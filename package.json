@@ -1,6 +1,17 @@
 {
   "name": "feedscout",
-  "description": "",
+  "description": "Lightweight feed autodiscovery for TypeScript. Extract RSS, Atom, and JSON feed URIs from HTML with configurable options.",
+  "keywords": [
+    "rss",
+    "rss-autodiscovery",
+    "autodiscovery",
+    "auto-discovery",
+    "feed-finder",
+    "rss-finder",
+    "feed-discovery",
+    "rss-discovery",
+    "feed-locator"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/macieklamberski/feedscout.git"
