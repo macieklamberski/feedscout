@@ -33,6 +33,14 @@ describe('discoverFeedUrisFromHeaders', () => {
       expect(result).toEqual(['/feed.xml', '/atom.xml'])
     })
 
+    it('should find multiple separate Link header entries', () => {
+      const headers = new Headers()
+      headers.append('Link', '</feed.xml>; rel="alternate"; type="application/rss+xml"')
+      headers.append('Link', '</atom.xml>; rel="alternate"; type="application/atom+xml"')
+      const result = discoverFeedUrisFromHeaders(headers, defaultOptions)
+      expect(result).toEqual(['/feed.xml', '/atom.xml'])
+    })
+
     it('should find Link with absolute URL', () => {
       const headers = new Headers({
         Link: '<https://example.com/feed.xml>; rel="alternate"; type="application/rss+xml"',
@@ -267,6 +275,22 @@ describe('discoverFeedUrisFromHeaders', () => {
       })
       const result = discoverFeedUrisFromHeaders(headers, defaultOptions)
       expect(result).toEqual(['/feed.xml'])
+    })
+
+    it('should handle parameters in different order', () => {
+      const headers = new Headers({
+        Link: '</feed.xml>; type="application/rss+xml"; rel="alternate"',
+      })
+      const result = discoverFeedUrisFromHeaders(headers, defaultOptions)
+      expect(result).toEqual(['/feed.xml'])
+    })
+
+    it('should handle parameters with title before type and rel', () => {
+      const headers = new Headers({
+        Link: '</atom.xml>; title="Atom Feed"; type="application/atom+xml"; rel="alternate"',
+      })
+      const result = discoverFeedUrisFromHeaders(headers, defaultOptions)
+      expect(result).toEqual(['/atom.xml'])
     })
   })
 })

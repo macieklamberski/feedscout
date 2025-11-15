@@ -161,6 +161,13 @@ describe('discoverFeedUris', () => {
       expect(discoverFeedUris(value, defaultOptions)).toEqual(expected)
     })
 
+    it('should ignore feed stylesheet', () => {
+      const value = '<link rel="feed stylesheet" href="/feed.xml">'
+      const expected: Array<string> = []
+
+      expect(discoverFeedUris(value, defaultOptions)).toEqual(expected)
+    })
+
     it('should find multiple feed links with different rel values', () => {
       const value = `
         <link rel="feed" href="/feed1.xml">
@@ -168,6 +175,20 @@ describe('discoverFeedUris', () => {
         <link rel="alternate" type="application/rss+xml" href="/feed3.xml">
       `
       const expected = ['/feed1.xml', '/feed2.xml', '/feed3.xml']
+
+      expect(discoverFeedUris(value, defaultOptions)).toEqual(expected)
+    })
+
+    it('should handle self-closing link tags', () => {
+      const value = '<link rel="feed" href="/feed.xml" />'
+      const expected = ['/feed.xml']
+
+      expect(discoverFeedUris(value, defaultOptions)).toEqual(expected)
+    })
+
+    it('should handle self-closing link tags with type attribute', () => {
+      const value = '<link rel="alternate" type="application/rss+xml" href="/feed.xml" />'
+      const expected = ['/feed.xml']
 
       expect(discoverFeedUris(value, defaultOptions)).toEqual(expected)
     })
@@ -325,6 +346,29 @@ describe('discoverFeedUris', () => {
       expect(discoverFeedUris(value, defaultOptions)).toEqual(expected)
     })
 
+    it('should deduplicate URI discovered via all three methods', () => {
+      const value = `
+        <link rel="feed" href="/feed">
+        <a href="/feed">Subscribe</a>
+        <a href="/feed">RSS Feed</a>
+      `
+      const expected = ['/feed']
+
+      expect(discoverFeedUris(value, defaultOptions)).toEqual(expected)
+    })
+
+    it('should deduplicate mixed discovery methods', () => {
+      const value = `
+        <link rel="alternate" type="application/rss+xml" href="/rss.xml">
+        <a href="/rss.xml">Link</a>
+        <a href="/custom">RSS</a>
+        <link rel="feed" href="/custom">
+      `
+      const expected = ['/rss.xml', '/custom']
+
+      expect(discoverFeedUris(value, defaultOptions)).toEqual(expected)
+    })
+
     it('should handle complex HTML document', () => {
       const value = `
         <!DOCTYPE html>
@@ -454,6 +498,38 @@ describe('discoverFeedUris', () => {
     it('should handle HTML entities in href', () => {
       const value = '<a href="/feed?foo=1&amp;bar=2">RSS</a>'
       const expected = ['/feed?foo=1&bar=2']
+
+      expect(discoverFeedUris(value, defaultOptions)).toEqual(expected)
+    })
+
+    it('should handle unicode characters in URIs', () => {
+      const value = '<link rel="feed" href="/フィード.xml">'
+      const expected = ['/フィード.xml']
+
+      expect(discoverFeedUris(value, defaultOptions)).toEqual(expected)
+    })
+
+    it('should handle unicode characters in anchor href', () => {
+      const value = '<a href="/مدونة/feed">RSS</a>'
+      const expected = ['/مدونة/feed']
+
+      expect(discoverFeedUris(value, defaultOptions)).toEqual(expected)
+    })
+
+    it('should handle very large HTML document', () => {
+      const feedLink = '<link rel="feed" href="/feed.xml">'
+      const fillerContent = '<p>filler content</p>'.repeat(10000)
+      const value = feedLink + fillerContent
+      const expected = ['/feed.xml']
+
+      expect(discoverFeedUris(value, defaultOptions)).toEqual(expected)
+    })
+
+    it('should handle document with many potential feed elements', () => {
+      const links = Array.from({ length: 100 }, (_, i) => `<a href="/page${i}">Page ${i}</a>`).join('\n')
+      const actualFeed = '<link rel="feed" href="/feed.xml">'
+      const value = actualFeed + links
+      const expected = ['/feed.xml']
 
       expect(discoverFeedUris(value, defaultOptions)).toEqual(expected)
     })
