@@ -1,0 +1,63 @@
+{
+  "name": "feedscout",
+  "description": "",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/macieklamberski/feedscout.git"
+  },
+  "homepage": "https://github.com/macieklamberski/feedscout",
+  "bugs": {
+    "url": "https://github.com/macieklamberski/feedscout/issues"
+  },
+  "author": "Maciej Lamberski",
+  "license": "MIT",
+  "type": "module",
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
+    },
+    "./utils": {
+      "import": {
+        "types": "./dist/common/utils.d.ts",
+        "default": "./dist/common/utils.js"
+      },
+      "require": {
+        "types": "./dist/common/utils.d.cts",
+        "default": "./dist/common/utils.cjs"
+      }
+    },
+    "./types": {
+      "import": {
+        "types": "./dist/common/types.d.ts",
+        "default": "./dist/common/types.js"
+      },
+      "require": {
+        "types": "./dist/common/types.d.cts",
+        "default": "./dist/common/types.cjs"
+      }
+    },
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "prepare": "lefthook install",
+    "build": "tsdown src/index.ts src/common/utils.ts src/common/types.ts --format cjs,esm --dts --clean"
+  },
+  "dependencies": {
+    "htmlparser2": "^10.0.0"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.3.2",
+    "kvalita": "^1.3.1",
+    "tsdown": "^0.15.12"
+  }
+}

@@ -1,0 +1,41 @@
+name: Test
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_call:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.56.0-noble
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install dependencies for Bun setup
+        run: |
+          apt-get update
+          apt-get install -y unzip
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          # Locked due to bug in newer versions: https://github.com/oven-sh/bun/issues/23139
+          bun-version: 1.2.20
+
+      - name: Install dependencies
+        run: bun install --ignore-scripts
+
+      - name: Run tests with coverage
+        run: bun test --coverage --coverage-reporter=lcov
+
+      - name: Upload coverage to Codecov
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./coverage/lcov.info
