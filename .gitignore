@@ -1,0 +1,9 @@
+# System
+Thumbs.db
+.DS_Store
+
+# Dependency
+node_modules
+
+# Build
+dist

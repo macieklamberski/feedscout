@@ -1,0 +1,14 @@
+{
+  "extends": [
+    "node_modules/kvalita/configs/lefthook-biome.json",
+    "node_modules/kvalita/configs/lefthook-typescript.json",
+    "node_modules/kvalita/configs/lefthook-commitlint.json"
+  ],
+  "pre-push": {
+    "commands": {
+      "test": {
+        "run": "bun test"
+      }
+    }
+  }
+}

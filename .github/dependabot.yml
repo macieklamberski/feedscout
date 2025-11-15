@@ -1,0 +1,13 @@
+version: 2
+updates:
+  - package-ecosystem: bun
+    directory: /
+    schedule:
+      interval: weekly
+    target-branch: main
+
+  - package-ecosystem: docker
+    directory: /.github/workflows
+    schedule:
+      interval: weekly
+    target-branch: main
