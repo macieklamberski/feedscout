@@ -13,3 +13,7 @@ export type ParserContext = {
   }
   options: DiscoverFeedUrisOptions
 }
+
+export type DiscoverFeedUrisFromHeadersOptions = {
+  linkMimeTypes: Array<string>
+}

@@ -1,9 +1,26 @@
 import type { Handler } from 'htmlparser2'
 import type { ParserContext } from './types.js'
 
-export const includesAny = (value: string, patterns: Array<string>): boolean => {
-  const lowerValue = value?.toLowerCase()
-  return patterns.some((pattern) => lowerValue?.includes(pattern.toLowerCase()))
+export const normalizeMimeType = (type: string): string => {
+  return type.split(';')[0].trim().toLowerCase()
+}
+
+export const includesAnyOf = (
+  value: string,
+  patterns: Array<string>,
+  parser?: (value: string) => string,
+): boolean => {
+  const parsedValue = parser ? parser(value) : value?.toLowerCase()
+  return patterns.some((pattern) => parsedValue?.includes(pattern.toLowerCase()))
+}
+
+export const isAnyOf = (
+  value: string,
+  patterns: Array<string>,
+  parser?: (value: string) => string,
+): boolean => {
+  const parsedValue = parser ? parser(value) : value?.toLowerCase()?.trim()
+  return patterns.some((pattern) => parsedValue === pattern.toLowerCase().trim())
 }
 
 export const handleOpenTag = (
@@ -16,7 +33,7 @@ export const handleOpenTag = (
     const rel = attribs.rel?.toLowerCase()
 
     // Traditional approach: rel="alternate" with MIME type.
-    if (rel === 'alternate' && includesAny(attribs.type, context.options.linkMimeTypes)) {
+    if (rel === 'alternate' && isAnyOf(attribs.type, context.options.linkMimeTypes, normalizeMimeType)) {
       context.discoveredUris.add(attribs.href)
     }
 
@@ -32,7 +49,7 @@ export const handleOpenTag = (
     const lowerHref = attribs.href.toLowerCase()
 
     // Skip if href contains ignored patterns.
-    if (includesAny(lowerHref, context.options.anchorIgnoredUris)) {
+    if (includesAnyOf(lowerHref, context.options.anchorIgnoredUris)) {
       context.currentAnchor.href = ''
       context.currentAnchor.text = ''
       return
@@ -62,7 +79,7 @@ export const handleCloseTag = (context: ParserContext, name: string, _isImplied:
     const normalizedText = context.currentAnchor.text.toLowerCase().trim()
 
     // Check if anchor text contains any feed label pattern.
-    if (includesAny(normalizedText, context.options.anchorLabels)) {
+    if (includesAnyOf(normalizedText, context.options.anchorLabels)) {
       context.discoveredUris.add(context.currentAnchor.href)
     }
 

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import { discoverFeedUris } from './index.js'
+import { discoverFeedUris } from './html.js'
 
 const linkMimeTypes = [
   'application/json',
@@ -99,6 +99,20 @@ describe('discoverFeedUris', () => {
     it('should ignore link without feed type', () => {
       const value = '<link rel="alternate" type="text/html" href="/page.html">'
       const expected: Array<string> = []
+
+      expect(discoverFeedUris(value, defaultOptions)).toEqual(expected)
+    })
+
+    it('should handle MIME type with charset parameter', () => {
+      const value = '<link rel="alternate" type="application/rss+xml; charset=utf-8" href="/feed.xml">'
+      const expected = ['/feed.xml']
+
+      expect(discoverFeedUris(value, defaultOptions)).toEqual(expected)
+    })
+
+    it('should handle MIME type with multiple parameters', () => {
+      const value = '<link rel="alternate" type="application/atom+xml; charset=utf-8; boundary=test" href="/atom.xml">'
+      const expected = ['/atom.xml']
 
       expect(discoverFeedUris(value, defaultOptions)).toEqual(expected)
     })
@@ -405,6 +419,88 @@ describe('discoverFeedUris', () => {
     it('should handle protocol-relative URLs', () => {
       const value = '<link rel="feed" href="//feeds.example.com/rss.xml">'
       const expected = ['//feeds.example.com/rss.xml']
+
+      expect(discoverFeedUris(value, defaultOptions)).toEqual(expected)
+    })
+
+    it('should ignore link without href attribute', () => {
+      const value = '<link rel="alternate" type="application/rss+xml">'
+      const expected: Array<string> = []
+
+      expect(discoverFeedUris(value, defaultOptions)).toEqual(expected)
+    })
+
+    it('should ignore link with empty href attribute', () => {
+      const value = '<link rel="alternate" type="application/rss+xml" href="">'
+      const expected: Array<string> = []
+
+      expect(discoverFeedUris(value, defaultOptions)).toEqual(expected)
+    })
+
+    it('should ignore anchor without href attribute', () => {
+      const value = '<a>RSS Feed</a>'
+      const expected: Array<string> = []
+
+      expect(discoverFeedUris(value, defaultOptions)).toEqual(expected)
+    })
+
+    it('should ignore anchor with empty href attribute', () => {
+      const value = '<a href="">RSS Feed</a>'
+      const expected: Array<string> = []
+
+      expect(discoverFeedUris(value, defaultOptions)).toEqual(expected)
+    })
+
+    it('should handle HTML entities in href', () => {
+      const value = '<a href="/feed?foo=1&amp;bar=2">RSS</a>'
+      const expected = ['/feed?foo=1&bar=2']
+
+      expect(discoverFeedUris(value, defaultOptions)).toEqual(expected)
+    })
+  })
+
+  // TODO: These edge cases should be handled during URL resolution phase.
+  // Currently, raw URIs are returned without validation. Invalid protocols
+  // and fragment-only URIs should be filtered when resolving to absolute URLs.
+  describe('unsupported edge cases', () => {
+    it('should return hash-only href when matched by text', () => {
+      const value = '<a href="#">RSS Feed</a>'
+      const expected = ['#']
+
+      expect(discoverFeedUris(value, defaultOptions)).toEqual(expected)
+    })
+
+    it('should return javascript protocol when matched by text', () => {
+      const value = '<a href="javascript:void(0)">RSS Feed</a>'
+      const expected = ['javascript:void(0)']
+
+      expect(discoverFeedUris(value, defaultOptions)).toEqual(expected)
+    })
+
+    it('should return mailto protocol when matched by text', () => {
+      const value = '<a href="mailto:feed@example.com">Subscribe via email</a>'
+      const expected = ['mailto:feed@example.com']
+
+      expect(discoverFeedUris(value, defaultOptions)).toEqual(expected)
+    })
+
+    it('should return tel protocol when matched by text', () => {
+      const value = '<a href="tel:+1234567890">RSS Hotline</a>'
+      const expected = ['tel:+1234567890']
+
+      expect(discoverFeedUris(value, defaultOptions)).toEqual(expected)
+    })
+
+    it('should return data protocol when matched by text', () => {
+      const value = '<a href="data:text/plain,feed">RSS Feed</a>'
+      const expected = ['data:text/plain,feed']
+
+      expect(discoverFeedUris(value, defaultOptions)).toEqual(expected)
+    })
+
+    it('should return href matched by suffix even with whitespace-only text', () => {
+      const value = '<a href="/feed">   </a>'
+      const expected = ['/feed']
 
       expect(discoverFeedUris(value, defaultOptions)).toEqual(expected)
     })
