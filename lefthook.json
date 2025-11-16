@@ -7,7 +7,7 @@
   "pre-push": {
     "commands": {
       "test": {
-        "run": "bun test"
+        "run": "bun test src/**/*.test.ts"
       }
     }
   }
