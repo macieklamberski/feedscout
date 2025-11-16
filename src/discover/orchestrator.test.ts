@@ -13,20 +13,46 @@ const defaultHeadersOptions = {
 }
 
 describe('discoverFeedUris', () => {
-  describe('no options provided', () => {
-    it('should return empty array when no options provided', () => {
+  describe('CMS-only discovery (default when no options)', () => {
+    it('should discover CMS feed URIs from HTML without options', () => {
       const html = '<meta name="generator" content="WordPress 6.4">'
-      const expected: Array<string> = []
+      const expected = [
+        '/feed/',
+        '/feed',
+        '/rss/',
+        '/rss',
+        '/comments/feed/',
+        '/comments/feed',
+        '/category/*/feed/',
+        '/tag/*/feed/',
+        '/wp-json/wp/v2/posts',
+        '/?rest_route=/wp/v2/posts',
+      ]
 
       expect(discoverFeedUris(html)).toEqual(expected)
     })
 
-    it('should return empty array for headers without options', () => {
+    it('should discover CMS feed URIs from headers without options', () => {
       const html = ''
       const headers = new Headers({ 'X-Powered-By': 'Next.js' })
-      const expected: Array<string> = []
+      const expected = ['/feed.xml', '/rss.xml', '/api/feed']
 
       expect(discoverFeedUris(html, headers)).toEqual(expected)
+    })
+
+    it('should combine CMS discovery from both HTML and headers', () => {
+      const html = '<meta name="generator" content="Hexo 6.3.0">'
+      const headers = new Headers({ 'X-Powered-By': 'Next.js' })
+      const expected = ['/atom.xml', '/rss2.xml', '/feed.xml', '/rss.xml', '/api/feed']
+
+      expect(discoverFeedUris(html, headers)).toEqual(expected)
+    })
+
+    it('should return empty array when no CMS detected', () => {
+      const html = '<html><body>No CMS</body></html>'
+      const expected: Array<string> = []
+
+      expect(discoverFeedUris(html)).toEqual(expected)
     })
   })
 
@@ -38,22 +64,22 @@ describe('discoverFeedUris', () => {
       expect(discoverFeedUris(html, undefined, { html: defaultHtmlOptions })).toEqual(expected)
     })
 
-    it('should discover multiple feeds from HTML', () => {
+    it('should combine HTML and CMS discovery', () => {
       const html = `
+        <meta name="generator" content="Jekyll v4.3.2">
         <link rel="alternate" type="application/rss+xml" href="/rss.xml">
-        <link rel="alternate" type="application/atom+xml" href="/atom.xml">
       `
-      const expected = ['/rss.xml', '/atom.xml']
+      const expected = ['/rss.xml', '/feed.xml', '/atom.xml']
 
       expect(discoverFeedUris(html, undefined, { html: defaultHtmlOptions })).toEqual(expected)
     })
 
-    it('should deduplicate URIs discovered via HTML', () => {
+    it('should deduplicate URIs discovered via both HTML and CMS methods', () => {
       const html = `
+        <meta name="generator" content="Jekyll v4.3.2">
         <link rel="alternate" type="application/rss+xml" href="/feed.xml">
-        <link rel="alternate" type="application/atom+xml" href="/feed.xml">
       `
-      const expected = ['/feed.xml']
+      const expected = ['/feed.xml', '/atom.xml', '/rss.xml']
 
       expect(discoverFeedUris(html, undefined, { html: defaultHtmlOptions })).toEqual(expected)
     })
@@ -70,24 +96,28 @@ describe('discoverFeedUris', () => {
       expect(discoverFeedUris(html, headers, { headers: defaultHeadersOptions })).toEqual(expected)
     })
 
-    it('should discover multiple feeds from headers', () => {
+    it('should combine headers and CMS discovery', () => {
       const html = ''
       const headers = new Headers({
-        Link: '</rss.xml>; rel="alternate"; type="application/rss+xml", </atom.xml>; rel="alternate"; type="application/atom+xml"',
+        Link: '</rss.xml>; rel="alternate"; type="application/rss+xml"',
+        'X-Powered-By': 'Next.js',
       })
-      const expected = ['/rss.xml', '/atom.xml']
+      const expected = ['/rss.xml', '/feed.xml', '/api/feed']
 
       expect(discoverFeedUris(html, headers, { headers: defaultHeadersOptions })).toEqual(expected)
     })
   })
 
   describe('all methods combined', () => {
-    it('should discover feeds from HTML and headers', () => {
-      const html = '<link rel="alternate" type="application/atom+xml" href="/atom.xml">'
+    it('should discover feeds from HTML, headers, and CMS', () => {
+      const html = `
+        <meta name="generator" content="Hugo 0.120.4">
+        <link rel="alternate" type="application/atom+xml" href="/atom.xml">
+      `
       const headers = new Headers({
         Link: '</api/rss>; rel="alternate"; type="application/rss+xml"',
       })
-      const expected = ['/atom.xml', '/api/rss']
+      const expected = ['/atom.xml', '/api/rss', '/index.xml', '/feed.xml', '/rss.xml']
 
       expect(
         discoverFeedUris(html, headers, {
@@ -97,12 +127,15 @@ describe('discoverFeedUris', () => {
       ).toEqual(expected)
     })
 
-    it('should deduplicate across both methods', () => {
-      const html = '<link rel="alternate" type="application/rss+xml" href="/feed.xml">'
+    it('should deduplicate across all three methods', () => {
+      const html = `
+        <meta name="generator" content="Jekyll v4.3.2">
+        <link rel="alternate" type="application/rss+xml" href="/feed.xml">
+      `
       const headers = new Headers({
         Link: '</feed.xml>; rel="alternate"; type="application/rss+xml"',
       })
-      const expected = ['/feed.xml']
+      const expected = ['/feed.xml', '/atom.xml', '/rss.xml']
 
       expect(
         discoverFeedUris(html, headers, {
@@ -115,7 +148,10 @@ describe('discoverFeedUris', () => {
 
   describe('method filtering via options', () => {
     it('should only run HTML method when specified', () => {
-      const html = '<link rel="alternate" type="application/rss+xml" href="/custom.xml">'
+      const html = `
+        <meta name="generator" content="WordPress 6.4">
+        <link rel="alternate" type="application/rss+xml" href="/custom.xml">
+      `
       const expected = ['/custom.xml']
 
       expect(
@@ -126,8 +162,33 @@ describe('discoverFeedUris', () => {
       ).toEqual(expected)
     })
 
+    it('should only run CMS method when specified', () => {
+      const html = `
+        <meta name="generator" content="WordPress 6.4">
+        <link rel="alternate" type="application/rss+xml" href="/custom.xml">
+      `
+      const expected = [
+        '/feed/',
+        '/feed',
+        '/rss/',
+        '/rss',
+        '/comments/feed/',
+        '/comments/feed',
+        '/category/*/feed/',
+        '/tag/*/feed/',
+        '/wp-json/wp/v2/posts',
+        '/?rest_route=/wp/v2/posts',
+      ]
+
+      expect(
+        discoverFeedUris(html, undefined, {
+          methods: ['cms'],
+        }),
+      ).toEqual(expected)
+    })
+
     it('should only run headers method when specified', () => {
-      const html = '<link rel="alternate" type="application/rss+xml" href="/custom.xml">'
+      const html = '<meta name="generator" content="WordPress 6.4">'
       const headers = new Headers({
         Link: '</feed.xml>; rel="alternate"; type="application/rss+xml"',
       })
@@ -141,12 +202,30 @@ describe('discoverFeedUris', () => {
       ).toEqual(expected)
     })
 
-    it('should run both html and headers methods when specified', () => {
-      const html = '<link rel="alternate" type="application/rss+xml" href="/rss.xml">'
+    it('should run html and cms methods when specified', () => {
+      const html = `
+        <meta name="generator" content="Hexo 6.3.0">
+        <link rel="alternate" type="application/atom+xml" href="/atom.xml">
+      `
+      const expected = ['/atom.xml', '/rss2.xml', '/feed.xml']
+
+      expect(
+        discoverFeedUris(html, undefined, {
+          methods: ['html', 'cms'],
+          html: defaultHtmlOptions,
+        }),
+      ).toEqual(expected)
+    })
+
+    it('should exclude CMS method when not specified', () => {
+      const html = `
+        <meta name="generator" content="WordPress 6.4">
+        <link rel="alternate" type="application/rss+xml" href="/custom.xml">
+      `
       const headers = new Headers({
-        Link: '</atom.xml>; rel="alternate"; type="application/atom+xml"',
+        Link: '</header.xml>; rel="alternate"; type="application/rss+xml"',
       })
-      const expected = ['/rss.xml', '/atom.xml']
+      const expected = ['/custom.xml', '/header.xml']
 
       expect(
         discoverFeedUris(html, headers, {
@@ -181,14 +260,14 @@ describe('discoverFeedUris', () => {
       expect(discoverFeedUris(html, headers, { headers: defaultHeadersOptions })).toEqual(expected)
     })
 
-    it('should handle HTML without feed links', () => {
+    it('should handle HTML without CMS or feed links', () => {
       const html = '<html><body><p>Plain content</p></body></html>'
       const expected: Array<string> = []
 
       expect(discoverFeedUris(html, undefined, { html: defaultHtmlOptions })).toEqual(expected)
     })
 
-    it('should handle headers without Link header', () => {
+    it('should handle headers without Link header or CMS markers', () => {
       const html = ''
       const headers = new Headers({ 'Content-Type': 'text/html' })
       const expected: Array<string> = []
@@ -197,7 +276,10 @@ describe('discoverFeedUris', () => {
     })
 
     it('should handle empty methods array', () => {
-      const html = '<link rel="alternate" type="application/rss+xml" href="/feed.xml">'
+      const html = `
+        <meta name="generator" content="WordPress 6.4">
+        <link rel="alternate" type="application/rss+xml" href="/feed.xml">
+      `
       const expected: Array<string> = []
 
       expect(
