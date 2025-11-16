@@ -1,15 +1,15 @@
 import { Parser } from 'htmlparser2'
-import type { DiscoverFeedUrisOptions, ParserContext } from '../common/types.js'
-import { createHandlers } from '../common/utils.js'
+import type { HtmlDiscoveryOptions, HtmlFeedUrisContext } from '../common/types.js'
+import { createHtmlFeedUrisHandlers } from '../common/utils.js'
 
-export const discoverFeedUris = (html: string, options: DiscoverFeedUrisOptions): Array<string> => {
-  const context: ParserContext = {
+export const discoverFeedUrisFromHtml = (html: string, options: HtmlDiscoveryOptions): Array<string> => {
+  const context: HtmlFeedUrisContext = {
     discoveredUris: new Set<string>(),
     currentAnchor: { href: '', text: '' },
     options,
   }
 
-  const parser = new Parser(createHandlers(context), { decodeEntities: true })
+  const parser = new Parser(createHtmlFeedUrisHandlers(context), { decodeEntities: true })
 
   parser.write(html)
   parser.end()

@@ -1,4 +1,4 @@
-import type { DiscoverFeedUrisFromHeadersOptions } from '../common/types.js'
+import type { HeadersDiscoveryOptions } from '../common/types.js'
 import { isAnyOf, normalizeMimeType } from '../common/utils.js'
 
 // RFC 8288: Web Linking - HTTP Link header field for feed discovery.
@@ -27,7 +27,7 @@ import { isAnyOf, normalizeMimeType } from '../common/utils.js'
  */
 export const discoverFeedUrisFromHeaders = (
   headers: Headers,
-  options: DiscoverFeedUrisFromHeadersOptions,
+  options: HeadersDiscoveryOptions,
 ): Array<string> => {
   const feedUris = new Set<string>()
   const linkHeader = headers.get('link')

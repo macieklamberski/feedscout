@@ -1,5 +1,5 @@
 import type { Handler } from 'htmlparser2'
-import type { ParserContext } from './types.js'
+import type { HtmlFeedUrisContext } from './types.js'
 
 export const normalizeMimeType = (type: string): string => {
   return type.split(';')[0].trim().toLowerCase()
@@ -24,7 +24,7 @@ export const isAnyOf = (
 }
 
 export const handleOpenTag = (
-  context: ParserContext,
+  context: HtmlFeedUrisContext,
   name: string,
   attribs: { [key: string]: string },
   _isImplied: boolean,
@@ -33,7 +33,10 @@ export const handleOpenTag = (
     const rel = attribs.rel?.toLowerCase()
 
     // Traditional approach: rel="alternate" with MIME type.
-    if (rel === 'alternate' && isAnyOf(attribs.type, context.options.linkMimeTypes, normalizeMimeType)) {
+    if (
+      rel === 'alternate' &&
+      isAnyOf(attribs.type, context.options.linkMimeTypes, normalizeMimeType)
+    ) {
       context.discoveredUris.add(attribs.href)
     }
 
@@ -66,14 +69,18 @@ export const handleOpenTag = (
   }
 }
 
-export const handleText = (context: ParserContext, text: string): void => {
+export const handleText = (context: HtmlFeedUrisContext, text: string): void => {
   // Accumulate text content for current anchor.
   if (context.currentAnchor.href) {
     context.currentAnchor.text += text
   }
 }
 
-export const handleCloseTag = (context: ParserContext, name: string, _isImplied: boolean): void => {
+export const handleCloseTag = (
+  context: HtmlFeedUrisContext,
+  name: string,
+  _isImplied: boolean,
+): void => {
   // Check anchor text patterns when anchor closes.
   if (name === 'a' && context.currentAnchor.href && context.currentAnchor.text) {
     const normalizedText = context.currentAnchor.text.toLowerCase().trim()
@@ -88,7 +95,7 @@ export const handleCloseTag = (context: ParserContext, name: string, _isImplied:
   }
 }
 
-export const createHandlers = (context: ParserContext): Partial<Handler> => {
+export const createHtmlFeedUrisHandlers = (context: HtmlFeedUrisContext): Partial<Handler> => {
   return {
     onopentag: (name, attribs, isImplied) => {
       return handleOpenTag(context, name, attribs, isImplied)

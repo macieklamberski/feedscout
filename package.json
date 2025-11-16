@@ -37,6 +37,16 @@
         "default": "./dist/index.cjs"
       }
     },
+    "./cms": {
+      "import": {
+        "types": "./dist/discover/cms.d.ts",
+        "default": "./dist/discover/cms.js"
+      },
+      "require": {
+        "types": "./dist/discover/cms.d.cts",
+        "default": "./dist/discover/cms.cjs"
+      }
+    },
     "./utils": {
       "import": {
         "types": "./dist/common/utils.d.ts",
@@ -61,7 +71,7 @@
   },
   "scripts": {
     "prepare": "lefthook install",
-    "build": "tsdown src/index.ts src/common/utils.ts src/common/types.ts --format cjs,esm --dts --clean"
+    "build": "tsdown src/index.ts src/discover/cms.ts src/common/utils.ts src/common/types.ts --format cjs,esm --dts --clean"
   },
   "dependencies": {
     "htmlparser2": "^10.0.0"

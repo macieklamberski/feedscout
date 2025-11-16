@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'bun:test'
 import { Parser } from 'htmlparser2'
-import type { ParserContext } from './types.js'
+import type { HtmlFeedUrisContext } from './types.js'
 import {
-  createHandlers,
+  createHtmlFeedUrisHandlers,
   handleCloseTag,
   handleOpenTag,
   handleText,
@@ -227,9 +227,9 @@ describe('isAnyOf', () => {
   })
 })
 
-describe('createHandlers', () => {
+describe('createHtmlFeedUrisHandlers', () => {
   it('should create handlers that can be used with htmlparser2', () => {
-    const context: ParserContext = {
+    const context: HtmlFeedUrisContext = {
       discoveredUris: new Set<string>(),
       currentAnchor: { href: '', text: '' },
       options: {
@@ -240,7 +240,7 @@ describe('createHandlers', () => {
       },
     }
 
-    const handlers = createHandlers(context)
+    const handlers = createHtmlFeedUrisHandlers(context)
     const parser = new Parser(handlers, { decodeEntities: true })
 
     const html = '<link rel="alternate" type="application/rss+xml" href="/feed.xml">'
@@ -251,7 +251,7 @@ describe('createHandlers', () => {
   })
 
   it('should allow combining feedscout handlers with custom handlers', () => {
-    const context: ParserContext = {
+    const context: HtmlFeedUrisContext = {
       discoveredUris: new Set<string>(),
       currentAnchor: { href: '', text: '' },
       options: {
@@ -266,7 +266,7 @@ describe('createHandlers', () => {
 
     // Create custom handlers that also track h1 elements.
     const handlers = {
-      ...createHandlers(context),
+      ...createHtmlFeedUrisHandlers(context),
       onopentag: (name: string, attribs: { [key: string]: string }, isImplied: boolean) => {
         // Call feedscout handler first.
         handleOpenTag(context, name, attribs, isImplied)
@@ -295,7 +295,7 @@ describe('createHandlers', () => {
 
 describe('individual handlers', () => {
   it('handleOpenTag should discover link elements', () => {
-    const context: ParserContext = {
+    const context: HtmlFeedUrisContext = {
       discoveredUris: new Set<string>(),
       currentAnchor: { href: '', text: '' },
       options: {
@@ -321,7 +321,7 @@ describe('individual handlers', () => {
   })
 
   it('handleOpenTag should discover anchor elements by href', () => {
-    const context: ParserContext = {
+    const context: HtmlFeedUrisContext = {
       discoveredUris: new Set<string>(),
       currentAnchor: { href: '', text: '' },
       options: {
@@ -339,7 +339,7 @@ describe('individual handlers', () => {
   })
 
   it('handleText should accumulate text for current anchor', () => {
-    const context: ParserContext = {
+    const context: HtmlFeedUrisContext = {
       discoveredUris: new Set<string>(),
       currentAnchor: { href: '/my-feed', text: '' },
       options: {
@@ -358,7 +358,7 @@ describe('individual handlers', () => {
   })
 
   it('handleCloseTag should discover anchor by text label', () => {
-    const context: ParserContext = {
+    const context: HtmlFeedUrisContext = {
       discoveredUris: new Set<string>(),
       currentAnchor: { href: '/my-feed', text: 'RSS Feed' },
       options: {

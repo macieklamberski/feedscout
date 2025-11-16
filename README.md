@@ -81,7 +81,7 @@ const uris = discoverFeedUrisFromHeaders(headers, {
 console.log(uris) // ['/feed.xml', '/atom.xml']
 ```
 
-### Notes
+## Notes
 
 Returned URIs may be relative. Resolve to absolute URLs using `new URL(uri, baseUrl)`.
 
