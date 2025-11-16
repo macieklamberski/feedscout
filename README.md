@@ -81,6 +81,73 @@ const uris = discoverFeedUrisFromHeaders(headers, {
 console.log(uris) // ['/feed.xml', '/atom.xml']
 ```
 
+### CMS Detection
+
+Detect CMS platforms and discover their conventional feed URI patterns:
+
+```typescript
+import { detectCms, discoverFeedUrisFromCmsHtml } from 'feedscout'
+
+const html = '<meta name="generator" content="WordPress 6.4">'
+
+// Detect CMS type from HTML
+const cmsType = detectCms(html)
+console.log(cmsType) // 'wordpress'
+
+// Get all CMS-specific feed URIs
+const uris = discoverFeedUrisFromCmsHtml(html)
+console.log(uris)
+// ['/feed/', '/feed', '/rss/', '/rss', '/comments/feed/', '/comments/feed',
+//  '/category/*/feed/', '/tag/*/feed/', '/wp-json/wp/v2/posts', '/?rest_route=/wp/v2/posts']
+```
+
+#### HTTP Header Detection
+
+Detect CMS from HTTP response headers (faster, doesn't require parsing HTML):
+
+```typescript
+import { detectCmsFromHeaders } from 'feedscout'
+
+const response = await fetch('https://example.com')
+
+// Detect CMS type from headers
+const cmsType = detectCmsFromHeaders(response.headers)
+console.log(cmsType) // 'next' | 'nuxt' | 'wordpress' | 'drupal' | undefined
+```
+
+**Supported HTTP headers:**
+- **Next.js** — `X-Powered-By: Next.js`
+- **Nuxt** — `X-Powered-By: Nuxt`
+- **WordPress** — `X-Pingback` header (pingback endpoint)
+- **Drupal** — `X-Generator: Drupal` (legacy, often removed)
+
+**Note:** HTTP header detection works reliably for Next.js, Nuxt, and WordPress (via X-Pingback). Other CMS platforms don't send identifying headers or remove them for security. Use HTML detection for comprehensive coverage.
+
+**Supported CMS platforms (24):**
+
+- **WordPress** — Detects via meta generator tag, `/wp-content/`, `/wp-includes/`, `/wp-json/` paths
+- **Ghost** — Detects via meta generator tag, `/ghost/` path
+- **Hexo** — Detects via meta generator tag
+- **Jekyll** — Detects via meta generator tag
+- **Hugo** — Detects via meta generator tag
+- **Gatsby** — Detects via meta generator tag
+- **Drupal** — Detects via meta generator tag, `/sites/default/files/` path
+- **Joomla** — Detects via meta generator tag, `option=com_` patterns
+- **Medium** — Detects via domain patterns
+- **Blogger** — Detects via meta generator tag, `.blogspot.com` domain
+- **Tumblr** — Detects via domain patterns
+- **Wix** — Detects via domain patterns
+- **Squarespace** — Detects via domain patterns
+- **Webflow** — Detects via meta generator tag, domain patterns
+- **Substack** — Detects via domain patterns
+- **Bear** — Detects via `bearblog.dev` domain
+- **Eleventy** — Detects via meta generator tag
+- **Next.js** — Detects via meta generator tag, `__next`, `_next/` patterns
+- **Nuxt** — Detects via meta generator tag, `__nuxt`, `_nuxt/` patterns
+- **VuePress** — Detects via meta generator tag
+- **Docusaurus** — Detects via meta generator tag
+- **Nikola** — Detects via meta generator tag, `getnikola.com` domain
+
 ## Notes
 
 Returned URIs may be relative. Resolve to absolute URLs using `new URL(uri, baseUrl)`.
@@ -141,6 +208,57 @@ const options: DiscoverFeedUrisOptions = {
   ],
 }
 ```
+
+### `detectCms(html)`
+
+Detects CMS platform from HTML content.
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `html` | `string` | Yes | HTML content to analyze |
+
+**Returns:** `CmsType \| undefined` — Detected CMS type or `undefined` if no CMS detected
+
+**Supported CMS types:** `'wordpress'`, `'ghost'`, `'hexo'`, `'jekyll'`, `'hugo'`, `'gatsby'`, `'drupal'`, `'joomla'`, `'medium'`, `'blogger'`, `'tumblr'`, `'wix'`, `'squarespace'`, `'webflow'`, `'substack'`, `'bear'`, `'eleventy'`, `'next'`, `'nuxt'`, `'vuepress'`, `'docusaurus'`, `'nikola'`
+
+### `discoverFeedUrisFromCmsHtml(html)`
+
+Discovers all CMS-specific feed URI patterns based on detected platform.
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `html` | `string` | Yes | HTML content to analyze |
+
+**Returns:** `string[]` — Array of all CMS-specific feed URIs (may be relative, empty if no CMS detected)
+
+### `detectCmsFromHeaders(headers)`
+
+Detects CMS platform from HTTP response headers.
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `headers` | `Headers` | Yes | Native Headers object from fetch API |
+
+**Returns:** `CmsType \| undefined` — Detected CMS type or `undefined` if no identifying headers found
+
+**Detection methods:**
+- Checks `X-Powered-By` header for Next.js, Nuxt
+- Checks `X-Pingback` header for WordPress
+- Checks `X-Generator` header for Drupal (legacy)
+
+**Supported platforms:** `'next'`, `'nuxt'`, `'wordpress'`, `'drupal'`
+
+**Note:** Most CMS platforms don't send identifying headers. For comprehensive detection, use `detectCms()` with HTML content.
+
+### `discoverFeedUrisFromCmsHeaders(headers)`
+
+Discovers CMS-specific feed URI patterns based on platform detected from HTTP headers.
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `headers` | `Headers` | Yes | Native Headers object from fetch API |
+
+**Returns:** `string[]` — Array of CMS-specific feed URIs (may be relative, empty if no CMS detected)
 
 ### `discoverFeedUrisFromHeaders(headers, options)`
 
