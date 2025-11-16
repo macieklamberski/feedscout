@@ -1,8 +1,11 @@
 import { Parser } from 'htmlparser2'
-import type { HtmlDiscoveryOptions, HtmlFeedUrisContext } from '../common/types.js'
-import { createHtmlFeedUrisHandlers } from '../common/utils.js'
+import type { HtmlDiscoveryOptions, HtmlFeedUrisContext } from './types.js'
+import { createHtmlFeedUrisHandlers } from './utils.js'
 
-export const discoverFeedUrisFromHtml = (html: string, options: HtmlDiscoveryOptions): Array<string> => {
+export const discoverFeedUrisFromHtml = (
+  html: string,
+  options: HtmlDiscoveryOptions,
+): Array<string> => {
   const context: HtmlFeedUrisContext = {
     discoveredUris: new Set<string>(),
     currentAnchor: { href: '', text: '' },

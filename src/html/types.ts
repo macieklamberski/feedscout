@@ -13,13 +13,3 @@ export type HtmlFeedUrisContext = {
   }
   options: HtmlDiscoveryOptions
 }
-
-export type HeadersDiscoveryOptions = {
-  linkMimeTypes: Array<string>
-}
-
-export type DiscoverFeedUrisOptions = {
-  methods?: Array<'html' | 'headers' | 'cms'>
-  html?: HtmlDiscoveryOptions
-  headers?: HeadersDiscoveryOptions
-}

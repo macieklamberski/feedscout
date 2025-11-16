@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import { discoverFeedUrisFromHeaders } from './headers.js'
+import { discoverFeedUrisFromHeaders } from './index.js'
 
 const linkMimeTypes = [
   'application/json',

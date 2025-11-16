@@ -1,30 +1,6 @@
-import type { HeadersDiscoveryOptions } from '../common/types.js'
 import { isAnyOf, normalizeMimeType } from '../common/utils.js'
+import type { HeadersDiscoveryOptions } from './types.js'
 
-// RFC 8288: Web Linking - HTTP Link header field for feed discovery.
-// https://www.rfc-editor.org/rfc/rfc8288
-
-/**
- * Discovers feed URIs from HTTP Link headers (RFC 8288).
- *
- * Parses the Link header and extracts URIs with rel="alternate" and
- * feed MIME types. Returns raw URIs without any resolution or validation.
- *
- * @param headers - Native Headers object from fetch API
- * @param options - Configuration for MIME type filtering
- * @returns Array of discovered feed URIs (raw, unresolved)
- *
- * @example
- * ```typescript
- * const headers = new Headers({
- *   'Link': '</feed.xml>; rel="alternate"; type="application/rss+xml"'
- * })
- * const uris = discoverFeedUrisFromHeaders(headers, {
- *   linkMimeTypes: ['application/rss+xml', 'application/atom+xml']
- * })
- * // Returns: ['/feed.xml']
- * ```
- */
 export const discoverFeedUrisFromHeaders = (
   headers: Headers,
   options: HeadersDiscoveryOptions,

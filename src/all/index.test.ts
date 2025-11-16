@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import { discoverFeedUris } from './orchestrator.js'
+import { discoverFeedUris } from './index.js'
 
 const defaultHtmlOptions = {
   linkMimeTypes: ['application/rss+xml', 'application/atom+xml'],

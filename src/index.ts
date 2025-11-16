@@ -1,17 +1,11 @@
 // Main orchestrator.
-export { discoverFeedUris } from './discover/orchestrator.js'
-
-// Method-specific discovery.
-export { discoverFeedUrisFromHtml } from './discover/html.js'
-export { discoverFeedUrisFromHeaders } from './discover/headers.js'
-
-// Handler creators for custom workflows.
-export { createHtmlFeedUrisHandlers } from './common/utils.js'
-
+export { discoverFeedUris } from './all/index.js'
 // Types.
-export type {
-  DiscoverFeedUrisOptions,
-  HtmlDiscoveryOptions,
-  HeadersDiscoveryOptions,
-  HtmlFeedUrisContext,
-} from './common/types.js'
+export type { DiscoverFeedUrisOptions } from './all/types.js'
+export { discoverFeedUrisFromHeaders } from './headers/index.js'
+export type { HeadersDiscoveryOptions } from './headers/types.js'
+// Method-specific discovery.
+export { discoverFeedUrisFromHtml } from './html/index.js'
+export type { HtmlDiscoveryOptions, HtmlFeedUrisContext } from './html/types.js'
+// Handler creators for custom workflows.
+export { createHtmlFeedUrisHandlers } from './html/utils.js'

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import { discoverFeedUrisFromHtml } from './html.js'
+import { discoverFeedUrisFromHtml } from './index.js'
 
 const linkMimeTypes = [
   'application/json',
@@ -104,14 +104,16 @@ describe('discoverFeedUrisFromHtml', () => {
     })
 
     it('should handle MIME type with charset parameter', () => {
-      const value = '<link rel="alternate" type="application/rss+xml; charset=utf-8" href="/feed.xml">'
+      const value =
+        '<link rel="alternate" type="application/rss+xml; charset=utf-8" href="/feed.xml">'
       const expected = ['/feed.xml']
 
       expect(discoverFeedUrisFromHtml(value, defaultOptions)).toEqual(expected)
     })
 
     it('should handle MIME type with multiple parameters', () => {
-      const value = '<link rel="alternate" type="application/atom+xml; charset=utf-8; boundary=test" href="/atom.xml">'
+      const value =
+        '<link rel="alternate" type="application/atom+xml; charset=utf-8; boundary=test" href="/atom.xml">'
       const expected = ['/atom.xml']
 
       expect(discoverFeedUrisFromHtml(value, defaultOptions)).toEqual(expected)
@@ -526,7 +528,9 @@ describe('discoverFeedUrisFromHtml', () => {
     })
 
     it('should handle document with many potential feed elements', () => {
-      const links = Array.from({ length: 100 }, (_, i) => `<a href="/page${i}">Page ${i}</a>`).join('\n')
+      const links = Array.from({ length: 100 }, (_, i) => `<a href="/page${i}">Page ${i}</a>`).join(
+        '\n',
+      )
       const actualFeed = '<link rel="feed" href="/feed.xml">'
       const value = actualFeed + links
       const expected = ['/feed.xml']

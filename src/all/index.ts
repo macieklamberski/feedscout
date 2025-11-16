@@ -1,6 +1,6 @@
-import type { DiscoverFeedUrisOptions } from '../common/types.js'
-import { discoverFeedUrisFromHtml } from './html.js'
-import { discoverFeedUrisFromHeaders } from './headers.js'
+import { discoverFeedUrisFromHeaders } from '../headers/index.js'
+import { discoverFeedUrisFromHtml } from '../html/index.js'
+import type { DiscoverFeedUrisOptions } from './types.js'
 
 export const discoverFeedUris = (
   html: string,
