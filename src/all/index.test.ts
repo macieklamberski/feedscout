@@ -207,5 +207,88 @@ describe('discoverFeedUris', () => {
         }),
       ).toEqual(expected)
     })
+
+    it('should handle very large HTML input', () => {
+      const feedLink = '<link rel="feed" href="/feed.xml">'
+      const largeHtml = feedLink + '<p>content</p>'.repeat(100000)
+      const expected = ['/feed.xml']
+
+      expect(discoverFeedUris(largeHtml, undefined, { html: defaultHtmlOptions })).toEqual(expected)
+    })
+
+    it('should handle HTML and headers both empty', () => {
+      const html = ''
+      const headers = new Headers()
+      const expected: Array<string> = []
+
+      expect(
+        discoverFeedUris(html, headers, {
+          html: defaultHtmlOptions,
+          headers: defaultHeadersOptions,
+        }),
+      ).toEqual(expected)
+    })
+
+    it('should handle methods array with invalid method name', () => {
+      const html = '<link rel="feed" href="/feed.xml">'
+      const expected: Array<string> = []
+
+      expect(
+        discoverFeedUris(html, undefined, {
+          // @ts-expect-error: This is for testing purposes.
+          methods: ['invalid'],
+          html: defaultHtmlOptions,
+        }),
+      ).toEqual(expected)
+    })
+
+    it('should handle cms method in methods array (not yet implemented)', () => {
+      const html = '<link rel="feed" href="/feed.xml">'
+      const expected: Array<string> = []
+
+      expect(
+        discoverFeedUris(html, undefined, {
+          methods: ['cms'],
+          html: defaultHtmlOptions,
+        }),
+      ).toEqual(expected)
+    })
+
+    it('should discover from HTML when cms and html both specified', () => {
+      const html = '<link rel="feed" href="/feed.xml">'
+      const expected = ['/feed.xml']
+
+      expect(
+        discoverFeedUris(html, undefined, {
+          methods: ['html', 'cms'],
+          html: defaultHtmlOptions,
+        }),
+      ).toEqual(expected)
+    })
+
+    it('should handle undefined html options with html method enabled', () => {
+      const html = '<link rel="feed" href="/feed.xml">'
+      const expected: Array<string> = []
+
+      expect(
+        discoverFeedUris(html, undefined, {
+          methods: ['html'],
+        }),
+      ).toEqual(expected)
+    })
+
+    it('should handle undefined headers options with headers method enabled', () => {
+      const html = ''
+      const headers = new Headers({
+        Link: '</feed.xml>; rel="alternate"; type="application/rss+xml"',
+      })
+      const expected: Array<string> = []
+
+      expect(
+        discoverFeedUris(html, headers, {
+          methods: ['headers'],
+        }),
+      ).toEqual(expected)
+    })
   })
 })

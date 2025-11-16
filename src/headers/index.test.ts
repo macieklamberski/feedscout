@@ -293,4 +293,111 @@ describe('discoverFeedUrisFromHeaders', () => {
       expect(result).toEqual(['/atom.xml'])
     })
   })
+
+  describe('exotic edge cases', () => {
+    it('should handle very long feed URLs', () => {
+      const longUrl = `/feed/${'a'.repeat(1000)}.xml`
+      const headers = new Headers({
+        Link: `<${longUrl}>; rel="alternate"; type="application/rss+xml"`,
+      })
+      const result = discoverFeedUrisFromHeaders(headers, defaultOptions)
+      expect(result).toEqual([longUrl])
+    })
+
+    it('should handle URL-encoded characters in URL', () => {
+      const headers = new Headers({
+        Link: '</feed%20rss.xml>; rel="alternate"; type="application/rss+xml"',
+      })
+      const result = discoverFeedUrisFromHeaders(headers, defaultOptions)
+      expect(result).toEqual(['/feed%20rss.xml'])
+    })
+
+    it('should handle punycode domains in URL', () => {
+      const headers = new Headers({
+        Link: '<https://xn--r8jz45g.jp/feed.xml>; rel="alternate"; type="application/rss+xml"',
+      })
+      const result = discoverFeedUrisFromHeaders(headers, defaultOptions)
+      expect(result).toEqual(['https://xn--r8jz45g.jp/feed.xml'])
+    })
+
+    it('should handle URL with fragment identifier', () => {
+      const headers = new Headers({
+        Link: '</feed.xml#latest>; rel="alternate"; type="application/rss+xml"',
+      })
+      const result = discoverFeedUrisFromHeaders(headers, defaultOptions)
+      expect(result).toEqual(['/feed.xml#latest'])
+    })
+
+    it('should handle URL with complex query parameters', () => {
+      const headers = new Headers({
+        Link: '</feed?cat=tech&sort=date&limit=10>; rel="alternate"; type="application/rss+xml"',
+      })
+      const result = discoverFeedUrisFromHeaders(headers, defaultOptions)
+      expect(result).toEqual(['/feed?cat=tech&sort=date&limit=10'])
+    })
+
+    it('should handle extra whitespace around parameters', () => {
+      const headers = new Headers({
+        Link: '</feed.xml>  ;  rel = "alternate"  ;  type = "application/rss+xml"  ',
+      })
+      const result = discoverFeedUrisFromHeaders(headers, defaultOptions)
+      expect(result).toEqual(['/feed.xml'])
+    })
+
+    it('should handle semicolons in quoted parameter values', () => {
+      const headers = new Headers({
+        Link: '</feed.xml>; rel="alternate"; title="Feed; Main"; type="application/rss+xml"',
+      })
+      const result = discoverFeedUrisFromHeaders(headers, defaultOptions)
+      expect(result).toEqual(['/feed.xml'])
+    })
+
+    it('should handle commas in quoted parameter values', () => {
+      const headers = new Headers({
+        Link: '</feed.xml>; rel="alternate"; title="News, Updates"; type="application/rss+xml"',
+      })
+      const result = discoverFeedUrisFromHeaders(headers, defaultOptions)
+      expect(result).toEqual(['/feed.xml'])
+    })
+
+    it('should handle escaped quotes in parameter values', () => {
+      const headers = new Headers({
+        Link: '</feed.xml>; rel="alternate"; title="The \\"Best\\" Feed"; type="application/rss+xml"',
+      })
+      const result = discoverFeedUrisFromHeaders(headers, defaultOptions)
+      expect(result).toEqual(['/feed.xml'])
+    })
+
+    it('should handle data URI (should not extract)', () => {
+      const headers = new Headers({
+        Link: '<data:text/plain,feed>; rel="alternate"; type="application/rss+xml"',
+      })
+      const result = discoverFeedUrisFromHeaders(headers, defaultOptions)
+      expect(result).toEqual(['data:text/plain,feed'])
+    })
+
+    it('should handle missing closing angle bracket', () => {
+      const headers = new Headers({
+        Link: '</feed.xml; rel="alternate"; type="application/rss+xml"',
+      })
+      const result = discoverFeedUrisFromHeaders(headers, defaultOptions)
+      expect(result).toEqual([])
+    })
+
+    it('should handle missing opening angle bracket', () => {
+      const headers = new Headers({
+        Link: '/feed.xml>; rel="alternate"; type="application/rss+xml"',
+      })
+      const result = discoverFeedUrisFromHeaders(headers, defaultOptions)
+      expect(result).toEqual([])
+    })
+
+    it('should handle angle brackets in wrong order', () => {
+      const headers = new Headers({
+        Link: '>/feed.xml<; rel="alternate"; type="application/rss+xml"',
+      })
+      const result = discoverFeedUrisFromHeaders(headers, defaultOptions)
+      expect(result).toEqual([])
+    })
+  })
 })

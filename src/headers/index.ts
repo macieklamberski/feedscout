@@ -20,8 +20,8 @@ export const discoverFeedUrisFromHeaders = (
     // Parse URL from angle brackets: <URL>
     // URLs in Link headers should not contain < or > (must be percent-encoded)
     const urlMatch = link.match(/<([^<>]+)>/)
-    const relMatch = link.match(/rel=["']?([^"';,]+)["']?/i)
-    const typeMatch = link.match(/type=["']?([^"';,]+)["']?/i)
+    const relMatch = link.match(/rel\s*=\s*["']?([^"';,]+)["']?/i)
+    const typeMatch = link.match(/type\s*=\s*["']?([^"';,]+)["']?/i)
 
     if (!urlMatch) {
       continue

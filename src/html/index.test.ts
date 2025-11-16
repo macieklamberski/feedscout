@@ -685,4 +685,133 @@ describe('discoverFeedUrisFromHtml', () => {
       expect(discoverFeedUrisFromHtml(value, defaultOptions)).toEqual(expected)
     })
   })
+
+  describe('exotic edge cases', () => {
+    it('should handle very long feed URLs', () => {
+      const longUrl = `/feed/${'a'.repeat(1000)}.xml`
+      const value = `<link rel="feed" href="${longUrl}">`
+      const expected = [longUrl]
+
+      expect(discoverFeedUrisFromHtml(value, defaultOptions)).toEqual(expected)
+    })
+
+    it('should handle URL-encoded characters in href', () => {
+      const value = '<link rel="feed" href="/feed%20rss.xml">'
+      const expected = ['/feed%20rss.xml']
+
+      expect(discoverFeedUrisFromHtml(value, defaultOptions)).toEqual(expected)
+    })
+
+    it('should handle multiple spaces in attributes', () => {
+      const value = '<link    rel="alternate"    type="application/rss+xml"    href="/feed.xml">'
+      const expected = ['/feed.xml']
+
+      expect(discoverFeedUrisFromHtml(value, defaultOptions)).toEqual(expected)
+    })
+
+    it('should handle tabs in attributes', () => {
+      const value = '<link\trel="alternate"\ttype="application/rss+xml"\thref="/feed.xml">'
+      const expected = ['/feed.xml']
+
+      expect(discoverFeedUrisFromHtml(value, defaultOptions)).toEqual(expected)
+    })
+
+    it('should handle newlines in attributes', () => {
+      const value = '<link\nrel="alternate"\ntype="application/rss+xml"\nhref="/feed.xml">'
+      const expected = ['/feed.xml']
+
+      expect(discoverFeedUrisFromHtml(value, defaultOptions)).toEqual(expected)
+    })
+
+    it('should handle anchor with title attribute', () => {
+      const value = '<a href="/feed" title="Subscribe">RSS Feed</a>'
+      const expected = ['/feed']
+
+      expect(discoverFeedUrisFromHtml(value, defaultOptions)).toEqual(expected)
+    })
+
+    it('should handle anchor with class attribute', () => {
+      const value = '<a href="/custom" class="feed-link">RSS</a>'
+      const expected = ['/custom']
+
+      expect(discoverFeedUrisFromHtml(value, defaultOptions)).toEqual(expected)
+    })
+
+    it('should handle malformed HTML with unclosed tags', () => {
+      const value = '<link rel="feed" href="/feed.xml"><div>content'
+      const expected = ['/feed.xml']
+
+      expect(discoverFeedUrisFromHtml(value, defaultOptions)).toEqual(expected)
+    })
+
+    it('should handle link elements in HTML comments', () => {
+      const value = '<!-- <link rel="feed" href="/commented.xml"> -->'
+      const expected: Array<string> = []
+
+      expect(discoverFeedUrisFromHtml(value, defaultOptions)).toEqual(expected)
+    })
+
+    it('should handle mixed quote styles in attributes', () => {
+      const value = '<link rel=\'alternate\' type="application/rss+xml" href="/feed.xml">'
+      const expected = ['/feed.xml']
+
+      expect(discoverFeedUrisFromHtml(value, defaultOptions)).toEqual(expected)
+    })
+
+    it('should handle attributes without quotes', () => {
+      const value = '<a href=/feed>RSS</a>'
+      const expected = ['/feed']
+
+      expect(discoverFeedUrisFromHtml(value, defaultOptions)).toEqual(expected)
+    })
+
+    it('should handle anchor with multiple nested elements', () => {
+      const value = '<a href="/feed"><div><span>RSS</span><strong>Feed</strong></div></a>'
+      const expected = ['/feed']
+
+      expect(discoverFeedUrisFromHtml(value, defaultOptions)).toEqual(expected)
+    })
+
+    it('should handle international domain names in href', () => {
+      const value = '<link rel="feed" href="https://例え.jp/feed.xml">'
+      const expected = ['https://例え.jp/feed.xml']
+
+      expect(discoverFeedUrisFromHtml(value, defaultOptions)).toEqual(expected)
+    })
+
+    it('should handle punycode domains in href', () => {
+      const value = '<link rel="feed" href="https://xn--r8jz45g.jp/feed.xml">'
+      const expected = ['https://xn--r8jz45g.jp/feed.xml']
+
+      expect(discoverFeedUrisFromHtml(value, defaultOptions)).toEqual(expected)
+    })
+
+    it('should handle feed URL with fragment identifier', () => {
+      const value = '<link rel="feed" href="/feed.xml#latest">'
+      const expected = ['/feed.xml#latest']
+
+      expect(discoverFeedUrisFromHtml(value, defaultOptions)).toEqual(expected)
+    })
+
+    it('should handle feed URL with complex query parameters', () => {
+      const value = '<a href="/feed?category=tech&sort=date&limit=10">RSS</a>'
+      const expected = ['/feed?category=tech&sort=date&limit=10']
+
+      expect(discoverFeedUrisFromHtml(value, defaultOptions)).toEqual(expected)
+    })
+
+    it('should handle anchor with onclick attribute', () => {
+      const value = '<a href="/feed" onclick="trackClick()">RSS</a>'
+      const expected = ['/feed']
+
+      expect(discoverFeedUrisFromHtml(value, defaultOptions)).toEqual(expected)
+    })
+
+    it('should handle zero-width spaces in anchor text', () => {
+      const value = '<a href="/custom">RSS\u200B</a>'
+      const expected = ['/custom']
+
+      expect(discoverFeedUrisFromHtml(value, defaultOptions)).toEqual(expected)
+    })
+  })
 })

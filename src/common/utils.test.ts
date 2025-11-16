@@ -57,6 +57,41 @@ describe('normalizeMimeType', () => {
 
     expect(normalizeMimeType(value)).toBe(expected)
   })
+
+  it('should handle MIME type with tab characters', () => {
+    const value = 'application/rss+xml\t; charset=utf-8'
+    const expected = 'application/rss+xml'
+
+    expect(normalizeMimeType(value)).toBe(expected)
+  })
+
+  it('should handle MIME type with newline characters', () => {
+    const value = 'application/rss+xml\n; charset=utf-8'
+    const expected = 'application/rss+xml'
+
+    expect(normalizeMimeType(value)).toBe(expected)
+  })
+
+  it('should handle MIME type starting with semicolon', () => {
+    const value = '; charset=utf-8'
+    const expected = ''
+
+    expect(normalizeMimeType(value)).toBe(expected)
+  })
+
+  it('should handle MIME type with quotes in parameters', () => {
+    const value = 'application/rss+xml; charset="utf-8"'
+    const expected = 'application/rss+xml'
+
+    expect(normalizeMimeType(value)).toBe(expected)
+  })
+
+  it('should handle MIME type with mixed whitespace', () => {
+    const value = ' \t application/atom+xml \n '
+    const expected = 'application/atom+xml'
+
+    expect(normalizeMimeType(value)).toBe(expected)
+  })
 })
 
 describe('includesAnyOf', () => {
@@ -130,6 +165,47 @@ describe('includesAnyOf', () => {
     const expected = false
 
     // @ts-expect-error: This is for testing purposes.
+    expect(includesAnyOf(value, patterns)).toBe(expected)
+  })
+
+  it('should handle null value', () => {
+    const value = null
+    const patterns = ['application/rss+xml']
+    const expected = false
+
+    // @ts-expect-error: This is for testing purposes.
+    expect(includesAnyOf(value, patterns)).toBe(expected)
+  })
+
+  it('should return true when multiple patterns match', () => {
+    const value = 'application/rss+xml feed'
+    const patterns = ['rss', 'feed', 'atom']
+    const expected = true
+
+    expect(includesAnyOf(value, patterns)).toBe(expected)
+  })
+
+  it('should handle special characters in patterns', () => {
+    const value = 'Subscribe via RSS/Atom'
+    const patterns = ['RSS/Atom']
+    const expected = true
+
+    expect(includesAnyOf(value, patterns)).toBe(expected)
+  })
+
+  it('should handle whitespace-only value', () => {
+    const value = '   '
+    const patterns = ['rss']
+    const expected = false
+
+    expect(includesAnyOf(value, patterns)).toBe(expected)
+  })
+
+  it('should handle pattern with numbers', () => {
+    const value = 'RSS 2.0 feed'
+    const patterns = ['2.0']
+    const expected = true
+
     expect(includesAnyOf(value, patterns)).toBe(expected)
   })
 })
@@ -213,6 +289,55 @@ describe('isAnyOf', () => {
     const expected = false
 
     // @ts-expect-error: This is for testing purposes.
+    expect(isAnyOf(value, patterns)).toBe(expected)
+  })
+
+  it('should handle null value', () => {
+    const value = null
+    const patterns = ['application/rss+xml']
+    const expected = false
+
+    // @ts-expect-error: This is for testing purposes.
+    expect(isAnyOf(value, patterns)).toBe(expected)
+  })
+
+  it('should handle value with tab characters', () => {
+    const value = 'application/rss+xml\t'
+    const patterns = ['application/rss+xml']
+    const expected = true
+
+    expect(isAnyOf(value, patterns)).toBe(expected)
+  })
+
+  it('should handle pattern with leading whitespace', () => {
+    const value = 'application/rss+xml'
+    const patterns = ['  application/rss+xml']
+    const expected = true
+
+    expect(isAnyOf(value, patterns)).toBe(expected)
+  })
+
+  it('should handle pattern with trailing whitespace', () => {
+    const value = 'application/rss+xml'
+    const patterns = ['application/rss+xml  ']
+    const expected = true
+
+    expect(isAnyOf(value, patterns)).toBe(expected)
+  })
+
+  it('should return true when last pattern matches', () => {
+    const value = 'application/json'
+    const patterns = ['application/rss+xml', 'application/atom+xml', 'application/json']
+    const expected = true
+
+    expect(isAnyOf(value, patterns)).toBe(expected)
+  })
+
+  it('should handle empty pattern in array', () => {
+    const value = ''
+    const patterns = ['', 'application/rss+xml']
+    const expected = true
+
     expect(isAnyOf(value, patterns)).toBe(expected)
   })
 })
