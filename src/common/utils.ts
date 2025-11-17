@@ -8,7 +8,8 @@ export const includesAnyOf = (
   parser?: (value: string) => string,
 ): boolean => {
   const parsedValue = parser ? parser(value) : value?.toLowerCase()
-  return patterns.some((pattern) => parsedValue?.includes(pattern.toLowerCase()))
+  const normalizedPatterns = patterns.map((pattern) => pattern.toLowerCase())
+  return normalizedPatterns.some((pattern) => parsedValue?.includes(pattern))
 }
 
 export const isAnyOf = (
