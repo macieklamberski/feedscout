@@ -1,8 +1,18 @@
-import type { HeadersDiscoveryOptions } from '../headers/types.js'
-import type { HtmlDiscoveryOptions } from '../html/types.js'
+import type { Options as GuessOptions } from '../guess/types.js'
+import type { Options as HeadersOptions } from '../headers/types.js'
+import type { Options as HtmlOptions } from '../html/types.js'
 
-export type DiscoverFeedUrisOptions = {
-  methods?: Array<'html' | 'headers' | 'cms'>
-  html?: HtmlDiscoveryOptions
-  headers?: HeadersDiscoveryOptions
+export type Config = {
+  html?: {
+    html: string
+    options: HtmlOptions
+  }
+  headers?: {
+    headers: Headers
+    options: HeadersOptions
+  }
+  guess?: {
+    baseUrl: string
+    options: GuessOptions
+  }
 }

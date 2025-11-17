@@ -1,33 +1,40 @@
+import { discoverCommonFeedUrisFromGuess } from '../guess/index.js'
 import { discoverFeedUrisFromHeaders } from '../headers/index.js'
 import { discoverFeedUrisFromHtml } from '../html/index.js'
-import type { DiscoverFeedUrisOptions } from './types.js'
+import type { Config } from './types.js'
 
-export const discoverFeedUris = (
-  html: string,
-  headers?: Headers,
-  options?: DiscoverFeedUrisOptions,
-): Array<string> => {
+export const discoverFeedUris = async (config: Config): Promise<Array<string>> => {
   const feedUris = new Set<string>()
 
-  // Determine which methods to run.
-  const enabledMethods = options?.methods || (headers ? ['html', 'headers'] : ['html'])
+  // TODO: the implementation of different discover methods in this function could be optimized
+  // once multiple methods use the same logic. For example, if parsing of the HTML is used more
+  // than once, we could do it in one pass by utilizing, eg. direct parser HTML handlers.
 
-  // Run HTML discovery if enabled and options provided.
-  if (enabledMethods.includes('html')) {
-    if (options?.html) {
-      const htmlUris = discoverFeedUrisFromHtml(html, options.html)
-      for (const uri of htmlUris) {
-        feedUris.add(uri)
-      }
+  if (config.html) {
+    const htmlUris = discoverFeedUrisFromHtml(config.html.html, config.html.options)
+
+    for (const uri of htmlUris) {
+      feedUris.add(uri)
     }
   }
 
-  // Run headers discovery if enabled, headers provided, and options provided.
-  if (enabledMethods.includes('headers')) {
-    if (headers && options?.headers) {
-      const headersUris = discoverFeedUrisFromHeaders(headers, options.headers)
-      for (const uri of headersUris) {
-        feedUris.add(uri)
+  if (config.headers) {
+    const headersUris = discoverFeedUrisFromHeaders(config.headers.headers, config.headers.options)
+
+    for (const uri of headersUris) {
+      feedUris.add(uri)
+    }
+  }
+
+  if (config.guess) {
+    const guessResults = await discoverCommonFeedUrisFromGuess(
+      config.guess.baseUrl,
+      config.guess.options,
+    )
+
+    for (const result of guessResults) {
+      if (result.isFeed) {
+        feedUris.add(result.url)
       }
     }
   }

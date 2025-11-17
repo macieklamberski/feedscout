@@ -1,3 +1,3 @@
-export type HeadersDiscoveryOptions = {
+export type Options = {
   linkMimeTypes: Array<string>
 }

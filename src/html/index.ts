@@ -1,12 +1,9 @@
 import { Parser } from 'htmlparser2'
 import { createHtmlFeedUrisHandlers } from './handlers.js'
-import type { HtmlDiscoveryOptions, HtmlFeedUrisContext } from './types.js'
+import type { Context, Options } from './types.js'
 
-export const discoverFeedUrisFromHtml = (
-  html: string,
-  options: HtmlDiscoveryOptions,
-): Array<string> => {
-  const context: HtmlFeedUrisContext = {
+export const discoverFeedUrisFromHtml = (html: string, options: Options): Array<string> => {
+  const context: Context = {
     discoveredUris: new Set<string>(),
     currentAnchor: { href: '', text: '' },
     options,

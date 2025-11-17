@@ -1,9 +1,9 @@
 import type { Handler } from 'htmlparser2'
 import { includesAnyOf, isAnyOf, normalizeMimeType } from '../common/utils.js'
-import type { HtmlFeedUrisContext } from './types.js'
+import type { Context } from './types.js'
 
 export const handleOpenTag = (
-  context: HtmlFeedUrisContext,
+  context: Context,
   name: string,
   attribs: { [key: string]: string },
   _isImplied: boolean,
@@ -48,18 +48,14 @@ export const handleOpenTag = (
   }
 }
 
-export const handleText = (context: HtmlFeedUrisContext, text: string): void => {
+export const handleText = (context: Context, text: string): void => {
   // Accumulate text content for current anchor.
   if (context.currentAnchor.href) {
     context.currentAnchor.text += text
   }
 }
 
-export const handleCloseTag = (
-  context: HtmlFeedUrisContext,
-  name: string,
-  _isImplied: boolean,
-): void => {
+export const handleCloseTag = (context: Context, name: string, _isImplied: boolean): void => {
   // Check anchor text patterns when anchor closes.
   if (name === 'a' && context.currentAnchor.href && context.currentAnchor.text) {
     const normalizedText = context.currentAnchor.text.toLowerCase().trim()
@@ -74,7 +70,7 @@ export const handleCloseTag = (
   }
 }
 
-export const createHtmlFeedUrisHandlers = (context: HtmlFeedUrisContext): Partial<Handler> => {
+export const createHtmlFeedUrisHandlers = (context: Context): Partial<Handler> => {
   return {
     onopentag: (name, attribs, isImplied) => {
       return handleOpenTag(context, name, attribs, isImplied)

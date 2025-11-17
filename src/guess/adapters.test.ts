@@ -1,0 +1,737 @@
+import { afterEach, describe, expect, it, spyOn } from 'bun:test'
+import {
+  createAxiosAdapter,
+  createGotAdapter,
+  createKyAdapter,
+  createNativeFetchAdapter,
+} from './adapters.js'
+import type { FetchFnResponse } from './types.js'
+
+// biome-ignore lint/suspicious/noExplicitAny: Type helper for mocking fetch with flexible signatures.
+const createFetchMock = <T extends (...args: Array<any>) => Promise<Response>>(
+  implementation: T,
+) => {
+  return implementation as unknown as typeof fetch
+}
+
+describe('createNativeFetchAdapter', () => {
+  const fetchSpy = spyOn(globalThis, 'fetch')
+
+  afterEach(() => {
+    fetchSpy.mockReset()
+  })
+
+  it('should create adapter that calls native fetch with correct URL', async () => {
+    fetchSpy.mockImplementation(
+      createFetchMock(async (url: string) => {
+        return {
+          headers: new Headers(),
+          text: async () => {
+            return 'response body'
+          },
+          url,
+          status: 200,
+          statusText: 'OK',
+        } as Response
+      }),
+    )
+    const adapter = createNativeFetchAdapter()
+
+    const result = await adapter('https://example.com/feed.xml')
+
+    expect(result.url).toBe('https://example.com/feed.xml')
+  })
+
+  it('should merge base options with call options', async () => {
+    let capturedOptions: RequestInit | undefined
+    fetchSpy.mockImplementation(
+      createFetchMock(async (_url: string, options?: RequestInit) => {
+        capturedOptions = options
+        return {
+          headers: new Headers(),
+          text: async () => {
+            return ''
+          },
+          url: '',
+          status: 200,
+          statusText: 'OK',
+        } as Response
+      }),
+    )
+    const adapter = createNativeFetchAdapter({ credentials: 'include' })
+
+    await adapter('https://example.com/feed.xml')
+
+    expect(capturedOptions?.credentials).toBe('include')
+  })
+
+  it('should merge headers from base and call options', async () => {
+    let capturedOptions: RequestInit | undefined
+    const mockFetch = async (_url: string, options?: RequestInit) => {
+      capturedOptions = options
+      return {
+        headers: new Headers(),
+        text: async () => {
+          return ''
+        },
+        url: '',
+        status: 200,
+        statusText: 'OK',
+      } as Response
+    }
+    fetchSpy.mockImplementation(createFetchMock(mockFetch))
+    const adapter = createNativeFetchAdapter({
+      headers: { 'X-Base': 'base-value' },
+    })
+
+    await adapter('https://example.com/feed.xml', {
+      headers: { 'X-Custom': 'custom-value' },
+    })
+
+    const headers = capturedOptions?.headers as Record<string, string>
+    expect(headers['X-Base']).toBe('base-value')
+    expect(headers['X-Custom']).toBe('custom-value')
+  })
+
+  it('should default to GET method when not specified', async () => {
+    let capturedOptions: RequestInit | undefined
+    const mockFetch = async (_url: string, options?: RequestInit) => {
+      capturedOptions = options
+      return {
+        headers: new Headers(),
+        text: async () => {
+          return ''
+        },
+        url: '',
+        status: 200,
+        statusText: 'OK',
+      } as Response
+    }
+    fetchSpy.mockImplementation(createFetchMock(mockFetch))
+    const adapter = createNativeFetchAdapter()
+
+    await adapter('https://example.com/feed.xml')
+
+    expect(capturedOptions?.method).toBe('GET')
+  })
+
+  it('should use specified method from options', async () => {
+    let capturedOptions: RequestInit | undefined
+    const mockFetch = async (_url: string, options?: RequestInit) => {
+      capturedOptions = options
+      return {
+        headers: new Headers(),
+        text: async () => {
+          return ''
+        },
+        url: '',
+        status: 200,
+        statusText: 'OK',
+      } as Response
+    }
+    fetchSpy.mockImplementation(createFetchMock(mockFetch))
+    const adapter = createNativeFetchAdapter()
+
+    await adapter('https://example.com/feed.xml', { method: 'HEAD' })
+
+    expect(capturedOptions?.method).toBe('HEAD')
+  })
+
+  it('should return response with correct structure', async () => {
+    const mockFetch = async () => {
+      return {
+        headers: new Headers({ 'content-type': 'application/rss+xml' }),
+        text: async () => {
+          return 'feed content'
+        },
+        url: 'https://example.com/feed.xml',
+        status: 200,
+        statusText: 'OK',
+      } as Response
+    }
+    fetchSpy.mockImplementation(createFetchMock(mockFetch))
+    const adapter = createNativeFetchAdapter()
+    const expected: FetchFnResponse = {
+      headers: new Headers({ 'content-type': 'application/rss+xml' }),
+      body: 'feed content',
+      url: 'https://example.com/feed.xml',
+      status: 200,
+      statusText: 'OK',
+    }
+
+    const result = await adapter('https://example.com/feed.xml')
+
+    expect(result.headers.get('content-type')).toBe(expected.headers.get('content-type'))
+    expect(result.body).toBe(expected.body)
+    expect(result.url).toBe(expected.url)
+    expect(result.status).toBe(expected.status)
+    expect(result.statusText).toBe(expected.statusText)
+  })
+
+  it('should preserve response URL for redirect handling', async () => {
+    const mockFetch = async () => {
+      return {
+        headers: new Headers(),
+        text: async () => {
+          return ''
+        },
+        url: 'https://redirect.example.com/feed.xml',
+        status: 200,
+        statusText: 'OK',
+      } as Response
+    }
+    fetchSpy.mockImplementation(createFetchMock(mockFetch))
+    const adapter = createNativeFetchAdapter()
+
+    const result = await adapter('https://example.com/feed.xml')
+
+    expect(result.url).toBe('https://redirect.example.com/feed.xml')
+  })
+
+  it('should convert response body to text', async () => {
+    const mockFetch = async () => {
+      return {
+        headers: new Headers(),
+        text: async () => {
+          return '<rss>feed content</rss>'
+        },
+        url: '',
+        status: 200,
+        statusText: 'OK',
+      } as Response
+    }
+    fetchSpy.mockImplementation(createFetchMock(mockFetch))
+    const adapter = createNativeFetchAdapter()
+
+    const result = await adapter('https://example.com/feed.xml')
+
+    expect(result.body).toBe('<rss>feed content</rss>')
+  })
+
+  it('should pass through status and statusText', async () => {
+    const mockFetch = async () => {
+      return {
+        headers: new Headers(),
+        text: async () => {
+          return ''
+        },
+        url: '',
+        status: 404,
+        statusText: 'Not Found',
+      } as Response
+    }
+    fetchSpy.mockImplementation(createFetchMock(mockFetch))
+    const adapter = createNativeFetchAdapter()
+
+    const result = await adapter('https://example.com/feed.xml')
+
+    expect(result.status).toBe(404)
+    expect(result.statusText).toBe('Not Found')
+  })
+})
+
+describe('createGotAdapter', () => {
+  it('should create adapter that calls got instance with correct URL', async () => {
+    let capturedUrl = ''
+    const mockGot = async (url: string) => {
+      capturedUrl = url
+      return {
+        headers: {},
+        body: '',
+        url,
+        statusCode: 200,
+        statusMessage: 'OK',
+      }
+    }
+    const adapter = createGotAdapter(mockGot)
+
+    await adapter('https://example.com/feed.xml')
+
+    expect(capturedUrl).toBe('https://example.com/feed.xml')
+  })
+
+  it('should use GET method by default', async () => {
+    let capturedOptions: Record<string, unknown> = {}
+    const mockGot = async (_url: string, options: Record<string, unknown>) => {
+      capturedOptions = options
+      return {
+        headers: {},
+        body: '',
+        url: '',
+        statusCode: 200,
+        statusMessage: 'OK',
+      }
+    }
+    const adapter = createGotAdapter(mockGot)
+
+    await adapter('https://example.com/feed.xml')
+
+    expect(capturedOptions.method).toBe('GET')
+  })
+
+  it('should pass custom headers to got', async () => {
+    let capturedOptions: Record<string, unknown> = {}
+    const mockGot = async (_url: string, options: Record<string, unknown>) => {
+      capturedOptions = options
+      return {
+        headers: {},
+        body: '',
+        url: '',
+        statusCode: 200,
+        statusMessage: 'OK',
+      }
+    }
+    const adapter = createGotAdapter(mockGot)
+
+    await adapter('https://example.com/feed.xml', {
+      headers: { 'X-Custom': 'value' },
+    })
+
+    const headers = capturedOptions.headers as Record<string, string>
+    expect(headers['X-Custom']).toBe('value')
+  })
+
+  it('should set throwHttpErrors to false', async () => {
+    let capturedOptions: Record<string, unknown> = {}
+    const mockGot = async (_url: string, options: Record<string, unknown>) => {
+      capturedOptions = options
+      return {
+        headers: {},
+        body: '',
+        url: '',
+        statusCode: 200,
+        statusMessage: 'OK',
+      }
+    }
+    const adapter = createGotAdapter(mockGot)
+
+    await adapter('https://example.com/feed.xml')
+
+    expect(capturedOptions.throwHttpErrors).toBe(false)
+  })
+
+  it('should convert got headers to Headers object', async () => {
+    const mockGot = async () => {
+      return {
+        headers: { 'content-type': 'application/rss+xml' },
+        body: '',
+        url: '',
+        statusCode: 200,
+        statusMessage: 'OK',
+      }
+    }
+    const adapter = createGotAdapter(mockGot)
+
+    const result = await adapter('https://example.com/feed.xml')
+
+    expect(result.headers).toBeInstanceOf(Headers)
+    expect(result.headers.get('content-type')).toBe('application/rss+xml')
+  })
+
+  it('should extract URL from got response', async () => {
+    const mockGot = async () => {
+      return {
+        headers: {},
+        body: '',
+        url: 'https://redirect.example.com/feed.xml',
+        statusCode: 200,
+        statusMessage: 'OK',
+      }
+    }
+    const adapter = createGotAdapter(mockGot)
+
+    const result = await adapter('https://example.com/feed.xml')
+
+    expect(result.url).toBe('https://redirect.example.com/feed.xml')
+  })
+
+  it('should map statusCode to status', async () => {
+    const mockGot = async () => {
+      return {
+        headers: {},
+        body: '',
+        url: '',
+        statusCode: 404,
+        statusMessage: 'Not Found',
+      }
+    }
+    const adapter = createGotAdapter(mockGot)
+
+    const result = await adapter('https://example.com/feed.xml')
+
+    expect(result.status).toBe(404)
+  })
+
+  it('should map statusMessage to statusText', async () => {
+    const mockGot = async () => {
+      return {
+        headers: {},
+        body: '',
+        url: '',
+        statusCode: 200,
+        statusMessage: 'OK',
+      }
+    }
+    const adapter = createGotAdapter(mockGot)
+
+    const result = await adapter('https://example.com/feed.xml')
+
+    expect(result.statusText).toBe('OK')
+  })
+
+  it('should return body as-is from got response', async () => {
+    const mockGot = async () => {
+      return {
+        headers: {},
+        body: '<rss>feed content</rss>',
+        url: '',
+        statusCode: 200,
+        statusMessage: 'OK',
+      }
+    }
+    const adapter = createGotAdapter(mockGot)
+
+    const result = await adapter('https://example.com/feed.xml')
+
+    expect(result.body).toBe('<rss>feed content</rss>')
+  })
+})
+
+describe('createAxiosAdapter', () => {
+  it('should create adapter that calls axios with correct config', async () => {
+    let capturedConfig: Record<string, unknown> = {}
+    const mockAxios = async (config: Record<string, unknown>) => {
+      capturedConfig = config
+      return {
+        headers: {},
+        data: '',
+        status: 200,
+        statusText: 'OK',
+        request: {},
+      }
+    }
+    const adapter = createAxiosAdapter(mockAxios)
+
+    await adapter('https://example.com/feed.xml')
+
+    expect(capturedConfig.url).toBe('https://example.com/feed.xml')
+  })
+
+  it('should use GET method by default', async () => {
+    let capturedConfig: Record<string, unknown> = {}
+    const mockAxios = async (config: Record<string, unknown>) => {
+      capturedConfig = config
+      return {
+        headers: {},
+        data: '',
+        status: 200,
+        statusText: 'OK',
+        request: {},
+      }
+    }
+    const adapter = createAxiosAdapter(mockAxios)
+
+    await adapter('https://example.com/feed.xml')
+
+    expect(capturedConfig.method).toBe('GET')
+  })
+
+  it('should pass custom headers to axios', async () => {
+    let capturedConfig: Record<string, unknown> = {}
+    const mockAxios = async (config: Record<string, unknown>) => {
+      capturedConfig = config
+      return {
+        headers: {},
+        data: '',
+        status: 200,
+        statusText: 'OK',
+        request: {},
+      }
+    }
+    const adapter = createAxiosAdapter(mockAxios)
+
+    await adapter('https://example.com/feed.xml', {
+      headers: { 'X-Custom': 'value' },
+    })
+
+    const headers = capturedConfig.headers as Record<string, string>
+    expect(headers['X-Custom']).toBe('value')
+  })
+
+  it('should set validateStatus to always return true', async () => {
+    let capturedConfig: Record<string, unknown> = {}
+    const mockAxios = async (config: Record<string, unknown>) => {
+      capturedConfig = config
+      return {
+        headers: {},
+        data: '',
+        status: 200,
+        statusText: 'OK',
+        request: {},
+      }
+    }
+    const adapter = createAxiosAdapter(mockAxios)
+
+    await adapter('https://example.com/feed.xml')
+
+    const validateStatus = capturedConfig.validateStatus as () => boolean
+    expect(validateStatus()).toBe(true)
+  })
+
+  it('should convert axios headers to Headers object', async () => {
+    const mockAxios = async () => {
+      return {
+        headers: { 'content-type': 'application/rss+xml' },
+        data: '',
+        status: 200,
+        statusText: 'OK',
+        request: {},
+      }
+    }
+    const adapter = createAxiosAdapter(mockAxios)
+
+    const result = await adapter('https://example.com/feed.xml')
+
+    expect(result.headers).toBeInstanceOf(Headers)
+    expect(result.headers.get('content-type')).toBe('application/rss+xml')
+  })
+
+  it('should extract URL from responseUrl when available', async () => {
+    const mockAxios = async () => {
+      return {
+        headers: {},
+        data: '',
+        status: 200,
+        statusText: 'OK',
+        request: {
+          res: {
+            responseUrl: 'https://redirect.example.com/feed.xml',
+          },
+        },
+      }
+    }
+    const adapter = createAxiosAdapter(mockAxios)
+
+    const result = await adapter('https://example.com/feed.xml')
+
+    expect(result.url).toBe('https://redirect.example.com/feed.xml')
+  })
+
+  it('should fallback to request URL when responseUrl unavailable', async () => {
+    const mockAxios = async () => {
+      return {
+        headers: {},
+        data: '',
+        status: 200,
+        statusText: 'OK',
+        request: {},
+      }
+    }
+    const adapter = createAxiosAdapter(mockAxios)
+
+    const result = await adapter('https://example.com/feed.xml')
+
+    expect(result.url).toBe('https://example.com/feed.xml')
+  })
+
+  it('should return data as body', async () => {
+    const mockAxios = async () => {
+      return {
+        headers: {},
+        data: '<rss>feed content</rss>',
+        status: 200,
+        statusText: 'OK',
+        request: {},
+      }
+    }
+    const adapter = createAxiosAdapter(mockAxios)
+
+    const result = await adapter('https://example.com/feed.xml')
+
+    expect(result.body).toBe('<rss>feed content</rss>')
+  })
+
+  it('should pass through status and statusText', async () => {
+    const mockAxios = async () => {
+      return {
+        headers: {},
+        data: '',
+        status: 404,
+        statusText: 'Not Found',
+        request: {},
+      }
+    }
+    const adapter = createAxiosAdapter(mockAxios)
+
+    const result = await adapter('https://example.com/feed.xml')
+
+    expect(result.status).toBe(404)
+    expect(result.statusText).toBe('Not Found')
+  })
+})
+
+describe('createKyAdapter', () => {
+  it('should create adapter that calls ky with correct URL', async () => {
+    let capturedUrl = ''
+    const mockKy = async (url: string) => {
+      capturedUrl = url
+      return {
+        headers: new Headers(),
+        text: async () => {
+          return ''
+        },
+        url,
+        status: 200,
+        statusText: 'OK',
+      }
+    }
+    const adapter = createKyAdapter(mockKy)
+
+    await adapter('https://example.com/feed.xml')
+
+    expect(capturedUrl).toBe('https://example.com/feed.xml')
+  })
+
+  it('should use GET method by default', async () => {
+    let capturedOptions: Record<string, unknown> = {}
+    const mockKy = async (_url: string, options: Record<string, unknown>) => {
+      capturedOptions = options
+      return {
+        headers: new Headers(),
+        text: async () => {
+          return ''
+        },
+        url: '',
+        status: 200,
+        statusText: 'OK',
+      }
+    }
+    const adapter = createKyAdapter(mockKy)
+
+    await adapter('https://example.com/feed.xml')
+
+    expect(capturedOptions.method).toBe('GET')
+  })
+
+  it('should pass custom headers to ky', async () => {
+    let capturedOptions: Record<string, unknown> = {}
+    const mockKy = async (_url: string, options: Record<string, unknown>) => {
+      capturedOptions = options
+      return {
+        headers: new Headers(),
+        text: async () => {
+          return ''
+        },
+        url: '',
+        status: 200,
+        statusText: 'OK',
+      }
+    }
+    const adapter = createKyAdapter(mockKy)
+
+    await adapter('https://example.com/feed.xml', {
+      headers: { 'X-Custom': 'value' },
+    })
+
+    const headers = capturedOptions.headers as Record<string, string>
+    expect(headers['X-Custom']).toBe('value')
+  })
+
+  it('should set throwHttpErrors to false', async () => {
+    let capturedOptions: Record<string, unknown> = {}
+    const mockKy = async (_url: string, options: Record<string, unknown>) => {
+      capturedOptions = options
+      return {
+        headers: new Headers(),
+        text: async () => {
+          return ''
+        },
+        url: '',
+        status: 200,
+        statusText: 'OK',
+      }
+    }
+    const adapter = createKyAdapter(mockKy)
+
+    await adapter('https://example.com/feed.xml')
+
+    expect(capturedOptions.throwHttpErrors).toBe(false)
+  })
+
+  it('should preserve ky response headers', async () => {
+    const mockKy = async () => {
+      return {
+        headers: new Headers({ 'content-type': 'application/rss+xml' }),
+        text: async () => {
+          return ''
+        },
+        url: '',
+        status: 200,
+        statusText: 'OK',
+      }
+    }
+    const adapter = createKyAdapter(mockKy)
+
+    const result = await adapter('https://example.com/feed.xml')
+
+    expect(result.headers.get('content-type')).toBe('application/rss+xml')
+  })
+
+  it('should convert response body to text', async () => {
+    const mockKy = async () => {
+      return {
+        headers: new Headers(),
+        text: async () => {
+          return '<rss>feed content</rss>'
+        },
+        url: '',
+        status: 200,
+        statusText: 'OK',
+      }
+    }
+    const adapter = createKyAdapter(mockKy)
+
+    const result = await adapter('https://example.com/feed.xml')
+
+    expect(result.body).toBe('<rss>feed content</rss>')
+  })
+
+  it('should use response.url from ky', async () => {
+    const mockKy = async () => {
+      return {
+        headers: new Headers(),
+        text: async () => {
+          return ''
+        },
+        url: 'https://redirect.example.com/feed.xml',
+        status: 200,
+        statusText: 'OK',
+      }
+    }
+    const adapter = createKyAdapter(mockKy)
+
+    const result = await adapter('https://example.com/feed.xml')
+
+    expect(result.url).toBe('https://redirect.example.com/feed.xml')
+  })
+
+  it('should pass through status and statusText', async () => {
+    const mockKy = async () => {
+      return {
+        headers: new Headers(),
+        text: async () => {
+          return ''
+        },
+        url: '',
+        status: 404,
+        statusText: 'Not Found',
+      }
+    }
+    const adapter = createKyAdapter(mockKy)
+
+    const result = await adapter('https://example.com/feed.xml')
+
+    expect(result.status).toBe(404)
+    expect(result.statusText).toBe('Not Found')
+  })
+})

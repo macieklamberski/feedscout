@@ -1,10 +1,7 @@
 import { isAnyOf, normalizeMimeType } from '../common/utils.js'
-import type { HeadersDiscoveryOptions } from './types.js'
+import type { Options } from './types.js'
 
-export const discoverFeedUrisFromHeaders = (
-  headers: Headers,
-  options: HeadersDiscoveryOptions,
-): Array<string> => {
+export const discoverFeedUrisFromHeaders = (headers: Headers, options: Options): Array<string> => {
   const feedUris = new Set<string>()
   const linkHeader = headers.get('link')
 

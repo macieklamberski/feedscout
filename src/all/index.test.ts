@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'bun:test'
 import { discoverFeedUris } from './index.js'
 
+const baseUrl = 'https://example.com'
+
 const defaultHtmlOptions = {
   linkMimeTypes: ['application/rss+xml', 'application/atom+xml'],
   anchorUris: ['/feed', '/rss', '/atom.xml'],
@@ -13,76 +15,260 @@ const defaultHeadersOptions = {
 }
 
 describe('discoverFeedUris', () => {
-  describe('no options provided', () => {
-    it('should return empty array when no options provided', () => {
-      const html = '<meta name="generator" content="WordPress 6.4">'
+  describe('no config provided', () => {
+    it('should return empty array when no config provided', async () => {
       const expected: Array<string> = []
 
-      expect(discoverFeedUris(html)).toEqual(expected)
-    })
-
-    it('should return empty array for headers without options', () => {
-      const html = ''
-      const headers = new Headers({ 'X-Powered-By': 'Next.js' })
-      const expected: Array<string> = []
-
-      expect(discoverFeedUris(html, headers)).toEqual(expected)
+      expect(await discoverFeedUris({})).toEqual(expected)
     })
   })
 
-  describe('HTML discovery with options', () => {
-    it('should discover feeds from HTML with provided options', () => {
+  describe('HTML discovery', () => {
+    it('should discover feeds from HTML with provided options', async () => {
       const html = '<link rel="alternate" type="application/rss+xml" href="/feed.xml">'
       const expected = ['/feed.xml']
 
-      expect(discoverFeedUris(html, undefined, { html: defaultHtmlOptions })).toEqual(expected)
+      expect(
+        await discoverFeedUris({
+          html: {
+            html: html,
+            options: defaultHtmlOptions,
+          },
+        }),
+      ).toEqual(expected)
     })
 
-    it('should discover multiple feeds from HTML', () => {
+    it('should discover multiple feeds from HTML', async () => {
       const html = `
         <link rel="alternate" type="application/rss+xml" href="/rss.xml">
         <link rel="alternate" type="application/atom+xml" href="/atom.xml">
       `
       const expected = ['/rss.xml', '/atom.xml']
 
-      expect(discoverFeedUris(html, undefined, { html: defaultHtmlOptions })).toEqual(expected)
+      expect(
+        await discoverFeedUris({
+          html: {
+            html: html,
+            options: defaultHtmlOptions,
+          },
+        }),
+      ).toEqual(expected)
     })
 
-    it('should deduplicate URIs discovered via HTML', () => {
+    it('should deduplicate URIs discovered via HTML', async () => {
       const html = `
         <link rel="alternate" type="application/rss+xml" href="/feed.xml">
         <link rel="alternate" type="application/atom+xml" href="/feed.xml">
       `
       const expected = ['/feed.xml']
 
-      expect(discoverFeedUris(html, undefined, { html: defaultHtmlOptions })).toEqual(expected)
+      expect(
+        await discoverFeedUris({
+          html: {
+            html: html,
+            options: defaultHtmlOptions,
+          },
+        }),
+      ).toEqual(expected)
     })
   })
 
-  describe('headers discovery with options', () => {
-    it('should discover feeds from headers with provided options', () => {
-      const html = ''
+  describe('headers discovery', () => {
+    it('should discover feeds from headers with provided options', async () => {
       const headers = new Headers({
         Link: '</feed.xml>; rel="alternate"; type="application/rss+xml"',
       })
       const expected = ['/feed.xml']
 
-      expect(discoverFeedUris(html, headers, { headers: defaultHeadersOptions })).toEqual(expected)
+      expect(
+        await discoverFeedUris({
+          headers: {
+            headers: headers,
+            options: defaultHeadersOptions,
+          },
+        }),
+      ).toEqual(expected)
     })
 
-    it('should discover multiple feeds from headers', () => {
-      const html = ''
+    it('should discover multiple feeds from headers', async () => {
       const headers = new Headers({
         Link: '</rss.xml>; rel="alternate"; type="application/rss+xml", </atom.xml>; rel="alternate"; type="application/atom+xml"',
       })
       const expected = ['/rss.xml', '/atom.xml']
 
-      expect(discoverFeedUris(html, headers, { headers: defaultHeadersOptions })).toEqual(expected)
+      expect(
+        await discoverFeedUris({
+          headers: {
+            headers: headers,
+            options: defaultHeadersOptions,
+          },
+        }),
+      ).toEqual(expected)
+    })
+  })
+
+  describe('guess discovery', () => {
+    it('should discover feeds from guess method', async () => {
+      const mockFetchFn = async () => {
+        return {
+          headers: new Headers({ 'content-type': 'application/rss+xml' }),
+          body: '<?xml version="1.0"?><rss version="2.0"></rss>',
+          url: 'https://example.com/feed.xml',
+          status: 200,
+          statusText: 'OK',
+        }
+      }
+      const expected = ['https://example.com/feed.xml']
+
+      expect(
+        await discoverFeedUris({
+          guess: {
+            baseUrl: baseUrl,
+            options: {
+              fetchFn: mockFetchFn,
+              feedUris: ['/feed.xml'],
+              stopOnFirst: true,
+            },
+          },
+        }),
+      ).toEqual(expected)
+    })
+
+    it('should return empty array when guess finds no valid feeds', async () => {
+      const mockFetchFn = async () => {
+        return {
+          headers: new Headers({ 'content-type': 'text/html' }),
+          body: '<html></html>',
+          url: 'https://example.com/feed.xml',
+          status: 200,
+          statusText: 'OK',
+        }
+      }
+      const expected: Array<string> = []
+
+      expect(
+        await discoverFeedUris({
+          guess: {
+            baseUrl: baseUrl,
+            options: {
+              fetchFn: mockFetchFn,
+              feedUris: ['/feed.xml'],
+            },
+          },
+        }),
+      ).toEqual(expected)
+    })
+
+    it('should deduplicate URIs across html, headers, and guess methods', async () => {
+      const html =
+        '<link rel="alternate" type="application/rss+xml" href="https://example.com/feed.xml">'
+      const headers = new Headers({
+        Link: '<https://example.com/feed.xml>; rel="alternate"; type="application/rss+xml"',
+      })
+      const mockFetchFn = async () => {
+        return {
+          headers: new Headers({ 'content-type': 'application/rss+xml' }),
+          body: '<?xml version="1.0"?><rss version="2.0"></rss>',
+          url: 'https://example.com/feed.xml',
+          status: 200,
+          statusText: 'OK',
+        }
+      }
+      const expected = ['https://example.com/feed.xml']
+
+      expect(
+        await discoverFeedUris({
+          html: {
+            html: html,
+            options: defaultHtmlOptions,
+          },
+          headers: {
+            headers: headers,
+            options: defaultHeadersOptions,
+          },
+          guess: {
+            baseUrl: baseUrl,
+            options: {
+              fetchFn: mockFetchFn,
+              feedUris: ['/feed.xml'],
+              stopOnFirst: true,
+            },
+          },
+        }),
+      ).toEqual(expected)
+    })
+
+    it('should combine unique feeds from all three methods', async () => {
+      const html = '<link rel="alternate" type="application/rss+xml" href="/rss.xml">'
+      const headers = new Headers({
+        Link: '</atom.xml>; rel="alternate"; type="application/atom+xml"',
+      })
+      const mockFetchFn = async () => {
+        return {
+          headers: new Headers({ 'content-type': 'application/rss+xml' }),
+          body: '<?xml version="1.0"?><rss version="2.0"></rss>',
+          url: 'https://example.com/feed.xml',
+          status: 200,
+          statusText: 'OK',
+        }
+      }
+      const expected = ['/rss.xml', '/atom.xml', 'https://example.com/feed.xml']
+
+      expect(
+        await discoverFeedUris({
+          html: {
+            html: html,
+            options: defaultHtmlOptions,
+          },
+          headers: {
+            headers: headers,
+            options: defaultHeadersOptions,
+          },
+          guess: {
+            baseUrl: baseUrl,
+            options: {
+              fetchFn: mockFetchFn,
+              feedUris: ['/feed.xml'],
+              stopOnFirst: true,
+            },
+          },
+        }),
+      ).toEqual(expected)
+    })
+
+    it('should only include valid results from guess method', async () => {
+      let callCount = 0
+      const mockFetchFn = async (url: string) => {
+        callCount++
+        return {
+          headers: new Headers({
+            'content-type': callCount === 1 ? 'application/rss+xml' : 'text/html',
+          }),
+          body:
+            callCount === 1 ? '<?xml version="1.0"?><rss version="2.0"></rss>' : '<html></html>',
+          url: url,
+          status: 200,
+          statusText: 'OK',
+        }
+      }
+      const expected = ['https://example.com/feed.xml']
+
+      expect(
+        await discoverFeedUris({
+          guess: {
+            baseUrl: baseUrl,
+            options: {
+              fetchFn: mockFetchFn,
+              feedUris: ['/feed.xml', '/rss.xml'],
+            },
+          },
+        }),
+      ).toEqual(expected)
     })
   })
 
   describe('all methods combined', () => {
-    it('should discover feeds from HTML and headers', () => {
+    it('should discover feeds from HTML and headers', async () => {
       const html = '<link rel="alternate" type="application/atom+xml" href="/atom.xml">'
       const headers = new Headers({
         Link: '</api/rss>; rel="alternate"; type="application/rss+xml"',
@@ -90,14 +276,20 @@ describe('discoverFeedUris', () => {
       const expected = ['/atom.xml', '/api/rss']
 
       expect(
-        discoverFeedUris(html, headers, {
-          html: defaultHtmlOptions,
-          headers: defaultHeadersOptions,
+        await discoverFeedUris({
+          html: {
+            html: html,
+            options: defaultHtmlOptions,
+          },
+          headers: {
+            headers: headers,
+            options: defaultHeadersOptions,
+          },
         }),
       ).toEqual(expected)
     })
 
-    it('should deduplicate across both methods', () => {
+    it('should deduplicate across HTML and headers', async () => {
       const html = '<link rel="alternate" type="application/rss+xml" href="/feed.xml">'
       const headers = new Headers({
         Link: '</feed.xml>; rel="alternate"; type="application/rss+xml"',
@@ -105,188 +297,297 @@ describe('discoverFeedUris', () => {
       const expected = ['/feed.xml']
 
       expect(
-        discoverFeedUris(html, headers, {
-          html: defaultHtmlOptions,
-          headers: defaultHeadersOptions,
-        }),
-      ).toEqual(expected)
-    })
-  })
-
-  describe('method filtering via options', () => {
-    it('should only run HTML method when specified', () => {
-      const html = '<link rel="alternate" type="application/rss+xml" href="/custom.xml">'
-      const expected = ['/custom.xml']
-
-      expect(
-        discoverFeedUris(html, undefined, {
-          methods: ['html'],
-          html: defaultHtmlOptions,
-        }),
-      ).toEqual(expected)
-    })
-
-    it('should only run headers method when specified', () => {
-      const html = '<link rel="alternate" type="application/rss+xml" href="/custom.xml">'
-      const headers = new Headers({
-        Link: '</feed.xml>; rel="alternate"; type="application/rss+xml"',
-      })
-      const expected = ['/feed.xml']
-
-      expect(
-        discoverFeedUris(html, headers, {
-          methods: ['headers'],
-          headers: defaultHeadersOptions,
-        }),
-      ).toEqual(expected)
-    })
-
-    it('should run both html and headers methods when specified', () => {
-      const html = '<link rel="alternate" type="application/rss+xml" href="/rss.xml">'
-      const headers = new Headers({
-        Link: '</atom.xml>; rel="alternate"; type="application/atom+xml"',
-      })
-      const expected = ['/rss.xml', '/atom.xml']
-
-      expect(
-        discoverFeedUris(html, headers, {
-          methods: ['html', 'headers'],
-          html: defaultHtmlOptions,
-          headers: defaultHeadersOptions,
+        await discoverFeedUris({
+          html: {
+            html: html,
+            options: defaultHtmlOptions,
+          },
+          headers: {
+            headers: headers,
+            options: defaultHeadersOptions,
+          },
         }),
       ).toEqual(expected)
     })
   })
 
   describe('edge cases', () => {
-    it('should handle empty HTML', () => {
+    it('should handle empty HTML', async () => {
       const html = ''
-      const expected: Array<string> = []
-
-      expect(discoverFeedUris(html)).toEqual(expected)
-    })
-
-    it('should handle empty HTML with options', () => {
-      const html = ''
-      const expected: Array<string> = []
-
-      expect(discoverFeedUris(html, undefined, { html: defaultHtmlOptions })).toEqual(expected)
-    })
-
-    it('should handle empty headers', () => {
-      const html = ''
-      const headers = new Headers()
-      const expected: Array<string> = []
-
-      expect(discoverFeedUris(html, headers, { headers: defaultHeadersOptions })).toEqual(expected)
-    })
-
-    it('should handle HTML without feed links', () => {
-      const html = '<html><body><p>Plain content</p></body></html>'
-      const expected: Array<string> = []
-
-      expect(discoverFeedUris(html, undefined, { html: defaultHtmlOptions })).toEqual(expected)
-    })
-
-    it('should handle headers without Link header', () => {
-      const html = ''
-      const headers = new Headers({ 'Content-Type': 'text/html' })
-      const expected: Array<string> = []
-
-      expect(discoverFeedUris(html, headers, { headers: defaultHeadersOptions })).toEqual(expected)
-    })
-
-    it('should handle empty methods array', () => {
-      const html = '<link rel="alternate" type="application/rss+xml" href="/feed.xml">'
       const expected: Array<string> = []
 
       expect(
-        discoverFeedUris(html, undefined, {
-          methods: [],
-          html: defaultHtmlOptions,
+        await discoverFeedUris({
+          html: {
+            html: html,
+            options: defaultHtmlOptions,
+          },
         }),
       ).toEqual(expected)
     })
 
-    it('should handle very large HTML input', () => {
+    it('should handle empty headers', async () => {
+      const headers = new Headers()
+      const expected: Array<string> = []
+
+      expect(
+        await discoverFeedUris({
+          headers: {
+            headers: headers,
+            options: defaultHeadersOptions,
+          },
+        }),
+      ).toEqual(expected)
+    })
+
+    it('should handle HTML without feed links', async () => {
+      const html = '<html><body><p>Plain content</p></body></html>'
+      const expected: Array<string> = []
+
+      expect(
+        await discoverFeedUris({
+          html: {
+            html: html,
+            options: defaultHtmlOptions,
+          },
+        }),
+      ).toEqual(expected)
+    })
+
+    it('should handle headers without Link header', async () => {
+      const headers = new Headers({ 'Content-Type': 'text/html' })
+      const expected: Array<string> = []
+
+      expect(
+        await discoverFeedUris({
+          headers: {
+            headers: headers,
+            options: defaultHeadersOptions,
+          },
+        }),
+      ).toEqual(expected)
+    })
+
+    it('should handle very large HTML input', async () => {
       const feedLink = '<link rel="feed" href="/feed.xml">'
       const largeHtml = feedLink + '<p>content</p>'.repeat(100000)
       const expected = ['/feed.xml']
 
-      expect(discoverFeedUris(largeHtml, undefined, { html: defaultHtmlOptions })).toEqual(expected)
+      expect(
+        await discoverFeedUris({
+          html: {
+            html: largeHtml,
+            options: defaultHtmlOptions,
+          },
+        }),
+      ).toEqual(expected)
     })
 
-    it('should handle HTML and headers both empty', () => {
+    it('should handle HTML and headers both empty', async () => {
       const html = ''
       const headers = new Headers()
       const expected: Array<string> = []
 
       expect(
-        discoverFeedUris(html, headers, {
-          html: defaultHtmlOptions,
-          headers: defaultHeadersOptions,
+        await discoverFeedUris({
+          html: {
+            html: html,
+            options: defaultHtmlOptions,
+          },
+          headers: {
+            headers: headers,
+            options: defaultHeadersOptions,
+          },
         }),
       ).toEqual(expected)
     })
+  })
 
-    it('should handle methods array with invalid method name', () => {
-      const html = '<link rel="feed" href="/feed.xml">'
-      const expected: Array<string> = []
+  describe('error handling', () => {
+    it('should handle guess method throwing error and return other results', async () => {
+      const html = '<link rel="alternate" type="application/rss+xml" href="/feed.xml">'
+      const headers = new Headers({
+        link: '</atom.xml>; rel="alternate"; type="application/atom+xml"',
+      })
+      const mockFetchFn = async () => {
+        throw new Error('Network error')
+      }
+      const expected = ['/feed.xml', '/atom.xml']
 
       expect(
-        discoverFeedUris(html, undefined, {
-          // @ts-expect-error: This is for testing purposes.
-          methods: ['invalid'],
-          html: defaultHtmlOptions,
+        await discoverFeedUris({
+          html: {
+            html: html,
+            options: {
+              linkMimeTypes: ['application/rss+xml', 'application/atom+xml'],
+              anchorUris: [],
+              anchorIgnoredUris: [],
+              anchorLabels: [],
+            },
+          },
+          headers: {
+            headers: headers,
+            options: {
+              linkMimeTypes: ['application/rss+xml', 'application/atom+xml'],
+            },
+          },
+          guess: {
+            baseUrl: 'https://example.com',
+            options: {
+              fetchFn: mockFetchFn,
+              feedUris: ['/feed.xml'],
+              includeInvalid: false,
+            },
+          },
         }),
       ).toEqual(expected)
     })
 
-    it('should handle cms method in methods array (not yet implemented)', () => {
-      const html = '<link rel="feed" href="/feed.xml">'
-      const expected: Array<string> = []
-
-      expect(
-        discoverFeedUris(html, undefined, {
-          methods: ['cms'],
-          html: defaultHtmlOptions,
-        }),
-      ).toEqual(expected)
-    })
-
-    it('should discover from HTML when cms and html both specified', () => {
-      const html = '<link rel="feed" href="/feed.xml">'
+    it('should handle partial failure when HTML succeeds and guess fails', async () => {
+      const html = '<link rel="alternate" type="application/rss+xml" href="/feed.xml">'
+      const mockFetchFn = async () => {
+        throw new Error('Network error')
+      }
       const expected = ['/feed.xml']
 
       expect(
-        discoverFeedUris(html, undefined, {
-          methods: ['html', 'cms'],
-          html: defaultHtmlOptions,
+        await discoverFeedUris({
+          html: {
+            html: html,
+            options: {
+              linkMimeTypes: ['application/rss+xml', 'application/atom+xml'],
+              anchorUris: [],
+              anchorIgnoredUris: [],
+              anchorLabels: [],
+            },
+          },
+          guess: {
+            baseUrl: 'https://example.com',
+            options: {
+              fetchFn: mockFetchFn,
+              feedUris: ['/rss.xml'],
+              includeInvalid: false,
+            },
+          },
         }),
       ).toEqual(expected)
     })
 
-    it('should handle undefined html options with html method enabled', () => {
-      const html = '<link rel="feed" href="/feed.xml">'
+    it('should return empty array when all methods fail', async () => {
+      const mockFetchFn = async () => {
+        throw new Error('Network error')
+      }
       const expected: Array<string> = []
 
       expect(
-        discoverFeedUris(html, undefined, {
-          methods: ['html'],
+        await discoverFeedUris({
+          guess: {
+            baseUrl: 'https://example.com',
+            options: {
+              fetchFn: mockFetchFn,
+              feedUris: ['/feed.xml'],
+              includeInvalid: false,
+            },
+          },
         }),
       ).toEqual(expected)
     })
 
-    it('should handle undefined headers options with headers method enabled', () => {
-      const html = ''
-      const headers = new Headers({
-        Link: '</feed.xml>; rel="alternate"; type="application/rss+xml"',
+    it('should handle guess returning no results without error', async () => {
+      const html = '<link rel="alternate" type="application/rss+xml" href="/feed.xml">'
+      const mockFetchFn = async () => {
+        return {
+          headers: new Headers({ 'content-type': 'text/html' }),
+          body: '<html></html>',
+          url: 'https://example.com/feed.xml',
+          status: 404,
+          statusText: 'Not Found',
+        }
+      }
+      const expected = ['/feed.xml']
+
+      expect(
+        await discoverFeedUris({
+          html: {
+            html: html,
+            options: {
+              linkMimeTypes: ['application/rss+xml', 'application/atom+xml'],
+              anchorUris: [],
+              anchorIgnoredUris: [],
+              anchorLabels: [],
+            },
+          },
+          guess: {
+            baseUrl: 'https://example.com',
+            options: {
+              fetchFn: mockFetchFn,
+              feedUris: ['/feed.xml'],
+            },
+          },
+        }),
+      ).toEqual(expected)
+    })
+
+    it('should handle empty HTML and empty headers gracefully', async () => {
+      const mockFetchFn = async () => {
+        return {
+          headers: new Headers({ 'content-type': 'application/rss+xml' }),
+          body: '<?xml version="1.0"?><rss version="2.0"></rss>',
+          url: 'https://example.com/feed.xml',
+          status: 200,
+          statusText: 'OK',
+        }
+      }
+      const expected = ['https://example.com/feed.xml']
+
+      expect(
+        await discoverFeedUris({
+          html: {
+            html: '',
+            options: {
+              linkMimeTypes: ['application/rss+xml'],
+              anchorUris: [],
+              anchorIgnoredUris: [],
+              anchorLabels: [],
+            },
+          },
+          headers: {
+            headers: new Headers(),
+            options: {
+              linkMimeTypes: ['application/rss+xml'],
+            },
+          },
+          guess: {
+            baseUrl: 'https://example.com',
+            options: {
+              fetchFn: mockFetchFn,
+              feedUris: ['/feed.xml'],
+            },
+          },
+        }),
+      ).toEqual(expected)
+    })
+
+    it('should handle very large result sets', async () => {
+      const links = Array.from({ length: 100 }).map((_, index) => {
+        return `<link rel="alternate" type="application/rss+xml" href="/feed${index}.xml">`
       })
-      const expected: Array<string> = []
+      const html = links.join('')
+      const expected = Array.from({ length: 100 }).map((_, index) => {
+        return `/feed${index}.xml`
+      })
 
       expect(
-        discoverFeedUris(html, headers, {
-          methods: ['headers'],
+        await discoverFeedUris({
+          html: {
+            html: html,
+            options: {
+              linkMimeTypes: ['application/rss+xml'],
+              anchorUris: [],
+              anchorIgnoredUris: [],
+              anchorLabels: [],
+            },
+          },
         }),
       ).toEqual(expected)
     })
