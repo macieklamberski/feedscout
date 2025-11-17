@@ -60,27 +60,28 @@ export const createContentValidator = (): ValidatorFn => {
       return { url: response.url, isFeed: false }
     }
 
-    const content = response.body.toLowerCase()
+    const content = response.body
 
     // Reject if it looks like HTML.
-    if (content.includes('<html')) {
+    if (/<html/i.test(content)) {
       return { url: response.url, isFeed: false }
     }
 
     // Detect feed format from content markers.
-    if (content.includes('<rss')) {
+    if (/<rss/i.test(content)) {
       return { url: response.url, isFeed: true, feedFormat: 'rss' }
     }
 
-    if (content.includes('<feed')) {
+    if (/<feed/i.test(content)) {
       return { url: response.url, isFeed: true, feedFormat: 'atom' }
     }
 
-    if (content.includes('<rdf')) {
+    if (/<rdf/i.test(content)) {
       return { url: response.url, isFeed: true, feedFormat: 'rdf' }
     }
 
-    if (content.includes('"version"')) {
+    // JSON Feed: check for version field with jsonfeed.org URL.
+    if (/"version"/i.test(content) && /jsonfeed\.org/i.test(content)) {
       return { url: response.url, isFeed: true, feedFormat: 'json' }
     }
 
