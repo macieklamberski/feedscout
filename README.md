@@ -4,13 +4,13 @@
 [![npm version](https://img.shields.io/npm/v/feedscout.svg)](https://www.npmjs.com/package/feedscout)
 [![license](https://img.shields.io/npm/l/feedscout.svg)](https://github.com/macieklamberski/feedscout/blob/main/LICENSE)
 
-Lightweight feed autodiscovery for TypeScript. Extract RSS, Atom, and JSON feed URIs from HTML with configurable options.
+Advanced feed autodiscovery for JavaScript. Collect feed URIs from webpages using multiple discovery methods.
 
 > **Work in Progress:** This library is under active development. The API may change before reaching v1.0.
 
 ## Overview
 
-Feedscout makes it easy to gather all feed URIs from webpages using multiple discovery methods.
+Feedscout makes it easy to collect all feed URIs from webpages using multiple discovery methods.
 
 ### HTML Discovery
 
@@ -39,7 +39,9 @@ npm install feedscout
 
 ## Usage
 
-### HTML Discovery
+### Quick Start
+
+Use the main orchestrator to combine multiple discovery methods:
 
 ```typescript
 import { discoverFeedUris } from 'feedscout'
@@ -55,7 +57,44 @@ const html = `
   </html>
 `
 
-const uris = discoverFeedUris(html, {
+const headers = new Headers({
+  'Link': '</atom.xml>; rel="alternate"; type="application/atom+xml"'
+})
+
+const uris = discoverFeedUris(html, headers, {
+  html: {
+    linkMimeTypes: ['application/rss+xml', 'application/atom+xml'],
+    anchorUris: ['/feed', '/rss', '/rss.xml'],
+    anchorIgnoredUris: ['wp-json/', 'comments'],
+    anchorLabels: ['rss', 'feed', 'subscribe'],
+  },
+  headers: {
+    linkMimeTypes: ['application/rss+xml', 'application/atom+xml'],
+  },
+})
+
+console.log(uris) // ['/feed.xml', '/rss', '/atom.xml']
+```
+
+### HTML Discovery
+
+For HTML-only discovery, use `discoverFeedUrisFromHtml`:
+
+```typescript
+import { discoverFeedUrisFromHtml } from 'feedscout'
+
+const html = `
+  <html>
+    <head>
+      <link rel="alternate" type="application/rss+xml" href="/feed.xml" />
+    </head>
+    <body>
+      <a href="/rss">RSS Feed</a>
+    </body>
+  </html>
+`
+
+const uris = discoverFeedUrisFromHtml(html, {
   linkMimeTypes: ['application/rss+xml', 'application/atom+xml'],
   anchorUris: ['/feed', '/rss', '/rss.xml'],
   anchorIgnoredUris: ['wp-json/', 'comments'],
@@ -89,18 +128,63 @@ Identical URIs are deduplicated, but variations like `http://` vs `https://` are
 
 ## API Reference
 
-### `discoverFeedUris(html, options)`
+### `discoverFeedUris(html, headers?, options?)`
+
+Main orchestrator that combines multiple discovery methods.
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `html` | `string` | Yes | HTML content to parse |
+| `headers` | `Headers` | No | Native Headers object from fetch API |
+| `options` | `DiscoverFeedUrisOptions` | No | Discovery configuration |
+
+**Returns:** `string[]` — Array of discovered feed URIs (may be relative)
+
+**Behavior:**
+- When called with only `html`: Returns empty array (requires options)
+- When called with `html` and `options.html`: Runs HTML discovery
+- When called with `html`, `headers`, and both `options.html` and `options.headers`: Runs both methods and deduplicates results
+- Can filter methods using `options.methods` array
+
+#### `DiscoverFeedUrisOptions`
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `methods` | `Array<'html' \| 'headers'>` | Optional. Methods to enable. Defaults to all available methods. |
+| `html` | `HtmlDiscoveryOptions` | Optional. Options for HTML discovery. Required if HTML discovery is enabled. |
+| `headers` | `HeadersDiscoveryOptions` | Optional. Options for headers discovery. Required if headers discovery is enabled. |
+
+**Example:**
+
+```typescript
+const options: DiscoverFeedUrisOptions = {
+  methods: ['html', 'headers'], // Optional: explicitly enable both
+  html: {
+    linkMimeTypes: ['application/rss+xml', 'application/atom+xml'],
+    anchorUris: ['/feed', '/rss'],
+    anchorIgnoredUris: ['comments'],
+    anchorLabels: ['rss', 'feed'],
+  },
+  headers: {
+    linkMimeTypes: ['application/rss+xml', 'application/atom+xml'],
+  },
+}
+```
+
+---
+
+### `discoverFeedUrisFromHtml(html, options)`
 
 Discovers feed URIs from HTML content.
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
 | `html` | `string` | Yes | HTML content to parse |
-| `options` | `DiscoverFeedUrisOptions` | Yes | Discovery configuration |
+| `options` | `HtmlDiscoveryOptions` | Yes | Discovery configuration |
 
 **Returns:** `string[]` — Array of discovered feed URIs (may be relative)
 
-### `DiscoverFeedUrisOptions`
+#### `HtmlDiscoveryOptions`
 
 All options are **required**. Configure each discovery strategy explicitly.
 
@@ -114,7 +198,7 @@ All options are **required**. Configure each discovery strategy explicitly.
 **Example configuration:**
 
 ```typescript
-const options: DiscoverFeedUrisOptions = {
+const options: HtmlDiscoveryOptions = {
   linkMimeTypes: [
     'application/rss+xml',
     'application/atom+xml',
@@ -142,6 +226,8 @@ const options: DiscoverFeedUrisOptions = {
 }
 ```
 
+---
+
 ### `discoverFeedUrisFromHeaders(headers, options)`
 
 Discovers feed URIs from HTTP Link headers (RFC 8288).
@@ -149,11 +235,11 @@ Discovers feed URIs from HTTP Link headers (RFC 8288).
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
 | `headers` | `Headers` | Yes | Native Headers object from fetch API |
-| `options` | `DiscoverFeedUrisFromHeadersOptions` | Yes | MIME type filtering configuration |
+| `options` | `HeadersDiscoveryOptions` | Yes | MIME type filtering configuration |
 
 **Returns:** `string[]` — Array of discovered feed URIs (may be relative)
 
-### `DiscoverFeedUrisFromHeadersOptions`
+#### `HeadersDiscoveryOptions`
 
 | Property | Type | Description |
 |----------|------|-------------|
@@ -162,7 +248,7 @@ Discovers feed URIs from HTTP Link headers (RFC 8288).
 **Example configuration:**
 
 ```typescript
-const options: DiscoverFeedUrisFromHeadersOptions = {
+const options: HeadersDiscoveryOptions = {
   linkMimeTypes: [
     'application/rss+xml',
     'application/atom+xml',

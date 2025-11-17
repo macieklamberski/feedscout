@@ -1,6 +1,6 @@
 {
   "name": "feedscout",
-  "description": "Lightweight feed autodiscovery for TypeScript. Extract RSS, Atom, and JSON feed URIs from HTML with configurable options.",
+  "description": "Advanced feed autodiscovery for JavaScript. Collect feed URIs from webpages using multiple discovery methods.",
   "keywords": [
     "rss",
     "rss-autodiscovery",
@@ -47,11 +47,21 @@
         "default": "./dist/common/utils.cjs"
       }
     },
+    "./guess": {
+      "import": {
+        "types": "./dist/guess/index.d.ts",
+        "default": "./dist/guess/index.js"
+      },
+      "require": {
+        "types": "./dist/guess/index.d.cts",
+        "default": "./dist/guess/index.cjs"
+      }
+    },
     "./package.json": "./package.json"
   },
   "scripts": {
     "prepare": "lefthook install",
-    "build": "tsdown src/index.ts src/common/utils.ts --format cjs,esm --dts --clean --unbundle --no-fixed-extension"
+    "build": "tsdown src/index.ts src/common/utils.ts src/guess/index.ts --format cjs,esm --dts --clean --unbundle --no-fixed-extension"
   },
   "dependencies": {
     "htmlparser2": "^10.0.0"
