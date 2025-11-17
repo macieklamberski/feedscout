@@ -1,6 +1,6 @@
 import { Parser } from 'htmlparser2'
+import { createHtmlFeedUrisHandlers } from './handlers.js'
 import type { HtmlDiscoveryOptions, HtmlFeedUrisContext } from './types.js'
-import { createHtmlFeedUrisHandlers } from './utils.js'
 
 export const discoverFeedUrisFromHtml = (
   html: string,
@@ -12,7 +12,8 @@ export const discoverFeedUrisFromHtml = (
     options,
   }
 
-  const parser = new Parser(createHtmlFeedUrisHandlers(context), { decodeEntities: true })
+  const handlers = createHtmlFeedUrisHandlers(context)
+  const parser = new Parser(handlers, { decodeEntities: true })
 
   parser.write(html)
   parser.end()
