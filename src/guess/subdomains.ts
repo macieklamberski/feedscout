@@ -86,18 +86,11 @@ export const getSubdomainVariants = (baseUrl: string, prefixes: Array<string>): 
 
   // Extract root domain (last two parts: example.com)
   const rootDomain = hostnameParts.slice(-2).join('.')
+  const protocol = url.protocol
+  const port = url.port ? `:${url.port}` : ''
 
   return prefixes.map((prefix) => {
-    const variant = new URL(url)
-
-    if (prefix === '') {
-      // Empty prefix means use root domain
-      variant.hostname = rootDomain
-    } else {
-      // Apply prefix to root domain
-      variant.hostname = `${prefix}.${rootDomain}`
-    }
-
-    return variant.origin
+    const hostname = prefix === '' ? rootDomain : `${prefix}.${rootDomain}`
+    return `${protocol}//${hostname}${port}`
   })
 }
