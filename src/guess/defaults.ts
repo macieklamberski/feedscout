@@ -25,13 +25,7 @@ export const feedUrisMinimal = ['/feed', '/rss', '/atom.xml', '/feed.xml', '/rss
 // Includes JSON Feed and common variations.
 export const feedUrisBalanced = [
   ...feedUrisMinimal,
-  '/feed.xml',
-  '/atom.xml',
-  '/index.xml',
-  '/rss.xml',
-  '/feed',
   '/feed/',
-  '/rss',
   '/index.atom',
   '/index.rss',
   '/feed.json',
@@ -44,5 +38,4 @@ export const feedUrisComprehensive = [
   '/?feed=rss2',
   '/?feed=atom',
   '/feeds/posts/default',
-  '/atom.xml',
 ]
