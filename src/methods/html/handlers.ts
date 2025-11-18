@@ -1,12 +1,12 @@
 import type { Handler } from 'htmlparser2'
-import { includesAnyOf, isAnyOf, normalizeMimeType } from '../common/utils.js'
+import { includesAnyOf, isAnyOf, normalizeMimeType, normalizeUrl } from '../../common/utils.js'
 import type { Context } from './types.js'
 
 export const handleOpenTag = (
   context: Context,
   name: string,
   attribs: { [key: string]: string },
-  _isImplied: boolean,
+  _isImplied?: boolean,
 ): void => {
   if (name === 'link' && attribs.href) {
     const rel = attribs.rel?.toLowerCase()
@@ -16,13 +16,13 @@ export const handleOpenTag = (
       rel === 'alternate' &&
       isAnyOf(attribs.type, context.options.linkMimeTypes, normalizeMimeType)
     ) {
-      context.discoveredUris.add(attribs.href)
+      context.discoveredUris.add(normalizeUrl(attribs.href, context.baseUrl))
     }
 
     // HTML5 approach: rel="feed" or rel="feed alternate" (MIME type optional).
     // Exclude "alternate stylesheet" which should not be interpreted as feed.
     if (rel?.includes('feed') && !rel.includes('stylesheet')) {
-      context.discoveredUris.add(attribs.href)
+      context.discoveredUris.add(normalizeUrl(attribs.href, context.baseUrl))
     }
   }
 
@@ -43,7 +43,7 @@ export const handleOpenTag = (
 
     // Check if href ends with any anchor URI pattern.
     if (context.options.anchorUris.some((uri) => lowerHref.endsWith(uri.toLowerCase()))) {
-      context.discoveredUris.add(attribs.href)
+      context.discoveredUris.add(normalizeUrl(attribs.href, context.baseUrl))
     }
   }
 }
@@ -55,14 +55,14 @@ export const handleText = (context: Context, text: string): void => {
   }
 }
 
-export const handleCloseTag = (context: Context, name: string, _isImplied: boolean): void => {
+export const handleCloseTag = (context: Context, name: string, _isImplied?: boolean): void => {
   // Check anchor text patterns when anchor closes.
   if (name === 'a' && context.currentAnchor.href && context.currentAnchor.text) {
     const normalizedText = context.currentAnchor.text.toLowerCase().trim()
 
     // Check if anchor text contains any feed label pattern.
     if (includesAnyOf(normalizedText, context.options.anchorLabels)) {
-      context.discoveredUris.add(context.currentAnchor.href)
+      context.discoveredUris.add(normalizeUrl(context.currentAnchor.href, context.baseUrl))
     }
 
     context.currentAnchor.href = ''

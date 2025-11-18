@@ -20,3 +20,7 @@ export const isAnyOf = (
   const parsedValue = parser ? parser(value) : value?.toLowerCase()?.trim()
   return patterns.some((pattern) => parsedValue === pattern.toLowerCase().trim())
 }
+
+export const normalizeUrl = (url: string, baseUrl: string | undefined): string => {
+  return baseUrl ? new URL(url, baseUrl).href : url
+}

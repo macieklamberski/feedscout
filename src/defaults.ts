@@ -1,0 +1,86 @@
+import type { Options as GuessOptions } from './methods/guess/types.js'
+import type { Options as HeadersOptions } from './methods/headers/types.js'
+import type { Options as HtmlOptions } from './methods/html/types.js'
+
+export const feedMimeTypes = [
+  // RSS:
+  'application/rss+xml',
+  'text/rss+xml',
+  'application/x-rss+xml',
+  'application/rss',
+  // Atom:
+  'application/atom+xml',
+  'text/atom+xml',
+  // JSON Feed:
+  'application/feed+json',
+  'application/json',
+  // RDF:
+  'application/rdf+xml',
+  'text/rdf+xml',
+  'application/atom',
+  // Generic:
+  'application/xml',
+  'text/xml',
+]
+
+// Covers modern static generators and simple WordPress setups.
+export const feedUrisMinimal = ['/feed', '/rss', '/atom.xml', '/feed.xml', '/rss.xml', '/index.xml']
+
+// Includes JSON Feed and common variations.
+export const feedUrisBalanced = [
+  ...feedUrisMinimal,
+  '/feed/',
+  '/index.atom',
+  '/index.rss',
+  '/feed.json',
+]
+
+// Includes WordPress query parameters, Blogger patterns, and additional variations.
+export const feedUrisComprehensive = [
+  ...feedUrisBalanced,
+  '/atom',
+  '/feed.rss',
+  '/feed.atom',
+  '/feed.rss.xml',
+  '/feed.atom.xml',
+  '/index.rss.xml',
+  '/index.atom.xml',
+  '/?feed=rss',
+  '/?feed=rss2',
+  '/?feed=atom',
+  '/?format=rss',
+  '/?format=atom',
+  '/?rss=1',
+  '/?atom=1',
+  '/.rss',
+  '/f.json',
+  '/f.rss',
+  '/json',
+  '/.feed',
+  '/comments/feed',
+  '/feeds/posts/default',
+]
+
+// URIs to ignore when discovering feeds from anchor elements.
+export const ignoredUris = ['wp-json/oembed/', 'wp-json/wp/']
+
+// Text labels used to identify feed links in anchor elements.
+export const anchorLabels = ['rss', 'feed', 'atom', 'subscribe', 'syndicate', 'json feed']
+
+// Default options for HTML method.
+export const defaultHtmlOptions: Omit<HtmlOptions, 'baseUrl'> = {
+  linkMimeTypes: feedMimeTypes,
+  anchorUris: feedUrisComprehensive,
+  anchorIgnoredUris: ignoredUris,
+  anchorLabels,
+}
+
+// Default options for Headers method.
+export const defaultHeadersOptions: Omit<HeadersOptions, 'baseUrl'> = {
+  linkMimeTypes: feedMimeTypes,
+}
+
+// Default options for Guess method (excluding baseUrl which is required).
+export const defaultGuessOptions: Omit<GuessOptions, 'baseUrl'> = {
+  feedUris: feedUrisBalanced,
+}
