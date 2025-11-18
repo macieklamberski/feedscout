@@ -1,17 +1,31 @@
 import { afterEach, describe, expect, it, spyOn } from 'bun:test'
+import type { FetchFnResponse } from '../common/types.js'
 import {
   createAxiosAdapter,
   createGotAdapter,
   createKyAdapter,
   createNativeFetchAdapter,
 } from './adapters.js'
-import type { FetchFnResponse } from './types.js'
 
-// biome-ignore lint/suspicious/noExplicitAny: Type helper for mocking fetch with flexible signatures.
+// Mock helper with type assertion - necessary because we can't fully implement the fetch interface in tests
+// biome-ignore lint/suspicious/noExplicitAny: Mock helper needs flexible signature
 const createFetchMock = <T extends (...args: Array<any>) => Promise<Response>>(
   implementation: T,
 ) => {
   return implementation as unknown as typeof fetch
+}
+
+// Helper to create partial Response objects for testing
+type MockResponse = Pick<Response, 'headers' | 'text' | 'url' | 'status' | 'statusText'>
+
+const createMockResponse = (partial: Partial<MockResponse>): Response => {
+  return {
+    headers: partial.headers ?? new Headers(),
+    text: partial.text ?? (async () => ''),
+    url: partial.url ?? '',
+    status: partial.status ?? 200,
+    statusText: partial.statusText ?? 'OK',
+  } as Response
 }
 
 describe('createNativeFetchAdapter', () => {
@@ -24,15 +38,10 @@ describe('createNativeFetchAdapter', () => {
   it('should create adapter that calls native fetch with correct URL', async () => {
     fetchSpy.mockImplementation(
       createFetchMock(async (url: string) => {
-        return {
-          headers: new Headers(),
-          text: async () => {
-            return 'response body'
-          },
+        return createMockResponse({
           url,
-          status: 200,
-          statusText: 'OK',
-        } as Response
+          text: async () => 'response body',
+        })
       }),
     )
     const adapter = createNativeFetchAdapter()
@@ -47,15 +56,7 @@ describe('createNativeFetchAdapter', () => {
     fetchSpy.mockImplementation(
       createFetchMock(async (_url: string, options?: RequestInit) => {
         capturedOptions = options
-        return {
-          headers: new Headers(),
-          text: async () => {
-            return ''
-          },
-          url: '',
-          status: 200,
-          statusText: 'OK',
-        } as Response
+        return createMockResponse({})
       }),
     )
     const adapter = createNativeFetchAdapter({ credentials: 'include' })
@@ -69,15 +70,7 @@ describe('createNativeFetchAdapter', () => {
     let capturedOptions: RequestInit | undefined
     const mockFetch = async (_url: string, options?: RequestInit) => {
       capturedOptions = options
-      return {
-        headers: new Headers(),
-        text: async () => {
-          return ''
-        },
-        url: '',
-        status: 200,
-        statusText: 'OK',
-      } as Response
+      return createMockResponse({})
     }
     fetchSpy.mockImplementation(createFetchMock(mockFetch))
     const adapter = createNativeFetchAdapter({
@@ -88,24 +81,16 @@ describe('createNativeFetchAdapter', () => {
       headers: { 'X-Custom': 'custom-value' },
     })
 
-    const headers = capturedOptions?.headers as Record<string, string>
-    expect(headers['X-Base']).toBe('base-value')
-    expect(headers['X-Custom']).toBe('custom-value')
+    expect(capturedOptions?.headers).toBeDefined()
+    expect(capturedOptions?.headers).toHaveProperty('X-Base', 'base-value')
+    expect(capturedOptions?.headers).toHaveProperty('X-Custom', 'custom-value')
   })
 
   it('should default to GET method when not specified', async () => {
     let capturedOptions: RequestInit | undefined
     const mockFetch = async (_url: string, options?: RequestInit) => {
       capturedOptions = options
-      return {
-        headers: new Headers(),
-        text: async () => {
-          return ''
-        },
-        url: '',
-        status: 200,
-        statusText: 'OK',
-      } as Response
+      return createMockResponse({})
     }
     fetchSpy.mockImplementation(createFetchMock(mockFetch))
     const adapter = createNativeFetchAdapter()
@@ -119,15 +104,7 @@ describe('createNativeFetchAdapter', () => {
     let capturedOptions: RequestInit | undefined
     const mockFetch = async (_url: string, options?: RequestInit) => {
       capturedOptions = options
-      return {
-        headers: new Headers(),
-        text: async () => {
-          return ''
-        },
-        url: '',
-        status: 200,
-        statusText: 'OK',
-      } as Response
+      return createMockResponse({})
     }
     fetchSpy.mockImplementation(createFetchMock(mockFetch))
     const adapter = createNativeFetchAdapter()
@@ -139,15 +116,13 @@ describe('createNativeFetchAdapter', () => {
 
   it('should return response with correct structure', async () => {
     const mockFetch = async () => {
-      return {
+      return createMockResponse({
         headers: new Headers({ 'content-type': 'application/rss+xml' }),
-        text: async () => {
-          return 'feed content'
-        },
+        text: async () => 'feed content',
         url: 'https://example.com/feed.xml',
         status: 200,
         statusText: 'OK',
-      } as Response
+      })
     }
     fetchSpy.mockImplementation(createFetchMock(mockFetch))
     const adapter = createNativeFetchAdapter()
@@ -170,15 +145,9 @@ describe('createNativeFetchAdapter', () => {
 
   it('should preserve response URL for redirect handling', async () => {
     const mockFetch = async () => {
-      return {
-        headers: new Headers(),
-        text: async () => {
-          return ''
-        },
+      return createMockResponse({
         url: 'https://redirect.example.com/feed.xml',
-        status: 200,
-        statusText: 'OK',
-      } as Response
+      })
     }
     fetchSpy.mockImplementation(createFetchMock(mockFetch))
     const adapter = createNativeFetchAdapter()
@@ -190,15 +159,9 @@ describe('createNativeFetchAdapter', () => {
 
   it('should convert response body to text', async () => {
     const mockFetch = async () => {
-      return {
-        headers: new Headers(),
-        text: async () => {
-          return '<rss>feed content</rss>'
-        },
-        url: '',
-        status: 200,
-        statusText: 'OK',
-      } as Response
+      return createMockResponse({
+        text: async () => '<rss>feed content</rss>',
+      })
     }
     fetchSpy.mockImplementation(createFetchMock(mockFetch))
     const adapter = createNativeFetchAdapter()
@@ -210,15 +173,10 @@ describe('createNativeFetchAdapter', () => {
 
   it('should pass through status and statusText', async () => {
     const mockFetch = async () => {
-      return {
-        headers: new Headers(),
-        text: async () => {
-          return ''
-        },
-        url: '',
+      return createMockResponse({
         status: 404,
         statusText: 'Not Found',
-      } as Response
+      })
     }
     fetchSpy.mockImplementation(createFetchMock(mockFetch))
     const adapter = createNativeFetchAdapter()
@@ -287,8 +245,8 @@ describe('createGotAdapter', () => {
       headers: { 'X-Custom': 'value' },
     })
 
-    const headers = capturedOptions.headers as Record<string, string>
-    expect(headers['X-Custom']).toBe('value')
+    expect(capturedOptions.headers).toBeDefined()
+    expect(capturedOptions.headers).toHaveProperty('X-Custom', 'value')
   })
 
   it('should set throwHttpErrors to false', async () => {
@@ -454,8 +412,8 @@ describe('createAxiosAdapter', () => {
       headers: { 'X-Custom': 'value' },
     })
 
-    const headers = capturedConfig.headers as Record<string, string>
-    expect(headers['X-Custom']).toBe('value')
+    expect(capturedConfig.headers).toBeDefined()
+    expect(capturedConfig.headers).toHaveProperty('X-Custom', 'value')
   })
 
   it('should set validateStatus to always return true', async () => {
@@ -474,8 +432,11 @@ describe('createAxiosAdapter', () => {
 
     await adapter('https://example.com/feed.xml')
 
-    const validateStatus = capturedConfig.validateStatus as () => boolean
-    expect(validateStatus()).toBe(true)
+    expect(capturedConfig.validateStatus).toBeDefined()
+    expect(typeof capturedConfig.validateStatus).toBe('function')
+    if (typeof capturedConfig.validateStatus === 'function') {
+      expect(capturedConfig.validateStatus()).toBe(true)
+    }
   })
 
   it('should convert axios headers to Headers object', async () => {
@@ -633,8 +594,8 @@ describe('createKyAdapter', () => {
       headers: { 'X-Custom': 'value' },
     })
 
-    const headers = capturedOptions.headers as Record<string, string>
-    expect(headers['X-Custom']).toBe('value')
+    expect(capturedOptions.headers).toBeDefined()
+    expect(capturedOptions.headers).toHaveProperty('X-Custom', 'value')
   })
 
   it('should set throwHttpErrors to false', async () => {

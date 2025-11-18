@@ -52,12 +52,11 @@ describe('handleOpenTag', () => {
   it('should add link tag with rel=alternate and valid MIME type', () => {
     const value = createMockContext()
 
-    handleOpenTag(
-      value,
-      'link',
-      { rel: 'alternate', type: 'application/rss+xml', href: '/feed.xml' },
-      false,
-    )
+    handleOpenTag(value, 'link', {
+      rel: 'alternate',
+      type: 'application/rss+xml',
+      href: '/feed.xml',
+    })
 
     expect(value.discoveredUris.has('/feed.xml')).toBe(true)
   })
@@ -65,7 +64,7 @@ describe('handleOpenTag', () => {
   it('should add link tag with rel=feed', () => {
     const value = createMockContext()
 
-    handleOpenTag(value, 'link', { rel: 'feed', href: '/feed.xml' }, false)
+    handleOpenTag(value, 'link', { rel: 'feed', href: '/feed.xml' })
 
     expect(value.discoveredUris.has('/feed.xml')).toBe(true)
   })
@@ -73,7 +72,7 @@ describe('handleOpenTag', () => {
   it('should add link tag with rel containing feed', () => {
     const value = createMockContext()
 
-    handleOpenTag(value, 'link', { rel: 'feed alternate', href: '/feed.xml' }, false)
+    handleOpenTag(value, 'link', { rel: 'feed alternate', href: '/feed.xml' })
 
     expect(value.discoveredUris.has('/feed.xml')).toBe(true)
   })
@@ -81,7 +80,7 @@ describe('handleOpenTag', () => {
   it('should ignore link tag with rel=alternate and invalid MIME type', () => {
     const value = createMockContext()
 
-    handleOpenTag(value, 'link', { rel: 'alternate', type: 'text/html', href: '/page.html' }, false)
+    handleOpenTag(value, 'link', { rel: 'alternate', type: 'text/html', href: '/page.html' })
 
     expect(value.discoveredUris.has('/page.html')).toBe(false)
   })
@@ -89,7 +88,7 @@ describe('handleOpenTag', () => {
   it('should ignore link tag without rel attribute', () => {
     const value = createMockContext()
 
-    handleOpenTag(value, 'link', { type: 'application/rss+xml', href: '/feed.xml' }, false)
+    handleOpenTag(value, 'link', { type: 'application/rss+xml', href: '/feed.xml' })
 
     expect(value.discoveredUris.has('/feed.xml')).toBe(false)
   })
@@ -97,7 +96,7 @@ describe('handleOpenTag', () => {
   it('should ignore link tag without href attribute', () => {
     const value = createMockContext()
 
-    handleOpenTag(value, 'link', { rel: 'alternate', type: 'application/rss+xml' }, false)
+    handleOpenTag(value, 'link', { rel: 'alternate', type: 'application/rss+xml' })
 
     expect(value.discoveredUris.size).toBe(0)
   })
@@ -105,7 +104,7 @@ describe('handleOpenTag', () => {
   it('should ignore link with rel=alternate stylesheet', () => {
     const value = createMockContext()
 
-    handleOpenTag(value, 'link', { rel: 'alternate stylesheet', href: '/style.css' }, false)
+    handleOpenTag(value, 'link', { rel: 'alternate stylesheet', href: '/style.css' })
 
     expect(value.discoveredUris.has('/style.css')).toBe(false)
   })
@@ -113,12 +112,11 @@ describe('handleOpenTag', () => {
   it('should handle case-insensitive rel attribute', () => {
     const value = createMockContext()
 
-    handleOpenTag(
-      value,
-      'link',
-      { rel: 'ALTERNATE', type: 'application/rss+xml', href: '/feed.xml' },
-      false,
-    )
+    handleOpenTag(value, 'link', {
+      rel: 'ALTERNATE',
+      type: 'application/rss+xml',
+      href: '/feed.xml',
+    })
 
     expect(value.discoveredUris.has('/feed.xml')).toBe(true)
   })
@@ -126,7 +124,7 @@ describe('handleOpenTag', () => {
   it('should add anchor tag with href ending in feed URI pattern', () => {
     const value = createMockContext()
 
-    handleOpenTag(value, 'a', { href: '/feed' }, false)
+    handleOpenTag(value, 'a', { href: '/feed' })
 
     expect(value.discoveredUris.has('/feed')).toBe(true)
   })
@@ -134,7 +132,7 @@ describe('handleOpenTag', () => {
   it('should add anchor tag with href ending in rss URI pattern', () => {
     const value = createMockContext()
 
-    handleOpenTag(value, 'a', { href: '/rss' }, false)
+    handleOpenTag(value, 'a', { href: '/rss' })
 
     expect(value.discoveredUris.has('/rss')).toBe(true)
   })
@@ -142,7 +140,7 @@ describe('handleOpenTag', () => {
   it('should store anchor href for text matching', () => {
     const value = createMockContext()
 
-    handleOpenTag(value, 'a', { href: '/custom-feed' }, false)
+    handleOpenTag(value, 'a', { href: '/custom-feed' })
 
     expect(value.currentAnchor.href).toBe('/custom-feed')
   })
@@ -150,7 +148,7 @@ describe('handleOpenTag', () => {
   it('should ignore anchor without href attribute', () => {
     const value = createMockContext()
 
-    handleOpenTag(value, 'a', {}, false)
+    handleOpenTag(value, 'a', {})
 
     expect(value.currentAnchor.href).toBe('')
   })
@@ -158,7 +156,7 @@ describe('handleOpenTag', () => {
   it('should ignore anchor with ignored URI pattern', () => {
     const value = createMockContext()
 
-    handleOpenTag(value, 'a', { href: '#section' }, false)
+    handleOpenTag(value, 'a', { href: '#section' })
 
     expect(value.currentAnchor.href).toBe('')
   })
@@ -166,7 +164,7 @@ describe('handleOpenTag', () => {
   it('should ignore anchor with javascript: URI', () => {
     const value = createMockContext()
 
-    handleOpenTag(value, 'a', { href: 'javascript:void(0)' }, false)
+    handleOpenTag(value, 'a', { href: 'javascript:void(0)' })
 
     expect(value.currentAnchor.href).toBe('')
   })
@@ -174,7 +172,7 @@ describe('handleOpenTag', () => {
   it('should ignore anchor with mailto: URI', () => {
     const value = createMockContext()
 
-    handleOpenTag(value, 'a', { href: 'mailto:user@example.com' }, false)
+    handleOpenTag(value, 'a', { href: 'mailto:user@example.com' })
 
     expect(value.currentAnchor.href).toBe('')
   })
@@ -182,7 +180,7 @@ describe('handleOpenTag', () => {
   it('should handle case-insensitive href matching', () => {
     const value = createMockContext()
 
-    handleOpenTag(value, 'a', { href: '/FEED' }, false)
+    handleOpenTag(value, 'a', { href: '/FEED' })
 
     expect(value.discoveredUris.has('/FEED')).toBe(true)
   })
@@ -190,7 +188,7 @@ describe('handleOpenTag', () => {
   it('should ignore non-link and non-anchor tags', () => {
     const value = createMockContext()
 
-    handleOpenTag(value, 'div', { href: '/feed.xml' }, false)
+    handleOpenTag(value, 'div', { href: '/feed.xml' })
 
     expect(value.discoveredUris.size).toBe(0)
   })
@@ -198,18 +196,16 @@ describe('handleOpenTag', () => {
   it('should handle multiple link tags in sequence', () => {
     const value = createMockContext()
 
-    handleOpenTag(
-      value,
-      'link',
-      { rel: 'alternate', type: 'application/rss+xml', href: '/feed.xml' },
-      false,
-    )
-    handleOpenTag(
-      value,
-      'link',
-      { rel: 'alternate', type: 'application/atom+xml', href: '/atom.xml' },
-      false,
-    )
+    handleOpenTag(value, 'link', {
+      rel: 'alternate',
+      type: 'application/rss+xml',
+      href: '/feed.xml',
+    })
+    handleOpenTag(value, 'link', {
+      rel: 'alternate',
+      type: 'application/atom+xml',
+      href: '/atom.xml',
+    })
 
     expect(value.discoveredUris.has('/feed.xml')).toBe(true)
     expect(value.discoveredUris.has('/atom.xml')).toBe(true)
@@ -218,7 +214,7 @@ describe('handleOpenTag', () => {
   it('should handle anchor with path containing feed pattern', () => {
     const value = createMockContext()
 
-    handleOpenTag(value, 'a', { href: '/blog/feed' }, false)
+    handleOpenTag(value, 'a', { href: '/blog/feed' })
 
     expect(value.discoveredUris.has('/blog/feed')).toBe(true)
   })
@@ -277,7 +273,7 @@ describe('handleCloseTag', () => {
     value.currentAnchor.href = '/custom-feed'
     value.currentAnchor.text = 'RSS Feed'
 
-    handleCloseTag(value, 'a', false)
+    handleCloseTag(value, 'a')
 
     expect(value.discoveredUris.has('/custom-feed')).toBe(true)
   })
@@ -287,7 +283,7 @@ describe('handleCloseTag', () => {
     value.currentAnchor.href = '/custom-rss'
     value.currentAnchor.text = 'Subscribe to RSS'
 
-    handleCloseTag(value, 'a', false)
+    handleCloseTag(value, 'a')
 
     expect(value.discoveredUris.has('/custom-rss')).toBe(true)
   })
@@ -297,7 +293,7 @@ describe('handleCloseTag', () => {
     value.currentAnchor.href = '/custom-atom'
     value.currentAnchor.text = 'Atom Feed'
 
-    handleCloseTag(value, 'a', false)
+    handleCloseTag(value, 'a')
 
     expect(value.discoveredUris.has('/custom-atom')).toBe(true)
   })
@@ -307,7 +303,7 @@ describe('handleCloseTag', () => {
     value.currentAnchor.href = '/custom-page'
     value.currentAnchor.text = 'Read More'
 
-    handleCloseTag(value, 'a', false)
+    handleCloseTag(value, 'a')
 
     expect(value.discoveredUris.has('/custom-page')).toBe(false)
   })
@@ -317,7 +313,7 @@ describe('handleCloseTag', () => {
     value.currentAnchor.href = ''
     value.currentAnchor.text = 'RSS Feed'
 
-    handleCloseTag(value, 'a', false)
+    handleCloseTag(value, 'a')
 
     expect(value.discoveredUris.size).toBe(0)
   })
@@ -327,7 +323,7 @@ describe('handleCloseTag', () => {
     value.currentAnchor.href = '/custom-feed'
     value.currentAnchor.text = ''
 
-    handleCloseTag(value, 'a', false)
+    handleCloseTag(value, 'a')
 
     expect(value.discoveredUris.has('/custom-feed')).toBe(false)
   })
@@ -337,7 +333,7 @@ describe('handleCloseTag', () => {
     value.currentAnchor.href = '/custom-feed'
     value.currentAnchor.text = 'RSS FEED'
 
-    handleCloseTag(value, 'a', false)
+    handleCloseTag(value, 'a')
 
     expect(value.discoveredUris.has('/custom-feed')).toBe(true)
   })
@@ -347,7 +343,7 @@ describe('handleCloseTag', () => {
     value.currentAnchor.href = '/custom-feed'
     value.currentAnchor.text = '  rss  '
 
-    handleCloseTag(value, 'a', false)
+    handleCloseTag(value, 'a')
 
     expect(value.discoveredUris.has('/custom-feed')).toBe(true)
   })
@@ -357,7 +353,7 @@ describe('handleCloseTag', () => {
     value.currentAnchor.href = '/custom-feed'
     value.currentAnchor.text = 'RSS Feed'
 
-    handleCloseTag(value, 'a', false)
+    handleCloseTag(value, 'a')
 
     expect(value.currentAnchor.href).toBe('')
     expect(value.currentAnchor.text).toBe('')
@@ -368,7 +364,7 @@ describe('handleCloseTag', () => {
     value.currentAnchor.href = '/custom-feed'
     value.currentAnchor.text = 'RSS Feed'
 
-    handleCloseTag(value, 'div', false)
+    handleCloseTag(value, 'div')
 
     expect(value.currentAnchor.href).toBe('/custom-feed')
     expect(value.currentAnchor.text).toBe('RSS Feed')
@@ -379,7 +375,7 @@ describe('handleCloseTag', () => {
     value.currentAnchor.href = '/custom-feed'
     value.currentAnchor.text = 'Subscribe to our RSS feed here'
 
-    handleCloseTag(value, 'a', false)
+    handleCloseTag(value, 'a')
 
     expect(value.discoveredUris.has('/custom-feed')).toBe(true)
   })

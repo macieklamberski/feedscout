@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import { generateFeedUrlCombinations, processConcurrently } from './utils.js'
+import { generateFeedUrlCombinations, getSubdomainVariants, getWwwCounterpart } from './utils.js'
 
 describe('generateFeedUrlCombinations', () => {
   it('should generate all URL combinations from multiple bases and URIs', () => {
@@ -144,186 +144,143 @@ describe('generateFeedUrlCombinations', () => {
   })
 })
 
-describe('processConcurrently', () => {
-  it('should process all items with concurrency limit', async () => {
-    const items = [1, 2, 3, 4, 5]
-    const processed: Array<number> = []
-    const processFn = async (item: number) => {
-      await new Promise((resolve) => {
-        return setTimeout(resolve, 10)
-      })
-      processed.push(item)
-    }
+describe('getWwwCounterpart', () => {
+  it('should add www to non-www domain', () => {
+    const value = 'https://example.com'
+    const expected = ['https://www.example.com']
 
-    await processConcurrently(items, processFn, { concurrency: 2 })
-
-    expect(processed.sort((a, b) => a - b)).toEqual([1, 2, 3, 4, 5])
+    expect(getWwwCounterpart(value)).toEqual(expected)
   })
 
-  it('should respect concurrency limit', async () => {
-    const items = [1, 2, 3, 4, 5]
-    let maxConcurrent = 0
-    let currentConcurrent = 0
-    const processFn = async () => {
-      currentConcurrent++
-      maxConcurrent = Math.max(maxConcurrent, currentConcurrent)
-      await new Promise((resolve) => {
-        return setTimeout(resolve, 50)
-      })
-      currentConcurrent--
-    }
+  it('should remove www from www domain', () => {
+    const value = 'https://www.example.com'
+    const expected = ['https://example.com']
 
-    await processConcurrently(items, processFn, { concurrency: 3 })
-
-    expect(maxConcurrent).toBe(3)
+    expect(getWwwCounterpart(value)).toEqual(expected)
   })
 
-  it('should stop early when shouldStop returns true', async () => {
-    const items = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-    const processed: Array<number> = []
-    const processFn = async (item: number) => {
-      await new Promise((resolve) => {
-        return setTimeout(resolve, 10)
-      })
-      processed.push(item)
-    }
+  it('should handle http protocol', () => {
+    const value = 'http://example.com'
+    const expected = ['http://www.example.com']
 
-    await processConcurrently(items, processFn, {
-      concurrency: 2,
-      shouldStop: () => {
-        return processed.length >= 5
-      },
-    })
-
-    expect(processed.length).toBeLessThanOrEqual(7)
+    expect(getWwwCounterpart(value)).toEqual(expected)
   })
 
-  it('should handle errors in processFn', async () => {
-    const items = [1, 2, 3, 4, 5]
-    const processed: Array<number> = []
-    const processFn = async (item: number) => {
-      if (item === 3) {
-        throw new Error('Test error')
-      }
-      processed.push(item)
-    }
+  it('should preserve port numbers', () => {
+    const value = 'https://example.com:8080'
+    const expected = ['https://www.example.com:8080']
 
-    await processConcurrently(items, processFn, { concurrency: 2 })
-
-    expect(processed.sort((a, b) => a - b)).toEqual([1, 2, 4, 5])
+    expect(getWwwCounterpart(value)).toEqual(expected)
   })
 
-  it('should handle empty array', async () => {
-    const items: Array<number> = []
-    const processed: Array<number> = []
-    const processFn = async (item: number) => {
-      processed.push(item)
-    }
+  it('should add www to domain with existing subdomain', () => {
+    const value = 'https://blog.example.com'
+    const expected = ['https://www.blog.example.com']
 
-    await processConcurrently(items, processFn, { concurrency: 2 })
-
-    expect(processed).toEqual([])
+    expect(getWwwCounterpart(value)).toEqual(expected)
   })
 
-  it('should process single item', async () => {
-    const items = [1]
-    const processed: Array<number> = []
-    const processFn = async (item: number) => {
-      processed.push(item)
-    }
+  it('should remove www from domain with other subdomain', () => {
+    const value = 'https://www.blog.example.com'
+    const expected = ['https://blog.example.com']
 
-    await processConcurrently(items, processFn, { concurrency: 2 })
-
-    expect(processed).toEqual([1])
+    expect(getWwwCounterpart(value)).toEqual(expected)
   })
 
-  it('should handle concurrency of 1', async () => {
-    const items = [1, 2, 3]
-    const processed: Array<number> = []
-    let maxConcurrent = 0
-    let currentConcurrent = 0
-    const processFn = async (item: number) => {
-      currentConcurrent++
-      maxConcurrent = Math.max(maxConcurrent, currentConcurrent)
-      await new Promise((resolve) => {
-        return setTimeout(resolve, 10)
-      })
-      processed.push(item)
-      currentConcurrent--
-    }
+  it('should ignore paths and query params in origin', () => {
+    const value = 'https://example.com/path?query=1'
+    const expected = ['https://www.example.com']
 
-    await processConcurrently(items, processFn, { concurrency: 1 })
+    expect(getWwwCounterpart(value)).toEqual(expected)
+  })
+})
 
-    expect(maxConcurrent).toBe(1)
-    expect(processed).toEqual([1, 2, 3])
+describe('getSubdomainVariants', () => {
+  it('should generate single subdomain variant', () => {
+    const value = 'https://example.com'
+    const expected = ['https://blog.example.com']
+
+    expect(getSubdomainVariants(value, ['blog'])).toEqual(expected)
   })
 
-  it('should handle concurrency greater than items length', async () => {
-    const items = [1, 2, 3]
-    const processed: Array<number> = []
-    const processFn = async (item: number) => {
-      await new Promise((resolve) => {
-        return setTimeout(resolve, 10)
-      })
-      processed.push(item)
-    }
+  it('should generate multiple subdomain variants', () => {
+    const value = 'https://example.com'
+    const expected = [
+      'https://blog.example.com',
+      'https://feeds.example.com',
+      'https://news.example.com',
+    ]
 
-    await processConcurrently(items, processFn, { concurrency: 10 })
-
-    expect(processed.sort((a, b) => a - b)).toEqual([1, 2, 3])
+    expect(getSubdomainVariants(value, ['blog', 'feeds', 'news'])).toEqual(expected)
   })
 
-  it('should process items in parallel when concurrency allows', async () => {
-    const items = [1, 2, 3]
-    const startTimes: Array<number> = []
-    const processFn = async () => {
-      startTimes.push(Date.now())
-      await new Promise((resolve) => {
-        return setTimeout(resolve, 50)
-      })
-    }
+  it('should return root domain when prefix is empty string', () => {
+    const value = 'https://www.example.com'
+    const expected = ['https://example.com']
 
-    await processConcurrently(items, processFn, { concurrency: 3 })
-    const timeDifferences = startTimes.slice(1).map((time, index) => {
-      return time - startTimes[index]
-    })
-
-    expect(timeDifferences.every((diff) => diff < 30)).toBe(true)
+    expect(getSubdomainVariants(value, [''])).toEqual(expected)
   })
 
-  it('should maintain side effects order independence', async () => {
-    const items = [1, 2, 3, 4, 5]
-    const results: Array<number> = []
-    const processFn = async (item: number) => {
-      await new Promise((resolve) => {
-        return setTimeout(resolve, Math.random() * 50)
-      })
-      results.push(item * 2)
-    }
+  it('should handle mix of empty and non-empty prefixes', () => {
+    const value = 'https://www.example.com'
+    const expected = ['https://example.com', 'https://blog.example.com']
 
-    await processConcurrently(items, processFn, { concurrency: 3 })
-    const expected = [2, 4, 6, 8, 10]
-
-    expect(results.sort((a, b) => a - b)).toEqual(expected)
+    expect(getSubdomainVariants(value, ['', 'blog'])).toEqual(expected)
   })
 
-  it('should not call shouldStop after completion', async () => {
-    const items = [1, 2, 3]
-    let shouldStopCallCount = 0
-    const processFn = async () => {
-      await new Promise((resolve) => {
-        return setTimeout(resolve, 10)
-      })
-    }
+  it('should preserve http protocol', () => {
+    const value = 'http://example.com'
+    const expected = ['http://blog.example.com']
 
-    await processConcurrently(items, processFn, {
-      concurrency: 2,
-      shouldStop: () => {
-        shouldStopCallCount++
-        return false
-      },
-    })
+    expect(getSubdomainVariants(value, ['blog'])).toEqual(expected)
+  })
 
-    expect(shouldStopCallCount).toBeGreaterThan(0)
+  it('should preserve port numbers', () => {
+    const value = 'https://example.com:8080'
+    const expected = ['https://blog.example.com:8080']
+
+    expect(getSubdomainVariants(value, ['blog'])).toEqual(expected)
+  })
+
+  it('should strip existing subdomain and apply new ones', () => {
+    const value = 'https://www.example.com'
+    const expected = ['https://blog.example.com', 'https://feeds.example.com']
+
+    expect(getSubdomainVariants(value, ['blog', 'feeds'])).toEqual(expected)
+  })
+
+  it('should handle multi-level existing subdomain', () => {
+    const value = 'https://api.v2.example.com'
+    const expected = ['https://blog.example.com']
+
+    expect(getSubdomainVariants(value, ['blog'])).toEqual(expected)
+  })
+
+  it('should handle www in prefixes', () => {
+    const value = 'https://example.com'
+    const expected = ['https://www.example.com']
+
+    expect(getSubdomainVariants(value, ['www'])).toEqual(expected)
+  })
+
+  it('should return empty array for empty prefix array', () => {
+    const value = 'https://example.com'
+    const expected: Array<string> = []
+
+    expect(getSubdomainVariants(value, [])).toEqual(expected)
+  })
+
+  it('should return empty array for localhost', () => {
+    const value = 'http://localhost'
+    const expected: Array<string> = []
+
+    expect(getSubdomainVariants(value, ['blog'])).toEqual(expected)
+  })
+
+  it('should return empty array for IP addresses', () => {
+    const value = 'http://192.168.1.1'
+    const expected: Array<string> = []
+
+    expect(getSubdomainVariants(value, ['blog'])).toEqual(expected)
   })
 })

@@ -7,6 +7,7 @@ export const discoverFeedUrisFromHtml = (html: string, options: Options): Array<
     discoveredUris: new Set<string>(),
     currentAnchor: { href: '', text: '' },
     options,
+    baseUrl: options.baseUrl,
   }
 
   const handlers = createHtmlFeedUrisHandlers(context)

@@ -1,3 +1,14 @@
+export const generateFeedUrlCombinations = (
+  baseUrls: Array<string>,
+  feedUris: Array<string>,
+): Array<string> => {
+  return baseUrls.flatMap((base) => {
+    return feedUris.map((uri) => {
+      return new URL(uri, base).toString()
+    })
+  })
+}
+
 /**
  * Get the www/non-www counterpart of a URL.
  *
