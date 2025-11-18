@@ -1,4 +1,4 @@
-import type { FetchFn } from './types.js'
+import type { FetchFn } from '../common/types.js'
 
 // biome-ignore lint/suspicious/noExplicitAny: To avoid importing the types from libraries.
 type AnyInstance = any

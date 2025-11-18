@@ -4,7 +4,8 @@
     "target": "esnext",
     "module": "nodenext",
     "moduleResolution": "nodenext",
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "resolveJsonModule": true
   },
   "include": ["src"]
 }
