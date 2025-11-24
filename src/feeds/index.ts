@@ -2,7 +2,7 @@ import type { ExtractFn, FeedInfo } from '../common/types.js'
 import locales from '../locales.json' with { type: 'json' }
 import { discoverFeedUris } from '../methods/index.js'
 import { createNativeFetchAdapter } from './adapters.js'
-import { createDefaultExtractor } from './extractors.js'
+import { createFeedsmithExtractor } from './extractors.js'
 import type { DiscoverFeedsInput, DiscoverFeedsOptions } from './types.js'
 import { normalizeInput, normalizeMethodsConfig, processConcurrently } from './utils.js'
 
@@ -13,7 +13,7 @@ export const discoverFeeds = async <T extends FeedInfo = FeedInfo>(
   const {
     methods,
     fetchFn = createNativeFetchAdapter(),
-    extractFn = createDefaultExtractor() as ExtractFn<T>,
+    extractFn = createFeedsmithExtractor() as ExtractFn<T>,
     concurrency = 3,
     stopOnFirst = false,
     includeInvalid = false,

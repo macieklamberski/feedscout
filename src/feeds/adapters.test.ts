@@ -7,7 +7,6 @@ import {
   createNativeFetchAdapter,
 } from './adapters.js'
 
-// Mock helper with type assertion - necessary because we can't fully implement the fetch interface in tests
 // biome-ignore lint/suspicious/noExplicitAny: Mock helper needs flexible signature
 const createFetchMock = <T extends (...args: Array<any>) => Promise<Response>>(
   implementation: T,
@@ -15,7 +14,6 @@ const createFetchMock = <T extends (...args: Array<any>) => Promise<Response>>(
   return implementation as unknown as typeof fetch
 }
 
-// Helper to create partial Response objects for testing
 type MockResponse = Pick<Response, 'headers' | 'text' | 'url' | 'status' | 'statusText'>
 
 const createMockResponse = (partial: Partial<MockResponse>): Response => {
@@ -45,7 +43,6 @@ describe('createNativeFetchAdapter', () => {
       }),
     )
     const adapter = createNativeFetchAdapter()
-
     const result = await adapter('https://example.com/feed.xml')
 
     expect(result.url).toBe('https://example.com/feed.xml')
@@ -151,7 +148,6 @@ describe('createNativeFetchAdapter', () => {
     }
     fetchSpy.mockImplementation(createFetchMock(mockFetch))
     const adapter = createNativeFetchAdapter()
-
     const result = await adapter('https://example.com/feed.xml')
 
     expect(result.url).toBe('https://redirect.example.com/feed.xml')
@@ -165,7 +161,6 @@ describe('createNativeFetchAdapter', () => {
     }
     fetchSpy.mockImplementation(createFetchMock(mockFetch))
     const adapter = createNativeFetchAdapter()
-
     const result = await adapter('https://example.com/feed.xml')
 
     expect(result.body).toBe('<rss>feed content</rss>')
@@ -180,7 +175,6 @@ describe('createNativeFetchAdapter', () => {
     }
     fetchSpy.mockImplementation(createFetchMock(mockFetch))
     const adapter = createNativeFetchAdapter()
-
     const result = await adapter('https://example.com/feed.xml')
 
     expect(result.status).toBe(404)
@@ -279,7 +273,6 @@ describe('createGotAdapter', () => {
       }
     }
     const adapter = createGotAdapter(mockGot)
-
     const result = await adapter('https://example.com/feed.xml')
 
     expect(result.headers).toBeInstanceOf(Headers)
@@ -297,7 +290,6 @@ describe('createGotAdapter', () => {
       }
     }
     const adapter = createGotAdapter(mockGot)
-
     const result = await adapter('https://example.com/feed.xml')
 
     expect(result.url).toBe('https://redirect.example.com/feed.xml')
@@ -314,7 +306,6 @@ describe('createGotAdapter', () => {
       }
     }
     const adapter = createGotAdapter(mockGot)
-
     const result = await adapter('https://example.com/feed.xml')
 
     expect(result.status).toBe(404)
@@ -331,7 +322,6 @@ describe('createGotAdapter', () => {
       }
     }
     const adapter = createGotAdapter(mockGot)
-
     const result = await adapter('https://example.com/feed.xml')
 
     expect(result.statusText).toBe('OK')
@@ -348,7 +338,6 @@ describe('createGotAdapter', () => {
       }
     }
     const adapter = createGotAdapter(mockGot)
-
     const result = await adapter('https://example.com/feed.xml')
 
     expect(result.body).toBe('<rss>feed content</rss>')
@@ -450,7 +439,6 @@ describe('createAxiosAdapter', () => {
       }
     }
     const adapter = createAxiosAdapter(mockAxios)
-
     const result = await adapter('https://example.com/feed.xml')
 
     expect(result.headers).toBeInstanceOf(Headers)
@@ -472,7 +460,6 @@ describe('createAxiosAdapter', () => {
       }
     }
     const adapter = createAxiosAdapter(mockAxios)
-
     const result = await adapter('https://example.com/feed.xml')
 
     expect(result.url).toBe('https://redirect.example.com/feed.xml')
@@ -489,7 +476,6 @@ describe('createAxiosAdapter', () => {
       }
     }
     const adapter = createAxiosAdapter(mockAxios)
-
     const result = await adapter('https://example.com/feed.xml')
 
     expect(result.url).toBe('https://example.com/feed.xml')
@@ -506,7 +492,6 @@ describe('createAxiosAdapter', () => {
       }
     }
     const adapter = createAxiosAdapter(mockAxios)
-
     const result = await adapter('https://example.com/feed.xml')
 
     expect(result.body).toBe('<rss>feed content</rss>')
@@ -523,7 +508,6 @@ describe('createAxiosAdapter', () => {
       }
     }
     const adapter = createAxiosAdapter(mockAxios)
-
     const result = await adapter('https://example.com/feed.xml')
 
     expect(result.status).toBe(404)
@@ -538,9 +522,7 @@ describe('createKyAdapter', () => {
       capturedUrl = url
       return {
         headers: new Headers(),
-        text: async () => {
-          return ''
-        },
+        text: async () => '',
         url,
         status: 200,
         statusText: 'OK',
@@ -559,9 +541,7 @@ describe('createKyAdapter', () => {
       capturedOptions = options
       return {
         headers: new Headers(),
-        text: async () => {
-          return ''
-        },
+        text: async () => '',
         url: '',
         status: 200,
         statusText: 'OK',
@@ -580,9 +560,7 @@ describe('createKyAdapter', () => {
       capturedOptions = options
       return {
         headers: new Headers(),
-        text: async () => {
-          return ''
-        },
+        text: async () => '',
         url: '',
         status: 200,
         statusText: 'OK',
@@ -604,9 +582,7 @@ describe('createKyAdapter', () => {
       capturedOptions = options
       return {
         headers: new Headers(),
-        text: async () => {
-          return ''
-        },
+        text: async () => '',
         url: '',
         status: 200,
         statusText: 'OK',
@@ -623,16 +599,13 @@ describe('createKyAdapter', () => {
     const mockKy = async () => {
       return {
         headers: new Headers({ 'content-type': 'application/rss+xml' }),
-        text: async () => {
-          return ''
-        },
+        text: async () => '',
         url: '',
         status: 200,
         statusText: 'OK',
       }
     }
     const adapter = createKyAdapter(mockKy)
-
     const result = await adapter('https://example.com/feed.xml')
 
     expect(result.headers.get('content-type')).toBe('application/rss+xml')
@@ -642,16 +615,13 @@ describe('createKyAdapter', () => {
     const mockKy = async () => {
       return {
         headers: new Headers(),
-        text: async () => {
-          return '<rss>feed content</rss>'
-        },
+        text: async () => '<rss>feed content</rss>',
         url: '',
         status: 200,
         statusText: 'OK',
       }
     }
     const adapter = createKyAdapter(mockKy)
-
     const result = await adapter('https://example.com/feed.xml')
 
     expect(result.body).toBe('<rss>feed content</rss>')
@@ -661,16 +631,13 @@ describe('createKyAdapter', () => {
     const mockKy = async () => {
       return {
         headers: new Headers(),
-        text: async () => {
-          return ''
-        },
+        text: async () => '',
         url: 'https://redirect.example.com/feed.xml',
         status: 200,
         statusText: 'OK',
       }
     }
     const adapter = createKyAdapter(mockKy)
-
     const result = await adapter('https://example.com/feed.xml')
 
     expect(result.url).toBe('https://redirect.example.com/feed.xml')
@@ -680,16 +647,13 @@ describe('createKyAdapter', () => {
     const mockKy = async () => {
       return {
         headers: new Headers(),
-        text: async () => {
-          return ''
-        },
+        text: async () => '',
         url: '',
         status: 404,
         statusText: 'Not Found',
       }
     }
     const adapter = createKyAdapter(mockKy)
-
     const result = await adapter('https://example.com/feed.xml')
 
     expect(result.status).toBe(404)
