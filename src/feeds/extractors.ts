@@ -1,42 +1,54 @@
+import { parseFeed } from 'feedsmith'
+import type { Atom, DeepPartial } from 'feedsmith/types'
 import type { ExtractFn } from '../common/types.js'
 
-/**
- * Default feed extractor using content-based detection.
- *
- * Checks content for feed markers using regex patterns.
- * Does NOT use HTTP headers (headers parameter available for custom extractors).
- *
- * TODO: Replace with feedsmith parsing for robust detection and metadata extraction.
- * Currently uses regex patterns for basic detection.
- * Future: Use feedsmith.parse() to validate feed structure and extract title, description, etc.
- */
-export const createDefaultExtractor = (): ExtractFn => {
+const getLinkOfType = (links: Array<DeepPartial<Atom.Link<string>>> | undefined, rel: string) => {
+  return links?.find((link) => link.rel === rel)
+}
+
+export const createFeedsmithExtractor = (): ExtractFn => {
   return async ({ content, url }) => {
     if (!content) {
       return { url, isFeed: false }
     }
 
-    // Reject if it looks like HTML
-    if (/<html/i.test(content)) {
-      return { url, isFeed: false }
-    }
+    try {
+      const { format, feed } = parseFeed(content)
 
-    // Detect feed format from content markers
-    if (/<rss/i.test(content)) {
-      return { url, isFeed: true, format: 'rss' }
-    }
+      if (format === 'rss' || format === 'rdf') {
+        return {
+          url,
+          isFeed: true,
+          format,
+          title: feed.title,
+          description: feed.description,
+          siteUrl: getLinkOfType(feed.atom?.links, 'alternate')?.href || feed.link,
+        }
+      }
 
-    if (/<feed/i.test(content)) {
-      return { url, isFeed: true, format: 'atom' }
-    }
+      if (format === 'atom') {
+        return {
+          url,
+          isFeed: true,
+          format,
+          title: feed.title,
+          description: feed.subtitle,
+          siteUrl: getLinkOfType(feed.links, 'alternate')?.href,
+        }
+      }
 
-    if (/<rdf/i.test(content)) {
-      return { url, isFeed: true, format: 'rdf' }
-    }
-
-    // JSON Feed: check for version field with jsonfeed.org URL
-    if (/"version"/i.test(content) && /jsonfeed\.org/i.test(content)) {
-      return { url, isFeed: true, format: 'json' }
+      if (format === 'json') {
+        return {
+          url,
+          isFeed: true,
+          format,
+          title: feed.title,
+          description: feed.description,
+          siteUrl: feed.home_page_url,
+        }
+      }
+    } catch {
+      // Silently fail and go further with the default return.
     }
 
     return { url, isFeed: false }

@@ -1,33 +1,41 @@
 import { describe, expect, it } from 'bun:test'
-import type { FeedInfo, FetchFnResponse, Progress } from '../common/types.js'
+import type { FeedInfo, FetchFn, Progress } from '../common/types.js'
 import locales from '../locales.json' with { type: 'json' }
 import { feedUrisBalanced, feedUrisComprehensive, feedUrisMinimal } from '../methods/guess/index.js'
 import { discoverFeeds } from './index.js'
 
-const createMockFetch = (
-  responses: Record<string, string>,
-): ((url: string) => Promise<FetchFnResponse>) => {
-  return async (url: string): Promise<FetchFnResponse> => {
-    const body = responses[url] ?? ''
-    return {
-      url,
-      body,
-      headers: new Headers(),
-      status: 200,
-      statusText: 'OK',
-    }
-  }
+const createMockFetch = (responses: Record<string, string>): FetchFn => {
+  return async (url: string) => ({
+    url,
+    body: responses[url] ?? '',
+    headers: new Headers(),
+    status: 200,
+    statusText: 'OK',
+  })
 }
 
 describe('discoverFeeds', () => {
   it('should find valid feeds using guess method with default URIs', async () => {
-    const rss = '<?xml version="1.0"?><rss version="2.0"><channel></channel></rss>'
-    const atom = '<?xml version="1.0"?><feed xmlns="http://www.w3.org/2005/Atom"></feed>'
+    const rss = `
+      <rss version="2.0">
+        <channel>
+          <title>Test RSS</title>
+          <link>https://example.com</link>
+          <description>Test feed</description>
+        </channel>
+      </rss>
+    `
+    const atom = `
+      <feed xmlns="http://www.w3.org/2005/Atom">
+        <title>Test Atom</title>
+        <link rel="alternate" href="https://example.com"/>
+        <subtitle>Test feed</subtitle>
+      </feed>
+    `
     const mockFetch = createMockFetch({
       'https://example.com/feed': rss,
       'https://example.com/atom': atom,
     })
-
     const value = await discoverFeeds(
       { url: 'https://example.com' },
       {
@@ -35,17 +43,22 @@ describe('discoverFeeds', () => {
         fetchFn: mockFetch,
       },
     )
-
     const expected: Array<FeedInfo> = [
       {
         url: 'https://example.com/feed',
         isFeed: true,
         format: 'rss',
+        title: 'Test RSS',
+        description: 'Test feed',
+        siteUrl: 'https://example.com',
       },
       {
         url: 'https://example.com/atom',
         isFeed: true,
         format: 'atom',
+        title: 'Test Atom',
+        description: 'Test feed',
+        siteUrl: 'https://example.com',
       },
     ]
 
@@ -54,10 +67,17 @@ describe('discoverFeeds', () => {
 
   it('should detect feed format from content', async () => {
     const mockFetch = createMockFetch({
-      'https://example.com/feed':
-        '<?xml version="1.0"?><rss version="2.0"><channel></channel></rss>',
-    })
+      'https://example.com/feed': `
 
+        <rss version="2.0">
+          <channel>
+            <title>Test RSS</title>
+            <link>https://example.com</link>
+            <description>Test feed</description>
+          </channel>
+        </rss>
+      `,
+    })
     const value = await discoverFeeds(
       { url: 'https://example.com' },
       {
@@ -65,12 +85,14 @@ describe('discoverFeeds', () => {
         fetchFn: mockFetch,
       },
     )
-
     const expected: Array<FeedInfo> = [
       {
         url: 'https://example.com/feed',
         isFeed: true,
         format: 'rss',
+        title: 'Test RSS',
+        description: 'Test feed',
+        siteUrl: 'https://example.com',
       },
     ]
 
@@ -79,11 +101,19 @@ describe('discoverFeeds', () => {
 
   it('should stop on first valid feed when stopOnFirst is true', async () => {
     let fetchCount = 0
-    const mockFetch = async (url: string): Promise<FetchFnResponse> => {
+    const mockFetch: FetchFn = async (url) => {
       fetchCount++
       return {
         url,
-        body: '<?xml version="1.0"?><rss version="2.0"><channel></channel></rss>',
+        body: `
+          <rss version="2.0">
+            <channel>
+              <title>Test RSS</title>
+              <link>https://example.com</link>
+              <description>Test feed</description>
+            </channel>
+          </rss>
+        `,
         headers: new Headers(),
         status: 200,
         statusText: 'OK',
@@ -98,12 +128,14 @@ describe('discoverFeeds', () => {
         concurrency: 1,
       },
     )
-
     const expected: Array<FeedInfo> = [
       {
         url: 'https://example.com/feed1',
         isFeed: true,
         format: 'rss',
+        title: 'Test RSS',
+        description: 'Test feed',
+        siteUrl: 'https://example.com',
       },
     ]
 
@@ -119,8 +151,16 @@ describe('discoverFeeds', () => {
       current: string
     }> = []
     const mockFetch = createMockFetch({
-      'https://example.com/feed':
-        '<?xml version="1.0"?><rss version="2.0"><channel></channel></rss>',
+      'https://example.com/feed': `
+
+        <rss version="2.0">
+          <channel>
+            <title>Test RSS</title>
+            <link>https://example.com</link>
+            <description>Test feed</description>
+          </channel>
+        </rss>
+      `,
     })
 
     await discoverFeeds(
@@ -133,7 +173,6 @@ describe('discoverFeeds', () => {
         },
       },
     )
-
     const expected: Array<Progress> = [
       {
         tested: 1,
@@ -153,7 +192,7 @@ describe('discoverFeeds', () => {
   })
 
   it('should handle fetch errors gracefully', async () => {
-    const mockFetch = async (_url: string): Promise<FetchFnResponse> => {
+    const mockFetch: FetchFn = async () => {
       throw new Error('Network error')
     }
     const value = await discoverFeeds(
@@ -168,7 +207,7 @@ describe('discoverFeeds', () => {
   })
 
   it('should include errors when includeInvalid is true', async () => {
-    const mockFetch = async (_url: string): Promise<FetchFnResponse> => {
+    const mockFetch: FetchFn = async () => {
       throw new Error('Network error')
     }
     const value = await discoverFeeds(
@@ -221,7 +260,6 @@ describe('discoverFeeds', () => {
         extractFn: customExtractor,
       },
     )
-
     const expected: Array<FeedInfo> = [
       {
         url: 'https://example.com/feed',
@@ -236,7 +274,7 @@ describe('discoverFeeds', () => {
   it('should respect concurrency limit', async () => {
     let maxConcurrent = 0
     let currentConcurrent = 0
-    const mockFetch = async (url: string): Promise<FetchFnResponse> => {
+    const mockFetch: FetchFn = async (url) => {
       currentConcurrent++
       maxConcurrent = Math.max(maxConcurrent, currentConcurrent)
       await new Promise((resolve) => {
@@ -245,7 +283,15 @@ describe('discoverFeeds', () => {
       currentConcurrent--
       return {
         url,
-        body: '<?xml version="1.0"?><rss version="2.0"><channel></channel></rss>',
+        body: `
+          <rss version="2.0">
+            <channel>
+              <title>Test RSS</title>
+              <link>https://example.com</link>
+              <description>Test feed</description>
+            </channel>
+          </rss>
+        `,
         headers: new Headers(),
         status: 200,
         statusText: 'OK',
@@ -265,12 +311,19 @@ describe('discoverFeeds', () => {
   })
 
   it('should work with minimal feed URIs array', async () => {
-    const rss = '<?xml version="1.0"?><rss version="2.0"><channel></channel></rss>'
+    const rss = `
+      <rss version="2.0">
+        <channel>
+          <title>Test RSS</title>
+          <link>https://example.com</link>
+          <description>Test feed</description>
+        </channel>
+      </rss>
+    `
     const mockFetch = createMockFetch({
       'https://example.com/feed': rss,
       'https://example.com/rss': rss,
     })
-
     const value = await discoverFeeds(
       { url: 'https://example.com' },
       {
@@ -278,17 +331,22 @@ describe('discoverFeeds', () => {
         fetchFn: mockFetch,
       },
     )
-
     const expected: Array<FeedInfo> = [
       {
         url: 'https://example.com/feed',
         isFeed: true,
         format: 'rss',
+        title: 'Test RSS',
+        description: 'Test feed',
+        siteUrl: 'https://example.com',
       },
       {
         url: 'https://example.com/rss',
         isFeed: true,
         format: 'rss',
+        title: 'Test RSS',
+        description: 'Test feed',
+        siteUrl: 'https://example.com',
       },
     ]
 
@@ -297,9 +355,14 @@ describe('discoverFeeds', () => {
 
   it('should work with balanced feed URIs array', async () => {
     const mockFetch = createMockFetch({
-      'https://example.com/feed.json': '{"version":"https://jsonfeed.org/version/1.1"}',
+      'https://example.com/feed.json': JSON.stringify({
+        version: 'https://jsonfeed.org/version/1.1',
+        title: 'Test JSON Feed',
+        home_page_url: 'https://example.com',
+        description: 'Test feed',
+        items: [],
+      }),
     })
-
     const value = await discoverFeeds(
       { url: 'https://example.com' },
       {
@@ -307,12 +370,14 @@ describe('discoverFeeds', () => {
         fetchFn: mockFetch,
       },
     )
-
     const expected: Array<FeedInfo> = [
       {
         url: 'https://example.com/feed.json',
         isFeed: true,
         format: 'json',
+        title: 'Test JSON Feed',
+        description: 'Test feed',
+        siteUrl: 'https://example.com',
       },
     ]
 
@@ -320,12 +385,19 @@ describe('discoverFeeds', () => {
   })
 
   it('should work with comprehensive feed URIs array', async () => {
-    const rss = '<?xml version="1.0"?><rss version="2.0"><channel></channel></rss>'
+    const rss = `
+      <rss version="2.0">
+        <channel>
+          <title>Test RSS</title>
+          <link>https://example.com</link>
+          <description>Test feed</description>
+        </channel>
+      </rss>
+    `
     const mockFetch = createMockFetch({
       'https://example.com/?feed=rss': rss,
       'https://example.com/feeds/posts/default': rss,
     })
-
     const value = await discoverFeeds(
       { url: 'https://example.com' },
       {
@@ -333,17 +405,22 @@ describe('discoverFeeds', () => {
         fetchFn: mockFetch,
       },
     )
-
     const expected: Array<FeedInfo> = [
       {
         url: 'https://example.com/?feed=rss',
         isFeed: true,
         format: 'rss',
+        title: 'Test RSS',
+        description: 'Test feed',
+        siteUrl: 'https://example.com',
       },
       {
         url: 'https://example.com/feeds/posts/default',
         isFeed: true,
         format: 'rss',
+        title: 'Test RSS',
+        description: 'Test feed',
+        siteUrl: 'https://example.com',
       },
     ]
 
@@ -351,13 +428,20 @@ describe('discoverFeeds', () => {
   })
 
   it('should test additional base URLs alongside main baseUrl', async () => {
-    const rss = '<?xml version="1.0"?><rss version="2.0"><channel></channel></rss>'
+    const rss = `
+      <rss version="2.0">
+        <channel>
+          <title>Test RSS</title>
+          <link>https://example.com</link>
+          <description>Test feed</description>
+        </channel>
+      </rss>
+    `
     const mockFetch = createMockFetch({
       'https://example.com/feed': rss,
       'https://www.example.com/feed': rss,
       'https://blog.example.com/feed': rss,
     })
-
     const value = await discoverFeeds(
       { url: 'https://example.com' },
       {
@@ -370,22 +454,30 @@ describe('discoverFeeds', () => {
         fetchFn: mockFetch,
       },
     )
-
     const expected: Array<FeedInfo> = [
       {
         url: 'https://example.com/feed',
         isFeed: true,
         format: 'rss',
+        title: 'Test RSS',
+        description: 'Test feed',
+        siteUrl: 'https://example.com',
       },
       {
         url: 'https://www.example.com/feed',
         isFeed: true,
         format: 'rss',
+        title: 'Test RSS',
+        description: 'Test feed',
+        siteUrl: 'https://example.com',
       },
       {
         url: 'https://blog.example.com/feed',
         isFeed: true,
         format: 'rss',
+        title: 'Test RSS',
+        description: 'Test feed',
+        siteUrl: 'https://example.com',
       },
     ]
 
@@ -411,7 +503,6 @@ describe('discoverFeeds', () => {
         },
       },
     )
-
     const expected = {
       tested: 2,
       total: 2,
@@ -423,16 +514,22 @@ describe('discoverFeeds', () => {
   })
 
   it('should combine URIs from multiple methods', async () => {
-    const rss = '<?xml version="1.0"?><rss version="2.0"><channel></channel></rss>'
+    const rss = `
+      <rss version="2.0">
+        <channel>
+          <title>Test RSS</title>
+          <link>https://example.com</link>
+          <description>Test feed</description>
+        </channel>
+      </rss>
+    `
     const mockFetch = createMockFetch({
       'https://example.com/feed': rss,
       'https://example.com/feed.xml': rss,
     })
-
     const headers = new Headers({
       Link: '</feed.xml>; rel="alternate"; type="application/rss+xml"',
     })
-
     const value = await discoverFeeds(
       {
         url: 'https://example.com',
@@ -458,11 +555,17 @@ describe('discoverFeeds', () => {
         url: 'https://example.com/feed',
         isFeed: true,
         format: 'rss',
+        title: 'Test RSS',
+        description: 'Test feed',
+        siteUrl: 'https://example.com',
       },
       {
         url: 'https://example.com/feed.xml',
         isFeed: true,
         format: 'rss',
+        title: 'Test RSS',
+        description: 'Test feed',
+        siteUrl: 'https://example.com',
       },
     ]
 
@@ -470,16 +573,22 @@ describe('discoverFeeds', () => {
   })
 
   it('should combine URIs from multiple methods with includeInvalid', async () => {
-    const rss = '<?xml version="1.0"?><rss version="2.0"><channel></channel></rss>'
+    const rss = `
+      <rss version="2.0">
+        <channel>
+          <title>Test RSS</title>
+          <link>https://example.com</link>
+          <description>Test feed</description>
+        </channel>
+      </rss>
+    `
     const mockFetch = createMockFetch({
       'https://example.com/feed': rss,
       'https://example.com/feed.xml': rss,
     })
-
     const headers = new Headers({
       Link: '</feed.xml>; rel="alternate"; type="application/rss+xml"',
     })
-
     const value = await discoverFeeds(
       {
         url: 'https://example.com',
@@ -506,11 +615,17 @@ describe('discoverFeeds', () => {
         url: 'https://example.com/feed',
         isFeed: true,
         format: 'rss',
+        title: 'Test RSS',
+        description: 'Test feed',
+        siteUrl: 'https://example.com',
       },
       {
         url: 'https://example.com/feed.xml',
         isFeed: true,
         format: 'rss',
+        title: 'Test RSS',
+        description: 'Test feed',
+        siteUrl: 'https://example.com',
       },
       {
         url: 'https://example.com/rss',
@@ -523,11 +638,9 @@ describe('discoverFeeds', () => {
 
   it('should deduplicate URIs across multiple methods', async () => {
     const mockFetch = createMockFetch({})
-
     const headers = new Headers({
       Link: '</feed.xml>; rel="alternate"; type="application/rss+xml"',
     })
-
     const value = await discoverFeeds(
       {
         url: 'https://example.com',
@@ -553,11 +666,9 @@ describe('discoverFeeds', () => {
 
   it('should deduplicate URIs across multiple methods with includeInvalid', async () => {
     const mockFetch = createMockFetch({})
-
     const headers = new Headers({
       Link: '</feed.xml>; rel="alternate"; type="application/rss+xml"',
     })
-
     const value = await discoverFeeds(
       {
         url: 'https://example.com',

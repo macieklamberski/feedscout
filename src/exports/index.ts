@@ -7,7 +7,7 @@ export type {
   Progress,
   ProgressFn,
 } from '../common/types.js'
-export { createDefaultExtractor } from '../feeds/extractors.js'
+export { createFeedsmithExtractor } from '../feeds/extractors.js'
 export { discoverFeeds } from '../feeds/index.js'
 export type {
   DiscoverFeedsInput,
