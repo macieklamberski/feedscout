@@ -1,13 +1,13 @@
-export type Options = {
+export type GuessMethodOptions = {
   baseUrl: string
-  feedUris?: Array<string>
+  uris: Array<string>
   /**
    * Additional base URLs to test alongside the main baseUrl.
    * Useful for testing subdomain variants (e.g., www, blog, feeds).
    *
    * @example
    * ```typescript
-   * import { getWwwCounterpart, getSubdomainVariants } from 'feedscout/guess'
+   * import { getWwwCounterpart, getSubdomainVariants } from 'feedscout/methods'
    *
    * // Test www variant
    * additionalBaseUrls: getWwwCounterpart('https://example.com')

@@ -1,9 +1,9 @@
-import type { FetchFn } from '../common/types.js'
+import type { DiscoverFetchFn } from '../types.js'
 
 // biome-ignore lint/suspicious/noExplicitAny: To avoid importing the types from libraries.
 type AnyInstance = any
 
-export const createNativeFetchAdapter = (baseOptions?: RequestInit): FetchFn => {
+export const createNativeFetchAdapter = (baseOptions?: RequestInit): DiscoverFetchFn => {
   return async (url, options) => {
     const response = await fetch(url, {
       ...baseOptions,
@@ -24,7 +24,7 @@ export const createNativeFetchAdapter = (baseOptions?: RequestInit): FetchFn => 
   }
 }
 
-export const createGotAdapter = (gotInstance: AnyInstance): FetchFn => {
+export const createGotAdapter = (gotInstance: AnyInstance): DiscoverFetchFn => {
   return async (url, options) => {
     const response = await gotInstance(url, {
       method: options?.method || 'GET',
@@ -42,7 +42,7 @@ export const createGotAdapter = (gotInstance: AnyInstance): FetchFn => {
   }
 }
 
-export const createAxiosAdapter = (axiosInstance: AnyInstance): FetchFn => {
+export const createAxiosAdapter = (axiosInstance: AnyInstance): DiscoverFetchFn => {
   return async (url, options) => {
     const response = await axiosInstance({
       url,
@@ -61,7 +61,7 @@ export const createAxiosAdapter = (axiosInstance: AnyInstance): FetchFn => {
   }
 }
 
-export const createKyAdapter = (kyInstance: AnyInstance): FetchFn => {
+export const createKyAdapter = (kyInstance: AnyInstance): DiscoverFetchFn => {
   return async (url, options) => {
     const response = await kyInstance(url, {
       method: options?.method || 'GET',

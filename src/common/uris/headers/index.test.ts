@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import { discoverFeedUrisFromHeaders } from './index.js'
+import { discoverUrisFromHeaders } from './index.js'
 
 const linkMimeTypes = [
   'application/json',
@@ -13,15 +13,15 @@ const linkMimeTypes = [
   'text/xml',
 ]
 
-const defaultOptions = { linkMimeTypes }
+const defaultOptions = { linkRels: ['alternate'], linkMimeTypes }
 
-describe('discoverFeedUrisFromHeaders', () => {
+describe('discoverUrisFromHeaders', () => {
   describe('should discover feeds from Link header', () => {
     it('should find single Link header with rel="alternate"', () => {
       const headers = new Headers({
         Link: '</feed.xml>; rel="alternate"; type="application/rss+xml"',
       })
-      const result = discoverFeedUrisFromHeaders(headers, defaultOptions)
+      const result = discoverUrisFromHeaders(headers, defaultOptions)
       expect(result).toEqual(['/feed.xml'])
     })
 
@@ -29,7 +29,7 @@ describe('discoverFeedUrisFromHeaders', () => {
       const headers = new Headers({
         Link: '</feed.xml>; rel="alternate"; type="application/rss+xml", </atom.xml>; rel="alternate"; type="application/atom+xml"',
       })
-      const result = discoverFeedUrisFromHeaders(headers, defaultOptions)
+      const result = discoverUrisFromHeaders(headers, defaultOptions)
       expect(result).toEqual(['/feed.xml', '/atom.xml'])
     })
 
@@ -37,7 +37,7 @@ describe('discoverFeedUrisFromHeaders', () => {
       const headers = new Headers()
       headers.append('Link', '</feed.xml>; rel="alternate"; type="application/rss+xml"')
       headers.append('Link', '</atom.xml>; rel="alternate"; type="application/atom+xml"')
-      const result = discoverFeedUrisFromHeaders(headers, defaultOptions)
+      const result = discoverUrisFromHeaders(headers, defaultOptions)
       expect(result).toEqual(['/feed.xml', '/atom.xml'])
     })
 
@@ -45,7 +45,7 @@ describe('discoverFeedUrisFromHeaders', () => {
       const headers = new Headers({
         Link: '<https://example.com/feed.xml>; rel="alternate"; type="application/rss+xml"',
       })
-      const result = discoverFeedUrisFromHeaders(headers, defaultOptions)
+      const result = discoverUrisFromHeaders(headers, defaultOptions)
       expect(result).toEqual(['https://example.com/feed.xml'])
     })
 
@@ -53,7 +53,7 @@ describe('discoverFeedUrisFromHeaders', () => {
       const headers = new Headers({
         Link: '</feed.xml>; rel="alternate"; type="application/rss+xml"; title="RSS Feed"',
       })
-      const result = discoverFeedUrisFromHeaders(headers, defaultOptions)
+      const result = discoverUrisFromHeaders(headers, defaultOptions)
       expect(result).toEqual(['/feed.xml'])
     })
   })
@@ -63,7 +63,7 @@ describe('discoverFeedUrisFromHeaders', () => {
       const headers = new Headers({
         Link: '</feed.xml>; rel="alternate"; type="application/rss+xml", </other>; rel="alternate"; type="text/html"',
       })
-      const result = discoverFeedUrisFromHeaders(headers, defaultOptions)
+      const result = discoverUrisFromHeaders(headers, defaultOptions)
       expect(result).toEqual(['/feed.xml'])
     })
 
@@ -71,7 +71,7 @@ describe('discoverFeedUrisFromHeaders', () => {
       const headers = new Headers({
         Link: '</feed.xml>; rel="alternate"; type="APPLICATION/RSS+XML"',
       })
-      const result = discoverFeedUrisFromHeaders(headers, defaultOptions)
+      const result = discoverUrisFromHeaders(headers, defaultOptions)
       expect(result).toEqual(['/feed.xml'])
     })
 
@@ -79,7 +79,7 @@ describe('discoverFeedUrisFromHeaders', () => {
       const headers = new Headers({
         Link: '</feed.xml>; rel="alternate"; type=" application/rss+xml "',
       })
-      const result = discoverFeedUrisFromHeaders(headers, defaultOptions)
+      const result = discoverUrisFromHeaders(headers, defaultOptions)
       expect(result).toEqual(['/feed.xml'])
     })
 
@@ -87,7 +87,7 @@ describe('discoverFeedUrisFromHeaders', () => {
       const headers = new Headers({
         Link: '</feed.xml>; rel="alternate"; type="application/rss+xml; charset=utf-8"',
       })
-      const result = discoverFeedUrisFromHeaders(headers, defaultOptions)
+      const result = discoverUrisFromHeaders(headers, defaultOptions)
       expect(result).toEqual(['/feed.xml'])
     })
 
@@ -95,7 +95,7 @@ describe('discoverFeedUrisFromHeaders', () => {
       const headers = new Headers({
         Link: '</atom.xml>; rel="alternate"; type="application/atom+xml; charset=utf-8; boundary=test"',
       })
-      const result = discoverFeedUrisFromHeaders(headers, defaultOptions)
+      const result = discoverUrisFromHeaders(headers, defaultOptions)
       expect(result).toEqual(['/atom.xml'])
     })
   })
@@ -103,7 +103,7 @@ describe('discoverFeedUrisFromHeaders', () => {
   describe('should handle missing or malformed headers', () => {
     it('should return empty array when Link header is missing', () => {
       const headers = new Headers()
-      const result = discoverFeedUrisFromHeaders(headers, defaultOptions)
+      const result = discoverUrisFromHeaders(headers, defaultOptions)
       expect(result).toEqual([])
     })
 
@@ -111,7 +111,7 @@ describe('discoverFeedUrisFromHeaders', () => {
       const headers = new Headers({
         Link: 'rel="alternate"; type="application/rss+xml"',
       })
-      const result = discoverFeedUrisFromHeaders(headers, defaultOptions)
+      const result = discoverUrisFromHeaders(headers, defaultOptions)
       expect(result).toEqual([])
     })
 
@@ -119,7 +119,7 @@ describe('discoverFeedUrisFromHeaders', () => {
       const headers = new Headers({
         Link: '</feed.xml>; type="application/rss+xml"',
       })
-      const result = discoverFeedUrisFromHeaders(headers, defaultOptions)
+      const result = discoverUrisFromHeaders(headers, defaultOptions)
       expect(result).toEqual([])
     })
 
@@ -127,7 +127,7 @@ describe('discoverFeedUrisFromHeaders', () => {
       const headers = new Headers({
         Link: '</feed.xml>; rel="alternate"',
       })
-      const result = discoverFeedUrisFromHeaders(headers, defaultOptions)
+      const result = discoverUrisFromHeaders(headers, defaultOptions)
       expect(result).toEqual([])
     })
 
@@ -135,7 +135,7 @@ describe('discoverFeedUrisFromHeaders', () => {
       const headers = new Headers({
         Link: '</feed.xml>; rel="canonical"; type="application/rss+xml"',
       })
-      const result = discoverFeedUrisFromHeaders(headers, defaultOptions)
+      const result = discoverUrisFromHeaders(headers, defaultOptions)
       expect(result).toEqual([])
     })
 
@@ -143,7 +143,7 @@ describe('discoverFeedUrisFromHeaders', () => {
       const headers = new Headers({
         Link: '',
       })
-      const result = discoverFeedUrisFromHeaders(headers, defaultOptions)
+      const result = discoverUrisFromHeaders(headers, defaultOptions)
       expect(result).toEqual([])
     })
 
@@ -151,7 +151,7 @@ describe('discoverFeedUrisFromHeaders', () => {
       const headers = new Headers({
         Link: '   ',
       })
-      const result = discoverFeedUrisFromHeaders(headers, defaultOptions)
+      const result = discoverUrisFromHeaders(headers, defaultOptions)
       expect(result).toEqual([])
     })
 
@@ -159,7 +159,7 @@ describe('discoverFeedUrisFromHeaders', () => {
       const headers = new Headers({
         Link: 'feed.xml>; rel="alternate"; type="application/rss+xml"',
       })
-      const result = discoverFeedUrisFromHeaders(headers, defaultOptions)
+      const result = discoverUrisFromHeaders(headers, defaultOptions)
       expect(result).toEqual([])
     })
 
@@ -167,7 +167,7 @@ describe('discoverFeedUrisFromHeaders', () => {
       const headers = new Headers({
         Link: '<feed.xml; rel="alternate"; type="application/rss+xml"',
       })
-      const result = discoverFeedUrisFromHeaders(headers, defaultOptions)
+      const result = discoverUrisFromHeaders(headers, defaultOptions)
       expect(result).toEqual([])
     })
   })
@@ -177,7 +177,7 @@ describe('discoverFeedUrisFromHeaders', () => {
       const headers = new Headers({
         Link: '</feed.xml>; rel="ALTERNATE"; type="application/rss+xml"',
       })
-      const result = discoverFeedUrisFromHeaders(headers, defaultOptions)
+      const result = discoverUrisFromHeaders(headers, defaultOptions)
       expect(result).toEqual(['/feed.xml'])
     })
 
@@ -185,7 +185,7 @@ describe('discoverFeedUrisFromHeaders', () => {
       const headers = new Headers({
         Link: '</feed.xml>; rel="Alternate"; type="application/rss+xml"',
       })
-      const result = discoverFeedUrisFromHeaders(headers, defaultOptions)
+      const result = discoverUrisFromHeaders(headers, defaultOptions)
       expect(result).toEqual(['/feed.xml'])
     })
   })
@@ -195,7 +195,7 @@ describe('discoverFeedUrisFromHeaders', () => {
       const headers = new Headers({
         Link: '</feed.xml>; rel="alternate"; type="application/rss+xml"',
       })
-      const result = discoverFeedUrisFromHeaders(headers, defaultOptions)
+      const result = discoverUrisFromHeaders(headers, defaultOptions)
       expect(result).toEqual(['/feed.xml'])
     })
 
@@ -203,7 +203,7 @@ describe('discoverFeedUrisFromHeaders', () => {
       const headers = new Headers({
         Link: '<https://example.com/feed.xml>; rel="alternate"; type="application/rss+xml"',
       })
-      const result = discoverFeedUrisFromHeaders(headers, defaultOptions)
+      const result = discoverUrisFromHeaders(headers, defaultOptions)
       expect(result).toEqual(['https://example.com/feed.xml'])
     })
 
@@ -211,7 +211,7 @@ describe('discoverFeedUrisFromHeaders', () => {
       const headers = new Headers({
         Link: '<feed.xml>; rel="alternate"; type="application/rss+xml"',
       })
-      const result = discoverFeedUrisFromHeaders(headers, defaultOptions)
+      const result = discoverUrisFromHeaders(headers, defaultOptions)
       expect(result).toEqual(['feed.xml'])
     })
   })
@@ -221,7 +221,7 @@ describe('discoverFeedUrisFromHeaders', () => {
       const headers = new Headers({
         Link: '</feed.xml>; rel="alternate"; type="application/rss+xml", </feed.xml>; rel="alternate"; type="application/atom+xml"',
       })
-      const result = discoverFeedUrisFromHeaders(headers, defaultOptions)
+      const result = discoverUrisFromHeaders(headers, defaultOptions)
       expect(result).toEqual(['/feed.xml'])
     })
   })
@@ -231,7 +231,7 @@ describe('discoverFeedUrisFromHeaders', () => {
       const headers = new Headers({
         Link: '</atom.xml>; rel="alternate"; type="application/atom+xml"',
       })
-      const result = discoverFeedUrisFromHeaders(headers, defaultOptions)
+      const result = discoverUrisFromHeaders(headers, defaultOptions)
       expect(result).toEqual(['/atom.xml'])
     })
 
@@ -239,7 +239,7 @@ describe('discoverFeedUrisFromHeaders', () => {
       const headers = new Headers({
         Link: '</feed.json>; rel="alternate"; type="application/json"',
       })
-      const result = discoverFeedUrisFromHeaders(headers, defaultOptions)
+      const result = discoverUrisFromHeaders(headers, defaultOptions)
       expect(result).toEqual(['/feed.json'])
     })
 
@@ -247,7 +247,7 @@ describe('discoverFeedUrisFromHeaders', () => {
       const headers = new Headers({
         Link: '</feed.xml>; rel="alternate"; type="text/xml"',
       })
-      const result = discoverFeedUrisFromHeaders(headers, defaultOptions)
+      const result = discoverUrisFromHeaders(headers, defaultOptions)
       expect(result).toEqual(['/feed.xml'])
     })
   })
@@ -257,7 +257,7 @@ describe('discoverFeedUrisFromHeaders', () => {
       const headers = new Headers({
         Link: '</feed.xml>; rel=alternate; type="application/rss+xml"',
       })
-      const result = discoverFeedUrisFromHeaders(headers, defaultOptions)
+      const result = discoverUrisFromHeaders(headers, defaultOptions)
       expect(result).toEqual(['/feed.xml'])
     })
 
@@ -265,7 +265,7 @@ describe('discoverFeedUrisFromHeaders', () => {
       const headers = new Headers({
         Link: "</feed.xml>; rel='alternate'; type='application/rss+xml'",
       })
-      const result = discoverFeedUrisFromHeaders(headers, defaultOptions)
+      const result = discoverUrisFromHeaders(headers, defaultOptions)
       expect(result).toEqual(['/feed.xml'])
     })
 
@@ -273,7 +273,7 @@ describe('discoverFeedUrisFromHeaders', () => {
       const headers = new Headers({
         Link: '</feed.xml>; rel="alternate"; type=\'application/rss+xml\'',
       })
-      const result = discoverFeedUrisFromHeaders(headers, defaultOptions)
+      const result = discoverUrisFromHeaders(headers, defaultOptions)
       expect(result).toEqual(['/feed.xml'])
     })
 
@@ -281,7 +281,7 @@ describe('discoverFeedUrisFromHeaders', () => {
       const headers = new Headers({
         Link: '</feed.xml>; type="application/rss+xml"; rel="alternate"',
       })
-      const result = discoverFeedUrisFromHeaders(headers, defaultOptions)
+      const result = discoverUrisFromHeaders(headers, defaultOptions)
       expect(result).toEqual(['/feed.xml'])
     })
 
@@ -289,7 +289,7 @@ describe('discoverFeedUrisFromHeaders', () => {
       const headers = new Headers({
         Link: '</atom.xml>; title="Atom Feed"; type="application/atom+xml"; rel="alternate"',
       })
-      const result = discoverFeedUrisFromHeaders(headers, defaultOptions)
+      const result = discoverUrisFromHeaders(headers, defaultOptions)
       expect(result).toEqual(['/atom.xml'])
     })
   })
@@ -300,7 +300,7 @@ describe('discoverFeedUrisFromHeaders', () => {
       const headers = new Headers({
         Link: `<${longUrl}>; rel="alternate"; type="application/rss+xml"`,
       })
-      const result = discoverFeedUrisFromHeaders(headers, defaultOptions)
+      const result = discoverUrisFromHeaders(headers, defaultOptions)
       expect(result).toEqual([longUrl])
     })
 
@@ -308,7 +308,7 @@ describe('discoverFeedUrisFromHeaders', () => {
       const headers = new Headers({
         Link: '</feed%20rss.xml>; rel="alternate"; type="application/rss+xml"',
       })
-      const result = discoverFeedUrisFromHeaders(headers, defaultOptions)
+      const result = discoverUrisFromHeaders(headers, defaultOptions)
       expect(result).toEqual(['/feed%20rss.xml'])
     })
 
@@ -316,7 +316,7 @@ describe('discoverFeedUrisFromHeaders', () => {
       const headers = new Headers({
         Link: '<https://xn--r8jz45g.jp/feed.xml>; rel="alternate"; type="application/rss+xml"',
       })
-      const result = discoverFeedUrisFromHeaders(headers, defaultOptions)
+      const result = discoverUrisFromHeaders(headers, defaultOptions)
       expect(result).toEqual(['https://xn--r8jz45g.jp/feed.xml'])
     })
 
@@ -324,7 +324,7 @@ describe('discoverFeedUrisFromHeaders', () => {
       const headers = new Headers({
         Link: '</feed.xml#latest>; rel="alternate"; type="application/rss+xml"',
       })
-      const result = discoverFeedUrisFromHeaders(headers, defaultOptions)
+      const result = discoverUrisFromHeaders(headers, defaultOptions)
       expect(result).toEqual(['/feed.xml#latest'])
     })
 
@@ -332,7 +332,7 @@ describe('discoverFeedUrisFromHeaders', () => {
       const headers = new Headers({
         Link: '</feed?cat=tech&sort=date&limit=10>; rel="alternate"; type="application/rss+xml"',
       })
-      const result = discoverFeedUrisFromHeaders(headers, defaultOptions)
+      const result = discoverUrisFromHeaders(headers, defaultOptions)
       expect(result).toEqual(['/feed?cat=tech&sort=date&limit=10'])
     })
 
@@ -340,7 +340,7 @@ describe('discoverFeedUrisFromHeaders', () => {
       const headers = new Headers({
         Link: '</feed.xml>  ;  rel = "alternate"  ;  type = "application/rss+xml"  ',
       })
-      const result = discoverFeedUrisFromHeaders(headers, defaultOptions)
+      const result = discoverUrisFromHeaders(headers, defaultOptions)
       expect(result).toEqual(['/feed.xml'])
     })
 
@@ -348,7 +348,7 @@ describe('discoverFeedUrisFromHeaders', () => {
       const headers = new Headers({
         Link: '</feed.xml>; rel="alternate"; title="Feed; Main"; type="application/rss+xml"',
       })
-      const result = discoverFeedUrisFromHeaders(headers, defaultOptions)
+      const result = discoverUrisFromHeaders(headers, defaultOptions)
       expect(result).toEqual(['/feed.xml'])
     })
 
@@ -356,7 +356,7 @@ describe('discoverFeedUrisFromHeaders', () => {
       const headers = new Headers({
         Link: '</feed.xml>; rel="alternate"; title="News, Updates"; type="application/rss+xml"',
       })
-      const result = discoverFeedUrisFromHeaders(headers, defaultOptions)
+      const result = discoverUrisFromHeaders(headers, defaultOptions)
       expect(result).toEqual(['/feed.xml'])
     })
 
@@ -364,7 +364,7 @@ describe('discoverFeedUrisFromHeaders', () => {
       const headers = new Headers({
         Link: '</feed.xml>; rel="alternate"; title="The \\"Best\\" Feed"; type="application/rss+xml"',
       })
-      const result = discoverFeedUrisFromHeaders(headers, defaultOptions)
+      const result = discoverUrisFromHeaders(headers, defaultOptions)
       expect(result).toEqual(['/feed.xml'])
     })
 
@@ -372,7 +372,7 @@ describe('discoverFeedUrisFromHeaders', () => {
       const headers = new Headers({
         Link: '<data:text/plain,feed>; rel="alternate"; type="application/rss+xml"',
       })
-      const result = discoverFeedUrisFromHeaders(headers, defaultOptions)
+      const result = discoverUrisFromHeaders(headers, defaultOptions)
       expect(result).toEqual(['data:text/plain,feed'])
     })
 
@@ -380,7 +380,7 @@ describe('discoverFeedUrisFromHeaders', () => {
       const headers = new Headers({
         Link: '</feed.xml; rel="alternate"; type="application/rss+xml"',
       })
-      const result = discoverFeedUrisFromHeaders(headers, defaultOptions)
+      const result = discoverUrisFromHeaders(headers, defaultOptions)
       expect(result).toEqual([])
     })
 
@@ -388,7 +388,7 @@ describe('discoverFeedUrisFromHeaders', () => {
       const headers = new Headers({
         Link: '/feed.xml>; rel="alternate"; type="application/rss+xml"',
       })
-      const result = discoverFeedUrisFromHeaders(headers, defaultOptions)
+      const result = discoverUrisFromHeaders(headers, defaultOptions)
       expect(result).toEqual([])
     })
 
@@ -396,7 +396,7 @@ describe('discoverFeedUrisFromHeaders', () => {
       const headers = new Headers({
         Link: '>/feed.xml<; rel="alternate"; type="application/rss+xml"',
       })
-      const result = discoverFeedUrisFromHeaders(headers, defaultOptions)
+      const result = discoverUrisFromHeaders(headers, defaultOptions)
       expect(result).toEqual([])
     })
   })

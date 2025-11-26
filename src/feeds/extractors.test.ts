@@ -1,24 +1,25 @@
 import { describe, expect, it } from 'bun:test'
-import type { FeedInfo } from '../common/types.js'
+import type { DiscoverResult } from '../common/types.js'
 import { createFeedsmithExtractor } from './extractors.js'
+import type { FeedResultValid } from './types.js'
 
 describe('createFeedsmithExtractor', () => {
-  it('should return isFeed: false when content is empty', async () => {
+  it('should return isValid: false when content is empty', async () => {
     const extractor = createFeedsmithExtractor()
     const result = await extractor({
       content: '',
       headers: new Headers(),
       url: 'https://example.com/feed.xml',
     })
-    const expected: FeedInfo = {
+    const expected: DiscoverResult<FeedResultValid> = {
       url: 'https://example.com/feed.xml',
-      isFeed: false,
+      isValid: false,
     }
 
     expect(result).toEqual(expected)
   })
 
-  it('should return isFeed: false when content looks like HTML', async () => {
+  it('should return isValid: false when content looks like HTML', async () => {
     const extractor = createFeedsmithExtractor()
     const html = '<!DOCTYPE html><html><head><title>Test</title></head></html>'
     const result = await extractor({
@@ -26,9 +27,9 @@ describe('createFeedsmithExtractor', () => {
       headers: new Headers(),
       url: 'https://example.com/index.html',
     })
-    const expected: FeedInfo = {
+    const expected: DiscoverResult<FeedResultValid> = {
       url: 'https://example.com/index.html',
-      isFeed: false,
+      isValid: false,
     }
 
     expect(result).toEqual(expected)
@@ -50,9 +51,9 @@ describe('createFeedsmithExtractor', () => {
       headers: new Headers(),
       url: 'https://example.com/feed.xml',
     })
-    const expected: FeedInfo = {
+    const expected: DiscoverResult<FeedResultValid> = {
       url: 'https://example.com/feed.xml',
-      isFeed: true,
+      isValid: true,
       format: 'rss',
       title: 'Test',
       description: 'Test feed',
@@ -76,9 +77,9 @@ describe('createFeedsmithExtractor', () => {
       headers: new Headers(),
       url: 'https://example.com/feed.xml',
     })
-    const expected: FeedInfo = {
+    const expected: DiscoverResult<FeedResultValid> = {
       url: 'https://example.com/feed.xml',
-      isFeed: true,
+      isValid: true,
       format: 'atom',
       title: 'Test',
       description: 'Test feed',
@@ -106,9 +107,9 @@ describe('createFeedsmithExtractor', () => {
       headers: new Headers(),
       url: 'https://example.com/feed.xml',
     })
-    const expected: FeedInfo = {
+    const expected: DiscoverResult<FeedResultValid> = {
       url: 'https://example.com/feed.xml',
-      isFeed: true,
+      isValid: true,
       format: 'rdf',
       title: 'Test',
       description: 'Test feed',
@@ -132,9 +133,9 @@ describe('createFeedsmithExtractor', () => {
       headers: new Headers(),
       url: 'https://example.com/feed.json',
     })
-    const expected: FeedInfo = {
+    const expected: DiscoverResult<FeedResultValid> = {
       url: 'https://example.com/feed.json',
-      isFeed: true,
+      isValid: true,
       format: 'json',
       title: 'Test',
       description: 'Test feed',
@@ -144,7 +145,7 @@ describe('createFeedsmithExtractor', () => {
     expect(result).toEqual(expected)
   })
 
-  it('should return isFeed: false when no feed markers found', async () => {
+  it('should return isValid: false when no feed markers found', async () => {
     const extractor = createFeedsmithExtractor()
     const content = '<data><item>Test</item></data>'
     const result = await extractor({
@@ -152,9 +153,9 @@ describe('createFeedsmithExtractor', () => {
       headers: new Headers(),
       url: 'https://example.com/data.xml',
     })
-    const expected: FeedInfo = {
+    const expected: DiscoverResult<FeedResultValid> = {
       url: 'https://example.com/data.xml',
-      isFeed: false,
+      isValid: false,
     }
 
     expect(result).toEqual(expected)
@@ -175,9 +176,9 @@ describe('createFeedsmithExtractor', () => {
       headers: new Headers(),
       url: 'https://example.com/feed.xml',
     })
-    const expected: FeedInfo = {
+    const expected: DiscoverResult<FeedResultValid> = {
       url: 'https://example.com/feed.xml',
-      isFeed: true,
+      isValid: true,
       format: 'rss',
       title: 'Test',
       description: 'Test feed',
@@ -195,9 +196,9 @@ describe('createFeedsmithExtractor', () => {
       headers: new Headers(),
       url: 'https://example.com/page.html',
     })
-    const expected: FeedInfo = {
+    const expected: DiscoverResult<FeedResultValid> = {
       url: 'https://example.com/page.html',
-      isFeed: false,
+      isValid: false,
     }
 
     expect(result).toEqual(expected)
@@ -220,9 +221,9 @@ describe('createFeedsmithExtractor', () => {
       headers: new Headers(),
       url: 'https://example.com/feed.xml',
     })
-    const expected: FeedInfo = {
+    const expected: DiscoverResult<FeedResultValid> = {
       url: 'https://example.com/feed.xml',
-      isFeed: true,
+      isValid: true,
       format: 'rss',
       title: 'Test',
       description: largeDescription,
@@ -239,9 +240,9 @@ describe('createFeedsmithExtractor', () => {
       headers: new Headers(),
       url: 'https://example.com/feed.xml',
     })
-    const expected: FeedInfo = {
+    const expected: DiscoverResult<FeedResultValid> = {
       url: 'https://example.com/feed.xml',
-      isFeed: false,
+      isValid: false,
     }
 
     expect(result).toEqual(expected)
@@ -264,9 +265,9 @@ describe('createFeedsmithExtractor', () => {
       headers: new Headers(),
       url: 'https://example.com/feed.xml',
     })
-    const expected: FeedInfo = {
+    const expected: DiscoverResult<FeedResultValid> = {
       url: 'https://example.com/feed.xml',
-      isFeed: true,
+      isValid: true,
       format: 'rss',
       title: 'Test',
       description: 'Test feed',
@@ -276,7 +277,7 @@ describe('createFeedsmithExtractor', () => {
     expect(result).toEqual(expected)
   })
 
-  it('should return isFeed: false for malformed XML content', async () => {
+  it('should return isValid: false for malformed XML content', async () => {
     const extractor = createFeedsmithExtractor()
     const malformed = '<rss><channel><item><unclosed>'
     const result = await extractor({
@@ -284,9 +285,9 @@ describe('createFeedsmithExtractor', () => {
       headers: new Headers(),
       url: 'https://example.com/feed.xml',
     })
-    const expected: FeedInfo = {
+    const expected: DiscoverResult<FeedResultValid> = {
       url: 'https://example.com/feed.xml',
-      isFeed: false,
+      isValid: false,
     }
 
     expect(result).toEqual(expected)
@@ -308,9 +309,9 @@ describe('createFeedsmithExtractor', () => {
       headers: new Headers(),
       url: 'https://redirect.example.com/feed.xml',
     })
-    const expected: FeedInfo = {
+    const expected: DiscoverResult<FeedResultValid> = {
       url: 'https://redirect.example.com/feed.xml',
-      isFeed: true,
+      isValid: true,
       format: 'rss',
       title: 'Test',
       description: 'Test feed',
@@ -332,9 +333,9 @@ describe('createFeedsmithExtractor', () => {
     })
 
     // Should detect as HTML, not RSS (ignoring headers)
-    const expected: FeedInfo = {
+    const expected: DiscoverResult<FeedResultValid> = {
       url: 'https://example.com/page.html',
-      isFeed: false,
+      isValid: false,
     }
 
     expect(result).toEqual(expected)

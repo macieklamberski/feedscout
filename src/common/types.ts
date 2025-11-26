@@ -1,25 +1,13 @@
-export type FeedInfo =
-  | {
-      url: string
-      isFeed: true
-      format: 'rss' | 'atom' | 'json' | 'rdf'
-      title?: string
-      description?: string
-      siteUrl?: string
-      method?: 'html' | 'headers' | 'guess'
-    }
-  | {
-      url: string
-      isFeed: false
-      error?: string
-    }
+import type { GuessMethodOptions } from './uris/guess/types.js'
+import type { HeadersMethodOptions } from './uris/headers/types.js'
+import type { HtmlMethodOptions } from './uris/html/types.js'
 
-export type FetchFnOptions = {
+export type DiscoverFetchFnOptions = {
   method?: 'GET' | 'HEAD'
   headers?: Record<string, string>
 }
 
-export type FetchFnResponse = {
+export type DiscoverFetchFnResponse = {
   headers: Headers
   body: string | ReadableStream<Uint8Array>
   url: string
@@ -27,21 +15,96 @@ export type FetchFnResponse = {
   statusText: string
 }
 
-export type FetchFn = (url: string, options?: FetchFnOptions) => Promise<FetchFnResponse>
+export type DiscoverFetchFn = (
+  url: string,
+  options?: DiscoverFetchFnOptions,
+) => Promise<DiscoverFetchFnResponse>
 
-export type Progress = {
+export type DiscoverProgress = {
   tested: number
   total: number
   found: number
   current: string
 }
 
-export type ProgressFn = (progress: Progress) => void
+export type DiscoverProgressFn = (progress: DiscoverProgress) => void
 
-export type ExtractFn<T extends FeedInfo = FeedInfo> = (input: {
+// Base result type - TValid contains fields present when isValid = true.
+export type DiscoverResult<TValid = object> =
+  | ({
+      url: string
+      isValid: true
+    } & TValid)
+  | {
+      url: string
+      isValid: false
+      error?: unknown
+    }
+
+// Extract function uses TValid generic.
+export type DiscoverExtractFn<TValid> = (input: {
   url: string
   content: string
   headers?: Headers
-}) => Promise<T>
+}) => Promise<DiscoverResult<TValid>>
 
-export type ValidatorFn = (response: FetchFnResponse) => Promise<FeedInfo>
+export type DiscoverInputObject = {
+  url: string
+  content?: string
+  headers?: Headers
+}
+
+export type DiscoverInput = string | DiscoverInputObject
+
+// User-facing config - partial options (users override only what they need).
+export type DiscoverMethodsConfig =
+  | Array<'html' | 'headers' | 'guess'>
+  | {
+      html?: true | Partial<Omit<HtmlMethodOptions, 'baseUrl'>>
+      headers?: true | Partial<Omit<HeadersMethodOptions, 'baseUrl'>>
+      guess?: true | Partial<Omit<GuessMethodOptions, 'baseUrl'>>
+    }
+
+// Defaults for method options (without baseUrl which comes from input).
+export type DiscoverMethodsConfigDefaults = {
+  html: Omit<HtmlMethodOptions, 'baseUrl'>
+  headers: Omit<HeadersMethodOptions, 'baseUrl'>
+  guess: Omit<GuessMethodOptions, 'baseUrl'>
+}
+
+// Internal methods config with full options and input data.
+export type DiscoverMethodsConfigInternal = {
+  html?: {
+    html: string
+    options: HtmlMethodOptions
+  }
+  headers?: {
+    headers: Headers
+    options: HeadersMethodOptions
+  }
+  guess?: {
+    options: GuessMethodOptions
+  }
+}
+
+// User-facing options - optional fetchFn and extractFn.
+export type DiscoverOptions<TValid> = {
+  methods: DiscoverMethodsConfig
+  fetchFn?: DiscoverFetchFn
+  extractFn?: DiscoverExtractFn<TValid>
+  concurrency?: number
+  stopOnFirst?: boolean
+  includeInvalid?: boolean
+  onProgress?: DiscoverProgressFn
+}
+
+// Internal options - required fetchFn and extractFn.
+export type DiscoverOptionsInternal<TValid> = {
+  methods: DiscoverMethodsConfig
+  fetchFn: DiscoverFetchFn
+  extractFn: DiscoverExtractFn<TValid>
+  concurrency?: number
+  stopOnFirst?: boolean
+  includeInvalid?: boolean
+  onProgress?: DiscoverProgressFn
+}

@@ -1,19 +1,20 @@
 import { describe, expect, it } from 'bun:test'
-import { discoverFeedUris } from './index.js'
+import { discoverUris } from './index.js'
 
-describe('discoverFeedUris', () => {
+describe('discoverUris', () => {
   it('should return empty array when no methods configured', () => {
-    const value = discoverFeedUris({})
+    const value = discoverUris({})
     const expected: Array<string> = []
 
     expect(value).toEqual(expected)
   })
 
   it('should discover URIs from HTML method', () => {
-    const value = discoverFeedUris({
+    const value = discoverUris({
       html: {
         html: '<link rel="alternate" type="application/rss+xml" href="/feed.xml">',
         options: {
+          linkRels: ['alternate'],
           linkMimeTypes: ['application/rss+xml'],
           anchorUris: [],
           anchorIgnoredUris: [],
@@ -30,10 +31,13 @@ describe('discoverFeedUris', () => {
     const headers = new Headers({
       Link: '</feed.xml>; rel="alternate"; type="application/rss+xml"',
     })
-    const value = discoverFeedUris({
+    const value = discoverUris({
       headers: {
         headers,
-        options: { linkMimeTypes: ['application/rss+xml'] },
+        options: {
+          linkRels: ['alternate'],
+          linkMimeTypes: ['application/rss+xml'],
+        },
       },
     })
     const expected = ['/feed.xml']
@@ -42,11 +46,11 @@ describe('discoverFeedUris', () => {
   })
 
   it('should discover URIs from Guess method', () => {
-    const value = discoverFeedUris({
+    const value = discoverUris({
       guess: {
         options: {
           baseUrl: 'https://example.com',
-          feedUris: ['/feed.xml', '/rss.xml'],
+          uris: ['/feed.xml', '/rss.xml'],
         },
       },
     })
@@ -59,10 +63,11 @@ describe('discoverFeedUris', () => {
     const headers = new Headers({
       Link: '</feed.xml>; rel="alternate"; type="application/rss+xml"',
     })
-    const value = discoverFeedUris({
+    const value = discoverUris({
       html: {
         html: '<link rel="alternate" type="application/rss+xml" href="/feed.xml">',
         options: {
+          linkRels: ['alternate'],
           linkMimeTypes: ['application/rss+xml'],
           anchorUris: [],
           anchorIgnoredUris: [],
@@ -71,7 +76,10 @@ describe('discoverFeedUris', () => {
       },
       headers: {
         headers,
-        options: { linkMimeTypes: ['application/rss+xml'] },
+        options: {
+          linkRels: ['alternate'],
+          linkMimeTypes: ['application/rss+xml'],
+        },
       },
     })
     const expected = ['/feed.xml']
@@ -83,10 +91,11 @@ describe('discoverFeedUris', () => {
     const headers = new Headers({
       Link: '</rss.xml>; rel="alternate"; type="application/rss+xml"',
     })
-    const value = discoverFeedUris({
+    const value = discoverUris({
       html: {
         html: '<link rel="alternate" type="application/rss+xml" href="/feed.xml">',
         options: {
+          linkRels: ['alternate'],
           linkMimeTypes: ['application/rss+xml'],
           anchorUris: [],
           anchorIgnoredUris: [],
@@ -95,12 +104,15 @@ describe('discoverFeedUris', () => {
       },
       headers: {
         headers,
-        options: { linkMimeTypes: ['application/rss+xml'] },
+        options: {
+          linkRels: ['alternate'],
+          linkMimeTypes: ['application/rss+xml'],
+        },
       },
       guess: {
         options: {
           baseUrl: 'https://example.com',
-          feedUris: ['/atom.xml'],
+          uris: ['/atom.xml'],
         },
       },
     })
@@ -113,10 +125,11 @@ describe('discoverFeedUris', () => {
     const headers = new Headers({
       Link: '</feed.xml>; rel="alternate"; type="application/rss+xml", </rss.xml>; rel="alternate"; type="application/rss+xml"',
     })
-    const value = discoverFeedUris({
+    const value = discoverUris({
       html: {
         html: '<link rel="alternate" type="application/rss+xml" href="/feed.xml"><link rel="feed" href="/rss.xml">',
         options: {
+          linkRels: ['alternate', 'feed'],
           linkMimeTypes: ['application/rss+xml'],
           anchorUris: [],
           anchorIgnoredUris: [],
@@ -125,7 +138,10 @@ describe('discoverFeedUris', () => {
       },
       headers: {
         headers,
-        options: { linkMimeTypes: ['application/rss+xml'] },
+        options: {
+          linkRels: ['alternate'],
+          linkMimeTypes: ['application/rss+xml'],
+        },
       },
     })
     const expected = ['/feed.xml', '/rss.xml']

@@ -1,10 +1,16 @@
 import { describe, expect, it } from 'bun:test'
-import type { FeedInfo, FetchFn, Progress } from '../common/types.js'
-import locales from '../locales.json' with { type: 'json' }
-import { feedUrisBalanced, feedUrisComprehensive, feedUrisMinimal } from '../methods/guess/index.js'
+import locales from '../common/locales.json' with { type: 'json' }
+import type {
+  DiscoverExtractFn,
+  DiscoverFetchFn,
+  DiscoverProgress,
+  DiscoverResult,
+} from '../common/types.js'
+import { feedUrisBalanced, feedUrisComprehensive, feedUrisMinimal } from './defaults.js'
 import { discoverFeeds } from './index.js'
+import type { FeedResultValid } from './types.js'
 
-const createMockFetch = (responses: Record<string, string>): FetchFn => {
+const createMockFetch = (responses: Record<string, string>): DiscoverFetchFn => {
   return async (url: string) => ({
     url,
     body: responses[url] ?? '',
@@ -39,14 +45,14 @@ describe('discoverFeeds', () => {
     const value = await discoverFeeds(
       { url: 'https://example.com' },
       {
-        methods: { guess: { feedUris: ['/feed', '/atom', '/rss'] } },
+        methods: { guess: { uris: ['/feed', '/atom', '/rss'] } },
         fetchFn: mockFetch,
       },
     )
-    const expected: Array<FeedInfo> = [
+    const expected: Array<DiscoverResult<FeedResultValid>> = [
       {
         url: 'https://example.com/feed',
-        isFeed: true,
+        isValid: true,
         format: 'rss',
         title: 'Test RSS',
         description: 'Test feed',
@@ -54,7 +60,7 @@ describe('discoverFeeds', () => {
       },
       {
         url: 'https://example.com/atom',
-        isFeed: true,
+        isValid: true,
         format: 'atom',
         title: 'Test Atom',
         description: 'Test feed',
@@ -81,14 +87,14 @@ describe('discoverFeeds', () => {
     const value = await discoverFeeds(
       { url: 'https://example.com' },
       {
-        methods: { guess: { feedUris: ['/feed'] } },
+        methods: { guess: { uris: ['/feed'] } },
         fetchFn: mockFetch,
       },
     )
-    const expected: Array<FeedInfo> = [
+    const expected: Array<DiscoverResult<FeedResultValid>> = [
       {
         url: 'https://example.com/feed',
-        isFeed: true,
+        isValid: true,
         format: 'rss',
         title: 'Test RSS',
         description: 'Test feed',
@@ -101,7 +107,7 @@ describe('discoverFeeds', () => {
 
   it('should stop on first valid feed when stopOnFirst is true', async () => {
     let fetchCount = 0
-    const mockFetch: FetchFn = async (url) => {
+    const mockFetch: DiscoverFetchFn = async (url) => {
       fetchCount++
       return {
         url,
@@ -122,16 +128,16 @@ describe('discoverFeeds', () => {
     const value = await discoverFeeds(
       { url: 'https://example.com' },
       {
-        methods: { guess: { feedUris: ['/feed1', '/feed2', '/feed3', '/feed4', '/feed5'] } },
+        methods: { guess: { uris: ['/feed1', '/feed2', '/feed3', '/feed4', '/feed5'] } },
         fetchFn: mockFetch,
         stopOnFirst: true,
         concurrency: 1,
       },
     )
-    const expected: Array<FeedInfo> = [
+    const expected: Array<DiscoverResult<FeedResultValid>> = [
       {
         url: 'https://example.com/feed1',
-        isFeed: true,
+        isValid: true,
         format: 'rss',
         title: 'Test RSS',
         description: 'Test feed',
@@ -166,14 +172,14 @@ describe('discoverFeeds', () => {
     await discoverFeeds(
       { url: 'https://example.com' },
       {
-        methods: { guess: { feedUris: ['/feed', '/rss'] } },
+        methods: { guess: { uris: ['/feed', '/rss'] } },
         fetchFn: mockFetch,
         onProgress: (progress) => {
           progressUpdates.push(progress)
         },
       },
     )
-    const expected: Array<Progress> = [
+    const expected: Array<DiscoverProgress> = [
       {
         tested: 1,
         total: 2,
@@ -192,13 +198,13 @@ describe('discoverFeeds', () => {
   })
 
   it('should handle fetch errors gracefully', async () => {
-    const mockFetch: FetchFn = async () => {
+    const mockFetch: DiscoverFetchFn = async () => {
       throw new Error('Network error')
     }
     const value = await discoverFeeds(
       { url: 'https://example.com' },
       {
-        methods: { guess: { feedUris: ['/feed'] } },
+        methods: { guess: { uris: ['/feed'] } },
         fetchFn: mockFetch,
       },
     )
@@ -207,21 +213,21 @@ describe('discoverFeeds', () => {
   })
 
   it('should include errors when includeInvalid is true', async () => {
-    const mockFetch: FetchFn = async () => {
+    const mockFetch: DiscoverFetchFn = async () => {
       throw new Error('Network error')
     }
     const value = await discoverFeeds(
       { url: 'https://example.com' },
       {
-        methods: { guess: { feedUris: ['/feed'] } },
+        methods: { guess: { uris: ['/feed'] } },
         fetchFn: mockFetch,
         includeInvalid: true,
       },
     )
-    const expected: Array<FeedInfo> = [
+    const expected: Array<DiscoverResult<FeedResultValid>> = [
       {
         url: 'https://example.com/feed',
-        isFeed: false,
+        isValid: false,
       },
     ]
 
@@ -232,38 +238,32 @@ describe('discoverFeeds', () => {
     const mockFetch = createMockFetch({
       'https://example.com/feed': 'custom feed content',
     })
-    const customExtractor = async ({
-      url,
-      content,
-    }: {
-      url: string
-      content: string
-    }): Promise<FeedInfo> => {
-      const isFeed = content.includes('custom feed')
-      if (isFeed) {
+    const customExtractor: DiscoverExtractFn<FeedResultValid> = async ({ url, content }) => {
+      const isValid = content.includes('custom feed')
+      if (isValid) {
         return {
           url,
-          isFeed: true,
+          isValid: true,
           format: 'rss',
         }
       }
       return {
         url,
-        isFeed: false,
+        isValid: false,
       }
     }
     const value = await discoverFeeds(
       { url: 'https://example.com' },
       {
-        methods: { guess: { feedUris: ['/feed'] } },
+        methods: { guess: { uris: ['/feed'] } },
         fetchFn: mockFetch,
         extractFn: customExtractor,
       },
     )
-    const expected: Array<FeedInfo> = [
+    const expected: Array<DiscoverResult<FeedResultValid>> = [
       {
         url: 'https://example.com/feed',
-        isFeed: true,
+        isValid: true,
         format: 'rss',
       },
     ]
@@ -274,7 +274,7 @@ describe('discoverFeeds', () => {
   it('should respect concurrency limit', async () => {
     let maxConcurrent = 0
     let currentConcurrent = 0
-    const mockFetch: FetchFn = async (url) => {
+    const mockFetch: DiscoverFetchFn = async (url) => {
       currentConcurrent++
       maxConcurrent = Math.max(maxConcurrent, currentConcurrent)
       await new Promise((resolve) => {
@@ -301,7 +301,7 @@ describe('discoverFeeds', () => {
     await discoverFeeds(
       { url: 'https://example.com' },
       {
-        methods: { guess: { feedUris: ['/feed1', '/feed2', '/feed3', '/feed4', '/feed5'] } },
+        methods: { guess: { uris: ['/feed1', '/feed2', '/feed3', '/feed4', '/feed5'] } },
         fetchFn: mockFetch,
         concurrency: 2,
       },
@@ -327,14 +327,14 @@ describe('discoverFeeds', () => {
     const value = await discoverFeeds(
       { url: 'https://example.com' },
       {
-        methods: { guess: { feedUris: feedUrisMinimal } },
+        methods: { guess: { uris: feedUrisMinimal } },
         fetchFn: mockFetch,
       },
     )
-    const expected: Array<FeedInfo> = [
+    const expected: Array<DiscoverResult<FeedResultValid>> = [
       {
         url: 'https://example.com/feed',
-        isFeed: true,
+        isValid: true,
         format: 'rss',
         title: 'Test RSS',
         description: 'Test feed',
@@ -342,7 +342,7 @@ describe('discoverFeeds', () => {
       },
       {
         url: 'https://example.com/rss',
-        isFeed: true,
+        isValid: true,
         format: 'rss',
         title: 'Test RSS',
         description: 'Test feed',
@@ -366,14 +366,14 @@ describe('discoverFeeds', () => {
     const value = await discoverFeeds(
       { url: 'https://example.com' },
       {
-        methods: { guess: { feedUris: feedUrisBalanced } },
+        methods: { guess: { uris: feedUrisBalanced } },
         fetchFn: mockFetch,
       },
     )
-    const expected: Array<FeedInfo> = [
+    const expected: Array<DiscoverResult<FeedResultValid>> = [
       {
         url: 'https://example.com/feed.json',
-        isFeed: true,
+        isValid: true,
         format: 'json',
         title: 'Test JSON Feed',
         description: 'Test feed',
@@ -401,14 +401,14 @@ describe('discoverFeeds', () => {
     const value = await discoverFeeds(
       { url: 'https://example.com' },
       {
-        methods: { guess: { feedUris: feedUrisComprehensive } },
+        methods: { guess: { uris: feedUrisComprehensive } },
         fetchFn: mockFetch,
       },
     )
-    const expected: Array<FeedInfo> = [
+    const expected: Array<DiscoverResult<FeedResultValid>> = [
       {
         url: 'https://example.com/?feed=rss',
-        isFeed: true,
+        isValid: true,
         format: 'rss',
         title: 'Test RSS',
         description: 'Test feed',
@@ -416,7 +416,7 @@ describe('discoverFeeds', () => {
       },
       {
         url: 'https://example.com/feeds/posts/default',
-        isFeed: true,
+        isValid: true,
         format: 'rss',
         title: 'Test RSS',
         description: 'Test feed',
@@ -447,17 +447,17 @@ describe('discoverFeeds', () => {
       {
         methods: {
           guess: {
-            feedUris: ['/feed'],
+            uris: ['/feed'],
             additionalBaseUrls: ['https://www.example.com', 'https://blog.example.com'],
           },
         },
         fetchFn: mockFetch,
       },
     )
-    const expected: Array<FeedInfo> = [
+    const expected: Array<DiscoverResult<FeedResultValid>> = [
       {
         url: 'https://example.com/feed',
-        isFeed: true,
+        isValid: true,
         format: 'rss',
         title: 'Test RSS',
         description: 'Test feed',
@@ -465,7 +465,7 @@ describe('discoverFeeds', () => {
       },
       {
         url: 'https://www.example.com/feed',
-        isFeed: true,
+        isValid: true,
         format: 'rss',
         title: 'Test RSS',
         description: 'Test feed',
@@ -473,7 +473,7 @@ describe('discoverFeeds', () => {
       },
       {
         url: 'https://blog.example.com/feed',
-        isFeed: true,
+        isValid: true,
         format: 'rss',
         title: 'Test RSS',
         description: 'Test feed',
@@ -485,7 +485,7 @@ describe('discoverFeeds', () => {
   })
 
   it('should update progress correctly with additional base URLs', async () => {
-    const progressUpdates: Array<Progress> = []
+    const progressUpdates: Array<DiscoverProgress> = []
     const mockFetch = createMockFetch({})
 
     await discoverFeeds(
@@ -493,7 +493,7 @@ describe('discoverFeeds', () => {
       {
         methods: {
           guess: {
-            feedUris: ['/feed'],
+            uris: ['/feed'],
             additionalBaseUrls: ['https://www.example.com'],
           },
         },
@@ -545,15 +545,15 @@ describe('discoverFeeds', () => {
             anchorLabels: [],
           },
           headers: { linkMimeTypes: ['application/rss+xml'] },
-          guess: { feedUris: ['/feed', '/rss'] },
+          guess: { uris: ['/feed', '/rss'] },
         },
         fetchFn: mockFetch,
       },
     )
-    const expected: Array<FeedInfo> = [
+    const expected: Array<DiscoverResult<FeedResultValid>> = [
       {
         url: 'https://example.com/feed',
-        isFeed: true,
+        isValid: true,
         format: 'rss',
         title: 'Test RSS',
         description: 'Test feed',
@@ -561,7 +561,7 @@ describe('discoverFeeds', () => {
       },
       {
         url: 'https://example.com/feed.xml',
-        isFeed: true,
+        isValid: true,
         format: 'rss',
         title: 'Test RSS',
         description: 'Test feed',
@@ -604,16 +604,16 @@ describe('discoverFeeds', () => {
             anchorLabels: [],
           },
           headers: { linkMimeTypes: ['application/rss+xml'] },
-          guess: { feedUris: ['/feed', '/rss'] },
+          guess: { uris: ['/feed', '/rss'] },
         },
         fetchFn: mockFetch,
         includeInvalid: true,
       },
     )
-    const expected: Array<FeedInfo> = [
+    const expected: Array<DiscoverResult<FeedResultValid>> = [
       {
         url: 'https://example.com/feed',
-        isFeed: true,
+        isValid: true,
         format: 'rss',
         title: 'Test RSS',
         description: 'Test feed',
@@ -621,7 +621,7 @@ describe('discoverFeeds', () => {
       },
       {
         url: 'https://example.com/feed.xml',
-        isFeed: true,
+        isValid: true,
         format: 'rss',
         title: 'Test RSS',
         description: 'Test feed',
@@ -629,7 +629,7 @@ describe('discoverFeeds', () => {
       },
       {
         url: 'https://example.com/rss',
-        isFeed: false,
+        isValid: false,
       },
     ]
 
@@ -689,10 +689,10 @@ describe('discoverFeeds', () => {
         includeInvalid: true,
       },
     )
-    const expected: Array<FeedInfo> = [
+    const expected: Array<DiscoverResult<FeedResultValid>> = [
       {
         url: 'https://example.com/feed.xml',
-        isFeed: false,
+        isValid: false,
       },
     ]
 

@@ -1,15 +1,16 @@
 import { parseFeed } from 'feedsmith'
 import type { Atom, DeepPartial } from 'feedsmith/types'
-import type { ExtractFn } from '../common/types.js'
+import type { DiscoverExtractFn } from '../common/types.js'
+import type { FeedResultValid } from './types.js'
 
 const getLinkOfType = (links: Array<DeepPartial<Atom.Link<string>>> | undefined, rel: string) => {
   return links?.find((link) => link.rel === rel)
 }
 
-export const createFeedsmithExtractor = (): ExtractFn => {
+export const createFeedsmithExtractor = (): DiscoverExtractFn<FeedResultValid> => {
   return async ({ content, url }) => {
     if (!content) {
-      return { url, isFeed: false }
+      return { url, isValid: false }
     }
 
     try {
@@ -18,7 +19,7 @@ export const createFeedsmithExtractor = (): ExtractFn => {
       if (format === 'rss' || format === 'rdf') {
         return {
           url,
-          isFeed: true,
+          isValid: true,
           format,
           title: feed.title,
           description: feed.description,
@@ -29,7 +30,7 @@ export const createFeedsmithExtractor = (): ExtractFn => {
       if (format === 'atom') {
         return {
           url,
-          isFeed: true,
+          isValid: true,
           format,
           title: feed.title,
           description: feed.subtitle,
@@ -40,7 +41,7 @@ export const createFeedsmithExtractor = (): ExtractFn => {
       if (format === 'json') {
         return {
           url,
-          isFeed: true,
+          isValid: true,
           format,
           title: feed.title,
           description: feed.description,
@@ -51,6 +52,6 @@ export const createFeedsmithExtractor = (): ExtractFn => {
       // Silently fail and go further with the default return.
     }
 
-    return { url, isFeed: false }
+    return { url, isValid: false }
   }
 }

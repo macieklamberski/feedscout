@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, spyOn } from 'bun:test'
-import type { FetchFnResponse } from '../common/types.js'
+import type { DiscoverFetchFnResponse } from '../types.js'
 import {
   createAxiosAdapter,
   createGotAdapter,
@@ -123,7 +123,7 @@ describe('createNativeFetchAdapter', () => {
     }
     fetchSpy.mockImplementation(createFetchMock(mockFetch))
     const adapter = createNativeFetchAdapter()
-    const expected: FetchFnResponse = {
+    const expected: DiscoverFetchFnResponse = {
       headers: new Headers({ 'content-type': 'application/rss+xml' }),
       body: 'feed content',
       url: 'https://example.com/feed.xml',

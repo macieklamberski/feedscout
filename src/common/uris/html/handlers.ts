@@ -1,9 +1,15 @@
 import type { Handler } from 'htmlparser2'
-import { includesAnyOf, isAnyOf, normalizeMimeType, normalizeUrl } from '../../common/utils.js'
-import type { Context } from './types.js'
+import {
+  anyWordMatchesAnyOf,
+  endsWithAnyOf,
+  includesAnyOf,
+  isOfAllowedMimeType,
+  normalizeUrl,
+} from '../../../common/utils.js'
+import type { HtmlMethodContext } from './types.js'
 
 export const handleOpenTag = (
-  context: Context,
+  context: HtmlMethodContext,
   name: string,
   attribs: { [key: string]: string },
   _isImplied?: boolean,
@@ -11,18 +17,18 @@ export const handleOpenTag = (
   if (name === 'link' && attribs.href) {
     const rel = attribs.rel?.toLowerCase()
 
-    // Traditional approach: rel="alternate" with MIME type.
-    if (
-      rel === 'alternate' &&
-      isAnyOf(attribs.type, context.options.linkMimeTypes, normalizeMimeType)
-    ) {
-      context.discoveredUris.add(normalizeUrl(attribs.href, context.baseUrl))
+    if (!rel) {
+      return
     }
 
-    // HTML5 approach: rel="feed" or rel="feed alternate" (MIME type optional).
-    // Exclude "alternate stylesheet" which should not be interpreted as feed.
-    if (rel?.includes('feed') && !rel.includes('stylesheet')) {
-      context.discoveredUris.add(normalizeUrl(attribs.href, context.baseUrl))
+    // Check if rel matches any of the specified link rels.
+    if (!anyWordMatchesAnyOf(rel, context.options.linkRels)) {
+      return
+    }
+
+    // If MIME types are specified, check if type attribute matches.
+    if (isOfAllowedMimeType(attribs.type, context.options.linkMimeTypes)) {
+      context.discoveredUris.add(normalizeUrl(attribs.href, context.options.baseUrl))
     }
   }
 
@@ -42,27 +48,31 @@ export const handleOpenTag = (
     context.currentAnchor.text = ''
 
     // Check if href ends with any anchor URI pattern.
-    if (context.options.anchorUris.some((uri) => lowerHref.endsWith(uri.toLowerCase()))) {
-      context.discoveredUris.add(normalizeUrl(attribs.href, context.baseUrl))
+    if (endsWithAnyOf(lowerHref, context.options.anchorUris)) {
+      context.discoveredUris.add(normalizeUrl(attribs.href, context.options.baseUrl))
     }
   }
 }
 
-export const handleText = (context: Context, text: string): void => {
+export const handleText = (context: HtmlMethodContext, text: string): void => {
   // Accumulate text content for current anchor.
   if (context.currentAnchor.href) {
     context.currentAnchor.text += text
   }
 }
 
-export const handleCloseTag = (context: Context, name: string, _isImplied?: boolean): void => {
+export const handleCloseTag = (
+  context: HtmlMethodContext,
+  name: string,
+  _isImplied?: boolean,
+): void => {
   // Check anchor text patterns when anchor closes.
   if (name === 'a' && context.currentAnchor.href && context.currentAnchor.text) {
     const normalizedText = context.currentAnchor.text.toLowerCase().trim()
 
-    // Check if anchor text contains any feed label pattern.
+    // Check if anchor text contains any label pattern.
     if (includesAnyOf(normalizedText, context.options.anchorLabels)) {
-      context.discoveredUris.add(normalizeUrl(context.currentAnchor.href, context.baseUrl))
+      context.discoveredUris.add(normalizeUrl(context.currentAnchor.href, context.options.baseUrl))
     }
 
     context.currentAnchor.href = ''
@@ -70,7 +80,7 @@ export const handleCloseTag = (context: Context, name: string, _isImplied?: bool
   }
 }
 
-export const createHtmlFeedUrisHandlers = (context: Context): Partial<Handler> => {
+export const createHtmlUrisHandlers = (context: HtmlMethodContext): Partial<Handler> => {
   return {
     onopentag: (name, attribs, isImplied) => {
       return handleOpenTag(context, name, attribs, isImplied)
