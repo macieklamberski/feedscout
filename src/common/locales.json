@@ -1,6 +1,5 @@
 {
   "errors": {
-    "fetchFnRequired": "fetchFn is required to validate discovered URIs",
     "htmlMethodRequiresContent": "HTML method requires content to be provided in input",
     "headersMethodRequiresHeaders": "Headers method requires headers to be provided in input",
     "guessMethodRequiresUrl": "Guess method requires url to be provided in input"

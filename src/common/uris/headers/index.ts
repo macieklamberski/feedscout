@@ -1,8 +1,11 @@
-import { isAnyOf, normalizeMimeType, normalizeUrl } from '../../common/utils.js'
-import type { Options } from './types.js'
+import { anyWordMatchesAnyOf, isOfAllowedMimeType, normalizeUrl } from '../../../common/utils.js'
+import type { HeadersMethodOptions } from './types.js'
 
-export const discoverFeedUrisFromHeaders = (headers: Headers, options: Options): Array<string> => {
-  const feedUris = new Set<string>()
+export const discoverUrisFromHeaders = (
+  headers: Headers,
+  options: HeadersMethodOptions,
+): Array<string> => {
+  const uris = new Set<string>()
   const linkHeader = headers.get('link')
 
   if (!linkHeader) {
@@ -28,11 +31,20 @@ export const discoverFeedUrisFromHeaders = (headers: Headers, options: Options):
     const rel = relMatch?.[1]?.toLowerCase()
     const type = typeMatch?.[1]
 
-    // Check if this is an alternate feed link with matching MIME type.
-    if (rel === 'alternate' && type && isAnyOf(type, options.linkMimeTypes, normalizeMimeType)) {
-      feedUris.add(normalizeUrl(url, options.baseUrl))
+    if (!rel) {
+      continue
+    }
+
+    // Check if rel matches any of the specified link rels.
+    if (!anyWordMatchesAnyOf(rel, options.linkRels)) {
+      continue
+    }
+
+    // If MIME types are specified, check if type attribute matches.
+    if (isOfAllowedMimeType(type, options.linkMimeTypes)) {
+      uris.add(normalizeUrl(url, options.baseUrl))
     }
   }
 
-  return Array.from(feedUris)
+  return Array.from(uris)
 }

@@ -1,9 +1,9 @@
-export const generateFeedUrlCombinations = (
+export const generateUrlCombinations = (
   baseUrls: Array<string>,
-  feedUris: Array<string>,
+  uris: Array<string>,
 ): Array<string> => {
   return baseUrls.flatMap((base) => {
-    return feedUris.map((uri) => {
+    return uris.map((uri) => {
       return new URL(uri, base).toString()
     })
   })
@@ -29,18 +29,17 @@ export const generateFeedUrlCombinations = (
  */
 export const getWwwCounterpart = (baseUrl: string): Array<string> => {
   const url = new URL(baseUrl)
+  const counterpart = new URL(url)
 
+  // Remove www.
   if (url.hostname.startsWith('www.')) {
-    // Remove www
-    const counterpart = new URL(url)
     counterpart.hostname = url.hostname.replace(/^www\./, '')
     return [counterpart.origin]
-  } else {
-    // Add www
-    const counterpart = new URL(url)
-    counterpart.hostname = `www.${url.hostname}`
-    return [counterpart.origin]
   }
+
+  // Add www.
+  counterpart.hostname = `www.${url.hostname}`
+  return [counterpart.origin]
 }
 
 /**

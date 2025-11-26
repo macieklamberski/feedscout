@@ -1,17 +1,17 @@
-export type Options = {
+export type HtmlMethodOptions = {
   baseUrl?: string
+  linkRels: Array<string>
   linkMimeTypes: Array<string>
   anchorUris: Array<string>
   anchorIgnoredUris: Array<string>
   anchorLabels: Array<string>
 }
 
-export type Context = {
+export type HtmlMethodContext = {
   discoveredUris: Set<string>
   currentAnchor: {
     href: string
     text: string
   }
-  options: Options
-  baseUrl?: string
+  options: HtmlMethodOptions
 }

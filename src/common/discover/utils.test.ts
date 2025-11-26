@@ -1,26 +1,20 @@
 import { describe, expect, it } from 'bun:test'
-import type { FetchFn } from '../common/types.js'
-import {
-  anchorLabels,
-  feedMimeTypes,
-  feedUrisBalanced,
-  feedUrisComprehensive,
-  ignoredUris,
-} from '../defaults.js'
 import locales from '../locales.json' with { type: 'json' }
-import { normalizeInput, normalizeMethodsConfig, processConcurrently } from './utils.js'
+import type { DiscoverFetchFn } from '../types.js'
+import { normalizeInput, normalizeMethodsConfig } from './utils.js'
 
 describe('normalizeInput', () => {
-  it('should fetch and normalize string input', async () => {
-    const fetchFn: FetchFn = async (url) => {
-      return {
-        url,
-        body: '<html>content</html>',
-        headers: new Headers({ 'content-type': 'text/html' }),
-        status: 200,
-        statusText: 'OK',
-      }
+  const fetchFn: DiscoverFetchFn = async (url) => {
+    return {
+      url,
+      body: '<html>content</html>',
+      headers: new Headers({ 'content-type': 'text/html' }),
+      status: 200,
+      statusText: 'OK',
     }
+  }
+
+  it('should fetch and normalize string input', async () => {
     const expected = {
       url: 'https://example.com',
       content: '<html>content</html>',
@@ -31,7 +25,7 @@ describe('normalizeInput', () => {
   })
 
   it('should preserve redirected URL from fetch response', async () => {
-    const fetchFn: FetchFn = async () => {
+    const redirectFetchFn: DiscoverFetchFn = async () => {
       return {
         url: 'https://example.com/redirected',
         body: '<html>content</html>',
@@ -46,11 +40,11 @@ describe('normalizeInput', () => {
       headers: expect.any(Headers),
     }
 
-    expect(await normalizeInput('https://example.com', fetchFn)).toEqual(expected)
+    expect(await normalizeInput('https://example.com', redirectFetchFn)).toEqual(expected)
   })
 
   it('should handle ReadableStream body by converting to empty string', async () => {
-    const fetchFn: FetchFn = async (url) => {
+    const streamFetchFn: DiscoverFetchFn = async (url) => {
       return {
         url,
         body: new ReadableStream(),
@@ -65,12 +59,12 @@ describe('normalizeInput', () => {
       headers: expect.any(Headers),
     }
 
-    expect(await normalizeInput('https://example.com', fetchFn)).toEqual(expected)
+    expect(await normalizeInput('https://example.com', streamFetchFn)).toEqual(expected)
   })
 
   it('should preserve headers from fetch response', async () => {
     const headers = new Headers({ 'content-type': 'text/html', link: '</feed>; rel="alternate"' })
-    const fetchFn: FetchFn = async (url) => {
+    const headersFetchFn: DiscoverFetchFn = async (url) => {
       return {
         url,
         body: '<html></html>',
@@ -80,19 +74,11 @@ describe('normalizeInput', () => {
       }
     }
 
-    const result = await normalizeInput('https://example.com', fetchFn)
+    const result = await normalizeInput('https://example.com', headersFetchFn)
 
     expect(result.headers).toBe(headers)
     expect(result.headers?.get('content-type')).toBe('text/html')
     expect(result.headers?.get('link')).toBe('</feed>; rel="alternate"')
-  })
-
-  it('should throw error when string input without fetchFn', async () => {
-    const throwing = async () => {
-      return normalizeInput('https://example.com')
-    }
-
-    await expect(throwing()).rejects.toThrow(locales.errors.fetchFnRequired)
   })
 
   it('should return object input as-is', async () => {
@@ -102,16 +88,7 @@ describe('normalizeInput', () => {
       headers: new Headers({ 'content-type': 'text/html' }),
     }
 
-    expect(await normalizeInput(value)).toEqual(value)
-  })
-
-  it('should return object input without fetchFn', async () => {
-    const value = {
-      url: 'https://example.com',
-      content: '<html>content</html>',
-    }
-
-    expect(await normalizeInput(value)).toEqual(value)
+    expect(await normalizeInput(value, fetchFn)).toEqual(value)
   })
 
   it('should return object input with only url', async () => {
@@ -119,7 +96,7 @@ describe('normalizeInput', () => {
       url: 'https://example.com',
     }
 
-    expect(await normalizeInput(value)).toEqual(value)
+    expect(await normalizeInput(value, fetchFn)).toEqual(value)
   })
 
   it('should return object input with url and content', async () => {
@@ -128,7 +105,7 @@ describe('normalizeInput', () => {
       content: '<html></html>',
     }
 
-    expect(await normalizeInput(value)).toEqual(value)
+    expect(await normalizeInput(value, fetchFn)).toEqual(value)
   })
 
   it('should return object input with url and headers', async () => {
@@ -138,7 +115,7 @@ describe('normalizeInput', () => {
       headers,
     }
 
-    expect(await normalizeInput(value)).toEqual(value)
+    expect(await normalizeInput(value, fetchFn)).toEqual(value)
   })
 
   it('should return object input with all fields', async () => {
@@ -149,11 +126,11 @@ describe('normalizeInput', () => {
       headers,
     }
 
-    expect(await normalizeInput(value)).toEqual(value)
+    expect(await normalizeInput(value, fetchFn)).toEqual(value)
   })
 
   it('should handle empty string content from fetch', async () => {
-    const fetchFn: FetchFn = async (url) => {
+    const emptyFetchFn: DiscoverFetchFn = async (url) => {
       return {
         url,
         body: '',
@@ -168,12 +145,12 @@ describe('normalizeInput', () => {
       headers: expect.any(Headers),
     }
 
-    expect(await normalizeInput('https://example.com', fetchFn)).toEqual(expected)
+    expect(await normalizeInput('https://example.com', emptyFetchFn)).toEqual(expected)
   })
 
   it('should not call fetchFn when object input provided', async () => {
     let fetchCalled = false
-    const fetchFn: FetchFn = async (url) => {
+    const trackingFetchFn: DiscoverFetchFn = async (url) => {
       fetchCalled = true
       return {
         url,
@@ -188,13 +165,13 @@ describe('normalizeInput', () => {
       content: '<html>existing</html>',
     }
 
-    await normalizeInput(value, fetchFn)
+    await normalizeInput(value, trackingFetchFn)
 
     expect(fetchCalled).toBe(false)
   })
 
   it('should handle fetch response with different status codes', async () => {
-    const fetchFn: FetchFn = async (url) => {
+    const statusFetchFn: DiscoverFetchFn = async (url) => {
       return {
         url,
         body: '<html>content</html>',
@@ -209,11 +186,90 @@ describe('normalizeInput', () => {
       headers: expect.any(Headers),
     }
 
-    expect(await normalizeInput('https://example.com', fetchFn)).toEqual(expected)
+    expect(await normalizeInput('https://example.com', statusFetchFn)).toEqual(expected)
   })
 })
 
 describe('normalizeMethodsConfig', () => {
+  const feedMimeTypes = [
+    'application/rss+xml',
+    'text/rss+xml',
+    'application/x-rss+xml',
+    'application/rss',
+    'application/atom+xml',
+    'text/atom+xml',
+    'application/feed+json',
+    'application/json',
+    'application/rdf+xml',
+    'text/rdf+xml',
+    'application/atom',
+    'application/xml',
+    'text/xml',
+  ]
+  const feedUrisComprehensive = [
+    '/feed',
+    '/rss',
+    '/atom.xml',
+    '/feed.xml',
+    '/rss.xml',
+    '/index.xml',
+    '/feed/',
+    '/index.atom',
+    '/index.rss',
+    '/feed.json',
+    '/atom',
+    '/feed.rss',
+    '/feed.atom',
+    '/feed.rss.xml',
+    '/feed.atom.xml',
+    '/index.rss.xml',
+    '/index.atom.xml',
+    '/?feed=rss',
+    '/?feed=rss2',
+    '/?feed=atom',
+    '/?format=rss',
+    '/?format=atom',
+    '/?rss=1',
+    '/?atom=1',
+    '/.rss',
+    '/f.json',
+    '/f.rss',
+    '/json',
+    '/.feed',
+    '/comments/feed',
+    '/feeds/posts/default',
+  ]
+  const feedUrisBalanced = [
+    '/feed',
+    '/rss',
+    '/atom.xml',
+    '/feed.xml',
+    '/rss.xml',
+    '/index.xml',
+    '/feed/',
+    '/index.atom',
+    '/index.rss',
+    '/feed.json',
+  ]
+  const ignoredUris = ['wp-json/oembed/', 'wp-json/wp/']
+  const anchorLabels = ['rss', 'feed', 'atom', 'subscribe', 'syndicate', 'json feed']
+  const defaults = {
+    html: {
+      linkRels: ['alternate', 'feed'],
+      linkMimeTypes: feedMimeTypes,
+      anchorUris: feedUrisComprehensive,
+      anchorIgnoredUris: ignoredUris,
+      anchorLabels,
+    },
+    headers: {
+      linkRels: ['alternate'],
+      linkMimeTypes: feedMimeTypes,
+    },
+    guess: {
+      uris: feedUrisBalanced,
+    },
+  }
+
   it('should normalize array with single method to config with defaults', () => {
     const value = {
       url: 'https://example.com',
@@ -232,7 +288,7 @@ describe('normalizeMethodsConfig', () => {
       },
     }
 
-    expect(normalizeMethodsConfig(value, ['html'])).toEqual(expected)
+    expect(normalizeMethodsConfig(value, ['html'], defaults)).toEqual(expected)
   })
 
   it('should normalize array with multiple methods to config with defaults', () => {
@@ -242,7 +298,7 @@ describe('normalizeMethodsConfig', () => {
       headers: new Headers(),
     }
 
-    const result = normalizeMethodsConfig(value, ['html', 'headers', 'guess'])
+    const result = normalizeMethodsConfig(value, ['html', 'headers', 'guess'], defaults)
 
     expect(result.html).toBeDefined()
     expect(result.headers).toBeDefined()
@@ -264,7 +320,7 @@ describe('normalizeMethodsConfig', () => {
       },
     }
 
-    expect(normalizeMethodsConfig(value, { html: true })).toEqual(expected)
+    expect(normalizeMethodsConfig(value, { html: true }, defaults)).toEqual(expected)
   })
 
   it('should normalize object with custom options and merge with defaults', () => {
@@ -274,13 +330,13 @@ describe('normalizeMethodsConfig', () => {
     const expected = {
       guess: {
         options: {
-          feedUris: ['/custom-feed'],
+          uris: ['/custom-feed'],
           baseUrl: 'https://example.com',
         },
       },
     }
 
-    expect(normalizeMethodsConfig(value, { guess: { feedUris: ['/custom-feed'] } })).toEqual(
+    expect(normalizeMethodsConfig(value, { guess: { uris: ['/custom-feed'] } }, defaults)).toEqual(
       expected,
     )
   })
@@ -291,10 +347,14 @@ describe('normalizeMethodsConfig', () => {
       content: '<html></html>',
     }
 
-    const result = normalizeMethodsConfig(value, { html: true, guess: { feedUris: ['/custom'] } })
+    const result = normalizeMethodsConfig(
+      value,
+      { html: true, guess: { uris: ['/custom'] } },
+      defaults,
+    )
 
     expect(result.html).toBeDefined()
-    expect(result.guess?.options.feedUris).toEqual(['/custom'])
+    expect(result.guess?.options.uris).toEqual(['/custom'])
   })
 
   it('should override default options with custom options', () => {
@@ -303,7 +363,11 @@ describe('normalizeMethodsConfig', () => {
       content: '<html></html>',
     }
 
-    const result = normalizeMethodsConfig(value, { html: { anchorLabels: ['custom-label'] } })
+    const result = normalizeMethodsConfig(
+      value,
+      { html: { anchorLabels: ['custom-label'] } },
+      defaults,
+    )
 
     expect(result.html?.options.anchorLabels).toEqual(['custom-label'])
     expect(result.html?.options.linkMimeTypes).toEqual(feedMimeTypes)
@@ -315,7 +379,7 @@ describe('normalizeMethodsConfig', () => {
     }
     const expected = {}
 
-    expect(normalizeMethodsConfig(value, [])).toEqual(expected)
+    expect(normalizeMethodsConfig(value, [], defaults)).toEqual(expected)
   })
 
   it('should handle empty object', () => {
@@ -324,7 +388,7 @@ describe('normalizeMethodsConfig', () => {
     }
     const expected = {}
 
-    expect(normalizeMethodsConfig(value, {})).toEqual(expected)
+    expect(normalizeMethodsConfig(value, {}, defaults)).toEqual(expected)
   })
 
   it('should include baseUrl from input in all method configs', () => {
@@ -334,7 +398,7 @@ describe('normalizeMethodsConfig', () => {
       headers: new Headers(),
     }
 
-    const result = normalizeMethodsConfig(value, ['html', 'headers', 'guess'])
+    const result = normalizeMethodsConfig(value, ['html', 'headers', 'guess'], defaults)
 
     expect(result.html?.options.baseUrl).toBe('https://blog.example.com')
     expect(result.headers?.options.baseUrl).toBe('https://blog.example.com')
@@ -348,7 +412,7 @@ describe('normalizeMethodsConfig', () => {
       headers,
     }
 
-    const result = normalizeMethodsConfig(value, ['headers'])
+    const result = normalizeMethodsConfig(value, ['headers'], defaults)
 
     expect(result.headers?.headers).toBe(headers)
   })
@@ -361,7 +425,7 @@ describe('normalizeMethodsConfig', () => {
       content: htmlContent,
     }
 
-    const result = normalizeMethodsConfig(value, ['html'])
+    const result = normalizeMethodsConfig(value, ['html'], defaults)
 
     expect(result.html?.html).toBe(htmlContent)
   })
@@ -376,7 +440,7 @@ describe('normalizeMethodsConfig', () => {
       anchorUris: ['/custom-feed'],
     }
 
-    const result = normalizeMethodsConfig(value, { html: customOptions })
+    const result = normalizeMethodsConfig(value, { html: customOptions }, defaults)
 
     expect(result.html?.options.anchorLabels).toEqual(['custom1', 'custom2'])
     expect(result.html?.options.anchorUris).toEqual(['/custom-feed'])
@@ -390,7 +454,7 @@ describe('normalizeMethodsConfig', () => {
       headers: new Headers(),
     }
 
-    const result = normalizeMethodsConfig(value, ['html', 'headers', 'guess'])
+    const result = normalizeMethodsConfig(value, ['html', 'headers', 'guess'], defaults)
 
     expect(result.html).toBeDefined()
     expect(result.headers).toBeDefined()
@@ -404,7 +468,11 @@ describe('normalizeMethodsConfig', () => {
       headers: new Headers(),
     }
 
-    const result = normalizeMethodsConfig(value, { html: true, headers: true, guess: true })
+    const result = normalizeMethodsConfig(
+      value,
+      { html: true, headers: true, guess: true },
+      defaults,
+    )
 
     expect(result.html).toBeDefined()
     expect(result.headers).toBeDefined()
@@ -415,7 +483,7 @@ describe('normalizeMethodsConfig', () => {
     const value = {
       url: 'https://example.com',
     }
-    const throwing = () => normalizeMethodsConfig(value, ['html'])
+    const throwing = () => normalizeMethodsConfig(value, ['html'], defaults)
 
     expect(throwing).toThrow(locales.errors.htmlMethodRequiresContent)
   })
@@ -424,7 +492,7 @@ describe('normalizeMethodsConfig', () => {
     const value = {
       url: 'https://example.com',
     }
-    const throwing = () => normalizeMethodsConfig(value, ['headers'])
+    const throwing = () => normalizeMethodsConfig(value, ['headers'], defaults)
 
     expect(throwing).toThrow(locales.errors.headersMethodRequiresHeaders)
   })
@@ -434,7 +502,7 @@ describe('normalizeMethodsConfig', () => {
       url: '',
       content: '<html></html>',
     }
-    const throwing = () => normalizeMethodsConfig(value, ['guess'])
+    const throwing = () => normalizeMethodsConfig(value, ['guess'], defaults)
 
     expect(throwing).toThrow(locales.errors.guessMethodRequiresUrl)
   })
@@ -443,7 +511,7 @@ describe('normalizeMethodsConfig', () => {
     const value = {
       url: 'https://example.com',
     }
-    const throwing = () => normalizeMethodsConfig(value, { html: true })
+    const throwing = () => normalizeMethodsConfig(value, { html: true }, defaults)
 
     expect(throwing).toThrow(locales.errors.htmlMethodRequiresContent)
   })
@@ -452,7 +520,7 @@ describe('normalizeMethodsConfig', () => {
     const value = {
       url: 'https://example.com',
     }
-    const throwing = () => normalizeMethodsConfig(value, { headers: true })
+    const throwing = () => normalizeMethodsConfig(value, { headers: true }, defaults)
 
     expect(throwing).toThrow(locales.errors.headersMethodRequiresHeaders)
   })
@@ -461,7 +529,7 @@ describe('normalizeMethodsConfig', () => {
     const value = {
       url: '',
     }
-    const throwing = () => normalizeMethodsConfig(value, { guess: true })
+    const throwing = () => normalizeMethodsConfig(value, { guess: true }, defaults)
 
     expect(throwing).toThrow(locales.errors.guessMethodRequiresUrl)
   })
@@ -475,6 +543,7 @@ describe('normalizeMethodsConfig', () => {
       html: {
         html: '<html></html>',
         options: {
+          linkRels: ['alternate', 'feed'],
           linkMimeTypes: feedMimeTypes,
           anchorUris: feedUrisComprehensive,
           anchorIgnoredUris: ignoredUris,
@@ -484,7 +553,7 @@ describe('normalizeMethodsConfig', () => {
       },
     }
 
-    expect(normalizeMethodsConfig(value, ['html'])).toEqual(expected)
+    expect(normalizeMethodsConfig(value, ['html'], defaults)).toEqual(expected)
   })
 
   it('should return complete headers config with all default values', () => {
@@ -497,13 +566,14 @@ describe('normalizeMethodsConfig', () => {
       headers: {
         headers,
         options: {
+          linkRels: ['alternate'],
           linkMimeTypes: feedMimeTypes,
           baseUrl: 'https://example.com',
         },
       },
     }
 
-    expect(normalizeMethodsConfig(value, ['headers'])).toEqual(expected)
+    expect(normalizeMethodsConfig(value, ['headers'], defaults)).toEqual(expected)
   })
 
   it('should return complete guess config with all default values', () => {
@@ -513,13 +583,13 @@ describe('normalizeMethodsConfig', () => {
     const expected = {
       guess: {
         options: {
-          feedUris: feedUrisBalanced,
+          uris: feedUrisBalanced,
           baseUrl: 'https://example.com',
         },
       },
     }
 
-    expect(normalizeMethodsConfig(value, ['guess'])).toEqual(expected)
+    expect(normalizeMethodsConfig(value, ['guess'], defaults)).toEqual(expected)
   })
 
   it('should keep all defaults when overriding html anchorLabels', () => {
@@ -531,6 +601,7 @@ describe('normalizeMethodsConfig', () => {
       html: {
         html: '<html></html>',
         options: {
+          linkRels: ['alternate', 'feed'],
           linkMimeTypes: feedMimeTypes,
           anchorUris: feedUrisComprehensive,
           anchorIgnoredUris: ignoredUris,
@@ -540,9 +611,9 @@ describe('normalizeMethodsConfig', () => {
       },
     }
 
-    expect(normalizeMethodsConfig(value, { html: { anchorLabels: ['custom-label'] } })).toEqual(
-      expected,
-    )
+    expect(
+      normalizeMethodsConfig(value, { html: { anchorLabels: ['custom-label'] } }, defaults),
+    ).toEqual(expected)
   })
 
   it('should keep all defaults when overriding html anchorUris', () => {
@@ -554,6 +625,7 @@ describe('normalizeMethodsConfig', () => {
       html: {
         html: '<html></html>',
         options: {
+          linkRels: ['alternate', 'feed'],
           linkMimeTypes: feedMimeTypes,
           anchorUris: ['/custom-feed'],
           anchorIgnoredUris: ignoredUris,
@@ -563,9 +635,9 @@ describe('normalizeMethodsConfig', () => {
       },
     }
 
-    expect(normalizeMethodsConfig(value, { html: { anchorUris: ['/custom-feed'] } })).toEqual(
-      expected,
-    )
+    expect(
+      normalizeMethodsConfig(value, { html: { anchorUris: ['/custom-feed'] } }, defaults),
+    ).toEqual(expected)
   })
 
   it('should keep all defaults when overriding html anchorIgnoredUris', () => {
@@ -577,6 +649,7 @@ describe('normalizeMethodsConfig', () => {
       html: {
         html: '<html></html>',
         options: {
+          linkRels: ['alternate', 'feed'],
           linkMimeTypes: feedMimeTypes,
           anchorUris: feedUrisComprehensive,
           anchorIgnoredUris: ['custom-ignore'],
@@ -587,7 +660,7 @@ describe('normalizeMethodsConfig', () => {
     }
 
     expect(
-      normalizeMethodsConfig(value, { html: { anchorIgnoredUris: ['custom-ignore'] } }),
+      normalizeMethodsConfig(value, { html: { anchorIgnoredUris: ['custom-ignore'] } }, defaults),
     ).toEqual(expected)
   })
 
@@ -600,6 +673,7 @@ describe('normalizeMethodsConfig', () => {
       html: {
         html: '<html></html>',
         options: {
+          linkRels: ['alternate', 'feed'],
           linkMimeTypes: ['custom/mime'],
           anchorUris: feedUrisComprehensive,
           anchorIgnoredUris: ignoredUris,
@@ -609,9 +683,9 @@ describe('normalizeMethodsConfig', () => {
       },
     }
 
-    expect(normalizeMethodsConfig(value, { html: { linkMimeTypes: ['custom/mime'] } })).toEqual(
-      expected,
-    )
+    expect(
+      normalizeMethodsConfig(value, { html: { linkMimeTypes: ['custom/mime'] } }, defaults),
+    ).toEqual(expected)
   })
 
   it('should keep all defaults when overriding guess feedUris', () => {
@@ -621,13 +695,13 @@ describe('normalizeMethodsConfig', () => {
     const expected = {
       guess: {
         options: {
-          feedUris: ['/custom-feed'],
+          uris: ['/custom-feed'],
           baseUrl: 'https://example.com',
         },
       },
     }
 
-    expect(normalizeMethodsConfig(value, { guess: { feedUris: ['/custom-feed'] } })).toEqual(
+    expect(normalizeMethodsConfig(value, { guess: { uris: ['/custom-feed'] } }, defaults)).toEqual(
       expected,
     )
   })
@@ -642,15 +716,16 @@ describe('normalizeMethodsConfig', () => {
       headers: {
         headers,
         options: {
+          linkRels: ['alternate'],
           linkMimeTypes: ['custom/mime'],
           baseUrl: 'https://example.com',
         },
       },
     }
 
-    expect(normalizeMethodsConfig(value, { headers: { linkMimeTypes: ['custom/mime'] } })).toEqual(
-      expected,
-    )
+    expect(
+      normalizeMethodsConfig(value, { headers: { linkMimeTypes: ['custom/mime'] } }, defaults),
+    ).toEqual(expected)
   })
 
   it('should handle empty string content for html method', () => {
@@ -662,6 +737,7 @@ describe('normalizeMethodsConfig', () => {
       html: {
         html: '',
         options: {
+          linkRels: ['alternate', 'feed'],
           linkMimeTypes: feedMimeTypes,
           anchorUris: feedUrisComprehensive,
           anchorIgnoredUris: ignoredUris,
@@ -671,7 +747,7 @@ describe('normalizeMethodsConfig', () => {
       },
     }
 
-    expect(normalizeMethodsConfig(value, ['html'])).toEqual(expected)
+    expect(normalizeMethodsConfig(value, ['html'], defaults)).toEqual(expected)
   })
 
   it('should handle undefined url as falsy', () => {
@@ -679,7 +755,7 @@ describe('normalizeMethodsConfig', () => {
       content: '<html></html>',
     }
     // @ts-expect-error: This is for testing purposes.
-    const throwing = () => normalizeMethodsConfig(value, ['guess'])
+    const throwing = () => normalizeMethodsConfig(value, ['guess'], defaults)
 
     expect(throwing).toThrow(locales.errors.guessMethodRequiresUrl)
   })
@@ -695,6 +771,7 @@ describe('normalizeMethodsConfig', () => {
       html: {
         html: '<html></html>',
         options: {
+          linkRels: ['alternate', 'feed'],
           linkMimeTypes: feedMimeTypes,
           anchorUris: feedUrisComprehensive,
           anchorIgnoredUris: ignoredUris,
@@ -705,222 +782,19 @@ describe('normalizeMethodsConfig', () => {
       headers: {
         headers,
         options: {
+          linkRels: ['alternate'],
           linkMimeTypes: feedMimeTypes,
           baseUrl: 'https://example.com',
         },
       },
       guess: {
         options: {
-          feedUris: feedUrisBalanced,
+          uris: feedUrisBalanced,
           baseUrl: 'https://example.com',
         },
       },
     }
 
-    expect(normalizeMethodsConfig(value, ['html', 'headers', 'guess'])).toEqual(expected)
-  })
-})
-
-describe('processConcurrently', () => {
-  it('should process all items with concurrency limit', async () => {
-    const items = [1, 2, 3, 4, 5]
-    const processed: Array<number> = []
-    const processFn = async (item: number) => {
-      await new Promise((resolve) => {
-        return setTimeout(resolve, 10)
-      })
-      processed.push(item)
-    }
-
-    await processConcurrently(items, processFn, { concurrency: 2 })
-
-    expect(
-      processed.sort((a, b) => {
-        return a - b
-      }),
-    ).toEqual([1, 2, 3, 4, 5])
-  })
-
-  it('should respect concurrency limit', async () => {
-    const items = [1, 2, 3, 4, 5]
-    let maxConcurrent = 0
-    let currentConcurrent = 0
-    const processFn = async () => {
-      currentConcurrent++
-      maxConcurrent = Math.max(maxConcurrent, currentConcurrent)
-      await new Promise((resolve) => {
-        return setTimeout(resolve, 50)
-      })
-      currentConcurrent--
-    }
-
-    await processConcurrently(items, processFn, { concurrency: 3 })
-
-    expect(maxConcurrent).toBe(3)
-  })
-
-  it('should stop early when shouldStop returns true', async () => {
-    const items = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-    const processed: Array<number> = []
-    const processFn = async (item: number) => {
-      await new Promise((resolve) => {
-        return setTimeout(resolve, 10)
-      })
-      processed.push(item)
-    }
-
-    await processConcurrently(items, processFn, {
-      concurrency: 2,
-      shouldStop: () => {
-        return processed.length >= 5
-      },
-    })
-
-    expect(processed.length).toBeLessThanOrEqual(7)
-  })
-
-  it('should handle errors in processFn', async () => {
-    const items = [1, 2, 3, 4, 5]
-    const processed: Array<number> = []
-    const processFn = async (item: number) => {
-      if (item === 3) {
-        throw new Error('Test error')
-      }
-      processed.push(item)
-    }
-
-    await processConcurrently(items, processFn, { concurrency: 2 })
-
-    expect(
-      processed.sort((a, b) => {
-        return a - b
-      }),
-    ).toEqual([1, 2, 4, 5])
-  })
-
-  it('should handle empty array', async () => {
-    const items: Array<number> = []
-    const processed: Array<number> = []
-    const processFn = async (item: number) => {
-      processed.push(item)
-    }
-
-    await processConcurrently(items, processFn, { concurrency: 2 })
-
-    expect(processed).toEqual([])
-  })
-
-  it('should process single item', async () => {
-    const items = [1]
-    const processed: Array<number> = []
-    const processFn = async (item: number) => {
-      processed.push(item)
-    }
-
-    await processConcurrently(items, processFn, { concurrency: 2 })
-
-    expect(processed).toEqual([1])
-  })
-
-  it('should handle concurrency of 1', async () => {
-    const items = [1, 2, 3]
-    const processed: Array<number> = []
-    let maxConcurrent = 0
-    let currentConcurrent = 0
-    const processFn = async (item: number) => {
-      currentConcurrent++
-      maxConcurrent = Math.max(maxConcurrent, currentConcurrent)
-      await new Promise((resolve) => {
-        return setTimeout(resolve, 10)
-      })
-      processed.push(item)
-      currentConcurrent--
-    }
-
-    await processConcurrently(items, processFn, { concurrency: 1 })
-
-    expect(maxConcurrent).toBe(1)
-    expect(processed).toEqual([1, 2, 3])
-  })
-
-  it('should handle concurrency greater than items length', async () => {
-    const items = [1, 2, 3]
-    const processed: Array<number> = []
-    const processFn = async (item: number) => {
-      await new Promise((resolve) => {
-        return setTimeout(resolve, 10)
-      })
-      processed.push(item)
-    }
-
-    await processConcurrently(items, processFn, { concurrency: 10 })
-
-    expect(
-      processed.sort((a, b) => {
-        return a - b
-      }),
-    ).toEqual([1, 2, 3])
-  })
-
-  it('should process items in parallel when concurrency allows', async () => {
-    const items = [1, 2, 3]
-    const startTimes: Array<number> = []
-    const processFn = async () => {
-      startTimes.push(Date.now())
-      await new Promise((resolve) => {
-        return setTimeout(resolve, 50)
-      })
-    }
-
-    await processConcurrently(items, processFn, { concurrency: 3 })
-    const timeDifferences = startTimes.slice(1).map((time, index) => {
-      return time - startTimes[index]
-    })
-
-    expect(
-      timeDifferences.every((diff) => {
-        return diff < 30
-      }),
-    ).toBe(true)
-  })
-
-  it('should maintain side effects order independence', async () => {
-    const items = [1, 2, 3, 4, 5]
-    const results: Array<number> = []
-    const processFn = async (item: number) => {
-      await new Promise((resolve) => {
-        return setTimeout(resolve, Math.random() * 50)
-      })
-      results.push(item * 2)
-    }
-
-    await processConcurrently(items, processFn, { concurrency: 3 })
-    const expected = [2, 4, 6, 8, 10]
-
-    expect(
-      results.sort((a, b) => {
-        return a - b
-      }),
-    ).toEqual(expected)
-  })
-
-  it('should not call shouldStop after completion', async () => {
-    const items = [1, 2, 3]
-    let shouldStopCallCount = 0
-    const processFn = async () => {
-      await new Promise((resolve) => {
-        return setTimeout(resolve, 10)
-      })
-    }
-
-    await processConcurrently(items, processFn, {
-      concurrency: 2,
-      shouldStop: () => {
-        shouldStopCallCount++
-        return false
-      },
-    })
-
-    expect(shouldStopCallCount).toBeGreaterThan(0)
+    expect(normalizeMethodsConfig(value, ['html', 'headers', 'guess'], defaults)).toEqual(expected)
   })
 })

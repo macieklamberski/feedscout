@@ -1,37 +1,21 @@
 import { describe, expect, it } from 'bun:test'
-import {
-  discoverFeedUrisFromGuess,
-  feedUrisBalanced,
-  feedUrisComprehensive,
-  feedUrisMinimal,
-} from './index.js'
+import { discoverUrisFromGuess } from './index.js'
 
-describe('discoverFeedUrisFromGuess', () => {
-  it('should generate URIs from base URL and default feed URIs', () => {
-    const value = discoverFeedUrisFromGuess({
+describe('discoverUrisFromGuess', () => {
+  it('should generate URIs from base URL and URIs', () => {
+    const value = discoverUrisFromGuess({
       baseUrl: 'https://example.com',
-      feedUris: ['/feed.xml', '/atom.xml'],
+      uris: ['/feed.xml', '/atom.xml'],
     })
     const expected = ['https://example.com/feed.xml', 'https://example.com/atom.xml']
 
     expect(value).toEqual(expected)
   })
 
-  it('should use balanced feed URIs by default', () => {
-    const value = discoverFeedUrisFromGuess({ baseUrl: 'https://example.com' })
-
-    expect(value.length).toBe(feedUrisBalanced.length)
-    expect(
-      value.some((url) => {
-        return url.includes('/feed')
-      }),
-    ).toBe(true)
-  })
-
-  it('should accept minimal feed URIs array', () => {
-    const value = discoverFeedUrisFromGuess({
+  it('should accept minimal URIs array', () => {
+    const value = discoverUrisFromGuess({
       baseUrl: 'https://example.com',
-      feedUris: feedUrisMinimal,
+      uris: ['/feed', '/rss', '/atom.xml'],
     })
 
     expect(
@@ -46,10 +30,10 @@ describe('discoverFeedUrisFromGuess', () => {
     ).toBe(true)
   })
 
-  it('should accept balanced feed URIs array', () => {
-    const value = discoverFeedUrisFromGuess({
+  it('should accept balanced URIs array', () => {
+    const value = discoverUrisFromGuess({
       baseUrl: 'https://example.com',
-      feedUris: feedUrisBalanced,
+      uris: ['/feed', '/feed/', '/feed.json'],
     })
 
     expect(
@@ -59,10 +43,10 @@ describe('discoverFeedUrisFromGuess', () => {
     ).toBe(true)
   })
 
-  it('should accept comprehensive feed URIs array', () => {
-    const value = discoverFeedUrisFromGuess({
+  it('should accept comprehensive URIs array', () => {
+    const value = discoverUrisFromGuess({
       baseUrl: 'https://example.com',
-      feedUris: feedUrisComprehensive,
+      uris: ['/?feed=rss', '/feeds/posts/default'],
     })
 
     expect(
@@ -77,10 +61,10 @@ describe('discoverFeedUrisFromGuess', () => {
     ).toBe(true)
   })
 
-  it('should accept custom array of feed URIs', () => {
-    const value = discoverFeedUrisFromGuess({
+  it('should accept custom array of URIs', () => {
+    const value = discoverUrisFromGuess({
       baseUrl: 'https://example.com',
-      feedUris: ['/custom-feed', '/my-rss.xml'],
+      uris: ['/custom-feed', '/my-rss.xml'],
     })
     const expected = ['https://example.com/custom-feed', 'https://example.com/my-rss.xml']
 
@@ -88,9 +72,9 @@ describe('discoverFeedUrisFromGuess', () => {
   })
 
   it('should generate URLs for additional base URLs', () => {
-    const value = discoverFeedUrisFromGuess({
+    const value = discoverUrisFromGuess({
       baseUrl: 'https://example.com',
-      feedUris: ['/feed', '/rss'],
+      uris: ['/feed', '/rss'],
       additionalBaseUrls: ['https://www.example.com', 'https://blog.example.com'],
     })
     const expected = [
@@ -106,9 +90,9 @@ describe('discoverFeedUrisFromGuess', () => {
   })
 
   it('should generate correct cartesian product with additionalBaseUrls', () => {
-    const value = discoverFeedUrisFromGuess({
+    const value = discoverUrisFromGuess({
       baseUrl: 'https://example.com',
-      feedUris: ['/feed.xml'],
+      uris: ['/feed.xml'],
       additionalBaseUrls: ['https://www.example.com'],
     })
     const expected = ['https://example.com/feed.xml', 'https://www.example.com/feed.xml']
@@ -116,10 +100,10 @@ describe('discoverFeedUrisFromGuess', () => {
     expect(value).toEqual(expected)
   })
 
-  it('should handle empty feedUris array', () => {
-    const value = discoverFeedUrisFromGuess({
+  it('should handle empty uris array', () => {
+    const value = discoverUrisFromGuess({
       baseUrl: 'https://example.com',
-      feedUris: [],
+      uris: [],
     })
     const expected: Array<string> = []
 
@@ -127,9 +111,9 @@ describe('discoverFeedUrisFromGuess', () => {
   })
 
   it('should handle empty additionalBaseUrls array', () => {
-    const value = discoverFeedUrisFromGuess({
+    const value = discoverUrisFromGuess({
       baseUrl: 'https://example.com',
-      feedUris: ['/feed.xml'],
+      uris: ['/feed.xml'],
       additionalBaseUrls: [],
     })
     const expected = ['https://example.com/feed.xml']

@@ -3,4 +3,4 @@ export {
   createGotAdapter,
   createKyAdapter,
   createNativeFetchAdapter,
-} from '../feeds/adapters.js'
+} from '../common/discover/adapters.js'

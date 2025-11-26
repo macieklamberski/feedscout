@@ -1,10 +1,8 @@
+export { discoverUrisFromGuess } from '../common/uris/guess/index.js'
 export {
-  discoverFeedUrisFromGuess,
-  feedUrisBalanced,
-  feedUrisComprehensive,
-  feedUrisMinimal,
+  generateUrlCombinations,
   getSubdomainVariants,
   getWwwCounterpart,
-} from '../methods/guess/index.js'
-export { discoverFeedUrisFromHeaders } from '../methods/headers/index.js'
-export { discoverFeedUrisFromHtml } from '../methods/html/index.js'
+} from '../common/uris/guess/utils.js'
+export { discoverUrisFromHeaders } from '../common/uris/headers/index.js'
+export { discoverUrisFromHtml } from '../common/uris/html/index.js'

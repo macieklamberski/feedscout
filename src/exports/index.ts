@@ -1,23 +1,22 @@
+export { discover } from '../common/discover/index.js'
 export type {
-  ExtractFn,
-  FeedInfo,
-  FetchFn,
-  FetchFnOptions,
-  FetchFnResponse,
-  Progress,
-  ProgressFn,
+  DiscoverExtractFn,
+  DiscoverFetchFn,
+  DiscoverFetchFnOptions,
+  DiscoverFetchFnResponse,
+  DiscoverInput,
+  DiscoverInputObject,
+  DiscoverMethodsConfig,
+  DiscoverMethodsConfigDefaults,
+  DiscoverMethodsConfigInternal,
+  DiscoverOptions,
+  DiscoverOptionsInternal,
+  DiscoverProgress,
+  DiscoverProgressFn,
+  DiscoverResult,
 } from '../common/types.js'
+export { discoverUris } from '../common/uris/index.js'
+export { feedUrisBalanced, feedUrisComprehensive, feedUrisMinimal } from '../feeds/defaults.js'
 export { createFeedsmithExtractor } from '../feeds/extractors.js'
 export { discoverFeeds } from '../feeds/index.js'
-export type {
-  DiscoverFeedsInput,
-  DiscoverFeedsInputObject,
-  DiscoverFeedsOptions,
-} from '../feeds/types.js'
-export {
-  feedUrisBalanced,
-  feedUrisComprehensive,
-  feedUrisMinimal,
-} from '../methods/guess/index.js'
-export { discoverFeedUris } from '../methods/index.js'
-export type { Config as DiscoverFeedUrisConfig } from '../methods/types.js'
+export type { FeedResultValid } from '../feeds/types.js'

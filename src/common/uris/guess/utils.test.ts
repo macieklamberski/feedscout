@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'bun:test'
-import { generateFeedUrlCombinations, getSubdomainVariants, getWwwCounterpart } from './utils.js'
+import { generateUrlCombinations, getSubdomainVariants, getWwwCounterpart } from './utils.js'
 
-describe('generateFeedUrlCombinations', () => {
+describe('generateUrlCombinations', () => {
   it('should generate all URL combinations from multiple bases and URIs', () => {
     const baseUrls = ['https://example.com', 'https://blog.example.com']
     const feedUris = ['/feed.xml', '/rss.xml']
@@ -12,7 +12,7 @@ describe('generateFeedUrlCombinations', () => {
       'https://blog.example.com/rss.xml',
     ]
 
-    expect(generateFeedUrlCombinations(baseUrls, feedUris)).toEqual(expected)
+    expect(generateUrlCombinations(baseUrls, feedUris)).toEqual(expected)
   })
 
   it('should generate combinations with single base and multiple URIs', () => {
@@ -24,7 +24,7 @@ describe('generateFeedUrlCombinations', () => {
       'https://example.com/atom.xml',
     ]
 
-    expect(generateFeedUrlCombinations(baseUrls, feedUris)).toEqual(expected)
+    expect(generateUrlCombinations(baseUrls, feedUris)).toEqual(expected)
   })
 
   it('should generate combinations with multiple bases and single URI', () => {
@@ -36,7 +36,7 @@ describe('generateFeedUrlCombinations', () => {
       'https://blog.example.com/feed.xml',
     ]
 
-    expect(generateFeedUrlCombinations(baseUrls, feedUris)).toEqual(expected)
+    expect(generateUrlCombinations(baseUrls, feedUris)).toEqual(expected)
   })
 
   it('should handle relative URIs without leading slash', () => {
@@ -44,7 +44,7 @@ describe('generateFeedUrlCombinations', () => {
     const feedUris = ['feed.xml', 'rss.xml']
     const expected = ['https://example.com/feed.xml', 'https://example.com/rss.xml']
 
-    expect(generateFeedUrlCombinations(baseUrls, feedUris)).toEqual(expected)
+    expect(generateUrlCombinations(baseUrls, feedUris)).toEqual(expected)
   })
 
   it('should handle base URLs with trailing slash', () => {
@@ -52,7 +52,7 @@ describe('generateFeedUrlCombinations', () => {
     const feedUris = ['/feed.xml', 'rss.xml']
     const expected = ['https://example.com/feed.xml', 'https://example.com/rss.xml']
 
-    expect(generateFeedUrlCombinations(baseUrls, feedUris)).toEqual(expected)
+    expect(generateUrlCombinations(baseUrls, feedUris)).toEqual(expected)
   })
 
   it('should handle base URLs with paths', () => {
@@ -60,7 +60,7 @@ describe('generateFeedUrlCombinations', () => {
     const feedUris = ['/feed.xml', 'rss.xml']
     const expected = ['https://example.com/feed.xml', 'https://example.com/blog/rss.xml']
 
-    expect(generateFeedUrlCombinations(baseUrls, feedUris)).toEqual(expected)
+    expect(generateUrlCombinations(baseUrls, feedUris)).toEqual(expected)
   })
 
   it('should handle query parameters in URIs', () => {
@@ -68,15 +68,15 @@ describe('generateFeedUrlCombinations', () => {
     const feedUris = ['/?feed=rss', '/?feed=atom']
     const expected = ['https://example.com/?feed=rss', 'https://example.com/?feed=atom']
 
-    expect(generateFeedUrlCombinations(baseUrls, feedUris)).toEqual(expected)
+    expect(generateUrlCombinations(baseUrls, feedUris)).toEqual(expected)
   })
 
-  it('should handle absolute URIs in feedUris', () => {
+  it('should handle absolute URIs', () => {
     const baseUrls = ['https://example.com']
     const feedUris = ['https://feeds.example.com/rss.xml']
     const expected = ['https://feeds.example.com/rss.xml']
 
-    expect(generateFeedUrlCombinations(baseUrls, feedUris)).toEqual(expected)
+    expect(generateUrlCombinations(baseUrls, feedUris)).toEqual(expected)
   })
 
   it('should handle mixed relative and absolute URIs', () => {
@@ -84,7 +84,7 @@ describe('generateFeedUrlCombinations', () => {
     const feedUris = ['/feed.xml', 'https://feeds.example.com/rss.xml']
     const expected = ['https://example.com/feed.xml', 'https://feeds.example.com/rss.xml']
 
-    expect(generateFeedUrlCombinations(baseUrls, feedUris)).toEqual(expected)
+    expect(generateUrlCombinations(baseUrls, feedUris)).toEqual(expected)
   })
 
   it('should return empty array when baseUrls is empty', () => {
@@ -92,15 +92,15 @@ describe('generateFeedUrlCombinations', () => {
     const feedUris = ['/feed.xml', '/rss.xml']
     const expected: Array<string> = []
 
-    expect(generateFeedUrlCombinations(baseUrls, feedUris)).toEqual(expected)
+    expect(generateUrlCombinations(baseUrls, feedUris)).toEqual(expected)
   })
 
-  it('should return empty array when feedUris is empty', () => {
+  it('should return empty URIs array', () => {
     const baseUrls = ['https://example.com']
     const feedUris: Array<string> = []
     const expected: Array<string> = []
 
-    expect(generateFeedUrlCombinations(baseUrls, feedUris)).toEqual(expected)
+    expect(generateUrlCombinations(baseUrls, feedUris)).toEqual(expected)
   })
 
   it('should return empty array when both arrays are empty', () => {
@@ -108,7 +108,7 @@ describe('generateFeedUrlCombinations', () => {
     const feedUris: Array<string> = []
     const expected: Array<string> = []
 
-    expect(generateFeedUrlCombinations(baseUrls, feedUris)).toEqual(expected)
+    expect(generateUrlCombinations(baseUrls, feedUris)).toEqual(expected)
   })
 
   it('should handle single base and single URI', () => {
@@ -116,7 +116,7 @@ describe('generateFeedUrlCombinations', () => {
     const feedUris = ['/feed.xml']
     const expected = ['https://example.com/feed.xml']
 
-    expect(generateFeedUrlCombinations(baseUrls, feedUris)).toEqual(expected)
+    expect(generateUrlCombinations(baseUrls, feedUris)).toEqual(expected)
   })
 
   it('should preserve URL encoding in URIs', () => {
@@ -124,7 +124,7 @@ describe('generateFeedUrlCombinations', () => {
     const feedUris = ['/feed%20name.xml', '/rss%2Batom.xml']
     const expected = ['https://example.com/feed%20name.xml', 'https://example.com/rss%2Batom.xml']
 
-    expect(generateFeedUrlCombinations(baseUrls, feedUris)).toEqual(expected)
+    expect(generateUrlCombinations(baseUrls, feedUris)).toEqual(expected)
   })
 
   it('should handle different protocols in base URLs', () => {
@@ -132,7 +132,7 @@ describe('generateFeedUrlCombinations', () => {
     const feedUris = ['/feed.xml']
     const expected = ['http://example.com/feed.xml', 'https://example.com/feed.xml']
 
-    expect(generateFeedUrlCombinations(baseUrls, feedUris)).toEqual(expected)
+    expect(generateUrlCombinations(baseUrls, feedUris)).toEqual(expected)
   })
 
   it('should handle ports in base URLs', () => {
@@ -140,7 +140,7 @@ describe('generateFeedUrlCombinations', () => {
     const feedUris = ['/feed.xml']
     const expected = ['https://example.com:8080/feed.xml']
 
-    expect(generateFeedUrlCombinations(baseUrls, feedUris)).toEqual(expected)
+    expect(generateUrlCombinations(baseUrls, feedUris)).toEqual(expected)
   })
 })
 
