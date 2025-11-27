@@ -123,6 +123,10 @@ describe('discoverUrisFromHtml', () => {
 
   describe('link elements with rel="feed" (HTML5)', () => {
     it.skip('should find feed link without MIME type', () => {
+      // HTML5 spec allows rel="feed" without type attribute.
+      // This indicates a syndication feed where the format is autodiscovered.
+      // The implementation should accept rel="feed" even when type is missing,
+      // as the feed format can be determined by fetching and parsing the content.
       const value = '<link rel="feed" href="/feed.xml">'
       const expected = ['/feed.xml']
 
@@ -137,7 +141,21 @@ describe('discoverUrisFromHtml', () => {
     })
 
     it.skip('should find feed link with hAtom (text/html) MIME type', () => {
+      // hAtom is a microformat that embeds feed data within HTML pages.
+      // Sites using hAtom may serve feeds with type="text/html" because
+      // the content is parseable HTML with microformat annotations.
+      // The implementation should recognize rel="feed" type="text/html"
+      // as a valid feed indicator for hAtom-style feeds.
       const value = '<link rel="feed" type="text/html" href="/hatom.html">'
+      const expected = ['/hatom.html']
+
+      expect(discoverUrisFromHtml(value, defaultOptions)).toEqual(expected)
+    })
+
+    it.skip('should find feed link with text/html MIME type when rel contains feed', () => {
+      // Similar to hAtom case - some sites use compound rel values
+      // like "alternate feed" with text/html type.
+      const value = '<link rel="alternate feed" type="text/html" href="/hatom.html">'
       const expected = ['/hatom.html']
 
       expect(discoverUrisFromHtml(value, defaultOptions)).toEqual(expected)
@@ -152,6 +170,27 @@ describe('discoverUrisFromHtml', () => {
 
     it('should handle uppercase rel="ALTERNATE"', () => {
       const value = '<link rel="ALTERNATE" type="application/rss+xml" href="/feed.xml">'
+      const expected = ['/feed.xml']
+
+      expect(discoverUrisFromHtml(value, defaultOptions)).toEqual(expected)
+    })
+
+    it('should handle mixed case rel="Feed Alternate"', () => {
+      const value = '<link rel="Feed Alternate" type="application/rss+xml" href="/feed.xml">'
+      const expected = ['/feed.xml']
+
+      expect(discoverUrisFromHtml(value, defaultOptions)).toEqual(expected)
+    })
+
+    it('should find link with compound rel containing alternate and feed', () => {
+      const value = '<link rel="alternate feed" type="application/rss+xml" href="/feed.xml">'
+      const expected = ['/feed.xml']
+
+      expect(discoverUrisFromHtml(value, defaultOptions)).toEqual(expected)
+    })
+
+    it('should find link with compound rel feed alternate (reversed order)', () => {
+      const value = '<link rel="feed alternate" type="application/rss+xml" href="/feed.xml">'
       const expected = ['/feed.xml']
 
       expect(discoverUrisFromHtml(value, defaultOptions)).toEqual(expected)

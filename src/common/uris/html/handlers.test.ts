@@ -58,6 +58,9 @@ describe('handleOpenTag', () => {
   })
 
   it.skip('should add link tag with rel=feed without type (edge case)', () => {
+    // HTML5 spec allows rel="feed" without type attribute.
+    // The feed format should be autodiscovered when fetching the content.
+    // This is a valid pattern seen in the wild that we should support.
     const value = createMockContext()
 
     handleOpenTag(value, 'link', { rel: 'feed', href: '/feed.xml' })
@@ -65,10 +68,45 @@ describe('handleOpenTag', () => {
     expect(value.discoveredUris.has('/feed.xml')).toBe(true)
   })
 
+  it.skip('should add link tag with rel=feed and text/html type (hAtom)', () => {
+    // hAtom microformat embeds feed data in HTML pages.
+    // Sites using hAtom serve feeds with type="text/html".
+    // This should be recognized as a valid feed when rel="feed" is present.
+    const value = createMockContext()
+
+    handleOpenTag(value, 'link', { rel: 'feed', type: 'text/html', href: '/hatom.html' })
+
+    expect(value.discoveredUris.has('/hatom.html')).toBe(true)
+  })
+
   it('should add link tag with rel=feed and matching type', () => {
     const value = createMockContext()
 
     handleOpenTag(value, 'link', { rel: 'feed', type: 'application/rss+xml', href: '/feed.xml' })
+
+    expect(value.discoveredUris.has('/feed.xml')).toBe(true)
+  })
+
+  it('should add link tag with rel containing feed in compound value', () => {
+    const value = createMockContext()
+
+    handleOpenTag(value, 'link', {
+      rel: 'feed alternate',
+      type: 'application/rss+xml',
+      href: '/feed.xml',
+    })
+
+    expect(value.discoveredUris.has('/feed.xml')).toBe(true)
+  })
+
+  it('should add link tag with rel containing alternate in compound value', () => {
+    const value = createMockContext()
+
+    handleOpenTag(value, 'link', {
+      rel: 'alternate feed',
+      type: 'application/rss+xml',
+      href: '/feed.xml',
+    })
 
     expect(value.discoveredUris.has('/feed.xml')).toBe(true)
   })
