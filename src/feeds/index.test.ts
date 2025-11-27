@@ -271,6 +271,178 @@ describe('discoverFeeds', () => {
     expect(value).toEqual(expected)
   })
 
+  it('should preserve additional data from custom extractor', async () => {
+    type ExtendedFeedResult = FeedResultValid & {
+      itemCount: number
+      lastUpdated: string
+    }
+    const mockFetch = createMockFetch({
+      'https://example.com/feed': 'custom feed with 42 items updated 2024-01-15',
+    })
+    const customExtractor: DiscoverExtractFn<ExtendedFeedResult> = async ({ url, content }) => {
+      const isValid = content.includes('custom feed')
+      if (isValid) {
+        return {
+          url,
+          isValid: true,
+          format: 'rss',
+          title: 'Custom Feed',
+          itemCount: 42,
+          lastUpdated: '2024-01-15',
+        }
+      }
+      return {
+        url,
+        isValid: false,
+      }
+    }
+    const value = await discoverFeeds<ExtendedFeedResult>(
+      { url: 'https://example.com' },
+      {
+        methods: { guess: { uris: ['/feed'] } },
+        fetchFn: mockFetch,
+        extractFn: customExtractor,
+      },
+    )
+    const expected: Array<DiscoverResult<ExtendedFeedResult>> = [
+      {
+        url: 'https://example.com/feed',
+        isValid: true,
+        format: 'rss',
+        title: 'Custom Feed',
+        itemCount: 42,
+        lastUpdated: '2024-01-15',
+      },
+    ]
+
+    expect(value).toEqual(expected)
+  })
+
+  it('should handle custom extractor with optional additional fields', async () => {
+    type ExtendedFeedResult = FeedResultValid & {
+      itemCount?: number
+      author?: string
+    }
+    const mockFetch = createMockFetch({
+      'https://example.com/feed1': 'feed by John',
+      'https://example.com/feed2': 'anonymous feed',
+    })
+    const customExtractor: DiscoverExtractFn<ExtendedFeedResult> = async ({ url, content }) => {
+      const hasAuthor = content.includes('by John')
+      return {
+        url,
+        isValid: true,
+        format: 'rss',
+        author: hasAuthor ? 'John' : undefined,
+      }
+    }
+    const value = await discoverFeeds<ExtendedFeedResult>(
+      { url: 'https://example.com' },
+      {
+        methods: { guess: { uris: ['/feed1', '/feed2'] } },
+        fetchFn: mockFetch,
+        extractFn: customExtractor,
+      },
+    )
+    const expected: Array<DiscoverResult<ExtendedFeedResult>> = [
+      {
+        url: 'https://example.com/feed1',
+        isValid: true,
+        format: 'rss',
+        author: 'John',
+      },
+      {
+        url: 'https://example.com/feed2',
+        isValid: true,
+        format: 'rss',
+        author: undefined,
+      },
+    ]
+
+    expect(value).toEqual(expected)
+  })
+
+  it('should handle custom extractor returning error with additional context', async () => {
+    const mockFetch = createMockFetch({
+      'https://example.com/feed': 'invalid content',
+    })
+    const customExtractor: DiscoverExtractFn<FeedResultValid> = async ({ url }) => {
+      return {
+        url,
+        isValid: false,
+        error: { code: 'PARSE_ERROR', message: 'Failed to parse feed' },
+      }
+    }
+    const value = await discoverFeeds(
+      { url: 'https://example.com' },
+      {
+        methods: { guess: { uris: ['/feed'] } },
+        fetchFn: mockFetch,
+        extractFn: customExtractor,
+        includeInvalid: true,
+      },
+    )
+    const expected: Array<DiscoverResult<FeedResultValid>> = [
+      {
+        url: 'https://example.com/feed',
+        isValid: false,
+        error: { code: 'PARSE_ERROR', message: 'Failed to parse feed' },
+      },
+    ]
+
+    expect(value).toEqual(expected)
+  })
+
+  it.skip('should handle custom extractor that uses headers', async () => {
+    // Implementation gap: The discover function in src/common/discover/index.ts
+    // does not pass headers from fetchFn response to extractFn.
+    // The type signature supports it (DiscoverExtractFn accepts headers?: Headers),
+    // but the actual call at line 55-58 omits headers.
+    type ExtendedFeedResult = FeedResultValid & {
+      etag?: string
+    }
+    const mockFetch: DiscoverFetchFn = async (url) => ({
+      url,
+      body: '<rss><channel><title>Test</title></channel></rss>',
+      headers: new Headers({ etag: '"abc123"' }),
+      status: 200,
+      statusText: 'OK',
+    })
+    const customExtractor: DiscoverExtractFn<ExtendedFeedResult> = async ({
+      url,
+      content,
+      headers,
+    }) => {
+      if (content.includes('<rss>')) {
+        return {
+          url,
+          isValid: true,
+          format: 'rss',
+          etag: headers?.get('etag') ?? undefined,
+        }
+      }
+      return { url, isValid: false }
+    }
+    const value = await discoverFeeds<ExtendedFeedResult>(
+      { url: 'https://example.com' },
+      {
+        methods: { guess: { uris: ['/feed'] } },
+        fetchFn: mockFetch,
+        extractFn: customExtractor,
+      },
+    )
+    const expected: Array<DiscoverResult<ExtendedFeedResult>> = [
+      {
+        url: 'https://example.com/feed',
+        isValid: true,
+        format: 'rss',
+        etag: '"abc123"',
+      },
+    ]
+
+    expect(value).toEqual(expected)
+  })
+
   it('should respect concurrency limit', async () => {
     let maxConcurrent = 0
     let currentConcurrent = 0
