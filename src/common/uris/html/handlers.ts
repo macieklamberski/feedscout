@@ -1,9 +1,8 @@
 import type { Handler } from 'htmlparser2'
 import {
-  anyWordMatchesAnyOf,
   endsWithAnyOf,
   includesAnyOf,
-  isOfAllowedMimeType,
+  matchesAnyOfLinkSelectors,
   normalizeUrl,
 } from '../../../common/utils.js'
 import type { HtmlMethodContext } from './types.js'
@@ -21,13 +20,7 @@ export const handleOpenTag = (
       return
     }
 
-    // Check if rel matches any of the specified link rels.
-    if (!anyWordMatchesAnyOf(rel, context.options.linkRels)) {
-      return
-    }
-
-    // If MIME types are specified, check if type attribute matches.
-    if (isOfAllowedMimeType(attribs.type, context.options.linkMimeTypes)) {
+    if (matchesAnyOfLinkSelectors(rel, attribs.type, context.options.linkSelectors)) {
       context.discoveredUris.add(normalizeUrl(attribs.href, context.options.baseUrl))
     }
   }

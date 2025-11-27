@@ -1,3 +1,4 @@
+import type { LinkSelector } from '../common/types.js'
 import type { GuessMethodOptions } from '../common/uris/guess/types.js'
 import type { HeadersMethodOptions } from '../common/uris/headers/types.js'
 import type { HtmlMethodOptions } from '../common/uris/html/types.js'
@@ -67,10 +68,14 @@ export const ignoredUris = ['wp-json/oembed/', 'wp-json/wp/']
 // Text labels used to identify feed links in anchor elements.
 export const anchorLabels = ['rss', 'feed', 'atom', 'subscribe', 'syndicate', 'json feed']
 
+export const linkSelectors: Array<LinkSelector> = [
+  { rel: 'alternate', types: feedMimeTypes },
+  { rel: 'feed' },
+]
+
 // Default options for HTML method.
 export const defaultHtmlOptions: Omit<HtmlMethodOptions, 'baseUrl'> = {
-  linkRels: ['alternate', 'feed'],
-  linkMimeTypes: feedMimeTypes,
+  linkSelectors,
   anchorUris: feedUrisComprehensive,
   anchorIgnoredUris: ignoredUris,
   anchorLabels,
@@ -78,8 +83,7 @@ export const defaultHtmlOptions: Omit<HtmlMethodOptions, 'baseUrl'> = {
 
 // Default options for Headers method.
 export const defaultHeadersOptions: Omit<HeadersMethodOptions, 'baseUrl'> = {
-  linkRels: ['alternate'],
-  linkMimeTypes: feedMimeTypes,
+  linkSelectors,
 }
 
 // Default options for Guess method (excluding baseUrl which is required).

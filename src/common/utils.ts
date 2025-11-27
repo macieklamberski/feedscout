@@ -47,7 +47,27 @@ export const isOfAllowedMimeType = (
 }
 
 export const normalizeUrl = (url: string, baseUrl: string | undefined): string => {
+  // TODO: Make this a default function to normalize URLs, but make sure to also add
+  // an option to allow passing custom function as an option (NormalizeUrlFn).
   return baseUrl ? new URL(url, baseUrl).href : url
+}
+
+export const matchesAnyOfLinkSelectors = (
+  rel: string,
+  type: string | undefined,
+  selectors: Array<{ rel: string; types?: Array<string> }>,
+): boolean => {
+  return selectors.some((selector) => {
+    if (!anyWordMatchesAnyOf(rel, [selector.rel])) {
+      return false
+    }
+
+    if (!selector.types) {
+      return true
+    }
+
+    return isOfAllowedMimeType(type, selector.types)
+  })
 }
 
 export const processConcurrently = async <T>(

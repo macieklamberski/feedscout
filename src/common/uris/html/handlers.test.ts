@@ -10,8 +10,10 @@ const createMockContext = (): HtmlMethodContext => {
       text: '',
     },
     options: {
-      linkRels: ['alternate', 'feed'],
-      linkMimeTypes: ['application/rss+xml', 'application/atom+xml'],
+      linkSelectors: [
+        { rel: 'alternate', types: ['application/rss+xml', 'application/atom+xml'] },
+        { rel: 'feed' },
+      ],
       anchorUris: ['/feed', '/rss', '/atom.xml'],
       anchorIgnoredUris: ['#', 'javascript:', 'mailto:'],
       anchorLabels: ['rss', 'feed', 'atom'],
@@ -57,7 +59,7 @@ describe('handleOpenTag', () => {
     expect(value.discoveredUris.has('/feed.xml')).toBe(true)
   })
 
-  it.skip('should add link tag with rel=feed without type (edge case)', () => {
+  it('should add link tag with rel=feed without type (edge case)', () => {
     // HTML5 spec allows rel="feed" without type attribute.
     // The feed format should be autodiscovered when fetching the content.
     // This is a valid pattern seen in the wild that we should support.
@@ -68,7 +70,7 @@ describe('handleOpenTag', () => {
     expect(value.discoveredUris.has('/feed.xml')).toBe(true)
   })
 
-  it.skip('should add link tag with rel=feed and text/html type (hAtom)', () => {
+  it('should add link tag with rel=feed and text/html type (hAtom)', () => {
     // hAtom microformat embeds feed data in HTML pages.
     // Sites using hAtom serve feeds with type="text/html".
     // This should be recognized as a valid feed when rel="feed" is present.

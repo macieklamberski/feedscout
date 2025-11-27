@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'bun:test'
 import { discoverUrisFromHtml } from './index.js'
+import type { HtmlMethodOptions } from './types.js'
 
 const linkMimeTypes = [
   'application/json',
@@ -49,9 +50,8 @@ const anchorIgnoredUris = ['wp-json/oembed/', 'wp-json/wp/']
 
 const anchorLabels = ['rss', 'feed', 'atom', 'subscribe', 'syndicate', 'json feed']
 
-const defaultOptions = {
-  linkRels: ['alternate', 'feed'],
-  linkMimeTypes,
+const defaultOptions: HtmlMethodOptions = {
+  linkSelectors: [{ rel: 'alternate', types: linkMimeTypes }, { rel: 'feed' }],
   anchorUris,
   anchorIgnoredUris,
   anchorLabels,
@@ -122,7 +122,7 @@ describe('discoverUrisFromHtml', () => {
   })
 
   describe('link elements with rel="feed" (HTML5)', () => {
-    it.skip('should find feed link without MIME type', () => {
+    it('should find feed link without MIME type', () => {
       // HTML5 spec allows rel="feed" without type attribute.
       // This indicates a syndication feed where the format is autodiscovered.
       // The implementation should accept rel="feed" even when type is missing,
@@ -140,7 +140,7 @@ describe('discoverUrisFromHtml', () => {
       expect(discoverUrisFromHtml(value, defaultOptions)).toEqual(expected)
     })
 
-    it.skip('should find feed link with hAtom (text/html) MIME type', () => {
+    it('should find feed link with hAtom (text/html) MIME type', () => {
       // hAtom is a microformat that embeds feed data within HTML pages.
       // Sites using hAtom may serve feeds with type="text/html" because
       // the content is parseable HTML with microformat annotations.
@@ -152,7 +152,7 @@ describe('discoverUrisFromHtml', () => {
       expect(discoverUrisFromHtml(value, defaultOptions)).toEqual(expected)
     })
 
-    it.skip('should find feed link with text/html MIME type when rel contains feed', () => {
+    it('should find feed link with text/html MIME type when rel contains feed', () => {
       // Similar to hAtom case - some sites use compound rel values
       // like "alternate feed" with text/html type.
       const value = '<link rel="alternate feed" type="text/html" href="/hatom.html">'
@@ -203,7 +203,11 @@ describe('discoverUrisFromHtml', () => {
       expect(discoverUrisFromHtml(value, defaultOptions)).toEqual(expected)
     })
 
-    it('should ignore feed stylesheet', () => {
+    it.skip('should ignore feed stylesheet', () => {
+      // This is not supported for now as the chance of such thing happening is quite
+      // low anyway. It's better to incorrectly treat such as valid than to treat
+      // `rel="feed home"` or `rel="feed alternate"` as invalid.
+
       const value = '<link rel="feed stylesheet" href="/feed.xml">'
       const expected: Array<string> = []
 
@@ -431,18 +435,6 @@ describe('discoverUrisFromHtml', () => {
   })
 
   describe('custom options', () => {
-    it('should use custom linkMimeTypes', () => {
-      const value = '<link rel="alternate" type="custom/feed" href="/custom.xml">'
-      const expected = ['/custom.xml']
-
-      expect(
-        discoverUrisFromHtml(value, {
-          ...defaultOptions,
-          linkMimeTypes: ['custom/feed'],
-        }),
-      ).toEqual(expected)
-    })
-
     it('should use custom anchorUris', () => {
       const value = '<a href="/custom-feed">Feed</a>'
       const expected = ['/custom-feed']

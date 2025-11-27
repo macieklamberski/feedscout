@@ -1,4 +1,4 @@
-import { anyWordMatchesAnyOf, isOfAllowedMimeType, normalizeUrl } from '../../../common/utils.js'
+import { matchesAnyOfLinkSelectors, normalizeUrl } from '../../../common/utils.js'
 import type { HeadersMethodOptions } from './types.js'
 
 export const discoverUrisFromHeaders = (
@@ -35,13 +35,7 @@ export const discoverUrisFromHeaders = (
       continue
     }
 
-    // Check if rel matches any of the specified link rels.
-    if (!anyWordMatchesAnyOf(rel, options.linkRels)) {
-      continue
-    }
-
-    // If MIME types are specified, check if type attribute matches.
-    if (isOfAllowedMimeType(type, options.linkMimeTypes)) {
+    if (matchesAnyOfLinkSelectors(rel, type, options.linkSelectors)) {
       uris.add(normalizeUrl(url, options.baseUrl))
     }
   }

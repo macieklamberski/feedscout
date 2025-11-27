@@ -5,7 +5,9 @@ import {
   includesAnyOf,
   isAnyOf,
   isOfAllowedMimeType,
+  matchesAnyOfLinkSelectors,
   normalizeMimeType,
+  normalizeUrl,
   processConcurrently,
 } from './utils.js'
 
@@ -317,6 +319,170 @@ describe('isAnyOf', () => {
     const patterns = ['', 'application/rss+xml']
 
     expect(isAnyOf(value, patterns)).toBe(true)
+  })
+})
+
+describe('normalizeUrl', () => {
+  it('should resolve relative URL with base URL', () => {
+    const value = '/feed.xml'
+    const baseUrl = 'https://example.com'
+    const expected = 'https://example.com/feed.xml'
+
+    expect(normalizeUrl(value, baseUrl)).toBe(expected)
+  })
+
+  it('should resolve relative URL with base URL containing path', () => {
+    const value = 'feed.xml'
+    const baseUrl = 'https://example.com/blog/'
+    const expected = 'https://example.com/blog/feed.xml'
+
+    expect(normalizeUrl(value, baseUrl)).toBe(expected)
+  })
+
+  it('should preserve absolute URL when base URL provided', () => {
+    const value = 'https://other.com/feed.xml'
+    const baseUrl = 'https://example.com'
+    const expected = 'https://other.com/feed.xml'
+
+    expect(normalizeUrl(value, baseUrl)).toBe(expected)
+  })
+
+  it('should return URL unchanged when base URL is undefined', () => {
+    const value = '/feed.xml'
+    const baseUrl = undefined
+    const expected = '/feed.xml'
+
+    expect(normalizeUrl(value, baseUrl)).toBe(expected)
+  })
+
+  it('should handle protocol-relative URLs', () => {
+    const value = '//cdn.example.com/feed.xml'
+    const baseUrl = 'https://example.com'
+    const expected = 'https://cdn.example.com/feed.xml'
+
+    expect(normalizeUrl(value, baseUrl)).toBe(expected)
+  })
+
+  it('should handle parent directory references', () => {
+    const value = '../feed.xml'
+    const baseUrl = 'https://example.com/blog/posts/'
+    const expected = 'https://example.com/blog/feed.xml'
+
+    expect(normalizeUrl(value, baseUrl)).toBe(expected)
+  })
+})
+
+describe('matchesAnyOfLinkSelectors', () => {
+  it('should return true when rel matches selector without types', () => {
+    const rel = 'feed'
+    const type = undefined
+    const selectors = [{ rel: 'feed' }]
+
+    expect(matchesAnyOfLinkSelectors(rel, type, selectors)).toBe(true)
+  })
+
+  it('should return true when rel and type match selector', () => {
+    const rel = 'alternate'
+    const type = 'application/rss+xml'
+    const selectors = [{ rel: 'alternate', types: ['application/rss+xml', 'application/atom+xml'] }]
+
+    expect(matchesAnyOfLinkSelectors(rel, type, selectors)).toBe(true)
+  })
+
+  it('should return false when rel matches but type does not', () => {
+    const rel = 'alternate'
+    const type = 'text/html'
+    const selectors = [{ rel: 'alternate', types: ['application/rss+xml'] }]
+
+    expect(matchesAnyOfLinkSelectors(rel, type, selectors)).toBe(false)
+  })
+
+  it('should return false when rel does not match', () => {
+    const rel = 'stylesheet'
+    const type = 'application/rss+xml'
+    const selectors = [{ rel: 'alternate', types: ['application/rss+xml'] }]
+
+    expect(matchesAnyOfLinkSelectors(rel, type, selectors)).toBe(false)
+  })
+
+  it('should return true when type is undefined and selector has no types', () => {
+    const rel = 'feed'
+    const type = undefined
+    const selectors = [{ rel: 'feed' }]
+
+    expect(matchesAnyOfLinkSelectors(rel, type, selectors)).toBe(true)
+  })
+
+  it('should return false when type is undefined but selector requires types', () => {
+    const rel = 'alternate'
+    const type = undefined
+    const selectors = [{ rel: 'alternate', types: ['application/rss+xml'] }]
+
+    expect(matchesAnyOfLinkSelectors(rel, type, selectors)).toBe(false)
+  })
+
+  it('should match rel case-insensitively', () => {
+    const rel = 'ALTERNATE'
+    const type = 'application/rss+xml'
+    const selectors = [{ rel: 'alternate', types: ['application/rss+xml'] }]
+
+    expect(matchesAnyOfLinkSelectors(rel, type, selectors)).toBe(true)
+  })
+
+  it('should match type case-insensitively', () => {
+    const rel = 'alternate'
+    const type = 'APPLICATION/RSS+XML'
+    const selectors = [{ rel: 'alternate', types: ['application/rss+xml'] }]
+
+    expect(matchesAnyOfLinkSelectors(rel, type, selectors)).toBe(true)
+  })
+
+  it('should match any selector in array', () => {
+    const rel = 'feed'
+    const type = undefined
+    const selectors = [{ rel: 'alternate', types: ['application/rss+xml'] }, { rel: 'feed' }]
+
+    expect(matchesAnyOfLinkSelectors(rel, type, selectors)).toBe(true)
+  })
+
+  it('should return false for empty selectors array', () => {
+    const rel = 'alternate'
+    const type = 'application/rss+xml'
+    const selectors: Array<{ rel: string; types?: Array<string> }> = []
+
+    expect(matchesAnyOfLinkSelectors(rel, type, selectors)).toBe(false)
+  })
+
+  it('should match rel as word in space-separated value', () => {
+    const rel = 'alternate feed'
+    const type = undefined
+    const selectors = [{ rel: 'feed' }]
+
+    expect(matchesAnyOfLinkSelectors(rel, type, selectors)).toBe(true)
+  })
+
+  it('should not match partial rel word', () => {
+    const rel = 'feedburner'
+    const type = undefined
+    const selectors = [{ rel: 'feed' }]
+
+    expect(matchesAnyOfLinkSelectors(rel, type, selectors)).toBe(false)
+  })
+
+  it('should handle type with charset parameter', () => {
+    const rel = 'alternate'
+    const type = 'application/rss+xml; charset=utf-8'
+    const selectors = [{ rel: 'alternate', types: ['application/rss+xml'] }]
+
+    expect(matchesAnyOfLinkSelectors(rel, type, selectors)).toBe(true)
+  })
+
+  it('should handle empty types array as allowing any type', () => {
+    const rel = 'alternate'
+    const type = 'text/html'
+    const selectors = [{ rel: 'alternate', types: [] }]
+
+    expect(matchesAnyOfLinkSelectors(rel, type, selectors)).toBe(true)
   })
 })
 
