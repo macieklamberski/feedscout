@@ -1,7 +1,8 @@
+import type { LinkSelector } from '../../types.js'
+
 export type HtmlMethodOptions = {
   baseUrl?: string
-  linkRels: Array<string>
-  linkMimeTypes: Array<string>
+  linkSelectors: Array<LinkSelector>
   anchorUris: Array<string>
   anchorIgnoredUris: Array<string>
   anchorLabels: Array<string>

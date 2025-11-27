@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'bun:test'
 import { discoverUrisFromHeaders } from './index.js'
+import type { HeadersMethodOptions } from './types.js'
 
 const linkMimeTypes = [
   'application/json',
@@ -13,7 +14,9 @@ const linkMimeTypes = [
   'text/xml',
 ]
 
-const defaultOptions = { linkRels: ['alternate'], linkMimeTypes }
+const defaultOptions: HeadersMethodOptions = {
+  linkSelectors: [{ rel: 'alternate', types: linkMimeTypes }],
+}
 
 describe('discoverUrisFromHeaders', () => {
   describe('should discover feeds from Link header', () => {

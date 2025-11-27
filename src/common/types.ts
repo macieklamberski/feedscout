@@ -2,6 +2,11 @@ import type { GuessMethodOptions } from './uris/guess/types.js'
 import type { HeadersMethodOptions } from './uris/headers/types.js'
 import type { HtmlMethodOptions } from './uris/html/types.js'
 
+export type LinkSelector = {
+  rel: string
+  types?: Array<string>
+}
+
 export type DiscoverFetchFnOptions = {
   method?: 'GET' | 'HEAD'
   headers?: Record<string, string>

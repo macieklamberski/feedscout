@@ -73,12 +73,14 @@ describe('normalizeInput', () => {
         statusText: 'OK',
       }
     }
-
     const result = await normalizeInput('https://example.com', headersFetchFn)
+    const expected = {
+      url: 'https://example.com',
+      content: '<html></html>',
+      headers,
+    }
 
-    expect(result.headers).toBe(headers)
-    expect(result.headers?.get('content-type')).toBe('text/html')
-    expect(result.headers?.get('link')).toBe('</feed>; rel="alternate"')
+    expect(result).toEqual(expected)
   })
 
   it('should return object input as-is', async () => {
@@ -253,17 +255,16 @@ describe('normalizeMethodsConfig', () => {
   ]
   const ignoredUris = ['wp-json/oembed/', 'wp-json/wp/']
   const anchorLabels = ['rss', 'feed', 'atom', 'subscribe', 'syndicate', 'json feed']
+  const linkSelectors = [{ rel: 'alternate', types: feedMimeTypes }, { rel: 'feed' }]
   const defaults = {
     html: {
-      linkRels: ['alternate', 'feed'],
-      linkMimeTypes: feedMimeTypes,
+      linkSelectors,
       anchorUris: feedUrisComprehensive,
       anchorIgnoredUris: ignoredUris,
       anchorLabels,
     },
     headers: {
-      linkRels: ['alternate'],
-      linkMimeTypes: feedMimeTypes,
+      linkSelectors,
     },
     guess: {
       uris: feedUrisBalanced,
@@ -278,13 +279,13 @@ describe('normalizeMethodsConfig', () => {
     const expected = {
       html: {
         html: '<html></html>',
-        options: expect.objectContaining({
-          linkMimeTypes: feedMimeTypes,
-          anchorUris: expect.arrayContaining(['/feed', '/rss', '/atom']),
-          anchorIgnoredUris: ['wp-json/oembed/', 'wp-json/wp/'],
-          anchorLabels: ['rss', 'feed', 'atom', 'subscribe', 'syndicate', 'json feed'],
+        options: {
+          linkSelectors,
+          anchorUris: feedUrisComprehensive,
+          anchorIgnoredUris: ignoredUris,
+          anchorLabels,
           baseUrl: 'https://example.com',
-        }),
+        },
       },
     }
 
@@ -292,17 +293,40 @@ describe('normalizeMethodsConfig', () => {
   })
 
   it('should normalize array with multiple methods to config with defaults', () => {
+    const headers = new Headers()
     const value = {
       url: 'https://example.com',
       content: '<html></html>',
-      headers: new Headers(),
+      headers,
+    }
+    const result = normalizeMethodsConfig(value, ['html', 'headers', 'guess'], defaults)
+    const expected = {
+      html: {
+        html: '<html></html>',
+        options: {
+          linkSelectors,
+          anchorUris: feedUrisComprehensive,
+          anchorIgnoredUris: ignoredUris,
+          anchorLabels,
+          baseUrl: 'https://example.com',
+        },
+      },
+      headers: {
+        headers,
+        options: {
+          linkSelectors,
+          baseUrl: 'https://example.com',
+        },
+      },
+      guess: {
+        options: {
+          uris: feedUrisBalanced,
+          baseUrl: 'https://example.com',
+        },
+      },
     }
 
-    const result = normalizeMethodsConfig(value, ['html', 'headers', 'guess'], defaults)
-
-    expect(result.html).toBeDefined()
-    expect(result.headers).toBeDefined()
-    expect(result.guess).toBeDefined()
+    expect(result).toEqual(expected)
   })
 
   it('should normalize object with true values to config with defaults', () => {
@@ -313,10 +337,13 @@ describe('normalizeMethodsConfig', () => {
     const expected = {
       html: {
         html: '<html></html>',
-        options: expect.objectContaining({
-          linkMimeTypes: feedMimeTypes,
+        options: {
+          linkSelectors,
+          anchorUris: feedUrisComprehensive,
+          anchorIgnoredUris: ignoredUris,
+          anchorLabels,
           baseUrl: 'https://example.com',
-        }),
+        },
       },
     }
 
@@ -346,15 +373,31 @@ describe('normalizeMethodsConfig', () => {
       url: 'https://example.com',
       content: '<html></html>',
     }
-
     const result = normalizeMethodsConfig(
       value,
       { html: true, guess: { uris: ['/custom'] } },
       defaults,
     )
+    const expected = {
+      html: {
+        html: '<html></html>',
+        options: {
+          linkSelectors,
+          anchorUris: feedUrisComprehensive,
+          anchorIgnoredUris: ignoredUris,
+          anchorLabels,
+          baseUrl: 'https://example.com',
+        },
+      },
+      guess: {
+        options: {
+          uris: ['/custom'],
+          baseUrl: 'https://example.com',
+        },
+      },
+    }
 
-    expect(result.html).toBeDefined()
-    expect(result.guess?.options.uris).toEqual(['/custom'])
+    expect(result).toEqual(expected)
   })
 
   it('should override default options with custom options', () => {
@@ -362,15 +405,25 @@ describe('normalizeMethodsConfig', () => {
       url: 'https://example.com',
       content: '<html></html>',
     }
-
     const result = normalizeMethodsConfig(
       value,
       { html: { anchorLabels: ['custom-label'] } },
       defaults,
     )
+    const expected = {
+      html: {
+        html: '<html></html>',
+        options: {
+          linkSelectors,
+          anchorUris: feedUrisComprehensive,
+          anchorIgnoredUris: ignoredUris,
+          anchorLabels: ['custom-label'],
+          baseUrl: 'https://example.com',
+        },
+      },
+    }
 
-    expect(result.html?.options.anchorLabels).toEqual(['custom-label'])
-    expect(result.html?.options.linkMimeTypes).toEqual(feedMimeTypes)
+    expect(result).toEqual(expected)
   })
 
   it('should handle empty array', () => {
@@ -392,17 +445,40 @@ describe('normalizeMethodsConfig', () => {
   })
 
   it('should include baseUrl from input in all method configs', () => {
+    const headers = new Headers()
     const value = {
       url: 'https://blog.example.com',
       content: '<html></html>',
-      headers: new Headers(),
+      headers,
+    }
+    const result = normalizeMethodsConfig(value, ['html', 'headers', 'guess'], defaults)
+    const expected = {
+      html: {
+        html: '<html></html>',
+        options: {
+          linkSelectors,
+          anchorUris: feedUrisComprehensive,
+          anchorIgnoredUris: ignoredUris,
+          anchorLabels,
+          baseUrl: 'https://blog.example.com',
+        },
+      },
+      headers: {
+        headers,
+        options: {
+          linkSelectors,
+          baseUrl: 'https://blog.example.com',
+        },
+      },
+      guess: {
+        options: {
+          uris: feedUrisBalanced,
+          baseUrl: 'https://blog.example.com',
+        },
+      },
     }
 
-    const result = normalizeMethodsConfig(value, ['html', 'headers', 'guess'], defaults)
-
-    expect(result.html?.options.baseUrl).toBe('https://blog.example.com')
-    expect(result.headers?.options.baseUrl).toBe('https://blog.example.com')
-    expect(result.guess?.options.baseUrl).toBe('https://blog.example.com')
+    expect(result).toEqual(expected)
   })
 
   it('should pass headers object to headers method config', () => {
@@ -411,10 +487,18 @@ describe('normalizeMethodsConfig', () => {
       url: 'https://example.com',
       headers,
     }
-
     const result = normalizeMethodsConfig(value, ['headers'], defaults)
+    const expected = {
+      headers: {
+        headers,
+        options: {
+          linkSelectors,
+          baseUrl: 'https://example.com',
+        },
+      },
+    }
 
-    expect(result.headers?.headers).toBe(headers)
+    expect(result).toEqual(expected)
   })
 
   it('should pass html content to html method config', () => {
@@ -424,10 +508,21 @@ describe('normalizeMethodsConfig', () => {
       url: 'https://example.com',
       content: htmlContent,
     }
-
     const result = normalizeMethodsConfig(value, ['html'], defaults)
+    const expected = {
+      html: {
+        html: htmlContent,
+        options: {
+          linkSelectors,
+          anchorUris: feedUrisComprehensive,
+          anchorIgnoredUris: ignoredUris,
+          anchorLabels,
+          baseUrl: 'https://example.com',
+        },
+      },
+    }
 
-    expect(result.html?.html).toBe(htmlContent)
+    expect(result).toEqual(expected)
   })
 
   it('should preserve custom options when merging with defaults', () => {
@@ -439,44 +534,99 @@ describe('normalizeMethodsConfig', () => {
       anchorLabels: ['custom1', 'custom2'],
       anchorUris: ['/custom-feed'],
     }
-
     const result = normalizeMethodsConfig(value, { html: customOptions }, defaults)
+    const expected = {
+      html: {
+        html: '<html></html>',
+        options: {
+          linkSelectors,
+          anchorUris: ['/custom-feed'],
+          anchorIgnoredUris: ignoredUris,
+          anchorLabels: ['custom1', 'custom2'],
+          baseUrl: 'https://example.com',
+        },
+      },
+    }
 
-    expect(result.html?.options.anchorLabels).toEqual(['custom1', 'custom2'])
-    expect(result.html?.options.anchorUris).toEqual(['/custom-feed'])
-    expect(result.html?.options.linkMimeTypes).toEqual(feedMimeTypes)
+    expect(result).toEqual(expected)
   })
 
   it('should handle all three methods with array format', () => {
+    const headers = new Headers()
     const value = {
       url: 'https://example.com',
       content: '<html></html>',
-      headers: new Headers(),
+      headers,
+    }
+    const result = normalizeMethodsConfig(value, ['html', 'headers', 'guess'], defaults)
+    const expected = {
+      html: {
+        html: '<html></html>',
+        options: {
+          linkSelectors,
+          anchorUris: feedUrisComprehensive,
+          anchorIgnoredUris: ignoredUris,
+          anchorLabels,
+          baseUrl: 'https://example.com',
+        },
+      },
+      headers: {
+        headers,
+        options: {
+          linkSelectors,
+          baseUrl: 'https://example.com',
+        },
+      },
+      guess: {
+        options: {
+          uris: feedUrisBalanced,
+          baseUrl: 'https://example.com',
+        },
+      },
     }
 
-    const result = normalizeMethodsConfig(value, ['html', 'headers', 'guess'], defaults)
-
-    expect(result.html).toBeDefined()
-    expect(result.headers).toBeDefined()
-    expect(result.guess).toBeDefined()
+    expect(result).toEqual(expected)
   })
 
   it('should handle all three methods with object format', () => {
+    const headers = new Headers()
     const value = {
       url: 'https://example.com',
       content: '<html></html>',
-      headers: new Headers(),
+      headers,
     }
-
     const result = normalizeMethodsConfig(
       value,
       { html: true, headers: true, guess: true },
       defaults,
     )
+    const expected = {
+      html: {
+        html: '<html></html>',
+        options: {
+          linkSelectors,
+          anchorUris: feedUrisComprehensive,
+          anchorIgnoredUris: ignoredUris,
+          anchorLabels,
+          baseUrl: 'https://example.com',
+        },
+      },
+      headers: {
+        headers,
+        options: {
+          linkSelectors,
+          baseUrl: 'https://example.com',
+        },
+      },
+      guess: {
+        options: {
+          uris: feedUrisBalanced,
+          baseUrl: 'https://example.com',
+        },
+      },
+    }
 
-    expect(result.html).toBeDefined()
-    expect(result.headers).toBeDefined()
-    expect(result.guess).toBeDefined()
+    expect(result).toEqual(expected)
   })
 
   it('should throw error when html method requested without content', () => {
@@ -539,12 +689,12 @@ describe('normalizeMethodsConfig', () => {
       url: 'https://example.com',
       content: '<html></html>',
     }
+    const result = normalizeMethodsConfig(value, ['html'], defaults)
     const expected = {
       html: {
         html: '<html></html>',
         options: {
-          linkRels: ['alternate', 'feed'],
-          linkMimeTypes: feedMimeTypes,
+          linkSelectors,
           anchorUris: feedUrisComprehensive,
           anchorIgnoredUris: ignoredUris,
           anchorLabels,
@@ -553,7 +703,7 @@ describe('normalizeMethodsConfig', () => {
       },
     }
 
-    expect(normalizeMethodsConfig(value, ['html'], defaults)).toEqual(expected)
+    expect(result).toEqual(expected)
   })
 
   it('should return complete headers config with all default values', () => {
@@ -562,24 +712,25 @@ describe('normalizeMethodsConfig', () => {
       url: 'https://example.com',
       headers,
     }
+    const result = normalizeMethodsConfig(value, ['headers'], defaults)
     const expected = {
       headers: {
         headers,
         options: {
-          linkRels: ['alternate'],
-          linkMimeTypes: feedMimeTypes,
+          linkSelectors,
           baseUrl: 'https://example.com',
         },
       },
     }
 
-    expect(normalizeMethodsConfig(value, ['headers'], defaults)).toEqual(expected)
+    expect(result).toEqual(expected)
   })
 
   it('should return complete guess config with all default values', () => {
     const value = {
       url: 'https://example.com',
     }
+    const result = normalizeMethodsConfig(value, ['guess'], defaults)
     const expected = {
       guess: {
         options: {
@@ -589,7 +740,7 @@ describe('normalizeMethodsConfig', () => {
       },
     }
 
-    expect(normalizeMethodsConfig(value, ['guess'], defaults)).toEqual(expected)
+    expect(result).toEqual(expected)
   })
 
   it('should keep all defaults when overriding html anchorLabels', () => {
@@ -597,12 +748,16 @@ describe('normalizeMethodsConfig', () => {
       url: 'https://example.com',
       content: '<html></html>',
     }
+    const result = normalizeMethodsConfig(
+      value,
+      { html: { anchorLabels: ['custom-label'] } },
+      defaults,
+    )
     const expected = {
       html: {
         html: '<html></html>',
         options: {
-          linkRels: ['alternate', 'feed'],
-          linkMimeTypes: feedMimeTypes,
+          linkSelectors,
           anchorUris: feedUrisComprehensive,
           anchorIgnoredUris: ignoredUris,
           anchorLabels: ['custom-label'],
@@ -611,9 +766,7 @@ describe('normalizeMethodsConfig', () => {
       },
     }
 
-    expect(
-      normalizeMethodsConfig(value, { html: { anchorLabels: ['custom-label'] } }, defaults),
-    ).toEqual(expected)
+    expect(result).toEqual(expected)
   })
 
   it('should keep all defaults when overriding html anchorUris', () => {
@@ -621,12 +774,16 @@ describe('normalizeMethodsConfig', () => {
       url: 'https://example.com',
       content: '<html></html>',
     }
+    const result = normalizeMethodsConfig(
+      value,
+      { html: { anchorUris: ['/custom-feed'] } },
+      defaults,
+    )
     const expected = {
       html: {
         html: '<html></html>',
         options: {
-          linkRels: ['alternate', 'feed'],
-          linkMimeTypes: feedMimeTypes,
+          linkSelectors,
           anchorUris: ['/custom-feed'],
           anchorIgnoredUris: ignoredUris,
           anchorLabels,
@@ -635,9 +792,7 @@ describe('normalizeMethodsConfig', () => {
       },
     }
 
-    expect(
-      normalizeMethodsConfig(value, { html: { anchorUris: ['/custom-feed'] } }, defaults),
-    ).toEqual(expected)
+    expect(result).toEqual(expected)
   })
 
   it('should keep all defaults when overriding html anchorIgnoredUris', () => {
@@ -645,12 +800,16 @@ describe('normalizeMethodsConfig', () => {
       url: 'https://example.com',
       content: '<html></html>',
     }
+    const result = normalizeMethodsConfig(
+      value,
+      { html: { anchorIgnoredUris: ['custom-ignore'] } },
+      defaults,
+    )
     const expected = {
       html: {
         html: '<html></html>',
         options: {
-          linkRels: ['alternate', 'feed'],
-          linkMimeTypes: feedMimeTypes,
+          linkSelectors,
           anchorUris: feedUrisComprehensive,
           anchorIgnoredUris: ['custom-ignore'],
           anchorLabels,
@@ -659,22 +818,25 @@ describe('normalizeMethodsConfig', () => {
       },
     }
 
-    expect(
-      normalizeMethodsConfig(value, { html: { anchorIgnoredUris: ['custom-ignore'] } }, defaults),
-    ).toEqual(expected)
+    expect(result).toEqual(expected)
   })
 
-  it('should keep all defaults when overriding html linkMimeTypes', () => {
+  it('should keep all defaults when overriding html linkSelectors', () => {
     const value = {
       url: 'https://example.com',
       content: '<html></html>',
     }
+    const customSelectors = [{ rel: 'custom', types: ['custom/mime'] }]
+    const result = normalizeMethodsConfig(
+      value,
+      { html: { linkSelectors: customSelectors } },
+      defaults,
+    )
     const expected = {
       html: {
         html: '<html></html>',
         options: {
-          linkRels: ['alternate', 'feed'],
-          linkMimeTypes: ['custom/mime'],
+          linkSelectors: customSelectors,
           anchorUris: feedUrisComprehensive,
           anchorIgnoredUris: ignoredUris,
           anchorLabels,
@@ -683,15 +845,14 @@ describe('normalizeMethodsConfig', () => {
       },
     }
 
-    expect(
-      normalizeMethodsConfig(value, { html: { linkMimeTypes: ['custom/mime'] } }, defaults),
-    ).toEqual(expected)
+    expect(result).toEqual(expected)
   })
 
   it('should keep all defaults when overriding guess feedUris', () => {
     const value = {
       url: 'https://example.com',
     }
+    const result = normalizeMethodsConfig(value, { guess: { uris: ['/custom-feed'] } }, defaults)
     const expected = {
       guess: {
         options: {
@@ -701,31 +862,32 @@ describe('normalizeMethodsConfig', () => {
       },
     }
 
-    expect(normalizeMethodsConfig(value, { guess: { uris: ['/custom-feed'] } }, defaults)).toEqual(
-      expected,
-    )
+    expect(result).toEqual(expected)
   })
 
-  it('should keep all defaults when overriding headers linkMimeTypes', () => {
+  it('should keep all defaults when overriding headers linkSelectors', () => {
     const headers = new Headers()
     const value = {
       url: 'https://example.com',
       headers,
     }
+    const customSelectors = [{ rel: 'custom', types: ['custom/mime'] }]
+    const result = normalizeMethodsConfig(
+      value,
+      { headers: { linkSelectors: customSelectors } },
+      defaults,
+    )
     const expected = {
       headers: {
         headers,
         options: {
-          linkRels: ['alternate'],
-          linkMimeTypes: ['custom/mime'],
+          linkSelectors: customSelectors,
           baseUrl: 'https://example.com',
         },
       },
     }
 
-    expect(
-      normalizeMethodsConfig(value, { headers: { linkMimeTypes: ['custom/mime'] } }, defaults),
-    ).toEqual(expected)
+    expect(result).toEqual(expected)
   })
 
   it('should handle empty string content for html method', () => {
@@ -733,12 +895,12 @@ describe('normalizeMethodsConfig', () => {
       url: 'https://example.com',
       content: '',
     }
+    const result = normalizeMethodsConfig(value, ['html'], defaults)
     const expected = {
       html: {
         html: '',
         options: {
-          linkRels: ['alternate', 'feed'],
-          linkMimeTypes: feedMimeTypes,
+          linkSelectors,
           anchorUris: feedUrisComprehensive,
           anchorIgnoredUris: ignoredUris,
           anchorLabels,
@@ -747,7 +909,7 @@ describe('normalizeMethodsConfig', () => {
       },
     }
 
-    expect(normalizeMethodsConfig(value, ['html'], defaults)).toEqual(expected)
+    expect(result).toEqual(expected)
   })
 
   it('should handle undefined url as falsy', () => {
@@ -767,12 +929,12 @@ describe('normalizeMethodsConfig', () => {
       content: '<html></html>',
       headers,
     }
+    const result = normalizeMethodsConfig(value, ['html', 'headers', 'guess'], defaults)
     const expected = {
       html: {
         html: '<html></html>',
         options: {
-          linkRels: ['alternate', 'feed'],
-          linkMimeTypes: feedMimeTypes,
+          linkSelectors,
           anchorUris: feedUrisComprehensive,
           anchorIgnoredUris: ignoredUris,
           anchorLabels,
@@ -782,8 +944,7 @@ describe('normalizeMethodsConfig', () => {
       headers: {
         headers,
         options: {
-          linkRels: ['alternate'],
-          linkMimeTypes: feedMimeTypes,
+          linkSelectors,
           baseUrl: 'https://example.com',
         },
       },
@@ -795,6 +956,6 @@ describe('normalizeMethodsConfig', () => {
       },
     }
 
-    expect(normalizeMethodsConfig(value, ['html', 'headers', 'guess'], defaults)).toEqual(expected)
+    expect(result).toEqual(expected)
   })
 })

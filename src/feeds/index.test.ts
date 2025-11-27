@@ -711,12 +711,14 @@ describe('discoverFeeds', () => {
       {
         methods: {
           html: {
-            linkMimeTypes: ['application/rss+xml'],
+            linkSelectors: [{ rel: 'alternate', types: ['application/rss+xml'] }],
             anchorUris: [],
             anchorIgnoredUris: [],
             anchorLabels: [],
           },
-          headers: { linkMimeTypes: ['application/rss+xml'] },
+          headers: {
+            linkSelectors: [{ rel: 'alternate', types: ['application/rss+xml'] }],
+          },
           guess: { uris: ['/feed', '/rss'] },
         },
         fetchFn: mockFetch,
@@ -770,12 +772,14 @@ describe('discoverFeeds', () => {
       {
         methods: {
           html: {
-            linkMimeTypes: ['application/rss+xml'],
+            linkSelectors: [{ rel: 'alternate', types: ['application/rss+xml'] }],
             anchorUris: [],
             anchorIgnoredUris: [],
             anchorLabels: [],
           },
-          headers: { linkMimeTypes: ['application/rss+xml'] },
+          headers: {
+            linkSelectors: [{ rel: 'alternate', types: ['application/rss+xml'] }],
+          },
           guess: { uris: ['/feed', '/rss'] },
         },
         fetchFn: mockFetch,
@@ -822,12 +826,14 @@ describe('discoverFeeds', () => {
       {
         methods: {
           html: {
-            linkMimeTypes: ['application/rss+xml'],
+            linkSelectors: [{ rel: 'alternate', types: ['application/rss+xml'] }],
             anchorUris: [],
             anchorIgnoredUris: [],
             anchorLabels: [],
           },
-          headers: { linkMimeTypes: ['application/rss+xml'] },
+          headers: {
+            linkSelectors: [{ rel: 'alternate', types: ['application/rss+xml'] }],
+          },
         },
         fetchFn: mockFetch,
       },
@@ -850,12 +856,14 @@ describe('discoverFeeds', () => {
       {
         methods: {
           html: {
-            linkMimeTypes: ['application/rss+xml'],
+            linkSelectors: [{ rel: 'alternate', types: ['application/rss+xml'] }],
             anchorUris: [],
             anchorIgnoredUris: [],
             anchorLabels: [],
           },
-          headers: { linkMimeTypes: ['application/rss+xml'] },
+          headers: {
+            linkSelectors: [{ rel: 'alternate', types: ['application/rss+xml'] }],
+          },
         },
         fetchFn: mockFetch,
         includeInvalid: true,

@@ -14,8 +14,7 @@ describe('discoverUris', () => {
       html: {
         html: '<link rel="alternate" type="application/rss+xml" href="/feed.xml">',
         options: {
-          linkRels: ['alternate'],
-          linkMimeTypes: ['application/rss+xml'],
+          linkSelectors: [{ rel: 'alternate', types: ['application/rss+xml'] }],
           anchorUris: [],
           anchorIgnoredUris: [],
           anchorLabels: [],
@@ -35,8 +34,7 @@ describe('discoverUris', () => {
       headers: {
         headers,
         options: {
-          linkRels: ['alternate'],
-          linkMimeTypes: ['application/rss+xml'],
+          linkSelectors: [{ rel: 'alternate', types: ['application/rss+xml'] }],
         },
       },
     })
@@ -67,8 +65,7 @@ describe('discoverUris', () => {
       html: {
         html: '<link rel="alternate" type="application/rss+xml" href="/feed.xml">',
         options: {
-          linkRels: ['alternate'],
-          linkMimeTypes: ['application/rss+xml'],
+          linkSelectors: [{ rel: 'alternate', types: ['application/rss+xml'] }],
           anchorUris: [],
           anchorIgnoredUris: [],
           anchorLabels: [],
@@ -77,8 +74,7 @@ describe('discoverUris', () => {
       headers: {
         headers,
         options: {
-          linkRels: ['alternate'],
-          linkMimeTypes: ['application/rss+xml'],
+          linkSelectors: [{ rel: 'alternate', types: ['application/rss+xml'] }],
         },
       },
     })
@@ -95,8 +91,7 @@ describe('discoverUris', () => {
       html: {
         html: '<link rel="alternate" type="application/rss+xml" href="/feed.xml">',
         options: {
-          linkRels: ['alternate'],
-          linkMimeTypes: ['application/rss+xml'],
+          linkSelectors: [{ rel: 'alternate', types: ['application/rss+xml'] }],
           anchorUris: [],
           anchorIgnoredUris: [],
           anchorLabels: [],
@@ -105,8 +100,7 @@ describe('discoverUris', () => {
       headers: {
         headers,
         options: {
-          linkRels: ['alternate'],
-          linkMimeTypes: ['application/rss+xml'],
+          linkSelectors: [{ rel: 'alternate', types: ['application/rss+xml'] }],
         },
       },
       guess: {
@@ -129,8 +123,7 @@ describe('discoverUris', () => {
       html: {
         html: '<link rel="alternate" type="application/rss+xml" href="/feed.xml"><link rel="feed" href="/rss.xml">',
         options: {
-          linkRels: ['alternate', 'feed'],
-          linkMimeTypes: ['application/rss+xml'],
+          linkSelectors: [{ rel: 'alternate', types: ['application/rss+xml'] }, { rel: 'feed' }],
           anchorUris: [],
           anchorIgnoredUris: [],
           anchorLabels: [],
@@ -139,8 +132,7 @@ describe('discoverUris', () => {
       headers: {
         headers,
         options: {
-          linkRels: ['alternate'],
-          linkMimeTypes: ['application/rss+xml'],
+          linkSelectors: [{ rel: 'alternate', types: ['application/rss+xml'] }],
         },
       },
     })

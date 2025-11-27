@@ -1,5 +1,6 @@
+import type { LinkSelector } from '../../types.js'
+
 export type HeadersMethodOptions = {
   baseUrl?: string
-  linkRels: Array<string>
-  linkMimeTypes: Array<string>
+  linkSelectors: Array<LinkSelector>
 }
