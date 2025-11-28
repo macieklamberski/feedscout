@@ -3,7 +3,7 @@ import { discover } from '../common/discover/index.js'
 import type { DiscoverInput, DiscoverOptions, DiscoverResult } from '../common/types.js'
 import { normalizeUrl } from '../common/utils.js'
 import { defaultGuessOptions, defaultHeadersOptions, defaultHtmlOptions } from './defaults.js'
-import { opmlExtractor } from './extractors.js'
+import { feedsmithExtractor } from './extractors.js'
 import type { BlogrollResultValid } from './types.js'
 
 export const discoverBlogrolls = async <TValid extends BlogrollResultValid = BlogrollResultValid>(
@@ -15,7 +15,7 @@ export const discoverBlogrolls = async <TValid extends BlogrollResultValid = Blo
     {
       ...options,
       fetchFn: options.fetchFn ?? createNativeFetchAdapter(),
-      extractFn: options.extractFn ?? opmlExtractor,
+      extractFn: options.extractFn ?? feedsmithExtractor,
       normalizeUrlFn: options.normalizeUrlFn ?? normalizeUrl,
     },
     {
