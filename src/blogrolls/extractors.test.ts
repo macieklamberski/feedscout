@@ -1,11 +1,11 @@
 import { describe, expect, it } from 'bun:test'
 import type { DiscoverResult } from '../common/types.js'
-import { opmlExtractor } from './extractors.js'
+import { feedsmithExtractor } from './extractors.js'
 import type { BlogrollResultValid } from './types.js'
 
-describe('opmlExtractor', () => {
+describe('feedsmithExtractor', () => {
   it('should return isValid: false when content is empty', async () => {
-    const result = await opmlExtractor({
+    const result = await feedsmithExtractor({
       content: '',
       headers: new Headers(),
       url: 'https://example.com/blogroll.opml',
@@ -20,7 +20,7 @@ describe('opmlExtractor', () => {
 
   it('should return isValid: false when content looks like HTML', async () => {
     const html = '<!DOCTYPE html><html><head><title>Test</title></head></html>'
-    const result = await opmlExtractor({
+    const result = await feedsmithExtractor({
       content: html,
       headers: new Headers(),
       url: 'https://example.com/index.html',
@@ -44,7 +44,7 @@ describe('opmlExtractor', () => {
         </body>
       </opml>
     `
-    const result = await opmlExtractor({
+    const result = await feedsmithExtractor({
       content: opml,
       headers: new Headers(),
       url: 'https://example.com/blogroll.opml',
@@ -72,7 +72,7 @@ describe('opmlExtractor', () => {
         </body>
       </opml>
     `
-    const result = await opmlExtractor({
+    const result = await feedsmithExtractor({
       content: opml,
       headers: new Headers(),
       url: 'https://example.com/subscriptions.opml',
@@ -95,7 +95,7 @@ describe('opmlExtractor', () => {
         </body>
       </opml>
     `
-    const result = await opmlExtractor({
+    const result = await feedsmithExtractor({
       content: opml,
       headers: new Headers(),
       url: 'https://example.com/blogroll.opml',
@@ -111,7 +111,7 @@ describe('opmlExtractor', () => {
 
   it('should return isValid: false for non-XML content', async () => {
     const nonXml = 'this is just plain text, not XML or OPML'
-    const result = await opmlExtractor({
+    const result = await feedsmithExtractor({
       content: nonXml,
       headers: new Headers(),
       url: 'https://example.com/blogroll.opml',
@@ -133,7 +133,7 @@ describe('opmlExtractor', () => {
         </channel>
       </rss>
     `
-    const result = await opmlExtractor({
+    const result = await feedsmithExtractor({
       content: rss,
       headers: new Headers(),
       url: 'https://example.com/feed.xml',
@@ -153,7 +153,7 @@ describe('opmlExtractor', () => {
         <body></body>
       </opml>
     `
-    const result = await opmlExtractor({
+    const result = await feedsmithExtractor({
       content: opml,
       headers: new Headers(),
       url: 'https://redirect.example.com/blogroll.opml',
@@ -168,7 +168,7 @@ describe('opmlExtractor', () => {
   })
 
   it('should handle content with only whitespace', async () => {
-    const result = await opmlExtractor({
+    const result = await feedsmithExtractor({
       content: '   \n\t  ',
       headers: new Headers(),
       url: 'https://example.com/blogroll.opml',
@@ -188,7 +188,7 @@ describe('opmlExtractor', () => {
         <body></body>
       </opml>
     `
-    const result = await opmlExtractor({
+    const result = await feedsmithExtractor({
       content: opml,
       headers: new Headers(),
       url: 'https://example.com/blogroll.opml',

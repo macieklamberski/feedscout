@@ -37,6 +37,26 @@
         "default": "./dist/index.cjs"
       }
     },
+    "./feeds": {
+      "import": {
+        "types": "./dist/feeds.d.ts",
+        "default": "./dist/feeds.js"
+      },
+      "require": {
+        "types": "./dist/feeds.d.cts",
+        "default": "./dist/feeds.cjs"
+      }
+    },
+    "./blogrolls": {
+      "import": {
+        "types": "./dist/blogrolls.d.ts",
+        "default": "./dist/blogrolls.js"
+      },
+      "require": {
+        "types": "./dist/blogrolls.d.cts",
+        "default": "./dist/blogrolls.cjs"
+      }
+    },
     "./adapters": {
       "import": {
         "types": "./dist/adapters.d.ts",
@@ -61,7 +81,7 @@
   },
   "scripts": {
     "prepare": "lefthook install",
-    "build": "tsdown src/exports/index.ts src/exports/adapters.ts src/exports/methods.ts --format cjs,esm --dts --clean --unbundle --no-fixed-extension"
+    "build": "tsdown src/exports/index.ts src/exports/feeds.ts src/exports/blogrolls.ts src/exports/adapters.ts src/exports/methods.ts --format cjs,esm --dts --clean --unbundle --no-fixed-extension"
   },
   "dependencies": {
     "feedsmith": "^2.6.1",
