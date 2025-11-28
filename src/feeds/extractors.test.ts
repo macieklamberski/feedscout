@@ -1,12 +1,11 @@
 import { describe, expect, it } from 'bun:test'
 import type { DiscoverResult } from '../common/types.js'
-import { createFeedsmithExtractor } from './extractors.js'
+import { feedsmithExtractor } from './extractors.js'
 import type { FeedResultValid } from './types.js'
 
-describe('createFeedsmithExtractor', () => {
+describe('feedsmithExtractor', () => {
   it('should return isValid: false when content is empty', async () => {
-    const extractor = createFeedsmithExtractor()
-    const result = await extractor({
+    const result = await feedsmithExtractor({
       content: '',
       headers: new Headers(),
       url: 'https://example.com/feed.xml',
@@ -20,9 +19,8 @@ describe('createFeedsmithExtractor', () => {
   })
 
   it('should return isValid: false when content looks like HTML', async () => {
-    const extractor = createFeedsmithExtractor()
     const html = '<!DOCTYPE html><html><head><title>Test</title></head></html>'
-    const result = await extractor({
+    const result = await feedsmithExtractor({
       content: html,
       headers: new Headers(),
       url: 'https://example.com/index.html',
@@ -36,7 +34,6 @@ describe('createFeedsmithExtractor', () => {
   })
 
   it('should detect RSS format from <rss> tag', async () => {
-    const extractor = createFeedsmithExtractor()
     const rss = `
       <rss version="2.0">
         <channel>
@@ -46,7 +43,7 @@ describe('createFeedsmithExtractor', () => {
         </channel>
       </rss>
     `
-    const result = await extractor({
+    const result = await feedsmithExtractor({
       content: rss,
       headers: new Headers(),
       url: 'https://example.com/feed.xml',
@@ -64,7 +61,6 @@ describe('createFeedsmithExtractor', () => {
   })
 
   it('should detect Atom format from <feed> tag', async () => {
-    const extractor = createFeedsmithExtractor()
     const atom = `
       <feed xmlns="http://www.w3.org/2005/Atom">
         <title>Test</title>
@@ -72,7 +68,7 @@ describe('createFeedsmithExtractor', () => {
         <subtitle>Test feed</subtitle>
       </feed>
     `
-    const result = await extractor({
+    const result = await feedsmithExtractor({
       content: atom,
       headers: new Headers(),
       url: 'https://example.com/feed.xml',
@@ -90,7 +86,6 @@ describe('createFeedsmithExtractor', () => {
   })
 
   it('should detect RDF format from <rdf> tag', async () => {
-    const extractor = createFeedsmithExtractor()
     const rdf = `
       <rdf:RDF
         xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
@@ -102,7 +97,7 @@ describe('createFeedsmithExtractor', () => {
         </channel>
       </rdf:RDF>
     `
-    const result = await extractor({
+    const result = await feedsmithExtractor({
       content: rdf,
       headers: new Headers(),
       url: 'https://example.com/feed.xml',
@@ -120,7 +115,6 @@ describe('createFeedsmithExtractor', () => {
   })
 
   it('should detect JSON Feed format from "version" field', async () => {
-    const extractor = createFeedsmithExtractor()
     const json = JSON.stringify({
       version: 'https://jsonfeed.org/version/1.1',
       title: 'Test',
@@ -128,7 +122,7 @@ describe('createFeedsmithExtractor', () => {
       description: 'Test feed',
       items: [],
     })
-    const result = await extractor({
+    const result = await feedsmithExtractor({
       content: json,
       headers: new Headers(),
       url: 'https://example.com/feed.json',
@@ -146,9 +140,8 @@ describe('createFeedsmithExtractor', () => {
   })
 
   it('should return isValid: false when no feed markers found', async () => {
-    const extractor = createFeedsmithExtractor()
     const content = '<data><item>Test</item></data>'
-    const result = await extractor({
+    const result = await feedsmithExtractor({
       content,
       headers: new Headers(),
       url: 'https://example.com/data.xml',
@@ -162,7 +155,6 @@ describe('createFeedsmithExtractor', () => {
   })
 
   it('should handle case-insensitive content matching', async () => {
-    const extractor = createFeedsmithExtractor()
     const rss = `
       <RSS version="2.0">
         <channel>
@@ -171,7 +163,7 @@ describe('createFeedsmithExtractor', () => {
           <description>Test feed</description>
         </channel>
       </RSS>`
-    const result = await extractor({
+    const result = await feedsmithExtractor({
       content: rss,
       headers: new Headers(),
       url: 'https://example.com/feed.xml',
@@ -189,9 +181,8 @@ describe('createFeedsmithExtractor', () => {
   })
 
   it('should prioritize HTML rejection over feed detection', async () => {
-    const extractor = createFeedsmithExtractor()
     const mixed = '<html><body><rss>Not a real feed</rss></body></html>'
-    const result = await extractor({
+    const result = await feedsmithExtractor({
       content: mixed,
       headers: new Headers(),
       url: 'https://example.com/page.html',
@@ -205,7 +196,6 @@ describe('createFeedsmithExtractor', () => {
   })
 
   it('should handle very large content', async () => {
-    const extractor = createFeedsmithExtractor()
     const largeDescription = 'a'.repeat(1000000)
     const largeRss = `
       <rss version="2.0">
@@ -216,7 +206,7 @@ describe('createFeedsmithExtractor', () => {
         </channel>
       </rss>
     `
-    const result = await extractor({
+    const result = await feedsmithExtractor({
       content: largeRss,
       headers: new Headers(),
       url: 'https://example.com/feed.xml',
@@ -234,8 +224,7 @@ describe('createFeedsmithExtractor', () => {
   })
 
   it('should handle content with only whitespace', async () => {
-    const extractor = createFeedsmithExtractor()
-    const result = await extractor({
+    const result = await feedsmithExtractor({
       content: '   \n\t  ',
       headers: new Headers(),
       url: 'https://example.com/feed.xml',
@@ -249,7 +238,6 @@ describe('createFeedsmithExtractor', () => {
   })
 
   it('should handle content with BOM characters', async () => {
-    const extractor = createFeedsmithExtractor()
     const rss = `\uFEFF
 
       <rss version="2.0">
@@ -260,7 +248,7 @@ describe('createFeedsmithExtractor', () => {
         </channel>
       </rss>
     `
-    const result = await extractor({
+    const result = await feedsmithExtractor({
       content: rss,
       headers: new Headers(),
       url: 'https://example.com/feed.xml',
@@ -278,9 +266,8 @@ describe('createFeedsmithExtractor', () => {
   })
 
   it('should return isValid: false for malformed XML content', async () => {
-    const extractor = createFeedsmithExtractor()
     const malformed = '<rss><channel><item><unclosed>'
-    const result = await extractor({
+    const result = await feedsmithExtractor({
       content: malformed,
       headers: new Headers(),
       url: 'https://example.com/feed.xml',
@@ -294,7 +281,6 @@ describe('createFeedsmithExtractor', () => {
   })
 
   it('should include URL in result', async () => {
-    const extractor = createFeedsmithExtractor()
     const rss = `
       <rss version="2.0">
         <channel>
@@ -304,7 +290,7 @@ describe('createFeedsmithExtractor', () => {
         </channel>
       </rss>
     `
-    const result = await extractor({
+    const result = await feedsmithExtractor({
       content: rss,
       headers: new Headers(),
       url: 'https://redirect.example.com/feed.xml',
@@ -322,11 +308,10 @@ describe('createFeedsmithExtractor', () => {
   })
 
   it('should not use headers for detection', async () => {
-    const extractor = createFeedsmithExtractor()
     const headers = new Headers()
     headers.set('content-type', 'application/rss+xml')
 
-    const result = await extractor({
+    const result = await feedsmithExtractor({
       content: '<html>Not a feed</html>',
       headers,
       url: 'https://example.com/page.html',

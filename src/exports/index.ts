@@ -17,6 +17,6 @@ export type {
 } from '../common/types.js'
 export { discoverUris } from '../common/uris/index.js'
 export { feedUrisBalanced, feedUrisComprehensive, feedUrisMinimal } from '../feeds/defaults.js'
-export { createFeedsmithExtractor } from '../feeds/extractors.js'
+export { feedsmithExtractor } from '../feeds/extractors.js'
 export { discoverFeeds } from '../feeds/index.js'
 export type { FeedResultValid } from '../feeds/types.js'
