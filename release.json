@@ -7,5 +7,17 @@
       "channel": "next",
       "prerelease": "next"
     }
+  ],
+  "plugins": [
+    [
+      "@semantic-release/commit-analyzer",
+      {
+        "preset": "conventionalcommits",
+        "releaseRules": [{ "breaking": true, "release": "major" }]
+      }
+    ],
+    ["@semantic-release/release-notes-generator", { "preset": "conventionalcommits" }],
+    "@semantic-release/npm",
+    "@semantic-release/github"
   ]
 }
