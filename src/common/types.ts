@@ -7,6 +7,8 @@ export type LinkSelector = {
   types?: Array<string>
 }
 
+export type DiscoverNormalizeUrlFn = (url: string, baseUrl: string | undefined) => string
+
 export type DiscoverFetchFnOptions = {
   method?: 'GET' | 'HEAD'
   headers?: Record<string, string>
@@ -92,22 +94,24 @@ export type DiscoverMethodsConfigInternal = {
   }
 }
 
-// User-facing options - optional fetchFn and extractFn.
+// User-facing options - optional fetchFn, extractFn, normalizeUrlFn.
 export type DiscoverOptions<TValid> = {
   methods: DiscoverMethodsConfig
   fetchFn?: DiscoverFetchFn
   extractFn?: DiscoverExtractFn<TValid>
+  normalizeUrlFn?: DiscoverNormalizeUrlFn
   concurrency?: number
   stopOnFirst?: boolean
   includeInvalid?: boolean
   onProgress?: DiscoverProgressFn
 }
 
-// Internal options - required fetchFn and extractFn.
+// Internal options - required fetchFn, extractFn, normalizeUrlFn.
 export type DiscoverOptionsInternal<TValid> = {
   methods: DiscoverMethodsConfig
   fetchFn: DiscoverFetchFn
   extractFn: DiscoverExtractFn<TValid>
+  normalizeUrlFn: DiscoverNormalizeUrlFn
   concurrency?: number
   stopOnFirst?: boolean
   includeInvalid?: boolean
