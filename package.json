@@ -81,7 +81,10 @@
   },
   "scripts": {
     "prepare": "lefthook install",
-    "build": "tsdown src/exports/index.ts src/exports/feeds.ts src/exports/blogrolls.ts src/exports/adapters.ts src/exports/methods.ts --format cjs,esm --dts --clean --unbundle --no-fixed-extension"
+    "build": "tsdown src/exports/index.ts src/exports/feeds.ts src/exports/blogrolls.ts src/exports/adapters.ts src/exports/methods.ts --format cjs,esm --dts --clean --unbundle --no-fixed-extension",
+    "docs:dev": "vitepress dev docs",
+    "docs:build": "vitepress build docs",
+    "docs:preview": "vitepress preview docs"
   },
   "dependencies": {
     "feedsmith": "^2.6.1",
@@ -90,6 +93,8 @@
   "devDependencies": {
     "@types/bun": "^1.3.3",
     "kvalita": "^1.3.1",
-    "tsdown": "^0.16.8"
+    "tsdown": "^0.16.8",
+    "vitepress": "^1.6.4",
+    "vitepress-plugin-llms": "^1.9.3"
   }
 }
