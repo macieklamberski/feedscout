@@ -1,3 +1,11 @@
+export {
+  blogrollUrisBalanced,
+  blogrollUrisComprehensive,
+  blogrollUrisMinimal,
+} from '../blogrolls/defaults.js'
+export { opmlExtractor } from '../blogrolls/extractors.js'
+export { discoverBlogrolls } from '../blogrolls/index.js'
+export type { BlogrollResultValid } from '../blogrolls/types.js'
 export { discover } from '../common/discover/index.js'
 export type {
   DiscoverExtractFn,
