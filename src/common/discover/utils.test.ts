@@ -276,6 +276,7 @@ describe('normalizeMethodsConfig', () => {
       url: 'https://example.com',
       content: '<html></html>',
     }
+    const result = normalizeMethodsConfig(value, ['html'], defaults)
     const expected = {
       html: {
         html: '<html></html>',
@@ -289,7 +290,7 @@ describe('normalizeMethodsConfig', () => {
       },
     }
 
-    expect(normalizeMethodsConfig(value, ['html'], defaults)).toEqual(expected)
+    expect(result).toEqual(expected)
   })
 
   it('should normalize array with multiple methods to config with defaults', () => {
@@ -334,6 +335,7 @@ describe('normalizeMethodsConfig', () => {
       url: 'https://example.com',
       content: '<html></html>',
     }
+    const result = normalizeMethodsConfig(value, { html: true }, defaults)
     const expected = {
       html: {
         html: '<html></html>',
@@ -347,13 +349,14 @@ describe('normalizeMethodsConfig', () => {
       },
     }
 
-    expect(normalizeMethodsConfig(value, { html: true }, defaults)).toEqual(expected)
+    expect(result).toEqual(expected)
   })
 
   it('should normalize object with custom options and merge with defaults', () => {
     const value = {
       url: 'https://example.com',
     }
+    const result = normalizeMethodsConfig(value, { guess: { uris: ['/custom-feed'] } }, defaults)
     const expected = {
       guess: {
         options: {
@@ -363,9 +366,7 @@ describe('normalizeMethodsConfig', () => {
       },
     }
 
-    expect(normalizeMethodsConfig(value, { guess: { uris: ['/custom-feed'] } }, defaults)).toEqual(
-      expected,
-    )
+    expect(result).toEqual(expected)
   })
 
   it('should normalize mixed object with true and custom options', () => {
@@ -430,18 +431,20 @@ describe('normalizeMethodsConfig', () => {
     const value = {
       url: 'https://example.com',
     }
+    const result = normalizeMethodsConfig(value, [], defaults)
     const expected = {}
 
-    expect(normalizeMethodsConfig(value, [], defaults)).toEqual(expected)
+    expect(result).toEqual(expected)
   })
 
   it('should handle empty object', () => {
     const value = {
       url: 'https://example.com',
     }
+    const result = normalizeMethodsConfig(value, {}, defaults)
     const expected = {}
 
-    expect(normalizeMethodsConfig(value, {}, defaults)).toEqual(expected)
+    expect(result).toEqual(expected)
   })
 
   it('should include baseUrl from input in all method configs', () => {

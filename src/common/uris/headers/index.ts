@@ -1,4 +1,4 @@
-import { matchesAnyOfLinkSelectors, normalizeUrl } from '../../../common/utils.js'
+import { matchesAnyOfLinkSelectors } from '../../../common/utils.js'
 import type { HeadersMethodOptions } from './types.js'
 
 export const discoverUrisFromHeaders = (
@@ -36,7 +36,7 @@ export const discoverUrisFromHeaders = (
     }
 
     if (matchesAnyOfLinkSelectors(rel, type, options.linkSelectors)) {
-      uris.add(normalizeUrl(url, options.baseUrl))
+      uris.add(url)
     }
   }
 

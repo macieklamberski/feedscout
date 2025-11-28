@@ -17,6 +17,7 @@ export const discover = async <TValid>(
     methods,
     fetchFn,
     extractFn,
+    normalizeUrlFn,
     concurrency = 3,
     stopOnFirst = false,
     includeInvalid = false,
@@ -41,8 +42,9 @@ export const discover = async <TValid>(
   // Step 2: Build methods config from input and selected methods.
   const methodsConfig = normalizeMethodsConfig(normalizedInput, methods, defaults)
 
-  // Step 3: Discover URIs using selected methods.
-  const uris = discoverUris(methodsConfig)
+  // Step 3: Discover URIs using selected methods and normalize them.
+  const rawUris = discoverUris(methodsConfig)
+  const uris = [...new Set(rawUris.map((uri) => normalizeUrlFn(uri, normalizedInput.url)))]
 
   // Step 4: Validate discovered URIs.
   const results: Array<DiscoverResult<TValid>> = []

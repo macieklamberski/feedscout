@@ -1,10 +1,5 @@
 import type { Handler } from 'htmlparser2'
-import {
-  endsWithAnyOf,
-  includesAnyOf,
-  matchesAnyOfLinkSelectors,
-  normalizeUrl,
-} from '../../../common/utils.js'
+import { endsWithAnyOf, includesAnyOf, matchesAnyOfLinkSelectors } from '../../../common/utils.js'
 import type { HtmlMethodContext } from './types.js'
 
 export const handleOpenTag = (
@@ -21,7 +16,7 @@ export const handleOpenTag = (
     }
 
     if (matchesAnyOfLinkSelectors(rel, attribs.type, context.options.linkSelectors)) {
-      context.discoveredUris.add(normalizeUrl(attribs.href, context.options.baseUrl))
+      context.discoveredUris.add(attribs.href)
     }
   }
 
@@ -42,7 +37,7 @@ export const handleOpenTag = (
 
     // Check if href ends with any anchor URI pattern.
     if (endsWithAnyOf(lowerHref, context.options.anchorUris)) {
-      context.discoveredUris.add(normalizeUrl(attribs.href, context.options.baseUrl))
+      context.discoveredUris.add(attribs.href)
     }
   }
 }
@@ -65,7 +60,7 @@ export const handleCloseTag = (
 
     // Check if anchor text contains any label pattern.
     if (includesAnyOf(normalizedText, context.options.anchorLabels)) {
-      context.discoveredUris.add(normalizeUrl(context.currentAnchor.href, context.options.baseUrl))
+      context.discoveredUris.add(context.currentAnchor.href)
     }
 
     context.currentAnchor.href = ''
