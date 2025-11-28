@@ -3,9 +3,9 @@
   "branches": [
     "main",
     {
-      "name": "next",
-      "channel": "next",
-      "prerelease": "next"
+      "name": "beta",
+      "channel": "beta",
+      "prerelease": "beta"
     }
   ],
   "plugins": [
