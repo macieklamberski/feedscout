@@ -1,1 +1,1 @@
-export * from '../hubs/types.js'
+export * from '../hubs/discover/types.js'

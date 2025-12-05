@@ -1,4 +1,4 @@
-import type { DiscoverFetchFn, DiscoverInput } from '../common/types.js'
+import type { DiscoverFetchFn, DiscoverInput } from '../../common/types.js'
 
 export type NormalizedInput = {
   url: string

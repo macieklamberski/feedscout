@@ -16,5 +16,9 @@ export type {
   DiscoverResult,
 } from '../common/types.js'
 export { discoverFeeds } from '../feeds/index.js'
-export { discoverHubs } from '../hubs/index.js'
-export type { DiscoverHubsMethodsConfig, DiscoverHubsOptions, HubResult } from '../hubs/types.js'
+export { discoverHubs } from '../hubs/discover/index.js'
+export type {
+  DiscoverHubsMethodsConfig,
+  DiscoverHubsOptions,
+  HubResult,
+} from '../hubs/discover/types.js'
