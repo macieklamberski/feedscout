@@ -40,7 +40,9 @@ Finds feeds by scanning links and anchors in HTML content, parsing HTTP headers,
 
 ## Quick Start
 
-This is a short guide on how to get you up and running with Feedscout. For a full overview of all the features, [visit the documentation](https://feedscout.dev).
+This is a short guide on how to get you up and running with Feedscout.
+
+For a full overview of all the features, [visit the documentation](https://feedscout.dev).
 
 ### Installation
 
