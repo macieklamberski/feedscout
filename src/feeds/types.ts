@@ -3,5 +3,4 @@ export type FeedResultValid = {
   title?: string
   description?: string
   siteUrl?: string
-  method?: 'html' | 'headers' | 'guess'
 }
