@@ -6,42 +6,68 @@
 
 Advanced feed autodiscovery for JavaScript. Collect feeds from webpages using multiple discovery methods.
 
+Finds feeds by scanning links and anchors in HTML content, parsing HTTP headers, and guessing common paths, then validates each URL by fetching and parsing the feed.
+
 **[Read full docs ↗](https://feedscout.dev)**
 &nbsp;&nbsp;·&nbsp;&nbsp;
 [Quick Start](#quick-start)
 
 ---
 
-## Overview
+## Features
 
-Feedscout makes it easy to discover feeds from webpages using multiple methods.
+### Supported Content
 
-### HTML Discovery
+- **Feeds** — RSS, Atom, JSON Feed, and RDF. Each feed is validated and returns metadata like format, title, description, and site URL.
+- **Blogrolls** — OPML files containing feed subscriptions. Validated and returns title.
+- **WebSub hubs** — Find hubs for real-time feed update notifications.
 
-Extracts feed URIs from HTML content using multiple strategies:
+### Discovery Methods
 
-- **Link elements** — `<link rel="alternate">` with feed MIME types and `<link rel="feed">` elements
-- **Anchor elements** — `<a href="…">` matching `/feed`, `/rss.xml` or containing "RSS", "Subscribe", etc.
+- **HTML** — Scans `<link>` elements with feed MIME types and `<a>` elements matching feed patterns or labels like "RSS", "Subscribe".
+- **Headers** — Parses HTTP `Link` headers for `rel="alternate"` with feed MIME types per RFC 8288.
+- **Guess** — Tests common paths (e.g. `/feed`, `/rss.xml`, `/atom.xml`) against the base URL as a fallback.
 
-This method uses [htmlparser2](https://github.com/fb55/htmlparser2) for efficient parsing. Follows [RSS Board](https://www.rssboard.org/rss-autodiscovery) and [WHATWG](https://blog.whatwg.org/feed-autodiscovery) specs.
+### Customization
 
-### HTTP Headers Discovery
-
-Parses HTTP `Link` headers for `rel="alternate"` with feed MIME types per [RFC 8288](https://www.rfc-editor.org/rfc/rfc8288). Useful when feeds are advertised via HTTP headers rather than HTML metadata.
-
-### Guess Method
-
-Tests common feed paths (`/feed`, `/rss.xml`, `/atom.xml`, etc.) against the base URL. Useful as fallback when other methods fail.
+- **Custom extractors** — Override the default parser to extract additional metadata from feeds and blogrolls.
+- **Configurable methods** — Enable/disable discovery methods or customize their options.
+- **Adapter system** — Use native fetch or integrate with Axios, Got, or Ky.
+- **Concurrency control** — Limit parallel requests during validation.
+- **Progress tracking** — Monitor discovery progress with callbacks.
+- **Type-safe** — Full TypeScript support with exported types.
+- **Tree-shakable** — Import only what you need.
 
 ## Quick Start
+
+This is a short guide on how to get you up and running with Feedscout. For a full overview of all the features, [visit the documentation](https://feedscout.dev).
+
+### Installation
 
 ```bash
 npm install feedscout
 ```
 
-### Basic Usage
+### Discover Feeds
 
-Given HTML content on https://example.com:
+```typescript
+import { discoverFeeds } from 'feedscout'
+
+const feeds = await discoverFeeds('https://example.com', {
+  methods: ['html', 'headers'],
+})
+
+// [{
+//   url: 'https://example.com/feed.xml',
+//   isValid: true,
+//   format: 'rss',
+//   title: 'Example Blog',
+//   description: 'A blog about examples',
+//   siteUrl: 'https://example.com',
+// }]
+```
+
+Or with existing HTML content:
 
 ```html
 <html>
@@ -54,76 +80,46 @@ Given HTML content on https://example.com:
 </html>
 ```
 
-Feedscout discovers and extracts feeds data:
-
 ```typescript
-import { discoverFeeds } from 'feedscout'
-
 const feeds = await discoverFeeds(
   { url: 'https://example.com', content: html },
-  { methods: ['html', 'guess'] },
+  { methods: ['html'] },
 )
 
-// [{ url: 'https://example.com/feed.xml', isValid: true, format: 'rss', title: '...' }]
+// [
+//   {
+//     url: 'https://example.com/feed.xml',
+//     isValid: true,
+//     format: 'rss',
+//     title: 'Example Blog',
+//     description: 'A blog about examples',
+//     siteUrl: 'https://example.com',
+//   },
+//   {
+//     url: 'https://example.com/rss',
+//     isValid: true,
+//     format: 'rss',
+//     title: 'Example Blog',
+//     description: 'A blog about examples',
+//     siteUrl: 'https://example.com',
+//   },
+// ]
 ```
 
-By default, native `fetch()` is used. For projects using other HTTP libraries, adapters are available:
+### Discover Blogrolls
 
 ```typescript
-import axios from 'axios'
-import { createAxiosAdapter } from 'feedscout/adapters'
+import { discoverBlogrolls } from 'feedscout'
 
-const feeds = await discoverFeeds(input, {
-  methods: ['html', 'guess'],
-  fetchFn: createAxiosAdapter(axios),
+const blogrolls = await discoverBlogrolls('https://example.com', {
+  methods: ['html'],
 })
 ```
 
-| Adapter | Library |
-|---------|---------|
-| `createNativeFetchAdapter` | Native `fetch` (default) |
-| `createAxiosAdapter` | [axios](https://axios-http.com) |
-| `createGotAdapter` | [got](https://github.com/sindresorhus/got) |
-| `createKyAdapter` | [ky](https://github.com/sindresorhus/ky) |
-
-
-### Using Existing Response Data
-
-If you already have the response, you can provide it directly instead of fetching the data again:
+### Discover WebSub Hubs
 
 ```typescript
-const feeds = await discoverFeeds(
-  {
-    url: 'https://example.com',
-    content: htmlContent,
-    headers: responseHeaders,
-  },
-  {
-    methods: ['html', 'headers', 'guess'],
-  },
-)
+import { discoverHubs } from 'feedscout'
+
+const hubs = await discoverHubs('https://example.com/feed.xml')
 ```
-
-### Custom Options with Object Syntax
-
-If you want more control over what types of links, anchors or labels are treated as feeds, use object syntax to customize method options:
-
-```typescript
-const feeds = await discoverFeeds('https://example.com', {
-    methods: {
-      html: {
-        anchorLabels: ['rss', 'feed', 'subscribe'],
-        anchorUris: ['/feed', '/rss'],
-      },
-      headers: true, // Use defaults
-      guess: {
-        uris: ['/custom-feed', '/blog/rss'],
-      },
-    },
-    concurrency: 5,
-    stopOnFirst: true,
-  }
-)
-```
-
-For all available options, [visit the reference page in documentation ↗](https://feedscout.dev).
