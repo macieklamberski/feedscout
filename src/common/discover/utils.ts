@@ -26,15 +26,6 @@ export const normalizeInput = async (
   }
 }
 
-/**
- * Normalizes user-facing methods config to internal methods config format.
- *
- * Handles:
- * - Array → object conversion
- * - true → {} normalization
- * - Merging with default options
- * - Building complete method configurations with input data
- */
 export const normalizeMethodsConfig = (
   input: DiscoverInputObject,
   methods: DiscoverMethodsConfig,
