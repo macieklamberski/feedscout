@@ -19,7 +19,7 @@ export const discover = async <TValid>(
     extractFn,
     normalizeUrlFn,
     concurrency = 3,
-    stopOnFirst = false,
+    stopOnFirstResult = false,
     includeInvalid = false,
     onProgress,
   } = options
@@ -80,7 +80,7 @@ export const discover = async <TValid>(
 
   await processConcurrently(uris, processUri, {
     concurrency,
-    shouldStop: () => stopOnFirst && found > 0,
+    shouldStop: () => stopOnFirstResult && found > 0,
   })
 
   return includeInvalid ? results : results.filter((result) => result.isValid)

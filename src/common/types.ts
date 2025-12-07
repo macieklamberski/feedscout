@@ -101,7 +101,7 @@ export type DiscoverOptions<TValid> = {
   extractFn?: DiscoverExtractFn<TValid>
   normalizeUrlFn?: DiscoverNormalizeUrlFn
   concurrency?: number
-  stopOnFirst?: boolean
+  stopOnFirstResult?: boolean
   includeInvalid?: boolean
   onProgress?: DiscoverProgressFn
 }
@@ -113,7 +113,7 @@ export type DiscoverOptionsInternal<TValid> = {
   extractFn: DiscoverExtractFn<TValid>
   normalizeUrlFn: DiscoverNormalizeUrlFn
   concurrency?: number
-  stopOnFirst?: boolean
+  stopOnFirstResult?: boolean
   includeInvalid?: boolean
   onProgress?: DiscoverProgressFn
 }

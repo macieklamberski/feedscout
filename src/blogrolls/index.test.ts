@@ -69,7 +69,7 @@ describe('discoverBlogrolls', () => {
     expect(value).toEqual(expected)
   })
 
-  it('should stop on first valid blogroll when stopOnFirst is true', async () => {
+  it('should stop on first valid blogroll when stopOnFirstResult is true', async () => {
     let fetchCount = 0
     const mockFetch: DiscoverFetchFn = async (url) => {
       fetchCount++
@@ -86,7 +86,7 @@ describe('discoverBlogrolls', () => {
       {
         methods: { guess: { uris: ['/blogroll1.opml', '/blogroll2.opml', '/blogroll3.opml'] } },
         fetchFn: mockFetch,
-        stopOnFirst: true,
+        stopOnFirstResult: true,
         concurrency: 1,
       },
     )
