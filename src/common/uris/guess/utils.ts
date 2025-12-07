@@ -12,34 +12,34 @@ export const generateUrlCombinations = (
 /**
  * Get the www/non-www counterpart of a URL.
  *
- * - If URL is `example.com`, returns `['www.example.com']`
- * - If URL is `www.example.com`, returns `['example.com']`
+ * - If URL is `example.com`, returns `www.example.com`
+ * - If URL is `www.example.com`, returns `example.com`
  *
  * @param baseUrl - The base URL to get the counterpart for
- * @returns Array with single www/non-www counterpart URL
+ * @returns The www/non-www counterpart URL
  *
  * @example
  * ```typescript
  * getWwwCounterpart('https://example.com')
- * // → ['https://www.example.com']
+ * // → 'https://www.example.com'
  *
  * getWwwCounterpart('https://www.example.com')
- * // → ['https://example.com']
+ * // → 'https://example.com'
  * ```
  */
-export const getWwwCounterpart = (baseUrl: string): Array<string> => {
+export const getWwwCounterpart = (baseUrl: string): string => {
   const url = new URL(baseUrl)
   const counterpart = new URL(url)
 
   // Remove www.
   if (url.hostname.startsWith('www.')) {
     counterpart.hostname = url.hostname.replace(/^www\./, '')
-    return [counterpart.origin]
+    return counterpart.origin
   }
 
   // Add www.
   counterpart.hostname = `www.${url.hostname}`
-  return [counterpart.origin]
+  return counterpart.origin
 }
 
 /**

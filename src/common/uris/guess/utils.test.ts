@@ -147,51 +147,51 @@ describe('generateUrlCombinations', () => {
 describe('getWwwCounterpart', () => {
   it('should add www to non-www domain', () => {
     const value = 'https://example.com'
-    const expected = ['https://www.example.com']
+    const expected = 'https://www.example.com'
 
-    expect(getWwwCounterpart(value)).toEqual(expected)
+    expect(getWwwCounterpart(value)).toBe(expected)
   })
 
   it('should remove www from www domain', () => {
     const value = 'https://www.example.com'
-    const expected = ['https://example.com']
+    const expected = 'https://example.com'
 
-    expect(getWwwCounterpart(value)).toEqual(expected)
+    expect(getWwwCounterpart(value)).toBe(expected)
   })
 
   it('should handle http protocol', () => {
     const value = 'http://example.com'
-    const expected = ['http://www.example.com']
+    const expected = 'http://www.example.com'
 
-    expect(getWwwCounterpart(value)).toEqual(expected)
+    expect(getWwwCounterpart(value)).toBe(expected)
   })
 
   it('should preserve port numbers', () => {
     const value = 'https://example.com:8080'
-    const expected = ['https://www.example.com:8080']
+    const expected = 'https://www.example.com:8080'
 
-    expect(getWwwCounterpart(value)).toEqual(expected)
+    expect(getWwwCounterpart(value)).toBe(expected)
   })
 
   it('should add www to domain with existing subdomain', () => {
     const value = 'https://blog.example.com'
-    const expected = ['https://www.blog.example.com']
+    const expected = 'https://www.blog.example.com'
 
-    expect(getWwwCounterpart(value)).toEqual(expected)
+    expect(getWwwCounterpart(value)).toBe(expected)
   })
 
   it('should remove www from domain with other subdomain', () => {
     const value = 'https://www.blog.example.com'
-    const expected = ['https://blog.example.com']
+    const expected = 'https://blog.example.com'
 
-    expect(getWwwCounterpart(value)).toEqual(expected)
+    expect(getWwwCounterpart(value)).toBe(expected)
   })
 
   it('should ignore paths and query params in origin', () => {
     const value = 'https://example.com/path?query=1'
-    const expected = ['https://www.example.com']
+    const expected = 'https://www.example.com'
 
-    expect(getWwwCounterpart(value)).toEqual(expected)
+    expect(getWwwCounterpart(value)).toBe(expected)
   })
 })
 
