@@ -1,10 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverFetchFn } from '../../../common/types.js'
 import { githubHandler } from './github.js'
-
-const createMockFetch = (body = ''): DiscoverFetchFn => {
-  return async () => ({ body, headers: new Headers(), url: '', status: 200, statusText: 'OK' })
-}
 
 describe('githubHandler', () => {
   describe('match', () => {
@@ -18,11 +13,8 @@ describe('githubHandler', () => {
   })
 
   describe('resolve', () => {
-    it('should return releases and commits feeds for repository', async () => {
-      const value = await githubHandler.resolve(
-        'https://github.com/microsoft/vscode',
-        createMockFetch(),
-      )
+    it('should return releases and commits feeds for repository', () => {
+      const value = githubHandler.resolve('https://github.com/microsoft/vscode', '')
 
       expect(value).toEqual([
         'https://github.com/microsoft/vscode/releases.atom',
@@ -30,11 +22,8 @@ describe('githubHandler', () => {
       ])
     })
 
-    it('should include branch-specific commits feed when on branch page', async () => {
-      const value = await githubHandler.resolve(
-        'https://github.com/microsoft/vscode/tree/main',
-        createMockFetch(),
-      )
+    it('should include branch-specific commits feed when on branch page', () => {
+      const value = githubHandler.resolve('https://github.com/microsoft/vscode/tree/main', '')
 
       expect(value).toEqual([
         'https://github.com/microsoft/vscode/releases.atom',
@@ -43,17 +32,14 @@ describe('githubHandler', () => {
       ])
     })
 
-    it('should return empty array for special paths', async () => {
-      const value = await githubHandler.resolve(
-        'https://github.com/settings/profile',
-        createMockFetch(),
-      )
+    it('should return empty array for special paths', () => {
+      const value = githubHandler.resolve('https://github.com/settings/profile', '')
 
       expect(value).toEqual([])
     })
 
-    it('should return empty array when missing repo name', async () => {
-      const value = await githubHandler.resolve('https://github.com/microsoft', createMockFetch())
+    it('should return empty array when missing repo name', () => {
+      const value = githubHandler.resolve('https://github.com/microsoft', '')
 
       expect(value).toEqual([])
     })

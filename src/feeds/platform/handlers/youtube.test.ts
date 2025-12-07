@@ -1,10 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverFetchFn } from '../../../common/types.js'
 import { youtubeHandler } from './youtube.js'
-
-const createMockFetch = (body = ''): DiscoverFetchFn => {
-  return async () => ({ body, headers: new Headers(), url: '', status: 200, statusText: 'OK' })
-}
 
 describe('youtubeHandler', () => {
   describe('match', () => {
@@ -18,47 +13,38 @@ describe('youtubeHandler', () => {
   })
 
   describe('resolve', () => {
-    it('should return feed URL for channel ID', async () => {
-      const value = await youtubeHandler.resolve(
-        'https://youtube.com/channel/UC1234567890',
-        createMockFetch(),
-      )
+    it('should return feed URL for channel ID', () => {
+      const value = youtubeHandler.resolve('https://youtube.com/channel/UC1234567890', '')
 
       expect(value).toEqual(['https://www.youtube.com/feeds/videos.xml?channel_id=UC1234567890'])
     })
 
-    it('should return feed URL for playlist', async () => {
-      const value = await youtubeHandler.resolve(
-        'https://youtube.com/playlist?list=PL1234567890',
-        createMockFetch(),
-      )
+    it('should return feed URL for playlist', () => {
+      const value = youtubeHandler.resolve('https://youtube.com/playlist?list=PL1234567890', '')
 
       expect(value).toEqual(['https://www.youtube.com/feeds/videos.xml?playlist_id=PL1234567890'])
     })
 
-    it('should fetch channel ID from @handle page', async () => {
-      const value = await youtubeHandler.resolve(
+    it('should extract channel ID from @handle page content', () => {
+      const value = youtubeHandler.resolve(
         'https://youtube.com/@veritasium',
-        createMockFetch('{"channelId":"UC1234567890"}'),
+        '{"channelId":"UC1234567890"}',
       )
 
       expect(value).toEqual(['https://www.youtube.com/feeds/videos.xml?channel_id=UC1234567890'])
     })
 
-    it('should return empty array when @handle page fetch fails', async () => {
-      const value = await youtubeHandler.resolve(
+    it('should return empty array when @handle content has no channel ID', () => {
+      const value = youtubeHandler.resolve(
         'https://youtube.com/@nonexistent',
-        createMockFetch('<html>No channel ID here</html>'),
+        '<html>No channel ID here</html>',
       )
 
       expect(value).toEqual([])
     })
 
-    it('should return empty array for unsupported paths', async () => {
-      const value = await youtubeHandler.resolve(
-        'https://youtube.com/watch?v=abc123',
-        createMockFetch(),
-      )
+    it('should return empty array for unsupported paths', () => {
+      const value = youtubeHandler.resolve('https://youtube.com/watch?v=abc123', '')
 
       expect(value).toEqual([])
     })

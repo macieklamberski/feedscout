@@ -6,6 +6,7 @@ import type {
   DiscoverProgress,
   DiscoverResult,
 } from '../common/types.js'
+import type { PlatformHandler } from '../common/uris/platform/types.js'
 import {
   defaultPlatformOptions,
   feedUrisBalanced,
@@ -13,7 +14,6 @@ import {
   feedUrisMinimal,
 } from './defaults.js'
 import { discoverFeeds } from './index.js'
-import type { PlatformHandler } from './platform/types.js'
 import type { FeedResultValid } from './types.js'
 
 const createMockFetch = (responses: Record<string, string>): DiscoverFetchFn => {
@@ -986,7 +986,7 @@ describe('discoverFeeds', () => {
       `
       const customHandler: PlatformHandler = {
         match: (url) => new URL(url).hostname === 'custom.com',
-        resolve: async () => ['https://custom.com/my-feed.xml'],
+        resolve: () => ['https://custom.com/my-feed.xml'],
       }
       const mockFetch = createMockFetch({
         'https://custom.com/my-feed.xml': rss,
@@ -1080,9 +1080,8 @@ describe('discoverFeeds', () => {
 
     it('should return empty array when platform discovery throws error', async () => {
       const errorHandler: PlatformHandler = {
-        name: 'error-handler',
         match: () => true,
-        resolve: async () => {
+        resolve: () => {
           throw new Error('Platform discovery failed')
         },
       }
@@ -1095,28 +1094,27 @@ describe('discoverFeeds', () => {
       expect(value).toEqual([])
     })
 
-    it('should pass fetchFn to platform handlers', async () => {
-      let fetchFnCalled = false
-      const handlerThatUsesFetch: PlatformHandler = {
-        name: 'fetch-user',
+    it('should pass content to platform handlers', async () => {
+      let receivedContent: string | undefined
+      const handlerThatUsesContent: PlatformHandler = {
         match: () => true,
-        resolve: async (_url, fetchFn) => {
-          await fetchFn('https://api.example.com/lookup')
-          fetchFnCalled = true
+        resolve: (_url, content) => {
+          receivedContent = content
 
           return ['https://example.com/feed.xml']
         },
       }
+      const htmlContent = '<html><head></head><body>Test content</body></html>'
       const mockFetch = createMockFetch({
-        'https://api.example.com/lookup': '{}',
+        'https://example.com': htmlContent,
         'https://example.com/feed.xml': '<rss></rss>',
       })
       await discoverFeeds('https://example.com', {
-        methods: { platform: { handlers: [handlerThatUsesFetch] } },
+        methods: { platform: { handlers: [handlerThatUsesContent] } },
         fetchFn: mockFetch,
       })
 
-      expect(fetchFnCalled).toBe(true)
+      expect(receivedContent).toBe(htmlContent)
     })
   })
 })

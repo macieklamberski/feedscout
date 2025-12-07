@@ -2,10 +2,10 @@ import type { LinkSelector } from '../common/types.js'
 import type { GuessMethodOptions } from '../common/uris/guess/types.js'
 import type { HeadersMethodOptions } from '../common/uris/headers/types.js'
 import type { HtmlMethodOptions } from '../common/uris/html/types.js'
+import type { PlatformMethodOptions } from '../common/uris/platform/types.js'
 import { githubHandler } from './platform/handlers/github.js'
 import { redditHandler } from './platform/handlers/reddit.js'
 import { youtubeHandler } from './platform/handlers/youtube.js'
-import type { PlatformMethodOptions } from './platform/types.js'
 
 export const feedMimeTypes = [
   // RSS:
@@ -96,6 +96,6 @@ export const defaultGuessOptions: Omit<GuessMethodOptions, 'baseUrl'> = {
 }
 
 // Default options for Platform method.
-export const defaultPlatformOptions: PlatformMethodOptions = {
+export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
   handlers: [githubHandler, redditHandler, youtubeHandler],
 }

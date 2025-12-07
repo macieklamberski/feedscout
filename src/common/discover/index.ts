@@ -22,7 +22,6 @@ export const discover = async <TValid>(
     stopOnFirstResult = false,
     includeInvalid = false,
     onProgress,
-    additionalUris = [],
   } = options
 
   // Normalize input: string → fetch URL, object → use provided content.
@@ -44,7 +43,7 @@ export const discover = async <TValid>(
   const methodsConfig = normalizeMethodsConfig(normalizedInput, methods, defaults)
 
   // Step 3: Discover URIs using selected methods and normalize them.
-  const rawUris = [...additionalUris, ...discoverUris(methodsConfig)]
+  const rawUris = discoverUris(methodsConfig)
   const uris = [...new Set(rawUris.map((uri) => normalizeUrlFn(uri, normalizedInput.url)))]
 
   // Step 4: Validate discovered URIs.

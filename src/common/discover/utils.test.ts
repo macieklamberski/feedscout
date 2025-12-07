@@ -257,6 +257,9 @@ describe('normalizeMethodsConfig', () => {
   const anchorLabels = ['rss', 'feed', 'atom', 'subscribe', 'syndicate', 'json feed']
   const linkSelectors = [{ rel: 'alternate', types: feedMimeTypes }, { rel: 'feed' }]
   const defaults = {
+    platform: {
+      handlers: [],
+    },
     html: {
       linkSelectors,
       anchorUris: feedUrisComprehensive,

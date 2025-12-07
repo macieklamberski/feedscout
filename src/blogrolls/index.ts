@@ -19,6 +19,7 @@ export const discoverBlogrolls = async <TValid extends BlogrollResultValid = Blo
       normalizeUrlFn: options.normalizeUrlFn ?? normalizeUrl,
     },
     {
+      platform: { handlers: [] }, // Blogrolls do not use platform-specific discovery.
       html: defaultHtmlOptions,
       headers: defaultHeadersOptions,
       guess: defaultGuessOptions,
