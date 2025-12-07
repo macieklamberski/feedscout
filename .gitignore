@@ -8,5 +8,9 @@ node_modules
 # Build
 dist
 
+# Docs
+docs/.vitepress/cache
+docs/.vitepress/dist
+
 # Development
 plans
