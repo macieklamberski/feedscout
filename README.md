@@ -32,7 +32,7 @@ Finds feeds by scanning links and anchors in HTML content, parsing HTTP headers,
 
 - **Custom extractors** — Override the default parser to extract additional metadata from feeds and blogrolls.
 - **Configurable methods** — Enable/disable discovery methods or customize their options.
-- **Adapter system** — Use native fetch or integrate with Axios, Got, or Ky.
+- **Adapter system** — Use native fetch or easily integrate with Axios, Got, or Ky.
 - **Concurrency control** — Limit parallel requests during validation.
 - **Progress tracking** — Monitor discovery progress with callbacks.
 - **Type-safe** — Full TypeScript support with exported types.
