@@ -722,7 +722,7 @@
 
     "kind-of": ["kind-of@6.0.3", "", {}, "sha512-dcS1ul+9tmeD95T+x28/ehLgd9mENa3LsvDTtzm3vyBEO7RPptvAD+t44WVXaUjTBRcrpFeFlC8WCruUR456hw=="],
 
-    "kvalita": ["kvalita@1.6.1", "", { "peerDependencies": { "@biomejs/biome": ">=2.0.0", "@commitlint/cli": ">=19.0.0", "@commitlint/config-conventional": ">=19.0.0", "conventional-changelog-conventionalcommits": ">=8.0.0", "lefthook": ">=1.0.0", "semantic-release": ">=23.0.0", "typescript": ">=5.0.0" } }, "sha512-oN3keL+s1DVIB75ubiIkhrCfL6QCko2MK1T1GbYkVmExNO6CbmyVw1vjxiLiqRIcv9wJrxN9tWh5whJiGqzVHw=="],
+    "kvalita": ["kvalita@1.7.0", "", { "peerDependencies": { "@biomejs/biome": ">=2.0.0", "@commitlint/cli": ">=19.0.0", "@commitlint/config-conventional": ">=19.0.0", "conventional-changelog-conventionalcommits": ">=8.0.0", "lefthook": ">=1.0.0", "semantic-release": ">=23.0.0", "typescript": ">=5.0.0" } }, "sha512-SVeebgT1YsHj8ncDvFnmL2fETe0BvGYCw5sO9IoGVr/QVs5y0SIJa15ZeYhI/7+BD03NafQd7Uf/3T8iaMfW6Q=="],
 
     "lefthook": ["lefthook@2.0.8", "", { "optionalDependencies": { "lefthook-darwin-arm64": "2.0.8", "lefthook-darwin-x64": "2.0.8", "lefthook-freebsd-arm64": "2.0.8", "lefthook-freebsd-x64": "2.0.8", "lefthook-linux-arm64": "2.0.8", "lefthook-linux-x64": "2.0.8", "lefthook-openbsd-arm64": "2.0.8", "lefthook-openbsd-x64": "2.0.8", "lefthook-windows-arm64": "2.0.8", "lefthook-windows-x64": "2.0.8" }, "bin": { "lefthook": "bin/index.js" } }, "sha512-FozDCKeSI+m3BP0cvyPgHch+yf7ClS3hDy1JsRUrbNmlyjqBcmlygnRXsZzpH+wHoNnF2fmfhJhkx/7S7IpaVw=="],
 
