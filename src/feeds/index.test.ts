@@ -105,7 +105,7 @@ describe('discoverFeeds', () => {
     expect(value).toEqual(expected)
   })
 
-  it('should stop on first valid feed when stopOnFirst is true', async () => {
+  it('should stop on first valid feed when stopOnFirstResult is true', async () => {
     let fetchCount = 0
     const mockFetch: DiscoverFetchFn = async (url) => {
       fetchCount++
@@ -130,7 +130,7 @@ describe('discoverFeeds', () => {
       {
         methods: { guess: { uris: ['/feed1', '/feed2', '/feed3', '/feed4', '/feed5'] } },
         fetchFn: mockFetch,
-        stopOnFirst: true,
+        stopOnFirstResult: true,
         concurrency: 1,
       },
     )
