@@ -19,9 +19,10 @@ export const discover = async <TValid>(
     extractFn,
     normalizeUrlFn,
     concurrency = 3,
-    stopOnFirst = false,
+    stopOnFirstResult = false,
     includeInvalid = false,
     onProgress,
+    additionalUris = [],
   } = options
 
   // Normalize input: string → fetch URL, object → use provided content.
@@ -43,7 +44,7 @@ export const discover = async <TValid>(
   const methodsConfig = normalizeMethodsConfig(normalizedInput, methods, defaults)
 
   // Step 3: Discover URIs using selected methods and normalize them.
-  const rawUris = discoverUris(methodsConfig)
+  const rawUris = [...additionalUris, ...discoverUris(methodsConfig)]
   const uris = [...new Set(rawUris.map((uri) => normalizeUrlFn(uri, normalizedInput.url)))]
 
   // Step 4: Validate discovered URIs.
@@ -80,7 +81,7 @@ export const discover = async <TValid>(
 
   await processConcurrently(uris, processUri, {
     concurrency,
-    shouldStop: () => stopOnFirst && found > 0,
+    shouldStop: () => stopOnFirstResult && found > 0,
   })
 
   return includeInvalid ? results : results.filter((result) => result.isValid)

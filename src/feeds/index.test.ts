@@ -6,8 +6,14 @@ import type {
   DiscoverProgress,
   DiscoverResult,
 } from '../common/types.js'
-import { feedUrisBalanced, feedUrisComprehensive, feedUrisMinimal } from './defaults.js'
+import {
+  defaultPlatformOptions,
+  feedUrisBalanced,
+  feedUrisComprehensive,
+  feedUrisMinimal,
+} from './defaults.js'
 import { discoverFeeds } from './index.js'
+import type { PlatformHandler } from './platform/types.js'
 import type { FeedResultValid } from './types.js'
 
 const createMockFetch = (responses: Record<string, string>): DiscoverFetchFn => {
@@ -105,7 +111,7 @@ describe('discoverFeeds', () => {
     expect(value).toEqual(expected)
   })
 
-  it('should stop on first valid feed when stopOnFirst is true', async () => {
+  it('should stop on first valid feed when stopOnFirstResult is true', async () => {
     let fetchCount = 0
     const mockFetch: DiscoverFetchFn = async (url) => {
       fetchCount++
@@ -130,7 +136,7 @@ describe('discoverFeeds', () => {
       {
         methods: { guess: { uris: ['/feed1', '/feed2', '/feed3', '/feed4', '/feed5'] } },
         fetchFn: mockFetch,
-        stopOnFirst: true,
+        stopOnFirstResult: true,
         concurrency: 1,
       },
     )
@@ -896,5 +902,253 @@ describe('discoverFeeds', () => {
     const throwing = () => discoverFeeds({ content: '<html></html>' }, { methods: ['guess'] })
 
     expect(throwing).toThrow(locales.errors.guessMethodRequiresUrl)
+  })
+
+  describe('platform method', () => {
+    it('should discover feeds when platform method specified in array form', async () => {
+      const rss = `
+        <rss version="2.0">
+          <channel>
+            <title>Test RSS</title>
+            <link>https://reddit.com</link>
+            <description>Test feed</description>
+          </channel>
+        </rss>
+      `
+      const mockFetch = createMockFetch({
+        'https://www.reddit.com/r/programming/.rss': rss,
+      })
+      const value = await discoverFeeds('https://reddit.com/r/programming', {
+        methods: ['platform'],
+        fetchFn: mockFetch,
+      })
+      const expected: Array<DiscoverResult<FeedResultValid>> = [
+        {
+          url: 'https://www.reddit.com/r/programming/.rss',
+          isValid: true,
+          format: 'rss',
+          title: 'Test RSS',
+          description: 'Test feed',
+          siteUrl: 'https://reddit.com',
+        },
+      ]
+
+      expect(value).toEqual(expected)
+    })
+
+    it('should discover feeds when platform method specified as true in object form', async () => {
+      const atom = `
+        <feed xmlns="http://www.w3.org/2005/Atom">
+          <title>Test Atom</title>
+          <link rel="alternate" href="https://github.com/owner/repo"/>
+          <subtitle>Test feed</subtitle>
+        </feed>
+      `
+      const mockFetch = createMockFetch({
+        'https://github.com/owner/repo/releases.atom': atom,
+        'https://github.com/owner/repo/commits.atom': atom,
+      })
+      const value = await discoverFeeds('https://github.com/owner/repo', {
+        methods: { platform: true },
+        fetchFn: mockFetch,
+      })
+      const expected: Array<DiscoverResult<FeedResultValid>> = [
+        {
+          url: 'https://github.com/owner/repo/releases.atom',
+          isValid: true,
+          format: 'atom',
+          title: 'Test Atom',
+          description: 'Test feed',
+          siteUrl: 'https://github.com/owner/repo',
+        },
+        {
+          url: 'https://github.com/owner/repo/commits.atom',
+          isValid: true,
+          format: 'atom',
+          title: 'Test Atom',
+          description: 'Test feed',
+          siteUrl: 'https://github.com/owner/repo',
+        },
+      ]
+
+      expect(value).toEqual(expected)
+    })
+
+    it('should use custom handlers when provided in object form', async () => {
+      const rss = `
+        <rss version="2.0">
+          <channel>
+            <title>Custom Feed</title>
+            <link>https://custom.com</link>
+            <description>Custom feed</description>
+          </channel>
+        </rss>
+      `
+      const customHandler: PlatformHandler = {
+        match: (url) => new URL(url).hostname === 'custom.com',
+        resolve: async () => ['https://custom.com/my-feed.xml'],
+      }
+      const mockFetch = createMockFetch({
+        'https://custom.com/my-feed.xml': rss,
+      })
+      const value = await discoverFeeds('https://custom.com/page', {
+        methods: { platform: { handlers: [customHandler] } },
+        fetchFn: mockFetch,
+      })
+      const expected: Array<DiscoverResult<FeedResultValid>> = [
+        {
+          url: 'https://custom.com/my-feed.xml',
+          isValid: true,
+          format: 'rss',
+          title: 'Custom Feed',
+          description: 'Custom feed',
+          siteUrl: 'https://custom.com',
+        },
+      ]
+
+      expect(value).toEqual(expected)
+    })
+
+    it('should combine platform URIs with other method URIs', async () => {
+      const rss = `
+        <rss version="2.0">
+          <channel>
+            <title>Test RSS</title>
+            <link>https://reddit.com</link>
+            <description>Test feed</description>
+          </channel>
+        </rss>
+      `
+      const mockFetch = createMockFetch({
+        'https://www.reddit.com/r/programming/.rss': rss,
+        'https://reddit.com/feed': rss,
+      })
+      const value = await discoverFeeds(
+        { url: 'https://reddit.com/r/programming' },
+        {
+          methods: { platform: true, guess: { uris: ['/feed'] } },
+          fetchFn: mockFetch,
+        },
+      )
+      const expected: Array<DiscoverResult<FeedResultValid>> = [
+        {
+          url: 'https://www.reddit.com/r/programming/.rss',
+          isValid: true,
+          format: 'rss',
+          title: 'Test RSS',
+          description: 'Test feed',
+          siteUrl: 'https://reddit.com',
+        },
+        {
+          url: 'https://reddit.com/feed',
+          isValid: true,
+          format: 'rss',
+          title: 'Test RSS',
+          description: 'Test feed',
+          siteUrl: 'https://reddit.com',
+        },
+      ]
+
+      expect(value).toEqual(expected)
+    })
+
+    it('should return empty array when platform method not specified', async () => {
+      const mockFetch = createMockFetch({})
+      const value = await discoverFeeds(
+        { url: 'https://reddit.com/r/programming' },
+        {
+          methods: { guess: { uris: [] } },
+          fetchFn: mockFetch,
+        },
+      )
+
+      expect(value).toEqual([])
+    })
+
+    it('should return empty array for invalid URLs', async () => {
+      const mockFetch = createMockFetch({})
+      const value = await discoverFeeds(
+        { url: 'not-a-valid-url' },
+        {
+          methods: ['platform'],
+          fetchFn: mockFetch,
+        },
+      )
+
+      expect(value).toEqual([])
+    })
+
+    it('should return empty array when platform discovery throws error', async () => {
+      const errorHandler: PlatformHandler = {
+        name: 'error-handler',
+        match: () => true,
+        resolve: async () => {
+          throw new Error('Platform discovery failed')
+        },
+      }
+      const mockFetch = createMockFetch({})
+      const value = await discoverFeeds('https://example.com', {
+        methods: { platform: { handlers: [errorHandler] } },
+        fetchFn: mockFetch,
+      })
+
+      expect(value).toEqual([])
+    })
+
+    it('should pass fetchFn to platform handlers', async () => {
+      let fetchFnCalled = false
+      const handlerThatUsesFetch: PlatformHandler = {
+        name: 'fetch-user',
+        match: () => true,
+        resolve: async (_url, fetchFn) => {
+          await fetchFn('https://api.example.com/lookup')
+          fetchFnCalled = true
+
+          return ['https://example.com/feed.xml']
+        },
+      }
+      const mockFetch = createMockFetch({
+        'https://api.example.com/lookup': '{}',
+        'https://example.com/feed.xml': '<rss></rss>',
+      })
+      await discoverFeeds('https://example.com', {
+        methods: { platform: { handlers: [handlerThatUsesFetch] } },
+        fetchFn: mockFetch,
+      })
+
+      expect(fetchFnCalled).toBe(true)
+    })
+  })
+})
+
+describe('defaultPlatformOptions', () => {
+  it('should contain all 3 platform handlers', () => {
+    const value = defaultPlatformOptions.handlers.length
+
+    expect(value).toBe(3)
+  })
+
+  it('should contain handler that matches GitHub URLs', () => {
+    const value = defaultPlatformOptions.handlers.some((h) =>
+      h.match('https://github.com/owner/repo'),
+    )
+
+    expect(value).toBe(true)
+  })
+
+  it('should contain handler that matches Reddit URLs', () => {
+    const value = defaultPlatformOptions.handlers.some((h) =>
+      h.match('https://reddit.com/r/programming'),
+    )
+
+    expect(value).toBe(true)
+  })
+
+  it('should contain handler that matches YouTube URLs', () => {
+    const value = defaultPlatformOptions.handlers.some((h) =>
+      h.match('https://youtube.com/@channel'),
+    )
+
+    expect(value).toBe(true)
   })
 })

@@ -1,3 +1,4 @@
+import type { PlatformMethodOptions } from '../feeds/platform/types.js'
 import type { GuessMethodOptions } from './uris/guess/types.js'
 import type { HeadersMethodOptions } from './uris/headers/types.js'
 import type { HtmlMethodOptions } from './uris/html/types.js'
@@ -65,8 +66,9 @@ export type DiscoverInput = string | DiscoverInputObject
 
 // User-facing config - partial options (users override only what they need).
 export type DiscoverMethodsConfig =
-  | Array<'html' | 'headers' | 'guess'>
+  | Array<'platform' | 'html' | 'headers' | 'guess'>
   | {
+      platform?: true | Partial<PlatformMethodOptions>
       html?: true | Partial<Omit<HtmlMethodOptions, 'baseUrl'>>
       headers?: true | Partial<Omit<HeadersMethodOptions, 'baseUrl'>>
       guess?: true | Partial<Omit<GuessMethodOptions, 'baseUrl'>>
@@ -101,9 +103,10 @@ export type DiscoverOptions<TValid> = {
   extractFn?: DiscoverExtractFn<TValid>
   normalizeUrlFn?: DiscoverNormalizeUrlFn
   concurrency?: number
-  stopOnFirst?: boolean
+  stopOnFirstResult?: boolean
   includeInvalid?: boolean
   onProgress?: DiscoverProgressFn
+  additionalUris?: Array<string>
 }
 
 // Internal options - required fetchFn, extractFn, normalizeUrlFn.
@@ -113,7 +116,8 @@ export type DiscoverOptionsInternal<TValid> = {
   extractFn: DiscoverExtractFn<TValid>
   normalizeUrlFn: DiscoverNormalizeUrlFn
   concurrency?: number
-  stopOnFirst?: boolean
+  stopOnFirstResult?: boolean
   includeInvalid?: boolean
   onProgress?: DiscoverProgressFn
+  additionalUris?: Array<string>
 }
