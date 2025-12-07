@@ -1080,7 +1080,6 @@ describe('discoverFeeds', () => {
 
     it('should return empty array when platform discovery throws error', async () => {
       const errorHandler: PlatformHandler = {
-        name: 'error-handler',
         match: () => true,
         resolve: async () => {
           throw new Error('Platform discovery failed')
@@ -1098,7 +1097,6 @@ describe('discoverFeeds', () => {
     it('should pass fetchFn to platform handlers', async () => {
       let fetchFnCalled = false
       const handlerThatUsesFetch: PlatformHandler = {
-        name: 'fetch-user',
         match: () => true,
         resolve: async (_url, fetchFn) => {
           await fetchFn('https://api.example.com/lookup')
