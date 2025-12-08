@@ -1,0 +1,46 @@
+import type { PlatformHandler } from '../../../common/uris/platform/types.js'
+import { isAnyOf } from '../../../common/utils.js'
+
+const hosts = ['gist.github.com']
+const excludedPaths = ['discover', 'search', 'login', 'join', 'settings', 'starred']
+
+export const githubGistHandler: PlatformHandler = {
+  match: (url) => {
+    return isAnyOf(new URL(url).hostname, hosts)
+  },
+
+  resolve: (url) => {
+    const { pathname } = new URL(url)
+    const uris: Array<string> = []
+
+    // Match /{username}/{gist-id} pattern (specific gist).
+    const gistMatch = pathname.match(/^\/([^/]+)\/([a-f0-9]+)/)
+
+    if (gistMatch?.[1] && gistMatch?.[2]) {
+      const username = gistMatch[1]
+      const gistId = gistMatch[2]
+
+      if (!isAnyOf(username, excludedPaths)) {
+        // Revisions feed for this specific gist.
+        uris.push(`https://gist.github.com/${username}/${gistId}/revisions.atom`)
+        // Also include user's gists feed.
+        uris.push(`https://gist.github.com/${username}.atom`)
+      }
+
+      return uris
+    }
+
+    // Match /{username} pattern (user's gists page).
+    const userMatch = pathname.match(/^\/([^/]+)\/?$/)
+
+    if (userMatch?.[1] && !isAnyOf(userMatch[1], excludedPaths)) {
+      const username = userMatch[1]
+
+      uris.push(`https://gist.github.com/${username}.atom`)
+
+      return uris
+    }
+
+    return []
+  },
+}
