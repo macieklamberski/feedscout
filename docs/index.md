@@ -4,7 +4,7 @@ outline: 2
 
 # Feedscout
 
-Advanced feed autodiscovery for JavaScript. Collect feeds from webpages using multiple discovery methods.
+Advanced feed autodiscovery for JavaScript. Collect feed information from any webpage using multiple discovery methods.
 
 Finds feeds by scanning links and anchors in HTML content, parsing HTTP headers, and guessing common paths, then validates each URL by fetching and parsing the feed.
 
