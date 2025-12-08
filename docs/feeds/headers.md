@@ -29,13 +29,13 @@ Feedscout comes with reasonable defaults, but you can customize how headers are 
 Control which `Link` headers are matched:
 
 ```typescript
-import { feedMimeTypes } from 'feedscout/feeds'
+import { mimeTypes } from 'feedscout/feeds'
 
 const feeds = await discoverFeeds(url, {
   methods: {
     headers: {
       linkSelectors: [
-        { rel: 'alternate', types: feedMimeTypes },
+        { rel: 'alternate', types: mimeTypes },
         { rel: 'feed' },
       ],
     },

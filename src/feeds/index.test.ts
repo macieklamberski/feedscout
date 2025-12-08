@@ -6,9 +6,9 @@ import type {
   DiscoverProgress,
   DiscoverResult,
 } from '../common/types.js'
-import { feedUrisBalanced, feedUrisComprehensive, feedUrisMinimal } from './defaults.js'
+import { urisBalanced, urisComprehensive, urisMinimal } from './defaults.js'
 import { discoverFeeds } from './index.js'
-import type { FeedResultValid } from './types.js'
+import type { FeedResult } from './types.js'
 
 const createMockFetch = (responses: Record<string, string>): DiscoverFetchFn => {
   return async (url: string) => ({
@@ -49,7 +49,7 @@ describe('discoverFeeds', () => {
         fetchFn: mockFetch,
       },
     )
-    const expected: Array<DiscoverResult<FeedResultValid>> = [
+    const expected: Array<DiscoverResult<FeedResult>> = [
       {
         url: 'https://example.com/feed',
         isValid: true,
@@ -91,7 +91,7 @@ describe('discoverFeeds', () => {
         fetchFn: mockFetch,
       },
     )
-    const expected: Array<DiscoverResult<FeedResultValid>> = [
+    const expected: Array<DiscoverResult<FeedResult>> = [
       {
         url: 'https://example.com/feed',
         isValid: true,
@@ -134,7 +134,7 @@ describe('discoverFeeds', () => {
         concurrency: 1,
       },
     )
-    const expected: Array<DiscoverResult<FeedResultValid>> = [
+    const expected: Array<DiscoverResult<FeedResult>> = [
       {
         url: 'https://example.com/feed1',
         isValid: true,
@@ -224,7 +224,7 @@ describe('discoverFeeds', () => {
         includeInvalid: true,
       },
     )
-    const expected: Array<DiscoverResult<FeedResultValid>> = [
+    const expected: Array<DiscoverResult<FeedResult>> = [
       {
         url: 'https://example.com/feed',
         isValid: false,
@@ -238,7 +238,7 @@ describe('discoverFeeds', () => {
     const mockFetch = createMockFetch({
       'https://example.com/feed': 'custom feed content',
     })
-    const customExtractor: DiscoverExtractFn<FeedResultValid> = async ({ url, content }) => {
+    const customExtractor: DiscoverExtractFn<FeedResult> = async ({ url, content }) => {
       const isValid = content.includes('custom feed')
       if (isValid) {
         return {
@@ -260,7 +260,7 @@ describe('discoverFeeds', () => {
         extractFn: customExtractor,
       },
     )
-    const expected: Array<DiscoverResult<FeedResultValid>> = [
+    const expected: Array<DiscoverResult<FeedResult>> = [
       {
         url: 'https://example.com/feed',
         isValid: true,
@@ -272,7 +272,7 @@ describe('discoverFeeds', () => {
   })
 
   it('should preserve additional data from custom extractor', async () => {
-    type ExtendedFeedResult = FeedResultValid & {
+    type ExtendedFeedResult = FeedResult & {
       itemCount: number
       lastUpdated: string
     }
@@ -319,7 +319,7 @@ describe('discoverFeeds', () => {
   })
 
   it('should handle custom extractor with optional additional fields', async () => {
-    type ExtendedFeedResult = FeedResultValid & {
+    type ExtendedFeedResult = FeedResult & {
       itemCount?: number
       author?: string
     }
@@ -366,7 +366,7 @@ describe('discoverFeeds', () => {
     const mockFetch = createMockFetch({
       'https://example.com/feed': 'invalid content',
     })
-    const customExtractor: DiscoverExtractFn<FeedResultValid> = async ({ url }) => {
+    const customExtractor: DiscoverExtractFn<FeedResult> = async ({ url }) => {
       return {
         url,
         isValid: false,
@@ -382,7 +382,7 @@ describe('discoverFeeds', () => {
         includeInvalid: true,
       },
     )
-    const expected: Array<DiscoverResult<FeedResultValid>> = [
+    const expected: Array<DiscoverResult<FeedResult>> = [
       {
         url: 'https://example.com/feed',
         isValid: false,
@@ -398,7 +398,7 @@ describe('discoverFeeds', () => {
     // does not pass headers from fetchFn response to extractFn.
     // The type signature supports it (DiscoverExtractFn accepts headers?: Headers),
     // but the actual call at line 55-58 omits headers.
-    type ExtendedFeedResult = FeedResultValid & {
+    type ExtendedFeedResult = FeedResult & {
       etag?: string
     }
     const mockFetch: DiscoverFetchFn = async (url) => ({
@@ -499,11 +499,11 @@ describe('discoverFeeds', () => {
     const value = await discoverFeeds(
       { url: 'https://example.com' },
       {
-        methods: { guess: { uris: feedUrisMinimal } },
+        methods: { guess: { uris: urisMinimal } },
         fetchFn: mockFetch,
       },
     )
-    const expected: Array<DiscoverResult<FeedResultValid>> = [
+    const expected: Array<DiscoverResult<FeedResult>> = [
       {
         url: 'https://example.com/feed',
         isValid: true,
@@ -538,11 +538,11 @@ describe('discoverFeeds', () => {
     const value = await discoverFeeds(
       { url: 'https://example.com' },
       {
-        methods: { guess: { uris: feedUrisBalanced } },
+        methods: { guess: { uris: urisBalanced } },
         fetchFn: mockFetch,
       },
     )
-    const expected: Array<DiscoverResult<FeedResultValid>> = [
+    const expected: Array<DiscoverResult<FeedResult>> = [
       {
         url: 'https://example.com/feed.json',
         isValid: true,
@@ -573,11 +573,11 @@ describe('discoverFeeds', () => {
     const value = await discoverFeeds(
       { url: 'https://example.com' },
       {
-        methods: { guess: { uris: feedUrisComprehensive } },
+        methods: { guess: { uris: urisComprehensive } },
         fetchFn: mockFetch,
       },
     )
-    const expected: Array<DiscoverResult<FeedResultValid>> = [
+    const expected: Array<DiscoverResult<FeedResult>> = [
       {
         url: 'https://example.com/?feed=rss',
         isValid: true,
@@ -626,7 +626,7 @@ describe('discoverFeeds', () => {
         fetchFn: mockFetch,
       },
     )
-    const expected: Array<DiscoverResult<FeedResultValid>> = [
+    const expected: Array<DiscoverResult<FeedResult>> = [
       {
         url: 'https://example.com/feed',
         isValid: true,
@@ -724,7 +724,7 @@ describe('discoverFeeds', () => {
         fetchFn: mockFetch,
       },
     )
-    const expected: Array<DiscoverResult<FeedResultValid>> = [
+    const expected: Array<DiscoverResult<FeedResult>> = [
       {
         url: 'https://example.com/feed',
         isValid: true,
@@ -786,7 +786,7 @@ describe('discoverFeeds', () => {
         includeInvalid: true,
       },
     )
-    const expected: Array<DiscoverResult<FeedResultValid>> = [
+    const expected: Array<DiscoverResult<FeedResult>> = [
       {
         url: 'https://example.com/feed',
         isValid: true,
@@ -869,7 +869,7 @@ describe('discoverFeeds', () => {
         includeInvalid: true,
       },
     )
-    const expected: Array<DiscoverResult<FeedResultValid>> = [
+    const expected: Array<DiscoverResult<FeedResult>> = [
       {
         url: 'https://example.com/feed.xml',
         isValid: false,

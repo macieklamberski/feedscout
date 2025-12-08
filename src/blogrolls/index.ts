@@ -3,10 +3,10 @@ import { discover } from '../common/discover/index.js'
 import type { DiscoverInput, DiscoverOptions, DiscoverResult } from '../common/types.js'
 import { normalizeUrl } from '../common/utils.js'
 import { defaultGuessOptions, defaultHeadersOptions, defaultHtmlOptions } from './defaults.js'
-import { feedsmithExtractor } from './extractors.js'
-import type { BlogrollResultValid } from './types.js'
+import { defaultExtractor } from './extractors.js'
+import type { BlogrollResult } from './types.js'
 
-export const discoverBlogrolls = async <TValid extends BlogrollResultValid = BlogrollResultValid>(
+export const discoverBlogrolls = async <TValid extends BlogrollResult = BlogrollResult>(
   input: DiscoverInput,
   options: DiscoverOptions<TValid>,
 ): Promise<Array<DiscoverResult<TValid>>> => {
@@ -15,7 +15,7 @@ export const discoverBlogrolls = async <TValid extends BlogrollResultValid = Blo
     {
       ...options,
       fetchFn: options.fetchFn ?? createNativeFetchAdapter(),
-      extractFn: options.extractFn ?? feedsmithExtractor,
+      extractFn: options.extractFn ?? defaultExtractor,
       normalizeUrlFn: options.normalizeUrlFn ?? normalizeUrl,
     },
     {

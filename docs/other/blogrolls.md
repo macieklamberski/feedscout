@@ -56,7 +56,7 @@ Blogrolls use the same three discovery methods as feeds — see the [Feeds](/fee
 Customize discovery the same way as feeds:
 
 ```typescript
-import { blogrollUrisComprehensive } from 'feedscout/blogrolls'
+import { urisComprehensive } from 'feedscout/blogrolls'
 
 const blogrolls = await discoverBlogrolls(url, {
   methods: {
@@ -64,7 +64,7 @@ const blogrolls = await discoverBlogrolls(url, {
       anchorLabels: ['blogroll', 'opml', 'subscriptions'],
     },
     guess: {
-      uris: blogrollUrisComprehensive,
+      uris: urisComprehensive,
     },
   },
 })
@@ -79,7 +79,7 @@ There are three predefined URI sets:
 Basic paths following common conventions:
 
 ```typescript
-import { blogrollUrisMinimal } from 'feedscout/blogrolls'
+import { urisMinimal } from 'feedscout/blogrolls'
 
 // [
 //   '/.well-known/recommendations.opml',
@@ -93,9 +93,9 @@ import { blogrollUrisMinimal } from 'feedscout/blogrolls'
 Includes additional common variations:
 
 ```typescript
-import { blogrollUrisBalanced } from 'feedscout/blogrolls'
+import { urisBalanced } from 'feedscout/blogrolls'
 
-// blogrollUrisMinimal + [
+// urisMinimal + [
 //   '/blogroll.xml',
 //   '/subscriptions.opml',
 //   '/recommendations.opml',
@@ -107,9 +107,9 @@ import { blogrollUrisBalanced } from 'feedscout/blogrolls'
 Includes less common patterns:
 
 ```typescript
-import { blogrollUrisComprehensive } from 'feedscout/blogrolls'
+import { urisComprehensive } from 'feedscout/blogrolls'
 
-// blogrollUrisBalanced + [
+// urisBalanced + [
 //   '/links.opml',
 //   '/feeds.opml',
 //   '/subscriptions.xml',
@@ -121,10 +121,10 @@ import { blogrollUrisComprehensive } from 'feedscout/blogrolls'
 Blogroll discovery uses these link selectors:
 
 ```typescript
-import { linkSelectors, opmlMimeTypes } from 'feedscout/blogrolls'
+import { linkSelectors, mimeTypes } from 'feedscout/blogrolls'
 
 // [
 //   { rel: 'blogroll' },
-//   { rel: 'outline', types: opmlMimeTypes },
+//   { rel: 'outline', types: mimeTypes },
 // ]
 ```
