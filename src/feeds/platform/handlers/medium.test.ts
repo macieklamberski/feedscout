@@ -1,10 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverFetchFn } from '../../../common/types.js'
 import { mediumHandler } from './medium.js'
-
-const createMockFetch = (body = ''): DiscoverFetchFn => {
-  return async () => ({ body, headers: new Headers(), url: '', status: 200, statusText: 'OK' })
-}
 
 describe('mediumHandler', () => {
   describe('match', () => {
@@ -21,38 +16,32 @@ describe('mediumHandler', () => {
   })
 
   describe('resolve', () => {
-    it('should return feed URL for user profile', async () => {
-      const value = await mediumHandler.resolve('https://medium.com/@username', createMockFetch())
+    it('should return feed URL for user profile', () => {
+      const value = mediumHandler.resolve('https://medium.com/@username')
 
       expect(value).toEqual(['https://medium.com/feed/@username'])
     })
 
-    it('should return feed URL for publication', async () => {
-      const value = await mediumHandler.resolve(
-        'https://medium.com/towards-data-science',
-        createMockFetch(),
-      )
+    it('should return feed URL for publication', () => {
+      const value = mediumHandler.resolve('https://medium.com/towards-data-science')
 
       expect(value).toEqual(['https://medium.com/feed/towards-data-science'])
     })
 
-    it('should return feed URL for custom subdomain', async () => {
-      const value = await mediumHandler.resolve('https://blog.medium.com', createMockFetch())
+    it('should return feed URL for custom subdomain', () => {
+      const value = mediumHandler.resolve('https://blog.medium.com')
 
       expect(value).toEqual(['https://medium.com/feed/blog'])
     })
 
-    it('should skip reserved paths', async () => {
-      const value = await mediumHandler.resolve(
-        'https://medium.com/tag/programming',
-        createMockFetch(),
-      )
+    it('should skip reserved paths', () => {
+      const value = mediumHandler.resolve('https://medium.com/tag/programming')
 
       expect(value).toEqual([])
     })
 
-    it('should return empty array for non-matching paths', async () => {
-      const value = await mediumHandler.resolve('https://medium.com/me/settings', createMockFetch())
+    it('should return empty array for non-matching paths', () => {
+      const value = mediumHandler.resolve('https://medium.com/me/settings')
 
       expect(value).toEqual([])
     })

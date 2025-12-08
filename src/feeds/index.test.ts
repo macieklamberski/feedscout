@@ -6,15 +6,10 @@ import type {
   DiscoverProgress,
   DiscoverResult,
 } from '../common/types.js'
-import {
-  defaultPlatformOptions,
-  feedUrisBalanced,
-  feedUrisComprehensive,
-  feedUrisMinimal,
-} from './defaults.js'
+import type { PlatformHandler } from '../common/uris/platform/types.js'
+import { defaultPlatformOptions, urisBalanced, urisComprehensive, urisMinimal } from './defaults.js'
 import { discoverFeeds } from './index.js'
-import type { PlatformHandler } from './platform/types.js'
-import type { FeedResultValid } from './types.js'
+import type { FeedResult } from './types.js'
 
 const createMockFetch = (responses: Record<string, string>): DiscoverFetchFn => {
   return async (url: string) => ({
@@ -55,7 +50,7 @@ describe('discoverFeeds', () => {
         fetchFn: mockFetch,
       },
     )
-    const expected: Array<DiscoverResult<FeedResultValid>> = [
+    const expected: Array<DiscoverResult<FeedResult>> = [
       {
         url: 'https://example.com/feed',
         isValid: true,
@@ -97,7 +92,7 @@ describe('discoverFeeds', () => {
         fetchFn: mockFetch,
       },
     )
-    const expected: Array<DiscoverResult<FeedResultValid>> = [
+    const expected: Array<DiscoverResult<FeedResult>> = [
       {
         url: 'https://example.com/feed',
         isValid: true,
@@ -140,7 +135,7 @@ describe('discoverFeeds', () => {
         concurrency: 1,
       },
     )
-    const expected: Array<DiscoverResult<FeedResultValid>> = [
+    const expected: Array<DiscoverResult<FeedResult>> = [
       {
         url: 'https://example.com/feed1',
         isValid: true,
@@ -230,7 +225,7 @@ describe('discoverFeeds', () => {
         includeInvalid: true,
       },
     )
-    const expected: Array<DiscoverResult<FeedResultValid>> = [
+    const expected: Array<DiscoverResult<FeedResult>> = [
       {
         url: 'https://example.com/feed',
         isValid: false,
@@ -244,7 +239,7 @@ describe('discoverFeeds', () => {
     const mockFetch = createMockFetch({
       'https://example.com/feed': 'custom feed content',
     })
-    const customExtractor: DiscoverExtractFn<FeedResultValid> = async ({ url, content }) => {
+    const customExtractor: DiscoverExtractFn<FeedResult> = async ({ url, content }) => {
       const isValid = content.includes('custom feed')
       if (isValid) {
         return {
@@ -266,7 +261,7 @@ describe('discoverFeeds', () => {
         extractFn: customExtractor,
       },
     )
-    const expected: Array<DiscoverResult<FeedResultValid>> = [
+    const expected: Array<DiscoverResult<FeedResult>> = [
       {
         url: 'https://example.com/feed',
         isValid: true,
@@ -278,7 +273,7 @@ describe('discoverFeeds', () => {
   })
 
   it('should preserve additional data from custom extractor', async () => {
-    type ExtendedFeedResult = FeedResultValid & {
+    type ExtendedFeedResult = FeedResult & {
       itemCount: number
       lastUpdated: string
     }
@@ -325,7 +320,7 @@ describe('discoverFeeds', () => {
   })
 
   it('should handle custom extractor with optional additional fields', async () => {
-    type ExtendedFeedResult = FeedResultValid & {
+    type ExtendedFeedResult = FeedResult & {
       itemCount?: number
       author?: string
     }
@@ -372,7 +367,7 @@ describe('discoverFeeds', () => {
     const mockFetch = createMockFetch({
       'https://example.com/feed': 'invalid content',
     })
-    const customExtractor: DiscoverExtractFn<FeedResultValid> = async ({ url }) => {
+    const customExtractor: DiscoverExtractFn<FeedResult> = async ({ url }) => {
       return {
         url,
         isValid: false,
@@ -388,7 +383,7 @@ describe('discoverFeeds', () => {
         includeInvalid: true,
       },
     )
-    const expected: Array<DiscoverResult<FeedResultValid>> = [
+    const expected: Array<DiscoverResult<FeedResult>> = [
       {
         url: 'https://example.com/feed',
         isValid: false,
@@ -404,7 +399,7 @@ describe('discoverFeeds', () => {
     // does not pass headers from fetchFn response to extractFn.
     // The type signature supports it (DiscoverExtractFn accepts headers?: Headers),
     // but the actual call at line 55-58 omits headers.
-    type ExtendedFeedResult = FeedResultValid & {
+    type ExtendedFeedResult = FeedResult & {
       etag?: string
     }
     const mockFetch: DiscoverFetchFn = async (url) => ({
@@ -505,11 +500,11 @@ describe('discoverFeeds', () => {
     const value = await discoverFeeds(
       { url: 'https://example.com' },
       {
-        methods: { guess: { uris: feedUrisMinimal } },
+        methods: { guess: { uris: urisMinimal } },
         fetchFn: mockFetch,
       },
     )
-    const expected: Array<DiscoverResult<FeedResultValid>> = [
+    const expected: Array<DiscoverResult<FeedResult>> = [
       {
         url: 'https://example.com/feed',
         isValid: true,
@@ -544,11 +539,11 @@ describe('discoverFeeds', () => {
     const value = await discoverFeeds(
       { url: 'https://example.com' },
       {
-        methods: { guess: { uris: feedUrisBalanced } },
+        methods: { guess: { uris: urisBalanced } },
         fetchFn: mockFetch,
       },
     )
-    const expected: Array<DiscoverResult<FeedResultValid>> = [
+    const expected: Array<DiscoverResult<FeedResult>> = [
       {
         url: 'https://example.com/feed.json',
         isValid: true,
@@ -579,11 +574,11 @@ describe('discoverFeeds', () => {
     const value = await discoverFeeds(
       { url: 'https://example.com' },
       {
-        methods: { guess: { uris: feedUrisComprehensive } },
+        methods: { guess: { uris: urisComprehensive } },
         fetchFn: mockFetch,
       },
     )
-    const expected: Array<DiscoverResult<FeedResultValid>> = [
+    const expected: Array<DiscoverResult<FeedResult>> = [
       {
         url: 'https://example.com/?feed=rss',
         isValid: true,
@@ -632,7 +627,7 @@ describe('discoverFeeds', () => {
         fetchFn: mockFetch,
       },
     )
-    const expected: Array<DiscoverResult<FeedResultValid>> = [
+    const expected: Array<DiscoverResult<FeedResult>> = [
       {
         url: 'https://example.com/feed',
         isValid: true,
@@ -730,7 +725,7 @@ describe('discoverFeeds', () => {
         fetchFn: mockFetch,
       },
     )
-    const expected: Array<DiscoverResult<FeedResultValid>> = [
+    const expected: Array<DiscoverResult<FeedResult>> = [
       {
         url: 'https://example.com/feed',
         isValid: true,
@@ -792,7 +787,7 @@ describe('discoverFeeds', () => {
         includeInvalid: true,
       },
     )
-    const expected: Array<DiscoverResult<FeedResultValid>> = [
+    const expected: Array<DiscoverResult<FeedResult>> = [
       {
         url: 'https://example.com/feed',
         isValid: true,
@@ -875,7 +870,7 @@ describe('discoverFeeds', () => {
         includeInvalid: true,
       },
     )
-    const expected: Array<DiscoverResult<FeedResultValid>> = [
+    const expected: Array<DiscoverResult<FeedResult>> = [
       {
         url: 'https://example.com/feed.xml',
         isValid: false,
@@ -922,7 +917,7 @@ describe('discoverFeeds', () => {
         methods: ['platform'],
         fetchFn: mockFetch,
       })
-      const expected: Array<DiscoverResult<FeedResultValid>> = [
+      const expected: Array<DiscoverResult<FeedResult>> = [
         {
           url: 'https://www.reddit.com/r/programming/.rss',
           isValid: true,
@@ -952,7 +947,7 @@ describe('discoverFeeds', () => {
         methods: { platform: true },
         fetchFn: mockFetch,
       })
-      const expected: Array<DiscoverResult<FeedResultValid>> = [
+      const expected: Array<DiscoverResult<FeedResult>> = [
         {
           url: 'https://github.com/owner/repo/releases.atom',
           isValid: true,
@@ -986,7 +981,7 @@ describe('discoverFeeds', () => {
       `
       const customHandler: PlatformHandler = {
         match: (url) => new URL(url).hostname === 'custom.com',
-        resolve: async () => ['https://custom.com/my-feed.xml'],
+        resolve: () => ['https://custom.com/my-feed.xml'],
       }
       const mockFetch = createMockFetch({
         'https://custom.com/my-feed.xml': rss,
@@ -995,7 +990,7 @@ describe('discoverFeeds', () => {
         methods: { platform: { handlers: [customHandler] } },
         fetchFn: mockFetch,
       })
-      const expected: Array<DiscoverResult<FeedResultValid>> = [
+      const expected: Array<DiscoverResult<FeedResult>> = [
         {
           url: 'https://custom.com/my-feed.xml',
           isValid: true,
@@ -1030,7 +1025,7 @@ describe('discoverFeeds', () => {
           fetchFn: mockFetch,
         },
       )
-      const expected: Array<DiscoverResult<FeedResultValid>> = [
+      const expected: Array<DiscoverResult<FeedResult>> = [
         {
           url: 'https://www.reddit.com/r/programming/.rss',
           isValid: true,
@@ -1081,7 +1076,7 @@ describe('discoverFeeds', () => {
     it('should return empty array when platform discovery throws error', async () => {
       const errorHandler: PlatformHandler = {
         match: () => true,
-        resolve: async () => {
+        resolve: () => {
           throw new Error('Platform discovery failed')
         },
       }
@@ -1094,27 +1089,27 @@ describe('discoverFeeds', () => {
       expect(value).toEqual([])
     })
 
-    it('should pass fetchFn to platform handlers', async () => {
-      let fetchFnCalled = false
-      const handlerThatUsesFetch: PlatformHandler = {
+    it('should pass content to platform handlers', async () => {
+      let receivedContent: string | undefined
+      const handlerThatUsesContent: PlatformHandler = {
         match: () => true,
-        resolve: async (_url, fetchFn) => {
-          await fetchFn('https://api.example.com/lookup')
-          fetchFnCalled = true
+        resolve: (_url, content) => {
+          receivedContent = content
 
           return ['https://example.com/feed.xml']
         },
       }
+      const htmlContent = '<html><head></head><body>Test content</body></html>'
       const mockFetch = createMockFetch({
-        'https://api.example.com/lookup': '{}',
+        'https://example.com': htmlContent,
         'https://example.com/feed.xml': '<rss></rss>',
       })
       await discoverFeeds('https://example.com', {
-        methods: { platform: { handlers: [handlerThatUsesFetch] } },
+        methods: { platform: { handlers: [handlerThatUsesContent] } },
         fetchFn: mockFetch,
       })
 
-      expect(fetchFnCalled).toBe(true)
+      expect(receivedContent).toBe(htmlContent)
     })
   })
 })

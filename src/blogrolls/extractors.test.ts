@@ -1,16 +1,16 @@
 import { describe, expect, it } from 'bun:test'
 import type { DiscoverResult } from '../common/types.js'
-import { feedsmithExtractor } from './extractors.js'
-import type { BlogrollResultValid } from './types.js'
+import { defaultExtractor } from './extractors.js'
+import type { BlogrollResult } from './types.js'
 
-describe('feedsmithExtractor', () => {
+describe('defaultExtractor', () => {
   it('should return isValid: false when content is empty', async () => {
-    const result = await feedsmithExtractor({
+    const result = await defaultExtractor({
       content: '',
       headers: new Headers(),
       url: 'https://example.com/blogroll.opml',
     })
-    const expected: DiscoverResult<BlogrollResultValid> = {
+    const expected: DiscoverResult<BlogrollResult> = {
       url: 'https://example.com/blogroll.opml',
       isValid: false,
     }
@@ -20,12 +20,12 @@ describe('feedsmithExtractor', () => {
 
   it('should return isValid: false when content looks like HTML', async () => {
     const html = '<!DOCTYPE html><html><head><title>Test</title></head></html>'
-    const result = await feedsmithExtractor({
+    const result = await defaultExtractor({
       content: html,
       headers: new Headers(),
       url: 'https://example.com/index.html',
     })
-    const expected: DiscoverResult<BlogrollResultValid> = {
+    const expected: DiscoverResult<BlogrollResult> = {
       url: 'https://example.com/index.html',
       isValid: false,
     }
@@ -44,12 +44,12 @@ describe('feedsmithExtractor', () => {
         </body>
       </opml>
     `
-    const result = await feedsmithExtractor({
+    const result = await defaultExtractor({
       content: opml,
       headers: new Headers(),
       url: 'https://example.com/blogroll.opml',
     })
-    const expected: DiscoverResult<BlogrollResultValid> = {
+    const expected: DiscoverResult<BlogrollResult> = {
       url: 'https://example.com/blogroll.opml',
       isValid: true,
       title: 'My Blogroll',
@@ -72,12 +72,12 @@ describe('feedsmithExtractor', () => {
         </body>
       </opml>
     `
-    const result = await feedsmithExtractor({
+    const result = await defaultExtractor({
       content: opml,
       headers: new Headers(),
       url: 'https://example.com/subscriptions.opml',
     })
-    const expected: DiscoverResult<BlogrollResultValid> = {
+    const expected: DiscoverResult<BlogrollResult> = {
       url: 'https://example.com/subscriptions.opml',
       isValid: true,
       title: 'Subscriptions',
@@ -95,12 +95,12 @@ describe('feedsmithExtractor', () => {
         </body>
       </opml>
     `
-    const result = await feedsmithExtractor({
+    const result = await defaultExtractor({
       content: opml,
       headers: new Headers(),
       url: 'https://example.com/blogroll.opml',
     })
-    const expected: DiscoverResult<BlogrollResultValid> = {
+    const expected: DiscoverResult<BlogrollResult> = {
       url: 'https://example.com/blogroll.opml',
       isValid: true,
       title: undefined,
@@ -111,12 +111,12 @@ describe('feedsmithExtractor', () => {
 
   it('should return isValid: false for non-XML content', async () => {
     const nonXml = 'this is just plain text, not XML or OPML'
-    const result = await feedsmithExtractor({
+    const result = await defaultExtractor({
       content: nonXml,
       headers: new Headers(),
       url: 'https://example.com/blogroll.opml',
     })
-    const expected: DiscoverResult<BlogrollResultValid> = {
+    const expected: DiscoverResult<BlogrollResult> = {
       url: 'https://example.com/blogroll.opml',
       isValid: false,
     }
@@ -133,12 +133,12 @@ describe('feedsmithExtractor', () => {
         </channel>
       </rss>
     `
-    const result = await feedsmithExtractor({
+    const result = await defaultExtractor({
       content: rss,
       headers: new Headers(),
       url: 'https://example.com/feed.xml',
     })
-    const expected: DiscoverResult<BlogrollResultValid> = {
+    const expected: DiscoverResult<BlogrollResult> = {
       url: 'https://example.com/feed.xml',
       isValid: false,
     }
@@ -153,12 +153,12 @@ describe('feedsmithExtractor', () => {
         <body></body>
       </opml>
     `
-    const result = await feedsmithExtractor({
+    const result = await defaultExtractor({
       content: opml,
       headers: new Headers(),
       url: 'https://redirect.example.com/blogroll.opml',
     })
-    const expected: DiscoverResult<BlogrollResultValid> = {
+    const expected: DiscoverResult<BlogrollResult> = {
       url: 'https://redirect.example.com/blogroll.opml',
       isValid: true,
       title: 'Test',
@@ -168,12 +168,12 @@ describe('feedsmithExtractor', () => {
   })
 
   it('should handle content with only whitespace', async () => {
-    const result = await feedsmithExtractor({
+    const result = await defaultExtractor({
       content: '   \n\t  ',
       headers: new Headers(),
       url: 'https://example.com/blogroll.opml',
     })
-    const expected: DiscoverResult<BlogrollResultValid> = {
+    const expected: DiscoverResult<BlogrollResult> = {
       url: 'https://example.com/blogroll.opml',
       isValid: false,
     }
@@ -188,12 +188,12 @@ describe('feedsmithExtractor', () => {
         <body></body>
       </opml>
     `
-    const result = await feedsmithExtractor({
+    const result = await defaultExtractor({
       content: opml,
       headers: new Headers(),
       url: 'https://example.com/blogroll.opml',
     })
-    const expected: DiscoverResult<BlogrollResultValid> = {
+    const expected: DiscoverResult<BlogrollResult> = {
       url: 'https://example.com/blogroll.opml',
       isValid: true,
       title: 'Test',

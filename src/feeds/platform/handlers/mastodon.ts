@@ -1,4 +1,4 @@
-import type { PlatformHandler } from '../types.js'
+import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 
 const knownInstances = [
   'mastodon.social',
@@ -37,7 +37,7 @@ export const mastodonHandler: PlatformHandler = {
     return parsedUrl.pathname.startsWith('/@')
   },
 
-  resolve: async (url) => {
+  resolve: (url) => {
     const parsedUrl = new URL(url)
     const match = parsedUrl.pathname.match(/^\/@([^/]+)/)
 

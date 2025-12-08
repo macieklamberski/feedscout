@@ -1,11 +1,8 @@
 import { parseOpml } from 'feedsmith'
 import type { DiscoverExtractFn } from '../common/types.js'
-import type { BlogrollResultValid } from './types.js'
+import type { BlogrollResult } from './types.js'
 
-export const feedsmithExtractor: DiscoverExtractFn<BlogrollResultValid> = async ({
-  content,
-  url,
-}) => {
+export const defaultExtractor: DiscoverExtractFn<BlogrollResult> = async ({ content, url }) => {
   if (!content) {
     return { url, isValid: false }
   }

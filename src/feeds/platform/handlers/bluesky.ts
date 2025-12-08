@@ -1,5 +1,5 @@
+import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { isAnyOf } from '../../../common/utils.js'
-import type { PlatformHandler } from '../types.js'
 
 const hosts = ['bsky.app']
 
@@ -8,7 +8,7 @@ const defaultBridgeUrl = 'https://bsky.link/api/rss'
 export const blueskyHandler: PlatformHandler = {
   match: (url) => isAnyOf(new URL(url).hostname, hosts),
 
-  resolve: async (url) => {
+  resolve: (url) => {
     const { pathname } = new URL(url)
     const profileMatch = pathname.match(/^\/profile\/([^/]+)/)
 

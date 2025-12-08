@@ -1,6 +1,17 @@
 {
   "name": "feedscout",
-  "description": "Advanced feed autodiscovery for JavaScript. Collect feed URIs from webpages using multiple discovery methods.",
+  "description": "Advanced feed autodiscovery for JavaScript. Collect feed information from any webpage using multiple discovery methods.",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/macieklamberski/feedscout.git"
+  },
+  "homepage": "https://feedscout.dev",
+  "bugs": {
+    "url": "https://github.com/macieklamberski/feedscout/issues"
+  },
+  "license": "MIT",
+  "author": "Maciej Lamberski",
+  "sideEffects": false,
   "keywords": [
     "rss",
     "rss-autodiscovery",
@@ -12,20 +23,7 @@
     "rss-discovery",
     "feed-locator"
   ],
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/macieklamberski/feedscout.git"
-  },
-  "homepage": "https://github.com/macieklamberski/feedscout",
-  "bugs": {
-    "url": "https://github.com/macieklamberski/feedscout/issues"
-  },
-  "author": "Maciej Lamberski",
-  "license": "MIT",
   "type": "module",
-  "files": [
-    "dist"
-  ],
   "exports": {
     ".": {
       "import": {
@@ -89,6 +87,9 @@
     },
     "./package.json": "./package.json"
   },
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "prepare": "lefthook install",
     "build": "tsdown src/exports/index.ts src/exports/feeds.ts src/exports/blogrolls.ts src/exports/hubs.ts src/exports/adapters.ts src/exports/methods.ts --format cjs,esm --dts --clean --unbundle --no-fixed-extension",
@@ -101,10 +102,9 @@
     "htmlparser2": "^10.0.0"
   },
   "devDependencies": {
-    "@types/bun": "^1.3.3",
-    "kvalita": "^1.6.1",
-    "tsdown": "^0.16.8",
-    "vitepress": "^1.6.4",
-    "vitepress-plugin-llms": "^1.9.3"
+    "@types/bun": "^1.3.4",
+    "kvalita": "1.8.0",
+    "tsdown": "^0.17.1",
+    "vitepress": "^1.6.4"
   }
 }

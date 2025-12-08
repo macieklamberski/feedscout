@@ -7,19 +7,12 @@ export type {
   DiscoverInput,
   DiscoverInputObject,
   DiscoverMethodsConfig,
-  DiscoverMethodsConfigDefaults,
-  DiscoverMethodsConfigInternal,
+  DiscoverNormalizeUrlFn,
   DiscoverOptions,
-  DiscoverOptionsInternal,
   DiscoverProgress,
   DiscoverProgressFn,
   DiscoverResult,
 } from '../common/types.js'
+export type { PlatformHandler, PlatformMethodOptions } from '../common/uris/platform/types.js'
 export { discoverFeeds } from '../feeds/index.js'
-export type { PlatformHandler, PlatformMethodOptions } from '../feeds/platform/types.js'
 export { discoverHubs } from '../hubs/discover/index.js'
-export type {
-  DiscoverHubsMethodsConfig,
-  DiscoverHubsOptions,
-  HubResult,
-} from '../hubs/discover/types.js'

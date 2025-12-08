@@ -1,5 +1,5 @@
+import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { isAnyOf } from '../../../common/utils.js'
-import type { PlatformHandler } from '../types.js'
 
 const hosts = ['dev.to', 'www.dev.to']
 
@@ -26,7 +26,7 @@ const skipPaths = [
 export const devtoHandler: PlatformHandler = {
   match: (url) => isAnyOf(new URL(url).hostname, hosts),
 
-  resolve: async (url) => {
+  resolve: (url) => {
     const { pathname } = new URL(url)
 
     // User profile: /username.

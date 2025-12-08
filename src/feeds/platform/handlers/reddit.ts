@@ -1,12 +1,12 @@
+import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { isAnyOf } from '../../../common/utils.js'
-import type { PlatformHandler } from '../types.js'
 
 const hosts = ['reddit.com', 'www.reddit.com', 'old.reddit.com', 'new.reddit.com']
 
 export const redditHandler: PlatformHandler = {
   match: (url) => isAnyOf(new URL(url).hostname, hosts),
 
-  resolve: async (url) => {
+  resolve: (url) => {
     const { pathname } = new URL(url)
 
     // Match /r/subreddit pattern.

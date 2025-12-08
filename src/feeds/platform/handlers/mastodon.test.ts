@@ -1,10 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverFetchFn } from '../../../common/types.js'
 import { mastodonHandler } from './mastodon.js'
-
-const createMockFetch = (body = ''): DiscoverFetchFn => {
-  return async () => ({ body, headers: new Headers(), url: '', status: 200, statusText: 'OK' })
-}
 
 describe('mastodonHandler', () => {
   describe('match', () => {
@@ -22,29 +17,20 @@ describe('mastodonHandler', () => {
   })
 
   describe('resolve', () => {
-    it('should return RSS feed URL for user profile', async () => {
-      const value = await mastodonHandler.resolve(
-        'https://mastodon.social/@username',
-        createMockFetch(),
-      )
+    it('should return RSS feed URL for user profile', () => {
+      const value = mastodonHandler.resolve('https://mastodon.social/@username')
 
       expect(value).toEqual(['https://mastodon.social/@username.rss'])
     })
 
-    it('should handle profiles with subpaths', async () => {
-      const value = await mastodonHandler.resolve(
-        'https://fosstodon.org/@user/123456',
-        createMockFetch(),
-      )
+    it('should handle profiles with subpaths', () => {
+      const value = mastodonHandler.resolve('https://fosstodon.org/@user/123456')
 
       expect(value).toEqual(['https://fosstodon.org/@user.rss'])
     })
 
-    it('should return empty array for non-profile paths', async () => {
-      const value = await mastodonHandler.resolve(
-        'https://mastodon.social/explore',
-        createMockFetch(),
-      )
+    it('should return empty array for non-profile paths', () => {
+      const value = mastodonHandler.resolve('https://mastodon.social/explore')
 
       expect(value).toEqual([])
     })

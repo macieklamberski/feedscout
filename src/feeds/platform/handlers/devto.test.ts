@@ -1,10 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverFetchFn } from '../../../common/types.js'
 import { devtoHandler } from './devto.js'
-
-const createMockFetch = (body = ''): DiscoverFetchFn => {
-  return async () => ({ body, headers: new Headers(), url: '', status: 200, statusText: 'OK' })
-}
 
 describe('devtoHandler', () => {
   describe('match', () => {
@@ -20,26 +15,26 @@ describe('devtoHandler', () => {
   })
 
   describe('resolve', () => {
-    it('should return feed URL for user profile', async () => {
-      const value = await devtoHandler.resolve('https://dev.to/username', createMockFetch())
+    it('should return feed URL for user profile', () => {
+      const value = devtoHandler.resolve('https://dev.to/username')
 
       expect(value).toEqual(['https://dev.to/feed/username'])
     })
 
-    it('should return feed URL for tag page', async () => {
-      const value = await devtoHandler.resolve('https://dev.to/t/javascript', createMockFetch())
+    it('should return feed URL for tag page', () => {
+      const value = devtoHandler.resolve('https://dev.to/t/javascript')
 
       expect(value).toEqual(['https://dev.to/feed/tag/javascript'])
     })
 
-    it('should skip reserved paths', async () => {
-      const value = await devtoHandler.resolve('https://dev.to/search', createMockFetch())
+    it('should skip reserved paths', () => {
+      const value = devtoHandler.resolve('https://dev.to/search')
 
       expect(value).toEqual([])
     })
 
-    it('should skip settings paths', async () => {
-      const value = await devtoHandler.resolve('https://dev.to/settings', createMockFetch())
+    it('should skip settings paths', () => {
+      const value = devtoHandler.resolve('https://dev.to/settings')
 
       expect(value).toEqual([])
     })

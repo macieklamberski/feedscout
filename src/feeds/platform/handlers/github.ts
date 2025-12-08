@@ -1,12 +1,12 @@
+import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { isAnyOf } from '../../../common/utils.js'
-import type { PlatformHandler } from '../types.js'
 
 const hosts = ['github.com', 'www.github.com']
 
 export const githubHandler: PlatformHandler = {
   match: (url) => isAnyOf(new URL(url).hostname, hosts),
 
-  resolve: async (url) => {
+  resolve: (url) => {
     const { pathname } = new URL(url)
     const uris: Array<string> = []
 

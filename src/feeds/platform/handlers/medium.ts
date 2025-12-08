@@ -1,4 +1,4 @@
-import type { PlatformHandler } from '../types.js'
+import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 
 const hosts = ['medium.com', 'www.medium.com']
 
@@ -11,7 +11,7 @@ export const mediumHandler: PlatformHandler = {
     return hosts.includes(hostname) || hostname.endsWith('.medium.com')
   },
 
-  resolve: async (url) => {
+  resolve: (url) => {
     const { hostname, pathname } = new URL(url)
     const lowerHostname = hostname.toLowerCase()
 

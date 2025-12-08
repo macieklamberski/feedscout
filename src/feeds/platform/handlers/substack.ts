@@ -1,9 +1,9 @@
-import type { PlatformHandler } from '../types.js'
+import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 
 export const substackHandler: PlatformHandler = {
   match: (url) => new URL(url).hostname.toLowerCase().endsWith('.substack.com'),
 
-  resolve: async (url) => {
+  resolve: (url) => {
     const { origin } = new URL(url)
 
     return [`${origin}/feed`]
