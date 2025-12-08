@@ -20,6 +20,14 @@ const excludedPaths = [
   'login',
   'signup',
   'join',
+  'notifications',
+  'new',
+  'organizations',
+  'orgs',
+  'codespaces',
+  'pulls',
+  'issues',
+  'apps',
 ]
 
 export const githubHandler: PlatformHandler = {
@@ -30,6 +38,17 @@ export const githubHandler: PlatformHandler = {
   resolve: (url) => {
     const { pathname } = new URL(url)
     const uris: Array<string> = []
+
+    // Match /{owner} pattern (user/org profile page).
+    const userMatch = pathname.match(/^\/([^/]+)\/?$/)
+
+    if (userMatch?.[1] && !isAnyOf(userMatch[1], excludedPaths)) {
+      const user = userMatch[1]
+
+      uris.push(`https://github.com/${user}.atom`)
+
+      return uris
+    }
 
     // Match /{owner}/{repo} pattern.
     const repoMatch = pathname.match(/^\/([^/]+)\/([^/]+)/)
@@ -43,6 +62,12 @@ export const githubHandler: PlatformHandler = {
     // Repository feeds.
     uris.push(`https://github.com/${owner}/${repo}/releases.atom`)
     uris.push(`https://github.com/${owner}/${repo}/commits.atom`)
+    uris.push(`https://github.com/${owner}/${repo}/tags.atom`)
+
+    // If on wiki page, add wiki feed.
+    if (pathname.includes('/wiki')) {
+      uris.push(`https://github.com/${owner}/${repo}/wiki.atom`)
+    }
 
     // If on a specific branch, add branch-specific commits feed.
     const branchMatch = pathname.match(/^\/[^/]+\/[^/]+\/tree\/([^/]+)/)

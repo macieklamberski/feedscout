@@ -15,11 +15,36 @@ describe('githubHandler', () => {
   })
 
   describe('resolve', () => {
-    it('should return releases and commits feeds for repository', () => {
+    it('should return releases, commits, and tags feeds for repository', () => {
       const value = 'https://github.com/microsoft/vscode'
       const expected = [
         'https://github.com/microsoft/vscode/releases.atom',
         'https://github.com/microsoft/vscode/commits.atom',
+        'https://github.com/microsoft/vscode/tags.atom',
+      ]
+
+      expect(githubHandler.resolve(value, '')).toEqual(expected)
+    })
+
+    it('should include wiki feed when on wiki page', () => {
+      const value = 'https://github.com/microsoft/vscode/wiki'
+      const expected = [
+        'https://github.com/microsoft/vscode/releases.atom',
+        'https://github.com/microsoft/vscode/commits.atom',
+        'https://github.com/microsoft/vscode/tags.atom',
+        'https://github.com/microsoft/vscode/wiki.atom',
+      ]
+
+      expect(githubHandler.resolve(value, '')).toEqual(expected)
+    })
+
+    it('should include wiki feed when on specific wiki subpage', () => {
+      const value = 'https://github.com/microsoft/vscode/wiki/Roadmap'
+      const expected = [
+        'https://github.com/microsoft/vscode/releases.atom',
+        'https://github.com/microsoft/vscode/commits.atom',
+        'https://github.com/microsoft/vscode/tags.atom',
+        'https://github.com/microsoft/vscode/wiki.atom',
       ]
 
       expect(githubHandler.resolve(value, '')).toEqual(expected)
@@ -30,8 +55,23 @@ describe('githubHandler', () => {
       const expected = [
         'https://github.com/microsoft/vscode/releases.atom',
         'https://github.com/microsoft/vscode/commits.atom',
+        'https://github.com/microsoft/vscode/tags.atom',
         'https://github.com/microsoft/vscode/commits/main.atom',
       ]
+
+      expect(githubHandler.resolve(value, '')).toEqual(expected)
+    })
+
+    it('should return user activity feed for user profile page', () => {
+      const value = 'https://github.com/microsoft'
+      const expected = ['https://github.com/microsoft.atom']
+
+      expect(githubHandler.resolve(value, '')).toEqual(expected)
+    })
+
+    it('should return user activity feed for user profile page with trailing slash', () => {
+      const value = 'https://github.com/torvalds/'
+      const expected = ['https://github.com/torvalds.atom']
 
       expect(githubHandler.resolve(value, '')).toEqual(expected)
     })
@@ -43,8 +83,8 @@ describe('githubHandler', () => {
       expect(githubHandler.resolve(value, '')).toEqual(expected)
     })
 
-    it('should return empty array when missing repo name', () => {
-      const value = 'https://github.com/microsoft'
+    it('should return empty array for excluded user-level paths', () => {
+      const value = 'https://github.com/explore'
       const expected: Array<string> = []
 
       expect(githubHandler.resolve(value, '')).toEqual(expected)
