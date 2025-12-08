@@ -6,6 +6,7 @@ describe('youtubeHandler', () => {
     const cases = [
       ['https://youtube.com/@channel', true],
       ['https://www.youtube.com/@channel', true],
+      ['https://m.youtube.com/@channel', true],
       ['https://vimeo.com/channel', false],
     ] as const
 
@@ -37,8 +38,40 @@ describe('youtubeHandler', () => {
       expect(youtubeHandler.resolve(value, content)).toEqual(expected)
     })
 
+    it('should extract channel ID from legacy /user/ page content', () => {
+      const value = 'https://youtube.com/user/pewdiepie'
+      const content = '{"channelId":"UC1234567890"}'
+      const expected = ['https://www.youtube.com/feeds/videos.xml?channel_id=UC1234567890']
+
+      expect(youtubeHandler.resolve(value, content)).toEqual(expected)
+    })
+
+    it('should extract channel ID from /c/ custom URL page content', () => {
+      const value = 'https://youtube.com/c/mkbhd'
+      const content = '{"channelId":"UC1234567890"}'
+      const expected = ['https://www.youtube.com/feeds/videos.xml?channel_id=UC1234567890']
+
+      expect(youtubeHandler.resolve(value, content)).toEqual(expected)
+    })
+
     it('should return empty array when @handle content has no channel ID', () => {
       const value = 'https://youtube.com/@nonexistent'
+      const content = '<html>No channel ID here</html>'
+      const expected: Array<string> = []
+
+      expect(youtubeHandler.resolve(value, content)).toEqual(expected)
+    })
+
+    it('should return empty array when /user/ content has no channel ID', () => {
+      const value = 'https://youtube.com/user/nonexistent'
+      const content = '<html>No channel ID here</html>'
+      const expected: Array<string> = []
+
+      expect(youtubeHandler.resolve(value, content)).toEqual(expected)
+    })
+
+    it('should return empty array when /c/ content has no channel ID', () => {
+      const value = 'https://youtube.com/c/nonexistent'
       const content = '<html>No channel ID here</html>'
       const expected: Array<string> = []
 

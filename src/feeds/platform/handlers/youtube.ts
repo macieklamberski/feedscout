@@ -3,6 +3,12 @@ import { isAnyOf } from '../../../common/utils.js'
 
 const hosts = ['youtube.com', 'www.youtube.com', 'm.youtube.com']
 
+const extractChannelIdFromContent = (content: string): string | undefined => {
+  const match = content.match(/"channelId":"(UC[a-zA-Z0-9_-]+)"/)
+
+  return match?.[1]
+}
+
 export const youtubeHandler: PlatformHandler = {
   match: (url) => {
     return isAnyOf(new URL(url).hostname, hosts)
@@ -26,14 +32,22 @@ export const youtubeHandler: PlatformHandler = {
       uris.push(`https://www.youtube.com/feeds/videos.xml?playlist_id=${playlistId}`)
     }
 
-    // Handle URLs (@username) - extract channel ID from content.
-    const handleMatch = parsedUrl.pathname.match(/^\/@([^/]+)/)
+    // For URL formats that require content parsing to get channel ID:
+    // - Handle: /@username
+    // - Legacy user: /user/username
+    // - Custom URL: /c/customname
+    if (uris.length === 0 && content) {
+      const needsContentParsing =
+        parsedUrl.pathname.match(/^\/@([^/]+)/) ||
+        parsedUrl.pathname.match(/^\/user\/([^/]+)/) ||
+        parsedUrl.pathname.match(/^\/c\/([^/]+)/)
 
-    if (handleMatch?.[1] && uris.length === 0 && content) {
-      const channelIdMatch = content.match(/"channelId":"(UC[a-zA-Z0-9_-]+)"/)
+      if (needsContentParsing) {
+        const channelId = extractChannelIdFromContent(content)
 
-      if (channelIdMatch?.[1]) {
-        uris.push(`https://www.youtube.com/feeds/videos.xml?channel_id=${channelIdMatch[1]}`)
+        if (channelId) {
+          uris.push(`https://www.youtube.com/feeds/videos.xml?channel_id=${channelId}`)
+        }
       }
     }
 
