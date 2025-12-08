@@ -32,12 +32,18 @@ export const redditHandler: PlatformHandler = {
     if (subredditMatch?.[1]) {
       const subreddit = subredditMatch[1]
       const sort = subredditMatch[2]
+      const uris: Array<string> = []
 
       if (sort && isAnyOf(sort, sortOptions)) {
-        return [`https://www.reddit.com/r/${subreddit}/${sort}/.rss`]
+        uris.push(`https://www.reddit.com/r/${subreddit}/${sort}/.rss`)
+      } else {
+        uris.push(`https://www.reddit.com/r/${subreddit}/.rss`)
       }
 
-      return [`https://www.reddit.com/r/${subreddit}/.rss`]
+      // Add all comments feed for subreddit.
+      uris.push(`https://www.reddit.com/r/${subreddit}/comments/.rss`)
+
+      return uris
     }
 
     // Match /u/username or /user/username pattern.

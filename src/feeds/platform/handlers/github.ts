@@ -69,6 +69,11 @@ export const githubHandler: PlatformHandler = {
       uris.push(`https://github.com/${owner}/${repo}/wiki.atom`)
     }
 
+    // If on discussions page, add discussions feed.
+    if (pathname.includes('/discussions')) {
+      uris.push(`https://github.com/${owner}/${repo}/discussions.atom`)
+    }
+
     // If on a specific branch, add branch-specific commits feed.
     const branchMatch = pathname.match(/^\/[^/]+\/[^/]+\/tree\/([^/]+)/)
 

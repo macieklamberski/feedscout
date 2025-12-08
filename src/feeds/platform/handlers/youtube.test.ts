@@ -16,24 +16,30 @@ describe('youtubeHandler', () => {
   })
 
   describe('resolve', () => {
-    it('should return feed URL for channel ID', () => {
+    it('should return feed URL and videos-only feed for channel ID', () => {
       const value = 'https://youtube.com/channel/UC1234567890'
-      const expected = ['https://www.youtube.com/feeds/videos.xml?channel_id=UC1234567890']
+      const expected = [
+        'https://www.youtube.com/feeds/videos.xml?channel_id=UC1234567890',
+        'https://www.youtube.com/feeds/videos.xml?playlist_id=UULF1234567890',
+      ]
 
-      expect(youtubeHandler.resolve(value, '')).toEqual(expected)
+      expect(youtubeHandler.resolve(value)).toEqual(expected)
     })
 
     it('should return feed URL for playlist', () => {
       const value = 'https://youtube.com/playlist?list=PL1234567890'
       const expected = ['https://www.youtube.com/feeds/videos.xml?playlist_id=PL1234567890']
 
-      expect(youtubeHandler.resolve(value, '')).toEqual(expected)
+      expect(youtubeHandler.resolve(value)).toEqual(expected)
     })
 
     it('should extract channel ID from @handle page content', () => {
       const value = 'https://youtube.com/@veritasium'
       const content = '{"channelId":"UC1234567890"}'
-      const expected = ['https://www.youtube.com/feeds/videos.xml?channel_id=UC1234567890']
+      const expected = [
+        'https://www.youtube.com/feeds/videos.xml?channel_id=UC1234567890',
+        'https://www.youtube.com/feeds/videos.xml?playlist_id=UULF1234567890',
+      ]
 
       expect(youtubeHandler.resolve(value, content)).toEqual(expected)
     })
@@ -41,7 +47,10 @@ describe('youtubeHandler', () => {
     it('should extract channel ID from legacy /user/ page content', () => {
       const value = 'https://youtube.com/user/pewdiepie'
       const content = '{"channelId":"UC1234567890"}'
-      const expected = ['https://www.youtube.com/feeds/videos.xml?channel_id=UC1234567890']
+      const expected = [
+        'https://www.youtube.com/feeds/videos.xml?channel_id=UC1234567890',
+        'https://www.youtube.com/feeds/videos.xml?playlist_id=UULF1234567890',
+      ]
 
       expect(youtubeHandler.resolve(value, content)).toEqual(expected)
     })
@@ -49,7 +58,10 @@ describe('youtubeHandler', () => {
     it('should extract channel ID from /c/ custom URL page content', () => {
       const value = 'https://youtube.com/c/mkbhd'
       const content = '{"channelId":"UC1234567890"}'
-      const expected = ['https://www.youtube.com/feeds/videos.xml?channel_id=UC1234567890']
+      const expected = [
+        'https://www.youtube.com/feeds/videos.xml?channel_id=UC1234567890',
+        'https://www.youtube.com/feeds/videos.xml?playlist_id=UULF1234567890',
+      ]
 
       expect(youtubeHandler.resolve(value, content)).toEqual(expected)
     })
@@ -82,7 +94,7 @@ describe('youtubeHandler', () => {
       const value = 'https://youtube.com/watch?v=abc123'
       const expected: Array<string> = []
 
-      expect(youtubeHandler.resolve(value, '')).toEqual(expected)
+      expect(youtubeHandler.resolve(value)).toEqual(expected)
     })
   })
 })
