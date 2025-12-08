@@ -13,10 +13,10 @@ import {
   defaultHtmlOptions,
   defaultPlatformOptions,
 } from './defaults.js'
-import { feedsmithExtractor } from './extractors.js'
-import type { FeedResultValid } from './types.js'
+import { defaultExtractor } from './extractors.js'
+import type { FeedResult } from './types.js'
 
-export const discoverFeeds = async <TValid extends FeedResultValid = FeedResultValid>(
+export const discoverFeeds = async <TValid extends FeedResult = FeedResult>(
   input: DiscoverInput,
   options: DiscoverOptions<TValid>,
 ): Promise<Array<DiscoverResult<TValid>>> => {
@@ -27,7 +27,7 @@ export const discoverFeeds = async <TValid extends FeedResultValid = FeedResultV
     {
       ...options,
       fetchFn,
-      extractFn: options.extractFn ?? feedsmithExtractor,
+      extractFn: options.extractFn ?? defaultExtractor,
       normalizeUrlFn: options.normalizeUrlFn ?? normalizeUrl,
     },
     {

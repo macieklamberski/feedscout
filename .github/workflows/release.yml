@@ -48,4 +48,4 @@ jobs:
       - name: Release and publish package
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: bunx semantic-release --extends ./release.json
+        run: bunx semantic-release --extends kvalita/semantic-release

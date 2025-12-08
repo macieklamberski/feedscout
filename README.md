@@ -4,7 +4,7 @@
 [![npm version](https://img.shields.io/npm/v/feedscout.svg)](https://www.npmjs.com/package/feedscout)
 [![license](https://img.shields.io/npm/l/feedscout.svg)](https://github.com/macieklamberski/feedscout/blob/main/LICENSE)
 
-Advanced feed autodiscovery for JavaScript. Collect feeds from webpages using multiple discovery methods.
+Advanced feed autodiscovery for JavaScript. Collect feed information from any webpage using multiple discovery methods.
 
 Finds feeds by scanning links and anchors in HTML content, parsing HTTP headers, and guessing common paths, then validates each URL by fetching and parsing the feed.
 

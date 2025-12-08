@@ -1,13 +1,9 @@
 import { defineConfig } from 'vitepress'
-import llmstxt from 'vitepress-plugin-llms'
 
 export default defineConfig({
-  vite: {
-    plugins: [llmstxt()],
-  },
   title: 'Feedscout',
   description:
-    'Advanced feed autodiscovery for JavaScript. Collect feed URIs from webpages using multiple discovery methods.',
+    'Advanced feed autodiscovery for JavaScript. Collect feed information from any webpage using multiple discovery methods.',
   lastUpdated: true,
   cleanUrls: true,
   head: [
@@ -16,7 +12,7 @@ export default defineConfig({
       {
         async: '',
         src: 'https://umami.lamberski.com/script.js',
-        'data-website-id': 'f1c2e3d4-5a6b-7c8d-9e0f-1a2b3c4d5e6f',
+        'data-website-id': '5c218e6f-78ec-473e-9936-5e2dda0ddc67',
       },
     ],
   ],

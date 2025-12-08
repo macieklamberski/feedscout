@@ -13,8 +13,8 @@ Discovers and validates feeds from a webpage.
 ```typescript
 function discoverFeeds(
   input: DiscoverInput,
-  options: DiscoverOptions<FeedResultValid>,
-): Promise<Array<DiscoverResult<FeedResultValid>>>
+  options: DiscoverOptions<FeedResult>,
+): Promise<Array<DiscoverResult<FeedResult>>>
 ```
 
 ## Parameters

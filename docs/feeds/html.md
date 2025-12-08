@@ -50,13 +50,13 @@ Feedscout comes with reasonable defaults, but you can customize how HTML is pars
 Control which `<link>` elements are matched:
 
 ```typescript
-import { feedMimeTypes } from 'feedscout/feeds'
+import { mimeTypes } from 'feedscout/feeds'
 
 const feeds = await discoverFeeds(url, {
   methods: {
     html: {
       linkSelectors: [
-        { rel: 'alternate', types: feedMimeTypes },
+        { rel: 'alternate', types: mimeTypes },
         { rel: 'feed' },
       ],
     },
@@ -120,7 +120,7 @@ The defaults include comprehensive anchor URIs and common feed-related labels. Y
 import {
   linkSelectors,
   anchorLabels,
-  feedUrisComprehensive,
+  urisComprehensive,
   ignoredUris,
 } from 'feedscout/feeds'
 ```
