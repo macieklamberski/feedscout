@@ -101,9 +101,9 @@
     "htmlparser2": "^10.0.0"
   },
   "devDependencies": {
-    "kvalita": "^1.7.1",
-    "tsdown": "^0.16.8",
-    "vitepress": "^1.6.4",
-    "vitepress-plugin-llms": "^1.9.3"
+    "@types/bun": "^1.3.4",
+    "kvalita": "1.8.0",
+    "tsdown": "^0.17.1",
+    "vitepress": "^1.6.4"
   }
 }
