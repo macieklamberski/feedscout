@@ -2,7 +2,6 @@ import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { isAnyOf } from '../../../common/utils.js'
 
 const hosts = ['bsky.app']
-const defaultBridgeUrl = 'https://bsky.link/api/rss'
 
 export const blueskyHandler: PlatformHandler = {
   match: (url) => {
@@ -18,6 +17,6 @@ export const blueskyHandler: PlatformHandler = {
       return []
     }
 
-    return [`${defaultBridgeUrl}/${handle}`]
+    return [`https://bsky.app/profile/${handle}/rss`]
   },
 }

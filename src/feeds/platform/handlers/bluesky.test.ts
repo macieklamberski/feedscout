@@ -14,16 +14,16 @@ describe('blueskyHandler', () => {
   })
 
   describe('resolve', () => {
-    it('should return RSS bridge feed URL for profile', () => {
+    it('should return native RSS feed URL for profile', () => {
       const value = 'https://bsky.app/profile/user.bsky.social'
-      const expected = ['https://bsky.link/api/rss/user.bsky.social']
+      const expected = ['https://bsky.app/profile/user.bsky.social/rss']
 
       expect(blueskyHandler.resolve(value)).toEqual(expected)
     })
 
     it('should handle custom domain handles', () => {
       const value = 'https://bsky.app/profile/example.com'
-      const expected = ['https://bsky.link/api/rss/example.com']
+      const expected = ['https://bsky.app/profile/example.com/rss']
 
       expect(blueskyHandler.resolve(value)).toEqual(expected)
     })
