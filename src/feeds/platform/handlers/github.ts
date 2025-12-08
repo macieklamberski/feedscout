@@ -2,9 +2,30 @@ import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { isAnyOf } from '../../../common/utils.js'
 
 const hosts = ['github.com', 'www.github.com']
+const excludedPaths = [
+  'settings',
+  'explore',
+  'topics',
+  'trending',
+  'collections',
+  'events',
+  'sponsors',
+  'about',
+  'pricing',
+  'search',
+  'marketplace',
+  'features',
+  'enterprise',
+  'team',
+  'login',
+  'signup',
+  'join',
+]
 
 export const githubHandler: PlatformHandler = {
-  match: (url) => isAnyOf(new URL(url).hostname, hosts),
+  match: (url) => {
+    return isAnyOf(new URL(url).hostname, hosts)
+  },
 
   resolve: (url) => {
     const { pathname } = new URL(url)
@@ -12,36 +33,10 @@ export const githubHandler: PlatformHandler = {
 
     // Match /{owner}/{repo} pattern.
     const repoMatch = pathname.match(/^\/([^/]+)\/([^/]+)/)
+    const owner = repoMatch?.[1]
+    const repo = repoMatch?.[2]
 
-    if (!repoMatch?.[1] || !repoMatch?.[2]) {
-      return []
-    }
-
-    const owner = repoMatch[1]
-    const repo = repoMatch[2]
-
-    // Skip special paths that aren't repositories.
-    const specialPaths = [
-      'settings',
-      'explore',
-      'topics',
-      'trending',
-      'collections',
-      'events',
-      'sponsors',
-      'about',
-      'pricing',
-      'search',
-      'marketplace',
-      'features',
-      'enterprise',
-      'team',
-      'login',
-      'signup',
-      'join',
-    ]
-
-    if (specialPaths.includes(owner.toLowerCase())) {
+    if (!owner || !repo || isAnyOf(owner, excludedPaths)) {
       return []
     }
 

@@ -1,8 +1,8 @@
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
+import { isAnyOf } from '../../../common/utils.js'
 
 const hosts = ['medium.com', 'www.medium.com']
-
-const skipPaths = ['tag', 'search', 'me', 'new-story', 'plans', 'membership']
+const excludedPaths = ['tag', 'search', 'me', 'new-story', 'plans', 'membership']
 
 export const mediumHandler: PlatformHandler = {
   match: (url) => {
@@ -16,7 +16,7 @@ export const mediumHandler: PlatformHandler = {
     const lowerHostname = hostname.toLowerCase()
 
     // Medium.com user profiles: /@username.
-    if (lowerHostname === 'medium.com' || lowerHostname === 'www.medium.com') {
+    if (hosts.includes(lowerHostname)) {
       // User profile: /@username.
       const userMatch = pathname.match(/^\/@([^/]+)/)
 
@@ -32,7 +32,7 @@ export const mediumHandler: PlatformHandler = {
       if (pubMatch?.[1]) {
         const publication = pubMatch[1]
 
-        if (!skipPaths.includes(publication.toLowerCase())) {
+        if (!isAnyOf(publication, excludedPaths)) {
           return [`https://medium.com/feed/${publication}`]
         }
       }

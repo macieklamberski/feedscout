@@ -4,7 +4,9 @@ import { isAnyOf } from '../../../common/utils.js'
 const hosts = ['youtube.com', 'www.youtube.com', 'm.youtube.com']
 
 export const youtubeHandler: PlatformHandler = {
-  match: (url) => isAnyOf(new URL(url).hostname, hosts),
+  match: (url) => {
+    return isAnyOf(new URL(url).hostname, hosts)
+  },
 
   resolve: (url, content) => {
     const parsedUrl = new URL(url)

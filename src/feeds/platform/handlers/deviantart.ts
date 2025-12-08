@@ -2,8 +2,22 @@ import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { isAnyOf } from '../../../common/utils.js'
 
 const hosts = ['deviantart.com', 'www.deviantart.com']
-
 const feedBaseUrl = 'https://backend.deviantart.com/rss.xml'
+const excludedPaths = [
+  'about',
+  'join',
+  'search',
+  'tag',
+  'topic',
+  'watch',
+  'notifications',
+  'settings',
+  'submit',
+  'shop',
+  'core-membership',
+  'team',
+  'developers',
+]
 
 export const deviantartHandler: PlatformHandler = {
   match: (url) => {
@@ -19,31 +33,9 @@ export const deviantartHandler: PlatformHandler = {
     // /{username}/gallery/all
     // /{username}/gallery/{folder-id}/{folder-name}
     const userMatch = pathname.match(/^\/([a-zA-Z0-9_-]+)(?:\/gallery)?(?:\/|$)/)
+    const username = userMatch?.[1]
 
-    if (!userMatch?.[1]) {
-      return []
-    }
-
-    const username = userMatch[1]
-
-    // Exclude system paths.
-    const systemPaths = [
-      'about',
-      'join',
-      'search',
-      'tag',
-      'topic',
-      'watch',
-      'notifications',
-      'settings',
-      'submit',
-      'shop',
-      'core-membership',
-      'team',
-      'developers',
-    ]
-
-    if (systemPaths.includes(username.toLowerCase())) {
+    if (!username || isAnyOf(username, excludedPaths)) {
       return []
     }
 

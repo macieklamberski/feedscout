@@ -40,12 +40,11 @@ export const mastodonHandler: PlatformHandler = {
   resolve: (url) => {
     const parsedUrl = new URL(url)
     const match = parsedUrl.pathname.match(/^\/@([^/]+)/)
+    const username = match?.[1]
 
-    if (!match?.[1]) {
+    if (!username) {
       return []
     }
-
-    const username = match[1]
 
     return [`${parsedUrl.origin}/@${username}.rss`]
   },

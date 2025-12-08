@@ -4,7 +4,9 @@ import { isAnyOf } from '../../../common/utils.js'
 const hosts = ['reddit.com', 'www.reddit.com', 'old.reddit.com', 'new.reddit.com']
 
 export const redditHandler: PlatformHandler = {
-  match: (url) => isAnyOf(new URL(url).hostname, hosts),
+  match: (url) => {
+    return isAnyOf(new URL(url).hostname, hosts)
+  },
 
   resolve: (url) => {
     const { pathname } = new URL(url)

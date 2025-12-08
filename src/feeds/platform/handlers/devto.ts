@@ -2,8 +2,7 @@ import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { isAnyOf } from '../../../common/utils.js'
 
 const hosts = ['dev.to', 'www.dev.to']
-
-const skipPaths = [
+const excludedPaths = [
   'tag',
   'tags',
   'search',
@@ -24,7 +23,9 @@ const skipPaths = [
 ]
 
 export const devtoHandler: PlatformHandler = {
-  match: (url) => isAnyOf(new URL(url).hostname, hosts),
+  match: (url) => {
+    return isAnyOf(new URL(url).hostname, hosts)
+  },
 
   resolve: (url) => {
     const { pathname } = new URL(url)
@@ -35,7 +36,7 @@ export const devtoHandler: PlatformHandler = {
     if (userMatch?.[1]) {
       const username = userMatch[1]
 
-      if (!skipPaths.includes(username.toLowerCase())) {
+      if (!isAnyOf(username, excludedPaths)) {
         return [`https://dev.to/feed/${username}`]
       }
     }
