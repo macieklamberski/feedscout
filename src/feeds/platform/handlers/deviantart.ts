@@ -27,12 +27,23 @@ export const deviantartHandler: PlatformHandler = {
   resolve: (url) => {
     const { pathname } = new URL(url)
 
+    // Match gallery folder: /{username}/gallery/{folder-id}/{folder-name}
+    const folderMatch = pathname.match(/^\/([a-zA-Z0-9_-]+)\/gallery\/(\d+)(?:\/|$)/)
+
+    if (folderMatch?.[1] && folderMatch?.[2]) {
+      const username = folderMatch[1]
+      const folderId = folderMatch[2]
+
+      if (!isAnyOf(username, excludedPaths)) {
+        return [`${feedBaseUrl}?q=${encodeURIComponent(`gallery:${username}/${folderId}`)}`]
+      }
+    }
+
     // Match username from profile/gallery paths like:
     // /{username}
     // /{username}/gallery
     // /{username}/gallery/all
-    // /{username}/gallery/{folder-id}/{folder-name}
-    const userMatch = pathname.match(/^\/([a-zA-Z0-9_-]+)(?:\/gallery)?(?:\/|$)/)
+    const userMatch = pathname.match(/^\/([a-zA-Z0-9_-]+)(?:\/gallery(?:\/all)?)?(?:\/|$)/)
     const username = userMatch?.[1]
 
     if (!username || isAnyOf(username, excludedPaths)) {

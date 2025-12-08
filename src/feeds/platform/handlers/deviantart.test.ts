@@ -35,8 +35,22 @@ describe('deviantartHandler', () => {
       expect(deviantartHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return RSS feed URL for gallery subfolder', () => {
+    it('should return folder-specific RSS feed URL for gallery subfolder', () => {
       const value = 'https://www.deviantart.com/artistname/gallery/12345/folder-name'
+      const expected = ['https://backend.deviantart.com/rss.xml?q=gallery%3Aartistname%2F12345']
+
+      expect(deviantartHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return folder-specific RSS feed URL for gallery subfolder without name', () => {
+      const value = 'https://www.deviantart.com/artistname/gallery/67890'
+      const expected = ['https://backend.deviantart.com/rss.xml?q=gallery%3Aartistname%2F67890']
+
+      expect(deviantartHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return user gallery feed for /gallery/all path', () => {
+      const value = 'https://www.deviantart.com/artistname/gallery/all'
       const expected = [
         'https://backend.deviantart.com/rss.xml?type=deviation&q=by%3Aartistname%20sort%3Atime%20meta%3Aall',
       ]
