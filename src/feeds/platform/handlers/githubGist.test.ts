@@ -20,14 +20,14 @@ describe('githubGistHandler', () => {
       const value = 'https://gist.github.com/torvalds'
       const expected = ['https://gist.github.com/torvalds.atom']
 
-      expect(githubGistHandler.resolve(value, '')).toEqual(expected)
+      expect(githubGistHandler.resolve(value)).toEqual(expected)
     })
 
     it('should return user gists feed for user page with trailing slash', () => {
       const value = 'https://gist.github.com/torvalds/'
       const expected = ['https://gist.github.com/torvalds.atom']
 
-      expect(githubGistHandler.resolve(value, '')).toEqual(expected)
+      expect(githubGistHandler.resolve(value)).toEqual(expected)
     })
 
     it('should return revisions and user feeds for specific gist', () => {
@@ -37,20 +37,20 @@ describe('githubGistHandler', () => {
         'https://gist.github.com/torvalds.atom',
       ]
 
-      expect(githubGistHandler.resolve(value, '')).toEqual(expected)
+      expect(githubGistHandler.resolve(value)).toEqual(expected)
     })
 
     it('should return empty array for excluded paths', () => {
-      expect(githubGistHandler.resolve('https://gist.github.com/discover', '')).toEqual([])
-      expect(githubGistHandler.resolve('https://gist.github.com/search', '')).toEqual([])
-      expect(githubGistHandler.resolve('https://gist.github.com/starred', '')).toEqual([])
+      expect(githubGistHandler.resolve('https://gist.github.com/discover')).toEqual([])
+      expect(githubGistHandler.resolve('https://gist.github.com/search')).toEqual([])
+      expect(githubGistHandler.resolve('https://gist.github.com/starred')).toEqual([])
     })
 
     it('should return empty array for root path', () => {
       const value = 'https://gist.github.com/'
       const expected: Array<string> = []
 
-      expect(githubGistHandler.resolve(value, '')).toEqual(expected)
+      expect(githubGistHandler.resolve(value)).toEqual(expected)
     })
   })
 })
