@@ -24,7 +24,7 @@ describe('redditHandler', () => {
         'https://www.reddit.com/r/programming/comments/.rss',
       ]
 
-      expect(redditHandler.resolve(value, '')).toEqual(expected)
+      expect(redditHandler.resolve(value)).toEqual(expected)
     })
 
     it('should return sorted RSS feed URL and all-comments feed when viewing sorted subreddit', () => {
@@ -67,7 +67,7 @@ describe('redditHandler', () => {
       ]
 
       for (const [value, expected] of cases) {
-        expect(redditHandler.resolve(value, '')).toEqual(expected)
+        expect(redditHandler.resolve(value)).toEqual(expected)
       }
     })
 
@@ -78,42 +78,42 @@ describe('redditHandler', () => {
         'https://www.reddit.com/r/programming/comments/.rss',
       ]
 
-      expect(redditHandler.resolve(value, '')).toEqual(expected)
+      expect(redditHandler.resolve(value)).toEqual(expected)
     })
 
     it('should return RSS feed URL for post comments', () => {
       const value = 'https://reddit.com/r/AskReddit/comments/abc123/whats_your_favorite'
       const expected = ['https://www.reddit.com/r/AskReddit/comments/abc123/.rss']
 
-      expect(redditHandler.resolve(value, '')).toEqual(expected)
+      expect(redditHandler.resolve(value)).toEqual(expected)
     })
 
     it('should return RSS feed URL for domain tracking', () => {
       const value = 'https://reddit.com/domain/github.com'
       const expected = ['https://www.reddit.com/domain/github.com/.rss']
 
-      expect(redditHandler.resolve(value, '')).toEqual(expected)
+      expect(redditHandler.resolve(value)).toEqual(expected)
     })
 
     it('should return RSS feed URL for user profile', () => {
       const value = 'https://reddit.com/user/spez'
       const expected = ['https://www.reddit.com/user/spez/.rss']
 
-      expect(redditHandler.resolve(value, '')).toEqual(expected)
+      expect(redditHandler.resolve(value)).toEqual(expected)
     })
 
     it('should handle u/ format for user profiles', () => {
       const value = 'https://reddit.com/u/spez'
       const expected = ['https://www.reddit.com/user/spez/.rss']
 
-      expect(redditHandler.resolve(value, '')).toEqual(expected)
+      expect(redditHandler.resolve(value)).toEqual(expected)
     })
 
     it('should return empty array for invalid paths', () => {
       const value = 'https://reddit.com/about'
       const expected: Array<string> = []
 
-      expect(redditHandler.resolve(value, '')).toEqual(expected)
+      expect(redditHandler.resolve(value)).toEqual(expected)
     })
   })
 })
