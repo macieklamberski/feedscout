@@ -41,7 +41,7 @@ export const normalizeMethodsConfig = (
 
   if (methodsObj.platform && defaults.platform) {
     if (!input.url || input.url === '') {
-      throw new Error(locales.errors.guessMethodRequiresUrl)
+      throw new Error(locales.errors.platformMethodRequiresUrl)
     }
 
     const platformOptions = methodsObj.platform === true ? {} : methodsObj.platform
