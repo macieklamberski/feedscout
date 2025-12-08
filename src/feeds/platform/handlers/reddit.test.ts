@@ -7,6 +7,7 @@ describe('redditHandler', () => {
       ['https://reddit.com/r/programming', true],
       ['https://www.reddit.com/r/programming', true],
       ['https://old.reddit.com/r/programming', true],
+      ['https://new.reddit.com/r/programming', true],
       ['https://example.com/r/test', false],
     ] as const
 
@@ -23,6 +24,47 @@ describe('redditHandler', () => {
       expect(redditHandler.resolve(value, '')).toEqual(expected)
     })
 
+    it('should return sorted RSS feed URL when viewing sorted subreddit', () => {
+      const cases = [
+        ['https://reddit.com/r/programming/hot', 'https://www.reddit.com/r/programming/hot/.rss'],
+        ['https://reddit.com/r/programming/new', 'https://www.reddit.com/r/programming/new/.rss'],
+        [
+          'https://reddit.com/r/programming/rising',
+          'https://www.reddit.com/r/programming/rising/.rss',
+        ],
+        [
+          'https://reddit.com/r/programming/controversial',
+          'https://www.reddit.com/r/programming/controversial/.rss',
+        ],
+        ['https://reddit.com/r/programming/top', 'https://www.reddit.com/r/programming/top/.rss'],
+      ] as const
+
+      for (const [value, expected] of cases) {
+        expect(redditHandler.resolve(value, '')).toEqual([expected])
+      }
+    })
+
+    it('should return base feed for unknown sort options', () => {
+      const value = 'https://reddit.com/r/programming/wiki'
+      const expected = ['https://www.reddit.com/r/programming/.rss']
+
+      expect(redditHandler.resolve(value, '')).toEqual(expected)
+    })
+
+    it('should return RSS feed URL for post comments', () => {
+      const value = 'https://reddit.com/r/AskReddit/comments/abc123/whats_your_favorite'
+      const expected = ['https://www.reddit.com/r/AskReddit/comments/abc123/.rss']
+
+      expect(redditHandler.resolve(value, '')).toEqual(expected)
+    })
+
+    it('should return RSS feed URL for domain tracking', () => {
+      const value = 'https://reddit.com/domain/github.com'
+      const expected = ['https://www.reddit.com/domain/github.com/.rss']
+
+      expect(redditHandler.resolve(value, '')).toEqual(expected)
+    })
+
     it('should return RSS feed URL for user profile', () => {
       const value = 'https://reddit.com/user/spez'
       const expected = ['https://www.reddit.com/user/spez/.rss']
@@ -33,13 +75,6 @@ describe('redditHandler', () => {
     it('should handle u/ format for user profiles', () => {
       const value = 'https://reddit.com/u/spez'
       const expected = ['https://www.reddit.com/user/spez/.rss']
-
-      expect(redditHandler.resolve(value, '')).toEqual(expected)
-    })
-
-    it('should handle subreddit paths with trailing content', () => {
-      const value = 'https://reddit.com/r/programming/hot'
-      const expected = ['https://www.reddit.com/r/programming/.rss']
 
       expect(redditHandler.resolve(value, '')).toEqual(expected)
     })
