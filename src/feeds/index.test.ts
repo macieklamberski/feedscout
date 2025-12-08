@@ -1115,10 +1115,10 @@ describe('discoverFeeds', () => {
 })
 
 describe('defaultPlatformOptions', () => {
-  it('should contain all 3 platform handlers', () => {
+  it('should contain all 11 platform handlers', () => {
     const value = defaultPlatformOptions.handlers.length
 
-    expect(value).toBe(3)
+    expect(value).toBe(11)
   })
 
   it('should contain handler that matches GitHub URLs', () => {
