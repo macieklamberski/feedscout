@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'bun:test'
 import locales from '../common/locales.json' with { type: 'json' }
 import type { DiscoverFetchFn, DiscoverProgress, DiscoverResult } from '../common/types.js'
-import { blogrollUrisBalanced, blogrollUrisComprehensive, blogrollUrisMinimal } from './defaults.js'
+import { urisBalanced, urisComprehensive, urisMinimal } from './defaults.js'
 import { discoverBlogrolls } from './index.js'
-import type { BlogrollResultValid } from './types.js'
+import type { BlogrollResult } from './types.js'
 
 const createMockFetch = (responses: Record<string, string>): DiscoverFetchFn => {
   return async (url: string) => ({
@@ -36,7 +36,7 @@ describe('discoverBlogrolls', () => {
         fetchFn: mockFetch,
       },
     )
-    const expected: Array<DiscoverResult<BlogrollResultValid>> = [
+    const expected: Array<DiscoverResult<BlogrollResult>> = [
       {
         url: 'https://example.com/blogroll.opml',
         isValid: true,
@@ -58,7 +58,7 @@ describe('discoverBlogrolls', () => {
         fetchFn: mockFetch,
       },
     )
-    const expected: Array<DiscoverResult<BlogrollResultValid>> = [
+    const expected: Array<DiscoverResult<BlogrollResult>> = [
       {
         url: 'https://example.com/.well-known/recommendations.opml',
         isValid: true,
@@ -90,7 +90,7 @@ describe('discoverBlogrolls', () => {
         concurrency: 1,
       },
     )
-    const expected: Array<DiscoverResult<BlogrollResultValid>> = [
+    const expected: Array<DiscoverResult<BlogrollResult>> = [
       {
         url: 'https://example.com/blogroll1.opml',
         isValid: true,
@@ -163,7 +163,7 @@ describe('discoverBlogrolls', () => {
         includeInvalid: true,
       },
     )
-    const expected: Array<DiscoverResult<BlogrollResultValid>> = [
+    const expected: Array<DiscoverResult<BlogrollResult>> = [
       {
         url: 'https://example.com/blogroll.opml',
         isValid: false,
@@ -216,7 +216,7 @@ describe('discoverBlogrolls', () => {
     const value = await discoverBlogrolls(
       { url: 'https://example.com' },
       {
-        methods: { guess: { uris: blogrollUrisMinimal } },
+        methods: { guess: { uris: urisMinimal } },
         fetchFn: mockFetch,
       },
     )
@@ -233,11 +233,11 @@ describe('discoverBlogrolls', () => {
     const value = await discoverBlogrolls(
       { url: 'https://example.com' },
       {
-        methods: { guess: { uris: blogrollUrisBalanced } },
+        methods: { guess: { uris: urisBalanced } },
         fetchFn: mockFetch,
       },
     )
-    const expected: Array<DiscoverResult<BlogrollResultValid>> = [
+    const expected: Array<DiscoverResult<BlogrollResult>> = [
       {
         url: 'https://example.com/subscriptions.opml',
         isValid: true,
@@ -256,7 +256,7 @@ describe('discoverBlogrolls', () => {
     const value = await discoverBlogrolls(
       { url: 'https://example.com' },
       {
-        methods: { guess: { uris: blogrollUrisComprehensive } },
+        methods: { guess: { uris: urisComprehensive } },
         fetchFn: mockFetch,
       },
     )
@@ -278,7 +278,7 @@ describe('discoverBlogrolls', () => {
         fetchFn: mockFetch,
       },
     )
-    const expected: Array<DiscoverResult<BlogrollResultValid>> = [
+    const expected: Array<DiscoverResult<BlogrollResult>> = [
       {
         url: 'https://example.com/my-blogroll.opml',
         isValid: true,
@@ -303,7 +303,7 @@ describe('discoverBlogrolls', () => {
         fetchFn: mockFetch,
       },
     )
-    const expected: Array<DiscoverResult<BlogrollResultValid>> = [
+    const expected: Array<DiscoverResult<BlogrollResult>> = [
       {
         url: 'https://example.com/subscriptions.opml',
         isValid: true,
@@ -328,7 +328,7 @@ describe('discoverBlogrolls', () => {
         fetchFn: mockFetch,
       },
     )
-    const expected: Array<DiscoverResult<BlogrollResultValid>> = [
+    const expected: Array<DiscoverResult<BlogrollResult>> = [
       {
         url: 'https://example.com/reading-list.opml',
         isValid: true,
@@ -353,7 +353,7 @@ describe('discoverBlogrolls', () => {
         fetchFn: mockFetch,
       },
     )
-    const expected: Array<DiscoverResult<BlogrollResultValid>> = [
+    const expected: Array<DiscoverResult<BlogrollResult>> = [
       {
         url: 'https://example.com/links',
         isValid: true,

@@ -54,7 +54,7 @@ for (const feed of feeds) {
 Valid feed results have these properties:
 
 ```typescript
-type FeedResultValid = {
+type FeedResult = {
   format: 'rss' | 'atom' | 'json' | 'rdf'
   title?: string
   description?: string
@@ -67,7 +67,7 @@ type FeedResultValid = {
 Valid blogroll results have these properties:
 
 ```typescript
-type BlogrollResultValid = {
+type BlogrollResult = {
   title?: string
 }
 ```
@@ -77,8 +77,8 @@ type BlogrollResultValid = {
 The `DiscoverOptions` type is generic to support custom extractors:
 
 ```typescript
-// Default usage with FeedResultValid
-const options: DiscoverOptions<FeedResultValid> = {
+// Default usage with FeedResult
+const options: DiscoverOptions<FeedResult> = {
   methods: ['html', 'guess'],
 }
 
@@ -101,15 +101,20 @@ const options: DiscoverOptions<CustomResult> = {
 
 ## Method Options
 
-Each discovery method has its own options type:
+Each discovery method accepts options inline:
 
 ```typescript
-import type { HtmlMethodOptions } from 'feedscout/feeds'
-
-const htmlOptions: Partial<Omit<HtmlMethodOptions, 'baseUrl'>> = {
-  anchorLabels: ['rss', 'feed'],
-  anchorUris: ['/feed', '/rss'],
-}
+const feeds = await discoverFeeds(url, {
+  methods: {
+    html: {
+      anchorLabels: ['rss', 'feed'],
+      anchorUris: ['/feed', '/rss'],
+    },
+    guess: {
+      uris: ['/feed', '/rss.xml'],
+    },
+  },
+})
 ```
 
 ## Fetch Function Type
@@ -153,10 +158,10 @@ Types are available from multiple export paths:
 import type { DiscoverResult, DiscoverOptions } from 'feedscout'
 
 // Feed-specific types
-import type { FeedResultValid } from 'feedscout/feeds'
+import type { FeedResult } from 'feedscout/feeds'
 
 // Blogroll-specific types
-import type { BlogrollResultValid } from 'feedscout/blogrolls'
+import type { BlogrollResult } from 'feedscout/blogrolls'
 
 // Hub-specific types
 import type { HubResult, DiscoverHubsOptions } from 'feedscout/hubs'

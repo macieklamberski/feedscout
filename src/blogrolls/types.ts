@@ -1,3 +1,3 @@
-export type BlogrollResultValid = {
+export type BlogrollResult = {
   title?: string
 }

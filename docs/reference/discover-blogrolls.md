@@ -13,8 +13,8 @@ Discovers and validates OPML blogrolls from a webpage.
 ```typescript
 function discoverBlogrolls(
   input: DiscoverInput,
-  options: DiscoverOptions<BlogrollResultValid>,
-): Promise<Array<DiscoverResult<BlogrollResultValid>>>
+  options: DiscoverOptions<BlogrollResult>,
+): Promise<Array<DiscoverResult<BlogrollResult>>>
 ```
 
 ## Parameters
@@ -83,7 +83,7 @@ const blogrolls = await discoverBlogrolls('https://example.com', {
 ### With Custom Options
 
 ```typescript
-import { blogrollUrisComprehensive } from 'feedscout/blogrolls'
+import { urisComprehensive } from 'feedscout/blogrolls'
 
 const blogrolls = await discoverBlogrolls('https://example.com', {
   methods: {
@@ -91,7 +91,7 @@ const blogrolls = await discoverBlogrolls('https://example.com', {
       anchorLabels: ['blogroll', 'opml'],
     },
     guess: {
-      uris: blogrollUrisComprehensive,
+      uris: urisComprehensive,
     },
   },
 })

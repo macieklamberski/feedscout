@@ -3,7 +3,7 @@ import type { GuessMethodOptions } from '../common/uris/guess/types.js'
 import type { HeadersMethodOptions } from '../common/uris/headers/types.js'
 import type { HtmlMethodOptions } from '../common/uris/html/types.js'
 
-export const feedMimeTypes = [
+export const mimeTypes = [
   // RSS:
   'application/rss+xml',
   'text/rss+xml',
@@ -25,20 +25,14 @@ export const feedMimeTypes = [
 ]
 
 // Covers modern static generators and simple WordPress setups.
-export const feedUrisMinimal = ['/feed', '/rss', '/atom.xml', '/feed.xml', '/rss.xml', '/index.xml']
+export const urisMinimal = ['/feed', '/rss', '/atom.xml', '/feed.xml', '/rss.xml', '/index.xml']
 
 // Includes JSON Feed and common variations.
-export const feedUrisBalanced = [
-  ...feedUrisMinimal,
-  '/feed/',
-  '/index.atom',
-  '/index.rss',
-  '/feed.json',
-]
+export const urisBalanced = [...urisMinimal, '/feed/', '/index.atom', '/index.rss', '/feed.json']
 
 // Includes WordPress query parameters, Blogger patterns, and additional variations.
-export const feedUrisComprehensive = [
-  ...feedUrisBalanced,
+export const urisComprehensive = [
+  ...urisBalanced,
   '/atom',
   '/feed.rss',
   '/feed.atom',
@@ -69,14 +63,14 @@ export const ignoredUris = ['wp-json/oembed/', 'wp-json/wp/']
 export const anchorLabels = ['rss', 'feed', 'atom', 'subscribe', 'syndicate', 'json feed']
 
 export const linkSelectors: Array<LinkSelector> = [
-  { rel: 'alternate', types: feedMimeTypes },
+  { rel: 'alternate', types: mimeTypes },
   { rel: 'feed' },
 ]
 
 // Default options for HTML method.
 export const defaultHtmlOptions: Omit<HtmlMethodOptions, 'baseUrl'> = {
   linkSelectors,
-  anchorUris: feedUrisComprehensive,
+  anchorUris: urisComprehensive,
   anchorIgnoredUris: ignoredUris,
   anchorLabels,
 }
@@ -88,5 +82,5 @@ export const defaultHeadersOptions: Omit<HeadersMethodOptions, 'baseUrl'> = {
 
 // Default options for Guess method (excluding baseUrl which is required).
 export const defaultGuessOptions: Omit<GuessMethodOptions, 'baseUrl'> = {
-  uris: feedUrisBalanced,
+  uris: urisBalanced,
 }

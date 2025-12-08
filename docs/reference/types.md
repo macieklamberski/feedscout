@@ -15,9 +15,9 @@ import type {
   DiscoverProgress,
   DiscoverFetchFn,
   DiscoverNormalizeUrlFn,
-  DiscoverHubsOptions,
-  HubResult,
 } from 'feedscout'
+
+import type { HubResult, DiscoverHubsOptions } from 'feedscout/hubs'
 ```
 
 ## Input Types
@@ -96,12 +96,12 @@ type DiscoverResult<TValid> =
   | { url: string; isValid: false; error?: unknown }
 ```
 
-### FeedResultValid
+### FeedResult
 
 Valid feed result properties:
 
 ```typescript
-type FeedResultValid = {
+type FeedResult = {
   format: 'rss' | 'atom' | 'json' | 'rdf'
   title?: string
   description?: string
@@ -109,12 +109,12 @@ type FeedResultValid = {
 }
 ```
 
-### BlogrollResultValid
+### BlogrollResult
 
 Valid blogroll result properties:
 
 ```typescript
-type BlogrollResultValid = {
+type BlogrollResult = {
   title?: string
 }
 ```

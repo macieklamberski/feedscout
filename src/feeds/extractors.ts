@@ -1,13 +1,13 @@
 import { parseFeed } from 'feedsmith'
 import type { Atom, DeepPartial } from 'feedsmith/types'
 import type { DiscoverExtractFn } from '../common/types.js'
-import type { FeedResultValid } from './types.js'
+import type { FeedResult } from './types.js'
 
 const getLinkOfType = (links: Array<DeepPartial<Atom.Link<string>>> | undefined, rel: string) => {
   return links?.find((link) => link.rel === rel)
 }
 
-export const feedsmithExtractor: DiscoverExtractFn<FeedResultValid> = async ({ content, url }) => {
+export const defaultExtractor: DiscoverExtractFn<FeedResult> = async ({ content, url }) => {
   if (!content) {
     return { url, isValid: false }
   }

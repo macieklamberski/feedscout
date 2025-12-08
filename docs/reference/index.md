@@ -56,10 +56,10 @@ Feedscout uses multiple export paths for tree-shaking:
 import { discoverFeeds, discoverBlogrolls, discoverHubs } from 'feedscout'
 
 // Feed-specific defaults and types
-import { feedMimeTypes, feedUrisBalanced } from 'feedscout/feeds'
+import { mimeTypes, urisBalanced } from 'feedscout/feeds'
 
 // Blogroll-specific defaults and types
-import { blogrollUrisBalanced } from 'feedscout/blogrolls'
+import { urisBalanced } from 'feedscout/blogrolls'
 
 // Hub-specific types
 import type { HubResult, DiscoverHubsOptions } from 'feedscout/hubs'

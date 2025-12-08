@@ -32,7 +32,7 @@ There are three predefined URI sets:
 Basic paths that cover most modern sites:
 
 ```typescript
-import { feedUrisMinimal } from 'feedscout/feeds'
+import { urisMinimal } from 'feedscout/feeds'
 
 // [
 //   '/feed',
@@ -49,9 +49,9 @@ import { feedUrisMinimal } from 'feedscout/feeds'
 Includes JSON Feed and common variations:
 
 ```typescript
-import { feedUrisBalanced } from 'feedscout/feeds'
+import { urisBalanced } from 'feedscout/feeds'
 
-// feedUrisMinimal + [
+// urisMinimal + [
 //   '/feed/',
 //   '/index.atom',
 //   '/index.rss',
@@ -64,9 +64,9 @@ import { feedUrisBalanced } from 'feedscout/feeds'
 Includes WordPress, Blogger, and many other patterns:
 
 ```typescript
-import { feedUrisComprehensive } from 'feedscout/feeds'
+import { urisComprehensive } from 'feedscout/feeds'
 
-// feedUrisBalanced + [
+// urisBalanced + [
 //   '/?feed=rss',
 //   '/?feed=atom',
 //   '/feeds/posts/default',
