@@ -17,33 +17,38 @@ describe('mediumHandler', () => {
 
   describe('resolve', () => {
     it('should return feed URL for user profile', () => {
-      const value = mediumHandler.resolve('https://medium.com/@username')
+      const value = 'https://medium.com/@username'
+      const expected = ['https://medium.com/feed/@username']
 
-      expect(value).toEqual(['https://medium.com/feed/@username'])
+      expect(mediumHandler.resolve(value)).toEqual(expected)
     })
 
     it('should return feed URL for publication', () => {
-      const value = mediumHandler.resolve('https://medium.com/towards-data-science')
+      const value = 'https://medium.com/towards-data-science'
+      const expected = ['https://medium.com/feed/towards-data-science']
 
-      expect(value).toEqual(['https://medium.com/feed/towards-data-science'])
+      expect(mediumHandler.resolve(value)).toEqual(expected)
     })
 
     it('should return feed URL for custom subdomain', () => {
-      const value = mediumHandler.resolve('https://blog.medium.com')
+      const value = 'https://blog.medium.com'
+      const expected = ['https://medium.com/feed/blog']
 
-      expect(value).toEqual(['https://medium.com/feed/blog'])
+      expect(mediumHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should skip reserved paths', () => {
-      const value = mediumHandler.resolve('https://medium.com/tag/programming')
+    it('should return empty array for excluded paths', () => {
+      const value = 'https://medium.com/tag/programming'
+      const expected: Array<string> = []
 
-      expect(value).toEqual([])
+      expect(mediumHandler.resolve(value)).toEqual(expected)
     })
 
     it('should return empty array for non-matching paths', () => {
-      const value = mediumHandler.resolve('https://medium.com/me/settings')
+      const value = 'https://medium.com/me/settings'
+      const expected: Array<string> = []
 
-      expect(value).toEqual([])
+      expect(mediumHandler.resolve(value)).toEqual(expected)
     })
   })
 })

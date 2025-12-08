@@ -18,21 +18,24 @@ describe('mastodonHandler', () => {
 
   describe('resolve', () => {
     it('should return RSS feed URL for user profile', () => {
-      const value = mastodonHandler.resolve('https://mastodon.social/@username')
+      const value = 'https://mastodon.social/@username'
+      const expected = ['https://mastodon.social/@username.rss']
 
-      expect(value).toEqual(['https://mastodon.social/@username.rss'])
+      expect(mastodonHandler.resolve(value)).toEqual(expected)
     })
 
     it('should handle profiles with subpaths', () => {
-      const value = mastodonHandler.resolve('https://fosstodon.org/@user/123456')
+      const value = 'https://fosstodon.org/@user/123456'
+      const expected = ['https://fosstodon.org/@user.rss']
 
-      expect(value).toEqual(['https://fosstodon.org/@user.rss'])
+      expect(mastodonHandler.resolve(value)).toEqual(expected)
     })
 
     it('should return empty array for non-profile paths', () => {
-      const value = mastodonHandler.resolve('https://mastodon.social/explore')
+      const value = 'https://mastodon.social/explore'
+      const expected: Array<string> = []
 
-      expect(value).toEqual([])
+      expect(mastodonHandler.resolve(value)).toEqual(expected)
     })
   })
 })

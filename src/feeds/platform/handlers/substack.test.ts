@@ -16,15 +16,17 @@ describe('substackHandler', () => {
 
   describe('resolve', () => {
     it('should return feed URL for newsletter', () => {
-      const value = substackHandler.resolve('https://example.substack.com')
+      const value = 'https://example.substack.com'
+      const expected = ['https://example.substack.com/feed']
 
-      expect(value).toEqual(['https://example.substack.com/feed'])
+      expect(substackHandler.resolve(value)).toEqual(expected)
     })
 
     it('should return feed URL regardless of path', () => {
-      const value = substackHandler.resolve('https://newsletter.substack.com/p/some-article')
+      const value = 'https://newsletter.substack.com/p/some-article'
+      const expected = ['https://newsletter.substack.com/feed']
 
-      expect(value).toEqual(['https://newsletter.substack.com/feed'])
+      expect(substackHandler.resolve(value)).toEqual(expected)
     })
   })
 })

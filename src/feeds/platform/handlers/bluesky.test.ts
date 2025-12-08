@@ -15,21 +15,24 @@ describe('blueskyHandler', () => {
 
   describe('resolve', () => {
     it('should return RSS bridge feed URL for profile', () => {
-      const value = blueskyHandler.resolve('https://bsky.app/profile/user.bsky.social')
+      const value = 'https://bsky.app/profile/user.bsky.social'
+      const expected = ['https://bsky.link/api/rss/user.bsky.social']
 
-      expect(value).toEqual(['https://bsky.link/api/rss/user.bsky.social'])
+      expect(blueskyHandler.resolve(value)).toEqual(expected)
     })
 
     it('should handle custom domain handles', () => {
-      const value = blueskyHandler.resolve('https://bsky.app/profile/example.com')
+      const value = 'https://bsky.app/profile/example.com'
+      const expected = ['https://bsky.link/api/rss/example.com']
 
-      expect(value).toEqual(['https://bsky.link/api/rss/example.com'])
+      expect(blueskyHandler.resolve(value)).toEqual(expected)
     })
 
     it('should return empty array for non-profile paths', () => {
-      const value = blueskyHandler.resolve('https://bsky.app/about')
+      const value = 'https://bsky.app/about'
+      const expected: Array<string> = []
 
-      expect(value).toEqual([])
+      expect(blueskyHandler.resolve(value)).toEqual(expected)
     })
   })
 })

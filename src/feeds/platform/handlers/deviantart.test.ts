@@ -18,40 +18,42 @@ describe('deviantartHandler', () => {
 
   describe('resolve', () => {
     it('should return RSS feed URL for user profile', () => {
-      const value = deviantartHandler.resolve('https://www.deviantart.com/artistname')
-
-      expect(value).toEqual([
+      const value = 'https://www.deviantart.com/artistname'
+      const expected = [
         'https://backend.deviantart.com/rss.xml?type=deviation&q=by%3Aartistname%20sort%3Atime%20meta%3Aall',
-      ])
+      ]
+
+      expect(deviantartHandler.resolve(value)).toEqual(expected)
     })
 
     it('should return RSS feed URL for user gallery', () => {
-      const value = deviantartHandler.resolve('https://www.deviantart.com/artistname/gallery')
-
-      expect(value).toEqual([
+      const value = 'https://www.deviantart.com/artistname/gallery'
+      const expected = [
         'https://backend.deviantart.com/rss.xml?type=deviation&q=by%3Aartistname%20sort%3Atime%20meta%3Aall',
-      ])
+      ]
+
+      expect(deviantartHandler.resolve(value)).toEqual(expected)
     })
 
     it('should return RSS feed URL for gallery subfolder', () => {
-      const value = deviantartHandler.resolve(
-        'https://www.deviantart.com/artistname/gallery/12345/folder-name',
-      )
-
-      expect(value).toEqual([
+      const value = 'https://www.deviantart.com/artistname/gallery/12345/folder-name'
+      const expected = [
         'https://backend.deviantart.com/rss.xml?type=deviation&q=by%3Aartistname%20sort%3Atime%20meta%3Aall',
-      ])
+      ]
+
+      expect(deviantartHandler.resolve(value)).toEqual(expected)
     })
 
     it('should handle usernames with numbers and underscores', () => {
-      const value = deviantartHandler.resolve('https://www.deviantart.com/artist_123')
-
-      expect(value).toEqual([
+      const value = 'https://www.deviantart.com/artist_123'
+      const expected = [
         'https://backend.deviantart.com/rss.xml?type=deviation&q=by%3Aartist_123%20sort%3Atime%20meta%3Aall',
-      ])
+      ]
+
+      expect(deviantartHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return empty array for system paths', () => {
+    it('should return empty array for excluded paths', () => {
       expect(deviantartHandler.resolve('https://www.deviantart.com/about')).toEqual([])
       expect(deviantartHandler.resolve('https://www.deviantart.com/search')).toEqual([])
       expect(deviantartHandler.resolve('https://www.deviantart.com/join')).toEqual([])
@@ -60,9 +62,10 @@ describe('deviantartHandler', () => {
     })
 
     it('should return empty array for root path', () => {
-      const value = deviantartHandler.resolve('https://www.deviantart.com/')
+      const value = 'https://www.deviantart.com/'
+      const expected: Array<string> = []
 
-      expect(value).toEqual([])
+      expect(deviantartHandler.resolve(value)).toEqual(expected)
     })
   })
 })
