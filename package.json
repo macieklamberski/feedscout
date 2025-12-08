@@ -102,7 +102,7 @@
   },
   "devDependencies": {
     "kvalita": "^1.7.1",
-    "tsdown": "^0.16.8",
+    "tsdown": "^0.17.0",
     "vitepress": "^1.6.4",
     "vitepress-plugin-llms": "^1.9.3"
   }
