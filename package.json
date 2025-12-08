@@ -1,6 +1,6 @@
 {
   "name": "feedscout",
-  "description": "Advanced feed autodiscovery for JavaScript. Collect feed URIs from webpages using multiple discovery methods.",
+  "description": "Advanced feed autodiscovery for JavaScript. Collect feed information from any webpage using multiple discovery methods.",
   "keywords": [
     "rss",
     "rss-autodiscovery",

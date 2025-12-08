@@ -3,7 +3,7 @@ import { defineConfig } from 'vitepress'
 export default defineConfig({
   title: 'Feedscout',
   description:
-    'Advanced feed autodiscovery for JavaScript. Collect feed URIs from webpages using multiple discovery methods.',
+    'Advanced feed autodiscovery for JavaScript. Collect feed information from any webpage using multiple discovery methods.',
   lastUpdated: true,
   cleanUrls: true,
   head: [
