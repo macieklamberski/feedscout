@@ -1,11 +1,6 @@
 import { createNativeFetchAdapter } from '../common/discover/adapters.js'
 import { discover } from '../common/discover/index.js'
-import type {
-  DiscoverFetchFn,
-  DiscoverInput,
-  DiscoverOptions,
-  DiscoverResult,
-} from '../common/types.js'
+import type { DiscoverInput, DiscoverOptions, DiscoverResult } from '../common/types.js'
 import { normalizeUrl } from '../common/utils.js'
 import {
   defaultGuessOptions,
@@ -20,13 +15,11 @@ export const discoverFeeds = async <TValid extends FeedResult = FeedResult>(
   input: DiscoverInput,
   options: DiscoverOptions<TValid>,
 ): Promise<Array<DiscoverResult<TValid>>> => {
-  const fetchFn: DiscoverFetchFn = options.fetchFn ?? createNativeFetchAdapter()
-
   return discover<TValid>(
     input,
     {
       ...options,
-      fetchFn,
+      fetchFn: options.fetchFn ?? createNativeFetchAdapter(),
       extractFn: options.extractFn ?? defaultExtractor,
       normalizeUrlFn: options.normalizeUrlFn ?? normalizeUrl,
     },

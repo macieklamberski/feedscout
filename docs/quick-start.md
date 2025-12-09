@@ -53,6 +53,23 @@ const feeds = await discoverFeeds('https://example.com', {
 // }]
 ```
 
+### Discover Platform Feeds
+
+For YouTube, GitHub, and Reddit, Feedscout can generate feed URLs directly from the page URL:
+
+```typescript
+const feeds = await discoverFeeds('https://www.youtube.com/@mkbhd', {
+  methods: ['platform'],
+})
+
+// [{
+//   url: 'https://www.youtube.com/feeds/videos.xml?channel_id=UCBJycsmduvYEL83R_U4JriQ',
+//   isValid: true,
+//   format: 'atom',
+//   title: 'Marques Brownlee',
+// }]
+```
+
 ### Using Existing Content
 
 If you already have the HTML content and/or headers, pass them directly to avoid an extra fetch:

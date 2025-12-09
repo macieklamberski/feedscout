@@ -1,6 +1,6 @@
 ---
 outline: 2
-prev: Discover Feeds
+prev: Platform Method
 next: Headers Method
 ---
 
