@@ -1,14 +1,14 @@
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { isSubdomainOf } from '../../../common/utils.js'
 
-export const substackHandler: PlatformHandler = {
+export const blogspotHandler: PlatformHandler = {
   match: (url) => {
-    return isSubdomainOf(url, 'substack.com')
+    return isSubdomainOf(url, 'blogspot.com')
   },
 
   resolve: (url) => {
     const { origin } = new URL(url)
 
-    return [`${origin}/feed`]
+    return [`${origin}/feeds/posts/default`]
   },
 }

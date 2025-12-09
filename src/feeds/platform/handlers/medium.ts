@@ -1,14 +1,12 @@
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
-import { isAnyOf } from '../../../common/utils.js'
+import { isAnyOf, isHostOf, isSubdomainOf } from '../../../common/utils.js'
 
 const hosts = ['medium.com', 'www.medium.com']
 const excludedPaths = ['tag', 'search', 'me', 'new-story', 'plans', 'membership']
 
 export const mediumHandler: PlatformHandler = {
   match: (url) => {
-    const hostname = new URL(url).hostname.toLowerCase()
-
-    return hosts.includes(hostname) || hostname.endsWith('.medium.com')
+    return isHostOf(url, hosts) || isSubdomainOf(url, 'medium.com')
   },
 
   resolve: (url) => {

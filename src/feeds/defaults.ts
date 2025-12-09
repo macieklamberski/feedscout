@@ -4,6 +4,7 @@ import type { HeadersMethodOptions } from '../common/uris/headers/types.js'
 import type { HtmlMethodOptions } from '../common/uris/html/types.js'
 import type { PlatformMethodOptions } from '../common/uris/platform/types.js'
 import { applePodcastsHandler } from './platform/handlers/applePodcasts.js'
+import { blogspotHandler } from './platform/handlers/blogspot.js'
 import { blueskyHandler } from './platform/handlers/bluesky.js'
 import { deviantartHandler } from './platform/handlers/deviantart.js'
 import { devtoHandler } from './platform/handlers/devto.js'
@@ -13,6 +14,8 @@ import { mastodonHandler } from './platform/handlers/mastodon.js'
 import { mediumHandler } from './platform/handlers/medium.js'
 import { redditHandler } from './platform/handlers/reddit.js'
 import { substackHandler } from './platform/handlers/substack.js'
+import { tumblrHandler } from './platform/handlers/tumblr.js'
+import { wordpressHandler } from './platform/handlers/wordpress.js'
 import { youtubeHandler } from './platform/handlers/youtube.js'
 
 export const mimeTypes = [
@@ -101,6 +104,7 @@ export const defaultGuessOptions: Omit<GuessMethodOptions, 'baseUrl'> = {
 export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
   handlers: [
     applePodcastsHandler,
+    blogspotHandler,
     blueskyHandler,
     deviantartHandler,
     devtoHandler,
@@ -110,6 +114,8 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     mediumHandler,
     redditHandler,
     substackHandler,
+    tumblrHandler,
+    wordpressHandler,
     youtubeHandler,
   ],
 }

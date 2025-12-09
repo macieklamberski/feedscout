@@ -1,5 +1,5 @@
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
-import { isAnyOf } from '../../../common/utils.js'
+import { isAnyOf, isHostOf } from '../../../common/utils.js'
 
 const hosts = ['podcasts.apple.com']
 const excludedPaths = ['subscribe', 'app', 'redeem', 'buy', 'charts']
@@ -51,7 +51,7 @@ const extractPodcastId = (pathname: string): string | undefined => {
 
 export const applePodcastsHandler: PlatformHandler = {
   match: (url) => {
-    return isAnyOf(new URL(url).hostname, hosts)
+    return isHostOf(url, hosts)
   },
 
   resolve: (url, content) => {

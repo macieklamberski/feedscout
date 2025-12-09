@@ -1,12 +1,12 @@
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
-import { isAnyOf } from '../../../common/utils.js'
+import { isAnyOf, isHostOf } from '../../../common/utils.js'
 
 const hosts = ['gist.github.com']
 const excludedPaths = ['discover', 'search', 'login', 'join', 'settings', 'starred']
 
 export const githubGistHandler: PlatformHandler = {
   match: (url) => {
-    return isAnyOf(new URL(url).hostname, hosts)
+    return isHostOf(url, hosts)
   },
 
   resolve: (url) => {

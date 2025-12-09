@@ -1,11 +1,11 @@
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
-import { isAnyOf } from '../../../common/utils.js'
+import { isHostOf } from '../../../common/utils.js'
 
 const hosts = ['bsky.app']
 
 export const blueskyHandler: PlatformHandler = {
   match: (url) => {
-    return isAnyOf(new URL(url).hostname, hosts)
+    return isHostOf(url, hosts)
   },
 
   resolve: (url) => {

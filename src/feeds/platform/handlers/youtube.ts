@@ -1,5 +1,5 @@
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
-import { isAnyOf } from '../../../common/utils.js'
+import { isHostOf } from '../../../common/utils.js'
 
 const hosts = ['youtube.com', 'www.youtube.com', 'm.youtube.com']
 
@@ -21,7 +21,7 @@ const getVideosOnlyPlaylistId = (channelId: string): string | undefined => {
 
 export const youtubeHandler: PlatformHandler = {
   match: (url) => {
-    return isAnyOf(new URL(url).hostname, hosts)
+    return isHostOf(url, hosts)
   },
 
   resolve: (url, content) => {
