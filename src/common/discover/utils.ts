@@ -39,7 +39,7 @@ export const normalizeMethodsConfig = (
   // Step 2: Build internal methods config.
   const methodsConfig: DiscoverMethodsConfigInternal = {}
 
-  if (methodsObj.platform && defaults.platform) {
+  if (methodsObj.platform) {
     if (!input.url || input.url === '') {
       throw new Error(locales.errors.platformMethodRequiresUrl)
     }
