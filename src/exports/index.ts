@@ -13,6 +13,5 @@ export type {
   DiscoverProgressFn,
   DiscoverResult,
 } from '../common/types.js'
-export type { PlatformHandler, PlatformMethodOptions } from '../common/uris/platform/types.js'
 export { discoverFeeds } from '../feeds/index.js'
 export { discoverHubs } from '../hubs/discover/index.js'
