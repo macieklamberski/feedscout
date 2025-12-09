@@ -6,14 +6,14 @@ export const discoverUrisFromPlatform = (
 ): Array<string> => {
   const { baseUrl, handlers } = options
 
-  try {
-    for (const handler of handlers) {
+  for (const handler of handlers) {
+    try {
       if (handler.match(baseUrl)) {
         return handler.resolve(baseUrl, html)
       }
+    } catch {
+      // Handler error - continue to next.
     }
-  } catch {
-    // Invalid URL or handler error - return empty.
   }
 
   return []
