@@ -1122,24 +1122,24 @@ describe('defaultPlatformOptions', () => {
   })
 
   it('should contain handler that matches GitHub URLs', () => {
-    const value = defaultPlatformOptions.handlers.some((h) =>
-      h.match('https://github.com/owner/repo'),
+    const value = defaultPlatformOptions.handlers.some((handler) =>
+      handler.match('https://github.com/owner/repo'),
     )
 
     expect(value).toBe(true)
   })
 
   it('should contain handler that matches Reddit URLs', () => {
-    const value = defaultPlatformOptions.handlers.some((h) =>
-      h.match('https://reddit.com/r/programming'),
+    const value = defaultPlatformOptions.handlers.some((handler) =>
+      handler.match('https://reddit.com/r/programming'),
     )
 
     expect(value).toBe(true)
   })
 
   it('should contain handler that matches YouTube URLs', () => {
-    const value = defaultPlatformOptions.handlers.some((h) =>
-      h.match('https://youtube.com/@channel'),
+    const value = defaultPlatformOptions.handlers.some((handler) =>
+      handler.match('https://youtube.com/@channel'),
     )
 
     expect(value).toBe(true)
