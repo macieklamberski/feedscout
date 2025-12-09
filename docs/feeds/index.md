@@ -1,12 +1,12 @@
 ---
 outline: 2
 prev: TypeScript
-next: HTML Method
+next: Platform Method
 ---
 
 # Discover Feeds
 
-Feedscout discovers RSS, Atom, JSON Feed, and RDF feeds from webpages using three discovery methods.
+Feedscout discovers RSS, Atom, JSON Feed, and RDF feeds from webpages using four discovery methods.
 
 ## Basic Usage
 
@@ -14,7 +14,7 @@ Feedscout discovers RSS, Atom, JSON Feed, and RDF feeds from webpages using thre
 import { discoverFeeds } from 'feedscout'
 
 const feeds = await discoverFeeds('https://example.com', {
-  methods: ['html', 'headers', 'guess'],
+  methods: ['platform', 'html', 'headers', 'guess'],
 })
 ```
 
@@ -35,6 +35,7 @@ Each result contains feed metadata:
 
 | Method | Source |
 |--------|--------|
+| [Platform](/feeds/platform) | GitHub, Reddit, YouTube URL patterns |
 | [HTML](/feeds/html) | `<link>` and `<a>` elements |
 | [Headers](/feeds/headers) | HTTP `Link` headers |
 | [Guess](/feeds/guess) | Common feed paths |
@@ -54,7 +55,7 @@ Use an array to enable methods with their default options:
 
 ```typescript
 const feeds = await discoverFeeds(url, {
-  methods: ['html', 'headers', 'guess'],
+  methods: ['platform', 'html', 'headers', 'guess'],
 })
 ```
 
@@ -65,6 +66,7 @@ Use an object to customize individual method options:
 ```typescript
 const feeds = await discoverFeeds(url, {
   methods: {
+    platform: true, // Use defaults
     html: {
       anchorLabels: ['rss', 'feed'],
       anchorUris: ['/feed', '/rss'],

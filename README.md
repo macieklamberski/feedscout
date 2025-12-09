@@ -24,6 +24,7 @@ Finds feeds by scanning links and anchors in HTML content, parsing HTTP headers,
 
 ### Discovery Methods
 
+- **Platform** — Generates feed URLs for GitHub, Reddit, and YouTube using URL pattern matching.
 - **HTML** — Scans `<link>` elements with feed MIME types and `<a>` elements matching feed patterns or labels like "RSS", "Subscribe".
 - **Headers** — Parses HTTP `Link` headers for `rel="alternate"` with feed MIME types per RFC 8288.
 - **Guess** — Tests common paths (e.g. `/feed`, `/rss.xml`, `/atom.xml`) against the base URL as a fallback.
