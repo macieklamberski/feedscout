@@ -39,6 +39,23 @@ export const normalizeMethodsConfig = (
   // Step 2: Build internal methods config.
   const methodsConfig: DiscoverMethodsConfigInternal = {}
 
+  if (methodsObj.platform) {
+    if (!input.url || input.url === '') {
+      throw new Error(locales.errors.platformMethodRequiresUrl)
+    }
+
+    const platformOptions = methodsObj.platform === true ? {} : methodsObj.platform
+
+    methodsConfig.platform = {
+      html: input.content ?? '',
+      options: {
+        ...defaults.platform,
+        ...platformOptions,
+        baseUrl: input.url,
+      },
+    }
+  }
+
   if (methodsObj.html) {
     if (input.content === undefined) {
       throw new Error(locales.errors.htmlMethodRequiresContent)

@@ -42,6 +42,7 @@ export default defineConfig({
             text: 'Methods',
             collapsed: false,
             items: [
+              { text: 'Platform', link: '/feeds/platform' },
               { text: 'HTML', link: '/feeds/html' },
               { text: 'Headers', link: '/feeds/headers' },
               { text: 'Guess', link: '/feeds/guess' },
