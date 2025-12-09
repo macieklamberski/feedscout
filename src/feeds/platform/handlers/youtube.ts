@@ -11,12 +11,8 @@ const extractChannelIdFromContent = (content: string): string | undefined => {
 
 // Convert channel ID to playlist ID for videos-only feed (excludes shorts).
 // YouTube uses special playlist prefixes: UC = all, UULF = videos only, UUSH = shorts only.
-const getVideosOnlyPlaylistId = (channelId: string): string | undefined => {
-  if (channelId.startsWith('UC')) {
-    return channelId.replace(/^UC/, 'UULF')
-  }
-
-  return undefined
+const getVideosOnlyPlaylistId = (channelId: string): string => {
+  return channelId.replace(/^UC/, 'UULF')
 }
 
 export const youtubeHandler: PlatformHandler = {
@@ -35,13 +31,9 @@ export const youtubeHandler: PlatformHandler = {
       const channelId = channelMatch[1]
 
       uris.push(`https://www.youtube.com/feeds/videos.xml?channel_id=${channelId}`)
-
-      // Add videos-only feed (excludes shorts).
-      const videosOnlyId = getVideosOnlyPlaylistId(channelId)
-
-      if (videosOnlyId) {
-        uris.push(`https://www.youtube.com/feeds/videos.xml?playlist_id=${videosOnlyId}`)
-      }
+      uris.push(
+        `https://www.youtube.com/feeds/videos.xml?playlist_id=${getVideosOnlyPlaylistId(channelId)}`,
+      )
     }
 
     // Playlist: /playlist?list=PL...
@@ -66,13 +58,9 @@ export const youtubeHandler: PlatformHandler = {
 
         if (channelId) {
           uris.push(`https://www.youtube.com/feeds/videos.xml?channel_id=${channelId}`)
-
-          // Add videos-only feed (excludes shorts).
-          const videosOnlyId = getVideosOnlyPlaylistId(channelId)
-
-          if (videosOnlyId) {
-            uris.push(`https://www.youtube.com/feeds/videos.xml?playlist_id=${videosOnlyId}`)
-          }
+          uris.push(
+            `https://www.youtube.com/feeds/videos.xml?playlist_id=${getVideosOnlyPlaylistId(channelId)}`,
+          )
         }
       }
     }
