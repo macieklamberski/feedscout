@@ -101,17 +101,15 @@ describe('githubHandler', () => {
     })
 
     it('should return empty array for excluded paths', () => {
-      const value = 'https://github.com/settings/profile'
-      const expected: Array<string> = []
-
-      expect(githubHandler.resolve(value)).toEqual(expected)
+      expect(githubHandler.resolve('https://github.com/explore')).toEqual([])
+      expect(githubHandler.resolve('https://github.com/copilot')).toEqual([])
+      expect(githubHandler.resolve('https://github.com/dashboard')).toEqual([])
     })
 
-    it('should return empty array for excluded user-level paths', () => {
-      const value = 'https://github.com/explore'
-      const expected: Array<string> = []
-
-      expect(githubHandler.resolve(value)).toEqual(expected)
+    it('should return empty array for nested excluded paths', () => {
+      expect(githubHandler.resolve('https://github.com/settings/profile')).toEqual([])
+      expect(githubHandler.resolve('https://github.com/features/actions')).toEqual([])
+      expect(githubHandler.resolve('https://github.com/orgs/github/teams')).toEqual([])
     })
   })
 })
