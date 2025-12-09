@@ -257,6 +257,9 @@ describe('normalizeMethodsConfig', () => {
   const anchorLabels = ['rss', 'feed', 'atom', 'subscribe', 'syndicate', 'json feed']
   const linkSelectors = [{ rel: 'alternate', types: feedMimeTypes }, { rel: 'feed' }]
   const defaults = {
+    platform: {
+      handlers: [],
+    },
     html: {
       linkSelectors,
       anchorUris: feedUrisComprehensive,
@@ -632,6 +635,16 @@ describe('normalizeMethodsConfig', () => {
     expect(result).toEqual(expected)
   })
 
+  it('should throw error when platform method requested without url', () => {
+    const value = {
+      url: '',
+      content: '<html></html>',
+    }
+    const throwing = () => normalizeMethodsConfig(value, ['platform'], defaults)
+
+    expect(throwing).toThrow(locales.errors.platformMethodRequiresUrl)
+  })
+
   it('should throw error when html method requested without content', () => {
     const value = {
       url: 'https://example.com',
@@ -658,6 +671,16 @@ describe('normalizeMethodsConfig', () => {
     const throwing = () => normalizeMethodsConfig(value, ['guess'], defaults)
 
     expect(throwing).toThrow(locales.errors.guessMethodRequiresUrl)
+  })
+
+  it('should throw error when platform method in object format without url', () => {
+    const value = {
+      url: '',
+      content: '<html></html>',
+    }
+    const throwing = () => normalizeMethodsConfig(value, { platform: true }, defaults)
+
+    expect(throwing).toThrow(locales.errors.platformMethodRequiresUrl)
   })
 
   it('should throw error when html method in object format without content', () => {

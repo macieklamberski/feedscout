@@ -1,6 +1,7 @@
 import type { GuessMethodOptions } from './uris/guess/types.js'
 import type { HeadersMethodOptions } from './uris/headers/types.js'
 import type { HtmlMethodOptions } from './uris/html/types.js'
+import type { PlatformMethodOptions } from './uris/platform/types.js'
 
 export type LinkSelector = {
   rel: string
@@ -65,8 +66,9 @@ export type DiscoverInput = string | DiscoverInputObject
 
 // User-facing config - partial options (users override only what they need).
 export type DiscoverMethodsConfig =
-  | Array<'html' | 'headers' | 'guess'>
+  | Array<'platform' | 'html' | 'headers' | 'guess'>
   | {
+      platform?: true | Partial<PlatformMethodOptions>
       html?: true | Partial<Omit<HtmlMethodOptions, 'baseUrl'>>
       headers?: true | Partial<Omit<HeadersMethodOptions, 'baseUrl'>>
       guess?: true | Partial<Omit<GuessMethodOptions, 'baseUrl'>>
@@ -74,6 +76,7 @@ export type DiscoverMethodsConfig =
 
 // Defaults for method options (without baseUrl which comes from input).
 export type DiscoverMethodsConfigDefaults = {
+  platform: Omit<PlatformMethodOptions, 'baseUrl'>
   html: Omit<HtmlMethodOptions, 'baseUrl'>
   headers: Omit<HeadersMethodOptions, 'baseUrl'>
   guess: Omit<GuessMethodOptions, 'baseUrl'>
@@ -81,6 +84,10 @@ export type DiscoverMethodsConfigDefaults = {
 
 // Internal methods config with full options and input data.
 export type DiscoverMethodsConfigInternal = {
+  platform?: {
+    html: string
+    options: PlatformMethodOptions
+  }
   html?: {
     html: string
     options: HtmlMethodOptions
