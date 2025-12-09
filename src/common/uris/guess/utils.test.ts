@@ -283,4 +283,11 @@ describe('getSubdomainVariants', () => {
 
     expect(getSubdomainVariants(value, ['blog'])).toEqual(expected)
   })
+
+  it('should return empty array for localhost with port', () => {
+    const value = 'http://localhost:3000'
+    const expected: Array<string> = []
+
+    expect(getSubdomainVariants(value, ['blog'])).toEqual(expected)
+  })
 })
