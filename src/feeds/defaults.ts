@@ -6,6 +6,7 @@ import type { PlatformMethodOptions } from '../common/uris/platform/types.js'
 import { blogspotHandler } from './platform/handlers/blogspot.js'
 import { blueskyHandler } from './platform/handlers/bluesky.js'
 import { githubHandler } from './platform/handlers/github.js'
+import { gitlabHandler } from './platform/handlers/gitlab.js'
 import { kickstarterHandler } from './platform/handlers/kickstarter.js'
 import { redditHandler } from './platform/handlers/reddit.js'
 import { substackHandler } from './platform/handlers/substack.js'
@@ -101,6 +102,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     blogspotHandler,
     blueskyHandler,
     githubHandler,
+    gitlabHandler,
     kickstarterHandler,
     redditHandler,
     substackHandler,
