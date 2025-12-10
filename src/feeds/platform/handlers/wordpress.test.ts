@@ -21,6 +21,7 @@ describe('wordpressHandler', () => {
       const expected = [
         'https://example.wordpress.com/feed/',
         'https://example.wordpress.com/feed/atom/',
+        'https://example.wordpress.com/comments/feed/',
       ]
 
       expect(wordpressHandler.resolve(value)).toEqual(expected)
@@ -28,7 +29,11 @@ describe('wordpressHandler', () => {
 
     it('should return feed URLs regardless of path', () => {
       const value = 'https://blog.wordpress.com/2024/01/01/some-post/'
-      const expected = ['https://blog.wordpress.com/feed/', 'https://blog.wordpress.com/feed/atom/']
+      const expected = [
+        'https://blog.wordpress.com/feed/',
+        'https://blog.wordpress.com/feed/atom/',
+        'https://blog.wordpress.com/comments/feed/',
+      ]
 
       expect(wordpressHandler.resolve(value)).toEqual(expected)
     })
