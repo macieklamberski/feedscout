@@ -34,5 +34,9 @@ describe('kickstarterHandler', () => {
 
       expect(kickstarterHandler.resolve(value)).toEqual(expected)
     })
+
+    it('should return empty array for non-project pages', () => {
+      expect(kickstarterHandler.resolve('https://www.kickstarter.com/discover')).toEqual([])
+    })
   })
 })
