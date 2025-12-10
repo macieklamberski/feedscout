@@ -75,6 +75,15 @@ describe('deviantartHandler', () => {
       expect(deviantartHandler.resolve('https://www.deviantart.com/developers')).toEqual([])
     })
 
+    it('should return empty array for excluded paths in gallery folder format', () => {
+      expect(deviantartHandler.resolve('https://www.deviantart.com/about/gallery/12345')).toEqual(
+        [],
+      )
+      expect(
+        deviantartHandler.resolve('https://www.deviantart.com/search/gallery/67890/folder'),
+      ).toEqual([])
+    })
+
     it('should return empty array for root path', () => {
       const value = 'https://www.deviantart.com/'
       const expected: Array<string> = []
