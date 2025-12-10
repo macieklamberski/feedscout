@@ -2,6 +2,7 @@ import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { isHostOf } from '../../../common/utils.js'
 
 const hosts = ['soundcloud.com', 'www.soundcloud.com', 'm.soundcloud.com']
+const excludedPaths = ['discover', 'stream', 'search', 'upload', 'you', 'settings', 'messages']
 
 const extractUserIdFromContent = (content: string): string | undefined => {
   const match = content.match(/soundcloud:\/\/users:(\d+)/)
@@ -17,10 +18,6 @@ export const soundcloudHandler: PlatformHandler = {
 
     const { pathname } = new URL(url)
     const pathSegments = pathname.split('/').filter(Boolean)
-
-    // Match user profile pages: soundcloud.com/{user}
-    // Exclude system paths like /discover, /stream, /search, etc.
-    const excludedPaths = ['discover', 'stream', 'search', 'upload', 'you', 'settings', 'messages']
 
     return pathSegments.length >= 1 && !excludedPaths.includes(pathSegments[0])
   },
