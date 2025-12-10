@@ -91,6 +91,16 @@ Discovers Atom feeds for Kickstarter project updates.
 |-------------|-----------------|
 | `kickstarter.com/projects/{creator}/{project}` | Project updates feed |
 
+### SoundCloud
+
+Discovers RSS feeds for SoundCloud user profiles.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `soundcloud.com/{user}` | User sounds feed* |
+
+\* *Requires HTML content to extract user ID.*
+
 ### Substack
 
 Discovers RSS feeds for Substack newsletters.
@@ -159,6 +169,7 @@ import {
   gitlabHandler,
   kickstarterHandler,
   redditHandler,
+  soundcloudHandler,
   substackHandler,
   tumblrHandler,
   youtubeHandler,
