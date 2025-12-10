@@ -9,6 +9,6 @@ export const wordpressHandler: PlatformHandler = {
   resolve: (url) => {
     const { origin } = new URL(url)
 
-    return [`${origin}/feed/`]
+    return [`${origin}/feed/`, `${origin}/feed/atom/`]
   },
 }
