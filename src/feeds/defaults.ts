@@ -8,6 +8,7 @@ import { githubHandler } from './platform/handlers/github.js'
 import { redditHandler } from './platform/handlers/reddit.js'
 import { substackHandler } from './platform/handlers/substack.js'
 import { tumblrHandler } from './platform/handlers/tumblr.js'
+import { wordpressHandler } from './platform/handlers/wordpress.js'
 import { youtubeHandler } from './platform/handlers/youtube.js'
 
 export const mimeTypes = [
@@ -100,6 +101,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     redditHandler,
     substackHandler,
     tumblrHandler,
+    wordpressHandler,
     youtubeHandler,
   ],
 }
