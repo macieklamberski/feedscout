@@ -4,6 +4,7 @@ import type { HeadersMethodOptions } from '../common/uris/headers/types.js'
 import type { HtmlMethodOptions } from '../common/uris/html/types.js'
 import type { PlatformMethodOptions } from '../common/uris/platform/types.js'
 import { blogspotHandler } from './platform/handlers/blogspot.js'
+import { blueskyHandler } from './platform/handlers/bluesky.js'
 import { githubHandler } from './platform/handlers/github.js'
 import { redditHandler } from './platform/handlers/reddit.js'
 import { substackHandler } from './platform/handlers/substack.js'
@@ -97,6 +98,7 @@ export const defaultGuessOptions: Omit<GuessMethodOptions, 'baseUrl'> = {
 export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
   handlers: [
     blogspotHandler,
+    blueskyHandler,
     githubHandler,
     redditHandler,
     substackHandler,

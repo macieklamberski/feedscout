@@ -64,6 +64,14 @@ Discovers RSS and Atom feeds for Blogspot blogs.
 |-------------|-----------------|
 | `*.blogspot.com` | Posts feed (Atom + RSS) |
 
+### Bluesky
+
+Discovers RSS feeds for Bluesky profiles.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `bsky.app/profile/{handle}` | Profile posts feed |
+
 ### Substack
 
 Discovers RSS feeds for Substack newsletters.
@@ -127,6 +135,7 @@ Or import individual handlers:
 ```typescript
 import {
   blogspotHandler,
+  blueskyHandler,
   githubHandler,
   redditHandler,
   substackHandler,
