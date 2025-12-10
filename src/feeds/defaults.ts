@@ -9,6 +9,7 @@ import { githubHandler } from './platform/handlers/github.js'
 import { gitlabHandler } from './platform/handlers/gitlab.js'
 import { kickstarterHandler } from './platform/handlers/kickstarter.js'
 import { redditHandler } from './platform/handlers/reddit.js'
+import { soundcloudHandler } from './platform/handlers/soundcloud.js'
 import { substackHandler } from './platform/handlers/substack.js'
 import { tumblrHandler } from './platform/handlers/tumblr.js'
 import { wordpressHandler } from './platform/handlers/wordpress.js'
@@ -105,6 +106,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     gitlabHandler,
     kickstarterHandler,
     redditHandler,
+    soundcloudHandler,
     substackHandler,
     tumblrHandler,
     wordpressHandler,
