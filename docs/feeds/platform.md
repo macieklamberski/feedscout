@@ -16,6 +16,9 @@ The Platform method uses handlers for each supported platform:
 2. **URL Generation** — The matching handler generates feed URLs based on the URL structure.
 3. **First Match** — The first matching handler wins; subsequent handlers are skipped.
 
+> [!TIP]
+> Even when feeds are discoverable via HTML `<link>` tags, the Platform method is useful because it generates feed URLs directly from the page URL—no HTTP request needed. This makes it faster when you only have a URL and want to avoid fetching the page content first.
+
 ## Supported Platforms
 
 ### GitHub
