@@ -4,7 +4,9 @@ import {
   endsWithAnyOf,
   includesAnyOf,
   isAnyOf,
+  isHostOf,
   isOfAllowedMimeType,
+  isSubdomainOf,
   matchesAnyOfLinkSelectors,
   normalizeMimeType,
   normalizeUrl,
@@ -101,6 +103,82 @@ describe('normalizeMimeType', () => {
     const expected = 'application/atom+xml'
 
     expect(normalizeMimeType(value)).toBe(expected)
+  })
+})
+
+describe('isSubdomainOf', () => {
+  it('should return true for subdomain of domain', () => {
+    const value = 'https://example.blogspot.com'
+
+    expect(isSubdomainOf(value, 'blogspot.com')).toBe(true)
+  })
+
+  it('should return true for nested subdomain', () => {
+    const value = 'https://blog.example.blogspot.com'
+
+    expect(isSubdomainOf(value, 'blogspot.com')).toBe(true)
+  })
+
+  it('should return false for exact domain match', () => {
+    const value = 'https://blogspot.com'
+
+    expect(isSubdomainOf(value, 'blogspot.com')).toBe(false)
+  })
+
+  it('should return false for unrelated domain', () => {
+    const value = 'https://example.com'
+
+    expect(isSubdomainOf(value, 'blogspot.com')).toBe(false)
+  })
+
+  it('should handle case-insensitive matching', () => {
+    const value = 'https://EXAMPLE.BLOGSPOT.COM'
+
+    expect(isSubdomainOf(value, 'blogspot.com')).toBe(true)
+  })
+
+  it('should return false for partial domain match', () => {
+    const value = 'https://fakeblogspot.com'
+
+    expect(isSubdomainOf(value, 'blogspot.com')).toBe(false)
+  })
+})
+
+describe('isHostOf', () => {
+  it('should return true when hostname matches one of hosts', () => {
+    const value = 'https://github.com/owner/repo'
+
+    expect(isHostOf(value, ['github.com', 'www.github.com'])).toBe(true)
+  })
+
+  it('should return true for www subdomain match', () => {
+    const value = 'https://www.github.com/owner/repo'
+
+    expect(isHostOf(value, ['github.com', 'www.github.com'])).toBe(true)
+  })
+
+  it('should return false when hostname does not match any host', () => {
+    const value = 'https://gitlab.com/owner/repo'
+
+    expect(isHostOf(value, ['github.com', 'www.github.com'])).toBe(false)
+  })
+
+  it('should handle case-insensitive matching', () => {
+    const value = 'https://GITHUB.COM/owner/repo'
+
+    expect(isHostOf(value, ['github.com'])).toBe(true)
+  })
+
+  it('should return false for empty hosts array', () => {
+    const value = 'https://github.com/owner/repo'
+
+    expect(isHostOf(value, [])).toBe(false)
+  })
+
+  it('should return false for subdomain when only root domain in hosts', () => {
+    const value = 'https://api.github.com/users'
+
+    expect(isHostOf(value, ['github.com'])).toBe(false)
   })
 })
 
