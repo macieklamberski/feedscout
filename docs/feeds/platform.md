@@ -74,6 +74,15 @@ Discovers RSS feeds for Bluesky profiles.
 |-------------|-----------------|
 | `bsky.app/profile/{handle}` | Profile posts feed |
 
+### itch.io
+
+Discovers RSS feeds for itch.io creators and game devlogs.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `*.itch.io` | Creator feed |
+| `*.itch.io/{game}/devlog` | Game devlog feed |
+
 ### Substack
 
 Discovers RSS feeds for Substack newsletters.
@@ -139,6 +148,7 @@ import {
   blogspotHandler,
   blueskyHandler,
   githubHandler,
+  itchioHandler,
   redditHandler,
   substackHandler,
   tumblrHandler,
