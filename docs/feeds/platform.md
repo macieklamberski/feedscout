@@ -83,6 +83,14 @@ Discovers Atom feeds for GitLab users and repositories.
 | `gitlab.com/{user}` | User activity feed |
 | `gitlab.com/{user}/{repo}` | Repository activity feed |
 
+### Kickstarter
+
+Discovers Atom feeds for Kickstarter project updates.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `kickstarter.com/projects/{creator}/{project}` | Project updates feed |
+
 ### Substack
 
 Discovers RSS feeds for Substack newsletters.
@@ -149,6 +157,7 @@ import {
   blueskyHandler,
   githubHandler,
   gitlabHandler,
+  kickstarterHandler,
   redditHandler,
   substackHandler,
   tumblrHandler,
