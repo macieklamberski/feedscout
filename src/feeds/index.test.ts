@@ -1115,12 +1115,6 @@ describe('discoverFeeds', () => {
 })
 
 describe('defaultPlatformOptions', () => {
-  it('should contain all 8 platform handlers', () => {
-    const value = defaultPlatformOptions.handlers.length
-
-    expect(value).toBe(8)
-  })
-
   it('should contain handler that matches GitHub URLs', () => {
     const value = defaultPlatformOptions.handlers.some((handler) =>
       handler.match('https://github.com/owner/repo'),

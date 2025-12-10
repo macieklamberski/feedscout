@@ -74,6 +74,14 @@ Discovers RSS feeds for Bluesky profiles.
 |-------------|-----------------|
 | `bsky.app/profile/{handle}` | Profile posts feed |
 
+### Kickstarter
+
+Discovers Atom feeds for Kickstarter project updates.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `kickstarter.com/projects/{creator}/{project}` | Project updates feed |
+
 ### Substack
 
 Discovers RSS feeds for Substack newsletters.
@@ -139,6 +147,7 @@ import {
   blogspotHandler,
   blueskyHandler,
   githubHandler,
+  kickstarterHandler,
   redditHandler,
   substackHandler,
   tumblrHandler,
