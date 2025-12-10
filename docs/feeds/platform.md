@@ -56,6 +56,30 @@ Discovers Atom feeds for channels and playlists. Generates two feed variants for
 
 \* *Requires HTML content to extract channel ID.*
 
+### Blogspot
+
+Discovers RSS and Atom feeds for Blogspot blogs.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `*.blogspot.com` | Posts feed (Atom + RSS) |
+
+### Substack
+
+Discovers RSS feeds for Substack newsletters.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `*.substack.com` | Newsletter feed |
+
+### Tumblr
+
+Discovers RSS feeds for Tumblr blogs.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `*.tumblr.com` | Blog posts feed |
+
 ## Basic Usage
 
 ```typescript
@@ -79,11 +103,7 @@ const feeds = await discoverFeeds('https://github.com/feedstand/feedstand', {
 Handlers are checked in order. The first matching handler generates the feeds:
 
 ```typescript
-import {
-  githubHandler,
-  redditHandler,
-  youtubeHandler
-} from 'feedscout/platform'
+import { githubHandler, youtubeHandler } from 'feedscout/platform'
 
 const feeds = await discoverFeeds(url, {
   methods: {
@@ -106,9 +126,12 @@ Or import individual handlers:
 
 ```typescript
 import {
+  blogspotHandler,
   githubHandler,
   redditHandler,
-  youtubeHandler
+  substackHandler,
+  tumblrHandler,
+  youtubeHandler,
 } from 'feedscout/platform'
 ```
 
