@@ -74,6 +74,15 @@ Discovers RSS feeds for Bluesky profiles.
 |-------------|-----------------|
 | `bsky.app/profile/{handle}` | Profile posts feed |
 
+### GitLab
+
+Discovers Atom feeds for GitLab users and repositories.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `gitlab.com/{user}` | User activity feed |
+| `gitlab.com/{user}/{repo}` | Repository activity feed |
+
 ### Substack
 
 Discovers RSS feeds for Substack newsletters.
@@ -139,6 +148,7 @@ import {
   blogspotHandler,
   blueskyHandler,
   githubHandler,
+  gitlabHandler,
   redditHandler,
   substackHandler,
   tumblrHandler,
