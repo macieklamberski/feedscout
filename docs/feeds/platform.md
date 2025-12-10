@@ -1,5 +1,5 @@
 ---
-outline: 2
+outline: [2, 3]
 prev: Discover Feeds
 next: HTML Method
 ---
