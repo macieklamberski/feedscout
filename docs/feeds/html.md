@@ -1,5 +1,4 @@
 ---
-outline: 2
 prev: Platform Method
 next: Headers Method
 ---

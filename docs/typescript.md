@@ -1,5 +1,4 @@
 ---
-outline: 2
 prev: Quick Start
 next: Discover Feeds
 ---
