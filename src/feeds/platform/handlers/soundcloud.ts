@@ -25,7 +25,7 @@ export const soundcloudHandler: PlatformHandler = {
     return pathSegments.length >= 1 && !excludedPaths.includes(pathSegments[0])
   },
 
-  resolve: (url, content) => {
+  resolve: (_url, content) => {
     if (!content) {
       return []
     }
