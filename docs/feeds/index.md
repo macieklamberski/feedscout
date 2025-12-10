@@ -35,7 +35,7 @@ Each result contains feed metadata:
 
 | Method | Source |
 |--------|--------|
-| [Platform](/feeds/platform) | GitHub, Reddit, YouTube URL patterns |
+| [Platform](/feeds/platform) | Popular platform URL patterns |
 | [HTML](/feeds/html) | `<link>` and `<a>` elements |
 | [Headers](/feeds/headers) | HTTP `Link` headers |
 | [Guess](/feeds/guess) | Common feed paths |
