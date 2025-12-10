@@ -1,5 +1,4 @@
 ---
-outline: 2
 prev: URL Normalization
 next: discoverFeeds
 ---

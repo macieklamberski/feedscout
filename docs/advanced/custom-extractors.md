@@ -1,5 +1,4 @@
 ---
-outline: 2
 prev: HTTP Adapters
 next: URL Normalization
 ---

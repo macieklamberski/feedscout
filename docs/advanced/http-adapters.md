@@ -1,5 +1,4 @@
 ---
-outline: 2
 prev: Hubs
 next: Custom Extractors
 ---

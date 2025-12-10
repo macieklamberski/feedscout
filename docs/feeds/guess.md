@@ -1,5 +1,4 @@
 ---
-outline: 2
 prev: Headers Method
 next: Discover More
 ---

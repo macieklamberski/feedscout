@@ -1,5 +1,4 @@
 ---
-outline: 2
 prev: HTML Method
 next: Guess Method
 ---

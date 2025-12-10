@@ -1,5 +1,4 @@
 ---
-outline: 2
 prev: Guess Method
 next: Discover WebSub Hubs
 ---

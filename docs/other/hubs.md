@@ -1,5 +1,4 @@
 ---
-outline: 2
 prev: Discover Blogrolls
 next: HTTP Adapters
 ---

@@ -1,5 +1,4 @@
 ---
-outline: 2
 prev: TypeScript
 next: Platform Method
 ---
