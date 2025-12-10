@@ -3,8 +3,11 @@ import type { GuessMethodOptions } from '../common/uris/guess/types.js'
 import type { HeadersMethodOptions } from '../common/uris/headers/types.js'
 import type { HtmlMethodOptions } from '../common/uris/html/types.js'
 import type { PlatformMethodOptions } from '../common/uris/platform/types.js'
+import { blogspotHandler } from './platform/handlers/blogspot.js'
 import { githubHandler } from './platform/handlers/github.js'
 import { redditHandler } from './platform/handlers/reddit.js'
+import { substackHandler } from './platform/handlers/substack.js'
+import { tumblrHandler } from './platform/handlers/tumblr.js'
 import { youtubeHandler } from './platform/handlers/youtube.js'
 
 export const mimeTypes = [
@@ -91,5 +94,12 @@ export const defaultGuessOptions: Omit<GuessMethodOptions, 'baseUrl'> = {
 
 // Default options for Platform method.
 export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
-  handlers: [githubHandler, redditHandler, youtubeHandler],
+  handlers: [
+    blogspotHandler,
+    githubHandler,
+    redditHandler,
+    substackHandler,
+    tumblrHandler,
+    youtubeHandler,
+  ],
 }
