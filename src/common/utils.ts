@@ -2,6 +2,14 @@ export const normalizeMimeType = (type: string): string => {
   return type.split(';')[0].trim().toLowerCase()
 }
 
+export const isSubdomainOf = (url: string, domain: string): boolean => {
+  return new URL(url).hostname.toLowerCase().endsWith(`.${domain}`)
+}
+
+export const isHostOf = (url: string, hosts: Array<string>): boolean => {
+  return isAnyOf(new URL(url).hostname, hosts)
+}
+
 export const includesAnyOf = (
   value: string,
   patterns: Array<string>,

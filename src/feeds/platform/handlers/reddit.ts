@@ -1,5 +1,5 @@
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
-import { isAnyOf } from '../../../common/utils.js'
+import { isAnyOf, isHostOf } from '../../../common/utils.js'
 
 const hosts = ['reddit.com', 'www.reddit.com', 'old.reddit.com', 'new.reddit.com']
 const sortOptions = ['hot', 'new', 'rising', 'controversial', 'top']
@@ -10,7 +10,7 @@ const sortOptions = ['hot', 'new', 'rising', 'controversial', 'top']
 
 export const redditHandler: PlatformHandler = {
   match: (url) => {
-    return isAnyOf(new URL(url).hostname, hosts)
+    return isHostOf(url, hosts)
   },
 
   resolve: (url) => {
