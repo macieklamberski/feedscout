@@ -98,7 +98,7 @@
     "docs:preview": "vitepress preview docs"
   },
   "dependencies": {
-    "feedsmith": "^2.7.0",
+    "feedsmith": "^2.8.0",
     "htmlparser2": "^10.0.0"
   },
   "devDependencies": {
