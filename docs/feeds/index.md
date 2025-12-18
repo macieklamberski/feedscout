@@ -12,10 +12,10 @@ Feedscout discovers RSS, Atom, JSON Feed, and RDF feeds from webpages using four
 ```typescript
 import { discoverFeeds } from 'feedscout'
 
-const feeds = await discoverFeeds('https://example.com', {
-  methods: ['platform', 'html', 'headers', 'guess'],
-})
+const feeds = await discoverFeeds('https://example.com')
 ```
+
+By default, all discovery methods are used (platform, html, headers, guess).
 
 Each result contains feed metadata:
 

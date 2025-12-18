@@ -38,9 +38,7 @@ bun add feedscout
 ```typescript
 import { discoverFeeds } from 'feedscout'
 
-const feeds = await discoverFeeds('https://example.com', {
-  methods: ['html', 'headers'],
-})
+const feeds = await discoverFeeds('https://example.com')
 
 // [{
 //   url: 'https://example.com/feed.xml',
@@ -50,6 +48,14 @@ const feeds = await discoverFeeds('https://example.com', {
 //   description: 'A blog about examples',
 //   siteUrl: 'https://example.com',
 // }]
+```
+
+By default, all discovery methods are used (platform, html, headers, guess). You can customize which methods to use:
+
+```typescript
+const feeds = await discoverFeeds('https://example.com', {
+  methods: ['html', 'headers'],
+})
 ```
 
 ### Discover Platform Feeds
@@ -137,9 +143,7 @@ const feeds = await discoverFeeds(
 ```typescript
 import { discoverBlogrolls } from 'feedscout'
 
-const blogrolls = await discoverBlogrolls('https://example.com', {
-  methods: ['html'],
-})
+const blogrolls = await discoverBlogrolls('https://example.com')
 
 // [{
 //   url: 'https://example.com/blogroll.opml',
@@ -148,7 +152,7 @@ const blogrolls = await discoverBlogrolls('https://example.com', {
 // }]
 ```
 
-The same existing content pattern works here — pass `{ url, content, headers }` to avoid extra fetches.
+By default, all discovery methods are used (html, headers, guess). The same existing content pattern works here — pass `{ url, content, headers }` to avoid extra fetches.
 
 ## Discover WebSub Hubs
 

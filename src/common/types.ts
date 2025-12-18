@@ -101,9 +101,9 @@ export type DiscoverMethodsConfigInternal = {
   }
 }
 
-// User-facing options - optional fetchFn, extractFn, normalizeUrlFn.
+// User-facing options - all fields optional for simple usage.
 export type DiscoverOptions<TValid> = {
-  methods: DiscoverMethodsConfig
+  methods?: DiscoverMethodsConfig
   fetchFn?: DiscoverFetchFn
   extractFn?: DiscoverExtractFn<TValid>
   normalizeUrlFn?: DiscoverNormalizeUrlFn
