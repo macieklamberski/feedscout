@@ -39,11 +39,11 @@ type DiscoverInputObject = {
 
 ### DiscoverOptions
 
-Options for `discoverFeeds` and `discoverBlogrolls`:
+Options for `discoverFeeds` and `discoverBlogrolls`. All fields are optional for simple usage:
 
 ```typescript
 type DiscoverOptions<TValid> = {
-  methods: DiscoverMethodsConfig
+  methods?: DiscoverMethodsConfig
   fetchFn?: DiscoverFetchFn
   extractFn?: DiscoverExtractFn<TValid>
   normalizeUrlFn?: DiscoverNormalizeUrlFn
@@ -53,6 +53,10 @@ type DiscoverOptions<TValid> = {
   onProgress?: DiscoverProgressFn
 }
 ```
+
+When `methods` is not specified:
+- `discoverFeeds` uses: `['platform', 'html', 'headers', 'guess']`
+- `discoverBlogrolls` uses: `['html', 'headers', 'guess']`
 
 ### DiscoverMethodsConfig
 
