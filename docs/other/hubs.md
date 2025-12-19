@@ -1,6 +1,6 @@
 ---
 prev: Discover Blogrolls
-next: HTTP Adapters
+next: Custom HTTP Clients
 ---
 
 # Discover WebSub Hubs
@@ -155,17 +155,7 @@ const hubs = await discoverHubs(
 
 ## Custom Fetch Function
 
-Use a custom HTTP client:
-
-```typescript
-import { createAxiosAdapter } from 'feedscout/adapters'
-import axios from 'axios'
-
-const hubs = await discoverHubs(feedUrl, {
-  methods: ['headers', 'feed'],
-  fetchFn: createAxiosAdapter(axios),
-})
-```
+Use a custom HTTP client. See [Custom HTTP Clients](/advanced/http-clients) for examples with Axios, Got, Ky, and more.
 
 ## Specifications
 
