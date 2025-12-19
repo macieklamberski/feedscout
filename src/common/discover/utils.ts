@@ -8,6 +8,21 @@ import type {
   DiscoverMethodsConfigInternal,
 } from '../types.js'
 
+export const defaultFetchFn: DiscoverFetchFn = async (url, options) => {
+  const response = await fetch(url, {
+    method: options?.method ?? 'GET',
+    headers: options?.headers,
+  })
+
+  return {
+    headers: response.headers,
+    body: await response.text(),
+    url: response.url,
+    status: response.status,
+    statusText: response.statusText,
+  }
+}
+
 export const normalizeInput = async (
   input: DiscoverInput,
   fetchFn: DiscoverFetchFn,

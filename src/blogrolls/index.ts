@@ -1,5 +1,5 @@
-import { createNativeFetchAdapter } from '../common/discover/adapters.js'
 import { discover } from '../common/discover/index.js'
+import { defaultFetchFn } from '../common/discover/utils.js'
 import type { DiscoverInput, DiscoverOptions, DiscoverResult } from '../common/types.js'
 import { normalizeUrl } from '../common/utils.js'
 import { defaultGuessOptions, defaultHeadersOptions, defaultHtmlOptions } from './defaults.js'
@@ -15,7 +15,7 @@ export const discoverBlogrolls = async <TValid extends BlogrollResult = Blogroll
     {
       ...options,
       methods: options.methods ?? ['html', 'headers', 'guess'],
-      fetchFn: options.fetchFn ?? createNativeFetchAdapter(),
+      fetchFn: options.fetchFn ?? defaultFetchFn,
       extractFn: options.extractFn ?? defaultExtractor,
       normalizeUrlFn: options.normalizeUrlFn ?? normalizeUrl,
     },

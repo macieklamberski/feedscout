@@ -126,7 +126,6 @@ URL normalization happens before validation, so it works with all other options:
 const feeds = await discoverFeeds(url, {
   methods: ['html', 'guess'],
   normalizeUrlFn: customNormalize,
-  fetchFn: createAxiosAdapter(axios),
   extractFn: customExtractor,
   concurrency: 3,
 })

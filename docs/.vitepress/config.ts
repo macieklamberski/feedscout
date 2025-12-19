@@ -23,7 +23,7 @@ export default defineConfig({
     nav: [
       { text: 'Quick Start', link: '/quick-start' },
       { text: 'Discover Feeds', link: '/feeds/' },
-      { text: 'Advanced', link: '/advanced/http-adapters' },
+      { text: 'Advanced', link: '/advanced/http-clients' },
     ],
     sidebar: [
       {
@@ -60,7 +60,7 @@ export default defineConfig({
       {
         text: 'Advanced',
         items: [
-          { text: 'HTTP Adapters', link: '/advanced/http-adapters' },
+          { text: 'Custom HTTP Clients', link: '/advanced/http-clients' },
           { text: 'Custom Extractors', link: '/advanced/custom-extractors' },
           { text: 'URL Normalization', link: '/advanced/url-normalization' },
         ],
