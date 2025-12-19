@@ -68,8 +68,6 @@ const feeds = await discoverFeeds('https://example.com')
 // }]
 ```
 
-By default, all discovery methods are used (platform, html, headers, guess). You can customize which methods to use:
-
 ```typescript
 const feeds = await discoverFeeds('https://example.com', {
   methods: ['html', 'headers'],

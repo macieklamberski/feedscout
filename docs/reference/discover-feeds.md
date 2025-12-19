@@ -40,7 +40,7 @@ All options are optional. When not provided, sensible defaults are used.
 
 | Property | Type | Default | Description |
 |----------|------|---------|-------------|
-| `methods` | `DiscoverMethodsConfig` | all methods | Which methods to use |
+| `methods` | `DiscoverMethodsConfig` | `['platform', 'html', 'headers', 'guess']` | Which methods to use |
 | `fetchFn` | `DiscoverFetchFn` | native fetch | Custom fetch function |
 | `extractFn` | `DiscoverExtractFn` | feedsmith | Custom feed extraction function |
 | `normalizeUrlFn` | `DiscoverNormalizeUrlFn` | | Custom URL normalization function |
@@ -48,8 +48,6 @@ All options are optional. When not provided, sensible defaults are used.
 | `stopOnFirstResult` | `boolean` | `false` | Stop after first valid feed |
 | `includeInvalid` | `boolean` | `false` | Include invalid results |
 | `onProgress` | `DiscoverProgressFn` | | Progress callback |
-
-When `methods` is not specified, all discovery methods are used: `['platform', 'html', 'headers', 'guess']`.
 
 ## Return Value
 
