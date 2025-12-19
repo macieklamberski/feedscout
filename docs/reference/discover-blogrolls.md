@@ -40,7 +40,7 @@ All options are optional. When not provided, sensible defaults are used.
 
 | Property | Type | Default | Description |
 |----------|------|---------|-------------|
-| `methods` | `DiscoverMethodsConfig` | all methods | Which methods to use |
+| `methods` | `DiscoverMethodsConfig` | `['html', 'headers', 'guess']` | Which methods to use |
 | `fetchFn` | `DiscoverFetchFn` | native fetch | Custom fetch function |
 | `extractFn` | `DiscoverExtractFn` | feedsmith | Custom OPML extraction function |
 | `normalizeUrlFn` | `DiscoverNormalizeUrlFn` | | Custom URL normalization function |
@@ -48,8 +48,6 @@ All options are optional. When not provided, sensible defaults are used.
 | `stopOnFirstResult` | `boolean` | `false` | Stop after first valid blogroll |
 | `includeInvalid` | `boolean` | `false` | Include invalid results |
 | `onProgress` | `DiscoverProgressFn` | | Progress callback |
-
-When `methods` is not specified, all discovery methods are used: `['html', 'headers', 'guess']`.
 
 ## Return Value
 
@@ -83,7 +81,7 @@ const blogrolls = await discoverBlogrolls('https://example.com')
 
 // Or specify which methods to use
 const blogrolls = await discoverBlogrolls('https://example.com', {
-  methods: ['html', 'headers', 'guess'],
+  methods: ['html', 'guess'],
 })
 ```
 

@@ -152,7 +152,9 @@ const blogrolls = await discoverBlogrolls('https://example.com')
 // }]
 ```
 
-By default, all discovery methods are used (html, headers, guess). The same existing content pattern works here — pass `{ url, content, headers }` to avoid extra fetches.
+### Using Existing Content
+
+The same [existing content pattern](#using-existing-content) works here — pass `{ url, content, headers }` to avoid extra fetches.
 
 ## Discover WebSub Hubs
 
@@ -167,7 +169,7 @@ const hubs = await discoverHubs('https://example.com/feed.xml')
 // }]
 ```
 
-The same existing content pattern works here — pass `{ url, content, headers }` to avoid extra fetches.
+The same [existing content pattern](#using-existing-content) works here — pass `{ url, content, headers }` to avoid extra fetches.
 
 ## Next Steps
 

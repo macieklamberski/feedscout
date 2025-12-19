@@ -54,10 +54,6 @@ type DiscoverOptions<TValid> = {
 }
 ```
 
-When `methods` is not specified:
-- `discoverFeeds` uses: `['platform', 'html', 'headers', 'guess']`
-- `discoverBlogrolls` uses: `['html', 'headers', 'guess']`
-
 ### DiscoverMethodsConfig
 
 Configuration for discovery methods:
