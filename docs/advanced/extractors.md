@@ -1,5 +1,5 @@
 ---
-prev: HTTP Adapters
+prev: Custom HTTP Clients
 next: URL Normalization
 ---
 

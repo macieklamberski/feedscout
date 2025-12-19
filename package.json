@@ -65,16 +65,6 @@
         "default": "./dist/hubs.cjs"
       }
     },
-    "./adapters": {
-      "import": {
-        "types": "./dist/adapters.d.ts",
-        "default": "./dist/adapters.js"
-      },
-      "require": {
-        "types": "./dist/adapters.d.cts",
-        "default": "./dist/adapters.cjs"
-      }
-    },
     "./methods": {
       "import": {
         "types": "./dist/methods.d.ts",
@@ -92,7 +82,7 @@
   ],
   "scripts": {
     "prepare": "lefthook install",
-    "build": "tsdown src/exports/index.ts src/exports/feeds.ts src/exports/blogrolls.ts src/exports/hubs.ts src/exports/adapters.ts src/exports/methods.ts --format cjs,esm --dts --clean --unbundle --no-fixed-extension",
+    "build": "tsdown src/exports/index.ts src/exports/feeds.ts src/exports/blogrolls.ts src/exports/hubs.ts src/exports/methods.ts --format cjs,esm --dts --clean --unbundle --no-fixed-extension",
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",
     "docs:preview": "vitepress preview docs"

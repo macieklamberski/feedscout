@@ -35,17 +35,6 @@ Import from `feedscout/methods`:
 | `getSubdomainVariants` | Generate subdomain variants of a URL |
 | `generateUrlCombinations` | Combine base URLs with URI paths |
 
-## Adapter Functions
-
-Import from `feedscout/adapters`:
-
-| Function | Description |
-|----------|-------------|
-| `createNativeFetchAdapter` | Adapter for native `fetch` |
-| `createAxiosAdapter` | Adapter for Axios |
-| `createGotAdapter` | Adapter for Got |
-| `createKyAdapter` | Adapter for Ky |
-
 ## Export Paths
 
 Feedscout uses multiple export paths for tree-shaking:
@@ -62,9 +51,6 @@ import { urisBalanced } from 'feedscout/blogrolls'
 
 // Hub-specific types
 import type { HubResult, DiscoverHubsOptions } from 'feedscout/hubs'
-
-// HTTP adapters
-import { createAxiosAdapter } from 'feedscout/adapters'
 
 // Discovery method functions
 import { discoverUrisFromHtml } from 'feedscout/methods'

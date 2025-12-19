@@ -132,14 +132,19 @@ const feeds = await discoverFeeds('https://example.com', {
 })
 ```
 
-### With Custom Adapter
+### With Custom HTTP Client
 
 ```typescript
-import axios from 'axios'
-import { createAxiosAdapter } from 'feedscout/adapters'
+import type { DiscoverFetchFn } from 'feedscout'
+
+const myCustomFetch: DiscoverFetchFn = async (url, options) => {
+  // Handle the request and return response here.
+}
 
 const feeds = await discoverFeeds('https://example.com', {
   methods: ['html', 'guess'],
-  fetchFn: createAxiosAdapter(axios),
+  fetchFn: myCustomFetch,
 })
 ```
+
+See [Custom HTTP Clients](/advanced/http-clients) for examples with Axios, Got, Ky, and more.
