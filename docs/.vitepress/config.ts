@@ -61,7 +61,7 @@ export default defineConfig({
         text: 'Advanced',
         items: [
           { text: 'Custom HTTP Clients', link: '/advanced/http-clients' },
-          { text: 'Custom Extractors', link: '/advanced/custom-extractors' },
+          { text: 'Custom Extractors', link: '/advanced/extractors' },
           { text: 'URL Normalization', link: '/advanced/url-normalization' },
         ],
       },
