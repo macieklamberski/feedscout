@@ -22,6 +22,34 @@ const createMockFetch = (responses: Record<string, string>): DiscoverFetchFn => 
 }
 
 describe('discoverFeeds', () => {
+  it('should use all methods by default when options not provided', async () => {
+    const rss = `
+      <rss version="2.0">
+        <channel>
+          <title>Test RSS</title>
+          <link>https://example.com</link>
+          <description>Test feed</description>
+        </channel>
+      </rss>
+    `
+    const mockFetch = createMockFetch({
+      'https://example.com/feed': rss,
+    })
+    const value = await discoverFeeds('https://example.com', { fetchFn: mockFetch })
+    const expected: Array<DiscoverResult<FeedResult>> = [
+      {
+        url: 'https://example.com/feed',
+        isValid: true,
+        format: 'rss',
+        title: 'Test RSS',
+        description: 'Test feed',
+        siteUrl: 'https://example.com',
+      },
+    ]
+
+    expect(value).toEqual(expected)
+  })
+
   it('should find valid feeds using guess method with default URIs', async () => {
     const rss = `
       <rss version="2.0">

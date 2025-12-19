@@ -8,12 +8,13 @@ import type { BlogrollResult } from './types.js'
 
 export const discoverBlogrolls = async <TValid extends BlogrollResult = BlogrollResult>(
   input: DiscoverInput,
-  options: DiscoverOptions<TValid>,
+  options: DiscoverOptions<TValid> = {},
 ): Promise<Array<DiscoverResult<TValid>>> => {
   return discover<TValid>(
     input,
     {
       ...options,
+      methods: options.methods ?? ['html', 'headers', 'guess'],
       fetchFn: options.fetchFn ?? createNativeFetchAdapter(),
       extractFn: options.extractFn ?? defaultExtractor,
       normalizeUrlFn: options.normalizeUrlFn ?? normalizeUrl,

@@ -25,8 +25,14 @@ Use `discoverBlogrolls()` to find OPML files:
 ```typescript
 import { discoverBlogrolls } from 'feedscout'
 
+const blogrolls = await discoverBlogrolls('https://example.com')
+```
+
+By default, all discovery methods are used (html, headers, guess). You can customize which methods to use:
+
+```typescript
 const blogrolls = await discoverBlogrolls('https://example.com', {
-  methods: ['html', 'headers', 'guess'],
+  methods: ['html', 'headers'],
 })
 ```
 

@@ -39,11 +39,11 @@ type DiscoverInputObject = {
 
 ### DiscoverOptions
 
-Options for `discoverFeeds` and `discoverBlogrolls`:
+Options for `discoverFeeds` and `discoverBlogrolls`. All fields are optional for simple usage:
 
 ```typescript
 type DiscoverOptions<TValid> = {
-  methods: DiscoverMethodsConfig
+  methods?: DiscoverMethodsConfig
   fetchFn?: DiscoverFetchFn
   extractFn?: DiscoverExtractFn<TValid>
   normalizeUrlFn?: DiscoverNormalizeUrlFn
