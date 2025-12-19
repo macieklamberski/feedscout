@@ -1,4 +1,4 @@
-import { createNativeFetchAdapter } from '../../common/discover/adapters.js'
+import { defaultFetchFn } from '../../common/discover/utils.js'
 import type { DiscoverInput } from '../../common/types.js'
 import { discoverHubsFromFeed } from '../feed/index.js'
 import { discoverHubsFromHeaders } from '../headers/index.js'
@@ -10,7 +10,7 @@ export const discoverHubs = async (
   input: DiscoverInput,
   options: DiscoverHubsOptions = {},
 ): Promise<Array<HubResult>> => {
-  const { methods = ['headers', 'feed', 'html'], fetchFn = createNativeFetchAdapter() } = options
+  const { methods = ['headers', 'feed', 'html'], fetchFn = defaultFetchFn } = options
 
   const normalizedInput = await normalizeInput(input, fetchFn)
   const results: Array<HubResult> = []
