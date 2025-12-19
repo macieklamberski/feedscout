@@ -1,6 +1,6 @@
 ---
 prev: Discover Blogrolls
-next: HTTP Adapters
+next: Custom HTTP Clients
 ---
 
 # Discover WebSub Hubs
