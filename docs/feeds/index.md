@@ -12,9 +12,7 @@ Feedscout discovers RSS, Atom, JSON Feed, and RDF feeds from webpages using four
 ```typescript
 import { discoverFeeds } from 'feedscout'
 
-const feeds = await discoverFeeds('https://example.com', {
-  methods: ['platform', 'html', 'headers', 'guess'],
-})
+const feeds = await discoverFeeds('https://example.com')
 ```
 
 Each result contains feed metadata:
@@ -47,6 +45,8 @@ Each result contains feed metadata:
 4. **Results** — Valid feeds are returned with metadata (format, title, etc.).
 
 ## Specifying Methods
+
+By default, all discovery methods are used (platform, html, headers, guess). You can customize which methods to use with `methods` option.
 
 ### Array Syntax
 

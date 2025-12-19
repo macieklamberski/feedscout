@@ -12,7 +12,7 @@ Discovers and validates feeds from a webpage.
 ```typescript
 function discoverFeeds(
   input: DiscoverInput,
-  options: DiscoverOptions<FeedResult>,
+  options?: DiscoverOptions<FeedResult>,
 ): Promise<Array<DiscoverResult<FeedResult>>>
 ```
 
@@ -36,9 +36,11 @@ discoverFeeds({
 
 ### options
 
+All options are optional. When not provided, sensible defaults are used.
+
 | Property | Type | Default | Description |
 |----------|------|---------|-------------|
-| `methods` | `DiscoverMethodsConfig` | | **Required.** Which methods to use |
+| `methods` | `DiscoverMethodsConfig` | `['platform', 'html', 'headers', 'guess']` | Which methods to use |
 | `fetchFn` | `DiscoverFetchFn` | native fetch | Custom fetch function |
 | `extractFn` | `DiscoverExtractFn` | feedsmith | Custom feed extraction function |
 | `normalizeUrlFn` | `DiscoverNormalizeUrlFn` | | Custom URL normalization function |
@@ -77,6 +79,10 @@ Returns a promise that resolves to an array of results:
 ```typescript
 import { discoverFeeds } from 'feedscout'
 
+// Simple usage - all methods enabled by default
+const feeds = await discoverFeeds('https://example.com')
+
+// Or specify which methods to use
 const feeds = await discoverFeeds('https://example.com', {
   methods: ['html', 'headers', 'guess'],
 })

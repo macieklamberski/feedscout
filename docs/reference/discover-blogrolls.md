@@ -12,7 +12,7 @@ Discovers and validates OPML blogrolls from a webpage.
 ```typescript
 function discoverBlogrolls(
   input: DiscoverInput,
-  options: DiscoverOptions<BlogrollResult>,
+  options?: DiscoverOptions<BlogrollResult>,
 ): Promise<Array<DiscoverResult<BlogrollResult>>>
 ```
 
@@ -36,9 +36,11 @@ discoverBlogrolls({
 
 ### options
 
+All options are optional. When not provided, sensible defaults are used.
+
 | Property | Type | Default | Description |
 |----------|------|---------|-------------|
-| `methods` | `DiscoverMethodsConfig` | | **Required.** Which methods to use |
+| `methods` | `DiscoverMethodsConfig` | `['html', 'headers', 'guess']` | Which methods to use |
 | `fetchFn` | `DiscoverFetchFn` | native fetch | Custom fetch function |
 | `extractFn` | `DiscoverExtractFn` | feedsmith | Custom OPML extraction function |
 | `normalizeUrlFn` | `DiscoverNormalizeUrlFn` | | Custom URL normalization function |
@@ -74,8 +76,12 @@ Returns a promise that resolves to an array of results:
 ```typescript
 import { discoverBlogrolls } from 'feedscout'
 
+// Simple usage - all methods enabled by default
+const blogrolls = await discoverBlogrolls('https://example.com')
+
+// Or specify which methods to use
 const blogrolls = await discoverBlogrolls('https://example.com', {
-  methods: ['html', 'headers', 'guess'],
+  methods: ['html', 'guess'],
 })
 ```
 
