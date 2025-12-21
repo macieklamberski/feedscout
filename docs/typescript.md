@@ -141,9 +141,9 @@ const customFetch: DiscoverFetchFn = async (url, options) => {
 The progress callback receives `DiscoverProgress`:
 
 ```typescript
-import type { DiscoverProgressFn, DiscoverProgress } from 'feedscout'
+import type { DiscoverOnProgressFn, DiscoverProgress } from 'feedscout'
 
-const onProgress: DiscoverProgressFn = (progress: DiscoverProgress) => {
+const onProgress: DiscoverOnProgressFn = (progress: DiscoverProgress) => {
   console.log(`${progress.tested}/${progress.total}`)
 }
 ```

@@ -47,7 +47,7 @@ All options are optional. When not provided, sensible defaults are used.
 | `concurrency` | `number` | `3` | Max parallel validations |
 | `stopOnFirstResult` | `boolean` | `false` | Stop after first valid feed |
 | `includeInvalid` | `boolean` | `false` | Include invalid results |
-| `onProgress` | `DiscoverProgressFn` | | Progress callback |
+| `onProgress` | `DiscoverOnProgressFn` | | Progress callback |
 
 ## Return Value
 
