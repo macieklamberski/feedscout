@@ -50,7 +50,7 @@ type DiscoverOptions<TValid> = {
   concurrency?: number
   stopOnFirstResult?: boolean
   includeInvalid?: boolean
-  onProgress?: DiscoverProgressFn
+  onProgress?: DiscoverOnProgressFn
 }
 ```
 
@@ -144,12 +144,12 @@ type DiscoverProgress = {
 }
 ```
 
-### DiscoverProgressFn
+### DiscoverOnProgressFn
 
 Progress callback function type:
 
 ```typescript
-type DiscoverProgressFn = (progress: DiscoverProgress) => void
+type DiscoverOnProgressFn = (progress: DiscoverProgress) => void
 ```
 
 ## Fetch Types
