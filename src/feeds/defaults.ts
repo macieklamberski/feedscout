@@ -8,6 +8,7 @@ import { blueskyHandler } from './platform/handlers/bluesky.js'
 import { githubHandler } from './platform/handlers/github.js'
 import { gitlabHandler } from './platform/handlers/gitlab.js'
 import { kickstarterHandler } from './platform/handlers/kickstarter.js'
+import { producthuntHandler } from './platform/handlers/producthunt.js'
 import { redditHandler } from './platform/handlers/reddit.js'
 import { soundcloudHandler } from './platform/handlers/soundcloud.js'
 import { substackHandler } from './platform/handlers/substack.js'
@@ -105,6 +106,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     githubHandler,
     gitlabHandler,
     kickstarterHandler,
+    producthuntHandler,
     redditHandler,
     soundcloudHandler,
     substackHandler,
