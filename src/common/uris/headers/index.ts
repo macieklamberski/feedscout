@@ -1,6 +1,10 @@
 import { matchesAnyOfLinkSelectors } from '../../../common/utils.js'
 import type { HeadersMethodOptions } from './types.js'
 
+const urlRegex = /<([^<>]+)>/
+const relRegex = /rel\s*=\s*["']?([^"';,]+)["']?/i
+const typeRegex = /type\s*=\s*["']?([^"';,]+)["']?/i
+
 export const discoverUrisFromHeaders = (
   headers: Headers,
   options: HeadersMethodOptions,
@@ -19,9 +23,9 @@ export const discoverUrisFromHeaders = (
   for (const link of links) {
     // Parse URL from angle brackets: <URL>.
     // URLs in Link headers should not contain < or > (must be percent-encoded).
-    const urlMatch = link.match(/<([^<>]+)>/)
-    const relMatch = link.match(/rel\s*=\s*["']?([^"';,]+)["']?/i)
-    const typeMatch = link.match(/type\s*=\s*["']?([^"';,]+)["']?/i)
+    const urlMatch = link.match(urlRegex)
+    const relMatch = link.match(relRegex)
+    const typeMatch = link.match(typeRegex)
 
     if (!urlMatch) {
       continue
