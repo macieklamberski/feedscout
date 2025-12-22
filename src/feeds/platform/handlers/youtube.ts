@@ -2,9 +2,14 @@ import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { isHostOf } from '../../../common/utils.js'
 
 const hosts = ['youtube.com', 'www.youtube.com', 'm.youtube.com']
+const channelIdRegex = /"channelId":"(UC[a-zA-Z0-9_-]+)"/
+const channelPathRegex = /^\/channel\/(UC[a-zA-Z0-9_-]+)/
+const handlePathRegex = /^\/@([^/]+)/
+const userPathRegex = /^\/user\/([^/]+)/
+const customPathRegex = /^\/c\/([^/]+)/
 
 const extractChannelIdFromContent = (content: string): string | undefined => {
-  const match = content.match(/"channelId":"(UC[a-zA-Z0-9_-]+)"/)
+  const match = content.match(channelIdRegex)
 
   return match?.[1]
 }
@@ -25,7 +30,7 @@ export const youtubeHandler: PlatformHandler = {
     const uris: Array<string> = []
 
     // Direct channel ID: /channel/UC...
-    const channelMatch = parsedUrl.pathname.match(/^\/channel\/(UC[a-zA-Z0-9_-]+)/)
+    const channelMatch = parsedUrl.pathname.match(channelPathRegex)
 
     if (channelMatch?.[1]) {
       const channelId = channelMatch[1]
@@ -49,9 +54,9 @@ export const youtubeHandler: PlatformHandler = {
     // - Custom URL: /c/customname
     if (uris.length === 0 && content) {
       const needsContentParsing =
-        parsedUrl.pathname.match(/^\/@([^/]+)/) ||
-        parsedUrl.pathname.match(/^\/user\/([^/]+)/) ||
-        parsedUrl.pathname.match(/^\/c\/([^/]+)/)
+        parsedUrl.pathname.match(handlePathRegex) ||
+        parsedUrl.pathname.match(userPathRegex) ||
+        parsedUrl.pathname.match(customPathRegex)
 
       if (needsContentParsing) {
         const channelId = extractChannelIdFromContent(content)
