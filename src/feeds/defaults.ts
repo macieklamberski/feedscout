@@ -10,6 +10,7 @@ import { devtoHandler } from './platform/handlers/devto.js'
 import { githubHandler } from './platform/handlers/github.js'
 import { gitlabHandler } from './platform/handlers/gitlab.js'
 import { kickstarterHandler } from './platform/handlers/kickstarter.js'
+import { producthuntHandler } from './platform/handlers/producthunt.js'
 import { lobstersHandler } from './platform/handlers/lobsters.js'
 import { redditHandler } from './platform/handlers/reddit.js'
 import { soundcloudHandler } from './platform/handlers/soundcloud.js'
@@ -110,6 +111,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     githubHandler,
     gitlabHandler,
     kickstarterHandler,
+    producthuntHandler,
     lobstersHandler,
     redditHandler,
     soundcloudHandler,
