@@ -20,30 +20,6 @@ The Platform method uses handlers for each supported platform:
 
 ## Supported Platforms
 
-### GitHub
-
-Discovers Atom feeds for users, organizations, and repositories.
-
-| URL Pattern | Feeds Generated |
-|-------------|-----------------|
-| `github.com/{user}` | User activity feed |
-| `github.com/{owner}/{repo}` | Releases, commits, tags |
-| `github.com/{owner}/{repo}/wiki` | Wiki changes (+ above) |
-| `github.com/{owner}/{repo}/discussions` | Discussions (+ above) |
-| `github.com/{owner}/{repo}/tree/{branch}` | Branch commits (+ above) |
-
-### Reddit
-
-Discovers RSS feeds for subreddits, users, and domains.
-
-| URL Pattern | Feeds Generated |
-|-------------|-----------------|
-| `reddit.com/r/{subreddit}` | Subreddit posts + comments |
-| `reddit.com/r/{subreddit}/{sort}` | Sorted posts (hot/new/rising/top) |
-| `reddit.com/r/{subreddit}/comments/{id}` | Post comments |
-| `reddit.com/u/{username}` | User activity |
-| `reddit.com/domain/{domain}` | Domain submissions |
-
 ### YouTube
 
 Discovers Atom feeds for channels and playlists. Generates two feed variants for channels: all uploads and videos-only (excludes Shorts).
@@ -58,6 +34,44 @@ Discovers Atom feeds for channels and playlists. Generates two feed variants for
 
 \* *Requires HTML content to extract channel ID.*
 
+### Reddit
+
+Discovers RSS feeds for subreddits, users, and domains.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `reddit.com/r/{subreddit}` | Subreddit posts + comments |
+| `reddit.com/r/{subreddit}/{sort}` | Sorted posts (hot/new/rising/top) |
+| `reddit.com/r/{subreddit}/comments/{id}` | Post comments |
+| `reddit.com/u/{username}` | User activity |
+| `reddit.com/domain/{domain}` | Domain submissions |
+
+### Medium
+
+Discovers RSS feeds for Medium user profiles, publications, and subdomains.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `medium.com/@{username}` | User posts feed |
+| `medium.com/{publication}` | Publication feed |
+| `*.medium.com` | Subdomain publication feed |
+
+### Substack
+
+Discovers RSS feeds for Substack newsletters.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `*.substack.com` | Newsletter feed |
+
+### WordPress.com
+
+Discovers RSS and Atom feeds for WordPress.com blogs.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `*.wordpress.com` | Posts feed (RSS + Atom) + comments |
+
 ### Blogspot
 
 Discovers RSS and Atom feeds for Blogspot blogs.
@@ -66,13 +80,38 @@ Discovers RSS and Atom feeds for Blogspot blogs.
 |-------------|-----------------|
 | `*.blogspot.com` | Posts feed (Atom + RSS) |
 
-### Bluesky
+### DEV.to
 
-Discovers RSS feeds for Bluesky profiles.
+Discovers RSS feeds for DEV.to user profiles and tags.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `bsky.app/profile/{handle}` | Profile posts feed |
+| `dev.to/{username}` | User posts feed |
+| `dev.to/t/{tag}` | Tag posts feed |
+
+### Lobsters
+
+Discovers RSS feeds for Lobsters homepage, tags, and domains.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `lobste.rs` | Homepage feed |
+| `lobste.rs/newest` | Newest posts feed |
+| `lobste.rs/t/{tag}` | Tag feed |
+| `lobste.rs/t/{tag1},{tag2}` | Multi-tag feed |
+| `lobste.rs/domains/{domain}` | Domain feed |
+
+### GitHub
+
+Discovers Atom feeds for users, organizations, and repositories.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `github.com/{user}` | User activity feed |
+| `github.com/{owner}/{repo}` | Releases, commits, tags |
+| `github.com/{owner}/{repo}/wiki` | Wiki changes (+ above) |
+| `github.com/{owner}/{repo}/discussions` | Discussions (+ above) |
+| `github.com/{owner}/{repo}/tree/{branch}` | Branch commits (+ above) |
 
 ### GitLab
 
@@ -83,13 +122,39 @@ Discovers Atom feeds for GitLab users and repositories.
 | `gitlab.com/{user}` | User activity feed |
 | `gitlab.com/{user}/{repo}` | Repository activity feed |
 
-### Kickstarter
+### Product Hunt
 
-Discovers Atom feeds for Kickstarter project updates.
+Discovers RSS feeds for Product Hunt homepage, topics, and categories.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `kickstarter.com/projects/{creator}/{project}` | Project updates feed |
+| `producthunt.com` | Homepage feed |
+| `producthunt.com/topics/{topic}` | Topic feed |
+| `producthunt.com/categories/{category}` | Category feed |
+
+### Bluesky
+
+Discovers RSS feeds for Bluesky profiles.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `bsky.app/profile/{handle}` | Profile posts feed |
+
+### Tumblr
+
+Discovers RSS feeds for Tumblr blogs.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `*.tumblr.com` | Blog posts feed |
+
+### Behance
+
+Discovers RSS feeds for Behance user portfolios.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `behance.net/{username}` | User portfolio feed |
 
 ### SoundCloud
 
@@ -101,21 +166,13 @@ Discovers RSS feeds for SoundCloud user profiles.
 
 \* *Requires HTML content to extract user ID.*
 
-### Substack
+### Kickstarter
 
-Discovers RSS feeds for Substack newsletters.
-
-| URL Pattern | Feeds Generated |
-|-------------|-----------------|
-| `*.substack.com` | Newsletter feed |
-
-### Tumblr
-
-Discovers RSS feeds for Tumblr blogs.
+Discovers Atom feeds for Kickstarter project updates.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `*.tumblr.com` | Blog posts feed |
+| `kickstarter.com/projects/{creator}/{project}` | Project updates feed |
 
 ## Basic Usage
 
@@ -163,15 +220,21 @@ Or import individual handlers:
 
 ```typescript
 import {
+  behanceHandler,
   blogspotHandler,
   blueskyHandler,
+  devtoHandler,
   githubHandler,
   gitlabHandler,
   kickstarterHandler,
+  lobstersHandler,
+  mediumHandler,
+  producthuntHandler,
   redditHandler,
   soundcloudHandler,
   substackHandler,
   tumblrHandler,
+  wordpressHandler,
   youtubeHandler,
 } from 'feedscout/platform'
 ```
