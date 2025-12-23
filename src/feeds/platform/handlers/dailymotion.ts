@@ -3,10 +3,13 @@ import { isHostOf } from '../../../common/utils.js'
 
 const hosts = ['dailymotion.com', 'www.dailymotion.com']
 const userPathRegex = /^\/([a-zA-Z0-9_-]+)$/
-const playlistPathRegex = /^\/playlist\/([a-zA-Z0-9]+)/
+const playlistPathRegex = /^\/playlist\/([a-zA-Z0-9_-]+)/
 const excludedPaths = [
   'signin',
   'signout',
+  'signup',
+  'login',
+  'logout',
   'register',
   'search',
   'legal',
@@ -21,6 +24,26 @@ const excludedPaths = [
   'partner',
   'monetize',
   'studio',
+  'video',
+  'live',
+  'channels',
+  'playlist',
+  'topics',
+  'trending',
+  'dm',
+  'creator',
+  'premium',
+  'explore',
+  'following',
+  'subscriptions',
+  'notifications',
+  'history',
+  'watch',
+  'contact',
+  'ads',
+  'dmca',
+  'copyright',
+  'community',
 ]
 
 export const dailymotionHandler: PlatformHandler = {

@@ -32,6 +32,13 @@ describe('dailymotionHandler', () => {
       expect(dailymotionHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return RSS feed for playlist with underscores and dashes', () => {
+      const value = 'https://www.dailymotion.com/playlist/x7vjjm_BFM-Story_bfm-story'
+      const expected = ['https://www.dailymotion.com/rss/playlist/x7vjjm_BFM-Story_bfm-story']
+
+      expect(dailymotionHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should normalize username to lowercase', () => {
       const value = 'https://www.dailymotion.com/NASA'
       const expected = ['https://www.dailymotion.com/rss/user/nasa']
@@ -44,6 +51,10 @@ describe('dailymotionHandler', () => {
         'https://www.dailymotion.com/signin',
         'https://www.dailymotion.com/upload',
         'https://www.dailymotion.com/settings',
+        'https://www.dailymotion.com/video',
+        'https://www.dailymotion.com/login',
+        'https://www.dailymotion.com/live',
+        'https://www.dailymotion.com/trending',
       ]
 
       for (const value of values) {
