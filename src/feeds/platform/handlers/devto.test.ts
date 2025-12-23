@@ -50,6 +50,13 @@ describe('devtoHandler', () => {
       expect(devtoHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should handle trailing slash in user profile URL', () => {
+      const value = 'https://dev.to/thepracticaldev/'
+      const expected = ['https://dev.to/feed/thepracticaldev']
+
+      expect(devtoHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return empty array for paths with subpaths', () => {
       const value = 'https://dev.to/thepracticaldev/some-article'
 

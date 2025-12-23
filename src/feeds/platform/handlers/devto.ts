@@ -2,7 +2,7 @@ import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { isAnyOf, isHostOf } from '../../../common/utils.js'
 
 const hosts = ['dev.to', 'www.dev.to']
-const userPathRegex = /^\/([a-zA-Z0-9_]+)$/
+const userPathRegex = /^\/([a-zA-Z0-9_]+)\/?$/
 const tagPathRegex = /^\/t\/([^/]+)/
 const excludedPaths = [
   'tag',
