@@ -3,12 +3,17 @@ import type { GuessMethodOptions } from '../common/uris/guess/types.js'
 import type { HeadersMethodOptions } from '../common/uris/headers/types.js'
 import type { HtmlMethodOptions } from '../common/uris/html/types.js'
 import type { PlatformMethodOptions } from '../common/uris/platform/types.js'
+import { behanceHandler } from './platform/handlers/behance.js'
 import { blogspotHandler } from './platform/handlers/blogspot.js'
 import { blueskyHandler } from './platform/handlers/bluesky.js'
+import { devtoHandler } from './platform/handlers/devto.js'
 import { githubHandler } from './platform/handlers/github.js'
 import { gitlabHandler } from './platform/handlers/gitlab.js'
 import { kickstarterHandler } from './platform/handlers/kickstarter.js'
+import { lobstersHandler } from './platform/handlers/lobsters.js'
 import { mastodonHandler } from './platform/handlers/mastodon.js'
+import { mediumHandler } from './platform/handlers/medium.js'
+import { producthuntHandler } from './platform/handlers/producthunt.js'
 import { redditHandler } from './platform/handlers/reddit.js'
 import { soundcloudHandler } from './platform/handlers/soundcloud.js'
 import { substackHandler } from './platform/handlers/substack.js'
@@ -101,12 +106,17 @@ export const defaultGuessOptions: Omit<GuessMethodOptions, 'baseUrl'> = {
 // Default options for Platform method.
 export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
   handlers: [
+    behanceHandler,
     blogspotHandler,
     blueskyHandler,
+    devtoHandler,
     githubHandler,
     gitlabHandler,
     kickstarterHandler,
+    lobstersHandler,
     mastodonHandler,
+    mediumHandler,
+    producthuntHandler,
     redditHandler,
     soundcloudHandler,
     substackHandler,
