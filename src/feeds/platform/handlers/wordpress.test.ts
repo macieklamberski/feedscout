@@ -20,6 +20,8 @@ describe('wordpressHandler', () => {
       const value = 'https://example.wordpress.com'
       const expected = [
         'https://example.wordpress.com/feed/',
+        'https://example.wordpress.com/feed/rss2/',
+        'https://example.wordpress.com/feed/rdf/',
         'https://example.wordpress.com/feed/atom/',
         'https://example.wordpress.com/comments/feed/',
       ]
@@ -31,6 +33,8 @@ describe('wordpressHandler', () => {
       const value = 'https://blog.wordpress.com/2024/01/01/some-post/'
       const expected = [
         'https://blog.wordpress.com/feed/',
+        'https://blog.wordpress.com/feed/rss2/',
+        'https://blog.wordpress.com/feed/rdf/',
         'https://blog.wordpress.com/feed/atom/',
         'https://blog.wordpress.com/comments/feed/',
       ]
