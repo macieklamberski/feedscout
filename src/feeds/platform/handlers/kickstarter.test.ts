@@ -38,5 +38,19 @@ describe('kickstarterHandler', () => {
     it('should return empty array for non-project pages', () => {
       expect(kickstarterHandler.resolve('https://www.kickstarter.com/discover')).toEqual([])
     })
+
+    it('should handle URLs with query params', () => {
+      const value = 'https://www.kickstarter.com/projects/creator/project?ref=discovery'
+      const expected = ['https://www.kickstarter.com/projects/creator/project/posts.atom']
+
+      expect(kickstarterHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should handle URLs with trailing slashes', () => {
+      const value = 'https://www.kickstarter.com/projects/creator/project/'
+      const expected = ['https://www.kickstarter.com/projects/creator/project/posts.atom']
+
+      expect(kickstarterHandler.resolve(value)).toEqual(expected)
+    })
   })
 })
