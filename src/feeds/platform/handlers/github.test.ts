@@ -133,5 +133,29 @@ describe('githubHandler', () => {
 
       expect(githubHandler.resolve(value)).toEqual(expected)
     })
+
+    it('should include file-specific commits feed when viewing a file', () => {
+      const value = 'https://github.com/anthropics/sdk/blob/main/src/index.ts'
+      const expected = [
+        'https://github.com/anthropics/sdk/releases.atom',
+        'https://github.com/anthropics/sdk/commits.atom',
+        'https://github.com/anthropics/sdk/tags.atom',
+        'https://github.com/anthropics/sdk/commits/main/src/index.ts.atom',
+      ]
+
+      expect(githubHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should include file-specific commits feed when on file history page', () => {
+      const value = 'https://github.com/anthropics/sdk/commits/main/src/index.ts'
+      const expected = [
+        'https://github.com/anthropics/sdk/releases.atom',
+        'https://github.com/anthropics/sdk/commits.atom',
+        'https://github.com/anthropics/sdk/tags.atom',
+        'https://github.com/anthropics/sdk/commits/main/src/index.ts.atom',
+      ]
+
+      expect(githubHandler.resolve(value)).toEqual(expected)
+    })
   })
 })

@@ -94,12 +94,22 @@ export const githubHandler: PlatformHandler = {
     }
 
     // If on a specific branch, add branch-specific commits feed.
-    const branchMatch = pathname.match(/^\/[^/]+\/[^/]+\/tree\/([^/]+)/)
+    const branchMatch = pathname.match(/^\/[^/]+\/[^/]+\/tree\/([^/]+)\/?$/)
 
     if (branchMatch?.[1]) {
       const branch = branchMatch[1]
 
       uris.push(`https://github.com/${owner}/${repo}/commits/${branch}.atom`)
+    }
+
+    // If viewing a file (blob) or file history (commits), add file-specific commits feed.
+    const fileMatch = pathname.match(/^\/[^/]+\/[^/]+\/(?:blob|commits)\/([^/]+)\/(.+)/)
+
+    if (fileMatch?.[1] && fileMatch?.[2]) {
+      const branch = fileMatch[1]
+      const filePath = fileMatch[2]
+
+      uris.push(`https://github.com/${owner}/${repo}/commits/${branch}/${filePath}.atom`)
     }
 
     return uris
