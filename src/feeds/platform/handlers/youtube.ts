@@ -1,7 +1,7 @@
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { isHostOf } from '../../../common/utils.js'
 
-const hosts = ['youtube.com', 'www.youtube.com', 'm.youtube.com']
+const hosts = ['youtube.com', 'www.youtube.com', 'm.youtube.com', 'youtu.be', 'www.youtu.be']
 const channelIdRegex = /"channelId":"(UC[a-zA-Z0-9_-]+)"/
 const channelPathRegex = /^\/channel\/(UC[a-zA-Z0-9_-]+)/
 const handlePathRegex = /^\/@([^/]+)/

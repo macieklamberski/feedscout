@@ -7,6 +7,8 @@ describe('youtubeHandler', () => {
       ['https://youtube.com/@channel', true],
       ['https://www.youtube.com/@channel', true],
       ['https://m.youtube.com/@channel', true],
+      ['https://youtu.be/dQw4w9WgXcQ', true],
+      ['https://www.youtu.be/dQw4w9WgXcQ', true],
       ['https://vimeo.com/channel', false],
     ] as const
 
