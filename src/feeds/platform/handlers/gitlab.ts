@@ -1,7 +1,30 @@
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
-import { isHostOf } from '../../../common/utils.js'
+import { isAnyOf, isHostOf } from '../../../common/utils.js'
 
 const hosts = ['gitlab.com', 'www.gitlab.com']
+const excludedPaths = [
+  'explore',
+  'dashboard',
+  'projects',
+  'groups',
+  'search',
+  'admin',
+  'help',
+  'assets',
+  'users',
+  'api',
+  'jwt',
+  'oauth',
+  'profile',
+  'snippets',
+  'abuse_reports',
+  'invites',
+  'import',
+  'uploads',
+  'robots.txt',
+  'sitemap',
+  '-',
+]
 
 export const gitlabHandler: PlatformHandler = {
   match: (url) => {
@@ -16,7 +39,9 @@ export const gitlabHandler: PlatformHandler = {
     if (pathSegments.length === 1) {
       const user = pathSegments[0]
 
-      return [`${origin}/${user}.atom`]
+      if (!isAnyOf(user, excludedPaths)) {
+        return [`${origin}/${user}.atom`]
+      }
     }
 
     // Repo page: gitlab.com/{user}/{repo}
@@ -24,7 +49,9 @@ export const gitlabHandler: PlatformHandler = {
       const user = pathSegments[0]
       const repo = pathSegments[1]
 
-      return [`${origin}/${user}/${repo}.atom`]
+      if (!isAnyOf(user, excludedPaths)) {
+        return [`${origin}/${user}/${repo}.atom`]
+      }
     }
 
     return []

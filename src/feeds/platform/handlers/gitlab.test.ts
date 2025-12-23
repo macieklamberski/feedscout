@@ -44,5 +44,19 @@ describe('gitlabHandler', () => {
 
       expect(gitlabHandler.resolve(value)).toEqual(expected)
     })
+
+    it('should return empty array for excluded paths', () => {
+      const values = [
+        'https://gitlab.com/explore',
+        'https://gitlab.com/dashboard',
+        'https://gitlab.com/users',
+        'https://gitlab.com/search',
+        'https://gitlab.com/help',
+      ]
+
+      for (const value of values) {
+        expect(gitlabHandler.resolve(value)).toEqual([])
+      }
+    })
   })
 })
