@@ -31,6 +31,13 @@ describe('behanceHandler', () => {
       expect(behanceHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should handle trailing slash', () => {
+      const value = 'https://www.behance.net/johndoe/'
+      const expected = ['https://www.behance.net/johndoe.xml']
+
+      expect(behanceHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return empty array for excluded paths', () => {
       const values = [
         'https://www.behance.net/search',

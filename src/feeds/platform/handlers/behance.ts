@@ -1,8 +1,8 @@
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
-import { isHostOf } from '../../../common/utils.js'
+import { isAnyOf, isHostOf } from '../../../common/utils.js'
 
 const hosts = ['behance.net', 'www.behance.net']
-const userPathRegex = /^\/([a-zA-Z0-9_-]+)$/
+const userPathRegex = /^\/([a-zA-Z0-9_-]+)\/?$/
 const excludedPaths = [
   'search',
   'galleries',
@@ -37,7 +37,7 @@ export const behanceHandler: PlatformHandler = {
     if (userMatch?.[1]) {
       const username = userMatch[1]
 
-      if (!excludedPaths.includes(username.toLowerCase())) {
+      if (!isAnyOf(username, excludedPaths)) {
         return [`https://www.behance.net/${username}.xml`]
       }
     }
