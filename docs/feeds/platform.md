@@ -113,6 +113,15 @@ Discovers Atom feeds for users, organizations, and repositories.
 | `github.com/{owner}/{repo}/discussions` | Discussions (+ above) |
 | `github.com/{owner}/{repo}/tree/{branch}` | Branch commits (+ above) |
 
+### GitHub Gist
+
+Discovers Atom feeds for GitHub Gist users.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `gist.github.com/{username}` | User gists feed |
+| `gist.github.com/{username}/{gist-id}` | User gists feed |
+
 ### GitLab
 
 Discovers Atom feeds for GitLab users and repositories.
@@ -131,6 +140,25 @@ Discovers RSS feeds for Product Hunt homepage, topics, and categories.
 | `producthunt.com` | Homepage feed |
 | `producthunt.com/topics/{topic}` | Topic feed |
 | `producthunt.com/categories/{category}` | Category feed |
+
+### Dailymotion
+
+Discovers RSS feeds for Dailymotion users and playlists.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `dailymotion.com/{username}` | User videos feed |
+| `dailymotion.com/playlist/{id}` | Playlist feed |
+
+### DeviantArt
+
+Discovers RSS feeds for DeviantArt user portfolios and gallery folders.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `deviantart.com/{username}` | User deviations feed |
+| `deviantart.com/{username}/gallery` | User gallery feed |
+| `deviantart.com/{username}/gallery/{id}` | Gallery folder feed |
 
 ### Bluesky
 
@@ -223,7 +251,10 @@ import {
   behanceHandler,
   blogspotHandler,
   blueskyHandler,
+  dailymotionHandler,
+  deviantartHandler,
   devtoHandler,
+  githubGistHandler,
   githubHandler,
   gitlabHandler,
   kickstarterHandler,
