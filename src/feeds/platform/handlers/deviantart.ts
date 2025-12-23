@@ -27,6 +27,17 @@ export const deviantartHandler: PlatformHandler = {
   resolve: (url) => {
     const { pathname } = new URL(url)
 
+    // Match favourites: /{username}/favourites
+    const favMatch = pathname.match(/^\/([a-zA-Z0-9_-]+)\/favourites\/?$/)
+
+    if (favMatch?.[1]) {
+      const username = favMatch[1]
+
+      if (!isAnyOf(username, excludedPaths)) {
+        return [`${feedBaseUrl}?type=deviation&q=${encodeURIComponent(`favby:${username}`)}`]
+      }
+    }
+
     // Match gallery folder: /{username}/gallery/{folder-id}/{folder-name}.
     const folderMatch = pathname.match(/^\/([a-zA-Z0-9_-]+)\/gallery\/(\d+)(?:\/|$)/)
 
@@ -35,7 +46,9 @@ export const deviantartHandler: PlatformHandler = {
       const folderId = folderMatch[2]
 
       if (!isAnyOf(username, excludedPaths)) {
-        return [`${feedBaseUrl}?q=${encodeURIComponent(`gallery:${username}/${folderId}`)}`]
+        return [
+          `${feedBaseUrl}?type=deviation&q=${encodeURIComponent(`gallery:${username}/${folderId}`)}`,
+        ]
       }
     }
 

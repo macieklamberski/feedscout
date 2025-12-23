@@ -44,7 +44,16 @@ describe('deviantartHandler', () => {
 
     it('should return RSS feed URL for specific gallery folder', () => {
       const value = 'https://deviantart.com/yuumei/gallery/123456/folder-name'
-      const expected = ['https://backend.deviantart.com/rss.xml?q=gallery%3Ayuumei%2F123456']
+      const expected = [
+        'https://backend.deviantart.com/rss.xml?type=deviation&q=gallery%3Ayuumei%2F123456',
+      ]
+
+      expect(deviantartHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return RSS feed URL for favourites', () => {
+      const value = 'https://deviantart.com/yuumei/favourites'
+      const expected = ['https://backend.deviantart.com/rss.xml?type=deviation&q=favby%3Ayuumei']
 
       expect(deviantartHandler.resolve(value)).toEqual(expected)
     })
