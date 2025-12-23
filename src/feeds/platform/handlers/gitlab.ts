@@ -50,7 +50,11 @@ export const gitlabHandler: PlatformHandler = {
       const repo = pathSegments[1]
 
       if (!isAnyOf(user, excludedPaths)) {
-        return [`${origin}/${user}/${repo}.atom`]
+        return [
+          `${origin}/${user}/${repo}/-/releases.atom`,
+          `${origin}/${user}/${repo}/-/tags?format=atom`,
+          `${origin}/${user}/${repo}.atom`,
+        ]
       }
     }
 

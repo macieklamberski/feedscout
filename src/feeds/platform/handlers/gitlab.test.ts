@@ -24,16 +24,24 @@ describe('gitlabHandler', () => {
       expect(gitlabHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return atom feed for repo page', () => {
+    it('should return releases, tags, and activity feeds for repo page', () => {
       const value = 'https://gitlab.com/gitlab-org/gitlab'
-      const expected = ['https://gitlab.com/gitlab-org/gitlab.atom']
+      const expected = [
+        'https://gitlab.com/gitlab-org/gitlab/-/releases.atom',
+        'https://gitlab.com/gitlab-org/gitlab/-/tags?format=atom',
+        'https://gitlab.com/gitlab-org/gitlab.atom',
+      ]
 
       expect(gitlabHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return atom feed for repo subpage', () => {
+    it('should return feeds for repo subpage', () => {
       const value = 'https://gitlab.com/gitlab-org/gitlab/-/issues'
-      const expected = ['https://gitlab.com/gitlab-org/gitlab.atom']
+      const expected = [
+        'https://gitlab.com/gitlab-org/gitlab/-/releases.atom',
+        'https://gitlab.com/gitlab-org/gitlab/-/tags?format=atom',
+        'https://gitlab.com/gitlab-org/gitlab.atom',
+      ]
 
       expect(gitlabHandler.resolve(value)).toEqual(expected)
     })
