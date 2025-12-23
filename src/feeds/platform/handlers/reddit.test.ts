@@ -115,5 +115,12 @@ describe('redditHandler', () => {
 
       expect(redditHandler.resolve(value)).toEqual(expected)
     })
+
+    it('should return RSS feed URL for homepage', () => {
+      const value = 'https://reddit.com/'
+      const expected = ['https://www.reddit.com/.rss']
+
+      expect(redditHandler.resolve(value)).toEqual(expected)
+    })
   })
 })

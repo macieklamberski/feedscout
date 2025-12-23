@@ -15,6 +15,12 @@ export const redditHandler: PlatformHandler = {
 
   resolve: (url) => {
     const { pathname } = new URL(url)
+    const pathSegments = pathname.split('/').filter(Boolean)
+
+    // Homepage: reddit.com/
+    if (pathSegments.length === 0) {
+      return ['https://www.reddit.com/.rss']
+    }
 
     // Match /r/subreddit/comments/id pattern (post comments feed).
     const commentsMatch = pathname.match(/^\/r\/([^/]+)\/comments\/([^/]+)/)
