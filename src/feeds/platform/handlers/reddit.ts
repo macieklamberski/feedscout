@@ -52,6 +52,16 @@ export const redditHandler: PlatformHandler = {
       return uris
     }
 
+    // Match multireddit: /user/{username}/m/{multireddit}.
+    const multiredditMatch = pathname.match(/^\/user\/([^/]+)\/m\/([^/]+)/)
+
+    if (multiredditMatch?.[1] && multiredditMatch?.[2]) {
+      const username = multiredditMatch[1]
+      const multireddit = multiredditMatch[2]
+
+      return [`https://www.reddit.com/user/${username}/m/${multireddit}/.rss`]
+    }
+
     // Match /u/username or /user/username pattern.
     const userMatch = pathname.match(/^\/(u|user)\/([^/]+)/)
 

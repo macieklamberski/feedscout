@@ -109,6 +109,23 @@ describe('redditHandler', () => {
       expect(redditHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return RSS feed URL for combined subreddits', () => {
+      const value = 'https://reddit.com/r/programming+javascript'
+      const expected = [
+        'https://www.reddit.com/r/programming+javascript/.rss',
+        'https://www.reddit.com/r/programming+javascript/comments/.rss',
+      ]
+
+      expect(redditHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return RSS feed URL for multireddit', () => {
+      const value = 'https://reddit.com/user/kjoneslol/m/sfwpornnetwork'
+      const expected = ['https://www.reddit.com/user/kjoneslol/m/sfwpornnetwork/.rss']
+
+      expect(redditHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return empty array for invalid paths', () => {
       const value = 'https://reddit.com/about'
       const expected: Array<string> = []
