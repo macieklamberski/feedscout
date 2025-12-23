@@ -7,6 +7,7 @@ import { behanceHandler } from './platform/handlers/behance.js'
 import { blogspotHandler } from './platform/handlers/blogspot.js'
 import { blueskyHandler } from './platform/handlers/bluesky.js'
 import { deviantartHandler } from './platform/handlers/deviantart.js'
+import { dailymotionHandler } from './platform/handlers/dailymotion.js'
 import { devtoHandler } from './platform/handlers/devto.js'
 import { githubHandler } from './platform/handlers/github.js'
 import { gitlabHandler } from './platform/handlers/gitlab.js'
@@ -110,6 +111,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     blogspotHandler,
     blueskyHandler,
     deviantartHandler,
+    dailymotionHandler,
     devtoHandler,
     githubHandler,
     gitlabHandler,
