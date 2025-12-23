@@ -18,12 +18,8 @@ export const githubGistHandler: PlatformHandler = {
 
     if (gistMatch?.[1] && gistMatch?.[2]) {
       const username = gistMatch[1]
-      const gistId = gistMatch[2]
 
       if (!isAnyOf(username, excludedPaths)) {
-        // Revisions feed for this specific gist.
-        uris.push(`https://gist.github.com/${username}/${gistId}/revisions.atom`)
-        // Also include user's gists feed.
         uris.push(`https://gist.github.com/${username}.atom`)
       }
 

@@ -30,12 +30,9 @@ describe('githubGistHandler', () => {
       expect(githubGistHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return revisions feed and user feed for specific gist', () => {
+    it('should return user feed for specific gist', () => {
       const value = 'https://gist.github.com/defunkt/1234567890abcdef'
-      const expected = [
-        'https://gist.github.com/defunkt/1234567890abcdef/revisions.atom',
-        'https://gist.github.com/defunkt.atom',
-      ]
+      const expected = ['https://gist.github.com/defunkt.atom']
 
       expect(githubGistHandler.resolve(value)).toEqual(expected)
     })
