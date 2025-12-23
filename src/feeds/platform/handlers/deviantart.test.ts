@@ -63,6 +63,12 @@ describe('deviantartHandler', () => {
       }
     })
 
+    it('should return empty array for gallery folder with excluded path', () => {
+      const value = 'https://deviantart.com/about/gallery/123456/folder-name'
+
+      expect(deviantartHandler.resolve(value)).toEqual([])
+    })
+
     it('should handle usernames with underscores and hyphens', () => {
       const value = 'https://deviantart.com/some_user-name'
       const expected = [
