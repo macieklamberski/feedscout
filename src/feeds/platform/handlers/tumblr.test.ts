@@ -29,5 +29,12 @@ describe('tumblrHandler', () => {
 
       expect(tumblrHandler.resolve(value)).toEqual(expected)
     })
+
+    it('should return tagged feed URL for tag page', () => {
+      const value = 'https://example.tumblr.com/tagged/photography'
+      const expected = ['https://example.tumblr.com/tagged/photography/rss']
+
+      expect(tumblrHandler.resolve(value)).toEqual(expected)
+    })
   })
 })
