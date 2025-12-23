@@ -2,7 +2,7 @@ import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { isAnyOf, isHostOf, isSubdomainOf } from '../../../common/utils.js'
 
 const hosts = ['medium.com', 'www.medium.com']
-const excludedPaths = ['tag', 'search', 'me', 'new-story', 'plans', 'membership']
+const excludedPaths = ['search', 'me', 'new-story', 'plans', 'membership']
 
 export const mediumHandler: PlatformHandler = {
   match: (url) => {
@@ -24,6 +24,15 @@ export const mediumHandler: PlatformHandler = {
         return [`https://medium.com/feed/@${username}`]
       }
 
+      // Tag feed: /tag/tag-name.
+      const tagMatch = pathname.match(/^\/tag\/([^/]+)/)
+
+      if (tagMatch?.[1]) {
+        const tag = tagMatch[1]
+
+        return [`https://medium.com/feed/tag/${tag}`]
+      }
+
       // Publication: /publication-name.
       const pubMatch = pathname.match(/^\/([^/@][^/]+)/)
 
@@ -36,8 +45,12 @@ export const mediumHandler: PlatformHandler = {
       }
     }
 
-    // Custom domain: subdomain.medium.com.
-    if (lowerHostname.endsWith('.medium.com') && lowerHostname !== 'medium.com') {
+    // Custom domain: subdomain.medium.com (excluding www).
+    if (
+      lowerHostname.endsWith('.medium.com') &&
+      lowerHostname !== 'medium.com' &&
+      lowerHostname !== 'www.medium.com'
+    ) {
       const subdomain = lowerHostname.replace('.medium.com', '')
 
       return [`https://medium.com/feed/${subdomain}`]

@@ -38,9 +38,15 @@ describe('mediumHandler', () => {
       expect(mediumHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return RSS feed URL for tag page', () => {
+      const value = 'https://medium.com/tag/javascript'
+      const expected = ['https://medium.com/feed/tag/javascript']
+
+      expect(mediumHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return empty array for excluded paths', () => {
       const excludedUrls = [
-        'https://medium.com/tag/javascript',
         'https://medium.com/search',
         'https://medium.com/me',
         'https://medium.com/new-story',
@@ -61,6 +67,13 @@ describe('mediumHandler', () => {
     it('should handle user profile with article path', () => {
       const value = 'https://medium.com/@ev/some-article'
       const expected = ['https://medium.com/feed/@ev']
+
+      expect(mediumHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return RSS feed URL for publication on www.medium.com', () => {
+      const value = 'https://www.medium.com/towards-data-science'
+      const expected = ['https://medium.com/feed/towards-data-science']
 
       expect(mediumHandler.resolve(value)).toEqual(expected)
     })
