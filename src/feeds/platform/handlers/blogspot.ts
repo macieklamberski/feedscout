@@ -11,8 +11,22 @@ export const blogspotHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    const { origin } = new URL(url)
+    const { origin, pathname } = new URL(url)
+    const uris: Array<string> = []
 
-    return [`${origin}/feeds/posts/default`, `${origin}/feeds/posts/default?alt=rss`]
+    // Label page: /search/label/{label}
+    const labelMatch = pathname.match(/^\/search\/label\/([^/]+)/)
+
+    if (labelMatch?.[1]) {
+      const label = labelMatch[1]
+
+      uris.push(`${origin}/feeds/posts/default/-/${label}`)
+    }
+
+    // Always include main blog feeds.
+    uris.push(`${origin}/feeds/posts/default`)
+    uris.push(`${origin}/feeds/posts/default?alt=rss`)
+
+    return uris
   },
 }

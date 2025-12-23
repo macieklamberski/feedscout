@@ -32,9 +32,20 @@ describe('blogspotHandler', () => {
       expect(blogspotHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return feed URLs regardless of path', () => {
+    it('should return feed URLs for post page', () => {
       const value = 'https://blog.blogspot.com/2024/01/some-post.html'
       const expected = [
+        'https://blog.blogspot.com/feeds/posts/default',
+        'https://blog.blogspot.com/feeds/posts/default?alt=rss',
+      ]
+
+      expect(blogspotHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should include label feed when on label page', () => {
+      const value = 'https://blog.blogspot.com/search/label/technology'
+      const expected = [
+        'https://blog.blogspot.com/feeds/posts/default/-/technology',
         'https://blog.blogspot.com/feeds/posts/default',
         'https://blog.blogspot.com/feeds/posts/default?alt=rss',
       ]
