@@ -1,9 +1,13 @@
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
-import { isSubdomainOf } from '../../../common/utils.js'
+
+// Matches *.blogspot.com and country TLDs like *.blogspot.co.uk, *.blogspot.de, etc.
+const blogspotDomainRegex = /^.+\.blogspot\.(?:com|co\.[a-z]{2}|com\.[a-z]{2}|[a-z]{2,3})$/
 
 export const blogspotHandler: PlatformHandler = {
   match: (url) => {
-    return isSubdomainOf(url, 'blogspot.com')
+    const hostname = new URL(url).hostname.toLowerCase()
+
+    return blogspotDomainRegex.test(hostname)
   },
 
   resolve: (url) => {

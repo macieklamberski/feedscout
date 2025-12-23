@@ -6,6 +6,12 @@ describe('blogspotHandler', () => {
     const cases = [
       ['https://example.blogspot.com', true],
       ['https://blog.example.blogspot.com', true],
+      ['https://example.blogspot.co.uk', true],
+      ['https://example.blogspot.de', true],
+      ['https://example.blogspot.fr', true],
+      ['https://example.blogspot.in', true],
+      ['https://example.blogspot.jp', true],
+      ['https://example.blogspot.com.br', true],
       ['https://blogspot.com', false],
       ['https://example.com', false],
     ] as const
