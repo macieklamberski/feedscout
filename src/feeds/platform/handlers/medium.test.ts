@@ -45,6 +45,20 @@ describe('mediumHandler', () => {
       expect(mediumHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return RSS feed URL for publication tagged page', () => {
+      const value = 'https://medium.com/towards-data-science/tagged/machine-learning'
+      const expected = ['https://medium.com/feed/towards-data-science/tagged/machine-learning']
+
+      expect(mediumHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return RSS feed URL for subdomain tagged page', () => {
+      const value = 'https://blog.medium.com/tagged/engineering'
+      const expected = ['https://medium.com/feed/blog/tagged/engineering']
+
+      expect(mediumHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return empty array for excluded paths', () => {
       const excludedUrls = [
         'https://medium.com/search',

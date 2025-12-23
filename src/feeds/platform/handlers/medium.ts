@@ -33,6 +33,18 @@ export const mediumHandler: PlatformHandler = {
         return [`https://medium.com/feed/tag/${tag}`]
       }
 
+      // Publication tagged feed: /publication/tagged/tag-name.
+      const pubTagMatch = pathname.match(/^\/([^/@][^/]+)\/tagged\/([^/]+)/)
+
+      if (pubTagMatch?.[1] && pubTagMatch?.[2]) {
+        const publication = pubTagMatch[1]
+        const tag = pubTagMatch[2]
+
+        if (!isAnyOf(publication, excludedPaths)) {
+          return [`https://medium.com/feed/${publication}/tagged/${tag}`]
+        }
+      }
+
       // Publication: /publication-name.
       const pubMatch = pathname.match(/^\/([^/@][^/]+)/)
 
@@ -52,6 +64,13 @@ export const mediumHandler: PlatformHandler = {
       lowerHostname !== 'www.medium.com'
     ) {
       const subdomain = lowerHostname.replace('.medium.com', '')
+
+      // Subdomain tagged feed: subdomain.medium.com/tagged/tag-name.
+      const tagMatch = pathname.match(/^\/tagged\/([^/]+)/)
+
+      if (tagMatch?.[1]) {
+        return [`https://medium.com/feed/${subdomain}/tagged/${tagMatch[1]}`]
+      }
 
       return [`https://medium.com/feed/${subdomain}`]
     }
