@@ -29,9 +29,51 @@ describe('wordpressHandler', () => {
       expect(wordpressHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return feed URLs regardless of path', () => {
+    it('should return feed URLs for post page', () => {
       const value = 'https://blog.wordpress.com/2024/01/01/some-post/'
       const expected = [
+        'https://blog.wordpress.com/feed/',
+        'https://blog.wordpress.com/feed/rss2/',
+        'https://blog.wordpress.com/feed/rdf/',
+        'https://blog.wordpress.com/feed/atom/',
+        'https://blog.wordpress.com/comments/feed/',
+      ]
+
+      expect(wordpressHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should include category feed when on category page', () => {
+      const value = 'https://blog.wordpress.com/category/tech/'
+      const expected = [
+        'https://blog.wordpress.com/category/tech/feed/',
+        'https://blog.wordpress.com/feed/',
+        'https://blog.wordpress.com/feed/rss2/',
+        'https://blog.wordpress.com/feed/rdf/',
+        'https://blog.wordpress.com/feed/atom/',
+        'https://blog.wordpress.com/comments/feed/',
+      ]
+
+      expect(wordpressHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should include tag feed when on tag page', () => {
+      const value = 'https://blog.wordpress.com/tag/javascript/'
+      const expected = [
+        'https://blog.wordpress.com/tag/javascript/feed/',
+        'https://blog.wordpress.com/feed/',
+        'https://blog.wordpress.com/feed/rss2/',
+        'https://blog.wordpress.com/feed/rdf/',
+        'https://blog.wordpress.com/feed/atom/',
+        'https://blog.wordpress.com/comments/feed/',
+      ]
+
+      expect(wordpressHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should include author feed when on author page', () => {
+      const value = 'https://blog.wordpress.com/author/johndoe/'
+      const expected = [
+        'https://blog.wordpress.com/author/johndoe/feed/',
         'https://blog.wordpress.com/feed/',
         'https://blog.wordpress.com/feed/rss2/',
         'https://blog.wordpress.com/feed/rdf/',
