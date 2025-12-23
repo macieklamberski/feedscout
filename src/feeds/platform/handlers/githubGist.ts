@@ -2,7 +2,7 @@ import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { isAnyOf, isHostOf } from '../../../common/utils.js'
 
 const hosts = ['gist.github.com']
-const excludedPaths = ['discover', 'search', 'login', 'join', 'settings', 'starred']
+const excludedPaths = ['discover', 'search', 'login', 'join', 'settings']
 
 export const githubGistHandler: PlatformHandler = {
   match: (url) => {
@@ -22,6 +22,17 @@ export const githubGistHandler: PlatformHandler = {
       if (!isAnyOf(username, excludedPaths)) {
         uris.push(`https://gist.github.com/${username}.atom`)
       }
+
+      return uris
+    }
+
+    // Match /{username}/starred pattern (user's starred gists page).
+    const starredMatch = pathname.match(/^\/([^/]+)\/starred\/?$/)
+
+    if (starredMatch?.[1] && !isAnyOf(starredMatch[1], excludedPaths)) {
+      const username = starredMatch[1]
+
+      uris.push(`https://gist.github.com/${username}/starred.atom`)
 
       return uris
     }

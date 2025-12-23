@@ -37,13 +37,26 @@ describe('githubGistHandler', () => {
       expect(githubGistHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return starred gists feed for user starred page', () => {
+      const value = 'https://gist.github.com/defunkt/starred'
+      const expected = ['https://gist.github.com/defunkt/starred.atom']
+
+      expect(githubGistHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return starred gists feed with trailing slash', () => {
+      const value = 'https://gist.github.com/defunkt/starred/'
+      const expected = ['https://gist.github.com/defunkt/starred.atom']
+
+      expect(githubGistHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return empty array for excluded paths', () => {
       const excludedUrls = [
         'https://gist.github.com/discover',
         'https://gist.github.com/search',
         'https://gist.github.com/login',
         'https://gist.github.com/join',
-        'https://gist.github.com/starred',
       ]
 
       for (const url of excludedUrls) {
