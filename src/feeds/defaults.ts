@@ -10,6 +10,7 @@ import { deviantartHandler } from './platform/handlers/deviantart.js'
 import { dailymotionHandler } from './platform/handlers/dailymotion.js'
 import { devtoHandler } from './platform/handlers/devto.js'
 import { githubHandler } from './platform/handlers/github.js'
+import { githubGistHandler } from './platform/handlers/githubGist.js'
 import { gitlabHandler } from './platform/handlers/gitlab.js'
 import { kickstarterHandler } from './platform/handlers/kickstarter.js'
 import { lobstersHandler } from './platform/handlers/lobsters.js'
@@ -114,6 +115,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     dailymotionHandler,
     devtoHandler,
     githubHandler,
+    githubGistHandler,
     gitlabHandler,
     kickstarterHandler,
     mediumHandler,
