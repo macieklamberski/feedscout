@@ -58,12 +58,18 @@ describe('deviantartHandler', () => {
       expect(deviantartHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return RSS feed URL for tag page', () => {
+      const value = 'https://deviantart.com/tag/photography'
+      const expected = ['https://backend.deviantart.com/rss.xml?type=deviation&q=tag%3Aphotography']
+
+      expect(deviantartHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return empty array for excluded paths', () => {
       const excludedUrls = [
         'https://deviantart.com/about',
         'https://deviantart.com/join',
         'https://deviantart.com/search',
-        'https://deviantart.com/tag',
         'https://deviantart.com/shop',
       ]
 

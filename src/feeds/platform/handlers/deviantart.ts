@@ -7,7 +7,6 @@ const excludedPaths = [
   'about',
   'join',
   'search',
-  'tag',
   'topic',
   'watch',
   'notifications',
@@ -26,6 +25,15 @@ export const deviantartHandler: PlatformHandler = {
 
   resolve: (url) => {
     const { pathname } = new URL(url)
+
+    // Match tag page: /tag/{tagname}
+    const tagMatch = pathname.match(/^\/tag\/([^/]+)/)
+
+    if (tagMatch?.[1]) {
+      const tag = tagMatch[1]
+
+      return [`${feedBaseUrl}?type=deviation&q=${encodeURIComponent(`tag:${tag}`)}`]
+    }
 
     // Match favourites: /{username}/favourites
     const favMatch = pathname.match(/^\/([a-zA-Z0-9_-]+)\/favourites\/?$/)
