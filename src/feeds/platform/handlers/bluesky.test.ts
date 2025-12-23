@@ -28,6 +28,13 @@ describe('blueskyHandler', () => {
       expect(blueskyHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should handle DID-based profile URLs', () => {
+      const value = 'https://bsky.app/profile/did:plc:z72i7hdynmk6r22z27h6tvur'
+      const expected = ['https://bsky.app/profile/did:plc:z72i7hdynmk6r22z27h6tvur/rss']
+
+      expect(blueskyHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return empty array for non-profile paths', () => {
       const value = 'https://bsky.app/about'
       const expected: Array<string> = []
