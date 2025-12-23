@@ -12,6 +12,8 @@ describe('soundcloudHandler', () => {
       ['https://soundcloud.com/stream', false],
       ['https://soundcloud.com/search', false],
       ['https://soundcloud.com/upload', false],
+      ['https://soundcloud.com/Discover', false],
+      ['https://soundcloud.com/STREAM', false],
       ['https://soundcloud.com', false],
       ['https://example.com/diplo', false],
     ] as const

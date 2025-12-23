@@ -84,12 +84,12 @@ export const githubHandler: PlatformHandler = {
     uris.push(`https://github.com/${owner}/${repo}/tags.atom`)
 
     // If on wiki page, add wiki feed.
-    if (pathname.includes('/wiki')) {
+    if (/\/wiki(\/|$)/.test(pathname)) {
       uris.push(`https://github.com/${owner}/${repo}/wiki.atom`)
     }
 
     // If on discussions page, add discussions feed.
-    if (pathname.includes('/discussions')) {
+    if (/\/discussions(\/|$)/.test(pathname)) {
       uris.push(`https://github.com/${owner}/${repo}/discussions.atom`)
     }
 

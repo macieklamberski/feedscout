@@ -52,8 +52,13 @@ export const youtubeHandler: PlatformHandler = {
     // - Handle: /@username
     // - Legacy user: /user/username
     // - Custom URL: /c/customname
+    // - Video pages: /watch?v= or youtu.be/videoId
     if (uris.length === 0 && content) {
+      const isVideoPage =
+        parsedUrl.searchParams.has('v') ||
+        (parsedUrl.hostname.includes('youtu.be') && parsedUrl.pathname.length > 1)
       const needsContentParsing =
+        isVideoPage ||
         parsedUrl.pathname.match(handlePathRegex) ||
         parsedUrl.pathname.match(userPathRegex) ||
         parsedUrl.pathname.match(customPathRegex)

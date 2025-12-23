@@ -1,5 +1,5 @@
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
-import { isHostOf } from '../../../common/utils.js'
+import { isAnyOf, isHostOf } from '../../../common/utils.js'
 
 const hosts = ['soundcloud.com', 'www.soundcloud.com', 'm.soundcloud.com']
 const excludedPaths = ['discover', 'stream', 'search', 'upload', 'you', 'settings', 'messages']
@@ -19,7 +19,7 @@ export const soundcloudHandler: PlatformHandler = {
     const { pathname } = new URL(url)
     const pathSegments = pathname.split('/').filter(Boolean)
 
-    return pathSegments.length >= 1 && !excludedPaths.includes(pathSegments[0])
+    return pathSegments.length >= 1 && !isAnyOf(pathSegments[0], excludedPaths)
   },
 
   resolve: (_url, content) => {

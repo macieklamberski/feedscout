@@ -92,11 +92,33 @@ describe('youtubeHandler', () => {
       expect(youtubeHandler.resolve(value, content)).toEqual(expected)
     })
 
-    it('should return empty array for unsupported paths', () => {
+    it('should return empty array for video page without content', () => {
       const value = 'https://youtube.com/watch?v=abc123'
       const expected: Array<string> = []
 
       expect(youtubeHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should extract channel ID from video page content', () => {
+      const value = 'https://youtube.com/watch?v=abc123'
+      const content = '{"channelId":"UC1234567890"}'
+      const expected = [
+        'https://www.youtube.com/feeds/videos.xml?channel_id=UC1234567890',
+        'https://www.youtube.com/feeds/videos.xml?playlist_id=UULF1234567890',
+      ]
+
+      expect(youtubeHandler.resolve(value, content)).toEqual(expected)
+    })
+
+    it('should extract channel ID from youtu.be short URL content', () => {
+      const value = 'https://youtu.be/abc123'
+      const content = '{"channelId":"UC1234567890"}'
+      const expected = [
+        'https://www.youtube.com/feeds/videos.xml?channel_id=UC1234567890',
+        'https://www.youtube.com/feeds/videos.xml?playlist_id=UULF1234567890',
+      ]
+
+      expect(youtubeHandler.resolve(value, content)).toEqual(expected)
     })
   })
 })

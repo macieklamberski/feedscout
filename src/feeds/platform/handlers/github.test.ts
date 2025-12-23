@@ -111,5 +111,27 @@ describe('githubHandler', () => {
       expect(githubHandler.resolve('https://github.com/features/actions')).toEqual([])
       expect(githubHandler.resolve('https://github.com/orgs/github/teams')).toEqual([])
     })
+
+    it('should not include wiki feed for repos with wiki in name', () => {
+      const value = 'https://github.com/owner/wiki-tools'
+      const expected = [
+        'https://github.com/owner/wiki-tools/releases.atom',
+        'https://github.com/owner/wiki-tools/commits.atom',
+        'https://github.com/owner/wiki-tools/tags.atom',
+      ]
+
+      expect(githubHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should not include discussions feed for repos with discussions in name', () => {
+      const value = 'https://github.com/owner/discussions-api'
+      const expected = [
+        'https://github.com/owner/discussions-api/releases.atom',
+        'https://github.com/owner/discussions-api/commits.atom',
+        'https://github.com/owner/discussions-api/tags.atom',
+      ]
+
+      expect(githubHandler.resolve(value)).toEqual(expected)
+    })
   })
 })

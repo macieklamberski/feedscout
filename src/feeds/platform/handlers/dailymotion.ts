@@ -1,5 +1,5 @@
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
-import { isHostOf } from '../../../common/utils.js'
+import { isAnyOf, isHostOf } from '../../../common/utils.js'
 
 const hosts = ['dailymotion.com', 'www.dailymotion.com']
 const userPathRegex = /^\/([a-zA-Z0-9_-]+)$/
@@ -67,10 +67,10 @@ export const dailymotionHandler: PlatformHandler = {
     const userMatch = pathname.match(userPathRegex)
 
     if (userMatch?.[1]) {
-      const username = userMatch[1].toLowerCase()
+      const username = userMatch[1]
 
-      if (!excludedPaths.includes(username)) {
-        return [`https://www.dailymotion.com/rss/user/${username}`]
+      if (!isAnyOf(username, excludedPaths)) {
+        return [`https://www.dailymotion.com/rss/${username}`]
       }
     }
 
