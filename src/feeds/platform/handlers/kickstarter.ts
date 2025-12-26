@@ -5,19 +5,11 @@ const hosts = ['kickstarter.com', 'www.kickstarter.com']
 
 export const kickstarterHandler: PlatformHandler = {
   match: (url) => {
-    if (!isHostOf(url, hosts)) {
-      return false
-    }
-
-    const { pathname } = new URL(url)
-    const pathSegments = pathname.split('/').filter(Boolean)
-
-    // Only match project pages: /projects/{creator}/{project}
-    return pathSegments.length >= 3 && pathSegments[0] === 'projects'
+    return isHostOf(url, hosts)
   },
 
   resolve: (url) => {
-    const { origin, pathname } = new URL(url)
+    const { pathname } = new URL(url)
     const pathSegments = pathname.split('/').filter(Boolean)
 
     // Project page: kickstarter.com/projects/{creator}/{project}
@@ -25,9 +17,10 @@ export const kickstarterHandler: PlatformHandler = {
       const creator = pathSegments[1]
       const project = pathSegments[2]
 
-      return [`${origin}/projects/${creator}/${project}/posts.atom`]
+      return [`https://www.kickstarter.com/projects/${creator}/${project}/posts.atom`]
     }
 
-    return []
+    // Homepage or discover pages - return global new projects feed.
+    return ['https://www.kickstarter.com/projects/feed.atom']
   },
 }

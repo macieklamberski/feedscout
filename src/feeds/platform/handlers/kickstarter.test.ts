@@ -6,8 +6,8 @@ describe('kickstarterHandler', () => {
     const cases = [
       ['https://www.kickstarter.com/projects/creator/project', true],
       ['https://kickstarter.com/projects/creator/project', true],
-      ['https://kickstarter.com/discover', false],
-      ['https://kickstarter.com', false],
+      ['https://kickstarter.com/discover', true],
+      ['https://kickstarter.com', true],
       ['https://example.com', false],
     ] as const
 
@@ -35,8 +35,18 @@ describe('kickstarterHandler', () => {
       expect(kickstarterHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return empty array for non-project pages', () => {
-      expect(kickstarterHandler.resolve('https://www.kickstarter.com/discover')).toEqual([])
+    it('should return global projects feed for homepage', () => {
+      const value = 'https://www.kickstarter.com/'
+      const expected = ['https://www.kickstarter.com/projects/feed.atom']
+
+      expect(kickstarterHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return global projects feed for discover page', () => {
+      const value = 'https://www.kickstarter.com/discover'
+      const expected = ['https://www.kickstarter.com/projects/feed.atom']
+
+      expect(kickstarterHandler.resolve(value)).toEqual(expected)
     })
 
     it('should handle URLs with query params', () => {
