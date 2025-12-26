@@ -17,23 +17,30 @@ describe('behanceHandler', () => {
   })
 
   describe('resolve', () => {
-    it('should return XML feed for user profile', () => {
+    it('should return feed for user profile', () => {
       const value = 'https://www.behance.net/johndoe'
-      const expected = ['https://www.behance.net/johndoe.xml']
+      const expected = ['https://www.behance.net/feeds/user?username=johndoe']
 
       expect(behanceHandler.resolve(value)).toEqual(expected)
     })
 
     it('should handle mixed case usernames', () => {
       const value = 'https://www.behance.net/JohnDoe'
-      const expected = ['https://www.behance.net/JohnDoe.xml']
+      const expected = ['https://www.behance.net/feeds/user?username=JohnDoe']
 
       expect(behanceHandler.resolve(value)).toEqual(expected)
     })
 
     it('should handle trailing slash', () => {
       const value = 'https://www.behance.net/johndoe/'
-      const expected = ['https://www.behance.net/johndoe.xml']
+      const expected = ['https://www.behance.net/feeds/user?username=johndoe']
+
+      expect(behanceHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return appreciated feed for appreciated page', () => {
+      const value = 'https://www.behance.net/johndoe/appreciated'
+      const expected = ['https://www.behance.net/feeds/user?username=johndoe&content=appreciated']
 
       expect(behanceHandler.resolve(value)).toEqual(expected)
     })
@@ -57,7 +64,7 @@ describe('behanceHandler', () => {
       expect(behanceHandler.resolve(value)).toEqual([])
     })
 
-    it('should return empty array for nested paths', () => {
+    it('should return empty array for other nested paths', () => {
       const value = 'https://www.behance.net/johndoe/projects'
 
       expect(behanceHandler.resolve(value)).toEqual([])

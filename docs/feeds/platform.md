@@ -198,11 +198,12 @@ Discovers RSS feeds for Tumblr blogs and tagged posts.
 
 ### Behance
 
-Discovers RSS feeds for Behance user portfolios.
+Discovers RSS feeds for Behance user portfolios and appreciated works.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | `behance.net/{username}` | User portfolio feed |
+| `behance.net/{username}/appreciated` | User appreciated feed |
 
 ### SoundCloud
 
