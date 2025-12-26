@@ -52,5 +52,33 @@ describe('lobstersHandler', () => {
 
       expect(lobstersHandler.resolve(value)).toEqual(expected)
     })
+
+    it('should return user stories feed for user page', () => {
+      const value = 'https://lobste.rs/~pushcx'
+      const expected = ['https://lobste.rs/~pushcx/stories.rss']
+
+      expect(lobstersHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return top stories feed for top page', () => {
+      const value = 'https://lobste.rs/top'
+      const expected = ['https://lobste.rs/top/rss']
+
+      expect(lobstersHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return top stories feed with period', () => {
+      const value = 'https://lobste.rs/top/1d'
+      const expected = ['https://lobste.rs/top/1d/rss']
+
+      expect(lobstersHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return comments feed for comments page', () => {
+      const value = 'https://lobste.rs/comments'
+      const expected = ['https://lobste.rs/comments.rss']
+
+      expect(lobstersHandler.resolve(value)).toEqual(expected)
+    })
   })
 })
