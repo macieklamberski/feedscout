@@ -66,5 +66,17 @@ describe('gitlabHandler', () => {
         expect(gitlabHandler.resolve(value)).toEqual([])
       }
     })
+
+    it('should return empty array for excluded paths with repo segment', () => {
+      const values = [
+        'https://gitlab.com/explore/projects',
+        'https://gitlab.com/dashboard/issues',
+        'https://gitlab.com/help/docs',
+      ]
+
+      for (const value of values) {
+        expect(gitlabHandler.resolve(value)).toEqual([])
+      }
+    })
   })
 })

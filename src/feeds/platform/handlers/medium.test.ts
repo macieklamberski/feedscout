@@ -72,6 +72,18 @@ describe('mediumHandler', () => {
       }
     })
 
+    it('should return empty array for excluded paths in tagged URLs', () => {
+      const excludedUrls = [
+        'https://medium.com/search/tagged/javascript',
+        'https://medium.com/me/tagged/react',
+        'https://medium.com/plans/tagged/python',
+      ]
+
+      for (const url of excludedUrls) {
+        expect(mediumHandler.resolve(url)).toEqual([])
+      }
+    })
+
     it('should return empty array for root path', () => {
       const value = 'https://medium.com/'
 
