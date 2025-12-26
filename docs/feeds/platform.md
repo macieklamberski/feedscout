@@ -158,6 +158,15 @@ Discovers RSS feeds for Product Hunt homepage, topics, and categories.
 | `producthunt.com/topics/{topic}` | Topic feed |
 | `producthunt.com/categories/{category}` | Category feed |
 
+### Pinterest
+
+Discovers RSS feeds for Pinterest user profiles and boards.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `pinterest.com/{username}` | User pins feed |
+| `pinterest.com/{username}/{boardname}` | Board pins feed |
+
 ### Dailymotion
 
 Discovers RSS feeds for Dailymotion users and playlists.

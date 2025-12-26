@@ -6,8 +6,8 @@ import type { PlatformMethodOptions } from '../common/uris/platform/types.js'
 import { behanceHandler } from './platform/handlers/behance.js'
 import { blogspotHandler } from './platform/handlers/blogspot.js'
 import { blueskyHandler } from './platform/handlers/bluesky.js'
-import { deviantartHandler } from './platform/handlers/deviantart.js'
 import { dailymotionHandler } from './platform/handlers/dailymotion.js'
+import { deviantartHandler } from './platform/handlers/deviantart.js'
 import { devtoHandler } from './platform/handlers/devto.js'
 import { githubHandler } from './platform/handlers/github.js'
 import { githubGistHandler } from './platform/handlers/githubGist.js'
@@ -15,6 +15,7 @@ import { gitlabHandler } from './platform/handlers/gitlab.js'
 import { kickstarterHandler } from './platform/handlers/kickstarter.js'
 import { lobstersHandler } from './platform/handlers/lobsters.js'
 import { mediumHandler } from './platform/handlers/medium.js'
+import { pinterestHandler } from './platform/handlers/pinterest.js'
 import { producthuntHandler } from './platform/handlers/producthunt.js'
 import { redditHandler } from './platform/handlers/reddit.js'
 import { soundcloudHandler } from './platform/handlers/soundcloud.js'
@@ -119,6 +120,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     gitlabHandler,
     kickstarterHandler,
     mediumHandler,
+    pinterestHandler,
     producthuntHandler,
     lobstersHandler,
     redditHandler,
