@@ -123,35 +123,6 @@ const feeds = await discoverFeeds('https://example.com', {
 })
 ```
 
-## ofetch
-
-[ofetch](https://github.com/unjs/ofetch) is a better fetch API that works across Node, browsers, and workers.
-
-```typescript
-import { ofetch } from 'ofetch'
-import type { DiscoverFetchFn } from 'feedscout'
-
-const ofetchFn: DiscoverFetchFn = async (url, options) => {
-  const response = await ofetch.raw(url, {
-    method: options?.method ?? 'GET',
-    headers: options?.headers,
-    ignoreResponseError: true,
-  })
-
-  return {
-    headers: response.headers,
-    body: response._data,
-    url: response.url,
-    status: response.status,
-    statusText: response.statusText,
-  }
-}
-
-const feeds = await discoverFeeds('https://example.com', {
-  fetchFn: ofetchFn,
-})
-```
-
 ## Native Fetch with Customizations
 
 To customize the default fetch behavior (e.g., add headers or credentials):
