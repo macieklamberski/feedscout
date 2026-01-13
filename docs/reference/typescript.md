@@ -1,9 +1,8 @@
 ---
-prev: Quick Start
-next: Discover Feeds
+title: "Reference: Working with TypeScript"
 ---
 
-# TypeScript
+# Working with TypeScript
 
 Feedscout is written in TypeScript and exports comprehensive type definitions.
 

@@ -1,6 +1,5 @@
 ---
-prev: discoverBlogrolls
-next: Types
+title: "Reference: discoverHubs"
 ---
 
 # discoverHubs
@@ -124,5 +123,5 @@ const hubs = await discoverHubs('https://example.com/feed.xml', {
 })
 ```
 
-See [Custom HTTP Clients](/advanced/http-clients) for examples with Axios, Got, Ky, and more.
+See [Customize HTTP Clients](/customization/http-clients) for examples with Axios, Got, Ky, and more.
 

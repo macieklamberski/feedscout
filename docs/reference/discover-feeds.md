@@ -1,6 +1,5 @@
 ---
-prev: Overview
-next: discoverBlogrolls
+title: "Reference: discoverFeeds"
 ---
 
 # discoverFeeds
@@ -147,4 +146,4 @@ const feeds = await discoverFeeds('https://example.com', {
 })
 ```
 
-See [Custom HTTP Clients](/advanced/http-clients) for examples with Axios, Got, Ky, and more.
+See [Customize HTTP Clients](/customization/http-clients) for examples with Axios, Got, Ky, and more.

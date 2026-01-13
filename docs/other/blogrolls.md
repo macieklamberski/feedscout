@@ -1,6 +1,5 @@
 ---
-prev: Guess Method
-next: Discover WebSub Hubs
+title: Discover Blogrolls
 ---
 
 # Discover Blogrolls

@@ -1,6 +1,5 @@
 ---
-prev: Platform Method
-next: Headers Method
+title: "Discover Feeds: HTML Method"
 ---
 
 # HTML Method
