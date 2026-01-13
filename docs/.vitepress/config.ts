@@ -37,7 +37,7 @@ export default defineConfig({
     nav: [
       { text: 'Quick Start', link: '/quick-start' },
       { text: 'Discover Feeds', link: '/feeds/' },
-      { text: 'Customization', link: '/customization/http-clients' },
+      { text: 'Customization', link: '/customization/data-fetching' },
     ],
     sidebar: [
       {
@@ -73,8 +73,8 @@ export default defineConfig({
       {
         text: 'Customization',
         items: [
-          { text: 'HTTP Clients', link: '/customization/http-clients' },
-          { text: 'Extractors', link: '/customization/extractors' },
+          { text: 'Data Fetching', link: '/customization/data-fetching' },
+          { text: 'Data Extraction', link: '/customization/data-extraction' },
           { text: 'URL Normalization', link: '/customization/url-normalization' },
         ],
       },

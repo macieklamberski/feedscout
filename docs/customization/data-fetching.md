@@ -1,8 +1,8 @@
 ---
-title: "Customization: HTTP Clients"
+title: "Customization: Data Fetching"
 ---
 
-# Customize HTTP Clients
+# Customize Data Fetching
 
 By default, Feedscout uses native `fetch` to perform HTTP requests. You can use any HTTP client by providing a custom `fetchFn` that handles requests and returns responses.
 

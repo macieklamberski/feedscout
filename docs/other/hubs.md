@@ -154,7 +154,7 @@ const hubs = await discoverHubs(
 
 ## Custom Fetch Function
 
-Use a custom HTTP client. See [Customize HTTP Clients](/customization/http-clients) for examples with Axios, Got, Ky, and more.
+Use a custom HTTP client. See [Customize Data Fetching](/customization/data-fetching) for examples with Axios, Got, Ky, and more.
 
 ## Specifications
 

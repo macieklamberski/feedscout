@@ -174,5 +174,5 @@ The same [existing content pattern](#using-existing-content) works here — pass
 
 - Learn about [feed discovery](/feeds/) in detail.
 - Discover [Blogrolls](/other/blogrolls) and [WebSub Hubs](/other/hubs).
-- Use different HTTP clients with [Customize HTTP Clients](/customization/http-clients).
+- Use different HTTP clients with [Customize Data Fetching](/customization/data-fetching).
 - See the full [API Reference](/reference/).

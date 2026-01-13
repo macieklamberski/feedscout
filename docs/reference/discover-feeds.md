@@ -146,4 +146,4 @@ const feeds = await discoverFeeds('https://example.com', {
 })
 ```
 
-See [Customize HTTP Clients](/customization/http-clients) for examples with Axios, Got, Ky, and more.
+See [Customize Data Fetching](/customization/data-fetching) for examples with Axios, Got, Ky, and more.

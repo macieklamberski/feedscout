@@ -1,8 +1,8 @@
 ---
-title: "Customization: Extractors"
+title: "Customization: Data Extraction"
 ---
 
-# Customize Extractors
+# Customize Data Extraction
 
 By default, Feedscout uses [Feedsmith](https://feedsmith.dev) to parse and validate discovered feed URLs. You can provide a custom extractor to change how feeds are validated or to extract additional metadata.
 
