@@ -1,6 +1,5 @@
 ---
-prev: TypeScript
-next: Platform Method
+title: Discover Feeds
 ---
 
 # Discover Feeds

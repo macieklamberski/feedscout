@@ -1,5 +1,5 @@
 ---
-prev: discoverHubs
+title: "Reference: Types"
 ---
 
 # Types

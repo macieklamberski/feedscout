@@ -1,6 +1,5 @@
 ---
-prev: discoverFeeds
-next: discoverHubs
+title: "Reference: discoverBlogrolls"
 ---
 
 # discoverBlogrolls

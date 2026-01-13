@@ -1,12 +1,26 @@
 import { defineConfig } from 'vitepress'
 
+const hostname = 'https://feedscout.dev'
+
 export default defineConfig({
   title: 'Feedscout',
+  titleTemplate: ':title',
   description:
     'Advanced feed autodiscovery for JavaScript. Collect feed information from any webpage using multiple discovery methods.',
   lastUpdated: true,
   cleanUrls: true,
+  sitemap: {
+    hostname,
+  },
+  transformHead: ({ pageData }) => {
+    const canonicalUrl = `${hostname}/${pageData.relativePath}`
+      .replace(/index\.md$/, '')
+      .replace(/\.md$/, '')
+
+    return [['link', { rel: 'canonical', href: canonicalUrl }]]
+  },
   head: [
+    ['meta', { property: 'og:site_name', content: 'Feedscout' }],
     [
       'script',
       {
@@ -23,7 +37,7 @@ export default defineConfig({
     nav: [
       { text: 'Quick Start', link: '/quick-start' },
       { text: 'Discover Feeds', link: '/feeds/' },
-      { text: 'Advanced', link: '/advanced/http-clients' },
+      { text: 'Customization', link: '/customization/http-clients' },
     ],
     sidebar: [
       {
@@ -31,7 +45,6 @@ export default defineConfig({
         items: [
           { text: 'Introduction', link: '/' },
           { text: 'Quick Start', link: '/quick-start' },
-          { text: 'TypeScript', link: '/typescript' },
         ],
       },
       {
@@ -58,11 +71,11 @@ export default defineConfig({
         ],
       },
       {
-        text: 'Advanced',
+        text: 'Customization',
         items: [
-          { text: 'Custom HTTP Clients', link: '/advanced/http-clients' },
-          { text: 'Custom Extractors', link: '/advanced/extractors' },
-          { text: 'URL Normalization', link: '/advanced/url-normalization' },
+          { text: 'HTTP Clients', link: '/customization/http-clients' },
+          { text: 'Extractors', link: '/customization/extractors' },
+          { text: 'URL Normalization', link: '/customization/url-normalization' },
         ],
       },
       {
@@ -73,6 +86,7 @@ export default defineConfig({
           { text: 'discoverBlogrolls', link: '/reference/discover-blogrolls' },
           { text: 'discoverHubs', link: '/reference/discover-hubs' },
           { text: 'Types', link: '/reference/types' },
+          { text: 'TypeScript', link: '/reference/typescript' },
         ],
       },
     ],

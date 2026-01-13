@@ -1,5 +1,5 @@
 ---
-outline: 2
+title: Feedscout — Advanced Feed Autodiscovery for JavaScript
 ---
 
 # Feedscout

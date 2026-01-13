@@ -1,6 +1,5 @@
 ---
-prev: URL Normalization
-next: discoverFeeds
+title: "Reference: API Overview"
 ---
 
 # API Reference

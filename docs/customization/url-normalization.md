@@ -1,9 +1,8 @@
 ---
-prev: Custom Extractors
-next: API Reference
+title: "Customization: URL Normalization"
 ---
 
-# URL Normalization
+# Customize URL Normalization
 
 Feedscout normalizes discovered URLs before validation to ensure consistent results. You can provide a custom normalization function to change this behavior.
 
