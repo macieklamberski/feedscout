@@ -47,7 +47,7 @@ Results include the blogroll URL and title:
 
 ## Discovery Methods
 
-Blogrolls use the same three discovery methods as feeds — see the [Feeds](/feeds/) section for details on how each method works.
+Blogrolls use the same three discovery methods as feeds — see the [Feeds](/feeds) section for details on how each method works.
 
 | Method | What It Looks For |
 |--------|-------------------|

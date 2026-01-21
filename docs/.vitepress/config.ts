@@ -36,7 +36,7 @@ export default defineConfig({
     },
     nav: [
       { text: 'Quick Start', link: '/quick-start' },
-      { text: 'Discover Feeds', link: '/feeds/' },
+      { text: 'Discover Feeds', link: '/feeds' },
       { text: 'Customization', link: '/customization/data-fetching' },
     ],
     sidebar: [
@@ -50,7 +50,7 @@ export default defineConfig({
       {
         text: 'Discover Feeds',
         items: [
-          { text: 'Overview', link: '/feeds/' },
+          { text: 'Overview', link: '/feeds' },
           {
             text: 'Methods',
             collapsed: false,
@@ -81,7 +81,7 @@ export default defineConfig({
       {
         text: 'API Reference',
         items: [
-          { text: 'Overview', link: '/reference/' },
+          { text: 'Overview', link: '/reference' },
           { text: 'discoverFeeds', link: '/reference/discover-feeds' },
           { text: 'discoverBlogrolls', link: '/reference/discover-blogrolls' },
           { text: 'discoverHubs', link: '/reference/discover-hubs' },
