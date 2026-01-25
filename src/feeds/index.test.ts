@@ -3,6 +3,7 @@ import locales from '../common/locales.json' with { type: 'json' }
 import type {
   DiscoverExtractFn,
   DiscoverFetchFn,
+  DiscoverNormalizeUrlFn,
   DiscoverProgress,
   DiscoverResult,
 } from '../common/types.js'
@@ -1139,6 +1140,86 @@ describe('discoverFeeds', () => {
 
       expect(receivedContent).toBe(htmlContent)
     })
+  })
+})
+
+describe('normalizeUrlFn option', () => {
+  it('should use custom normalizeUrlFn to transform discovered URIs', async () => {
+    const rss = `
+      <rss version="2.0">
+        <channel>
+          <title>Test RSS</title>
+          <link>https://example.com</link>
+          <description>Test feed</description>
+        </channel>
+      </rss>
+    `
+    const mockFetch = createMockFetch({
+      'https://custom.example.com/feed': rss,
+    })
+    const customNormalizer: DiscoverNormalizeUrlFn = (url, baseUrl) => {
+      const fullUrl = baseUrl ? new URL(url, baseUrl).href : url
+      return fullUrl.replace('example.com', 'custom.example.com')
+    }
+    const value = await discoverFeeds(
+      { url: 'https://example.com' },
+      {
+        methods: { guess: { uris: ['/feed'] } },
+        fetchFn: mockFetch,
+        normalizeUrlFn: customNormalizer,
+      },
+    )
+    const expected: Array<DiscoverResult<FeedResult>> = [
+      {
+        url: 'https://custom.example.com/feed',
+        isValid: true,
+        format: 'rss',
+        title: 'Test RSS',
+        description: 'Test feed',
+        siteUrl: 'https://example.com',
+      },
+    ]
+
+    expect(value).toEqual(expected)
+  })
+
+  it('should use custom normalizeUrlFn for HTML discovered links', async () => {
+    const html = '<link rel="alternate" type="application/rss+xml" href="/feed.xml">'
+    const rss = `
+      <rss version="2.0">
+        <channel>
+          <title>Test RSS</title>
+          <link>https://example.com</link>
+          <description>Test feed</description>
+        </channel>
+      </rss>
+    `
+    const mockFetch = createMockFetch({
+      'https://cdn.example.com/feed.xml': rss,
+    })
+    const customNormalizer: DiscoverNormalizeUrlFn = (url) => {
+      return url.startsWith('/') ? `https://cdn.example.com${url}` : url
+    }
+    const value = await discoverFeeds(
+      { url: 'https://example.com', content: html },
+      {
+        methods: ['html'],
+        fetchFn: mockFetch,
+        normalizeUrlFn: customNormalizer,
+      },
+    )
+    const expected: Array<DiscoverResult<FeedResult>> = [
+      {
+        url: 'https://cdn.example.com/feed.xml',
+        isValid: true,
+        format: 'rss',
+        title: 'Test RSS',
+        description: 'Test feed',
+        siteUrl: 'https://example.com',
+      },
+    ]
+
+    expect(value).toEqual(expected)
   })
 })
 

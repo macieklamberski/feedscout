@@ -1,5 +1,6 @@
 import { defaultFetchFn } from '../../common/discover/utils.js'
 import type { DiscoverInput } from '../../common/types.js'
+import { normalizeUrl } from '../../common/utils.js'
 import { discoverHubsFromFeed } from '../feed/index.js'
 import { discoverHubsFromHeaders } from '../headers/index.js'
 import { discoverHubsFromHtml } from '../html/index.js'
@@ -10,13 +11,21 @@ export const discoverHubs = async (
   input: DiscoverInput,
   options: DiscoverHubsOptions = {},
 ): Promise<Array<HubResult>> => {
-  const { methods = ['headers', 'feed', 'html'], fetchFn = defaultFetchFn } = options
+  const {
+    methods = ['headers', 'feed', 'html'],
+    fetchFn = defaultFetchFn,
+    normalizeUrlFn = normalizeUrl,
+  } = options
 
   const normalizedInput = await normalizeInput(input, fetchFn)
   const results: Array<HubResult> = []
 
   if (methods.includes('headers') && normalizedInput.headers) {
-    const headerHubs = discoverHubsFromHeaders(normalizedInput.headers, normalizedInput.url)
+    const headerHubs = discoverHubsFromHeaders(
+      normalizedInput.headers,
+      normalizedInput.url,
+      normalizeUrlFn,
+    )
     results.push(...headerHubs)
   }
 
@@ -26,7 +35,11 @@ export const discoverHubs = async (
   }
 
   if (methods.includes('html') && normalizedInput.content) {
-    const htmlHubs = discoverHubsFromHtml(normalizedInput.content, normalizedInput.url)
+    const htmlHubs = discoverHubsFromHtml(
+      normalizedInput.content,
+      normalizedInput.url,
+      normalizeUrlFn,
+    )
     results.push(...htmlHubs)
   }
 

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverFetchFn } from '../../common/types.js'
+import type { DiscoverFetchFn, DiscoverNormalizeUrlFn } from '../../common/types.js'
 import { discoverHubs } from './index.js'
 import type { HubResult } from './types.js'
 
@@ -147,6 +147,80 @@ describe('discoverHubs', () => {
         {
           hub: 'https://feed-hub.example.com/',
           topic: 'https://example.com/feed.xml',
+        },
+      ]
+
+      expect(value).toEqual(expected)
+    })
+  })
+
+  describe('normalizeUrlFn option', () => {
+    it('should use custom normalizeUrlFn for HTML hubs', async () => {
+      const html = '<link rel="hub" href="/hub">'
+      const customNormalizer: DiscoverNormalizeUrlFn = (url) => {
+        return `https://custom.example.com${url}`
+      }
+      const value = await discoverHubs(
+        { url: 'https://example.com/', content: html },
+        {
+          methods: ['html'],
+          normalizeUrlFn: customNormalizer,
+        },
+      )
+      const expected: Array<HubResult> = [
+        {
+          hub: 'https://custom.example.com/hub',
+          topic: 'https://example.com/',
+        },
+      ]
+
+      expect(value).toEqual(expected)
+    })
+
+    it('should use custom normalizeUrlFn for header hubs', async () => {
+      const headers = new Headers({
+        link: '</hub>; rel="hub"',
+      })
+      const customNormalizer: DiscoverNormalizeUrlFn = (url) => {
+        return `https://custom.example.com${url}`
+      }
+      const value = await discoverHubs(
+        { url: 'https://example.com/', headers },
+        {
+          methods: ['headers'],
+          normalizeUrlFn: customNormalizer,
+        },
+      )
+      const expected: Array<HubResult> = [
+        {
+          hub: 'https://custom.example.com/hub',
+          topic: 'https://example.com/',
+        },
+      ]
+
+      expect(value).toEqual(expected)
+    })
+
+    it('should use custom normalizeUrlFn for self URLs', async () => {
+      const html =
+        '<link rel="hub" href="https://hub.example.com/"><link rel="self" href="/feed.xml">'
+      const customNormalizer: DiscoverNormalizeUrlFn = (url) => {
+        if (url.startsWith('/')) {
+          return `https://normalized.example.com${url}`
+        }
+        return url
+      }
+      const value = await discoverHubs(
+        { url: 'https://example.com/', content: html },
+        {
+          methods: ['html'],
+          normalizeUrlFn: customNormalizer,
+        },
+      )
+      const expected: Array<HubResult> = [
+        {
+          hub: 'https://hub.example.com/',
+          topic: 'https://normalized.example.com/feed.xml',
         },
       ]
 

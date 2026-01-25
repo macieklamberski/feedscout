@@ -55,8 +55,6 @@ export const isOfAllowedMimeType = (
 }
 
 export const normalizeUrl = (url: string, baseUrl: string | undefined): string => {
-  // TODO: Make this a default function to normalize URLs, but make sure to also add
-  // an option to allow passing custom function as an option (NormalizeUrlFn).
   return baseUrl ? new URL(url, baseUrl).href : url
 }
 
