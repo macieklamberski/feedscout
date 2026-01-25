@@ -44,6 +44,11 @@ const feeds = await discoverFeeds(url, {
   methods: ['html', 'guess'],
   normalizeUrlFn: customNormalize,
 })
+
+// Also works with discoverHubs
+const hubs = await discoverHubs(url, {
+  normalizeUrlFn: customNormalize,
+})
 ```
 
 ## Interface
@@ -119,7 +124,7 @@ const normalizeUrl: DiscoverNormalizeUrlFn = (url, baseUrl) => {
 
 ## Combining with Other Options
 
-URL normalization happens before validation, so it works with all other options:
+URL normalization works with `discoverFeeds`, `discoverBlogrolls`, and `discoverHubs`:
 
 ```typescript
 const feeds = await discoverFeeds(url, {
@@ -127,5 +132,10 @@ const feeds = await discoverFeeds(url, {
   normalizeUrlFn: customNormalize,
   extractFn: customExtractor,
   concurrency: 3,
+})
+
+const hubs = await discoverHubs(url, {
+  methods: ['headers', 'html'],
+  normalizeUrlFn: customNormalize,
 })
 ```

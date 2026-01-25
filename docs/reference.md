@@ -34,6 +34,17 @@ Import from `feedscout/methods`:
 | `getSubdomainVariants` | Generate subdomain variants of a URL |
 | `generateUrlCombinations` | Combine base URLs with URI paths |
 
+Import from `feedscout/utils`:
+
+| Function | Description |
+|----------|-------------|
+| `isSubdomainOf` | Check if URL is subdomain of domain |
+| `isHostOf` | Check if URL host matches any in list |
+| `includesAnyOf` | Check if string includes any pattern |
+| `isAnyOf` | Check if string equals any pattern |
+| `anyWordMatchesAnyOf` | Check if any word matches patterns |
+| `endsWithAnyOf` | Check if string ends with any pattern |
+
 ## Export Paths
 
 Feedscout uses multiple export paths for tree-shaking:
@@ -53,4 +64,7 @@ import type { HubResult, DiscoverHubsOptions } from 'feedscout/hubs'
 
 // Discovery method functions
 import { discoverUrisFromHtml } from 'feedscout/methods'
+
+// Utility functions
+import { isSubdomainOf, isHostOf } from 'feedscout/utils'
 ```
