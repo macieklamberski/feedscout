@@ -55,19 +55,29 @@ export const urisBalanced = [...urisMinimal, '/feed/', '/index.atom', '/index.rs
 export const urisComprehensive = [
   ...urisBalanced,
   '/atom',
+  '/rss/',
+  '/rss2.xml',
   '/feed.rss',
   '/feed.atom',
   '/feed.rss.xml',
   '/feed.atom.xml',
+  '/feed/atom/',
+  '/feed/rss/',
+  '/feed/rss2/',
+  '/feed/rdf',
+  '/feed/rdf/',
   '/index.rss.xml',
   '/index.atom.xml',
-  '/?feed=rss',
-  '/?feed=rss2',
-  '/?feed=atom',
-  '/?format=rss',
-  '/?format=atom',
-  '/?rss=1',
-  '/?atom=1',
+  '?feed=rss',
+  '?feed=rss2',
+  '?feed=atom',
+  '?feed=rdf',
+  '?feed=comments-rss2',
+  '?feed=comments-atom',
+  '?format=rss',
+  '?format=atom',
+  '?rss=1',
+  '?atom=1',
   '/.rss',
   '/f.json',
   '/f.rss',
@@ -75,13 +85,23 @@ export const urisComprehensive = [
   '/.feed',
   '/comments/feed',
   '/feeds/posts/default',
+  '/feeds/posts/default?alt=rss',
+  '/feeds/comments/default',
 ]
 
 // URIs to ignore when discovering feeds from anchor elements.
 export const ignoredUris = ['wp-json/oembed/', 'wp-json/wp/']
 
 // Text labels used to identify feed links in anchor elements.
-export const anchorLabels = ['rss', 'feed', 'atom', 'subscribe', 'syndicate', 'json feed']
+export const anchorLabels = [
+  'rss',
+  'feed',
+  'atom',
+  'subscribe',
+  'syndicate',
+  'syndication',
+  'json feed',
+]
 
 export const linkSelectors: Array<LinkSelector> = [
   { rel: 'alternate', types: mimeTypes },
