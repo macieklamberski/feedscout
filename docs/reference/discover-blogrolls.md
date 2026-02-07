@@ -43,8 +43,9 @@ All options are optional. When not provided, sensible defaults are used.
 | `fetchFn` | `DiscoverFetchFn` | native fetch | Custom fetch function |
 | `extractFn` | `DiscoverExtractFn` | feedsmith | Custom OPML extraction function |
 | `normalizeUrlFn` | `DiscoverNormalizeUrlFn` | | Custom URL normalization function |
-| `concurrency` | `number` | `3` | Max parallel validations |
+| `stopOnFirstMethod` | `boolean` | `false` | Stop URI collection after first method with results |
 | `stopOnFirstResult` | `boolean` | `false` | Stop after first valid blogroll |
+| `concurrency` | `number` | `3` | Max parallel validations |
 | `includeInvalid` | `boolean` | `false` | Include invalid results |
 | `onProgress` | `DiscoverOnProgressFn` | | Progress callback |
 

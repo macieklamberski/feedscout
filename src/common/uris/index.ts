@@ -4,12 +4,19 @@ import { discoverUrisFromHeaders } from './headers/index.js'
 import { discoverUrisFromHtml } from './html/index.js'
 import { discoverUrisFromPlatform } from './platform/index.js'
 
-export const discoverUris = (config: DiscoverMethodsConfigInternal): Array<string> => {
+export const discoverUris = (
+  config: DiscoverMethodsConfigInternal,
+  stopOnFirstMethod = false,
+): Array<string> => {
   const uris = new Set<string>()
 
   if (config.platform) {
     for (const uri of discoverUrisFromPlatform(config.platform.html, config.platform.options)) {
       uris.add(uri)
+    }
+
+    if (stopOnFirstMethod && uris.size > 0) {
+      return Array.from(uris)
     }
   }
 
@@ -17,11 +24,19 @@ export const discoverUris = (config: DiscoverMethodsConfigInternal): Array<strin
     for (const uri of discoverUrisFromHtml(config.html.html, config.html.options)) {
       uris.add(uri)
     }
+
+    if (stopOnFirstMethod && uris.size > 0) {
+      return Array.from(uris)
+    }
   }
 
   if (config.headers) {
     for (const uri of discoverUrisFromHeaders(config.headers.headers, config.headers.options)) {
       uris.add(uri)
+    }
+
+    if (stopOnFirstMethod && uris.size > 0) {
+      return Array.from(uris)
     }
   }
 

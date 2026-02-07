@@ -140,4 +140,56 @@ describe('discoverUris', () => {
 
     expect(value).toEqual(expected)
   })
+
+  it('should return only first method URIs when stopOnFirstMethod is true', () => {
+    const value = discoverUris(
+      {
+        html: {
+          html: '<link rel="alternate" type="application/rss+xml" href="/feed.xml">',
+          options: {
+            linkSelectors: [{ rel: 'alternate', types: ['application/rss+xml'] }],
+            anchorUris: [],
+            anchorIgnoredUris: [],
+            anchorLabels: [],
+          },
+        },
+        guess: {
+          options: {
+            baseUrl: 'https://example.com',
+            uris: ['/rss.xml'],
+          },
+        },
+      },
+      true,
+    )
+    const expected = ['/feed.xml']
+
+    expect(value).toEqual(expected)
+  })
+
+  it('should fall through to next method when stopOnFirstMethod is true and first method is empty', () => {
+    const value = discoverUris(
+      {
+        html: {
+          html: '<div>No feeds here</div>',
+          options: {
+            linkSelectors: [{ rel: 'alternate', types: ['application/rss+xml'] }],
+            anchorUris: [],
+            anchorIgnoredUris: [],
+            anchorLabels: [],
+          },
+        },
+        guess: {
+          options: {
+            baseUrl: 'https://example.com',
+            uris: ['/rss.xml'],
+          },
+        },
+      },
+      true,
+    )
+    const expected = ['https://example.com/rss.xml']
+
+    expect(value).toEqual(expected)
+  })
 })

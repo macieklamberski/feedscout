@@ -99,6 +99,18 @@ const feeds = await discoverFeeds(
 
 ## Options
 
+### Stop on First Method
+
+Stop URI collection after the first discovery method that produces results. Useful for platforms (like YouTube) where early methods find the correct feed and later methods (like guess) generate many unnecessary URLs:
+
+```typescript
+const feeds = await discoverFeeds(url, {
+  methods: ['platform', 'html', 'headers', 'guess'],
+  stopOnFirstMethod: true,
+})
+// Only URIs from the first successful method are validated
+```
+
 ### Stop on First Result
 
 Return immediately after finding a valid result (feed, blogroll):
@@ -122,20 +134,6 @@ const feeds = await discoverFeeds(url, {
 })
 ```
 
-### Progress Tracking
-
-Monitor discovery progress with a callback:
-
-```typescript
-const feeds = await discoverFeeds(url, {
-  methods: ['html', 'guess'],
-  onProgress: ({ tested, total, found, current }) => {
-    console.log(`[${tested}/${total}] Testing: ${current}`)
-    console.log(`Found so far: ${found}`)
-  },
-})
-```
-
 ### Include Invalid
 
 Include invalid results for debugging:
@@ -153,4 +151,18 @@ for (const feed of feeds) {
     console.log(`Invalid: ${feed.url}`, feed.error)
   }
 }
+```
+
+### Progress Tracking
+
+Monitor discovery progress with a callback:
+
+```typescript
+const feeds = await discoverFeeds(url, {
+  methods: ['html', 'guess'],
+  onProgress: ({ tested, total, found, current }) => {
+    console.log(`[${tested}/${total}] Testing: ${current}`)
+    console.log(`Found so far: ${found}`)
+  },
+})
 ```

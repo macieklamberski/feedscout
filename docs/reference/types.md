@@ -47,8 +47,9 @@ type DiscoverOptions<TValid> = {
   fetchFn?: DiscoverFetchFn
   extractFn?: DiscoverExtractFn<TValid>
   normalizeUrlFn?: DiscoverNormalizeUrlFn
-  concurrency?: number
+  stopOnFirstMethod?: boolean
   stopOnFirstResult?: boolean
+  concurrency?: number
   includeInvalid?: boolean
   onProgress?: DiscoverOnProgressFn
 }
