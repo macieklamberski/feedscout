@@ -72,6 +72,18 @@ describe('youtubeHandler', () => {
       expect(youtubeHandler.resolve(value, content)).toEqual(expected)
     })
 
+    it('should extract channel ID from externalId in consent page content', () => {
+      const value = 'https://youtube.com/@testchannel'
+      const content = '{"externalId":"UC1234567890"}'
+      const expected = [
+        'https://www.youtube.com/feeds/videos.xml?channel_id=UC1234567890',
+        'https://www.youtube.com/feeds/videos.xml?playlist_id=UULF1234567890',
+        'https://www.youtube.com/feeds/videos.xml?playlist_id=UUSH1234567890',
+      ]
+
+      expect(youtubeHandler.resolve(value, content)).toEqual(expected)
+    })
+
     it('should return empty array when @handle content has no channel ID', () => {
       const value = 'https://youtube.com/@nonexistent'
       const content = '<html>No channel ID here</html>'
