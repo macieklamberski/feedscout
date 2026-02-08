@@ -1,5 +1,5 @@
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
-import { isAnyOf, isHostOf } from '../../../common/utils.js'
+import { composeHint, isAnyOf, isHostOf } from '../../../common/utils.js'
 
 const hosts = ['pinterest.com', 'www.pinterest.com', 'pin.it']
 const excludedPaths = [
@@ -51,7 +51,7 @@ export const pinterestHandler: PlatformHandler = {
         return [
           {
             uri: `https://www.pinterest.com/${username}/feed.rss`,
-            hint: { key: 'pinterest:pins', label: 'Pins' },
+            hint: composeHint('pinterest:pins'),
           },
         ]
       }
@@ -59,7 +59,7 @@ export const pinterestHandler: PlatformHandler = {
       return [
         {
           uri: `https://www.pinterest.com/${username}/${boardname}.rss`,
-          hint: { key: 'pinterest:board', label: 'Board' },
+          hint: composeHint('pinterest:board'),
         },
       ]
     }
@@ -68,7 +68,7 @@ export const pinterestHandler: PlatformHandler = {
     return [
       {
         uri: `https://www.pinterest.com/${username}/feed.rss`,
-        hint: { key: 'pinterest:pins', label: 'Pins' },
+        hint: composeHint('pinterest:pins'),
       },
     ]
   },

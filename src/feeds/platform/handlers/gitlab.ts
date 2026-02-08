@@ -1,5 +1,5 @@
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
-import { isAnyOf, isHostOf } from '../../../common/utils.js'
+import { composeHint, isAnyOf, isHostOf } from '../../../common/utils.js'
 
 const hosts = ['gitlab.com', 'www.gitlab.com']
 const excludedPaths = [
@@ -40,9 +40,7 @@ export const gitlabHandler: PlatformHandler = {
       const user = pathSegments[0]
 
       if (!isAnyOf(user, excludedPaths)) {
-        return [
-          { uri: `${origin}/${user}.atom`, hint: { key: 'gitlab:activity', label: 'Activity' } },
-        ]
+        return [{ uri: `${origin}/${user}.atom`, hint: composeHint('gitlab:activity') }]
       }
     }
 
@@ -55,15 +53,15 @@ export const gitlabHandler: PlatformHandler = {
         return [
           {
             uri: `${origin}/${user}/${repo}/-/releases.atom`,
-            hint: { key: 'gitlab:releases', label: 'Releases' },
+            hint: composeHint('gitlab:releases'),
           },
           {
             uri: `${origin}/${user}/${repo}/-/tags?format=atom`,
-            hint: { key: 'gitlab:tags', label: 'Tags' },
+            hint: composeHint('gitlab:tags'),
           },
           {
             uri: `${origin}/${user}/${repo}.atom`,
-            hint: { key: 'gitlab:activity', label: 'Activity' },
+            hint: composeHint('gitlab:activity'),
           },
         ]
       }

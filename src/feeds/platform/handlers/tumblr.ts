@@ -1,5 +1,5 @@
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
-import { isSubdomainOf } from '../../../common/utils.js'
+import { composeHint, isSubdomainOf } from '../../../common/utils.js'
 
 const tagPathRegex = /^\/tagged\/([^/]+)/
 
@@ -17,9 +17,9 @@ export const tumblrHandler: PlatformHandler = {
     if (tagMatch?.[1]) {
       const tag = tagMatch[1]
 
-      return [{ uri: `${origin}/tagged/${tag}/rss`, hint: { key: 'tumblr:tag', label: 'Tag' } }]
+      return [{ uri: `${origin}/tagged/${tag}/rss`, hint: composeHint('tumblr:tag') }]
     }
 
-    return [{ uri: `${origin}/rss`, hint: { key: 'tumblr:posts', label: 'Posts' } }]
+    return [{ uri: `${origin}/rss`, hint: composeHint('tumblr:posts') }]
   },
 }

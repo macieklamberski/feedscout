@@ -1,5 +1,5 @@
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
-import { isAnyOf, isHostOf } from '../../../common/utils.js'
+import { composeHint, isAnyOf, isHostOf } from '../../../common/utils.js'
 
 const hosts = ['dev.to', 'www.dev.to']
 const userPathRegex = /^\/([a-zA-Z0-9_]+)\/?$/
@@ -39,9 +39,7 @@ export const devtoHandler: PlatformHandler = {
       const username = userMatch[1]
 
       if (!isAnyOf(username, excludedPaths)) {
-        return [
-          { uri: `https://dev.to/feed/${username}`, hint: { key: 'devto:posts', label: 'Posts' } },
-        ]
+        return [{ uri: `https://dev.to/feed/${username}`, hint: composeHint('devto:posts') }]
       }
     }
 
@@ -51,7 +49,7 @@ export const devtoHandler: PlatformHandler = {
     if (tagMatch?.[1]) {
       const tag = tagMatch[1]
 
-      return [{ uri: `https://dev.to/feed/tag/${tag}`, hint: { key: 'devto:tag', label: 'Tag' } }]
+      return [{ uri: `https://dev.to/feed/tag/${tag}`, hint: composeHint('devto:tag') }]
     }
 
     return []

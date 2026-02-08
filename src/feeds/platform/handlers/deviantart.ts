@@ -1,5 +1,5 @@
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
-import { isAnyOf, isHostOf } from '../../../common/utils.js'
+import { composeHint, isAnyOf, isHostOf } from '../../../common/utils.js'
 
 const hosts = ['deviantart.com', 'www.deviantart.com']
 const feedBaseUrl = 'https://backend.deviantart.com/rss.xml'
@@ -35,7 +35,7 @@ export const deviantartHandler: PlatformHandler = {
       return [
         {
           uri: `${feedBaseUrl}?type=deviation&q=${encodeURIComponent(`tag:${tag}`)}`,
-          hint: { key: 'deviantart:tag', label: 'Tag' },
+          hint: composeHint('deviantart:tag'),
         },
       ]
     }
@@ -50,7 +50,7 @@ export const deviantartHandler: PlatformHandler = {
         return [
           {
             uri: `${feedBaseUrl}?type=deviation&q=${encodeURIComponent(`favby:${username}`)}`,
-            hint: { key: 'deviantart:favorites', label: 'Favorites' },
+            hint: composeHint('deviantart:favorites'),
           },
         ]
       }
@@ -67,7 +67,7 @@ export const deviantartHandler: PlatformHandler = {
         return [
           {
             uri: `${feedBaseUrl}?type=deviation&q=${encodeURIComponent(`gallery:${username}/${folderId}`)}`,
-            hint: { key: 'deviantart:gallery', label: 'Gallery' },
+            hint: composeHint('deviantart:gallery'),
           },
         ]
       }
@@ -90,7 +90,7 @@ export const deviantartHandler: PlatformHandler = {
     return [
       {
         uri: `${feedBaseUrl}?type=deviation&q=${encodeURIComponent(query)}`,
-        hint: { key: 'deviantart:deviations', label: 'Deviations' },
+        hint: composeHint('deviantart:deviations'),
       },
     ]
   },

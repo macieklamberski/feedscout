@@ -1,5 +1,5 @@
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
-import { isAnyOf, isHostOf } from '../../../common/utils.js'
+import { composeHint, isAnyOf, isHostOf } from '../../../common/utils.js'
 
 const hosts = ['dailymotion.com', 'www.dailymotion.com']
 const userPathRegex = /^\/([a-zA-Z0-9_-]+)$/
@@ -63,7 +63,7 @@ export const dailymotionHandler: PlatformHandler = {
       return [
         {
           uri: `https://www.dailymotion.com/rss/playlist/${playlistId}`,
-          hint: { key: 'dailymotion:playlist', label: 'Playlist' },
+          hint: composeHint('dailymotion:playlist'),
         },
       ]
     }
@@ -78,7 +78,7 @@ export const dailymotionHandler: PlatformHandler = {
         return [
           {
             uri: `https://www.dailymotion.com/rss/${username}`,
-            hint: { key: 'dailymotion:videos', label: 'Videos' },
+            hint: composeHint('dailymotion:videos'),
           },
         ]
       }

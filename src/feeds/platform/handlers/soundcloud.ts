@@ -1,5 +1,5 @@
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
-import { isAnyOf, isHostOf } from '../../../common/utils.js'
+import { composeHint, isAnyOf, isHostOf } from '../../../common/utils.js'
 
 const hosts = ['soundcloud.com', 'www.soundcloud.com', 'm.soundcloud.com']
 const excludedPaths = ['discover', 'stream', 'search', 'upload', 'you', 'settings', 'messages']
@@ -36,7 +36,7 @@ export const soundcloudHandler: PlatformHandler = {
     return [
       {
         uri: `https://feeds.soundcloud.com/users/soundcloud:users:${userId}/sounds.rss`,
-        hint: { key: 'soundcloud:tracks', label: 'Tracks' },
+        hint: composeHint('soundcloud:tracks'),
       },
     ]
   },

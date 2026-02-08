@@ -1,6 +1,6 @@
 import type { DiscoverUriEntry } from '../../../common/types.js'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
-import { isSubdomainOf } from '../../../common/utils.js'
+import { composeHint, isSubdomainOf } from '../../../common/utils.js'
 
 const categoryPathRegex = /^\/category\/([^/]+)/
 const tagPathRegex = /^\/tag\/([^/]+)/
@@ -21,7 +21,7 @@ export const wordpressHandler: PlatformHandler = {
     if (categoryMatch?.[1]) {
       uris.push({
         uri: `${origin}/category/${categoryMatch[1]}/feed/`,
-        hint: { key: 'wordpress:category', label: 'Category' },
+        hint: composeHint('wordpress:category'),
       })
     }
 
@@ -31,7 +31,7 @@ export const wordpressHandler: PlatformHandler = {
     if (tagMatch?.[1]) {
       uris.push({
         uri: `${origin}/tag/${tagMatch[1]}/feed/`,
-        hint: { key: 'wordpress:tag', label: 'Tag' },
+        hint: composeHint('wordpress:tag'),
       })
     }
 
@@ -41,42 +41,42 @@ export const wordpressHandler: PlatformHandler = {
     if (authorMatch?.[1]) {
       uris.push({
         uri: `${origin}/author/${authorMatch[1]}/feed/`,
-        hint: { key: 'wordpress:author', label: 'Author' },
+        hint: composeHint('wordpress:author'),
       })
     }
 
     // Always include main blog feeds.
     uris.push({
       uri: [`${origin}/feed/`, `${origin}/?feed=rss`],
-      hint: { key: 'wordpress:posts-rss2', label: 'Posts (RSS 2.0)' },
+      hint: composeHint('wordpress:posts-rss2'),
     })
     uris.push({
       uri: [`${origin}/feed/rss2/`, `${origin}/?feed=rss2`],
-      hint: { key: 'wordpress:posts-rss2-alt', label: 'Posts (RSS 2.0)' },
+      hint: composeHint('wordpress:posts-rss2-alt'),
     })
     uris.push({
       uri: [`${origin}/feed/rdf/`, `${origin}/?feed=rdf`],
-      hint: { key: 'wordpress:posts-rdf', label: 'Posts (RDF)' },
+      hint: composeHint('wordpress:posts-rdf'),
     })
     uris.push({
       uri: [`${origin}/feed/atom/`, `${origin}/?feed=atom`],
-      hint: { key: 'wordpress:posts-atom', label: 'Posts (Atom)' },
+      hint: composeHint('wordpress:posts-atom'),
     })
     uris.push({
       uri: [`${origin}/comments/feed/`, `${origin}/?feed=comments-rss2`],
-      hint: { key: 'wordpress:comments', label: 'Comments' },
+      hint: composeHint('wordpress:comments'),
     })
     uris.push({
       uri: [`${origin}/comments/feed/rss2/`, `${origin}/?feed=comments-rss2`],
-      hint: { key: 'wordpress:comments-rss2', label: 'Comments (RSS 2.0)' },
+      hint: composeHint('wordpress:comments-rss2'),
     })
     uris.push({
       uri: [`${origin}/comments/feed/rdf/`, `${origin}/?feed=comments-rdf`],
-      hint: { key: 'wordpress:comments-rdf', label: 'Comments (RDF)' },
+      hint: composeHint('wordpress:comments-rdf'),
     })
     uris.push({
       uri: [`${origin}/comments/feed/atom/`, `${origin}/?feed=comments-atom`],
-      hint: { key: 'wordpress:comments-atom', label: 'Comments (Atom)' },
+      hint: composeHint('wordpress:comments-atom'),
     })
 
     return uris

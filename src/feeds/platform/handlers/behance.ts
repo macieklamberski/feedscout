@@ -1,5 +1,5 @@
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
-import { isAnyOf, isHostOf } from '../../../common/utils.js'
+import { composeHint, isAnyOf, isHostOf } from '../../../common/utils.js'
 
 const hosts = ['behance.net', 'www.behance.net']
 const userPathRegex = /^\/([a-zA-Z0-9_-]+)(?:\/(appreciated))?\/?$/
@@ -43,7 +43,7 @@ export const behanceHandler: PlatformHandler = {
           return [
             {
               uri: `https://www.behance.net/feeds/user?username=${username}&content=appreciated`,
-              hint: { key: 'behance:appreciated', label: 'Appreciated' },
+              hint: composeHint('behance:appreciated'),
             },
           ]
         }
@@ -51,7 +51,7 @@ export const behanceHandler: PlatformHandler = {
         return [
           {
             uri: `https://www.behance.net/feeds/user?username=${username}`,
-            hint: { key: 'behance:portfolio', label: 'Portfolio' },
+            hint: composeHint('behance:portfolio'),
           },
         ]
       }

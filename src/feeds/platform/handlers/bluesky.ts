@@ -1,5 +1,5 @@
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
-import { isHostOf } from '../../../common/utils.js'
+import { composeHint, isHostOf } from '../../../common/utils.js'
 
 const hosts = ['bsky.app']
 
@@ -20,7 +20,7 @@ export const blueskyHandler: PlatformHandler = {
     return [
       {
         uri: `https://bsky.app/profile/${handle}/rss`,
-        hint: { key: 'bluesky:posts', label: 'Posts' },
+        hint: composeHint('bluesky:posts'),
       },
     ]
   },

@@ -1,6 +1,6 @@
 import type { DiscoverUriEntry } from '../../../common/types.js'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
-import { isAnyOf, isHostOf } from '../../../common/utils.js'
+import { composeHint, isAnyOf, isHostOf } from '../../../common/utils.js'
 
 const hosts = ['github.com', 'www.github.com']
 const excludedPaths = [
@@ -68,7 +68,7 @@ export const githubHandler: PlatformHandler = {
       return [
         {
           uri: `https://github.com/${user}.atom`,
-          hint: { key: 'github:activity', label: 'Activity' },
+          hint: composeHint('github:activity'),
         },
       ]
     }
@@ -85,22 +85,22 @@ export const githubHandler: PlatformHandler = {
     // Repository feeds.
     uris.push({
       uri: `https://github.com/${owner}/${repo}/releases.atom`,
-      hint: { key: 'github:releases', label: 'Releases' },
+      hint: composeHint('github:releases'),
     })
     uris.push({
       uri: `https://github.com/${owner}/${repo}/commits.atom`,
-      hint: { key: 'github:commits', label: 'Commits' },
+      hint: composeHint('github:commits'),
     })
     uris.push({
       uri: `https://github.com/${owner}/${repo}/tags.atom`,
-      hint: { key: 'github:tags', label: 'Tags' },
+      hint: composeHint('github:tags'),
     })
 
     // If on wiki page, add wiki feed.
     if (/\/wiki(\/|$)/.test(pathname)) {
       uris.push({
         uri: `https://github.com/${owner}/${repo}/wiki.atom`,
-        hint: { key: 'github:wiki', label: 'Wiki' },
+        hint: composeHint('github:wiki'),
       })
     }
 
@@ -108,7 +108,7 @@ export const githubHandler: PlatformHandler = {
     if (/\/discussions(\/|$)/.test(pathname)) {
       uris.push({
         uri: `https://github.com/${owner}/${repo}/discussions.atom`,
-        hint: { key: 'github:discussions', label: 'Discussions' },
+        hint: composeHint('github:discussions'),
       })
     }
 
@@ -120,7 +120,7 @@ export const githubHandler: PlatformHandler = {
 
       uris.push({
         uri: `https://github.com/${owner}/${repo}/commits/${branch}.atom`,
-        hint: { key: 'github:branch-commits', label: 'Branch commits' },
+        hint: composeHint('github:branch-commits'),
       })
     }
 
@@ -133,7 +133,7 @@ export const githubHandler: PlatformHandler = {
 
       uris.push({
         uri: `https://github.com/${owner}/${repo}/commits/${branch}/${filePath}.atom`,
-        hint: { key: 'github:file-history', label: 'File history' },
+        hint: composeHint('github:file-history'),
       })
     }
 

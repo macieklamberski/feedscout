@@ -1,5 +1,5 @@
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
-import { isHostOf } from '../../../common/utils.js'
+import { composeHint, isHostOf } from '../../../common/utils.js'
 
 const hosts = ['kickstarter.com', 'www.kickstarter.com']
 
@@ -20,7 +20,7 @@ export const kickstarterHandler: PlatformHandler = {
       return [
         {
           uri: `https://www.kickstarter.com/projects/${creator}/${project}/posts.atom`,
-          hint: { key: 'kickstarter:updates', label: 'Updates' },
+          hint: composeHint('kickstarter:updates'),
         },
       ]
     }
@@ -29,7 +29,7 @@ export const kickstarterHandler: PlatformHandler = {
     return [
       {
         uri: 'https://www.kickstarter.com/projects/feed.atom',
-        hint: { key: 'kickstarter:projects', label: 'Projects' },
+        hint: composeHint('kickstarter:projects'),
       },
     ]
   },

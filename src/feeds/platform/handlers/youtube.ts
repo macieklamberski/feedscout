@@ -1,6 +1,6 @@
 import type { DiscoverUriEntry } from '../../../common/types.js'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
-import { isHostOf } from '../../../common/utils.js'
+import { composeHint, isHostOf } from '../../../common/utils.js'
 
 const hosts = ['youtube.com', 'www.youtube.com', 'm.youtube.com', 'youtu.be', 'www.youtu.be']
 const channelIdRegex = /"(?:channelId|externalId)":"(UC[a-zA-Z0-9_-]+)"/
@@ -28,15 +28,15 @@ const getShortsOnlyPlaylistId = (channelId: string): string => {
 const pushChannelUris = (uris: Array<DiscoverUriEntry>, channelId: string): void => {
   uris.push({
     uri: `https://www.youtube.com/feeds/videos.xml?channel_id=${channelId}`,
-    hint: { key: 'youtube:all', label: 'All uploads' },
+    hint: composeHint('youtube:all'),
   })
   uris.push({
     uri: `https://www.youtube.com/feeds/videos.xml?playlist_id=${getVideosOnlyPlaylistId(channelId)}`,
-    hint: { key: 'youtube:videos', label: 'Videos only' },
+    hint: composeHint('youtube:videos'),
   })
   uris.push({
     uri: `https://www.youtube.com/feeds/videos.xml?playlist_id=${getShortsOnlyPlaylistId(channelId)}`,
-    hint: { key: 'youtube:shorts', label: 'Shorts only' },
+    hint: composeHint('youtube:shorts'),
   })
 }
 
@@ -64,7 +64,7 @@ export const youtubeHandler: PlatformHandler = {
     if (playlistId) {
       uris.push({
         uri: `https://www.youtube.com/feeds/videos.xml?playlist_id=${playlistId}`,
-        hint: { key: 'youtube:playlist', label: 'Playlist' },
+        hint: composeHint('youtube:playlist'),
       })
     }
 

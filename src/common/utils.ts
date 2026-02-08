@@ -1,3 +1,11 @@
+import locales from './locales.json' with { type: 'json' }
+import type { DiscoverUriHint } from './types.js'
+
+export const composeHint = (key: string): DiscoverUriHint => ({
+  key,
+  label: locales.hints[key as keyof typeof locales.hints],
+})
+
 export const normalizeMimeType = (type: string): string => {
   return type.split(';')[0].trim().toLowerCase()
 }

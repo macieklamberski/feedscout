@@ -1,5 +1,5 @@
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
-import { isAnyOf, isHostOf, isSubdomainOf } from '../../../common/utils.js'
+import { composeHint, isAnyOf, isHostOf, isSubdomainOf } from '../../../common/utils.js'
 
 const hosts = ['medium.com', 'www.medium.com']
 const excludedPaths = ['search', 'me', 'new-story', 'plans', 'membership']
@@ -24,7 +24,7 @@ export const mediumHandler: PlatformHandler = {
         return [
           {
             uri: `https://medium.com/feed/@${username}`,
-            hint: { key: 'medium:posts', label: 'Posts' },
+            hint: composeHint('medium:posts'),
           },
         ]
       }
@@ -35,9 +35,7 @@ export const mediumHandler: PlatformHandler = {
       if (tagMatch?.[1]) {
         const tag = tagMatch[1]
 
-        return [
-          { uri: `https://medium.com/feed/tag/${tag}`, hint: { key: 'medium:tag', label: 'Tag' } },
-        ]
+        return [{ uri: `https://medium.com/feed/tag/${tag}`, hint: composeHint('medium:tag') }]
       }
 
       // Publication tagged feed: /publication/tagged/tag-name.
@@ -51,7 +49,7 @@ export const mediumHandler: PlatformHandler = {
           return [
             {
               uri: `https://medium.com/feed/${publication}/tagged/${tag}`,
-              hint: { key: 'medium:tagged', label: 'Tagged' },
+              hint: composeHint('medium:tagged'),
             },
           ]
         }
@@ -67,7 +65,7 @@ export const mediumHandler: PlatformHandler = {
           return [
             {
               uri: `https://medium.com/feed/${publication}`,
-              hint: { key: 'medium:publication', label: 'Publication' },
+              hint: composeHint('medium:publication'),
             },
           ]
         }
@@ -89,7 +87,7 @@ export const mediumHandler: PlatformHandler = {
         return [
           {
             uri: `https://medium.com/feed/${subdomain}/tagged/${tagMatch[1]}`,
-            hint: { key: 'medium:tagged', label: 'Tagged' },
+            hint: composeHint('medium:tagged'),
           },
         ]
       }
@@ -97,7 +95,7 @@ export const mediumHandler: PlatformHandler = {
       return [
         {
           uri: `https://medium.com/feed/${subdomain}`,
-          hint: { key: 'medium:publication', label: 'Publication' },
+          hint: composeHint('medium:publication'),
         },
       ]
     }

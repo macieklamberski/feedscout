@@ -1,5 +1,5 @@
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
-import { isAnyOf, isHostOf } from '../../../common/utils.js'
+import { composeHint, isAnyOf, isHostOf } from '../../../common/utils.js'
 
 const hosts = ['gist.github.com']
 const excludedPaths = ['discover', 'search', 'login', 'join', 'settings']
@@ -22,7 +22,7 @@ export const githubGistHandler: PlatformHandler = {
         return [
           {
             uri: `https://gist.github.com/${username}.atom`,
-            hint: { key: 'github-gist:gists', label: 'Gists' },
+            hint: composeHint('github-gist:gists'),
           },
         ]
       }
@@ -39,7 +39,7 @@ export const githubGistHandler: PlatformHandler = {
       return [
         {
           uri: `https://gist.github.com/${username}/starred.atom`,
-          hint: { key: 'github-gist:starred', label: 'Starred' },
+          hint: composeHint('github-gist:starred'),
         },
       ]
     }
@@ -53,7 +53,7 @@ export const githubGistHandler: PlatformHandler = {
       return [
         {
           uri: `https://gist.github.com/${username}.atom`,
-          hint: { key: 'github-gist:gists', label: 'Gists' },
+          hint: composeHint('github-gist:gists'),
         },
       ]
     }

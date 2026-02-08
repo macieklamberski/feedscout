@@ -1,5 +1,5 @@
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
-import { isSubdomainOf } from '../../../common/utils.js'
+import { composeHint, isSubdomainOf } from '../../../common/utils.js'
 
 export const substackHandler: PlatformHandler = {
   match: (url) => {
@@ -9,6 +9,6 @@ export const substackHandler: PlatformHandler = {
   resolve: (url) => {
     const { origin } = new URL(url)
 
-    return [{ uri: `${origin}/feed`, hint: { key: 'substack:newsletter', label: 'Newsletter' } }]
+    return [{ uri: `${origin}/feed`, hint: composeHint('substack:newsletter') }]
   },
 }

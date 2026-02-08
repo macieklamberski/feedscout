@@ -1,5 +1,5 @@
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
-import { isHostOf } from '../../../common/utils.js'
+import { composeHint, isHostOf } from '../../../common/utils.js'
 
 const hosts = ['producthunt.com', 'www.producthunt.com']
 const topicPathRegex = /^\/topics\/([a-zA-Z0-9_-]+)/
@@ -22,7 +22,7 @@ export const producthuntHandler: PlatformHandler = {
       return [
         {
           uri: `https://www.producthunt.com/feed?topic=${topic}`,
-          hint: { key: 'producthunt:topic', label: 'Topic' },
+          hint: composeHint('producthunt:topic'),
         },
       ]
     }
@@ -36,7 +36,7 @@ export const producthuntHandler: PlatformHandler = {
       return [
         {
           uri: `https://www.producthunt.com/feed?category=${category}`,
-          hint: { key: 'producthunt:category', label: 'Category' },
+          hint: composeHint('producthunt:category'),
         },
       ]
     }
@@ -45,7 +45,7 @@ export const producthuntHandler: PlatformHandler = {
     return [
       {
         uri: 'https://www.producthunt.com/feed',
-        hint: { key: 'producthunt:products', label: 'Products' },
+        hint: composeHint('producthunt:products'),
       },
     ]
   },

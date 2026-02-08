@@ -1,5 +1,5 @@
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
-import { isHostOf } from '../../../common/utils.js'
+import { composeHint, isHostOf } from '../../../common/utils.js'
 
 const hosts = ['lobste.rs']
 const tagPathRegex = /^\/t\/([a-zA-Z0-9,_-]+)/
@@ -21,9 +21,7 @@ export const lobstersHandler: PlatformHandler = {
     if (tagMatch?.[1]) {
       const tags = tagMatch[1]
 
-      return [
-        { uri: `https://lobste.rs/t/${tags}.rss`, hint: { key: 'lobsters:tag', label: 'Tag' } },
-      ]
+      return [{ uri: `https://lobste.rs/t/${tags}.rss`, hint: composeHint('lobsters:tag') }]
     }
 
     // Domain page: /domains/{domain}
@@ -35,7 +33,7 @@ export const lobstersHandler: PlatformHandler = {
       return [
         {
           uri: `https://lobste.rs/domains/${domain}.rss`,
-          hint: { key: 'lobsters:domain', label: 'Domain' },
+          hint: composeHint('lobsters:domain'),
         },
       ]
     }
@@ -49,7 +47,7 @@ export const lobstersHandler: PlatformHandler = {
       return [
         {
           uri: `https://lobste.rs/~${username}/stories.rss`,
-          hint: { key: 'lobsters:stories', label: 'Stories' },
+          hint: composeHint('lobsters:stories'),
         },
       ]
     }
@@ -64,21 +62,17 @@ export const lobstersHandler: PlatformHandler = {
         return [
           {
             uri: `https://lobste.rs/top/${period}/rss`,
-            hint: { key: 'lobsters:top', label: 'Top stories' },
+            hint: composeHint('lobsters:top'),
           },
         ]
       }
 
-      return [
-        { uri: 'https://lobste.rs/top/rss', hint: { key: 'lobsters:top', label: 'Top stories' } },
-      ]
+      return [{ uri: 'https://lobste.rs/top/rss', hint: composeHint('lobsters:top') }]
     }
 
     // Newest page.
     if (pathname === '/newest' || pathname === '/newest/') {
-      return [
-        { uri: 'https://lobste.rs/newest.rss', hint: { key: 'lobsters:newest', label: 'Newest' } },
-      ]
+      return [{ uri: 'https://lobste.rs/newest.rss', hint: composeHint('lobsters:newest') }]
     }
 
     // Comments page.
@@ -86,12 +80,12 @@ export const lobstersHandler: PlatformHandler = {
       return [
         {
           uri: 'https://lobste.rs/comments.rss',
-          hint: { key: 'lobsters:comments', label: 'Comments' },
+          hint: composeHint('lobsters:comments'),
         },
       ]
     }
 
     // Homepage or other pages - return main feed.
-    return [{ uri: 'https://lobste.rs/rss', hint: { key: 'lobsters:stories', label: 'Stories' } }]
+    return [{ uri: 'https://lobste.rs/rss', hint: composeHint('lobsters:stories') }]
   },
 }

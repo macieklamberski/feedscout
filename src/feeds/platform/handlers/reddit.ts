@@ -1,6 +1,6 @@
 import type { DiscoverUriEntry } from '../../../common/types.js'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
-import { isAnyOf, isHostOf } from '../../../common/utils.js'
+import { composeHint, isAnyOf, isHostOf } from '../../../common/utils.js'
 
 const hosts = ['reddit.com', 'www.reddit.com', 'old.reddit.com', 'new.reddit.com']
 const sortOptions = ['hot', 'new', 'rising', 'controversial', 'top']
@@ -20,7 +20,7 @@ export const redditHandler: PlatformHandler = {
 
     // Homepage: reddit.com/
     if (pathSegments.length === 0) {
-      return [{ uri: 'https://www.reddit.com/.rss', hint: { key: 'reddit:posts', label: 'Posts' } }]
+      return [{ uri: 'https://www.reddit.com/.rss', hint: composeHint('reddit:posts') }]
     }
 
     // Match /r/subreddit/comments/id pattern (post comments feed).
@@ -33,7 +33,7 @@ export const redditHandler: PlatformHandler = {
       return [
         {
           uri: `https://www.reddit.com/r/${subreddit}/comments/${postId}/.rss`,
-          hint: { key: 'reddit:post-comments', label: 'Post comments' },
+          hint: composeHint('reddit:post-comments'),
         },
       ]
     }
@@ -49,19 +49,19 @@ export const redditHandler: PlatformHandler = {
       if (sort && isAnyOf(sort, sortOptions)) {
         uris.push({
           uri: `https://www.reddit.com/r/${subreddit}/${sort}/.rss`,
-          hint: { key: 'reddit:posts', label: 'Posts' },
+          hint: composeHint('reddit:posts'),
         })
       } else {
         uris.push({
           uri: `https://www.reddit.com/r/${subreddit}/.rss`,
-          hint: { key: 'reddit:posts', label: 'Posts' },
+          hint: composeHint('reddit:posts'),
         })
       }
 
       // Add all comments feed for subreddit.
       uris.push({
         uri: `https://www.reddit.com/r/${subreddit}/comments/.rss`,
-        hint: { key: 'reddit:comments', label: 'Comments' },
+        hint: composeHint('reddit:comments'),
       })
 
       return uris
@@ -77,7 +77,7 @@ export const redditHandler: PlatformHandler = {
       return [
         {
           uri: `https://www.reddit.com/user/${username}/m/${multireddit}/.rss`,
-          hint: { key: 'reddit:multireddit', label: 'Multireddit' },
+          hint: composeHint('reddit:multireddit'),
         },
       ]
     }
@@ -91,7 +91,7 @@ export const redditHandler: PlatformHandler = {
       return [
         {
           uri: `https://www.reddit.com/user/${username}/.rss`,
-          hint: { key: 'reddit:posts', label: 'Posts' },
+          hint: composeHint('reddit:posts'),
         },
       ]
     }
@@ -105,7 +105,7 @@ export const redditHandler: PlatformHandler = {
       return [
         {
           uri: `https://www.reddit.com/domain/${domain}/.rss`,
-          hint: { key: 'reddit:posts', label: 'Posts' },
+          hint: composeHint('reddit:posts'),
         },
       ]
     }
