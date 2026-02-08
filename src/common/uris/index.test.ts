@@ -141,7 +141,43 @@ describe('discoverUris', () => {
     expect(value).toEqual(expected)
   })
 
-  it('should return only first method URIs when stopOnFirstMethod is true', () => {
+  it('should stop after platform method when stopOnFirstMethod is true', () => {
+    const value = discoverUris(
+      {
+        platform: {
+          html: '',
+          options: {
+            baseUrl: 'https://example.com',
+            handlers: [
+              {
+                match: () => {
+                  return true
+                },
+                resolve: () => {
+                  return ['https://example.com/feed.xml']
+                },
+              },
+            ],
+          },
+        },
+        html: {
+          html: '<link rel="alternate" type="application/rss+xml" href="/rss.xml">',
+          options: {
+            linkSelectors: [{ rel: 'alternate', types: ['application/rss+xml'] }],
+            anchorUris: [],
+            anchorIgnoredUris: [],
+            anchorLabels: [],
+          },
+        },
+      },
+      true,
+    )
+    const expected = ['https://example.com/feed.xml']
+
+    expect(value).toEqual(expected)
+  })
+
+  it('should stop after html method when stopOnFirstMethod is true', () => {
     const value = discoverUris(
       {
         html: {
@@ -151,6 +187,32 @@ describe('discoverUris', () => {
             anchorUris: [],
             anchorIgnoredUris: [],
             anchorLabels: [],
+          },
+        },
+        guess: {
+          options: {
+            baseUrl: 'https://example.com',
+            uris: ['/rss.xml'],
+          },
+        },
+      },
+      true,
+    )
+    const expected = ['/feed.xml']
+
+    expect(value).toEqual(expected)
+  })
+
+  it('should stop after headers method when stopOnFirstMethod is true', () => {
+    const headers = new Headers({
+      Link: '</feed.xml>; rel="alternate"; type="application/rss+xml"',
+    })
+    const value = discoverUris(
+      {
+        headers: {
+          headers,
+          options: {
+            linkSelectors: [{ rel: 'alternate', types: ['application/rss+xml'] }],
           },
         },
         guess: {
