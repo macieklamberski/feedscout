@@ -22,6 +22,7 @@ import { soundcloudHandler } from './platform/handlers/soundcloud.js'
 import { substackHandler } from './platform/handlers/substack.js'
 import { tumblrHandler } from './platform/handlers/tumblr.js'
 import { wordpressHandler } from './platform/handlers/wordpress.js'
+import { wpengineHandler } from './platform/handlers/wpengine.js'
 import { youtubeHandler } from './platform/handlers/youtube.js'
 
 export const mimeTypes = [
@@ -148,6 +149,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     substackHandler,
     tumblrHandler,
     wordpressHandler,
+    wpengineHandler,
     youtubeHandler,
   ],
 }
