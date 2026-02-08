@@ -80,6 +80,15 @@ Discovers RSS and Atom feeds for WordPress.com blogs, with category, tag, and au
 | `*.wordpress.com/tag/{tag}` | Tag feed (+ above) |
 | `*.wordpress.com/author/{author}` | Author feed (+ above) |
 
+### WP Engine
+
+Discovers feeds for WP Engine-hosted WordPress sites. Uses the same feed structure as [WordPress.com](#wordpresscom).
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `*.wpenginepowered.com` | Same as WordPress.com |
+| `*.wpengine.com` | Same as WordPress.com (legacy domain) |
+
 ### Blogspot
 
 Discovers RSS and Atom feeds for Blogspot blogs, including label-specific feeds.
@@ -297,6 +306,7 @@ import {
   substackHandler,
   tumblrHandler,
   wordpressHandler,
+  wpengineHandler,
   youtubeHandler,
 } from 'feedscout/platform'
 ```
