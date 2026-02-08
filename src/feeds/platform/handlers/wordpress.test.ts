@@ -24,6 +24,9 @@ describe('wordpressHandler', () => {
         'https://example.wordpress.com/feed/rdf/',
         'https://example.wordpress.com/feed/atom/',
         'https://example.wordpress.com/comments/feed/',
+        'https://example.wordpress.com/comments/feed/rss2/',
+        'https://example.wordpress.com/comments/feed/rdf/',
+        'https://example.wordpress.com/comments/feed/atom/',
       ]
 
       expect(wordpressHandler.resolve(value)).toEqual(expected)
@@ -37,6 +40,9 @@ describe('wordpressHandler', () => {
         'https://blog.wordpress.com/feed/rdf/',
         'https://blog.wordpress.com/feed/atom/',
         'https://blog.wordpress.com/comments/feed/',
+        'https://blog.wordpress.com/comments/feed/rss2/',
+        'https://blog.wordpress.com/comments/feed/rdf/',
+        'https://blog.wordpress.com/comments/feed/atom/',
       ]
 
       expect(wordpressHandler.resolve(value)).toEqual(expected)
@@ -51,6 +57,9 @@ describe('wordpressHandler', () => {
         'https://blog.wordpress.com/feed/rdf/',
         'https://blog.wordpress.com/feed/atom/',
         'https://blog.wordpress.com/comments/feed/',
+        'https://blog.wordpress.com/comments/feed/rss2/',
+        'https://blog.wordpress.com/comments/feed/rdf/',
+        'https://blog.wordpress.com/comments/feed/atom/',
       ]
 
       expect(wordpressHandler.resolve(value)).toEqual(expected)
@@ -65,6 +74,9 @@ describe('wordpressHandler', () => {
         'https://blog.wordpress.com/feed/rdf/',
         'https://blog.wordpress.com/feed/atom/',
         'https://blog.wordpress.com/comments/feed/',
+        'https://blog.wordpress.com/comments/feed/rss2/',
+        'https://blog.wordpress.com/comments/feed/rdf/',
+        'https://blog.wordpress.com/comments/feed/atom/',
       ]
 
       expect(wordpressHandler.resolve(value)).toEqual(expected)
@@ -79,6 +91,9 @@ describe('wordpressHandler', () => {
         'https://blog.wordpress.com/feed/rdf/',
         'https://blog.wordpress.com/feed/atom/',
         'https://blog.wordpress.com/comments/feed/',
+        'https://blog.wordpress.com/comments/feed/rss2/',
+        'https://blog.wordpress.com/comments/feed/rdf/',
+        'https://blog.wordpress.com/comments/feed/atom/',
       ]
 
       expect(wordpressHandler.resolve(value)).toEqual(expected)

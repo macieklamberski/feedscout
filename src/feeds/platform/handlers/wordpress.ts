@@ -41,6 +41,9 @@ export const wordpressHandler: PlatformHandler = {
     uris.push(`${origin}/feed/rdf/`)
     uris.push(`${origin}/feed/atom/`)
     uris.push(`${origin}/comments/feed/`)
+    uris.push(`${origin}/comments/feed/rss2/`)
+    uris.push(`${origin}/comments/feed/rdf/`)
+    uris.push(`${origin}/comments/feed/atom/`)
 
     return uris
   },
