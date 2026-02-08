@@ -1,10 +1,18 @@
+import type { UriEntry } from '../../types.js'
+
 export const generateUrlCombinations = (
   baseUrls: Array<string>,
-  uris: Array<string>,
-): Array<string> => {
+  uris: Array<UriEntry>,
+): Array<UriEntry> => {
   return baseUrls.flatMap((base) => {
     return uris.map((uri) => {
-      return new URL(uri, base).toString()
+      if (typeof uri === 'string') {
+        return new URL(uri, base).toString()
+      }
+
+      return uri.map((alternative) => {
+        return new URL(alternative, base).toString()
+      })
     })
   })
 }

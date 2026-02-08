@@ -1,3 +1,4 @@
+import type { UriEntry } from '../../../common/types.js'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { isSubdomainOf } from '../../../common/utils.js'
 
@@ -12,7 +13,7 @@ export const wordpressHandler: PlatformHandler = {
 
   resolve: (url) => {
     const { origin, pathname } = new URL(url)
-    const uris: Array<string> = []
+    const uris: Array<UriEntry> = []
 
     // Category page: /category/{slug}/
     const categoryMatch = pathname.match(categoryPathRegex)
@@ -36,14 +37,14 @@ export const wordpressHandler: PlatformHandler = {
     }
 
     // Always include main blog feeds.
-    uris.push(`${origin}/feed/`)
-    uris.push(`${origin}/feed/rss2/`)
-    uris.push(`${origin}/feed/rdf/`)
-    uris.push(`${origin}/feed/atom/`)
-    uris.push(`${origin}/comments/feed/`)
-    uris.push(`${origin}/comments/feed/rss2/`)
-    uris.push(`${origin}/comments/feed/rdf/`)
-    uris.push(`${origin}/comments/feed/atom/`)
+    uris.push([`${origin}/feed/`, `${origin}/?feed=rss`])
+    uris.push([`${origin}/feed/rss2/`, `${origin}/?feed=rss2`])
+    uris.push([`${origin}/feed/rdf/`, `${origin}/?feed=rdf`])
+    uris.push([`${origin}/feed/atom/`, `${origin}/?feed=atom`])
+    uris.push([`${origin}/comments/feed/`, `${origin}/?feed=comments-rss2`])
+    uris.push([`${origin}/comments/feed/rss2/`, `${origin}/?feed=comments-rss2`])
+    uris.push([`${origin}/comments/feed/rdf/`, `${origin}/?feed=comments-rdf`])
+    uris.push([`${origin}/comments/feed/atom/`, `${origin}/?feed=comments-atom`])
 
     return uris
   },

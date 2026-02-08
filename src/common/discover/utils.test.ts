@@ -1,7 +1,12 @@
 import { afterEach, describe, expect, it, spyOn } from 'bun:test'
 import locales from '../locales.json' with { type: 'json' }
-import type { DiscoverFetchFn } from '../types.js'
-import { defaultFetchFn, normalizeInput, normalizeMethodsConfig } from './utils.js'
+import type { DiscoverFetchFn, DiscoverNormalizeUrlFn } from '../types.js'
+import {
+  defaultFetchFn,
+  normalizeInput,
+  normalizeMethodsConfig,
+  normalizeUriEntry,
+} from './utils.js'
 
 describe('defaultFetchFn', () => {
   // biome-ignore lint/suspicious/noExplicitAny: Mock helper needs flexible signature.
@@ -1134,5 +1139,57 @@ describe('normalizeMethodsConfig', () => {
     }
 
     expect(result).toEqual(expected)
+  })
+})
+
+describe('normalizeUriEntry', () => {
+  const normalizeUrlFn: DiscoverNormalizeUrlFn = (url, baseUrl) => {
+    return new URL(url, baseUrl).toString()
+  }
+
+  it('should normalize string entry', () => {
+    const value = '/feed.xml'
+    const expected = 'https://example.com/feed.xml'
+
+    expect(normalizeUriEntry(value, normalizeUrlFn, 'https://example.com')).toBe(expected)
+  })
+
+  it('should normalize array entry', () => {
+    const value = ['/feed/', '?feed=rss']
+    const expected = ['https://example.com/feed/', 'https://example.com/?feed=rss']
+
+    expect(normalizeUriEntry(value, normalizeUrlFn, 'https://example.com')).toEqual(expected)
+  })
+
+  it('should apply normalizeUrlFn to each alternative in array', () => {
+    const value = ['/feed/atom/', '?feed=atom', '/rss.xml']
+    const expected = [
+      'https://example.com/feed/atom/',
+      'https://example.com/?feed=atom',
+      'https://example.com/rss.xml',
+    ]
+
+    expect(normalizeUriEntry(value, normalizeUrlFn, 'https://example.com')).toEqual(expected)
+  })
+
+  it('should handle undefined baseUrl for string entry', () => {
+    const value = 'https://example.com/feed.xml'
+    const expected = 'https://example.com/feed.xml'
+
+    expect(normalizeUriEntry(value, normalizeUrlFn, undefined)).toBe(expected)
+  })
+
+  it('should handle undefined baseUrl for array entry', () => {
+    const value = ['https://example.com/feed/', 'https://example.com/?feed=rss']
+    const expected = ['https://example.com/feed/', 'https://example.com/?feed=rss']
+
+    expect(normalizeUriEntry(value, normalizeUrlFn, undefined)).toEqual(expected)
+  })
+
+  it('should handle single-element array', () => {
+    const value = ['/feed.xml']
+    const expected = ['https://example.com/feed.xml']
+
+    expect(normalizeUriEntry(value, normalizeUrlFn, 'https://example.com')).toEqual(expected)
   })
 })

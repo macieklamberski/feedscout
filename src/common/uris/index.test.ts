@@ -254,4 +254,97 @@ describe('discoverUris', () => {
 
     expect(value).toEqual(expected)
   })
+
+  it('should pass through array entries from platform handler', () => {
+    const value = discoverUris({
+      platform: {
+        html: '',
+        options: {
+          baseUrl: 'https://example.com',
+          handlers: [
+            {
+              match: () => {
+                return true
+              },
+              resolve: () => {
+                return [
+                  ['https://example.com/feed/', 'https://example.com/?feed=rss'],
+                  'https://example.com/atom.xml',
+                ]
+              },
+            },
+          ],
+        },
+      },
+    })
+    const expected = [
+      ['https://example.com/feed/', 'https://example.com/?feed=rss'],
+      'https://example.com/atom.xml',
+    ]
+
+    expect(value).toEqual(expected)
+  })
+
+  it('should deduplicate array entries with same alternatives', () => {
+    const value = discoverUris({
+      platform: {
+        html: '',
+        options: {
+          baseUrl: 'https://example.com',
+          handlers: [
+            {
+              match: () => {
+                return true
+              },
+              resolve: () => {
+                return [['https://example.com/feed/', 'https://example.com/?feed=rss']]
+              },
+            },
+          ],
+        },
+      },
+      guess: {
+        options: {
+          baseUrl: 'https://example.com',
+          uris: [['/feed/', '?feed=rss']],
+        },
+      },
+    })
+    const expected = [['https://example.com/feed/', 'https://example.com/?feed=rss']]
+
+    expect(value).toEqual(expected)
+  })
+
+  it('should handle mixed string and array entries across methods', () => {
+    const value = discoverUris({
+      platform: {
+        html: '',
+        options: {
+          baseUrl: 'https://example.com',
+          handlers: [
+            {
+              match: () => {
+                return true
+              },
+              resolve: () => {
+                return [['https://example.com/feed/', 'https://example.com/?feed=rss']]
+              },
+            },
+          ],
+        },
+      },
+      guess: {
+        options: {
+          baseUrl: 'https://example.com',
+          uris: ['/atom.xml'],
+        },
+      },
+    })
+    const expected = [
+      ['https://example.com/feed/', 'https://example.com/?feed=rss'],
+      'https://example.com/atom.xml',
+    ]
+
+    expect(value).toEqual(expected)
+  })
 })

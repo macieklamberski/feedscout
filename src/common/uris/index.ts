@@ -1,4 +1,5 @@
-import type { DiscoverMethodsConfigInternal } from '../types.js'
+import type { DiscoverMethodsConfigInternal, UriEntry } from '../types.js'
+import { deduplicateUriEntries } from '../utils.js'
 import { discoverUrisFromGuess } from './guess/index.js'
 import { discoverUrisFromHeaders } from './headers/index.js'
 import { discoverUrisFromHtml } from './html/index.js'
@@ -7,44 +8,36 @@ import { discoverUrisFromPlatform } from './platform/index.js'
 export const discoverUris = (
   config: DiscoverMethodsConfigInternal,
   stopOnFirstMethod = false,
-): Array<string> => {
-  const uris = new Set<string>()
+): Array<UriEntry> => {
+  const uris: Array<UriEntry> = []
 
   if (config.platform) {
-    for (const uri of discoverUrisFromPlatform(config.platform.html, config.platform.options)) {
-      uris.add(uri)
-    }
+    uris.push(...discoverUrisFromPlatform(config.platform.html, config.platform.options))
 
-    if (stopOnFirstMethod && uris.size > 0) {
-      return Array.from(uris)
+    if (stopOnFirstMethod && uris.length > 0) {
+      return deduplicateUriEntries(uris)
     }
   }
 
   if (config.html) {
-    for (const uri of discoverUrisFromHtml(config.html.html, config.html.options)) {
-      uris.add(uri)
-    }
+    uris.push(...discoverUrisFromHtml(config.html.html, config.html.options))
 
-    if (stopOnFirstMethod && uris.size > 0) {
-      return Array.from(uris)
+    if (stopOnFirstMethod && uris.length > 0) {
+      return deduplicateUriEntries(uris)
     }
   }
 
   if (config.headers) {
-    for (const uri of discoverUrisFromHeaders(config.headers.headers, config.headers.options)) {
-      uris.add(uri)
-    }
+    uris.push(...discoverUrisFromHeaders(config.headers.headers, config.headers.options))
 
-    if (stopOnFirstMethod && uris.size > 0) {
-      return Array.from(uris)
+    if (stopOnFirstMethod && uris.length > 0) {
+      return deduplicateUriEntries(uris)
     }
   }
 
   if (config.guess) {
-    for (const uri of discoverUrisFromGuess(config.guess.options)) {
-      uris.add(uri)
-    }
+    uris.push(...discoverUrisFromGuess(config.guess.options))
   }
 
-  return Array.from(uris)
+  return deduplicateUriEntries(uris)
 }

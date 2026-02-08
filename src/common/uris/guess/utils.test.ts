@@ -142,6 +142,36 @@ describe('generateUrlCombinations', () => {
 
     expect(generateUrlCombinations(baseUrls, feedUris)).toEqual(expected)
   })
+
+  it('should resolve array entries as alternative groups', () => {
+    const baseUrls = ['https://example.com']
+    const feedUris = [['/feed/', '?feed=rss']]
+    const expected = [['https://example.com/feed/', 'https://example.com/?feed=rss']]
+
+    expect(generateUrlCombinations(baseUrls, feedUris)).toEqual(expected)
+  })
+
+  it('should handle mixed string and array entries', () => {
+    const baseUrls = ['https://example.com']
+    const feedUris = ['/rss.xml', ['/feed/', '?feed=rss']]
+    const expected = [
+      'https://example.com/rss.xml',
+      ['https://example.com/feed/', 'https://example.com/?feed=rss'],
+    ]
+
+    expect(generateUrlCombinations(baseUrls, feedUris)).toEqual(expected)
+  })
+
+  it('should resolve array entries across multiple base URLs', () => {
+    const baseUrls = ['https://example.com', 'https://blog.example.com']
+    const feedUris = [['/feed/', '?feed=rss']]
+    const expected = [
+      ['https://example.com/feed/', 'https://example.com/?feed=rss'],
+      ['https://blog.example.com/feed/', 'https://blog.example.com/?feed=rss'],
+    ]
+
+    expect(generateUrlCombinations(baseUrls, feedUris)).toEqual(expected)
+  })
 })
 
 describe('getWwwCounterpart', () => {

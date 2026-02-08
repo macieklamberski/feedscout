@@ -76,6 +76,24 @@ export const matchesAnyOfLinkSelectors = (
   })
 }
 
+export const deduplicateUriEntries = <T extends string | Array<string>>(
+  entries: Array<T>,
+): Array<T> => {
+  const seen = new Set<string>()
+
+  return entries.filter((entry) => {
+    const key = typeof entry === 'string' ? entry : entry.join('\0')
+
+    if (seen.has(key)) {
+      return false
+    }
+
+    seen.add(key)
+
+    return true
+  })
+}
+
 export const processConcurrently = async <T>(
   items: Array<T>,
   processFn: (item: T) => Promise<void>,

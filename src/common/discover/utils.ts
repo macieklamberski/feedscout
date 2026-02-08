@@ -6,6 +6,8 @@ import type {
   DiscoverMethodsConfig,
   DiscoverMethodsConfigDefaults,
   DiscoverMethodsConfigInternal,
+  DiscoverNormalizeUrlFn,
+  UriEntry,
 } from '../types.js'
 
 export const defaultFetchFn: DiscoverFetchFn = async (url, options) => {
@@ -39,6 +41,20 @@ export const normalizeInput = async (
     content: typeof response.body === 'string' ? response.body : '',
     headers: response.headers,
   }
+}
+
+export const normalizeUriEntry = (
+  entry: UriEntry,
+  normalizeUrlFn: DiscoverNormalizeUrlFn,
+  baseUrl: string | undefined,
+): UriEntry => {
+  if (typeof entry === 'string') {
+    return normalizeUrlFn(entry, baseUrl)
+  }
+
+  return entry.map((uri) => {
+    return normalizeUrlFn(uri, baseUrl)
+  })
 }
 
 export const normalizeMethodsConfig = (

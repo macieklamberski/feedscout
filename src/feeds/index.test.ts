@@ -179,6 +179,92 @@ describe('discoverFeeds', () => {
     expect(fetchCount).toBe(1)
   })
 
+  it('should stop trying alternatives when first alternative is valid', async () => {
+    const rss = `
+      <rss version="2.0">
+        <channel>
+          <title>Test RSS</title>
+          <link>https://example.com</link>
+          <description>Test feed</description>
+        </channel>
+      </rss>
+    `
+    const fetchedUrls: Array<string> = []
+    const mockFetch: DiscoverFetchFn = async (url) => {
+      fetchedUrls.push(url)
+      return {
+        url,
+        body: url === 'https://example.com/feed/' ? rss : '',
+        headers: new Headers(),
+        status: 200,
+        statusText: 'OK',
+      }
+    }
+    const value = await discoverFeeds(
+      { url: 'https://example.com' },
+      {
+        methods: { guess: { uris: [['/feed/', '/?feed=rss']] } },
+        fetchFn: mockFetch,
+      },
+    )
+    const expected: Array<DiscoverResult<FeedResult>> = [
+      {
+        url: 'https://example.com/feed/',
+        isValid: true,
+        format: 'rss',
+        title: 'Test RSS',
+        description: 'Test feed',
+        siteUrl: 'https://example.com',
+      },
+    ]
+
+    expect(value).toEqual(expected)
+    expect(fetchedUrls).toEqual(['https://example.com/feed/'])
+  })
+
+  it('should try second alternative when first alternative is not valid', async () => {
+    const rss = `
+      <rss version="2.0">
+        <channel>
+          <title>Test RSS</title>
+          <link>https://example.com</link>
+          <description>Test feed</description>
+        </channel>
+      </rss>
+    `
+    const fetchedUrls: Array<string> = []
+    const mockFetch: DiscoverFetchFn = async (url) => {
+      fetchedUrls.push(url)
+      return {
+        url,
+        body: url === 'https://example.com/?feed=rss' ? rss : '',
+        headers: new Headers(),
+        status: 200,
+        statusText: 'OK',
+      }
+    }
+    const value = await discoverFeeds(
+      { url: 'https://example.com' },
+      {
+        methods: { guess: { uris: [['/feed/', '/?feed=rss']] } },
+        fetchFn: mockFetch,
+      },
+    )
+    const expected: Array<DiscoverResult<FeedResult>> = [
+      {
+        url: 'https://example.com/?feed=rss',
+        isValid: true,
+        format: 'rss',
+        title: 'Test RSS',
+        description: 'Test feed',
+        siteUrl: 'https://example.com',
+      },
+    ]
+
+    expect(value).toEqual(expected)
+    expect(fetchedUrls).toEqual(['https://example.com/feed/', 'https://example.com/?feed=rss'])
+  })
+
   it('should call onProgress callback with correct updates', async () => {
     const progressUpdates: Array<{
       tested: number

@@ -3,6 +3,8 @@ import type { HeadersMethodOptions } from './uris/headers/types.js'
 import type { HtmlMethodOptions } from './uris/html/types.js'
 import type { PlatformMethodOptions } from './uris/platform/types.js'
 
+export type UriEntry = string | Array<string>
+
 export type LinkSelector = {
   rel: string
   types?: Array<string>

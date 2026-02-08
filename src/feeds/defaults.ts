@@ -1,4 +1,4 @@
-import type { LinkSelector } from '../common/types.js'
+import type { LinkSelector, UriEntry } from '../common/types.js'
 import type { GuessMethodOptions } from '../common/uris/guess/types.js'
 import type { HeadersMethodOptions } from '../common/uris/headers/types.js'
 import type { HtmlMethodOptions } from '../common/uris/html/types.js'
@@ -53,7 +53,7 @@ export const urisMinimal = ['/feed', '/rss', '/atom.xml', '/feed.xml', '/rss.xml
 export const urisBalanced = [...urisMinimal, '/feed/', '/index.atom', '/index.rss', '/feed.json']
 
 // Includes WordPress query parameters, Blogger patterns, and additional variations.
-export const urisComprehensive = [
+export const urisComprehensive: Array<UriEntry> = [
   ...urisBalanced,
   '/atom',
   '/rss/',
@@ -62,19 +62,13 @@ export const urisComprehensive = [
   '/feed.atom',
   '/feed.rss.xml',
   '/feed.atom.xml',
-  '/feed/atom/',
-  '/feed/rss/',
-  '/feed/rss2/',
-  '/feed/rdf',
-  '/feed/rdf/',
+  ['/feed/atom/', '?feed=atom'],
+  ['/feed/rss/', '?feed=rss'],
+  ['/feed/rss2/', '?feed=rss2'],
+  ['/feed/rdf', '?feed=rdf'],
+  ['/feed/rdf/', '?feed=rdf'],
   '/index.rss.xml',
   '/index.atom.xml',
-  '?feed=rss',
-  '?feed=rss2',
-  '?feed=atom',
-  '?feed=rdf',
-  '?feed=comments-rss2',
-  '?feed=comments-atom',
   '?format=rss',
   '?format=atom',
   '?rss=1',
@@ -84,7 +78,10 @@ export const urisComprehensive = [
   '/f.rss',
   '/json',
   '/.feed',
-  '/comments/feed',
+  ['/comments/feed', '?feed=comments-rss2'],
+  ['/comments/feed/rss2/', '?feed=comments-rss2'],
+  ['/comments/feed/rdf/', '?feed=comments-rdf'],
+  ['/comments/feed/atom/', '?feed=comments-atom'],
   '/feeds/posts/default',
   '/feeds/posts/default?alt=rss',
   '/feeds/comments/default',
@@ -112,7 +109,7 @@ export const linkSelectors: Array<LinkSelector> = [
 // Default options for HTML method.
 export const defaultHtmlOptions: Omit<HtmlMethodOptions, 'baseUrl'> = {
   linkSelectors,
-  anchorUris: urisComprehensive,
+  anchorUris: urisComprehensive.flat(),
   anchorIgnoredUris: ignoredUris,
   anchorLabels,
 }

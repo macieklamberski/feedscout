@@ -3,10 +3,11 @@ import type {
   DiscoverMethodsConfigDefaults,
   DiscoverOptionsInternal,
   DiscoverResult,
+  UriEntry,
 } from '../types.js'
 import { discoverUris } from '../uris/index.js'
-import { processConcurrently } from '../utils.js'
-import { normalizeInput, normalizeMethodsConfig } from './utils.js'
+import { deduplicateUriEntries, processConcurrently } from '../utils.js'
+import { normalizeInput, normalizeMethodsConfig, normalizeUriEntry } from './utils.js'
 
 export const discover = async <TValid>(
   input: DiscoverInput,
@@ -43,32 +44,43 @@ export const discover = async <TValid>(
   // Step 2: Build methods config from input and selected methods.
   const methodsConfig = normalizeMethodsConfig(normalizedInput, methods, defaults)
 
-  // Step 3: Discover URIs using selected methods and normalize them.
+  // Step 3: Discover URIs using selected methods, normalize, and deduplicate.
   const rawUris = discoverUris(methodsConfig, stopOnFirstMethod)
-  const uris = [...new Set(rawUris.map((uri) => normalizeUrlFn(uri, normalizedInput.url)))]
+  const normalizedUris = rawUris.map((entry) => {
+    return normalizeUriEntry(entry, normalizeUrlFn, normalizedInput.url)
+  })
+  const uris = deduplicateUriEntries(normalizedUris)
 
   // Step 4: Validate discovered URIs.
   const results: Array<DiscoverResult<TValid>> = []
   let tested = 0
   let found = 0
 
-  const processUri = async (url: string): Promise<void> => {
+  const fetchAndExtract = async (url: string): Promise<DiscoverResult<TValid>> => {
     try {
       const fetchResult = await fetchFn(url)
-      const extractResult = await extractFn({
+
+      return await extractFn({
         url: fetchResult.url,
         content: typeof fetchResult.body === 'string' ? fetchResult.body : '',
       })
+    } catch (error) {
+      return { url, isValid: false, error } as DiscoverResult<TValid>
+    }
+  }
 
-      results.push(extractResult)
+  const processUri = async (entry: UriEntry): Promise<void> => {
+    const alternatives = typeof entry === 'string' ? [entry] : entry
 
-      if (extractResult.isValid) {
+    for (const url of alternatives) {
+      const result = await fetchAndExtract(url)
+
+      results.push(result)
+      tested += 1
+
+      if (result.isValid) {
         found += 1
       }
-    } catch (error) {
-      results.push({ url, isValid: false, error })
-    } finally {
-      tested += 1
 
       onProgress?.({
         tested,
@@ -76,6 +88,11 @@ export const discover = async <TValid>(
         found,
         current: url,
       })
+
+      // Stop trying alternatives on first valid result.
+      if (result.isValid) {
+        break
+      }
     }
   }
 
