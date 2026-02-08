@@ -19,7 +19,12 @@ export const producthuntHandler: PlatformHandler = {
     if (topicMatch?.[1]) {
       const topic = topicMatch[1]
 
-      return [`https://www.producthunt.com/feed?topic=${topic}`]
+      return [
+        {
+          uri: `https://www.producthunt.com/feed?topic=${topic}`,
+          hint: { key: 'producthunt:topic', label: 'Topic' },
+        },
+      ]
     }
 
     // Category page: /categories/{category}
@@ -28,10 +33,20 @@ export const producthuntHandler: PlatformHandler = {
     if (categoryMatch?.[1]) {
       const category = categoryMatch[1]
 
-      return [`https://www.producthunt.com/feed?category=${category}`]
+      return [
+        {
+          uri: `https://www.producthunt.com/feed?category=${category}`,
+          hint: { key: 'producthunt:category', label: 'Category' },
+        },
+      ]
     }
 
     // Homepage or other pages - return main feed.
-    return ['https://www.producthunt.com/feed']
+    return [
+      {
+        uri: 'https://www.producthunt.com/feed',
+        hint: { key: 'producthunt:products', label: 'Products' },
+      },
+    ]
   },
 }

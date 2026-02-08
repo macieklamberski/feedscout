@@ -60,7 +60,12 @@ export const dailymotionHandler: PlatformHandler = {
     if (playlistMatch?.[1]) {
       const playlistId = playlistMatch[1]
 
-      return [`https://www.dailymotion.com/rss/playlist/${playlistId}`]
+      return [
+        {
+          uri: `https://www.dailymotion.com/rss/playlist/${playlistId}`,
+          hint: { key: 'dailymotion:playlist', label: 'Playlist' },
+        },
+      ]
     }
 
     // User/channel page: /{username}
@@ -70,7 +75,12 @@ export const dailymotionHandler: PlatformHandler = {
       const username = userMatch[1]
 
       if (!isAnyOf(username, excludedPaths)) {
-        return [`https://www.dailymotion.com/rss/${username}`]
+        return [
+          {
+            uri: `https://www.dailymotion.com/rss/${username}`,
+            hint: { key: 'dailymotion:videos', label: 'Videos' },
+          },
+        ]
       }
     }
 

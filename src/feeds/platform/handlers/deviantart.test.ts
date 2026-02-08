@@ -18,7 +18,10 @@ describe('deviantartHandler', () => {
     it('should return RSS feed URL for user profile', () => {
       const value = 'https://deviantart.com/yuumei'
       const expected = [
-        'https://backend.deviantart.com/rss.xml?type=deviation&q=by%3Ayuumei%20sort%3Atime%20meta%3Aall',
+        {
+          uri: 'https://backend.deviantart.com/rss.xml?type=deviation&q=by%3Ayuumei%20sort%3Atime%20meta%3Aall',
+          hint: { key: 'deviantart:deviations', label: 'Deviations' },
+        },
       ]
 
       expect(deviantartHandler.resolve(value)).toEqual(expected)
@@ -27,7 +30,10 @@ describe('deviantartHandler', () => {
     it('should return RSS feed URL for user gallery', () => {
       const value = 'https://www.deviantart.com/yuumei/gallery'
       const expected = [
-        'https://backend.deviantart.com/rss.xml?type=deviation&q=by%3Ayuumei%20sort%3Atime%20meta%3Aall',
+        {
+          uri: 'https://backend.deviantart.com/rss.xml?type=deviation&q=by%3Ayuumei%20sort%3Atime%20meta%3Aall',
+          hint: { key: 'deviantart:deviations', label: 'Deviations' },
+        },
       ]
 
       expect(deviantartHandler.resolve(value)).toEqual(expected)
@@ -36,7 +42,10 @@ describe('deviantartHandler', () => {
     it('should return RSS feed URL for user gallery/all', () => {
       const value = 'https://deviantart.com/yuumei/gallery/all'
       const expected = [
-        'https://backend.deviantart.com/rss.xml?type=deviation&q=by%3Ayuumei%20sort%3Atime%20meta%3Aall',
+        {
+          uri: 'https://backend.deviantart.com/rss.xml?type=deviation&q=by%3Ayuumei%20sort%3Atime%20meta%3Aall',
+          hint: { key: 'deviantart:deviations', label: 'Deviations' },
+        },
       ]
 
       expect(deviantartHandler.resolve(value)).toEqual(expected)
@@ -45,7 +54,10 @@ describe('deviantartHandler', () => {
     it('should return RSS feed URL for specific gallery folder', () => {
       const value = 'https://deviantart.com/yuumei/gallery/123456/folder-name'
       const expected = [
-        'https://backend.deviantart.com/rss.xml?type=deviation&q=gallery%3Ayuumei%2F123456',
+        {
+          uri: 'https://backend.deviantart.com/rss.xml?type=deviation&q=gallery%3Ayuumei%2F123456',
+          hint: { key: 'deviantart:gallery', label: 'Gallery' },
+        },
       ]
 
       expect(deviantartHandler.resolve(value)).toEqual(expected)
@@ -53,14 +65,24 @@ describe('deviantartHandler', () => {
 
     it('should return RSS feed URL for favourites', () => {
       const value = 'https://deviantart.com/yuumei/favourites'
-      const expected = ['https://backend.deviantart.com/rss.xml?type=deviation&q=favby%3Ayuumei']
+      const expected = [
+        {
+          uri: 'https://backend.deviantart.com/rss.xml?type=deviation&q=favby%3Ayuumei',
+          hint: { key: 'deviantart:favorites', label: 'Favorites' },
+        },
+      ]
 
       expect(deviantartHandler.resolve(value)).toEqual(expected)
     })
 
     it('should return RSS feed URL for tag page', () => {
       const value = 'https://deviantart.com/tag/photography'
-      const expected = ['https://backend.deviantart.com/rss.xml?type=deviation&q=tag%3Aphotography']
+      const expected = [
+        {
+          uri: 'https://backend.deviantart.com/rss.xml?type=deviation&q=tag%3Aphotography',
+          hint: { key: 'deviantart:tag', label: 'Tag' },
+        },
+      ]
 
       expect(deviantartHandler.resolve(value)).toEqual(expected)
     })
@@ -93,7 +115,10 @@ describe('deviantartHandler', () => {
     it('should handle usernames with underscores and hyphens', () => {
       const value = 'https://deviantart.com/some_user-name'
       const expected = [
-        'https://backend.deviantart.com/rss.xml?type=deviation&q=by%3Asome_user-name%20sort%3Atime%20meta%3Aall',
+        {
+          uri: 'https://backend.deviantart.com/rss.xml?type=deviation&q=by%3Asome_user-name%20sort%3Atime%20meta%3Aall',
+          hint: { key: 'deviantart:deviations', label: 'Deviations' },
+        },
       ]
 
       expect(deviantartHandler.resolve(value)).toEqual(expected)

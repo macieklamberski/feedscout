@@ -1,3 +1,4 @@
+import type { DiscoverUriEntry } from '../../../common/types.js'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { isAnyOf, isHostOf } from '../../../common/utils.js'
 
@@ -56,7 +57,7 @@ export const githubHandler: PlatformHandler = {
 
   resolve: (url) => {
     const { pathname } = new URL(url)
-    const uris: Array<string> = []
+    const uris: Array<DiscoverUriEntry> = []
 
     // Match /{owner} pattern (user/org profile page).
     const userMatch = pathname.match(/^\/([^/]+)\/?$/)
@@ -64,9 +65,12 @@ export const githubHandler: PlatformHandler = {
     if (userMatch?.[1] && !isAnyOf(userMatch[1], excludedPaths)) {
       const user = userMatch[1]
 
-      uris.push(`https://github.com/${user}.atom`)
-
-      return uris
+      return [
+        {
+          uri: `https://github.com/${user}.atom`,
+          hint: { key: 'github:activity', label: 'Activity' },
+        },
+      ]
     }
 
     // Match /{owner}/{repo} pattern.
@@ -79,18 +83,33 @@ export const githubHandler: PlatformHandler = {
     }
 
     // Repository feeds.
-    uris.push(`https://github.com/${owner}/${repo}/releases.atom`)
-    uris.push(`https://github.com/${owner}/${repo}/commits.atom`)
-    uris.push(`https://github.com/${owner}/${repo}/tags.atom`)
+    uris.push({
+      uri: `https://github.com/${owner}/${repo}/releases.atom`,
+      hint: { key: 'github:releases', label: 'Releases' },
+    })
+    uris.push({
+      uri: `https://github.com/${owner}/${repo}/commits.atom`,
+      hint: { key: 'github:commits', label: 'Commits' },
+    })
+    uris.push({
+      uri: `https://github.com/${owner}/${repo}/tags.atom`,
+      hint: { key: 'github:tags', label: 'Tags' },
+    })
 
     // If on wiki page, add wiki feed.
     if (/\/wiki(\/|$)/.test(pathname)) {
-      uris.push(`https://github.com/${owner}/${repo}/wiki.atom`)
+      uris.push({
+        uri: `https://github.com/${owner}/${repo}/wiki.atom`,
+        hint: { key: 'github:wiki', label: 'Wiki' },
+      })
     }
 
     // If on discussions page, add discussions feed.
     if (/\/discussions(\/|$)/.test(pathname)) {
-      uris.push(`https://github.com/${owner}/${repo}/discussions.atom`)
+      uris.push({
+        uri: `https://github.com/${owner}/${repo}/discussions.atom`,
+        hint: { key: 'github:discussions', label: 'Discussions' },
+      })
     }
 
     // If on a specific branch, add branch-specific commits feed.
@@ -99,7 +118,10 @@ export const githubHandler: PlatformHandler = {
     if (branchMatch?.[1]) {
       const branch = branchMatch[1]
 
-      uris.push(`https://github.com/${owner}/${repo}/commits/${branch}.atom`)
+      uris.push({
+        uri: `https://github.com/${owner}/${repo}/commits/${branch}.atom`,
+        hint: { key: 'github:branch-commits', label: 'Branch commits' },
+      })
     }
 
     // If viewing a file (blob) or file history (commits), add file-specific commits feed.
@@ -109,7 +131,10 @@ export const githubHandler: PlatformHandler = {
       const branch = fileMatch[1]
       const filePath = fileMatch[2]
 
-      uris.push(`https://github.com/${owner}/${repo}/commits/${branch}/${filePath}.atom`)
+      uris.push({
+        uri: `https://github.com/${owner}/${repo}/commits/${branch}/${filePath}.atom`,
+        hint: { key: 'github:file-history', label: 'File history' },
+      })
     }
 
     return uris

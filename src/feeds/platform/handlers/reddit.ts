@@ -1,3 +1,4 @@
+import type { DiscoverUriEntry } from '../../../common/types.js'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { isAnyOf, isHostOf } from '../../../common/utils.js'
 
@@ -19,7 +20,7 @@ export const redditHandler: PlatformHandler = {
 
     // Homepage: reddit.com/
     if (pathSegments.length === 0) {
-      return ['https://www.reddit.com/.rss']
+      return [{ uri: 'https://www.reddit.com/.rss', hint: { key: 'reddit:posts', label: 'Posts' } }]
     }
 
     // Match /r/subreddit/comments/id pattern (post comments feed).
@@ -29,7 +30,12 @@ export const redditHandler: PlatformHandler = {
       const subreddit = commentsMatch[1]
       const postId = commentsMatch[2]
 
-      return [`https://www.reddit.com/r/${subreddit}/comments/${postId}/.rss`]
+      return [
+        {
+          uri: `https://www.reddit.com/r/${subreddit}/comments/${postId}/.rss`,
+          hint: { key: 'reddit:post-comments', label: 'Post comments' },
+        },
+      ]
     }
 
     // Match /r/subreddit with optional sort.
@@ -38,16 +44,25 @@ export const redditHandler: PlatformHandler = {
     if (subredditMatch?.[1]) {
       const subreddit = subredditMatch[1]
       const sort = subredditMatch[2]
-      const uris: Array<string> = []
+      const uris: Array<DiscoverUriEntry> = []
 
       if (sort && isAnyOf(sort, sortOptions)) {
-        uris.push(`https://www.reddit.com/r/${subreddit}/${sort}/.rss`)
+        uris.push({
+          uri: `https://www.reddit.com/r/${subreddit}/${sort}/.rss`,
+          hint: { key: 'reddit:posts', label: 'Posts' },
+        })
       } else {
-        uris.push(`https://www.reddit.com/r/${subreddit}/.rss`)
+        uris.push({
+          uri: `https://www.reddit.com/r/${subreddit}/.rss`,
+          hint: { key: 'reddit:posts', label: 'Posts' },
+        })
       }
 
       // Add all comments feed for subreddit.
-      uris.push(`https://www.reddit.com/r/${subreddit}/comments/.rss`)
+      uris.push({
+        uri: `https://www.reddit.com/r/${subreddit}/comments/.rss`,
+        hint: { key: 'reddit:comments', label: 'Comments' },
+      })
 
       return uris
     }
@@ -59,7 +74,12 @@ export const redditHandler: PlatformHandler = {
       const username = multiredditMatch[1]
       const multireddit = multiredditMatch[2]
 
-      return [`https://www.reddit.com/user/${username}/m/${multireddit}/.rss`]
+      return [
+        {
+          uri: `https://www.reddit.com/user/${username}/m/${multireddit}/.rss`,
+          hint: { key: 'reddit:multireddit', label: 'Multireddit' },
+        },
+      ]
     }
 
     // Match /u/username or /user/username pattern.
@@ -68,7 +88,12 @@ export const redditHandler: PlatformHandler = {
     if (userMatch?.[2]) {
       const username = userMatch[2]
 
-      return [`https://www.reddit.com/user/${username}/.rss`]
+      return [
+        {
+          uri: `https://www.reddit.com/user/${username}/.rss`,
+          hint: { key: 'reddit:posts', label: 'Posts' },
+        },
+      ]
     }
 
     // Match /domain/site pattern.
@@ -77,7 +102,12 @@ export const redditHandler: PlatformHandler = {
     if (domainMatch?.[1]) {
       const domain = domainMatch[1]
 
-      return [`https://www.reddit.com/domain/${domain}/.rss`]
+      return [
+        {
+          uri: `https://www.reddit.com/domain/${domain}/.rss`,
+          hint: { key: 'reddit:posts', label: 'Posts' },
+        },
+      ]
     }
 
     return []

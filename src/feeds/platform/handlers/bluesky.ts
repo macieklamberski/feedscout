@@ -17,6 +17,11 @@ export const blueskyHandler: PlatformHandler = {
       return []
     }
 
-    return [`https://bsky.app/profile/${handle}/rss`]
+    return [
+      {
+        uri: `https://bsky.app/profile/${handle}/rss`,
+        hint: { key: 'bluesky:posts', label: 'Posts' },
+      },
+    ]
   },
 }

@@ -17,10 +17,20 @@ export const kickstarterHandler: PlatformHandler = {
       const creator = pathSegments[1]
       const project = pathSegments[2]
 
-      return [`https://www.kickstarter.com/projects/${creator}/${project}/posts.atom`]
+      return [
+        {
+          uri: `https://www.kickstarter.com/projects/${creator}/${project}/posts.atom`,
+          hint: { key: 'kickstarter:updates', label: 'Updates' },
+        },
+      ]
     }
 
     // Homepage or discover pages - return global new projects feed.
-    return ['https://www.kickstarter.com/projects/feed.atom']
+    return [
+      {
+        uri: 'https://www.kickstarter.com/projects/feed.atom',
+        hint: { key: 'kickstarter:projects', label: 'Projects' },
+      },
+    ]
   },
 }

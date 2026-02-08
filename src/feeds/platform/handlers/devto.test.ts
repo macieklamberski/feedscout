@@ -17,14 +17,24 @@ describe('devtoHandler', () => {
   describe('resolve', () => {
     it('should return RSS feed URL for user profile', () => {
       const value = 'https://dev.to/thepracticaldev'
-      const expected = ['https://dev.to/feed/thepracticaldev']
+      const expected = [
+        {
+          uri: 'https://dev.to/feed/thepracticaldev',
+          hint: { key: 'devto:posts', label: 'Posts' },
+        },
+      ]
 
       expect(devtoHandler.resolve(value)).toEqual(expected)
     })
 
     it('should return RSS feed URL for tag page', () => {
       const value = 'https://dev.to/t/javascript'
-      const expected = ['https://dev.to/feed/tag/javascript']
+      const expected = [
+        {
+          uri: 'https://dev.to/feed/tag/javascript',
+          hint: { key: 'devto:tag', label: 'Tag' },
+        },
+      ]
 
       expect(devtoHandler.resolve(value)).toEqual(expected)
     })
@@ -45,14 +55,24 @@ describe('devtoHandler', () => {
 
     it('should handle usernames with underscores', () => {
       const value = 'https://dev.to/some_user'
-      const expected = ['https://dev.to/feed/some_user']
+      const expected = [
+        {
+          uri: 'https://dev.to/feed/some_user',
+          hint: { key: 'devto:posts', label: 'Posts' },
+        },
+      ]
 
       expect(devtoHandler.resolve(value)).toEqual(expected)
     })
 
     it('should handle trailing slash in user profile URL', () => {
       const value = 'https://dev.to/thepracticaldev/'
-      const expected = ['https://dev.to/feed/thepracticaldev']
+      const expected = [
+        {
+          uri: 'https://dev.to/feed/thepracticaldev',
+          hint: { key: 'devto:posts', label: 'Posts' },
+        },
+      ]
 
       expect(devtoHandler.resolve(value)).toEqual(expected)
     })

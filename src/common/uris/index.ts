@@ -19,7 +19,7 @@ export const discoverUris = (config: DiscoverMethodsConfigInternal): DiscoverUri
     const uris = discoverUrisFromHtml(config.html.html, config.html.options)
 
     if (uris.length > 0) {
-      result.html = uris
+      result.html = uris.map((uri) => ({ uri }))
     }
   }
 
@@ -27,7 +27,7 @@ export const discoverUris = (config: DiscoverMethodsConfigInternal): DiscoverUri
     const uris = discoverUrisFromHeaders(config.headers.headers, config.headers.options)
 
     if (uris.length > 0) {
-      result.headers = uris
+      result.headers = uris.map((uri) => ({ uri }))
     }
   }
 
@@ -35,7 +35,7 @@ export const discoverUris = (config: DiscoverMethodsConfigInternal): DiscoverUri
     const uris = discoverUrisFromGuess(config.guess.options)
 
     if (uris.length > 0) {
-      result.guess = uris
+      result.guess = uris.map((uri) => ({ uri }))
     }
   }
 

@@ -20,21 +20,36 @@ describe('dailymotionHandler', () => {
   describe('resolve', () => {
     it('should return RSS feed for user page', () => {
       const value = 'https://www.dailymotion.com/bfmtv'
-      const expected = ['https://www.dailymotion.com/rss/bfmtv']
+      const expected = [
+        {
+          uri: 'https://www.dailymotion.com/rss/bfmtv',
+          hint: { key: 'dailymotion:videos', label: 'Videos' },
+        },
+      ]
 
       expect(dailymotionHandler.resolve(value)).toEqual(expected)
     })
 
     it('should return RSS feed for playlist page', () => {
       const value = 'https://www.dailymotion.com/playlist/x7vjjm'
-      const expected = ['https://www.dailymotion.com/rss/playlist/x7vjjm']
+      const expected = [
+        {
+          uri: 'https://www.dailymotion.com/rss/playlist/x7vjjm',
+          hint: { key: 'dailymotion:playlist', label: 'Playlist' },
+        },
+      ]
 
       expect(dailymotionHandler.resolve(value)).toEqual(expected)
     })
 
     it('should return RSS feed for playlist with underscores and dashes', () => {
       const value = 'https://www.dailymotion.com/playlist/x7vjjm_BFM-Story_bfm-story'
-      const expected = ['https://www.dailymotion.com/rss/playlist/x7vjjm_BFM-Story_bfm-story']
+      const expected = [
+        {
+          uri: 'https://www.dailymotion.com/rss/playlist/x7vjjm_BFM-Story_bfm-story',
+          hint: { key: 'dailymotion:playlist', label: 'Playlist' },
+        },
+      ]
 
       expect(dailymotionHandler.resolve(value)).toEqual(expected)
     })

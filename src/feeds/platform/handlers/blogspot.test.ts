@@ -25,8 +25,14 @@ describe('blogspotHandler', () => {
     it('should return feed URLs for blog', () => {
       const value = 'https://example.blogspot.com'
       const expected = [
-        'https://example.blogspot.com/feeds/posts/default',
-        'https://example.blogspot.com/feeds/posts/default?alt=rss',
+        {
+          uri: 'https://example.blogspot.com/feeds/posts/default',
+          hint: { key: 'blogspot:posts-atom', label: 'Posts (Atom)' },
+        },
+        {
+          uri: 'https://example.blogspot.com/feeds/posts/default?alt=rss',
+          hint: { key: 'blogspot:posts-rss', label: 'Posts (RSS)' },
+        },
       ]
 
       expect(blogspotHandler.resolve(value)).toEqual(expected)
@@ -35,8 +41,14 @@ describe('blogspotHandler', () => {
     it('should return feed URLs for post page', () => {
       const value = 'https://blog.blogspot.com/2024/01/some-post.html'
       const expected = [
-        'https://blog.blogspot.com/feeds/posts/default',
-        'https://blog.blogspot.com/feeds/posts/default?alt=rss',
+        {
+          uri: 'https://blog.blogspot.com/feeds/posts/default',
+          hint: { key: 'blogspot:posts-atom', label: 'Posts (Atom)' },
+        },
+        {
+          uri: 'https://blog.blogspot.com/feeds/posts/default?alt=rss',
+          hint: { key: 'blogspot:posts-rss', label: 'Posts (RSS)' },
+        },
       ]
 
       expect(blogspotHandler.resolve(value)).toEqual(expected)
@@ -45,9 +57,18 @@ describe('blogspotHandler', () => {
     it('should include label feed when on label page', () => {
       const value = 'https://blog.blogspot.com/search/label/technology'
       const expected = [
-        'https://blog.blogspot.com/feeds/posts/default/-/technology',
-        'https://blog.blogspot.com/feeds/posts/default',
-        'https://blog.blogspot.com/feeds/posts/default?alt=rss',
+        {
+          uri: 'https://blog.blogspot.com/feeds/posts/default/-/technology',
+          hint: { key: 'blogspot:label', label: 'Label' },
+        },
+        {
+          uri: 'https://blog.blogspot.com/feeds/posts/default',
+          hint: { key: 'blogspot:posts-atom', label: 'Posts (Atom)' },
+        },
+        {
+          uri: 'https://blog.blogspot.com/feeds/posts/default?alt=rss',
+          hint: { key: 'blogspot:posts-rss', label: 'Posts (RSS)' },
+        },
       ]
 
       expect(blogspotHandler.resolve(value)).toEqual(expected)

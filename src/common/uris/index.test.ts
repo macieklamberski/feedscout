@@ -21,7 +21,7 @@ describe('discoverUris', () => {
         },
       },
     })
-    const expected = { html: ['/feed.xml'] }
+    const expected = { html: [{ uri: '/feed.xml' }] }
 
     expect(value).toEqual(expected)
   })
@@ -38,7 +38,7 @@ describe('discoverUris', () => {
         },
       },
     })
-    const expected = { headers: ['/feed.xml'] }
+    const expected = { headers: [{ uri: '/feed.xml' }] }
 
     expect(value).toEqual(expected)
   })
@@ -52,7 +52,9 @@ describe('discoverUris', () => {
         },
       },
     })
-    const expected = { guess: ['https://example.com/feed.xml', 'https://example.com/rss.xml'] }
+    const expected = {
+      guess: [{ uri: 'https://example.com/feed.xml' }, { uri: 'https://example.com/rss.xml' }],
+    }
 
     expect(value).toEqual(expected)
   })
@@ -85,9 +87,9 @@ describe('discoverUris', () => {
       },
     })
     const expected = {
-      html: ['/feed.xml'],
-      headers: ['/rss.xml'],
-      guess: ['https://example.com/atom.xml'],
+      html: [{ uri: '/feed.xml' }],
+      headers: [{ uri: '/rss.xml' }],
+      guess: [{ uri: 'https://example.com/atom.xml' }],
     }
 
     expect(value).toEqual(expected)
@@ -115,8 +117,8 @@ describe('discoverUris', () => {
       },
     })
     const expected = {
-      html: ['/feed.xml', '/rss.xml'],
-      headers: ['/feed.xml', '/rss.xml'],
+      html: [{ uri: '/feed.xml' }, { uri: '/rss.xml' }],
+      headers: [{ uri: '/feed.xml' }, { uri: '/rss.xml' }],
     }
 
     expect(value).toEqual(expected)
@@ -140,7 +142,7 @@ describe('discoverUris', () => {
         },
       },
     })
-    const expected = { guess: ['https://example.com/rss.xml'] }
+    const expected = { guess: [{ uri: 'https://example.com/rss.xml' }] }
 
     expect(value).toEqual(expected)
   })
@@ -153,15 +155,11 @@ describe('discoverUris', () => {
           baseUrl: 'https://example.com',
           handlers: [
             {
-              match: () => {
-                return true
-              },
-              resolve: () => {
-                return [
-                  ['https://example.com/feed/', 'https://example.com/?feed=rss'],
-                  'https://example.com/atom.xml',
-                ]
-              },
+              match: () => true,
+              resolve: () => [
+                { uri: ['https://example.com/feed/', 'https://example.com/?feed=rss'] },
+                { uri: 'https://example.com/atom.xml' },
+              ],
             },
           ],
         },
@@ -169,8 +167,8 @@ describe('discoverUris', () => {
     })
     const expected = {
       platform: [
-        ['https://example.com/feed/', 'https://example.com/?feed=rss'],
-        'https://example.com/atom.xml',
+        { uri: ['https://example.com/feed/', 'https://example.com/?feed=rss'] },
+        { uri: 'https://example.com/atom.xml' },
       ],
     }
 
@@ -185,12 +183,10 @@ describe('discoverUris', () => {
           baseUrl: 'https://example.com',
           handlers: [
             {
-              match: () => {
-                return true
-              },
-              resolve: () => {
-                return [['https://example.com/feed/', 'https://example.com/?feed=rss']]
-              },
+              match: () => true,
+              resolve: () => [
+                { uri: ['https://example.com/feed/', 'https://example.com/?feed=rss'] },
+              ],
             },
           ],
         },
@@ -203,8 +199,8 @@ describe('discoverUris', () => {
       },
     })
     const expected = {
-      platform: [['https://example.com/feed/', 'https://example.com/?feed=rss']],
-      guess: ['https://example.com/atom.xml'],
+      platform: [{ uri: ['https://example.com/feed/', 'https://example.com/?feed=rss'] }],
+      guess: [{ uri: 'https://example.com/atom.xml' }],
     }
 
     expect(value).toEqual(expected)

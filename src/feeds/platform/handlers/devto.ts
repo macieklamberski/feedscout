@@ -39,7 +39,9 @@ export const devtoHandler: PlatformHandler = {
       const username = userMatch[1]
 
       if (!isAnyOf(username, excludedPaths)) {
-        return [`https://dev.to/feed/${username}`]
+        return [
+          { uri: `https://dev.to/feed/${username}`, hint: { key: 'devto:posts', label: 'Posts' } },
+        ]
       }
     }
 
@@ -49,7 +51,7 @@ export const devtoHandler: PlatformHandler = {
     if (tagMatch?.[1]) {
       const tag = tagMatch[1]
 
-      return [`https://dev.to/feed/tag/${tag}`]
+      return [{ uri: `https://dev.to/feed/tag/${tag}`, hint: { key: 'devto:tag', label: 'Tag' } }]
     }
 
     return []

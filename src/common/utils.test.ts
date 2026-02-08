@@ -1,7 +1,6 @@
 import { describe, expect, it } from 'bun:test'
 import {
   anyWordMatchesAnyOf,
-  deduplicateUriEntries,
   endsWithAnyOf,
   includesAnyOf,
   isAnyOf,
@@ -940,53 +939,5 @@ describe('processConcurrently', () => {
     })
 
     expect(shouldStopCallCount).toBeGreaterThan(0)
-  })
-})
-
-describe('deduplicateUriEntries', () => {
-  it('should deduplicate string entries', () => {
-    const value = ['/feed', '/rss', '/feed']
-    const expected = ['/feed', '/rss']
-
-    expect(deduplicateUriEntries(value)).toEqual(expected)
-  })
-
-  it('should deduplicate array entries', () => {
-    const value = [
-      ['/feed/', '?feed=rss'],
-      ['/rss/', '?feed=rss2'],
-      ['/feed/', '?feed=rss'],
-    ]
-    const expected = [
-      ['/feed/', '?feed=rss'],
-      ['/rss/', '?feed=rss2'],
-    ]
-
-    expect(deduplicateUriEntries(value)).toEqual(expected)
-  })
-
-  it('should handle mixed string and array entries', () => {
-    const value = ['/feed', ['/feed/', '?feed=rss'], '/feed', '/rss']
-    const expected = ['/feed', ['/feed/', '?feed=rss'], '/rss']
-
-    expect(deduplicateUriEntries(value)).toEqual(expected)
-  })
-
-  it('should not deduplicate string against array containing it', () => {
-    const value = ['/feed/', ['/feed/', '?feed=rss']]
-    const expected = ['/feed/', ['/feed/', '?feed=rss']]
-
-    expect(deduplicateUriEntries(value)).toEqual(expected)
-  })
-
-  it('should return empty array for empty input', () => {
-    expect(deduplicateUriEntries([])).toEqual([])
-  })
-
-  it('should preserve order of first occurrence', () => {
-    const value = ['/rss', '/feed', '/atom', '/feed', '/rss']
-    const expected = ['/rss', '/feed', '/atom']
-
-    expect(deduplicateUriEntries(value)).toEqual(expected)
   })
 })

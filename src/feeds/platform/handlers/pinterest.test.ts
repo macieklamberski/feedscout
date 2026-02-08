@@ -19,49 +19,84 @@ describe('pinterestHandler', () => {
   describe('resolve', () => {
     it('should return user feed for profile page', () => {
       const value = 'https://www.pinterest.com/nasa'
-      const expected = ['https://www.pinterest.com/nasa/feed.rss']
+      const expected = [
+        {
+          uri: 'https://www.pinterest.com/nasa/feed.rss',
+          hint: { key: 'pinterest:pins', label: 'Pins' },
+        },
+      ]
 
       expect(pinterestHandler.resolve(value)).toEqual(expected)
     })
 
     it('should return user feed for profile with trailing slash', () => {
       const value = 'https://www.pinterest.com/nasa/'
-      const expected = ['https://www.pinterest.com/nasa/feed.rss']
+      const expected = [
+        {
+          uri: 'https://www.pinterest.com/nasa/feed.rss',
+          hint: { key: 'pinterest:pins', label: 'Pins' },
+        },
+      ]
 
       expect(pinterestHandler.resolve(value)).toEqual(expected)
     })
 
     it('should return board feed for board page', () => {
       const value = 'https://www.pinterest.com/nasa/mars'
-      const expected = ['https://www.pinterest.com/nasa/mars.rss']
+      const expected = [
+        {
+          uri: 'https://www.pinterest.com/nasa/mars.rss',
+          hint: { key: 'pinterest:board', label: 'Board' },
+        },
+      ]
 
       expect(pinterestHandler.resolve(value)).toEqual(expected)
     })
 
     it('should return board feed for board with trailing slash', () => {
       const value = 'https://www.pinterest.com/nasa/space-exploration/'
-      const expected = ['https://www.pinterest.com/nasa/space-exploration.rss']
+      const expected = [
+        {
+          uri: 'https://www.pinterest.com/nasa/space-exploration.rss',
+          hint: { key: 'pinterest:board', label: 'Board' },
+        },
+      ]
 
       expect(pinterestHandler.resolve(value)).toEqual(expected)
     })
 
     it('should return user feed for pins page', () => {
       const value = 'https://www.pinterest.com/nasa/pins'
-      const expected = ['https://www.pinterest.com/nasa/feed.rss']
+      const expected = [
+        {
+          uri: 'https://www.pinterest.com/nasa/feed.rss',
+          hint: { key: 'pinterest:pins', label: 'Pins' },
+        },
+      ]
 
       expect(pinterestHandler.resolve(value)).toEqual(expected)
     })
 
     it('should return user feed for boards page', () => {
       const value = 'https://www.pinterest.com/nasa/boards'
-      const expected = ['https://www.pinterest.com/nasa/feed.rss']
+      const expected = [
+        {
+          uri: 'https://www.pinterest.com/nasa/feed.rss',
+          hint: { key: 'pinterest:pins', label: 'Pins' },
+        },
+      ]
 
       expect(pinterestHandler.resolve(value)).toEqual(expected)
     })
 
     it('should return user feed for saved page', () => {
       const value = 'https://www.pinterest.com/nasa/_saved'
-      const expected = ['https://www.pinterest.com/nasa/feed.rss']
+      const expected = [
+        {
+          uri: 'https://www.pinterest.com/nasa/feed.rss',
+          hint: { key: 'pinterest:pins', label: 'Pins' },
+        },
+      ]
 
       expect(pinterestHandler.resolve(value)).toEqual(expected)
     })

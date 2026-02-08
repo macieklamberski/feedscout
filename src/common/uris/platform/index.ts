@@ -1,10 +1,10 @@
-import type { UriEntry } from '../../types.js'
+import type { DiscoverUriEntry } from '../../types.js'
 import type { PlatformMethodOptions } from './types.js'
 
 export const discoverUrisFromPlatform = (
   html: string,
   options: PlatformMethodOptions,
-): Array<UriEntry> => {
+): Array<DiscoverUriEntry> => {
   const { baseUrl, handlers } = options
 
   for (const handler of handlers) {

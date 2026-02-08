@@ -21,7 +21,9 @@ export const lobstersHandler: PlatformHandler = {
     if (tagMatch?.[1]) {
       const tags = tagMatch[1]
 
-      return [`https://lobste.rs/t/${tags}.rss`]
+      return [
+        { uri: `https://lobste.rs/t/${tags}.rss`, hint: { key: 'lobsters:tag', label: 'Tag' } },
+      ]
     }
 
     // Domain page: /domains/{domain}
@@ -30,7 +32,12 @@ export const lobstersHandler: PlatformHandler = {
     if (domainMatch?.[1]) {
       const domain = domainMatch[1]
 
-      return [`https://lobste.rs/domains/${domain}.rss`]
+      return [
+        {
+          uri: `https://lobste.rs/domains/${domain}.rss`,
+          hint: { key: 'lobsters:domain', label: 'Domain' },
+        },
+      ]
     }
 
     // User page: /~{username}
@@ -39,7 +46,12 @@ export const lobstersHandler: PlatformHandler = {
     if (userMatch?.[1]) {
       const username = userMatch[1]
 
-      return [`https://lobste.rs/~${username}/stories.rss`]
+      return [
+        {
+          uri: `https://lobste.rs/~${username}/stories.rss`,
+          hint: { key: 'lobsters:stories', label: 'Stories' },
+        },
+      ]
     }
 
     // Top stories page: /top or /top/{period}
@@ -49,23 +61,37 @@ export const lobstersHandler: PlatformHandler = {
       const period = topMatch[1]
 
       if (period) {
-        return [`https://lobste.rs/top/${period}/rss`]
+        return [
+          {
+            uri: `https://lobste.rs/top/${period}/rss`,
+            hint: { key: 'lobsters:top', label: 'Top stories' },
+          },
+        ]
       }
 
-      return ['https://lobste.rs/top/rss']
+      return [
+        { uri: 'https://lobste.rs/top/rss', hint: { key: 'lobsters:top', label: 'Top stories' } },
+      ]
     }
 
     // Newest page.
     if (pathname === '/newest' || pathname === '/newest/') {
-      return ['https://lobste.rs/newest.rss']
+      return [
+        { uri: 'https://lobste.rs/newest.rss', hint: { key: 'lobsters:newest', label: 'Newest' } },
+      ]
     }
 
     // Comments page.
     if (pathname === '/comments' || pathname === '/comments/') {
-      return ['https://lobste.rs/comments.rss']
+      return [
+        {
+          uri: 'https://lobste.rs/comments.rss',
+          hint: { key: 'lobsters:comments', label: 'Comments' },
+        },
+      ]
     }
 
     // Homepage or other pages - return main feed.
-    return ['https://lobste.rs/rss']
+    return [{ uri: 'https://lobste.rs/rss', hint: { key: 'lobsters:stories', label: 'Stories' } }]
   },
 }

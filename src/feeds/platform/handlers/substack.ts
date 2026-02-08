@@ -9,6 +9,6 @@ export const substackHandler: PlatformHandler = {
   resolve: (url) => {
     const { origin } = new URL(url)
 
-    return [`${origin}/feed`]
+    return [{ uri: `${origin}/feed`, hint: { key: 'substack:newsletter', label: 'Newsletter' } }]
   },
 }

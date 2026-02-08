@@ -19,28 +19,48 @@ describe('behanceHandler', () => {
   describe('resolve', () => {
     it('should return feed for user profile', () => {
       const value = 'https://www.behance.net/johndoe'
-      const expected = ['https://www.behance.net/feeds/user?username=johndoe']
+      const expected = [
+        {
+          uri: 'https://www.behance.net/feeds/user?username=johndoe',
+          hint: { key: 'behance:portfolio', label: 'Portfolio' },
+        },
+      ]
 
       expect(behanceHandler.resolve(value)).toEqual(expected)
     })
 
     it('should handle mixed case usernames', () => {
       const value = 'https://www.behance.net/JohnDoe'
-      const expected = ['https://www.behance.net/feeds/user?username=JohnDoe']
+      const expected = [
+        {
+          uri: 'https://www.behance.net/feeds/user?username=JohnDoe',
+          hint: { key: 'behance:portfolio', label: 'Portfolio' },
+        },
+      ]
 
       expect(behanceHandler.resolve(value)).toEqual(expected)
     })
 
     it('should handle trailing slash', () => {
       const value = 'https://www.behance.net/johndoe/'
-      const expected = ['https://www.behance.net/feeds/user?username=johndoe']
+      const expected = [
+        {
+          uri: 'https://www.behance.net/feeds/user?username=johndoe',
+          hint: { key: 'behance:portfolio', label: 'Portfolio' },
+        },
+      ]
 
       expect(behanceHandler.resolve(value)).toEqual(expected)
     })
 
     it('should return appreciated feed for appreciated page', () => {
       const value = 'https://www.behance.net/johndoe/appreciated'
-      const expected = ['https://www.behance.net/feeds/user?username=johndoe&content=appreciated']
+      const expected = [
+        {
+          uri: 'https://www.behance.net/feeds/user?username=johndoe&content=appreciated',
+          hint: { key: 'behance:appreciated', label: 'Appreciated' },
+        },
+      ]
 
       expect(behanceHandler.resolve(value)).toEqual(expected)
     })

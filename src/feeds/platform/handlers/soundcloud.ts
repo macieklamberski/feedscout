@@ -33,6 +33,11 @@ export const soundcloudHandler: PlatformHandler = {
       return []
     }
 
-    return [`https://feeds.soundcloud.com/users/soundcloud:users:${userId}/sounds.rss`]
+    return [
+      {
+        uri: `https://feeds.soundcloud.com/users/soundcloud:users:${userId}/sounds.rss`,
+        hint: { key: 'soundcloud:tracks', label: 'Tracks' },
+      },
+    ]
   },
 }

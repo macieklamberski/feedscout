@@ -17,9 +17,9 @@ export const tumblrHandler: PlatformHandler = {
     if (tagMatch?.[1]) {
       const tag = tagMatch[1]
 
-      return [`${origin}/tagged/${tag}/rss`]
+      return [{ uri: `${origin}/tagged/${tag}/rss`, hint: { key: 'tumblr:tag', label: 'Tag' } }]
     }
 
-    return [`${origin}/rss`]
+    return [{ uri: `${origin}/rss`, hint: { key: 'tumblr:posts', label: 'Posts' } }]
   },
 }

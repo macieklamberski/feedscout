@@ -3,11 +3,11 @@ import {
   type DiscoverMethodsConfigDefaults,
   type DiscoverOptionsInternal,
   type DiscoverResult,
+  type DiscoverUriEntry,
   discoverMethodOrder,
-  type UriEntry,
 } from '../types.js'
 import { discoverUris } from '../uris/index.js'
-import { deduplicateUriEntries, processConcurrently } from '../utils.js'
+import { processConcurrently } from '../utils.js'
 import { normalizeInput, normalizeMethodsConfig, normalizeUriEntry } from './utils.js'
 
 export const discover = async <TValid>(
@@ -50,7 +50,7 @@ export const discover = async <TValid>(
 
   // Step 4: Normalize and deduplicate URIs per method group, deduping across groups.
   const seen = new Set<string>()
-  const methodGroups: Array<Array<UriEntry>> = []
+  const methodGroups: Array<Array<DiscoverUriEntry>> = []
 
   for (const method of discoverMethodOrder) {
     const rawUris = urisByMethod[method]
@@ -63,8 +63,8 @@ export const discover = async <TValid>(
       return normalizeUriEntry(entry, normalizeUrlFn, normalizedInput.url)
     })
 
-    const unique = deduplicateUriEntries(normalized).filter((entry) => {
-      const key = typeof entry === 'string' ? entry : entry.join('\0')
+    const unique = normalized.filter((entry) => {
+      const key = typeof entry.uri === 'string' ? entry.uri : entry.uri.join('\0')
 
       if (seen.has(key)) {
         return false
@@ -99,13 +99,13 @@ export const discover = async <TValid>(
     }
   }
 
-  const processUri = async (entry: UriEntry): Promise<void> => {
-    const alternatives = typeof entry === 'string' ? [entry] : entry
+  const processUri = async (entry: DiscoverUriEntry): Promise<void> => {
+    const alternatives = typeof entry.uri === 'string' ? [entry.uri] : entry.uri
 
     for (const url of alternatives) {
       const result = await fetchAndExtract(url)
 
-      results.push(result)
+      results.push(entry.hint ? { ...result, hint: entry.hint } : result)
       tested += 1
 
       if (result.isValid) {

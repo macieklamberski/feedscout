@@ -40,7 +40,9 @@ export const gitlabHandler: PlatformHandler = {
       const user = pathSegments[0]
 
       if (!isAnyOf(user, excludedPaths)) {
-        return [`${origin}/${user}.atom`]
+        return [
+          { uri: `${origin}/${user}.atom`, hint: { key: 'gitlab:activity', label: 'Activity' } },
+        ]
       }
     }
 
@@ -51,9 +53,18 @@ export const gitlabHandler: PlatformHandler = {
 
       if (!isAnyOf(user, excludedPaths)) {
         return [
-          `${origin}/${user}/${repo}/-/releases.atom`,
-          `${origin}/${user}/${repo}/-/tags?format=atom`,
-          `${origin}/${user}/${repo}.atom`,
+          {
+            uri: `${origin}/${user}/${repo}/-/releases.atom`,
+            hint: { key: 'gitlab:releases', label: 'Releases' },
+          },
+          {
+            uri: `${origin}/${user}/${repo}/-/tags?format=atom`,
+            hint: { key: 'gitlab:tags', label: 'Tags' },
+          },
+          {
+            uri: `${origin}/${user}/${repo}.atom`,
+            hint: { key: 'gitlab:activity', label: 'Activity' },
+          },
         ]
       }
     }

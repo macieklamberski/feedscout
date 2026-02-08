@@ -32,7 +32,12 @@ export const deviantartHandler: PlatformHandler = {
     if (tagMatch?.[1]) {
       const tag = tagMatch[1]
 
-      return [`${feedBaseUrl}?type=deviation&q=${encodeURIComponent(`tag:${tag}`)}`]
+      return [
+        {
+          uri: `${feedBaseUrl}?type=deviation&q=${encodeURIComponent(`tag:${tag}`)}`,
+          hint: { key: 'deviantart:tag', label: 'Tag' },
+        },
+      ]
     }
 
     // Match favourites: /{username}/favourites
@@ -42,7 +47,12 @@ export const deviantartHandler: PlatformHandler = {
       const username = favMatch[1]
 
       if (!isAnyOf(username, excludedPaths)) {
-        return [`${feedBaseUrl}?type=deviation&q=${encodeURIComponent(`favby:${username}`)}`]
+        return [
+          {
+            uri: `${feedBaseUrl}?type=deviation&q=${encodeURIComponent(`favby:${username}`)}`,
+            hint: { key: 'deviantart:favorites', label: 'Favorites' },
+          },
+        ]
       }
     }
 
@@ -55,7 +65,10 @@ export const deviantartHandler: PlatformHandler = {
 
       if (!isAnyOf(username, excludedPaths)) {
         return [
-          `${feedBaseUrl}?type=deviation&q=${encodeURIComponent(`gallery:${username}/${folderId}`)}`,
+          {
+            uri: `${feedBaseUrl}?type=deviation&q=${encodeURIComponent(`gallery:${username}/${folderId}`)}`,
+            hint: { key: 'deviantart:gallery', label: 'Gallery' },
+          },
         ]
       }
     }
@@ -74,6 +87,11 @@ export const deviantartHandler: PlatformHandler = {
     // Build RSS feed URL with query for user's deviations sorted by time.
     const query = `by:${username} sort:time meta:all`
 
-    return [`${feedBaseUrl}?type=deviation&q=${encodeURIComponent(query)}`]
+    return [
+      {
+        uri: `${feedBaseUrl}?type=deviation&q=${encodeURIComponent(query)}`,
+        hint: { key: 'deviantart:deviations', label: 'Deviations' },
+      },
+    ]
   },
 }

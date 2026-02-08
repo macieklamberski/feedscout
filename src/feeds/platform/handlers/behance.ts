@@ -40,10 +40,20 @@ export const behanceHandler: PlatformHandler = {
 
       if (!isAnyOf(username, excludedPaths)) {
         if (subpage === 'appreciated') {
-          return [`https://www.behance.net/feeds/user?username=${username}&content=appreciated`]
+          return [
+            {
+              uri: `https://www.behance.net/feeds/user?username=${username}&content=appreciated`,
+              hint: { key: 'behance:appreciated', label: 'Appreciated' },
+            },
+          ]
         }
 
-        return [`https://www.behance.net/feeds/user?username=${username}`]
+        return [
+          {
+            uri: `https://www.behance.net/feeds/user?username=${username}`,
+            hint: { key: 'behance:portfolio', label: 'Portfolio' },
+          },
+        ]
       }
     }
 

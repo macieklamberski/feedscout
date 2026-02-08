@@ -17,14 +17,24 @@ describe('substackHandler', () => {
   describe('resolve', () => {
     it('should return feed URL for newsletter', () => {
       const value = 'https://example.substack.com'
-      const expected = ['https://example.substack.com/feed']
+      const expected = [
+        {
+          uri: 'https://example.substack.com/feed',
+          hint: { key: 'substack:newsletter', label: 'Newsletter' },
+        },
+      ]
 
       expect(substackHandler.resolve(value)).toEqual(expected)
     })
 
     it('should return feed URL regardless of path', () => {
       const value = 'https://newsletter.substack.com/p/some-article'
-      const expected = ['https://newsletter.substack.com/feed']
+      const expected = [
+        {
+          uri: 'https://newsletter.substack.com/feed',
+          hint: { key: 'substack:newsletter', label: 'Newsletter' },
+        },
+      ]
 
       expect(substackHandler.resolve(value)).toEqual(expected)
     })

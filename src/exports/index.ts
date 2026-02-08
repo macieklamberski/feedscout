@@ -12,6 +12,8 @@ export type {
   DiscoverOptions,
   DiscoverProgress,
   DiscoverResult,
+  DiscoverUriEntry,
+  DiscoverUriHint,
   UriEntry,
 } from '../common/types.js'
 export { discoverFeeds } from '../feeds/index.js'

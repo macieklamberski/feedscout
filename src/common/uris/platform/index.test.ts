@@ -5,39 +5,29 @@ import type { PlatformHandler } from './types.js'
 describe('discoverUrisFromPlatform', () => {
   it('should return URIs when handler matches', () => {
     const handler: PlatformHandler = {
-      match: () => {
-        return true
-      },
-      resolve: () => {
-        return ['https://example.com/feed.xml']
-      },
+      match: () => true,
+      resolve: () => [{ uri: 'https://example.com/feed.xml' }],
     }
     const value = { baseUrl: 'https://example.com', handlers: [handler] }
-    const expected = ['https://example.com/feed.xml']
+    const expected = [{ uri: 'https://example.com/feed.xml' }]
 
     expect(discoverUrisFromPlatform('', value)).toEqual(expected)
   })
 
   it('should return empty array when no handler matches', () => {
     const handler: PlatformHandler = {
-      match: () => {
-        return false
-      },
-      resolve: () => {
-        return ['https://example.com/feed.xml']
-      },
+      match: () => false,
+      resolve: () => [{ uri: 'https://example.com/feed.xml' }],
     }
     const value = { baseUrl: 'https://example.com', handlers: [handler] }
-    const expected: Array<string> = []
 
-    expect(discoverUrisFromPlatform('', value)).toEqual(expected)
+    expect(discoverUrisFromPlatform('', value)).toEqual([])
   })
 
   it('should return empty array when handlers array is empty', () => {
     const value = { baseUrl: 'https://example.com', handlers: [] }
-    const expected: Array<string> = []
 
-    expect(discoverUrisFromPlatform('', value)).toEqual(expected)
+    expect(discoverUrisFromPlatform('', value)).toEqual([])
   })
 
   it('should continue to next handler if first handler throws', () => {
@@ -45,49 +35,37 @@ describe('discoverUrisFromPlatform', () => {
       match: () => {
         throw new Error('Handler error')
       },
-      resolve: () => {
-        return []
-      },
+      resolve: () => [],
     }
     const workingHandler: PlatformHandler = {
-      match: () => {
-        return true
-      },
-      resolve: () => {
-        return ['https://example.com/feed.xml']
-      },
+      match: () => true,
+      resolve: () => [{ uri: 'https://example.com/feed.xml' }],
     }
     const value = {
       baseUrl: 'https://example.com',
       handlers: [throwingHandler, workingHandler],
     }
-    const expected = ['https://example.com/feed.xml']
+    const expected = [{ uri: 'https://example.com/feed.xml' }]
 
     expect(discoverUrisFromPlatform('', value)).toEqual(expected)
   })
 
   it('should continue to next handler if resolve throws', () => {
     const throwingHandler: PlatformHandler = {
-      match: () => {
-        return true
-      },
+      match: () => true,
       resolve: () => {
         throw new Error('Resolve error')
       },
     }
     const workingHandler: PlatformHandler = {
-      match: () => {
-        return true
-      },
-      resolve: () => {
-        return ['https://example.com/feed.xml']
-      },
+      match: () => true,
+      resolve: () => [{ uri: 'https://example.com/feed.xml' }],
     }
     const value = {
       baseUrl: 'https://example.com',
       handlers: [throwingHandler, workingHandler],
     }
-    const expected = ['https://example.com/feed.xml']
+    const expected = [{ uri: 'https://example.com/feed.xml' }]
 
     expect(discoverUrisFromPlatform('', value)).toEqual(expected)
   })
@@ -95,9 +73,7 @@ describe('discoverUrisFromPlatform', () => {
   it('should pass html content to handler resolve method', () => {
     let receivedHtml = ''
     const handler: PlatformHandler = {
-      match: () => {
-        return true
-      },
+      match: () => true,
       resolve: (_url, content) => {
         receivedHtml = content ?? ''
 
@@ -137,26 +113,18 @@ describe('discoverUrisFromPlatform', () => {
 
   it('should use first matching handler when multiple handlers match', () => {
     const firstHandler: PlatformHandler = {
-      match: () => {
-        return true
-      },
-      resolve: () => {
-        return ['https://example.com/first.xml']
-      },
+      match: () => true,
+      resolve: () => [{ uri: 'https://example.com/first.xml' }],
     }
     const secondHandler: PlatformHandler = {
-      match: () => {
-        return true
-      },
-      resolve: () => {
-        return ['https://example.com/second.xml']
-      },
+      match: () => true,
+      resolve: () => [{ uri: 'https://example.com/second.xml' }],
     }
     const value = {
       baseUrl: 'https://example.com',
       handlers: [firstHandler, secondHandler],
     }
-    const expected = ['https://example.com/first.xml']
+    const expected = [{ uri: 'https://example.com/first.xml' }]
 
     expect(discoverUrisFromPlatform('', value)).toEqual(expected)
   })
@@ -164,21 +132,15 @@ describe('discoverUrisFromPlatform', () => {
   it('should not call resolve on non-matching handlers', () => {
     let secondResolvedCalled = false
     const firstHandler: PlatformHandler = {
-      match: () => {
-        return true
-      },
-      resolve: () => {
-        return ['https://example.com/first.xml']
-      },
+      match: () => true,
+      resolve: () => [{ uri: 'https://example.com/first.xml' }],
     }
     const secondHandler: PlatformHandler = {
-      match: () => {
-        return true
-      },
+      match: () => true,
       resolve: () => {
         secondResolvedCalled = true
 
-        return ['https://example.com/second.xml']
+        return [{ uri: 'https://example.com/second.xml' }]
       },
     }
     const value = {
@@ -199,9 +161,7 @@ describe('discoverUrisFromPlatform', () => {
 
         return false
       },
-      resolve: () => {
-        return []
-      },
+      resolve: () => [],
     }
     const secondHandler: PlatformHandler = {
       match: () => {
@@ -209,9 +169,7 @@ describe('discoverUrisFromPlatform', () => {
 
         return false
       },
-      resolve: () => {
-        return []
-      },
+      resolve: () => [],
     }
     const value = {
       baseUrl: 'https://example.com',

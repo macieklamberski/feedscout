@@ -1,8 +1,8 @@
-import type { UriEntry } from '../../types.js'
+import type { DiscoverUriEntry } from '../../types.js'
 
 export type PlatformHandler = {
   match: (url: string) => boolean
-  resolve: (url: string, content?: string) => Array<UriEntry>
+  resolve: (url: string, content?: string) => Array<DiscoverUriEntry>
 }
 
 export type PlatformMethodOptions = {

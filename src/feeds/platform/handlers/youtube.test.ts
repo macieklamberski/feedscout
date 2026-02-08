@@ -21,9 +21,18 @@ describe('youtubeHandler', () => {
     it('should return all feed variants for channel ID', () => {
       const value = 'https://youtube.com/channel/UC1234567890'
       const expected = [
-        'https://www.youtube.com/feeds/videos.xml?channel_id=UC1234567890',
-        'https://www.youtube.com/feeds/videos.xml?playlist_id=UULF1234567890',
-        'https://www.youtube.com/feeds/videos.xml?playlist_id=UUSH1234567890',
+        {
+          uri: 'https://www.youtube.com/feeds/videos.xml?channel_id=UC1234567890',
+          hint: { key: 'youtube:all', label: 'All uploads' },
+        },
+        {
+          uri: 'https://www.youtube.com/feeds/videos.xml?playlist_id=UULF1234567890',
+          hint: { key: 'youtube:videos', label: 'Videos only' },
+        },
+        {
+          uri: 'https://www.youtube.com/feeds/videos.xml?playlist_id=UUSH1234567890',
+          hint: { key: 'youtube:shorts', label: 'Shorts only' },
+        },
       ]
 
       expect(youtubeHandler.resolve(value)).toEqual(expected)
@@ -31,7 +40,12 @@ describe('youtubeHandler', () => {
 
     it('should return feed URL for playlist', () => {
       const value = 'https://youtube.com/playlist?list=PL1234567890'
-      const expected = ['https://www.youtube.com/feeds/videos.xml?playlist_id=PL1234567890']
+      const expected = [
+        {
+          uri: 'https://www.youtube.com/feeds/videos.xml?playlist_id=PL1234567890',
+          hint: { key: 'youtube:playlist', label: 'Playlist' },
+        },
+      ]
 
       expect(youtubeHandler.resolve(value)).toEqual(expected)
     })
@@ -40,9 +54,18 @@ describe('youtubeHandler', () => {
       const value = 'https://youtube.com/@veritasium'
       const content = '{"channelId":"UC1234567890"}'
       const expected = [
-        'https://www.youtube.com/feeds/videos.xml?channel_id=UC1234567890',
-        'https://www.youtube.com/feeds/videos.xml?playlist_id=UULF1234567890',
-        'https://www.youtube.com/feeds/videos.xml?playlist_id=UUSH1234567890',
+        {
+          uri: 'https://www.youtube.com/feeds/videos.xml?channel_id=UC1234567890',
+          hint: { key: 'youtube:all', label: 'All uploads' },
+        },
+        {
+          uri: 'https://www.youtube.com/feeds/videos.xml?playlist_id=UULF1234567890',
+          hint: { key: 'youtube:videos', label: 'Videos only' },
+        },
+        {
+          uri: 'https://www.youtube.com/feeds/videos.xml?playlist_id=UUSH1234567890',
+          hint: { key: 'youtube:shorts', label: 'Shorts only' },
+        },
       ]
 
       expect(youtubeHandler.resolve(value, content)).toEqual(expected)
@@ -52,9 +75,18 @@ describe('youtubeHandler', () => {
       const value = 'https://youtube.com/user/pewdiepie'
       const content = '{"channelId":"UC1234567890"}'
       const expected = [
-        'https://www.youtube.com/feeds/videos.xml?channel_id=UC1234567890',
-        'https://www.youtube.com/feeds/videos.xml?playlist_id=UULF1234567890',
-        'https://www.youtube.com/feeds/videos.xml?playlist_id=UUSH1234567890',
+        {
+          uri: 'https://www.youtube.com/feeds/videos.xml?channel_id=UC1234567890',
+          hint: { key: 'youtube:all', label: 'All uploads' },
+        },
+        {
+          uri: 'https://www.youtube.com/feeds/videos.xml?playlist_id=UULF1234567890',
+          hint: { key: 'youtube:videos', label: 'Videos only' },
+        },
+        {
+          uri: 'https://www.youtube.com/feeds/videos.xml?playlist_id=UUSH1234567890',
+          hint: { key: 'youtube:shorts', label: 'Shorts only' },
+        },
       ]
 
       expect(youtubeHandler.resolve(value, content)).toEqual(expected)
@@ -64,9 +96,18 @@ describe('youtubeHandler', () => {
       const value = 'https://youtube.com/c/mkbhd'
       const content = '{"channelId":"UC1234567890"}'
       const expected = [
-        'https://www.youtube.com/feeds/videos.xml?channel_id=UC1234567890',
-        'https://www.youtube.com/feeds/videos.xml?playlist_id=UULF1234567890',
-        'https://www.youtube.com/feeds/videos.xml?playlist_id=UUSH1234567890',
+        {
+          uri: 'https://www.youtube.com/feeds/videos.xml?channel_id=UC1234567890',
+          hint: { key: 'youtube:all', label: 'All uploads' },
+        },
+        {
+          uri: 'https://www.youtube.com/feeds/videos.xml?playlist_id=UULF1234567890',
+          hint: { key: 'youtube:videos', label: 'Videos only' },
+        },
+        {
+          uri: 'https://www.youtube.com/feeds/videos.xml?playlist_id=UUSH1234567890',
+          hint: { key: 'youtube:shorts', label: 'Shorts only' },
+        },
       ]
 
       expect(youtubeHandler.resolve(value, content)).toEqual(expected)
@@ -76,9 +117,18 @@ describe('youtubeHandler', () => {
       const value = 'https://youtube.com/@testchannel'
       const content = '{"externalId":"UC1234567890"}'
       const expected = [
-        'https://www.youtube.com/feeds/videos.xml?channel_id=UC1234567890',
-        'https://www.youtube.com/feeds/videos.xml?playlist_id=UULF1234567890',
-        'https://www.youtube.com/feeds/videos.xml?playlist_id=UUSH1234567890',
+        {
+          uri: 'https://www.youtube.com/feeds/videos.xml?channel_id=UC1234567890',
+          hint: { key: 'youtube:all', label: 'All uploads' },
+        },
+        {
+          uri: 'https://www.youtube.com/feeds/videos.xml?playlist_id=UULF1234567890',
+          hint: { key: 'youtube:videos', label: 'Videos only' },
+        },
+        {
+          uri: 'https://www.youtube.com/feeds/videos.xml?playlist_id=UUSH1234567890',
+          hint: { key: 'youtube:shorts', label: 'Shorts only' },
+        },
       ]
 
       expect(youtubeHandler.resolve(value, content)).toEqual(expected)
@@ -87,41 +137,46 @@ describe('youtubeHandler', () => {
     it('should return empty array when @handle content has no channel ID', () => {
       const value = 'https://youtube.com/@nonexistent'
       const content = '<html>No channel ID here</html>'
-      const expected: Array<string> = []
 
-      expect(youtubeHandler.resolve(value, content)).toEqual(expected)
+      expect(youtubeHandler.resolve(value, content)).toEqual([])
     })
 
     it('should return empty array when /user/ content has no channel ID', () => {
       const value = 'https://youtube.com/user/nonexistent'
       const content = '<html>No channel ID here</html>'
-      const expected: Array<string> = []
 
-      expect(youtubeHandler.resolve(value, content)).toEqual(expected)
+      expect(youtubeHandler.resolve(value, content)).toEqual([])
     })
 
     it('should return empty array when /c/ content has no channel ID', () => {
       const value = 'https://youtube.com/c/nonexistent'
       const content = '<html>No channel ID here</html>'
-      const expected: Array<string> = []
 
-      expect(youtubeHandler.resolve(value, content)).toEqual(expected)
+      expect(youtubeHandler.resolve(value, content)).toEqual([])
     })
 
     it('should return empty array for video page without content', () => {
       const value = 'https://youtube.com/watch?v=abc123'
-      const expected: Array<string> = []
 
-      expect(youtubeHandler.resolve(value)).toEqual(expected)
+      expect(youtubeHandler.resolve(value)).toEqual([])
     })
 
     it('should extract channel ID from video page content', () => {
       const value = 'https://youtube.com/watch?v=abc123'
       const content = '{"channelId":"UC1234567890"}'
       const expected = [
-        'https://www.youtube.com/feeds/videos.xml?channel_id=UC1234567890',
-        'https://www.youtube.com/feeds/videos.xml?playlist_id=UULF1234567890',
-        'https://www.youtube.com/feeds/videos.xml?playlist_id=UUSH1234567890',
+        {
+          uri: 'https://www.youtube.com/feeds/videos.xml?channel_id=UC1234567890',
+          hint: { key: 'youtube:all', label: 'All uploads' },
+        },
+        {
+          uri: 'https://www.youtube.com/feeds/videos.xml?playlist_id=UULF1234567890',
+          hint: { key: 'youtube:videos', label: 'Videos only' },
+        },
+        {
+          uri: 'https://www.youtube.com/feeds/videos.xml?playlist_id=UUSH1234567890',
+          hint: { key: 'youtube:shorts', label: 'Shorts only' },
+        },
       ]
 
       expect(youtubeHandler.resolve(value, content)).toEqual(expected)
@@ -131,9 +186,18 @@ describe('youtubeHandler', () => {
       const value = 'https://youtu.be/abc123'
       const content = '{"channelId":"UC1234567890"}'
       const expected = [
-        'https://www.youtube.com/feeds/videos.xml?channel_id=UC1234567890',
-        'https://www.youtube.com/feeds/videos.xml?playlist_id=UULF1234567890',
-        'https://www.youtube.com/feeds/videos.xml?playlist_id=UUSH1234567890',
+        {
+          uri: 'https://www.youtube.com/feeds/videos.xml?channel_id=UC1234567890',
+          hint: { key: 'youtube:all', label: 'All uploads' },
+        },
+        {
+          uri: 'https://www.youtube.com/feeds/videos.xml?playlist_id=UULF1234567890',
+          hint: { key: 'youtube:videos', label: 'Videos only' },
+        },
+        {
+          uri: 'https://www.youtube.com/feeds/videos.xml?playlist_id=UUSH1234567890',
+          hint: { key: 'youtube:shorts', label: 'Shorts only' },
+        },
       ]
 
       expect(youtubeHandler.resolve(value, content)).toEqual(expected)

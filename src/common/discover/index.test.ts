@@ -36,7 +36,7 @@ describe('discover', () => {
     it('should fall through to next method when first method URIs are all invalid', async () => {
       const platformHandler: PlatformHandler = {
         match: () => true,
-        resolve: () => ['/platform-feed'],
+        resolve: () => [{ uri: '/platform-feed' }],
       }
       const mockFetch = createMockFetch({
         'https://example.com': '<html></html>',
@@ -73,7 +73,7 @@ describe('discover', () => {
       const fetchedUrls: Array<string> = []
       const platformHandler: PlatformHandler = {
         match: () => true,
-        resolve: () => ['/platform-feed'],
+        resolve: () => [{ uri: '/platform-feed' }],
       }
       const mockFetch: DiscoverFetchFn = async (url) => {
         fetchedUrls.push(url)
@@ -117,7 +117,7 @@ describe('discover', () => {
       const fetchedUrls: Array<string> = []
       const platformHandler: PlatformHandler = {
         match: () => true,
-        resolve: () => ['/shared-feed'],
+        resolve: () => [{ uri: '/shared-feed' }],
       }
       const mockFetch: DiscoverFetchFn = async (url) => {
         fetchedUrls.push(url)
@@ -164,7 +164,7 @@ describe('discover', () => {
       const fetchedUrls: Array<string> = []
       const platformHandler: PlatformHandler = {
         match: () => true,
-        resolve: () => ['/invalid-feed'],
+        resolve: () => [{ uri: '/invalid-feed' }],
       }
       const mockFetch: DiscoverFetchFn = async (url) => {
         fetchedUrls.push(url)
@@ -212,7 +212,7 @@ describe('discover', () => {
       const progressUpdates: Array<DiscoverProgress> = []
       const platformHandler: PlatformHandler = {
         match: () => true,
-        resolve: () => ['/platform-feed'],
+        resolve: () => [{ uri: '/platform-feed' }],
       }
       const mockFetch = createMockFetch({
         'https://example.com/guess-feed': rss,

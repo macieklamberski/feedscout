@@ -31,7 +31,12 @@ describe('soundcloudHandler', () => {
 
     it('should return RSS feed when user ID found in content', () => {
       const value = 'https://soundcloud.com/diplo'
-      const expected = ['https://feeds.soundcloud.com/users/soundcloud:users:16730/sounds.rss']
+      const expected = [
+        {
+          uri: 'https://feeds.soundcloud.com/users/soundcloud:users:16730/sounds.rss',
+          hint: { key: 'soundcloud:tracks', label: 'Tracks' },
+        },
+      ]
 
       expect(soundcloudHandler.resolve(value, contentWithUserId)).toEqual(expected)
     })

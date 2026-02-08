@@ -328,6 +328,7 @@ describe('discoverFeeds', () => {
           title: 'Test RSS',
           description: 'Test feed',
           siteUrl: 'https://reddit.com',
+          hint: { key: 'reddit:posts', label: 'Posts' },
         },
       ]
 
@@ -358,6 +359,7 @@ describe('discoverFeeds', () => {
           title: 'Test Atom',
           description: 'Test feed',
           siteUrl: 'https://github.com/owner/repo',
+          hint: { key: 'github:releases', label: 'Releases' },
         },
         {
           url: 'https://github.com/owner/repo/commits.atom',
@@ -366,6 +368,7 @@ describe('discoverFeeds', () => {
           title: 'Test Atom',
           description: 'Test feed',
           siteUrl: 'https://github.com/owner/repo',
+          hint: { key: 'github:commits', label: 'Commits' },
         },
       ]
 
@@ -384,7 +387,7 @@ describe('discoverFeeds', () => {
       `
       const customHandler: PlatformHandler = {
         match: (url) => new URL(url).hostname === 'custom.com',
-        resolve: () => ['https://custom.com/my-feed.xml'],
+        resolve: () => [{ uri: 'https://custom.com/my-feed.xml' }],
       }
       const mockFetch = createMockFetch({
         'https://custom.com/my-feed.xml': rss,
@@ -436,6 +439,7 @@ describe('discoverFeeds', () => {
           title: 'Test RSS',
           description: 'Test feed',
           siteUrl: 'https://reddit.com',
+          hint: { key: 'reddit:posts', label: 'Posts' },
         },
         {
           url: 'https://reddit.com/feed',
@@ -499,7 +503,7 @@ describe('discoverFeeds', () => {
         resolve: (_url, content) => {
           receivedContent = content
 
-          return ['https://example.com/feed.xml']
+          return [{ uri: 'https://example.com/feed.xml' }]
         },
       }
       const htmlContent = '<html><head></head><body>Test content</body></html>'

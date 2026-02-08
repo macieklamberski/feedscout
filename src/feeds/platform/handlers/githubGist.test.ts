@@ -18,35 +18,60 @@ describe('githubGistHandler', () => {
   describe('resolve', () => {
     it('should return Atom feed URL for user gists page', () => {
       const value = 'https://gist.github.com/defunkt'
-      const expected = ['https://gist.github.com/defunkt.atom']
+      const expected = [
+        {
+          uri: 'https://gist.github.com/defunkt.atom',
+          hint: { key: 'github-gist:gists', label: 'Gists' },
+        },
+      ]
 
       expect(githubGistHandler.resolve(value)).toEqual(expected)
     })
 
     it('should return Atom feed URL for user gists page with trailing slash', () => {
       const value = 'https://gist.github.com/defunkt/'
-      const expected = ['https://gist.github.com/defunkt.atom']
+      const expected = [
+        {
+          uri: 'https://gist.github.com/defunkt.atom',
+          hint: { key: 'github-gist:gists', label: 'Gists' },
+        },
+      ]
 
       expect(githubGistHandler.resolve(value)).toEqual(expected)
     })
 
     it('should return user feed for specific gist', () => {
       const value = 'https://gist.github.com/defunkt/1234567890abcdef'
-      const expected = ['https://gist.github.com/defunkt.atom']
+      const expected = [
+        {
+          uri: 'https://gist.github.com/defunkt.atom',
+          hint: { key: 'github-gist:gists', label: 'Gists' },
+        },
+      ]
 
       expect(githubGistHandler.resolve(value)).toEqual(expected)
     })
 
     it('should return starred gists feed for user starred page', () => {
       const value = 'https://gist.github.com/defunkt/starred'
-      const expected = ['https://gist.github.com/defunkt/starred.atom']
+      const expected = [
+        {
+          uri: 'https://gist.github.com/defunkt/starred.atom',
+          hint: { key: 'github-gist:starred', label: 'Starred' },
+        },
+      ]
 
       expect(githubGistHandler.resolve(value)).toEqual(expected)
     })
 
     it('should return starred gists feed with trailing slash', () => {
       const value = 'https://gist.github.com/defunkt/starred/'
-      const expected = ['https://gist.github.com/defunkt/starred.atom']
+      const expected = [
+        {
+          uri: 'https://gist.github.com/defunkt/starred.atom',
+          hint: { key: 'github-gist:starred', label: 'Starred' },
+        },
+      ]
 
       expect(githubGistHandler.resolve(value)).toEqual(expected)
     })

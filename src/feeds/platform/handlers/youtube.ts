@@ -1,3 +1,4 @@
+import type { DiscoverUriEntry } from '../../../common/types.js'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { isHostOf } from '../../../common/utils.js'
 
@@ -24,6 +25,21 @@ const getShortsOnlyPlaylistId = (channelId: string): string => {
   return channelId.replace(/^UC/, 'UUSH')
 }
 
+const pushChannelUris = (uris: Array<DiscoverUriEntry>, channelId: string): void => {
+  uris.push({
+    uri: `https://www.youtube.com/feeds/videos.xml?channel_id=${channelId}`,
+    hint: { key: 'youtube:all', label: 'All uploads' },
+  })
+  uris.push({
+    uri: `https://www.youtube.com/feeds/videos.xml?playlist_id=${getVideosOnlyPlaylistId(channelId)}`,
+    hint: { key: 'youtube:videos', label: 'Videos only' },
+  })
+  uris.push({
+    uri: `https://www.youtube.com/feeds/videos.xml?playlist_id=${getShortsOnlyPlaylistId(channelId)}`,
+    hint: { key: 'youtube:shorts', label: 'Shorts only' },
+  })
+}
+
 export const youtubeHandler: PlatformHandler = {
   match: (url) => {
     return isHostOf(url, hosts)
@@ -31,7 +47,7 @@ export const youtubeHandler: PlatformHandler = {
 
   resolve: (url, content) => {
     const parsedUrl = new URL(url)
-    const uris: Array<string> = []
+    const uris: Array<DiscoverUriEntry> = []
 
     // Direct channel ID: /channel/UC...
     const channelMatch = parsedUrl.pathname.match(channelPathRegex)
@@ -39,20 +55,17 @@ export const youtubeHandler: PlatformHandler = {
     if (channelMatch?.[1]) {
       const channelId = channelMatch[1]
 
-      uris.push(`https://www.youtube.com/feeds/videos.xml?channel_id=${channelId}`)
-      uris.push(
-        `https://www.youtube.com/feeds/videos.xml?playlist_id=${getVideosOnlyPlaylistId(channelId)}`,
-      )
-      uris.push(
-        `https://www.youtube.com/feeds/videos.xml?playlist_id=${getShortsOnlyPlaylistId(channelId)}`,
-      )
+      pushChannelUris(uris, channelId)
     }
 
     // Playlist: /playlist?list=PL...
     const playlistId = parsedUrl.searchParams.get('list')
 
     if (playlistId) {
-      uris.push(`https://www.youtube.com/feeds/videos.xml?playlist_id=${playlistId}`)
+      uris.push({
+        uri: `https://www.youtube.com/feeds/videos.xml?playlist_id=${playlistId}`,
+        hint: { key: 'youtube:playlist', label: 'Playlist' },
+      })
     }
 
     // For URL formats that require content parsing to get channel ID:
@@ -74,13 +87,7 @@ export const youtubeHandler: PlatformHandler = {
         const channelId = extractChannelIdFromContent(content)
 
         if (channelId) {
-          uris.push(`https://www.youtube.com/feeds/videos.xml?channel_id=${channelId}`)
-          uris.push(
-            `https://www.youtube.com/feeds/videos.xml?playlist_id=${getVideosOnlyPlaylistId(channelId)}`,
-          )
-          uris.push(
-            `https://www.youtube.com/feeds/videos.xml?playlist_id=${getShortsOnlyPlaylistId(channelId)}`,
-          )
+          pushChannelUris(uris, channelId)
         }
       }
     }

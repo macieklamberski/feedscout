@@ -21,7 +21,12 @@ export const mediumHandler: PlatformHandler = {
       if (userMatch?.[1]) {
         const username = userMatch[1]
 
-        return [`https://medium.com/feed/@${username}`]
+        return [
+          {
+            uri: `https://medium.com/feed/@${username}`,
+            hint: { key: 'medium:posts', label: 'Posts' },
+          },
+        ]
       }
 
       // Tag feed: /tag/tag-name.
@@ -30,7 +35,9 @@ export const mediumHandler: PlatformHandler = {
       if (tagMatch?.[1]) {
         const tag = tagMatch[1]
 
-        return [`https://medium.com/feed/tag/${tag}`]
+        return [
+          { uri: `https://medium.com/feed/tag/${tag}`, hint: { key: 'medium:tag', label: 'Tag' } },
+        ]
       }
 
       // Publication tagged feed: /publication/tagged/tag-name.
@@ -41,7 +48,12 @@ export const mediumHandler: PlatformHandler = {
         const tag = pubTagMatch[2]
 
         if (!isAnyOf(publication, excludedPaths)) {
-          return [`https://medium.com/feed/${publication}/tagged/${tag}`]
+          return [
+            {
+              uri: `https://medium.com/feed/${publication}/tagged/${tag}`,
+              hint: { key: 'medium:tagged', label: 'Tagged' },
+            },
+          ]
         }
       }
 
@@ -52,7 +64,12 @@ export const mediumHandler: PlatformHandler = {
         const publication = pubMatch[1]
 
         if (!isAnyOf(publication, excludedPaths)) {
-          return [`https://medium.com/feed/${publication}`]
+          return [
+            {
+              uri: `https://medium.com/feed/${publication}`,
+              hint: { key: 'medium:publication', label: 'Publication' },
+            },
+          ]
         }
       }
     }
@@ -69,10 +86,20 @@ export const mediumHandler: PlatformHandler = {
       const tagMatch = pathname.match(/^\/tagged\/([^/]+)/)
 
       if (tagMatch?.[1]) {
-        return [`https://medium.com/feed/${subdomain}/tagged/${tagMatch[1]}`]
+        return [
+          {
+            uri: `https://medium.com/feed/${subdomain}/tagged/${tagMatch[1]}`,
+            hint: { key: 'medium:tagged', label: 'Tagged' },
+          },
+        ]
       }
 
-      return [`https://medium.com/feed/${subdomain}`]
+      return [
+        {
+          uri: `https://medium.com/feed/${subdomain}`,
+          hint: { key: 'medium:publication', label: 'Publication' },
+        },
+      ]
     }
 
     return []

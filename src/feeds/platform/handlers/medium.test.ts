@@ -19,42 +19,69 @@ describe('mediumHandler', () => {
   describe('resolve', () => {
     it('should return RSS feed URL for user profile', () => {
       const value = 'https://medium.com/@ev'
-      const expected = ['https://medium.com/feed/@ev']
+      const expected = [
+        { uri: 'https://medium.com/feed/@ev', hint: { key: 'medium:posts', label: 'Posts' } },
+      ]
 
       expect(mediumHandler.resolve(value)).toEqual(expected)
     })
 
     it('should return RSS feed URL for publication', () => {
       const value = 'https://medium.com/towards-data-science'
-      const expected = ['https://medium.com/feed/towards-data-science']
+      const expected = [
+        {
+          uri: 'https://medium.com/feed/towards-data-science',
+          hint: { key: 'medium:publication', label: 'Publication' },
+        },
+      ]
 
       expect(mediumHandler.resolve(value)).toEqual(expected)
     })
 
     it('should return RSS feed URL for subdomain publication', () => {
       const value = 'https://blog.medium.com/some-article'
-      const expected = ['https://medium.com/feed/blog']
+      const expected = [
+        {
+          uri: 'https://medium.com/feed/blog',
+          hint: { key: 'medium:publication', label: 'Publication' },
+        },
+      ]
 
       expect(mediumHandler.resolve(value)).toEqual(expected)
     })
 
     it('should return RSS feed URL for tag page', () => {
       const value = 'https://medium.com/tag/javascript'
-      const expected = ['https://medium.com/feed/tag/javascript']
+      const expected = [
+        {
+          uri: 'https://medium.com/feed/tag/javascript',
+          hint: { key: 'medium:tag', label: 'Tag' },
+        },
+      ]
 
       expect(mediumHandler.resolve(value)).toEqual(expected)
     })
 
     it('should return RSS feed URL for publication tagged page', () => {
       const value = 'https://medium.com/towards-data-science/tagged/machine-learning'
-      const expected = ['https://medium.com/feed/towards-data-science/tagged/machine-learning']
+      const expected = [
+        {
+          uri: 'https://medium.com/feed/towards-data-science/tagged/machine-learning',
+          hint: { key: 'medium:tagged', label: 'Tagged' },
+        },
+      ]
 
       expect(mediumHandler.resolve(value)).toEqual(expected)
     })
 
     it('should return RSS feed URL for subdomain tagged page', () => {
       const value = 'https://blog.medium.com/tagged/engineering'
-      const expected = ['https://medium.com/feed/blog/tagged/engineering']
+      const expected = [
+        {
+          uri: 'https://medium.com/feed/blog/tagged/engineering',
+          hint: { key: 'medium:tagged', label: 'Tagged' },
+        },
+      ]
 
       expect(mediumHandler.resolve(value)).toEqual(expected)
     })
@@ -92,14 +119,21 @@ describe('mediumHandler', () => {
 
     it('should handle user profile with article path', () => {
       const value = 'https://medium.com/@ev/some-article'
-      const expected = ['https://medium.com/feed/@ev']
+      const expected = [
+        { uri: 'https://medium.com/feed/@ev', hint: { key: 'medium:posts', label: 'Posts' } },
+      ]
 
       expect(mediumHandler.resolve(value)).toEqual(expected)
     })
 
     it('should return RSS feed URL for publication on www.medium.com', () => {
       const value = 'https://www.medium.com/towards-data-science'
-      const expected = ['https://medium.com/feed/towards-data-science']
+      const expected = [
+        {
+          uri: 'https://medium.com/feed/towards-data-science',
+          hint: { key: 'medium:publication', label: 'Publication' },
+        },
+      ]
 
       expect(mediumHandler.resolve(value)).toEqual(expected)
     })

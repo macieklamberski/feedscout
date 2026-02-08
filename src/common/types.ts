@@ -5,12 +5,22 @@ import type { PlatformMethodOptions } from './uris/platform/types.js'
 
 export type UriEntry = string | Array<string>
 
+export type DiscoverUriHint = {
+  key: string
+  label: string
+}
+
+export type DiscoverUriEntry = {
+  uri: UriEntry
+  hint?: DiscoverUriHint
+}
+
 export const discoverMethodOrder = ['platform', 'html', 'headers', 'guess'] as const
 
 export type DiscoverMethod = (typeof discoverMethodOrder)[number]
 
 export type DiscoverUrisResult = {
-  [K in DiscoverMethod]?: Array<UriEntry>
+  [K in DiscoverMethod]?: Array<DiscoverUriEntry>
 }
 
 export type LinkSelector = {
@@ -52,10 +62,12 @@ export type DiscoverResult<TValid = object> =
   | ({
       url: string
       isValid: true
+      hint?: DiscoverUriHint
     } & TValid)
   | {
       url: string
       isValid: false
+      hint?: DiscoverUriHint
       error?: unknown
     }
 

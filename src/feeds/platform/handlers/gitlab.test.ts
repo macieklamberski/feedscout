@@ -19,7 +19,12 @@ describe('gitlabHandler', () => {
   describe('resolve', () => {
     it('should return atom feed for user page', () => {
       const value = 'https://gitlab.com/gitlab-org'
-      const expected = ['https://gitlab.com/gitlab-org.atom']
+      const expected = [
+        {
+          uri: 'https://gitlab.com/gitlab-org.atom',
+          hint: { key: 'gitlab:activity', label: 'Activity' },
+        },
+      ]
 
       expect(gitlabHandler.resolve(value)).toEqual(expected)
     })
@@ -27,9 +32,18 @@ describe('gitlabHandler', () => {
     it('should return releases, tags, and activity feeds for repo page', () => {
       const value = 'https://gitlab.com/gitlab-org/gitlab'
       const expected = [
-        'https://gitlab.com/gitlab-org/gitlab/-/releases.atom',
-        'https://gitlab.com/gitlab-org/gitlab/-/tags?format=atom',
-        'https://gitlab.com/gitlab-org/gitlab.atom',
+        {
+          uri: 'https://gitlab.com/gitlab-org/gitlab/-/releases.atom',
+          hint: { key: 'gitlab:releases', label: 'Releases' },
+        },
+        {
+          uri: 'https://gitlab.com/gitlab-org/gitlab/-/tags?format=atom',
+          hint: { key: 'gitlab:tags', label: 'Tags' },
+        },
+        {
+          uri: 'https://gitlab.com/gitlab-org/gitlab.atom',
+          hint: { key: 'gitlab:activity', label: 'Activity' },
+        },
       ]
 
       expect(gitlabHandler.resolve(value)).toEqual(expected)
@@ -38,9 +52,18 @@ describe('gitlabHandler', () => {
     it('should return feeds for repo subpage', () => {
       const value = 'https://gitlab.com/gitlab-org/gitlab/-/issues'
       const expected = [
-        'https://gitlab.com/gitlab-org/gitlab/-/releases.atom',
-        'https://gitlab.com/gitlab-org/gitlab/-/tags?format=atom',
-        'https://gitlab.com/gitlab-org/gitlab.atom',
+        {
+          uri: 'https://gitlab.com/gitlab-org/gitlab/-/releases.atom',
+          hint: { key: 'gitlab:releases', label: 'Releases' },
+        },
+        {
+          uri: 'https://gitlab.com/gitlab-org/gitlab/-/tags?format=atom',
+          hint: { key: 'gitlab:tags', label: 'Tags' },
+        },
+        {
+          uri: 'https://gitlab.com/gitlab-org/gitlab.atom',
+          hint: { key: 'gitlab:activity', label: 'Activity' },
+        },
       ]
 
       expect(gitlabHandler.resolve(value)).toEqual(expected)
@@ -48,9 +71,8 @@ describe('gitlabHandler', () => {
 
     it('should return empty array for root page', () => {
       const value = 'https://gitlab.com'
-      const expected: Array<string> = []
 
-      expect(gitlabHandler.resolve(value)).toEqual(expected)
+      expect(gitlabHandler.resolve(value)).toEqual([])
     })
 
     it('should return empty array for excluded paths', () => {
