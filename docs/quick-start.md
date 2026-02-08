@@ -71,6 +71,7 @@ const feeds = await discoverFeeds('https://www.youtube.com/@mkbhd', {
 //   isValid: true,
 //   format: 'atom',
 //   title: 'Marques Brownlee',
+//   hint: { key: 'youtube:all', label: 'All uploads' },
 // }]
 ```
 

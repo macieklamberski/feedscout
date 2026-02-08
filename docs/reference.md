@@ -20,6 +20,7 @@ These functions extract URIs without validation. Import from `feedscout/methods`
 
 | Function | Description |
 |----------|-------------|
+| `discoverUrisFromPlatform` | Generate feed URIs for known platforms |
 | `discoverUrisFromHtml` | Extract feed URIs from HTML content |
 | `discoverUrisFromHeaders` | Extract feed URIs from HTTP headers |
 | `discoverUrisFromGuess` | Generate feed URIs from common paths |
@@ -52,6 +53,7 @@ Feedscout uses multiple export paths for tree-shaking:
 ```typescript
 // Main exports
 import { discoverFeeds, discoverBlogrolls, discoverHubs } from 'feedscout'
+import type { DiscoverUriEntry, DiscoverUriHint, UriEntry } from 'feedscout'
 
 // Feed-specific defaults and types
 import { mimeTypes, urisBalanced } from 'feedscout/feeds'
@@ -62,8 +64,12 @@ import { urisBalanced } from 'feedscout/blogrolls'
 // Hub-specific types
 import type { HubResult, DiscoverHubsOptions } from 'feedscout/hubs'
 
+// Platform-specific handlers and types
+import { youtubeHandler, defaultPlatformOptions } from 'feedscout/platform'
+import type { PlatformHandler } from 'feedscout/platform'
+
 // Discovery method functions
-import { discoverUrisFromHtml } from 'feedscout/methods'
+import { discoverUrisFromPlatform, discoverUrisFromHtml } from 'feedscout/methods'
 
 // Utility functions
 import { isSubdomainOf, isHostOf } from 'feedscout/utils'

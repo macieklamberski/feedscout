@@ -14,6 +14,9 @@ import type {
   DiscoverProgress,
   DiscoverFetchFn,
   DiscoverNormalizeUrlFn,
+  DiscoverUriEntry,
+  DiscoverUriHint,
+  UriEntry,
 } from 'feedscout'
 
 import type { HubResult, DiscoverHubsOptions } from 'feedscout/hubs'
@@ -92,9 +95,11 @@ Result from discovery functions:
 
 ```typescript
 type DiscoverResult<TValid> =
-  | ({ url: string; isValid: true } & TValid)
-  | { url: string; isValid: false; error?: unknown }
+  | ({ url: string; isValid: true; hint?: DiscoverUriHint } & TValid)
+  | { url: string; isValid: false; hint?: DiscoverUriHint; error?: unknown }
 ```
+
+See [Platform method hints](/feeds/platform#hints) for details on the `hint` property.
 
 ### FeedResult
 
@@ -127,6 +132,36 @@ Result from `discoverHubs`:
 type HubResult = {
   hub: string   // Hub URL to subscribe to
   topic: string // Feed URL the hub serves updates for
+}
+```
+
+### DiscoverUriHint
+
+A hint describing the type of feed a URI represents. See [Platform method hints](/feeds/platform#hints) for details:
+
+```typescript
+type DiscoverUriHint = {
+  key: string
+  label: string
+}
+```
+
+### UriEntry
+
+A URI or array of alternative URIs. When an array, alternatives are tried in order until one validates successfully:
+
+```typescript
+type UriEntry = string | Array<string>
+```
+
+### DiscoverUriEntry
+
+A URI entry with an optional hint. Used by [platform handlers](/feeds/platform#creating-custom-handlers) to return feed URIs with metadata:
+
+```typescript
+type DiscoverUriEntry = {
+  uri: UriEntry
+  hint?: DiscoverUriHint
 }
 ```
 

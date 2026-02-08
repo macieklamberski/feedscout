@@ -72,6 +72,8 @@ Returns a promise that resolves to an array of results:
 }
 ```
 
+Results from the [Platform method](/feeds/platform) also include a [`hint`](/feeds/platform#hints) that identifies the type of feed.
+
 ## Examples
 
 ### Basic Usage

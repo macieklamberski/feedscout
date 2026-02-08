@@ -27,6 +27,8 @@ Each result contains feed metadata:
 }
 ```
 
+Results from the [Platform method](/feeds/platform) also include a [`hint`](/feeds/platform#hints) that identifies the type of feed.
+
 ## Discovery Methods
 
 | Method | Source |

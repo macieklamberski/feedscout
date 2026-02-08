@@ -16,6 +16,7 @@ import type {
   DiscoverOptions,
   DiscoverResult,
   DiscoverProgress,
+  DiscoverUriHint,
 } from 'feedscout'
 
 import { discoverFeeds } from 'feedscout'
@@ -40,9 +41,11 @@ for (const feed of feeds) {
     console.log(feed.title)       // string | undefined
     console.log(feed.description) // string | undefined
     console.log(feed.siteUrl)     // string | undefined
+    console.log(feed.hint)        // DiscoverUriHint | undefined
   } else {
     // TypeScript knows this is an invalid result
     console.log(feed.error) // unknown
+    console.log(feed.hint)  // DiscoverUriHint | undefined
   }
 }
 ```
@@ -153,7 +156,7 @@ Types are available from multiple export paths:
 
 ```typescript
 // Main types
-import type { DiscoverResult, DiscoverOptions } from 'feedscout'
+import type { DiscoverResult, DiscoverOptions, DiscoverUriHint } from 'feedscout'
 
 // Feed-specific types
 import type { FeedResult } from 'feedscout/feeds'
@@ -163,4 +166,7 @@ import type { BlogrollResult } from 'feedscout/blogrolls'
 
 // Hub-specific types
 import type { HubResult, DiscoverHubsOptions } from 'feedscout/hubs'
+
+// Platform handler types
+import type { PlatformHandler } from 'feedscout/platform'
 ```

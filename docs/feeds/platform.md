@@ -17,6 +17,19 @@ The Platform method uses handlers for each supported platform:
 > [!TIP]
 > Even when feeds are discoverable via HTML `<link>` tags, the Platform method is useful because it generates feed URLs directly from the page URL—no HTTP request needed. This makes it faster when you only have a URL and want to avoid fetching the page content first.
 
+## Hints
+
+Platform handlers attach a `hint` to each feed URI they generate. Hints provide a machine-readable `key` and a human-readable `label` that describe what type of feed the URI represents (e.g., "All uploads", "Videos only", "Shorts only"). This is useful when a single URL generates multiple feed variants and you need to let users pick the right one, especially for feeds that don't include a descriptive title.
+
+Hints are propagated to the final [`DiscoverResult`](/reference/types#discoverresult) objects returned by `discoverFeeds`. Results from non-platform methods (HTML, headers, guess) do not include hints.
+
+```typescript
+type DiscoverUriHint = {
+  key: string    // e.g., 'youtube:all', 'youtube:videos'
+  label: string  // e.g., 'All uploads', 'Videos only'
+}
+```
+
 ## Supported Platforms
 
 ### YouTube
@@ -324,8 +337,18 @@ const uris = discoverUrisFromPlatform(htmlContent, {
 })
 
 // [
-//   'https://www.youtube.com/feeds/videos.xml?channel_id=UCBJycsmduvYEL83R_U4JriQ',
-//   'https://www.youtube.com/feeds/videos.xml?playlist_id=UULFBJycsmduvYEL83R_U4JriQ',
+//   {
+//     uri: 'https://www.youtube.com/feeds/videos.xml?channel_id=UCBJycsmduvYEL83R_U4JriQ',
+//     hint: { key: 'youtube:all', label: 'All uploads' },
+//   },
+//   {
+//     uri: 'https://www.youtube.com/feeds/videos.xml?playlist_id=UULFBJycsmduvYEL83R_U4JriQ',
+//     hint: { key: 'youtube:videos', label: 'Videos only' },
+//   },
+//   {
+//     uri: 'https://www.youtube.com/feeds/videos.xml?playlist_id=UUSHBJycsmduvYEL83R_U4JriQ',
+//     hint: { key: 'youtube:shorts', label: 'Shorts only' },
+//   },
 // ]
 ```
 
@@ -343,14 +366,14 @@ A `PlatformHandler` has two methods:
 ```typescript
 type PlatformHandler = {
   match: (url: string) => boolean
-  resolve: (url: string, content?: string) => Array<string>
+  resolve: (url: string, content?: string) => Array<DiscoverUriEntry>
 }
 ```
 
 | Method | Description |
 |--------|-------------|
 | `match(url)` | Returns `true` if this handler should process the URL |
-| `resolve(url, content?)` | Returns an array of feed URLs for the given page URL |
+| `resolve(url, content?)` | Returns an array of [`DiscoverUriEntry`](/reference/types#discoverurientry) objects for the given page URL |
 
 ### Basic Example
 
@@ -367,7 +390,7 @@ const myHandler: PlatformHandler = {
   resolve: (url) => {
     const { origin } = new URL(url)
 
-    return [`${origin}/feed.xml`]
+    return [{ uri: `${origin}/feed.xml` }]
   },
 }
 ```
@@ -389,7 +412,7 @@ const profileHandler: PlatformHandler = {
     const match = pathname.match(/^\/users\/([^/]+)/)
 
     if (match?.[1]) {
-      return [`${origin}/users/${match[1]}/feed.rss`]
+      return [{ uri: `${origin}/users/${match[1]}/feed.rss` }]
     }
 
     return []
@@ -412,7 +435,7 @@ const contentHandler: PlatformHandler = {
 
     const match = content.match(/data-feed-url="([^"]+)"/)
 
-    return match?.[1] ? [match[1]] : []
+    return match?.[1] ? [{ uri: match[1] }] : []
   },
 }
 ```
