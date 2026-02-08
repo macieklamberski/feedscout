@@ -1,43 +1,43 @@
-import type { DiscoverMethodsConfigInternal, UriEntry } from '../types.js'
-import { deduplicateUriEntries } from '../utils.js'
+import type { DiscoverMethodsConfigInternal, DiscoverUrisResult } from '../types.js'
 import { discoverUrisFromGuess } from './guess/index.js'
 import { discoverUrisFromHeaders } from './headers/index.js'
 import { discoverUrisFromHtml } from './html/index.js'
 import { discoverUrisFromPlatform } from './platform/index.js'
 
-export const discoverUris = (
-  config: DiscoverMethodsConfigInternal,
-  stopOnFirstMethod = false,
-): Array<UriEntry> => {
-  const uris: Array<UriEntry> = []
+export const discoverUris = (config: DiscoverMethodsConfigInternal): DiscoverUrisResult => {
+  const result: DiscoverUrisResult = {}
 
   if (config.platform) {
-    uris.push(...discoverUrisFromPlatform(config.platform.html, config.platform.options))
+    const uris = discoverUrisFromPlatform(config.platform.html, config.platform.options)
 
-    if (stopOnFirstMethod && uris.length > 0) {
-      return deduplicateUriEntries(uris)
+    if (uris.length > 0) {
+      result.platform = uris
     }
   }
 
   if (config.html) {
-    uris.push(...discoverUrisFromHtml(config.html.html, config.html.options))
+    const uris = discoverUrisFromHtml(config.html.html, config.html.options)
 
-    if (stopOnFirstMethod && uris.length > 0) {
-      return deduplicateUriEntries(uris)
+    if (uris.length > 0) {
+      result.html = uris
     }
   }
 
   if (config.headers) {
-    uris.push(...discoverUrisFromHeaders(config.headers.headers, config.headers.options))
+    const uris = discoverUrisFromHeaders(config.headers.headers, config.headers.options)
 
-    if (stopOnFirstMethod && uris.length > 0) {
-      return deduplicateUriEntries(uris)
+    if (uris.length > 0) {
+      result.headers = uris
     }
   }
 
   if (config.guess) {
-    uris.push(...discoverUrisFromGuess(config.guess.options))
+    const uris = discoverUrisFromGuess(config.guess.options)
+
+    if (uris.length > 0) {
+      result.guess = uris
+    }
   }
 
-  return deduplicateUriEntries(uris)
+  return result
 }

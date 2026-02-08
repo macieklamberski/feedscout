@@ -2,9 +2,9 @@ import { describe, expect, it } from 'bun:test'
 import { discoverUris } from './index.js'
 
 describe('discoverUris', () => {
-  it('should return empty array when no methods configured', () => {
+  it('should return empty object when no methods configured', () => {
     const value = discoverUris({})
-    const expected: Array<string> = []
+    const expected = {}
 
     expect(value).toEqual(expected)
   })
@@ -21,7 +21,7 @@ describe('discoverUris', () => {
         },
       },
     })
-    const expected = ['/feed.xml']
+    const expected = { html: ['/feed.xml'] }
 
     expect(value).toEqual(expected)
   })
@@ -38,7 +38,7 @@ describe('discoverUris', () => {
         },
       },
     })
-    const expected = ['/feed.xml']
+    const expected = { headers: ['/feed.xml'] }
 
     expect(value).toEqual(expected)
   })
@@ -52,38 +52,12 @@ describe('discoverUris', () => {
         },
       },
     })
-    const expected = ['https://example.com/feed.xml', 'https://example.com/rss.xml']
+    const expected = { guess: ['https://example.com/feed.xml', 'https://example.com/rss.xml'] }
 
     expect(value).toEqual(expected)
   })
 
-  it('should deduplicate URIs across methods', () => {
-    const headers = new Headers({
-      Link: '</feed.xml>; rel="alternate"; type="application/rss+xml"',
-    })
-    const value = discoverUris({
-      html: {
-        html: '<link rel="alternate" type="application/rss+xml" href="/feed.xml">',
-        options: {
-          linkSelectors: [{ rel: 'alternate', types: ['application/rss+xml'] }],
-          anchorUris: [],
-          anchorIgnoredUris: [],
-          anchorLabels: [],
-        },
-      },
-      headers: {
-        headers,
-        options: {
-          linkSelectors: [{ rel: 'alternate', types: ['application/rss+xml'] }],
-        },
-      },
-    })
-    const expected = ['/feed.xml']
-
-    expect(value).toEqual(expected)
-  })
-
-  it('should combine URIs from all methods', () => {
+  it('should return URIs from all methods in separate properties', () => {
     const headers = new Headers({
       Link: '</rss.xml>; rel="alternate"; type="application/rss+xml"',
     })
@@ -110,12 +84,16 @@ describe('discoverUris', () => {
         },
       },
     })
-    const expected = ['/feed.xml', '/rss.xml', 'https://example.com/atom.xml']
+    const expected = {
+      html: ['/feed.xml'],
+      headers: ['/rss.xml'],
+      guess: ['https://example.com/atom.xml'],
+    }
 
     expect(value).toEqual(expected)
   })
 
-  it('should handle duplicate URIs from different methods', () => {
+  it('should keep duplicate URIs across methods in separate properties', () => {
     const headers = new Headers({
       Link: '</feed.xml>; rel="alternate"; type="application/rss+xml", </rss.xml>; rel="alternate"; type="application/rss+xml"',
     })
@@ -136,121 +114,33 @@ describe('discoverUris', () => {
         },
       },
     })
-    const expected = ['/feed.xml', '/rss.xml']
+    const expected = {
+      html: ['/feed.xml', '/rss.xml'],
+      headers: ['/feed.xml', '/rss.xml'],
+    }
 
     expect(value).toEqual(expected)
   })
 
-  it('should stop after platform method when stopOnFirstMethod is true', () => {
-    const value = discoverUris(
-      {
-        platform: {
-          html: '',
-          options: {
-            baseUrl: 'https://example.com',
-            handlers: [
-              {
-                match: () => {
-                  return true
-                },
-                resolve: () => {
-                  return ['https://example.com/feed.xml']
-                },
-              },
-            ],
-          },
-        },
-        html: {
-          html: '<link rel="alternate" type="application/rss+xml" href="/rss.xml">',
-          options: {
-            linkSelectors: [{ rel: 'alternate', types: ['application/rss+xml'] }],
-            anchorUris: [],
-            anchorIgnoredUris: [],
-            anchorLabels: [],
-          },
+  it('should skip methods that return empty results', () => {
+    const value = discoverUris({
+      html: {
+        html: '<div>No feeds here</div>',
+        options: {
+          linkSelectors: [{ rel: 'alternate', types: ['application/rss+xml'] }],
+          anchorUris: [],
+          anchorIgnoredUris: [],
+          anchorLabels: [],
         },
       },
-      true,
-    )
-    const expected = ['https://example.com/feed.xml']
-
-    expect(value).toEqual(expected)
-  })
-
-  it('should stop after html method when stopOnFirstMethod is true', () => {
-    const value = discoverUris(
-      {
-        html: {
-          html: '<link rel="alternate" type="application/rss+xml" href="/feed.xml">',
-          options: {
-            linkSelectors: [{ rel: 'alternate', types: ['application/rss+xml'] }],
-            anchorUris: [],
-            anchorIgnoredUris: [],
-            anchorLabels: [],
-          },
-        },
-        guess: {
-          options: {
-            baseUrl: 'https://example.com',
-            uris: ['/rss.xml'],
-          },
+      guess: {
+        options: {
+          baseUrl: 'https://example.com',
+          uris: ['/rss.xml'],
         },
       },
-      true,
-    )
-    const expected = ['/feed.xml']
-
-    expect(value).toEqual(expected)
-  })
-
-  it('should stop after headers method when stopOnFirstMethod is true', () => {
-    const headers = new Headers({
-      Link: '</feed.xml>; rel="alternate"; type="application/rss+xml"',
     })
-    const value = discoverUris(
-      {
-        headers: {
-          headers,
-          options: {
-            linkSelectors: [{ rel: 'alternate', types: ['application/rss+xml'] }],
-          },
-        },
-        guess: {
-          options: {
-            baseUrl: 'https://example.com',
-            uris: ['/rss.xml'],
-          },
-        },
-      },
-      true,
-    )
-    const expected = ['/feed.xml']
-
-    expect(value).toEqual(expected)
-  })
-
-  it('should fall through to next method when stopOnFirstMethod is true and first method is empty', () => {
-    const value = discoverUris(
-      {
-        html: {
-          html: '<div>No feeds here</div>',
-          options: {
-            linkSelectors: [{ rel: 'alternate', types: ['application/rss+xml'] }],
-            anchorUris: [],
-            anchorIgnoredUris: [],
-            anchorLabels: [],
-          },
-        },
-        guess: {
-          options: {
-            baseUrl: 'https://example.com',
-            uris: ['/rss.xml'],
-          },
-        },
-      },
-      true,
-    )
-    const expected = ['https://example.com/rss.xml']
+    const expected = { guess: ['https://example.com/rss.xml'] }
 
     expect(value).toEqual(expected)
   })
@@ -277,40 +167,12 @@ describe('discoverUris', () => {
         },
       },
     })
-    const expected = [
-      ['https://example.com/feed/', 'https://example.com/?feed=rss'],
-      'https://example.com/atom.xml',
-    ]
-
-    expect(value).toEqual(expected)
-  })
-
-  it('should deduplicate array entries with same alternatives', () => {
-    const value = discoverUris({
-      platform: {
-        html: '',
-        options: {
-          baseUrl: 'https://example.com',
-          handlers: [
-            {
-              match: () => {
-                return true
-              },
-              resolve: () => {
-                return [['https://example.com/feed/', 'https://example.com/?feed=rss']]
-              },
-            },
-          ],
-        },
-      },
-      guess: {
-        options: {
-          baseUrl: 'https://example.com',
-          uris: [['/feed/', '?feed=rss']],
-        },
-      },
-    })
-    const expected = [['https://example.com/feed/', 'https://example.com/?feed=rss']]
+    const expected = {
+      platform: [
+        ['https://example.com/feed/', 'https://example.com/?feed=rss'],
+        'https://example.com/atom.xml',
+      ],
+    }
 
     expect(value).toEqual(expected)
   })
@@ -340,10 +202,10 @@ describe('discoverUris', () => {
         },
       },
     })
-    const expected = [
-      ['https://example.com/feed/', 'https://example.com/?feed=rss'],
-      'https://example.com/atom.xml',
-    ]
+    const expected = {
+      platform: [['https://example.com/feed/', 'https://example.com/?feed=rss']],
+      guess: ['https://example.com/atom.xml'],
+    }
 
     expect(value).toEqual(expected)
   })

@@ -1,9 +1,10 @@
-import type {
-  DiscoverInput,
-  DiscoverMethodsConfigDefaults,
-  DiscoverOptionsInternal,
-  DiscoverResult,
-  UriEntry,
+import {
+  type DiscoverInput,
+  type DiscoverMethodsConfigDefaults,
+  type DiscoverOptionsInternal,
+  type DiscoverResult,
+  discoverMethodOrder,
+  type UriEntry,
 } from '../types.js'
 import { discoverUris } from '../uris/index.js'
 import { deduplicateUriEntries, processConcurrently } from '../utils.js'
@@ -44,14 +45,43 @@ export const discover = async <TValid>(
   // Step 2: Build methods config from input and selected methods.
   const methodsConfig = normalizeMethodsConfig(normalizedInput, methods, defaults)
 
-  // Step 3: Discover URIs using selected methods, normalize, and deduplicate.
-  const rawUris = discoverUris(methodsConfig, stopOnFirstMethod)
-  const normalizedUris = rawUris.map((entry) => {
-    return normalizeUriEntry(entry, normalizeUrlFn, normalizedInput.url)
-  })
-  const uris = deduplicateUriEntries(normalizedUris)
+  // Step 3: Discover URIs using selected methods.
+  const urisByMethod = discoverUris(methodsConfig)
 
-  // Step 4: Validate discovered URIs.
+  // Step 4: Normalize and deduplicate URIs per method group, deduping across groups.
+  const seen = new Set<string>()
+  const methodGroups: Array<Array<UriEntry>> = []
+
+  for (const method of discoverMethodOrder) {
+    const rawUris = urisByMethod[method]
+
+    if (!rawUris?.length) {
+      continue
+    }
+
+    const normalized = rawUris.map((entry) => {
+      return normalizeUriEntry(entry, normalizeUrlFn, normalizedInput.url)
+    })
+
+    const unique = deduplicateUriEntries(normalized).filter((entry) => {
+      const key = typeof entry === 'string' ? entry : entry.join('\0')
+
+      if (seen.has(key)) {
+        return false
+      }
+
+      seen.add(key)
+
+      return true
+    })
+
+    if (unique.length > 0) {
+      methodGroups.push(unique)
+    }
+  }
+
+  // Step 5: Validate discovered URIs.
+  const total = methodGroups.reduce((sum, group) => sum + group.length, 0)
   const results: Array<DiscoverResult<TValid>> = []
   let tested = 0
   let found = 0
@@ -82,12 +112,7 @@ export const discover = async <TValid>(
         found += 1
       }
 
-      onProgress?.({
-        tested,
-        total: uris.length,
-        found,
-        current: url,
-      })
+      onProgress?.({ tested, total, found, current: url })
 
       // Stop trying alternatives on first valid result.
       if (result.isValid) {
@@ -96,10 +121,20 @@ export const discover = async <TValid>(
     }
   }
 
-  await processConcurrently(uris, processUri, {
-    concurrency,
-    shouldStop: () => stopOnFirstResult && found > 0,
-  })
+  for (const group of methodGroups) {
+    const foundBefore = found
+
+    await processConcurrently(group, processUri, {
+      concurrency,
+      shouldStop: () => {
+        return stopOnFirstResult && found > 0
+      },
+    })
+
+    if (stopOnFirstMethod && found > foundBefore) {
+      break
+    }
+  }
 
   return includeInvalid ? results : results.filter((result) => result.isValid)
 }

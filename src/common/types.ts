@@ -5,6 +5,14 @@ import type { PlatformMethodOptions } from './uris/platform/types.js'
 
 export type UriEntry = string | Array<string>
 
+export const discoverMethodOrder = ['platform', 'html', 'headers', 'guess'] as const
+
+export type DiscoverMethod = (typeof discoverMethodOrder)[number]
+
+export type DiscoverUrisResult = {
+  [K in DiscoverMethod]?: Array<UriEntry>
+}
+
 export type LinkSelector = {
   rel: string
   types?: Array<string>
@@ -68,7 +76,7 @@ export type DiscoverInput = string | DiscoverInputObject
 
 // User-facing config - partial options (users override only what they need).
 export type DiscoverMethodsConfig =
-  | Array<'platform' | 'html' | 'headers' | 'guess'>
+  | Array<DiscoverMethod>
   | {
       platform?: true | Partial<PlatformMethodOptions>
       html?: true | Partial<Omit<HtmlMethodOptions, 'baseUrl'>>
