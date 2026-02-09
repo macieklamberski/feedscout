@@ -42,29 +42,6 @@ export const pinterestHandler: PlatformHandler = {
       return []
     }
 
-    // Board page: /{username}/{boardname}
-    if (pathSegments.length >= 2) {
-      const boardname = pathSegments[1]
-
-      // Skip special paths like /pins, /boards, /_saved, etc.
-      if (boardname.startsWith('_') || boardname === 'pins' || boardname === 'boards') {
-        return [
-          {
-            uri: `https://www.pinterest.com/${username}/feed.rss`,
-            hint: composeHint('pinterest:pins'),
-          },
-        ]
-      }
-
-      return [
-        {
-          uri: `https://www.pinterest.com/${username}/${boardname}.rss`,
-          hint: composeHint('pinterest:board'),
-        },
-      ]
-    }
-
-    // User profile: /{username}
     return [
       {
         uri: `https://www.pinterest.com/${username}/feed.rss`,
