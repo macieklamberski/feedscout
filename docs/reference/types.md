@@ -9,6 +9,7 @@ All types are exported from the main `feedscout` package.
 ```typescript
 import type {
   DiscoverInput,
+  DiscoverMethod,
   DiscoverOptions,
   DiscoverResult,
   DiscoverProgress,
@@ -58,6 +59,14 @@ type DiscoverOptions<TValid> = {
 }
 ```
 
+### DiscoverMethod
+
+Union type of available discovery method names:
+
+```typescript
+type DiscoverMethod = 'platform' | 'html' | 'headers' | 'guess'
+```
+
 ### DiscoverMethodsConfig
 
 Configuration for discovery methods:
@@ -95,11 +104,22 @@ Result from discovery functions:
 
 ```typescript
 type DiscoverResult<TValid> =
-  | ({ url: string; isValid: true; hint?: DiscoverUriHint } & TValid)
-  | { url: string; isValid: false; hint?: DiscoverUriHint; error?: unknown }
+  | ({
+      url: string
+      isValid: true
+      method?: DiscoverMethod
+      hint?: DiscoverUriHint
+    } & TValid)
+  | {
+      url: string
+      isValid: false
+      method?: DiscoverMethod
+      hint?: DiscoverUriHint
+      error?: unknown
+    }
 ```
 
-See [Platform method hints](/feeds/platform#hints) for details on the `hint` property.
+The `method` field indicates which discovery method produced the result (`'platform'`, `'html'`, `'headers'`, or `'guess'`). See [Platform method hints](/feeds/platform#hints) for details on the `hint` property.
 
 ### FeedResult
 

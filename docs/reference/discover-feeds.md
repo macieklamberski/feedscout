@@ -58,7 +58,8 @@ Returns a promise that resolves to an array of results:
 {
   url: 'https://example.com/feed.xml',
   isValid: true,
-  format: 'rss',        // 'rss' | 'atom' | 'json' | 'rdf'
+  method: 'guess',       // 'platform' | 'html' | 'headers' | 'guess'
+  format: 'rss',         // 'rss' | 'atom' | 'json' | 'rdf'
   title: 'Example Blog',
   description: 'A blog about examples',
   siteUrl: 'https://example.com',
@@ -68,11 +69,12 @@ Returns a promise that resolves to an array of results:
 {
   url: 'https://example.com/not-a-feed',
   isValid: false,
+  method: 'guess',
   error: Error,
 }
 ```
 
-Results from the [Platform method](/feeds/platform) also include a [`hint`](/feeds/platform#hints) that identifies the type of feed.
+The `method` field indicates which discovery method produced the result. Results from the [Platform method](/feeds/platform) also include a [`hint`](/feeds/platform#hints) that identifies the type of feed.
 
 ## Examples
 
