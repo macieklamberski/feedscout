@@ -59,6 +59,7 @@ describe('discover', () => {
         {
           url: 'https://example.com/guess-feed',
           isValid: true,
+          method: 'guess',
           format: 'rss',
           title: 'Test RSS',
           description: 'Test feed',
@@ -102,6 +103,7 @@ describe('discover', () => {
         {
           url: 'https://example.com/platform-feed',
           isValid: true,
+          method: 'platform',
           format: 'rss',
           title: 'Test RSS',
           description: 'Test feed',
@@ -146,6 +148,7 @@ describe('discover', () => {
         {
           url: 'https://example.com/guess-feed',
           isValid: true,
+          method: 'guess',
           format: 'rss',
           title: 'Test RSS',
           description: 'Test feed',
@@ -194,6 +197,7 @@ describe('discover', () => {
         {
           url: 'https://example.com/guess-feed1',
           isValid: true,
+          method: 'guess',
           format: 'rss',
           title: 'Test RSS',
           description: 'Test feed',
@@ -267,6 +271,7 @@ describe('discover', () => {
         {
           url: 'https://example.com/feed1',
           isValid: true,
+          method: 'guess',
           format: 'rss',
           title: 'Test RSS',
           description: 'Test feed',
@@ -303,6 +308,7 @@ describe('discover', () => {
         {
           url: 'https://example.com/feed/',
           isValid: true,
+          method: 'guess',
           format: 'rss',
           title: 'Test RSS',
           description: 'Test feed',
@@ -337,6 +343,7 @@ describe('discover', () => {
         {
           url: 'https://example.com/?feed=rss',
           isValid: true,
+          method: 'guess',
           format: 'rss',
           title: 'Test RSS',
           description: 'Test feed',
@@ -446,6 +453,7 @@ describe('discover', () => {
         {
           url: 'https://example.com/feed',
           isValid: false,
+          method: 'guess',
         },
       ]
 
@@ -521,6 +529,7 @@ describe('discover', () => {
         {
           url: 'https://example.com/feed',
           isValid: true,
+          method: 'html',
           format: 'rss',
           title: 'Test RSS',
           description: 'Test feed',
@@ -529,6 +538,7 @@ describe('discover', () => {
         {
           url: 'https://example.com/feed.xml',
           isValid: true,
+          method: 'headers',
           format: 'rss',
           title: 'Test RSS',
           description: 'Test feed',
@@ -574,6 +584,7 @@ describe('discover', () => {
         {
           url: 'https://example.com/feed',
           isValid: true,
+          method: 'html',
           format: 'rss',
           title: 'Test RSS',
           description: 'Test feed',
@@ -582,6 +593,7 @@ describe('discover', () => {
         {
           url: 'https://example.com/feed.xml',
           isValid: true,
+          method: 'headers',
           format: 'rss',
           title: 'Test RSS',
           description: 'Test feed',
@@ -590,6 +602,7 @@ describe('discover', () => {
         {
           url: 'https://example.com/rss',
           isValid: false,
+          method: 'guess',
         },
       ]
 
@@ -657,6 +670,7 @@ describe('discover', () => {
         {
           url: 'https://example.com/feed.xml',
           isValid: false,
+          method: 'html',
         },
       ]
 
@@ -695,6 +709,7 @@ describe('discover', () => {
         {
           url: 'https://example.com/feed',
           isValid: true,
+          method: 'guess',
           format: 'rss',
         },
       ]
@@ -739,6 +754,7 @@ describe('discover', () => {
         {
           url: 'https://example.com/feed',
           isValid: true,
+          method: 'guess',
           format: 'rss',
           title: 'Custom Feed',
           itemCount: 42,
@@ -779,12 +795,14 @@ describe('discover', () => {
         {
           url: 'https://example.com/feed1',
           isValid: true,
+          method: 'guess',
           format: 'rss',
           author: 'John',
         },
         {
           url: 'https://example.com/feed2',
           isValid: true,
+          method: 'guess',
           format: 'rss',
           author: undefined,
         },
@@ -817,6 +835,7 @@ describe('discover', () => {
         {
           url: 'https://example.com/feed',
           isValid: false,
+          method: 'guess',
           error: { code: 'PARSE_ERROR', message: 'Failed to parse feed' },
         },
       ]
@@ -866,6 +885,7 @@ describe('discover', () => {
         {
           url: 'https://example.com/feed',
           isValid: true,
+          method: 'guess',
           format: 'rss',
           etag: '"abc123"',
         },
@@ -896,6 +916,7 @@ describe('discover', () => {
         {
           url: 'https://custom.example.com/feed',
           isValid: true,
+          method: 'guess',
           format: 'rss',
           title: 'Test RSS',
           description: 'Test feed',
@@ -926,6 +947,7 @@ describe('discover', () => {
         {
           url: 'https://cdn.example.com/feed.xml',
           isValid: true,
+          method: 'html',
           format: 'rss',
           title: 'Test RSS',
           description: 'Test feed',
