@@ -62,11 +62,13 @@ export type DiscoverResult<TValid = object> =
   | ({
       url: string
       isValid: true
+      method?: DiscoverMethod
       hint?: DiscoverUriHint
     } & TValid)
   | {
       url: string
       isValid: false
+      method?: DiscoverMethod
       hint?: DiscoverUriHint
       error?: unknown
     }

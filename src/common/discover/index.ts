@@ -1,5 +1,6 @@
 import {
   type DiscoverInput,
+  type DiscoverMethod,
   type DiscoverMethodsConfigDefaults,
   type DiscoverOptionsInternal,
   type DiscoverResult,
@@ -50,7 +51,7 @@ export const discover = async <TValid>(
 
   // Step 4: Normalize and deduplicate URIs per method group, deduping across groups.
   const seen = new Set<string>()
-  const methodGroups: Array<Array<DiscoverUriEntry>> = []
+  const methodGroups: Array<{ method: DiscoverMethod; entries: Array<DiscoverUriEntry> }> = []
 
   for (const method of discoverMethodOrder) {
     const rawUris = urisByMethod[method]
@@ -76,12 +77,12 @@ export const discover = async <TValid>(
     })
 
     if (unique.length > 0) {
-      methodGroups.push(unique)
+      methodGroups.push({ method, entries: unique })
     }
   }
 
   // Step 5: Validate discovered URIs.
-  const total = methodGroups.reduce((sum, group) => sum + group.length, 0)
+  const total = methodGroups.reduce((sum, group) => sum + group.entries.length, 0)
   const results: Array<DiscoverResult<TValid>> = []
   let tested = 0
   let found = 0
@@ -99,13 +100,13 @@ export const discover = async <TValid>(
     }
   }
 
-  const processUri = async (entry: DiscoverUriEntry): Promise<void> => {
+  const processUri = async (entry: DiscoverUriEntry, method: DiscoverMethod): Promise<void> => {
     const alternatives = typeof entry.uri === 'string' ? [entry.uri] : entry.uri
 
     for (const url of alternatives) {
       const result = await fetchAndExtract(url)
 
-      results.push(entry.hint ? { ...result, hint: entry.hint } : result)
+      results.push(entry.hint ? { ...result, method, hint: entry.hint } : { ...result, method })
       tested += 1
 
       if (result.isValid) {
@@ -121,10 +122,10 @@ export const discover = async <TValid>(
     }
   }
 
-  for (const group of methodGroups) {
+  for (const { method, entries } of methodGroups) {
     const foundBefore = found
 
-    await processConcurrently(group, processUri, {
+    await processConcurrently(entries, (entry) => processUri(entry, method), {
       concurrency,
       shouldStop: () => {
         return stopOnFirstResult && found > 0

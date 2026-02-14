@@ -39,6 +39,7 @@ describe('discoverBlogrolls', () => {
       {
         url: 'https://example.com/blogroll.opml',
         isValid: true,
+        method: 'guess',
         title: 'My Blogroll',
       },
     ]
@@ -61,6 +62,7 @@ describe('discoverBlogrolls', () => {
       {
         url: 'https://example.com/.well-known/recommendations.opml',
         isValid: true,
+        method: 'guess',
         title: 'My Blogroll',
       },
     ]
@@ -101,6 +103,7 @@ describe('discoverBlogrolls', () => {
       {
         url: 'https://example.com/subscriptions.opml',
         isValid: true,
+        method: 'guess',
         title: 'My Blogroll',
       },
     ]
@@ -142,6 +145,7 @@ describe('discoverBlogrolls', () => {
       {
         url: 'https://example.com/my-blogroll.opml',
         isValid: true,
+        method: 'html',
         title: 'My Blogroll',
       },
     ]
@@ -167,6 +171,7 @@ describe('discoverBlogrolls', () => {
       {
         url: 'https://example.com/subscriptions.opml',
         isValid: true,
+        method: 'html',
         title: 'My Blogroll',
       },
     ]
@@ -192,6 +197,7 @@ describe('discoverBlogrolls', () => {
       {
         url: 'https://example.com/reading-list.opml',
         isValid: true,
+        method: 'html',
         title: 'My Blogroll',
       },
     ]
@@ -217,6 +223,7 @@ describe('discoverBlogrolls', () => {
       {
         url: 'https://example.com/links',
         isValid: true,
+        method: 'html',
         title: 'My Blogroll',
       },
     ]

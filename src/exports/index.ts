@@ -6,6 +6,7 @@ export type {
   DiscoverFetchFnResponse,
   DiscoverInput,
   DiscoverInputObject,
+  DiscoverMethod,
   DiscoverMethodsConfig,
   DiscoverNormalizeUrlFn,
   DiscoverOnProgressFn,

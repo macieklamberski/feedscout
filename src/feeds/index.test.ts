@@ -34,6 +34,7 @@ describe('discoverFeeds', () => {
       {
         url: 'https://example.com/feed',
         isValid: true,
+        method: 'guess',
         format: 'rss',
         title: 'Test RSS',
         description: 'Test feed',
@@ -76,6 +77,7 @@ describe('discoverFeeds', () => {
       {
         url: 'https://example.com/feed',
         isValid: true,
+        method: 'guess',
         format: 'rss',
         title: 'Test RSS',
         description: 'Test feed',
@@ -84,6 +86,7 @@ describe('discoverFeeds', () => {
       {
         url: 'https://example.com/atom',
         isValid: true,
+        method: 'guess',
         format: 'atom',
         title: 'Test Atom',
         description: 'Test feed',
@@ -118,6 +121,7 @@ describe('discoverFeeds', () => {
       {
         url: 'https://example.com/feed',
         isValid: true,
+        method: 'guess',
         format: 'rss',
         title: 'Test RSS',
         description: 'Test feed',
@@ -153,6 +157,7 @@ describe('discoverFeeds', () => {
       {
         url: 'https://example.com/feed',
         isValid: true,
+        method: 'guess',
         format: 'rss',
         title: 'Test RSS',
         description: 'Test feed',
@@ -161,6 +166,7 @@ describe('discoverFeeds', () => {
       {
         url: 'https://example.com/rss',
         isValid: true,
+        method: 'guess',
         format: 'rss',
         title: 'Test RSS',
         description: 'Test feed',
@@ -192,6 +198,7 @@ describe('discoverFeeds', () => {
       {
         url: 'https://example.com/feed.json',
         isValid: true,
+        method: 'guess',
         format: 'json',
         title: 'Test JSON Feed',
         description: 'Test feed',
@@ -227,6 +234,7 @@ describe('discoverFeeds', () => {
       {
         url: 'https://example.com/?feed=rss',
         isValid: true,
+        method: 'guess',
         format: 'rss',
         title: 'Test RSS',
         description: 'Test feed',
@@ -235,6 +243,7 @@ describe('discoverFeeds', () => {
       {
         url: 'https://example.com/feeds/posts/default',
         isValid: true,
+        method: 'guess',
         format: 'rss',
         title: 'Test RSS',
         description: 'Test feed',
@@ -276,6 +285,7 @@ describe('discoverFeeds', () => {
       {
         url: 'https://example.com/feed',
         isValid: true,
+        method: 'guess',
         format: 'rss',
         title: 'Test RSS',
         description: 'Test feed',
@@ -284,6 +294,7 @@ describe('discoverFeeds', () => {
       {
         url: 'https://www.example.com/feed',
         isValid: true,
+        method: 'guess',
         format: 'rss',
         title: 'Test RSS',
         description: 'Test feed',
@@ -292,6 +303,7 @@ describe('discoverFeeds', () => {
       {
         url: 'https://blog.example.com/feed',
         isValid: true,
+        method: 'guess',
         format: 'rss',
         title: 'Test RSS',
         description: 'Test feed',
@@ -324,6 +336,7 @@ describe('discoverFeeds', () => {
         {
           url: 'https://www.reddit.com/r/programming/.rss',
           isValid: true,
+          method: 'platform',
           format: 'rss',
           title: 'Test RSS',
           description: 'Test feed',
@@ -355,6 +368,7 @@ describe('discoverFeeds', () => {
         {
           url: 'https://github.com/owner/repo/releases.atom',
           isValid: true,
+          method: 'platform',
           format: 'atom',
           title: 'Test Atom',
           description: 'Test feed',
@@ -364,6 +378,7 @@ describe('discoverFeeds', () => {
         {
           url: 'https://github.com/owner/repo/commits.atom',
           isValid: true,
+          method: 'platform',
           format: 'atom',
           title: 'Test Atom',
           description: 'Test feed',
@@ -400,6 +415,7 @@ describe('discoverFeeds', () => {
         {
           url: 'https://custom.com/my-feed.xml',
           isValid: true,
+          method: 'platform',
           format: 'rss',
           title: 'Custom Feed',
           description: 'Custom feed',
@@ -435,6 +451,7 @@ describe('discoverFeeds', () => {
         {
           url: 'https://www.reddit.com/r/programming/.rss',
           isValid: true,
+          method: 'platform',
           format: 'rss',
           title: 'Test RSS',
           description: 'Test feed',
@@ -444,6 +461,7 @@ describe('discoverFeeds', () => {
         {
           url: 'https://reddit.com/feed',
           isValid: true,
+          method: 'guess',
           format: 'rss',
           title: 'Test RSS',
           description: 'Test feed',
