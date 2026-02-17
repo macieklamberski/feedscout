@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'bun:test'
 import {
   anyWordMatchesAnyOf,
+  composeHint,
   endsWithAnyOf,
   includesAnyOf,
   isAnyOf,
@@ -12,6 +13,35 @@ import {
   normalizeUrl,
   processConcurrently,
 } from './utils.js'
+
+describe('composeHint', () => {
+  it('should return hint with key and label for valid key', () => {
+    const value = 'youtube:all'
+    const expected = {
+      key: 'youtube:all',
+      label: 'All uploads',
+    }
+
+    expect(composeHint(value)).toEqual(expected)
+  })
+
+  it('should return hint with key and label for another valid key', () => {
+    const value = 'reddit:posts'
+    const expected = {
+      key: 'reddit:posts',
+      label: 'Posts',
+    }
+
+    expect(composeHint(value)).toEqual(expected)
+  })
+
+  it('should return undefined label for unknown key', () => {
+    const value = 'unknown:key'
+
+    // @ts-expect-error: This is for testing purposes.
+    expect(composeHint(value)).toEqual({ key: 'unknown:key', label: undefined })
+  })
+})
 
 describe('normalizeMimeType', () => {
   it('should extract base MIME type without parameters', () => {
@@ -788,9 +818,7 @@ describe('processConcurrently', () => {
 
     await processConcurrently(items, processFn, {
       concurrency: 2,
-      shouldStop: () => {
-        return processed.length >= 5
-      },
+      shouldStop: () => processed.length >= 5,
     })
 
     expect(processed.length).toBeLessThanOrEqual(7)
