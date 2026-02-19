@@ -69,6 +69,9 @@
     "producthunt:category": "Category",
     "producthunt:products": "Products",
     "soundcloud:tracks": "Tracks",
+    "stackexchange:tag": "Tag",
+    "stackexchange:question": "Question",
+    "stackexchange:user": "User",
     "substack:newsletter": "Newsletter",
     "tumblr:posts": "Posts",
     "tumblr:tag": "Tag"

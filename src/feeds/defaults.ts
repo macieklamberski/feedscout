@@ -19,6 +19,7 @@ import { pinterestHandler } from './platform/handlers/pinterest.js'
 import { producthuntHandler } from './platform/handlers/producthunt.js'
 import { redditHandler } from './platform/handlers/reddit.js'
 import { soundcloudHandler } from './platform/handlers/soundcloud.js'
+import { stackExchangeHandler } from './platform/handlers/stackExchange.js'
 import { substackHandler } from './platform/handlers/substack.js'
 import { tumblrHandler } from './platform/handlers/tumblr.js'
 import { wordpressHandler } from './platform/handlers/wordpress.js'
@@ -143,6 +144,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     lobstersHandler,
     redditHandler,
     soundcloudHandler,
+    stackExchangeHandler,
     substackHandler,
     tumblrHandler,
     wordpressHandler,
