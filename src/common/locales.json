@@ -69,6 +69,8 @@
     "producthunt:category": "Category",
     "producthunt:products": "Products",
     "soundcloud:tracks": "Tracks",
+    "steam:news": "News",
+    "steam:group": "Group",
     "substack:newsletter": "Newsletter",
     "tumblr:posts": "Posts",
     "tumblr:tag": "Tag"

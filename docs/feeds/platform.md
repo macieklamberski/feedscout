@@ -254,6 +254,17 @@ Discovers Atom feeds for Kickstarter projects and global new projects.
 | `kickstarter.com/discover` | Global new projects feed |
 | `kickstarter.com/projects/{creator}/{project}` | Project updates feed |
 
+### Steam
+
+Discovers RSS feeds for Steam game news and community groups.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `store.steampowered.com/app/{id}` | Game news feed |
+| `store.steampowered.com/news/app/{id}` | Game news feed |
+| `steamcommunity.com/app/{id}` | Game news feed |
+| `steamcommunity.com/groups/{name}` | Group RSS feed |
+
 ## Basic Usage
 
 ```typescript
@@ -315,6 +326,7 @@ import {
   producthuntHandler,
   redditHandler,
   soundcloudHandler,
+  steamHandler,
   substackHandler,
   tumblrHandler,
   wordpressHandler,
