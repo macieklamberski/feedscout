@@ -254,6 +254,14 @@ Discovers Atom feeds for Kickstarter projects and global new projects.
 | `kickstarter.com/discover` | Global new projects feed |
 | `kickstarter.com/projects/{creator}/{project}` | Project updates feed |
 
+### Letterboxd
+
+Discovers RSS feeds for Letterboxd user profiles.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `letterboxd.com/{username}` | User diary feed |
+
 ## Basic Usage
 
 ```typescript
@@ -310,6 +318,7 @@ import {
   githubHandler,
   gitlabHandler,
   kickstarterHandler,
+  letterboxdHandler,
   lobstersHandler,
   mediumHandler,
   producthuntHandler,
