@@ -6,6 +6,7 @@ import type { PlatformMethodOptions } from '../common/uris/platform/types.js'
 import { behanceHandler } from './platform/handlers/behance.js'
 import { blogspotHandler } from './platform/handlers/blogspot.js'
 import { blueskyHandler } from './platform/handlers/bluesky.js'
+import { codebergHandler } from './platform/handlers/codeberg.js'
 import { dailymotionHandler } from './platform/handlers/dailymotion.js'
 import { deviantartHandler } from './platform/handlers/deviantart.js'
 import { devtoHandler } from './platform/handlers/devto.js'
@@ -130,6 +131,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     behanceHandler,
     blogspotHandler,
     blueskyHandler,
+    codebergHandler,
     deviantartHandler,
     dailymotionHandler,
     devtoHandler,
