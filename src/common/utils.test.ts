@@ -172,6 +172,18 @@ describe('isSubdomainOf', () => {
 
     expect(isSubdomainOf(value, 'blogspot.com')).toBe(false)
   })
+
+  it('should return true when matching any domain in array', () => {
+    const value = 'https://example.wordpress.com'
+
+    expect(isSubdomainOf(value, ['blogspot.com', 'wordpress.com'])).toBe(true)
+  })
+
+  it('should return false when matching no domain in array', () => {
+    const value = 'https://example.tumblr.com'
+
+    expect(isSubdomainOf(value, ['blogspot.com', 'wordpress.com'])).toBe(false)
+  })
 })
 
 describe('isHostOf', () => {
@@ -209,6 +221,18 @@ describe('isHostOf', () => {
     const value = 'https://api.github.com/users'
 
     expect(isHostOf(value, ['github.com'])).toBe(false)
+  })
+
+  it('should return true for string argument', () => {
+    const value = 'https://github.com/owner/repo'
+
+    expect(isHostOf(value, 'github.com')).toBe(true)
+  })
+
+  it('should return false for non-matching string argument', () => {
+    const value = 'https://gitlab.com/owner/repo'
+
+    expect(isHostOf(value, 'github.com')).toBe(false)
   })
 })
 
