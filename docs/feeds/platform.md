@@ -254,6 +254,16 @@ Discovers Atom feeds for Kickstarter projects and global new projects.
 | `kickstarter.com/discover` | Global new projects feed |
 | `kickstarter.com/projects/{creator}/{project}` | Project updates feed |
 
+### Stack Exchange
+
+Discovers RSS feeds for Stack Overflow, Server Fault, Super User, Ask Ubuntu, MathOverflow, Stack Apps, and all `*.stackexchange.com` sites.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `{site}/questions/tagged/{tag}` | Tag feed |
+| `{site}/questions/{id}` | Question feed |
+| `{site}/users/{id}` | User feed |
+
 ## Basic Usage
 
 ```typescript
@@ -315,6 +325,7 @@ import {
   producthuntHandler,
   redditHandler,
   soundcloudHandler,
+  stackExchangeHandler,
   substackHandler,
   tumblrHandler,
   wordpressHandler,
