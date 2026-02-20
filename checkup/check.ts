@@ -12,7 +12,9 @@ for (const [platform, urls] of platforms) {
   const failures: Array<{ url: string; detail: string }> = []
 
   for (let i = 0; i < urls.length; i++) {
-    if (i > 0) await delay(delayMs)
+    if (i > 0) {
+      await delay(delayMs)
+    }
 
     const url = urls[i]
 
