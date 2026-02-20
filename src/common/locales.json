@@ -90,6 +90,21 @@
     "vimeo:videos": "Videos",
     "vimeo:likes": "Likes",
     "vimeo:channel": "Channel",
-    "vimeo:group": "Group"
+    "vimeo:group": "Group",
+    "hashnode:blog": "Blog",
+    "paragraph:blog": "Blog",
+    "hatenablog:posts-rss": "Posts (RSS)",
+    "hatenablog:posts-atom": "Posts (Atom)",
+    "hatenablog:category-rss": "Category (RSS)",
+    "hatenablog:category-atom": "Category (Atom)",
+    "hatenablog:author-rss": "Author (RSS)",
+    "hatenablog:author-atom": "Author (Atom)",
+    "itchio:devlog": "Devlog",
+    "itchio:games": "Games",
+    "itchio:tag": "Tag",
+    "itchio:section": "Section",
+    "itchio:featured": "Featured",
+    "itchio:new": "New",
+    "itchio:sales": "Sales"
   }
 }
