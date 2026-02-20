@@ -145,7 +145,10 @@ describe('wpengineHandler', () => {
       const value = 'https://example.wpenginepowered.com/category/tech/'
       const expected = [
         {
-          uri: 'https://example.wpenginepowered.com/category/tech/feed/',
+          uri: [
+            'https://example.wpenginepowered.com/category/tech/feed/',
+            'https://example.wpenginepowered.com/category/tech/?feed=rss',
+          ],
           hint: { key: 'wordpress:category', label: 'Category' },
         },
         {
@@ -213,7 +216,10 @@ describe('wpengineHandler', () => {
       const value = 'https://example.wpenginepowered.com/tag/javascript/'
       const expected = [
         {
-          uri: 'https://example.wpenginepowered.com/tag/javascript/feed/',
+          uri: [
+            'https://example.wpenginepowered.com/tag/javascript/feed/',
+            'https://example.wpenginepowered.com/tag/javascript/?feed=rss',
+          ],
           hint: { key: 'wordpress:tag', label: 'Tag' },
         },
         {
@@ -281,7 +287,10 @@ describe('wpengineHandler', () => {
       const value = 'https://example.wpenginepowered.com/author/johndoe/'
       const expected = [
         {
-          uri: 'https://example.wpenginepowered.com/author/johndoe/feed/',
+          uri: [
+            'https://example.wpenginepowered.com/author/johndoe/feed/',
+            'https://example.wpenginepowered.com/author/johndoe/?feed=rss',
+          ],
           hint: { key: 'wordpress:author', label: 'Author' },
         },
         {

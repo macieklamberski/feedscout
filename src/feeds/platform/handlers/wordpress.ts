@@ -20,7 +20,10 @@ export const wordpressHandler: PlatformHandler = {
 
     if (categoryMatch?.[1]) {
       uris.push({
-        uri: `${origin}/category/${categoryMatch[1]}/feed/`,
+        uri: [
+          `${origin}/category/${categoryMatch[1]}/feed/`,
+          `${origin}/category/${categoryMatch[1]}/?feed=rss`,
+        ],
         hint: composeHint('wordpress:category'),
       })
     }
@@ -30,7 +33,7 @@ export const wordpressHandler: PlatformHandler = {
 
     if (tagMatch?.[1]) {
       uris.push({
-        uri: `${origin}/tag/${tagMatch[1]}/feed/`,
+        uri: [`${origin}/tag/${tagMatch[1]}/feed/`, `${origin}/tag/${tagMatch[1]}/?feed=rss`],
         hint: composeHint('wordpress:tag'),
       })
     }
@@ -40,7 +43,10 @@ export const wordpressHandler: PlatformHandler = {
 
     if (authorMatch?.[1]) {
       uris.push({
-        uri: `${origin}/author/${authorMatch[1]}/feed/`,
+        uri: [
+          `${origin}/author/${authorMatch[1]}/feed/`,
+          `${origin}/author/${authorMatch[1]}/?feed=rss`,
+        ],
         hint: composeHint('wordpress:author'),
       })
     }
