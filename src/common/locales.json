@@ -82,6 +82,7 @@
     "steam:group": "Group",
     "substack:newsletter": "Newsletter",
     "tumblr:posts": "Posts",
-    "tumblr:tag": "Tag"
+    "tumblr:tag": "Tag",
+    "sourceforge:activity": "Activity"
   }
 }

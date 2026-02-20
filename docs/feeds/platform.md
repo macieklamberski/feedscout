@@ -257,6 +257,14 @@ Discovers RSS feeds for SoundCloud user profiles.
 
 \* *Requires HTML content to extract user ID.*
 
+### SourceForge
+
+Discovers RSS feeds for SourceForge project activity and file releases.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `sourceforge.net/projects/{project}` | Project activity feed |
+
 ### Kickstarter
 
 Discovers Atom feeds for Kickstarter projects and global new projects.
@@ -359,6 +367,7 @@ import {
   producthuntHandler,
   redditHandler,
   soundcloudHandler,
+  sourceforgeHandler,
   stackExchangeHandler,
   steamHandler,
   substackHandler,
