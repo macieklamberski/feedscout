@@ -22,7 +22,10 @@ describe('youtubeHandler', () => {
       const value = 'https://youtube.com/channel/UC1234567890'
       const expected = [
         {
-          uri: 'https://www.youtube.com/feeds/videos.xml?channel_id=UC1234567890',
+          uri: [
+            'https://www.youtube.com/feeds/videos.xml?channel_id=UC1234567890',
+            'https://www.youtube.com/feeds/videos.xml?playlist_id=UU1234567890',
+          ],
           hint: { key: 'youtube:all', label: 'All uploads' },
         },
         {
@@ -32,6 +35,10 @@ describe('youtubeHandler', () => {
         {
           uri: 'https://www.youtube.com/feeds/videos.xml?playlist_id=UUSH1234567890',
           hint: { key: 'youtube:shorts', label: 'Shorts only' },
+        },
+        {
+          uri: 'https://www.youtube.com/feeds/videos.xml?playlist_id=UULV1234567890',
+          hint: { key: 'youtube:live', label: 'Live streams only' },
         },
       ]
 
@@ -55,7 +62,10 @@ describe('youtubeHandler', () => {
       const content = '{"channelId":"UC1234567890"}'
       const expected = [
         {
-          uri: 'https://www.youtube.com/feeds/videos.xml?channel_id=UC1234567890',
+          uri: [
+            'https://www.youtube.com/feeds/videos.xml?channel_id=UC1234567890',
+            'https://www.youtube.com/feeds/videos.xml?playlist_id=UU1234567890',
+          ],
           hint: { key: 'youtube:all', label: 'All uploads' },
         },
         {
@@ -65,6 +75,10 @@ describe('youtubeHandler', () => {
         {
           uri: 'https://www.youtube.com/feeds/videos.xml?playlist_id=UUSH1234567890',
           hint: { key: 'youtube:shorts', label: 'Shorts only' },
+        },
+        {
+          uri: 'https://www.youtube.com/feeds/videos.xml?playlist_id=UULV1234567890',
+          hint: { key: 'youtube:live', label: 'Live streams only' },
         },
       ]
 
@@ -76,7 +90,10 @@ describe('youtubeHandler', () => {
       const content = '{"channelId":"UC1234567890"}'
       const expected = [
         {
-          uri: 'https://www.youtube.com/feeds/videos.xml?channel_id=UC1234567890',
+          uri: [
+            'https://www.youtube.com/feeds/videos.xml?channel_id=UC1234567890',
+            'https://www.youtube.com/feeds/videos.xml?playlist_id=UU1234567890',
+          ],
           hint: { key: 'youtube:all', label: 'All uploads' },
         },
         {
@@ -86,6 +103,10 @@ describe('youtubeHandler', () => {
         {
           uri: 'https://www.youtube.com/feeds/videos.xml?playlist_id=UUSH1234567890',
           hint: { key: 'youtube:shorts', label: 'Shorts only' },
+        },
+        {
+          uri: 'https://www.youtube.com/feeds/videos.xml?playlist_id=UULV1234567890',
+          hint: { key: 'youtube:live', label: 'Live streams only' },
         },
       ]
 
@@ -97,7 +118,10 @@ describe('youtubeHandler', () => {
       const content = '{"channelId":"UC1234567890"}'
       const expected = [
         {
-          uri: 'https://www.youtube.com/feeds/videos.xml?channel_id=UC1234567890',
+          uri: [
+            'https://www.youtube.com/feeds/videos.xml?channel_id=UC1234567890',
+            'https://www.youtube.com/feeds/videos.xml?playlist_id=UU1234567890',
+          ],
           hint: { key: 'youtube:all', label: 'All uploads' },
         },
         {
@@ -107,6 +131,10 @@ describe('youtubeHandler', () => {
         {
           uri: 'https://www.youtube.com/feeds/videos.xml?playlist_id=UUSH1234567890',
           hint: { key: 'youtube:shorts', label: 'Shorts only' },
+        },
+        {
+          uri: 'https://www.youtube.com/feeds/videos.xml?playlist_id=UULV1234567890',
+          hint: { key: 'youtube:live', label: 'Live streams only' },
         },
       ]
 
@@ -118,7 +146,10 @@ describe('youtubeHandler', () => {
       const content = '{"externalId":"UC1234567890"}'
       const expected = [
         {
-          uri: 'https://www.youtube.com/feeds/videos.xml?channel_id=UC1234567890',
+          uri: [
+            'https://www.youtube.com/feeds/videos.xml?channel_id=UC1234567890',
+            'https://www.youtube.com/feeds/videos.xml?playlist_id=UU1234567890',
+          ],
           hint: { key: 'youtube:all', label: 'All uploads' },
         },
         {
@@ -128,6 +159,10 @@ describe('youtubeHandler', () => {
         {
           uri: 'https://www.youtube.com/feeds/videos.xml?playlist_id=UUSH1234567890',
           hint: { key: 'youtube:shorts', label: 'Shorts only' },
+        },
+        {
+          uri: 'https://www.youtube.com/feeds/videos.xml?playlist_id=UULV1234567890',
+          hint: { key: 'youtube:live', label: 'Live streams only' },
         },
       ]
 
@@ -166,7 +201,10 @@ describe('youtubeHandler', () => {
       const content = '{"channelId":"UC1234567890"}'
       const expected = [
         {
-          uri: 'https://www.youtube.com/feeds/videos.xml?channel_id=UC1234567890',
+          uri: [
+            'https://www.youtube.com/feeds/videos.xml?channel_id=UC1234567890',
+            'https://www.youtube.com/feeds/videos.xml?playlist_id=UU1234567890',
+          ],
           hint: { key: 'youtube:all', label: 'All uploads' },
         },
         {
@@ -176,6 +214,10 @@ describe('youtubeHandler', () => {
         {
           uri: 'https://www.youtube.com/feeds/videos.xml?playlist_id=UUSH1234567890',
           hint: { key: 'youtube:shorts', label: 'Shorts only' },
+        },
+        {
+          uri: 'https://www.youtube.com/feeds/videos.xml?playlist_id=UULV1234567890',
+          hint: { key: 'youtube:live', label: 'Live streams only' },
         },
       ]
 
@@ -187,7 +229,10 @@ describe('youtubeHandler', () => {
       const content = '{"channelId":"UC1234567890"}'
       const expected = [
         {
-          uri: 'https://www.youtube.com/feeds/videos.xml?channel_id=UC1234567890',
+          uri: [
+            'https://www.youtube.com/feeds/videos.xml?channel_id=UC1234567890',
+            'https://www.youtube.com/feeds/videos.xml?playlist_id=UU1234567890',
+          ],
           hint: { key: 'youtube:all', label: 'All uploads' },
         },
         {
@@ -197,6 +242,10 @@ describe('youtubeHandler', () => {
         {
           uri: 'https://www.youtube.com/feeds/videos.xml?playlist_id=UUSH1234567890',
           hint: { key: 'youtube:shorts', label: 'Shorts only' },
+        },
+        {
+          uri: 'https://www.youtube.com/feeds/videos.xml?playlist_id=UULV1234567890',
+          hint: { key: 'youtube:live', label: 'Live streams only' },
         },
       ]
 

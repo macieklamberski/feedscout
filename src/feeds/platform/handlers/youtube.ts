@@ -15,8 +15,12 @@ const extractChannelIdFromContent = (content: string): string | undefined => {
   return match?.[1]
 }
 
-// Convert channel ID to playlist ID for filtered feeds.
-// YouTube uses special playlist prefixes: UC = all, UULF = videos only, UUSH = shorts only.
+// Convert channel ID to playlist IDs for filtered feeds.
+// YouTube playlist prefixes: UU = all (legacy), UULF = videos only, UUSH = shorts only, UULV = live streams only.
+const getAllUploadsPlaylistId = (channelId: string): string => {
+  return channelId.replace(/^UC/, 'UU')
+}
+
 const getVideosOnlyPlaylistId = (channelId: string): string => {
   return channelId.replace(/^UC/, 'UULF')
 }
@@ -25,18 +29,33 @@ const getShortsOnlyPlaylistId = (channelId: string): string => {
   return channelId.replace(/^UC/, 'UUSH')
 }
 
+const getLiveStreamsOnlyPlaylistId = (channelId: string): string => {
+  return channelId.replace(/^UC/, 'UULV')
+}
+
+const feedUrl = (param: string, value: string): string => {
+  return `https://www.youtube.com/feeds/videos.xml?${param}=${value}`
+}
+
 const pushChannelUris = (uris: Array<DiscoverUriEntry>, channelId: string): void => {
   uris.push({
-    uri: `https://www.youtube.com/feeds/videos.xml?channel_id=${channelId}`,
+    uri: [
+      feedUrl('channel_id', channelId),
+      feedUrl('playlist_id', getAllUploadsPlaylistId(channelId)),
+    ],
     hint: composeHint('youtube:all'),
   })
   uris.push({
-    uri: `https://www.youtube.com/feeds/videos.xml?playlist_id=${getVideosOnlyPlaylistId(channelId)}`,
+    uri: feedUrl('playlist_id', getVideosOnlyPlaylistId(channelId)),
     hint: composeHint('youtube:videos'),
   })
   uris.push({
-    uri: `https://www.youtube.com/feeds/videos.xml?playlist_id=${getShortsOnlyPlaylistId(channelId)}`,
+    uri: feedUrl('playlist_id', getShortsOnlyPlaylistId(channelId)),
     hint: composeHint('youtube:shorts'),
+  })
+  uris.push({
+    uri: feedUrl('playlist_id', getLiveStreamsOnlyPlaylistId(channelId)),
+    hint: composeHint('youtube:live'),
   })
 }
 
@@ -63,7 +82,7 @@ export const youtubeHandler: PlatformHandler = {
 
     if (playlistId) {
       uris.push({
-        uri: `https://www.youtube.com/feeds/videos.xml?playlist_id=${playlistId}`,
+        uri: feedUrl('playlist_id', playlistId),
         hint: composeHint('youtube:playlist'),
       })
     }

@@ -9,6 +9,7 @@
     "youtube:all": "All uploads",
     "youtube:videos": "Videos only",
     "youtube:shorts": "Shorts only",
+    "youtube:live": "Live streams only",
     "youtube:playlist": "Playlist",
     "github:activity": "Activity",
     "github:releases": "Releases",
