@@ -133,7 +133,10 @@ describe('wordpressHandler', () => {
       const value = 'https://blog.wordpress.com/category/tech/'
       const expected = [
         {
-          uri: 'https://blog.wordpress.com/category/tech/feed/',
+          uri: [
+            'https://blog.wordpress.com/category/tech/feed/',
+            'https://blog.wordpress.com/category/tech/?feed=rss',
+          ],
           hint: { key: 'wordpress:category', label: 'Category' },
         },
         {
@@ -189,7 +192,10 @@ describe('wordpressHandler', () => {
       const value = 'https://blog.wordpress.com/tag/javascript/'
       const expected = [
         {
-          uri: 'https://blog.wordpress.com/tag/javascript/feed/',
+          uri: [
+            'https://blog.wordpress.com/tag/javascript/feed/',
+            'https://blog.wordpress.com/tag/javascript/?feed=rss',
+          ],
           hint: { key: 'wordpress:tag', label: 'Tag' },
         },
         {
@@ -245,7 +251,10 @@ describe('wordpressHandler', () => {
       const value = 'https://blog.wordpress.com/author/johndoe/'
       const expected = [
         {
-          uri: 'https://blog.wordpress.com/author/johndoe/feed/',
+          uri: [
+            'https://blog.wordpress.com/author/johndoe/feed/',
+            'https://blog.wordpress.com/author/johndoe/?feed=rss',
+          ],
           hint: { key: 'wordpress:author', label: 'Author' },
         },
         {

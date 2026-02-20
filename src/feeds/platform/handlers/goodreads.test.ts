@@ -81,6 +81,18 @@ describe('goodreadsHandler', () => {
       expect(goodreadsHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return empty array for user page with non-numeric id', () => {
+      const value = 'https://www.goodreads.com/user/show/abc-otis'
+
+      expect(goodreadsHandler.resolve(value)).toEqual([])
+    })
+
+    it('should return empty array for review list page with non-numeric id', () => {
+      const value = 'https://www.goodreads.com/review/list/abc-otis'
+
+      expect(goodreadsHandler.resolve(value)).toEqual([])
+    })
+
     it('should return empty array for root page', () => {
       const value = 'https://www.goodreads.com'
 

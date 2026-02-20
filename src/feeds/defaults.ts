@@ -6,6 +6,7 @@ import type { PlatformMethodOptions } from '../common/uris/platform/types.js'
 import { behanceHandler } from './platform/handlers/behance.js'
 import { blogspotHandler } from './platform/handlers/blogspot.js'
 import { blueskyHandler } from './platform/handlers/bluesky.js'
+import { codebergHandler } from './platform/handlers/codeberg.js'
 import { dailymotionHandler } from './platform/handlers/dailymotion.js'
 import { deviantartHandler } from './platform/handlers/deviantart.js'
 import { devtoHandler } from './platform/handlers/devto.js'
@@ -14,14 +15,19 @@ import { githubGistHandler } from './platform/handlers/githubGist.js'
 import { gitlabHandler } from './platform/handlers/gitlab.js'
 import { goodreadsHandler } from './platform/handlers/goodreads.js'
 import { kickstarterHandler } from './platform/handlers/kickstarter.js'
+import { letterboxdHandler } from './platform/handlers/letterboxd.js'
 import { lobstersHandler } from './platform/handlers/lobsters.js'
 import { mediumHandler } from './platform/handlers/medium.js'
 import { pinterestHandler } from './platform/handlers/pinterest.js'
 import { producthuntHandler } from './platform/handlers/producthunt.js'
 import { redditHandler } from './platform/handlers/reddit.js'
 import { soundcloudHandler } from './platform/handlers/soundcloud.js'
+import { sourceforgeHandler } from './platform/handlers/sourceforge.js'
+import { stackExchangeHandler } from './platform/handlers/stackExchange.js'
+import { steamHandler } from './platform/handlers/steam.js'
 import { substackHandler } from './platform/handlers/substack.js'
 import { tumblrHandler } from './platform/handlers/tumblr.js'
+import { vimeoHandler } from './platform/handlers/vimeo.js'
 import { wordpressHandler } from './platform/handlers/wordpress.js'
 import { wpengineHandler } from './platform/handlers/wpengine.js'
 import { youtubeHandler } from './platform/handlers/youtube.js'
@@ -131,6 +137,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     behanceHandler,
     blogspotHandler,
     blueskyHandler,
+    codebergHandler,
     deviantartHandler,
     dailymotionHandler,
     devtoHandler,
@@ -139,14 +146,19 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     githubGistHandler,
     gitlabHandler,
     kickstarterHandler,
+    letterboxdHandler,
     mediumHandler,
     pinterestHandler,
     producthuntHandler,
     lobstersHandler,
     redditHandler,
     soundcloudHandler,
+    sourceforgeHandler,
+    stackExchangeHandler,
+    steamHandler,
     substackHandler,
     tumblrHandler,
+    vimeoHandler,
     wordpressHandler,
     wpengineHandler,
     youtubeHandler,
