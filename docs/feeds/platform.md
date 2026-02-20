@@ -136,6 +136,15 @@ Discovers RSS feeds for Lobsters homepage, users, tags, and domains.
 | `lobste.rs/t/{tag1},{tag2}` | Multi-tag feed |
 | `lobste.rs/domains/{domain}` | Domain feed |
 
+### Goodreads
+
+Discovers RSS feeds for Goodreads user activity and bookshelves.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `goodreads.com/user/show/{id}` | User updates + reviews |
+| `goodreads.com/review/list/{id}` | Reviews + user updates |
+
 ### GitHub
 
 Discovers Atom feeds for users, organizations, and repositories.
@@ -306,6 +315,7 @@ import {
   dailymotionHandler,
   deviantartHandler,
   devtoHandler,
+  goodreadsHandler,
   githubGistHandler,
   githubHandler,
   gitlabHandler,

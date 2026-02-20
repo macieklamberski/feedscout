@@ -71,6 +71,8 @@
     "soundcloud:tracks": "Tracks",
     "substack:newsletter": "Newsletter",
     "tumblr:posts": "Posts",
-    "tumblr:tag": "Tag"
+    "tumblr:tag": "Tag",
+    "goodreads:updates": "Updates",
+    "goodreads:reviews": "Reviews"
   }
 }
