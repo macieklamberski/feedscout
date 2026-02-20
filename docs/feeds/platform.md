@@ -257,6 +257,17 @@ Discovers RSS feeds for SoundCloud user profiles.
 
 \* *Requires HTML content to extract user ID.*
 
+### Vimeo
+
+Discovers RSS feeds for Vimeo user profiles, channels, and groups.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `vimeo.com/{user}` | User videos feed |
+| `vimeo.com/{user}/likes` | User likes feed (+ videos) |
+| `vimeo.com/channels/{channel}` | Channel feed |
+| `vimeo.com/groups/{group}` | Group feed |
+
 ### SourceForge
 
 Discovers RSS feeds for SourceForge project activity and file releases.
@@ -372,6 +383,7 @@ import {
   steamHandler,
   substackHandler,
   tumblrHandler,
+  vimeoHandler,
   wordpressHandler,
   wpengineHandler,
   youtubeHandler,

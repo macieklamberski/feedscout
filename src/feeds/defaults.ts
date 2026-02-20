@@ -26,6 +26,7 @@ import { stackExchangeHandler } from './platform/handlers/stackExchange.js'
 import { steamHandler } from './platform/handlers/steam.js'
 import { substackHandler } from './platform/handlers/substack.js'
 import { tumblrHandler } from './platform/handlers/tumblr.js'
+import { vimeoHandler } from './platform/handlers/vimeo.js'
 import { wordpressHandler } from './platform/handlers/wordpress.js'
 import { wpengineHandler } from './platform/handlers/wpengine.js'
 import { youtubeHandler } from './platform/handlers/youtube.js'
@@ -155,6 +156,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     steamHandler,
     substackHandler,
     tumblrHandler,
+    vimeoHandler,
     wordpressHandler,
     wpengineHandler,
     youtubeHandler,

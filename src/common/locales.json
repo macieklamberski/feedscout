@@ -83,6 +83,10 @@
     "substack:newsletter": "Newsletter",
     "tumblr:posts": "Posts",
     "tumblr:tag": "Tag",
-    "sourceforge:activity": "Activity"
+    "sourceforge:activity": "Activity",
+    "vimeo:videos": "Videos",
+    "vimeo:likes": "Likes",
+    "vimeo:channel": "Channel",
+    "vimeo:group": "Group"
   }
 }
