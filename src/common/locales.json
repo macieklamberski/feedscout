@@ -72,6 +72,8 @@
     "stackexchange:tag": "Tag",
     "stackexchange:question": "Question",
     "stackexchange:user": "User",
+    "steam:news": "News",
+    "steam:group": "Group",
     "substack:newsletter": "Newsletter",
     "tumblr:posts": "Posts",
     "tumblr:tag": "Tag"

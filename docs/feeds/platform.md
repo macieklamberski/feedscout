@@ -254,6 +254,17 @@ Discovers Atom feeds for Kickstarter projects and global new projects.
 | `kickstarter.com/discover` | Global new projects feed |
 | `kickstarter.com/projects/{creator}/{project}` | Project updates feed |
 
+### Steam
+
+Discovers RSS feeds for Steam game news and community groups.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `store.steampowered.com/app/{id}` | Game news feed |
+| `store.steampowered.com/news/app/{id}` | Game news feed |
+| `steamcommunity.com/app/{id}` | Game news feed |
+| `steamcommunity.com/groups/{name}` | Group RSS feed |
+
 ### Stack Exchange
 
 Discovers RSS feeds for Stack Overflow, Server Fault, Super User, Ask Ubuntu, MathOverflow, Stack Apps, and all `*.stackexchange.com` sites.
@@ -326,6 +337,7 @@ import {
   redditHandler,
   soundcloudHandler,
   stackExchangeHandler,
+  steamHandler,
   substackHandler,
   tumblrHandler,
   wordpressHandler,
