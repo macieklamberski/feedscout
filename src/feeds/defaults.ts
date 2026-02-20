@@ -13,6 +13,7 @@ import { githubHandler } from './platform/handlers/github.js'
 import { githubGistHandler } from './platform/handlers/githubGist.js'
 import { gitlabHandler } from './platform/handlers/gitlab.js'
 import { kickstarterHandler } from './platform/handlers/kickstarter.js'
+import { letterboxdHandler } from './platform/handlers/letterboxd.js'
 import { lobstersHandler } from './platform/handlers/lobsters.js'
 import { mediumHandler } from './platform/handlers/medium.js'
 import { pinterestHandler } from './platform/handlers/pinterest.js'
@@ -139,6 +140,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     githubGistHandler,
     gitlabHandler,
     kickstarterHandler,
+    letterboxdHandler,
     mediumHandler,
     pinterestHandler,
     producthuntHandler,
