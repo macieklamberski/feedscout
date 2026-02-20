@@ -160,6 +160,19 @@ Discovers Atom feeds for GitHub Gist users and starred gists.
 | `gist.github.com/{username}/{gist-id}` | User gists feed |
 | `gist.github.com/{username}/starred` | User starred gists feed |
 
+### Codeberg / Gitea
+
+Discovers RSS feeds for Codeberg and Gitea users, repositories, releases, tags, and branch commits.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `codeberg.org/{user}` | User activity feed |
+| `codeberg.org/{user}/{repo}` | Releases, tags, activity |
+| `codeberg.org/{user}/{repo}/src/branch/{branch}` | Branch commits (+ above) |
+| `codeberg.org/{user}/{repo}/src/branch/{branch}/{path}` | File history (+ above) |
+
+Also supports `gitea.com` with the same patterns.
+
 ### GitLab
 
 Discovers Atom feeds for GitLab users, repositories, releases, and tags.
@@ -262,6 +275,35 @@ Discovers Atom feeds for Kickstarter projects and global new projects.
 | `kickstarter.com/discover` | Global new projects feed |
 | `kickstarter.com/projects/{creator}/{project}` | Project updates feed |
 
+### Letterboxd
+
+Discovers RSS feeds for Letterboxd user profiles.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `letterboxd.com/{username}` | User diary feed |
+
+### Steam
+
+Discovers RSS feeds for Steam game news and community groups.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `store.steampowered.com/app/{id}` | Game news feed |
+| `store.steampowered.com/news/app/{id}` | Game news feed |
+| `steamcommunity.com/app/{id}` | Game news feed |
+| `steamcommunity.com/groups/{name}` | Group RSS feed |
+
+### Stack Exchange
+
+Discovers RSS feeds for Stack Overflow, Server Fault, Super User, Ask Ubuntu, MathOverflow, Stack Apps, and all `*.stackexchange.com` sites.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `{site}/questions/tagged/{tag}` | Tag feed |
+| `{site}/questions/{id}` | Question feed |
+| `{site}/users/{id}` | User feed |
+
 ## Basic Usage
 
 ```typescript
@@ -311,6 +353,7 @@ import {
   behanceHandler,
   blogspotHandler,
   blueskyHandler,
+  codebergHandler,
   dailymotionHandler,
   deviantartHandler,
   devtoHandler,
@@ -318,12 +361,15 @@ import {
   githubHandler,
   gitlabHandler,
   kickstarterHandler,
+  letterboxdHandler,
   lobstersHandler,
   mediumHandler,
   producthuntHandler,
   redditHandler,
   soundcloudHandler,
   sourceforgeHandler,
+  stackExchangeHandler,
+  steamHandler,
   substackHandler,
   tumblrHandler,
   wordpressHandler,
