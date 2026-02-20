@@ -34,16 +34,16 @@ type DiscoverUriHint = {
 
 ### YouTube
 
-Discovers Atom feeds for channels and playlists. Generates three feed variants for channels: all uploads, videos-only (excludes Shorts), and shorts-only.
+Discovers Atom feeds for channels and playlists. Generates four feed variants for channels: all uploads, videos-only, shorts-only, and live streams-only.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `youtube.com/channel/{id}` | Channel feed + videos-only + shorts-only |
-| `youtube.com/@{handle}` | Channel feed + videos-only + shorts-only* |
-| `youtube.com/user/{name}` | Channel feed + videos-only + shorts-only* |
-| `youtube.com/c/{custom}` | Channel feed + videos-only + shorts-only* |
-| `youtube.com/watch?v={id}` | Channel feed + videos-only + shorts-only* |
-| `youtu.be/{id}` | Channel feed + videos-only + shorts-only* |
+| `youtube.com/channel/{id}` | All uploads + videos-only + shorts-only + live streams-only |
+| `youtube.com/@{handle}` | All uploads + videos-only + shorts-only + live streams-only* |
+| `youtube.com/user/{name}` | All uploads + videos-only + shorts-only + live streams-only* |
+| `youtube.com/c/{custom}` | All uploads + videos-only + shorts-only + live streams-only* |
+| `youtube.com/watch?v={id}` | All uploads + videos-only + shorts-only + live streams-only* |
+| `youtu.be/{id}` | All uploads + videos-only + shorts-only + live streams-only* |
 | `youtube.com/playlist?list={id}` | Playlist feed |
 
 \* *Requires HTML content to extract channel ID.*
@@ -414,7 +414,10 @@ const uris = discoverUrisFromPlatform(htmlContent, {
 
 // [
 //   {
-//     uri: 'https://www.youtube.com/feeds/videos.xml?channel_id=UCBJycsmduvYEL83R_U4JriQ',
+//     uri: [
+//       'https://www.youtube.com/feeds/videos.xml?channel_id=UCBJycsmduvYEL83R_U4JriQ',
+//       'https://www.youtube.com/feeds/videos.xml?playlist_id=UUBJycsmduvYEL83R_U4JriQ',
+//     ],
 //     hint: { key: 'youtube:all', label: 'All uploads' },
 //   },
 //   {
@@ -424,6 +427,10 @@ const uris = discoverUrisFromPlatform(htmlContent, {
 //   {
 //     uri: 'https://www.youtube.com/feeds/videos.xml?playlist_id=UUSHBJycsmduvYEL83R_U4JriQ',
 //     hint: { key: 'youtube:shorts', label: 'Shorts only' },
+//   },
+//   {
+//     uri: 'https://www.youtube.com/feeds/videos.xml?playlist_id=UULVBJycsmduvYEL83R_U4JriQ',
+//     hint: { key: 'youtube:live', label: 'Live streams only' },
 //   },
 // ]
 ```
