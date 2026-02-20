@@ -71,6 +71,10 @@
     "soundcloud:tracks": "Tracks",
     "substack:newsletter": "Newsletter",
     "tumblr:posts": "Posts",
-    "tumblr:tag": "Tag"
+    "tumblr:tag": "Tag",
+    "vimeo:videos": "Videos",
+    "vimeo:likes": "Likes",
+    "vimeo:channel": "Channel",
+    "vimeo:group": "Group"
   }
 }

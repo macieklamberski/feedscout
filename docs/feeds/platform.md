@@ -244,6 +244,17 @@ Discovers RSS feeds for SoundCloud user profiles.
 
 \* *Requires HTML content to extract user ID.*
 
+### Vimeo
+
+Discovers RSS feeds for Vimeo user profiles, channels, and groups.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `vimeo.com/{user}` | User videos feed |
+| `vimeo.com/{user}/likes` | User likes feed (+ videos) |
+| `vimeo.com/channels/{channel}` | Channel feed |
+| `vimeo.com/groups/{group}` | Group feed |
+
 ### Kickstarter
 
 Discovers Atom feeds for Kickstarter projects and global new projects.
@@ -317,6 +328,7 @@ import {
   soundcloudHandler,
   substackHandler,
   tumblrHandler,
+  vimeoHandler,
   wordpressHandler,
   wpengineHandler,
   youtubeHandler,
