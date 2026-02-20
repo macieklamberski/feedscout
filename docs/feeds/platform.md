@@ -160,6 +160,19 @@ Discovers Atom feeds for GitHub Gist users and starred gists.
 | `gist.github.com/{username}/{gist-id}` | User gists feed |
 | `gist.github.com/{username}/starred` | User starred gists feed |
 
+### Codeberg / Gitea
+
+Discovers RSS feeds for Codeberg and Gitea users, repositories, releases, tags, and branch commits.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `codeberg.org/{user}` | User activity feed |
+| `codeberg.org/{user}/{repo}` | Releases, tags, activity |
+| `codeberg.org/{user}/{repo}/src/branch/{branch}` | Branch commits (+ above) |
+| `codeberg.org/{user}/{repo}/src/branch/{branch}/{path}` | File history (+ above) |
+
+Also supports `gitea.com` with the same patterns.
+
 ### GitLab
 
 Discovers Atom feeds for GitLab users, repositories, releases, and tags.
@@ -332,6 +345,7 @@ import {
   behanceHandler,
   blogspotHandler,
   blueskyHandler,
+  codebergHandler,
   dailymotionHandler,
   deviantartHandler,
   devtoHandler,
