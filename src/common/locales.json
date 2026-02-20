@@ -71,6 +71,7 @@
     "soundcloud:tracks": "Tracks",
     "substack:newsletter": "Newsletter",
     "tumblr:posts": "Posts",
-    "tumblr:tag": "Tag"
+    "tumblr:tag": "Tag",
+    "sourceforge:activity": "Activity"
   }
 }
