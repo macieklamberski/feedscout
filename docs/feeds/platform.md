@@ -324,6 +324,50 @@ Discovers RSS feeds for Stack Overflow, Server Fault, Super User, Ask Ubuntu, Ma
 | `{site}/questions/{id}` | Question feed |
 | `{site}/users/{id}` | User feed |
 
+### Hashnode
+
+Discovers RSS feeds for Hashnode blogs on `*.hashnode.dev`.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `*.hashnode.dev` | Blog feed |
+
+### Paragraph
+
+Discovers RSS feeds for Paragraph blogs (successor to Mirror.xyz).
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `paragraph.com/@{username}` | Blog feed |
+
+### Hatena Blog
+
+Discovers RSS and Atom feeds for Hatena Blog on `*.hatenablog.com`, `*.hatenablog.jp`, and `*.hateblo.jp`.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `*.hatenablog.com` | Posts feed (RSS + Atom) |
+| `*.hatenablog.jp` | Posts feed (RSS + Atom) |
+| `*.hateblo.jp` | Posts feed (RSS + Atom) |
+| `*/archive/category/{category}` | Category feed (RSS + Atom) + posts |
+| `*/archive/author/{author}` | Author feed (RSS + Atom) + posts |
+
+### Itch.io
+
+Discovers RSS feeds for Itch.io games, creators, devlogs, and browse pages.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `{creator}.itch.io/{game}` | Game devlog feed |
+| `{creator}.itch.io` | Creator's games feed |
+| `itch.io/games` | Games feed |
+| `itch.io/games/by-{username}` | Creator's games feed |
+| `itch.io/games/tag-{tag}` | Tag feed |
+| `itch.io/games/{sort}` | Sorted games feed (newest/top-rated/top-sellers/on-sale) |
+| `itch.io/{section}` | Section feed (tools/game-assets/soundtracks/physical-games/books/comics/misc) |
+| `itch.io/devlogs` | All devlogs feed |
+| `itch.io` | Featured + new + sales feeds |
+
 ## Basic Usage
 
 ```typescript
@@ -381,10 +425,14 @@ import {
   githubGistHandler,
   githubHandler,
   gitlabHandler,
+  hashnodeHandler,
+  hatenablogHandler,
+  itchioHandler,
   kickstarterHandler,
   letterboxdHandler,
   lobstersHandler,
   mediumHandler,
+  paragraphHandler,
   producthuntHandler,
   redditHandler,
   soundcloudHandler,

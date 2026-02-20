@@ -14,10 +14,14 @@ import { githubHandler } from './platform/handlers/github.js'
 import { githubGistHandler } from './platform/handlers/githubGist.js'
 import { gitlabHandler } from './platform/handlers/gitlab.js'
 import { goodreadsHandler } from './platform/handlers/goodreads.js'
+import { hashnodeHandler } from './platform/handlers/hashnode.js'
+import { hatenablogHandler } from './platform/handlers/hatenablog.js'
+import { itchioHandler } from './platform/handlers/itchio.js'
 import { kickstarterHandler } from './platform/handlers/kickstarter.js'
 import { letterboxdHandler } from './platform/handlers/letterboxd.js'
 import { lobstersHandler } from './platform/handlers/lobsters.js'
 import { mediumHandler } from './platform/handlers/medium.js'
+import { paragraphHandler } from './platform/handlers/paragraph.js'
 import { pinterestHandler } from './platform/handlers/pinterest.js'
 import { producthuntHandler } from './platform/handlers/producthunt.js'
 import { redditHandler } from './platform/handlers/reddit.js'
@@ -143,11 +147,15 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     devtoHandler,
     goodreadsHandler,
     githubHandler,
+    hashnodeHandler,
+    hatenablogHandler,
     githubGistHandler,
     gitlabHandler,
+    itchioHandler,
     kickstarterHandler,
     letterboxdHandler,
     mediumHandler,
+    paragraphHandler,
     pinterestHandler,
     producthuntHandler,
     lobstersHandler,

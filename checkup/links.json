@@ -169,6 +169,37 @@
     "https://developer.wpengine.com/comments/feed/atom/",
     "https://developer.wpengine.com/?feed=comments-atom"
   ],
+  "hashnode": ["https://townhall.hashnode.com/rss.xml"],
+  "paragraph": ["https://paragraph.com/@blog/feed", "https://paragraph.com/@optimism/rss"],
+  "hatenablog": [
+    "https://staff.hatenablog.com/rss",
+    "https://staff.hatenablog.com/feed",
+    "https://staff.hatenablog.com/rss/category/news",
+    "https://staff.hatenablog.com/feed/category/news",
+    "https://blog.hatenablog.com/rss/author/hatenablog-editors",
+    "https://blog.hatenablog.com/feed/author/hatenablog-editors"
+  ],
+  "itchio": [
+    "https://qeresi.itch.io/a-tale-of-crowns/devlog.rss",
+    "https://itch.io/games/by-leafo.xml",
+    "https://itch.io/games/tag-horror.xml",
+    "https://itch.io/games/newest.xml",
+    "https://itch.io/games/top-rated.xml",
+    "https://itch.io/games/top-sellers.xml",
+    "https://itch.io/games/on-sale.xml",
+    "https://itch.io/games.xml",
+    "https://itch.io/devlogs.xml",
+    "https://itch.io/tools.xml",
+    "https://itch.io/game-assets.xml",
+    "https://itch.io/soundtracks.xml",
+    "https://itch.io/physical-games.xml",
+    "https://itch.io/books.xml",
+    "https://itch.io/comics.xml",
+    "https://itch.io/misc.xml",
+    "https://itch.io/feed/featured.xml",
+    "https://itch.io/feed/new.xml",
+    "https://itch.io/feed/sales.xml"
+  ],
   "youtube": [
     "https://www.youtube.com/feeds/videos.xml?channel_id=UCXuqSBlHAE6Xw-yeJA0Tunw",
     "https://www.youtube.com/feeds/videos.xml?playlist_id=UUXuqSBlHAE6Xw-yeJA0Tunw",
