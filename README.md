@@ -38,8 +38,6 @@ Finds feeds by scanning links and anchors in HTML content, parsing HTTP headers,
 Uses native fetch by default but supports custom adapters for Axios, Got, Ky, or any other HTTP client. Discovery methods can be individually enabled or disabled and their options adjusted. Custom extractors let you override the default parser to pull additional metadata from feeds and blogrolls.
 ## Quick Start
 
-This is a short guide on how to get you up and running with Feedscout.
-
 For a full overview of all the features, [visit the documentation](https://feedscout.dev).
 
 ### Installation
