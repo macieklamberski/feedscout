@@ -19,7 +19,10 @@ for (const [platform, urls] of platforms) {
     const url = urls[i]
 
     try {
-      const response = await fetch(url, { signal: AbortSignal.timeout(timeoutMs) })
+      const response = await fetch(url, {
+        signal: AbortSignal.timeout(timeoutMs),
+        headers: { 'User-Agent': 'Feedscout/1.x' },
+      })
 
       if (!response.ok) {
         failures.push({ url, detail: `HTTP ${response.status}` })

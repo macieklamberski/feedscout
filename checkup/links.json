@@ -14,8 +14,8 @@
     "https://codeberg.org/forgejo/forgejo.rss",
     "https://codeberg.org/forgejo/forgejo/releases.rss",
     "https://codeberg.org/forgejo/forgejo/tags.rss",
-    "https://codeberg.org/forgejo/forgejo/rss/branch/main",
-    "https://codeberg.org/forgejo/forgejo/rss/branch/main/README.md"
+    "https://codeberg.org/forgejo/forgejo/rss/branch/forgejo",
+    "https://codeberg.org/forgejo/forgejo/rss/branch/forgejo/README.md"
   ],
   "dailymotion": [
     "https://www.dailymotion.com/rss/Euronews-en",
@@ -95,7 +95,7 @@
     "https://www.reddit.com/r/programming/new/.rss",
     "https://www.reddit.com/r/programming/comments/.rss",
     "https://www.reddit.com/user/spez/.rss",
-    "https://www.reddit.com/user/spez/m/mod/.rss",
+    "https://www.reddit.com/user/kjoneslol/m/sfwpornnetwork/.rss",
     "https://www.reddit.com/domain/github.com/.rss"
   ],
   "soundcloud": ["https://feeds.soundcloud.com/users/soundcloud:users:1613713/sounds.rss"],
@@ -113,7 +113,7 @@
     "https://stackapps.com/feeds/tag/api",
     "https://mathoverflow.net/feeds/tag/set-theory",
     "https://meta.stackexchange.com/feeds/tag/discussion",
-    "https://gaming.stackexchange.com/feeds/tag/minecraft"
+    "https://gaming.stackexchange.com/feeds/tag/steam"
   ],
   "steam": [
     "https://store.steampowered.com/feeds/news/app/730/",
@@ -173,6 +173,6 @@
     "https://www.youtube.com/feeds/videos.xml?channel_id=UCXuqSBlHAE6Xw-yeJA0Tunw",
     "https://www.youtube.com/feeds/videos.xml?playlist_id=UUXuqSBlHAE6Xw-yeJA0Tunw",
     "https://www.youtube.com/feeds/videos.xml?playlist_id=UUSHXuqSBlHAE6Xw-yeJA0Tunw",
-    "https://www.youtube.com/feeds/videos.xml?playlist_id=PLFgquLnL59alCl_2TQhENURD0G4YWZLXB"
+    "https://www.youtube.com/feeds/videos.xml?playlist_id=PLrAXtmErZgOeiKm4sgNOknGvNjby9efdf"
   ]
 }
