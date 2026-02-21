@@ -19,7 +19,6 @@ import { goodreadsHandler } from './platform/handlers/goodreads.js'
 import { hashnodeHandler } from './platform/handlers/hashnode.js'
 import { hatenablogHandler } from './platform/handlers/hatenablog.js'
 import { itchioHandler } from './platform/handlers/itchio.js'
-import { jandanHandler } from './platform/handlers/jandan.js'
 import { kickstarterHandler } from './platform/handlers/kickstarter.js'
 import { letterboxdHandler } from './platform/handlers/letterboxd.js'
 import { lobstersHandler } from './platform/handlers/lobsters.js'
@@ -159,7 +158,6 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     githubGistHandler,
     gitlabHandler,
     itchioHandler,
-    jandanHandler,
     kickstarterHandler,
     letterboxdHandler,
     mediumHandler,

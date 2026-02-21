@@ -405,14 +405,6 @@ Discovers RSS feeds for Ximalaya podcast albums.
 |-------------|-----------------|
 | `www.ximalaya.com/album/{id}` | Album feed |
 
-### Jandan
-
-Discovers RSS feeds for Jandan (煎蛋).
-
-| URL Pattern | Feeds Generated |
-|-------------|-----------------|
-| `jandan.net` | Site feed |
-
 ## Basic Usage
 
 ```typescript
@@ -475,7 +467,6 @@ import {
   hashnodeHandler,
   hatenablogHandler,
   itchioHandler,
-  jandanHandler,
   kickstarterHandler,
   letterboxdHandler,
   lobstersHandler,
