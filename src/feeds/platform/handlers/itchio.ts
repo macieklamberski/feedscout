@@ -53,11 +53,6 @@ export const itchioHandler: PlatformHandler = {
       ]
     }
 
-    // Main domain: browse/curated pages.
-    if (!mainHosts.includes(lowerHostname)) {
-      return []
-    }
-
     // /games/by-{username}
     const byUserMatch = pathname.match(byUserPathRegex)
 
