@@ -1,7 +1,7 @@
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, isHostOf } from '../../../common/utils.js'
 
-const hosts = ['www.ximalaya.com']
+const hosts = ['www.ximalaya.com', 'ximalaya.com']
 
 export const ximalayaHandler: PlatformHandler = {
   match: (url) => {

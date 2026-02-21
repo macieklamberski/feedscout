@@ -1,7 +1,7 @@
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, isHostOf } from '../../../common/utils.js'
 
-const hosts = ['jandan.net', 'i.jandan.net']
+const hosts = ['jandan.net', 'www.jandan.net', 'i.jandan.net']
 
 export const jandanHandler: PlatformHandler = {
   match: (url) => {

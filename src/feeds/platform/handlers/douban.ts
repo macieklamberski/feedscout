@@ -1,11 +1,9 @@
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
-import { composeHint, isHostOf } from '../../../common/utils.js'
-
-const hosts = ['www.douban.com', 'book.douban.com', 'movie.douban.com', 'music.douban.com']
+import { composeHint, isHostOf, isSubdomainOf } from '../../../common/utils.js'
 
 export const doubanHandler: PlatformHandler = {
   match: (url) => {
-    return isHostOf(url, hosts)
+    return isHostOf(url, 'douban.com') || isSubdomainOf(url, 'douban.com')
   },
 
   resolve: (url) => {

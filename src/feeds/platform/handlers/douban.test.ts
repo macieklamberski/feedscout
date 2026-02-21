@@ -5,6 +5,7 @@ describe('doubanHandler', () => {
   describe('match', () => {
     const cases = [
       ['https://www.douban.com/', true],
+      ['https://douban.com/', true],
       ['https://book.douban.com/', true],
       ['https://movie.douban.com/', true],
       ['https://music.douban.com/', true],

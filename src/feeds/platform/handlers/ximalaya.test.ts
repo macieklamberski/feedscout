@@ -5,7 +5,7 @@ describe('ximalayaHandler', () => {
   describe('match', () => {
     const cases = [
       ['https://www.ximalaya.com/album/203355', true],
-      ['https://ximalaya.com/album/203355', false],
+      ['https://ximalaya.com/album/203355', true],
       ['https://example.com', false],
     ] as const
 

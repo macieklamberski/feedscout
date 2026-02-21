@@ -5,6 +5,7 @@ describe('jandanHandler', () => {
   describe('match', () => {
     const cases = [
       ['https://jandan.net/', true],
+      ['https://www.jandan.net/', true],
       ['https://i.jandan.net/', true],
       ['https://example.com', false],
     ] as const
