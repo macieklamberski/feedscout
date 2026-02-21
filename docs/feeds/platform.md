@@ -368,6 +368,51 @@ Discovers RSS feeds for Itch.io games, creators, devlogs, and browse pages.
 | `itch.io/devlogs` | All devlogs feed |
 | `itch.io` | Featured + new + sales feeds |
 
+### CSDN
+
+Discovers RSS feeds for CSDN user blogs.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `blog.csdn.net/{username}` | Blog feed |
+
+### Douban
+
+Discovers RSS feeds for Douban user interests, reviews, notes, and subject reviews.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `www.douban.com/people/{user}` | Interests + reviews + notes |
+| `{subdomain}.douban.com/subject/{id}` | Subject reviews |
+| `www.douban.com` | Book + movie + music + drama reviews |
+
+### V2EX
+
+Discovers Atom feeds for V2EX index, nodes, members, and tabs.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `v2ex.com` | Index feed |
+| `v2ex.com/go/{node}` | Node feed |
+| `v2ex.com/member/{username}` | Member feed |
+| `v2ex.com/?tab={tab}` | Tab feed |
+
+### Ximalaya
+
+Discovers RSS feeds for Ximalaya podcast albums.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `www.ximalaya.com/album/{id}` | Album feed |
+
+### Jandan
+
+Discovers RSS feeds for Jandan (煎蛋).
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `jandan.net` | Site feed |
+
 ## Basic Usage
 
 ```typescript
@@ -418,9 +463,11 @@ import {
   blogspotHandler,
   blueskyHandler,
   codebergHandler,
+  csdnHandler,
   dailymotionHandler,
   deviantartHandler,
   devtoHandler,
+  doubanHandler,
   goodreadsHandler,
   githubGistHandler,
   githubHandler,
@@ -428,6 +475,7 @@ import {
   hashnodeHandler,
   hatenablogHandler,
   itchioHandler,
+  jandanHandler,
   kickstarterHandler,
   letterboxdHandler,
   lobstersHandler,
@@ -441,9 +489,11 @@ import {
   steamHandler,
   substackHandler,
   tumblrHandler,
+  v2exHandler,
   vimeoHandler,
   wordpressHandler,
   wpengineHandler,
+  ximalayaHandler,
   youtubeHandler,
 } from 'feedscout/platform'
 ```

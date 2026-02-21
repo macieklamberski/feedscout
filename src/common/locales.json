@@ -105,6 +105,17 @@
     "itchio:section": "Section",
     "itchio:featured": "Featured",
     "itchio:new": "New",
-    "itchio:sales": "Sales"
+    "itchio:sales": "Sales",
+    "csdn:blog": "Blog",
+    "douban:interests": "Interests",
+    "douban:reviews": "Reviews",
+    "douban:notes": "Notes",
+    "douban:subjectReviews": "Subject reviews",
+    "v2ex:index": "Index",
+    "v2ex:node": "Node",
+    "v2ex:member": "Member",
+    "v2ex:tab": "Tab",
+    "ximalaya:album": "Album",
+    "jandan:feed": "Feed"
   }
 }

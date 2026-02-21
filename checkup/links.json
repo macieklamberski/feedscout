@@ -200,6 +200,25 @@
     "https://itch.io/feed/new.xml",
     "https://itch.io/feed/sales.xml"
   ],
+  "csdn": ["https://rss.csdn.net/csdnnews/rss/map", "https://blog.csdn.net/csdnnews/rss/list"],
+  "douban": [
+    "https://www.douban.com/feed/people/ahbei/interests",
+    "https://www.douban.com/feed/people/ahbei/reviews",
+    "https://www.douban.com/feed/people/ahbei/notes",
+    "https://www.douban.com/feed/subject/1084336/reviews",
+    "https://www.douban.com/feed/review/book",
+    "https://www.douban.com/feed/review/movie",
+    "https://www.douban.com/feed/review/music",
+    "https://www.douban.com/feed/review/drama"
+  ],
+  "v2ex": [
+    "https://www.v2ex.com/index.xml",
+    "https://www.v2ex.com/feed/programmer.xml",
+    "https://www.v2ex.com/feed/member/livid.xml",
+    "https://www.v2ex.com/feed/tab/tech.xml"
+  ],
+  "ximalaya": ["https://www.ximalaya.com/album/203355.xml"],
+  "jandan": ["https://jandan.net/?feed=rss2"],
   "youtube": [
     "https://www.youtube.com/feeds/videos.xml?channel_id=UCXuqSBlHAE6Xw-yeJA0Tunw",
     "https://www.youtube.com/feeds/videos.xml?playlist_id=UUXuqSBlHAE6Xw-yeJA0Tunw",
