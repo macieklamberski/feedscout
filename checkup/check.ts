@@ -2,13 +2,11 @@ import links from './links.json' with { type: 'json' }
 
 const platforms = Object.entries(links)
 const timeoutMs = 30_000
-const delayMs = 500
-
-let failed = 0
+const delayMs = 1_000
 
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
-for (const [platform, urls] of platforms) {
+const checkPlatform = async (platform: string, urls: Array<string>) => {
   const failures: Array<{ url: string; detail: string }> = []
 
   for (let i = 0; i < urls.length; i++) {
@@ -41,7 +39,11 @@ for (const [platform, urls] of platforms) {
     console.log(`  ✗ ${url} (${detail})`)
   }
 
-  failed += failures.length
+  return failures.length
 }
+
+const counts = await Promise.all(platforms.map(([platform, urls]) => checkPlatform(platform, urls)))
+
+const failed = counts.reduce((sum, count) => sum + count, 0)
 
 process.exit(failed === 0 ? 0 : 1)
