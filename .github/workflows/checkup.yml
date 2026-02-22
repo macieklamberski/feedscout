@@ -16,4 +16,4 @@ jobs:
         uses: oven-sh/setup-bun@v2
 
       - name: Check links
-        run: bun checkup/check.ts
+        run: bun check/check.ts
