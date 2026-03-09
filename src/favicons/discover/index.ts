@@ -4,6 +4,7 @@ import { normalizeUrl } from '../../common/utils.js'
 import { discoverFaviconsFromGuess } from '../guess/index.js'
 import { discoverFaviconsFromHeaders } from '../headers/index.js'
 import { discoverFaviconsFromHtml } from '../html/index.js'
+import { discoverFaviconsFromManifest } from '../manifest/index.js'
 import type { DiscoverFaviconsOptions, FaviconResult } from './types.js'
 import { deduplicateResults, normalizeInput } from './utils.js'
 
@@ -12,7 +13,7 @@ export const discoverFavicons = async (
   options: DiscoverFaviconsOptions = {},
 ): Promise<Array<FaviconResult>> => {
   const {
-    methods = ['html', 'headers', 'guess'],
+    methods = ['html', 'manifest', 'headers', 'guess'],
     fetchFn = defaultFetchFn,
     normalizeUrlFn = normalizeUrl,
   } = options
@@ -27,6 +28,16 @@ export const discoverFavicons = async (
       normalizeUrlFn,
     )
     results.push(...htmlResults)
+  }
+
+  if (methods.includes('manifest') && normalizedInput.content) {
+    const manifestResults = await discoverFaviconsFromManifest(
+      normalizedInput.content,
+      normalizedInput.url,
+      fetchFn,
+      normalizeUrlFn,
+    )
+    results.push(...manifestResults)
   }
 
   if (methods.includes('headers') && normalizedInput.headers) {
