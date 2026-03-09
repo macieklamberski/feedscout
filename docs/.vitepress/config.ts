@@ -68,6 +68,7 @@ export default defineConfig({
         text: 'Discover More',
         items: [
           { text: 'Blogrolls', link: '/other/blogrolls' },
+          { text: 'Favicons', link: '/other/favicons' },
           { text: 'WebSub Hubs', link: '/other/hubs' },
         ],
       },
@@ -85,6 +86,7 @@ export default defineConfig({
           { text: 'Overview', link: '/reference' },
           { text: 'discoverFeeds', link: '/reference/discover-feeds' },
           { text: 'discoverBlogrolls', link: '/reference/discover-blogrolls' },
+          { text: 'discoverFavicons', link: '/reference/discover-favicons' },
           { text: 'discoverHubs', link: '/reference/discover-hubs' },
           { text: 'Types', link: '/reference/types' },
           { text: 'TypeScript', link: '/reference/typescript' },
