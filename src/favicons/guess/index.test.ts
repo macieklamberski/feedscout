@@ -31,8 +31,15 @@ describe('discoverFaviconsFromGuess', () => {
 
   it('should handle URL with port', () => {
     const value = discoverFaviconsFromGuess('https://example.com:8080/page')
+    const expected: Array<FaviconResult> = [
+      { url: 'https://example.com:8080/favicon.ico', method: 'guess' },
+      { url: 'https://example.com:8080/apple-touch-icon.png', method: 'guess' },
+      { url: 'https://example.com:8080/apple-touch-icon-precomposed.png', method: 'guess' },
+      { url: 'https://example.com:8080/favicon.png', method: 'guess' },
+      { url: 'https://example.com:8080/favicon.svg', method: 'guess' },
+    ]
 
-    expect(value[0]).toEqual({ url: 'https://example.com:8080/favicon.ico', method: 'guess' })
+    expect(value).toEqual(expected)
   })
 
   it('should return empty array for invalid URL', () => {

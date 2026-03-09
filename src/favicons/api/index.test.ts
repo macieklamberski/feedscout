@@ -38,20 +38,34 @@ describe('discoverFaviconsFromApi', () => {
 
   it('should extract domain from URL with path', () => {
     const value = discoverFaviconsFromApi('https://example.com/blog/post/123')
+    const expected: Array<FaviconResult> = [
+      {
+        url: 'https://www.google.com/s2/favicons?domain=example.com&sz=64',
+        method: 'api',
+      },
+      {
+        url: 'https://icons.duckduckgo.com/ip3/example.com.ico',
+        method: 'api',
+      },
+    ]
 
-    expect(value[0]).toEqual({
-      url: 'https://www.google.com/s2/favicons?domain=example.com&sz=64',
-      method: 'api',
-    })
+    expect(value).toEqual(expected)
   })
 
   it('should handle subdomain', () => {
     const value = discoverFaviconsFromApi('https://blog.example.com/')
+    const expected: Array<FaviconResult> = [
+      {
+        url: 'https://www.google.com/s2/favicons?domain=blog.example.com&sz=64',
+        method: 'api',
+      },
+      {
+        url: 'https://icons.duckduckgo.com/ip3/blog.example.com.ico',
+        method: 'api',
+      },
+    ]
 
-    expect(value[0]).toEqual({
-      url: 'https://www.google.com/s2/favicons?domain=blog.example.com&sz=64',
-      method: 'api',
-    })
+    expect(value).toEqual(expected)
   })
 
   it('should return empty array for invalid URL', () => {
