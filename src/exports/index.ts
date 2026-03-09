@@ -17,5 +17,6 @@ export type {
   DiscoverUriHint,
   UriEntry,
 } from '../common/types.js'
+export { discoverFavicons } from '../favicons/discover/index.js'
 export { discoverFeeds } from '../feeds/index.js'
 export { discoverHubs } from '../hubs/discover/index.js'

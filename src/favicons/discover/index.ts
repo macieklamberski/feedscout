@@ -1,0 +1,37 @@
+import { defaultFetchFn } from '../../common/discover/utils.js'
+import type { DiscoverInput } from '../../common/types.js'
+import { normalizeUrl } from '../../common/utils.js'
+import { discoverFaviconsFromGuess } from '../guess/index.js'
+import { discoverFaviconsFromHtml } from '../html/index.js'
+import type { DiscoverFaviconsOptions, FaviconResult } from './types.js'
+import { deduplicateResults, normalizeInput } from './utils.js'
+
+export const discoverFavicons = async (
+  input: DiscoverInput,
+  options: DiscoverFaviconsOptions = {},
+): Promise<Array<FaviconResult>> => {
+  const {
+    methods = ['html', 'guess'],
+    fetchFn = defaultFetchFn,
+    normalizeUrlFn = normalizeUrl,
+  } = options
+
+  const normalizedInput = await normalizeInput(input, fetchFn)
+  const results: Array<FaviconResult> = []
+
+  if (methods.includes('html') && normalizedInput.content) {
+    const htmlResults = discoverFaviconsFromHtml(
+      normalizedInput.content,
+      normalizedInput.url,
+      normalizeUrlFn,
+    )
+    results.push(...htmlResults)
+  }
+
+  if (methods.includes('guess')) {
+    const guessResults = discoverFaviconsFromGuess(normalizedInput.url)
+    results.push(...guessResults)
+  }
+
+  return deduplicateResults(results)
+}
