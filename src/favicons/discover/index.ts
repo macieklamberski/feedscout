@@ -1,6 +1,7 @@
 import { defaultFetchFn } from '../../common/discover/utils.js'
 import type { DiscoverInput } from '../../common/types.js'
 import { normalizeUrl } from '../../common/utils.js'
+import { discoverFaviconsFromApi } from '../api/index.js'
 import { discoverFaviconsFromGuess } from '../guess/index.js'
 import { discoverFaviconsFromHeaders } from '../headers/index.js'
 import { discoverFaviconsFromHtml } from '../html/index.js'
@@ -52,6 +53,11 @@ export const discoverFavicons = async (
   if (methods.includes('guess')) {
     const guessResults = discoverFaviconsFromGuess(normalizedInput.url)
     results.push(...guessResults)
+  }
+
+  if (methods.includes('api')) {
+    const apiResults = discoverFaviconsFromApi(normalizedInput.url, options.api)
+    results.push(...apiResults)
   }
 
   return deduplicateResults(results)
