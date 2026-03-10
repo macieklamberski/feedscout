@@ -113,7 +113,6 @@ const feeds = await discoverFeeds('https://example.com', {
 
 ```typescript
 const response = await fetch('https://example.com')
-const content = await response.text()
 
 const feeds = await discoverFeeds(
   {

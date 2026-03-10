@@ -843,11 +843,7 @@ describe('discover', () => {
       expect(value).toEqual(expected)
     })
 
-    it.skip('should handle custom extractor that uses headers', async () => {
-      // Implementation gap: The discover function in src/common/discover/index.ts
-      // does not pass headers from fetchFn response to extractFn.
-      // The type signature supports it (DiscoverExtractFn accepts headers?: Headers),
-      // but the actual call at line 55-58 omits headers.
+    it('should handle custom extractor that uses headers', async () => {
       type ExtendedFeedResult = FeedResult & {
         etag?: string
       }

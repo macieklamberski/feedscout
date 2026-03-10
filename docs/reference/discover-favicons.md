@@ -105,7 +105,6 @@ const favicons = await discoverFavicons('https://example.com', {
 
 ```typescript
 const response = await fetch('https://example.com')
-const content = await response.text()
 
 const favicons = await discoverFavicons(
   {
