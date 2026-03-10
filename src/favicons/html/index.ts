@@ -1,7 +1,7 @@
 import { Parser } from 'htmlparser2'
 import type { DiscoverNormalizeUrlFn } from '../../common/types.js'
-import { normalizeUrl } from '../../common/utils.js'
-import { matchesIconRel } from '../defaults.js'
+import { anyWordMatchesAnyOf, normalizeUrl } from '../../common/utils.js'
+import { defaultIconRels } from '../defaults.js'
 import type { FaviconResult } from '../discover/types.js'
 
 const getIconRel = (rel: string): string => {
@@ -22,7 +22,7 @@ export const discoverFaviconsFromHtml = (
         if (name === 'link' && attribs.href && attribs.rel) {
           const rel = attribs.rel
 
-          if (matchesIconRel(rel)) {
+          if (anyWordMatchesAnyOf(rel, defaultIconRels)) {
             results.push({
               url: normalizeUrlFn(attribs.href, baseUrl),
               method: 'html',

@@ -1,6 +1,6 @@
 import type { DiscoverNormalizeUrlFn } from '../../common/types.js'
-import { normalizeUrl } from '../../common/utils.js'
-import { matchesIconRel } from '../defaults.js'
+import { anyWordMatchesAnyOf, normalizeUrl } from '../../common/utils.js'
+import { defaultIconRels } from '../defaults.js'
 import type { FaviconResult } from '../discover/types.js'
 
 const urlRegex = /<([^<>]+)>/
@@ -33,7 +33,7 @@ export const discoverFaviconsFromHeaders = (
     const url = urlMatch[1]
     const rel = relMatch[1]
 
-    if (!matchesIconRel(rel)) {
+    if (!anyWordMatchesAnyOf(rel, defaultIconRels)) {
       continue
     }
 
