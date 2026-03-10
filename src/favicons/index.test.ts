@@ -1,6 +1,5 @@
 import { describe, expect, it } from 'bun:test'
 import type { DiscoverFetchFn, DiscoverResult } from '../common/types.js'
-import { defaultGuessPaths } from './defaults.js'
 import { discoverFavicons } from './index.js'
 import type { FaviconResult } from './types.js'
 
@@ -181,14 +180,14 @@ describe('discoverFavicons', () => {
 
     expect(value).toEqual(expected)
   })
-})
 
-describe('defaultGuessPaths', () => {
-  it('should contain favicon.ico', () => {
-    expect(defaultGuessPaths).toContain('/favicon.ico')
-  })
+  it('should return empty array for invalid URLs', async () => {
+    const mockFetch = createMockFetch({})
+    const value = await discoverFavicons('not-a-valid-url', {
+      methods: ['html'],
+      fetchFn: mockFetch,
+    })
 
-  it('should contain apple-touch-icon.png', () => {
-    expect(defaultGuessPaths).toContain('/apple-touch-icon.png')
+    expect(value).toEqual([])
   })
 })
