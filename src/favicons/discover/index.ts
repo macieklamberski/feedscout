@@ -1,4 +1,4 @@
-import { defaultFetchFn } from '../../common/discover/utils.js'
+import { defaultFetchFn, normalizeInput } from '../../common/discover/utils.js'
 import type { DiscoverInput } from '../../common/types.js'
 import { normalizeUrl } from '../../common/utils.js'
 import { discoverFaviconsFromApi } from '../api/index.js'
@@ -6,8 +6,8 @@ import { discoverFaviconsFromGuess } from '../guess/index.js'
 import { discoverFaviconsFromHeaders } from '../headers/index.js'
 import { discoverFaviconsFromHtml } from '../html/index.js'
 import { discoverFaviconsFromManifest } from '../manifest/index.js'
-import type { DiscoverFaviconsOptions, FaviconResult } from './types.js'
-import { deduplicateResults, normalizeInput } from './utils.js'
+import type { DiscoverFaviconsOptions, FaviconResult } from '../types.js'
+import { deduplicateResults } from './utils.js'
 
 export const discoverFavicons = async (
   input: DiscoverInput,

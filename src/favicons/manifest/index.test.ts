@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'bun:test'
 import type { DiscoverFetchFn } from '../../common/types.js'
-import type { FaviconResult } from '../discover/types.js'
+import type { FaviconResult } from '../types.js'
 import { discoverFaviconsFromManifest } from './index.js'
 
 const createMockFetch = (responses: Record<string, string>): DiscoverFetchFn => {

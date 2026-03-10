@@ -1,4 +1,4 @@
-import type { FaviconResult } from '../discover/types.js'
+import type { FaviconResult } from '../types.js'
 
 export type FaviconApiProvider = (domain: string) => string
 

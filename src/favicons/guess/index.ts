@@ -1,5 +1,5 @@
 import { defaultGuessPaths } from '../defaults.js'
-import type { FaviconResult } from '../discover/types.js'
+import type { FaviconResult } from '../types.js'
 
 export type GuessMethodOptions = {
   paths?: Array<string>
@@ -16,7 +16,7 @@ export const discoverFaviconsFromGuess = (
 
     return paths.map((path) => ({
       url: `${origin}${path}`,
-      method: 'guess' as const,
+      method: 'guess',
     }))
   } catch {
     return []

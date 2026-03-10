@@ -1,6 +1,6 @@
-import type { DiscoverFetchFn, DiscoverNormalizeUrlFn } from '../../common/types.js'
-import type { ApiMethodOptions } from '../api/index.js'
-import type { GuessMethodOptions } from '../guess/index.js'
+import type { DiscoverFetchFn, DiscoverNormalizeUrlFn } from '../common/types.js'
+import type { ApiMethodOptions } from './api/index.js'
+import type { GuessMethodOptions } from './guess/index.js'
 
 export type FaviconMethod = 'html' | 'manifest' | 'headers' | 'guess' | 'api'
 

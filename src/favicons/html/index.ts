@@ -2,7 +2,7 @@ import { Parser } from 'htmlparser2'
 import type { DiscoverNormalizeUrlFn } from '../../common/types.js'
 import { anyWordMatchesAnyOf, normalizeUrl } from '../../common/utils.js'
 import { defaultIconRels } from '../defaults.js'
-import type { FaviconResult } from '../discover/types.js'
+import type { FaviconResult } from '../types.js'
 
 const getIconRel = (rel: string): string => {
   return rel.toLowerCase().trim()
@@ -29,19 +29,6 @@ export const discoverFaviconsFromHtml = (
               rel: getIconRel(rel),
               ...(attribs.type ? { type: attribs.type } : {}),
               ...(attribs.sizes ? { sizes: attribs.sizes } : {}),
-            })
-          }
-        }
-
-        // Handle <meta name="msapplication-TileImage"> tags.
-        if (name === 'meta' && attribs.content) {
-          const metaName = attribs.name?.toLowerCase()
-
-          if (metaName === 'msapplication-tileimage') {
-            results.push({
-              url: normalizeUrlFn(attribs.content, baseUrl),
-              method: 'html',
-              sizes: '144x144',
             })
           }
         }

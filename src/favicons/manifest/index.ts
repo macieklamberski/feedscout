@@ -1,7 +1,7 @@
 import { Parser } from 'htmlparser2'
 import type { DiscoverFetchFn, DiscoverNormalizeUrlFn } from '../../common/types.js'
 import { normalizeUrl } from '../../common/utils.js'
-import type { FaviconResult } from '../discover/types.js'
+import type { FaviconResult } from '../types.js'
 
 type ManifestIcon = {
   src?: string

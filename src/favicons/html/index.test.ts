@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import type { FaviconResult } from '../discover/types.js'
+import type { FaviconResult } from '../types.js'
 import { discoverFaviconsFromHtml } from './index.js'
 
 describe('discoverFaviconsFromHtml', () => {
@@ -181,56 +181,6 @@ describe('discoverFaviconsFromHtml', () => {
     expect(value).toEqual(expected)
   })
 
-  it('should discover msapplication-TileImage meta tag', () => {
-    const html = '<meta name="msapplication-TileImage" content="/mstile-144x144.png">'
-    const value = discoverFaviconsFromHtml(html, 'https://example.com/')
-    const expected: Array<FaviconResult> = [
-      {
-        url: 'https://example.com/mstile-144x144.png',
-        method: 'html',
-        sizes: '144x144',
-      },
-    ]
-
-    expect(value).toEqual(expected)
-  })
-
-  it('should handle case-insensitive msapplication-TileImage', () => {
-    const html = '<meta name="MSAPPLICATION-TILEIMAGE" content="/mstile.png">'
-    const value = discoverFaviconsFromHtml(html, 'https://example.com/')
-    const expected: Array<FaviconResult> = [
-      {
-        url: 'https://example.com/mstile.png',
-        method: 'html',
-        sizes: '144x144',
-      },
-    ]
-
-    expect(value).toEqual(expected)
-  })
-
-  it('should discover both link and meta favicons', () => {
-    const html = `
-      <link rel="icon" href="/favicon.ico">
-      <meta name="msapplication-TileImage" content="/mstile.png">
-    `
-    const value = discoverFaviconsFromHtml(html, 'https://example.com/')
-    const expected: Array<FaviconResult> = [
-      {
-        url: 'https://example.com/favicon.ico',
-        method: 'html',
-        rel: 'icon',
-      },
-      {
-        url: 'https://example.com/mstile.png',
-        method: 'html',
-        sizes: '144x144',
-      },
-    ]
-
-    expect(value).toEqual(expected)
-  })
-
   it('should ignore link tags without href', () => {
     const html = '<link rel="icon">'
     const value = discoverFaviconsFromHtml(html, 'https://example.com/')
@@ -247,13 +197,6 @@ describe('discoverFaviconsFromHtml', () => {
 
   it('should ignore non-icon link tags', () => {
     const html = '<link rel="stylesheet" href="/styles.css">'
-    const value = discoverFaviconsFromHtml(html, 'https://example.com/')
-
-    expect(value).toEqual([])
-  })
-
-  it('should ignore meta tags without content', () => {
-    const html = '<meta name="msapplication-TileImage">'
     const value = discoverFaviconsFromHtml(html, 'https://example.com/')
 
     expect(value).toEqual([])

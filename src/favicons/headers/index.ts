@@ -1,7 +1,7 @@
 import type { DiscoverNormalizeUrlFn } from '../../common/types.js'
 import { anyWordMatchesAnyOf, normalizeUrl } from '../../common/utils.js'
 import { defaultIconRels } from '../defaults.js'
-import type { FaviconResult } from '../discover/types.js'
+import type { FaviconResult } from '../types.js'
 
 const urlRegex = /<([^<>]+)>/
 const relRegex = /rel\s*=\s*["']?([^"';,]+)["']?/i

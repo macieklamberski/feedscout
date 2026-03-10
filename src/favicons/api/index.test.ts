@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import type { FaviconResult } from '../discover/types.js'
+import type { FaviconResult } from '../types.js'
 import { discoverFaviconsFromApi, duckDuckGo, type FaviconApiProvider, googleS2 } from './index.js'
 
 describe('discoverFaviconsFromApi', () => {
