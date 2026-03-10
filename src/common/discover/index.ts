@@ -94,6 +94,8 @@ export const discover = async <TValid>(
       return await extractFn({
         url: fetchResult.url,
         content: typeof fetchResult.body === 'string' ? fetchResult.body : '',
+        headers: fetchResult.headers,
+        status: fetchResult.status,
       })
     } catch (error) {
       return { url, isValid: false, error } as DiscoverResult<TValid>
