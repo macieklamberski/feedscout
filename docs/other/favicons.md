@@ -37,7 +37,7 @@ Results include the favicon URL and metadata:
 
 | Method | Source | Description |
 |--------|--------|-------------|
-| `html` | HTML `<link>` and `<meta>` tags | Parses icon-related link elements and `msapplication-TileImage` meta tags |
+| `html` | HTML `<link>` tags | Parses icon-related link elements |
 | `manifest` | Web App Manifest | Fetches `manifest.json`/`.webmanifest` and extracts `icons[]` array |
 | `headers` | HTTP `Link` headers | Parses `rel="icon"` links from response headers |
 | `guess` | Known paths | Tries common favicon paths like `/favicon.ico`, `/apple-touch-icon.png` |
@@ -50,12 +50,6 @@ Parses `<link>` elements with icon-related `rel` values:
 ```html
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-```
-
-Also extracts `<meta>` tags:
-
-```html
-<meta name="msapplication-TileImage" content="/mstile-144x144.png">
 ```
 
 Supported `rel` values: `icon`, `shortcut icon`, `apple-touch-icon`, `apple-touch-icon-precomposed`.
@@ -92,6 +86,17 @@ Tests common favicon paths against the site's origin:
 - `/apple-touch-icon-precomposed.png`
 - `/favicon.png`
 - `/favicon.svg`
+
+Custom paths can be configured:
+
+```typescript
+const favicons = await discoverFavicons('https://example.com', {
+  methods: ['guess'],
+  guess: {
+    paths: ['/favicon.ico', '/icon.svg'],
+  },
+})
+```
 
 ### API Method
 

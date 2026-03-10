@@ -40,6 +40,7 @@ discoverFavicons({
 | `methods` | `DiscoverFaviconsMethodsConfig` | `['html', 'manifest', 'headers', 'guess']` | Methods to use |
 | `fetchFn` | `DiscoverFetchFn` | native fetch | Custom fetch function |
 | `normalizeUrlFn` | `DiscoverNormalizeUrlFn` | resolve relative | Custom URL normalization |
+| `guess` | `GuessMethodOptions` | default paths | Guess method configuration |
 | `api` | `ApiMethodOptions` | default providers | API method configuration |
 
 #### methods
@@ -50,11 +51,34 @@ Array of discovery methods to use:
 type DiscoverFaviconsMethodsConfig = Array<'html' | 'manifest' | 'headers' | 'guess' | 'api'>
 ```
 
-- `html` — Parse `<link rel="icon">` elements and `<meta name="msapplication-TileImage">` tags.
+- `html` — Parse `<link rel="icon">` elements.
 - `manifest` — Fetch Web App Manifest and extract `icons[]` array.
 - `headers` — Parse HTTP `Link` headers for `rel="icon"`.
 - `guess` — Try common favicon paths (`/favicon.ico`, `/apple-touch-icon.png`, etc.).
 - `api` — Generate URLs from third-party favicon APIs (Google S2, DuckDuckGo).
+
+#### guess
+
+Configuration for the guess method:
+
+```typescript
+type GuessMethodOptions = {
+  paths?: Array<string>
+}
+```
+
+Custom paths:
+
+```typescript
+import { defaultGuessPaths } from 'feedscout/favicons'
+
+discoverFavicons(url, {
+  methods: ['guess'],
+  guess: {
+    paths: ['/favicon.ico', '/icon.svg'],
+  },
+})
+```
 
 #### api
 
