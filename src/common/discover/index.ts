@@ -36,6 +36,7 @@ export const discover = async <TValid>(
     const result = await extractFn({
       url: normalizedInput.url,
       content: normalizedInput.content,
+      headers: normalizedInput.headers,
     })
 
     if (result.isValid) {
