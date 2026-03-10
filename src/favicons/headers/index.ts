@@ -1,21 +1,12 @@
 import type { DiscoverNormalizeUrlFn } from '../../common/types.js'
 import { normalizeUrl } from '../../common/utils.js'
+import { matchesIconRel } from '../defaults.js'
 import type { FaviconResult } from '../discover/types.js'
 
 const urlRegex = /<([^<>]+)>/
 const relRegex = /rel\s*=\s*["']?([^"';,]+)["']?/i
 const typeRegex = /type\s*=\s*["']?([^"';,]+)["']?/i
 const sizesRegex = /sizes\s*=\s*["']?([^"';,]+)["']?/i
-
-const iconRels = ['icon', 'shortcut', 'apple-touch-icon', 'apple-touch-icon-precomposed']
-
-const matchesIconRel = (rel: string): boolean => {
-  const words = rel.toLowerCase().split(/\s+/)
-
-  return words.some((word) => {
-    return iconRels.includes(word)
-  })
-}
 
 export const discoverFaviconsFromHeaders = (
   headers: Headers,
