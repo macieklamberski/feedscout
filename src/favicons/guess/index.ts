@@ -1,12 +1,5 @@
+import { defaultGuessPaths } from '../defaults.js'
 import type { FaviconResult } from '../discover/types.js'
-
-export const defaultGuessPaths = [
-  '/favicon.ico',
-  '/apple-touch-icon.png',
-  '/apple-touch-icon-precomposed.png',
-  '/favicon.png',
-  '/favicon.svg',
-]
 
 export type GuessMethodOptions = {
   paths?: Array<string>

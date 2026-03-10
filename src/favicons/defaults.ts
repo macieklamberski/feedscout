@@ -1,3 +1,11 @@
+export const defaultGuessPaths = [
+  '/favicon.ico',
+  '/apple-touch-icon.png',
+  '/apple-touch-icon-precomposed.png',
+  '/favicon.png',
+  '/favicon.svg',
+]
+
 export const defaultIconRels = [
   'icon',
   'shortcut',
