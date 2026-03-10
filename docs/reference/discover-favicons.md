@@ -4,15 +4,15 @@ title: "Reference: discoverFavicons"
 
 # discoverFavicons
 
-Discovers favicon URLs from a webpage.
+Discovers favicon URLs from a webpage. Uses the same discovery pipeline as `discoverFeeds` and `discoverBlogrolls`.
 
 ## Signature
 
 ```typescript
 function discoverFavicons(
   input: DiscoverInput,
-  options?: DiscoverFaviconsOptions,
-): Promise<Array<FaviconResult>>
+  options?: DiscoverOptions<FaviconResult>,
+): Promise<Array<DiscoverResult<FaviconResult>>>
 ```
 
 ## Parameters
@@ -35,85 +35,27 @@ discoverFavicons({
 
 ### options
 
+Uses the same `DiscoverOptions` type as other discover functions. See [discoverFeeds](/reference/discover-feeds) for the full options reference.
+
 | Property | Type | Default | Description |
 |----------|------|---------|-------------|
-| `methods` | `DiscoverFaviconsMethodsConfig` | `['html', 'manifest', 'headers', 'guess']` | Methods to use |
+| `methods` | `DiscoverMethodsConfig` | `['html', 'headers', 'guess']` | Methods to use |
 | `fetchFn` | `DiscoverFetchFn` | native fetch | Custom fetch function |
 | `normalizeUrlFn` | `DiscoverNormalizeUrlFn` | resolve relative | Custom URL normalization |
-| `guess` | `GuessMethodOptions` | default paths | Guess method configuration |
-| `api` | `ApiMethodOptions` | default providers | API method configuration |
-
-#### methods
-
-Array of discovery methods to use:
-
-```typescript
-type DiscoverFaviconsMethodsConfig = Array<'html' | 'manifest' | 'headers' | 'guess' | 'api'>
-```
-
-- `html` — Parse `<link rel="icon">` elements.
-- `manifest` — Fetch Web App Manifest and extract `icons[]` array.
-- `headers` — Parse HTTP `Link` headers for `rel="icon"`.
-- `guess` — Try common favicon paths (`/favicon.ico`, `/apple-touch-icon.png`, etc.).
-- `api` — Generate URLs from third-party favicon APIs (Google S2, DuckDuckGo).
-
-#### guess
-
-Configuration for the guess method:
-
-```typescript
-type GuessMethodOptions = {
-  paths?: Array<string>
-}
-```
-
-Custom paths:
-
-```typescript
-import { defaultGuessPaths } from 'feedscout/favicons'
-
-discoverFavicons(url, {
-  methods: ['guess'],
-  guess: {
-    paths: ['/favicon.ico', '/icon.svg'],
-  },
-})
-```
-
-#### api
-
-Configuration for the API method:
-
-```typescript
-type ApiMethodOptions = {
-  providers?: Array<FaviconApiProvider>
-}
-```
-
-Custom providers:
-
-```typescript
-import { googleS2, duckDuckGo } from 'feedscout/favicons'
-
-discoverFavicons(url, {
-  methods: ['api'],
-  api: {
-    providers: [googleS2(128), duckDuckGo()],
-  },
-})
-```
+| `concurrency` | `number` | `3` | Max concurrent validation requests |
+| `stopOnFirstResult` | `boolean` | `false` | Stop after first valid result |
+| `stopOnFirstMethod` | `boolean` | `false` | Stop after first method finds results |
+| `includeInvalid` | `boolean` | `false` | Include invalid results |
 
 ## Return Value
 
-Returns a promise that resolves to an array of favicon results:
+Returns a promise that resolves to an array of discover results:
 
 ```typescript
-type FaviconResult = {
-  url: string           // Favicon URL
-  method: FaviconMethod // Which method discovered it
-  type?: string         // MIME type (e.g. "image/png")
-  sizes?: string        // Icon dimensions (e.g. "32x32")
-  rel?: string          // Link rel value (e.g. "apple-touch-icon")
+type DiscoverResult<FaviconResult> = {
+  url: string
+  isValid: boolean
+  method?: 'html' | 'headers' | 'guess'
 }
 ```
 
@@ -121,10 +63,9 @@ Example result:
 
 ```typescript
 {
-  url: 'https://example.com/apple-touch-icon.png',
+  url: 'https://example.com/favicon.ico',
+  isValid: true,
   method: 'html',
-  rel: 'apple-touch-icon',
-  sizes: '180x180',
 }
 ```
 
@@ -145,6 +86,14 @@ const favicons = await discoverFavicons('https://example.com')
 ```typescript
 const favicons = await discoverFavicons('https://example.com', {
   methods: ['html', 'guess'],
+})
+```
+
+### With Custom Guess Paths
+
+```typescript
+const favicons = await discoverFavicons('https://example.com', {
+  methods: { guess: { uris: ['/favicon.ico', '/icon.svg'] } },
 })
 ```
 
@@ -199,34 +148,3 @@ const favicons = await discoverFavicons('https://example.com', {
 ```
 
 See [Customize URL Normalization](/customization/url-normalization) for more examples.
-
-### With Third-Party API Providers
-
-```typescript
-import { discoverFavicons } from 'feedscout'
-import { googleS2, duckDuckGo } from 'feedscout/favicons'
-
-const favicons = await discoverFavicons('https://example.com', {
-  methods: ['html', 'api'],
-  api: {
-    providers: [googleS2(128), duckDuckGo()],
-  },
-})
-```
-
-### With Custom API Provider
-
-```typescript
-import type { FaviconApiProvider } from 'feedscout/favicons'
-
-const myProvider: FaviconApiProvider = (domain) => {
-  return `https://my-api.example.com/favicon/${domain}`
-}
-
-const favicons = await discoverFavicons('https://example.com', {
-  methods: ['html', 'api'],
-  api: {
-    providers: [myProvider],
-  },
-})
-```

@@ -14,7 +14,7 @@ import { discoverFavicons } from 'feedscout'
 const favicons = await discoverFavicons('https://example.com')
 ```
 
-By default, all discovery methods are used (html, manifest, headers, guess). You can customize which methods to use:
+By default, all discovery methods are used (html, headers, guess). You can customize which methods to use:
 
 ```typescript
 const favicons = await discoverFavicons('https://example.com', {
@@ -22,26 +22,15 @@ const favicons = await discoverFavicons('https://example.com', {
 })
 ```
 
-Results include the favicon URL and metadata:
-
-```typescript
-{
-  url: 'https://example.com/apple-touch-icon.png',
-  method: 'html',
-  rel: 'apple-touch-icon',
-  sizes: '180x180',
-}
-```
+Discovered favicon URLs are validated by checking that the resource exists (HEAD request with successful status code). Only valid results are returned by default.
 
 ## Discovery Methods
 
 | Method | Source | Description |
 |--------|--------|-------------|
 | `html` | HTML `<link>` tags | Parses icon-related link elements |
-| `manifest` | Web App Manifest | Fetches `manifest.json`/`.webmanifest` and extracts `icons[]` array |
 | `headers` | HTTP `Link` headers | Parses `rel="icon"` links from response headers |
 | `guess` | Known paths | Tries common favicon paths like `/favicon.ico`, `/apple-touch-icon.png` |
-| `api` | Third-party APIs | Generates URLs from Google S2 and DuckDuckGo favicon APIs |
 
 ### HTML Method
 
@@ -53,21 +42,6 @@ Parses `<link>` elements with icon-related `rel` values:
 ```
 
 Supported `rel` values: `icon`, `shortcut icon`, `apple-touch-icon`, `apple-touch-icon-precomposed`.
-
-### Manifest Method
-
-Discovers `<link rel="manifest">` in HTML, fetches the manifest file, and extracts icons:
-
-```json
-{
-  "icons": [
-    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" },
-    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png" }
-  ]
-}
-```
-
-Icon `src` URLs are resolved relative to the manifest URL.
 
 ### Headers Method
 
@@ -91,33 +65,7 @@ Custom paths can be configured:
 
 ```typescript
 const favicons = await discoverFavicons('https://example.com', {
-  methods: ['guess'],
-  guess: {
-    paths: ['/favicon.ico', '/icon.svg'],
-  },
-})
-```
-
-### API Method
-
-Generates URLs from third-party favicon APIs (not enabled by default):
-
-```typescript
-const favicons = await discoverFavicons('https://example.com', {
-  methods: ['html', 'guess', 'api'],
-})
-```
-
-Built-in providers: Google S2 and DuckDuckGo. Custom providers can be added:
-
-```typescript
-import { googleS2, duckDuckGo } from 'feedscout/favicons'
-
-const favicons = await discoverFavicons('https://example.com', {
-  methods: ['html', 'api'],
-  api: {
-    providers: [googleS2(128), duckDuckGo()],
-  },
+  methods: { guess: { uris: ['/favicon.ico', '/icon.svg'] } },
 })
 ```
 
