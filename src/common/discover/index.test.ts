@@ -843,11 +843,7 @@ describe('discover', () => {
       expect(value).toEqual(expected)
     })
 
-    it.skip('should handle custom extractor that uses headers', async () => {
-      // Implementation gap: The discover function in src/common/discover/index.ts
-      // does not pass headers from fetchFn response to extractFn.
-      // The type signature supports it (DiscoverExtractFn accepts headers?: Headers),
-      // but the actual call at line 55-58 omits headers.
+    it('should handle custom extractor that uses headers', async () => {
       type ExtendedFeedResult = FeedResult & {
         etag?: string
       }
@@ -977,6 +973,61 @@ describe('discover', () => {
       const throwing = () => discoverFeeds({ content: '<html></html>' }, { methods: ['guess'] })
 
       expect(throwing).toThrow(locales.errors.guessMethodRequiresUrl)
+    })
+  })
+
+  describe('extractFn receives status and headers', () => {
+    it('should pass status and headers to extractFn during validation', async () => {
+      let receivedStatus: number | undefined
+      let receivedHeaders: Headers | undefined
+      const responseHeaders = new Headers({ 'content-type': 'application/rss+xml' })
+      const customExtractor: DiscoverExtractFn<FeedResult> = async ({ url, status, headers }) => {
+        if (status !== undefined) {
+          receivedStatus = status
+          receivedHeaders = headers
+
+          return { url, isValid: true, format: 'rss' }
+        }
+
+        return { url, isValid: false }
+      }
+      const mockFetch: DiscoverFetchFn = async (url: string) => ({
+        url,
+        body: rss,
+        headers: responseHeaders,
+        status: 200,
+        statusText: 'OK',
+      })
+      await discoverFeeds(
+        { url: 'https://example.com', content: '<html></html>' },
+        {
+          methods: { guess: { uris: ['/feed'] } },
+          fetchFn: mockFetch,
+          extractFn: customExtractor,
+        },
+      )
+
+      expect(receivedStatus).toBe(200)
+      expect(receivedHeaders).toBe(responseHeaders)
+    })
+
+    it('should pass headers to extractFn during initial content check', async () => {
+      let receivedHeaders: Headers | undefined
+      const customExtractor: DiscoverExtractFn<FeedResult> = async ({ url, headers }) => {
+        receivedHeaders = headers
+
+        return { url, isValid: true, format: 'rss' }
+      }
+      const inputHeaders = new Headers({ 'content-type': 'application/rss+xml' })
+      await discoverFeeds(
+        { url: 'https://example.com', content: rss, headers: inputHeaders },
+        {
+          methods: ['html'],
+          extractFn: customExtractor,
+        },
+      )
+
+      expect(receivedHeaders).toBe(inputHeaders)
     })
   })
 })
