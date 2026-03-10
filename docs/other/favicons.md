@@ -14,15 +14,15 @@ import { discoverFavicons } from 'feedscout'
 const favicons = await discoverFavicons('https://example.com')
 ```
 
-By default, all discovery methods are used (html, headers, guess). You can customize which methods to use:
+Each result contains the favicon URL and validation status:
 
 ```typescript
-const favicons = await discoverFavicons('https://example.com', {
-  methods: ['html', 'guess'],
-})
+{
+  url: 'https://example.com/apple-touch-icon.png',
+  isValid: true,
+  method: 'html',
+}
 ```
-
-Discovered favicon URLs are validated by checking that the resource exists (HEAD request with successful status code). Only valid results are returned by default.
 
 ## Discovery Methods
 
@@ -32,63 +32,128 @@ Discovered favicon URLs are validated by checking that the resource exists (HEAD
 | `headers` | HTTP `Link` headers | Parses `rel="icon"` links from response headers |
 | `guess` | Known paths | Tries common favicon paths like `/favicon.ico`, `/apple-touch-icon.png` |
 
-### HTML Method
+## How Discovery Works
 
-Parses `<link>` elements with icon-related `rel` values:
+1. **URI Collection** — Each enabled method extracts potential favicon URLs.
+2. **Deduplication** — Duplicate URLs are removed.
+3. **Validation** — Each URL is fetched and checked for a successful status code.
+4. **Results** — Valid favicon URLs are returned.
 
-```html
-<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-```
+## Specifying Methods
 
-Supported `rel` values: `icon`, `shortcut icon`, `apple-touch-icon`, `apple-touch-icon-precomposed`.
+By default, all discovery methods are used (html, headers, guess). You can customize which methods to use with `methods` option.
 
-### Headers Method
+### Array Syntax
 
-Parses HTTP `Link` headers for icon-related relations:
-
-```http
-Link: </favicon.png>; rel="icon"; type="image/png"; sizes="32x32"
-```
-
-### Guess Method
-
-Tests common favicon paths against the site's origin:
-
-- `/favicon.ico`
-- `/apple-touch-icon.png`
-- `/apple-touch-icon-precomposed.png`
-- `/favicon.png`
-- `/favicon.svg`
-
-Custom paths can be configured:
+Use an array to enable methods with their default options:
 
 ```typescript
-const favicons = await discoverFavicons('https://example.com', {
-  methods: { guess: { uris: ['/favicon.ico', '/icon.svg'] } },
+const favicons = await discoverFavicons(url, {
+  methods: ['html', 'headers', 'guess'],
 })
 ```
 
-## Using Existing Content
+### Object Syntax
 
-If you already have the HTML content and headers, pass them directly:
+Use an object to customize individual method options:
 
 ```typescript
+const favicons = await discoverFavicons(url, {
+  methods: {
+    html: true, // Use defaults
+    headers: true, // Use defaults
+    guess: {
+      uris: ['/favicon.ico', '/icon.svg'],
+    },
+  },
+})
+```
+
+Set a method to `true` to use defaults, or provide an options object to customize.
+
+## Using Existing Content
+
+If you already have the HTML content and headers, pass them directly to avoid an extra fetch:
+
+```typescript
+// Response fetched someplace else
 const response = await fetch('https://example.com')
-const content = await response.text()
 
 const favicons = await discoverFavicons(
   {
     url: 'https://example.com',
-    content,
+    content: await response.text(),
     headers: response.headers,
   },
-  {
-    methods: ['html', 'headers'],
-  },
+  { methods: ['html', 'headers'] },
 )
 ```
 
-## Custom Fetch Function
+## Options
 
-Use a custom HTTP client. See [Customize Data Fetching](/customization/data-fetching) for examples with Axios, Got, Ky, and more.
+### Stop on First Method
+
+Stop URI collection after the first discovery method that produces results:
+
+```typescript
+const favicons = await discoverFavicons(url, {
+  methods: ['html', 'headers', 'guess'],
+  stopOnFirstMethod: true,
+})
+// Only URIs from the first successful method are validated
+```
+
+### Stop on First Result
+
+Return immediately after finding a valid result:
+
+```typescript
+const favicons = await discoverFavicons(url, {
+  methods: ['html', 'guess'],
+  stopOnFirstResult: true,
+})
+// Returns array with at most 1 result
+```
+
+### Concurrency
+
+Control how many URLs are validated in parallel:
+
+```typescript
+const favicons = await discoverFavicons(url, {
+  methods: ['html', 'guess'],
+  concurrency: 5, // Default is 3
+})
+```
+
+### Include Invalid
+
+Include invalid results for debugging:
+
+```typescript
+const favicons = await discoverFavicons(url, {
+  methods: ['html', 'guess'],
+  includeInvalid: true,
+})
+
+for (const favicon of favicons) {
+  if (favicon.isValid) {
+    console.log(`Found: ${favicon.url}`)
+  } else {
+    console.log(`Invalid: ${favicon.url}`)
+  }
+}
+```
+
+### Progress Tracking
+
+Monitor discovery progress with a callback:
+
+```typescript
+const favicons = await discoverFavicons(url, {
+  methods: ['html', 'guess'],
+  onProgress: ({ tested, total, found, current }) => {
+    console.log(`[${tested}/${total}] ${current} (${found} found)`)
+  },
+})
+```

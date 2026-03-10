@@ -23,49 +23,49 @@ The URL to discover favicons from. Can be a string or an object:
 
 ```typescript
 // String - URL to fetch and scan
-discoverFavicons('https://example.com')
+discoverFavicons('https://example.com', options)
 
 // Object - provide existing content/headers
 discoverFavicons({
   url: 'https://example.com',
-  content: htmlContent,
-  headers: responseHeaders,
-})
+  content: htmlContent,     // Optional HTML content
+  headers: responseHeaders, // Optional HTTP headers
+}, options)
 ```
 
 ### options
 
-Uses the same `DiscoverOptions` type as other discover functions. See [discoverFeeds](/reference/discover-feeds) for the full options reference.
+All options are optional. When not provided, sensible defaults are used.
 
 | Property | Type | Default | Description |
 |----------|------|---------|-------------|
-| `methods` | `DiscoverMethodsConfig` | `['html', 'headers', 'guess']` | Methods to use |
+| `methods` | `DiscoverMethodsConfig` | `['html', 'headers', 'guess']` | Which methods to use |
 | `fetchFn` | `DiscoverFetchFn` | native fetch | Custom fetch function |
-| `normalizeUrlFn` | `DiscoverNormalizeUrlFn` | resolve relative | Custom URL normalization |
-| `concurrency` | `number` | `3` | Max concurrent validation requests |
-| `stopOnFirstResult` | `boolean` | `false` | Stop after first valid result |
-| `stopOnFirstMethod` | `boolean` | `false` | Stop after first method finds results |
+| `extractFn` | `DiscoverExtractFn` | status check | Custom extraction function |
+| `normalizeUrlFn` | `DiscoverNormalizeUrlFn` | | Custom URL normalization function |
+| `stopOnFirstMethod` | `boolean` | `false` | Stop URI collection after first method with results |
+| `stopOnFirstResult` | `boolean` | `false` | Stop after first valid favicon |
+| `concurrency` | `number` | `3` | Max parallel validations |
 | `includeInvalid` | `boolean` | `false` | Include invalid results |
+| `onProgress` | `DiscoverOnProgressFn` | | Progress callback |
 
 ## Return Value
 
-Returns a promise that resolves to an array of discover results:
+Returns a promise that resolves to an array of results:
 
 ```typescript
-type DiscoverResult<FaviconResult> = {
-  url: string
-  isValid: boolean
-  method?: 'html' | 'headers' | 'guess'
-}
-```
-
-Example result:
-
-```typescript
+// Valid result
 {
   url: 'https://example.com/favicon.ico',
   isValid: true,
   method: 'html',
+}
+
+// Invalid result (when includeInvalid: true)
+{
+  url: 'https://example.com/missing.png',
+  isValid: false,
+  method: 'guess',
 }
 ```
 
@@ -78,22 +78,26 @@ Results are deduplicated by URL — the first occurrence (from the highest-prior
 ```typescript
 import { discoverFavicons } from 'feedscout'
 
+// Simple usage - all methods enabled by default
 const favicons = await discoverFavicons('https://example.com')
-```
 
-### With Specific Methods
-
-```typescript
+// Or specify which methods to use
 const favicons = await discoverFavicons('https://example.com', {
   methods: ['html', 'guess'],
 })
 ```
 
-### With Custom Guess Paths
+### With Custom Options
 
 ```typescript
 const favicons = await discoverFavicons('https://example.com', {
-  methods: { guess: { uris: ['/favicon.ico', '/icon.svg'] } },
+  methods: {
+    guess: {
+      uris: ['/favicon.ico', '/icon.svg'],
+    },
+  },
+  concurrency: 3,
+  stopOnFirstResult: true,
 })
 ```
 
@@ -106,13 +110,22 @@ const content = await response.text()
 const favicons = await discoverFavicons(
   {
     url: 'https://example.com',
-    content,
+    content: await response.text(),
     headers: response.headers,
   },
-  {
-    methods: ['html', 'headers'],
-  },
+  { methods: ['html', 'headers'] },
 )
+```
+
+### With Progress Tracking
+
+```typescript
+const favicons = await discoverFavicons('https://example.com', {
+  methods: ['html', 'guess'],
+  onProgress: ({ tested, total, found, current }) => {
+    console.log(`[${tested}/${total}] ${current} (${found} found)`)
+  },
+})
 ```
 
 ### With Custom HTTP Client
@@ -130,21 +143,3 @@ const favicons = await discoverFavicons('https://example.com', {
 ```
 
 See [Customize Data Fetching](/customization/data-fetching) for examples with Axios, Got, Ky, and more.
-
-### With Custom URL Normalization
-
-```typescript
-import type { DiscoverNormalizeUrlFn } from 'feedscout'
-
-const normalizeUrl: DiscoverNormalizeUrlFn = (url, baseUrl) => {
-  const resolved = new URL(url, baseUrl)
-  resolved.protocol = 'https:'
-  return resolved.href
-}
-
-const favicons = await discoverFavicons('https://example.com', {
-  normalizeUrlFn: normalizeUrl,
-})
-```
-
-See [Customize URL Normalization](/customization/url-normalization) for more examples.
