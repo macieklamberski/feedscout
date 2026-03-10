@@ -51,7 +51,7 @@ export const discoverFavicons = async (
   }
 
   if (methods.includes('guess')) {
-    const guessResults = discoverFaviconsFromGuess(normalizedInput.url)
+    const guessResults = discoverFaviconsFromGuess(normalizedInput.url, options.guess)
     results.push(...guessResults)
   }
 

@@ -1,6 +1,6 @@
 import type { FaviconResult } from '../discover/types.js'
 
-const guessPaths = [
+export const defaultGuessPaths = [
   '/favicon.ico',
   '/apple-touch-icon.png',
   '/apple-touch-icon-precomposed.png',
@@ -8,11 +8,20 @@ const guessPaths = [
   '/favicon.svg',
 ]
 
-export const discoverFaviconsFromGuess = (baseUrl: string): Array<FaviconResult> => {
+export type GuessMethodOptions = {
+  paths?: Array<string>
+}
+
+export const discoverFaviconsFromGuess = (
+  baseUrl: string,
+  options: GuessMethodOptions = {},
+): Array<FaviconResult> => {
+  const { paths = defaultGuessPaths } = options
+
   try {
     const origin = new URL(baseUrl).origin
 
-    return guessPaths.map((path) => ({
+    return paths.map((path) => ({
       url: `${origin}${path}`,
       method: 'guess' as const,
     }))

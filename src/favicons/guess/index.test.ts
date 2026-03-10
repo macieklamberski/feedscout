@@ -42,6 +42,24 @@ describe('discoverFaviconsFromGuess', () => {
     expect(value).toEqual(expected)
   })
 
+  it('should use custom paths', () => {
+    const value = discoverFaviconsFromGuess('https://example.com/', {
+      paths: ['/icon.png', '/logo.svg'],
+    })
+    const expected: Array<FaviconResult> = [
+      { url: 'https://example.com/icon.png', method: 'guess' },
+      { url: 'https://example.com/logo.svg', method: 'guess' },
+    ]
+
+    expect(value).toEqual(expected)
+  })
+
+  it('should return empty array for empty paths', () => {
+    const value = discoverFaviconsFromGuess('https://example.com/', { paths: [] })
+
+    expect(value).toEqual([])
+  })
+
   it('should return empty array for invalid URL', () => {
     const value = discoverFaviconsFromGuess('not-a-url')
 
