@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverFetchFn, DiscoverResult } from '../../common/types.js'
-import { defaultGuessPaths } from '../defaults.js'
-import type { FaviconResult } from '../types.js'
+import type { DiscoverFetchFn, DiscoverResult } from '../common/types.js'
+import { defaultGuessPaths } from './defaults.js'
 import { discoverFavicons } from './index.js'
+import type { FaviconResult } from './types.js'
 
 const createMockFetch = (responses: Record<string, string>): DiscoverFetchFn => {
   return async (url: string) => ({

@@ -1,10 +1,10 @@
-import { discover } from '../../common/discover/index.js'
-import { defaultFetchFn } from '../../common/discover/utils.js'
-import type { DiscoverInput, DiscoverOptions, DiscoverResult } from '../../common/types.js'
-import { normalizeUrl } from '../../common/utils.js'
-import { defaultGuessOptions, defaultHeadersOptions, defaultHtmlOptions } from '../defaults.js'
-import { defaultExtractor } from '../extractors.js'
-import type { FaviconResult } from '../types.js'
+import { discover } from '../common/discover/index.js'
+import { defaultFetchFn } from '../common/discover/utils.js'
+import type { DiscoverInput, DiscoverOptions, DiscoverResult } from '../common/types.js'
+import { normalizeUrl } from '../common/utils.js'
+import { defaultGuessOptions, defaultHeadersOptions, defaultHtmlOptions } from './defaults.js'
+import { defaultExtractor } from './extractors.js'
+import type { FaviconResult } from './types.js'
 
 export const discoverFavicons = async <TValid extends FaviconResult = FaviconResult>(
   input: DiscoverInput,
