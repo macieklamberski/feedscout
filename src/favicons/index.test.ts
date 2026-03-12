@@ -181,6 +181,22 @@ describe('discoverFavicons', () => {
     expect(value).toEqual(expected)
   })
 
+  it('should discover favicon from github platform handler', async () => {
+    const mockFetch = createMockFetch({
+      'https://github.com/octocat': '<html></html>',
+      'https://github.com/octocat.png': 'binary',
+    })
+    const value = await discoverFavicons('https://github.com/octocat', {
+      methods: ['platform'],
+      fetchFn: mockFetch,
+    })
+    const expected: Array<DiscoverResult<FaviconResult>> = [
+      { url: 'https://github.com/octocat.png', isValid: true, method: 'platform' },
+    ]
+
+    expect(value).toEqual(expected)
+  })
+
   it('should return empty array for invalid URLs', async () => {
     const mockFetch = createMockFetch({})
     const value = await discoverFavicons('not-a-valid-url', {

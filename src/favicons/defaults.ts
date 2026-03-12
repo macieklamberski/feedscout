@@ -2,6 +2,8 @@ import type { LinkSelector } from '../common/types.js'
 import type { GuessMethodOptions } from '../common/uris/guess/types.js'
 import type { HeadersMethodOptions } from '../common/uris/headers/types.js'
 import type { HtmlMethodOptions } from '../common/uris/html/types.js'
+import type { PlatformMethodOptions } from '../common/uris/platform/types.js'
+import { githubHandler } from './platform/handlers/github.js'
 
 export const defaultIconRels = [
   'icon',
@@ -33,4 +35,8 @@ export const defaultHeadersOptions: Omit<HeadersMethodOptions, 'baseUrl'> = {
 
 export const defaultGuessOptions: Omit<GuessMethodOptions, 'baseUrl'> = {
   uris: defaultGuessPaths,
+}
+
+export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
+  handlers: [githubHandler],
 }
