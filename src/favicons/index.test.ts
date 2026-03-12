@@ -218,6 +218,25 @@ describe('discoverFavicons', () => {
     expect(value).toEqual(expected)
   })
 
+  it('should discover favicon from bluesky platform handler', async () => {
+    const avatarUrl = 'https://cdn.bsky.app/img/avatar/plain/did:plc:abc123/avatar.jpg'
+    const mockFetch = createMockFetch({
+      'https://bsky.app/profile/user.bsky.social': '<html></html>',
+      'https://public.api.bsky.app/xrpc/app.bsky.actor.getProfile?actor=user.bsky.social':
+        JSON.stringify({ avatar: avatarUrl }),
+      [avatarUrl]: 'binary',
+    })
+    const value = await discoverFavicons('https://bsky.app/profile/user.bsky.social', {
+      methods: ['platform'],
+      fetchFn: mockFetch,
+    })
+    const expected: Array<DiscoverResult<FaviconResult>> = [
+      { url: avatarUrl, isValid: true, method: 'platform' },
+    ]
+
+    expect(value).toEqual(expected)
+  })
+
   it('should return empty array for invalid URLs', async () => {
     const mockFetch = createMockFetch({})
     const value = await discoverFavicons('not-a-valid-url', {
