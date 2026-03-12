@@ -56,10 +56,8 @@ export const redditHandler: PlatformHandler = {
           return [{ uri: icon }]
         }
       }
+    } catch {}
 
-      return []
-    } catch {
-      return []
-    }
+    return []
   },
 }
