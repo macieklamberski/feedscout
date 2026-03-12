@@ -12,7 +12,7 @@ export const discoverUrisFromPlatform = async (
   for (const handler of handlers) {
     try {
       if (handler.match(baseUrl, content, headers)) {
-        return await handler.resolve(baseUrl, content, fetchFn)
+        return await handler.resolve(baseUrl, content, headers, fetchFn)
       }
     } catch {
       // Handler error - continue to next.

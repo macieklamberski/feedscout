@@ -5,6 +5,7 @@ export type PlatformHandler = {
   resolve: (
     url: string,
     content?: string,
+    headers?: Headers,
     fetchFn?: DiscoverFetchFn,
   ) => Array<DiscoverUriEntry> | Promise<Array<DiscoverUriEntry>>
 }
