@@ -11,7 +11,7 @@ describe('discoverUrisFromPlatform', () => {
     const value = { baseUrl: 'https://example.com', handlers: [handler] }
     const expected = [{ uri: 'https://example.com/feed.xml' }]
 
-    expect(await discoverUrisFromPlatform('', undefined, value)).toEqual(expected)
+    expect(await discoverUrisFromPlatform(undefined, undefined, value)).toEqual(expected)
   })
 
   it('should return empty array when no handler matches', async () => {
@@ -21,13 +21,13 @@ describe('discoverUrisFromPlatform', () => {
     }
     const value = { baseUrl: 'https://example.com', handlers: [handler] }
 
-    expect(await discoverUrisFromPlatform('', undefined, value)).toEqual([])
+    expect(await discoverUrisFromPlatform(undefined, undefined, value)).toEqual([])
   })
 
   it('should return empty array when handlers array is empty', async () => {
     const value = { baseUrl: 'https://example.com', handlers: [] }
 
-    expect(await discoverUrisFromPlatform('', undefined, value)).toEqual([])
+    expect(await discoverUrisFromPlatform(undefined, undefined, value)).toEqual([])
   })
 
   it('should continue to next handler if first handler throws', async () => {
@@ -47,7 +47,7 @@ describe('discoverUrisFromPlatform', () => {
     }
     const expected = [{ uri: 'https://example.com/feed.xml' }]
 
-    expect(await discoverUrisFromPlatform('', undefined, value)).toEqual(expected)
+    expect(await discoverUrisFromPlatform(undefined, undefined, value)).toEqual(expected)
   })
 
   it('should continue to next handler if resolve throws', async () => {
@@ -67,7 +67,7 @@ describe('discoverUrisFromPlatform', () => {
     }
     const expected = [{ uri: 'https://example.com/feed.xml' }]
 
-    expect(await discoverUrisFromPlatform('', undefined, value)).toEqual(expected)
+    expect(await discoverUrisFromPlatform(undefined, undefined, value)).toEqual(expected)
   })
 
   it('should pass html content to handler resolve method', async () => {
@@ -105,7 +105,7 @@ describe('discoverUrisFromPlatform', () => {
     }
     const value = { baseUrl: 'https://example.com/page', handlers: [handler] }
 
-    await discoverUrisFromPlatform('', undefined, value)
+    await discoverUrisFromPlatform(undefined, undefined, value)
 
     expect(matchedUrl).toBe('https://example.com/page')
     expect(resolvedUrl).toBe('https://example.com/page')
@@ -126,7 +126,7 @@ describe('discoverUrisFromPlatform', () => {
     }
     const expected = [{ uri: 'https://example.com/first.xml' }]
 
-    expect(await discoverUrisFromPlatform('', undefined, value)).toEqual(expected)
+    expect(await discoverUrisFromPlatform(undefined, undefined, value)).toEqual(expected)
   })
 
   it('should not call resolve on non-matching handlers', async () => {
@@ -148,7 +148,7 @@ describe('discoverUrisFromPlatform', () => {
       handlers: [firstHandler, secondHandler],
     }
 
-    await discoverUrisFromPlatform('', undefined, value)
+    await discoverUrisFromPlatform(undefined, undefined, value)
 
     expect(secondResolvedCalled).toBe(false)
   })
@@ -176,7 +176,7 @@ describe('discoverUrisFromPlatform', () => {
       handlers: [firstHandler, secondHandler],
     }
 
-    await discoverUrisFromPlatform('', undefined, value)
+    await discoverUrisFromPlatform(undefined, undefined, value)
 
     expect(callOrder).toEqual(['first', 'second'])
   })
