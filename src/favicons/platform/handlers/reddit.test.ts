@@ -119,6 +119,11 @@ describe('redditHandler', () => {
       expect(redditHandler.match('https://reddit.com')).toBe(false)
     })
 
+    it('should not match non-subreddit and non-user Reddit paths', () => {
+      expect(redditHandler.match('https://reddit.com/about')).toBe(false)
+      expect(redditHandler.match('https://reddit.com/wiki')).toBe(false)
+    })
+
     it('should not match non-Reddit URLs', () => {
       expect(redditHandler.match('https://example.com/r/javascript')).toBe(false)
     })
@@ -201,29 +206,25 @@ describe('redditHandler', () => {
       expect(value).toEqual(expected)
     })
 
-    it('should normalize /u/ to /user/ in API call', async () => {
-      const mockFetch = createMockFetch({
-        'https://www.reddit.com/user/spez/about.json': JSON.stringify({
-          data: { icon_img: 'https://styles.redditmedia.com/user-icon.png' },
-        }),
-      })
-      const value = await redditHandler.resolve(
-        'https://reddit.com/u/spez',
-        undefined,
-        undefined,
-        mockFetch,
-      )
-
-      expect(value).toEqual([{ uri: 'https://styles.redditmedia.com/user-icon.png' }])
-    })
-
     it('should return empty array when fetchFn is not provided', async () => {
       const value = await redditHandler.resolve('https://reddit.com/r/javascript')
 
       expect(value).toEqual([])
     })
 
-    it('should return empty array when all icon fields are empty', async () => {
+    it('should return empty array for non-subreddit and non-user path', async () => {
+      const mockFetch = createMockFetch({})
+      const value = await redditHandler.resolve(
+        'https://reddit.com/about',
+        undefined,
+        undefined,
+        mockFetch,
+      )
+
+      expect(value).toEqual([])
+    })
+
+    it('should return empty array when subreddit icon fields are empty', async () => {
       const mockFetch = createMockFetch({
         'https://www.reddit.com/r/javascript/about.json': JSON.stringify({
           data: { community_icon: '', icon_img: '' },
@@ -239,12 +240,42 @@ describe('redditHandler', () => {
       expect(value).toEqual([])
     })
 
-    it('should return empty array when data fields are missing', async () => {
+    it('should return empty array when subreddit data fields are missing', async () => {
       const mockFetch = createMockFetch({
         'https://www.reddit.com/r/javascript/about.json': JSON.stringify({ data: {} }),
       })
       const value = await redditHandler.resolve(
         'https://reddit.com/r/javascript',
+        undefined,
+        undefined,
+        mockFetch,
+      )
+
+      expect(value).toEqual([])
+    })
+
+    it('should return empty array when user icon fields are empty', async () => {
+      const mockFetch = createMockFetch({
+        'https://www.reddit.com/user/spez/about.json': JSON.stringify({
+          data: { icon_img: '', snoovatar_img: '' },
+        }),
+      })
+      const value = await redditHandler.resolve(
+        'https://reddit.com/u/spez',
+        undefined,
+        undefined,
+        mockFetch,
+      )
+
+      expect(value).toEqual([])
+    })
+
+    it('should return empty array when user data fields are missing', async () => {
+      const mockFetch = createMockFetch({
+        'https://www.reddit.com/user/spez/about.json': JSON.stringify({ data: {} }),
+      })
+      const value = await redditHandler.resolve(
+        'https://reddit.com/u/spez',
         undefined,
         undefined,
         mockFetch,
