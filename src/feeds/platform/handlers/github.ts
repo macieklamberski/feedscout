@@ -2,8 +2,8 @@ import type { DiscoverUriEntry } from '../../../common/types.js'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, isAnyOf, isHostOf } from '../../../common/utils.js'
 
-const hosts = ['github.com', 'www.github.com']
-const excludedPaths = [
+export const hosts = ['github.com', 'www.github.com']
+export const excludedPaths = [
   'about',
   'account',
   'apps',
@@ -41,6 +41,7 @@ const excludedPaths = [
   'security',
   'sessions',
   'settings',
+  'signup',
   'site',
   'sponsors',
   'stars',
