@@ -22,6 +22,7 @@ import { itchioHandler } from './platform/handlers/itchio.js'
 import { kickstarterHandler } from './platform/handlers/kickstarter.js'
 import { letterboxdHandler } from './platform/handlers/letterboxd.js'
 import { lobstersHandler } from './platform/handlers/lobsters.js'
+import { mastodonHandler } from './platform/handlers/mastodon.js'
 import { mediumHandler } from './platform/handlers/medium.js'
 import { paragraphHandler } from './platform/handlers/paragraph.js'
 import { pinterestHandler } from './platform/handlers/pinterest.js'
@@ -160,11 +161,12 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     itchioHandler,
     kickstarterHandler,
     letterboxdHandler,
+    lobstersHandler,
+    mastodonHandler,
     mediumHandler,
     paragraphHandler,
     pinterestHandler,
     producthuntHandler,
-    lobstersHandler,
     redditHandler,
     soundcloudHandler,
     sourceforgeHandler,
