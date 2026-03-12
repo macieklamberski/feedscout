@@ -34,10 +34,8 @@ export const blueskyHandler: PlatformHandler = {
       if (typeof data.avatar === 'string' && data.avatar.length > 0) {
         return [{ uri: data.avatar }]
       }
+    } catch {}
 
-      return []
-    } catch {
-      return []
-    }
+    return []
   },
 }

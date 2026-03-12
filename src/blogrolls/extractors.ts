@@ -15,7 +15,7 @@ export const defaultExtractor: DiscoverExtractFn<BlogrollResult> = async ({ cont
       isValid: true,
       title: opml.head?.title,
     }
-  } catch {
-    return { url, isValid: false }
-  }
+  } catch {}
+
+  return { url, isValid: false }
 }
