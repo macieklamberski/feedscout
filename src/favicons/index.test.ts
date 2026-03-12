@@ -197,6 +197,27 @@ describe('discoverFavicons', () => {
     expect(value).toEqual(expected)
   })
 
+  it('should discover favicon from mastodon platform handler', async () => {
+    const avatarUrl = 'https://files.mastodon.social/accounts/avatars/000/123/original/avatar.png'
+    const mockFetch = createMockFetch({
+      'https://mastodon.social/@user':
+        '<html><head><meta name="generator" content="Mastodon v4.2.0"></head></html>',
+      'https://mastodon.social/api/v1/accounts/lookup?acct=user': JSON.stringify({
+        avatar: avatarUrl,
+      }),
+      [avatarUrl]: 'binary',
+    })
+    const value = await discoverFavicons('https://mastodon.social/@user', {
+      methods: ['platform'],
+      fetchFn: mockFetch,
+    })
+    const expected: Array<DiscoverResult<FaviconResult>> = [
+      { url: avatarUrl, isValid: true, method: 'platform' },
+    ]
+
+    expect(value).toEqual(expected)
+  })
+
   it('should return empty array for invalid URLs', async () => {
     const mockFetch = createMockFetch({})
     const value = await discoverFavicons('not-a-valid-url', {
