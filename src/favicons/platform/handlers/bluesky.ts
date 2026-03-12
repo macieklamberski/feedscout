@@ -12,12 +12,10 @@ export const isProfilePath = (pathname: string): boolean => {
 export const blueskyHandler: PlatformHandler = {
   match: (url) => {
     try {
-      const { pathname } = new URL(url)
+      return isHostOf(url, hosts) && isProfilePath(new URL(url).pathname)
+    } catch {}
 
-      return isHostOf(url, hosts) && isProfilePath(pathname)
-    } catch {
-      return false
-    }
+    return false
   },
 
   resolve: async (url, _content, _headers, fetchFn) => {
