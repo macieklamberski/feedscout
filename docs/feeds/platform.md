@@ -230,6 +230,18 @@ Discovers RSS feeds for DeviantArt user portfolios, gallery folders, favourites,
 | `deviantart.com/{username}/favourites` | User favourites feed |
 | `deviantart.com/tag/{tag}` | Tag feed |
 
+### Mastodon
+
+Discovers RSS feeds for Mastodon user profiles and hashtag pages. Detects Mastodon instances via the `<meta name="generator">` HTML tag or the `Server` response header — no hardcoded instance list.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `{instance}/@{username}` | User posts feed |
+| `{instance}/tags/{tag}` | Hashtag feed |
+
+> [!NOTE]
+> Requires page content or response headers to detect Mastodon instances. Works with any Mastodon-compatible server, not just well-known instances.
+
 ### Bluesky
 
 Discovers RSS feeds for Bluesky profiles.
@@ -470,6 +482,7 @@ import {
   kickstarterHandler,
   letterboxdHandler,
   lobstersHandler,
+  mastodonHandler,
   mediumHandler,
   paragraphHandler,
   producthuntHandler,
@@ -537,15 +550,20 @@ A `PlatformHandler` has two methods:
 
 ```typescript
 type PlatformHandler = {
-  match: (url: string) => boolean
-  resolve: (url: string, content?: string) => Array<DiscoverUriEntry>
+  match: (url: string, content?: string, headers?: Headers) => boolean
+  resolve: (
+    url: string,
+    content?: string,
+    headers?: Headers,
+    fetchFn?: DiscoverFetchFn,
+  ) => Array<DiscoverUriEntry> | Promise<Array<DiscoverUriEntry>>
 }
 ```
 
 | Method | Description |
 |--------|-------------|
-| `match(url)` | Returns `true` if this handler should process the URL |
-| `resolve(url, content?)` | Returns an array of [`DiscoverUriEntry`](/reference/types#discoverurientry) objects for the given page URL |
+| `match(url, content?, headers?)` | Returns `true` if this handler should process the URL |
+| `resolve(url, content?, headers?, fetchFn?)` | Returns an array of [`DiscoverUriEntry`](/reference/types#discoverurientry) objects for the given page URL |
 
 ### Basic Example
 
