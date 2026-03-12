@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'bun:test'
 import type { DiscoverFetchFn, DiscoverUriEntry } from '../../../common/types.js'
-import { mastodonHandler } from './mastodon.js'
+import { isMastodonHeaders, isMastodonHtml, isProfilePath, mastodonHandler } from './mastodon.js'
 
 const createMockFetch = (responses: Record<string, string>): DiscoverFetchFn => {
   return async (url: string) => ({
@@ -12,59 +12,144 @@ const createMockFetch = (responses: Record<string, string>): DiscoverFetchFn => 
   })
 }
 
-const mastodonHtml = '<html><head><meta name="generator" content="Mastodon v4.2.0"></head></html>'
-const mastodonHeaders = new Headers({ server: 'Mastodon' })
+describe('isProfilePath', () => {
+  it('should return true for /@ paths', () => {
+    expect(isProfilePath('/@user')).toBe(true)
+    expect(isProfilePath('/@admin')).toBe(true)
+  })
+
+  it('should return true for /@ path with trailing slash', () => {
+    expect(isProfilePath('/@user/')).toBe(true)
+  })
+
+  it('should return false for multi-segment /@ paths', () => {
+    expect(isProfilePath('/@user/123456789')).toBe(false)
+    expect(isProfilePath('/@user/with/extra')).toBe(false)
+  })
+
+  it('should return false for paths without @', () => {
+    expect(isProfilePath('/user')).toBe(false)
+    expect(isProfilePath('/about')).toBe(false)
+  })
+
+  it('should return false for root path', () => {
+    expect(isProfilePath('/')).toBe(false)
+  })
+
+  it('should return false for empty string', () => {
+    expect(isProfilePath('')).toBe(false)
+  })
+})
+
+describe('isMastodonHtml', () => {
+  it('should return true for standard Mastodon generator meta tag', () => {
+    expect(isMastodonHtml('<meta name="generator" content="Mastodon v4.2.0">')).toBe(true)
+  })
+
+  it('should return true for case variations', () => {
+    expect(isMastodonHtml('<meta name="generator" content="mastodon v4.0.0">')).toBe(true)
+    expect(isMastodonHtml('<meta name="generator" content="MASTODON v4.0.0">')).toBe(true)
+  })
+
+  it('should return true for generator tag with single quotes', () => {
+    expect(isMastodonHtml("<meta name='generator' content='Mastodon v4.2.0'>")).toBe(true)
+  })
+
+  it('should return true for tag within full HTML document', () => {
+    const value = '<html><head><meta name="generator" content="Mastodon v4.2.0"></head></html>'
+
+    expect(isMastodonHtml(value)).toBe(true)
+  })
+
+  it('should return false for non-Mastodon generator', () => {
+    expect(isMastodonHtml('<meta name="generator" content="WordPress 6.0">')).toBe(false)
+  })
+
+  it('should return false for HTML without generator tag', () => {
+    expect(isMastodonHtml('<html><head><title>Test</title></head></html>')).toBe(false)
+  })
+
+  it('should return false for empty string', () => {
+    expect(isMastodonHtml('')).toBe(false)
+  })
+})
+
+describe('isMastodonHeaders', () => {
+  it('should return true for Mastodon server header', () => {
+    expect(isMastodonHeaders(new Headers({ server: 'Mastodon' }))).toBe(true)
+  })
+
+  it('should return true for case variations', () => {
+    expect(isMastodonHeaders(new Headers({ server: 'mastodon' }))).toBe(true)
+    expect(isMastodonHeaders(new Headers({ server: 'MASTODON' }))).toBe(true)
+  })
+
+  it('should return true for server header with version', () => {
+    expect(isMastodonHeaders(new Headers({ server: 'Mastodon/4.2.0' }))).toBe(true)
+  })
+
+  it('should return true for server header containing Mastodon as substring', () => {
+    expect(isMastodonHeaders(new Headers({ server: 'nginx (Mastodon)' }))).toBe(true)
+  })
+
+  it('should return false for non-Mastodon server', () => {
+    expect(isMastodonHeaders(new Headers({ server: 'nginx' }))).toBe(false)
+    expect(isMastodonHeaders(new Headers({ server: 'Apache' }))).toBe(false)
+  })
+
+  it('should return false for missing server header', () => {
+    expect(isMastodonHeaders(new Headers())).toBe(false)
+    expect(isMastodonHeaders(new Headers({ 'content-type': 'text/html' }))).toBe(false)
+  })
+})
 
 describe('mastodonHandler', () => {
   describe('match', () => {
-    it('should match /@ profile path with Mastodon generator in HTML', () => {
-      expect(mastodonHandler.match('https://mastodon.social/@user', mastodonHtml)).toBe(true)
-      expect(mastodonHandler.match('https://example.com/@user', mastodonHtml)).toBe(true)
+    it('should match profile path with Mastodon HTML', () => {
+      const value = '<meta name="generator" content="Mastodon v4.2.0">'
+
+      expect(mastodonHandler.match('https://mastodon.social/@user', value)).toBe(true)
+      expect(mastodonHandler.match('https://example.com/@user', value)).toBe(true)
     })
 
-    it('should match /@ profile path with Mastodon server header', () => {
-      const result = mastodonHandler.match('https://example.com/@user', '', mastodonHeaders)
-
-      expect(result).toBe(true)
+    it('should match profile path with Mastodon server header', () => {
+      expect(
+        mastodonHandler.match('https://example.com/@user', '', new Headers({ server: 'Mastodon' })),
+      ).toBe(true)
     })
 
     it('should match when both HTML and headers indicate Mastodon', () => {
-      const result = mastodonHandler.match(
-        'https://example.com/@user',
-        mastodonHtml,
-        mastodonHeaders,
-      )
+      const value = '<meta name="generator" content="Mastodon v4.2.0">'
 
-      expect(result).toBe(true)
+      expect(
+        mastodonHandler.match(
+          'https://example.com/@user',
+          value,
+          new Headers({ server: 'Mastodon' }),
+        ),
+      ).toBe(true)
     })
 
     it('should not match without Mastodon signals', () => {
-      const result = mastodonHandler.match(
-        'https://example.com/@user',
-        '<html></html>',
-        new Headers({ server: 'nginx' }),
-      )
-
       expect(mastodonHandler.match('https://example.com/@user', '<html></html>')).toBe(false)
-      expect(result).toBe(false)
+      expect(
+        mastodonHandler.match('https://example.com/@user', '', new Headers({ server: 'nginx' })),
+      ).toBe(false)
     })
 
     it('should not match without content and headers', () => {
       expect(mastodonHandler.match('https://mastodon.social/@user')).toBe(false)
-      expect(mastodonHandler.match('https://mastodon.social/@user', '')).toBe(false)
     })
 
     it('should not match non-profile paths', () => {
-      expect(mastodonHandler.match('https://mastodon.social/about', mastodonHtml)).toBe(false)
-      expect(mastodonHandler.match('https://mastodon.social/', mastodonHtml)).toBe(false)
-    })
+      const value = '<meta name="generator" content="Mastodon v4.2.0">'
 
-    it('should not match non-@ profile paths', () => {
-      expect(mastodonHandler.match('https://mastodon.social/user', mastodonHtml)).toBe(false)
+      expect(mastodonHandler.match('https://mastodon.social/about', value)).toBe(false)
+      expect(mastodonHandler.match('https://mastodon.social/', value)).toBe(false)
     })
 
     it('should not match invalid URLs', () => {
-      expect(mastodonHandler.match('not-a-url', mastodonHtml)).toBe(false)
+      expect(mastodonHandler.match('not-a-url')).toBe(false)
     })
   })
 
@@ -88,8 +173,55 @@ describe('mastodonHandler', () => {
       expect(value).toEqual(expected)
     })
 
+    it('should resolve avatar from different instance', async () => {
+      const mockFetch = createMockFetch({
+        'https://hachyderm.io/api/v1/accounts/lookup?acct=dev': JSON.stringify({
+          avatar: 'https://media.hachyderm.io/avatars/dev.png',
+        }),
+      })
+      const value = await mastodonHandler.resolve(
+        'https://hachyderm.io/@dev',
+        undefined,
+        undefined,
+        mockFetch,
+      )
+      const expected: Array<DiscoverUriEntry> = [
+        { uri: 'https://media.hachyderm.io/avatars/dev.png' },
+      ]
+
+      expect(value).toEqual(expected)
+    })
+
     it('should return empty array when fetchFn is not provided', async () => {
       const value = await mastodonHandler.resolve('https://mastodon.social/@user')
+
+      expect(value).toEqual([])
+    })
+
+    it('should return empty array when avatar is empty string', async () => {
+      const mockFetch = createMockFetch({
+        'https://mastodon.social/api/v1/accounts/lookup?acct=user': JSON.stringify({ avatar: '' }),
+      })
+      const value = await mastodonHandler.resolve(
+        'https://mastodon.social/@user',
+        undefined,
+        undefined,
+        mockFetch,
+      )
+
+      expect(value).toEqual([])
+    })
+
+    it('should return empty array when avatar is not a string', async () => {
+      const mockFetch = createMockFetch({
+        'https://mastodon.social/api/v1/accounts/lookup?acct=user': JSON.stringify({ avatar: 123 }),
+      })
+      const value = await mastodonHandler.resolve(
+        'https://mastodon.social/@user',
+        undefined,
+        undefined,
+        mockFetch,
+      )
 
       expect(value).toEqual([])
     })
@@ -136,23 +268,11 @@ describe('mastodonHandler', () => {
       expect(value).toEqual([])
     })
 
-    it('should use correct API URL for different instances', async () => {
-      const mockFetch = createMockFetch({
-        'https://hachyderm.io/api/v1/accounts/lookup?acct=dev': JSON.stringify({
-          avatar: 'https://media.hachyderm.io/avatars/dev.png',
-        }),
-      })
-      const value = await mastodonHandler.resolve(
-        'https://hachyderm.io/@dev',
-        undefined,
-        undefined,
-        mockFetch,
-      )
-      const expected: Array<DiscoverUriEntry> = [
-        { uri: 'https://media.hachyderm.io/avatars/dev.png' },
-      ]
+    it('should return empty array for invalid URL', async () => {
+      const mockFetch = createMockFetch({})
+      const value = await mastodonHandler.resolve('not-a-url', undefined, undefined, mockFetch)
 
-      expect(value).toEqual(expected)
+      expect(value).toEqual([])
     })
   })
 })

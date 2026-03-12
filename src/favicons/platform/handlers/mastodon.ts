@@ -1,16 +1,16 @@
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 
-const isProfilePath = (pathname: string): boolean => {
+export const isProfilePath = (pathname: string): boolean => {
   const segments = pathname.split('/').filter(Boolean)
 
   return segments.length === 1 && segments[0].startsWith('@')
 }
 
-const isMastodonHtml = (html: string): boolean => {
-  return /<meta[^>]+name=["']generator["'][^>]+content=["']Mastodon/i.test(html)
+export const isMastodonHtml = (content: string): boolean => {
+  return /<meta[^>]+name=["']generator["'][^>]+content=["']Mastodon/i.test(content)
 }
 
-const isMastodonHeaders = (headers: Headers): boolean => {
+export const isMastodonHeaders = (headers: Headers): boolean => {
   return /mastodon/i.test(headers.get('server') ?? '')
 }
 
