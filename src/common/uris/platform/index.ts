@@ -1,16 +1,18 @@
-import type { DiscoverUriEntry } from '../../types.js'
+import type { DiscoverFetchFn, DiscoverUriEntry } from '../../types.js'
 import type { PlatformMethodOptions } from './types.js'
 
-export const discoverUrisFromPlatform = (
-  html: string,
+export const discoverUrisFromPlatform = async (
+  content: string | undefined,
+  headers: Headers | undefined,
   options: PlatformMethodOptions,
-): Array<DiscoverUriEntry> => {
+  fetchFn?: DiscoverFetchFn,
+): Promise<Array<DiscoverUriEntry>> => {
   const { baseUrl, handlers } = options
 
   for (const handler of handlers) {
     try {
-      if (handler.match(baseUrl)) {
-        return handler.resolve(baseUrl, html)
+      if (handler.match(baseUrl, content, headers)) {
+        return await handler.resolve(baseUrl, content, headers, fetchFn)
       }
     } catch {
       // Handler error - continue to next.

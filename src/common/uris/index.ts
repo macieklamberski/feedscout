@@ -1,14 +1,26 @@
-import type { DiscoverMethodsConfigInternal, DiscoverUrisResult } from '../types.js'
+import type {
+  DiscoverFetchFn,
+  DiscoverMethodsConfigInternal,
+  DiscoverUrisResult,
+} from '../types.js'
 import { discoverUrisFromGuess } from './guess/index.js'
 import { discoverUrisFromHeaders } from './headers/index.js'
 import { discoverUrisFromHtml } from './html/index.js'
 import { discoverUrisFromPlatform } from './platform/index.js'
 
-export const discoverUris = (config: DiscoverMethodsConfigInternal): DiscoverUrisResult => {
+export const discoverUris = async (
+  config: DiscoverMethodsConfigInternal,
+  fetchFn?: DiscoverFetchFn,
+): Promise<DiscoverUrisResult> => {
   const result: DiscoverUrisResult = {}
 
   if (config.platform) {
-    const uris = discoverUrisFromPlatform(config.platform.html, config.platform.options)
+    const uris = await discoverUrisFromPlatform(
+      config.platform.content,
+      config.platform.headers,
+      config.platform.options,
+      fetchFn,
+    )
 
     if (uris.length > 0) {
       result.platform = uris
