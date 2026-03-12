@@ -1,33 +1,6 @@
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
-import { isHostOf } from '../../../common/utils.js'
-
-const hosts = ['github.com', 'www.github.com']
-
-const excludedPaths = new Set([
-  'about',
-  'codespaces',
-  'collections',
-  'contact',
-  'copilot',
-  'enterprise',
-  'events',
-  'explore',
-  'features',
-  'issues',
-  'join',
-  'login',
-  'marketplace',
-  'notifications',
-  'pricing',
-  'pulls',
-  'search',
-  'security',
-  'settings',
-  'signup',
-  'sponsors',
-  'topics',
-  'trending',
-])
+import { isAnyOf, isHostOf } from '../../../common/utils.js'
+import { excludedPaths, hosts } from '../../../feeds/platform/handlers/github.js'
 
 export const githubHandler: PlatformHandler = {
   match: (url) => {
@@ -44,7 +17,7 @@ export const githubHandler: PlatformHandler = {
 
     const user = segments[0]
 
-    if (excludedPaths.has(user.toLowerCase())) {
+    if (isAnyOf(user, excludedPaths)) {
       return []
     }
 
