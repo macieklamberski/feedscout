@@ -16,7 +16,7 @@ export const discoverUris = async (
 
   if (config.platform) {
     const uris = await discoverUrisFromPlatform(
-      config.platform.html,
+      config.platform.content,
       config.platform.headers,
       config.platform.options,
       fetchFn,
