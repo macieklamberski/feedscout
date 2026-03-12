@@ -77,7 +77,8 @@ describe('mastodonHandler', () => {
       })
       const value = await mastodonHandler.resolve(
         'https://mastodon.social/@user',
-        mastodonHtml,
+        undefined,
+        undefined,
         mockFetch,
       )
       const expected: Array<DiscoverUriEntry> = [
@@ -88,7 +89,7 @@ describe('mastodonHandler', () => {
     })
 
     it('should return empty array when fetchFn is not provided', async () => {
-      const value = await mastodonHandler.resolve('https://mastodon.social/@user', mastodonHtml)
+      const value = await mastodonHandler.resolve('https://mastodon.social/@user')
 
       expect(value).toEqual([])
     })
@@ -99,7 +100,8 @@ describe('mastodonHandler', () => {
       })
       const value = await mastodonHandler.resolve(
         'https://mastodon.social/@user',
-        mastodonHtml,
+        undefined,
+        undefined,
         mockFetch,
       )
 
@@ -112,7 +114,8 @@ describe('mastodonHandler', () => {
       })
       const value = await mastodonHandler.resolve(
         'https://mastodon.social/@user',
-        mastodonHtml,
+        undefined,
+        undefined,
         mockFetch,
       )
 
@@ -125,7 +128,8 @@ describe('mastodonHandler', () => {
       }
       const value = await mastodonHandler.resolve(
         'https://mastodon.social/@user',
-        mastodonHtml,
+        undefined,
+        undefined,
         mockFetch,
       )
 
@@ -140,7 +144,8 @@ describe('mastodonHandler', () => {
       })
       const value = await mastodonHandler.resolve(
         'https://hachyderm.io/@dev',
-        mastodonHtml,
+        undefined,
+        undefined,
         mockFetch,
       )
       const expected: Array<DiscoverUriEntry> = [

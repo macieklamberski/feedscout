@@ -37,7 +37,7 @@ export const mastodonHandler: PlatformHandler = {
     }
   },
 
-  resolve: async (url, _content, fetchFn) => {
+  resolve: async (url, _content, _headers, fetchFn) => {
     if (!fetchFn) {
       return []
     }
