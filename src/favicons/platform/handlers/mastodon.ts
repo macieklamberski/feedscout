@@ -30,11 +30,9 @@ export const mastodonHandler: PlatformHandler = {
       if (headers && isMastodonHeaders(headers)) {
         return true
       }
+    } catch {}
 
-      return false
-    } catch {
-      return false
-    }
+    return false
   },
 
   resolve: async (url, _content, _headers, fetchFn) => {
