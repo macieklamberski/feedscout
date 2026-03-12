@@ -67,6 +67,8 @@
     "lobsters:top": "Top stories",
     "lobsters:newest": "Newest",
     "lobsters:comments": "Comments",
+    "mastodon:posts": "Posts",
+    "mastodon:tag": "Tag",
     "medium:posts": "Posts",
     "medium:tag": "Tag",
     "medium:tagged": "Tagged",
