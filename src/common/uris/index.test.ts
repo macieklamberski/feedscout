@@ -150,7 +150,6 @@ describe('discoverUris', () => {
   it('should pass through array entries from platform handler', async () => {
     const value = await discoverUris({
       platform: {
-        content: '',
         options: {
           baseUrl: 'https://example.com',
           handlers: [
@@ -178,7 +177,6 @@ describe('discoverUris', () => {
   it('should handle mixed string and array entries across methods', async () => {
     const value = await discoverUris({
       platform: {
-        content: '',
         options: {
           baseUrl: 'https://example.com',
           handlers: [

@@ -79,7 +79,7 @@ export const normalizeMethodsConfig = (
     const platformOptions = methodsObj.platform === true ? {} : methodsObj.platform
 
     methodsConfig.platform = {
-      content: input.content ?? '',
+      content: input.content,
       headers: input.headers,
       options: {
         ...defaults.platform,

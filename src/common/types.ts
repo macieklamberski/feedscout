@@ -110,7 +110,7 @@ export type DiscoverMethodsConfigDefaults = {
 // Internal methods config with full options and input data.
 export type DiscoverMethodsConfigInternal = {
   platform?: {
-    content: string
+    content?: string
     headers?: Headers
     options: PlatformMethodOptions
   }
