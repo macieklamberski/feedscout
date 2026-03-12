@@ -57,7 +57,8 @@ describe('blueskyHandler', () => {
       })
       const value = await blueskyHandler.resolve(
         'https://bsky.app/profile/user.bsky.social',
-        '',
+        undefined,
+        undefined,
         mockFetch,
       )
       const expected: Array<DiscoverUriEntry> = [{ uri: avatarUrl }]
@@ -66,7 +67,7 @@ describe('blueskyHandler', () => {
     })
 
     it('should return empty array when fetchFn is not provided', async () => {
-      const value = await blueskyHandler.resolve('https://bsky.app/profile/user.bsky.social', '')
+      const value = await blueskyHandler.resolve('https://bsky.app/profile/user.bsky.social')
 
       expect(value).toEqual([])
     })
@@ -78,7 +79,8 @@ describe('blueskyHandler', () => {
       })
       const value = await blueskyHandler.resolve(
         'https://bsky.app/profile/user.bsky.social',
-        '',
+        undefined,
+        undefined,
         mockFetch,
       )
 
@@ -92,7 +94,8 @@ describe('blueskyHandler', () => {
       })
       const value = await blueskyHandler.resolve(
         'https://bsky.app/profile/user.bsky.social',
-        '',
+        undefined,
+        undefined,
         mockFetch,
       )
 
@@ -105,7 +108,8 @@ describe('blueskyHandler', () => {
       }
       const value = await blueskyHandler.resolve(
         'https://bsky.app/profile/user.bsky.social',
-        '',
+        undefined,
+        undefined,
         mockFetch,
       )
 
@@ -120,7 +124,8 @@ describe('blueskyHandler', () => {
       })
       const value = await blueskyHandler.resolve(
         'https://bsky.app/profile/example.com',
-        '',
+        undefined,
+        undefined,
         mockFetch,
       )
       const expected: Array<DiscoverUriEntry> = [{ uri: avatarUrl }]
