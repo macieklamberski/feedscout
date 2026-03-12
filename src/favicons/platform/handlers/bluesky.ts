@@ -1,9 +1,9 @@
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { isHostOf } from '../../../common/utils.js'
 
-const hosts = ['bsky.app', 'www.bsky.app']
+export const hosts = ['bsky.app', 'www.bsky.app']
 
-const isProfilePath = (pathname: string): boolean => {
+export const isProfilePath = (pathname: string): boolean => {
   const segments = pathname.split('/').filter(Boolean)
 
   return segments.length >= 2 && segments[0] === 'profile'
