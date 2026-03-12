@@ -80,6 +80,7 @@ export const normalizeMethodsConfig = (
 
     methodsConfig.platform = {
       html: input.content ?? '',
+      headers: input.headers,
       options: {
         ...defaults.platform,
         ...platformOptions,

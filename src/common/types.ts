@@ -111,6 +111,7 @@ export type DiscoverMethodsConfigDefaults = {
 export type DiscoverMethodsConfigInternal = {
   platform?: {
     html: string
+    headers?: Headers
     options: PlatformMethodOptions
   }
   html?: {

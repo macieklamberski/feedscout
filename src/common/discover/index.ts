@@ -48,7 +48,7 @@ export const discover = async <TValid>(
   const methodsConfig = normalizeMethodsConfig(normalizedInput, methods, defaults)
 
   // Step 3: Discover URIs using selected methods.
-  const urisByMethod = discoverUris(methodsConfig)
+  const urisByMethod = await discoverUris(methodsConfig, fetchFn)
 
   // Step 4: Normalize and deduplicate URIs per method group, deduping across groups.
   const seen = new Set<string>()

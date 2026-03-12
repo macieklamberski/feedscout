@@ -2,15 +2,15 @@ import { describe, expect, it } from 'bun:test'
 import { discoverUris } from './index.js'
 
 describe('discoverUris', () => {
-  it('should return empty object when no methods configured', () => {
-    const value = discoverUris({})
+  it('should return empty object when no methods configured', async () => {
+    const value = await discoverUris({})
     const expected = {}
 
     expect(value).toEqual(expected)
   })
 
-  it('should discover URIs from HTML method', () => {
-    const value = discoverUris({
+  it('should discover URIs from HTML method', async () => {
+    const value = await discoverUris({
       html: {
         html: '<link rel="alternate" type="application/rss+xml" href="/feed.xml">',
         options: {
@@ -26,11 +26,11 @@ describe('discoverUris', () => {
     expect(value).toEqual(expected)
   })
 
-  it('should discover URIs from Headers method', () => {
+  it('should discover URIs from Headers method', async () => {
     const headers = new Headers({
       Link: '</feed.xml>; rel="alternate"; type="application/rss+xml"',
     })
-    const value = discoverUris({
+    const value = await discoverUris({
       headers: {
         headers,
         options: {
@@ -43,8 +43,8 @@ describe('discoverUris', () => {
     expect(value).toEqual(expected)
   })
 
-  it('should discover URIs from Guess method', () => {
-    const value = discoverUris({
+  it('should discover URIs from Guess method', async () => {
+    const value = await discoverUris({
       guess: {
         options: {
           baseUrl: 'https://example.com',
@@ -59,11 +59,11 @@ describe('discoverUris', () => {
     expect(value).toEqual(expected)
   })
 
-  it('should return URIs from all methods in separate properties', () => {
+  it('should return URIs from all methods in separate properties', async () => {
     const headers = new Headers({
       Link: '</rss.xml>; rel="alternate"; type="application/rss+xml"',
     })
-    const value = discoverUris({
+    const value = await discoverUris({
       html: {
         html: '<link rel="alternate" type="application/rss+xml" href="/feed.xml">',
         options: {
@@ -95,11 +95,11 @@ describe('discoverUris', () => {
     expect(value).toEqual(expected)
   })
 
-  it('should keep duplicate URIs across methods in separate properties', () => {
+  it('should keep duplicate URIs across methods in separate properties', async () => {
     const headers = new Headers({
       Link: '</feed.xml>; rel="alternate"; type="application/rss+xml", </rss.xml>; rel="alternate"; type="application/rss+xml"',
     })
-    const value = discoverUris({
+    const value = await discoverUris({
       html: {
         html: '<link rel="alternate" type="application/rss+xml" href="/feed.xml"><link rel="feed" href="/rss.xml">',
         options: {
@@ -124,8 +124,8 @@ describe('discoverUris', () => {
     expect(value).toEqual(expected)
   })
 
-  it('should skip methods that return empty results', () => {
-    const value = discoverUris({
+  it('should skip methods that return empty results', async () => {
+    const value = await discoverUris({
       html: {
         html: '<div>No feeds here</div>',
         options: {
@@ -147,8 +147,8 @@ describe('discoverUris', () => {
     expect(value).toEqual(expected)
   })
 
-  it('should pass through array entries from platform handler', () => {
-    const value = discoverUris({
+  it('should pass through array entries from platform handler', async () => {
+    const value = await discoverUris({
       platform: {
         html: '',
         options: {
@@ -175,8 +175,8 @@ describe('discoverUris', () => {
     expect(value).toEqual(expected)
   })
 
-  it('should handle mixed string and array entries across methods', () => {
-    const value = discoverUris({
+  it('should handle mixed string and array entries across methods', async () => {
+    const value = await discoverUris({
       platform: {
         html: '',
         options: {
