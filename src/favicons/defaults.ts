@@ -7,6 +7,7 @@ import { blueskyHandler } from './platform/handlers/bluesky.js'
 import { codebergHandler } from './platform/handlers/codeberg.js'
 import { githubHandler } from './platform/handlers/github.js'
 import { githubGistHandler } from './platform/handlers/githubGist.js'
+import { lobstersHandler } from './platform/handlers/lobsters.js'
 import { mastodonHandler } from './platform/handlers/mastodon.js'
 import { redditHandler } from './platform/handlers/reddit.js'
 import { tumblrHandler } from './platform/handlers/tumblr.js'
@@ -52,5 +53,6 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     redditHandler,
     tumblrHandler,
     codebergHandler,
+    lobstersHandler,
   ],
 }
