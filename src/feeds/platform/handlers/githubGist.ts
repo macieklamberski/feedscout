@@ -1,8 +1,8 @@
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, isAnyOf, isHostOf } from '../../../common/utils.js'
 
-const hosts = ['gist.github.com']
-const excludedPaths = ['discover', 'search', 'login', 'join', 'settings']
+export const hosts = ['gist.github.com']
+export const excludedPaths = ['discover', 'search', 'login', 'join', 'settings']
 
 export const githubGistHandler: PlatformHandler = {
   match: (url) => {
