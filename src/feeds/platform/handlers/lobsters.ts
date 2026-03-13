@@ -1,7 +1,7 @@
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, isHostOf } from '../../../common/utils.js'
 
-const hosts = ['lobste.rs']
+export const hosts = ['lobste.rs']
 const tagPathRegex = /^\/t\/([a-zA-Z0-9,_-]+)/
 const domainPathRegex = /^\/domains\/([^/]+)/
 const userPathRegex = /^\/~([a-zA-Z0-9_-]+)/
