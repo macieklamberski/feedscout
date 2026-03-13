@@ -4,6 +4,7 @@ import type { HeadersMethodOptions } from '../common/uris/headers/types.js'
 import type { HtmlMethodOptions } from '../common/uris/html/types.js'
 import type { PlatformMethodOptions } from '../common/uris/platform/types.js'
 import { blueskyHandler } from './platform/handlers/bluesky.js'
+import { codebergHandler } from './platform/handlers/codeberg.js'
 import { githubHandler } from './platform/handlers/github.js'
 import { githubGistHandler } from './platform/handlers/githubGist.js'
 import { mastodonHandler } from './platform/handlers/mastodon.js'
@@ -50,5 +51,6 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     blueskyHandler,
     redditHandler,
     tumblrHandler,
+    codebergHandler,
   ],
 }
