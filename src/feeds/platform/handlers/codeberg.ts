@@ -1,8 +1,8 @@
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, isAnyOf, isHostOf } from '../../../common/utils.js'
 
-const hosts = ['codeberg.org', 'www.codeberg.org', 'gitea.com', 'www.gitea.com']
-const excludedPaths = [
+export const hosts = ['codeberg.org', 'www.codeberg.org', 'gitea.com', 'www.gitea.com']
+export const excludedPaths = [
   'explore',
   'admin',
   'user',

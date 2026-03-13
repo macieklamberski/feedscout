@@ -4,6 +4,7 @@ import type { HeadersMethodOptions } from '../common/uris/headers/types.js'
 import type { HtmlMethodOptions } from '../common/uris/html/types.js'
 import type { PlatformMethodOptions } from '../common/uris/platform/types.js'
 import { blueskyHandler } from './platform/handlers/bluesky.js'
+import { codebergHandler } from './platform/handlers/codeberg.js'
 import { githubHandler } from './platform/handlers/github.js'
 import { mastodonHandler } from './platform/handlers/mastodon.js'
 import { redditHandler } from './platform/handlers/reddit.js'
@@ -41,5 +42,5 @@ export const defaultGuessOptions: Omit<GuessMethodOptions, 'baseUrl'> = {
 }
 
 export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
-  handlers: [githubHandler, mastodonHandler, blueskyHandler, redditHandler],
+  handlers: [githubHandler, mastodonHandler, blueskyHandler, redditHandler, codebergHandler],
 }
