@@ -1,9 +1,9 @@
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, isAnyOf, isHostOf } from '../../../common/utils.js'
 
-const hosts = ['deviantart.com', 'www.deviantart.com']
+export const hosts = ['deviantart.com', 'www.deviantart.com']
 const feedBaseUrl = 'https://backend.deviantart.com/rss.xml'
-const excludedPaths = [
+export const excludedPaths = [
   'about',
   'join',
   'search',
