@@ -4,7 +4,7 @@ title: "Reference: discoverFavicons"
 
 # discoverFavicons
 
-Discovers favicon URLs from a webpage. Uses the same discovery pipeline as `discoverFeeds` and `discoverBlogrolls`.
+Discovers favicon URLs from a webpage or feed. Uses the same discovery pipeline as `discoverFeeds` and `discoverBlogrolls`.
 
 ## Signature
 
@@ -78,13 +78,7 @@ Results are deduplicated by URL — the first occurrence (from the highest-prior
 ```typescript
 import { discoverFavicons } from 'feedscout'
 
-// Simple usage - all methods enabled by default
 const favicons = await discoverFavicons('https://example.com')
-
-// Or specify which methods to use
-const favicons = await discoverFavicons('https://example.com', {
-  methods: ['html', 'guess'],
-})
 ```
 
 ### With Custom Options
@@ -96,49 +90,6 @@ const favicons = await discoverFavicons('https://example.com', {
       uris: ['/favicon.ico', '/icon.svg'],
     },
   },
-  concurrency: 3,
   stopOnFirstResult: true,
 })
 ```
-
-### With Existing Content
-
-```typescript
-const response = await fetch('https://example.com')
-
-const favicons = await discoverFavicons(
-  {
-    url: 'https://example.com',
-    content: await response.text(),
-    headers: response.headers,
-  },
-  { methods: ['html', 'headers'] },
-)
-```
-
-### With Progress Tracking
-
-```typescript
-const favicons = await discoverFavicons('https://example.com', {
-  methods: ['html', 'guess'],
-  onProgress: ({ tested, total, found, current }) => {
-    console.log(`[${tested}/${total}] ${current} (${found} found)`)
-  },
-})
-```
-
-### With Custom HTTP Client
-
-```typescript
-import type { DiscoverFetchFn } from 'feedscout'
-
-const myCustomFetch: DiscoverFetchFn = async (url, options) => {
-  // Handle the request and return response here.
-}
-
-const favicons = await discoverFavicons('https://example.com', {
-  fetchFn: myCustomFetch,
-})
-```
-
-See [Customize Data Fetching](/customization/data-fetching) for examples with Axios, Got, Ky, and more.
