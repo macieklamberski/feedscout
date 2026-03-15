@@ -63,7 +63,6 @@ Returns a promise that resolves to an array of results:
   title: 'Example Blog',
   description: 'A blog about examples',
   siteUrl: 'https://example.com',
-  icon: 'https://example.com/icon.png', // Atom and JSON Feed only.
 }
 
 // Invalid result (when includeInvalid: true)
@@ -76,8 +75,6 @@ Returns a promise that resolves to an array of results:
 ```
 
 The `method` field indicates which discovery method produced the result. Results from the [Platform method](/feeds/platform) also include a [`hint`](/feeds/platform#hints) that identifies the type of feed.
-
-The `icon` field is extracted from dedicated icon fields available in Atom and JSON Feed formats. For RSS and RDF, or if the `icon` is not present in the Atom and JSON Feed, use [`discoverFavicons`](/other/favicons) as a fallback to find the site's icon.
 
 ## Examples
 
