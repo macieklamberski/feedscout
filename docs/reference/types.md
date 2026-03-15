@@ -131,6 +131,7 @@ type FeedResult = {
   title?: string
   description?: string
   siteUrl?: string
+  icon?: string
 }
 ```
 

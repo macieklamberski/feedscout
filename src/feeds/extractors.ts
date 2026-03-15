@@ -34,6 +34,7 @@ export const defaultExtractor: DiscoverExtractFn<FeedResult> = async ({ content,
         title: feed.title,
         description: feed.subtitle,
         siteUrl: getLinkOfType(feed.links, 'alternate')?.href,
+        icon: feed.icon,
       }
     }
 
@@ -45,6 +46,7 @@ export const defaultExtractor: DiscoverExtractFn<FeedResult> = async ({ content,
         title: feed.title,
         description: feed.description,
         siteUrl: feed.home_page_url,
+        icon: feed.favicon ?? feed.icon,
       }
     }
   } catch {
