@@ -63,7 +63,7 @@ Returns a promise that resolves to an array of results:
   title: 'Example Blog',
   description: 'A blog about examples',
   siteUrl: 'https://example.com',
-  icon: 'https://example.com/icon.png',
+  icon: 'https://example.com/icon.png', // Atom and JSON Feed only.
 }
 
 // Invalid result (when includeInvalid: true)
