@@ -3,6 +3,7 @@ import { defaultFetchFn } from '../common/discover/utils.js'
 import type { DiscoverInput, DiscoverOptions, DiscoverResult } from '../common/types.js'
 import { normalizeUrl } from '../common/utils.js'
 import {
+  defaultFeedOptions,
   defaultGuessOptions,
   defaultHeadersOptions,
   defaultHtmlOptions,
@@ -19,13 +20,14 @@ export const discoverFavicons = async <TValid extends FaviconResult = FaviconRes
     input,
     {
       ...options,
-      methods: options.methods ?? ['platform', 'html', 'headers', 'guess'],
+      methods: options.methods ?? ['platform', 'feed', 'html', 'headers', 'guess'],
       fetchFn: options.fetchFn ?? defaultFetchFn,
       extractFn: options.extractFn ?? defaultExtractor,
       normalizeUrlFn: options.normalizeUrlFn ?? normalizeUrl,
     },
     {
       platform: defaultPlatformOptions,
+      feed: defaultFeedOptions,
       html: defaultHtmlOptions,
       headers: defaultHeadersOptions,
       guess: defaultGuessOptions,

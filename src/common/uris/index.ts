@@ -3,6 +3,7 @@ import type {
   DiscoverMethodsConfigInternal,
   DiscoverUrisResult,
 } from '../types.js'
+import { discoverUrisFromFeed } from './feed/index.js'
 import { discoverUrisFromGuess } from './guess/index.js'
 import { discoverUrisFromHeaders } from './headers/index.js'
 import { discoverUrisFromHtml } from './html/index.js'
@@ -24,6 +25,14 @@ export const discoverUris = async (
 
     if (uris.length > 0) {
       result.platform = uris
+    }
+  }
+
+  if (config.feed) {
+    const uris = discoverUrisFromFeed(config.feed.content, config.feed.options)
+
+    if (uris.length > 0) {
+      result.feed = uris.map((uri) => ({ uri }))
     }
   }
 

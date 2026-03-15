@@ -89,6 +89,22 @@ export const normalizeMethodsConfig = (
     }
   }
 
+  if (methodsObj.feed && defaults.feed) {
+    if (input.content === undefined) {
+      throw new Error(locales.errors.feedMethodRequiresContent)
+    }
+
+    const feedOptions = methodsObj.feed === true ? {} : methodsObj.feed
+
+    methodsConfig.feed = {
+      content: input.content,
+      options: {
+        ...defaults.feed,
+        ...feedOptions,
+      },
+    }
+  }
+
   if (methodsObj.html && defaults.html) {
     if (input.content === undefined) {
       throw new Error(locales.errors.htmlMethodRequiresContent)
