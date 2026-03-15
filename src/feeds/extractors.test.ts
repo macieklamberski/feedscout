@@ -307,6 +307,210 @@ describe('defaultExtractor', () => {
     expect(result).toEqual(expected)
   })
 
+  it('should extract icon from Atom feed', async () => {
+    const atom = `
+      <feed xmlns="http://www.w3.org/2005/Atom">
+        <title>Test</title>
+        <link rel="alternate" href="https://example.com"/>
+        <subtitle>Test feed</subtitle>
+        <icon>https://example.com/icon.png</icon>
+      </feed>
+    `
+    const result = await defaultExtractor({
+      content: atom,
+      headers: new Headers(),
+      url: 'https://example.com/feed.xml',
+    })
+    const expected: DiscoverResult<FeedResult> = {
+      url: 'https://example.com/feed.xml',
+      isValid: true,
+      format: 'atom',
+      title: 'Test',
+      description: 'Test feed',
+      siteUrl: 'https://example.com',
+      icon: 'https://example.com/icon.png',
+    }
+
+    expect(result).toEqual(expected)
+  })
+
+  it('should extract icon from JSON Feed favicon field', async () => {
+    const json = JSON.stringify({
+      version: 'https://jsonfeed.org/version/1.1',
+      title: 'Test',
+      home_page_url: 'https://example.com',
+      description: 'Test feed',
+      favicon: 'https://example.com/favicon.ico',
+      items: [],
+    })
+    const result = await defaultExtractor({
+      content: json,
+      headers: new Headers(),
+      url: 'https://example.com/feed.json',
+    })
+    const expected: DiscoverResult<FeedResult> = {
+      url: 'https://example.com/feed.json',
+      isValid: true,
+      format: 'json',
+      title: 'Test',
+      description: 'Test feed',
+      siteUrl: 'https://example.com',
+      icon: 'https://example.com/favicon.ico',
+    }
+
+    expect(result).toEqual(expected)
+  })
+
+  it('should fall back to icon field when JSON Feed has no favicon', async () => {
+    const json = JSON.stringify({
+      version: 'https://jsonfeed.org/version/1.1',
+      title: 'Test',
+      home_page_url: 'https://example.com',
+      description: 'Test feed',
+      icon: 'https://example.com/icon.png',
+      items: [],
+    })
+    const result = await defaultExtractor({
+      content: json,
+      headers: new Headers(),
+      url: 'https://example.com/feed.json',
+    })
+    const expected: DiscoverResult<FeedResult> = {
+      url: 'https://example.com/feed.json',
+      isValid: true,
+      format: 'json',
+      title: 'Test',
+      description: 'Test feed',
+      siteUrl: 'https://example.com',
+      icon: 'https://example.com/icon.png',
+    }
+
+    expect(result).toEqual(expected)
+  })
+
+  it('should prefer favicon over icon in JSON Feed', async () => {
+    const json = JSON.stringify({
+      version: 'https://jsonfeed.org/version/1.1',
+      title: 'Test',
+      home_page_url: 'https://example.com',
+      description: 'Test feed',
+      favicon: 'https://example.com/favicon.ico',
+      icon: 'https://example.com/icon.png',
+      items: [],
+    })
+    const result = await defaultExtractor({
+      content: json,
+      headers: new Headers(),
+      url: 'https://example.com/feed.json',
+    })
+    const expected: DiscoverResult<FeedResult> = {
+      url: 'https://example.com/feed.json',
+      isValid: true,
+      format: 'json',
+      title: 'Test',
+      description: 'Test feed',
+      siteUrl: 'https://example.com',
+      icon: 'https://example.com/favicon.ico',
+    }
+
+    expect(result).toEqual(expected)
+  })
+
+  it('should not extract icon from RSS image', async () => {
+    const rss = `
+      <rss version="2.0">
+        <channel>
+          <title>Test</title>
+          <link>https://example.com</link>
+          <description>Test feed</description>
+          <image>
+            <url>https://example.com/image.png</url>
+            <title>Test</title>
+            <link>https://example.com</link>
+          </image>
+        </channel>
+      </rss>
+    `
+    const result = await defaultExtractor({
+      content: rss,
+      headers: new Headers(),
+      url: 'https://example.com/feed.xml',
+    })
+    const expected: DiscoverResult<FeedResult> = {
+      url: 'https://example.com/feed.xml',
+      isValid: true,
+      format: 'rss',
+      title: 'Test',
+      description: 'Test feed',
+      siteUrl: 'https://example.com',
+      icon: undefined,
+    }
+
+    expect(result).toEqual(expected)
+  })
+
+  it('should not extract icon from RDF image', async () => {
+    const rdf = `
+      <rdf:RDF
+        xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+        xmlns="http://purl.org/rss/1.0/">
+        <channel>
+          <title>Test</title>
+          <link>https://example.com</link>
+          <description>Test feed</description>
+        </channel>
+        <image rdf:about="https://example.com/image.png">
+          <title>Test</title>
+          <link>https://example.com</link>
+          <url>https://example.com/image.png</url>
+        </image>
+      </rdf:RDF>
+    `
+    const result = await defaultExtractor({
+      content: rdf,
+      headers: new Headers(),
+      url: 'https://example.com/feed.xml',
+    })
+    const expected: DiscoverResult<FeedResult> = {
+      url: 'https://example.com/feed.xml',
+      isValid: true,
+      format: 'rdf',
+      title: 'Test',
+      description: 'Test feed',
+      siteUrl: 'https://example.com',
+      icon: undefined,
+    }
+
+    expect(result).toEqual(expected)
+  })
+
+  it('should not extract icon from Atom logo', async () => {
+    const atom = `
+      <feed xmlns="http://www.w3.org/2005/Atom">
+        <title>Test</title>
+        <link rel="alternate" href="https://example.com"/>
+        <subtitle>Test feed</subtitle>
+        <logo>https://example.com/logo.png</logo>
+      </feed>
+    `
+    const result = await defaultExtractor({
+      content: atom,
+      headers: new Headers(),
+      url: 'https://example.com/feed.xml',
+    })
+    const expected: DiscoverResult<FeedResult> = {
+      url: 'https://example.com/feed.xml',
+      isValid: true,
+      format: 'atom',
+      title: 'Test',
+      description: 'Test feed',
+      siteUrl: 'https://example.com',
+      icon: undefined,
+    }
+
+    expect(result).toEqual(expected)
+  })
+
   it('should not use headers for detection', async () => {
     const headers = new Headers()
     headers.set('content-type', 'application/rss+xml')

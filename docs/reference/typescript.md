@@ -42,6 +42,7 @@ for (const feed of feeds) {
     console.log(feed.title)       // string | undefined
     console.log(feed.description) // string | undefined
     console.log(feed.siteUrl)     // string | undefined
+    console.log(feed.icon)        // string | undefined
     console.log(feed.method)      // DiscoverMethod | undefined
     console.log(feed.hint)        // DiscoverUriHint | undefined
   } else {
@@ -63,6 +64,7 @@ type FeedResult = {
   title?: string
   description?: string
   siteUrl?: string
+  icon?: string
 }
 ```
 
