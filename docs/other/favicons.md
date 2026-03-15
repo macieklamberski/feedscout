@@ -28,6 +28,8 @@ Each result contains the favicon URL and validation status:
 
 | Method | Source | Description |
 |--------|--------|-------------|
+| `platform` | Platform-specific handlers | Extracts avatars/icons from known platforms (GitHub, Mastodon, Bluesky, etc.) |
+| `feed` | Feed content | Extracts icon from Atom `<icon>` and JSON Feed `favicon`/`icon` fields |
 | `html` | HTML `<link>` tags | Parses icon-related link elements |
 | `headers` | HTTP `Link` headers | Parses `rel="icon"` links from response headers |
 | `guess` | Known paths | Tries common favicon paths like `/favicon.ico`, `/apple-touch-icon.png` |
@@ -41,7 +43,7 @@ Each result contains the favicon URL and validation status:
 
 ## Specifying Methods
 
-By default, all discovery methods are used (html, headers, guess). You can customize which methods to use with `methods` option.
+By default, all discovery methods are used (platform, feed, html, headers, guess). You can customize which methods to use with `methods` option.
 
 ### Array Syntax
 
@@ -49,7 +51,7 @@ Use an array to enable methods with their default options:
 
 ```typescript
 const favicons = await discoverFavicons(url, {
-  methods: ['html', 'headers', 'guess'],
+  methods: ['platform', 'feed', 'html', 'headers', 'guess'],
 })
 ```
 
@@ -62,6 +64,7 @@ const favicons = await discoverFavicons(url, {
   methods: {
     html: true, // Use defaults
     headers: true, // Use defaults
+    feed: true, // Use defaults
     guess: {
       uris: ['/favicon.ico', '/icon.svg'],
     },

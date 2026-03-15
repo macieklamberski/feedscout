@@ -58,7 +58,7 @@ Returns a promise that resolves to an array of results:
 {
   url: 'https://example.com/feed.xml',
   isValid: true,
-  method: 'guess',       // 'platform' | 'html' | 'headers' | 'guess'
+  method: 'guess',       // 'platform' | 'feed' | 'html' | 'headers' | 'guess'
   format: 'rss',         // 'rss' | 'atom' | 'json' | 'rdf'
   title: 'Example Blog',
   description: 'A blog about examples',
