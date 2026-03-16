@@ -1068,4 +1068,16 @@ describe('processConcurrently', () => {
 
     expect(shouldStopCallCount).toBeGreaterThan(0)
   })
+
+  it('should not process items when concurrency is 0', async () => {
+    const items = [1, 2, 3]
+    const processed: Array<number> = []
+    const processFn = async (item: number) => {
+      processed.push(item)
+    }
+
+    await processConcurrently(items, processFn, { concurrency: 0 })
+
+    expect(processed).toEqual([])
+  })
 })
