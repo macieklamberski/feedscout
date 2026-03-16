@@ -6,8 +6,8 @@ export const discoverUrisFromFeed = (
   options: FeedMethodOptions,
 ): Array<string> => {
   try {
-    const { format, feed } = parseFeed(content)
-    const urls = options.extractUrls({ format, feed })
+    const result = parseFeed(content)
+    const urls = options.extractUrls(result)
 
     return urls.filter((url) => url != null && url !== '')
   } catch {}
