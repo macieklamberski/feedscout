@@ -8,7 +8,7 @@ import type { BlogrollResult } from './types.js'
 
 export const discoverBlogrolls = async <TValid extends BlogrollResult = BlogrollResult>(
   input: DiscoverInput,
-  options: DiscoverOptions<TValid> = {},
+  options: DiscoverOptions<TValid, 'html' | 'headers' | 'guess'> = {},
 ): Promise<Array<DiscoverResult<TValid>>> => {
   return discover<TValid>(
     input,
@@ -20,7 +20,6 @@ export const discoverBlogrolls = async <TValid extends BlogrollResult = Blogroll
       normalizeUrlFn: options.normalizeUrlFn ?? normalizeUrl,
     },
     {
-      platform: { handlers: [] }, // Blogrolls do not use platform-specific discovery.
       html: defaultHtmlOptions,
       headers: defaultHeadersOptions,
       guess: defaultGuessOptions,

@@ -46,8 +46,8 @@ type DiscoverInputObject = {
 Options for `discoverFeeds` and `discoverBlogrolls`. All fields are optional for simple usage:
 
 ```typescript
-type DiscoverOptions<TValid> = {
-  methods?: DiscoverMethodsConfig
+type DiscoverOptions<TValid, TMethods extends DiscoverMethod = DiscoverMethod> = {
+  methods?: DiscoverMethodsConfig<TMethods>
   fetchFn?: DiscoverFetchFn
   extractFn?: DiscoverExtractFn<TValid>
   normalizeUrlFn?: DiscoverNormalizeUrlFn
@@ -72,13 +72,17 @@ type DiscoverMethod = 'platform' | 'html' | 'headers' | 'guess'
 Configuration for discovery methods:
 
 ```typescript
-type DiscoverMethodsConfig =
-  | Array<'html' | 'headers' | 'guess'>
-  | {
-      html?: true | Partial<Omit<HtmlMethodOptions, 'baseUrl'>>
-      headers?: true | Partial<Omit<HeadersMethodOptions, 'baseUrl'>>
-      guess?: true | Partial<Omit<GuessMethodOptions, 'baseUrl'>>
-    }
+type DiscoverMethodsConfig<TMethods extends DiscoverMethod = DiscoverMethod> =
+  | Array<TMethods>
+  | Pick<
+      {
+        platform?: true | Partial<PlatformMethodOptions>
+        html?: true | Partial<Omit<HtmlMethodOptions, 'baseUrl'>>
+        headers?: true | Partial<Omit<HeadersMethodOptions, 'baseUrl'>>
+        guess?: true | Partial<Omit<GuessMethodOptions, 'baseUrl'>>
+      },
+      TMethods
+    >
 ```
 
 The `baseUrl` is omitted because it's automatically derived from the input URL.

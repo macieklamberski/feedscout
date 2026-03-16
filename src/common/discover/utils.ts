@@ -71,7 +71,7 @@ export const normalizeMethodsConfig = (
   // Step 2: Build internal methods config.
   const methodsConfig: DiscoverMethodsConfigInternal = {}
 
-  if (methodsObj.platform) {
+  if (methodsObj.platform && defaults.platform) {
     if (!input.url || input.url === '') {
       throw new Error(locales.errors.platformMethodRequiresUrl)
     }
@@ -89,7 +89,7 @@ export const normalizeMethodsConfig = (
     }
   }
 
-  if (methodsObj.html) {
+  if (methodsObj.html && defaults.html) {
     if (input.content === undefined) {
       throw new Error(locales.errors.htmlMethodRequiresContent)
     }
@@ -106,7 +106,7 @@ export const normalizeMethodsConfig = (
     }
   }
 
-  if (methodsObj.headers) {
+  if (methodsObj.headers && defaults.headers) {
     if (input.headers === undefined) {
       throw new Error(locales.errors.headersMethodRequiresHeaders)
     }
@@ -123,7 +123,7 @@ export const normalizeMethodsConfig = (
     }
   }
 
-  if (methodsObj.guess) {
+  if (methodsObj.guess && defaults.guess) {
     if (!input.url || input.url === '') {
       throw new Error(locales.errors.guessMethodRequiresUrl)
     }

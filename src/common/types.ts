@@ -90,21 +90,24 @@ export type DiscoverInputObject = {
 export type DiscoverInput = string | DiscoverInputObject
 
 // User-facing config - partial options (users override only what they need).
-export type DiscoverMethodsConfig =
-  | Array<DiscoverMethod>
-  | {
-      platform?: true | Partial<PlatformMethodOptions>
-      html?: true | Partial<Omit<HtmlMethodOptions, 'baseUrl'>>
-      headers?: true | Partial<Omit<HeadersMethodOptions, 'baseUrl'>>
-      guess?: true | Partial<Omit<GuessMethodOptions, 'baseUrl'>>
-    }
+export type DiscoverMethodsConfig<TMethods extends DiscoverMethod = DiscoverMethod> =
+  | Array<TMethods>
+  | Pick<
+      {
+        platform?: true | Partial<PlatformMethodOptions>
+        html?: true | Partial<Omit<HtmlMethodOptions, 'baseUrl'>>
+        headers?: true | Partial<Omit<HeadersMethodOptions, 'baseUrl'>>
+        guess?: true | Partial<Omit<GuessMethodOptions, 'baseUrl'>>
+      },
+      TMethods
+    >
 
 // Defaults for method options (without baseUrl which comes from input).
 export type DiscoverMethodsConfigDefaults = {
-  platform: Omit<PlatformMethodOptions, 'baseUrl'>
-  html: Omit<HtmlMethodOptions, 'baseUrl'>
-  headers: Omit<HeadersMethodOptions, 'baseUrl'>
-  guess: Omit<GuessMethodOptions, 'baseUrl'>
+  platform?: Omit<PlatformMethodOptions, 'baseUrl'>
+  html?: Omit<HtmlMethodOptions, 'baseUrl'>
+  headers?: Omit<HeadersMethodOptions, 'baseUrl'>
+  guess?: Omit<GuessMethodOptions, 'baseUrl'>
 }
 
 // Internal methods config with full options and input data.
@@ -128,8 +131,8 @@ export type DiscoverMethodsConfigInternal = {
 }
 
 // User-facing options - all fields optional for simple usage.
-export type DiscoverOptions<TValid> = {
-  methods?: DiscoverMethodsConfig
+export type DiscoverOptions<TValid, TMethods extends DiscoverMethod = DiscoverMethod> = {
+  methods?: DiscoverMethodsConfig<TMethods>
   fetchFn?: DiscoverFetchFn
   extractFn?: DiscoverExtractFn<TValid>
   normalizeUrlFn?: DiscoverNormalizeUrlFn
