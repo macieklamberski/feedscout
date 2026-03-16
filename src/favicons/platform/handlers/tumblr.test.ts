@@ -53,14 +53,10 @@ describe('tumblrHandler', () => {
       expect(value).toEqual(expected)
     })
 
-    // Questionable: extracts 'www' as blog name.
-    it('should resolve www.tumblr.com using www as blog name', () => {
-      const value = tumblrHandler.resolve('https://www.tumblr.com')
-      const expected: Array<DiscoverUriEntry> = [
-        { uri: 'https://api.tumblr.com/v2/blog/www/avatar/512' },
-      ]
+    it('should return empty array for www subdomain', () => {
+      const value = tumblrHandler.resolve('https://www.tumblr.com/')
 
-      expect(value).toEqual(expected)
+      expect(value).toEqual([])
     })
   })
 })
