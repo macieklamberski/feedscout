@@ -4,7 +4,7 @@ title: "Reference: discoverFavicons"
 
 # discoverFavicons
 
-Discovers favicon URLs from a webpage or feed. Uses the same discovery pipeline as `discoverFeeds` and `discoverBlogrolls`.
+Discovers favicon URLs from a webpage or feed.
 
 ## Signature
 
@@ -28,8 +28,8 @@ discoverFavicons('https://example.com', options)
 // Object - provide existing content/headers
 discoverFavicons({
   url: 'https://example.com',
-  content: htmlContent,     // Optional HTML content
-  headers: responseHeaders, // Optional HTTP headers
+  content: htmlContent,
+  headers: responseHeaders,
 }, options)
 ```
 
@@ -66,10 +66,9 @@ Returns a promise that resolves to an array of results:
   url: 'https://example.com/missing.png',
   isValid: false,
   method: 'guess',
+  error: Error,
 }
 ```
-
-Results are deduplicated by URL — the first occurrence (from the highest-priority method) is kept.
 
 ## Examples
 
@@ -78,7 +77,13 @@ Results are deduplicated by URL — the first occurrence (from the highest-prior
 ```typescript
 import { discoverFavicons } from 'feedscout'
 
+// Simple usage - all methods enabled by default
 const favicons = await discoverFavicons('https://example.com')
+
+// Or specify which methods to use
+const favicons = await discoverFavicons('https://example.com', {
+  methods: ['html', 'headers', 'guess'],
+})
 ```
 
 ### With Custom Options
