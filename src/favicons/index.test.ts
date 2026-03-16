@@ -283,10 +283,17 @@ describe('discoverFavicons', () => {
     expect(value).toEqual(expected)
   })
 
-  it('should return empty array from feed method for non-feed content', async () => {
+  it('should return empty array from feed method for RSS content', async () => {
+    const rssContent = `<?xml version="1.0"?>
+      <rss version="2.0">
+        <channel>
+          <title>Example</title>
+          <link>https://example.com</link>
+        </channel>
+      </rss>`
     const mockFetch = createMockFetch({})
     const value = await discoverFavicons(
-      { url: 'https://example.com', content: '<html></html>' },
+      { url: 'https://example.com/feed.xml', content: rssContent },
       { methods: ['feed'], fetchFn: mockFetch },
     )
 
