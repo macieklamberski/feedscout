@@ -13,7 +13,7 @@ import type { FeedResult } from './types.js'
 
 export const discoverFeeds = async <TValid extends FeedResult = FeedResult>(
   input: DiscoverInput,
-  options: DiscoverOptions<TValid> = {},
+  options: DiscoverOptions<TValid, 'platform' | 'html' | 'headers' | 'guess'> = {},
 ): Promise<Array<DiscoverResult<TValid>>> => {
   return discover<TValid>(
     input,
