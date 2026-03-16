@@ -284,5 +284,11 @@ describe('discoverHubs', () => {
 
       expect(value).toEqual(expected)
     })
+
+    it('should return empty array for input with only url and no content or headers', async () => {
+      const value = await discoverHubs({ url: 'https://example.com/' })
+
+      expect(value).toEqual([])
+    })
   })
 })
