@@ -1,7 +1,7 @@
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, isHostOf } from '../../../common/utils.js'
 
-const hosts = ['bsky.app']
+const hosts = ['bsky.app', 'www.bsky.app']
 
 export const blueskyHandler: PlatformHandler = {
   match: (url) => {
