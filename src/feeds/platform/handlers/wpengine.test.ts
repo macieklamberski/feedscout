@@ -17,8 +17,8 @@ describe('wpengineHandler', () => {
       expect(wpengineHandler.match(url)).toBe(expected)
     })
 
-    it('should throw for invalid URL', () => {
-      expect(() => wpengineHandler.match('not-a-url')).toThrow()
+    it('should return false for invalid URL', () => {
+      expect(wpengineHandler.match('not-a-url')).toBe(false)
     })
   })
 

@@ -16,8 +16,8 @@ describe('letterboxdHandler', () => {
       expect(letterboxdHandler.match(url)).toBe(expected)
     })
 
-    it('should throw for invalid URL', () => {
-      expect(() => letterboxdHandler.match('not-a-url')).toThrow()
+    it('should return false for invalid URL', () => {
+      expect(letterboxdHandler.match('not-a-url')).toBe(false)
     })
   })
 

@@ -20,8 +20,8 @@ describe('blogspotHandler', () => {
       expect(blogspotHandler.match(url)).toBe(expected)
     })
 
-    it('should throw for invalid URL', () => {
-      expect(() => blogspotHandler.match('not-a-url')).toThrow()
+    it('should return false for invalid URL', () => {
+      expect(blogspotHandler.match('not-a-url')).toBe(false)
     })
   })
 
