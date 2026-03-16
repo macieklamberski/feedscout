@@ -86,5 +86,29 @@ describe('devtoHandler', () => {
 
       expect(devtoHandler.resolve(value)).toEqual([])
     })
+
+    it('should resolve www.dev.to URL', () => {
+      const value = 'https://www.dev.to/username'
+      const expected = [
+        {
+          uri: 'https://dev.to/feed/username',
+          hint: { key: 'devto:posts', label: 'Posts' },
+        },
+      ]
+
+      expect(devtoHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should resolve username matching excluded path prefix', () => {
+      const value = 'https://dev.to/about_me'
+      const expected = [
+        {
+          uri: 'https://dev.to/feed/about_me',
+          hint: { key: 'devto:posts', label: 'Posts' },
+        },
+      ]
+
+      expect(devtoHandler.resolve(value)).toEqual(expected)
+    })
   })
 })

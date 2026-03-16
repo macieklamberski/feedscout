@@ -141,5 +141,17 @@ describe('mediumHandler', () => {
 
       expect(mediumHandler.resolve(value)).toEqual(expected)
     })
+
+    it('should return RSS feed URL for numeric-only publication name', () => {
+      const value = 'https://medium.com/12345'
+      const expected = [
+        {
+          uri: 'https://medium.com/feed/12345',
+          hint: { key: 'medium:publication', label: 'Publication' },
+        },
+      ]
+
+      expect(mediumHandler.resolve(value)).toEqual(expected)
+    })
   })
 })

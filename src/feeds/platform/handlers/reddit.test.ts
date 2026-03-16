@@ -210,6 +210,28 @@ describe('redditHandler', () => {
       expect(redditHandler.resolve(value)).toEqual([])
     })
 
+    it('should return empty array for /r/ without subreddit', () => {
+      const value = 'https://reddit.com/r/'
+
+      expect(redditHandler.resolve(value)).toEqual([])
+    })
+
+    it('should ignore query params in subreddit URL', () => {
+      const value = 'https://reddit.com/r/programming?sort=new'
+      const expected = [
+        {
+          uri: 'https://www.reddit.com/r/programming/.rss',
+          hint: { key: 'reddit:posts', label: 'Posts' },
+        },
+        {
+          uri: 'https://www.reddit.com/r/programming/comments/.rss',
+          hint: { key: 'reddit:comments', label: 'Comments' },
+        },
+      ]
+
+      expect(redditHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return RSS feed URL for homepage', () => {
       const value = 'https://reddit.com/'
       const expected = [

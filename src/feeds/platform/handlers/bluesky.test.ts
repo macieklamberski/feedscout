@@ -59,5 +59,23 @@ describe('blueskyHandler', () => {
 
       expect(blueskyHandler.resolve(value)).toEqual([])
     })
+
+    it('should return empty array for /profile/ without handle', () => {
+      const value = 'https://bsky.app/profile/'
+
+      expect(blueskyHandler.resolve(value)).toEqual([])
+    })
+
+    it('should resolve /profile/user/post/123 using first segment as handle', () => {
+      const value = 'https://bsky.app/profile/user.bsky.social/post/123'
+      const expected = [
+        {
+          uri: 'https://bsky.app/profile/user.bsky.social/rss',
+          hint: { key: 'bluesky:posts', label: 'Posts' },
+        },
+      ]
+
+      expect(blueskyHandler.resolve(value)).toEqual(expected)
+    })
   })
 })

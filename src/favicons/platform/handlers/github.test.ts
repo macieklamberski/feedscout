@@ -60,5 +60,19 @@ describe('githubHandler', () => {
       expect(githubHandler.resolve('https://github.com/Features')).toEqual([])
       expect(githubHandler.resolve('https://github.com/EXPLORE')).toEqual([])
     })
+
+    it('should resolve www.github.com URL', () => {
+      const value = githubHandler.resolve('https://www.github.com/octocat')
+      const expected: Array<DiscoverUriEntry> = [{ uri: 'https://github.com/octocat.png' }]
+
+      expect(value).toEqual(expected)
+    })
+
+    it('should resolve username with dashes', () => {
+      const value = githubHandler.resolve('https://github.com/my-org')
+      const expected: Array<DiscoverUriEntry> = [{ uri: 'https://github.com/my-org.png' }]
+
+      expect(value).toEqual(expected)
+    })
   })
 })
