@@ -331,15 +331,15 @@ describe('includesAnyOf', () => {
     expect(includesAnyOf(value, patterns)).toBe(false)
   })
 
-  it('should return true when pattern contains empty string', () => {
-    expect(includesAnyOf('anything', [''])).toBe(true)
-  })
-
   it('should handle pattern with numbers', () => {
     const value = 'RSS 2.0 feed'
     const patterns = ['2.0']
 
     expect(includesAnyOf(value, patterns)).toBe(true)
+  })
+
+  it('should return false when pattern is empty string', () => {
+    expect(includesAnyOf('anything', [''])).toBe(false)
   })
 })
 
@@ -803,8 +803,8 @@ describe('endsWithAnyOf', () => {
     expect(endsWithAnyOf(value, patterns)).toBe(true)
   })
 
-  it('should return true when pattern contains empty string', () => {
-    expect(endsWithAnyOf('anything', [''])).toBe(true)
+  it('should return false when pattern is empty string', () => {
+    expect(endsWithAnyOf('anything', [''])).toBe(false)
   })
 })
 

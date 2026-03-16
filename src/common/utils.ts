@@ -30,7 +30,7 @@ export const includesAnyOf = (
 ): boolean => {
   const parsedValue = parser ? parser(value) : value?.toLowerCase()
   const normalizedPatterns = patterns.map((pattern) => pattern.toLowerCase())
-  return normalizedPatterns.some((pattern) => parsedValue?.includes(pattern))
+  return normalizedPatterns.some((pattern) => pattern && parsedValue?.includes(pattern))
 }
 
 export const isAnyOf = (
@@ -49,7 +49,7 @@ export const anyWordMatchesAnyOf = (value: string, patterns: Array<string>): boo
 
 export const endsWithAnyOf = (value: string, patterns: Array<string>): boolean => {
   const lowerValue = value.toLowerCase()
-  return patterns.some((pattern) => lowerValue.endsWith(pattern.toLowerCase()))
+  return patterns.some((pattern) => pattern && lowerValue.endsWith(pattern.toLowerCase()))
 }
 
 export const isOfAllowedMimeType = (
