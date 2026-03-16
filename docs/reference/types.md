@@ -43,7 +43,7 @@ type DiscoverInputObject = {
 
 ### DiscoverOptions
 
-Options for `discoverFeeds` and `discoverBlogrolls`. All fields are optional for simple usage:
+Options for discovery functions. All fields are optional for simple usage. The `TMethods` parameter restricts which methods are available — each discoverer narrows it to its supported methods:
 
 ```typescript
 type DiscoverOptions<TValid, TMethods extends DiscoverMethod = DiscoverMethod> = {
@@ -64,7 +64,7 @@ type DiscoverOptions<TValid, TMethods extends DiscoverMethod = DiscoverMethod> =
 Union type of available discovery method names:
 
 ```typescript
-type DiscoverMethod = 'platform' | 'html' | 'headers' | 'guess'
+type DiscoverMethod = 'platform' | 'feed' | 'html' | 'headers' | 'guess'
 ```
 
 ### DiscoverMethodsConfig
@@ -77,6 +77,7 @@ type DiscoverMethodsConfig<TMethods extends DiscoverMethod = DiscoverMethod> =
   | Pick<
       {
         platform?: true | Partial<PlatformMethodOptions>
+        feed?: true | Partial<FeedMethodOptions>
         html?: true | Partial<Omit<HtmlMethodOptions, 'baseUrl'>>
         headers?: true | Partial<Omit<HeadersMethodOptions, 'baseUrl'>>
         guess?: true | Partial<Omit<GuessMethodOptions, 'baseUrl'>>
@@ -123,7 +124,7 @@ type DiscoverResult<TValid> =
     }
 ```
 
-The `method` field indicates which discovery method produced the result (`'platform'`, `'html'`, `'headers'`, or `'guess'`). See [Platform method hints](/feeds/platform#hints) for details on the `hint` property.
+The `method` field indicates which discovery method produced the result (`'platform'`, `'feed'`, `'html'`, `'headers'`, or `'guess'`). See [Platform method hints](/feeds/platform#hints) for details on the `hint` property.
 
 ### FeedResult
 
@@ -257,6 +258,20 @@ type DiscoverExtractFnInput = {
 ```
 
 ## Method Option Types
+
+### FeedMethodOptions
+
+Options for Feed discovery method:
+
+```typescript
+type FeedMethodData = ReturnType<typeof parseFeed>
+
+type FeedMethodOptions = {
+  extractUrls: (params: FeedMethodData) => Array<string>
+}
+```
+
+`FeedMethodData` is the return type of feedsmith's `parseFeed` — it contains `format` (e.g. `'atom'`, `'json'`) and `feed` (the parsed feed object). The `extractUrls` callback should return an array of URLs. For favicons, the default extractor pulls `icon` from Atom feeds and `favicon`/`icon` from JSON Feeds.
 
 ### HtmlMethodOptions
 

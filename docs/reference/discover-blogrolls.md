@@ -11,7 +11,7 @@ Discovers and validates OPML blogrolls from a webpage.
 ```typescript
 function discoverBlogrolls(
   input: DiscoverInput,
-  options?: DiscoverOptions<BlogrollResult>,
+  options?: DiscoverOptions<BlogrollResult, 'html' | 'headers' | 'guess'>,
 ): Promise<Array<DiscoverResult<BlogrollResult>>>
 ```
 

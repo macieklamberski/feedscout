@@ -67,6 +67,10 @@ export const isOfAllowedMimeType = (
   return isAnyOf(type, allowedTypes, normalizeMimeType)
 }
 
+export const omitEmpty = <T>(array: Array<T | null | undefined>): Array<T> => {
+  return array.filter((item): item is T => item != null && item !== '')
+}
+
 export const normalizeUrl = (url: string, baseUrl: string | undefined): string => {
   return baseUrl ? new URL(url, baseUrl).href : url
 }

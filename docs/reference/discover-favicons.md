@@ -4,7 +4,7 @@ title: "Reference: discoverFavicons"
 
 # discoverFavicons
 
-Discovers favicon URLs from a webpage. Uses the same discovery pipeline as `discoverFeeds` and `discoverBlogrolls`.
+Discovers favicon URLs from a webpage or feed.
 
 ## Signature
 
@@ -28,8 +28,8 @@ discoverFavicons('https://example.com', options)
 // Object - provide existing content/headers
 discoverFavicons({
   url: 'https://example.com',
-  content: htmlContent,     // Optional HTML content
-  headers: responseHeaders, // Optional HTTP headers
+  content: htmlContent,
+  headers: responseHeaders,
 }, options)
 ```
 
@@ -39,7 +39,7 @@ All options are optional. When not provided, sensible defaults are used.
 
 | Property | Type | Default | Description |
 |----------|------|---------|-------------|
-| `methods` | `DiscoverMethodsConfig` | `['html', 'headers', 'guess']` | Which methods to use |
+| `methods` | `DiscoverMethodsConfig` | `['platform', 'feed', 'html', 'headers', 'guess']` | Which methods to use |
 | `fetchFn` | `DiscoverFetchFn` | native fetch | Custom fetch function |
 | `extractFn` | `DiscoverExtractFn` | status check | Custom extraction function |
 | `normalizeUrlFn` | `DiscoverNormalizeUrlFn` | | Custom URL normalization function |
@@ -66,10 +66,9 @@ Returns a promise that resolves to an array of results:
   url: 'https://example.com/missing.png',
   isValid: false,
   method: 'guess',
+  error: Error,
 }
 ```
-
-Results are deduplicated by URL — the first occurrence (from the highest-priority method) is kept.
 
 ## Examples
 
@@ -83,7 +82,7 @@ const favicons = await discoverFavicons('https://example.com')
 
 // Or specify which methods to use
 const favicons = await discoverFavicons('https://example.com', {
-  methods: ['html', 'guess'],
+  methods: ['html', 'headers', 'guess'],
 })
 ```
 
@@ -96,49 +95,6 @@ const favicons = await discoverFavicons('https://example.com', {
       uris: ['/favicon.ico', '/icon.svg'],
     },
   },
-  concurrency: 3,
   stopOnFirstResult: true,
 })
 ```
-
-### With Existing Content
-
-```typescript
-const response = await fetch('https://example.com')
-
-const favicons = await discoverFavicons(
-  {
-    url: 'https://example.com',
-    content: await response.text(),
-    headers: response.headers,
-  },
-  { methods: ['html', 'headers'] },
-)
-```
-
-### With Progress Tracking
-
-```typescript
-const favicons = await discoverFavicons('https://example.com', {
-  methods: ['html', 'guess'],
-  onProgress: ({ tested, total, found, current }) => {
-    console.log(`[${tested}/${total}] ${current} (${found} found)`)
-  },
-})
-```
-
-### With Custom HTTP Client
-
-```typescript
-import type { DiscoverFetchFn } from 'feedscout'
-
-const myCustomFetch: DiscoverFetchFn = async (url, options) => {
-  // Handle the request and return response here.
-}
-
-const favicons = await discoverFavicons('https://example.com', {
-  fetchFn: myCustomFetch,
-})
-```
-
-See [Customize Data Fetching](/customization/data-fetching) for examples with Axios, Got, Ky, and more.

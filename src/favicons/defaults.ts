@@ -1,8 +1,10 @@
 import type { LinkSelector } from '../common/types.js'
+import type { FeedMethodOptions } from '../common/uris/feed/types.js'
 import type { GuessMethodOptions } from '../common/uris/guess/types.js'
 import type { HeadersMethodOptions } from '../common/uris/headers/types.js'
 import type { HtmlMethodOptions } from '../common/uris/html/types.js'
 import type { PlatformMethodOptions } from '../common/uris/platform/types.js'
+import { omitEmpty } from '../common/utils.js'
 import { blueskyHandler } from './platform/handlers/bluesky.js'
 import { codebergHandler } from './platform/handlers/codeberg.js'
 import { deviantartHandler } from './platform/handlers/deviantart.js'
@@ -30,6 +32,20 @@ export const defaultGuessPaths = [
 ]
 
 export const linkSelectors: Array<LinkSelector> = defaultIconRels.map((rel) => ({ rel }))
+
+export const defaultFeedOptions: FeedMethodOptions = {
+  extractUrls: ({ format, feed }) => {
+    if (format === 'atom') {
+      return omitEmpty([feed.icon])
+    }
+
+    if (format === 'json') {
+      return omitEmpty([feed.favicon, feed.icon])
+    }
+
+    return []
+  },
+}
 
 export const defaultHtmlOptions: Omit<HtmlMethodOptions, 'baseUrl'> = {
   linkSelectors,

@@ -1,3 +1,4 @@
+export { discoverUrisFromFeed } from '../common/uris/feed/index.js'
 export { discoverUrisFromGuess } from '../common/uris/guess/index.js'
 export {
   generateUrlCombinations,

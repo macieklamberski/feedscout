@@ -11,7 +11,7 @@ Discovers and validates feeds from a webpage.
 ```typescript
 function discoverFeeds(
   input: DiscoverInput,
-  options?: DiscoverOptions<FeedResult>,
+  options?: DiscoverOptions<FeedResult, 'platform' | 'html' | 'headers' | 'guess'>,
 ): Promise<Array<DiscoverResult<FeedResult>>>
 ```
 

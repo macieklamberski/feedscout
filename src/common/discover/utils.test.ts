@@ -439,9 +439,13 @@ describe('normalizeMethodsConfig', () => {
   const ignoredUris = ['wp-json/oembed/', 'wp-json/wp/']
   const anchorLabels = ['rss', 'feed', 'atom', 'subscribe', 'syndicate', 'json feed']
   const linkSelectors = [{ rel: 'alternate', types: feedMimeTypes }, { rel: 'feed' }]
+  const extractUrls = () => [] as Array<string>
   const defaults = {
     platform: {
       handlers: [],
+    },
+    feed: {
+      extractUrls,
     },
     html: {
       linkSelectors,
@@ -826,6 +830,65 @@ describe('normalizeMethodsConfig', () => {
     const throwing = () => normalizeMethodsConfig(value, ['platform'], defaults)
 
     expect(throwing).toThrow(locales.errors.platformMethodRequiresUrl)
+  })
+
+  it('should normalize feed method with defaults', () => {
+    const value = {
+      url: 'https://example.com',
+      content: '<feed>content</feed>',
+    }
+    const result = normalizeMethodsConfig(value, ['feed'], defaults)
+    const expected = {
+      feed: {
+        content: '<feed>content</feed>',
+        options: {
+          extractUrls,
+        },
+      },
+    }
+
+    expect(result).toEqual(expected)
+  })
+
+  it('should normalize feed method with custom extractUrls', () => {
+    const customExtractUrls = () => ['https://example.com/icon.png']
+    const value = {
+      url: 'https://example.com',
+      content: '<feed>content</feed>',
+    }
+    const result = normalizeMethodsConfig(
+      value,
+      { feed: { extractUrls: customExtractUrls } },
+      defaults,
+    )
+    const expected = {
+      feed: {
+        content: '<feed>content</feed>',
+        options: {
+          extractUrls: customExtractUrls,
+        },
+      },
+    }
+
+    expect(result).toEqual(expected)
+  })
+
+  it('should throw error when feed method requested without content', () => {
+    const value = {
+      url: 'https://example.com',
+    }
+    const throwing = () => normalizeMethodsConfig(value, ['feed'], defaults)
+
+    expect(throwing).toThrow(locales.errors.feedMethodRequiresContent)
+  })
+
+  it('should throw error when feed method in object format without content', () => {
+    const value = {
+      url: 'https://example.com',
+    }
+    const throwing = () => normalizeMethodsConfig(value, { feed: true }, defaults)
+
+    expect(throwing).toThrow(locales.errors.feedMethodRequiresContent)
   })
 
   it('should throw error when html method requested without content', () => {

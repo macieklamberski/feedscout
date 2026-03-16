@@ -1,10 +1,36 @@
 import { describe, expect, it } from 'bun:test'
+import { omitEmpty } from '../utils.js'
 import { discoverUris } from './index.js'
 
 describe('discoverUris', () => {
   it('should return empty object when no methods configured', async () => {
     const value = await discoverUris({})
     const expected = {}
+
+    expect(value).toEqual(expected)
+  })
+
+  it('should discover URIs from Feed method', async () => {
+    const content = JSON.stringify({
+      version: 'https://jsonfeed.org/version/1.1',
+      title: 'Example',
+      favicon: 'https://example.com/favicon.ico',
+      items: [],
+    })
+    const value = await discoverUris({
+      feed: {
+        content,
+        options: {
+          extractUrls: ({ format, feed }) => {
+            if (format === 'json') {
+              return omitEmpty([feed.favicon])
+            }
+            return []
+          },
+        },
+      },
+    })
+    const expected = { feed: [{ uri: 'https://example.com/favicon.ico' }] }
 
     expect(value).toEqual(expected)
   })

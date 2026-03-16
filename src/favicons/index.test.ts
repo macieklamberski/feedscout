@@ -237,6 +237,69 @@ describe('discoverFavicons', () => {
     expect(value).toEqual(expected)
   })
 
+  it('should discover favicon from Atom feed content', async () => {
+    const atomContent = `<?xml version="1.0" encoding="utf-8"?>
+      <feed xmlns="http://www.w3.org/2005/Atom">
+        <title>Example</title>
+        <icon>https://example.com/icon.png</icon>
+        <id>urn:uuid:1</id>
+        <updated>2024-01-01T00:00:00Z</updated>
+      </feed>`
+    const mockFetch = createMockFetch({
+      'https://example.com/icon.png': 'binary',
+    })
+    const value = await discoverFavicons(
+      { url: 'https://example.com/feed.xml', content: atomContent },
+      { methods: ['feed'], fetchFn: mockFetch },
+    )
+    const expected: Array<DiscoverResult<FaviconResult>> = [
+      { url: 'https://example.com/icon.png', isValid: true, method: 'feed' },
+    ]
+
+    expect(value).toEqual(expected)
+  })
+
+  it('should discover favicon from JSON Feed content', async () => {
+    const jsonContent = JSON.stringify({
+      version: 'https://jsonfeed.org/version/1.1',
+      title: 'Example',
+      favicon: 'https://example.com/favicon.ico',
+      icon: 'https://example.com/icon.png',
+      items: [],
+    })
+    const mockFetch = createMockFetch({
+      'https://example.com/favicon.ico': 'binary',
+      'https://example.com/icon.png': 'binary',
+    })
+    const value = await discoverFavicons(
+      { url: 'https://example.com/feed.json', content: jsonContent },
+      { methods: ['feed'], fetchFn: mockFetch },
+    )
+    const expected: Array<DiscoverResult<FaviconResult>> = [
+      { url: 'https://example.com/favicon.ico', isValid: true, method: 'feed' },
+      { url: 'https://example.com/icon.png', isValid: true, method: 'feed' },
+    ]
+
+    expect(value).toEqual(expected)
+  })
+
+  it('should return empty array from feed method for RSS content', async () => {
+    const rssContent = `<?xml version="1.0"?>
+      <rss version="2.0">
+        <channel>
+          <title>Example</title>
+          <link>https://example.com</link>
+        </channel>
+      </rss>`
+    const mockFetch = createMockFetch({})
+    const value = await discoverFavicons(
+      { url: 'https://example.com/feed.xml', content: rssContent },
+      { methods: ['feed'], fetchFn: mockFetch },
+    )
+
+    expect(value).toEqual([])
+  })
+
   it('should return empty array for invalid URLs', async () => {
     const mockFetch = createMockFetch({})
     const value = await discoverFavicons('not-a-valid-url', {
