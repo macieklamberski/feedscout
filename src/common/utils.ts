@@ -101,6 +101,10 @@ export const processConcurrently = async <T>(
     shouldStop?: () => boolean
   },
 ): Promise<void> => {
+  if (options.concurrency < 1) {
+    return
+  }
+
   const active = new Set<Promise<void>>()
 
   let index = 0
