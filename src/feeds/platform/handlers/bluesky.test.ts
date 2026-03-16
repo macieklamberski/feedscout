@@ -5,6 +5,7 @@ describe('blueskyHandler', () => {
   describe('match', () => {
     const cases = [
       ['https://bsky.app/profile/user.bsky.social', true],
+      ['https://www.bsky.app/profile/user.bsky.social', false],
       ['https://twitter.com/user', false],
     ] as const
 
@@ -68,6 +69,18 @@ describe('blueskyHandler', () => {
 
     it('should resolve /profile/user/post/123 using first segment as handle', () => {
       const value = 'https://bsky.app/profile/user.bsky.social/post/123'
+      const expected = [
+        {
+          uri: 'https://bsky.app/profile/user.bsky.social/rss',
+          hint: { key: 'bluesky:posts', label: 'Posts' },
+        },
+      ]
+
+      expect(blueskyHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return empty array for /profile/user/followers subpath extraction', () => {
+      const value = 'https://bsky.app/profile/user.bsky.social/followers'
       const expected = [
         {
           uri: 'https://bsky.app/profile/user.bsky.social/rss',

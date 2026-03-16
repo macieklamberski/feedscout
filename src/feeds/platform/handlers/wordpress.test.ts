@@ -251,6 +251,65 @@ describe('wordpressHandler', () => {
       expect(wordpressHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should handle URL-encoded category names', () => {
+      const value = 'https://blog.wordpress.com/category/c%2B%2B/'
+      const expected = [
+        {
+          uri: [
+            'https://blog.wordpress.com/category/c%2B%2B/feed/',
+            'https://blog.wordpress.com/category/c%2B%2B/?feed=rss',
+          ],
+          hint: { key: 'wordpress:category', label: 'Category' },
+        },
+        {
+          uri: ['https://blog.wordpress.com/feed/', 'https://blog.wordpress.com/?feed=rss'],
+          hint: { key: 'wordpress:posts-rss2', label: 'Posts (RSS 2.0)' },
+        },
+        {
+          uri: ['https://blog.wordpress.com/feed/rss2/', 'https://blog.wordpress.com/?feed=rss2'],
+          hint: { key: 'wordpress:posts-rss2-alt', label: 'Posts (RSS 2.0)' },
+        },
+        {
+          uri: ['https://blog.wordpress.com/feed/rdf/', 'https://blog.wordpress.com/?feed=rdf'],
+          hint: { key: 'wordpress:posts-rdf', label: 'Posts (RDF)' },
+        },
+        {
+          uri: ['https://blog.wordpress.com/feed/atom/', 'https://blog.wordpress.com/?feed=atom'],
+          hint: { key: 'wordpress:posts-atom', label: 'Posts (Atom)' },
+        },
+        {
+          uri: [
+            'https://blog.wordpress.com/comments/feed/',
+            'https://blog.wordpress.com/?feed=comments-rss2',
+          ],
+          hint: { key: 'wordpress:comments', label: 'Comments' },
+        },
+        {
+          uri: [
+            'https://blog.wordpress.com/comments/feed/rss2/',
+            'https://blog.wordpress.com/?feed=comments-rss2',
+          ],
+          hint: { key: 'wordpress:comments-rss2', label: 'Comments (RSS 2.0)' },
+        },
+        {
+          uri: [
+            'https://blog.wordpress.com/comments/feed/rdf/',
+            'https://blog.wordpress.com/?feed=comments-rdf',
+          ],
+          hint: { key: 'wordpress:comments-rdf', label: 'Comments (RDF)' },
+        },
+        {
+          uri: [
+            'https://blog.wordpress.com/comments/feed/atom/',
+            'https://blog.wordpress.com/?feed=comments-atom',
+          ],
+          hint: { key: 'wordpress:comments-atom', label: 'Comments (Atom)' },
+        },
+      ]
+
+      expect(wordpressHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should include author feed when on author page', () => {
       const value = 'https://blog.wordpress.com/author/johndoe/'
       const expected = [

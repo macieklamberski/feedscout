@@ -104,5 +104,26 @@ describe('gitlabHandler', () => {
         expect(gitlabHandler.resolve(value)).toEqual([])
       }
     })
+
+    it('should use first two path segments for deeply nested groups', () => {
+      // gitlab.com/group/subgroup/project treats group as user and subgroup as repo.
+      const value = 'https://gitlab.com/group/subgroup/project'
+      const expected = [
+        {
+          uri: 'https://gitlab.com/group/subgroup/-/releases.atom',
+          hint: { key: 'gitlab:releases', label: 'Releases' },
+        },
+        {
+          uri: 'https://gitlab.com/group/subgroup/-/tags?format=atom',
+          hint: { key: 'gitlab:tags', label: 'Tags' },
+        },
+        {
+          uri: 'https://gitlab.com/group/subgroup.atom',
+          hint: { key: 'gitlab:activity', label: 'Activity' },
+        },
+      ]
+
+      expect(gitlabHandler.resolve(value)).toEqual(expected)
+    })
   })
 })

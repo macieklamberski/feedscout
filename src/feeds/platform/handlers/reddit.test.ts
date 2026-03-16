@@ -243,5 +243,22 @@ describe('redditHandler', () => {
 
       expect(redditHandler.resolve(value)).toEqual(expected)
     })
+
+    it('should treat malformed comments URL without post ID as subreddit', () => {
+      // /r/AskReddit/comments/ lacks a post ID, so commentsMatch fails.
+      const value = 'https://reddit.com/r/AskReddit/comments/'
+      const expected = [
+        {
+          uri: 'https://www.reddit.com/r/AskReddit/.rss',
+          hint: { key: 'reddit:posts', label: 'Posts' },
+        },
+        {
+          uri: 'https://www.reddit.com/r/AskReddit/comments/.rss',
+          hint: { key: 'reddit:comments', label: 'Comments' },
+        },
+      ]
+
+      expect(redditHandler.resolve(value)).toEqual(expected)
+    })
   })
 })
