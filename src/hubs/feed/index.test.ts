@@ -198,4 +198,40 @@ describe('discoverHubsFromFeed', () => {
 
     expect(value).toEqual([])
   })
+
+  it('should return empty array when Atom hub link has no href', () => {
+    const content = `
+      <?xml version="1.0" encoding="utf-8"?>
+      <feed xmlns="http://www.w3.org/2005/Atom">
+        <title>Example Feed</title>
+        <link rel="hub"/>
+        <link href="https://example.com/feed.xml" rel="self"/>
+      </feed>
+    `
+    const value = discoverHubsFromFeed(content, 'https://example.com/feed.xml')
+
+    expect(value).toEqual([])
+  })
+
+  it('should return empty array when JSON Feed has explicit empty hubs array', () => {
+    const content = JSON.stringify({
+      version: 'https://jsonfeed.org/version/1.1',
+      title: 'Example Feed',
+      hubs: [],
+    })
+    const value = discoverHubsFromFeed(content, 'https://example.com/feed.json')
+
+    expect(value).toEqual([])
+  })
+
+  it('should skip JSON Feed hub entry without url field', () => {
+    const content = JSON.stringify({
+      version: 'https://jsonfeed.org/version/1.1',
+      title: 'Example Feed',
+      hubs: [{ type: 'WebSub' }],
+    })
+    const value = discoverHubsFromFeed(content, 'https://example.com/feed.json')
+
+    expect(value).toEqual([])
+  })
 })

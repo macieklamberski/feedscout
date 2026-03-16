@@ -69,4 +69,30 @@ describe('normalizeInput', () => {
 
     expect(value.content).toBeUndefined()
   })
+
+  it('should propagate error when fetchFn rejects', async () => {
+    const mockFetch: DiscoverFetchFn = async () => {
+      throw new Error('Network error')
+    }
+
+    expect(normalizeInput('https://example.com/', mockFetch)).rejects.toThrow('Network error')
+  })
+
+  it('should use response.url when it differs from input (redirect)', async () => {
+    const mockFetch: DiscoverFetchFn = async () => ({
+      url: 'https://redirected.example.com/',
+      body: '<html></html>',
+      headers: new Headers(),
+      status: 200,
+      statusText: 'OK',
+    })
+    const value = await normalizeInput('https://example.com/', mockFetch)
+    const expected = {
+      url: 'https://redirected.example.com/',
+      content: '<html></html>',
+      headers: expect.any(Headers),
+    }
+
+    expect(value).toEqual(expected)
+  })
 })

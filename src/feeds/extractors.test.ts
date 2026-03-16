@@ -317,10 +317,84 @@ describe('defaultExtractor', () => {
       url: 'https://example.com/page.html',
     })
 
-    // Should detect as HTML, not RSS (ignoring headers)
+    // Should detect as HTML, not RSS (ignoring headers).
     const expected: DiscoverResult<FeedResult> = {
       url: 'https://example.com/page.html',
       isValid: false,
+    }
+
+    expect(result).toEqual(expected)
+  })
+
+  it('should return siteUrl undefined for Atom without alternate link', async () => {
+    const atom = `
+      <feed xmlns="http://www.w3.org/2005/Atom">
+        <title>Test</title>
+        <subtitle>Test feed</subtitle>
+      </feed>
+    `
+    const result = await defaultExtractor({
+      content: atom,
+      headers: new Headers(),
+      url: 'https://example.com/feed.xml',
+    })
+    const expected: DiscoverResult<FeedResult> = {
+      url: 'https://example.com/feed.xml',
+      isValid: true,
+      format: 'atom',
+      title: 'Test',
+      description: 'Test feed',
+      siteUrl: undefined,
+    }
+
+    expect(result).toEqual(expected)
+  })
+
+  it('should return siteUrl undefined for RSS without link element', async () => {
+    const rss = `
+      <rss version="2.0">
+        <channel>
+          <title>Test</title>
+          <description>Test feed</description>
+        </channel>
+      </rss>
+    `
+    const result = await defaultExtractor({
+      content: rss,
+      headers: new Headers(),
+      url: 'https://example.com/feed.xml',
+    })
+    const expected: DiscoverResult<FeedResult> = {
+      url: 'https://example.com/feed.xml',
+      isValid: true,
+      format: 'rss',
+      title: 'Test',
+      description: 'Test feed',
+      siteUrl: undefined,
+    }
+
+    expect(result).toEqual(expected)
+  })
+
+  it('should return siteUrl undefined for JSON Feed without home_page_url', async () => {
+    const json = JSON.stringify({
+      version: 'https://jsonfeed.org/version/1.1',
+      title: 'Test',
+      description: 'Test feed',
+      items: [],
+    })
+    const result = await defaultExtractor({
+      content: json,
+      headers: new Headers(),
+      url: 'https://example.com/feed.json',
+    })
+    const expected: DiscoverResult<FeedResult> = {
+      url: 'https://example.com/feed.json',
+      isValid: true,
+      format: 'json',
+      title: 'Test',
+      description: 'Test feed',
+      siteUrl: undefined,
     }
 
     expect(result).toEqual(expected)

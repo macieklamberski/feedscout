@@ -23,6 +23,10 @@ describe('stackExchangeHandler', () => {
     it.each(cases)('%s -> %s', (url, expected) => {
       expect(stackExchangeHandler.match(url)).toBe(expected)
     })
+
+    it('should throw for invalid URL', () => {
+      expect(() => stackExchangeHandler.match('not-a-url')).toThrow()
+    })
   })
 
   describe('resolve', () => {

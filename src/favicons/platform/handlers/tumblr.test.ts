@@ -19,6 +19,10 @@ describe('tumblrHandler', () => {
     it('should not match non-tumblr URLs', () => {
       expect(tumblrHandler.match('https://example.com')).toBe(false)
     })
+
+    it('should throw for invalid URL', () => {
+      expect(() => tumblrHandler.match('not-a-url')).toThrow()
+    })
   })
 
   describe('resolve', () => {
@@ -44,6 +48,16 @@ describe('tumblrHandler', () => {
       const value = tumblrHandler.resolve('https://staff.tumblr.com/tagged/updates')
       const expected: Array<DiscoverUriEntry> = [
         { uri: 'https://api.tumblr.com/v2/blog/staff/avatar/512' },
+      ]
+
+      expect(value).toEqual(expected)
+    })
+
+    // Questionable: extracts 'www' as blog name.
+    it('should resolve www.tumblr.com using www as blog name', () => {
+      const value = tumblrHandler.resolve('https://www.tumblr.com')
+      const expected: Array<DiscoverUriEntry> = [
+        { uri: 'https://api.tumblr.com/v2/blog/www/avatar/512' },
       ]
 
       expect(value).toEqual(expected)

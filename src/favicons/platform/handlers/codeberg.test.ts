@@ -23,6 +23,10 @@ describe('codebergHandler', () => {
     it('should not match non-codeberg URLs', () => {
       expect(codebergHandler.match('https://github.com/user')).toBe(false)
     })
+
+    it('should throw for invalid URL', () => {
+      expect(() => codebergHandler.match('not-a-url')).toThrow()
+    })
   })
 
   describe('resolve', () => {
@@ -73,6 +77,24 @@ describe('codebergHandler', () => {
     it('should handle excluded paths case-insensitively', () => {
       expect(codebergHandler.resolve('https://codeberg.org/Explore')).toEqual([])
       expect(codebergHandler.resolve('https://codeberg.org/ADMIN')).toEqual([])
+    })
+
+    it('should resolve www.codeberg.org URL', () => {
+      const value = codebergHandler.resolve('https://www.codeberg.org/forgejo')
+      const expected: Array<DiscoverUriEntry> = [
+        { uri: 'https://www.codeberg.org/user/avatar/forgejo/512' },
+      ]
+
+      expect(value).toEqual(expected)
+    })
+
+    it('should resolve www.gitea.com URL', () => {
+      const value = codebergHandler.resolve('https://www.gitea.com/gitea')
+      const expected: Array<DiscoverUriEntry> = [
+        { uri: 'https://www.gitea.com/user/avatar/gitea/512' },
+      ]
+
+      expect(value).toEqual(expected)
     })
   })
 })

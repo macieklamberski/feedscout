@@ -14,6 +14,10 @@ describe('hashnodeHandler', () => {
     it.each(cases)('%s -> %s', (url, expected) => {
       expect(hashnodeHandler.match(url)).toBe(expected)
     })
+
+    it('should throw for invalid URL', () => {
+      expect(() => hashnodeHandler.match('not-a-url')).toThrow()
+    })
   })
 
   describe('resolve', () => {

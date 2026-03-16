@@ -201,4 +201,20 @@ describe('defaultExtractor', () => {
 
     expect(result).toEqual(expected)
   })
+
+  it('should return isValid: false for malformed XML with unclosed tags', async () => {
+    const content =
+      '<?xml version="1.0"?><opml version="2.0"><head><title>Test</title></head><body><outline'
+    const result = await defaultExtractor({
+      content,
+      headers: new Headers(),
+      url: 'https://example.com/blogroll.opml',
+    })
+    const expected: DiscoverResult<BlogrollResult> = {
+      url: 'https://example.com/blogroll.opml',
+      isValid: false,
+    }
+
+    expect(result).toEqual(expected)
+  })
 })

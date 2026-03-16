@@ -14,6 +14,10 @@ describe('mediumHandler', () => {
     it.each(cases)('%s -> %s', (url, expected) => {
       expect(mediumHandler.match(url)).toBe(expected)
     })
+
+    it('should throw for invalid URL', () => {
+      expect(() => mediumHandler.match('not-a-url')).toThrow()
+    })
   })
 
   describe('resolve', () => {
@@ -131,6 +135,18 @@ describe('mediumHandler', () => {
       const expected = [
         {
           uri: 'https://medium.com/feed/towards-data-science',
+          hint: { key: 'medium:publication', label: 'Publication' },
+        },
+      ]
+
+      expect(mediumHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return RSS feed URL for numeric-only publication name', () => {
+      const value = 'https://medium.com/12345'
+      const expected = [
+        {
+          uri: 'https://medium.com/feed/12345',
           hint: { key: 'medium:publication', label: 'Publication' },
         },
       ]

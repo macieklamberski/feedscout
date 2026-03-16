@@ -153,6 +153,26 @@ describe('discoverUrisFromPlatform', () => {
     expect(secondResolvedCalled).toBe(false)
   })
 
+  it('should continue to next handler if async resolve throws', async () => {
+    const throwingHandler: PlatformHandler = {
+      match: () => true,
+      resolve: async () => {
+        throw new Error('Async resolve error')
+      },
+    }
+    const workingHandler: PlatformHandler = {
+      match: () => true,
+      resolve: () => [{ uri: 'https://example.com/feed.xml' }],
+    }
+    const value = {
+      baseUrl: 'https://example.com',
+      handlers: [throwingHandler, workingHandler],
+    }
+    const expected = [{ uri: 'https://example.com/feed.xml' }]
+
+    expect(await discoverUrisFromPlatform(undefined, undefined, value)).toEqual(expected)
+  })
+
   it('should check handlers in provided order', async () => {
     const callOrder: Array<string> = []
     const firstHandler: PlatformHandler = {

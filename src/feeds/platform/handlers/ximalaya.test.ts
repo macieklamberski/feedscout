@@ -12,6 +12,10 @@ describe('ximalayaHandler', () => {
     it.each(cases)('%s -> %s', (url, expected) => {
       expect(ximalayaHandler.match(url)).toBe(expected)
     })
+
+    it('should throw for invalid URL', () => {
+      expect(() => ximalayaHandler.match('not-a-url')).toThrow()
+    })
   })
 
   describe('resolve', () => {

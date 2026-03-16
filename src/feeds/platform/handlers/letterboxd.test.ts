@@ -15,6 +15,10 @@ describe('letterboxdHandler', () => {
     it.each(cases)('%s -> %s', (url, expected) => {
       expect(letterboxdHandler.match(url)).toBe(expected)
     })
+
+    it('should throw for invalid URL', () => {
+      expect(() => letterboxdHandler.match('not-a-url')).toThrow()
+    })
   })
 
   describe('resolve', () => {

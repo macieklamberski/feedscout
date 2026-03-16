@@ -12,6 +12,10 @@ describe('githubHandler', () => {
     it.each(cases)('%s -> %s', (url, expected) => {
       expect(githubHandler.match(url)).toBe(expected)
     })
+
+    it('should throw for invalid URL', () => {
+      expect(() => githubHandler.match('not-a-url')).toThrow()
+    })
   })
 
   describe('resolve', () => {
@@ -173,6 +177,62 @@ describe('githubHandler', () => {
         {
           uri: 'https://github.com/torvalds.atom',
           hint: { key: 'github:activity', label: 'Activity' },
+        },
+      ]
+
+      expect(githubHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should resolve www.github.com URL', () => {
+      const value = 'https://www.github.com/octocat'
+      const expected = [
+        {
+          uri: 'https://github.com/octocat.atom',
+          hint: { key: 'github:activity', label: 'Activity' },
+        },
+      ]
+
+      expect(githubHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should resolve deeply nested file path', () => {
+      const value = 'https://github.com/owner/repo/blob/main/src/deeply/nested/file.ts'
+      const expected = [
+        {
+          uri: 'https://github.com/owner/repo/releases.atom',
+          hint: { key: 'github:releases', label: 'Releases' },
+        },
+        {
+          uri: 'https://github.com/owner/repo/commits.atom',
+          hint: { key: 'github:commits', label: 'Commits' },
+        },
+        {
+          uri: 'https://github.com/owner/repo/tags.atom',
+          hint: { key: 'github:tags', label: 'Tags' },
+        },
+        {
+          uri: 'https://github.com/owner/repo/commits/main/src/deeply/nested/file.ts.atom',
+          hint: { key: 'github:file-history', label: 'File history' },
+        },
+      ]
+
+      expect(githubHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should resolve URL-encoded repo name', () => {
+      const value = 'https://github.com/owner/my%20repo'
+      const expected = [
+        {
+          uri: 'https://github.com/owner/my%20repo/releases.atom',
+          hint: { key: 'github:releases', label: 'Releases' },
+        },
+        {
+          uri: 'https://github.com/owner/my%20repo/commits.atom',
+          hint: { key: 'github:commits', label: 'Commits' },
+        },
+        {
+          uri: 'https://github.com/owner/my%20repo/tags.atom',
+          hint: { key: 'github:tags', label: 'Tags' },
         },
       ]
 

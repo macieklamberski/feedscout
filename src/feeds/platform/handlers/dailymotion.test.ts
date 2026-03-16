@@ -15,6 +15,10 @@ describe('dailymotionHandler', () => {
     it.each(cases)('%s -> %s', (url, expected) => {
       expect(dailymotionHandler.match(url)).toBe(expected)
     })
+
+    it('should throw for invalid URL', () => {
+      expect(() => dailymotionHandler.match('not-a-url')).toThrow()
+    })
   })
 
   describe('resolve', () => {

@@ -15,6 +15,10 @@ describe('redditHandler', () => {
     it.each(cases)('%s -> %s', (url, expected) => {
       expect(redditHandler.match(url)).toBe(expected)
     })
+
+    it('should throw for invalid URL', () => {
+      expect(() => redditHandler.match('not-a-url')).toThrow()
+    })
   })
 
   describe('resolve', () => {
@@ -206,12 +210,51 @@ describe('redditHandler', () => {
       expect(redditHandler.resolve(value)).toEqual([])
     })
 
+    it('should return empty array for /r/ without subreddit', () => {
+      const value = 'https://reddit.com/r/'
+
+      expect(redditHandler.resolve(value)).toEqual([])
+    })
+
+    it('should ignore query params in subreddit URL', () => {
+      const value = 'https://reddit.com/r/programming?sort=new'
+      const expected = [
+        {
+          uri: 'https://www.reddit.com/r/programming/.rss',
+          hint: { key: 'reddit:posts', label: 'Posts' },
+        },
+        {
+          uri: 'https://www.reddit.com/r/programming/comments/.rss',
+          hint: { key: 'reddit:comments', label: 'Comments' },
+        },
+      ]
+
+      expect(redditHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return RSS feed URL for homepage', () => {
       const value = 'https://reddit.com/'
       const expected = [
         {
           uri: 'https://www.reddit.com/.rss',
           hint: { key: 'reddit:posts', label: 'Posts' },
+        },
+      ]
+
+      expect(redditHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should treat malformed comments URL without post ID as subreddit', () => {
+      // /r/AskReddit/comments/ lacks a post ID, so commentsMatch fails.
+      const value = 'https://reddit.com/r/AskReddit/comments/'
+      const expected = [
+        {
+          uri: 'https://www.reddit.com/r/AskReddit/.rss',
+          hint: { key: 'reddit:posts', label: 'Posts' },
+        },
+        {
+          uri: 'https://www.reddit.com/r/AskReddit/comments/.rss',
+          hint: { key: 'reddit:comments', label: 'Comments' },
         },
       ]
 

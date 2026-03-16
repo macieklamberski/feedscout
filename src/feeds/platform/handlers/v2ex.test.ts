@@ -12,6 +12,10 @@ describe('v2exHandler', () => {
     it.each(cases)('%s -> %s', (url, expected) => {
       expect(v2exHandler.match(url)).toBe(expected)
     })
+
+    it('should throw for invalid URL', () => {
+      expect(() => v2exHandler.match('not-a-url')).toThrow()
+    })
   })
 
   describe('resolve', () => {

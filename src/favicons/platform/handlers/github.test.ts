@@ -15,6 +15,10 @@ describe('githubHandler', () => {
     it('should not match non-github URLs', () => {
       expect(githubHandler.match('https://gitlab.com/user')).toBe(false)
     })
+
+    it('should throw for invalid URL', () => {
+      expect(() => githubHandler.match('not-a-url')).toThrow()
+    })
   })
 
   describe('resolve', () => {
@@ -55,6 +59,20 @@ describe('githubHandler', () => {
     it('should handle excluded paths case-insensitively', () => {
       expect(githubHandler.resolve('https://github.com/Features')).toEqual([])
       expect(githubHandler.resolve('https://github.com/EXPLORE')).toEqual([])
+    })
+
+    it('should resolve www.github.com URL', () => {
+      const value = githubHandler.resolve('https://www.github.com/octocat')
+      const expected: Array<DiscoverUriEntry> = [{ uri: 'https://github.com/octocat.png' }]
+
+      expect(value).toEqual(expected)
+    })
+
+    it('should resolve username with dashes', () => {
+      const value = githubHandler.resolve('https://github.com/my-org')
+      const expected: Array<DiscoverUriEntry> = [{ uri: 'https://github.com/my-org.png' }]
+
+      expect(value).toEqual(expected)
     })
   })
 })
