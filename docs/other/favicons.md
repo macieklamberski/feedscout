@@ -44,6 +44,21 @@ Favicons use the same discovery pipeline as feeds — see the [Feeds](/feeds) se
 | Headers | `Link` headers with icon-related `rel` values |
 | Guess | Common paths like `/favicon.ico`, `/apple-touch-icon.png` |
 
+## Extracting Icons from Feeds
+
+When given a feed URL, favicon discovery can extract icons directly from the feed content. Atom feeds provide an `<icon>` element, and JSON Feeds include `favicon` and `icon` fields:
+
+```typescript
+// Pass a feed URL to extract its icon
+const favicons = await discoverFavicons('https://example.com/feed.xml')
+
+// Or provide existing feed content
+const favicons = await discoverFavicons({
+  url: 'https://example.com/feed.json',
+  content: feedContent,
+})
+```
+
 ## Configuration
 
 Customize discovery the same way as feeds:
