@@ -11,7 +11,7 @@ Discovers and validates feeds from a webpage.
 ```typescript
 function discoverFeeds(
   input: DiscoverInput,
-  options?: DiscoverOptions<FeedResult>,
+  options?: DiscoverOptions<FeedResult, 'platform' | 'html' | 'headers' | 'guess'>,
 ): Promise<Array<DiscoverResult<FeedResult>>>
 ```
 
@@ -58,7 +58,7 @@ Returns a promise that resolves to an array of results:
 {
   url: 'https://example.com/feed.xml',
   isValid: true,
-  method: 'guess',       // 'platform' | 'feed' | 'html' | 'headers' | 'guess'
+  method: 'guess',       // 'platform' | 'html' | 'headers' | 'guess'
   format: 'rss',         // 'rss' | 'atom' | 'json' | 'rdf'
   title: 'Example Blog',
   description: 'A blog about examples',

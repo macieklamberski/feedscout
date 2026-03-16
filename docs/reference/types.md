@@ -43,7 +43,7 @@ type DiscoverInputObject = {
 
 ### DiscoverOptions
 
-Options for `discoverFeeds` and `discoverBlogrolls`. All fields are optional for simple usage:
+Options for discovery functions. All fields are optional for simple usage. The `TMethods` parameter restricts which methods are available — each discoverer narrows it to its supported methods:
 
 ```typescript
 type DiscoverOptions<TValid, TMethods extends DiscoverMethod = DiscoverMethod> = {
@@ -264,12 +264,14 @@ type DiscoverExtractFnInput = {
 Options for Feed discovery method:
 
 ```typescript
+type FeedMethodData = ReturnType<typeof parseFeed>
+
 type FeedMethodOptions = {
-  extractUrls: (params: { format: string; feed: unknown }) => Array<string>
+  extractUrls: (params: FeedMethodData) => Array<string>
 }
 ```
 
-The `extractUrls` callback receives the parsed feed format and data, and should return an array of URLs. For favicons, the default extractor pulls `icon` from Atom feeds and `favicon`/`icon` from JSON Feeds.
+`FeedMethodData` is the return type of feedsmith's `parseFeed` — it contains `format` (e.g. `'atom'`, `'json'`) and `feed` (the parsed feed object). The `extractUrls` callback should return an array of URLs. For favicons, the default extractor pulls `icon` from Atom feeds and `favicon`/`icon` from JSON Feeds.
 
 ### HtmlMethodOptions
 
