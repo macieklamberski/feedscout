@@ -104,10 +104,10 @@ export type DiscoverMethodsConfig<TMethods extends DiscoverMethod = DiscoverMeth
 
 // Defaults for method options (without baseUrl which comes from input).
 export type DiscoverMethodsConfigDefaults = {
-  platform: Omit<PlatformMethodOptions, 'baseUrl'>
-  html: Omit<HtmlMethodOptions, 'baseUrl'>
-  headers: Omit<HeadersMethodOptions, 'baseUrl'>
-  guess: Omit<GuessMethodOptions, 'baseUrl'>
+  platform?: Omit<PlatformMethodOptions, 'baseUrl'>
+  html?: Omit<HtmlMethodOptions, 'baseUrl'>
+  headers?: Omit<HeadersMethodOptions, 'baseUrl'>
+  guess?: Omit<GuessMethodOptions, 'baseUrl'>
 }
 
 // Internal methods config with full options and input data.
