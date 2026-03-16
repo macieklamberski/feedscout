@@ -11,6 +11,10 @@ describe('blueskyHandler', () => {
     it.each(cases)('%s -> %s', (url, expected) => {
       expect(blueskyHandler.match(url)).toBe(expected)
     })
+
+    it('should throw for invalid URL', () => {
+      expect(() => blueskyHandler.match('not-a-url')).toThrow()
+    })
   })
 
   describe('resolve', () => {

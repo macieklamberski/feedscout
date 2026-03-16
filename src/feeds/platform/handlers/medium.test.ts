@@ -14,6 +14,10 @@ describe('mediumHandler', () => {
     it.each(cases)('%s -> %s', (url, expected) => {
       expect(mediumHandler.match(url)).toBe(expected)
     })
+
+    it('should throw for invalid URL', () => {
+      expect(() => mediumHandler.match('not-a-url')).toThrow()
+    })
   })
 
   describe('resolve', () => {

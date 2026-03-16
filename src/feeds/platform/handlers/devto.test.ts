@@ -12,6 +12,10 @@ describe('devtoHandler', () => {
     it.each(cases)('%s -> %s', (url, expected) => {
       expect(devtoHandler.match(url)).toBe(expected)
     })
+
+    it('should throw for invalid URL', () => {
+      expect(() => devtoHandler.match('not-a-url')).toThrow()
+    })
   })
 
   describe('resolve', () => {

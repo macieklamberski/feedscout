@@ -15,6 +15,10 @@ describe('redditHandler', () => {
     it.each(cases)('%s -> %s', (url, expected) => {
       expect(redditHandler.match(url)).toBe(expected)
     })
+
+    it('should throw for invalid URL', () => {
+      expect(() => redditHandler.match('not-a-url')).toThrow()
+    })
   })
 
   describe('resolve', () => {

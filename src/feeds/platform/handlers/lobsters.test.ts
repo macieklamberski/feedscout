@@ -15,6 +15,10 @@ describe('lobstersHandler', () => {
     it.each(cases)('%s -> %s', (url, expected) => {
       expect(lobstersHandler.match(url)).toBe(expected)
     })
+
+    it('should throw for invalid URL', () => {
+      expect(() => lobstersHandler.match('not-a-url')).toThrow()
+    })
   })
 
   describe('resolve', () => {

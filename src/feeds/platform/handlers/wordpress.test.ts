@@ -13,6 +13,10 @@ describe('wordpressHandler', () => {
     it.each(cases)('%s -> %s', (url, expected) => {
       expect(wordpressHandler.match(url)).toBe(expected)
     })
+
+    it('should throw for invalid URL', () => {
+      expect(() => wordpressHandler.match('not-a-url')).toThrow()
+    })
   })
 
   describe('resolve', () => {

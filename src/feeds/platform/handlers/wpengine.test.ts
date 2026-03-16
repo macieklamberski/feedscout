@@ -16,6 +16,10 @@ describe('wpengineHandler', () => {
     it.each(cases)('%s -> %s', (url, expected) => {
       expect(wpengineHandler.match(url)).toBe(expected)
     })
+
+    it('should throw for invalid URL', () => {
+      expect(() => wpengineHandler.match('not-a-url')).toThrow()
+    })
   })
 
   describe('resolve', () => {

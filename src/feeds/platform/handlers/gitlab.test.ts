@@ -14,6 +14,10 @@ describe('gitlabHandler', () => {
     it.each(cases)('%s -> %s', (url, expected) => {
       expect(gitlabHandler.match(url)).toBe(expected)
     })
+
+    it('should throw for invalid URL', () => {
+      expect(() => gitlabHandler.match('not-a-url')).toThrow()
+    })
   })
 
   describe('resolve', () => {

@@ -14,6 +14,10 @@ describe('pinterestHandler', () => {
     it.each(cases)('%s -> %s', (url, expected) => {
       expect(pinterestHandler.match(url)).toBe(expected)
     })
+
+    it('should throw for invalid URL', () => {
+      expect(() => pinterestHandler.match('not-a-url')).toThrow()
+    })
   })
 
   describe('resolve', () => {

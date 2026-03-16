@@ -15,6 +15,10 @@ describe('githubHandler', () => {
     it('should not match non-github URLs', () => {
       expect(githubHandler.match('https://gitlab.com/user')).toBe(false)
     })
+
+    it('should throw for invalid URL', () => {
+      expect(() => githubHandler.match('not-a-url')).toThrow()
+    })
   })
 
   describe('resolve', () => {

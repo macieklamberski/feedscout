@@ -12,6 +12,10 @@ describe('githubHandler', () => {
     it.each(cases)('%s -> %s', (url, expected) => {
       expect(githubHandler.match(url)).toBe(expected)
     })
+
+    it('should throw for invalid URL', () => {
+      expect(() => githubHandler.match('not-a-url')).toThrow()
+    })
   })
 
   describe('resolve', () => {

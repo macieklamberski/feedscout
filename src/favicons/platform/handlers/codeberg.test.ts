@@ -23,6 +23,10 @@ describe('codebergHandler', () => {
     it('should not match non-codeberg URLs', () => {
       expect(codebergHandler.match('https://github.com/user')).toBe(false)
     })
+
+    it('should throw for invalid URL', () => {
+      expect(() => codebergHandler.match('not-a-url')).toThrow()
+    })
   })
 
   describe('resolve', () => {

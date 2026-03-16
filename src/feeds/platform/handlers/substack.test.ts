@@ -12,6 +12,10 @@ describe('substackHandler', () => {
     it.each(cases)('%s -> %s', (url, expected) => {
       expect(substackHandler.match(url)).toBe(expected)
     })
+
+    it('should throw for invalid URL', () => {
+      expect(() => substackHandler.match('not-a-url')).toThrow()
+    })
   })
 
   describe('resolve', () => {
