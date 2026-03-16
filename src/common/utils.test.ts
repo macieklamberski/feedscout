@@ -1047,7 +1047,7 @@ describe('processConcurrently', () => {
     ).toEqual(expected)
   })
 
-  it.todo('should handle concurrency=0 — causes infinite loop, items never process')
+  // TODO: Should handle concurrency=0 — causes infinite loop, items never process.
 
   it('should not call shouldStop after completion', async () => {
     const items = [1, 2, 3]
