@@ -955,6 +955,50 @@ describe('discover', () => {
     })
   })
 
+  describe('hint preservation', () => {
+    it('should preserve hint from platform handler in result', async () => {
+      const platformHandler: PlatformHandler = {
+        match: () => true,
+        resolve: () => [{ uri: '/feed', hint: { key: 'test', label: 'Test' } }],
+      }
+      const mockFetch = createMockFetch({
+        'https://example.com/feed': rss,
+      })
+      const value = await discoverFeeds(
+        { url: 'https://example.com', content: '<html></html>' },
+        {
+          methods: { platform: { handlers: [platformHandler] } },
+          fetchFn: mockFetch,
+        },
+      )
+      const expected: Array<DiscoverResult<FeedResult>> = [
+        {
+          url: 'https://example.com/feed',
+          isValid: true,
+          method: 'platform',
+          hint: { key: 'test', label: 'Test' },
+          format: 'rss',
+          title: 'Test RSS',
+          description: 'Test feed',
+          siteUrl: 'https://example.com',
+        },
+      ]
+
+      expect(value).toEqual(expected)
+    })
+  })
+
+  describe('empty methods', () => {
+    it('should return empty array for empty methods config', async () => {
+      const value = await discoverFeeds(
+        { url: 'https://example.com' },
+        { methods: [] },
+      )
+
+      expect(value).toEqual([])
+    })
+  })
+
   describe('method validation', () => {
     it('should throw error when html method requested without content', () => {
       const throwing = () => discoverFeeds({ url: 'https://example.com' }, { methods: ['html'] })

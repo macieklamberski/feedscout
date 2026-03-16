@@ -162,6 +162,14 @@ describe('generateUrlCombinations', () => {
     expect(generateUrlCombinations(baseUrls, feedUris)).toEqual(expected)
   })
 
+  it('should resolve empty array entry as empty alternatives group', () => {
+    const baseUrls = ['https://example.com']
+    const feedUris: Array<Array<string>> = [[]]
+    const expected = [[] as Array<string>]
+
+    expect(generateUrlCombinations(baseUrls, feedUris)).toEqual(expected)
+  })
+
   it('should resolve array entries across multiple base URLs', () => {
     const baseUrls = ['https://example.com', 'https://blog.example.com']
     const feedUris = [['/feed/', '?feed=rss']]
@@ -220,6 +228,13 @@ describe('getWwwCounterpart', () => {
   it('should ignore paths and query params in origin', () => {
     const value = 'https://example.com/path?query=1'
     const expected = 'https://www.example.com'
+
+    expect(getWwwCounterpart(value)).toBe(expected)
+  })
+
+  it('should add www to localhost', () => {
+    const value = 'https://localhost'
+    const expected = 'https://www.localhost'
 
     expect(getWwwCounterpart(value)).toBe(expected)
   })

@@ -331,6 +331,10 @@ describe('includesAnyOf', () => {
     expect(includesAnyOf(value, patterns)).toBe(false)
   })
 
+  it('should return true when pattern contains empty string', () => {
+    expect(includesAnyOf('anything', [''])).toBe(true)
+  })
+
   it('should handle pattern with numbers', () => {
     const value = 'RSS 2.0 feed'
     const patterns = ['2.0']
@@ -798,6 +802,10 @@ describe('endsWithAnyOf', () => {
 
     expect(endsWithAnyOf(value, patterns)).toBe(true)
   })
+
+  it('should return true when pattern contains empty string', () => {
+    expect(endsWithAnyOf('anything', [''])).toBe(true)
+  })
 })
 
 describe('isOfAllowedMimeType', () => {
@@ -1038,6 +1046,8 @@ describe('processConcurrently', () => {
       }),
     ).toEqual(expected)
   })
+
+  it.todo('should handle concurrency=0 — causes infinite loop, items never process')
 
   it('should not call shouldStop after completion', async () => {
     const items = [1, 2, 3]
