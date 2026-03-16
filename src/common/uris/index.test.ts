@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'bun:test'
+import { omitEmpty } from '../utils.js'
 import { discoverUris } from './index.js'
 
 describe('discoverUris', () => {
@@ -20,9 +21,11 @@ describe('discoverUris', () => {
       feed: {
         content,
         options: {
-          extractUrls: ({ feed }) => {
-            const record = feed as Record<string, unknown>
-            return [record.favicon as string].filter(Boolean)
+          extractUrls: ({ format, feed }) => {
+            if (format === 'json') {
+              return omitEmpty([feed.favicon])
+            }
+            return []
           },
         },
       },

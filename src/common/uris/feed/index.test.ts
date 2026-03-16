@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'bun:test'
+import { omitEmpty } from '../../utils.js'
 import { discoverUrisFromFeed } from './index.js'
 
 describe('discoverUrisFromFeed', () => {
@@ -13,8 +14,7 @@ describe('discoverUrisFromFeed', () => {
     const value = discoverUrisFromFeed(content, {
       extractUrls: ({ format, feed }) => {
         if (format === 'atom') {
-          const record = feed as Record<string, unknown>
-          return [record.icon as string].filter(Boolean)
+          return omitEmpty([feed.icon])
         }
         return []
       },
@@ -35,8 +35,7 @@ describe('discoverUrisFromFeed', () => {
     const value = discoverUrisFromFeed(content, {
       extractUrls: ({ format, feed }) => {
         if (format === 'json') {
-          const record = feed as Record<string, unknown>
-          return [record.favicon as string, record.icon as string].filter(Boolean)
+          return omitEmpty([feed.favicon, feed.icon])
         }
         return []
       },
@@ -82,9 +81,11 @@ describe('discoverUrisFromFeed', () => {
       items: [],
     })
     const value = discoverUrisFromFeed(content, {
-      extractUrls: ({ feed }) => {
-        const record = feed as Record<string, unknown>
-        return [record.favicon as string, record.icon as string, '']
+      extractUrls: ({ format, feed }) => {
+        if (format === 'json') {
+          return omitEmpty([feed.favicon, feed.icon])
+        }
+        return []
       },
     })
     const expected = ['https://example.com/favicon.ico']
