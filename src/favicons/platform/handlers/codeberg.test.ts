@@ -24,8 +24,8 @@ describe('codebergHandler', () => {
       expect(codebergHandler.match('https://github.com/user')).toBe(false)
     })
 
-    it('should throw for invalid URL', () => {
-      expect(() => codebergHandler.match('not-a-url')).toThrow()
+    it('should return false for invalid URL', () => {
+      expect(codebergHandler.match('not-a-url')).toBe(false)
     })
   })
 

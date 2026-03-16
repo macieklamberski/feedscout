@@ -18,8 +18,8 @@ describe('codebergHandler', () => {
       expect(codebergHandler.match(url)).toBe(expected)
     })
 
-    it('should throw for invalid URL', () => {
-      expect(() => codebergHandler.match('not-a-url')).toThrow()
+    it('should return false for invalid URL', () => {
+      expect(codebergHandler.match('not-a-url')).toBe(false)
     })
   })
 

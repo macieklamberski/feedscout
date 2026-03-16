@@ -13,8 +13,8 @@ describe('substackHandler', () => {
       expect(substackHandler.match(url)).toBe(expected)
     })
 
-    it('should throw for invalid URL', () => {
-      expect(() => substackHandler.match('not-a-url')).toThrow()
+    it('should return false for invalid URL', () => {
+      expect(substackHandler.match('not-a-url')).toBe(false)
     })
   })
 

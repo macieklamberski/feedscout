@@ -16,8 +16,8 @@ describe('doubanHandler', () => {
       expect(doubanHandler.match(url)).toBe(expected)
     })
 
-    it('should throw for invalid URL', () => {
-      expect(() => doubanHandler.match('not-a-url')).toThrow()
+    it('should return false for invalid URL', () => {
+      expect(doubanHandler.match('not-a-url')).toBe(false)
     })
   })
 

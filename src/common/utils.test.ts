@@ -185,6 +185,10 @@ describe('isSubdomainOf', () => {
 
     expect(isSubdomainOf(value, ['blogspot.com', 'wordpress.com'])).toBe(false)
   })
+
+  it('should return false for invalid URL', () => {
+    expect(isSubdomainOf('not-a-url', 'blogspot.com')).toBe(false)
+  })
 })
 
 describe('isHostOf', () => {
@@ -234,6 +238,10 @@ describe('isHostOf', () => {
     const value = 'https://gitlab.com/owner/repo'
 
     expect(isHostOf(value, 'github.com')).toBe(false)
+  })
+
+  it('should return false for invalid URL', () => {
+    expect(isHostOf('not-a-url', ['github.com'])).toBe(false)
   })
 })
 

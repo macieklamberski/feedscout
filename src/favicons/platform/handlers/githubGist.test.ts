@@ -16,8 +16,8 @@ describe('githubGistHandler', () => {
       expect(githubGistHandler.match('https://gitlab.com/user')).toBe(false)
     })
 
-    it('should throw for invalid URL', () => {
-      expect(() => githubGistHandler.match('not-a-url')).toThrow()
+    it('should return false for invalid URL', () => {
+      expect(githubGistHandler.match('not-a-url')).toBe(false)
     })
   })
 

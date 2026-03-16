@@ -15,8 +15,8 @@ describe('vimeoHandler', () => {
       expect(vimeoHandler.match(url)).toBe(expected)
     })
 
-    it('should throw for invalid URL', () => {
-      expect(() => vimeoHandler.match('not-a-url')).toThrow()
+    it('should return false for invalid URL', () => {
+      expect(vimeoHandler.match('not-a-url')).toBe(false)
     })
   })
 

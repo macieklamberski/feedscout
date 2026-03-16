@@ -11,16 +11,22 @@ export const normalizeMimeType = (type: string): string => {
 }
 
 export const isSubdomainOf = (url: string, domains: string | Array<string>): boolean => {
-  const hostname = new URL(url).hostname.toLowerCase()
-  const list = Array.isArray(domains) ? domains : [domains]
+  try {
+    const hostname = new URL(url).hostname.toLowerCase()
+    const list = Array.isArray(domains) ? domains : [domains]
+    return list.some((domain) => hostname.endsWith(`.${domain}`))
+  } catch {}
 
-  return list.some((domain) => hostname.endsWith(`.${domain}`))
+  return false
 }
 
 export const isHostOf = (url: string, hosts: string | Array<string>): boolean => {
-  const list = Array.isArray(hosts) ? hosts : [hosts]
+  try {
+    const list = Array.isArray(hosts) ? hosts : [hosts]
+    return isAnyOf(new URL(url).hostname, list)
+  } catch {}
 
-  return isAnyOf(new URL(url).hostname, list)
+  return false
 }
 
 export const includesAnyOf = (
