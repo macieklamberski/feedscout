@@ -44,6 +44,23 @@ Favicons use the same discovery pipeline as feeds — see the [Feeds](/feeds) se
 | Headers | `Link` headers with icon-related `rel` values |
 | Guess | Common paths like `/favicon.ico`, `/apple-touch-icon.png` |
 
+## Supported Platforms
+
+The Platform method extracts avatars and icons directly from known platforms using their public APIs or URL conventions:
+
+| Platform | What It Extracts |
+|----------|-----------------|
+| GitHub | User avatar |
+| GitHub Gist | User avatar (via GitHub) |
+| Mastodon | Profile avatar (via public API) |
+| Bluesky | Profile avatar (via public API) |
+| Reddit | Subreddit icon or user avatar (via public API) |
+| Tumblr | Blog avatar |
+| Codeberg | User avatar |
+| Lobsters | User avatar |
+| SourceForge | Project icon |
+| DeviantArt | User avatar |
+
 ## Extracting Icons from Feeds
 
 When given a feed URL, favicon discovery can extract icons directly from the feed content. Atom feeds provide an `<icon>` element, and JSON Feeds include `favicon` and `icon` fields:
