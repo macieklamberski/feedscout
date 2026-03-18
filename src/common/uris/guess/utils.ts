@@ -1,18 +1,32 @@
 import type { UriEntry } from '../../types.js'
 
+const resolveUri = (uri: string, base: string, origin: string, pathname: string): string => {
+  if (uri.startsWith('/')) {
+    return `${origin}${uri}`
+  }
+
+  if (uri.startsWith('?')) {
+    return `${origin}${pathname}${uri}`
+  }
+
+  return new URL(uri, base).toString()
+}
+
 export const generateUrlCombinations = (
   baseUrls: Array<string>,
   uris: Array<UriEntry>,
 ): Array<UriEntry> => {
   return baseUrls.flatMap((base) => {
+    const parsed = new URL(base)
+    const origin = parsed.origin
+    const pathname = parsed.pathname
+
     return uris.map((uri) => {
       if (typeof uri === 'string') {
-        return new URL(uri, base).toString()
+        return resolveUri(uri, base, origin, pathname)
       }
 
-      return uri.map((alternative) => {
-        return new URL(alternative, base).toString()
-      })
+      return uri.map((alternative) => resolveUri(alternative, base, origin, pathname))
     })
   })
 }
