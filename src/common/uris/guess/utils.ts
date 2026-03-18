@@ -33,17 +33,15 @@ export const generateUrlCombinations = (
 
 export const getWwwCounterpart = (baseUrl: string): string => {
   const url = new URL(baseUrl)
-  const counterpart = new URL(url)
+  const port = url.port ? `:${url.port}` : ''
 
   // Remove www.
   if (url.hostname.startsWith('www.')) {
-    counterpart.hostname = url.hostname.replace(/^www\./, '')
-    return counterpart.origin
+    return `${url.protocol}//${url.hostname.slice(4)}${port}`
   }
 
   // Add www.
-  counterpart.hostname = `www.${url.hostname}`
-  return counterpart.origin
+  return `${url.protocol}//www.${url.hostname}${port}`
 }
 
 export const getSubdomainVariants = (baseUrl: string, prefixes: Array<string>): Array<string> => {

@@ -290,6 +290,20 @@ describe('getWwwCounterpart', () => {
 
     expect(getWwwCounterpart(value)).toBe(expected)
   })
+
+  it('should add www to IDN domain', () => {
+    const value = 'https://münchen.de'
+    const expected = 'https://www.xn--mnchen-3ya.de'
+
+    expect(getWwwCounterpart(value)).toBe(expected)
+  })
+
+  it('should remove www from IDN domain', () => {
+    const value = 'https://www.münchen.de'
+    const expected = 'https://xn--mnchen-3ya.de'
+
+    expect(getWwwCounterpart(value)).toBe(expected)
+  })
 })
 
 describe('getSubdomainVariants', () => {
