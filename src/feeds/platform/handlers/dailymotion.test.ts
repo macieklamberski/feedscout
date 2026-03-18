@@ -16,8 +16,8 @@ describe('dailymotionHandler', () => {
       expect(dailymotionHandler.match(url)).toBe(expected)
     })
 
-    it('should throw for invalid URL', () => {
-      expect(() => dailymotionHandler.match('not-a-url')).toThrow()
+    it('should return false for invalid URL', () => {
+      expect(dailymotionHandler.match('not-a-url')).toBe(false)
     })
   })
 

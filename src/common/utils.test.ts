@@ -185,6 +185,10 @@ describe('isSubdomainOf', () => {
 
     expect(isSubdomainOf(value, ['blogspot.com', 'wordpress.com'])).toBe(false)
   })
+
+  it('should return false for invalid URL', () => {
+    expect(isSubdomainOf('not-a-url', 'blogspot.com')).toBe(false)
+  })
 })
 
 describe('isHostOf', () => {
@@ -234,6 +238,10 @@ describe('isHostOf', () => {
     const value = 'https://gitlab.com/owner/repo'
 
     expect(isHostOf(value, 'github.com')).toBe(false)
+  })
+
+  it('should return false for invalid URL', () => {
+    expect(isHostOf('not-a-url', ['github.com'])).toBe(false)
   })
 })
 
@@ -331,15 +339,15 @@ describe('includesAnyOf', () => {
     expect(includesAnyOf(value, patterns)).toBe(false)
   })
 
-  it('should return true when pattern contains empty string', () => {
-    expect(includesAnyOf('anything', [''])).toBe(true)
-  })
-
   it('should handle pattern with numbers', () => {
     const value = 'RSS 2.0 feed'
     const patterns = ['2.0']
 
     expect(includesAnyOf(value, patterns)).toBe(true)
+  })
+
+  it('should return false when pattern is empty string', () => {
+    expect(includesAnyOf('anything', [''])).toBe(false)
   })
 })
 
@@ -803,8 +811,8 @@ describe('endsWithAnyOf', () => {
     expect(endsWithAnyOf(value, patterns)).toBe(true)
   })
 
-  it('should return true when pattern contains empty string', () => {
-    expect(endsWithAnyOf('anything', [''])).toBe(true)
+  it('should return false when pattern is empty string', () => {
+    expect(endsWithAnyOf('anything', [''])).toBe(false)
   })
 })
 

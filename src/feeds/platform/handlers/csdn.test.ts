@@ -13,8 +13,8 @@ describe('csdnHandler', () => {
       expect(csdnHandler.match(url)).toBe(expected)
     })
 
-    it('should throw for invalid URL', () => {
-      expect(() => csdnHandler.match('not-a-url')).toThrow()
+    it('should return false for invalid URL', () => {
+      expect(csdnHandler.match('not-a-url')).toBe(false)
     })
   })
 

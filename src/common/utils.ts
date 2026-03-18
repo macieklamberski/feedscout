@@ -11,16 +11,22 @@ export const normalizeMimeType = (type: string): string => {
 }
 
 export const isSubdomainOf = (url: string, domains: string | Array<string>): boolean => {
-  const hostname = new URL(url).hostname.toLowerCase()
-  const list = Array.isArray(domains) ? domains : [domains]
+  try {
+    const hostname = new URL(url).hostname.toLowerCase()
+    const list = Array.isArray(domains) ? domains : [domains]
+    return list.some((domain) => hostname.endsWith(`.${domain}`))
+  } catch {}
 
-  return list.some((domain) => hostname.endsWith(`.${domain}`))
+  return false
 }
 
 export const isHostOf = (url: string, hosts: string | Array<string>): boolean => {
-  const list = Array.isArray(hosts) ? hosts : [hosts]
+  try {
+    const list = Array.isArray(hosts) ? hosts : [hosts]
+    return isAnyOf(new URL(url).hostname, list)
+  } catch {}
 
-  return isAnyOf(new URL(url).hostname, list)
+  return false
 }
 
 export const includesAnyOf = (
@@ -30,7 +36,7 @@ export const includesAnyOf = (
 ): boolean => {
   const parsedValue = parser ? parser(value) : value?.toLowerCase()
   const normalizedPatterns = patterns.map((pattern) => pattern.toLowerCase())
-  return normalizedPatterns.some((pattern) => parsedValue?.includes(pattern))
+  return normalizedPatterns.some((pattern) => pattern && parsedValue?.includes(pattern))
 }
 
 export const isAnyOf = (
@@ -49,7 +55,7 @@ export const anyWordMatchesAnyOf = (value: string, patterns: Array<string>): boo
 
 export const endsWithAnyOf = (value: string, patterns: Array<string>): boolean => {
   const lowerValue = value.toLowerCase()
-  return patterns.some((pattern) => lowerValue.endsWith(pattern.toLowerCase()))
+  return patterns.some((pattern) => pattern && lowerValue.endsWith(pattern.toLowerCase()))
 }
 
 export const isOfAllowedMimeType = (
