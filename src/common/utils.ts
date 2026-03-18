@@ -35,8 +35,7 @@ export const includesAnyOf = (
   parser?: (value: string) => string,
 ): boolean => {
   const parsedValue = parser ? parser(value) : value?.toLowerCase()
-  const normalizedPatterns = patterns.map((pattern) => pattern.toLowerCase())
-  return normalizedPatterns.some((pattern) => pattern && parsedValue?.includes(pattern))
+  return patterns.some((pattern) => pattern && parsedValue?.includes(pattern.toLowerCase()))
 }
 
 export const isAnyOf = (
