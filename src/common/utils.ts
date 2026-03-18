@@ -35,8 +35,7 @@ export const includesAnyOf = (
   parser?: (value: string) => string,
 ): boolean => {
   const parsedValue = parser ? parser(value) : value?.toLowerCase()
-  const normalizedPatterns = patterns.map((pattern) => pattern.toLowerCase())
-  return normalizedPatterns.some((pattern) => pattern && parsedValue?.includes(pattern))
+  return patterns.some((pattern) => pattern && parsedValue?.includes(pattern.toLowerCase()))
 }
 
 export const isAnyOf = (
@@ -74,7 +73,15 @@ export const isOfAllowedMimeType = (
 }
 
 export const omitEmpty = <T>(array: Array<T | null | undefined>): Array<T> => {
-  return array.filter((item): item is T => item != null && item !== '')
+  const result: Array<T> = []
+
+  for (const item of array) {
+    if (item != null && item !== '') {
+      result.push(item as T)
+    }
+  }
+
+  return result
 }
 
 export const normalizeUrl = (url: string, baseUrl: string | undefined): string => {
