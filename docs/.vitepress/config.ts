@@ -98,12 +98,16 @@ export default defineConfig({
     },
     socialLinks: [
       {
+        icon: 'npm',
+        link: 'https://www.npmjs.com/package/feedscout',
+      },
+      {
         icon: 'github',
         link: 'https://github.com/macieklamberski/feedscout',
       },
       {
-        icon: 'npm',
-        link: 'https://www.npmjs.com/package/feedscout',
+        icon: 'x',
+        link: 'https://x.com/macieklamberski',
       },
     ],
   },
