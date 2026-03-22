@@ -24,6 +24,16 @@ export default defineConfig({
     ['meta', { property: 'og:site_name', content: 'Feedscout' }],
     [
       'script',
+      { type: 'application/ld+json' },
+      JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'WebSite',
+        name: 'Feedscout',
+        url: hostname,
+      }),
+    ],
+    [
+      'script',
       {
         async: '',
         src: 'https://stats.lamberski.com/script.js',
