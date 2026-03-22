@@ -5,4 +5,5 @@ export {
   isAnyOf,
   isHostOf,
   isSubdomainOf,
+  omitEmpty,
 } from '../common/utils.js'
