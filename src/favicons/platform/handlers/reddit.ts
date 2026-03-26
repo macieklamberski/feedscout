@@ -1,6 +1,7 @@
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { isHostOf } from '../../../common/utils.js'
 import { hosts } from '../../../feeds/platform/handlers/reddit.js'
+import { isNonEmptyString, parseBodyJson } from '../../utils.js'
 
 export const isSubredditPath = (pathname: string): boolean => {
   const segments = pathname.split('/').filter(Boolean)
@@ -37,10 +38,10 @@ export const redditHandler: PlatformHandler = {
         const subreddit = pathname.split('/').filter(Boolean)[1]
         const apiUrl = `https://www.reddit.com/r/${subreddit}/about.json`
         const response = await fetchFn(apiUrl)
-        const data = JSON.parse(typeof response.body === 'string' ? response.body : '')
+        const data = parseBodyJson(response.body)
         const icon = data?.data?.community_icon?.split('?')[0] || data?.data?.icon_img
 
-        if (typeof icon === 'string' && icon.length > 0) {
+        if (isNonEmptyString(icon)) {
           return [{ uri: icon }]
         }
       }
@@ -49,10 +50,10 @@ export const redditHandler: PlatformHandler = {
         const username = pathname.split('/').filter(Boolean)[1]
         const apiUrl = `https://www.reddit.com/user/${username}/about.json`
         const response = await fetchFn(apiUrl)
-        const data = JSON.parse(typeof response.body === 'string' ? response.body : '')
+        const data = parseBodyJson(response.body)
         const icon = data?.data?.icon_img || data?.data?.snoovatar_img
 
-        if (typeof icon === 'string' && icon.length > 0) {
+        if (isNonEmptyString(icon)) {
           return [{ uri: icon }]
         }
       }
