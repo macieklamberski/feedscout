@@ -118,6 +118,8 @@
     "v2ex:node": "Node",
     "v2ex:member": "Member",
     "v2ex:tab": "Tab",
-    "ximalaya:album": "Album"
+    "ximalaya:album": "Album",
+    "lemmy:community": "Community",
+    "lemmy:user": "User"
   }
 }
