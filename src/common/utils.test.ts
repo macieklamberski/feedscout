@@ -3,6 +3,7 @@ import {
   anyWordMatchesAnyOf,
   composeHint,
   endsWithAnyOf,
+  hasMetaContent,
   includesAnyOf,
   isAnyOf,
   isHostOf,
@@ -1087,5 +1088,90 @@ describe('processConcurrently', () => {
     await processConcurrently(items, processFn, { concurrency: 0 })
 
     expect(processed).toEqual([])
+  })
+})
+
+describe('hasMetaContent', () => {
+  it('should return true when name comes before content', () => {
+    expect(
+      hasMetaContent('<meta name="generator" content="Mastodon v4.2.0">', 'generator', 'Mastodon'),
+    ).toBe(true)
+  })
+
+  it('should return true when content comes before name', () => {
+    expect(
+      hasMetaContent('<meta content="Mastodon v4.2.0" name="generator">', 'generator', 'Mastodon'),
+    ).toBe(true)
+  })
+
+  it('should return true when property attribute is used instead of name', () => {
+    expect(
+      hasMetaContent('<meta property="og:site_name" content="GitLab">', 'og:site_name', 'GitLab'),
+    ).toBe(true)
+  })
+
+  it('should return true when content comes before property', () => {
+    expect(
+      hasMetaContent('<meta content="GitLab" property="og:site_name">', 'og:site_name', 'GitLab'),
+    ).toBe(true)
+  })
+
+  it('should return true when content is a prefix match', () => {
+    expect(
+      hasMetaContent('<meta name="generator" content="Lemmy v0.19.5">', 'generator', 'Lemmy'),
+    ).toBe(true)
+  })
+
+  it('should return true when tag has additional attributes', () => {
+    const html = '<meta charset="utf-8" name="generator" content="Mastodon v4.2.0" />'
+    expect(hasMetaContent(html, 'generator', 'Mastodon')).toBe(true)
+  })
+
+  it('should return true when meta tag is embedded in full HTML', () => {
+    const html = '<html><head><meta name="generator" content="Mastodon v4.2.0"></head></html>'
+    expect(hasMetaContent(html, 'generator', 'Mastodon')).toBe(true)
+  })
+
+  it('should return false when name does not match', () => {
+    expect(
+      hasMetaContent('<meta name="description" content="Mastodon">', 'generator', 'Mastodon'),
+    ).toBe(false)
+  })
+
+  it('should return false when content does not match', () => {
+    expect(
+      hasMetaContent('<meta name="generator" content="WordPress">', 'generator', 'Mastodon'),
+    ).toBe(false)
+  })
+
+  it('should return false when content partially matches from the wrong position', () => {
+    expect(
+      hasMetaContent('<meta name="generator" content="not-Mastodon">', 'generator', 'Mastodon'),
+    ).toBe(false)
+  })
+
+  it('should be case-insensitive for tag and attribute names', () => {
+    expect(
+      hasMetaContent('<META NAME="generator" CONTENT="Mastodon">', 'generator', 'Mastodon'),
+    ).toBe(true)
+  })
+
+  it('should return false for empty content string', () => {
+    expect(hasMetaContent('', 'generator', 'Mastodon')).toBe(false)
+  })
+
+  it('should return false when meta tag is absent', () => {
+    expect(
+      hasMetaContent('<html><body>Mastodon generator</body></html>', 'generator', 'Mastodon'),
+    ).toBe(false)
+  })
+
+  it('should support colon in name for Open Graph properties', () => {
+    const html = '<meta property="og:site_name" content="My GitLab">'
+    expect(hasMetaContent(html, 'og:site_name', 'My GitLab')).toBe(true)
+  })
+
+  it('should return false when name is present but content attribute is missing', () => {
+    expect(hasMetaContent('<meta name="generator">', 'generator', 'Mastodon')).toBe(false)
   })
 })
