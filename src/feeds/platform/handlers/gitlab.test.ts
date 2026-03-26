@@ -1,18 +1,71 @@
 import { describe, expect, it } from 'bun:test'
-import { gitlabHandler } from './gitlab.js'
+import { gitlabHandler, isGitlabHeaders, isGitlabHtml } from './gitlab.js'
+
+const selfHostedHtml = '<html><head><meta property="og:site_name" content="GitLab"></head></html>'
+const selfHostedHeaders = new Headers({ 'x-gitlab-meta': '{"version":"1"}' })
+
+describe('isGitlabHtml', () => {
+  it('should return true for og:site_name GitLab meta tag', () => {
+    expect(isGitlabHtml('<meta property="og:site_name" content="GitLab">')).toBe(true)
+  })
+
+  it('should return true regardless of attribute order', () => {
+    expect(isGitlabHtml('<meta content="GitLab" property="og:site_name">')).toBe(true)
+  })
+
+  it('should return true when embedded in full HTML', () => {
+    expect(isGitlabHtml(selfHostedHtml)).toBe(true)
+  })
+
+  it('should return false for non-GitLab og:site_name values', () => {
+    expect(isGitlabHtml('<meta property="og:site_name" content="GitHub">')).toBe(false)
+  })
+
+  it('should return false for empty content', () => {
+    expect(isGitlabHtml('')).toBe(false)
+  })
+})
+
+describe('isGitlabHeaders', () => {
+  it('should return true when x-gitlab-meta header is present', () => {
+    expect(isGitlabHeaders(new Headers({ 'x-gitlab-meta': '{"version":"1"}' }))).toBe(true)
+  })
+
+  it('should return false when header is absent', () => {
+    expect(isGitlabHeaders(new Headers())).toBe(false)
+    expect(isGitlabHeaders(new Headers({ server: 'nginx' }))).toBe(false)
+  })
+})
 
 describe('gitlabHandler', () => {
   describe('match', () => {
-    const cases = [
-      ['https://gitlab.com/gitlab-org', true],
-      ['https://gitlab.com/gitlab-org/gitlab', true],
-      ['https://www.gitlab.com/user', true],
-      ['https://github.com/user/repo', false],
-      ['https://example.com', false],
-    ] as const
+    it('should match gitlab.com user and repo URLs without content', () => {
+      expect(gitlabHandler.match('https://gitlab.com/gitlab-org')).toBe(true)
+      expect(gitlabHandler.match('https://gitlab.com/gitlab-org/gitlab')).toBe(true)
+      expect(gitlabHandler.match('https://www.gitlab.com/user')).toBe(true)
+    })
 
-    it.each(cases)('%s -> %s', (url, expected) => {
-      expect(gitlabHandler.match(url)).toBe(expected)
+    it('should match self-hosted instance with GitLab HTML', () => {
+      expect(gitlabHandler.match('https://gitlab.mycompany.com/user', selfHostedHtml)).toBe(true)
+    })
+
+    it('should match self-hosted instance with GitLab header', () => {
+      expect(gitlabHandler.match('https://gitlab.mycompany.com/user', '', selfHostedHeaders)).toBe(
+        true,
+      )
+    })
+
+    it('should not match self-hosted root path even with GitLab signals', () => {
+      expect(gitlabHandler.match('https://gitlab.mycompany.com', selfHostedHtml)).toBe(false)
+    })
+
+    it('should not match self-hosted without content or headers', () => {
+      expect(gitlabHandler.match('https://gitlab.mycompany.com/user')).toBe(false)
+    })
+
+    it('should not match non-GitLab URLs', () => {
+      expect(gitlabHandler.match('https://github.com/user/repo')).toBe(false)
+      expect(gitlabHandler.match('https://example.com')).toBe(false)
     })
 
     it('should return false for invalid URL', () => {
