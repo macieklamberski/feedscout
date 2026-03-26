@@ -8,6 +8,7 @@ import { omitEmpty } from '../common/utils.js'
 import { blueskyHandler } from './platform/handlers/bluesky.js'
 import { codebergHandler } from './platform/handlers/codeberg.js'
 import { deviantartHandler } from './platform/handlers/deviantart.js'
+import { devtoHandler } from './platform/handlers/devto.js'
 import { githubHandler } from './platform/handlers/github.js'
 import { githubGistHandler } from './platform/handlers/githubGist.js'
 import { lobstersHandler } from './platform/handlers/lobsters.js'
@@ -74,5 +75,6 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     lobstersHandler,
     sourceforgeHandler,
     deviantartHandler,
+    devtoHandler,
   ],
 }
