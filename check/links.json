@@ -82,6 +82,10 @@
     "https://medium.com/feed/towards-data-science/tagged/python",
     "https://medium.com/feed/towards-data-science"
   ],
+  "mastodon": [
+    "https://mastodon.social/@Mastodon.rss",
+    "https://mastodon.social/tags/mastodon.rss"
+  ],
   "pinterest": ["https://www.pinterest.com/pinterest/feed.rss"],
   "producthunt": [
     "https://www.producthunt.com/feed?topic=artificial-intelligence",
