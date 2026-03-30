@@ -309,4 +309,63 @@ describe('discoverFavicons', () => {
 
     expect(value).toEqual([])
   })
+
+  it('should recognize direct favicon URL via image content-type', async () => {
+    const fetchFn: DiscoverFetchFn = async (url: string) => ({
+      url,
+      body: 'binary',
+      headers: new Headers({ 'content-type': 'image/png' }),
+      status: 200,
+      statusText: 'OK',
+    })
+    const value = await discoverFavicons('https://example.com/icon.png', { fetchFn })
+    const expected: Array<DiscoverResult<FaviconResult>> = [
+      { url: 'https://example.com/icon.png', isValid: true },
+    ]
+
+    expect(value).toEqual(expected)
+  })
+
+  it('should recognize direct SVG favicon via content', async () => {
+    const svgContent = '<svg xmlns="http://www.w3.org/2000/svg"><circle r="10"/></svg>'
+    const fetchFn: DiscoverFetchFn = async (url: string) => ({
+      url,
+      body: svgContent,
+      headers: new Headers(),
+      status: 200,
+      statusText: 'OK',
+    })
+    const value = await discoverFavicons('https://example.com/icon.svg', { fetchFn })
+    const expected: Array<DiscoverResult<FaviconResult>> = [
+      { url: 'https://example.com/icon.svg', isValid: true },
+    ]
+
+    expect(value).toEqual(expected)
+  })
+
+  it('should recognize SVG favicon from object input without headers', async () => {
+    const svgContent = '<?xml version="1.0"?><svg xmlns="http://www.w3.org/2000/svg"></svg>'
+    const mockFetch = createMockFetch({})
+    const value = await discoverFavicons(
+      { url: 'https://example.com/icon.svg', content: svgContent },
+      { fetchFn: mockFetch },
+    )
+    const expected: Array<DiscoverResult<FaviconResult>> = [
+      { url: 'https://example.com/icon.svg', isValid: true },
+    ]
+
+    expect(value).toEqual(expected)
+  })
+
+  it('should not recognize HTML page with embedded SVG as direct favicon', async () => {
+    const html =
+      '<html><body><svg xmlns="http://www.w3.org/2000/svg"><circle r="10"/></svg></body></html>'
+    const mockFetch = createMockFetch({})
+    const value = await discoverFavicons(
+      { url: 'https://example.com', content: html },
+      { methods: ['guess'], fetchFn: mockFetch },
+    )
+
+    expect(value).toEqual([])
+  })
 })
