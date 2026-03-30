@@ -23,6 +23,7 @@ export const discoverFeeds = async <TValid extends FeedResult = FeedResult>(
       fetchFn: options.fetchFn ?? defaultFetchFn,
       extractFn: options.extractFn ?? defaultExtractor,
       normalizeUrlFn: options.normalizeUrlFn ?? normalizeUrl,
+      // No resolveSiteUrlFn — feeds discoverer early-returns in extractFn before site resolution.
     },
     {
       platform: defaultPlatformOptions,

@@ -14,10 +14,11 @@ const isImageContent = (content: string): boolean => {
   }
 
   const trimmed = content.trimStart()
+  const head = trimmed.slice(0, 200)
 
   return (
     trimmed.startsWith('<svg') ||
-    (trimmed.startsWith('<?xml') && trimmed.includes('<svg')) ||
+    (trimmed.startsWith('<?xml') && head.includes('<svg')) ||
     content.slice(1, 4) === 'PNG' ||
     content.startsWith('GIF8') ||
     (content.startsWith('RIFF') && content.includes('WEBP'))
