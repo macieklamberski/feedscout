@@ -17,6 +17,10 @@ describe('hatenablogHandler', () => {
     it.each(cases)('%s -> %s', (url, expected) => {
       expect(hatenablogHandler.match(url)).toBe(expected)
     })
+
+    it('should return false for invalid URL', () => {
+      expect(hatenablogHandler.match('not-a-url')).toBe(false)
+    })
   })
 
   describe('resolve', () => {

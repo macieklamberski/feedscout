@@ -136,4 +136,52 @@ describe('discoverHubsFromHeaders', () => {
 
     expect(value).toEqual(expected)
   })
+
+  it('should apply custom normalizeUrlFn to hub and topic URLs', () => {
+    const headers = new Headers({
+      link: '</hub>; rel="hub", </feed.xml>; rel="self"',
+    })
+    const customNormalizer = (url: string, baseUrl: string | undefined) => {
+      return `https://custom.example.com${url}`
+    }
+    const value = discoverHubsFromHeaders(headers, 'https://example.com/feed.xml', customNormalizer)
+    const expected: Array<HubResult> = [
+      {
+        hub: 'https://custom.example.com/hub',
+        topic: 'https://custom.example.com/feed.xml',
+      },
+    ]
+
+    expect(value).toEqual(expected)
+  })
+
+  it('should resolve relative hub URL /hub in Link header', () => {
+    const headers = new Headers({
+      link: '</hub>; rel="hub"',
+    })
+    const value = discoverHubsFromHeaders(headers, 'https://example.com/feed.xml')
+    const expected: Array<HubResult> = [
+      {
+        hub: 'https://example.com/hub',
+        topic: 'https://example.com/feed.xml',
+      },
+    ]
+
+    expect(value).toEqual(expected)
+  })
+
+  it('should use first self entry when multiple rel="self" are present', () => {
+    const headers = new Headers({
+      link: '<https://hub.example.com/>; rel="hub", <https://example.com/first.xml>; rel="self", <https://example.com/second.xml>; rel="self"',
+    })
+    const value = discoverHubsFromHeaders(headers, 'https://example.com/')
+    const expected: Array<HubResult> = [
+      {
+        hub: 'https://hub.example.com/',
+        topic: 'https://example.com/first.xml',
+      },
+    ]
+
+    expect(value).toEqual(expected)
+  })
 })

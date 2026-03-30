@@ -1,8 +1,8 @@
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
-import { composeHint, isAnyOf, isHostOf } from '../../../common/utils.js'
+import { composeHint, hasMetaContent, isAnyOf, isHostOf } from '../../../common/utils.js'
 
-const hosts = ['gitlab.com', 'www.gitlab.com']
-const excludedPaths = [
+export const hosts = ['gitlab.com', 'www.gitlab.com']
+export const excludedPaths = [
   'explore',
   'dashboard',
   'projects',
@@ -26,9 +26,40 @@ const excludedPaths = [
   '-',
 ]
 
+export const isGitlabHtml = (content: string): boolean => {
+  return hasMetaContent(content, 'og:site_name', 'GitLab')
+}
+
+export const isGitlabHeaders = (headers: Headers): boolean => {
+  return headers.has('x-gitlab-meta')
+}
+
 export const gitlabHandler: PlatformHandler = {
-  match: (url) => {
-    return isHostOf(url, hosts)
+  match: (url, content, headers) => {
+    // Fast path for gitlab.com.
+    if (isHostOf(url, hosts)) {
+      return true
+    }
+
+    // Self-hosted instances require content or headers to confirm.
+    try {
+      const { pathname } = new URL(url)
+      const pathSegments = pathname.split('/').filter(Boolean)
+
+      if (pathSegments.length === 0) {
+        return false
+      }
+
+      if (content && isGitlabHtml(content)) {
+        return true
+      }
+
+      if (headers && isGitlabHeaders(headers)) {
+        return true
+      }
+    } catch {}
+
+    return false
   },
 
   resolve: (url) => {

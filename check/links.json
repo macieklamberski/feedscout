@@ -65,6 +65,7 @@
     "https://www.kickstarter.com/projects/elanlee/exploding-kittens/posts.atom",
     "https://www.kickstarter.com/projects/feed.atom"
   ],
+  "lemmy": ["https://lemmy.ml/feeds/c/lemmy.xml", "https://lemmy.ml/feeds/u/dessalines.xml"],
   "letterboxd": ["https://letterboxd.com/dave/rss/", "https://letterboxd.com/lynch/rss/"],
   "lobsters": [
     "https://lobste.rs/t/programming.rss",
@@ -81,6 +82,10 @@
     "https://medium.com/feed/tag/programming",
     "https://medium.com/feed/towards-data-science/tagged/python",
     "https://medium.com/feed/towards-data-science"
+  ],
+  "mastodon": [
+    "https://mastodon.social/@Mastodon.rss",
+    "https://mastodon.social/tags/mastodon.rss"
   ],
   "pinterest": ["https://www.pinterest.com/pinterest/feed.rss"],
   "producthunt": [

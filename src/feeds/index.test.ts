@@ -314,6 +314,21 @@ describe('discoverFeeds', () => {
     expect(value).toEqual(expected)
   })
 
+  it('should return empty array when methods is empty array', async () => {
+    const mockFetch = createMockFetch({
+      'https://example.com/feed': '<rss><channel><title>Test</title></channel></rss>',
+    })
+    const value = await discoverFeeds(
+      { url: 'https://example.com' },
+      {
+        methods: [],
+        fetchFn: mockFetch,
+      },
+    )
+
+    expect(value).toEqual([])
+  })
+
   describe('platform method', () => {
     it('should discover feeds when platform method specified in array form', async () => {
       const rss = `

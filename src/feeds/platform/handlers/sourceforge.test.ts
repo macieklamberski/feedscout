@@ -14,6 +14,10 @@ describe('sourceforgeHandler', () => {
     it.each(cases)('%s -> %s', (url, expected) => {
       expect(sourceforgeHandler.match(url)).toBe(expected)
     })
+
+    it('should return false for invalid URL', () => {
+      expect(sourceforgeHandler.match('not-a-url')).toBe(false)
+    })
   })
 
   describe('resolve', () => {

@@ -200,6 +200,47 @@ describe('discoverUris', () => {
     expect(value).toEqual(expected)
   })
 
+  it('should return empty object when all methods return empty arrays', async () => {
+    const value = await discoverUris({
+      html: {
+        html: '<div>No feeds</div>',
+        options: {
+          linkSelectors: [{ rel: 'alternate', types: ['application/rss+xml'] }],
+          anchorUris: [],
+          anchorIgnoredUris: [],
+          anchorLabels: [],
+        },
+      },
+      guess: {
+        options: {
+          baseUrl: 'https://example.com',
+          uris: [],
+        },
+      },
+    })
+
+    expect(value).toEqual({})
+  })
+
+  it('should filter undefined entries from feed extractUrls via omitEmpty', async () => {
+    const content = JSON.stringify({
+      version: 'https://jsonfeed.org/version/1.1',
+      title: 'Example',
+      items: [],
+    })
+    const value = await discoverUris({
+      feed: {
+        content,
+        options: {
+          extractUrls: () => omitEmpty([undefined, '/valid']),
+        },
+      },
+    })
+    const expected = { feed: [{ uri: '/valid' }] }
+
+    expect(value).toEqual(expected)
+  })
+
   it('should handle mixed string and array entries across methods', async () => {
     const value = await discoverUris({
       platform: {

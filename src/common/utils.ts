@@ -11,16 +11,22 @@ export const normalizeMimeType = (type: string): string => {
 }
 
 export const isSubdomainOf = (url: string, domains: string | Array<string>): boolean => {
-  const hostname = new URL(url).hostname.toLowerCase()
-  const list = Array.isArray(domains) ? domains : [domains]
+  try {
+    const hostname = new URL(url).hostname.toLowerCase()
+    const list = Array.isArray(domains) ? domains : [domains]
+    return list.some((domain) => hostname.endsWith(`.${domain}`))
+  } catch {}
 
-  return list.some((domain) => hostname.endsWith(`.${domain}`))
+  return false
 }
 
 export const isHostOf = (url: string, hosts: string | Array<string>): boolean => {
-  const list = Array.isArray(hosts) ? hosts : [hosts]
+  try {
+    const list = Array.isArray(hosts) ? hosts : [hosts]
+    return isAnyOf(new URL(url).hostname, list)
+  } catch {}
 
-  return isAnyOf(new URL(url).hostname, list)
+  return false
 }
 
 export const includesAnyOf = (
@@ -29,8 +35,7 @@ export const includesAnyOf = (
   parser?: (value: string) => string,
 ): boolean => {
   const parsedValue = parser ? parser(value) : value?.toLowerCase()
-  const normalizedPatterns = patterns.map((pattern) => pattern.toLowerCase())
-  return normalizedPatterns.some((pattern) => parsedValue?.includes(pattern))
+  return patterns.some((pattern) => pattern && parsedValue?.includes(pattern.toLowerCase()))
 }
 
 export const isAnyOf = (
@@ -49,7 +54,7 @@ export const anyWordMatchesAnyOf = (value: string, patterns: Array<string>): boo
 
 export const endsWithAnyOf = (value: string, patterns: Array<string>): boolean => {
   const lowerValue = value.toLowerCase()
-  return patterns.some((pattern) => lowerValue.endsWith(pattern.toLowerCase()))
+  return patterns.some((pattern) => pattern && lowerValue.endsWith(pattern.toLowerCase()))
 }
 
 export const isOfAllowedMimeType = (
@@ -67,8 +72,29 @@ export const isOfAllowedMimeType = (
   return isAnyOf(type, allowedTypes, normalizeMimeType)
 }
 
+// Check if HTML contains a meta tag matching a name or property attribute with the given
+// content value (prefix match), regardless of attribute order.
+export const hasMetaContent = (content: string, name: string, value: string): boolean => {
+  const escapedName = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+  const escapedValue = value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+  const regex = new RegExp(
+    `<meta(?=[^>]*(?:name|property)=["']${escapedName}["'])(?=[^>]*content=["']${escapedValue})`,
+    'i',
+  )
+
+  return regex.test(content)
+}
+
 export const omitEmpty = <T>(array: Array<T | null | undefined>): Array<T> => {
-  return array.filter((item): item is T => item != null && item !== '')
+  const result: Array<T> = []
+
+  for (const item of array) {
+    if (item != null && item !== '') {
+      result.push(item as T)
+    }
+  }
+
+  return result
 }
 
 export const normalizeUrl = (url: string, baseUrl: string | undefined): string => {
@@ -101,6 +127,10 @@ export const processConcurrently = async <T>(
     shouldStop?: () => boolean
   },
 ): Promise<void> => {
+  if (options.concurrency < 1) {
+    return
+  }
+
   const active = new Set<Promise<void>>()
 
   let index = 0

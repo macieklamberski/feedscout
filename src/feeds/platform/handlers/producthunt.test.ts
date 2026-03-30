@@ -14,6 +14,10 @@ describe('producthuntHandler', () => {
     it.each(cases)('%s -> %s', (url, expected) => {
       expect(producthuntHandler.match(url)).toBe(expected)
     })
+
+    it('should return false for invalid URL', () => {
+      expect(producthuntHandler.match('not-a-url')).toBe(false)
+    })
   })
 
   describe('resolve', () => {

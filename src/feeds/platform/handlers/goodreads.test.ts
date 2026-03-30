@@ -14,6 +14,10 @@ describe('goodreadsHandler', () => {
     it.each(cases)('%s -> %s', (url, expected) => {
       expect(goodreadsHandler.match(url)).toBe(expected)
     })
+
+    it('should return false for invalid URL', () => {
+      expect(goodreadsHandler.match('not-a-url')).toBe(false)
+    })
   })
 
   describe('resolve', () => {

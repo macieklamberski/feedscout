@@ -82,10 +82,22 @@ describe('discoverBlogrolls', () => {
         fetchFn: mockFetch,
       },
     )
+    const expected: Array<DiscoverResult<BlogrollResult>> = [
+      {
+        url: 'https://example.com/.well-known/recommendations.opml',
+        isValid: true,
+        method: 'guess',
+        title: 'My Blogroll',
+      },
+      {
+        url: 'https://example.com/blogroll.opml',
+        isValid: true,
+        method: 'guess',
+        title: 'My Blogroll',
+      },
+    ]
 
-    expect(value.length).toBe(2)
-    expect(value[0].isValid).toBe(true)
-    expect(value[1].isValid).toBe(true)
+    expect(value).toEqual(expected)
   })
 
   it('should work with balanced blogroll URIs array', async () => {
@@ -123,8 +135,22 @@ describe('discoverBlogrolls', () => {
         fetchFn: mockFetch,
       },
     )
+    const expected: Array<DiscoverResult<BlogrollResult>> = [
+      {
+        url: 'https://example.com/links.opml',
+        isValid: true,
+        method: 'guess',
+        title: 'My Blogroll',
+      },
+      {
+        url: 'https://example.com/feeds.opml',
+        isValid: true,
+        method: 'guess',
+        title: 'My Blogroll',
+      },
+    ]
 
-    expect(value.length).toBe(2)
+    expect(value).toEqual(expected)
   })
 
   it('should discover blogrolls from HTML link elements with rel="blogroll"', async () => {
@@ -248,7 +274,71 @@ describe('discoverBlogrolls', () => {
         fetchFn: mockFetch,
       },
     )
+    const expected: Array<DiscoverResult<BlogrollResult>> = [
+      {
+        url: 'https://example.com/blogroll.opml',
+        isValid: true,
+        method: 'guess',
+        title: 'My Blogroll',
+      },
+      {
+        url: 'https://www.example.com/blogroll.opml',
+        isValid: true,
+        method: 'guess',
+        title: 'My Blogroll',
+      },
+    ]
 
-    expect(value.length).toBe(2)
+    expect(value).toEqual(expected)
+  })
+
+  it('should filter out invalid results when fetchFn returns 404', async () => {
+    const mockFetch: DiscoverFetchFn = async (url: string) => ({
+      url,
+      body: 'Not Found',
+      headers: new Headers(),
+      status: 404,
+      statusText: 'Not Found',
+    })
+    const value = await discoverBlogrolls(
+      { url: 'https://example.com' },
+      {
+        methods: { guess: { uris: ['/blogroll.opml'] } },
+        fetchFn: mockFetch,
+      },
+    )
+
+    expect(value).toEqual([])
+  })
+
+  it('should filter out invalid results for valid HTTP 200 with invalid OPML', async () => {
+    const mockFetch = createMockFetch({
+      'https://example.com/blogroll.opml': '<!DOCTYPE html><html><body>Not OPML</body></html>',
+    })
+    const value = await discoverBlogrolls(
+      { url: 'https://example.com' },
+      {
+        methods: { guess: { uris: ['/blogroll.opml'] } },
+        fetchFn: mockFetch,
+      },
+    )
+
+    expect(value).toEqual([])
+  })
+
+  it('should return empty array when no blogrolls found', async () => {
+    const mockFetch = createMockFetch({})
+    const value = await discoverBlogrolls(
+      {
+        url: 'https://example.com',
+        content: '<html><head></head><body>No blogrolls here</body></html>',
+      },
+      {
+        methods: { html: true },
+        fetchFn: mockFetch,
+      },
+    )
+
+    expect(value).toEqual([])
   })
 })

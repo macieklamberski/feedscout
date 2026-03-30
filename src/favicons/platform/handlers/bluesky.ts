@@ -1,5 +1,6 @@
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { isHostOf } from '../../../common/utils.js'
+import { isNonEmptyString, parseBodyJson } from '../../utils.js'
 
 export const hosts = ['bsky.app', 'www.bsky.app']
 
@@ -29,9 +30,9 @@ export const blueskyHandler: PlatformHandler = {
       const handle = segments[1]
       const apiUrl = `https://public.api.bsky.app/xrpc/app.bsky.actor.getProfile?actor=${handle}`
       const response = await fetchFn(apiUrl)
-      const data = JSON.parse(typeof response.body === 'string' ? response.body : '')
+      const data = parseBodyJson(response.body)
 
-      if (typeof data.avatar === 'string' && data.avatar.length > 0) {
+      if (isNonEmptyString(data.avatar)) {
         return [{ uri: data.avatar }]
       }
     } catch {}

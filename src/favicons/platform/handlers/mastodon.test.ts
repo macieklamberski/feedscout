@@ -274,5 +274,42 @@ describe('mastodonHandler', () => {
 
       expect(value).toEqual([])
     })
+
+    // Port is stripped from API URL because handler uses hostname (not host).
+    it('should resolve avatar from instance with port number', async () => {
+      const mockFetch = createMockFetch({
+        'https://mastodon.local/api/v1/accounts/lookup?acct=user': JSON.stringify({
+          avatar: 'https://mastodon.local:3000/avatars/user.png',
+        }),
+      })
+      const value = await mastodonHandler.resolve(
+        'https://mastodon.local:3000/@user',
+        undefined,
+        undefined,
+        mockFetch,
+      )
+      const expected: Array<DiscoverUriEntry> = [
+        { uri: 'https://mastodon.local:3000/avatars/user.png' },
+      ]
+
+      expect(value).toEqual(expected)
+    })
+
+    it('should resolve avatar from /@user@domain format', async () => {
+      const mockFetch = createMockFetch({
+        'https://mastodon.social/api/v1/accounts/lookup?acct=user@remote.social': JSON.stringify({
+          avatar: 'https://remote.social/avatars/user.png',
+        }),
+      })
+      const value = await mastodonHandler.resolve(
+        'https://mastodon.social/@user@remote.social',
+        undefined,
+        undefined,
+        mockFetch,
+      )
+      const expected: Array<DiscoverUriEntry> = [{ uri: 'https://remote.social/avatars/user.png' }]
+
+      expect(value).toEqual(expected)
+    })
   })
 })

@@ -53,5 +53,21 @@ describe('sourceforgeHandler', () => {
     it('should return empty array for non-project path', () => {
       expect(sourceforgeHandler.resolve('https://sourceforge.net/about')).toEqual([])
     })
+
+    it('should resolve project icon from www variant', () => {
+      const value = sourceforgeHandler.resolve('https://www.sourceforge.net/projects/mingw')
+      const expected: Array<DiscoverUriEntry> = [{ uri: 'https://a.fsdn.com/allura/p/mingw/icon' }]
+
+      expect(value).toEqual(expected)
+    })
+
+    it('should resolve project icon for project with hyphens', () => {
+      const value = sourceforgeHandler.resolve('https://sourceforge.net/projects/my-cool-project')
+      const expected: Array<DiscoverUriEntry> = [
+        { uri: 'https://a.fsdn.com/allura/p/my-cool-project/icon' },
+      ]
+
+      expect(value).toEqual(expected)
+    })
   })
 })

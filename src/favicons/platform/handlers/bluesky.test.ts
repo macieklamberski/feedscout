@@ -206,5 +206,25 @@ describe('blueskyHandler', () => {
 
       expect(value).toEqual([])
     })
+
+    it('should resolve avatar from www.bsky.app variant', async () => {
+      const mockFetch = createMockFetch({
+        'https://public.api.bsky.app/xrpc/app.bsky.actor.getProfile?actor=user.bsky.social':
+          JSON.stringify({
+            avatar: 'https://cdn.bsky.app/img/avatar/plain/did:plc:abc/avatar.jpg',
+          }),
+      })
+      const value = await blueskyHandler.resolve(
+        'https://www.bsky.app/profile/user.bsky.social',
+        undefined,
+        undefined,
+        mockFetch,
+      )
+      const expected: Array<DiscoverUriEntry> = [
+        { uri: 'https://cdn.bsky.app/img/avatar/plain/did:plc:abc/avatar.jpg' },
+      ]
+
+      expect(value).toEqual(expected)
+    })
   })
 })

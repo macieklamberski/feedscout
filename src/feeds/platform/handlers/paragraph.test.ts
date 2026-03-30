@@ -13,6 +13,10 @@ describe('paragraphHandler', () => {
     it.each(cases)('%s -> %s', (url, expected) => {
       expect(paragraphHandler.match(url)).toBe(expected)
     })
+
+    it('should return false for invalid URL', () => {
+      expect(paragraphHandler.match('not-a-url')).toBe(false)
+    })
   })
 
   describe('resolve', () => {

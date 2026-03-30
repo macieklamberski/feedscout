@@ -92,5 +92,9 @@ describe('deviantartHandler', () => {
     it('should return empty array for root URL', () => {
       expect(deviantartHandler.resolve('https://www.deviantart.com/')).toEqual([])
     })
+
+    it('should return empty array for single-char username', () => {
+      expect(deviantartHandler.resolve('https://www.deviantart.com/x')).toEqual([])
+    })
   })
 })

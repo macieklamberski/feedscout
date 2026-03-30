@@ -15,6 +15,10 @@ describe('itchioHandler', () => {
     it.each(cases)('%s -> %s', (url, expected) => {
       expect(itchioHandler.match(url)).toBe(expected)
     })
+
+    it('should return false for invalid URL', () => {
+      expect(itchioHandler.match('not-a-url')).toBe(false)
+    })
   })
 
   describe('resolve', () => {

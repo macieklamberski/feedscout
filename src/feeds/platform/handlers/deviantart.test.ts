@@ -12,6 +12,10 @@ describe('deviantartHandler', () => {
     it.each(cases)('%s -> %s', (url, expected) => {
       expect(deviantartHandler.match(url)).toBe(expected)
     })
+
+    it('should return false for invalid URL', () => {
+      expect(deviantartHandler.match('not-a-url')).toBe(false)
+    })
   })
 
   describe('resolve', () => {

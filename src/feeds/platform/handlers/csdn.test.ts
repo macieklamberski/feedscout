@@ -12,6 +12,10 @@ describe('csdnHandler', () => {
     it.each(cases)('%s -> %s', (url, expected) => {
       expect(csdnHandler.match(url)).toBe(expected)
     })
+
+    it('should return false for invalid URL', () => {
+      expect(csdnHandler.match('not-a-url')).toBe(false)
+    })
   })
 
   describe('resolve', () => {

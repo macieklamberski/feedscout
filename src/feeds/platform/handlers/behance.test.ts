@@ -14,6 +14,10 @@ describe('behanceHandler', () => {
     it.each(cases)('%s -> %s', (url, expected) => {
       expect(behanceHandler.match(url)).toBe(expected)
     })
+
+    it('should return false for invalid URL', () => {
+      expect(behanceHandler.match('not-a-url')).toBe(false)
+    })
   })
 
   describe('resolve', () => {

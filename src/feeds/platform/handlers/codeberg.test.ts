@@ -17,6 +17,10 @@ describe('codebergHandler', () => {
     it.each(cases)('%s -> %s', (url, expected) => {
       expect(codebergHandler.match(url)).toBe(expected)
     })
+
+    it('should return false for invalid URL', () => {
+      expect(codebergHandler.match('not-a-url')).toBe(false)
+    })
   })
 
   describe('resolve', () => {

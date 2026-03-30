@@ -21,6 +21,10 @@ describe('soundcloudHandler', () => {
     it.each(cases)('%s -> %s', (url, expected) => {
       expect(soundcloudHandler.match(url)).toBe(expected)
     })
+
+    it('should return false for invalid URL', () => {
+      expect(soundcloudHandler.match('not-a-url')).toBe(false)
+    })
   })
 
   describe('resolve', () => {

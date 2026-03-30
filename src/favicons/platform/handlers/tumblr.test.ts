@@ -19,6 +19,10 @@ describe('tumblrHandler', () => {
     it('should not match non-tumblr URLs', () => {
       expect(tumblrHandler.match('https://example.com')).toBe(false)
     })
+
+    it('should return false for invalid URL', () => {
+      expect(tumblrHandler.match('not-a-url')).toBe(false)
+    })
   })
 
   describe('resolve', () => {
@@ -47,6 +51,12 @@ describe('tumblrHandler', () => {
       ]
 
       expect(value).toEqual(expected)
+    })
+
+    it('should return empty array for www subdomain', () => {
+      const value = tumblrHandler.resolve('https://www.tumblr.com/')
+
+      expect(value).toEqual([])
     })
   })
 })

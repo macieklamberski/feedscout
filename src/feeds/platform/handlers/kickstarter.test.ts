@@ -14,6 +14,10 @@ describe('kickstarterHandler', () => {
     it.each(cases)('%s -> %s', (url, expected) => {
       expect(kickstarterHandler.match(url)).toBe(expected)
     })
+
+    it('should return false for invalid URL', () => {
+      expect(kickstarterHandler.match('not-a-url')).toBe(false)
+    })
   })
 
   describe('resolve', () => {

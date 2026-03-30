@@ -20,6 +20,7 @@ import { hashnodeHandler } from './platform/handlers/hashnode.js'
 import { hatenablogHandler } from './platform/handlers/hatenablog.js'
 import { itchioHandler } from './platform/handlers/itchio.js'
 import { kickstarterHandler } from './platform/handlers/kickstarter.js'
+import { lemmyHandler } from './platform/handlers/lemmy.js'
 import { letterboxdHandler } from './platform/handlers/letterboxd.js'
 import { lobstersHandler } from './platform/handlers/lobsters.js'
 import { mastodonHandler } from './platform/handlers/mastodon.js'
@@ -160,6 +161,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     gitlabHandler,
     itchioHandler,
     kickstarterHandler,
+    lemmyHandler,
     letterboxdHandler,
     lobstersHandler,
     mastodonHandler,

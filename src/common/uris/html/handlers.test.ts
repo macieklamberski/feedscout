@@ -406,6 +406,19 @@ describe('handleCloseTag', () => {
     expect(value.currentAnchor.text).toBe('RSS Feed')
   })
 
+  it('should deduplicate URI matched by both href suffix and text', () => {
+    const value = createMockContext()
+
+    // Anchor with href ending in /feed (matched by href suffix in handleOpenTag).
+    handleOpenTag(value, 'a', { href: '/feed' })
+    handleText(value, 'RSS Feed')
+    // handleCloseTag would also add /feed via text match, but Set deduplicates.
+    handleCloseTag(value, 'a')
+
+    expect(value.discoveredUris.size).toBe(1)
+    expect(value.discoveredUris.has('/feed')).toBe(true)
+  })
+
   it('should handle text with feed keyword in the middle', () => {
     const value = createMockContext()
     value.currentAnchor.href = '/custom-feed'

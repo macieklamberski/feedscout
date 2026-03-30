@@ -44,5 +44,5 @@ export const discoverUrisFromHeaders = (
     }
   }
 
-  return Array.from(uris)
+  return [...uris]
 }

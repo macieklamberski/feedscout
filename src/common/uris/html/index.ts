@@ -15,5 +15,5 @@ export const discoverUrisFromHtml = (html: string, options: HtmlMethodOptions): 
   parser.write(html)
   parser.end()
 
-  return Array.from(context.discoveredUris)
+  return [...context.discoveredUris]
 }

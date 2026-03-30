@@ -318,5 +318,22 @@ describe('redditHandler', () => {
 
       expect(value).toEqual([])
     })
+
+    it('should return empty array when community_icon is non-string type', async () => {
+      // When community_icon is a number, .split() throws and the catch block returns [].
+      const mockFetch = createMockFetch({
+        'https://www.reddit.com/r/javascript/about.json': JSON.stringify({
+          data: { community_icon: 42, icon_img: 'https://b.thumbs.redditmedia.com/fallback.png' },
+        }),
+      })
+      const value = await redditHandler.resolve(
+        'https://reddit.com/r/javascript',
+        undefined,
+        undefined,
+        mockFetch,
+      )
+
+      expect(value).toEqual([])
+    })
   })
 })

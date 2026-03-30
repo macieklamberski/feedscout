@@ -13,6 +13,10 @@ describe('tumblrHandler', () => {
     it.each(cases)('%s -> %s', (url, expected) => {
       expect(tumblrHandler.match(url)).toBe(expected)
     })
+
+    it('should return false for invalid URL', () => {
+      expect(tumblrHandler.match('not-a-url')).toBe(false)
+    })
   })
 
   describe('resolve', () => {

@@ -19,6 +19,10 @@ describe('blogspotHandler', () => {
     it.each(cases)('%s -> %s', (url, expected) => {
       expect(blogspotHandler.match(url)).toBe(expected)
     })
+
+    it('should return false for invalid URL', () => {
+      expect(blogspotHandler.match('not-a-url')).toBe(false)
+    })
   })
 
   describe('resolve', () => {

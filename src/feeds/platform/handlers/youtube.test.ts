@@ -15,6 +15,10 @@ describe('youtubeHandler', () => {
     it.each(cases)('%s -> %s', (url, expected) => {
       expect(youtubeHandler.match(url)).toBe(expected)
     })
+
+    it('should return false for invalid URL', () => {
+      expect(youtubeHandler.match('not-a-url')).toBe(false)
+    })
   })
 
   describe('resolve', () => {

@@ -11,7 +11,7 @@ export const tumblrHandler: PlatformHandler = {
     const { hostname } = new URL(url)
     const blog = hostname.split('.')[0]
 
-    if (!blog) {
+    if (!blog || blog === 'www') {
       return []
     }
 

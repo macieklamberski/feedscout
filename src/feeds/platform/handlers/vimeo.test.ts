@@ -14,6 +14,10 @@ describe('vimeoHandler', () => {
     it.each(cases)('%s -> %s', (url, expected) => {
       expect(vimeoHandler.match(url)).toBe(expected)
     })
+
+    it('should return false for invalid URL', () => {
+      expect(vimeoHandler.match('not-a-url')).toBe(false)
+    })
   })
 
   describe('resolve', () => {

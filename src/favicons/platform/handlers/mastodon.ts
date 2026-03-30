@@ -1,4 +1,6 @@
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
+import { hasMetaContent } from '../../../common/utils.js'
+import { isNonEmptyString, parseBodyJson } from '../../utils.js'
 
 export const isProfilePath = (pathname: string): boolean => {
   const segments = pathname.split('/').filter(Boolean)
@@ -7,7 +9,7 @@ export const isProfilePath = (pathname: string): boolean => {
 }
 
 export const isMastodonHtml = (content: string): boolean => {
-  return /<meta[^>]+name=["']generator["'][^>]+content=["']Mastodon/i.test(content)
+  return hasMetaContent(content, 'generator', 'Mastodon')
 }
 
 export const isMastodonHeaders = (headers: Headers): boolean => {
@@ -45,9 +47,9 @@ export const mastodonHandler: PlatformHandler = {
       const username = pathname.split('/').filter(Boolean)[0].replace('@', '')
       const apiUrl = `https://${hostname}/api/v1/accounts/lookup?acct=${username}`
       const response = await fetchFn(apiUrl)
-      const data = JSON.parse(typeof response.body === 'string' ? response.body : '')
+      const data = parseBodyJson(response.body)
 
-      if (typeof data.avatar === 'string' && data.avatar.length > 0) {
+      if (isNonEmptyString(data.avatar)) {
         return [{ uri: data.avatar }]
       }
     } catch {}

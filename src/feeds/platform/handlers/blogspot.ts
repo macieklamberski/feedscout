@@ -7,9 +7,13 @@ const blogspotDomainRegex = /^.+\.blogspot\.(?:com|co\.[a-z]{2}|com\.[a-z]{2}|[a
 
 export const blogspotHandler: PlatformHandler = {
   match: (url) => {
-    const hostname = new URL(url).hostname.toLowerCase()
+    try {
+      const hostname = new URL(url).hostname.toLowerCase()
 
-    return blogspotDomainRegex.test(hostname)
+      return blogspotDomainRegex.test(hostname)
+    } catch {}
+
+    return false
   },
 
   resolve: (url) => {

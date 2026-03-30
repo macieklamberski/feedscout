@@ -59,5 +59,9 @@ describe('lobstersHandler', () => {
     it('should return empty array for non-user path', () => {
       expect(lobstersHandler.resolve('https://lobste.rs/t/programming')).toEqual([])
     })
+
+    it('should return empty array for username with @ char', () => {
+      expect(lobstersHandler.resolve('https://lobste.rs/~@invalid')).toEqual([])
+    })
   })
 })
