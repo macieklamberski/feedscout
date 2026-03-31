@@ -30,7 +30,11 @@ export const discoverHubs = async (
   }
 
   if (methods.includes('feed') && normalizedInput.content) {
-    const feedHubs = discoverHubsFromFeed(normalizedInput.content, normalizedInput.url)
+    const feedHubs = discoverHubsFromFeed(
+      normalizedInput.content,
+      normalizedInput.url,
+      normalizeUrlFn,
+    )
     results.push(...feedHubs)
   }
 
