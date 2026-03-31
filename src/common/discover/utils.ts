@@ -88,7 +88,7 @@ export const defaultResolveSiteUrlFn: DiscoverResolveSiteUrlFn = (input) => {
     }
 
     // Avoid re-fetching the same URL.
-    if (siteUrl === normalizeUrl(input.url, input.url)) {
+    if (siteUrl && new URL(siteUrl).href === new URL(input.url).href) {
       return
     }
 
