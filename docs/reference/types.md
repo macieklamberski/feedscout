@@ -14,7 +14,7 @@ import type {
   DiscoverResult,
   DiscoverProgress,
   DiscoverFetchFn,
-  DiscoverNormalizeUrlFn,
+  DiscoverResolveUrlFn,
   DiscoverUriEntry,
   DiscoverUriHint,
   UriEntry,
@@ -50,7 +50,7 @@ type DiscoverOptions<TValid, TMethods extends DiscoverMethod = DiscoverMethod> =
   methods?: DiscoverMethodsConfig<TMethods>
   fetchFn?: DiscoverFetchFn
   extractFn?: DiscoverExtractFn<TValid>
-  normalizeUrlFn?: DiscoverNormalizeUrlFn
+  resolveUrlFn?: DiscoverResolveUrlFn
   stopOnFirstMethod?: boolean
   stopOnFirstResult?: boolean
   concurrency?: number

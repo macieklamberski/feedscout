@@ -95,7 +95,7 @@ describe('discoverHubsFromHtml', () => {
     expect(value).toEqual(expected)
   })
 
-  it('should apply custom normalizeUrlFn', () => {
+  it('should apply custom resolveUrlFn', () => {
     const html = '<link rel="hub" href="/hub">'
     const customNormalizer = (url: string) => `https://custom.example.com${url}`
     const value = discoverHubsFromHtml(html, 'https://example.com/', customNormalizer)

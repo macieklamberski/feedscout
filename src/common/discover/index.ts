@@ -21,7 +21,7 @@ export const discover = async <TValid>(
     methods,
     fetchFn,
     extractFn,
-    normalizeUrlFn,
+    resolveUrlFn,
     resolveSiteUrlFn,
     stopOnFirstMethod = false,
     stopOnFirstResult = false,
@@ -83,7 +83,7 @@ export const discover = async <TValid>(
     }
 
     const normalized = rawUris.map((entry) => {
-      return normalizeUriEntry(entry, normalizeUrlFn, sourceInput.url)
+      return normalizeUriEntry(entry, resolveUrlFn, sourceInput.url)
     })
 
     const unique = normalized.filter((entry) => {

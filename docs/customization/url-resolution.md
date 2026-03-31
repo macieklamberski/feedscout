@@ -1,10 +1,10 @@
 ---
-title: "Customization: URL Normalization"
+title: "Customization: URL Resolution"
 ---
 
-# Customize URL Normalization
+# Customize URL Resolution
 
-Feedscout normalizes discovered URLs before validation to ensure consistent results. You can provide a custom normalization function to change this behavior.
+Feedscout resolves discovered URLs before validation to ensure consistent results. You can provide a custom resolution function to change this behavior.
 
 ## Default Behavior
 
@@ -13,21 +13,21 @@ By default, Feedscout resolves relative URLs against the base URL:
 ```typescript
 // Base URL: https://example.com/blog/
 // Discovered: /feed.xml
-// Normalized: https://example.com/feed.xml
+// Resolved: https://example.com/feed.xml
 
 // Base URL: https://example.com/blog/
 // Discovered: ../rss
-// Normalized: https://example.com/rss
+// Resolved: https://example.com/rss
 ```
 
-## Custom Normalization
+## Custom Resolution
 
-Provide a `normalizeUrlFn` to customize URL normalization:
+Provide a `resolveUrlFn` to customize URL resolution:
 
 ```typescript
-import type { DiscoverNormalizeUrlFn } from 'feedscout'
+import type { DiscoverResolveUrlFn } from 'feedscout'
 
-const customNormalize: DiscoverNormalizeUrlFn = (url, baseUrl) => {
+const customResolve: DiscoverResolveUrlFn = (url, baseUrl) => {
   // Resolve relative URLs
   const resolved = new URL(url, baseUrl).href
 
@@ -42,19 +42,19 @@ const customNormalize: DiscoverNormalizeUrlFn = (url, baseUrl) => {
 
 const feeds = await discoverFeeds(url, {
   methods: ['html', 'guess'],
-  normalizeUrlFn: customNormalize,
+  resolveUrlFn: customResolve,
 })
 
 // Also works with discoverHubs
 const hubs = await discoverHubs(url, {
-  normalizeUrlFn: customNormalize,
+  resolveUrlFn: customResolve,
 })
 ```
 
 ## Interface
 
 ```typescript
-type DiscoverNormalizeUrlFn = (url: string, baseUrl: string | undefined) => string
+type DiscoverResolveUrlFn = (url: string, baseUrl: string | undefined) => string
 ```
 
 ## Use Cases
@@ -64,7 +64,7 @@ type DiscoverNormalizeUrlFn = (url: string, baseUrl: string | undefined) => stri
 Strip unnecessary query parameters:
 
 ```typescript
-const normalizeUrl: DiscoverNormalizeUrlFn = (url, baseUrl) => {
+const resolveUrl: DiscoverResolveUrlFn = (url, baseUrl) => {
   const resolved = new URL(url, baseUrl)
 
   // Keep only essential parameters
@@ -86,7 +86,7 @@ const normalizeUrl: DiscoverNormalizeUrlFn = (url, baseUrl) => {
 Upgrade HTTP URLs to HTTPS:
 
 ```typescript
-const normalizeUrl: DiscoverNormalizeUrlFn = (url, baseUrl) => {
+const resolveUrl: DiscoverResolveUrlFn = (url, baseUrl) => {
   const resolved = new URL(url, baseUrl)
   resolved.protocol = 'https:'
   return resolved.href
@@ -95,10 +95,10 @@ const normalizeUrl: DiscoverNormalizeUrlFn = (url, baseUrl) => {
 
 ### Removing Trailing Slashes
 
-Normalize paths by removing trailing slashes:
+Remove trailing slashes from paths:
 
 ```typescript
-const normalizeUrl: DiscoverNormalizeUrlFn = (url, baseUrl) => {
+const resolveUrl: DiscoverResolveUrlFn = (url, baseUrl) => {
   const resolved = new URL(url, baseUrl)
   resolved.pathname = resolved.pathname.replace(/\/+$/, '')
   return resolved.href
@@ -110,7 +110,7 @@ const normalizeUrl: DiscoverNormalizeUrlFn = (url, baseUrl) => {
 Rewrite URLs for specific domains:
 
 ```typescript
-const normalizeUrl: DiscoverNormalizeUrlFn = (url, baseUrl) => {
+const resolveUrl: DiscoverResolveUrlFn = (url, baseUrl) => {
   const resolved = new URL(url, baseUrl)
 
   // Use feeds subdomain for specific sites
@@ -124,18 +124,18 @@ const normalizeUrl: DiscoverNormalizeUrlFn = (url, baseUrl) => {
 
 ## Combining with Other Options
 
-URL normalization works with `discoverFeeds`, `discoverBlogrolls`, and `discoverHubs`:
+URL resolution works with `discoverFeeds`, `discoverBlogrolls`, and `discoverHubs`:
 
 ```typescript
 const feeds = await discoverFeeds(url, {
   methods: ['html', 'guess'],
-  normalizeUrlFn: customNormalize,
+  resolveUrlFn: customResolve,
   extractFn: customExtractor,
   concurrency: 3,
 })
 
 const hubs = await discoverHubs(url, {
   methods: ['headers', 'html'],
-  normalizeUrlFn: customNormalize,
+  resolveUrlFn: customResolve,
 })
 ```

@@ -1,7 +1,7 @@
 import { parseFeed } from 'feedsmith'
 import type { Atom, DeepPartial } from 'feedsmith/types'
-import type { DiscoverNormalizeUrlFn } from '../../common/types.js'
-import { normalizeUrl } from '../../common/utils.js'
+import type { DiscoverResolveUrlFn } from '../../common/types.js'
+import { resolveUrl } from '../../common/utils.js'
 import type { HubResult } from '../discover/types.js'
 
 const getLinksWithRel = (
@@ -16,7 +16,7 @@ const getLinksWithRel = (
 export const discoverHubsFromFeed = (
   content: string,
   baseUrl: string,
-  normalizeUrlFn: DiscoverNormalizeUrlFn = normalizeUrl,
+  resolveUrlFn: DiscoverResolveUrlFn = resolveUrl,
 ): Array<HubResult> => {
   try {
     const { format, feed } = parseFeed(content)
@@ -24,12 +24,12 @@ export const discoverHubsFromFeed = (
     // JSON Feed has native hubs support.
     if (format === 'json') {
       const hubs = feed.hubs ?? []
-      const topic = feed.feed_url ? normalizeUrlFn(feed.feed_url, baseUrl) : baseUrl
+      const topic = feed.feed_url ? resolveUrlFn(feed.feed_url, baseUrl) : baseUrl
 
       return hubs
         .filter((hub) => hub.url)
         .map((hub) => ({
-          hub: normalizeUrlFn(hub.url as string, baseUrl),
+          hub: resolveUrlFn(hub.url as string, baseUrl),
           topic,
         }))
     }
@@ -40,10 +40,10 @@ export const discoverHubsFromFeed = (
 
     if (hubUris.length > 0) {
       const selfUris = getLinksWithRel(links, 'self')
-      const topic = selfUris[0] ? normalizeUrlFn(selfUris[0], baseUrl) : baseUrl
+      const topic = selfUris[0] ? resolveUrlFn(selfUris[0], baseUrl) : baseUrl
 
       return hubUris.map((hub) => ({
-        hub: normalizeUrlFn(hub, baseUrl),
+        hub: resolveUrlFn(hub, baseUrl),
         topic,
       }))
     }

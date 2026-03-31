@@ -137,7 +137,7 @@ describe('discoverHubsFromHeaders', () => {
     expect(value).toEqual(expected)
   })
 
-  it('should apply custom normalizeUrlFn to hub and topic URLs', () => {
+  it('should apply custom resolveUrlFn to hub and topic URLs', () => {
     const headers = new Headers({
       link: '</hub>; rel="hub", </feed.xml>; rel="self"',
     })

@@ -99,7 +99,7 @@ export const omitEmpty = <T>(array: Array<T | null | undefined>): Array<T> => {
   return result
 }
 
-export const normalizeUrl = (url: string, baseUrl: string | undefined): string => {
+export const resolveUrl = (url: string, baseUrl: string | undefined): string => {
   return baseUrl ? new URL(url, baseUrl).href : url
 }
 

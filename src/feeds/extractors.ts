@@ -1,7 +1,7 @@
 import { parseFeed } from 'feedsmith'
 import { getFeedSiteUrl } from '../common/discover/utils.js'
 import type { DiscoverExtractFn } from '../common/types.js'
-import { normalizeUrl } from '../common/utils.js'
+import { resolveUrl } from '../common/utils.js'
 import type { FeedResult } from './types.js'
 
 export const defaultExtractor: DiscoverExtractFn<FeedResult> = ({ content, url }) => {
@@ -13,7 +13,7 @@ export const defaultExtractor: DiscoverExtractFn<FeedResult> = ({ content, url }
     const parsed = parseFeed(content)
     const { format, feed } = parsed
     const rawSiteUrl = getFeedSiteUrl(parsed)
-    const siteUrl = rawSiteUrl ? normalizeUrl(rawSiteUrl, url) : undefined
+    const siteUrl = rawSiteUrl ? resolveUrl(rawSiteUrl, url) : undefined
 
     if (format === 'rss' || format === 'rdf') {
       return {
