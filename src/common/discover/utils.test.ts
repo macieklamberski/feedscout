@@ -1338,10 +1338,16 @@ describe('defaultResolveSiteUrlFn', () => {
   it('should return site URL from RSS feed with channel link', () => {
     const value = {
       url: 'https://example.com/feed.xml',
-      content:
-        '<?xml version="1.0"?><rss version="2.0"><channel><link>https://example.com</link></channel></rss>',
+      content: `
+        <?xml version="1.0"?>
+        <rss version="2.0">
+          <channel>
+            <link>https://example.com</link>
+          </channel>
+        </rss>
+      `,
     }
-    const expected = 'https://example.com'
+    const expected = 'https://example.com/'
 
     expect(defaultResolveSiteUrlFn(value)).toBe(expected)
   })
@@ -1349,10 +1355,14 @@ describe('defaultResolveSiteUrlFn', () => {
   it('should return site URL from Atom feed with alternate link', () => {
     const value = {
       url: 'https://example.com/feed.xml',
-      content:
-        '<?xml version="1.0"?><feed xmlns="http://www.w3.org/2005/Atom"><link rel="alternate" href="https://example.com"/></feed>',
+      content: `
+        <?xml version="1.0"?>
+        <feed xmlns="http://www.w3.org/2005/Atom">
+          <link rel="alternate" href="https://example.com"/>
+        </feed>
+      `,
     }
-    const expected = 'https://example.com'
+    const expected = 'https://example.com/'
 
     expect(defaultResolveSiteUrlFn(value)).toBe(expected)
   })
@@ -1367,7 +1377,7 @@ describe('defaultResolveSiteUrlFn', () => {
         items: [],
       }),
     }
-    const expected = 'https://example.com'
+    const expected = 'https://example.com/'
 
     expect(defaultResolveSiteUrlFn(value)).toBe(expected)
   })
@@ -1375,8 +1385,12 @@ describe('defaultResolveSiteUrlFn', () => {
   it('should fall back to origin when feed has no site URL', () => {
     const value = {
       url: 'https://example.com/feed.xml',
-      content:
-        '<?xml version="1.0"?><feed xmlns="http://www.w3.org/2005/Atom"><title>Test</title></feed>',
+      content: `
+        <?xml version="1.0"?>
+        <feed xmlns="http://www.w3.org/2005/Atom">
+          <title>Test</title>
+        </feed>
+      `,
     }
     const expected = 'https://example.com'
 
@@ -1386,8 +1400,14 @@ describe('defaultResolveSiteUrlFn', () => {
   it('should return undefined when resolved URL equals input URL', () => {
     const value = {
       url: 'https://example.com',
-      content:
-        '<?xml version="1.0"?><rss version="2.0"><channel><link>https://example.com</link></channel></rss>',
+      content: `
+        <?xml version="1.0"?>
+        <rss version="2.0">
+          <channel>
+            <link>https://example.com</link>
+          </channel>
+        </rss>
+      `,
     }
 
     expect(defaultResolveSiteUrlFn(value)).toBeUndefined()
@@ -1422,10 +1442,63 @@ describe('defaultResolveSiteUrlFn', () => {
   it('should return site URL from RSS feed with atom:link alternate', () => {
     const value = {
       url: 'https://cdn.example.com/feed.xml',
-      content:
-        '<?xml version="1.0"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><atom:link rel="alternate" href="https://example.com"/></channel></rss>',
+      content: `
+        <?xml version="1.0"?>
+        <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+          <channel>
+            <atom:link rel="alternate" href="https://example.com"/>
+          </channel>
+        </rss>
+      `,
     }
-    const expected = 'https://example.com'
+    const expected = 'https://example.com/'
+
+    expect(defaultResolveSiteUrlFn(value)).toBe(expected)
+  })
+
+  it('should resolve relative site URL from RSS feed against feed URL', () => {
+    const value = {
+      url: 'https://example.com/feed.xml',
+      content: `
+        <?xml version="1.0"?>
+        <rss version="2.0">
+          <channel>
+            <link>/log/</link>
+          </channel>
+        </rss>
+      `,
+    }
+    const expected = 'https://example.com/log/'
+
+    expect(defaultResolveSiteUrlFn(value)).toBe(expected)
+  })
+
+  it('should resolve relative site URL from Atom feed against feed URL', () => {
+    const value = {
+      url: 'https://example.com/feed.xml',
+      content: `
+        <?xml version="1.0"?>
+        <feed xmlns="http://www.w3.org/2005/Atom">
+          <link rel="alternate" href="/blog"/>
+        </feed>
+      `,
+    }
+    const expected = 'https://example.com/blog'
+
+    expect(defaultResolveSiteUrlFn(value)).toBe(expected)
+  })
+
+  it('should resolve relative site URL from JSON Feed against feed URL', () => {
+    const value = {
+      url: 'https://example.com/feed.json',
+      content: JSON.stringify({
+        version: 'https://jsonfeed.org/version/1.1',
+        title: 'Example',
+        home_page_url: '/site/',
+        items: [],
+      }),
+    }
+    const expected = 'https://example.com/site/'
 
     expect(defaultResolveSiteUrlFn(value)).toBe(expected)
   })
@@ -1481,10 +1554,9 @@ describe('normalizeMethodsConfig with siteInput', () => {
         },
       },
     }
+    const result = normalizeMethodsConfig(value, siteValue, ['html', 'headers', 'guess'], defaults)
 
-    expect(
-      normalizeMethodsConfig(value, siteValue, ['html', 'headers', 'guess'], defaults),
-    ).toEqual(expected)
+    expect(result).toEqual(expected)
   })
 
   it('should use original input for feed method when siteInput provided', () => {
@@ -1506,8 +1578,9 @@ describe('normalizeMethodsConfig with siteInput', () => {
         },
       },
     }
+    const result = normalizeMethodsConfig(value, siteValue, ['feed'], defaults)
 
-    expect(normalizeMethodsConfig(value, siteValue, ['feed'], defaults)).toEqual(expected)
+    expect(result).toEqual(expected)
   })
 
   it('should fall back to sourceInput when siteInput is undefined', () => {
@@ -1534,8 +1607,9 @@ describe('normalizeMethodsConfig with siteInput', () => {
         },
       },
     }
+    const result = normalizeMethodsConfig(value, undefined, ['html', 'guess'], defaults)
 
-    expect(normalizeMethodsConfig(value, undefined, ['html', 'guess'], defaults)).toEqual(expected)
+    expect(result).toEqual(expected)
   })
 })
 

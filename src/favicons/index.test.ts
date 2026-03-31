@@ -380,7 +380,7 @@ describe('discoverFavicons', () => {
     const siteHtml = '<link rel="icon" href="/favicon.ico">'
     const mockFetch = createMockFetch({
       'https://example.com/feed.xml': rssContent,
-      'https://example.com': siteHtml,
+      'https://example.com/': siteHtml,
       'https://example.com/favicon.ico': 'binary',
     })
     const value = await discoverFavicons('https://example.com/feed.xml', {
@@ -403,7 +403,7 @@ describe('discoverFavicons', () => {
     const siteHtml = '<link rel="icon" href="/icon.png">'
     const mockFetch = createMockFetch({
       'https://example.com/feed.xml': atomContent,
-      'https://example.com': siteHtml,
+      'https://example.com/': siteHtml,
       'https://example.com/icon.png': 'binary',
     })
     const value = await discoverFavicons('https://example.com/feed.xml', {
@@ -427,7 +427,7 @@ describe('discoverFavicons', () => {
     const siteHtml = '<link rel="icon" href="/favicon.svg">'
     const mockFetch = createMockFetch({
       'https://example.com/feed.json': jsonContent,
-      'https://example.com': siteHtml,
+      'https://example.com/': siteHtml,
       'https://example.com/favicon.svg': 'binary',
     })
     const value = await discoverFavicons('https://example.com/feed.json', {
@@ -473,7 +473,7 @@ describe('discoverFavicons', () => {
     const siteHtml = '<link rel="icon" href="/site-icon.png">'
     const mockFetch = createMockFetch({
       'https://example.com/feed.xml': atomContent,
-      'https://example.com': siteHtml,
+      'https://example.com/': siteHtml,
       'https://example.com/feed-icon.png': 'binary',
       'https://example.com/site-icon.png': 'binary',
     })

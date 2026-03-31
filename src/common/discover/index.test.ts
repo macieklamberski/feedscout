@@ -63,7 +63,7 @@ describe('discover', () => {
           format: 'rss',
           title: 'Test RSS',
           description: 'Test feed',
-          siteUrl: 'https://example.com',
+          siteUrl: 'https://example.com/',
         },
       ]
 
@@ -107,7 +107,7 @@ describe('discover', () => {
           format: 'rss',
           title: 'Test RSS',
           description: 'Test feed',
-          siteUrl: 'https://example.com',
+          siteUrl: 'https://example.com/',
         },
       ]
 
@@ -152,7 +152,7 @@ describe('discover', () => {
           format: 'rss',
           title: 'Test RSS',
           description: 'Test feed',
-          siteUrl: 'https://example.com',
+          siteUrl: 'https://example.com/',
         },
       ]
 
@@ -201,7 +201,7 @@ describe('discover', () => {
           format: 'rss',
           title: 'Test RSS',
           description: 'Test feed',
-          siteUrl: 'https://example.com',
+          siteUrl: 'https://example.com/',
         },
       ]
 
@@ -275,7 +275,7 @@ describe('discover', () => {
           format: 'rss',
           title: 'Test RSS',
           description: 'Test feed',
-          siteUrl: 'https://example.com',
+          siteUrl: 'https://example.com/',
         },
       ]
 
@@ -312,7 +312,7 @@ describe('discover', () => {
           format: 'rss',
           title: 'Test RSS',
           description: 'Test feed',
-          siteUrl: 'https://example.com',
+          siteUrl: 'https://example.com/',
         },
       ]
 
@@ -347,7 +347,7 @@ describe('discover', () => {
           format: 'rss',
           title: 'Test RSS',
           description: 'Test feed',
-          siteUrl: 'https://example.com',
+          siteUrl: 'https://example.com/',
         },
       ]
 
@@ -533,7 +533,7 @@ describe('discover', () => {
           format: 'rss',
           title: 'Test RSS',
           description: 'Test feed',
-          siteUrl: 'https://example.com',
+          siteUrl: 'https://example.com/',
         },
         {
           url: 'https://example.com/feed.xml',
@@ -542,7 +542,7 @@ describe('discover', () => {
           format: 'rss',
           title: 'Test RSS',
           description: 'Test feed',
-          siteUrl: 'https://example.com',
+          siteUrl: 'https://example.com/',
         },
       ]
 
@@ -588,7 +588,7 @@ describe('discover', () => {
           format: 'rss',
           title: 'Test RSS',
           description: 'Test feed',
-          siteUrl: 'https://example.com',
+          siteUrl: 'https://example.com/',
         },
         {
           url: 'https://example.com/feed.xml',
@@ -597,7 +597,7 @@ describe('discover', () => {
           format: 'rss',
           title: 'Test RSS',
           description: 'Test feed',
-          siteUrl: 'https://example.com',
+          siteUrl: 'https://example.com/',
         },
         {
           url: 'https://example.com/rss',
@@ -916,7 +916,7 @@ describe('discover', () => {
           format: 'rss',
           title: 'Test RSS',
           description: 'Test feed',
-          siteUrl: 'https://example.com',
+          siteUrl: 'https://example.com/',
         },
       ]
 
@@ -947,7 +947,7 @@ describe('discover', () => {
           format: 'rss',
           title: 'Test RSS',
           description: 'Test feed',
-          siteUrl: 'https://example.com',
+          siteUrl: 'https://example.com/',
         },
       ]
 
@@ -980,7 +980,7 @@ describe('discover', () => {
           format: 'rss',
           title: 'Test RSS',
           description: 'Test feed',
-          siteUrl: 'https://example.com',
+          siteUrl: 'https://example.com/',
         },
       ]
 

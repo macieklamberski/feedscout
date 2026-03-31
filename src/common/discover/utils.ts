@@ -12,6 +12,7 @@ import type {
   DiscoverResolveSiteUrlFn,
   DiscoverUriEntry,
 } from '../types.js'
+import { normalizeUrl } from '../utils.js'
 
 export const defaultFetchFn: DiscoverFetchFn = async (url, options) => {
   const response = await fetch(url, {
@@ -81,10 +82,13 @@ export const defaultResolveSiteUrlFn: DiscoverResolveSiteUrlFn = (input) => {
       try {
         siteUrl = new URL(input.url).origin
       } catch {}
+    } else {
+      // Resolve relative site URLs against the feed URL.
+      siteUrl = normalizeUrl(siteUrl, input.url)
     }
 
     // Avoid re-fetching the same URL.
-    if (siteUrl === input.url) {
+    if (siteUrl === normalizeUrl(input.url, input.url)) {
       return
     }
 
