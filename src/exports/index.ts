@@ -9,7 +9,7 @@ export type {
   DiscoverInputObject,
   DiscoverMethod,
   DiscoverMethodsConfig,
-  DiscoverNormalizeUrlFn,
+  DiscoverResolveUrlFn,
   DiscoverOnProgressFn,
   DiscoverOptions,
   DiscoverProgress,

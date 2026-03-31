@@ -11,7 +11,7 @@ import {
   isSubdomainOf,
   matchesAnyOfLinkSelectors,
   normalizeMimeType,
-  normalizeUrl,
+  resolveUrl,
   omitEmpty,
   processConcurrently,
 } from './utils.js'
@@ -533,13 +533,13 @@ describe('omitEmpty', () => {
   })
 })
 
-describe('normalizeUrl', () => {
+describe('resolveUrl', () => {
   it('should resolve relative URL with base URL', () => {
     const value = '/feed.xml'
     const baseUrl = 'https://example.com'
     const expected = 'https://example.com/feed.xml'
 
-    expect(normalizeUrl(value, baseUrl)).toBe(expected)
+    expect(resolveUrl(value, baseUrl)).toBe(expected)
   })
 
   it('should resolve relative URL with base URL containing path', () => {
@@ -547,7 +547,7 @@ describe('normalizeUrl', () => {
     const baseUrl = 'https://example.com/blog/'
     const expected = 'https://example.com/blog/feed.xml'
 
-    expect(normalizeUrl(value, baseUrl)).toBe(expected)
+    expect(resolveUrl(value, baseUrl)).toBe(expected)
   })
 
   it('should preserve absolute URL when base URL provided', () => {
@@ -555,7 +555,7 @@ describe('normalizeUrl', () => {
     const baseUrl = 'https://example.com'
     const expected = 'https://other.com/feed.xml'
 
-    expect(normalizeUrl(value, baseUrl)).toBe(expected)
+    expect(resolveUrl(value, baseUrl)).toBe(expected)
   })
 
   it('should return URL unchanged when base URL is undefined', () => {
@@ -563,7 +563,7 @@ describe('normalizeUrl', () => {
     const baseUrl = undefined
     const expected = '/feed.xml'
 
-    expect(normalizeUrl(value, baseUrl)).toBe(expected)
+    expect(resolveUrl(value, baseUrl)).toBe(expected)
   })
 
   it('should handle protocol-relative URLs', () => {
@@ -571,7 +571,7 @@ describe('normalizeUrl', () => {
     const baseUrl = 'https://example.com'
     const expected = 'https://cdn.example.com/feed.xml'
 
-    expect(normalizeUrl(value, baseUrl)).toBe(expected)
+    expect(resolveUrl(value, baseUrl)).toBe(expected)
   })
 
   it('should handle parent directory references', () => {
@@ -579,7 +579,7 @@ describe('normalizeUrl', () => {
     const baseUrl = 'https://example.com/blog/posts/'
     const expected = 'https://example.com/blog/feed.xml'
 
-    expect(normalizeUrl(value, baseUrl)).toBe(expected)
+    expect(resolveUrl(value, baseUrl)).toBe(expected)
   })
 })
 

@@ -5,7 +5,7 @@ import locales from '../locales.json' with { type: 'json' }
 import type {
   DiscoverExtractFn,
   DiscoverFetchFn,
-  DiscoverNormalizeUrlFn,
+  DiscoverResolveUrlFn,
   DiscoverProgress,
   DiscoverResult,
 } from '../types.js'
@@ -891,12 +891,12 @@ describe('discover', () => {
     })
   })
 
-  describe('normalizeUrlFn', () => {
-    it('should use custom normalizeUrlFn to transform discovered URIs', async () => {
+  describe('resolveUrlFn', () => {
+    it('should use custom resolveUrlFn to transform discovered URIs', async () => {
       const mockFetch = createMockFetch({
         'https://custom.example.com/feed': rss,
       })
-      const customNormalizer: DiscoverNormalizeUrlFn = (url, baseUrl) => {
+      const customResolveUrlFn: DiscoverResolveUrlFn = (url, baseUrl) => {
         const fullUrl = baseUrl ? new URL(url, baseUrl).href : url
         return fullUrl.replace('example.com', 'custom.example.com')
       }
@@ -905,7 +905,7 @@ describe('discover', () => {
         {
           methods: { guess: { uris: ['/feed'] } },
           fetchFn: mockFetch,
-          normalizeUrlFn: customNormalizer,
+          resolveUrlFn: customResolveUrlFn,
         },
       )
       const expected: Array<DiscoverResult<FeedResult>> = [
@@ -923,12 +923,12 @@ describe('discover', () => {
       expect(value).toEqual(expected)
     })
 
-    it('should use custom normalizeUrlFn for HTML discovered links', async () => {
+    it('should use custom resolveUrlFn for HTML discovered links', async () => {
       const html = '<link rel="alternate" type="application/rss+xml" href="/feed.xml">'
       const mockFetch = createMockFetch({
         'https://cdn.example.com/feed.xml': rss,
       })
-      const customNormalizer: DiscoverNormalizeUrlFn = (url) => {
+      const customResolveUrlFn: DiscoverResolveUrlFn = (url) => {
         return url.startsWith('/') ? `https://cdn.example.com${url}` : url
       }
       const value = await discoverFeeds(
@@ -936,7 +936,7 @@ describe('discover', () => {
         {
           methods: ['html'],
           fetchFn: mockFetch,
-          normalizeUrlFn: customNormalizer,
+          resolveUrlFn: customResolveUrlFn,
         },
       )
       const expected: Array<DiscoverResult<FeedResult>> = [

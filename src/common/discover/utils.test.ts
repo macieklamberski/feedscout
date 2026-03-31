@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it, spyOn } from 'bun:test'
 import { parseFeed } from 'feedsmith'
 import locales from '../locales.json' with { type: 'json' }
-import type { DiscoverFetchFn, DiscoverNormalizeUrlFn } from '../types.js'
+import type { DiscoverFetchFn, DiscoverResolveUrlFn } from '../types.js'
 import {
   defaultFetchFn,
   defaultResolveSiteUrlFn,
@@ -1614,7 +1614,7 @@ describe('normalizeMethodsConfig with siteInput', () => {
 })
 
 describe('normalizeUriEntry', () => {
-  const normalizeUrlFn: DiscoverNormalizeUrlFn = (url, baseUrl) => {
+  const resolveUrlFn: DiscoverResolveUrlFn = (url, baseUrl) => {
     return new URL(url, baseUrl).toString()
   }
 
@@ -1622,17 +1622,17 @@ describe('normalizeUriEntry', () => {
     const value = { uri: '/feed.xml' }
     const expected = { uri: 'https://example.com/feed.xml' }
 
-    expect(normalizeUriEntry(value, normalizeUrlFn, 'https://example.com')).toEqual(expected)
+    expect(normalizeUriEntry(value, resolveUrlFn, 'https://example.com')).toEqual(expected)
   })
 
   it('should normalize array entry', () => {
     const value = { uri: ['/feed/', '?feed=rss'] }
     const expected = { uri: ['https://example.com/feed/', 'https://example.com/?feed=rss'] }
 
-    expect(normalizeUriEntry(value, normalizeUrlFn, 'https://example.com')).toEqual(expected)
+    expect(normalizeUriEntry(value, resolveUrlFn, 'https://example.com')).toEqual(expected)
   })
 
-  it('should apply normalizeUrlFn to each alternative in array', () => {
+  it('should apply resolveUrlFn to each alternative in array', () => {
     const value = { uri: ['/feed/atom/', '?feed=atom', '/rss.xml'] }
     const expected = {
       uri: [
@@ -1642,28 +1642,28 @@ describe('normalizeUriEntry', () => {
       ],
     }
 
-    expect(normalizeUriEntry(value, normalizeUrlFn, 'https://example.com')).toEqual(expected)
+    expect(normalizeUriEntry(value, resolveUrlFn, 'https://example.com')).toEqual(expected)
   })
 
   it('should handle undefined baseUrl for string entry', () => {
     const value = { uri: 'https://example.com/feed.xml' }
     const expected = { uri: 'https://example.com/feed.xml' }
 
-    expect(normalizeUriEntry(value, normalizeUrlFn, undefined)).toEqual(expected)
+    expect(normalizeUriEntry(value, resolveUrlFn, undefined)).toEqual(expected)
   })
 
   it('should handle undefined baseUrl for array entry', () => {
     const value = { uri: ['https://example.com/feed/', 'https://example.com/?feed=rss'] }
     const expected = { uri: ['https://example.com/feed/', 'https://example.com/?feed=rss'] }
 
-    expect(normalizeUriEntry(value, normalizeUrlFn, undefined)).toEqual(expected)
+    expect(normalizeUriEntry(value, resolveUrlFn, undefined)).toEqual(expected)
   })
 
   it('should handle single-element array', () => {
     const value = { uri: ['/feed.xml'] }
     const expected = { uri: ['https://example.com/feed.xml'] }
 
-    expect(normalizeUriEntry(value, normalizeUrlFn, 'https://example.com')).toEqual(expected)
+    expect(normalizeUriEntry(value, resolveUrlFn, 'https://example.com')).toEqual(expected)
   })
 
   it('should preserve hint on string entry', () => {
@@ -1673,7 +1673,7 @@ describe('normalizeUriEntry', () => {
       hint: { key: 'test:feed', label: 'Feed' },
     }
 
-    expect(normalizeUriEntry(value, normalizeUrlFn, 'https://example.com')).toEqual(expected)
+    expect(normalizeUriEntry(value, resolveUrlFn, 'https://example.com')).toEqual(expected)
   })
 
   it('should preserve hint on array entry', () => {
@@ -1683,6 +1683,6 @@ describe('normalizeUriEntry', () => {
       hint: { key: 'test:feed', label: 'Feed' },
     }
 
-    expect(normalizeUriEntry(value, normalizeUrlFn, 'https://example.com')).toEqual(expected)
+    expect(normalizeUriEntry(value, resolveUrlFn, 'https://example.com')).toEqual(expected)
   })
 })

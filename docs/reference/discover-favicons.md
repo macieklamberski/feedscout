@@ -42,7 +42,7 @@ All options are optional. When not provided, sensible defaults are used.
 | `methods` | `DiscoverMethodsConfig` | `['platform', 'feed', 'html', 'headers', 'guess']` | Which methods to use |
 | `fetchFn` | `DiscoverFetchFn` | native fetch | Custom fetch function |
 | `extractFn` | `DiscoverExtractFn` | status check | Custom extraction function |
-| `normalizeUrlFn` | `DiscoverNormalizeUrlFn` | | Custom URL normalization function |
+| `resolveUrlFn` | `DiscoverResolveUrlFn` | | Custom URL resolution function |
 | `stopOnFirstMethod` | `boolean` | `false` | Stop URI collection after first method with results |
 | `stopOnFirstResult` | `boolean` | `false` | Stop after first valid favicon |
 | `concurrency` | `number` | `3` | Max parallel validations |

@@ -8,11 +8,11 @@ import type {
   DiscoverMethodsConfig,
   DiscoverMethodsConfigDefaults,
   DiscoverMethodsConfigInternal,
-  DiscoverNormalizeUrlFn,
+  DiscoverResolveUrlFn,
   DiscoverResolveSiteUrlFn,
   DiscoverUriEntry,
 } from '../types.js'
-import { normalizeUrl } from '../utils.js'
+import { resolveUrl } from '../utils.js'
 
 export const defaultFetchFn: DiscoverFetchFn = async (url, options) => {
   const response = await fetch(url, {
@@ -84,7 +84,7 @@ export const defaultResolveSiteUrlFn: DiscoverResolveSiteUrlFn = (input) => {
       } catch {}
     } else {
       // Resolve relative site URLs against the feed URL.
-      siteUrl = normalizeUrl(siteUrl, input.url)
+      siteUrl = resolveUrl(siteUrl, input.url)
     }
 
     // Avoid re-fetching the same URL.
@@ -98,16 +98,16 @@ export const defaultResolveSiteUrlFn: DiscoverResolveSiteUrlFn = (input) => {
 
 export const normalizeUriEntry = (
   entry: DiscoverUriEntry,
-  normalizeUrlFn: DiscoverNormalizeUrlFn,
+  resolveUrlFn: DiscoverResolveUrlFn,
   baseUrl: string | undefined,
 ): DiscoverUriEntry => {
   if (typeof entry.uri === 'string') {
-    return { ...entry, uri: normalizeUrlFn(entry.uri, baseUrl) }
+    return { ...entry, uri: resolveUrlFn(entry.uri, baseUrl) }
   }
 
   return {
     ...entry,
-    uri: entry.uri.map((uri) => normalizeUrlFn(uri, baseUrl)),
+    uri: entry.uri.map((uri) => resolveUrlFn(uri, baseUrl)),
   }
 }
 

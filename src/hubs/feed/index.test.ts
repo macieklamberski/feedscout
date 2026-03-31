@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverNormalizeUrlFn } from '../../common/types.js'
+import type { DiscoverResolveUrlFn } from '../../common/types.js'
 import type { HubResult } from '../discover/types.js'
 import { discoverHubsFromFeed } from './index.js'
 
@@ -274,7 +274,7 @@ describe('discoverHubsFromFeed', () => {
     expect(value).toEqual(expected)
   })
 
-  it('should apply custom normalizeUrlFn to hub and topic URLs', () => {
+  it('should apply custom resolveUrlFn to hub and topic URLs', () => {
     const content = `
       <?xml version="1.0" encoding="utf-8"?>
       <feed xmlns="http://www.w3.org/2005/Atom">
@@ -283,10 +283,10 @@ describe('discoverHubsFromFeed', () => {
         <link href="/feed.xml" rel="self"/>
       </feed>
     `
-    const customNormalizer: DiscoverNormalizeUrlFn = (url) => {
+    const customResolveUrlFn: DiscoverResolveUrlFn = (url) => {
       return `https://custom.example.com${url}`
     }
-    const value = discoverHubsFromFeed(content, 'https://example.com/feed.xml', customNormalizer)
+    const value = discoverHubsFromFeed(content, 'https://example.com/feed.xml', customResolveUrlFn)
     const expected: Array<HubResult> = [
       {
         hub: 'https://custom.example.com/hub',
