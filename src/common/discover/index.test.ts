@@ -990,10 +990,7 @@ describe('discover', () => {
 
   describe('empty methods', () => {
     it('should return empty array for empty methods config', async () => {
-      const value = await discoverFeeds(
-        { url: 'https://example.com' },
-        { methods: [] },
-      )
+      const value = await discoverFeeds({ url: 'https://example.com' }, { methods: [] })
 
       expect(value).toEqual([])
     })
