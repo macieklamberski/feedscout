@@ -126,6 +126,16 @@ describe('defaultExtractor', () => {
       expect(await defaultExtractor(value)).toEqual(expected)
     })
 
+    it('should return isValid: false for RSS feed with svg in entry content', async () => {
+      const value = {
+        url: 'https://example.com/feed.xml',
+        content: '<?xml version="1.0"?><rss><channel><item><description>&lt;svg xmlns="http://www.w3.org/2000/svg"&gt;&lt;/svg&gt;</description></item></channel></rss>',
+      }
+      const expected = { url: 'https://example.com/feed.xml', isValid: false }
+
+      expect(await defaultExtractor(value)).toEqual(expected)
+    })
+
     it('should return isValid: false for <?xml without <svg', async () => {
       const value = {
         url: 'https://example.com/feed.xml',

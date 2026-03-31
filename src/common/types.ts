@@ -31,6 +31,8 @@ export type LinkSelector = {
 
 export type DiscoverNormalizeUrlFn = (url: string, baseUrl: string | undefined) => string
 
+export type DiscoverResolveSiteUrlFn = (input: DiscoverInputObject) => string | undefined
+
 export type DiscoverFetchFnOptions = {
   method?: 'GET' | 'HEAD'
   headers?: Record<string, string>
@@ -143,6 +145,7 @@ export type DiscoverOptions<TValid, TMethods extends DiscoverMethod = DiscoverMe
   fetchFn?: DiscoverFetchFn
   extractFn?: DiscoverExtractFn<TValid>
   normalizeUrlFn?: DiscoverNormalizeUrlFn
+  resolveSiteUrlFn?: DiscoverResolveSiteUrlFn
   stopOnFirstMethod?: boolean
   stopOnFirstResult?: boolean
   concurrency?: number
@@ -156,6 +159,7 @@ export type DiscoverOptionsInternal<TValid> = {
   fetchFn: DiscoverFetchFn
   extractFn: DiscoverExtractFn<TValid>
   normalizeUrlFn: DiscoverNormalizeUrlFn
+  resolveSiteUrlFn?: DiscoverResolveSiteUrlFn
   stopOnFirstMethod?: boolean
   stopOnFirstResult?: boolean
   concurrency?: number

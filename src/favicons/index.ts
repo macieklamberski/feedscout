@@ -1,5 +1,5 @@
 import { discover } from '../common/discover/index.js'
-import { defaultFetchFn } from '../common/discover/utils.js'
+import { defaultFetchFn, defaultResolveSiteUrlFn } from '../common/discover/utils.js'
 import type { DiscoverInput, DiscoverOptions, DiscoverResult } from '../common/types.js'
 import { normalizeUrl } from '../common/utils.js'
 import {
@@ -24,6 +24,7 @@ export const discoverFavicons = async <TValid extends FaviconResult = FaviconRes
       fetchFn: options.fetchFn ?? defaultFetchFn,
       extractFn: options.extractFn ?? defaultExtractor,
       normalizeUrlFn: options.normalizeUrlFn ?? normalizeUrl,
+      resolveSiteUrlFn: options.resolveSiteUrlFn ?? defaultResolveSiteUrlFn,
     },
     {
       platform: defaultPlatformOptions,

@@ -1,5 +1,6 @@
 import {
   type DiscoverInput,
+  type DiscoverInputObject,
   type DiscoverMethod,
   type DiscoverMethodsConfigDefaults,
   type DiscoverOptionsInternal,
@@ -21,6 +22,7 @@ export const discover = async <TValid>(
     fetchFn,
     extractFn,
     normalizeUrlFn,
+    resolveSiteUrlFn,
     stopOnFirstMethod = false,
     stopOnFirstResult = false,
     concurrency = 3,
@@ -29,14 +31,14 @@ export const discover = async <TValid>(
   } = options
 
   // Normalize input: string → fetch URL, object → use provided content.
-  const normalizedInput = await normalizeInput(input, fetchFn)
+  const sourceInput = await normalizeInput(input, fetchFn)
 
   // Step 1: Check if content is already valid (only if content is provided).
-  if (normalizedInput.content) {
+  if (sourceInput.content) {
     const result = await extractFn({
-      url: normalizedInput.url,
-      content: normalizedInput.content,
-      headers: normalizedInput.headers,
+      url: sourceInput.url,
+      content: sourceInput.content,
+      headers: sourceInput.headers,
     })
 
     if (result.isValid) {
@@ -44,8 +46,27 @@ export const discover = async <TValid>(
     }
   }
 
+  // Step 1.5: Resolve site input if resolveSiteUrlFn is provided.
+  let siteInput: DiscoverInputObject | undefined
+
+  if (resolveSiteUrlFn) {
+    const siteUrl = resolveSiteUrlFn(sourceInput)
+
+    if (siteUrl) {
+      try {
+        const response = await fetchFn(siteUrl)
+
+        siteInput = {
+          url: response.url,
+          content: typeof response.body === 'string' ? response.body : '',
+          headers: response.headers,
+        }
+      } catch {}
+    }
+  }
+
   // Step 2: Build methods config from input and selected methods.
-  const methodsConfig = normalizeMethodsConfig(normalizedInput, methods, defaults)
+  const methodsConfig = normalizeMethodsConfig(sourceInput, siteInput, methods, defaults)
 
   // Step 3: Discover URIs using selected methods.
   const urisByMethod = await discoverUris(methodsConfig, fetchFn)
@@ -62,7 +83,7 @@ export const discover = async <TValid>(
     }
 
     const normalized = rawUris.map((entry) => {
-      return normalizeUriEntry(entry, normalizeUrlFn, normalizedInput.url)
+      return normalizeUriEntry(entry, normalizeUrlFn, sourceInput.url)
     })
 
     const unique = normalized.filter((entry) => {
