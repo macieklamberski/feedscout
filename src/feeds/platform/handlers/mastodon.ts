@@ -8,7 +8,7 @@ const tagPathRegex = /^\/tags\/([^/]+)/
 export const isProfilePath = (pathname: string): boolean => {
   const segments = pathname.split('/').filter(Boolean)
 
-  return segments.length >= 1 && segments[0].startsWith('@')
+  return segments.length > 0 && segments[0].startsWith('@')
 }
 
 export const isTagPath = (pathname: string): boolean => {

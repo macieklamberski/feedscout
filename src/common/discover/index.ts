@@ -78,7 +78,7 @@ export const discover = async <TValid>(
   for (const method of discoverMethodOrder) {
     const rawUris = urisByMethod[method]
 
-    if (!rawUris?.length) {
+    if (!rawUris || rawUris.length === 0) {
       continue
     }
 

@@ -70,7 +70,7 @@ export const vimeoHandler: PlatformHandler = {
     }
 
     // User page: vimeo.com/{user}
-    if (pathSegments.length >= 1) {
+    if (pathSegments.length > 0) {
       const user = pathSegments[0]
 
       // Skip excluded paths and numeric-only segments (video IDs).

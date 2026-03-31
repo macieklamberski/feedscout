@@ -21,7 +21,7 @@ export const soundcloudHandler: PlatformHandler = {
     const { pathname } = new URL(url)
     const pathSegments = pathname.split('/').filter(Boolean)
 
-    return pathSegments.length >= 1 && !isAnyOf(pathSegments[0], excludedPaths)
+    return pathSegments.length > 0 && !isAnyOf(pathSegments[0], excludedPaths)
   },
 
   resolve: (_url, content) => {
