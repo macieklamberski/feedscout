@@ -12,7 +12,7 @@ import {
 import { defaultExtractor } from './extractors.js'
 import type { FaviconResult } from './types.js'
 
-export const discoverFavicons = async <TValid extends FaviconResult = FaviconResult>(
+export const discoverFavicons = <TValid extends FaviconResult = FaviconResult>(
   input: DiscoverInput,
   options: DiscoverOptions<TValid> = {},
 ): Promise<Array<DiscoverResult<TValid>>> => {

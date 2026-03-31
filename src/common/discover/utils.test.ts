@@ -39,7 +39,7 @@ describe('defaultFetchFn', () => {
 
   it('should call native fetch with correct URL', async () => {
     fetchSpy.mockImplementation(
-      createFetchMock(async (url: string) => {
+      createFetchMock((url: string) => {
         return createMockResponse({
           url,
           text: async () => 'response body',
@@ -61,7 +61,7 @@ describe('defaultFetchFn', () => {
   it('should default to GET method when not specified', async () => {
     let capturedOptions: RequestInit | undefined
     fetchSpy.mockImplementation(
-      createFetchMock(async (_url: string, options?: RequestInit) => {
+      createFetchMock((_url: string, options?: RequestInit) => {
         capturedOptions = options
         return createMockResponse({})
       }),
@@ -75,7 +75,7 @@ describe('defaultFetchFn', () => {
   it('should use specified method from options', async () => {
     let capturedOptions: RequestInit | undefined
     fetchSpy.mockImplementation(
-      createFetchMock(async (_url: string, options?: RequestInit) => {
+      createFetchMock((_url: string, options?: RequestInit) => {
         capturedOptions = options
         return createMockResponse({})
       }),
@@ -89,7 +89,7 @@ describe('defaultFetchFn', () => {
   it('should pass headers to fetch', async () => {
     let capturedOptions: RequestInit | undefined
     fetchSpy.mockImplementation(
-      createFetchMock(async (_url: string, options?: RequestInit) => {
+      createFetchMock((_url: string, options?: RequestInit) => {
         capturedOptions = options
         return createMockResponse({})
       }),
@@ -104,7 +104,7 @@ describe('defaultFetchFn', () => {
 
   it('should return response with correct structure', async () => {
     fetchSpy.mockImplementation(
-      createFetchMock(async () => {
+      createFetchMock(() => {
         return createMockResponse({
           headers: new Headers({ 'content-type': 'application/rss+xml' }),
           text: async () => 'feed content',
@@ -129,7 +129,7 @@ describe('defaultFetchFn', () => {
 
   it('should preserve response URL for redirect handling', async () => {
     fetchSpy.mockImplementation(
-      createFetchMock(async () => {
+      createFetchMock(() => {
         return createMockResponse({
           url: 'https://redirect.example.com/feed.xml',
         })
@@ -149,7 +149,7 @@ describe('defaultFetchFn', () => {
 
   it('should convert response body to text', async () => {
     fetchSpy.mockImplementation(
-      createFetchMock(async () => {
+      createFetchMock(() => {
         return createMockResponse({
           text: async () => '<rss>feed content</rss>',
         })
@@ -169,7 +169,7 @@ describe('defaultFetchFn', () => {
 
   it('should pass through status and statusText', async () => {
     fetchSpy.mockImplementation(
-      createFetchMock(async () => {
+      createFetchMock(() => {
         return createMockResponse({
           status: 404,
           statusText: 'Not Found',
@@ -190,7 +190,7 @@ describe('defaultFetchFn', () => {
 })
 
 describe('normalizeInput', () => {
-  const fetchFn: DiscoverFetchFn = async (url) => {
+  const fetchFn: DiscoverFetchFn = (url) => {
     return {
       url,
       body: '<html>content</html>',
@@ -211,7 +211,7 @@ describe('normalizeInput', () => {
   })
 
   it('should preserve redirected URL from fetch response', async () => {
-    const redirectFetchFn: DiscoverFetchFn = async () => {
+    const redirectFetchFn: DiscoverFetchFn = () => {
       return {
         url: 'https://example.com/redirected',
         body: '<html>content</html>',
@@ -230,7 +230,7 @@ describe('normalizeInput', () => {
   })
 
   it('should handle ReadableStream body by converting to empty string', async () => {
-    const streamFetchFn: DiscoverFetchFn = async (url) => {
+    const streamFetchFn: DiscoverFetchFn = (url) => {
       return {
         url,
         body: new ReadableStream(),
@@ -250,7 +250,7 @@ describe('normalizeInput', () => {
 
   it('should preserve headers from fetch response', async () => {
     const headers = new Headers({ 'content-type': 'text/html', link: '</feed>; rel="alternate"' })
-    const headersFetchFn: DiscoverFetchFn = async (url) => {
+    const headersFetchFn: DiscoverFetchFn = (url) => {
       return {
         url,
         body: '<html></html>',
@@ -318,7 +318,7 @@ describe('normalizeInput', () => {
   })
 
   it('should handle empty string content from fetch', async () => {
-    const emptyFetchFn: DiscoverFetchFn = async (url) => {
+    const emptyFetchFn: DiscoverFetchFn = (url) => {
       return {
         url,
         body: '',
@@ -338,7 +338,7 @@ describe('normalizeInput', () => {
 
   it('should not call fetchFn when object input provided', async () => {
     let fetchCalled = false
-    const trackingFetchFn: DiscoverFetchFn = async (url) => {
+    const trackingFetchFn: DiscoverFetchFn = (url) => {
       fetchCalled = true
       return {
         url,
@@ -359,7 +359,7 @@ describe('normalizeInput', () => {
   })
 
   it('should handle fetch response with different status codes', async () => {
-    const statusFetchFn: DiscoverFetchFn = async (url) => {
+    const statusFetchFn: DiscoverFetchFn = (url) => {
       return {
         url,
         body: '<html>content</html>',

@@ -934,6 +934,7 @@ describe('processConcurrently', () => {
   it('should handle errors in processFn', async () => {
     const items = [1, 2, 3, 4, 5]
     const processed: Array<number> = []
+    // biome-ignore lint/suspicious/useAwait: Must return Promise for processConcurrently.
     const processFn = async (item: number) => {
       if (item === 3) {
         throw new Error('Test error')
@@ -953,6 +954,7 @@ describe('processConcurrently', () => {
   it('should handle empty array', async () => {
     const items: Array<number> = []
     const processed: Array<number> = []
+    // biome-ignore lint/suspicious/useAwait: Must return Promise for processConcurrently.
     const processFn = async (item: number) => {
       processed.push(item)
     }
@@ -965,6 +967,7 @@ describe('processConcurrently', () => {
   it('should process single item', async () => {
     const items = [1]
     const processed: Array<number> = []
+    // biome-ignore lint/suspicious/useAwait: Must return Promise for processConcurrently.
     const processFn = async (item: number) => {
       processed.push(item)
     }
@@ -1081,6 +1084,7 @@ describe('processConcurrently', () => {
   it('should not process items when concurrency is 0', async () => {
     const items = [1, 2, 3]
     const processed: Array<number> = []
+    // biome-ignore lint/suspicious/useAwait: Must return Promise for processConcurrently.
     const processFn = async (item: number) => {
       processed.push(item)
     }

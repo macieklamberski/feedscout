@@ -255,7 +255,7 @@ describe('mastodonHandler', () => {
     })
 
     it('should return empty array when fetch throws', async () => {
-      const mockFetch: DiscoverFetchFn = async () => {
+      const mockFetch: DiscoverFetchFn = () => {
         throw new Error('Network error')
       }
       const value = await mastodonHandler.resolve(
