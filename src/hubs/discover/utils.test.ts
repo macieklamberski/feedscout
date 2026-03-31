@@ -70,8 +70,8 @@ describe('normalizeInput', () => {
     expect(value.content).toBeUndefined()
   })
 
-  it('should propagate error when fetchFn rejects', async () => {
-    const mockFetch: DiscoverFetchFn = async () => {
+  it('should propagate error when fetchFn rejects', () => {
+    const mockFetch: DiscoverFetchFn = () => {
       throw new Error('Network error')
     }
 

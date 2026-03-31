@@ -11,7 +11,7 @@ import {
 import { defaultExtractor } from './extractors.js'
 import type { FeedResult } from './types.js'
 
-export const discoverFeeds = async <TValid extends FeedResult = FeedResult>(
+export const discoverFeeds = <TValid extends FeedResult = FeedResult>(
   input: DiscoverInput,
   options: DiscoverOptions<TValid, 'platform' | 'html' | 'headers' | 'guess'> = {},
 ): Promise<Array<DiscoverResult<TValid>>> => {

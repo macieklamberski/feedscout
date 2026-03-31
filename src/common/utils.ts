@@ -1,6 +1,8 @@
 import locales from './locales.json' with { type: 'json' }
 import type { DiscoverUriHint } from './types.js'
 
+const whitespaceRegex = /\s+/
+
 export const composeHint = (key: string): DiscoverUriHint => ({
   key,
   label: locales.hints[key as keyof typeof locales.hints],
@@ -48,7 +50,7 @@ export const isAnyOf = (
 }
 
 export const anyWordMatchesAnyOf = (value: string, patterns: Array<string>): boolean => {
-  const words = value.toLowerCase().split(/\s+/)
+  const words = value.toLowerCase().split(whitespaceRegex)
   return words.some((word) => isAnyOf(word, patterns))
 }
 

@@ -1,11 +1,13 @@
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, isAnyOf, isHostOf } from '../../../common/utils.js'
 
+const userIdRegex = /soundcloud:\/\/users:(\d+)/
+
 const hosts = ['soundcloud.com', 'www.soundcloud.com', 'm.soundcloud.com']
 const excludedPaths = ['discover', 'stream', 'search', 'upload', 'you', 'settings', 'messages']
 
 const extractUserIdFromContent = (content: string): string | undefined => {
-  const match = content.match(/soundcloud:\/\/users:(\d+)/)
+  const match = content.match(userIdRegex)
 
   return match?.[1]
 }
@@ -19,7 +21,7 @@ export const soundcloudHandler: PlatformHandler = {
     const { pathname } = new URL(url)
     const pathSegments = pathname.split('/').filter(Boolean)
 
-    return pathSegments.length >= 1 && !isAnyOf(pathSegments[0], excludedPaths)
+    return pathSegments.length > 0 && !isAnyOf(pathSegments[0], excludedPaths)
   },
 
   resolve: (_url, content) => {

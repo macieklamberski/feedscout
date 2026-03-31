@@ -82,7 +82,7 @@ export type DiscoverExtractFn<TValid> = (input: {
   content: string
   headers?: Headers
   status?: number
-}) => Promise<DiscoverResult<TValid>>
+}) => Promise<DiscoverResult<TValid>> | DiscoverResult<TValid>
 
 export type DiscoverInputObject = {
   url: string

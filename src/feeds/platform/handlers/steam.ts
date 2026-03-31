@@ -1,6 +1,9 @@
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, isHostOf } from '../../../common/utils.js'
 
+const appPathRegex = /^\/(?:news\/)?app\/(\d+)/
+const groupPathRegex = /^\/groups\/([^/]+)/
+
 const hosts = ['store.steampowered.com', 'steamcommunity.com']
 
 export const steamHandler: PlatformHandler = {
@@ -11,7 +14,7 @@ export const steamHandler: PlatformHandler = {
   resolve: (url) => {
     const { hostname, pathname } = new URL(url)
 
-    const appMatch = pathname.match(/^\/(?:news\/)?app\/(\d+)/)
+    const appMatch = pathname.match(appPathRegex)
 
     if (appMatch?.[1]) {
       return [
@@ -23,7 +26,7 @@ export const steamHandler: PlatformHandler = {
     }
 
     if (hostname === 'steamcommunity.com') {
-      const groupMatch = pathname.match(/^\/groups\/([^/]+)/)
+      const groupMatch = pathname.match(groupPathRegex)
 
       if (groupMatch?.[1]) {
         return [

@@ -1,6 +1,8 @@
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, hasMetaContent } from '../../../common/utils.js'
 
+const lemmyPoweredByRegex = /lemmy/i
+
 export const isCommunityPath = (pathname: string): boolean => {
   const segments = pathname.split('/').filter(Boolean)
 
@@ -20,7 +22,7 @@ export const isLemmyHtml = (content: string): boolean => {
 export const isLemmyHeaders = (headers: Headers): boolean => {
   const poweredBy = headers.get('x-powered-by') ?? ''
 
-  return /lemmy/i.test(poweredBy)
+  return lemmyPoweredByRegex.test(poweredBy)
 }
 
 export const lemmyHandler: PlatformHandler = {

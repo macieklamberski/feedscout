@@ -6,7 +6,7 @@ import { defaultGuessOptions, defaultHeadersOptions, defaultHtmlOptions } from '
 import { defaultExtractor } from './extractors.js'
 import type { BlogrollResult } from './types.js'
 
-export const discoverBlogrolls = async <TValid extends BlogrollResult = BlogrollResult>(
+export const discoverBlogrolls = <TValid extends BlogrollResult = BlogrollResult>(
   input: DiscoverInput,
   options: DiscoverOptions<TValid, 'html' | 'headers' | 'guess'> = {},
 ): Promise<Array<DiscoverResult<TValid>>> => {

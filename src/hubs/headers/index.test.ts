@@ -141,7 +141,7 @@ describe('discoverHubsFromHeaders', () => {
     const headers = new Headers({
       link: '</hub>; rel="hub", </feed.xml>; rel="self"',
     })
-    const customNormalizer = (url: string, baseUrl: string | undefined) => {
+    const customNormalizer = (url: string) => {
       return `https://custom.example.com${url}`
     }
     const value = discoverHubsFromHeaders(headers, 'https://example.com/feed.xml', customNormalizer)

@@ -513,7 +513,7 @@ describe('discoverFavicons', () => {
           <link>https://dead-site.com</link>
         </channel>
       </rss>`
-    const fetchFn: DiscoverFetchFn = async (url: string) => {
+    const fetchFn: DiscoverFetchFn = (url: string) => {
       if (url === 'https://dead-site.com') {
         throw new Error('Connection refused')
       }
