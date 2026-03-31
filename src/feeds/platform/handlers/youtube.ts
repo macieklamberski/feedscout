@@ -2,12 +2,14 @@ import type { DiscoverUriEntry } from '../../../common/types.js'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, isHostOf } from '../../../common/utils.js'
 
-const hosts = ['youtube.com', 'www.youtube.com', 'm.youtube.com', 'youtu.be', 'www.youtu.be']
 const channelIdRegex = /"(?:channelId|externalId)":"(UC[a-zA-Z0-9_-]+)"/
 const channelPathRegex = /^\/channel\/(UC[a-zA-Z0-9_-]+)/
 const handlePathRegex = /^\/@([^/]+)/
 const userPathRegex = /^\/user\/([^/]+)/
 const customPathRegex = /^\/c\/([^/]+)/
+const channelPrefixRegex = /^UC/
+
+const hosts = ['youtube.com', 'www.youtube.com', 'm.youtube.com', 'youtu.be', 'www.youtu.be']
 
 const extractChannelIdFromContent = (content: string): string | undefined => {
   const match = content.match(channelIdRegex)
@@ -18,19 +20,19 @@ const extractChannelIdFromContent = (content: string): string | undefined => {
 // Convert channel ID to playlist IDs for filtered feeds.
 // YouTube playlist prefixes: UU = all (legacy), UULF = videos only, UUSH = shorts only, UULV = live streams only.
 const getAllUploadsPlaylistId = (channelId: string): string => {
-  return channelId.replace(/^UC/, 'UU')
+  return channelId.replace(channelPrefixRegex, 'UU')
 }
 
 const getVideosOnlyPlaylistId = (channelId: string): string => {
-  return channelId.replace(/^UC/, 'UULF')
+  return channelId.replace(channelPrefixRegex, 'UULF')
 }
 
 const getShortsOnlyPlaylistId = (channelId: string): string => {
-  return channelId.replace(/^UC/, 'UUSH')
+  return channelId.replace(channelPrefixRegex, 'UUSH')
 }
 
 const getLiveStreamsOnlyPlaylistId = (channelId: string): string => {
-  return channelId.replace(/^UC/, 'UULV')
+  return channelId.replace(channelPrefixRegex, 'UULV')
 }
 
 const feedUrl = (param: string, value: string): string => {

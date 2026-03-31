@@ -2,6 +2,8 @@ import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { hasMetaContent } from '../../../common/utils.js'
 import { isNonEmptyString, parseBodyJson } from '../../utils.js'
 
+const mastodonRegex = /mastodon/i
+
 export const isProfilePath = (pathname: string): boolean => {
   const segments = pathname.split('/').filter(Boolean)
 
@@ -13,7 +15,7 @@ export const isMastodonHtml = (content: string): boolean => {
 }
 
 export const isMastodonHeaders = (headers: Headers): boolean => {
-  return /mastodon/i.test(headers.get('server') ?? '')
+  return mastodonRegex.test(headers.get('server') ?? '')
 }
 
 export const mastodonHandler: PlatformHandler = {

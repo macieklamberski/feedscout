@@ -1,6 +1,8 @@
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, isAnyOf, isHostOf } from '../../../common/utils.js'
 
+const numericPathRegex = /^\d+$/
+
 const hosts = ['vimeo.com', 'www.vimeo.com']
 const excludedPaths = [
   'about',
@@ -72,7 +74,7 @@ export const vimeoHandler: PlatformHandler = {
       const user = pathSegments[0]
 
       // Skip excluded paths and numeric-only segments (video IDs).
-      if (!isAnyOf(user, excludedPaths) && !/^\d+$/.test(user)) {
+      if (!isAnyOf(user, excludedPaths) && !numericPathRegex.test(user)) {
         const feeds = [{ uri: `${origin}/${user}/videos/rss`, hint: composeHint('vimeo:videos') }]
 
         if (pathSegments[1] === 'likes') {
