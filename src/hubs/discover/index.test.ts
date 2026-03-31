@@ -157,14 +157,14 @@ describe('discoverHubs', () => {
   describe('resolveUrlFn option', () => {
     it('should use custom resolveUrlFn for HTML hubs', async () => {
       const html = '<link rel="hub" href="/hub">'
-      const customNormalizer: DiscoverResolveUrlFn = (url) => {
+      const customResolveUrlFn: DiscoverResolveUrlFn = (url) => {
         return `https://custom.example.com${url}`
       }
       const value = await discoverHubs(
         { url: 'https://example.com/', content: html },
         {
           methods: ['html'],
-          resolveUrlFn: customNormalizer,
+          resolveUrlFn: customResolveUrlFn,
         },
       )
       const expected: Array<HubResult> = [
@@ -181,14 +181,14 @@ describe('discoverHubs', () => {
       const headers = new Headers({
         link: '</hub>; rel="hub"',
       })
-      const customNormalizer: DiscoverResolveUrlFn = (url) => {
+      const customResolveUrlFn: DiscoverResolveUrlFn = (url) => {
         return `https://custom.example.com${url}`
       }
       const value = await discoverHubs(
         { url: 'https://example.com/', headers },
         {
           methods: ['headers'],
-          resolveUrlFn: customNormalizer,
+          resolveUrlFn: customResolveUrlFn,
         },
       )
       const expected: Array<HubResult> = [
@@ -204,7 +204,7 @@ describe('discoverHubs', () => {
     it('should use custom resolveUrlFn for self URLs', async () => {
       const html =
         '<link rel="hub" href="https://hub.example.com/"><link rel="self" href="/feed.xml">'
-      const customNormalizer: DiscoverResolveUrlFn = (url) => {
+      const customResolveUrlFn: DiscoverResolveUrlFn = (url) => {
         if (url.startsWith('/')) {
           return `https://normalized.example.com${url}`
         }
@@ -214,7 +214,7 @@ describe('discoverHubs', () => {
         { url: 'https://example.com/', content: html },
         {
           methods: ['html'],
-          resolveUrlFn: customNormalizer,
+          resolveUrlFn: customResolveUrlFn,
         },
       )
       const expected: Array<HubResult> = [

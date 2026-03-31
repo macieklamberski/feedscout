@@ -896,7 +896,7 @@ describe('discover', () => {
       const mockFetch = createMockFetch({
         'https://custom.example.com/feed': rss,
       })
-      const customNormalizer: DiscoverResolveUrlFn = (url, baseUrl) => {
+      const customResolveUrlFn: DiscoverResolveUrlFn = (url, baseUrl) => {
         const fullUrl = baseUrl ? new URL(url, baseUrl).href : url
         return fullUrl.replace('example.com', 'custom.example.com')
       }
@@ -905,7 +905,7 @@ describe('discover', () => {
         {
           methods: { guess: { uris: ['/feed'] } },
           fetchFn: mockFetch,
-          resolveUrlFn: customNormalizer,
+          resolveUrlFn: customResolveUrlFn,
         },
       )
       const expected: Array<DiscoverResult<FeedResult>> = [
@@ -928,7 +928,7 @@ describe('discover', () => {
       const mockFetch = createMockFetch({
         'https://cdn.example.com/feed.xml': rss,
       })
-      const customNormalizer: DiscoverResolveUrlFn = (url) => {
+      const customResolveUrlFn: DiscoverResolveUrlFn = (url) => {
         return url.startsWith('/') ? `https://cdn.example.com${url}` : url
       }
       const value = await discoverFeeds(
@@ -936,7 +936,7 @@ describe('discover', () => {
         {
           methods: ['html'],
           fetchFn: mockFetch,
-          resolveUrlFn: customNormalizer,
+          resolveUrlFn: customResolveUrlFn,
         },
       )
       const expected: Array<DiscoverResult<FeedResult>> = [

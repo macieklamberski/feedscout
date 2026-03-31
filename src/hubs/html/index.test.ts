@@ -97,8 +97,8 @@ describe('discoverHubsFromHtml', () => {
 
   it('should apply custom resolveUrlFn', () => {
     const html = '<link rel="hub" href="/hub">'
-    const customNormalizer = (url: string) => `https://custom.example.com${url}`
-    const value = discoverHubsFromHtml(html, 'https://example.com/', customNormalizer)
+    const customResolveUrlFn = (url: string) => `https://custom.example.com${url}`
+    const value = discoverHubsFromHtml(html, 'https://example.com/', customResolveUrlFn)
     const expected: Array<HubResult> = [
       {
         hub: 'https://custom.example.com/hub',

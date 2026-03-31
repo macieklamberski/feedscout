@@ -283,10 +283,10 @@ describe('discoverHubsFromFeed', () => {
         <link href="/feed.xml" rel="self"/>
       </feed>
     `
-    const customNormalizer: DiscoverResolveUrlFn = (url) => {
+    const customResolveUrlFn: DiscoverResolveUrlFn = (url) => {
       return `https://custom.example.com${url}`
     }
-    const value = discoverHubsFromFeed(content, 'https://example.com/feed.xml', customNormalizer)
+    const value = discoverHubsFromFeed(content, 'https://example.com/feed.xml', customResolveUrlFn)
     const expected: Array<HubResult> = [
       {
         hub: 'https://custom.example.com/hub',
