@@ -13,7 +13,7 @@ import {
 
 describe('defaultFetchFn', () => {
   // biome-ignore lint/suspicious/noExplicitAny: Mock helper needs flexible signature.
-  const createFetchMock = <T extends (...args: Array<any>) => Promise<Response>>(
+  const createFetchMock = <T extends (...args: Array<any>) => Response | Promise<Response>>(
     implementation: T,
   ) => {
     return implementation as unknown as typeof fetch
@@ -191,13 +191,13 @@ describe('defaultFetchFn', () => {
 
 describe('normalizeInput', () => {
   const fetchFn: DiscoverFetchFn = (url) => {
-    return {
+    return Promise.resolve({
       url,
       body: '<html>content</html>',
       headers: new Headers({ 'content-type': 'text/html' }),
       status: 200,
       statusText: 'OK',
-    }
+    })
   }
 
   it('should fetch and normalize string input', async () => {
@@ -212,13 +212,13 @@ describe('normalizeInput', () => {
 
   it('should preserve redirected URL from fetch response', async () => {
     const redirectFetchFn: DiscoverFetchFn = () => {
-      return {
+      return Promise.resolve({
         url: 'https://example.com/redirected',
         body: '<html>content</html>',
         headers: new Headers(),
         status: 200,
         statusText: 'OK',
-      }
+      })
     }
     const expected = {
       url: 'https://example.com/redirected',
@@ -231,13 +231,13 @@ describe('normalizeInput', () => {
 
   it('should handle ReadableStream body by converting to empty string', async () => {
     const streamFetchFn: DiscoverFetchFn = (url) => {
-      return {
+      return Promise.resolve({
         url,
         body: new ReadableStream(),
         headers: new Headers(),
         status: 200,
         statusText: 'OK',
-      }
+      })
     }
     const expected = {
       url: 'https://example.com',
@@ -251,13 +251,13 @@ describe('normalizeInput', () => {
   it('should preserve headers from fetch response', async () => {
     const headers = new Headers({ 'content-type': 'text/html', link: '</feed>; rel="alternate"' })
     const headersFetchFn: DiscoverFetchFn = (url) => {
-      return {
+      return Promise.resolve({
         url,
         body: '<html></html>',
         headers,
         status: 200,
         statusText: 'OK',
-      }
+      })
     }
     const result = await normalizeInput('https://example.com', headersFetchFn)
     const expected = {
@@ -319,13 +319,13 @@ describe('normalizeInput', () => {
 
   it('should handle empty string content from fetch', async () => {
     const emptyFetchFn: DiscoverFetchFn = (url) => {
-      return {
+      return Promise.resolve({
         url,
         body: '',
         headers: new Headers(),
         status: 200,
         statusText: 'OK',
-      }
+      })
     }
     const expected = {
       url: 'https://example.com',
@@ -340,13 +340,13 @@ describe('normalizeInput', () => {
     let fetchCalled = false
     const trackingFetchFn: DiscoverFetchFn = (url) => {
       fetchCalled = true
-      return {
+      return Promise.resolve({
         url,
         body: '<html></html>',
         headers: new Headers(),
         status: 200,
         statusText: 'OK',
-      }
+      })
     }
     const value = {
       url: 'https://example.com',
@@ -360,13 +360,13 @@ describe('normalizeInput', () => {
 
   it('should handle fetch response with different status codes', async () => {
     const statusFetchFn: DiscoverFetchFn = (url) => {
-      return {
+      return Promise.resolve({
         url,
         body: '<html>content</html>',
         headers: new Headers(),
         status: 301,
         statusText: 'Moved Permanently',
-      }
+      })
     }
     const expected = {
       url: 'https://example.com',

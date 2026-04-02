@@ -144,7 +144,11 @@ describe('discoverHubsFromHeaders', () => {
     const customResolveUrlFn = (url: string) => {
       return `https://custom.example.com${url}`
     }
-    const value = discoverHubsFromHeaders(headers, 'https://example.com/feed.xml', customResolveUrlFn)
+    const value = discoverHubsFromHeaders(
+      headers,
+      'https://example.com/feed.xml',
+      customResolveUrlFn,
+    )
     const expected: Array<HubResult> = [
       {
         hub: 'https://custom.example.com/hub',

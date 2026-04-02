@@ -515,16 +515,16 @@ describe('discoverFavicons', () => {
       </rss>`
     const fetchFn: DiscoverFetchFn = (url: string) => {
       if (url === 'https://dead-site.com') {
-        throw new Error('Connection refused')
+        return Promise.reject(new Error('Connection refused'))
       }
 
-      return {
+      return Promise.resolve({
         url,
         body: url === 'https://example.com/feed.xml' ? rssContent : '',
         headers: new Headers(),
         status: 200,
         statusText: 'OK',
-      }
+      })
     }
     const value = await discoverFavicons('https://example.com/feed.xml', {
       methods: ['html'],
