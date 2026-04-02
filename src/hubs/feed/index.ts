@@ -24,12 +24,14 @@ export const discoverHubsFromFeed = (
     // JSON Feed has native hubs support.
     if (format === 'json') {
       const hubs = feed.hubs ?? []
-      const topic = feed.feed_url ? resolveUrlFn(feed.feed_url, baseUrl) : baseUrl
+      const topic = feed.feed_url
+        ? (resolveUrlFn(feed.feed_url, baseUrl) ?? feed.feed_url)
+        : baseUrl
 
       return hubs
         .filter((hub) => hub.url)
         .map((hub) => ({
-          hub: resolveUrlFn(hub.url as string, baseUrl),
+          hub: resolveUrlFn(hub.url as string, baseUrl) ?? (hub.url as string),
           topic,
         }))
     }
@@ -40,10 +42,10 @@ export const discoverHubsFromFeed = (
 
     if (hubUris.length > 0) {
       const selfUris = getLinksWithRel(links, 'self')
-      const topic = selfUris[0] ? resolveUrlFn(selfUris[0], baseUrl) : baseUrl
+      const topic = selfUris[0] ? (resolveUrlFn(selfUris[0], baseUrl) ?? selfUris[0]) : baseUrl
 
       return hubUris.map((hub) => ({
-        hub: resolveUrlFn(hub, baseUrl),
+        hub: resolveUrlFn(hub, baseUrl) ?? hub,
         topic,
       }))
     }

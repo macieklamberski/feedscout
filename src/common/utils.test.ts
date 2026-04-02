@@ -11,9 +11,9 @@ import {
   isSubdomainOf,
   matchesAnyOfLinkSelectors,
   normalizeMimeType,
-  resolveUrl,
   omitEmpty,
   processConcurrently,
+  resolveUrl,
 } from './utils.js'
 
 describe('composeHint', () => {
@@ -558,10 +558,18 @@ describe('resolveUrl', () => {
     expect(resolveUrl(value, baseUrl)).toBe(expected)
   })
 
-  it('should return URL unchanged when base URL is undefined', () => {
+  it('should return undefined when base URL is undefined and URL is relative', () => {
     const value = '/feed.xml'
     const baseUrl = undefined
-    const expected = '/feed.xml'
+    const expected = undefined
+
+    expect(resolveUrl(value, baseUrl)).toBe(expected)
+  })
+
+  it('should return absolute URL when base URL is undefined', () => {
+    const value = 'https://example.com/feed.xml'
+    const baseUrl = undefined
+    const expected = 'https://example.com/feed.xml'
 
     expect(resolveUrl(value, baseUrl)).toBe(expected)
   })

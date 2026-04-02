@@ -29,7 +29,7 @@ export type LinkSelector = {
   types?: Array<string>
 }
 
-export type DiscoverResolveUrlFn = (url: string, baseUrl: string | undefined) => string
+export type DiscoverResolveUrlFn = (url: string, baseUrl: string | undefined) => string | undefined
 
 export type DiscoverResolveSiteUrlFn = (input: DiscoverInputObject) => string | undefined
 

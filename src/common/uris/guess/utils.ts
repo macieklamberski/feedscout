@@ -11,7 +11,7 @@ const resolveUri = (uri: string, base: string, origin: string, pathname: string)
     return `${origin}${pathname}${uri}`
   }
 
-  return new URL(uri, base).toString()
+  return new URL(uri, base).href
 }
 
 export const generateUrlCombinations = (
