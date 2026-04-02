@@ -4,6 +4,8 @@ import type { HeadersMethodOptions } from './uris/headers/types.js'
 import type { HtmlMethodOptions } from './uris/html/types.js'
 import type { PlatformMethodOptions } from './uris/platform/types.js'
 
+export type MaybePromise<T> = T | Promise<T>
+
 export type UriEntry = string | Array<string>
 
 export type DiscoverUriHint = {
@@ -49,7 +51,7 @@ export type DiscoverFetchFnResponse = {
 export type DiscoverFetchFn = (
   url: string,
   options?: DiscoverFetchFnOptions,
-) => Promise<DiscoverFetchFnResponse>
+) => MaybePromise<DiscoverFetchFnResponse>
 
 export type DiscoverProgress = {
   tested: number
@@ -82,7 +84,7 @@ export type DiscoverExtractFn<TValid> = (input: {
   content: string
   headers?: Headers
   status?: number
-}) => Promise<DiscoverResult<TValid>> | DiscoverResult<TValid>
+}) => MaybePromise<DiscoverResult<TValid>>
 
 export type DiscoverInputObject = {
   url: string

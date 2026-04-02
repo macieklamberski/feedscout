@@ -1,4 +1,4 @@
-import type { DiscoverFetchFn, DiscoverUriEntry } from '../../types.js'
+import type { DiscoverFetchFn, DiscoverUriEntry, MaybePromise } from '../../types.js'
 
 export type PlatformHandler = {
   match: (url: string, content?: string, headers?: Headers) => boolean
@@ -7,7 +7,7 @@ export type PlatformHandler = {
     content?: string,
     headers?: Headers,
     fetchFn?: DiscoverFetchFn,
-  ) => Array<DiscoverUriEntry> | Promise<Array<DiscoverUriEntry>>
+  ) => MaybePromise<Array<DiscoverUriEntry>>
 }
 
 export type PlatformMethodOptions = {
