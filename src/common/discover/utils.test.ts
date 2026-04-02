@@ -229,7 +229,7 @@ describe('normalizeInput', () => {
     expect(await normalizeInput('https://example.com', redirectFetchFn)).toEqual(expected)
   })
 
-  it('should handle ReadableStream body by converting to empty string', async () => {
+  it('should handle ReadableStream body by returning undefined content', async () => {
     const streamFetchFn: DiscoverFetchFn = (url) => {
       return Promise.resolve({
         url,
@@ -241,7 +241,7 @@ describe('normalizeInput', () => {
     }
     const expected = {
       url: 'https://example.com',
-      content: '',
+      content: undefined,
       headers: expect.any(Headers),
     }
 
