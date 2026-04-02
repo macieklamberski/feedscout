@@ -5,8 +5,8 @@ import locales from '../locales.json' with { type: 'json' }
 import type {
   DiscoverExtractFn,
   DiscoverFetchFn,
-  DiscoverResolveUrlFn,
   DiscoverProgress,
+  DiscoverResolveUrlFn,
   DiscoverResult,
 } from '../types.js'
 import type { PlatformHandler } from '../uris/platform/types.js'
@@ -79,13 +79,13 @@ describe('discover', () => {
       const mockFetch: DiscoverFetchFn = (url) => {
         fetchedUrls.push(url)
 
-        return {
+        return Promise.resolve({
           url,
           body: url === 'https://example.com/platform-feed' ? rss : '',
           headers: new Headers(),
           status: 200,
           statusText: 'OK',
-        }
+        })
       }
       const value = await discoverFeeds(
         { url: 'https://example.com', content: '<html></html>' },
@@ -124,13 +124,13 @@ describe('discover', () => {
       const mockFetch: DiscoverFetchFn = (url) => {
         fetchedUrls.push(url)
 
-        return {
+        return Promise.resolve({
           url,
           body: url === 'https://example.com/guess-feed' ? rss : '',
           headers: new Headers(),
           status: 200,
           statusText: 'OK',
-        }
+        })
       }
       const value = await discoverFeeds(
         { url: 'https://example.com', content: '<html></html>' },
@@ -172,13 +172,13 @@ describe('discover', () => {
       const mockFetch: DiscoverFetchFn = (url) => {
         fetchedUrls.push(url)
 
-        return {
+        return Promise.resolve({
           url,
           body: url.includes('guess') ? rss : '',
           headers: new Headers(),
           status: 200,
           statusText: 'OK',
-        }
+        })
       }
       const value = await discoverFeeds(
         { url: 'https://example.com', content: '<html></html>' },
@@ -250,13 +250,13 @@ describe('discover', () => {
       let fetchCount = 0
       const mockFetch: DiscoverFetchFn = (url) => {
         fetchCount++
-        return {
+        return Promise.resolve({
           url,
           body: rss,
           headers: new Headers(),
           status: 200,
           statusText: 'OK',
-        }
+        })
       }
       const value = await discoverFeeds(
         { url: 'https://example.com' },
@@ -289,13 +289,13 @@ describe('discover', () => {
       const fetchedUrls: Array<string> = []
       const mockFetch: DiscoverFetchFn = (url) => {
         fetchedUrls.push(url)
-        return {
+        return Promise.resolve({
           url,
           body: url === 'https://example.com/feed/' ? rss : '',
           headers: new Headers(),
           status: 200,
           statusText: 'OK',
-        }
+        })
       }
       const value = await discoverFeeds(
         { url: 'https://example.com' },
@@ -324,13 +324,13 @@ describe('discover', () => {
       const fetchedUrls: Array<string> = []
       const mockFetch: DiscoverFetchFn = (url) => {
         fetchedUrls.push(url)
-        return {
+        return Promise.resolve({
           url,
           body: url === 'https://example.com/?feed=rss' ? rss : '',
           headers: new Headers(),
           status: 200,
           statusText: 'OK',
-        }
+        })
       }
       const value = await discoverFeeds(
         { url: 'https://example.com' },
@@ -424,7 +424,7 @@ describe('discover', () => {
   describe('error handling', () => {
     it('should handle fetch errors gracefully', async () => {
       const mockFetch: DiscoverFetchFn = () => {
-        throw new Error('Network error')
+        return Promise.reject(new Error('Network error'))
       }
       const value = await discoverFeeds(
         { url: 'https://example.com' },
@@ -439,7 +439,7 @@ describe('discover', () => {
 
     it('should include errors when includeInvalid is true', async () => {
       const mockFetch: DiscoverFetchFn = () => {
-        throw new Error('Network error')
+        return Promise.reject(new Error('Network error'))
       }
       const value = await discoverFeeds(
         { url: 'https://example.com' },
@@ -847,13 +847,14 @@ describe('discover', () => {
       type ExtendedFeedResult = FeedResult & {
         etag?: string
       }
-      const mockFetch: DiscoverFetchFn = async (url) => ({
-        url,
-        body: '<rss><channel><title>Test</title></channel></rss>',
-        headers: new Headers({ etag: '"abc123"' }),
-        status: 200,
-        statusText: 'OK',
-      })
+      const mockFetch: DiscoverFetchFn = (url) =>
+        Promise.resolve({
+          url,
+          body: '<rss><channel><title>Test</title></channel></rss>',
+          headers: new Headers({ etag: '"abc123"' }),
+          status: 200,
+          statusText: 'OK',
+        })
       const customExtractor: DiscoverExtractFn<ExtendedFeedResult> = ({
         url,
         content,
@@ -1032,13 +1033,14 @@ describe('discover', () => {
 
         return { url, isValid: false }
       }
-      const mockFetch: DiscoverFetchFn = async (url: string) => ({
-        url,
-        body: rss,
-        headers: responseHeaders,
-        status: 200,
-        statusText: 'OK',
-      })
+      const mockFetch: DiscoverFetchFn = (url: string) =>
+        Promise.resolve({
+          url,
+          body: rss,
+          headers: responseHeaders,
+          status: 200,
+          statusText: 'OK',
+        })
       await discoverFeeds(
         { url: 'https://example.com', content: '<html></html>' },
         {

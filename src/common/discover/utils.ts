@@ -8,8 +8,8 @@ import type {
   DiscoverMethodsConfig,
   DiscoverMethodsConfigDefaults,
   DiscoverMethodsConfigInternal,
-  DiscoverResolveUrlFn,
   DiscoverResolveSiteUrlFn,
+  DiscoverResolveUrlFn,
   DiscoverUriEntry,
 } from '../types.js'
 import { resolveUrl } from '../utils.js'

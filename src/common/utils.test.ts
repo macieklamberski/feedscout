@@ -11,9 +11,9 @@ import {
   isSubdomainOf,
   matchesAnyOfLinkSelectors,
   normalizeMimeType,
-  resolveUrl,
   omitEmpty,
   processConcurrently,
+  resolveUrl,
 } from './utils.js'
 
 describe('composeHint', () => {
