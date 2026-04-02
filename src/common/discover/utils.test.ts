@@ -1615,7 +1615,11 @@ describe('normalizeMethodsConfig with siteInput', () => {
 
 describe('normalizeUriEntry', () => {
   const resolveUrlFn: DiscoverResolveUrlFn = (url, baseUrl) => {
-    return new URL(url, baseUrl).toString()
+    try {
+      return new URL(url, baseUrl).href
+    } catch {
+      return
+    }
   }
 
   it('should normalize string entry', () => {

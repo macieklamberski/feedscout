@@ -102,12 +102,12 @@ export const normalizeUriEntry = (
   baseUrl: string | undefined,
 ): DiscoverUriEntry => {
   if (typeof entry.uri === 'string') {
-    return { ...entry, uri: resolveUrlFn(entry.uri, baseUrl) }
+    return { ...entry, uri: resolveUrlFn(entry.uri, baseUrl) ?? entry.uri }
   }
 
   return {
     ...entry,
-    uri: entry.uri.map((uri) => resolveUrlFn(uri, baseUrl)),
+    uri: entry.uri.map((uri) => resolveUrlFn(uri, baseUrl) ?? uri),
   }
 }
 

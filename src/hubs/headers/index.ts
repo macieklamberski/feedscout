@@ -18,10 +18,10 @@ export const discoverHubsFromHeaders = (
   }
 
   const selfUris = discoverUrisFromHeaders(headers, { linkSelectors: selfSelector })
-  const topic = selfUris[0] ? resolveUrlFn(selfUris[0], baseUrl) : baseUrl
+  const topic = selfUris[0] ? (resolveUrlFn(selfUris[0], baseUrl) ?? selfUris[0]) : baseUrl
 
   return hubUris.map((hub) => ({
-    hub: resolveUrlFn(hub, baseUrl),
+    hub: resolveUrlFn(hub, baseUrl) ?? hub,
     topic,
   }))
 }
