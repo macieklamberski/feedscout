@@ -312,6 +312,18 @@ describe('mastodonHandler', () => {
       expect(value).toEqual(expected)
     })
 
+    it('should return empty array for non-profile path', async () => {
+      const mockFetch = createMockFetch({})
+      const value = await mastodonHandler.resolve(
+        'https://mastodon.social/about',
+        undefined,
+        undefined,
+        mockFetch,
+      )
+
+      expect(value).toEqual([])
+    })
+
     it('should strip feed extension from profile URL', async () => {
       const mockFetch = createMockFetch({
         'https://mastodon.social/api/v1/accounts/lookup?acct=user': JSON.stringify({
