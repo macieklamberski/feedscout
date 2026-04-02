@@ -74,5 +74,12 @@ describe('githubHandler', () => {
 
       expect(value).toEqual(expected)
     })
+
+    it('should strip feed extension from user URL', () => {
+      const value = githubHandler.resolve('https://github.com/octocat.atom')
+      const expected: Array<DiscoverUriEntry> = [{ uri: 'https://github.com/octocat.png' }]
+
+      expect(value).toEqual(expected)
+    })
   })
 })

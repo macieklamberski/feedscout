@@ -2,6 +2,10 @@ import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { isAnyOf, isHostOf } from '../../../common/utils.js'
 import { excludedPaths, hosts } from '../../../feeds/platform/handlers/codeberg.js'
 
+// Extracts the username from the path, excluding dots to avoid capturing
+// feed extensions like .rss in Codeberg feed URLs (e.g., /user.rss).
+const userRegex = /^\/([^/.]+)/
+
 export const codebergHandler: PlatformHandler = {
   match: (url) => {
     return isHostOf(url, hosts)
@@ -9,13 +13,13 @@ export const codebergHandler: PlatformHandler = {
 
   resolve: (url) => {
     const { origin, pathname } = new URL(url)
-    const segments = pathname.split('/').filter(Boolean)
+    const match = pathname.match(userRegex)
 
-    if (segments.length === 0) {
+    if (!match?.[1]) {
       return []
     }
 
-    const username = segments[0]
+    const username = match[1]
 
     if (isAnyOf(username, excludedPaths)) {
       return []

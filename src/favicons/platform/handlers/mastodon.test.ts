@@ -311,5 +311,24 @@ describe('mastodonHandler', () => {
 
       expect(value).toEqual(expected)
     })
+
+    it('should strip feed extension from profile URL', async () => {
+      const mockFetch = createMockFetch({
+        'https://mastodon.social/api/v1/accounts/lookup?acct=user': JSON.stringify({
+          avatar: 'https://mastodon.social/avatars/user.png',
+        }),
+      })
+      const value = await mastodonHandler.resolve(
+        'https://mastodon.social/@user.rss',
+        undefined,
+        undefined,
+        mockFetch,
+      )
+      const expected: Array<DiscoverUriEntry> = [
+        { uri: 'https://mastodon.social/avatars/user.png' },
+      ]
+
+      expect(value).toEqual(expected)
+    })
   })
 })

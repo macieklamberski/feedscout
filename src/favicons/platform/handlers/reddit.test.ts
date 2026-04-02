@@ -27,6 +27,11 @@ describe('isSubredditPath', () => {
     expect(isSubredditPath('/r/javascript/')).toBe(true)
   })
 
+  it('should return true for /r/subreddit with feed extension', () => {
+    expect(isSubredditPath('/r/javascript.rss')).toBe(true)
+    expect(isSubredditPath('/r/javascript.atom')).toBe(true)
+  })
+
   it('should return false for /r without subreddit', () => {
     expect(isSubredditPath('/r')).toBe(false)
     expect(isSubredditPath('/r/')).toBe(false)
@@ -69,6 +74,11 @@ describe('isUserPath', () => {
   it('should return true for user paths with trailing slash', () => {
     expect(isUserPath('/u/spez/')).toBe(true)
     expect(isUserPath('/user/spez/')).toBe(true)
+  })
+
+  it('should return true for user paths with feed extension', () => {
+    expect(isUserPath('/u/spez.rss')).toBe(true)
+    expect(isUserPath('/user/spez.atom')).toBe(true)
   })
 
   it('should return false for /u or /user without username', () => {
@@ -122,6 +132,11 @@ describe('redditHandler', () => {
     it('should not match non-subreddit and non-user Reddit paths', () => {
       expect(redditHandler.match('https://reddit.com/about')).toBe(false)
       expect(redditHandler.match('https://reddit.com/wiki')).toBe(false)
+    })
+
+    it('should match URLs with feed extensions', () => {
+      expect(redditHandler.match('https://www.reddit.com/r/javascript.rss')).toBe(true)
+      expect(redditHandler.match('https://www.reddit.com/u/spez.rss')).toBe(true)
     })
 
     it('should not match non-Reddit URLs', () => {
@@ -202,6 +217,42 @@ describe('redditHandler', () => {
         mockFetch,
       )
       const expected: Array<DiscoverUriEntry> = [{ uri: 'https://i.redd.it/snoovatar/snoo.png' }]
+
+      expect(value).toEqual(expected)
+    })
+
+    it('should strip feed extension from subreddit URL', async () => {
+      const mockFetch = createMockFetch({
+        'https://www.reddit.com/r/javascript/about.json': JSON.stringify({
+          data: { community_icon: 'https://styles.redditmedia.com/icon.png' },
+        }),
+      })
+      const value = await redditHandler.resolve(
+        'https://reddit.com/r/javascript.rss',
+        undefined,
+        undefined,
+        mockFetch,
+      )
+      const expected: Array<DiscoverUriEntry> = [{ uri: 'https://styles.redditmedia.com/icon.png' }]
+
+      expect(value).toEqual(expected)
+    })
+
+    it('should strip feed extension from user URL', async () => {
+      const mockFetch = createMockFetch({
+        'https://www.reddit.com/user/spez/about.json': JSON.stringify({
+          data: { icon_img: 'https://styles.redditmedia.com/user-icon.png' },
+        }),
+      })
+      const value = await redditHandler.resolve(
+        'https://reddit.com/u/spez.rss',
+        undefined,
+        undefined,
+        mockFetch,
+      )
+      const expected: Array<DiscoverUriEntry> = [
+        { uri: 'https://styles.redditmedia.com/user-icon.png' },
+      ]
 
       expect(value).toEqual(expected)
     })
