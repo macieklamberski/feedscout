@@ -1,10 +1,10 @@
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, isAnyOf, isHostOf } from '../../../common/utils.js'
 
-const tagRegex = /^\/tag\/([^/]+)/
-const favouritesRegex = /^\/([a-zA-Z0-9_-]+)\/favourites\/?$/
-const folderRegex = /^\/([a-zA-Z0-9_-]+)\/gallery\/(\d+)(?:\/|$)/
-const profileRegex = /^\/([a-zA-Z0-9_-]+)(?:\/gallery(?:\/all)?)?(?:\/|$)/
+const tagPattern = /^\/tag\/([^/]+)/
+const favouritesPattern = /^\/([a-zA-Z0-9_-]+)\/favourites\/?$/
+const folderPattern = /^\/([a-zA-Z0-9_-]+)\/gallery\/(\d+)(?:\/|$)/
+const profilePattern = /^\/([a-zA-Z0-9_-]+)(?:\/gallery(?:\/all)?)?(?:\/|$)/
 
 export const hosts = ['deviantart.com', 'www.deviantart.com']
 const feedBaseUrl = 'https://backend.deviantart.com/rss.xml'
@@ -32,7 +32,7 @@ export const deviantartHandler: PlatformHandler = {
     const { pathname } = new URL(url)
 
     // Match tag page: /tag/{tagname}
-    const tagMatch = pathname.match(tagRegex)
+    const tagMatch = pathname.match(tagPattern)
 
     if (tagMatch?.[1]) {
       const tag = tagMatch[1]
@@ -46,7 +46,7 @@ export const deviantartHandler: PlatformHandler = {
     }
 
     // Match favourites: /{username}/favourites
-    const favMatch = pathname.match(favouritesRegex)
+    const favMatch = pathname.match(favouritesPattern)
 
     if (favMatch?.[1]) {
       const username = favMatch[1]
@@ -62,7 +62,7 @@ export const deviantartHandler: PlatformHandler = {
     }
 
     // Match gallery folder: /{username}/gallery/{folder-id}/{folder-name}.
-    const folderMatch = pathname.match(folderRegex)
+    const folderMatch = pathname.match(folderPattern)
 
     if (folderMatch?.[1] && folderMatch?.[2]) {
       const username = folderMatch[1]
@@ -82,7 +82,7 @@ export const deviantartHandler: PlatformHandler = {
     // /{username}
     // /{username}/gallery
     // /{username}/gallery/all
-    const userMatch = pathname.match(profileRegex)
+    const userMatch = pathname.match(profilePattern)
     const username = userMatch?.[1]
 
     if (!username || isAnyOf(username, excludedPaths)) {

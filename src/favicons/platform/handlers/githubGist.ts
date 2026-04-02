@@ -4,7 +4,7 @@ import { excludedPaths, hosts } from '../../../feeds/platform/handlers/githubGis
 
 // Extracts the username from the path, excluding dots to avoid capturing
 // feed extensions like .atom in Gist feed URLs (e.g., /user.atom).
-const userRegex = /^\/([^/.]+)/
+const userPattern = /^\/([^/.]+)/
 
 export const githubGistHandler: PlatformHandler = {
   match: (url) => {
@@ -13,7 +13,7 @@ export const githubGistHandler: PlatformHandler = {
 
   resolve: (url) => {
     const { pathname } = new URL(url)
-    const match = pathname.match(userRegex)
+    const match = pathname.match(userPattern)
 
     if (!match?.[1]) {
       return []

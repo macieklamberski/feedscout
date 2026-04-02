@@ -2,11 +2,11 @@ import type { DiscoverUriEntry } from '../../../common/types.js'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, isAnyOf, isHostOf } from '../../../common/utils.js'
 
-const commentsPathRegex = /^\/r\/([^/]+)\/comments\/([^/]+)/
-const subredditPathRegex = /^\/r\/([^/]+)(?:\/([^/]+))?/
-const multiredditPathRegex = /^\/user\/([^/]+)\/m\/([^/]+)/
-const userPathRegex = /^\/(u|user)\/([^/]+)/
-const domainPathRegex = /^\/domain\/([^/]+)/
+const commentsPattern = /^\/r\/([^/]+)\/comments\/([^/]+)/
+const subredditPattern = /^\/r\/([^/]+)(?:\/([^/]+))?/
+const multiredditPattern = /^\/user\/([^/]+)\/m\/([^/]+)/
+const userPattern = /^\/(u|user)\/([^/]+)/
+const domainPattern = /^\/domain\/([^/]+)/
 
 export const hosts = ['reddit.com', 'www.reddit.com', 'old.reddit.com', 'new.reddit.com']
 const sortOptions = ['hot', 'new', 'rising', 'controversial', 'top']
@@ -30,7 +30,7 @@ export const redditHandler: PlatformHandler = {
     }
 
     // Match /r/subreddit/comments/id pattern (post comments feed).
-    const commentsMatch = pathname.match(commentsPathRegex)
+    const commentsMatch = pathname.match(commentsPattern)
 
     if (commentsMatch?.[1] && commentsMatch?.[2]) {
       const subreddit = commentsMatch[1]
@@ -45,7 +45,7 @@ export const redditHandler: PlatformHandler = {
     }
 
     // Match /r/subreddit with optional sort.
-    const subredditMatch = pathname.match(subredditPathRegex)
+    const subredditMatch = pathname.match(subredditPattern)
 
     if (subredditMatch?.[1]) {
       const subreddit = subredditMatch[1]
@@ -74,7 +74,7 @@ export const redditHandler: PlatformHandler = {
     }
 
     // Match multireddit: /user/{username}/m/{multireddit}.
-    const multiredditMatch = pathname.match(multiredditPathRegex)
+    const multiredditMatch = pathname.match(multiredditPattern)
 
     if (multiredditMatch?.[1] && multiredditMatch?.[2]) {
       const username = multiredditMatch[1]
@@ -89,7 +89,7 @@ export const redditHandler: PlatformHandler = {
     }
 
     // Match /u/username or /user/username pattern.
-    const userMatch = pathname.match(userPathRegex)
+    const userMatch = pathname.match(userPattern)
 
     if (userMatch?.[2]) {
       const username = userMatch[2]
@@ -103,7 +103,7 @@ export const redditHandler: PlatformHandler = {
     }
 
     // Match /domain/site pattern.
-    const domainMatch = pathname.match(domainPathRegex)
+    const domainMatch = pathname.match(domainPattern)
 
     if (domainMatch?.[1]) {
       const domain = domainMatch[1]

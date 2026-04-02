@@ -5,15 +5,15 @@ import { isNonEmptyString, parseBodyJson } from '../../utils.js'
 
 // Extracts the subreddit or username from the path, excluding dots to avoid
 // capturing feed extensions like .rss in Reddit feed URLs (e.g., /r/sub.rss).
-const subredditPathRegex = /^\/r\/([^/.]+)/
-const userPathRegex = /^\/(u|user)\/([^/.]+)/
+const subredditPattern = /^\/r\/([^/.]+)/
+const userPattern = /^\/(u|user)\/([^/.]+)/
 
 export const isSubredditPath = (pathname: string): boolean => {
-  return subredditPathRegex.test(pathname)
+  return subredditPattern.test(pathname)
 }
 
 export const isUserPath = (pathname: string): boolean => {
-  return userPathRegex.test(pathname)
+  return userPattern.test(pathname)
 }
 
 export const redditHandler: PlatformHandler = {
@@ -34,7 +34,7 @@ export const redditHandler: PlatformHandler = {
 
     try {
       const { pathname } = new URL(url)
-      const subredditMatch = pathname.match(subredditPathRegex)
+      const subredditMatch = pathname.match(subredditPattern)
 
       if (subredditMatch?.[1]) {
         const subreddit = subredditMatch[1]
@@ -48,7 +48,7 @@ export const redditHandler: PlatformHandler = {
         }
       }
 
-      const userMatch = pathname.match(userPathRegex)
+      const userMatch = pathname.match(userPattern)
 
       if (userMatch?.[2]) {
         const username = userMatch[2]
