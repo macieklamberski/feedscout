@@ -1,11 +1,10 @@
-import { defaultFetchFn } from '../../common/discover/utils.js'
+import { defaultFetchFn, normalizeInput } from '../../common/discover/utils.js'
 import type { DiscoverInput } from '../../common/types.js'
 import { resolveUrl } from '../../common/utils.js'
 import { discoverHubsFromFeed } from '../feed/index.js'
 import { discoverHubsFromHeaders } from '../headers/index.js'
 import { discoverHubsFromHtml } from '../html/index.js'
 import type { DiscoverHubsOptions, HubResult } from './types.js'
-import { normalizeInput } from './utils.js'
 
 export const discoverHubs = async (
   input: DiscoverInput,
