@@ -3,24 +3,26 @@ import { isAnyOf, isHostOf } from '../../../common/utils.js'
 import { excludedPaths, hosts } from '../../../feeds/platform/handlers/devto.js'
 import { isNonEmptyString, parseBodyJson } from '../../utils.js'
 
+// Extracts the username from the path, excluding dots to avoid capturing
+// feed extensions that may be appended to the URL.
+const userPattern = /^\/([^/.]+)/
+
 export const devtoHandler: PlatformHandler = {
   match: (url) => {
     try {
       const { pathname } = new URL(url)
-      const segments = pathname.split('/').filter(Boolean)
+      const match = pathname.match(userPattern)
 
-      if (!isHostOf(url, hosts) || segments.length === 0) {
+      if (!isHostOf(url, hosts) || !match?.[1]) {
         return false
       }
-
-      const first = segments[0]
 
       // Tag pages do not correspond to a user profile.
-      if (first === 't') {
+      if (match[1] === 't') {
         return false
       }
 
-      return !isAnyOf(first, excludedPaths)
+      return !isAnyOf(match[1], excludedPaths)
     } catch {}
 
     return false
@@ -33,13 +35,13 @@ export const devtoHandler: PlatformHandler = {
 
     try {
       const { pathname } = new URL(url)
-      const segments = pathname.split('/').filter(Boolean)
+      const match = pathname.match(userPattern)
 
-      if (segments.length === 0 || segments[0] === 't') {
+      if (!match?.[1] || match[1] === 't') {
         return []
       }
 
-      const username = segments[0]
+      const username = match[1]
       const apiUrl = `https://dev.to/api/users/by_username?url=${encodeURIComponent(username)}`
       const response = await fetchFn(apiUrl)
       const data = parseBodyJson(response.body)
