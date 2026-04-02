@@ -578,4 +578,41 @@ describe('defaultPlatformOptions', () => {
 
     expect(value).toBe(true)
   })
+
+  it('should fall back to guess method when initial URL fetch throws', async () => {
+    const rssContent = `<?xml version="1.0"?>
+      <rss version="2.0">
+        <channel><title>Test</title></channel>
+      </rss>`
+    const fetchFn: DiscoverFetchFn = (url: string) => {
+      if (url === 'https://example.com/') {
+        throw new Error('Connection refused')
+      }
+
+      return Promise.resolve({
+        url,
+        body: url === 'https://example.com/feed.xml' ? rssContent : '',
+        headers: new Headers(),
+        status: url === 'https://example.com/feed.xml' ? 200 : 404,
+        statusText: url === 'https://example.com/feed.xml' ? 'OK' : 'Not Found',
+      })
+    }
+    const value = await discoverFeeds('https://example.com/', {
+      methods: ['guess'],
+      fetchFn,
+    })
+    const expected: Array<DiscoverResult<FeedResult>> = [
+      {
+        url: 'https://example.com/feed.xml',
+        isValid: true,
+        method: 'guess',
+        format: 'rss',
+        title: 'Test',
+        description: undefined,
+        siteUrl: undefined,
+      },
+    ]
+
+    expect(value).toEqual(expected)
+  })
 })

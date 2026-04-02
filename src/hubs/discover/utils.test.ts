@@ -70,12 +70,14 @@ describe('normalizeInput', () => {
     expect(value.content).toBeUndefined()
   })
 
-  it('should propagate error when fetchFn rejects', () => {
+  it('should return url-only object when fetchFn throws for string input', async () => {
     const mockFetch: DiscoverFetchFn = () => {
       throw new Error('Network error')
     }
+    const value = await normalizeInput('https://example.com/', mockFetch)
+    const expected = { url: 'https://example.com/' }
 
-    expect(normalizeInput('https://example.com/', mockFetch)).rejects.toThrow('Network error')
+    expect(value).toEqual(expected)
   })
 
   it('should use response.url when it differs from input (redirect)', async () => {

@@ -376,6 +376,16 @@ describe('normalizeInput', () => {
 
     expect(await normalizeInput('https://example.com', statusFetchFn)).toEqual(expected)
   })
+
+  it('should return url-only object when fetchFn throws for string input', async () => {
+    const throwingFetchFn: DiscoverFetchFn = () => {
+      throw new Error('Network error')
+    }
+    const value = await normalizeInput('https://example.com', throwingFetchFn)
+    const expected = { url: 'https://example.com' }
+
+    expect(value).toEqual(expected)
+  })
 })
 
 describe('normalizeMethodsConfig', () => {

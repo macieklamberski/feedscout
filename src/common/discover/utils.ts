@@ -37,14 +37,20 @@ export const normalizeInput = async (
     return input
   }
 
-  const response = await fetchFn(input)
+  try {
+    const response = await fetchFn(input)
 
-  return {
-    url: response.url,
-    // TODO: Support streams here.
-    content: typeof response.body === 'string' ? response.body : '',
-    headers: response.headers,
-  }
+    return {
+      url: response.url,
+      // TODO: Support streams here.
+      content: typeof response.body === 'string' ? response.body : '',
+      headers: response.headers,
+    }
+  } catch {}
+
+  // When the fetch fails, return the URL without content so that URL-only
+  // methods like guess can still run.
+  return { url: input }
 }
 
 const getLinkOfType = (links: Array<DeepPartial<Atom.Link<string>>> | undefined, rel: string) => {

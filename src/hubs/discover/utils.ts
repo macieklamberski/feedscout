@@ -11,14 +11,20 @@ export const normalizeInput = async (
   fetchFn: DiscoverFetchFn,
 ): Promise<NormalizedInput> => {
   if (typeof input === 'string') {
-    const response = await fetchFn(input)
+    try {
+      const response = await fetchFn(input)
 
-    return {
-      url: response.url,
-      // TODO: Support streams here.
-      content: typeof response.body === 'string' ? response.body : undefined,
-      headers: response.headers,
-    }
+      return {
+        url: response.url,
+        // TODO: Support streams here.
+        content: typeof response.body === 'string' ? response.body : undefined,
+        headers: response.headers,
+      }
+    } catch {}
+
+    // When the fetch fails, return the URL without content so that the
+    // discoverer can still proceed gracefully.
+    return { url: input }
   }
 
   return {
