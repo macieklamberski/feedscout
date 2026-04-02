@@ -33,15 +33,15 @@ describe('youtubeHandler', () => {
       },
       {
         uri: 'https://www.youtube.com/feeds/videos.xml?playlist_id=UULF1234567890',
-        hint: { key: 'youtube:videos', label: 'Videos only' },
+        hint: { key: 'youtube:videos', label: 'Videos' },
       },
       {
         uri: 'https://www.youtube.com/feeds/videos.xml?playlist_id=UUSH1234567890',
-        hint: { key: 'youtube:shorts', label: 'Shorts only' },
+        hint: { key: 'youtube:shorts', label: 'Shorts' },
       },
       {
         uri: 'https://www.youtube.com/feeds/videos.xml?playlist_id=UULV1234567890',
-        hint: { key: 'youtube:live', label: 'Live streams only' },
+        hint: { key: 'youtube:live', label: 'Live streams' },
       },
       {
         uri: 'https://www.youtube.com/feeds/videos.xml?playlist_id=UULP1234567890',

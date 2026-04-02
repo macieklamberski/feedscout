@@ -8,9 +8,9 @@
   },
   "hints": {
     "youtube:all": "All uploads",
-    "youtube:videos": "Videos only",
-    "youtube:shorts": "Shorts only",
-    "youtube:live": "Live streams only",
+    "youtube:videos": "Videos",
+    "youtube:shorts": "Shorts",
+    "youtube:live": "Live streams",
     "youtube:popular-videos": "Popular videos",
     "youtube:popular-shorts": "Popular shorts",
     "youtube:popular-live": "Popular live streams",
