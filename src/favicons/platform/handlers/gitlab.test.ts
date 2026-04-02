@@ -195,6 +195,18 @@ describe('gitlabHandler', () => {
       expect(value).toEqual(expected)
     })
 
+    it('should return empty array for root URL', async () => {
+      const mockFetch = createMockFetch({})
+      const value = await gitlabHandler.resolve(
+        'https://gitlab.com',
+        undefined,
+        undefined,
+        mockFetch,
+      )
+
+      expect(value).toEqual([])
+    })
+
     it('should return empty array for excluded paths', async () => {
       const mockFetch = createMockFetch({})
       const value = await gitlabHandler.resolve(
