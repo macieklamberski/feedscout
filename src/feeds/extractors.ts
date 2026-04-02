@@ -1,19 +1,19 @@
 import { parseFeed } from 'feedsmith'
-import type { Atom, DeepPartial } from 'feedsmith/types'
+import { getFeedSiteUrl } from '../common/discover/utils.js'
 import type { DiscoverExtractFn } from '../common/types.js'
+import { resolveUrl } from '../common/utils.js'
 import type { FeedResult } from './types.js'
 
-const getLinkOfType = (links: Array<DeepPartial<Atom.Link<string>>> | undefined, rel: string) => {
-  return links?.find((link) => link.rel === rel)
-}
-
-export const defaultExtractor: DiscoverExtractFn<FeedResult> = async ({ content, url }) => {
+export const defaultExtractor: DiscoverExtractFn<FeedResult> = ({ content, url }) => {
   if (!content) {
     return { url, isValid: false }
   }
 
   try {
-    const { format, feed } = parseFeed(content)
+    const parsed = parseFeed(content)
+    const { format, feed } = parsed
+    const rawSiteUrl = getFeedSiteUrl(parsed)
+    const siteUrl = rawSiteUrl ? resolveUrl(rawSiteUrl, url) : undefined
 
     if (format === 'rss' || format === 'rdf') {
       return {
@@ -22,7 +22,7 @@ export const defaultExtractor: DiscoverExtractFn<FeedResult> = async ({ content,
         format,
         title: feed.title,
         description: feed.description,
-        siteUrl: getLinkOfType(feed.atom?.links, 'alternate')?.href || feed.link,
+        siteUrl,
       }
     }
 
@@ -33,7 +33,7 @@ export const defaultExtractor: DiscoverExtractFn<FeedResult> = async ({ content,
         format,
         title: feed.title,
         description: feed.subtitle,
-        siteUrl: getLinkOfType(feed.links, 'alternate')?.href,
+        siteUrl,
       }
     }
 
@@ -44,7 +44,7 @@ export const defaultExtractor: DiscoverExtractFn<FeedResult> = async ({ content,
         format,
         title: feed.title,
         description: feed.description,
-        siteUrl: feed.home_page_url,
+        siteUrl,
       }
     }
   } catch {

@@ -1,6 +1,6 @@
-import type { DiscoverNormalizeUrlFn } from '../../common/types.js'
+import type { DiscoverResolveUrlFn } from '../../common/types.js'
 import { discoverUrisFromHtml } from '../../common/uris/html/index.js'
-import { normalizeUrl } from '../../common/utils.js'
+import { resolveUrl } from '../../common/utils.js'
 import type { HubResult } from '../discover/types.js'
 
 const hubSelector = [{ rel: 'hub' }]
@@ -15,7 +15,7 @@ const htmlOptions = {
 export const discoverHubsFromHtml = (
   content: string,
   baseUrl: string,
-  normalizeUrlFn: DiscoverNormalizeUrlFn = normalizeUrl,
+  resolveUrlFn: DiscoverResolveUrlFn = resolveUrl,
 ): Array<HubResult> => {
   const hubUris = discoverUrisFromHtml(content, { ...htmlOptions, linkSelectors: hubSelector })
 
@@ -24,10 +24,10 @@ export const discoverHubsFromHtml = (
   }
 
   const selfUris = discoverUrisFromHtml(content, { ...htmlOptions, linkSelectors: selfSelector })
-  const topic = selfUris[0] ? normalizeUrlFn(selfUris[0], baseUrl) : baseUrl
+  const topic = selfUris[0] ? (resolveUrlFn(selfUris[0], baseUrl) ?? selfUris[0]) : baseUrl
 
   return hubUris.map((hub) => ({
-    hub: normalizeUrlFn(hub, baseUrl),
+    hub: resolveUrlFn(hub, baseUrl) ?? hub,
     topic,
   }))
 }

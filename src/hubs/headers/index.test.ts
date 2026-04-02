@@ -137,14 +137,18 @@ describe('discoverHubsFromHeaders', () => {
     expect(value).toEqual(expected)
   })
 
-  it('should apply custom normalizeUrlFn to hub and topic URLs', () => {
+  it('should apply custom resolveUrlFn to hub and topic URLs', () => {
     const headers = new Headers({
       link: '</hub>; rel="hub", </feed.xml>; rel="self"',
     })
-    const customNormalizer = (url: string, baseUrl: string | undefined) => {
+    const customResolveUrlFn = (url: string) => {
       return `https://custom.example.com${url}`
     }
-    const value = discoverHubsFromHeaders(headers, 'https://example.com/feed.xml', customNormalizer)
+    const value = discoverHubsFromHeaders(
+      headers,
+      'https://example.com/feed.xml',
+      customResolveUrlFn,
+    )
     const expected: Array<HubResult> = [
       {
         hub: 'https://custom.example.com/hub',

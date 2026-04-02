@@ -2,10 +2,14 @@ import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { hasMetaContent } from '../../../common/utils.js'
 import { isNonEmptyString, parseBodyJson } from '../../utils.js'
 
-export const isProfilePath = (pathname: string): boolean => {
-  const segments = pathname.split('/').filter(Boolean)
+const mastodonPattern = /mastodon/i
 
-  return segments.length === 1 && segments[0].startsWith('@')
+// Extracts the username from the path, stripping the .rss feed extension
+// that Mastodon appends to profile URLs (e.g., /@user.rss).
+const profilePattern = /^\/@([^/.]+(?:@[^/.]+\.[^/.]+)?)(?:\.rss)?\/?$/
+
+export const isProfilePath = (pathname: string): boolean => {
+  return profilePattern.test(pathname)
 }
 
 export const isMastodonHtml = (content: string): boolean => {
@@ -13,7 +17,7 @@ export const isMastodonHtml = (content: string): boolean => {
 }
 
 export const isMastodonHeaders = (headers: Headers): boolean => {
-  return /mastodon/i.test(headers.get('server') ?? '')
+  return mastodonPattern.test(headers.get('server') ?? '')
 }
 
 export const mastodonHandler: PlatformHandler = {
@@ -44,7 +48,13 @@ export const mastodonHandler: PlatformHandler = {
 
     try {
       const { hostname, pathname } = new URL(url)
-      const username = pathname.split('/').filter(Boolean)[0].replace('@', '')
+      const match = pathname.match(profilePattern)
+
+      if (!match?.[1]) {
+        return []
+      }
+
+      const username = match[1]
       const apiUrl = `https://${hostname}/api/v1/accounts/lookup?acct=${username}`
       const response = await fetchFn(apiUrl)
       const data = parseBodyJson(response.body)

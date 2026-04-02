@@ -255,7 +255,7 @@ describe('mastodonHandler', () => {
     })
 
     it('should return empty array when fetch throws', async () => {
-      const mockFetch: DiscoverFetchFn = async () => {
+      const mockFetch: DiscoverFetchFn = () => {
         throw new Error('Network error')
       }
       const value = await mastodonHandler.resolve(
@@ -308,6 +308,37 @@ describe('mastodonHandler', () => {
         mockFetch,
       )
       const expected: Array<DiscoverUriEntry> = [{ uri: 'https://remote.social/avatars/user.png' }]
+
+      expect(value).toEqual(expected)
+    })
+
+    it('should return empty array for non-profile path', async () => {
+      const mockFetch = createMockFetch({})
+      const value = await mastodonHandler.resolve(
+        'https://mastodon.social/about',
+        undefined,
+        undefined,
+        mockFetch,
+      )
+
+      expect(value).toEqual([])
+    })
+
+    it('should strip feed extension from profile URL', async () => {
+      const mockFetch = createMockFetch({
+        'https://mastodon.social/api/v1/accounts/lookup?acct=user': JSON.stringify({
+          avatar: 'https://mastodon.social/avatars/user.png',
+        }),
+      })
+      const value = await mastodonHandler.resolve(
+        'https://mastodon.social/@user.rss',
+        undefined,
+        undefined,
+        mockFetch,
+      )
+      const expected: Array<DiscoverUriEntry> = [
+        { uri: 'https://mastodon.social/avatars/user.png' },
+      ]
 
       expect(value).toEqual(expected)
     })

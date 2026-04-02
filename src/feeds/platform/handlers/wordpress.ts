@@ -2,9 +2,9 @@ import type { DiscoverUriEntry } from '../../../common/types.js'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, isSubdomainOf } from '../../../common/utils.js'
 
-const categoryPathRegex = /^\/category\/([^/]+)/
-const tagPathRegex = /^\/tag\/([^/]+)/
-const authorPathRegex = /^\/author\/([^/]+)/
+const categoryPattern = /^\/category\/([^/]+)/
+const tagPattern = /^\/tag\/([^/]+)/
+const authorPattern = /^\/author\/([^/]+)/
 
 export const wordpressHandler: PlatformHandler = {
   match: (url) => {
@@ -16,7 +16,7 @@ export const wordpressHandler: PlatformHandler = {
     const uris: Array<DiscoverUriEntry> = []
 
     // Category page: /category/{slug}/
-    const categoryMatch = pathname.match(categoryPathRegex)
+    const categoryMatch = pathname.match(categoryPattern)
 
     if (categoryMatch?.[1]) {
       uris.push({
@@ -29,7 +29,7 @@ export const wordpressHandler: PlatformHandler = {
     }
 
     // Tag page: /tag/{slug}/
-    const tagMatch = pathname.match(tagPathRegex)
+    const tagMatch = pathname.match(tagPattern)
 
     if (tagMatch?.[1]) {
       uris.push({
@@ -39,7 +39,7 @@ export const wordpressHandler: PlatformHandler = {
     }
 
     // Author page: /author/{username}/
-    const authorMatch = pathname.match(authorPathRegex)
+    const authorMatch = pathname.match(authorPattern)
 
     if (authorMatch?.[1]) {
       uris.push({

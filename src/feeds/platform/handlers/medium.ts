@@ -1,6 +1,12 @@
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, isAnyOf, isHostOf, isSubdomainOf } from '../../../common/utils.js'
 
+const userPattern = /^\/@([^/]+)/
+const tagPattern = /^\/tag\/([^/]+)/
+const publicationTagPattern = /^\/([^/@][^/]+)\/tagged\/([^/]+)/
+const publicationPattern = /^\/([^/@][^/]+)/
+const subdomainTagPattern = /^\/tagged\/([^/]+)/
+
 const hosts = ['medium.com', 'www.medium.com']
 const excludedPaths = ['search', 'me', 'new-story', 'plans', 'membership']
 
@@ -16,7 +22,7 @@ export const mediumHandler: PlatformHandler = {
     // Medium.com user profiles: /@username.
     if (hosts.includes(lowerHostname)) {
       // User profile: /@username.
-      const userMatch = pathname.match(/^\/@([^/]+)/)
+      const userMatch = pathname.match(userPattern)
 
       if (userMatch?.[1]) {
         const username = userMatch[1]
@@ -30,7 +36,7 @@ export const mediumHandler: PlatformHandler = {
       }
 
       // Tag feed: /tag/tag-name.
-      const tagMatch = pathname.match(/^\/tag\/([^/]+)/)
+      const tagMatch = pathname.match(tagPattern)
 
       if (tagMatch?.[1]) {
         const tag = tagMatch[1]
@@ -39,7 +45,7 @@ export const mediumHandler: PlatformHandler = {
       }
 
       // Publication tagged feed: /publication/tagged/tag-name.
-      const pubTagMatch = pathname.match(/^\/([^/@][^/]+)\/tagged\/([^/]+)/)
+      const pubTagMatch = pathname.match(publicationTagPattern)
 
       if (pubTagMatch?.[1] && pubTagMatch?.[2]) {
         const publication = pubTagMatch[1]
@@ -56,7 +62,7 @@ export const mediumHandler: PlatformHandler = {
       }
 
       // Publication: /publication-name.
-      const pubMatch = pathname.match(/^\/([^/@][^/]+)/)
+      const pubMatch = pathname.match(publicationPattern)
 
       if (pubMatch?.[1]) {
         const publication = pubMatch[1]
@@ -81,7 +87,7 @@ export const mediumHandler: PlatformHandler = {
       const subdomain = lowerHostname.replace('.medium.com', '')
 
       // Subdomain tagged feed: subdomain.medium.com/tagged/tag-name.
-      const tagMatch = pathname.match(/^\/tagged\/([^/]+)/)
+      const tagMatch = pathname.match(subdomainTagPattern)
 
       if (tagMatch?.[1]) {
         return [

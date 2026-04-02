@@ -1,5 +1,7 @@
 import type { UriEntry } from '../../types.js'
 
+const ipAddressRegex = /^\d+\.\d+\.\d+\.\d+$/
+
 const resolveUri = (uri: string, base: string, origin: string, pathname: string): string => {
   if (uri.startsWith('/')) {
     return `${origin}${uri}`
@@ -9,7 +11,7 @@ const resolveUri = (uri: string, base: string, origin: string, pathname: string)
     return `${origin}${pathname}${uri}`
   }
 
-  return new URL(uri, base).toString()
+  return new URL(uri, base).href
 }
 
 export const generateUrlCombinations = (
@@ -49,7 +51,7 @@ export const getSubdomainVariants = (baseUrl: string, prefixes: Array<string>): 
   const hostname = url.hostname
 
   // Check if hostname is an IP address (simple check for digits and dots)
-  const isIpAddress = /^\d+\.\d+\.\d+\.\d+$/.test(hostname)
+  const isIpAddress = ipAddressRegex.test(hostname)
 
   // Handle edge cases: localhost, IPs
   if (hostname === 'localhost' || isIpAddress) {

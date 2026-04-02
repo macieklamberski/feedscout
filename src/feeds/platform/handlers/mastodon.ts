@@ -2,10 +2,13 @@ import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 import { isMastodonHeaders, isMastodonHtml } from '../../../favicons/platform/handlers/mastodon.js'
 
+const profilePattern = /^\/@([^/]+)/
+const tagPattern = /^\/tags\/([^/]+)/
+
 export const isProfilePath = (pathname: string): boolean => {
   const segments = pathname.split('/').filter(Boolean)
 
-  return segments.length >= 1 && segments[0].startsWith('@')
+  return segments.length > 0 && segments[0].startsWith('@')
 }
 
 export const isTagPath = (pathname: string): boolean => {
@@ -38,13 +41,13 @@ export const mastodonHandler: PlatformHandler = {
   resolve: (url) => {
     try {
       const { origin, pathname } = new URL(url)
-      const userMatch = pathname.match(/^\/@([^/]+)/)
+      const userMatch = pathname.match(profilePattern)
 
       if (userMatch?.[1]) {
         return [{ uri: `${origin}/@${userMatch[1]}.rss`, hint: composeHint('mastodon:posts') }]
       }
 
-      const tagMatch = pathname.match(/^\/tags\/([^/]+)/)
+      const tagMatch = pathname.match(tagPattern)
 
       if (tagMatch?.[1]) {
         return [{ uri: `${origin}/tags/${tagMatch[1]}.rss`, hint: composeHint('mastodon:tag') }]

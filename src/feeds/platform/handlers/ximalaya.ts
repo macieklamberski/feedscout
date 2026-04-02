@@ -1,6 +1,8 @@
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, isHostOf } from '../../../common/utils.js'
 
+const albumPattern = /^\/album\/(\d+)/
+
 const hosts = ['www.ximalaya.com', 'ximalaya.com']
 
 export const ximalayaHandler: PlatformHandler = {
@@ -10,7 +12,7 @@ export const ximalayaHandler: PlatformHandler = {
 
   resolve: (url) => {
     const { pathname } = new URL(url)
-    const albumMatch = pathname.match(/^\/album\/(\d+)/)
+    const albumMatch = pathname.match(albumPattern)
     const id = albumMatch?.[1]
 
     if (!id) {

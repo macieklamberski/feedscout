@@ -1,12 +1,12 @@
 import { discover } from '../common/discover/index.js'
-import { defaultFetchFn } from '../common/discover/utils.js'
+import { defaultFetchFn, defaultResolveSiteUrlFn } from '../common/discover/utils.js'
 import type { DiscoverInput, DiscoverOptions, DiscoverResult } from '../common/types.js'
-import { normalizeUrl } from '../common/utils.js'
+import { resolveUrl } from '../common/utils.js'
 import { defaultGuessOptions, defaultHeadersOptions, defaultHtmlOptions } from './defaults.js'
 import { defaultExtractor } from './extractors.js'
 import type { BlogrollResult } from './types.js'
 
-export const discoverBlogrolls = async <TValid extends BlogrollResult = BlogrollResult>(
+export const discoverBlogrolls = <TValid extends BlogrollResult = BlogrollResult>(
   input: DiscoverInput,
   options: DiscoverOptions<TValid, 'html' | 'headers' | 'guess'> = {},
 ): Promise<Array<DiscoverResult<TValid>>> => {
@@ -17,7 +17,8 @@ export const discoverBlogrolls = async <TValid extends BlogrollResult = Blogroll
       methods: options.methods ?? ['html', 'headers', 'guess'],
       fetchFn: options.fetchFn ?? defaultFetchFn,
       extractFn: options.extractFn ?? defaultExtractor,
-      normalizeUrlFn: options.normalizeUrlFn ?? normalizeUrl,
+      resolveUrlFn: options.resolveUrlFn ?? resolveUrl,
+      resolveSiteUrlFn: options.resolveSiteUrlFn ?? defaultResolveSiteUrlFn,
     },
     {
       html: defaultHtmlOptions,

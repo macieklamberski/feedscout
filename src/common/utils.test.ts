@@ -11,9 +11,9 @@ import {
   isSubdomainOf,
   matchesAnyOfLinkSelectors,
   normalizeMimeType,
-  normalizeUrl,
   omitEmpty,
   processConcurrently,
+  resolveUrl,
 } from './utils.js'
 
 describe('composeHint', () => {
@@ -533,13 +533,13 @@ describe('omitEmpty', () => {
   })
 })
 
-describe('normalizeUrl', () => {
+describe('resolveUrl', () => {
   it('should resolve relative URL with base URL', () => {
     const value = '/feed.xml'
     const baseUrl = 'https://example.com'
     const expected = 'https://example.com/feed.xml'
 
-    expect(normalizeUrl(value, baseUrl)).toBe(expected)
+    expect(resolveUrl(value, baseUrl)).toBe(expected)
   })
 
   it('should resolve relative URL with base URL containing path', () => {
@@ -547,7 +547,7 @@ describe('normalizeUrl', () => {
     const baseUrl = 'https://example.com/blog/'
     const expected = 'https://example.com/blog/feed.xml'
 
-    expect(normalizeUrl(value, baseUrl)).toBe(expected)
+    expect(resolveUrl(value, baseUrl)).toBe(expected)
   })
 
   it('should preserve absolute URL when base URL provided', () => {
@@ -555,15 +555,23 @@ describe('normalizeUrl', () => {
     const baseUrl = 'https://example.com'
     const expected = 'https://other.com/feed.xml'
 
-    expect(normalizeUrl(value, baseUrl)).toBe(expected)
+    expect(resolveUrl(value, baseUrl)).toBe(expected)
   })
 
-  it('should return URL unchanged when base URL is undefined', () => {
+  it('should return undefined when base URL is undefined and URL is relative', () => {
     const value = '/feed.xml'
     const baseUrl = undefined
-    const expected = '/feed.xml'
+    const expected = undefined
 
-    expect(normalizeUrl(value, baseUrl)).toBe(expected)
+    expect(resolveUrl(value, baseUrl)).toBe(expected)
+  })
+
+  it('should return absolute URL when base URL is undefined', () => {
+    const value = 'https://example.com/feed.xml'
+    const baseUrl = undefined
+    const expected = 'https://example.com/feed.xml'
+
+    expect(resolveUrl(value, baseUrl)).toBe(expected)
   })
 
   it('should handle protocol-relative URLs', () => {
@@ -571,7 +579,7 @@ describe('normalizeUrl', () => {
     const baseUrl = 'https://example.com'
     const expected = 'https://cdn.example.com/feed.xml'
 
-    expect(normalizeUrl(value, baseUrl)).toBe(expected)
+    expect(resolveUrl(value, baseUrl)).toBe(expected)
   })
 
   it('should handle parent directory references', () => {
@@ -579,7 +587,7 @@ describe('normalizeUrl', () => {
     const baseUrl = 'https://example.com/blog/posts/'
     const expected = 'https://example.com/blog/feed.xml'
 
-    expect(normalizeUrl(value, baseUrl)).toBe(expected)
+    expect(resolveUrl(value, baseUrl)).toBe(expected)
   })
 })
 
@@ -934,6 +942,7 @@ describe('processConcurrently', () => {
   it('should handle errors in processFn', async () => {
     const items = [1, 2, 3, 4, 5]
     const processed: Array<number> = []
+    // biome-ignore lint/suspicious/useAwait: Must return Promise for processConcurrently.
     const processFn = async (item: number) => {
       if (item === 3) {
         throw new Error('Test error')
@@ -953,6 +962,7 @@ describe('processConcurrently', () => {
   it('should handle empty array', async () => {
     const items: Array<number> = []
     const processed: Array<number> = []
+    // biome-ignore lint/suspicious/useAwait: Must return Promise for processConcurrently.
     const processFn = async (item: number) => {
       processed.push(item)
     }
@@ -965,6 +975,7 @@ describe('processConcurrently', () => {
   it('should process single item', async () => {
     const items = [1]
     const processed: Array<number> = []
+    // biome-ignore lint/suspicious/useAwait: Must return Promise for processConcurrently.
     const processFn = async (item: number) => {
       processed.push(item)
     }
@@ -1081,6 +1092,7 @@ describe('processConcurrently', () => {
   it('should not process items when concurrency is 0', async () => {
     const items = [1, 2, 3]
     const processed: Array<number> = []
+    // biome-ignore lint/suspicious/useAwait: Must return Promise for processConcurrently.
     const processFn = async (item: number) => {
       processed.push(item)
     }
