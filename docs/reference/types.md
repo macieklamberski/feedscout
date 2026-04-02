@@ -223,7 +223,7 @@ Custom fetch function type:
 type DiscoverFetchFn = (
   url: string,
   options?: DiscoverFetchFnOptions,
-) => Promise<DiscoverFetchFnResponse>
+) => MaybePromise<DiscoverFetchFnResponse>
 
 type DiscoverFetchFnOptions = {
   method?: 'GET' | 'HEAD'
@@ -248,7 +248,7 @@ Custom extractor function type:
 ```typescript
 type DiscoverExtractFn<TValid> = (
   input: DiscoverExtractFnInput,
-) => Promise<DiscoverResult<TValid>>
+) => MaybePromise<DiscoverResult<TValid>>
 
 type DiscoverExtractFnInput = {
   url: string
