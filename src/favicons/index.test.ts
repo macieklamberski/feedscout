@@ -533,4 +533,30 @@ describe('discoverFavicons', () => {
 
     expect(value).toEqual([])
   })
+
+  it('should fall back to guess method when initial URL fetch throws', async () => {
+    const pngContent = '\x89PNG\r\n\x1a\n'
+    const fetchFn: DiscoverFetchFn = (url: string) => {
+      if (url === 'https://example.com/') {
+        throw new Error('Connection refused')
+      }
+
+      return Promise.resolve({
+        url,
+        body: url === 'https://example.com/favicon.ico' ? pngContent : '',
+        headers: new Headers(),
+        status: url === 'https://example.com/favicon.ico' ? 200 : 404,
+        statusText: url === 'https://example.com/favicon.ico' ? 'OK' : 'Not Found',
+      })
+    }
+    const value = await discoverFavicons('https://example.com/', {
+      methods: ['guess'],
+      fetchFn,
+    })
+    const expected: Array<DiscoverResult<FaviconResult>> = [
+      { url: 'https://example.com/favicon.ico', isValid: true, method: 'guess' },
+    ]
+
+    expect(value).toEqual(expected)
+  })
 })

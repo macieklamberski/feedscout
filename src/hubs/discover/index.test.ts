@@ -290,5 +290,14 @@ describe('discoverHubs', () => {
 
       expect(value).toEqual([])
     })
+
+    it('should return empty array when initial URL fetch throws', async () => {
+      const fetchFn: DiscoverFetchFn = () => {
+        throw new Error('Connection refused')
+      }
+      const value = await discoverHubs('https://example.com/', { fetchFn })
+
+      expect(value).toEqual([])
+    })
   })
 })

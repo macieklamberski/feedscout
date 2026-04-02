@@ -341,4 +341,34 @@ describe('discoverBlogrolls', () => {
 
     expect(value).toEqual([])
   })
+
+  it('should fall back to guess method when initial URL fetch throws', async () => {
+    const fetchFn: DiscoverFetchFn = (url: string) => {
+      if (url === 'https://example.com/') {
+        throw new Error('Connection refused')
+      }
+
+      return Promise.resolve({
+        url,
+        body: url === 'https://example.com/blogroll.opml' ? opml : '',
+        headers: new Headers(),
+        status: url === 'https://example.com/blogroll.opml' ? 200 : 404,
+        statusText: url === 'https://example.com/blogroll.opml' ? 'OK' : 'Not Found',
+      })
+    }
+    const value = await discoverBlogrolls('https://example.com/', {
+      methods: ['guess'],
+      fetchFn,
+    })
+    const expected: Array<DiscoverResult<BlogrollResult>> = [
+      {
+        url: 'https://example.com/blogroll.opml',
+        isValid: true,
+        method: 'guess',
+        title: 'My Blogroll',
+      },
+    ]
+
+    expect(value).toEqual(expected)
+  })
 })

@@ -229,7 +229,7 @@ describe('normalizeInput', () => {
     expect(await normalizeInput('https://example.com', redirectFetchFn)).toEqual(expected)
   })
 
-  it('should handle ReadableStream body by converting to empty string', async () => {
+  it('should handle ReadableStream body by returning undefined content', async () => {
     const streamFetchFn: DiscoverFetchFn = (url) => {
       return Promise.resolve({
         url,
@@ -241,7 +241,7 @@ describe('normalizeInput', () => {
     }
     const expected = {
       url: 'https://example.com',
-      content: '',
+      content: undefined,
       headers: expect.any(Headers),
     }
 
@@ -375,6 +375,16 @@ describe('normalizeInput', () => {
     }
 
     expect(await normalizeInput('https://example.com', statusFetchFn)).toEqual(expected)
+  })
+
+  it('should return url-only object when fetchFn throws for string input', async () => {
+    const throwingFetchFn: DiscoverFetchFn = () => {
+      throw new Error('Network error')
+    }
+    const value = await normalizeInput('https://example.com', throwingFetchFn)
+    const expected = { url: 'https://example.com' }
+
+    expect(value).toEqual(expected)
   })
 })
 
