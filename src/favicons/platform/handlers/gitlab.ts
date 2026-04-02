@@ -8,6 +8,10 @@ import {
 } from '../../../feeds/platform/handlers/gitlab.js'
 import { isNonEmptyString, parseBodyJson } from '../../utils.js'
 
+// Extracts the username from the path. GitLab usernames can contain dots,
+// so the regex strips the .atom feed extension instead of excluding dots.
+const userPattern = /^\/([^/]+?)(?:\.atom)?(?:\/|$)/
+
 export const gitlabHandler: PlatformHandler = {
   match: (url, content, headers) => {
     try {
@@ -16,9 +20,8 @@ export const gitlabHandler: PlatformHandler = {
       }
 
       const { pathname } = new URL(url)
-      const segments = pathname.split('/').filter(Boolean)
 
-      if (segments.length === 0) {
+      if (!userPattern.test(pathname)) {
         return false
       }
 
@@ -41,13 +44,13 @@ export const gitlabHandler: PlatformHandler = {
 
     try {
       const { origin, pathname } = new URL(url)
-      const segments = pathname.split('/').filter(Boolean)
+      const match = pathname.match(userPattern)
 
-      if (segments.length === 0) {
+      if (!match?.[1]) {
         return []
       }
 
-      const username = segments[0]
+      const username = match[1]
 
       if (isAnyOf(username, excludedPaths)) {
         return []

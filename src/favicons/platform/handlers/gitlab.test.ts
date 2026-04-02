@@ -50,6 +50,11 @@ describe('gitlabHandler', () => {
       expect(gitlabHandler.match('https://gitlab.mycompany.com/user')).toBe(false)
     })
 
+    it('should match URLs with feed extensions', () => {
+      expect(gitlabHandler.match('https://gitlab.com/alice.atom')).toBe(true)
+      expect(gitlabHandler.match('https://gitlab.com/john.doe.atom')).toBe(true)
+    })
+
     it('should not match invalid URLs', () => {
       expect(gitlabHandler.match('not-a-url')).toBe(false)
     })
@@ -133,6 +138,63 @@ describe('gitlabHandler', () => {
       expect(value).toEqual(expected)
     })
 
+    it('should strip feed extension from user URL', async () => {
+      const mockFetch = createMockFetch({
+        'https://gitlab.com/api/v4/users?username=alice': JSON.stringify([
+          { avatar_url: 'https://gitlab.com/uploads/user/avatar/1/alice.png' },
+        ]),
+      })
+      const value = await gitlabHandler.resolve(
+        'https://gitlab.com/alice.atom',
+        undefined,
+        undefined,
+        mockFetch,
+      )
+      const expected: Array<DiscoverUriEntry> = [
+        { uri: 'https://gitlab.com/uploads/user/avatar/1/alice.png' },
+      ]
+
+      expect(value).toEqual(expected)
+    })
+
+    it('should preserve dots in usernames', async () => {
+      const mockFetch = createMockFetch({
+        'https://gitlab.com/api/v4/users?username=john.doe': JSON.stringify([
+          { avatar_url: 'https://gitlab.com/uploads/user/avatar/1/john.doe.png' },
+        ]),
+      })
+      const value = await gitlabHandler.resolve(
+        'https://gitlab.com/john.doe',
+        undefined,
+        undefined,
+        mockFetch,
+      )
+      const expected: Array<DiscoverUriEntry> = [
+        { uri: 'https://gitlab.com/uploads/user/avatar/1/john.doe.png' },
+      ]
+
+      expect(value).toEqual(expected)
+    })
+
+    it('should strip feed extension from dotted username', async () => {
+      const mockFetch = createMockFetch({
+        'https://gitlab.com/api/v4/users?username=john.doe': JSON.stringify([
+          { avatar_url: 'https://gitlab.com/uploads/user/avatar/1/john.doe.png' },
+        ]),
+      })
+      const value = await gitlabHandler.resolve(
+        'https://gitlab.com/john.doe.atom',
+        undefined,
+        undefined,
+        mockFetch,
+      )
+      const expected: Array<DiscoverUriEntry> = [
+        { uri: 'https://gitlab.com/uploads/user/avatar/1/john.doe.png' },
+      ]
+
+      expect(value).toEqual(expected)
+    })
+
     it('should return empty array for excluded paths', async () => {
       const mockFetch = createMockFetch({})
       const value = await gitlabHandler.resolve(
@@ -194,7 +256,7 @@ describe('gitlabHandler', () => {
     })
 
     it('should return empty array when fetch throws', async () => {
-      const mockFetch: DiscoverFetchFn = async () => {
+      const mockFetch: DiscoverFetchFn = () => {
         throw new Error('Network error')
       }
       const value = await gitlabHandler.resolve(
