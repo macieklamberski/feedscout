@@ -126,6 +126,7 @@
     "v2ex:tab": "Tab",
     "ximalaya:album": "Album",
     "lemmy:community": "Community",
-    "lemmy:user": "User"
+    "lemmy:user": "User",
+    "apple-podcasts:podcast": "Podcast"
   }
 }

@@ -1,5 +1,9 @@
 import { defineConfig } from 'vitepress'
 
+const indexPattern = /index\.md$/
+const mdPattern = /\.md$/
+const trailingSlashPattern = /\/$/
+
 const hostname = 'https://feedscout.dev'
 
 export default defineConfig({
@@ -14,9 +18,9 @@ export default defineConfig({
   },
   transformHead: ({ pageData }) => {
     const canonicalUrl = `${hostname}/${pageData.relativePath}`
-      .replace(/index\.md$/, '')
-      .replace(/\.md$/, '')
-      .replace(/\/$/, '')
+      .replace(indexPattern, '')
+      .replace(mdPattern, '')
+      .replace(trailingSlashPattern, '')
 
     return [['link', { rel: 'canonical', href: canonicalUrl }]]
   },

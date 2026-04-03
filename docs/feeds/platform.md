@@ -32,6 +32,16 @@ type DiscoverUriHint = {
 
 ## Supported Platforms
 
+### Apple Podcasts
+
+Discovers RSS feeds for Apple Podcasts shows by extracting the feed URL from the page content.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `podcasts.apple.com/{locale}/podcast/{name}/id{id}` | Podcast feed* |
+
+\* *Requires HTML content to extract feed URL.*
+
 ### YouTube
 
 Discovers Atom feeds for channels and playlists. Generates four feed variants for channels: all uploads, videos-only, shorts-only, and live streams-only.
@@ -464,6 +474,7 @@ Or import individual handlers:
 
 ```typescript
 import {
+  applePodcastsHandler,
   behanceHandler,
   blogspotHandler,
   blueskyHandler,
