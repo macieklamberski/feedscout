@@ -1,7 +1,9 @@
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
-import { isHostOf } from '../../../common/utils.js'
+import { composeHint, isHostOf } from '../../../common/utils.js'
 
-const hosts = ['bsky.app']
+const profilePattern = /^\/profile\/([^/]+)/
+
+const hosts = ['bsky.app', 'www.bsky.app']
 
 export const blueskyHandler: PlatformHandler = {
   match: (url) => {
@@ -10,13 +12,18 @@ export const blueskyHandler: PlatformHandler = {
 
   resolve: (url) => {
     const { pathname } = new URL(url)
-    const profileMatch = pathname.match(/^\/profile\/([^/]+)/)
+    const profileMatch = pathname.match(profilePattern)
     const handle = profileMatch?.[1]
 
     if (!handle) {
       return []
     }
 
-    return [`https://bsky.app/profile/${handle}/rss`]
+    return [
+      {
+        uri: `https://bsky.app/profile/${handle}/rss`,
+        hint: composeHint('bluesky:posts'),
+      },
+    ]
   },
 }

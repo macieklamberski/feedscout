@@ -63,10 +63,62 @@ describe('generateUrlCombinations', () => {
     expect(generateUrlCombinations(baseUrls, feedUris)).toEqual(expected)
   })
 
-  it('should handle query parameters in URIs', () => {
+  it('should handle query parameters in URIs with leading slash', () => {
     const baseUrls = ['https://example.com']
     const feedUris = ['/?feed=rss', '/?feed=atom']
     const expected = ['https://example.com/?feed=rss', 'https://example.com/?feed=atom']
+
+    expect(generateUrlCombinations(baseUrls, feedUris)).toEqual(expected)
+  })
+
+  it('should handle bare query string URIs against root base', () => {
+    const baseUrls = ['https://example.com']
+    const feedUris = ['?format=rss', '?rss=1']
+    const expected = ['https://example.com/?format=rss', 'https://example.com/?rss=1']
+
+    expect(generateUrlCombinations(baseUrls, feedUris)).toEqual(expected)
+  })
+
+  it('should handle bare query string URIs against base with path', () => {
+    const baseUrls = ['https://example.com/blog']
+    const feedUris = ['?format=rss', '?atom=1']
+    const expected = ['https://example.com/blog?format=rss', 'https://example.com/blog?atom=1']
+
+    expect(generateUrlCombinations(baseUrls, feedUris)).toEqual(expected)
+  })
+
+  it('should handle bare query string URIs against base with trailing slash', () => {
+    const baseUrls = ['https://example.com/blog/']
+    const feedUris = ['?format=rss']
+    const expected = ['https://example.com/blog/?format=rss']
+
+    expect(generateUrlCombinations(baseUrls, feedUris)).toEqual(expected)
+  })
+
+  it('should handle bare query string URIs against base with port', () => {
+    const baseUrls = ['https://example.com:8080/blog']
+    const feedUris = ['?feed=rss']
+    const expected = ['https://example.com:8080/blog?feed=rss']
+
+    expect(generateUrlCombinations(baseUrls, feedUris)).toEqual(expected)
+  })
+
+  it('should handle mixed path, query, and absolute URIs', () => {
+    const baseUrls = ['https://example.com/blog']
+    const feedUris = ['/feed.xml', '?format=rss', 'https://feeds.example.com/rss.xml']
+    const expected = [
+      'https://example.com/feed.xml',
+      'https://example.com/blog?format=rss',
+      'https://feeds.example.com/rss.xml',
+    ]
+
+    expect(generateUrlCombinations(baseUrls, feedUris)).toEqual(expected)
+  })
+
+  it('should handle array entries with bare query strings', () => {
+    const baseUrls = ['https://example.com']
+    const feedUris = [['/feed/atom/', '?feed=atom']]
+    const expected = [['https://example.com/feed/atom/', 'https://example.com/?feed=atom']]
 
     expect(generateUrlCombinations(baseUrls, feedUris)).toEqual(expected)
   })
@@ -142,6 +194,44 @@ describe('generateUrlCombinations', () => {
 
     expect(generateUrlCombinations(baseUrls, feedUris)).toEqual(expected)
   })
+
+  it('should resolve array entries as alternative groups', () => {
+    const baseUrls = ['https://example.com']
+    const feedUris = [['/feed/', '?feed=rss']]
+    const expected = [['https://example.com/feed/', 'https://example.com/?feed=rss']]
+
+    expect(generateUrlCombinations(baseUrls, feedUris)).toEqual(expected)
+  })
+
+  it('should handle mixed string and array entries', () => {
+    const baseUrls = ['https://example.com']
+    const feedUris = ['/rss.xml', ['/feed/', '?feed=rss']]
+    const expected = [
+      'https://example.com/rss.xml',
+      ['https://example.com/feed/', 'https://example.com/?feed=rss'],
+    ]
+
+    expect(generateUrlCombinations(baseUrls, feedUris)).toEqual(expected)
+  })
+
+  it('should resolve empty array entry as empty alternatives group', () => {
+    const baseUrls = ['https://example.com']
+    const feedUris: Array<Array<string>> = [[]]
+    const expected = [[] as Array<string>]
+
+    expect(generateUrlCombinations(baseUrls, feedUris)).toEqual(expected)
+  })
+
+  it('should resolve array entries across multiple base URLs', () => {
+    const baseUrls = ['https://example.com', 'https://blog.example.com']
+    const feedUris = [['/feed/', '?feed=rss']]
+    const expected = [
+      ['https://example.com/feed/', 'https://example.com/?feed=rss'],
+      ['https://blog.example.com/feed/', 'https://blog.example.com/?feed=rss'],
+    ]
+
+    expect(generateUrlCombinations(baseUrls, feedUris)).toEqual(expected)
+  })
 })
 
 describe('getWwwCounterpart', () => {
@@ -190,6 +280,27 @@ describe('getWwwCounterpart', () => {
   it('should ignore paths and query params in origin', () => {
     const value = 'https://example.com/path?query=1'
     const expected = 'https://www.example.com'
+
+    expect(getWwwCounterpart(value)).toBe(expected)
+  })
+
+  it('should add www to localhost', () => {
+    const value = 'https://localhost'
+    const expected = 'https://www.localhost'
+
+    expect(getWwwCounterpart(value)).toBe(expected)
+  })
+
+  it('should add www to IDN domain', () => {
+    const value = 'https://münchen.de'
+    const expected = 'https://www.xn--mnchen-3ya.de'
+
+    expect(getWwwCounterpart(value)).toBe(expected)
+  })
+
+  it('should remove www from IDN domain', () => {
+    const value = 'https://www.münchen.de'
+    const expected = 'https://xn--mnchen-3ya.de'
 
     expect(getWwwCounterpart(value)).toBe(expected)
   })

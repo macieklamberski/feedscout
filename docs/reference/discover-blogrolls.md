@@ -1,6 +1,5 @@
 ---
-prev: discoverFeeds
-next: discoverHubs
+title: "Reference: discoverBlogrolls"
 ---
 
 # discoverBlogrolls
@@ -12,7 +11,7 @@ Discovers and validates OPML blogrolls from a webpage.
 ```typescript
 function discoverBlogrolls(
   input: DiscoverInput,
-  options?: DiscoverOptions<BlogrollResult>,
+  options?: DiscoverOptions<BlogrollResult, 'html' | 'headers' | 'guess'>,
 ): Promise<Array<DiscoverResult<BlogrollResult>>>
 ```
 
@@ -43,9 +42,10 @@ All options are optional. When not provided, sensible defaults are used.
 | `methods` | `DiscoverMethodsConfig` | `['html', 'headers', 'guess']` | Which methods to use |
 | `fetchFn` | `DiscoverFetchFn` | native fetch | Custom fetch function |
 | `extractFn` | `DiscoverExtractFn` | feedsmith | Custom OPML extraction function |
-| `normalizeUrlFn` | `DiscoverNormalizeUrlFn` | | Custom URL normalization function |
-| `concurrency` | `number` | `3` | Max parallel validations |
+| `resolveUrlFn` | `DiscoverResolveUrlFn` | | Custom URL resolution function |
+| `stopOnFirstMethod` | `boolean` | `false` | Stop URI collection after first method with results |
 | `stopOnFirstResult` | `boolean` | `false` | Stop after first valid blogroll |
+| `concurrency` | `number` | `3` | Max parallel validations |
 | `includeInvalid` | `boolean` | `false` | Include invalid results |
 | `onProgress` | `DiscoverOnProgressFn` | | Progress callback |
 
@@ -58,6 +58,7 @@ Returns a promise that resolves to an array of results:
 {
   url: 'https://example.com/blogroll.opml',
   isValid: true,
+  method: 'guess',
   title: 'My Reading List',
 }
 
@@ -65,6 +66,7 @@ Returns a promise that resolves to an array of results:
 {
   url: 'https://example.com/not-opml.xml',
   isValid: false,
+  method: 'guess',
   error: Error,
 }
 ```

@@ -1,6 +1,5 @@
 ---
-prev: Introduction
-next: TypeScript
+title: Quick Start
 ---
 
 # Quick Start
@@ -60,7 +59,7 @@ const feeds = await discoverFeeds('https://example.com', {
 
 ### Discover Platform Feeds
 
-For YouTube, GitHub, and Reddit, Feedscout can generate feed URLs directly from the page URL:
+For YouTube, GitHub, Reddit, and 30+ other platforms, Feedscout can generate feed URLs directly from the page URL:
 
 ```typescript
 const feeds = await discoverFeeds('https://www.youtube.com/@mkbhd', {
@@ -72,6 +71,7 @@ const feeds = await discoverFeeds('https://www.youtube.com/@mkbhd', {
 //   isValid: true,
 //   format: 'atom',
 //   title: 'Marques Brownlee',
+//   hint: { key: 'youtube:all', label: 'All uploads' },
 // }]
 ```
 
@@ -156,6 +156,21 @@ const blogrolls = await discoverBlogrolls('https://example.com')
 
 The same [existing content pattern](#using-existing-content) works here — pass `{ url, content, headers }` to avoid extra fetches.
 
+## Discover Favicons
+
+```typescript
+import { discoverFavicons } from 'feedscout'
+
+const favicons = await discoverFavicons('https://example.com')
+
+// [{
+//   url: 'https://example.com/apple-touch-icon.png',
+//   isValid: true,
+// }]
+```
+
+The same [existing content pattern](#using-existing-content) works here — pass `{ url, content, headers }` to avoid extra fetches.
+
 ## Discover WebSub Hubs
 
 ```typescript
@@ -173,7 +188,7 @@ The same [existing content pattern](#using-existing-content) works here — pass
 
 ## Next Steps
 
-- Learn about [feed discovery](/feeds/) in detail.
-- Discover [Blogrolls](/other/blogrolls) and [WebSub Hubs](/other/hubs).
-- Use different HTTP clients with [Custom HTTP Clients](/advanced/http-clients).
-- See the full [API Reference](/reference/).
+- Learn about [feed discovery](/feeds) in detail.
+- Discover [Blogrolls](/other/blogrolls), [Favicons](/other/favicons), and [WebSub Hubs](/other/hubs).
+- Use different HTTP clients with [Customize Data Fetching](/customization/data-fetching).
+- See the full [API Reference](/reference).

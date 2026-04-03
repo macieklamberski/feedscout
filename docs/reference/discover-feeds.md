@@ -1,6 +1,5 @@
 ---
-prev: Overview
-next: discoverBlogrolls
+title: "Reference: discoverFeeds"
 ---
 
 # discoverFeeds
@@ -12,7 +11,7 @@ Discovers and validates feeds from a webpage.
 ```typescript
 function discoverFeeds(
   input: DiscoverInput,
-  options?: DiscoverOptions<FeedResult>,
+  options?: DiscoverOptions<FeedResult, 'platform' | 'html' | 'headers' | 'guess'>,
 ): Promise<Array<DiscoverResult<FeedResult>>>
 ```
 
@@ -43,9 +42,10 @@ All options are optional. When not provided, sensible defaults are used.
 | `methods` | `DiscoverMethodsConfig` | `['platform', 'html', 'headers', 'guess']` | Which methods to use |
 | `fetchFn` | `DiscoverFetchFn` | native fetch | Custom fetch function |
 | `extractFn` | `DiscoverExtractFn` | feedsmith | Custom feed extraction function |
-| `normalizeUrlFn` | `DiscoverNormalizeUrlFn` | | Custom URL normalization function |
-| `concurrency` | `number` | `3` | Max parallel validations |
+| `resolveUrlFn` | `DiscoverResolveUrlFn` | | Custom URL resolution function |
+| `stopOnFirstMethod` | `boolean` | `false` | Stop URI collection after first method with results |
 | `stopOnFirstResult` | `boolean` | `false` | Stop after first valid feed |
+| `concurrency` | `number` | `3` | Max parallel validations |
 | `includeInvalid` | `boolean` | `false` | Include invalid results |
 | `onProgress` | `DiscoverOnProgressFn` | | Progress callback |
 
@@ -58,7 +58,8 @@ Returns a promise that resolves to an array of results:
 {
   url: 'https://example.com/feed.xml',
   isValid: true,
-  format: 'rss',        // 'rss' | 'atom' | 'json' | 'rdf'
+  method: 'guess',       // 'platform' | 'html' | 'headers' | 'guess'
+  format: 'rss',         // 'rss' | 'atom' | 'json' | 'rdf'
   title: 'Example Blog',
   description: 'A blog about examples',
   siteUrl: 'https://example.com',
@@ -68,9 +69,12 @@ Returns a promise that resolves to an array of results:
 {
   url: 'https://example.com/not-a-feed',
   isValid: false,
+  method: 'guess',
   error: Error,
 }
 ```
+
+The `method` field indicates which discovery method produced the result. Results from the [Platform method](/feeds/platform) also include a [`hint`](/feeds/platform#hints) that identifies the type of feed.
 
 ## Examples
 
@@ -109,7 +113,6 @@ const feeds = await discoverFeeds('https://example.com', {
 
 ```typescript
 const response = await fetch('https://example.com')
-const content = await response.text()
 
 const feeds = await discoverFeeds(
   {
@@ -147,4 +150,4 @@ const feeds = await discoverFeeds('https://example.com', {
 })
 ```
 
-See [Custom HTTP Clients](/advanced/http-clients) for examples with Axios, Got, Ky, and more.
+See [Customize Data Fetching](/customization/data-fetching) for examples with Axios, Got, Ky, and more.

@@ -94,4 +94,44 @@ describe('discoverHubsFromHtml', () => {
 
     expect(value).toEqual(expected)
   })
+
+  it('should apply custom resolveUrlFn', () => {
+    const html = '<link rel="hub" href="/hub">'
+    const customResolveUrlFn = (url: string) => `https://custom.example.com${url}`
+    const value = discoverHubsFromHtml(html, 'https://example.com/', customResolveUrlFn)
+    const expected: Array<HubResult> = [
+      {
+        hub: 'https://custom.example.com/hub',
+        topic: 'https://example.com/',
+      },
+    ]
+
+    expect(value).toEqual(expected)
+  })
+
+  it('should use baseUrl as topic when self link has empty href', () => {
+    const html = '<link rel="hub" href="https://hub.example.com/"><link rel="self" href="">'
+    const value = discoverHubsFromHtml(html, 'https://example.com/')
+    const expected: Array<HubResult> = [
+      {
+        hub: 'https://hub.example.com/',
+        topic: 'https://example.com/',
+      },
+    ]
+
+    expect(value).toEqual(expected)
+  })
+
+  it('should handle malformed HTML with unclosed tags', () => {
+    const html = '<link rel="hub" href="https://hub.example.com/"><div><span'
+    const value = discoverHubsFromHtml(html, 'https://example.com/')
+    const expected: Array<HubResult> = [
+      {
+        hub: 'https://hub.example.com/',
+        topic: 'https://example.com/',
+      },
+    ]
+
+    expect(value).toEqual(expected)
+  })
 })

@@ -5,7 +5,8 @@
     "module": "nodenext",
     "moduleResolution": "nodenext",
     "skipLibCheck": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "types": ["bun", "node"]
   },
-  "include": ["src"]
+  "include": ["src", "check"]
 }

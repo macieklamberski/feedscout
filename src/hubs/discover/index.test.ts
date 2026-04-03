@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverFetchFn } from '../../common/types.js'
+import type { DiscoverFetchFn, DiscoverResolveUrlFn } from '../../common/types.js'
 import { discoverHubs } from './index.js'
 import type { HubResult } from './types.js'
 
@@ -154,6 +154,80 @@ describe('discoverHubs', () => {
     })
   })
 
+  describe('resolveUrlFn option', () => {
+    it('should use custom resolveUrlFn for HTML hubs', async () => {
+      const html = '<link rel="hub" href="/hub">'
+      const customResolveUrlFn: DiscoverResolveUrlFn = (url) => {
+        return `https://custom.example.com${url}`
+      }
+      const value = await discoverHubs(
+        { url: 'https://example.com/', content: html },
+        {
+          methods: ['html'],
+          resolveUrlFn: customResolveUrlFn,
+        },
+      )
+      const expected: Array<HubResult> = [
+        {
+          hub: 'https://custom.example.com/hub',
+          topic: 'https://example.com/',
+        },
+      ]
+
+      expect(value).toEqual(expected)
+    })
+
+    it('should use custom resolveUrlFn for header hubs', async () => {
+      const headers = new Headers({
+        link: '</hub>; rel="hub"',
+      })
+      const customResolveUrlFn: DiscoverResolveUrlFn = (url) => {
+        return `https://custom.example.com${url}`
+      }
+      const value = await discoverHubs(
+        { url: 'https://example.com/', headers },
+        {
+          methods: ['headers'],
+          resolveUrlFn: customResolveUrlFn,
+        },
+      )
+      const expected: Array<HubResult> = [
+        {
+          hub: 'https://custom.example.com/hub',
+          topic: 'https://example.com/',
+        },
+      ]
+
+      expect(value).toEqual(expected)
+    })
+
+    it('should use custom resolveUrlFn for self URLs', async () => {
+      const html =
+        '<link rel="hub" href="https://hub.example.com/"><link rel="self" href="/feed.xml">'
+      const customResolveUrlFn: DiscoverResolveUrlFn = (url) => {
+        if (url.startsWith('/')) {
+          return `https://normalized.example.com${url}`
+        }
+        return url
+      }
+      const value = await discoverHubs(
+        { url: 'https://example.com/', content: html },
+        {
+          methods: ['html'],
+          resolveUrlFn: customResolveUrlFn,
+        },
+      )
+      const expected: Array<HubResult> = [
+        {
+          hub: 'https://hub.example.com/',
+          topic: 'https://normalized.example.com/feed.xml',
+        },
+      ]
+
+      expect(value).toEqual(expected)
+    })
+  })
+
   describe('input normalization', () => {
     it('should work with input object containing headers', async () => {
       const headers = new Headers({
@@ -209,6 +283,21 @@ describe('discoverHubs', () => {
       ]
 
       expect(value).toEqual(expected)
+    })
+
+    it('should return empty array for input with only url and no content or headers', async () => {
+      const value = await discoverHubs({ url: 'https://example.com/' })
+
+      expect(value).toEqual([])
+    })
+
+    it('should return empty array when initial URL fetch throws', async () => {
+      const fetchFn: DiscoverFetchFn = () => {
+        throw new Error('Connection refused')
+      }
+      const value = await discoverHubs('https://example.com/', { fetchFn })
+
+      expect(value).toEqual([])
     })
   })
 })

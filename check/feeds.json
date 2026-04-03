@@ -1,0 +1,237 @@
+{
+  "behance": [
+    "https://www.behance.net/feeds/user?username=matejlatin",
+    "https://www.behance.net/feeds/user?username=matejlatin&content=appreciated"
+  ],
+  "blogspot": [
+    "https://googleblog.blogspot.com/feeds/posts/default",
+    "https://googleblog.blogspot.com/feeds/posts/default?alt=rss",
+    "https://googleblog.blogspot.com/feeds/posts/default/-/Products"
+  ],
+  "bluesky": ["https://bsky.app/profile/jay.bsky.team/rss"],
+  "codeberg": [
+    "https://codeberg.org/forgejo.rss",
+    "https://codeberg.org/forgejo/forgejo.rss",
+    "https://codeberg.org/forgejo/forgejo/releases.rss",
+    "https://codeberg.org/forgejo/forgejo/tags.rss",
+    "https://codeberg.org/forgejo/forgejo/rss/branch/forgejo",
+    "https://codeberg.org/forgejo/forgejo/rss/branch/forgejo/README.md"
+  ],
+  "dailymotion": [
+    "https://www.dailymotion.com/rss/Euronews-en",
+    "https://www.dailymotion.com/rss/playlist/x5e4h5"
+  ],
+  "deviantart": [
+    "https://backend.deviantart.com/rss.xml?type=deviation&q=by:yuumei+sort:time+meta:all",
+    "https://backend.deviantart.com/rss.xml?type=deviation&q=favby:yuumei",
+    "https://backend.deviantart.com/rss.xml?type=deviation&q=tag:landscape",
+    "https://backend.deviantart.com/rss.xml?type=deviation&q=gallery:yuumei/87557498"
+  ],
+  "devto": ["https://dev.to/feed/ben", "https://dev.to/feed/tag/javascript"],
+  "gitea": [
+    "https://gitea.com/gitea.rss",
+    "https://gitea.com/gitea/go-sdk.rss",
+    "https://gitea.com/gitea/go-sdk/releases.rss",
+    "https://gitea.com/gitea/go-sdk/tags.rss",
+    "https://gitea.com/gitea/go-sdk/rss/branch/main",
+    "https://gitea.com/gitea/go-sdk/rss/branch/main/README.md"
+  ],
+  "github": [
+    "https://github.com/torvalds.atom",
+    "https://github.com/torvalds/linux/releases.atom",
+    "https://github.com/torvalds/linux/commits.atom",
+    "https://github.com/torvalds/linux/tags.atom",
+    "https://github.com/torvalds/linux/wiki.atom",
+    "https://github.com/vercel/next.js/discussions.atom",
+    "https://github.com/torvalds/linux/commits/master.atom",
+    "https://github.com/torvalds/linux/commits/master/Makefile.atom"
+  ],
+  "githubGist": [
+    "https://gist.github.com/torvalds.atom",
+    "https://gist.github.com/torvalds/starred.atom"
+  ],
+  "gitlab": [
+    "https://gitlab.com/gitlab-org.atom",
+    "https://gitlab.com/gitlab-org/gitlab/-/releases.atom",
+    "https://gitlab.com/gitlab-org/gitlab/-/tags?format=atom",
+    "https://gitlab.com/gitlab-org/gitlab.atom"
+  ],
+  "goodreads": [
+    "https://www.goodreads.com/user/updates_rss/1",
+    "https://www.goodreads.com/review/list_rss/1",
+    "https://www.goodreads.com/review/list_rss/1?shelf=read"
+  ],
+  "kickstarter": [
+    "https://www.kickstarter.com/projects/elanlee/exploding-kittens/posts.atom",
+    "https://www.kickstarter.com/projects/feed.atom"
+  ],
+  "lemmy": ["https://lemmy.ml/feeds/c/lemmy.xml", "https://lemmy.ml/feeds/u/dessalines.xml"],
+  "letterboxd": ["https://letterboxd.com/dave/rss/", "https://letterboxd.com/lynch/rss/"],
+  "lobsters": [
+    "https://lobste.rs/t/programming.rss",
+    "https://lobste.rs/domains/github.com.rss",
+    "https://lobste.rs/~pushcx/stories.rss",
+    "https://lobste.rs/top/rss",
+    "https://lobste.rs/top/1w/rss",
+    "https://lobste.rs/newest.rss",
+    "https://lobste.rs/comments.rss",
+    "https://lobste.rs/rss"
+  ],
+  "medium": [
+    "https://medium.com/feed/@ev",
+    "https://medium.com/feed/tag/programming",
+    "https://medium.com/feed/towards-data-science/tagged/python",
+    "https://medium.com/feed/towards-data-science"
+  ],
+  "mastodon": [
+    "https://mastodon.social/@Mastodon.rss",
+    "https://mastodon.social/tags/mastodon.rss"
+  ],
+  "pinterest": ["https://www.pinterest.com/pinterest/feed.rss"],
+  "producthunt": [
+    "https://www.producthunt.com/feed?topic=artificial-intelligence",
+    "https://www.producthunt.com/feed?category=ai",
+    "https://www.producthunt.com/feed"
+  ],
+  "reddit": [
+    "https://www.reddit.com/.rss",
+    "https://www.reddit.com/r/programming/comments/1qoxwdt/.rss",
+    "https://www.reddit.com/r/programming/.rss",
+    "https://www.reddit.com/r/programming/new/.rss",
+    "https://www.reddit.com/r/programming/comments/.rss",
+    "https://www.reddit.com/user/spez/.rss",
+    "https://www.reddit.com/user/kjoneslol/m/sfwpornnetwork/.rss",
+    "https://www.reddit.com/domain/github.com/.rss"
+  ],
+  "soundcloud": ["https://feeds.soundcloud.com/users/soundcloud:users:1613713/sounds.rss"],
+  "sourceforge": [
+    "https://sourceforge.net/projects/filezilla/rss",
+    "https://sourceforge.net/projects/nmap/rss"
+  ],
+  "stackExchange": [
+    "https://stackoverflow.com/feeds/tag/javascript",
+    "https://stackoverflow.com/feeds/question/927358",
+    "https://stackoverflow.com/feeds/user/22656",
+    "https://serverfault.com/feeds/tag/nginx",
+    "https://superuser.com/feeds/tag/windows",
+    "https://askubuntu.com/feeds/tag/apt",
+    "https://stackapps.com/feeds/tag/api",
+    "https://mathoverflow.net/feeds/tag/set-theory",
+    "https://meta.stackexchange.com/feeds/tag/discussion",
+    "https://gaming.stackexchange.com/feeds/tag/steam"
+  ],
+  "steam": [
+    "https://store.steampowered.com/feeds/news/app/730/",
+    "https://store.steampowered.com/feeds/news/app/570/",
+    "https://steamcommunity.com/groups/Valve/rss",
+    "https://steamcommunity.com/groups/SteamClientBeta/rss"
+  ],
+  "substack": [
+    "https://newsletter.pragmaticengineer.com/feed",
+    "https://govtrackus.substack.com/feed"
+  ],
+  "tumblr": ["https://staff.tumblr.com/rss", "https://staff.tumblr.com/tagged/updates/rss"],
+  "vimeo": [
+    "https://vimeo.com/casey/videos/rss",
+    "https://vimeo.com/casey/likes/rss",
+    "https://vimeo.com/channels/staffpicks/videos/rss",
+    "https://vimeo.com/groups/animation/videos/rss"
+  ],
+  "wordpress": [
+    "https://wordpress.org/news/feed/",
+    "https://wordpress.org/news/?feed=rss",
+    "https://wordpress.org/news/feed/rss2/",
+    "https://wordpress.org/news/?feed=rss2",
+    "https://wordpress.org/news/feed/rdf/",
+    "https://wordpress.org/news/?feed=rdf",
+    "https://wordpress.org/news/feed/atom/",
+    "https://wordpress.org/news/?feed=atom",
+    "https://wordpress.org/news/comments/feed/",
+    "https://wordpress.org/news/?feed=comments-rss2",
+    "https://wordpress.org/news/comments/feed/rss2/",
+    "https://wordpress.org/news/comments/feed/rdf/",
+    "https://wordpress.org/news/?feed=comments-rdf",
+    "https://wordpress.org/news/comments/feed/atom/",
+    "https://wordpress.org/news/?feed=comments-atom",
+    "https://wordpress.org/news/category/development/feed/",
+    "https://wordpress.org/news/category/development/?feed=rss",
+    "https://wordpress.org/news/tag/releases/feed/",
+    "https://wordpress.org/news/tag/releases/?feed=rss",
+    "https://wordpress.org/news/author/flavor/feed/",
+    "https://wordpress.org/news/author/flavor/?feed=rss"
+  ],
+  "wpengine": [
+    "https://developer.wpengine.com/feed/",
+    "https://developer.wpengine.com/?feed=rss",
+    "https://developer.wpengine.com/feed/rss2/",
+    "https://developer.wpengine.com/?feed=rss2",
+    "https://developer.wpengine.com/feed/rdf/",
+    "https://developer.wpengine.com/?feed=rdf",
+    "https://developer.wpengine.com/feed/atom/",
+    "https://developer.wpengine.com/?feed=atom",
+    "https://developer.wpengine.com/comments/feed/",
+    "https://developer.wpengine.com/?feed=comments-rss2",
+    "https://developer.wpengine.com/comments/feed/rss2/",
+    "https://developer.wpengine.com/comments/feed/rdf/",
+    "https://developer.wpengine.com/?feed=comments-rdf",
+    "https://developer.wpengine.com/comments/feed/atom/",
+    "https://developer.wpengine.com/?feed=comments-atom"
+  ],
+  "hashnode": ["https://townhall.hashnode.com/rss.xml"],
+  "paragraph": ["https://paragraph.com/@blog/feed", "https://paragraph.com/@optimism/rss"],
+  "hatenablog": [
+    "https://staff.hatenablog.com/rss",
+    "https://staff.hatenablog.com/feed",
+    "https://staff.hatenablog.com/rss/category/news",
+    "https://staff.hatenablog.com/feed/category/news",
+    "https://blog.hatenablog.com/rss/author/hatenablog-editors",
+    "https://blog.hatenablog.com/feed/author/hatenablog-editors"
+  ],
+  "itchio": [
+    "https://qeresi.itch.io/a-tale-of-crowns/devlog.rss",
+    "https://itch.io/games/by-leafo.xml",
+    "https://itch.io/games/tag-horror.xml",
+    "https://itch.io/games/newest.xml",
+    "https://itch.io/games/top-rated.xml",
+    "https://itch.io/games/top-sellers.xml",
+    "https://itch.io/games/on-sale.xml",
+    "https://itch.io/games.xml",
+    "https://itch.io/devlogs.xml",
+    "https://itch.io/tools.xml",
+    "https://itch.io/game-assets.xml",
+    "https://itch.io/soundtracks.xml",
+    "https://itch.io/physical-games.xml",
+    "https://itch.io/books.xml",
+    "https://itch.io/comics.xml",
+    "https://itch.io/misc.xml",
+    "https://itch.io/feed/featured.xml",
+    "https://itch.io/feed/new.xml",
+    "https://itch.io/feed/sales.xml"
+  ],
+  "csdn": ["https://rss.csdn.net/csdnnews/rss/map", "https://blog.csdn.net/csdnnews/rss/list"],
+  "douban": [
+    "https://www.douban.com/feed/people/ahbei/interests",
+    "https://www.douban.com/feed/people/ahbei/reviews",
+    "https://www.douban.com/feed/people/ahbei/notes",
+    "https://www.douban.com/feed/subject/1084336/reviews",
+    "https://www.douban.com/feed/review/book",
+    "https://www.douban.com/feed/review/movie",
+    "https://www.douban.com/feed/review/music",
+    "https://www.douban.com/feed/review/drama"
+  ],
+  "v2ex": [
+    "https://www.v2ex.com/index.xml",
+    "https://www.v2ex.com/feed/programmer.xml",
+    "https://www.v2ex.com/feed/member/livid.xml",
+    "https://www.v2ex.com/feed/tab/tech.xml"
+  ],
+  "ximalaya": ["https://www.ximalaya.com/album/203355.xml"],
+  "youtube": [
+    "https://www.youtube.com/feeds/videos.xml?channel_id=UCXuqSBlHAE6Xw-yeJA0Tunw",
+    "https://www.youtube.com/feeds/videos.xml?playlist_id=UUXuqSBlHAE6Xw-yeJA0Tunw",
+    "https://www.youtube.com/feeds/videos.xml?playlist_id=UULFXuqSBlHAE6Xw-yeJA0Tunw",
+    "https://www.youtube.com/feeds/videos.xml?playlist_id=UUSHXuqSBlHAE6Xw-yeJA0Tunw",
+    "https://www.youtube.com/feeds/videos.xml?playlist_id=UULVXuqSBlHAE6Xw-yeJA0Tunw",
+    "https://www.youtube.com/feeds/videos.xml?playlist_id=PLrAXtmErZgOeiKm4sgNOknGvNjby9efdf"
+  ]
+}

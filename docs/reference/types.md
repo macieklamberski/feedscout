@@ -1,5 +1,5 @@
 ---
-prev: discoverHubs
+title: "Reference: Types"
 ---
 
 # Types
@@ -9,11 +9,15 @@ All types are exported from the main `feedscout` package.
 ```typescript
 import type {
   DiscoverInput,
+  DiscoverMethod,
   DiscoverOptions,
   DiscoverResult,
   DiscoverProgress,
   DiscoverFetchFn,
-  DiscoverNormalizeUrlFn,
+  DiscoverResolveUrlFn,
+  DiscoverUriEntry,
+  DiscoverUriHint,
+  UriEntry,
 } from 'feedscout'
 
 import type { HubResult, DiscoverHubsOptions } from 'feedscout/hubs'
@@ -39,19 +43,28 @@ type DiscoverInputObject = {
 
 ### DiscoverOptions
 
-Options for `discoverFeeds` and `discoverBlogrolls`. All fields are optional for simple usage:
+Options for discovery functions. All fields are optional for simple usage. The `TMethods` parameter restricts which methods are available — each discoverer narrows it to its supported methods:
 
 ```typescript
-type DiscoverOptions<TValid> = {
-  methods?: DiscoverMethodsConfig
+type DiscoverOptions<TValid, TMethods extends DiscoverMethod = DiscoverMethod> = {
+  methods?: DiscoverMethodsConfig<TMethods>
   fetchFn?: DiscoverFetchFn
   extractFn?: DiscoverExtractFn<TValid>
-  normalizeUrlFn?: DiscoverNormalizeUrlFn
-  concurrency?: number
+  resolveUrlFn?: DiscoverResolveUrlFn
+  stopOnFirstMethod?: boolean
   stopOnFirstResult?: boolean
+  concurrency?: number
   includeInvalid?: boolean
   onProgress?: DiscoverOnProgressFn
 }
+```
+
+### DiscoverMethod
+
+Union type of available discovery method names:
+
+```typescript
+type DiscoverMethod = 'platform' | 'feed' | 'html' | 'headers' | 'guess'
 ```
 
 ### DiscoverMethodsConfig
@@ -59,13 +72,18 @@ type DiscoverOptions<TValid> = {
 Configuration for discovery methods:
 
 ```typescript
-type DiscoverMethodsConfig =
-  | Array<'html' | 'headers' | 'guess'>
-  | {
-      html?: true | Partial<Omit<HtmlMethodOptions, 'baseUrl'>>
-      headers?: true | Partial<Omit<HeadersMethodOptions, 'baseUrl'>>
-      guess?: true | Partial<Omit<GuessMethodOptions, 'baseUrl'>>
-    }
+type DiscoverMethodsConfig<TMethods extends DiscoverMethod = DiscoverMethod> =
+  | Array<TMethods>
+  | Pick<
+      {
+        platform?: true | Partial<PlatformMethodOptions>
+        feed?: true | Partial<FeedMethodOptions>
+        html?: true | Partial<Omit<HtmlMethodOptions, 'baseUrl'>>
+        headers?: true | Partial<Omit<HeadersMethodOptions, 'baseUrl'>>
+        guess?: true | Partial<Omit<GuessMethodOptions, 'baseUrl'>>
+      },
+      TMethods
+    >
 ```
 
 The `baseUrl` is omitted because it's automatically derived from the input URL.
@@ -91,9 +109,22 @@ Result from discovery functions:
 
 ```typescript
 type DiscoverResult<TValid> =
-  | ({ url: string; isValid: true } & TValid)
-  | { url: string; isValid: false; error?: unknown }
+  | ({
+      url: string
+      isValid: true
+      method?: DiscoverMethod
+      hint?: DiscoverUriHint
+    } & TValid)
+  | {
+      url: string
+      isValid: false
+      method?: DiscoverMethod
+      hint?: DiscoverUriHint
+      error?: unknown
+    }
 ```
+
+The `method` field indicates which discovery method produced the result (`'platform'`, `'feed'`, `'html'`, `'headers'`, or `'guess'`). See [Platform method hints](/feeds/platform#hints) for details on the `hint` property.
 
 ### FeedResult
 
@@ -126,6 +157,36 @@ Result from `discoverHubs`:
 type HubResult = {
   hub: string   // Hub URL to subscribe to
   topic: string // Feed URL the hub serves updates for
+}
+```
+
+### DiscoverUriHint
+
+A hint describing the type of feed a URI represents. See [Platform method hints](/feeds/platform#hints) for details:
+
+```typescript
+type DiscoverUriHint = {
+  key: string
+  label: string
+}
+```
+
+### UriEntry
+
+A URI or array of alternative URIs. When an array, alternatives are tried in order until one validates successfully:
+
+```typescript
+type UriEntry = string | Array<string>
+```
+
+### DiscoverUriEntry
+
+A URI entry with an optional hint. Used by [platform handlers](/feeds/platform#creating-custom-handlers) to return feed URIs with metadata:
+
+```typescript
+type DiscoverUriEntry = {
+  uri: UriEntry
+  hint?: DiscoverUriHint
 }
 ```
 
@@ -162,7 +223,7 @@ Custom fetch function type:
 type DiscoverFetchFn = (
   url: string,
   options?: DiscoverFetchFnOptions,
-) => Promise<DiscoverFetchFnResponse>
+) => MaybePromise<DiscoverFetchFnResponse>
 
 type DiscoverFetchFnOptions = {
   method?: 'GET' | 'HEAD'
@@ -187,7 +248,7 @@ Custom extractor function type:
 ```typescript
 type DiscoverExtractFn<TValid> = (
   input: DiscoverExtractFnInput,
-) => Promise<DiscoverResult<TValid>>
+) => MaybePromise<DiscoverResult<TValid>>
 
 type DiscoverExtractFnInput = {
   url: string
@@ -197,6 +258,20 @@ type DiscoverExtractFnInput = {
 ```
 
 ## Method Option Types
+
+### FeedMethodOptions
+
+Options for Feed discovery method:
+
+```typescript
+type FeedMethodData = ReturnType<typeof parseFeed>
+
+type FeedMethodOptions = {
+  extractUrls: (params: FeedMethodData) => Array<string>
+}
+```
+
+`FeedMethodData` is the return type of feedsmith's `parseFeed` — it contains `format` (e.g. `'atom'`, `'json'`) and `feed` (the parsed feed object). The `extractUrls` callback should return an array of URLs. For favicons, the default extractor pulls `icon` from Atom feeds and `favicon`/`icon` from JSON Feeds.
 
 ### HtmlMethodOptions
 

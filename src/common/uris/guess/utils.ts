@@ -1,27 +1,49 @@
+import type { UriEntry } from '../../types.js'
+
+const ipAddressRegex = /^\d+\.\d+\.\d+\.\d+$/
+
+const resolveUri = (uri: string, base: string, origin: string, pathname: string): string => {
+  if (uri.startsWith('/')) {
+    return `${origin}${uri}`
+  }
+
+  if (uri.startsWith('?')) {
+    return `${origin}${pathname}${uri}`
+  }
+
+  return new URL(uri, base).href
+}
+
 export const generateUrlCombinations = (
   baseUrls: Array<string>,
-  uris: Array<string>,
-): Array<string> => {
+  uris: Array<UriEntry>,
+): Array<UriEntry> => {
   return baseUrls.flatMap((base) => {
+    const parsed = new URL(base)
+    const origin = parsed.origin
+    const pathname = parsed.pathname
+
     return uris.map((uri) => {
-      return new URL(uri, base).toString()
+      if (typeof uri === 'string') {
+        return resolveUri(uri, base, origin, pathname)
+      }
+
+      return uri.map((alternative) => resolveUri(alternative, base, origin, pathname))
     })
   })
 }
 
 export const getWwwCounterpart = (baseUrl: string): string => {
   const url = new URL(baseUrl)
-  const counterpart = new URL(url)
+  const port = url.port ? `:${url.port}` : ''
 
   // Remove www.
   if (url.hostname.startsWith('www.')) {
-    counterpart.hostname = url.hostname.replace(/^www\./, '')
-    return counterpart.origin
+    return `${url.protocol}//${url.hostname.slice(4)}${port}`
   }
 
   // Add www.
-  counterpart.hostname = `www.${url.hostname}`
-  return counterpart.origin
+  return `${url.protocol}//www.${url.hostname}${port}`
 }
 
 export const getSubdomainVariants = (baseUrl: string, prefixes: Array<string>): Array<string> => {
@@ -29,7 +51,7 @@ export const getSubdomainVariants = (baseUrl: string, prefixes: Array<string>): 
   const hostname = url.hostname
 
   // Check if hostname is an IP address (simple check for digits and dots)
-  const isIpAddress = /^\d+\.\d+\.\d+\.\d+$/.test(hostname)
+  const isIpAddress = ipAddressRegex.test(hostname)
 
   // Handle edge cases: localhost, IPs
   if (hostname === 'localhost' || isIpAddress) {

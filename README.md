@@ -18,30 +18,26 @@ Finds feeds by scanning links and anchors in HTML content, parsing HTTP headers,
 
 ### Supported Content
 
-- **Feeds** — RSS, Atom, JSON Feed, and RDF. Each feed is validated and returns metadata like format, title, description, and site URL.
-- **Blogrolls** — OPML files containing feed subscriptions. Validated and returns title.
-- **WebSub hubs** — Find hubs for real-time feed update notifications.
+| Type | Description |
+| --- | --- |
+| Feeds | RSS, Atom, JSON Feed, and RDF. Each feed is validated and returns metadata like format, title, description, and site URL. |
+| Blogrolls | OPML files containing feed subscriptions. Validated and returns title. |
+| Favicons | Site icons from HTML, feeds, platform APIs, and common paths. Validated to ensure URLs point to actual images. |
+| WebSub&nbsp;hubs | Find hubs for real-time feed update notifications. |
 
 ### Discovery Methods
 
-- **Platform** — Generates feed URLs for YouTube, GitHub, WordPress, and other popular platforms using URL pattern matching.
-- **HTML** — Scans `<link>` elements with feed MIME types and `<a>` elements matching feed patterns or labels like "RSS", "Subscribe".
-- **Headers** — Parses HTTP `Link` headers for `rel="alternate"` with feed MIME types per RFC 8288.
-- **Guess** — Tests common paths (e.g. `/feed`, `/rss.xml`, `/atom.xml`) against the base URL as a fallback.
+| Method | Description |
+| --- | --- |
+| Platform | Generates feed URLs for YouTube, GitHub, WordPress, and 30+ other popular platforms using URL pattern matching. |
+| HTML | Scans `<link>` elements with feed MIME types and `<a>` elements matching feed patterns or labels like "RSS", "Subscribe". |
+| Headers | Parses HTTP `Link` headers for `rel="alternate"` with feed MIME types per RFC 8288. |
+| Guess | Tests common paths (e.g. `/feed`, `/rss.xml`, `/atom.xml`) against the base URL as a fallback. |
 
 ### Customization
 
-- **Custom extractors** — Override the default parser to extract additional metadata from feeds and blogrolls.
-- **Configurable methods** — Enable/disable discovery methods or customize their options.
-- **Adapter system** — Use native fetch or easily integrate with Axios, Got, or Ky.
-- **Concurrency control** — Limit parallel requests during validation.
-- **Progress tracking** — Monitor discovery progress with callbacks.
-- **Type-safe** — Full TypeScript support with exported types.
-- **Tree-shakable** — Import only what you need.
-
+Uses native fetch by default but supports custom adapters for Axios, Got, Ky, or any other HTTP client. Discovery methods can be individually enabled or disabled and their options adjusted. Custom extractors let you override the default parser to pull additional metadata from feeds and blogrolls.
 ## Quick Start
-
-This is a short guide on how to get you up and running with Feedscout.
 
 For a full overview of all the features, [visit the documentation](https://feedscout.dev).
 
@@ -146,6 +142,19 @@ const blogrolls = await discoverBlogrolls('https://example.com')
 //   url: 'https://example.com/blogroll.opml',
 //   isValid: true,
 //   title: 'My Blogroll',
+// }]
+```
+
+### Discover Favicons
+
+```typescript
+import { discoverFavicons } from 'feedscout'
+
+const favicons = await discoverFavicons('https://example.com')
+
+// [{
+//   url: 'https://example.com/apple-touch-icon.png',
+//   isValid: true,
 // }]
 ```
 

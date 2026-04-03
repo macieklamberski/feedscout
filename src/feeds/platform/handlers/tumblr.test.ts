@@ -13,19 +13,39 @@ describe('tumblrHandler', () => {
     it.each(cases)('%s -> %s', (url, expected) => {
       expect(tumblrHandler.match(url)).toBe(expected)
     })
+
+    it('should return false for invalid URL', () => {
+      expect(tumblrHandler.match('not-a-url')).toBe(false)
+    })
   })
 
   describe('resolve', () => {
     it('should return feed URL for blog', () => {
       const value = 'https://example.tumblr.com'
-      const expected = ['https://example.tumblr.com/rss']
+      const expected = [
+        { uri: 'https://example.tumblr.com/rss', hint: { key: 'tumblr:posts', label: 'Posts' } },
+      ]
 
       expect(tumblrHandler.resolve(value)).toEqual(expected)
     })
 
     it('should return feed URL regardless of path', () => {
       const value = 'https://blog.tumblr.com/post/123456/some-post'
-      const expected = ['https://blog.tumblr.com/rss']
+      const expected = [
+        { uri: 'https://blog.tumblr.com/rss', hint: { key: 'tumblr:posts', label: 'Posts' } },
+      ]
+
+      expect(tumblrHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return tagged feed URL for tag page', () => {
+      const value = 'https://example.tumblr.com/tagged/photography'
+      const expected = [
+        {
+          uri: 'https://example.tumblr.com/tagged/photography/rss',
+          hint: { key: 'tumblr:tag', label: 'Tag' },
+        },
+      ]
 
       expect(tumblrHandler.resolve(value)).toEqual(expected)
     })

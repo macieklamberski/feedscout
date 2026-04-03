@@ -1,0 +1,57 @@
+import type { PlatformHandler } from '../../../common/uris/platform/types.js'
+import { composeHint, isAnyOf, isHostOf } from '../../../common/utils.js'
+
+export const hosts = ['dev.to', 'www.dev.to']
+const userPattern = /^\/([a-zA-Z0-9_]+)\/?$/
+const tagPattern = /^\/t\/([^/]+)/
+export const excludedPaths = [
+  'tag',
+  'tags',
+  'search',
+  'top',
+  'latest',
+  'about',
+  'contact',
+  'privacy',
+  'terms',
+  'code-of-conduct',
+  'faq',
+  'enter',
+  'settings',
+  'signout-confirm',
+  'notifications',
+  'reading-list',
+  'dashboard',
+]
+
+export const devtoHandler: PlatformHandler = {
+  match: (url) => {
+    return isHostOf(url, hosts)
+  },
+
+  resolve: (url) => {
+    const { pathname } = new URL(url)
+
+    // User profile: /username.
+    const userMatch = pathname.match(userPattern)
+
+    if (userMatch?.[1]) {
+      const username = userMatch[1]
+
+      if (!isAnyOf(username, excludedPaths)) {
+        return [{ uri: `https://dev.to/feed/${username}`, hint: composeHint('devto:posts') }]
+      }
+    }
+
+    // Tag page: /t/tagname.
+    const tagMatch = pathname.match(tagPattern)
+
+    if (tagMatch?.[1]) {
+      const tag = tagMatch[1]
+
+      return [{ uri: `https://dev.to/feed/tag/${tag}`, hint: composeHint('devto:tag') }]
+    }
+
+    return []
+  },
+}

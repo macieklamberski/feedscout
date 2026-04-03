@@ -1,17 +1,46 @@
 import { defineConfig } from 'vitepress'
 
+const indexPattern = /index\.md$/
+const mdPattern = /\.md$/
+const trailingSlashPattern = /\/$/
+
+const hostname = 'https://feedscout.dev'
+
 export default defineConfig({
   title: 'Feedscout',
+  titleTemplate: ':title',
   description:
     'Advanced feed autodiscovery for JavaScript. Collect feed information from any webpage using multiple discovery methods.',
   lastUpdated: true,
   cleanUrls: true,
+  sitemap: {
+    hostname,
+  },
+  transformHead: ({ pageData }) => {
+    const canonicalUrl = `${hostname}/${pageData.relativePath}`
+      .replace(indexPattern, '')
+      .replace(mdPattern, '')
+      .replace(trailingSlashPattern, '')
+
+    return [['link', { rel: 'canonical', href: canonicalUrl }]]
+  },
   head: [
+    ['meta', { property: 'og:site_name', content: 'Feedscout' }],
+    [
+      'script',
+      { type: 'application/ld+json' },
+      JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'WebSite',
+        name: 'Feedscout',
+        url: hostname,
+      }),
+    ],
     [
       'script',
       {
         async: '',
-        src: 'https://umami.lamberski.com/script.js',
+        src: 'https://stats.lamberski.com/script.js',
         'data-website-id': '5c218e6f-78ec-473e-9936-5e2dda0ddc67',
       },
     ],
@@ -22,8 +51,8 @@ export default defineConfig({
     },
     nav: [
       { text: 'Quick Start', link: '/quick-start' },
-      { text: 'Discover Feeds', link: '/feeds/' },
-      { text: 'Advanced', link: '/advanced/http-clients' },
+      { text: 'Discover Feeds', link: '/feeds' },
+      { text: 'Customization', link: '/customization/data-fetching' },
     ],
     sidebar: [
       {
@@ -31,13 +60,12 @@ export default defineConfig({
         items: [
           { text: 'Introduction', link: '/' },
           { text: 'Quick Start', link: '/quick-start' },
-          { text: 'TypeScript', link: '/typescript' },
         ],
       },
       {
         text: 'Discover Feeds',
         items: [
-          { text: 'Overview', link: '/feeds/' },
+          { text: 'Overview', link: '/feeds' },
           {
             text: 'Methods',
             collapsed: false,
@@ -54,25 +82,28 @@ export default defineConfig({
         text: 'Discover More',
         items: [
           { text: 'Blogrolls', link: '/other/blogrolls' },
+          { text: 'Favicons', link: '/other/favicons' },
           { text: 'WebSub Hubs', link: '/other/hubs' },
         ],
       },
       {
-        text: 'Advanced',
+        text: 'Customization',
         items: [
-          { text: 'Custom HTTP Clients', link: '/advanced/http-clients' },
-          { text: 'Custom Extractors', link: '/advanced/extractors' },
-          { text: 'URL Normalization', link: '/advanced/url-normalization' },
+          { text: 'Data Fetching', link: '/customization/data-fetching' },
+          { text: 'Data Extraction', link: '/customization/data-extraction' },
+          { text: 'URL Resolution', link: '/customization/url-resolution' },
         ],
       },
       {
         text: 'API Reference',
         items: [
-          { text: 'Overview', link: '/reference/' },
+          { text: 'Overview', link: '/reference' },
           { text: 'discoverFeeds', link: '/reference/discover-feeds' },
           { text: 'discoverBlogrolls', link: '/reference/discover-blogrolls' },
+          { text: 'discoverFavicons', link: '/reference/discover-favicons' },
           { text: 'discoverHubs', link: '/reference/discover-hubs' },
           { text: 'Types', link: '/reference/types' },
+          { text: 'TypeScript', link: '/reference/typescript' },
         ],
       },
     ],
@@ -81,12 +112,16 @@ export default defineConfig({
     },
     socialLinks: [
       {
+        icon: 'npm',
+        link: 'https://www.npmjs.com/package/feedscout',
+      },
+      {
         icon: 'github',
         link: 'https://github.com/macieklamberski/feedscout',
       },
       {
-        icon: 'npm',
-        link: 'https://www.npmjs.com/package/feedscout',
+        icon: 'x',
+        link: 'https://x.com/macieklamberski',
       },
     ],
   },

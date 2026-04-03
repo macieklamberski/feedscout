@@ -1,6 +1,5 @@
 ---
-prev: Discover Feeds
-next: HTML Method
+title: "Discover Feeds: Platform Method"
 ---
 
 # Platform Method
@@ -18,6 +17,19 @@ The Platform method uses handlers for each supported platform:
 > [!TIP]
 > Even when feeds are discoverable via HTML `<link>` tags, the Platform method is useful because it generates feed URLs directly from the page URL—no HTTP request needed. This makes it faster when you only have a URL and want to avoid fetching the page content first.
 
+## Hints
+
+Platform handlers attach a `hint` to each feed URI they generate. Hints provide a machine-readable `key` and a human-readable `label` that describe what type of feed the URI represents (e.g., "All uploads", "Videos only", "Shorts only"). This is useful when a single URL generates multiple feed variants and you need to let users pick the right one, especially for feeds that don't include a descriptive title.
+
+Hints are propagated to the final [`DiscoverResult`](/reference/types#discoverresult) objects returned by `discoverFeeds`. Results from non-platform methods (HTML, headers, guess) do not include hints.
+
+```typescript
+type DiscoverUriHint = {
+  key: string    // e.g., 'youtube:all', 'youtube:videos'
+  label: string  // e.g., 'All uploads', 'Videos only'
+}
+```
+
 ## Supported Platforms
 
 ### Apple Podcasts
@@ -30,6 +42,120 @@ Discovers RSS feeds for Apple Podcasts shows by extracting the feed URL from the
 
 \* *Requires HTML content to extract feed URL.*
 
+### YouTube
+
+Discovers Atom feeds for channels and playlists. Generates four feed variants for channels: all uploads, videos-only, shorts-only, and live streams-only.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `youtube.com/channel/{id}` | All uploads + videos-only + shorts-only + live streams-only |
+| `youtube.com/@{handle}` | All uploads + videos-only + shorts-only + live streams-only* |
+| `youtube.com/user/{name}` | All uploads + videos-only + shorts-only + live streams-only* |
+| `youtube.com/c/{custom}` | All uploads + videos-only + shorts-only + live streams-only* |
+| `youtube.com/watch?v={id}` | All uploads + videos-only + shorts-only + live streams-only* |
+| `youtu.be/{id}` | All uploads + videos-only + shorts-only + live streams-only* |
+| `youtube.com/playlist?list={id}` | Playlist feed |
+
+\* *Requires HTML content to extract channel ID.*
+
+### Reddit
+
+Discovers RSS feeds for subreddits, users, multireddits, and domains.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `reddit.com` | Homepage feed |
+| `reddit.com/r/{subreddit}` | Subreddit posts + comments |
+| `reddit.com/r/{subreddit}/{sort}` | Sorted posts (hot/new/rising/top) |
+| `reddit.com/r/{subreddit}/comments/{id}` | Post comments |
+| `reddit.com/u/{username}` | User activity |
+| `reddit.com/user/{username}/m/{multireddit}` | Multireddit feed |
+| `reddit.com/domain/{domain}` | Domain submissions |
+
+### Medium
+
+Discovers RSS feeds for Medium user profiles, publications, tags, and subdomains.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `medium.com/@{username}` | User posts feed |
+| `medium.com/{publication}` | Publication feed |
+| `medium.com/{publication}/tagged/{tag}` | Tagged publication feed |
+| `*.medium.com` | Subdomain publication feed |
+| `*.medium.com/tagged/{tag}` | Subdomain tagged feed |
+
+### Substack
+
+Discovers RSS feeds for Substack newsletters.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `*.substack.com` | Newsletter feed |
+| `substack.com/@{user}` | Newsletter feed |
+
+### WordPress.com
+
+Discovers RSS and Atom feeds for WordPress.com blogs, with category, tag, and author support.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `*.wordpress.com` | Posts feed (RSS + Atom + RDF) + comments |
+| `*.wordpress.com/category/{category}` | Category feed (+ above) |
+| `*.wordpress.com/tag/{tag}` | Tag feed (+ above) |
+| `*.wordpress.com/author/{author}` | Author feed (+ above) |
+
+### WP Engine
+
+Discovers feeds for WP Engine-hosted WordPress sites. Uses the same feed structure as [WordPress.com](#wordpresscom).
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `*.wpenginepowered.com` | Same as WordPress.com |
+| `*.wpengine.com` | Same as WordPress.com (legacy domain) |
+
+### Blogspot
+
+Discovers RSS and Atom feeds for Blogspot blogs, including label-specific feeds.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `*.blogspot.com` | Posts feed (Atom + RSS) |
+| `*.blogspot.com/search/label/{label}` | Label feed (+ above) |
+
+### DEV.to
+
+Discovers RSS feeds for DEV.to user profiles and tags.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `dev.to/{username}` | User posts feed |
+| `dev.to/t/{tag}` | Tag posts feed |
+
+### Lobsters
+
+Discovers RSS feeds for Lobsters homepage, users, tags, and domains.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `lobste.rs` | Homepage feed |
+| `lobste.rs/newest` | Newest posts feed |
+| `lobste.rs/top` | Top stories feed |
+| `lobste.rs/top/{period}` | Top stories by period (1d/3d/1w/1m/1y) |
+| `lobste.rs/comments` | Site-wide comments feed |
+| `lobste.rs/~{username}` | User stories feed |
+| `lobste.rs/t/{tag}` | Tag feed |
+| `lobste.rs/t/{tag1},{tag2}` | Multi-tag feed |
+| `lobste.rs/domains/{domain}` | Domain feed |
+
+### Goodreads
+
+Discovers RSS feeds for Goodreads user activity and bookshelves.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `goodreads.com/user/show/{id}` | User updates + reviews |
+| `goodreads.com/review/list/{id}` | Reviews + user updates |
+
 ### GitHub
 
 Discovers Atom feeds for users, organizations, and repositories.
@@ -41,40 +167,91 @@ Discovers Atom feeds for users, organizations, and repositories.
 | `github.com/{owner}/{repo}/wiki` | Wiki changes (+ above) |
 | `github.com/{owner}/{repo}/discussions` | Discussions (+ above) |
 | `github.com/{owner}/{repo}/tree/{branch}` | Branch commits (+ above) |
+| `github.com/{owner}/{repo}/blob/{branch}/{path}` | File commits (+ above) |
+| `github.com/{owner}/{repo}/commits/{branch}/{path}` | File commits (+ above) |
 
-### Reddit
+### GitHub Gist
 
-Discovers RSS feeds for subreddits, users, and domains.
-
-| URL Pattern | Feeds Generated |
-|-------------|-----------------|
-| `reddit.com/r/{subreddit}` | Subreddit posts + comments |
-| `reddit.com/r/{subreddit}/{sort}` | Sorted posts (hot/new/rising/top) |
-| `reddit.com/r/{subreddit}/comments/{id}` | Post comments |
-| `reddit.com/u/{username}` | User activity |
-| `reddit.com/domain/{domain}` | Domain submissions |
-
-### YouTube
-
-Discovers Atom feeds for channels and playlists. Generates two feed variants for channels: all uploads and videos-only (excludes Shorts).
+Discovers Atom feeds for GitHub Gist users and starred gists.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `youtube.com/channel/{id}` | Channel feed + videos-only |
-| `youtube.com/@{handle}` | Channel feed + videos-only* |
-| `youtube.com/user/{name}` | Channel feed + videos-only* |
-| `youtube.com/c/{custom}` | Channel feed + videos-only* |
-| `youtube.com/playlist?list={id}` | Playlist feed |
+| `gist.github.com/{username}` | User gists feed |
+| `gist.github.com/{username}/{gist-id}` | User gists feed |
+| `gist.github.com/{username}/starred` | User starred gists feed |
 
-\* *Requires HTML content to extract channel ID.*
+### Codeberg / Gitea
 
-### Blogspot
-
-Discovers RSS and Atom feeds for Blogspot blogs.
+Discovers RSS feeds for Codeberg and Gitea users, repositories, releases, tags, and branch commits.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `*.blogspot.com` | Posts feed (Atom + RSS) |
+| `codeberg.org/{user}` | User activity feed |
+| `codeberg.org/{user}/{repo}` | Releases, tags, activity |
+| `codeberg.org/{user}/{repo}/src/branch/{branch}` | Branch commits (+ above) |
+| `codeberg.org/{user}/{repo}/src/branch/{branch}/{path}` | File history (+ above) |
+
+Also supports `gitea.com` with the same patterns.
+
+### GitLab
+
+Discovers Atom feeds for GitLab users, repositories, releases, and tags.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `gitlab.com/{user}` | User activity feed |
+| `gitlab.com/{user}/{repo}` | Releases, tags, commits |
+
+### Product Hunt
+
+Discovers RSS feeds for Product Hunt homepage, topics, and categories.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `producthunt.com` | Homepage feed |
+| `producthunt.com/topics/{topic}` | Topic feed |
+| `producthunt.com/categories/{category}` | Category feed |
+
+### Pinterest
+
+Discovers RSS feeds for Pinterest user profiles.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `pinterest.com/{username}` | User pins feed |
+
+### Dailymotion
+
+Discovers RSS feeds for Dailymotion users and playlists.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `dailymotion.com/{username}` | User videos feed |
+| `dailymotion.com/playlist/{id}` | Playlist feed |
+
+### DeviantArt
+
+Discovers RSS feeds for DeviantArt user portfolios, gallery folders, favourites, and tags.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `deviantart.com/{username}` | User deviations feed |
+| `deviantart.com/{username}/gallery` | User gallery feed |
+| `deviantart.com/{username}/gallery/{id}` | Gallery folder feed |
+| `deviantart.com/{username}/favourites` | User favourites feed |
+| `deviantart.com/tag/{tag}` | Tag feed |
+
+### Mastodon
+
+Discovers RSS feeds for Mastodon user profiles and hashtag pages. Detects Mastodon instances via the `<meta name="generator">` HTML tag or the `Server` response header — no hardcoded instance list.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `{instance}/@{username}` | User posts feed |
+| `{instance}/tags/{tag}` | Hashtag feed |
+
+> [!NOTE]
+> Requires page content or response headers to detect Mastodon instances. Works with any Mastodon-compatible server, not just well-known instances.
 
 ### Bluesky
 
@@ -84,22 +261,23 @@ Discovers RSS feeds for Bluesky profiles.
 |-------------|-----------------|
 | `bsky.app/profile/{handle}` | Profile posts feed |
 
-### GitLab
+### Tumblr
 
-Discovers Atom feeds for GitLab users and repositories.
-
-| URL Pattern | Feeds Generated |
-|-------------|-----------------|
-| `gitlab.com/{user}` | User activity feed |
-| `gitlab.com/{user}/{repo}` | Repository activity feed |
-
-### Kickstarter
-
-Discovers Atom feeds for Kickstarter project updates.
+Discovers RSS feeds for Tumblr blogs and tagged posts.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `kickstarter.com/projects/{creator}/{project}` | Project updates feed |
+| `*.tumblr.com` | Blog posts feed |
+| `*.tumblr.com/tagged/{tag}` | Tagged posts feed |
+
+### Behance
+
+Discovers RSS feeds for Behance user portfolios and appreciated works.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `behance.net/{username}` | User portfolio feed |
+| `behance.net/{username}/appreciated` | User appreciated feed |
 
 ### SoundCloud
 
@@ -111,29 +289,144 @@ Discovers RSS feeds for SoundCloud user profiles.
 
 \* *Requires HTML content to extract user ID.*
 
-### Substack
+### Vimeo
 
-Discovers RSS feeds for Substack newsletters.
-
-| URL Pattern | Feeds Generated |
-|-------------|-----------------|
-| `*.substack.com` | Newsletter feed |
-
-### Tumblr
-
-Discovers RSS feeds for Tumblr blogs.
+Discovers RSS feeds for Vimeo user profiles, channels, and groups.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `*.tumblr.com` | Blog posts feed |
+| `vimeo.com/{user}` | User videos feed |
+| `vimeo.com/{user}/likes` | User likes feed (+ videos) |
+| `vimeo.com/channels/{channel}` | Channel feed |
+| `vimeo.com/groups/{group}` | Group feed |
 
-### WordPress
+### SourceForge
 
-Discovers RSS and Atom feeds for WordPress.com blogs.
+Discovers RSS feeds for SourceForge project activity and file releases.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `*.wordpress.com` | Posts feed (RSS + Atom), comments feed |
+| `sourceforge.net/projects/{project}` | Project activity feed |
+
+### Kickstarter
+
+Discovers Atom feeds for Kickstarter projects and global new projects.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `kickstarter.com` | Global new projects feed |
+| `kickstarter.com/discover` | Global new projects feed |
+| `kickstarter.com/projects/{creator}/{project}` | Project updates feed |
+
+### Letterboxd
+
+Discovers RSS feeds for Letterboxd user profiles.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `letterboxd.com/{username}` | User diary feed |
+
+### Steam
+
+Discovers RSS feeds for Steam game news and community groups.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `store.steampowered.com/app/{id}` | Game news feed |
+| `store.steampowered.com/news/app/{id}` | Game news feed |
+| `steamcommunity.com/app/{id}` | Game news feed |
+| `steamcommunity.com/groups/{name}` | Group RSS feed |
+
+### Stack Exchange
+
+Discovers RSS feeds for Stack Overflow, Server Fault, Super User, Ask Ubuntu, MathOverflow, Stack Apps, and all `*.stackexchange.com` sites.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `{site}/questions/tagged/{tag}` | Tag feed |
+| `{site}/questions/{id}` | Question feed |
+| `{site}/users/{id}` | User feed |
+
+### Hashnode
+
+Discovers RSS feeds for Hashnode blogs on `*.hashnode.dev`.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `*.hashnode.dev` | Blog feed |
+
+### Paragraph
+
+Discovers RSS feeds for Paragraph blogs (successor to Mirror.xyz).
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `paragraph.com/@{username}` | Blog feed |
+
+### Hatena Blog
+
+Discovers RSS and Atom feeds for Hatena Blog on `*.hatenablog.com`, `*.hatenablog.jp`, and `*.hateblo.jp`.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `*.hatenablog.com` | Posts feed (RSS + Atom) |
+| `*.hatenablog.jp` | Posts feed (RSS + Atom) |
+| `*.hateblo.jp` | Posts feed (RSS + Atom) |
+| `*/archive/category/{category}` | Category feed (RSS + Atom) + posts |
+| `*/archive/author/{author}` | Author feed (RSS + Atom) + posts |
+
+### Itch.io
+
+Discovers RSS feeds for Itch.io games, creators, devlogs, and browse pages.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `{creator}.itch.io/{game}` | Game devlog feed |
+| `{creator}.itch.io` | Creator's games feed |
+| `itch.io/games` | Games feed |
+| `itch.io/games/by-{username}` | Creator's games feed |
+| `itch.io/games/tag-{tag}` | Tag feed |
+| `itch.io/games/{sort}` | Sorted games feed (newest/top-rated/top-sellers/on-sale) |
+| `itch.io/{section}` | Section feed (tools/game-assets/soundtracks/physical-games/books/comics/misc) |
+| `itch.io/devlogs` | All devlogs feed |
+| `itch.io` | Featured + new + sales feeds |
+
+### CSDN
+
+Discovers RSS feeds for CSDN user blogs.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `blog.csdn.net/{username}` | Blog feed |
+
+### Douban
+
+Discovers RSS feeds for Douban user interests, reviews, notes, and subject reviews.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `www.douban.com/people/{user}` | Interests + reviews + notes |
+| `{subdomain}.douban.com/subject/{id}` | Subject reviews |
+| `www.douban.com` | Book + movie + music + drama reviews |
+
+### V2EX
+
+Discovers Atom feeds for V2EX index, nodes, members, and tabs.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `v2ex.com` | Index feed |
+| `v2ex.com/go/{node}` | Node feed |
+| `v2ex.com/member/{username}` | Member feed |
+| `v2ex.com/?tab={tab}` | Tab feed |
+
+### Ximalaya
+
+Discovers RSS feeds for Ximalaya podcast albums.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `www.ximalaya.com/album/{id}` | Album feed |
 
 ## Basic Usage
 
@@ -182,16 +475,41 @@ Or import individual handlers:
 ```typescript
 import {
   applePodcastsHandler,
+  behanceHandler,
   blogspotHandler,
   blueskyHandler,
+  codebergHandler,
+  csdnHandler,
+  dailymotionHandler,
+  deviantartHandler,
+  devtoHandler,
+  doubanHandler,
+  goodreadsHandler,
+  githubGistHandler,
   githubHandler,
   gitlabHandler,
+  hashnodeHandler,
+  hatenablogHandler,
+  itchioHandler,
   kickstarterHandler,
+  letterboxdHandler,
+  lobstersHandler,
+  mastodonHandler,
+  mediumHandler,
+  paragraphHandler,
+  producthuntHandler,
   redditHandler,
   soundcloudHandler,
+  sourceforgeHandler,
+  stackExchangeHandler,
+  steamHandler,
   substackHandler,
   tumblrHandler,
+  v2exHandler,
+  vimeoHandler,
   wordpressHandler,
+  wpengineHandler,
+  ximalayaHandler,
   youtubeHandler,
 } from 'feedscout/platform'
 ```
@@ -209,8 +527,25 @@ const uris = discoverUrisFromPlatform(htmlContent, {
 })
 
 // [
-//   'https://www.youtube.com/feeds/videos.xml?channel_id=UCBJycsmduvYEL83R_U4JriQ',
-//   'https://www.youtube.com/feeds/videos.xml?playlist_id=UULFBJycsmduvYEL83R_U4JriQ',
+//   {
+//     uri: [
+//       'https://www.youtube.com/feeds/videos.xml?channel_id=UCBJycsmduvYEL83R_U4JriQ',
+//       'https://www.youtube.com/feeds/videos.xml?playlist_id=UUBJycsmduvYEL83R_U4JriQ',
+//     ],
+//     hint: { key: 'youtube:all', label: 'All uploads' },
+//   },
+//   {
+//     uri: 'https://www.youtube.com/feeds/videos.xml?playlist_id=UULFBJycsmduvYEL83R_U4JriQ',
+//     hint: { key: 'youtube:videos', label: 'Videos only' },
+//   },
+//   {
+//     uri: 'https://www.youtube.com/feeds/videos.xml?playlist_id=UUSHBJycsmduvYEL83R_U4JriQ',
+//     hint: { key: 'youtube:shorts', label: 'Shorts only' },
+//   },
+//   {
+//     uri: 'https://www.youtube.com/feeds/videos.xml?playlist_id=UULVBJycsmduvYEL83R_U4JriQ',
+//     hint: { key: 'youtube:live', label: 'Live streams only' },
+//   },
 // ]
 ```
 
@@ -227,15 +562,20 @@ A `PlatformHandler` has two methods:
 
 ```typescript
 type PlatformHandler = {
-  match: (url: string) => boolean
-  resolve: (url: string, content?: string) => Array<string>
+  match: (url: string, content?: string, headers?: Headers) => boolean
+  resolve: (
+    url: string,
+    content?: string,
+    headers?: Headers,
+    fetchFn?: DiscoverFetchFn,
+  ) => Array<DiscoverUriEntry> | Promise<Array<DiscoverUriEntry>>
 }
 ```
 
 | Method | Description |
 |--------|-------------|
-| `match(url)` | Returns `true` if this handler should process the URL |
-| `resolve(url, content?)` | Returns an array of feed URLs for the given page URL |
+| `match(url, content?, headers?)` | Returns `true` if this handler should process the URL |
+| `resolve(url, content?, headers?, fetchFn?)` | Returns an array of [`DiscoverUriEntry`](/reference/types#discoverurientry) objects for the given page URL |
 
 ### Basic Example
 
@@ -252,7 +592,7 @@ const myHandler: PlatformHandler = {
   resolve: (url) => {
     const { origin } = new URL(url)
 
-    return [`${origin}/feed.xml`]
+    return [{ uri: `${origin}/feed.xml` }]
   },
 }
 ```
@@ -274,7 +614,7 @@ const profileHandler: PlatformHandler = {
     const match = pathname.match(/^\/users\/([^/]+)/)
 
     if (match?.[1]) {
-      return [`${origin}/users/${match[1]}/feed.rss`]
+      return [{ uri: `${origin}/users/${match[1]}/feed.rss` }]
     }
 
     return []
@@ -297,7 +637,7 @@ const contentHandler: PlatformHandler = {
 
     const match = content.match(/data-feed-url="([^"]+)"/)
 
-    return match?.[1] ? [match[1]] : []
+    return match?.[1] ? [{ uri: match[1] }] : []
   },
 }
 ```

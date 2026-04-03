@@ -1,19 +1,46 @@
-import type { LinkSelector } from '../common/types.js'
+import type { LinkSelector, UriEntry } from '../common/types.js'
 import type { GuessMethodOptions } from '../common/uris/guess/types.js'
 import type { HeadersMethodOptions } from '../common/uris/headers/types.js'
 import type { HtmlMethodOptions } from '../common/uris/html/types.js'
 import type { PlatformMethodOptions } from '../common/uris/platform/types.js'
 import { applePodcastsHandler } from './platform/handlers/applePodcasts.js'
+import { behanceHandler } from './platform/handlers/behance.js'
 import { blogspotHandler } from './platform/handlers/blogspot.js'
 import { blueskyHandler } from './platform/handlers/bluesky.js'
+import { codebergHandler } from './platform/handlers/codeberg.js'
+import { csdnHandler } from './platform/handlers/csdn.js'
+import { dailymotionHandler } from './platform/handlers/dailymotion.js'
+import { deviantartHandler } from './platform/handlers/deviantart.js'
+import { devtoHandler } from './platform/handlers/devto.js'
+import { doubanHandler } from './platform/handlers/douban.js'
 import { githubHandler } from './platform/handlers/github.js'
+import { githubGistHandler } from './platform/handlers/githubGist.js'
 import { gitlabHandler } from './platform/handlers/gitlab.js'
+import { goodreadsHandler } from './platform/handlers/goodreads.js'
+import { hashnodeHandler } from './platform/handlers/hashnode.js'
+import { hatenablogHandler } from './platform/handlers/hatenablog.js'
+import { itchioHandler } from './platform/handlers/itchio.js'
 import { kickstarterHandler } from './platform/handlers/kickstarter.js'
+import { lemmyHandler } from './platform/handlers/lemmy.js'
+import { letterboxdHandler } from './platform/handlers/letterboxd.js'
+import { lobstersHandler } from './platform/handlers/lobsters.js'
+import { mastodonHandler } from './platform/handlers/mastodon.js'
+import { mediumHandler } from './platform/handlers/medium.js'
+import { paragraphHandler } from './platform/handlers/paragraph.js'
+import { pinterestHandler } from './platform/handlers/pinterest.js'
+import { producthuntHandler } from './platform/handlers/producthunt.js'
 import { redditHandler } from './platform/handlers/reddit.js'
 import { soundcloudHandler } from './platform/handlers/soundcloud.js'
+import { sourceforgeHandler } from './platform/handlers/sourceforge.js'
+import { stackExchangeHandler } from './platform/handlers/stackExchange.js'
+import { steamHandler } from './platform/handlers/steam.js'
 import { substackHandler } from './platform/handlers/substack.js'
 import { tumblrHandler } from './platform/handlers/tumblr.js'
+import { v2exHandler } from './platform/handlers/v2ex.js'
+import { vimeoHandler } from './platform/handlers/vimeo.js'
 import { wordpressHandler } from './platform/handlers/wordpress.js'
+import { wpengineHandler } from './platform/handlers/wpengine.js'
+import { ximalayaHandler } from './platform/handlers/ximalaya.js'
 import { youtubeHandler } from './platform/handlers/youtube.js'
 
 export const mimeTypes = [
@@ -44,36 +71,53 @@ export const urisMinimal = ['/feed', '/rss', '/atom.xml', '/feed.xml', '/rss.xml
 export const urisBalanced = [...urisMinimal, '/feed/', '/index.atom', '/index.rss', '/feed.json']
 
 // Includes WordPress query parameters, Blogger patterns, and additional variations.
-export const urisComprehensive = [
+export const urisComprehensive: Array<UriEntry> = [
   ...urisBalanced,
   '/atom',
+  '/rss/',
+  '/rss2.xml',
   '/feed.rss',
   '/feed.atom',
   '/feed.rss.xml',
   '/feed.atom.xml',
+  ['/feed/atom/', '?feed=atom'],
+  ['/feed/rss/', '?feed=rss'],
+  ['/feed/rss2/', '?feed=rss2'],
+  ['/feed/rdf', '?feed=rdf'],
+  ['/feed/rdf/', '?feed=rdf'],
   '/index.rss.xml',
   '/index.atom.xml',
-  '/?feed=rss',
-  '/?feed=rss2',
-  '/?feed=atom',
-  '/?format=rss',
-  '/?format=atom',
-  '/?rss=1',
-  '/?atom=1',
+  '?format=rss',
+  '?format=atom',
+  '?rss=1',
+  '?atom=1',
   '/.rss',
   '/f.json',
   '/f.rss',
   '/json',
   '/.feed',
-  '/comments/feed',
+  ['/comments/feed', '?feed=comments-rss2'],
+  ['/comments/feed/rss2/', '?feed=comments-rss2'],
+  ['/comments/feed/rdf/', '?feed=comments-rdf'],
+  ['/comments/feed/atom/', '?feed=comments-atom'],
   '/feeds/posts/default',
+  '/feeds/posts/default?alt=rss',
+  '/feeds/comments/default',
 ]
 
 // URIs to ignore when discovering feeds from anchor elements.
 export const ignoredUris = ['wp-json/oembed/', 'wp-json/wp/']
 
 // Text labels used to identify feed links in anchor elements.
-export const anchorLabels = ['rss', 'feed', 'atom', 'subscribe', 'syndicate', 'json feed']
+export const anchorLabels = [
+  'rss',
+  'feed',
+  'atom',
+  'subscribe',
+  'syndicate',
+  'syndication',
+  'json feed',
+]
 
 export const linkSelectors: Array<LinkSelector> = [
   { rel: 'alternate', types: mimeTypes },
@@ -83,7 +127,7 @@ export const linkSelectors: Array<LinkSelector> = [
 // Default options for HTML method.
 export const defaultHtmlOptions: Omit<HtmlMethodOptions, 'baseUrl'> = {
   linkSelectors,
-  anchorUris: urisComprehensive,
+  anchorUris: urisComprehensive.flat(),
   anchorIgnoredUris: ignoredUris,
   anchorLabels,
 }
@@ -102,16 +146,43 @@ export const defaultGuessOptions: Omit<GuessMethodOptions, 'baseUrl'> = {
 export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
   handlers: [
     applePodcastsHandler,
+    behanceHandler,
     blogspotHandler,
     blueskyHandler,
+    csdnHandler,
+    codebergHandler,
+    doubanHandler,
+    deviantartHandler,
+    dailymotionHandler,
+    devtoHandler,
+    goodreadsHandler,
     githubHandler,
+    hashnodeHandler,
+    hatenablogHandler,
+    githubGistHandler,
     gitlabHandler,
+    itchioHandler,
     kickstarterHandler,
+    lemmyHandler,
+    letterboxdHandler,
+    lobstersHandler,
+    mastodonHandler,
+    mediumHandler,
+    paragraphHandler,
+    pinterestHandler,
+    producthuntHandler,
     redditHandler,
     soundcloudHandler,
+    sourceforgeHandler,
+    stackExchangeHandler,
+    steamHandler,
     substackHandler,
     tumblrHandler,
+    v2exHandler,
+    vimeoHandler,
     wordpressHandler,
+    wpengineHandler,
+    ximalayaHandler,
     youtubeHandler,
   ],
 }

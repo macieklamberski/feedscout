@@ -4,6 +4,7 @@ import type { HeadersMethodOptions } from './types.js'
 const urlRegex = /<([^<>]+)>/
 const relRegex = /rel\s*=\s*["']?([^"';,]+)["']?/i
 const typeRegex = /type\s*=\s*["']?([^"';,]+)["']?/i
+const linkSplitRegex = /,(?=\s*<)/
 
 export const discoverUrisFromHeaders = (
   headers: Headers,
@@ -18,7 +19,7 @@ export const discoverUrisFromHeaders = (
 
   // Split by comma, but not commas inside angle brackets or quotes.
   // Link headers format: <url>; rel="alternate"; type="application/rss+xml".
-  const links = linkHeader.split(/,(?=\s*<)/)
+  const links = linkHeader.split(linkSplitRegex)
 
   for (const link of links) {
     // Parse URL from angle brackets: <URL>.
@@ -44,5 +45,5 @@ export const discoverUrisFromHeaders = (
     }
   }
 
-  return Array.from(uris)
+  return [...uris]
 }

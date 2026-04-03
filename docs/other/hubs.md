@@ -1,6 +1,5 @@
 ---
-prev: Discover Blogrolls
-next: Custom HTTP Clients
+title: Discover WebSub Hubs
 ---
 
 # Discover WebSub Hubs
@@ -155,7 +154,7 @@ const hubs = await discoverHubs(
 
 ## Custom Fetch Function
 
-Use a custom HTTP client. See [Custom HTTP Clients](/advanced/http-clients) for examples with Axios, Got, Ky, and more.
+Use a custom HTTP client. See [Customize Data Fetching](/customization/data-fetching) for examples with Axios, Got, Ky, and more.
 
 ## Specifications
 

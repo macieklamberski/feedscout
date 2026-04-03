@@ -27,7 +27,12 @@ describe('applePodcastsHandler', () => {
 
     it('should return feed URL when found in content', () => {
       const value = 'https://podcasts.apple.com/us/podcast/the-daily/id1200361736'
-      const expected = ['https://feeds.simplecast.com/Sl5CSM3S']
+      const expected = [
+        {
+          uri: 'https://feeds.simplecast.com/Sl5CSM3S',
+          hint: { key: 'apple-podcasts:podcast', label: 'Podcast' },
+        },
+      ]
 
       expect(applePodcastsHandler.resolve(value, contentWithFeedUrl)).toEqual(expected)
     })
@@ -48,7 +53,12 @@ describe('applePodcastsHandler', () => {
     it('should handle feedUrl with spaces around colon', () => {
       const value = 'https://podcasts.apple.com/us/podcast/the-daily/id1200361736'
       const content = '{"feedUrl" : "https://example.com/feed.xml"}'
-      const expected = ['https://example.com/feed.xml']
+      const expected = [
+        {
+          uri: 'https://example.com/feed.xml',
+          hint: { key: 'apple-podcasts:podcast', label: 'Podcast' },
+        },
+      ]
 
       expect(applePodcastsHandler.resolve(value, content)).toEqual(expected)
     })

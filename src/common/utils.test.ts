@@ -1,7 +1,9 @@
 import { describe, expect, it } from 'bun:test'
 import {
   anyWordMatchesAnyOf,
+  composeHint,
   endsWithAnyOf,
+  hasMetaContent,
   includesAnyOf,
   isAnyOf,
   isHostOf,
@@ -9,9 +11,39 @@ import {
   isSubdomainOf,
   matchesAnyOfLinkSelectors,
   normalizeMimeType,
-  normalizeUrl,
+  omitEmpty,
   processConcurrently,
+  resolveUrl,
 } from './utils.js'
+
+describe('composeHint', () => {
+  it('should return hint with key and label for valid key', () => {
+    const value = 'youtube:all'
+    const expected = {
+      key: 'youtube:all',
+      label: 'All uploads',
+    }
+
+    expect(composeHint(value)).toEqual(expected)
+  })
+
+  it('should return hint with key and label for another valid key', () => {
+    const value = 'reddit:posts'
+    const expected = {
+      key: 'reddit:posts',
+      label: 'Posts',
+    }
+
+    expect(composeHint(value)).toEqual(expected)
+  })
+
+  it('should return undefined label for unknown key', () => {
+    const value = 'unknown:key'
+
+    // @ts-expect-error: This is for testing purposes.
+    expect(composeHint(value)).toEqual({ key: 'unknown:key', label: undefined })
+  })
+})
 
 describe('normalizeMimeType', () => {
   it('should extract base MIME type without parameters', () => {
@@ -142,6 +174,22 @@ describe('isSubdomainOf', () => {
 
     expect(isSubdomainOf(value, 'blogspot.com')).toBe(false)
   })
+
+  it('should return true when matching any domain in array', () => {
+    const value = 'https://example.wordpress.com'
+
+    expect(isSubdomainOf(value, ['blogspot.com', 'wordpress.com'])).toBe(true)
+  })
+
+  it('should return false when matching no domain in array', () => {
+    const value = 'https://example.tumblr.com'
+
+    expect(isSubdomainOf(value, ['blogspot.com', 'wordpress.com'])).toBe(false)
+  })
+
+  it('should return false for invalid URL', () => {
+    expect(isSubdomainOf('not-a-url', 'blogspot.com')).toBe(false)
+  })
 })
 
 describe('isHostOf', () => {
@@ -179,6 +227,22 @@ describe('isHostOf', () => {
     const value = 'https://api.github.com/users'
 
     expect(isHostOf(value, ['github.com'])).toBe(false)
+  })
+
+  it('should return true for string argument', () => {
+    const value = 'https://github.com/owner/repo'
+
+    expect(isHostOf(value, 'github.com')).toBe(true)
+  })
+
+  it('should return false for non-matching string argument', () => {
+    const value = 'https://gitlab.com/owner/repo'
+
+    expect(isHostOf(value, 'github.com')).toBe(false)
+  })
+
+  it('should return false for invalid URL', () => {
+    expect(isHostOf('not-a-url', ['github.com'])).toBe(false)
   })
 })
 
@@ -281,6 +345,10 @@ describe('includesAnyOf', () => {
     const patterns = ['2.0']
 
     expect(includesAnyOf(value, patterns)).toBe(true)
+  })
+
+  it('should return false when pattern is empty string', () => {
+    expect(includesAnyOf('anything', [''])).toBe(false)
   })
 })
 
@@ -400,13 +468,78 @@ describe('isAnyOf', () => {
   })
 })
 
-describe('normalizeUrl', () => {
+describe('omitEmpty', () => {
+  it('should remove undefined values', () => {
+    const value = ['a', undefined, 'b']
+    const expected = ['a', 'b']
+
+    expect(omitEmpty(value)).toEqual(expected)
+  })
+
+  it('should remove null values', () => {
+    const value = ['a', null, 'b']
+    const expected = ['a', 'b']
+
+    expect(omitEmpty(value)).toEqual(expected)
+  })
+
+  it('should remove empty strings', () => {
+    const value = ['a', '', 'b']
+    const expected = ['a', 'b']
+
+    expect(omitEmpty(value)).toEqual(expected)
+  })
+
+  it('should remove mixed empty values', () => {
+    const value = [undefined, 'a', null, '', 'b', undefined]
+    const expected = ['a', 'b']
+
+    expect(omitEmpty(value)).toEqual(expected)
+  })
+
+  it('should return empty array when all values are empty', () => {
+    const value = [undefined, null, '']
+    const expected: Array<string> = []
+
+    expect(omitEmpty(value)).toEqual(expected)
+  })
+
+  it('should return empty array for empty input', () => {
+    const value: Array<string | undefined> = []
+    const expected: Array<string> = []
+
+    expect(omitEmpty(value)).toEqual(expected)
+  })
+
+  it('should preserve all values when none are empty', () => {
+    const value = ['a', 'b', 'c']
+    const expected = ['a', 'b', 'c']
+
+    expect(omitEmpty(value)).toEqual(expected)
+  })
+
+  it('should work with number arrays', () => {
+    const value = [1, undefined, 0, null, 3]
+    const expected = [1, 0, 3]
+
+    expect(omitEmpty(value)).toEqual(expected)
+  })
+
+  it('should preserve order of remaining values', () => {
+    const value = ['c', undefined, 'a', null, 'b']
+    const expected = ['c', 'a', 'b']
+
+    expect(omitEmpty(value)).toEqual(expected)
+  })
+})
+
+describe('resolveUrl', () => {
   it('should resolve relative URL with base URL', () => {
     const value = '/feed.xml'
     const baseUrl = 'https://example.com'
     const expected = 'https://example.com/feed.xml'
 
-    expect(normalizeUrl(value, baseUrl)).toBe(expected)
+    expect(resolveUrl(value, baseUrl)).toBe(expected)
   })
 
   it('should resolve relative URL with base URL containing path', () => {
@@ -414,7 +547,7 @@ describe('normalizeUrl', () => {
     const baseUrl = 'https://example.com/blog/'
     const expected = 'https://example.com/blog/feed.xml'
 
-    expect(normalizeUrl(value, baseUrl)).toBe(expected)
+    expect(resolveUrl(value, baseUrl)).toBe(expected)
   })
 
   it('should preserve absolute URL when base URL provided', () => {
@@ -422,15 +555,23 @@ describe('normalizeUrl', () => {
     const baseUrl = 'https://example.com'
     const expected = 'https://other.com/feed.xml'
 
-    expect(normalizeUrl(value, baseUrl)).toBe(expected)
+    expect(resolveUrl(value, baseUrl)).toBe(expected)
   })
 
-  it('should return URL unchanged when base URL is undefined', () => {
+  it('should return undefined when base URL is undefined and URL is relative', () => {
     const value = '/feed.xml'
     const baseUrl = undefined
-    const expected = '/feed.xml'
+    const expected = undefined
 
-    expect(normalizeUrl(value, baseUrl)).toBe(expected)
+    expect(resolveUrl(value, baseUrl)).toBe(expected)
+  })
+
+  it('should return absolute URL when base URL is undefined', () => {
+    const value = 'https://example.com/feed.xml'
+    const baseUrl = undefined
+    const expected = 'https://example.com/feed.xml'
+
+    expect(resolveUrl(value, baseUrl)).toBe(expected)
   })
 
   it('should handle protocol-relative URLs', () => {
@@ -438,7 +579,7 @@ describe('normalizeUrl', () => {
     const baseUrl = 'https://example.com'
     const expected = 'https://cdn.example.com/feed.xml'
 
-    expect(normalizeUrl(value, baseUrl)).toBe(expected)
+    expect(resolveUrl(value, baseUrl)).toBe(expected)
   })
 
   it('should handle parent directory references', () => {
@@ -446,7 +587,7 @@ describe('normalizeUrl', () => {
     const baseUrl = 'https://example.com/blog/posts/'
     const expected = 'https://example.com/blog/feed.xml'
 
-    expect(normalizeUrl(value, baseUrl)).toBe(expected)
+    expect(resolveUrl(value, baseUrl)).toBe(expected)
   })
 })
 
@@ -678,6 +819,10 @@ describe('endsWithAnyOf', () => {
 
     expect(endsWithAnyOf(value, patterns)).toBe(true)
   })
+
+  it('should return false when pattern is empty string', () => {
+    expect(endsWithAnyOf('anything', [''])).toBe(false)
+  })
 })
 
 describe('isOfAllowedMimeType', () => {
@@ -788,9 +933,7 @@ describe('processConcurrently', () => {
 
     await processConcurrently(items, processFn, {
       concurrency: 2,
-      shouldStop: () => {
-        return processed.length >= 5
-      },
+      shouldStop: () => processed.length >= 5,
     })
 
     expect(processed.length).toBeLessThanOrEqual(7)
@@ -799,6 +942,7 @@ describe('processConcurrently', () => {
   it('should handle errors in processFn', async () => {
     const items = [1, 2, 3, 4, 5]
     const processed: Array<number> = []
+    // biome-ignore lint/suspicious/useAwait: Must return Promise for processConcurrently.
     const processFn = async (item: number) => {
       if (item === 3) {
         throw new Error('Test error')
@@ -818,6 +962,7 @@ describe('processConcurrently', () => {
   it('should handle empty array', async () => {
     const items: Array<number> = []
     const processed: Array<number> = []
+    // biome-ignore lint/suspicious/useAwait: Must return Promise for processConcurrently.
     const processFn = async (item: number) => {
       processed.push(item)
     }
@@ -830,6 +975,7 @@ describe('processConcurrently', () => {
   it('should process single item', async () => {
     const items = [1]
     const processed: Array<number> = []
+    // biome-ignore lint/suspicious/useAwait: Must return Promise for processConcurrently.
     const processFn = async (item: number) => {
       processed.push(item)
     }
@@ -921,6 +1067,8 @@ describe('processConcurrently', () => {
     ).toEqual(expected)
   })
 
+  // TODO: Should handle concurrency=0 — causes infinite loop, items never process.
+
   it('should not call shouldStop after completion', async () => {
     const items = [1, 2, 3]
     let shouldStopCallCount = 0
@@ -939,5 +1087,100 @@ describe('processConcurrently', () => {
     })
 
     expect(shouldStopCallCount).toBeGreaterThan(0)
+  })
+
+  it('should not process items when concurrency is 0', async () => {
+    const items = [1, 2, 3]
+    const processed: Array<number> = []
+    // biome-ignore lint/suspicious/useAwait: Must return Promise for processConcurrently.
+    const processFn = async (item: number) => {
+      processed.push(item)
+    }
+
+    await processConcurrently(items, processFn, { concurrency: 0 })
+
+    expect(processed).toEqual([])
+  })
+})
+
+describe('hasMetaContent', () => {
+  it('should return true when name comes before content', () => {
+    const value = '<meta name="generator" content="Mastodon v4.2.0">'
+
+    expect(hasMetaContent(value, 'generator', 'Mastodon')).toBe(true)
+  })
+
+  it('should return true when content comes before name', () => {
+    const value = '<meta content="Mastodon v4.2.0" name="generator">'
+
+    expect(hasMetaContent(value, 'generator', 'Mastodon')).toBe(true)
+  })
+
+  it('should return true when using property attribute', () => {
+    const value = '<meta property="og:site_name" content="GitLab">'
+
+    expect(hasMetaContent(value, 'og:site_name', 'GitLab')).toBe(true)
+  })
+
+  it('should return true when content comes before property', () => {
+    const value = '<meta content="GitLab" property="og:site_name">'
+
+    expect(hasMetaContent(value, 'og:site_name', 'GitLab')).toBe(true)
+  })
+
+  it('should return true when content starts with value', () => {
+    const value = '<meta name="generator" content="Lemmy v0.19.5">'
+
+    expect(hasMetaContent(value, 'generator', 'Lemmy')).toBe(true)
+  })
+
+  it('should return true when tag has additional attributes', () => {
+    const value = '<meta charset="utf-8" name="generator" content="Mastodon v4.2.0" />'
+
+    expect(hasMetaContent(value, 'generator', 'Mastodon')).toBe(true)
+  })
+
+  it('should return true when meta tag is embedded in full HTML', () => {
+    const value = '<html><head><meta name="generator" content="Mastodon v4.2.0"></head></html>'
+
+    expect(hasMetaContent(value, 'generator', 'Mastodon')).toBe(true)
+  })
+
+  it('should be case-insensitive for tag and attribute names', () => {
+    const value = '<META NAME="generator" CONTENT="Mastodon">'
+
+    expect(hasMetaContent(value, 'generator', 'Mastodon')).toBe(true)
+  })
+
+  it('should return false when name does not match', () => {
+    const value = '<meta name="description" content="Mastodon">'
+
+    expect(hasMetaContent(value, 'generator', 'Mastodon')).toBe(false)
+  })
+
+  it('should return false when content does not match', () => {
+    const value = '<meta name="generator" content="WordPress">'
+
+    expect(hasMetaContent(value, 'generator', 'Mastodon')).toBe(false)
+  })
+
+  it('should return false when content is a suffix match', () => {
+    const value = '<meta name="generator" content="not-Mastodon">'
+
+    expect(hasMetaContent(value, 'generator', 'Mastodon')).toBe(false)
+  })
+
+  it('should return false when content attribute is missing', () => {
+    expect(hasMetaContent('<meta name="generator">', 'generator', 'Mastodon')).toBe(false)
+  })
+
+  it('should return false when meta tag is absent', () => {
+    expect(
+      hasMetaContent('<html><body>Mastodon generator</body></html>', 'generator', 'Mastodon'),
+    ).toBe(false)
+  })
+
+  it('should return false for empty HTML', () => {
+    expect(hasMetaContent('', 'generator', 'Mastodon')).toBe(false)
   })
 })

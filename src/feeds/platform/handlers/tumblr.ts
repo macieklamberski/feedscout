@@ -1,14 +1,27 @@
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
-import { isSubdomainOf } from '../../../common/utils.js'
+import { composeHint, isSubdomainOf } from '../../../common/utils.js'
+
+export const domains = ['tumblr.com']
+
+const tagPattern = /^\/tagged\/([^/]+)/
 
 export const tumblrHandler: PlatformHandler = {
   match: (url) => {
-    return isSubdomainOf(url, 'tumblr.com')
+    return isSubdomainOf(url, domains)
   },
 
   resolve: (url) => {
-    const { origin } = new URL(url)
+    const { origin, pathname } = new URL(url)
 
-    return [`${origin}/rss`]
+    // Tagged posts: /tagged/{tag}
+    const tagMatch = pathname.match(tagPattern)
+
+    if (tagMatch?.[1]) {
+      const tag = tagMatch[1]
+
+      return [{ uri: `${origin}/tagged/${tag}/rss`, hint: composeHint('tumblr:tag') }]
+    }
+
+    return [{ uri: `${origin}/rss`, hint: composeHint('tumblr:posts') }]
   },
 }

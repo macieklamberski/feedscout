@@ -1,35 +1,64 @@
-import type { DiscoverMethodsConfigInternal } from '../types.js'
+import type {
+  DiscoverFetchFn,
+  DiscoverMethodsConfigInternal,
+  DiscoverUrisResult,
+} from '../types.js'
+import { discoverUrisFromFeed } from './feed/index.js'
 import { discoverUrisFromGuess } from './guess/index.js'
 import { discoverUrisFromHeaders } from './headers/index.js'
 import { discoverUrisFromHtml } from './html/index.js'
 import { discoverUrisFromPlatform } from './platform/index.js'
 
-export const discoverUris = (config: DiscoverMethodsConfigInternal): Array<string> => {
-  const uris = new Set<string>()
+export const discoverUris = async (
+  config: DiscoverMethodsConfigInternal,
+  fetchFn?: DiscoverFetchFn,
+): Promise<DiscoverUrisResult> => {
+  const result: DiscoverUrisResult = {}
 
   if (config.platform) {
-    for (const uri of discoverUrisFromPlatform(config.platform.html, config.platform.options)) {
-      uris.add(uri)
+    const uris = await discoverUrisFromPlatform(
+      config.platform.content,
+      config.platform.headers,
+      config.platform.options,
+      fetchFn,
+    )
+
+    if (uris.length > 0) {
+      result.platform = uris
+    }
+  }
+
+  if (config.feed) {
+    const uris = discoverUrisFromFeed(config.feed.content, config.feed.options)
+
+    if (uris.length > 0) {
+      result.feed = uris.map((uri) => ({ uri }))
     }
   }
 
   if (config.html) {
-    for (const uri of discoverUrisFromHtml(config.html.html, config.html.options)) {
-      uris.add(uri)
+    const uris = discoverUrisFromHtml(config.html.html, config.html.options)
+
+    if (uris.length > 0) {
+      result.html = uris.map((uri) => ({ uri }))
     }
   }
 
   if (config.headers) {
-    for (const uri of discoverUrisFromHeaders(config.headers.headers, config.headers.options)) {
-      uris.add(uri)
+    const uris = discoverUrisFromHeaders(config.headers.headers, config.headers.options)
+
+    if (uris.length > 0) {
+      result.headers = uris.map((uri) => ({ uri }))
     }
   }
 
   if (config.guess) {
-    for (const uri of discoverUrisFromGuess(config.guess.options)) {
-      uris.add(uri)
+    const uris = discoverUrisFromGuess(config.guess.options)
+
+    if (uris.length > 0) {
+      result.guess = uris.map((uri) => ({ uri }))
     }
   }
 
-  return Array.from(uris)
+  return result
 }

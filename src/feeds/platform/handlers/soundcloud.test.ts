@@ -12,12 +12,18 @@ describe('soundcloudHandler', () => {
       ['https://soundcloud.com/stream', false],
       ['https://soundcloud.com/search', false],
       ['https://soundcloud.com/upload', false],
+      ['https://soundcloud.com/Discover', false],
+      ['https://soundcloud.com/STREAM', false],
       ['https://soundcloud.com', false],
       ['https://example.com/diplo', false],
     ] as const
 
     it.each(cases)('%s -> %s', (url, expected) => {
       expect(soundcloudHandler.match(url)).toBe(expected)
+    })
+
+    it('should return false for invalid URL', () => {
+      expect(soundcloudHandler.match('not-a-url')).toBe(false)
     })
   })
 
@@ -29,7 +35,12 @@ describe('soundcloudHandler', () => {
 
     it('should return RSS feed when user ID found in content', () => {
       const value = 'https://soundcloud.com/diplo'
-      const expected = ['https://feeds.soundcloud.com/users/soundcloud:users:16730/sounds.rss']
+      const expected = [
+        {
+          uri: 'https://feeds.soundcloud.com/users/soundcloud:users:16730/sounds.rss',
+          hint: { key: 'soundcloud:tracks', label: 'Tracks' },
+        },
+      ]
 
       expect(soundcloudHandler.resolve(value, contentWithUserId)).toEqual(expected)
     })

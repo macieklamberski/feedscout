@@ -363,6 +363,14 @@ describe('discoverUrisFromHeaders', () => {
       expect(result).toEqual(['/feed.xml'])
     })
 
+    it('should match alternate in space-separated rel value', () => {
+      const headers = new Headers({
+        Link: '</feed.xml>; rel="hub alternate"; type="application/rss+xml"',
+      })
+      const result = discoverUrisFromHeaders(headers, defaultOptions)
+      expect(result).toEqual(['/feed.xml'])
+    })
+
     it('should handle escaped quotes in parameter values', () => {
       const headers = new Headers({
         Link: '</feed.xml>; rel="alternate"; title="The \\"Best\\" Feed"; type="application/rss+xml"',

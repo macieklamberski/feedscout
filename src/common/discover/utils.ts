@@ -1,3 +1,5 @@
+import { parseFeed } from 'feedsmith'
+import type { Atom, DeepPartial } from 'feedsmith/types'
 import locales from '../locales.json' with { type: 'json' }
 import type {
   DiscoverFetchFn,
@@ -6,7 +8,11 @@ import type {
   DiscoverMethodsConfig,
   DiscoverMethodsConfigDefaults,
   DiscoverMethodsConfigInternal,
+  DiscoverResolveSiteUrlFn,
+  DiscoverResolveUrlFn,
+  DiscoverUriEntry,
 } from '../types.js'
+import { resolveUrl } from '../utils.js'
 
 export const defaultFetchFn: DiscoverFetchFn = async (url, options) => {
   const response = await fetch(url, {
@@ -31,21 +37,94 @@ export const normalizeInput = async (
     return input
   }
 
-  const response = await fetchFn(input)
+  try {
+    const response = await fetchFn(input)
+
+    return {
+      url: response.url,
+      // TODO: Support streams here.
+      content: typeof response.body === 'string' ? response.body : undefined,
+      headers: response.headers,
+    }
+  } catch {}
+
+  // When the fetch fails, return the URL without content so that URL-only
+  // methods like guess can still run.
+  return { url: input }
+}
+
+const getLinkOfType = (links: Array<DeepPartial<Atom.Link<string>>> | undefined, rel: string) => {
+  return links?.find((link) => link.rel === rel)
+}
+
+export const getFeedSiteUrl = (parsed: ReturnType<typeof parseFeed>): string | undefined => {
+  const { format, feed } = parsed
+
+  if (format === 'rss' || format === 'rdf') {
+    return getLinkOfType(feed.atom?.links, 'alternate')?.href ?? feed.link
+  }
+
+  if (format === 'atom') {
+    return getLinkOfType(feed.links, 'alternate')?.href
+  }
+
+  if (format === 'json') {
+    return feed.home_page_url
+  }
+}
+
+// TODO: parseFeed is called here and again in discoverUrisFromFeed for the favicons
+// discoverer. Consider caching the parsed result to avoid double parsing.
+export const defaultResolveSiteUrlFn: DiscoverResolveSiteUrlFn = (input) => {
+  if (!input.content) {
+    return
+  }
+
+  try {
+    let siteUrl = getFeedSiteUrl(parseFeed(input.content))
+
+    // Fall back to origin if no site URL found in feed metadata.
+    if (!siteUrl) {
+      try {
+        siteUrl = new URL(input.url).origin
+      } catch {}
+    } else {
+      // Resolve relative site URLs against the feed URL.
+      siteUrl = resolveUrl(siteUrl, input.url)
+    }
+
+    // Avoid re-fetching the same URL.
+    if (siteUrl && new URL(siteUrl).href === new URL(input.url).href) {
+      return
+    }
+
+    return siteUrl
+  } catch {}
+}
+
+export const normalizeUriEntry = (
+  entry: DiscoverUriEntry,
+  resolveUrlFn: DiscoverResolveUrlFn,
+  baseUrl: string | undefined,
+): DiscoverUriEntry => {
+  if (typeof entry.uri === 'string') {
+    return { ...entry, uri: resolveUrlFn(entry.uri, baseUrl) ?? entry.uri }
+  }
 
   return {
-    url: response.url,
-    // TODO: Support streams here.
-    content: typeof response.body === 'string' ? response.body : '',
-    headers: response.headers,
+    ...entry,
+    uri: entry.uri.map((uri) => resolveUrlFn(uri, baseUrl) ?? uri),
   }
 }
 
 export const normalizeMethodsConfig = (
-  input: DiscoverInputObject,
+  sourceInput: DiscoverInputObject,
+  siteInput: DiscoverInputObject | undefined,
   methods: DiscoverMethodsConfig,
   defaults: DiscoverMethodsConfigDefaults,
 ): DiscoverMethodsConfigInternal => {
+  const resolvedInput = siteInput ?? sourceInput
+
   // Step 1: Normalize methods (array → object, true → {}).
   const methodsObj = Array.isArray(methods)
     ? Object.fromEntries(methods.map((method) => [method, true]))
@@ -54,59 +133,76 @@ export const normalizeMethodsConfig = (
   // Step 2: Build internal methods config.
   const methodsConfig: DiscoverMethodsConfigInternal = {}
 
-  if (methodsObj.platform) {
-    if (!input.url || input.url === '') {
+  if (methodsObj.platform && defaults.platform) {
+    if (!resolvedInput.url || resolvedInput.url === '') {
       throw new Error(locales.errors.platformMethodRequiresUrl)
     }
 
     const platformOptions = methodsObj.platform === true ? {} : methodsObj.platform
 
     methodsConfig.platform = {
-      html: input.content ?? '',
+      content: resolvedInput.content,
+      headers: resolvedInput.headers,
       options: {
         ...defaults.platform,
         ...platformOptions,
-        baseUrl: input.url,
+        baseUrl: resolvedInput.url,
       },
     }
   }
 
-  if (methodsObj.html) {
-    if (input.content === undefined) {
+  if (methodsObj.feed && defaults.feed) {
+    if (sourceInput.content === undefined) {
+      throw new Error(locales.errors.feedMethodRequiresContent)
+    }
+
+    const feedOptions = methodsObj.feed === true ? {} : methodsObj.feed
+
+    methodsConfig.feed = {
+      content: sourceInput.content,
+      options: {
+        ...defaults.feed,
+        ...feedOptions,
+      },
+    }
+  }
+
+  if (methodsObj.html && defaults.html) {
+    if (resolvedInput.content === undefined) {
       throw new Error(locales.errors.htmlMethodRequiresContent)
     }
 
     const htmlOptions = methodsObj.html === true ? {} : methodsObj.html
 
     methodsConfig.html = {
-      html: input.content,
+      html: resolvedInput.content,
       options: {
         ...defaults.html,
         ...htmlOptions,
-        baseUrl: input.url,
+        baseUrl: resolvedInput.url,
       },
     }
   }
 
-  if (methodsObj.headers) {
-    if (input.headers === undefined) {
+  if (methodsObj.headers && defaults.headers) {
+    if (resolvedInput.headers === undefined) {
       throw new Error(locales.errors.headersMethodRequiresHeaders)
     }
 
     const headersOptions = methodsObj.headers === true ? {} : methodsObj.headers
 
     methodsConfig.headers = {
-      headers: input.headers,
+      headers: resolvedInput.headers,
       options: {
         ...defaults.headers,
         ...headersOptions,
-        baseUrl: input.url,
+        baseUrl: resolvedInput.url,
       },
     }
   }
 
-  if (methodsObj.guess) {
-    if (!input.url || input.url === '') {
+  if (methodsObj.guess && defaults.guess) {
+    if (!resolvedInput.url || resolvedInput.url === '') {
       throw new Error(locales.errors.guessMethodRequiresUrl)
     }
 
@@ -116,7 +212,7 @@ export const normalizeMethodsConfig = (
       options: {
         ...defaults.guess,
         ...guessOptions,
-        baseUrl: input.url,
+        baseUrl: resolvedInput.url,
       },
     }
   }

@@ -1,11 +1,19 @@
 import { afterEach, describe, expect, it, spyOn } from 'bun:test'
+import { parseFeed } from 'feedsmith'
 import locales from '../locales.json' with { type: 'json' }
-import type { DiscoverFetchFn } from '../types.js'
-import { defaultFetchFn, normalizeInput, normalizeMethodsConfig } from './utils.js'
+import type { DiscoverFetchFn, DiscoverResolveUrlFn } from '../types.js'
+import {
+  defaultFetchFn,
+  defaultResolveSiteUrlFn,
+  getFeedSiteUrl,
+  normalizeInput,
+  normalizeMethodsConfig,
+  normalizeUriEntry,
+} from './utils.js'
 
 describe('defaultFetchFn', () => {
   // biome-ignore lint/suspicious/noExplicitAny: Mock helper needs flexible signature.
-  const createFetchMock = <T extends (...args: Array<any>) => Promise<Response>>(
+  const createFetchMock = <T extends (...args: Array<any>) => Response | Promise<Response>>(
     implementation: T,
   ) => {
     return implementation as unknown as typeof fetch
@@ -31,7 +39,7 @@ describe('defaultFetchFn', () => {
 
   it('should call native fetch with correct URL', async () => {
     fetchSpy.mockImplementation(
-      createFetchMock(async (url: string) => {
+      createFetchMock((url: string) => {
         return createMockResponse({
           url,
           text: async () => 'response body',
@@ -39,14 +47,21 @@ describe('defaultFetchFn', () => {
       }),
     )
     const result = await defaultFetchFn('https://example.com/feed.xml')
+    const expected = {
+      url: 'https://example.com/feed.xml',
+      body: 'response body',
+      headers: expect.any(Headers),
+      status: 200,
+      statusText: 'OK',
+    }
 
-    expect(result.url).toBe('https://example.com/feed.xml')
+    expect(result).toEqual(expected)
   })
 
   it('should default to GET method when not specified', async () => {
     let capturedOptions: RequestInit | undefined
     fetchSpy.mockImplementation(
-      createFetchMock(async (_url: string, options?: RequestInit) => {
+      createFetchMock((_url: string, options?: RequestInit) => {
         capturedOptions = options
         return createMockResponse({})
       }),
@@ -60,7 +75,7 @@ describe('defaultFetchFn', () => {
   it('should use specified method from options', async () => {
     let capturedOptions: RequestInit | undefined
     fetchSpy.mockImplementation(
-      createFetchMock(async (_url: string, options?: RequestInit) => {
+      createFetchMock((_url: string, options?: RequestInit) => {
         capturedOptions = options
         return createMockResponse({})
       }),
@@ -74,7 +89,7 @@ describe('defaultFetchFn', () => {
   it('should pass headers to fetch', async () => {
     let capturedOptions: RequestInit | undefined
     fetchSpy.mockImplementation(
-      createFetchMock(async (_url: string, options?: RequestInit) => {
+      createFetchMock((_url: string, options?: RequestInit) => {
         capturedOptions = options
         return createMockResponse({})
       }),
@@ -89,7 +104,7 @@ describe('defaultFetchFn', () => {
 
   it('should return response with correct structure', async () => {
     fetchSpy.mockImplementation(
-      createFetchMock(async () => {
+      createFetchMock(() => {
         return createMockResponse({
           headers: new Headers({ 'content-type': 'application/rss+xml' }),
           text: async () => 'feed content',
@@ -99,70 +114,90 @@ describe('defaultFetchFn', () => {
         })
       }),
     )
-
     const result = await defaultFetchFn('https://example.com/feed.xml')
+    const expected = {
+      url: 'https://example.com/feed.xml',
+      body: 'feed content',
+      headers: expect.any(Headers),
+      status: 200,
+      statusText: 'OK',
+    }
 
+    expect(result).toEqual(expected)
     expect(result.headers.get('content-type')).toBe('application/rss+xml')
-    expect(result.body).toBe('feed content')
-    expect(result.url).toBe('https://example.com/feed.xml')
-    expect(result.status).toBe(200)
-    expect(result.statusText).toBe('OK')
   })
 
   it('should preserve response URL for redirect handling', async () => {
     fetchSpy.mockImplementation(
-      createFetchMock(async () => {
+      createFetchMock(() => {
         return createMockResponse({
           url: 'https://redirect.example.com/feed.xml',
         })
       }),
     )
-
     const result = await defaultFetchFn('https://example.com/feed.xml')
+    const expected = {
+      url: 'https://redirect.example.com/feed.xml',
+      body: '',
+      headers: expect.any(Headers),
+      status: 200,
+      statusText: 'OK',
+    }
 
-    expect(result.url).toBe('https://redirect.example.com/feed.xml')
+    expect(result).toEqual(expected)
   })
 
   it('should convert response body to text', async () => {
     fetchSpy.mockImplementation(
-      createFetchMock(async () => {
+      createFetchMock(() => {
         return createMockResponse({
           text: async () => '<rss>feed content</rss>',
         })
       }),
     )
-
     const result = await defaultFetchFn('https://example.com/feed.xml')
+    const expected = {
+      url: '',
+      body: '<rss>feed content</rss>',
+      headers: expect.any(Headers),
+      status: 200,
+      statusText: 'OK',
+    }
 
-    expect(result.body).toBe('<rss>feed content</rss>')
+    expect(result).toEqual(expected)
   })
 
   it('should pass through status and statusText', async () => {
     fetchSpy.mockImplementation(
-      createFetchMock(async () => {
+      createFetchMock(() => {
         return createMockResponse({
           status: 404,
           statusText: 'Not Found',
         })
       }),
     )
-
     const result = await defaultFetchFn('https://example.com/feed.xml')
+    const expected = {
+      url: '',
+      body: '',
+      headers: expect.any(Headers),
+      status: 404,
+      statusText: 'Not Found',
+    }
 
-    expect(result.status).toBe(404)
-    expect(result.statusText).toBe('Not Found')
+    expect(result).toEqual(expected)
   })
 })
 
 describe('normalizeInput', () => {
-  const fetchFn: DiscoverFetchFn = async (url) => {
-    return {
+  const fetchFn: DiscoverFetchFn = (url) => {
+    return Promise.resolve({
       url,
       body: '<html>content</html>',
       headers: new Headers({ 'content-type': 'text/html' }),
       status: 200,
       statusText: 'OK',
-    }
+    })
   }
 
   it('should fetch and normalize string input', async () => {
@@ -176,14 +211,14 @@ describe('normalizeInput', () => {
   })
 
   it('should preserve redirected URL from fetch response', async () => {
-    const redirectFetchFn: DiscoverFetchFn = async () => {
-      return {
+    const redirectFetchFn: DiscoverFetchFn = () => {
+      return Promise.resolve({
         url: 'https://example.com/redirected',
         body: '<html>content</html>',
         headers: new Headers(),
         status: 200,
         statusText: 'OK',
-      }
+      })
     }
     const expected = {
       url: 'https://example.com/redirected',
@@ -194,19 +229,19 @@ describe('normalizeInput', () => {
     expect(await normalizeInput('https://example.com', redirectFetchFn)).toEqual(expected)
   })
 
-  it('should handle ReadableStream body by converting to empty string', async () => {
-    const streamFetchFn: DiscoverFetchFn = async (url) => {
-      return {
+  it('should handle ReadableStream body by returning undefined content', async () => {
+    const streamFetchFn: DiscoverFetchFn = (url) => {
+      return Promise.resolve({
         url,
         body: new ReadableStream(),
         headers: new Headers(),
         status: 200,
         statusText: 'OK',
-      }
+      })
     }
     const expected = {
       url: 'https://example.com',
-      content: '',
+      content: undefined,
       headers: expect.any(Headers),
     }
 
@@ -215,14 +250,14 @@ describe('normalizeInput', () => {
 
   it('should preserve headers from fetch response', async () => {
     const headers = new Headers({ 'content-type': 'text/html', link: '</feed>; rel="alternate"' })
-    const headersFetchFn: DiscoverFetchFn = async (url) => {
-      return {
+    const headersFetchFn: DiscoverFetchFn = (url) => {
+      return Promise.resolve({
         url,
         body: '<html></html>',
         headers,
         status: 200,
         statusText: 'OK',
-      }
+      })
     }
     const result = await normalizeInput('https://example.com', headersFetchFn)
     const expected = {
@@ -283,14 +318,14 @@ describe('normalizeInput', () => {
   })
 
   it('should handle empty string content from fetch', async () => {
-    const emptyFetchFn: DiscoverFetchFn = async (url) => {
-      return {
+    const emptyFetchFn: DiscoverFetchFn = (url) => {
+      return Promise.resolve({
         url,
         body: '',
         headers: new Headers(),
         status: 200,
         statusText: 'OK',
-      }
+      })
     }
     const expected = {
       url: 'https://example.com',
@@ -303,15 +338,15 @@ describe('normalizeInput', () => {
 
   it('should not call fetchFn when object input provided', async () => {
     let fetchCalled = false
-    const trackingFetchFn: DiscoverFetchFn = async (url) => {
+    const trackingFetchFn: DiscoverFetchFn = (url) => {
       fetchCalled = true
-      return {
+      return Promise.resolve({
         url,
         body: '<html></html>',
         headers: new Headers(),
         status: 200,
         statusText: 'OK',
-      }
+      })
     }
     const value = {
       url: 'https://example.com',
@@ -324,14 +359,14 @@ describe('normalizeInput', () => {
   })
 
   it('should handle fetch response with different status codes', async () => {
-    const statusFetchFn: DiscoverFetchFn = async (url) => {
-      return {
+    const statusFetchFn: DiscoverFetchFn = (url) => {
+      return Promise.resolve({
         url,
         body: '<html>content</html>',
         headers: new Headers(),
         status: 301,
         statusText: 'Moved Permanently',
-      }
+      })
     }
     const expected = {
       url: 'https://example.com',
@@ -340,6 +375,16 @@ describe('normalizeInput', () => {
     }
 
     expect(await normalizeInput('https://example.com', statusFetchFn)).toEqual(expected)
+  })
+
+  it('should return url-only object when fetchFn throws for string input', async () => {
+    const throwingFetchFn: DiscoverFetchFn = () => {
+      throw new Error('Network error')
+    }
+    const value = await normalizeInput('https://example.com', throwingFetchFn)
+    const expected = { url: 'https://example.com' }
+
+    expect(value).toEqual(expected)
   })
 })
 
@@ -407,9 +452,13 @@ describe('normalizeMethodsConfig', () => {
   const ignoredUris = ['wp-json/oembed/', 'wp-json/wp/']
   const anchorLabels = ['rss', 'feed', 'atom', 'subscribe', 'syndicate', 'json feed']
   const linkSelectors = [{ rel: 'alternate', types: feedMimeTypes }, { rel: 'feed' }]
+  const extractUrls = () => [] as Array<string>
   const defaults = {
     platform: {
       handlers: [],
+    },
+    feed: {
+      extractUrls,
     },
     html: {
       linkSelectors,
@@ -430,7 +479,7 @@ describe('normalizeMethodsConfig', () => {
       url: 'https://example.com',
       content: '<html></html>',
     }
-    const result = normalizeMethodsConfig(value, ['html'], defaults)
+    const result = normalizeMethodsConfig(value, undefined, ['html'], defaults)
     const expected = {
       html: {
         html: '<html></html>',
@@ -454,7 +503,7 @@ describe('normalizeMethodsConfig', () => {
       content: '<html></html>',
       headers,
     }
-    const result = normalizeMethodsConfig(value, ['html', 'headers', 'guess'], defaults)
+    const result = normalizeMethodsConfig(value, undefined, ['html', 'headers', 'guess'], defaults)
     const expected = {
       html: {
         html: '<html></html>',
@@ -489,7 +538,7 @@ describe('normalizeMethodsConfig', () => {
       url: 'https://example.com',
       content: '<html></html>',
     }
-    const result = normalizeMethodsConfig(value, { html: true }, defaults)
+    const result = normalizeMethodsConfig(value, undefined, { html: true }, defaults)
     const expected = {
       html: {
         html: '<html></html>',
@@ -510,7 +559,12 @@ describe('normalizeMethodsConfig', () => {
     const value = {
       url: 'https://example.com',
     }
-    const result = normalizeMethodsConfig(value, { guess: { uris: ['/custom-feed'] } }, defaults)
+    const result = normalizeMethodsConfig(
+      value,
+      undefined,
+      { guess: { uris: ['/custom-feed'] } },
+      defaults,
+    )
     const expected = {
       guess: {
         options: {
@@ -530,6 +584,7 @@ describe('normalizeMethodsConfig', () => {
     }
     const result = normalizeMethodsConfig(
       value,
+      undefined,
       { html: true, guess: { uris: ['/custom'] } },
       defaults,
     )
@@ -562,6 +617,7 @@ describe('normalizeMethodsConfig', () => {
     }
     const result = normalizeMethodsConfig(
       value,
+      undefined,
       { html: { anchorLabels: ['custom-label'] } },
       defaults,
     )
@@ -585,7 +641,7 @@ describe('normalizeMethodsConfig', () => {
     const value = {
       url: 'https://example.com',
     }
-    const result = normalizeMethodsConfig(value, [], defaults)
+    const result = normalizeMethodsConfig(value, undefined, [], defaults)
     const expected = {}
 
     expect(result).toEqual(expected)
@@ -595,7 +651,7 @@ describe('normalizeMethodsConfig', () => {
     const value = {
       url: 'https://example.com',
     }
-    const result = normalizeMethodsConfig(value, {}, defaults)
+    const result = normalizeMethodsConfig(value, undefined, {}, defaults)
     const expected = {}
 
     expect(result).toEqual(expected)
@@ -608,7 +664,7 @@ describe('normalizeMethodsConfig', () => {
       content: '<html></html>',
       headers,
     }
-    const result = normalizeMethodsConfig(value, ['html', 'headers', 'guess'], defaults)
+    const result = normalizeMethodsConfig(value, undefined, ['html', 'headers', 'guess'], defaults)
     const expected = {
       html: {
         html: '<html></html>',
@@ -644,7 +700,7 @@ describe('normalizeMethodsConfig', () => {
       url: 'https://example.com',
       headers,
     }
-    const result = normalizeMethodsConfig(value, ['headers'], defaults)
+    const result = normalizeMethodsConfig(value, undefined, ['headers'], defaults)
     const expected = {
       headers: {
         headers,
@@ -665,7 +721,7 @@ describe('normalizeMethodsConfig', () => {
       url: 'https://example.com',
       content: htmlContent,
     }
-    const result = normalizeMethodsConfig(value, ['html'], defaults)
+    const result = normalizeMethodsConfig(value, undefined, ['html'], defaults)
     const expected = {
       html: {
         html: htmlContent,
@@ -691,7 +747,7 @@ describe('normalizeMethodsConfig', () => {
       anchorLabels: ['custom1', 'custom2'],
       anchorUris: ['/custom-feed'],
     }
-    const result = normalizeMethodsConfig(value, { html: customOptions }, defaults)
+    const result = normalizeMethodsConfig(value, undefined, { html: customOptions }, defaults)
     const expected = {
       html: {
         html: '<html></html>',
@@ -715,7 +771,7 @@ describe('normalizeMethodsConfig', () => {
       content: '<html></html>',
       headers,
     }
-    const result = normalizeMethodsConfig(value, ['html', 'headers', 'guess'], defaults)
+    const result = normalizeMethodsConfig(value, undefined, ['html', 'headers', 'guess'], defaults)
     const expected = {
       html: {
         html: '<html></html>',
@@ -754,6 +810,7 @@ describe('normalizeMethodsConfig', () => {
     }
     const result = normalizeMethodsConfig(
       value,
+      undefined,
       { html: true, headers: true, guess: true },
       defaults,
     )
@@ -791,16 +848,76 @@ describe('normalizeMethodsConfig', () => {
       url: '',
       content: '<html></html>',
     }
-    const throwing = () => normalizeMethodsConfig(value, ['platform'], defaults)
+    const throwing = () => normalizeMethodsConfig(value, undefined, ['platform'], defaults)
 
     expect(throwing).toThrow(locales.errors.platformMethodRequiresUrl)
+  })
+
+  it('should normalize feed method with defaults', () => {
+    const value = {
+      url: 'https://example.com',
+      content: '<feed>content</feed>',
+    }
+    const result = normalizeMethodsConfig(value, undefined, ['feed'], defaults)
+    const expected = {
+      feed: {
+        content: '<feed>content</feed>',
+        options: {
+          extractUrls,
+        },
+      },
+    }
+
+    expect(result).toEqual(expected)
+  })
+
+  it('should normalize feed method with custom extractUrls', () => {
+    const customExtractUrls = () => ['https://example.com/icon.png']
+    const value = {
+      url: 'https://example.com',
+      content: '<feed>content</feed>',
+    }
+    const result = normalizeMethodsConfig(
+      value,
+      undefined,
+      { feed: { extractUrls: customExtractUrls } },
+      defaults,
+    )
+    const expected = {
+      feed: {
+        content: '<feed>content</feed>',
+        options: {
+          extractUrls: customExtractUrls,
+        },
+      },
+    }
+
+    expect(result).toEqual(expected)
+  })
+
+  it('should throw error when feed method requested without content', () => {
+    const value = {
+      url: 'https://example.com',
+    }
+    const throwing = () => normalizeMethodsConfig(value, undefined, ['feed'], defaults)
+
+    expect(throwing).toThrow(locales.errors.feedMethodRequiresContent)
+  })
+
+  it('should throw error when feed method in object format without content', () => {
+    const value = {
+      url: 'https://example.com',
+    }
+    const throwing = () => normalizeMethodsConfig(value, undefined, { feed: true }, defaults)
+
+    expect(throwing).toThrow(locales.errors.feedMethodRequiresContent)
   })
 
   it('should throw error when html method requested without content', () => {
     const value = {
       url: 'https://example.com',
     }
-    const throwing = () => normalizeMethodsConfig(value, ['html'], defaults)
+    const throwing = () => normalizeMethodsConfig(value, undefined, ['html'], defaults)
 
     expect(throwing).toThrow(locales.errors.htmlMethodRequiresContent)
   })
@@ -809,7 +926,7 @@ describe('normalizeMethodsConfig', () => {
     const value = {
       url: 'https://example.com',
     }
-    const throwing = () => normalizeMethodsConfig(value, ['headers'], defaults)
+    const throwing = () => normalizeMethodsConfig(value, undefined, ['headers'], defaults)
 
     expect(throwing).toThrow(locales.errors.headersMethodRequiresHeaders)
   })
@@ -819,7 +936,7 @@ describe('normalizeMethodsConfig', () => {
       url: '',
       content: '<html></html>',
     }
-    const throwing = () => normalizeMethodsConfig(value, ['guess'], defaults)
+    const throwing = () => normalizeMethodsConfig(value, undefined, ['guess'], defaults)
 
     expect(throwing).toThrow(locales.errors.guessMethodRequiresUrl)
   })
@@ -829,7 +946,7 @@ describe('normalizeMethodsConfig', () => {
       url: '',
       content: '<html></html>',
     }
-    const throwing = () => normalizeMethodsConfig(value, { platform: true }, defaults)
+    const throwing = () => normalizeMethodsConfig(value, undefined, { platform: true }, defaults)
 
     expect(throwing).toThrow(locales.errors.platformMethodRequiresUrl)
   })
@@ -838,7 +955,7 @@ describe('normalizeMethodsConfig', () => {
     const value = {
       url: 'https://example.com',
     }
-    const throwing = () => normalizeMethodsConfig(value, { html: true }, defaults)
+    const throwing = () => normalizeMethodsConfig(value, undefined, { html: true }, defaults)
 
     expect(throwing).toThrow(locales.errors.htmlMethodRequiresContent)
   })
@@ -847,7 +964,7 @@ describe('normalizeMethodsConfig', () => {
     const value = {
       url: 'https://example.com',
     }
-    const throwing = () => normalizeMethodsConfig(value, { headers: true }, defaults)
+    const throwing = () => normalizeMethodsConfig(value, undefined, { headers: true }, defaults)
 
     expect(throwing).toThrow(locales.errors.headersMethodRequiresHeaders)
   })
@@ -856,7 +973,7 @@ describe('normalizeMethodsConfig', () => {
     const value = {
       url: '',
     }
-    const throwing = () => normalizeMethodsConfig(value, { guess: true }, defaults)
+    const throwing = () => normalizeMethodsConfig(value, undefined, { guess: true }, defaults)
 
     expect(throwing).toThrow(locales.errors.guessMethodRequiresUrl)
   })
@@ -866,7 +983,7 @@ describe('normalizeMethodsConfig', () => {
       url: 'https://example.com',
       content: '<html></html>',
     }
-    const result = normalizeMethodsConfig(value, ['html'], defaults)
+    const result = normalizeMethodsConfig(value, undefined, ['html'], defaults)
     const expected = {
       html: {
         html: '<html></html>',
@@ -889,7 +1006,7 @@ describe('normalizeMethodsConfig', () => {
       url: 'https://example.com',
       headers,
     }
-    const result = normalizeMethodsConfig(value, ['headers'], defaults)
+    const result = normalizeMethodsConfig(value, undefined, ['headers'], defaults)
     const expected = {
       headers: {
         headers,
@@ -907,7 +1024,7 @@ describe('normalizeMethodsConfig', () => {
     const value = {
       url: 'https://example.com',
     }
-    const result = normalizeMethodsConfig(value, ['guess'], defaults)
+    const result = normalizeMethodsConfig(value, undefined, ['guess'], defaults)
     const expected = {
       guess: {
         options: {
@@ -927,6 +1044,7 @@ describe('normalizeMethodsConfig', () => {
     }
     const result = normalizeMethodsConfig(
       value,
+      undefined,
       { html: { anchorLabels: ['custom-label'] } },
       defaults,
     )
@@ -953,6 +1071,7 @@ describe('normalizeMethodsConfig', () => {
     }
     const result = normalizeMethodsConfig(
       value,
+      undefined,
       { html: { anchorUris: ['/custom-feed'] } },
       defaults,
     )
@@ -979,6 +1098,7 @@ describe('normalizeMethodsConfig', () => {
     }
     const result = normalizeMethodsConfig(
       value,
+      undefined,
       { html: { anchorIgnoredUris: ['custom-ignore'] } },
       defaults,
     )
@@ -1006,6 +1126,7 @@ describe('normalizeMethodsConfig', () => {
     const customSelectors = [{ rel: 'custom', types: ['custom/mime'] }]
     const result = normalizeMethodsConfig(
       value,
+      undefined,
       { html: { linkSelectors: customSelectors } },
       defaults,
     )
@@ -1029,7 +1150,12 @@ describe('normalizeMethodsConfig', () => {
     const value = {
       url: 'https://example.com',
     }
-    const result = normalizeMethodsConfig(value, { guess: { uris: ['/custom-feed'] } }, defaults)
+    const result = normalizeMethodsConfig(
+      value,
+      undefined,
+      { guess: { uris: ['/custom-feed'] } },
+      defaults,
+    )
     const expected = {
       guess: {
         options: {
@@ -1051,6 +1177,7 @@ describe('normalizeMethodsConfig', () => {
     const customSelectors = [{ rel: 'custom', types: ['custom/mime'] }]
     const result = normalizeMethodsConfig(
       value,
+      undefined,
       { headers: { linkSelectors: customSelectors } },
       defaults,
     )
@@ -1072,7 +1199,7 @@ describe('normalizeMethodsConfig', () => {
       url: 'https://example.com',
       content: '',
     }
-    const result = normalizeMethodsConfig(value, ['html'], defaults)
+    const result = normalizeMethodsConfig(value, undefined, ['html'], defaults)
     const expected = {
       html: {
         html: '',
@@ -1094,7 +1221,7 @@ describe('normalizeMethodsConfig', () => {
       content: '<html></html>',
     }
     // @ts-expect-error: This is for testing purposes.
-    const throwing = () => normalizeMethodsConfig(value, ['guess'], defaults)
+    const throwing = () => normalizeMethodsConfig(value, undefined, ['guess'], defaults)
 
     expect(throwing).toThrow(locales.errors.guessMethodRequiresUrl)
   })
@@ -1106,7 +1233,7 @@ describe('normalizeMethodsConfig', () => {
       content: '<html></html>',
       headers,
     }
-    const result = normalizeMethodsConfig(value, ['html', 'headers', 'guess'], defaults)
+    const result = normalizeMethodsConfig(value, undefined, ['html', 'headers', 'guess'], defaults)
     const expected = {
       html: {
         html: '<html></html>',
@@ -1134,5 +1261,442 @@ describe('normalizeMethodsConfig', () => {
     }
 
     expect(result).toEqual(expected)
+  })
+})
+
+describe('getFeedSiteUrl', () => {
+  it('should return site URL from RSS feed with channel link', () => {
+    const value = parseFeed(
+      '<?xml version="1.0"?><rss version="2.0"><channel><link>https://example.com</link></channel></rss>',
+    )
+    const expected = 'https://example.com'
+
+    expect(getFeedSiteUrl(value)).toBe(expected)
+  })
+
+  it('should return site URL from RSS feed with atom:link alternate', () => {
+    const value = parseFeed(
+      '<?xml version="1.0"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><atom:link rel="alternate" href="https://example.com"/></channel></rss>',
+    )
+    const expected = 'https://example.com'
+
+    expect(getFeedSiteUrl(value)).toBe(expected)
+  })
+
+  it('should prefer atom:link alternate over channel link in RSS', () => {
+    const value = parseFeed(
+      '<?xml version="1.0"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><link>https://fallback.com</link><atom:link rel="alternate" href="https://preferred.com"/></channel></rss>',
+    )
+    const expected = 'https://preferred.com'
+
+    expect(getFeedSiteUrl(value)).toBe(expected)
+  })
+
+  it('should return site URL from Atom feed with alternate link', () => {
+    const value = parseFeed(
+      '<?xml version="1.0"?><feed xmlns="http://www.w3.org/2005/Atom"><link rel="alternate" href="https://example.com"/></feed>',
+    )
+    const expected = 'https://example.com'
+
+    expect(getFeedSiteUrl(value)).toBe(expected)
+  })
+
+  it('should return undefined from Atom feed without alternate link', () => {
+    const value = parseFeed(
+      '<?xml version="1.0"?><feed xmlns="http://www.w3.org/2005/Atom"><link rel="self" href="https://example.com/feed.xml"/></feed>',
+    )
+
+    expect(getFeedSiteUrl(value)).toBeUndefined()
+  })
+
+  it('should return site URL from JSON Feed with home_page_url', () => {
+    const value = parseFeed(
+      JSON.stringify({
+        version: 'https://jsonfeed.org/version/1.1',
+        title: 'Example',
+        home_page_url: 'https://example.com',
+        items: [],
+      }),
+    )
+    const expected = 'https://example.com'
+
+    expect(getFeedSiteUrl(value)).toBe(expected)
+  })
+
+  it('should return undefined from JSON Feed without home_page_url', () => {
+    const value = parseFeed(
+      JSON.stringify({
+        version: 'https://jsonfeed.org/version/1.1',
+        title: 'Example',
+        items: [],
+      }),
+    )
+
+    expect(getFeedSiteUrl(value)).toBeUndefined()
+  })
+
+  it('should return undefined from RSS feed without link', () => {
+    const value = parseFeed(
+      '<?xml version="1.0"?><rss version="2.0"><channel><title>Example</title></channel></rss>',
+    )
+
+    expect(getFeedSiteUrl(value)).toBeUndefined()
+  })
+})
+
+describe('defaultResolveSiteUrlFn', () => {
+  it('should return site URL from RSS feed with channel link', () => {
+    const value = {
+      url: 'https://example.com/feed.xml',
+      content: `
+        <?xml version="1.0"?>
+        <rss version="2.0">
+          <channel>
+            <link>https://example.com</link>
+          </channel>
+        </rss>
+      `,
+    }
+    const expected = 'https://example.com/'
+
+    expect(defaultResolveSiteUrlFn(value)).toBe(expected)
+  })
+
+  it('should return site URL from Atom feed with alternate link', () => {
+    const value = {
+      url: 'https://example.com/feed.xml',
+      content: `
+        <?xml version="1.0"?>
+        <feed xmlns="http://www.w3.org/2005/Atom">
+          <link rel="alternate" href="https://example.com"/>
+        </feed>
+      `,
+    }
+    const expected = 'https://example.com/'
+
+    expect(defaultResolveSiteUrlFn(value)).toBe(expected)
+  })
+
+  it('should return site URL from JSON Feed with home_page_url', () => {
+    const value = {
+      url: 'https://example.com/feed.json',
+      content: JSON.stringify({
+        version: 'https://jsonfeed.org/version/1.1',
+        title: 'Example',
+        home_page_url: 'https://example.com',
+        items: [],
+      }),
+    }
+    const expected = 'https://example.com/'
+
+    expect(defaultResolveSiteUrlFn(value)).toBe(expected)
+  })
+
+  it('should fall back to origin when feed has no site URL', () => {
+    const value = {
+      url: 'https://example.com/feed.xml',
+      content: `
+        <?xml version="1.0"?>
+        <feed xmlns="http://www.w3.org/2005/Atom">
+          <title>Test</title>
+        </feed>
+      `,
+    }
+    const expected = 'https://example.com'
+
+    expect(defaultResolveSiteUrlFn(value)).toBe(expected)
+  })
+
+  it('should return undefined when resolved URL equals input URL', () => {
+    const value = {
+      url: 'https://example.com',
+      content: `
+        <?xml version="1.0"?>
+        <rss version="2.0">
+          <channel>
+            <link>https://example.com</link>
+          </channel>
+        </rss>
+      `,
+    }
+
+    expect(defaultResolveSiteUrlFn(value)).toBeUndefined()
+  })
+
+  it('should return undefined for non-feed content', () => {
+    const value = {
+      url: 'https://example.com',
+      content: '<html><head></head><body></body></html>',
+    }
+
+    expect(defaultResolveSiteUrlFn(value)).toBeUndefined()
+  })
+
+  it('should return undefined for empty content', () => {
+    const value = {
+      url: 'https://example.com',
+      content: '',
+    }
+
+    expect(defaultResolveSiteUrlFn(value)).toBeUndefined()
+  })
+
+  it('should return undefined for undefined content', () => {
+    const value = {
+      url: 'https://example.com',
+    }
+
+    expect(defaultResolveSiteUrlFn(value)).toBeUndefined()
+  })
+
+  it('should return site URL from RSS feed with atom:link alternate', () => {
+    const value = {
+      url: 'https://cdn.example.com/feed.xml',
+      content: `
+        <?xml version="1.0"?>
+        <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+          <channel>
+            <atom:link rel="alternate" href="https://example.com"/>
+          </channel>
+        </rss>
+      `,
+    }
+    const expected = 'https://example.com/'
+
+    expect(defaultResolveSiteUrlFn(value)).toBe(expected)
+  })
+
+  it('should resolve relative site URL from RSS feed against feed URL', () => {
+    const value = {
+      url: 'https://example.com/feed.xml',
+      content: `
+        <?xml version="1.0"?>
+        <rss version="2.0">
+          <channel>
+            <link>/log/</link>
+          </channel>
+        </rss>
+      `,
+    }
+    const expected = 'https://example.com/log/'
+
+    expect(defaultResolveSiteUrlFn(value)).toBe(expected)
+  })
+
+  it('should resolve relative site URL from Atom feed against feed URL', () => {
+    const value = {
+      url: 'https://example.com/feed.xml',
+      content: `
+        <?xml version="1.0"?>
+        <feed xmlns="http://www.w3.org/2005/Atom">
+          <link rel="alternate" href="/blog"/>
+        </feed>
+      `,
+    }
+    const expected = 'https://example.com/blog'
+
+    expect(defaultResolveSiteUrlFn(value)).toBe(expected)
+  })
+
+  it('should resolve relative site URL from JSON Feed against feed URL', () => {
+    const value = {
+      url: 'https://example.com/feed.json',
+      content: JSON.stringify({
+        version: 'https://jsonfeed.org/version/1.1',
+        title: 'Example',
+        home_page_url: '/site/',
+        items: [],
+      }),
+    }
+    const expected = 'https://example.com/site/'
+
+    expect(defaultResolveSiteUrlFn(value)).toBe(expected)
+  })
+})
+
+describe('normalizeMethodsConfig with siteInput', () => {
+  const defaults = {
+    feed: { extractUrls: () => [] as Array<string> },
+    html: {
+      linkSelectors: [{ rel: 'icon' }],
+      anchorUris: [] as Array<string>,
+      anchorIgnoredUris: [] as Array<string>,
+      anchorLabels: [] as Array<string>,
+    },
+    headers: { linkSelectors: [{ rel: 'icon' }] },
+    guess: { uris: ['/favicon.ico'] },
+  }
+
+  it('should use siteInput for html, headers, and guess methods', () => {
+    const siteHeaders = new Headers({ 'content-type': 'text/html' })
+    const value = {
+      url: 'https://example.com/feed.xml',
+      content: '<rss>feed content</rss>',
+      headers: new Headers({ 'content-type': 'application/rss+xml' }),
+    }
+    const siteValue = {
+      url: 'https://example.com',
+      content: '<html><link rel="icon" href="/favicon.ico"></html>',
+      headers: siteHeaders,
+    }
+    const expected = {
+      html: {
+        html: '<html><link rel="icon" href="/favicon.ico"></html>',
+        options: {
+          linkSelectors: [{ rel: 'icon' }],
+          anchorUris: [],
+          anchorIgnoredUris: [],
+          anchorLabels: [],
+          baseUrl: 'https://example.com',
+        },
+      },
+      headers: {
+        headers: siteHeaders,
+        options: {
+          linkSelectors: [{ rel: 'icon' }],
+          baseUrl: 'https://example.com',
+        },
+      },
+      guess: {
+        options: {
+          uris: ['/favicon.ico'],
+          baseUrl: 'https://example.com',
+        },
+      },
+    }
+    const result = normalizeMethodsConfig(value, siteValue, ['html', 'headers', 'guess'], defaults)
+
+    expect(result).toEqual(expected)
+  })
+
+  it('should use original input for feed method when siteInput provided', () => {
+    const value = {
+      url: 'https://example.com/feed.xml',
+      content: '<rss>feed content</rss>',
+      headers: new Headers(),
+    }
+    const siteValue = {
+      url: 'https://example.com',
+      content: '<html>site content</html>',
+      headers: new Headers(),
+    }
+    const expected = {
+      feed: {
+        content: '<rss>feed content</rss>',
+        options: {
+          extractUrls: expect.any(Function),
+        },
+      },
+    }
+    const result = normalizeMethodsConfig(value, siteValue, ['feed'], defaults)
+
+    expect(result).toEqual(expected)
+  })
+
+  it('should fall back to sourceInput when siteInput is undefined', () => {
+    const value = {
+      url: 'https://example.com',
+      content: '<html>content</html>',
+      headers: new Headers(),
+    }
+    const expected = {
+      html: {
+        html: '<html>content</html>',
+        options: {
+          linkSelectors: [{ rel: 'icon' }],
+          anchorUris: [],
+          anchorIgnoredUris: [],
+          anchorLabels: [],
+          baseUrl: 'https://example.com',
+        },
+      },
+      guess: {
+        options: {
+          uris: ['/favicon.ico'],
+          baseUrl: 'https://example.com',
+        },
+      },
+    }
+    const result = normalizeMethodsConfig(value, undefined, ['html', 'guess'], defaults)
+
+    expect(result).toEqual(expected)
+  })
+})
+
+describe('normalizeUriEntry', () => {
+  const resolveUrlFn: DiscoverResolveUrlFn = (url, baseUrl) => {
+    try {
+      return new URL(url, baseUrl).href
+    } catch {
+      return
+    }
+  }
+
+  it('should normalize string entry', () => {
+    const value = { uri: '/feed.xml' }
+    const expected = { uri: 'https://example.com/feed.xml' }
+
+    expect(normalizeUriEntry(value, resolveUrlFn, 'https://example.com')).toEqual(expected)
+  })
+
+  it('should normalize array entry', () => {
+    const value = { uri: ['/feed/', '?feed=rss'] }
+    const expected = { uri: ['https://example.com/feed/', 'https://example.com/?feed=rss'] }
+
+    expect(normalizeUriEntry(value, resolveUrlFn, 'https://example.com')).toEqual(expected)
+  })
+
+  it('should apply resolveUrlFn to each alternative in array', () => {
+    const value = { uri: ['/feed/atom/', '?feed=atom', '/rss.xml'] }
+    const expected = {
+      uri: [
+        'https://example.com/feed/atom/',
+        'https://example.com/?feed=atom',
+        'https://example.com/rss.xml',
+      ],
+    }
+
+    expect(normalizeUriEntry(value, resolveUrlFn, 'https://example.com')).toEqual(expected)
+  })
+
+  it('should handle undefined baseUrl for string entry', () => {
+    const value = { uri: 'https://example.com/feed.xml' }
+    const expected = { uri: 'https://example.com/feed.xml' }
+
+    expect(normalizeUriEntry(value, resolveUrlFn, undefined)).toEqual(expected)
+  })
+
+  it('should handle undefined baseUrl for array entry', () => {
+    const value = { uri: ['https://example.com/feed/', 'https://example.com/?feed=rss'] }
+    const expected = { uri: ['https://example.com/feed/', 'https://example.com/?feed=rss'] }
+
+    expect(normalizeUriEntry(value, resolveUrlFn, undefined)).toEqual(expected)
+  })
+
+  it('should handle single-element array', () => {
+    const value = { uri: ['/feed.xml'] }
+    const expected = { uri: ['https://example.com/feed.xml'] }
+
+    expect(normalizeUriEntry(value, resolveUrlFn, 'https://example.com')).toEqual(expected)
+  })
+
+  it('should preserve hint on string entry', () => {
+    const value = { uri: '/feed.xml', hint: { key: 'test:feed', label: 'Feed' } }
+    const expected = {
+      uri: 'https://example.com/feed.xml',
+      hint: { key: 'test:feed', label: 'Feed' },
+    }
+
+    expect(normalizeUriEntry(value, resolveUrlFn, 'https://example.com')).toEqual(expected)
+  })
+
+  it('should preserve hint on array entry', () => {
+    const value = { uri: ['/feed/', '?feed=rss'], hint: { key: 'test:feed', label: 'Feed' } }
+    const expected = {
+      uri: ['https://example.com/feed/', 'https://example.com/?feed=rss'],
+      hint: { key: 'test:feed', label: 'Feed' },
+    }
+
+    expect(normalizeUriEntry(value, resolveUrlFn, 'https://example.com')).toEqual(expected)
   })
 })

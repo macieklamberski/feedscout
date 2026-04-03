@@ -1,6 +1,5 @@
 ---
-prev: HTML Method
-next: Guess Method
+title: "Discover Feeds: Headers Method"
 ---
 
 # Headers Method

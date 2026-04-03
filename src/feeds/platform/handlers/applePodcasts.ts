@@ -1,12 +1,12 @@
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
-import { isHostOf } from '../../../common/utils.js'
+import { composeHint, isHostOf } from '../../../common/utils.js'
 
 const hosts = ['podcasts.apple.com']
-const podcastPathRegex = /^\/[a-z]{2}\/podcast\/[^/]+\/id\d+/
-const feedUrlRegex = /"feedUrl"\s*:\s*"([^"]+)"/
+const podcastPattern = /^\/[a-z]{2}\/podcast\/[^/]+\/id\d+/
+const feedUrlPattern = /"feedUrl"\s*:\s*"([^"]+)"/
 
 const extractFeedUrlFromContent = (content: string): string | undefined => {
-  const match = content.match(feedUrlRegex)
+  const match = content.match(feedUrlPattern)
 
   return match?.[1]
 }
@@ -20,7 +20,7 @@ export const applePodcastsHandler: PlatformHandler = {
     const { pathname } = new URL(url)
 
     // Match podcast pages: /us/podcast/{name}/id{number}
-    return podcastPathRegex.test(pathname)
+    return podcastPattern.test(pathname)
   },
 
   resolve: (_url, content) => {
@@ -34,6 +34,6 @@ export const applePodcastsHandler: PlatformHandler = {
       return []
     }
 
-    return [feedUrl]
+    return [{ uri: feedUrl, hint: composeHint('apple-podcasts:podcast') }]
   },
 }
