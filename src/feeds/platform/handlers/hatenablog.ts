@@ -3,8 +3,8 @@ import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, isSubdomainOf } from '../../../common/utils.js'
 
 const domains = ['hatenablog.com', 'hatenablog.jp', 'hateblo.jp']
-const categoryPattern = /^\/archive\/category\/([^/]+)/
-const authorPattern = /^\/archive\/author\/([^/]+)/
+const categoryRegex = /^\/archive\/category\/([^/]+)/
+const authorRegex = /^\/archive\/author\/([^/]+)/
 
 export const hatenablogHandler: PlatformHandler = {
   match: (url) => {
@@ -16,7 +16,7 @@ export const hatenablogHandler: PlatformHandler = {
     const uris: Array<DiscoverUriEntry> = []
 
     // Category page: /archive/category/{category}
-    const categoryMatch = pathname.match(categoryPattern)
+    const categoryMatch = pathname.match(categoryRegex)
 
     if (categoryMatch?.[1]) {
       const category = categoryMatch[1]
@@ -32,7 +32,7 @@ export const hatenablogHandler: PlatformHandler = {
     }
 
     // Author page: /archive/author/{author}
-    const authorMatch = pathname.match(authorPattern)
+    const authorMatch = pathname.match(authorRegex)
 
     if (authorMatch?.[1]) {
       const author = authorMatch[1]

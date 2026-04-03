@@ -4,7 +4,7 @@ import { excludedPaths, hosts } from '../../../feeds/platform/handlers/codeberg.
 
 // Extracts the username from the path, excluding dots to avoid capturing
 // feed extensions like .rss in Codeberg feed URLs (e.g., /user.rss).
-const userPattern = /^\/([^/.]+)/
+const userRegex = /^\/([^/.]+)/
 
 export const codebergHandler: PlatformHandler = {
   match: (url) => {
@@ -13,7 +13,7 @@ export const codebergHandler: PlatformHandler = {
 
   resolve: (url) => {
     const { origin, pathname } = new URL(url)
-    const match = pathname.match(userPattern)
+    const match = pathname.match(userRegex)
 
     if (!match?.[1]) {
       return []

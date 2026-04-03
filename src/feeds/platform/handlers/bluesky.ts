@@ -1,7 +1,7 @@
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, isHostOf } from '../../../common/utils.js'
 
-const profilePattern = /^\/profile\/([^/]+)/
+const profileRegex = /^\/profile\/([^/]+)/
 
 const hosts = ['bsky.app', 'www.bsky.app']
 
@@ -12,7 +12,7 @@ export const blueskyHandler: PlatformHandler = {
 
   resolve: (url) => {
     const { pathname } = new URL(url)
-    const profileMatch = pathname.match(profilePattern)
+    const profileMatch = pathname.match(profileRegex)
     const handle = profileMatch?.[1]
 
     if (!handle) {

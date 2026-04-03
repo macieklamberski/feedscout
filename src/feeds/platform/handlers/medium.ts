@@ -1,11 +1,11 @@
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, isAnyOf, isHostOf, isSubdomainOf } from '../../../common/utils.js'
 
-const userPattern = /^\/@([^/]+)/
-const tagPattern = /^\/tag\/([^/]+)/
-const publicationTagPattern = /^\/([^/@][^/]+)\/tagged\/([^/]+)/
-const publicationPattern = /^\/([^/@][^/]+)/
-const subdomainTagPattern = /^\/tagged\/([^/]+)/
+const userRegex = /^\/@([^/]+)/
+const tagRegex = /^\/tag\/([^/]+)/
+const publicationTagRegex = /^\/([^/@][^/]+)\/tagged\/([^/]+)/
+const publicationRegex = /^\/([^/@][^/]+)/
+const subdomainTagRegex = /^\/tagged\/([^/]+)/
 
 const hosts = ['medium.com', 'www.medium.com']
 const excludedPaths = ['search', 'me', 'new-story', 'plans', 'membership']
@@ -22,7 +22,7 @@ export const mediumHandler: PlatformHandler = {
     // Medium.com user profiles: /@username.
     if (hosts.includes(lowerHostname)) {
       // User profile: /@username.
-      const userMatch = pathname.match(userPattern)
+      const userMatch = pathname.match(userRegex)
 
       if (userMatch?.[1]) {
         const username = userMatch[1]
@@ -36,7 +36,7 @@ export const mediumHandler: PlatformHandler = {
       }
 
       // Tag feed: /tag/tag-name.
-      const tagMatch = pathname.match(tagPattern)
+      const tagMatch = pathname.match(tagRegex)
 
       if (tagMatch?.[1]) {
         const tag = tagMatch[1]
@@ -45,7 +45,7 @@ export const mediumHandler: PlatformHandler = {
       }
 
       // Publication tagged feed: /publication/tagged/tag-name.
-      const pubTagMatch = pathname.match(publicationTagPattern)
+      const pubTagMatch = pathname.match(publicationTagRegex)
 
       if (pubTagMatch?.[1] && pubTagMatch?.[2]) {
         const publication = pubTagMatch[1]
@@ -62,7 +62,7 @@ export const mediumHandler: PlatformHandler = {
       }
 
       // Publication: /publication-name.
-      const pubMatch = pathname.match(publicationPattern)
+      const pubMatch = pathname.match(publicationRegex)
 
       if (pubMatch?.[1]) {
         const publication = pubMatch[1]
@@ -87,7 +87,7 @@ export const mediumHandler: PlatformHandler = {
       const subdomain = lowerHostname.replace('.medium.com', '')
 
       // Subdomain tagged feed: subdomain.medium.com/tagged/tag-name.
-      const tagMatch = pathname.match(subdomainTagPattern)
+      const tagMatch = pathname.match(subdomainTagRegex)
 
       if (tagMatch?.[1]) {
         return [

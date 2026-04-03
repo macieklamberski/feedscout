@@ -2,10 +2,10 @@ import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, isHostOf } from '../../../common/utils.js'
 
 export const hosts = ['lobste.rs']
-const tagPattern = /^\/t\/([a-zA-Z0-9,_-]+)/
-const domainPattern = /^\/domains\/([^/]+)/
-const userPattern = /^\/~([a-zA-Z0-9_-]+)/
-const topPattern = /^\/top(?:\/(1d|3d|1w|1m|1y))?\/?$/
+const tagRegex = /^\/t\/([a-zA-Z0-9,_-]+)/
+const domainRegex = /^\/domains\/([^/]+)/
+const userRegex = /^\/~([a-zA-Z0-9_-]+)/
+const topRegex = /^\/top(?:\/(1d|3d|1w|1m|1y))?\/?$/
 
 export const lobstersHandler: PlatformHandler = {
   match: (url) => {
@@ -16,7 +16,7 @@ export const lobstersHandler: PlatformHandler = {
     const { pathname } = new URL(url)
 
     // Tag page: /t/{tag} or /t/{tag1},{tag2}
-    const tagMatch = pathname.match(tagPattern)
+    const tagMatch = pathname.match(tagRegex)
 
     if (tagMatch?.[1]) {
       const tags = tagMatch[1]
@@ -25,7 +25,7 @@ export const lobstersHandler: PlatformHandler = {
     }
 
     // Domain page: /domains/{domain}
-    const domainMatch = pathname.match(domainPattern)
+    const domainMatch = pathname.match(domainRegex)
 
     if (domainMatch?.[1]) {
       const domain = domainMatch[1]
@@ -39,7 +39,7 @@ export const lobstersHandler: PlatformHandler = {
     }
 
     // User page: /~{username}
-    const userMatch = pathname.match(userPattern)
+    const userMatch = pathname.match(userRegex)
 
     if (userMatch?.[1]) {
       const username = userMatch[1]
@@ -53,7 +53,7 @@ export const lobstersHandler: PlatformHandler = {
     }
 
     // Top stories page: /top or /top/{period}
-    const topMatch = pathname.match(topPattern)
+    const topMatch = pathname.match(topRegex)
 
     if (topMatch) {
       const period = topMatch[1]

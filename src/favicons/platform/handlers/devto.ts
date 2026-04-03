@@ -5,13 +5,13 @@ import { isNonEmptyString, parseBodyJson } from '../../utils.js'
 
 // Extracts the username from the path, excluding dots to avoid capturing
 // feed extensions that may be appended to the URL.
-const userPattern = /^\/([^/.]+)/
+const userRegex = /^\/([^/.]+)/
 
 export const devtoHandler: PlatformHandler = {
   match: (url) => {
     try {
       const { pathname } = new URL(url)
-      const match = pathname.match(userPattern)
+      const match = pathname.match(userRegex)
 
       if (!isHostOf(url, hosts) || !match?.[1]) {
         return false
@@ -35,7 +35,7 @@ export const devtoHandler: PlatformHandler = {
 
     try {
       const { pathname } = new URL(url)
-      const match = pathname.match(userPattern)
+      const match = pathname.match(userRegex)
 
       if (!match?.[1] || match[1] === 't') {
         return []
