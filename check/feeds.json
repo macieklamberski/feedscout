@@ -126,7 +126,10 @@
     "https://steamcommunity.com/groups/Valve/rss",
     "https://steamcommunity.com/groups/SteamClientBeta/rss"
   ],
-  "substack": ["https://newsletter.pragmaticengineer.com/feed"],
+  "substack": [
+    "https://newsletter.pragmaticengineer.com/feed",
+    "https://govtrackus.substack.com/feed"
+  ],
   "tumblr": ["https://staff.tumblr.com/rss", "https://staff.tumblr.com/tagged/updates/rss"],
   "vimeo": [
     "https://vimeo.com/casey/videos/rss",

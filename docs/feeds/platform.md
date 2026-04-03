@@ -81,6 +81,7 @@ Discovers RSS feeds for Substack newsletters.
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | `*.substack.com` | Newsletter feed |
+| `substack.com/@{user}` | Newsletter feed |
 
 ### WordPress.com
 
