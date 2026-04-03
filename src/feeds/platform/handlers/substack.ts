@@ -9,27 +9,20 @@ export const substackHandler: PlatformHandler = {
       return true
     }
 
-    try {
-      return isHostOf(url, 'substack.com') && profilePattern.test(new URL(url).pathname)
-    } catch {}
-
-    return false
+    return isHostOf(url, 'substack.com') && profilePattern.test(new URL(url).pathname)
   },
 
   resolve: (url) => {
     const parsed = new URL(url)
+    const profileMatch = parsed.pathname.match(profilePattern)
 
-    if (isHostOf(url, 'substack.com')) {
-      const match = parsed.pathname.match(profilePattern)
-
-      if (match?.[1]) {
-        return [
-          {
-            uri: `https://${match[1]}.substack.com/feed`,
-            hint: composeHint('substack:newsletter'),
-          },
-        ]
-      }
+    if (isHostOf(url, 'substack.com') && profileMatch?.[1]) {
+      return [
+        {
+          uri: `https://${profileMatch[1]}.substack.com/feed`,
+          hint: composeHint('substack:newsletter'),
+        },
+      ]
     }
 
     return [{ uri: `${parsed.origin}/feed`, hint: composeHint('substack:newsletter') }]
