@@ -38,7 +38,7 @@ describe('discoverFeeds', () => {
         format: 'rss',
         title: 'Test RSS',
         description: 'Test feed',
-        siteUrl: 'https://example.com',
+        siteUrl: 'https://example.com/',
       },
     ]
 
@@ -81,7 +81,7 @@ describe('discoverFeeds', () => {
         format: 'rss',
         title: 'Test RSS',
         description: 'Test feed',
-        siteUrl: 'https://example.com',
+        siteUrl: 'https://example.com/',
       },
       {
         url: 'https://example.com/atom',
@@ -90,7 +90,7 @@ describe('discoverFeeds', () => {
         format: 'atom',
         title: 'Test Atom',
         description: 'Test feed',
-        siteUrl: 'https://example.com',
+        siteUrl: 'https://example.com/',
       },
     ]
 
@@ -125,7 +125,7 @@ describe('discoverFeeds', () => {
         format: 'rss',
         title: 'Test RSS',
         description: 'Test feed',
-        siteUrl: 'https://example.com',
+        siteUrl: 'https://example.com/',
       },
     ]
 
@@ -161,7 +161,7 @@ describe('discoverFeeds', () => {
         format: 'rss',
         title: 'Test RSS',
         description: 'Test feed',
-        siteUrl: 'https://example.com',
+        siteUrl: 'https://example.com/',
       },
       {
         url: 'https://example.com/rss',
@@ -170,7 +170,7 @@ describe('discoverFeeds', () => {
         format: 'rss',
         title: 'Test RSS',
         description: 'Test feed',
-        siteUrl: 'https://example.com',
+        siteUrl: 'https://example.com/',
       },
     ]
 
@@ -202,7 +202,7 @@ describe('discoverFeeds', () => {
         format: 'json',
         title: 'Test JSON Feed',
         description: 'Test feed',
-        siteUrl: 'https://example.com',
+        siteUrl: 'https://example.com/',
       },
     ]
 
@@ -238,7 +238,7 @@ describe('discoverFeeds', () => {
         format: 'rss',
         title: 'Test RSS',
         description: 'Test feed',
-        siteUrl: 'https://example.com',
+        siteUrl: 'https://example.com/',
       },
       {
         url: 'https://example.com/feeds/posts/default',
@@ -247,7 +247,7 @@ describe('discoverFeeds', () => {
         format: 'rss',
         title: 'Test RSS',
         description: 'Test feed',
-        siteUrl: 'https://example.com',
+        siteUrl: 'https://example.com/',
       },
     ]
 
@@ -289,7 +289,7 @@ describe('discoverFeeds', () => {
         format: 'rss',
         title: 'Test RSS',
         description: 'Test feed',
-        siteUrl: 'https://example.com',
+        siteUrl: 'https://example.com/',
       },
       {
         url: 'https://www.example.com/feed',
@@ -298,7 +298,7 @@ describe('discoverFeeds', () => {
         format: 'rss',
         title: 'Test RSS',
         description: 'Test feed',
-        siteUrl: 'https://example.com',
+        siteUrl: 'https://example.com/',
       },
       {
         url: 'https://blog.example.com/feed',
@@ -307,7 +307,7 @@ describe('discoverFeeds', () => {
         format: 'rss',
         title: 'Test RSS',
         description: 'Test feed',
-        siteUrl: 'https://example.com',
+        siteUrl: 'https://example.com/',
       },
     ]
 
@@ -355,7 +355,7 @@ describe('discoverFeeds', () => {
           format: 'rss',
           title: 'Test RSS',
           description: 'Test feed',
-          siteUrl: 'https://reddit.com',
+          siteUrl: 'https://reddit.com/',
           hint: { key: 'reddit:posts', label: 'Posts' },
         },
       ]
@@ -434,7 +434,7 @@ describe('discoverFeeds', () => {
           format: 'rss',
           title: 'Custom Feed',
           description: 'Custom feed',
-          siteUrl: 'https://custom.com',
+          siteUrl: 'https://custom.com/',
         },
       ]
 
@@ -470,7 +470,7 @@ describe('discoverFeeds', () => {
           format: 'rss',
           title: 'Test RSS',
           description: 'Test feed',
-          siteUrl: 'https://reddit.com',
+          siteUrl: 'https://reddit.com/',
           hint: { key: 'reddit:posts', label: 'Posts' },
         },
         {
@@ -480,7 +480,7 @@ describe('discoverFeeds', () => {
           format: 'rss',
           title: 'Test RSS',
           description: 'Test feed',
-          siteUrl: 'https://reddit.com',
+          siteUrl: 'https://reddit.com/',
         },
       ]
 
@@ -577,5 +577,42 @@ describe('defaultPlatformOptions', () => {
     )
 
     expect(value).toBe(true)
+  })
+
+  it('should fall back to guess method when initial URL fetch throws', async () => {
+    const rssContent = `<?xml version="1.0"?>
+      <rss version="2.0">
+        <channel><title>Test</title></channel>
+      </rss>`
+    const fetchFn: DiscoverFetchFn = (url: string) => {
+      if (url === 'https://example.com/') {
+        throw new Error('Connection refused')
+      }
+
+      return Promise.resolve({
+        url,
+        body: url === 'https://example.com/feed.xml' ? rssContent : '',
+        headers: new Headers(),
+        status: url === 'https://example.com/feed.xml' ? 200 : 404,
+        statusText: url === 'https://example.com/feed.xml' ? 'OK' : 'Not Found',
+      })
+    }
+    const value = await discoverFeeds('https://example.com/', {
+      methods: ['guess'],
+      fetchFn,
+    })
+    const expected: Array<DiscoverResult<FeedResult>> = [
+      {
+        url: 'https://example.com/feed.xml',
+        isValid: true,
+        method: 'guess',
+        format: 'rss',
+        title: 'Test',
+        description: undefined,
+        siteUrl: undefined,
+      },
+    ]
+
+    expect(value).toEqual(expected)
   })
 })

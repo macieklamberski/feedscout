@@ -61,5 +61,12 @@ describe('githubGistHandler', () => {
       expect(githubGistHandler.resolve('https://gist.github.com/Discover')).toEqual([])
       expect(githubGistHandler.resolve('https://gist.github.com/SEARCH')).toEqual([])
     })
+
+    it('should strip feed extension from user URL', () => {
+      const value = githubGistHandler.resolve('https://gist.github.com/octocat.atom')
+      const expected: Array<DiscoverUriEntry> = [{ uri: 'https://github.com/octocat.png' }]
+
+      expect(value).toEqual(expected)
+    })
   })
 })

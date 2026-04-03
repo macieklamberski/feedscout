@@ -3,16 +3,17 @@ import { isHostOf } from '../../../common/utils.js'
 import { hosts } from '../../../feeds/platform/handlers/reddit.js'
 import { isNonEmptyString, parseBodyJson } from '../../utils.js'
 
-export const isSubredditPath = (pathname: string): boolean => {
-  const segments = pathname.split('/').filter(Boolean)
+// Extracts the subreddit or username from the path, excluding dots to avoid
+// capturing feed extensions like .rss in Reddit feed URLs (e.g., /r/sub.rss).
+const subredditPattern = /^\/r\/([^/.]+)/
+const userPattern = /^\/(u|user)\/([^/.]+)/
 
-  return segments.length >= 2 && segments[0] === 'r'
+export const isSubredditPath = (pathname: string): boolean => {
+  return subredditPattern.test(pathname)
 }
 
 export const isUserPath = (pathname: string): boolean => {
-  const segments = pathname.split('/').filter(Boolean)
-
-  return segments.length >= 2 && (segments[0] === 'u' || segments[0] === 'user')
+  return userPattern.test(pathname)
 }
 
 export const redditHandler: PlatformHandler = {
@@ -33,9 +34,10 @@ export const redditHandler: PlatformHandler = {
 
     try {
       const { pathname } = new URL(url)
+      const subredditMatch = pathname.match(subredditPattern)
 
-      if (isSubredditPath(pathname)) {
-        const subreddit = pathname.split('/').filter(Boolean)[1]
+      if (subredditMatch?.[1]) {
+        const subreddit = subredditMatch[1]
         const apiUrl = `https://www.reddit.com/r/${subreddit}/about.json`
         const response = await fetchFn(apiUrl)
         const data = parseBodyJson(response.body)
@@ -46,8 +48,10 @@ export const redditHandler: PlatformHandler = {
         }
       }
 
-      if (isUserPath(pathname)) {
-        const username = pathname.split('/').filter(Boolean)[1]
+      const userMatch = pathname.match(userPattern)
+
+      if (userMatch?.[2]) {
+        const username = userMatch[2]
         const apiUrl = `https://www.reddit.com/user/${username}/about.json`
         const response = await fetchFn(apiUrl)
         const data = parseBodyJson(response.body)

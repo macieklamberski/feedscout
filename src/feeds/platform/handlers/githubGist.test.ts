@@ -93,6 +93,12 @@ describe('githubGistHandler', () => {
       }
     })
 
+    it('should return empty array for gist URL with excluded username', () => {
+      const value = 'https://gist.github.com/discover/1234567890abcdef'
+
+      expect(githubGistHandler.resolve(value)).toEqual([])
+    })
+
     it('should return empty array for root path', () => {
       const value = 'https://gist.github.com/'
 

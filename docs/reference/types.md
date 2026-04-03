@@ -14,7 +14,7 @@ import type {
   DiscoverResult,
   DiscoverProgress,
   DiscoverFetchFn,
-  DiscoverNormalizeUrlFn,
+  DiscoverResolveUrlFn,
   DiscoverUriEntry,
   DiscoverUriHint,
   UriEntry,
@@ -50,7 +50,7 @@ type DiscoverOptions<TValid, TMethods extends DiscoverMethod = DiscoverMethod> =
   methods?: DiscoverMethodsConfig<TMethods>
   fetchFn?: DiscoverFetchFn
   extractFn?: DiscoverExtractFn<TValid>
-  normalizeUrlFn?: DiscoverNormalizeUrlFn
+  resolveUrlFn?: DiscoverResolveUrlFn
   stopOnFirstMethod?: boolean
   stopOnFirstResult?: boolean
   concurrency?: number
@@ -223,7 +223,7 @@ Custom fetch function type:
 type DiscoverFetchFn = (
   url: string,
   options?: DiscoverFetchFnOptions,
-) => Promise<DiscoverFetchFnResponse>
+) => MaybePromise<DiscoverFetchFnResponse>
 
 type DiscoverFetchFnOptions = {
   method?: 'GET' | 'HEAD'
@@ -248,7 +248,7 @@ Custom extractor function type:
 ```typescript
 type DiscoverExtractFn<TValid> = (
   input: DiscoverExtractFnInput,
-) => Promise<DiscoverResult<TValid>>
+) => MaybePromise<DiscoverResult<TValid>>
 
 type DiscoverExtractFnInput = {
   url: string

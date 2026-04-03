@@ -1,6 +1,10 @@
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, isHostOf, isSubdomainOf } from '../../../common/utils.js'
 
+const tagPattern = /^\/questions\/tagged\/([\w.+-]+)/
+const questionPattern = /^\/questions\/(\d+)/
+const userPattern = /^\/users\/(\d+)/
+
 // Standalone domains from SE API: https://api.stackexchange.com/2.3/sites
 const domains = [
   'stackoverflow.com',
@@ -20,7 +24,7 @@ export const stackExchangeHandler: PlatformHandler = {
   resolve: (url) => {
     const { origin, pathname } = new URL(url)
 
-    const tagMatch = pathname.match(/^\/questions\/tagged\/([\w.+-]+)/)
+    const tagMatch = pathname.match(tagPattern)
 
     if (tagMatch?.[1]) {
       return [
@@ -31,7 +35,7 @@ export const stackExchangeHandler: PlatformHandler = {
       ]
     }
 
-    const questionMatch = pathname.match(/^\/questions\/(\d+)/)
+    const questionMatch = pathname.match(questionPattern)
 
     if (questionMatch?.[1]) {
       return [
@@ -42,7 +46,7 @@ export const stackExchangeHandler: PlatformHandler = {
       ]
     }
 
-    const userMatch = pathname.match(/^\/users\/(\d+)/)
+    const userMatch = pathname.match(userPattern)
 
     if (userMatch?.[1]) {
       return [

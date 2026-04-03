@@ -309,4 +309,254 @@ describe('discoverFavicons', () => {
 
     expect(value).toEqual([])
   })
+
+  it('should recognize direct favicon URL via image content-type', async () => {
+    const fetchFn: DiscoverFetchFn = async (url: string) => ({
+      url,
+      body: 'binary',
+      headers: new Headers({ 'content-type': 'image/png' }),
+      status: 200,
+      statusText: 'OK',
+    })
+    const value = await discoverFavicons('https://example.com/icon.png', { fetchFn })
+    const expected: Array<DiscoverResult<FaviconResult>> = [
+      { url: 'https://example.com/icon.png', isValid: true },
+    ]
+
+    expect(value).toEqual(expected)
+  })
+
+  it('should recognize direct SVG favicon via content', async () => {
+    const svgContent = '<svg xmlns="http://www.w3.org/2000/svg"><circle r="10"/></svg>'
+    const fetchFn: DiscoverFetchFn = async (url: string) => ({
+      url,
+      body: svgContent,
+      headers: new Headers(),
+      status: 200,
+      statusText: 'OK',
+    })
+    const value = await discoverFavicons('https://example.com/icon.svg', { fetchFn })
+    const expected: Array<DiscoverResult<FaviconResult>> = [
+      { url: 'https://example.com/icon.svg', isValid: true },
+    ]
+
+    expect(value).toEqual(expected)
+  })
+
+  it('should recognize SVG favicon from object input without headers', async () => {
+    const svgContent = '<?xml version="1.0"?><svg xmlns="http://www.w3.org/2000/svg"></svg>'
+    const mockFetch = createMockFetch({})
+    const value = await discoverFavicons(
+      { url: 'https://example.com/icon.svg', content: svgContent },
+      { fetchFn: mockFetch },
+    )
+    const expected: Array<DiscoverResult<FaviconResult>> = [
+      { url: 'https://example.com/icon.svg', isValid: true },
+    ]
+
+    expect(value).toEqual(expected)
+  })
+
+  it('should not recognize HTML page with embedded SVG as direct favicon', async () => {
+    const html =
+      '<html><body><svg xmlns="http://www.w3.org/2000/svg"><circle r="10"/></svg></body></html>'
+    const mockFetch = createMockFetch({})
+    const value = await discoverFavicons(
+      { url: 'https://example.com', content: html },
+      { methods: ['guess'], fetchFn: mockFetch },
+    )
+
+    expect(value).toEqual([])
+  })
+
+  it('should discover favicons from site HTML when given RSS feed URL', async () => {
+    const rssContent = `<?xml version="1.0"?>
+      <rss version="2.0">
+        <channel>
+          <title>Example</title>
+          <link>https://example.com</link>
+        </channel>
+      </rss>`
+    const siteHtml = '<link rel="icon" href="/favicon.ico">'
+    const mockFetch = createMockFetch({
+      'https://example.com/feed.xml': rssContent,
+      'https://example.com/': siteHtml,
+      'https://example.com/favicon.ico': 'binary',
+    })
+    const value = await discoverFavicons('https://example.com/feed.xml', {
+      methods: ['html'],
+      fetchFn: mockFetch,
+    })
+    const expected: Array<DiscoverResult<FaviconResult>> = [
+      { url: 'https://example.com/favicon.ico', isValid: true, method: 'html' },
+    ]
+
+    expect(value).toEqual(expected)
+  })
+
+  it('should discover favicons from site HTML when given Atom feed URL', async () => {
+    const atomContent = `<?xml version="1.0"?>
+      <feed xmlns="http://www.w3.org/2005/Atom">
+        <title>Example</title>
+        <link rel="alternate" href="https://example.com"/>
+      </feed>`
+    const siteHtml = '<link rel="icon" href="/icon.png">'
+    const mockFetch = createMockFetch({
+      'https://example.com/feed.xml': atomContent,
+      'https://example.com/': siteHtml,
+      'https://example.com/icon.png': 'binary',
+    })
+    const value = await discoverFavicons('https://example.com/feed.xml', {
+      methods: ['html'],
+      fetchFn: mockFetch,
+    })
+    const expected: Array<DiscoverResult<FaviconResult>> = [
+      { url: 'https://example.com/icon.png', isValid: true, method: 'html' },
+    ]
+
+    expect(value).toEqual(expected)
+  })
+
+  it('should discover favicons from site HTML when given JSON Feed URL', async () => {
+    const jsonContent = JSON.stringify({
+      version: 'https://jsonfeed.org/version/1.1',
+      title: 'Example',
+      home_page_url: 'https://example.com',
+      items: [],
+    })
+    const siteHtml = '<link rel="icon" href="/favicon.svg">'
+    const mockFetch = createMockFetch({
+      'https://example.com/feed.json': jsonContent,
+      'https://example.com/': siteHtml,
+      'https://example.com/favicon.svg': 'binary',
+    })
+    const value = await discoverFavicons('https://example.com/feed.json', {
+      methods: ['html'],
+      fetchFn: mockFetch,
+    })
+    const expected: Array<DiscoverResult<FaviconResult>> = [
+      { url: 'https://example.com/favicon.svg', isValid: true, method: 'html' },
+    ]
+
+    expect(value).toEqual(expected)
+  })
+
+  it('should fall back to origin when feed has no site URL', async () => {
+    const atomContent = `<?xml version="1.0"?>
+      <feed xmlns="http://www.w3.org/2005/Atom">
+        <title>Example</title>
+      </feed>`
+    const siteHtml = '<link rel="icon" href="/favicon.ico">'
+    const mockFetch = createMockFetch({
+      'https://example.com/feed.xml': atomContent,
+      'https://example.com': siteHtml,
+      'https://example.com/favicon.ico': 'binary',
+    })
+    const value = await discoverFavicons('https://example.com/feed.xml', {
+      methods: ['html'],
+      fetchFn: mockFetch,
+    })
+    const expected: Array<DiscoverResult<FaviconResult>> = [
+      { url: 'https://example.com/favicon.ico', isValid: true, method: 'html' },
+    ]
+
+    expect(value).toEqual(expected)
+  })
+
+  it('should return results from both feed and html methods when given feed URL', async () => {
+    const atomContent = `<?xml version="1.0"?>
+      <feed xmlns="http://www.w3.org/2005/Atom">
+        <title>Example</title>
+        <icon>https://example.com/feed-icon.png</icon>
+        <link rel="alternate" href="https://example.com"/>
+      </feed>`
+    const siteHtml = '<link rel="icon" href="/site-icon.png">'
+    const mockFetch = createMockFetch({
+      'https://example.com/feed.xml': atomContent,
+      'https://example.com/': siteHtml,
+      'https://example.com/feed-icon.png': 'binary',
+      'https://example.com/site-icon.png': 'binary',
+    })
+    const value = await discoverFavicons('https://example.com/feed.xml', {
+      methods: ['feed', 'html'],
+      fetchFn: mockFetch,
+    })
+    const expected: Array<DiscoverResult<FaviconResult>> = [
+      { url: 'https://example.com/feed-icon.png', isValid: true, method: 'feed' },
+      { url: 'https://example.com/site-icon.png', isValid: true, method: 'html' },
+    ]
+
+    expect(value).toEqual(expected)
+  })
+
+  it('should not trigger site resolution for non-feed input', async () => {
+    const html = '<link rel="icon" href="/favicon.ico">'
+    const mockFetch = createMockFetch({
+      'https://example.com': html,
+      'https://example.com/favicon.ico': 'binary',
+    })
+    const value = await discoverFavicons('https://example.com', {
+      methods: ['html'],
+      fetchFn: mockFetch,
+    })
+    const expected: Array<DiscoverResult<FaviconResult>> = [
+      { url: 'https://example.com/favicon.ico', isValid: true, method: 'html' },
+    ]
+
+    expect(value).toEqual(expected)
+  })
+
+  it('should proceed gracefully when site URL fetch fails', async () => {
+    const rssContent = `<?xml version="1.0"?>
+      <rss version="2.0">
+        <channel>
+          <link>https://dead-site.com</link>
+        </channel>
+      </rss>`
+    const fetchFn: DiscoverFetchFn = (url: string) => {
+      if (url === 'https://dead-site.com') {
+        return Promise.reject(new Error('Connection refused'))
+      }
+
+      return Promise.resolve({
+        url,
+        body: url === 'https://example.com/feed.xml' ? rssContent : '',
+        headers: new Headers(),
+        status: 200,
+        statusText: 'OK',
+      })
+    }
+    const value = await discoverFavicons('https://example.com/feed.xml', {
+      methods: ['html'],
+      fetchFn,
+    })
+
+    expect(value).toEqual([])
+  })
+
+  it('should fall back to guess method when initial URL fetch throws', async () => {
+    const pngContent = '\x89PNG\r\n\x1a\n'
+    const fetchFn: DiscoverFetchFn = (url: string) => {
+      if (url === 'https://example.com/') {
+        throw new Error('Connection refused')
+      }
+
+      return Promise.resolve({
+        url,
+        body: url === 'https://example.com/favicon.ico' ? pngContent : '',
+        headers: new Headers(),
+        status: url === 'https://example.com/favicon.ico' ? 200 : 404,
+        statusText: url === 'https://example.com/favicon.ico' ? 'OK' : 'Not Found',
+      })
+    }
+    const value = await discoverFavicons('https://example.com/', {
+      methods: ['guess'],
+      fetchFn,
+    })
+    const expected: Array<DiscoverResult<FaviconResult>> = [
+      { url: 'https://example.com/favicon.ico', isValid: true, method: 'guess' },
+    ]
+
+    expect(value).toEqual(expected)
+  })
 })

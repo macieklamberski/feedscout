@@ -39,7 +39,7 @@ discoverHubs({
 |----------|------|---------|-------------|
 | `methods` | `DiscoverHubsMethodsConfig` | all | Methods to use |
 | `fetchFn` | `DiscoverFetchFn` | native fetch | Custom fetch function |
-| `normalizeUrlFn` | `DiscoverNormalizeUrlFn` | resolve relative | Custom URL normalization |
+| `resolveUrlFn` | `DiscoverResolveUrlFn` | resolve relative | Custom URL resolution |
 
 #### methods
 
@@ -126,21 +126,21 @@ const hubs = await discoverHubs('https://example.com/feed.xml', {
 
 See [Customize Data Fetching](/customization/data-fetching) for examples with Axios, Got, Ky, and more.
 
-### With Custom URL Normalization
+### With Custom URL Resolution
 
 ```typescript
-import type { DiscoverNormalizeUrlFn } from 'feedscout'
+import type { DiscoverResolveUrlFn } from 'feedscout'
 
-const normalizeUrl: DiscoverNormalizeUrlFn = (url, baseUrl) => {
+const resolveUrl: DiscoverResolveUrlFn = (url, baseUrl) => {
   const resolved = new URL(url, baseUrl)
   resolved.protocol = 'https:'
   return resolved.href
 }
 
 const hubs = await discoverHubs('https://example.com/feed.xml', {
-  normalizeUrlFn: normalizeUrl,
+  resolveUrlFn: resolveUrl,
 })
 ```
 
-See [Customize URL Normalization](/customization/url-normalization) for more examples.
+See [Customize URL Resolution](/customization/url-resolution) for more examples.
 

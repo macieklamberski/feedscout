@@ -2,7 +2,7 @@ import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, isHostOf } from '../../../common/utils.js'
 
 const hosts = ['paragraph.com', 'www.paragraph.com']
-const userPathRegex = /^\/@([^/]+)/
+const userPattern = /^\/@([^/]+)/
 
 export const paragraphHandler: PlatformHandler = {
   match: (url) => {
@@ -11,7 +11,7 @@ export const paragraphHandler: PlatformHandler = {
 
   resolve: (url) => {
     const { pathname } = new URL(url)
-    const userMatch = pathname.match(userPathRegex)
+    const userMatch = pathname.match(userPattern)
 
     if (!userMatch?.[1]) {
       return []

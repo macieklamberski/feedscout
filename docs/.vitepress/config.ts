@@ -87,7 +87,7 @@ export default defineConfig({
         items: [
           { text: 'Data Fetching', link: '/customization/data-fetching' },
           { text: 'Data Extraction', link: '/customization/data-extraction' },
-          { text: 'URL Normalization', link: '/customization/url-normalization' },
+          { text: 'URL Resolution', link: '/customization/url-resolution' },
         ],
       },
       {

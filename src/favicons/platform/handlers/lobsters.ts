@@ -2,14 +2,14 @@ import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { isHostOf } from '../../../common/utils.js'
 import { hosts } from '../../../feeds/platform/handlers/lobsters.js'
 
-const userPathRegex = /^\/~([a-zA-Z0-9_-]+)/
+const userPattern = /^\/~([a-zA-Z0-9_-]+)/
 
 export const lobstersHandler: PlatformHandler = {
   match: (url) => {
     try {
       const { pathname } = new URL(url)
 
-      return isHostOf(url, hosts) && userPathRegex.test(pathname)
+      return isHostOf(url, hosts) && userPattern.test(pathname)
     } catch {}
 
     return false
@@ -17,7 +17,7 @@ export const lobstersHandler: PlatformHandler = {
 
   resolve: (url) => {
     const { pathname } = new URL(url)
-    const match = pathname.match(userPathRegex)
+    const match = pathname.match(userPattern)
 
     if (!match?.[1]) {
       return []

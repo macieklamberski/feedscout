@@ -8,9 +8,15 @@
   },
   "hints": {
     "youtube:all": "All uploads",
-    "youtube:videos": "Videos only",
-    "youtube:shorts": "Shorts only",
-    "youtube:live": "Live streams only",
+    "youtube:videos": "Videos",
+    "youtube:shorts": "Shorts",
+    "youtube:live": "Live streams",
+    "youtube:popular-videos": "Popular videos",
+    "youtube:popular-shorts": "Popular shorts",
+    "youtube:popular-live": "Popular live streams",
+    "youtube:member-videos": "Member videos",
+    "youtube:member-shorts": "Member shorts",
+    "youtube:member-live": "Member live streams",
     "youtube:playlist": "Playlist",
     "github:activity": "Activity",
     "github:releases": "Releases",
@@ -118,6 +124,8 @@
     "v2ex:node": "Node",
     "v2ex:member": "Member",
     "v2ex:tab": "Tab",
-    "ximalaya:album": "Album"
+    "ximalaya:album": "Album",
+    "lemmy:community": "Community",
+    "lemmy:user": "User"
   }
 }

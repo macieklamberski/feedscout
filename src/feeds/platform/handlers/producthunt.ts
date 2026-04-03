@@ -2,8 +2,8 @@ import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, isHostOf } from '../../../common/utils.js'
 
 const hosts = ['producthunt.com', 'www.producthunt.com']
-const topicPathRegex = /^\/topics\/([a-zA-Z0-9_-]+)/
-const categoryPathRegex = /^\/categories\/([a-zA-Z0-9_-]+)/
+const topicPattern = /^\/topics\/([a-zA-Z0-9_-]+)/
+const categoryPattern = /^\/categories\/([a-zA-Z0-9_-]+)/
 
 export const producthuntHandler: PlatformHandler = {
   match: (url) => {
@@ -14,7 +14,7 @@ export const producthuntHandler: PlatformHandler = {
     const { pathname } = new URL(url)
 
     // Topic page: /topics/{topic}
-    const topicMatch = pathname.match(topicPathRegex)
+    const topicMatch = pathname.match(topicPattern)
 
     if (topicMatch?.[1]) {
       const topic = topicMatch[1]
@@ -28,7 +28,7 @@ export const producthuntHandler: PlatformHandler = {
     }
 
     // Category page: /categories/{category}
-    const categoryMatch = pathname.match(categoryPathRegex)
+    const categoryMatch = pathname.match(categoryPattern)
 
     if (categoryMatch?.[1]) {
       const category = categoryMatch[1]

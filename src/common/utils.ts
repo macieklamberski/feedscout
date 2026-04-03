@@ -1,5 +1,7 @@
 import locales from './locales.json' with { type: 'json' }
-import type { DiscoverUriHint } from './types.js'
+import type { DiscoverResolveUrlFn, DiscoverUriHint } from './types.js'
+
+const whitespaceRegex = /\s+/
 
 export const composeHint = (key: string): DiscoverUriHint => ({
   key,
@@ -48,7 +50,7 @@ export const isAnyOf = (
 }
 
 export const anyWordMatchesAnyOf = (value: string, patterns: Array<string>): boolean => {
-  const words = value.toLowerCase().split(/\s+/)
+  const words = value.toLowerCase().split(whitespaceRegex)
   return words.some((word) => isAnyOf(word, patterns))
 }
 
@@ -97,8 +99,12 @@ export const omitEmpty = <T>(array: Array<T | null | undefined>): Array<T> => {
   return result
 }
 
-export const normalizeUrl = (url: string, baseUrl: string | undefined): string => {
-  return baseUrl ? new URL(url, baseUrl).href : url
+export const resolveUrl: DiscoverResolveUrlFn = (url, baseUrl) => {
+  try {
+    return new URL(url, baseUrl).href
+  } catch {
+    return
+  }
 }
 
 export const matchesAnyOfLinkSelectors = (

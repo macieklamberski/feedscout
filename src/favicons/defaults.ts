@@ -11,6 +11,7 @@ import { deviantartHandler } from './platform/handlers/deviantart.js'
 import { devtoHandler } from './platform/handlers/devto.js'
 import { githubHandler } from './platform/handlers/github.js'
 import { githubGistHandler } from './platform/handlers/githubGist.js'
+import { gitlabHandler } from './platform/handlers/gitlab.js'
 import { lobstersHandler } from './platform/handlers/lobsters.js'
 import { mastodonHandler } from './platform/handlers/mastodon.js'
 import { redditHandler } from './platform/handlers/reddit.js'
@@ -20,6 +21,7 @@ import { tumblrHandler } from './platform/handlers/tumblr.js'
 export const defaultIconRels = [
   'icon',
   'shortcut',
+  'alternate icon',
   'apple-touch-icon',
   'apple-touch-icon-precomposed',
 ]
@@ -67,6 +69,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
   handlers: [
     githubHandler,
     githubGistHandler,
+    gitlabHandler,
     mastodonHandler,
     blueskyHandler,
     redditHandler,

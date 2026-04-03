@@ -54,7 +54,7 @@ describe('defaultExtractor', () => {
       format: 'rss',
       title: 'Test',
       description: 'Test feed',
-      siteUrl: 'https://example.com',
+      siteUrl: 'https://example.com/',
     }
 
     expect(result).toEqual(expected)
@@ -79,7 +79,7 @@ describe('defaultExtractor', () => {
       format: 'atom',
       title: 'Test',
       description: 'Test feed',
-      siteUrl: 'https://example.com',
+      siteUrl: 'https://example.com/',
     }
 
     expect(result).toEqual(expected)
@@ -108,7 +108,7 @@ describe('defaultExtractor', () => {
       format: 'rdf',
       title: 'Test',
       description: 'Test feed',
-      siteUrl: 'https://example.com',
+      siteUrl: 'https://example.com/',
     }
 
     expect(result).toEqual(expected)
@@ -133,7 +133,7 @@ describe('defaultExtractor', () => {
       format: 'json',
       title: 'Test',
       description: 'Test feed',
-      siteUrl: 'https://example.com',
+      siteUrl: 'https://example.com/',
     }
 
     expect(result).toEqual(expected)
@@ -174,7 +174,7 @@ describe('defaultExtractor', () => {
       format: 'rss',
       title: 'Test',
       description: 'Test feed',
-      siteUrl: 'https://example.com',
+      siteUrl: 'https://example.com/',
     }
 
     expect(result).toEqual(expected)
@@ -217,7 +217,7 @@ describe('defaultExtractor', () => {
       format: 'rss',
       title: 'Test',
       description: largeDescription,
-      siteUrl: 'https://example.com',
+      siteUrl: 'https://example.com/',
     }
 
     expect(result).toEqual(expected)
@@ -259,7 +259,7 @@ describe('defaultExtractor', () => {
       format: 'rss',
       title: 'Test',
       description: 'Test feed',
-      siteUrl: 'https://example.com',
+      siteUrl: 'https://example.com/',
     }
 
     expect(result).toEqual(expected)
@@ -301,7 +301,7 @@ describe('defaultExtractor', () => {
       format: 'rss',
       title: 'Test',
       description: 'Test feed',
-      siteUrl: 'https://example.com',
+      siteUrl: 'https://example.com/',
     }
 
     expect(result).toEqual(expected)
@@ -395,6 +395,83 @@ describe('defaultExtractor', () => {
       title: 'Test',
       description: 'Test feed',
       siteUrl: undefined,
+    }
+
+    expect(result).toEqual(expected)
+  })
+
+  it('should resolve relative siteUrl from RSS feed against feed URL', async () => {
+    const rss = `
+      <rss version="2.0">
+        <channel>
+          <title>Test</title>
+          <link>/log/</link>
+          <description>Test feed</description>
+        </channel>
+      </rss>
+    `
+    const result = await defaultExtractor({
+      content: rss,
+      headers: new Headers(),
+      url: 'https://example.com/feed.xml',
+    })
+    const expected: DiscoverResult<FeedResult> = {
+      url: 'https://example.com/feed.xml',
+      isValid: true,
+      format: 'rss',
+      title: 'Test',
+      description: 'Test feed',
+      siteUrl: 'https://example.com/log/',
+    }
+
+    expect(result).toEqual(expected)
+  })
+
+  it('should resolve relative siteUrl from Atom feed against feed URL', async () => {
+    const atom = `
+      <feed xmlns="http://www.w3.org/2005/Atom">
+        <title>Test</title>
+        <link rel="alternate" href="/blog"/>
+        <subtitle>Test feed</subtitle>
+      </feed>
+    `
+    const result = await defaultExtractor({
+      content: atom,
+      headers: new Headers(),
+      url: 'https://example.com/feed.xml',
+    })
+    const expected: DiscoverResult<FeedResult> = {
+      url: 'https://example.com/feed.xml',
+      isValid: true,
+      format: 'atom',
+      title: 'Test',
+      description: 'Test feed',
+      siteUrl: 'https://example.com/blog',
+    }
+
+    expect(result).toEqual(expected)
+  })
+
+  it('should resolve relative siteUrl from JSON Feed against feed URL', async () => {
+    const json = JSON.stringify({
+      version: 'https://jsonfeed.org/version/1.1',
+      title: 'Test',
+      home_page_url: '/site/',
+      description: 'Test feed',
+      items: [],
+    })
+    const result = await defaultExtractor({
+      content: json,
+      headers: new Headers(),
+      url: 'https://example.com/feed.json',
+    })
+    const expected: DiscoverResult<FeedResult> = {
+      url: 'https://example.com/feed.json',
+      isValid: true,
+      format: 'json',
+      title: 'Test',
+      description: 'Test feed',
+      siteUrl: 'https://example.com/site/',
     }
 
     expect(result).toEqual(expected)

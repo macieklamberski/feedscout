@@ -2,8 +2,8 @@ import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, isAnyOf, isHostOf } from '../../../common/utils.js'
 
 export const hosts = ['dev.to', 'www.dev.to']
-const userPathRegex = /^\/([a-zA-Z0-9_]+)\/?$/
-const tagPathRegex = /^\/t\/([^/]+)/
+const userPattern = /^\/([a-zA-Z0-9_]+)\/?$/
+const tagPattern = /^\/t\/([^/]+)/
 export const excludedPaths = [
   'tag',
   'tags',
@@ -33,7 +33,7 @@ export const devtoHandler: PlatformHandler = {
     const { pathname } = new URL(url)
 
     // User profile: /username.
-    const userMatch = pathname.match(userPathRegex)
+    const userMatch = pathname.match(userPattern)
 
     if (userMatch?.[1]) {
       const username = userMatch[1]
@@ -44,7 +44,7 @@ export const devtoHandler: PlatformHandler = {
     }
 
     // Tag page: /t/tagname.
-    const tagMatch = pathname.match(tagPathRegex)
+    const tagMatch = pathname.match(tagPattern)
 
     if (tagMatch?.[1]) {
       const tag = tagMatch[1]
