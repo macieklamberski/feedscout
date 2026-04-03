@@ -1,0 +1,14 @@
+{
+  "github": ["https://github.com/torvalds"],
+  "githubGist": ["https://gist.github.com/torvalds"],
+  "gitlab": ["https://gitlab.com/gitlab-org", "https://gitlab.com/john.doe"],
+  "mastodon": ["https://mastodon.social/@Gargron"],
+  "bluesky": ["https://bsky.app/profile/jay.bsky.team"],
+  "reddit": ["https://www.reddit.com/r/programming"],
+  "tumblr": ["https://staff.tumblr.com"],
+  "codeberg": ["https://codeberg.org/forgejo"],
+  "lobsters": ["https://lobste.rs/~pushcx"],
+  "sourceforge": ["https://sourceforge.net/projects/vlc"],
+  "deviantart": ["https://www.deviantart.com/yuumei"],
+  "devto": ["https://dev.to/ben"]
+}
