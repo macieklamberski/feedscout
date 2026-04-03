@@ -52,6 +52,7 @@ The Platform method extracts avatars and icons directly from known platforms usi
 |----------|-----------------|
 | GitHub | User avatar |
 | GitHub Gist | User avatar (via GitHub) |
+| GitLab | User or group avatar (via public API) |
 | Mastodon | Profile avatar (via public API) |
 | Bluesky | Profile avatar (via public API) |
 | Reddit | Subreddit icon or user avatar (via public API) |
