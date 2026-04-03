@@ -195,6 +195,41 @@ describe('gitlabHandler', () => {
       expect(value).toEqual(expected)
     })
 
+    it('should fall back to groups API when users API returns empty', async () => {
+      const mockFetch = createMockFetch({
+        'https://gitlab.com/api/v4/users?username=gitlab-org': JSON.stringify([]),
+        'https://gitlab.com/api/v4/groups/gitlab-org': JSON.stringify({
+          avatar_url: 'https://gitlab.com/uploads/-/system/group/avatar/9970/project_avatar.png',
+        }),
+      })
+      const value = await gitlabHandler.resolve(
+        'https://gitlab.com/gitlab-org',
+        undefined,
+        undefined,
+        mockFetch,
+      )
+      const expected: Array<DiscoverUriEntry> = [
+        { uri: 'https://gitlab.com/uploads/-/system/group/avatar/9970/project_avatar.png' },
+      ]
+
+      expect(value).toEqual(expected)
+    })
+
+    it('should return empty array when both users and groups API return empty', async () => {
+      const mockFetch = createMockFetch({
+        'https://gitlab.com/api/v4/users?username=nonexistent': JSON.stringify([]),
+        'https://gitlab.com/api/v4/groups/nonexistent': JSON.stringify({ avatar_url: '' }),
+      })
+      const value = await gitlabHandler.resolve(
+        'https://gitlab.com/nonexistent',
+        undefined,
+        undefined,
+        mockFetch,
+      )
+
+      expect(value).toEqual([])
+    })
+
     it('should return empty array for root URL', async () => {
       const mockFetch = createMockFetch({})
       const value = await gitlabHandler.resolve(

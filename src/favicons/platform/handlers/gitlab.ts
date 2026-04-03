@@ -1,3 +1,4 @@
+import type { DiscoverFetchFn } from '../../../common/types.js'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { isAnyOf, isHostOf } from '../../../common/utils.js'
 import {
@@ -11,6 +12,21 @@ import { isNonEmptyString, parseBodyJson } from '../../utils.js'
 // Extracts the username from the path. GitLab usernames can contain dots,
 // so the regex strips the .atom feed extension instead of excluding dots.
 const userPattern = /^\/([^/]+?)(?:\.atom)?(?:\/|$)/
+
+const fetchAvatarUrl = async (
+  apiUrl: string,
+  fetchFn: DiscoverFetchFn,
+): Promise<string | undefined> => {
+  const response = await fetchFn(apiUrl)
+  const data = parseBodyJson(response.body)
+
+  // Users API returns an array, groups API returns an object.
+  const entry = Array.isArray(data) ? data[0] : data
+
+  if (isNonEmptyString(entry?.avatar_url)) {
+    return entry.avatar_url
+  }
+}
 
 export const gitlabHandler: PlatformHandler = {
   match: (url, content, headers) => {
@@ -56,16 +72,14 @@ export const gitlabHandler: PlatformHandler = {
         return []
       }
 
-      const apiUrl = `${origin}/api/v4/users?username=${encodeURIComponent(username)}`
-      const response = await fetchFn(apiUrl)
-      const data = parseBodyJson(response.body)
+      // Try users API first, then fall back to groups API.
+      const encodedName = encodeURIComponent(username)
+      const avatarUrl =
+        (await fetchAvatarUrl(`${origin}/api/v4/users?username=${encodedName}`, fetchFn)) ??
+        (await fetchAvatarUrl(`${origin}/api/v4/groups/${encodedName}`, fetchFn))
 
-      if (Array.isArray(data) && data.length > 0) {
-        const avatarUrl = data[0]?.avatar_url
-
-        if (isNonEmptyString(avatarUrl)) {
-          return [{ uri: avatarUrl }]
-        }
+      if (avatarUrl) {
+        return [{ uri: avatarUrl }]
       }
     } catch {}
 
