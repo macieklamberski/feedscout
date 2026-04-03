@@ -11,7 +11,7 @@ import { isNonEmptyString, parseBodyJson } from '../../utils.js'
 
 // Extracts the username from the path. GitLab usernames can contain dots,
 // so the regex strips the .atom feed extension instead of excluding dots.
-const userPattern = /^\/([^/]+?)(?:\.atom)?(?:\/|$)/
+const userRegex = /^\/([^/]+?)(?:\.atom)?(?:\/|$)/
 
 const fetchAvatarUrl = async (
   apiUrl: string,
@@ -37,7 +37,7 @@ export const gitlabHandler: PlatformHandler = {
 
       const { pathname } = new URL(url)
 
-      if (!userPattern.test(pathname)) {
+      if (!userRegex.test(pathname)) {
         return false
       }
 
@@ -60,7 +60,7 @@ export const gitlabHandler: PlatformHandler = {
 
     try {
       const { origin, pathname } = new URL(url)
-      const match = pathname.match(userPattern)
+      const match = pathname.match(userRegex)
 
       if (!match?.[1]) {
         return []

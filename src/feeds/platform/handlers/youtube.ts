@@ -2,17 +2,17 @@ import type { DiscoverUriEntry } from '../../../common/types.js'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, isHostOf } from '../../../common/utils.js'
 
-const channelIdPattern = /"(?:channelId|externalId)":"(UC[a-zA-Z0-9_-]+)"/
-const channelPattern = /^\/channel\/(UC[a-zA-Z0-9_-]+)/
-const handlePattern = /^\/@([^/]+)/
-const userPattern = /^\/user\/([^/]+)/
-const customPattern = /^\/c\/([^/]+)/
-const channelPrefixPattern = /^UC/
+const channelIdRegex = /"(?:channelId|externalId)":"(UC[a-zA-Z0-9_-]+)"/
+const channelRegex = /^\/channel\/(UC[a-zA-Z0-9_-]+)/
+const handleRegex = /^\/@([^/]+)/
+const userRegex = /^\/user\/([^/]+)/
+const customRegex = /^\/c\/([^/]+)/
+const channelPrefixRegex = /^UC/
 
 const hosts = ['youtube.com', 'www.youtube.com', 'm.youtube.com', 'youtu.be', 'www.youtu.be']
 
 const extractChannelIdFromContent = (content: string): string | undefined => {
-  const match = content.match(channelIdPattern)
+  const match = content.match(channelIdRegex)
 
   return match?.[1]
 }
@@ -20,7 +20,7 @@ const extractChannelIdFromContent = (content: string): string | undefined => {
 // Convert channel ID to playlist IDs for filtered feeds.
 // YouTube playlist prefixes: https://stackoverflow.com/a/77816885.
 const playlistPrefix = (prefix: string, channelId: string): string => {
-  return channelId.replace(channelPrefixPattern, prefix)
+  return channelId.replace(channelPrefixRegex, prefix)
 }
 
 const feedUrl = (param: string, value: string): string => {
@@ -83,7 +83,7 @@ export const youtubeHandler: PlatformHandler = {
     const uris: Array<DiscoverUriEntry> = []
 
     // Direct channel ID: /channel/UC...
-    const channelMatch = parsedUrl.pathname.match(channelPattern)
+    const channelMatch = parsedUrl.pathname.match(channelRegex)
 
     if (channelMatch?.[1]) {
       const channelId = channelMatch[1]
@@ -112,9 +112,9 @@ export const youtubeHandler: PlatformHandler = {
         (parsedUrl.hostname.includes('youtu.be') && parsedUrl.pathname.length > 1)
       const needsContentParsing =
         isVideoPage ||
-        parsedUrl.pathname.match(handlePattern) ||
-        parsedUrl.pathname.match(userPattern) ||
-        parsedUrl.pathname.match(customPattern)
+        parsedUrl.pathname.match(handleRegex) ||
+        parsedUrl.pathname.match(userRegex) ||
+        parsedUrl.pathname.match(customRegex)
 
       if (needsContentParsing) {
         const channelId = extractChannelIdFromContent(content)

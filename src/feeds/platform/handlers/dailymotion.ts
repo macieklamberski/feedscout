@@ -2,8 +2,8 @@ import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, isAnyOf, isHostOf } from '../../../common/utils.js'
 
 const hosts = ['dailymotion.com', 'www.dailymotion.com']
-const userPattern = /^\/([a-zA-Z0-9_-]+)$/
-const playlistPattern = /^\/playlist\/([a-zA-Z0-9_-]+)/
+const userRegex = /^\/([a-zA-Z0-9_-]+)$/
+const playlistRegex = /^\/playlist\/([a-zA-Z0-9_-]+)/
 const excludedPaths = [
   'signin',
   'signout',
@@ -55,7 +55,7 @@ export const dailymotionHandler: PlatformHandler = {
     const { pathname } = new URL(url)
 
     // Playlist page: /playlist/{id}
-    const playlistMatch = pathname.match(playlistPattern)
+    const playlistMatch = pathname.match(playlistRegex)
 
     if (playlistMatch?.[1]) {
       const playlistId = playlistMatch[1]
@@ -69,7 +69,7 @@ export const dailymotionHandler: PlatformHandler = {
     }
 
     // User/channel page: /{username}
-    const userMatch = pathname.match(userPattern)
+    const userMatch = pathname.match(userRegex)
 
     if (userMatch?.[1]) {
       const username = userMatch[1]

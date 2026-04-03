@@ -3,7 +3,7 @@ import { composeHint, isSubdomainOf } from '../../../common/utils.js'
 
 export const domains = ['tumblr.com']
 
-const tagPattern = /^\/tagged\/([^/]+)/
+const tagRegex = /^\/tagged\/([^/]+)/
 
 export const tumblrHandler: PlatformHandler = {
   match: (url) => {
@@ -14,7 +14,7 @@ export const tumblrHandler: PlatformHandler = {
     const { origin, pathname } = new URL(url)
 
     // Tagged posts: /tagged/{tag}
-    const tagMatch = pathname.match(tagPattern)
+    const tagMatch = pathname.match(tagRegex)
 
     if (tagMatch?.[1]) {
       const tag = tagMatch[1]

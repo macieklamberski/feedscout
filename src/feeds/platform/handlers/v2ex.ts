@@ -1,8 +1,8 @@
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, isHostOf } from '../../../common/utils.js'
 
-const nodePattern = /^\/go\/([^/]+)/
-const memberPattern = /^\/member\/([^/]+)/
+const nodeRegex = /^\/go\/([^/]+)/
+const memberRegex = /^\/member\/([^/]+)/
 
 const hosts = ['www.v2ex.com', 'v2ex.com']
 
@@ -15,7 +15,7 @@ export const v2exHandler: PlatformHandler = {
     const { pathname, searchParams } = new URL(url)
 
     // Node page: /go/{node}
-    const nodeMatch = pathname.match(nodePattern)
+    const nodeMatch = pathname.match(nodeRegex)
 
     if (nodeMatch?.[1]) {
       return [
@@ -27,7 +27,7 @@ export const v2exHandler: PlatformHandler = {
     }
 
     // Member page: /member/{username}
-    const memberMatch = pathname.match(memberPattern)
+    const memberMatch = pathname.match(memberRegex)
 
     if (memberMatch?.[1]) {
       return [

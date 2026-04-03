@@ -1,8 +1,8 @@
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, isHostOf, isSubdomainOf } from '../../../common/utils.js'
 
-const userPattern = /^\/people\/([^/]+)/
-const subjectPattern = /^\/subject\/(\d+)/
+const userRegex = /^\/people\/([^/]+)/
+const subjectRegex = /^\/subject\/(\d+)/
 
 export const doubanHandler: PlatformHandler = {
   match: (url) => {
@@ -13,7 +13,7 @@ export const doubanHandler: PlatformHandler = {
     const { pathname } = new URL(url)
 
     // User page: /people/{user}/
-    const userMatch = pathname.match(userPattern)
+    const userMatch = pathname.match(userRegex)
 
     if (userMatch?.[1]) {
       const user = userMatch[1]
@@ -35,7 +35,7 @@ export const doubanHandler: PlatformHandler = {
     }
 
     // Subject page: /subject/{id}/
-    const subjectMatch = pathname.match(subjectPattern)
+    const subjectMatch = pathname.match(subjectRegex)
 
     if (subjectMatch?.[1]) {
       const id = subjectMatch[1]

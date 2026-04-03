@@ -14,11 +14,11 @@ const sections = [
 ]
 const sorts = ['newest', 'top-rated', 'top-sellers', 'on-sale']
 
-const byUserPattern = /^\/games\/by-([^/]+)/
-const tagPattern = /^\/games\/tag-([^/]+)/
-const sortPattern = /^\/games\/([^/.]+)/
-const sectionPattern = /^\/([^/.]+)/
-const gamePattern = /^\/([^/]+)/
+const byUserRegex = /^\/games\/by-([^/]+)/
+const tagRegex = /^\/games\/tag-([^/]+)/
+const sortRegex = /^\/games\/([^/.]+)/
+const sectionRegex = /^\/([^/.]+)/
+const gameRegex = /^\/([^/]+)/
 
 export const itchioHandler: PlatformHandler = {
   match: (url) => {
@@ -32,7 +32,7 @@ export const itchioHandler: PlatformHandler = {
     // Subdomain: creator pages ({creator}.itch.io).
     if (!mainHosts.includes(lowerHostname) && lowerHostname.endsWith('.itch.io')) {
       const creator = lowerHostname.replace('.itch.io', '')
-      const gameMatch = pathname.match(gamePattern)
+      const gameMatch = pathname.match(gameRegex)
 
       // Game page: {creator}.itch.io/{game}
       if (gameMatch?.[1]) {
@@ -54,7 +54,7 @@ export const itchioHandler: PlatformHandler = {
     }
 
     // /games/by-{username}
-    const byUserMatch = pathname.match(byUserPattern)
+    const byUserMatch = pathname.match(byUserRegex)
 
     if (byUserMatch?.[1]) {
       return [
@@ -66,7 +66,7 @@ export const itchioHandler: PlatformHandler = {
     }
 
     // /games/tag-{tag}
-    const tagMatch = pathname.match(tagPattern)
+    const tagMatch = pathname.match(tagRegex)
 
     if (tagMatch?.[1]) {
       return [
@@ -78,7 +78,7 @@ export const itchioHandler: PlatformHandler = {
     }
 
     // /games/{sort}
-    const sortMatch = pathname.match(sortPattern)
+    const sortMatch = pathname.match(sortRegex)
 
     if (sortMatch?.[1] && isAnyOf(sortMatch[1], sorts)) {
       return [
@@ -100,7 +100,7 @@ export const itchioHandler: PlatformHandler = {
     }
 
     // /{section} (tools, game-assets, soundtracks, physical-games, books, comics, misc)
-    const sectionMatch = pathname.match(sectionPattern)
+    const sectionMatch = pathname.match(sectionRegex)
 
     if (sectionMatch?.[1] && isAnyOf(sectionMatch[1], sections)) {
       return [

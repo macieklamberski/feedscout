@@ -2,12 +2,12 @@ import type { DiscoverUriEntry } from '../../../common/types.js'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, isAnyOf, isHostOf } from '../../../common/utils.js'
 
-const userPattern = /^\/([^/]+)\/?$/
-const repoPattern = /^\/([^/]+)\/([^/]+)/
-const wikiPattern = /\/wiki(\/|$)/
-const discussionsPattern = /\/discussions(\/|$)/
-const branchPattern = /^\/[^/]+\/[^/]+\/tree\/([^/]+)\/?$/
-const filePattern = /^\/[^/]+\/[^/]+\/(?:blob|commits)\/([^/]+)\/(.+)/
+const userRegex = /^\/([^/]+)\/?$/
+const repoRegex = /^\/([^/]+)\/([^/]+)/
+const wikiRegex = /\/wiki(\/|$)/
+const discussionsRegex = /\/discussions(\/|$)/
+const branchRegex = /^\/[^/]+\/[^/]+\/tree\/([^/]+)\/?$/
+const fileRegex = /^\/[^/]+\/[^/]+\/(?:blob|commits)\/([^/]+)\/(.+)/
 
 export const hosts = ['github.com', 'www.github.com']
 export const excludedPaths = [
@@ -68,7 +68,7 @@ export const githubHandler: PlatformHandler = {
     const uris: Array<DiscoverUriEntry> = []
 
     // Match /{owner} pattern (user/org profile page).
-    const userMatch = pathname.match(userPattern)
+    const userMatch = pathname.match(userRegex)
 
     if (userMatch?.[1] && !isAnyOf(userMatch[1], excludedPaths)) {
       const user = userMatch[1]
@@ -82,7 +82,7 @@ export const githubHandler: PlatformHandler = {
     }
 
     // Match /{owner}/{repo} pattern.
-    const repoMatch = pathname.match(repoPattern)
+    const repoMatch = pathname.match(repoRegex)
     const owner = repoMatch?.[1]
     const repo = repoMatch?.[2]
 
@@ -105,7 +105,7 @@ export const githubHandler: PlatformHandler = {
     })
 
     // If on wiki page, add wiki feed.
-    if (wikiPattern.test(pathname)) {
+    if (wikiRegex.test(pathname)) {
       uris.push({
         uri: `https://github.com/${owner}/${repo}/wiki.atom`,
         hint: composeHint('github:wiki'),
@@ -113,7 +113,7 @@ export const githubHandler: PlatformHandler = {
     }
 
     // If on discussions page, add discussions feed.
-    if (discussionsPattern.test(pathname)) {
+    if (discussionsRegex.test(pathname)) {
       uris.push({
         uri: `https://github.com/${owner}/${repo}/discussions.atom`,
         hint: composeHint('github:discussions'),
@@ -121,7 +121,7 @@ export const githubHandler: PlatformHandler = {
     }
 
     // If on a specific branch, add branch-specific commits feed.
-    const branchMatch = pathname.match(branchPattern)
+    const branchMatch = pathname.match(branchRegex)
 
     if (branchMatch?.[1]) {
       const branch = branchMatch[1]
@@ -133,7 +133,7 @@ export const githubHandler: PlatformHandler = {
     }
 
     // If viewing a file (blob) or file history (commits), add file-specific commits feed.
-    const fileMatch = pathname.match(filePattern)
+    const fileMatch = pathname.match(fileRegex)
 
     if (fileMatch?.[1] && fileMatch?.[2]) {
       const branch = fileMatch[1]

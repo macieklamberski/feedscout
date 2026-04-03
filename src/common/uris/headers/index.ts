@@ -1,10 +1,10 @@
 import { matchesAnyOfLinkSelectors } from '../../../common/utils.js'
 import type { HeadersMethodOptions } from './types.js'
 
+const linkSplitRegex = /,(?=\s*<)/
 const urlRegex = /<([^<>]+)>/
 const relRegex = /rel\s*=\s*["']?([^"';,]+)["']?/i
 const typeRegex = /type\s*=\s*["']?([^"';,]+)["']?/i
-const linkSplitRegex = /,(?=\s*<)/
 
 export const discoverUrisFromHeaders = (
   headers: Headers,

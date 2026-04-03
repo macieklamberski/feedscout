@@ -2,14 +2,14 @@ import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { hasMetaContent } from '../../../common/utils.js'
 import { isNonEmptyString, parseBodyJson } from '../../utils.js'
 
-const mastodonPattern = /mastodon/i
+const mastodonRegex = /mastodon/i
 
 // Extracts the username from the path, stripping the .rss feed extension
 // that Mastodon appends to profile URLs (e.g., /@user.rss).
-const profilePattern = /^\/@([^/.]+(?:@[^/.]+\.[^/.]+)?)(?:\.rss)?\/?$/
+const profileRegex = /^\/@([^/.]+(?:@[^/.]+\.[^/.]+)?)(?:\.rss)?\/?$/
 
 export const isProfilePath = (pathname: string): boolean => {
-  return profilePattern.test(pathname)
+  return profileRegex.test(pathname)
 }
 
 export const isMastodonHtml = (content: string): boolean => {
@@ -17,7 +17,7 @@ export const isMastodonHtml = (content: string): boolean => {
 }
 
 export const isMastodonHeaders = (headers: Headers): boolean => {
-  return mastodonPattern.test(headers.get('server') ?? '')
+  return mastodonRegex.test(headers.get('server') ?? '')
 }
 
 export const mastodonHandler: PlatformHandler = {
@@ -48,7 +48,7 @@ export const mastodonHandler: PlatformHandler = {
 
     try {
       const { hostname, pathname } = new URL(url)
-      const match = pathname.match(profilePattern)
+      const match = pathname.match(profileRegex)
 
       if (!match?.[1]) {
         return []

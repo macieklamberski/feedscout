@@ -1,7 +1,7 @@
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, isHostOf, isSubdomainOf } from '../../../common/utils.js'
 
-const profilePattern = /^\/@([\w-]+)/
+const profileRegex = /^\/@([\w-]+)/
 
 export const substackHandler: PlatformHandler = {
   match: (url) => {
@@ -9,12 +9,12 @@ export const substackHandler: PlatformHandler = {
       return true
     }
 
-    return isHostOf(url, 'substack.com') && profilePattern.test(new URL(url).pathname)
+    return isHostOf(url, 'substack.com') && profileRegex.test(new URL(url).pathname)
   },
 
   resolve: (url) => {
     const parsed = new URL(url)
-    const profileMatch = parsed.pathname.match(profilePattern)
+    const profileMatch = parsed.pathname.match(profileRegex)
 
     if (isHostOf(url, 'substack.com') && profileMatch?.[1]) {
       return [
