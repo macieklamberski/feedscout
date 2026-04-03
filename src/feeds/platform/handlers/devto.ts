@@ -1,10 +1,10 @@
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, isAnyOf, isHostOf } from '../../../common/utils.js'
 
-const hosts = ['dev.to', 'www.dev.to']
+export const hosts = ['dev.to', 'www.dev.to']
 const userPattern = /^\/([a-zA-Z0-9_]+)\/?$/
 const tagPattern = /^\/t\/([^/]+)/
-const excludedPaths = [
+export const excludedPaths = [
   'tag',
   'tags',
   'search',
