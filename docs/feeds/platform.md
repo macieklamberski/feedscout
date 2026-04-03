@@ -20,6 +20,16 @@ The Platform method uses handlers for each supported platform:
 
 ## Supported Platforms
 
+### Apple Podcasts
+
+Discovers RSS feeds for Apple Podcasts shows by extracting the feed URL from the page content.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `podcasts.apple.com/{locale}/podcast/{name}/id{id}` | Podcast feed* |
+
+\* *Requires HTML content to extract feed URL.*
+
 ### GitHub
 
 Discovers Atom feeds for users, organizations, and repositories.
@@ -117,6 +127,14 @@ Discovers RSS feeds for Tumblr blogs.
 |-------------|-----------------|
 | `*.tumblr.com` | Blog posts feed |
 
+### WordPress
+
+Discovers RSS and Atom feeds for WordPress.com blogs.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `*.wordpress.com` | Posts feed (RSS + Atom), comments feed |
+
 ## Basic Usage
 
 ```typescript
@@ -163,6 +181,7 @@ Or import individual handlers:
 
 ```typescript
 import {
+  applePodcastsHandler,
   blogspotHandler,
   blueskyHandler,
   githubHandler,
@@ -172,6 +191,7 @@ import {
   soundcloudHandler,
   substackHandler,
   tumblrHandler,
+  wordpressHandler,
   youtubeHandler,
 } from 'feedscout/platform'
 ```
