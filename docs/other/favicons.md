@@ -60,6 +60,7 @@ The Platform method extracts avatars and icons directly from known platforms usi
 | Lobsters | User avatar |
 | SourceForge | Project icon |
 | DeviantArt | User avatar |
+| Dev.to | Profile image (via public API) |
 
 ## Extracting Icons from Feeds
 
