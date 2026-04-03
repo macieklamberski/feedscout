@@ -48,20 +48,20 @@ Favicons use the same discovery pipeline as feeds — see the [Feeds](/feeds) se
 
 The Platform method extracts avatars and icons directly from known platforms using their public APIs or URL conventions:
 
-| Platform | What It Extracts |
-|----------|-----------------|
-| GitHub | User avatar |
-| GitHub Gist | User avatar (via GitHub) |
-| GitLab | User or group avatar (via public API) |
-| Mastodon | Profile avatar (via public API) |
-| Bluesky | Profile avatar (via public API) |
-| Reddit | Subreddit icon or user avatar (via public API) |
-| Tumblr | Blog avatar |
-| Codeberg | User avatar |
-| Lobsters | User avatar |
-| SourceForge | Project icon |
-| DeviantArt | User avatar |
-| Dev.to | Profile image (via public API) |
+| Platform | What It Extracts | Method |
+|----------|-----------------|--------|
+| GitHub | User avatar | URL pattern |
+| GitHub Gist | User avatar | URL pattern |
+| GitLab | User or group avatar | Public API |
+| Mastodon | Profile avatar | Public API |
+| Bluesky | Profile avatar | Public API |
+| Reddit | Subreddit icon or user avatar | Public API |
+| Tumblr | Blog avatar | URL pattern |
+| Codeberg | User avatar | URL pattern |
+| Lobsters | User avatar | URL pattern |
+| SourceForge | Project icon | URL pattern |
+| DeviantArt | User avatar | URL pattern |
+| Dev.to | Profile image | Public API |
 
 ## Extracting Icons from Feeds
 
