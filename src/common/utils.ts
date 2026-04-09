@@ -1,5 +1,5 @@
 import locales from './locales.json' with { type: 'json' }
-import type { DiscoverResolveUrlFn, DiscoverUriHint } from './types.js'
+import type { DiscoverUriHint } from './types.js'
 
 const whitespaceRegex = /\s+/
 
@@ -97,14 +97,6 @@ export const omitEmpty = <T>(array: Array<T | null | undefined>): Array<T> => {
   }
 
   return result
-}
-
-export const resolveUrl: DiscoverResolveUrlFn = (url, baseUrl) => {
-  try {
-    return new URL(url, baseUrl).href
-  } catch {
-    return
-  }
 }
 
 export const matchesAnyOfLinkSelectors = (

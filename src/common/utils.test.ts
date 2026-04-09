@@ -13,7 +13,6 @@ import {
   normalizeMimeType,
   omitEmpty,
   processConcurrently,
-  resolveUrl,
 } from './utils.js'
 
 describe('composeHint', () => {
@@ -530,64 +529,6 @@ describe('omitEmpty', () => {
     const expected = ['c', 'a', 'b']
 
     expect(omitEmpty(value)).toEqual(expected)
-  })
-})
-
-describe('resolveUrl', () => {
-  it('should resolve relative URL with base URL', () => {
-    const value = '/feed.xml'
-    const baseUrl = 'https://example.com'
-    const expected = 'https://example.com/feed.xml'
-
-    expect(resolveUrl(value, baseUrl)).toBe(expected)
-  })
-
-  it('should resolve relative URL with base URL containing path', () => {
-    const value = 'feed.xml'
-    const baseUrl = 'https://example.com/blog/'
-    const expected = 'https://example.com/blog/feed.xml'
-
-    expect(resolveUrl(value, baseUrl)).toBe(expected)
-  })
-
-  it('should preserve absolute URL when base URL provided', () => {
-    const value = 'https://other.com/feed.xml'
-    const baseUrl = 'https://example.com'
-    const expected = 'https://other.com/feed.xml'
-
-    expect(resolveUrl(value, baseUrl)).toBe(expected)
-  })
-
-  it('should return undefined when base URL is undefined and URL is relative', () => {
-    const value = '/feed.xml'
-    const baseUrl = undefined
-    const expected = undefined
-
-    expect(resolveUrl(value, baseUrl)).toBe(expected)
-  })
-
-  it('should return absolute URL when base URL is undefined', () => {
-    const value = 'https://example.com/feed.xml'
-    const baseUrl = undefined
-    const expected = 'https://example.com/feed.xml'
-
-    expect(resolveUrl(value, baseUrl)).toBe(expected)
-  })
-
-  it('should handle protocol-relative URLs', () => {
-    const value = '//cdn.example.com/feed.xml'
-    const baseUrl = 'https://example.com'
-    const expected = 'https://cdn.example.com/feed.xml'
-
-    expect(resolveUrl(value, baseUrl)).toBe(expected)
-  })
-
-  it('should handle parent directory references', () => {
-    const value = '../feed.xml'
-    const baseUrl = 'https://example.com/blog/posts/'
-    const expected = 'https://example.com/blog/feed.xml'
-
-    expect(resolveUrl(value, baseUrl)).toBe(expected)
   })
 })
 

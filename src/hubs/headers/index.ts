@@ -1,6 +1,6 @@
+import { defaultResolveUrlFn } from '../../common/discover/utils.js'
 import type { DiscoverResolveUrlFn } from '../../common/types.js'
 import { discoverUrisFromHeaders } from '../../common/uris/headers/index.js'
-import { resolveUrl } from '../../common/utils.js'
 import type { HubResult } from '../discover/types.js'
 
 const hubSelector = [{ rel: 'hub' }]
@@ -9,7 +9,7 @@ const selfSelector = [{ rel: 'self' }]
 export const discoverHubsFromHeaders = (
   headers: Headers,
   baseUrl: string,
-  resolveUrlFn: DiscoverResolveUrlFn = resolveUrl,
+  resolveUrlFn: DiscoverResolveUrlFn = defaultResolveUrlFn,
 ): Array<HubResult> => {
   const hubUris = discoverUrisFromHeaders(headers, { linkSelectors: hubSelector })
 

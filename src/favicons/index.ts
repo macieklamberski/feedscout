@@ -1,7 +1,10 @@
 import { discover } from '../common/discover/index.js'
-import { defaultFetchFn, defaultResolveSiteUrlFn } from '../common/discover/utils.js'
+import {
+  defaultFetchFn,
+  defaultResolveSiteUrlFn,
+  defaultResolveUrlFn,
+} from '../common/discover/utils.js'
 import type { DiscoverInput, DiscoverOptions, DiscoverResult } from '../common/types.js'
-import { resolveUrl } from '../common/utils.js'
 import {
   defaultFeedOptions,
   defaultGuessOptions,
@@ -23,7 +26,7 @@ export const discoverFavicons = <TValid extends FaviconResult = FaviconResult>(
       methods: options.methods ?? ['platform', 'feed', 'html', 'headers', 'guess'],
       fetchFn: options.fetchFn ?? defaultFetchFn,
       extractFn: options.extractFn ?? defaultExtractor,
-      resolveUrlFn: options.resolveUrlFn ?? resolveUrl,
+      resolveUrlFn: options.resolveUrlFn ?? defaultResolveUrlFn,
       resolveSiteUrlFn: options.resolveSiteUrlFn ?? defaultResolveSiteUrlFn,
     },
     {

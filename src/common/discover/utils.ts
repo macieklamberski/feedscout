@@ -72,6 +72,14 @@ export const getFeedSiteUrl = (parsed: ReturnType<typeof parseFeed>): string | u
   }
 }
 
+export const defaultResolveUrlFn: DiscoverResolveUrlFn = (url, baseUrl) => {
+  try {
+    return new URL(url, baseUrl).href
+  } catch {
+    return
+  }
+}
+
 // TODO: parseFeed is called here and again in discoverUrisFromFeed for the favicons
 // discoverer. Consider caching the parsed result to avoid double parsing.
 export const defaultResolveSiteUrlFn: DiscoverResolveSiteUrlFn = (input, resolveUrlFn) => {
