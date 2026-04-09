@@ -35,14 +35,24 @@ export const defaultResolveSiteUrlFn: DiscoverResolveSiteUrlFn = (input, resolve
   try {
     let siteUrl = getFeedSiteUrl(parseFeed(input.content))
 
-    // Fall back to origin if no site URL found in feed metadata.
-    if (!siteUrl) {
+    if (siteUrl) {
+      // Resolve relative site URLs against the feed URL.
+      siteUrl = resolveUrlFn(siteUrl, input.url)
+
+      // Strip fragment - fragments are client-side only and irrelevant for fetching.
+      if (siteUrl) {
+        const parsed = new URL(siteUrl)
+        parsed.hash = ''
+        siteUrl = parsed.href
+      }
+    }
+
+    // Fall back to origin if no site URL found in feed metadata
+    // or if it resolves to the feed URL itself.
+    if (!siteUrl || siteUrl === new URL(input.url).href) {
       try {
         siteUrl = new URL(input.url).origin
       } catch {}
-    } else {
-      // Resolve relative site URLs against the feed URL.
-      siteUrl = resolveUrlFn(siteUrl, input.url)
     }
 
     // Avoid re-fetching the same URL.

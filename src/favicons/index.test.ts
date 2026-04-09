@@ -417,6 +417,29 @@ describe('discoverFavicons', () => {
     expect(value).toEqual(expected)
   })
 
+  it('should discover favicons from site HTML when Atom feed has fragment-only alternate link', async () => {
+    const atomContent = `<?xml version="1.0"?>
+      <feed xmlns="http://www.w3.org/2005/Atom">
+        <title>Example</title>
+        <link rel="alternate" href="#respond"/>
+      </feed>`
+    const siteHtml = '<link rel="icon" href="/favicon.ico">'
+    const mockFetch = createMockFetch({
+      'https://example.com/feed.xml': atomContent,
+      'https://example.com': siteHtml,
+      'https://example.com/favicon.ico': 'binary',
+    })
+    const value = await discoverFavicons('https://example.com/feed.xml', {
+      methods: ['html'],
+      fetchFn: mockFetch,
+    })
+    const expected: Array<DiscoverResult<FaviconResult>> = [
+      { url: 'https://example.com/favicon.ico', isValid: true, method: 'html' },
+    ]
+
+    expect(value).toEqual(expected)
+  })
+
   it('should discover favicons from site HTML when given JSON Feed URL', async () => {
     const jsonContent = JSON.stringify({
       version: 'https://jsonfeed.org/version/1.1',
