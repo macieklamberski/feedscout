@@ -3,7 +3,7 @@ import { defaultResolveUrlFn, getFeedSiteUrl } from '../common/discover/utils.js
 import type { DiscoverExtractFn } from '../common/types.js'
 import type { FeedResult } from './types.js'
 
-export const defaultExtractor: DiscoverExtractFn<FeedResult> = ({ content, url }) => {
+export const defaultExtractFn: DiscoverExtractFn<FeedResult> = ({ content, url }) => {
   if (!content) {
     return { url, isValid: false }
   }

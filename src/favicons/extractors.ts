@@ -29,7 +29,7 @@ const isSuccessStatus = (status?: number): boolean => {
   return status !== undefined && status >= 200 && status < 400
 }
 
-export const defaultExtractor: DiscoverExtractFn<FaviconResult> = (input) => {
+export const defaultExtractFn: DiscoverExtractFn<FaviconResult> = (input) => {
   if (
     isImageContentType(input.headers) ||
     isImageContent(input.content) ||

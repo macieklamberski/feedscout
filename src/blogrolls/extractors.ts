@@ -2,7 +2,7 @@ import { parseOpml } from 'feedsmith'
 import type { DiscoverExtractFn } from '../common/types.js'
 import type { BlogrollResult } from './types.js'
 
-export const defaultExtractor: DiscoverExtractFn<BlogrollResult> = ({ content, url }) => {
+export const defaultExtractFn: DiscoverExtractFn<BlogrollResult> = ({ content, url }) => {
   if (!content) {
     return { url, isValid: false }
   }
