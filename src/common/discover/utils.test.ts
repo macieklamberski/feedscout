@@ -1577,6 +1577,85 @@ describe('defaultResolveSiteUrlFn', () => {
 
     expect(defaultResolveSiteUrlFn(value, resolveUrlFn)).toBe(expected)
   })
+
+  it('should strip fragment from resolved Atom feed site URL', () => {
+    const value = {
+      url: 'https://example.com/feed.xml',
+      content: `
+        <?xml version="1.0"?>
+        <feed xmlns="http://www.w3.org/2005/Atom">
+          <link rel="alternate" href="https://example.com/#section"/>
+        </feed>
+      `,
+    }
+    const expected = 'https://example.com/'
+
+    expect(defaultResolveSiteUrlFn(value, resolveUrlFn)).toBe(expected)
+  })
+
+  it('should fall back to origin when Atom feed alternate link is fragment-only', () => {
+    const value = {
+      url: 'https://example.com/path/feed/atom/',
+      content: `
+        <?xml version="1.0"?>
+        <feed xmlns="http://www.w3.org/2005/Atom">
+          <link rel="alternate" href="#respond"/>
+        </feed>
+      `,
+    }
+    const expected = 'https://example.com'
+
+    expect(defaultResolveSiteUrlFn(value, resolveUrlFn)).toBe(expected)
+  })
+
+  it('should fall back to origin when RSS channel link is fragment-only', () => {
+    const value = {
+      url: 'https://example.com/feed.xml',
+      content: `
+        <?xml version="1.0"?>
+        <rss version="2.0">
+          <channel>
+            <link>#section</link>
+          </channel>
+        </rss>
+      `,
+    }
+    const expected = 'https://example.com'
+
+    expect(defaultResolveSiteUrlFn(value, resolveUrlFn)).toBe(expected)
+  })
+
+  it('should strip fragment from resolved RSS feed site URL', () => {
+    const value = {
+      url: 'https://example.com/feed.xml',
+      content: `
+        <?xml version="1.0"?>
+        <rss version="2.0">
+          <channel>
+            <link>https://example.com/blog#section</link>
+          </channel>
+        </rss>
+      `,
+    }
+    const expected = 'https://example.com/blog'
+
+    expect(defaultResolveSiteUrlFn(value, resolveUrlFn)).toBe(expected)
+  })
+
+  it('should fall back to origin when site URL resolves to feed URL', () => {
+    const value = {
+      url: 'https://example.com/feed.xml',
+      content: `
+        <?xml version="1.0"?>
+        <feed xmlns="http://www.w3.org/2005/Atom">
+          <link rel="alternate" href="https://example.com/feed.xml"/>
+        </feed>
+      `,
+    }
+    const expected = 'https://example.com'
+
+    expect(defaultResolveSiteUrlFn(value, resolveUrlFn)).toBe(expected)
+  })
 })
 
 describe('normalizeMethodsConfig with siteInput', () => {
