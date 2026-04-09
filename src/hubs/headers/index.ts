@@ -1,4 +1,4 @@
-import { defaultResolveUrlFn } from '../../common/discover/utils.js'
+import { defaultResolveUrlFn } from '../../common/discover/defaults.js'
 import type { DiscoverResolveUrlFn } from '../../common/types.js'
 import { discoverUrisFromHeaders } from '../../common/uris/headers/index.js'
 import type { HubResult } from '../discover/types.js'

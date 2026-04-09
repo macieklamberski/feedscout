@@ -1,5 +1,5 @@
+import { defaultFetchFn, defaultResolveUrlFn } from '../common/discover/defaults.js'
 import { discover } from '../common/discover/index.js'
-import { defaultFetchFn, defaultResolveUrlFn } from '../common/discover/utils.js'
 import type { DiscoverInput, DiscoverOptions, DiscoverResult } from '../common/types.js'
 import {
   defaultGuessOptions,

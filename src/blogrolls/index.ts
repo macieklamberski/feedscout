@@ -1,9 +1,9 @@
-import { discover } from '../common/discover/index.js'
 import {
   defaultFetchFn,
   defaultResolveSiteUrlFn,
   defaultResolveUrlFn,
-} from '../common/discover/utils.js'
+} from '../common/discover/defaults.js'
+import { discover } from '../common/discover/index.js'
 import type { DiscoverInput, DiscoverOptions, DiscoverResult } from '../common/types.js'
 import { defaultGuessOptions, defaultHeadersOptions, defaultHtmlOptions } from './defaults.js'
 import { defaultExtractFn } from './extractors.js'

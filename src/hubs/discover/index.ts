@@ -1,4 +1,5 @@
-import { defaultFetchFn, defaultResolveUrlFn, normalizeInput } from '../../common/discover/utils.js'
+import { defaultFetchFn, defaultResolveUrlFn } from '../../common/discover/defaults.js'
+import { normalizeInput } from '../../common/discover/utils.js'
 import type { DiscoverInput } from '../../common/types.js'
 import { discoverHubsFromFeed } from '../feed/index.js'
 import { discoverHubsFromHeaders } from '../headers/index.js'

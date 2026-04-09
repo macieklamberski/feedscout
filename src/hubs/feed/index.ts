@@ -1,6 +1,6 @@
 import { parseFeed } from 'feedsmith'
 import type { Atom, DeepPartial } from 'feedsmith/types'
-import { defaultResolveUrlFn } from '../../common/discover/utils.js'
+import { defaultResolveUrlFn } from '../../common/discover/defaults.js'
 import type { DiscoverResolveUrlFn } from '../../common/types.js'
 import type { HubResult } from '../discover/types.js'
 

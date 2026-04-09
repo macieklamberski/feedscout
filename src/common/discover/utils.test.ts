@@ -2,10 +2,8 @@ import { afterEach, describe, expect, it, spyOn } from 'bun:test'
 import { parseFeed } from 'feedsmith'
 import locales from '../locales.json' with { type: 'json' }
 import type { DiscoverFetchFn, DiscoverResolveUrlFn } from '../types.js'
+import { defaultFetchFn, defaultResolveSiteUrlFn, defaultResolveUrlFn } from './defaults.js'
 import {
-  defaultFetchFn,
-  defaultResolveSiteUrlFn,
-  defaultResolveUrlFn,
   getFeedSiteUrl,
   normalizeInput,
   normalizeMethodsConfig,

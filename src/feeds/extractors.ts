@@ -1,5 +1,6 @@
 import { parseFeed } from 'feedsmith'
-import { defaultResolveUrlFn, getFeedSiteUrl } from '../common/discover/utils.js'
+import { defaultResolveUrlFn } from '../common/discover/defaults.js'
+import { getFeedSiteUrl } from '../common/discover/utils.js'
 import type { DiscoverExtractFn } from '../common/types.js'
 import type { FeedResult } from './types.js'
 
