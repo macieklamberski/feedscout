@@ -33,7 +33,10 @@ export type LinkSelector = {
 
 export type DiscoverResolveUrlFn = (url: string, baseUrl: string | undefined) => string | undefined
 
-export type DiscoverResolveSiteUrlFn = (input: DiscoverInputObject) => string | undefined
+export type DiscoverResolveSiteUrlFn = (
+  input: DiscoverInputObject,
+  resolveUrlFn: DiscoverResolveUrlFn,
+) => string | undefined
 
 export type DiscoverFetchFnOptions = {
   method?: 'GET' | 'HEAD'

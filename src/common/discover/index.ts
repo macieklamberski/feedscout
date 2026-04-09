@@ -50,7 +50,7 @@ export const discover = async <TValid>(
   let siteInput: DiscoverInputObject | undefined
 
   if (resolveSiteUrlFn) {
-    const siteUrl = resolveSiteUrlFn(sourceInput)
+    const siteUrl = resolveSiteUrlFn(sourceInput, resolveUrlFn)
 
     if (siteUrl) {
       try {

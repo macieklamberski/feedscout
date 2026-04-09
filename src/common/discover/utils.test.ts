@@ -1345,6 +1345,14 @@ describe('getFeedSiteUrl', () => {
 })
 
 describe('defaultResolveSiteUrlFn', () => {
+  const resolveUrlFn: DiscoverResolveUrlFn = (url, baseUrl) => {
+    try {
+      return new URL(url, baseUrl).href
+    } catch {
+      return
+    }
+  }
+
   it('should return site URL from RSS feed with channel link', () => {
     const value = {
       url: 'https://example.com/feed.xml',
@@ -1359,7 +1367,7 @@ describe('defaultResolveSiteUrlFn', () => {
     }
     const expected = 'https://example.com/'
 
-    expect(defaultResolveSiteUrlFn(value)).toBe(expected)
+    expect(defaultResolveSiteUrlFn(value, resolveUrlFn)).toBe(expected)
   })
 
   it('should return site URL from Atom feed with alternate link', () => {
@@ -1374,7 +1382,7 @@ describe('defaultResolveSiteUrlFn', () => {
     }
     const expected = 'https://example.com/'
 
-    expect(defaultResolveSiteUrlFn(value)).toBe(expected)
+    expect(defaultResolveSiteUrlFn(value, resolveUrlFn)).toBe(expected)
   })
 
   it('should return site URL from JSON Feed with home_page_url', () => {
@@ -1389,7 +1397,7 @@ describe('defaultResolveSiteUrlFn', () => {
     }
     const expected = 'https://example.com/'
 
-    expect(defaultResolveSiteUrlFn(value)).toBe(expected)
+    expect(defaultResolveSiteUrlFn(value, resolveUrlFn)).toBe(expected)
   })
 
   it('should fall back to origin when feed has no site URL', () => {
@@ -1404,7 +1412,7 @@ describe('defaultResolveSiteUrlFn', () => {
     }
     const expected = 'https://example.com'
 
-    expect(defaultResolveSiteUrlFn(value)).toBe(expected)
+    expect(defaultResolveSiteUrlFn(value, resolveUrlFn)).toBe(expected)
   })
 
   it('should return undefined when resolved URL equals input URL', () => {
@@ -1420,7 +1428,7 @@ describe('defaultResolveSiteUrlFn', () => {
       `,
     }
 
-    expect(defaultResolveSiteUrlFn(value)).toBeUndefined()
+    expect(defaultResolveSiteUrlFn(value, resolveUrlFn)).toBeUndefined()
   })
 
   it('should return undefined for non-feed content', () => {
@@ -1429,7 +1437,7 @@ describe('defaultResolveSiteUrlFn', () => {
       content: '<html><head></head><body></body></html>',
     }
 
-    expect(defaultResolveSiteUrlFn(value)).toBeUndefined()
+    expect(defaultResolveSiteUrlFn(value, resolveUrlFn)).toBeUndefined()
   })
 
   it('should return undefined for empty content', () => {
@@ -1438,7 +1446,7 @@ describe('defaultResolveSiteUrlFn', () => {
       content: '',
     }
 
-    expect(defaultResolveSiteUrlFn(value)).toBeUndefined()
+    expect(defaultResolveSiteUrlFn(value, resolveUrlFn)).toBeUndefined()
   })
 
   it('should return undefined for undefined content', () => {
@@ -1446,7 +1454,7 @@ describe('defaultResolveSiteUrlFn', () => {
       url: 'https://example.com',
     }
 
-    expect(defaultResolveSiteUrlFn(value)).toBeUndefined()
+    expect(defaultResolveSiteUrlFn(value, resolveUrlFn)).toBeUndefined()
   })
 
   it('should return site URL from RSS feed with atom:link alternate', () => {
@@ -1463,7 +1471,7 @@ describe('defaultResolveSiteUrlFn', () => {
     }
     const expected = 'https://example.com/'
 
-    expect(defaultResolveSiteUrlFn(value)).toBe(expected)
+    expect(defaultResolveSiteUrlFn(value, resolveUrlFn)).toBe(expected)
   })
 
   it('should resolve relative site URL from RSS feed against feed URL', () => {
@@ -1480,7 +1488,7 @@ describe('defaultResolveSiteUrlFn', () => {
     }
     const expected = 'https://example.com/log/'
 
-    expect(defaultResolveSiteUrlFn(value)).toBe(expected)
+    expect(defaultResolveSiteUrlFn(value, resolveUrlFn)).toBe(expected)
   })
 
   it('should resolve relative site URL from Atom feed against feed URL', () => {
@@ -1495,7 +1503,7 @@ describe('defaultResolveSiteUrlFn', () => {
     }
     const expected = 'https://example.com/blog'
 
-    expect(defaultResolveSiteUrlFn(value)).toBe(expected)
+    expect(defaultResolveSiteUrlFn(value, resolveUrlFn)).toBe(expected)
   })
 
   it('should resolve relative site URL from JSON Feed against feed URL', () => {
@@ -1510,7 +1518,7 @@ describe('defaultResolveSiteUrlFn', () => {
     }
     const expected = 'https://example.com/site/'
 
-    expect(defaultResolveSiteUrlFn(value)).toBe(expected)
+    expect(defaultResolveSiteUrlFn(value, resolveUrlFn)).toBe(expected)
   })
 })
 

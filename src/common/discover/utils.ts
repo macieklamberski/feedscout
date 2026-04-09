@@ -12,7 +12,6 @@ import type {
   DiscoverResolveUrlFn,
   DiscoverUriEntry,
 } from '../types.js'
-import { resolveUrl } from '../utils.js'
 
 export const defaultFetchFn: DiscoverFetchFn = async (url, options) => {
   const response = await fetch(url, {
@@ -75,7 +74,7 @@ export const getFeedSiteUrl = (parsed: ReturnType<typeof parseFeed>): string | u
 
 // TODO: parseFeed is called here and again in discoverUrisFromFeed for the favicons
 // discoverer. Consider caching the parsed result to avoid double parsing.
-export const defaultResolveSiteUrlFn: DiscoverResolveSiteUrlFn = (input) => {
+export const defaultResolveSiteUrlFn: DiscoverResolveSiteUrlFn = (input, resolveUrlFn) => {
   if (!input.content) {
     return
   }
@@ -90,7 +89,7 @@ export const defaultResolveSiteUrlFn: DiscoverResolveSiteUrlFn = (input) => {
       } catch {}
     } else {
       // Resolve relative site URLs against the feed URL.
-      siteUrl = resolveUrl(siteUrl, input.url)
+      siteUrl = resolveUrlFn(siteUrl, input.url)
     }
 
     // Avoid re-fetching the same URL.
