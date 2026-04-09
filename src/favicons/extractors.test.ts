@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'bun:test'
-import { defaultExtractor } from './extractors.js'
+import { defaultExtractFn } from './extractors.js'
 
-describe('defaultExtractor', () => {
+describe('defaultExtractFn', () => {
   describe('content-type header', () => {
     it('should return isValid: true for image/png content-type', async () => {
       const value = {
@@ -11,7 +11,7 @@ describe('defaultExtractor', () => {
       }
       const expected = { url: 'https://example.com/icon.png', isValid: true }
 
-      expect(await defaultExtractor(value)).toEqual(expected)
+      expect(await defaultExtractFn(value)).toEqual(expected)
     })
 
     it('should return isValid: true for image/x-icon content-type', async () => {
@@ -22,7 +22,7 @@ describe('defaultExtractor', () => {
       }
       const expected = { url: 'https://example.com/favicon.ico', isValid: true }
 
-      expect(await defaultExtractor(value)).toEqual(expected)
+      expect(await defaultExtractFn(value)).toEqual(expected)
     })
 
     it('should return isValid: true for image/svg+xml content-type', async () => {
@@ -33,7 +33,7 @@ describe('defaultExtractor', () => {
       }
       const expected = { url: 'https://example.com/icon.svg', isValid: true }
 
-      expect(await defaultExtractor(value)).toEqual(expected)
+      expect(await defaultExtractFn(value)).toEqual(expected)
     })
 
     it('should return isValid: false for text/html content-type without other signals', async () => {
@@ -44,14 +44,14 @@ describe('defaultExtractor', () => {
       }
       const expected = { url: 'https://example.com/icon.png', isValid: false }
 
-      expect(await defaultExtractor(value)).toEqual(expected)
+      expect(await defaultExtractFn(value)).toEqual(expected)
     })
 
     it('should return isValid: false for missing content-type without other signals', async () => {
       const value = { url: 'https://example.com/icon.png', content: '', headers: new Headers() }
       const expected = { url: 'https://example.com/icon.png', isValid: false }
 
-      expect(await defaultExtractor(value)).toEqual(expected)
+      expect(await defaultExtractFn(value)).toEqual(expected)
     })
   })
 
@@ -63,7 +63,7 @@ describe('defaultExtractor', () => {
       }
       const expected = { url: 'https://example.com/icon.svg', isValid: true }
 
-      expect(await defaultExtractor(value)).toEqual(expected)
+      expect(await defaultExtractFn(value)).toEqual(expected)
     })
 
     it('should return isValid: true for content starting with <?xml followed by <svg', async () => {
@@ -73,7 +73,7 @@ describe('defaultExtractor', () => {
       }
       const expected = { url: 'https://example.com/icon.svg', isValid: true }
 
-      expect(await defaultExtractor(value)).toEqual(expected)
+      expect(await defaultExtractFn(value)).toEqual(expected)
     })
 
     it('should return isValid: true for svg content with leading whitespace', async () => {
@@ -83,7 +83,7 @@ describe('defaultExtractor', () => {
       }
       const expected = { url: 'https://example.com/icon.svg', isValid: true }
 
-      expect(await defaultExtractor(value)).toEqual(expected)
+      expect(await defaultExtractFn(value)).toEqual(expected)
     })
 
     it('should return isValid: true for PNG magic bytes', async () => {
@@ -93,7 +93,7 @@ describe('defaultExtractor', () => {
       }
       const expected = { url: 'https://example.com/icon.png', isValid: true }
 
-      expect(await defaultExtractor(value)).toEqual(expected)
+      expect(await defaultExtractFn(value)).toEqual(expected)
     })
 
     it('should return isValid: true for GIF89a magic bytes', async () => {
@@ -103,7 +103,7 @@ describe('defaultExtractor', () => {
       }
       const expected = { url: 'https://example.com/icon.gif', isValid: true }
 
-      expect(await defaultExtractor(value)).toEqual(expected)
+      expect(await defaultExtractFn(value)).toEqual(expected)
     })
 
     it('should return isValid: true for GIF87a magic bytes', async () => {
@@ -113,7 +113,7 @@ describe('defaultExtractor', () => {
       }
       const expected = { url: 'https://example.com/icon.gif', isValid: true }
 
-      expect(await defaultExtractor(value)).toEqual(expected)
+      expect(await defaultExtractFn(value)).toEqual(expected)
     })
 
     it('should return isValid: true for WebP magic bytes', async () => {
@@ -123,7 +123,7 @@ describe('defaultExtractor', () => {
       }
       const expected = { url: 'https://example.com/icon.webp', isValid: true }
 
-      expect(await defaultExtractor(value)).toEqual(expected)
+      expect(await defaultExtractFn(value)).toEqual(expected)
     })
 
     it('should return isValid: false for RSS feed with svg in entry content', async () => {
@@ -134,7 +134,7 @@ describe('defaultExtractor', () => {
       }
       const expected = { url: 'https://example.com/feed.xml', isValid: false }
 
-      expect(await defaultExtractor(value)).toEqual(expected)
+      expect(await defaultExtractFn(value)).toEqual(expected)
     })
 
     it('should return isValid: false for <?xml without <svg', async () => {
@@ -144,7 +144,7 @@ describe('defaultExtractor', () => {
       }
       const expected = { url: 'https://example.com/feed.xml', isValid: false }
 
-      expect(await defaultExtractor(value)).toEqual(expected)
+      expect(await defaultExtractFn(value)).toEqual(expected)
     })
 
     it('should return isValid: false for html content', async () => {
@@ -154,7 +154,7 @@ describe('defaultExtractor', () => {
       }
       const expected = { url: 'https://example.com', isValid: false }
 
-      expect(await defaultExtractor(value)).toEqual(expected)
+      expect(await defaultExtractFn(value)).toEqual(expected)
     })
 
     it('should return isValid: false for html content with embedded svg', async () => {
@@ -165,7 +165,7 @@ describe('defaultExtractor', () => {
       }
       const expected = { url: 'https://example.com', isValid: false }
 
-      expect(await defaultExtractor(value)).toEqual(expected)
+      expect(await defaultExtractFn(value)).toEqual(expected)
     })
   })
 
@@ -174,63 +174,63 @@ describe('defaultExtractor', () => {
       const value = { url: 'https://example.com/icon.png', content: '', status: 200 }
       const expected = { url: 'https://example.com/icon.png', isValid: true }
 
-      expect(await defaultExtractor(value)).toEqual(expected)
+      expect(await defaultExtractFn(value)).toEqual(expected)
     })
 
     it('should return isValid: true for status 299', async () => {
       const value = { url: 'https://example.com/icon.png', content: '', status: 299 }
       const expected = { url: 'https://example.com/icon.png', isValid: true }
 
-      expect(await defaultExtractor(value)).toEqual(expected)
+      expect(await defaultExtractFn(value)).toEqual(expected)
     })
 
     it('should return isValid: true for status 301', async () => {
       const value = { url: 'https://example.com/icon.png', content: '', status: 301 }
       const expected = { url: 'https://example.com/icon.png', isValid: true }
 
-      expect(await defaultExtractor(value)).toEqual(expected)
+      expect(await defaultExtractFn(value)).toEqual(expected)
     })
 
     it('should return isValid: true for status 399', async () => {
       const value = { url: 'https://example.com/icon.png', content: '', status: 399 }
       const expected = { url: 'https://example.com/icon.png', isValid: true }
 
-      expect(await defaultExtractor(value)).toEqual(expected)
+      expect(await defaultExtractFn(value)).toEqual(expected)
     })
 
     it('should return isValid: false for status 400', async () => {
       const value = { url: 'https://example.com/icon.png', content: '', status: 400 }
       const expected = { url: 'https://example.com/icon.png', isValid: false }
 
-      expect(await defaultExtractor(value)).toEqual(expected)
+      expect(await defaultExtractFn(value)).toEqual(expected)
     })
 
     it('should return isValid: false for status 404', async () => {
       const value = { url: 'https://example.com/icon.png', content: '', status: 404 }
       const expected = { url: 'https://example.com/icon.png', isValid: false }
 
-      expect(await defaultExtractor(value)).toEqual(expected)
+      expect(await defaultExtractFn(value)).toEqual(expected)
     })
 
     it('should return isValid: false for status 500', async () => {
       const value = { url: 'https://example.com/icon.png', content: '', status: 500 }
       const expected = { url: 'https://example.com/icon.png', isValid: false }
 
-      expect(await defaultExtractor(value)).toEqual(expected)
+      expect(await defaultExtractFn(value)).toEqual(expected)
     })
 
     it('should return isValid: false for status 199', async () => {
       const value = { url: 'https://example.com/icon.png', content: '', status: 199 }
       const expected = { url: 'https://example.com/icon.png', isValid: false }
 
-      expect(await defaultExtractor(value)).toEqual(expected)
+      expect(await defaultExtractFn(value)).toEqual(expected)
     })
 
     it('should return isValid: false for undefined status without other signals', async () => {
       const value = { url: 'https://example.com/icon.png', content: '' }
       const expected = { url: 'https://example.com/icon.png', isValid: false }
 
-      expect(await defaultExtractor(value)).toEqual(expected)
+      expect(await defaultExtractFn(value)).toEqual(expected)
     })
   })
 })

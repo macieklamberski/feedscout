@@ -2,9 +2,8 @@ import { afterEach, describe, expect, it, spyOn } from 'bun:test'
 import { parseFeed } from 'feedsmith'
 import locales from '../locales.json' with { type: 'json' }
 import type { DiscoverFetchFn, DiscoverResolveUrlFn } from '../types.js'
+import { defaultFetchFn, defaultResolveSiteUrlFn, defaultResolveUrlFn } from './defaults.js'
 import {
-  defaultFetchFn,
-  defaultResolveSiteUrlFn,
   getFeedSiteUrl,
   normalizeInput,
   normalizeMethodsConfig,
@@ -1344,7 +1343,73 @@ describe('getFeedSiteUrl', () => {
   })
 })
 
+describe('defaultResolveUrlFn', () => {
+  it('should resolve relative URL with base URL', () => {
+    const value = '/feed.xml'
+    const baseUrl = 'https://example.com'
+    const expected = 'https://example.com/feed.xml'
+
+    expect(defaultResolveUrlFn(value, baseUrl)).toBe(expected)
+  })
+
+  it('should resolve relative URL with base URL containing path', () => {
+    const value = 'feed.xml'
+    const baseUrl = 'https://example.com/blog/'
+    const expected = 'https://example.com/blog/feed.xml'
+
+    expect(defaultResolveUrlFn(value, baseUrl)).toBe(expected)
+  })
+
+  it('should preserve absolute URL when base URL provided', () => {
+    const value = 'https://other.com/feed.xml'
+    const baseUrl = 'https://example.com'
+    const expected = 'https://other.com/feed.xml'
+
+    expect(defaultResolveUrlFn(value, baseUrl)).toBe(expected)
+  })
+
+  it('should return undefined when base URL is undefined and URL is relative', () => {
+    const value = '/feed.xml'
+    const baseUrl = undefined
+    const expected = undefined
+
+    expect(defaultResolveUrlFn(value, baseUrl)).toBe(expected)
+  })
+
+  it('should return absolute URL when base URL is undefined', () => {
+    const value = 'https://example.com/feed.xml'
+    const baseUrl = undefined
+    const expected = 'https://example.com/feed.xml'
+
+    expect(defaultResolveUrlFn(value, baseUrl)).toBe(expected)
+  })
+
+  it('should handle protocol-relative URLs', () => {
+    const value = '//cdn.example.com/feed.xml'
+    const baseUrl = 'https://example.com'
+    const expected = 'https://cdn.example.com/feed.xml'
+
+    expect(defaultResolveUrlFn(value, baseUrl)).toBe(expected)
+  })
+
+  it('should handle parent directory references', () => {
+    const value = '../feed.xml'
+    const baseUrl = 'https://example.com/blog/posts/'
+    const expected = 'https://example.com/blog/feed.xml'
+
+    expect(defaultResolveUrlFn(value, baseUrl)).toBe(expected)
+  })
+})
+
 describe('defaultResolveSiteUrlFn', () => {
+  const resolveUrlFn: DiscoverResolveUrlFn = (url, baseUrl) => {
+    try {
+      return new URL(url, baseUrl).href
+    } catch {
+      return
+    }
+  }
+
   it('should return site URL from RSS feed with channel link', () => {
     const value = {
       url: 'https://example.com/feed.xml',
@@ -1359,7 +1424,7 @@ describe('defaultResolveSiteUrlFn', () => {
     }
     const expected = 'https://example.com/'
 
-    expect(defaultResolveSiteUrlFn(value)).toBe(expected)
+    expect(defaultResolveSiteUrlFn(value, resolveUrlFn)).toBe(expected)
   })
 
   it('should return site URL from Atom feed with alternate link', () => {
@@ -1374,7 +1439,7 @@ describe('defaultResolveSiteUrlFn', () => {
     }
     const expected = 'https://example.com/'
 
-    expect(defaultResolveSiteUrlFn(value)).toBe(expected)
+    expect(defaultResolveSiteUrlFn(value, resolveUrlFn)).toBe(expected)
   })
 
   it('should return site URL from JSON Feed with home_page_url', () => {
@@ -1389,7 +1454,7 @@ describe('defaultResolveSiteUrlFn', () => {
     }
     const expected = 'https://example.com/'
 
-    expect(defaultResolveSiteUrlFn(value)).toBe(expected)
+    expect(defaultResolveSiteUrlFn(value, resolveUrlFn)).toBe(expected)
   })
 
   it('should fall back to origin when feed has no site URL', () => {
@@ -1404,7 +1469,7 @@ describe('defaultResolveSiteUrlFn', () => {
     }
     const expected = 'https://example.com'
 
-    expect(defaultResolveSiteUrlFn(value)).toBe(expected)
+    expect(defaultResolveSiteUrlFn(value, resolveUrlFn)).toBe(expected)
   })
 
   it('should return undefined when resolved URL equals input URL', () => {
@@ -1420,7 +1485,7 @@ describe('defaultResolveSiteUrlFn', () => {
       `,
     }
 
-    expect(defaultResolveSiteUrlFn(value)).toBeUndefined()
+    expect(defaultResolveSiteUrlFn(value, resolveUrlFn)).toBeUndefined()
   })
 
   it('should return undefined for non-feed content', () => {
@@ -1429,7 +1494,7 @@ describe('defaultResolveSiteUrlFn', () => {
       content: '<html><head></head><body></body></html>',
     }
 
-    expect(defaultResolveSiteUrlFn(value)).toBeUndefined()
+    expect(defaultResolveSiteUrlFn(value, resolveUrlFn)).toBeUndefined()
   })
 
   it('should return undefined for empty content', () => {
@@ -1438,7 +1503,7 @@ describe('defaultResolveSiteUrlFn', () => {
       content: '',
     }
 
-    expect(defaultResolveSiteUrlFn(value)).toBeUndefined()
+    expect(defaultResolveSiteUrlFn(value, resolveUrlFn)).toBeUndefined()
   })
 
   it('should return undefined for undefined content', () => {
@@ -1446,7 +1511,7 @@ describe('defaultResolveSiteUrlFn', () => {
       url: 'https://example.com',
     }
 
-    expect(defaultResolveSiteUrlFn(value)).toBeUndefined()
+    expect(defaultResolveSiteUrlFn(value, resolveUrlFn)).toBeUndefined()
   })
 
   it('should return site URL from RSS feed with atom:link alternate', () => {
@@ -1463,7 +1528,7 @@ describe('defaultResolveSiteUrlFn', () => {
     }
     const expected = 'https://example.com/'
 
-    expect(defaultResolveSiteUrlFn(value)).toBe(expected)
+    expect(defaultResolveSiteUrlFn(value, resolveUrlFn)).toBe(expected)
   })
 
   it('should resolve relative site URL from RSS feed against feed URL', () => {
@@ -1480,7 +1545,7 @@ describe('defaultResolveSiteUrlFn', () => {
     }
     const expected = 'https://example.com/log/'
 
-    expect(defaultResolveSiteUrlFn(value)).toBe(expected)
+    expect(defaultResolveSiteUrlFn(value, resolveUrlFn)).toBe(expected)
   })
 
   it('should resolve relative site URL from Atom feed against feed URL', () => {
@@ -1495,7 +1560,7 @@ describe('defaultResolveSiteUrlFn', () => {
     }
     const expected = 'https://example.com/blog'
 
-    expect(defaultResolveSiteUrlFn(value)).toBe(expected)
+    expect(defaultResolveSiteUrlFn(value, resolveUrlFn)).toBe(expected)
   })
 
   it('should resolve relative site URL from JSON Feed against feed URL', () => {
@@ -1510,7 +1575,7 @@ describe('defaultResolveSiteUrlFn', () => {
     }
     const expected = 'https://example.com/site/'
 
-    expect(defaultResolveSiteUrlFn(value)).toBe(expected)
+    expect(defaultResolveSiteUrlFn(value, resolveUrlFn)).toBe(expected)
   })
 })
 
