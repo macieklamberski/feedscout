@@ -11,6 +11,8 @@ on:
         options:
           - main
           - beta
+          - alpha
+          - next
 
 jobs:
   test:
