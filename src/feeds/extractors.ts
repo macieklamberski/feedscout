@@ -31,8 +31,8 @@ export const defaultExtractFn: DiscoverExtractFn<FeedResult> = ({ content, url }
         url,
         isValid: true,
         format,
-        title: feed.title,
-        description: feed.subtitle,
+        title: feed.title?.value,
+        description: feed.subtitle?.value,
         siteUrl,
       }
     }

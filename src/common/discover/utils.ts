@@ -1,5 +1,4 @@
-import type { parseFeed } from 'feedsmith'
-import type { Atom, DeepPartial } from 'feedsmith/types'
+import type { Atom } from 'feedsmith'
 import locales from '../locales.json' with { type: 'json' }
 import type {
   DiscoverFetchFn,
@@ -11,6 +10,7 @@ import type {
   DiscoverResolveUrlFn,
   DiscoverUriEntry,
 } from '../types.js'
+import type { FeedMethodData } from '../uris/feed/types.js'
 
 export const normalizeInput = async (
   input: DiscoverInput,
@@ -36,11 +36,11 @@ export const normalizeInput = async (
   return { url: input }
 }
 
-const getLinkOfType = (links: Array<DeepPartial<Atom.Link<string>>> | undefined, rel: string) => {
+const getLinkOfType = (links: Array<Atom.Link<string>> | undefined, rel: string) => {
   return links?.find((link) => link.rel === rel)
 }
 
-export const getFeedSiteUrl = (parsed: ReturnType<typeof parseFeed>): string | undefined => {
+export const getFeedSiteUrl = (parsed: FeedMethodData): string | undefined => {
   const { format, feed } = parsed
 
   if (format === 'rss' || format === 'rdf') {
