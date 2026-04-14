@@ -1,11 +1,11 @@
-import type { LinkSelector } from '../../types.js'
+import type { LinkSelector, Pattern } from '../../types.js'
 
 export type HtmlMethodOptions = {
   baseUrl?: string
   linkSelectors: Array<LinkSelector>
-  anchorUris: Array<string>
-  anchorIgnoredUris: Array<string>
-  anchorLabels: Array<string>
+  anchorUris: Array<Pattern>
+  anchorIgnoredUris: Array<Pattern>
+  anchorLabels: Array<Pattern>
 }
 
 export type HtmlMethodContext = {

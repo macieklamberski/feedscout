@@ -124,10 +124,13 @@ export const linkSelectors: Array<LinkSelector> = [
   { rel: 'feed' },
 ]
 
+// Path segments that indicate feed URLs when found within anchor hrefs.
+export const anchorPathSegments = [/\/rss\//, /\/atom\//, /\/feed\//]
+
 // Default options for HTML method.
 export const defaultHtmlOptions: Omit<HtmlMethodOptions, 'baseUrl'> = {
   linkSelectors,
-  anchorUris: urisComprehensive.flat(),
+  anchorUris: [...urisComprehensive.flat(), ...anchorPathSegments],
   anchorIgnoredUris: ignoredUris,
   anchorLabels,
 }
