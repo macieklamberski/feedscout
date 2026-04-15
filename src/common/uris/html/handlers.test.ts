@@ -9,6 +9,7 @@ const createMockContext = (): HtmlMethodContext => {
       href: '',
       text: '',
     },
+    foundMicroformat: false,
     options: {
       linkSelectors: [
         { rel: 'alternate', types: ['application/rss+xml', 'application/atom+xml'] },
@@ -253,6 +254,69 @@ describe('handleOpenTag', () => {
     handleOpenTag(value, 'a', { href: '/blog/feed' })
 
     expect(value.discoveredUris.has('/blog/feed')).toBe(true)
+  })
+
+  it('should set foundMicroformat when element has class h-feed', () => {
+    const value = createMockContext()
+    value.options.microformatClasses = ['h-feed', 'h-entry']
+
+    handleOpenTag(value, 'div', { class: 'h-feed' })
+
+    expect(value.foundMicroformat).toBe(true)
+  })
+
+  it('should set foundMicroformat when element has class h-entry', () => {
+    const value = createMockContext()
+    value.options.microformatClasses = ['h-feed', 'h-entry']
+
+    handleOpenTag(value, 'article', { class: 'h-entry' })
+
+    expect(value.foundMicroformat).toBe(true)
+  })
+
+  it('should set foundMicroformat when h-entry is in compound class', () => {
+    const value = createMockContext()
+    value.options.microformatClasses = ['h-feed', 'h-entry']
+
+    handleOpenTag(value, 'article', { class: 'post h-entry h-card' })
+
+    expect(value.foundMicroformat).toBe(true)
+  })
+
+  it('should not set foundMicroformat when microformatClasses is not set', () => {
+    const value = createMockContext()
+
+    handleOpenTag(value, 'div', { class: 'h-feed' })
+
+    expect(value.foundMicroformat).toBe(false)
+  })
+
+  it('should not set foundMicroformat for unrelated classes', () => {
+    const value = createMockContext()
+    value.options.microformatClasses = ['h-feed', 'h-entry']
+
+    handleOpenTag(value, 'div', { class: 'blog-post article' })
+
+    expect(value.foundMicroformat).toBe(false)
+  })
+
+  it('should handle case-insensitive microformat class matching', () => {
+    const value = createMockContext()
+    value.options.microformatClasses = ['h-feed', 'h-entry']
+
+    handleOpenTag(value, 'div', { class: 'H-Feed' })
+
+    expect(value.foundMicroformat).toBe(true)
+  })
+
+  it('should not re-check once foundMicroformat is true', () => {
+    const value = createMockContext()
+    value.options.microformatClasses = ['h-feed', 'h-entry']
+    value.foundMicroformat = true
+
+    handleOpenTag(value, 'div', { class: 'some-other-class' })
+
+    expect(value.foundMicroformat).toBe(true)
   })
 })
 

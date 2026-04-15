@@ -720,6 +720,111 @@ describe('discoverUrisFromHtml', () => {
     })
   })
 
+  describe('microformat detection', () => {
+    it('should return baseUrl when h-feed class is detected', () => {
+      const value = '<div class="h-feed"><article class="h-entry"><p>Post</p></article></div>'
+      const expected = ['https://example.com']
+
+      expect(
+        discoverUrisFromHtml(value, {
+          ...defaultOptions,
+          baseUrl: 'https://example.com',
+          microformatClasses: ['h-feed', 'h-entry'],
+        }),
+      ).toEqual(expected)
+    })
+
+    it('should return baseUrl when h-entry class is detected', () => {
+      const value = '<article class="h-entry"><p>Post</p></article>'
+      const expected = ['https://example.com']
+
+      expect(
+        discoverUrisFromHtml(value, {
+          ...defaultOptions,
+          baseUrl: 'https://example.com',
+          microformatClasses: ['h-feed', 'h-entry'],
+        }),
+      ).toEqual(expected)
+    })
+
+    it('should return baseUrl with compound class', () => {
+      const value = '<article class="post h-entry h-card"><p>Post</p></article>'
+      const expected = ['https://example.com']
+
+      expect(
+        discoverUrisFromHtml(value, {
+          ...defaultOptions,
+          baseUrl: 'https://example.com',
+          microformatClasses: ['h-feed', 'h-entry'],
+        }),
+      ).toEqual(expected)
+    })
+
+    it('should not return baseUrl when microformatClasses is not configured', () => {
+      const value = '<div class="h-feed"><article class="h-entry"><p>Post</p></article></div>'
+      const expected: Array<string> = []
+
+      expect(discoverUrisFromHtml(value, defaultOptions)).toEqual(expected)
+    })
+
+    it('should not return baseUrl when no microformat classes found', () => {
+      const value = '<div class="blog"><article class="post"><p>Post</p></article></div>'
+      const expected: Array<string> = []
+
+      expect(
+        discoverUrisFromHtml(value, {
+          ...defaultOptions,
+          baseUrl: 'https://example.com',
+          microformatClasses: ['h-feed', 'h-entry'],
+        }),
+      ).toEqual(expected)
+    })
+
+    it('should not return baseUrl when baseUrl is not set', () => {
+      const value = '<div class="h-feed"><article class="h-entry"><p>Post</p></article></div>'
+      const expected: Array<string> = []
+
+      expect(
+        discoverUrisFromHtml(value, {
+          ...defaultOptions,
+          microformatClasses: ['h-feed', 'h-entry'],
+        }),
+      ).toEqual(expected)
+    })
+
+    it('should combine microformat detection with link discovery', () => {
+      const value = `
+        <link rel="alternate" type="application/rss+xml" href="/feed.xml">
+        <div class="h-feed"><article class="h-entry"><p>Post</p></article></div>
+      `
+      const expected = ['/feed.xml', 'https://example.com']
+
+      expect(
+        discoverUrisFromHtml(value, {
+          ...defaultOptions,
+          baseUrl: 'https://example.com',
+          microformatClasses: ['h-feed', 'h-entry'],
+        }),
+      ).toEqual(expected)
+    })
+
+    it('should deduplicate when baseUrl already discovered via other means', () => {
+      const value = `
+        <link rel="alternate" type="application/rss+xml" href="https://example.com">
+        <div class="h-feed"><article class="h-entry"><p>Post</p></article></div>
+      `
+      const expected = ['https://example.com']
+
+      expect(
+        discoverUrisFromHtml(value, {
+          ...defaultOptions,
+          baseUrl: 'https://example.com',
+          microformatClasses: ['h-feed', 'h-entry'],
+        }),
+      ).toEqual(expected)
+    })
+  })
+
   describe('exotic edge cases', () => {
     it('should handle very long feed URLs', () => {
       const longUrl = `/feed/${'a'.repeat(1000)}.xml`

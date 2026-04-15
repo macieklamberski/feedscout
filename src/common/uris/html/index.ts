@@ -6,6 +6,7 @@ export const discoverUrisFromHtml = (html: string, options: HtmlMethodOptions): 
   const context: HtmlMethodContext = {
     discoveredUris: new Set<string>(),
     currentAnchor: { href: '', text: '' },
+    foundMicroformat: false,
     options,
   }
 
@@ -14,6 +15,11 @@ export const discoverUrisFromHtml = (html: string, options: HtmlMethodOptions): 
 
   parser.write(html)
   parser.end()
+
+  // If microformat classes detected, the page itself is a feed candidate.
+  if (context.foundMicroformat && options.baseUrl) {
+    context.discoveredUris.add(options.baseUrl)
+  }
 
   return [...context.discoveredUris]
 }
