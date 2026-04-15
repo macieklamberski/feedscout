@@ -23,6 +23,10 @@ const playlistPrefix = (prefix: string, channelId: string): string => {
   return channelId.replace(channelPrefixRegex, prefix)
 }
 
+// YouTube also supports a legacy ?user=username feed parameter, but it only
+// works with old-style usernames (not modern @handles) and returns the same
+// Atom content as ?channel_id=. YouTube's own autodiscovery always uses
+// channel_id, so we treat it as the canonical format.
 const feedUrl = (param: string, value: string): string => {
   return `https://www.youtube.com/feeds/videos.xml?${param}=${value}`
 }
