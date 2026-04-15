@@ -434,6 +434,129 @@ describe('discoverUrisFromHtml', () => {
     })
   })
 
+  describe('JSON-LD detection', () => {
+    it('should extract URL from DataFeed type', () => {
+      const value =
+        '<script type="application/ld+json">{"@type": "DataFeed", "url": "https://example.com/feed.xml"}</script>'
+      const expected = ['https://example.com/feed.xml']
+
+      expect(discoverUrisFromHtml(value, { ...defaultOptions, jsonLdTypes: ['DataFeed'] })).toEqual(
+        expected,
+      )
+    })
+
+    it('should add baseUrl when DataFeed type is found', () => {
+      const value =
+        '<script type="application/ld+json">{"@type": "DataFeed", "dataFeedElement": [{"@type": "DataFeedItem"}]}</script>'
+      const expected = ['https://example.com']
+
+      expect(
+        discoverUrisFromHtml(value, {
+          ...defaultOptions,
+          baseUrl: 'https://example.com',
+          jsonLdTypes: ['DataFeed'],
+        }),
+      ).toEqual(expected)
+    })
+
+    it('should handle @graph with nested types', () => {
+      const value =
+        '<script type="application/ld+json">{"@graph": [{"@type": "DataFeed", "url": "https://example.com/feed.xml"}]}</script>'
+      const expected = ['https://example.com/feed.xml']
+
+      expect(discoverUrisFromHtml(value, { ...defaultOptions, jsonLdTypes: ['DataFeed'] })).toEqual(
+        expected,
+      )
+    })
+
+    it('should handle array of JSON-LD objects', () => {
+      const value =
+        '<script type="application/ld+json">[{"@type": "DataFeed", "url": "https://example.com/feed1.xml"}, {"@type": "DataFeed", "url": "https://example.com/feed2.xml"}]</script>'
+      const expected = ['https://example.com/feed1.xml', 'https://example.com/feed2.xml']
+
+      expect(discoverUrisFromHtml(value, { ...defaultOptions, jsonLdTypes: ['DataFeed'] })).toEqual(
+        expected,
+      )
+    })
+
+    it('should ignore non-matching @type values', () => {
+      const value =
+        '<script type="application/ld+json">{"@type": "Article", "url": "https://example.com/article"}</script>'
+      const expected: Array<string> = []
+
+      expect(discoverUrisFromHtml(value, { ...defaultOptions, jsonLdTypes: ['DataFeed'] })).toEqual(
+        expected,
+      )
+    })
+
+    it('should ignore invalid JSON in script block', () => {
+      const value = '<script type="application/ld+json">{not valid json}</script>'
+      const expected: Array<string> = []
+
+      expect(discoverUrisFromHtml(value, { ...defaultOptions, jsonLdTypes: ['DataFeed'] })).toEqual(
+        expected,
+      )
+    })
+
+    it('should not activate without jsonLdTypes option', () => {
+      const value =
+        '<script type="application/ld+json">{"@type": "DataFeed", "url": "https://example.com/feed.xml"}</script>'
+      const expected: Array<string> = []
+
+      expect(discoverUrisFromHtml(value, defaultOptions)).toEqual(expected)
+    })
+
+    it('should handle multiple JSON-LD script blocks', () => {
+      const value =
+        '<script type="application/ld+json">{"@type": "WebSite", "url": "https://example.com"}</script><script type="application/ld+json">{"@type": "DataFeed", "url": "https://example.com/feed.xml"}</script>'
+      const expected = ['https://example.com/feed.xml']
+
+      expect(discoverUrisFromHtml(value, { ...defaultOptions, jsonLdTypes: ['DataFeed'] })).toEqual(
+        expected,
+      )
+    })
+
+    it('should combine JSON-LD with link discovery', () => {
+      const value =
+        '<link rel="alternate" type="application/rss+xml" href="/rss.xml"><script type="application/ld+json">{"@type": "DataFeed", "url": "https://example.com/feed.xml"}</script>'
+      const expected = ['/rss.xml', 'https://example.com/feed.xml']
+
+      expect(discoverUrisFromHtml(value, { ...defaultOptions, jsonLdTypes: ['DataFeed'] })).toEqual(
+        expected,
+      )
+    })
+
+    it('should deduplicate URLs found via JSON-LD with other methods', () => {
+      const value =
+        '<link rel="alternate" type="application/rss+xml" href="https://example.com/feed.xml"><script type="application/ld+json">{"@type": "DataFeed", "url": "https://example.com/feed.xml"}</script>'
+      const expected = ['https://example.com/feed.xml']
+
+      expect(discoverUrisFromHtml(value, { ...defaultOptions, jsonLdTypes: ['DataFeed'] })).toEqual(
+        expected,
+      )
+    })
+
+    it('should handle case-insensitive type matching', () => {
+      const value =
+        '<script type="application/ld+json">{"@type": "datafeed", "url": "https://example.com/feed.xml"}</script>'
+      const expected = ['https://example.com/feed.xml']
+
+      expect(discoverUrisFromHtml(value, { ...defaultOptions, jsonLdTypes: ['DataFeed'] })).toEqual(
+        expected,
+      )
+    })
+
+    it('should extract sameAs URLs from matching type', () => {
+      const value =
+        '<script type="application/ld+json">{"@type": "DataFeed", "sameAs": ["https://example.com/feed.xml", "https://example.com/rss.xml"]}</script>'
+      const expected = ['https://example.com/feed.xml', 'https://example.com/rss.xml']
+
+      expect(discoverUrisFromHtml(value, { ...defaultOptions, jsonLdTypes: ['DataFeed'] })).toEqual(
+        expected,
+      )
+    })
+  })
+
   describe('custom options', () => {
     it('should use custom anchorUris', () => {
       const value = '<a href="/custom-feed">Feed</a>'

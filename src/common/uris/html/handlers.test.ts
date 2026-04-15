@@ -9,6 +9,7 @@ const createMockContext = (): HtmlMethodContext => {
       href: '',
       text: '',
     },
+    currentScript: null,
     options: {
       linkSelectors: [
         { rel: 'alternate', types: ['application/rss+xml', 'application/atom+xml'] },
@@ -254,6 +255,32 @@ describe('handleOpenTag', () => {
 
     expect(value.discoveredUris.has('/blog/feed')).toBe(true)
   })
+
+  it('should start tracking JSON-LD script when jsonLdTypes is set', () => {
+    const value = createMockContext()
+    value.options.jsonLdTypes = ['DataFeed']
+
+    handleOpenTag(value, 'script', { type: 'application/ld+json' })
+
+    expect(value.currentScript).toEqual({ isJsonLd: true, content: '' })
+  })
+
+  it('should not track script when jsonLdTypes is not set', () => {
+    const value = createMockContext()
+
+    handleOpenTag(value, 'script', { type: 'application/ld+json' })
+
+    expect(value.currentScript).toBeNull()
+  })
+
+  it('should not track non-JSON-LD script', () => {
+    const value = createMockContext()
+    value.options.jsonLdTypes = ['DataFeed']
+
+    handleOpenTag(value, 'script', { type: 'text/javascript' })
+
+    expect(value.currentScript).toBeNull()
+  })
 })
 
 describe('handleText', () => {
@@ -300,6 +327,26 @@ describe('handleText', () => {
     handleText(value, '')
 
     expect(value.currentAnchor.text).toBe('')
+  })
+
+  it('should accumulate JSON-LD script content', () => {
+    const value = createMockContext()
+    value.currentScript = { isJsonLd: true, content: '' }
+
+    handleText(value, '{"@type": "DataFeed"}')
+
+    expect(value.currentScript.content).toBe('{"@type": "DataFeed"}')
+  })
+
+  it('should not accumulate text in anchor when inside JSON-LD script', () => {
+    const value = createMockContext()
+    value.currentScript = { isJsonLd: true, content: '' }
+    value.currentAnchor.href = '/some-link'
+
+    handleText(value, 'some text')
+
+    expect(value.currentAnchor.text).toBe('')
+    expect(value.currentScript.content).toBe('some text')
   })
 })
 
@@ -427,5 +474,59 @@ describe('handleCloseTag', () => {
     handleCloseTag(value, 'a')
 
     expect(value.discoveredUris.has('/custom-feed')).toBe(true)
+  })
+
+  it('should extract URL from JSON-LD when script closes', () => {
+    const value = createMockContext()
+    value.options.jsonLdTypes = ['DataFeed']
+    value.currentScript = {
+      isJsonLd: true,
+      content: '{"@type": "DataFeed", "url": "https://example.com/feed.xml"}',
+    }
+
+    handleCloseTag(value, 'script')
+
+    expect(value.discoveredUris.has('https://example.com/feed.xml')).toBe(true)
+    expect(value.currentScript).toBeNull()
+  })
+
+  it('should handle invalid JSON-LD gracefully', () => {
+    const value = createMockContext()
+    value.options.jsonLdTypes = ['DataFeed']
+    value.currentScript = { isJsonLd: true, content: 'not valid json' }
+
+    handleCloseTag(value, 'script')
+
+    expect(value.discoveredUris.size).toBe(0)
+    expect(value.currentScript).toBeNull()
+  })
+
+  it('should add baseUrl for DataFeed type', () => {
+    const value = createMockContext()
+    value.options.jsonLdTypes = ['DataFeed']
+    value.options.baseUrl = 'https://example.com'
+    value.currentScript = {
+      isJsonLd: true,
+      content: '{"@type": "DataFeed", "dataFeedElement": []}',
+    }
+
+    handleCloseTag(value, 'script')
+
+    expect(value.discoveredUris.has('https://example.com')).toBe(true)
+  })
+
+  it('should extract URLs from @graph', () => {
+    const value = createMockContext()
+    value.options.jsonLdTypes = ['DataFeed']
+    value.currentScript = {
+      isJsonLd: true,
+      content: JSON.stringify({
+        '@graph': [{ '@type': 'DataFeed', url: 'https://example.com/feed.xml' }],
+      }),
+    }
+
+    handleCloseTag(value, 'script')
+
+    expect(value.discoveredUris.has('https://example.com/feed.xml')).toBe(true)
   })
 })
