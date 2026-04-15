@@ -130,6 +130,7 @@ export const defaultHtmlOptions: Omit<HtmlMethodOptions, 'baseUrl'> = {
   anchorUris: urisComprehensive.flat(),
   anchorIgnoredUris: ignoredUris,
   anchorLabels,
+  microformatClasses: ['h-feed', 'h-entry'],
 }
 
 // Default options for Headers method.

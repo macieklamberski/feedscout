@@ -2,6 +2,8 @@ import type { Handler } from 'htmlparser2'
 import { endsWithAnyOf, includesAnyOf, matchesAnyOfLinkSelectors } from '../../../common/utils.js'
 import type { HtmlMethodContext } from './types.js'
 
+const whitespacePattern = /\s+/
+
 export const handleOpenTag = (
   context: HtmlMethodContext,
   name: string,
@@ -38,6 +40,15 @@ export const handleOpenTag = (
     // Check if href ends with any anchor URI pattern.
     if (endsWithAnyOf(lowerHref, context.options.anchorUris)) {
       context.discoveredUris.add(attribs.href)
+    }
+  }
+
+  // Detect microformat classes indicating the page itself is a feed.
+  if (!context.foundMicroformat && context.options.microformatClasses?.length && attribs.class) {
+    const classes = attribs.class.toLowerCase().split(whitespacePattern)
+
+    if (context.options.microformatClasses.some((mf) => classes.includes(mf.toLowerCase()))) {
+      context.foundMicroformat = true
     }
   }
 }
