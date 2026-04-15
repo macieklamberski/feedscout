@@ -155,6 +155,22 @@ export const normalizeMethodsConfig = (
     }
   }
 
+  if (methodsObj.wellknown && defaults.wellknown) {
+    if (!resolvedInput.url || resolvedInput.url === '') {
+      throw new Error(locales.errors.wellknownMethodRequiresUrl)
+    }
+
+    const wellknownOptions = methodsObj.wellknown === true ? {} : methodsObj.wellknown
+
+    methodsConfig.wellknown = {
+      options: {
+        ...defaults.wellknown,
+        ...wellknownOptions,
+        baseUrl: resolvedInput.url,
+      },
+    }
+  }
+
   if (methodsObj.guess && defaults.guess) {
     if (!resolvedInput.url || resolvedInput.url === '') {
       throw new Error(locales.errors.guessMethodRequiresUrl)

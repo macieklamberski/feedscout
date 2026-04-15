@@ -6,19 +6,20 @@ import {
   defaultHeadersOptions,
   defaultHtmlOptions,
   defaultPlatformOptions,
+  defaultWellknownOptions,
 } from './defaults.js'
 import { defaultExtractFn } from './extractors.js'
 import type { FeedResult } from './types.js'
 
 export const discoverFeeds = <TValid extends FeedResult = FeedResult>(
   input: DiscoverInput,
-  options: DiscoverOptions<TValid, 'platform' | 'html' | 'headers' | 'guess'> = {},
+  options: DiscoverOptions<TValid, 'platform' | 'html' | 'wellknown' | 'headers' | 'guess'> = {},
 ): Promise<Array<DiscoverResult<TValid>>> => {
   return discover<TValid>(
     input,
     {
       ...options,
-      methods: options.methods ?? ['platform', 'html', 'headers', 'guess'],
+      methods: options.methods ?? ['platform', 'html', 'wellknown', 'headers', 'guess'],
       fetchFn: options.fetchFn ?? defaultFetchFn,
       extractFn: options.extractFn ?? defaultExtractFn,
       resolveUrlFn: options.resolveUrlFn ?? defaultResolveUrlFn,
@@ -27,6 +28,7 @@ export const discoverFeeds = <TValid extends FeedResult = FeedResult>(
     {
       platform: defaultPlatformOptions,
       html: defaultHtmlOptions,
+      wellknown: defaultWellknownOptions,
       headers: defaultHeadersOptions,
       guess: defaultGuessOptions,
     },

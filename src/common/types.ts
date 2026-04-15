@@ -3,6 +3,7 @@ import type { GuessMethodOptions } from './uris/guess/types.js'
 import type { HeadersMethodOptions } from './uris/headers/types.js'
 import type { HtmlMethodOptions } from './uris/html/types.js'
 import type { PlatformMethodOptions } from './uris/platform/types.js'
+import type { WellknownMethodOptions } from './uris/wellknown/types.js'
 
 export type MaybePromise<T> = T | Promise<T>
 
@@ -18,7 +19,14 @@ export type DiscoverUriEntry = {
   hint?: DiscoverUriHint
 }
 
-export const discoverMethodOrder = ['platform', 'feed', 'html', 'headers', 'guess'] as const
+export const discoverMethodOrder = [
+  'platform',
+  'feed',
+  'html',
+  'wellknown',
+  'headers',
+  'guess',
+] as const
 
 export type DiscoverMethod = (typeof discoverMethodOrder)[number]
 
@@ -105,6 +113,7 @@ export type DiscoverMethodsConfig<TMethods extends DiscoverMethod = DiscoverMeth
         platform?: true | Partial<PlatformMethodOptions>
         feed?: true | Partial<FeedMethodOptions>
         html?: true | Partial<Omit<HtmlMethodOptions, 'baseUrl'>>
+        wellknown?: true | Partial<Omit<WellknownMethodOptions, 'baseUrl'>>
         headers?: true | Partial<Omit<HeadersMethodOptions, 'baseUrl'>>
         guess?: true | Partial<Omit<GuessMethodOptions, 'baseUrl'>>
       },
@@ -116,6 +125,7 @@ export type DiscoverMethodsConfigDefaults = {
   platform?: Omit<PlatformMethodOptions, 'baseUrl'>
   feed?: FeedMethodOptions
   html?: Omit<HtmlMethodOptions, 'baseUrl'>
+  wellknown?: Omit<WellknownMethodOptions, 'baseUrl'>
   headers?: Omit<HeadersMethodOptions, 'baseUrl'>
   guess?: Omit<GuessMethodOptions, 'baseUrl'>
 }
@@ -134,6 +144,9 @@ export type DiscoverMethodsConfigInternal = {
   html?: {
     html: string
     options: HtmlMethodOptions
+  }
+  wellknown?: {
+    options: WellknownMethodOptions
   }
   headers?: {
     headers: Headers
