@@ -33,6 +33,8 @@
     "gitlab:activity": "Activity",
     "gitlab:releases": "Releases",
     "gitlab:tags": "Tags",
+    "gitlab:issues": "Issues",
+    "gitlab:merge-requests": "Merge requests",
     "codeberg:activity": "Activity",
     "codeberg:releases": "Releases",
     "codeberg:tags": "Tags",

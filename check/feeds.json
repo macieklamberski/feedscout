@@ -57,6 +57,8 @@
     "https://gitlab.com/gitlab-org.atom",
     "https://gitlab.com/gitlab-org/gitlab/-/releases.atom",
     "https://gitlab.com/gitlab-org/gitlab/-/tags?format=atom",
+    "https://gitlab.com/gitlab-org/gitlab/-/issues.atom",
+    "https://gitlab.com/gitlab-org/gitlab/-/merge_requests.atom",
     "https://gitlab.com/gitlab-org/gitlab.atom"
   ],
   "goodreads": [

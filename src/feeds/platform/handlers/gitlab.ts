@@ -91,6 +91,14 @@ export const gitlabHandler: PlatformHandler = {
             hint: composeHint('gitlab:tags'),
           },
           {
+            uri: `${origin}/${user}/${repo}/-/issues.atom`,
+            hint: composeHint('gitlab:issues'),
+          },
+          {
+            uri: `${origin}/${user}/${repo}/-/merge_requests.atom`,
+            hint: composeHint('gitlab:merge-requests'),
+          },
+          {
             uri: `${origin}/${user}/${repo}.atom`,
             hint: composeHint('gitlab:activity'),
           },
