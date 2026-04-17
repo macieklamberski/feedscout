@@ -91,6 +91,30 @@ describe('deviantartHandler', () => {
       expect(deviantartHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return RSS feed URL for journal page', () => {
+      const value = 'https://deviantart.com/yuumei/journal'
+      const expected = [
+        {
+          uri: 'https://backend.deviantart.com/rss.xml?q=journal%3Ayuumei',
+          hint: { key: 'deviantart:journal', label: 'Journal' },
+        },
+      ]
+
+      expect(deviantartHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return RSS feed URL for specific journal post', () => {
+      const value = 'https://deviantart.com/yuumei/journal/some-post-slug'
+      const expected = [
+        {
+          uri: 'https://backend.deviantart.com/rss.xml?q=journal%3Ayuumei',
+          hint: { key: 'deviantart:journal', label: 'Journal' },
+        },
+      ]
+
+      expect(deviantartHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return empty array for excluded paths', () => {
       const excludedUrls = [
         'https://deviantart.com/about',
