@@ -11,9 +11,8 @@ const domainRegex = /^\/domain\/([^/]+)/
 export const hosts = ['reddit.com', 'www.reddit.com', 'old.reddit.com', 'new.reddit.com']
 const sortOptions = ['hot', 'new', 'rising', 'controversial', 'top']
 
-// Note: Reddit also supports these feed formats which require user input:
-// - Time-filtered top/controversial: /r/{sub}/top/.rss?t=week (hour|day|week|month|year|all)
-// - Combined subreddits: /r/{sub1}+{sub2}/.rss
+// Combined subreddits work transparently: /r/{sub1}+{sub2} is captured by the same regex.
+// Note: time-filtered top/controversial feeds require user input (?t=week).
 
 export const redditHandler: PlatformHandler = {
   match: (url) => {

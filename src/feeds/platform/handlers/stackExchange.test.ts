@@ -42,6 +42,18 @@ describe('stackExchangeHandler', () => {
       expect(stackExchangeHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return tag feed for combined tags on Stack Overflow', () => {
+      const value = 'https://stackoverflow.com/questions/tagged/javascript+typescript'
+      const expected = [
+        {
+          uri: 'https://stackoverflow.com/feeds/tag/javascript+typescript',
+          hint: { key: 'stackexchange:tag', label: 'Tag' },
+        },
+      ]
+
+      expect(stackExchangeHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return question feed for question page on Stack Overflow', () => {
       const value = 'https://stackoverflow.com/questions/12345/how-to-do-something'
       const expected = [
