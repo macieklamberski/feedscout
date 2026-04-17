@@ -150,6 +150,18 @@ describe('stackExchangeHandler', () => {
       expect(stackExchangeHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return collective feed for collectives page', () => {
+      const value = 'https://stackoverflow.com/collectives/aws'
+      const expected = [
+        {
+          uri: 'https://stackoverflow.com/feeds/collectives/aws',
+          hint: { key: 'stackexchange:collective', label: 'Collective' },
+        },
+      ]
+
+      expect(stackExchangeHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return empty array for unrecognized path', () => {
       expect(stackExchangeHandler.resolve('https://stackoverflow.com/company')).toEqual([])
     })
