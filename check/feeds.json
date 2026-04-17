@@ -22,7 +22,8 @@
   ],
   "dailymotion": [
     "https://www.dailymotion.com/rss/Euronews-en",
-    "https://www.dailymotion.com/rss/playlist/x5e4h5"
+    "https://www.dailymotion.com/rss/playlist/x5e4h5",
+    "https://www.dailymotion.com/rss/channel/news"
   ],
   "deviantart": [
     "https://backend.deviantart.com/rss.xml?type=deviation&q=by:yuumei+sort:time+meta:all",
