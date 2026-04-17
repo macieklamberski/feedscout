@@ -95,7 +95,8 @@
   ],
   "mastodon": [
     "https://mastodon.social/@Mastodon.rss",
-    "https://mastodon.social/tags/mastodon.rss"
+    "https://mastodon.social/tags/mastodon.rss",
+    "https://mastodon.social/@Gargron/tagged/mastodev.rss"
   ],
   "pinterest": ["https://www.pinterest.com/pinterest/feed.rss"],
   "producthunt": [
