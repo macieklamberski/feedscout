@@ -1,5 +1,12 @@
 import { describe, expect, it } from 'bun:test'
-import { isCommunityPath, isLemmyHeaders, isLemmyHtml, isUserPath, lemmyHandler } from './lemmy.js'
+import {
+  isCommunityPath,
+  isHomePath,
+  isLemmyHeaders,
+  isLemmyHtml,
+  isUserPath,
+  lemmyHandler,
+} from './lemmy.js'
 
 const lemmyHtml = '<html><head><meta name="generator" content="Lemmy v0.19.5"></head></html>'
 const lemmyHeaders = new Headers({ 'x-powered-by': 'Lemmy' })
@@ -59,6 +66,20 @@ describe('isUserPath', () => {
 
   it('should return false for empty string', () => {
     expect(isUserPath('')).toBe(false)
+  })
+})
+
+describe('isHomePath', () => {
+  it('should return true for root paths', () => {
+    expect(isHomePath('/')).toBe(true)
+    expect(isHomePath('')).toBe(true)
+    expect(isHomePath('/home')).toBe(true)
+  })
+
+  it('should return false for non-root paths', () => {
+    expect(isHomePath('/c/programming')).toBe(false)
+    expect(isHomePath('/u/alice')).toBe(false)
+    expect(isHomePath('/about')).toBe(false)
   })
 })
 
@@ -132,9 +153,13 @@ describe('lemmyHandler', () => {
       expect(lemmyHandler.match('https://lemmy.ml/c/programming')).toBe(false)
     })
 
-    it('should not match non-community and non-user paths even with Lemmy HTML', () => {
+    it('should match home path with Lemmy HTML', () => {
+      expect(lemmyHandler.match('https://lemmy.ml/', lemmyHtml)).toBe(true)
+      expect(lemmyHandler.match('https://lemmy.ml/home', lemmyHtml)).toBe(true)
+    })
+
+    it('should not match non-community, non-user, non-home paths even with Lemmy HTML', () => {
       expect(lemmyHandler.match('https://lemmy.ml/about', lemmyHtml)).toBe(false)
-      expect(lemmyHandler.match('https://lemmy.ml/', lemmyHtml)).toBe(false)
     })
 
     it('should not match without Lemmy signals', () => {
@@ -196,7 +221,23 @@ describe('lemmyHandler', () => {
       expect(lemmyHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return empty array for non-community and non-user paths', () => {
+    it('should return site-wide feeds for home path', () => {
+      const value = 'https://lemmy.ml/'
+      const expected = [
+        {
+          uri: 'https://lemmy.ml/feeds/all.xml',
+          hint: { key: 'lemmy:all', label: 'All' },
+        },
+        {
+          uri: 'https://lemmy.ml/feeds/local.xml',
+          hint: { key: 'lemmy:local', label: 'Local' },
+        },
+      ]
+
+      expect(lemmyHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return empty array for non-community, non-user, non-home paths', () => {
       expect(lemmyHandler.resolve('https://lemmy.ml/about')).toEqual([])
     })
 

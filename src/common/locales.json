@@ -133,6 +133,8 @@
     "ximalaya:album": "Album",
     "lemmy:community": "Community",
     "lemmy:user": "User",
+    "lemmy:all": "All",
+    "lemmy:local": "Local",
     "apple-podcasts:podcast": "Podcast"
   }
 }

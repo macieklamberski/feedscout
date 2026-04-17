@@ -70,7 +70,12 @@
     "https://www.kickstarter.com/projects/elanlee/exploding-kittens/posts.atom",
     "https://www.kickstarter.com/projects/feed.atom"
   ],
-  "lemmy": ["https://lemmy.ml/feeds/c/lemmy.xml", "https://lemmy.ml/feeds/u/dessalines.xml"],
+  "lemmy": [
+    "https://lemmy.ml/feeds/c/lemmy.xml",
+    "https://lemmy.ml/feeds/u/dessalines.xml",
+    "https://lemmy.ml/feeds/all.xml",
+    "https://lemmy.ml/feeds/local.xml"
+  ],
   "letterboxd": ["https://letterboxd.com/dave/rss/", "https://letterboxd.com/lynch/rss/"],
   "lobsters": [
     "https://lobste.rs/t/programming.rss",

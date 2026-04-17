@@ -15,6 +15,10 @@ export const isUserPath = (pathname: string): boolean => {
   return segments.length >= 2 && segments[0] === 'u'
 }
 
+export const isHomePath = (pathname: string): boolean => {
+  return pathname === '/' || pathname === '' || pathname === '/home'
+}
+
 export const isLemmyHtml = (content: string): boolean => {
   return hasMetaContent(content, 'generator', 'Lemmy')
 }
@@ -30,7 +34,7 @@ export const lemmyHandler: PlatformHandler = {
     try {
       const { pathname } = new URL(url)
 
-      if (!isCommunityPath(pathname) && !isUserPath(pathname)) {
+      if (!isCommunityPath(pathname) && !isUserPath(pathname) && !isHomePath(pathname)) {
         return false
       }
 
@@ -65,6 +69,19 @@ export const lemmyHandler: PlatformHandler = {
           {
             uri: `${origin}/feeds/u/${segments[1]}.xml`,
             hint: composeHint('lemmy:user'),
+          },
+        ]
+      }
+
+      if (isHomePath(pathname)) {
+        return [
+          {
+            uri: `${origin}/feeds/all.xml`,
+            hint: composeHint('lemmy:all'),
+          },
+          {
+            uri: `${origin}/feeds/local.xml`,
+            hint: composeHint('lemmy:local'),
           },
         ]
       }
