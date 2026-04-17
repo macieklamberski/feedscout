@@ -114,8 +114,28 @@ describe('stackExchangeHandler', () => {
       expect(stackExchangeHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return empty array for homepage', () => {
-      expect(stackExchangeHandler.resolve('https://stackoverflow.com/')).toEqual([])
+    it('should return site-wide newest feed for homepage', () => {
+      const value = 'https://stackoverflow.com/'
+      const expected = [
+        {
+          uri: 'https://stackoverflow.com/feeds',
+          hint: { key: 'stackexchange:newest', label: 'Newest questions' },
+        },
+      ]
+
+      expect(stackExchangeHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return site-wide newest feed for subdomain homepage', () => {
+      const value = 'https://math.stackexchange.com/'
+      const expected = [
+        {
+          uri: 'https://math.stackexchange.com/feeds',
+          hint: { key: 'stackexchange:newest', label: 'Newest questions' },
+        },
+      ]
+
+      expect(stackExchangeHandler.resolve(value)).toEqual(expected)
     })
 
     it('should return empty array for unrecognized path', () => {

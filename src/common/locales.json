@@ -91,6 +91,7 @@
     "stackexchange:tag": "Tag",
     "stackexchange:question": "Question",
     "stackexchange:user": "User",
+    "stackexchange:newest": "Newest questions",
     "steam:news": "News",
     "steam:group": "Group",
     "substack:newsletter": "Newsletter",

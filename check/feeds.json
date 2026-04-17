@@ -112,6 +112,7 @@
     "https://sourceforge.net/projects/nmap/rss"
   ],
   "stackExchange": [
+    "https://stackoverflow.com/feeds",
     "https://stackoverflow.com/feeds/tag/javascript",
     "https://stackoverflow.com/feeds/question/927358",
     "https://stackoverflow.com/feeds/user/22656",

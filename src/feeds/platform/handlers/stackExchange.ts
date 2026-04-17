@@ -57,6 +57,16 @@ export const stackExchangeHandler: PlatformHandler = {
       ]
     }
 
+    // Homepage: site-wide newest questions feed.
+    if (pathname === '/' || pathname === '') {
+      return [
+        {
+          uri: `${origin}/feeds`,
+          hint: composeHint('stackexchange:newest'),
+        },
+      ]
+    }
+
     return []
   },
 }
