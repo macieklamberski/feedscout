@@ -93,8 +93,28 @@ describe('steamHandler', () => {
       expect(steamHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return empty array for store homepage', () => {
-      expect(steamHandler.resolve('https://store.steampowered.com/')).toEqual([])
+    it('should return global news feed for store homepage', () => {
+      const value = 'https://store.steampowered.com/'
+      const expected = [
+        {
+          uri: 'https://store.steampowered.com/feeds/news.xml',
+          hint: { key: 'steam:news-global', label: 'News (global)' },
+        },
+      ]
+
+      expect(steamHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return global news feed for store news index', () => {
+      const value = 'https://store.steampowered.com/news/'
+      const expected = [
+        {
+          uri: 'https://store.steampowered.com/feeds/news.xml',
+          hint: { key: 'steam:news-global', label: 'News (global)' },
+        },
+      ]
+
+      expect(steamHandler.resolve(value)).toEqual(expected)
     })
 
     it('should return empty array for community homepage', () => {
