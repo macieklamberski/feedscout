@@ -37,6 +37,14 @@ describe('blogspotHandler', () => {
           uri: 'https://example.blogspot.com/feeds/posts/default?alt=rss',
           hint: { key: 'blogspot:posts-rss', label: 'Posts (RSS)' },
         },
+        {
+          uri: 'https://example.blogspot.com/feeds/comments/default',
+          hint: { key: 'blogspot:comments-atom', label: 'Comments (Atom)' },
+        },
+        {
+          uri: 'https://example.blogspot.com/feeds/comments/default?alt=rss',
+          hint: { key: 'blogspot:comments-rss', label: 'Comments (RSS)' },
+        },
       ]
 
       expect(blogspotHandler.resolve(value)).toEqual(expected)
@@ -53,17 +61,29 @@ describe('blogspotHandler', () => {
           uri: 'https://blog.blogspot.com/feeds/posts/default?alt=rss',
           hint: { key: 'blogspot:posts-rss', label: 'Posts (RSS)' },
         },
+        {
+          uri: 'https://blog.blogspot.com/feeds/comments/default',
+          hint: { key: 'blogspot:comments-atom', label: 'Comments (Atom)' },
+        },
+        {
+          uri: 'https://blog.blogspot.com/feeds/comments/default?alt=rss',
+          hint: { key: 'blogspot:comments-rss', label: 'Comments (RSS)' },
+        },
       ]
 
       expect(blogspotHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should include label feed when on label page', () => {
+    it('should include label feeds when on label page', () => {
       const value = 'https://blog.blogspot.com/search/label/technology'
       const expected = [
         {
           uri: 'https://blog.blogspot.com/feeds/posts/default/-/technology',
-          hint: { key: 'blogspot:label', label: 'Label' },
+          hint: { key: 'blogspot:label-atom', label: 'Label (Atom)' },
+        },
+        {
+          uri: 'https://blog.blogspot.com/feeds/posts/default/-/technology?alt=rss',
+          hint: { key: 'blogspot:label-rss', label: 'Label (RSS)' },
         },
         {
           uri: 'https://blog.blogspot.com/feeds/posts/default',
@@ -72,6 +92,14 @@ describe('blogspotHandler', () => {
         {
           uri: 'https://blog.blogspot.com/feeds/posts/default?alt=rss',
           hint: { key: 'blogspot:posts-rss', label: 'Posts (RSS)' },
+        },
+        {
+          uri: 'https://blog.blogspot.com/feeds/comments/default',
+          hint: { key: 'blogspot:comments-atom', label: 'Comments (Atom)' },
+        },
+        {
+          uri: 'https://blog.blogspot.com/feeds/comments/default?alt=rss',
+          hint: { key: 'blogspot:comments-rss', label: 'Comments (RSS)' },
         },
       ]
 

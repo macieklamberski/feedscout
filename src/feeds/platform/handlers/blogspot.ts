@@ -29,7 +29,11 @@ export const blogspotHandler: PlatformHandler = {
 
       uris.push({
         uri: `${origin}/feeds/posts/default/-/${label}`,
-        hint: composeHint('blogspot:label'),
+        hint: composeHint('blogspot:label-atom'),
+      })
+      uris.push({
+        uri: `${origin}/feeds/posts/default/-/${label}?alt=rss`,
+        hint: composeHint('blogspot:label-rss'),
       })
     }
 
@@ -41,6 +45,14 @@ export const blogspotHandler: PlatformHandler = {
     uris.push({
       uri: `${origin}/feeds/posts/default?alt=rss`,
       hint: composeHint('blogspot:posts-rss'),
+    })
+    uris.push({
+      uri: `${origin}/feeds/comments/default`,
+      hint: composeHint('blogspot:comments-atom'),
+    })
+    uris.push({
+      uri: `${origin}/feeds/comments/default?alt=rss`,
+      hint: composeHint('blogspot:comments-rss'),
     })
 
     return uris
