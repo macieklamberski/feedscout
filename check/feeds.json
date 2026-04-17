@@ -13,9 +13,13 @@
   ],
   "bluesky": ["https://bsky.app/profile/jay.bsky.team/rss"],
   "codeberg": [
+    "https://codeberg.org/forgejo.atom",
     "https://codeberg.org/forgejo.rss",
+    "https://codeberg.org/forgejo/forgejo.atom",
     "https://codeberg.org/forgejo/forgejo.rss",
+    "https://codeberg.org/forgejo/forgejo/releases.atom",
     "https://codeberg.org/forgejo/forgejo/releases.rss",
+    "https://codeberg.org/forgejo/forgejo/tags.atom",
     "https://codeberg.org/forgejo/forgejo/tags.rss",
     "https://codeberg.org/forgejo/forgejo/rss/branch/forgejo",
     "https://codeberg.org/forgejo/forgejo/rss/branch/forgejo/README.md"
