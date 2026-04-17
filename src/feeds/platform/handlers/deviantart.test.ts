@@ -140,6 +140,12 @@ describe('deviantartHandler', () => {
       expect(deviantartHandler.resolve(value)).toEqual([])
     })
 
+    it('should return empty array for journal with excluded path', () => {
+      const value = 'https://deviantart.com/about/journal'
+
+      expect(deviantartHandler.resolve(value)).toEqual([])
+    })
+
     it('should handle usernames with underscores and hyphens', () => {
       const value = 'https://deviantart.com/some_user-name'
       const expected = [
