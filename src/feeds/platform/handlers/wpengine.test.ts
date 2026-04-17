@@ -37,17 +37,17 @@ describe('wpengineHandler', () => {
         },
         {
           uri: [
-            'https://example.wpenginepowered.com/feed/rdf/',
-            'https://example.wpenginepowered.com/?feed=rdf',
-          ],
-          hint: { key: 'wordpress:posts-rdf', label: 'Posts (RDF)' },
-        },
-        {
-          uri: [
             'https://example.wpenginepowered.com/feed/atom/',
             'https://example.wpenginepowered.com/?feed=atom',
           ],
           hint: { key: 'wordpress:posts-atom', label: 'Posts (Atom)' },
+        },
+        {
+          uri: [
+            'https://example.wpenginepowered.com/feed/rdf/',
+            'https://example.wpenginepowered.com/?feed=rdf',
+          ],
+          hint: { key: 'wordpress:posts-rdf', label: 'Posts (RDF)' },
         },
         {
           uri: [
@@ -60,17 +60,17 @@ describe('wpengineHandler', () => {
         },
         {
           uri: [
-            'https://example.wpenginepowered.com/comments/feed/rdf/',
-            'https://example.wpenginepowered.com/?feed=comments-rdf',
-          ],
-          hint: { key: 'wordpress:comments-rdf', label: 'Comments (RDF)' },
-        },
-        {
-          uri: [
             'https://example.wpenginepowered.com/comments/feed/atom/',
             'https://example.wpenginepowered.com/?feed=comments-atom',
           ],
           hint: { key: 'wordpress:comments-atom', label: 'Comments (Atom)' },
+        },
+        {
+          uri: [
+            'https://example.wpenginepowered.com/comments/feed/rdf/',
+            'https://example.wpenginepowered.com/?feed=comments-rdf',
+          ],
+          hint: { key: 'wordpress:comments-rdf', label: 'Comments (RDF)' },
         },
       ]
 
@@ -90,15 +90,15 @@ describe('wpengineHandler', () => {
           hint: { key: 'wordpress:posts-rss', label: 'Posts (RSS)' },
         },
         {
-          uri: ['https://example.wpengine.com/feed/rdf/', 'https://example.wpengine.com/?feed=rdf'],
-          hint: { key: 'wordpress:posts-rdf', label: 'Posts (RDF)' },
-        },
-        {
           uri: [
             'https://example.wpengine.com/feed/atom/',
             'https://example.wpengine.com/?feed=atom',
           ],
           hint: { key: 'wordpress:posts-atom', label: 'Posts (Atom)' },
+        },
+        {
+          uri: ['https://example.wpengine.com/feed/rdf/', 'https://example.wpengine.com/?feed=rdf'],
+          hint: { key: 'wordpress:posts-rdf', label: 'Posts (RDF)' },
         },
         {
           uri: [
@@ -111,17 +111,17 @@ describe('wpengineHandler', () => {
         },
         {
           uri: [
-            'https://example.wpengine.com/comments/feed/rdf/',
-            'https://example.wpengine.com/?feed=comments-rdf',
-          ],
-          hint: { key: 'wordpress:comments-rdf', label: 'Comments (RDF)' },
-        },
-        {
-          uri: [
             'https://example.wpengine.com/comments/feed/atom/',
             'https://example.wpengine.com/?feed=comments-atom',
           ],
           hint: { key: 'wordpress:comments-atom', label: 'Comments (Atom)' },
+        },
+        {
+          uri: [
+            'https://example.wpengine.com/comments/feed/rdf/',
+            'https://example.wpengine.com/?feed=comments-rdf',
+          ],
+          hint: { key: 'wordpress:comments-rdf', label: 'Comments (RDF)' },
         },
       ]
 
@@ -135,6 +135,8 @@ describe('wpengineHandler', () => {
           uri: [
             'https://example.wpenginepowered.com/category/tech/feed/',
             'https://example.wpenginepowered.com/category/tech/?feed=rss',
+            'https://example.wpenginepowered.com/category/tech/feed/rss2/',
+            'https://example.wpenginepowered.com/category/tech/?feed=rss2',
           ],
           hint: { key: 'wordpress:category-rss', label: 'Category (RSS)' },
         },
@@ -163,17 +165,17 @@ describe('wpengineHandler', () => {
         },
         {
           uri: [
-            'https://example.wpenginepowered.com/feed/rdf/',
-            'https://example.wpenginepowered.com/?feed=rdf',
-          ],
-          hint: { key: 'wordpress:posts-rdf', label: 'Posts (RDF)' },
-        },
-        {
-          uri: [
             'https://example.wpenginepowered.com/feed/atom/',
             'https://example.wpenginepowered.com/?feed=atom',
           ],
           hint: { key: 'wordpress:posts-atom', label: 'Posts (Atom)' },
+        },
+        {
+          uri: [
+            'https://example.wpenginepowered.com/feed/rdf/',
+            'https://example.wpenginepowered.com/?feed=rdf',
+          ],
+          hint: { key: 'wordpress:posts-rdf', label: 'Posts (RDF)' },
         },
         {
           uri: [
@@ -186,17 +188,17 @@ describe('wpengineHandler', () => {
         },
         {
           uri: [
-            'https://example.wpenginepowered.com/comments/feed/rdf/',
-            'https://example.wpenginepowered.com/?feed=comments-rdf',
-          ],
-          hint: { key: 'wordpress:comments-rdf', label: 'Comments (RDF)' },
-        },
-        {
-          uri: [
             'https://example.wpenginepowered.com/comments/feed/atom/',
             'https://example.wpenginepowered.com/?feed=comments-atom',
           ],
           hint: { key: 'wordpress:comments-atom', label: 'Comments (Atom)' },
+        },
+        {
+          uri: [
+            'https://example.wpenginepowered.com/comments/feed/rdf/',
+            'https://example.wpenginepowered.com/?feed=comments-rdf',
+          ],
+          hint: { key: 'wordpress:comments-rdf', label: 'Comments (RDF)' },
         },
       ]
 
@@ -210,6 +212,8 @@ describe('wpengineHandler', () => {
           uri: [
             'https://example.wpenginepowered.com/tag/javascript/feed/',
             'https://example.wpenginepowered.com/tag/javascript/?feed=rss',
+            'https://example.wpenginepowered.com/tag/javascript/feed/rss2/',
+            'https://example.wpenginepowered.com/tag/javascript/?feed=rss2',
           ],
           hint: { key: 'wordpress:tag-rss', label: 'Tag (RSS)' },
         },
@@ -238,17 +242,17 @@ describe('wpengineHandler', () => {
         },
         {
           uri: [
-            'https://example.wpenginepowered.com/feed/rdf/',
-            'https://example.wpenginepowered.com/?feed=rdf',
-          ],
-          hint: { key: 'wordpress:posts-rdf', label: 'Posts (RDF)' },
-        },
-        {
-          uri: [
             'https://example.wpenginepowered.com/feed/atom/',
             'https://example.wpenginepowered.com/?feed=atom',
           ],
           hint: { key: 'wordpress:posts-atom', label: 'Posts (Atom)' },
+        },
+        {
+          uri: [
+            'https://example.wpenginepowered.com/feed/rdf/',
+            'https://example.wpenginepowered.com/?feed=rdf',
+          ],
+          hint: { key: 'wordpress:posts-rdf', label: 'Posts (RDF)' },
         },
         {
           uri: [
@@ -261,17 +265,17 @@ describe('wpengineHandler', () => {
         },
         {
           uri: [
-            'https://example.wpenginepowered.com/comments/feed/rdf/',
-            'https://example.wpenginepowered.com/?feed=comments-rdf',
-          ],
-          hint: { key: 'wordpress:comments-rdf', label: 'Comments (RDF)' },
-        },
-        {
-          uri: [
             'https://example.wpenginepowered.com/comments/feed/atom/',
             'https://example.wpenginepowered.com/?feed=comments-atom',
           ],
           hint: { key: 'wordpress:comments-atom', label: 'Comments (Atom)' },
+        },
+        {
+          uri: [
+            'https://example.wpenginepowered.com/comments/feed/rdf/',
+            'https://example.wpenginepowered.com/?feed=comments-rdf',
+          ],
+          hint: { key: 'wordpress:comments-rdf', label: 'Comments (RDF)' },
         },
       ]
 
@@ -285,6 +289,8 @@ describe('wpengineHandler', () => {
           uri: [
             'https://example.wpenginepowered.com/author/johndoe/feed/',
             'https://example.wpenginepowered.com/author/johndoe/?feed=rss',
+            'https://example.wpenginepowered.com/author/johndoe/feed/rss2/',
+            'https://example.wpenginepowered.com/author/johndoe/?feed=rss2',
           ],
           hint: { key: 'wordpress:author-rss', label: 'Author (RSS)' },
         },
@@ -313,17 +319,17 @@ describe('wpengineHandler', () => {
         },
         {
           uri: [
-            'https://example.wpenginepowered.com/feed/rdf/',
-            'https://example.wpenginepowered.com/?feed=rdf',
-          ],
-          hint: { key: 'wordpress:posts-rdf', label: 'Posts (RDF)' },
-        },
-        {
-          uri: [
             'https://example.wpenginepowered.com/feed/atom/',
             'https://example.wpenginepowered.com/?feed=atom',
           ],
           hint: { key: 'wordpress:posts-atom', label: 'Posts (Atom)' },
+        },
+        {
+          uri: [
+            'https://example.wpenginepowered.com/feed/rdf/',
+            'https://example.wpenginepowered.com/?feed=rdf',
+          ],
+          hint: { key: 'wordpress:posts-rdf', label: 'Posts (RDF)' },
         },
         {
           uri: [
@@ -336,17 +342,17 @@ describe('wpengineHandler', () => {
         },
         {
           uri: [
-            'https://example.wpenginepowered.com/comments/feed/rdf/',
-            'https://example.wpenginepowered.com/?feed=comments-rdf',
-          ],
-          hint: { key: 'wordpress:comments-rdf', label: 'Comments (RDF)' },
-        },
-        {
-          uri: [
             'https://example.wpenginepowered.com/comments/feed/atom/',
             'https://example.wpenginepowered.com/?feed=comments-atom',
           ],
           hint: { key: 'wordpress:comments-atom', label: 'Comments (Atom)' },
+        },
+        {
+          uri: [
+            'https://example.wpenginepowered.com/comments/feed/rdf/',
+            'https://example.wpenginepowered.com/?feed=comments-rdf',
+          ],
+          hint: { key: 'wordpress:comments-rdf', label: 'Comments (RDF)' },
         },
       ]
 
@@ -357,15 +363,26 @@ describe('wpengineHandler', () => {
       const value = 'https://example.wpenginepowered.com/2024/'
       const expected = [
         {
-          uri: 'https://example.wpenginepowered.com/2024/feed/',
+          uri: [
+            'https://example.wpenginepowered.com/2024/feed/',
+            'https://example.wpenginepowered.com/2024/?feed=rss',
+            'https://example.wpenginepowered.com/2024/feed/rss2/',
+            'https://example.wpenginepowered.com/2024/?feed=rss2',
+          ],
           hint: { key: 'wordpress:date-archive-rss', label: 'Date archive (RSS)' },
         },
         {
-          uri: 'https://example.wpenginepowered.com/2024/feed/atom/',
+          uri: [
+            'https://example.wpenginepowered.com/2024/feed/atom/',
+            'https://example.wpenginepowered.com/2024/?feed=atom',
+          ],
           hint: { key: 'wordpress:date-archive-atom', label: 'Date archive (Atom)' },
         },
         {
-          uri: 'https://example.wpenginepowered.com/2024/feed/rdf/',
+          uri: [
+            'https://example.wpenginepowered.com/2024/feed/rdf/',
+            'https://example.wpenginepowered.com/2024/?feed=rdf',
+          ],
           hint: { key: 'wordpress:date-archive-rdf', label: 'Date archive (RDF)' },
         },
         {
@@ -379,17 +396,17 @@ describe('wpengineHandler', () => {
         },
         {
           uri: [
-            'https://example.wpenginepowered.com/feed/rdf/',
-            'https://example.wpenginepowered.com/?feed=rdf',
-          ],
-          hint: { key: 'wordpress:posts-rdf', label: 'Posts (RDF)' },
-        },
-        {
-          uri: [
             'https://example.wpenginepowered.com/feed/atom/',
             'https://example.wpenginepowered.com/?feed=atom',
           ],
           hint: { key: 'wordpress:posts-atom', label: 'Posts (Atom)' },
+        },
+        {
+          uri: [
+            'https://example.wpenginepowered.com/feed/rdf/',
+            'https://example.wpenginepowered.com/?feed=rdf',
+          ],
+          hint: { key: 'wordpress:posts-rdf', label: 'Posts (RDF)' },
         },
         {
           uri: [
@@ -402,17 +419,17 @@ describe('wpengineHandler', () => {
         },
         {
           uri: [
-            'https://example.wpenginepowered.com/comments/feed/rdf/',
-            'https://example.wpenginepowered.com/?feed=comments-rdf',
-          ],
-          hint: { key: 'wordpress:comments-rdf', label: 'Comments (RDF)' },
-        },
-        {
-          uri: [
             'https://example.wpenginepowered.com/comments/feed/atom/',
             'https://example.wpenginepowered.com/?feed=comments-atom',
           ],
           hint: { key: 'wordpress:comments-atom', label: 'Comments (Atom)' },
+        },
+        {
+          uri: [
+            'https://example.wpenginepowered.com/comments/feed/rdf/',
+            'https://example.wpenginepowered.com/?feed=comments-rdf',
+          ],
+          hint: { key: 'wordpress:comments-rdf', label: 'Comments (RDF)' },
         },
       ]
 
@@ -423,15 +440,26 @@ describe('wpengineHandler', () => {
       const value = 'https://example.wpenginepowered.com/2024/06/'
       const expected = [
         {
-          uri: 'https://example.wpenginepowered.com/2024/06/feed/',
+          uri: [
+            'https://example.wpenginepowered.com/2024/06/feed/',
+            'https://example.wpenginepowered.com/2024/06/?feed=rss',
+            'https://example.wpenginepowered.com/2024/06/feed/rss2/',
+            'https://example.wpenginepowered.com/2024/06/?feed=rss2',
+          ],
           hint: { key: 'wordpress:date-archive-rss', label: 'Date archive (RSS)' },
         },
         {
-          uri: 'https://example.wpenginepowered.com/2024/06/feed/atom/',
+          uri: [
+            'https://example.wpenginepowered.com/2024/06/feed/atom/',
+            'https://example.wpenginepowered.com/2024/06/?feed=atom',
+          ],
           hint: { key: 'wordpress:date-archive-atom', label: 'Date archive (Atom)' },
         },
         {
-          uri: 'https://example.wpenginepowered.com/2024/06/feed/rdf/',
+          uri: [
+            'https://example.wpenginepowered.com/2024/06/feed/rdf/',
+            'https://example.wpenginepowered.com/2024/06/?feed=rdf',
+          ],
           hint: { key: 'wordpress:date-archive-rdf', label: 'Date archive (RDF)' },
         },
         {
@@ -445,17 +473,17 @@ describe('wpengineHandler', () => {
         },
         {
           uri: [
-            'https://example.wpenginepowered.com/feed/rdf/',
-            'https://example.wpenginepowered.com/?feed=rdf',
-          ],
-          hint: { key: 'wordpress:posts-rdf', label: 'Posts (RDF)' },
-        },
-        {
-          uri: [
             'https://example.wpenginepowered.com/feed/atom/',
             'https://example.wpenginepowered.com/?feed=atom',
           ],
           hint: { key: 'wordpress:posts-atom', label: 'Posts (Atom)' },
+        },
+        {
+          uri: [
+            'https://example.wpenginepowered.com/feed/rdf/',
+            'https://example.wpenginepowered.com/?feed=rdf',
+          ],
+          hint: { key: 'wordpress:posts-rdf', label: 'Posts (RDF)' },
         },
         {
           uri: [
@@ -468,17 +496,17 @@ describe('wpengineHandler', () => {
         },
         {
           uri: [
-            'https://example.wpenginepowered.com/comments/feed/rdf/',
-            'https://example.wpenginepowered.com/?feed=comments-rdf',
-          ],
-          hint: { key: 'wordpress:comments-rdf', label: 'Comments (RDF)' },
-        },
-        {
-          uri: [
             'https://example.wpenginepowered.com/comments/feed/atom/',
             'https://example.wpenginepowered.com/?feed=comments-atom',
           ],
           hint: { key: 'wordpress:comments-atom', label: 'Comments (Atom)' },
+        },
+        {
+          uri: [
+            'https://example.wpenginepowered.com/comments/feed/rdf/',
+            'https://example.wpenginepowered.com/?feed=comments-rdf',
+          ],
+          hint: { key: 'wordpress:comments-rdf', label: 'Comments (RDF)' },
         },
       ]
 

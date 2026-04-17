@@ -34,17 +34,17 @@ describe('wordpressHandler', () => {
         },
         {
           uri: [
-            'https://example.wordpress.com/feed/rdf/',
-            'https://example.wordpress.com/?feed=rdf',
-          ],
-          hint: { key: 'wordpress:posts-rdf', label: 'Posts (RDF)' },
-        },
-        {
-          uri: [
             'https://example.wordpress.com/feed/atom/',
             'https://example.wordpress.com/?feed=atom',
           ],
           hint: { key: 'wordpress:posts-atom', label: 'Posts (Atom)' },
+        },
+        {
+          uri: [
+            'https://example.wordpress.com/feed/rdf/',
+            'https://example.wordpress.com/?feed=rdf',
+          ],
+          hint: { key: 'wordpress:posts-rdf', label: 'Posts (RDF)' },
         },
         {
           uri: [
@@ -57,17 +57,17 @@ describe('wordpressHandler', () => {
         },
         {
           uri: [
-            'https://example.wordpress.com/comments/feed/rdf/',
-            'https://example.wordpress.com/?feed=comments-rdf',
-          ],
-          hint: { key: 'wordpress:comments-rdf', label: 'Comments (RDF)' },
-        },
-        {
-          uri: [
             'https://example.wordpress.com/comments/feed/atom/',
             'https://example.wordpress.com/?feed=comments-atom',
           ],
           hint: { key: 'wordpress:comments-atom', label: 'Comments (Atom)' },
+        },
+        {
+          uri: [
+            'https://example.wordpress.com/comments/feed/rdf/',
+            'https://example.wordpress.com/?feed=comments-rdf',
+          ],
+          hint: { key: 'wordpress:comments-rdf', label: 'Comments (RDF)' },
         },
       ]
 
@@ -87,12 +87,12 @@ describe('wordpressHandler', () => {
           hint: { key: 'wordpress:posts-rss', label: 'Posts (RSS)' },
         },
         {
-          uri: ['https://blog.wordpress.com/feed/rdf/', 'https://blog.wordpress.com/?feed=rdf'],
-          hint: { key: 'wordpress:posts-rdf', label: 'Posts (RDF)' },
-        },
-        {
           uri: ['https://blog.wordpress.com/feed/atom/', 'https://blog.wordpress.com/?feed=atom'],
           hint: { key: 'wordpress:posts-atom', label: 'Posts (Atom)' },
+        },
+        {
+          uri: ['https://blog.wordpress.com/feed/rdf/', 'https://blog.wordpress.com/?feed=rdf'],
+          hint: { key: 'wordpress:posts-rdf', label: 'Posts (RDF)' },
         },
         {
           uri: [
@@ -105,17 +105,17 @@ describe('wordpressHandler', () => {
         },
         {
           uri: [
-            'https://blog.wordpress.com/comments/feed/rdf/',
-            'https://blog.wordpress.com/?feed=comments-rdf',
-          ],
-          hint: { key: 'wordpress:comments-rdf', label: 'Comments (RDF)' },
-        },
-        {
-          uri: [
             'https://blog.wordpress.com/comments/feed/atom/',
             'https://blog.wordpress.com/?feed=comments-atom',
           ],
           hint: { key: 'wordpress:comments-atom', label: 'Comments (Atom)' },
+        },
+        {
+          uri: [
+            'https://blog.wordpress.com/comments/feed/rdf/',
+            'https://blog.wordpress.com/?feed=comments-rdf',
+          ],
+          hint: { key: 'wordpress:comments-rdf', label: 'Comments (RDF)' },
         },
       ]
 
@@ -129,6 +129,8 @@ describe('wordpressHandler', () => {
           uri: [
             'https://blog.wordpress.com/category/tech/feed/',
             'https://blog.wordpress.com/category/tech/?feed=rss',
+            'https://blog.wordpress.com/category/tech/feed/rss2/',
+            'https://blog.wordpress.com/category/tech/?feed=rss2',
           ],
           hint: { key: 'wordpress:category-rss', label: 'Category (RSS)' },
         },
@@ -156,12 +158,12 @@ describe('wordpressHandler', () => {
           hint: { key: 'wordpress:posts-rss', label: 'Posts (RSS)' },
         },
         {
-          uri: ['https://blog.wordpress.com/feed/rdf/', 'https://blog.wordpress.com/?feed=rdf'],
-          hint: { key: 'wordpress:posts-rdf', label: 'Posts (RDF)' },
-        },
-        {
           uri: ['https://blog.wordpress.com/feed/atom/', 'https://blog.wordpress.com/?feed=atom'],
           hint: { key: 'wordpress:posts-atom', label: 'Posts (Atom)' },
+        },
+        {
+          uri: ['https://blog.wordpress.com/feed/rdf/', 'https://blog.wordpress.com/?feed=rdf'],
+          hint: { key: 'wordpress:posts-rdf', label: 'Posts (RDF)' },
         },
         {
           uri: [
@@ -174,17 +176,17 @@ describe('wordpressHandler', () => {
         },
         {
           uri: [
-            'https://blog.wordpress.com/comments/feed/rdf/',
-            'https://blog.wordpress.com/?feed=comments-rdf',
-          ],
-          hint: { key: 'wordpress:comments-rdf', label: 'Comments (RDF)' },
-        },
-        {
-          uri: [
             'https://blog.wordpress.com/comments/feed/atom/',
             'https://blog.wordpress.com/?feed=comments-atom',
           ],
           hint: { key: 'wordpress:comments-atom', label: 'Comments (Atom)' },
+        },
+        {
+          uri: [
+            'https://blog.wordpress.com/comments/feed/rdf/',
+            'https://blog.wordpress.com/?feed=comments-rdf',
+          ],
+          hint: { key: 'wordpress:comments-rdf', label: 'Comments (RDF)' },
         },
       ]
 
@@ -198,6 +200,8 @@ describe('wordpressHandler', () => {
           uri: [
             'https://blog.wordpress.com/tag/javascript/feed/',
             'https://blog.wordpress.com/tag/javascript/?feed=rss',
+            'https://blog.wordpress.com/tag/javascript/feed/rss2/',
+            'https://blog.wordpress.com/tag/javascript/?feed=rss2',
           ],
           hint: { key: 'wordpress:tag-rss', label: 'Tag (RSS)' },
         },
@@ -225,12 +229,12 @@ describe('wordpressHandler', () => {
           hint: { key: 'wordpress:posts-rss', label: 'Posts (RSS)' },
         },
         {
-          uri: ['https://blog.wordpress.com/feed/rdf/', 'https://blog.wordpress.com/?feed=rdf'],
-          hint: { key: 'wordpress:posts-rdf', label: 'Posts (RDF)' },
-        },
-        {
           uri: ['https://blog.wordpress.com/feed/atom/', 'https://blog.wordpress.com/?feed=atom'],
           hint: { key: 'wordpress:posts-atom', label: 'Posts (Atom)' },
+        },
+        {
+          uri: ['https://blog.wordpress.com/feed/rdf/', 'https://blog.wordpress.com/?feed=rdf'],
+          hint: { key: 'wordpress:posts-rdf', label: 'Posts (RDF)' },
         },
         {
           uri: [
@@ -243,17 +247,17 @@ describe('wordpressHandler', () => {
         },
         {
           uri: [
-            'https://blog.wordpress.com/comments/feed/rdf/',
-            'https://blog.wordpress.com/?feed=comments-rdf',
-          ],
-          hint: { key: 'wordpress:comments-rdf', label: 'Comments (RDF)' },
-        },
-        {
-          uri: [
             'https://blog.wordpress.com/comments/feed/atom/',
             'https://blog.wordpress.com/?feed=comments-atom',
           ],
           hint: { key: 'wordpress:comments-atom', label: 'Comments (Atom)' },
+        },
+        {
+          uri: [
+            'https://blog.wordpress.com/comments/feed/rdf/',
+            'https://blog.wordpress.com/?feed=comments-rdf',
+          ],
+          hint: { key: 'wordpress:comments-rdf', label: 'Comments (RDF)' },
         },
       ]
 
@@ -267,6 +271,8 @@ describe('wordpressHandler', () => {
           uri: [
             'https://blog.wordpress.com/category/c%2B%2B/feed/',
             'https://blog.wordpress.com/category/c%2B%2B/?feed=rss',
+            'https://blog.wordpress.com/category/c%2B%2B/feed/rss2/',
+            'https://blog.wordpress.com/category/c%2B%2B/?feed=rss2',
           ],
           hint: { key: 'wordpress:category-rss', label: 'Category (RSS)' },
         },
@@ -294,12 +300,12 @@ describe('wordpressHandler', () => {
           hint: { key: 'wordpress:posts-rss', label: 'Posts (RSS)' },
         },
         {
-          uri: ['https://blog.wordpress.com/feed/rdf/', 'https://blog.wordpress.com/?feed=rdf'],
-          hint: { key: 'wordpress:posts-rdf', label: 'Posts (RDF)' },
-        },
-        {
           uri: ['https://blog.wordpress.com/feed/atom/', 'https://blog.wordpress.com/?feed=atom'],
           hint: { key: 'wordpress:posts-atom', label: 'Posts (Atom)' },
+        },
+        {
+          uri: ['https://blog.wordpress.com/feed/rdf/', 'https://blog.wordpress.com/?feed=rdf'],
+          hint: { key: 'wordpress:posts-rdf', label: 'Posts (RDF)' },
         },
         {
           uri: [
@@ -312,17 +318,17 @@ describe('wordpressHandler', () => {
         },
         {
           uri: [
-            'https://blog.wordpress.com/comments/feed/rdf/',
-            'https://blog.wordpress.com/?feed=comments-rdf',
-          ],
-          hint: { key: 'wordpress:comments-rdf', label: 'Comments (RDF)' },
-        },
-        {
-          uri: [
             'https://blog.wordpress.com/comments/feed/atom/',
             'https://blog.wordpress.com/?feed=comments-atom',
           ],
           hint: { key: 'wordpress:comments-atom', label: 'Comments (Atom)' },
+        },
+        {
+          uri: [
+            'https://blog.wordpress.com/comments/feed/rdf/',
+            'https://blog.wordpress.com/?feed=comments-rdf',
+          ],
+          hint: { key: 'wordpress:comments-rdf', label: 'Comments (RDF)' },
         },
       ]
 
@@ -336,6 +342,8 @@ describe('wordpressHandler', () => {
           uri: [
             'https://blog.wordpress.com/author/johndoe/feed/',
             'https://blog.wordpress.com/author/johndoe/?feed=rss',
+            'https://blog.wordpress.com/author/johndoe/feed/rss2/',
+            'https://blog.wordpress.com/author/johndoe/?feed=rss2',
           ],
           hint: { key: 'wordpress:author-rss', label: 'Author (RSS)' },
         },
@@ -363,12 +371,12 @@ describe('wordpressHandler', () => {
           hint: { key: 'wordpress:posts-rss', label: 'Posts (RSS)' },
         },
         {
-          uri: ['https://blog.wordpress.com/feed/rdf/', 'https://blog.wordpress.com/?feed=rdf'],
-          hint: { key: 'wordpress:posts-rdf', label: 'Posts (RDF)' },
-        },
-        {
           uri: ['https://blog.wordpress.com/feed/atom/', 'https://blog.wordpress.com/?feed=atom'],
           hint: { key: 'wordpress:posts-atom', label: 'Posts (Atom)' },
+        },
+        {
+          uri: ['https://blog.wordpress.com/feed/rdf/', 'https://blog.wordpress.com/?feed=rdf'],
+          hint: { key: 'wordpress:posts-rdf', label: 'Posts (RDF)' },
         },
         {
           uri: [
@@ -381,17 +389,17 @@ describe('wordpressHandler', () => {
         },
         {
           uri: [
-            'https://blog.wordpress.com/comments/feed/rdf/',
-            'https://blog.wordpress.com/?feed=comments-rdf',
-          ],
-          hint: { key: 'wordpress:comments-rdf', label: 'Comments (RDF)' },
-        },
-        {
-          uri: [
             'https://blog.wordpress.com/comments/feed/atom/',
             'https://blog.wordpress.com/?feed=comments-atom',
           ],
           hint: { key: 'wordpress:comments-atom', label: 'Comments (Atom)' },
+        },
+        {
+          uri: [
+            'https://blog.wordpress.com/comments/feed/rdf/',
+            'https://blog.wordpress.com/?feed=comments-rdf',
+          ],
+          hint: { key: 'wordpress:comments-rdf', label: 'Comments (RDF)' },
         },
       ]
 
@@ -402,15 +410,26 @@ describe('wordpressHandler', () => {
       const value = 'https://blog.wordpress.com/2024/'
       const expected = [
         {
-          uri: 'https://blog.wordpress.com/2024/feed/',
+          uri: [
+            'https://blog.wordpress.com/2024/feed/',
+            'https://blog.wordpress.com/2024/?feed=rss',
+            'https://blog.wordpress.com/2024/feed/rss2/',
+            'https://blog.wordpress.com/2024/?feed=rss2',
+          ],
           hint: { key: 'wordpress:date-archive-rss', label: 'Date archive (RSS)' },
         },
         {
-          uri: 'https://blog.wordpress.com/2024/feed/atom/',
+          uri: [
+            'https://blog.wordpress.com/2024/feed/atom/',
+            'https://blog.wordpress.com/2024/?feed=atom',
+          ],
           hint: { key: 'wordpress:date-archive-atom', label: 'Date archive (Atom)' },
         },
         {
-          uri: 'https://blog.wordpress.com/2024/feed/rdf/',
+          uri: [
+            'https://blog.wordpress.com/2024/feed/rdf/',
+            'https://blog.wordpress.com/2024/?feed=rdf',
+          ],
           hint: { key: 'wordpress:date-archive-rdf', label: 'Date archive (RDF)' },
         },
         {
@@ -423,12 +442,12 @@ describe('wordpressHandler', () => {
           hint: { key: 'wordpress:posts-rss', label: 'Posts (RSS)' },
         },
         {
-          uri: ['https://blog.wordpress.com/feed/rdf/', 'https://blog.wordpress.com/?feed=rdf'],
-          hint: { key: 'wordpress:posts-rdf', label: 'Posts (RDF)' },
-        },
-        {
           uri: ['https://blog.wordpress.com/feed/atom/', 'https://blog.wordpress.com/?feed=atom'],
           hint: { key: 'wordpress:posts-atom', label: 'Posts (Atom)' },
+        },
+        {
+          uri: ['https://blog.wordpress.com/feed/rdf/', 'https://blog.wordpress.com/?feed=rdf'],
+          hint: { key: 'wordpress:posts-rdf', label: 'Posts (RDF)' },
         },
         {
           uri: [
@@ -441,17 +460,17 @@ describe('wordpressHandler', () => {
         },
         {
           uri: [
-            'https://blog.wordpress.com/comments/feed/rdf/',
-            'https://blog.wordpress.com/?feed=comments-rdf',
-          ],
-          hint: { key: 'wordpress:comments-rdf', label: 'Comments (RDF)' },
-        },
-        {
-          uri: [
             'https://blog.wordpress.com/comments/feed/atom/',
             'https://blog.wordpress.com/?feed=comments-atom',
           ],
           hint: { key: 'wordpress:comments-atom', label: 'Comments (Atom)' },
+        },
+        {
+          uri: [
+            'https://blog.wordpress.com/comments/feed/rdf/',
+            'https://blog.wordpress.com/?feed=comments-rdf',
+          ],
+          hint: { key: 'wordpress:comments-rdf', label: 'Comments (RDF)' },
         },
       ]
 
@@ -462,15 +481,26 @@ describe('wordpressHandler', () => {
       const value = 'https://blog.wordpress.com/2024/06/'
       const expected = [
         {
-          uri: 'https://blog.wordpress.com/2024/06/feed/',
+          uri: [
+            'https://blog.wordpress.com/2024/06/feed/',
+            'https://blog.wordpress.com/2024/06/?feed=rss',
+            'https://blog.wordpress.com/2024/06/feed/rss2/',
+            'https://blog.wordpress.com/2024/06/?feed=rss2',
+          ],
           hint: { key: 'wordpress:date-archive-rss', label: 'Date archive (RSS)' },
         },
         {
-          uri: 'https://blog.wordpress.com/2024/06/feed/atom/',
+          uri: [
+            'https://blog.wordpress.com/2024/06/feed/atom/',
+            'https://blog.wordpress.com/2024/06/?feed=atom',
+          ],
           hint: { key: 'wordpress:date-archive-atom', label: 'Date archive (Atom)' },
         },
         {
-          uri: 'https://blog.wordpress.com/2024/06/feed/rdf/',
+          uri: [
+            'https://blog.wordpress.com/2024/06/feed/rdf/',
+            'https://blog.wordpress.com/2024/06/?feed=rdf',
+          ],
           hint: { key: 'wordpress:date-archive-rdf', label: 'Date archive (RDF)' },
         },
         {
@@ -483,12 +513,12 @@ describe('wordpressHandler', () => {
           hint: { key: 'wordpress:posts-rss', label: 'Posts (RSS)' },
         },
         {
-          uri: ['https://blog.wordpress.com/feed/rdf/', 'https://blog.wordpress.com/?feed=rdf'],
-          hint: { key: 'wordpress:posts-rdf', label: 'Posts (RDF)' },
-        },
-        {
           uri: ['https://blog.wordpress.com/feed/atom/', 'https://blog.wordpress.com/?feed=atom'],
           hint: { key: 'wordpress:posts-atom', label: 'Posts (Atom)' },
+        },
+        {
+          uri: ['https://blog.wordpress.com/feed/rdf/', 'https://blog.wordpress.com/?feed=rdf'],
+          hint: { key: 'wordpress:posts-rdf', label: 'Posts (RDF)' },
         },
         {
           uri: [
@@ -501,17 +531,17 @@ describe('wordpressHandler', () => {
         },
         {
           uri: [
-            'https://blog.wordpress.com/comments/feed/rdf/',
-            'https://blog.wordpress.com/?feed=comments-rdf',
-          ],
-          hint: { key: 'wordpress:comments-rdf', label: 'Comments (RDF)' },
-        },
-        {
-          uri: [
             'https://blog.wordpress.com/comments/feed/atom/',
             'https://blog.wordpress.com/?feed=comments-atom',
           ],
           hint: { key: 'wordpress:comments-atom', label: 'Comments (Atom)' },
+        },
+        {
+          uri: [
+            'https://blog.wordpress.com/comments/feed/rdf/',
+            'https://blog.wordpress.com/?feed=comments-rdf',
+          ],
+          hint: { key: 'wordpress:comments-rdf', label: 'Comments (RDF)' },
         },
       ]
 

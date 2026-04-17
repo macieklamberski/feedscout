@@ -21,25 +21,18 @@ export const wordpressHandler: PlatformHandler = {
     const categoryMatch = pathname.match(categoryRegex)
 
     if (categoryMatch?.[1]) {
+      const base = `${origin}/category/${categoryMatch[1]}`
+
       uris.push({
-        uri: [
-          `${origin}/category/${categoryMatch[1]}/feed/`,
-          `${origin}/category/${categoryMatch[1]}/?feed=rss`,
-        ],
+        uri: [`${base}/feed/`, `${base}/?feed=rss`, `${base}/feed/rss2/`, `${base}/?feed=rss2`],
         hint: composeHint('wordpress:category-rss'),
       })
       uris.push({
-        uri: [
-          `${origin}/category/${categoryMatch[1]}/feed/atom/`,
-          `${origin}/category/${categoryMatch[1]}/?feed=atom`,
-        ],
+        uri: [`${base}/feed/atom/`, `${base}/?feed=atom`],
         hint: composeHint('wordpress:category-atom'),
       })
       uris.push({
-        uri: [
-          `${origin}/category/${categoryMatch[1]}/feed/rdf/`,
-          `${origin}/category/${categoryMatch[1]}/?feed=rdf`,
-        ],
+        uri: [`${base}/feed/rdf/`, `${base}/?feed=rdf`],
         hint: composeHint('wordpress:category-rdf'),
       })
     }
@@ -48,16 +41,18 @@ export const wordpressHandler: PlatformHandler = {
     const tagMatch = pathname.match(tagRegex)
 
     if (tagMatch?.[1]) {
+      const base = `${origin}/tag/${tagMatch[1]}`
+
       uris.push({
-        uri: [`${origin}/tag/${tagMatch[1]}/feed/`, `${origin}/tag/${tagMatch[1]}/?feed=rss`],
+        uri: [`${base}/feed/`, `${base}/?feed=rss`, `${base}/feed/rss2/`, `${base}/?feed=rss2`],
         hint: composeHint('wordpress:tag-rss'),
       })
       uris.push({
-        uri: [`${origin}/tag/${tagMatch[1]}/feed/atom/`, `${origin}/tag/${tagMatch[1]}/?feed=atom`],
+        uri: [`${base}/feed/atom/`, `${base}/?feed=atom`],
         hint: composeHint('wordpress:tag-atom'),
       })
       uris.push({
-        uri: [`${origin}/tag/${tagMatch[1]}/feed/rdf/`, `${origin}/tag/${tagMatch[1]}/?feed=rdf`],
+        uri: [`${base}/feed/rdf/`, `${base}/?feed=rdf`],
         hint: composeHint('wordpress:tag-rdf'),
       })
     }
@@ -66,25 +61,18 @@ export const wordpressHandler: PlatformHandler = {
     const authorMatch = pathname.match(authorRegex)
 
     if (authorMatch?.[1]) {
+      const base = `${origin}/author/${authorMatch[1]}`
+
       uris.push({
-        uri: [
-          `${origin}/author/${authorMatch[1]}/feed/`,
-          `${origin}/author/${authorMatch[1]}/?feed=rss`,
-        ],
+        uri: [`${base}/feed/`, `${base}/?feed=rss`, `${base}/feed/rss2/`, `${base}/?feed=rss2`],
         hint: composeHint('wordpress:author-rss'),
       })
       uris.push({
-        uri: [
-          `${origin}/author/${authorMatch[1]}/feed/atom/`,
-          `${origin}/author/${authorMatch[1]}/?feed=atom`,
-        ],
+        uri: [`${base}/feed/atom/`, `${base}/?feed=atom`],
         hint: composeHint('wordpress:author-atom'),
       })
       uris.push({
-        uri: [
-          `${origin}/author/${authorMatch[1]}/feed/rdf/`,
-          `${origin}/author/${authorMatch[1]}/?feed=rdf`,
-        ],
+        uri: [`${base}/feed/rdf/`, `${base}/?feed=rdf`],
         hint: composeHint('wordpress:author-rdf'),
       })
     }
@@ -93,16 +81,18 @@ export const wordpressHandler: PlatformHandler = {
     const yearMonthMatch = pathname.match(yearMonthRegex)
 
     if (yearMonthMatch?.[1] && yearMonthMatch?.[2]) {
+      const base = `${origin}/${yearMonthMatch[1]}/${yearMonthMatch[2]}`
+
       uris.push({
-        uri: `${origin}/${yearMonthMatch[1]}/${yearMonthMatch[2]}/feed/`,
+        uri: [`${base}/feed/`, `${base}/?feed=rss`, `${base}/feed/rss2/`, `${base}/?feed=rss2`],
         hint: composeHint('wordpress:date-archive-rss'),
       })
       uris.push({
-        uri: `${origin}/${yearMonthMatch[1]}/${yearMonthMatch[2]}/feed/atom/`,
+        uri: [`${base}/feed/atom/`, `${base}/?feed=atom`],
         hint: composeHint('wordpress:date-archive-atom'),
       })
       uris.push({
-        uri: `${origin}/${yearMonthMatch[1]}/${yearMonthMatch[2]}/feed/rdf/`,
+        uri: [`${base}/feed/rdf/`, `${base}/?feed=rdf`],
         hint: composeHint('wordpress:date-archive-rdf'),
       })
     }
@@ -111,16 +101,18 @@ export const wordpressHandler: PlatformHandler = {
     const yearMatch = pathname.match(yearRegex)
 
     if (yearMatch?.[1]) {
+      const base = `${origin}/${yearMatch[1]}`
+
       uris.push({
-        uri: `${origin}/${yearMatch[1]}/feed/`,
+        uri: [`${base}/feed/`, `${base}/?feed=rss`, `${base}/feed/rss2/`, `${base}/?feed=rss2`],
         hint: composeHint('wordpress:date-archive-rss'),
       })
       uris.push({
-        uri: `${origin}/${yearMatch[1]}/feed/atom/`,
+        uri: [`${base}/feed/atom/`, `${base}/?feed=atom`],
         hint: composeHint('wordpress:date-archive-atom'),
       })
       uris.push({
-        uri: `${origin}/${yearMatch[1]}/feed/rdf/`,
+        uri: [`${base}/feed/rdf/`, `${base}/?feed=rdf`],
         hint: composeHint('wordpress:date-archive-rdf'),
       })
     }
@@ -136,12 +128,12 @@ export const wordpressHandler: PlatformHandler = {
       hint: composeHint('wordpress:posts-rss'),
     })
     uris.push({
-      uri: [`${origin}/feed/rdf/`, `${origin}/?feed=rdf`],
-      hint: composeHint('wordpress:posts-rdf'),
-    })
-    uris.push({
       uri: [`${origin}/feed/atom/`, `${origin}/?feed=atom`],
       hint: composeHint('wordpress:posts-atom'),
+    })
+    uris.push({
+      uri: [`${origin}/feed/rdf/`, `${origin}/?feed=rdf`],
+      hint: composeHint('wordpress:posts-rdf'),
     })
     uris.push({
       uri: [
@@ -153,12 +145,12 @@ export const wordpressHandler: PlatformHandler = {
       hint: composeHint('wordpress:comments-rss'),
     })
     uris.push({
-      uri: [`${origin}/comments/feed/rdf/`, `${origin}/?feed=comments-rdf`],
-      hint: composeHint('wordpress:comments-rdf'),
-    })
-    uris.push({
       uri: [`${origin}/comments/feed/atom/`, `${origin}/?feed=comments-atom`],
       hint: composeHint('wordpress:comments-atom'),
+    })
+    uris.push({
+      uri: [`${origin}/comments/feed/rdf/`, `${origin}/?feed=comments-rdf`],
+      hint: composeHint('wordpress:comments-rdf'),
     })
 
     return uris
