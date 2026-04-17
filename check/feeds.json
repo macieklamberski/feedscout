@@ -109,6 +109,7 @@
     "https://www.reddit.com/r/programming/.rss",
     "https://www.reddit.com/r/programming/new/.rss",
     "https://www.reddit.com/r/programming/comments/.rss",
+    "https://www.reddit.com/r/programming+javascript/.rss",
     "https://www.reddit.com/user/spez/.rss",
     "https://www.reddit.com/user/kjoneslol/m/sfwpornnetwork/.rss",
     "https://www.reddit.com/domain/github.com/.rss"
@@ -121,6 +122,7 @@
   "stackExchange": [
     "https://stackoverflow.com/feeds",
     "https://stackoverflow.com/feeds/tag/javascript",
+    "https://stackoverflow.com/feeds/tag/javascript+typescript",
     "https://stackoverflow.com/feeds/question/927358",
     "https://stackoverflow.com/feeds/user/22656",
     "https://serverfault.com/feeds/tag/nginx",
