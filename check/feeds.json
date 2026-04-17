@@ -112,6 +112,8 @@
     "https://www.reddit.com/r/programming/comments/.rss",
     "https://www.reddit.com/r/programming+javascript/.rss",
     "https://www.reddit.com/user/spez/.rss",
+    "https://www.reddit.com/user/spez/submitted/.rss",
+    "https://www.reddit.com/user/spez/comments/.rss",
     "https://www.reddit.com/user/kjoneslol/m/sfwpornnetwork/.rss",
     "https://www.reddit.com/domain/github.com/.rss"
   ],

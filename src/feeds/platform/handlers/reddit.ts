@@ -5,7 +5,7 @@ import { composeHint, isAnyOf, isHostOf } from '../../../common/utils.js'
 const commentsRegex = /^\/r\/([^/]+)\/comments\/([^/]+)/
 const subredditRegex = /^\/r\/([^/]+)(?:\/([^/]+))?/
 const multiredditRegex = /^\/user\/([^/]+)\/m\/([^/]+)/
-const userRegex = /^\/(u|user)\/([^/]+)/
+const userRegex = /^\/(?:u|user)\/([^/]+)(?:\/(submitted|comments))?/
 const domainRegex = /^\/domain\/([^/]+)/
 
 export const hosts = ['reddit.com', 'www.reddit.com', 'old.reddit.com', 'new.reddit.com']
@@ -87,11 +87,38 @@ export const redditHandler: PlatformHandler = {
       ]
     }
 
-    // Match /u/username or /user/username pattern.
+    // Match /u/username or /user/username pattern, with optional /submitted or /comments.
     const userMatch = pathname.match(userRegex)
 
-    if (userMatch?.[2]) {
-      const username = userMatch[2]
+    if (userMatch?.[1]) {
+      const username = userMatch[1]
+      const filter = userMatch[2]
+
+      if (filter === 'submitted') {
+        return [
+          {
+            uri: `https://www.reddit.com/user/${username}/submitted/.rss`,
+            hint: composeHint('reddit:user-submitted'),
+          },
+          {
+            uri: `https://www.reddit.com/user/${username}/.rss`,
+            hint: composeHint('reddit:posts'),
+          },
+        ]
+      }
+
+      if (filter === 'comments') {
+        return [
+          {
+            uri: `https://www.reddit.com/user/${username}/comments/.rss`,
+            hint: composeHint('reddit:user-comments'),
+          },
+          {
+            uri: `https://www.reddit.com/user/${username}/.rss`,
+            hint: composeHint('reddit:posts'),
+          },
+        ]
+      }
 
       return [
         {

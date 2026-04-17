@@ -30,6 +30,8 @@
     "reddit:post-comments": "Post comments",
     "reddit:comments": "Comments",
     "reddit:multireddit": "Multireddit",
+    "reddit:user-submitted": "Submitted",
+    "reddit:user-comments": "Comments",
     "gitlab:activity": "Activity",
     "gitlab:releases": "Releases",
     "gitlab:tags": "Tags",

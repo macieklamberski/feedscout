@@ -176,6 +176,38 @@ describe('redditHandler', () => {
       expect(redditHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return submitted and profile feeds for /user/{user}/submitted', () => {
+      const value = 'https://reddit.com/user/spez/submitted'
+      const expected = [
+        {
+          uri: 'https://www.reddit.com/user/spez/submitted/.rss',
+          hint: { key: 'reddit:user-submitted', label: 'Submitted' },
+        },
+        {
+          uri: 'https://www.reddit.com/user/spez/.rss',
+          hint: { key: 'reddit:posts', label: 'Posts' },
+        },
+      ]
+
+      expect(redditHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return user-comments and profile feeds for /user/{user}/comments', () => {
+      const value = 'https://reddit.com/user/spez/comments'
+      const expected = [
+        {
+          uri: 'https://www.reddit.com/user/spez/comments/.rss',
+          hint: { key: 'reddit:user-comments', label: 'Comments' },
+        },
+        {
+          uri: 'https://www.reddit.com/user/spez/.rss',
+          hint: { key: 'reddit:posts', label: 'Posts' },
+        },
+      ]
+
+      expect(redditHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return RSS feed URL for combined subreddits', () => {
       const value = 'https://reddit.com/r/programming+javascript'
       const expected = [
