@@ -31,6 +31,16 @@ export const behanceHandler: PlatformHandler = {
   resolve: (url) => {
     const { pathname } = new URL(url)
 
+    // Homepage: featured projects feed.
+    if (pathname === '/' || pathname === '') {
+      return [
+        {
+          uri: 'https://www.behance.net/feeds/projects',
+          hint: composeHint('behance:projects'),
+        },
+      ]
+    }
+
     // User profile: /{username} or /{username}/appreciated
     const userMatch = pathname.match(userRegex)
 

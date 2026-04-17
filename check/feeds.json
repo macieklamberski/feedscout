@@ -1,7 +1,8 @@
 {
   "behance": [
     "https://www.behance.net/feeds/user?username=matejlatin",
-    "https://www.behance.net/feeds/user?username=matejlatin&content=appreciated"
+    "https://www.behance.net/feeds/user?username=matejlatin&content=appreciated",
+    "https://www.behance.net/feeds/projects"
   ],
   "blogspot": [
     "https://googleblog.blogspot.com/feeds/posts/default",
