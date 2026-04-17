@@ -153,7 +153,21 @@ describe('wpengineHandler', () => {
             'https://example.wpenginepowered.com/category/tech/feed/',
             'https://example.wpenginepowered.com/category/tech/?feed=rss',
           ],
-          hint: { key: 'wordpress:category', label: 'Category' },
+          hint: { key: 'wordpress:category-rss', label: 'Category (RSS)' },
+        },
+        {
+          uri: [
+            'https://example.wpenginepowered.com/category/tech/feed/atom/',
+            'https://example.wpenginepowered.com/category/tech/?feed=atom',
+          ],
+          hint: { key: 'wordpress:category-atom', label: 'Category (Atom)' },
+        },
+        {
+          uri: [
+            'https://example.wpenginepowered.com/category/tech/feed/rdf/',
+            'https://example.wpenginepowered.com/category/tech/?feed=rdf',
+          ],
+          hint: { key: 'wordpress:category-rdf', label: 'Category (RDF)' },
         },
         {
           uri: [
@@ -224,7 +238,21 @@ describe('wpengineHandler', () => {
             'https://example.wpenginepowered.com/tag/javascript/feed/',
             'https://example.wpenginepowered.com/tag/javascript/?feed=rss',
           ],
-          hint: { key: 'wordpress:tag', label: 'Tag' },
+          hint: { key: 'wordpress:tag-rss', label: 'Tag (RSS)' },
+        },
+        {
+          uri: [
+            'https://example.wpenginepowered.com/tag/javascript/feed/atom/',
+            'https://example.wpenginepowered.com/tag/javascript/?feed=atom',
+          ],
+          hint: { key: 'wordpress:tag-atom', label: 'Tag (Atom)' },
+        },
+        {
+          uri: [
+            'https://example.wpenginepowered.com/tag/javascript/feed/rdf/',
+            'https://example.wpenginepowered.com/tag/javascript/?feed=rdf',
+          ],
+          hint: { key: 'wordpress:tag-rdf', label: 'Tag (RDF)' },
         },
         {
           uri: [
@@ -295,7 +323,21 @@ describe('wpengineHandler', () => {
             'https://example.wpenginepowered.com/author/johndoe/feed/',
             'https://example.wpenginepowered.com/author/johndoe/?feed=rss',
           ],
-          hint: { key: 'wordpress:author', label: 'Author' },
+          hint: { key: 'wordpress:author-rss', label: 'Author (RSS)' },
+        },
+        {
+          uri: [
+            'https://example.wpenginepowered.com/author/johndoe/feed/atom/',
+            'https://example.wpenginepowered.com/author/johndoe/?feed=atom',
+          ],
+          hint: { key: 'wordpress:author-atom', label: 'Author (Atom)' },
+        },
+        {
+          uri: [
+            'https://example.wpenginepowered.com/author/johndoe/feed/rdf/',
+            'https://example.wpenginepowered.com/author/johndoe/?feed=rdf',
+          ],
+          hint: { key: 'wordpress:author-rdf', label: 'Author (RDF)' },
         },
         {
           uri: [

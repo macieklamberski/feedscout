@@ -141,7 +141,21 @@ describe('wordpressHandler', () => {
             'https://blog.wordpress.com/category/tech/feed/',
             'https://blog.wordpress.com/category/tech/?feed=rss',
           ],
-          hint: { key: 'wordpress:category', label: 'Category' },
+          hint: { key: 'wordpress:category-rss', label: 'Category (RSS)' },
+        },
+        {
+          uri: [
+            'https://blog.wordpress.com/category/tech/feed/atom/',
+            'https://blog.wordpress.com/category/tech/?feed=atom',
+          ],
+          hint: { key: 'wordpress:category-atom', label: 'Category (Atom)' },
+        },
+        {
+          uri: [
+            'https://blog.wordpress.com/category/tech/feed/rdf/',
+            'https://blog.wordpress.com/category/tech/?feed=rdf',
+          ],
+          hint: { key: 'wordpress:category-rdf', label: 'Category (RDF)' },
         },
         {
           uri: ['https://blog.wordpress.com/feed/', 'https://blog.wordpress.com/?feed=rss'],
@@ -200,7 +214,21 @@ describe('wordpressHandler', () => {
             'https://blog.wordpress.com/tag/javascript/feed/',
             'https://blog.wordpress.com/tag/javascript/?feed=rss',
           ],
-          hint: { key: 'wordpress:tag', label: 'Tag' },
+          hint: { key: 'wordpress:tag-rss', label: 'Tag (RSS)' },
+        },
+        {
+          uri: [
+            'https://blog.wordpress.com/tag/javascript/feed/atom/',
+            'https://blog.wordpress.com/tag/javascript/?feed=atom',
+          ],
+          hint: { key: 'wordpress:tag-atom', label: 'Tag (Atom)' },
+        },
+        {
+          uri: [
+            'https://blog.wordpress.com/tag/javascript/feed/rdf/',
+            'https://blog.wordpress.com/tag/javascript/?feed=rdf',
+          ],
+          hint: { key: 'wordpress:tag-rdf', label: 'Tag (RDF)' },
         },
         {
           uri: ['https://blog.wordpress.com/feed/', 'https://blog.wordpress.com/?feed=rss'],
@@ -259,7 +287,21 @@ describe('wordpressHandler', () => {
             'https://blog.wordpress.com/category/c%2B%2B/feed/',
             'https://blog.wordpress.com/category/c%2B%2B/?feed=rss',
           ],
-          hint: { key: 'wordpress:category', label: 'Category' },
+          hint: { key: 'wordpress:category-rss', label: 'Category (RSS)' },
+        },
+        {
+          uri: [
+            'https://blog.wordpress.com/category/c%2B%2B/feed/atom/',
+            'https://blog.wordpress.com/category/c%2B%2B/?feed=atom',
+          ],
+          hint: { key: 'wordpress:category-atom', label: 'Category (Atom)' },
+        },
+        {
+          uri: [
+            'https://blog.wordpress.com/category/c%2B%2B/feed/rdf/',
+            'https://blog.wordpress.com/category/c%2B%2B/?feed=rdf',
+          ],
+          hint: { key: 'wordpress:category-rdf', label: 'Category (RDF)' },
         },
         {
           uri: ['https://blog.wordpress.com/feed/', 'https://blog.wordpress.com/?feed=rss'],
@@ -318,7 +360,21 @@ describe('wordpressHandler', () => {
             'https://blog.wordpress.com/author/johndoe/feed/',
             'https://blog.wordpress.com/author/johndoe/?feed=rss',
           ],
-          hint: { key: 'wordpress:author', label: 'Author' },
+          hint: { key: 'wordpress:author-rss', label: 'Author (RSS)' },
+        },
+        {
+          uri: [
+            'https://blog.wordpress.com/author/johndoe/feed/atom/',
+            'https://blog.wordpress.com/author/johndoe/?feed=atom',
+          ],
+          hint: { key: 'wordpress:author-atom', label: 'Author (Atom)' },
+        },
+        {
+          uri: [
+            'https://blog.wordpress.com/author/johndoe/feed/rdf/',
+            'https://blog.wordpress.com/author/johndoe/?feed=rdf',
+          ],
+          hint: { key: 'wordpress:author-rdf', label: 'Author (RDF)' },
         },
         {
           uri: ['https://blog.wordpress.com/feed/', 'https://blog.wordpress.com/?feed=rss'],
@@ -374,7 +430,15 @@ describe('wordpressHandler', () => {
       const expected = [
         {
           uri: 'https://blog.wordpress.com/2024/feed/',
-          hint: { key: 'wordpress:date-archive', label: 'Date archive' },
+          hint: { key: 'wordpress:date-archive-rss', label: 'Date archive (RSS)' },
+        },
+        {
+          uri: 'https://blog.wordpress.com/2024/feed/atom/',
+          hint: { key: 'wordpress:date-archive-atom', label: 'Date archive (Atom)' },
+        },
+        {
+          uri: 'https://blog.wordpress.com/2024/feed/rdf/',
+          hint: { key: 'wordpress:date-archive-rdf', label: 'Date archive (RDF)' },
         },
         {
           uri: ['https://blog.wordpress.com/feed/', 'https://blog.wordpress.com/?feed=rss'],
@@ -430,7 +494,15 @@ describe('wordpressHandler', () => {
       const expected = [
         {
           uri: 'https://blog.wordpress.com/2024/06/feed/',
-          hint: { key: 'wordpress:date-archive', label: 'Date archive' },
+          hint: { key: 'wordpress:date-archive-rss', label: 'Date archive (RSS)' },
+        },
+        {
+          uri: 'https://blog.wordpress.com/2024/06/feed/atom/',
+          hint: { key: 'wordpress:date-archive-atom', label: 'Date archive (Atom)' },
+        },
+        {
+          uri: 'https://blog.wordpress.com/2024/06/feed/rdf/',
+          hint: { key: 'wordpress:date-archive-rdf', label: 'Date archive (RDF)' },
         },
         {
           uri: ['https://blog.wordpress.com/feed/', 'https://blog.wordpress.com/?feed=rss'],
@@ -486,7 +558,7 @@ describe('wordpressHandler', () => {
       const result = wordpressHandler.resolve(value) as Array<{ hint?: { key: string } }>
 
       for (const entry of result) {
-        expect(entry.hint?.key).not.toBe('wordpress:date-archive')
+        expect(entry.hint?.key?.startsWith('wordpress:date-archive')).toBe(false)
       }
     })
   })

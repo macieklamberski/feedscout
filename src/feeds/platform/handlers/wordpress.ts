@@ -26,7 +26,21 @@ export const wordpressHandler: PlatformHandler = {
           `${origin}/category/${categoryMatch[1]}/feed/`,
           `${origin}/category/${categoryMatch[1]}/?feed=rss`,
         ],
-        hint: composeHint('wordpress:category'),
+        hint: composeHint('wordpress:category-rss'),
+      })
+      uris.push({
+        uri: [
+          `${origin}/category/${categoryMatch[1]}/feed/atom/`,
+          `${origin}/category/${categoryMatch[1]}/?feed=atom`,
+        ],
+        hint: composeHint('wordpress:category-atom'),
+      })
+      uris.push({
+        uri: [
+          `${origin}/category/${categoryMatch[1]}/feed/rdf/`,
+          `${origin}/category/${categoryMatch[1]}/?feed=rdf`,
+        ],
+        hint: composeHint('wordpress:category-rdf'),
       })
     }
 
@@ -36,7 +50,15 @@ export const wordpressHandler: PlatformHandler = {
     if (tagMatch?.[1]) {
       uris.push({
         uri: [`${origin}/tag/${tagMatch[1]}/feed/`, `${origin}/tag/${tagMatch[1]}/?feed=rss`],
-        hint: composeHint('wordpress:tag'),
+        hint: composeHint('wordpress:tag-rss'),
+      })
+      uris.push({
+        uri: [`${origin}/tag/${tagMatch[1]}/feed/atom/`, `${origin}/tag/${tagMatch[1]}/?feed=atom`],
+        hint: composeHint('wordpress:tag-atom'),
+      })
+      uris.push({
+        uri: [`${origin}/tag/${tagMatch[1]}/feed/rdf/`, `${origin}/tag/${tagMatch[1]}/?feed=rdf`],
+        hint: composeHint('wordpress:tag-rdf'),
       })
     }
 
@@ -49,7 +71,21 @@ export const wordpressHandler: PlatformHandler = {
           `${origin}/author/${authorMatch[1]}/feed/`,
           `${origin}/author/${authorMatch[1]}/?feed=rss`,
         ],
-        hint: composeHint('wordpress:author'),
+        hint: composeHint('wordpress:author-rss'),
+      })
+      uris.push({
+        uri: [
+          `${origin}/author/${authorMatch[1]}/feed/atom/`,
+          `${origin}/author/${authorMatch[1]}/?feed=atom`,
+        ],
+        hint: composeHint('wordpress:author-atom'),
+      })
+      uris.push({
+        uri: [
+          `${origin}/author/${authorMatch[1]}/feed/rdf/`,
+          `${origin}/author/${authorMatch[1]}/?feed=rdf`,
+        ],
+        hint: composeHint('wordpress:author-rdf'),
       })
     }
 
@@ -59,7 +95,15 @@ export const wordpressHandler: PlatformHandler = {
     if (yearMonthMatch?.[1] && yearMonthMatch?.[2]) {
       uris.push({
         uri: `${origin}/${yearMonthMatch[1]}/${yearMonthMatch[2]}/feed/`,
-        hint: composeHint('wordpress:date-archive'),
+        hint: composeHint('wordpress:date-archive-rss'),
+      })
+      uris.push({
+        uri: `${origin}/${yearMonthMatch[1]}/${yearMonthMatch[2]}/feed/atom/`,
+        hint: composeHint('wordpress:date-archive-atom'),
+      })
+      uris.push({
+        uri: `${origin}/${yearMonthMatch[1]}/${yearMonthMatch[2]}/feed/rdf/`,
+        hint: composeHint('wordpress:date-archive-rdf'),
       })
     }
 
@@ -69,7 +113,15 @@ export const wordpressHandler: PlatformHandler = {
     if (yearMatch?.[1]) {
       uris.push({
         uri: `${origin}/${yearMatch[1]}/feed/`,
-        hint: composeHint('wordpress:date-archive'),
+        hint: composeHint('wordpress:date-archive-rss'),
+      })
+      uris.push({
+        uri: `${origin}/${yearMatch[1]}/feed/atom/`,
+        hint: composeHint('wordpress:date-archive-atom'),
+      })
+      uris.push({
+        uri: `${origin}/${yearMatch[1]}/feed/rdf/`,
+        hint: composeHint('wordpress:date-archive-rdf'),
       })
     }
 
