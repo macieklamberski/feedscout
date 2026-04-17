@@ -45,6 +45,7 @@
     "wordpress:category": "Category",
     "wordpress:tag": "Tag",
     "wordpress:author": "Author",
+    "wordpress:date-archive": "Date archive",
     "wordpress:posts-rss2": "Posts (RSS 2.0)",
     "wordpress:posts-rss2-alt": "Posts (RSS 2.0)",
     "wordpress:posts-rdf": "Posts (RDF)",

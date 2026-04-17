@@ -5,6 +5,8 @@ import { composeHint, isSubdomainOf } from '../../../common/utils.js'
 const categoryRegex = /^\/category\/([^/]+)/
 const tagRegex = /^\/tag\/([^/]+)/
 const authorRegex = /^\/author\/([^/]+)/
+const yearRegex = /^\/(\d{4})\/?$/
+const yearMonthRegex = /^\/(\d{4})\/(\d{2})\/?$/
 
 export const wordpressHandler: PlatformHandler = {
   match: (url) => {
@@ -48,6 +50,26 @@ export const wordpressHandler: PlatformHandler = {
           `${origin}/author/${authorMatch[1]}/?feed=rss`,
         ],
         hint: composeHint('wordpress:author'),
+      })
+    }
+
+    // Month archive page: /{year}/{month}/
+    const yearMonthMatch = pathname.match(yearMonthRegex)
+
+    if (yearMonthMatch?.[1] && yearMonthMatch?.[2]) {
+      uris.push({
+        uri: `${origin}/${yearMonthMatch[1]}/${yearMonthMatch[2]}/feed/`,
+        hint: composeHint('wordpress:date-archive'),
+      })
+    }
+
+    // Year archive page: /{year}/
+    const yearMatch = pathname.match(yearRegex)
+
+    if (yearMatch?.[1]) {
+      uris.push({
+        uri: `${origin}/${yearMatch[1]}/feed/`,
+        hint: composeHint('wordpress:date-archive'),
       })
     }
 

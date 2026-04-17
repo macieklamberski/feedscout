@@ -176,7 +176,9 @@
     "https://wordpress.org/news/tag/releases/feed/",
     "https://wordpress.org/news/tag/releases/?feed=rss",
     "https://wordpress.org/news/author/flavor/feed/",
-    "https://wordpress.org/news/author/flavor/?feed=rss"
+    "https://wordpress.org/news/author/flavor/?feed=rss",
+    "https://wordpress.org/news/2024/feed/",
+    "https://wordpress.org/news/2024/06/feed/"
   ],
   "wpengine": [
     "https://developer.wpengine.com/feed/",
