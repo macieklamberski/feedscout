@@ -37,18 +37,18 @@
     "https://gitea.com/gitea/go-sdk/rss/branch/main/README.md"
   ],
   "github": [
-    "https://github.com/torvalds.atom",
-    "https://github.com/torvalds/linux/releases.atom",
-    "https://github.com/torvalds/linux/commits.atom",
-    "https://github.com/torvalds/linux/tags.atom",
-    "https://github.com/torvalds/linux/wiki.atom",
+    "https://github.com/macieklamberski.atom",
+    "https://github.com/macieklamberski/feedscout/releases.atom",
+    "https://github.com/macieklamberski/feedscout/commits.atom",
+    "https://github.com/macieklamberski/feedscout/tags.atom",
+    "https://github.com/microsoft/vscode/wiki.atom",
     "https://github.com/vercel/next.js/discussions.atom",
-    "https://github.com/torvalds/linux/commits/master.atom",
-    "https://github.com/torvalds/linux/commits/master/Makefile.atom"
+    "https://github.com/macieklamberski/feedscout/commits/main.atom",
+    "https://github.com/macieklamberski/feedscout/commits/main/package.json.atom"
   ],
   "githubGist": [
-    "https://gist.github.com/torvalds.atom",
-    "https://gist.github.com/torvalds/starred.atom"
+    "https://gist.github.com/macieklamberski.atom",
+    "https://gist.github.com/macieklamberski/starred.atom"
   ],
   "gitlab": [
     "https://gitlab.com/gitlab-org.atom",
