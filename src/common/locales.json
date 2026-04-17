@@ -75,6 +75,8 @@
     "devto:tag": "Tag",
     "github-gist:gists": "Gists",
     "github-gist:starred": "Starred",
+    "github-gist:forks": "Forks",
+    "github-gist:discover": "Discover",
     "kickstarter:updates": "Updates",
     "kickstarter:projects": "Projects",
     "letterboxd:diary": "Diary",

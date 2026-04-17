@@ -53,7 +53,9 @@
   ],
   "githubGist": [
     "https://gist.github.com/macieklamberski.atom",
-    "https://gist.github.com/macieklamberski/starred.atom"
+    "https://gist.github.com/macieklamberski/starred.atom",
+    "https://gist.github.com/defunkt/forks.atom",
+    "https://gist.github.com/discover.atom"
   ],
   "gitlab": [
     "https://gitlab.com/gitlab-org.atom",

@@ -80,9 +80,56 @@ describe('githubGistHandler', () => {
       expect(githubGistHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return forks gists feed for user forks page', () => {
+      const value = 'https://gist.github.com/defunkt/forks'
+      const expected = [
+        {
+          uri: 'https://gist.github.com/defunkt/forks.atom',
+          hint: { key: 'github-gist:forks', label: 'Forks' },
+        },
+      ]
+
+      expect(githubGistHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return forks gists feed with trailing slash', () => {
+      const value = 'https://gist.github.com/defunkt/forks/'
+      const expected = [
+        {
+          uri: 'https://gist.github.com/defunkt/forks.atom',
+          hint: { key: 'github-gist:forks', label: 'Forks' },
+        },
+      ]
+
+      expect(githubGistHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return discover feed for discover page', () => {
+      const value = 'https://gist.github.com/discover'
+      const expected = [
+        {
+          uri: 'https://gist.github.com/discover.atom',
+          hint: { key: 'github-gist:discover', label: 'Discover' },
+        },
+      ]
+
+      expect(githubGistHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return discover feed with trailing slash', () => {
+      const value = 'https://gist.github.com/discover/'
+      const expected = [
+        {
+          uri: 'https://gist.github.com/discover.atom',
+          hint: { key: 'github-gist:discover', label: 'Discover' },
+        },
+      ]
+
+      expect(githubGistHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return empty array for excluded paths', () => {
       const excludedUrls = [
-        'https://gist.github.com/discover',
         'https://gist.github.com/search',
         'https://gist.github.com/login',
         'https://gist.github.com/join',
