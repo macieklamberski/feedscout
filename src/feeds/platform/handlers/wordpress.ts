@@ -127,12 +127,13 @@ export const wordpressHandler: PlatformHandler = {
 
     // Always include main blog feeds.
     uris.push({
-      uri: [`${origin}/feed/`, `${origin}/?feed=rss`],
-      hint: composeHint('wordpress:posts-rss2'),
-    })
-    uris.push({
-      uri: [`${origin}/feed/rss2/`, `${origin}/?feed=rss2`],
-      hint: composeHint('wordpress:posts-rss2-alt'),
+      uri: [
+        `${origin}/feed/`,
+        `${origin}/?feed=rss`,
+        `${origin}/feed/rss2/`,
+        `${origin}/?feed=rss2`,
+      ],
+      hint: composeHint('wordpress:posts-rss'),
     })
     uris.push({
       uri: [`${origin}/feed/rdf/`, `${origin}/?feed=rdf`],
@@ -143,12 +144,13 @@ export const wordpressHandler: PlatformHandler = {
       hint: composeHint('wordpress:posts-atom'),
     })
     uris.push({
-      uri: [`${origin}/comments/feed/`, `${origin}/?feed=comments-rss2`],
-      hint: composeHint('wordpress:comments'),
-    })
-    uris.push({
-      uri: [`${origin}/comments/feed/rss2/`, `${origin}/?feed=comments-rss2`],
-      hint: composeHint('wordpress:comments-rss2'),
+      uri: [
+        `${origin}/comments/feed/`,
+        `${origin}/?feed=comments-rss`,
+        `${origin}/comments/feed/rss2/`,
+        `${origin}/?feed=comments-rss2`,
+      ],
+      hint: composeHint('wordpress:comments-rss'),
     })
     uris.push({
       uri: [`${origin}/comments/feed/rdf/`, `${origin}/?feed=comments-rdf`],

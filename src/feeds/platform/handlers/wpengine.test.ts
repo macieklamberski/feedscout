@@ -30,15 +30,10 @@ describe('wpengineHandler', () => {
           uri: [
             'https://example.wpenginepowered.com/feed/',
             'https://example.wpenginepowered.com/?feed=rss',
-          ],
-          hint: { key: 'wordpress:posts-rss2', label: 'Posts (RSS 2.0)' },
-        },
-        {
-          uri: [
             'https://example.wpenginepowered.com/feed/rss2/',
             'https://example.wpenginepowered.com/?feed=rss2',
           ],
-          hint: { key: 'wordpress:posts-rss2-alt', label: 'Posts (RSS 2.0)' },
+          hint: { key: 'wordpress:posts-rss', label: 'Posts (RSS)' },
         },
         {
           uri: [
@@ -57,16 +52,11 @@ describe('wpengineHandler', () => {
         {
           uri: [
             'https://example.wpenginepowered.com/comments/feed/',
-            'https://example.wpenginepowered.com/?feed=comments-rss2',
-          ],
-          hint: { key: 'wordpress:comments', label: 'Comments' },
-        },
-        {
-          uri: [
+            'https://example.wpenginepowered.com/?feed=comments-rss',
             'https://example.wpenginepowered.com/comments/feed/rss2/',
             'https://example.wpenginepowered.com/?feed=comments-rss2',
           ],
-          hint: { key: 'wordpress:comments-rss2', label: 'Comments (RSS 2.0)' },
+          hint: { key: 'wordpress:comments-rss', label: 'Comments (RSS)' },
         },
         {
           uri: [
@@ -91,15 +81,13 @@ describe('wpengineHandler', () => {
       const value = 'https://example.wpengine.com'
       const expected = [
         {
-          uri: ['https://example.wpengine.com/feed/', 'https://example.wpengine.com/?feed=rss'],
-          hint: { key: 'wordpress:posts-rss2', label: 'Posts (RSS 2.0)' },
-        },
-        {
           uri: [
+            'https://example.wpengine.com/feed/',
+            'https://example.wpengine.com/?feed=rss',
             'https://example.wpengine.com/feed/rss2/',
             'https://example.wpengine.com/?feed=rss2',
           ],
-          hint: { key: 'wordpress:posts-rss2-alt', label: 'Posts (RSS 2.0)' },
+          hint: { key: 'wordpress:posts-rss', label: 'Posts (RSS)' },
         },
         {
           uri: ['https://example.wpengine.com/feed/rdf/', 'https://example.wpengine.com/?feed=rdf'],
@@ -115,16 +103,11 @@ describe('wpengineHandler', () => {
         {
           uri: [
             'https://example.wpengine.com/comments/feed/',
-            'https://example.wpengine.com/?feed=comments-rss2',
-          ],
-          hint: { key: 'wordpress:comments', label: 'Comments' },
-        },
-        {
-          uri: [
+            'https://example.wpengine.com/?feed=comments-rss',
             'https://example.wpengine.com/comments/feed/rss2/',
             'https://example.wpengine.com/?feed=comments-rss2',
           ],
-          hint: { key: 'wordpress:comments-rss2', label: 'Comments (RSS 2.0)' },
+          hint: { key: 'wordpress:comments-rss', label: 'Comments (RSS)' },
         },
         {
           uri: [
@@ -173,15 +156,10 @@ describe('wpengineHandler', () => {
           uri: [
             'https://example.wpenginepowered.com/feed/',
             'https://example.wpenginepowered.com/?feed=rss',
-          ],
-          hint: { key: 'wordpress:posts-rss2', label: 'Posts (RSS 2.0)' },
-        },
-        {
-          uri: [
             'https://example.wpenginepowered.com/feed/rss2/',
             'https://example.wpenginepowered.com/?feed=rss2',
           ],
-          hint: { key: 'wordpress:posts-rss2-alt', label: 'Posts (RSS 2.0)' },
+          hint: { key: 'wordpress:posts-rss', label: 'Posts (RSS)' },
         },
         {
           uri: [
@@ -200,16 +178,11 @@ describe('wpengineHandler', () => {
         {
           uri: [
             'https://example.wpenginepowered.com/comments/feed/',
-            'https://example.wpenginepowered.com/?feed=comments-rss2',
-          ],
-          hint: { key: 'wordpress:comments', label: 'Comments' },
-        },
-        {
-          uri: [
+            'https://example.wpenginepowered.com/?feed=comments-rss',
             'https://example.wpenginepowered.com/comments/feed/rss2/',
             'https://example.wpenginepowered.com/?feed=comments-rss2',
           ],
-          hint: { key: 'wordpress:comments-rss2', label: 'Comments (RSS 2.0)' },
+          hint: { key: 'wordpress:comments-rss', label: 'Comments (RSS)' },
         },
         {
           uri: [
@@ -258,15 +231,10 @@ describe('wpengineHandler', () => {
           uri: [
             'https://example.wpenginepowered.com/feed/',
             'https://example.wpenginepowered.com/?feed=rss',
-          ],
-          hint: { key: 'wordpress:posts-rss2', label: 'Posts (RSS 2.0)' },
-        },
-        {
-          uri: [
             'https://example.wpenginepowered.com/feed/rss2/',
             'https://example.wpenginepowered.com/?feed=rss2',
           ],
-          hint: { key: 'wordpress:posts-rss2-alt', label: 'Posts (RSS 2.0)' },
+          hint: { key: 'wordpress:posts-rss', label: 'Posts (RSS)' },
         },
         {
           uri: [
@@ -285,16 +253,11 @@ describe('wpengineHandler', () => {
         {
           uri: [
             'https://example.wpenginepowered.com/comments/feed/',
-            'https://example.wpenginepowered.com/?feed=comments-rss2',
-          ],
-          hint: { key: 'wordpress:comments', label: 'Comments' },
-        },
-        {
-          uri: [
+            'https://example.wpenginepowered.com/?feed=comments-rss',
             'https://example.wpenginepowered.com/comments/feed/rss2/',
             'https://example.wpenginepowered.com/?feed=comments-rss2',
           ],
-          hint: { key: 'wordpress:comments-rss2', label: 'Comments (RSS 2.0)' },
+          hint: { key: 'wordpress:comments-rss', label: 'Comments (RSS)' },
         },
         {
           uri: [
@@ -343,15 +306,10 @@ describe('wpengineHandler', () => {
           uri: [
             'https://example.wpenginepowered.com/feed/',
             'https://example.wpenginepowered.com/?feed=rss',
-          ],
-          hint: { key: 'wordpress:posts-rss2', label: 'Posts (RSS 2.0)' },
-        },
-        {
-          uri: [
             'https://example.wpenginepowered.com/feed/rss2/',
             'https://example.wpenginepowered.com/?feed=rss2',
           ],
-          hint: { key: 'wordpress:posts-rss2-alt', label: 'Posts (RSS 2.0)' },
+          hint: { key: 'wordpress:posts-rss', label: 'Posts (RSS)' },
         },
         {
           uri: [
@@ -370,16 +328,143 @@ describe('wpengineHandler', () => {
         {
           uri: [
             'https://example.wpenginepowered.com/comments/feed/',
-            'https://example.wpenginepowered.com/?feed=comments-rss2',
-          ],
-          hint: { key: 'wordpress:comments', label: 'Comments' },
-        },
-        {
-          uri: [
+            'https://example.wpenginepowered.com/?feed=comments-rss',
             'https://example.wpenginepowered.com/comments/feed/rss2/',
             'https://example.wpenginepowered.com/?feed=comments-rss2',
           ],
-          hint: { key: 'wordpress:comments-rss2', label: 'Comments (RSS 2.0)' },
+          hint: { key: 'wordpress:comments-rss', label: 'Comments (RSS)' },
+        },
+        {
+          uri: [
+            'https://example.wpenginepowered.com/comments/feed/rdf/',
+            'https://example.wpenginepowered.com/?feed=comments-rdf',
+          ],
+          hint: { key: 'wordpress:comments-rdf', label: 'Comments (RDF)' },
+        },
+        {
+          uri: [
+            'https://example.wpenginepowered.com/comments/feed/atom/',
+            'https://example.wpenginepowered.com/?feed=comments-atom',
+          ],
+          hint: { key: 'wordpress:comments-atom', label: 'Comments (Atom)' },
+        },
+      ]
+
+      expect(wpengineHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should include year archive feed when on year page', () => {
+      const value = 'https://example.wpenginepowered.com/2024/'
+      const expected = [
+        {
+          uri: 'https://example.wpenginepowered.com/2024/feed/',
+          hint: { key: 'wordpress:date-archive-rss', label: 'Date archive (RSS)' },
+        },
+        {
+          uri: 'https://example.wpenginepowered.com/2024/feed/atom/',
+          hint: { key: 'wordpress:date-archive-atom', label: 'Date archive (Atom)' },
+        },
+        {
+          uri: 'https://example.wpenginepowered.com/2024/feed/rdf/',
+          hint: { key: 'wordpress:date-archive-rdf', label: 'Date archive (RDF)' },
+        },
+        {
+          uri: [
+            'https://example.wpenginepowered.com/feed/',
+            'https://example.wpenginepowered.com/?feed=rss',
+            'https://example.wpenginepowered.com/feed/rss2/',
+            'https://example.wpenginepowered.com/?feed=rss2',
+          ],
+          hint: { key: 'wordpress:posts-rss', label: 'Posts (RSS)' },
+        },
+        {
+          uri: [
+            'https://example.wpenginepowered.com/feed/rdf/',
+            'https://example.wpenginepowered.com/?feed=rdf',
+          ],
+          hint: { key: 'wordpress:posts-rdf', label: 'Posts (RDF)' },
+        },
+        {
+          uri: [
+            'https://example.wpenginepowered.com/feed/atom/',
+            'https://example.wpenginepowered.com/?feed=atom',
+          ],
+          hint: { key: 'wordpress:posts-atom', label: 'Posts (Atom)' },
+        },
+        {
+          uri: [
+            'https://example.wpenginepowered.com/comments/feed/',
+            'https://example.wpenginepowered.com/?feed=comments-rss',
+            'https://example.wpenginepowered.com/comments/feed/rss2/',
+            'https://example.wpenginepowered.com/?feed=comments-rss2',
+          ],
+          hint: { key: 'wordpress:comments-rss', label: 'Comments (RSS)' },
+        },
+        {
+          uri: [
+            'https://example.wpenginepowered.com/comments/feed/rdf/',
+            'https://example.wpenginepowered.com/?feed=comments-rdf',
+          ],
+          hint: { key: 'wordpress:comments-rdf', label: 'Comments (RDF)' },
+        },
+        {
+          uri: [
+            'https://example.wpenginepowered.com/comments/feed/atom/',
+            'https://example.wpenginepowered.com/?feed=comments-atom',
+          ],
+          hint: { key: 'wordpress:comments-atom', label: 'Comments (Atom)' },
+        },
+      ]
+
+      expect(wpengineHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should include month archive feed when on year/month page', () => {
+      const value = 'https://example.wpenginepowered.com/2024/06/'
+      const expected = [
+        {
+          uri: 'https://example.wpenginepowered.com/2024/06/feed/',
+          hint: { key: 'wordpress:date-archive-rss', label: 'Date archive (RSS)' },
+        },
+        {
+          uri: 'https://example.wpenginepowered.com/2024/06/feed/atom/',
+          hint: { key: 'wordpress:date-archive-atom', label: 'Date archive (Atom)' },
+        },
+        {
+          uri: 'https://example.wpenginepowered.com/2024/06/feed/rdf/',
+          hint: { key: 'wordpress:date-archive-rdf', label: 'Date archive (RDF)' },
+        },
+        {
+          uri: [
+            'https://example.wpenginepowered.com/feed/',
+            'https://example.wpenginepowered.com/?feed=rss',
+            'https://example.wpenginepowered.com/feed/rss2/',
+            'https://example.wpenginepowered.com/?feed=rss2',
+          ],
+          hint: { key: 'wordpress:posts-rss', label: 'Posts (RSS)' },
+        },
+        {
+          uri: [
+            'https://example.wpenginepowered.com/feed/rdf/',
+            'https://example.wpenginepowered.com/?feed=rdf',
+          ],
+          hint: { key: 'wordpress:posts-rdf', label: 'Posts (RDF)' },
+        },
+        {
+          uri: [
+            'https://example.wpenginepowered.com/feed/atom/',
+            'https://example.wpenginepowered.com/?feed=atom',
+          ],
+          hint: { key: 'wordpress:posts-atom', label: 'Posts (Atom)' },
+        },
+        {
+          uri: [
+            'https://example.wpenginepowered.com/comments/feed/',
+            'https://example.wpenginepowered.com/?feed=comments-rss',
+            'https://example.wpenginepowered.com/comments/feed/rss2/',
+            'https://example.wpenginepowered.com/?feed=comments-rss2',
+          ],
+          hint: { key: 'wordpress:comments-rss', label: 'Comments (RSS)' },
         },
         {
           uri: [

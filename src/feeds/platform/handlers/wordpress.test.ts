@@ -24,15 +24,13 @@ describe('wordpressHandler', () => {
       const value = 'https://example.wordpress.com'
       const expected = [
         {
-          uri: ['https://example.wordpress.com/feed/', 'https://example.wordpress.com/?feed=rss'],
-          hint: { key: 'wordpress:posts-rss2', label: 'Posts (RSS 2.0)' },
-        },
-        {
           uri: [
+            'https://example.wordpress.com/feed/',
+            'https://example.wordpress.com/?feed=rss',
             'https://example.wordpress.com/feed/rss2/',
             'https://example.wordpress.com/?feed=rss2',
           ],
-          hint: { key: 'wordpress:posts-rss2-alt', label: 'Posts (RSS 2.0)' },
+          hint: { key: 'wordpress:posts-rss', label: 'Posts (RSS)' },
         },
         {
           uri: [
@@ -51,16 +49,11 @@ describe('wordpressHandler', () => {
         {
           uri: [
             'https://example.wordpress.com/comments/feed/',
-            'https://example.wordpress.com/?feed=comments-rss2',
-          ],
-          hint: { key: 'wordpress:comments', label: 'Comments' },
-        },
-        {
-          uri: [
+            'https://example.wordpress.com/?feed=comments-rss',
             'https://example.wordpress.com/comments/feed/rss2/',
             'https://example.wordpress.com/?feed=comments-rss2',
           ],
-          hint: { key: 'wordpress:comments-rss2', label: 'Comments (RSS 2.0)' },
+          hint: { key: 'wordpress:comments-rss', label: 'Comments (RSS)' },
         },
         {
           uri: [
@@ -85,12 +78,13 @@ describe('wordpressHandler', () => {
       const value = 'https://blog.wordpress.com/2024/01/01/some-post/'
       const expected = [
         {
-          uri: ['https://blog.wordpress.com/feed/', 'https://blog.wordpress.com/?feed=rss'],
-          hint: { key: 'wordpress:posts-rss2', label: 'Posts (RSS 2.0)' },
-        },
-        {
-          uri: ['https://blog.wordpress.com/feed/rss2/', 'https://blog.wordpress.com/?feed=rss2'],
-          hint: { key: 'wordpress:posts-rss2-alt', label: 'Posts (RSS 2.0)' },
+          uri: [
+            'https://blog.wordpress.com/feed/',
+            'https://blog.wordpress.com/?feed=rss',
+            'https://blog.wordpress.com/feed/rss2/',
+            'https://blog.wordpress.com/?feed=rss2',
+          ],
+          hint: { key: 'wordpress:posts-rss', label: 'Posts (RSS)' },
         },
         {
           uri: ['https://blog.wordpress.com/feed/rdf/', 'https://blog.wordpress.com/?feed=rdf'],
@@ -103,16 +97,11 @@ describe('wordpressHandler', () => {
         {
           uri: [
             'https://blog.wordpress.com/comments/feed/',
-            'https://blog.wordpress.com/?feed=comments-rss2',
-          ],
-          hint: { key: 'wordpress:comments', label: 'Comments' },
-        },
-        {
-          uri: [
+            'https://blog.wordpress.com/?feed=comments-rss',
             'https://blog.wordpress.com/comments/feed/rss2/',
             'https://blog.wordpress.com/?feed=comments-rss2',
           ],
-          hint: { key: 'wordpress:comments-rss2', label: 'Comments (RSS 2.0)' },
+          hint: { key: 'wordpress:comments-rss', label: 'Comments (RSS)' },
         },
         {
           uri: [
@@ -158,12 +147,13 @@ describe('wordpressHandler', () => {
           hint: { key: 'wordpress:category-rdf', label: 'Category (RDF)' },
         },
         {
-          uri: ['https://blog.wordpress.com/feed/', 'https://blog.wordpress.com/?feed=rss'],
-          hint: { key: 'wordpress:posts-rss2', label: 'Posts (RSS 2.0)' },
-        },
-        {
-          uri: ['https://blog.wordpress.com/feed/rss2/', 'https://blog.wordpress.com/?feed=rss2'],
-          hint: { key: 'wordpress:posts-rss2-alt', label: 'Posts (RSS 2.0)' },
+          uri: [
+            'https://blog.wordpress.com/feed/',
+            'https://blog.wordpress.com/?feed=rss',
+            'https://blog.wordpress.com/feed/rss2/',
+            'https://blog.wordpress.com/?feed=rss2',
+          ],
+          hint: { key: 'wordpress:posts-rss', label: 'Posts (RSS)' },
         },
         {
           uri: ['https://blog.wordpress.com/feed/rdf/', 'https://blog.wordpress.com/?feed=rdf'],
@@ -176,16 +166,11 @@ describe('wordpressHandler', () => {
         {
           uri: [
             'https://blog.wordpress.com/comments/feed/',
-            'https://blog.wordpress.com/?feed=comments-rss2',
-          ],
-          hint: { key: 'wordpress:comments', label: 'Comments' },
-        },
-        {
-          uri: [
+            'https://blog.wordpress.com/?feed=comments-rss',
             'https://blog.wordpress.com/comments/feed/rss2/',
             'https://blog.wordpress.com/?feed=comments-rss2',
           ],
-          hint: { key: 'wordpress:comments-rss2', label: 'Comments (RSS 2.0)' },
+          hint: { key: 'wordpress:comments-rss', label: 'Comments (RSS)' },
         },
         {
           uri: [
@@ -231,12 +216,13 @@ describe('wordpressHandler', () => {
           hint: { key: 'wordpress:tag-rdf', label: 'Tag (RDF)' },
         },
         {
-          uri: ['https://blog.wordpress.com/feed/', 'https://blog.wordpress.com/?feed=rss'],
-          hint: { key: 'wordpress:posts-rss2', label: 'Posts (RSS 2.0)' },
-        },
-        {
-          uri: ['https://blog.wordpress.com/feed/rss2/', 'https://blog.wordpress.com/?feed=rss2'],
-          hint: { key: 'wordpress:posts-rss2-alt', label: 'Posts (RSS 2.0)' },
+          uri: [
+            'https://blog.wordpress.com/feed/',
+            'https://blog.wordpress.com/?feed=rss',
+            'https://blog.wordpress.com/feed/rss2/',
+            'https://blog.wordpress.com/?feed=rss2',
+          ],
+          hint: { key: 'wordpress:posts-rss', label: 'Posts (RSS)' },
         },
         {
           uri: ['https://blog.wordpress.com/feed/rdf/', 'https://blog.wordpress.com/?feed=rdf'],
@@ -249,16 +235,11 @@ describe('wordpressHandler', () => {
         {
           uri: [
             'https://blog.wordpress.com/comments/feed/',
-            'https://blog.wordpress.com/?feed=comments-rss2',
-          ],
-          hint: { key: 'wordpress:comments', label: 'Comments' },
-        },
-        {
-          uri: [
+            'https://blog.wordpress.com/?feed=comments-rss',
             'https://blog.wordpress.com/comments/feed/rss2/',
             'https://blog.wordpress.com/?feed=comments-rss2',
           ],
-          hint: { key: 'wordpress:comments-rss2', label: 'Comments (RSS 2.0)' },
+          hint: { key: 'wordpress:comments-rss', label: 'Comments (RSS)' },
         },
         {
           uri: [
@@ -304,12 +285,13 @@ describe('wordpressHandler', () => {
           hint: { key: 'wordpress:category-rdf', label: 'Category (RDF)' },
         },
         {
-          uri: ['https://blog.wordpress.com/feed/', 'https://blog.wordpress.com/?feed=rss'],
-          hint: { key: 'wordpress:posts-rss2', label: 'Posts (RSS 2.0)' },
-        },
-        {
-          uri: ['https://blog.wordpress.com/feed/rss2/', 'https://blog.wordpress.com/?feed=rss2'],
-          hint: { key: 'wordpress:posts-rss2-alt', label: 'Posts (RSS 2.0)' },
+          uri: [
+            'https://blog.wordpress.com/feed/',
+            'https://blog.wordpress.com/?feed=rss',
+            'https://blog.wordpress.com/feed/rss2/',
+            'https://blog.wordpress.com/?feed=rss2',
+          ],
+          hint: { key: 'wordpress:posts-rss', label: 'Posts (RSS)' },
         },
         {
           uri: ['https://blog.wordpress.com/feed/rdf/', 'https://blog.wordpress.com/?feed=rdf'],
@@ -322,16 +304,11 @@ describe('wordpressHandler', () => {
         {
           uri: [
             'https://blog.wordpress.com/comments/feed/',
-            'https://blog.wordpress.com/?feed=comments-rss2',
-          ],
-          hint: { key: 'wordpress:comments', label: 'Comments' },
-        },
-        {
-          uri: [
+            'https://blog.wordpress.com/?feed=comments-rss',
             'https://blog.wordpress.com/comments/feed/rss2/',
             'https://blog.wordpress.com/?feed=comments-rss2',
           ],
-          hint: { key: 'wordpress:comments-rss2', label: 'Comments (RSS 2.0)' },
+          hint: { key: 'wordpress:comments-rss', label: 'Comments (RSS)' },
         },
         {
           uri: [
@@ -377,12 +354,13 @@ describe('wordpressHandler', () => {
           hint: { key: 'wordpress:author-rdf', label: 'Author (RDF)' },
         },
         {
-          uri: ['https://blog.wordpress.com/feed/', 'https://blog.wordpress.com/?feed=rss'],
-          hint: { key: 'wordpress:posts-rss2', label: 'Posts (RSS 2.0)' },
-        },
-        {
-          uri: ['https://blog.wordpress.com/feed/rss2/', 'https://blog.wordpress.com/?feed=rss2'],
-          hint: { key: 'wordpress:posts-rss2-alt', label: 'Posts (RSS 2.0)' },
+          uri: [
+            'https://blog.wordpress.com/feed/',
+            'https://blog.wordpress.com/?feed=rss',
+            'https://blog.wordpress.com/feed/rss2/',
+            'https://blog.wordpress.com/?feed=rss2',
+          ],
+          hint: { key: 'wordpress:posts-rss', label: 'Posts (RSS)' },
         },
         {
           uri: ['https://blog.wordpress.com/feed/rdf/', 'https://blog.wordpress.com/?feed=rdf'],
@@ -395,16 +373,11 @@ describe('wordpressHandler', () => {
         {
           uri: [
             'https://blog.wordpress.com/comments/feed/',
-            'https://blog.wordpress.com/?feed=comments-rss2',
-          ],
-          hint: { key: 'wordpress:comments', label: 'Comments' },
-        },
-        {
-          uri: [
+            'https://blog.wordpress.com/?feed=comments-rss',
             'https://blog.wordpress.com/comments/feed/rss2/',
             'https://blog.wordpress.com/?feed=comments-rss2',
           ],
-          hint: { key: 'wordpress:comments-rss2', label: 'Comments (RSS 2.0)' },
+          hint: { key: 'wordpress:comments-rss', label: 'Comments (RSS)' },
         },
         {
           uri: [
@@ -441,12 +414,13 @@ describe('wordpressHandler', () => {
           hint: { key: 'wordpress:date-archive-rdf', label: 'Date archive (RDF)' },
         },
         {
-          uri: ['https://blog.wordpress.com/feed/', 'https://blog.wordpress.com/?feed=rss'],
-          hint: { key: 'wordpress:posts-rss2', label: 'Posts (RSS 2.0)' },
-        },
-        {
-          uri: ['https://blog.wordpress.com/feed/rss2/', 'https://blog.wordpress.com/?feed=rss2'],
-          hint: { key: 'wordpress:posts-rss2-alt', label: 'Posts (RSS 2.0)' },
+          uri: [
+            'https://blog.wordpress.com/feed/',
+            'https://blog.wordpress.com/?feed=rss',
+            'https://blog.wordpress.com/feed/rss2/',
+            'https://blog.wordpress.com/?feed=rss2',
+          ],
+          hint: { key: 'wordpress:posts-rss', label: 'Posts (RSS)' },
         },
         {
           uri: ['https://blog.wordpress.com/feed/rdf/', 'https://blog.wordpress.com/?feed=rdf'],
@@ -459,16 +433,11 @@ describe('wordpressHandler', () => {
         {
           uri: [
             'https://blog.wordpress.com/comments/feed/',
-            'https://blog.wordpress.com/?feed=comments-rss2',
-          ],
-          hint: { key: 'wordpress:comments', label: 'Comments' },
-        },
-        {
-          uri: [
+            'https://blog.wordpress.com/?feed=comments-rss',
             'https://blog.wordpress.com/comments/feed/rss2/',
             'https://blog.wordpress.com/?feed=comments-rss2',
           ],
-          hint: { key: 'wordpress:comments-rss2', label: 'Comments (RSS 2.0)' },
+          hint: { key: 'wordpress:comments-rss', label: 'Comments (RSS)' },
         },
         {
           uri: [
@@ -505,12 +474,13 @@ describe('wordpressHandler', () => {
           hint: { key: 'wordpress:date-archive-rdf', label: 'Date archive (RDF)' },
         },
         {
-          uri: ['https://blog.wordpress.com/feed/', 'https://blog.wordpress.com/?feed=rss'],
-          hint: { key: 'wordpress:posts-rss2', label: 'Posts (RSS 2.0)' },
-        },
-        {
-          uri: ['https://blog.wordpress.com/feed/rss2/', 'https://blog.wordpress.com/?feed=rss2'],
-          hint: { key: 'wordpress:posts-rss2-alt', label: 'Posts (RSS 2.0)' },
+          uri: [
+            'https://blog.wordpress.com/feed/',
+            'https://blog.wordpress.com/?feed=rss',
+            'https://blog.wordpress.com/feed/rss2/',
+            'https://blog.wordpress.com/?feed=rss2',
+          ],
+          hint: { key: 'wordpress:posts-rss', label: 'Posts (RSS)' },
         },
         {
           uri: ['https://blog.wordpress.com/feed/rdf/', 'https://blog.wordpress.com/?feed=rdf'],
@@ -523,16 +493,11 @@ describe('wordpressHandler', () => {
         {
           uri: [
             'https://blog.wordpress.com/comments/feed/',
-            'https://blog.wordpress.com/?feed=comments-rss2',
-          ],
-          hint: { key: 'wordpress:comments', label: 'Comments' },
-        },
-        {
-          uri: [
+            'https://blog.wordpress.com/?feed=comments-rss',
             'https://blog.wordpress.com/comments/feed/rss2/',
             'https://blog.wordpress.com/?feed=comments-rss2',
           ],
-          hint: { key: 'wordpress:comments-rss2', label: 'Comments (RSS 2.0)' },
+          hint: { key: 'wordpress:comments-rss', label: 'Comments (RSS)' },
         },
         {
           uri: [
