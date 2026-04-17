@@ -12,8 +12,10 @@ export const sourceforgeHandler: PlatformHandler = {
     const { origin, pathname } = new URL(url)
     const pathSegments = pathname.split('/').filter(Boolean)
 
-    // Project page: sourceforge.net/projects/{project}
-    if (pathSegments[0] === 'projects' && pathSegments[1]) {
+    // Project pages can be at either /projects/{project} or /p/{project}.
+    const isProject = (pathSegments[0] === 'projects' || pathSegments[0] === 'p') && pathSegments[1]
+
+    if (isProject) {
       const project = pathSegments[1]
 
       return [
