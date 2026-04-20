@@ -10,7 +10,10 @@ let browser: Browser | undefined
 
 export const getBrowser = async () => {
   if (!browser) {
-    browser = await chromium.launch()
+    const proxy = process.env.FETCH_PROXY
+    browser = await chromium.launch({
+      proxy: proxy ? { server: proxy } : undefined,
+    })
   }
   return browser
 }
