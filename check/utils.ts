@@ -22,32 +22,31 @@ export type FetchOptions = {
   headers?: Record<string, string>
 }
 
+const fetchOnce = (url: string, options?: FetchOptions) =>
+  fetch(url, {
+    method: options?.method ?? 'GET',
+    headers: { 'User-Agent': userAgent, ...options?.headers },
+    signal: AbortSignal.timeout(timeoutMs),
+    proxy: process.env.FETCH_PROXY,
+  })
+
 const fetchWithRetry = async (url: string, options?: FetchOptions): Promise<FetchResult> => {
-  let response: Response | undefined
+  let response = await fetchOnce(url, options)
 
-  for (let attempt = 0; attempt <= retryDelaysMs.length; attempt++) {
-    if (attempt > 0) {
-      await delay(retryDelaysMs[attempt - 1])
-    }
-
-    response = await fetch(url, {
-      method: options?.method ?? 'GET',
-      headers: { 'User-Agent': userAgent, ...options?.headers },
-      signal: AbortSignal.timeout(timeoutMs),
-      proxy: process.env.FETCH_PROXY,
-    })
-
+  for (const retryDelayMs of retryDelaysMs) {
     if (!fallbackStatuses.has(response.status)) {
       break
     }
+    await delay(retryDelayMs)
+    response = await fetchOnce(url, options)
   }
 
   return {
-    status: response!.status,
-    statusText: response!.statusText,
-    body: await response!.text(),
-    headers: response!.headers,
-    url: response!.url,
+    status: response.status,
+    statusText: response.statusText,
+    body: await response.text(),
+    headers: response.headers,
+    url: response.url,
   }
 }
 
