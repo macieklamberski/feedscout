@@ -1,6 +1,6 @@
 import { discoverFavicons } from '../src/favicons/index.js'
 import favicons from './favicons.json' with { type: 'json' }
-import { checkPlatforms, timeoutMs } from './utils.js'
+import { checkPlatforms, timeoutMs, userAgent } from './utils.js'
 
 const checkUrl = async (url: string) => {
   try {
@@ -9,7 +9,7 @@ const checkUrl = async (url: string) => {
       fetchFn: async (fetchUrl, options) => {
         const response = await fetch(fetchUrl, {
           method: options?.method ?? 'GET',
-          headers: options?.headers,
+          headers: { 'User-Agent': userAgent, ...options?.headers },
           signal: AbortSignal.timeout(timeoutMs),
           proxy: process.env.FETCH_PROXY,
         })

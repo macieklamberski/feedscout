@@ -2,6 +2,7 @@ import { type Browser, chromium } from 'playwright'
 
 export const timeoutMs = 30_000
 export const delayMs = 1_000
+export const userAgent = 'Feedscout (https://feedscout.dev)'
 
 export const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 

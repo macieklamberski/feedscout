@@ -1,5 +1,5 @@
 import feeds from './feeds.json' with { type: 'json' }
-import { checkPlatforms, getBrowser, timeoutMs } from './utils.js'
+import { checkPlatforms, getBrowser, timeoutMs, userAgent } from './utils.js'
 
 const shouldFallback = (status: number) => status === 429 || status >= 500
 
@@ -24,6 +24,7 @@ const checkUrl = async (url: string) => {
   try {
     const response = await fetch(url, {
       signal: AbortSignal.timeout(timeoutMs),
+      headers: { 'User-Agent': userAgent },
       proxy: process.env.FETCH_PROXY,
     })
 
