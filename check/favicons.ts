@@ -9,8 +9,9 @@ const checkUrl = async (url: string) => {
       fetchFn: async (fetchUrl, options) => {
         const response = await fetch(fetchUrl, {
           method: options?.method ?? 'GET',
-          headers: { 'User-Agent': 'Feedscout/1.x', ...options?.headers },
+          headers: { 'User-Agent': 'Feedscout (https://feedscout.dev)', ...options?.headers },
           signal: AbortSignal.timeout(timeoutMs),
+          proxy: process.env.HTTPS_PROXY,
         })
 
         return {

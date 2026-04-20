@@ -5,7 +5,8 @@ const checkUrl = async (url: string) => {
   try {
     const response = await fetch(url, {
       signal: AbortSignal.timeout(timeoutMs),
-      headers: { 'User-Agent': 'Feedscout/1.x' },
+      headers: { 'User-Agent': 'Feedscout (https://feedscout.dev)' },
+      proxy: process.env.HTTPS_PROXY,
     })
 
     if (!response.ok) {

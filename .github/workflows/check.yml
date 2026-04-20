@@ -8,6 +8,8 @@ on:
 jobs:
   check:
     runs-on: ubuntu-latest
+    env:
+      HTTPS_PROXY: ${{ secrets.HTTPS_PROXY }}
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -15,5 +17,8 @@ jobs:
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
 
-      - name: Check links
-        run: bun check/check.ts
+      - name: Check feeds
+        run: bun check/feeds.ts
+
+      - name: Check favicons
+        run: bun check/favicons.ts
