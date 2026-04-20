@@ -9,7 +9,7 @@ const checkUrl = async (url: string) => {
       fetchFn: async (fetchUrl, options) => {
         const response = await fetch(fetchUrl, {
           method: options?.method ?? 'GET',
-          headers: { 'User-Agent': 'Feedscout (https://feedscout.dev)', ...options?.headers },
+          headers: options?.headers,
           signal: AbortSignal.timeout(timeoutMs),
           proxy: process.env.FETCH_PROXY,
         })

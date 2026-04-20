@@ -1,7 +1,26 @@
+import { type Browser, chromium } from 'playwright'
+
 export const timeoutMs = 30_000
 export const delayMs = 1_000
 
 export const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
+
+let browser: Browser | undefined
+
+export const getBrowser = async () => {
+  if (!browser) {
+    const proxy = process.env.FETCH_PROXY
+    browser = await chromium.launch({
+      proxy: proxy ? { server: proxy } : undefined,
+    })
+  }
+  return browser
+}
+
+export const closeBrowser = async () => {
+  await browser?.close()
+  browser = undefined
+}
 
 export const checkPlatforms = async (
   platforms: Array<[string, Array<string>]>,
@@ -33,6 +52,8 @@ export const checkPlatforms = async (
       return failures.length
     }),
   )
+
+  await closeBrowser()
 
   const failed = counts.reduce((sum, count) => sum + count, 0)
 
