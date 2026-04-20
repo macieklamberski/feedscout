@@ -1,4 +1,3 @@
-import ky from 'ky'
 import { type Browser, chromium } from 'playwright'
 
 export const timeoutMs = 30_000
@@ -23,25 +22,32 @@ export type FetchOptions = {
   headers?: Record<string, string>
 }
 
-const fetchWithKy = async (url: string, options?: FetchOptions): Promise<FetchResult> => {
-  const response = await ky(url, {
-    method: options?.method ?? 'GET',
-    timeout: timeoutMs,
-    headers: { 'User-Agent': userAgent, ...options?.headers },
-    throwHttpErrors: false,
-    retry: {
-      limit: retryDelaysMs.length,
-      statusCodes: Array.from(fallbackStatuses),
-      delay: (attemptCount) => retryDelaysMs[attemptCount - 1] ?? 0,
-    },
-  })
+const fetchWithRetry = async (url: string, options?: FetchOptions): Promise<FetchResult> => {
+  let response: Response | undefined
+
+  for (let attempt = 0; attempt <= retryDelaysMs.length; attempt++) {
+    if (attempt > 0) {
+      await delay(retryDelaysMs[attempt - 1])
+    }
+
+    response = await fetch(url, {
+      method: options?.method ?? 'GET',
+      headers: { 'User-Agent': userAgent, ...options?.headers },
+      signal: AbortSignal.timeout(timeoutMs),
+      proxy: process.env.FETCH_PROXY,
+    })
+
+    if (!fallbackStatuses.has(response.status)) {
+      break
+    }
+  }
 
   return {
-    status: response.status,
-    statusText: response.statusText,
-    body: await response.text(),
-    headers: response.headers,
-    url: response.url,
+    status: response!.status,
+    statusText: response!.statusText,
+    body: await response!.text(),
+    headers: response!.headers,
+    url: response!.url,
   }
 }
 
@@ -77,7 +83,7 @@ export const fetchWithFallback = async (
   options?: FetchOptions,
 ): Promise<FetchResult> => {
   try {
-    const result = await fetchWithKy(url, options)
+    const result = await fetchWithRetry(url, options)
     if (!fallbackStatuses.has(result.status)) {
       return result
     }
