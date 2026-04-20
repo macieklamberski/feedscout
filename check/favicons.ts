@@ -1,27 +1,12 @@
 import { discoverFavicons } from '../src/favicons/index.js'
 import favicons from './favicons.json' with { type: 'json' }
-import { checkPlatforms, timeoutMs, userAgent } from './utils.js'
+import { checkPlatforms, fetchWithFallback } from './utils.js'
 
 const checkUrl = async (url: string) => {
   try {
     const results = await discoverFavicons(url, {
       methods: ['platform'],
-      fetchFn: async (fetchUrl, options) => {
-        const response = await fetch(fetchUrl, {
-          method: options?.method ?? 'GET',
-          headers: { 'User-Agent': userAgent, ...options?.headers },
-          signal: AbortSignal.timeout(timeoutMs),
-          proxy: process.env.FETCH_PROXY,
-        })
-
-        return {
-          headers: response.headers,
-          body: await response.text(),
-          url: response.url,
-          status: response.status,
-          statusText: response.statusText,
-        }
-      },
+      fetchFn: fetchWithFallback,
     })
 
     const valid = results.filter((result) => result.isValid)
