@@ -11,6 +11,7 @@ const checkUrl = async (url: string) => {
           method: options?.method ?? 'GET',
           headers: { 'User-Agent': userAgent, ...options?.headers },
           signal: AbortSignal.timeout(timeoutMs),
+          proxy: process.env.FETCH_PROXY,
         })
 
         return {
