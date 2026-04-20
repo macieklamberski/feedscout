@@ -11,7 +11,7 @@ const checkUrl = async (url: string) => {
           method: options?.method ?? 'GET',
           headers: { 'User-Agent': 'Feedscout (https://feedscout.dev)', ...options?.headers },
           signal: AbortSignal.timeout(timeoutMs),
-          proxy: process.env.HTTPS_PROXY,
+          proxy: process.env.FETCH_PROXY,
         })
 
         return {

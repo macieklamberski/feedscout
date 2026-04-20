@@ -9,7 +9,7 @@ jobs:
   check:
     runs-on: ubuntu-latest
     env:
-      HTTPS_PROXY: ${{ secrets.HTTPS_PROXY }}
+      FETCH_PROXY: ${{ secrets.FETCH_PROXY }}
     steps:
       - name: Checkout
         uses: actions/checkout@v6
