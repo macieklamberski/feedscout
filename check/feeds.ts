@@ -1,13 +1,19 @@
+import ky, { HTTPError } from 'ky'
 import feeds from './feeds.json' with { type: 'json' }
 import { checkPlatforms, getBrowser, timeoutMs, userAgent } from './utils.js'
 
-const shouldFallback = (status: number) => status === 429 || status >= 500
+const retryDelaysMs = [1_000, 3_000, 7_000]
+
+const shouldFallback = (status: number) => status === 403 || status === 429 || status >= 500
 
 const checkWithBrowser = async (url: string) => {
   const context = await (await getBrowser()).newContext()
   try {
     const page = await context.newPage()
-    const response = await page.goto(url, { timeout: timeoutMs })
+    const response = await page.goto(url, {
+      timeout: timeoutMs,
+      waitUntil: 'domcontentloaded',
+    })
 
     if (!response) {
       return 'No response'
@@ -22,24 +28,26 @@ const checkWithBrowser = async (url: string) => {
 
 const checkUrl = async (url: string) => {
   try {
-    const response = await fetch(url, {
-      signal: AbortSignal.timeout(timeoutMs),
+    await ky(url, {
+      timeout: timeoutMs,
       headers: { 'User-Agent': userAgent },
-      proxy: process.env.FETCH_PROXY,
+      retry: {
+        limit: retryDelaysMs.length,
+        statusCodes: [403, 408, 413, 429, 500, 502, 503, 504],
+        delay: (attemptCount) => retryDelaysMs[attemptCount - 1] ?? 0,
+      },
     })
-
-    if (response.ok) {
-      return
+  } catch (error) {
+    if (error instanceof HTTPError && !shouldFallback(error.response.status)) {
+      return `HTTP ${error.response.status}`
     }
-    if (shouldFallback(response.status)) {
-      return await checkWithBrowser(url)
-    }
-    return `HTTP ${response.status}`
-  } catch {
     try {
       return await checkWithBrowser(url)
-    } catch (error) {
-      return error instanceof Error ? error.message : 'Unknown error'
+    } catch (browserError) {
+      if (error instanceof HTTPError) {
+        return `HTTP ${error.response.status}`
+      }
+      return browserError instanceof Error ? browserError.message : 'Unknown error'
     }
   }
 }

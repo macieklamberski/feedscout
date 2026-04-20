@@ -8,8 +8,6 @@ on:
 jobs:
   check:
     runs-on: ubuntu-latest
-    env:
-      FETCH_PROXY: ${{ secrets.FETCH_PROXY }}
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -20,7 +18,12 @@ jobs:
       - name: Install dependencies
         run: bun install --frozen-lockfile
 
+      - name: Install check dependencies
+        working-directory: check
+        run: bun install --frozen-lockfile
+
       - name: Install Playwright browser
+        working-directory: check
         run: bunx playwright install --with-deps chromium
 
       - name: Check feeds

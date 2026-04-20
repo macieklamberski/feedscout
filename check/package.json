@@ -1,0 +1,9 @@
+{
+  "name": "feedscout-check",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "ky": "^1.11.0",
+    "playwright": "^1.59.1"
+  }
+}
