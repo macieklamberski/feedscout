@@ -8,11 +8,22 @@ export const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve
 
 let browser: Browser | undefined
 
+const parseProxy = (url: string | undefined) => {
+  if (!url) {
+    return
+  }
+  const parsed = new URL(url)
+  return {
+    server: `${parsed.protocol}//${parsed.host}`,
+    username: parsed.username ? decodeURIComponent(parsed.username) : undefined,
+    password: parsed.password ? decodeURIComponent(parsed.password) : undefined,
+  }
+}
+
 export const getBrowser = async () => {
   if (!browser) {
-    const proxy = process.env.FETCH_PROXY
     browser = await chromium.launch({
-      proxy: proxy ? { server: proxy } : undefined,
+      proxy: parseProxy(process.env.FETCH_PROXY),
     })
   }
   return browser
