@@ -7,6 +7,8 @@ const tagRegex = /^\/tag\/([^/]+)/
 const authorRegex = /^\/author\/([^/]+)/
 const yearRegex = /^\/(\d{4})\/?$/
 const yearMonthRegex = /^\/(\d{4})\/(\d{2})\/?$/
+const dayRegex = /^\/(\d{4})\/(\d{2})\/(\d{2})\/?$/
+const trailingSlashRegex = /\/$/
 
 export const wordpressHandler: PlatformHandler = {
   match: (url) => {
@@ -16,11 +18,13 @@ export const wordpressHandler: PlatformHandler = {
   resolve: (url) => {
     const { origin, pathname } = new URL(url)
     const uris: Array<DiscoverUriEntry> = []
+    let archiveMatched = false
 
     // Category page: /category/{slug}/
     const categoryMatch = pathname.match(categoryRegex)
 
     if (categoryMatch?.[1]) {
+      archiveMatched = true
       const base = `${origin}/category/${categoryMatch[1]}`
 
       uris.push({
@@ -41,6 +45,7 @@ export const wordpressHandler: PlatformHandler = {
     const tagMatch = pathname.match(tagRegex)
 
     if (tagMatch?.[1]) {
+      archiveMatched = true
       const base = `${origin}/tag/${tagMatch[1]}`
 
       uris.push({
@@ -61,6 +66,7 @@ export const wordpressHandler: PlatformHandler = {
     const authorMatch = pathname.match(authorRegex)
 
     if (authorMatch?.[1]) {
+      archiveMatched = true
       const base = `${origin}/author/${authorMatch[1]}`
 
       uris.push({
@@ -77,10 +83,32 @@ export const wordpressHandler: PlatformHandler = {
       })
     }
 
+    // Day archive page: /{year}/{month}/{day}/
+    const dayMatch = pathname.match(dayRegex)
+
+    if (dayMatch?.[1] && dayMatch?.[2] && dayMatch?.[3]) {
+      archiveMatched = true
+      const base = `${origin}/${dayMatch[1]}/${dayMatch[2]}/${dayMatch[3]}`
+
+      uris.push({
+        uri: [`${base}/feed/`, `${base}/?feed=rss`, `${base}/feed/rss2/`, `${base}/?feed=rss2`],
+        hint: composeHint('wordpress:date-archive-rss'),
+      })
+      uris.push({
+        uri: [`${base}/feed/atom/`, `${base}/?feed=atom`],
+        hint: composeHint('wordpress:date-archive-atom'),
+      })
+      uris.push({
+        uri: [`${base}/feed/rdf/`, `${base}/?feed=rdf`],
+        hint: composeHint('wordpress:date-archive-rdf'),
+      })
+    }
+
     // Month archive page: /{year}/{month}/
     const yearMonthMatch = pathname.match(yearMonthRegex)
 
     if (yearMonthMatch?.[1] && yearMonthMatch?.[2]) {
+      archiveMatched = true
       const base = `${origin}/${yearMonthMatch[1]}/${yearMonthMatch[2]}`
 
       uris.push({
@@ -101,6 +129,7 @@ export const wordpressHandler: PlatformHandler = {
     const yearMatch = pathname.match(yearRegex)
 
     if (yearMatch?.[1]) {
+      archiveMatched = true
       const base = `${origin}/${yearMatch[1]}`
 
       uris.push({
@@ -114,6 +143,26 @@ export const wordpressHandler: PlatformHandler = {
       uris.push({
         uri: [`${base}/feed/rdf/`, `${base}/?feed=rdf`],
         hint: composeHint('wordpress:date-archive-rdf'),
+      })
+    }
+
+    // Post page: any non-root, non-archive, non-feed path.
+    const segments = pathname.split('/').filter(Boolean)
+
+    if (!archiveMatched && segments.length > 0 && !segments.includes('feed')) {
+      const base = `${origin}${pathname.replace(trailingSlashRegex, '')}`
+
+      uris.push({
+        uri: [`${base}/feed/`, `${base}/?feed=rss`, `${base}/feed/rss2/`, `${base}/?feed=rss2`],
+        hint: composeHint('wordpress:post-comments-rss'),
+      })
+      uris.push({
+        uri: [`${base}/feed/atom/`, `${base}/?feed=atom`],
+        hint: composeHint('wordpress:post-comments-atom'),
+      })
+      uris.push({
+        uri: [`${base}/feed/rdf/`, `${base}/?feed=rdf`],
+        hint: composeHint('wordpress:post-comments-rdf'),
       })
     }
 

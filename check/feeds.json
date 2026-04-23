@@ -220,7 +220,15 @@
     "https://wordpress.org/news/2024/06/feed/atom/",
     "https://wordpress.org/news/2024/06/?feed=atom",
     "https://wordpress.org/news/2024/06/feed/rdf/",
-    "https://wordpress.org/news/2024/06/?feed=rdf"
+    "https://wordpress.org/news/2024/06/?feed=rdf",
+    "https://wordpress.org/news/2024/06/14/feed/",
+    "https://wordpress.org/news/2024/06/14/?feed=rss",
+    "https://wordpress.org/news/2024/06/14/feed/rss2/",
+    "https://wordpress.org/news/2024/06/14/?feed=rss2",
+    "https://wordpress.org/news/2024/06/14/feed/atom/",
+    "https://wordpress.org/news/2024/06/14/?feed=atom",
+    "https://wordpress.org/news/2024/06/14/feed/rdf/",
+    "https://wordpress.org/news/2024/06/14/?feed=rdf"
   ],
   "wpengine": [
     "https://developer.wpengine.com/feed/",
@@ -278,7 +286,15 @@
     "https://developer.wpengine.com/2023/06/feed/atom/",
     "https://developer.wpengine.com/2023/06/?feed=atom",
     "https://developer.wpengine.com/2023/06/feed/rdf/",
-    "https://developer.wpengine.com/2023/06/?feed=rdf"
+    "https://developer.wpengine.com/2023/06/?feed=rdf",
+    "https://developer.wpengine.com/2023/06/14/feed/",
+    "https://developer.wpengine.com/2023/06/14/?feed=rss",
+    "https://developer.wpengine.com/2023/06/14/feed/rss2/",
+    "https://developer.wpengine.com/2023/06/14/?feed=rss2",
+    "https://developer.wpengine.com/2023/06/14/feed/atom/",
+    "https://developer.wpengine.com/2023/06/14/?feed=atom",
+    "https://developer.wpengine.com/2023/06/14/feed/rdf/",
+    "https://developer.wpengine.com/2023/06/14/?feed=rdf"
   ],
   "hashnode": ["https://townhall.hashnode.com/rss.xml"],
   "paragraph": ["https://paragraph.com/@blog/feed", "https://paragraph.com/@optimism/rss"],

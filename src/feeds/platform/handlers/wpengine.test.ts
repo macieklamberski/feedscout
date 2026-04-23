@@ -512,5 +512,156 @@ describe('wpengineHandler', () => {
 
       expect(wpengineHandler.resolve(value)).toEqual(expected)
     })
+
+    it('should include day archive feed when on year/month/day page', () => {
+      const value = 'https://example.wpenginepowered.com/2024/06/15/'
+      const expected = [
+        {
+          uri: [
+            'https://example.wpenginepowered.com/2024/06/15/feed/',
+            'https://example.wpenginepowered.com/2024/06/15/?feed=rss',
+            'https://example.wpenginepowered.com/2024/06/15/feed/rss2/',
+            'https://example.wpenginepowered.com/2024/06/15/?feed=rss2',
+          ],
+          hint: { key: 'wordpress:date-archive-rss', label: 'Date archive (RSS)' },
+        },
+        {
+          uri: [
+            'https://example.wpenginepowered.com/2024/06/15/feed/atom/',
+            'https://example.wpenginepowered.com/2024/06/15/?feed=atom',
+          ],
+          hint: { key: 'wordpress:date-archive-atom', label: 'Date archive (Atom)' },
+        },
+        {
+          uri: [
+            'https://example.wpenginepowered.com/2024/06/15/feed/rdf/',
+            'https://example.wpenginepowered.com/2024/06/15/?feed=rdf',
+          ],
+          hint: { key: 'wordpress:date-archive-rdf', label: 'Date archive (RDF)' },
+        },
+        {
+          uri: [
+            'https://example.wpenginepowered.com/feed/',
+            'https://example.wpenginepowered.com/?feed=rss',
+            'https://example.wpenginepowered.com/feed/rss2/',
+            'https://example.wpenginepowered.com/?feed=rss2',
+          ],
+          hint: { key: 'wordpress:posts-rss', label: 'Posts (RSS)' },
+        },
+        {
+          uri: [
+            'https://example.wpenginepowered.com/feed/atom/',
+            'https://example.wpenginepowered.com/?feed=atom',
+          ],
+          hint: { key: 'wordpress:posts-atom', label: 'Posts (Atom)' },
+        },
+        {
+          uri: [
+            'https://example.wpenginepowered.com/feed/rdf/',
+            'https://example.wpenginepowered.com/?feed=rdf',
+          ],
+          hint: { key: 'wordpress:posts-rdf', label: 'Posts (RDF)' },
+        },
+        {
+          uri: [
+            'https://example.wpenginepowered.com/comments/feed/',
+            'https://example.wpenginepowered.com/?feed=comments-rss',
+            'https://example.wpenginepowered.com/comments/feed/rss2/',
+            'https://example.wpenginepowered.com/?feed=comments-rss2',
+          ],
+          hint: { key: 'wordpress:comments-rss', label: 'Comments (RSS)' },
+        },
+        {
+          uri: [
+            'https://example.wpenginepowered.com/comments/feed/atom/',
+            'https://example.wpenginepowered.com/?feed=comments-atom',
+          ],
+          hint: { key: 'wordpress:comments-atom', label: 'Comments (Atom)' },
+        },
+        {
+          uri: [
+            'https://example.wpenginepowered.com/comments/feed/rdf/',
+            'https://example.wpenginepowered.com/?feed=comments-rdf',
+          ],
+          hint: { key: 'wordpress:comments-rdf', label: 'Comments (RDF)' },
+        },
+      ]
+
+      expect(wpengineHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should include post comments feeds for post URLs', () => {
+      const value = 'https://example.wpengine.com/2024/06/hello-world/'
+      const expected = [
+        {
+          uri: [
+            'https://example.wpengine.com/2024/06/hello-world/feed/',
+            'https://example.wpengine.com/2024/06/hello-world/?feed=rss',
+            'https://example.wpengine.com/2024/06/hello-world/feed/rss2/',
+            'https://example.wpengine.com/2024/06/hello-world/?feed=rss2',
+          ],
+          hint: { key: 'wordpress:post-comments-rss', label: 'Post comments (RSS)' },
+        },
+        {
+          uri: [
+            'https://example.wpengine.com/2024/06/hello-world/feed/atom/',
+            'https://example.wpengine.com/2024/06/hello-world/?feed=atom',
+          ],
+          hint: { key: 'wordpress:post-comments-atom', label: 'Post comments (Atom)' },
+        },
+        {
+          uri: [
+            'https://example.wpengine.com/2024/06/hello-world/feed/rdf/',
+            'https://example.wpengine.com/2024/06/hello-world/?feed=rdf',
+          ],
+          hint: { key: 'wordpress:post-comments-rdf', label: 'Post comments (RDF)' },
+        },
+        {
+          uri: [
+            'https://example.wpengine.com/feed/',
+            'https://example.wpengine.com/?feed=rss',
+            'https://example.wpengine.com/feed/rss2/',
+            'https://example.wpengine.com/?feed=rss2',
+          ],
+          hint: { key: 'wordpress:posts-rss', label: 'Posts (RSS)' },
+        },
+        {
+          uri: [
+            'https://example.wpengine.com/feed/atom/',
+            'https://example.wpengine.com/?feed=atom',
+          ],
+          hint: { key: 'wordpress:posts-atom', label: 'Posts (Atom)' },
+        },
+        {
+          uri: ['https://example.wpengine.com/feed/rdf/', 'https://example.wpengine.com/?feed=rdf'],
+          hint: { key: 'wordpress:posts-rdf', label: 'Posts (RDF)' },
+        },
+        {
+          uri: [
+            'https://example.wpengine.com/comments/feed/',
+            'https://example.wpengine.com/?feed=comments-rss',
+            'https://example.wpengine.com/comments/feed/rss2/',
+            'https://example.wpengine.com/?feed=comments-rss2',
+          ],
+          hint: { key: 'wordpress:comments-rss', label: 'Comments (RSS)' },
+        },
+        {
+          uri: [
+            'https://example.wpengine.com/comments/feed/atom/',
+            'https://example.wpengine.com/?feed=comments-atom',
+          ],
+          hint: { key: 'wordpress:comments-atom', label: 'Comments (Atom)' },
+        },
+        {
+          uri: [
+            'https://example.wpengine.com/comments/feed/rdf/',
+            'https://example.wpengine.com/?feed=comments-rdf',
+          ],
+          hint: { key: 'wordpress:comments-rdf', label: 'Comments (RDF)' },
+        },
+      ]
+
+      expect(wpengineHandler.resolve(value)).toEqual(expected)
+    })
   })
 })

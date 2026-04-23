@@ -79,6 +79,29 @@ describe('wordpressHandler', () => {
       const expected = [
         {
           uri: [
+            'https://blog.wordpress.com/2024/01/01/some-post/feed/',
+            'https://blog.wordpress.com/2024/01/01/some-post/?feed=rss',
+            'https://blog.wordpress.com/2024/01/01/some-post/feed/rss2/',
+            'https://blog.wordpress.com/2024/01/01/some-post/?feed=rss2',
+          ],
+          hint: { key: 'wordpress:post-comments-rss', label: 'Post comments (RSS)' },
+        },
+        {
+          uri: [
+            'https://blog.wordpress.com/2024/01/01/some-post/feed/atom/',
+            'https://blog.wordpress.com/2024/01/01/some-post/?feed=atom',
+          ],
+          hint: { key: 'wordpress:post-comments-atom', label: 'Post comments (Atom)' },
+        },
+        {
+          uri: [
+            'https://blog.wordpress.com/2024/01/01/some-post/feed/rdf/',
+            'https://blog.wordpress.com/2024/01/01/some-post/?feed=rdf',
+          ],
+          hint: { key: 'wordpress:post-comments-rdf', label: 'Post comments (RDF)' },
+        },
+        {
+          uri: [
             'https://blog.wordpress.com/feed/',
             'https://blog.wordpress.com/?feed=rss',
             'https://blog.wordpress.com/feed/rss2/',
@@ -548,12 +571,154 @@ describe('wordpressHandler', () => {
       expect(wordpressHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should not include date archive feed for post URLs like /2024/06/post-slug/', () => {
+    it('should include day archive feed when on year/month/day page', () => {
+      const value = 'https://blog.wordpress.com/2024/06/15/'
+      const expected = [
+        {
+          uri: [
+            'https://blog.wordpress.com/2024/06/15/feed/',
+            'https://blog.wordpress.com/2024/06/15/?feed=rss',
+            'https://blog.wordpress.com/2024/06/15/feed/rss2/',
+            'https://blog.wordpress.com/2024/06/15/?feed=rss2',
+          ],
+          hint: { key: 'wordpress:date-archive-rss', label: 'Date archive (RSS)' },
+        },
+        {
+          uri: [
+            'https://blog.wordpress.com/2024/06/15/feed/atom/',
+            'https://blog.wordpress.com/2024/06/15/?feed=atom',
+          ],
+          hint: { key: 'wordpress:date-archive-atom', label: 'Date archive (Atom)' },
+        },
+        {
+          uri: [
+            'https://blog.wordpress.com/2024/06/15/feed/rdf/',
+            'https://blog.wordpress.com/2024/06/15/?feed=rdf',
+          ],
+          hint: { key: 'wordpress:date-archive-rdf', label: 'Date archive (RDF)' },
+        },
+        {
+          uri: [
+            'https://blog.wordpress.com/feed/',
+            'https://blog.wordpress.com/?feed=rss',
+            'https://blog.wordpress.com/feed/rss2/',
+            'https://blog.wordpress.com/?feed=rss2',
+          ],
+          hint: { key: 'wordpress:posts-rss', label: 'Posts (RSS)' },
+        },
+        {
+          uri: ['https://blog.wordpress.com/feed/atom/', 'https://blog.wordpress.com/?feed=atom'],
+          hint: { key: 'wordpress:posts-atom', label: 'Posts (Atom)' },
+        },
+        {
+          uri: ['https://blog.wordpress.com/feed/rdf/', 'https://blog.wordpress.com/?feed=rdf'],
+          hint: { key: 'wordpress:posts-rdf', label: 'Posts (RDF)' },
+        },
+        {
+          uri: [
+            'https://blog.wordpress.com/comments/feed/',
+            'https://blog.wordpress.com/?feed=comments-rss',
+            'https://blog.wordpress.com/comments/feed/rss2/',
+            'https://blog.wordpress.com/?feed=comments-rss2',
+          ],
+          hint: { key: 'wordpress:comments-rss', label: 'Comments (RSS)' },
+        },
+        {
+          uri: [
+            'https://blog.wordpress.com/comments/feed/atom/',
+            'https://blog.wordpress.com/?feed=comments-atom',
+          ],
+          hint: { key: 'wordpress:comments-atom', label: 'Comments (Atom)' },
+        },
+        {
+          uri: [
+            'https://blog.wordpress.com/comments/feed/rdf/',
+            'https://blog.wordpress.com/?feed=comments-rdf',
+          ],
+          hint: { key: 'wordpress:comments-rdf', label: 'Comments (RDF)' },
+        },
+      ]
+
+      expect(wordpressHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should include post comments feeds for post URLs like /2024/06/post-slug/', () => {
       const value = 'https://blog.wordpress.com/2024/06/some-post/'
+      const expected = [
+        {
+          uri: [
+            'https://blog.wordpress.com/2024/06/some-post/feed/',
+            'https://blog.wordpress.com/2024/06/some-post/?feed=rss',
+            'https://blog.wordpress.com/2024/06/some-post/feed/rss2/',
+            'https://blog.wordpress.com/2024/06/some-post/?feed=rss2',
+          ],
+          hint: { key: 'wordpress:post-comments-rss', label: 'Post comments (RSS)' },
+        },
+        {
+          uri: [
+            'https://blog.wordpress.com/2024/06/some-post/feed/atom/',
+            'https://blog.wordpress.com/2024/06/some-post/?feed=atom',
+          ],
+          hint: { key: 'wordpress:post-comments-atom', label: 'Post comments (Atom)' },
+        },
+        {
+          uri: [
+            'https://blog.wordpress.com/2024/06/some-post/feed/rdf/',
+            'https://blog.wordpress.com/2024/06/some-post/?feed=rdf',
+          ],
+          hint: { key: 'wordpress:post-comments-rdf', label: 'Post comments (RDF)' },
+        },
+        {
+          uri: [
+            'https://blog.wordpress.com/feed/',
+            'https://blog.wordpress.com/?feed=rss',
+            'https://blog.wordpress.com/feed/rss2/',
+            'https://blog.wordpress.com/?feed=rss2',
+          ],
+          hint: { key: 'wordpress:posts-rss', label: 'Posts (RSS)' },
+        },
+        {
+          uri: ['https://blog.wordpress.com/feed/atom/', 'https://blog.wordpress.com/?feed=atom'],
+          hint: { key: 'wordpress:posts-atom', label: 'Posts (Atom)' },
+        },
+        {
+          uri: ['https://blog.wordpress.com/feed/rdf/', 'https://blog.wordpress.com/?feed=rdf'],
+          hint: { key: 'wordpress:posts-rdf', label: 'Posts (RDF)' },
+        },
+        {
+          uri: [
+            'https://blog.wordpress.com/comments/feed/',
+            'https://blog.wordpress.com/?feed=comments-rss',
+            'https://blog.wordpress.com/comments/feed/rss2/',
+            'https://blog.wordpress.com/?feed=comments-rss2',
+          ],
+          hint: { key: 'wordpress:comments-rss', label: 'Comments (RSS)' },
+        },
+        {
+          uri: [
+            'https://blog.wordpress.com/comments/feed/atom/',
+            'https://blog.wordpress.com/?feed=comments-atom',
+          ],
+          hint: { key: 'wordpress:comments-atom', label: 'Comments (Atom)' },
+        },
+        {
+          uri: [
+            'https://blog.wordpress.com/comments/feed/rdf/',
+            'https://blog.wordpress.com/?feed=comments-rdf',
+          ],
+          hint: { key: 'wordpress:comments-rdf', label: 'Comments (RDF)' },
+        },
+      ]
+
+      expect(wordpressHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should not emit post comments feed when URL path is a feed URL', () => {
+      const value = 'https://blog.wordpress.com/feed/atom/'
       const result = wordpressHandler.resolve(value) as Array<{ hint?: { key: string } }>
 
       for (const entry of result) {
-        expect(entry.hint?.key?.startsWith('wordpress:date-archive')).toBe(false)
+        expect(entry.hint?.key?.startsWith('wordpress:post-comments')).toBe(false)
       }
     })
   })
