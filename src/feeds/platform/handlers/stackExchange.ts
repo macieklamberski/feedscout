@@ -4,6 +4,7 @@ import { composeHint, isHostOf, isSubdomainOf } from '../../../common/utils.js'
 const tagRegex = /^\/questions\/tagged\/([\w.+-]+)/
 const questionRegex = /^\/questions\/(\d+)/
 const userRegex = /^\/users\/(\d+)/
+const collectiveRegex = /^\/collectives\/([^/]+)/
 
 // Standalone domains from SE API: https://api.stackexchange.com/2.3/sites
 const domains = [
@@ -53,6 +54,27 @@ export const stackExchangeHandler: PlatformHandler = {
         {
           uri: `${origin}/feeds/user/${userMatch[1]}`,
           hint: composeHint('stackexchange:user'),
+        },
+      ]
+    }
+
+    const collectiveMatch = pathname.match(collectiveRegex)
+
+    if (collectiveMatch?.[1]) {
+      return [
+        {
+          uri: `${origin}/feeds/collectives/${collectiveMatch[1]}`,
+          hint: composeHint('stackexchange:collective'),
+        },
+      ]
+    }
+
+    // Homepage: site-wide newest questions feed.
+    if (pathname === '/' || pathname === '') {
+      return [
+        {
+          uri: `${origin}/feeds`,
+          hint: composeHint('stackexchange:newest'),
         },
       ]
     }

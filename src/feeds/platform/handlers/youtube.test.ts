@@ -173,5 +173,35 @@ describe('youtubeHandler', () => {
 
       expect(value).toEqual(expectedChannelFeeds)
     })
+
+    it('should extract channel ID from /shorts/{id} URL content', () => {
+      const value = youtubeHandler.resolve(
+        'https://youtube.com/shorts/abc123',
+        '{"channelId":"UC1234567890"}',
+      )
+
+      expect(value).toEqual(expectedChannelFeeds)
+    })
+
+    it('should extract channel ID from /live/{id} URL content', () => {
+      const value = youtubeHandler.resolve(
+        'https://youtube.com/live/abc123',
+        '{"channelId":"UC1234567890"}',
+      )
+
+      expect(value).toEqual(expectedChannelFeeds)
+    })
+
+    it('should return empty array for /shorts/{id} without content', () => {
+      const value = youtubeHandler.resolve('https://youtube.com/shorts/abc123')
+
+      expect(value).toEqual([])
+    })
+
+    it('should return empty array for /live/{id} without content', () => {
+      const value = youtubeHandler.resolve('https://youtube.com/live/abc123')
+
+      expect(value).toEqual([])
+    })
   })
 })

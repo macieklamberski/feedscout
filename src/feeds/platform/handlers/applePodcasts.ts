@@ -2,7 +2,7 @@ import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, isHostOf } from '../../../common/utils.js'
 
 const hosts = ['podcasts.apple.com']
-const podcastRegex = /^\/[a-z]{2}\/podcast\/[^/]+\/id\d+/
+const podcastRegex = /^(?:\/[a-z]{2})?\/podcast\/(?:[^/]+\/)?id\d+/
 const feedUrlRegex = /"feedUrl"\s*:\s*"([^"]+)"/
 
 const extractFeedUrlFromContent = (content: string): string | undefined => {
@@ -19,7 +19,7 @@ export const applePodcastsHandler: PlatformHandler = {
 
     const { pathname } = new URL(url)
 
-    // Match podcast pages: /us/podcast/{name}/id{number}
+    // Match podcast pages: /{locale}/podcast/{name}/id{number}, locale and name optional.
     return podcastRegex.test(pathname)
   },
 

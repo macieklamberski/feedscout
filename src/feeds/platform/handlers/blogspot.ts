@@ -5,6 +5,8 @@ import { composeHint } from '../../../common/utils.js'
 // Matches *.blogspot.com and country TLDs like *.blogspot.co.uk, *.blogspot.de, etc.
 const blogspotDomainRegex = /^.+\.blogspot\.(?:com|co\.[a-z]{2}|com\.[a-z]{2}|[a-z]{2,3})$/
 const labelRegex = /^\/search\/label\/([^/]+)/
+const postRegex = /^\/\d{4}\/\d{2}\/[^/]+\.html$/
+const postCommentsFeedRegex = /href="[^"]*\/feeds\/(\d+)\/comments\/default/
 
 export const blogspotHandler: PlatformHandler = {
   match: (url) => {
@@ -17,7 +19,7 @@ export const blogspotHandler: PlatformHandler = {
     return false
   },
 
-  resolve: (url) => {
+  resolve: (url, content) => {
     const { origin, pathname } = new URL(url)
     const uris: Array<DiscoverUriEntry> = []
 
@@ -29,8 +31,30 @@ export const blogspotHandler: PlatformHandler = {
 
       uris.push({
         uri: `${origin}/feeds/posts/default/-/${label}`,
-        hint: composeHint('blogspot:label'),
+        hint: composeHint('blogspot:label-atom'),
       })
+      uris.push({
+        uri: `${origin}/feeds/posts/default/-/${label}?alt=rss`,
+        hint: composeHint('blogspot:label-rss'),
+      })
+    }
+
+    // Post page: /{year}/{month}/{slug}.html — extract postId from content.
+    if (content && postRegex.test(pathname)) {
+      const postIdMatch = content.match(postCommentsFeedRegex)
+
+      if (postIdMatch?.[1]) {
+        const postId = postIdMatch[1]
+
+        uris.push({
+          uri: `${origin}/feeds/${postId}/comments/default`,
+          hint: composeHint('blogspot:post-comments-atom'),
+        })
+        uris.push({
+          uri: `${origin}/feeds/${postId}/comments/default?alt=rss`,
+          hint: composeHint('blogspot:post-comments-rss'),
+        })
+      }
     }
 
     // Always include main blog feeds.
@@ -41,6 +65,14 @@ export const blogspotHandler: PlatformHandler = {
     uris.push({
       uri: `${origin}/feeds/posts/default?alt=rss`,
       hint: composeHint('blogspot:posts-rss'),
+    })
+    uris.push({
+      uri: `${origin}/feeds/comments/default`,
+      hint: composeHint('blogspot:comments-atom'),
+    })
+    uris.push({
+      uri: `${origin}/feeds/comments/default?alt=rss`,
+      hint: composeHint('blogspot:comments-rss'),
     })
 
     return uris

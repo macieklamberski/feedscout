@@ -82,10 +82,16 @@ describe('behanceHandler', () => {
       }
     })
 
-    it('should return empty array for homepage', () => {
+    it('should return featured projects feed for homepage', () => {
       const value = 'https://www.behance.net/'
+      const expected = [
+        {
+          uri: 'https://www.behance.net/feeds/projects',
+          hint: { key: 'behance:projects', label: 'Featured projects' },
+        },
+      ]
 
-      expect(behanceHandler.resolve(value)).toEqual([])
+      expect(behanceHandler.resolve(value)).toEqual(expected)
     })
 
     it('should return empty array for other nested paths', () => {

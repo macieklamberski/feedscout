@@ -58,6 +58,18 @@ describe('dailymotionHandler', () => {
       expect(dailymotionHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return RSS feed for channel page', () => {
+      const value = 'https://www.dailymotion.com/channel/news'
+      const expected = [
+        {
+          uri: 'https://www.dailymotion.com/rss/channel/news',
+          hint: { key: 'dailymotion:channel', label: 'Channel' },
+        },
+      ]
+
+      expect(dailymotionHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return empty array for excluded paths', () => {
       const values = [
         'https://www.dailymotion.com/signin',

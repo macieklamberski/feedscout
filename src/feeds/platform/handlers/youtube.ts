@@ -7,6 +7,8 @@ const channelRegex = /^\/channel\/(UC[a-zA-Z0-9_-]+)/
 const handleRegex = /^\/@([^/]+)/
 const userRegex = /^\/user\/([^/]+)/
 const customRegex = /^\/c\/([^/]+)/
+const shortsRegex = /^\/shorts\/[\w-]+/
+const liveRegex = /^\/live\/[\w-]+/
 const channelPrefixRegex = /^UC/
 
 const hosts = ['youtube.com', 'www.youtube.com', 'm.youtube.com', 'youtu.be', 'www.youtu.be']
@@ -110,10 +112,14 @@ export const youtubeHandler: PlatformHandler = {
     // - Legacy user: /user/username
     // - Custom URL: /c/customname
     // - Video pages: /watch?v= or youtu.be/videoId
+    // - Shorts: /shorts/videoId
+    // - Live stream: /live/videoId
     if (uris.length === 0 && content) {
       const isVideoPage =
         parsedUrl.searchParams.has('v') ||
-        (parsedUrl.hostname.includes('youtu.be') && parsedUrl.pathname.length > 1)
+        (parsedUrl.hostname.includes('youtu.be') && parsedUrl.pathname.length > 1) ||
+        shortsRegex.test(parsedUrl.pathname) ||
+        liveRegex.test(parsedUrl.pathname)
       const needsContentParsing =
         isVideoPage ||
         parsedUrl.pathname.match(handleRegex) ||

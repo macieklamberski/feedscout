@@ -38,6 +38,23 @@ export const steamHandler: PlatformHandler = {
       }
     }
 
+    // Global news feed on store root or /news/
+    if (
+      hostname === 'store.steampowered.com' &&
+      (pathname === '/' || pathname === '' || pathname.startsWith('/news'))
+    ) {
+      return [
+        {
+          uri: 'https://store.steampowered.com/feeds/news.xml',
+          hint: composeHint('steam:news-global'),
+        },
+        {
+          uri: 'https://store.steampowered.com/feeds/daily_deals.xml',
+          hint: composeHint('steam:daily-deals'),
+        },
+      ]
+    }
+
     return []
   },
 }

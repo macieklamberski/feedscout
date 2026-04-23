@@ -3,7 +3,9 @@ import { composeHint, isAnyOf, isHostOf } from '../../../common/utils.js'
 
 const gistRegex = /^\/([^/]+)\/([a-f0-9]+)/
 const starredRegex = /^\/([^/]+)\/starred\/?$/
+const forksRegex = /^\/([^/]+)\/forks\/?$/
 const userRegex = /^\/([^/]+)\/?$/
+const discoverRegex = /^\/discover\/?$/
 
 export const hosts = ['gist.github.com']
 export const excludedPaths = ['discover', 'search', 'login', 'join', 'settings']
@@ -15,6 +17,44 @@ export const githubGistHandler: PlatformHandler = {
 
   resolve: (url) => {
     const { pathname } = new URL(url)
+
+    // Discover page: /discover (global new gists feed).
+    if (discoverRegex.test(pathname)) {
+      return [
+        {
+          uri: 'https://gist.github.com/discover.atom',
+          hint: composeHint('github-gist:discover'),
+        },
+      ]
+    }
+
+    // Match /{username}/starred pattern (user's starred gists page).
+    const starredMatch = pathname.match(starredRegex)
+
+    if (starredMatch?.[1] && !isAnyOf(starredMatch[1], excludedPaths)) {
+      const username = starredMatch[1]
+
+      return [
+        {
+          uri: `https://gist.github.com/${username}/starred.atom`,
+          hint: composeHint('github-gist:starred'),
+        },
+      ]
+    }
+
+    // Match /{username}/forks pattern (user's forked gists page).
+    const forksMatch = pathname.match(forksRegex)
+
+    if (forksMatch?.[1] && !isAnyOf(forksMatch[1], excludedPaths)) {
+      const username = forksMatch[1]
+
+      return [
+        {
+          uri: `https://gist.github.com/${username}/forks.atom`,
+          hint: composeHint('github-gist:forks'),
+        },
+      ]
+    }
 
     // Match /{username}/{gist-id} pattern (specific gist).
     const gistMatch = pathname.match(gistRegex)
@@ -32,20 +72,6 @@ export const githubGistHandler: PlatformHandler = {
       }
 
       return []
-    }
-
-    // Match /{username}/starred pattern (user's starred gists page).
-    const starredMatch = pathname.match(starredRegex)
-
-    if (starredMatch?.[1] && !isAnyOf(starredMatch[1], excludedPaths)) {
-      const username = starredMatch[1]
-
-      return [
-        {
-          uri: `https://gist.github.com/${username}/starred.atom`,
-          hint: composeHint('github-gist:starred'),
-        },
-      ]
     }
 
     // Match /{username} pattern (user's gists page).
