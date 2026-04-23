@@ -69,6 +69,8 @@
     "blogspot:comments-rss": "Comments (RSS)",
     "blogspot:label-atom": "Label (Atom)",
     "blogspot:label-rss": "Label (RSS)",
+    "blogspot:post-comments-atom": "Post comments (Atom)",
+    "blogspot:post-comments-rss": "Post comments (RSS)",
     "behance:portfolio": "Portfolio",
     "behance:appreciated": "Appreciated",
     "behance:projects": "Featured projects",

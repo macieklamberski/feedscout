@@ -10,7 +10,9 @@
     "https://googleblog.blogspot.com/feeds/posts/default/-/Products",
     "https://googleblog.blogspot.com/feeds/posts/default/-/Products?alt=rss",
     "https://security.googleblog.com/feeds/comments/default",
-    "https://security.googleblog.com/feeds/comments/default?alt=rss"
+    "https://security.googleblog.com/feeds/comments/default?alt=rss",
+    "https://security.googleblog.com/feeds/1469360228826887140/comments/default",
+    "https://security.googleblog.com/feeds/1469360228826887140/comments/default?alt=rss"
   ],
   "bluesky": ["https://bsky.app/profile/jay.bsky.team/rss"],
   "codeberg": [
