@@ -48,6 +48,10 @@ export const steamHandler: PlatformHandler = {
           uri: 'https://store.steampowered.com/feeds/news.xml',
           hint: composeHint('steam:news-global'),
         },
+        {
+          uri: 'https://store.steampowered.com/feeds/daily_deals.xml',
+          hint: composeHint('steam:daily-deals'),
+        },
       ]
     }
 

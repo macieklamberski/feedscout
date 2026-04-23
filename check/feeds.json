@@ -151,6 +151,7 @@
     "https://store.steampowered.com/feeds/news/app/730/",
     "https://store.steampowered.com/feeds/news/app/570/",
     "https://store.steampowered.com/feeds/news.xml",
+    "https://store.steampowered.com/feeds/daily_deals.xml",
     "https://steamcommunity.com/groups/Valve/rss",
     "https://steamcommunity.com/groups/SteamClientBeta/rss"
   ],
