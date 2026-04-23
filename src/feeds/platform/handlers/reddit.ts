@@ -10,9 +10,24 @@ const domainRegex = /^\/domain\/([^/]+)/
 
 export const hosts = ['reddit.com', 'www.reddit.com', 'old.reddit.com', 'new.reddit.com']
 const sortOptions = ['hot', 'new', 'rising', 'controversial', 'top']
+const timeOptions = new Set(['hour', 'day', 'week', 'month', 'year', 'all'])
+const timeFilteredSorts = new Set(['top', 'controversial'])
+
+const getTimeframeSuffix = (sort: string, searchParams: URLSearchParams): string => {
+  if (!timeFilteredSorts.has(sort)) {
+    return ''
+  }
+
+  const timeframe = searchParams.get('t')
+
+  if (timeframe && timeOptions.has(timeframe)) {
+    return `?t=${timeframe}`
+  }
+
+  return ''
+}
 
 // Combined subreddits work transparently: /r/{sub1}+{sub2} is captured by the same regex.
-// Note: time-filtered top/controversial feeds require user input (?t=week).
 
 export const redditHandler: PlatformHandler = {
   match: (url) => {
@@ -20,7 +35,7 @@ export const redditHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    const { pathname } = new URL(url)
+    const { pathname, searchParams } = new URL(url)
     const pathSegments = pathname.split('/').filter(Boolean)
 
     // Homepage: reddit.com/
@@ -53,7 +68,7 @@ export const redditHandler: PlatformHandler = {
 
       if (sort && isAnyOf(sort, sortOptions)) {
         uris.push({
-          uri: `https://www.reddit.com/r/${subreddit}/${sort}/.rss`,
+          uri: `https://www.reddit.com/r/${subreddit}/${sort}/.rss${getTimeframeSuffix(sort, searchParams)}`,
           hint: composeHint('reddit:posts'),
         })
       } else {

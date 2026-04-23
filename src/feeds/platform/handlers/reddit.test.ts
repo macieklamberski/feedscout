@@ -112,6 +112,73 @@ describe('redditHandler', () => {
       }
     })
 
+    it('should forward ?t=timeframe on top and controversial sorts', () => {
+      const cases: Array<[string, Array<DiscoverUriEntry>]> = [
+        [
+          'https://reddit.com/r/programming/top?t=week',
+          [
+            {
+              uri: 'https://www.reddit.com/r/programming/top/.rss?t=week',
+              hint: { key: 'reddit:posts', label: 'Posts' },
+            },
+            {
+              uri: 'https://www.reddit.com/r/programming/comments/.rss',
+              hint: { key: 'reddit:comments', label: 'Comments' },
+            },
+          ],
+        ],
+        [
+          'https://reddit.com/r/programming/controversial?t=all',
+          [
+            {
+              uri: 'https://www.reddit.com/r/programming/controversial/.rss?t=all',
+              hint: { key: 'reddit:posts', label: 'Posts' },
+            },
+            {
+              uri: 'https://www.reddit.com/r/programming/comments/.rss',
+              hint: { key: 'reddit:comments', label: 'Comments' },
+            },
+          ],
+        ],
+      ]
+
+      for (const [value, expected] of cases) {
+        expect(redditHandler.resolve(value)).toEqual(expected)
+      }
+    })
+
+    it('should drop unknown ?t= values', () => {
+      const value = 'https://reddit.com/r/programming/top?t=garbage'
+      const expected = [
+        {
+          uri: 'https://www.reddit.com/r/programming/top/.rss',
+          hint: { key: 'reddit:posts', label: 'Posts' },
+        },
+        {
+          uri: 'https://www.reddit.com/r/programming/comments/.rss',
+          hint: { key: 'reddit:comments', label: 'Comments' },
+        },
+      ]
+
+      expect(redditHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should not forward ?t= on non-time-filtered sorts', () => {
+      const value = 'https://reddit.com/r/programming/new?t=week'
+      const expected = [
+        {
+          uri: 'https://www.reddit.com/r/programming/new/.rss',
+          hint: { key: 'reddit:posts', label: 'Posts' },
+        },
+        {
+          uri: 'https://www.reddit.com/r/programming/comments/.rss',
+          hint: { key: 'reddit:comments', label: 'Comments' },
+        },
+      ]
+
+      expect(redditHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return base feed and all-comments feed for unknown sort options', () => {
       const value = 'https://reddit.com/r/programming/wiki'
       const expected = [

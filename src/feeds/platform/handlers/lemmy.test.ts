@@ -237,6 +237,53 @@ describe('lemmyHandler', () => {
       expect(lemmyHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should forward ?sort= on community, user, and home feeds', () => {
+      const communityExpected = [
+        {
+          uri: 'https://lemmy.ml/feeds/c/programming.xml?sort=TopWeek',
+          hint: { key: 'lemmy:community', label: 'Community' },
+        },
+      ]
+
+      expect(lemmyHandler.resolve('https://lemmy.ml/c/programming?sort=TopWeek')).toEqual(
+        communityExpected,
+      )
+
+      const userExpected = [
+        {
+          uri: 'https://lemmy.ml/feeds/u/alice.xml?sort=New',
+          hint: { key: 'lemmy:user', label: 'User' },
+        },
+      ]
+
+      expect(lemmyHandler.resolve('https://lemmy.ml/u/alice?sort=New')).toEqual(userExpected)
+
+      const homeExpected = [
+        {
+          uri: 'https://lemmy.ml/feeds/all.xml?sort=Active',
+          hint: { key: 'lemmy:all', label: 'All' },
+        },
+        {
+          uri: 'https://lemmy.ml/feeds/local.xml?sort=Active',
+          hint: { key: 'lemmy:local', label: 'Local' },
+        },
+      ]
+
+      expect(lemmyHandler.resolve('https://lemmy.ml/?sort=Active')).toEqual(homeExpected)
+    })
+
+    it('should drop unknown ?sort= values', () => {
+      const value = 'https://lemmy.ml/c/programming?sort=garbage'
+      const expected = [
+        {
+          uri: 'https://lemmy.ml/feeds/c/programming.xml',
+          hint: { key: 'lemmy:community', label: 'Community' },
+        },
+      ]
+
+      expect(lemmyHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return empty array for non-community, non-user, non-home paths', () => {
       expect(lemmyHandler.resolve('https://lemmy.ml/about')).toEqual([])
     })
