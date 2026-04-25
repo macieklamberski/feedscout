@@ -1,6 +1,8 @@
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, isHostOf } from '../../../common/utils.js'
 
+// Discoverable without handler.
+
 export const hosts = ['sourceforge.net', 'www.sourceforge.net']
 
 export const sourceforgeHandler: PlatformHandler = {

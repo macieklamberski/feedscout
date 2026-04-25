@@ -1,6 +1,8 @@
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, isAnyOf, isHostOf } from '../../../common/utils.js'
 
+// Partially discoverable without handler.
+
 export const hosts = ['dev.to', 'www.dev.to']
 const userRegex = /^\/([a-zA-Z0-9_]+)\/?$/
 const tagRegex = /^\/t\/([^/]+)/

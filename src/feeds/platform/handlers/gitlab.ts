@@ -1,6 +1,8 @@
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, hasMetaContent, isAnyOf, isHostOf } from '../../../common/utils.js'
 
+// Discoverable without handler.
+
 export const hosts = ['gitlab.com', 'www.gitlab.com']
 export const excludedPaths = [
   'explore',

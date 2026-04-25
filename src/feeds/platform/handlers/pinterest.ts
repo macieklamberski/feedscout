@@ -1,6 +1,8 @@
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, isAnyOf, isHostOf } from '../../../common/utils.js'
 
+// Not discoverable without handler.
+
 const hosts = ['pinterest.com', 'www.pinterest.com', 'pin.it']
 const excludedPaths = [
   '_',

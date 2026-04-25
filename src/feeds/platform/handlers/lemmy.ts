@@ -1,6 +1,8 @@
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, hasMetaContent } from '../../../common/utils.js'
 
+// Discoverable without handler.
+
 const lemmyPoweredByRegex = /lemmy/i
 const validSorts = new Set([
   'Active',

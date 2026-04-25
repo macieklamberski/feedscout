@@ -1,6 +1,8 @@
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, isSubdomainOf } from '../../../common/utils.js'
 
+// Discoverable without handler.
+
 export const domains = ['tumblr.com']
 
 const tagRegex = /^\/tagged\/([^/]+)/

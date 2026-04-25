@@ -1,6 +1,8 @@
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, isHostOf } from '../../../common/utils.js'
 
+// Discoverable without handler.
+//
 // paragraph.com/@{user}/feed and paragraph.com/@{user}/rss also work but
 // 308-redirect to api.paragraph.com.
 

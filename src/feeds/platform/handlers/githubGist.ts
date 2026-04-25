@@ -1,6 +1,8 @@
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, isAnyOf, isHostOf } from '../../../common/utils.js'
 
+// Partially discoverable without handler.
+
 const gistRegex = /^\/([^/]+)\/([a-f0-9]+)/
 const starredRegex = /^\/([^/]+)\/starred\/?$/
 const forksRegex = /^\/([^/]+)\/forks\/?$/

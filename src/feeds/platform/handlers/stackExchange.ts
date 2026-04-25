@@ -1,6 +1,8 @@
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, isHostOf, isSubdomainOf } from '../../../common/utils.js'
 
+// Partially discoverable without handler.
+
 const tagRegex = /^\/questions\/tagged\/([\w.+-]+)/
 const questionRegex = /^\/questions\/(\d+)/
 const userRegex = /^\/users\/(\d+)/

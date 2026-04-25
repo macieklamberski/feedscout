@@ -1,6 +1,8 @@
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, isAnyOf, isHostOf } from '../../../common/utils.js'
 
+// Not discoverable without handler.
+
 const tagRegex = /^\/tag\/([^/]+)/
 const favouritesRegex = /^\/([a-zA-Z0-9_-]+)\/favourites\/?$/
 const folderRegex = /^\/([a-zA-Z0-9_-]+)\/gallery\/(\d+)(?:\/|$)/

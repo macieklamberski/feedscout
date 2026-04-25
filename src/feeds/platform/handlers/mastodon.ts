@@ -3,6 +3,8 @@ import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 import { isMastodonHeaders, isMastodonHtml } from '../../../favicons/platform/handlers/mastodon.js'
 
+// Partially discoverable without handler.
+
 const profileRegex = /^\/@([^/]+)/
 const taggedProfileRegex = /^\/@([^/]+)\/tagged\/([^/]+)/
 const tagRegex = /^\/tags\/([^/]+)/

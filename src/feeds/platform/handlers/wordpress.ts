@@ -2,6 +2,8 @@ import type { DiscoverUriEntry } from '../../../common/types.js'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, isSubdomainOf } from '../../../common/utils.js'
 
+// Discoverable without handler.
+
 const categoryRegex = /^\/category\/([^/]+)/
 const tagRegex = /^\/tag\/([^/]+)/
 const authorRegex = /^\/author\/([^/]+)/

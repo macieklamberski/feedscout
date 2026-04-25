@@ -2,6 +2,8 @@ import type { DiscoverUriEntry } from '../../../common/types.js'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, isAnyOf, isHostOf, isSubdomainOf } from '../../../common/utils.js'
 
+// Partially discoverable without handler.
+
 const mainHosts = ['itch.io', 'www.itch.io']
 const sections = [
   'tools',

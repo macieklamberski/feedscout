@@ -2,6 +2,8 @@ import type { DiscoverUriEntry } from '../../../common/types.js'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, isAnyOf, isHostOf } from '../../../common/utils.js'
 
+// Not discoverable without handler.
+
 const commentsRegex = /^\/r\/([^/]+)\/comments\/([^/]+)/
 const subredditRegex = /^\/r\/([^/]+)(?:\/([^/]+))?/
 const multiredditRegex = /^\/user\/([^/]+)\/m\/([^/]+)/

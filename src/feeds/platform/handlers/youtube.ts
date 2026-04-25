@@ -2,6 +2,8 @@ import type { DiscoverUriEntry } from '../../../common/types.js'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, isHostOf } from '../../../common/utils.js'
 
+// Partially discoverable without handler.
+
 const channelIdRegex = /"(?:channelId|externalId)":"(UC[a-zA-Z0-9_-]+)"/
 const channelRegex = /^\/channel\/(UC[a-zA-Z0-9_-]+)/
 const handleRegex = /^\/@([^/]+)/
