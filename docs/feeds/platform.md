@@ -306,7 +306,7 @@ Discovers RSS feeds for SourceForge project activity and file releases.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `sourceforge.net/projects/{project}` | Project activity feed |
+| `sourceforge.net/projects/{project}` | Project activity and files feeds |
 
 ### Kickstarter
 

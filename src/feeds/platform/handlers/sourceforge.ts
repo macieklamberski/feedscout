@@ -20,8 +20,12 @@ export const sourceforgeHandler: PlatformHandler = {
 
       return [
         {
-          uri: `${origin}/projects/${project}/rss`,
+          uri: `${origin}/p/${project}/activity/feed`,
           hint: composeHint('sourceforge:activity'),
+        },
+        {
+          uri: `${origin}/projects/${project}/rss`,
+          hint: composeHint('sourceforge:files'),
         },
       ]
     }

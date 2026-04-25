@@ -131,7 +131,9 @@
   ],
   "soundcloud": ["https://feeds.soundcloud.com/users/soundcloud:users:1613713/sounds.rss"],
   "sourceforge": [
+    "https://sourceforge.net/p/filezilla/activity/feed",
     "https://sourceforge.net/projects/filezilla/rss",
+    "https://sourceforge.net/p/nmap/activity/feed",
     "https://sourceforge.net/projects/nmap/rss"
   ],
   "stackExchange": [
