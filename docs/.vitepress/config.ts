@@ -1,6 +1,6 @@
 import { defineConfig } from 'vitepress'
 
-const indexRegex = /index\.md$/
+const indexMdRegex = /index\.md$/
 const mdRegex = /\.md$/
 const trailingSlashRegex = /\/$/
 
@@ -18,7 +18,7 @@ export default defineConfig({
   },
   transformHead: ({ pageData }) => {
     const canonicalUrl = `${hostname}/${pageData.relativePath}`
-      .replace(indexRegex, '')
+      .replace(indexMdRegex, '')
       .replace(mdRegex, '')
       .replace(trailingSlashRegex, '')
 
