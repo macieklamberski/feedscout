@@ -39,9 +39,9 @@ export default defineConfig({
     [
       'script',
       {
-        async: '',
-        src: 'https://stats.lamberski.com/script.js',
-        'data-website-id': '5c218e6f-78ec-473e-9936-5e2dda0ddc67',
+        defer: '',
+        src: 'https://ping.lamberski.com/js/script.js',
+        'data-domain': 'feedscout.dev',
       },
     ],
   ],
