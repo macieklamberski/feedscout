@@ -1,6 +1,8 @@
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, isHostOf, isSubdomainOf } from '../../../common/utils.js'
 
+// Discoverable without handler.
+
 const profileRegex = /^\/@([\w-]+)/
 
 export const substackHandler: PlatformHandler = {

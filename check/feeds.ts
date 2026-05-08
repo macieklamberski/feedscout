@@ -1,15 +1,16 @@
+import { discoverFeeds } from '../src/feeds/index.js'
 import feeds from './feeds.json' with { type: 'json' }
-import { checkPlatforms, timeoutMs } from './utils.js'
+import { checkPlatforms, fetchWithFallback } from './utils.js'
 
 const checkUrl = async (url: string) => {
   try {
-    const response = await fetch(url, {
-      signal: AbortSignal.timeout(timeoutMs),
-      headers: { 'User-Agent': 'Feedscout/1.x' },
+    const results = await discoverFeeds(url, {
+      methods: [],
+      fetchFn: fetchWithFallback,
     })
 
-    if (!response.ok) {
-      return `HTTP ${response.status}`
+    if (results.length === 0) {
+      return 'No valid feed found'
     }
   } catch (error) {
     return error instanceof Error ? error.message : 'Unknown error'

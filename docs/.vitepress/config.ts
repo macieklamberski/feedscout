@@ -1,6 +1,6 @@
 import { defineConfig } from 'vitepress'
 
-const indexRegex = /index\.md$/
+const indexMdRegex = /index\.md$/
 const mdRegex = /\.md$/
 const trailingSlashRegex = /\/$/
 
@@ -18,7 +18,7 @@ export default defineConfig({
   },
   transformHead: ({ pageData }) => {
     const canonicalUrl = `${hostname}/${pageData.relativePath}`
-      .replace(indexRegex, '')
+      .replace(indexMdRegex, '')
       .replace(mdRegex, '')
       .replace(trailingSlashRegex, '')
 
@@ -39,9 +39,10 @@ export default defineConfig({
     [
       'script',
       {
-        async: '',
-        src: 'https://stats.lamberski.com/script.js',
-        'data-website-id': '5c218e6f-78ec-473e-9936-5e2dda0ddc67',
+        defer: '',
+        src: '/beat.js',
+        'data-domain': 'feedscout.dev',
+        'data-api': '/beat.json',
       },
     ],
   ],

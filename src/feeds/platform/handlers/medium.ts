@@ -1,6 +1,8 @@
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, isAnyOf, isHostOf, isSubdomainOf } from '../../../common/utils.js'
 
+// Partially discoverable without handler.
+
 const userRegex = /^\/@([^/]+)/
 const tagRegex = /^\/tag\/([^/]+)/
 const publicationTagRegex = /^\/([^/@][^/]+)\/tagged\/([^/]+)/

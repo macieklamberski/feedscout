@@ -1,6 +1,8 @@
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, hasMetaContent, isAnyOf, isHostOf } from '../../../common/utils.js'
 
+// Discoverable without handler.
+
 export const hosts = ['gitlab.com', 'www.gitlab.com']
 export const excludedPaths = [
   'explore',
@@ -89,6 +91,14 @@ export const gitlabHandler: PlatformHandler = {
           {
             uri: `${origin}/${user}/${repo}/-/tags?format=atom`,
             hint: composeHint('gitlab:tags'),
+          },
+          {
+            uri: `${origin}/${user}/${repo}/-/issues.atom`,
+            hint: composeHint('gitlab:issues'),
+          },
+          {
+            uri: `${origin}/${user}/${repo}/-/merge_requests.atom`,
+            hint: composeHint('gitlab:merge-requests'),
           },
           {
             uri: `${origin}/${user}/${repo}.atom`,

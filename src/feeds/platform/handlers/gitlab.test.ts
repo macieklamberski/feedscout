@@ -86,7 +86,7 @@ describe('gitlabHandler', () => {
       expect(gitlabHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return releases, tags, and activity feeds for repo page', () => {
+    it('should return releases, tags, issues, merge requests, and activity feeds for repo page', () => {
       const value = 'https://gitlab.com/gitlab-org/gitlab'
       const expected = [
         {
@@ -96,6 +96,14 @@ describe('gitlabHandler', () => {
         {
           uri: 'https://gitlab.com/gitlab-org/gitlab/-/tags?format=atom',
           hint: { key: 'gitlab:tags', label: 'Tags' },
+        },
+        {
+          uri: 'https://gitlab.com/gitlab-org/gitlab/-/issues.atom',
+          hint: { key: 'gitlab:issues', label: 'Issues' },
+        },
+        {
+          uri: 'https://gitlab.com/gitlab-org/gitlab/-/merge_requests.atom',
+          hint: { key: 'gitlab:merge-requests', label: 'Merge requests' },
         },
         {
           uri: 'https://gitlab.com/gitlab-org/gitlab.atom',
@@ -116,6 +124,14 @@ describe('gitlabHandler', () => {
         {
           uri: 'https://gitlab.com/gitlab-org/gitlab/-/tags?format=atom',
           hint: { key: 'gitlab:tags', label: 'Tags' },
+        },
+        {
+          uri: 'https://gitlab.com/gitlab-org/gitlab/-/issues.atom',
+          hint: { key: 'gitlab:issues', label: 'Issues' },
+        },
+        {
+          uri: 'https://gitlab.com/gitlab-org/gitlab/-/merge_requests.atom',
+          hint: { key: 'gitlab:merge-requests', label: 'Merge requests' },
         },
         {
           uri: 'https://gitlab.com/gitlab-org/gitlab.atom',
@@ -169,6 +185,14 @@ describe('gitlabHandler', () => {
         {
           uri: 'https://gitlab.com/group/subgroup/-/tags?format=atom',
           hint: { key: 'gitlab:tags', label: 'Tags' },
+        },
+        {
+          uri: 'https://gitlab.com/group/subgroup/-/issues.atom',
+          hint: { key: 'gitlab:issues', label: 'Issues' },
+        },
+        {
+          uri: 'https://gitlab.com/group/subgroup/-/merge_requests.atom',
+          hint: { key: 'gitlab:merge-requests', label: 'Merge requests' },
         },
         {
           uri: 'https://gitlab.com/group/subgroup.atom',

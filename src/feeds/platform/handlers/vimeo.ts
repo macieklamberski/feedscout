@@ -1,6 +1,8 @@
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, isAnyOf, isHostOf } from '../../../common/utils.js'
 
+// Partially discoverable without handler.
+
 const numericRegex = /^\d+$/
 
 const hosts = ['vimeo.com', 'www.vimeo.com']

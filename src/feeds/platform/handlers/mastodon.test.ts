@@ -152,6 +152,22 @@ describe('mastodonHandler', () => {
       expect(mastodonHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return tagged and profile feeds for /@user/tagged/{tag}', () => {
+      const value = 'https://mastodon.social/@Gargron/tagged/mastodev'
+      const expected = [
+        {
+          uri: 'https://mastodon.social/@Gargron/tagged/mastodev.rss',
+          hint: { key: 'mastodon:tagged', label: 'Tagged' },
+        },
+        {
+          uri: 'https://mastodon.social/@Gargron.rss',
+          hint: { key: 'mastodon:posts', label: 'Posts' },
+        },
+      ]
+
+      expect(mastodonHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return empty array for non-matching paths', () => {
       expect(mastodonHandler.resolve('https://mastodon.social/about')).toEqual([])
     })

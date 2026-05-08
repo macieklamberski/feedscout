@@ -2,6 +2,8 @@ import type { DiscoverUriEntry } from '../../../common/types.js'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, isAnyOf, isHostOf, isSubdomainOf } from '../../../common/utils.js'
 
+// Partially discoverable without handler.
+
 const mainHosts = ['itch.io', 'www.itch.io']
 const sections = [
   'tools',
@@ -16,6 +18,9 @@ const sorts = ['newest', 'top-rated', 'top-sellers', 'on-sale']
 
 const byUserRegex = /^\/games\/by-([^/]+)/
 const tagRegex = /^\/games\/tag-([^/]+)/
+const platformRegex = /^\/games\/platform-([^/.]+)/
+const genreRegex = /^\/games\/genre-([^/.]+)/
+const madeWithRegex = /^\/games\/made-with-([^/.]+)/
 const sortRegex = /^\/games\/([^/.]+)/
 const sectionRegex = /^\/([^/.]+)/
 const gameRegex = /^\/([^/]+)/
@@ -73,6 +78,42 @@ export const itchioHandler: PlatformHandler = {
         {
           uri: `https://itch.io/games/tag-${tagMatch[1]}.xml`,
           hint: composeHint('itchio:tag'),
+        },
+      ]
+    }
+
+    // /games/platform-{platform}
+    const platformMatch = pathname.match(platformRegex)
+
+    if (platformMatch?.[1]) {
+      return [
+        {
+          uri: `https://itch.io/games/platform-${platformMatch[1]}.xml`,
+          hint: composeHint('itchio:platform'),
+        },
+      ]
+    }
+
+    // /games/genre-{genre}
+    const genreMatch = pathname.match(genreRegex)
+
+    if (genreMatch?.[1]) {
+      return [
+        {
+          uri: `https://itch.io/games/genre-${genreMatch[1]}.xml`,
+          hint: composeHint('itchio:genre'),
+        },
+      ]
+    }
+
+    // /games/made-with-{engine}
+    const madeWithMatch = pathname.match(madeWithRegex)
+
+    if (madeWithMatch?.[1]) {
+      return [
+        {
+          uri: `https://itch.io/games/made-with-${madeWithMatch[1]}.xml`,
+          hint: composeHint('itchio:made-with'),
         },
       ]
     }

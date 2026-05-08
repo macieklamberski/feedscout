@@ -1,5 +1,8 @@
+import type { DiscoverUriEntry } from '../../../common/types.js'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, isAnyOf, isHostOf } from '../../../common/utils.js'
+
+// Discoverable without handler.
 
 export const hosts = ['codeberg.org', 'www.codeberg.org', 'gitea.com', 'www.gitea.com']
 export const excludedPaths = [
@@ -28,7 +31,12 @@ export const codebergHandler: PlatformHandler = {
       const user = pathSegments[0]
 
       if (!isAnyOf(user, excludedPaths)) {
-        return [{ uri: `${origin}/${user}.rss`, hint: composeHint('codeberg:activity') }]
+        return [
+          {
+            uri: [`${origin}/${user}.atom`, `${origin}/${user}.rss`],
+            hint: composeHint('codeberg:activity'),
+          },
+        ]
       }
     }
 
@@ -38,17 +46,20 @@ export const codebergHandler: PlatformHandler = {
       const repo = pathSegments[1]
 
       if (!isAnyOf(user, excludedPaths)) {
-        const feeds = [
+        const feeds: Array<DiscoverUriEntry> = [
           {
-            uri: `${origin}/${user}/${repo}/releases.rss`,
+            uri: [
+              `${origin}/${user}/${repo}/releases.atom`,
+              `${origin}/${user}/${repo}/releases.rss`,
+            ],
             hint: composeHint('codeberg:releases'),
           },
           {
-            uri: `${origin}/${user}/${repo}/tags.rss`,
+            uri: [`${origin}/${user}/${repo}/tags.atom`, `${origin}/${user}/${repo}/tags.rss`],
             hint: composeHint('codeberg:tags'),
           },
           {
-            uri: `${origin}/${user}/${repo}.rss`,
+            uri: [`${origin}/${user}/${repo}.atom`, `${origin}/${user}/${repo}.rss`],
             hint: composeHint('codeberg:activity'),
           },
         ]
