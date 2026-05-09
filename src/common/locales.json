@@ -253,6 +253,7 @@
     "qiita:posts": "Posts",
     "qiita:tag": "Tag",
     "qiita:organization": "Organization",
-    "qiita:popular": "Popular items"
+    "qiita:popular": "Popular items",
+    "rss-com:podcast": "Podcast"
   }
 }

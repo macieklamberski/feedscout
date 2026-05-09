@@ -818,6 +818,14 @@ Discovers Atom feeds for Qiita users, tags, organizations, and popular items.
 | `qiita.com/organizations/{org}` | Organization feed |
 | `qiita.com/popular-items` | Popular items feed |
 
+### RSS.com
+
+Discovers RSS feeds for RSS.com-hosted podcasts.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `rss.com/podcasts/{slug}` | Podcast feed |
+
 ## Basic Usage
 
 ```typescript
@@ -929,6 +937,7 @@ import {
   proseHandler,
   qiitaHandler,
   redditHandler,
+  rssComHandler,
   soundcloudHandler,
   sourceforgeHandler,
   stackExchangeHandler,
