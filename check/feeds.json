@@ -1,4 +1,9 @@
 {
+  "artstation": [
+    "https://www.artstation.com/rossdraws.rss",
+    "https://www.artstation.com/artwork.rss",
+    "https://www.artstation.com/artwork.rss?sorting=trending"
+  ],
   "behance": [
     "https://www.behance.net/feeds/user?username=matejlatin",
     "https://www.behance.net/feeds/user?username=matejlatin&content=appreciated",
