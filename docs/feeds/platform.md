@@ -436,6 +436,62 @@ Discovers Atom and RSS feeds for Bear Blog, including tag-filtered feeds.
 |-------------|-----------------|
 | `*.bearblog.dev` | Posts feed (Atom + RSS) |
 | `*.bearblog.dev/?q={tag}` | Tag feed (Atom + RSS) + posts |
+### Transistor
+
+Discovers RSS feeds for Transistor-hosted podcasts.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `*.transistor.fm` | Podcast feed |
+### Odysee
+
+Discovers RSS feeds for Odysee channels.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `odysee.com/@{channel}:{id}` | Videos feed |
+### MyAnimeList
+
+Discovers RSS feeds for MyAnimeList user lists.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `myanimelist.net/profile/{user}` | Anime list, Manga list, Recently watched, Recently read (RSS) |
+| `myanimelist.net/animelist/{user}` | (same as above) |
+| `myanimelist.net/mangalist/{user}` | (same as above) |
+| `myanimelist.net/history/{user}` | (same as above) |
+### Hacker News
+
+Discovers RSS feeds for Hacker News.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `news.ycombinator.com` | Front page feed (RSS) |
+| `news.ycombinator.com/show` | Show HN feed (RSS) |
+### ArtStation
+
+Discovers RSS feeds for ArtStation portfolios and the global artwork feed.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `artstation.com/{user}` | Portfolio feed |
+| `{user}.artstation.com` | Portfolio feed |
+| `artstation.com/artwork` | Artwork + Artwork (Trending) |
+### Tistory
+
+Discovers RSS feeds for Tistory blogs.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `*.tistory.com` | Blog feed |
+
+### Velog
+
+Discovers RSS feeds for Velog users.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `velog.io/@{user}` | Posts feed |
 
 ## Basic Usage
 
@@ -485,6 +541,7 @@ Or import individual handlers:
 import {
   applePodcastsHandler,
   bearblogHandler,
+  artstationHandler,
   behanceHandler,
   blogspotHandler,
   blueskyHandler,
@@ -498,6 +555,7 @@ import {
   githubGistHandler,
   gitlabHandler,
   goodreadsHandler,
+  hackernewsHandler,
   hashnodeHandler,
   hatenablogHandler,
   itchioHandler,
@@ -506,6 +564,8 @@ import {
   lobstersHandler,
   mastodonHandler,
   mediumHandler,
+  odyseeHandler,
+  myanimelistHandler,
   paragraphHandler,
   producthuntHandler,
   redditHandler,
@@ -514,8 +574,11 @@ import {
   stackExchangeHandler,
   steamHandler,
   substackHandler,
+  transistorHandler,
+  tistoryHandler,
   tumblrHandler,
   v2exHandler,
+  velogHandler,
   vimeoHandler,
   wordpressHandler,
   wpengineHandler,
