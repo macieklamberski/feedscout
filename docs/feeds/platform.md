@@ -428,6 +428,16 @@ Discovers RSS feeds for Ximalaya podcast albums.
 |-------------|-----------------|
 | `www.ximalaya.com/album/{id}` | Album feed |
 
+### MyAnimeList
+
+Discovers RSS feeds for MyAnimeList user lists.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `myanimelist.net/profile/{user}` | Anime list, Manga list, Recently watched, Recently read (RSS) |
+| `myanimelist.net/animelist/{user}` | (same as above) |
+| `myanimelist.net/mangalist/{user}` | (same as above) |
+| `myanimelist.net/history/{user}` | (same as above) |
 ### Hacker News
 
 Discovers RSS feeds for Hacker News.
@@ -531,6 +541,7 @@ import {
   lobstersHandler,
   mastodonHandler,
   mediumHandler,
+  myanimelistHandler,
   paragraphHandler,
   producthuntHandler,
   redditHandler,
