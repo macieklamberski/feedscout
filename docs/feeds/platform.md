@@ -807,6 +807,17 @@ Discovers Atom feeds for Posthaven blogs.
 |-------------|-----------------|
 | `*.posthaven.com` | Posts feed (Atom) |
 
+### Qiita
+
+Discovers Atom feeds for Qiita users, tags, organizations, and popular items.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `qiita.com/{user}` | User posts feed |
+| `qiita.com/tags/{tag}` | Tag feed |
+| `qiita.com/organizations/{org}` | Organization feed |
+| `qiita.com/popular-items` | Popular items feed |
+
 ## Basic Usage
 
 ```typescript
@@ -916,6 +927,7 @@ import {
   posthavenHandler,
   producthuntHandler,
   proseHandler,
+  qiitaHandler,
   redditHandler,
   soundcloudHandler,
   sourceforgeHandler,

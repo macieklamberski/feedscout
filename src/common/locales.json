@@ -249,6 +249,10 @@
     "pleroma:posts": "Posts",
     "podbean:podcast": "Podcast",
     "podigee:podcast": "Podcast",
-    "posthaven:posts": "Posts"
+    "posthaven:posts": "Posts",
+    "qiita:posts": "Posts",
+    "qiita:tag": "Tag",
+    "qiita:organization": "Organization",
+    "qiita:popular": "Popular items"
   }
 }

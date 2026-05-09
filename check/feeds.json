@@ -207,6 +207,12 @@
     "https://www.producthunt.com/feed"
   ],
   "prose": ["https://hey.prose.sh/rss"],
+  "qiita": [
+    "https://qiita.com/Qiita/feed.atom",
+    "https://qiita.com/tags/javascript/feed.atom",
+    "https://qiita.com/organizations/qiita-inc/activities.atom",
+    "https://qiita.com/popular-items/feed.atom"
+  ],
   "reddit": [
     "https://www.reddit.com/.rss",
     "https://www.reddit.com/r/programming/comments/1qoxwdt/.rss",

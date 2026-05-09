@@ -68,6 +68,7 @@ import { podigeeHandler } from './platform/handlers/podigee.js'
 import { posthavenHandler } from './platform/handlers/posthaven.js'
 import { producthuntHandler } from './platform/handlers/producthunt.js'
 import { proseHandler } from './platform/handlers/prose.js'
+import { qiitaHandler } from './platform/handlers/qiita.js'
 import { redditHandler } from './platform/handlers/reddit.js'
 import { soundcloudHandler } from './platform/handlers/soundcloud.js'
 import { sourceforgeHandler } from './platform/handlers/sourceforge.js'
@@ -256,6 +257,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     posthavenHandler,
     producthuntHandler,
     proseHandler,
+    qiitaHandler,
     redditHandler,
     soundcloudHandler,
     sourceforgeHandler,
