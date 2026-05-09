@@ -428,6 +428,13 @@ Discovers RSS feeds for Ximalaya podcast albums.
 |-------------|-----------------|
 | `www.ximalaya.com/album/{id}` | Album feed |
 
+### Buttondown
+
+Discovers RSS feeds for Buttondown newsletters.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `buttondown.com/{user}` | Newsletter feed |
 ### Bear Blog
 
 Discovers Atom and RSS feeds for Bear Blog, including tag-filtered feeds.
@@ -545,6 +552,7 @@ import {
   behanceHandler,
   blogspotHandler,
   blueskyHandler,
+  buttondownHandler,
   codebergHandler,
   csdnHandler,
   dailymotionHandler,
