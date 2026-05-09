@@ -428,6 +428,14 @@ Discovers RSS feeds for Ximalaya podcast albums.
 |-------------|-----------------|
 | `www.ximalaya.com/album/{id}` | Album feed |
 
+### Listed
+
+Discovers RSS feeds for Listed (Standard Notes) blogs.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `listed.to/@{user}` | Blog feed |
+
 ## Basic Usage
 
 ```typescript
@@ -484,15 +492,16 @@ import {
   deviantartHandler,
   devtoHandler,
   doubanHandler,
-  goodreadsHandler,
-  githubGistHandler,
   githubHandler,
+  githubGistHandler,
   gitlabHandler,
+  goodreadsHandler,
   hashnodeHandler,
   hatenablogHandler,
   itchioHandler,
   kickstarterHandler,
   letterboxdHandler,
+  listedHandler,
   lobstersHandler,
   mastodonHandler,
   mediumHandler,
