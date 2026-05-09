@@ -189,6 +189,12 @@
     "https://myanimelist.net/rss.php?type=rm&u=Xinil",
     "https://myanimelist.net/rss.php?type=rrm&u=Xinil"
   ],
+  "pika": [
+    "https://pika.pika.page/posts_feed",
+    "https://pika.pika.page/posts_feed.rss",
+    "https://discardpile.pika.page/tag/tech/feed",
+    "https://discardpile.pika.page/tag/tech/feed.rss"
+  ],
   "pinterest": ["https://www.pinterest.com/pinterest/feed.rss"],
   "producthunt": [
     "https://www.producthunt.com/feed?topic=artificial-intelligence",

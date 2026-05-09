@@ -240,6 +240,10 @@
     "misskey:posts": "Posts",
     "naver-blog:blog": "Blog",
     "observable:notebooks": "Notebooks",
-    "observable:collection": "Collection"
+    "observable:collection": "Collection",
+    "pika:posts-atom": "Posts (Atom)",
+    "pika:posts-rss": "Posts (RSS)",
+    "pika:tag-atom": "Tag (Atom)",
+    "pika:tag-rss": "Tag (RSS)"
   }
 }

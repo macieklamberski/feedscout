@@ -59,6 +59,7 @@ import { observableHandler } from './platform/handlers/observable.js'
 import { odyseeHandler } from './platform/handlers/odysee.js'
 import { pagecordHandler } from './platform/handlers/pagecord.js'
 import { paragraphHandler } from './platform/handlers/paragraph.js'
+import { pikaHandler } from './platform/handlers/pika.js'
 import { pinterestHandler } from './platform/handlers/pinterest.js'
 import { producthuntHandler } from './platform/handlers/producthunt.js'
 import { proseHandler } from './platform/handlers/prose.js'
@@ -241,6 +242,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     odyseeHandler,
     pagecordHandler,
     paragraphHandler,
+    pikaHandler,
     pinterestHandler,
     producthuntHandler,
     proseHandler,

@@ -758,6 +758,15 @@ Discovers RSS feeds for Observable user notebooks and collections.
 | `observablehq.com/@{user}` | Notebooks feed |
 | `observablehq.com/@{user}/collection/{slug}` | Collection feed |
 
+### Pika
+
+Discovers Atom and RSS feeds for Pika blogs, including tag feeds.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `*.pika.page` | Posts feed (Atom + RSS) |
+| `*.pika.page/tag/{tag}` | Tag feed (Atom + RSS) + posts |
+
 ## Basic Usage
 
 ```typescript
@@ -859,6 +868,7 @@ import {
   odyseeHandler,
   pagecordHandler,
   paragraphHandler,
+  pikaHandler,
   producthuntHandler,
   proseHandler,
   redditHandler,
