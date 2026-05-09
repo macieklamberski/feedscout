@@ -436,6 +436,30 @@ Discovers RSS feeds for Hacker News.
 |-------------|-----------------|
 | `news.ycombinator.com` | Front page feed (RSS) |
 | `news.ycombinator.com/show` | Show HN feed (RSS) |
+### ArtStation
+
+Discovers RSS feeds for ArtStation portfolios and the global artwork feed.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `artstation.com/{user}` | Portfolio feed |
+| `{user}.artstation.com` | Portfolio feed |
+| `artstation.com/artwork` | Artwork + Artwork (Trending) |
+### Tistory
+
+Discovers RSS feeds for Tistory blogs.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `*.tistory.com` | Blog feed |
+
+### Velog
+
+Discovers RSS feeds for Velog users.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `velog.io/@{user}` | Posts feed |
 
 ## Basic Usage
 
@@ -484,6 +508,7 @@ Or import individual handlers:
 ```typescript
 import {
   applePodcastsHandler,
+  artstationHandler,
   behanceHandler,
   blogspotHandler,
   blueskyHandler,
@@ -514,8 +539,10 @@ import {
   stackExchangeHandler,
   steamHandler,
   substackHandler,
+  tistoryHandler,
   tumblrHandler,
   v2exHandler,
+  velogHandler,
   vimeoHandler,
   wordpressHandler,
   wpengineHandler,

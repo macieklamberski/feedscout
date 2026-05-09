@@ -127,6 +127,7 @@
     "goodreads:shelf": "Shelf",
     "sourceforge:activity": "Recent activity",
     "sourceforge:files": "File releases",
+    "velog:posts": "Posts",
     "vimeo:videos": "Videos",
     "vimeo:likes": "Likes",
     "vimeo:channel": "Channel",
@@ -165,6 +166,10 @@
     "lemmy:local": "Local",
     "apple-podcasts:podcast": "Podcast",
     "hackernews:front": "Front page",
-    "hackernews:show": "Show HN"
+    "hackernews:show": "Show HN",
+    "tistory:blog": "Blog",
+    "artstation:portfolio": "Portfolio",
+    "artstation:artwork": "Artwork",
+    "artstation:artwork-trending": "Artwork (Trending)"
   }
 }
