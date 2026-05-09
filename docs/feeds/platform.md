@@ -610,6 +610,15 @@ Discovers RSS, Atom, and RDF feeds for Ameba Blog.
 |-------------|-----------------|
 | `ameblo.jp/{user}` | Posts feed (RSS + Atom + RDF) |
 
+### Are.na
+
+Discovers RSS feeds for Are.na user profiles and channels.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `are.na/{user}` | User profile feed |
+| `are.na/{user}/{channel}` | Channel feed |
+
 ## Basic Usage
 
 ```typescript
@@ -659,6 +668,7 @@ import {
   acastHandler,
   amebloHandler,
   applePodcastsHandler,
+  arenaHandler,
   artstationHandler,
   bearblogHandler,
   behanceHandler,

@@ -207,6 +207,8 @@
     "acast:podcast": "Podcast",
     "ameblo:posts-rss": "Posts (RSS)",
     "ameblo:posts-atom": "Posts (Atom)",
-    "ameblo:posts-rdf": "Posts (RDF)"
+    "ameblo:posts-rdf": "Posts (RDF)",
+    "arena:profile": "Profile",
+    "arena:channel": "Channel"
   }
 }

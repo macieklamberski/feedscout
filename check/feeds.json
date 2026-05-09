@@ -5,6 +5,7 @@
     "https://ameblo.jp/shibuya/atom.xml",
     "https://rssblog.ameba.jp/shibuya/rss.html"
   ],
+  "arena": ["https://www.are.na/charles-broskoski/feed/rss"],
   "bearblog": ["https://herman.bearblog.dev/feed/", "https://herman.bearblog.dev/feed/?type=rss"],
   "artstation": [
     "https://www.artstation.com/rossdraws.rss",

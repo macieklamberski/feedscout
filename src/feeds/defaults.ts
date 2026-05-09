@@ -6,6 +6,7 @@ import type { PlatformMethodOptions } from '../common/uris/platform/types.js'
 import { acastHandler } from './platform/handlers/acast.js'
 import { amebloHandler } from './platform/handlers/ameblo.js'
 import { applePodcastsHandler } from './platform/handlers/applePodcasts.js'
+import { arenaHandler } from './platform/handlers/arena.js'
 import { artstationHandler } from './platform/handlers/artstation.js'
 import { bearblogHandler } from './platform/handlers/bearblog.js'
 import { behanceHandler } from './platform/handlers/behance.js'
@@ -171,6 +172,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     acastHandler,
     amebloHandler,
     applePodcastsHandler,
+    arenaHandler,
     artstationHandler,
     bearblogHandler,
     behanceHandler,
