@@ -248,6 +248,7 @@
     "pixelfed:posts": "Posts",
     "pleroma:posts": "Posts",
     "podbean:podcast": "Podcast",
-    "podigee:podcast": "Podcast"
+    "podigee:podcast": "Podcast",
+    "posthaven:posts": "Posts"
   }
 }

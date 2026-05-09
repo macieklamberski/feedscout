@@ -65,6 +65,7 @@ import { pixelfedHandler } from './platform/handlers/pixelfed.js'
 import { pleromaHandler } from './platform/handlers/pleroma.js'
 import { podbeanHandler } from './platform/handlers/podbean.js'
 import { podigeeHandler } from './platform/handlers/podigee.js'
+import { posthavenHandler } from './platform/handlers/posthaven.js'
 import { producthuntHandler } from './platform/handlers/producthunt.js'
 import { proseHandler } from './platform/handlers/prose.js'
 import { redditHandler } from './platform/handlers/reddit.js'
@@ -252,6 +253,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     pleromaHandler,
     podbeanHandler,
     podigeeHandler,
+    posthavenHandler,
     producthuntHandler,
     proseHandler,
     redditHandler,

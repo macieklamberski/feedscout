@@ -799,6 +799,14 @@ Discovers RSS feeds for Podigee-hosted podcasts.
 |-------------|-----------------|
 | `*.podigee.io` | Podcast feed (RSS) |
 
+### Posthaven
+
+Discovers Atom feeds for Posthaven blogs.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `*.posthaven.com` | Posts feed (Atom) |
+
 ## Basic Usage
 
 ```typescript
@@ -905,6 +913,7 @@ import {
   pleromaHandler,
   podbeanHandler,
   podigeeHandler,
+  posthavenHandler,
   producthuntHandler,
   proseHandler,
   redditHandler,

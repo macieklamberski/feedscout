@@ -200,6 +200,7 @@
   "pleroma": ["https://lain.com/users/lain/feed.atom"],
   "podbean": ["https://feed.podbean.com/podcast/feed.xml"],
   "podigee": ["https://cui-bono.podigee.io/feed/mp3"],
+  "posthaven": ["https://blog.posthaven.com/posts.atom"],
   "producthunt": [
     "https://www.producthunt.com/feed?topic=artificial-intelligence",
     "https://www.producthunt.com/feed?category=ai",
