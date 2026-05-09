@@ -157,6 +157,14 @@
     "https://mastodon.social/tags/mastodon.rss",
     "https://mastodon.social/@Gargron/tagged/mastodev.rss"
   ],
+  "microblog": [
+    "https://vincent.micro.blog/feed.xml",
+    "https://vincent.micro.blog/feed.json",
+    "https://vincent.micro.blog/podcast.xml",
+    "https://vincent.micro.blog/archive/index.json",
+    "https://vincent.micro.blog/photos/index.json",
+    "https://vincent.micro.blog/replies.xml"
+  ],
   "pagecord": ["https://blog.pagecord.com/feed.xml"],
   "note": [
     "https://note.com/info/rss",

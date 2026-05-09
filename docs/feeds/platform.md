@@ -720,6 +720,18 @@ Discovers RSS feeds for Mataroa blogs.
 |-------------|-----------------|
 | `*.mataroa.blog` | Blog feed |
 
+### Micro.blog
+
+Discovers RSS, JSON, and podcast feeds for Micro.blog-hosted blogs, including category, archive, photos, and replies feeds.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `*.micro.blog` | Posts (RSS + JSON) + podcast |
+| `*.micro.blog/categories/{slug}` | Category (RSS + JSON) + above |
+| `*.micro.blog/archive` | Archive feed + above |
+| `*.micro.blog/photos` | Photos feed + above |
+| `*.micro.blog/replies` | Replies feed + above |
+
 ## Basic Usage
 
 ```typescript
@@ -811,6 +823,7 @@ import {
   mastodonHandler,
   mataroaHandler,
   mediumHandler,
+  microblogHandler,
   myanimelistHandler,
   nebulaHandler,
   noteHandler,

@@ -228,6 +228,14 @@
     "libsyn:podcast": "Podcast",
     "livejournal:posts-rss": "Posts (RSS)",
     "livejournal:posts-atom": "Posts (Atom)",
-    "mataroa:blog": "Blog"
+    "mataroa:blog": "Blog",
+    "microblog:posts-rss": "Posts (RSS)",
+    "microblog:posts-json": "Posts (JSON)",
+    "microblog:podcast": "Podcast",
+    "microblog:category-rss": "Category (RSS)",
+    "microblog:category-json": "Category (JSON)",
+    "microblog:archive": "Archive",
+    "microblog:photos": "Photos",
+    "microblog:replies": "Replies"
   }
 }
