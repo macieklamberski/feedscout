@@ -672,6 +672,14 @@ Discovers RSS feeds for Ghost-hosted blogs, including tag and author feeds.
 | `*.ghost.io/tag/{slug}` | Tag feed + blog |
 | `*.ghost.io/author/{slug}` | Author feed + blog |
 
+### Hearthis.at
+
+Discovers RSS feeds for Hearthis.at user profiles.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `hearthis.at/{user}` | Tracks feed |
+
 ## Basic Usage
 
 ```typescript
@@ -750,6 +758,7 @@ import {
   hackernewsHandler,
   hashnodeHandler,
   hatenablogHandler,
+  hearthisHandler,
   itchioHandler,
   kickstarterHandler,
   letterboxdHandler,

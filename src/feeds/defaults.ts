@@ -35,6 +35,7 @@ import { goodreadsHandler } from './platform/handlers/goodreads.js'
 import { hackernewsHandler } from './platform/handlers/hackernews.js'
 import { hashnodeHandler } from './platform/handlers/hashnode.js'
 import { hatenablogHandler } from './platform/handlers/hatenablog.js'
+import { hearthisHandler } from './platform/handlers/hearthis.js'
 import { itchioHandler } from './platform/handlers/itchio.js'
 import { kickstarterHandler } from './platform/handlers/kickstarter.js'
 import { lemmyHandler } from './platform/handlers/lemmy.js'
@@ -207,6 +208,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     hackernewsHandler,
     hashnodeHandler,
     hatenablogHandler,
+    hearthisHandler,
     itchioHandler,
     kickstarterHandler,
     lemmyHandler,
