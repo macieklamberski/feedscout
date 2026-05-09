@@ -82,6 +82,7 @@
     "https://www.goodreads.com/review/list_rss/1",
     "https://www.goodreads.com/review/list_rss/1?shelf=read"
   ],
+  "hackernews": ["https://news.ycombinator.com/rss", "https://news.ycombinator.com/showrss"],
   "kickstarter": [
     "https://www.kickstarter.com/projects/elanlee/exploding-kittens/posts.atom",
     "https://www.kickstarter.com/projects/feed.atom"
