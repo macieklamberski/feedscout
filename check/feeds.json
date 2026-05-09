@@ -166,6 +166,7 @@
     "https://vincent.micro.blog/replies.xml"
   ],
   "misskey": ["https://misskey.io/@ai.atom"],
+  "naverBlog": ["https://rss.blog.naver.com/naverofficial.xml"],
   "pagecord": ["https://blog.pagecord.com/feed.xml"],
   "note": [
     "https://note.com/info/rss",

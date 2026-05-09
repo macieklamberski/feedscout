@@ -52,6 +52,7 @@ import { mediumHandler } from './platform/handlers/medium.js'
 import { microblogHandler } from './platform/handlers/microblog.js'
 import { misskeyHandler } from './platform/handlers/misskey.js'
 import { myanimelistHandler } from './platform/handlers/myanimelist.js'
+import { naverBlogHandler } from './platform/handlers/naverBlog.js'
 import { nebulaHandler } from './platform/handlers/nebula.js'
 import { noteHandler } from './platform/handlers/note.js'
 import { odyseeHandler } from './platform/handlers/odysee.js'
@@ -232,6 +233,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     microblogHandler,
     misskeyHandler,
     myanimelistHandler,
+    naverBlogHandler,
     nebulaHandler,
     noteHandler,
     odyseeHandler,

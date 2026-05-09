@@ -237,6 +237,7 @@
     "microblog:archive": "Archive",
     "microblog:photos": "Photos",
     "microblog:replies": "Replies",
-    "misskey:posts": "Posts"
+    "misskey:posts": "Posts",
+    "naver-blog:blog": "Blog"
   }
 }

@@ -740,6 +740,15 @@ Discovers Atom feeds for Misskey user profiles. Detected by the `Misskey` applic
 |-------------|-----------------|
 | `{instance}/@{user}` | Posts feed (Atom) |
 
+### Naver Blog
+
+Discovers RSS feeds for Naver Blog.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `blog.naver.com/{id}` | Blog feed |
+| `m.blog.naver.com/{id}` | Blog feed |
+
 ## Basic Usage
 
 ```typescript
@@ -834,6 +843,7 @@ import {
   microblogHandler,
   misskeyHandler,
   myanimelistHandler,
+  naverBlogHandler,
   nebulaHandler,
   noteHandler,
   odyseeHandler,
