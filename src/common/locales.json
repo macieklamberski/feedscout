@@ -265,6 +265,9 @@
     "weblog-lol:posts-rss": "Posts (RSS)",
     "weblog-lol:posts-atom": "Posts (Atom)",
     "weblog-lol:posts-json": "Posts (JSON)",
-    "weebly:blog": "Blog"
+    "weebly:blog": "Blog",
+    "zenn:posts": "Posts",
+    "zenn:topic": "Topic",
+    "zenn:publication": "Publication"
   }
 }

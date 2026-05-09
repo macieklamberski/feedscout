@@ -478,5 +478,10 @@
     "https://www.youtube.com/feeds/videos.xml?playlist_id=UUSHXuqSBlHAE6Xw-yeJA0Tunw",
     "https://www.youtube.com/feeds/videos.xml?playlist_id=UULVXuqSBlHAE6Xw-yeJA0Tunw",
     "https://www.youtube.com/feeds/videos.xml?playlist_id=PLrAXtmErZgOeiKm4sgNOknGvNjby9efdf"
+  ],
+  "zenn": [
+    "https://zenn.dev/zenn/feed",
+    "https://zenn.dev/topics/react/feed",
+    "https://zenn.dev/p/team_zenn/feed"
   ]
 }

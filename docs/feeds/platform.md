@@ -868,6 +868,17 @@ Discovers RSS feeds for Weebly-hosted blogs.
 | `*.weebly.com` | Blog feed |
 | `*.weebly.com/{slug}` | Blog feed (custom page slug) |
 
+### Zenn
+
+Discovers RSS feeds for Zenn users, topics, and publications.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `zenn.dev/{user}` | User posts feed |
+| `zenn.dev/topics/{topic}` | Topic feed |
+| `zenn.dev/p/{pub}` | Publication feed |
+| `zenn.dev/publications/{pub}` | Publication feed |
+
 ## Basic Usage
 
 ```typescript
@@ -1001,6 +1012,7 @@ import {
   writeasHandler,
   ximalayaHandler,
   youtubeHandler,
+  zennHandler,
 } from 'feedscout/platform'
 ```
 

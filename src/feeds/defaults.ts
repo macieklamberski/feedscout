@@ -92,6 +92,7 @@ import { wpengineHandler } from './platform/handlers/wpengine.js'
 import { writeasHandler } from './platform/handlers/writeas.js'
 import { ximalayaHandler } from './platform/handlers/ximalaya.js'
 import { youtubeHandler } from './platform/handlers/youtube.js'
+import { zennHandler } from './platform/handlers/zenn.js'
 
 export const mimeTypes = [
   // RSS:
@@ -287,5 +288,6 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     writeasHandler,
     ximalayaHandler,
     youtubeHandler,
+    zennHandler,
   ],
 }
