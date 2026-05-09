@@ -826,6 +826,14 @@ Discovers RSS feeds for RSS.com-hosted podcasts.
 |-------------|-----------------|
 | `rss.com/podcasts/{slug}` | Podcast feed |
 
+### Seesaa Blog
+
+Discovers RSS 2.0 and RDF feeds for Seesaa Blog.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `*.seesaa.net` | Posts feed (RSS 2.0 + RDF) |
+
 ## Basic Usage
 
 ```typescript
@@ -938,6 +946,7 @@ import {
   qiitaHandler,
   redditHandler,
   rssComHandler,
+  seesaaHandler,
   soundcloudHandler,
   sourceforgeHandler,
   stackExchangeHandler,
