@@ -168,6 +168,7 @@
     "https://newsletter.pragmaticengineer.com/feed",
     "https://garymarcus.substack.com/feed"
   ],
+  "tistory": ["https://notice.tistory.com/rss"],
   "tumblr": ["https://staff.tumblr.com/rss", "https://staff.tumblr.com/tagged/updates/rss"],
   "vimeo": [
     "https://vimeo.com/casey/videos/rss",
@@ -358,6 +359,7 @@
     "https://www.v2ex.com/feed/member/livid.xml",
     "https://www.v2ex.com/feed/tab/tech.xml"
   ],
+  "velog": ["https://v2.velog.io/rss/velopert"],
   "ximalaya": ["https://www.ximalaya.com/album/203355.xml"],
   "youtube": [
     "https://www.youtube.com/feeds/videos.xml?channel_id=UCXuqSBlHAE6Xw-yeJA0Tunw",

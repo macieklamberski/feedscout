@@ -437,6 +437,21 @@ Discovers RSS feeds for ArtStation portfolios and the global artwork feed.
 | `artstation.com/{user}` | Portfolio feed |
 | `{user}.artstation.com` | Portfolio feed |
 | `artstation.com/artwork` | Artwork + Artwork (Trending) |
+### Tistory
+
+Discovers RSS feeds for Tistory blogs.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `*.tistory.com` | Blog feed |
+
+### Velog
+
+Discovers RSS feeds for Velog users.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `velog.io/@{user}` | Posts feed |
 
 ## Basic Usage
 
@@ -515,8 +530,10 @@ import {
   stackExchangeHandler,
   steamHandler,
   substackHandler,
+  tistoryHandler,
   tumblrHandler,
   v2exHandler,
+  velogHandler,
   vimeoHandler,
   wordpressHandler,
   wpengineHandler,

@@ -127,6 +127,7 @@
     "goodreads:shelf": "Shelf",
     "sourceforge:activity": "Recent activity",
     "sourceforge:files": "File releases",
+    "velog:posts": "Posts",
     "vimeo:videos": "Videos",
     "vimeo:likes": "Likes",
     "vimeo:channel": "Channel",
@@ -164,6 +165,7 @@
     "lemmy:all": "All",
     "lemmy:local": "Local",
     "apple-podcasts:podcast": "Podcast",
+    "tistory:blog": "Blog",
     "artstation:portfolio": "Portfolio",
     "artstation:artwork": "Artwork",
     "artstation:artwork-trending": "Artwork (Trending)"
