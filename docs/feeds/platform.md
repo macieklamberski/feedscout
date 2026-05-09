@@ -428,6 +428,14 @@ Discovers RSS feeds for Ximalaya podcast albums.
 |-------------|-----------------|
 | `www.ximalaya.com/album/{id}` | Album feed |
 
+### Odysee
+
+Discovers RSS feeds for Odysee channels.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `odysee.com/@{channel}:{id}` | Videos feed |
+
 ## Basic Usage
 
 ```typescript
@@ -484,10 +492,10 @@ import {
   deviantartHandler,
   devtoHandler,
   doubanHandler,
-  goodreadsHandler,
-  githubGistHandler,
   githubHandler,
+  githubGistHandler,
   gitlabHandler,
+  goodreadsHandler,
   hashnodeHandler,
   hatenablogHandler,
   itchioHandler,
@@ -496,6 +504,7 @@ import {
   lobstersHandler,
   mastodonHandler,
   mediumHandler,
+  odyseeHandler,
   paragraphHandler,
   producthuntHandler,
   redditHandler,
