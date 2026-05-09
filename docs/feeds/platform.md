@@ -428,6 +428,16 @@ Discovers RSS feeds for Ximalaya podcast albums.
 |-------------|-----------------|
 | `www.ximalaya.com/album/{id}` | Album feed |
 
+### note.com
+
+Discovers RSS feeds for note.com, including hashtag and magazine feeds.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `note.com/{user}` | Blog feed |
+| `note.com/hashtag/{tag}` | Hashtag feed |
+| `note.com/{user}/m/{magazineId}` | Magazine feed |
+
 ## Basic Usage
 
 ```typescript
@@ -484,10 +494,10 @@ import {
   deviantartHandler,
   devtoHandler,
   doubanHandler,
-  goodreadsHandler,
-  githubGistHandler,
   githubHandler,
+  githubGistHandler,
   gitlabHandler,
+  goodreadsHandler,
   hashnodeHandler,
   hatenablogHandler,
   itchioHandler,
@@ -496,6 +506,7 @@ import {
   lobstersHandler,
   mastodonHandler,
   mediumHandler,
+  noteHandler,
   paragraphHandler,
   producthuntHandler,
   redditHandler,

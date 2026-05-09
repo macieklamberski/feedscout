@@ -109,6 +109,11 @@
     "https://mastodon.social/tags/mastodon.rss",
     "https://mastodon.social/@Gargron/tagged/mastodev.rss"
   ],
+  "note": [
+    "https://note.com/info/rss",
+    "https://note.com/hashtag/AI/rss",
+    "https://note.com/notemag/m/m7244518f06ae/rss"
+  ],
   "pinterest": ["https://www.pinterest.com/pinterest/feed.rss"],
   "producthunt": [
     "https://www.producthunt.com/feed?topic=artificial-intelligence",
