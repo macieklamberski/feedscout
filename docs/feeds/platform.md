@@ -428,6 +428,14 @@ Discovers RSS feeds for Ximalaya podcast albums.
 |-------------|-----------------|
 | `www.ximalaya.com/album/{id}` | Album feed |
 
+### Excite Blog
+
+Discovers RSS and Atom feeds for Excite Blog, including category feeds.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `*.exblog.jp` | Posts feed (RSS + Atom) |
+| `*.exblog.jp/i{N}` | Category feed (RSS + Atom) + posts |
 ### Dreamwidth
 
 Discovers RSS and Atom feeds for Dreamwidth blogs.
@@ -566,6 +574,7 @@ import {
   deviantartHandler,
   devtoHandler,
   doubanHandler,
+  exblogHandler,
   dreamwidthHandler,
   githubHandler,
   githubGistHandler,
