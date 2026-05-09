@@ -428,6 +428,16 @@ Discovers RSS feeds for Ximalaya podcast albums.
 |-------------|-----------------|
 | `www.ximalaya.com/album/{id}` | Album feed |
 
+### ArtStation
+
+Discovers RSS feeds for ArtStation portfolios and the global artwork feed.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `artstation.com/{user}` | Portfolio feed |
+| `{user}.artstation.com` | Portfolio feed |
+| `artstation.com/artwork` | Artwork + Artwork (Trending) |
+
 ## Basic Usage
 
 ```typescript
@@ -475,6 +485,7 @@ Or import individual handlers:
 ```typescript
 import {
   applePodcastsHandler,
+  artstationHandler,
   behanceHandler,
   blogspotHandler,
   blueskyHandler,
@@ -484,10 +495,10 @@ import {
   deviantartHandler,
   devtoHandler,
   doubanHandler,
-  goodreadsHandler,
-  githubGistHandler,
   githubHandler,
+  githubGistHandler,
   gitlabHandler,
+  goodreadsHandler,
   hashnodeHandler,
   hatenablogHandler,
   itchioHandler,

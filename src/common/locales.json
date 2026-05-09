@@ -163,6 +163,9 @@
     "lemmy:user": "User",
     "lemmy:all": "All",
     "lemmy:local": "Local",
-    "apple-podcasts:podcast": "Podcast"
+    "apple-podcasts:podcast": "Podcast",
+    "artstation:portfolio": "Portfolio",
+    "artstation:artwork": "Artwork",
+    "artstation:artwork-trending": "Artwork (Trending)"
   }
 }

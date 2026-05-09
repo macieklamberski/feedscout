@@ -4,6 +4,7 @@ import type { HeadersMethodOptions } from '../common/uris/headers/types.js'
 import type { HtmlMethodOptions } from '../common/uris/html/types.js'
 import type { PlatformMethodOptions } from '../common/uris/platform/types.js'
 import { applePodcastsHandler } from './platform/handlers/applePodcasts.js'
+import { artstationHandler } from './platform/handlers/artstation.js'
 import { behanceHandler } from './platform/handlers/behance.js'
 import { blogspotHandler } from './platform/handlers/blogspot.js'
 import { blueskyHandler } from './platform/handlers/bluesky.js'
@@ -149,21 +150,22 @@ export const defaultGuessOptions: Omit<GuessMethodOptions, 'baseUrl'> = {
 export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
   handlers: [
     applePodcastsHandler,
+    artstationHandler,
     behanceHandler,
     blogspotHandler,
     blueskyHandler,
-    csdnHandler,
     codebergHandler,
-    doubanHandler,
-    deviantartHandler,
+    csdnHandler,
     dailymotionHandler,
+    deviantartHandler,
     devtoHandler,
-    goodreadsHandler,
+    doubanHandler,
     githubHandler,
-    hashnodeHandler,
-    hatenablogHandler,
     githubGistHandler,
     gitlabHandler,
+    goodreadsHandler,
+    hashnodeHandler,
+    hatenablogHandler,
     itchioHandler,
     kickstarterHandler,
     lemmyHandler,
