@@ -732,6 +732,14 @@ Discovers RSS, JSON, and podcast feeds for Micro.blog-hosted blogs, including ca
 | `*.micro.blog/photos` | Photos feed + above |
 | `*.micro.blog/replies` | Replies feed + above |
 
+### Misskey
+
+Discovers Atom feeds for Misskey user profiles. Detected by the `Misskey` application-name meta tag.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `{instance}/@{user}` | Posts feed (Atom) |
+
 ## Basic Usage
 
 ```typescript
@@ -824,6 +832,7 @@ import {
   mataroaHandler,
   mediumHandler,
   microblogHandler,
+  misskeyHandler,
   myanimelistHandler,
   nebulaHandler,
   noteHandler,

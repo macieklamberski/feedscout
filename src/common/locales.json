@@ -236,6 +236,7 @@
     "microblog:category-json": "Category (JSON)",
     "microblog:archive": "Archive",
     "microblog:photos": "Photos",
-    "microblog:replies": "Replies"
+    "microblog:replies": "Replies",
+    "misskey:posts": "Posts"
   }
 }

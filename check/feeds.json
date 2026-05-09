@@ -165,6 +165,7 @@
     "https://vincent.micro.blog/photos/index.json",
     "https://vincent.micro.blog/replies.xml"
   ],
+  "misskey": ["https://misskey.io/@ai.atom"],
   "pagecord": ["https://blog.pagecord.com/feed.xml"],
   "note": [
     "https://note.com/info/rss",
