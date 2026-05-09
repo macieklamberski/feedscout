@@ -225,6 +225,8 @@
     "hey-world:blog": "Blog",
     "insanejournal:posts-rss": "Posts (RSS)",
     "insanejournal:posts-atom": "Posts (Atom)",
-    "libsyn:podcast": "Podcast"
+    "libsyn:podcast": "Podcast",
+    "livejournal:posts-rss": "Posts (RSS)",
+    "livejournal:posts-atom": "Posts (Atom)"
   }
 }

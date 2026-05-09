@@ -704,6 +704,14 @@ Discovers RSS feeds for Libsyn-hosted podcasts.
 |-------------|-----------------|
 | `*.libsyn.com` | Podcast feed |
 
+### LiveJournal
+
+Discovers RSS and Atom feeds for LiveJournal blogs.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `*.livejournal.com` | Posts feed (RSS + Atom) |
+
 ## Basic Usage
 
 ```typescript
@@ -790,6 +798,7 @@ import {
   letterboxdHandler,
   libsynHandler,
   listedHandler,
+  livejournalHandler,
   lobstersHandler,
   mastodonHandler,
   mediumHandler,

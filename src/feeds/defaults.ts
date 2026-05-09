@@ -44,6 +44,7 @@ import { lemmyHandler } from './platform/handlers/lemmy.js'
 import { letterboxdHandler } from './platform/handlers/letterboxd.js'
 import { libsynHandler } from './platform/handlers/libsyn.js'
 import { listedHandler } from './platform/handlers/listed.js'
+import { livejournalHandler } from './platform/handlers/livejournal.js'
 import { lobstersHandler } from './platform/handlers/lobsters.js'
 import { mastodonHandler } from './platform/handlers/mastodon.js'
 import { mediumHandler } from './platform/handlers/medium.js'
@@ -220,6 +221,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     letterboxdHandler,
     libsynHandler,
     listedHandler,
+    livejournalHandler,
     lobstersHandler,
     mastodonHandler,
     mediumHandler,

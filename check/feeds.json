@@ -131,6 +131,10 @@
   "letterboxd": ["https://letterboxd.com/dave/rss/", "https://letterboxd.com/lynch/rss/"],
   "libsyn": ["https://thefeed.libsyn.com/rss"],
   "listed": ["https://listed.to/@Listed/feed.rss"],
+  "livejournal": [
+    "https://news.livejournal.com/data/rss",
+    "https://news.livejournal.com/data/atom"
+  ],
   "lobsters": [
     "https://lobste.rs/t/programming.rss",
     "https://lobste.rs/domains/github.com.rss",
