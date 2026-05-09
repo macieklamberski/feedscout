@@ -353,6 +353,7 @@
     "https://www.v2ex.com/feed/member/livid.xml",
     "https://www.v2ex.com/feed/tab/tech.xml"
   ],
+  "velog": ["https://v2.velog.io/rss/velopert"],
   "ximalaya": ["https://www.ximalaya.com/album/203355.xml"],
   "youtube": [
     "https://www.youtube.com/feeds/videos.xml?channel_id=UCXuqSBlHAE6Xw-yeJA0Tunw",
