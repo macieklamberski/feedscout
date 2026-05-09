@@ -163,6 +163,10 @@
     "lemmy:user": "User",
     "lemmy:all": "All",
     "lemmy:local": "Local",
-    "apple-podcasts:podcast": "Podcast"
+    "apple-podcasts:podcast": "Podcast",
+    "bearblog:posts-atom": "Posts (Atom)",
+    "bearblog:posts-rss": "Posts (RSS)",
+    "bearblog:tag-atom": "Tag (Atom)",
+    "bearblog:tag-rss": "Tag (RSS)"
   }
 }
