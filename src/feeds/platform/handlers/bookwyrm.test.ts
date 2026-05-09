@@ -70,5 +70,9 @@ describe('bookwyrmHandler', () => {
     it('should return empty array for non-user paths', () => {
       expect(bookwyrmHandler.resolve('https://bookwyrm.social/about')).toEqual([])
     })
+
+    it('should return empty array for invalid URL', () => {
+      expect(bookwyrmHandler.resolve('not-a-url')).toEqual([])
+    })
   })
 })

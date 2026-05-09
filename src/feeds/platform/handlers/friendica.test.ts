@@ -71,5 +71,9 @@ describe('friendicaHandler', () => {
     it('should return empty array for non-profile paths', () => {
       expect(friendicaHandler.resolve('https://libranet.de/about')).toEqual([])
     })
+
+    it('should return empty array for invalid URL', () => {
+      expect(friendicaHandler.resolve('not-a-url')).toEqual([])
+    })
   })
 })

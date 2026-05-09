@@ -70,5 +70,9 @@ describe('pleromaHandler', () => {
     it('should return empty array for non-profile paths', () => {
       expect(pleromaHandler.resolve('https://lain.com/about')).toEqual([])
     })
+
+    it('should return empty array for invalid URL', () => {
+      expect(pleromaHandler.resolve('not-a-url')).toEqual([])
+    })
   })
 })

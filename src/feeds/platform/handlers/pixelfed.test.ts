@@ -83,5 +83,9 @@ describe('pixelfedHandler', () => {
     it('should return empty array for excluded paths', () => {
       expect(pixelfedHandler.resolve('https://pixelfed.social/discover')).toEqual([])
     })
+
+    it('should return empty array for invalid URL', () => {
+      expect(pixelfedHandler.resolve('not-a-url')).toEqual([])
+    })
   })
 })

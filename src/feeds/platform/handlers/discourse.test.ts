@@ -102,5 +102,9 @@ describe('discourseHandler', () => {
 
       expect(discourseHandler.resolve(value)).toEqual(expected)
     })
+
+    it('should return empty array for invalid URL', () => {
+      expect(discourseHandler.resolve('not-a-url')).toEqual([])
+    })
   })
 })
