@@ -256,6 +256,7 @@
     "qiita:popular": "Popular items",
     "rss-com:podcast": "Podcast",
     "seesaa:posts-rss2": "Posts (RSS 2.0)",
-    "seesaa:posts-rdf": "Posts (RDF)"
+    "seesaa:posts-rdf": "Posts (RDF)",
+    "spreaker:podcast": "Podcast"
   }
 }

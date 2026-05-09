@@ -236,6 +236,7 @@
     "https://sourceforge.net/p/nmap/activity/feed",
     "https://sourceforge.net/projects/nmap/rss"
   ],
+  "spreaker": ["https://www.spreaker.com/show/1433865/episodes/feed"],
   "stackExchange": [
     "https://stackoverflow.com/feeds",
     "https://stackoverflow.com/feeds/tag/javascript",

@@ -74,6 +74,7 @@ import { rssComHandler } from './platform/handlers/rssCom.js'
 import { seesaaHandler } from './platform/handlers/seesaa.js'
 import { soundcloudHandler } from './platform/handlers/soundcloud.js'
 import { sourceforgeHandler } from './platform/handlers/sourceforge.js'
+import { spreakerHandler } from './platform/handlers/spreaker.js'
 import { stackExchangeHandler } from './platform/handlers/stackExchange.js'
 import { steamHandler } from './platform/handlers/steam.js'
 import { substackHandler } from './platform/handlers/substack.js'
@@ -265,6 +266,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     seesaaHandler,
     soundcloudHandler,
     sourceforgeHandler,
+    spreakerHandler,
     stackExchangeHandler,
     steamHandler,
     substackHandler,

@@ -834,6 +834,14 @@ Discovers RSS 2.0 and RDF feeds for Seesaa Blog.
 |-------------|-----------------|
 | `*.seesaa.net` | Posts feed (RSS 2.0 + RDF) |
 
+### Spreaker
+
+Discovers RSS feeds for Spreaker-hosted podcasts.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `spreaker.com/podcast/{slug}--{id}` | Podcast feed |
+
 ## Basic Usage
 
 ```typescript
@@ -949,6 +957,7 @@ import {
   seesaaHandler,
   soundcloudHandler,
   sourceforgeHandler,
+  spreakerHandler,
   stackExchangeHandler,
   steamHandler,
   substackHandler,
