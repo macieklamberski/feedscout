@@ -165,6 +165,7 @@
     "lemmy:all": "All",
     "lemmy:local": "Local",
     "apple-podcasts:podcast": "Podcast",
+    "pagecord:blog": "Blog",
     "listed:blog": "Blog",
     "fireside:podcast-rss": "Podcast (RSS)",
     "fireside:podcast-json": "Podcast (JSON)",

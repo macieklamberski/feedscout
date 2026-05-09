@@ -428,6 +428,13 @@ Discovers RSS feeds for Ximalaya podcast albums.
 |-------------|-----------------|
 | `www.ximalaya.com/album/{id}` | Album feed |
 
+### Pagecord
+
+Discovers RSS feeds for Pagecord blogs.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `*.pagecord.com` | Blog feed |
 ### ArtStation
 
 Discovers RSS feeds for ArtStation portfolios and the global artwork feed.
@@ -648,6 +655,7 @@ import {
   lobstersHandler,
   mastodonHandler,
   mediumHandler,
+  pagecordHandler,
   myanimelistHandler,
   nebulaHandler,
   noteHandler,

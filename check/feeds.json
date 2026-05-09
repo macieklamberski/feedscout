@@ -124,6 +124,7 @@
     "https://mastodon.social/tags/mastodon.rss",
     "https://mastodon.social/@Gargron/tagged/mastodev.rss"
   ],
+  "pagecord": ["https://blog.pagecord.com/feed.xml"],
   "note": [
     "https://note.com/info/rss",
     "https://note.com/hashtag/AI/rss",

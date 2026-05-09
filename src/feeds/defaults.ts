@@ -38,6 +38,7 @@ import { myanimelistHandler } from './platform/handlers/myanimelist.js'
 import { nebulaHandler } from './platform/handlers/nebula.js'
 import { noteHandler } from './platform/handlers/note.js'
 import { odyseeHandler } from './platform/handlers/odysee.js'
+import { pagecordHandler } from './platform/handlers/pagecord.js'
 import { paragraphHandler } from './platform/handlers/paragraph.js'
 import { pinterestHandler } from './platform/handlers/pinterest.js'
 import { producthuntHandler } from './platform/handlers/producthunt.js'
@@ -194,6 +195,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     lobstersHandler,
     mastodonHandler,
     mediumHandler,
+    pagecordHandler,
     myanimelistHandler,
     nebulaHandler,
     noteHandler,
