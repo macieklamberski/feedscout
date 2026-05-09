@@ -27,6 +27,7 @@
     "https://codeberg.org/forgejo/forgejo/rss/branch/forgejo",
     "https://codeberg.org/forgejo/forgejo/rss/branch/forgejo/README.md"
   ],
+  "csdn": ["https://rss.csdn.net/csdnnews/rss/map", "https://blog.csdn.net/csdnnews/rss/list"],
   "dailymotion": [
     "https://www.dailymotion.com/rss/Euronews-en",
     "https://www.dailymotion.com/rss/playlist/x5e4h5",
@@ -40,6 +41,16 @@
     "https://backend.deviantart.com/rss.xml?q=journal:yuumei"
   ],
   "devto": ["https://dev.to/feed/ben", "https://dev.to/feed/tag/javascript"],
+  "douban": [
+    "https://www.douban.com/feed/people/ahbei/interests",
+    "https://www.douban.com/feed/people/ahbei/reviews",
+    "https://www.douban.com/feed/people/ahbei/notes",
+    "https://www.douban.com/feed/subject/1084336/reviews",
+    "https://www.douban.com/feed/review/book",
+    "https://www.douban.com/feed/review/movie",
+    "https://www.douban.com/feed/review/music",
+    "https://www.douban.com/feed/review/drama"
+  ],
   "gitea": [
     "https://gitea.com/gitea.rss",
     "https://gitea.com/gitea/go-sdk.rss",
@@ -77,6 +88,39 @@
     "https://www.goodreads.com/review/list_rss/1",
     "https://www.goodreads.com/review/list_rss/1?shelf=read"
   ],
+  "hashnode": ["https://townhall.hashnode.com/rss.xml"],
+  "hatenablog": [
+    "https://staff.hatenablog.com/rss",
+    "https://staff.hatenablog.com/feed",
+    "https://staff.hatenablog.com/rss/category/news",
+    "https://staff.hatenablog.com/feed/category/news",
+    "https://blog.hatenablog.com/rss/author/hatenablog-editors",
+    "https://blog.hatenablog.com/feed/author/hatenablog-editors"
+  ],
+  "itchio": [
+    "https://qeresi.itch.io/a-tale-of-crowns/devlog.rss",
+    "https://itch.io/games/by-leafo.xml",
+    "https://itch.io/games/tag-horror.xml",
+    "https://itch.io/games/platform-web.xml",
+    "https://itch.io/games/genre-puzzle.xml",
+    "https://itch.io/games/made-with-unity.xml",
+    "https://itch.io/games/newest.xml",
+    "https://itch.io/games/top-rated.xml",
+    "https://itch.io/games/top-sellers.xml",
+    "https://itch.io/games/on-sale.xml",
+    "https://itch.io/games.xml",
+    "https://itch.io/devlogs.xml",
+    "https://itch.io/tools.xml",
+    "https://itch.io/game-assets.xml",
+    "https://itch.io/soundtracks.xml",
+    "https://itch.io/physical-games.xml",
+    "https://itch.io/books.xml",
+    "https://itch.io/comics.xml",
+    "https://itch.io/misc.xml",
+    "https://itch.io/feed/featured.xml",
+    "https://itch.io/feed/new.xml",
+    "https://itch.io/feed/sales.xml"
+  ],
   "kickstarter": [
     "https://www.kickstarter.com/projects/elanlee/exploding-kittens/posts.atom",
     "https://www.kickstarter.com/projects/feed.atom"
@@ -98,17 +142,18 @@
     "https://lobste.rs/comments.rss",
     "https://lobste.rs/rss"
   ],
+  "mastodon": [
+    "https://mastodon.social/@Mastodon.rss",
+    "https://mastodon.social/tags/mastodon.rss",
+    "https://mastodon.social/@Gargron/tagged/mastodev.rss"
+  ],
   "medium": [
     "https://medium.com/feed/@ev",
     "https://medium.com/feed/tag/programming",
     "https://medium.com/feed/towards-data-science/tagged/python",
     "https://medium.com/feed/towards-data-science"
   ],
-  "mastodon": [
-    "https://mastodon.social/@Mastodon.rss",
-    "https://mastodon.social/tags/mastodon.rss",
-    "https://mastodon.social/@Gargron/tagged/mastodev.rss"
-  ],
+  "paragraph": ["https://paragraph.com/@blog/feed", "https://paragraph.com/@optimism/rss"],
   "pinterest": ["https://www.pinterest.com/pinterest/feed.rss"],
   "producthunt": [
     "https://www.producthunt.com/feed?topic=artificial-intelligence",
@@ -163,7 +208,14 @@
     "https://newsletter.pragmaticengineer.com/feed",
     "https://garymarcus.substack.com/feed"
   ],
+  "tistory": ["https://notice.tistory.com/rss"],
   "tumblr": ["https://staff.tumblr.com/rss", "https://staff.tumblr.com/tagged/updates/rss"],
+  "v2ex": [
+    "https://www.v2ex.com/index.xml",
+    "https://www.v2ex.com/feed/programmer.xml",
+    "https://www.v2ex.com/feed/member/livid.xml",
+    "https://www.v2ex.com/feed/tab/tech.xml"
+  ],
   "vimeo": [
     "https://vimeo.com/casey/videos/rss",
     "https://vimeo.com/casey/likes/rss",
@@ -301,57 +353,6 @@
     "https://developer.wpengine.com/2023/06/14/?feed=atom",
     "https://developer.wpengine.com/2023/06/14/feed/rdf/",
     "https://developer.wpengine.com/2023/06/14/?feed=rdf"
-  ],
-  "hashnode": ["https://townhall.hashnode.com/rss.xml"],
-  "paragraph": ["https://paragraph.com/@blog/feed", "https://paragraph.com/@optimism/rss"],
-  "hatenablog": [
-    "https://staff.hatenablog.com/rss",
-    "https://staff.hatenablog.com/feed",
-    "https://staff.hatenablog.com/rss/category/news",
-    "https://staff.hatenablog.com/feed/category/news",
-    "https://blog.hatenablog.com/rss/author/hatenablog-editors",
-    "https://blog.hatenablog.com/feed/author/hatenablog-editors"
-  ],
-  "itchio": [
-    "https://qeresi.itch.io/a-tale-of-crowns/devlog.rss",
-    "https://itch.io/games/by-leafo.xml",
-    "https://itch.io/games/tag-horror.xml",
-    "https://itch.io/games/platform-web.xml",
-    "https://itch.io/games/genre-puzzle.xml",
-    "https://itch.io/games/made-with-unity.xml",
-    "https://itch.io/games/newest.xml",
-    "https://itch.io/games/top-rated.xml",
-    "https://itch.io/games/top-sellers.xml",
-    "https://itch.io/games/on-sale.xml",
-    "https://itch.io/games.xml",
-    "https://itch.io/devlogs.xml",
-    "https://itch.io/tools.xml",
-    "https://itch.io/game-assets.xml",
-    "https://itch.io/soundtracks.xml",
-    "https://itch.io/physical-games.xml",
-    "https://itch.io/books.xml",
-    "https://itch.io/comics.xml",
-    "https://itch.io/misc.xml",
-    "https://itch.io/feed/featured.xml",
-    "https://itch.io/feed/new.xml",
-    "https://itch.io/feed/sales.xml"
-  ],
-  "csdn": ["https://rss.csdn.net/csdnnews/rss/map", "https://blog.csdn.net/csdnnews/rss/list"],
-  "douban": [
-    "https://www.douban.com/feed/people/ahbei/interests",
-    "https://www.douban.com/feed/people/ahbei/reviews",
-    "https://www.douban.com/feed/people/ahbei/notes",
-    "https://www.douban.com/feed/subject/1084336/reviews",
-    "https://www.douban.com/feed/review/book",
-    "https://www.douban.com/feed/review/movie",
-    "https://www.douban.com/feed/review/music",
-    "https://www.douban.com/feed/review/drama"
-  ],
-  "v2ex": [
-    "https://www.v2ex.com/index.xml",
-    "https://www.v2ex.com/feed/programmer.xml",
-    "https://www.v2ex.com/feed/member/livid.xml",
-    "https://www.v2ex.com/feed/tab/tech.xml"
   ],
   "ximalaya": ["https://www.ximalaya.com/album/203355.xml"],
   "youtube": [
