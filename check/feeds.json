@@ -102,6 +102,7 @@
     "https://lemmy.ml/feeds/local.xml"
   ],
   "letterboxd": ["https://letterboxd.com/dave/rss/", "https://letterboxd.com/lynch/rss/"],
+  "listed": ["https://listed.to/@Listed/feed.rss"],
   "lobsters": [
     "https://lobste.rs/t/programming.rss",
     "https://lobste.rs/domains/github.com.rss",
