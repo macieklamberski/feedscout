@@ -428,6 +428,14 @@ Discovers RSS feeds for Ximalaya podcast albums.
 |-------------|-----------------|
 | `www.ximalaya.com/album/{id}` | Album feed |
 
+### Tistory
+
+Discovers RSS feeds for Tistory blogs.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `*.tistory.com` | Blog feed |
+
 ### Velog
 
 Discovers RSS feeds for Velog users.
@@ -492,10 +500,10 @@ import {
   deviantartHandler,
   devtoHandler,
   doubanHandler,
-  goodreadsHandler,
-  githubGistHandler,
   githubHandler,
+  githubGistHandler,
   gitlabHandler,
+  goodreadsHandler,
   hashnodeHandler,
   hatenablogHandler,
   itchioHandler,
@@ -512,6 +520,7 @@ import {
   stackExchangeHandler,
   steamHandler,
   substackHandler,
+  tistoryHandler,
   tumblrHandler,
   v2exHandler,
   velogHandler,
