@@ -428,6 +428,13 @@ Discovers RSS feeds for Ximalaya podcast albums.
 |-------------|-----------------|
 | `www.ximalaya.com/album/{id}` | Album feed |
 
+### Fireside.fm
+
+Discovers RSS and JSON feeds for Fireside.fm-hosted podcasts.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `*.fireside.fm` | Podcast feed (RSS + JSON) |
 ### Excite Blog
 
 Discovers RSS and Atom feeds for Excite Blog, including category feeds.
@@ -574,6 +581,7 @@ import {
   deviantartHandler,
   devtoHandler,
   doubanHandler,
+  firesideHandler,
   exblogHandler,
   dreamwidthHandler,
   githubHandler,

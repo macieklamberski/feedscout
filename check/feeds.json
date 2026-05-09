@@ -47,6 +47,7 @@
     "https://backend.deviantart.com/rss.xml?q=journal:yuumei"
   ],
   "devto": ["https://dev.to/feed/ben", "https://dev.to/feed/tag/javascript"],
+  "fireside": ["https://feeds.fireside.fm/office/rss", "https://office.fireside.fm/json"],
   "exblog": ["https://petitcc.exblog.jp/index.xml", "https://petitcc.exblog.jp/atom.xml"],
   "dreamwidth": [
     "https://dw-news.dreamwidth.org/data/rss",
