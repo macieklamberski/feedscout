@@ -78,6 +78,7 @@ import { spreakerHandler } from './platform/handlers/spreaker.js'
 import { stackExchangeHandler } from './platform/handlers/stackExchange.js'
 import { steamHandler } from './platform/handlers/steam.js'
 import { substackHandler } from './platform/handlers/substack.js'
+import { tildesHandler } from './platform/handlers/tildes.js'
 import { tistoryHandler } from './platform/handlers/tistory.js'
 import { transistorHandler } from './platform/handlers/transistor.js'
 import { tumblrHandler } from './platform/handlers/tumblr.js'
@@ -270,6 +271,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     stackExchangeHandler,
     steamHandler,
     substackHandler,
+    tildesHandler,
     tistoryHandler,
     transistorHandler,
     tumblrHandler,

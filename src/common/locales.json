@@ -257,6 +257,10 @@
     "rss-com:podcast": "Podcast",
     "seesaa:posts-rss2": "Posts (RSS 2.0)",
     "seesaa:posts-rdf": "Posts (RDF)",
-    "spreaker:podcast": "Podcast"
+    "spreaker:podcast": "Podcast",
+    "tildes:topics-rss": "Topics (RSS)",
+    "tildes:topics-atom": "Topics (Atom)",
+    "tildes:group-rss": "Group (RSS)",
+    "tildes:group-atom": "Group (Atom)"
   }
 }

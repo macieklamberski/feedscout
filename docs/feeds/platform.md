@@ -842,6 +842,15 @@ Discovers RSS feeds for Spreaker-hosted podcasts.
 |-------------|-----------------|
 | `spreaker.com/podcast/{slug}--{id}` | Podcast feed |
 
+### Tildes
+
+Discovers RSS and Atom feeds for Tildes homepage and groups.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `tildes.net` | Topics feed (RSS + Atom) |
+| `tildes.net/~{group}` | Group feed (RSS + Atom) |
+
 ## Basic Usage
 
 ```typescript
@@ -961,6 +970,7 @@ import {
   stackExchangeHandler,
   steamHandler,
   substackHandler,
+  tildesHandler,
   tistoryHandler,
   transistorHandler,
   tumblrHandler,
