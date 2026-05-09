@@ -35,6 +35,7 @@ import { lobstersHandler } from './platform/handlers/lobsters.js'
 import { mastodonHandler } from './platform/handlers/mastodon.js'
 import { mediumHandler } from './platform/handlers/medium.js'
 import { myanimelistHandler } from './platform/handlers/myanimelist.js'
+import { nebulaHandler } from './platform/handlers/nebula.js'
 import { odyseeHandler } from './platform/handlers/odysee.js'
 import { paragraphHandler } from './platform/handlers/paragraph.js'
 import { pinterestHandler } from './platform/handlers/pinterest.js'
@@ -174,9 +175,9 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     deviantartHandler,
     devtoHandler,
     doubanHandler,
-    firesideHandler,
-    exblogHandler,
     dreamwidthHandler,
+    exblogHandler,
+    firesideHandler,
     githubHandler,
     githubGistHandler,
     gitlabHandler,
@@ -192,8 +193,9 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     lobstersHandler,
     mastodonHandler,
     mediumHandler,
-    odyseeHandler,
     myanimelistHandler,
+    nebulaHandler,
+    odyseeHandler,
     paragraphHandler,
     pinterestHandler,
     producthuntHandler,

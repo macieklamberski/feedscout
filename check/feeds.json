@@ -124,6 +124,12 @@
     "https://mastodon.social/tags/mastodon.rss",
     "https://mastodon.social/@Gargron/tagged/mastodev.rss"
   ],
+  "nebula": [
+    "https://rss.nebula.app/video/channels/realengineering.rss",
+    "https://rss.nebula.app/video/channels/realengineering.rss?plus=true",
+    "https://rss.nebula.app/video.rss",
+    "https://rss.nebula.app/video/categories/technology.rss"
+  ],
   "odysee": ["https://odysee.com/$/rss/@Odysee:8"],
   "myanimelist": [
     "https://myanimelist.net/rss.php?type=rw&u=Xinil",

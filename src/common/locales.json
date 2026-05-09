@@ -190,6 +190,12 @@
     "tistory:blog": "Blog",
     "artstation:portfolio": "Portfolio",
     "artstation:artwork": "Artwork",
-    "artstation:artwork-trending": "Artwork (Trending)"
+    "artstation:artwork-trending": "Artwork (Trending)",
+    "nebula:videos": "Videos",
+    "nebula:videos-plus": "Videos (Plus)",
+    "nebula:videos-all": "All Videos",
+    "nebula:videos-all-plus": "All Videos (Plus)",
+    "nebula:category": "Category",
+    "nebula:category-plus": "Category (Plus)"
   }
 }
