@@ -783,6 +783,14 @@ Discovers Atom feeds for Pleroma (and Akkoma) user profiles. Detected by Pleroma
 |-------------|-----------------|
 | `{instance}/users/{user}` | Posts feed (Atom) |
 
+### Podbean
+
+Discovers RSS feeds for Podbean-hosted podcasts.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `*.podbean.com` | Podcast feed |
+
 ## Basic Usage
 
 ```typescript
@@ -887,6 +895,7 @@ import {
   pikaHandler,
   pixelfedHandler,
   pleromaHandler,
+  podbeanHandler,
   producthuntHandler,
   proseHandler,
   redditHandler,

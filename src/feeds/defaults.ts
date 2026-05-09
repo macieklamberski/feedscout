@@ -63,6 +63,7 @@ import { pikaHandler } from './platform/handlers/pika.js'
 import { pinterestHandler } from './platform/handlers/pinterest.js'
 import { pixelfedHandler } from './platform/handlers/pixelfed.js'
 import { pleromaHandler } from './platform/handlers/pleroma.js'
+import { podbeanHandler } from './platform/handlers/podbean.js'
 import { producthuntHandler } from './platform/handlers/producthunt.js'
 import { proseHandler } from './platform/handlers/prose.js'
 import { redditHandler } from './platform/handlers/reddit.js'
@@ -248,6 +249,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     pinterestHandler,
     pixelfedHandler,
     pleromaHandler,
+    podbeanHandler,
     producthuntHandler,
     proseHandler,
     redditHandler,
