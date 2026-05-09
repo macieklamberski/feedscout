@@ -115,6 +115,7 @@
     "https://www.producthunt.com/feed?category=ai",
     "https://www.producthunt.com/feed"
   ],
+  "prose": ["https://hey.prose.sh/rss"],
   "reddit": [
     "https://www.reddit.com/.rss",
     "https://www.reddit.com/r/programming/comments/1qoxwdt/.rss",

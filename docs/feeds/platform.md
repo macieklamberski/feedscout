@@ -428,6 +428,14 @@ Discovers RSS feeds for Ximalaya podcast albums.
 |-------------|-----------------|
 | `www.ximalaya.com/album/{id}` | Album feed |
 
+### Prose.sh
+
+Discovers Atom feeds for Prose.sh blogs.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `*.prose.sh` | Blog feed |
+
 ## Basic Usage
 
 ```typescript
@@ -484,10 +492,10 @@ import {
   deviantartHandler,
   devtoHandler,
   doubanHandler,
-  goodreadsHandler,
-  githubGistHandler,
   githubHandler,
+  githubGistHandler,
   gitlabHandler,
+  goodreadsHandler,
   hashnodeHandler,
   hatenablogHandler,
   itchioHandler,
@@ -498,6 +506,7 @@ import {
   mediumHandler,
   paragraphHandler,
   producthuntHandler,
+  proseHandler,
   redditHandler,
   soundcloudHandler,
   sourceforgeHandler,
