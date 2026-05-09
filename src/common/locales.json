@@ -163,6 +163,8 @@
     "lemmy:user": "User",
     "lemmy:all": "All",
     "lemmy:local": "Local",
-    "apple-podcasts:podcast": "Podcast"
+    "apple-podcasts:podcast": "Podcast",
+    "writeas:blog": "Blog",
+    "writeas:tag": "Tag"
   }
 }

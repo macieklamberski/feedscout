@@ -40,6 +40,7 @@ import { v2exHandler } from './platform/handlers/v2ex.js'
 import { vimeoHandler } from './platform/handlers/vimeo.js'
 import { wordpressHandler } from './platform/handlers/wordpress.js'
 import { wpengineHandler } from './platform/handlers/wpengine.js'
+import { writeasHandler } from './platform/handlers/writeas.js'
 import { ximalayaHandler } from './platform/handlers/ximalaya.js'
 import { youtubeHandler } from './platform/handlers/youtube.js'
 
@@ -152,18 +153,18 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     behanceHandler,
     blogspotHandler,
     blueskyHandler,
-    csdnHandler,
     codebergHandler,
-    doubanHandler,
-    deviantartHandler,
+    csdnHandler,
     dailymotionHandler,
+    deviantartHandler,
     devtoHandler,
-    goodreadsHandler,
+    doubanHandler,
     githubHandler,
-    hashnodeHandler,
-    hatenablogHandler,
     githubGistHandler,
     gitlabHandler,
+    goodreadsHandler,
+    hashnodeHandler,
+    hatenablogHandler,
     itchioHandler,
     kickstarterHandler,
     lemmyHandler,
@@ -185,6 +186,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     vimeoHandler,
     wordpressHandler,
     wpengineHandler,
+    writeasHandler,
     ximalayaHandler,
     youtubeHandler,
   ],

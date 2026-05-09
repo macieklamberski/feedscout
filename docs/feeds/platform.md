@@ -428,6 +428,15 @@ Discovers RSS feeds for Ximalaya podcast albums.
 |-------------|-----------------|
 | `www.ximalaya.com/album/{id}` | Album feed |
 
+### Write.as
+
+Discovers RSS feeds for Write.as blogs, including tag feeds.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `write.as/{user}` | Blog feed |
+| `write.as/{user}/tag:{tag}` | Tag feed + blog |
+
 ## Basic Usage
 
 ```typescript
@@ -484,10 +493,10 @@ import {
   deviantartHandler,
   devtoHandler,
   doubanHandler,
-  goodreadsHandler,
-  githubGistHandler,
   githubHandler,
+  githubGistHandler,
   gitlabHandler,
+  goodreadsHandler,
   hashnodeHandler,
   hatenablogHandler,
   itchioHandler,
@@ -509,6 +518,7 @@ import {
   vimeoHandler,
   wordpressHandler,
   wpengineHandler,
+  writeasHandler,
   ximalayaHandler,
   youtubeHandler,
 } from 'feedscout/platform'
