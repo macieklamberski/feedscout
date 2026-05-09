@@ -224,6 +224,7 @@
     "hearthis:tracks": "Tracks",
     "hey-world:blog": "Blog",
     "insanejournal:posts-rss": "Posts (RSS)",
-    "insanejournal:posts-atom": "Posts (Atom)"
+    "insanejournal:posts-atom": "Posts (Atom)",
+    "libsyn:podcast": "Podcast"
   }
 }

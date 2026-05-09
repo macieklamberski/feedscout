@@ -42,6 +42,7 @@ import { itchioHandler } from './platform/handlers/itchio.js'
 import { kickstarterHandler } from './platform/handlers/kickstarter.js'
 import { lemmyHandler } from './platform/handlers/lemmy.js'
 import { letterboxdHandler } from './platform/handlers/letterboxd.js'
+import { libsynHandler } from './platform/handlers/libsyn.js'
 import { listedHandler } from './platform/handlers/listed.js'
 import { lobstersHandler } from './platform/handlers/lobsters.js'
 import { mastodonHandler } from './platform/handlers/mastodon.js'
@@ -217,6 +218,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     kickstarterHandler,
     lemmyHandler,
     letterboxdHandler,
+    libsynHandler,
     listedHandler,
     lobstersHandler,
     mastodonHandler,

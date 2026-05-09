@@ -696,6 +696,14 @@ Discovers RSS and Atom feeds for InsaneJournal journals.
 |-------------|-----------------|
 | `*.insanejournal.com` | Posts feed (RSS + Atom) |
 
+### Libsyn
+
+Discovers RSS feeds for Libsyn-hosted podcasts.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `*.libsyn.com` | Podcast feed |
+
 ## Basic Usage
 
 ```typescript
@@ -780,6 +788,7 @@ import {
   itchioHandler,
   kickstarterHandler,
   letterboxdHandler,
+  libsynHandler,
   listedHandler,
   lobstersHandler,
   mastodonHandler,
