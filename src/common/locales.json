@@ -163,6 +163,8 @@
     "lemmy:user": "User",
     "lemmy:all": "All",
     "lemmy:local": "Local",
-    "apple-podcasts:podcast": "Podcast"
+    "apple-podcasts:podcast": "Podcast",
+    "fireside:podcast-rss": "Podcast (RSS)",
+    "fireside:podcast-json": "Podcast (JSON)"
   }
 }
