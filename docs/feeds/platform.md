@@ -428,6 +428,14 @@ Discovers RSS feeds for Ximalaya podcast albums.
 |-------------|-----------------|
 | `www.ximalaya.com/album/{id}` | Album feed |
 
+### Dreamwidth
+
+Discovers RSS and Atom feeds for Dreamwidth blogs.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `*.dreamwidth.org` | Posts feed (RSS + Atom) |
+
 ## Basic Usage
 
 ```typescript
@@ -484,10 +492,11 @@ import {
   deviantartHandler,
   devtoHandler,
   doubanHandler,
-  goodreadsHandler,
-  githubGistHandler,
+  dreamwidthHandler,
   githubHandler,
+  githubGistHandler,
   gitlabHandler,
+  goodreadsHandler,
   hashnodeHandler,
   hatenablogHandler,
   itchioHandler,
