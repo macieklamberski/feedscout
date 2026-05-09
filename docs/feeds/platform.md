@@ -602,6 +602,14 @@ Discovers RSS feeds for Acast-hosted podcasts.
 |-------------|-----------------|
 | `shows.acast.com/{slug}` | Podcast feed (RSS) |
 
+### Ameba Blog
+
+Discovers RSS, Atom, and RDF feeds for Ameba Blog.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `ameblo.jp/{user}` | Posts feed (RSS + Atom + RDF) |
+
 ## Basic Usage
 
 ```typescript
@@ -649,6 +657,7 @@ Or import individual handlers:
 ```typescript
 import {
   acastHandler,
+  amebloHandler,
   applePodcastsHandler,
   artstationHandler,
   bearblogHandler,

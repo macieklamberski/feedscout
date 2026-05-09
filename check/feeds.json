@@ -1,5 +1,10 @@
 {
   "acast": ["https://feeds.acast.com/public/shows/my-dad-wrote-a-porno"],
+  "ameblo": [
+    "https://ameblo.jp/shibuya/rss20.xml",
+    "https://ameblo.jp/shibuya/atom.xml",
+    "https://rssblog.ameba.jp/shibuya/rss.html"
+  ],
   "bearblog": ["https://herman.bearblog.dev/feed/", "https://herman.bearblog.dev/feed/?type=rss"],
   "artstation": [
     "https://www.artstation.com/rossdraws.rss",
