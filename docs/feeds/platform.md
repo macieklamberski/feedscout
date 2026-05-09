@@ -775,6 +775,14 @@ Discovers Atom feeds for Pixelfed user profiles. Detected by the `pixelfed` gene
 |-------------|-----------------|
 | `{instance}/{user}` or `{instance}/users/{user}` | Posts feed (Atom) |
 
+### Pleroma
+
+Discovers Atom feeds for Pleroma (and Akkoma) user profiles. Detected by Pleroma-specific API endpoint references in HTML.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `{instance}/users/{user}` | Posts feed (Atom) |
+
 ## Basic Usage
 
 ```typescript
@@ -878,6 +886,7 @@ import {
   paragraphHandler,
   pikaHandler,
   pixelfedHandler,
+  pleromaHandler,
   producthuntHandler,
   proseHandler,
   redditHandler,
