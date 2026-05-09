@@ -428,6 +428,13 @@ Discovers RSS feeds for Ximalaya podcast albums.
 |-------------|-----------------|
 | `www.ximalaya.com/album/{id}` | Album feed |
 
+### Prose.sh
+
+Discovers Atom feeds for Prose.sh blogs.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `*.prose.sh` | Blog feed |
 ### Pagecord
 
 Discovers RSS feeds for Pagecord blogs.
@@ -662,6 +669,7 @@ import {
   odyseeHandler,
   paragraphHandler,
   producthuntHandler,
+  proseHandler,
   redditHandler,
   soundcloudHandler,
   sourceforgeHandler,
