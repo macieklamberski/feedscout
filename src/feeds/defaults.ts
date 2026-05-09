@@ -16,6 +16,7 @@ import { dailymotionHandler } from './platform/handlers/dailymotion.js'
 import { deviantartHandler } from './platform/handlers/deviantart.js'
 import { devtoHandler } from './platform/handlers/devto.js'
 import { doubanHandler } from './platform/handlers/douban.js'
+import { dreamwidthHandler } from './platform/handlers/dreamwidth.js'
 import { githubHandler } from './platform/handlers/github.js'
 import { githubGistHandler } from './platform/handlers/githubGist.js'
 import { gitlabHandler } from './platform/handlers/gitlab.js'
@@ -170,6 +171,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     deviantartHandler,
     devtoHandler,
     doubanHandler,
+    dreamwidthHandler,
     githubHandler,
     githubGistHandler,
     gitlabHandler,

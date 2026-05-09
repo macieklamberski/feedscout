@@ -47,6 +47,10 @@
     "https://backend.deviantart.com/rss.xml?q=journal:yuumei"
   ],
   "devto": ["https://dev.to/feed/ben", "https://dev.to/feed/tag/javascript"],
+  "dreamwidth": [
+    "https://dw-news.dreamwidth.org/data/rss",
+    "https://dw-news.dreamwidth.org/data/atom"
+  ],
   "gitea": [
     "https://gitea.com/gitea.rss",
     "https://gitea.com/gitea/go-sdk.rss",
