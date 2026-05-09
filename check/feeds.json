@@ -284,6 +284,7 @@
     "https://adam.weblog.lol/atom.xml",
     "https://adam.weblog.lol/feed.json"
   ],
+  "weebly": ["https://ukiyaseed.weebly.com/1/feed"],
   "wordpress": [
     "https://wordpress.org/news/feed/",
     "https://wordpress.org/news/?feed=rss",

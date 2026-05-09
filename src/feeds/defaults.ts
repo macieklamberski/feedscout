@@ -86,6 +86,7 @@ import { v2exHandler } from './platform/handlers/v2ex.js'
 import { velogHandler } from './platform/handlers/velog.js'
 import { vimeoHandler } from './platform/handlers/vimeo.js'
 import { weblogLolHandler } from './platform/handlers/weblogLol.js'
+import { weeblyHandler } from './platform/handlers/weebly.js'
 import { wordpressHandler } from './platform/handlers/wordpress.js'
 import { wpengineHandler } from './platform/handlers/wpengine.js'
 import { writeasHandler } from './platform/handlers/writeas.js'
@@ -280,6 +281,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     velogHandler,
     vimeoHandler,
     weblogLolHandler,
+    weeblyHandler,
     wordpressHandler,
     wpengineHandler,
     writeasHandler,

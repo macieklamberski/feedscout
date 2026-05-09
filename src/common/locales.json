@@ -264,6 +264,7 @@
     "tildes:group-atom": "Group (Atom)",
     "weblog-lol:posts-rss": "Posts (RSS)",
     "weblog-lol:posts-atom": "Posts (Atom)",
-    "weblog-lol:posts-json": "Posts (JSON)"
+    "weblog-lol:posts-json": "Posts (JSON)",
+    "weebly:blog": "Blog"
   }
 }

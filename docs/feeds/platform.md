@@ -859,6 +859,15 @@ Discovers RSS, Atom, and JSON feeds for weblog.lol blogs.
 |-------------|-----------------|
 | `*.weblog.lol` | Posts feed (RSS + Atom + JSON) |
 
+### Weebly
+
+Discovers RSS feeds for Weebly-hosted blogs.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `*.weebly.com` | Blog feed |
+| `*.weebly.com/{slug}` | Blog feed (custom page slug) |
+
 ## Basic Usage
 
 ```typescript
@@ -986,6 +995,7 @@ import {
   velogHandler,
   vimeoHandler,
   weblogLolHandler,
+  weeblyHandler,
   wordpressHandler,
   wpengineHandler,
   writeasHandler,
