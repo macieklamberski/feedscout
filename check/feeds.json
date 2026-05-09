@@ -1,4 +1,10 @@
 {
+  "bearblog": ["https://herman.bearblog.dev/feed/", "https://herman.bearblog.dev/feed/?type=rss"],
+  "artstation": [
+    "https://www.artstation.com/rossdraws.rss",
+    "https://www.artstation.com/artwork.rss",
+    "https://www.artstation.com/artwork.rss?sorting=trending"
+  ],
   "behance": [
     "https://www.behance.net/feeds/user?username=matejlatin",
     "https://www.behance.net/feeds/user?username=matejlatin&content=appreciated",
@@ -15,6 +21,7 @@
     "https://security.googleblog.com/feeds/1469360228826887140/comments/default?alt=rss"
   ],
   "bluesky": ["https://bsky.app/profile/jay.bsky.team/rss"],
+  "buttondown": ["https://buttondown.com/jmduke/rss"],
   "codeberg": [
     "https://codeberg.org/forgejo.atom",
     "https://codeberg.org/forgejo.rss",
@@ -41,6 +48,11 @@
   ],
   "devto": ["https://dev.to/feed/ben", "https://dev.to/feed/tag/javascript"],
   "fireside": ["https://feeds.fireside.fm/office/rss", "https://office.fireside.fm/json"],
+  "exblog": ["https://petitcc.exblog.jp/index.xml", "https://petitcc.exblog.jp/atom.xml"],
+  "dreamwidth": [
+    "https://dw-news.dreamwidth.org/data/rss",
+    "https://dw-news.dreamwidth.org/data/atom"
+  ],
   "gitea": [
     "https://gitea.com/gitea.rss",
     "https://gitea.com/gitea/go-sdk.rss",
@@ -78,6 +90,7 @@
     "https://www.goodreads.com/review/list_rss/1",
     "https://www.goodreads.com/review/list_rss/1?shelf=read"
   ],
+  "hackernews": ["https://news.ycombinator.com/rss", "https://news.ycombinator.com/showrss"],
   "kickstarter": [
     "https://www.kickstarter.com/projects/elanlee/exploding-kittens/posts.atom",
     "https://www.kickstarter.com/projects/feed.atom"
@@ -109,6 +122,12 @@
     "https://mastodon.social/@Mastodon.rss",
     "https://mastodon.social/tags/mastodon.rss",
     "https://mastodon.social/@Gargron/tagged/mastodev.rss"
+  ],
+  "odysee": ["https://odysee.com/$/rss/@Odysee:8"],
+  "myanimelist": [
+    "https://myanimelist.net/rss.php?type=rw&u=Xinil",
+    "https://myanimelist.net/rss.php?type=rm&u=Xinil",
+    "https://myanimelist.net/rss.php?type=rrm&u=Xinil"
   ],
   "pinterest": ["https://www.pinterest.com/pinterest/feed.rss"],
   "producthunt": [
@@ -164,6 +183,8 @@
     "https://newsletter.pragmaticengineer.com/feed",
     "https://garymarcus.substack.com/feed"
   ],
+  "transistor": ["https://feeds.transistor.fm/build-your-saas"],
+  "tistory": ["https://notice.tistory.com/rss"],
   "tumblr": ["https://staff.tumblr.com/rss", "https://staff.tumblr.com/tagged/updates/rss"],
   "vimeo": [
     "https://vimeo.com/casey/videos/rss",
@@ -354,6 +375,7 @@
     "https://www.v2ex.com/feed/member/livid.xml",
     "https://www.v2ex.com/feed/tab/tech.xml"
   ],
+  "velog": ["https://v2.velog.io/rss/velopert"],
   "ximalaya": ["https://www.ximalaya.com/album/203355.xml"],
   "youtube": [
     "https://www.youtube.com/feeds/videos.xml?channel_id=UCXuqSBlHAE6Xw-yeJA0Tunw",
