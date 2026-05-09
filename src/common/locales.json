@@ -216,6 +216,7 @@
     "discourse:latest": "Latest",
     "discourse:category": "Category",
     "discourse:topic": "Topic",
-    "discourse:activity": "Activity"
+    "discourse:activity": "Activity",
+    "friendica:posts": "Posts"
   }
 }

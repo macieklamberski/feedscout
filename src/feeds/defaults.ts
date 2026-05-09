@@ -26,6 +26,7 @@ import { doubanHandler } from './platform/handlers/douban.js'
 import { dreamwidthHandler } from './platform/handlers/dreamwidth.js'
 import { exblogHandler } from './platform/handlers/exblog.js'
 import { firesideHandler } from './platform/handlers/fireside.js'
+import { friendicaHandler } from './platform/handlers/friendica.js'
 import { githubHandler } from './platform/handlers/github.js'
 import { githubGistHandler } from './platform/handlers/githubGist.js'
 import { gitlabHandler } from './platform/handlers/gitlab.js'
@@ -196,6 +197,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     dreamwidthHandler,
     exblogHandler,
     firesideHandler,
+    friendicaHandler,
     githubHandler,
     githubGistHandler,
     gitlabHandler,

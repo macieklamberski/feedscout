@@ -654,6 +654,14 @@ Discovers RSS feeds for Discourse forums. Detected by the `Discourse` generator 
 | `{instance}/t/{slug}/{id}` | Topic feed (RSS) |
 | `{instance}/` (or any other path) | Latest topics feed (RSS) |
 
+### Friendica
+
+Discovers Atom feeds for Friendica user profiles. Detected by the `Friendica` generator meta tag.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `{instance}/profile/{user}` | Posts feed (Atom) |
+
 ## Basic Usage
 
 ```typescript
@@ -723,6 +731,7 @@ import {
   dreamwidthHandler,
   exblogHandler,
   firesideHandler,
+  friendicaHandler,
   githubHandler,
   githubGistHandler,
   gitlabHandler,
