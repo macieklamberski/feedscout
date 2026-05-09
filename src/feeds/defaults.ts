@@ -17,6 +17,7 @@ import { githubHandler } from './platform/handlers/github.js'
 import { githubGistHandler } from './platform/handlers/githubGist.js'
 import { gitlabHandler } from './platform/handlers/gitlab.js'
 import { goodreadsHandler } from './platform/handlers/goodreads.js'
+import { hackernewsHandler } from './platform/handlers/hackernews.js'
 import { hashnodeHandler } from './platform/handlers/hashnode.js'
 import { hatenablogHandler } from './platform/handlers/hatenablog.js'
 import { itchioHandler } from './platform/handlers/itchio.js'
@@ -152,18 +153,19 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     behanceHandler,
     blogspotHandler,
     blueskyHandler,
-    csdnHandler,
     codebergHandler,
-    doubanHandler,
-    deviantartHandler,
+    csdnHandler,
     dailymotionHandler,
+    deviantartHandler,
     devtoHandler,
-    goodreadsHandler,
+    doubanHandler,
     githubHandler,
-    hashnodeHandler,
-    hatenablogHandler,
     githubGistHandler,
     gitlabHandler,
+    goodreadsHandler,
+    hackernewsHandler,
+    hashnodeHandler,
+    hatenablogHandler,
     itchioHandler,
     kickstarterHandler,
     lemmyHandler,

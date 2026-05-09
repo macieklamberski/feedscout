@@ -428,6 +428,15 @@ Discovers RSS feeds for Ximalaya podcast albums.
 |-------------|-----------------|
 | `www.ximalaya.com/album/{id}` | Album feed |
 
+### Hacker News
+
+Discovers RSS feeds for Hacker News.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `news.ycombinator.com` | Front page feed (RSS) |
+| `news.ycombinator.com/show` | Show HN feed (RSS) |
+
 ## Basic Usage
 
 ```typescript
@@ -484,10 +493,11 @@ import {
   deviantartHandler,
   devtoHandler,
   doubanHandler,
-  goodreadsHandler,
-  githubGistHandler,
   githubHandler,
+  githubGistHandler,
   gitlabHandler,
+  goodreadsHandler,
+  hackernewsHandler,
   hashnodeHandler,
   hatenablogHandler,
   itchioHandler,
