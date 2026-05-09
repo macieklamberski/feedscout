@@ -7,6 +7,7 @@ import { applePodcastsHandler } from './platform/handlers/applePodcasts.js'
 import { behanceHandler } from './platform/handlers/behance.js'
 import { blogspotHandler } from './platform/handlers/blogspot.js'
 import { blueskyHandler } from './platform/handlers/bluesky.js'
+import { buttondownHandler } from './platform/handlers/buttondown.js'
 import { codebergHandler } from './platform/handlers/codeberg.js'
 import { csdnHandler } from './platform/handlers/csdn.js'
 import { dailymotionHandler } from './platform/handlers/dailymotion.js'
@@ -152,18 +153,19 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     behanceHandler,
     blogspotHandler,
     blueskyHandler,
-    csdnHandler,
+    buttondownHandler,
     codebergHandler,
-    doubanHandler,
-    deviantartHandler,
+    csdnHandler,
     dailymotionHandler,
+    deviantartHandler,
     devtoHandler,
-    goodreadsHandler,
+    doubanHandler,
     githubHandler,
-    hashnodeHandler,
-    hatenablogHandler,
     githubGistHandler,
     gitlabHandler,
+    goodreadsHandler,
+    hashnodeHandler,
+    hatenablogHandler,
     itchioHandler,
     kickstarterHandler,
     lemmyHandler,

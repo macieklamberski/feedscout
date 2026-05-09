@@ -428,6 +428,14 @@ Discovers RSS feeds for Ximalaya podcast albums.
 |-------------|-----------------|
 | `www.ximalaya.com/album/{id}` | Album feed |
 
+### Buttondown
+
+Discovers RSS feeds for Buttondown newsletters.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `buttondown.com/{user}` | Newsletter feed |
+
 ## Basic Usage
 
 ```typescript
@@ -478,16 +486,17 @@ import {
   behanceHandler,
   blogspotHandler,
   blueskyHandler,
+  buttondownHandler,
   codebergHandler,
   csdnHandler,
   dailymotionHandler,
   deviantartHandler,
   devtoHandler,
   doubanHandler,
-  goodreadsHandler,
-  githubGistHandler,
   githubHandler,
+  githubGistHandler,
   gitlabHandler,
+  goodreadsHandler,
   hashnodeHandler,
   hatenablogHandler,
   itchioHandler,

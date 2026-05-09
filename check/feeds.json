@@ -15,6 +15,7 @@
     "https://security.googleblog.com/feeds/1469360228826887140/comments/default?alt=rss"
   ],
   "bluesky": ["https://bsky.app/profile/jay.bsky.team/rss"],
+  "buttondown": ["https://buttondown.com/jmduke/rss"],
   "codeberg": [
     "https://codeberg.org/forgejo.atom",
     "https://codeberg.org/forgejo.rss",
