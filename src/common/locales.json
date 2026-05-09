@@ -127,6 +127,7 @@
     "goodreads:shelf": "Shelf",
     "sourceforge:activity": "Recent activity",
     "sourceforge:files": "File releases",
+    "velog:posts": "Posts",
     "vimeo:videos": "Videos",
     "vimeo:likes": "Likes",
     "vimeo:channel": "Channel",
@@ -164,6 +165,22 @@
     "lemmy:all": "All",
     "lemmy:local": "Local",
     "apple-podcasts:podcast": "Podcast",
-    "buttondown:newsletter": "Newsletter"
+    "buttondown:newsletter": "Newsletter",
+    "bearblog:posts-atom": "Posts (Atom)",
+    "bearblog:posts-rss": "Posts (RSS)",
+    "bearblog:tag-atom": "Tag (Atom)",
+    "bearblog:tag-rss": "Tag (RSS)",
+    "transistor:podcast": "Podcast",
+    "odysee:videos": "Videos",
+    "myanimelist:anime": "Anime list",
+    "myanimelist:manga": "Manga list",
+    "myanimelist:recently-watched": "Recently watched",
+    "myanimelist:recently-read": "Recently read",
+    "hackernews:front": "Front page",
+    "hackernews:show": "Show HN",
+    "tistory:blog": "Blog",
+    "artstation:portfolio": "Portfolio",
+    "artstation:artwork": "Artwork",
+    "artstation:artwork-trending": "Artwork (Trending)"
   }
 }
