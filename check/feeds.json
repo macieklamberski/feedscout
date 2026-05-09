@@ -199,6 +199,7 @@
   "pixelfed": ["https://pixelfed.social/users/dansup.atom"],
   "pleroma": ["https://lain.com/users/lain/feed.atom"],
   "podbean": ["https://feed.podbean.com/podcast/feed.xml"],
+  "podigee": ["https://cui-bono.podigee.io/feed/mp3"],
   "producthunt": [
     "https://www.producthunt.com/feed?topic=artificial-intelligence",
     "https://www.producthunt.com/feed?category=ai",

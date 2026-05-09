@@ -791,6 +791,14 @@ Discovers RSS feeds for Podbean-hosted podcasts.
 |-------------|-----------------|
 | `*.podbean.com` | Podcast feed |
 
+### Podigee
+
+Discovers RSS feeds for Podigee-hosted podcasts.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `*.podigee.io` | Podcast feed (RSS) |
+
 ## Basic Usage
 
 ```typescript
@@ -896,6 +904,7 @@ import {
   pixelfedHandler,
   pleromaHandler,
   podbeanHandler,
+  podigeeHandler,
   producthuntHandler,
   proseHandler,
   redditHandler,

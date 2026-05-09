@@ -247,6 +247,7 @@
     "pika:tag-rss": "Tag (RSS)",
     "pixelfed:posts": "Posts",
     "pleroma:posts": "Posts",
-    "podbean:podcast": "Podcast"
+    "podbean:podcast": "Podcast",
+    "podigee:podcast": "Podcast"
   }
 }
