@@ -851,6 +851,14 @@ Discovers RSS and Atom feeds for Tildes homepage and groups.
 | `tildes.net` | Topics feed (RSS + Atom) |
 | `tildes.net/~{group}` | Group feed (RSS + Atom) |
 
+### weblog.lol
+
+Discovers RSS, Atom, and JSON feeds for weblog.lol blogs.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `*.weblog.lol` | Posts feed (RSS + Atom + JSON) |
+
 ## Basic Usage
 
 ```typescript
@@ -977,6 +985,7 @@ import {
   v2exHandler,
   velogHandler,
   vimeoHandler,
+  weblogLolHandler,
   wordpressHandler,
   wpengineHandler,
   writeasHandler,

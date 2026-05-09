@@ -279,6 +279,11 @@
     "https://vimeo.com/channels/staffpicks/videos/rss",
     "https://vimeo.com/groups/animation/videos/rss"
   ],
+  "weblogLol": [
+    "https://adam.weblog.lol/rss.xml",
+    "https://adam.weblog.lol/atom.xml",
+    "https://adam.weblog.lol/feed.json"
+  ],
   "wordpress": [
     "https://wordpress.org/news/feed/",
     "https://wordpress.org/news/?feed=rss",

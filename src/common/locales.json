@@ -261,6 +261,9 @@
     "tildes:topics-rss": "Topics (RSS)",
     "tildes:topics-atom": "Topics (Atom)",
     "tildes:group-rss": "Group (RSS)",
-    "tildes:group-atom": "Group (Atom)"
+    "tildes:group-atom": "Group (Atom)",
+    "weblog-lol:posts-rss": "Posts (RSS)",
+    "weblog-lol:posts-atom": "Posts (Atom)",
+    "weblog-lol:posts-json": "Posts (JSON)"
   }
 }
