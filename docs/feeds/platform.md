@@ -436,6 +436,14 @@ Discovers RSS feeds for Tistory blogs.
 |-------------|-----------------|
 | `*.tistory.com` | Blog feed |
 
+### Velog
+
+Discovers RSS feeds for Velog users.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `velog.io/@{user}` | Posts feed |
+
 ## Basic Usage
 
 ```typescript
@@ -515,6 +523,7 @@ import {
   tistoryHandler,
   tumblrHandler,
   v2exHandler,
+  velogHandler,
   vimeoHandler,
   wordpressHandler,
   wpengineHandler,
