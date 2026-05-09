@@ -163,6 +163,10 @@
     "lemmy:user": "User",
     "lemmy:all": "All",
     "lemmy:local": "Local",
-    "apple-podcasts:podcast": "Podcast"
+    "apple-podcasts:podcast": "Podcast",
+    "myanimelist:anime": "Anime list",
+    "myanimelist:manga": "Manga list",
+    "myanimelist:recently-watched": "Recently watched",
+    "myanimelist:recently-read": "Recently read"
   }
 }

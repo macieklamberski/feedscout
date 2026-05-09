@@ -109,6 +109,11 @@
     "https://mastodon.social/tags/mastodon.rss",
     "https://mastodon.social/@Gargron/tagged/mastodev.rss"
   ],
+  "myanimelist": [
+    "https://myanimelist.net/rss.php?type=rw&u=Xinil",
+    "https://myanimelist.net/rss.php?type=rm&u=Xinil",
+    "https://myanimelist.net/rss.php?type=rrm&u=Xinil"
+  ],
   "pinterest": ["https://www.pinterest.com/pinterest/feed.rss"],
   "producthunt": [
     "https://www.producthunt.com/feed?topic=artificial-intelligence",
