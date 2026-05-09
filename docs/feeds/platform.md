@@ -428,6 +428,17 @@ Discovers RSS feeds for Ximalaya podcast albums.
 |-------------|-----------------|
 | `www.ximalaya.com/album/{id}` | Album feed |
 
+### Nebula
+
+Discovers RSS feeds for Nebula channels, the global video feed, and category feeds, each with a Plus-only variant.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `nebula.tv/{channel}` | Videos + Videos (Plus) |
+| `nebula.tv` | All videos + All videos (Plus) |
+| `nebula.tv/videos` | All videos + All videos (Plus) |
+| `nebula.tv/videos?category={slug}` | Category + Category (Plus) + above |
+
 ## Basic Usage
 
 ```typescript
@@ -484,10 +495,10 @@ import {
   deviantartHandler,
   devtoHandler,
   doubanHandler,
-  goodreadsHandler,
-  githubGistHandler,
   githubHandler,
+  githubGistHandler,
   gitlabHandler,
+  goodreadsHandler,
   hashnodeHandler,
   hatenablogHandler,
   itchioHandler,
@@ -496,6 +507,7 @@ import {
   lobstersHandler,
   mastodonHandler,
   mediumHandler,
+  nebulaHandler,
   paragraphHandler,
   producthuntHandler,
   redditHandler,

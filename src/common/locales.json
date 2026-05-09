@@ -163,6 +163,12 @@
     "lemmy:user": "User",
     "lemmy:all": "All",
     "lemmy:local": "Local",
-    "apple-podcasts:podcast": "Podcast"
+    "apple-podcasts:podcast": "Podcast",
+    "nebula:videos": "Videos",
+    "nebula:videos-plus": "Videos (Plus)",
+    "nebula:videos-all": "All Videos",
+    "nebula:videos-all-plus": "All Videos (Plus)",
+    "nebula:category": "Category",
+    "nebula:category-plus": "Category (Plus)"
   }
 }

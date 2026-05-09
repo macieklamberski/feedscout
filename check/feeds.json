@@ -109,6 +109,12 @@
     "https://mastodon.social/tags/mastodon.rss",
     "https://mastodon.social/@Gargron/tagged/mastodev.rss"
   ],
+  "nebula": [
+    "https://rss.nebula.app/video/channels/realengineering.rss",
+    "https://rss.nebula.app/video/channels/realengineering.rss?plus=true",
+    "https://rss.nebula.app/video.rss",
+    "https://rss.nebula.app/video/categories/technology.rss"
+  ],
   "pinterest": ["https://www.pinterest.com/pinterest/feed.rss"],
   "producthunt": [
     "https://www.producthunt.com/feed?topic=artificial-intelligence",
