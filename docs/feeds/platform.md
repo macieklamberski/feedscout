@@ -428,6 +428,86 @@ Discovers RSS feeds for Ximalaya podcast albums.
 |-------------|-----------------|
 | `www.ximalaya.com/album/{id}` | Album feed |
 
+### ArtStation
+
+Discovers RSS feeds for ArtStation portfolios and the global artwork feed.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `artstation.com/{user}` | Portfolio feed |
+| `{user}.artstation.com` | Portfolio feed |
+| `artstation.com/artwork` | Artwork + Artwork (Trending) |
+
+### Bear Blog
+
+Discovers Atom and RSS feeds for Bear Blog, including tag-filtered feeds.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `*.bearblog.dev` | Posts feed (Atom + RSS) |
+| `*.bearblog.dev/?q={tag}` | Tag feed (Atom + RSS) + posts |
+
+### Buttondown
+
+Discovers RSS feeds for Buttondown newsletters.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `buttondown.com/{user}` | Newsletter feed |
+
+### Dreamwidth
+
+Discovers RSS and Atom feeds for Dreamwidth blogs.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `*.dreamwidth.org` | Posts feed (RSS + Atom) |
+
+### Excite Blog
+
+Discovers RSS and Atom feeds for Excite Blog, including category feeds.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `*.exblog.jp` | Posts feed (RSS + Atom) |
+| `*.exblog.jp/i{N}` | Category feed (RSS + Atom) + posts |
+
+### Fireside.fm
+
+Discovers RSS and JSON feeds for Fireside.fm-hosted podcasts.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `*.fireside.fm` | Podcast feed (RSS + JSON) |
+
+### Hacker News
+
+Discovers RSS feeds for Hacker News.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `news.ycombinator.com` | Front page feed (RSS) |
+| `news.ycombinator.com/show` | Show HN feed (RSS) |
+
+### Listed
+
+Discovers RSS feeds for Listed (Standard Notes) blogs.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `listed.to/@{user}` | Blog feed |
+
+### MyAnimeList
+
+Discovers RSS feeds for MyAnimeList user lists.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `myanimelist.net/profile/{user}` | Anime list, Manga list, Recently watched, Recently read (RSS) |
+| `myanimelist.net/animelist/{user}` | (same as above) |
+| `myanimelist.net/mangalist/{user}` | (same as above) |
+| `myanimelist.net/history/{user}` | (same as above) |
+
 ### Nebula
 
 Discovers RSS feeds for Nebula channels, the global video feed, and category feeds, each with a Plus-only variant.
@@ -438,6 +518,38 @@ Discovers RSS feeds for Nebula channels, the global video feed, and category fee
 | `nebula.tv` | All videos + All videos (Plus) |
 | `nebula.tv/videos` | All videos + All videos (Plus) |
 | `nebula.tv/videos?category={slug}` | Category + Category (Plus) + above |
+
+### Odysee
+
+Discovers RSS feeds for Odysee channels.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `odysee.com/@{channel}:{id}` | Videos feed |
+
+### Tistory
+
+Discovers RSS feeds for Tistory blogs.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `*.tistory.com` | Blog feed |
+
+### Transistor
+
+Discovers RSS feeds for Transistor-hosted podcasts.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `*.transistor.fm` | Podcast feed |
+
+### Velog
+
+Discovers RSS feeds for Velog users.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `velog.io/@{user}` | Posts feed |
 
 ## Basic Usage
 
@@ -486,28 +598,38 @@ Or import individual handlers:
 ```typescript
 import {
   applePodcastsHandler,
+  bearblogHandler,
+  artstationHandler,
   behanceHandler,
   blogspotHandler,
   blueskyHandler,
+  buttondownHandler,
   codebergHandler,
   csdnHandler,
   dailymotionHandler,
   deviantartHandler,
   devtoHandler,
   doubanHandler,
+  dreamwidthHandler,
+  exblogHandler,
+  firesideHandler,
   githubHandler,
   githubGistHandler,
   gitlabHandler,
   goodreadsHandler,
+  hackernewsHandler,
   hashnodeHandler,
   hatenablogHandler,
   itchioHandler,
   kickstarterHandler,
   letterboxdHandler,
+  listedHandler,
   lobstersHandler,
   mastodonHandler,
   mediumHandler,
+  myanimelistHandler,
   nebulaHandler,
+  odyseeHandler,
   paragraphHandler,
   producthuntHandler,
   redditHandler,
@@ -516,8 +638,11 @@ import {
   stackExchangeHandler,
   steamHandler,
   substackHandler,
+  transistorHandler,
+  tistoryHandler,
   tumblrHandler,
   v2exHandler,
+  velogHandler,
   vimeoHandler,
   wordpressHandler,
   wpengineHandler,
