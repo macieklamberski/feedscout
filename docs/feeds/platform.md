@@ -428,6 +428,14 @@ Discovers RSS feeds for Ximalaya podcast albums.
 |-------------|-----------------|
 | `www.ximalaya.com/album/{id}` | Album feed |
 
+### Pagecord
+
+Discovers RSS feeds for Pagecord blogs.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `*.pagecord.com` | Blog feed |
+
 ## Basic Usage
 
 ```typescript
@@ -484,10 +492,10 @@ import {
   deviantartHandler,
   devtoHandler,
   doubanHandler,
-  goodreadsHandler,
-  githubGistHandler,
   githubHandler,
+  githubGistHandler,
   gitlabHandler,
+  goodreadsHandler,
   hashnodeHandler,
   hatenablogHandler,
   itchioHandler,
@@ -496,6 +504,7 @@ import {
   lobstersHandler,
   mastodonHandler,
   mediumHandler,
+  pagecordHandler,
   paragraphHandler,
   producthuntHandler,
   redditHandler,

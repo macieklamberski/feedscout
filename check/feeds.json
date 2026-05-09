@@ -109,6 +109,7 @@
     "https://mastodon.social/tags/mastodon.rss",
     "https://mastodon.social/@Gargron/tagged/mastodev.rss"
   ],
+  "pagecord": ["https://blog.pagecord.com/feed.xml"],
   "pinterest": ["https://www.pinterest.com/pinterest/feed.rss"],
   "producthunt": [
     "https://www.producthunt.com/feed?topic=artificial-intelligence",
