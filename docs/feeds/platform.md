@@ -594,6 +594,291 @@ Discovers RSS feeds for Velog users.
 |-------------|-----------------|
 | `velog.io/@{user}` | Posts feed |
 
+### Acast
+
+Discovers RSS feeds for Acast-hosted podcasts.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `shows.acast.com/{slug}` | Podcast feed (RSS) |
+
+### Ameba Blog
+
+Discovers RSS, Atom, and RDF feeds for Ameba Blog.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `ameblo.jp/{user}` | Posts feed (RSS + Atom + RDF) |
+
+### Are.na
+
+Discovers RSS feeds for Are.na user profiles and channels.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `are.na/{user}` | User profile feed |
+| `are.na/{user}/{channel}` | Channel feed |
+
+### Audioboom
+
+Discovers RSS and JSON feeds for Audioboom channels.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `audioboom.com/channels/{id}` | Podcast feed (RSS) |
+
+### BookWyrm
+
+Discovers RSS feeds for BookWyrm user reviews. Detected by the `BookWyrm` generator meta tag.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `{instance}/user/{user}` | Reviews feed (RSS) |
+
+### Buzzsprout
+
+Discovers RSS feeds for Buzzsprout-hosted podcasts.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `buzzsprout.com/{id}` | Podcast feed |
+
+### Discourse
+
+Discovers RSS feeds for Discourse forums. Detected by the `Discourse` generator meta tag.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `{instance}/u/{user}` | User activity feed (RSS) |
+| `{instance}/c/{slug}` | Category feed (RSS) |
+| `{instance}/t/{slug}/{id}` | Topic feed (RSS) |
+| `{instance}/` (or any other path) | Latest topics feed (RSS) |
+
+### Friendica
+
+Discovers Atom feeds for Friendica user profiles. Detected by the `Friendica` generator meta tag.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `{instance}/profile/{user}` | Posts feed (Atom) |
+
+### Ghost
+
+Discovers RSS feeds for Ghost-hosted blogs, including tag and author feeds.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `*.ghost.io` | Blog feed |
+| `*.ghost.io/tag/{slug}` | Tag feed + blog |
+| `*.ghost.io/author/{slug}` | Author feed + blog |
+
+### Hearthis.at
+
+Discovers RSS feeds for Hearthis.at user profiles.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `hearthis.at/{user}` | Tracks feed |
+
+### HEY World
+
+Discovers Atom feeds for HEY World blogs.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `world.hey.com/{user}` | Blog feed |
+
+### InsaneJournal
+
+Discovers RSS and Atom feeds for InsaneJournal journals.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `*.insanejournal.com` | Posts feed (RSS + Atom) |
+
+### Libsyn
+
+Discovers RSS feeds for Libsyn-hosted podcasts.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `*.libsyn.com` | Podcast feed |
+
+### LiveJournal
+
+Discovers RSS and Atom feeds for LiveJournal blogs.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `*.livejournal.com` | Posts feed (RSS + Atom) |
+
+### Mataroa
+
+Discovers RSS feeds for Mataroa blogs.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `*.mataroa.blog` | Blog feed |
+
+### Micro.blog
+
+Discovers RSS, JSON, and podcast feeds for Micro.blog-hosted blogs, including category, archive, photos, and replies feeds.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `*.micro.blog` | Posts (RSS + JSON) + podcast |
+| `*.micro.blog/categories/{slug}` | Category (RSS + JSON) + above |
+| `*.micro.blog/archive` | Archive feed + above |
+| `*.micro.blog/photos` | Photos feed + above |
+| `*.micro.blog/replies` | Replies feed + above |
+
+### Misskey
+
+Discovers Atom feeds for Misskey user profiles. Detected by the `Misskey` application-name meta tag.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `{instance}/@{user}` | Posts feed (Atom) |
+
+### Naver Blog
+
+Discovers RSS feeds for Naver Blog.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `blog.naver.com/{id}` | Blog feed |
+| `m.blog.naver.com/{id}` | Blog feed |
+
+### Observable
+
+Discovers RSS feeds for Observable user notebooks and collections.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `observablehq.com/@{user}` | Notebooks feed |
+| `observablehq.com/@{user}/collection/{slug}` | Collection feed |
+
+### Pika
+
+Discovers Atom and RSS feeds for Pika blogs, including tag feeds.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `*.pika.page` | Posts feed (Atom + RSS) |
+| `*.pika.page/tag/{tag}` | Tag feed (Atom + RSS) + posts |
+
+### Pixelfed
+
+Discovers Atom feeds for Pixelfed user profiles. Detected by the `pixelfed` generator meta tag.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `{instance}/{user}` or `{instance}/users/{user}` | Posts feed (Atom) |
+
+### Pleroma
+
+Discovers Atom feeds for Pleroma (and Akkoma) user profiles. Detected by Pleroma-specific API endpoint references in HTML.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `{instance}/users/{user}` | Posts feed (Atom) |
+
+### Podbean
+
+Discovers RSS feeds for Podbean-hosted podcasts.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `*.podbean.com` | Podcast feed |
+
+### Podigee
+
+Discovers RSS feeds for Podigee-hosted podcasts.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `*.podigee.io` | Podcast feed (RSS) |
+
+### Posthaven
+
+Discovers Atom feeds for Posthaven blogs.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `*.posthaven.com` | Posts feed (Atom) |
+
+### Qiita
+
+Discovers Atom feeds for Qiita users, tags, organizations, and popular items.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `qiita.com/{user}` | User posts feed |
+| `qiita.com/tags/{tag}` | Tag feed |
+| `qiita.com/organizations/{org}` | Organization feed |
+| `qiita.com/popular-items` | Popular items feed |
+
+### RSS.com
+
+Discovers RSS feeds for RSS.com-hosted podcasts.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `rss.com/podcasts/{slug}` | Podcast feed |
+
+### Seesaa Blog
+
+Discovers RSS 2.0 and RDF feeds for Seesaa Blog.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `*.seesaa.net` | Posts feed (RSS 2.0 + RDF) |
+
+### Spreaker
+
+Discovers RSS feeds for Spreaker-hosted podcasts.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `spreaker.com/podcast/{slug}--{id}` | Podcast feed |
+
+### Tildes
+
+Discovers RSS and Atom feeds for Tildes homepage and groups.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `tildes.net` | Topics feed (RSS + Atom) |
+| `tildes.net/~{group}` | Group feed (RSS + Atom) |
+
+### weblog.lol
+
+Discovers RSS, Atom, and JSON feeds for weblog.lol blogs.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `*.weblog.lol` | Posts feed (RSS + Atom + JSON) |
+
+### Weebly
+
+Discovers RSS feeds for Weebly-hosted blogs.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `*.weebly.com` | Blog feed |
+| `*.weebly.com/{slug}` | Blog feed (custom page slug) |
+
+### Zenn
+
+Discovers RSS feeds for Zenn users, topics, and publications.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `zenn.dev/{user}` | User posts feed |
+| `zenn.dev/topics/{topic}` | Topic feed |
+| `zenn.dev/p/{pub}` | Publication feed |
+| `zenn.dev/publications/{pub}` | Publication feed |
+
 ## Basic Usage
 
 ```typescript
@@ -640,22 +925,31 @@ Or import individual handlers:
 
 ```typescript
 import {
+  acastHandler,
+  amebloHandler,
   applePodcastsHandler,
-  bearblogHandler,
+  arenaHandler,
   artstationHandler,
+  audioboomHandler,
+  bearblogHandler,
   behanceHandler,
   blogspotHandler,
   blueskyHandler,
+  bookwyrmHandler,
   buttondownHandler,
+  buzzsproutHandler,
   codebergHandler,
   csdnHandler,
   dailymotionHandler,
   deviantartHandler,
   devtoHandler,
+  discourseHandler,
   doubanHandler,
   dreamwidthHandler,
   exblogHandler,
   firesideHandler,
+  friendicaHandler,
+  ghostHandler,
   githubHandler,
   githubGistHandler,
   gitlabHandler,
@@ -663,38 +957,62 @@ import {
   hackernewsHandler,
   hashnodeHandler,
   hatenablogHandler,
+  hearthisHandler,
+  heyWorldHandler,
+  insanejournalHandler,
   itchioHandler,
   kickstarterHandler,
   letterboxdHandler,
+  libsynHandler,
   listedHandler,
+  livejournalHandler,
   lobstersHandler,
   mastodonHandler,
+  mataroaHandler,
   mediumHandler,
-  pagecordHandler,
+  microblogHandler,
+  misskeyHandler,
   myanimelistHandler,
+  naverBlogHandler,
   nebulaHandler,
   noteHandler,
+  observableHandler,
   odyseeHandler,
+  pagecordHandler,
   paragraphHandler,
+  pikaHandler,
+  pixelfedHandler,
+  pleromaHandler,
+  podbeanHandler,
+  podigeeHandler,
+  posthavenHandler,
   producthuntHandler,
   proseHandler,
+  qiitaHandler,
   redditHandler,
+  rssComHandler,
+  seesaaHandler,
   soundcloudHandler,
   sourceforgeHandler,
+  spreakerHandler,
   stackExchangeHandler,
   steamHandler,
   substackHandler,
-  transistorHandler,
+  tildesHandler,
   tistoryHandler,
+  transistorHandler,
   tumblrHandler,
   v2exHandler,
   velogHandler,
   vimeoHandler,
+  weblogLolHandler,
+  weeblyHandler,
   wordpressHandler,
   wpengineHandler,
   writeasHandler,
   ximalayaHandler,
   youtubeHandler,
+  zennHandler,
 } from 'feedscout/platform'
 ```
 
