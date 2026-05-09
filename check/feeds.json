@@ -57,6 +57,11 @@
     "https://backend.deviantart.com/rss.xml?q=journal:yuumei"
   ],
   "devto": ["https://dev.to/feed/ben", "https://dev.to/feed/tag/javascript"],
+  "discourse": [
+    "https://users.rust-lang.org/latest.rss",
+    "https://users.rust-lang.org/c/help.rss",
+    "https://users.rust-lang.org/u/steveklabnik/activity.rss"
+  ],
   "fireside": ["https://feeds.fireside.fm/office/rss", "https://office.fireside.fm/json"],
   "exblog": ["https://petitcc.exblog.jp/index.xml", "https://petitcc.exblog.jp/atom.xml"],
   "dreamwidth": [

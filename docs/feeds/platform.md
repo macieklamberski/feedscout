@@ -643,6 +643,17 @@ Discovers RSS feeds for Buzzsprout-hosted podcasts.
 |-------------|-----------------|
 | `buzzsprout.com/{id}` | Podcast feed |
 
+### Discourse
+
+Discovers RSS feeds for Discourse forums. Detected by the `Discourse` generator meta tag.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `{instance}/u/{user}` | User activity feed (RSS) |
+| `{instance}/c/{slug}` | Category feed (RSS) |
+| `{instance}/t/{slug}/{id}` | Topic feed (RSS) |
+| `{instance}/` (or any other path) | Latest topics feed (RSS) |
+
 ## Basic Usage
 
 ```typescript
@@ -707,6 +718,7 @@ import {
   dailymotionHandler,
   deviantartHandler,
   devtoHandler,
+  discourseHandler,
   doubanHandler,
   dreamwidthHandler,
   exblogHandler,

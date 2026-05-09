@@ -21,6 +21,7 @@ import { csdnHandler } from './platform/handlers/csdn.js'
 import { dailymotionHandler } from './platform/handlers/dailymotion.js'
 import { deviantartHandler } from './platform/handlers/deviantart.js'
 import { devtoHandler } from './platform/handlers/devto.js'
+import { discourseHandler } from './platform/handlers/discourse.js'
 import { doubanHandler } from './platform/handlers/douban.js'
 import { dreamwidthHandler } from './platform/handlers/dreamwidth.js'
 import { exblogHandler } from './platform/handlers/exblog.js'
@@ -190,6 +191,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     dailymotionHandler,
     deviantartHandler,
     devtoHandler,
+    discourseHandler,
     doubanHandler,
     dreamwidthHandler,
     exblogHandler,

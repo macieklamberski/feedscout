@@ -212,6 +212,10 @@
     "arena:channel": "Channel",
     "audioboom:podcast": "Podcast",
     "bookwyrm:reviews": "Reviews",
-    "buzzsprout:podcast": "Podcast"
+    "buzzsprout:podcast": "Podcast",
+    "discourse:latest": "Latest",
+    "discourse:category": "Category",
+    "discourse:topic": "Topic",
+    "discourse:activity": "Activity"
   }
 }
