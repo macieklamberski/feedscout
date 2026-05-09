@@ -145,6 +145,7 @@
     "https://lobste.rs/comments.rss",
     "https://lobste.rs/rss"
   ],
+  "mataroa": ["https://hey.mataroa.blog/rss/"],
   "medium": [
     "https://medium.com/feed/@ev",
     "https://medium.com/feed/tag/programming",

@@ -47,6 +47,7 @@ import { listedHandler } from './platform/handlers/listed.js'
 import { livejournalHandler } from './platform/handlers/livejournal.js'
 import { lobstersHandler } from './platform/handlers/lobsters.js'
 import { mastodonHandler } from './platform/handlers/mastodon.js'
+import { mataroaHandler } from './platform/handlers/mataroa.js'
 import { mediumHandler } from './platform/handlers/medium.js'
 import { myanimelistHandler } from './platform/handlers/myanimelist.js'
 import { nebulaHandler } from './platform/handlers/nebula.js'
@@ -224,6 +225,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     livejournalHandler,
     lobstersHandler,
     mastodonHandler,
+    mataroaHandler,
     mediumHandler,
     myanimelistHandler,
     nebulaHandler,

@@ -227,6 +227,7 @@
     "insanejournal:posts-atom": "Posts (Atom)",
     "libsyn:podcast": "Podcast",
     "livejournal:posts-rss": "Posts (RSS)",
-    "livejournal:posts-atom": "Posts (Atom)"
+    "livejournal:posts-atom": "Posts (Atom)",
+    "mataroa:blog": "Blog"
   }
 }

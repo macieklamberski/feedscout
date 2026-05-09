@@ -712,6 +712,14 @@ Discovers RSS and Atom feeds for LiveJournal blogs.
 |-------------|-----------------|
 | `*.livejournal.com` | Posts feed (RSS + Atom) |
 
+### Mataroa
+
+Discovers RSS feeds for Mataroa blogs.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `*.mataroa.blog` | Blog feed |
+
 ## Basic Usage
 
 ```typescript
@@ -801,6 +809,7 @@ import {
   livejournalHandler,
   lobstersHandler,
   mastodonHandler,
+  mataroaHandler,
   mediumHandler,
   myanimelistHandler,
   nebulaHandler,
