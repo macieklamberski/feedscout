@@ -428,6 +428,14 @@ Discovers RSS feeds for Ximalaya podcast albums.
 |-------------|-----------------|
 | `www.ximalaya.com/album/{id}` | Album feed |
 
+### Tistory
+
+Discovers RSS feeds for Tistory blogs.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `*.tistory.com` | Blog feed |
+
 ## Basic Usage
 
 ```typescript
@@ -510,6 +518,7 @@ import {
   wordpressHandler,
   wpengineHandler,
   ximalayaHandler,
+  tistoryHandler,
   youtubeHandler,
 } from 'feedscout/platform'
 ```
