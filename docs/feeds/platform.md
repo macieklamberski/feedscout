@@ -749,6 +749,15 @@ Discovers RSS feeds for Naver Blog.
 | `blog.naver.com/{id}` | Blog feed |
 | `m.blog.naver.com/{id}` | Blog feed |
 
+### Observable
+
+Discovers RSS feeds for Observable user notebooks and collections.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `observablehq.com/@{user}` | Notebooks feed |
+| `observablehq.com/@{user}/collection/{slug}` | Collection feed |
+
 ## Basic Usage
 
 ```typescript
@@ -846,6 +855,7 @@ import {
   naverBlogHandler,
   nebulaHandler,
   noteHandler,
+  observableHandler,
   odyseeHandler,
   pagecordHandler,
   paragraphHandler,

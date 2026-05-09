@@ -55,6 +55,7 @@ import { myanimelistHandler } from './platform/handlers/myanimelist.js'
 import { naverBlogHandler } from './platform/handlers/naverBlog.js'
 import { nebulaHandler } from './platform/handlers/nebula.js'
 import { noteHandler } from './platform/handlers/note.js'
+import { observableHandler } from './platform/handlers/observable.js'
 import { odyseeHandler } from './platform/handlers/odysee.js'
 import { pagecordHandler } from './platform/handlers/pagecord.js'
 import { paragraphHandler } from './platform/handlers/paragraph.js'
@@ -236,6 +237,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     naverBlogHandler,
     nebulaHandler,
     noteHandler,
+    observableHandler,
     odyseeHandler,
     pagecordHandler,
     paragraphHandler,

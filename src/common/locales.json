@@ -238,6 +238,8 @@
     "microblog:photos": "Photos",
     "microblog:replies": "Replies",
     "misskey:posts": "Posts",
-    "naver-blog:blog": "Blog"
+    "naver-blog:blog": "Blog",
+    "observable:notebooks": "Notebooks",
+    "observable:collection": "Collection"
   }
 }
