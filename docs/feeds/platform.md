@@ -594,6 +594,14 @@ Discovers RSS feeds for Velog users.
 |-------------|-----------------|
 | `velog.io/@{user}` | Posts feed |
 
+### Acast
+
+Discovers RSS feeds for Acast-hosted podcasts.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `shows.acast.com/{slug}` | Podcast feed (RSS) |
+
 ## Basic Usage
 
 ```typescript
@@ -640,9 +648,10 @@ Or import individual handlers:
 
 ```typescript
 import {
+  acastHandler,
   applePodcastsHandler,
-  bearblogHandler,
   artstationHandler,
+  bearblogHandler,
   behanceHandler,
   blogspotHandler,
   blueskyHandler,
@@ -670,11 +679,11 @@ import {
   lobstersHandler,
   mastodonHandler,
   mediumHandler,
-  pagecordHandler,
   myanimelistHandler,
   nebulaHandler,
   noteHandler,
   odyseeHandler,
+  pagecordHandler,
   paragraphHandler,
   producthuntHandler,
   proseHandler,
@@ -684,8 +693,8 @@ import {
   stackExchangeHandler,
   steamHandler,
   substackHandler,
-  transistorHandler,
   tistoryHandler,
+  transistorHandler,
   tumblrHandler,
   v2exHandler,
   velogHandler,

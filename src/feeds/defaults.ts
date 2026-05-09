@@ -3,6 +3,7 @@ import type { GuessMethodOptions } from '../common/uris/guess/types.js'
 import type { HeadersMethodOptions } from '../common/uris/headers/types.js'
 import type { HtmlMethodOptions } from '../common/uris/html/types.js'
 import type { PlatformMethodOptions } from '../common/uris/platform/types.js'
+import { acastHandler } from './platform/handlers/acast.js'
 import { applePodcastsHandler } from './platform/handlers/applePodcasts.js'
 import { artstationHandler } from './platform/handlers/artstation.js'
 import { bearblogHandler } from './platform/handlers/bearblog.js'
@@ -166,9 +167,10 @@ export const defaultGuessOptions: Omit<GuessMethodOptions, 'baseUrl'> = {
 // Default options for Platform method.
 export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
   handlers: [
+    acastHandler,
     applePodcastsHandler,
-    bearblogHandler,
     artstationHandler,
+    bearblogHandler,
     behanceHandler,
     blogspotHandler,
     blueskyHandler,
@@ -197,11 +199,11 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     lobstersHandler,
     mastodonHandler,
     mediumHandler,
-    pagecordHandler,
     myanimelistHandler,
     nebulaHandler,
     noteHandler,
     odyseeHandler,
+    pagecordHandler,
     paragraphHandler,
     pinterestHandler,
     producthuntHandler,
@@ -212,8 +214,8 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     stackExchangeHandler,
     steamHandler,
     substackHandler,
-    transistorHandler,
     tistoryHandler,
+    transistorHandler,
     tumblrHandler,
     v2exHandler,
     velogHandler,

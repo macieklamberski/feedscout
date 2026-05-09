@@ -203,6 +203,7 @@
     "nebula:videos-all": "All Videos",
     "nebula:videos-all-plus": "All Videos (Plus)",
     "nebula:category": "Category",
-    "nebula:category-plus": "Category (Plus)"
+    "nebula:category-plus": "Category (Plus)",
+    "acast:podcast": "Podcast"
   }
 }
