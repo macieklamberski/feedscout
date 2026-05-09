@@ -1,4 +1,5 @@
 {
+  "bearblog": ["https://herman.bearblog.dev/feed/", "https://herman.bearblog.dev/feed/?type=rss"],
   "artstation": [
     "https://www.artstation.com/rossdraws.rss",
     "https://www.artstation.com/artwork.rss",

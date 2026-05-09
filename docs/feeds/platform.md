@@ -428,6 +428,14 @@ Discovers RSS feeds for Ximalaya podcast albums.
 |-------------|-----------------|
 | `www.ximalaya.com/album/{id}` | Album feed |
 
+### Bear Blog
+
+Discovers Atom and RSS feeds for Bear Blog, including tag-filtered feeds.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `*.bearblog.dev` | Posts feed (Atom + RSS) |
+| `*.bearblog.dev/?q={tag}` | Tag feed (Atom + RSS) + posts |
 ### Transistor
 
 Discovers RSS feeds for Transistor-hosted podcasts.
@@ -532,6 +540,7 @@ Or import individual handlers:
 ```typescript
 import {
   applePodcastsHandler,
+  bearblogHandler,
   artstationHandler,
   behanceHandler,
   blogspotHandler,

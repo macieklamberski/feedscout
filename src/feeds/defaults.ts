@@ -5,6 +5,7 @@ import type { HtmlMethodOptions } from '../common/uris/html/types.js'
 import type { PlatformMethodOptions } from '../common/uris/platform/types.js'
 import { applePodcastsHandler } from './platform/handlers/applePodcasts.js'
 import { artstationHandler } from './platform/handlers/artstation.js'
+import { bearblogHandler } from './platform/handlers/bearblog.js'
 import { behanceHandler } from './platform/handlers/behance.js'
 import { blogspotHandler } from './platform/handlers/blogspot.js'
 import { blueskyHandler } from './platform/handlers/bluesky.js'
@@ -156,6 +157,7 @@ export const defaultGuessOptions: Omit<GuessMethodOptions, 'baseUrl'> = {
 export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
   handlers: [
     applePodcastsHandler,
+    bearblogHandler,
     artstationHandler,
     behanceHandler,
     blogspotHandler,
