@@ -40,6 +40,7 @@ import { stackExchangeHandler } from './platform/handlers/stackExchange.js'
 import { steamHandler } from './platform/handlers/steam.js'
 import { substackHandler } from './platform/handlers/substack.js'
 import { tistoryHandler } from './platform/handlers/tistory.js'
+import { transistorHandler } from './platform/handlers/transistor.js'
 import { tumblrHandler } from './platform/handlers/tumblr.js'
 import { v2exHandler } from './platform/handlers/v2ex.js'
 import { velogHandler } from './platform/handlers/velog.js'
@@ -190,6 +191,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     stackExchangeHandler,
     steamHandler,
     substackHandler,
+    transistorHandler,
     tistoryHandler,
     tumblrHandler,
     v2exHandler,
