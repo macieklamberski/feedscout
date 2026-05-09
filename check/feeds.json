@@ -113,6 +113,7 @@
   ],
   "hackernews": ["https://news.ycombinator.com/rss", "https://news.ycombinator.com/showrss"],
   "hearthis": ["https://hearthis.at/james-monty-montgomery/podcast/"],
+  "heyWorld": ["https://world.hey.com/dhh/feed.atom"],
   "kickstarter": [
     "https://www.kickstarter.com/projects/elanlee/exploding-kittens/posts.atom",
     "https://www.kickstarter.com/projects/feed.atom"

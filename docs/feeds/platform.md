@@ -680,6 +680,14 @@ Discovers RSS feeds for Hearthis.at user profiles.
 |-------------|-----------------|
 | `hearthis.at/{user}` | Tracks feed |
 
+### HEY World
+
+Discovers Atom feeds for HEY World blogs.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `world.hey.com/{user}` | Blog feed |
+
 ## Basic Usage
 
 ```typescript
@@ -759,6 +767,7 @@ import {
   hashnodeHandler,
   hatenablogHandler,
   hearthisHandler,
+  heyWorldHandler,
   itchioHandler,
   kickstarterHandler,
   letterboxdHandler,
