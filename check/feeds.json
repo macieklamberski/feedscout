@@ -389,6 +389,7 @@
     "https://www.v2ex.com/feed/member/livid.xml",
     "https://www.v2ex.com/feed/tab/tech.xml"
   ],
+  "writeas": ["https://write.as/matt/feed/", "https://write.as/matt/tag:reading/feed/"],
   "velog": ["https://v2.velog.io/rss/velopert"],
   "ximalaya": ["https://www.ximalaya.com/album/203355.xml"],
   "youtube": [

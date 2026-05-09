@@ -165,6 +165,8 @@
     "lemmy:all": "All",
     "lemmy:local": "Local",
     "apple-podcasts:podcast": "Podcast",
+    "writeas:blog": "Blog",
+    "writeas:tag": "Tag",
     "prose:blog": "Blog",
     "pagecord:blog": "Blog",
     "listed:blog": "Blog",

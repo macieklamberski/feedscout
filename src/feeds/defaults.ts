@@ -57,6 +57,7 @@ import { velogHandler } from './platform/handlers/velog.js'
 import { vimeoHandler } from './platform/handlers/vimeo.js'
 import { wordpressHandler } from './platform/handlers/wordpress.js'
 import { wpengineHandler } from './platform/handlers/wpengine.js'
+import { writeasHandler } from './platform/handlers/writeas.js'
 import { ximalayaHandler } from './platform/handlers/ximalaya.js'
 import { youtubeHandler } from './platform/handlers/youtube.js'
 
@@ -219,6 +220,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     vimeoHandler,
     wordpressHandler,
     wpengineHandler,
+    writeasHandler,
     ximalayaHandler,
     youtubeHandler,
   ],

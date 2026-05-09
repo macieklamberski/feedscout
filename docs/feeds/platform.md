@@ -428,6 +428,14 @@ Discovers RSS feeds for Ximalaya podcast albums.
 |-------------|-----------------|
 | `www.ximalaya.com/album/{id}` | Album feed |
 
+### Write.as
+
+Discovers RSS feeds for Write.as blogs, including tag feeds.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `write.as/{user}` | Blog feed |
+| `write.as/{user}/tag:{tag}` | Tag feed + blog |
 ### Prose.sh
 
 Discovers Atom feeds for Prose.sh blogs.
@@ -684,6 +692,7 @@ import {
   vimeoHandler,
   wordpressHandler,
   wpengineHandler,
+  writeasHandler,
   ximalayaHandler,
   youtubeHandler,
 } from 'feedscout/platform'
