@@ -196,6 +196,7 @@
     "https://discardpile.pika.page/tag/tech/feed.rss"
   ],
   "pinterest": ["https://www.pinterest.com/pinterest/feed.rss"],
+  "pixelfed": ["https://pixelfed.social/users/dansup.atom"],
   "producthunt": [
     "https://www.producthunt.com/feed?topic=artificial-intelligence",
     "https://www.producthunt.com/feed?category=ai",

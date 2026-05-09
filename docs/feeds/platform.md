@@ -767,6 +767,14 @@ Discovers Atom and RSS feeds for Pika blogs, including tag feeds.
 | `*.pika.page` | Posts feed (Atom + RSS) |
 | `*.pika.page/tag/{tag}` | Tag feed (Atom + RSS) + posts |
 
+### Pixelfed
+
+Discovers Atom feeds for Pixelfed user profiles. Detected by the `pixelfed` generator meta tag.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `{instance}/{user}` or `{instance}/users/{user}` | Posts feed (Atom) |
+
 ## Basic Usage
 
 ```typescript
@@ -869,6 +877,7 @@ import {
   pagecordHandler,
   paragraphHandler,
   pikaHandler,
+  pixelfedHandler,
   producthuntHandler,
   proseHandler,
   redditHandler,

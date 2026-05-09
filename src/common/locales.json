@@ -244,6 +244,7 @@
     "pika:posts-atom": "Posts (Atom)",
     "pika:posts-rss": "Posts (RSS)",
     "pika:tag-atom": "Tag (Atom)",
-    "pika:tag-rss": "Tag (RSS)"
+    "pika:tag-rss": "Tag (RSS)",
+    "pixelfed:posts": "Posts"
   }
 }

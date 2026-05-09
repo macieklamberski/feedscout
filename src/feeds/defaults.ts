@@ -61,6 +61,7 @@ import { pagecordHandler } from './platform/handlers/pagecord.js'
 import { paragraphHandler } from './platform/handlers/paragraph.js'
 import { pikaHandler } from './platform/handlers/pika.js'
 import { pinterestHandler } from './platform/handlers/pinterest.js'
+import { pixelfedHandler } from './platform/handlers/pixelfed.js'
 import { producthuntHandler } from './platform/handlers/producthunt.js'
 import { proseHandler } from './platform/handlers/prose.js'
 import { redditHandler } from './platform/handlers/reddit.js'
@@ -244,6 +245,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     paragraphHandler,
     pikaHandler,
     pinterestHandler,
+    pixelfedHandler,
     producthuntHandler,
     proseHandler,
     redditHandler,
