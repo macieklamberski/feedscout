@@ -69,6 +69,11 @@
     "https://dw-news.dreamwidth.org/data/atom"
   ],
   "friendica": ["https://libranet.de/feed/admin"],
+  "ghost": [
+    "https://demo.ghost.io/rss/",
+    "https://demo.ghost.io/tag/getting-started/rss/",
+    "https://demo.ghost.io/author/ghost/rss/"
+  ],
   "gitea": [
     "https://gitea.com/gitea.rss",
     "https://gitea.com/gitea/go-sdk.rss",

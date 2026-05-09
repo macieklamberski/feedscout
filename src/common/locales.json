@@ -217,6 +217,9 @@
     "discourse:category": "Category",
     "discourse:topic": "Topic",
     "discourse:activity": "Activity",
-    "friendica:posts": "Posts"
+    "friendica:posts": "Posts",
+    "ghost:blog": "Blog",
+    "ghost:tag": "Tag",
+    "ghost:author": "Author"
   }
 }

@@ -662,6 +662,16 @@ Discovers Atom feeds for Friendica user profiles. Detected by the `Friendica` ge
 |-------------|-----------------|
 | `{instance}/profile/{user}` | Posts feed (Atom) |
 
+### Ghost
+
+Discovers RSS feeds for Ghost-hosted blogs, including tag and author feeds.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `*.ghost.io` | Blog feed |
+| `*.ghost.io/tag/{slug}` | Tag feed + blog |
+| `*.ghost.io/author/{slug}` | Author feed + blog |
+
 ## Basic Usage
 
 ```typescript
@@ -732,6 +742,7 @@ import {
   exblogHandler,
   firesideHandler,
   friendicaHandler,
+  ghostHandler,
   githubHandler,
   githubGistHandler,
   gitlabHandler,
