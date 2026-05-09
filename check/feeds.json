@@ -124,6 +124,11 @@
     "https://mastodon.social/tags/mastodon.rss",
     "https://mastodon.social/@Gargron/tagged/mastodev.rss"
   ],
+  "note": [
+    "https://note.com/info/rss",
+    "https://note.com/hashtag/AI/rss",
+    "https://note.com/notemag/m/m7244518f06ae/rss"
+  ],
   "nebula": [
     "https://rss.nebula.app/video/channels/realengineering.rss",
     "https://rss.nebula.app/video/channels/realengineering.rss?plus=true",

@@ -519,6 +519,27 @@ Discovers RSS feeds for Nebula channels, the global video feed, and category fee
 | `nebula.tv/videos` | All videos + All videos (Plus) |
 | `nebula.tv/videos?category={slug}` | Category + Category (Plus) + above |
 
+### note.com
+
+Discovers RSS feeds for note.com, including hashtag and magazine feeds.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `note.com/{user}` | Blog feed |
+| `note.com/hashtag/{tag}` | Hashtag feed |
+| `note.com/{user}/m/{magazineId}` | Magazine feed |
+
+### Odysee
+
+Discovers RSS feeds for Nebula channels, the global video feed, and category feeds, each with a Plus-only variant.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `nebula.tv/{channel}` | Videos + Videos (Plus) |
+| `nebula.tv` | All videos + All videos (Plus) |
+| `nebula.tv/videos` | All videos + All videos (Plus) |
+| `nebula.tv/videos?category={slug}` | Category + Category (Plus) + above |
+
 ### Odysee
 
 Discovers RSS feeds for Odysee channels.
@@ -629,6 +650,7 @@ import {
   mediumHandler,
   myanimelistHandler,
   nebulaHandler,
+  noteHandler,
   odyseeHandler,
   paragraphHandler,
   producthuntHandler,
