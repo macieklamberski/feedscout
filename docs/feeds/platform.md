@@ -627,6 +627,14 @@ Discovers RSS and JSON feeds for Audioboom channels.
 |-------------|-----------------|
 | `audioboom.com/channels/{id}` | Podcast feed (RSS) |
 
+### BookWyrm
+
+Discovers RSS feeds for BookWyrm user reviews. Detected by the `BookWyrm` generator meta tag.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `{instance}/user/{user}` | Reviews feed (RSS) |
+
 ## Basic Usage
 
 ```typescript
@@ -683,6 +691,7 @@ import {
   behanceHandler,
   blogspotHandler,
   blueskyHandler,
+  bookwyrmHandler,
   buttondownHandler,
   codebergHandler,
   csdnHandler,

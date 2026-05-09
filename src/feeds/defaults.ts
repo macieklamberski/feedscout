@@ -13,6 +13,7 @@ import { bearblogHandler } from './platform/handlers/bearblog.js'
 import { behanceHandler } from './platform/handlers/behance.js'
 import { blogspotHandler } from './platform/handlers/blogspot.js'
 import { blueskyHandler } from './platform/handlers/bluesky.js'
+import { bookwyrmHandler } from './platform/handlers/bookwyrm.js'
 import { buttondownHandler } from './platform/handlers/buttondown.js'
 import { codebergHandler } from './platform/handlers/codeberg.js'
 import { csdnHandler } from './platform/handlers/csdn.js'
@@ -180,6 +181,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     behanceHandler,
     blogspotHandler,
     blueskyHandler,
+    bookwyrmHandler,
     buttondownHandler,
     codebergHandler,
     csdnHandler,
