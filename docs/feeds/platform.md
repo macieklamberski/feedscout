@@ -635,6 +635,14 @@ Discovers RSS feeds for BookWyrm user reviews. Detected by the `BookWyrm` genera
 |-------------|-----------------|
 | `{instance}/user/{user}` | Reviews feed (RSS) |
 
+### Buzzsprout
+
+Discovers RSS feeds for Buzzsprout-hosted podcasts.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `buzzsprout.com/{id}` | Podcast feed |
+
 ## Basic Usage
 
 ```typescript
@@ -693,6 +701,7 @@ import {
   blueskyHandler,
   bookwyrmHandler,
   buttondownHandler,
+  buzzsproutHandler,
   codebergHandler,
   csdnHandler,
   dailymotionHandler,

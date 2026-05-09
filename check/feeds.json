@@ -31,6 +31,7 @@
   "bluesky": ["https://bsky.app/profile/jay.bsky.team/rss"],
   "bookwyrm": ["https://bookwyrm.social/user/mouse/rss"],
   "buttondown": ["https://buttondown.com/jmduke/rss"],
+  "buzzsprout": ["https://rss.buzzsprout.com/231452.rss"],
   "codeberg": [
     "https://codeberg.org/forgejo.atom",
     "https://codeberg.org/forgejo.rss",

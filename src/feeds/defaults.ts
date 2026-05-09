@@ -15,6 +15,7 @@ import { blogspotHandler } from './platform/handlers/blogspot.js'
 import { blueskyHandler } from './platform/handlers/bluesky.js'
 import { bookwyrmHandler } from './platform/handlers/bookwyrm.js'
 import { buttondownHandler } from './platform/handlers/buttondown.js'
+import { buzzsproutHandler } from './platform/handlers/buzzsprout.js'
 import { codebergHandler } from './platform/handlers/codeberg.js'
 import { csdnHandler } from './platform/handlers/csdn.js'
 import { dailymotionHandler } from './platform/handlers/dailymotion.js'
@@ -183,6 +184,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     blueskyHandler,
     bookwyrmHandler,
     buttondownHandler,
+    buzzsproutHandler,
     codebergHandler,
     csdnHandler,
     dailymotionHandler,
