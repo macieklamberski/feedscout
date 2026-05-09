@@ -40,6 +40,7 @@
     "https://backend.deviantart.com/rss.xml?q=journal:yuumei"
   ],
   "devto": ["https://dev.to/feed/ben", "https://dev.to/feed/tag/javascript"],
+  "exblog": ["https://petitcc.exblog.jp/index.xml", "https://petitcc.exblog.jp/atom.xml"],
   "gitea": [
     "https://gitea.com/gitea.rss",
     "https://gitea.com/gitea/go-sdk.rss",

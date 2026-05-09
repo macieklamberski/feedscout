@@ -163,6 +163,10 @@
     "lemmy:user": "User",
     "lemmy:all": "All",
     "lemmy:local": "Local",
-    "apple-podcasts:podcast": "Podcast"
+    "apple-podcasts:podcast": "Podcast",
+    "exblog:posts-rss": "Posts (RSS)",
+    "exblog:posts-atom": "Posts (Atom)",
+    "exblog:category-rss": "Category (RSS)",
+    "exblog:category-atom": "Category (Atom)"
   }
 }

@@ -13,6 +13,7 @@ import { dailymotionHandler } from './platform/handlers/dailymotion.js'
 import { deviantartHandler } from './platform/handlers/deviantart.js'
 import { devtoHandler } from './platform/handlers/devto.js'
 import { doubanHandler } from './platform/handlers/douban.js'
+import { exblogHandler } from './platform/handlers/exblog.js'
 import { githubHandler } from './platform/handlers/github.js'
 import { githubGistHandler } from './platform/handlers/githubGist.js'
 import { gitlabHandler } from './platform/handlers/gitlab.js'
@@ -152,18 +153,19 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     behanceHandler,
     blogspotHandler,
     blueskyHandler,
-    csdnHandler,
     codebergHandler,
-    doubanHandler,
-    deviantartHandler,
+    csdnHandler,
     dailymotionHandler,
+    deviantartHandler,
     devtoHandler,
-    goodreadsHandler,
+    doubanHandler,
+    exblogHandler,
     githubHandler,
-    hashnodeHandler,
-    hatenablogHandler,
     githubGistHandler,
     gitlabHandler,
+    goodreadsHandler,
+    hashnodeHandler,
+    hatenablogHandler,
     itchioHandler,
     kickstarterHandler,
     lemmyHandler,
