@@ -37,6 +37,7 @@ import { hashnodeHandler } from './platform/handlers/hashnode.js'
 import { hatenablogHandler } from './platform/handlers/hatenablog.js'
 import { hearthisHandler } from './platform/handlers/hearthis.js'
 import { heyWorldHandler } from './platform/handlers/heyWorld.js'
+import { insanejournalHandler } from './platform/handlers/insanejournal.js'
 import { itchioHandler } from './platform/handlers/itchio.js'
 import { kickstarterHandler } from './platform/handlers/kickstarter.js'
 import { lemmyHandler } from './platform/handlers/lemmy.js'
@@ -211,6 +212,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     hatenablogHandler,
     hearthisHandler,
     heyWorldHandler,
+    insanejournalHandler,
     itchioHandler,
     kickstarterHandler,
     lemmyHandler,

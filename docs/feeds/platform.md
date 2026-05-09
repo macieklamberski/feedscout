@@ -688,6 +688,14 @@ Discovers Atom feeds for HEY World blogs.
 |-------------|-----------------|
 | `world.hey.com/{user}` | Blog feed |
 
+### InsaneJournal
+
+Discovers RSS and Atom feeds for InsaneJournal journals.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `*.insanejournal.com` | Posts feed (RSS + Atom) |
+
 ## Basic Usage
 
 ```typescript
@@ -768,6 +776,7 @@ import {
   hatenablogHandler,
   hearthisHandler,
   heyWorldHandler,
+  insanejournalHandler,
   itchioHandler,
   kickstarterHandler,
   letterboxdHandler,

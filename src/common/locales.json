@@ -222,6 +222,8 @@
     "ghost:tag": "Tag",
     "ghost:author": "Author",
     "hearthis:tracks": "Tracks",
-    "hey-world:blog": "Blog"
+    "hey-world:blog": "Blog",
+    "insanejournal:posts-rss": "Posts (RSS)",
+    "insanejournal:posts-atom": "Posts (Atom)"
   }
 }
