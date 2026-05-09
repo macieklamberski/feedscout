@@ -4,6 +4,7 @@ import type { HeadersMethodOptions } from '../common/uris/headers/types.js'
 import type { HtmlMethodOptions } from '../common/uris/html/types.js'
 import type { PlatformMethodOptions } from '../common/uris/platform/types.js'
 import { applePodcastsHandler } from './platform/handlers/applePodcasts.js'
+import { artstationHandler } from './platform/handlers/artstation.js'
 import { behanceHandler } from './platform/handlers/behance.js'
 import { blogspotHandler } from './platform/handlers/blogspot.js'
 import { blueskyHandler } from './platform/handlers/bluesky.js'
@@ -17,6 +18,7 @@ import { githubHandler } from './platform/handlers/github.js'
 import { githubGistHandler } from './platform/handlers/githubGist.js'
 import { gitlabHandler } from './platform/handlers/gitlab.js'
 import { goodreadsHandler } from './platform/handlers/goodreads.js'
+import { hackernewsHandler } from './platform/handlers/hackernews.js'
 import { hashnodeHandler } from './platform/handlers/hashnode.js'
 import { hatenablogHandler } from './platform/handlers/hatenablog.js'
 import { itchioHandler } from './platform/handlers/itchio.js'
@@ -26,6 +28,7 @@ import { letterboxdHandler } from './platform/handlers/letterboxd.js'
 import { lobstersHandler } from './platform/handlers/lobsters.js'
 import { mastodonHandler } from './platform/handlers/mastodon.js'
 import { mediumHandler } from './platform/handlers/medium.js'
+import { myanimelistHandler } from './platform/handlers/myanimelist.js'
 import { odyseeHandler } from './platform/handlers/odysee.js'
 import { paragraphHandler } from './platform/handlers/paragraph.js'
 import { pinterestHandler } from './platform/handlers/pinterest.js'
@@ -36,8 +39,10 @@ import { sourceforgeHandler } from './platform/handlers/sourceforge.js'
 import { stackExchangeHandler } from './platform/handlers/stackExchange.js'
 import { steamHandler } from './platform/handlers/steam.js'
 import { substackHandler } from './platform/handlers/substack.js'
+import { tistoryHandler } from './platform/handlers/tistory.js'
 import { tumblrHandler } from './platform/handlers/tumblr.js'
 import { v2exHandler } from './platform/handlers/v2ex.js'
+import { velogHandler } from './platform/handlers/velog.js'
 import { vimeoHandler } from './platform/handlers/vimeo.js'
 import { wordpressHandler } from './platform/handlers/wordpress.js'
 import { wpengineHandler } from './platform/handlers/wpengine.js'
@@ -150,6 +155,7 @@ export const defaultGuessOptions: Omit<GuessMethodOptions, 'baseUrl'> = {
 export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
   handlers: [
     applePodcastsHandler,
+    artstationHandler,
     behanceHandler,
     blogspotHandler,
     blueskyHandler,
@@ -163,6 +169,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     githubGistHandler,
     gitlabHandler,
     goodreadsHandler,
+    hackernewsHandler,
     hashnodeHandler,
     hatenablogHandler,
     itchioHandler,
@@ -173,6 +180,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     mastodonHandler,
     mediumHandler,
     odyseeHandler,
+    myanimelistHandler,
     paragraphHandler,
     pinterestHandler,
     producthuntHandler,
@@ -182,8 +190,10 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     stackExchangeHandler,
     steamHandler,
     substackHandler,
+    tistoryHandler,
     tumblrHandler,
     v2exHandler,
+    velogHandler,
     vimeoHandler,
     wordpressHandler,
     wpengineHandler,
