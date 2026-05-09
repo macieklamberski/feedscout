@@ -428,6 +428,13 @@ Discovers RSS feeds for Ximalaya podcast albums.
 |-------------|-----------------|
 | `www.ximalaya.com/album/{id}` | Album feed |
 
+### Odysee
+
+Discovers RSS feeds for Odysee channels.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `odysee.com/@{channel}:{id}` | Videos feed |
 ### MyAnimeList
 
 Discovers RSS feeds for MyAnimeList user lists.
@@ -541,6 +548,7 @@ import {
   lobstersHandler,
   mastodonHandler,
   mediumHandler,
+  odyseeHandler,
   myanimelistHandler,
   paragraphHandler,
   producthuntHandler,

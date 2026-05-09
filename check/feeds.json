@@ -115,6 +115,7 @@
     "https://mastodon.social/tags/mastodon.rss",
     "https://mastodon.social/@Gargron/tagged/mastodev.rss"
   ],
+  "odysee": ["https://odysee.com/$/rss/@Odysee:8"],
   "myanimelist": [
     "https://myanimelist.net/rss.php?type=rw&u=Xinil",
     "https://myanimelist.net/rss.php?type=rm&u=Xinil",
