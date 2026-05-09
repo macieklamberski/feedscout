@@ -209,6 +209,7 @@
     "ameblo:posts-atom": "Posts (Atom)",
     "ameblo:posts-rdf": "Posts (RDF)",
     "arena:profile": "Profile",
-    "arena:channel": "Channel"
+    "arena:channel": "Channel",
+    "audioboom:podcast": "Podcast"
   }
 }

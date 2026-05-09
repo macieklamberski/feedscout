@@ -619,6 +619,14 @@ Discovers RSS feeds for Are.na user profiles and channels.
 | `are.na/{user}` | User profile feed |
 | `are.na/{user}/{channel}` | Channel feed |
 
+### Audioboom
+
+Discovers RSS and JSON feeds for Audioboom channels.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `audioboom.com/channels/{id}` | Podcast feed (RSS) |
+
 ## Basic Usage
 
 ```typescript
@@ -670,6 +678,7 @@ import {
   applePodcastsHandler,
   arenaHandler,
   artstationHandler,
+  audioboomHandler,
   bearblogHandler,
   behanceHandler,
   blogspotHandler,

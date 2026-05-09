@@ -8,6 +8,7 @@ import { amebloHandler } from './platform/handlers/ameblo.js'
 import { applePodcastsHandler } from './platform/handlers/applePodcasts.js'
 import { arenaHandler } from './platform/handlers/arena.js'
 import { artstationHandler } from './platform/handlers/artstation.js'
+import { audioboomHandler } from './platform/handlers/audioboom.js'
 import { bearblogHandler } from './platform/handlers/bearblog.js'
 import { behanceHandler } from './platform/handlers/behance.js'
 import { blogspotHandler } from './platform/handlers/blogspot.js'
@@ -174,6 +175,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     applePodcastsHandler,
     arenaHandler,
     artstationHandler,
+    audioboomHandler,
     bearblogHandler,
     behanceHandler,
     blogspotHandler,
