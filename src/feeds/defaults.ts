@@ -35,6 +35,7 @@ import { sourceforgeHandler } from './platform/handlers/sourceforge.js'
 import { stackExchangeHandler } from './platform/handlers/stackExchange.js'
 import { steamHandler } from './platform/handlers/steam.js'
 import { substackHandler } from './platform/handlers/substack.js'
+import { transistorHandler } from './platform/handlers/transistor.js'
 import { tumblrHandler } from './platform/handlers/tumblr.js'
 import { v2exHandler } from './platform/handlers/v2ex.js'
 import { vimeoHandler } from './platform/handlers/vimeo.js'
@@ -152,18 +153,18 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     behanceHandler,
     blogspotHandler,
     blueskyHandler,
-    csdnHandler,
     codebergHandler,
-    doubanHandler,
-    deviantartHandler,
+    csdnHandler,
     dailymotionHandler,
+    deviantartHandler,
     devtoHandler,
-    goodreadsHandler,
+    doubanHandler,
     githubHandler,
-    hashnodeHandler,
-    hatenablogHandler,
     githubGistHandler,
     gitlabHandler,
+    goodreadsHandler,
+    hashnodeHandler,
+    hatenablogHandler,
     itchioHandler,
     kickstarterHandler,
     lemmyHandler,
@@ -180,6 +181,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     stackExchangeHandler,
     steamHandler,
     substackHandler,
+    transistorHandler,
     tumblrHandler,
     v2exHandler,
     vimeoHandler,

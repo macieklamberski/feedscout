@@ -428,6 +428,14 @@ Discovers RSS feeds for Ximalaya podcast albums.
 |-------------|-----------------|
 | `www.ximalaya.com/album/{id}` | Album feed |
 
+### Transistor
+
+Discovers RSS feeds for Transistor-hosted podcasts.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `*.transistor.fm` | Podcast feed |
+
 ## Basic Usage
 
 ```typescript
@@ -484,10 +492,10 @@ import {
   deviantartHandler,
   devtoHandler,
   doubanHandler,
-  goodreadsHandler,
-  githubGistHandler,
   githubHandler,
+  githubGistHandler,
   gitlabHandler,
+  goodreadsHandler,
   hashnodeHandler,
   hatenablogHandler,
   itchioHandler,
@@ -504,6 +512,7 @@ import {
   stackExchangeHandler,
   steamHandler,
   substackHandler,
+  transistorHandler,
   tumblrHandler,
   v2exHandler,
   vimeoHandler,

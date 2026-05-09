@@ -163,6 +163,7 @@
     "https://newsletter.pragmaticengineer.com/feed",
     "https://garymarcus.substack.com/feed"
   ],
+  "transistor": ["https://feeds.transistor.fm/build-your-saas"],
   "tumblr": ["https://staff.tumblr.com/rss", "https://staff.tumblr.com/tagged/updates/rss"],
   "vimeo": [
     "https://vimeo.com/casey/videos/rss",
