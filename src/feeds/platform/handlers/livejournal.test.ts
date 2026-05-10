@@ -136,6 +136,14 @@ describe('livejournalHandler', () => {
       expect(livejournalHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return empty array for legacy host without user segment', () => {
+      expect(livejournalHandler.resolve('https://users.livejournal.com/')).toEqual([])
+    })
+
+    it('should return empty array for www host without user selector', () => {
+      expect(livejournalHandler.resolve('https://www.livejournal.com/random')).toEqual([])
+    })
+
     it('should canonicalise community.livejournal.com/{user} legacy host', () => {
       const value = 'https://community.livejournal.com/ohnotheydidnt'
       const expected = [

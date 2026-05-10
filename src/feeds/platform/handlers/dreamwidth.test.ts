@@ -91,6 +91,10 @@ describe('dreamwidthHandler', () => {
       expect(dreamwidthHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return empty array for www host without user selector', () => {
+      expect(dreamwidthHandler.resolve('https://www.dreamwidth.org/random')).toEqual([])
+    })
+
     it('should canonicalise www.dreamwidth.org/users/{user} to subdomain', () => {
       const value = 'https://www.dreamwidth.org/users/dw_news'
       const expected = [

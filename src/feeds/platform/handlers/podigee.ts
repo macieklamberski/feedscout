@@ -8,16 +8,7 @@ const domainSuffix = /\.podigee\.io$/i
 // Reserved Podigee subdomains that aren't user shows. Without this guard the handler
 // emits 404-bound URLs (e.g. https://www.podigee.io/feed/mp3 redirects to a 404 on
 // podigee.com).
-const reservedSlugs = new Set([
-  'www',
-  'app',
-  'help',
-  'hilfe',
-  'blog',
-  'status',
-  'player',
-  'cdn',
-])
+const reservedSlugs = new Set(['www', 'app', 'help', 'hilfe', 'blog', 'status', 'player', 'cdn'])
 
 export const podigeeHandler: PlatformHandler = {
   match: (url) => {
@@ -25,13 +16,9 @@ export const podigeeHandler: PlatformHandler = {
       return false
     }
 
-    try {
-      const slug = new URL(url).hostname.toLowerCase().replace(domainSuffix, '')
+    const slug = new URL(url).hostname.toLowerCase().replace(domainSuffix, '')
 
-      return !reservedSlugs.has(slug)
-    } catch {}
-
-    return false
+    return !reservedSlugs.has(slug)
   },
 
   resolve: (url) => {

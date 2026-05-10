@@ -157,6 +157,18 @@ describe('insanejournalHandler', () => {
       expect(insanejournalHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return empty array for www host without user/asylum selector', () => {
+      expect(insanejournalHandler.resolve('https://www.insanejournal.com/random')).toEqual([])
+    })
+
+    it('should return empty array for asylums host without slug', () => {
+      expect(insanejournalHandler.resolve('https://asylums.insanejournal.com/')).toEqual([])
+    })
+
+    it('should return empty array for feeds host without slug', () => {
+      expect(insanejournalHandler.resolve('https://feeds.insanejournal.com/')).toEqual([])
+    })
+
     it('should keep feeds.insanejournal.com path-scoped feeds', () => {
       const value = 'https://feeds.insanejournal.com/dw_code_feed'
       const expected = [

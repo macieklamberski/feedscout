@@ -67,5 +67,11 @@ describe('libsynHandler', () => {
 
       expect(libsynHandler.resolve(value)).toEqual(expected)
     })
+
+    it('should return empty array for feeds.libsyn.com without numeric show ID', () => {
+      const value = 'https://feeds.libsyn.com/something-non-numeric'
+
+      expect(libsynHandler.resolve(value)).toEqual([])
+    })
   })
 })

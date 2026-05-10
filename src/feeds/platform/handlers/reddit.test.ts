@@ -219,12 +219,34 @@ describe('redditHandler', () => {
       expect(redditHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return empty array for /search without q', () => {
+      const value = 'https://www.reddit.com/search'
+
+      expect(redditHandler.resolve(value)).toEqual([])
+    })
+
     it('should return sitewide search feed for /search?q=', () => {
       const value = 'https://www.reddit.com/search?q=typescript'
       const expected = [
         {
           uri: 'https://www.reddit.com/search.rss?q=typescript',
           hint: { key: 'reddit:search', label: 'Search' },
+        },
+      ]
+
+      expect(redditHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should fall through to base subreddit feed for /r/{sub}/search without q', () => {
+      const value = 'https://www.reddit.com/r/programming/search'
+      const expected = [
+        {
+          uri: 'https://www.reddit.com/r/programming/.rss',
+          hint: { key: 'reddit:posts', label: 'Posts' },
+        },
+        {
+          uri: 'https://www.reddit.com/r/programming/comments/.rss',
+          hint: { key: 'reddit:comments', label: 'Comments' },
         },
       ]
 

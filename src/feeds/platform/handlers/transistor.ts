@@ -24,13 +24,9 @@ export const transistorHandler: PlatformHandler = {
       return false
     }
 
-    try {
-      const slug = new URL(url).hostname.toLowerCase().replace(domainSuffix, '')
+    const slug = new URL(url).hostname.toLowerCase().replace(domainSuffix, '')
 
-      return !reservedSlugs.has(slug)
-    } catch {}
-
-    return false
+    return !reservedSlugs.has(slug)
   },
 
   resolve: (url) => {

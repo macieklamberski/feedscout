@@ -31,6 +31,10 @@ export const libsynHandler: PlatformHandler = {
           },
         ]
       }
+
+      // feeds.libsyn.com without a numeric show ID has no useful feed
+      // (apex /rss returns 404).
+      return []
     }
 
     return [{ uri: `${origin}/rss`, hint: composeHint('libsyn:podcast') }]

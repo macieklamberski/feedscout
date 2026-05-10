@@ -21,11 +21,7 @@ export const dreamwidthHandler: PlatformHandler = {
     // www.dreamwidth.org only matches when the path carries a /users/ or /~ user
     // selector — bare apex/www has no per-user context and would emit a 404 URL.
     if (isHostOf(url, ['www.dreamwidth.org', 'dreamwidth.org'])) {
-      try {
-        return usersPathRegex.test(new URL(url).pathname)
-      } catch {}
-
-      return false
+      return usersPathRegex.test(new URL(url).pathname)
     }
 
     return true

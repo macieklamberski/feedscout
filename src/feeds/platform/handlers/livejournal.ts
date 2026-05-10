@@ -29,24 +29,18 @@ export const livejournalHandler: PlatformHandler = {
 
     // Bare www/users/community/syndicated hosts have no per-user context and would
     // emit 404 URLs. Allow them only when a user selector is in the path.
-    try {
-      const { hostname, pathname } = new URL(url)
+    const { hostname, pathname } = new URL(url)
+    const lower = hostname.toLowerCase()
 
-      if (reservedHosts.has(hostname.toLowerCase())) {
-        if (hostname.toLowerCase() === 'www.livejournal.com') {
-          return wwwUsersPathRegex.test(pathname)
-        }
-
-        if (
-          hostname.toLowerCase() === 'users.livejournal.com' ||
-          hostname.toLowerCase() === 'community.livejournal.com'
-        ) {
-          return legacyUserPathRegex.test(pathname)
-        }
-
-        return false
+    if (reservedHosts.has(lower)) {
+      if (lower === 'www.livejournal.com') {
+        return wwwUsersPathRegex.test(pathname)
       }
-    } catch {
+
+      if (lower === 'users.livejournal.com' || lower === 'community.livejournal.com') {
+        return legacyUserPathRegex.test(pathname)
+      }
+
       return false
     }
 

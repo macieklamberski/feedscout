@@ -22,22 +22,18 @@ export const insanejournalHandler: PlatformHandler = {
       return false
     }
 
-    try {
-      const { hostname, pathname } = new URL(url)
-      const lower = hostname.toLowerCase()
+    const { hostname, pathname } = new URL(url)
+    const lower = hostname.toLowerCase()
 
-      if (lower === 'www.insanejournal.com' || lower === 'insanejournal.com') {
-        return wwwUsersPathRegex.test(pathname) || wwwAsylumPathRegex.test(pathname)
-      }
+    if (lower === 'www.insanejournal.com' || lower === 'insanejournal.com') {
+      return wwwUsersPathRegex.test(pathname) || wwwAsylumPathRegex.test(pathname)
+    }
 
-      if (lower === 'asylums.insanejournal.com' || lower === 'feeds.insanejournal.com') {
-        return firstSegmentRegex.test(pathname)
-      }
+    if (lower === 'asylums.insanejournal.com' || lower === 'feeds.insanejournal.com') {
+      return firstSegmentRegex.test(pathname)
+    }
 
-      return true
-    } catch {}
-
-    return false
+    return true
   },
 
   resolve: (url) => {
