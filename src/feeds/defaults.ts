@@ -184,6 +184,7 @@ export const defaultHtmlOptions: Omit<HtmlMethodOptions, 'baseUrl'> = {
   anchorUris: [...urisComprehensive.flat(), ...anchorPathSegments],
   anchorIgnoredUris: ignoredUris,
   anchorLabels,
+  jsonLdTypes: ['DataFeed'],
 }
 
 // Default options for Headers method.

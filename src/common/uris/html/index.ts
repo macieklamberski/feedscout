@@ -6,6 +6,7 @@ export const discoverUrisFromHtml = (html: string, options: HtmlMethodOptions): 
   const context: HtmlMethodContext = {
     discoveredUris: new Set<string>(),
     currentAnchor: { href: '', text: '' },
+    currentScript: null,
     options,
   }
 

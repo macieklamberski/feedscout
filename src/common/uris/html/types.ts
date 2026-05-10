@@ -6,6 +6,7 @@ export type HtmlMethodOptions = {
   anchorUris: Array<Pattern>
   anchorIgnoredUris: Array<Pattern>
   anchorLabels: Array<Pattern>
+  jsonLdTypes?: Array<string>
 }
 
 export type HtmlMethodContext = {
@@ -14,5 +15,6 @@ export type HtmlMethodContext = {
     href: string
     text: string
   }
+  currentScript: { isJsonLd: boolean; content: string } | null
   options: HtmlMethodOptions
 }
