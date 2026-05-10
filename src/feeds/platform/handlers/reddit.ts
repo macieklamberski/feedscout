@@ -5,13 +5,16 @@ import { composeHint, isAnyOf, isHostOf } from '../../../common/utils.js'
 // Not discoverable without handler.
 
 const commentsRegex = /^\/r\/([^/]+)\/comments\/([^/]+)/
+const subredditWikiRegex = /^\/r\/([^/]+)\/wiki/
+const subredditSearchRegex = /^\/r\/([^/]+)\/search/
 const subredditRegex = /^\/r\/([^/]+)(?:\/([^/]+))?/
 const multiredditRegex = /^\/user\/([^/]+)\/m\/([^/]+)/
 const userRegex = /^\/(?:u|user)\/([^/]+)(?:\/(submitted|comments))?/
 const domainRegex = /^\/domain\/([^/]+)/
+const subredditsRegex = /^\/(?:subreddits|reddits)(?:\/(new|popular))?/
 
 export const hosts = ['reddit.com', 'www.reddit.com', 'old.reddit.com', 'new.reddit.com']
-const sortOptions = ['hot', 'new', 'rising', 'controversial', 'top']
+const sortOptions = ['hot', 'new', 'rising', 'controversial', 'top', 'best']
 const timeOptions = new Set(['hour', 'day', 'week', 'month', 'year', 'all'])
 const timeFilteredSorts = new Set(['top', 'controversial'])
 
@@ -43,6 +46,76 @@ export const redditHandler: PlatformHandler = {
     // Homepage: reddit.com/
     if (pathSegments.length === 0) {
       return [{ uri: 'https://www.reddit.com/.rss', hint: composeHint('reddit:posts') }]
+    }
+
+    // Sitewide sort: /hot, /new, /rising, /controversial, /top, /best
+    if (pathSegments.length === 1 && isAnyOf(pathSegments[0], sortOptions)) {
+      const sort = pathSegments[0]
+
+      return [
+        {
+          uri: `https://www.reddit.com/${sort}/.rss${getTimeframeSuffix(sort, searchParams)}`,
+          hint: composeHint('reddit:posts'),
+        },
+      ]
+    }
+
+    // Sitewide search: /search?q=...
+    if (pathSegments[0] === 'search') {
+      const query = searchParams.get('q')
+
+      if (query) {
+        return [
+          {
+            uri: `https://www.reddit.com/search.rss?q=${encodeURIComponent(query)}`,
+            hint: composeHint('reddit:search'),
+          },
+        ]
+      }
+    }
+
+    // Subreddit list: /subreddits[/new|/popular]
+    const subredditsMatch = pathname.match(subredditsRegex)
+
+    if (subredditsMatch) {
+      const sort = subredditsMatch[1]
+      const path = sort ? `subreddits/${sort}` : 'subreddits'
+
+      return [
+        {
+          uri: `https://www.reddit.com/${path}/.rss`,
+          hint: composeHint('reddit:subreddits'),
+        },
+      ]
+    }
+
+    // Subreddit search: /r/{sub}/search?q=...
+    const subredditSearchMatch = pathname.match(subredditSearchRegex)
+
+    if (subredditSearchMatch?.[1]) {
+      const subreddit = subredditSearchMatch[1]
+      const query = searchParams.get('q')
+
+      if (query) {
+        return [
+          {
+            uri: `https://www.reddit.com/r/${subreddit}/search.rss?q=${encodeURIComponent(query)}&restrict_sr=on`,
+            hint: composeHint('reddit:search'),
+          },
+        ]
+      }
+    }
+
+    // Subreddit wiki: /r/{sub}/wiki[/...]
+    const subredditWikiMatch = pathname.match(subredditWikiRegex)
+
+    if (subredditWikiMatch?.[1]) {
+      return [
+        {
+          uri: `https://www.reddit.com/r/${subredditWikiMatch[1]}/wiki/index.rss`,
+          hint: composeHint('reddit:wiki'),
+        },
+      ]
     }
 
     // Match /r/subreddit/comments/id pattern (post comments feed).
