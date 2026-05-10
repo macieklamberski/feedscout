@@ -291,5 +291,41 @@ describe('lemmyHandler', () => {
     it('should return empty array for invalid URL', () => {
       expect(lemmyHandler.resolve('not-a-url')).toEqual([])
     })
+
+    it('should accept extended sort values', () => {
+      const value = 'https://lemmy.ml/c/programming?sort=Controversial'
+      const expected = [
+        {
+          uri: 'https://lemmy.ml/feeds/c/programming.xml?sort=Controversial',
+          hint: { key: 'lemmy:community', label: 'Community' },
+        },
+      ]
+
+      expect(lemmyHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should pass through numeric ?limit= values', () => {
+      const value = 'https://lemmy.ml/c/programming?sort=Hot&limit=5'
+      const expected = [
+        {
+          uri: 'https://lemmy.ml/feeds/c/programming.xml?sort=Hot&limit=5',
+          hint: { key: 'lemmy:community', label: 'Community' },
+        },
+      ]
+
+      expect(lemmyHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should drop non-numeric ?limit= values', () => {
+      const value = 'https://lemmy.ml/c/programming?limit=garbage'
+      const expected = [
+        {
+          uri: 'https://lemmy.ml/feeds/c/programming.xml',
+          hint: { key: 'lemmy:community', label: 'Community' },
+        },
+      ]
+
+      expect(lemmyHandler.resolve(value)).toEqual(expected)
+    })
   })
 })
