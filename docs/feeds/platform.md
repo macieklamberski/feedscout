@@ -115,12 +115,15 @@ Discovers feeds for WP Engine-hosted WordPress sites. Uses the same feed structu
 
 ### Blogspot
 
-Discovers RSS and Atom feeds for Blogspot blogs, including label-specific feeds.
+Discovers RSS and Atom feeds for Blogspot blogs, including label, comments, summary, and per-post comments feeds. Also matches country-coded TLDs (`*.blogspot.co.uk`, `*.blogspot.de`, etc.).
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `*.blogspot.com` | Posts feed (Atom + RSS) |
-| `*.blogspot.com/search/label/{label}` | Label feed (+ above) |
+| `*.blogspot.com` | Posts feed (Atom + RSS) + summary (Atom + RSS) + comments (Atom + RSS) |
+| `*.blogspot.com/search/label/{label}` | Label feed (Atom + RSS) + above |
+| `*.blogspot.com/{year}/{month}/{slug}.html` | Post comments feed (Atom + RSS)* + above |
+
+\* *Requires HTML content to extract the post ID.*
 
 ### DEV.to
 

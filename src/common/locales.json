@@ -65,6 +65,8 @@
     "wordpress:post-comments-atom": "Post comments (Atom)",
     "blogspot:posts-atom": "Posts (Atom)",
     "blogspot:posts-rss": "Posts (RSS)",
+    "blogspot:posts-summary-atom": "Posts summary (Atom)",
+    "blogspot:posts-summary-rss": "Posts summary (RSS)",
     "blogspot:comments-atom": "Comments (Atom)",
     "blogspot:comments-rss": "Comments (RSS)",
     "blogspot:label-atom": "Label (Atom)",

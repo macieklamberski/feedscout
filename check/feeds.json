@@ -22,6 +22,8 @@
   "blogspot": [
     "https://googleblog.blogspot.com/feeds/posts/default",
     "https://googleblog.blogspot.com/feeds/posts/default?alt=rss",
+    "https://googleblog.blogspot.com/feeds/posts/summary",
+    "https://googleblog.blogspot.com/feeds/posts/summary?alt=rss",
     "https://googleblog.blogspot.com/feeds/posts/default/-/Products",
     "https://googleblog.blogspot.com/feeds/posts/default/-/Products?alt=rss",
     "https://security.googleblog.com/feeds/comments/default",
