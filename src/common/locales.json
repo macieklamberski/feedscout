@@ -37,6 +37,7 @@
     "gitlab:tags": "Tags",
     "gitlab:issues": "Issues",
     "gitlab:merge-requests": "Merge requests",
+    "gitlab:branch-commits": "Branch commits",
     "codeberg:activity": "Activity",
     "codeberg:releases": "Releases",
     "codeberg:tags": "Tags",

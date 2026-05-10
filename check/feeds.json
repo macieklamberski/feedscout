@@ -113,7 +113,8 @@
     "https://gitlab.com/gitlab-org/gitlab/-/tags?format=atom",
     "https://gitlab.com/gitlab-org/gitlab/-/issues.atom",
     "https://gitlab.com/gitlab-org/gitlab/-/merge_requests.atom",
-    "https://gitlab.com/gitlab-org/gitlab.atom"
+    "https://gitlab.com/gitlab-org/gitlab.atom",
+    "https://gitlab.com/gitlab-org/gitlab/-/commits/master?format=atom"
   ],
   "goodreads": [
     "https://www.goodreads.com/user/updates_rss/1",

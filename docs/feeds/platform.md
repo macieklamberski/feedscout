@@ -200,12 +200,14 @@ Also supports `gitea.com` with the same patterns.
 
 ### GitLab
 
-Discovers Atom feeds for GitLab users, repositories, releases, and tags.
+Discovers Atom feeds for GitLab users and repositories. Self-hosted instances are detected via the `og:site_name` HTML meta tag or the `X-Gitlab-Meta` response header.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | `gitlab.com/{user}` | User activity feed |
-| `gitlab.com/{user}/{repo}` | Releases, tags, commits |
+| `gitlab.com/{user}/{repo}` | Releases, tags, issues, merge requests, activity |
+| `gitlab.com/{user}/{repo}/-/commits/{branch}` | Branch commits feed (+ above) |
+| `gitlab.com/{user}/{repo}/-/tree/{branch}` | Branch commits feed (+ above) |
 
 ### Product Hunt
 
