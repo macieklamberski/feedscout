@@ -63,6 +63,10 @@ describe('nebulaHandler', () => {
           uri: 'https://rss.nebula.app/video.rss?plus=true',
           hint: { key: 'nebula:videos-all-plus', label: 'All Videos (Plus)' },
         },
+        {
+          uri: 'https://rss.nebula.app/video/channels.rss',
+          hint: { key: 'nebula:channels', label: 'Recently Added Channels' },
+        },
       ]
 
       expect(nebulaHandler.resolve(value)).toEqual(expected)
@@ -78,6 +82,30 @@ describe('nebulaHandler', () => {
         {
           uri: 'https://rss.nebula.app/video.rss?plus=true',
           hint: { key: 'nebula:videos-all-plus', label: 'All Videos (Plus)' },
+        },
+        {
+          uri: 'https://rss.nebula.app/video/channels.rss',
+          hint: { key: 'nebula:channels', label: 'Recently Added Channels' },
+        },
+      ]
+
+      expect(nebulaHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return global feeds for /explore', () => {
+      const value = 'https://nebula.tv/explore'
+      const expected = [
+        {
+          uri: 'https://rss.nebula.app/video.rss',
+          hint: { key: 'nebula:videos-all', label: 'All Videos' },
+        },
+        {
+          uri: 'https://rss.nebula.app/video.rss?plus=true',
+          hint: { key: 'nebula:videos-all-plus', label: 'All Videos (Plus)' },
+        },
+        {
+          uri: 'https://rss.nebula.app/video/channels.rss',
+          hint: { key: 'nebula:channels', label: 'Recently Added Channels' },
         },
       ]
 
@@ -102,6 +130,38 @@ describe('nebulaHandler', () => {
         {
           uri: 'https://rss.nebula.app/video.rss?plus=true',
           hint: { key: 'nebula:videos-all-plus', label: 'All Videos (Plus)' },
+        },
+        {
+          uri: 'https://rss.nebula.app/video/channels.rss',
+          hint: { key: 'nebula:channels', label: 'Recently Added Channels' },
+        },
+      ]
+
+      expect(nebulaHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should lowercase the category query value', () => {
+      const value = 'https://nebula.tv/explore?category=Science'
+      const expected = [
+        {
+          uri: 'https://rss.nebula.app/video/categories/science.rss',
+          hint: { key: 'nebula:category', label: 'Category' },
+        },
+        {
+          uri: 'https://rss.nebula.app/video/categories/science.rss?plus=true',
+          hint: { key: 'nebula:category-plus', label: 'Category (Plus)' },
+        },
+        {
+          uri: 'https://rss.nebula.app/video.rss',
+          hint: { key: 'nebula:videos-all', label: 'All Videos' },
+        },
+        {
+          uri: 'https://rss.nebula.app/video.rss?plus=true',
+          hint: { key: 'nebula:videos-all-plus', label: 'All Videos (Plus)' },
+        },
+        {
+          uri: 'https://rss.nebula.app/video/channels.rss',
+          hint: { key: 'nebula:channels', label: 'Recently Added Channels' },
         },
       ]
 

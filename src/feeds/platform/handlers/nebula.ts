@@ -10,6 +10,7 @@ const excludedPaths = [
   'classes',
   'library',
   'login',
+  'originals',
   'pricing',
   'privacy',
   'search',
@@ -17,6 +18,10 @@ const excludedPaths = [
   'signup',
   'terms',
 ]
+
+// /explore is the canonical landing page (Nebula 301s root and /videos to it).
+// Treated as the global feed surface, not a creator slug.
+const globalPaths = new Set(['videos', 'explore'])
 
 export const nebulaHandler: PlatformHandler = {
   match: (url) => {
@@ -27,9 +32,10 @@ export const nebulaHandler: PlatformHandler = {
     const { pathname, searchParams } = new URL(url)
     const pathSegments = pathname.split('/').filter(Boolean)
 
-    // Root or /videos — global feed (optionally filtered by category).
-    if (pathSegments.length === 0 || pathSegments[0] === 'videos') {
-      const category = searchParams.get('category')
+    // Root, /videos, or /explore[/{tab}] — global feed (optionally filtered by category).
+    if (pathSegments.length === 0 || globalPaths.has(pathSegments[0])) {
+      const rawCategory = searchParams.get('category')
+      const category = rawCategory ? rawCategory.toLowerCase() : null
       const uris: Array<DiscoverUriEntry> = []
 
       if (category) {
@@ -50,6 +56,10 @@ export const nebulaHandler: PlatformHandler = {
       uris.push({
         uri: 'https://rss.nebula.app/video.rss?plus=true',
         hint: composeHint('nebula:videos-all-plus'),
+      })
+      uris.push({
+        uri: 'https://rss.nebula.app/video/channels.rss',
+        hint: composeHint('nebula:channels'),
       })
 
       return uris
