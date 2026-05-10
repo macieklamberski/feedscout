@@ -364,7 +364,7 @@ Discovers RSS feeds for Stack Overflow, Server Fault, Super User, Ask Ubuntu, Ma
 | `{site}/collectives/{name}` | Collective feed |
 
 > [!NOTE]
-> Tag feeds accept `?sort={newest|active|votes|creation}` (also `?tab=…`) — the value is passed through to the generated feed URL when it matches one of the allowed sorts. Unknown values are silently dropped.
+> Tag feeds accept `?sort={newest|active|votes|creation|hot|week|month}` (also `?tab=…`) — the value is passed through to the generated feed URL when it matches one of the allowed sorts. Unknown values are silently dropped.
 
 ### Hashnode
 
