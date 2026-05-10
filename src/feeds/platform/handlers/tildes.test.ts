@@ -73,5 +73,37 @@ describe('tildesHandler', () => {
 
       expect(tildesHandler.resolve(value)).toEqual([])
     })
+
+    it('should pass through tag query on group feeds', () => {
+      const value = 'https://tildes.net/~tech?tag=programming'
+      const expected = [
+        {
+          uri: 'https://tildes.net/~tech/topics.rss?tag=programming',
+          hint: { key: 'tildes:group-rss', label: 'Group (RSS)' },
+        },
+        {
+          uri: 'https://tildes.net/~tech/topics.atom?tag=programming',
+          hint: { key: 'tildes:group-atom', label: 'Group (Atom)' },
+        },
+      ]
+
+      expect(tildesHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should pass through tag query on global topics feeds', () => {
+      const value = 'https://tildes.net/?tag=programming'
+      const expected = [
+        {
+          uri: 'https://tildes.net/topics.rss?tag=programming',
+          hint: { key: 'tildes:topics-rss', label: 'Topics (RSS)' },
+        },
+        {
+          uri: 'https://tildes.net/topics.atom?tag=programming',
+          hint: { key: 'tildes:topics-atom', label: 'Topics (Atom)' },
+        },
+      ]
+
+      expect(tildesHandler.resolve(value)).toEqual(expected)
+    })
   })
 })
