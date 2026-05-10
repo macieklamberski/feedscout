@@ -224,12 +224,14 @@ Discovers RSS feeds for Pinterest user profiles.
 
 ### Dailymotion
 
-Discovers RSS feeds for Dailymotion users and playlists.
+Discovers RSS feeds for Dailymotion users, playlists, channels, and the global trending feed.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | `dailymotion.com/{username}` | User videos feed |
 | `dailymotion.com/playlist/{id}` | Playlist feed |
+| `dailymotion.com/channel/{name}` | Channel feed |
+| `dailymotion.com` or `dailymotion.com/trending` | Trending feed |
 
 ### DeviantArt
 

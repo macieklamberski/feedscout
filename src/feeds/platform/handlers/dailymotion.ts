@@ -57,6 +57,16 @@ export const dailymotionHandler: PlatformHandler = {
   resolve: (url) => {
     const { pathname } = new URL(url)
 
+    // Homepage or /trending: global trending feed.
+    if (pathname === '/' || pathname === '' || pathname === '/trending') {
+      return [
+        {
+          uri: 'https://www.dailymotion.com/rss/trending',
+          hint: composeHint('dailymotion:trending'),
+        },
+      ]
+    }
+
     // Playlist page: /playlist/{id}
     const playlistMatch = pathname.match(playlistRegex)
 
