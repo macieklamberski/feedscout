@@ -1,6 +1,8 @@
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, isHostOf } from '../../../common/utils.js'
 
+// Partially discoverable without handler.
+
 export const hosts = ['lobste.rs']
 const tagRegex = /^\/t\/([a-zA-Z0-9,_-]+)/
 const domainRegex = /^\/domains\/([^/]+)/

@@ -1,6 +1,8 @@
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, isHostOf } from '../../../common/utils.js'
 
+// Not discoverable without handler.
+
 const appRegex = /^\/(?:news\/)?app\/(\d+)/
 const groupRegex = /^\/groups\/([^/]+)/
 
@@ -36,6 +38,23 @@ export const steamHandler: PlatformHandler = {
           },
         ]
       }
+    }
+
+    // Global news feed on store root or /news/
+    if (
+      hostname === 'store.steampowered.com' &&
+      (pathname === '/' || pathname === '' || pathname.startsWith('/news'))
+    ) {
+      return [
+        {
+          uri: 'https://store.steampowered.com/feeds/news.xml',
+          hint: composeHint('steam:news-global'),
+        },
+        {
+          uri: 'https://store.steampowered.com/feeds/daily_deals.xml',
+          hint: composeHint('steam:daily-deals'),
+        },
+      ]
     }
 
     return []

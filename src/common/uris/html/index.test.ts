@@ -50,9 +50,11 @@ const anchorIgnoredUris = ['wp-json/oembed/', 'wp-json/wp/']
 
 const anchorLabels = ['rss', 'feed', 'atom', 'subscribe', 'syndicate', 'json feed']
 
+const anchorPathSegments = [/\/rss\//, /\/atom\//, /\/feed\//]
+
 const defaultOptions: HtmlMethodOptions = {
   linkSelectors: [{ rel: 'alternate', types: linkMimeTypes }, { rel: 'feed' }],
-  anchorUris,
+  anchorUris: [...anchorUris, ...anchorPathSegments],
   anchorIgnoredUris,
   anchorLabels,
 }
@@ -283,11 +285,12 @@ describe('discoverUrisFromHtml', () => {
       expect(discoverUrisFromHtml(value, defaultOptions)).toEqual(expected)
     })
 
-    it('should not match anchor if URI not at end', () => {
+    it('should not match anchor by suffix if URI not at end', () => {
       const value = '<a href="/feed/comments">Comments</a>'
       const expected: Array<string> = []
 
-      expect(discoverUrisFromHtml(value, defaultOptions)).toEqual(expected)
+      // Uses string-only anchorUris to test pure suffix matching behavior.
+      expect(discoverUrisFromHtml(value, { ...defaultOptions, anchorUris })).toEqual(expected)
     })
 
     it('should ignore wp-json/oembed/ URI', () => {
@@ -300,6 +303,50 @@ describe('discoverUrisFromHtml', () => {
     it('should ignore wp-json/wp/ URI', () => {
       const value = '<a href="/wp-json/wp/v2/posts">Posts</a>'
       const expected: Array<string> = []
+
+      expect(discoverUrisFromHtml(value, defaultOptions)).toEqual(expected)
+    })
+  })
+
+  describe('anchor elements by href path segment', () => {
+    it('should find anchor with /rss/ in path', () => {
+      const value = '<a href="/rss/now.xml"><svg></svg></a>'
+      const expected = ['/rss/now.xml']
+
+      expect(discoverUrisFromHtml(value, defaultOptions)).toEqual(expected)
+    })
+
+    it('should find anchor with /atom/ in path', () => {
+      const value = '<a href="/atom/entries.xml">Link</a>'
+      const expected = ['/atom/entries.xml']
+
+      expect(discoverUrisFromHtml(value, defaultOptions)).toEqual(expected)
+    })
+
+    it('should find anchor with /feed/ in path', () => {
+      const value = '<a href="/feed/podcast.xml">Link</a>'
+      const expected = ['/feed/podcast.xml']
+
+      expect(discoverUrisFromHtml(value, defaultOptions)).toEqual(expected)
+    })
+
+    it('should not match without full path segment', () => {
+      const value = '<a href="/my-rss-page">Link</a>'
+      const expected: Array<string> = []
+
+      expect(discoverUrisFromHtml(value, defaultOptions)).toEqual(expected)
+    })
+
+    it('should handle case-insensitive path segments', () => {
+      const value = '<a href="/RSS/now.xml"><svg></svg></a>'
+      const expected = ['/RSS/now.xml']
+
+      expect(discoverUrisFromHtml(value, defaultOptions)).toEqual(expected)
+    })
+
+    it('should deduplicate with suffix matching', () => {
+      const value = '<a href="/blog/feed/">Feed</a>'
+      const expected = ['/blog/feed/']
 
       expect(discoverUrisFromHtml(value, defaultOptions)).toEqual(expected)
     })
@@ -443,6 +490,19 @@ describe('discoverUrisFromHtml', () => {
         discoverUrisFromHtml(value, {
           ...defaultOptions,
           anchorUris: ['/custom-feed'],
+        }),
+      ).toEqual(expected)
+    })
+
+    it('should use custom RegExp anchorUris', () => {
+      const value = '<a href="/podcast/episodes.xml">Link</a>'
+      const expected = ['/podcast/episodes.xml']
+
+      expect(
+        discoverUrisFromHtml(value, {
+          ...defaultOptions,
+          // biome-ignore lint/performance/useTopLevelRegex: Test-specific pattern.
+          anchorUris: [/\/podcast\//],
         }),
       ).toEqual(expected)
     })

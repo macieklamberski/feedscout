@@ -1,6 +1,8 @@
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, isHostOf } from '../../../common/utils.js'
 
+// Not discoverable without handler.
+
 const userRegex = /^\/([^/]+)/
 
 const hosts = ['blog.csdn.net']

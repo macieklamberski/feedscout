@@ -349,6 +349,30 @@ describe('includesAnyOf', () => {
   it('should return false when pattern is empty string', () => {
     expect(includesAnyOf('anything', [''])).toBe(false)
   })
+
+  it('should return true when value matches a RegExp pattern', () => {
+    const value = '/rss/now.xml'
+    // biome-ignore lint/performance/useTopLevelRegex: Test-specific pattern.
+    const patterns = [/\/rss\//]
+
+    expect(includesAnyOf(value, patterns)).toBe(true)
+  })
+
+  it('should return false when value does not match a RegExp pattern', () => {
+    const value = '/blog/post.html'
+    // biome-ignore lint/performance/useTopLevelRegex: Test-specific pattern.
+    const patterns = [/\/rss\//]
+
+    expect(includesAnyOf(value, patterns)).toBe(false)
+  })
+
+  it('should handle mixed string and RegExp patterns', () => {
+    const value = '/rss/now.xml'
+    // biome-ignore lint/performance/useTopLevelRegex: Test-specific pattern.
+    const patterns = ['atom', /\/rss\//]
+
+    expect(includesAnyOf(value, patterns)).toBe(true)
+  })
 })
 
 describe('isAnyOf', () => {
@@ -464,6 +488,22 @@ describe('isAnyOf', () => {
     const patterns = ['', 'application/rss+xml']
 
     expect(isAnyOf(value, patterns)).toBe(true)
+  })
+
+  it('should return true when value matches a RegExp pattern', () => {
+    const value = 'application/rss+xml'
+    // biome-ignore lint/performance/useTopLevelRegex: Test-specific pattern.
+    const patterns = [/^application\/rss/]
+
+    expect(isAnyOf(value, patterns)).toBe(true)
+  })
+
+  it('should return false when value does not match a RegExp pattern', () => {
+    const value = 'text/html'
+    // biome-ignore lint/performance/useTopLevelRegex: Test-specific pattern.
+    const patterns = [/^application\/rss/]
+
+    expect(isAnyOf(value, patterns)).toBe(false)
   })
 })
 
@@ -709,6 +749,22 @@ describe('anyWordMatchesAnyOf', () => {
 
     expect(anyWordMatchesAnyOf(value, patterns)).toBe(false)
   })
+
+  it('should return true when a word matches a RegExp pattern', () => {
+    const value = 'alternate feed'
+    // biome-ignore lint/performance/useTopLevelRegex: Test-specific pattern.
+    const patterns = [/^feed$/]
+
+    expect(anyWordMatchesAnyOf(value, patterns)).toBe(true)
+  })
+
+  it('should return false when no word matches a RegExp pattern', () => {
+    const value = 'alternate stylesheet'
+    // biome-ignore lint/performance/useTopLevelRegex: Test-specific pattern.
+    const patterns = [/^feed$/]
+
+    expect(anyWordMatchesAnyOf(value, patterns)).toBe(false)
+  })
 })
 
 describe('endsWithAnyOf', () => {
@@ -763,6 +819,30 @@ describe('endsWithAnyOf', () => {
 
   it('should return false when pattern is empty string', () => {
     expect(endsWithAnyOf('anything', [''])).toBe(false)
+  })
+
+  it('should return true when value matches a RegExp pattern', () => {
+    const value = '/rss/now.xml'
+    // biome-ignore lint/performance/useTopLevelRegex: Test-specific pattern.
+    const patterns = [/\/rss\//]
+
+    expect(endsWithAnyOf(value, patterns)).toBe(true)
+  })
+
+  it('should return false when value does not match a RegExp pattern', () => {
+    const value = '/blog/post.html'
+    // biome-ignore lint/performance/useTopLevelRegex: Test-specific pattern.
+    const patterns = [/\/rss\//]
+
+    expect(endsWithAnyOf(value, patterns)).toBe(false)
+  })
+
+  it('should handle mixed string and RegExp patterns', () => {
+    const value = '/rss/now.xml'
+    // biome-ignore lint/performance/useTopLevelRegex: Test-specific pattern.
+    const patterns = ['.html', /\/rss\//]
+
+    expect(endsWithAnyOf(value, patterns)).toBe(true)
   })
 })
 

@@ -2,11 +2,15 @@ import type { DiscoverUriEntry } from '../../../common/types.js'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, isHostOf } from '../../../common/utils.js'
 
+// Partially discoverable without handler.
+
 const channelIdRegex = /"(?:channelId|externalId)":"(UC[a-zA-Z0-9_-]+)"/
 const channelRegex = /^\/channel\/(UC[a-zA-Z0-9_-]+)/
 const handleRegex = /^\/@([^/]+)/
 const userRegex = /^\/user\/([^/]+)/
 const customRegex = /^\/c\/([^/]+)/
+const shortsRegex = /^\/shorts\/[\w-]+/
+const liveRegex = /^\/live\/[\w-]+/
 const channelPrefixRegex = /^UC/
 
 const hosts = ['youtube.com', 'www.youtube.com', 'm.youtube.com', 'youtu.be', 'www.youtu.be']
@@ -23,6 +27,10 @@ const playlistPrefix = (prefix: string, channelId: string): string => {
   return channelId.replace(channelPrefixRegex, prefix)
 }
 
+// YouTube also supports a legacy ?user=username feed parameter, but it only
+// works with old-style usernames (not modern @handles) and returns the same
+// Atom content as ?channel_id=. YouTube's own autodiscovery always uses
+// channel_id, so we treat it as the canonical format.
 const feedUrl = (param: string, value: string): string => {
   return `https://www.youtube.com/feeds/videos.xml?${param}=${value}`
 }
@@ -106,10 +114,14 @@ export const youtubeHandler: PlatformHandler = {
     // - Legacy user: /user/username
     // - Custom URL: /c/customname
     // - Video pages: /watch?v= or youtu.be/videoId
+    // - Shorts: /shorts/videoId
+    // - Live stream: /live/videoId
     if (uris.length === 0 && content) {
       const isVideoPage =
         parsedUrl.searchParams.has('v') ||
-        (parsedUrl.hostname.includes('youtu.be') && parsedUrl.pathname.length > 1)
+        (parsedUrl.hostname.includes('youtu.be') && parsedUrl.pathname.length > 1) ||
+        shortsRegex.test(parsedUrl.pathname) ||
+        liveRegex.test(parsedUrl.pathname)
       const needsContentParsing =
         isVideoPage ||
         parsedUrl.pathname.match(handleRegex) ||

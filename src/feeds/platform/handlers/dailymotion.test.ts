@@ -58,6 +58,18 @@ describe('dailymotionHandler', () => {
       expect(dailymotionHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return RSS feed for channel page', () => {
+      const value = 'https://www.dailymotion.com/channel/news'
+      const expected = [
+        {
+          uri: 'https://www.dailymotion.com/rss/channel/news',
+          hint: { key: 'dailymotion:channel', label: 'Channel' },
+        },
+      ]
+
+      expect(dailymotionHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return empty array for excluded paths', () => {
       const values = [
         'https://www.dailymotion.com/signin',
@@ -66,7 +78,6 @@ describe('dailymotionHandler', () => {
         'https://www.dailymotion.com/video',
         'https://www.dailymotion.com/login',
         'https://www.dailymotion.com/live',
-        'https://www.dailymotion.com/trending',
       ]
 
       for (const value of values) {
@@ -74,10 +85,28 @@ describe('dailymotionHandler', () => {
       }
     })
 
-    it('should return empty array for homepage', () => {
+    it('should return trending feed for homepage', () => {
       const value = 'https://www.dailymotion.com/'
+      const expected = [
+        {
+          uri: 'https://www.dailymotion.com/rss/trending',
+          hint: { key: 'dailymotion:trending', label: 'Trending' },
+        },
+      ]
 
-      expect(dailymotionHandler.resolve(value)).toEqual([])
+      expect(dailymotionHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return trending feed for /trending', () => {
+      const value = 'https://www.dailymotion.com/trending'
+      const expected = [
+        {
+          uri: 'https://www.dailymotion.com/rss/trending',
+          hint: { key: 'dailymotion:trending', label: 'Trending' },
+        },
+      ]
+
+      expect(dailymotionHandler.resolve(value)).toEqual(expected)
     })
   })
 })

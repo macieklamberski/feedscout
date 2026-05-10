@@ -1,9 +1,12 @@
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, isAnyOf, isHostOf } from '../../../common/utils.js'
 
+// Not discoverable without handler.
+
 const tagRegex = /^\/tag\/([^/]+)/
 const favouritesRegex = /^\/([a-zA-Z0-9_-]+)\/favourites\/?$/
 const folderRegex = /^\/([a-zA-Z0-9_-]+)\/gallery\/(\d+)(?:\/|$)/
+const journalRegex = /^\/([a-zA-Z0-9_-]+)\/journal(?:\/|$)/
 const profileRegex = /^\/([a-zA-Z0-9_-]+)(?:\/gallery(?:\/all)?)?(?:\/|$)/
 
 export const hosts = ['deviantart.com', 'www.deviantart.com']
@@ -73,6 +76,22 @@ export const deviantartHandler: PlatformHandler = {
           {
             uri: `${feedBaseUrl}?type=deviation&q=${encodeURIComponent(`gallery:${username}/${folderId}`)}`,
             hint: composeHint('deviantart:gallery'),
+          },
+        ]
+      }
+    }
+
+    // Match journal: /{username}/journal or /{username}/journal/{slug}
+    const journalMatch = pathname.match(journalRegex)
+
+    if (journalMatch?.[1]) {
+      const username = journalMatch[1]
+
+      if (!isAnyOf(username, excludedPaths)) {
+        return [
+          {
+            uri: `${feedBaseUrl}?q=${encodeURIComponent(`journal:${username}`)}`,
+            hint: composeHint('deviantart:journal'),
           },
         ]
       }

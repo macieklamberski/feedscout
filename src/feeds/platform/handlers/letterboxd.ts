@@ -1,6 +1,8 @@
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, isAnyOf, isHostOf } from '../../../common/utils.js'
 
+// Discoverable without handler.
+
 const hosts = ['letterboxd.com', 'www.letterboxd.com']
 const excludedPaths = [
   'about',

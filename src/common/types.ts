@@ -7,6 +7,8 @@ import type { WellknownMethodOptions } from './uris/wellknown/types.js'
 
 export type MaybePromise<T> = T | Promise<T>
 
+export type Pattern = string | RegExp
+
 export type UriEntry = string | Array<string>
 
 export type DiscoverUriHint = {

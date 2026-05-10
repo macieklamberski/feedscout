@@ -1,6 +1,8 @@
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, isHostOf } from '../../../common/utils.js'
 
+// Discoverable without handler.
+
 const nodeRegex = /^\/go\/([^/]+)/
 const memberRegex = /^\/member\/([^/]+)/
 

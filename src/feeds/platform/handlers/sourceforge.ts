@@ -1,6 +1,8 @@
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, isHostOf } from '../../../common/utils.js'
 
+// Discoverable without handler.
+
 export const hosts = ['sourceforge.net', 'www.sourceforge.net']
 
 export const sourceforgeHandler: PlatformHandler = {
@@ -12,14 +14,32 @@ export const sourceforgeHandler: PlatformHandler = {
     const { origin, pathname } = new URL(url)
     const pathSegments = pathname.split('/').filter(Boolean)
 
-    // Project page: sourceforge.net/projects/{project}
-    if (pathSegments[0] === 'projects' && pathSegments[1]) {
+    // Project pages can be at either /projects/{project} or /p/{project}.
+    const isProject = (pathSegments[0] === 'projects' || pathSegments[0] === 'p') && pathSegments[1]
+
+    if (isProject) {
       const project = pathSegments[1]
 
       return [
         {
-          uri: `${origin}/projects/${project}/rss`,
+          uri: `${origin}/p/${project}/activity/feed`,
           hint: composeHint('sourceforge:activity'),
+        },
+        {
+          uri: `${origin}/projects/${project}/rss`,
+          hint: composeHint('sourceforge:files'),
+        },
+        {
+          uri: `${origin}/p/${project}/news/feed.rss`,
+          hint: composeHint('sourceforge:news-rss'),
+        },
+        {
+          uri: `${origin}/p/${project}/news/feed.atom`,
+          hint: composeHint('sourceforge:news-atom'),
+        },
+        {
+          uri: `${origin}/p/${project}/discussion/feed`,
+          hint: composeHint('sourceforge:discussion'),
         },
       ]
     }

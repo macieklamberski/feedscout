@@ -1,6 +1,8 @@
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, isHostOf } from '../../../common/utils.js'
 
+// Partially discoverable without handler.
+
 const hosts = ['kickstarter.com', 'www.kickstarter.com']
 
 export const kickstarterHandler: PlatformHandler = {

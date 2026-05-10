@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverFetchFn } from '../../types.js'
+import type { DiscoverFetchFn, DiscoverUriEntry } from '../../types.js'
 import { discoverUrisFromWellknown } from './index.js'
 
 const createMockFetchFn = (responses: Record<string, string>): DiscoverFetchFn => {
@@ -58,7 +58,7 @@ describe('discoverUrisFromWellknown', () => {
         ],
       }),
     })
-    const expected: Array<unknown> = []
+    const expected: Array<DiscoverUriEntry> = []
 
     return expect(
       discoverUrisFromWellknown(
@@ -77,7 +77,7 @@ describe('discoverUrisFromWellknown', () => {
         links: 'not-an-array',
       }),
     })
-    const expected: Array<unknown> = []
+    const expected: Array<DiscoverUriEntry> = []
 
     return expect(
       discoverUrisFromWellknown(
@@ -94,7 +94,7 @@ describe('discoverUrisFromWellknown', () => {
     const fetchFn = createMockFetchFn({
       'https://example.com/.well-known/host-meta.json': 'not valid json {{{',
     })
-    const expected: Array<unknown> = []
+    const expected: Array<DiscoverUriEntry> = []
 
     return expect(
       discoverUrisFromWellknown(
@@ -109,7 +109,7 @@ describe('discoverUrisFromWellknown', () => {
 
   it('should return empty when fetch fails', () => {
     const fetchFn = createMockFetchFn({})
-    const expected: Array<unknown> = []
+    const expected: Array<DiscoverUriEntry> = []
 
     return expect(
       discoverUrisFromWellknown(
@@ -257,7 +257,7 @@ describe('discoverUrisFromWellknown', () => {
         ],
       }),
     })
-    const expected: Array<unknown> = []
+    const expected: Array<DiscoverUriEntry> = []
 
     return expect(
       discoverUrisFromWellknown(

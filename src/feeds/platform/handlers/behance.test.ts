@@ -72,7 +72,6 @@ describe('behanceHandler', () => {
     it('should return empty array for excluded paths', () => {
       const values = [
         'https://www.behance.net/search',
-        'https://www.behance.net/galleries',
         'https://www.behance.net/blog',
         'https://www.behance.net/about',
       ]
@@ -82,10 +81,36 @@ describe('behanceHandler', () => {
       }
     })
 
-    it('should return empty array for homepage', () => {
+    it('should return featured projects + Featured-by-Adobe feed for homepage', () => {
       const value = 'https://www.behance.net/'
+      const expected = [
+        {
+          uri: 'https://www.behance.net/feeds/projects',
+          hint: { key: 'behance:projects', label: 'Featured projects' },
+        },
+        {
+          uri: 'https://feeds.feedburner.com/behance/vorr',
+          hint: { key: 'behance:featured', label: 'Featured by Adobe' },
+        },
+      ]
 
-      expect(behanceHandler.resolve(value)).toEqual([])
+      expect(behanceHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return featured projects + Featured-by-Adobe feed for /galleries', () => {
+      const value = 'https://www.behance.net/galleries'
+      const expected = [
+        {
+          uri: 'https://www.behance.net/feeds/projects',
+          hint: { key: 'behance:projects', label: 'Featured projects' },
+        },
+        {
+          uri: 'https://feeds.feedburner.com/behance/vorr',
+          hint: { key: 'behance:featured', label: 'Featured by Adobe' },
+        },
+      ]
+
+      expect(behanceHandler.resolve(value)).toEqual(expected)
     })
 
     it('should return empty array for other nested paths', () => {

@@ -82,6 +82,42 @@ describe('itchioHandler', () => {
       expect(itchioHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return platform feed for platform path', () => {
+      const value = 'https://itch.io/games/platform-web'
+      const expected = [
+        {
+          uri: 'https://itch.io/games/platform-web.xml',
+          hint: { key: 'itchio:platform', label: 'Platform' },
+        },
+      ]
+
+      expect(itchioHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return genre feed for genre path', () => {
+      const value = 'https://itch.io/games/genre-puzzle'
+      const expected = [
+        {
+          uri: 'https://itch.io/games/genre-puzzle.xml',
+          hint: { key: 'itchio:genre', label: 'Genre' },
+        },
+      ]
+
+      expect(itchioHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return made-with feed for made-with path', () => {
+      const value = 'https://itch.io/games/made-with-unity'
+      const expected = [
+        {
+          uri: 'https://itch.io/games/made-with-unity.xml',
+          hint: { key: 'itchio:made-with', label: 'Made with' },
+        },
+      ]
+
+      expect(itchioHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return sort feed for sort path', () => {
       const value = 'https://itch.io/games/newest'
       const expected = [
@@ -166,6 +202,7 @@ describe('itchioHandler', () => {
         },
         { uri: 'https://itch.io/feed/new.xml', hint: { key: 'itchio:new', label: 'New' } },
         { uri: 'https://itch.io/feed/sales.xml', hint: { key: 'itchio:sales', label: 'Sales' } },
+        { uri: 'https://itch.io/blog.rss', hint: { key: 'itchio:blog', label: 'Blog' } },
       ]
 
       expect(itchioHandler.resolve(value)).toEqual(expected)
@@ -180,6 +217,7 @@ describe('itchioHandler', () => {
         },
         { uri: 'https://itch.io/feed/new.xml', hint: { key: 'itchio:new', label: 'New' } },
         { uri: 'https://itch.io/feed/sales.xml', hint: { key: 'itchio:sales', label: 'Sales' } },
+        { uri: 'https://itch.io/blog.rss', hint: { key: 'itchio:blog', label: 'Blog' } },
       ]
 
       expect(itchioHandler.resolve(value)).toEqual(expected)

@@ -1,6 +1,8 @@
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, isHostOf } from '../../../common/utils.js'
 
+// Discoverable without handler.
+
 const hosts = ['producthunt.com', 'www.producthunt.com']
 const topicRegex = /^\/topics\/([a-zA-Z0-9_-]+)/
 const categoryRegex = /^\/categories\/([a-zA-Z0-9_-]+)/
