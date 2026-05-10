@@ -289,7 +289,8 @@
     "https://vimeo.com/casey/videos/rss",
     "https://vimeo.com/casey/likes/rss",
     "https://vimeo.com/channels/staffpicks/videos/rss",
-    "https://vimeo.com/groups/animation/videos/rss"
+    "https://vimeo.com/groups/animation/videos/rss",
+    "https://vimeo.com/album/12345/rss"
   ],
   "weblogLol": [
     "https://adam.weblog.lol/rss.xml",

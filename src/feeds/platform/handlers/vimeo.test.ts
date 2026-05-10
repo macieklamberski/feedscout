@@ -109,6 +109,36 @@ describe('vimeoHandler', () => {
       expect(vimeoHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return album feed for /album/{id}', () => {
+      const value = 'https://vimeo.com/album/12345'
+      const expected = [
+        {
+          uri: 'https://vimeo.com/album/12345/rss',
+          hint: { key: 'vimeo:album', label: 'Album' },
+        },
+      ]
+
+      expect(vimeoHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return album feed for /album/{id}/subpage', () => {
+      const value = 'https://vimeo.com/album/12345/something'
+      const expected = [
+        {
+          uri: 'https://vimeo.com/album/12345/rss',
+          hint: { key: 'vimeo:album', label: 'Album' },
+        },
+      ]
+
+      expect(vimeoHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return empty array for non-numeric album id', () => {
+      const value = 'https://vimeo.com/album/not-a-number'
+
+      expect(vimeoHandler.resolve(value)).toEqual([])
+    })
+
     it('should return empty array for root page', () => {
       const value = 'https://vimeo.com'
 

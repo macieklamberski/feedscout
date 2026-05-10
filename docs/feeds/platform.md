@@ -296,7 +296,7 @@ Discovers RSS feeds for SoundCloud user profiles.
 
 ### Vimeo
 
-Discovers RSS feeds for Vimeo user profiles, channels, and groups.
+Discovers RSS feeds for Vimeo user profiles, channels, groups, and albums (showcases).
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
@@ -304,6 +304,7 @@ Discovers RSS feeds for Vimeo user profiles, channels, and groups.
 | `vimeo.com/{user}/likes` | User likes feed (+ videos) |
 | `vimeo.com/channels/{channel}` | Channel feed |
 | `vimeo.com/groups/{group}` | Group feed |
+| `vimeo.com/album/{id}` | Album/showcase feed |
 
 ### SourceForge
 
