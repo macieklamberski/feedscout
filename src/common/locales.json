@@ -227,6 +227,7 @@
     "ameblo:posts-rdf": "Posts (RDF)",
     "arena:profile": "Profile",
     "arena:channel": "Channel",
+    "arena:editorial": "Editorial",
     "audioboom:podcast": "Podcast",
     "bookwyrm:activity": "Activity",
     "bookwyrm:reviews": "Reviews",

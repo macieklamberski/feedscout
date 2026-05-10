@@ -31,6 +31,17 @@ export const arenaHandler: PlatformHandler = {
       return []
     }
 
+    // Editorial section: /editorial[/{article-slug}] resolves to the dedicated
+    // editorial feed (article-slug pages have no per-article feed).
+    if (pathSegments[0] === 'editorial') {
+      return [
+        {
+          uri: 'https://www.are.na/editorial/feed/rss',
+          hint: composeHint('arena:editorial'),
+        },
+      ]
+    }
+
     const username = pathSegments[0]
 
     if (isAnyOf(username, excludedPaths)) {
