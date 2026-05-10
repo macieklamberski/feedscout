@@ -43,5 +43,35 @@ describe('libsynHandler', () => {
 
       expect(libsynHandler.resolve(value)).toEqual(expected)
     })
+
+    it('should preserve show ID for feeds.libsyn.com canonical URL', () => {
+      const value = 'https://feeds.libsyn.com/113039/rss'
+      const expected = [
+        {
+          uri: 'https://feeds.libsyn.com/113039/rss',
+          hint: { key: 'libsyn:podcast', label: 'Podcast' },
+        },
+      ]
+
+      expect(libsynHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should preserve show ID for feeds.libsyn.com without /rss suffix', () => {
+      const value = 'https://feeds.libsyn.com/113039'
+      const expected = [
+        {
+          uri: 'https://feeds.libsyn.com/113039/rss',
+          hint: { key: 'libsyn:podcast', label: 'Podcast' },
+        },
+      ]
+
+      expect(libsynHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return empty array for feeds.libsyn.com without numeric show ID', () => {
+      const value = 'https://feeds.libsyn.com/something-non-numeric'
+
+      expect(libsynHandler.resolve(value)).toEqual([])
+    })
   })
 })

@@ -67,5 +67,29 @@ describe('arenaHandler', () => {
 
       expect(arenaHandler.resolve(value)).toEqual([])
     })
+
+    it('should return editorial feed for /editorial', () => {
+      const value = 'https://www.are.na/editorial'
+      const expected = [
+        {
+          uri: 'https://www.are.na/editorial/feed/rss',
+          hint: { key: 'arena:editorial', label: 'Editorial' },
+        },
+      ]
+
+      expect(arenaHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return editorial feed for editorial article slug', () => {
+      const value = 'https://www.are.na/editorial/learning-to-float'
+      const expected = [
+        {
+          uri: 'https://www.are.na/editorial/feed/rss',
+          hint: { key: 'arena:editorial', label: 'Editorial' },
+        },
+      ]
+
+      expect(arenaHandler.resolve(value)).toEqual(expected)
+    })
   })
 })

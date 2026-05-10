@@ -5,9 +5,28 @@ import { composeHint, isSubdomainOf } from '../../../common/utils.js'
 
 const domainSuffix = /\.transistor\.fm$/i
 
+// Reserved Transistor subdomains that aren't user shows. Without this guard the
+// handler emits feeds.transistor.fm/{www|share|support|...} URLs that 404.
+const reservedSlugs = new Set([
+  'www',
+  'feeds',
+  'share',
+  'support',
+  'help',
+  'developers',
+  'api',
+  'cdn',
+])
+
 export const transistorHandler: PlatformHandler = {
   match: (url) => {
-    return isSubdomainOf(url, 'transistor.fm')
+    if (!isSubdomainOf(url, 'transistor.fm')) {
+      return false
+    }
+
+    const slug = new URL(url).hostname.toLowerCase().replace(domainSuffix, '')
+
+    return !reservedSlugs.has(slug)
   },
 
   resolve: (url) => {

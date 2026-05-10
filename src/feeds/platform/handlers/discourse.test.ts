@@ -67,6 +67,18 @@ describe('discourseHandler', () => {
       expect(discourseHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return category feed for nested /c/{slug}/{slug}/{id} path', () => {
+      const value = 'https://meta.discourse.org/c/contribute/feature/2'
+      const expected = [
+        {
+          uri: 'https://meta.discourse.org/c/contribute/feature/2.rss',
+          hint: { key: 'discourse:category', label: 'Category' },
+        },
+      ]
+
+      expect(discourseHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return topic feed for /t/{slug}/{id} path', () => {
       const value = 'https://users.rust-lang.org/t/welcome-to-the-rust-users-forum/2'
       const expected = [

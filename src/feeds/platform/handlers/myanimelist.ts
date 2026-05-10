@@ -25,6 +25,16 @@ export const myanimelistHandler: PlatformHandler = {
       ]
     }
 
+    // Featured articles feed: /featured
+    if (pathname === '/featured' || pathname.startsWith('/featured/')) {
+      return [
+        {
+          uri: 'https://myanimelist.net/rss/featured.xml',
+          hint: composeHint('myanimelist:featured'),
+        },
+      ]
+    }
+
     const match = pathname.match(userRegex)
 
     if (!match?.[1]) {

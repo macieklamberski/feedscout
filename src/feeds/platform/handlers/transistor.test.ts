@@ -8,6 +8,10 @@ describe('transistorHandler', () => {
       ['https://blog.example.transistor.fm', true],
       ['https://transistor.fm', false],
       ['https://example.com', false],
+      ['https://www.transistor.fm', false],
+      ['https://feeds.transistor.fm', false],
+      ['https://share.transistor.fm', false],
+      ['https://support.transistor.fm', false],
     ] as const
 
     it.each(cases)('%s -> %s', (url, expected) => {

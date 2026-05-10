@@ -35,6 +35,10 @@ describe('microblogHandler', () => {
           uri: 'https://manton.micro.blog/podcast.xml',
           hint: { key: 'microblog:podcast', label: 'Podcast' },
         },
+        {
+          uri: 'https://manton.micro.blog/podcast.json',
+          hint: { key: 'microblog:podcast-json', label: 'Podcast (JSON)' },
+        },
       ]
 
       expect(microblogHandler.resolve(value)).toEqual(expected)
@@ -63,6 +67,10 @@ describe('microblogHandler', () => {
           uri: 'https://manton.micro.blog/podcast.xml',
           hint: { key: 'microblog:podcast', label: 'Podcast' },
         },
+        {
+          uri: 'https://manton.micro.blog/podcast.json',
+          hint: { key: 'microblog:podcast-json', label: 'Podcast (JSON)' },
+        },
       ]
 
       expect(microblogHandler.resolve(value)).toEqual(expected)
@@ -86,6 +94,10 @@ describe('microblogHandler', () => {
         {
           uri: 'https://manton.micro.blog/podcast.xml',
           hint: { key: 'microblog:podcast', label: 'Podcast' },
+        },
+        {
+          uri: 'https://manton.micro.blog/podcast.json',
+          hint: { key: 'microblog:podcast-json', label: 'Podcast (JSON)' },
         },
       ]
 
@@ -111,6 +123,10 @@ describe('microblogHandler', () => {
           uri: 'https://manton.micro.blog/podcast.xml',
           hint: { key: 'microblog:podcast', label: 'Podcast' },
         },
+        {
+          uri: 'https://manton.micro.blog/podcast.json',
+          hint: { key: 'microblog:podcast-json', label: 'Podcast (JSON)' },
+        },
       ]
 
       expect(microblogHandler.resolve(value)).toEqual(expected)
@@ -135,6 +151,10 @@ describe('microblogHandler', () => {
           uri: 'https://manton.micro.blog/podcast.xml',
           hint: { key: 'microblog:podcast', label: 'Podcast' },
         },
+        {
+          uri: 'https://manton.micro.blog/podcast.json',
+          hint: { key: 'microblog:podcast-json', label: 'Podcast (JSON)' },
+        },
       ]
 
       expect(microblogHandler.resolve(value)).toEqual(expected)
@@ -154,6 +174,10 @@ describe('microblogHandler', () => {
         {
           uri: 'https://manton.micro.blog/podcast.xml',
           hint: { key: 'microblog:podcast', label: 'Podcast' },
+        },
+        {
+          uri: 'https://manton.micro.blog/podcast.json',
+          hint: { key: 'microblog:podcast-json', label: 'Podcast (JSON)' },
         },
       ]
 

@@ -133,6 +133,18 @@ describe('vimeoHandler', () => {
       expect(vimeoHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return album feed for /showcase/{id} (rewritten to /album/)', () => {
+      const value = 'https://vimeo.com/showcase/12345'
+      const expected = [
+        {
+          uri: 'https://vimeo.com/album/12345/rss',
+          hint: { key: 'vimeo:album', label: 'Album' },
+        },
+      ]
+
+      expect(vimeoHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return empty array for non-numeric album id', () => {
       const value = 'https://vimeo.com/album/not-a-number'
 

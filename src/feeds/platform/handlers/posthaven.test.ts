@@ -43,5 +43,21 @@ describe('posthavenHandler', () => {
 
       expect(posthavenHandler.resolve(value)).toEqual(expected)
     })
+
+    it('should return tag and posts feeds for /tag/{tag}', () => {
+      const value = 'https://blog.posthaven.com/tag/Feature%20Releases'
+      const expected = [
+        {
+          uri: 'https://blog.posthaven.com/tag/Feature%20Releases.atom',
+          hint: { key: 'posthaven:tag', label: 'Tag' },
+        },
+        {
+          uri: 'https://blog.posthaven.com/posts.atom',
+          hint: { key: 'posthaven:posts', label: 'Posts' },
+        },
+      ]
+
+      expect(posthavenHandler.resolve(value)).toEqual(expected)
+    })
   })
 })

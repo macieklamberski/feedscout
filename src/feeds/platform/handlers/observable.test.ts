@@ -62,8 +62,32 @@ describe('observableHandler', () => {
       expect(observableHandler.resolve(value)).toEqual([])
     })
 
-    it('should return empty array for paths without @ prefix', () => {
+    it('should return recent feed for /recent', () => {
+      const value = 'https://observablehq.com/recent'
+      const expected = [
+        {
+          uri: 'https://api.observablehq.com/documents/public.rss',
+          hint: { key: 'observable:recent', label: 'Recent' },
+        },
+      ]
+
+      expect(observableHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return trending feed for /trending', () => {
       const value = 'https://observablehq.com/trending'
+      const expected = [
+        {
+          uri: 'https://api.observablehq.com/documents/trending.rss',
+          hint: { key: 'observable:trending', label: 'Trending' },
+        },
+      ]
+
+      expect(observableHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return empty array for paths without @ prefix', () => {
+      const value = 'https://observablehq.com/about'
 
       expect(observableHandler.resolve(value)).toEqual([])
     })

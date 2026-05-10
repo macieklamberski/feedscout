@@ -44,7 +44,7 @@ describe('friendicaHandler', () => {
   })
 
   describe('resolve', () => {
-    it('should return posts and comments feeds for profile', () => {
+    it('should return posts/comments/replies/activity feeds for profile', () => {
       const value = 'https://libranet.de/profile/admin'
       const expected = [
         {
@@ -55,12 +55,20 @@ describe('friendicaHandler', () => {
           uri: 'https://libranet.de/feed/admin/comments',
           hint: { key: 'friendica:comments', label: 'Comments' },
         },
+        {
+          uri: 'https://libranet.de/feed/admin/replies',
+          hint: { key: 'friendica:replies', label: 'Replies' },
+        },
+        {
+          uri: 'https://libranet.de/feed/admin/activity',
+          hint: { key: 'friendica:activity', label: 'Activity' },
+        },
       ]
 
       expect(friendicaHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return both feeds regardless of subpath', () => {
+    it('should return all feeds regardless of subpath', () => {
       const value = 'https://libranet.de/profile/admin/photos'
       const expected = [
         {
@@ -70,6 +78,14 @@ describe('friendicaHandler', () => {
         {
           uri: 'https://libranet.de/feed/admin/comments',
           hint: { key: 'friendica:comments', label: 'Comments' },
+        },
+        {
+          uri: 'https://libranet.de/feed/admin/replies',
+          hint: { key: 'friendica:replies', label: 'Replies' },
+        },
+        {
+          uri: 'https://libranet.de/feed/admin/activity',
+          hint: { key: 'friendica:activity', label: 'Activity' },
         },
       ]
 

@@ -87,5 +87,17 @@ describe('letterboxdHandler', () => {
 
       expect(letterboxdHandler.resolve(value)).toEqual([])
     })
+
+    it('should return Journal feed for /journal', () => {
+      const value = 'https://letterboxd.com/journal'
+      const expected = [
+        {
+          uri: 'https://letterboxd.com/journal/rss/',
+          hint: { key: 'letterboxd:journal', label: 'Journal' },
+        },
+      ]
+
+      expect(letterboxdHandler.resolve(value)).toEqual(expected)
+    })
   })
 })

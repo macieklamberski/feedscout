@@ -142,6 +142,18 @@ describe('itchioHandler', () => {
       expect(itchioHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return sort feed for free path', () => {
+      const value = 'https://itch.io/games/free'
+      const expected = [
+        {
+          uri: 'https://itch.io/games/free.xml',
+          hint: { key: 'itchio:games', label: 'Games' },
+        },
+      ]
+
+      expect(itchioHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return games feed for /games path', () => {
       const value = 'https://itch.io/games'
       const expected = [

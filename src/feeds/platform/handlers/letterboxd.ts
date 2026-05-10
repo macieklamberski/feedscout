@@ -39,6 +39,16 @@ export const letterboxdHandler: PlatformHandler = {
       return []
     }
 
+    // Editorial Letterboxd Journal feed.
+    if (pathSegments[0] === 'journal') {
+      return [
+        {
+          uri: 'https://letterboxd.com/journal/rss/',
+          hint: composeHint('letterboxd:journal'),
+        },
+      ]
+    }
+
     const username = pathSegments[0]
 
     if (isAnyOf(username, excludedPaths)) {

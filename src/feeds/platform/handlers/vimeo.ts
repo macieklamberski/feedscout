@@ -73,9 +73,14 @@ export const vimeoHandler: PlatformHandler = {
       ]
     }
 
-    // Album/showcase: vimeo.com/album/{id} (only the /album/ form has a working RSS endpoint;
-    // /showcase/{id}/rss returns 404 even though the browser URL uses /showcase/).
-    if (pathSegments[0] === 'album' && pathSegments[1] && numericRegex.test(pathSegments[1])) {
+    // Album/showcase: vimeo.com/album/{id} or vimeo.com/showcase/{id}. Only /album/{id}/rss
+    // returns RSS; /showcase/{id}/rss returns 404. /album/{id} 301-redirects to
+    // /showcase/{id} in the browser, so users will most often paste the showcase URL.
+    if (
+      (pathSegments[0] === 'album' || pathSegments[0] === 'showcase') &&
+      pathSegments[1] &&
+      numericRegex.test(pathSegments[1])
+    ) {
       const albumId = pathSegments[1]
 
       return [

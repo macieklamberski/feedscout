@@ -13,19 +13,23 @@ export const tildesHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    const { pathname } = new URL(url)
+    const { pathname, searchParams } = new URL(url)
     const groupMatch = pathname.match(groupRegex)
     const uris: Array<DiscoverUriEntry> = []
+
+    // Tildes' feed views honour the ?tag= query (forces order=NEW server-side).
+    const tag = searchParams.get('tag')
+    const tagSuffix = tag ? `?tag=${encodeURIComponent(tag)}` : ''
 
     if (groupMatch?.[1]) {
       const group = groupMatch[1]
 
       uris.push({
-        uri: `https://tildes.net/~${group}/topics.rss`,
+        uri: `https://tildes.net/~${group}/topics.rss${tagSuffix}`,
         hint: composeHint('tildes:group-rss'),
       })
       uris.push({
-        uri: `https://tildes.net/~${group}/topics.atom`,
+        uri: `https://tildes.net/~${group}/topics.atom${tagSuffix}`,
         hint: composeHint('tildes:group-atom'),
       })
 
@@ -35,11 +39,11 @@ export const tildesHandler: PlatformHandler = {
     // Global home feed only for root path.
     if (pathname === '/' || pathname === '') {
       uris.push({
-        uri: 'https://tildes.net/topics.rss',
+        uri: `https://tildes.net/topics.rss${tagSuffix}`,
         hint: composeHint('tildes:topics-rss'),
       })
       uris.push({
-        uri: 'https://tildes.net/topics.atom',
+        uri: `https://tildes.net/topics.atom${tagSuffix}`,
         hint: composeHint('tildes:topics-atom'),
       })
     }

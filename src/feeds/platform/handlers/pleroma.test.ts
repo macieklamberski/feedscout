@@ -50,6 +50,10 @@ describe('pleromaHandler', () => {
           uri: 'https://lain.com/users/lain/feed.atom',
           hint: { key: 'pleroma:posts', label: 'Posts' },
         },
+        {
+          uri: 'https://lain.com/users/lain/feed.rss',
+          hint: { key: 'pleroma:posts-rss', label: 'Posts (RSS)' },
+        },
       ]
 
       expect(pleromaHandler.resolve(value)).toEqual(expected)
@@ -61,6 +65,10 @@ describe('pleromaHandler', () => {
         {
           uri: 'https://lain.com/users/lain/feed.atom',
           hint: { key: 'pleroma:posts', label: 'Posts' },
+        },
+        {
+          uri: 'https://lain.com/users/lain/feed.rss',
+          hint: { key: 'pleroma:posts-rss', label: 'Posts (RSS)' },
         },
       ]
 

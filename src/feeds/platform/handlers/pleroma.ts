@@ -39,6 +39,10 @@ export const pleromaHandler: PlatformHandler = {
           uri: `${origin}/users/${match[1]}/feed.atom`,
           hint: composeHint('pleroma:posts'),
         },
+        {
+          uri: `${origin}/users/${match[1]}/feed.rss`,
+          hint: composeHint('pleroma:posts-rss'),
+        },
       ]
     } catch {}
 

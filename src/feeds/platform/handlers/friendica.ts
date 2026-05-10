@@ -42,6 +42,14 @@ export const friendicaHandler: PlatformHandler = {
           uri: `${origin}/feed/${match[1]}/comments`,
           hint: composeHint('friendica:comments'),
         },
+        {
+          uri: `${origin}/feed/${match[1]}/replies`,
+          hint: composeHint('friendica:replies'),
+        },
+        {
+          uri: `${origin}/feed/${match[1]}/activity`,
+          hint: composeHint('friendica:activity'),
+        },
       ]
     } catch {}
 

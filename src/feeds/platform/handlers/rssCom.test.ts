@@ -55,5 +55,29 @@ describe('rssComHandler', () => {
 
       expect(rssComHandler.resolve(value)).toEqual([])
     })
+
+    it('should return feed URL for /es/podcasts/{slug}', () => {
+      const value = 'https://rss.com/es/podcasts/podcasting101'
+      const expected = [
+        {
+          uri: 'https://media.rss.com/podcasting101/feed.xml',
+          hint: { key: 'rss-com:podcast', label: 'Podcast' },
+        },
+      ]
+
+      expect(rssComHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return feed URL for /it/podcasts/{slug}', () => {
+      const value = 'https://rss.com/it/podcasts/podcasting101'
+      const expected = [
+        {
+          uri: 'https://media.rss.com/podcasting101/feed.xml',
+          hint: { key: 'rss-com:podcast', label: 'Podcast' },
+        },
+      ]
+
+      expect(rssComHandler.resolve(value)).toEqual(expected)
+    })
   })
 })

@@ -80,6 +80,7 @@ Discovers RSS feeds for Medium user profiles, publications, tags, and subdomains
 |-------------|-----------------|
 | `medium.com/@{username}` | User posts feed |
 | `medium.com/{publication}` | Publication feed |
+| `medium.com/tag/{tag}` | Tag feed |
 | `medium.com/{publication}/tagged/{tag}` | Tagged publication feed |
 | `*.medium.com` | Subdomain publication feed |
 | `*.medium.com/tagged/{tag}` | Subdomain tagged feed |
@@ -177,13 +178,15 @@ Discovers Atom feeds for users, organizations, and repositories.
 
 ### GitHub Gist
 
-Discovers Atom feeds for GitHub Gist users and starred gists.
+Discovers Atom feeds for GitHub Gist users, starred gists, forks, and the discover stream.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | `gist.github.com/{username}` | User gists feed |
 | `gist.github.com/{username}/{gist-id}` | User gists feed |
 | `gist.github.com/{username}/starred` | User starred gists feed |
+| `gist.github.com/{username}/forks` | User forks feed |
+| `gist.github.com/discover` | Discover gists feed |
 
 ### Codeberg / Gitea
 
@@ -257,6 +260,9 @@ Discovers RSS feeds for Mastodon user profiles and hashtag pages. Detects Mastod
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | `{instance}/@{username}` | User posts feed |
+| `{instance}/@{username}/tagged/{tag}` | User posts tagged feed |
+| `{instance}/@{username}/with_replies` | User posts with replies feed |
+| `{instance}/@{username}/media` | User media-only feed |
 | `{instance}/tags/{tag}` | Hashtag feed |
 
 > [!NOTE]
@@ -361,7 +367,7 @@ Discovers RSS feeds for Stack Overflow, Server Fault, Super User, Ask Ubuntu, Ma
 | `{site}/collectives/{name}` | Collective feed |
 
 > [!NOTE]
-> Tag feeds accept `?sort={newest|active|votes|creation}` (also `?tab=…`) — the value is passed through to the generated feed URL when it matches one of the allowed sorts. Unknown values are silently dropped.
+> Tag feeds accept `?sort={newest|active|votes|creation|hot|week|month}` (also `?tab=…`) — the value is passed through to the generated feed URL when it matches one of the allowed sorts. Unknown values are silently dropped.
 
 ### Hashnode
 
@@ -639,7 +645,7 @@ Discovers RSS feeds for Are.na user profiles and channels.
 
 ### Audioboom
 
-Discovers RSS and JSON feeds for Audioboom channels.
+Discovers RSS feeds for Audioboom channels.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
@@ -725,7 +731,8 @@ Discovers RSS feeds for Libsyn-hosted podcasts.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `*.libsyn.com` | Podcast feed |
+| `{slug}.libsyn.com` | Podcast feed |
+| `feeds.libsyn.com/{showId}` | Podcast feed |
 
 ### LiveJournal
 

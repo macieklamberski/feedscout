@@ -5,7 +5,7 @@ import { composeHint, hasMetaContent } from '../../../common/utils.js'
 // Discoverable without handler.
 
 const userRegex = /^\/u\/([^/]+)/
-const categoryRegex = /^\/c\/([^/]+)/
+const categoryRegex = /^\/c\/(.+?)\/?$/
 const topicRegex = /^\/t\/([^/]+)\/(\d+)/
 const topRegex = /^\/top(?:\/([^/]+))?\/?$/
 

@@ -180,7 +180,7 @@ describe('redditHandler', () => {
     })
 
     it('should return base feed and all-comments feed for unknown sort options', () => {
-      const value = 'https://reddit.com/r/programming/wiki'
+      const value = 'https://reddit.com/r/programming/about'
       const expected = [
         {
           uri: 'https://www.reddit.com/r/programming/.rss',
@@ -189,6 +189,112 @@ describe('redditHandler', () => {
         {
           uri: 'https://www.reddit.com/r/programming/comments/.rss',
           hint: { key: 'reddit:comments', label: 'Comments' },
+        },
+      ]
+
+      expect(redditHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return sitewide sort feed for /hot', () => {
+      const value = 'https://www.reddit.com/hot'
+      const expected = [
+        {
+          uri: 'https://www.reddit.com/hot/.rss',
+          hint: { key: 'reddit:posts', label: 'Posts' },
+        },
+      ]
+
+      expect(redditHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return sitewide sort feed with timeframe for /top?t=week', () => {
+      const value = 'https://www.reddit.com/top?t=week'
+      const expected = [
+        {
+          uri: 'https://www.reddit.com/top/.rss?t=week',
+          hint: { key: 'reddit:posts', label: 'Posts' },
+        },
+      ]
+
+      expect(redditHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return empty array for /search without q', () => {
+      const value = 'https://www.reddit.com/search'
+
+      expect(redditHandler.resolve(value)).toEqual([])
+    })
+
+    it('should return sitewide search feed for /search?q=', () => {
+      const value = 'https://www.reddit.com/search?q=typescript'
+      const expected = [
+        {
+          uri: 'https://www.reddit.com/search.rss?q=typescript',
+          hint: { key: 'reddit:search', label: 'Search' },
+        },
+      ]
+
+      expect(redditHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should fall through to base subreddit feed for /r/{sub}/search without q', () => {
+      const value = 'https://www.reddit.com/r/programming/search'
+      const expected = [
+        {
+          uri: 'https://www.reddit.com/r/programming/.rss',
+          hint: { key: 'reddit:posts', label: 'Posts' },
+        },
+        {
+          uri: 'https://www.reddit.com/r/programming/comments/.rss',
+          hint: { key: 'reddit:comments', label: 'Comments' },
+        },
+      ]
+
+      expect(redditHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return restricted search feed for /r/{sub}/search?q=', () => {
+      const value = 'https://www.reddit.com/r/programming/search?q=rust'
+      const expected = [
+        {
+          uri: 'https://www.reddit.com/r/programming/search.rss?q=rust&restrict_sr=on',
+          hint: { key: 'reddit:search', label: 'Search' },
+        },
+      ]
+
+      expect(redditHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return wiki feed for /r/{sub}/wiki', () => {
+      const value = 'https://www.reddit.com/r/programming/wiki'
+      const expected = [
+        {
+          uri: 'https://www.reddit.com/r/programming/wiki/index.rss',
+          hint: { key: 'reddit:wiki', label: 'Wiki' },
+        },
+      ]
+
+      expect(redditHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return subreddit-list feed for /subreddits', () => {
+      const value = 'https://www.reddit.com/subreddits'
+      const expected = [
+        {
+          uri: 'https://www.reddit.com/subreddits/.rss',
+          hint: { key: 'reddit:subreddits', label: 'Subreddits' },
+        },
+      ]
+
+      expect(redditHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return subreddit-list feed for /subreddits/popular', () => {
+      const value = 'https://www.reddit.com/subreddits/popular'
+      const expected = [
+        {
+          uri: 'https://www.reddit.com/subreddits/popular/.rss',
+          hint: { key: 'reddit:subreddits', label: 'Subreddits' },
         },
       ]
 

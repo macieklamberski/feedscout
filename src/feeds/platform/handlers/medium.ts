@@ -89,12 +89,15 @@ export const mediumHandler: PlatformHandler = {
       const subdomain = lowerHostname.replace('.medium.com', '')
 
       // Subdomain tagged feed: subdomain.medium.com/tagged/tag-name.
+      // Emit {subdomain}.medium.com form directly — Medium routes it correctly for
+      // both publications and user vanity subdomains. The medium.com/feed/{subdomain}
+      // form 404s on user vanity subdomains (e.g. hlung.medium.com).
       const tagMatch = pathname.match(subdomainTagRegex)
 
       if (tagMatch?.[1]) {
         return [
           {
-            uri: `https://medium.com/feed/${subdomain}/tagged/${tagMatch[1]}`,
+            uri: `https://${subdomain}.medium.com/feed/tagged/${tagMatch[1]}`,
             hint: composeHint('medium:tagged'),
           },
         ]
@@ -102,7 +105,7 @@ export const mediumHandler: PlatformHandler = {
 
       return [
         {
-          uri: `https://medium.com/feed/${subdomain}`,
+          uri: `https://${subdomain}.medium.com/feed`,
           hint: composeHint('medium:publication'),
         },
       ]

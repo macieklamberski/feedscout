@@ -3,7 +3,13 @@ import { composeHint, isAnyOf, isHostOf } from '../../../common/utils.js'
 
 // Partially discoverable without handler.
 
-const hosts = ['buttondown.com', 'www.buttondown.com']
+// buttondown.email is the legacy primary domain (still 302-redirects to .com).
+const hosts = [
+  'buttondown.com',
+  'www.buttondown.com',
+  'buttondown.email',
+  'www.buttondown.email',
+]
 const excludedPaths = [
   'about',
   'api',

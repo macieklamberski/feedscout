@@ -15,6 +15,26 @@ export const observableHandler: PlatformHandler = {
   resolve: (url) => {
     const { pathname } = new URL(url)
 
+    // Site-wide recent feed.
+    if (pathname === '/recent' || pathname === '/recent/') {
+      return [
+        {
+          uri: 'https://api.observablehq.com/documents/public.rss',
+          hint: composeHint('observable:recent'),
+        },
+      ]
+    }
+
+    // Site-wide trending feed.
+    if (pathname === '/trending' || pathname === '/trending/') {
+      return [
+        {
+          uri: 'https://api.observablehq.com/documents/trending.rss',
+          hint: composeHint('observable:trending'),
+        },
+      ]
+    }
+
     // Collection page: /@{user}/collection/{slug}
     const collectionMatch = pathname.match(collectionRegex)
 

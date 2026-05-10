@@ -14,7 +14,7 @@ const sections = [
   'comics',
   'misc',
 ]
-const sorts = ['newest', 'top-rated', 'top-sellers', 'on-sale']
+const sorts = ['newest', 'top-rated', 'top-sellers', 'on-sale', 'free']
 
 const byUserRegex = /^\/games\/by-([^/]+)/
 const tagRegex = /^\/games\/tag-([^/]+)/

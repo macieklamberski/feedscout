@@ -8,6 +8,7 @@ const excludedPaths = [
   'about',
   'api',
   'login',
+  'official-columns',
   'organizations',
   'popular-items',
   'privacy',
@@ -21,6 +22,7 @@ const excludedPaths = [
 const tagRegex = /^\/tags\/([^/]+)/
 const organizationRegex = /^\/organizations\/([^/]+)/
 const popularItemsRegex = /^\/popular-items(\/|$)/
+const officialColumnsRegex = /^\/official-columns(\/|$)/
 
 export const qiitaHandler: PlatformHandler = {
   match: (url) => {
@@ -60,6 +62,16 @@ export const qiitaHandler: PlatformHandler = {
         {
           uri: 'https://qiita.com/popular-items/feed.atom',
           hint: composeHint('qiita:popular'),
+        },
+      ]
+    }
+
+    // Qiita Zine (official columns).
+    if (officialColumnsRegex.test(pathname)) {
+      return [
+        {
+          uri: 'https://qiita.com/official-columns/feed/',
+          hint: composeHint('qiita:zine'),
         },
       ]
     }

@@ -188,8 +188,32 @@ describe('stackExchangeHandler', () => {
       expect(stackExchangeHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should drop unknown sort values silently', () => {
+    it('should pass through hot sort', () => {
       const value = 'https://stackoverflow.com/questions/tagged/javascript?sort=hot'
+      const expected = [
+        {
+          uri: 'https://stackoverflow.com/feeds/tag/javascript?sort=hot',
+          hint: { key: 'stackexchange:tag', label: 'Tag' },
+        },
+      ]
+
+      expect(stackExchangeHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should pass through week sort', () => {
+      const value = 'https://stackoverflow.com/questions/tagged/javascript?sort=week'
+      const expected = [
+        {
+          uri: 'https://stackoverflow.com/feeds/tag/javascript?sort=week',
+          hint: { key: 'stackexchange:tag', label: 'Tag' },
+        },
+      ]
+
+      expect(stackExchangeHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should drop unknown sort values silently', () => {
+      const value = 'https://stackoverflow.com/questions/tagged/javascript?sort=garbage'
       const expected = [
         {
           uri: 'https://stackoverflow.com/feeds/tag/javascript',
