@@ -26,7 +26,7 @@ export const weeblyHandler: PlatformHandler = {
       })
     }
 
-    uris.push({ uri: `${origin}/1/feed`, hint: composeHint('weebly:blog') })
+    uris.push({ uri: `${origin}/blog/feed`, hint: composeHint('weebly:blog') })
 
     return uris
   },

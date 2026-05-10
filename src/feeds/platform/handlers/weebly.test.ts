@@ -24,7 +24,7 @@ describe('weeblyHandler', () => {
       const value = 'https://example.weebly.com'
       const expected = [
         {
-          uri: 'https://example.weebly.com/1/feed',
+          uri: 'https://example.weebly.com/blog/feed',
           hint: { key: 'weebly:blog', label: 'Blog' },
         },
       ]
@@ -33,14 +33,14 @@ describe('weeblyHandler', () => {
     })
 
     it('should return custom slug and default feeds for named blog page', () => {
-      const value = 'https://example.weebly.com/blog'
+      const value = 'https://example.weebly.com/articles'
       const expected = [
         {
-          uri: 'https://example.weebly.com/blog/feed',
+          uri: 'https://example.weebly.com/articles/feed',
           hint: { key: 'weebly:blog', label: 'Blog' },
         },
         {
-          uri: 'https://example.weebly.com/1/feed',
+          uri: 'https://example.weebly.com/blog/feed',
           hint: { key: 'weebly:blog', label: 'Blog' },
         },
       ]
@@ -52,7 +52,7 @@ describe('weeblyHandler', () => {
       const value = 'https://example.weebly.com/1/feed'
       const expected = [
         {
-          uri: 'https://example.weebly.com/1/feed',
+          uri: 'https://example.weebly.com/blog/feed',
           hint: { key: 'weebly:blog', label: 'Blog' },
         },
       ]
