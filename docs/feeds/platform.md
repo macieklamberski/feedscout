@@ -313,11 +313,11 @@ Discovers RSS feeds for Vimeo user profiles, channels, groups, and albums (showc
 
 ### SourceForge
 
-Discovers RSS feeds for SourceForge project activity and file releases.
+Discovers RSS feeds for SourceForge project activity, file releases, news, and discussion.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `sourceforge.net/projects/{project}` | Project activity and files feeds |
+| `sourceforge.net/projects/{project}` or `sourceforge.net/p/{project}` | Activity + files + news (RSS + Atom) + discussion |
 
 ### Kickstarter
 

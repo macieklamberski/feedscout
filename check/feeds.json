@@ -249,7 +249,10 @@
     "https://sourceforge.net/p/filezilla/activity/feed",
     "https://sourceforge.net/projects/filezilla/rss",
     "https://sourceforge.net/p/nmap/activity/feed",
-    "https://sourceforge.net/projects/nmap/rss"
+    "https://sourceforge.net/projects/nmap/rss",
+    "https://sourceforge.net/p/sevenzip/news/feed.rss",
+    "https://sourceforge.net/p/sevenzip/news/feed.atom",
+    "https://sourceforge.net/p/sevenzip/discussion/feed"
   ],
   "spreaker": ["https://www.spreaker.com/show/1433865/episodes/feed"],
   "stackExchange": [

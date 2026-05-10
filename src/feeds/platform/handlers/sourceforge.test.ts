@@ -33,6 +33,18 @@ describe('sourceforgeHandler', () => {
           uri: 'https://sourceforge.net/projects/filezilla/rss',
           hint: { key: 'sourceforge:files', label: 'File releases' },
         },
+        {
+          uri: 'https://sourceforge.net/p/filezilla/news/feed.rss',
+          hint: { key: 'sourceforge:news-rss', label: 'News (RSS)' },
+        },
+        {
+          uri: 'https://sourceforge.net/p/filezilla/news/feed.atom',
+          hint: { key: 'sourceforge:news-atom', label: 'News (Atom)' },
+        },
+        {
+          uri: 'https://sourceforge.net/p/filezilla/discussion/feed',
+          hint: { key: 'sourceforge:discussion', label: 'Discussion' },
+        },
       ]
 
       expect(sourceforgeHandler.resolve(value)).toEqual(expected)
@@ -49,6 +61,18 @@ describe('sourceforgeHandler', () => {
           uri: 'https://sourceforge.net/projects/filezilla/rss',
           hint: { key: 'sourceforge:files', label: 'File releases' },
         },
+        {
+          uri: 'https://sourceforge.net/p/filezilla/news/feed.rss',
+          hint: { key: 'sourceforge:news-rss', label: 'News (RSS)' },
+        },
+        {
+          uri: 'https://sourceforge.net/p/filezilla/news/feed.atom',
+          hint: { key: 'sourceforge:news-atom', label: 'News (Atom)' },
+        },
+        {
+          uri: 'https://sourceforge.net/p/filezilla/discussion/feed',
+          hint: { key: 'sourceforge:discussion', label: 'Discussion' },
+        },
       ]
 
       expect(sourceforgeHandler.resolve(value)).toEqual(expected)
@@ -64,6 +88,18 @@ describe('sourceforgeHandler', () => {
         {
           uri: 'https://sourceforge.net/projects/nmap/rss',
           hint: { key: 'sourceforge:files', label: 'File releases' },
+        },
+        {
+          uri: 'https://sourceforge.net/p/nmap/news/feed.rss',
+          hint: { key: 'sourceforge:news-rss', label: 'News (RSS)' },
+        },
+        {
+          uri: 'https://sourceforge.net/p/nmap/news/feed.atom',
+          hint: { key: 'sourceforge:news-atom', label: 'News (Atom)' },
+        },
+        {
+          uri: 'https://sourceforge.net/p/nmap/discussion/feed',
+          hint: { key: 'sourceforge:discussion', label: 'Discussion' },
         },
       ]
 
