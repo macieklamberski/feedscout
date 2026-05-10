@@ -13,17 +13,19 @@ export const hosts = ['deviantart.com', 'www.deviantart.com']
 const feedBaseUrl = 'https://backend.deviantart.com/rss.xml'
 export const excludedPaths = [
   'about',
+  'core-membership',
+  'daily-deviations',
+  'developers',
   'join',
+  'notifications',
+  'popular',
   'search',
+  'settings',
+  'shop',
+  'submit',
+  'team',
   'topic',
   'watch',
-  'notifications',
-  'settings',
-  'submit',
-  'shop',
-  'core-membership',
-  'team',
-  'developers',
 ]
 
 export const deviantartHandler: PlatformHandler = {
@@ -33,6 +35,25 @@ export const deviantartHandler: PlatformHandler = {
 
   resolve: (url) => {
     const { pathname } = new URL(url)
+
+    // Site-wide curated feeds.
+    if (pathname === '/daily-deviations' || pathname === '/daily-deviations/') {
+      return [
+        {
+          uri: `${feedBaseUrl}?q=${encodeURIComponent('special:dd')}`,
+          hint: composeHint('deviantart:daily-deviations'),
+        },
+      ]
+    }
+
+    if (pathname === '/popular' || pathname === '/popular/') {
+      return [
+        {
+          uri: `${feedBaseUrl}?type=deviation&q=${encodeURIComponent('boost:popular')}`,
+          hint: composeHint('deviantart:popular'),
+        },
+      ]
+    }
 
     // Match tag page: /tag/{tagname}
     const tagMatch = pathname.match(tagRegex)
