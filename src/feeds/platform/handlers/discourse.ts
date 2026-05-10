@@ -1,3 +1,4 @@
+import type { DiscoverUriEntry } from '../../../common/types.js'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, hasMetaContent } from '../../../common/utils.js'
 
@@ -6,6 +7,22 @@ import { composeHint, hasMetaContent } from '../../../common/utils.js'
 const userRegex = /^\/u\/([^/]+)/
 const categoryRegex = /^\/c\/([^/]+)/
 const topicRegex = /^\/t\/([^/]+)\/(\d+)/
+const topRegex = /^\/top(?:\/([^/]+))?\/?$/
+
+const validTopPeriods = new Set(['daily', 'weekly', 'monthly', 'quarterly', 'yearly', 'all'])
+
+const getTopPeriodSuffix = (
+  pathPeriod: string | undefined,
+  searchParams: URLSearchParams,
+): string => {
+  const period = pathPeriod ?? searchParams.get('period') ?? undefined
+
+  if (period && validTopPeriods.has(period)) {
+    return `?period=${period}`
+  }
+
+  return ''
+}
 
 export const isDiscourseHtml = (content: string): boolean => {
   return hasMetaContent(content, 'generator', 'Discourse')
@@ -28,7 +45,7 @@ export const discourseHandler: PlatformHandler = {
 
   resolve: (url) => {
     try {
-      const { origin, pathname } = new URL(url)
+      const { origin, pathname, searchParams } = new URL(url)
 
       const topicMatch = pathname.match(topicRegex)
 
@@ -63,12 +80,33 @@ export const discourseHandler: PlatformHandler = {
         ]
       }
 
-      return [
-        {
-          uri: `${origin}/latest.rss`,
-          hint: composeHint('discourse:latest'),
-        },
-      ]
+      // Top topics: /top or /top/{period}
+      const topMatch = pathname.match(topRegex)
+
+      if (topMatch) {
+        const periodSuffix = getTopPeriodSuffix(topMatch[1], searchParams)
+
+        return [
+          {
+            uri: `${origin}/top.rss${periodSuffix}`,
+            hint: composeHint('discourse:top'),
+          },
+        ]
+      }
+
+      // Site root or unmatched path: latest topics + latest posts.
+      const uris: Array<DiscoverUriEntry> = []
+
+      uris.push({
+        uri: `${origin}/latest.rss`,
+        hint: composeHint('discourse:latest'),
+      })
+      uris.push({
+        uri: `${origin}/posts.rss`,
+        hint: composeHint('discourse:posts'),
+      })
+
+      return uris
     } catch {}
 
     return []

@@ -232,6 +232,8 @@
     "bookwyrm:shelf": "Shelf",
     "buzzsprout:podcast": "Podcast",
     "discourse:latest": "Latest",
+    "discourse:posts": "Latest posts",
+    "discourse:top": "Top",
     "discourse:category": "Category",
     "discourse:topic": "Topic",
     "discourse:activity": "Activity",

@@ -74,7 +74,10 @@
   "discourse": [
     "https://users.rust-lang.org/latest.rss",
     "https://users.rust-lang.org/c/help.rss",
-    "https://users.rust-lang.org/u/steveklabnik/activity.rss"
+    "https://users.rust-lang.org/u/steveklabnik/activity.rss",
+    "https://meta.discourse.org/posts.rss",
+    "https://meta.discourse.org/top.rss",
+    "https://meta.discourse.org/top.rss?period=weekly"
   ],
   "fireside": ["https://feeds.fireside.fm/office/rss", "https://office.fireside.fm/json"],
   "exblog": ["https://petitcc.exblog.jp/index.xml", "https://petitcc.exblog.jp/atom.xml"],

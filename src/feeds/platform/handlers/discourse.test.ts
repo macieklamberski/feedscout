@@ -79,24 +79,82 @@ describe('discourseHandler', () => {
       expect(discourseHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return latest feed for root path', () => {
+    it('should return latest topics + latest posts feeds for root path', () => {
       const value = 'https://users.rust-lang.org/'
       const expected = [
         {
           uri: 'https://users.rust-lang.org/latest.rss',
           hint: { key: 'discourse:latest', label: 'Latest' },
         },
+        {
+          uri: 'https://users.rust-lang.org/posts.rss',
+          hint: { key: 'discourse:posts', label: 'Latest posts' },
+        },
       ]
 
       expect(discourseHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return latest feed for unknown paths', () => {
+    it('should return latest + posts feeds for unknown paths', () => {
       const value = 'https://users.rust-lang.org/about'
       const expected = [
         {
           uri: 'https://users.rust-lang.org/latest.rss',
           hint: { key: 'discourse:latest', label: 'Latest' },
+        },
+        {
+          uri: 'https://users.rust-lang.org/posts.rss',
+          hint: { key: 'discourse:posts', label: 'Latest posts' },
+        },
+      ]
+
+      expect(discourseHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return top feed for /top path', () => {
+      const value = 'https://users.rust-lang.org/top'
+      const expected = [
+        {
+          uri: 'https://users.rust-lang.org/top.rss',
+          hint: { key: 'discourse:top', label: 'Top' },
+        },
+      ]
+
+      expect(discourseHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should pass through period via /top/{period} path', () => {
+      for (const period of ['daily', 'weekly', 'monthly', 'quarterly', 'yearly', 'all']) {
+        const value = `https://users.rust-lang.org/top/${period}`
+        const expected = [
+          {
+            uri: `https://users.rust-lang.org/top.rss?period=${period}`,
+            hint: { key: 'discourse:top', label: 'Top' },
+          },
+        ]
+
+        expect(discourseHandler.resolve(value)).toEqual(expected)
+      }
+    })
+
+    it('should pass through period via ?period= query param', () => {
+      const value = 'https://users.rust-lang.org/top?period=weekly'
+      const expected = [
+        {
+          uri: 'https://users.rust-lang.org/top.rss?period=weekly',
+          hint: { key: 'discourse:top', label: 'Top' },
+        },
+      ]
+
+      expect(discourseHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should drop unknown period values silently', () => {
+      const value = 'https://users.rust-lang.org/top/invalid'
+      const expected = [
+        {
+          uri: 'https://users.rust-lang.org/top.rss',
+          hint: { key: 'discourse:top', label: 'Top' },
         },
       ]
 

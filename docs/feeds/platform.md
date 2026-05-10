@@ -671,7 +671,11 @@ Discovers RSS feeds for Discourse forums. Detected by the `Discourse` generator 
 | `{instance}/u/{user}` | User activity feed (RSS) |
 | `{instance}/c/{slug}` | Category feed (RSS) |
 | `{instance}/t/{slug}/{id}` | Topic feed (RSS) |
-| `{instance}/` (or any other path) | Latest topics feed (RSS) |
+| `{instance}/top` or `/top/{period}` | Top topics feed (RSS) |
+| `{instance}/` (or any other path) | Latest topics feed + latest posts feed (RSS) |
+
+> [!NOTE]
+> The top topics feed accepts `{daily|weekly|monthly|quarterly|yearly|all}` via either the `/top/{period}` path or `?period={period}` query param. Unknown values are silently dropped.
 
 ### Friendica
 
