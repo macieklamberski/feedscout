@@ -29,6 +29,18 @@ export const sourceforgeHandler: PlatformHandler = {
           uri: `${origin}/projects/${project}/rss`,
           hint: composeHint('sourceforge:files'),
         },
+        {
+          uri: `${origin}/p/${project}/news/feed.rss`,
+          hint: composeHint('sourceforge:news-rss'),
+        },
+        {
+          uri: `${origin}/p/${project}/news/feed.atom`,
+          hint: composeHint('sourceforge:news-atom'),
+        },
+        {
+          uri: `${origin}/p/${project}/discussion/feed`,
+          hint: composeHint('sourceforge:discussion'),
+        },
       ]
     }
 

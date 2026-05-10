@@ -8,6 +8,7 @@ const numericRegex = /^\d+$/
 const hosts = ['vimeo.com', 'www.vimeo.com']
 const excludedPaths = [
   'about',
+  'album',
   'blog',
   'business',
   'careers',
@@ -30,6 +31,7 @@ const excludedPaths = [
   'pro',
   'search',
   'settings',
+  'showcase',
   'site_map',
   'solutions',
   'stock',
@@ -67,6 +69,19 @@ export const vimeoHandler: PlatformHandler = {
         {
           uri: `${origin}/groups/${group}/videos/rss`,
           hint: composeHint('vimeo:group'),
+        },
+      ]
+    }
+
+    // Album/showcase: vimeo.com/album/{id} (only the /album/ form has a working RSS endpoint;
+    // /showcase/{id}/rss returns 404 even though the browser URL uses /showcase/).
+    if (pathSegments[0] === 'album' && pathSegments[1] && numericRegex.test(pathSegments[1])) {
+      const albumId = pathSegments[1]
+
+      return [
+        {
+          uri: `${origin}/album/${albumId}/rss`,
+          hint: composeHint('vimeo:album'),
         },
       ]
     }

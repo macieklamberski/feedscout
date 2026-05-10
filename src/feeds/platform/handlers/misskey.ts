@@ -36,7 +36,15 @@ export const misskeyHandler: PlatformHandler = {
       return [
         {
           uri: `${origin}/@${match[1]}.atom`,
-          hint: composeHint('misskey:posts'),
+          hint: composeHint('misskey:posts-atom'),
+        },
+        {
+          uri: `${origin}/@${match[1]}.rss`,
+          hint: composeHint('misskey:posts-rss'),
+        },
+        {
+          uri: `${origin}/@${match[1]}.json`,
+          hint: composeHint('misskey:posts-json'),
         },
       ]
     } catch {}

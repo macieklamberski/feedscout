@@ -80,10 +80,16 @@ describe('zennHandler', () => {
       expect(zennHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return empty array for root path', () => {
+    it('should return trending feed for root path', () => {
       const value = 'https://zenn.dev/'
+      const expected = [
+        {
+          uri: 'https://zenn.dev/feed',
+          hint: { key: 'zenn:trending', label: 'Trending' },
+        },
+      ]
 
-      expect(zennHandler.resolve(value)).toEqual([])
+      expect(zennHandler.resolve(value)).toEqual(expected)
     })
 
     it('should return empty array for excluded paths', () => {

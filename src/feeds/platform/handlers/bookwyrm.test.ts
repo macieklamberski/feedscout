@@ -43,25 +43,58 @@ describe('bookwyrmHandler', () => {
   })
 
   describe('resolve', () => {
-    it('should return rss feed for profile', () => {
+    const baseFeeds = (user: string) => [
+      {
+        uri: `https://bookwyrm.social/user/${user}/rss`,
+        hint: { key: 'bookwyrm:activity', label: 'Activity' },
+      },
+      {
+        uri: `https://bookwyrm.social/user/${user}/rss-reviews`,
+        hint: { key: 'bookwyrm:reviews', label: 'Reviews' },
+      },
+      {
+        uri: `https://bookwyrm.social/user/${user}/rss-quotes`,
+        hint: { key: 'bookwyrm:quotes', label: 'Quotes' },
+      },
+      {
+        uri: `https://bookwyrm.social/user/${user}/rss-comments`,
+        hint: { key: 'bookwyrm:comments', label: 'Comments' },
+      },
+    ]
+
+    it('should return activity, reviews, quotes, and comments feeds for profile', () => {
       const value = 'https://bookwyrm.social/user/mouse'
+
+      expect(bookwyrmHandler.resolve(value)).toEqual(baseFeeds('mouse'))
+    })
+
+    it('should return all four feeds regardless of subpath', () => {
+      const value = 'https://bookwyrm.social/user/mouse/books'
+
+      expect(bookwyrmHandler.resolve(value)).toEqual(baseFeeds('mouse'))
+    })
+
+    it('should prepend shelf feed for /user/{user}/books/{shelf}', () => {
+      const value = 'https://bookwyrm.social/user/mouse/books/read'
       const expected = [
         {
-          uri: 'https://bookwyrm.social/user/mouse/rss',
-          hint: { key: 'bookwyrm:reviews', label: 'Reviews' },
+          uri: 'https://bookwyrm.social/user/mouse/books/read/rss',
+          hint: { key: 'bookwyrm:shelf', label: 'Shelf' },
         },
+        ...baseFeeds('mouse'),
       ]
 
       expect(bookwyrmHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return rss feed regardless of subpath', () => {
-      const value = 'https://bookwyrm.social/user/mouse/books'
+    it('should prepend shelf feed for /user/{user}/shelf/{shelf}', () => {
+      const value = 'https://bookwyrm.social/user/mouse/shelf/to-read'
       const expected = [
         {
-          uri: 'https://bookwyrm.social/user/mouse/rss',
-          hint: { key: 'bookwyrm:reviews', label: 'Reviews' },
+          uri: 'https://bookwyrm.social/user/mouse/shelf/to-read/rss',
+          hint: { key: 'bookwyrm:shelf', label: 'Shelf' },
         },
+        ...baseFeeds('mouse'),
       ]
 
       expect(bookwyrmHandler.resolve(value)).toEqual(expected)

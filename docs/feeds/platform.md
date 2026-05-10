@@ -115,19 +115,24 @@ Discovers feeds for WP Engine-hosted WordPress sites. Uses the same feed structu
 
 ### Blogspot
 
-Discovers RSS and Atom feeds for Blogspot blogs, including label-specific feeds.
+Discovers RSS and Atom feeds for Blogspot blogs, including label, comments, summary, and per-post comments feeds. Also matches country-coded TLDs (`*.blogspot.co.uk`, `*.blogspot.de`, etc.).
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `*.blogspot.com` | Posts feed (Atom + RSS) |
-| `*.blogspot.com/search/label/{label}` | Label feed (+ above) |
+| `*.blogspot.com` | Posts feed (Atom + RSS) + summary (Atom + RSS) + comments (Atom + RSS) |
+| `*.blogspot.com/search/label/{label}` | Label feed (Atom + RSS) + above |
+| `*.blogspot.com/{year}/{month}/{slug}.html` | Post comments feed (Atom + RSS)* + above |
+
+\* *Requires HTML content to extract the post ID.*
 
 ### DEV.to
 
-Discovers RSS feeds for DEV.to user profiles and tags.
+Discovers RSS feeds for DEV.to user profiles, tags, the global community, and the latest sort.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
+| `dev.to` | Community feed |
+| `dev.to/latest` | Latest sort feed |
 | `dev.to/{username}` | User posts feed |
 | `dev.to/t/{tag}` | Tag posts feed |
 
@@ -195,12 +200,14 @@ Also supports `gitea.com` with the same patterns.
 
 ### GitLab
 
-Discovers Atom feeds for GitLab users, repositories, releases, and tags.
+Discovers Atom feeds for GitLab users and repositories. Self-hosted instances are detected via the `og:site_name` HTML meta tag or the `X-Gitlab-Meta` response header.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | `gitlab.com/{user}` | User activity feed |
-| `gitlab.com/{user}/{repo}` | Releases, tags, commits |
+| `gitlab.com/{user}/{repo}` | Releases, tags, issues, merge requests, activity |
+| `gitlab.com/{user}/{repo}/-/commits/{branch}` | Branch commits feed (+ above) |
+| `gitlab.com/{user}/{repo}/-/tree/{branch}` | Branch commits feed (+ above) |
 
 ### Product Hunt
 
@@ -222,12 +229,14 @@ Discovers RSS feeds for Pinterest user profiles.
 
 ### Dailymotion
 
-Discovers RSS feeds for Dailymotion users and playlists.
+Discovers RSS feeds for Dailymotion users, playlists, channels, and the global trending feed.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | `dailymotion.com/{username}` | User videos feed |
 | `dailymotion.com/playlist/{id}` | Playlist feed |
+| `dailymotion.com/channel/{name}` | Channel feed |
+| `dailymotion.com` or `dailymotion.com/trending` | Trending feed |
 
 ### DeviantArt
 
@@ -272,10 +281,11 @@ Discovers RSS feeds for Tumblr blogs and tagged posts.
 
 ### Behance
 
-Discovers RSS feeds for Behance user portfolios and appreciated works.
+Discovers RSS feeds for Behance user portfolios and appreciated works, plus the homepage Featured-projects and Featured-by-Adobe gallery feeds.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
+| `behance.net` or `behance.net/galleries` | Featured projects + Featured by Adobe |
 | `behance.net/{username}` | User portfolio feed |
 | `behance.net/{username}/appreciated` | User appreciated feed |
 
@@ -291,7 +301,7 @@ Discovers RSS feeds for SoundCloud user profiles.
 
 ### Vimeo
 
-Discovers RSS feeds for Vimeo user profiles, channels, and groups.
+Discovers RSS feeds for Vimeo user profiles, channels, groups, and albums (showcases).
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
@@ -299,14 +309,15 @@ Discovers RSS feeds for Vimeo user profiles, channels, and groups.
 | `vimeo.com/{user}/likes` | User likes feed (+ videos) |
 | `vimeo.com/channels/{channel}` | Channel feed |
 | `vimeo.com/groups/{group}` | Group feed |
+| `vimeo.com/album/{id}` | Album/showcase feed |
 
 ### SourceForge
 
-Discovers RSS feeds for SourceForge project activity and file releases.
+Discovers RSS feeds for SourceForge project activity, file releases, news, and discussion.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `sourceforge.net/projects/{project}` | Project activity and files feeds |
+| `sourceforge.net/projects/{project}` or `sourceforge.net/p/{project}` | Activity + files + news (RSS + Atom) + discussion |
 
 ### Kickstarter
 
@@ -343,9 +354,14 @@ Discovers RSS feeds for Stack Overflow, Server Fault, Super User, Ask Ubuntu, Ma
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
+| `{site}` | Site-wide newest questions feed |
 | `{site}/questions/tagged/{tag}` | Tag feed |
 | `{site}/questions/{id}` | Question feed |
 | `{site}/users/{id}` | User feed |
+| `{site}/collectives/{name}` | Collective feed |
+
+> [!NOTE]
+> Tag feeds accept `?sort={newest|active|votes|creation}` (also `?tab=…`) — the value is passed through to the generated feed URL when it matches one of the allowed sorts. Unknown values are silently dropped.
 
 ### Hashnode
 
@@ -389,7 +405,7 @@ Discovers RSS feeds for Itch.io games, creators, devlogs, and browse pages.
 | `itch.io/games/{sort}` | Sorted games feed (newest/top-rated/top-sellers/on-sale) |
 | `itch.io/{section}` | Section feed (tools/game-assets/soundtracks/physical-games/books/comics/misc) |
 | `itch.io/devlogs` | All devlogs feed |
-| `itch.io` | Featured + new + sales feeds |
+| `itch.io` | Featured + new + sales feeds + itch.io blog |
 
 ### CSDN
 
@@ -521,7 +537,7 @@ Discovers RSS feeds for Listed (Standard Notes) blogs.
 
 ### MyAnimeList
 
-Discovers RSS feeds for MyAnimeList user lists.
+Discovers RSS feeds for MyAnimeList user lists and site-wide news.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
@@ -529,6 +545,7 @@ Discovers RSS feeds for MyAnimeList user lists.
 | `myanimelist.net/animelist/{user}` | (same as above) |
 | `myanimelist.net/mangalist/{user}` | (same as above) |
 | `myanimelist.net/history/{user}` | (same as above) |
+| `myanimelist.net/news` | Site-wide news feed |
 
 ### Nebula
 
@@ -588,11 +605,12 @@ Discovers RSS feeds for Transistor-hosted podcasts.
 
 ### Velog
 
-Discovers RSS feeds for Velog users.
+Discovers RSS feeds for Velog users and the platform-wide trending feed.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | `velog.io/@{user}` | Posts feed |
+| `velog.io` | Trending posts feed |
 
 ### Acast
 
@@ -629,11 +647,12 @@ Discovers RSS and JSON feeds for Audioboom channels.
 
 ### BookWyrm
 
-Discovers RSS feeds for BookWyrm user reviews. Detected by the `BookWyrm` generator meta tag.
+Discovers RSS feeds for BookWyrm user activity, reviews, quotes, comments, and per-shelf feeds. Detected by the `BookWyrm` generator meta tag.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{instance}/user/{user}` | Reviews feed (RSS) |
+| `{instance}/user/{user}` | Activity + reviews + quotes + comments (RSS) |
+| `{instance}/user/{user}/(shelf\|books)/{shelf-id}` | Shelf feed (RSS) + activity/reviews/quotes/comments |
 
 ### Buzzsprout
 
@@ -652,7 +671,11 @@ Discovers RSS feeds for Discourse forums. Detected by the `Discourse` generator 
 | `{instance}/u/{user}` | User activity feed (RSS) |
 | `{instance}/c/{slug}` | Category feed (RSS) |
 | `{instance}/t/{slug}/{id}` | Topic feed (RSS) |
-| `{instance}/` (or any other path) | Latest topics feed (RSS) |
+| `{instance}/top` or `/top/{period}` | Top topics feed (RSS) |
+| `{instance}/` (or any other path) | Latest topics feed + latest posts feed (RSS) |
+
+> [!NOTE]
+> The top topics feed accepts `{daily|weekly|monthly|quarterly|yearly|all}` via either the `/top/{period}` path or `?period={period}` query param. Unknown values are silently dropped.
 
 ### Friendica
 
@@ -660,7 +683,7 @@ Discovers Atom feeds for Friendica user profiles. Detected by the `Friendica` ge
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{instance}/profile/{user}` | Posts feed (Atom) |
+| `{instance}/profile/{user}` | Posts feed (Atom) + comments-only feed (Atom) |
 
 ### Ghost
 
@@ -734,11 +757,11 @@ Discovers RSS, JSON, and podcast feeds for Micro.blog-hosted blogs, including ca
 
 ### Misskey
 
-Discovers Atom feeds for Misskey user profiles. Detected by the `Misskey` application-name meta tag.
+Discovers Atom, RSS, and JSON feeds for Misskey user profiles. Detected by the `Misskey` application-name meta tag.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{instance}/@{user}` | Posts feed (Atom) |
+| `{instance}/@{user}` | Posts feed (Atom + RSS + JSON) |
 
 ### Naver Blog
 
@@ -870,7 +893,7 @@ Discovers RSS feeds for Weebly-hosted blogs.
 
 ### Zenn
 
-Discovers RSS feeds for Zenn users, topics, and publications.
+Discovers RSS feeds for Zenn users, topics, publications, and the platform-wide trending feed.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
@@ -878,6 +901,7 @@ Discovers RSS feeds for Zenn users, topics, and publications.
 | `zenn.dev/topics/{topic}` | Topic feed |
 | `zenn.dev/p/{pub}` | Publication feed |
 | `zenn.dev/publications/{pub}` | Publication feed |
+| `zenn.dev` | Trending posts feed |
 
 ## Basic Usage
 

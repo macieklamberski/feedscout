@@ -16,11 +16,14 @@
   "behance": [
     "https://www.behance.net/feeds/user?username=matejlatin",
     "https://www.behance.net/feeds/user?username=matejlatin&content=appreciated",
-    "https://www.behance.net/feeds/projects"
+    "https://www.behance.net/feeds/projects",
+    "https://feeds.feedburner.com/behance/vorr"
   ],
   "blogspot": [
     "https://googleblog.blogspot.com/feeds/posts/default",
     "https://googleblog.blogspot.com/feeds/posts/default?alt=rss",
+    "https://googleblog.blogspot.com/feeds/posts/summary",
+    "https://googleblog.blogspot.com/feeds/posts/summary?alt=rss",
     "https://googleblog.blogspot.com/feeds/posts/default/-/Products",
     "https://googleblog.blogspot.com/feeds/posts/default/-/Products?alt=rss",
     "https://security.googleblog.com/feeds/comments/default",
@@ -29,7 +32,12 @@
     "https://security.googleblog.com/feeds/1469360228826887140/comments/default?alt=rss"
   ],
   "bluesky": ["https://bsky.app/profile/jay.bsky.team/rss"],
-  "bookwyrm": ["https://bookwyrm.social/user/mouse/rss"],
+  "bookwyrm": [
+    "https://bookwyrm.social/user/mouse/rss",
+    "https://bookwyrm.social/user/mouse/rss-reviews",
+    "https://bookwyrm.social/user/mouse/rss-quotes",
+    "https://bookwyrm.social/user/mouse/rss-comments"
+  ],
   "buttondown": ["https://buttondown.com/jmduke/rss"],
   "buzzsprout": ["https://rss.buzzsprout.com/231452.rss"],
   "codeberg": [
@@ -47,7 +55,8 @@
   "dailymotion": [
     "https://www.dailymotion.com/rss/Euronews-en",
     "https://www.dailymotion.com/rss/playlist/x5e4h5",
-    "https://www.dailymotion.com/rss/channel/news"
+    "https://www.dailymotion.com/rss/channel/news",
+    "https://www.dailymotion.com/rss/trending"
   ],
   "deviantart": [
     "https://backend.deviantart.com/rss.xml?type=deviation&q=by:yuumei+sort:time+meta:all",
@@ -56,11 +65,19 @@
     "https://backend.deviantart.com/rss.xml?type=deviation&q=gallery:yuumei/87557498",
     "https://backend.deviantart.com/rss.xml?q=journal:yuumei"
   ],
-  "devto": ["https://dev.to/feed/ben", "https://dev.to/feed/tag/javascript"],
+  "devto": [
+    "https://dev.to/feed/ben",
+    "https://dev.to/feed/tag/javascript",
+    "https://dev.to/feed",
+    "https://dev.to/feed/latest"
+  ],
   "discourse": [
     "https://users.rust-lang.org/latest.rss",
     "https://users.rust-lang.org/c/help.rss",
-    "https://users.rust-lang.org/u/steveklabnik/activity.rss"
+    "https://users.rust-lang.org/u/steveklabnik/activity.rss",
+    "https://meta.discourse.org/posts.rss",
+    "https://meta.discourse.org/top.rss",
+    "https://meta.discourse.org/top.rss?period=weekly"
   ],
   "fireside": ["https://feeds.fireside.fm/office/rss", "https://office.fireside.fm/json"],
   "exblog": ["https://petitcc.exblog.jp/index.xml", "https://petitcc.exblog.jp/atom.xml"],
@@ -68,7 +85,7 @@
     "https://dw-news.dreamwidth.org/data/rss",
     "https://dw-news.dreamwidth.org/data/atom"
   ],
-  "friendica": ["https://libranet.de/feed/admin"],
+  "friendica": ["https://libranet.de/feed/admin", "https://friendica.world/feed/surazeus/comments"],
   "ghost": [
     "https://demo.ghost.io/rss/",
     "https://demo.ghost.io/tag/getting-started/rss/",
@@ -104,7 +121,8 @@
     "https://gitlab.com/gitlab-org/gitlab/-/tags?format=atom",
     "https://gitlab.com/gitlab-org/gitlab/-/issues.atom",
     "https://gitlab.com/gitlab-org/gitlab/-/merge_requests.atom",
-    "https://gitlab.com/gitlab-org/gitlab.atom"
+    "https://gitlab.com/gitlab-org/gitlab.atom",
+    "https://gitlab.com/gitlab-org/gitlab/-/commits/master?format=atom"
   ],
   "goodreads": [
     "https://www.goodreads.com/user/updates_rss/1",
@@ -165,7 +183,11 @@
     "https://vincent.micro.blog/photos/index.json",
     "https://vincent.micro.blog/replies.xml"
   ],
-  "misskey": ["https://misskey.io/@ai.atom"],
+  "misskey": [
+    "https://misskey.io/@ai.atom",
+    "https://misskey.io/@ai.rss",
+    "https://misskey.io/@ai.json"
+  ],
   "naverBlog": ["https://rss.blog.naver.com/naverofficial.xml"],
   "observable": [
     "https://api.observablehq.com/documents/@mbostock.rss",
@@ -187,7 +209,8 @@
   "myanimelist": [
     "https://myanimelist.net/rss.php?type=rw&u=Xinil",
     "https://myanimelist.net/rss.php?type=rm&u=Xinil",
-    "https://myanimelist.net/rss.php?type=rrm&u=Xinil"
+    "https://myanimelist.net/rss.php?type=rrm&u=Xinil",
+    "https://myanimelist.net/rss/news.xml"
   ],
   "pika": [
     "https://pika.pika.page/posts_feed",
@@ -234,7 +257,10 @@
     "https://sourceforge.net/p/filezilla/activity/feed",
     "https://sourceforge.net/projects/filezilla/rss",
     "https://sourceforge.net/p/nmap/activity/feed",
-    "https://sourceforge.net/projects/nmap/rss"
+    "https://sourceforge.net/projects/nmap/rss",
+    "https://sourceforge.net/p/sevenzip/news/feed.rss",
+    "https://sourceforge.net/p/sevenzip/news/feed.atom",
+    "https://sourceforge.net/p/sevenzip/discussion/feed"
   ],
   "spreaker": ["https://www.spreaker.com/show/1433865/episodes/feed"],
   "stackExchange": [
@@ -277,7 +303,8 @@
     "https://vimeo.com/casey/videos/rss",
     "https://vimeo.com/casey/likes/rss",
     "https://vimeo.com/channels/staffpicks/videos/rss",
-    "https://vimeo.com/groups/animation/videos/rss"
+    "https://vimeo.com/groups/animation/videos/rss",
+    "https://vimeo.com/album/12345/rss"
   ],
   "weblogLol": [
     "https://adam.weblog.lol/rss.xml",
@@ -449,7 +476,8 @@
     "https://itch.io/misc.xml",
     "https://itch.io/feed/featured.xml",
     "https://itch.io/feed/new.xml",
-    "https://itch.io/feed/sales.xml"
+    "https://itch.io/feed/sales.xml",
+    "https://itch.io/blog.rss"
   ],
   "csdn": ["https://rss.csdn.net/csdnnews/rss/map", "https://blog.csdn.net/csdnnews/rss/list"],
   "douban": [
@@ -469,7 +497,7 @@
     "https://www.v2ex.com/feed/tab/tech.xml"
   ],
   "writeas": ["https://write.as/matt/feed/", "https://write.as/matt/tag:reading/feed/"],
-  "velog": ["https://v2.velog.io/rss/velopert"],
+  "velog": ["https://v2.velog.io/rss/velopert", "https://v2.velog.io/rss"],
   "ximalaya": ["https://www.ximalaya.com/album/203355.xml"],
   "youtube": [
     "https://www.youtube.com/feeds/videos.xml?channel_id=UCXuqSBlHAE6Xw-yeJA0Tunw",
@@ -482,6 +510,7 @@
   "zenn": [
     "https://zenn.dev/zenn/feed",
     "https://zenn.dev/topics/react/feed",
-    "https://zenn.dev/p/team_zenn/feed"
+    "https://zenn.dev/p/team_zenn/feed",
+    "https://zenn.dev/feed"
   ]
 }

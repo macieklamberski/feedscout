@@ -83,7 +83,7 @@ export const gitlabHandler: PlatformHandler = {
       const repo = pathSegments[1]
 
       if (!isAnyOf(user, excludedPaths)) {
-        return [
+        const repoFeeds = [
           {
             uri: `${origin}/${user}/${repo}/-/releases.atom`,
             hint: composeHint('gitlab:releases'),
@@ -105,6 +105,22 @@ export const gitlabHandler: PlatformHandler = {
             hint: composeHint('gitlab:activity'),
           },
         ]
+
+        // Branch commits/tree page: gitlab.com/{user}/{repo}/-/(commits|tree)/{branch}
+        if (
+          pathSegments[2] === '-' &&
+          (pathSegments[3] === 'commits' || pathSegments[3] === 'tree') &&
+          pathSegments[4]
+        ) {
+          const branch = pathSegments[4]
+
+          repoFeeds.unshift({
+            uri: `${origin}/${user}/${repo}/-/commits/${branch}?format=atom`,
+            hint: composeHint('gitlab:branch-commits'),
+          })
+        }
+
+        return repoFeeds
       }
     }
 

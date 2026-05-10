@@ -59,8 +59,14 @@ export const zennHandler: PlatformHandler = {
 
     const pathSegments = pathname.split('/').filter(Boolean)
 
+    // Homepage: trending feed.
     if (pathSegments.length === 0) {
-      return []
+      return [
+        {
+          uri: 'https://zenn.dev/feed',
+          hint: composeHint('zenn:trending'),
+        },
+      ]
     }
 
     const username = pathSegments[0]

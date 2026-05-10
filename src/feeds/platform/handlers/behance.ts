@@ -37,12 +37,16 @@ export const behanceHandler: PlatformHandler = {
   resolve: (url) => {
     const { pathname } = new URL(url)
 
-    // Homepage: featured projects feed.
-    if (pathname === '/' || pathname === '') {
+    // Homepage: featured projects feed + Featured-by-Adobe gallery.
+    if (pathname === '/' || pathname === '' || pathname === '/galleries') {
       return [
         {
           uri: 'https://www.behance.net/feeds/projects',
           hint: composeHint('behance:projects'),
+        },
+        {
+          uri: 'https://feeds.feedburner.com/behance/vorr',
+          hint: composeHint('behance:featured'),
         },
       ]
     }

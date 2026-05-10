@@ -38,6 +38,10 @@ export const friendicaHandler: PlatformHandler = {
           uri: `${origin}/feed/${match[1]}`,
           hint: composeHint('friendica:posts'),
         },
+        {
+          uri: `${origin}/feed/${match[1]}/comments`,
+          hint: composeHint('friendica:comments'),
+        },
       ]
     } catch {}
 
