@@ -260,6 +260,9 @@ Discovers RSS feeds for Mastodon user profiles and hashtag pages. Detects Mastod
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | `{instance}/@{username}` | User posts feed |
+| `{instance}/@{username}/tagged/{tag}` | User posts tagged feed |
+| `{instance}/@{username}/with_replies` | User posts with replies feed |
+| `{instance}/@{username}/media` | User media-only feed |
 | `{instance}/tags/{tag}` | Hashtag feed |
 
 > [!NOTE]
