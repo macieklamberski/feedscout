@@ -67,6 +67,30 @@ describe('myanimelistHandler', () => {
       expect(myanimelistHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return news feed for /news', () => {
+      const value = 'https://myanimelist.net/news'
+      const expected = [
+        {
+          uri: 'https://myanimelist.net/rss/news.xml',
+          hint: { key: 'myanimelist:news', label: 'News' },
+        },
+      ]
+
+      expect(myanimelistHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return news feed for /news/{slug}', () => {
+      const value = 'https://myanimelist.net/news/12345-some-anime-news'
+      const expected = [
+        {
+          uri: 'https://myanimelist.net/rss/news.xml',
+          hint: { key: 'myanimelist:news', label: 'News' },
+        },
+      ]
+
+      expect(myanimelistHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return empty array for non-user paths', () => {
       expect(myanimelistHandler.resolve('https://myanimelist.net/anime/1')).toEqual([])
     })

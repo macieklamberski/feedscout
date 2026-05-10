@@ -14,6 +14,17 @@ export const myanimelistHandler: PlatformHandler = {
 
   resolve: (url) => {
     const { pathname } = new URL(url)
+
+    // Site-wide news feed: /news
+    if (pathname === '/news' || pathname.startsWith('/news/')) {
+      return [
+        {
+          uri: 'https://myanimelist.net/rss/news.xml',
+          hint: composeHint('myanimelist:news'),
+        },
+      ]
+    }
+
     const match = pathname.match(userRegex)
 
     if (!match?.[1]) {

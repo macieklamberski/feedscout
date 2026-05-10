@@ -187,7 +187,8 @@
   "myanimelist": [
     "https://myanimelist.net/rss.php?type=rw&u=Xinil",
     "https://myanimelist.net/rss.php?type=rm&u=Xinil",
-    "https://myanimelist.net/rss.php?type=rrm&u=Xinil"
+    "https://myanimelist.net/rss.php?type=rrm&u=Xinil",
+    "https://myanimelist.net/rss/news.xml"
   ],
   "pika": [
     "https://pika.pika.page/posts_feed",

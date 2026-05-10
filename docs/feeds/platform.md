@@ -521,7 +521,7 @@ Discovers RSS feeds for Listed (Standard Notes) blogs.
 
 ### MyAnimeList
 
-Discovers RSS feeds for MyAnimeList user lists.
+Discovers RSS feeds for MyAnimeList user lists and site-wide news.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
@@ -529,6 +529,7 @@ Discovers RSS feeds for MyAnimeList user lists.
 | `myanimelist.net/animelist/{user}` | (same as above) |
 | `myanimelist.net/mangalist/{user}` | (same as above) |
 | `myanimelist.net/history/{user}` | (same as above) |
+| `myanimelist.net/news` | Site-wide news feed |
 
 ### Nebula
 
