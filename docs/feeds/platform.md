@@ -177,13 +177,15 @@ Discovers Atom feeds for users, organizations, and repositories.
 
 ### GitHub Gist
 
-Discovers Atom feeds for GitHub Gist users and starred gists.
+Discovers Atom feeds for GitHub Gist users, starred gists, forks, and the discover stream.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | `gist.github.com/{username}` | User gists feed |
 | `gist.github.com/{username}/{gist-id}` | User gists feed |
 | `gist.github.com/{username}/starred` | User starred gists feed |
+| `gist.github.com/{username}/forks` | User forks feed |
+| `gist.github.com/discover` | Discover gists feed |
 
 ### Codeberg / Gitea
 
