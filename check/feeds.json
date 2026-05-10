@@ -476,7 +476,7 @@
     "https://www.v2ex.com/feed/tab/tech.xml"
   ],
   "writeas": ["https://write.as/matt/feed/", "https://write.as/matt/tag:reading/feed/"],
-  "velog": ["https://v2.velog.io/rss/velopert"],
+  "velog": ["https://v2.velog.io/rss/velopert", "https://v2.velog.io/rss"],
   "ximalaya": ["https://www.ximalaya.com/album/203355.xml"],
   "youtube": [
     "https://www.youtube.com/feeds/videos.xml?channel_id=UCXuqSBlHAE6Xw-yeJA0Tunw",

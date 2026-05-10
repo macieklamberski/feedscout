@@ -590,11 +590,12 @@ Discovers RSS feeds for Transistor-hosted podcasts.
 
 ### Velog
 
-Discovers RSS feeds for Velog users.
+Discovers RSS feeds for Velog users and the platform-wide trending feed.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | `velog.io/@{user}` | Posts feed |
+| `velog.io` | Trending posts feed |
 
 ### Acast
 

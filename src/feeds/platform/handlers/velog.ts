@@ -13,15 +13,25 @@ export const velogHandler: PlatformHandler = {
     const { pathname } = new URL(url)
     const userMatch = pathname.match(userRegex)
 
-    if (!userMatch?.[1]) {
-      return []
+    if (userMatch?.[1]) {
+      return [
+        {
+          uri: `https://v2.velog.io/rss/${userMatch[1]}`,
+          hint: composeHint('velog:posts'),
+        },
+      ]
     }
 
-    return [
-      {
-        uri: `https://v2.velog.io/rss/${userMatch[1]}`,
-        hint: composeHint('velog:posts'),
-      },
-    ]
+    // Homepage: trending posts feed.
+    if (pathname === '/' || pathname === '') {
+      return [
+        {
+          uri: 'https://v2.velog.io/rss',
+          hint: composeHint('velog:trending'),
+        },
+      ]
+    }
+
+    return []
   },
 }

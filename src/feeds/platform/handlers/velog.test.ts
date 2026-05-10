@@ -44,10 +44,16 @@ describe('velogHandler', () => {
       expect(velogHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return empty array for root path', () => {
+    it('should return trending feed for root path', () => {
       const value = 'https://velog.io/'
+      const expected = [
+        {
+          uri: 'https://v2.velog.io/rss',
+          hint: { key: 'velog:trending', label: 'Trending' },
+        },
+      ]
 
-      expect(velogHandler.resolve(value)).toEqual([])
+      expect(velogHandler.resolve(value)).toEqual(expected)
     })
 
     it('should return empty array for paths without @ prefix', () => {
