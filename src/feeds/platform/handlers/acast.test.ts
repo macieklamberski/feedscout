@@ -6,6 +6,8 @@ describe('acastHandler', () => {
     const cases = [
       ['https://shows.acast.com/my-dad-wrote-a-porno', true],
       ['https://shows.acast.com', true],
+      ['https://play.acast.com/s/my-dad-wrote-a-porno', true],
+      ['https://embed.acast.com/my-dad-wrote-a-porno', true],
       ['https://acast.com/show', false],
       ['https://example.com', false],
     ] as const
@@ -54,6 +56,30 @@ describe('acastHandler', () => {
       const value = 'https://shows.acast.com/discover'
 
       expect(acastHandler.resolve(value)).toEqual([])
+    })
+
+    it('should return podcast feed for play.acast.com/s/{slug}', () => {
+      const value = 'https://play.acast.com/s/my-dad-wrote-a-porno'
+      const expected = [
+        {
+          uri: 'https://feeds.acast.com/public/shows/my-dad-wrote-a-porno',
+          hint: { key: 'acast:podcast', label: 'Podcast' },
+        },
+      ]
+
+      expect(acastHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return podcast feed for embed.acast.com/{slug}', () => {
+      const value = 'https://embed.acast.com/my-dad-wrote-a-porno'
+      const expected = [
+        {
+          uri: 'https://feeds.acast.com/public/shows/my-dad-wrote-a-porno',
+          hint: { key: 'acast:podcast', label: 'Podcast' },
+        },
+      ]
+
+      expect(acastHandler.resolve(value)).toEqual(expected)
     })
   })
 })
