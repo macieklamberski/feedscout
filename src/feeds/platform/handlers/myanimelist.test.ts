@@ -91,6 +91,30 @@ describe('myanimelistHandler', () => {
       expect(myanimelistHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return featured feed for /featured', () => {
+      const value = 'https://myanimelist.net/featured'
+      const expected = [
+        {
+          uri: 'https://myanimelist.net/rss/featured.xml',
+          hint: { key: 'myanimelist:featured', label: 'Featured' },
+        },
+      ]
+
+      expect(myanimelistHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return featured feed for /featured/{slug}', () => {
+      const value = 'https://myanimelist.net/featured/12345-some-feature'
+      const expected = [
+        {
+          uri: 'https://myanimelist.net/rss/featured.xml',
+          hint: { key: 'myanimelist:featured', label: 'Featured' },
+        },
+      ]
+
+      expect(myanimelistHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return empty array for non-user paths', () => {
       expect(myanimelistHandler.resolve('https://myanimelist.net/anime/1')).toEqual([])
     })
