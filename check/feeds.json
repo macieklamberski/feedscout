@@ -165,7 +165,11 @@
     "https://vincent.micro.blog/photos/index.json",
     "https://vincent.micro.blog/replies.xml"
   ],
-  "misskey": ["https://misskey.io/@ai.atom"],
+  "misskey": [
+    "https://misskey.io/@ai.atom",
+    "https://misskey.io/@ai.rss",
+    "https://misskey.io/@ai.json"
+  ],
   "naverBlog": ["https://rss.blog.naver.com/naverofficial.xml"],
   "observable": [
     "https://api.observablehq.com/documents/@mbostock.rss",

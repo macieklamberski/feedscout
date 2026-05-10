@@ -735,11 +735,11 @@ Discovers RSS, JSON, and podcast feeds for Micro.blog-hosted blogs, including ca
 
 ### Misskey
 
-Discovers Atom feeds for Misskey user profiles. Detected by the `Misskey` application-name meta tag.
+Discovers Atom, RSS, and JSON feeds for Misskey user profiles. Detected by the `Misskey` application-name meta tag.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{instance}/@{user}` | Posts feed (Atom) |
+| `{instance}/@{user}` | Posts feed (Atom + RSS + JSON) |
 
 ### Naver Blog
 

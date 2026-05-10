@@ -43,24 +43,40 @@ describe('misskeyHandler', () => {
   })
 
   describe('resolve', () => {
-    it('should return atom feed for profile', () => {
+    it('should return atom, rss, and json feeds for profile', () => {
       const value = 'https://misskey.io/@ai'
       const expected = [
         {
           uri: 'https://misskey.io/@ai.atom',
-          hint: { key: 'misskey:posts', label: 'Posts' },
+          hint: { key: 'misskey:posts-atom', label: 'Posts (Atom)' },
+        },
+        {
+          uri: 'https://misskey.io/@ai.rss',
+          hint: { key: 'misskey:posts-rss', label: 'Posts (RSS)' },
+        },
+        {
+          uri: 'https://misskey.io/@ai.json',
+          hint: { key: 'misskey:posts-json', label: 'Posts (JSON)' },
         },
       ]
 
       expect(misskeyHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return atom feed regardless of subpath', () => {
+    it('should return all three formats regardless of subpath', () => {
       const value = 'https://misskey.io/@ai/notes'
       const expected = [
         {
           uri: 'https://misskey.io/@ai.atom',
-          hint: { key: 'misskey:posts', label: 'Posts' },
+          hint: { key: 'misskey:posts-atom', label: 'Posts (Atom)' },
+        },
+        {
+          uri: 'https://misskey.io/@ai.rss',
+          hint: { key: 'misskey:posts-rss', label: 'Posts (RSS)' },
+        },
+        {
+          uri: 'https://misskey.io/@ai.json',
+          hint: { key: 'misskey:posts-json', label: 'Posts (JSON)' },
         },
       ]
 
