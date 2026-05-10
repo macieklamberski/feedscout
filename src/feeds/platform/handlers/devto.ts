@@ -34,6 +34,16 @@ export const devtoHandler: PlatformHandler = {
   resolve: (url) => {
     const { pathname } = new URL(url)
 
+    // Homepage: global community feed.
+    if (pathname === '/' || pathname === '') {
+      return [{ uri: 'https://dev.to/feed', hint: composeHint('devto:community') }]
+    }
+
+    // Latest sort: /latest.
+    if (pathname === '/latest' || pathname === '/latest/') {
+      return [{ uri: 'https://dev.to/feed/latest', hint: composeHint('devto:latest') }]
+    }
+
     // User profile: /username.
     const userMatch = pathname.match(userRegex)
 

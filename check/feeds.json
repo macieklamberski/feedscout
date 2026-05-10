@@ -57,7 +57,12 @@
     "https://backend.deviantart.com/rss.xml?type=deviation&q=gallery:yuumei/87557498",
     "https://backend.deviantart.com/rss.xml?q=journal:yuumei"
   ],
-  "devto": ["https://dev.to/feed/ben", "https://dev.to/feed/tag/javascript"],
+  "devto": [
+    "https://dev.to/feed/ben",
+    "https://dev.to/feed/tag/javascript",
+    "https://dev.to/feed",
+    "https://dev.to/feed/latest"
+  ],
   "discourse": [
     "https://users.rust-lang.org/latest.rss",
     "https://users.rust-lang.org/c/help.rss",

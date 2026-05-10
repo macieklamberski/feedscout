@@ -124,10 +124,12 @@ Discovers RSS and Atom feeds for Blogspot blogs, including label-specific feeds.
 
 ### DEV.to
 
-Discovers RSS feeds for DEV.to user profiles and tags.
+Discovers RSS feeds for DEV.to user profiles, tags, the global community, and the latest sort.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
+| `dev.to` | Community feed |
+| `dev.to/latest` | Latest sort feed |
 | `dev.to/{username}` | User posts feed |
 | `dev.to/t/{tag}` | Tag posts feed |
 

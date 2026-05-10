@@ -86,6 +86,8 @@
     "deviantart:journal": "Journal",
     "devto:posts": "Posts",
     "devto:tag": "Tag",
+    "devto:community": "Community",
+    "devto:latest": "Latest",
     "github-gist:gists": "Gists",
     "github-gist:starred": "Starred",
     "github-gist:forks": "Forks",
