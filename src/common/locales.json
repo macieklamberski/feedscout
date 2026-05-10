@@ -288,6 +288,7 @@
     "qiita:tag": "Tag",
     "qiita:organization": "Organization",
     "qiita:popular": "Popular items",
+    "qiita:zine": "Qiita Zine",
     "rss-com:podcast": "Podcast",
     "seesaa:posts-rss2": "Posts (RSS 2.0)",
     "seesaa:posts-rdf": "Posts (RDF)",

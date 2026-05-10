@@ -91,5 +91,29 @@ describe('qiitaHandler', () => {
 
       expect(qiitaHandler.resolve(value)).toEqual([])
     })
+
+    it('should return Qiita Zine feed for /official-columns', () => {
+      const value = 'https://qiita.com/official-columns'
+      const expected = [
+        {
+          uri: 'https://qiita.com/official-columns/feed/',
+          hint: { key: 'qiita:zine', label: 'Qiita Zine' },
+        },
+      ]
+
+      expect(qiitaHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return Qiita Zine feed for /official-columns/{slug}', () => {
+      const value = 'https://qiita.com/official-columns/some-article'
+      const expected = [
+        {
+          uri: 'https://qiita.com/official-columns/feed/',
+          hint: { key: 'qiita:zine', label: 'Qiita Zine' },
+        },
+      ]
+
+      expect(qiitaHandler.resolve(value)).toEqual(expected)
+    })
   })
 })
