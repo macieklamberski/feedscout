@@ -24,6 +24,7 @@
     "github:tags": "Tags",
     "github:wiki": "Wiki",
     "github:discussions": "Discussions",
+    "github:discussion-category": "Discussion category",
     "github:branch-commits": "Branch commits",
     "github:file-history": "File history",
     "reddit:posts": "Posts",
