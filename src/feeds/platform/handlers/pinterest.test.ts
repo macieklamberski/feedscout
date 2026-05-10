@@ -45,24 +45,24 @@ describe('pinterestHandler', () => {
       expect(pinterestHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return user feed for board page', () => {
+    it('should return board feed for /{user}/{board}', () => {
       const value = 'https://www.pinterest.com/nasa/mars'
       const expected = [
         {
-          uri: 'https://www.pinterest.com/nasa/feed.rss',
-          hint: { key: 'pinterest:pins', label: 'Pins' },
+          uri: 'https://www.pinterest.com/nasa/mars.rss',
+          hint: { key: 'pinterest:board', label: 'Board' },
         },
       ]
 
       expect(pinterestHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return user feed for board with trailing slash', () => {
+    it('should return board feed for /{user}/{board} with trailing slash', () => {
       const value = 'https://www.pinterest.com/nasa/space-exploration/'
       const expected = [
         {
-          uri: 'https://www.pinterest.com/nasa/feed.rss',
-          hint: { key: 'pinterest:pins', label: 'Pins' },
+          uri: 'https://www.pinterest.com/nasa/space-exploration.rss',
+          hint: { key: 'pinterest:board', label: 'Board' },
         },
       ]
 
