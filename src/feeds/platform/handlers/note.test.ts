@@ -68,10 +68,16 @@ describe('noteHandler', () => {
       expect(noteHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return empty array for root path', () => {
+    it('should return featured feed for root path', () => {
       const value = 'https://note.com/'
+      const expected = [
+        {
+          uri: 'https://note.com/rss',
+          hint: { key: 'note:featured', label: 'Featured' },
+        },
+      ]
 
-      expect(noteHandler.resolve(value)).toEqual([])
+      expect(noteHandler.resolve(value)).toEqual(expected)
     })
 
     it('should return empty array for excluded paths', () => {

@@ -59,7 +59,12 @@ export const noteHandler: PlatformHandler = {
     const pathSegments = pathname.split('/').filter(Boolean)
 
     if (pathSegments.length === 0) {
-      return []
+      return [
+        {
+          uri: 'https://note.com/rss',
+          hint: composeHint('note:featured'),
+        },
+      ]
     }
 
     const username = pathSegments[0]
