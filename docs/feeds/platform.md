@@ -725,7 +725,8 @@ Discovers RSS feeds for Libsyn-hosted podcasts.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `*.libsyn.com` | Podcast feed |
+| `{slug}.libsyn.com` | Podcast feed |
+| `feeds.libsyn.com/{showId}` | Podcast feed |
 
 ### LiveJournal
 
