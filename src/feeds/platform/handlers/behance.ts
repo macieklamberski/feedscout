@@ -1,6 +1,12 @@
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, isAnyOf, isHostOf } from '../../../common/utils.js'
 
+// Not discoverable without handler.
+//
+// HTML autodiscovery on behance.net pages returns the generic site feed
+// (feeds.feedburner.com/behance/vorr) regardless of profile, not the user-specific
+// feed. The handler is the only path to per-user feeds via /feeds/user?username={user}.
+
 const hosts = ['behance.net', 'www.behance.net']
 const userRegex = /^\/([a-zA-Z0-9_-]+)(?:\/(appreciated))?\/?$/
 const excludedPaths = [
@@ -30,6 +36,20 @@ export const behanceHandler: PlatformHandler = {
 
   resolve: (url) => {
     const { pathname } = new URL(url)
+
+    // Homepage: featured projects feed + Featured-by-Adobe gallery.
+    if (pathname === '/' || pathname === '' || pathname === '/galleries') {
+      return [
+        {
+          uri: 'https://www.behance.net/feeds/projects',
+          hint: composeHint('behance:projects'),
+        },
+        {
+          uri: 'https://feeds.feedburner.com/behance/vorr',
+          hint: composeHint('behance:featured'),
+        },
+      ]
+    }
 
     // User profile: /{username} or /{username}/appreciated
     const userMatch = pathname.match(userRegex)

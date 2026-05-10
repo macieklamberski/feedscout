@@ -15,7 +15,8 @@ const createMockContext = (): HtmlMethodContext => {
         { rel: 'alternate', types: ['application/rss+xml', 'application/atom+xml'] },
         { rel: 'feed' },
       ],
-      anchorUris: ['/feed', '/rss', '/atom.xml'],
+      // biome-ignore lint/performance/useTopLevelRegex: Test-specific patterns.
+      anchorUris: ['/feed', '/rss', '/atom.xml', /\/rss\//, /\/atom\//, /\/feed\//],
       anchorIgnoredUris: ['#', 'javascript:', 'mailto:'],
       anchorLabels: ['rss', 'feed', 'atom'],
     },
@@ -281,6 +282,22 @@ describe('handleOpenTag', () => {
 
     expect(value.currentScript).toBeNull()
   })
+
+  it('should add anchor tag with href matching a RegExp pattern', () => {
+    const value = createMockContext()
+
+    handleOpenTag(value, 'a', { href: '/rss/now.xml' })
+
+    expect(value.discoveredUris.has('/rss/now.xml')).toBe(true)
+  })
+
+  it('should not add anchor tag when href does not match any RegExp pattern', () => {
+    const value = createMockContext()
+
+    handleOpenTag(value, 'a', { href: '/blog/post.html' })
+
+    expect(value.discoveredUris.has('/blog/post.html')).toBe(false)
+  })
 })
 
 describe('handleText', () => {
@@ -528,5 +545,18 @@ describe('handleCloseTag', () => {
     handleCloseTag(value, 'script')
 
     expect(value.discoveredUris.has('https://example.com/feed.xml')).toBe(true)
+  })
+
+  it('should return early from JSON-LD extraction when jsonLdTypes is empty', () => {
+    const value = createMockContext()
+    value.currentScript = {
+      isJsonLd: true,
+      content: '{"@type": "DataFeed", "url": "https://example.com/feed.xml"}',
+    }
+
+    handleCloseTag(value, 'script')
+
+    expect(value.discoveredUris.size).toBe(0)
+    expect(value.currentScript).toBeNull()
   })
 })

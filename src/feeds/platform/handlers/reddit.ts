@@ -2,18 +2,34 @@ import type { DiscoverUriEntry } from '../../../common/types.js'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, isAnyOf, isHostOf } from '../../../common/utils.js'
 
+// Not discoverable without handler.
+
 const commentsRegex = /^\/r\/([^/]+)\/comments\/([^/]+)/
 const subredditRegex = /^\/r\/([^/]+)(?:\/([^/]+))?/
 const multiredditRegex = /^\/user\/([^/]+)\/m\/([^/]+)/
-const userRegex = /^\/(u|user)\/([^/]+)/
+const userRegex = /^\/(?:u|user)\/([^/]+)(?:\/(submitted|comments))?/
 const domainRegex = /^\/domain\/([^/]+)/
 
 export const hosts = ['reddit.com', 'www.reddit.com', 'old.reddit.com', 'new.reddit.com']
 const sortOptions = ['hot', 'new', 'rising', 'controversial', 'top']
+const timeOptions = new Set(['hour', 'day', 'week', 'month', 'year', 'all'])
+const timeFilteredSorts = new Set(['top', 'controversial'])
 
-// Note: Reddit also supports these feed formats which require user input:
-// - Time-filtered top/controversial: /r/{sub}/top/.rss?t=week (hour|day|week|month|year|all)
-// - Combined subreddits: /r/{sub1}+{sub2}/.rss
+const getTimeframeSuffix = (sort: string, searchParams: URLSearchParams): string => {
+  if (!timeFilteredSorts.has(sort)) {
+    return ''
+  }
+
+  const timeframe = searchParams.get('t')
+
+  if (timeframe && timeOptions.has(timeframe)) {
+    return `?t=${timeframe}`
+  }
+
+  return ''
+}
+
+// Combined subreddits work transparently: /r/{sub1}+{sub2} is captured by the same regex.
 
 export const redditHandler: PlatformHandler = {
   match: (url) => {
@@ -21,7 +37,7 @@ export const redditHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    const { pathname } = new URL(url)
+    const { pathname, searchParams } = new URL(url)
     const pathSegments = pathname.split('/').filter(Boolean)
 
     // Homepage: reddit.com/
@@ -54,7 +70,7 @@ export const redditHandler: PlatformHandler = {
 
       if (sort && isAnyOf(sort, sortOptions)) {
         uris.push({
-          uri: `https://www.reddit.com/r/${subreddit}/${sort}/.rss`,
+          uri: `https://www.reddit.com/r/${subreddit}/${sort}/.rss${getTimeframeSuffix(sort, searchParams)}`,
           hint: composeHint('reddit:posts'),
         })
       } else {
@@ -88,11 +104,38 @@ export const redditHandler: PlatformHandler = {
       ]
     }
 
-    // Match /u/username or /user/username pattern.
+    // Match /u/username or /user/username pattern, with optional /submitted or /comments.
     const userMatch = pathname.match(userRegex)
 
-    if (userMatch?.[2]) {
-      const username = userMatch[2]
+    if (userMatch?.[1]) {
+      const username = userMatch[1]
+      const filter = userMatch[2]
+
+      if (filter === 'submitted') {
+        return [
+          {
+            uri: `https://www.reddit.com/user/${username}/submitted/.rss`,
+            hint: composeHint('reddit:user-submitted'),
+          },
+          {
+            uri: `https://www.reddit.com/user/${username}/.rss`,
+            hint: composeHint('reddit:posts'),
+          },
+        ]
+      }
+
+      if (filter === 'comments') {
+        return [
+          {
+            uri: `https://www.reddit.com/user/${username}/comments/.rss`,
+            hint: composeHint('reddit:user-comments'),
+          },
+          {
+            uri: `https://www.reddit.com/user/${username}/.rss`,
+            hint: composeHint('reddit:posts'),
+          },
+        ]
+      }
 
       return [
         {

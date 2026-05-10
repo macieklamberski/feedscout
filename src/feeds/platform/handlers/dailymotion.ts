@@ -1,9 +1,12 @@
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, isAnyOf, isHostOf } from '../../../common/utils.js'
 
+// Not discoverable without handler.
+
 const hosts = ['dailymotion.com', 'www.dailymotion.com']
 const userRegex = /^\/([a-zA-Z0-9_-]+)$/
 const playlistRegex = /^\/playlist\/([a-zA-Z0-9_-]+)/
+const channelRegex = /^\/channel\/([a-zA-Z0-9_-]+)/
 const excludedPaths = [
   'signin',
   'signout',
@@ -54,6 +57,16 @@ export const dailymotionHandler: PlatformHandler = {
   resolve: (url) => {
     const { pathname } = new URL(url)
 
+    // Homepage or /trending: global trending feed.
+    if (pathname === '/' || pathname === '' || pathname === '/trending') {
+      return [
+        {
+          uri: 'https://www.dailymotion.com/rss/trending',
+          hint: composeHint('dailymotion:trending'),
+        },
+      ]
+    }
+
     // Playlist page: /playlist/{id}
     const playlistMatch = pathname.match(playlistRegex)
 
@@ -68,7 +81,19 @@ export const dailymotionHandler: PlatformHandler = {
       ]
     }
 
-    // User/channel page: /{username}
+    // Channel page: /channel/{name}
+    const channelMatch = pathname.match(channelRegex)
+
+    if (channelMatch?.[1]) {
+      return [
+        {
+          uri: `https://www.dailymotion.com/rss/channel/${channelMatch[1]}`,
+          hint: composeHint('dailymotion:channel'),
+        },
+      ]
+    }
+
+    // User page: /{username}
     const userMatch = pathname.match(userRegex)
 
     if (userMatch?.[1]) {

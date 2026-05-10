@@ -6,6 +6,7 @@ describe('sourceforgeHandler', () => {
     const cases = [
       ['https://sourceforge.net/projects/filezilla', true],
       ['https://www.sourceforge.net/projects/nmap', true],
+      ['https://sourceforge.net/p/nmap/activity', true],
       ['https://sourceforge.net', true],
       ['https://github.com/user/repo', false],
       ['https://example.com', false],
@@ -21,24 +22,84 @@ describe('sourceforgeHandler', () => {
   })
 
   describe('resolve', () => {
-    it('should return activity feed for project page', () => {
+    it('should return activity and files feeds for legacy project page', () => {
       const value = 'https://sourceforge.net/projects/filezilla'
       const expected = [
         {
+          uri: 'https://sourceforge.net/p/filezilla/activity/feed',
+          hint: { key: 'sourceforge:activity', label: 'Recent activity' },
+        },
+        {
           uri: 'https://sourceforge.net/projects/filezilla/rss',
-          hint: { key: 'sourceforge:activity', label: 'Activity' },
+          hint: { key: 'sourceforge:files', label: 'File releases' },
+        },
+        {
+          uri: 'https://sourceforge.net/p/filezilla/news/feed.rss',
+          hint: { key: 'sourceforge:news-rss', label: 'News (RSS)' },
+        },
+        {
+          uri: 'https://sourceforge.net/p/filezilla/news/feed.atom',
+          hint: { key: 'sourceforge:news-atom', label: 'News (Atom)' },
+        },
+        {
+          uri: 'https://sourceforge.net/p/filezilla/discussion/feed',
+          hint: { key: 'sourceforge:discussion', label: 'Discussion' },
         },
       ]
 
       expect(sourceforgeHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return activity feed for project subpage', () => {
+    it('should return activity and files feeds for project subpage', () => {
       const value = 'https://sourceforge.net/projects/filezilla/files'
       const expected = [
         {
+          uri: 'https://sourceforge.net/p/filezilla/activity/feed',
+          hint: { key: 'sourceforge:activity', label: 'Recent activity' },
+        },
+        {
           uri: 'https://sourceforge.net/projects/filezilla/rss',
-          hint: { key: 'sourceforge:activity', label: 'Activity' },
+          hint: { key: 'sourceforge:files', label: 'File releases' },
+        },
+        {
+          uri: 'https://sourceforge.net/p/filezilla/news/feed.rss',
+          hint: { key: 'sourceforge:news-rss', label: 'News (RSS)' },
+        },
+        {
+          uri: 'https://sourceforge.net/p/filezilla/news/feed.atom',
+          hint: { key: 'sourceforge:news-atom', label: 'News (Atom)' },
+        },
+        {
+          uri: 'https://sourceforge.net/p/filezilla/discussion/feed',
+          hint: { key: 'sourceforge:discussion', label: 'Discussion' },
+        },
+      ]
+
+      expect(sourceforgeHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return activity and files feeds for /p/{project} URL', () => {
+      const value = 'https://sourceforge.net/p/nmap/bugs/123'
+      const expected = [
+        {
+          uri: 'https://sourceforge.net/p/nmap/activity/feed',
+          hint: { key: 'sourceforge:activity', label: 'Recent activity' },
+        },
+        {
+          uri: 'https://sourceforge.net/projects/nmap/rss',
+          hint: { key: 'sourceforge:files', label: 'File releases' },
+        },
+        {
+          uri: 'https://sourceforge.net/p/nmap/news/feed.rss',
+          hint: { key: 'sourceforge:news-rss', label: 'News (RSS)' },
+        },
+        {
+          uri: 'https://sourceforge.net/p/nmap/news/feed.atom',
+          hint: { key: 'sourceforge:news-atom', label: 'News (Atom)' },
+        },
+        {
+          uri: 'https://sourceforge.net/p/nmap/discussion/feed',
+          hint: { key: 'sourceforge:discussion', label: 'Discussion' },
         },
       ]
 
@@ -65,6 +126,12 @@ describe('sourceforgeHandler', () => {
 
     it('should return empty array for projects path without project name', () => {
       const value = 'https://sourceforge.net/projects'
+
+      expect(sourceforgeHandler.resolve(value)).toEqual([])
+    })
+
+    it('should return empty array for /p path without project name', () => {
+      const value = 'https://sourceforge.net/p'
 
       expect(sourceforgeHandler.resolve(value)).toEqual([])
     })

@@ -1,6 +1,6 @@
 {
-  "github": ["https://github.com/torvalds"],
-  "githubGist": ["https://gist.github.com/torvalds"],
+  "github": ["https://github.com/macieklamberski"],
+  "githubGist": ["https://gist.github.com/macieklamberski"],
   "gitlab": ["https://gitlab.com/gitlab-org", "https://gitlab.com/john.doe"],
   "mastodon": ["https://mastodon.social/@Gargron"],
   "bluesky": ["https://bsky.app/profile/jay.bsky.team"],

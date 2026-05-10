@@ -42,6 +42,18 @@ describe('stackExchangeHandler', () => {
       expect(stackExchangeHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return tag feed for combined tags on Stack Overflow', () => {
+      const value = 'https://stackoverflow.com/questions/tagged/javascript+typescript'
+      const expected = [
+        {
+          uri: 'https://stackoverflow.com/feeds/tag/javascript+typescript',
+          hint: { key: 'stackexchange:tag', label: 'Tag' },
+        },
+      ]
+
+      expect(stackExchangeHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return question feed for question page on Stack Overflow', () => {
       const value = 'https://stackoverflow.com/questions/12345/how-to-do-something'
       const expected = [
@@ -114,8 +126,78 @@ describe('stackExchangeHandler', () => {
       expect(stackExchangeHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return empty array for homepage', () => {
-      expect(stackExchangeHandler.resolve('https://stackoverflow.com/')).toEqual([])
+    it('should return site-wide newest feed for homepage', () => {
+      const value = 'https://stackoverflow.com/'
+      const expected = [
+        {
+          uri: 'https://stackoverflow.com/feeds',
+          hint: { key: 'stackexchange:newest', label: 'Newest questions' },
+        },
+      ]
+
+      expect(stackExchangeHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return site-wide newest feed for subdomain homepage', () => {
+      const value = 'https://math.stackexchange.com/'
+      const expected = [
+        {
+          uri: 'https://math.stackexchange.com/feeds',
+          hint: { key: 'stackexchange:newest', label: 'Newest questions' },
+        },
+      ]
+
+      expect(stackExchangeHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return collective feed for collectives page', () => {
+      const value = 'https://stackoverflow.com/collectives/aws'
+      const expected = [
+        {
+          uri: 'https://stackoverflow.com/feeds/collectives/aws',
+          hint: { key: 'stackexchange:collective', label: 'Collective' },
+        },
+      ]
+
+      expect(stackExchangeHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should pass through ?sort= on tag feed when value is allowed', () => {
+      for (const sort of ['newest', 'active', 'votes', 'creation']) {
+        const value = `https://stackoverflow.com/questions/tagged/javascript?sort=${sort}`
+        const expected = [
+          {
+            uri: `https://stackoverflow.com/feeds/tag/javascript?sort=${sort}`,
+            hint: { key: 'stackexchange:tag', label: 'Tag' },
+          },
+        ]
+
+        expect(stackExchangeHandler.resolve(value)).toEqual(expected)
+      }
+    })
+
+    it('should pass through ?tab= on tag feed (lowercased) when value is allowed', () => {
+      const value = 'https://stackoverflow.com/questions/tagged/javascript?tab=Active'
+      const expected = [
+        {
+          uri: 'https://stackoverflow.com/feeds/tag/javascript?sort=active',
+          hint: { key: 'stackexchange:tag', label: 'Tag' },
+        },
+      ]
+
+      expect(stackExchangeHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should drop unknown sort values silently', () => {
+      const value = 'https://stackoverflow.com/questions/tagged/javascript?sort=hot'
+      const expected = [
+        {
+          uri: 'https://stackoverflow.com/feeds/tag/javascript',
+          hint: { key: 'stackexchange:tag', label: 'Tag' },
+        },
+      ]
+
+      expect(stackExchangeHandler.resolve(value)).toEqual(expected)
     })
 
     it('should return empty array for unrecognized path', () => {

@@ -1,6 +1,8 @@
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, isAnyOf, isHostOf } from '../../../common/utils.js'
 
+// Not discoverable without handler.
+
 const userIdRegex = /soundcloud:\/\/users:(\d+)/
 
 const hosts = ['soundcloud.com', 'www.soundcloud.com', 'm.soundcloud.com']
