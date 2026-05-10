@@ -199,6 +199,8 @@
     "bearblog:posts-rss": "Posts (RSS)",
     "bearblog:tag-atom": "Tag (Atom)",
     "bearblog:tag-rss": "Tag (RSS)",
+    "bearblog:discover-atom": "Trending (Atom)",
+    "bearblog:discover-rss": "Trending (RSS)",
     "transistor:podcast": "Podcast",
     "odysee:videos": "Videos",
     "myanimelist:anime": "Anime list",

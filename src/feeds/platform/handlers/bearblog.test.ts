@@ -6,7 +6,8 @@ describe('bearblogHandler', () => {
     const cases = [
       ['https://herman.bearblog.dev', true],
       ['https://blog.example.bearblog.dev', true],
-      ['https://bearblog.dev', false],
+      ['https://bearblog.dev', true],
+      ['https://www.bearblog.dev', true],
       ['https://example.com', false],
     ] as const
 
@@ -46,6 +47,22 @@ describe('bearblogHandler', () => {
         {
           uri: 'https://herman.bearblog.dev/feed/?type=rss',
           hint: { key: 'bearblog:posts-rss', label: 'Posts (RSS)' },
+        },
+      ]
+
+      expect(bearblogHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return apex discover feeds for bearblog.dev', () => {
+      const value = 'https://bearblog.dev/'
+      const expected = [
+        {
+          uri: 'https://bearblog.dev/discover/feed/',
+          hint: { key: 'bearblog:discover-atom', label: 'Trending (Atom)' },
+        },
+        {
+          uri: 'https://bearblog.dev/discover/feed/?type=rss',
+          hint: { key: 'bearblog:discover-rss', label: 'Trending (RSS)' },
         },
       ]
 
