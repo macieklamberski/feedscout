@@ -115,6 +115,8 @@
     "mastodon:posts": "Posts",
     "mastodon:tag": "Tag",
     "mastodon:tagged": "Tagged",
+    "mastodon:replies": "Posts with replies",
+    "mastodon:media": "Media",
     "medium:posts": "Posts",
     "medium:tag": "Tag",
     "medium:tagged": "Tagged",

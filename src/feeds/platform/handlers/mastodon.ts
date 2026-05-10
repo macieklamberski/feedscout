@@ -7,6 +7,8 @@ import { isMastodonHeaders, isMastodonHtml } from '../../../favicons/platform/ha
 
 const profileRegex = /^\/@([^/]+)/
 const taggedProfileRegex = /^\/@([^/]+)\/tagged\/([^/]+)/
+const repliesProfileRegex = /^\/@([^/]+)\/with_replies/
+const mediaProfileRegex = /^\/@([^/]+)\/media/
 const tagRegex = /^\/tags\/([^/]+)/
 
 export const isProfilePath = (pathname: string): boolean => {
@@ -45,6 +47,38 @@ export const mastodonHandler: PlatformHandler = {
   resolve: (url) => {
     try {
       const { origin, pathname } = new URL(url)
+
+      // Replies-included feed: /@user/with_replies
+      const repliesMatch = pathname.match(repliesProfileRegex)
+
+      if (repliesMatch?.[1]) {
+        return [
+          {
+            uri: `${origin}/@${repliesMatch[1]}/with_replies.rss`,
+            hint: composeHint('mastodon:replies'),
+          },
+          {
+            uri: `${origin}/@${repliesMatch[1]}.rss`,
+            hint: composeHint('mastodon:posts'),
+          },
+        ]
+      }
+
+      // Media-only feed: /@user/media
+      const mediaMatch = pathname.match(mediaProfileRegex)
+
+      if (mediaMatch?.[1]) {
+        return [
+          {
+            uri: `${origin}/@${mediaMatch[1]}/media.rss`,
+            hint: composeHint('mastodon:media'),
+          },
+          {
+            uri: `${origin}/@${mediaMatch[1]}.rss`,
+            hint: composeHint('mastodon:posts'),
+          },
+        ]
+      }
 
       // Tagged profile page: /@user/tagged/{tag}
       const taggedMatch = pathname.match(taggedProfileRegex)
