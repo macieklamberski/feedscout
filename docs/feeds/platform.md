@@ -647,11 +647,12 @@ Discovers RSS and JSON feeds for Audioboom channels.
 
 ### BookWyrm
 
-Discovers RSS feeds for BookWyrm user reviews. Detected by the `BookWyrm` generator meta tag.
+Discovers RSS feeds for BookWyrm user activity, reviews, quotes, comments, and per-shelf feeds. Detected by the `BookWyrm` generator meta tag.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{instance}/user/{user}` | Reviews feed (RSS) |
+| `{instance}/user/{user}` | Activity + reviews + quotes + comments (RSS) |
+| `{instance}/user/{user}/(shelf\|books)/{shelf-id}` | Shelf feed (RSS) + activity/reviews/quotes/comments |
 
 ### Buzzsprout
 

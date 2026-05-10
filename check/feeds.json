@@ -32,7 +32,12 @@
     "https://security.googleblog.com/feeds/1469360228826887140/comments/default?alt=rss"
   ],
   "bluesky": ["https://bsky.app/profile/jay.bsky.team/rss"],
-  "bookwyrm": ["https://bookwyrm.social/user/mouse/rss"],
+  "bookwyrm": [
+    "https://bookwyrm.social/user/mouse/rss",
+    "https://bookwyrm.social/user/mouse/rss-reviews",
+    "https://bookwyrm.social/user/mouse/rss-quotes",
+    "https://bookwyrm.social/user/mouse/rss-comments"
+  ],
   "buttondown": ["https://buttondown.com/jmduke/rss"],
   "buzzsprout": ["https://rss.buzzsprout.com/231452.rss"],
   "codeberg": [
