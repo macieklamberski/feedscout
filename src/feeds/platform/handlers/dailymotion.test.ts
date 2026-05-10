@@ -108,5 +108,17 @@ describe('dailymotionHandler', () => {
 
       expect(dailymotionHandler.resolve(value)).toEqual(expected)
     })
+
+    it('should return search feed for /search/{query}', () => {
+      const value = 'https://www.dailymotion.com/search/cats'
+      const expected = [
+        {
+          uri: 'https://www.dailymotion.com/rss/search/cats',
+          hint: { key: 'dailymotion:search', label: 'Search' },
+        },
+      ]
+
+      expect(dailymotionHandler.resolve(value)).toEqual(expected)
+    })
   })
 })
