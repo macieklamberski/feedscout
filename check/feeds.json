@@ -77,7 +77,7 @@
     "https://dw-news.dreamwidth.org/data/rss",
     "https://dw-news.dreamwidth.org/data/atom"
   ],
-  "friendica": ["https://libranet.de/feed/admin"],
+  "friendica": ["https://libranet.de/feed/admin", "https://friendica.world/feed/surazeus/comments"],
   "ghost": [
     "https://demo.ghost.io/rss/",
     "https://demo.ghost.io/tag/getting-started/rss/",

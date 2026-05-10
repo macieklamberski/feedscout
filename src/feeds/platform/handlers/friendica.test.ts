@@ -44,24 +44,32 @@ describe('friendicaHandler', () => {
   })
 
   describe('resolve', () => {
-    it('should return atom feed for profile', () => {
+    it('should return posts and comments feeds for profile', () => {
       const value = 'https://libranet.de/profile/admin'
       const expected = [
         {
           uri: 'https://libranet.de/feed/admin',
           hint: { key: 'friendica:posts', label: 'Posts' },
         },
+        {
+          uri: 'https://libranet.de/feed/admin/comments',
+          hint: { key: 'friendica:comments', label: 'Comments' },
+        },
       ]
 
       expect(friendicaHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return atom feed regardless of subpath', () => {
+    it('should return both feeds regardless of subpath', () => {
       const value = 'https://libranet.de/profile/admin/photos'
       const expected = [
         {
           uri: 'https://libranet.de/feed/admin',
           hint: { key: 'friendica:posts', label: 'Posts' },
+        },
+        {
+          uri: 'https://libranet.de/feed/admin/comments',
+          hint: { key: 'friendica:comments', label: 'Comments' },
         },
       ]
 

@@ -232,6 +232,7 @@
     "discourse:topic": "Topic",
     "discourse:activity": "Activity",
     "friendica:posts": "Posts",
+    "friendica:comments": "Comments",
     "ghost:blog": "Blog",
     "ghost:tag": "Tag",
     "ghost:author": "Author",

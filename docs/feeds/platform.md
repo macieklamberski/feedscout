@@ -678,7 +678,7 @@ Discovers Atom feeds for Friendica user profiles. Detected by the `Friendica` ge
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{instance}/profile/{user}` | Posts feed (Atom) |
+| `{instance}/profile/{user}` | Posts feed (Atom) + comments-only feed (Atom) |
 
 ### Ghost
 
