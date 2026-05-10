@@ -389,7 +389,7 @@ Discovers RSS feeds for Itch.io games, creators, devlogs, and browse pages.
 | `itch.io/games/{sort}` | Sorted games feed (newest/top-rated/top-sellers/on-sale) |
 | `itch.io/{section}` | Section feed (tools/game-assets/soundtracks/physical-games/books/comics/misc) |
 | `itch.io/devlogs` | All devlogs feed |
-| `itch.io` | Featured + new + sales feeds |
+| `itch.io` | Featured + new + sales feeds + itch.io blog |
 
 ### CSDN
 

@@ -449,7 +449,8 @@
     "https://itch.io/misc.xml",
     "https://itch.io/feed/featured.xml",
     "https://itch.io/feed/new.xml",
-    "https://itch.io/feed/sales.xml"
+    "https://itch.io/feed/sales.xml",
+    "https://itch.io/blog.rss"
   ],
   "csdn": ["https://rss.csdn.net/csdnnews/rss/map", "https://blog.csdn.net/csdnnews/rss/list"],
   "douban": [

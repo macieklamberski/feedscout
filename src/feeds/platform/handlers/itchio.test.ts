@@ -202,6 +202,7 @@ describe('itchioHandler', () => {
         },
         { uri: 'https://itch.io/feed/new.xml', hint: { key: 'itchio:new', label: 'New' } },
         { uri: 'https://itch.io/feed/sales.xml', hint: { key: 'itchio:sales', label: 'Sales' } },
+        { uri: 'https://itch.io/blog.rss', hint: { key: 'itchio:blog', label: 'Blog' } },
       ]
 
       expect(itchioHandler.resolve(value)).toEqual(expected)
@@ -216,6 +217,7 @@ describe('itchioHandler', () => {
         },
         { uri: 'https://itch.io/feed/new.xml', hint: { key: 'itchio:new', label: 'New' } },
         { uri: 'https://itch.io/feed/sales.xml', hint: { key: 'itchio:sales', label: 'Sales' } },
+        { uri: 'https://itch.io/blog.rss', hint: { key: 'itchio:blog', label: 'Blog' } },
       ]
 
       expect(itchioHandler.resolve(value)).toEqual(expected)
