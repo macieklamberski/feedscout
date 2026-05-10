@@ -8,6 +8,10 @@ describe('podigeeHandler', () => {
       ['https://anything.podigee.io/episodes', true],
       ['https://podigee.io', false],
       ['https://example.com', false],
+      ['https://www.podigee.io', false],
+      ['https://app.podigee.io', false],
+      ['https://help.podigee.io', false],
+      ['https://blog.podigee.io', false],
     ] as const
 
     it.each(cases)('%s -> %s', (url, expected) => {
