@@ -639,7 +639,7 @@ Discovers RSS feeds for Are.na user profiles and channels.
 
 ### Audioboom
 
-Discovers RSS and JSON feeds for Audioboom channels.
+Discovers RSS feeds for Audioboom channels.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
