@@ -274,6 +274,7 @@
     "weebly:blog": "Blog",
     "zenn:posts": "Posts",
     "zenn:topic": "Topic",
-    "zenn:publication": "Publication"
+    "zenn:publication": "Publication",
+    "zenn:trending": "Trending"
   }
 }

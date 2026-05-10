@@ -489,6 +489,7 @@
   "zenn": [
     "https://zenn.dev/zenn/feed",
     "https://zenn.dev/topics/react/feed",
-    "https://zenn.dev/p/team_zenn/feed"
+    "https://zenn.dev/p/team_zenn/feed",
+    "https://zenn.dev/feed"
   ]
 }

@@ -873,7 +873,7 @@ Discovers RSS feeds for Weebly-hosted blogs.
 
 ### Zenn
 
-Discovers RSS feeds for Zenn users, topics, and publications.
+Discovers RSS feeds for Zenn users, topics, publications, and the platform-wide trending feed.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
@@ -881,6 +881,7 @@ Discovers RSS feeds for Zenn users, topics, and publications.
 | `zenn.dev/topics/{topic}` | Topic feed |
 | `zenn.dev/p/{pub}` | Publication feed |
 | `zenn.dev/publications/{pub}` | Publication feed |
+| `zenn.dev` | Trending posts feed |
 
 ## Basic Usage
 
