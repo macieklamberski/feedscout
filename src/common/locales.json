@@ -277,6 +277,8 @@
     "naver-blog:blog": "Blog",
     "observable:notebooks": "Notebooks",
     "observable:collection": "Collection",
+    "observable:recent": "Recent",
+    "observable:trending": "Trending",
     "pika:posts-atom": "Posts (Atom)",
     "pika:posts-rss": "Posts (RSS)",
     "pika:tag-atom": "Tag (Atom)",
