@@ -5,7 +5,7 @@ import { composeHint, isSubdomainOf } from '../../../common/utils.js'
 
 export const hashnodeHandler: PlatformHandler = {
   match: (url) => {
-    return isSubdomainOf(url, 'hashnode.dev')
+    return isSubdomainOf(url, ['hashnode.dev', 'hashnode.com'])
   },
 
   resolve: (url) => {
