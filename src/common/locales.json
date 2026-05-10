@@ -294,6 +294,7 @@
     "pika:tag-rss": "Tag (RSS)",
     "pixelfed:posts": "Posts",
     "pleroma:posts": "Posts",
+    "pleroma:posts-rss": "Posts (RSS)",
     "podbean:podcast": "Podcast",
     "podigee:podcast": "Podcast",
     "posthaven:posts": "Posts",
