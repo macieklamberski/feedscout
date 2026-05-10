@@ -7,6 +7,8 @@ describe('buttondownHandler', () => {
       ['https://buttondown.com/cassidoo', true],
       ['https://www.buttondown.com/user', true],
       ['https://buttondown.com', true],
+      ['https://buttondown.email/cassidoo', true],
+      ['https://www.buttondown.email/cassidoo', true],
       ['https://example.com', false],
     ] as const
 
@@ -54,6 +56,18 @@ describe('buttondownHandler', () => {
       const value = 'https://buttondown.com/login'
 
       expect(buttondownHandler.resolve(value)).toEqual([])
+    })
+
+    it('should canonicalise legacy buttondown.email host to buttondown.com feed', () => {
+      const value = 'https://buttondown.email/cassidoo'
+      const expected = [
+        {
+          uri: 'https://buttondown.com/cassidoo/rss',
+          hint: { key: 'buttondown:newsletter', label: 'Newsletter' },
+        },
+      ]
+
+      expect(buttondownHandler.resolve(value)).toEqual(expected)
     })
   })
 })
