@@ -559,4 +559,20 @@ describe('handleCloseTag', () => {
     expect(value.discoveredUris.size).toBe(0)
     expect(value.currentScript).toBeNull()
   })
+
+  it('should extract URLs from JSON-LD with @type as array', () => {
+    const value = createMockContext()
+    value.options.jsonLdTypes = ['DataFeed']
+    value.currentScript = {
+      isJsonLd: true,
+      content: JSON.stringify({
+        '@type': ['DataFeed', 'Thing'],
+        url: 'https://example.com/feed.xml',
+      }),
+    }
+
+    handleCloseTag(value, 'script')
+
+    expect(value.discoveredUris.has('https://example.com/feed.xml')).toBe(true)
+  })
 })
