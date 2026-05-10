@@ -26,6 +26,10 @@ export const sourceforgeHandler: PlatformHandler = {
           hint: composeHint('sourceforge:activity'),
         },
         {
+          uri: `${origin}/p/${project}/feed`,
+          hint: composeHint('sourceforge:project-feed'),
+        },
+        {
           uri: `${origin}/projects/${project}/rss`,
           hint: composeHint('sourceforge:files'),
         },
@@ -40,6 +44,14 @@ export const sourceforgeHandler: PlatformHandler = {
         {
           uri: `${origin}/p/${project}/discussion/feed`,
           hint: composeHint('sourceforge:discussion'),
+        },
+        {
+          uri: `${origin}/p/${project}/discussion/feed.atom`,
+          hint: composeHint('sourceforge:discussion-atom'),
+        },
+        {
+          uri: `${origin}/p/${project}/bugs/feed`,
+          hint: composeHint('sourceforge:bugs'),
         },
       ]
     }
