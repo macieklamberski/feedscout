@@ -80,6 +80,7 @@ Discovers RSS feeds for Medium user profiles, publications, tags, and subdomains
 |-------------|-----------------|
 | `medium.com/@{username}` | User posts feed |
 | `medium.com/{publication}` | Publication feed |
+| `medium.com/tag/{tag}` | Tag feed |
 | `medium.com/{publication}/tagged/{tag}` | Tagged publication feed |
 | `*.medium.com` | Subdomain publication feed |
 | `*.medium.com/tagged/{tag}` | Subdomain tagged feed |
