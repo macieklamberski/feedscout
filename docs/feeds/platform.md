@@ -354,9 +354,14 @@ Discovers RSS feeds for Stack Overflow, Server Fault, Super User, Ask Ubuntu, Ma
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
+| `{site}` | Site-wide newest questions feed |
 | `{site}/questions/tagged/{tag}` | Tag feed |
 | `{site}/questions/{id}` | Question feed |
 | `{site}/users/{id}` | User feed |
+| `{site}/collectives/{name}` | Collective feed |
+
+> [!NOTE]
+> Tag feeds accept `?sort={newest|active|votes|creation}` (also `?tab=…`) — the value is passed through to the generated feed URL when it matches one of the allowed sorts. Unknown values are silently dropped.
 
 ### Hashnode
 
