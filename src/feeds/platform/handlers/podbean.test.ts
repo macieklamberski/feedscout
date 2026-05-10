@@ -8,6 +8,11 @@ describe('podbeanHandler', () => {
       ['https://blog.example.podbean.com', true],
       ['https://podbean.com', false],
       ['https://example.com', false],
+      ['https://www.podbean.com', false],
+      ['https://support.podbean.com', false],
+      ['https://feed.podbean.com', false],
+      ['https://pbcdn1.podbean.com', false],
+      ['https://sponsorship.podbean.com', false],
     ] as const
 
     it.each(cases)('%s -> %s', (url, expected) => {
