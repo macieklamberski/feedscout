@@ -2,7 +2,15 @@ import type { DiscoverUriEntry } from '../../../common/types.js'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, isSubdomainOf } from '../../../common/utils.js'
 
-// Discoverable without handler.
+// Discoverability: Discoverable without handler.
+//
+// WordPress.com blogs serve the full WordPress feed surface — `/feed/`,
+// `/comments/feed/`, `/category/{c}/feed/`, `/tag/{t}/feed/`,
+// `/author/{a}/feed/`, date archives `/{Y}[/{M}[/{D}]]/feed/`, and per-post
+// comment feeds — each with RSS 2.0, Atom, and RDF variants plus `/?feed=...`
+// query fallbacks, and every page advertises them via `<link rel="alternate">`.
+// The handler enumerates archive/post/main/comments feeds explicitly so
+// every variant is surfaced without depending on HTML parsing.
 
 const categoryRegex = /^\/category\/([^/]+)/
 const tagRegex = /^\/tag\/([^/]+)/

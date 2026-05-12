@@ -2,7 +2,14 @@ import type { DiscoverUriEntry } from '../../../common/types.js'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, isSubdomainOf } from '../../../common/utils.js'
 
-// Partially discoverable without handler.
+// Discoverability: Partially discoverable without handler.
+//
+// Excite Blog publishes RSS 2.0 and Atom feeds at `{user}.exblog.jp/index.xml`
+// and `/atom.xml`, plus per-category variants at `/i{N}/index.xml` and
+// `/i{N}/atom.xml`. Blog roots advertise the user-level feeds via HTML
+// `<link rel="alternate">`, but category pages only link the user-level
+// feeds; the handler is needed to emit both Atom variants and to surface
+// the per-category RSS/Atom URIs that generic discovery would miss.
 
 const categoryRegex = /^\/i(\d+)/
 

@@ -1,7 +1,15 @@
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, isAnyOf, isHostOf, isSubdomainOf } from '../../../common/utils.js'
 
-// Partially discoverable without handler.
+// Discoverability: Partially discoverable without handler.
+//
+// Medium exposes RSS at `medium.com/feed/@{user}`, `medium.com/feed/{publication}`,
+// `medium.com/feed/{publication}/tagged/{tag}`, `medium.com/feed/tag/{tag}`, plus
+// per-subdomain `{slug}.medium.com/feed`. Human-facing pages do not advertise these
+// via HTML `<link rel="alternate">`, so the handler is required to translate the
+// `/@user`, `/{publication}` and `*.medium.com` URL shapes onto the parallel `/feed/*`
+// paths and to emit the subdomain form (which works for both publications and user
+// vanity subdomains, unlike `medium.com/feed/{subdomain}`).
 
 const userRegex = /^\/@([^/]+)/
 const tagRegex = /^\/tag\/([^/]+)/

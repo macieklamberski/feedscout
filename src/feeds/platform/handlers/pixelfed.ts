@@ -1,7 +1,15 @@
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, hasMetaContent } from '../../../common/utils.js'
 
-// Discoverable without handler.
+// Discoverability: Discoverable without handler.
+//
+// Pixelfed exposes a single Atom feed per profile at
+// `{instance}/users/{user}.atom`, served by `ProfileController@showAtomFeed` —
+// the only feed route registered in `routes/web.php`. There are no RSS, tag,
+// discover, public-timeline, or per-status feed routes upstream. The handler is
+// content-keyed by the `<meta name="generator" content="pixelfed">` tag
+// (instances are not enumerable by host) and maps both `/{user}` and
+// `/users/{user}` profile URLs onto the canonical `.atom` path.
 
 const profileRegex = /^\/(?:users\/)?([a-zA-Z0-9_]+)\/?$/
 const excludedPaths = [

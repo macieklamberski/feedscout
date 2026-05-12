@@ -1,7 +1,14 @@
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, isAnyOf, isHostOf } from '../../../common/utils.js'
 
-// Not discoverable without handler.
+// Discoverability: Not discoverable without handler.
+//
+// Dailymotion exposes RSS 2.0 with MRSS at `/rss/trending`, `/rss/{user}`,
+// `/rss/channel/{name}`, `/rss/playlist/{id}`, and `/rss/search/{query}`,
+// but none of the user-facing pages advertise them via HTML
+// `<link rel="alternate">` or HTTP Link headers. The handler is required
+// to map homepage/trending, user, channel, playlist, and search URLs onto
+// the corresponding `/rss/...` endpoints.
 
 const hosts = ['dailymotion.com', 'www.dailymotion.com']
 const userRegex = /^\/([a-zA-Z0-9_-]+)$/

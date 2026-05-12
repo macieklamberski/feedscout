@@ -1,7 +1,14 @@
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, isAnyOf, isHostOf } from '../../../common/utils.js'
 
-// Discoverable without handler.
+// Discoverability: Discoverable without handler.
+//
+// Letterboxd serves one RSS 2.0 feed per member at
+// `letterboxd.com/{user}/rss/` (diary entries, reviews, list creations) plus
+// the editorial `letterboxd.com/journal/rss/`, both advertised via
+// `<link rel="alternate" type="application/rss+xml">` on the matching HTML
+// pages. There is no native watchlist or per-list RSS — those endpoints
+// return Cloudflare 403s and the HTML pages expose no alternate feed link.
 
 const hosts = ['letterboxd.com', 'www.letterboxd.com']
 const excludedPaths = [

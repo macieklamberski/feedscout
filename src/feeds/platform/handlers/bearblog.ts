@@ -2,7 +2,16 @@ import type { DiscoverUriEntry } from '../../../common/types.js'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, isHostOf, isSubdomainOf } from '../../../common/utils.js'
 
-// Partially discoverable without handler.
+// Discoverability: Partially discoverable without handler.
+//
+// Each Bear Blog (a `*.bearblog.dev` subdomain) exposes per-blog Atom at
+// `/feed/`, RSS at `/feed/?type=rss`, and tag-filtered variants via
+// `/feed/?q={tag}`; the apex `bearblog.dev` also serves the sitewide trending
+// feed at `/discover/feed/`. The per-blog Atom URL is advertised on the blog
+// homepage via `<link rel="alternate">`, but the RSS, tag, and discover
+// variants are not autodiscovered.
+// The handler emits both Atom and RSS for posts/tags and adds the apex
+// trending feeds that are otherwise undiscoverable.
 
 const apexHosts = ['bearblog.dev', 'www.bearblog.dev']
 

@@ -1,7 +1,14 @@
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, isHostOf, isSubdomainOf } from '../../../common/utils.js'
 
-// Discoverable without handler.
+// Discoverability: Discoverable without handler.
+//
+// Substack newsletters live at `{sub}.substack.com` with the canonical RSS
+// feed at `/feed`, advertised on the home page via
+// `<link rel="alternate" type="application/rss+xml">`. The handler also
+// maps the `substack.com/@{user}` profile URL onto `{user}.substack.com/feed`,
+// which generic autodiscovery cannot reach because the profile page lives
+// on the apex host.
 
 const profileRegex = /^\/@([\w-]+)/
 

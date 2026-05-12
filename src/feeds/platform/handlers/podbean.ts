@@ -1,9 +1,15 @@
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, isSubdomainOf } from '../../../common/utils.js'
 
-// Discoverable without handler.
+// Discoverability: Discoverable without handler.
 //
-// {slug}.podbean.com/feed.xml also works but 302-redirects to feed.podbean.com.
+// Podbean shows live at `{slug}.podbean.com` with the canonical RSS feed at
+// off-domain `feed.podbean.com/{slug}/feed.xml`; the slug-subdomain
+// `/feed.xml` and `/feed/` paths 302-redirect there and the show HTML
+// advertises the canonical feed via JSON-LD `webFeed`. The handler avoids
+// the redirect hop by emitting the canonical form directly and guards
+// against reserved subdomains (`www`, `support`, etc.) that would otherwise
+// resolve to unrelated user-owned shows.
 
 const domainSuffix = /\.podbean\.com$/i
 

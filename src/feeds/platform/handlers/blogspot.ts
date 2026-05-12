@@ -2,12 +2,17 @@ import type { DiscoverUriEntry } from '../../../common/types.js'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 
-// Discoverable without handler.
+// Discoverability: Discoverable without handler.
 //
-// HTML autodiscovery on Blogspot blogs commonly returns Feedburner aliases or, for
-// some Google-owned blogs, an entirely different consolidated URL (e.g.
-// googleblog.blogspot.com → blog.google/rss/). The handler emits native
-// /feeds/posts/default URLs which serve directly or redirect to equivalent content.
+// Blogspot blogs (`*.blogspot.{com,tld}`) expose canonical Atom and RSS at
+// `/feeds/posts/default[?alt=rss]`, plus summary variants at
+// `/feeds/posts/summary`, comments at `/feeds/comments/default`, per-label
+// feeds at `/feeds/posts/default/-/{label}`, and per-post comment feeds at
+// `/feeds/{postId}/comments/default`. HTML autodiscovery is unreliable: it
+// often returns FeedBurner aliases or, for some Google-owned blogs, an
+// entirely different consolidated URL (e.g. `blog.google/rss/`).
+// The handler emits the native `/feeds/...` URLs for every variant and
+// scrapes the post ID from HTML for per-post comment feeds.
 
 // Matches *.blogspot.com and country TLDs like *.blogspot.co.uk, *.blogspot.de, etc.
 const blogspotDomainRegex = /^.+\.blogspot\.(?:com|co\.[a-z]{2}|com\.[a-z]{2}|[a-z]{2,3})$/

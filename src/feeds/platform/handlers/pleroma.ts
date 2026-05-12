@@ -1,7 +1,15 @@
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 
-// Discoverable without handler.
+// Discoverability: Discoverable without handler.
+//
+// Pleroma exposes per-profile feeds at `{instance}/users/{user}/feed.{atom,rss}`,
+// served by `Feed.UserController` which whitelists those two formats; the bare
+// `/users/{user}.atom` form 302-redirects to the canonical path. There are no
+// per-status feed routes upstream, and tag feeds exist (`/tags/{tag}.{atom,rss}`)
+// but have no human-facing HTML page to trigger discovery from. The handler is
+// content-keyed via the `/api/pleroma/` marker (instances are not enumerable by
+// host) and emits both Atom and RSS for each profile URL.
 
 const profileRegex = /^\/users\/([^/]+)/
 const pleromaApiRegex = /\/api\/pleroma\//i

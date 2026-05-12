@@ -2,14 +2,15 @@ import type { DiscoverUriEntry } from '../../../common/types.js'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, isSubdomainOf } from '../../../common/utils.js'
 
-// Discoverable without handler.
+// Discoverability: Discoverable without handler.
 //
-// InsaneJournal is an LJ fork. User journals live at {user}.insanejournal.com,
-// asylums (communities) at asylums.insanejournal.com/{name}, and syndicated feeds
-// at feeds.insanejournal.com/{name}. Each exposes /data/{rss,atom,userpics} with
-// optional ?tag={tag} filter. www.insanejournal.com/users/{user}, /~{user},
-// /asylum/{name}, and /community/{name} are alternate paths that the handler
-// canonicalises to the corresponding subdomain form.
+// InsaneJournal (an LJ-codebase fork) serves RSS and Atom per user at
+// `{user}.insanejournal.com/data/{rss,atom}`, plus `/data/userpics` (Atom)
+// and `?tag={tag}` filtering; asylums live at
+// `asylums.insanejournal.com/{name}/data/...`. Only the base RSS and Atom
+// are advertised via HTML `<link rel="alternate">`. The handler adds tag
+// filters, the userpics feed, and canonicalises the `www/users/{u}`, `/~{u}`,
+// `/asylum/{n}`, `/community/{n}` paths to the right subdomain form.
 
 const wwwUsersPathRegex = /^\/(?:users\/|~)([^/]+)/
 const wwwAsylumPathRegex = /^\/(?:asylum|community)\/([^/]+)/

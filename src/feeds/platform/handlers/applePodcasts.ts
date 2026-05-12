@@ -1,7 +1,14 @@
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, isHostOf } from '../../../common/utils.js'
 
-// Not discoverable without handler.
+// Discoverability: Not discoverable without handler.
+//
+// Apple Podcasts show pages at `podcasts.apple.com/{locale}/podcast/{name}/id{number}`
+// embed the upstream RSS URL in a `"feedUrl":"…"` JSON payload inside the page
+// HTML, but the page itself ships no `<link rel="alternate">` for that feed.
+// The handler scrapes the `feedUrl` string from the fetched HTML to surface
+// the actual podcast RSS (typically hosted on a third party like Simplecast,
+// Megaphone, or Libsyn).
 
 const hosts = ['podcasts.apple.com']
 const podcastRegex = /^(?:\/[a-z]{2})?\/podcast\/(?:[^/]+\/)?id\d+/

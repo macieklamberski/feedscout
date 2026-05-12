@@ -1,7 +1,15 @@
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, isAnyOf, isHostOf } from '../../../common/utils.js'
 
-// Partially discoverable without handler.
+// Discoverability: Partially discoverable without handler.
+//
+// note.com serves per-creator (`/{user}/rss`), per-hashtag (`/hashtag/{tag}/rss`),
+// per-magazine (`/{user}/m/{magId}/rss`), and site-wide spotlight (`/rss`) feeds
+// as RSS 2.0. Only the per-creator page exposes an HTML `<link rel="alternate">`;
+// hashtag, magazine, article, and the root page are SPA-hydrated with no static
+// autodiscovery link. The handler maps each human-facing URL shape onto its
+// corresponding `*/rss` path and gates a long `excludedPaths` list to keep
+// platform routes (api, search, settings, etc.) from being treated as usernames.
 
 const hosts = ['note.com', 'www.note.com']
 const excludedPaths = [

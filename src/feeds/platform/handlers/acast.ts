@@ -1,7 +1,15 @@
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, isAnyOf, isHostOf } from '../../../common/utils.js'
 
-// Discoverable without handler.
+// Discoverability: Discoverable without handler.
+//
+// Acast podcast pages live on `shows.acast.com/{slug}`, the legacy
+// `play.acast.com/s/{slug}` host, and the embed-player host
+// `embed.acast.com/{slug}`, and all resolve to the canonical RSS at
+// `feeds.acast.com/public/shows/{slug}`. The shows.acast.com page advertises
+// that RSS via standard `<link rel="alternate">` autodiscovery.
+// The handler maps the alternate host shapes (play/embed) onto the canonical
+// feeds.acast.com URL so legacy and embed links resolve directly.
 
 // shows.acast.com is the canonical web host. play.acast.com is a legacy host that
 // 302-redirects to shows.acast.com (slug at path index 1, after /s/). embed.acast.com

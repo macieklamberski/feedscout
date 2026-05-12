@@ -1,7 +1,15 @@
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, isHostOf } from '../../../common/utils.js'
 
-// Partially discoverable without handler.
+// Discoverability: Partially discoverable without handler.
+//
+// Lobsters serves RSS 2.0 across its routes: `/rss`, `/newest.rss`,
+// `/comments.rss`, `/top/rss` and `/top/{1d|3d|1w|1m|1y}/rss`,
+// `/t/{tag}.rss` (single and multi-tag), `/domains/{d}.rss`, and
+// `/~{user}/stories.rss`. The homepage only advertises the main `/rss` via
+// HTML `<link rel="alternate">`; the per-tag, per-domain, per-user, and top
+// feeds aren't autodiscovered, so the handler maps each browse path to its
+// matching feed.
 
 export const hosts = ['lobste.rs']
 const tagRegex = /^\/t\/([a-zA-Z0-9,_-]+)/

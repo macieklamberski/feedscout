@@ -1,7 +1,14 @@
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, isHostOf } from '../../../common/utils.js'
 
-// Discoverable without handler.
+// Discoverability: Discoverable without handler.
+//
+// V2EX publishes four Atom feed surfaces documented at `blog.v2ex.com/rss/`:
+// `/index.xml`, `/feed/{node}.xml`, `/feed/member/{name}.xml` and
+// `/feed/tab/{tab}.xml`, all served at `www.v2ex.com` (apex 301s to www).
+// The handler translates the in-app URL shapes (`/go/{node}`,
+// `/member/{name}`, `/?tab={tab}`, root) onto those canonical Atom feeds so
+// users do not have to recall the `/feed/...xml` paths.
 
 const nodeRegex = /^\/go\/([^/]+)/
 const memberRegex = /^\/member\/([^/]+)/

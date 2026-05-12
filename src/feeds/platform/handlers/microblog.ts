@@ -2,12 +2,15 @@ import type { DiscoverUriEntry } from '../../../common/types.js'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, isSubdomainOf } from '../../../common/utils.js'
 
-// Discoverable without handler.
+// Discoverability: Discoverable without handler.
 //
-// Some Micro.blog users configure custom domains; HTML autodiscovery on those blogs
-// may point to off-platform URLs (e.g. manton.micro.blog → www.manton.org/feed.xml).
-// The handler always returns the {slug}.micro.blog/* form (the platform itself may
-// still 302-redirect to the user's custom domain).
+// Micro.blog serves per-user feeds under predictable Hugo-style paths on each
+// `{slug}.micro.blog` subdomain: `/feed.xml`, `/feed.json`, `/podcast.xml`,
+// `/podcast.json`, plus `/categories/{slug}/feed.{xml,json}`, `/archive/index.json`,
+// `/photos/index.json`, and `/replies.xml` when enabled. HTML autodiscovery is
+// present but may point off-platform when users configure custom domains
+// (e.g. `manton.micro.blog` advertises `www.manton.org/feed.xml`); the handler
+// guarantees the `{slug}.micro.blog/*` form regardless of redirect target.
 
 const categoryRegex = /^\/categories\/([^/]+)/
 

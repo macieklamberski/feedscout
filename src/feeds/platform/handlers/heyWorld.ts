@@ -1,7 +1,14 @@
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, isHostOf } from '../../../common/utils.js'
 
-// Discoverable without handler.
+// Discoverability: Discoverable without handler.
+//
+// HEY World exposes exactly one Atom feed per author at
+// `world.hey.com/{user}/feed.atom`, advertised via a single
+// `<link rel="alternate" type="application/atom+xml">` in the blog HTML head.
+// There is no JSON Feed, no RSS variant, no sitewide feed, no per-post
+// comments feed, and no topic/tag scoping — every other format returns
+// HTTP 406. The handler short-circuits the discovery fetch.
 
 export const heyWorldHandler: PlatformHandler = {
   match: (url) => {

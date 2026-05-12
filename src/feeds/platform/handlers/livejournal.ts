@@ -2,12 +2,15 @@ import type { DiscoverUriEntry } from '../../../common/types.js'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, isSubdomainOf } from '../../../common/utils.js'
 
-// Discoverable without handler.
+// Discoverability: Discoverable without handler.
 //
-// LiveJournal serves per-user feeds at {user}.livejournal.com/data/{rss,atom,userpics},
-// with optional ?tag={tag} filter. www.livejournal.com/users/{user} and /~{user} are
-// alternate paths; users.livejournal.com/{user} and community.livejournal.com/{user}
-// are legacy hosts. The handler canonicalises all of these to the subdomain form.
+// LiveJournal serves per-user RSS and Atom at
+// `{user}.livejournal.com/data/{rss,atom}` (plus `/data/userpics` Atom and
+// `?tag={tag}` filtering); only the base RSS+Atom are advertised via HTML
+// `<link rel="alternate">`. Alternate paths `www.livejournal.com/users/{u}`,
+// `/~{u}`, and legacy hosts `users.livejournal.com/{u}` /
+// `community.livejournal.com/{u}` all resolve to the same per-user data.
+// The handler adds tag and userpics feeds and canonicalises the alternates.
 
 const wwwUsersPathRegex = /^\/(?:users\/|~)([^/]+)/
 const legacyUserPathRegex = /^\/([^/]+)/

@@ -2,11 +2,15 @@ import type { DiscoverUriEntry } from '../../../common/types.js'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, isAnyOf, isHostOf } from '../../../common/utils.js'
 
-// Discoverable without handler.
+// Discoverability: Discoverable without handler.
 //
-// HTML autodiscovery on ameblo.jp/{user}/ pages returns the mirror URL
-// rssblog.ameba.jp/{user}/rss20.xml. Both URLs serve byte-identical content;
-// the handler emits the ameblo.jp form for consistency with the canonical site host.
+// Ameba blogs expose three per-user feeds: RSS 2.0 at
+// `ameblo.jp/{user}/rss20.xml`, Atom at `ameblo.jp/{user}/atom.xml`, and RSS
+// 1.0 (RDF) at `rssblog.ameba.jp/{user}/rss.html`. HTML autodiscovery on the
+// user page advertises only the mirror `rssblog.ameba.jp/{user}/rss20.xml`,
+// which serves byte-identical content to the ameblo.jp form.
+// The handler emits all three formats and prefers the canonical `ameblo.jp`
+// host over the autodiscovered `rssblog.ameba.jp` mirror.
 
 const hosts = ['ameblo.jp', 'www.ameblo.jp']
 const excludedPaths = ['genre', 'hashtag', 'search']
