@@ -3,11 +3,6 @@ import type { GuessMethodOptions } from '../common/uris/guess/types.js'
 import type { HeadersMethodOptions } from '../common/uris/headers/types.js'
 import type { HtmlMethodOptions } from '../common/uris/html/types.js'
 import type { PlatformMethodOptions } from '../common/uris/platform/types.js'
-// Handlers below are commented out when the platform's feeds are fully
-// discoverable via the generic HTML, Headers, and Guess methods (the
-// "Discoverability: Discoverable without handler." tier — see each handler
-// file's top comment for details). They remain on disk so they can be
-// re-enabled by uncommenting both the import and the handlers-array entry.
 // import { acastHandler } from './platform/handlers/acast.js'
 // import { amebloHandler } from './platform/handlers/ameblo.js'
 import { applePodcastsHandler } from './platform/handlers/applePodcasts.js'
@@ -202,11 +197,6 @@ export const defaultGuessOptions: Omit<GuessMethodOptions, 'baseUrl'> = {
 }
 
 // Default options for Platform method.
-//
-// 50 handlers tagged "Discoverable without handler." are commented out below
-// (and their imports above) because the HTML/Headers/Guess methods already
-// surface every feed they emit. Re-enable by uncommenting both lines for the
-// platform.
 export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
   handlers: [
     // acastHandler,
