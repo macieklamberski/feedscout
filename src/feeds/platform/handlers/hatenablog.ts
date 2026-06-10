@@ -4,7 +4,14 @@ import { composeHint, isSubdomainOf } from '../../../common/utils.js'
 
 // Discoverable without handler.
 
-const domains = ['hatenablog.com', 'hatenablog.jp', 'hateblo.jp']
+const domains = [
+  'hatenablog.com',
+  'hatenablog.jp',
+  'hateblo.jp',
+  'hatenadiary.com',
+  'hatenadiary.jp',
+  'hatenadiary.org',
+]
 const categoryRegex = /^\/archive\/category\/([^/]+)/
 const authorRegex = /^\/archive\/author\/([^/]+)/
 

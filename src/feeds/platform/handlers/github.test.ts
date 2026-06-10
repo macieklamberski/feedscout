@@ -159,6 +159,34 @@ describe('githubHandler', () => {
       expect(githubHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should include category-scoped discussion feed when on category page', () => {
+      const value = 'https://github.com/microsoft/vscode/discussions/categories/announcements'
+      const expected = [
+        {
+          uri: 'https://github.com/microsoft/vscode/releases.atom',
+          hint: { key: 'github:releases', label: 'Releases' },
+        },
+        {
+          uri: 'https://github.com/microsoft/vscode/commits.atom',
+          hint: { key: 'github:commits', label: 'Commits' },
+        },
+        {
+          uri: 'https://github.com/microsoft/vscode/tags.atom',
+          hint: { key: 'github:tags', label: 'Tags' },
+        },
+        {
+          uri: 'https://github.com/microsoft/vscode/discussions.atom',
+          hint: { key: 'github:discussions', label: 'Discussions' },
+        },
+        {
+          uri: 'https://github.com/microsoft/vscode/discussions/categories/announcements.atom',
+          hint: { key: 'github:discussion-category', label: 'Discussion category' },
+        },
+      ]
+
+      expect(githubHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return user activity feed for user profile page', () => {
       const value = 'https://github.com/microsoft'
       const expected = [

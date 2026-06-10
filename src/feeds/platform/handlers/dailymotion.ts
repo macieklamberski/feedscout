@@ -7,6 +7,7 @@ const hosts = ['dailymotion.com', 'www.dailymotion.com']
 const userRegex = /^\/([a-zA-Z0-9_-]+)$/
 const playlistRegex = /^\/playlist\/([a-zA-Z0-9_-]+)/
 const channelRegex = /^\/channel\/([a-zA-Z0-9_-]+)/
+const searchRegex = /^\/search\/([^/]+)/
 const excludedPaths = [
   'signin',
   'signout',
@@ -57,6 +58,16 @@ export const dailymotionHandler: PlatformHandler = {
   resolve: (url) => {
     const { pathname } = new URL(url)
 
+    // Homepage or /trending: global trending feed.
+    if (pathname === '/' || pathname === '' || pathname === '/trending') {
+      return [
+        {
+          uri: 'https://www.dailymotion.com/rss/trending',
+          hint: composeHint('dailymotion:trending'),
+        },
+      ]
+    }
+
     // Playlist page: /playlist/{id}
     const playlistMatch = pathname.match(playlistRegex)
 
@@ -67,6 +78,18 @@ export const dailymotionHandler: PlatformHandler = {
         {
           uri: `https://www.dailymotion.com/rss/playlist/${playlistId}`,
           hint: composeHint('dailymotion:playlist'),
+        },
+      ]
+    }
+
+    // Search results: /search/{query}
+    const searchMatch = pathname.match(searchRegex)
+
+    if (searchMatch?.[1]) {
+      return [
+        {
+          uri: `https://www.dailymotion.com/rss/search/${searchMatch[1]}`,
+          hint: composeHint('dailymotion:search'),
         },
       ]
     }

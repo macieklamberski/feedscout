@@ -74,6 +74,14 @@ export const blogspotHandler: PlatformHandler = {
       hint: composeHint('blogspot:posts-rss'),
     })
     uris.push({
+      uri: `${origin}/feeds/posts/summary`,
+      hint: composeHint('blogspot:posts-summary-atom'),
+    })
+    uris.push({
+      uri: `${origin}/feeds/posts/summary?alt=rss`,
+      hint: composeHint('blogspot:posts-summary-rss'),
+    })
+    uris.push({
       uri: `${origin}/feeds/comments/default`,
       hint: composeHint('blogspot:comments-atom'),
     })

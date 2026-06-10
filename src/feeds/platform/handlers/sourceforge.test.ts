@@ -22,7 +22,7 @@ describe('sourceforgeHandler', () => {
   })
 
   describe('resolve', () => {
-    it('should return activity and files feeds for legacy project page', () => {
+    it('should return all feeds for legacy project page', () => {
       const value = 'https://sourceforge.net/projects/filezilla'
       const expected = [
         {
@@ -30,15 +30,39 @@ describe('sourceforgeHandler', () => {
           hint: { key: 'sourceforge:activity', label: 'Recent activity' },
         },
         {
+          uri: 'https://sourceforge.net/p/filezilla/feed',
+          hint: { key: 'sourceforge:project-feed', label: 'Project feed' },
+        },
+        {
           uri: 'https://sourceforge.net/projects/filezilla/rss',
           hint: { key: 'sourceforge:files', label: 'File releases' },
+        },
+        {
+          uri: 'https://sourceforge.net/p/filezilla/news/feed.rss',
+          hint: { key: 'sourceforge:news-rss', label: 'News (RSS)' },
+        },
+        {
+          uri: 'https://sourceforge.net/p/filezilla/news/feed.atom',
+          hint: { key: 'sourceforge:news-atom', label: 'News (Atom)' },
+        },
+        {
+          uri: 'https://sourceforge.net/p/filezilla/discussion/feed',
+          hint: { key: 'sourceforge:discussion', label: 'Discussion' },
+        },
+        {
+          uri: 'https://sourceforge.net/p/filezilla/discussion/feed.atom',
+          hint: { key: 'sourceforge:discussion-atom', label: 'Discussion (Atom)' },
+        },
+        {
+          uri: 'https://sourceforge.net/p/filezilla/bugs/feed',
+          hint: { key: 'sourceforge:bugs', label: 'Bugs' },
         },
       ]
 
       expect(sourceforgeHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return activity and files feeds for project subpage', () => {
+    it('should return all feeds for project subpage', () => {
       const value = 'https://sourceforge.net/projects/filezilla/files'
       const expected = [
         {
@@ -46,15 +70,39 @@ describe('sourceforgeHandler', () => {
           hint: { key: 'sourceforge:activity', label: 'Recent activity' },
         },
         {
+          uri: 'https://sourceforge.net/p/filezilla/feed',
+          hint: { key: 'sourceforge:project-feed', label: 'Project feed' },
+        },
+        {
           uri: 'https://sourceforge.net/projects/filezilla/rss',
           hint: { key: 'sourceforge:files', label: 'File releases' },
+        },
+        {
+          uri: 'https://sourceforge.net/p/filezilla/news/feed.rss',
+          hint: { key: 'sourceforge:news-rss', label: 'News (RSS)' },
+        },
+        {
+          uri: 'https://sourceforge.net/p/filezilla/news/feed.atom',
+          hint: { key: 'sourceforge:news-atom', label: 'News (Atom)' },
+        },
+        {
+          uri: 'https://sourceforge.net/p/filezilla/discussion/feed',
+          hint: { key: 'sourceforge:discussion', label: 'Discussion' },
+        },
+        {
+          uri: 'https://sourceforge.net/p/filezilla/discussion/feed.atom',
+          hint: { key: 'sourceforge:discussion-atom', label: 'Discussion (Atom)' },
+        },
+        {
+          uri: 'https://sourceforge.net/p/filezilla/bugs/feed',
+          hint: { key: 'sourceforge:bugs', label: 'Bugs' },
         },
       ]
 
       expect(sourceforgeHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return activity and files feeds for /p/{project} URL', () => {
+    it('should return all feeds for /p/{project} URL', () => {
       const value = 'https://sourceforge.net/p/nmap/bugs/123'
       const expected = [
         {
@@ -62,8 +110,32 @@ describe('sourceforgeHandler', () => {
           hint: { key: 'sourceforge:activity', label: 'Recent activity' },
         },
         {
+          uri: 'https://sourceforge.net/p/nmap/feed',
+          hint: { key: 'sourceforge:project-feed', label: 'Project feed' },
+        },
+        {
           uri: 'https://sourceforge.net/projects/nmap/rss',
           hint: { key: 'sourceforge:files', label: 'File releases' },
+        },
+        {
+          uri: 'https://sourceforge.net/p/nmap/news/feed.rss',
+          hint: { key: 'sourceforge:news-rss', label: 'News (RSS)' },
+        },
+        {
+          uri: 'https://sourceforge.net/p/nmap/news/feed.atom',
+          hint: { key: 'sourceforge:news-atom', label: 'News (Atom)' },
+        },
+        {
+          uri: 'https://sourceforge.net/p/nmap/discussion/feed',
+          hint: { key: 'sourceforge:discussion', label: 'Discussion' },
+        },
+        {
+          uri: 'https://sourceforge.net/p/nmap/discussion/feed.atom',
+          hint: { key: 'sourceforge:discussion-atom', label: 'Discussion (Atom)' },
+        },
+        {
+          uri: 'https://sourceforge.net/p/nmap/bugs/feed',
+          hint: { key: 'sourceforge:bugs', label: 'Bugs' },
         },
       ]
 

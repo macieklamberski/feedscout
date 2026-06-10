@@ -128,6 +128,30 @@ describe('deviantartHandler', () => {
       }
     })
 
+    it('should return curated daily-deviations feed', () => {
+      const value = 'https://deviantart.com/daily-deviations'
+      const expected = [
+        {
+          uri: 'https://backend.deviantart.com/rss.xml?q=special%3Add',
+          hint: { key: 'deviantart:daily-deviations', label: 'Daily Deviations' },
+        },
+      ]
+
+      expect(deviantartHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return popular feed', () => {
+      const value = 'https://deviantart.com/popular'
+      const expected = [
+        {
+          uri: 'https://backend.deviantart.com/rss.xml?type=deviation&q=boost%3Apopular',
+          hint: { key: 'deviantart:popular', label: 'Popular' },
+        },
+      ]
+
+      expect(deviantartHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return empty array for gallery folder with excluded path', () => {
       const value = 'https://deviantart.com/about/gallery/123456/folder-name'
 

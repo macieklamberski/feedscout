@@ -9,23 +9,42 @@ const validSorts = new Set([
   'Hot',
   'New',
   'Old',
+  'TopHour',
+  'TopSixHour',
+  'TopTwelveHour',
   'TopDay',
   'TopWeek',
   'TopMonth',
+  'TopThreeMonths',
+  'TopSixMonths',
+  'TopNineMonths',
   'TopYear',
   'TopAll',
+  'Controversial',
+  'Scaled',
   'MostComments',
   'NewComments',
 ])
 
-const getSortSuffix = (searchParams: URLSearchParams): string => {
+const numericRegex = /^\d+$/
+
+const getQuerySuffix = (searchParams: URLSearchParams): string => {
+  const params = new URLSearchParams()
   const sort = searchParams.get('sort')
 
   if (sort && validSorts.has(sort)) {
-    return `?sort=${sort}`
+    params.set('sort', sort)
   }
 
-  return ''
+  const limit = searchParams.get('limit')
+
+  if (limit && numericRegex.test(limit)) {
+    params.set('limit', limit)
+  }
+
+  const query = params.toString()
+
+  return query ? `?${query}` : ''
 }
 
 export const isCommunityPath = (pathname: string): boolean => {
@@ -79,7 +98,7 @@ export const lemmyHandler: PlatformHandler = {
     try {
       const { origin, pathname, searchParams } = new URL(url)
       const segments = pathname.split('/').filter(Boolean)
-      const sortSuffix = getSortSuffix(searchParams)
+      const sortSuffix = getQuerySuffix(searchParams)
 
       if (isCommunityPath(pathname) && segments[1]) {
         return [

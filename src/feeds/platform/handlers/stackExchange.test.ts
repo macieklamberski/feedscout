@@ -162,6 +162,68 @@ describe('stackExchangeHandler', () => {
       expect(stackExchangeHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should pass through ?sort= on tag feed when value is allowed', () => {
+      for (const sort of ['newest', 'active', 'votes', 'creation']) {
+        const value = `https://stackoverflow.com/questions/tagged/javascript?sort=${sort}`
+        const expected = [
+          {
+            uri: `https://stackoverflow.com/feeds/tag/javascript?sort=${sort}`,
+            hint: { key: 'stackexchange:tag', label: 'Tag' },
+          },
+        ]
+
+        expect(stackExchangeHandler.resolve(value)).toEqual(expected)
+      }
+    })
+
+    it('should pass through ?tab= on tag feed (lowercased) when value is allowed', () => {
+      const value = 'https://stackoverflow.com/questions/tagged/javascript?tab=Active'
+      const expected = [
+        {
+          uri: 'https://stackoverflow.com/feeds/tag/javascript?sort=active',
+          hint: { key: 'stackexchange:tag', label: 'Tag' },
+        },
+      ]
+
+      expect(stackExchangeHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should pass through hot sort', () => {
+      const value = 'https://stackoverflow.com/questions/tagged/javascript?sort=hot'
+      const expected = [
+        {
+          uri: 'https://stackoverflow.com/feeds/tag/javascript?sort=hot',
+          hint: { key: 'stackexchange:tag', label: 'Tag' },
+        },
+      ]
+
+      expect(stackExchangeHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should pass through week sort', () => {
+      const value = 'https://stackoverflow.com/questions/tagged/javascript?sort=week'
+      const expected = [
+        {
+          uri: 'https://stackoverflow.com/feeds/tag/javascript?sort=week',
+          hint: { key: 'stackexchange:tag', label: 'Tag' },
+        },
+      ]
+
+      expect(stackExchangeHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should drop unknown sort values silently', () => {
+      const value = 'https://stackoverflow.com/questions/tagged/javascript?sort=garbage'
+      const expected = [
+        {
+          uri: 'https://stackoverflow.com/feeds/tag/javascript',
+          hint: { key: 'stackexchange:tag', label: 'Tag' },
+        },
+      ]
+
+      expect(stackExchangeHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return empty array for unrecognized path', () => {
       expect(stackExchangeHandler.resolve('https://stackoverflow.com/company')).toEqual([])
     })

@@ -65,7 +65,14 @@ export const codebergHandler: PlatformHandler = {
         ]
 
         // Branch page: codeberg.org/{user}/{repo}/src/branch/{branch}
-        if (pathSegments[2] === 'src' && pathSegments[3] === 'branch' && pathSegments[4]) {
+        // Gitea still serves /rss/branch/{branch} but Forgejo (Codeberg's runtime)
+        // removed it — so gate this emission on Gitea hosts only.
+        if (
+          isHostOf(url, ['gitea.com', 'www.gitea.com']) &&
+          pathSegments[2] === 'src' &&
+          pathSegments[3] === 'branch' &&
+          pathSegments[4]
+        ) {
           const branch = pathSegments[4]
           const filePath = pathSegments.slice(5).join('/')
 

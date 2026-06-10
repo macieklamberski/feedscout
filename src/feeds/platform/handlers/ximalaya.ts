@@ -3,7 +3,8 @@ import { composeHint, isHostOf } from '../../../common/utils.js'
 
 // Not discoverable without handler.
 
-const albumRegex = /^\/album\/(\d+)/
+// Match /album/{id} (canonical) or /{userid}/album/{id} (legacy form).
+const albumRegex = /(?:^|\/)album\/(\d+)/
 
 const hosts = ['www.ximalaya.com', 'ximalaya.com']
 

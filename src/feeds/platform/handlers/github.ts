@@ -8,6 +8,7 @@ const userRegex = /^\/([^/]+)\/?$/
 const repoRegex = /^\/([^/]+)\/([^/]+)/
 const wikiRegex = /\/wiki(\/|$)/
 const discussionsRegex = /\/discussions(\/|$)/
+const discussionCategoryRegex = /\/discussions\/categories\/([^/]+)/
 const branchRegex = /^\/[^/]+\/[^/]+\/tree\/([^/]+)\/?$/
 const fileRegex = /^\/[^/]+\/[^/]+\/(?:blob|commits)\/([^/]+)\/(.+)/
 
@@ -119,6 +120,16 @@ export const githubHandler: PlatformHandler = {
       uris.push({
         uri: `https://github.com/${owner}/${repo}/discussions.atom`,
         hint: composeHint('github:discussions'),
+      })
+    }
+
+    // If on discussion category page, add category-scoped discussions feed.
+    const discussionCategoryMatch = pathname.match(discussionCategoryRegex)
+
+    if (discussionCategoryMatch?.[1]) {
+      uris.push({
+        uri: `https://github.com/${owner}/${repo}/discussions/categories/${discussionCategoryMatch[1]}.atom`,
+        hint: composeHint('github:discussion-category'),
       })
     }
 

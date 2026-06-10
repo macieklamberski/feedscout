@@ -19,20 +19,33 @@ const domains = [
   'stackexchange.com',
 ]
 
+// Sort values accepted by feeds.tag. Documented at api.stackexchange.com.
+const validSorts = new Set(['newest', 'active', 'votes', 'creation', 'hot', 'week', 'month'])
+
+const getSortSuffix = (searchParams: URLSearchParams): string => {
+  const sort = searchParams.get('sort') ?? searchParams.get('tab')?.toLowerCase()
+
+  if (sort && validSorts.has(sort)) {
+    return `?sort=${sort}`
+  }
+
+  return ''
+}
+
 export const stackExchangeHandler: PlatformHandler = {
   match: (url) => {
     return isHostOf(url, domains) || isSubdomainOf(url, domains)
   },
 
   resolve: (url) => {
-    const { origin, pathname } = new URL(url)
+    const { origin, pathname, searchParams } = new URL(url)
 
     const tagMatch = pathname.match(tagRegex)
 
     if (tagMatch?.[1]) {
       return [
         {
-          uri: `${origin}/feeds/tag/${tagMatch[1]}`,
+          uri: `${origin}/feeds/tag/${tagMatch[1]}${getSortSuffix(searchParams)}`,
           hint: composeHint('stackexchange:tag'),
         },
       ]

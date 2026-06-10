@@ -175,5 +175,37 @@ describe('mastodonHandler', () => {
     it('should return empty array for invalid URL', () => {
       expect(mastodonHandler.resolve('not-a-url')).toEqual([])
     })
+
+    it('should return replies and profile feeds for /@user/with_replies', () => {
+      const value = 'https://mastodon.social/@Gargron/with_replies'
+      const expected = [
+        {
+          uri: 'https://mastodon.social/@Gargron/with_replies.rss',
+          hint: { key: 'mastodon:replies', label: 'Posts with replies' },
+        },
+        {
+          uri: 'https://mastodon.social/@Gargron.rss',
+          hint: { key: 'mastodon:posts', label: 'Posts' },
+        },
+      ]
+
+      expect(mastodonHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return media and profile feeds for /@user/media', () => {
+      const value = 'https://mastodon.social/@Gargron/media'
+      const expected = [
+        {
+          uri: 'https://mastodon.social/@Gargron/media.rss',
+          hint: { key: 'mastodon:media', label: 'Media' },
+        },
+        {
+          uri: 'https://mastodon.social/@Gargron.rss',
+          hint: { key: 'mastodon:posts', label: 'Posts' },
+        },
+      ]
+
+      expect(mastodonHandler.resolve(value)).toEqual(expected)
+    })
   })
 })

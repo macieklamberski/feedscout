@@ -8,6 +8,7 @@ const numericRegex = /^\d+$/
 const hosts = ['vimeo.com', 'www.vimeo.com']
 const excludedPaths = [
   'about',
+  'album',
   'blog',
   'business',
   'careers',
@@ -30,6 +31,7 @@ const excludedPaths = [
   'pro',
   'search',
   'settings',
+  'showcase',
   'site_map',
   'solutions',
   'stock',
@@ -67,6 +69,24 @@ export const vimeoHandler: PlatformHandler = {
         {
           uri: `${origin}/groups/${group}/videos/rss`,
           hint: composeHint('vimeo:group'),
+        },
+      ]
+    }
+
+    // Album/showcase: vimeo.com/album/{id} or vimeo.com/showcase/{id}. Only /album/{id}/rss
+    // returns RSS; /showcase/{id}/rss returns 404. /album/{id} 301-redirects to
+    // /showcase/{id} in the browser, so users will most often paste the showcase URL.
+    if (
+      (pathSegments[0] === 'album' || pathSegments[0] === 'showcase') &&
+      pathSegments[1] &&
+      numericRegex.test(pathSegments[1])
+    ) {
+      const albumId = pathSegments[1]
+
+      return [
+        {
+          uri: `${origin}/album/${albumId}/rss`,
+          hint: composeHint('vimeo:album'),
         },
       ]
     }

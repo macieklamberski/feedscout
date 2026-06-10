@@ -142,6 +142,70 @@ describe('gitlabHandler', () => {
       expect(gitlabHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return branch commits feed for /-/commits/{branch}', () => {
+      const value = 'https://gitlab.com/gitlab-org/gitlab/-/commits/master'
+      const expected = [
+        {
+          uri: 'https://gitlab.com/gitlab-org/gitlab/-/commits/master?format=atom',
+          hint: { key: 'gitlab:branch-commits', label: 'Branch commits' },
+        },
+        {
+          uri: 'https://gitlab.com/gitlab-org/gitlab/-/releases.atom',
+          hint: { key: 'gitlab:releases', label: 'Releases' },
+        },
+        {
+          uri: 'https://gitlab.com/gitlab-org/gitlab/-/tags?format=atom',
+          hint: { key: 'gitlab:tags', label: 'Tags' },
+        },
+        {
+          uri: 'https://gitlab.com/gitlab-org/gitlab/-/issues.atom',
+          hint: { key: 'gitlab:issues', label: 'Issues' },
+        },
+        {
+          uri: 'https://gitlab.com/gitlab-org/gitlab/-/merge_requests.atom',
+          hint: { key: 'gitlab:merge-requests', label: 'Merge requests' },
+        },
+        {
+          uri: 'https://gitlab.com/gitlab-org/gitlab.atom',
+          hint: { key: 'gitlab:activity', label: 'Activity' },
+        },
+      ]
+
+      expect(gitlabHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return branch commits feed for /-/tree/{branch}', () => {
+      const value = 'https://gitlab.com/gitlab-org/gitlab/-/tree/main'
+      const expected = [
+        {
+          uri: 'https://gitlab.com/gitlab-org/gitlab/-/commits/main?format=atom',
+          hint: { key: 'gitlab:branch-commits', label: 'Branch commits' },
+        },
+        {
+          uri: 'https://gitlab.com/gitlab-org/gitlab/-/releases.atom',
+          hint: { key: 'gitlab:releases', label: 'Releases' },
+        },
+        {
+          uri: 'https://gitlab.com/gitlab-org/gitlab/-/tags?format=atom',
+          hint: { key: 'gitlab:tags', label: 'Tags' },
+        },
+        {
+          uri: 'https://gitlab.com/gitlab-org/gitlab/-/issues.atom',
+          hint: { key: 'gitlab:issues', label: 'Issues' },
+        },
+        {
+          uri: 'https://gitlab.com/gitlab-org/gitlab/-/merge_requests.atom',
+          hint: { key: 'gitlab:merge-requests', label: 'Merge requests' },
+        },
+        {
+          uri: 'https://gitlab.com/gitlab-org/gitlab.atom',
+          hint: { key: 'gitlab:activity', label: 'Activity' },
+        },
+      ]
+
+      expect(gitlabHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return empty array for root page', () => {
       const value = 'https://gitlab.com'
 

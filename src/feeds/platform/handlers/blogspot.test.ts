@@ -38,6 +38,14 @@ describe('blogspotHandler', () => {
           hint: { key: 'blogspot:posts-rss', label: 'Posts (RSS)' },
         },
         {
+          uri: 'https://example.blogspot.com/feeds/posts/summary',
+          hint: { key: 'blogspot:posts-summary-atom', label: 'Posts summary (Atom)' },
+        },
+        {
+          uri: 'https://example.blogspot.com/feeds/posts/summary?alt=rss',
+          hint: { key: 'blogspot:posts-summary-rss', label: 'Posts summary (RSS)' },
+        },
+        {
           uri: 'https://example.blogspot.com/feeds/comments/default',
           hint: { key: 'blogspot:comments-atom', label: 'Comments (Atom)' },
         },
@@ -60,6 +68,14 @@ describe('blogspotHandler', () => {
         {
           uri: 'https://blog.blogspot.com/feeds/posts/default?alt=rss',
           hint: { key: 'blogspot:posts-rss', label: 'Posts (RSS)' },
+        },
+        {
+          uri: 'https://blog.blogspot.com/feeds/posts/summary',
+          hint: { key: 'blogspot:posts-summary-atom', label: 'Posts summary (Atom)' },
+        },
+        {
+          uri: 'https://blog.blogspot.com/feeds/posts/summary?alt=rss',
+          hint: { key: 'blogspot:posts-summary-rss', label: 'Posts summary (RSS)' },
         },
         {
           uri: 'https://blog.blogspot.com/feeds/comments/default',
@@ -98,6 +114,14 @@ describe('blogspotHandler', () => {
         {
           uri: 'https://blog.blogspot.com/feeds/posts/default?alt=rss',
           hint: { key: 'blogspot:posts-rss', label: 'Posts (RSS)' },
+        },
+        {
+          uri: 'https://blog.blogspot.com/feeds/posts/summary',
+          hint: { key: 'blogspot:posts-summary-atom', label: 'Posts summary (Atom)' },
+        },
+        {
+          uri: 'https://blog.blogspot.com/feeds/posts/summary?alt=rss',
+          hint: { key: 'blogspot:posts-summary-rss', label: 'Posts summary (RSS)' },
         },
         {
           uri: 'https://blog.blogspot.com/feeds/comments/default',
@@ -140,6 +164,14 @@ describe('blogspotHandler', () => {
         {
           uri: 'https://blog.blogspot.com/feeds/posts/default?alt=rss',
           hint: { key: 'blogspot:posts-rss', label: 'Posts (RSS)' },
+        },
+        {
+          uri: 'https://blog.blogspot.com/feeds/posts/summary',
+          hint: { key: 'blogspot:posts-summary-atom', label: 'Posts summary (Atom)' },
+        },
+        {
+          uri: 'https://blog.blogspot.com/feeds/posts/summary?alt=rss',
+          hint: { key: 'blogspot:posts-summary-rss', label: 'Posts summary (RSS)' },
         },
         {
           uri: 'https://blog.blogspot.com/feeds/comments/default',

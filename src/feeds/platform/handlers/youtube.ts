@@ -13,7 +13,14 @@ const shortsRegex = /^\/shorts\/[\w-]+/
 const liveRegex = /^\/live\/[\w-]+/
 const channelPrefixRegex = /^UC/
 
-const hosts = ['youtube.com', 'www.youtube.com', 'm.youtube.com', 'youtu.be', 'www.youtu.be']
+const hosts = [
+  'youtube.com',
+  'www.youtube.com',
+  'm.youtube.com',
+  'music.youtube.com',
+  'youtu.be',
+  'www.youtu.be',
+]
 
 const extractChannelIdFromContent = (content: string): string | undefined => {
   const match = content.match(channelIdRegex)

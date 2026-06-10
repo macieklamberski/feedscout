@@ -14,7 +14,7 @@ const sections = [
   'comics',
   'misc',
 ]
-const sorts = ['newest', 'top-rated', 'top-sellers', 'on-sale']
+const sorts = ['newest', 'top-rated', 'top-sellers', 'on-sale', 'free']
 
 const byUserRegex = /^\/games\/by-([^/]+)/
 const tagRegex = /^\/games\/tag-([^/]+)/
@@ -152,12 +152,13 @@ export const itchioHandler: PlatformHandler = {
       ]
     }
 
-    // Root page: curated feeds.
+    // Root page: curated feeds + itch.io blog.
     const uris: Array<DiscoverUriEntry> = []
 
     uris.push({ uri: 'https://itch.io/feed/featured.xml', hint: composeHint('itchio:featured') })
     uris.push({ uri: 'https://itch.io/feed/new.xml', hint: composeHint('itchio:new') })
     uris.push({ uri: 'https://itch.io/feed/sales.xml', hint: composeHint('itchio:sales') })
+    uris.push({ uri: 'https://itch.io/blog.rss', hint: composeHint('itchio:blog') })
 
     return uris
   },
