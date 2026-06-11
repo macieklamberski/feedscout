@@ -55,6 +55,13 @@ describe('gitlabHandler', () => {
       )
     })
 
+    it('should match self-hosted instance with non-GitLab content but GitLab header', () => {
+      const value = 'https://gitlab.mycompany.com/user'
+      const content = '<html><head><title>Projects</title></head></html>'
+
+      expect(gitlabHandler.match(value, content, selfHostedHeaders)).toBe(true)
+    })
+
     it('should not match self-hosted root path even with GitLab signals', () => {
       expect(gitlabHandler.match('https://gitlab.mycompany.com', selfHostedHtml)).toBe(false)
     })
@@ -212,30 +219,38 @@ describe('gitlabHandler', () => {
       expect(gitlabHandler.resolve(value)).toEqual([])
     })
 
-    it('should return empty array for excluded paths', () => {
-      const values = [
-        'https://gitlab.com/explore',
-        'https://gitlab.com/dashboard',
-        'https://gitlab.com/users',
-        'https://gitlab.com/search',
-        'https://gitlab.com/help',
-      ]
+    const excludedValues: Array<string> = [
+      'https://gitlab.com/explore',
+      'https://gitlab.com/dashboard',
+      'https://gitlab.com/users',
+      'https://gitlab.com/search',
+      'https://gitlab.com/help',
+    ]
 
-      for (const value of values) {
-        expect(gitlabHandler.resolve(value)).toEqual([])
-      }
+    it.each(excludedValues)('should return empty array for %s', (value) => {
+      expect(gitlabHandler.resolve(value)).toEqual([])
     })
 
-    it('should return empty array for excluded paths with repo segment', () => {
-      const values = [
-        'https://gitlab.com/explore/projects',
-        'https://gitlab.com/dashboard/issues',
-        'https://gitlab.com/help/docs',
+    const excludedRepoValues: Array<string> = [
+      'https://gitlab.com/explore/projects',
+      'https://gitlab.com/dashboard/issues',
+      'https://gitlab.com/help/docs',
+    ]
+
+    it.each(excludedRepoValues)('should return empty array for %s', (value) => {
+      expect(gitlabHandler.resolve(value)).toEqual([])
+    })
+
+    it('should keep self-hosted origin in resolved feeds', () => {
+      const value = 'https://gitlab.mycompany.com/team'
+      const expected = [
+        {
+          uri: 'https://gitlab.mycompany.com/team.atom',
+          hint: { key: 'gitlab:activity', label: 'Activity' },
+        },
       ]
 
-      for (const value of values) {
-        expect(gitlabHandler.resolve(value)).toEqual([])
-      }
+      expect(gitlabHandler.resolve(value)).toEqual(expected)
     })
 
     it('should use first two path segments for deeply nested groups', () => {
@@ -265,6 +280,11 @@ describe('gitlabHandler', () => {
       ]
 
       expect(gitlabHandler.resolve(value)).toEqual(expected)
+    })
+
+    it.todo('should define behavior for invalid URL input', () => {
+      // resolve('not-a-url') currently throws a TypeError from the unguarded new URL call; the
+      // desired contract (throw vs empty array) is undecided.
     })
   })
 })

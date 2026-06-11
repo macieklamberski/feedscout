@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'bun:test'
+import type { UriEntry } from '../../types.js'
 import { generateUrlCombinations, getSubdomainVariants, getWwwCounterpart } from './utils.js'
 
 describe('generateUrlCombinations', () => {
@@ -217,7 +218,7 @@ describe('generateUrlCombinations', () => {
   it('should resolve empty array entry as empty alternatives group', () => {
     const baseUrls = ['https://example.com']
     const feedUris: Array<Array<string>> = [[]]
-    const expected = [[] as Array<string>]
+    const expected: Array<UriEntry> = [[]]
 
     expect(generateUrlCombinations(baseUrls, feedUris)).toEqual(expected)
   })
@@ -303,6 +304,12 @@ describe('getWwwCounterpart', () => {
     const expected = 'https://xn--mnchen-3ya.de'
 
     expect(getWwwCounterpart(value)).toBe(expected)
+  })
+
+  it('should throw for invalid base URL', () => {
+    const throwing = () => getWwwCounterpart('not-a-url')
+
+    expect(throwing).toThrow(TypeError)
   })
 })
 
@@ -400,5 +407,18 @@ describe('getSubdomainVariants', () => {
     const expected: Array<string> = []
 
     expect(getSubdomainVariants(value, ['blog'])).toEqual(expected)
+  })
+
+  it('should return empty array for single-label hostname', () => {
+    const value = 'http://intranet'
+    const expected: Array<string> = []
+
+    expect(getSubdomainVariants(value, ['blog'])).toEqual(expected)
+  })
+
+  it('should throw for invalid base URL', () => {
+    const throwing = () => getSubdomainVariants('not-a-url', ['blog'])
+
+    expect(throwing).toThrow(TypeError)
   })
 })

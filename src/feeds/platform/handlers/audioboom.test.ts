@@ -3,14 +3,14 @@ import { audioboomHandler } from './audioboom.js'
 
 describe('audioboomHandler', () => {
   describe('match', () => {
-    const cases = [
-      ['https://audioboom.com/channels/5071123', true],
-      ['https://www.audioboom.com/channels/5071123', true],
-      ['https://audioboom.com', true],
-      ['https://example.com', false],
-    ] as const
+    const values: Array<[boolean, string]> = [
+      [true, 'https://audioboom.com/channels/5071123'],
+      [true, 'https://www.audioboom.com/channels/5071123'],
+      [true, 'https://audioboom.com'],
+      [false, 'https://example.com'],
+    ]
 
-    it.each(cases)('%s -> %s', (url, expected) => {
+    it.each(values)('should return %s for %s', (expected, url) => {
       expect(audioboomHandler.match(url)).toBe(expected)
     })
 
@@ -54,6 +54,11 @@ describe('audioboomHandler', () => {
       const value = 'https://audioboom.com/posts/12345'
 
       expect(audioboomHandler.resolve(value)).toEqual([])
+    })
+
+    it.todo('should define behavior for invalid URL input', () => {
+      // resolve('not-a-url') currently throws a TypeError from the unguarded new URL call; the
+      // desired contract (throw vs empty array) is undecided.
     })
   })
 })

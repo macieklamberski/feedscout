@@ -3,16 +3,16 @@ import { hashnodeHandler } from './hashnode.js'
 
 describe('hashnodeHandler', () => {
   describe('match', () => {
-    const cases = [
-      ['https://example.hashnode.dev', true],
-      ['https://blog.example.hashnode.dev', true],
-      ['https://townhall.hashnode.com', true],
-      ['https://hashnode.dev', false],
-      ['https://hashnode.com', false],
-      ['https://example.com', false],
-    ] as const
+    const values: Array<[boolean, string]> = [
+      [true, 'https://example.hashnode.dev'],
+      [true, 'https://blog.example.hashnode.dev'],
+      [true, 'https://townhall.hashnode.com'],
+      [false, 'https://hashnode.dev'],
+      [false, 'https://hashnode.com'],
+      [false, 'https://example.com'],
+    ]
 
-    it.each(cases)('%s -> %s', (url, expected) => {
+    it.each(values)('should return %s for %s', (expected, url) => {
       expect(hashnodeHandler.match(url)).toBe(expected)
     })
 
@@ -44,6 +44,11 @@ describe('hashnodeHandler', () => {
       ]
 
       expect(hashnodeHandler.resolve(value)).toEqual(expected)
+    })
+
+    it.todo('should define behavior for invalid URL input', () => {
+      // resolve('not-a-url') currently throws a TypeError from the unguarded new URL call; the
+      // desired contract (throw vs empty array) is undecided.
     })
   })
 })

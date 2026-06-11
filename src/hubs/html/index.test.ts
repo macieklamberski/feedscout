@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'bun:test'
+import type { DiscoverResolveUrlFn } from '../../common/types.js'
 import type { HubResult } from '../discover/types.js'
 import { discoverHubsFromHtml } from './index.js'
 
@@ -103,6 +104,20 @@ describe('discoverHubsFromHtml', () => {
       {
         hub: 'https://custom.example.com/hub',
         topic: 'https://example.com/',
+      },
+    ]
+
+    expect(value).toEqual(expected)
+  })
+
+  it('should keep raw hub and topic when resolveUrlFn returns undefined', () => {
+    const html = '<link rel="hub" href="/hub"><link rel="self" href="/feed.xml">'
+    const resolveNothingFn: DiscoverResolveUrlFn = () => undefined
+    const value = discoverHubsFromHtml(html, 'https://example.com/', resolveNothingFn)
+    const expected: Array<HubResult> = [
+      {
+        hub: '/hub',
+        topic: '/feed.xml',
       },
     ]
 

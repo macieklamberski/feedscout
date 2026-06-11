@@ -3,14 +3,14 @@ import { ghostHandler } from './ghost.js'
 
 describe('ghostHandler', () => {
   describe('match', () => {
-    const cases = [
-      ['https://demo.ghost.io', true],
-      ['https://blog.example.ghost.io', true],
-      ['https://ghost.io', false],
-      ['https://example.com', false],
-    ] as const
+    const values: Array<[boolean, string]> = [
+      [true, 'https://demo.ghost.io'],
+      [true, 'https://blog.example.ghost.io'],
+      [false, 'https://ghost.io'],
+      [false, 'https://example.com'],
+    ]
 
-    it.each(cases)('%s -> %s', (url, expected) => {
+    it.each(values)('should return %s for %s', (expected, url) => {
       expect(ghostHandler.match(url)).toBe(expected)
     })
 
@@ -74,6 +74,11 @@ describe('ghostHandler', () => {
       ]
 
       expect(ghostHandler.resolve(value)).toEqual(expected)
+    })
+
+    it.todo('should define behavior for invalid URL input', () => {
+      // resolve('not-a-url') currently throws a TypeError from the unguarded new URL call; the
+      // desired contract (throw vs empty array) is undecided.
     })
   })
 })

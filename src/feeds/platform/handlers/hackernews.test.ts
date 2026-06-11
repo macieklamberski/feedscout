@@ -3,15 +3,15 @@ import { hackernewsHandler } from './hackernews.js'
 
 describe('hackernewsHandler', () => {
   describe('match', () => {
-    const cases = [
-      ['https://news.ycombinator.com', true],
-      ['https://news.ycombinator.com/news', true],
-      ['https://news.ycombinator.com/item?id=12345', true],
-      ['https://ycombinator.com', false],
-      ['https://example.com', false],
-    ] as const
+    const values: Array<[boolean, string]> = [
+      [true, 'https://news.ycombinator.com'],
+      [true, 'https://news.ycombinator.com/news'],
+      [true, 'https://news.ycombinator.com/item?id=12345'],
+      [false, 'https://ycombinator.com'],
+      [false, 'https://example.com'],
+    ]
 
-    it.each(cases)('%s -> %s', (url, expected) => {
+    it.each(values)('should return %s for %s', (expected, url) => {
       expect(hackernewsHandler.match(url)).toBe(expected)
     })
 
@@ -67,6 +67,11 @@ describe('hackernewsHandler', () => {
       ]
 
       expect(hackernewsHandler.resolve(value)).toEqual(expected)
+    })
+
+    it.todo('should define behavior for invalid URL input', () => {
+      // resolve('not-a-url') currently throws a TypeError from the unguarded new URL call; the
+      // desired contract (throw vs empty array) is undecided.
     })
   })
 })

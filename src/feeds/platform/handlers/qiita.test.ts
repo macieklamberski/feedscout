@@ -3,14 +3,14 @@ import { qiitaHandler } from './qiita.js'
 
 describe('qiitaHandler', () => {
   describe('match', () => {
-    const cases = [
-      ['https://qiita.com/Qiita', true],
-      ['https://www.qiita.com/user', true],
-      ['https://qiita.com', true],
-      ['https://example.com', false],
-    ] as const
+    const values: Array<[boolean, string]> = [
+      [true, 'https://qiita.com/Qiita'],
+      [true, 'https://www.qiita.com/user'],
+      [true, 'https://qiita.com'],
+      [false, 'https://example.com'],
+    ]
 
-    it.each(cases)('%s -> %s', (url, expected) => {
+    it.each(values)('should return %s for %s', (expected, url) => {
       expect(qiitaHandler.match(url)).toBe(expected)
     })
 
@@ -92,6 +92,25 @@ describe('qiitaHandler', () => {
       expect(qiitaHandler.resolve(value)).toEqual([])
     })
 
+    it('should return empty array for excluded paths', () => {
+      const values = [
+        'https://qiita.com/about',
+        'https://qiita.com/api',
+        'https://qiita.com/login',
+        'https://qiita.com/organizations',
+        'https://qiita.com/privacy',
+        'https://qiita.com/search',
+        'https://qiita.com/settings',
+        'https://qiita.com/signup',
+        'https://qiita.com/terms',
+        'https://qiita.com/trend',
+      ]
+
+      for (const value of values) {
+        expect(qiitaHandler.resolve(value)).toEqual([])
+      }
+    })
+
     it('should return Qiita Zine feed for /official-columns', () => {
       const value = 'https://qiita.com/official-columns'
       const expected = [
@@ -114,6 +133,11 @@ describe('qiitaHandler', () => {
       ]
 
       expect(qiitaHandler.resolve(value)).toEqual(expected)
+    })
+
+    it.todo('should define behavior for invalid URL input', () => {
+      // resolve('not-a-url') currently throws a TypeError from the unguarded new URL call; the
+      // desired contract (throw vs empty array) is undecided.
     })
   })
 })

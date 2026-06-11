@@ -296,4 +296,36 @@ describe('discoverHubsFromFeed', () => {
 
     expect(value).toEqual(expected)
   })
+
+  it('should keep raw hub and topic when resolveUrlFn returns undefined', () => {
+    const content = `
+      <?xml version="1.0" encoding="utf-8"?>
+      <feed xmlns="http://www.w3.org/2005/Atom">
+        <title>Example Feed</title>
+        <link href="/hub" rel="hub"/>
+        <link href="/feed.xml" rel="self"/>
+      </feed>
+    `
+    const resolveNothingFn: DiscoverResolveUrlFn = () => undefined
+    const value = discoverHubsFromFeed(content, 'https://example.com/feed.xml', resolveNothingFn)
+    const expected: Array<HubResult> = [
+      {
+        hub: '/hub',
+        topic: '/feed.xml',
+      },
+    ]
+
+    expect(value).toEqual(expected)
+  })
+
+  it.todo('should use baseUrl as topic when RSS feed has hub but no self link', () => {
+    // RSS feed with an atom:link rel="hub" but no atom:link rel="self".
+    // Expected: one result with the hub URL and topic equal to the baseUrl argument.
+  })
+
+  it.todo('should discover hub from RDF feed with atom namespace links', () => {
+    // RDF (RSS 1.0) feed with atom:link rel="hub" and rel="self" entries reads links from
+    // feed.atom.links, the same branch as RSS.
+    // Expected: one result with the hub URL and the self URL as topic.
+  })
 })

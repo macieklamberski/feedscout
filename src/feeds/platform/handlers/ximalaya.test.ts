@@ -3,13 +3,13 @@ import { ximalayaHandler } from './ximalaya.js'
 
 describe('ximalayaHandler', () => {
   describe('match', () => {
-    const cases = [
-      ['https://www.ximalaya.com/album/203355', true],
-      ['https://ximalaya.com/album/203355', true],
-      ['https://example.com', false],
-    ] as const
+    const values: Array<[boolean, string]> = [
+      [true, 'https://www.ximalaya.com/album/203355'],
+      [true, 'https://ximalaya.com/album/203355'],
+      [false, 'https://example.com'],
+    ]
 
-    it.each(cases)('%s -> %s', (url, expected) => {
+    it.each(values)('should return %s for %s', (expected, url) => {
       expect(ximalayaHandler.match(url)).toBe(expected)
     })
 
@@ -71,6 +71,11 @@ describe('ximalayaHandler', () => {
       ]
 
       expect(ximalayaHandler.resolve(value)).toEqual(expected)
+    })
+
+    it.todo('should define behavior for invalid URL input', () => {
+      // resolve('not-a-url') currently throws a TypeError from the unguarded new URL call; the
+      // desired contract (throw vs empty array) is undecided.
     })
   })
 })

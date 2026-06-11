@@ -164,6 +164,7 @@ describe('lemmyHandler', () => {
 
     it('should not match without Lemmy signals', () => {
       const plainHtml = '<html><head></head></html>'
+
       expect(lemmyHandler.match('https://lemmy.ml/c/programming', plainHtml)).toBe(false)
     })
 
@@ -237,28 +238,33 @@ describe('lemmyHandler', () => {
       expect(lemmyHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should forward ?sort= on community, user, and home feeds', () => {
-      const communityExpected = [
+    it('should forward ?sort= on community feed', () => {
+      const value = 'https://lemmy.ml/c/programming?sort=TopWeek'
+      const expected = [
         {
           uri: 'https://lemmy.ml/feeds/c/programming.xml?sort=TopWeek',
           hint: { key: 'lemmy:community', label: 'Community' },
         },
       ]
 
-      expect(lemmyHandler.resolve('https://lemmy.ml/c/programming?sort=TopWeek')).toEqual(
-        communityExpected,
-      )
+      expect(lemmyHandler.resolve(value)).toEqual(expected)
+    })
 
-      const userExpected = [
+    it('should forward ?sort= on user feed', () => {
+      const value = 'https://lemmy.ml/u/alice?sort=New'
+      const expected = [
         {
           uri: 'https://lemmy.ml/feeds/u/alice.xml?sort=New',
           hint: { key: 'lemmy:user', label: 'User' },
         },
       ]
 
-      expect(lemmyHandler.resolve('https://lemmy.ml/u/alice?sort=New')).toEqual(userExpected)
+      expect(lemmyHandler.resolve(value)).toEqual(expected)
+    })
 
-      const homeExpected = [
+    it('should forward ?sort= on home feeds', () => {
+      const value = 'https://lemmy.ml/?sort=Active'
+      const expected = [
         {
           uri: 'https://lemmy.ml/feeds/all.xml?sort=Active',
           hint: { key: 'lemmy:all', label: 'All' },
@@ -269,7 +275,7 @@ describe('lemmyHandler', () => {
         },
       ]
 
-      expect(lemmyHandler.resolve('https://lemmy.ml/?sort=Active')).toEqual(homeExpected)
+      expect(lemmyHandler.resolve(value)).toEqual(expected)
     })
 
     it('should drop unknown ?sort= values', () => {
@@ -322,6 +328,34 @@ describe('lemmyHandler', () => {
         {
           uri: 'https://lemmy.ml/feeds/c/programming.xml',
           hint: { key: 'lemmy:community', label: 'Community' },
+        },
+      ]
+
+      expect(lemmyHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should pass through ?limit= without sort', () => {
+      const value = 'https://lemmy.ml/c/programming?limit=10'
+      const expected = [
+        {
+          uri: 'https://lemmy.ml/feeds/c/programming.xml?limit=10',
+          hint: { key: 'lemmy:community', label: 'Community' },
+        },
+      ]
+
+      expect(lemmyHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return site-wide feeds for /home path', () => {
+      const value = 'https://lemmy.ml/home'
+      const expected = [
+        {
+          uri: 'https://lemmy.ml/feeds/all.xml',
+          hint: { key: 'lemmy:all', label: 'All' },
+        },
+        {
+          uri: 'https://lemmy.ml/feeds/local.xml',
+          hint: { key: 'lemmy:local', label: 'Local' },
         },
       ]
 

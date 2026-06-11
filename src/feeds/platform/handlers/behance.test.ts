@@ -3,15 +3,15 @@ import { behanceHandler } from './behance.js'
 
 describe('behanceHandler', () => {
   describe('match', () => {
-    const cases = [
-      ['https://www.behance.net/johndoe', true],
-      ['https://behance.net/johndoe', true],
-      ['https://www.behance.net/', true],
-      ['https://www.behance.net/search', true],
-      ['https://example.com/behance', false],
-    ] as const
+    const values: Array<[boolean, string]> = [
+      [true, 'https://www.behance.net/johndoe'],
+      [true, 'https://behance.net/johndoe'],
+      [true, 'https://www.behance.net/'],
+      [true, 'https://www.behance.net/search'],
+      [false, 'https://example.com/behance'],
+    ]
 
-    it.each(cases)('%s -> %s', (url, expected) => {
+    it.each(values)('should return %s for %s', (expected, url) => {
       expect(behanceHandler.match(url)).toBe(expected)
     })
 
@@ -69,16 +69,14 @@ describe('behanceHandler', () => {
       expect(behanceHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return empty array for excluded paths', () => {
-      const values = [
-        'https://www.behance.net/search',
-        'https://www.behance.net/blog',
-        'https://www.behance.net/about',
-      ]
+    const excludedValues: Array<string> = [
+      'https://www.behance.net/search',
+      'https://www.behance.net/blog',
+      'https://www.behance.net/about',
+    ]
 
-      for (const value of values) {
-        expect(behanceHandler.resolve(value)).toEqual([])
-      }
+    it.each(excludedValues)('should return empty array for %s', (value) => {
+      expect(behanceHandler.resolve(value)).toEqual([])
     })
 
     it('should return featured projects + Featured-by-Adobe feed for homepage', () => {
@@ -117,6 +115,11 @@ describe('behanceHandler', () => {
       const value = 'https://www.behance.net/johndoe/projects'
 
       expect(behanceHandler.resolve(value)).toEqual([])
+    })
+
+    it.todo('should define behavior for invalid URL input', () => {
+      // resolve('not-a-url') currently throws a TypeError from the unguarded new URL call; the
+      // desired contract (throw vs empty array) is undecided.
     })
   })
 })

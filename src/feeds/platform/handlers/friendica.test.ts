@@ -19,6 +19,10 @@ describe('friendicaHandler', () => {
     it('should return false for non-Friendica generator', () => {
       expect(isFriendicaHtml(otherHtml)).toBe(false)
     })
+
+    it('should return false for empty content', () => {
+      expect(isFriendicaHtml('')).toBe(false)
+    })
   })
 
   describe('match', () => {

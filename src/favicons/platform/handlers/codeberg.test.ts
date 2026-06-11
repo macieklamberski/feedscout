@@ -31,37 +31,34 @@ describe('codebergHandler', () => {
 
   describe('resolve', () => {
     it('should resolve user avatar from user URL', () => {
-      const value = codebergHandler.resolve('https://codeberg.org/forgejo')
       const expected: Array<DiscoverUriEntry> = [
         { uri: 'https://codeberg.org/user/avatar/forgejo/512' },
       ]
 
-      expect(value).toEqual(expected)
+      expect(codebergHandler.resolve('https://codeberg.org/forgejo')).toEqual(expected)
     })
 
     it('should resolve user avatar from repo URL', () => {
-      const value = codebergHandler.resolve('https://codeberg.org/forgejo/forgejo')
       const expected: Array<DiscoverUriEntry> = [
         { uri: 'https://codeberg.org/user/avatar/forgejo/512' },
       ]
 
-      expect(value).toEqual(expected)
+      expect(codebergHandler.resolve('https://codeberg.org/forgejo/forgejo')).toEqual(expected)
     })
 
     it('should resolve user avatar from deep path', () => {
-      const value = codebergHandler.resolve('https://codeberg.org/forgejo/forgejo/src/branch/main')
+      const value = 'https://codeberg.org/forgejo/forgejo/src/branch/main'
       const expected: Array<DiscoverUriEntry> = [
         { uri: 'https://codeberg.org/user/avatar/forgejo/512' },
       ]
 
-      expect(value).toEqual(expected)
+      expect(codebergHandler.resolve(value)).toEqual(expected)
     })
 
     it('should resolve user avatar using gitea.com origin', () => {
-      const value = codebergHandler.resolve('https://gitea.com/gitea')
       const expected: Array<DiscoverUriEntry> = [{ uri: 'https://gitea.com/user/avatar/gitea/512' }]
 
-      expect(value).toEqual(expected)
+      expect(codebergHandler.resolve('https://gitea.com/gitea')).toEqual(expected)
     })
 
     it('should return empty array for root URL', () => {
@@ -80,30 +77,32 @@ describe('codebergHandler', () => {
     })
 
     it('should resolve www.codeberg.org URL', () => {
-      const value = codebergHandler.resolve('https://www.codeberg.org/forgejo')
       const expected: Array<DiscoverUriEntry> = [
         { uri: 'https://www.codeberg.org/user/avatar/forgejo/512' },
       ]
 
-      expect(value).toEqual(expected)
+      expect(codebergHandler.resolve('https://www.codeberg.org/forgejo')).toEqual(expected)
     })
 
     it('should resolve www.gitea.com URL', () => {
-      const value = codebergHandler.resolve('https://www.gitea.com/gitea')
       const expected: Array<DiscoverUriEntry> = [
         { uri: 'https://www.gitea.com/user/avatar/gitea/512' },
       ]
 
-      expect(value).toEqual(expected)
+      expect(codebergHandler.resolve('https://www.gitea.com/gitea')).toEqual(expected)
     })
 
     it('should strip feed extension from user URL', () => {
-      const value = codebergHandler.resolve('https://codeberg.org/forgejo.rss')
       const expected: Array<DiscoverUriEntry> = [
         { uri: 'https://codeberg.org/user/avatar/forgejo/512' },
       ]
 
-      expect(value).toEqual(expected)
+      expect(codebergHandler.resolve('https://codeberg.org/forgejo.rss')).toEqual(expected)
+    })
+
+    it.todo('should define behavior for invalid URL input', () => {
+      // resolve('not-a-url') currently throws a TypeError from the unguarded new URL call; the
+      // desired contract (throw vs empty array) is undecided.
     })
   })
 })

@@ -67,7 +67,7 @@ describe('gitlabHandler', () => {
           { avatar_url: 'https://gitlab.com/uploads/user/avatar/1/alice.png' },
         ]),
       })
-      const value = await gitlabHandler.resolve(
+      const result = await gitlabHandler.resolve(
         'https://gitlab.com/alice',
         undefined,
         undefined,
@@ -77,7 +77,7 @@ describe('gitlabHandler', () => {
         { uri: 'https://gitlab.com/uploads/user/avatar/1/alice.png' },
       ]
 
-      expect(value).toEqual(expected)
+      expect(result).toEqual(expected)
     })
 
     it('should return avatar from first result when API returns multiple users', async () => {
@@ -87,7 +87,7 @@ describe('gitlabHandler', () => {
           { avatar_url: 'https://gitlab.com/uploads/user/avatar/2/other.png' },
         ]),
       })
-      const value = await gitlabHandler.resolve(
+      const result = await gitlabHandler.resolve(
         'https://gitlab.com/alice',
         undefined,
         undefined,
@@ -97,7 +97,7 @@ describe('gitlabHandler', () => {
         { uri: 'https://gitlab.com/uploads/user/avatar/1/alice.png' },
       ]
 
-      expect(value).toEqual(expected)
+      expect(result).toEqual(expected)
     })
 
     it('should use origin from self-hosted instance', async () => {
@@ -106,7 +106,7 @@ describe('gitlabHandler', () => {
           { avatar_url: 'https://gitlab.mycompany.com/uploads/user/avatar/1/alice.png' },
         ]),
       })
-      const value = await gitlabHandler.resolve(
+      const result = await gitlabHandler.resolve(
         'https://gitlab.mycompany.com/alice',
         undefined,
         undefined,
@@ -116,7 +116,7 @@ describe('gitlabHandler', () => {
         { uri: 'https://gitlab.mycompany.com/uploads/user/avatar/1/alice.png' },
       ]
 
-      expect(value).toEqual(expected)
+      expect(result).toEqual(expected)
     })
 
     it('should extract username from repo URL path', async () => {
@@ -125,7 +125,7 @@ describe('gitlabHandler', () => {
           { avatar_url: 'https://gitlab.com/uploads/group/avatar/1/gitlab-org.png' },
         ]),
       })
-      const value = await gitlabHandler.resolve(
+      const result = await gitlabHandler.resolve(
         'https://gitlab.com/gitlab-org/gitlab',
         undefined,
         undefined,
@@ -135,7 +135,7 @@ describe('gitlabHandler', () => {
         { uri: 'https://gitlab.com/uploads/group/avatar/1/gitlab-org.png' },
       ]
 
-      expect(value).toEqual(expected)
+      expect(result).toEqual(expected)
     })
 
     it('should strip feed extension from user URL', async () => {
@@ -144,7 +144,7 @@ describe('gitlabHandler', () => {
           { avatar_url: 'https://gitlab.com/uploads/user/avatar/1/alice.png' },
         ]),
       })
-      const value = await gitlabHandler.resolve(
+      const result = await gitlabHandler.resolve(
         'https://gitlab.com/alice.atom',
         undefined,
         undefined,
@@ -154,7 +154,7 @@ describe('gitlabHandler', () => {
         { uri: 'https://gitlab.com/uploads/user/avatar/1/alice.png' },
       ]
 
-      expect(value).toEqual(expected)
+      expect(result).toEqual(expected)
     })
 
     it('should preserve dots in usernames', async () => {
@@ -163,7 +163,7 @@ describe('gitlabHandler', () => {
           { avatar_url: 'https://gitlab.com/uploads/user/avatar/1/john.doe.png' },
         ]),
       })
-      const value = await gitlabHandler.resolve(
+      const result = await gitlabHandler.resolve(
         'https://gitlab.com/john.doe',
         undefined,
         undefined,
@@ -173,7 +173,7 @@ describe('gitlabHandler', () => {
         { uri: 'https://gitlab.com/uploads/user/avatar/1/john.doe.png' },
       ]
 
-      expect(value).toEqual(expected)
+      expect(result).toEqual(expected)
     })
 
     it('should strip feed extension from dotted username', async () => {
@@ -182,7 +182,7 @@ describe('gitlabHandler', () => {
           { avatar_url: 'https://gitlab.com/uploads/user/avatar/1/john.doe.png' },
         ]),
       })
-      const value = await gitlabHandler.resolve(
+      const result = await gitlabHandler.resolve(
         'https://gitlab.com/john.doe.atom',
         undefined,
         undefined,
@@ -192,7 +192,7 @@ describe('gitlabHandler', () => {
         { uri: 'https://gitlab.com/uploads/user/avatar/1/john.doe.png' },
       ]
 
-      expect(value).toEqual(expected)
+      expect(result).toEqual(expected)
     })
 
     it('should fall back to groups API when users API returns empty', async () => {
@@ -202,7 +202,7 @@ describe('gitlabHandler', () => {
           avatar_url: 'https://gitlab.com/uploads/-/system/group/avatar/9970/project_avatar.png',
         }),
       })
-      const value = await gitlabHandler.resolve(
+      const result = await gitlabHandler.resolve(
         'https://gitlab.com/gitlab-org',
         undefined,
         undefined,
@@ -212,7 +212,7 @@ describe('gitlabHandler', () => {
         { uri: 'https://gitlab.com/uploads/-/system/group/avatar/9970/project_avatar.png' },
       ]
 
-      expect(value).toEqual(expected)
+      expect(result).toEqual(expected)
     })
 
     it('should return empty array when both users and groups API return empty', async () => {
@@ -220,107 +220,107 @@ describe('gitlabHandler', () => {
         'https://gitlab.com/api/v4/users?username=nonexistent': JSON.stringify([]),
         'https://gitlab.com/api/v4/groups/nonexistent': JSON.stringify({ avatar_url: '' }),
       })
-      const value = await gitlabHandler.resolve(
+      const result = await gitlabHandler.resolve(
         'https://gitlab.com/nonexistent',
         undefined,
         undefined,
         mockFetch,
       )
 
-      expect(value).toEqual([])
+      expect(result).toEqual([])
     })
 
     it('should return empty array for root URL', async () => {
       const mockFetch = createMockFetch({})
-      const value = await gitlabHandler.resolve(
+      const result = await gitlabHandler.resolve(
         'https://gitlab.com',
         undefined,
         undefined,
         mockFetch,
       )
 
-      expect(value).toEqual([])
+      expect(result).toEqual([])
     })
 
     it('should return empty array for excluded paths', async () => {
       const mockFetch = createMockFetch({})
-      const value = await gitlabHandler.resolve(
+      const result = await gitlabHandler.resolve(
         'https://gitlab.com/explore',
         undefined,
         undefined,
         mockFetch,
       )
 
-      expect(value).toEqual([])
+      expect(result).toEqual([])
     })
 
     it('should return empty array when API returns empty array', async () => {
       const mockFetch = createMockFetch({
         'https://gitlab.com/api/v4/users?username=nonexistent': JSON.stringify([]),
       })
-      const value = await gitlabHandler.resolve(
+      const result = await gitlabHandler.resolve(
         'https://gitlab.com/nonexistent',
         undefined,
         undefined,
         mockFetch,
       )
 
-      expect(value).toEqual([])
+      expect(result).toEqual([])
     })
 
     it('should return empty array when avatar_url is empty', async () => {
       const mockFetch = createMockFetch({
         'https://gitlab.com/api/v4/users?username=alice': JSON.stringify([{ avatar_url: '' }]),
       })
-      const value = await gitlabHandler.resolve(
+      const result = await gitlabHandler.resolve(
         'https://gitlab.com/alice',
         undefined,
         undefined,
         mockFetch,
       )
 
-      expect(value).toEqual([])
+      expect(result).toEqual([])
     })
 
     it('should return empty array when API returns invalid JSON', async () => {
       const mockFetch = createMockFetch({
         'https://gitlab.com/api/v4/users?username=alice': 'not-json',
       })
-      const value = await gitlabHandler.resolve(
+      const result = await gitlabHandler.resolve(
         'https://gitlab.com/alice',
         undefined,
         undefined,
         mockFetch,
       )
 
-      expect(value).toEqual([])
+      expect(result).toEqual([])
     })
 
     it('should return empty array when fetchFn is not provided', async () => {
-      const value = await gitlabHandler.resolve('https://gitlab.com/alice')
+      const result = await gitlabHandler.resolve('https://gitlab.com/alice')
 
-      expect(value).toEqual([])
+      expect(result).toEqual([])
     })
 
     it('should return empty array when fetch throws', async () => {
       const mockFetch: DiscoverFetchFn = () => {
         throw new Error('Network error')
       }
-      const value = await gitlabHandler.resolve(
+      const result = await gitlabHandler.resolve(
         'https://gitlab.com/alice',
         undefined,
         undefined,
         mockFetch,
       )
 
-      expect(value).toEqual([])
+      expect(result).toEqual([])
     })
 
     it('should return empty array for invalid URL', async () => {
       const mockFetch = createMockFetch({})
-      const value = await gitlabHandler.resolve('not-a-url', undefined, undefined, mockFetch)
+      const result = await gitlabHandler.resolve('not-a-url', undefined, undefined, mockFetch)
 
-      expect(value).toEqual([])
+      expect(result).toEqual([])
     })
   })
 })

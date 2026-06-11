@@ -1,26 +1,26 @@
 import { describe, expect, it } from 'bun:test'
+import type { DiscoverUriEntry } from '../../../common/types.js'
 import { stackExchangeHandler } from './stackExchange.js'
 
 describe('stackExchangeHandler', () => {
   describe('match', () => {
-    const cases = [
-      ['https://stackoverflow.com/questions/tagged/javascript', true],
-      ['https://www.stackoverflow.com/questions/12345', true],
-      ['https://serverfault.com/users/123', true],
-      ['https://superuser.com/', true],
-      ['https://askubuntu.com/questions/tagged/apt', true],
-      ['https://stackapps.com/', true],
-      ['https://mathoverflow.net/questions/tagged/algebra', true],
-      ['https://www.stackoverflow.com/questions/12345', true],
-      ['https://meta.stackoverflow.com/', true],
-      ['https://es.stackoverflow.com/', true],
-      ['https://meta.mathoverflow.net/', true],
-      ['https://math.stackexchange.com/questions/tagged/calculus', true],
-      ['https://gaming.stackexchange.com/', true],
-      ['https://example.com/questions', false],
-    ] as const
+    const values: Array<[boolean, string]> = [
+      [true, 'https://stackoverflow.com/questions/tagged/javascript'],
+      [true, 'https://www.stackoverflow.com/questions/12345'],
+      [true, 'https://serverfault.com/users/123'],
+      [true, 'https://superuser.com/'],
+      [true, 'https://askubuntu.com/questions/tagged/apt'],
+      [true, 'https://stackapps.com/'],
+      [true, 'https://mathoverflow.net/questions/tagged/algebra'],
+      [true, 'https://meta.stackoverflow.com/'],
+      [true, 'https://es.stackoverflow.com/'],
+      [true, 'https://meta.mathoverflow.net/'],
+      [true, 'https://math.stackexchange.com/questions/tagged/calculus'],
+      [true, 'https://gaming.stackexchange.com/'],
+      [false, 'https://example.com/questions'],
+    ]
 
-    it.each(cases)('%s -> %s', (url, expected) => {
+    it.each(values)('should return %s for %s', (expected, url) => {
       expect(stackExchangeHandler.match(url)).toBe(expected)
     })
 
@@ -162,18 +162,58 @@ describe('stackExchangeHandler', () => {
       expect(stackExchangeHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should pass through ?sort= on tag feed when value is allowed', () => {
-      for (const sort of ['newest', 'active', 'votes', 'creation']) {
-        const value = `https://stackoverflow.com/questions/tagged/javascript?sort=${sort}`
-        const expected = [
+    const allowedSortValues: Array<[string, Array<DiscoverUriEntry>]> = [
+      [
+        'https://stackoverflow.com/questions/tagged/javascript?sort=newest',
+        [
           {
-            uri: `https://stackoverflow.com/feeds/tag/javascript?sort=${sort}`,
+            uri: 'https://stackoverflow.com/feeds/tag/javascript?sort=newest',
             hint: { key: 'stackexchange:tag', label: 'Tag' },
           },
-        ]
+        ],
+      ],
+      [
+        'https://stackoverflow.com/questions/tagged/javascript?sort=active',
+        [
+          {
+            uri: 'https://stackoverflow.com/feeds/tag/javascript?sort=active',
+            hint: { key: 'stackexchange:tag', label: 'Tag' },
+          },
+        ],
+      ],
+      [
+        'https://stackoverflow.com/questions/tagged/javascript?sort=votes',
+        [
+          {
+            uri: 'https://stackoverflow.com/feeds/tag/javascript?sort=votes',
+            hint: { key: 'stackexchange:tag', label: 'Tag' },
+          },
+        ],
+      ],
+      [
+        'https://stackoverflow.com/questions/tagged/javascript?sort=creation',
+        [
+          {
+            uri: 'https://stackoverflow.com/feeds/tag/javascript?sort=creation',
+            hint: { key: 'stackexchange:tag', label: 'Tag' },
+          },
+        ],
+      ],
+      [
+        'https://stackoverflow.com/questions/tagged/javascript?sort=month',
+        [
+          {
+            uri: 'https://stackoverflow.com/feeds/tag/javascript?sort=month',
+            hint: { key: 'stackexchange:tag', label: 'Tag' },
+          },
+        ],
+      ],
+    ]
 
-        expect(stackExchangeHandler.resolve(value)).toEqual(expected)
-      }
+    it.each(
+      allowedSortValues,
+    )('should pass through allowed ?sort= value for %s', (url, expected) => {
+      expect(stackExchangeHandler.resolve(url)).toEqual(expected)
     })
 
     it('should pass through ?tab= on tag feed (lowercased) when value is allowed', () => {
@@ -212,6 +252,18 @@ describe('stackExchangeHandler', () => {
       expect(stackExchangeHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should drop disallowed ?tab= values silently', () => {
+      const value = 'https://stackoverflow.com/questions/tagged/javascript?tab=Frequent'
+      const expected = [
+        {
+          uri: 'https://stackoverflow.com/feeds/tag/javascript',
+          hint: { key: 'stackexchange:tag', label: 'Tag' },
+        },
+      ]
+
+      expect(stackExchangeHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should drop unknown sort values silently', () => {
       const value = 'https://stackoverflow.com/questions/tagged/javascript?sort=garbage'
       const expected = [
@@ -226,6 +278,11 @@ describe('stackExchangeHandler', () => {
 
     it('should return empty array for unrecognized path', () => {
       expect(stackExchangeHandler.resolve('https://stackoverflow.com/company')).toEqual([])
+    })
+
+    it.todo('should define behavior for invalid URL input', () => {
+      // resolve('not-a-url') currently throws a TypeError from the unguarded new URL call; the
+      // desired contract (throw vs empty array) is undecided.
     })
   })
 })

@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'bun:test'
+import type { DiscoverFetchFn } from '../types.js'
 import { omitEmpty } from '../utils.js'
 import { discoverUris } from './index.js'
 
@@ -269,5 +270,54 @@ describe('discoverUris', () => {
     }
 
     expect(value).toEqual(expected)
+  })
+
+  it('should forward content, headers, and fetchFn to platform handler resolve', async () => {
+    let received: {
+      content: string | undefined
+      headers: Headers | undefined
+      fetchFn: DiscoverFetchFn | undefined
+    } = { content: undefined, headers: undefined, fetchFn: undefined }
+    const content = '<html>platform page</html>'
+    const headers = new Headers({ 'content-type': 'text/html' })
+    const fetchFn: DiscoverFetchFn = (url) => {
+      return Promise.resolve({
+        url,
+        body: '',
+        headers: new Headers(),
+        status: 200,
+        statusText: 'OK',
+      })
+    }
+
+    await discoverUris(
+      {
+        platform: {
+          content,
+          headers,
+          options: {
+            baseUrl: 'https://example.com',
+            handlers: [
+              {
+                match: () => true,
+                resolve: (_url, resolveContent, resolveHeaders, resolveFetchFn) => {
+                  received = {
+                    content: resolveContent,
+                    headers: resolveHeaders,
+                    fetchFn: resolveFetchFn,
+                  }
+
+                  return []
+                },
+              },
+            ],
+          },
+        },
+      },
+      fetchFn,
+    )
+    const expected = { content, headers, fetchFn }
+
+    expect(received).toEqual(expected)
   })
 })

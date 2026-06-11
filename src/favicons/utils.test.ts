@@ -11,16 +11,22 @@ describe('parseBodyJson', () => {
   })
 
   it('should throw on invalid JSON string', () => {
-    expect(() => parseBodyJson('not-json')).toThrow()
+    const throwing = () => parseBodyJson('not-json')
+
+    expect(throwing).toThrow()
   })
 
   it('should throw when body is a ReadableStream', () => {
-    const stream = new ReadableStream()
-    expect(() => parseBodyJson(stream)).toThrow()
+    const value = new ReadableStream()
+    const throwing = () => parseBodyJson(value)
+
+    expect(throwing).toThrow()
   })
 
   it('should throw on empty string', () => {
-    expect(() => parseBodyJson('')).toThrow()
+    const throwing = () => parseBodyJson('')
+
+    expect(throwing).toThrow()
   })
 })
 
@@ -42,13 +48,7 @@ describe('isNonEmptyString', () => {
     expect(isNonEmptyString({})).toBe(false)
   })
 
-  it('should act as a type guard narrowing to string', () => {
-    const value: unknown = 'https://example.com/avatar.png'
-
-    if (isNonEmptyString(value)) {
-      expect(value.startsWith('https')).toBe(true)
-    } else {
-      expect(true).toBe(false)
-    }
+  it('should return true for whitespace-only strings', () => {
+    expect(isNonEmptyString(' ')).toBe(true)
   })
 })

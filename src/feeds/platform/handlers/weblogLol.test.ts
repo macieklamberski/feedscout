@@ -3,14 +3,14 @@ import { weblogLolHandler } from './weblogLol.js'
 
 describe('weblogLolHandler', () => {
   describe('match', () => {
-    const cases = [
-      ['https://robb.weblog.lol', true],
-      ['https://blog.example.weblog.lol', true],
-      ['https://weblog.lol', false],
-      ['https://example.com', false],
-    ] as const
+    const values: Array<[boolean, string]> = [
+      [true, 'https://robb.weblog.lol'],
+      [true, 'https://blog.example.weblog.lol'],
+      [false, 'https://weblog.lol'],
+      [false, 'https://example.com'],
+    ]
 
-    it.each(cases)('%s -> %s', (url, expected) => {
+    it.each(values)('should return %s for %s', (expected, url) => {
       expect(weblogLolHandler.match(url)).toBe(expected)
     })
 
@@ -58,6 +58,11 @@ describe('weblogLolHandler', () => {
       ]
 
       expect(weblogLolHandler.resolve(value)).toEqual(expected)
+    })
+
+    it.todo('should define behavior for invalid URL input', () => {
+      // resolve('not-a-url') currently throws a TypeError from the unguarded new URL call; the
+      // desired contract (throw vs empty array) is undecided.
     })
   })
 })

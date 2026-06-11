@@ -155,7 +155,7 @@ describe('redditHandler', () => {
           data: { community_icon: 'https://styles.redditmedia.com/icon.png?v=1' },
         }),
       })
-      const value = await redditHandler.resolve(
+      const result = await redditHandler.resolve(
         'https://reddit.com/r/javascript',
         undefined,
         undefined,
@@ -163,7 +163,7 @@ describe('redditHandler', () => {
       )
       const expected: Array<DiscoverUriEntry> = [{ uri: 'https://styles.redditmedia.com/icon.png' }]
 
-      expect(value).toEqual(expected)
+      expect(result).toEqual(expected)
     })
 
     it('should resolve subreddit icon from icon_img when community_icon is empty', async () => {
@@ -172,7 +172,7 @@ describe('redditHandler', () => {
           data: { community_icon: '', icon_img: 'https://b.thumbs.redditmedia.com/icon.png' },
         }),
       })
-      const value = await redditHandler.resolve(
+      const result = await redditHandler.resolve(
         'https://reddit.com/r/programming',
         undefined,
         undefined,
@@ -182,7 +182,7 @@ describe('redditHandler', () => {
         { uri: 'https://b.thumbs.redditmedia.com/icon.png' },
       ]
 
-      expect(value).toEqual(expected)
+      expect(result).toEqual(expected)
     })
 
     it('should resolve user icon from icon_img', async () => {
@@ -191,7 +191,7 @@ describe('redditHandler', () => {
           data: { icon_img: 'https://styles.redditmedia.com/user-icon.png' },
         }),
       })
-      const value = await redditHandler.resolve(
+      const result = await redditHandler.resolve(
         'https://reddit.com/u/spez',
         undefined,
         undefined,
@@ -201,7 +201,7 @@ describe('redditHandler', () => {
         { uri: 'https://styles.redditmedia.com/user-icon.png' },
       ]
 
-      expect(value).toEqual(expected)
+      expect(result).toEqual(expected)
     })
 
     it('should resolve user icon from snoovatar_img when icon_img is empty', async () => {
@@ -210,7 +210,7 @@ describe('redditHandler', () => {
           data: { icon_img: '', snoovatar_img: 'https://i.redd.it/snoovatar/snoo.png' },
         }),
       })
-      const value = await redditHandler.resolve(
+      const result = await redditHandler.resolve(
         'https://reddit.com/user/spez',
         undefined,
         undefined,
@@ -218,7 +218,7 @@ describe('redditHandler', () => {
       )
       const expected: Array<DiscoverUriEntry> = [{ uri: 'https://i.redd.it/snoovatar/snoo.png' }]
 
-      expect(value).toEqual(expected)
+      expect(result).toEqual(expected)
     })
 
     it('should strip feed extension from subreddit URL', async () => {
@@ -227,7 +227,7 @@ describe('redditHandler', () => {
           data: { community_icon: 'https://styles.redditmedia.com/icon.png' },
         }),
       })
-      const value = await redditHandler.resolve(
+      const result = await redditHandler.resolve(
         'https://reddit.com/r/javascript.rss',
         undefined,
         undefined,
@@ -235,7 +235,7 @@ describe('redditHandler', () => {
       )
       const expected: Array<DiscoverUriEntry> = [{ uri: 'https://styles.redditmedia.com/icon.png' }]
 
-      expect(value).toEqual(expected)
+      expect(result).toEqual(expected)
     })
 
     it('should strip feed extension from user URL', async () => {
@@ -244,7 +244,7 @@ describe('redditHandler', () => {
           data: { icon_img: 'https://styles.redditmedia.com/user-icon.png' },
         }),
       })
-      const value = await redditHandler.resolve(
+      const result = await redditHandler.resolve(
         'https://reddit.com/u/spez.rss',
         undefined,
         undefined,
@@ -254,25 +254,25 @@ describe('redditHandler', () => {
         { uri: 'https://styles.redditmedia.com/user-icon.png' },
       ]
 
-      expect(value).toEqual(expected)
+      expect(result).toEqual(expected)
     })
 
     it('should return empty array when fetchFn is not provided', async () => {
-      const value = await redditHandler.resolve('https://reddit.com/r/javascript')
+      const result = await redditHandler.resolve('https://reddit.com/r/javascript')
 
-      expect(value).toEqual([])
+      expect(result).toEqual([])
     })
 
     it('should return empty array for non-subreddit and non-user path', async () => {
       const mockFetch = createMockFetch({})
-      const value = await redditHandler.resolve(
+      const result = await redditHandler.resolve(
         'https://reddit.com/about',
         undefined,
         undefined,
         mockFetch,
       )
 
-      expect(value).toEqual([])
+      expect(result).toEqual([])
     })
 
     it('should return empty array when subreddit icon fields are empty', async () => {
@@ -281,28 +281,28 @@ describe('redditHandler', () => {
           data: { community_icon: '', icon_img: '' },
         }),
       })
-      const value = await redditHandler.resolve(
+      const result = await redditHandler.resolve(
         'https://reddit.com/r/javascript',
         undefined,
         undefined,
         mockFetch,
       )
 
-      expect(value).toEqual([])
+      expect(result).toEqual([])
     })
 
     it('should return empty array when subreddit data fields are missing', async () => {
       const mockFetch = createMockFetch({
         'https://www.reddit.com/r/javascript/about.json': JSON.stringify({ data: {} }),
       })
-      const value = await redditHandler.resolve(
+      const result = await redditHandler.resolve(
         'https://reddit.com/r/javascript',
         undefined,
         undefined,
         mockFetch,
       )
 
-      expect(value).toEqual([])
+      expect(result).toEqual([])
     })
 
     it('should return empty array when user icon fields are empty', async () => {
@@ -311,63 +311,63 @@ describe('redditHandler', () => {
           data: { icon_img: '', snoovatar_img: '' },
         }),
       })
-      const value = await redditHandler.resolve(
+      const result = await redditHandler.resolve(
         'https://reddit.com/u/spez',
         undefined,
         undefined,
         mockFetch,
       )
 
-      expect(value).toEqual([])
+      expect(result).toEqual([])
     })
 
     it('should return empty array when user data fields are missing', async () => {
       const mockFetch = createMockFetch({
         'https://www.reddit.com/user/spez/about.json': JSON.stringify({ data: {} }),
       })
-      const value = await redditHandler.resolve(
+      const result = await redditHandler.resolve(
         'https://reddit.com/u/spez',
         undefined,
         undefined,
         mockFetch,
       )
 
-      expect(value).toEqual([])
+      expect(result).toEqual([])
     })
 
     it('should return empty array when API returns invalid JSON', async () => {
       const mockFetch = createMockFetch({
         'https://www.reddit.com/r/javascript/about.json': 'not json',
       })
-      const value = await redditHandler.resolve(
+      const result = await redditHandler.resolve(
         'https://reddit.com/r/javascript',
         undefined,
         undefined,
         mockFetch,
       )
 
-      expect(value).toEqual([])
+      expect(result).toEqual([])
     })
 
     it('should return empty array when fetch throws', async () => {
       const mockFetch: DiscoverFetchFn = () => {
         throw new Error('Network error')
       }
-      const value = await redditHandler.resolve(
+      const result = await redditHandler.resolve(
         'https://reddit.com/r/javascript',
         undefined,
         undefined,
         mockFetch,
       )
 
-      expect(value).toEqual([])
+      expect(result).toEqual([])
     })
 
     it('should return empty array for invalid URL', async () => {
       const mockFetch = createMockFetch({})
-      const value = await redditHandler.resolve('not-a-url', undefined, undefined, mockFetch)
+      const result = await redditHandler.resolve('not-a-url', undefined, undefined, mockFetch)
 
-      expect(value).toEqual([])
+      expect(result).toEqual([])
     })
 
     it('should return empty array when community_icon is non-string type', async () => {
@@ -377,14 +377,14 @@ describe('redditHandler', () => {
           data: { community_icon: 42, icon_img: 'https://b.thumbs.redditmedia.com/fallback.png' },
         }),
       })
-      const value = await redditHandler.resolve(
+      const result = await redditHandler.resolve(
         'https://reddit.com/r/javascript',
         undefined,
         undefined,
         mockFetch,
       )
 
-      expect(value).toEqual([])
+      expect(result).toEqual([])
     })
   })
 })
