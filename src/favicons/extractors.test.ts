@@ -167,6 +167,12 @@ describe('defaultExtractFn', () => {
 
       expect(await defaultExtractFn(value)).toEqual(expected)
     })
+
+    it.todo('should not detect svg when <svg appears beyond the 200-char head slice', () => {
+      // An <?xml document whose <svg tag only appears after 200+ characters of prolog and comments
+      // is not detected as an image because the check only inspects the first 200 characters; the
+      // desired boundary is undecided.
+    })
   })
 
   describe('status code', () => {
@@ -229,6 +235,31 @@ describe('defaultExtractFn', () => {
     it('should return isValid: false for undefined status without other signals', async () => {
       const value = { url: 'https://example.com/icon.png', content: '' }
       const expected = { url: 'https://example.com/icon.png', isValid: false }
+
+      expect(await defaultExtractFn(value)).toEqual(expected)
+    })
+  })
+
+  describe('signal precedence', () => {
+    it('should return isValid: true for image content-type even with 404 status', async () => {
+      const value = {
+        url: 'https://example.com/icon.png',
+        content: '',
+        headers: new Headers({ 'content-type': 'image/png' }),
+        status: 404,
+      }
+      const expected = { url: 'https://example.com/icon.png', isValid: true }
+
+      expect(await defaultExtractFn(value)).toEqual(expected)
+    })
+
+    it('should return isValid: true for html content with 200 status', async () => {
+      const value = {
+        url: 'https://example.com/favicon.ico',
+        content: '<html><head></head><body></body></html>',
+        status: 200,
+      }
+      const expected = { url: 'https://example.com/favicon.ico', isValid: true }
 
       expect(await defaultExtractFn(value)).toEqual(expected)
     })

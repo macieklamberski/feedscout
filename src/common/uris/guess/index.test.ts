@@ -17,17 +17,13 @@ describe('discoverUrisFromGuess', () => {
       baseUrl: 'https://example.com',
       uris: ['/feed', '/rss', '/atom.xml'],
     })
+    const expected = [
+      'https://example.com/feed',
+      'https://example.com/rss',
+      'https://example.com/atom.xml',
+    ]
 
-    expect(
-      value.some((url) => {
-        return url.includes('/feed')
-      }),
-    ).toBe(true)
-    expect(
-      value.some((url) => {
-        return url.includes('/rss')
-      }),
-    ).toBe(true)
+    expect(value).toEqual(expected)
   })
 
   it('should accept balanced URIs array', () => {
@@ -35,12 +31,13 @@ describe('discoverUrisFromGuess', () => {
       baseUrl: 'https://example.com',
       uris: ['/feed', '/feed/', '/feed.json'],
     })
+    const expected = [
+      'https://example.com/feed',
+      'https://example.com/feed/',
+      'https://example.com/feed.json',
+    ]
 
-    expect(
-      value.some((url) => {
-        return url.includes('/feed.json')
-      }),
-    ).toBe(true)
+    expect(value).toEqual(expected)
   })
 
   it('should accept comprehensive URIs array', () => {
@@ -48,17 +45,9 @@ describe('discoverUrisFromGuess', () => {
       baseUrl: 'https://example.com',
       uris: ['/?feed=rss', '/feeds/posts/default'],
     })
+    const expected = ['https://example.com/?feed=rss', 'https://example.com/feeds/posts/default']
 
-    expect(
-      value.some((url) => {
-        return url.includes('?feed=rss')
-      }),
-    ).toBe(true)
-    expect(
-      value.some((url) => {
-        return url.includes('/feeds/posts/default')
-      }),
-    ).toBe(true)
+    expect(value).toEqual(expected)
   })
 
   it('should accept custom array of URIs', () => {
@@ -119,5 +108,11 @@ describe('discoverUrisFromGuess', () => {
     const expected = ['https://example.com/feed.xml']
 
     expect(value).toEqual(expected)
+  })
+
+  it('should throw for invalid base URL', () => {
+    const throwing = () => discoverUrisFromGuess({ baseUrl: 'not-a-url', uris: ['/feed'] })
+
+    expect(throwing).toThrow(TypeError)
   })
 })

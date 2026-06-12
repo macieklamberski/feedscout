@@ -3,13 +3,13 @@ import { v2exHandler } from './v2ex.js'
 
 describe('v2exHandler', () => {
   describe('match', () => {
-    const cases = [
-      ['https://www.v2ex.com/', true],
-      ['https://v2ex.com/', true],
-      ['https://example.com', false],
-    ] as const
+    const values: Array<[boolean, string]> = [
+      [true, 'https://www.v2ex.com/'],
+      [true, 'https://v2ex.com/'],
+      [false, 'https://example.com'],
+    ]
 
-    it.each(cases)('%s -> %s', (url, expected) => {
+    it.each(values)('should return %s for %s', (expected, url) => {
       expect(v2exHandler.match(url)).toBe(expected)
     })
 
@@ -83,6 +83,23 @@ describe('v2exHandler', () => {
       const value = 'https://www.v2ex.com/t/12345'
 
       expect(v2exHandler.resolve(value)).toEqual([])
+    })
+
+    it('should return tab feed for /t/{id} page with tab query', () => {
+      const value = 'https://www.v2ex.com/t/12345?tab=tech'
+      const expected = [
+        {
+          uri: 'https://www.v2ex.com/feed/tab/tech.xml',
+          hint: { key: 'v2ex:tab', label: 'Tab' },
+        },
+      ]
+
+      expect(v2exHandler.resolve(value)).toEqual(expected)
+    })
+
+    it.todo('should define behavior for invalid URL input', () => {
+      // resolve('not-a-url') currently throws a TypeError from the unguarded new URL call; the
+      // desired contract (throw vs empty array) is undecided.
     })
   })
 })

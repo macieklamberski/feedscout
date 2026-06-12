@@ -4,15 +4,15 @@ import { redditHandler } from './reddit.js'
 
 describe('redditHandler', () => {
   describe('match', () => {
-    const cases = [
-      ['https://reddit.com/r/programming', true],
-      ['https://www.reddit.com/r/programming', true],
-      ['https://old.reddit.com/r/programming', true],
-      ['https://new.reddit.com/r/programming', true],
-      ['https://example.com/r/test', false],
-    ] as const
+    const values: Array<[boolean, string]> = [
+      [true, 'https://reddit.com/r/programming'],
+      [true, 'https://www.reddit.com/r/programming'],
+      [true, 'https://old.reddit.com/r/programming'],
+      [true, 'https://new.reddit.com/r/programming'],
+      [false, 'https://example.com/r/test'],
+    ]
 
-    it.each(cases)('%s -> %s', (url, expected) => {
+    it.each(values)('should return %s for %s', (expected, url) => {
       expect(redditHandler.match(url)).toBe(expected)
     })
 
@@ -38,113 +38,126 @@ describe('redditHandler', () => {
       expect(redditHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return sorted RSS feed URL and all-comments feed when viewing sorted subreddit', () => {
-      const cases: Array<[string, Array<DiscoverUriEntry>]> = [
+    const sortedValues: Array<[string, Array<DiscoverUriEntry>]> = [
+      [
+        'https://reddit.com/r/programming/hot',
         [
-          'https://reddit.com/r/programming/hot',
-          [
-            {
-              uri: 'https://www.reddit.com/r/programming/hot/.rss',
-              hint: { key: 'reddit:posts', label: 'Posts' },
-            },
-            {
-              uri: 'https://www.reddit.com/r/programming/comments/.rss',
-              hint: { key: 'reddit:comments', label: 'Comments' },
-            },
-          ],
+          {
+            uri: 'https://www.reddit.com/r/programming/hot/.rss',
+            hint: { key: 'reddit:posts', label: 'Posts' },
+          },
+          {
+            uri: 'https://www.reddit.com/r/programming/comments/.rss',
+            hint: { key: 'reddit:comments', label: 'Comments' },
+          },
         ],
+      ],
+      [
+        'https://reddit.com/r/programming/new',
         [
-          'https://reddit.com/r/programming/new',
-          [
-            {
-              uri: 'https://www.reddit.com/r/programming/new/.rss',
-              hint: { key: 'reddit:posts', label: 'Posts' },
-            },
-            {
-              uri: 'https://www.reddit.com/r/programming/comments/.rss',
-              hint: { key: 'reddit:comments', label: 'Comments' },
-            },
-          ],
+          {
+            uri: 'https://www.reddit.com/r/programming/new/.rss',
+            hint: { key: 'reddit:posts', label: 'Posts' },
+          },
+          {
+            uri: 'https://www.reddit.com/r/programming/comments/.rss',
+            hint: { key: 'reddit:comments', label: 'Comments' },
+          },
         ],
+      ],
+      [
+        'https://reddit.com/r/programming/rising',
         [
-          'https://reddit.com/r/programming/rising',
-          [
-            {
-              uri: 'https://www.reddit.com/r/programming/rising/.rss',
-              hint: { key: 'reddit:posts', label: 'Posts' },
-            },
-            {
-              uri: 'https://www.reddit.com/r/programming/comments/.rss',
-              hint: { key: 'reddit:comments', label: 'Comments' },
-            },
-          ],
+          {
+            uri: 'https://www.reddit.com/r/programming/rising/.rss',
+            hint: { key: 'reddit:posts', label: 'Posts' },
+          },
+          {
+            uri: 'https://www.reddit.com/r/programming/comments/.rss',
+            hint: { key: 'reddit:comments', label: 'Comments' },
+          },
         ],
+      ],
+      [
+        'https://reddit.com/r/programming/controversial',
         [
-          'https://reddit.com/r/programming/controversial',
-          [
-            {
-              uri: 'https://www.reddit.com/r/programming/controversial/.rss',
-              hint: { key: 'reddit:posts', label: 'Posts' },
-            },
-            {
-              uri: 'https://www.reddit.com/r/programming/comments/.rss',
-              hint: { key: 'reddit:comments', label: 'Comments' },
-            },
-          ],
+          {
+            uri: 'https://www.reddit.com/r/programming/controversial/.rss',
+            hint: { key: 'reddit:posts', label: 'Posts' },
+          },
+          {
+            uri: 'https://www.reddit.com/r/programming/comments/.rss',
+            hint: { key: 'reddit:comments', label: 'Comments' },
+          },
         ],
+      ],
+      [
+        'https://reddit.com/r/programming/top',
         [
-          'https://reddit.com/r/programming/top',
-          [
-            {
-              uri: 'https://www.reddit.com/r/programming/top/.rss',
-              hint: { key: 'reddit:posts', label: 'Posts' },
-            },
-            {
-              uri: 'https://www.reddit.com/r/programming/comments/.rss',
-              hint: { key: 'reddit:comments', label: 'Comments' },
-            },
-          ],
+          {
+            uri: 'https://www.reddit.com/r/programming/top/.rss',
+            hint: { key: 'reddit:posts', label: 'Posts' },
+          },
+          {
+            uri: 'https://www.reddit.com/r/programming/comments/.rss',
+            hint: { key: 'reddit:comments', label: 'Comments' },
+          },
         ],
-      ]
+      ],
+      [
+        'https://reddit.com/r/programming/best',
+        [
+          {
+            uri: 'https://www.reddit.com/r/programming/best/.rss',
+            hint: { key: 'reddit:posts', label: 'Posts' },
+          },
+          {
+            uri: 'https://www.reddit.com/r/programming/comments/.rss',
+            hint: { key: 'reddit:comments', label: 'Comments' },
+          },
+        ],
+      ],
+    ]
 
-      for (const [value, expected] of cases) {
-        expect(redditHandler.resolve(value)).toEqual(expected)
-      }
+    it.each(
+      sortedValues,
+    )('should return sorted RSS feed URL and all-comments feed for %s', (url, expected) => {
+      expect(redditHandler.resolve(url)).toEqual(expected)
     })
 
-    it('should forward ?t=timeframe on top and controversial sorts', () => {
-      const cases: Array<[string, Array<DiscoverUriEntry>]> = [
+    const timeframeValues: Array<[string, Array<DiscoverUriEntry>]> = [
+      [
+        'https://reddit.com/r/programming/top?t=week',
         [
-          'https://reddit.com/r/programming/top?t=week',
-          [
-            {
-              uri: 'https://www.reddit.com/r/programming/top/.rss?t=week',
-              hint: { key: 'reddit:posts', label: 'Posts' },
-            },
-            {
-              uri: 'https://www.reddit.com/r/programming/comments/.rss',
-              hint: { key: 'reddit:comments', label: 'Comments' },
-            },
-          ],
+          {
+            uri: 'https://www.reddit.com/r/programming/top/.rss?t=week',
+            hint: { key: 'reddit:posts', label: 'Posts' },
+          },
+          {
+            uri: 'https://www.reddit.com/r/programming/comments/.rss',
+            hint: { key: 'reddit:comments', label: 'Comments' },
+          },
         ],
+      ],
+      [
+        'https://reddit.com/r/programming/controversial?t=all',
         [
-          'https://reddit.com/r/programming/controversial?t=all',
-          [
-            {
-              uri: 'https://www.reddit.com/r/programming/controversial/.rss?t=all',
-              hint: { key: 'reddit:posts', label: 'Posts' },
-            },
-            {
-              uri: 'https://www.reddit.com/r/programming/comments/.rss',
-              hint: { key: 'reddit:comments', label: 'Comments' },
-            },
-          ],
+          {
+            uri: 'https://www.reddit.com/r/programming/controversial/.rss?t=all',
+            hint: { key: 'reddit:posts', label: 'Posts' },
+          },
+          {
+            uri: 'https://www.reddit.com/r/programming/comments/.rss',
+            hint: { key: 'reddit:comments', label: 'Comments' },
+          },
         ],
-      ]
+      ],
+    ]
 
-      for (const [value, expected] of cases) {
-        expect(redditHandler.resolve(value)).toEqual(expected)
-      }
+    it.each(
+      timeframeValues,
+    )('should forward ?t=timeframe on time-filtered sort for %s', (url, expected) => {
+      expect(redditHandler.resolve(url)).toEqual(expected)
     })
 
     it('should drop unknown ?t= values', () => {
@@ -212,6 +225,18 @@ describe('redditHandler', () => {
       const expected = [
         {
           uri: 'https://www.reddit.com/top/.rss?t=week',
+          hint: { key: 'reddit:posts', label: 'Posts' },
+        },
+      ]
+
+      expect(redditHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return sitewide sort feed for /best', () => {
+      const value = 'https://www.reddit.com/best'
+      const expected = [
+        {
+          uri: 'https://www.reddit.com/best/.rss',
           hint: { key: 'reddit:posts', label: 'Posts' },
         },
       ]
@@ -294,6 +319,30 @@ describe('redditHandler', () => {
       const expected = [
         {
           uri: 'https://www.reddit.com/subreddits/popular/.rss',
+          hint: { key: 'reddit:subreddits', label: 'Subreddits' },
+        },
+      ]
+
+      expect(redditHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return subreddit-list feed for /subreddits/new', () => {
+      const value = 'https://www.reddit.com/subreddits/new'
+      const expected = [
+        {
+          uri: 'https://www.reddit.com/subreddits/new/.rss',
+          hint: { key: 'reddit:subreddits', label: 'Subreddits' },
+        },
+      ]
+
+      expect(redditHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return subreddit-list feed for /reddits alias', () => {
+      const value = 'https://www.reddit.com/reddits'
+      const expected = [
+        {
+          uri: 'https://www.reddit.com/subreddits/.rss',
           hint: { key: 'reddit:subreddits', label: 'Subreddits' },
         },
       ]
@@ -464,6 +513,11 @@ describe('redditHandler', () => {
       ]
 
       expect(redditHandler.resolve(value)).toEqual(expected)
+    })
+
+    it.todo('should define behavior for invalid URL input', () => {
+      // resolve('not-a-url') currently throws a TypeError from the unguarded new URL call; the
+      // desired contract (throw vs empty array) is undecided.
     })
   })
 })

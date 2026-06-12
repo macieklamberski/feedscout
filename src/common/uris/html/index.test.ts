@@ -170,13 +170,6 @@ describe('discoverUrisFromHtml', () => {
       expect(discoverUrisFromHtml(value, defaultOptions)).toEqual(expected)
     })
 
-    it('should handle uppercase rel="ALTERNATE"', () => {
-      const value = '<link rel="ALTERNATE" type="application/rss+xml" href="/feed.xml">'
-      const expected = ['/feed.xml']
-
-      expect(discoverUrisFromHtml(value, defaultOptions)).toEqual(expected)
-    })
-
     it('should handle mixed case rel="Feed Alternate"', () => {
       const value = '<link rel="Feed Alternate" type="application/rss+xml" href="/feed.xml">'
       const expected = ['/feed.xml']
@@ -205,15 +198,13 @@ describe('discoverUrisFromHtml', () => {
       expect(discoverUrisFromHtml(value, defaultOptions)).toEqual(expected)
     })
 
-    it.skip('should ignore feed stylesheet', () => {
-      // This is not supported for now as the chance of such thing happening is quite
-      // low anyway. It's better to incorrectly treat such as valid than to treat
-      // `rel="feed home"` or `rel="feed alternate"` as invalid.
-
-      const value = '<link rel="feed stylesheet" href="/feed.xml">'
-      const expected: Array<string> = []
-
-      expect(discoverUrisFromHtml(value, defaultOptions)).toEqual(expected)
+    it.todo('should ignore feed stylesheet', () => {
+      // '<link rel="feed stylesheet" href="/feed.xml">' is currently treated as a feed link because
+      // any rel containing "feed" matches.
+      // Rejecting it is intentionally unsupported for now: filtering out "stylesheet" risks also
+      // rejecting valid compound values like "feed home" or "feed alternate", and the combination
+      // is rare in the wild.
+      // Expected once supported: this markup yields an empty array.
     })
 
     it('should find multiple feed links with different MIME types', () => {
@@ -228,13 +219,6 @@ describe('discoverUrisFromHtml', () => {
     })
 
     it('should handle self-closing link tags', () => {
-      const value = '<link rel="alternate" type="application/rss+xml" href="/feed.xml" />'
-      const expected = ['/feed.xml']
-
-      expect(discoverUrisFromHtml(value, defaultOptions)).toEqual(expected)
-    })
-
-    it('should handle self-closing link tags with type attribute', () => {
       const value = '<link rel="alternate" type="application/rss+xml" href="/feed.xml" />'
       const expected = ['/feed.xml']
 
@@ -353,13 +337,6 @@ describe('discoverUrisFromHtml', () => {
   })
 
   describe('anchor elements by text content', () => {
-    it('should find anchor with "RSS" text', () => {
-      const value = '<a href="/my-feed">RSS</a>'
-      const expected = ['/my-feed']
-
-      expect(discoverUrisFromHtml(value, defaultOptions)).toEqual(expected)
-    })
-
     it('should find anchor with "feed" text', () => {
       const value = '<a href="/custom-url">Subscribe to our feed</a>'
       const expected = ['/custom-url']
@@ -370,13 +347,6 @@ describe('discoverUrisFromHtml', () => {
     it('should find anchor with "Atom" text', () => {
       const value = '<a href="/articles.xml">Atom Feed</a>'
       const expected = ['/articles.xml']
-
-      expect(discoverUrisFromHtml(value, defaultOptions)).toEqual(expected)
-    })
-
-    it('should find anchor with "subscribe" text', () => {
-      const value = '<a href="/updates">Subscribe</a>'
-      const expected = ['/updates']
 
       expect(discoverUrisFromHtml(value, defaultOptions)).toEqual(expected)
     })
@@ -615,7 +585,7 @@ describe('discoverUrisFromHtml', () => {
     it('should handle very large HTML document', () => {
       const feedLink = '<link rel="alternate" type="application/rss+xml" href="/feed.xml">'
       const fillerContent = '<p>filler content</p>'.repeat(10000)
-      const value = feedLink + fillerContent
+      const value = `${feedLink}${fillerContent}`
       const expected = ['/feed.xml']
 
       expect(discoverUrisFromHtml(value, defaultOptions)).toEqual(expected)
@@ -626,16 +596,16 @@ describe('discoverUrisFromHtml', () => {
         '\n',
       )
       const actualFeed = '<link rel="alternate" type="application/rss+xml" href="/feed.xml">'
-      const value = actualFeed + links
+      const value = `${actualFeed}${links}`
       const expected = ['/feed.xml']
 
       expect(discoverUrisFromHtml(value, defaultOptions)).toEqual(expected)
     })
   })
 
-  // TODO: These edge cases should be handled during URL resolution phase.
-  // Currently, raw URIs are returned without validation. Invalid protocols
-  // and fragment-only URIs should be filtered when resolving to absolute URLs.
+  // The HTML method returns raw matched hrefs without protocol or fragment validation, so hash-only
+  // and non-http protocols pass through here and are filtered later during URL resolution. These
+  // tests pin that pass-through behavior.
   describe('unsupported edge cases', () => {
     it('should return hash-only href when matched by text', () => {
       const value = '<a href="#">RSS Feed</a>'

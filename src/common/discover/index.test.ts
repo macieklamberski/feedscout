@@ -31,7 +31,13 @@ const createMockFetch = (responses: Record<string, string>): DiscoverFetchFn => 
   })
 }
 
-describe('discover', () => {
+// These tests cover the generic discover engine co-located with this file (stop flags,
+// alternatives, progress, error handling, concurrency, fn injection). They drive it through
+// discoverFeeds because discover itself takes an internal options object where every fn is
+// mandatory plus a per-method defaults bundle; the wrapper is the public API that supplies those,
+// so each test only has to inject a mock fetchFn. Feed-specific behavior (platform/html/headers
+// methods, default options wiring) is covered in src/feeds/index.test.ts instead.
+describe('discoverFeeds', () => {
   describe('stopOnFirstMethod', () => {
     it('should fall through to next method when first method URIs are all invalid', async () => {
       const platformHandler: PlatformHandler = {
@@ -454,10 +460,11 @@ describe('discover', () => {
           url: 'https://example.com/feed',
           isValid: false,
           method: 'guess',
+          error: expect.any(Error),
         },
       ]
 
-      expect(value).toMatchObject(expected)
+      expect(value).toEqual(expected)
     })
   })
 
@@ -1001,20 +1008,20 @@ describe('discover', () => {
     it('should throw error when html method requested without content', () => {
       const throwing = () => discoverFeeds({ url: 'https://example.com' }, { methods: ['html'] })
 
-      expect(throwing).toThrow(locales.errors.htmlMethodRequiresContent)
+      expect(throwing()).rejects.toThrow(locales.errors.htmlMethodRequiresContent)
     })
 
     it('should throw error when headers method requested without headers', () => {
       const throwing = () => discoverFeeds({ url: 'https://example.com' }, { methods: ['headers'] })
 
-      expect(throwing).toThrow(locales.errors.headersMethodRequiresHeaders)
+      expect(throwing()).rejects.toThrow(locales.errors.headersMethodRequiresHeaders)
     })
 
     it('should throw error when guess method requested without url', () => {
       // @ts-expect-error: This is for testing purposes.
       const throwing = () => discoverFeeds({ content: '<html></html>' }, { methods: ['guess'] })
 
-      expect(throwing).toThrow(locales.errors.guessMethodRequiresUrl)
+      expect(throwing()).rejects.toThrow(locales.errors.guessMethodRequiresUrl)
     })
   })
 
@@ -1071,6 +1078,27 @@ describe('discover', () => {
       )
 
       expect(receivedHeaders).toBe(inputHeaders)
+    })
+  })
+
+  describe.todo('resolveSiteUrlFn', () => {
+    it.todo('should fetch resolved site URL and run html method against site content', () => {
+      // Pass resolveSiteUrlFn returning a site URL for feed-like input, with fetchFn serving HTML
+      // containing a feed link for that site URL.
+      // Expected: the html method discovers URIs from the fetched site content, not the feed
+      // content.
+    })
+
+    it.todo('should fall back to source input when site fetch throws', () => {
+      // Pass resolveSiteUrlFn returning a site URL while fetchFn rejects for that URL.
+      // Expected: discovery continues using the original input content without throwing.
+    })
+  })
+
+  describe('default concurrency', () => {
+    it.todo('should process at most three URIs at once when concurrency is not specified', () => {
+      // Run discoverFeeds with five guess URIs, a fetchFn that tracks concurrent calls, and no
+      // concurrency option. Expected: maximum observed concurrency is 3 (the default).
     })
   })
 })

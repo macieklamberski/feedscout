@@ -3,18 +3,18 @@ import { codebergHandler } from './codeberg.js'
 
 describe('codebergHandler', () => {
   describe('match', () => {
-    const cases = [
-      ['https://codeberg.org/forgejo', true],
-      ['https://codeberg.org/forgejo/forgejo', true],
-      ['https://www.codeberg.org/user', true],
-      ['https://gitea.com/gitea', true],
-      ['https://gitea.com/gitea/go-sdk', true],
-      ['https://www.gitea.com/user', true],
-      ['https://github.com/user/repo', false],
-      ['https://example.com', false],
-    ] as const
+    const values: Array<[boolean, string]> = [
+      [true, 'https://codeberg.org/forgejo'],
+      [true, 'https://codeberg.org/forgejo/forgejo'],
+      [true, 'https://www.codeberg.org/user'],
+      [true, 'https://gitea.com/gitea'],
+      [true, 'https://gitea.com/gitea/go-sdk'],
+      [true, 'https://www.gitea.com/user'],
+      [false, 'https://github.com/user/repo'],
+      [false, 'https://example.com'],
+    ]
 
-    it.each(cases)('%s -> %s', (url, expected) => {
+    it.each(values)('should return %s for %s', (expected, url) => {
       expect(codebergHandler.match(url)).toBe(expected)
     })
 
@@ -215,30 +215,31 @@ describe('codebergHandler', () => {
       expect(codebergHandler.resolve(value)).toEqual([])
     })
 
-    it('should return empty array for excluded paths', () => {
-      const values = [
-        'https://codeberg.org/explore',
-        'https://codeberg.org/admin',
-        'https://codeberg.org/user',
-        'https://codeberg.org/assets',
-        'https://codeberg.org/-',
-      ]
+    const excludedValues: Array<string> = [
+      'https://codeberg.org/explore',
+      'https://codeberg.org/admin',
+      'https://codeberg.org/user',
+      'https://codeberg.org/assets',
+      'https://codeberg.org/-',
+    ]
 
-      for (const value of values) {
-        expect(codebergHandler.resolve(value)).toEqual([])
-      }
+    it.each(excludedValues)('should return empty array for %s', (value) => {
+      expect(codebergHandler.resolve(value)).toEqual([])
     })
 
-    it('should return empty array for excluded paths with repo segment', () => {
-      const values = [
-        'https://codeberg.org/explore/repos',
-        'https://codeberg.org/admin/users',
-        'https://codeberg.org/user/login',
-      ]
+    const excludedRepoValues: Array<string> = [
+      'https://codeberg.org/explore/repos',
+      'https://codeberg.org/admin/users',
+      'https://codeberg.org/user/login',
+    ]
 
-      for (const value of values) {
-        expect(codebergHandler.resolve(value)).toEqual([])
-      }
+    it.each(excludedRepoValues)('should return empty array for %s', (value) => {
+      expect(codebergHandler.resolve(value)).toEqual([])
+    })
+
+    it.todo('should define behavior for invalid URL input', () => {
+      // resolve('not-a-url') currently throws a TypeError from the unguarded new URL call; the
+      // desired contract (throw vs empty array) is undecided.
     })
   })
 })

@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'bun:test'
+import type { DiscoverResolveUrlFn } from '../../common/types.js'
 import type { HubResult } from '../discover/types.js'
 import { discoverHubsFromHeaders } from './index.js'
 
@@ -168,6 +169,22 @@ describe('discoverHubsFromHeaders', () => {
       {
         hub: 'https://example.com/hub',
         topic: 'https://example.com/feed.xml',
+      },
+    ]
+
+    expect(value).toEqual(expected)
+  })
+
+  it('should keep raw hub and topic when resolveUrlFn returns undefined', () => {
+    const headers = new Headers({
+      link: '</hub>; rel="hub", </feed.xml>; rel="self"',
+    })
+    const resolveNothingFn: DiscoverResolveUrlFn = () => undefined
+    const value = discoverHubsFromHeaders(headers, 'https://example.com/', resolveNothingFn)
+    const expected: Array<HubResult> = [
+      {
+        hub: '/hub',
+        topic: '/feed.xml',
       },
     ]
 

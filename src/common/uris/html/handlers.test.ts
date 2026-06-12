@@ -407,9 +407,9 @@ describe('handleCloseTag', () => {
     value.currentAnchor.text = 'RSS Feed'
 
     handleCloseTag(value, 'a')
+    const expected = { href: '', text: '' }
 
-    expect(value.currentAnchor.href).toBe('')
-    expect(value.currentAnchor.text).toBe('')
+    expect(value.currentAnchor).toEqual(expected)
   })
 
   it('should ignore non-anchor close tags', () => {
@@ -418,9 +418,9 @@ describe('handleCloseTag', () => {
     value.currentAnchor.text = 'RSS Feed'
 
     handleCloseTag(value, 'div')
+    const expected = { href: '/custom-feed', text: 'RSS Feed' }
 
-    expect(value.currentAnchor.href).toBe('/custom-feed')
-    expect(value.currentAnchor.text).toBe('RSS Feed')
+    expect(value.currentAnchor).toEqual(expected)
   })
 
   it('should deduplicate URI matched by both href suffix and text', () => {

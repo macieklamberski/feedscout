@@ -916,12 +916,10 @@ describe('processConcurrently', () => {
     }
 
     await processConcurrently(items, processFn, { concurrency: 2 })
+    const processedSorted = processed.sort((a, b) => a - b)
+    const expected = [1, 2, 3, 4, 5]
 
-    expect(
-      processed.sort((a, b) => {
-        return a - b
-      }),
-    ).toEqual([1, 2, 3, 4, 5])
+    expect(processedSorted).toEqual(expected)
   })
 
   it('should respect concurrency limit', async () => {
@@ -972,12 +970,10 @@ describe('processConcurrently', () => {
     }
 
     await processConcurrently(items, processFn, { concurrency: 2 })
+    const processedSorted = processed.sort((a, b) => a - b)
+    const expected = [1, 2, 4, 5]
 
-    expect(
-      processed.sort((a, b) => {
-        return a - b
-      }),
-    ).toEqual([1, 2, 4, 5])
+    expect(processedSorted).toEqual(expected)
   })
 
   it('should handle empty array', async () => {
@@ -1038,34 +1034,34 @@ describe('processConcurrently', () => {
     }
 
     await processConcurrently(items, processFn, { concurrency: 10 })
+    const processedSorted = processed.sort((a, b) => a - b)
+    const expected = [1, 2, 3]
 
-    expect(
-      processed.sort((a, b) => {
-        return a - b
-      }),
-    ).toEqual([1, 2, 3])
+    expect(processedSorted).toEqual(expected)
   })
 
   it('should process items in parallel when concurrency allows', async () => {
     const items = [1, 2, 3]
-    const startTimes: Array<number> = []
+    let startedCount = 0
+    let releaseBarrier = () => {}
+    const barrier = new Promise<void>((resolve) => {
+      releaseBarrier = resolve
+    })
+    // Each item blocks on a barrier that opens only once all three have started, so the
+    // run completes only when all items execute in parallel.
     const processFn = async () => {
-      startTimes.push(Date.now())
-      await new Promise((resolve) => {
-        return setTimeout(resolve, 50)
-      })
+      startedCount++
+
+      if (startedCount === items.length) {
+        releaseBarrier()
+      }
+
+      await barrier
     }
 
     await processConcurrently(items, processFn, { concurrency: 3 })
-    const timeDifferences = startTimes.slice(1).map((time, index) => {
-      return time - startTimes[index]
-    })
 
-    expect(
-      timeDifferences.every((diff) => {
-        return diff < 30
-      }),
-    ).toBe(true)
+    expect(startedCount).toBe(3)
   })
 
   it('should maintain side effects order independence', async () => {
@@ -1079,16 +1075,11 @@ describe('processConcurrently', () => {
     }
 
     await processConcurrently(items, processFn, { concurrency: 3 })
+    const resultsSorted = results.sort((a, b) => a - b)
     const expected = [2, 4, 6, 8, 10]
 
-    expect(
-      results.sort((a, b) => {
-        return a - b
-      }),
-    ).toEqual(expected)
+    expect(resultsSorted).toEqual(expected)
   })
-
-  // TODO: Should handle concurrency=0 — causes infinite loop, items never process.
 
   it('should not call shouldStop after completion', async () => {
     const items = [1, 2, 3]
@@ -1121,6 +1112,11 @@ describe('processConcurrently', () => {
     await processConcurrently(items, processFn, { concurrency: 0 })
 
     expect(processed).toEqual([])
+  })
+
+  it.todo('should not process items when concurrency is negative', () => {
+    // Call processConcurrently with { concurrency: -1 } and a few items.
+    // Expected: returns immediately without processing any item, same as concurrency 0.
   })
 })
 
@@ -1203,5 +1199,16 @@ describe('hasMetaContent', () => {
 
   it('should return false for empty HTML', () => {
     expect(hasMetaContent('', 'generator', 'Mastodon')).toBe(false)
+  })
+
+  it.todo('should escape regex metacharacters in name and value', () => {
+    // hasMetaContent builds a RegExp from the raw name and value, escaping metacharacters first.
+    // Expected: a value like "C++ Blog" or a name like "og:site_name(beta)" matches literally
+    // instead of breaking the pattern.
+  })
+
+  it.todo('should match single-quoted attribute values', () => {
+    // Expected: "<meta name='generator' content='Mastodon v4.2.0'>" with single-quoted attributes
+    // returns true for ('generator', 'Mastodon').
   })
 })

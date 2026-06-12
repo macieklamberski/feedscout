@@ -3,14 +3,14 @@ import { firesideHandler } from './fireside.js'
 
 describe('firesideHandler', () => {
   describe('match', () => {
-    const cases = [
-      ['https://office.fireside.fm', true],
-      ['https://blog.example.fireside.fm', true],
-      ['https://fireside.fm', false],
-      ['https://example.com', false],
-    ] as const
+    const values: Array<[boolean, string]> = [
+      [true, 'https://office.fireside.fm'],
+      [true, 'https://blog.example.fireside.fm'],
+      [false, 'https://fireside.fm'],
+      [false, 'https://example.com'],
+    ]
 
-    it.each(cases)('%s -> %s', (url, expected) => {
+    it.each(values)('should return %s for %s', (expected, url) => {
       expect(firesideHandler.match(url)).toBe(expected)
     })
 
@@ -50,6 +50,16 @@ describe('firesideHandler', () => {
       ]
 
       expect(firesideHandler.resolve(value)).toEqual(expected)
+    })
+
+    it.todo('should define behavior for www.fireside.fm', () => {
+      // resolve('https://www.fireside.fm') currently treats www as a podcast slug and emits
+      // https://feeds.fireside.fm/www/rss, which is likely a source bug.
+    })
+
+    it.todo('should define behavior for invalid URL input', () => {
+      // resolve('not-a-url') currently throws a TypeError from the unguarded new URL call; the
+      // desired contract (throw vs empty array) is undecided.
     })
   })
 })

@@ -3,15 +3,15 @@ import { mediumHandler } from './medium.js'
 
 describe('mediumHandler', () => {
   describe('match', () => {
-    const cases = [
-      ['https://medium.com/@ev', true],
-      ['https://www.medium.com/@ev', true],
-      ['https://medium.com/towards-data-science', true],
-      ['https://blog.medium.com', true],
-      ['https://example.com/@ev', false],
-    ] as const
+    const values: Array<[boolean, string]> = [
+      [true, 'https://medium.com/@ev'],
+      [true, 'https://www.medium.com/@ev'],
+      [true, 'https://medium.com/towards-data-science'],
+      [true, 'https://blog.medium.com'],
+      [false, 'https://example.com/@ev'],
+    ]
 
-    it.each(cases)('%s -> %s', (url, expected) => {
+    it.each(values)('should return %s for %s', (expected, url) => {
       expect(mediumHandler.match(url)).toBe(expected)
     })
 
@@ -96,6 +96,7 @@ describe('mediumHandler', () => {
         'https://medium.com/me',
         'https://medium.com/new-story',
         'https://medium.com/plans',
+        'https://medium.com/membership',
       ]
 
       for (const url of excludedUrls) {
@@ -108,6 +109,7 @@ describe('mediumHandler', () => {
         'https://medium.com/search/tagged/javascript',
         'https://medium.com/me/tagged/react',
         'https://medium.com/plans/tagged/python',
+        'https://medium.com/membership/tagged/writing',
       ]
 
       for (const url of excludedUrls) {
@@ -152,6 +154,11 @@ describe('mediumHandler', () => {
       ]
 
       expect(mediumHandler.resolve(value)).toEqual(expected)
+    })
+
+    it.todo('should define behavior for invalid URL input', () => {
+      // resolve('not-a-url') currently throws a TypeError from the unguarded new URL call; the
+      // desired contract (throw vs empty array) is undecided.
     })
   })
 })

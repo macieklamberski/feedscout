@@ -3,15 +3,15 @@ import { producthuntHandler } from './producthunt.js'
 
 describe('producthuntHandler', () => {
   describe('match', () => {
-    const cases = [
-      ['https://www.producthunt.com/', true],
-      ['https://producthunt.com/', true],
-      ['https://www.producthunt.com/topics/artificial-intelligence', true],
-      ['https://www.producthunt.com/categories/tech', true],
-      ['https://example.com/producthunt', false],
-    ] as const
+    const values: Array<[boolean, string]> = [
+      [true, 'https://www.producthunt.com/'],
+      [true, 'https://producthunt.com/'],
+      [true, 'https://www.producthunt.com/topics/artificial-intelligence'],
+      [true, 'https://www.producthunt.com/categories/tech'],
+      [false, 'https://example.com/producthunt'],
+    ]
 
-    it.each(cases)('%s -> %s', (url, expected) => {
+    it.each(values)('should return %s for %s', (expected, url) => {
       expect(producthuntHandler.match(url)).toBe(expected)
     })
 
@@ -67,6 +67,11 @@ describe('producthuntHandler', () => {
       ]
 
       expect(producthuntHandler.resolve(value)).toEqual(expected)
+    })
+
+    it.todo('should define behavior for invalid URL input', () => {
+      // resolve('not-a-url') currently throws a TypeError from the unguarded new URL call; the
+      // desired contract (throw vs empty array) is undecided.
     })
   })
 })

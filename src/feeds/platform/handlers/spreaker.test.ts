@@ -3,14 +3,14 @@ import { spreakerHandler } from './spreaker.js'
 
 describe('spreakerHandler', () => {
   describe('match', () => {
-    const cases = [
-      ['https://www.spreaker.com/podcast/spreaker-live-show--1433865', true],
-      ['https://spreaker.com/podcast/my-show--12345', true],
-      ['https://spreaker.com', true],
-      ['https://example.com', false],
-    ] as const
+    const values: Array<[boolean, string]> = [
+      [true, 'https://www.spreaker.com/podcast/spreaker-live-show--1433865'],
+      [true, 'https://spreaker.com/podcast/my-show--12345'],
+      [true, 'https://spreaker.com'],
+      [false, 'https://example.com'],
+    ]
 
-    it.each(cases)('%s -> %s', (url, expected) => {
+    it.each(values)('should return %s for %s', (expected, url) => {
       expect(spreakerHandler.match(url)).toBe(expected)
     })
 
@@ -66,6 +66,23 @@ describe('spreakerHandler', () => {
       ]
 
       expect(spreakerHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return feed URL for /show/{id} with deeper path', () => {
+      const value = 'https://www.spreaker.com/show/1433865/episodes'
+      const expected = [
+        {
+          uri: 'https://www.spreaker.com/show/1433865/episodes/feed',
+          hint: { key: 'spreaker:podcast', label: 'Podcast' },
+        },
+      ]
+
+      expect(spreakerHandler.resolve(value)).toEqual(expected)
+    })
+
+    it.todo('should define behavior for invalid URL input', () => {
+      // resolve('not-a-url') currently throws a TypeError from the unguarded new URL call; the
+      // desired contract (throw vs empty array) is undecided.
     })
   })
 })

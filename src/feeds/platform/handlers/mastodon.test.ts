@@ -69,36 +69,29 @@ describe('mastodonHandler', () => {
     })
 
     it('should match profile path with Mastodon server header', () => {
-      const result = mastodonHandler.match('https://mastodon.social/@user', '', mastodonHeaders)
-
-      expect(result).toBe(true)
+      expect(mastodonHandler.match('https://mastodon.social/@user', '', mastodonHeaders)).toBe(true)
     })
 
     it('should match tag path with Mastodon HTML', () => {
-      const result = mastodonHandler.match('https://mastodon.social/tags/javascript', mastodonHtml)
+      const value = 'https://mastodon.social/tags/javascript'
 
-      expect(result).toBe(true)
+      expect(mastodonHandler.match(value, mastodonHtml)).toBe(true)
     })
 
     it('should match tag path with Mastodon server header', () => {
-      const result = mastodonHandler.match(
-        'https://mastodon.social/tags/javascript',
-        '',
-        mastodonHeaders,
-      )
+      const value = 'https://mastodon.social/tags/javascript'
 
-      expect(result).toBe(true)
+      expect(mastodonHandler.match(value, '', mastodonHeaders)).toBe(true)
     })
 
-    it('should not match without Mastodon signals', () => {
-      const result = mastodonHandler.match(
-        'https://mastodon.social/@user',
-        '',
-        new Headers({ server: 'nginx' }),
-      )
-
+    it('should not match without Mastodon HTML signals', () => {
       expect(mastodonHandler.match('https://mastodon.social/@user', '<html></html>')).toBe(false)
-      expect(result).toBe(false)
+    })
+
+    it('should not match without Mastodon header signals', () => {
+      const headers = new Headers({ server: 'nginx' })
+
+      expect(mastodonHandler.match('https://mastodon.social/@user', '', headers)).toBe(false)
     })
 
     it('should not match without content and headers', () => {

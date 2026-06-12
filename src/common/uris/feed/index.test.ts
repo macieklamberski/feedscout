@@ -4,13 +4,15 @@ import { discoverUrisFromFeed } from './index.js'
 
 describe('discoverUrisFromFeed', () => {
   it('should extract icon from Atom feed', () => {
-    const content = `<?xml version="1.0" encoding="utf-8"?>
+    const content = `
+      <?xml version="1.0" encoding="utf-8"?>
       <feed xmlns="http://www.w3.org/2005/Atom">
         <title>Example</title>
         <icon>https://example.com/icon.png</icon>
         <id>urn:uuid:1</id>
         <updated>2024-01-01T00:00:00Z</updated>
-      </feed>`
+      </feed>
+    `
     const value = discoverUrisFromFeed(content, {
       extractUrls: ({ format, feed }) => {
         if (format === 'atom') {
@@ -46,13 +48,15 @@ describe('discoverUrisFromFeed', () => {
   })
 
   it('should return empty array for RSS feed', () => {
-    const content = `<?xml version="1.0"?>
+    const content = `
+      <?xml version="1.0"?>
       <rss version="2.0">
         <channel>
           <title>Example</title>
           <link>https://example.com</link>
         </channel>
-      </rss>`
+      </rss>
+    `
     const value = discoverUrisFromFeed(content, {
       extractUrls: ({ format }) => {
         if (format === 'atom' || format === 'json') {
@@ -67,6 +71,14 @@ describe('discoverUrisFromFeed', () => {
 
   it('should return empty array for invalid content', () => {
     const value = discoverUrisFromFeed('not a feed', {
+      extractUrls: () => ['should-not-reach'],
+    })
+
+    expect(value).toEqual([])
+  })
+
+  it('should return empty array for empty string content', () => {
+    const value = discoverUrisFromFeed('', {
       extractUrls: () => ['should-not-reach'],
     })
 

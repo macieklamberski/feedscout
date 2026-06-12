@@ -22,6 +22,10 @@ describe('deviantartHandler', () => {
       expect(deviantartHandler.match('https://www.deviantart.com/artistname/favourites')).toBe(true)
     })
 
+    it('should match single-char username URLs even though resolve returns no avatars', () => {
+      expect(deviantartHandler.match('https://www.deviantart.com/x')).toBe(true)
+    })
+
     it('should not match tag pages', () => {
       expect(deviantartHandler.match('https://www.deviantart.com/tag/photography')).toBe(false)
     })
@@ -48,36 +52,34 @@ describe('deviantartHandler', () => {
 
   describe('resolve', () => {
     it('should resolve user avatar with 3 URI alternatives', () => {
-      const value = deviantartHandler.resolve('https://www.deviantart.com/artistname')
       const expected: Array<DiscoverUriEntry> = [
         { uri: 'https://a.deviantart.net/avatars-big/a/r/artistname.jpg' },
         { uri: 'https://a.deviantart.net/avatars-big/a/r/artistname.gif' },
         { uri: 'https://a.deviantart.net/avatars-big/a/r/artistname.png' },
       ]
 
-      expect(value).toEqual(expected)
+      expect(deviantartHandler.resolve('https://www.deviantart.com/artistname')).toEqual(expected)
     })
 
     it('should resolve user avatar from gallery URL', () => {
-      const value = deviantartHandler.resolve('https://www.deviantart.com/artistname/gallery/all')
+      const value = 'https://www.deviantart.com/artistname/gallery/all'
       const expected: Array<DiscoverUriEntry> = [
         { uri: 'https://a.deviantart.net/avatars-big/a/r/artistname.jpg' },
         { uri: 'https://a.deviantart.net/avatars-big/a/r/artistname.gif' },
         { uri: 'https://a.deviantart.net/avatars-big/a/r/artistname.png' },
       ]
 
-      expect(value).toEqual(expected)
+      expect(deviantartHandler.resolve(value)).toEqual(expected)
     })
 
     it('should normalize username to lowercase', () => {
-      const value = deviantartHandler.resolve('https://www.deviantart.com/ArtistName')
       const expected: Array<DiscoverUriEntry> = [
         { uri: 'https://a.deviantart.net/avatars-big/a/r/artistname.jpg' },
         { uri: 'https://a.deviantart.net/avatars-big/a/r/artistname.gif' },
         { uri: 'https://a.deviantart.net/avatars-big/a/r/artistname.png' },
       ]
 
-      expect(value).toEqual(expected)
+      expect(deviantartHandler.resolve('https://www.deviantart.com/ArtistName')).toEqual(expected)
     })
 
     it('should return empty array for tag pages', () => {
@@ -95,6 +97,11 @@ describe('deviantartHandler', () => {
 
     it('should return empty array for single-char username', () => {
       expect(deviantartHandler.resolve('https://www.deviantart.com/x')).toEqual([])
+    })
+
+    it.todo('should define behavior for invalid URL input', () => {
+      // resolve('not-a-url') currently throws a TypeError from the unguarded new URL call; the
+      // desired contract (throw vs empty array) is undecided.
     })
   })
 })

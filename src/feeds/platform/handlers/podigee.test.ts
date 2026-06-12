@@ -3,18 +3,18 @@ import { podigeeHandler } from './podigee.js'
 
 describe('podigeeHandler', () => {
   describe('match', () => {
-    const cases = [
-      ['https://cui-bono.podigee.io', true],
-      ['https://anything.podigee.io/episodes', true],
-      ['https://podigee.io', false],
-      ['https://example.com', false],
-      ['https://www.podigee.io', false],
-      ['https://app.podigee.io', false],
-      ['https://help.podigee.io', false],
-      ['https://blog.podigee.io', false],
-    ] as const
+    const values: Array<[boolean, string]> = [
+      [true, 'https://cui-bono.podigee.io'],
+      [true, 'https://anything.podigee.io/episodes'],
+      [false, 'https://podigee.io'],
+      [false, 'https://example.com'],
+      [false, 'https://www.podigee.io'],
+      [false, 'https://app.podigee.io'],
+      [false, 'https://help.podigee.io'],
+      [false, 'https://blog.podigee.io'],
+    ]
 
-    it.each(cases)('%s -> %s', (url, expected) => {
+    it.each(values)('should return %s for %s', (expected, url) => {
       expect(podigeeHandler.match(url)).toBe(expected)
     })
 
@@ -46,6 +46,11 @@ describe('podigeeHandler', () => {
       ]
 
       expect(podigeeHandler.resolve(value)).toEqual(expected)
+    })
+
+    it.todo('should define behavior for invalid URL input', () => {
+      // resolve('not-a-url') currently throws a TypeError from the unguarded new URL call; the
+      // desired contract (throw vs empty array) is undecided.
     })
   })
 })

@@ -3,14 +3,14 @@ import { pikaHandler } from './pika.js'
 
 describe('pikaHandler', () => {
   describe('match', () => {
-    const cases = [
-      ['https://pika.pika.page', true],
-      ['https://blog.example.pika.page', true],
-      ['https://pika.page', false],
-      ['https://example.com', false],
-    ] as const
+    const values: Array<[boolean, string]> = [
+      [true, 'https://pika.pika.page'],
+      [true, 'https://blog.example.pika.page'],
+      [false, 'https://pika.page'],
+      [false, 'https://example.com'],
+    ]
 
-    it.each(cases)('%s -> %s', (url, expected) => {
+    it.each(values)('should return %s for %s', (expected, url) => {
       expect(pikaHandler.match(url)).toBe(expected)
     })
 
@@ -74,6 +74,11 @@ describe('pikaHandler', () => {
       ]
 
       expect(pikaHandler.resolve(value)).toEqual(expected)
+    })
+
+    it.todo('should define behavior for invalid URL input', () => {
+      // resolve('not-a-url') currently throws a TypeError from the unguarded new URL call; the
+      // desired contract (throw vs empty array) is undecided.
     })
   })
 })

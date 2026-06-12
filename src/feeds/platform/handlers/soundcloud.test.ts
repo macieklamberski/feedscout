@@ -3,22 +3,25 @@ import { soundcloudHandler } from './soundcloud.js'
 
 describe('soundcloudHandler', () => {
   describe('match', () => {
-    const cases = [
-      ['https://soundcloud.com/diplo', true],
-      ['https://www.soundcloud.com/diplo', true],
-      ['https://m.soundcloud.com/diplo', true],
-      ['https://soundcloud.com/diplo/tracks', true],
-      ['https://soundcloud.com/discover', false],
-      ['https://soundcloud.com/stream', false],
-      ['https://soundcloud.com/search', false],
-      ['https://soundcloud.com/upload', false],
-      ['https://soundcloud.com/Discover', false],
-      ['https://soundcloud.com/STREAM', false],
-      ['https://soundcloud.com', false],
-      ['https://example.com/diplo', false],
-    ] as const
+    const values: Array<[boolean, string]> = [
+      [true, 'https://soundcloud.com/diplo'],
+      [true, 'https://www.soundcloud.com/diplo'],
+      [true, 'https://m.soundcloud.com/diplo'],
+      [true, 'https://soundcloud.com/diplo/tracks'],
+      [false, 'https://soundcloud.com/discover'],
+      [false, 'https://soundcloud.com/stream'],
+      [false, 'https://soundcloud.com/search'],
+      [false, 'https://soundcloud.com/upload'],
+      [false, 'https://soundcloud.com/you'],
+      [false, 'https://soundcloud.com/settings'],
+      [false, 'https://soundcloud.com/messages'],
+      [false, 'https://soundcloud.com/Discover'],
+      [false, 'https://soundcloud.com/STREAM'],
+      [false, 'https://soundcloud.com'],
+      [false, 'https://example.com/diplo'],
+    ]
 
-    it.each(cases)('%s -> %s', (url, expected) => {
+    it.each(values)('should return %s for %s', (expected, url) => {
       expect(soundcloudHandler.match(url)).toBe(expected)
     })
 
@@ -56,6 +59,10 @@ describe('soundcloudHandler', () => {
       const content = '<html><body>No user ID here</body></html>'
 
       expect(soundcloudHandler.resolve(value, content)).toEqual([])
+    })
+
+    it('should return empty array for invalid URL without content', () => {
+      expect(soundcloudHandler.resolve('not-a-url')).toEqual([])
     })
   })
 })

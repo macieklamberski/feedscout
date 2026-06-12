@@ -3,14 +3,14 @@ import { libsynHandler } from './libsyn.js'
 
 describe('libsynHandler', () => {
   describe('match', () => {
-    const cases = [
-      ['https://podcastingforcoaches.libsyn.com', true],
-      ['https://blog.example.libsyn.com', true],
-      ['https://libsyn.com', false],
-      ['https://example.com', false],
-    ] as const
+    const values: Array<[boolean, string]> = [
+      [true, 'https://podcastingforcoaches.libsyn.com'],
+      [true, 'https://blog.example.libsyn.com'],
+      [false, 'https://libsyn.com'],
+      [false, 'https://example.com'],
+    ]
 
-    it.each(cases)('%s -> %s', (url, expected) => {
+    it.each(values)('should return %s for %s', (expected, url) => {
       expect(libsynHandler.match(url)).toBe(expected)
     })
 
@@ -72,6 +72,11 @@ describe('libsynHandler', () => {
       const value = 'https://feeds.libsyn.com/something-non-numeric'
 
       expect(libsynHandler.resolve(value)).toEqual([])
+    })
+
+    it.todo('should define behavior for invalid URL input', () => {
+      // resolve('not-a-url') currently throws a TypeError from the unguarded new URL call; the
+      // desired contract (throw vs empty array) is undecided.
     })
   })
 })
