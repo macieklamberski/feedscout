@@ -30,17 +30,11 @@ export const isDiscourseHtml = (content: string): boolean => {
 
 export const discourseHandler: PlatformHandler = {
   match: (url, content) => {
-    try {
-      if (!content || !isDiscourseHtml(content)) {
-        return false
-      }
+    if (!content || !isDiscourseHtml(content)) {
+      return false
+    }
 
-      new URL(url)
-
-      return true
-    } catch {}
-
-    return false
+    return URL.canParse(url)
   },
 
   resolve: (url) => {

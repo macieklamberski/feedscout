@@ -1268,9 +1268,7 @@ describe('defaultResolveSiteUrlFn', () => {
   const resolveUrlFn: DiscoverResolveUrlFn = (url, baseUrl) => {
     try {
       return new URL(url, baseUrl).href
-    } catch {
-      return
-    }
+    } catch {}
   }
 
   it('should return site URL from RSS feed with channel link', () => {
@@ -1525,9 +1523,7 @@ describe('normalizeUriEntry', () => {
   const resolveUrlFn: DiscoverResolveUrlFn = (url, baseUrl) => {
     try {
       return new URL(url, baseUrl).href
-    } catch {
-      return
-    }
+    } catch {}
   }
 
   it('should normalize string entry', () => {

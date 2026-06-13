@@ -21,7 +21,7 @@ export const libsynHandler: PlatformHandler = {
     const { origin, pathname } = new URL(url)
 
     if (isHostOf(url, 'feeds.libsyn.com')) {
-      const showId = pathname.split('/').filter(Boolean)[0]
+      const showId = pathname.split('/').find(Boolean)
 
       if (showId && numericRegex.test(showId)) {
         return [
