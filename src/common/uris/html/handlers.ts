@@ -39,6 +39,17 @@ export const handleOpenTag = (
     if (endsWithAnyOf(lowerHref, context.options.anchorUris)) {
       context.discoveredUris.add(attribs.href)
     }
+
+    // Match feed-related labels in title / aria-label (covers icon-only links with no text).
+    const ariaLabel = attribs['aria-label']
+    const title = attribs.title
+
+    if (
+      (ariaLabel && includesAnyOf(ariaLabel, context.options.anchorLabels)) ||
+      (title && includesAnyOf(title, context.options.anchorLabels))
+    ) {
+      context.discoveredUris.add(attribs.href)
+    }
   }
 }
 

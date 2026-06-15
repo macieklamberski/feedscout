@@ -387,6 +387,36 @@ describe('discoverUrisFromHtml', () => {
     })
   })
 
+  describe('anchor elements by title and aria-label', () => {
+    it('should find icon-only anchor with feed label in title', () => {
+      const value = '<a href="/blog/syndication" title="RSS feed"><svg></svg></a>'
+      const expected = ['/blog/syndication']
+
+      expect(discoverUrisFromHtml(value, defaultOptions)).toEqual(expected)
+    })
+
+    it('should find icon-only anchor with feed label in aria-label', () => {
+      const value = '<a href="/blog/syndication" aria-label="Subscribe via RSS"><svg></svg></a>'
+      const expected = ['/blog/syndication']
+
+      expect(discoverUrisFromHtml(value, defaultOptions)).toEqual(expected)
+    })
+
+    it('should not match anchor when title and aria-label lack feed labels', () => {
+      const value = '<a href="/about" title="About us" aria-label="Home"><svg></svg></a>'
+      const expected: Array<string> = []
+
+      expect(discoverUrisFromHtml(value, defaultOptions)).toEqual(expected)
+    })
+
+    it('should ignore feed label in title when href is an ignored URI', () => {
+      const value = '<a href="/wp-json/wp/v2/posts" title="RSS feed"><svg></svg></a>'
+      const expected: Array<string> = []
+
+      expect(discoverUrisFromHtml(value, defaultOptions)).toEqual(expected)
+    })
+  })
+
   describe('combined scenarios', () => {
     it('should find both link and anchor elements', () => {
       const value = `
