@@ -271,6 +271,39 @@ describe('handleOpenTag', () => {
 
     expect(value.discoveredUris.has('/blog/post.html')).toBe(false)
   })
+
+  it('should add anchor tag with feed label in title attribute', () => {
+    // Icon-only links carry their label in title/aria-label, not visible text.
+    const value = createMockContext()
+
+    handleOpenTag(value, 'a', { href: '/blog/syndication', title: 'RSS feed' })
+
+    expect(value.discoveredUris.has('/blog/syndication')).toBe(true)
+  })
+
+  it('should add anchor tag with feed label in aria-label attribute', () => {
+    const value = createMockContext()
+
+    handleOpenTag(value, 'a', { href: '/blog/syndication', 'aria-label': 'Subscribe via RSS' })
+
+    expect(value.discoveredUris.has('/blog/syndication')).toBe(true)
+  })
+
+  it('should not add anchor tag when title and aria-label lack feed labels', () => {
+    const value = createMockContext()
+
+    handleOpenTag(value, 'a', { href: '/about', title: 'About us', 'aria-label': 'Home' })
+
+    expect(value.discoveredUris.has('/about')).toBe(false)
+  })
+
+  it('should ignore feed label in title when href matches an ignored URI', () => {
+    const value = createMockContext()
+
+    handleOpenTag(value, 'a', { href: '#section', title: 'RSS feed' })
+
+    expect(value.discoveredUris.has('#section')).toBe(false)
+  })
 })
 
 describe('handleText', () => {
