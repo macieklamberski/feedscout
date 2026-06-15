@@ -15,5 +15,27 @@ export const discoverUrisFromHtml = (html: string, options: HtmlMethodOptions): 
   parser.write(html)
   parser.end()
 
-  return [...context.discoveredUris]
+  const uris = [...context.discoveredUris]
+
+  // Resolve discovered URLs against <base href> when present (browser semantics). Without a
+  // <base>, URLs are returned as-is and resolved downstream against the page URL.
+  if (context.baseHref) {
+    let base: string | undefined
+
+    try {
+      base = options.baseUrl ? new URL(context.baseHref, options.baseUrl).href : context.baseHref
+    } catch {
+      base = options.baseUrl
+    }
+
+    return uris.map((uri) => {
+      try {
+        return new URL(uri, base).href
+      } catch {
+        return uri
+      }
+    })
+  }
+
+  return uris
 }

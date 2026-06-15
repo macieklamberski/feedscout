@@ -447,6 +447,48 @@ describe('discoverUrisFromHtml', () => {
     })
   })
 
+  describe('<base href> resolution', () => {
+    const withBase = { ...defaultOptions, baseUrl: 'https://example.com/page' }
+
+    it('should resolve relative anchor hrefs against an absolute <base href>', () => {
+      const value = '<base href="https://example.com/sub/"><a href="feed.xml">RSS</a>'
+      const expected = ['https://example.com/sub/feed.xml']
+
+      expect(discoverUrisFromHtml(value, withBase)).toEqual(expected)
+    })
+
+    it('should resolve relative link hrefs against a relative <base href> and the page URL', () => {
+      const value =
+        '<base href="/blog/"><link rel="alternate" type="application/rss+xml" href="rss">'
+      const expected = ['https://example.com/blog/rss']
+
+      expect(discoverUrisFromHtml(value, withBase)).toEqual(expected)
+    })
+
+    it('should leave absolute discovered URLs unchanged under a <base href>', () => {
+      const value =
+        '<base href="https://example.com/sub/"><link rel="alternate" type="application/rss+xml" href="https://feeds.example.org/rss.xml">'
+      const expected = ['https://feeds.example.org/rss.xml']
+
+      expect(discoverUrisFromHtml(value, withBase)).toEqual(expected)
+    })
+
+    it('should ignore an empty <base href> and leave URLs unchanged', () => {
+      const value = '<base href=""><a href="/feed.xml">RSS</a>'
+      const expected = ['/feed.xml']
+
+      expect(discoverUrisFromHtml(value, withBase)).toEqual(expected)
+    })
+
+    it('should use the first <base href> when multiple are present', () => {
+      const value =
+        '<base href="https://a.example/x/"><base href="https://b.example/y/"><a href="feed.xml">RSS</a>'
+      const expected = ['https://a.example/x/feed.xml']
+
+      expect(discoverUrisFromHtml(value, withBase)).toEqual(expected)
+    })
+  })
+
   describe('combined scenarios', () => {
     it('should find both link and anchor elements', () => {
       const value = `

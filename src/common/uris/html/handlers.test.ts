@@ -230,6 +230,31 @@ describe('handleOpenTag', () => {
     expect(value.discoveredUris.size).toBe(0)
   })
 
+  it('should capture the first <base href> into context', () => {
+    const value = createMockContext()
+
+    handleOpenTag(value, 'base', { href: 'https://example.com/sub/' })
+
+    expect(value.baseHref).toBe('https://example.com/sub/')
+  })
+
+  it('should ignore an empty <base href>', () => {
+    const value = createMockContext()
+
+    handleOpenTag(value, 'base', { href: '' })
+
+    expect(value.baseHref).toBeUndefined()
+  })
+
+  it('should keep the first <base href> when multiple are present', () => {
+    const value = createMockContext()
+
+    handleOpenTag(value, 'base', { href: '/first/' })
+    handleOpenTag(value, 'base', { href: '/second/' })
+
+    expect(value.baseHref).toBe('/first/')
+  })
+
   it('should handle multiple link tags in sequence', () => {
     const value = createMockContext()
 
