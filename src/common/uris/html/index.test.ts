@@ -487,6 +487,24 @@ describe('discoverUrisFromHtml', () => {
 
       expect(discoverUrisFromHtml(value, withBase)).toEqual(expected)
     })
+
+    it('should resolve against an absolute <base href> when no page URL is provided', () => {
+      const value = '<base href="https://example.com/sub/"><a href="feed.xml">RSS</a>'
+      const expected = ['https://example.com/sub/feed.xml']
+
+      // defaultOptions has no baseUrl, so the base href is used directly.
+      expect(discoverUrisFromHtml(value, defaultOptions)).toEqual(expected)
+    })
+
+    it('should leave URLs unchanged when the base cannot be resolved', () => {
+      const value = '<base href="/sub/"><a href="feed.xml">RSS</a>'
+      const expected = ['feed.xml']
+
+      // A relative base with an invalid page URL resolves to nothing usable.
+      expect(
+        discoverUrisFromHtml(value, { ...defaultOptions, baseUrl: 'not-a-valid-url' }),
+      ).toEqual(expected)
+    })
   })
 
   describe('combined scenarios', () => {
