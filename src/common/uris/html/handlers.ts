@@ -8,6 +8,15 @@ export const handleOpenTag = (
   attribs: { [key: string]: string },
   _isImplied?: boolean,
 ): void => {
+  // Capture the first <base href> to resolve relative URLs against (browser semantics).
+  if (name === 'base' && context.baseHref === undefined) {
+    const href = attribs.href?.trim()
+
+    if (href) {
+      context.baseHref = href
+    }
+  }
+
   if (name === 'link' && attribs.href) {
     const rel = attribs.rel?.toLowerCase()
 

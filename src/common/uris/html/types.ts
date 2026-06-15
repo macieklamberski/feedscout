@@ -14,5 +14,6 @@ export type HtmlMethodContext = {
     href: string
     text: string
   }
+  baseHref?: string
   options: HtmlMethodOptions
 }
