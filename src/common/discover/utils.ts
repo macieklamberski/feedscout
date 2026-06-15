@@ -1,6 +1,7 @@
 import type { Atom } from 'feedsmith'
 import locales from '../locales.json' with { type: 'json' }
 import type {
+  DiscoverCleanUrlFn,
   DiscoverFetchFn,
   DiscoverInput,
   DiscoverInputObject,
@@ -60,15 +61,18 @@ export const normalizeUriEntry = (
   entry: DiscoverUriEntry,
   resolveUrlFn: DiscoverResolveUrlFn,
   baseUrl: string | undefined,
+  cleanUrlFn?: DiscoverCleanUrlFn,
 ): DiscoverUriEntry => {
-  if (typeof entry.uri === 'string') {
-    return { ...entry, uri: resolveUrlFn(entry.uri, baseUrl) ?? entry.uri }
+  const normalize = (uri: string) => {
+    const resolved = resolveUrlFn(uri, baseUrl) ?? uri
+    return cleanUrlFn ? cleanUrlFn(resolved) : resolved
   }
 
-  return {
-    ...entry,
-    uri: entry.uri.map((uri) => resolveUrlFn(uri, baseUrl) ?? uri),
+  if (typeof entry.uri === 'string') {
+    return { ...entry, uri: normalize(entry.uri) }
   }
+
+  return { ...entry, uri: entry.uri.map(normalize) }
 }
 
 export const normalizeMethodsConfig = (

@@ -1609,4 +1609,37 @@ describe('normalizeUriEntry', () => {
 
     expect(normalizeUriEntry(value, resolveNothingFn, undefined)).toEqual(expected)
   })
+
+  it('should apply cleanUrlFn after resolution on string entry', () => {
+    const cleanUrlFn = (url: string) => url.replace(/[?&]utm_[^&]*/g, '')
+    const value = { uri: '/feed.xml?utm_source=rss' }
+    const expected = { uri: 'https://example.com/feed.xml' }
+
+    expect(normalizeUriEntry(value, resolveUrlFn, 'https://example.com', cleanUrlFn)).toEqual(
+      expected,
+    )
+  })
+
+  it('should apply cleanUrlFn to each alternative in array', () => {
+    const cleanUrlFn = (url: string) => url.replace(/[?&]utm_[^&]*/g, '')
+    const value = { uri: ['/a?utm_x=1', '/b?utm_y=2'] }
+    const expected = { uri: ['https://example.com/a', 'https://example.com/b'] }
+
+    expect(normalizeUriEntry(value, resolveUrlFn, 'https://example.com', cleanUrlFn)).toEqual(
+      expected,
+    )
+  })
+
+  it('should let cleanUrlFn unwrap a wrapper URL into the real feed', () => {
+    const cleanUrlFn = (url: string) => {
+      const wrapped = new URL(url).searchParams.get('url')
+      return wrapped ?? url
+    }
+    const value = { uri: 'https://add.my.yahoo.com/content?url=https%3A%2F%2Fexample.com%2Ffeed' }
+    const expected = { uri: 'https://example.com/feed' }
+
+    expect(normalizeUriEntry(value, resolveUrlFn, 'https://example.com', cleanUrlFn)).toEqual(
+      expected,
+    )
+  })
 })

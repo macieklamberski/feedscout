@@ -122,6 +122,37 @@ const resolveUrl: DiscoverResolveUrlFn = (url, baseUrl) => {
 }
 ```
 
+## Cleaning Discovered URLs
+
+`resolveUrlFn` turns a discovered URL into an absolute one. To additionally **clean** discovered URLs — unwrap redirect/affiliate/share wrappers (`?url=…`, `?feed=aHR0c…`) into the real feed, or strip tracking parameters — provide a `cleanUrlFn`. It runs after resolution and before deduplication, so cleaned URLs also dedupe correctly.
+
+```typescript
+import type { DiscoverCleanUrlFn } from 'feedscout'
+
+const cleanUrlFn: DiscoverCleanUrlFn = (url) => {
+  const parsed = new URL(url)
+  parsed.searchParams.delete('utm_source')
+  parsed.searchParams.delete('utm_medium')
+  return parsed.href
+}
+
+const feeds = await discoverFeeds(url, { cleanUrlFn })
+```
+
+Feedscout does not bundle a cleaner. [`urlpurify`](https://github.com/macieklamberski/urlpurify) (zero dependencies) is a drop-in that unwraps 70+ wrapper services and strips known tracking parameters:
+
+```typescript
+import { cleanUrl } from 'urlpurify'
+
+const feeds = await discoverFeeds(url, { cleanUrlFn: cleanUrl })
+```
+
+## Interface (cleanUrlFn)
+
+```typescript
+type DiscoverCleanUrlFn = (url: string) => string
+```
+
 ## Combining with Other Options
 
 URL resolution works with `discoverFeeds`, `discoverBlogrolls`, and `discoverHubs`:

@@ -40,6 +40,10 @@ export type DiscoverResolveSiteUrlFn = (
   resolveUrlFn: DiscoverResolveUrlFn,
 ) => string | undefined
 
+// Cleans a discovered URL before dedup and validation, e.g. to unwrap redirect/affiliate
+// wrappers or strip tracking parameters (urlpurify's cleanUrl is a drop-in).
+export type DiscoverCleanUrlFn = (url: string) => string
+
 export type DiscoverFetchFnOptions = {
   method?: 'GET' | 'HEAD'
   headers?: Record<string, string>
@@ -153,6 +157,7 @@ export type DiscoverOptions<TValid, TMethods extends DiscoverMethod = DiscoverMe
   extractFn?: DiscoverExtractFn<TValid>
   resolveUrlFn?: DiscoverResolveUrlFn
   resolveSiteUrlFn?: DiscoverResolveSiteUrlFn
+  cleanUrlFn?: DiscoverCleanUrlFn
   stopOnFirstMethod?: boolean
   stopOnFirstResult?: boolean
   concurrency?: number
@@ -167,6 +172,7 @@ export type DiscoverOptionsInternal<TValid> = {
   extractFn: DiscoverExtractFn<TValid>
   resolveUrlFn: DiscoverResolveUrlFn
   resolveSiteUrlFn?: DiscoverResolveSiteUrlFn
+  cleanUrlFn?: DiscoverCleanUrlFn
   stopOnFirstMethod?: boolean
   stopOnFirstResult?: boolean
   concurrency?: number
