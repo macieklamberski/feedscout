@@ -9,13 +9,13 @@
       },
       "devDependencies": {
         "@types/bun": "^1.3.13",
-        "feedsmith": "^3.0.0-beta.4",
+        "feedsmith": "3.0.0-beta.5",
         "kvalita": "^1.15.1",
         "tsdown": "^0.22.2",
         "vitepress": "^2.0.0-alpha.17",
       },
       "peerDependencies": {
-        "feedsmith": "^3.0.0-beta.4",
+        "feedsmith": "3.0.0-beta.5",
       },
     },
   },
@@ -546,7 +546,7 @@
 
     "fdir": ["fdir@6.5.0", "", { "peerDependencies": { "picomatch": "^3 || ^4" }, "optionalPeers": ["picomatch"] }, "sha512-tIbYtZbucOs0BRGqPJkshJUYdL+SDH7dVM8gjy+ERp3WAUjLEFJE+02kanyHtwjWOnwrKYBiwAmM0p4kLJAnXg=="],
 
-    "feedsmith": ["feedsmith@3.0.0-next.6", "", { "dependencies": { "entities": "^7.0.1", "fast-xml-parser": "^5.3.5" } }, "sha512-EAwwD5Nv86FTalnXs/mBsIDQzBX1x5X+fIf/gmPVI0Bh8zv7O/TtSGvhweNtNYrb66tBEhOzAdzxe3O8OD/G8w=="],
+    "feedsmith": ["feedsmith@3.0.0-beta.5", "", { "dependencies": { "entities": "^7.0.1", "fast-xml-parser": "~5.8.0" } }, "sha512-94qmagy4Tkx1NXryzmicPk8PCH6+F4Dy7gaeLSqRNZ+753Opu19AHo4FgvKl4jNUTCJVmAHlAwDIwRjVd/uBIQ=="],
 
     "figures": ["figures@6.1.0", "", { "dependencies": { "is-unicode-supported": "^2.0.0" } }, "sha512-d+l3qxjSesT4V7v2fh+QnmFnUWv9lSpjarhShNTgBOfA0ttejbQUAlHLitbjkoRiDulW0OPoQPYIGhIC8ohejg=="],
 

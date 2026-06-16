@@ -68,11 +68,11 @@
     "htmlparser2": "^12.0.0"
   },
   "peerDependencies": {
-    "feedsmith": "^3.0.0-beta.4"
+    "feedsmith": "3.0.0-beta.5"
   },
   "devDependencies": {
     "@types/bun": "^1.3.13",
-    "feedsmith": "^3.0.0-beta.4",
+    "feedsmith": "3.0.0-beta.5",
     "kvalita": "^1.15.1",
     "tsdown": "^0.22.2",
     "vitepress": "^2.0.0-alpha.17"
