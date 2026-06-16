@@ -1,4 +1,4 @@
-import type { LinkSelector, UriEntry } from '../common/types.js'
+import type { LinkSelector, Pattern, UriEntry } from '../common/types.js'
 import type { GuessMethodOptions } from '../common/uris/guess/types.js'
 import type { HeadersMethodOptions } from '../common/uris/headers/types.js'
 import type { HtmlMethodOptions } from '../common/uris/html/types.js'
@@ -156,32 +156,33 @@ export const urisComprehensive: Array<UriEntry> = [
   '/feeds/comments/default',
 ]
 
-// URIs to ignore when discovering feeds from anchor elements.
-export const ignoredUris = ['wp-json/oembed/', 'wp-json/wp/']
+// Subscribe/share endpoints (Add to My Yahoo, Netvibes, Google Podcasts, AddThis, affiliate
+// redirectors, …) pass the real feed URL as a query parameter, e.g. ?url=http…, ?feed=aHR0c…
+// (base64 of "http"). They would otherwise match on their "Subscribe"/"RSS" link text and waste
+// a fetch, so ignore any anchor whose href carries an embedded URL.
+const wrappedFeedUrl = /[?&][^=&]*=(https?:|https?%3a|aHR0c)/i
 
-// Text labels used to identify feed links in anchor elements.
-export const anchorLabels = [
-  'rss',
-  'feed',
-  'atom',
-  'subscribe',
-  'syndicate',
-  'syndication',
-  'json feed',
-]
+// URIs to ignore when discovering feeds from anchor elements.
+export const ignoredUris: Array<Pattern> = ['wp-json/oembed/', 'wp-json/wp/', wrappedFeedUrl]
+
+// Text labels used to identify feed links in anchor elements. "subscribe" is deliberately
+// excluded: on its own it overwhelmingly marks podcast-app, YouTube, and newsletter buttons
+// rather than feeds, and real feed links are still caught by their href or an rss/feed/atom label.
+export const anchorLabels = ['rss', 'feed', 'atom', 'syndicate', 'syndication', 'json feed']
 
 export const linkSelectors: Array<LinkSelector> = [
   { rel: 'alternate', types: mimeTypes },
   { rel: 'feed' },
 ]
 
-// Path segments that indicate feed URLs when found within anchor hrefs.
+// Path segments that indicate feed URLs when found in an anchor href's pathname.
 export const anchorPathSegments = [/\/rss\//, /\/atom\//, /\/feed\//]
 
 // Default options for HTML method.
 export const defaultHtmlOptions: Omit<HtmlMethodOptions, 'baseUrl'> = {
   linkSelectors,
-  anchorUris: [...urisComprehensive.flat(), ...anchorPathSegments],
+  anchorUris: urisComprehensive.flat(),
+  anchorPathSegments,
   anchorIgnoredUris: ignoredUris,
   anchorLabels,
 }
