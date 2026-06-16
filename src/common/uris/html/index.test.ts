@@ -54,7 +54,8 @@ const anchorPathSegments = [/\/rss\//, /\/atom\//, /\/feed\//]
 
 const defaultOptions: HtmlMethodOptions = {
   linkSelectors: [{ rel: 'alternate', types: linkMimeTypes }, { rel: 'feed' }],
-  anchorUris: [...anchorUris, ...anchorPathSegments],
+  anchorUris,
+  anchorPathSegments,
   anchorIgnoredUris,
   anchorLabels,
 }
@@ -289,8 +290,10 @@ describe('discoverUrisFromHtml', () => {
       const value = '<a href="/feed/comments">Comments</a>'
       const expected: Array<string> = []
 
-      // Uses string-only anchorUris to test pure suffix matching behavior.
-      expect(discoverUrisFromHtml(value, { ...defaultOptions, anchorUris })).toEqual(expected)
+      // Uses string-only anchorUris and no path segments to test pure suffix matching behavior.
+      expect(
+        discoverUrisFromHtml(value, { ...defaultOptions, anchorUris, anchorPathSegments: [] }),
+      ).toEqual(expected)
     })
 
     it('should ignore wp-json/oembed/ URI', () => {
@@ -347,6 +350,14 @@ describe('discoverUrisFromHtml', () => {
     it('should deduplicate with suffix matching', () => {
       const value = '<a href="/blog/feed/">Feed</a>'
       const expected = ['/blog/feed/']
+
+      expect(discoverUrisFromHtml(value, defaultOptions)).toEqual(expected)
+    })
+
+    it('should not match a feed path segment that only appears in the query string', () => {
+      const value =
+        '<a href="https://www.live.com/Default.aspx?add=https://site.example/rss/section">x</a>'
+      const expected: Array<string> = []
 
       expect(discoverUrisFromHtml(value, defaultOptions)).toEqual(expected)
     })
