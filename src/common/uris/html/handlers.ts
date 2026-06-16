@@ -8,6 +8,15 @@ export const handleOpenTag = (
   attribs: { [key: string]: string },
   _isImplied?: boolean,
 ): void => {
+  // Capture the first <base href> to resolve relative URLs against (browser semantics).
+  if (name === 'base' && context.baseHref === undefined) {
+    const href = attribs.href?.trim()
+
+    if (href) {
+      context.baseHref = href
+    }
+  }
+
   if (name === 'link' && attribs.href) {
     const rel = attribs.rel?.toLowerCase()
 
@@ -37,6 +46,31 @@ export const handleOpenTag = (
 
     // Check if href ends with any anchor URI pattern.
     if (endsWithAnyOf(lowerHref, context.options.anchorUris)) {
+      context.discoveredUris.add(attribs.href)
+    }
+
+    // Match feed path segments against the pathname only, so a feed path embedded in a wrapper's
+    // query string (e.g. ?add=https://site/rss/x) does not count as a feed.
+    if (context.options.anchorPathSegments?.length) {
+      let pathname: string | undefined
+
+      try {
+        pathname = new URL(attribs.href, 'https://feedscout.invalid').pathname
+      } catch {}
+
+      if (pathname && includesAnyOf(pathname, context.options.anchorPathSegments)) {
+        context.discoveredUris.add(attribs.href)
+      }
+    }
+
+    // Match feed-related labels in title / aria-label (covers icon-only links with no text).
+    const ariaLabel = attribs['aria-label']
+    const title = attribs.title
+
+    if (
+      (ariaLabel && includesAnyOf(ariaLabel, context.options.anchorLabels)) ||
+      (title && includesAnyOf(title, context.options.anchorLabels))
+    ) {
       context.discoveredUris.add(attribs.href)
     }
   }

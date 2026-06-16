@@ -29,14 +29,17 @@ Looks for `<link>` elements that advertise feeds:
 Scans `<a>` tags for feed links using two strategies:
 
 1. **URI matching** — Checks if `href` contains common feed paths like `/feed`, `/rss.xml`.
-2. **Label matching** — Checks if link text contains words like "RSS", "Feed", "Subscribe".
+2. **Label matching** — Checks if the link text, `title`, or `aria-label` contains words like "RSS", "Feed", "Subscribe". This catches icon-only links that have no visible text.
 
 ```html
 <!-- Matched by URI -->
 <a href="/feed.xml">XML</a>
 
-<!-- Matched by label -->
+<!-- Matched by label (text) -->
 <a href="/subscribe">RSS Feed</a>
+
+<!-- Matched by label (title / aria-label) on an icon-only link -->
+<a href="/blog/syndication" title="RSS feed"><svg>...</svg></a>
 ```
 
 ## Configuration
