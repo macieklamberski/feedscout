@@ -93,6 +93,20 @@ const feeds = await discoverFeeds(url, {
 })
 ```
 
+### Anchor Attributes
+
+Specify element attributes to scan for the anchor labels, on the anchor itself and on its descendants. This finds icon-only feed links whose label lives in an attribute rather than visible text — for example a `title`, an `aria-label`, or the layer name Framer emits on a feed icon (`data-framer-name="RSS Icon"`):
+
+```typescript
+const feeds = await discoverFeeds(url, {
+  methods: {
+    html: {
+      anchorAttributes: ['aria-label', 'title', 'data-framer-name'],
+    },
+  },
+})
+```
+
 ### Ignored URIs
 
 Exclude certain URI patterns from anchor matching:

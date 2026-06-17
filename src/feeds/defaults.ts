@@ -178,6 +178,12 @@ export const linkSelectors: Array<LinkSelector> = [
 // Path segments that indicate feed URLs when found in an anchor href's pathname.
 export const anchorPathSegments = [/\/rss\//, /\/atom\//, /\/feed\//]
 
+// Descendant attributes scanned for feed labels on icon-only anchors that carry no text or label
+// of their own. Framer names its feed-icon layer with data-framer-name (e.g. "RSS Icon"), which is
+// the common case this covers. "class" is intentionally excluded: anchorLabels match as substrings,
+// so labels collide with ordinary class names ("feed" in "feedback", "atom" in "atomic").
+export const anchorAttributes = ['aria-label', 'title', 'data-framer-name']
+
 // Default options for HTML method.
 export const defaultHtmlOptions: Omit<HtmlMethodOptions, 'baseUrl'> = {
   linkSelectors,
@@ -185,6 +191,7 @@ export const defaultHtmlOptions: Omit<HtmlMethodOptions, 'baseUrl'> = {
   anchorPathSegments,
   anchorIgnoredUris: ignoredUris,
   anchorLabels,
+  anchorAttributes,
 }
 
 // Default options for Headers method.
