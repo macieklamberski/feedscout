@@ -5,7 +5,7 @@ import { composeHint, isAnyOf, isHostOf, isSubdomainOf } from '../../../common/u
 // Not discoverable without handler.
 
 const hosts = ['artstation.com', 'www.artstation.com']
-const domainSuffix = /\.artstation\.com$/i
+const domainSuffixRegex = /\.artstation\.com$/i
 const excludedPaths = [
   'blogs',
   'channels',
@@ -32,7 +32,7 @@ export const artstationHandler: PlatformHandler = {
 
     // Subdomain form: {user}.artstation.com
     if (!isHostOf(url, hosts) && isSubdomainOf(url, 'artstation.com')) {
-      const username = parsed.hostname.replace(domainSuffix, '')
+      const username = parsed.hostname.replace(domainSuffixRegex, '')
 
       return [
         {

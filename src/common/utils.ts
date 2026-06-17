@@ -101,12 +101,12 @@ export const isOfAllowedMimeType = (
 export const hasMetaContent = (content: string, name: string, value: string): boolean => {
   const escapedName = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
   const escapedValue = value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-  const regex = new RegExp(
+  const metaTagRegex = new RegExp(
     `<meta(?=[^>]*(?:name|property)=["']${escapedName}["'])(?=[^>]*content=["']${escapedValue})`,
     'i',
   )
 
-  return regex.test(content)
+  return metaTagRegex.test(content)
 }
 
 export const omitEmpty = <T>(array: Array<T | null | undefined>): Array<T> => {
