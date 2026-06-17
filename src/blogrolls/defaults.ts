@@ -32,6 +32,7 @@ export const defaultHtmlOptions: Omit<HtmlMethodOptions, 'baseUrl'> = {
   anchorUris: urisComprehensive,
   anchorIgnoredUris: [],
   anchorLabels,
+  anchorAttributes: ['aria-label', 'title'],
 }
 
 export const defaultHeadersOptions: Omit<HeadersMethodOptions, 'baseUrl'> = {

@@ -282,8 +282,10 @@ type HtmlMethodOptions = {
   baseUrl?: string
   linkSelectors: Array<LinkSelector>
   anchorUris: Array<string>
+  anchorPathSegments?: Array<string>
   anchorIgnoredUris: Array<string>
   anchorLabels: Array<string>
+  anchorAttributes?: Array<string>
 }
 
 type LinkSelector = {

@@ -9,6 +9,11 @@ export type HtmlMethodOptions = {
   anchorPathSegments?: Array<Pattern>
   anchorIgnoredUris: Array<Pattern>
   anchorLabels: Array<Pattern>
+  // Element attributes scanned for feed labels (matched against anchorLabels), on the anchor itself
+  // and on any descendant while the anchor is open. Covers icon-only links whose only signal is an
+  // attribute rather than visible text — title, aria-label, or a layer name such as the one Framer
+  // emits for the feed icon (<div data-framer-name="RSS Icon">).
+  anchorAttributes?: Array<string>
 }
 
 export type HtmlMethodContext = {

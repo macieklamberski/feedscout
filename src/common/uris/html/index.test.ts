@@ -52,12 +52,15 @@ const anchorLabels = ['rss', 'feed', 'atom', 'subscribe', 'syndicate', 'json fee
 
 const anchorPathSegments = [/\/rss\//, /\/atom\//, /\/feed\//]
 
+const anchorAttributes = ['aria-label', 'title', 'data-framer-name']
+
 const defaultOptions: HtmlMethodOptions = {
   linkSelectors: [{ rel: 'alternate', types: linkMimeTypes }, { rel: 'feed' }],
   anchorUris,
   anchorPathSegments,
   anchorIgnoredUris,
   anchorLabels,
+  anchorAttributes,
 }
 
 describe('discoverUrisFromHtml', () => {
@@ -425,6 +428,36 @@ describe('discoverUrisFromHtml', () => {
       const expected: Array<string> = []
 
       expect(discoverUrisFromHtml(value, defaultOptions)).toEqual(expected)
+    })
+  })
+
+  describe('anchor elements by descendant attribute label', () => {
+    it('should find a Framer icon-only feed link via a descendant data-framer-name', () => {
+      // Framer wraps the feed link around an icon child whose layer name is the only feed signal;
+      // the anchor itself has no text, title, or aria-label.
+      const value =
+        '<a href="https://provider.example/fd/abc123.xml" target="_blank" rel="noopener"><div data-framer-component-type="SVG" data-framer-name="RSS Icon" aria-hidden="true"></div></a>'
+      const expected = ['https://provider.example/fd/abc123.xml']
+
+      expect(discoverUrisFromHtml(value, defaultOptions)).toEqual(expected)
+    })
+
+    it('should not match when the descendant attribute lacks a feed label', () => {
+      const value =
+        '<a href="https://provider.example/fd/abc123.xml"><div data-framer-name="Search Icon"></div></a>'
+      const expected: Array<string> = []
+
+      expect(discoverUrisFromHtml(value, defaultOptions)).toEqual(expected)
+    })
+
+    it('should not scan descendant attributes when none are configured', () => {
+      const value =
+        '<a href="https://provider.example/fd/abc123.xml"><div data-framer-name="RSS Icon"></div></a>'
+      const expected: Array<string> = []
+
+      expect(
+        discoverUrisFromHtml(value, { ...defaultOptions, anchorAttributes: undefined }),
+      ).toEqual(expected)
     })
   })
 
