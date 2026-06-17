@@ -19,6 +19,7 @@ const createMockContext = (): HtmlMethodContext => {
       anchorPathSegments: [/\/rss\//, /\/atom\//, /\/feed\//],
       anchorIgnoredUris: ['#', 'javascript:', 'mailto:'],
       anchorLabels: ['rss', 'feed', 'atom'],
+      anchorAttributes: ['aria-label', 'title', 'data-framer-name'],
     },
   }
 }
@@ -337,6 +338,44 @@ describe('handleOpenTag', () => {
     handleOpenTag(value, 'a', { href: '#section', title: 'RSS feed' })
 
     expect(value.discoveredUris.has('#section')).toBe(false)
+  })
+
+  it('should add anchor href when a descendant attribute carries a feed label', () => {
+    // Framer wraps an icon-only feed link around a child whose only signal is data-framer-name.
+    const value = createMockContext()
+
+    handleOpenTag(value, 'a', { href: 'https://provider.example/fd/abc123.xml' })
+    handleOpenTag(value, 'div', { 'data-framer-name': 'RSS Icon' })
+
+    expect(value.discoveredUris.has('https://provider.example/fd/abc123.xml')).toBe(true)
+  })
+
+  it('should not add anchor href when descendant attributes lack a feed label', () => {
+    const value = createMockContext()
+
+    handleOpenTag(value, 'a', { href: 'https://provider.example/fd/abc123.xml' })
+    handleOpenTag(value, 'div', { 'data-framer-name': 'Search Icon' })
+
+    expect(value.discoveredUris.has('https://provider.example/fd/abc123.xml')).toBe(false)
+  })
+
+  it('should not scan descendant attributes when the anchor was ignored', () => {
+    const value = createMockContext()
+
+    handleOpenTag(value, 'a', { href: '#section' })
+    handleOpenTag(value, 'div', { 'data-framer-name': 'RSS Icon' })
+
+    expect(value.discoveredUris.has('#section')).toBe(false)
+  })
+
+  it('should not scan descendant attributes when none are configured', () => {
+    const value = createMockContext()
+    value.options.anchorAttributes = undefined
+
+    handleOpenTag(value, 'a', { href: 'https://provider.example/fd/abc123.xml' })
+    handleOpenTag(value, 'div', { 'data-framer-name': 'RSS Icon' })
+
+    expect(value.discoveredUris.has('https://provider.example/fd/abc123.xml')).toBe(false)
   })
 })
 

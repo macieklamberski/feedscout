@@ -62,16 +62,21 @@ export const handleOpenTag = (
         context.discoveredUris.add(attribs.href)
       }
     }
+  }
 
-    // Match feed-related labels in title / aria-label (covers icon-only links with no text).
-    const ariaLabel = attribs['aria-label']
-    const title = attribs.title
+  // Match feed-related labels in configured attributes, covering icon-only links with no visible
+  // text. This runs both for the anchor itself (e.g. <a title="RSS feed">) and for any descendant
+  // element while the anchor is open (e.g. Framer renders the icon as a child element whose only
+  // signal is <div data-framer-name="RSS Icon">). Ignored anchors already cleared currentAnchor.href
+  // above, so neither they nor their descendants are scanned.
+  if (context.currentAnchor.href && context.options.anchorAttributes?.length) {
+    for (const attribute of context.options.anchorAttributes) {
+      const value = attribs[attribute]
 
-    if (
-      (ariaLabel && includesAnyOf(ariaLabel, context.options.anchorLabels)) ||
-      (title && includesAnyOf(title, context.options.anchorLabels))
-    ) {
-      context.discoveredUris.add(attribs.href)
+      if (value && includesAnyOf(value, context.options.anchorLabels)) {
+        context.discoveredUris.add(context.currentAnchor.href)
+        break
+      }
     }
   }
 }
