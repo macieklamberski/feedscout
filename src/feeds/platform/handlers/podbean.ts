@@ -5,7 +5,7 @@ import { composeHint, isSubdomainOf } from '../../../common/utils.js'
 //
 // {slug}.podbean.com/feed.xml also works but 302-redirects to feed.podbean.com.
 
-const domainSuffix = /\.podbean\.com$/i
+const domainSuffixRegex = /\.podbean\.com$/i
 
 // Reserved Podbean subdomains that aren't user shows. Without this guard, hitting
 // podbean.com corporate/infra hosts produces feed.podbean.com/{reserved}/feed.xml
@@ -27,14 +27,14 @@ export const podbeanHandler: PlatformHandler = {
       return false
     }
 
-    const slug = new URL(url).hostname.toLowerCase().replace(domainSuffix, '')
+    const slug = new URL(url).hostname.toLowerCase().replace(domainSuffixRegex, '')
 
     return !reservedSlugs.has(slug)
   },
 
   resolve: (url) => {
     const { hostname } = new URL(url)
-    const slug = hostname.replace(domainSuffix, '')
+    const slug = hostname.replace(domainSuffixRegex, '')
 
     return [
       {
