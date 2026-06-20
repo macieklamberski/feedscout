@@ -163,7 +163,7 @@ export type DiscoverOptions<TValid, TMethods extends DiscoverMethod = DiscoverMe
   stopOnFirstMethod?: boolean
   stopOnFirstResult?: boolean
   concurrency?: number
-  maxUris?: number // Cap on total candidate URIs fetched across all methods (default 50).
+  maxUris?: number
   onProgress?: DiscoverOnProgressFn
   onError?: DiscoverOnErrorFn
   includeInvalid?: boolean
