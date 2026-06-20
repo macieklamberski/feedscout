@@ -2,16 +2,30 @@ import type { UriEntry } from '../../types.js'
 
 const ipAddressRegex = /^\d+\.\d+\.\d+\.\d+$/
 
-const resolveUri = (uri: string, base: string, origin: string, pathname: string): string => {
+// Resolve a guess URI against a base, returning every candidate to try. For an
+// absolute path on a base that has a subpath (e.g. https://site.com/blog/), both
+// the path-rooted variant (https://site.com/blog/feed) and the origin-rooted one
+// (https://site.com/feed) are returned, path-rooted first; they collapse to a
+// single candidate when the base is at the root.
+const resolveUri = (
+  uri: string,
+  base: string,
+  origin: string,
+  pathname: string,
+  directory: string,
+): Array<string> => {
   if (uri.startsWith('/')) {
-    return `${origin}${uri}`
+    const originRooted = `${origin}${uri}`
+    const pathRooted = `${directory}${uri.slice(1)}`
+
+    return pathRooted === originRooted ? [originRooted] : [pathRooted, originRooted]
   }
 
   if (uri.startsWith('?')) {
-    return `${origin}${pathname}${uri}`
+    return [`${origin}${pathname}${uri}`]
   }
 
-  return new URL(uri, base).href
+  return [new URL(uri, base).href]
 }
 
 export const generateUrlCombinations = (
@@ -22,13 +36,18 @@ export const generateUrlCombinations = (
     const parsed = new URL(base)
     const origin = parsed.origin
     const pathname = parsed.pathname
+    const directory = new URL('.', base).href
 
     return uris.map((uri) => {
       if (typeof uri === 'string') {
-        return resolveUri(uri, base, origin, pathname)
+        const resolved = resolveUri(uri, base, origin, pathname, directory)
+
+        return resolved.length === 1 ? resolved[0] : resolved
       }
 
-      return uri.map((alternative) => resolveUri(alternative, base, origin, pathname))
+      return uri.flatMap((alternative) => {
+        return resolveUri(alternative, base, origin, pathname, directory)
+      })
     })
   })
 }

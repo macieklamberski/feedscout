@@ -55,10 +55,21 @@ describe('generateUrlCombinations', () => {
     expect(generateUrlCombinations(baseUrls, feedUris)).toEqual(expected)
   })
 
-  it('should handle base URLs with paths', () => {
+  it('should emit path-rooted and origin-rooted variants for absolute paths on a base with a subpath', () => {
     const baseUrls = ['https://example.com/blog/']
     const feedUris = ['/feed.xml', 'rss.xml']
-    const expected = ['https://example.com/feed.xml', 'https://example.com/blog/rss.xml']
+    const expected = [
+      ['https://example.com/blog/feed.xml', 'https://example.com/feed.xml'],
+      'https://example.com/blog/rss.xml',
+    ]
+
+    expect(generateUrlCombinations(baseUrls, feedUris)).toEqual(expected)
+  })
+
+  it('should root absolute paths at the base directory when the base has no trailing slash', () => {
+    const baseUrls = ['https://example.com/blog/post']
+    const feedUris = ['/feed.xml']
+    const expected = [['https://example.com/blog/feed.xml', 'https://example.com/feed.xml']]
 
     expect(generateUrlCombinations(baseUrls, feedUris)).toEqual(expected)
   })
