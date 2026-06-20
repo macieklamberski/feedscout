@@ -7,12 +7,14 @@ import {
   includesAnyOf,
   isAnyOf,
   isHostOf,
+  isObject,
   isOfAllowedMimeType,
   isSubdomainOf,
   matchesAnyOfLinkSelectors,
   normalizeMimeType,
   omitEmpty,
   processConcurrently,
+  toPositiveInteger,
 } from './utils.js'
 
 describe('composeHint', () => {
@@ -1210,5 +1212,51 @@ describe('hasMetaContent', () => {
   it.todo('should match single-quoted attribute values', () => {
     // Expected: "<meta name='generator' content='Mastodon v4.2.0'>" with single-quoted attributes
     // returns true for ('generator', 'Mastodon').
+  })
+})
+
+describe('isObject', () => {
+  it('should return true for plain objects', () => {
+    expect(isObject({})).toBe(true)
+    expect(isObject({ url: 'https://example.com' })).toBe(true)
+  })
+
+  it('should return false for null', () => {
+    expect(isObject(null)).toBe(false)
+  })
+
+  it('should return false for arrays', () => {
+    expect(isObject([])).toBe(false)
+    expect(isObject(['https://example.com'])).toBe(false)
+  })
+
+  it('should return false for primitives', () => {
+    expect(isObject('https://example.com')).toBe(false)
+    expect(isObject(42)).toBe(false)
+    expect(isObject(undefined)).toBe(false)
+  })
+})
+
+describe('toPositiveInteger', () => {
+  it('should return the value when it is a positive integer', () => {
+    expect(toPositiveInteger(5, 3)).toBe(5)
+    expect(toPositiveInteger(1, 3)).toBe(1)
+  })
+
+  it('should fall back for undefined', () => {
+    expect(toPositiveInteger(undefined, 3)).toBe(3)
+  })
+
+  it('should fall back for NaN', () => {
+    expect(toPositiveInteger(Number.NaN, 3)).toBe(3)
+  })
+
+  it('should fall back for values below 1', () => {
+    expect(toPositiveInteger(0, 3)).toBe(3)
+    expect(toPositiveInteger(-1, 3)).toBe(3)
+  })
+
+  it('should fall back for non-integer values', () => {
+    expect(toPositiveInteger(2.5, 3)).toBe(3)
   })
 })

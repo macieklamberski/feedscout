@@ -160,10 +160,10 @@ export const urisComprehensive: Array<UriEntry> = [
 // redirectors, …) pass the real feed URL as a query parameter, e.g. ?url=http…, ?feed=aHR0c…
 // (base64 of "http"). They would otherwise match on their "Subscribe"/"RSS" link text and waste
 // a fetch, so ignore any anchor whose href carries an embedded URL.
-const wrappedFeedUrl = /[?&][^=&]*=(https?:|https?%3a|aHR0c)/i
+const wrappedFeedUrlRegex = /[?&][^=&]*=(https?:|https?%3a|aHR0c)/i
 
 // URIs to ignore when discovering feeds from anchor elements.
-export const ignoredUris: Array<Pattern> = ['wp-json/oembed/', 'wp-json/wp/', wrappedFeedUrl]
+export const ignoredUris: Array<Pattern> = ['wp-json/oembed/', 'wp-json/wp/', wrappedFeedUrlRegex]
 
 // Text labels used to identify feed links in anchor elements. "subscribe" is deliberately
 // excluded: on its own it overwhelmingly marks podcast-app, YouTube, and newsletter buttons

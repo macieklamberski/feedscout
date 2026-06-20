@@ -468,6 +468,60 @@ describe('discoverFeeds', () => {
     })
   })
 
+  describe('onError', () => {
+    it('should call onError when the input fetch fails', async () => {
+      const errors: Array<{ error: unknown; phase: string; url?: string }> = []
+      const fetchError = new Error('Input fetch failed')
+      const mockFetch: DiscoverFetchFn = () => Promise.reject(fetchError)
+
+      await discoverFeeds('https://example.com', {
+        methods: ['guess'],
+        fetchFn: mockFetch,
+        onError: (error, context) => {
+          errors.push({ error, ...context })
+        },
+      })
+      const expected = [{ error: fetchError, phase: 'fetchInput', url: 'https://example.com' }]
+
+      expect(errors).toEqual(expected)
+    })
+
+    it('should call onError when site URL resolution fails', async () => {
+      const errors: Array<{ error: unknown; phase: string; url?: string }> = []
+      const fetchError = new Error('Site fetch failed')
+      const mockFetch: DiscoverFetchFn = (url) => {
+        if (url === 'https://example.com/site') {
+          return Promise.reject(fetchError)
+        }
+
+        return Promise.resolve({
+          url,
+          body: '',
+          headers: new Headers(),
+          status: 404,
+          statusText: 'Not Found',
+        })
+      }
+
+      await discoverFeeds(
+        { url: 'https://example.com/feed.xml', content: 'not a feed' },
+        {
+          methods: ['guess'],
+          fetchFn: mockFetch,
+          resolveSiteUrlFn: () => 'https://example.com/site',
+          onError: (error, context) => {
+            errors.push({ error, ...context })
+          },
+        },
+      )
+      const expected = [
+        { error: fetchError, phase: 'resolveSiteUrl', url: 'https://example.com/site' },
+      ]
+
+      expect(errors).toEqual(expected)
+    })
+  })
+
   describe('concurrency', () => {
     it('should respect concurrency limit', async () => {
       let maxConcurrent = 0

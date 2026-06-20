@@ -301,6 +301,28 @@ describe('normalizeInput', () => {
     expect(await normalizeInput(value, fetchFn)).toEqual(value)
   })
 
+  it('should not treat null as object input', async () => {
+    const expected = {
+      url: null,
+      content: '<html>content</html>',
+      headers: expect.any(Headers),
+    }
+
+    // null reports typeof 'object'; it must take the fetch path, not be returned as-is.
+    expect((await normalizeInput(null as never, fetchFn)) as unknown).toEqual(expected)
+  })
+
+  it('should not treat an array as object input', async () => {
+    const expected = {
+      url: [],
+      content: '<html>content</html>',
+      headers: expect.any(Headers),
+    }
+
+    // Arrays report typeof 'object'; they must take the fetch path, not be returned as-is.
+    expect((await normalizeInput([] as never, fetchFn)) as unknown).toEqual(expected)
+  })
+
   it('should return object input with url and headers', async () => {
     const headers = new Headers()
     const value = {

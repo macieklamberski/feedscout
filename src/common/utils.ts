@@ -8,6 +8,22 @@ export const composeHint = (key: string): DiscoverUriHint => ({
   label: locales.hints[key as keyof typeof locales.hints],
 })
 
+// A response is only acceptable when its status is in the 2xx range. A missing
+// status means the body was supplied directly (no fetch), so treat it as valid.
+export const isSuccessfulStatus = (status: number | undefined): boolean => {
+  return status === undefined || (status >= 200 && status < 300)
+}
+
+// Narrow to a plain object, excluding null and arrays (both report typeof 'object').
+export const isObject = (value: unknown): value is object => {
+  return value !== null && typeof value === 'object' && !Array.isArray(value)
+}
+
+// Coerce to a positive integer, falling back when missing or invalid (NaN, < 1, non-integer).
+export const toPositiveInteger = (value: number | undefined, fallback: number): number => {
+  return typeof value === 'number' && Number.isInteger(value) && value >= 1 ? value : fallback
+}
+
 export const normalizeMimeType = (type: string): string => {
   return type.split(';')[0].trim().toLowerCase()
 }
@@ -101,12 +117,12 @@ export const isOfAllowedMimeType = (
 export const hasMetaContent = (content: string, name: string, value: string): boolean => {
   const escapedName = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
   const escapedValue = value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-  const regex = new RegExp(
+  const metaTagRegex = new RegExp(
     `<meta(?=[^>]*(?:name|property)=["']${escapedName}["'])(?=[^>]*content=["']${escapedValue})`,
     'i',
   )
 
-  return regex.test(content)
+  return metaTagRegex.test(content)
 }
 
 export const omitEmpty = <T>(array: Array<T | null | undefined>): Array<T> => {
@@ -147,7 +163,9 @@ export const processConcurrently = async <T>(
     shouldStop?: () => boolean
   },
 ): Promise<void> => {
-  if (options.concurrency < 1) {
+  // Guard against < 1 and non-numeric (NaN) concurrency, which would otherwise
+  // spin the loop forever since `active.size < NaN` is always false.
+  if (!(options.concurrency >= 1)) {
     return
   }
 

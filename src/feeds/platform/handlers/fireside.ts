@@ -4,7 +4,7 @@ import { composeHint, isSubdomainOf } from '../../../common/utils.js'
 
 // Partially discoverable without handler.
 
-const domainSuffix = /\.fireside\.fm$/i
+const domainSuffixRegex = /\.fireside\.fm$/i
 
 export const firesideHandler: PlatformHandler = {
   match: (url) => {
@@ -13,7 +13,7 @@ export const firesideHandler: PlatformHandler = {
 
   resolve: (url) => {
     const { hostname } = new URL(url)
-    const slug = hostname.replace(domainSuffix, '')
+    const slug = hostname.replace(domainSuffixRegex, '')
     const uris: Array<DiscoverUriEntry> = []
 
     uris.push({

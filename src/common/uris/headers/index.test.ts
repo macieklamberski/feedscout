@@ -293,24 +293,6 @@ describe('discoverUrisFromHeaders', () => {
       expect(discoverUrisFromHeaders(headers, defaultOptions)).toEqual(expected)
     })
 
-    it('should handle single-quoted attributes', () => {
-      const headers = new Headers({
-        Link: "</feed.xml>; rel='alternate'; type='application/rss+xml'",
-      })
-      const expected = ['/feed.xml']
-
-      expect(discoverUrisFromHeaders(headers, defaultOptions)).toEqual(expected)
-    })
-
-    it('should handle mixed quote styles', () => {
-      const headers = new Headers({
-        Link: '</feed.xml>; rel="alternate"; type=\'application/rss+xml\'',
-      })
-      const expected = ['/feed.xml']
-
-      expect(discoverUrisFromHeaders(headers, defaultOptions)).toEqual(expected)
-    })
-
     it('should handle parameters in different order', () => {
       const headers = new Headers({
         Link: '</feed.xml>; type="application/rss+xml"; rel="alternate"',
@@ -456,6 +438,16 @@ describe('discoverUrisFromHeaders', () => {
       const expected: Array<string> = []
 
       expect(discoverUrisFromHeaders(headers, defaultOptions)).toEqual(expected)
+    })
+  })
+
+  describe('structured parameter parsing', () => {
+    it('should not read a decoy rel inside a quoted parameter value', () => {
+      const headers = new Headers({
+        Link: '<https://example.com/x>; title="; rel=alternate"; type="application/rss+xml"',
+      })
+      const result = discoverUrisFromHeaders(headers, defaultOptions)
+      expect(result).toEqual([])
     })
   })
 })

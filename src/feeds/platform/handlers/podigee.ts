@@ -3,7 +3,7 @@ import { composeHint, isSubdomainOf } from '../../../common/utils.js'
 
 // Discoverable without handler.
 
-const domainSuffix = /\.podigee\.io$/i
+const domainSuffixRegex = /\.podigee\.io$/i
 
 // Reserved Podigee subdomains that aren't user shows. Without this guard the handler
 // emits 404-bound URLs (e.g. https://www.podigee.io/feed/mp3 redirects to a 404 on
@@ -16,7 +16,7 @@ export const podigeeHandler: PlatformHandler = {
       return false
     }
 
-    const slug = new URL(url).hostname.toLowerCase().replace(domainSuffix, '')
+    const slug = new URL(url).hostname.toLowerCase().replace(domainSuffixRegex, '')
 
     return !reservedSlugs.has(slug)
   },

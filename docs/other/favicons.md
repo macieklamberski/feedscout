@@ -32,6 +32,10 @@ const favicons = await discoverFavicons('https://example.com', {
 })
 ```
 
+::: warning Untrusted SVG favicons
+A favicon validated as an SVG is returned by URL only — its contents are not sanitized. SVG files can carry active content (e.g. `<svg onload="...">`), so treat returned SVG favicon URLs as untrusted: render them as `<img src>` (which neutralizes scripts) rather than inlining the markup, or sanitize before use.
+:::
+
 ## Discovery Methods
 
 Favicons use the same discovery pipeline as feeds — see the [Feeds](/feeds) section for details on how each method works.
