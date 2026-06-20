@@ -160,4 +160,5 @@ Use a custom `fetchFn` when you need:
 - **Consistent HTTP client** — Use the same library across your app.
 - **Custom configuration** — Timeouts, proxies, retry logic.
 - **Request interceptors** — Logging, authentication, caching.
+- **Character encoding** — Decode non-UTF-8 feeds (e.g. `ISO-8859-1`, `Shift_JIS`) by reading the response as bytes and decoding with `TextDecoder` using the charset from the `Content-Type` header or the feed's XML declaration.
 - **Environment compatibility** — Some runtimes may not support native fetch.
