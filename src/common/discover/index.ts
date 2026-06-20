@@ -87,7 +87,8 @@ export const discover = async <TValid>(
     })
 
     const unique = normalized.filter((entry) => {
-      const key = typeof entry.uri === 'string' ? entry.uri : entry.uri.join('\0')
+      // Sort array alternatives so the key is order-independent.
+      const key = typeof entry.uri === 'string' ? entry.uri : [...entry.uri].sort().join('\0')
 
       if (seen.has(key)) {
         return false
