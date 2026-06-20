@@ -8,6 +8,12 @@ export const composeHint = (key: string): DiscoverUriHint => ({
   label: locales.hints[key as keyof typeof locales.hints],
 })
 
+// A response is only acceptable when its status is in the 2xx range. A missing
+// status means the body was supplied directly (no fetch), so treat it as valid.
+export const isSuccessfulStatus = (status: number | undefined): boolean => {
+  return status === undefined || (status >= 200 && status < 300)
+}
+
 export const normalizeMimeType = (type: string): string => {
   return type.split(';')[0].trim().toLowerCase()
 }

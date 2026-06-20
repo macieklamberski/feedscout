@@ -4,13 +4,21 @@ import { discoverFavicons } from './index.js'
 import type { FaviconResult } from './types.js'
 
 const createMockFetch = (responses: Record<string, string>): DiscoverFetchFn => {
-  return async (url: string) => ({
-    url,
-    body: responses[url] ?? '',
-    headers: new Headers(),
-    status: url in responses ? 200 : 404,
-    statusText: url in responses ? 'OK' : 'Not Found',
-  })
+  return (url: string) => {
+    const found = url in responses
+    const body = responses[url] ?? ''
+    // Mocked image endpoints use the 'binary' placeholder body; serve them with
+    // an image content-type so they pass favicon image validation.
+    const headers = new Headers(body === 'binary' ? { 'content-type': 'image/x-icon' } : {})
+
+    return {
+      url,
+      body,
+      headers,
+      status: found ? 200 : 404,
+      statusText: found ? 'OK' : 'Not Found',
+    }
+  }
 }
 
 describe('discoverFavicons', () => {
@@ -37,6 +45,7 @@ describe('discoverFavicons', () => {
       body: '',
       headers: new Headers({
         link: '</favicon.png>; rel="icon"',
+        ...(url.endsWith('.png') ? { 'content-type': 'image/png' } : {}),
       }),
       status: 200,
       statusText: 'OK',
