@@ -14,6 +14,11 @@ export const isSuccessfulStatus = (status: number | undefined): boolean => {
   return status === undefined || (status >= 200 && status < 300)
 }
 
+// Narrow to a plain object, excluding null and arrays (both report typeof 'object').
+export const isObject = (value: unknown): value is object => {
+  return value !== null && typeof value === 'object' && !Array.isArray(value)
+}
+
 export const normalizeMimeType = (type: string): string => {
   return type.split(';')[0].trim().toLowerCase()
 }

@@ -11,12 +11,13 @@ import type {
   DiscoverResolveUrlFn,
   DiscoverUriEntry,
 } from '../types.js'
+import { isObject } from '../utils.js'
 
 export const normalizeInput = async (
   input: DiscoverInput,
   fetchFn: DiscoverFetchFn,
 ): Promise<DiscoverInputObject> => {
-  if (typeof input === 'object') {
+  if (isObject(input)) {
     return input
   }
 

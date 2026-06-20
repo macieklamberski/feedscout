@@ -7,6 +7,7 @@ import {
   includesAnyOf,
   isAnyOf,
   isHostOf,
+  isObject,
   isOfAllowedMimeType,
   isSubdomainOf,
   matchesAnyOfLinkSelectors,
@@ -1203,5 +1204,27 @@ describe('hasMetaContent', () => {
 
   it('should return false for empty HTML', () => {
     expect(hasMetaContent('', 'generator', 'Mastodon')).toBe(false)
+  })
+})
+
+describe('isObject', () => {
+  it('should return true for plain objects', () => {
+    expect(isObject({})).toBe(true)
+    expect(isObject({ url: 'https://example.com' })).toBe(true)
+  })
+
+  it('should return false for null', () => {
+    expect(isObject(null)).toBe(false)
+  })
+
+  it('should return false for arrays', () => {
+    expect(isObject([])).toBe(false)
+    expect(isObject(['https://example.com'])).toBe(false)
+  })
+
+  it('should return false for primitives', () => {
+    expect(isObject('https://example.com')).toBe(false)
+    expect(isObject(42)).toBe(false)
+    expect(isObject(undefined)).toBe(false)
   })
 })
