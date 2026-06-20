@@ -54,6 +54,7 @@ type DiscoverOptions<TValid, TMethods extends DiscoverMethod = DiscoverMethod> =
   stopOnFirstMethod?: boolean
   stopOnFirstResult?: boolean
   concurrency?: number
+  maxUris?: number
   includeInvalid?: boolean
   onProgress?: DiscoverOnProgressFn
 }

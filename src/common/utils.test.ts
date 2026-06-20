@@ -14,6 +14,7 @@ import {
   normalizeMimeType,
   omitEmpty,
   processConcurrently,
+  toPositiveInteger,
 } from './utils.js'
 
 describe('composeHint', () => {
@@ -1226,5 +1227,29 @@ describe('isObject', () => {
     expect(isObject('https://example.com')).toBe(false)
     expect(isObject(42)).toBe(false)
     expect(isObject(undefined)).toBe(false)
+  })
+})
+
+describe('toPositiveInteger', () => {
+  it('should return the value when it is a positive integer', () => {
+    expect(toPositiveInteger(5, 3)).toBe(5)
+    expect(toPositiveInteger(1, 3)).toBe(1)
+  })
+
+  it('should fall back for undefined', () => {
+    expect(toPositiveInteger(undefined, 3)).toBe(3)
+  })
+
+  it('should fall back for NaN', () => {
+    expect(toPositiveInteger(Number.NaN, 3)).toBe(3)
+  })
+
+  it('should fall back for values below 1', () => {
+    expect(toPositiveInteger(0, 3)).toBe(3)
+    expect(toPositiveInteger(-1, 3)).toBe(3)
+  })
+
+  it('should fall back for non-integer values', () => {
+    expect(toPositiveInteger(2.5, 3)).toBe(3)
   })
 })

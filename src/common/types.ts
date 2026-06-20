@@ -163,6 +163,7 @@ export type DiscoverOptions<TValid, TMethods extends DiscoverMethod = DiscoverMe
   stopOnFirstMethod?: boolean
   stopOnFirstResult?: boolean
   concurrency?: number
+  maxUris?: number
   onProgress?: DiscoverOnProgressFn
   onError?: DiscoverOnErrorFn
   includeInvalid?: boolean
@@ -178,6 +179,7 @@ export type DiscoverOptionsInternal<TValid> = {
   stopOnFirstMethod?: boolean
   stopOnFirstResult?: boolean
   concurrency?: number
+  maxUris?: number
   includeInvalid?: boolean
   onProgress?: DiscoverOnProgressFn
   onError?: DiscoverOnErrorFn

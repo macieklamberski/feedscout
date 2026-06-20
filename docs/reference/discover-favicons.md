@@ -46,6 +46,7 @@ All options are optional. When not provided, sensible defaults are used.
 | `stopOnFirstMethod` | `boolean` | `false` | Stop URI collection after first method with results |
 | `stopOnFirstResult` | `boolean` | `false` | Stop after first valid favicon |
 | `concurrency` | `number` | `3` | Max parallel validations |
+| `maxUris` | `number` | `50` | Max total candidate URIs to fetch across all methods |
 | `includeInvalid` | `boolean` | `false` | Include invalid results |
 | `onProgress` | `DiscoverOnProgressFn` | | Progress callback |
 
