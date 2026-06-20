@@ -1,47 +1,47 @@
+import LinkHeader from 'http-link-header'
 import { matchesAnyOfLinkSelectors } from '../../../common/utils.js'
 import type { HeadersMethodOptions } from './types.js'
 
-const linkSplitRegex = /,(?=\s*<)/
-const urlRegex = /<([^<>]+)>/
-const relRegex = /rel\s*=\s*["']?([^"';,]+)["']?/i
-const typeRegex = /type\s*=\s*["']?([^"';,]+)["']?/i
+// RFC 8288 uses double-quoted strings, which the parser already unwraps. Strip a
+// surrounding single-quote pair too, since some servers use them non-standardly.
+const stripQuotes = (value: string): string => {
+  const first = value[0]
+
+  if (value.length >= 2 && (first === '"' || first === "'") && value[value.length - 1] === first) {
+    return value.slice(1, -1)
+  }
+
+  return value
+}
 
 export const discoverUrisFromHeaders = (
   headers: Headers,
   options: HeadersMethodOptions,
 ): Array<string> => {
-  const uris = new Set<string>()
   const linkHeader = headers.get('link')
 
   if (!linkHeader) {
     return []
   }
 
-  // Split by comma, but not commas inside angle brackets or quotes.
-  // Link headers format: <url>; rel="alternate"; type="application/rss+xml".
-  const links = linkHeader.split(linkSplitRegex)
+  // LinkHeader.parse handles RFC 8288 quoting/escaping (so a decoy `rel=` inside a
+  // quoted value can't be read as the rel) and throws on malformed input.
+  let refs: ReturnType<typeof LinkHeader.parse>['refs']
 
-  for (const link of links) {
-    // Parse URL from angle brackets: <URL>.
-    // URLs in Link headers should not contain < or > (must be percent-encoded).
-    const urlMatch = link.match(urlRegex)
-    const relMatch = link.match(relRegex)
-    const typeMatch = link.match(typeRegex)
+  try {
+    refs = LinkHeader.parse(linkHeader).refs
+  } catch {
+    return []
+  }
 
-    if (!urlMatch) {
-      continue
-    }
+  const uris = new Set<string>()
 
-    const url = urlMatch[1]
-    const rel = relMatch?.[1]?.toLowerCase()
-    const type = typeMatch?.[1]
+  for (const ref of refs) {
+    const rel = ref.rel ? stripQuotes(ref.rel) : undefined
+    const type = ref.type ? stripQuotes(ref.type) : undefined
 
-    if (!rel) {
-      continue
-    }
-
-    if (matchesAnyOfLinkSelectors(rel, type, options.linkSelectors)) {
-      uris.add(url)
+    if (rel && matchesAnyOfLinkSelectors(rel, type, options.linkSelectors)) {
+      uris.add(ref.uri)
     }
   }
 
