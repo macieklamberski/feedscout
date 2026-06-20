@@ -30,6 +30,11 @@ export const discover = async <TValid>(
     onProgress,
   } = options
 
+  // Clamp to a positive integer and cap the upper bound; anything invalid
+  // (NaN, < 1, non-integer) falls back to the default.
+  const safeConcurrency =
+    Number.isInteger(concurrency) && concurrency >= 1 ? Math.min(concurrency, 100) : 3
+
   // Normalize input: string → fetch URL, object → use provided content.
   const sourceInput = await normalizeInput(input, fetchFn)
 
@@ -150,7 +155,7 @@ export const discover = async <TValid>(
     const foundBefore = found
 
     await processConcurrently(entries, (entry) => processUri(entry, method), {
-      concurrency,
+      concurrency: safeConcurrency,
       shouldStop: () => {
         return stopOnFirstResult && found > 0
       },
