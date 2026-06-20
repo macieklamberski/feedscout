@@ -8,6 +8,7 @@ import type {
   DiscoverMethodsConfig,
   DiscoverMethodsConfigDefaults,
   DiscoverMethodsConfigInternal,
+  DiscoverOnErrorFn,
   DiscoverResolveUrlFn,
   DiscoverUriEntry,
 } from '../types.js'
@@ -15,6 +16,7 @@ import type {
 export const normalizeInput = async (
   input: DiscoverInput,
   fetchFn: DiscoverFetchFn,
+  onError?: DiscoverOnErrorFn,
 ): Promise<DiscoverInputObject> => {
   if (typeof input === 'object') {
     return input
@@ -29,7 +31,9 @@ export const normalizeInput = async (
       content: typeof response.body === 'string' ? response.body : undefined,
       headers: response.headers,
     }
-  } catch {}
+  } catch (error) {
+    onError?.(error, { phase: 'fetchInput', url: input })
+  }
 
   // When the fetch fails, return the URL without content so that URL-only
   // methods like guess can still run.
