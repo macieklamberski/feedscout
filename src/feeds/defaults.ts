@@ -3,6 +3,7 @@ import type { GuessMethodOptions } from '../common/uris/guess/types.js'
 import type { HeadersMethodOptions } from '../common/uris/headers/types.js'
 import type { HtmlMethodOptions } from '../common/uris/html/types.js'
 import type { PlatformMethodOptions } from '../common/uris/platform/types.js'
+import type { WellknownMethodOptions } from '../common/uris/wellknown/types.js'
 import { acastHandler } from './platform/handlers/acast.js'
 import { amebloHandler } from './platform/handlers/ameblo.js'
 import { applePodcastsHandler } from './platform/handlers/applePodcasts.js'
@@ -202,6 +203,11 @@ export const defaultHeadersOptions: Omit<HeadersMethodOptions, 'baseUrl'> = {
 // Default options for Guess method (excluding baseUrl which is required).
 export const defaultGuessOptions: Omit<GuessMethodOptions, 'baseUrl'> = {
   uris: urisBalanced,
+}
+
+// Default options for Well-known method.
+export const defaultWellknownOptions: Omit<WellknownMethodOptions, 'baseUrl'> = {
+  linkSelectors,
 }
 
 // Default options for Platform method.

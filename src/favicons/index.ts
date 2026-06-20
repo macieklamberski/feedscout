@@ -11,6 +11,7 @@ import {
   defaultHeadersOptions,
   defaultHtmlOptions,
   defaultPlatformOptions,
+  defaultWellknownOptions,
 } from './defaults.js'
 import { defaultExtractFn } from './extractors.js'
 import type { FaviconResult } from './types.js'
@@ -23,7 +24,7 @@ export const discoverFavicons = <TValid extends FaviconResult = FaviconResult>(
     input,
     {
       ...options,
-      methods: options.methods ?? ['platform', 'feed', 'html', 'headers', 'guess'],
+      methods: options.methods ?? ['platform', 'feed', 'html', 'wellknown', 'headers', 'guess'],
       fetchFn: options.fetchFn ?? defaultFetchFn,
       extractFn: options.extractFn ?? defaultExtractFn,
       resolveUrlFn: options.resolveUrlFn ?? defaultResolveUrlFn,
@@ -33,6 +34,7 @@ export const discoverFavicons = <TValid extends FaviconResult = FaviconResult>(
       platform: defaultPlatformOptions,
       feed: defaultFeedOptions,
       html: defaultHtmlOptions,
+      wellknown: defaultWellknownOptions,
       headers: defaultHeadersOptions,
       guess: defaultGuessOptions,
     },

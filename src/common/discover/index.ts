@@ -9,6 +9,7 @@ import {
   discoverMethodOrder,
 } from '../types.js'
 import { discoverUris } from '../uris/index.js'
+import { discoverUrisFromWellknown } from '../uris/wellknown/index.js'
 import { processConcurrently } from '../utils.js'
 import { normalizeInput, normalizeMethodsConfig, normalizeUriEntry } from './utils.js'
 
@@ -77,6 +78,15 @@ export const discover = async <TValid>(
 
   // Step 3: Discover URIs using selected methods.
   const urisByMethod = await discoverUris(methodsConfig, fetchFn)
+
+  // Discover URIs from well-known endpoint (async, requires fetching host-meta).
+  if (methodsConfig.wellknown) {
+    const wellknownUris = await discoverUrisFromWellknown(methodsConfig.wellknown.options, fetchFn)
+
+    if (wellknownUris.length > 0) {
+      urisByMethod.wellknown = wellknownUris
+    }
+  }
 
   // Step 4: Normalize and deduplicate URIs per method group, deduping across groups.
   const seen = new Set<string>()

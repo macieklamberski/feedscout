@@ -8,3 +8,4 @@ export {
 export { discoverUrisFromHeaders } from '../common/uris/headers/index.js'
 export { discoverUrisFromHtml } from '../common/uris/html/index.js'
 export { discoverUrisFromPlatform } from '../common/uris/platform/index.js'
+export { discoverUrisFromWellknown } from '../common/uris/wellknown/index.js'

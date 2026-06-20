@@ -2,6 +2,7 @@ import type { LinkSelector } from '../common/types.js'
 import type { GuessMethodOptions } from '../common/uris/guess/types.js'
 import type { HeadersMethodOptions } from '../common/uris/headers/types.js'
 import type { HtmlMethodOptions } from '../common/uris/html/types.js'
+import type { WellknownMethodOptions } from '../common/uris/wellknown/types.js'
 
 export const urisMinimal = ['/.well-known/recommendations.opml', '/blogroll.opml', '/opml.xml']
 
@@ -36,6 +37,10 @@ export const defaultHtmlOptions: Omit<HtmlMethodOptions, 'baseUrl'> = {
 }
 
 export const defaultHeadersOptions: Omit<HeadersMethodOptions, 'baseUrl'> = {
+  linkSelectors,
+}
+
+export const defaultWellknownOptions: Omit<WellknownMethodOptions, 'baseUrl'> = {
   linkSelectors,
 }
 

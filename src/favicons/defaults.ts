@@ -4,6 +4,7 @@ import type { GuessMethodOptions } from '../common/uris/guess/types.js'
 import type { HeadersMethodOptions } from '../common/uris/headers/types.js'
 import type { HtmlMethodOptions } from '../common/uris/html/types.js'
 import type { PlatformMethodOptions } from '../common/uris/platform/types.js'
+import type { WellknownMethodOptions } from '../common/uris/wellknown/types.js'
 import { omitEmpty } from '../common/utils.js'
 import { blueskyHandler } from './platform/handlers/bluesky.js'
 import { codebergHandler } from './platform/handlers/codeberg.js'
@@ -63,6 +64,11 @@ export const defaultHeadersOptions: Omit<HeadersMethodOptions, 'baseUrl'> = {
 
 export const defaultGuessOptions: Omit<GuessMethodOptions, 'baseUrl'> = {
   uris: defaultGuessPaths,
+}
+
+// Default options for Well-known method.
+export const defaultWellknownOptions: Omit<WellknownMethodOptions, 'baseUrl'> = {
+  linkSelectors,
 }
 
 export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {

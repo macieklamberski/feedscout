@@ -493,6 +493,9 @@ describe('normalizeMethodsConfig', () => {
     guess: {
       uris: feedUrisBalanced,
     },
+    wellknown: {
+      linkSelectors,
+    },
   }
 
   it('should normalize array with single method to config with defaults', () => {
@@ -997,6 +1000,25 @@ describe('normalizeMethodsConfig', () => {
     const throwing = () => normalizeMethodsConfig(value, undefined, { guess: true }, defaults)
 
     expect(throwing).toThrow(locales.errors.guessMethodRequiresUrl)
+  })
+
+  it('should throw error when wellknown method requested without url', () => {
+    const value = {
+      url: '',
+      content: '<html></html>',
+    }
+    const throwing = () => normalizeMethodsConfig(value, undefined, ['wellknown'], defaults)
+
+    expect(throwing).toThrow(locales.errors.wellknownMethodRequiresUrl)
+  })
+
+  it('should throw error when wellknown method in object format without url', () => {
+    const value = {
+      url: '',
+    }
+    const throwing = () => normalizeMethodsConfig(value, undefined, { wellknown: true }, defaults)
+
+    expect(throwing).toThrow(locales.errors.wellknownMethodRequiresUrl)
   })
 
   it('should return complete html config with all default values', () => {

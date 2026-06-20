@@ -732,6 +732,48 @@ describe('discover', () => {
     })
   })
 
+  describe('wellknown', () => {
+    it('should discover feeds from /.well-known/host-meta.json', async () => {
+      const hostMeta = JSON.stringify({
+        links: [
+          {
+            rel: 'alternate',
+            type: 'application/rss+xml',
+            href: 'https://example.com/wellknown-feed',
+          },
+        ],
+      })
+      const mockFetch = createMockFetch({
+        'https://example.com/.well-known/host-meta.json': hostMeta,
+        'https://example.com/wellknown-feed': rss,
+      })
+      const value = await discoverFeeds(
+        { url: 'https://example.com', content: '<html></html>' },
+        {
+          methods: {
+            wellknown: {
+              linkSelectors: [{ rel: 'alternate', types: ['application/rss+xml'] }],
+            },
+          },
+          fetchFn: mockFetch,
+        },
+      )
+      const expected: Array<DiscoverResult<FeedResult>> = [
+        {
+          url: 'https://example.com/wellknown-feed',
+          isValid: true,
+          method: 'wellknown',
+          format: 'rss',
+          title: 'Test RSS',
+          description: 'Test feed',
+          siteUrl: 'https://example.com/',
+        },
+      ]
+
+      expect(value).toEqual(expected)
+    })
+  })
+
   describe('extractFn', () => {
     it('should use custom extractor when provided', async () => {
       const mockFetch = createMockFetch({
