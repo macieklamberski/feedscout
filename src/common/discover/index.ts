@@ -28,10 +28,11 @@ export const discover = async <TValid>(
     concurrency = 3,
     includeInvalid = false,
     onProgress,
+    onError,
   } = options
 
   // Normalize input: string → fetch URL, object → use provided content.
-  const sourceInput = await normalizeInput(input, fetchFn)
+  const sourceInput = await normalizeInput(input, fetchFn, onError)
 
   // Step 1: Check if content is already valid (only if content is provided).
   if (sourceInput.content) {
@@ -61,7 +62,9 @@ export const discover = async <TValid>(
           content: typeof response.body === 'string' ? response.body : '',
           headers: response.headers,
         }
-      } catch {}
+      } catch (error) {
+        onError?.(error, { phase: 'resolveSiteUrl', url: siteUrl })
+      }
     }
   }
 
