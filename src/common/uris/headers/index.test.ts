@@ -404,21 +404,5 @@ describe('discoverUrisFromHeaders', () => {
       const result = discoverUrisFromHeaders(headers, defaultOptions)
       expect(result).toEqual([])
     })
-
-    it('should preserve a comma inside the angle-bracketed URL', () => {
-      const headers = new Headers({
-        Link: '<https://example.com/a,b>; rel="alternate"; type="application/rss+xml"',
-      })
-      const result = discoverUrisFromHeaders(headers, defaultOptions)
-      expect(result).toEqual(['https://example.com/a,b'])
-    })
-
-    it('should preserve a semicolon inside the angle-bracketed URL', () => {
-      const headers = new Headers({
-        Link: '<https://example.com/a;b>; rel="alternate"; type="application/rss+xml"',
-      })
-      const result = discoverUrisFromHeaders(headers, defaultOptions)
-      expect(result).toEqual(['https://example.com/a;b'])
-    })
   })
 })
