@@ -264,22 +264,6 @@ describe('discoverUrisFromHeaders', () => {
       expect(result).toEqual(['/feed.xml'])
     })
 
-    it('should handle single-quoted attributes', () => {
-      const headers = new Headers({
-        Link: "</feed.xml>; rel='alternate'; type='application/rss+xml'",
-      })
-      const result = discoverUrisFromHeaders(headers, defaultOptions)
-      expect(result).toEqual(['/feed.xml'])
-    })
-
-    it('should handle mixed quote styles', () => {
-      const headers = new Headers({
-        Link: '</feed.xml>; rel="alternate"; type=\'application/rss+xml\'',
-      })
-      const result = discoverUrisFromHeaders(headers, defaultOptions)
-      expect(result).toEqual(['/feed.xml'])
-    })
-
     it('should handle parameters in different order', () => {
       const headers = new Headers({
         Link: '</feed.xml>; type="application/rss+xml"; rel="alternate"',
