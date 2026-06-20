@@ -158,7 +158,9 @@ export const processConcurrently = async <T>(
     shouldStop?: () => boolean
   },
 ): Promise<void> => {
-  if (options.concurrency < 1) {
+  // Guard against < 1 and non-numeric (NaN) concurrency, which would otherwise
+  // spin the loop forever since `active.size < NaN` is always false.
+  if (!(options.concurrency >= 1)) {
     return
   }
 
