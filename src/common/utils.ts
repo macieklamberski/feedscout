@@ -19,6 +19,11 @@ export const isObject = (value: unknown): value is object => {
   return value !== null && typeof value === 'object' && !Array.isArray(value)
 }
 
+// Coerce to a positive integer, falling back when missing or invalid (NaN, < 1, non-integer).
+export const toPositiveInteger = (value: number | undefined, fallback: number): number => {
+  return typeof value === 'number' && Number.isInteger(value) && value >= 1 ? value : fallback
+}
+
 export const normalizeMimeType = (type: string): string => {
   return type.split(';')[0].trim().toLowerCase()
 }

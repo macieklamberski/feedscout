@@ -9,7 +9,7 @@ import {
   discoverMethodOrder,
 } from '../types.js'
 import { discoverUris } from '../uris/index.js'
-import { processConcurrently } from '../utils.js'
+import { processConcurrently, toPositiveInteger } from '../utils.js'
 import { normalizeInput, normalizeMethodsConfig, normalizeUriEntry } from './utils.js'
 
 export const discover = async <TValid>(
@@ -26,14 +26,16 @@ export const discover = async <TValid>(
     stopOnFirstMethod = false,
     stopOnFirstResult = false,
     concurrency = 3,
+    maxUris = 50,
     includeInvalid = false,
     onProgress,
     onError,
   } = options
 
-  // Reject NaN, < 1, and non-integer concurrency (which would hang or no-op the
-  // worker loop); a valid explicit value is respected as-is.
-  const safeConcurrency = Number.isInteger(concurrency) && concurrency >= 1 ? concurrency : 3
+  // Sanitize numeric options: reject NaN, < 1, and non-integer values, which
+  // would otherwise hang the worker loop or fetch nothing.
+  const safeConcurrency = toPositiveInteger(concurrency, 3)
+  const safeMaxUris = toPositiveInteger(maxUris, 50)
 
   // Normalize input: string → fetch URL, object → use provided content.
   const sourceInput = await normalizeInput(input, fetchFn, onError)
@@ -81,8 +83,13 @@ export const discover = async <TValid>(
   // Step 4: Normalize and deduplicate URIs per method group, deduping across groups.
   const seen = new Set<string>()
   const methodGroups: Array<{ method: DiscoverMethod; entries: Array<DiscoverUriEntry> }> = []
+  let remaining = safeMaxUris
 
   for (const method of discoverMethodOrder) {
+    if (remaining <= 0) {
+      break
+    }
+
     const rawUris = urisByMethod[method]
 
     if (!rawUris || rawUris.length === 0) {
@@ -107,7 +114,9 @@ export const discover = async <TValid>(
     })
 
     if (unique.length > 0) {
-      methodGroups.push({ method, entries: unique })
+      const capped = unique.slice(0, remaining)
+      remaining -= capped.length
+      methodGroups.push({ method, entries: capped })
     }
   }
 
