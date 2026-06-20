@@ -30,10 +30,9 @@ export const discover = async <TValid>(
     onProgress,
   } = options
 
-  // Clamp to a positive integer and cap the upper bound; anything invalid
-  // (NaN, < 1, non-integer) falls back to the default.
-  const safeConcurrency =
-    Number.isInteger(concurrency) && concurrency >= 1 ? Math.min(concurrency, 100) : 3
+  // Reject NaN, < 1, and non-integer concurrency (which would hang or no-op the
+  // worker loop); a valid explicit value is respected as-is.
+  const safeConcurrency = Number.isInteger(concurrency) && concurrency >= 1 ? concurrency : 3
 
   // Normalize input: string → fetch URL, object → use provided content.
   const sourceInput = await normalizeInput(input, fetchFn)
