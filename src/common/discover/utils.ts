@@ -1,4 +1,5 @@
 import type { Atom } from 'feedsmith'
+import { isObject } from 'trousse'
 import locales from '../locales.json' with { type: 'json' }
 import type {
   DiscoverFetchFn,
@@ -12,7 +13,6 @@ import type {
   DiscoverUriEntry,
 } from '../types.js'
 import type { FeedMethodData } from '../uris/feed/types.js'
-import { isObject } from '../utils.js'
 
 export const normalizeInput = async (
   input: DiscoverInput,

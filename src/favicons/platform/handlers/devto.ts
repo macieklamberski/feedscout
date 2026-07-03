@@ -1,7 +1,7 @@
+import { isAnyOf, isHostOf, isNonEmptyString } from 'trousse'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
-import { isAnyOf, isHostOf } from '../../../common/utils.js'
 import { excludedPaths, hosts } from '../../../feeds/platform/handlers/devto.js'
-import { isNonEmptyString, parseBodyJson } from '../../utils.js'
+import { parseBodyJson } from '../../utils.js'
 
 // Extracts the username from the path, excluding dots to avoid capturing
 // feed extensions that may be appended to the URL.

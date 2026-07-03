@@ -1,5 +1,5 @@
+import { isHostOf } from 'trousse'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
-import { isHostOf } from '../../../common/utils.js'
 import { hosts } from '../../../feeds/platform/handlers/lobsters.js'
 
 const userRegex = /^\/~([a-zA-Z0-9_-]+)/

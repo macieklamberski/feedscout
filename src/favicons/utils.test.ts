@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import { isNonEmptyString, parseBodyJson } from './utils.js'
+import { parseBodyJson } from './utils.js'
 
 describe('parseBodyJson', () => {
   it('should parse valid JSON string', () => {
@@ -27,28 +27,5 @@ describe('parseBodyJson', () => {
     const throwing = () => parseBodyJson('')
 
     expect(throwing).toThrow()
-  })
-})
-
-describe('isNonEmptyString', () => {
-  it('should return true for non-empty strings', () => {
-    expect(isNonEmptyString('hello')).toBe(true)
-    expect(isNonEmptyString('https://example.com/avatar.png')).toBe(true)
-  })
-
-  it('should return false for empty string', () => {
-    expect(isNonEmptyString('')).toBe(false)
-  })
-
-  it('should return false for non-string values', () => {
-    expect(isNonEmptyString(null)).toBe(false)
-    expect(isNonEmptyString(undefined)).toBe(false)
-    expect(isNonEmptyString(42)).toBe(false)
-    expect(isNonEmptyString([])).toBe(false)
-    expect(isNonEmptyString({})).toBe(false)
-  })
-
-  it('should return true for whitespace-only strings', () => {
-    expect(isNonEmptyString(' ')).toBe(true)
   })
 })

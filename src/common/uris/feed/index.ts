@@ -1,5 +1,5 @@
 import { parseFeed } from 'feedsmith'
-import { omitEmpty } from '../../utils.js'
+import { omitEmpty } from 'trousse'
 import type { FeedMethodOptions } from './types.js'
 
 export const discoverUrisFromFeed = (

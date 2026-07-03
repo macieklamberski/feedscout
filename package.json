@@ -49,10 +49,6 @@
       "types": "./dist/methods.d.ts",
       "default": "./dist/methods.js"
     },
-    "./utils": {
-      "types": "./dist/utils.d.ts",
-      "default": "./dist/utils.js"
-    },
     "./package.json": "./package.json"
   },
   "files": [
@@ -60,7 +56,7 @@
   ],
   "scripts": {
     "prepare": "lefthook install",
-    "build": "tsdown src/exports/index.ts src/exports/feeds.ts src/exports/blogrolls.ts src/exports/favicons.ts src/exports/hubs.ts src/exports/methods.ts src/exports/utils.ts --format esm --dts --clean --unbundle --no-fixed-extension",
+    "build": "tsdown src/exports/index.ts src/exports/feeds.ts src/exports/blogrolls.ts src/exports/favicons.ts src/exports/hubs.ts src/exports/methods.ts --format esm --dts --clean --unbundle --no-fixed-extension",
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs"
   },
@@ -76,6 +72,7 @@
     "@types/http-link-header": "^1.0.7",
     "feedsmith": "3.0.0-beta.5",
     "kvalita": "^1.15.1",
+    "trousse": "^1.0.0",
     "tsdown": "^0.22.2",
     "vitepress": "^2.0.0-alpha.17"
   }
