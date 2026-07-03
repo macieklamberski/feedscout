@@ -1,5 +1,5 @@
+import { isSubdomainOf } from 'trousse'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
-import { isSubdomainOf } from '../../../common/utils.js'
 import { domains } from '../../../feeds/platform/handlers/tumblr.js'
 
 export const tumblrHandler: PlatformHandler = {

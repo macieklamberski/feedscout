@@ -1,6 +1,7 @@
+import { isNonEmptyString } from 'trousse'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { hasMetaContent } from '../../../common/utils.js'
-import { isNonEmptyString, parseBodyJson } from '../../utils.js'
+import { parseBodyJson } from '../../utils.js'
 
 const mastodonRegex = /mastodon/i
 

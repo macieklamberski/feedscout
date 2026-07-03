@@ -1,5 +1,6 @@
+import { isAnyOf, isHostOf } from 'trousse'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
-import { composeHint, hasMetaContent, isAnyOf, isHostOf } from '../../../common/utils.js'
+import { composeHint, hasMetaContent } from '../../../common/utils.js'
 
 // Discoverable without handler.
 

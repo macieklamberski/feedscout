@@ -1,6 +1,7 @@
+import { isAnyOf, isHostOf, isSubdomainOf } from 'trousse'
 import type { DiscoverUriEntry } from '../../../common/types.js'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
-import { composeHint, isAnyOf, isHostOf, isSubdomainOf } from '../../../common/utils.js'
+import { composeHint } from '../../../common/utils.js'
 
 // Not discoverable without handler.
 

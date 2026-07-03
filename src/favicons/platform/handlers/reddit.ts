@@ -1,7 +1,7 @@
+import { isHostOf, isNonEmptyString } from 'trousse'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
-import { isHostOf } from '../../../common/utils.js'
 import { hosts } from '../../../feeds/platform/handlers/reddit.js'
-import { isNonEmptyString, parseBodyJson } from '../../utils.js'
+import { parseBodyJson } from '../../utils.js'
 
 // Extracts the subreddit or username from the path, excluding dots to avoid
 // capturing feed extensions like .rss in Reddit feed URLs (e.g., /r/sub.rss).

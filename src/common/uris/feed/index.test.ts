@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import { omitEmpty } from '../../utils.js'
+import { omitEmpty } from 'trousse'
 import { discoverUrisFromFeed } from './index.js'
 
 describe('discoverUrisFromFeed', () => {

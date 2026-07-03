@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'bun:test'
+import { omitEmpty } from 'trousse'
 import type { DiscoverFetchFn } from '../types.js'
-import { omitEmpty } from '../utils.js'
 import { discoverUris } from './index.js'
 
 describe('discoverUris', () => {

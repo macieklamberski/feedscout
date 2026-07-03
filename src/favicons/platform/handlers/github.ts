@@ -1,5 +1,5 @@
+import { isAnyOf, isHostOf } from 'trousse'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
-import { isAnyOf, isHostOf } from '../../../common/utils.js'
 import { excludedPaths, hosts } from '../../../feeds/platform/handlers/github.js'
 
 // Extracts the username from the path, excluding dots to avoid capturing
