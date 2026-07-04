@@ -1206,6 +1206,41 @@ describe('hasMetaContent', () => {
   it('should return false for empty HTML', () => {
     expect(hasMetaContent('', 'generator', 'Mastodon')).toBe(false)
   })
+
+  it('should return true when attributes use single quotes', () => {
+    const value = "<meta name='generator' content='Mastodon v4.2.0'>"
+
+    expect(hasMetaContent(value, 'generator', 'Mastodon')).toBe(true)
+  })
+
+  it('should escape regex special characters in name and value', () => {
+    const value = '<meta name="a.b*c" content="x$y (1+2)">'
+
+    expect(hasMetaContent(value, 'a.b*c', 'x$y (1+2)')).toBe(true)
+    expect(hasMetaContent(value, 'aXbXc', 'x$y (1+2)')).toBe(false)
+  })
+
+  it('should return false when value appears in a non-meta content attribute', () => {
+    const value = '<html><body><div content="Mastodon">text</div></body></html>'
+
+    expect(hasMetaContent(value, 'generator', 'Mastodon')).toBe(false)
+  })
+
+  it('should return false when value appears only in body text', () => {
+    const value =
+      '<html><head><meta name="generator" content="WordPress"></head><body>Migrated from Mastodon last year.</body></html>'
+
+    expect(hasMetaContent(value, 'generator', 'Mastodon')).toBe(false)
+  })
+
+  it('should return consistent results across repeated calls with the same pair', () => {
+    const matching = '<meta name="generator" content="Mastodon">'
+    const nonMatching = '<meta name="generator" content="WordPress">'
+
+    expect(hasMetaContent(matching, 'generator', 'Mastodon')).toBe(true)
+    expect(hasMetaContent(nonMatching, 'generator', 'Mastodon')).toBe(false)
+    expect(hasMetaContent(matching, 'generator', 'Mastodon')).toBe(true)
+  })
 })
 
 describe('isObject', () => {

@@ -112,17 +112,37 @@ export const isOfAllowedMimeType = (
   return isAnyOf(type, allowedTypes, normalizeMimeType)
 }
 
-// Check if HTML contains a meta tag matching a name or property attribute with the given
-// content value (prefix match), regardless of attribute order.
-export const hasMetaContent = (content: string, name: string, value: string): boolean => {
-  const escapedName = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-  const escapedValue = value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-  const metaTagRegex = new RegExp(
-    `<meta(?=[^>]*(?:name|property)=["']${escapedName}["'])(?=[^>]*content=["']${escapedValue})`,
-    'i',
-  )
+const escapeRegex = /[.*+?^${}()|[\]\\]/g
+const metaTagRegexCache = new Map<string, { valueRegex: RegExp; metaTagRegex: RegExp }>()
 
-  return metaTagRegex.test(content)
+// Check if HTML contains a meta tag matching a name or property attribute with the given
+// content value (prefix match), regardless of attribute order. The regexes are compiled once
+// per (name, value) pair — all call sites pass constant pairs, so the cache stays tiny — and a
+// cheap anchored pre-check (content= followed by the value) short-circuits the full scan on
+// pages that cannot match.
+export const hasMetaContent = (content: string, name: string, value: string): boolean => {
+  const key = `${name} ${value}`
+  let entry = metaTagRegexCache.get(key)
+
+  if (entry === undefined) {
+    const escapedName = name.replace(escapeRegex, '\\$&')
+    const escapedValue = value.replace(escapeRegex, '\\$&')
+
+    entry = {
+      valueRegex: new RegExp(`content=["']${escapedValue}`, 'i'),
+      metaTagRegex: new RegExp(
+        `<meta(?=[^>]*(?:name|property)=["']${escapedName}["'])(?=[^>]*content=["']${escapedValue})`,
+        'i',
+      ),
+    }
+    metaTagRegexCache.set(key, entry)
+  }
+
+  if (!entry.valueRegex.test(content)) {
+    return false
+  }
+
+  return entry.metaTagRegex.test(content)
 }
 
 export const omitEmpty = <T>(array: Array<T | null | undefined>): Array<T> => {
