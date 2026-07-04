@@ -243,6 +243,49 @@ describe('matchesAnyOfLinkSelectors', () => {
 
     expect(matchesAnyOfLinkSelectors(rel, type, selectors)).toBe(true)
   })
+
+  it('should match rel with leading and trailing whitespace', () => {
+    const rel = '  alternate  '
+    const type = 'application/rss+xml'
+    const selectors = [{ rel: 'alternate', types: ['application/rss+xml'] }]
+
+    expect(matchesAnyOfLinkSelectors(rel, type, selectors)).toBe(true)
+  })
+
+  it('should match rel words separated by tabs and newlines', () => {
+    const rel = 'alternate\t\nfeed'
+    const type = undefined
+    const selectors = [{ rel: 'feed' }]
+
+    expect(matchesAnyOfLinkSelectors(rel, type, selectors)).toBe(true)
+  })
+
+  it('should trim whitespace around selector rel', () => {
+    const rel = 'feed'
+    const type = undefined
+    const selectors = [{ rel: '  feed  ' }]
+
+    expect(matchesAnyOfLinkSelectors(rel, type, selectors)).toBe(true)
+  })
+
+  it('should return false for empty rel', () => {
+    const rel = ''
+    const type = undefined
+    const selectors = [{ rel: 'feed' }]
+
+    expect(matchesAnyOfLinkSelectors(rel, type, selectors)).toBe(false)
+  })
+
+  it('should check types of every selector whose rel matches', () => {
+    const rel = 'alternate feed'
+    const type = 'application/rss+xml'
+    const selectors = [
+      { rel: 'alternate', types: ['text/html'] },
+      { rel: 'feed', types: ['application/rss+xml'] },
+    ]
+
+    expect(matchesAnyOfLinkSelectors(rel, type, selectors)).toBe(true)
+  })
 })
 
 describe('isOfAllowedMimeType', () => {

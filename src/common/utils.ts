@@ -1,4 +1,4 @@
-import { anyWordMatchesAnyOf, isAnyOf } from 'trousse'
+import { isAnyOf } from 'trousse'
 import locales from './locales.json' with { type: 'json' }
 import type { DiscoverUriHint } from './types.js'
 
@@ -58,22 +58,47 @@ export const hasMetaContent = (content: string, name: string, value: string): bo
   ).test(content)
 }
 
+const whitespaceRegex = /\s+/
+
+// Lowercases and splits rel once, and only when it has whitespace; single-word rels skip the
+// split. This avoids repeating that work for every selector.
 export const matchesAnyOfLinkSelectors = (
   rel: string,
   type: string | undefined,
   selectors: Array<{ rel: string; types?: Array<string> }>,
 ): boolean => {
-  return selectors.some((selector) => {
-    if (!anyWordMatchesAnyOf(rel, [selector.rel])) {
-      return false
+  const lowerRel = rel.toLowerCase()
+  const words = whitespaceRegex.test(lowerRel) ? lowerRel.split(whitespaceRegex) : undefined
+
+  for (const selector of selectors) {
+    const selectorRel = selector.rel.toLowerCase().trim()
+    let wordMatched = false
+
+    if (words === undefined) {
+      wordMatched = lowerRel === selectorRel
+    } else {
+      for (const word of words) {
+        if (word === selectorRel) {
+          wordMatched = true
+          break
+        }
+      }
+    }
+
+    if (!wordMatched) {
+      continue
     }
 
     if (!selector.types) {
       return true
     }
 
-    return isOfAllowedMimeType(type, selector.types)
-  })
+    if (isOfAllowedMimeType(type, selector.types)) {
+      return true
+    }
+  }
+
+  return false
 }
 
 export const processConcurrently = async <T>(
