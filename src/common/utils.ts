@@ -37,17 +37,25 @@ export const isOfAllowedMimeType = (
   return isAnyOf(type, allowedTypes, normalizeMimeType)
 }
 
+const escapeRegex = /[.*+?^${}()|[\]\\]/g
+
 // Check if HTML contains a meta tag matching a name or property attribute with the given
-// content value (prefix match), regardless of attribute order.
+// content value (prefix match), regardless of attribute order. A quick check for "content="
+// followed by the value runs first; when it is missing, the page cannot match and the full
+// attribute-order-independent scan is skipped.
 export const hasMetaContent = (content: string, name: string, value: string): boolean => {
-  const escapedName = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-  const escapedValue = value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-  const metaTagRegex = new RegExp(
+  const escapedValue = value.replace(escapeRegex, '\\$&')
+
+  if (!new RegExp(`content=["']${escapedValue}`, 'i').test(content)) {
+    return false
+  }
+
+  const escapedName = name.replace(escapeRegex, '\\$&')
+
+  return new RegExp(
     `<meta(?=[^>]*(?:name|property)=["']${escapedName}["'])(?=[^>]*content=["']${escapedValue})`,
     'i',
-  )
-
-  return metaTagRegex.test(content)
+  ).test(content)
 }
 
 export const matchesAnyOfLinkSelectors = (
