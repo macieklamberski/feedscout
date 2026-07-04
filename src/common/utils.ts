@@ -157,22 +157,45 @@ export const omitEmpty = <T>(array: Array<T | null | undefined>): Array<T> => {
   return result
 }
 
+// The rel attribute is lowered and split into words once (only when it actually contains
+// whitespace — single-word rels are the common case), instead of once per selector.
 export const matchesAnyOfLinkSelectors = (
   rel: string,
   type: string | undefined,
   selectors: Array<{ rel: string; types?: Array<string> }>,
 ): boolean => {
-  return selectors.some((selector) => {
-    if (!anyWordMatchesAnyOf(rel, [selector.rel])) {
-      return false
+  const lowerRel = rel.toLowerCase()
+  const words = whitespaceRegex.test(lowerRel) ? lowerRel.split(whitespaceRegex) : undefined
+
+  for (const selector of selectors) {
+    const selectorRel = selector.rel.toLowerCase().trim()
+    let wordMatched = false
+
+    if (words === undefined) {
+      wordMatched = lowerRel === selectorRel
+    } else {
+      for (const word of words) {
+        if (word === selectorRel) {
+          wordMatched = true
+          break
+        }
+      }
+    }
+
+    if (!wordMatched) {
+      continue
     }
 
     if (!selector.types) {
       return true
     }
 
-    return isOfAllowedMimeType(type, selector.types)
-  })
+    if (isOfAllowedMimeType(type, selector.types)) {
+      return true
+    }
+  }
+
+  return false
 }
 
 export const processConcurrently = async <T>(
