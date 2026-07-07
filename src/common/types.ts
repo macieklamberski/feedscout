@@ -67,6 +67,13 @@ export type DiscoverProgress = {
 
 export type DiscoverOnProgressFn = (progress: DiscoverProgress) => void
 
+export type DiscoverErrorContext = {
+  phase: 'fetchInput' | 'resolveSiteUrl'
+  url?: string
+}
+
+export type DiscoverOnErrorFn = (error: unknown, context: DiscoverErrorContext) => void
+
 // Base result type - TValid contains fields present when isValid = true.
 export type DiscoverResult<TValid = object> =
   | ({
@@ -156,7 +163,9 @@ export type DiscoverOptions<TValid, TMethods extends DiscoverMethod = DiscoverMe
   stopOnFirstMethod?: boolean
   stopOnFirstResult?: boolean
   concurrency?: number
+  maxUris?: number
   onProgress?: DiscoverOnProgressFn
+  onError?: DiscoverOnErrorFn
   includeInvalid?: boolean
 }
 
@@ -170,6 +179,8 @@ export type DiscoverOptionsInternal<TValid> = {
   stopOnFirstMethod?: boolean
   stopOnFirstResult?: boolean
   concurrency?: number
+  maxUris?: number
   includeInvalid?: boolean
   onProgress?: DiscoverOnProgressFn
+  onError?: DiscoverOnErrorFn
 }

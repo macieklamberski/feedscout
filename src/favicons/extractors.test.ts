@@ -167,33 +167,32 @@ describe('defaultExtractFn', () => {
 
       expect(await defaultExtractFn(value)).toEqual(expected)
     })
+
+    it.todo('should not detect svg when <svg appears beyond the 200-char head slice', () => {
+      // An <?xml document whose <svg tag only appears after 200+ characters of prolog and comments
+      // is not detected as an image because the check only inspects the first 200 characters; the
+      // desired boundary is undecided.
+    })
   })
 
   describe('status code', () => {
-    it('should return isValid: true for status 200', async () => {
+    it('should return isValid: false for status 200 without an image signal', async () => {
       const value = { url: 'https://example.com/icon.png', content: '', status: 200 }
-      const expected = { url: 'https://example.com/icon.png', isValid: true }
+      const expected = { url: 'https://example.com/icon.png', isValid: false }
 
       expect(await defaultExtractFn(value)).toEqual(expected)
     })
 
-    it('should return isValid: true for status 299', async () => {
+    it('should return isValid: false for status 299 without an image signal', async () => {
       const value = { url: 'https://example.com/icon.png', content: '', status: 299 }
-      const expected = { url: 'https://example.com/icon.png', isValid: true }
+      const expected = { url: 'https://example.com/icon.png', isValid: false }
 
       expect(await defaultExtractFn(value)).toEqual(expected)
     })
 
-    it('should return isValid: true for status 301', async () => {
+    it('should return isValid: false for status 301 without an image signal', async () => {
       const value = { url: 'https://example.com/icon.png', content: '', status: 301 }
-      const expected = { url: 'https://example.com/icon.png', isValid: true }
-
-      expect(await defaultExtractFn(value)).toEqual(expected)
-    })
-
-    it('should return isValid: true for status 399', async () => {
-      const value = { url: 'https://example.com/icon.png', content: '', status: 399 }
-      const expected = { url: 'https://example.com/icon.png', isValid: true }
+      const expected = { url: 'https://example.com/icon.png', isValid: false }
 
       expect(await defaultExtractFn(value)).toEqual(expected)
     })
@@ -228,6 +227,29 @@ describe('defaultExtractFn', () => {
 
     it('should return isValid: false for undefined status without other signals', async () => {
       const value = { url: 'https://example.com/icon.png', content: '' }
+      const expected = { url: 'https://example.com/icon.png', isValid: false }
+
+      expect(await defaultExtractFn(value)).toEqual(expected)
+    })
+
+    it('should return isValid: true for an image signal on a 2xx status', async () => {
+      const value = {
+        url: 'https://example.com/icon.png',
+        content: '',
+        headers: new Headers({ 'content-type': 'image/png' }),
+        status: 200,
+      }
+      const expected = { url: 'https://example.com/icon.png', isValid: true }
+
+      expect(await defaultExtractFn(value)).toEqual(expected)
+    })
+
+    it('should return isValid: false for an image signal on an error status', async () => {
+      const value = {
+        url: 'https://example.com/icon.png',
+        content: '<svg xmlns="http://www.w3.org/2000/svg"></svg>',
+        status: 404,
+      }
       const expected = { url: 'https://example.com/icon.png', isValid: false }
 
       expect(await defaultExtractFn(value)).toEqual(expected)

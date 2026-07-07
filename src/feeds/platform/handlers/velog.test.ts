@@ -3,14 +3,14 @@ import { velogHandler } from './velog.js'
 
 describe('velogHandler', () => {
   describe('match', () => {
-    const cases = [
-      ['https://velog.io/@velopert', true],
-      ['https://www.velog.io/@user', true],
-      ['https://velog.io', true],
-      ['https://example.com', false],
-    ] as const
+    const values: Array<[boolean, string]> = [
+      [true, 'https://velog.io/@velopert'],
+      [true, 'https://www.velog.io/@user'],
+      [true, 'https://velog.io'],
+      [false, 'https://example.com'],
+    ]
 
-    it.each(cases)('%s -> %s', (url, expected) => {
+    it.each(values)('should return %s for %s', (expected, url) => {
       expect(velogHandler.match(url)).toBe(expected)
     })
 
@@ -60,6 +60,11 @@ describe('velogHandler', () => {
       const value = 'https://velog.io/trending'
 
       expect(velogHandler.resolve(value)).toEqual([])
+    })
+
+    it.todo('should define behavior for invalid URL input', () => {
+      // resolve('not-a-url') currently throws a TypeError from the unguarded new URL call; the
+      // desired contract (throw vs empty array) is undecided.
     })
   })
 })

@@ -3,15 +3,15 @@ import { vimeoHandler } from './vimeo.js'
 
 describe('vimeoHandler', () => {
   describe('match', () => {
-    const cases = [
-      ['https://vimeo.com/casey', true],
-      ['https://vimeo.com/channels/staffpicks', true],
-      ['https://www.vimeo.com/user', true],
-      ['https://youtube.com/user', false],
-      ['https://example.com', false],
-    ] as const
+    const values: Array<[boolean, string]> = [
+      [true, 'https://vimeo.com/casey'],
+      [true, 'https://vimeo.com/channels/staffpicks'],
+      [true, 'https://www.vimeo.com/user'],
+      [false, 'https://youtube.com/user'],
+      [false, 'https://example.com'],
+    ]
 
-    it.each(cases)('%s -> %s', (url, expected) => {
+    it.each(values)('should return %s for %s', (expected, url) => {
       expect(vimeoHandler.match(url)).toBe(expected)
     })
 
@@ -172,6 +172,32 @@ describe('vimeoHandler', () => {
         'https://vimeo.com/upload',
         'https://vimeo.com/settings',
         'https://vimeo.com/explore',
+        'https://vimeo.com/about',
+        'https://vimeo.com/album',
+        'https://vimeo.com/blog',
+        'https://vimeo.com/business',
+        'https://vimeo.com/careers',
+        'https://vimeo.com/categories',
+        'https://vimeo.com/channels',
+        'https://vimeo.com/create',
+        'https://vimeo.com/enterprise',
+        'https://vimeo.com/features',
+        'https://vimeo.com/for-hire',
+        'https://vimeo.com/groups',
+        'https://vimeo.com/help',
+        'https://vimeo.com/join',
+        'https://vimeo.com/log_in',
+        'https://vimeo.com/manage',
+        'https://vimeo.com/ondemand',
+        'https://vimeo.com/ott',
+        'https://vimeo.com/plus',
+        'https://vimeo.com/pricing',
+        'https://vimeo.com/pro',
+        'https://vimeo.com/showcase',
+        'https://vimeo.com/site_map',
+        'https://vimeo.com/solutions',
+        'https://vimeo.com/stock',
+        'https://vimeo.com/upgrade',
       ]
 
       for (const value of values) {
@@ -189,6 +215,11 @@ describe('vimeoHandler', () => {
       for (const value of values) {
         expect(vimeoHandler.resolve(value)).toEqual([])
       }
+    })
+
+    it.todo('should define behavior for invalid URL input', () => {
+      // resolve('not-a-url') currently throws a TypeError from the unguarded new URL call; the
+      // desired contract (throw vs empty array) is undecided.
     })
   })
 })

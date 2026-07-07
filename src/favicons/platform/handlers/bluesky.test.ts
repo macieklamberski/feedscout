@@ -87,7 +87,7 @@ describe('blueskyHandler', () => {
             avatar: 'https://cdn.bsky.app/img/avatar/plain/did:plc:abc123/avatar.jpg',
           }),
       })
-      const value = await blueskyHandler.resolve(
+      const result = await blueskyHandler.resolve(
         'https://bsky.app/profile/user.bsky.social',
         undefined,
         undefined,
@@ -97,7 +97,7 @@ describe('blueskyHandler', () => {
         { uri: 'https://cdn.bsky.app/img/avatar/plain/did:plc:abc123/avatar.jpg' },
       ]
 
-      expect(value).toEqual(expected)
+      expect(result).toEqual(expected)
     })
 
     it('should resolve avatar for custom domain handle', async () => {
@@ -107,7 +107,7 @@ describe('blueskyHandler', () => {
             avatar: 'https://cdn.bsky.app/img/avatar/plain/did:plc:xyz/avatar.jpg',
           }),
       })
-      const value = await blueskyHandler.resolve(
+      const result = await blueskyHandler.resolve(
         'https://bsky.app/profile/example.com',
         undefined,
         undefined,
@@ -117,13 +117,13 @@ describe('blueskyHandler', () => {
         { uri: 'https://cdn.bsky.app/img/avatar/plain/did:plc:xyz/avatar.jpg' },
       ]
 
-      expect(value).toEqual(expected)
+      expect(result).toEqual(expected)
     })
 
     it('should return empty array when fetchFn is not provided', async () => {
-      const value = await blueskyHandler.resolve('https://bsky.app/profile/user.bsky.social')
+      const result = await blueskyHandler.resolve('https://bsky.app/profile/user.bsky.social')
 
-      expect(value).toEqual([])
+      expect(result).toEqual([])
     })
 
     it('should return empty array when avatar is empty string', async () => {
@@ -131,14 +131,14 @@ describe('blueskyHandler', () => {
         'https://public.api.bsky.app/xrpc/app.bsky.actor.getProfile?actor=user.bsky.social':
           JSON.stringify({ avatar: '' }),
       })
-      const value = await blueskyHandler.resolve(
+      const result = await blueskyHandler.resolve(
         'https://bsky.app/profile/user.bsky.social',
         undefined,
         undefined,
         mockFetch,
       )
 
-      expect(value).toEqual([])
+      expect(result).toEqual([])
     })
 
     it('should return empty array when avatar is not a string', async () => {
@@ -146,14 +146,14 @@ describe('blueskyHandler', () => {
         'https://public.api.bsky.app/xrpc/app.bsky.actor.getProfile?actor=user.bsky.social':
           JSON.stringify({ avatar: 123 }),
       })
-      const value = await blueskyHandler.resolve(
+      const result = await blueskyHandler.resolve(
         'https://bsky.app/profile/user.bsky.social',
         undefined,
         undefined,
         mockFetch,
       )
 
-      expect(value).toEqual([])
+      expect(result).toEqual([])
     })
 
     it('should return empty array when API returns no avatar', async () => {
@@ -161,14 +161,14 @@ describe('blueskyHandler', () => {
         'https://public.api.bsky.app/xrpc/app.bsky.actor.getProfile?actor=user.bsky.social':
           JSON.stringify({}),
       })
-      const value = await blueskyHandler.resolve(
+      const result = await blueskyHandler.resolve(
         'https://bsky.app/profile/user.bsky.social',
         undefined,
         undefined,
         mockFetch,
       )
 
-      expect(value).toEqual([])
+      expect(result).toEqual([])
     })
 
     it('should return empty array when API returns invalid JSON', async () => {
@@ -176,35 +176,47 @@ describe('blueskyHandler', () => {
         'https://public.api.bsky.app/xrpc/app.bsky.actor.getProfile?actor=user.bsky.social':
           'not json',
       })
-      const value = await blueskyHandler.resolve(
+      const result = await blueskyHandler.resolve(
         'https://bsky.app/profile/user.bsky.social',
         undefined,
         undefined,
         mockFetch,
       )
 
-      expect(value).toEqual([])
+      expect(result).toEqual([])
     })
 
     it('should return empty array when fetch throws', async () => {
       const mockFetch: DiscoverFetchFn = () => {
         throw new Error('Network error')
       }
-      const value = await blueskyHandler.resolve(
+      const result = await blueskyHandler.resolve(
         'https://bsky.app/profile/user.bsky.social',
         undefined,
         undefined,
         mockFetch,
       )
 
-      expect(value).toEqual([])
+      expect(result).toEqual([])
     })
 
     it('should return empty array for invalid URL', async () => {
       const mockFetch = createMockFetch({})
-      const value = await blueskyHandler.resolve('not-a-url', undefined, undefined, mockFetch)
+      const result = await blueskyHandler.resolve('not-a-url', undefined, undefined, mockFetch)
 
-      expect(value).toEqual([])
+      expect(result).toEqual([])
+    })
+
+    it('should return empty array for non-profile path', async () => {
+      const mockFetch = createMockFetch({})
+      const result = await blueskyHandler.resolve(
+        'https://bsky.app/about',
+        undefined,
+        undefined,
+        mockFetch,
+      )
+
+      expect(result).toEqual([])
     })
 
     it('should resolve avatar from www.bsky.app variant', async () => {
@@ -214,7 +226,7 @@ describe('blueskyHandler', () => {
             avatar: 'https://cdn.bsky.app/img/avatar/plain/did:plc:abc/avatar.jpg',
           }),
       })
-      const value = await blueskyHandler.resolve(
+      const result = await blueskyHandler.resolve(
         'https://www.bsky.app/profile/user.bsky.social',
         undefined,
         undefined,
@@ -224,7 +236,7 @@ describe('blueskyHandler', () => {
         { uri: 'https://cdn.bsky.app/img/avatar/plain/did:plc:abc/avatar.jpg' },
       ]
 
-      expect(value).toEqual(expected)
+      expect(result).toEqual(expected)
     })
   })
 })

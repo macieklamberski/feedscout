@@ -3,8 +3,6 @@ import type { GuessMethodOptions } from '../common/uris/guess/types.js'
 import type { HeadersMethodOptions } from '../common/uris/headers/types.js'
 import type { HtmlMethodOptions } from '../common/uris/html/types.js'
 
-export const mimeTypes = ['text/x-opml', 'application/xml', 'text/xml']
-
 export const urisMinimal = ['/.well-known/recommendations.opml', '/blogroll.opml', '/opml.xml']
 
 export const urisBalanced = [
@@ -25,7 +23,8 @@ export const anchorLabels = ['blogroll', 'opml', 'subscriptions', 'reading list'
 
 export const linkSelectors: Array<LinkSelector> = [
   { rel: 'blogroll' },
-  { rel: 'outline', types: mimeTypes },
+  { rel: 'outline', types: ['text/x-opml', 'application/opml+xml', 'application/xml', 'text/xml'] },
+  { rel: 'alternate', types: ['text/x-opml', 'application/opml+xml'] },
 ]
 
 export const defaultHtmlOptions: Omit<HtmlMethodOptions, 'baseUrl'> = {
@@ -33,6 +32,7 @@ export const defaultHtmlOptions: Omit<HtmlMethodOptions, 'baseUrl'> = {
   anchorUris: urisComprehensive,
   anchorIgnoredUris: [],
   anchorLabels,
+  anchorAttributes: ['aria-label', 'title'],
 }
 
 export const defaultHeadersOptions: Omit<HeadersMethodOptions, 'baseUrl'> = {

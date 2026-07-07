@@ -3,14 +3,14 @@ import { zennHandler } from './zenn.js'
 
 describe('zennHandler', () => {
   describe('match', () => {
-    const cases = [
-      ['https://zenn.dev/zenn', true],
-      ['https://www.zenn.dev/user', true],
-      ['https://zenn.dev', true],
-      ['https://example.com', false],
-    ] as const
+    const values: Array<[boolean, string]> = [
+      [true, 'https://zenn.dev/zenn'],
+      [true, 'https://www.zenn.dev/user'],
+      [true, 'https://zenn.dev'],
+      [false, 'https://example.com'],
+    ]
 
-    it.each(cases)('%s -> %s', (url, expected) => {
+    it.each(values)('should return %s for %s', (expected, url) => {
       expect(zennHandler.match(url)).toBe(expected)
     })
 
@@ -93,9 +93,32 @@ describe('zennHandler', () => {
     })
 
     it('should return empty array for excluded paths', () => {
-      const value = 'https://zenn.dev/topics'
+      const values = [
+        'https://zenn.dev/topics',
+        'https://zenn.dev/about',
+        'https://zenn.dev/api',
+        'https://zenn.dev/articles',
+        'https://zenn.dev/books',
+        'https://zenn.dev/login',
+        'https://zenn.dev/notifications',
+        'https://zenn.dev/p',
+        'https://zenn.dev/privacy',
+        'https://zenn.dev/publications',
+        'https://zenn.dev/scraps',
+        'https://zenn.dev/search',
+        'https://zenn.dev/settings',
+        'https://zenn.dev/signup',
+        'https://zenn.dev/terms',
+      ]
 
-      expect(zennHandler.resolve(value)).toEqual([])
+      for (const value of values) {
+        expect(zennHandler.resolve(value)).toEqual([])
+      }
+    })
+
+    it.todo('should define behavior for invalid URL input', () => {
+      // resolve('not-a-url') currently throws a TypeError from the unguarded new URL call; the
+      // desired contract (throw vs empty array) is undecided.
     })
   })
 })

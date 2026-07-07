@@ -52,11 +52,15 @@ const anchorLabels = ['rss', 'feed', 'atom', 'subscribe', 'syndicate', 'json fee
 
 const anchorPathSegments = [/\/rss\//, /\/atom\//, /\/feed\//]
 
+const anchorAttributes = ['aria-label', 'title', 'data-framer-name']
+
 const defaultOptions: HtmlMethodOptions = {
   linkSelectors: [{ rel: 'alternate', types: linkMimeTypes }, { rel: 'feed' }],
-  anchorUris: [...anchorUris, ...anchorPathSegments],
+  anchorUris,
+  anchorPathSegments,
   anchorIgnoredUris,
   anchorLabels,
+  anchorAttributes,
 }
 
 describe('discoverUrisFromHtml', () => {
@@ -170,13 +174,6 @@ describe('discoverUrisFromHtml', () => {
       expect(discoverUrisFromHtml(value, defaultOptions)).toEqual(expected)
     })
 
-    it('should handle uppercase rel="ALTERNATE"', () => {
-      const value = '<link rel="ALTERNATE" type="application/rss+xml" href="/feed.xml">'
-      const expected = ['/feed.xml']
-
-      expect(discoverUrisFromHtml(value, defaultOptions)).toEqual(expected)
-    })
-
     it('should handle mixed case rel="Feed Alternate"', () => {
       const value = '<link rel="Feed Alternate" type="application/rss+xml" href="/feed.xml">'
       const expected = ['/feed.xml']
@@ -205,15 +202,13 @@ describe('discoverUrisFromHtml', () => {
       expect(discoverUrisFromHtml(value, defaultOptions)).toEqual(expected)
     })
 
-    it.skip('should ignore feed stylesheet', () => {
-      // This is not supported for now as the chance of such thing happening is quite
-      // low anyway. It's better to incorrectly treat such as valid than to treat
-      // `rel="feed home"` or `rel="feed alternate"` as invalid.
-
-      const value = '<link rel="feed stylesheet" href="/feed.xml">'
-      const expected: Array<string> = []
-
-      expect(discoverUrisFromHtml(value, defaultOptions)).toEqual(expected)
+    it.todo('should ignore feed stylesheet', () => {
+      // '<link rel="feed stylesheet" href="/feed.xml">' is currently treated as a feed link because
+      // any rel containing "feed" matches.
+      // Rejecting it is intentionally unsupported for now: filtering out "stylesheet" risks also
+      // rejecting valid compound values like "feed home" or "feed alternate", and the combination
+      // is rare in the wild.
+      // Expected once supported: this markup yields an empty array.
     })
 
     it('should find multiple feed links with different MIME types', () => {
@@ -228,13 +223,6 @@ describe('discoverUrisFromHtml', () => {
     })
 
     it('should handle self-closing link tags', () => {
-      const value = '<link rel="alternate" type="application/rss+xml" href="/feed.xml" />'
-      const expected = ['/feed.xml']
-
-      expect(discoverUrisFromHtml(value, defaultOptions)).toEqual(expected)
-    })
-
-    it('should handle self-closing link tags with type attribute', () => {
       const value = '<link rel="alternate" type="application/rss+xml" href="/feed.xml" />'
       const expected = ['/feed.xml']
 
@@ -289,8 +277,10 @@ describe('discoverUrisFromHtml', () => {
       const value = '<a href="/feed/comments">Comments</a>'
       const expected: Array<string> = []
 
-      // Uses string-only anchorUris to test pure suffix matching behavior.
-      expect(discoverUrisFromHtml(value, { ...defaultOptions, anchorUris })).toEqual(expected)
+      // Uses string-only anchorUris and no path segments to test pure suffix matching behavior.
+      expect(
+        discoverUrisFromHtml(value, { ...defaultOptions, anchorUris, anchorPathSegments: [] }),
+      ).toEqual(expected)
     })
 
     it('should ignore wp-json/oembed/ URI', () => {
@@ -350,16 +340,17 @@ describe('discoverUrisFromHtml', () => {
 
       expect(discoverUrisFromHtml(value, defaultOptions)).toEqual(expected)
     })
-  })
 
-  describe('anchor elements by text content', () => {
-    it('should find anchor with "RSS" text', () => {
-      const value = '<a href="/my-feed">RSS</a>'
-      const expected = ['/my-feed']
+    it('should not match a feed path segment that only appears in the query string', () => {
+      const value =
+        '<a href="https://www.live.com/Default.aspx?add=https://site.example/rss/section">x</a>'
+      const expected: Array<string> = []
 
       expect(discoverUrisFromHtml(value, defaultOptions)).toEqual(expected)
     })
+  })
 
+  describe('anchor elements by text content', () => {
     it('should find anchor with "feed" text', () => {
       const value = '<a href="/custom-url">Subscribe to our feed</a>'
       const expected = ['/custom-url']
@@ -370,13 +361,6 @@ describe('discoverUrisFromHtml', () => {
     it('should find anchor with "Atom" text', () => {
       const value = '<a href="/articles.xml">Atom Feed</a>'
       const expected = ['/articles.xml']
-
-      expect(discoverUrisFromHtml(value, defaultOptions)).toEqual(expected)
-    })
-
-    it('should find anchor with "subscribe" text', () => {
-      const value = '<a href="/updates">Subscribe</a>'
-      const expected = ['/updates']
 
       expect(discoverUrisFromHtml(value, defaultOptions)).toEqual(expected)
     })
@@ -414,6 +398,126 @@ describe('discoverUrisFromHtml', () => {
       const expected = ['/feed.xml']
 
       expect(discoverUrisFromHtml(value, defaultOptions)).toEqual(expected)
+    })
+  })
+
+  describe('anchor elements by title and aria-label', () => {
+    it('should find icon-only anchor with feed label in title', () => {
+      const value = '<a href="/blog/syndication" title="RSS feed"><svg></svg></a>'
+      const expected = ['/blog/syndication']
+
+      expect(discoverUrisFromHtml(value, defaultOptions)).toEqual(expected)
+    })
+
+    it('should find icon-only anchor with feed label in aria-label', () => {
+      const value = '<a href="/blog/syndication" aria-label="Subscribe via RSS"><svg></svg></a>'
+      const expected = ['/blog/syndication']
+
+      expect(discoverUrisFromHtml(value, defaultOptions)).toEqual(expected)
+    })
+
+    it('should not match anchor when title and aria-label lack feed labels', () => {
+      const value = '<a href="/about" title="About us" aria-label="Home"><svg></svg></a>'
+      const expected: Array<string> = []
+
+      expect(discoverUrisFromHtml(value, defaultOptions)).toEqual(expected)
+    })
+
+    it('should ignore feed label in title when href is an ignored URI', () => {
+      const value = '<a href="/wp-json/wp/v2/posts" title="RSS feed"><svg></svg></a>'
+      const expected: Array<string> = []
+
+      expect(discoverUrisFromHtml(value, defaultOptions)).toEqual(expected)
+    })
+  })
+
+  describe('anchor elements by descendant attribute label', () => {
+    it('should find a Framer icon-only feed link via a descendant data-framer-name', () => {
+      // Framer wraps the feed link around an icon child whose layer name is the only feed signal;
+      // the anchor itself has no text, title, or aria-label.
+      const value =
+        '<a href="https://provider.example/fd/abc123.xml" target="_blank" rel="noopener"><div data-framer-component-type="SVG" data-framer-name="RSS Icon" aria-hidden="true"></div></a>'
+      const expected = ['https://provider.example/fd/abc123.xml']
+
+      expect(discoverUrisFromHtml(value, defaultOptions)).toEqual(expected)
+    })
+
+    it('should not match when the descendant attribute lacks a feed label', () => {
+      const value =
+        '<a href="https://provider.example/fd/abc123.xml"><div data-framer-name="Search Icon"></div></a>'
+      const expected: Array<string> = []
+
+      expect(discoverUrisFromHtml(value, defaultOptions)).toEqual(expected)
+    })
+
+    it('should not scan descendant attributes when none are configured', () => {
+      const value =
+        '<a href="https://provider.example/fd/abc123.xml"><div data-framer-name="RSS Icon"></div></a>'
+      const expected: Array<string> = []
+
+      expect(
+        discoverUrisFromHtml(value, { ...defaultOptions, anchorAttributes: undefined }),
+      ).toEqual(expected)
+    })
+  })
+
+  describe('<base href> resolution', () => {
+    const withBase = { ...defaultOptions, baseUrl: 'https://example.com/page' }
+
+    it('should resolve relative anchor hrefs against an absolute <base href>', () => {
+      const value = '<base href="https://example.com/sub/"><a href="feed.xml">RSS</a>'
+      const expected = ['https://example.com/sub/feed.xml']
+
+      expect(discoverUrisFromHtml(value, withBase)).toEqual(expected)
+    })
+
+    it('should resolve relative link hrefs against a relative <base href> and the page URL', () => {
+      const value =
+        '<base href="/blog/"><link rel="alternate" type="application/rss+xml" href="rss">'
+      const expected = ['https://example.com/blog/rss']
+
+      expect(discoverUrisFromHtml(value, withBase)).toEqual(expected)
+    })
+
+    it('should leave absolute discovered URLs unchanged under a <base href>', () => {
+      const value =
+        '<base href="https://example.com/sub/"><link rel="alternate" type="application/rss+xml" href="https://feeds.example.org/rss.xml">'
+      const expected = ['https://feeds.example.org/rss.xml']
+
+      expect(discoverUrisFromHtml(value, withBase)).toEqual(expected)
+    })
+
+    it('should ignore an empty <base href> and leave URLs unchanged', () => {
+      const value = '<base href=""><a href="/feed.xml">RSS</a>'
+      const expected = ['/feed.xml']
+
+      expect(discoverUrisFromHtml(value, withBase)).toEqual(expected)
+    })
+
+    it('should use the first <base href> when multiple are present', () => {
+      const value =
+        '<base href="https://a.example/x/"><base href="https://b.example/y/"><a href="feed.xml">RSS</a>'
+      const expected = ['https://a.example/x/feed.xml']
+
+      expect(discoverUrisFromHtml(value, withBase)).toEqual(expected)
+    })
+
+    it('should resolve against an absolute <base href> when no page URL is provided', () => {
+      const value = '<base href="https://example.com/sub/"><a href="feed.xml">RSS</a>'
+      const expected = ['https://example.com/sub/feed.xml']
+
+      // defaultOptions has no baseUrl, so the base href is used directly.
+      expect(discoverUrisFromHtml(value, defaultOptions)).toEqual(expected)
+    })
+
+    it('should leave URLs unchanged when the base cannot be resolved', () => {
+      const value = '<base href="/sub/"><a href="feed.xml">RSS</a>'
+      const expected = ['feed.xml']
+
+      // A relative base with an invalid page URL resolves to nothing usable.
+      expect(
+        discoverUrisFromHtml(value, { ...defaultOptions, baseUrl: 'not-a-valid-url' }),
+      ).toEqual(expected)
     })
   })
 
@@ -615,7 +719,7 @@ describe('discoverUrisFromHtml', () => {
     it('should handle very large HTML document', () => {
       const feedLink = '<link rel="alternate" type="application/rss+xml" href="/feed.xml">'
       const fillerContent = '<p>filler content</p>'.repeat(10000)
-      const value = feedLink + fillerContent
+      const value = `${feedLink}${fillerContent}`
       const expected = ['/feed.xml']
 
       expect(discoverUrisFromHtml(value, defaultOptions)).toEqual(expected)
@@ -626,16 +730,16 @@ describe('discoverUrisFromHtml', () => {
         '\n',
       )
       const actualFeed = '<link rel="alternate" type="application/rss+xml" href="/feed.xml">'
-      const value = actualFeed + links
+      const value = `${actualFeed}${links}`
       const expected = ['/feed.xml']
 
       expect(discoverUrisFromHtml(value, defaultOptions)).toEqual(expected)
     })
   })
 
-  // TODO: These edge cases should be handled during URL resolution phase.
-  // Currently, raw URIs are returned without validation. Invalid protocols
-  // and fragment-only URIs should be filtered when resolving to absolute URLs.
+  // The HTML method returns raw matched hrefs without protocol or fragment validation, so hash-only
+  // and non-http protocols pass through here and are filtered later during URL resolution. These
+  // tests pin that pass-through behavior.
   describe('unsupported edge cases', () => {
     it('should return hash-only href when matched by text', () => {
       const value = '<a href="#">RSS Feed</a>'

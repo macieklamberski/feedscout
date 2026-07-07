@@ -1,13 +1,13 @@
+import { isAnyOf, isHostOf, isNonEmptyString } from 'trousse'
 import type { DiscoverFetchFn } from '../../../common/types.js'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
-import { isAnyOf, isHostOf } from '../../../common/utils.js'
 import {
   excludedPaths,
   hosts,
   isGitlabHeaders,
   isGitlabHtml,
 } from '../../../feeds/platform/handlers/gitlab.js'
-import { isNonEmptyString, parseBodyJson } from '../../utils.js'
+import { parseBodyJson } from '../../utils.js'
 
 // Extracts the username from the path. GitLab usernames can contain dots,
 // so the regex strips the .atom feed extension instead of excluding dots.

@@ -9,7 +9,7 @@ import {
   discoverMethodOrder,
 } from '../types.js'
 import { discoverUris } from '../uris/index.js'
-import { processConcurrently } from '../utils.js'
+import { processConcurrently, toPositiveInteger } from '../utils.js'
 import { normalizeInput, normalizeMethodsConfig, normalizeUriEntry } from './utils.js'
 
 export const discover = async <TValid>(
@@ -26,12 +26,19 @@ export const discover = async <TValid>(
     stopOnFirstMethod = false,
     stopOnFirstResult = false,
     concurrency = 3,
+    maxUris = 50,
     includeInvalid = false,
     onProgress,
+    onError,
   } = options
 
+  // Sanitize numeric options: reject NaN, < 1, and non-integer values, which
+  // would otherwise hang the worker loop or fetch nothing.
+  const safeConcurrency = toPositiveInteger(concurrency, 3)
+  const safeMaxUris = toPositiveInteger(maxUris, 50)
+
   // Normalize input: string → fetch URL, object → use provided content.
-  const sourceInput = await normalizeInput(input, fetchFn)
+  const sourceInput = await normalizeInput(input, fetchFn, onError)
 
   // Step 1: Check if content is already valid (only if content is provided).
   if (sourceInput.content) {
@@ -61,7 +68,9 @@ export const discover = async <TValid>(
           content: typeof response.body === 'string' ? response.body : '',
           headers: response.headers,
         }
-      } catch {}
+      } catch (error) {
+        onError?.(error, { phase: 'resolveSiteUrl', url: siteUrl })
+      }
     }
   }
 
@@ -74,8 +83,13 @@ export const discover = async <TValid>(
   // Step 4: Normalize and deduplicate URIs per method group, deduping across groups.
   const seen = new Set<string>()
   const methodGroups: Array<{ method: DiscoverMethod; entries: Array<DiscoverUriEntry> }> = []
+  let remaining = safeMaxUris
 
   for (const method of discoverMethodOrder) {
+    if (remaining <= 0) {
+      break
+    }
+
     const rawUris = urisByMethod[method]
 
     if (!rawUris || rawUris.length === 0) {
@@ -87,7 +101,8 @@ export const discover = async <TValid>(
     })
 
     const unique = normalized.filter((entry) => {
-      const key = typeof entry.uri === 'string' ? entry.uri : entry.uri.join('\0')
+      // Sort array alternatives so the key is order-independent.
+      const key = typeof entry.uri === 'string' ? entry.uri : [...entry.uri].sort().join('\0')
 
       if (seen.has(key)) {
         return false
@@ -99,7 +114,9 @@ export const discover = async <TValid>(
     })
 
     if (unique.length > 0) {
-      methodGroups.push({ method, entries: unique })
+      const capped = unique.slice(0, remaining)
+      remaining -= capped.length
+      methodGroups.push({ method, entries: capped })
     }
   }
 
@@ -150,7 +167,7 @@ export const discover = async <TValid>(
     const foundBefore = found
 
     await processConcurrently(entries, (entry) => processUri(entry, method), {
-      concurrency,
+      concurrency: safeConcurrency,
       shouldStop: () => {
         return stopOnFirstResult && found > 0
       },

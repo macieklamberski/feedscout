@@ -3,13 +3,13 @@ import { devtoHandler } from './devto.js'
 
 describe('devtoHandler', () => {
   describe('match', () => {
-    const cases = [
-      ['https://dev.to/thepracticaldev', true],
-      ['https://www.dev.to/thepracticaldev', true],
-      ['https://example.com/thepracticaldev', false],
-    ] as const
+    const values: Array<[boolean, string]> = [
+      [true, 'https://dev.to/thepracticaldev'],
+      [true, 'https://www.dev.to/thepracticaldev'],
+      [false, 'https://example.com/thepracticaldev'],
+    ]
 
-    it.each(cases)('%s -> %s', (url, expected) => {
+    it.each(values)('should return %s for %s', (expected, url) => {
       expect(devtoHandler.match(url)).toBe(expected)
     })
 
@@ -61,17 +61,15 @@ describe('devtoHandler', () => {
       expect(devtoHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return empty array for excluded paths', () => {
-      const excludedUrls = [
-        'https://dev.to/about',
-        'https://dev.to/search',
-        'https://dev.to/top',
-        'https://dev.to/settings',
-      ]
+    const excludedValues: Array<string> = [
+      'https://dev.to/about',
+      'https://dev.to/search',
+      'https://dev.to/top',
+      'https://dev.to/settings',
+    ]
 
-      for (const url of excludedUrls) {
-        expect(devtoHandler.resolve(url)).toEqual([])
-      }
+    it.each(excludedValues)('should return empty array for %s', (value) => {
+      expect(devtoHandler.resolve(value)).toEqual([])
     })
 
     it('should handle usernames with underscores', () => {
@@ -126,6 +124,11 @@ describe('devtoHandler', () => {
       ]
 
       expect(devtoHandler.resolve(value)).toEqual(expected)
+    })
+
+    it.todo('should define behavior for invalid URL input', () => {
+      // resolve('not-a-url') currently throws a TypeError from the unguarded new URL call; the
+      // desired contract (throw vs empty array) is undecided.
     })
   })
 })

@@ -1,5 +1,5 @@
-import type { parseFeed } from 'feedsmith'
-import type { Atom, DeepPartial } from 'feedsmith/types'
+import type { Atom } from 'feedsmith'
+import { isObject } from 'trousse'
 import locales from '../locales.json' with { type: 'json' }
 import type {
   DiscoverFetchFn,
@@ -8,15 +8,18 @@ import type {
   DiscoverMethodsConfig,
   DiscoverMethodsConfigDefaults,
   DiscoverMethodsConfigInternal,
+  DiscoverOnErrorFn,
   DiscoverResolveUrlFn,
   DiscoverUriEntry,
 } from '../types.js'
+import type { FeedMethodData } from '../uris/feed/types.js'
 
 export const normalizeInput = async (
   input: DiscoverInput,
   fetchFn: DiscoverFetchFn,
+  onError?: DiscoverOnErrorFn,
 ): Promise<DiscoverInputObject> => {
-  if (typeof input === 'object') {
+  if (isObject(input)) {
     return input
   }
 
@@ -29,18 +32,20 @@ export const normalizeInput = async (
       content: typeof response.body === 'string' ? response.body : undefined,
       headers: response.headers,
     }
-  } catch {}
+  } catch (error) {
+    onError?.(error, { phase: 'fetchInput', url: input })
+  }
 
   // When the fetch fails, return the URL without content so that URL-only
   // methods like guess can still run.
   return { url: input }
 }
 
-const getLinkOfType = (links: Array<DeepPartial<Atom.Link<string>>> | undefined, rel: string) => {
+const getLinkOfType = (links: Array<Atom.Link<string>> | undefined, rel: string) => {
   return links?.find((link) => link.rel === rel)
 }
 
-export const getFeedSiteUrl = (parsed: ReturnType<typeof parseFeed>): string | undefined => {
+export const getFeedSiteUrl = (parsed: FeedMethodData): string | undefined => {
   const { format, feed } = parsed
 
   if (format === 'rss' || format === 'rdf') {

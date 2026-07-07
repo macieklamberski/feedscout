@@ -54,6 +54,7 @@ type DiscoverOptions<TValid, TMethods extends DiscoverMethod = DiscoverMethod> =
   stopOnFirstMethod?: boolean
   stopOnFirstResult?: boolean
   concurrency?: number
+  maxUris?: number
   includeInvalid?: boolean
   onProgress?: DiscoverOnProgressFn
 }
@@ -282,8 +283,10 @@ type HtmlMethodOptions = {
   baseUrl?: string
   linkSelectors: Array<LinkSelector>
   anchorUris: Array<string>
+  anchorPathSegments?: Array<string>
   anchorIgnoredUris: Array<string>
   anchorLabels: Array<string>
+  anchorAttributes?: Array<string>
 }
 
 type LinkSelector = {

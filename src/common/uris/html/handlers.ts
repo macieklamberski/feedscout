@@ -1,5 +1,6 @@
 import type { Handler } from 'htmlparser2'
-import { endsWithAnyOf, includesAnyOf, matchesAnyOfLinkSelectors } from '../../../common/utils.js'
+import { endsWithAnyOf, includesAnyOf, parseUrl } from 'trousse'
+import { matchesAnyOfLinkSelectors } from '../../../common/utils.js'
 import type { HtmlMethodContext } from './types.js'
 
 export const handleOpenTag = (
@@ -8,6 +9,15 @@ export const handleOpenTag = (
   attribs: { [key: string]: string },
   _isImplied?: boolean,
 ): void => {
+  // Capture the first <base href> to resolve relative URLs against (browser semantics).
+  if (name === 'base' && context.baseHref === undefined) {
+    const href = attribs.href?.trim()
+
+    if (href) {
+      context.baseHref = href
+    }
+  }
+
   if (name === 'link' && attribs.href) {
     const rel = attribs.rel?.toLowerCase()
 
@@ -38,6 +48,32 @@ export const handleOpenTag = (
     // Check if href ends with any anchor URI pattern.
     if (endsWithAnyOf(lowerHref, context.options.anchorUris)) {
       context.discoveredUris.add(attribs.href)
+    }
+
+    // Match feed path segments against the pathname only, so a feed path embedded in a wrapper's
+    // query string (e.g. ?add=https://site/rss/x) does not count as a feed.
+    if (context.options.anchorPathSegments?.length) {
+      const pathname = parseUrl(attribs.href, 'https://feedscout.invalid')?.pathname
+
+      if (pathname && includesAnyOf(pathname, context.options.anchorPathSegments)) {
+        context.discoveredUris.add(attribs.href)
+      }
+    }
+  }
+
+  // Match feed-related labels in configured attributes, covering icon-only links with no visible
+  // text. This runs both for the anchor itself (e.g. <a title="RSS feed">) and for any descendant
+  // element while the anchor is open (e.g. Framer renders the icon as a child element whose only
+  // signal is <div data-framer-name="RSS Icon">). Ignored anchors already cleared currentAnchor.href
+  // above, so neither they nor their descendants are scanned.
+  if (context.currentAnchor.href && context.options.anchorAttributes?.length) {
+    for (const attribute of context.options.anchorAttributes) {
+      const value = attribs[attribute]
+
+      if (value && includesAnyOf(value, context.options.anchorLabels)) {
+        context.discoveredUris.add(context.currentAnchor.href)
+        break
+      }
     }
   }
 }

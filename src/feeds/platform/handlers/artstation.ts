@@ -1,6 +1,7 @@
+import { isAnyOf, isHostOf, isSubdomainOf } from 'trousse'
 import type { DiscoverUriEntry } from '../../../common/types.js'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
-import { composeHint, isAnyOf, isHostOf, isSubdomainOf } from '../../../common/utils.js'
+import { composeHint } from '../../../common/utils.js'
 
 // Discoverability: Not discoverable without handler.
 //
@@ -13,7 +14,7 @@ import { composeHint, isAnyOf, isHostOf, isSubdomainOf } from '../../../common/u
 // canonical `.rss` URLs and adds the trending/latest artwork variants.
 
 const hosts = ['artstation.com', 'www.artstation.com']
-const domainSuffix = /\.artstation\.com$/i
+const domainSuffixRegex = /\.artstation\.com$/i
 const excludedPaths = [
   'blogs',
   'channels',
@@ -40,7 +41,7 @@ export const artstationHandler: PlatformHandler = {
 
     // Subdomain form: {user}.artstation.com
     if (!isHostOf(url, hosts) && isSubdomainOf(url, 'artstation.com')) {
-      const username = parsed.hostname.replace(domainSuffix, '')
+      const username = parsed.hostname.replace(domainSuffixRegex, '')
 
       return [
         {

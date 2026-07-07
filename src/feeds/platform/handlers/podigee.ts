@@ -1,5 +1,6 @@
+import { isSubdomainOf } from 'trousse'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
-import { composeHint, isSubdomainOf } from '../../../common/utils.js'
+import { composeHint } from '../../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 //
@@ -10,7 +11,7 @@ import { composeHint, isSubdomainOf } from '../../../common/utils.js'
 // `blog`, etc.) that would otherwise produce 404-bound URIs on the
 // corporate site.
 
-const domainSuffix = /\.podigee\.io$/i
+const domainSuffixRegex = /\.podigee\.io$/i
 
 // Reserved Podigee subdomains that aren't user shows. Without this guard the handler
 // emits 404-bound URLs (e.g. https://www.podigee.io/feed/mp3 redirects to a 404 on
@@ -23,7 +24,7 @@ export const podigeeHandler: PlatformHandler = {
       return false
     }
 
-    const slug = new URL(url).hostname.toLowerCase().replace(domainSuffix, '')
+    const slug = new URL(url).hostname.toLowerCase().replace(domainSuffixRegex, '')
 
     return !reservedSlugs.has(slug)
   },

@@ -1,5 +1,5 @@
+import { isSubdomainOf } from 'trousse'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
-import { isSubdomainOf } from '../../../common/utils.js'
 import { wordpressHandler } from './wordpress.js'
 
 // Discoverability: Discoverable without handler.

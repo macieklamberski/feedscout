@@ -19,6 +19,10 @@ describe('discourseHandler', () => {
     it('should return false for non-Discourse generator', () => {
       expect(isDiscourseHtml(otherHtml)).toBe(false)
     })
+
+    it('should return false for empty content', () => {
+      expect(isDiscourseHtml('')).toBe(false)
+    })
   })
 
   describe('match', () => {
@@ -135,18 +139,31 @@ describe('discourseHandler', () => {
       expect(discourseHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should pass through period via /top/{period} path', () => {
-      for (const period of ['daily', 'weekly', 'monthly', 'quarterly', 'yearly', 'all']) {
-        const value = `https://users.rust-lang.org/top/${period}`
-        const expected = [
-          {
-            uri: `https://users.rust-lang.org/top.rss?period=${period}`,
-            hint: { key: 'discourse:top', label: 'Top' },
-          },
-        ]
+    const topPeriodValues: Array<[string, string]> = [
+      ['https://users.rust-lang.org/top/daily', 'https://users.rust-lang.org/top.rss?period=daily'],
+      [
+        'https://users.rust-lang.org/top/weekly',
+        'https://users.rust-lang.org/top.rss?period=weekly',
+      ],
+      [
+        'https://users.rust-lang.org/top/monthly',
+        'https://users.rust-lang.org/top.rss?period=monthly',
+      ],
+      [
+        'https://users.rust-lang.org/top/quarterly',
+        'https://users.rust-lang.org/top.rss?period=quarterly',
+      ],
+      [
+        'https://users.rust-lang.org/top/yearly',
+        'https://users.rust-lang.org/top.rss?period=yearly',
+      ],
+      ['https://users.rust-lang.org/top/all', 'https://users.rust-lang.org/top.rss?period=all'],
+    ]
 
-        expect(discourseHandler.resolve(value)).toEqual(expected)
-      }
+    it.each(topPeriodValues)('should pass through period for %s', (value, uri) => {
+      const expected = [{ uri, hint: { key: 'discourse:top', label: 'Top' } }]
+
+      expect(discourseHandler.resolve(value)).toEqual(expected)
     })
 
     it('should pass through period via ?period= query param', () => {
@@ -154,6 +171,18 @@ describe('discourseHandler', () => {
       const expected = [
         {
           uri: 'https://users.rust-lang.org/top.rss?period=weekly',
+          hint: { key: 'discourse:top', label: 'Top' },
+        },
+      ]
+
+      expect(discourseHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should prefer path period over ?period= query param', () => {
+      const value = 'https://users.rust-lang.org/top/daily?period=weekly'
+      const expected = [
+        {
+          uri: 'https://users.rust-lang.org/top.rss?period=daily',
           hint: { key: 'discourse:top', label: 'Top' },
         },
       ]

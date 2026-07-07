@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'bun:test'
+import locales from '../common/locales.json' with { type: 'json' }
 import type { DiscoverFetchFn, DiscoverResult } from '../common/types.js'
 import { urisBalanced, urisComprehensive, urisMinimal } from './defaults.js'
 import { discoverBlogrolls } from './index.js'
@@ -14,7 +15,8 @@ const createMockFetch = (responses: Record<string, string>): DiscoverFetchFn => 
   })
 }
 
-const opml = `<?xml version="1.0" encoding="UTF-8"?>
+const opml = `
+  <?xml version="1.0" encoding="UTF-8"?>
   <opml version="2.0">
     <head><title>My Blogroll</title></head>
     <body>
@@ -205,6 +207,52 @@ describe('discoverBlogrolls', () => {
     expect(value).toEqual(expected)
   })
 
+  it('should discover blogrolls from HTML link elements with rel="alternate" and OPML type', async () => {
+    const mockFetch = createMockFetch({
+      'https://example.com/blogroll.opml': opml,
+    })
+    const value = await discoverBlogrolls(
+      {
+        url: 'https://example.com',
+        content:
+          '<link rel="alternate" type="application/opml+xml" title="Outline" href="/blogroll.opml">',
+      },
+      {
+        methods: { html: true },
+        fetchFn: mockFetch,
+      },
+    )
+    const expected: Array<DiscoverResult<BlogrollResult>> = [
+      {
+        url: 'https://example.com/blogroll.opml',
+        isValid: true,
+        method: 'html',
+        title: 'My Blogroll',
+      },
+    ]
+
+    expect(value).toEqual(expected)
+  })
+
+  it('should not discover regular feeds advertised as rel="alternate" with a feed MIME type', async () => {
+    const mockFetch = createMockFetch({
+      'https://example.com/feed.xml': opml,
+    })
+    const value = await discoverBlogrolls(
+      {
+        url: 'https://example.com',
+        content: '<link rel="alternate" type="application/rss+xml" href="/feed.xml">',
+      },
+      {
+        methods: { html: true },
+        fetchFn: mockFetch,
+      },
+    )
+    const expected: Array<DiscoverResult<BlogrollResult>> = []
+
+    expect(value).toEqual(expected)
+  })
+
   it('should discover blogrolls from anchor elements with .opml href', async () => {
     const mockFetch = createMockFetch({
       'https://example.com/reading-list.opml': opml,
@@ -255,6 +303,66 @@ describe('discoverBlogrolls', () => {
     ]
 
     expect(value).toEqual(expected)
+  })
+
+  it('should discover blogrolls from Link header with rel="blogroll"', async () => {
+    const mockFetch = createMockFetch({
+      'https://example.com/blogroll.opml': opml,
+    })
+    const headers = new Headers({
+      Link: '</blogroll.opml>; rel="blogroll"',
+    })
+    const value = await discoverBlogrolls(
+      { url: 'https://example.com', headers },
+      {
+        methods: ['headers'],
+        fetchFn: mockFetch,
+      },
+    )
+    const expected: Array<DiscoverResult<BlogrollResult>> = [
+      {
+        url: 'https://example.com/blogroll.opml',
+        isValid: true,
+        method: 'headers',
+        title: 'My Blogroll',
+      },
+    ]
+
+    expect(value).toEqual(expected)
+  })
+
+  it('should discover blogrolls from Link header with rel="outline" and OPML type', async () => {
+    const mockFetch = createMockFetch({
+      'https://example.com/subscriptions.opml': opml,
+    })
+    const headers = new Headers({
+      Link: '</subscriptions.opml>; rel="outline"; type="text/x-opml"',
+    })
+    const value = await discoverBlogrolls(
+      { url: 'https://example.com', headers },
+      {
+        methods: ['headers'],
+        fetchFn: mockFetch,
+      },
+    )
+    const expected: Array<DiscoverResult<BlogrollResult>> = [
+      {
+        url: 'https://example.com/subscriptions.opml',
+        isValid: true,
+        method: 'headers',
+        title: 'My Blogroll',
+      },
+    ]
+
+    expect(value).toEqual(expected)
+  })
+
+  it('should throw error when html method requested without content', () => {
+    const mockFetch = createMockFetch({})
+    const throwing = () =>
+      discoverBlogrolls({ url: 'https://example.com' }, { methods: ['html'], fetchFn: mockFetch })
+
+    expect(throwing()).rejects.toThrow(locales.errors.htmlMethodRequiresContent)
   })
 
   it('should test additional base URLs alongside main baseUrl', async () => {

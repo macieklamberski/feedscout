@@ -1,5 +1,6 @@
+import { isSubdomainOf } from 'trousse'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
-import { composeHint, isSubdomainOf } from '../../../common/utils.js'
+import { composeHint } from '../../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 //
@@ -11,7 +12,7 @@ import { composeHint, isSubdomainOf } from '../../../common/utils.js'
 // against reserved subdomains (`www`, `support`, etc.) that would otherwise
 // resolve to unrelated user-owned shows.
 
-const domainSuffix = /\.podbean\.com$/i
+const domainSuffixRegex = /\.podbean\.com$/i
 
 // Reserved Podbean subdomains that aren't user shows. Without this guard, hitting
 // podbean.com corporate/infra hosts produces feed.podbean.com/{reserved}/feed.xml
@@ -33,14 +34,14 @@ export const podbeanHandler: PlatformHandler = {
       return false
     }
 
-    const slug = new URL(url).hostname.toLowerCase().replace(domainSuffix, '')
+    const slug = new URL(url).hostname.toLowerCase().replace(domainSuffixRegex, '')
 
     return !reservedSlugs.has(slug)
   },
 
   resolve: (url) => {
     const { hostname } = new URL(url)
-    const slug = hostname.replace(domainSuffix, '')
+    const slug = hostname.replace(domainSuffixRegex, '')
 
     return [
       {

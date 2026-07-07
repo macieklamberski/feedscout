@@ -1,5 +1,6 @@
+import { isSubdomainOf } from 'trousse'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
-import { composeHint, isSubdomainOf } from '../../../common/utils.js'
+import { composeHint } from '../../../common/utils.js'
 
 // Discoverability: Not discoverable without handler.
 //
@@ -10,7 +11,7 @@ import { composeHint, isSubdomainOf } from '../../../common/utils.js'
 // to the canonical feed without fetching, and skips reserved subdomains
 // (`www`, `share`, `support`, …) that would otherwise resolve to 404s.
 
-const domainSuffix = /\.transistor\.fm$/i
+const domainSuffixRegex = /\.transistor\.fm$/i
 
 // Reserved Transistor subdomains that aren't user shows. Without this guard the
 // handler emits feeds.transistor.fm/{www|share|support|...} URLs that 404.
@@ -31,14 +32,14 @@ export const transistorHandler: PlatformHandler = {
       return false
     }
 
-    const slug = new URL(url).hostname.toLowerCase().replace(domainSuffix, '')
+    const slug = new URL(url).hostname.toLowerCase().replace(domainSuffixRegex, '')
 
     return !reservedSlugs.has(slug)
   },
 
   resolve: (url) => {
     const { hostname } = new URL(url)
-    const slug = hostname.replace(domainSuffix, '')
+    const slug = hostname.replace(domainSuffixRegex, '')
 
     return [
       {

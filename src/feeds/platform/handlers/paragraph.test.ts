@@ -3,14 +3,14 @@ import { paragraphHandler } from './paragraph.js'
 
 describe('paragraphHandler', () => {
   describe('match', () => {
-    const cases = [
-      ['https://paragraph.com/@blog', true],
-      ['https://www.paragraph.com/@user', true],
-      ['https://paragraph.com/', true],
-      ['https://example.com', false],
-    ] as const
+    const values: Array<[boolean, string]> = [
+      [true, 'https://paragraph.com/@blog'],
+      [true, 'https://www.paragraph.com/@user'],
+      [true, 'https://paragraph.com/'],
+      [false, 'https://example.com'],
+    ]
 
-    it.each(cases)('%s -> %s', (url, expected) => {
+    it.each(values)('should return %s for %s', (expected, url) => {
       expect(paragraphHandler.match(url)).toBe(expected)
     })
 
@@ -66,6 +66,11 @@ describe('paragraphHandler', () => {
       const value = 'https://paragraph.com/about'
 
       expect(paragraphHandler.resolve(value)).toEqual([])
+    })
+
+    it.todo('should define behavior for invalid URL input', () => {
+      // resolve('not-a-url') currently throws a TypeError from the unguarded new URL call; the
+      // desired contract (throw vs empty array) is undecided.
     })
   })
 })

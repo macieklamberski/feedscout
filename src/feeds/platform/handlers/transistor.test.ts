@@ -3,18 +3,18 @@ import { transistorHandler } from './transistor.js'
 
 describe('transistorHandler', () => {
   describe('match', () => {
-    const cases = [
-      ['https://build-your-saas.transistor.fm', true],
-      ['https://blog.example.transistor.fm', true],
-      ['https://transistor.fm', false],
-      ['https://example.com', false],
-      ['https://www.transistor.fm', false],
-      ['https://feeds.transistor.fm', false],
-      ['https://share.transistor.fm', false],
-      ['https://support.transistor.fm', false],
-    ] as const
+    const values: Array<[boolean, string]> = [
+      [true, 'https://build-your-saas.transistor.fm'],
+      [true, 'https://blog.example.transistor.fm'],
+      [false, 'https://transistor.fm'],
+      [false, 'https://example.com'],
+      [false, 'https://www.transistor.fm'],
+      [false, 'https://feeds.transistor.fm'],
+      [false, 'https://share.transistor.fm'],
+      [false, 'https://support.transistor.fm'],
+    ]
 
-    it.each(cases)('%s -> %s', (url, expected) => {
+    it.each(values)('should return %s for %s', (expected, url) => {
       expect(transistorHandler.match(url)).toBe(expected)
     })
 
@@ -46,6 +46,11 @@ describe('transistorHandler', () => {
       ]
 
       expect(transistorHandler.resolve(value)).toEqual(expected)
+    })
+
+    it.todo('should define behavior for invalid URL input', () => {
+      // resolve('not-a-url') currently throws a TypeError from the unguarded new URL call; the
+      // desired contract (throw vs empty array) is undecided.
     })
   })
 })

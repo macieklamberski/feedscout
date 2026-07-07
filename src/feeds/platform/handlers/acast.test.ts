@@ -3,16 +3,16 @@ import { acastHandler } from './acast.js'
 
 describe('acastHandler', () => {
   describe('match', () => {
-    const cases = [
-      ['https://shows.acast.com/my-dad-wrote-a-porno', true],
-      ['https://shows.acast.com', true],
-      ['https://play.acast.com/s/my-dad-wrote-a-porno', true],
-      ['https://embed.acast.com/my-dad-wrote-a-porno', true],
-      ['https://acast.com/show', false],
-      ['https://example.com', false],
-    ] as const
+    const values: Array<[boolean, string]> = [
+      [true, 'https://shows.acast.com/my-dad-wrote-a-porno'],
+      [true, 'https://shows.acast.com'],
+      [true, 'https://play.acast.com/s/my-dad-wrote-a-porno'],
+      [true, 'https://embed.acast.com/my-dad-wrote-a-porno'],
+      [false, 'https://acast.com/show'],
+      [false, 'https://example.com'],
+    ]
 
-    it.each(cases)('%s -> %s', (url, expected) => {
+    it.each(values)('should return %s for %s', (expected, url) => {
       expect(acastHandler.match(url)).toBe(expected)
     })
 
@@ -80,6 +80,23 @@ describe('acastHandler', () => {
       ]
 
       expect(acastHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return empty array for play.acast.com/s without slug', () => {
+      const value = 'https://play.acast.com/s'
+
+      expect(acastHandler.resolve(value)).toEqual([])
+    })
+
+    it('should return empty array for excluded path on embed.acast.com', () => {
+      const value = 'https://embed.acast.com/discover'
+
+      expect(acastHandler.resolve(value)).toEqual([])
+    })
+
+    it.todo('should define behavior for invalid URL input', () => {
+      // resolve('not-a-url') currently throws a TypeError from the unguarded new URL call; the
+      // desired contract (throw vs empty array) is undecided.
     })
   })
 })

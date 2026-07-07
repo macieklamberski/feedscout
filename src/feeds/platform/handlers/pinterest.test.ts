@@ -3,15 +3,15 @@ import { pinterestHandler } from './pinterest.js'
 
 describe('pinterestHandler', () => {
   describe('match', () => {
-    const cases = [
-      ['https://www.pinterest.com/nasa', true],
-      ['https://pinterest.com/nasa', true],
-      ['https://www.pinterest.com/nasa/mars', true],
-      ['https://pin.it/abc123', true],
-      ['https://example.com/pinterest', false],
-    ] as const
+    const values: Array<[boolean, string]> = [
+      [true, 'https://www.pinterest.com/nasa'],
+      [true, 'https://pinterest.com/nasa'],
+      [true, 'https://www.pinterest.com/nasa/mars'],
+      [true, 'https://pin.it/abc123'],
+      [false, 'https://example.com/pinterest'],
+    ]
 
-    it.each(cases)('%s -> %s', (url, expected) => {
+    it.each(values)('should return %s for %s', (expected, url) => {
       expect(pinterestHandler.match(url)).toBe(expected)
     })
 
@@ -111,6 +111,18 @@ describe('pinterestHandler', () => {
         'https://www.pinterest.com/ideas',
         'https://www.pinterest.com/today',
         'https://www.pinterest.com/explore',
+        'https://www.pinterest.com/_',
+        'https://www.pinterest.com/about',
+        'https://www.pinterest.com/business',
+        'https://www.pinterest.com/convert',
+        'https://www.pinterest.com/login',
+        'https://www.pinterest.com/news_hub',
+        'https://www.pinterest.com/password',
+        'https://www.pinterest.com/privacy',
+        'https://www.pinterest.com/resource',
+        'https://www.pinterest.com/settings',
+        'https://www.pinterest.com/terms',
+        'https://www.pinterest.com/topics',
       ]
 
       for (const value of values) {
@@ -128,6 +140,16 @@ describe('pinterestHandler', () => {
       const value = 'https://www.pinterest.com/pin/123456789'
 
       expect(pinterestHandler.resolve(value)).toEqual([])
+    })
+
+    it.todo('should define resolve behavior for pin.it short links', () => {
+      // pin.it short codes are redirect tokens, not usernames, but resolve currently
+      // emits https://www.pinterest.com/{code}/feed.rss for them; likely needs a fix.
+    })
+
+    it.todo('should define behavior for invalid URL input', () => {
+      // resolve('not-a-url') currently throws a TypeError from the unguarded new URL call; the
+      // desired contract (throw vs empty array) is undecided.
     })
   })
 })

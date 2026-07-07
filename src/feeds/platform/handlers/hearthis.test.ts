@@ -3,14 +3,14 @@ import { hearthisHandler } from './hearthis.js'
 
 describe('hearthisHandler', () => {
   describe('match', () => {
-    const cases = [
-      ['https://hearthis.at/james-monty-montgomery', true],
-      ['https://www.hearthis.at/user', true],
-      ['https://hearthis.at', true],
-      ['https://example.com', false],
-    ] as const
+    const values: Array<[boolean, string]> = [
+      [true, 'https://hearthis.at/james-monty-montgomery'],
+      [true, 'https://www.hearthis.at/user'],
+      [true, 'https://hearthis.at'],
+      [false, 'https://example.com'],
+    ]
 
-    it.each(cases)('%s -> %s', (url, expected) => {
+    it.each(values)('should return %s for %s', (expected, url) => {
       expect(hearthisHandler.match(url)).toBe(expected)
     })
 
@@ -54,6 +54,11 @@ describe('hearthisHandler', () => {
       const value = 'https://hearthis.at/login'
 
       expect(hearthisHandler.resolve(value)).toEqual([])
+    })
+
+    it.todo('should define behavior for invalid URL input', () => {
+      // resolve('not-a-url') currently throws a TypeError from the unguarded new URL call; the
+      // desired contract (throw vs empty array) is undecided.
     })
   })
 })

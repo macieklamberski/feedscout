@@ -54,7 +54,7 @@ describe('devtoHandler', () => {
           profile_image: 'https://res.cloudinary.com/practicaldev/image/fetch/alice.jpg',
         }),
       })
-      const value = await devtoHandler.resolve(
+      const result = await devtoHandler.resolve(
         'https://dev.to/alice',
         undefined,
         undefined,
@@ -64,88 +64,126 @@ describe('devtoHandler', () => {
         { uri: 'https://res.cloudinary.com/practicaldev/image/fetch/alice.jpg' },
       ]
 
-      expect(value).toEqual(expected)
+      expect(result).toEqual(expected)
     })
 
     it('should return empty array when profile_image is absent', async () => {
       const mockFetch = createMockFetch({
         'https://dev.to/api/users/by_username?url=alice': JSON.stringify({}),
       })
-      const value = await devtoHandler.resolve(
+      const result = await devtoHandler.resolve(
         'https://dev.to/alice',
         undefined,
         undefined,
         mockFetch,
       )
 
-      expect(value).toEqual([])
+      expect(result).toEqual([])
     })
 
     it('should return empty array when profile_image is empty string', async () => {
       const mockFetch = createMockFetch({
         'https://dev.to/api/users/by_username?url=alice': JSON.stringify({ profile_image: '' }),
       })
-      const value = await devtoHandler.resolve(
+      const result = await devtoHandler.resolve(
         'https://dev.to/alice',
         undefined,
         undefined,
         mockFetch,
       )
 
-      expect(value).toEqual([])
+      expect(result).toEqual([])
     })
 
     it('should return empty array for tag pages', async () => {
       const mockFetch = createMockFetch({})
-      const value = await devtoHandler.resolve(
+      const result = await devtoHandler.resolve(
         'https://dev.to/t/javascript',
         undefined,
         undefined,
         mockFetch,
       )
 
-      expect(value).toEqual([])
+      expect(result).toEqual([])
     })
 
     it('should return empty array when API returns invalid JSON', async () => {
       const mockFetch = createMockFetch({
         'https://dev.to/api/users/by_username?url=alice': 'not-json',
       })
-      const value = await devtoHandler.resolve(
+      const result = await devtoHandler.resolve(
         'https://dev.to/alice',
         undefined,
         undefined,
         mockFetch,
       )
 
-      expect(value).toEqual([])
+      expect(result).toEqual([])
     })
 
     it('should return empty array when fetchFn is not provided', async () => {
-      const value = await devtoHandler.resolve('https://dev.to/alice')
+      const result = await devtoHandler.resolve('https://dev.to/alice')
 
-      expect(value).toEqual([])
+      expect(result).toEqual([])
     })
 
     it('should return empty array when fetch throws', async () => {
       const mockFetch: DiscoverFetchFn = () => {
         throw new Error('Network error')
       }
-      const value = await devtoHandler.resolve(
+      const result = await devtoHandler.resolve(
         'https://dev.to/alice',
         undefined,
         undefined,
         mockFetch,
       )
 
-      expect(value).toEqual([])
+      expect(result).toEqual([])
     })
 
     it('should return empty array for invalid URL', async () => {
       const mockFetch = createMockFetch({})
-      const value = await devtoHandler.resolve('not-a-url', undefined, undefined, mockFetch)
+      const result = await devtoHandler.resolve('not-a-url', undefined, undefined, mockFetch)
 
-      expect(value).toEqual([])
+      expect(result).toEqual([])
+    })
+
+    it('should return profile image from www.dev.to URL', async () => {
+      const mockFetch = createMockFetch({
+        'https://dev.to/api/users/by_username?url=alice': JSON.stringify({
+          profile_image: 'https://res.cloudinary.com/practicaldev/image/fetch/alice.jpg',
+        }),
+      })
+      const result = await devtoHandler.resolve(
+        'https://www.dev.to/alice',
+        undefined,
+        undefined,
+        mockFetch,
+      )
+      const expected: Array<DiscoverUriEntry> = [
+        { uri: 'https://res.cloudinary.com/practicaldev/image/fetch/alice.jpg' },
+      ]
+
+      expect(result).toEqual(expected)
+    })
+
+    it('should resolve excluded paths as usernames since only match guards them', async () => {
+      const mockFetch = createMockFetch({
+        'https://dev.to/api/users/by_username?url=search': JSON.stringify({
+          profile_image: 'https://res.cloudinary.com/practicaldev/image/fetch/search.jpg',
+        }),
+      })
+      const result = await devtoHandler.resolve(
+        'https://dev.to/search',
+        undefined,
+        undefined,
+        mockFetch,
+      )
+      const expected: Array<DiscoverUriEntry> = [
+        { uri: 'https://res.cloudinary.com/practicaldev/image/fetch/search.jpg' },
+      ]
+
+      expect(result).toEqual(expected)
     })
   })
 })

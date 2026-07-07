@@ -18,6 +18,10 @@ describe('bookwyrmHandler', () => {
     it('should return false for non-BookWyrm generator', () => {
       expect(isBookwyrmHtml(otherHtml)).toBe(false)
     })
+
+    it('should return false for empty content', () => {
+      expect(isBookwyrmHtml('')).toBe(false)
+    })
   })
 
   describe('match', () => {
@@ -43,35 +47,52 @@ describe('bookwyrmHandler', () => {
   })
 
   describe('resolve', () => {
-    const baseFeeds = (user: string) => [
-      {
-        uri: `https://bookwyrm.social/user/${user}/rss`,
-        hint: { key: 'bookwyrm:activity', label: 'Activity' },
-      },
-      {
-        uri: `https://bookwyrm.social/user/${user}/rss-reviews`,
-        hint: { key: 'bookwyrm:reviews', label: 'Reviews' },
-      },
-      {
-        uri: `https://bookwyrm.social/user/${user}/rss-quotes`,
-        hint: { key: 'bookwyrm:quotes', label: 'Quotes' },
-      },
-      {
-        uri: `https://bookwyrm.social/user/${user}/rss-comments`,
-        hint: { key: 'bookwyrm:comments', label: 'Comments' },
-      },
-    ]
-
     it('should return activity, reviews, quotes, and comments feeds for profile', () => {
       const value = 'https://bookwyrm.social/user/mouse'
+      const expected = [
+        {
+          uri: 'https://bookwyrm.social/user/mouse/rss',
+          hint: { key: 'bookwyrm:activity', label: 'Activity' },
+        },
+        {
+          uri: 'https://bookwyrm.social/user/mouse/rss-reviews',
+          hint: { key: 'bookwyrm:reviews', label: 'Reviews' },
+        },
+        {
+          uri: 'https://bookwyrm.social/user/mouse/rss-quotes',
+          hint: { key: 'bookwyrm:quotes', label: 'Quotes' },
+        },
+        {
+          uri: 'https://bookwyrm.social/user/mouse/rss-comments',
+          hint: { key: 'bookwyrm:comments', label: 'Comments' },
+        },
+      ]
 
-      expect(bookwyrmHandler.resolve(value)).toEqual(baseFeeds('mouse'))
+      expect(bookwyrmHandler.resolve(value)).toEqual(expected)
     })
 
     it('should return all four feeds regardless of subpath', () => {
       const value = 'https://bookwyrm.social/user/mouse/books'
+      const expected = [
+        {
+          uri: 'https://bookwyrm.social/user/mouse/rss',
+          hint: { key: 'bookwyrm:activity', label: 'Activity' },
+        },
+        {
+          uri: 'https://bookwyrm.social/user/mouse/rss-reviews',
+          hint: { key: 'bookwyrm:reviews', label: 'Reviews' },
+        },
+        {
+          uri: 'https://bookwyrm.social/user/mouse/rss-quotes',
+          hint: { key: 'bookwyrm:quotes', label: 'Quotes' },
+        },
+        {
+          uri: 'https://bookwyrm.social/user/mouse/rss-comments',
+          hint: { key: 'bookwyrm:comments', label: 'Comments' },
+        },
+      ]
 
-      expect(bookwyrmHandler.resolve(value)).toEqual(baseFeeds('mouse'))
+      expect(bookwyrmHandler.resolve(value)).toEqual(expected)
     })
 
     it('should prepend shelf feed for /user/{user}/books/{shelf}', () => {
@@ -81,7 +102,22 @@ describe('bookwyrmHandler', () => {
           uri: 'https://bookwyrm.social/user/mouse/books/read/rss',
           hint: { key: 'bookwyrm:shelf', label: 'Shelf' },
         },
-        ...baseFeeds('mouse'),
+        {
+          uri: 'https://bookwyrm.social/user/mouse/rss',
+          hint: { key: 'bookwyrm:activity', label: 'Activity' },
+        },
+        {
+          uri: 'https://bookwyrm.social/user/mouse/rss-reviews',
+          hint: { key: 'bookwyrm:reviews', label: 'Reviews' },
+        },
+        {
+          uri: 'https://bookwyrm.social/user/mouse/rss-quotes',
+          hint: { key: 'bookwyrm:quotes', label: 'Quotes' },
+        },
+        {
+          uri: 'https://bookwyrm.social/user/mouse/rss-comments',
+          hint: { key: 'bookwyrm:comments', label: 'Comments' },
+        },
       ]
 
       expect(bookwyrmHandler.resolve(value)).toEqual(expected)
@@ -94,7 +130,22 @@ describe('bookwyrmHandler', () => {
           uri: 'https://bookwyrm.social/user/mouse/shelf/to-read/rss',
           hint: { key: 'bookwyrm:shelf', label: 'Shelf' },
         },
-        ...baseFeeds('mouse'),
+        {
+          uri: 'https://bookwyrm.social/user/mouse/rss',
+          hint: { key: 'bookwyrm:activity', label: 'Activity' },
+        },
+        {
+          uri: 'https://bookwyrm.social/user/mouse/rss-reviews',
+          hint: { key: 'bookwyrm:reviews', label: 'Reviews' },
+        },
+        {
+          uri: 'https://bookwyrm.social/user/mouse/rss-quotes',
+          hint: { key: 'bookwyrm:quotes', label: 'Quotes' },
+        },
+        {
+          uri: 'https://bookwyrm.social/user/mouse/rss-comments',
+          hint: { key: 'bookwyrm:comments', label: 'Comments' },
+        },
       ]
 
       expect(bookwyrmHandler.resolve(value)).toEqual(expected)

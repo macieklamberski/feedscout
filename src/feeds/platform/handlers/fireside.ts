@@ -1,6 +1,7 @@
+import { isSubdomainOf } from 'trousse'
 import type { DiscoverUriEntry } from '../../../common/types.js'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
-import { composeHint, isSubdomainOf } from '../../../common/utils.js'
+import { composeHint } from '../../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 //
@@ -11,7 +12,7 @@ import { composeHint, isSubdomainOf } from '../../../common/utils.js'
 // is needed to emit both feed URIs deterministically from the
 // `{slug}.fireside.fm` hostname without parsing the page.
 
-const domainSuffix = /\.fireside\.fm$/i
+const domainSuffixRegex = /\.fireside\.fm$/i
 
 export const firesideHandler: PlatformHandler = {
   match: (url) => {
@@ -20,7 +21,7 @@ export const firesideHandler: PlatformHandler = {
 
   resolve: (url) => {
     const { hostname } = new URL(url)
-    const slug = hostname.replace(domainSuffix, '')
+    const slug = hostname.replace(domainSuffixRegex, '')
     const uris: Array<DiscoverUriEntry> = []
 
     uris.push({

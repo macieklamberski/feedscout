@@ -1,6 +1,6 @@
+import { isHostOf, isNonEmptyString } from 'trousse'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
-import { isHostOf } from '../../../common/utils.js'
-import { isNonEmptyString, parseBodyJson } from '../../utils.js'
+import { parseBodyJson } from '../../utils.js'
 
 export const hosts = ['bsky.app', 'www.bsky.app']
 
