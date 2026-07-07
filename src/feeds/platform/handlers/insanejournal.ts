@@ -2,7 +2,7 @@ import type { DiscoverUriEntry } from '../../../common/types.js'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, isSubdomainOf } from '../../../common/utils.js'
 
-// Discoverability: Discoverable without handler.
+// Discoverability: Partially discoverable without handler.
 //
 // InsaneJournal (an LJ-codebase fork) serves RSS and Atom per user at
 // `{user}.insanejournal.com/data/{rss,atom}`, plus `/data/userpics` (Atom)

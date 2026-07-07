@@ -1,7 +1,7 @@
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, hasMetaContent, isAnyOf, isHostOf } from '../../../common/utils.js'
 
-// Discoverability: Discoverable without handler.
+// Discoverability: Partially discoverable without handler.
 //
 // GitLab serves Atom feeds at predictable suffixes — `/{user}.atom`,
 // `/{user}/{repo}.atom`, `/-/releases.atom`, `/-/issues.atom`,

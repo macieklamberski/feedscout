@@ -1,14 +1,15 @@
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, isAnyOf, isHostOf } from '../../../common/utils.js'
 
-// Discoverability: Discoverable without handler.
+// Discoverability: Not discoverable without handler.
 //
 // Letterboxd serves one RSS 2.0 feed per member at
 // `letterboxd.com/{user}/rss/` (diary entries, reviews, list creations) plus
-// the editorial `letterboxd.com/journal/rss/`, both advertised via
-// `<link rel="alternate" type="application/rss+xml">` on the matching HTML
-// pages. There is no native watchlist or per-list RSS — those endpoints
-// return Cloudflare 403s and the HTML pages expose no alternate feed link.
+// the editorial `letterboxd.com/journal/rss/`. The member page advertises the
+// feed via `<link rel="alternate" type="application/rss+xml">`, but profile
+// pages sit behind a Cloudflare challenge that blocks a plain fetch, so
+// generic discovery cannot read the link. The handler builds `/{user}/rss/`
+// from the URL without fetching. There is no native watchlist or per-list RSS.
 
 const hosts = ['letterboxd.com', 'www.letterboxd.com']
 const excludedPaths = [

@@ -1,7 +1,7 @@
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, hasMetaContent } from '../../../common/utils.js'
 
-// Discoverability: Discoverable without handler.
+// Discoverability: Partially discoverable without handler.
 //
 // Lemmy instances serve RSS 2.0 at `/feeds/{all,local}.xml`,
 // `/feeds/c/{community}.xml`, and `/feeds/u/{user}.xml`, with optional

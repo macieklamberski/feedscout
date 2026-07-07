@@ -1,7 +1,7 @@
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, isSubdomainOf } from '../../../common/utils.js'
 
-// Discoverability: Discoverable without handler.
+// Discoverability: Partially discoverable without handler.
 //
 // Tumblr blogs expose `/rss` and `/tagged/{tag}/rss` (RSS 2.0) on every
 // `*.tumblr.com` subdomain and on custom domains, and every blog page emits

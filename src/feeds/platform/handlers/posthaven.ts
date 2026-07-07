@@ -2,7 +2,7 @@ import type { DiscoverUriEntry } from '../../../common/types.js'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, isSubdomainOf } from '../../../common/utils.js'
 
-// Discoverability: Discoverable without handler.
+// Discoverability: Partially discoverable without handler.
 //
 // Posthaven blogs expose a per-blog Atom feed at
 // `{sub}.posthaven.com/posts.atom`, advertised on the home page via

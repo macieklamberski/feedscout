@@ -1,7 +1,7 @@
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, hasMetaContent } from '../../../common/utils.js'
 
-// Discoverability: Discoverable without handler.
+// Discoverability: Partially discoverable without handler.
 //
 // Friendica instances expose per-user Atom feeds at
 // `{instance}/feed/{nickname}` plus `comments`, `replies`, and `activity`

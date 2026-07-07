@@ -1,7 +1,7 @@
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, isAnyOf, isHostOf } from '../../../common/utils.js'
 
-// Discoverability: Discoverable without handler.
+// Discoverability: Partially discoverable without handler.
 //
 // Qiita exposes Atom feeds for user posts (`/{user}/feed.atom`), tags
 // (`/tags/{tag}/feed.atom`), organizations

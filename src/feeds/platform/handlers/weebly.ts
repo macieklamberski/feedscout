@@ -2,7 +2,7 @@ import type { DiscoverUriEntry } from '../../../common/types.js'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, isSubdomainOf } from '../../../common/utils.js'
 
-// Discoverability: Discoverable without handler.
+// Discoverability: Not discoverable without handler.
 //
 // Weebly blogs expose RSS 2.0 at `/{blog-page-slug}/feed` (e.g. `/blog/feed`)
 // and at the per-site numeric page ID `/{N}/feed`, but the homepage's

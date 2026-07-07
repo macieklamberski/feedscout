@@ -2,7 +2,7 @@ import type { DiscoverUriEntry } from '../../../common/types.js'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 
-// Discoverability: Discoverable without handler.
+// Discoverability: Partially discoverable without handler.
 //
 // Blogspot blogs (`*.blogspot.{com,tld}`) expose canonical Atom and RSS at
 // `/feeds/posts/default[?alt=rss]`, plus summary variants at

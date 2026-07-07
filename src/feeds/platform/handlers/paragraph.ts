@@ -1,7 +1,7 @@
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, isHostOf } from '../../../common/utils.js'
 
-// Discoverability: Discoverable without handler.
+// Discoverability: Not discoverable without handler.
 //
 // Paragraph serves one RSS feed per user off-domain at
 // `api.paragraph.com/blogs/rss/@{user}`. The `paragraph.com/@{user}` profile page

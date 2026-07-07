@@ -1,7 +1,7 @@
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, isHostOf } from '../../../common/utils.js'
 
-// Discoverability: Discoverable without handler.
+// Discoverability: Partially discoverable without handler.
 //
 // SourceForge projects at `/projects/{p}` and `/p/{p}` expose feeds at
 // several mount points — activity, files (`/projects/{p}/rss`), news

@@ -1,7 +1,7 @@
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, hasMetaContent } from '../../../common/utils.js'
 
-// Discoverability: Discoverable without handler.
+// Discoverability: Not discoverable without handler.
 //
 // Misskey exposes per-profile feeds at `{instance}/@{user}.{atom,rss,json}` — the
 // only feed routes registered by upstream `ClientServerService.ts` and built by

@@ -2,7 +2,7 @@ import type { DiscoverUriEntry } from '../../../common/types.js'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, hasMetaContent } from '../../../common/utils.js'
 
-// Discoverability: Discoverable without handler.
+// Discoverability: Partially discoverable without handler.
 //
 // Discourse forums advertise their feeds via standard `.rss` URLs appended
 // to topic, user activity, category, top, and latest pages, and most
@@ -37,17 +37,11 @@ export const isDiscourseHtml = (content: string): boolean => {
 
 export const discourseHandler: PlatformHandler = {
   match: (url, content) => {
-    try {
-      if (!content || !isDiscourseHtml(content)) {
-        return false
-      }
+    if (!content || !isDiscourseHtml(content)) {
+      return false
+    }
 
-      new URL(url)
-
-      return true
-    } catch {}
-
-    return false
+    return URL.canParse(url)
   },
 
   resolve: (url) => {

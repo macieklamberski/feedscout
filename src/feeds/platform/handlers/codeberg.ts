@@ -2,7 +2,7 @@ import type { DiscoverUriEntry } from '../../../common/types.js'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, isAnyOf, isHostOf } from '../../../common/utils.js'
 
-// Discoverability: Discoverable without handler.
+// Discoverability: Partially discoverable without handler.
 //
 // Codeberg (Forgejo) and gitea.com expose Atom and RSS for user/org activity
 // at `/{user}.atom|.rss` and repo activity at `/{user}/{repo}.atom|.rss`,

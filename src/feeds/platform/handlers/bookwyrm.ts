@@ -2,7 +2,7 @@ import type { DiscoverUriEntry } from '../../../common/types.js'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, hasMetaContent } from '../../../common/utils.js'
 
-// Discoverability: Discoverable without handler.
+// Discoverability: Partially discoverable without handler.
 //
 // BookWyrm instances expose per-user activity, reviews, quotes, and comments
 // feeds at `/user/{user}/{rss,rss-reviews,rss-quotes,rss-comments}`, plus

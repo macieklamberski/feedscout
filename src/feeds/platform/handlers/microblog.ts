@@ -2,7 +2,7 @@ import type { DiscoverUriEntry } from '../../../common/types.js'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, isSubdomainOf } from '../../../common/utils.js'
 
-// Discoverability: Discoverable without handler.
+// Discoverability: Partially discoverable without handler.
 //
 // Micro.blog serves per-user feeds under predictable Hugo-style paths on each
 // `{slug}.micro.blog` subdomain: `/feed.xml`, `/feed.json`, `/podcast.xml`,

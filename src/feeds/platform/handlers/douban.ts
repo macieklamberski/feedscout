@@ -1,7 +1,7 @@
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, isHostOf, isSubdomainOf } from '../../../common/utils.js'
 
-// Discoverability: Discoverable without handler.
+// Discoverability: Partially discoverable without handler.
 //
 // Douban publishes RSS 2.0 feeds at well-known `/feed/people/{user}/...`,
 // `/feed/subject/{id}/reviews`, and `/feed/review/{category}` paths, and

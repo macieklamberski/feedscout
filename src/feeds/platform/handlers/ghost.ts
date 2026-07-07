@@ -2,7 +2,7 @@ import type { DiscoverUriEntry } from '../../../common/types.js'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, isSubdomainOf } from '../../../common/utils.js'
 
-// Discoverability: Discoverable without handler.
+// Discoverability: Partially discoverable without handler.
 //
 // Ghost-hosted blogs on `*.ghost.io` serve RSS at `/rss/` and advertise
 // the site-level feed via HTML `<link rel="alternate">`, so generic
