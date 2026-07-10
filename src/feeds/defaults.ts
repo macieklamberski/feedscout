@@ -199,10 +199,24 @@ export const defaultHeadersOptions: Omit<HeadersMethodOptions, 'baseUrl'> = {
   linkSelectors,
 }
 
+// Path segments of same-origin links that mark a content section likely to host its own feed.
+export const sectionNames = [
+  'blog',
+  'news',
+  'posts',
+  'articles',
+  'writing',
+  'notes',
+  'journal',
+  'podcast',
+  'changelog',
+]
+
 // Default options for Guess method (excluding baseUrl which is required).
 export const defaultGuessOptions: Omit<GuessMethodOptions, 'baseUrl'> = {
   uris: urisBalanced,
   maxAncestorDepth: 2,
+  sectionNames,
 }
 
 // Default options for Platform method.

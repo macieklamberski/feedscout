@@ -172,4 +172,51 @@ describe('discoverUrisFromGuess', () => {
 
     expect(value).toEqual(expected)
   })
+
+  it('should probe section links found in content', () => {
+    const value = discoverUrisFromGuess({
+      baseUrl: 'https://example.com/',
+      uris: ['/rss.xml'],
+      content: '<a href="/blog">Blog</a>',
+      sectionNames: ['blog'],
+    })
+    const expected = ['https://example.com/rss.xml', 'https://example.com/blog/rss.xml']
+
+    expect(value).toEqual(expected)
+  })
+
+  it('should not probe sections without content', () => {
+    const value = discoverUrisFromGuess({
+      baseUrl: 'https://example.com/',
+      uris: ['/rss.xml'],
+      sectionNames: ['blog'],
+    })
+    const expected = ['https://example.com/rss.xml']
+
+    expect(value).toEqual(expected)
+  })
+
+  it('should not probe sections without sectionNames', () => {
+    const value = discoverUrisFromGuess({
+      baseUrl: 'https://example.com/',
+      uris: ['/rss.xml'],
+      content: '<a href="/blog">Blog</a>',
+    })
+    const expected = ['https://example.com/rss.xml']
+
+    expect(value).toEqual(expected)
+  })
+
+  it('should deduplicate section bases against ancestor bases', () => {
+    const value = discoverUrisFromGuess({
+      baseUrl: 'https://example.com/blog/post-slug/',
+      uris: ['/feed.xml'],
+      maxAncestorDepth: 1,
+      content: '<a href="/blog/">Blog</a>',
+      sectionNames: ['blog'],
+    })
+    const expected = ['https://example.com/feed.xml', 'https://example.com/blog/feed.xml']
+
+    expect(value).toEqual(expected)
+  })
 })

@@ -548,7 +548,10 @@ describe('normalizeMethodsConfig', () => {
         options: expectedHeadersOptions,
       },
       guess: {
-        options: expectedGuessOptions,
+        options: {
+          ...expectedGuessOptions,
+          content: '<html></html>',
+        },
       },
     }
 
@@ -602,6 +605,7 @@ describe('normalizeMethodsConfig', () => {
         options: {
           ...expectedGuessOptions,
           uris: ['/custom'],
+          content: '<html></html>',
         },
       },
     }
@@ -672,6 +676,7 @@ describe('normalizeMethodsConfig', () => {
       guess: {
         options: {
           ...expectedGuessOptions,
+          content: '<html></html>',
           baseUrl: 'https://blog.example.com',
         },
       },
@@ -756,7 +761,10 @@ describe('normalizeMethodsConfig', () => {
         options: expectedHeadersOptions,
       },
       guess: {
-        options: expectedGuessOptions,
+        options: {
+          ...expectedGuessOptions,
+          content: '<html></html>',
+        },
       },
     }
 
@@ -1077,6 +1085,7 @@ describe('normalizeMethodsConfig', () => {
         guess: {
           options: {
             uris: ['/favicon.ico'],
+            content: '<html><link rel="icon" href="/favicon.ico"></html>',
             baseUrl: 'https://example.com',
           },
         },
@@ -1129,6 +1138,7 @@ describe('normalizeMethodsConfig', () => {
         guess: {
           options: {
             uris: ['/favicon.ico'],
+            content: '<html>content</html>',
             baseUrl: 'https://example.com',
           },
         },
