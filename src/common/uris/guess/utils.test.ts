@@ -1,6 +1,12 @@
 import { describe, expect, it } from 'bun:test'
 import type { UriEntry } from '../../types.js'
-import { generateUrlCombinations, getSubdomainVariants, getWwwCounterpart } from './utils.js'
+import {
+  generatePathUrlCombinations,
+  generateUrlCombinations,
+  getAncestorPathBases,
+  getSubdomainVariants,
+  getWwwCounterpart,
+} from './utils.js'
 
 describe('generateUrlCombinations', () => {
   it('should generate all URL combinations from multiple bases and URIs', () => {
@@ -232,6 +238,136 @@ describe('generateUrlCombinations', () => {
     ]
 
     expect(generateUrlCombinations(baseUrls, feedUris)).toEqual(expected)
+  })
+})
+
+describe('generatePathUrlCombinations', () => {
+  it('should resolve URIs relative to the base directory', () => {
+    const value = generatePathUrlCombinations(['https://example.com/blog/'], ['/feed.xml', '/rss'])
+    const expected = ['https://example.com/blog/feed.xml', 'https://example.com/blog/rss']
+
+    expect(value).toEqual(expected)
+  })
+
+  it('should normalize bases without trailing slash', () => {
+    const value = generatePathUrlCombinations(['https://example.com/blog'], ['/feed.xml'])
+    const expected = ['https://example.com/blog/feed.xml']
+
+    expect(value).toEqual(expected)
+  })
+
+  it('should generate combinations for multiple bases in order', () => {
+    const value = generatePathUrlCombinations(
+      ['https://example.com/blog/', 'https://example.com/blog/2026/'],
+      ['/feed.xml', '/rss.xml'],
+    )
+    const expected = [
+      'https://example.com/blog/feed.xml',
+      'https://example.com/blog/rss.xml',
+      'https://example.com/blog/2026/feed.xml',
+      'https://example.com/blog/2026/rss.xml',
+    ]
+
+    expect(value).toEqual(expected)
+  })
+
+  it('should append bare query URIs to the base directory', () => {
+    const value = generatePathUrlCombinations(['https://example.com/blog/'], ['?format=rss'])
+    const expected = ['https://example.com/blog/?format=rss']
+
+    expect(value).toEqual(expected)
+  })
+
+  it('should resolve array entries as alternative groups', () => {
+    const value = generatePathUrlCombinations(
+      ['https://example.com/blog/'],
+      [['/feed/rss/', '?feed=rss']],
+    )
+    const expected = [['https://example.com/blog/feed/rss/', 'https://example.com/blog/?feed=rss']]
+
+    expect(value).toEqual(expected)
+  })
+
+  it('should pass absolute URIs through unchanged', () => {
+    const value = generatePathUrlCombinations(
+      ['https://example.com/blog/'],
+      ['https://feeds.example.com/rss.xml'],
+    )
+    const expected = ['https://feeds.example.com/rss.xml']
+
+    expect(value).toEqual(expected)
+  })
+
+  it('should return empty array when bases are empty', () => {
+    const value = generatePathUrlCombinations([], ['/feed.xml'])
+    const expected: Array<string> = []
+
+    expect(value).toEqual(expected)
+  })
+})
+
+describe('getAncestorPathBases', () => {
+  it('should return directory prefixes shallowest first', () => {
+    const value = getAncestorPathBases('https://example.com/blog/post-slug/', 2)
+    const expected = ['https://example.com/blog/', 'https://example.com/blog/post-slug/']
+
+    expect(value).toEqual(expected)
+  })
+
+  it('should treat the last segment without trailing slash as a file', () => {
+    const value = getAncestorPathBases('https://example.com/blog/post-slug', 2)
+    const expected = ['https://example.com/blog/']
+
+    expect(value).toEqual(expected)
+  })
+
+  it('should use the directory of a file path', () => {
+    const value = getAncestorPathBases('https://example.com/blog/post.html', 2)
+    const expected = ['https://example.com/blog/']
+
+    expect(value).toEqual(expected)
+  })
+
+  it('should cap the number of segments at maxDepth', () => {
+    const value = getAncestorPathBases('https://example.com/a/b/c/', 2)
+    const expected = ['https://example.com/a/', 'https://example.com/a/b/']
+
+    expect(value).toEqual(expected)
+  })
+
+  it('should return empty array for root URLs', () => {
+    const value = getAncestorPathBases('https://example.com/', 2)
+    const expected: Array<string> = []
+
+    expect(value).toEqual(expected)
+  })
+
+  it('should return empty array when maxDepth is 0', () => {
+    const value = getAncestorPathBases('https://example.com/blog/post-slug/', 0)
+    const expected: Array<string> = []
+
+    expect(value).toEqual(expected)
+  })
+
+  it('should ignore query strings and hashes', () => {
+    const value = getAncestorPathBases('https://example.com/blog/?page=2#latest', 2)
+    const expected = ['https://example.com/blog/']
+
+    expect(value).toEqual(expected)
+  })
+
+  it('should preserve ports', () => {
+    const value = getAncestorPathBases('https://example.com:8080/blog/post/', 1)
+    const expected = ['https://example.com:8080/blog/']
+
+    expect(value).toEqual(expected)
+  })
+
+  it('should return empty array for invalid URLs', () => {
+    const value = getAncestorPathBases('not-a-url', 2)
+    const expected: Array<string> = []
+
+    expect(value).toEqual(expected)
   })
 })
 
