@@ -1,5 +1,5 @@
 import { Parser } from 'htmlparser2'
-import { parseUrl } from 'trousse'
+import { getPathSegments, parseUrl } from 'trousse'
 import type { UriEntry } from '../../types.js'
 
 const ipAddressRegex = /^\d+\.\d+\.\d+\.\d+$/
@@ -97,11 +97,9 @@ export const extractSectionBaseUrls = (
   baseUrl: string,
   sectionNames: Array<string>,
 ): Array<string> => {
-  let base: URL
+  const base = parseUrl(baseUrl)
 
-  try {
-    base = new URL(baseUrl)
-  } catch {
+  if (!base) {
     return []
   }
 
@@ -113,19 +111,13 @@ export const extractSectionBaseUrls = (
           return
         }
 
-        let url: URL
+        const url = parseUrl(attributes.href, base)
 
-        try {
-          url = new URL(attributes.href, base)
-        } catch {
+        if (!url || url.origin !== base.origin) {
           return
         }
 
-        if (url.origin !== base.origin) {
-          return
-        }
-
-        const segments = url.pathname.split('/').filter((segment) => segment !== '')
+        const segments = getPathSegments(url)
         const segment = segments.length === 1 ? segments[0] : undefined
 
         if (segment && sectionNames.includes(segment.toLowerCase())) {
