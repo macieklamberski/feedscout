@@ -202,7 +202,6 @@ export const defaultHeadersOptions: Omit<HeadersMethodOptions, 'baseUrl'> = {
 // Default options for Guess method (excluding baseUrl which is required).
 export const defaultGuessOptions: Omit<GuessMethodOptions, 'baseUrl'> = {
   uris: urisBalanced,
-  maxAncestorDepth: 2,
 }
 
 // Default options for Platform method.

@@ -45,44 +45,6 @@ describe('discoverFeeds', () => {
     expect(value).toEqual(expected)
   })
 
-  it('should find feeds at ancestor paths when the page has no feed hints', async () => {
-    const rss = `
-      <rss version="2.0">
-        <channel>
-          <title>Blog RSS</title>
-          <link>https://example.com/blog/</link>
-          <description>Blog feed</description>
-        </channel>
-      </rss>
-    `
-    const html = `
-      <html>
-        <head><title>Post</title></head>
-        <body><a href="/blog/">Blog</a></body>
-      </html>
-    `
-    const mockFetch = createMockFetch({
-      'https://example.com/blog/post-slug/': html,
-      'https://example.com/blog/feed.xml': rss,
-    })
-    const value = await discoverFeeds('https://example.com/blog/post-slug/', {
-      fetchFn: mockFetch,
-    })
-    const expected: Array<DiscoverResult<FeedResult>> = [
-      {
-        url: 'https://example.com/blog/feed.xml',
-        isValid: true,
-        method: 'guess',
-        format: 'rss',
-        title: 'Blog RSS',
-        description: 'Blog feed',
-        siteUrl: 'https://example.com/blog/',
-      },
-    ]
-
-    expect(value).toEqual(expected)
-  })
-
   it('should find valid feeds using guess method with default URIs', async () => {
     const rss = `
       <rss version="2.0">

@@ -21,31 +21,6 @@ Many websites place feeds at predictable paths. The Guess method tests these pat
 
 Each path is appended to the base URL and checked for a valid feed.
 
-## Ancestor Paths
-
-Some sites serve their feed from a section directory rather than the root — for example, a post at `/blog/post-slug/` with the feed at `/blog/feed.xml`. In addition to the root-level paths, the Guess method tests path-style URIs against the directory ancestors of the base URL:
-
-```
-https://example.com/blog/post-slug/
-→ https://example.com/feed.xml          (root)
-→ https://example.com/blog/feed.xml     (ancestor)
-→ https://example.com/blog/post-slug/feed.xml
-```
-
-The `maxAncestorDepth` option controls how many directory levels from the root are tested (default: `2` for feeds). Set it to `0` to only test root-level paths:
-
-```typescript
-const feeds = await discoverFeeds(url, {
-  methods: {
-    guess: {
-      maxAncestorDepth: 0,
-    },
-  },
-})
-```
-
-Every configured URI is tested against each ancestor directory the same way it is tested against the root: `/feed.xml` resolves under the directory, and a bare query URI like `?feed=rss` is appended to it (`https://example.com/blog/?feed=rss`).
-
 ## URI Sets
 
 There are three predefined URI sets:
@@ -90,16 +65,12 @@ Includes WordPress, Blogger, and many other patterns:
 import { urisComprehensive } from 'feedscout/feeds'
 
 // urisBalanced + [
-//   '/atom',
-//   '/rss2.xml',
-//   '?format=rss',
-//   '?rss=1',
+//   '/?feed=rss',
+//   '/?feed=atom',
 //   '/feeds/posts/default',
 //   ...
 // ]
 ```
-
-Query URIs behave differently from path URIs: a bare `?format=rss` is appended to the current page's path (`https://example.com/blog?format=rss`), while `/`-prefixed paths always resolve from the site root. This matches platforms like WordPress and Squarespace that serve feeds via a query parameter on the page you're on.
 
 ## Configuration
 

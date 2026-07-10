@@ -315,6 +315,5 @@ type GuessMethodOptions = {
   baseUrl: string
   uris: Array<string>
   additionalBaseUrls?: Array<string>
-  maxAncestorDepth?: number
 }
 ```
