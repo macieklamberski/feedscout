@@ -33,6 +33,63 @@ export const generateUrlCombinations = (
   })
 }
 
+// Unlike resolveUri, a leading slash anchors at the base's directory instead of the origin:
+// /feed.xml + https://example.com/blog/ → https://example.com/blog/feed.xml.
+const resolvePathUri = (uri: string, base: string): string => {
+  if (uri.startsWith('/')) {
+    return new URL(uri.slice(1), base).href
+  }
+
+  return new URL(uri, base).href
+}
+
+// Resolves every URI against each base's directory: query URIs append to the directory
+// (?feed=rss → /blog/?feed=rss) and array alternatives stay paired, same as at origin level.
+export const generatePathUrlCombinations = (
+  pathBases: Array<string>,
+  uris: Array<UriEntry>,
+): Array<UriEntry> => {
+  return pathBases.flatMap((base) => {
+    const normalizedBase = base.endsWith('/') ? base : `${base}/`
+
+    return uris.map((uri) => {
+      if (typeof uri === 'string') {
+        return resolvePathUri(uri, normalizedBase)
+      }
+
+      return uri.map((alternative) => resolvePathUri(alternative, normalizedBase))
+    })
+  })
+}
+
+// Returns the directory prefixes of the URL's pathname as absolute URLs, shallowest first,
+// excluding the root, capped at maxDepth segments from the root.
+export const getAncestorPathBases = (baseUrl: string, maxDepth: number): Array<string> => {
+  let url: URL
+
+  try {
+    url = new URL(baseUrl)
+  } catch {
+    return []
+  }
+
+  // The first split element is always empty (pathname starts with /) and the last is either empty
+  // (directory URL) or the filename, so both are dropped. The filter collapses double slashes.
+  const segments = url.pathname
+    .split('/')
+    .slice(1, -1)
+    .filter((segment) => segment !== '')
+  const bases: Array<string> = []
+  let base = `${url.origin}/`
+
+  for (const segment of segments.slice(0, maxDepth)) {
+    base += `${segment}/`
+    bases.push(base)
+  }
+
+  return bases
+}
+
 export const getWwwCounterpart = (baseUrl: string): string => {
   const url = new URL(baseUrl)
   const port = url.port ? `:${url.port}` : ''
