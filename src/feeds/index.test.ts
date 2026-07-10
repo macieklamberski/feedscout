@@ -12,9 +12,9 @@ import type { FeedResult } from './types.js'
 
 const createMockFetch = (responses: Record<string, string>): DiscoverFetchFn => {
   return async (url: string) => ({
-    url,
-    body: responses[url] ?? '',
     headers: new Headers(),
+    body: responses[url] ?? '',
+    url,
     status: 200,
     statusText: 'OK',
   })
@@ -421,9 +421,9 @@ describe('discoverFeeds', () => {
       }
 
       return Promise.resolve({
-        url,
-        body: url === 'https://example.com/feed.xml' ? rssContent : '',
         headers: new Headers(),
+        body: url === 'https://example.com/feed.xml' ? rssContent : '',
+        url,
         status: url === 'https://example.com/feed.xml' ? 200 : 404,
         statusText: url === 'https://example.com/feed.xml' ? 'OK' : 'Not Found',
       })
@@ -538,11 +538,11 @@ describe('discoverFeeds', () => {
           url: 'https://www.reddit.com/r/programming/.rss',
           isValid: true,
           method: 'platform',
+          hint: { key: 'reddit:posts', label: 'Posts' },
           format: 'rss',
           title: 'Test RSS',
           description: 'Test feed',
           siteUrl: 'https://reddit.com/',
-          hint: { key: 'reddit:posts', label: 'Posts' },
         },
       ]
 
@@ -570,21 +570,21 @@ describe('discoverFeeds', () => {
           url: 'https://github.com/owner/repo/releases.atom',
           isValid: true,
           method: 'platform',
+          hint: { key: 'github:releases', label: 'Releases' },
           format: 'atom',
           title: 'Test Atom',
           description: 'Test feed',
           siteUrl: 'https://github.com/owner/repo',
-          hint: { key: 'github:releases', label: 'Releases' },
         },
         {
           url: 'https://github.com/owner/repo/commits.atom',
           isValid: true,
           method: 'platform',
+          hint: { key: 'github:commits', label: 'Commits' },
           format: 'atom',
           title: 'Test Atom',
           description: 'Test feed',
           siteUrl: 'https://github.com/owner/repo',
-          hint: { key: 'github:commits', label: 'Commits' },
         },
       ]
 
@@ -653,11 +653,11 @@ describe('discoverFeeds', () => {
           url: 'https://www.reddit.com/r/programming/.rss',
           isValid: true,
           method: 'platform',
+          hint: { key: 'reddit:posts', label: 'Posts' },
           format: 'rss',
           title: 'Test RSS',
           description: 'Test feed',
           siteUrl: 'https://reddit.com/',
-          hint: { key: 'reddit:posts', label: 'Posts' },
         },
         {
           url: 'https://reddit.com/feed',
@@ -794,14 +794,14 @@ describe('discoverFeeds', () => {
         </rss>
       `
       const fetchFn: DiscoverFetchFn = async (url: string) => ({
-        url,
-        body: url === 'https://example.com/feed.xml' ? rss : '',
         headers:
           url === 'https://example.com'
             ? new Headers({
                 link: '<https://example.com/feed.xml>; rel="alternate"; type="application/rss+xml"',
               })
             : new Headers(),
+        body: url === 'https://example.com/feed.xml' ? rss : '',
+        url,
         status: 200,
         statusText: 'OK',
       })
