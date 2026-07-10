@@ -1,4 +1,5 @@
-import { parseUrl } from 'trousse'
+import { Parser } from 'htmlparser2'
+import { getPathSegments, parseUrl } from 'trousse'
 import type { UriEntry } from '../../types.js'
 
 const ipAddressRegex = /^\d+\.\d+\.\d+\.\d+$/
@@ -87,6 +88,50 @@ export const getAncestorPathBases = (baseUrl: string, maxDepth: number): Array<s
   }
 
   return bases
+}
+
+// Scans page HTML for same-origin anchors whose path is a single section segment (e.g. /blog)
+// and returns them as path bases for probing, preserving the segment's original casing.
+export const extractSectionBaseUrls = (
+  content: string,
+  baseUrl: string,
+  sectionNames: Array<string>,
+): Array<string> => {
+  const base = parseUrl(baseUrl)
+
+  if (!base) {
+    return []
+  }
+
+  const bases = new Set<string>()
+  const parser = new Parser(
+    {
+      onopentag: (name, attributes) => {
+        if (name !== 'a' || !attributes.href) {
+          return
+        }
+
+        const url = parseUrl(attributes.href, base)
+
+        if (!url || url.origin !== base.origin) {
+          return
+        }
+
+        const segments = getPathSegments(url)
+        const segment = segments.length === 1 ? segments[0] : undefined
+
+        if (segment && sectionNames.includes(segment.toLowerCase())) {
+          bases.add(`${url.origin}/${segment}/`)
+        }
+      },
+    },
+    { decodeEntities: true },
+  )
+
+  parser.write(content)
+  parser.end()
+
+  return [...bases]
 }
 
 export const getWwwCounterpart = (baseUrl: string): string => {

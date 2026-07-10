@@ -46,6 +46,39 @@ const feeds = await discoverFeeds(url, {
 
 Every configured URI is tested against each ancestor directory the same way it is tested against the root: `/feed.xml` resolves under the directory, and a bare query URI like `?feed=rss` is appended to it (`https://example.com/blog/?feed=rss`).
 
+## Section Links
+
+Sites often keep their feed under a content section that isn't part of the current page's path — for example, a homepage linking to `/blog` with the feed at `/blog/rss.xml`. The Guess method scans the page HTML for same-origin links whose path is a single section segment and tests path-style URIs against them:
+
+```
+https://example.com/ with <a href="/blog">
+→ https://example.com/blog/rss.xml
+→ https://example.com/blog/feed.xml
+→ ...
+```
+
+The recognized section segments are exported as `sectionNames`:
+
+```typescript
+import { sectionNames } from 'feedscout/feeds'
+
+// ['blog', 'news', 'posts', 'articles', 'writing', 'notes', 'journal', 'podcast', 'changelog']
+```
+
+You can pass your own list:
+
+```typescript
+const feeds = await discoverFeeds(url, {
+  methods: {
+    guess: {
+      sectionNames: ['blog', 'updates'],
+    },
+  },
+})
+```
+
+Setting `sectionNames: []` disables section-link probing.
+
 ## URI Sets
 
 There are three predefined URI sets:

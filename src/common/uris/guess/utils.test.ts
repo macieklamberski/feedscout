@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'bun:test'
 import type { UriEntry } from '../../types.js'
 import {
+  extractSectionBaseUrls,
   generatePathUrlCombinations,
   generateUrlCombinations,
   getAncestorPathBases,
@@ -365,6 +366,113 @@ describe('getAncestorPathBases', () => {
 
   it('should return empty array for invalid URLs', () => {
     const value = getAncestorPathBases('not-a-url', 2)
+    const expected: Array<string> = []
+
+    expect(value).toEqual(expected)
+  })
+})
+
+describe('extractSectionBaseUrls', () => {
+  const sectionNames = ['blog', 'news', 'podcast']
+
+  it('should extract same-origin section links', () => {
+    const html = '<nav><a href="/blog">Blog</a><a href="/about">About</a></nav>'
+    const value = extractSectionBaseUrls(html, 'https://example.com/', sectionNames)
+    const expected = ['https://example.com/blog/']
+
+    expect(value).toEqual(expected)
+  })
+
+  it('should handle absolute same-origin links', () => {
+    const html = '<a href="https://example.com/news">News</a>'
+    const value = extractSectionBaseUrls(html, 'https://example.com/', sectionNames)
+    const expected = ['https://example.com/news/']
+
+    expect(value).toEqual(expected)
+  })
+
+  it('should ignore cross-origin links', () => {
+    const html = '<a href="https://other.com/blog">Blog</a>'
+    const value = extractSectionBaseUrls(html, 'https://example.com/', sectionNames)
+    const expected: Array<string> = []
+
+    expect(value).toEqual(expected)
+  })
+
+  it('should ignore links with more than one path segment', () => {
+    const html = '<a href="/blog/post-slug/">Post</a><a href="/en/blog">Blog</a>'
+    const value = extractSectionBaseUrls(html, 'https://example.com/', sectionNames)
+    const expected: Array<string> = []
+
+    expect(value).toEqual(expected)
+  })
+
+  it('should ignore links outside the section vocabulary', () => {
+    const html = '<a href="/pricing">Pricing</a><a href="/team">Team</a>'
+    const value = extractSectionBaseUrls(html, 'https://example.com/', sectionNames)
+    const expected: Array<string> = []
+
+    expect(value).toEqual(expected)
+  })
+
+  it('should normalize trailing slash variants to one base', () => {
+    const html = '<a href="/blog">Blog</a><a href="/blog/">Blog</a>'
+    const value = extractSectionBaseUrls(html, 'https://example.com/', sectionNames)
+    const expected = ['https://example.com/blog/']
+
+    expect(value).toEqual(expected)
+  })
+
+  it('should match case-insensitively while preserving the original casing', () => {
+    const html = '<a href="/Blog">Blog</a>'
+    const value = extractSectionBaseUrls(html, 'https://example.com/', sectionNames)
+    const expected = ['https://example.com/Blog/']
+
+    expect(value).toEqual(expected)
+  })
+
+  it('should resolve relative links against a deep base URL', () => {
+    const html = '<a href="/blog">Blog</a>'
+    const value = extractSectionBaseUrls(html, 'https://example.com/some/page/', sectionNames)
+    const expected = ['https://example.com/blog/']
+
+    expect(value).toEqual(expected)
+  })
+
+  it('should collect multiple sections in document order', () => {
+    const html = '<a href="/news">News</a><a href="/blog">Blog</a>'
+    const value = extractSectionBaseUrls(html, 'https://example.com/', sectionNames)
+    const expected = ['https://example.com/news/', 'https://example.com/blog/']
+
+    expect(value).toEqual(expected)
+  })
+
+  it('should ignore unparsable hrefs', () => {
+    const html = '<a href="http://">Broken</a><a href="/blog">Blog</a>'
+    const value = extractSectionBaseUrls(html, 'https://example.com/', sectionNames)
+    const expected = ['https://example.com/blog/']
+
+    expect(value).toEqual(expected)
+  })
+
+  it('should ignore anchors without href', () => {
+    const html = '<a name="top">Top</a>'
+    const value = extractSectionBaseUrls(html, 'https://example.com/', sectionNames)
+    const expected: Array<string> = []
+
+    expect(value).toEqual(expected)
+  })
+
+  it('should return empty array for invalid base URL', () => {
+    const html = '<a href="/blog">Blog</a>'
+    const value = extractSectionBaseUrls(html, 'not-a-url', sectionNames)
+    const expected: Array<string> = []
+
+    expect(value).toEqual(expected)
+  })
+
+  it('should return empty array for empty content', () => {
+    const value = extractSectionBaseUrls('', 'https://example.com/', sectionNames)
     const expected: Array<string> = []
 
     expect(value).toEqual(expected)
