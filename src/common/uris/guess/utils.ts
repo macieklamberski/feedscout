@@ -73,13 +73,21 @@ export const getAncestorPathBases = (baseUrl: string, maxDepth: number): Array<s
     return []
   }
 
-  // Directory of the URL: pathname up to and including the last slash.
-  const directory = url.pathname.slice(0, url.pathname.lastIndexOf('/') + 1)
-  const segments = directory.split('/').filter((segment) => segment !== '')
+  // The first split element is always empty (pathname starts with /) and the last is either empty
+  // (directory URL) or the filename, so both are dropped. The filter collapses double slashes.
+  const segments = url.pathname
+    .split('/')
+    .slice(1, -1)
+    .filter((segment) => segment !== '')
+  const bases: Array<string> = []
+  let base = `${url.origin}/`
 
-  return segments.slice(0, maxDepth).map((_, index) => {
-    return `${url.origin}/${segments.slice(0, index + 1).join('/')}/`
-  })
+  for (const segment of segments.slice(0, maxDepth)) {
+    base += `${segment}/`
+    bases.push(base)
+  }
+
+  return bases
 }
 
 export const getWwwCounterpart = (baseUrl: string): string => {
