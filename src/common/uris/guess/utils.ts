@@ -33,24 +33,32 @@ export const generateUrlCombinations = (
   })
 }
 
-// Keeps only plain path-style URIs (e.g. /feed.xml). Query URIs and array alternatives are
-// WordPress-shaped, and WordPress serves feeds from the root, so they are skipped for path bases.
-export const getAbsolutePathUris = (uris: Array<UriEntry>): Array<string> => {
-  return uris.filter((uri): uri is string => {
-    return typeof uri === 'string' && uri.startsWith('/')
-  })
+// Unlike resolveUri, a leading slash anchors at the base's directory instead of the origin:
+// /feed.xml + https://example.com/blog/ → https://example.com/blog/feed.xml.
+const resolvePathUri = (uri: string, base: string): string => {
+  if (uri.startsWith('/')) {
+    return new URL(uri.slice(1), base).href
+  }
+
+  return new URL(uri, base).href
 }
 
-// Resolves path-style URIs relative to each base's directory instead of the origin:
-// /feed.xml + https://example.com/blog/ → https://example.com/blog/feed.xml.
+// Resolves every URI against each base's directory: query URIs append to the directory
+// (?feed=rss → /blog/?feed=rss) and array alternatives stay paired, same as at origin level.
 export const generatePathUrlCombinations = (
   pathBases: Array<string>,
-  uris: Array<string>,
-): Array<string> => {
+  uris: Array<UriEntry>,
+): Array<UriEntry> => {
   return pathBases.flatMap((base) => {
     const normalizedBase = base.endsWith('/') ? base : `${base}/`
 
-    return uris.map((uri) => new URL(uri.slice(1), normalizedBase).href)
+    return uris.map((uri) => {
+      if (typeof uri === 'string') {
+        return resolvePathUri(uri, normalizedBase)
+      }
+
+      return uri.map((alternative) => resolvePathUri(alternative, normalizedBase))
+    })
   })
 }
 

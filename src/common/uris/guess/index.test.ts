@@ -149,7 +149,7 @@ describe('discoverUrisFromGuess', () => {
     expect(value).toEqual(expected)
   })
 
-  it('should skip query URIs and array alternatives for ancestor paths', () => {
+  it('should apply query URIs and array alternatives to ancestor paths', () => {
     const value = discoverUrisFromGuess({
       baseUrl: 'https://example.com/blog/post-slug/',
       uris: ['/feed.xml', '?format=rss', ['/feed/atom/', '?feed=atom']],
@@ -160,6 +160,8 @@ describe('discoverUrisFromGuess', () => {
       'https://example.com/blog/post-slug/?format=rss',
       ['https://example.com/feed/atom/', 'https://example.com/blog/post-slug/?feed=atom'],
       'https://example.com/blog/feed.xml',
+      'https://example.com/blog/?format=rss',
+      ['https://example.com/blog/feed/atom/', 'https://example.com/blog/?feed=atom'],
     ]
 
     expect(value).toEqual(expected)

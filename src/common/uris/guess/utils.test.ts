@@ -2,7 +2,6 @@ import { describe, expect, it } from 'bun:test'
 import {
   generatePathUrlCombinations,
   generateUrlCombinations,
-  getAbsolutePathUris,
   getAncestorPathBases,
   getSubdomainVariants,
   getWwwCounterpart,
@@ -241,41 +240,6 @@ describe('generateUrlCombinations', () => {
   })
 })
 
-describe('getAbsolutePathUris', () => {
-  it('should keep plain path-style URIs', () => {
-    const value = getAbsolutePathUris(['/feed.xml', '/rss', '/index.xml'])
-    const expected = ['/feed.xml', '/rss', '/index.xml']
-
-    expect(value).toEqual(expected)
-  })
-
-  it('should drop query URIs and array alternatives', () => {
-    const value = getAbsolutePathUris([
-      '/feed.xml',
-      '?format=rss',
-      ['/feed/atom/', '?feed=atom'],
-      '/rss',
-    ])
-    const expected = ['/feed.xml', '/rss']
-
-    expect(value).toEqual(expected)
-  })
-
-  it('should drop absolute URIs', () => {
-    const value = getAbsolutePathUris(['https://feeds.example.com/rss.xml', '/feed.xml'])
-    const expected = ['/feed.xml']
-
-    expect(value).toEqual(expected)
-  })
-
-  it('should return empty array for empty input', () => {
-    const value = getAbsolutePathUris([])
-    const expected: Array<string> = []
-
-    expect(value).toEqual(expected)
-  })
-})
-
 describe('generatePathUrlCombinations', () => {
   it('should resolve URIs relative to the base directory', () => {
     const value = generatePathUrlCombinations(['https://example.com/blog/'], ['/feed.xml', '/rss'])
@@ -302,6 +266,33 @@ describe('generatePathUrlCombinations', () => {
       'https://example.com/blog/2026/feed.xml',
       'https://example.com/blog/2026/rss.xml',
     ]
+
+    expect(value).toEqual(expected)
+  })
+
+  it('should append bare query URIs to the base directory', () => {
+    const value = generatePathUrlCombinations(['https://example.com/blog/'], ['?format=rss'])
+    const expected = ['https://example.com/blog/?format=rss']
+
+    expect(value).toEqual(expected)
+  })
+
+  it('should resolve array entries as alternative groups', () => {
+    const value = generatePathUrlCombinations(
+      ['https://example.com/blog/'],
+      [['/feed/rss/', '?feed=rss']],
+    )
+    const expected = [['https://example.com/blog/feed/rss/', 'https://example.com/blog/?feed=rss']]
+
+    expect(value).toEqual(expected)
+  })
+
+  it('should pass absolute URIs through unchanged', () => {
+    const value = generatePathUrlCombinations(
+      ['https://example.com/blog/'],
+      ['https://feeds.example.com/rss.xml'],
+    )
+    const expected = ['https://feeds.example.com/rss.xml']
 
     expect(value).toEqual(expected)
   })

@@ -44,7 +44,7 @@ const feeds = await discoverFeeds(url, {
 })
 ```
 
-Only plain path-style URIs are tested against ancestor directories — query-based patterns like `?feed=rss` are root-only.
+Every configured URI is tested against each ancestor directory the same way it is tested against the root: `/feed.xml` resolves under the directory, and a bare query URI like `?feed=rss` is appended to it (`https://example.com/blog/?feed=rss`).
 
 ## URI Sets
 
@@ -90,12 +90,16 @@ Includes WordPress, Blogger, and many other patterns:
 import { urisComprehensive } from 'feedscout/feeds'
 
 // urisBalanced + [
-//   '/?feed=rss',
-//   '/?feed=atom',
+//   '/atom',
+//   '/rss2.xml',
+//   '?format=rss',
+//   '?rss=1',
 //   '/feeds/posts/default',
 //   ...
 // ]
 ```
+
+Query URIs behave differently from path URIs: a bare `?format=rss` is appended to the current page's path (`https://example.com/blog?format=rss`), while `/`-prefixed paths always resolve from the site root. This matches platforms like WordPress and Squarespace that serve feeds via a query parameter on the page you're on.
 
 ## Configuration
 
