@@ -35,7 +35,7 @@ export const generateUrlCombinations = (
 
 // Keeps only plain path-style URIs (e.g. /feed.xml). Query URIs and array alternatives are
 // WordPress-shaped, and WordPress serves feeds from the root, so they are skipped for path bases.
-export const getPathUris = (uris: Array<UriEntry>): Array<string> => {
+export const getAbsolutePathUris = (uris: Array<UriEntry>): Array<string> => {
   return uris.filter((uri): uri is string => {
     return typeof uri === 'string' && uri.startsWith('/')
   })

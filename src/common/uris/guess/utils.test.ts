@@ -2,8 +2,8 @@ import { describe, expect, it } from 'bun:test'
 import {
   generatePathUrlCombinations,
   generateUrlCombinations,
+  getAbsolutePathUris,
   getAncestorPathBases,
-  getPathUris,
   getSubdomainVariants,
   getWwwCounterpart,
 } from './utils.js'
@@ -241,30 +241,35 @@ describe('generateUrlCombinations', () => {
   })
 })
 
-describe('getPathUris', () => {
+describe('getAbsolutePathUris', () => {
   it('should keep plain path-style URIs', () => {
-    const value = getPathUris(['/feed.xml', '/rss', '/index.xml'])
+    const value = getAbsolutePathUris(['/feed.xml', '/rss', '/index.xml'])
     const expected = ['/feed.xml', '/rss', '/index.xml']
 
     expect(value).toEqual(expected)
   })
 
   it('should drop query URIs and array alternatives', () => {
-    const value = getPathUris(['/feed.xml', '?format=rss', ['/feed/atom/', '?feed=atom'], '/rss'])
+    const value = getAbsolutePathUris([
+      '/feed.xml',
+      '?format=rss',
+      ['/feed/atom/', '?feed=atom'],
+      '/rss',
+    ])
     const expected = ['/feed.xml', '/rss']
 
     expect(value).toEqual(expected)
   })
 
   it('should drop absolute URIs', () => {
-    const value = getPathUris(['https://feeds.example.com/rss.xml', '/feed.xml'])
+    const value = getAbsolutePathUris(['https://feeds.example.com/rss.xml', '/feed.xml'])
     const expected = ['/feed.xml']
 
     expect(value).toEqual(expected)
   })
 
   it('should return empty array for empty input', () => {
-    const value = getPathUris([])
+    const value = getAbsolutePathUris([])
     const expected: Array<string> = []
 
     expect(value).toEqual(expected)

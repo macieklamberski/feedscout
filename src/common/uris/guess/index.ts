@@ -3,8 +3,8 @@ import type { GuessMethodOptions } from './types.js'
 import {
   generatePathUrlCombinations,
   generateUrlCombinations,
+  getAbsolutePathUris,
   getAncestorPathBases,
-  getPathUris,
 } from './utils.js'
 
 export const discoverUrisFromGuess = (options: GuessMethodOptions): Array<UriEntry> => {
@@ -17,7 +17,7 @@ export const discoverUrisFromGuess = (options: GuessMethodOptions): Array<UriEnt
 
   if (maxAncestorDepth > 0) {
     const ancestorBases = getAncestorPathBases(baseUrl, maxAncestorDepth)
-    combinations.push(...generatePathUrlCombinations(ancestorBases, getPathUris(uris)))
+    combinations.push(...generatePathUrlCombinations(ancestorBases, getAbsolutePathUris(uris)))
   }
 
   return combinations
