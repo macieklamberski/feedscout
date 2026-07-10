@@ -115,4 +115,61 @@ describe('discoverUrisFromGuess', () => {
 
     expect(throwing).toThrow(TypeError)
   })
+
+  it('should not probe ancestor paths by default', () => {
+    const value = discoverUrisFromGuess({
+      baseUrl: 'https://example.com/blog/post-slug/',
+      uris: ['/feed.xml'],
+    })
+    const expected = ['https://example.com/feed.xml']
+
+    expect(value).toEqual(expected)
+  })
+
+  it('should probe ancestor paths after origin URIs when maxAncestorDepth is set', () => {
+    const value = discoverUrisFromGuess({
+      baseUrl: 'https://example.com/blog/post-slug/',
+      uris: ['/feed.xml', '/rss'],
+      maxAncestorDepth: 2,
+    })
+    const expected = [
+      'https://example.com/feed.xml',
+      'https://example.com/rss',
+      'https://example.com/blog/feed.xml',
+      'https://example.com/blog/rss',
+      'https://example.com/blog/post-slug/feed.xml',
+      'https://example.com/blog/post-slug/rss',
+    ]
+
+    expect(value).toEqual(expected)
+  })
+
+  it('should apply query URIs and array alternatives to ancestor paths', () => {
+    const value = discoverUrisFromGuess({
+      baseUrl: 'https://example.com/blog/post-slug/',
+      uris: ['/feed.xml', '?format=rss', ['/feed/atom/', '?feed=atom']],
+      maxAncestorDepth: 1,
+    })
+    const expected = [
+      'https://example.com/feed.xml',
+      'https://example.com/blog/post-slug/?format=rss',
+      ['https://example.com/feed/atom/', 'https://example.com/blog/post-slug/?feed=atom'],
+      'https://example.com/blog/feed.xml',
+      'https://example.com/blog/?format=rss',
+      ['https://example.com/blog/feed/atom/', 'https://example.com/blog/?feed=atom'],
+    ]
+
+    expect(value).toEqual(expected)
+  })
+
+  it('should not generate ancestor URIs for root base URLs', () => {
+    const value = discoverUrisFromGuess({
+      baseUrl: 'https://example.com',
+      uris: ['/feed.xml'],
+      maxAncestorDepth: 2,
+    })
+    const expected = ['https://example.com/feed.xml']
+
+    expect(value).toEqual(expected)
+  })
 })
