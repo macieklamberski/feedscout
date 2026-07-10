@@ -1,3 +1,4 @@
+import { parseUrl } from 'trousse'
 import type { UriEntry } from '../../types.js'
 
 const ipAddressRegex = /^\d+\.\d+\.\d+\.\d+$/
@@ -65,11 +66,9 @@ export const generatePathUrlCombinations = (
 // Returns the directory prefixes of the URL's pathname as absolute URLs, shallowest first,
 // excluding the root, capped at maxDepth segments from the root.
 export const getAncestorPathBases = (baseUrl: string, maxDepth: number): Array<string> => {
-  let url: URL
+  const url = parseUrl(baseUrl)
 
-  try {
-    url = new URL(baseUrl)
-  } catch {
+  if (!url) {
     return []
   }
 
