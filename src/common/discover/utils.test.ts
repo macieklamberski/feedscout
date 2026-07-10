@@ -57,9 +57,9 @@ describe('defaultFetchFn', () => {
       }),
     )
     const expected = {
-      url: 'https://example.com/feed.xml',
-      body: 'response body',
       headers: expect.any(Headers),
+      body: 'response body',
+      url: 'https://example.com/feed.xml',
       status: 200,
       statusText: 'OK',
     }
@@ -125,9 +125,9 @@ describe('defaultFetchFn', () => {
     )
     const result = await defaultFetchFn('https://example.com/feed.xml')
     const expected = {
-      url: 'https://example.com/feed.xml',
-      body: 'feed content',
       headers: expect.any(Headers),
+      body: 'feed content',
+      url: 'https://example.com/feed.xml',
       status: 200,
       statusText: 'OK',
     }
@@ -145,9 +145,9 @@ describe('defaultFetchFn', () => {
       }),
     )
     const expected = {
-      url: 'https://redirect.example.com/feed.xml',
-      body: '',
       headers: expect.any(Headers),
+      body: '',
+      url: 'https://redirect.example.com/feed.xml',
       status: 200,
       statusText: 'OK',
     }
@@ -164,9 +164,9 @@ describe('defaultFetchFn', () => {
       }),
     )
     const expected = {
-      url: '',
-      body: '<rss>feed content</rss>',
       headers: expect.any(Headers),
+      body: '<rss>feed content</rss>',
+      url: '',
       status: 200,
       statusText: 'OK',
     }
@@ -184,9 +184,9 @@ describe('defaultFetchFn', () => {
       }),
     )
     const expected = {
-      url: '',
-      body: '',
       headers: expect.any(Headers),
+      body: '',
+      url: '',
       status: 404,
       statusText: 'Not Found',
     }
@@ -198,9 +198,9 @@ describe('defaultFetchFn', () => {
 describe('normalizeInput', () => {
   const fetchFn: DiscoverFetchFn = (url) => {
     return Promise.resolve({
-      url,
-      body: '<html>content</html>',
       headers: new Headers({ 'content-type': 'text/html' }),
+      body: '<html>content</html>',
+      url,
       status: 200,
       statusText: 'OK',
     })
@@ -219,9 +219,9 @@ describe('normalizeInput', () => {
   it('should preserve redirected URL from fetch response', async () => {
     const redirectFetchFn: DiscoverFetchFn = () => {
       return Promise.resolve({
-        url: 'https://example.com/redirected',
-        body: '<html>content</html>',
         headers: new Headers(),
+        body: '<html>content</html>',
+        url: 'https://example.com/redirected',
         status: 200,
         statusText: 'OK',
       })
@@ -238,9 +238,9 @@ describe('normalizeInput', () => {
   it('should handle ReadableStream body by returning undefined content', async () => {
     const streamFetchFn: DiscoverFetchFn = (url) => {
       return Promise.resolve({
-        url,
-        body: new ReadableStream(),
         headers: new Headers(),
+        body: new ReadableStream(),
+        url,
         status: 200,
         statusText: 'OK',
       })
@@ -258,9 +258,9 @@ describe('normalizeInput', () => {
     const headers = new Headers({ 'content-type': 'text/html', link: '</feed>; rel="alternate"' })
     const headersFetchFn: DiscoverFetchFn = (url) => {
       return Promise.resolve({
-        url,
-        body: '<html></html>',
         headers,
+        body: '<html></html>',
+        url,
         status: 200,
         statusText: 'OK',
       })
@@ -347,9 +347,9 @@ describe('normalizeInput', () => {
   it('should handle empty string content from fetch', async () => {
     const emptyFetchFn: DiscoverFetchFn = (url) => {
       return Promise.resolve({
-        url,
-        body: '',
         headers: new Headers(),
+        body: '',
+        url,
         status: 200,
         statusText: 'OK',
       })
@@ -368,9 +368,9 @@ describe('normalizeInput', () => {
     const trackingFetchFn: DiscoverFetchFn = (url) => {
       fetchCalled = true
       return Promise.resolve({
-        url,
-        body: '<html></html>',
         headers: new Headers(),
+        body: '<html></html>',
+        url,
         status: 200,
         statusText: 'OK',
       })
@@ -388,9 +388,9 @@ describe('normalizeInput', () => {
   it('should handle fetch response with different status codes', async () => {
     const statusFetchFn: DiscoverFetchFn = (url) => {
       return Promise.resolve({
-        url,
-        body: '<html>content</html>',
         headers: new Headers(),
+        body: '<html>content</html>',
+        url,
         status: 301,
         statusText: 'Moved Permanently',
       })
@@ -500,19 +500,19 @@ describe('normalizeMethodsConfig', () => {
     },
   }
   const expectedHtmlOptions = {
+    baseUrl: 'https://example.com',
     linkSelectors,
     anchorUris: feedUrisComprehensive,
     anchorIgnoredUris: ignoredUris,
     anchorLabels,
-    baseUrl: 'https://example.com',
   }
   const expectedHeadersOptions = {
-    linkSelectors,
     baseUrl: 'https://example.com',
+    linkSelectors,
   }
   const expectedGuessOptions = {
-    uris: feedUrisBalanced,
     baseUrl: 'https://example.com',
+    uris: feedUrisBalanced,
   }
 
   it('should normalize array with single method to config with defaults', () => {
@@ -1068,25 +1068,25 @@ describe('normalizeMethodsConfig', () => {
         html: {
           html: '<html><link rel="icon" href="/favicon.ico"></html>',
           options: {
+            baseUrl: 'https://example.com',
             linkSelectors: [{ rel: 'icon' }],
             anchorUris: [],
             anchorIgnoredUris: [],
             anchorLabels: [],
-            baseUrl: 'https://example.com',
           },
         },
         headers: {
           headers: siteHeaders,
           options: {
-            linkSelectors: [{ rel: 'icon' }],
             baseUrl: 'https://example.com',
+            linkSelectors: [{ rel: 'icon' }],
           },
         },
         guess: {
           options: {
+            baseUrl: 'https://example.com',
             uris: ['/favicon.ico'],
             content: '<html><link rel="icon" href="/favicon.ico"></html>',
-            baseUrl: 'https://example.com',
           },
         },
       }
@@ -1128,18 +1128,18 @@ describe('normalizeMethodsConfig', () => {
         html: {
           html: '<html>content</html>',
           options: {
+            baseUrl: 'https://example.com',
             linkSelectors: [{ rel: 'icon' }],
             anchorUris: [],
             anchorIgnoredUris: [],
             anchorLabels: [],
-            baseUrl: 'https://example.com',
           },
         },
         guess: {
           options: {
+            baseUrl: 'https://example.com',
             uris: ['/favicon.ico'],
             content: '<html>content</html>',
-            baseUrl: 'https://example.com',
           },
         },
       }
