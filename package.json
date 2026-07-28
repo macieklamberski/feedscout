@@ -65,12 +65,12 @@
     "http-link-header": "^1.1.3"
   },
   "peerDependencies": {
-    "feedsmith": "3.0.0-rc.1"
+    "feedsmith": "^3.0.0-rc.1"
   },
   "devDependencies": {
     "@types/bun": "^1.3.13",
     "@types/http-link-header": "^1.0.7",
-    "feedsmith": "3.0.0-rc.1",
+    "feedsmith": "^3.0.0-rc.1",
     "kvalita": "^1.15.1",
     "trousse": "^1.0.1",
     "tsdown": "^0.22.2",
