@@ -71,7 +71,7 @@
     "@types/bun": "^1.3.13",
     "@types/http-link-header": "^1.0.7",
     "feedsmith": "^3.0.0-rc.2",
-    "kvalita": "^1.16.0",
+    "kvalita": "^1.17.2",
     "trousse": "^1.4.0",
     "tsdown": "^0.22.14",
     "vitepress": "^2.0.0-alpha.18"
