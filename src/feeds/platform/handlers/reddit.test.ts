@@ -119,11 +119,12 @@ describe('redditHandler', () => {
       ],
     ]
 
-    it.each(
-      sortedValues,
-    )('should return sorted RSS feed URL and all-comments feed for %s', (url, expected) => {
-      expect(redditHandler.resolve(url)).toEqual(expected)
-    })
+    it.each(sortedValues)(
+      'should return sorted RSS feed URL and all-comments feed for %s',
+      (url, expected) => {
+        expect(redditHandler.resolve(url)).toEqual(expected)
+      },
+    )
 
     const timeframeValues: Array<[string, Array<DiscoverUriEntry>]> = [
       [
@@ -154,11 +155,12 @@ describe('redditHandler', () => {
       ],
     ]
 
-    it.each(
-      timeframeValues,
-    )('should forward ?t=timeframe on time-filtered sort for %s', (url, expected) => {
-      expect(redditHandler.resolve(url)).toEqual(expected)
-    })
+    it.each(timeframeValues)(
+      'should forward ?t=timeframe on time-filtered sort for %s',
+      (url, expected) => {
+        expect(redditHandler.resolve(url)).toEqual(expected)
+      },
+    )
 
     it('should drop unknown ?t= values', () => {
       const value = 'https://reddit.com/r/programming/top?t=garbage'
