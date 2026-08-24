@@ -9,3 +9,5 @@ jobs:
   lint:
     uses: macieklamberski/kvalita/.github/workflows/shared-lint.yml@main
     secrets: inherit
+    with:
+      prepare: cd check && bun install --frozen-lockfile
