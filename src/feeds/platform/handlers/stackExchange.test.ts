@@ -210,11 +210,12 @@ describe('stackExchangeHandler', () => {
       ],
     ]
 
-    it.each(
-      allowedSortValues,
-    )('should pass through allowed ?sort= value for %s', (url, expected) => {
-      expect(stackExchangeHandler.resolve(url)).toEqual(expected)
-    })
+    it.each(allowedSortValues)(
+      'should pass through allowed ?sort= value for %s',
+      (url, expected) => {
+        expect(stackExchangeHandler.resolve(url)).toEqual(expected)
+      },
+    )
 
     it('should pass through ?tab= on tag feed (lowercased) when value is allowed', () => {
       const value = 'https://stackoverflow.com/questions/tagged/javascript?tab=Active'
