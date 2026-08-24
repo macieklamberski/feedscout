@@ -1,0 +1,11 @@
+name: Lint
+
+on:
+  push:
+    branches: [main, alpha, beta, rc]
+  pull_request:
+
+jobs:
+  lint:
+    uses: macieklamberski/kvalita/.github/workflows/shared-lint.yml@main
+    secrets: inherit
