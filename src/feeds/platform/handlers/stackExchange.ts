@@ -2,7 +2,16 @@ import { isHostOf, isSubdomainOf } from 'trousse'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 
-// Partially discoverable without handler.
+// Discoverability: Partially discoverable without handler.
+//
+// Stack Exchange sites (stackoverflow.com and the per-site subdomains
+// listed in the SE API) expose Atom feeds under `/feeds`, `/feeds/tag/{tag}`,
+// `/feeds/question/{id}`, `/feeds/user/{id}`, and
+// `/feeds/collectives/{name}`, and most browser pages autodiscover the
+// matching feed via `<link rel="alternate" type="application/atom+xml">`.
+// The handler maps every supported URL shape directly to its feed and
+// passes through the `?sort=`/`?tab=` tag-feed sort parameter (whitelisted
+// to values the endpoint actually honors).
 
 const tagRegex = /^\/questions\/tagged\/([\w.+-]+)/
 const questionRegex = /^\/questions\/(\d+)/

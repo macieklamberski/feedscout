@@ -2,14 +2,15 @@ import { isHostOf, isSubdomainOf } from 'trousse'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 
-// Discoverable without handler.
+// Discoverability: Discoverable without handler.
 //
-// HTML autodiscovery on libsyn pages returns the underlying
-// rss.libsyn.com/shows/{showId}/destinations/{destId}.xml whose IDs aren't derivable
-// from the user's slug. The handler emits {slug}.libsyn.com/rss which 302-redirects
-// to that resolved URL. For the canonical feeds.libsyn.com/{showId}/rss form
-// (advertised by every libsyn-hosted page), preserve the show ID instead of stripping
-// the path to apex (which 404s).
+// Libsyn serves one RSS 2.0 podcast feed per show at `{slug}.libsyn.com/rss`
+// and `feeds.libsyn.com/{showId}/rss`; HTML pages autodiscover the canonical
+// numeric form via `<link rel="alternate" type="application/rss+xml">`. No
+// Atom, JSON Feed, or sub-feed (category, tag, mp3-only) routes exist. The
+// handler preserves the `feeds.libsyn.com/{showId}` show ID instead of
+// stripping to the apex (which 404s), and emits `${origin}/rss` for the
+// per-slug subdomain form.
 
 const numericRegex = /^\d+$/
 

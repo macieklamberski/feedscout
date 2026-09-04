@@ -2,7 +2,15 @@ import { isHostOf } from 'trousse'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 
-// Discoverable without handler.
+// Discoverability: Discoverable without handler.
+//
+// Observable serves all RSS off-domain on `api.observablehq.com`: per-user/team
+// notebooks (`/documents/@{slug}.rss`), per-collection
+// (`/collection/@{user}/{slug}.rss`), site-wide recently-published
+// (`/documents/public.rss`), and site-wide trending (`/documents/trending.rss`).
+// Only RSS is supported — no Atom or JSON Feed variants exist. The handler maps
+// the human-facing `/@{slug}`, `/@{user}/collection/{slug}`, `/recent`, and
+// `/trending` URL shapes onto the corresponding off-domain RSS endpoints.
 
 const hosts = ['observablehq.com', 'www.observablehq.com']
 const collectionRegex = /^\/@([^/]+)\/collection\/([^/]+)/

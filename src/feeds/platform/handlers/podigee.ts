@@ -2,7 +2,14 @@ import { isSubdomainOf } from 'trousse'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 
-// Discoverable without handler.
+// Discoverability: Discoverable without handler.
+//
+// Podigee shows live at `{slug}.podigee.io` with the canonical RSS feed at
+// `/feed/mp3`, the only URL advertised in the show HTML via
+// `<link rel="alternate" type="application/rss+xml">`. The handler emits
+// that canonical feed and skips reserved subdomains (`www`, `app`, `help`,
+// `blog`, etc.) that would otherwise produce 404-bound URIs on the
+// corporate site.
 
 const domainSuffixRegex = /\.podigee\.io$/i
 

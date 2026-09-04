@@ -2,7 +2,14 @@ import { isAnyOf, isHostOf } from 'trousse'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 
-// Partially discoverable without handler.
+// Discoverability: Partially discoverable without handler.
+//
+// DEV.to publishes RSS at `/feed`, `/feed/latest`, `/feed/{user-or-org}`,
+// and `/feed/tag/{tag}`, but the user-facing pages don't expose them via
+// HTML `<link rel="alternate">` or HTTP Link headers. The handler maps
+// homepage, `/latest`, `/{username}`, organisation handles, and `/t/{tag}`
+// URLs onto the corresponding `/feed/...` endpoints that generic
+// discovery would otherwise miss.
 
 export const hosts = ['dev.to', 'www.dev.to']
 const userRegex = /^\/([a-zA-Z0-9_]+)\/?$/

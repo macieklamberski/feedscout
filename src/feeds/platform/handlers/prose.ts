@@ -2,7 +2,14 @@ import { isHostOf, isSubdomainOf } from 'trousse'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 
-// Partially discoverable without handler.
+// Discoverability: Partially discoverable without handler.
+//
+// Prose.sh user blogs at `{user}.prose.sh` expose an Atom feed under six
+// aliased paths (`/rss`, `/atom.xml`, `/feed.xml`, etc.), but the home page
+// does not emit `<link rel="alternate">`, so generic discovery cannot find
+// it. The handler picks the canonical `/rss` URI, adds platform-wide
+// discovery on the apex `prose.sh` host, and threads the `?tag=` query
+// through to the per-blog tag-filtered feed.
 
 const apexHosts = ['prose.sh', 'www.prose.sh']
 

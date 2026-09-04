@@ -2,7 +2,14 @@ import { isHostOf } from 'trousse'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 
-// Discoverable without handler.
+// Discoverability: Partially discoverable without handler.
+//
+// SourceForge projects at `/projects/{p}` and `/p/{p}` expose feeds at
+// several mount points — activity, files (`/projects/{p}/rss`), news
+// (RSS and Atom), discussion (RSS and Atom), and bugs — but the project
+// page's `<link rel="alternate">` only autodiscovers the activity feed.
+// The handler emits the full set so callers get news, discussion, and
+// bug-tracker feeds that generic discovery misses.
 
 export const hosts = ['sourceforge.net', 'www.sourceforge.net']
 

@@ -3,7 +3,16 @@ import type { DiscoverUriEntry } from '../../../common/types.js'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 
-// Partially discoverable without handler.
+// Discoverability: Partially discoverable without handler.
+//
+// Nebula serves its RSS off-domain on `rss.nebula.app`: global videos
+// (`/video.rss`), recently-added channels (`/video/channels.rss`), per-creator
+// (`/video/channels/{slug}.rss`), and per-category (`/video/categories/{slug}.rss`),
+// each with an optional `?plus=true` Plus-subscriber variant. The Explore pages
+// advertise some of these via HTML `<link rel="alternate">`, but the handler is
+// needed to map `nebula.tv/{creator}`, `/explore[/…]?category=…` and the root
+// landing onto the right off-domain URLs and to lowercase the category slug
+// (Nebula's UI uses capitalised values but the RSS host requires lowercase).
 
 const hosts = ['nebula.tv', 'www.nebula.tv']
 const excludedPaths = [

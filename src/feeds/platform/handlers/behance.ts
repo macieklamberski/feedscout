@@ -2,11 +2,17 @@ import { isAnyOf, isHostOf } from 'trousse'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 
-// Not discoverable without handler.
+// Discoverability: Not discoverable without handler.
 //
-// HTML autodiscovery on behance.net pages returns the generic site feed
-// (feeds.feedburner.com/behance/vorr) regardless of profile, not the user-specific
-// feed. The handler is the only path to per-user feeds via /feeds/user?username={user}.
+// Behance exposes featured projects at `behance.net/feeds/projects`, the
+// Featured-by-Adobe gallery via FeedBurner at
+// `feeds.feedburner.com/behance/vorr`, and per-user portfolio and appreciated
+// feeds via `behance.net/feeds/user?username={user}[&content=appreciated]`.
+// HTML autodiscovery on every behance.net page returns only the generic
+// FeedBurner site feed regardless of which profile is being viewed, so
+// per-user feeds are not reachable via `<link rel="alternate">`.
+// The handler is the only path to per-user portfolio/appreciated feeds and
+// also surfaces the homepage and `/galleries` pair (projects + featured).
 
 const hosts = ['behance.net', 'www.behance.net']
 const userRegex = /^\/([a-zA-Z0-9_-]+)(?:\/(appreciated))?\/?$/

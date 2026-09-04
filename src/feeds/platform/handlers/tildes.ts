@@ -3,7 +3,14 @@ import type { DiscoverUriEntry } from '../../../common/types.js'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 
-// Discoverable without handler.
+// Discoverability: Discoverable without handler.
+//
+// Tildes exposes exactly four feed routes: `/topics.rss` and `/topics.atom`
+// for the global home, plus `/~{group}/topics.{rss,atom}` per group, and HTML
+// autodiscovery on `/` and `/~{group}` lists those feeds. The handler maps
+// any in-app URL onto the canonical home or group feed pair and passes the
+// `?tag=` query through so tag-filtered listings keep filtering on the feed
+// (server forces `order=NEW` regardless).
 
 const hosts = ['tildes.net', 'www.tildes.net']
 const groupRegex = /^\/~([^/]+)/

@@ -2,7 +2,16 @@ import { isAnyOf, isHostOf } from 'trousse'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, hasMetaContent } from '../../../common/utils.js'
 
-// Discoverable without handler.
+// Discoverability: Partially discoverable without handler.
+//
+// GitLab serves Atom feeds at predictable suffixes — `/{user}.atom`,
+// `/{user}/{repo}.atom`, `/-/releases.atom`, `/-/issues.atom`,
+// `/-/merge_requests.atom`, `/-/tags?format=atom`, and
+// `/-/commits/{branch}?format=atom` — and most user, project, and commit
+// pages link them via HTML `<link rel="alternate">`. The handler is kept
+// to emit the full bouquet of repo feeds and the branch-commits variant
+// in one resolve call, and to identify self-hosted GitLab via the
+// `og:site_name` meta tag or `x-gitlab-meta` header.
 
 export const hosts = ['gitlab.com', 'www.gitlab.com']
 export const excludedPaths = [

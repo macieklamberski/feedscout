@@ -3,7 +3,15 @@ import type { DiscoverUriEntry } from '../../../common/types.js'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 
-// Discoverable without handler.
+// Discoverability: Discoverable without handler.
+//
+// Hatena Blog serves Atom at `/feed` and RSS 2.0 at `/rss` per blog across
+// six hosted TLDs (`hatenablog.{com,jp}`, `hateblo.jp`, `hatenadiary.{com,jp,org}`),
+// plus `/{rss,feed}/category/{c}` and `/{rss,feed}/author/{id}` scoped variants;
+// blog HTML heads advertise the base `/feed` and `/rss` via
+// `<link rel="alternate">`. The handler is useful for mapping the
+// `/archive/category/...` and `/archive/author/...` browse paths to their
+// matching scoped feeds, which are not autodiscovered.
 
 const domains = [
   'hatenablog.com',

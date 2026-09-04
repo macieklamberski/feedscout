@@ -2,7 +2,16 @@ import { isHostOf } from 'trousse'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 
-// Not discoverable without handler.
+// Discoverability: Not discoverable without handler.
+//
+// CSDN user blogs at `blog.csdn.net/{user}` expose a per-blog RSS at
+// `rss.csdn.net/{user}/rss/map` (with `blog.csdn.net/{user}/rss/list` as a
+// 301-redirect alias). The user and homepage HTML carry no
+// `<link rel="alternate" type="application/rss+xml">` tag, and historical
+// surfaces like `feed.csdn.net` and per-tag/category RSS have all been
+// decommissioned, so the URL pattern is undocumented and undiscoverable.
+// The handler hardcodes the `rss.csdn.net/.../rss/map` URL with the
+// `blog.csdn.net/.../rss/list` redirect target as a fallback.
 
 const userRegex = /^\/([^/]+)/
 

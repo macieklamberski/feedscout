@@ -2,11 +2,14 @@ import { isHostOf } from 'trousse'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 
-// Discoverable without handler.
+// Discoverability: Discoverable without handler.
 //
-// HTML autodiscovery on bsky.app profile pages returns the DID-based URL
-// (.../profile/did:plc:.../rss). The handler emits the handle-based URL which
-// 302-redirects to the DID form.
+// Bluesky's web app exposes exactly one RSS surface per profile at
+// `bsky.app/profile/{ident}/rss`, accepting either a DNS-style handle or a
+// `did:plc:...` DID. The profile page advertises this feed via standard
+// `<link rel="alternate">` autodiscovery, pointing at the DID form.
+// The handler emits the handle-based URL which 302-redirects to the canonical
+// DID form, sparing a separate handle-to-DID resolution step.
 
 const profileRegex = /^\/profile\/([^/]+)/
 

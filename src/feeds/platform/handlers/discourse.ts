@@ -2,7 +2,14 @@ import type { DiscoverUriEntry } from '../../../common/types.js'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, hasMetaContent } from '../../../common/utils.js'
 
-// Discoverable without handler.
+// Discoverability: Partially discoverable without handler.
+//
+// Discourse forums advertise their feeds via standard `.rss` URLs appended
+// to topic, user activity, category, top, and latest pages, and most
+// installations link them from the page (the `<meta name="generator"
+// content="Discourse">` tag identifies the platform). Generic discovery
+// can find `/latest.rss`, `/top.rss`, and topic feeds; the handler is kept
+// to produce canonical URIs across forum-hosted Discourse instances.
 
 const userRegex = /^\/u\/([^/]+)/
 const categoryRegex = /^\/c\/(.+?)\/?$/

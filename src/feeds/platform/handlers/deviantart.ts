@@ -2,7 +2,15 @@ import { isAnyOf, isHostOf } from 'trousse'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 
-// Not discoverable without handler.
+// Discoverability: Not discoverable without handler.
+//
+// DeviantArt feeds live off-domain on `backend.deviantart.com/rss.xml` and
+// are driven by query parameters (`q=tag:…`, `q=gallery:…`, `q=favby:…`,
+// `q=journal:…`, `q=special:dd`, `q=boost:popular`); pages on
+// `www.deviantart.com` do not advertise them via HTML `<link rel="alternate">`
+// or HTTP Link headers. The handler is needed to translate tag, user,
+// gallery, journal, favourites, daily-deviations, and popular URLs into
+// the appropriate backend query.
 
 const tagRegex = /^\/tag\/([^/]+)/
 const favouritesRegex = /^\/([a-zA-Z0-9_-]+)\/favourites\/?$/

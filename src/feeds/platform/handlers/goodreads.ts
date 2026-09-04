@@ -3,7 +3,14 @@ import type { DiscoverUriEntry } from '../../../common/types.js'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 
-// Partially discoverable without handler.
+// Discoverability: Partially discoverable without handler.
+//
+// Goodreads user profile pages advertise `/user/updates_rss/{id}` and
+// `/review/list_rss/{id}` via HTML `<link rel="alternate">`, so generic
+// discovery can find the per-user updates and reviews feeds. The handler
+// is needed to map `/user/show/{id}-{slug}` and `/review/list/{id}-{slug}`
+// URLs onto the numeric-id RSS endpoints, and to add the
+// `?shelf={shelf}`-filtered variant when a shelf is present in the URL.
 
 const hosts = ['goodreads.com', 'www.goodreads.com']
 

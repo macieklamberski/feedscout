@@ -2,7 +2,15 @@ import { isHostOf } from 'trousse'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 
-// Partially discoverable without handler.
+// Discoverability: Partially discoverable without handler.
+//
+// Kickstarter exposes exactly two Atom feeds: per-project updates at
+// `/projects/{creator}/{project}/posts.atom` and a global new-projects
+// firehose at `/projects/feed.atom`. Categories, places, tags, profiles,
+// search, and comments are HTML-only (with `.atom` suffix returning 406 or
+// HTML behind Cloudflare), and the legacy `/blog.atom` was frozen in 2022.
+// The handler maps any non-project URL to the global feed and project URLs
+// to their `posts.atom`.
 
 const hosts = ['kickstarter.com', 'www.kickstarter.com']
 
