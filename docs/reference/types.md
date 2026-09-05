@@ -268,11 +268,11 @@ Options for Feed discovery method:
 type FeedMethodData = ReturnType<typeof parseFeed>
 
 type FeedMethodOptions = {
-  extractUrls: (params: FeedMethodData) => Array<string>
+  extractUrls: (params: FeedMethodData) => Array<string> | undefined
 }
 ```
 
-`FeedMethodData` is the return type of feedsmith's `parseFeed` — it contains `format` (e.g. `'atom'`, `'json'`) and `feed` (the parsed feed object). The `extractUrls` callback should return an array of URLs. For favicons, the default extractor pulls `icon` from Atom feeds and `favicon`/`icon` from JSON Feeds.
+`FeedMethodData` is the return type of feedsmith's `parseFeed` — it contains `format` (e.g. `'atom'`, `'json'`) and `feed` (the parsed feed object). The `extractUrls` callback should return an array of URLs, or `undefined` when it finds none. For favicons, the default extractor pulls `icon` from Atom feeds and `favicon`/`icon` from JSON Feeds.
 
 ### HtmlMethodOptions
 

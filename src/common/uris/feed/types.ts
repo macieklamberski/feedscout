@@ -4,5 +4,5 @@ import type { parseFeed } from 'feedsmith'
 export type FeedMethodData = ReturnType<typeof parseFeed<string>>
 
 export type FeedMethodOptions = {
-  extractUrls: (params: FeedMethodData) => Array<string>
+  extractUrls: (params: FeedMethodData) => Array<string> | undefined
 }
