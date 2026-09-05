@@ -69,6 +69,25 @@ describe('discoverUrisFromFeed', () => {
     expect(value).toEqual([])
   })
 
+  it('should return empty array when extractUrls returns undefined', () => {
+    const content = JSON.stringify({
+      version: 'https://jsonfeed.org/version/1.1',
+      title: 'Example',
+      items: [],
+    })
+    const value = discoverUrisFromFeed(content, {
+      extractUrls: ({ format, feed }) => {
+        if (format === 'json') {
+          return omitEmpty([feed.favicon, feed.icon])
+        }
+
+        return []
+      },
+    })
+
+    expect(value).toEqual([])
+  })
+
   it('should return empty array for invalid content', () => {
     const value = discoverUrisFromFeed('not a feed', {
       extractUrls: () => ['should-not-reach'],
