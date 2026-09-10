@@ -480,7 +480,9 @@ Discovers RSS feeds for ArtStation portfolios and the global artwork feed.
 |-------------|-----------------|
 | `artstation.com/{user}` | Portfolio feed |
 | `{user}.artstation.com` | Portfolio feed |
-| `artstation.com/artwork` | Artwork + Artwork (Trending) |
+| `artstation.com/artwork` | Artwork + Artwork (Latest) |
+
+> `?sorting=trending` is the feed default and returns the same items as the bare URL, so only `?sorting=latest` is emitted alongside it.
 
 ### Bear Blog
 
