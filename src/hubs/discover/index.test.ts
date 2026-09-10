@@ -5,9 +5,9 @@ import type { HubResult } from './types.js'
 
 const createMockFetch = (body: string, headers: Record<string, string> = {}): DiscoverFetchFn => {
   return async (url: string) => ({
-    url,
-    body,
     headers: new Headers(headers),
+    body,
+    url,
     status: 200,
     statusText: 'OK',
   })

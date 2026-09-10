@@ -8,9 +8,9 @@ export const discoverUrisFromFeed = (
 ): Array<string> => {
   try {
     const result = parseFeed(content)
-    const urls = options.extractUrls(result)
+    const urls = options.extractUrls(result) ?? []
 
-    return omitEmpty(urls)
+    return omitEmpty(urls) ?? []
   } catch {}
 
   return []

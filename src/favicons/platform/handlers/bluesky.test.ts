@@ -4,9 +4,9 @@ import { blueskyHandler, isProfilePath } from './bluesky.js'
 
 const createMockFetch = (responses: Record<string, string>): DiscoverFetchFn => {
   return async (url: string) => ({
-    url,
-    body: responses[url] ?? '',
     headers: new Headers(),
+    body: responses[url] ?? '',
+    url,
     status: url in responses ? 200 : 404,
     statusText: url in responses ? 'OK' : 'Not Found',
   })

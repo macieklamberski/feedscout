@@ -23,9 +23,9 @@ const rss = `
 
 const createMockFetch = (responses: Record<string, string>): DiscoverFetchFn => {
   return async (url: string) => ({
-    url,
-    body: responses[url] ?? '',
     headers: new Headers(),
+    body: responses[url] ?? '',
+    url,
     status: 200,
     statusText: 'OK',
   })
@@ -86,9 +86,9 @@ describe('discoverFeeds', () => {
         fetchedUrls.push(url)
 
         return Promise.resolve({
-          url,
-          body: url === 'https://example.com/platform-feed' ? rss : '',
           headers: new Headers(),
+          body: url === 'https://example.com/platform-feed' ? rss : '',
+          url,
           status: 200,
           statusText: 'OK',
         })
@@ -131,9 +131,9 @@ describe('discoverFeeds', () => {
         fetchedUrls.push(url)
 
         return Promise.resolve({
-          url,
-          body: url === 'https://example.com/guess-feed' ? rss : '',
           headers: new Headers(),
+          body: url === 'https://example.com/guess-feed' ? rss : '',
+          url,
           status: 200,
           statusText: 'OK',
         })
@@ -179,9 +179,9 @@ describe('discoverFeeds', () => {
         fetchedUrls.push(url)
 
         return Promise.resolve({
-          url,
-          body: url.includes('guess') ? rss : '',
           headers: new Headers(),
+          body: url.includes('guess') ? rss : '',
+          url,
           status: 200,
           statusText: 'OK',
         })
@@ -257,9 +257,9 @@ describe('discoverFeeds', () => {
       const mockFetch: DiscoverFetchFn = (url) => {
         fetchCount++
         return Promise.resolve({
-          url,
-          body: rss,
           headers: new Headers(),
+          body: rss,
+          url,
           status: 200,
           statusText: 'OK',
         })
@@ -296,9 +296,9 @@ describe('discoverFeeds', () => {
       const mockFetch: DiscoverFetchFn = (url) => {
         fetchedUrls.push(url)
         return Promise.resolve({
-          url,
-          body: url === 'https://example.com/feed/' ? rss : '',
           headers: new Headers(),
+          body: url === 'https://example.com/feed/' ? rss : '',
+          url,
           status: 200,
           statusText: 'OK',
         })
@@ -331,9 +331,9 @@ describe('discoverFeeds', () => {
       const mockFetch: DiscoverFetchFn = (url) => {
         fetchedUrls.push(url)
         return Promise.resolve({
-          url,
-          body: url === 'https://example.com/?feed=rss' ? rss : '',
           headers: new Headers(),
+          body: url === 'https://example.com/?feed=rss' ? rss : '',
+          url,
           status: 200,
           statusText: 'OK',
         })
@@ -495,9 +495,9 @@ describe('discoverFeeds', () => {
         }
 
         return Promise.resolve({
-          url,
-          body: '',
           headers: new Headers(),
+          body: '',
+          url,
           status: 404,
           statusText: 'Not Found',
         })
@@ -534,9 +534,9 @@ describe('discoverFeeds', () => {
         })
         currentConcurrent--
         return {
-          url,
-          body: rss,
           headers: new Headers(),
+          body: rss,
+          url,
           status: 200,
           statusText: 'OK',
         }
@@ -910,9 +910,9 @@ describe('discoverFeeds', () => {
       }
       const mockFetch: DiscoverFetchFn = (url) =>
         Promise.resolve({
-          url,
-          body: '<rss><channel><title>Test</title></channel></rss>',
           headers: new Headers({ etag: '"abc123"' }),
+          body: '<rss><channel><title>Test</title></channel></rss>',
+          url,
           status: 200,
           statusText: 'OK',
         })
@@ -1096,9 +1096,9 @@ describe('discoverFeeds', () => {
       }
       const mockFetch: DiscoverFetchFn = (url: string) =>
         Promise.resolve({
-          url,
-          body: rss,
           headers: responseHeaders,
+          body: rss,
+          url,
           status: 200,
           statusText: 'OK',
         })

@@ -4,10 +4,14 @@ updates:
     directory: /
     schedule:
       interval: weekly
+    cooldown:
+      default-days: 1
     target-branch: main
 
   - package-ecosystem: docker
     directory: /.github/workflows
     schedule:
       interval: weekly
+    cooldown:
+      default-days: 1
     target-branch: main

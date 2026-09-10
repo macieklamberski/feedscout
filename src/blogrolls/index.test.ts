@@ -7,9 +7,9 @@ import type { BlogrollResult } from './types.js'
 
 const createMockFetch = (responses: Record<string, string>): DiscoverFetchFn => {
   return async (url: string) => ({
-    url,
-    body: responses[url] ?? '',
     headers: new Headers(),
+    body: responses[url] ?? '',
+    url,
     status: 200,
     statusText: 'OK',
   })
@@ -402,9 +402,9 @@ describe('discoverBlogrolls', () => {
 
   it('should filter out invalid results when fetchFn returns 404', async () => {
     const mockFetch: DiscoverFetchFn = async (url: string) => ({
-      url,
-      body: 'Not Found',
       headers: new Headers(),
+      body: 'Not Found',
+      url,
       status: 404,
       statusText: 'Not Found',
     })
@@ -457,9 +457,9 @@ describe('discoverBlogrolls', () => {
       }
 
       return Promise.resolve({
-        url,
-        body: url === 'https://example.com/blogroll.opml' ? opml : '',
         headers: new Headers(),
+        body: url === 'https://example.com/blogroll.opml' ? opml : '',
+        url,
         status: url === 'https://example.com/blogroll.opml' ? 200 : 404,
         statusText: url === 'https://example.com/blogroll.opml' ? 'OK' : 'Not Found',
       })

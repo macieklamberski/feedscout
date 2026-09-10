@@ -12,9 +12,9 @@ import type { FeedResult } from './types.js'
 
 const createMockFetch = (responses: Record<string, string>): DiscoverFetchFn => {
   return async (url: string) => ({
-    url,
-    body: responses[url] ?? '',
     headers: new Headers(),
+    body: responses[url] ?? '',
+    url,
     status: 200,
     statusText: 'OK',
   })
@@ -48,6 +48,80 @@ describe('discoverFeeds', () => {
     ]
 
     expect(result).toEqual(expected)
+  })
+
+  it('should find feeds at ancestor paths when the page has no feed hints', async () => {
+    const rss = `
+      <rss version="2.0">
+        <channel>
+          <title>Blog RSS</title>
+          <link>https://example.com/blog/</link>
+          <description>Blog feed</description>
+        </channel>
+      </rss>
+    `
+    const html = `
+      <html>
+        <head><title>Post</title></head>
+        <body><a href="/blog/">Blog</a></body>
+      </html>
+    `
+    const mockFetch = createMockFetch({
+      'https://example.com/blog/post-slug/': html,
+      'https://example.com/blog/feed.xml': rss,
+    })
+    const value = await discoverFeeds('https://example.com/blog/post-slug/', {
+      fetchFn: mockFetch,
+    })
+    const expected: Array<DiscoverResult<FeedResult>> = [
+      {
+        url: 'https://example.com/blog/feed.xml',
+        isValid: true,
+        method: 'guess',
+        format: 'rss',
+        title: 'Blog RSS',
+        description: 'Blog feed',
+        siteUrl: 'https://example.com/blog/',
+      },
+    ]
+
+    expect(value).toEqual(expected)
+  })
+
+  it('should find feeds under linked sections when the root has no feed hints', async () => {
+    const rss = `
+      <rss version="2.0">
+        <channel>
+          <title>Blog RSS</title>
+          <link>https://example.com/blog</link>
+          <description>Blog feed</description>
+        </channel>
+      </rss>
+    `
+    const html = `
+      <html>
+        <head><title>Home</title></head>
+        <body><nav><a href="/blog">Blog</a><a href="/about">About</a></nav></body>
+      </html>
+    `
+    const mockFetch = createMockFetch({
+      'https://example.com/': html,
+      'https://example.com/blog/rss.xml': rss,
+    })
+    const value = await discoverFeeds('https://example.com/', { fetchFn: mockFetch })
+    const expected: Array<DiscoverResult<FeedResult>> = [
+      {
+        url: 'https://example.com/blog/rss.xml',
+        isValid: true,
+        method: 'guess',
+        format: 'rss',
+        title: 'Blog RSS',
+        description: 'Blog feed',
+        siteUrl: 'https://example.com/blog',
+      },
+    ]
+
+    expect(value).toEqual(expected)
   })
 
   it('should find valid feeds using guess method with default URIs', async () => {
@@ -347,9 +421,9 @@ describe('discoverFeeds', () => {
       }
 
       return Promise.resolve({
-        url,
-        body: url === 'https://example.com/feed.xml' ? rssContent : '',
         headers: new Headers(),
+        body: url === 'https://example.com/feed.xml' ? rssContent : '',
+        url,
         status: url === 'https://example.com/feed.xml' ? 200 : 404,
         statusText: url === 'https://example.com/feed.xml' ? 'OK' : 'Not Found',
       })
@@ -464,11 +538,11 @@ describe('discoverFeeds', () => {
           url: 'https://www.reddit.com/r/programming/.rss',
           isValid: true,
           method: 'platform',
+          hint: { key: 'reddit:posts', label: 'Posts' },
           format: 'rss',
           title: 'Test RSS',
           description: 'Test feed',
           siteUrl: 'https://reddit.com/',
-          hint: { key: 'reddit:posts', label: 'Posts' },
         },
       ]
 
@@ -496,21 +570,21 @@ describe('discoverFeeds', () => {
           url: 'https://github.com/owner/repo/releases.atom',
           isValid: true,
           method: 'platform',
+          hint: { key: 'github:releases', label: 'Releases' },
           format: 'atom',
           title: 'Test Atom',
           description: 'Test feed',
           siteUrl: 'https://github.com/owner/repo',
-          hint: { key: 'github:releases', label: 'Releases' },
         },
         {
           url: 'https://github.com/owner/repo/commits.atom',
           isValid: true,
           method: 'platform',
+          hint: { key: 'github:commits', label: 'Commits' },
           format: 'atom',
           title: 'Test Atom',
           description: 'Test feed',
           siteUrl: 'https://github.com/owner/repo',
-          hint: { key: 'github:commits', label: 'Commits' },
         },
       ]
 
@@ -579,11 +653,11 @@ describe('discoverFeeds', () => {
           url: 'https://www.reddit.com/r/programming/.rss',
           isValid: true,
           method: 'platform',
+          hint: { key: 'reddit:posts', label: 'Posts' },
           format: 'rss',
           title: 'Test RSS',
           description: 'Test feed',
           siteUrl: 'https://reddit.com/',
-          hint: { key: 'reddit:posts', label: 'Posts' },
         },
         {
           url: 'https://reddit.com/feed',
@@ -720,14 +794,14 @@ describe('discoverFeeds', () => {
         </rss>
       `
       const fetchFn: DiscoverFetchFn = async (url: string) => ({
-        url,
-        body: url === 'https://example.com/feed.xml' ? rss : '',
         headers:
           url === 'https://example.com'
             ? new Headers({
                 link: '<https://example.com/feed.xml>; rel="alternate"; type="application/rss+xml"',
               })
             : new Headers(),
+        body: url === 'https://example.com/feed.xml' ? rss : '',
+        url,
         status: 200,
         statusText: 'OK',
       })

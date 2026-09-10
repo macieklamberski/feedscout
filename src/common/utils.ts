@@ -1,4 +1,4 @@
-import { anyWordMatchesAnyOf, isAnyOf } from 'trousse'
+import { anyWordMatchesAnyOf, escapeRegex, isAnyOf } from 'trousse'
 import locales from './locales.json' with { type: 'json' }
 import type { DiscoverUriHint } from './types.js'
 
@@ -40,8 +40,8 @@ export const isOfAllowedMimeType = (
 // Check if HTML contains a meta tag matching a name or property attribute with the given
 // content value (prefix match), regardless of attribute order.
 export const hasMetaContent = (content: string, name: string, value: string): boolean => {
-  const escapedName = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-  const escapedValue = value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+  const escapedName = escapeRegex(name)
+  const escapedValue = escapeRegex(value)
   const metaTagRegex = new RegExp(
     `<meta(?=[^>]*(?:name|property)=["']${escapedName}["'])(?=[^>]*content=["']${escapedValue})`,
     'i',

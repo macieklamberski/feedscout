@@ -47,12 +47,12 @@ describe('discoverFavicons', () => {
 
   it('should discover favicons from headers', async () => {
     const mockFetch: DiscoverFetchFn = async (url: string) => ({
-      url,
-      body: '',
       headers: new Headers({
         link: '</favicon.png>; rel="icon"',
         ...(url.endsWith('.png') ? { 'content-type': 'image/png' } : {}),
       }),
+      body: '',
+      url,
       status: 200,
       statusText: 'OK',
     })
@@ -331,9 +331,9 @@ describe('discoverFavicons', () => {
 
   it('should recognize direct favicon URL via image content-type', async () => {
     const mockFetch: DiscoverFetchFn = async (url: string) => ({
-      url,
-      body: 'binary',
       headers: new Headers({ 'content-type': 'image/png' }),
+      body: 'binary',
+      url,
       status: 200,
       statusText: 'OK',
     })
@@ -348,9 +348,9 @@ describe('discoverFavicons', () => {
   it('should recognize direct SVG favicon via content', async () => {
     const svgContent = '<svg xmlns="http://www.w3.org/2000/svg"><circle r="10"/></svg>'
     const mockFetch: DiscoverFetchFn = async (url: string) => ({
-      url,
-      body: svgContent,
       headers: new Headers(),
+      body: svgContent,
+      url,
       status: 200,
       statusText: 'OK',
     })
@@ -573,9 +573,9 @@ describe('discoverFavicons', () => {
       }
 
       return Promise.resolve({
-        url,
-        body: url === 'https://example.com/feed.xml' ? rssContent : '',
         headers: new Headers(),
+        body: url === 'https://example.com/feed.xml' ? rssContent : '',
+        url,
         status: 200,
         statusText: 'OK',
       })
@@ -596,9 +596,9 @@ describe('discoverFavicons', () => {
       }
 
       return Promise.resolve({
-        url,
-        body: url === 'https://example.com/favicon.ico' ? pngContent : '',
         headers: new Headers(),
+        body: url === 'https://example.com/favicon.ico' ? pngContent : '',
+        url,
         status: url === 'https://example.com/favicon.ico' ? 200 : 404,
         statusText: url === 'https://example.com/favicon.ico' ? 'OK' : 'Not Found',
       })

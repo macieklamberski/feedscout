@@ -170,6 +170,8 @@ export const normalizeMethodsConfig = (
     methodsConfig.guess = {
       options: {
         ...defaults.guess,
+        // Page HTML for section-link scanning; explicit method options may override it.
+        content: resolvedInput.content,
         ...guessOptions,
         baseUrl: resolvedInput.url,
       },
