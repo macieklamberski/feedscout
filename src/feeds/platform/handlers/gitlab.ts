@@ -12,6 +12,9 @@ import { composeHint, hasMetaContent } from '../../../common/utils.js'
 // to emit the full bouquet of repo feeds and the branch-commits variant
 // in one resolve call, and to identify self-hosted GitLab via the
 // `og:site_name` meta tag or `x-gitlab-meta` header.
+//
+// A project path can be any depth, because groups nest. GitLab separates it
+// from the feature path with `/-/`, so that is what the split follows.
 
 export const hosts = ['gitlab.com', 'www.gitlab.com']
 export const excludedPaths = [
@@ -46,6 +49,29 @@ export const isGitlabHeaders = (headers: Headers): boolean => {
   return headers.has('x-gitlab-meta')
 }
 
+// Legacy project URLs put the feature straight after the project path, with no
+// `-` separator. A project can itself be named `tree`, so never cut at the
+// second segment.
+const legacyFeaturePaths = ['tree', 'commits']
+
+const splitProjectPath = (pathSegments: Array<string>): [Array<string>, Array<string>] => {
+  const dashIndex = pathSegments.indexOf('-')
+
+  if (dashIndex !== -1) {
+    return [pathSegments.slice(0, dashIndex), pathSegments.slice(dashIndex + 1)]
+  }
+
+  const featureIndex = pathSegments.findIndex((segment, index) => {
+    return index > 1 && isAnyOf(segment, legacyFeaturePaths)
+  })
+
+  if (featureIndex === -1) {
+    return [pathSegments, []]
+  }
+
+  return [pathSegments.slice(0, featureIndex), pathSegments.slice(featureIndex)]
+}
+
 export const gitlabHandler: PlatformHandler = {
   match: (url, content, headers) => {
     // Fast path for gitlab.com.
@@ -76,64 +102,50 @@ export const gitlabHandler: PlatformHandler = {
 
   resolve: (url) => {
     const { origin, pathname } = new URL(url)
-    const pathSegments = pathname.split('/').filter(Boolean)
+    const [projectSegments, featureSegments] = splitProjectPath(pathname.split('/').filter(Boolean))
 
-    // User/org page: gitlab.com/{user}
-    if (pathSegments.length === 1) {
-      const user = pathSegments[0]
-
-      if (!isAnyOf(user, excludedPaths)) {
-        return [{ uri: `${origin}/${user}.atom`, hint: composeHint('gitlab:activity') }]
-      }
+    if (projectSegments.length === 0 || isAnyOf(projectSegments[0], excludedPaths)) {
+      return []
     }
 
-    // Repo page: gitlab.com/{user}/{repo}
-    if (pathSegments.length >= 2) {
-      const user = pathSegments[0]
-      const repo = pathSegments[1]
-
-      if (!isAnyOf(user, excludedPaths)) {
-        const repoFeeds = [
-          {
-            uri: `${origin}/${user}/${repo}/-/releases.atom`,
-            hint: composeHint('gitlab:releases'),
-          },
-          {
-            uri: `${origin}/${user}/${repo}/-/tags?format=atom`,
-            hint: composeHint('gitlab:tags'),
-          },
-          {
-            uri: `${origin}/${user}/${repo}/-/issues.atom`,
-            hint: composeHint('gitlab:issues'),
-          },
-          {
-            uri: `${origin}/${user}/${repo}/-/merge_requests.atom`,
-            hint: composeHint('gitlab:merge-requests'),
-          },
-          {
-            uri: `${origin}/${user}/${repo}.atom`,
-            hint: composeHint('gitlab:activity'),
-          },
-        ]
-
-        // Branch commits/tree page: gitlab.com/{user}/{repo}/-/(commits|tree)/{branch}
-        if (
-          pathSegments[2] === '-' &&
-          (pathSegments[3] === 'commits' || pathSegments[3] === 'tree') &&
-          pathSegments[4]
-        ) {
-          const branch = pathSegments[4]
-
-          repoFeeds.unshift({
-            uri: `${origin}/${user}/${repo}/-/commits/${branch}?format=atom`,
-            hint: composeHint('gitlab:branch-commits'),
-          })
-        }
-
-        return repoFeeds
-      }
+    // User, org or group page: gitlab.com/{user}
+    if (projectSegments.length === 1) {
+      return [{ uri: `${origin}/${projectSegments[0]}.atom`, hint: composeHint('gitlab:activity') }]
     }
 
-    return []
+    // Project page: gitlab.com/{group}/{subgroup...}/{project}
+    const projectPath = projectSegments.join('/')
+    const repoFeeds = [
+      {
+        uri: `${origin}/${projectPath}/-/releases.atom`,
+        hint: composeHint('gitlab:releases'),
+      },
+      {
+        uri: `${origin}/${projectPath}/-/tags?format=atom`,
+        hint: composeHint('gitlab:tags'),
+      },
+      {
+        uri: `${origin}/${projectPath}/-/issues.atom`,
+        hint: composeHint('gitlab:issues'),
+      },
+      {
+        uri: `${origin}/${projectPath}/-/merge_requests.atom`,
+        hint: composeHint('gitlab:merge-requests'),
+      },
+      {
+        uri: `${origin}/${projectPath}.atom`,
+        hint: composeHint('gitlab:activity'),
+      },
+    ]
+
+    // Branch commits or tree page: .../-/(commits|tree)/{branch}
+    if (isAnyOf(featureSegments[0], legacyFeaturePaths) && featureSegments[1]) {
+      repoFeeds.unshift({
+        uri: `${origin}/${projectPath}/-/commits/${featureSegments[1]}?format=atom`,
+        hint: composeHint('gitlab:branch-commits'),
+      })
+    }
+
+    return repoFeeds
   },
 }

@@ -117,7 +117,8 @@
   ],
   "gitlab": [
     "https://gitlab.com/gitlab-org.atom",
-    "https://gitlab.com/gitlab-org/gitlab/-/releases.atom",
+    "https://gitlab.com/gitlab-org/security-products/analyzers/semgrep/-/releases.atom",
+    "https://gitlab.com/gitlab-org/security-products/analyzers/semgrep.atom",
     "https://gitlab.com/gitlab-org/gitlab/-/tags?format=atom",
     "https://gitlab.com/gitlab-org/gitlab/-/issues.atom",
     "https://gitlab.com/gitlab-org/gitlab/-/merge_requests.atom",

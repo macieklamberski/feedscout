@@ -208,9 +208,11 @@ Discovers Atom feeds for GitLab users and repositories. Self-hosted instances ar
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | `gitlab.com/{user}` | User activity feed |
-| `gitlab.com/{user}/{repo}` | Releases, tags, issues, merge requests, activity |
-| `gitlab.com/{user}/{repo}/-/commits/{branch}` | Branch commits feed (+ above) |
-| `gitlab.com/{user}/{repo}/-/tree/{branch}` | Branch commits feed (+ above) |
+| `gitlab.com/{project}` | Releases, tags, issues, merge requests, activity |
+| `gitlab.com/{project}/-/commits/{branch}` | Branch commits feed (+ above) |
+| `gitlab.com/{project}/-/tree/{branch}` | Branch commits feed (+ above) |
+
+> `{project}` is the full path and can be any depth, because groups nest: `group/subgroup/project` is one project. GitLab puts `/-/` between the project path and the feature path, which is where the split happens.
 
 ### Product Hunt
 
