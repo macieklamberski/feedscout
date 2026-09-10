@@ -2,7 +2,15 @@ import { isAnyOf, isHostOf } from 'trousse'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 
-// Discoverable without handler.
+// Discoverability: Discoverable without handler.
+//
+// Are.na exposes per-user feeds at `are.na/{user}/feed/rss`, per-channel feeds
+// at `are.na/{user}/{channel}/feed/rss`, and a sitewide Editorial blog feed at
+// `are.na/editorial/feed/rss`. Each profile, channel, and editorial page
+// advertises its single RSS via a standard `<link rel="alternate">` tag; no
+// Atom, JSON, or per-tab feed exists.
+// The handler maps `/editorial[/{slug}]` to the editorial feed (so article
+// pages don't 404) and excludes non-user top-level paths.
 
 const hosts = ['are.na', 'www.are.na']
 const excludedPaths = [

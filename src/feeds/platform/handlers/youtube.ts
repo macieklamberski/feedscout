@@ -3,7 +3,14 @@ import type { DiscoverUriEntry } from '../../../common/types.js'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 
-// Partially discoverable without handler.
+// Discoverability: Partially discoverable without handler.
+//
+// YouTube exposes per-channel Atom feeds at
+// `youtube.com/feeds/videos.xml?channel_id=UC…`, and channel pages embed an
+// HTML `<link rel="alternate">` pointing at it. The handler is needed to
+// map the modern `/@handle`, `/user/{name}`, `/c/{name}`, `/shorts/…` and
+// `/live/…` URL shapes onto the canonical channel feed, and to derive
+// filtered playlist feeds (uploads, livestreams, shorts, popular, members).
 
 const channelIdRegex = /"(?:channelId|externalId)":"(UC[a-zA-Z0-9_-]+)"/
 const channelRegex = /^\/channel\/(UC[a-zA-Z0-9_-]+)/

@@ -2,7 +2,15 @@ import { isHostOf } from 'trousse'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 
-// Discoverable without handler.
+// Discoverability: Discoverable without handler.
+//
+// Product Hunt publishes a single global Atom firehose at
+// `producthunt.com/feed`, the only functional feed surface; topic and
+// category pages have no autodiscoverable per-slug feed and the
+// `?topic=`/`?category=` query parameters are silently ignored for current
+// taxonomy slugs. The handler maps topic and category URLs to those
+// (largely no-op) query variants and falls back to the global feed for
+// every other matched page.
 
 const hosts = ['producthunt.com', 'www.producthunt.com']
 const topicRegex = /^\/topics\/([a-zA-Z0-9_-]+)/

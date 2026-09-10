@@ -3,7 +3,15 @@ import type { DiscoverUriEntry } from '../../../common/types.js'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 
-// Discoverable without handler.
+// Discoverability: Discoverable without handler.
+//
+// Audioboom channel pages at `audioboom.com/channels/{id}[-{slug}]` map to a
+// canonical RSS at `audioboom.com/channels/{id}.rss`, advertised on the
+// channel page via standard `<link rel="alternate">` autodiscovery and
+// reachable directly by appending `.rss` to the channel path.
+// The handler extracts the numeric channel ID (ignoring the optional
+// trailing slug) so both `{id}` and `{id}-{slug}` URL forms resolve to the
+// same RSS without needing a fetch.
 
 const hosts = ['audioboom.com', 'www.audioboom.com']
 const channelRegex = /^\/channels\/(\d+)/

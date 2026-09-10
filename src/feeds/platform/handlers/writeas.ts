@@ -3,7 +3,14 @@ import type { DiscoverUriEntry } from '../../../common/types.js'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 
-// Partially discoverable without handler.
+// Discoverability: Partially discoverable without handler.
+//
+// Write.as blogs expose `/{user}/feed/` and `/{user}/tag:{tag}/feed/` (RSS 2.0)
+// on the shared `write.as` host, but blog pages emit no
+// `<link rel="alternate" type="application/rss+xml">` autodiscovery tag. The
+// handler extracts the username (or username + tag) from the path, skipping
+// reserved top-level segments (`about`, `pricing`, `login`, …) that would
+// otherwise be misread as blog handles.
 
 const hosts = ['write.as', 'www.write.as']
 const excludedPaths = [

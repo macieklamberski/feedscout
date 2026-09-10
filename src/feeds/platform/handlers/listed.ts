@@ -2,7 +2,14 @@ import { isHostOf } from 'trousse'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 
-// Partially discoverable without handler.
+// Discoverability: Partially discoverable without handler.
+//
+// Listed (Standard Notes) exposes one RSS 2.0 feed per author at
+// `listed.to/@{user}/feed.rss` (with the no-suffix `/feed` route resolving
+// to the same controller action). There is no Atom or JSON Feed (both
+// return HTTP 500) and no sitewide feed. The "partial" tier reflects
+// custom-domain Listed blogs that share the same `/feed` route but aren't
+// matched by hostname — generic feed-link sniffing handles those upstream.
 
 const hosts = ['listed.to', 'www.listed.to']
 const userRegex = /^\/@([^/]+)/

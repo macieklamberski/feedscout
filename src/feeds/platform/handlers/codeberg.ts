@@ -3,7 +3,16 @@ import type { DiscoverUriEntry } from '../../../common/types.js'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 
-// Discoverable without handler.
+// Discoverability: Partially discoverable without handler.
+//
+// Codeberg (Forgejo) and gitea.com expose Atom and RSS for user/org activity
+// at `/{user}.atom|.rss` and repo activity at `/{user}/{repo}.atom|.rss`,
+// plus per-repo releases at `/{user}/{repo}/releases.atom|.rss` and tags at
+// `/{user}/{repo}/tags.atom|.rss`. The repo page advertises only the repo
+// activity feed via `<link rel="alternate">`; releases, tags, and per-branch
+// commit feeds are not autodiscovered.
+// The handler enumerates all four per-repo feeds and adds Gitea-only
+// `/rss/branch/{branch}` commit and file-history feeds (Forgejo removed them).
 
 export const hosts = ['codeberg.org', 'www.codeberg.org', 'gitea.com', 'www.gitea.com']
 export const excludedPaths = [

@@ -2,7 +2,15 @@ import { isAnyOf, isHostOf } from 'trousse'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 
-// Discoverable without handler.
+// Discoverability: Partially discoverable without handler.
+//
+// Qiita exposes Atom feeds for user posts (`/{user}/feed.atom`), tags
+// (`/tags/{tag}/feed.atom`), organizations
+// (`/organizations/{org}/activities.atom`), and popular items
+// (`/popular-items/feed.atom`), plus an RSS 2.0 feed for Qiita Zine at
+// `/official-columns/feed/`. The handler maps the matching browser URL
+// shapes onto these feeds and excludes reserved path segments so user
+// fallback does not produce 404-bound URIs for system pages.
 
 const hosts = ['qiita.com', 'www.qiita.com']
 const excludedPaths = [

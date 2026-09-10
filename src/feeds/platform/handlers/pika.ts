@@ -3,7 +3,15 @@ import type { DiscoverUriEntry } from '../../../common/types.js'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 
-// Discoverable without handler.
+// Discoverability: Discoverable without handler.
+//
+// Pika exposes Atom (`/posts_feed`) and RSS (`/posts_feed.rss`) per blog on every
+// `*.pika.page` subdomain, plus matching `/tag/{tag}/feed` and `/tag/{tag}/feed.rss`
+// pairs. The blog and tag pages each advertise the Atom variant via HTML
+// `<link rel="alternate">`, and Pika also accepts legacy redirect aliases
+// (`/feed`, `/feed.xml`, `/rss`, etc.) that all 30x to `/posts_feed`. The handler
+// emits both Atom and RSS for the blog and any tag page so consumers can pick
+// either format without needing the alias chain.
 
 const tagRegex = /^\/tag\/([^/]+)/
 

@@ -2,7 +2,14 @@ import { isHostOf, isSubdomainOf } from 'trousse'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 
-// Discoverable without handler.
+// Discoverability: Partially discoverable without handler.
+//
+// Douban publishes RSS 2.0 feeds at well-known `/feed/people/{user}/...`,
+// `/feed/subject/{id}/reviews`, and `/feed/review/{category}` paths, and
+// the corresponding HTML pages link them. The handler is kept to map
+// `/people/{user}`, `/subject/{id}`, and the homepage onto the canonical
+// feed URIs and to emit the multiple per-user variants (interests,
+// reviews, notes) in one resolve call.
 
 const userRegex = /^\/people\/([^/]+)/
 const subjectRegex = /^\/subject\/(\d+)/

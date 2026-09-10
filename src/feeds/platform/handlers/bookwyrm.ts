@@ -2,7 +2,16 @@ import type { DiscoverUriEntry } from '../../../common/types.js'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, hasMetaContent } from '../../../common/utils.js'
 
-// Discoverable without handler.
+// Discoverability: Partially discoverable without handler.
+//
+// BookWyrm instances expose per-user activity, reviews, quotes, and comments
+// feeds at `/user/{user}/{rss,rss-reviews,rss-quotes,rss-comments}`, plus
+// per-shelf feeds at `/user/{user}/(shelf|books)/{shelf-id}/rss`. Because
+// BookWyrm is self-hosted on arbitrary hostnames, matching relies on the
+// `<meta name="generator" content="BookWyrm">` tag in the page HTML rather
+// than a fixed host list.
+// The handler detects BookWyrm via the generator meta and emits all four
+// per-user feeds plus the shelf feed when the URL is a shelf page.
 
 const profileRegex = /^\/user\/([^/]+)/
 const shelfRegex = /^\/user\/([^/]+)\/(?:shelf|books)\/([^/]+)\/?/

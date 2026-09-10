@@ -1,7 +1,15 @@
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, hasMetaContent } from '../../../common/utils.js'
 
-// Discoverable without handler.
+// Discoverability: Partially discoverable without handler.
+//
+// Lemmy instances serve RSS 2.0 at `/feeds/{all,local}.xml`,
+// `/feeds/c/{community}.xml`, and `/feeds/u/{user}.xml`, with optional
+// `?sort=` and `?limit=` pass-through. Detection is instance-agnostic: the
+// handler reads `<meta name="generator" content="Lemmy">` from page HTML or
+// the `x-powered-by: Lemmy` response header, since the federated host set
+// is unbounded. The handler maps `/c/{name}`, `/u/{name}`, and home routes
+// to their feed twins and forwards whitelisted query params.
 
 const lemmyPoweredByRegex = /lemmy/i
 const validSorts = new Set([

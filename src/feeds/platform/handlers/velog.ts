@@ -2,6 +2,14 @@ import { isHostOf } from 'trousse'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 
+// Discoverability: Not discoverable without handler.
+//
+// Velog is a Korean SPA at `velog.io` that serves RSS only off-domain at
+// `v2.velog.io/rss` (entire/trending feed) and `v2.velog.io/rss/{username}`
+// per user; the main `velog.io` host has no `/rss` route and pages render
+// client-side with no `<link rel="alternate">` autodiscovery. The handler
+// maps `/@{user}` and `/` URLs onto the corresponding `v2.velog.io` feed.
+
 const hosts = ['velog.io', 'www.velog.io']
 const userRegex = /^\/@([^/]+)/
 

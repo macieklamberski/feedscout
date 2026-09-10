@@ -2,7 +2,14 @@ import { isAnyOf, isHostOf } from 'trousse'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 
-// Discoverable without handler.
+// Discoverability: Discoverable without handler.
+//
+// Zenn serves RSS 2.0 at `zenn.dev/feed` (trending), `zenn.dev/{user}/feed`,
+// `zenn.dev/topics/{topic}/feed`, and `zenn.dev/p/{pub}/feed` for
+// publications, and pages link to them via `<link rel="alternate">`. The
+// handler normalises `/publications/{pub}` to the working `/p/{pub}/feed`
+// shape, maps homepage requests to the trending feed, and excludes reserved
+// top-level segments that aren't usernames.
 
 const hosts = ['zenn.dev', 'www.zenn.dev']
 const excludedPaths = [
