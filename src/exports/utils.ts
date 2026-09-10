@@ -1,3 +1,4 @@
+export type { Pattern } from '../common/types.js'
 export {
   anyWordMatchesAnyOf,
   endsWithAnyOf,

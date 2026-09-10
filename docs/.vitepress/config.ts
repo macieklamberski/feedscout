@@ -1,5 +1,9 @@
 import { defineConfig } from 'vitepress'
 
+const indexMdRegex = /index\.md$/
+const mdRegex = /\.md$/
+const trailingSlashRegex = /\/$/
+
 const hostname = 'https://feedscout.dev'
 
 export default defineConfig({
@@ -14,9 +18,9 @@ export default defineConfig({
   },
   transformHead: ({ pageData }) => {
     const canonicalUrl = `${hostname}/${pageData.relativePath}`
-      .replace(/index\.md$/, '')
-      .replace(/\.md$/, '')
-      .replace(/\/$/, '')
+      .replace(indexMdRegex, '')
+      .replace(mdRegex, '')
+      .replace(trailingSlashRegex, '')
 
     return [['link', { rel: 'canonical', href: canonicalUrl }]]
   },
@@ -35,9 +39,10 @@ export default defineConfig({
     [
       'script',
       {
-        async: '',
-        src: 'https://stats.lamberski.com/script.js',
-        'data-website-id': '5c218e6f-78ec-473e-9936-5e2dda0ddc67',
+        defer: '',
+        src: '/beat.js',
+        'data-domain': 'feedscout.dev',
+        'data-api': '/beat.json',
       },
     ],
   ],
@@ -87,7 +92,7 @@ export default defineConfig({
         items: [
           { text: 'Data Fetching', link: '/customization/data-fetching' },
           { text: 'Data Extraction', link: '/customization/data-extraction' },
-          { text: 'URL Normalization', link: '/customization/url-normalization' },
+          { text: 'URL Resolution', link: '/customization/url-resolution' },
         ],
       },
       {

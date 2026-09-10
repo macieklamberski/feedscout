@@ -1,9 +1,14 @@
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, isAnyOf, isHostOf } from '../../../common/utils.js'
 
+// Partially discoverable without handler.
+
+const numericRegex = /^\d+$/
+
 const hosts = ['vimeo.com', 'www.vimeo.com']
 const excludedPaths = [
   'about',
+  'album',
   'blog',
   'business',
   'careers',
@@ -26,6 +31,7 @@ const excludedPaths = [
   'pro',
   'search',
   'settings',
+  'showcase',
   'site_map',
   'solutions',
   'stock',
@@ -67,12 +73,30 @@ export const vimeoHandler: PlatformHandler = {
       ]
     }
 
+    // Album/showcase: vimeo.com/album/{id} or vimeo.com/showcase/{id}. Only /album/{id}/rss
+    // returns RSS; /showcase/{id}/rss returns 404. /album/{id} 301-redirects to
+    // /showcase/{id} in the browser, so users will most often paste the showcase URL.
+    if (
+      (pathSegments[0] === 'album' || pathSegments[0] === 'showcase') &&
+      pathSegments[1] &&
+      numericRegex.test(pathSegments[1])
+    ) {
+      const albumId = pathSegments[1]
+
+      return [
+        {
+          uri: `${origin}/album/${albumId}/rss`,
+          hint: composeHint('vimeo:album'),
+        },
+      ]
+    }
+
     // User page: vimeo.com/{user}
-    if (pathSegments.length >= 1) {
+    if (pathSegments.length > 0) {
       const user = pathSegments[0]
 
       // Skip excluded paths and numeric-only segments (video IDs).
-      if (!isAnyOf(user, excludedPaths) && !/^\d+$/.test(user)) {
+      if (!isAnyOf(user, excludedPaths) && !numericRegex.test(user)) {
         const feeds = [{ uri: `${origin}/${user}/videos/rss`, hint: composeHint('vimeo:videos') }]
 
         if (pathSegments[1] === 'likes') {

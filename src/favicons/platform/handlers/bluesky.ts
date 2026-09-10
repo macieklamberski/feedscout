@@ -13,7 +13,7 @@ export const isProfilePath = (pathname: string): boolean => {
 export const blueskyHandler: PlatformHandler = {
   match: (url) => {
     try {
-      return isHostOf(url, hosts) && isProfilePath(new URL(url).pathname)
+      return isProfilePath(new URL(url).pathname) && isHostOf(url, hosts)
     } catch {}
 
     return false

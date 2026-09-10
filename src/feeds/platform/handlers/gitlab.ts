@@ -1,6 +1,8 @@
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, hasMetaContent, isAnyOf, isHostOf } from '../../../common/utils.js'
 
+// Discoverable without handler.
+
 export const hosts = ['gitlab.com', 'www.gitlab.com']
 export const excludedPaths = [
   'explore',
@@ -81,7 +83,7 @@ export const gitlabHandler: PlatformHandler = {
       const repo = pathSegments[1]
 
       if (!isAnyOf(user, excludedPaths)) {
-        return [
+        const repoFeeds = [
           {
             uri: `${origin}/${user}/${repo}/-/releases.atom`,
             hint: composeHint('gitlab:releases'),
@@ -91,10 +93,34 @@ export const gitlabHandler: PlatformHandler = {
             hint: composeHint('gitlab:tags'),
           },
           {
+            uri: `${origin}/${user}/${repo}/-/issues.atom`,
+            hint: composeHint('gitlab:issues'),
+          },
+          {
+            uri: `${origin}/${user}/${repo}/-/merge_requests.atom`,
+            hint: composeHint('gitlab:merge-requests'),
+          },
+          {
             uri: `${origin}/${user}/${repo}.atom`,
             hint: composeHint('gitlab:activity'),
           },
         ]
+
+        // Branch commits/tree page: gitlab.com/{user}/{repo}/-/(commits|tree)/{branch}
+        if (
+          pathSegments[2] === '-' &&
+          (pathSegments[3] === 'commits' || pathSegments[3] === 'tree') &&
+          pathSegments[4]
+        ) {
+          const branch = pathSegments[4]
+
+          repoFeeds.unshift({
+            uri: `${origin}/${user}/${repo}/-/commits/${branch}?format=atom`,
+            hint: composeHint('gitlab:branch-commits'),
+          })
+        }
+
+        return repoFeeds
       }
     }
 

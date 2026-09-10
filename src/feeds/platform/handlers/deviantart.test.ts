@@ -91,6 +91,30 @@ describe('deviantartHandler', () => {
       expect(deviantartHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return RSS feed URL for journal page', () => {
+      const value = 'https://deviantart.com/yuumei/journal'
+      const expected = [
+        {
+          uri: 'https://backend.deviantart.com/rss.xml?q=journal%3Ayuumei',
+          hint: { key: 'deviantart:journal', label: 'Journal' },
+        },
+      ]
+
+      expect(deviantartHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return RSS feed URL for specific journal post', () => {
+      const value = 'https://deviantart.com/yuumei/journal/some-post-slug'
+      const expected = [
+        {
+          uri: 'https://backend.deviantart.com/rss.xml?q=journal%3Ayuumei',
+          hint: { key: 'deviantart:journal', label: 'Journal' },
+        },
+      ]
+
+      expect(deviantartHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return empty array for excluded paths', () => {
       const excludedUrls = [
         'https://deviantart.com/about',
@@ -104,6 +128,30 @@ describe('deviantartHandler', () => {
       }
     })
 
+    it('should return curated daily-deviations feed', () => {
+      const value = 'https://deviantart.com/daily-deviations'
+      const expected = [
+        {
+          uri: 'https://backend.deviantart.com/rss.xml?q=special%3Add',
+          hint: { key: 'deviantart:daily-deviations', label: 'Daily Deviations' },
+        },
+      ]
+
+      expect(deviantartHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return popular feed', () => {
+      const value = 'https://deviantart.com/popular'
+      const expected = [
+        {
+          uri: 'https://backend.deviantart.com/rss.xml?type=deviation&q=boost%3Apopular',
+          hint: { key: 'deviantart:popular', label: 'Popular' },
+        },
+      ]
+
+      expect(deviantartHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return empty array for gallery folder with excluded path', () => {
       const value = 'https://deviantart.com/about/gallery/123456/folder-name'
 
@@ -112,6 +160,12 @@ describe('deviantartHandler', () => {
 
     it('should return empty array for favourites with excluded path', () => {
       const value = 'https://deviantart.com/about/favourites'
+
+      expect(deviantartHandler.resolve(value)).toEqual([])
+    })
+
+    it('should return empty array for journal with excluded path', () => {
+      const value = 'https://deviantart.com/about/journal'
 
       expect(deviantartHandler.resolve(value)).toEqual([])
     })

@@ -24,11 +24,11 @@ describe('codebergHandler', () => {
   })
 
   describe('resolve', () => {
-    it('should return rss feed for user page', () => {
+    it('should return activity feed for user page', () => {
       const value = 'https://codeberg.org/forgejo'
       const expected = [
         {
-          uri: 'https://codeberg.org/forgejo.rss',
+          uri: ['https://codeberg.org/forgejo.atom', 'https://codeberg.org/forgejo.rss'],
           hint: { key: 'codeberg:activity', label: 'Activity' },
         },
       ]
@@ -40,15 +40,24 @@ describe('codebergHandler', () => {
       const value = 'https://codeberg.org/forgejo/forgejo'
       const expected = [
         {
-          uri: 'https://codeberg.org/forgejo/forgejo/releases.rss',
+          uri: [
+            'https://codeberg.org/forgejo/forgejo/releases.atom',
+            'https://codeberg.org/forgejo/forgejo/releases.rss',
+          ],
           hint: { key: 'codeberg:releases', label: 'Releases' },
         },
         {
-          uri: 'https://codeberg.org/forgejo/forgejo/tags.rss',
+          uri: [
+            'https://codeberg.org/forgejo/forgejo/tags.atom',
+            'https://codeberg.org/forgejo/forgejo/tags.rss',
+          ],
           hint: { key: 'codeberg:tags', label: 'Tags' },
         },
         {
-          uri: 'https://codeberg.org/forgejo/forgejo.rss',
+          uri: [
+            'https://codeberg.org/forgejo/forgejo.atom',
+            'https://codeberg.org/forgejo/forgejo.rss',
+          ],
           hint: { key: 'codeberg:activity', label: 'Activity' },
         },
       ]
@@ -60,15 +69,24 @@ describe('codebergHandler', () => {
       const value = 'https://codeberg.org/forgejo/forgejo/issues'
       const expected = [
         {
-          uri: 'https://codeberg.org/forgejo/forgejo/releases.rss',
+          uri: [
+            'https://codeberg.org/forgejo/forgejo/releases.atom',
+            'https://codeberg.org/forgejo/forgejo/releases.rss',
+          ],
           hint: { key: 'codeberg:releases', label: 'Releases' },
         },
         {
-          uri: 'https://codeberg.org/forgejo/forgejo/tags.rss',
+          uri: [
+            'https://codeberg.org/forgejo/forgejo/tags.atom',
+            'https://codeberg.org/forgejo/forgejo/tags.rss',
+          ],
           hint: { key: 'codeberg:tags', label: 'Tags' },
         },
         {
-          uri: 'https://codeberg.org/forgejo/forgejo.rss',
+          uri: [
+            'https://codeberg.org/forgejo/forgejo.atom',
+            'https://codeberg.org/forgejo/forgejo.rss',
+          ],
           hint: { key: 'codeberg:activity', label: 'Activity' },
         },
       ]
@@ -76,23 +94,29 @@ describe('codebergHandler', () => {
       expect(codebergHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return branch commits feed for branch page', () => {
-      const value = 'https://codeberg.org/forgejo/forgejo/src/branch/main'
+    it('should return branch commits feed for Gitea branch page', () => {
+      const value = 'https://gitea.com/gitea/go-sdk/src/branch/main'
       const expected = [
         {
-          uri: 'https://codeberg.org/forgejo/forgejo/rss/branch/main',
+          uri: 'https://gitea.com/gitea/go-sdk/rss/branch/main',
           hint: { key: 'codeberg:branch-commits', label: 'Branch commits' },
         },
         {
-          uri: 'https://codeberg.org/forgejo/forgejo/releases.rss',
+          uri: [
+            'https://gitea.com/gitea/go-sdk/releases.atom',
+            'https://gitea.com/gitea/go-sdk/releases.rss',
+          ],
           hint: { key: 'codeberg:releases', label: 'Releases' },
         },
         {
-          uri: 'https://codeberg.org/forgejo/forgejo/tags.rss',
+          uri: [
+            'https://gitea.com/gitea/go-sdk/tags.atom',
+            'https://gitea.com/gitea/go-sdk/tags.rss',
+          ],
           hint: { key: 'codeberg:tags', label: 'Tags' },
         },
         {
-          uri: 'https://codeberg.org/forgejo/forgejo.rss',
+          uri: ['https://gitea.com/gitea/go-sdk.atom', 'https://gitea.com/gitea/go-sdk.rss'],
           hint: { key: 'codeberg:activity', label: 'Activity' },
         },
       ]
@@ -100,23 +124,58 @@ describe('codebergHandler', () => {
       expect(codebergHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return file history feed for file page', () => {
-      const value = 'https://codeberg.org/forgejo/forgejo/src/branch/main/README.md'
+    it('should return file history feed for Gitea file page', () => {
+      const value = 'https://gitea.com/gitea/go-sdk/src/branch/main/README.md'
       const expected = [
         {
-          uri: 'https://codeberg.org/forgejo/forgejo/rss/branch/main/README.md',
+          uri: 'https://gitea.com/gitea/go-sdk/rss/branch/main/README.md',
           hint: { key: 'codeberg:file-history', label: 'File history' },
         },
         {
-          uri: 'https://codeberg.org/forgejo/forgejo/releases.rss',
+          uri: [
+            'https://gitea.com/gitea/go-sdk/releases.atom',
+            'https://gitea.com/gitea/go-sdk/releases.rss',
+          ],
           hint: { key: 'codeberg:releases', label: 'Releases' },
         },
         {
-          uri: 'https://codeberg.org/forgejo/forgejo/tags.rss',
+          uri: [
+            'https://gitea.com/gitea/go-sdk/tags.atom',
+            'https://gitea.com/gitea/go-sdk/tags.rss',
+          ],
           hint: { key: 'codeberg:tags', label: 'Tags' },
         },
         {
-          uri: 'https://codeberg.org/forgejo/forgejo.rss',
+          uri: ['https://gitea.com/gitea/go-sdk.atom', 'https://gitea.com/gitea/go-sdk.rss'],
+          hint: { key: 'codeberg:activity', label: 'Activity' },
+        },
+      ]
+
+      expect(codebergHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should not emit branch commits feed for Codeberg branch page (Forgejo dropped the route)', () => {
+      const value = 'https://codeberg.org/forgejo/forgejo/src/branch/main'
+      const expected = [
+        {
+          uri: [
+            'https://codeberg.org/forgejo/forgejo/releases.atom',
+            'https://codeberg.org/forgejo/forgejo/releases.rss',
+          ],
+          hint: { key: 'codeberg:releases', label: 'Releases' },
+        },
+        {
+          uri: [
+            'https://codeberg.org/forgejo/forgejo/tags.atom',
+            'https://codeberg.org/forgejo/forgejo/tags.rss',
+          ],
+          hint: { key: 'codeberg:tags', label: 'Tags' },
+        },
+        {
+          uri: [
+            'https://codeberg.org/forgejo/forgejo.atom',
+            'https://codeberg.org/forgejo/forgejo.rss',
+          ],
           hint: { key: 'codeberg:activity', label: 'Activity' },
         },
       ]
@@ -128,15 +187,21 @@ describe('codebergHandler', () => {
       const value = 'https://gitea.com/gitea/go-sdk'
       const expected = [
         {
-          uri: 'https://gitea.com/gitea/go-sdk/releases.rss',
+          uri: [
+            'https://gitea.com/gitea/go-sdk/releases.atom',
+            'https://gitea.com/gitea/go-sdk/releases.rss',
+          ],
           hint: { key: 'codeberg:releases', label: 'Releases' },
         },
         {
-          uri: 'https://gitea.com/gitea/go-sdk/tags.rss',
+          uri: [
+            'https://gitea.com/gitea/go-sdk/tags.atom',
+            'https://gitea.com/gitea/go-sdk/tags.rss',
+          ],
           hint: { key: 'codeberg:tags', label: 'Tags' },
         },
         {
-          uri: 'https://gitea.com/gitea/go-sdk.rss',
+          uri: ['https://gitea.com/gitea/go-sdk.atom', 'https://gitea.com/gitea/go-sdk.rss'],
           hint: { key: 'codeberg:activity', label: 'Activity' },
         },
       ]

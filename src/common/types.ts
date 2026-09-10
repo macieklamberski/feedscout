@@ -4,6 +4,10 @@ import type { HeadersMethodOptions } from './uris/headers/types.js'
 import type { HtmlMethodOptions } from './uris/html/types.js'
 import type { PlatformMethodOptions } from './uris/platform/types.js'
 
+export type MaybePromise<T> = T | Promise<T>
+
+export type Pattern = string | RegExp
+
 export type UriEntry = string | Array<string>
 
 export type DiscoverUriHint = {
@@ -29,7 +33,12 @@ export type LinkSelector = {
   types?: Array<string>
 }
 
-export type DiscoverNormalizeUrlFn = (url: string, baseUrl: string | undefined) => string
+export type DiscoverResolveUrlFn = (url: string, baseUrl: string | undefined) => string | undefined
+
+export type DiscoverResolveSiteUrlFn = (
+  input: DiscoverInputObject,
+  resolveUrlFn: DiscoverResolveUrlFn,
+) => string | undefined
 
 export type DiscoverFetchFnOptions = {
   method?: 'GET' | 'HEAD'
@@ -47,7 +56,7 @@ export type DiscoverFetchFnResponse = {
 export type DiscoverFetchFn = (
   url: string,
   options?: DiscoverFetchFnOptions,
-) => Promise<DiscoverFetchFnResponse>
+) => MaybePromise<DiscoverFetchFnResponse>
 
 export type DiscoverProgress = {
   tested: number
@@ -57,6 +66,13 @@ export type DiscoverProgress = {
 }
 
 export type DiscoverOnProgressFn = (progress: DiscoverProgress) => void
+
+export type DiscoverErrorContext = {
+  phase: 'fetchInput' | 'resolveSiteUrl'
+  url?: string
+}
+
+export type DiscoverOnErrorFn = (error: unknown, context: DiscoverErrorContext) => void
 
 // Base result type - TValid contains fields present when isValid = true.
 export type DiscoverResult<TValid = object> =
@@ -80,7 +96,7 @@ export type DiscoverExtractFn<TValid> = (input: {
   content: string
   headers?: Headers
   status?: number
-}) => Promise<DiscoverResult<TValid>>
+}) => MaybePromise<DiscoverResult<TValid>>
 
 export type DiscoverInputObject = {
   url: string
@@ -142,23 +158,29 @@ export type DiscoverOptions<TValid, TMethods extends DiscoverMethod = DiscoverMe
   methods?: DiscoverMethodsConfig<TMethods>
   fetchFn?: DiscoverFetchFn
   extractFn?: DiscoverExtractFn<TValid>
-  normalizeUrlFn?: DiscoverNormalizeUrlFn
+  resolveUrlFn?: DiscoverResolveUrlFn
+  resolveSiteUrlFn?: DiscoverResolveSiteUrlFn
   stopOnFirstMethod?: boolean
   stopOnFirstResult?: boolean
   concurrency?: number
+  maxUris?: number
   onProgress?: DiscoverOnProgressFn
+  onError?: DiscoverOnErrorFn
   includeInvalid?: boolean
 }
 
-// Internal options - required fetchFn, extractFn, normalizeUrlFn.
+// Internal options - required fetchFn, extractFn, resolveUrlFn.
 export type DiscoverOptionsInternal<TValid> = {
   methods: DiscoverMethodsConfig
   fetchFn: DiscoverFetchFn
   extractFn: DiscoverExtractFn<TValid>
-  normalizeUrlFn: DiscoverNormalizeUrlFn
+  resolveUrlFn: DiscoverResolveUrlFn
+  resolveSiteUrlFn?: DiscoverResolveSiteUrlFn
   stopOnFirstMethod?: boolean
   stopOnFirstResult?: boolean
   concurrency?: number
+  maxUris?: number
   includeInvalid?: boolean
   onProgress?: DiscoverOnProgressFn
+  onError?: DiscoverOnErrorFn
 }

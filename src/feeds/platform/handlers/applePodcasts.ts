@@ -1,0 +1,41 @@
+import type { PlatformHandler } from '../../../common/uris/platform/types.js'
+import { composeHint, isHostOf } from '../../../common/utils.js'
+
+// Not discoverable without handler.
+
+const hosts = ['podcasts.apple.com']
+const podcastRegex = /^(?:\/[a-z]{2})?\/podcast\/(?:[^/]+\/)?id\d+/
+const feedUrlRegex = /"feedUrl"\s*:\s*"([^"]+)"/
+
+const extractFeedUrlFromContent = (content: string): string | undefined => {
+  const match = content.match(feedUrlRegex)
+
+  return match?.[1]
+}
+
+export const applePodcastsHandler: PlatformHandler = {
+  match: (url) => {
+    if (!isHostOf(url, hosts)) {
+      return false
+    }
+
+    const { pathname } = new URL(url)
+
+    // Match podcast pages: /{locale}/podcast/{name}/id{number}, locale and name optional.
+    return podcastRegex.test(pathname)
+  },
+
+  resolve: (_url, content) => {
+    if (!content) {
+      return []
+    }
+
+    const feedUrl = extractFeedUrlFromContent(content)
+
+    if (!feedUrl) {
+      return []
+    }
+
+    return [{ uri: feedUrl, hint: composeHint('apple-podcasts:podcast') }]
+  },
+}

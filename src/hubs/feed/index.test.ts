@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'bun:test'
+import type { DiscoverResolveUrlFn } from '../../common/types.js'
 import type { HubResult } from '../discover/types.js'
 import { discoverHubsFromFeed } from './index.js'
 
@@ -233,5 +234,66 @@ describe('discoverHubsFromFeed', () => {
     const value = discoverHubsFromFeed(content, 'https://example.com/feed.json')
 
     expect(value).toEqual([])
+  })
+
+  it('should resolve relative hub and self links in Atom feed', () => {
+    const content = `
+      <?xml version="1.0" encoding="utf-8"?>
+      <feed xmlns="http://www.w3.org/2005/Atom">
+        <title>Example Feed</title>
+        <link href="/hub" rel="hub"/>
+        <link href="/feed.xml" rel="self"/>
+      </feed>
+    `
+    const value = discoverHubsFromFeed(content, 'https://example.com/feed.xml')
+    const expected: Array<HubResult> = [
+      {
+        hub: 'https://example.com/hub',
+        topic: 'https://example.com/feed.xml',
+      },
+    ]
+
+    expect(value).toEqual(expected)
+  })
+
+  it('should resolve relative hub URL and feed_url in JSON Feed', () => {
+    const content = JSON.stringify({
+      version: 'https://jsonfeed.org/version/1.1',
+      title: 'Example Feed',
+      feed_url: '/feed.json',
+      hubs: [{ type: 'WebSub', url: '/hub' }],
+    })
+    const value = discoverHubsFromFeed(content, 'https://example.com/feed.json')
+    const expected: Array<HubResult> = [
+      {
+        hub: 'https://example.com/hub',
+        topic: 'https://example.com/feed.json',
+      },
+    ]
+
+    expect(value).toEqual(expected)
+  })
+
+  it('should apply custom resolveUrlFn to hub and topic URLs', () => {
+    const content = `
+      <?xml version="1.0" encoding="utf-8"?>
+      <feed xmlns="http://www.w3.org/2005/Atom">
+        <title>Example Feed</title>
+        <link href="/hub" rel="hub"/>
+        <link href="/feed.xml" rel="self"/>
+      </feed>
+    `
+    const customResolveUrlFn: DiscoverResolveUrlFn = (url) => {
+      return `https://custom.example.com${url}`
+    }
+    const value = discoverHubsFromFeed(content, 'https://example.com/feed.xml', customResolveUrlFn)
+    const expected: Array<HubResult> = [
+      {
+        hub: 'https://custom.example.com/hub',
+        topic: 'https://custom.example.com/feed.xml',
+      },
+    ]
+
+    expect(value).toEqual(expected)
   })
 })

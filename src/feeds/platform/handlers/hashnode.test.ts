@@ -6,6 +6,7 @@ describe('hashnodeHandler', () => {
     const cases = [
       ['https://example.hashnode.dev', true],
       ['https://blog.example.hashnode.dev', true],
+      ['https://townhall.hashnode.com', true],
       ['https://hashnode.dev', false],
       ['https://hashnode.com', false],
       ['https://example.com', false],

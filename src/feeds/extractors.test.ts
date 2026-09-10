@@ -1,11 +1,11 @@
 import { describe, expect, it } from 'bun:test'
 import type { DiscoverResult } from '../common/types.js'
-import { defaultExtractor } from './extractors.js'
+import { defaultExtractFn } from './extractors.js'
 import type { FeedResult } from './types.js'
 
-describe('defaultExtractor', () => {
+describe('defaultExtractFn', () => {
   it('should return isValid: false when content is empty', async () => {
-    const result = await defaultExtractor({
+    const result = await defaultExtractFn({
       content: '',
       headers: new Headers(),
       url: 'https://example.com/feed.xml',
@@ -20,7 +20,7 @@ describe('defaultExtractor', () => {
 
   it('should return isValid: false when content looks like HTML', async () => {
     const html = '<!DOCTYPE html><html><head><title>Test</title></head></html>'
-    const result = await defaultExtractor({
+    const result = await defaultExtractFn({
       content: html,
       headers: new Headers(),
       url: 'https://example.com/index.html',
@@ -43,7 +43,7 @@ describe('defaultExtractor', () => {
         </channel>
       </rss>
     `
-    const result = await defaultExtractor({
+    const result = await defaultExtractFn({
       content: rss,
       headers: new Headers(),
       url: 'https://example.com/feed.xml',
@@ -54,7 +54,7 @@ describe('defaultExtractor', () => {
       format: 'rss',
       title: 'Test',
       description: 'Test feed',
-      siteUrl: 'https://example.com',
+      siteUrl: 'https://example.com/',
     }
 
     expect(result).toEqual(expected)
@@ -68,7 +68,7 @@ describe('defaultExtractor', () => {
         <subtitle>Test feed</subtitle>
       </feed>
     `
-    const result = await defaultExtractor({
+    const result = await defaultExtractFn({
       content: atom,
       headers: new Headers(),
       url: 'https://example.com/feed.xml',
@@ -79,7 +79,7 @@ describe('defaultExtractor', () => {
       format: 'atom',
       title: 'Test',
       description: 'Test feed',
-      siteUrl: 'https://example.com',
+      siteUrl: 'https://example.com/',
     }
 
     expect(result).toEqual(expected)
@@ -97,7 +97,7 @@ describe('defaultExtractor', () => {
         </channel>
       </rdf:RDF>
     `
-    const result = await defaultExtractor({
+    const result = await defaultExtractFn({
       content: rdf,
       headers: new Headers(),
       url: 'https://example.com/feed.xml',
@@ -108,7 +108,7 @@ describe('defaultExtractor', () => {
       format: 'rdf',
       title: 'Test',
       description: 'Test feed',
-      siteUrl: 'https://example.com',
+      siteUrl: 'https://example.com/',
     }
 
     expect(result).toEqual(expected)
@@ -122,7 +122,7 @@ describe('defaultExtractor', () => {
       description: 'Test feed',
       items: [],
     })
-    const result = await defaultExtractor({
+    const result = await defaultExtractFn({
       content: json,
       headers: new Headers(),
       url: 'https://example.com/feed.json',
@@ -133,7 +133,7 @@ describe('defaultExtractor', () => {
       format: 'json',
       title: 'Test',
       description: 'Test feed',
-      siteUrl: 'https://example.com',
+      siteUrl: 'https://example.com/',
     }
 
     expect(result).toEqual(expected)
@@ -141,7 +141,7 @@ describe('defaultExtractor', () => {
 
   it('should return isValid: false when no feed markers found', async () => {
     const content = '<data><item>Test</item></data>'
-    const result = await defaultExtractor({
+    const result = await defaultExtractFn({
       content,
       headers: new Headers(),
       url: 'https://example.com/data.xml',
@@ -163,7 +163,7 @@ describe('defaultExtractor', () => {
           <description>Test feed</description>
         </channel>
       </RSS>`
-    const result = await defaultExtractor({
+    const result = await defaultExtractFn({
       content: rss,
       headers: new Headers(),
       url: 'https://example.com/feed.xml',
@@ -174,7 +174,7 @@ describe('defaultExtractor', () => {
       format: 'rss',
       title: 'Test',
       description: 'Test feed',
-      siteUrl: 'https://example.com',
+      siteUrl: 'https://example.com/',
     }
 
     expect(result).toEqual(expected)
@@ -182,7 +182,7 @@ describe('defaultExtractor', () => {
 
   it('should prioritize HTML rejection over feed detection', async () => {
     const mixed = '<html><body><rss>Not a real feed</rss></body></html>'
-    const result = await defaultExtractor({
+    const result = await defaultExtractFn({
       content: mixed,
       headers: new Headers(),
       url: 'https://example.com/page.html',
@@ -206,7 +206,7 @@ describe('defaultExtractor', () => {
         </channel>
       </rss>
     `
-    const result = await defaultExtractor({
+    const result = await defaultExtractFn({
       content: largeRss,
       headers: new Headers(),
       url: 'https://example.com/feed.xml',
@@ -217,14 +217,14 @@ describe('defaultExtractor', () => {
       format: 'rss',
       title: 'Test',
       description: largeDescription,
-      siteUrl: 'https://example.com',
+      siteUrl: 'https://example.com/',
     }
 
     expect(result).toEqual(expected)
   })
 
   it('should handle content with only whitespace', async () => {
-    const result = await defaultExtractor({
+    const result = await defaultExtractFn({
       content: '   \n\t  ',
       headers: new Headers(),
       url: 'https://example.com/feed.xml',
@@ -248,7 +248,7 @@ describe('defaultExtractor', () => {
         </channel>
       </rss>
     `
-    const result = await defaultExtractor({
+    const result = await defaultExtractFn({
       content: rss,
       headers: new Headers(),
       url: 'https://example.com/feed.xml',
@@ -259,7 +259,7 @@ describe('defaultExtractor', () => {
       format: 'rss',
       title: 'Test',
       description: 'Test feed',
-      siteUrl: 'https://example.com',
+      siteUrl: 'https://example.com/',
     }
 
     expect(result).toEqual(expected)
@@ -267,7 +267,7 @@ describe('defaultExtractor', () => {
 
   it('should return isValid: false for malformed XML content', async () => {
     const malformed = '<rss><channel><item><unclosed>'
-    const result = await defaultExtractor({
+    const result = await defaultExtractFn({
       content: malformed,
       headers: new Headers(),
       url: 'https://example.com/feed.xml',
@@ -290,7 +290,7 @@ describe('defaultExtractor', () => {
         </channel>
       </rss>
     `
-    const result = await defaultExtractor({
+    const result = await defaultExtractFn({
       content: rss,
       headers: new Headers(),
       url: 'https://redirect.example.com/feed.xml',
@@ -301,7 +301,7 @@ describe('defaultExtractor', () => {
       format: 'rss',
       title: 'Test',
       description: 'Test feed',
-      siteUrl: 'https://example.com',
+      siteUrl: 'https://example.com/',
     }
 
     expect(result).toEqual(expected)
@@ -311,7 +311,7 @@ describe('defaultExtractor', () => {
     const headers = new Headers()
     headers.set('content-type', 'application/rss+xml')
 
-    const result = await defaultExtractor({
+    const result = await defaultExtractFn({
       content: '<html>Not a feed</html>',
       headers,
       url: 'https://example.com/page.html',
@@ -333,7 +333,7 @@ describe('defaultExtractor', () => {
         <subtitle>Test feed</subtitle>
       </feed>
     `
-    const result = await defaultExtractor({
+    const result = await defaultExtractFn({
       content: atom,
       headers: new Headers(),
       url: 'https://example.com/feed.xml',
@@ -359,7 +359,7 @@ describe('defaultExtractor', () => {
         </channel>
       </rss>
     `
-    const result = await defaultExtractor({
+    const result = await defaultExtractFn({
       content: rss,
       headers: new Headers(),
       url: 'https://example.com/feed.xml',
@@ -383,7 +383,7 @@ describe('defaultExtractor', () => {
       description: 'Test feed',
       items: [],
     })
-    const result = await defaultExtractor({
+    const result = await defaultExtractFn({
       content: json,
       headers: new Headers(),
       url: 'https://example.com/feed.json',
@@ -395,6 +395,83 @@ describe('defaultExtractor', () => {
       title: 'Test',
       description: 'Test feed',
       siteUrl: undefined,
+    }
+
+    expect(result).toEqual(expected)
+  })
+
+  it('should resolve relative siteUrl from RSS feed against feed URL', async () => {
+    const rss = `
+      <rss version="2.0">
+        <channel>
+          <title>Test</title>
+          <link>/log/</link>
+          <description>Test feed</description>
+        </channel>
+      </rss>
+    `
+    const result = await defaultExtractFn({
+      content: rss,
+      headers: new Headers(),
+      url: 'https://example.com/feed.xml',
+    })
+    const expected: DiscoverResult<FeedResult> = {
+      url: 'https://example.com/feed.xml',
+      isValid: true,
+      format: 'rss',
+      title: 'Test',
+      description: 'Test feed',
+      siteUrl: 'https://example.com/log/',
+    }
+
+    expect(result).toEqual(expected)
+  })
+
+  it('should resolve relative siteUrl from Atom feed against feed URL', async () => {
+    const atom = `
+      <feed xmlns="http://www.w3.org/2005/Atom">
+        <title>Test</title>
+        <link rel="alternate" href="/blog"/>
+        <subtitle>Test feed</subtitle>
+      </feed>
+    `
+    const result = await defaultExtractFn({
+      content: atom,
+      headers: new Headers(),
+      url: 'https://example.com/feed.xml',
+    })
+    const expected: DiscoverResult<FeedResult> = {
+      url: 'https://example.com/feed.xml',
+      isValid: true,
+      format: 'atom',
+      title: 'Test',
+      description: 'Test feed',
+      siteUrl: 'https://example.com/blog',
+    }
+
+    expect(result).toEqual(expected)
+  })
+
+  it('should resolve relative siteUrl from JSON Feed against feed URL', async () => {
+    const json = JSON.stringify({
+      version: 'https://jsonfeed.org/version/1.1',
+      title: 'Test',
+      home_page_url: '/site/',
+      description: 'Test feed',
+      items: [],
+    })
+    const result = await defaultExtractFn({
+      content: json,
+      headers: new Headers(),
+      url: 'https://example.com/feed.json',
+    })
+    const expected: DiscoverResult<FeedResult> = {
+      url: 'https://example.com/feed.json',
+      isValid: true,
+      format: 'json',
+      title: 'Test',
+      description: 'Test feed',
+      siteUrl: 'https://example.com/site/',
     }
 
     expect(result).toEqual(expected)

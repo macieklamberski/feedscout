@@ -1,6 +1,8 @@
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, isAnyOf, isHostOf } from '../../../common/utils.js'
 
+// Discoverable without handler.
+
 const hosts = ['letterboxd.com', 'www.letterboxd.com']
 const excludedPaths = [
   'about',
@@ -35,6 +37,16 @@ export const letterboxdHandler: PlatformHandler = {
 
     if (pathSegments.length === 0) {
       return []
+    }
+
+    // Editorial Letterboxd Journal feed.
+    if (pathSegments[0] === 'journal') {
+      return [
+        {
+          uri: 'https://letterboxd.com/journal/rss/',
+          hint: composeHint('letterboxd:journal'),
+        },
+      ]
     }
 
     const username = pathSegments[0]

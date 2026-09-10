@@ -1,21 +1,31 @@
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, isAnyOf, isHostOf } from '../../../common/utils.js'
 
+// Not discoverable without handler.
+
+const tagRegex = /^\/tag\/([^/]+)/
+const favouritesRegex = /^\/([a-zA-Z0-9_-]+)\/favourites\/?$/
+const folderRegex = /^\/([a-zA-Z0-9_-]+)\/gallery\/(\d+)(?:\/|$)/
+const journalRegex = /^\/([a-zA-Z0-9_-]+)\/journal(?:\/|$)/
+const profileRegex = /^\/([a-zA-Z0-9_-]+)(?:\/gallery(?:\/all)?)?(?:\/|$)/
+
 export const hosts = ['deviantart.com', 'www.deviantart.com']
 const feedBaseUrl = 'https://backend.deviantart.com/rss.xml'
 export const excludedPaths = [
   'about',
+  'core-membership',
+  'daily-deviations',
+  'developers',
   'join',
+  'notifications',
+  'popular',
   'search',
+  'settings',
+  'shop',
+  'submit',
+  'team',
   'topic',
   'watch',
-  'notifications',
-  'settings',
-  'submit',
-  'shop',
-  'core-membership',
-  'team',
-  'developers',
 ]
 
 export const deviantartHandler: PlatformHandler = {
@@ -26,8 +36,27 @@ export const deviantartHandler: PlatformHandler = {
   resolve: (url) => {
     const { pathname } = new URL(url)
 
+    // Site-wide curated feeds.
+    if (pathname === '/daily-deviations' || pathname === '/daily-deviations/') {
+      return [
+        {
+          uri: `${feedBaseUrl}?q=${encodeURIComponent('special:dd')}`,
+          hint: composeHint('deviantart:daily-deviations'),
+        },
+      ]
+    }
+
+    if (pathname === '/popular' || pathname === '/popular/') {
+      return [
+        {
+          uri: `${feedBaseUrl}?type=deviation&q=${encodeURIComponent('boost:popular')}`,
+          hint: composeHint('deviantart:popular'),
+        },
+      ]
+    }
+
     // Match tag page: /tag/{tagname}
-    const tagMatch = pathname.match(/^\/tag\/([^/]+)/)
+    const tagMatch = pathname.match(tagRegex)
 
     if (tagMatch?.[1]) {
       const tag = tagMatch[1]
@@ -41,7 +70,7 @@ export const deviantartHandler: PlatformHandler = {
     }
 
     // Match favourites: /{username}/favourites
-    const favMatch = pathname.match(/^\/([a-zA-Z0-9_-]+)\/favourites\/?$/)
+    const favMatch = pathname.match(favouritesRegex)
 
     if (favMatch?.[1]) {
       const username = favMatch[1]
@@ -57,7 +86,7 @@ export const deviantartHandler: PlatformHandler = {
     }
 
     // Match gallery folder: /{username}/gallery/{folder-id}/{folder-name}.
-    const folderMatch = pathname.match(/^\/([a-zA-Z0-9_-]+)\/gallery\/(\d+)(?:\/|$)/)
+    const folderMatch = pathname.match(folderRegex)
 
     if (folderMatch?.[1] && folderMatch?.[2]) {
       const username = folderMatch[1]
@@ -73,11 +102,27 @@ export const deviantartHandler: PlatformHandler = {
       }
     }
 
+    // Match journal: /{username}/journal or /{username}/journal/{slug}
+    const journalMatch = pathname.match(journalRegex)
+
+    if (journalMatch?.[1]) {
+      const username = journalMatch[1]
+
+      if (!isAnyOf(username, excludedPaths)) {
+        return [
+          {
+            uri: `${feedBaseUrl}?q=${encodeURIComponent(`journal:${username}`)}`,
+            hint: composeHint('deviantart:journal'),
+          },
+        ]
+      }
+    }
+
     // Match username from profile/gallery paths like:
     // /{username}
     // /{username}/gallery
     // /{username}/gallery/all
-    const userMatch = pathname.match(/^\/([a-zA-Z0-9_-]+)(?:\/gallery(?:\/all)?)?(?:\/|$)/)
+    const userMatch = pathname.match(profileRegex)
     const username = userMatch?.[1]
 
     if (!username || isAnyOf(username, excludedPaths)) {

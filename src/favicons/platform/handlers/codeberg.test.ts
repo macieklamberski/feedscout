@@ -96,5 +96,14 @@ describe('codebergHandler', () => {
 
       expect(value).toEqual(expected)
     })
+
+    it('should strip feed extension from user URL', () => {
+      const value = codebergHandler.resolve('https://codeberg.org/forgejo.rss')
+      const expected: Array<DiscoverUriEntry> = [
+        { uri: 'https://codeberg.org/user/avatar/forgejo/512' },
+      ]
+
+      expect(value).toEqual(expected)
+    })
   })
 })

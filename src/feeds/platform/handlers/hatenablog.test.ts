@@ -7,10 +7,14 @@ describe('hatenablogHandler', () => {
       ['https://example.hatenablog.com', true],
       ['https://example.hatenablog.jp', true],
       ['https://example.hateblo.jp', true],
+      ['https://example.hatenadiary.com', true],
+      ['https://example.hatenadiary.jp', true],
+      ['https://example.hatenadiary.org', true],
       ['https://blog.example.hatenablog.com', true],
       ['https://hatenablog.com', false],
       ['https://hatenablog.jp', false],
       ['https://hateblo.jp', false],
+      ['https://hatenadiary.com', false],
       ['https://example.com', false],
     ] as const
 

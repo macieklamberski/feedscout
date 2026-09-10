@@ -6,6 +6,11 @@ describe('substackHandler', () => {
     const cases = [
       ['https://example.substack.com', true],
       ['https://blog.example.substack.com', true],
+      ['https://substack.com/@govtrackus', true],
+      ['https://substack.com/@theconsciouslee', true],
+      ['https://substack.com/@user-name', true],
+      ['https://substack.com/home', false],
+      ['https://substack.com', false],
       ['https://medium.com', false],
     ] as const
 
@@ -36,6 +41,30 @@ describe('substackHandler', () => {
       const expected = [
         {
           uri: 'https://newsletter.substack.com/feed',
+          hint: { key: 'substack:newsletter', label: 'Newsletter' },
+        },
+      ]
+
+      expect(substackHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return feed URL for profile page', () => {
+      const value = 'https://substack.com/@govtrackus'
+      const expected = [
+        {
+          uri: 'https://govtrackus.substack.com/feed',
+          hint: { key: 'substack:newsletter', label: 'Newsletter' },
+        },
+      ]
+
+      expect(substackHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return feed URL for profile page with subpath', () => {
+      const value = 'https://substack.com/@theconsciouslee/recommendations'
+      const expected = [
+        {
+          uri: 'https://theconsciouslee.substack.com/feed',
           hint: { key: 'substack:newsletter', label: 'Newsletter' },
         },
       ]

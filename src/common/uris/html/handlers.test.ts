@@ -15,8 +15,11 @@ const createMockContext = (): HtmlMethodContext => {
         { rel: 'feed' },
       ],
       anchorUris: ['/feed', '/rss', '/atom.xml'],
+      // biome-ignore lint/performance/useTopLevelRegex: Test-specific patterns.
+      anchorPathSegments: [/\/rss\//, /\/atom\//, /\/feed\//],
       anchorIgnoredUris: ['#', 'javascript:', 'mailto:'],
       anchorLabels: ['rss', 'feed', 'atom'],
+      anchorAttributes: ['aria-label', 'title', 'data-framer-name'],
     },
   }
 }
@@ -229,6 +232,31 @@ describe('handleOpenTag', () => {
     expect(value.discoveredUris.size).toBe(0)
   })
 
+  it('should capture the first <base href> into context', () => {
+    const value = createMockContext()
+
+    handleOpenTag(value, 'base', { href: 'https://example.com/sub/' })
+
+    expect(value.baseHref).toBe('https://example.com/sub/')
+  })
+
+  it('should ignore an empty <base href>', () => {
+    const value = createMockContext()
+
+    handleOpenTag(value, 'base', { href: '' })
+
+    expect(value.baseHref).toBeUndefined()
+  })
+
+  it('should keep the first <base href> when multiple are present', () => {
+    const value = createMockContext()
+
+    handleOpenTag(value, 'base', { href: '/first/' })
+    handleOpenTag(value, 'base', { href: '/second/' })
+
+    expect(value.baseHref).toBe('/first/')
+  })
+
   it('should handle multiple link tags in sequence', () => {
     const value = createMockContext()
 
@@ -253,6 +281,101 @@ describe('handleOpenTag', () => {
     handleOpenTag(value, 'a', { href: '/blog/feed' })
 
     expect(value.discoveredUris.has('/blog/feed')).toBe(true)
+  })
+
+  it('should add anchor tag with a feed path segment in the pathname', () => {
+    const value = createMockContext()
+
+    handleOpenTag(value, 'a', { href: '/rss/now.xml' })
+
+    expect(value.discoveredUris.has('/rss/now.xml')).toBe(true)
+  })
+
+  it('should not add anchor tag when href does not match any path segment', () => {
+    const value = createMockContext()
+
+    handleOpenTag(value, 'a', { href: '/blog/post.html' })
+
+    expect(value.discoveredUris.has('/blog/post.html')).toBe(false)
+  })
+
+  it('should not match a feed path segment that only appears in the query string', () => {
+    const value = createMockContext()
+
+    handleOpenTag(value, 'a', { href: '/share?add=https://other.example/rss/section' })
+
+    expect(value.discoveredUris.has('/share?add=https://other.example/rss/section')).toBe(false)
+  })
+
+  it('should add anchor tag with feed label in title attribute', () => {
+    // Icon-only links carry their label in title/aria-label, not visible text.
+    const value = createMockContext()
+
+    handleOpenTag(value, 'a', { href: '/blog/syndication', title: 'RSS feed' })
+
+    expect(value.discoveredUris.has('/blog/syndication')).toBe(true)
+  })
+
+  it('should add anchor tag with feed label in aria-label attribute', () => {
+    const value = createMockContext()
+
+    handleOpenTag(value, 'a', { href: '/blog/syndication', 'aria-label': 'Subscribe via RSS' })
+
+    expect(value.discoveredUris.has('/blog/syndication')).toBe(true)
+  })
+
+  it('should not add anchor tag when title and aria-label lack feed labels', () => {
+    const value = createMockContext()
+
+    handleOpenTag(value, 'a', { href: '/about', title: 'About us', 'aria-label': 'Home' })
+
+    expect(value.discoveredUris.has('/about')).toBe(false)
+  })
+
+  it('should ignore feed label in title when href matches an ignored URI', () => {
+    const value = createMockContext()
+
+    handleOpenTag(value, 'a', { href: '#section', title: 'RSS feed' })
+
+    expect(value.discoveredUris.has('#section')).toBe(false)
+  })
+
+  it('should add anchor href when a descendant attribute carries a feed label', () => {
+    // Framer wraps an icon-only feed link around a child whose only signal is data-framer-name.
+    const value = createMockContext()
+
+    handleOpenTag(value, 'a', { href: 'https://provider.example/fd/abc123.xml' })
+    handleOpenTag(value, 'div', { 'data-framer-name': 'RSS Icon' })
+
+    expect(value.discoveredUris.has('https://provider.example/fd/abc123.xml')).toBe(true)
+  })
+
+  it('should not add anchor href when descendant attributes lack a feed label', () => {
+    const value = createMockContext()
+
+    handleOpenTag(value, 'a', { href: 'https://provider.example/fd/abc123.xml' })
+    handleOpenTag(value, 'div', { 'data-framer-name': 'Search Icon' })
+
+    expect(value.discoveredUris.has('https://provider.example/fd/abc123.xml')).toBe(false)
+  })
+
+  it('should not scan descendant attributes when the anchor was ignored', () => {
+    const value = createMockContext()
+
+    handleOpenTag(value, 'a', { href: '#section' })
+    handleOpenTag(value, 'div', { 'data-framer-name': 'RSS Icon' })
+
+    expect(value.discoveredUris.has('#section')).toBe(false)
+  })
+
+  it('should not scan descendant attributes when none are configured', () => {
+    const value = createMockContext()
+    value.options.anchorAttributes = undefined
+
+    handleOpenTag(value, 'a', { href: 'https://provider.example/fd/abc123.xml' })
+    handleOpenTag(value, 'div', { 'data-framer-name': 'RSS Icon' })
+
+    expect(value.discoveredUris.has('https://provider.example/fd/abc123.xml')).toBe(false)
   })
 })
 

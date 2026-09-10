@@ -156,7 +156,7 @@ describe('discoverUrisFromPlatform', () => {
   it('should continue to next handler if async resolve throws', async () => {
     const throwingHandler: PlatformHandler = {
       match: () => true,
-      resolve: async () => {
+      resolve: () => {
         throw new Error('Async resolve error')
       },
     }

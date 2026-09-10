@@ -1,6 +1,14 @@
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, isAnyOf, isHostOf, isSubdomainOf } from '../../../common/utils.js'
 
+// Partially discoverable without handler.
+
+const userRegex = /^\/@([^/]+)/
+const tagRegex = /^\/tag\/([^/]+)/
+const publicationTagRegex = /^\/([^/@][^/]+)\/tagged\/([^/]+)/
+const publicationRegex = /^\/([^/@][^/]+)/
+const subdomainTagRegex = /^\/tagged\/([^/]+)/
+
 const hosts = ['medium.com', 'www.medium.com']
 const excludedPaths = ['search', 'me', 'new-story', 'plans', 'membership']
 
@@ -16,7 +24,7 @@ export const mediumHandler: PlatformHandler = {
     // Medium.com user profiles: /@username.
     if (hosts.includes(lowerHostname)) {
       // User profile: /@username.
-      const userMatch = pathname.match(/^\/@([^/]+)/)
+      const userMatch = pathname.match(userRegex)
 
       if (userMatch?.[1]) {
         const username = userMatch[1]
@@ -30,7 +38,7 @@ export const mediumHandler: PlatformHandler = {
       }
 
       // Tag feed: /tag/tag-name.
-      const tagMatch = pathname.match(/^\/tag\/([^/]+)/)
+      const tagMatch = pathname.match(tagRegex)
 
       if (tagMatch?.[1]) {
         const tag = tagMatch[1]
@@ -39,7 +47,7 @@ export const mediumHandler: PlatformHandler = {
       }
 
       // Publication tagged feed: /publication/tagged/tag-name.
-      const pubTagMatch = pathname.match(/^\/([^/@][^/]+)\/tagged\/([^/]+)/)
+      const pubTagMatch = pathname.match(publicationTagRegex)
 
       if (pubTagMatch?.[1] && pubTagMatch?.[2]) {
         const publication = pubTagMatch[1]
@@ -56,7 +64,7 @@ export const mediumHandler: PlatformHandler = {
       }
 
       // Publication: /publication-name.
-      const pubMatch = pathname.match(/^\/([^/@][^/]+)/)
+      const pubMatch = pathname.match(publicationRegex)
 
       if (pubMatch?.[1]) {
         const publication = pubMatch[1]
@@ -81,12 +89,15 @@ export const mediumHandler: PlatformHandler = {
       const subdomain = lowerHostname.replace('.medium.com', '')
 
       // Subdomain tagged feed: subdomain.medium.com/tagged/tag-name.
-      const tagMatch = pathname.match(/^\/tagged\/([^/]+)/)
+      // Emit {subdomain}.medium.com form directly — Medium routes it correctly for
+      // both publications and user vanity subdomains. The medium.com/feed/{subdomain}
+      // form 404s on user vanity subdomains (e.g. hlung.medium.com).
+      const tagMatch = pathname.match(subdomainTagRegex)
 
       if (tagMatch?.[1]) {
         return [
           {
-            uri: `https://medium.com/feed/${subdomain}/tagged/${tagMatch[1]}`,
+            uri: `https://${subdomain}.medium.com/feed/tagged/${tagMatch[1]}`,
             hint: composeHint('medium:tagged'),
           },
         ]
@@ -94,7 +105,7 @@ export const mediumHandler: PlatformHandler = {
 
       return [
         {
-          uri: `https://medium.com/feed/${subdomain}`,
+          uri: `https://${subdomain}.medium.com/feed`,
           hint: composeHint('medium:publication'),
         },
       ]

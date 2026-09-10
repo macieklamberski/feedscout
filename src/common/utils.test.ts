@@ -7,13 +7,14 @@ import {
   includesAnyOf,
   isAnyOf,
   isHostOf,
+  isObject,
   isOfAllowedMimeType,
   isSubdomainOf,
   matchesAnyOfLinkSelectors,
   normalizeMimeType,
-  normalizeUrl,
   omitEmpty,
   processConcurrently,
+  toPositiveInteger,
 } from './utils.js'
 
 describe('composeHint', () => {
@@ -350,6 +351,30 @@ describe('includesAnyOf', () => {
   it('should return false when pattern is empty string', () => {
     expect(includesAnyOf('anything', [''])).toBe(false)
   })
+
+  it('should return true when value matches a RegExp pattern', () => {
+    const value = '/rss/now.xml'
+    // biome-ignore lint/performance/useTopLevelRegex: Test-specific pattern.
+    const patterns = [/\/rss\//]
+
+    expect(includesAnyOf(value, patterns)).toBe(true)
+  })
+
+  it('should return false when value does not match a RegExp pattern', () => {
+    const value = '/blog/post.html'
+    // biome-ignore lint/performance/useTopLevelRegex: Test-specific pattern.
+    const patterns = [/\/rss\//]
+
+    expect(includesAnyOf(value, patterns)).toBe(false)
+  })
+
+  it('should handle mixed string and RegExp patterns', () => {
+    const value = '/rss/now.xml'
+    // biome-ignore lint/performance/useTopLevelRegex: Test-specific pattern.
+    const patterns = ['atom', /\/rss\//]
+
+    expect(includesAnyOf(value, patterns)).toBe(true)
+  })
 })
 
 describe('isAnyOf', () => {
@@ -466,6 +491,22 @@ describe('isAnyOf', () => {
 
     expect(isAnyOf(value, patterns)).toBe(true)
   })
+
+  it('should return true when value matches a RegExp pattern', () => {
+    const value = 'application/rss+xml'
+    // biome-ignore lint/performance/useTopLevelRegex: Test-specific pattern.
+    const patterns = [/^application\/rss/]
+
+    expect(isAnyOf(value, patterns)).toBe(true)
+  })
+
+  it('should return false when value does not match a RegExp pattern', () => {
+    const value = 'text/html'
+    // biome-ignore lint/performance/useTopLevelRegex: Test-specific pattern.
+    const patterns = [/^application\/rss/]
+
+    expect(isAnyOf(value, patterns)).toBe(false)
+  })
 })
 
 describe('omitEmpty', () => {
@@ -530,56 +571,6 @@ describe('omitEmpty', () => {
     const expected = ['c', 'a', 'b']
 
     expect(omitEmpty(value)).toEqual(expected)
-  })
-})
-
-describe('normalizeUrl', () => {
-  it('should resolve relative URL with base URL', () => {
-    const value = '/feed.xml'
-    const baseUrl = 'https://example.com'
-    const expected = 'https://example.com/feed.xml'
-
-    expect(normalizeUrl(value, baseUrl)).toBe(expected)
-  })
-
-  it('should resolve relative URL with base URL containing path', () => {
-    const value = 'feed.xml'
-    const baseUrl = 'https://example.com/blog/'
-    const expected = 'https://example.com/blog/feed.xml'
-
-    expect(normalizeUrl(value, baseUrl)).toBe(expected)
-  })
-
-  it('should preserve absolute URL when base URL provided', () => {
-    const value = 'https://other.com/feed.xml'
-    const baseUrl = 'https://example.com'
-    const expected = 'https://other.com/feed.xml'
-
-    expect(normalizeUrl(value, baseUrl)).toBe(expected)
-  })
-
-  it('should return URL unchanged when base URL is undefined', () => {
-    const value = '/feed.xml'
-    const baseUrl = undefined
-    const expected = '/feed.xml'
-
-    expect(normalizeUrl(value, baseUrl)).toBe(expected)
-  })
-
-  it('should handle protocol-relative URLs', () => {
-    const value = '//cdn.example.com/feed.xml'
-    const baseUrl = 'https://example.com'
-    const expected = 'https://cdn.example.com/feed.xml'
-
-    expect(normalizeUrl(value, baseUrl)).toBe(expected)
-  })
-
-  it('should handle parent directory references', () => {
-    const value = '../feed.xml'
-    const baseUrl = 'https://example.com/blog/posts/'
-    const expected = 'https://example.com/blog/feed.xml'
-
-    expect(normalizeUrl(value, baseUrl)).toBe(expected)
   })
 })
 
@@ -760,6 +751,22 @@ describe('anyWordMatchesAnyOf', () => {
 
     expect(anyWordMatchesAnyOf(value, patterns)).toBe(false)
   })
+
+  it('should return true when a word matches a RegExp pattern', () => {
+    const value = 'alternate feed'
+    // biome-ignore lint/performance/useTopLevelRegex: Test-specific pattern.
+    const patterns = [/^feed$/]
+
+    expect(anyWordMatchesAnyOf(value, patterns)).toBe(true)
+  })
+
+  it('should return false when no word matches a RegExp pattern', () => {
+    const value = 'alternate stylesheet'
+    // biome-ignore lint/performance/useTopLevelRegex: Test-specific pattern.
+    const patterns = [/^feed$/]
+
+    expect(anyWordMatchesAnyOf(value, patterns)).toBe(false)
+  })
 })
 
 describe('endsWithAnyOf', () => {
@@ -814,6 +821,30 @@ describe('endsWithAnyOf', () => {
 
   it('should return false when pattern is empty string', () => {
     expect(endsWithAnyOf('anything', [''])).toBe(false)
+  })
+
+  it('should return true when value matches a RegExp pattern', () => {
+    const value = '/rss/now.xml'
+    // biome-ignore lint/performance/useTopLevelRegex: Test-specific pattern.
+    const patterns = [/\/rss\//]
+
+    expect(endsWithAnyOf(value, patterns)).toBe(true)
+  })
+
+  it('should return false when value does not match a RegExp pattern', () => {
+    const value = '/blog/post.html'
+    // biome-ignore lint/performance/useTopLevelRegex: Test-specific pattern.
+    const patterns = [/\/rss\//]
+
+    expect(endsWithAnyOf(value, patterns)).toBe(false)
+  })
+
+  it('should handle mixed string and RegExp patterns', () => {
+    const value = '/rss/now.xml'
+    // biome-ignore lint/performance/useTopLevelRegex: Test-specific pattern.
+    const patterns = ['.html', /\/rss\//]
+
+    expect(endsWithAnyOf(value, patterns)).toBe(true)
   })
 })
 
@@ -934,6 +965,7 @@ describe('processConcurrently', () => {
   it('should handle errors in processFn', async () => {
     const items = [1, 2, 3, 4, 5]
     const processed: Array<number> = []
+    // biome-ignore lint/suspicious/useAwait: Must return Promise for processConcurrently.
     const processFn = async (item: number) => {
       if (item === 3) {
         throw new Error('Test error')
@@ -953,6 +985,7 @@ describe('processConcurrently', () => {
   it('should handle empty array', async () => {
     const items: Array<number> = []
     const processed: Array<number> = []
+    // biome-ignore lint/suspicious/useAwait: Must return Promise for processConcurrently.
     const processFn = async (item: number) => {
       processed.push(item)
     }
@@ -965,6 +998,7 @@ describe('processConcurrently', () => {
   it('should process single item', async () => {
     const items = [1]
     const processed: Array<number> = []
+    // biome-ignore lint/suspicious/useAwait: Must return Promise for processConcurrently.
     const processFn = async (item: number) => {
       processed.push(item)
     }
@@ -1081,6 +1115,7 @@ describe('processConcurrently', () => {
   it('should not process items when concurrency is 0', async () => {
     const items = [1, 2, 3]
     const processed: Array<number> = []
+    // biome-ignore lint/suspicious/useAwait: Must return Promise for processConcurrently.
     const processFn = async (item: number) => {
       processed.push(item)
     }
@@ -1170,5 +1205,51 @@ describe('hasMetaContent', () => {
 
   it('should return false for empty HTML', () => {
     expect(hasMetaContent('', 'generator', 'Mastodon')).toBe(false)
+  })
+})
+
+describe('isObject', () => {
+  it('should return true for plain objects', () => {
+    expect(isObject({})).toBe(true)
+    expect(isObject({ url: 'https://example.com' })).toBe(true)
+  })
+
+  it('should return false for null', () => {
+    expect(isObject(null)).toBe(false)
+  })
+
+  it('should return false for arrays', () => {
+    expect(isObject([])).toBe(false)
+    expect(isObject(['https://example.com'])).toBe(false)
+  })
+
+  it('should return false for primitives', () => {
+    expect(isObject('https://example.com')).toBe(false)
+    expect(isObject(42)).toBe(false)
+    expect(isObject(undefined)).toBe(false)
+  })
+})
+
+describe('toPositiveInteger', () => {
+  it('should return the value when it is a positive integer', () => {
+    expect(toPositiveInteger(5, 3)).toBe(5)
+    expect(toPositiveInteger(1, 3)).toBe(1)
+  })
+
+  it('should fall back for undefined', () => {
+    expect(toPositiveInteger(undefined, 3)).toBe(3)
+  })
+
+  it('should fall back for NaN', () => {
+    expect(toPositiveInteger(Number.NaN, 3)).toBe(3)
+  })
+
+  it('should fall back for values below 1', () => {
+    expect(toPositiveInteger(0, 3)).toBe(3)
+    expect(toPositiveInteger(-1, 3)).toBe(3)
+  })
+
+  it('should fall back for non-integer values', () => {
+    expect(toPositiveInteger(2.5, 3)).toBe(3)
   })
 })

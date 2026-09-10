@@ -1,6 +1,8 @@
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, isAnyOf, isHostOf } from '../../../common/utils.js'
 
+// Not discoverable without handler.
+
 const hosts = ['pinterest.com', 'www.pinterest.com', 'pin.it']
 const excludedPaths = [
   '_',
@@ -40,6 +42,20 @@ export const pinterestHandler: PlatformHandler = {
 
     if (isAnyOf(username, excludedPaths)) {
       return []
+    }
+
+    // Board page: /{user}/{board}. Reserved sub-routes (pins, _saved, etc.) are
+    // not boards; fall through to the user feed.
+    const reservedBoardSlugs = new Set(['pins', 'boards', '_saved', '_created', 'followers', 'following'])
+    const board = pathSegments[1]
+
+    if (board && !reservedBoardSlugs.has(board)) {
+      return [
+        {
+          uri: `https://www.pinterest.com/${username}/${board}.rss`,
+          hint: composeHint('pinterest:board'),
+        },
+      ]
     }
 
     return [

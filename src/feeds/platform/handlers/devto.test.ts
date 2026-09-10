@@ -43,12 +43,29 @@ describe('devtoHandler', () => {
       expect(devtoHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return community feed for homepage', () => {
+      const value = 'https://dev.to/'
+      const expected = [
+        { uri: 'https://dev.to/feed', hint: { key: 'devto:community', label: 'Community' } },
+      ]
+
+      expect(devtoHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return latest feed for /latest', () => {
+      const value = 'https://dev.to/latest'
+      const expected = [
+        { uri: 'https://dev.to/feed/latest', hint: { key: 'devto:latest', label: 'Latest' } },
+      ]
+
+      expect(devtoHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return empty array for excluded paths', () => {
       const excludedUrls = [
         'https://dev.to/about',
         'https://dev.to/search',
         'https://dev.to/top',
-        'https://dev.to/latest',
         'https://dev.to/settings',
       ]
 

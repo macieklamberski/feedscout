@@ -1,9 +1,13 @@
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, isAnyOf, isHostOf } from '../../../common/utils.js'
 
+// Not discoverable without handler.
+
 const hosts = ['dailymotion.com', 'www.dailymotion.com']
-const userPathRegex = /^\/([a-zA-Z0-9_-]+)$/
-const playlistPathRegex = /^\/playlist\/([a-zA-Z0-9_-]+)/
+const userRegex = /^\/([a-zA-Z0-9_-]+)$/
+const playlistRegex = /^\/playlist\/([a-zA-Z0-9_-]+)/
+const channelRegex = /^\/channel\/([a-zA-Z0-9_-]+)/
+const searchRegex = /^\/search\/([^/]+)/
 const excludedPaths = [
   'signin',
   'signout',
@@ -54,8 +58,18 @@ export const dailymotionHandler: PlatformHandler = {
   resolve: (url) => {
     const { pathname } = new URL(url)
 
+    // Homepage or /trending: global trending feed.
+    if (pathname === '/' || pathname === '' || pathname === '/trending') {
+      return [
+        {
+          uri: 'https://www.dailymotion.com/rss/trending',
+          hint: composeHint('dailymotion:trending'),
+        },
+      ]
+    }
+
     // Playlist page: /playlist/{id}
-    const playlistMatch = pathname.match(playlistPathRegex)
+    const playlistMatch = pathname.match(playlistRegex)
 
     if (playlistMatch?.[1]) {
       const playlistId = playlistMatch[1]
@@ -68,8 +82,32 @@ export const dailymotionHandler: PlatformHandler = {
       ]
     }
 
-    // User/channel page: /{username}
-    const userMatch = pathname.match(userPathRegex)
+    // Search results: /search/{query}
+    const searchMatch = pathname.match(searchRegex)
+
+    if (searchMatch?.[1]) {
+      return [
+        {
+          uri: `https://www.dailymotion.com/rss/search/${searchMatch[1]}`,
+          hint: composeHint('dailymotion:search'),
+        },
+      ]
+    }
+
+    // Channel page: /channel/{name}
+    const channelMatch = pathname.match(channelRegex)
+
+    if (channelMatch?.[1]) {
+      return [
+        {
+          uri: `https://www.dailymotion.com/rss/channel/${channelMatch[1]}`,
+          hint: composeHint('dailymotion:channel'),
+        },
+      ]
+    }
+
+    // User page: /{username}
+    const userMatch = pathname.match(userRegex)
 
     if (userMatch?.[1]) {
       const username = userMatch[1]

@@ -32,6 +32,10 @@ const favicons = await discoverFavicons('https://example.com', {
 })
 ```
 
+::: warning Untrusted SVG favicons
+A favicon validated as an SVG is returned by URL only — its contents are not sanitized. SVG files can carry active content (e.g. `<svg onload="...">`), so treat returned SVG favicon URLs as untrusted: render them as `<img src>` (which neutralizes scripts) rather than inlining the markup, or sanitize before use.
+:::
+
 ## Discovery Methods
 
 Favicons use the same discovery pipeline as feeds — see the [Feeds](/feeds) section for details on how each method works.
@@ -48,18 +52,20 @@ Favicons use the same discovery pipeline as feeds — see the [Feeds](/feeds) se
 
 The Platform method extracts avatars and icons directly from known platforms using their public APIs or URL conventions:
 
-| Platform | What It Extracts |
-|----------|-----------------|
-| GitHub | User avatar |
-| GitHub Gist | User avatar (via GitHub) |
-| Mastodon | Profile avatar (via public API) |
-| Bluesky | Profile avatar (via public API) |
-| Reddit | Subreddit icon or user avatar (via public API) |
-| Tumblr | Blog avatar |
-| Codeberg | User avatar |
-| Lobsters | User avatar |
-| SourceForge | Project icon |
-| DeviantArt | User avatar |
+| Platform | What It Extracts | Method |
+|----------|-----------------|--------|
+| GitHub | User avatar | URL pattern |
+| GitHub Gist | User avatar | URL pattern |
+| GitLab | User or group avatar | Public API |
+| Mastodon | Profile avatar | Public API |
+| Bluesky | Profile avatar | Public API |
+| Reddit | Subreddit icon or user avatar | Public API |
+| Tumblr | Blog avatar | URL pattern |
+| Codeberg | User avatar | URL pattern |
+| Lobsters | User avatar | URL pattern |
+| SourceForge | Project icon | URL pattern |
+| DeviantArt | User avatar | URL pattern |
+| Dev.to | Profile image | Public API |
 
 ## Extracting Icons from Feeds
 

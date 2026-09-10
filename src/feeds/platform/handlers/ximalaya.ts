@@ -1,6 +1,11 @@
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, isHostOf } from '../../../common/utils.js'
 
+// Not discoverable without handler.
+
+// Match /album/{id} (canonical) or /{userid}/album/{id} (legacy form).
+const albumRegex = /(?:^|\/)album\/(\d+)/
+
 const hosts = ['www.ximalaya.com', 'ximalaya.com']
 
 export const ximalayaHandler: PlatformHandler = {
@@ -10,7 +15,7 @@ export const ximalayaHandler: PlatformHandler = {
 
   resolve: (url) => {
     const { pathname } = new URL(url)
-    const albumMatch = pathname.match(/^\/album\/(\d+)/)
+    const albumMatch = pathname.match(albumRegex)
     const id = albumMatch?.[1]
 
     if (!id) {

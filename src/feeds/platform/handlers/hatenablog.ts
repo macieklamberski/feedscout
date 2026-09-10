@@ -2,9 +2,18 @@ import type { DiscoverUriEntry } from '../../../common/types.js'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, isSubdomainOf } from '../../../common/utils.js'
 
-const domains = ['hatenablog.com', 'hatenablog.jp', 'hateblo.jp']
-const categoryPathRegex = /^\/archive\/category\/([^/]+)/
-const authorPathRegex = /^\/archive\/author\/([^/]+)/
+// Discoverable without handler.
+
+const domains = [
+  'hatenablog.com',
+  'hatenablog.jp',
+  'hateblo.jp',
+  'hatenadiary.com',
+  'hatenadiary.jp',
+  'hatenadiary.org',
+]
+const categoryRegex = /^\/archive\/category\/([^/]+)/
+const authorRegex = /^\/archive\/author\/([^/]+)/
 
 export const hatenablogHandler: PlatformHandler = {
   match: (url) => {
@@ -16,7 +25,7 @@ export const hatenablogHandler: PlatformHandler = {
     const uris: Array<DiscoverUriEntry> = []
 
     // Category page: /archive/category/{category}
-    const categoryMatch = pathname.match(categoryPathRegex)
+    const categoryMatch = pathname.match(categoryRegex)
 
     if (categoryMatch?.[1]) {
       const category = categoryMatch[1]
@@ -32,7 +41,7 @@ export const hatenablogHandler: PlatformHandler = {
     }
 
     // Author page: /archive/author/{author}
-    const authorMatch = pathname.match(authorPathRegex)
+    const authorMatch = pathname.match(authorRegex)
 
     if (authorMatch?.[1]) {
       const author = authorMatch[1]

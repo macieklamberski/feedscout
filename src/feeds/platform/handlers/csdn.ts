@@ -1,6 +1,10 @@
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, isHostOf } from '../../../common/utils.js'
 
+// Not discoverable without handler.
+
+const userRegex = /^\/([^/]+)/
+
 const hosts = ['blog.csdn.net']
 
 export const csdnHandler: PlatformHandler = {
@@ -10,7 +14,7 @@ export const csdnHandler: PlatformHandler = {
 
   resolve: (url) => {
     const { pathname } = new URL(url)
-    const userMatch = pathname.match(/^\/([^/]+)/)
+    const userMatch = pathname.match(userRegex)
     const username = userMatch?.[1]
 
     if (!username) {

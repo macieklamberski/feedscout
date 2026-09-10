@@ -20,11 +20,11 @@ describe('paragraphHandler', () => {
   })
 
   describe('resolve', () => {
-    it('should return feed URLs for user blog', () => {
+    it('should return feed URL for user blog', () => {
       const value = 'https://paragraph.com/@blog'
       const expected = [
         {
-          uri: ['https://paragraph.com/@blog/feed', 'https://paragraph.com/@blog/rss'],
+          uri: 'https://api.paragraph.com/blogs/rss/@blog',
           hint: { key: 'paragraph:blog', label: 'Blog' },
         },
       ]
@@ -32,11 +32,11 @@ describe('paragraphHandler', () => {
       expect(paragraphHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return feed URLs regardless of subpath', () => {
+    it('should return feed URL regardless of subpath', () => {
       const value = 'https://paragraph.com/@optimism/some-post-slug'
       const expected = [
         {
-          uri: ['https://paragraph.com/@optimism/feed', 'https://paragraph.com/@optimism/rss'],
+          uri: 'https://api.paragraph.com/blogs/rss/@optimism',
           hint: { key: 'paragraph:blog', label: 'Blog' },
         },
       ]
@@ -44,11 +44,11 @@ describe('paragraphHandler', () => {
       expect(paragraphHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return feed URLs for www subdomain', () => {
+    it('should return feed URL for www subdomain', () => {
       const value = 'https://www.paragraph.com/@user'
       const expected = [
         {
-          uri: ['https://paragraph.com/@user/feed', 'https://paragraph.com/@user/rss'],
+          uri: 'https://api.paragraph.com/blogs/rss/@user',
           hint: { key: 'paragraph:blog', label: 'Blog' },
         },
       ]

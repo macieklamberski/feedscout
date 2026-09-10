@@ -85,6 +85,46 @@ describe('goodreadsHandler', () => {
       expect(goodreadsHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should include shelf feed when shelf query param is set', () => {
+      const value = 'https://www.goodreads.com/review/list/1-otis?shelf=read'
+      const expected = [
+        {
+          uri: 'https://www.goodreads.com/review/list_rss/1?shelf=read',
+          hint: { key: 'goodreads:shelf', label: 'Shelf' },
+        },
+        {
+          uri: 'https://www.goodreads.com/review/list_rss/1',
+          hint: { key: 'goodreads:reviews', label: 'Reviews' },
+        },
+        {
+          uri: 'https://www.goodreads.com/user/updates_rss/1',
+          hint: { key: 'goodreads:updates', label: 'Updates' },
+        },
+      ]
+
+      expect(goodreadsHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should encode special characters in shelf name', () => {
+      const value = 'https://www.goodreads.com/review/list/1?shelf=to-read'
+      const expected = [
+        {
+          uri: 'https://www.goodreads.com/review/list_rss/1?shelf=to-read',
+          hint: { key: 'goodreads:shelf', label: 'Shelf' },
+        },
+        {
+          uri: 'https://www.goodreads.com/review/list_rss/1',
+          hint: { key: 'goodreads:reviews', label: 'Reviews' },
+        },
+        {
+          uri: 'https://www.goodreads.com/user/updates_rss/1',
+          hint: { key: 'goodreads:updates', label: 'Updates' },
+        },
+      ]
+
+      expect(goodreadsHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return empty array for user page with non-numeric id', () => {
       const value = 'https://www.goodreads.com/user/show/abc-otis'
 

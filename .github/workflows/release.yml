@@ -4,13 +4,15 @@ on:
   workflow_dispatch:
     inputs:
       branch:
-        description: 'Branch to release'
+        description: Branch to release
         required: true
-        default: 'main'
+        default: main
         type: choice
         options:
           - main
+          - rc
           - beta
+          - alpha
 
 jobs:
   test:

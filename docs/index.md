@@ -16,7 +16,8 @@ Finds feeds by scanning links and anchors in HTML content, parsing HTTP headers,
 | --- | --- |
 | Feeds | RSS, Atom, JSON Feed, and RDF. Each feed is validated and returns metadata like format, title, description, and site URL. |
 | Blogrolls | OPML files containing feed subscriptions. Validated and returns title. |
-| WebSub&nbsp;hubs | Find hubs for real-time feed update notifications. |
+| Favicons | Site icons from HTML, feeds, platform APIs, and common paths. Validated to ensure URLs point to actual images. |
+| WebSub | Find hubs for real-time feed update notifications. |
 
 ### Discovery Methods
 

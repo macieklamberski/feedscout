@@ -42,10 +42,11 @@ All options are optional. When not provided, sensible defaults are used.
 | `methods` | `DiscoverMethodsConfig` | `['platform', 'html', 'headers', 'guess']` | Which methods to use |
 | `fetchFn` | `DiscoverFetchFn` | native fetch | Custom fetch function |
 | `extractFn` | `DiscoverExtractFn` | feedsmith | Custom feed extraction function |
-| `normalizeUrlFn` | `DiscoverNormalizeUrlFn` | | Custom URL normalization function |
+| `resolveUrlFn` | `DiscoverResolveUrlFn` | | Custom URL resolution function |
 | `stopOnFirstMethod` | `boolean` | `false` | Stop URI collection after first method with results |
 | `stopOnFirstResult` | `boolean` | `false` | Stop after first valid feed |
 | `concurrency` | `number` | `3` | Max parallel validations |
+| `maxUris` | `number` | `50` | Max total candidate URIs to fetch across all methods |
 | `includeInvalid` | `boolean` | `false` | Include invalid results |
 | `onProgress` | `DiscoverOnProgressFn` | | Progress callback |
 

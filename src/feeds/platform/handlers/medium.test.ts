@@ -46,7 +46,7 @@ describe('mediumHandler', () => {
       const value = 'https://blog.medium.com/some-article'
       const expected = [
         {
-          uri: 'https://medium.com/feed/blog',
+          uri: 'https://blog.medium.com/feed',
           hint: { key: 'medium:publication', label: 'Publication' },
         },
       ]
@@ -82,7 +82,7 @@ describe('mediumHandler', () => {
       const value = 'https://blog.medium.com/tagged/engineering'
       const expected = [
         {
-          uri: 'https://medium.com/feed/blog/tagged/engineering',
+          uri: 'https://blog.medium.com/feed/tagged/engineering',
           hint: { key: 'medium:tagged', label: 'Tagged' },
         },
       ]
