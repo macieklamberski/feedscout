@@ -34,6 +34,7 @@ import { gitlabHandler } from './platform/handlers/gitlab.js'
 import { goodreadsHandler } from './platform/handlers/goodreads.js'
 import { hackernewsHandler } from './platform/handlers/hackernews.js'
 import { hashnodeHandler } from './platform/handlers/hashnode.js'
+import { hatenaBookmarkHandler } from './platform/handlers/hatenaBookmark.js'
 import { hatenablogHandler } from './platform/handlers/hatenablog.js'
 import { hearthisHandler } from './platform/handlers/hearthis.js'
 import { heyWorldHandler } from './platform/handlers/heyWorld.js'
@@ -253,6 +254,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     goodreadsHandler,
     hackernewsHandler,
     hashnodeHandler,
+    hatenaBookmarkHandler,
     hatenablogHandler,
     hearthisHandler,
     heyWorldHandler,
