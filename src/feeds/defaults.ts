@@ -39,6 +39,7 @@ import { hearthisHandler } from './platform/handlers/hearthis.js'
 import { heyWorldHandler } from './platform/handlers/heyWorld.js'
 import { insanejournalHandler } from './platform/handlers/insanejournal.js'
 import { itchioHandler } from './platform/handlers/itchio.js'
+import { jandanHandler } from './platform/handlers/jandan.js'
 import { kickstarterHandler } from './platform/handlers/kickstarter.js'
 import { lemmyHandler } from './platform/handlers/lemmy.js'
 import { letterboxdHandler } from './platform/handlers/letterboxd.js'
@@ -258,6 +259,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     heyWorldHandler,
     insanejournalHandler,
     itchioHandler,
+    jandanHandler,
     kickstarterHandler,
     lemmyHandler,
     letterboxdHandler,

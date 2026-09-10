@@ -136,6 +136,7 @@
     "https://random.insanejournal.com/data/rss",
     "https://random.insanejournal.com/data/atom"
   ],
+  "jandan": ["https://jandan.net/?feed=rss2", "https://jandan.net/?feed=atom"],
   "kickstarter": [
     "https://www.kickstarter.com/projects/elanlee/exploding-kittens/posts.atom",
     "https://www.kickstarter.com/projects/feed.atom"

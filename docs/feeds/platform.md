@@ -725,6 +725,17 @@ Discovers RSS and Atom feeds for InsaneJournal journals.
 |-------------|-----------------|
 | `*.insanejournal.com` | Posts feed (RSS + Atom) |
 
+### Jandan
+
+Discovers RSS and Atom feeds for Jandan posts and post comments.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `jandan.net` | Posts feed (RSS + Atom) |
+| `jandan.net/p/{id}` | Post comments feed (RSS) |
+
+> The WordPress `/feed` route is blocked with a 403, so the handler emits the `?feed=` query-string routes.
+
 ### Libsyn
 
 Discovers RSS feeds for Libsyn-hosted podcasts.
