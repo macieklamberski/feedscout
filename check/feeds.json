@@ -252,6 +252,7 @@
   ],
   "rssCom": ["https://media.rss.com/podcasting101/feed.xml"],
   "seesaa": ["https://info.seesaa.net/index20.rdf", "https://info.seesaa.net/index.rdf"],
+  "smzdm": ["http://feed.smzdm.com"],
   "soundcloud": ["https://feeds.soundcloud.com/users/soundcloud:users:1613713/sounds.rss"],
   "sourceforge": [
     "https://sourceforge.net/p/filezilla/activity/feed",

@@ -72,6 +72,7 @@ import { qiitaHandler } from './platform/handlers/qiita.js'
 import { redditHandler } from './platform/handlers/reddit.js'
 import { rssComHandler } from './platform/handlers/rssCom.js'
 import { seesaaHandler } from './platform/handlers/seesaa.js'
+import { smzdmHandler } from './platform/handlers/smzdm.js'
 import { soundcloudHandler } from './platform/handlers/soundcloud.js'
 import { sourceforgeHandler } from './platform/handlers/sourceforge.js'
 import { spreakerHandler } from './platform/handlers/spreaker.js'
@@ -291,6 +292,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     redditHandler,
     rssComHandler,
     seesaaHandler,
+    smzdmHandler,
     soundcloudHandler,
     sourceforgeHandler,
     spreakerHandler,

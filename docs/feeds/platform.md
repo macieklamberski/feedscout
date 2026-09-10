@@ -864,6 +864,16 @@ Discovers RSS 2.0 and RDF feeds for Seesaa Blog.
 |-------------|-----------------|
 | `*.seesaa.net` | Posts feed (RSS 2.0 + RDF) |
 
+### SMZDM
+
+Discovers the RSS feed for SMZDM deals.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `smzdm.com` | Deals feed (RSS) |
+
+> The feed host answers over HTTP only. `https://feed.smzdm.com` returns 403.
+
 ### Spreaker
 
 Discovers RSS feeds for Spreaker-hosted podcasts.
