@@ -40,6 +40,7 @@ import { heyWorldHandler } from './platform/handlers/heyWorld.js'
 import { insanejournalHandler } from './platform/handlers/insanejournal.js'
 import { itchioHandler } from './platform/handlers/itchio.js'
 import { kickstarterHandler } from './platform/handlers/kickstarter.js'
+import { kucoinHandler } from './platform/handlers/kucoin.js'
 import { lemmyHandler } from './platform/handlers/lemmy.js'
 import { letterboxdHandler } from './platform/handlers/letterboxd.js'
 import { libsynHandler } from './platform/handlers/libsyn.js'
@@ -259,6 +260,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     insanejournalHandler,
     itchioHandler,
     kickstarterHandler,
+    kucoinHandler,
     lemmyHandler,
     letterboxdHandler,
     libsynHandler,

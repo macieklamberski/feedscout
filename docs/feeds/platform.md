@@ -725,6 +725,14 @@ Discovers RSS and Atom feeds for InsaneJournal journals.
 |-------------|-----------------|
 | `*.insanejournal.com` | Posts feed (RSS + Atom) |
 
+### KuCoin
+
+Discovers the RSS feed for KuCoin announcements.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `kucoin.com` | Announcements feed (RSS) |
+
 ### Libsyn
 
 Discovers RSS feeds for Libsyn-hosted podcasts.
