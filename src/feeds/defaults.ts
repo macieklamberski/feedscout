@@ -11,16 +11,19 @@ import { artstationHandler } from './platform/handlers/artstation.js'
 import { audioboomHandler } from './platform/handlers/audioboom.js'
 import { bearblogHandler } from './platform/handlers/bearblog.js'
 import { behanceHandler } from './platform/handlers/behance.js'
+import { bitchuteHandler } from './platform/handlers/bitchute.js'
 import { blogspotHandler } from './platform/handlers/blogspot.js'
 import { blueskyHandler } from './platform/handlers/bluesky.js'
 import { bookwyrmHandler } from './platform/handlers/bookwyrm.js'
 import { buttondownHandler } from './platform/handlers/buttondown.js'
 import { buzzsproutHandler } from './platform/handlers/buzzsprout.js'
 import { codebergHandler } from './platform/handlers/codeberg.js'
+import { confluenceHandler } from './platform/handlers/confluence.js'
 import { csdnHandler } from './platform/handlers/csdn.js'
 import { dailymotionHandler } from './platform/handlers/dailymotion.js'
 import { deviantartHandler } from './platform/handlers/deviantart.js'
 import { devtoHandler } from './platform/handlers/devto.js'
+import { diasporaHandler } from './platform/handlers/diaspora.js'
 import { discourseHandler } from './platform/handlers/discourse.js'
 import { doubanHandler } from './platform/handlers/douban.js'
 import { dreamwidthHandler } from './platform/handlers/dreamwidth.js'
@@ -39,6 +42,7 @@ import { hearthisHandler } from './platform/handlers/hearthis.js'
 import { heyWorldHandler } from './platform/handlers/heyWorld.js'
 import { insanejournalHandler } from './platform/handlers/insanejournal.js'
 import { itchioHandler } from './platform/handlers/itchio.js'
+import { jiraHandler } from './platform/handlers/jira.js'
 import { kickstarterHandler } from './platform/handlers/kickstarter.js'
 import { lemmyHandler } from './platform/handlers/lemmy.js'
 import { letterboxdHandler } from './platform/handlers/letterboxd.js'
@@ -54,9 +58,11 @@ import { misskeyHandler } from './platform/handlers/misskey.js'
 import { myanimelistHandler } from './platform/handlers/myanimelist.js'
 import { naverBlogHandler } from './platform/handlers/naverBlog.js'
 import { nebulaHandler } from './platform/handlers/nebula.js'
+import { neocitiesHandler } from './platform/handlers/neocities.js'
 import { noteHandler } from './platform/handlers/note.js'
 import { observableHandler } from './platform/handlers/observable.js'
 import { odyseeHandler } from './platform/handlers/odysee.js'
+import { openstatusHandler } from './platform/handlers/openstatus.js'
 import { pagecordHandler } from './platform/handlers/pagecord.js'
 import { paragraphHandler } from './platform/handlers/paragraph.js'
 import { pikaHandler } from './platform/handlers/pika.js'
@@ -66,6 +72,7 @@ import { pleromaHandler } from './platform/handlers/pleroma.js'
 import { podbeanHandler } from './platform/handlers/podbean.js'
 import { podigeeHandler } from './platform/handlers/podigee.js'
 import { posthavenHandler } from './platform/handlers/posthaven.js'
+import { postypeHandler } from './platform/handlers/postype.js'
 import { producthuntHandler } from './platform/handlers/producthunt.js'
 import { proseHandler } from './platform/handlers/prose.js'
 import { qiitaHandler } from './platform/handlers/qiita.js'
@@ -74,7 +81,9 @@ import { rssComHandler } from './platform/handlers/rssCom.js'
 import { seesaaHandler } from './platform/handlers/seesaa.js'
 import { soundcloudHandler } from './platform/handlers/soundcloud.js'
 import { sourceforgeHandler } from './platform/handlers/sourceforge.js'
+import { sourcehutHandler } from './platform/handlers/sourcehut.js'
 import { spreakerHandler } from './platform/handlers/spreaker.js'
+import { squarespaceHandler } from './platform/handlers/squarespace.js'
 import { stackExchangeHandler } from './platform/handlers/stackExchange.js'
 import { steamHandler } from './platform/handlers/steam.js'
 import { substackHandler } from './platform/handlers/substack.js'
@@ -87,6 +96,7 @@ import { velogHandler } from './platform/handlers/velog.js'
 import { vimeoHandler } from './platform/handlers/vimeo.js'
 import { weblogLolHandler } from './platform/handlers/weblogLol.js'
 import { weeblyHandler } from './platform/handlers/weebly.js'
+import { wikidotHandler } from './platform/handlers/wikidot.js'
 import { wordpressHandler } from './platform/handlers/wordpress.js'
 import { wpengineHandler } from './platform/handlers/wpengine.js'
 import { writeasHandler } from './platform/handlers/writeas.js'
@@ -230,16 +240,19 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     audioboomHandler,
     bearblogHandler,
     behanceHandler,
+    bitchuteHandler,
     blogspotHandler,
     blueskyHandler,
     bookwyrmHandler,
     buttondownHandler,
     buzzsproutHandler,
     codebergHandler,
+    confluenceHandler,
     csdnHandler,
     dailymotionHandler,
     deviantartHandler,
     devtoHandler,
+    diasporaHandler,
     discourseHandler,
     doubanHandler,
     dreamwidthHandler,
@@ -258,6 +271,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     heyWorldHandler,
     insanejournalHandler,
     itchioHandler,
+    jiraHandler,
     kickstarterHandler,
     lemmyHandler,
     letterboxdHandler,
@@ -273,9 +287,11 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     myanimelistHandler,
     naverBlogHandler,
     nebulaHandler,
+    neocitiesHandler,
     noteHandler,
     observableHandler,
     odyseeHandler,
+    openstatusHandler,
     pagecordHandler,
     paragraphHandler,
     pikaHandler,
@@ -285,6 +301,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     podbeanHandler,
     podigeeHandler,
     posthavenHandler,
+    postypeHandler,
     producthuntHandler,
     proseHandler,
     qiitaHandler,
@@ -293,7 +310,9 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     seesaaHandler,
     soundcloudHandler,
     sourceforgeHandler,
+    sourcehutHandler,
     spreakerHandler,
+    squarespaceHandler,
     stackExchangeHandler,
     steamHandler,
     substackHandler,
@@ -306,6 +325,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     vimeoHandler,
     weblogLolHandler,
     weeblyHandler,
+    wikidotHandler,
     wordpressHandler,
     wpengineHandler,
     writeasHandler,
