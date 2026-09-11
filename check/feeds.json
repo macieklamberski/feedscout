@@ -534,11 +534,30 @@
   ],
   "drupal": ["https://dri.es/rss.xml", "https://www.acquia.com/rss.xml"],
   "shopify": ["https://www.allbirds.com/blogs/news.atom"],
+  "hubspot": ["https://www.smartbugmedia.com/blog/rss.xml"],
+  "publii": ["https://getpublii.com/feed.xml", "https://falk.plus/feed.json"],
+  "wix": ["https://www.allthefood.ie/blog-feed.xml"],
+  "joomla": [
+    "https://www.joomla.org/announcements.feed?type=rss",
+    "https://community.joomla.org/blogs.feed?type=rss"
+  ],
+  "writefreely": [
+    "https://people.kernel.org/monsieuricon/feed/",
+    "https://people.kernel.org/read/feed/"
+  ],
+  "svbtle": ["https://dcurt.is/feed"],
+  "textpattern": ["https://textpattern.com/rss", "https://textpattern.com/atom"],
+  "grav": ["https://getgrav.org/blog.rss", "https://getgrav.org/blog.atom"],
+  "discuz": [
+    "https://bbs.kafan.cn/forum.php?mod=rss",
+    "https://bbs.kafan.cn/forum.php?mod=rss&fid=22"
+  ],
   "xenforo": ["https://voz.vn/f/diem-bao.33/index.rss"],
   "fc2": ["https://tetsujin.blog.fc2.com/?xml"],
   "togetter": ["https://togetter.com/rss/id/tarareba722", "https://togetter.com/rss/hot"],
   "syosetu": ["https://api.syosetu.com/writernovel/372556.Atom"],
   "cnblogs": ["https://www.cnblogs.com/vamei/rss"],
+  "homeland": ["https://ruby-china.org/topics/feed", "https://ruby-china.org/topics/node41/feed"],
   "learnku": ["https://learnku.com/feed", "https://learnku.com/laravel/feed"],
   "habr": [
     "https://habr.com/ru/rss/articles/",
@@ -546,11 +565,25 @@
     "https://habr.com/ru/rss/users/alizar/posts/"
   ],
   "nodebb": ["https://community.nodebb.org/recent.rss", "https://community.nodebb.org/popular.rss"],
+  "phpbb": ["https://www.phpbb.com/community/feed.php"],
+  "fluxbb": ["https://bbs.archlinux.org/extern.php?action=feed&type=RSS"],
+  "mobilizon": [
+    "https://mobilizon.fr/@framasoft/feed/atom",
+    "https://mobilizon.fr/feed/instance/atom"
+  ],
+  "hubzilla": ["https://zotum.net/feed/hub"],
+  "snac": ["https://comam.es/snac/grunfink.rss"],
+  "shaarli": ["https://demo.shaarli.org/feed/rss", "https://demo.shaarli.org/feed/atom"],
   "peertube": [
     "https://framatube.org/feeds/videos.xml?videoChannelName=joinpeertube",
     "https://framatube.org/feeds/videos.xml"
   ],
   "art19": ["https://rss.art19.com/american-scandal"],
   "omnystudio": ["https://omny.fm/shows/stuff-you-should-know/playlists/podcast.rss"],
-  "podomatic": ["https://asquaredpodcast10.podomatic.com/rss2.xml"]
+  "podomatic": ["https://asquaredpodcast10.podomatic.com/rss2.xml"],
+  "funkwhale": ["https://open.audio/api/v1/channels/stralci/rss"],
+  "powerpress": [
+    "https://www.rvfta.com/feed/podcast/",
+    "https://www.thisweekinphoto.com/feed/podcast/"
+  ]
 }
