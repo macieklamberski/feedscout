@@ -1,9 +1,10 @@
 import { describe, expect, it } from 'bun:test'
-import { discourseHandler, isDiscourseHtml } from './discourse.js'
+import { discourseHandler, isDiscourseHeaders, isDiscourseHtml } from './discourse.js'
 
 const discourseHtml =
   '<html><head><meta name="generator" content="Discourse 2026.4.0"></head></html>'
 const otherHtml = '<html><head><meta name="generator" content="WordPress"></head></html>'
+const discourseHeaders = new Headers({ 'x-discourse-route': 'list/latest' })
 
 describe('discourseHandler', () => {
   describe('isDiscourseHtml', () => {
@@ -16,12 +17,27 @@ describe('discourseHandler', () => {
       expect(isDiscourseHtml('<meta name="generator" content="DISCOURSE">')).toBe(true)
     })
 
+    it('should return true for the data-discourse-setup meta tag without generator', () => {
+      expect(isDiscourseHtml('<meta id="data-discourse-setup" data-base-url="/">')).toBe(true)
+    })
+
     it('should return false for non-Discourse generator', () => {
       expect(isDiscourseHtml(otherHtml)).toBe(false)
     })
 
     it('should return false for empty content', () => {
       expect(isDiscourseHtml('')).toBe(false)
+    })
+  })
+
+  describe('isDiscourseHeaders', () => {
+    it('should return true when x-discourse-route header is present', () => {
+      expect(isDiscourseHeaders(discourseHeaders)).toBe(true)
+    })
+
+    it('should return false when header is absent', () => {
+      expect(isDiscourseHeaders(new Headers())).toBe(false)
+      expect(isDiscourseHeaders(new Headers({ server: 'nginx' }))).toBe(false)
     })
   })
 
@@ -33,7 +49,13 @@ describe('discourseHandler', () => {
       ).toBe(true)
     })
 
-    it('should return false without content', () => {
+    it('should return true for any URL with Discourse headers', () => {
+      expect(discourseHandler.match('https://users.rust-lang.org/', '', discourseHeaders)).toBe(
+        true,
+      )
+    })
+
+    it('should return false without content or headers', () => {
       expect(discourseHandler.match('https://users.rust-lang.org/')).toBe(false)
     })
 

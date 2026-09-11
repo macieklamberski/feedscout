@@ -187,7 +187,8 @@
   "misskey": [
     "https://misskey.io/@ai.atom",
     "https://misskey.io/@ai.rss",
-    "https://misskey.io/@ai.json"
+    "https://misskey.io/@ai.json",
+    "https://blahaj.zone/@ada.atom"
   ],
   "naverBlog": ["https://rss.blog.naver.com/naverofficial.xml"],
   "observable": [

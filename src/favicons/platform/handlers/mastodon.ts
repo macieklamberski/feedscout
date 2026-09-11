@@ -13,8 +13,10 @@ export const isProfilePath = (pathname: string): boolean => {
   return profileRegex.test(pathname)
 }
 
+// Current Mastodon serves no generator meta, so the `<div id="mastodon">` app
+// root is matched too.
 export const isMastodonHtml = (content: string): boolean => {
-  return hasMetaContent(content, 'generator', 'Mastodon')
+  return hasMetaContent(content, 'generator', 'Mastodon') || content.includes('id="mastodon"')
 }
 
 export const isMastodonHeaders = (headers: Headers): boolean => {

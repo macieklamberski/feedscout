@@ -7,7 +7,8 @@ import { composeHint, hasMetaContent } from '../../../common/utils.js'
 // `{instance}/users/{user}.atom`, served by `ProfileController@showAtomFeed` —
 // the only feed route registered in `routes/web.php`. There are no RSS, tag,
 // discover, public-timeline, or per-status feed routes upstream. The handler is
-// content-keyed by the `<meta name="generator" content="pixelfed">` tag
+// content-keyed by the `<meta name="generator" content="pixelfed">` or
+// `<meta name="application-name" content="Pixelfed">` tag
 // (instances are not enumerable by host) and maps both `/{user}` and
 // `/users/{user}` profile URLs onto the canonical `.atom` path.
 
@@ -29,7 +30,10 @@ const excludedPaths = [
 ]
 
 export const isPixelfedHtml = (content: string): boolean => {
-  return hasMetaContent(content, 'generator', 'pixelfed')
+  return (
+    hasMetaContent(content, 'generator', 'pixelfed') ||
+    hasMetaContent(content, 'application-name', 'Pixelfed')
+  )
 }
 
 export const pixelfedHandler: PlatformHandler = {

@@ -6,10 +6,11 @@ import { composeHint, hasMetaContent } from '../../../common/utils.js'
 //
 // Discourse forums advertise their feeds via standard `.rss` URLs appended
 // to topic, user activity, category, top, and latest pages, and most
-// installations link them from the page (the `<meta name="generator"
-// content="Discourse">` tag identifies the platform). Generic discovery
-// can find `/latest.rss`, `/top.rss`, and topic feeds; the handler is kept
-// to produce canonical URIs across forum-hosted Discourse instances.
+// installations link them from the page. The `<meta name="generator"
+// content="Discourse">` tag, the `<meta id="data-discourse-setup">` tag and
+// the `x-discourse-route` response header identify the platform. Generic
+// discovery can find `/latest.rss`, `/top.rss`, and topic feeds; the handler
+// is kept to produce canonical URIs across forum-hosted Discourse instances.
 
 const userRegex = /^\/u\/([^/]+)/
 const categoryRegex = /^\/c\/(.+?)\/?$/
@@ -32,16 +33,31 @@ const getTopPeriodSuffix = (
 }
 
 export const isDiscourseHtml = (content: string): boolean => {
-  return hasMetaContent(content, 'generator', 'Discourse')
+  return (
+    hasMetaContent(content, 'generator', 'Discourse') ||
+    content.includes('id="data-discourse-setup"')
+  )
+}
+
+export const isDiscourseHeaders = (headers: Headers): boolean => {
+  return headers.has('x-discourse-route')
 }
 
 export const discourseHandler: PlatformHandler = {
-  match: (url, content) => {
-    if (!content || !isDiscourseHtml(content)) {
+  match: (url, content, headers) => {
+    if (!URL.canParse(url)) {
       return false
     }
 
-    return URL.canParse(url)
+    if (content && isDiscourseHtml(content)) {
+      return true
+    }
+
+    if (headers && isDiscourseHeaders(headers)) {
+      return true
+    }
+
+    return false
   },
 
   resolve: (url) => {

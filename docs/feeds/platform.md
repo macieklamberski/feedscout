@@ -203,7 +203,7 @@ Also supports `gitea.com` with the same patterns.
 
 ### GitLab
 
-Discovers Atom feeds for GitLab users and repositories. Self-hosted instances are detected via the `og:site_name` HTML meta tag or the `X-Gitlab-Meta` response header.
+Discovers Atom feeds for GitLab users and repositories. Self-hosted instances are detected via the `og:site_name` HTML meta tag or the `X-Gitlab-Meta` response header, on project paths only: `/{group}/{project}` or any path containing `/-/`.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
@@ -257,7 +257,7 @@ Discovers RSS feeds for DeviantArt user portfolios, gallery folders, favourites,
 
 ### Mastodon
 
-Discovers RSS feeds for Mastodon user profiles and hashtag pages. Detects Mastodon instances via the `<meta name="generator">` HTML tag or the `Server` response header — no hardcoded instance list.
+Discovers RSS feeds for Mastodon user profiles and hashtag pages. Detects Mastodon instances via the `<meta name="generator">` HTML tag, the `<div id="mastodon">` app root or the `Server` response header. There is no hardcoded instance list.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
@@ -672,7 +672,7 @@ Discovers RSS feeds for Buzzsprout-hosted podcasts.
 
 ### Discourse
 
-Discovers RSS feeds for Discourse forums. Detected by the `Discourse` generator meta tag.
+Discovers RSS feeds for Discourse forums. Detected by the `Discourse` generator meta tag, the `data-discourse-setup` meta tag or the `X-Discourse-Route` response header.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
@@ -687,7 +687,7 @@ Discovers RSS feeds for Discourse forums. Detected by the `Discourse` generator 
 
 ### Friendica
 
-Discovers Atom feeds for Friendica user profiles. Detected by the `Friendica` generator meta tag.
+Discovers Atom feeds for Friendica user profiles. Detected by the `Friendica` generator meta tag or the `X-Friendica-Version` response header.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
@@ -766,7 +766,7 @@ Discovers RSS, JSON, and podcast feeds for Micro.blog-hosted blogs, including ca
 
 ### Misskey
 
-Discovers Atom, RSS, and JSON feeds for Misskey user profiles. Detected by the `Misskey` application-name meta tag.
+Discovers Atom, RSS, and JSON feeds for Misskey and Sharkey user profiles. Detected by the `Misskey` or `Sharkey` application-name meta tag, or the `misskey_meta` script tag.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
@@ -801,7 +801,7 @@ Discovers Atom and RSS feeds for Pika blogs, including tag feeds.
 
 ### Pixelfed
 
-Discovers Atom feeds for Pixelfed user profiles. Detected by the `pixelfed` generator meta tag.
+Discovers Atom feeds for Pixelfed user profiles. Detected by the `pixelfed` generator meta tag or the `Pixelfed` application-name meta tag.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|

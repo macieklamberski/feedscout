@@ -1,9 +1,10 @@
 import { describe, expect, it } from 'bun:test'
-import { friendicaHandler, isFriendicaHtml } from './friendica.js'
+import { friendicaHandler, isFriendicaHeaders, isFriendicaHtml } from './friendica.js'
 
 const friendicaHtml =
   '<html><head><meta name="generator" content="Friendica 2026.01"></head></html>'
 const otherHtml = '<html><head><meta name="generator" content="WordPress"></head></html>'
+const friendicaHeaders = new Headers({ 'x-friendica-version': '2026.05' })
 
 describe('friendicaHandler', () => {
   describe('isFriendicaHtml', () => {
@@ -25,13 +26,34 @@ describe('friendicaHandler', () => {
     })
   })
 
+  describe('isFriendicaHeaders', () => {
+    it('should return true when x-friendica-version header is present', () => {
+      expect(isFriendicaHeaders(friendicaHeaders)).toBe(true)
+    })
+
+    it('should return false when header is absent', () => {
+      expect(isFriendicaHeaders(new Headers())).toBe(false)
+      expect(isFriendicaHeaders(new Headers({ server: 'Apache' }))).toBe(false)
+    })
+  })
+
   describe('match', () => {
     it('should return true for profile URL with Friendica content', () => {
       expect(friendicaHandler.match('https://libranet.de/profile/admin', friendicaHtml)).toBe(true)
     })
 
-    it('should return false without content', () => {
+    it('should return true for profile URL with Friendica headers', () => {
+      expect(
+        friendicaHandler.match('https://libranet.de/profile/admin', '', friendicaHeaders),
+      ).toBe(true)
+    })
+
+    it('should return false without content or headers', () => {
       expect(friendicaHandler.match('https://libranet.de/profile/admin')).toBe(false)
+    })
+
+    it('should return false for non-profile paths with Friendica headers', () => {
+      expect(friendicaHandler.match('https://libranet.de/about', '', friendicaHeaders)).toBe(false)
     })
 
     it('should return false for non-Friendica content', () => {
