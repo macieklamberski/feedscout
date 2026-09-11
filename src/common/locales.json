@@ -331,6 +331,21 @@
     "zenn:posts": "Posts",
     "zenn:topic": "Topic",
     "zenn:publication": "Publication",
-    "zenn:trending": "Trending"
+    "zenn:trending": "Trending",
+    "bitchute:channel": "Channel",
+    "confluence:space": "Space",
+    "confluence:site": "Site activity",
+    "diaspora:posts": "Posts",
+    "jira:project": "Project",
+    "jira:site": "Site activity",
+    "neocities:updates": "Site updates",
+    "openstatus:updates-rss": "Updates (RSS)",
+    "openstatus:updates-atom": "Updates (Atom)",
+    "postype:posts": "Posts",
+    "sourcehut:commits": "Commits",
+    "sourcehut:refs": "Refs",
+    "squarespace:collection": "Collection",
+    "wikidot:site-changes": "Site changes",
+    "wikidot:forum-threads": "Forum threads"
   }
 }

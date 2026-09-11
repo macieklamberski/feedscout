@@ -514,5 +514,30 @@
     "https://zenn.dev/topics/react/feed",
     "https://zenn.dev/p/team_zenn/feed",
     "https://zenn.dev/feed"
+  ],
+  "bitchute": ["https://www.bitchute.com/feeds/rss/channel/bcsupport/"],
+  "confluence": [
+    "https://cwiki.apache.org/confluence/plugins/servlet/streams?key=KAFKA",
+    "https://cwiki.apache.org/confluence/plugins/servlet/streams"
+  ],
+  "diaspora": ["https://despora.de/public/jaeger", "https://pod.geraspora.de/public/denschub"],
+  "jira": [
+    "https://jira.atlassian.com/plugins/servlet/streams?key=JRASERVER",
+    "https://ecosystem.atlassian.net/plugins/servlet/streams"
+  ],
+  "neocities": ["https://neocities.org/site/lazer-bunny.rss"],
+  "openstatus": [
+    "https://status.openstatus.dev/feed/rss",
+    "https://status.openstatus.dev/feed/atom"
+  ],
+  "postype": ["https://www.postype.com/@blog/rss", "https://blog.postype.com/rss"],
+  "sourcehut": [
+    "https://git.sr.ht/~sircmpwn/hare/log/rss.xml",
+    "https://git.sr.ht/~sircmpwn/hare/refs/rss.xml"
+  ],
+  "squarespace": ["https://www.squarespace.com/blog?format=rss"],
+  "wikidot": [
+    "https://scpwiki.com/feed/site-changes.xml",
+    "https://scpwiki.com/feed/forum/threads.xml"
   ]
 }

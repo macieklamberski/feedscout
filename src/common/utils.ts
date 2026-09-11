@@ -50,6 +50,18 @@ export const hasMetaContent = (content: string, name: string, value: string): bo
   return metaTagRegex.test(content)
 }
 
+// Read the content value of a meta tag by its name or property attribute,
+// regardless of attribute order.
+export const getMetaContent = (content: string, name: string): string | undefined => {
+  const escapedName = escapeRegex(name)
+  const metaTagRegex = new RegExp(
+    `<meta(?=[^>]*(?:name|property)=["']${escapedName}["'])[^>]*content=["']([^"']*)["']`,
+    'i',
+  )
+
+  return content.match(metaTagRegex)?.[1]
+}
+
 export const matchesAnyOfLinkSelectors = (
   rel: string,
   type: string | undefined,

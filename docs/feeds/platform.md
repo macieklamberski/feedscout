@@ -912,6 +912,107 @@ Discovers RSS feeds for Zenn users, topics, publications, and the platform-wide 
 | `zenn.dev/publications/{pub}` | Publication feed |
 | `zenn.dev` | Trending posts feed |
 
+### BitChute
+
+Discovers RSS feeds for BitChute channels. Channel pages carry only an oEmbed link, so nothing finds these without the handler.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `bitchute.com/channel/{slug}` | Channel feed (RSS) |
+
+> [!NOTE]
+> The feed endpoint accepts only the vanity slug that appears in the channel URL. A channel's internal id returns 404.
+
+### Confluence
+
+Discovers the Atom activity streams of a Confluence Data Center site. Detected by the `confluence-base-url` meta tag, with the context path and space key read from the page.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| Any page on a space | Space stream + site stream (Atom) |
+| Any other page | Site stream (Atom) |
+
+> [!NOTE]
+> Confluence Cloud is not supported. It renders client-side, serves no `confluence-*` meta tag, and its stream needs a session.
+
+### diaspora*
+
+Discovers the Atom feed of a diaspora* profile. Detected by the `Diaspora.Page` global.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `{pod}/u/{user}` | Posts feed (Atom) |
+| `{pod}/public/{user}` | Posts feed (Atom) |
+
+### Jira
+
+Discovers the Atom activity streams of a Jira site. Cloud is detected by the `atlassian.net` host, Data Center by the `ajs-base-url` meta tag together with a Jira path.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `{base}/browse/{KEY}-{n}` | Project stream + site stream (Atom) |
+| `{base}/projects/{KEY}` | Project stream + site stream (Atom) |
+| Any other Jira page | Site stream (Atom) |
+
+> [!NOTE]
+> Bitbucket Server ships the same meta tag and uses `/projects/{KEY}/repos/`, which is excluded. Confluence under `/wiki/` on a Cloud site is excluded too.
+
+### Neocities
+
+Discovers the RSS feed of a Neocities site. The feed is served from `neocities.org`, not from the site's own host, and lists file updates rather than posts.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `{user}.neocities.org` | Site updates feed (RSS) |
+| `neocities.org/site/{user}` | Site updates feed (RSS) |
+
+> [!NOTE]
+> A site served on a custom domain carries no username, so it is not matched.
+
+### OpenStatus
+
+Discovers the incident feeds of an OpenStatus status page. Detected by the `/api/status/summary.json` link the page carries, or by its generated preview image.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| Any status page | Updates feed (RSS + Atom) |
+
+### Postype
+
+Discovers RSS feeds for Postype channels. Channel pages carry no feed link.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `postype.com/@{id}` | Posts feed (RSS) |
+| `{id}.postype.com` | Posts feed (RSS) |
+
+### Sourcehut
+
+Discovers the commit and ref feeds of a Sourcehut repository. Repository pages carry no feed link.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `git.sr.ht/~{user}/{repo}` | Commits feed + refs feed (RSS) |
+
+### Squarespace
+
+Discovers the RSS feed of a Squarespace collection. Detected by the `Server: Squarespace` response header.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `{site}/{collection}` | Collection feed (RSS) |
+
+> [!NOTE]
+> The collection slug is operator-chosen, commonly `blog`, `news` or `journal`, so it is taken from the first path segment. The site root is not matched: it answers `?format=rss` with a 400.
+
+### Wikidot
+
+Discovers the site and forum feeds of a Wikidot wiki. Detected by the `application/wiki` edit link, so custom domains are covered as well as `*.wikidot.com` hosts.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| Any wiki page | Site changes feed + forum threads feed (RSS) |
+
 ## Basic Usage
 
 ```typescript
