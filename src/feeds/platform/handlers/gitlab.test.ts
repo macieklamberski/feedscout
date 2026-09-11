@@ -253,28 +253,102 @@ describe('gitlabHandler', () => {
       expect(gitlabHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should use first two path segments for deeply nested groups', () => {
-      // gitlab.com/group/subgroup/project treats group as user and subgroup as repo.
-      const value = 'https://gitlab.com/group/subgroup/project'
+    it('should use the whole project path for a nested group project', () => {
+      const value = 'https://gitlab.com/gitlab-org/security-products/analyzers/semgrep'
       const expected = [
         {
-          uri: 'https://gitlab.com/group/subgroup/-/releases.atom',
+          uri: 'https://gitlab.com/gitlab-org/security-products/analyzers/semgrep/-/releases.atom',
           hint: { key: 'gitlab:releases', label: 'Releases' },
         },
         {
-          uri: 'https://gitlab.com/group/subgroup/-/tags?format=atom',
+          uri: 'https://gitlab.com/gitlab-org/security-products/analyzers/semgrep/-/tags?format=atom',
           hint: { key: 'gitlab:tags', label: 'Tags' },
         },
         {
-          uri: 'https://gitlab.com/group/subgroup/-/issues.atom',
+          uri: 'https://gitlab.com/gitlab-org/security-products/analyzers/semgrep/-/issues.atom',
           hint: { key: 'gitlab:issues', label: 'Issues' },
         },
         {
-          uri: 'https://gitlab.com/group/subgroup/-/merge_requests.atom',
+          uri: 'https://gitlab.com/gitlab-org/security-products/analyzers/semgrep/-/merge_requests.atom',
           hint: { key: 'gitlab:merge-requests', label: 'Merge requests' },
         },
         {
-          uri: 'https://gitlab.com/group/subgroup.atom',
+          uri: 'https://gitlab.com/gitlab-org/security-products/analyzers/semgrep.atom',
+          hint: { key: 'gitlab:activity', label: 'Activity' },
+        },
+      ]
+
+      expect(gitlabHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should stop the project path at the dash separator', () => {
+      const value = 'https://gitlab.com/gitlab-org/security-products/analyzers/semgrep/-/issues'
+      const expected = [
+        {
+          uri: 'https://gitlab.com/gitlab-org/security-products/analyzers/semgrep/-/releases.atom',
+          hint: { key: 'gitlab:releases', label: 'Releases' },
+        },
+        {
+          uri: 'https://gitlab.com/gitlab-org/security-products/analyzers/semgrep/-/tags?format=atom',
+          hint: { key: 'gitlab:tags', label: 'Tags' },
+        },
+        {
+          uri: 'https://gitlab.com/gitlab-org/security-products/analyzers/semgrep/-/issues.atom',
+          hint: { key: 'gitlab:issues', label: 'Issues' },
+        },
+        {
+          uri: 'https://gitlab.com/gitlab-org/security-products/analyzers/semgrep/-/merge_requests.atom',
+          hint: { key: 'gitlab:merge-requests', label: 'Merge requests' },
+        },
+        {
+          uri: 'https://gitlab.com/gitlab-org/security-products/analyzers/semgrep.atom',
+          hint: { key: 'gitlab:activity', label: 'Activity' },
+        },
+      ]
+
+      expect(gitlabHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return branch commits for a nested group project', () => {
+      const value =
+        'https://gitlab.com/gitlab-org/security-products/analyzers/semgrep/-/commits/main'
+      const [firstFeed] = gitlabHandler.resolve(value) as Array<{ uri: string }>
+
+      expect(firstFeed.uri).toBe(
+        'https://gitlab.com/gitlab-org/security-products/analyzers/semgrep/-/commits/main?format=atom',
+      )
+    })
+
+    it('should stop the project path at a legacy feature segment', () => {
+      const value = 'https://gitlab.com/gitlab-org/security-products/analyzers/semgrep/tree/main'
+      const [firstFeed] = gitlabHandler.resolve(value) as Array<{ uri: string }>
+
+      expect(firstFeed.uri).toBe(
+        'https://gitlab.com/gitlab-org/security-products/analyzers/semgrep/-/commits/main?format=atom',
+      )
+    })
+
+    it('should treat a project named tree as part of the project path', () => {
+      const value = 'https://gitlab.com/group/tree'
+      const expected = [
+        {
+          uri: 'https://gitlab.com/group/tree/-/releases.atom',
+          hint: { key: 'gitlab:releases', label: 'Releases' },
+        },
+        {
+          uri: 'https://gitlab.com/group/tree/-/tags?format=atom',
+          hint: { key: 'gitlab:tags', label: 'Tags' },
+        },
+        {
+          uri: 'https://gitlab.com/group/tree/-/issues.atom',
+          hint: { key: 'gitlab:issues', label: 'Issues' },
+        },
+        {
+          uri: 'https://gitlab.com/group/tree/-/merge_requests.atom',
+          hint: { key: 'gitlab:merge-requests', label: 'Merge requests' },
+        },
+        {
+          uri: 'https://gitlab.com/group/tree.atom',
           hint: { key: 'gitlab:activity', label: 'Activity' },
         },
       ]
