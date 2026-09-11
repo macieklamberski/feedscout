@@ -97,6 +97,15 @@ describe('isLemmyHtml', () => {
     expect(isLemmyHtml(lemmyHtml)).toBe(true)
   })
 
+  it('should return true for the lemmy-site app root without generator meta', () => {
+    expect(isLemmyHtml('<body><div class="lemmy-site" id="app"></div></body>')).toBe(true)
+  })
+
+  it('should return false for a lemmy-site substring outside a class attribute', () => {
+    expect(isLemmyHtml('<a href="#/#lemmy-space:matrix.org">room</a>')).toBe(false)
+    expect(isLemmyHtml('<p>class lemmy-site</p>')).toBe(false)
+  })
+
   it('should return false for non-Lemmy generator values', () => {
     expect(isLemmyHtml('<meta name="generator" content="Mastodon v4.2.0">')).toBe(false)
     expect(isLemmyHtml('<meta name="generator" content="WordPress 6.4">')).toBe(false)
