@@ -50,6 +50,10 @@ export const hasMetaContent = (content: string, name: string, value: string): bo
   return metaTagRegex.test(content)
 }
 
+export const hasAnyMeta = (content: string, markers: Array<[string, string]>): boolean => {
+  return markers.some(([name, value]) => hasMetaContent(content, name, value))
+}
+
 // Read the content value of a meta tag by its name or property attribute,
 // regardless of attribute order.
 export const getMetaContent = (content: string, name: string): string | undefined => {

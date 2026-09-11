@@ -1,6 +1,6 @@
 import { parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
-import { composeHint, hasMetaContent } from '../../../common/utils.js'
+import { composeHint, hasAnyMeta } from '../../../common/utils.js'
 
 // Discoverability: Not discoverable without handler.
 //
@@ -13,14 +13,13 @@ import { composeHint, hasMetaContent } from '../../../common/utils.js'
 // routes upstream.
 
 const profileRegex = /^\/@([^/.]+)/
-const applicationNames = ['Misskey', 'Sharkey']
+const metaMarkers: Array<[string, string]> = [
+  ['application-name', 'Misskey'],
+  ['application-name', 'Sharkey'], // Fork, same feed routes
+]
 
 export const isMisskeyHtml = (content: string): boolean => {
-  if (content.includes('id="misskey_meta"')) {
-    return true
-  }
-
-  return applicationNames.some((name) => hasMetaContent(content, 'application-name', name))
+  return content.includes('id="misskey_meta"') || hasAnyMeta(content, metaMarkers)
 }
 
 export const misskeyHandler: PlatformHandler = {
