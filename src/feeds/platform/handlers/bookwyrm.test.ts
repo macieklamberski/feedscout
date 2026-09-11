@@ -15,6 +15,18 @@ describe('bookwyrmHandler', () => {
       expect(isBookwyrmHtml('<meta name="generator" content="BOOKWYRM">')).toBe(true)
     })
 
+    it('should return true for the footer source link without a generator meta', () => {
+      const value = '<a href="https://github.com/bookwyrm-social/bookwyrm">Source code</a>'
+
+      expect(isBookwyrmHtml(value)).toBe(true)
+    })
+
+    it('should return false for a link to another project in the same organisation', () => {
+      const value = '<a href="https://github.com/bookwyrm-social/bookwyrm-docs">Docs</a>'
+
+      expect(isBookwyrmHtml(value)).toBe(false)
+    })
+
     it('should return false for non-BookWyrm generator', () => {
       expect(isBookwyrmHtml(otherHtml)).toBe(false)
     })
