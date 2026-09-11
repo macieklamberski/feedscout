@@ -14,7 +14,7 @@ import { composeHint, hasMetaContent } from '../../../common/utils.js'
 // `og:site_name` meta tag or `x-gitlab-meta` header.
 //
 // A project path can be any depth, because groups nest. GitLab separates it
-// from the feature path with `/-/`, so that is what the split follows.
+// from the feature path with `/-/`.
 
 export const hosts = ['gitlab.com', 'www.gitlab.com']
 export const excludedPaths = [
@@ -74,17 +74,21 @@ const splitProjectPath = (pathSegments: Array<string>): [Array<string>, Array<st
 
 export const gitlabHandler: PlatformHandler = {
   match: (url, content, headers) => {
-    // Fast path for gitlab.com.
-    if (isHostOf(url, hosts)) {
-      return true
-    }
-
-    // Self-hosted instances require content or headers to confirm.
     try {
       const { pathname } = new URL(url)
-      const pathSegments = pathname.split('/').filter(Boolean)
+      const [projectSegments] = splitProjectPath(pathname.split('/').filter(Boolean))
 
-      if (pathSegments.length === 0) {
+      if (projectSegments.length === 0 || isAnyOf(projectSegments[0], excludedPaths)) {
+        return false
+      }
+
+      if (isHostOf(url, hosts)) {
+        return true
+      }
+
+      // `og:site_name` is operator-set text, so a self-hosted match also needs a
+      // project path or the `/-/` separator.
+      if (projectSegments.length < 2 && !pathname.includes('/-/')) {
         return false
       }
 

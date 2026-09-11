@@ -5,7 +5,8 @@ import { composeHint, hasMetaContent } from '../../../common/utils.js'
 //
 // Friendica instances expose per-user Atom feeds at
 // `{instance}/feed/{nickname}` plus `comments`, `replies`, and `activity`
-// variants, identified by `<meta name="generator" content="Friendica">`.
+// variants, identified by `<meta name="generator" content="Friendica">` or
+// the `x-friendica-version` response header.
 // Profile pages link the posts feed via `<link rel="alternate">`, so
 // generic discovery finds it; the handler is kept to emit the additional
 // comments, replies, and activity variants that the HTML does not
@@ -17,16 +18,26 @@ export const isFriendicaHtml = (content: string): boolean => {
   return hasMetaContent(content, 'generator', 'Friendica')
 }
 
+export const isFriendicaHeaders = (headers: Headers): boolean => {
+  return headers.has('x-friendica-version')
+}
+
 export const friendicaHandler: PlatformHandler = {
-  match: (url, content) => {
+  match: (url, content, headers) => {
     try {
-      if (!content || !isFriendicaHtml(content)) {
+      const { pathname } = new URL(url)
+
+      if (!profileRegex.test(pathname)) {
         return false
       }
 
-      const { pathname } = new URL(url)
+      if (content && isFriendicaHtml(content)) {
+        return true
+      }
 
-      return profileRegex.test(pathname)
+      if (headers && isFriendicaHeaders(headers)) {
+        return true
+      }
     } catch {}
 
     return false

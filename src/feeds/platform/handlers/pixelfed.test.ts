@@ -15,8 +15,16 @@ describe('pixelfedHandler', () => {
       expect(isPixelfedHtml('<meta name="generator" content="PIXELFED">')).toBe(true)
     })
 
+    it('should return true for Pixelfed application-name meta tag without generator', () => {
+      expect(isPixelfedHtml('<meta name="application-name" content="Pixelfed">')).toBe(true)
+    })
+
     it('should return false for non-Pixelfed generator', () => {
       expect(isPixelfedHtml(otherHtml)).toBe(false)
+    })
+
+    it('should return false for empty content', () => {
+      expect(isPixelfedHtml('')).toBe(false)
     })
   })
 

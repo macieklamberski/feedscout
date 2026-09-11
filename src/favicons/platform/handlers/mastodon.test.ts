@@ -61,6 +61,10 @@ describe('isMastodonHtml', () => {
     expect(isMastodonHtml(value)).toBe(true)
   })
 
+  it('should return true for the mastodon app root without generator', () => {
+    expect(isMastodonHtml('<body><div class="app-holder" id="mastodon"></div></body>')).toBe(true)
+  })
+
   it('should return false for non-Mastodon generator', () => {
     expect(isMastodonHtml('<meta name="generator" content="WordPress 6.0">')).toBe(false)
   })

@@ -9,8 +9,8 @@ import { isMastodonHeaders, isMastodonHtml } from '../../../favicons/platform/ha
 // hashtag at `/tags/{tag}.rss`, per-account-tag at
 // `/@{user}/tagged/{tag}.rss`, plus `with_replies.rss` and `media.rss`
 // profile variants. Detection is content-/header-keyed (no host whitelist):
-// the handler reads `<meta name="generator" content="Mastodon ...">` or the
-// `Server: Mastodon` header. Profile HTML pages don't advertise these
+// the handler reads `<meta name="generator" content="Mastodon ...">`, the
+// `<div id="mastodon">` app root or the `Server: Mastodon` header. Profile HTML pages don't advertise these
 // variants via `<link rel="alternate">`, so the handler is what maps each
 // browse path to its `.rss` twin.
 

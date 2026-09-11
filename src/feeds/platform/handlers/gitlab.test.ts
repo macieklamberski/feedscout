@@ -45,21 +45,42 @@ describe('gitlabHandler', () => {
       expect(gitlabHandler.match('https://www.gitlab.com/user')).toBe(true)
     })
 
-    it('should match self-hosted instance with GitLab HTML', () => {
-      expect(gitlabHandler.match('https://gitlab.mycompany.com/user', selfHostedHtml)).toBe(true)
+    it('should not match gitlab.com paths that resolve to no feed', () => {
+      expect(gitlabHandler.match('https://gitlab.com/')).toBe(false)
+      expect(gitlabHandler.match('https://gitlab.com/explore')).toBe(false)
+      expect(gitlabHandler.match('https://gitlab.com/-/profile')).toBe(false)
     })
 
-    it('should match self-hosted instance with GitLab header', () => {
-      expect(gitlabHandler.match('https://gitlab.mycompany.com/user', '', selfHostedHeaders)).toBe(
+    it('should match self-hosted project path with GitLab HTML', () => {
+      expect(gitlabHandler.match('https://gitlab.mycompany.com/user/repo', selfHostedHtml)).toBe(
         true,
       )
     })
 
+    it('should match self-hosted dash path with GitLab HTML', () => {
+      const value = 'https://gitlab.mycompany.com/user/repo/-/issues'
+
+      expect(gitlabHandler.match(value, selfHostedHtml)).toBe(true)
+    })
+
+    it('should match self-hosted project path with GitLab header', () => {
+      const value = 'https://gitlab.mycompany.com/user/repo'
+
+      expect(gitlabHandler.match(value, '', selfHostedHeaders)).toBe(true)
+    })
+
     it('should match self-hosted instance with non-GitLab content but GitLab header', () => {
-      const value = 'https://gitlab.mycompany.com/user'
+      const value = 'https://gitlab.mycompany.com/user/repo'
       const content = '<html><head><title>Projects</title></head></html>'
 
       expect(gitlabHandler.match(value, content, selfHostedHeaders)).toBe(true)
+    })
+
+    it('should not match self-hosted single-segment path even with GitLab signals', () => {
+      expect(gitlabHandler.match('https://gitlab.mycompany.com/user', selfHostedHtml)).toBe(false)
+      expect(gitlabHandler.match('https://gitlab.mycompany.com/user', '', selfHostedHeaders)).toBe(
+        false,
+      )
     })
 
     it('should not match self-hosted root path even with GitLab signals', () => {
@@ -67,7 +88,7 @@ describe('gitlabHandler', () => {
     })
 
     it('should not match self-hosted without content or headers', () => {
-      expect(gitlabHandler.match('https://gitlab.mycompany.com/user')).toBe(false)
+      expect(gitlabHandler.match('https://gitlab.mycompany.com/user/repo')).toBe(false)
     })
 
     it('should not match non-GitLab URLs', () => {
@@ -312,20 +333,66 @@ describe('gitlabHandler', () => {
     it('should return branch commits for a nested group project', () => {
       const value =
         'https://gitlab.com/gitlab-org/security-products/analyzers/semgrep/-/commits/main'
-      const [firstFeed] = gitlabHandler.resolve(value) as Array<{ uri: string }>
+      const expected = [
+        {
+          uri: 'https://gitlab.com/gitlab-org/security-products/analyzers/semgrep/-/commits/main?format=atom',
+          hint: { key: 'gitlab:branch-commits', label: 'Branch commits' },
+        },
+        {
+          uri: 'https://gitlab.com/gitlab-org/security-products/analyzers/semgrep/-/releases.atom',
+          hint: { key: 'gitlab:releases', label: 'Releases' },
+        },
+        {
+          uri: 'https://gitlab.com/gitlab-org/security-products/analyzers/semgrep/-/tags?format=atom',
+          hint: { key: 'gitlab:tags', label: 'Tags' },
+        },
+        {
+          uri: 'https://gitlab.com/gitlab-org/security-products/analyzers/semgrep/-/issues.atom',
+          hint: { key: 'gitlab:issues', label: 'Issues' },
+        },
+        {
+          uri: 'https://gitlab.com/gitlab-org/security-products/analyzers/semgrep/-/merge_requests.atom',
+          hint: { key: 'gitlab:merge-requests', label: 'Merge requests' },
+        },
+        {
+          uri: 'https://gitlab.com/gitlab-org/security-products/analyzers/semgrep.atom',
+          hint: { key: 'gitlab:activity', label: 'Activity' },
+        },
+      ]
 
-      expect(firstFeed.uri).toBe(
-        'https://gitlab.com/gitlab-org/security-products/analyzers/semgrep/-/commits/main?format=atom',
-      )
+      expect(gitlabHandler.resolve(value)).toEqual(expected)
     })
 
     it('should stop the project path at a legacy feature segment', () => {
       const value = 'https://gitlab.com/gitlab-org/security-products/analyzers/semgrep/tree/main'
-      const [firstFeed] = gitlabHandler.resolve(value) as Array<{ uri: string }>
+      const expected = [
+        {
+          uri: 'https://gitlab.com/gitlab-org/security-products/analyzers/semgrep/-/commits/main?format=atom',
+          hint: { key: 'gitlab:branch-commits', label: 'Branch commits' },
+        },
+        {
+          uri: 'https://gitlab.com/gitlab-org/security-products/analyzers/semgrep/-/releases.atom',
+          hint: { key: 'gitlab:releases', label: 'Releases' },
+        },
+        {
+          uri: 'https://gitlab.com/gitlab-org/security-products/analyzers/semgrep/-/tags?format=atom',
+          hint: { key: 'gitlab:tags', label: 'Tags' },
+        },
+        {
+          uri: 'https://gitlab.com/gitlab-org/security-products/analyzers/semgrep/-/issues.atom',
+          hint: { key: 'gitlab:issues', label: 'Issues' },
+        },
+        {
+          uri: 'https://gitlab.com/gitlab-org/security-products/analyzers/semgrep/-/merge_requests.atom',
+          hint: { key: 'gitlab:merge-requests', label: 'Merge requests' },
+        },
+        {
+          uri: 'https://gitlab.com/gitlab-org/security-products/analyzers/semgrep.atom',
+          hint: { key: 'gitlab:activity', label: 'Activity' },
+        },
+      ]
 
-      expect(firstFeed.uri).toBe(
-        'https://gitlab.com/gitlab-org/security-products/analyzers/semgrep/-/commits/main?format=atom',
-      )
+      expect(gitlabHandler.resolve(value)).toEqual(expected)
     })
 
     it('should treat a project named tree as part of the project path', () => {
