@@ -224,11 +224,7 @@
   "podbean": ["https://feed.podbean.com/podcast/feed.xml"],
   "podigee": ["https://cui-bono.podigee.io/feed/mp3"],
   "posthaven": ["https://blog.posthaven.com/posts.atom"],
-  "producthunt": [
-    "https://www.producthunt.com/feed?topic=artificial-intelligence",
-    "https://www.producthunt.com/feed?category=ai",
-    "https://www.producthunt.com/feed"
-  ],
+  "producthunt": ["https://www.producthunt.com/feed"],
   "prose": ["https://hey.prose.sh/rss"],
   "qiita": [
     "https://qiita.com/Qiita/feed.atom",
