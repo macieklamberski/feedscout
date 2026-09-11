@@ -40,18 +40,6 @@
   ],
   "buttondown": ["https://buttondown.com/jmduke/rss"],
   "buzzsprout": ["https://rss.buzzsprout.com/231452.rss"],
-  "codeberg": [
-    "https://codeberg.org/forgejo.atom",
-    "https://codeberg.org/forgejo.rss",
-    "https://codeberg.org/forgejo/forgejo.atom",
-    "https://codeberg.org/forgejo/forgejo.rss",
-    "https://codeberg.org/forgejo/forgejo/releases.atom",
-    "https://codeberg.org/forgejo/forgejo/releases.rss",
-    "https://codeberg.org/forgejo/forgejo/tags.atom",
-    "https://codeberg.org/forgejo/forgejo/tags.rss",
-    "https://codeberg.org/forgejo/forgejo/rss/branch/forgejo",
-    "https://codeberg.org/forgejo/forgejo/rss/branch/forgejo/README.md"
-  ],
   "dailymotion": [
     "https://www.dailymotion.com/rss/Euronews-en",
     "https://www.dailymotion.com/rss/playlist/x5e4h5",
@@ -92,12 +80,16 @@
     "https://demo.ghost.io/author/ghost/rss/"
   ],
   "gitea": [
-    "https://gitea.com/gitea.rss",
-    "https://gitea.com/gitea/go-sdk.rss",
-    "https://gitea.com/gitea/go-sdk/releases.rss",
-    "https://gitea.com/gitea/go-sdk/tags.rss",
-    "https://gitea.com/gitea/go-sdk/rss/branch/main",
-    "https://gitea.com/gitea/go-sdk/rss/branch/main/README.md"
+    "https://codeberg.org/forgejo.atom",
+    "https://codeberg.org/forgejo.rss",
+    "https://codeberg.org/forgejo/forgejo.atom",
+    "https://codeberg.org/forgejo/forgejo.rss",
+    "https://codeberg.org/forgejo/forgejo/releases.atom",
+    "https://codeberg.org/forgejo/forgejo/releases.rss",
+    "https://codeberg.org/forgejo/forgejo/tags.atom",
+    "https://codeberg.org/forgejo/forgejo/tags.rss",
+    "https://codeberg.org/forgejo/forgejo/rss/branch/forgejo",
+    "https://codeberg.org/forgejo/forgejo/rss/branch/forgejo/README.md"
   ],
   "github": [
     "https://github.com/macieklamberski.atom",
@@ -539,5 +531,26 @@
   "wikidot": [
     "https://scpwiki.com/feed/site-changes.xml",
     "https://scpwiki.com/feed/forum/threads.xml"
-  ]
+  ],
+  "drupal": ["https://dri.es/rss.xml", "https://www.acquia.com/rss.xml"],
+  "shopify": ["https://www.allbirds.com/blogs/news.atom"],
+  "xenforo": ["https://voz.vn/f/diem-bao.33/index.rss"],
+  "fc2": ["https://tetsujin.blog.fc2.com/?xml"],
+  "togetter": ["https://togetter.com/rss/id/tarareba722", "https://togetter.com/rss/hot"],
+  "syosetu": ["https://api.syosetu.com/writernovel/372556.Atom"],
+  "cnblogs": ["https://www.cnblogs.com/vamei/rss"],
+  "learnku": ["https://learnku.com/feed", "https://learnku.com/laravel/feed"],
+  "habr": [
+    "https://habr.com/ru/rss/articles/",
+    "https://habr.com/ru/rss/hub/programming/",
+    "https://habr.com/ru/rss/users/alizar/posts/"
+  ],
+  "nodebb": ["https://community.nodebb.org/recent.rss", "https://community.nodebb.org/popular.rss"],
+  "peertube": [
+    "https://framatube.org/feeds/videos.xml?videoChannelName=joinpeertube",
+    "https://framatube.org/feeds/videos.xml"
+  ],
+  "art19": ["https://rss.art19.com/american-scandal"],
+  "omnystudio": ["https://omny.fm/shows/stuff-you-should-know/playlists/podcast.rss"],
+  "podomatic": ["https://asquaredpodcast10.podomatic.com/rss2.xml"]
 }

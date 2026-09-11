@@ -188,18 +188,19 @@ Discovers Atom feeds for GitHub Gist users, starred gists, forks, and the discov
 | `gist.github.com/{username}/forks` | User forks feed |
 | `gist.github.com/discover` | Discover gists feed |
 
-### Codeberg / Gitea
+### Gitea
 
-Discovers RSS feeds for Codeberg and Gitea users, repositories, releases, tags, and branch commits.
+Discovers RSS feeds for Gitea users, repositories, releases, tags, and branch commits. Codeberg and `gitea.com` are matched by host; any other instance is matched by the session cookie Gitea sets on a repository page.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `codeberg.org/{user}` | User activity feed |
-| `codeberg.org/{user}/{repo}` | Releases, tags, activity |
-| `codeberg.org/{user}/{repo}/src/branch/{branch}` | Branch commits (+ above) |
-| `codeberg.org/{user}/{repo}/src/branch/{branch}/{path}` | File history (+ above) |
+| `{instance}/{user}` | User activity feed |
+| `{instance}/{user}/{repo}` | Releases, tags, activity |
+| `{instance}/{user}/{repo}/src/branch/{branch}` | Branch commits (+ above) |
+| `{instance}/{user}/{repo}/src/branch/{branch}/{path}` | File history (+ above) |
 
-Also supports `gitea.com` with the same patterns.
+> [!NOTE]
+> The branch commits and file history feeds are emitted only on `gitea.com`, because Forgejo removed that route. A self-hosted Forgejo instance sets no cookie on an anonymous request and is not matched; Codeberg, which runs Forgejo, is covered by the host list.
 
 ### GitLab
 
@@ -1012,6 +1013,170 @@ Discovers the site and forum feeds of a Wikidot wiki. Detected by the `applicati
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | Any wiki page | Site changes feed + forum threads feed (RSS) |
+### Drupal
+
+Discovers the site feed of a Drupal site. Detected by the `Generator` meta tag or the `X-Generator` response header.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| Any page | Site feed (RSS) |
+
+> [!NOTE]
+> Both signals are Drupal 8 and later, and a site builder can disable the `/rss.xml` view, so treat the feed as a probe.
+
+### Shopify
+
+Discovers the Atom feed of a Shopify store's blog. Detected by the `Powered-By` response header.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `{store}/blogs/{handle}` | Blog feed (Atom) |
+
+> [!NOTE]
+> There is no store-wide feed, so the blog handle is required. A missing blog answers 404 with an Atom content type and an empty body.
+
+### Mailchimp
+
+Discovers the RSS feed of a Mailchimp campaign archive.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `{dc}.campaign-archive.com/?u={u}&id={id}` | Archive feed (RSS) |
+
+> [!NOTE]
+> The datacentre prefix and both ids come from the input URL; none of them can be derived.
+
+### XenForo
+
+Discovers the feeds of a XenForo board. Detected by the `XF` or `XenForo` id on the html element.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `{board}/f/{slug}.{id}` | Forum feed + site feed (RSS) |
+| Any other page | Site feed (RSS) |
+
+> [!NOTE]
+> A missing forum answers with an XML error document rather than HTML, so a check for well-formed XML passes on a 404.
+
+### FC2 Blog
+
+Discovers the RSS feed of an FC2 blog.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `{user}.blog.fc2.com` | Posts feed (RSS) |
+| `{user}.blog{n}.fc2.com` | Posts feed (RSS) |
+
+> [!NOTE]
+> The canonical host redirects to a numbered host from the old sharding scheme, so both shapes are matched and the feed is built from whichever host answers.
+
+### Togetter
+
+Discovers the feeds of a Togetter curator or the site-wide popular feed.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `togetter.com/id/{user}` | Curator feed + popular feed (RSS) |
+| Any other page | Popular feed (RSS) |
+
+### Syosetu
+
+Discovers the Atom feed of a Syosetu author.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `mypage.syosetu.com/{writerId}` | Author feed (Atom) |
+
+> [!NOTE]
+> There is no per-work feed, and a novel URL carries an ncode rather than the numeric writer id, so only an author page resolves.
+
+### Cnblogs
+
+Discovers the feed of a Cnblogs blog.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `cnblogs.com/{user}` | Posts feed |
+
+> [!NOTE]
+> The response says RSS while the document is Atom, and the body opens with a byte order mark before the XML declaration.
+
+### LearnKu
+
+Discovers the feeds of a LearnKu community.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `learnku.com/{community}` | Community feed + site feed (RSS) |
+| Any other page | Site feed (RSS) |
+
+### Habr
+
+Discovers the feeds of a Habr hub, user or company, plus the site articles feed.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `habr.com/{lang}/hubs/{hub}` | Hub feed + articles feed (RSS) |
+| `habr.com/{lang}/users/{user}` | User feed + articles feed (RSS) |
+| `habr.com/{lang}/companies/{company}` | Company feed + articles feed (RSS) |
+| Any other page | Articles feed (RSS) |
+
+> [!NOTE]
+> The language segment is taken from the page URL and every one of these paths needs its trailing slash.
+
+### NodeBB
+
+Discovers the feeds of a NodeBB forum. Detected by the `X-Powered-By` response header.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `{forum}/category/{cid}` | Category feed + site feeds (RSS) |
+| `{forum}/topic/{tid}` | Topic feed + site feeds (RSS) |
+| Any other page | Recent feed + popular feed (RSS) |
+
+### PeerTube
+
+Discovers the feeds of a PeerTube instance, channel or account. Detected by the `X-Powered-By` response header.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `{instance}/c/{channel}` | Channel feed + instance feed |
+| `{instance}/a/{account}` | Account feed + instance feed |
+| Any other page | Instance feed |
+
+> [!NOTE]
+> A channel federated from another instance is addressed as `handle@remote.host`, and the bare handle answers 404.
+
+### Art19
+
+Discovers the RSS feed of an Art19 show.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `art19.com/shows/{slug}` | Show feed (RSS) |
+
+> [!NOTE]
+> The feed is derived from the URL in hand, never from where it redirects: a show can redirect to a site that mentions no feed while the derived feed still resolves.
+
+### Omny Studio
+
+Discovers the RSS feed of an Omny Studio show.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `omny.fm/shows/{slug}` | Show feed (RSS) |
+
+> [!NOTE]
+> A show whose page answers 404 can still resolve through this shortcut, which redirects to an identifier path on the content host.
+
+### Podomatic
+
+Discovers the RSS feed of a Podomatic show.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `{show}.podomatic.com` | Show feed (RSS) |
+| `podomatic.com/podcasts/{show}` | Show feed (RSS) |
 
 ## Basic Usage
 
@@ -1072,7 +1237,6 @@ import {
   bookwyrmHandler,
   buttondownHandler,
   buzzsproutHandler,
-  codebergHandler,
   csdnHandler,
   dailymotionHandler,
   deviantartHandler,
@@ -1084,6 +1248,7 @@ import {
   firesideHandler,
   friendicaHandler,
   ghostHandler,
+  giteaHandler,
   githubHandler,
   githubGistHandler,
   gitlabHandler,
