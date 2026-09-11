@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'bun:test'
 import {
   composeHint,
+  hasAnyMeta,
   hasMetaContent,
   isOfAllowedMimeType,
   matchesAnyOfLinkSelectors,
@@ -516,6 +517,37 @@ describe('processConcurrently', () => {
   it.todo('should not process items when concurrency is negative', () => {
     // Call processConcurrently with { concurrency: -1 } and a few items.
     // Expected: returns immediately without processing any item, same as concurrency 0.
+  })
+})
+
+describe('hasAnyMeta', () => {
+  const markers: Array<[string, string]> = [
+    ['generator', 'pixelfed'],
+    ['application-name', 'Pixelfed'],
+  ]
+
+  it('should return true when the first marker matches', () => {
+    const value = '<meta name="generator" content="pixelfed">'
+
+    expect(hasAnyMeta(value, markers)).toBe(true)
+  })
+
+  it('should return true when a later marker matches', () => {
+    const value = '<meta name="application-name" content="Pixelfed">'
+
+    expect(hasAnyMeta(value, markers)).toBe(true)
+  })
+
+  it('should return false when no marker matches', () => {
+    const value = '<meta name="generator" content="WordPress 6.4">'
+
+    expect(hasAnyMeta(value, markers)).toBe(false)
+  })
+
+  it('should return false for an empty marker list', () => {
+    const value = '<meta name="generator" content="pixelfed">'
+
+    expect(hasAnyMeta(value, [])).toBe(false)
   })
 })
 

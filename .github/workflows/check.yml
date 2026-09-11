@@ -32,4 +32,9 @@ jobs:
         run: bun check/feeds.ts
 
       - name: Check favicons
+        if: always()
         run: bun check/favicons.ts
+
+      - name: Check markers
+        if: always()
+        run: bun check/markers.ts

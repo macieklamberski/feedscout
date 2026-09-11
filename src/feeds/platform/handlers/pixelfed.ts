@@ -1,5 +1,5 @@
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
-import { composeHint, hasMetaContent } from '../../../common/utils.js'
+import { composeHint, hasAnyMeta } from '../../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 //
@@ -13,6 +13,10 @@ import { composeHint, hasMetaContent } from '../../../common/utils.js'
 // `/users/{user}` profile URLs onto the canonical `.atom` path.
 
 const profileRegex = /^\/(?:users\/)?([a-zA-Z0-9_]+)\/?$/
+const metaMarkers: Array<[string, string]> = [
+  ['generator', 'pixelfed'],
+  ['application-name', 'Pixelfed'],
+]
 const excludedPaths = [
   'admin',
   'api',
@@ -30,10 +34,7 @@ const excludedPaths = [
 ]
 
 export const isPixelfedHtml = (content: string): boolean => {
-  return (
-    hasMetaContent(content, 'generator', 'pixelfed') ||
-    hasMetaContent(content, 'application-name', 'Pixelfed')
-  )
+  return hasAnyMeta(content, metaMarkers)
 }
 
 export const pixelfedHandler: PlatformHandler = {
