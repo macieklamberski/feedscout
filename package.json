@@ -49,6 +49,10 @@
       "types": "./dist/methods.d.ts",
       "default": "./dist/methods.js"
     },
+    "./platform": {
+      "types": "./dist/platform.d.ts",
+      "default": "./dist/platform.js"
+    },
     "./package.json": "./package.json"
   },
   "files": [
@@ -56,7 +60,7 @@
   ],
   "scripts": {
     "prepare": "lefthook install",
-    "build": "tsdown src/exports/index.ts src/exports/feeds.ts src/exports/blogrolls.ts src/exports/favicons.ts src/exports/hubs.ts src/exports/methods.ts --format esm --dts --clean --unbundle --no-fixed-extension",
+    "build": "tsdown src/exports/index.ts src/exports/feeds.ts src/exports/blogrolls.ts src/exports/favicons.ts src/exports/hubs.ts src/exports/methods.ts src/exports/platform.ts --format esm --dts --clean --unbundle --no-fixed-extension",
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs"
   },
