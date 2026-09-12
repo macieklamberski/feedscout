@@ -73,6 +73,14 @@
     "https://dw-news.dreamwidth.org/data/rss",
     "https://dw-news.dreamwidth.org/data/atom"
   ],
+  "flickr": [
+    "https://www.flickr.com/services/feeds/photos_public.gne?tags=cats",
+    "https://www.flickr.com/services/feeds/photos_public.gne?id=24662369@N07",
+    "https://www.flickr.com/services/feeds/photos_faves.gne?id=24662369@N07",
+    "https://www.flickr.com/services/feeds/groups_pool.gne?id=42097308@N00",
+    "https://www.flickr.com/services/feeds/groups_discuss.gne?id=42097308@N00",
+    "https://www.flickr.com/services/feeds/forums.gne"
+  ],
   "friendica": ["https://libranet.de/feed/admin", "https://friendica.world/feed/surazeus/comments"],
   "ghost": [
     "https://demo.ghost.io/rss/",

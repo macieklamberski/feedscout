@@ -703,6 +703,22 @@ Discovers RSS feeds for Discourse forums. Detected by the `Discourse` generator 
 > [!NOTE]
 > The top topics feed accepts `{daily|weekly|monthly|quarterly|yearly|all}` via either the `/top/{period}` path or `?period={period}` query param. Unknown values are silently dropped.
 
+### Flickr
+
+Discovers Atom feeds for Flickr photostreams, favorites, tags, groups and the help forum.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `flickr.com/photos/tags/{tag}` | Tag feed |
+| `flickr.com/photos/{nsid}` | Photostream feed |
+| `flickr.com/photos/{nsid}/favorites` | Favorites feed |
+| `flickr.com/groups/{nsid}` | Group pool + discussions feeds |
+| `flickr.com/groups/{nsid}/pool` | Group pool feed |
+| `flickr.com/groups/{nsid}/discuss` | Group discussions feed |
+| `flickr.com/help/forum` | Forum feed |
+
+> The photo and group feeds take an NSID such as `24662369@N07`, never a vanity alias: `photos_public.gne?id={alias}` answers 404. A URL carrying an alias is left to the other methods, and the page itself links the right feed.
+
 ### Friendica
 
 Discovers Atom feeds for Friendica user profiles. Detected by the `Friendica` generator meta tag or the `X-Friendica-Version` response header.
