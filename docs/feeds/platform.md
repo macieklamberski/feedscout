@@ -217,13 +217,13 @@ Discovers Atom feeds for GitLab users and repositories. Self-hosted instances ar
 
 ### Product Hunt
 
-Discovers RSS feeds for Product Hunt homepage, topics, and categories.
+Discovers the Atom feed for Product Hunt.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `producthunt.com` | Homepage feed |
-| `producthunt.com/topics/{topic}` | Topic feed |
-| `producthunt.com/categories/{category}` | Category feed |
+| `producthunt.com` | Products feed (Atom) |
+
+> There is one feed. Topic and category pages have no feed of their own, and the `?topic=` and `?category=` parameters are ignored.
 
 ### Pinterest
 
