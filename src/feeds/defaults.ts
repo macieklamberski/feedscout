@@ -32,6 +32,7 @@ import { drupalHandler } from './platform/handlers/drupal.js'
 import { exblogHandler } from './platform/handlers/exblog.js'
 import { fc2Handler } from './platform/handlers/fc2.js'
 import { firesideHandler } from './platform/handlers/fireside.js'
+import { flickrHandler } from './platform/handlers/flickr.js'
 import { friendicaHandler } from './platform/handlers/friendica.js'
 import { ghostHandler } from './platform/handlers/ghost.js'
 import { giteaHandler } from './platform/handlers/gitea.js'
@@ -277,6 +278,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     exblogHandler,
     fc2Handler,
     firesideHandler,
+    flickrHandler,
     friendicaHandler,
     ghostHandler,
     giteaHandler,
