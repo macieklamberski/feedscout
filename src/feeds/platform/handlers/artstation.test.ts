@@ -77,8 +77,8 @@ describe('artstationHandler', () => {
           hint: { key: 'artstation:artwork', label: 'Artwork' },
         },
         {
-          uri: 'https://www.artstation.com/artwork.rss?sorting=trending',
-          hint: { key: 'artstation:artwork-trending', label: 'Artwork (Trending)' },
+          uri: 'https://www.artstation.com/artwork.rss?sorting=latest',
+          hint: { key: 'artstation:artwork-latest', label: 'Artwork (Latest)' },
         },
       ]
 
@@ -93,8 +93,8 @@ describe('artstationHandler', () => {
           hint: { key: 'artstation:artwork', label: 'Artwork' },
         },
         {
-          uri: 'https://www.artstation.com/artwork.rss?sorting=trending',
-          hint: { key: 'artstation:artwork-trending', label: 'Artwork (Trending)' },
+          uri: 'https://www.artstation.com/artwork.rss?sorting=latest',
+          hint: { key: 'artstation:artwork-latest', label: 'Artwork (Latest)' },
         },
       ]
 
