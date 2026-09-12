@@ -388,6 +388,21 @@ Discovers RSS feeds for Paragraph blogs (successor to Mirror.xyz).
 |-------------|-----------------|
 | `paragraph.com/@{username}` | Blog feed |
 
+### Hatena Bookmark
+
+Discovers RSS feeds for Hatena Bookmark listings, searches, sites and user bookmarks.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `b.hatena.ne.jp` | Hot entries feed |
+| `b.hatena.ne.jp/hotentry/{category}` | Hot entries by category |
+| `b.hatena.ne.jp/entrylist/{category}` | New entries by category |
+| `b.hatena.ne.jp/search/{tag\|text\|title}?q={query}` | Search feed |
+| `b.hatena.ne.jp/site/{domain}` | Site bookmarks feed |
+| `b.hatena.ne.jp/{user}` | User bookmarks feed |
+
+> Categories are `it`, `general`, `social`, `economics`, `life`, `knowledge`, `fun`, `entertainment` and `game`. Search and site feeds keep any filters already on the URL and add `mode=rss`.
+
 ### Hatena Blog
 
 Discovers RSS and Atom feeds for Hatena Blog on `*.hatenablog.com`, `*.hatenablog.jp`, and `*.hateblo.jp`.

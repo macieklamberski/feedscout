@@ -436,6 +436,14 @@
   ],
   "hashnode": ["https://townhall.hashnode.com/rss.xml"],
   "paragraph": ["https://paragraph.com/@blog/feed", "https://paragraph.com/@optimism/rss"],
+  "hatenaBookmark": [
+    "https://b.hatena.ne.jp/hotentry.rss",
+    "https://b.hatena.ne.jp/hotentry/it.rss",
+    "https://b.hatena.ne.jp/entrylist.rss",
+    "https://b.hatena.ne.jp/entrylist/game.rss",
+    "https://b.hatena.ne.jp/search/tag?q=rss&mode=rss",
+    "https://b.hatena.ne.jp/site/example.com?mode=rss"
+  ],
   "hatenablog": [
     "https://staff.hatenablog.com/rss",
     "https://staff.hatenablog.com/feed",
