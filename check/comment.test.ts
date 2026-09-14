@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'bun:test'
 import { readFileSync } from 'node:fs'
-import { renderComment } from './comment.js'
+import { renderComment, unmeasuredBlock } from './comment.js'
 import baseline from './discoverability.json' with { type: 'json' }
 import type { PlatformResult } from './verdict.js'
 
@@ -58,5 +58,13 @@ describe('handler comments', () => {
       .map((result) => result.platform)
 
     expect(drifted).toEqual([])
+  })
+
+  it('should leave an unmeasured platform its existing block', () => {
+    const unmeasured = (baseline as { results: Array<PlatformResult> }).results.find(
+      (result) => result.label === 'inconclusive',
+    )
+
+    expect(unmeasured && renderComment(unmeasured)).toBe(unmeasuredBlock)
   })
 })
