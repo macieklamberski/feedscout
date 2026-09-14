@@ -4,18 +4,7 @@ import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, getMetaContent } from '../../../common/utils.js'
 
 // Discoverability: Not discoverable without handler.
-//
-// Jira advertises its activity streams nowhere. They are served by a servlet at
-// `{base}/plugins/servlet/streams`, optionally keyed to one project, and the
-// site stream answers with Atom and no session on both Cloud and Data Center.
-//
-// Cloud is matched by host, because it renders client-side and serves none of
-// the `ajs-*` meta tags Data Center does. A Cloud site also hosts Confluence
-// under `/wiki/`, which is not Jira and is excluded.
-//
-// Data Center is matched by `ajs-base-url` plus a Jira-shaped path. Confluence
-// and Bitbucket Server both ship `ajs-base-url` too, so the path is what tells
-// them apart: Bitbucket puts `repos` after the project key.
+// Handler needed for: all shapes.
 
 // Data Center installs sit under a context path such as `/jira`, so none of
 // these can anchor at the start of the pathname.

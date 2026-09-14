@@ -2,15 +2,8 @@ import type { DiscoverUriEntry } from '../../../common/types.js'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 
-// Discoverability: Discoverable without handler.
-//
-// PeerTube serves an instance feed at `/feeds/videos.xml` and narrows it with
-// a query parameter: `?videoChannelName=` for a channel and `?accountName=`
-// for an account.
-//
-// The channel name is taken from the path rather than an id, because that is
-// what the URL carries. A channel federated from another instance is addressed
-// as `handle@remote.host` and the bare handle answers 404.
+// Discoverability: Partially discoverable without handler.
+// Generic covers instance (html), partly covers channel.
 
 const peertubeRegex = /peertube/i
 const channelPathRegex = /^\/c\/([^/]+)/

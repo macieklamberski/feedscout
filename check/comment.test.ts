@@ -4,37 +4,6 @@ import { renderComment, unmeasuredBlock } from './comment.js'
 import baseline from './discoverability.json' with { type: 'json' }
 import type { PlatformResult } from './verdict.js'
 
-// Handlers added after the last measurement still carry their unchecked prose.
-// The list empties when their comments are rewritten.
-const notYetRewritten = new Set([
-  'art19',
-  'bitchute',
-  'cnblogs',
-  'confluence',
-  'diaspora',
-  'drupal',
-  'fc2',
-  'flickr',
-  'gitea',
-  'habr',
-  'hatenaBookmark',
-  'jira',
-  'learnku',
-  'neocities',
-  'nodebb',
-  'openstatus',
-  'peertube',
-  'podomatic',
-  'postype',
-  'shopify',
-  'sourcehut',
-  'squarespace',
-  'syosetu',
-  'togetter',
-  'wikidot',
-  'xenforo',
-])
-
 const blockRegex = /^\/\/ Discoverability:.*?(?=\n(?!\/\/))/ms
 
 const readBlock = (platform: string): string | undefined => {
@@ -44,7 +13,7 @@ const readBlock = (platform: string): string | undefined => {
 }
 
 const measured = (baseline as { results: Array<PlatformResult> }).results.filter(
-  (result) => result.label !== 'inconclusive' && !notYetRewritten.has(result.platform),
+  (result) => result.label !== 'inconclusive',
 )
 
 describe('handler comments', () => {

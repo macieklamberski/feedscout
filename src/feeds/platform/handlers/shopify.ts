@@ -2,14 +2,6 @@ import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
-//
-// A Shopify store's blog serves Atom at `/blogs/{handle}.atom`. Blog pages
-// carry only `hreflang` alternates, and discovery finds the feed through an
-// anchor, so the handler exists to resolve it without a page fetch.
-//
-// There is no store-wide feed: `/blogs.atom` answers 404 with
-// `content-type: application/atom+xml` and an empty body, so the blog handle
-// is required and content-type alone never proves a hit.
 
 const shopifyRegex = /shopify/i
 
