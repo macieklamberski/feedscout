@@ -4,8 +4,7 @@ import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic covers: blog (html).
-// Generic partly covers: tag.
+// Generic covers blog (html), partly covers tag.
 
 const tagRegex = /^\/tag\/([^/]+)/
 

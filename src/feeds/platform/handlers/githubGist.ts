@@ -3,7 +3,7 @@ import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic covers: starred, user (html).
+// Generic covers starred, user (html).
 // Handler needed for: discover, forks.
 
 const gistRegex = /^\/([^/]+)\/([a-f0-9]+)/

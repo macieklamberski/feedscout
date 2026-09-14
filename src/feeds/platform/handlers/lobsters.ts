@@ -3,10 +3,8 @@ import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic covers: comments, domain, home, newest, top (html, guess).
+// Generic covers comments, domain, home, newest, top (html, guess).
 // Handler needed for: user.
-// The page rejects a plain fetch, so a consumer on the default fetch
-// reaches no feed regardless of the label.
 
 export const hosts = ['lobste.rs']
 const tagRegex = /^\/t\/([a-zA-Z0-9,_-]+)/

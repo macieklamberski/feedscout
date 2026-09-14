@@ -3,7 +3,7 @@ import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, hasMetaContent } from '../../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic covers: category, home (html).
+// Generic covers category, home (html).
 // Handler needed for: top, user.
 
 const userRegex = /^\/u\/([^/]+)/

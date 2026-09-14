@@ -3,7 +3,7 @@ import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic covers: hashtag, home, profile (html, guess).
+// Generic covers hashtag, home, profile (html, guess).
 // Handler needed for: magazine.
 
 const hosts = ['note.com', 'www.note.com']

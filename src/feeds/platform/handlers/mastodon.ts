@@ -4,7 +4,7 @@ import { composeHint } from '../../../common/utils.js'
 import { isMastodonHeaders, isMastodonHtml } from '../../../favicons/platform/handlers/mastodon.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic covers: profile (html).
+// Generic covers profile (html).
 // Handler needed for: tag.
 
 const profileRegex = /^\/@([^/]+)/

@@ -3,7 +3,7 @@ import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic covers: blog (html).
+// Generic covers blog (html).
 // Handler needed for: mobile.
 
 const hosts = ['blog.naver.com', 'm.blog.naver.com']

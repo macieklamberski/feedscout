@@ -4,7 +4,7 @@ import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic partly covers: blog, community, tag, tildePath, userPath, usersHost.
+// Generic partly covers blog, community, tag, tildePath, userPath, usersHost.
 
 const wwwUsersPathRegex = /^\/(?:users\/|~)([^/]+)/
 const legacyUserPathRegex = /^\/([^/]+)/

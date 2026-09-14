@@ -3,7 +3,7 @@ import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic covers: player, show (html).
+// Generic covers player, show (html).
 // Handler needed for: embed.
 
 // shows.acast.com is the canonical web host. play.acast.com is a legacy host that

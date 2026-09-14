@@ -4,7 +4,7 @@ import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic covers: featured, news (html).
+// Generic covers featured, news (html).
 // Handler needed for: animelist, mangalist, profile.
 
 const hosts = ['myanimelist.net', 'www.myanimelist.net']

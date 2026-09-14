@@ -4,13 +4,8 @@ import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic covers: domain, subreddits (html, guess).
-// Generic partly covers: multiSubreddit.
+// Generic covers domain, subreddits (html, guess), partly covers multiSubreddit.
 // Handler needed for: home, search, subreddit, user, userSubmitted.
-// The page rejects a plain fetch, so a consumer on the default fetch
-// reaches no feed regardless of the label.
-// Measured with account feed parameters, which a consumer does not have.
-// Unauthenticated reads are capped near one request per minute.
 
 const commentsRegex = /^\/r\/([^/]+)\/comments\/([^/]+)/
 const subredditWikiRegex = /^\/r\/([^/]+)\/wiki/

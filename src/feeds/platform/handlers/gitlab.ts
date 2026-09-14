@@ -3,11 +3,8 @@ import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, hasMetaContent } from '../../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic covers: group (html, guess).
-// Generic partly covers: commits, project, tree.
+// Generic covers group (html, guess), partly covers commits, project, tree.
 // Handler needed for: issues.
-// The page rejects a plain fetch, so a consumer on the default fetch
-// reaches no feed regardless of the label.
 
 export const hosts = ['gitlab.com', 'www.gitlab.com']
 export const excludedPaths = [

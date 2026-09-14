@@ -3,7 +3,7 @@ import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic covers: officialColumns, organization (guess, html).
+// Generic covers officialColumns, organization (guess, html).
 // Handler needed for: profile, tag.
 
 const hosts = ['qiita.com', 'www.qiita.com']

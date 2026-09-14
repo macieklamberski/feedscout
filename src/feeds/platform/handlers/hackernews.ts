@@ -3,7 +3,7 @@ import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic covers: home, news, show (html, guess).
+// Generic covers home, news, show (html, guess).
 // Handler needed for: shownew.
 
 const hosts = ['news.ycombinator.com']

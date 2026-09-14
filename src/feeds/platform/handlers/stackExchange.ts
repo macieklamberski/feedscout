@@ -3,8 +3,6 @@ import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
-// The page rejects a plain fetch, so a consumer on the default fetch
-// reaches no feed regardless of the label.
 
 const tagRegex = /^\/questions\/tagged\/([\w.+-]+)/
 const questionRegex = /^\/questions\/(\d+)/

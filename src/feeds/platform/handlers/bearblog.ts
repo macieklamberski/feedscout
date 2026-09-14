@@ -4,7 +4,7 @@ import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic covers: blog (guess, html).
+// Generic covers blog (guess, html).
 // Handler needed for: home.
 
 const apexHosts = ['bearblog.dev', 'www.bearblog.dev']

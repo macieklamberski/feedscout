@@ -4,11 +4,8 @@ import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic covers: devlog (html).
-// Generic partly covers: home.
+// Generic covers devlog (html), partly covers home.
 // Handler needed for: browseByUser, user.
-// The page rejects a plain fetch, so a consumer on the default fetch
-// reaches no feed regardless of the label.
 
 const mainHosts = ['itch.io', 'www.itch.io']
 const sections = [

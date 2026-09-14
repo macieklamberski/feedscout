@@ -3,7 +3,7 @@ import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic partly covers: activity, files, project.
+// Generic partly covers activity, files, project.
 
 export const hosts = ['sourceforge.net', 'www.sourceforge.net']
 

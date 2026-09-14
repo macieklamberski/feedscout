@@ -3,7 +3,7 @@ import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic partly covers: galleries.
+// Generic partly covers galleries.
 // Handler needed for: appreciated, profile.
 
 const hosts = ['behance.net', 'www.behance.net']

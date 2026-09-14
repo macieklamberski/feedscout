@@ -3,10 +3,8 @@ import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic covers: discover (guess, html).
+// Generic covers discover (guess, html).
 // Handler needed for: home, project.
-// The page rejects a plain fetch, so a consumer on the default fetch
-// reaches no feed regardless of the label.
 
 const hosts = ['kickstarter.com', 'www.kickstarter.com']
 

@@ -4,8 +4,6 @@ import { composeHint } from '../../../common/utils.js'
 
 // Discoverability: Not discoverable without handler.
 // Handler needed for: all shapes.
-// The page rejects a plain fetch, so a consumer on the default fetch
-// reaches no feed regardless of the label.
 
 const hosts = ['observablehq.com', 'www.observablehq.com']
 const collectionRegex = /^\/@([^/]+)\/collection\/([^/]+)/
