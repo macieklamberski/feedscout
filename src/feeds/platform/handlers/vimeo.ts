@@ -4,7 +4,7 @@ import { composeHint } from '../../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers: channel, group, user, userVideos (guess, html).
-// Handler needed for: likes.
+// Generic partly covers: likes.
 
 const numericRegex = /^\d+$/
 

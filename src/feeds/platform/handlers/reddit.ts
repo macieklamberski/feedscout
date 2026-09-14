@@ -5,7 +5,8 @@ import { composeHint } from '../../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers: domain, subreddits (html, guess).
-// Handler needed for: home, multiSubreddit, search, subreddit, user, userSubmitted.
+// Generic partly covers: multiSubreddit.
+// Handler needed for: home, search, subreddit, user, userSubmitted.
 // The page rejects a plain fetch, so a consumer on the default fetch
 // reaches no feed regardless of the label.
 // Measured with account feed parameters, which a consumer does not have.

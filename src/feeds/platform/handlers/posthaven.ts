@@ -5,7 +5,7 @@ import { composeHint } from '../../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers: blog (html).
-// Handler needed for: tag.
+// Generic partly covers: tag.
 
 const tagRegex = /^\/tag\/([^/]+)/
 

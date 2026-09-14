@@ -2,6 +2,7 @@ import { writeFileSync } from 'node:fs'
 import { defaultFetchFn } from '../src/common/discover/defaults.js'
 import type { DiscoverFetchFn, DiscoverMethod } from '../src/common/types.js'
 import { discoverFeeds } from '../src/feeds/index.js'
+import { renderComment } from './comment.js'
 import { isChallengePage, walledStatuses } from './http.js'
 import pages from './pages.json' with { type: 'json' }
 import { closeBrowser, delay, delayMs, fetchWithFallback, userAgent } from './utils.js'
@@ -231,70 +232,6 @@ const measure = async (shape: string, url: string): Promise<ShapeResult> => {
   }
 }
 
-const labelText: Record<string, string> = {
-  discoverable: 'Discoverable without handler.',
-  partially: 'Partially discoverable without handler.',
-  'not-discoverable': 'Not discoverable without handler.',
-}
-
-const renderComment = ({ label, botWalled, authenticated, shapes }: PlatformResult) => {
-  if (!labelText[label]) {
-    return '// (unmeasured, keep the existing block)'
-  }
-
-  const lines = [`// Discoverability: ${labelText[label]}`]
-
-  if (label !== 'discoverable') {
-    const covered = shapes.filter((shape) => shape.state === 'discoverable')
-    const needed = shapes.filter(
-      (shape) => shape.state === 'partially' || shape.state === 'not-discoverable',
-    )
-
-    if (covered.length > 0) {
-      const methods = [
-        ...new Set(covered.flatMap((s) => s.generic.map((u) => u.method).filter(Boolean))),
-      ]
-      lines.push(
-        `// Generic covers: ${covered.map((s) => s.shape).join(', ')} (${methods.join(', ')}).`,
-      )
-    }
-
-    const scope = covered.length === 0 ? 'all shapes' : needed.map((s) => s.shape).join(', ')
-    lines.push(`// Handler needed for: ${scope}.`)
-  }
-
-  if (botWalled) {
-    lines.push(
-      '// The page rejects a plain fetch, so a consumer on the default fetch',
-      '// reaches no feed regardless of the label.',
-    )
-  }
-
-  if (authenticated) {
-    lines.push(
-      '// Measured with account feed parameters, which a consumer does not have.',
-      '// Unauthenticated reads are capped near one request per minute.',
-    )
-  }
-
-  return lines.join('\n')
-}
-
-const render = async () => {
-  const baseline = (await import('./discoverability.json', { with: { type: 'json' } })).default
-
-  for (const result of (baseline as { results: Array<PlatformResult> }).results) {
-    console.log(`// ${result.platform}`)
-    console.log(renderComment(result))
-    console.log()
-  }
-}
-
-// The record keeps what a verdict rests on and drops what it never reads. A
-// generic URI that failed to validate is a guess probe missing, and there are
-// thousands of them; handler URIs keep their invalid entries, because a handler
-// emitting a dead feed is the finding. Statuses are read as a set, so repeats
-// of the same code carry nothing.
 const forRecord = (result: PlatformResult): PlatformResult => ({
   ...result,
   shapes: result.shapes.map((shape) => ({
@@ -390,6 +327,16 @@ const run = async () => {
   console.log('\n--- comment blocks ---\n')
 
   for (const result of results) {
+    console.log(`// ${result.platform}`)
+    console.log(renderComment(result))
+    console.log()
+  }
+}
+
+const render = async () => {
+  const baseline = (await import('./discoverability.json', { with: { type: 'json' } })).default
+
+  for (const result of (baseline as { results: Array<PlatformResult> }).results) {
     console.log(`// ${result.platform}`)
     console.log(renderComment(result))
     console.log()

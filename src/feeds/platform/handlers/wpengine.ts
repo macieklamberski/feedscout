@@ -3,7 +3,7 @@ import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { wordpressHandler } from './wordpress.js'
 
 // Discoverability: Partially discoverable without handler.
-// Handler needed for: all shapes.
+// Generic partly covers: blog.
 
 export const wpengineHandler: PlatformHandler = {
   match: (url) => {

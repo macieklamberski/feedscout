@@ -4,7 +4,7 @@ import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Handler needed for: all shapes.
+// Generic partly covers: archive, blog, photos, replies.
 
 const categoryRegex = /^\/categories\/([^/]+)/
 

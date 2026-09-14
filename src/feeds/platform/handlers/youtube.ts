@@ -4,7 +4,8 @@ import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Handler needed for: all shapes.
+// Generic partly covers: channelById.
+// Handler needed for: custom, handle, music, shortLink, user, watch.
 
 const channelIdRegex = /"(?:channelId|externalId)":"(UC[a-zA-Z0-9_-]+)"/
 const channelRegex = /^\/channel\/(UC[a-zA-Z0-9_-]+)/

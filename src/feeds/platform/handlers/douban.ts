@@ -4,7 +4,7 @@ import { composeHint } from '../../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers: subject (html).
-// Handler needed for: people.
+// Generic partly covers: people.
 
 const userRegex = /^\/people\/([^/]+)/
 const subjectRegex = /^\/subject\/(\d+)/

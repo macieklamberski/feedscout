@@ -5,7 +5,8 @@ import { composeHint } from '../../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers: devlog (html).
-// Handler needed for: browseByUser, home, user.
+// Generic partly covers: home.
+// Handler needed for: browseByUser, user.
 // The page rejects a plain fetch, so a consumer on the default fetch
 // reaches no feed regardless of the label.
 

@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'bun:test'
 import { readdirSync } from 'node:fs'
+import baseline from './discoverability.json' with { type: 'json' }
 import pages from './pages.json' with { type: 'json' }
+import type { PlatformResult } from './verdict.js'
 
 // Platforms that have no page a run can fetch. Mailchimp archives are keyed by
 // an account's private u/id pair with no public directory to source one from,
@@ -35,6 +37,16 @@ describe('pages.json', () => {
       .map(([platform]) => platform)
 
     expect(empty).toEqual([])
+  })
+
+  it('should still carry every shape the baseline measured', () => {
+    const missing = (baseline as { results: Array<PlatformResult> }).results.flatMap((result) =>
+      result.shapes
+        .filter((shape) => !corpus[result.platform]?.[shape.shape])
+        .map((shape) => `${result.platform}.${shape.shape}`),
+    )
+
+    expect(missing).toEqual([])
   })
 
   it('should only list unmeasured platforms that still have a handler', () => {

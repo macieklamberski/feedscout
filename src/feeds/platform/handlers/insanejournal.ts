@@ -4,7 +4,8 @@ import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Handler needed for: all shapes.
+// Generic partly covers: asylum, blog, tildePath, userPath.
+// Handler needed for: syndicated.
 
 const wwwUsersPathRegex = /^\/(?:users\/|~)([^/]+)/
 const wwwAsylumPathRegex = /^\/(?:asylum|community)\/([^/]+)/

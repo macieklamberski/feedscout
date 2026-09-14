@@ -4,7 +4,7 @@ import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Handler needed for: all shapes.
+// Generic partly covers: blog.
 
 const hosts = ['ameblo.jp', 'www.ameblo.jp']
 const excludedPaths = ['genre', 'hashtag', 'search']

@@ -3,7 +3,8 @@ import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Handler needed for: all shapes.
+// Generic partly covers: galleries.
+// Handler needed for: appreciated, profile.
 
 const hosts = ['behance.net', 'www.behance.net']
 const userRegex = /^\/([a-zA-Z0-9_-]+)(?:\/(appreciated))?\/?$/

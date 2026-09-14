@@ -4,7 +4,8 @@ import { composeHint, hasMetaContent } from '../../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers: group (html, guess).
-// Handler needed for: commits, issues, project, tree.
+// Generic partly covers: commits, project, tree.
+// Handler needed for: issues.
 // The page rejects a plain fetch, so a consumer on the default fetch
 // reaches no feed regardless of the label.
 
