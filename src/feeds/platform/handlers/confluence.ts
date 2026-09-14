@@ -4,17 +4,7 @@ import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, getMetaContent } from '../../../common/utils.js'
 
 // Discoverability: Not discoverable without handler.
-//
-// Confluence advertises its activity streams nowhere. They are served by a
-// servlet at `{base}/plugins/servlet/streams`, optionally keyed to one space.
-//
-// Data Center only: Confluence Cloud renders client-side, serves no
-// `confluence-*` meta, and its stream under `/wiki/` answers 404 or an HTML
-// holding page without a session.
-//
-// The context path varies between `/confluence`, `/wiki` and none, so it is
-// read from the page. `confluence-base-url` can name a different host than the
-// one fetched, so the feed is built from the fetched origin instead.
+// Handler needed for: all shapes.
 
 const trailingSlashRegex = /\/$/
 

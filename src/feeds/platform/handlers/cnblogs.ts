@@ -3,11 +3,6 @@ import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
-//
-// A Cnblogs blog serves its feed at `/{user}/rss`.
-//
-// The response says `application/rss+xml` while the document is Atom, and the
-// body opens with a UTF-8 byte order mark before the XML declaration.
 
 const hosts = ['cnblogs.com', 'www.cnblogs.com']
 const excludedPaths = ['news', 'aggsite', 'question', 'ing', 'search', 'kb', 'sitehome', 'util']

@@ -3,14 +3,7 @@ import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 
 // Discoverability: Not discoverable without handler.
-//
-// OpenStatus status pages link no feed. Incident feeds live at `/feed/rss` and
-// `/feed/atom` on the page's own origin.
-//
-// Both markers are paths OpenStatus itself serves: the summary endpoint the
-// page links as an alternate, and the origin of its generated preview image.
-// A bare `openstatus.dev` search matches the project's own marketing site,
-// its docs and its repository page, none of which is a status page.
+// Handler needed for: all shapes.
 
 const pageMarkers = ['/api/status/summary.json', 'www.openstatus.dev/api/og/page']
 
