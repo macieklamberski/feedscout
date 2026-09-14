@@ -3,16 +3,7 @@ import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-//
-// Blogspot blogs (`*.blogspot.{com,tld}`) expose canonical Atom and RSS at
-// `/feeds/posts/default[?alt=rss]`, plus summary variants at
-// `/feeds/posts/summary`, comments at `/feeds/comments/default`, per-label
-// feeds at `/feeds/posts/default/-/{label}`, and per-post comment feeds at
-// `/feeds/{postId}/comments/default`. HTML autodiscovery is unreliable: it
-// often returns FeedBurner aliases or, for some Google-owned blogs, an
-// entirely different consolidated URL (e.g. `blog.google/rss/`).
-// The handler emits the native `/feeds/...` URLs for every variant and
-// scrapes the post ID from HTML for per-post comment feeds.
+// Handler needed for: all shapes.
 
 // Matches *.blogspot.com and country TLDs like *.blogspot.co.uk, *.blogspot.de, etc.
 const blogspotDomainRegex = /^.+\.blogspot\.(?:com|co\.[a-z]{2}|com\.[a-z]{2}|[a-z]{2,3})$/

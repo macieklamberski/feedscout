@@ -4,14 +4,7 @@ import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-//
-// InsaneJournal (an LJ-codebase fork) serves RSS and Atom per user at
-// `{user}.insanejournal.com/data/{rss,atom}`, plus `/data/userpics` (Atom)
-// and `?tag={tag}` filtering; asylums live at
-// `asylums.insanejournal.com/{name}/data/...`. Only the base RSS and Atom
-// are advertised via HTML `<link rel="alternate">`. The handler adds tag
-// filters, the userpics feed, and canonicalises the `www/users/{u}`, `/~{u}`,
-// `/asylum/{n}`, `/community/{n}` paths to the right subdomain form.
+// Handler needed for: all shapes.
 
 const wwwUsersPathRegex = /^\/(?:users\/|~)([^/]+)/
 const wwwAsylumPathRegex = /^\/(?:asylum|community)\/([^/]+)/

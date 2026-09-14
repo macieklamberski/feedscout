@@ -3,15 +3,13 @@ import type { DiscoverUriEntry } from '../../../common/types.js'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 
-// Discoverability: Not discoverable without handler.
-//
-// Reddit exposes Atom feeds across an extensive surface — sitewide
-// (`/.rss`, `/{sort}/.rss`, `/search.rss`, `/subreddits.rss`), per-subreddit
-// (`/r/{sub}/.rss`, with `/{sort}` and `?t=` timeframe), per-post
-// (`/r/{sub}/comments/{id}/.rss`), wiki, multireddit, user, and domain —
-// but pages emit no `<link rel="alternate">`, and the bare `Mozilla/5.0` UA
-// is 403'd platform-wide. The handler maps the canonical browser URL
-// shapes onto the appropriate `.rss` feed for each surface.
+// Discoverability: Partially discoverable without handler.
+// Generic covers: domain, subreddits (html, guess).
+// Handler needed for: home, multiSubreddit, search, subreddit, user, userSubmitted.
+// The page rejects a plain fetch, so a consumer on the default fetch
+// reaches no feed regardless of the label.
+// Measured with account feed parameters, which a consumer does not have.
+// Unauthenticated reads are capped near one request per minute.
 
 const commentsRegex = /^\/r\/([^/]+)\/comments\/([^/]+)/
 const subredditWikiRegex = /^\/r\/([^/]+)\/wiki/

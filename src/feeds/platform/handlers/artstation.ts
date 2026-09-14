@@ -3,15 +3,7 @@ import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 
 // Discoverability: Not discoverable without handler.
-//
-// ArtStation portfolio pages (`{user}.artstation.com` or
-// `artstation.com/{user}`) and the global `/artwork` page do not advertise
-// their RSS via `<link rel="alternate">`; the SPA renders client-side and the
-// feed URLs follow an undocumented `.rss` suffix convention
-// (`www.artstation.com/{user}.rss`, `www.artstation.com/artwork.rss`).
-// The handler reshapes both the subdomain and path-based user forms into the
-// canonical `.rss` URLs. `?sorting=trending` is the default and returns the
-// same 50 items as the bare feed; `?sorting=latest` returns a different set.
+// Handler needed for: all shapes.
 
 const hosts = ['artstation.com', 'www.artstation.com']
 const domainSuffixRegex = /\.artstation\.com$/i

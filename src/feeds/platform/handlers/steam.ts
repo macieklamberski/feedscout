@@ -3,15 +3,7 @@ import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 
 // Discoverability: Not discoverable without handler.
-//
-// Steam exposes RSS feeds for per-app news
-// (`store.steampowered.com/feeds/news/app/{id}/`), the global news and
-// daily-deals firehoses (`/feeds/news.xml`, `/feeds/daily_deals.xml`), and
-// community groups (`steamcommunity.com/groups/{name}/rss`), but the SPA
-// store and community pages emit no `<link rel="alternate">` and Steam
-// silently aliases unknown `/feeds/*.xml` paths to the global news feed.
-// The handler maps store app URLs and community group URLs onto the
-// matching feed and emits the firehoses on the store root.
+// Handler needed for: all shapes.
 
 const appRegex = /^\/(?:news\/)?app\/(\d+)/
 const groupRegex = /^\/groups\/([^/]+)/

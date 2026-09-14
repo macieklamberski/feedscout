@@ -4,14 +4,7 @@ import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-//
-// Dreamwidth runs the dw-free LiveJournal fork and exposes per-user feeds
-// at `{user}.dreamwidth.org/data/{rss,atom,userpics}`, with an optional
-// `?tag={tag}` filter, but the journal HTML pages do not advertise them
-// via `<link rel="alternate">`. The handler is needed to emit the
-// userpics and tag-filtered variants and to canonicalise the alternate
-// `www.dreamwidth.org/users/{user}` and `/~{user}` paths into the
-// subdomain form.
+// Handler needed for: all shapes.
 
 const usersPathRegex = /^\/(?:users\/|~)([^/]+)/
 const tagRegex = /^\/tag\/([^/]+)/

@@ -3,14 +3,7 @@ import type { DiscoverUriEntry } from '../../../common/types.js'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 
-// Discoverability: Partially discoverable without handler.
-//
-// Ghost-hosted blogs on `*.ghost.io` serve RSS at `/rss/` and advertise
-// the site-level feed via HTML `<link rel="alternate">`, so generic
-// discovery finds it. The handler is kept to synthesise the per-tag
-// (`/tag/{slug}/rss/`) and per-author (`/author/{slug}/rss/`) feeds,
-// which Ghost's Casper theme does not advertise in `<link>` tags even
-// though the URLs resolve.
+// Discoverability: Discoverable without handler.
 
 const tagRegex = /^\/tag\/([^/]+)/
 const authorRegex = /^\/author\/([^/]+)/

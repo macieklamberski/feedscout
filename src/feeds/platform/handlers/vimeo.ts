@@ -3,13 +3,8 @@ import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-//
-// Vimeo exposes RSS 2.0 feeds at fixed paths per surface — `/{user}/videos/rss`,
-// `/{user}/likes/rss`, `/channels/{c}/videos/rss`, `/groups/{g}/videos/rss`
-// and `/album/{id}/rss` — but page HTML carries no `<link rel="alternate">`
-// for them. The handler is needed to map the various in-app URL shapes onto
-// the right feed, including recognising `/showcase/{id}` (the browser-visible
-// form that 301s to `/album/{id}`) and skipping reserved top-level paths.
+// Generic covers: channel, group, user, userVideos (guess, html).
+// Handler needed for: likes.
 
 const numericRegex = /^\d+$/
 
