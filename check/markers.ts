@@ -9,12 +9,14 @@ import { mastodonHandler } from '../src/feeds/platform/handlers/mastodon.js'
 import { misskeyHandler } from '../src/feeds/platform/handlers/misskey.js'
 import { pixelfedHandler } from '../src/feeds/platform/handlers/pixelfed.js'
 import { pleromaHandler } from '../src/feeds/platform/handlers/pleroma.js'
+import { isChallengePage, walledStatuses } from './http.js'
+import pages from './pages.json' with { type: 'json' }
 import { closeBrowser, delay, delayMs, fetchWithFallback } from './utils.js'
 
 type MarkerEntry = {
   platform: string
   handler: PlatformHandler
-  url: string
+  shape: string
 }
 
 type CheckResult = { detail: string; isWalled: boolean } | undefined
@@ -22,29 +24,19 @@ type CheckResult = { detail: string; isWalled: boolean } | undefined
 // A handler that matches on page content cannot be covered by a unit test: the
 // test encodes the marker its author saw, so it keeps passing after the
 // platform stops serving it. Only a real page says whether the marker is live.
+// The page URLs live in pages.json, which the discoverability run pre-flights,
+// so a URL that rots is corrected in one place for both checks.
 const entries: Array<MarkerEntry> = [
-  { platform: 'bookwyrm', handler: bookwyrmHandler, url: 'https://bookwyrm.social/user/mouse' },
-  { platform: 'discourse', handler: discourseHandler, url: 'https://meta.discourse.org/' },
-  { platform: 'friendica', handler: friendicaHandler, url: 'https://libranet.de/profile/support' },
-  {
-    platform: 'gitlab',
-    handler: gitlabHandler,
-    url: 'https://gitlab.com/gitlab-org/security-products/analyzers/semgrep',
-  },
-  { platform: 'lemmy', handler: lemmyHandler, url: 'https://lemmy.ml/c/programming' },
-  { platform: 'mastodon', handler: mastodonHandler, url: 'https://mastodon.social/@Gargron' },
-  { platform: 'misskey', handler: misskeyHandler, url: 'https://misskey.io/@syuilo' },
-  { platform: 'pixelfed', handler: pixelfedHandler, url: 'https://pixelfed.social/dansup' },
-  { platform: 'pleroma', handler: pleromaHandler, url: 'https://lain.com/users/lain' },
+  { platform: 'bookwyrm', handler: bookwyrmHandler, shape: 'profile' },
+  { platform: 'discourse', handler: discourseHandler, shape: 'home' },
+  { platform: 'friendica', handler: friendicaHandler, shape: 'profile' },
+  { platform: 'gitlab', handler: gitlabHandler, shape: 'project' },
+  { platform: 'lemmy', handler: lemmyHandler, shape: 'community' },
+  { platform: 'mastodon', handler: mastodonHandler, shape: 'profile' },
+  { platform: 'misskey', handler: misskeyHandler, shape: 'profile' },
+  { platform: 'pixelfed', handler: pixelfedHandler, shape: 'profile' },
+  { platform: 'pleroma', handler: pleromaHandler, shape: 'profile' },
 ]
-
-// Anubis and Cloudflare answer a challenge with status 200, so the body is the
-// only signal that the page was never served.
-const challengeMarkers = [
-  'id="anubis_base_prefix"', // Anubis
-  'cf_chl_opt', // Cloudflare interstitial
-]
-const walledStatuses = new Set([401, 403, 406, 429, 503])
 
 const handlers = defaultPlatformOptions.handlers
 const platformNames = new Map(entries.map((entry) => [entry.handler, entry.platform]))
@@ -53,11 +45,24 @@ const describeHandler = (handler: PlatformHandler): string => {
   return platformNames.get(handler) ?? `handler #${handlers.indexOf(handler)}`
 }
 
-const checkEntry = async ({ handler, url }: MarkerEntry): Promise<CheckResult> => {
+const corpus = pages as Record<string, Record<string, string>>
+
+const entryUrl = ({ platform, shape }: MarkerEntry): string | undefined => {
+  return corpus[platform]?.[shape]
+}
+
+const checkEntry = async (entry: MarkerEntry): Promise<CheckResult> => {
+  const url = entryUrl(entry)
+
+  if (!url) {
+    return { detail: `no ${entry.shape} URL in pages.json`, isWalled: false }
+  }
+
   try {
+    const { handler } = entry
     const response = await fetchWithFallback(url)
 
-    if (challengeMarkers.some((marker) => response.body.includes(marker))) {
+    if (isChallengePage(response.body)) {
       return { detail: 'bot challenge', isWalled: true }
     }
 
