@@ -14,3 +14,15 @@
   --vp-c-brand-3: #5aad3e;
   --vp-c-brand-soft: rgba(162, 229, 123, 0.14);
 }
+
+.nav-logo {
+  width: 24px;
+  height: 24px;
+  margin-right: 10px;
+  filter: grayscale(1) brightness(0.9);
+  transition: filter 0.25s;
+}
+
+.VPNavBarTitle .title:hover .nav-logo {
+  filter: none;
+}
