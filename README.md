@@ -44,7 +44,7 @@ For a full overview of all the features, [visit the documentation](https://feeds
 ### Installation
 
 ```bash
-npm install feedscout
+npm install feedscout feedsmith
 ```
 
 ### Discover Feeds

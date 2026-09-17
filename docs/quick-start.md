@@ -8,26 +8,24 @@ This guide will get you up and running with Feedscout in just a few minutes.
 
 ## Installation
 
-Feedscout works in both Node and modern browsers as either CommonJS or ES module.
-
-Install the package using your preferred package manager:
+Feedscout works in both Node and modern browsers as an ES module. It uses Feedsmith to parse feeds, so install both packages using your preferred package manager:
 
 ::: code-group
 
 ```bash [npm]
-npm install feedscout
+npm install feedscout feedsmith
 ```
 
 ```bash [yarn]
-yarn add feedscout
+yarn add feedscout feedsmith
 ```
 
 ```bash [pnpm]
-pnpm add feedscout
+pnpm add feedscout feedsmith
 ```
 
 ```bash [bun]
-bun add feedscout
+bun add feedscout feedsmith
 ```
 
 :::
