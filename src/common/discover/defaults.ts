@@ -20,9 +20,7 @@ export const defaultFetchFn: DiscoverFetchFn = async (url, options) => {
 export const defaultResolveUrlFn: DiscoverResolveUrlFn = (url, baseUrl) => {
   try {
     return new URL(url, baseUrl).href
-  } catch {
-    return
-  }
+  } catch {}
 }
 
 // TODO: parseFeed is called here and again in discoverUrisFromFeed for the favicons
