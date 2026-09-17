@@ -125,6 +125,10 @@ export default defineConfig({
           { text: 'TypeScript', link: '/reference/typescript' },
         ],
       },
+      {
+        text: 'Migration',
+        items: [{ text: 'From 1.x to 2.x', link: '/migration/v1-to-v2' }],
+      },
     ],
     search: {
       provider: 'local',
