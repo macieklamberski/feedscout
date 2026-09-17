@@ -72,6 +72,13 @@ export default defineConfig({
       { text: 'Quick Start', link: '/quick-start' },
       { text: 'Discover Feeds', link: '/feeds' },
       { text: 'Customization', link: '/customization/data-fetching' },
+      {
+        text: 'v1.x',
+        items: [
+          { text: 'v2.x (Latest)', link: 'https://feedscout.dev', target: '_self' },
+          { text: 'v1.x', link: 'https://v1.feedscout.dev', target: '_self' },
+        ],
+      },
     ],
     sidebar: [
       {
