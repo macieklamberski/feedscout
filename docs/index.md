@@ -1,5 +1,5 @@
 ---
-title: Feedscout — Advanced Feed Autodiscovery for JavaScript
+title: 'Feedscout: Advanced Feed Autodiscovery for JavaScript'
 ---
 
 # Feedscout
@@ -15,15 +15,15 @@ Finds feeds by scanning links and anchors in HTML content, parsing HTTP headers,
 | Type | Description |
 | --- | --- |
 | Feeds | RSS, Atom, JSON Feed, and RDF. Each feed is validated and returns metadata like format, title, description, and site URL. |
-| Blogrolls | OPML files containing feed subscriptions. Validated and returns title. |
+| Blogrolls | OPML files containing feed subscriptions. Each blogroll is validated and returns its title. |
 | Favicons | Site icons from HTML, feeds, platform APIs, and common paths. Validated to ensure URLs point to actual images. |
-| WebSub | Find hubs for real-time feed update notifications. |
+| WebSub | Hubs for real-time feed update notifications. |
 
 ### Discovery Methods
 
 | Method | Description |
 | --- | --- |
-| Platform | Generates feed URLs for YouTube, GitHub, WordPress, and 30+ other popular platforms using URL pattern matching. |
+| Platform | Generates feed URLs for YouTube, GitHub, WordPress, and 80+ other popular platforms using URL pattern matching. |
 | HTML | Scans `<link>` elements with feed MIME types and `<a>` elements matching feed patterns or labels like "RSS", "Feed" or "Atom". |
 | Headers | Parses HTTP `Link` headers for `rel="alternate"` with feed MIME types per RFC 8288. |
 | Guess | Tests common paths (e.g. `/feed`, `/rss.xml`, `/atom.xml`) against the base URL as a fallback. |
