@@ -7,21 +7,21 @@ title: Migrating from 1.x to 2.x
 This guide covers all breaking changes when upgrading from Feedscout 1.x to 2.x. Each breaking change is detailed with specific upgrade steps and examples.
 
 > [!IMPORTANT]
-> Version 2.x is ESM-only and no longer installs Feedsmith for you. Feedsmith 3 is now a peer dependency, so add it to your project next to Feedscout.
+> Version 2.x is ESM-only, and Feedsmith 3 is now a peer dependency. If your project uses Feedsmith 2 directly, upgrade it to 3.x.
 
 ## Installation
 
-Update Feedscout to the latest 2.x version and install Feedsmith 3:
+Update your package to the latest 2.x version:
 
 ```bash
-npm install feedscout@latest feedsmith@3
+npm install feedscout@latest
 ```
 
 ## Migration Checklist
 
 Use this checklist to ensure a complete migration:
 
-- Install `feedsmith@3` in your project
+- Upgrade Feedsmith to 3.x if your project uses it directly
 - Replace `require('feedscout')` with `import` statements
 - Replace `feedscout/utils` imports with imports from `trousse`
 - Handle `undefined` from `omitEmpty` if you use it
@@ -55,21 +55,10 @@ const feeds = await discoverFeeds('https://example.com')
 
 ### Feedsmith Is Now a Peer Dependency
 
-Feedscout 1.x installed Feedsmith 2 as a regular dependency. Feedscout 2.x lists Feedsmith as a peer dependency at `^3.0.0`, so your project installs it and controls its version.
-
-#### Before (1.x)
-```bash
-npm install feedscout
-```
-
-#### After (2.x)
-```bash
-npm install feedscout feedsmith@3
-```
+Feedscout 1.x installed Feedsmith 2 as a regular dependency. Feedscout 2.x lists Feedsmith as a peer dependency at `^3.0.0`, so Feedscout and your code share one copy. npm, pnpm and Bun install it for you. You only need to act if your project uses Feedsmith 2 directly, because that version no longer satisfies the peer range.
 
 #### Migration Steps
-1. Add `feedsmith@3` to your dependencies
-2. If your project also uses Feedsmith 2 directly, upgrade it to 3.x first. See the [Feedsmith migration guide](https://feedsmith.dev/migration/v2-to-v3)
+1. If your own code uses Feedsmith 2, upgrade it to 3.x by following the [Feedsmith 2.x to 3.x migration guide](https://feedsmith.dev/migration/v2-to-v3)
 
 ### Feed Method Callbacks Receive Feedsmith 3 Feeds
 
