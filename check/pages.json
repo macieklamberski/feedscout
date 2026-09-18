@@ -1,0 +1,535 @@
+{
+  "acast": {
+    "show": "https://shows.acast.com/my-dad-wrote-a-porno",
+    "player": "https://play.acast.com/s/my-dad-wrote-a-porno",
+    "embed": "https://embed.acast.com/my-dad-wrote-a-porno"
+  },
+  "ameblo": {
+    "blog": "https://ameblo.jp/shibuya"
+  },
+  "applePodcasts": {
+    "podcast": "https://podcasts.apple.com/us/podcast/the-daily/id1200361736",
+    "podcastById": "https://podcasts.apple.com/us/podcast/id1200361736"
+  },
+  "arena": {
+    "profile": "https://www.are.na/charles-broskoski",
+    "channel": "https://www.are.na/meg-miller/good-sign-offs",
+    "editorial": "https://www.are.na/editorial"
+  },
+  "art19": {
+    "show": "https://art19.com/shows/american-scandal"
+  },
+  "artstation": {
+    "profile": "https://www.artstation.com/rossdraws",
+    "profileSubdomain": "https://rossdraws.artstation.com",
+    "albums": "https://www.artstation.com/rossdraws/albums/all",
+    "explore": "https://www.artstation.com/artwork"
+  },
+  "audioboom": {
+    "channel": "https://audioboom.com/channels/5071123"
+  },
+  "bearblog": {
+    "blog": "https://herman.bearblog.dev",
+    "home": "https://bearblog.dev"
+  },
+  "behance": {
+    "profile": "https://www.behance.net/matejlatin",
+    "appreciated": "https://www.behance.net/matejlatin/appreciated",
+    "galleries": "https://www.behance.net/galleries"
+  },
+  "bitchute": {
+    "channel": "https://www.bitchute.com/channel/bcsupport/"
+  },
+  "blogspot": {
+    "blog": "https://googleblog.blogspot.com",
+    "label": "https://googleblog.blogspot.com/search/label/Products"
+  },
+  "bluesky": {
+    "profile": "https://bsky.app/profile/jay.bsky.team",
+    "profileDid": "https://bsky.app/profile/did:plc:z72i7hdynmk6r22z27h6tvur"
+  },
+  "bookwyrm": {
+    "profile": "https://bookwyrm.social/user/mouse",
+    "shelf": "https://bookwyrm.social/user/mouse/books/read"
+  },
+  "buttondown": {
+    "newsletter": "https://buttondown.com/jmduke",
+    "archive": "https://buttondown.com/jmduke/archive"
+  },
+  "buzzsprout": {
+    "show": "https://www.buzzsprout.com/231452"
+  },
+  "cnblogs": {
+    "blog": "https://www.cnblogs.com/vamei/"
+  },
+  "confluence": {
+    "space": "https://cwiki.apache.org/confluence/display/KAFKA"
+  },
+  "csdn": {
+    "blog": "https://blog.csdn.net/csdnnews"
+  },
+  "dailymotion": {
+    "user": "https://www.dailymotion.com/bfmtv",
+    "playlist": "https://www.dailymotion.com/playlist/x7vjjm",
+    "channel": "https://www.dailymotion.com/channel/news",
+    "trending": "https://www.dailymotion.com/trending",
+    "home": "https://www.dailymotion.com/"
+  },
+  "deviantart": {
+    "profile": "https://www.deviantart.com/yuumei",
+    "gallery": "https://www.deviantart.com/yuumei/gallery",
+    "favourites": "https://www.deviantart.com/yuumei/favourites",
+    "journal": "https://www.deviantart.com/yuumei/journal",
+    "tag": "https://www.deviantart.com/tag/photography",
+    "dailyDeviations": "https://www.deviantart.com/daily-deviations",
+    "popular": "https://www.deviantart.com/popular-all-time"
+  },
+  "devto": {
+    "profile": "https://dev.to/thepracticaldev",
+    "tag": "https://dev.to/t/javascript",
+    "home": "https://dev.to/",
+    "latest": "https://dev.to/latest"
+  },
+  "diaspora": {
+    "profile": "https://despora.de/public/jaeger",
+    "profileOtherPod": "https://pod.geraspora.de/public/denschub"
+  },
+  "discourse": {
+    "home": "https://users.rust-lang.org/latest",
+    "category": "https://users.rust-lang.org/c/help",
+    "user": "https://users.rust-lang.org/u/steveklabnik",
+    "top": "https://meta.discourse.org/top"
+  },
+  "douban": {
+    "home": "https://www.douban.com/",
+    "book": "https://book.douban.com/",
+    "movie": "https://movie.douban.com/",
+    "music": "https://music.douban.com/",
+    "people": "https://www.douban.com/people/ahbei/",
+    "subject": "https://book.douban.com/subject/1084336/"
+  },
+  "dreamwidth": {
+    "blog": "https://dw-news.dreamwidth.org",
+    "userPath": "https://www.dreamwidth.org/users/dw_news",
+    "tildePath": "https://www.dreamwidth.org/~dw-news",
+    "tag": "https://terriko.dreamwidth.org/tag/ghc09"
+  },
+  "drupal": {
+    "site": "https://dri.es",
+    "siteOther": "https://www.acquia.com"
+  },
+  "exblog": {
+    "blog": "https://petitcc.exblog.jp",
+    "category": "https://petitcc.exblog.jp/i2"
+  },
+  "fc2": {
+    "blog": "https://tetsujin.blog.fc2.com/"
+  },
+  "fireside": {
+    "show": "https://office.fireside.fm",
+    "home": "https://fireside.fm"
+  },
+  "flickr": {
+    "photostream": "https://www.flickr.com/photos/24662369@N07",
+    "favorites": "https://www.flickr.com/photos/24662369@N07/favorites",
+    "tag": "https://www.flickr.com/photos/tags/cats",
+    "group": "https://www.flickr.com/groups/42097308@N00/"
+  },
+  "friendica": {
+    "profile": "https://libranet.de/profile/admin"
+  },
+  "ghost": {
+    "blog": "https://demo.ghost.io",
+    "tag": "https://demo.ghost.io/tag/getting-started",
+    "author": "https://demo.ghost.io/author/ghost"
+  },
+  "gitea": {
+    "user": "https://codeberg.org/forgejo",
+    "repo": "https://codeberg.org/forgejo/forgejo",
+    "issues": "https://codeberg.org/forgejo/forgejo/issues",
+    "branch": "https://codeberg.org/forgejo/forgejo/src/branch/main"
+  },
+  "github": {
+    "user": "https://github.com/microsoft",
+    "repo": "https://github.com/microsoft/vscode",
+    "wiki": "https://github.com/microsoft/vscode/wiki",
+    "tree": "https://github.com/microsoft/vscode/tree/main",
+    "discussions": "https://github.com/vercel/next.js/discussions"
+  },
+  "githubGist": {
+    "user": "https://gist.github.com/defunkt",
+    "starred": "https://gist.github.com/defunkt/starred",
+    "forks": "https://gist.github.com/defunkt/forks",
+    "discover": "https://gist.github.com/discover"
+  },
+  "gitlab": {
+    "commits": "https://gitlab.com/gitlab-org/gitlab/-/commits/master",
+    "group": "https://gitlab.com/gitlab-org",
+    "issues": "https://gitlab.com/gitlab-org/gitlab/-/issues",
+    "project": "https://gitlab.com/gitlab-org/gitlab",
+    "tree": "https://gitlab.com/gitlab-org/gitlab/-/tree/master"
+  },
+  "goodreads": {
+    "userShow": "https://www.goodreads.com/user/show/1-otis-chandler",
+    "reviewList": "https://www.goodreads.com/review/list/1",
+    "shelf": "https://www.goodreads.com/review/list/1?shelf=read"
+  },
+  "habr": {
+    "hub": "https://habr.com/ru/hubs/programming/articles/",
+    "user": "https://habr.com/ru/users/alizar/posts/",
+    "home": "https://habr.com/ru/articles/"
+  },
+  "hackernews": {
+    "home": "https://news.ycombinator.com",
+    "news": "https://news.ycombinator.com/news",
+    "show": "https://news.ycombinator.com/show",
+    "shownew": "https://news.ycombinator.com/shownew"
+  },
+  "hashnode": {
+    "blog": "https://townhall.hashnode.com"
+  },
+  "hatenaBookmark": {
+    "home": "https://b.hatena.ne.jp",
+    "category": "https://b.hatena.ne.jp/hotentry/it"
+  },
+  "hatenablog": {
+    "blog": "https://staff.hatenablog.com",
+    "category": "https://staff.hatenablog.com/archive/category/news",
+    "author": "https://blog.hatenablog.com/archive/author/hatenablog-editors"
+  },
+  "hearthis": {
+    "profile": "https://hearthis.at/james-monty-montgomery"
+  },
+  "heyWorld": {
+    "blog": "https://world.hey.com/dhh"
+  },
+  "insanejournal": {
+    "blog": "https://random.insanejournal.com",
+    "userPath": "https://www.insanejournal.com/users/news",
+    "tildePath": "https://www.insanejournal.com/~news",
+    "asylum": "https://asylums.insanejournal.com/squeaky",
+    "syndicated": "https://feeds.insanejournal.com/dw_code_feed"
+  },
+  "itchio": {
+    "user": "https://leafo.itch.io",
+    "game": "https://leafo.itch.io/x-moon",
+    "devlog": "https://npckc.itch.io/a-tavern-for-tea/devlog",
+    "browseByUser": "https://itch.io/games/by-leafo",
+    "browseByTag": "https://itch.io/games/tag-horror",
+    "games": "https://itch.io/games",
+    "home": "https://itch.io/"
+  },
+  "jira": {
+    "project": "https://jira.atlassian.com/projects/JRASERVER"
+  },
+  "kickstarter": {
+    "project": "https://www.kickstarter.com/projects/elanlee/exploding-kittens",
+    "discover": "https://www.kickstarter.com/discover",
+    "home": "https://www.kickstarter.com/"
+  },
+  "learnku": {
+    "community": "https://learnku.com/laravel"
+  },
+  "lemmy": {
+    "community": "https://lemmy.ml/c/lemmy",
+    "user": "https://lemmy.ml/u/dessalines",
+    "home": "https://lemmy.ml/"
+  },
+  "letterboxd": {
+    "profile": "https://letterboxd.com/dave",
+    "films": "https://letterboxd.com/dave/films/",
+    "list": "https://letterboxd.com/dave/list/oscars-2027-priority-watchlist/",
+    "journal": "https://letterboxd.com/journal"
+  },
+  "libsyn": {
+    "show": "https://thefeed.libsyn.com",
+    "website": "https://thefeed.libsyn.com/website",
+    "feedsById": "https://feeds.libsyn.com/113039"
+  },
+  "listed": {
+    "blog": "https://listed.to/@Listed"
+  },
+  "livejournal": {
+    "blog": "https://news.livejournal.com",
+    "userPath": "https://www.livejournal.com/users/news",
+    "tildePath": "https://www.livejournal.com/~news",
+    "usersHost": "https://users.livejournal.com/news",
+    "community": "https://community.livejournal.com/ohnotheydidnt",
+    "tag": "https://ohnotheydidnt.livejournal.com/tag/television"
+  },
+  "lobsters": {
+    "home": "https://lobste.rs/",
+    "newest": "https://lobste.rs/newest",
+    "tag": "https://lobste.rs/t/programming",
+    "domain": "https://lobste.rs/domains/github.com",
+    "user": "https://lobste.rs/~pushcx",
+    "top": "https://lobste.rs/top",
+    "comments": "https://lobste.rs/comments"
+  },
+  "mastodon": {
+    "profile": "https://mastodon.social/@Mastodon",
+    "tag": "https://mastodon.social/tags/mastodon"
+  },
+  "mataroa": {
+    "blog": "https://hey.mataroa.blog"
+  },
+  "medium": {
+    "profile": "https://medium.com/@ev",
+    "publication": "https://medium.com/design-bootcamp",
+    "customDomain": "https://blog.medium.com",
+    "tag": "https://medium.com/tag/javascript",
+    "publicationTag": "https://medium.com/design-bootcamp/tagged/ux"
+  },
+  "microblog": {
+    "blog": "https://vincent.micro.blog",
+    "archive": "https://vincent.micro.blog/archive",
+    "photos": "https://vincent.micro.blog/photos",
+    "replies": "https://vincent.micro.blog/replies"
+  },
+  "misskey": {
+    "profile": "https://misskey.io/@ai"
+  },
+  "myanimelist": {
+    "profile": "https://myanimelist.net/profile/Xinil",
+    "animelist": "https://myanimelist.net/animelist/Xinil",
+    "mangalist": "https://myanimelist.net/mangalist/Xinil",
+    "news": "https://myanimelist.net/news",
+    "featured": "https://myanimelist.net/featured"
+  },
+  "naverBlog": {
+    "blog": "https://blog.naver.com/naverofficial",
+    "mobile": "https://m.blog.naver.com/naverofficial"
+  },
+  "nebula": {
+    "channel": "https://nebula.tv/realengineering",
+    "home": "https://nebula.tv",
+    "videos": "https://nebula.tv/videos",
+    "explore": "https://nebula.tv/explore"
+  },
+  "neocities": {
+    "site": "https://lazer-bunny.neocities.org/",
+    "profile": "https://neocities.org/site/lazer-bunny"
+  },
+  "nodebb": {
+    "recent": "https://community.nodebb.org/recent",
+    "popular": "https://community.nodebb.org/popular"
+  },
+  "note": {
+    "profile": "https://note.com/tsukasa_yamato",
+    "hashtag": "https://note.com/hashtag/AI",
+    "magazine": "https://note.com/notemag/m/m7244518f06ae",
+    "home": "https://note.com"
+  },
+  "observable": {
+    "profile": "https://observablehq.com/@mbostock",
+    "collection": "https://observablehq.com/@observablehq/collection/visualization",
+    "recent": "https://observablehq.com/recent",
+    "trending": "https://observablehq.com/trending"
+  },
+  "odysee": {
+    "channel": "https://odysee.com/@veritasium:f"
+  },
+  "openstatus": {
+    "status": "https://status.openstatus.dev"
+  },
+  "pagecord": {
+    "blog": "https://blog.pagecord.com"
+  },
+  "paragraph": {
+    "blog": "https://paragraph.com/@blog"
+  },
+  "peertube": {
+    "instance": "https://framatube.org/",
+    "channel": "https://framatube.org/c/joinpeertube"
+  },
+  "pika": {
+    "blog": "https://pika.pika.page",
+    "tag": "https://discardpile.pika.page/tag/tech"
+  },
+  "pinterest": {
+    "profile": "https://www.pinterest.com/pinterest",
+    "saved": "https://www.pinterest.com/pinterest/_saved"
+  },
+  "pixelfed": {
+    "profile": "https://pixelfed.social/dansup",
+    "profileUsers": "https://pixelfed.social/users/dansup"
+  },
+  "pleroma": {
+    "profile": "https://lain.com/users/lain"
+  },
+  "podbean": {
+    "show": "https://kickstartcommerce.podbean.com"
+  },
+  "podigee": {
+    "show": "https://cui-bono.podigee.io",
+    "episodes": "https://cui-bono.podigee.io/episodes"
+  },
+  "podomatic": {
+    "show": "https://asquaredpodcast10.podomatic.com/"
+  },
+  "posthaven": {
+    "blog": "https://blog.posthaven.com",
+    "tag": "https://blog.posthaven.com/tag/Feature%20Releases"
+  },
+  "postype": {
+    "profile": "https://www.postype.com/@blog",
+    "subdomain": "https://blog.postype.com/"
+  },
+  "producthunt": {
+    "home": "https://www.producthunt.com/",
+    "topic": "https://www.producthunt.com/topics/artificial-intelligence",
+    "category": "https://www.producthunt.com/categories/productivity"
+  },
+  "prose": {
+    "blog": "https://hey.prose.sh",
+    "home": "https://prose.sh"
+  },
+  "qiita": {
+    "profile": "https://qiita.com/Qiita",
+    "tag": "https://qiita.com/tags/javascript",
+    "organization": "https://qiita.com/organizations/qiita-inc",
+    "popular": "https://qiita.com/popular-items",
+    "officialColumns": "https://qiita.com/official-columns"
+  },
+  "reddit": {
+    "subreddit": "https://www.reddit.com/r/programming",
+    "home": "https://www.reddit.com/",
+    "user": "https://www.reddit.com/user/spez",
+    "userSubmitted": "https://www.reddit.com/user/spez/submitted",
+    "domain": "https://www.reddit.com/domain/github.com",
+    "multiSubreddit": "https://www.reddit.com/r/programming+javascript",
+    "search": "https://www.reddit.com/search?q=typescript",
+    "subreddits": "https://www.reddit.com/subreddits"
+  },
+  "rssCom": {
+    "podcast": "https://rss.com/podcasts/podcasting101",
+    "localized": "https://rss.com/es/podcasts/podcasting101"
+  },
+  "seesaa": {
+    "blog": "https://info.seesaa.net"
+  },
+  "shopify": {
+    "blog": "https://www.allbirds.com/blogs/news"
+  },
+  "soundcloud": {
+    "profile": "https://soundcloud.com/diplo",
+    "tracks": "https://soundcloud.com/diplo/tracks"
+  },
+  "sourceforge": {
+    "project": "https://sourceforge.net/projects/filezilla",
+    "activity": "https://sourceforge.net/p/nmap/activity",
+    "files": "https://sourceforge.net/projects/filezilla/files"
+  },
+  "sourcehut": {
+    "repo": "https://git.sr.ht/~sircmpwn/hare",
+    "log": "https://git.sr.ht/~sircmpwn/hare/log"
+  },
+  "spreaker": {
+    "podcast": "https://www.spreaker.com/podcast/spreaker-live-show--1433865",
+    "show": "https://www.spreaker.com/show/1433865"
+  },
+  "squarespace": {
+    "blog": "https://www.squarespace.com/blog"
+  },
+  "stackExchange": {
+    "tagged": "https://stackoverflow.com/questions/tagged/javascript",
+    "question": "https://stackoverflow.com/questions/11227809",
+    "user": "https://stackoverflow.com/users/123",
+    "home": "https://stackoverflow.com/",
+    "meta": "https://meta.stackoverflow.com/",
+    "collective": "https://stackoverflow.com/collectives/aws",
+    "otherSite": "https://mathoverflow.net/questions/tagged/algebra"
+  },
+  "steam": {
+    "app": "https://store.steampowered.com/app/730/Counter_Strike_2/",
+    "appNews": "https://store.steampowered.com/news/app/730/",
+    "communityApp": "https://steamcommunity.com/app/730",
+    "group": "https://steamcommunity.com/groups/Valve",
+    "storeHome": "https://store.steampowered.com/",
+    "newsHome": "https://store.steampowered.com/news/"
+  },
+  "substack": {
+    "blog": "https://garymarcus.substack.com",
+    "profile": "https://substack.com/@govtrackus"
+  },
+  "syosetu": {
+    "author": "https://mypage.syosetu.com/372556/"
+  },
+  "tildes": {
+    "group": "https://tildes.net/~tech",
+    "home": "https://tildes.net",
+    "tag": "https://tildes.net/?tag=programming"
+  },
+  "tistory": {
+    "blog": "https://notice.tistory.com"
+  },
+  "togetter": {
+    "user": "https://togetter.com/id/tarareba722"
+  },
+  "transistor": {
+    "show": "https://saas.transistor.fm"
+  },
+  "tumblr": {
+    "blog": "https://staff.tumblr.com",
+    "tagged": "https://staff.tumblr.com/tagged/updates"
+  },
+  "v2ex": {
+    "home": "https://www.v2ex.com/",
+    "node": "https://www.v2ex.com/go/programmer",
+    "member": "https://www.v2ex.com/member/livid",
+    "tab": "https://www.v2ex.com/?tab=tech"
+  },
+  "velog": {
+    "profile": "https://velog.io/@velopert",
+    "home": "https://velog.io"
+  },
+  "vimeo": {
+    "user": "https://vimeo.com/casey",
+    "userVideos": "https://vimeo.com/casey/videos",
+    "likes": "https://vimeo.com/casey/likes",
+    "channel": "https://vimeo.com/channels/staffpicks",
+    "group": "https://vimeo.com/groups/animation"
+  },
+  "weblogLol": {
+    "blog": "https://adam.weblog.lol"
+  },
+  "weebly": {
+    "blog": "https://ukiyaseed.weebly.com",
+    "blogPath": "https://ukiyaseed.weebly.com/blog"
+  },
+  "wikidot": {
+    "wiki": "https://scpwiki.com/"
+  },
+  "wordpress": {
+    "blog": "https://en.blog.wordpress.com"
+  },
+  "wpengine": {
+    "blog": "https://developer.wpengine.com"
+  },
+  "writeas": {
+    "blog": "https://write.as/matt",
+    "tag": "https://write.as/blog/tag:writeas"
+  },
+  "xenforo": {
+    "forum": "https://voz.vn/f/diem-bao.33/"
+  },
+  "ximalaya": {
+    "album": "https://www.ximalaya.com/album/203355",
+    "userAlbum": "https://www.ximalaya.com/61425525/album/6912905"
+  },
+  "youtube": {
+    "channelById": "https://www.youtube.com/channel/UCXuqSBlHAE6Xw-yeJA0Tunw",
+    "handle": "https://www.youtube.com/@veritasium",
+    "user": "https://www.youtube.com/user/pewdiepie",
+    "custom": "https://www.youtube.com/c/mkbhd",
+    "watch": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+    "shortLink": "https://youtu.be/dQw4w9WgXcQ",
+    "music": "https://music.youtube.com/channel/UCXuqSBlHAE6Xw-yeJA0Tunw"
+  },
+  "zenn": {
+    "profile": "https://zenn.dev/catnose99",
+    "topic": "https://zenn.dev/topics/react",
+    "publication": "https://zenn.dev/p/team_zenn",
+    "home": "https://zenn.dev"
+  }
+}

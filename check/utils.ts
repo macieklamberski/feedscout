@@ -1,11 +1,23 @@
+import { fileURLToPath } from 'node:url'
 import { type Browser, chromium } from 'playwright'
+
+// Bun reads .env from the working directory and these scripts run from the
+// repo root, so the harness loads its own .env. Absent is fine: every value in
+// it is optional.
+try {
+  process.loadEnvFile(fileURLToPath(new URL('./.env', import.meta.url)))
+} catch {}
 
 export const timeoutMs = 30_000
 export const delayMs = 1_000
 export const userAgent = 'Feedscout (https://feedscout.dev)'
 
 const retryDelaysMs = [1_000, 3_000, 7_000]
-const fallbackStatuses = new Set([403, 408, 413, 429, 500, 502, 503, 504])
+const retryStatuses = new Set([403, 408, 413, 429, 500, 502, 503, 504])
+// Retrying a 404 is pointless, but escalating one to the browser is not: sites
+// like GitLab answer a plain fetch with 404 and serve the real page to a
+// browser, and a page treated as dead measures as having no feed.
+const browserStatuses = new Set([...retryStatuses, 404])
 
 export const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
@@ -34,7 +46,7 @@ const fetchWithRetry = async (url: string, options?: FetchOptions): Promise<Fetc
   let response = await fetchOnce(url, options)
 
   for (const retryDelayMs of retryDelaysMs) {
-    if (!fallbackStatuses.has(response.status)) {
+    if (!retryStatuses.has(response.status)) {
       break
     }
     await delay(retryDelayMs)
@@ -83,7 +95,7 @@ export const fetchWithFallback = async (
 ): Promise<FetchResult> => {
   try {
     const result = await fetchWithRetry(url, options)
-    if (!fallbackStatuses.has(result.status)) {
+    if (!browserStatuses.has(result.status)) {
       return result
     }
     try {
