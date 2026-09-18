@@ -68,7 +68,7 @@ Discovers RSS feeds for subreddits, users, multireddits, and domains.
 |-------------|-----------------|
 | `reddit.com` | Homepage feed |
 | `reddit.com/r/{subreddit}` | Subreddit posts + comments |
-| `reddit.com/r/{subreddit}/{sort}` | Sorted posts (hot/new/rising/top) |
+| `reddit.com/r/{subreddit}/{sort}` | Sorted posts (hot/new/rising/top) + comments |
 | `reddit.com/r/{subreddit}/comments/{id}` | Post comments |
 | `reddit.com/u/{username}` | User activity |
 | `reddit.com/user/{username}/m/{multireddit}` | Multireddit feed |
@@ -328,7 +328,7 @@ Discovers RSS feeds for SourceForge project activity, file releases, news, and d
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `sourceforge.net/projects/{project}` or `sourceforge.net/p/{project}` | Activity + files + news (RSS + Atom) + discussion |
+| `sourceforge.net/projects/{project}` or `sourceforge.net/p/{project}` | Activity + project + files + news (RSS + Atom) + discussion (RSS + Atom) + bugs |
 
 ### Kickstarter
 
@@ -527,7 +527,7 @@ Discovers RSS and Atom feeds for Dreamwidth blogs.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `*.dreamwidth.org` | Posts feed (RSS + Atom) |
+| `*.dreamwidth.org` | Posts feed (RSS + Atom) + userpics (Atom) |
 
 ### Excite Blog
 
@@ -582,8 +582,8 @@ Discovers RSS feeds for Nebula channels, the global video feed, and category fee
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | `nebula.tv/{channel}` | Videos + Videos (Plus) |
-| `nebula.tv` | All videos + All videos (Plus) |
-| `nebula.tv/videos` | All videos + All videos (Plus) |
+| `nebula.tv` | All videos + All videos (Plus) + recently added channels |
+| `nebula.tv/videos` | All videos + All videos (Plus) + recently added channels |
 | `nebula.tv/videos?category={slug}` | Category + Category (Plus) + above |
 
 ### note.com
@@ -750,7 +750,7 @@ Discovers RSS and Atom feeds for InsaneJournal journals.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `*.insanejournal.com` | Posts feed (RSS + Atom) |
+| `*.insanejournal.com` | Posts feed (RSS + Atom) + userpics (Atom) |
 
 ### Lemmy
 
@@ -780,7 +780,7 @@ Discovers RSS and Atom feeds for LiveJournal blogs.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `*.livejournal.com` | Posts feed (RSS + Atom) |
+| `*.livejournal.com` | Posts feed (RSS + Atom) + userpics (Atom) |
 
 ### Mataroa
 
@@ -796,7 +796,7 @@ Discovers RSS, JSON, and podcast feeds for Micro.blog-hosted blogs, including ca
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `*.micro.blog` | Posts (RSS + JSON) + podcast |
+| `*.micro.blog` | Posts (RSS + JSON) + podcast (RSS + JSON) |
 | `*.micro.blog/categories/{slug}` | Category (RSS + JSON) + above |
 | `*.micro.blog/archive` | Archive feed + above |
 | `*.micro.blog/photos` | Photos feed + above |
@@ -936,7 +936,7 @@ Discovers RSS feeds for Weebly-hosted blogs.
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | `*.weebly.com` | Blog feed |
-| `*.weebly.com/{slug}` | Blog feed (custom page slug) |
+| `*.weebly.com/{slug}` | Blog feed (custom page slug) + default blog feed |
 
 ### Zenn
 

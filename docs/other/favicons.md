@@ -14,7 +14,7 @@ import { discoverFavicons } from 'feedscout'
 const favicons = await discoverFavicons('https://example.com')
 ```
 
-Each result contains the favicon URL and validation status:
+Each result contains the favicon URL and validation status. A URL is valid when the response is 2xx and is an image, by its `Content-Type` or by its content:
 
 ```typescript
 {

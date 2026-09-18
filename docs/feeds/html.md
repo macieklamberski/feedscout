@@ -28,7 +28,7 @@ Looks for `<link>` elements that advertise feeds:
 
 Scans `<a>` tags for feed links using two strategies:
 
-1. **URI matching**: Checks if `href` contains common feed paths like `/feed`, `/rss.xml`.
+1. **URI matching**: Checks if `href` ends with a common feed path like `/feed` or `/rss.xml`, or has a feed segment like `/rss/` in its path.
 2. **Label matching**: Checks if the link text, `title`, or `aria-label` contains words like "RSS", "Feed", "Atom". This catches icon-only links that have no visible text.
 
 ```html
@@ -67,7 +67,7 @@ const feeds = await discoverFeeds(url, {
 
 ### Anchor URIs
 
-Specify URI patterns to match in anchor `href` attributes:
+Specify URI patterns to match at the end of anchor `href` attributes:
 
 ```typescript
 const feeds = await discoverFeeds(url, {
