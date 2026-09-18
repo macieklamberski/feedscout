@@ -1,15 +1,7 @@
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 
-// Discoverability: Partially discoverable without handler.
-//
-// Roughly half of Squarespace sites carry no `alternate` link. A collection
-// takes `?format=rss`, and the collection slug is operator-chosen, `/blog`,
-// `/news` or `/journal`, so it comes from the first path segment.
-//
-// The site root answers `?format=rss` with 400, so a root URL is never
-// matched. A non-collection page answers 200 with HTML, which discovery
-// filters on the root element.
+// Discoverability: Discoverable without handler.
 
 const squarespaceRegex = /squarespace/i
 const excludedPaths = ['config', 'api', 'static', 'universal', 'account', 'commerce', 'checkout']

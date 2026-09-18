@@ -3,10 +3,6 @@ import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
-//
-// A Podomatic show serves its feed at `{show}.podomatic.com/rss2.xml`. The
-// directory path `www.podomatic.com/podcasts/{show}` addresses the same show,
-// and both shapes map back to the subdomain for the feed.
 
 const hosts = ['podomatic.com', 'www.podomatic.com']
 const domainSuffixRegex = /\.podomatic\.com$/i

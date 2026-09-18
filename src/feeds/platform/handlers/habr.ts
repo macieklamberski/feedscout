@@ -3,11 +3,8 @@ import type { DiscoverUriEntry } from '../../../common/types.js'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 
-// Discoverability: Discoverable without handler.
-//
-// Habr serves feeds under a language segment: `/{lang}/rss/articles/`, plus hub,
-// user and company variants. The language segment is required and mirrors the
-// page URL, and every one of these paths needs its trailing slash.
+// Discoverability: Partially discoverable without handler.
+// Generic covers home (guess, html), partly covers hub, user.
 
 const hosts = ['habr.com', 'www.habr.com']
 const languages = ['ru', 'en']

@@ -2,10 +2,8 @@ import type { DiscoverUriEntry } from '../../../common/types.js'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 
-// Discoverability: Discoverable without handler.
-//
-// NodeBB serves recent and popular feeds at the origin, plus a per-category
-// feed at `/category/{cid}.rss` and a per-topic feed at `/topic/{tid}.rss`.
+// Discoverability: Not discoverable without handler.
+// Handler needed for: all shapes.
 
 const nodebbRegex = /nodebb/i
 const categoryRegex = /\/category\/(\d+)/
