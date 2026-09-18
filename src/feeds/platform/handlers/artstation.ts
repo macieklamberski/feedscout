@@ -1,5 +1,4 @@
 import { isAnyOf, isHostOf, isSubdomainOf } from 'trousse'
-import type { DiscoverUriEntry } from '../../../common/types.js'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 
@@ -11,7 +10,8 @@ import { composeHint } from '../../../common/utils.js'
 // feed URLs follow an undocumented `.rss` suffix convention
 // (`www.artstation.com/{user}.rss`, `www.artstation.com/artwork.rss`).
 // The handler reshapes both the subdomain and path-based user forms into the
-// canonical `.rss` URLs and adds the trending/latest artwork variants.
+// canonical `.rss` URLs. `?sorting=trending` is the default and returns the
+// same 50 items as the bare feed; `?sorting=latest` returns a different set.
 
 const hosts = ['artstation.com', 'www.artstation.com']
 const domainSuffixRegex = /\.artstation\.com$/i
@@ -55,18 +55,16 @@ export const artstationHandler: PlatformHandler = {
 
     // Global artwork page: /artwork
     if (pathSegments[0] === 'artwork' || pathSegments.length === 0) {
-      const uris: Array<DiscoverUriEntry> = []
-
-      uris.push({
-        uri: 'https://www.artstation.com/artwork.rss',
-        hint: composeHint('artstation:artwork'),
-      })
-      uris.push({
-        uri: 'https://www.artstation.com/artwork.rss?sorting=trending',
-        hint: composeHint('artstation:artwork-trending'),
-      })
-
-      return uris
+      return [
+        {
+          uri: 'https://www.artstation.com/artwork.rss',
+          hint: composeHint('artstation:artwork'),
+        },
+        {
+          uri: 'https://www.artstation.com/artwork.rss?sorting=latest',
+          hint: composeHint('artstation:artwork-latest'),
+        },
+      ]
     }
 
     const username = pathSegments[0]

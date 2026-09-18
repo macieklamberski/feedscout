@@ -8,7 +8,7 @@ This guide will get you up and running with Feedscout in just a few minutes.
 
 ## Installation
 
-Feedscout works in both Node and modern browsers as either CommonJS or ES module.
+Feedscout works in both Node and modern browsers as an ES module.
 
 Install the package using your preferred package manager:
 

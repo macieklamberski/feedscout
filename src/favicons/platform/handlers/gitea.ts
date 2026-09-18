@@ -1,14 +1,33 @@
 import { isAnyOf, isHostOf } from 'trousse'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
-import { excludedPaths, hosts } from '../../../feeds/platform/handlers/codeberg.js'
+import {
+  excludedPaths,
+  hasResolvablePath,
+  hosts,
+  isGiteaHeaders,
+} from '../../../feeds/platform/handlers/gitea.js'
 
 // Extracts the username from the path, excluding dots to avoid capturing
-// feed extensions like .rss in Codeberg feed URLs (e.g., /user.rss).
+// feed extensions like .rss in Gitea feed URLs (e.g., /user.rss).
 const userRegex = /^\/([^/.]+)/
 
-export const codebergHandler: PlatformHandler = {
-  match: (url) => {
-    return isHostOf(url, hosts)
+export const giteaHandler: PlatformHandler = {
+  match: (url, _content, headers) => {
+    try {
+      if (!hasResolvablePath(url)) {
+        return false
+      }
+
+      if (isHostOf(url, hosts)) {
+        return true
+      }
+
+      if (headers && isGiteaHeaders(headers)) {
+        return true
+      }
+    } catch {}
+
+    return false
   },
 
   resolve: (url) => {

@@ -14,3 +14,9 @@
   --vp-c-brand-3: #5aad3e;
   --vp-c-brand-soft: rgba(162, 229, 123, 0.14);
 }
+
+.nav-logo {
+  width: 24px;
+  height: 24px;
+  margin-right: 10px;
+}

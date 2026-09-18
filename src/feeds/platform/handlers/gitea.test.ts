@@ -1,25 +1,64 @@
 import { describe, expect, it } from 'bun:test'
-import { codebergHandler } from './codeberg.js'
+import { giteaHandler } from './gitea.js'
 
-describe('codebergHandler', () => {
+describe('giteaHandler', () => {
   describe('match', () => {
     const values: Array<[boolean, string]> = [
       [true, 'https://codeberg.org/forgejo'],
       [true, 'https://codeberg.org/forgejo/forgejo'],
-      [true, 'https://www.codeberg.org/user'],
+      [true, 'https://www.codeberg.org/forgejo'],
       [true, 'https://gitea.com/gitea'],
       [true, 'https://gitea.com/gitea/go-sdk'],
-      [true, 'https://www.gitea.com/user'],
+      [true, 'https://www.gitea.com/gitea'],
+      [false, 'https://codeberg.org/user'],
+      [false, 'https://gitea.com/explore'],
+      [false, 'https://codeberg.org/'],
       [false, 'https://github.com/user/repo'],
       [false, 'https://example.com'],
     ]
 
     it.each(values)('should return %s for %s', (expected, url) => {
-      expect(codebergHandler.match(url)).toBe(expected)
+      expect(giteaHandler.match(url)).toBe(expected)
+    })
+
+    it('should match a self-hosted instance by the session cookie', () => {
+      const value = 'https://git.example.org/owner/project'
+      const headers = new Headers({ 'set-cookie': 'i_like_gitea=abc123; Path=/; HttpOnly' })
+
+      expect(giteaHandler.match(value, '', headers)).toBe(true)
+    })
+
+    it('should not match a self-hosted instance without the cookie', () => {
+      const value = 'https://git.example.org/owner/project'
+      const headers = new Headers({ 'set-cookie': 'session=abc123; Path=/' })
+
+      expect(giteaHandler.match(value, '', headers)).toBe(false)
+      expect(giteaHandler.match(value)).toBe(false)
+    })
+
+    it('should match a renamed session cookie', () => {
+      const value = 'https://git.example.org/owner/project'
+      const headers = new Headers({ 'set-cookie': 'example-gitea=abc123; Path=/' })
+
+      expect(giteaHandler.match(value, '', headers)).toBe(true)
+    })
+
+    it('should not match a cookie whose name only starts with the marker', () => {
+      const value = 'https://git.example.org/owner/project'
+      const headers = new Headers({ 'set-cookie': 'gitea_theme=dark; Path=/' })
+
+      expect(giteaHandler.match(value, '', headers)).toBe(false)
+    })
+
+    it('should not match the marker inside a cookie value', () => {
+      const value = 'https://git.example.org/owner/project'
+      const headers = new Headers({ 'set-cookie': 'session=i_like_gitea=abc123; Path=/' })
+
+      expect(giteaHandler.match(value, '', headers)).toBe(false)
     })
 
     it('should return false for invalid URL', () => {
-      expect(codebergHandler.match('not-a-url')).toBe(false)
+      expect(giteaHandler.match('not-a-url')).toBe(false)
     })
   })
 
@@ -29,11 +68,11 @@ describe('codebergHandler', () => {
       const expected = [
         {
           uri: ['https://codeberg.org/forgejo.atom', 'https://codeberg.org/forgejo.rss'],
-          hint: { key: 'codeberg:activity', label: 'Activity' },
+          hint: { key: 'gitea:activity', label: 'Activity' },
         },
       ]
 
-      expect(codebergHandler.resolve(value)).toEqual(expected)
+      expect(giteaHandler.resolve(value)).toEqual(expected)
     })
 
     it('should return releases, tags, and activity feeds for repo page', () => {
@@ -44,25 +83,25 @@ describe('codebergHandler', () => {
             'https://codeberg.org/forgejo/forgejo/releases.atom',
             'https://codeberg.org/forgejo/forgejo/releases.rss',
           ],
-          hint: { key: 'codeberg:releases', label: 'Releases' },
+          hint: { key: 'gitea:releases', label: 'Releases' },
         },
         {
           uri: [
             'https://codeberg.org/forgejo/forgejo/tags.atom',
             'https://codeberg.org/forgejo/forgejo/tags.rss',
           ],
-          hint: { key: 'codeberg:tags', label: 'Tags' },
+          hint: { key: 'gitea:tags', label: 'Tags' },
         },
         {
           uri: [
             'https://codeberg.org/forgejo/forgejo.atom',
             'https://codeberg.org/forgejo/forgejo.rss',
           ],
-          hint: { key: 'codeberg:activity', label: 'Activity' },
+          hint: { key: 'gitea:activity', label: 'Activity' },
         },
       ]
 
-      expect(codebergHandler.resolve(value)).toEqual(expected)
+      expect(giteaHandler.resolve(value)).toEqual(expected)
     })
 
     it('should return feeds for repo subpage', () => {
@@ -73,25 +112,25 @@ describe('codebergHandler', () => {
             'https://codeberg.org/forgejo/forgejo/releases.atom',
             'https://codeberg.org/forgejo/forgejo/releases.rss',
           ],
-          hint: { key: 'codeberg:releases', label: 'Releases' },
+          hint: { key: 'gitea:releases', label: 'Releases' },
         },
         {
           uri: [
             'https://codeberg.org/forgejo/forgejo/tags.atom',
             'https://codeberg.org/forgejo/forgejo/tags.rss',
           ],
-          hint: { key: 'codeberg:tags', label: 'Tags' },
+          hint: { key: 'gitea:tags', label: 'Tags' },
         },
         {
           uri: [
             'https://codeberg.org/forgejo/forgejo.atom',
             'https://codeberg.org/forgejo/forgejo.rss',
           ],
-          hint: { key: 'codeberg:activity', label: 'Activity' },
+          hint: { key: 'gitea:activity', label: 'Activity' },
         },
       ]
 
-      expect(codebergHandler.resolve(value)).toEqual(expected)
+      expect(giteaHandler.resolve(value)).toEqual(expected)
     })
 
     it('should return branch commits feed for Gitea branch page', () => {
@@ -99,29 +138,29 @@ describe('codebergHandler', () => {
       const expected = [
         {
           uri: 'https://gitea.com/gitea/go-sdk/rss/branch/main',
-          hint: { key: 'codeberg:branch-commits', label: 'Branch commits' },
+          hint: { key: 'gitea:branch-commits', label: 'Branch commits' },
         },
         {
           uri: [
             'https://gitea.com/gitea/go-sdk/releases.atom',
             'https://gitea.com/gitea/go-sdk/releases.rss',
           ],
-          hint: { key: 'codeberg:releases', label: 'Releases' },
+          hint: { key: 'gitea:releases', label: 'Releases' },
         },
         {
           uri: [
             'https://gitea.com/gitea/go-sdk/tags.atom',
             'https://gitea.com/gitea/go-sdk/tags.rss',
           ],
-          hint: { key: 'codeberg:tags', label: 'Tags' },
+          hint: { key: 'gitea:tags', label: 'Tags' },
         },
         {
           uri: ['https://gitea.com/gitea/go-sdk.atom', 'https://gitea.com/gitea/go-sdk.rss'],
-          hint: { key: 'codeberg:activity', label: 'Activity' },
+          hint: { key: 'gitea:activity', label: 'Activity' },
         },
       ]
 
-      expect(codebergHandler.resolve(value)).toEqual(expected)
+      expect(giteaHandler.resolve(value)).toEqual(expected)
     })
 
     it('should return file history feed for Gitea file page', () => {
@@ -129,29 +168,29 @@ describe('codebergHandler', () => {
       const expected = [
         {
           uri: 'https://gitea.com/gitea/go-sdk/rss/branch/main/README.md',
-          hint: { key: 'codeberg:file-history', label: 'File history' },
+          hint: { key: 'gitea:file-history', label: 'File history' },
         },
         {
           uri: [
             'https://gitea.com/gitea/go-sdk/releases.atom',
             'https://gitea.com/gitea/go-sdk/releases.rss',
           ],
-          hint: { key: 'codeberg:releases', label: 'Releases' },
+          hint: { key: 'gitea:releases', label: 'Releases' },
         },
         {
           uri: [
             'https://gitea.com/gitea/go-sdk/tags.atom',
             'https://gitea.com/gitea/go-sdk/tags.rss',
           ],
-          hint: { key: 'codeberg:tags', label: 'Tags' },
+          hint: { key: 'gitea:tags', label: 'Tags' },
         },
         {
           uri: ['https://gitea.com/gitea/go-sdk.atom', 'https://gitea.com/gitea/go-sdk.rss'],
-          hint: { key: 'codeberg:activity', label: 'Activity' },
+          hint: { key: 'gitea:activity', label: 'Activity' },
         },
       ]
 
-      expect(codebergHandler.resolve(value)).toEqual(expected)
+      expect(giteaHandler.resolve(value)).toEqual(expected)
     })
 
     it('should not emit branch commits feed for Codeberg branch page (Forgejo dropped the route)', () => {
@@ -162,25 +201,25 @@ describe('codebergHandler', () => {
             'https://codeberg.org/forgejo/forgejo/releases.atom',
             'https://codeberg.org/forgejo/forgejo/releases.rss',
           ],
-          hint: { key: 'codeberg:releases', label: 'Releases' },
+          hint: { key: 'gitea:releases', label: 'Releases' },
         },
         {
           uri: [
             'https://codeberg.org/forgejo/forgejo/tags.atom',
             'https://codeberg.org/forgejo/forgejo/tags.rss',
           ],
-          hint: { key: 'codeberg:tags', label: 'Tags' },
+          hint: { key: 'gitea:tags', label: 'Tags' },
         },
         {
           uri: [
             'https://codeberg.org/forgejo/forgejo.atom',
             'https://codeberg.org/forgejo/forgejo.rss',
           ],
-          hint: { key: 'codeberg:activity', label: 'Activity' },
+          hint: { key: 'gitea:activity', label: 'Activity' },
         },
       ]
 
-      expect(codebergHandler.resolve(value)).toEqual(expected)
+      expect(giteaHandler.resolve(value)).toEqual(expected)
     })
 
     it('should return feeds for gitea.com', () => {
@@ -191,28 +230,28 @@ describe('codebergHandler', () => {
             'https://gitea.com/gitea/go-sdk/releases.atom',
             'https://gitea.com/gitea/go-sdk/releases.rss',
           ],
-          hint: { key: 'codeberg:releases', label: 'Releases' },
+          hint: { key: 'gitea:releases', label: 'Releases' },
         },
         {
           uri: [
             'https://gitea.com/gitea/go-sdk/tags.atom',
             'https://gitea.com/gitea/go-sdk/tags.rss',
           ],
-          hint: { key: 'codeberg:tags', label: 'Tags' },
+          hint: { key: 'gitea:tags', label: 'Tags' },
         },
         {
           uri: ['https://gitea.com/gitea/go-sdk.atom', 'https://gitea.com/gitea/go-sdk.rss'],
-          hint: { key: 'codeberg:activity', label: 'Activity' },
+          hint: { key: 'gitea:activity', label: 'Activity' },
         },
       ]
 
-      expect(codebergHandler.resolve(value)).toEqual(expected)
+      expect(giteaHandler.resolve(value)).toEqual(expected)
     })
 
     it('should return empty array for root page', () => {
       const value = 'https://codeberg.org'
 
-      expect(codebergHandler.resolve(value)).toEqual([])
+      expect(giteaHandler.resolve(value)).toEqual([])
     })
 
     const excludedValues: Array<string> = [
@@ -224,7 +263,7 @@ describe('codebergHandler', () => {
     ]
 
     it.each(excludedValues)('should return empty array for %s', (value) => {
-      expect(codebergHandler.resolve(value)).toEqual([])
+      expect(giteaHandler.resolve(value)).toEqual([])
     })
 
     const excludedRepoValues: Array<string> = [
@@ -234,7 +273,7 @@ describe('codebergHandler', () => {
     ]
 
     it.each(excludedRepoValues)('should return empty array for %s', (value) => {
-      expect(codebergHandler.resolve(value)).toEqual([])
+      expect(giteaHandler.resolve(value)).toEqual([])
     })
 
     it.todo('should define behavior for invalid URL input', () => {
