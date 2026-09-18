@@ -23,7 +23,7 @@ Each path is appended to the base URL and checked for a valid feed.
 
 ## Ancestor Paths
 
-Some sites serve their feed from a section directory rather than the root — for example, a post at `/blog/post-slug/` with the feed at `/blog/feed.xml`. In addition to the root-level paths, the Guess method tests path-style URIs against the directory ancestors of the base URL:
+Some sites serve their feed from a section directory, not the root. An example is a post at `/blog/post-slug/` with the feed at `/blog/feed.xml`. In addition to the root-level paths, the Guess method tests path-style URIs against the directory ancestors of the base URL:
 
 ```
 https://example.com/blog/post-slug/
@@ -48,7 +48,7 @@ Every configured URI is tested against each ancestor directory the same way it i
 
 ## Section Links
 
-Sites often keep their feed under a content section that isn't part of the current page's path — for example, a homepage linking to `/blog` with the feed at `/blog/rss.xml`. The Guess method scans the page HTML for same-origin links whose path is a single section segment and tests path-style URIs against them:
+Sites often keep their feed under a content section that isn't part of the current page's path. An example is a homepage linking to `/blog` with the feed at `/blog/rss.xml`. The Guess method scans the page HTML for same-origin links whose path is a single section segment and tests path-style URIs against them:
 
 ```
 https://example.com/ with <a href="/blog">
@@ -242,7 +242,7 @@ const uris = discoverUrisFromGuess({
 ```
 
 > [!NOTE]
-> Unlike `discoverUrisFromHtml` and `discoverUrisFromHeaders`, the Guess method returns URLs without checking if they exist. Validation happens during the main discovery process.
+> The Guess method builds absolute URLs from the base URL. It does not check if they exist. Validation happens in `discoverFeeds`.
 
 ## When to Use
 
