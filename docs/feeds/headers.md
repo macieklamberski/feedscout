@@ -67,8 +67,11 @@ const uris = discoverUrisFromHeaders(headers, {
   linkSelectors: [{ rel: 'alternate', types: ['application/rss+xml'] }],
 })
 
-// ['https://example.com/feed.xml']
+// ['/feed.xml']
 ```
+
+> [!NOTE]
+> URIs come back as written in the header, so they can be relative. `discoverFeeds()` resolves them against the page URL before fetching.
 
 ## Providing Headers
 

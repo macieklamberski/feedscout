@@ -49,9 +49,9 @@ Array of discovery methods to use:
 type DiscoverHubsMethodsConfig = Array<'headers' | 'html' | 'feed'>
 ```
 
-- `headers` — Parse HTTP `Link` headers for `rel="hub"`.
-- `feed` — Extract hub links from feed content (Atom, RSS, JSON Feed).
-- `html` — Scan for `<link rel="hub">` elements.
+- `headers`: Parse HTTP `Link` headers for `rel="hub"`.
+- `feed`: Extract hub links from feed content (Atom, RSS, JSON Feed).
+- `html`: Scan for `<link rel="hub">` elements.
 
 ## Return Value
 
@@ -100,7 +100,7 @@ const content = await response.text()
 const hubs = await discoverHubs(
   {
     url: 'https://example.com/feed.xml',
-    content: await response.text(),
+    content,
     headers: response.headers,
   },
   {
@@ -115,7 +115,18 @@ const hubs = await discoverHubs(
 import type { DiscoverFetchFn } from 'feedscout'
 
 const myCustomFetch: DiscoverFetchFn = async (url, options) => {
-  // Handle the request and return response here.
+  const response = await fetch(url, {
+    method: options?.method ?? 'GET',
+    headers: options?.headers,
+  })
+
+  return {
+    headers: response.headers,
+    body: await response.text(),
+    url: response.url,
+    status: response.status,
+    statusText: response.statusText,
+  }
 }
 
 const hubs = await discoverHubs('https://example.com/feed.xml', {

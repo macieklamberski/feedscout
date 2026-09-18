@@ -14,15 +14,16 @@ After discovering potential feed URLs, Feedscout fetches each URL and passes the
 
 Custom extractors can be used for:
 
-- **Adding custom metadata** — Extract additional fields like language, images, or items
-- **Custom validation** — Reject feeds with no items, old feeds, or based on other criteria
-- **Using a different parser** — Replace the default Feedsmith parser with another library
-- **Blogroll extractors** — Custom extractors also work with `discoverBlogrolls`
+- **Adding custom metadata**: Extract additional fields like language, images, or items
+- **Custom validation**: Reject feeds with no items, old feeds, or based on other criteria
+- **Using a different parser**: Replace the default Feedsmith parser with another library
+- **Blogroll extractors**: Custom extractors also work with `discoverBlogrolls`
 
 ## Example
 
 ```typescript
-import type { DiscoverExtractFn, DiscoverResult } from 'feedscout'
+import { discoverFeeds } from 'feedscout'
+import type { DiscoverExtractFn } from 'feedscout'
 import { parseFeed } from 'feedsmith'
 
 type CustomFeedResult = {
@@ -34,13 +35,14 @@ type CustomFeedResult = {
 const customExtractor: DiscoverExtractFn<CustomFeedResult> = async ({ url, content }) => {
   try {
     const { format, feed } = parseFeed(content)
+    const items = format === 'atom' ? feed.entries : feed.items
 
     return {
       url,
       isValid: true,
       format,
       title: feed.title,
-      itemCount: feed.items?.length ?? 0,
+      itemCount: items?.length ?? 0,
     }
   } catch (error) {
     return { url, isValid: false, error }

@@ -43,12 +43,14 @@ All options are optional. When not provided, sensible defaults are used.
 | `fetchFn` | `DiscoverFetchFn` | native fetch | Custom fetch function |
 | `extractFn` | `DiscoverExtractFn` | feedsmith | Custom feed extraction function |
 | `resolveUrlFn` | `DiscoverResolveUrlFn` | | Custom URL resolution function |
+| `resolveSiteUrlFn` | `DiscoverResolveSiteUrlFn` | | Picks a site URL to scan as well when the input is a feed |
 | `stopOnFirstMethod` | `boolean` | `false` | Stop URI collection after first method with results |
 | `stopOnFirstResult` | `boolean` | `false` | Stop after first valid feed |
 | `concurrency` | `number` | `3` | Max parallel validations |
 | `maxUris` | `number` | `50` | Max total candidate URIs to fetch across all methods |
 | `includeInvalid` | `boolean` | `false` | Include invalid results |
 | `onProgress` | `DiscoverOnProgressFn` | | Progress callback |
+| `onError` | `DiscoverOnErrorFn` | | Called when fetching the input or the site URL fails |
 
 ## Return Value
 
@@ -142,7 +144,18 @@ const feeds = await discoverFeeds('https://example.com', {
 import type { DiscoverFetchFn } from 'feedscout'
 
 const myCustomFetch: DiscoverFetchFn = async (url, options) => {
-  // Handle the request and return response here.
+  const response = await fetch(url, {
+    method: options?.method ?? 'GET',
+    headers: options?.headers,
+  })
+
+  return {
+    headers: response.headers,
+    body: await response.text(),
+    url: response.url,
+    status: response.status,
+    statusText: response.statusText,
+  }
 }
 
 const feeds = await discoverFeeds('https://example.com', {
