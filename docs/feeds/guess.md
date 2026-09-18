@@ -65,8 +65,9 @@ Includes WordPress, Blogger, and many other patterns:
 import { urisComprehensive } from 'feedscout/feeds'
 
 // urisBalanced + [
-//   '/?feed=rss',
-//   '/?feed=atom',
+//   '/atom',
+//   '/rss/',
+//   ['/feed/atom/', '?feed=atom'],
 //   '/feeds/posts/default',
 //   ...
 // ]
@@ -180,7 +181,7 @@ const uris = discoverUrisFromGuess({
 ```
 
 > [!NOTE]
-> Unlike `discoverUrisFromHtml` and `discoverUrisFromHeaders`, the Guess method returns URLs without checking if they exist. Validation happens during the main discovery process.
+> The Guess method builds absolute URLs from the base URL. It does not check if they exist. Validation happens in `discoverFeeds`.
 
 ## When to Use
 

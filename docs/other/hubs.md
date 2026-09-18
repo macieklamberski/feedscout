@@ -15,8 +15,8 @@ Feedscout can discover WebSub (formerly PubSubHubbub) hubs from feeds and webpag
 
 Each hub result contains:
 
-- **hub** — The hub URL to subscribe to.
-- **topic** — The feed URL that the hub serves updates for.
+- **hub**: The hub URL to subscribe to.
+- **topic**: The feed URL that the hub serves updates for.
 
 ## Basic Usage
 
@@ -143,7 +143,7 @@ const content = await response.text()
 const hubs = await discoverHubs(
   {
     url: 'https://example.com/feed.xml',
-    content: await response.text(),
+    content,
     headers: response.headers,
   },
   {

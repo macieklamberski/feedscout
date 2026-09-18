@@ -4,7 +4,7 @@ title: "Reference: Types"
 
 # Types
 
-All types are exported from the main `feedscout` package.
+The shared types are exported from the main `feedscout` package. Result types and platform types come from the path of the discoverer they belong to.
 
 ```typescript
 import type {
@@ -15,12 +15,18 @@ import type {
   DiscoverProgress,
   DiscoverFetchFn,
   DiscoverResolveUrlFn,
+  DiscoverResolveSiteUrlFn,
+  DiscoverOnErrorFn,
+  DiscoverErrorContext,
   DiscoverUriEntry,
   DiscoverUriHint,
   UriEntry,
 } from 'feedscout'
 
+import type { FeedResult } from 'feedscout/feeds'
+import type { BlogrollResult } from 'feedscout/blogrolls'
 import type { HubResult, DiscoverHubsOptions } from 'feedscout/hubs'
+import type { PlatformHandler, PlatformMethodOptions } from 'feedscout/platform'
 ```
 
 ## Input Types
@@ -43,7 +49,7 @@ type DiscoverInputObject = {
 
 ### DiscoverOptions
 
-Options for discovery functions. All fields are optional for simple usage. The `TMethods` parameter restricts which methods are available — each discoverer narrows it to its supported methods:
+Options for discovery functions. All fields are optional for simple usage. The `TMethods` parameter restricts which methods are available. Each discoverer narrows it to its supported methods:
 
 ```typescript
 type DiscoverOptions<TValid, TMethods extends DiscoverMethod = DiscoverMethod> = {
@@ -51,12 +57,14 @@ type DiscoverOptions<TValid, TMethods extends DiscoverMethod = DiscoverMethod> =
   fetchFn?: DiscoverFetchFn
   extractFn?: DiscoverExtractFn<TValid>
   resolveUrlFn?: DiscoverResolveUrlFn
+  resolveSiteUrlFn?: DiscoverResolveSiteUrlFn
   stopOnFirstMethod?: boolean
   stopOnFirstResult?: boolean
   concurrency?: number
   maxUris?: number
   includeInvalid?: boolean
   onProgress?: DiscoverOnProgressFn
+  onError?: DiscoverOnErrorFn
 }
 ```
 
@@ -97,6 +105,7 @@ Options for `discoverHubs`:
 type DiscoverHubsOptions = {
   methods?: DiscoverHubsMethodsConfig
   fetchFn?: DiscoverFetchFn
+  resolveUrlFn?: DiscoverResolveUrlFn
 }
 
 type DiscoverHubsMethodsConfig = Array<'headers' | 'html' | 'feed'>
@@ -214,6 +223,21 @@ Progress callback function type:
 type DiscoverOnProgressFn = (progress: DiscoverProgress) => void
 ```
 
+## Error Types
+
+### DiscoverOnErrorFn
+
+Error callback function type. Called when a request made by discovery itself fails, so the error is not lost:
+
+```typescript
+type DiscoverOnErrorFn = (error: unknown, context: DiscoverErrorContext) => void
+
+type DiscoverErrorContext = {
+  phase: 'fetchInput' | 'resolveSiteUrl'
+  url?: string
+}
+```
+
 ## Fetch Types
 
 ### DiscoverFetchFn
@@ -247,15 +271,33 @@ type DiscoverFetchFnResponse = {
 Custom extractor function type:
 
 ```typescript
-type DiscoverExtractFn<TValid> = (
-  input: DiscoverExtractFnInput,
-) => MaybePromise<DiscoverResult<TValid>>
-
-type DiscoverExtractFnInput = {
+type DiscoverExtractFn<TValid> = (input: {
   url: string
   content: string
   headers?: Headers
-}
+  status?: number
+}) => MaybePromise<DiscoverResult<TValid>>
+```
+
+## URL Resolution Types
+
+### DiscoverResolveUrlFn
+
+Custom URL resolution function type. Return `undefined` to keep the URL as discovered:
+
+```typescript
+type DiscoverResolveUrlFn = (url: string, baseUrl: string | undefined) => string | undefined
+```
+
+### DiscoverResolveSiteUrlFn
+
+Resolves the site URL to scan when the input is a feed. Used by `discoverBlogrolls` and `discoverFavicons`, where the default reads the site link from the feed and falls back to the origin of the feed URL. Return `undefined` to scan the input as is:
+
+```typescript
+type DiscoverResolveSiteUrlFn = (
+  input: DiscoverInputObject,
+  resolveUrlFn: DiscoverResolveUrlFn,
+) => string | undefined
 ```
 
 ## Method Option Types
@@ -272,7 +314,7 @@ type FeedMethodOptions = {
 }
 ```
 
-`FeedMethodData` is the return type of feedsmith's `parseFeed` — it contains `format` (e.g. `'atom'`, `'json'`) and `feed` (the parsed feed object). The `extractUrls` callback should return an array of URLs. For favicons, the default extractor pulls `icon` from Atom feeds and `favicon`/`icon` from JSON Feeds.
+`FeedMethodData` is the return type of Feedsmith's `parseFeed`. It contains `format` (e.g. `'atom'`, `'json'`) and `feed` (the parsed feed object). The `extractUrls` callback should return an array of URLs. For favicons, the default extractor pulls `icon` from Atom feeds and `favicon`/`icon` from JSON Feeds.
 
 ### HtmlMethodOptions
 
@@ -282,12 +324,14 @@ Options for HTML discovery method:
 type HtmlMethodOptions = {
   baseUrl?: string
   linkSelectors: Array<LinkSelector>
-  anchorUris: Array<string>
-  anchorPathSegments?: Array<string>
-  anchorIgnoredUris: Array<string>
-  anchorLabels: Array<string>
+  anchorUris: Array<Pattern>
+  anchorPathSegments?: Array<Pattern>
+  anchorIgnoredUris: Array<Pattern>
+  anchorLabels: Array<Pattern>
   anchorAttributes?: Array<string>
 }
+
+type Pattern = string | RegExp
 
 type LinkSelector = {
   rel: string
@@ -313,7 +357,7 @@ Options for Guess discovery method:
 ```typescript
 type GuessMethodOptions = {
   baseUrl: string
-  uris: Array<string>
+  uris: Array<UriEntry>
   additionalBaseUrls?: Array<string>
 }
 ```

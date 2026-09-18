@@ -28,8 +28,8 @@ Looks for `<link>` elements that advertise feeds:
 
 Scans `<a>` tags for feed links using two strategies:
 
-1. **URI matching** — Checks if `href` contains common feed paths like `/feed`, `/rss.xml`.
-2. **Label matching** — Checks if the link text, `title`, or `aria-label` contains words like "RSS", "Feed", "Subscribe". This catches icon-only links that have no visible text.
+1. **URI matching**: Checks if `href` contains common feed paths like `/feed`, `/rss.xml`.
+2. **Label matching**: Checks if the link text, `title`, or `aria-label` contains words like "RSS", "Feed", "Atom". This catches icon-only links that have no visible text.
 
 ```html
 <!-- Matched by URI -->
@@ -95,7 +95,7 @@ const feeds = await discoverFeeds(url, {
 
 ### Anchor Attributes
 
-Specify element attributes to scan for the anchor labels, on the anchor itself and on its descendants. This finds icon-only feed links whose label lives in an attribute rather than visible text — for example a `title`, an `aria-label`, or the layer name Framer emits on a feed icon (`data-framer-name="RSS Icon"`):
+Specify element attributes to scan for the anchor labels, on the anchor itself and on its descendants. This finds icon-only feed links whose label lives in an attribute, not in visible text: a `title`, an `aria-label`, or the layer name Framer emits on a feed icon (`data-framer-name="RSS Icon"`):
 
 ```typescript
 const feeds = await discoverFeeds(url, {
@@ -156,7 +156,9 @@ const uris = discoverUrisFromHtml(htmlContent, {
 })
 
 // [
-//   'https://example.com/feed.xml',
-//   'https://example.com/rss',
+//   '/feed.xml',
+//   '/rss',
 // ]
 ```
+
+URIs come back as written in the HTML, so they can be relative. They are resolved against `<base href>` when the page has one. `discoverFeeds` resolves the rest against the page URL.

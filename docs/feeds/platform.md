@@ -10,23 +10,23 @@ The Platform method generates feed URLs for known platforms using URL pattern ma
 
 The Platform method uses handlers for each supported platform:
 
-1. **Pattern Matching** — Each handler checks if the URL matches its platform (e.g., `github.com`, `youtube.com`).
-2. **URL Generation** — The matching handler generates feed URLs based on the URL structure.
-3. **First Match** — The first matching handler wins; subsequent handlers are skipped.
+1. **Pattern Matching**: Each handler checks if the URL matches its platform (e.g., `github.com`, `youtube.com`).
+2. **URL Generation**: The matching handler generates feed URLs based on the URL structure.
+3. **First Match**: The first matching handler wins. Subsequent handlers are skipped.
 
 > [!TIP]
-> Even when feeds are discoverable via HTML `<link>` tags, the Platform method is useful because it generates feed URLs directly from the page URL—no HTTP request needed. This makes it faster when you only have a URL and want to avoid fetching the page content first.
+> Even when feeds are discoverable via HTML `<link>` tags, the Platform method is useful because it generates feed variants the page does not advertise, like a channel's Shorts feed or a repository's releases feed. Handlers that work from the URL alone need no page content, which helps when you [use the method directly](#using-directly) and only have a URL.
 
 ## Hints
 
-Platform handlers attach a `hint` to each feed URI they generate. Hints provide a machine-readable `key` and a human-readable `label` that describe what type of feed the URI represents (e.g., "All uploads", "Videos only", "Shorts only"). This is useful when a single URL generates multiple feed variants and you need to let users pick the right one, especially for feeds that don't include a descriptive title.
+Platform handlers attach a `hint` to each feed URI they generate. Hints provide a machine-readable `key` and a human-readable `label` that describe what type of feed the URI represents (e.g., "All uploads", "Videos", "Shorts"). This is useful when a single URL generates multiple feed variants and you need to let users pick the right one, especially for feeds that don't include a descriptive title.
 
 Hints are propagated to the final [`DiscoverResult`](/reference/types#discoverresult) objects returned by `discoverFeeds`. Results from non-platform methods (HTML, headers, guess) do not include hints.
 
 ```typescript
 type DiscoverUriHint = {
   key: string    // e.g., 'youtube:all', 'youtube:videos'
-  label: string  // e.g., 'All uploads', 'Videos only'
+  label: string  // e.g., 'All uploads', 'Videos'
 }
 ```
 
@@ -44,16 +44,18 @@ Discovers RSS feeds for Apple Podcasts shows by extracting the feed URL from the
 
 ### YouTube
 
-Discovers Atom feeds for channels and playlists. Generates four feed variants for channels: all uploads, videos-only, shorts-only, and live streams-only.
+Discovers Atom feeds for channels and playlists. Generates ten feed variants for channels: all uploads, then videos, shorts and live streams, each also as a popular and a members-only feed.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `youtube.com/channel/{id}` | All uploads + videos-only + shorts-only + live streams-only |
-| `youtube.com/@{handle}` | All uploads + videos-only + shorts-only + live streams-only* |
-| `youtube.com/user/{name}` | All uploads + videos-only + shorts-only + live streams-only* |
-| `youtube.com/c/{custom}` | All uploads + videos-only + shorts-only + live streams-only* |
-| `youtube.com/watch?v={id}` | All uploads + videos-only + shorts-only + live streams-only* |
-| `youtu.be/{id}` | All uploads + videos-only + shorts-only + live streams-only* |
+| `youtube.com/channel/{id}` | All channel feed variants |
+| `youtube.com/@{handle}` | All channel feed variants* |
+| `youtube.com/user/{name}` | All channel feed variants* |
+| `youtube.com/c/{custom}` | All channel feed variants* |
+| `youtube.com/watch?v={id}` | All channel feed variants* |
+| `youtu.be/{id}` | All channel feed variants* |
+| `youtube.com/shorts/{id}` | All channel feed variants* |
+| `youtube.com/live/{id}` | All channel feed variants* |
 | `youtube.com/playlist?list={id}` | Playlist feed |
 
 \* *Requires HTML content to extract channel ID.*
@@ -107,7 +109,7 @@ Discovers RSS and Atom feeds for WordPress.com blogs, with category, tag, and au
 
 ### WP Engine
 
-Discovers feeds for WP Engine-hosted WordPress sites. Uses the same feed structure as [WordPress.com](#wordpresscom).
+Discovers feeds for WP Engine-hosted WordPress sites. Uses the same feed structure as [WordPress.com](#wordpress-com).
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
@@ -255,7 +257,7 @@ Discovers RSS feeds for DeviantArt user portfolios, gallery folders, favourites,
 
 ### Mastodon
 
-Discovers RSS feeds for Mastodon user profiles and hashtag pages. Detects Mastodon instances via the `<meta name="generator">` HTML tag or the `Server` response header — no hardcoded instance list.
+Discovers RSS feeds for Mastodon user profiles and hashtag pages. Detects Mastodon instances via the `<meta name="generator">` HTML tag or the `Server` response header, with no hardcoded instance list.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
@@ -367,7 +369,7 @@ Discovers RSS feeds for Stack Overflow, Server Fault, Super User, Ask Ubuntu, Ma
 | `{site}/collectives/{name}` | Collective feed |
 
 > [!NOTE]
-> Tag feeds accept `?sort={newest|active|votes|creation|hot|week|month}` (also `?tab=…`) — the value is passed through to the generated feed URL when it matches one of the allowed sorts. Unknown values are silently dropped.
+> Tag feeds accept `?sort={newest|active|votes|creation|hot|week|month}` (also `?tab=…`). The value is passed through to the generated feed URL when it matches one of the allowed sorts. Unknown values are silently dropped.
 
 ### Hashnode
 
@@ -576,17 +578,6 @@ Discovers RSS feeds for note.com, including hashtag and magazine feeds.
 
 ### Odysee
 
-Discovers RSS feeds for Nebula channels, the global video feed, and category feeds, each with a Plus-only variant.
-
-| URL Pattern | Feeds Generated |
-|-------------|-----------------|
-| `nebula.tv/{channel}` | Videos + Videos (Plus) |
-| `nebula.tv` | All videos + All videos (Plus) |
-| `nebula.tv/videos` | All videos + All videos (Plus) |
-| `nebula.tv/videos?category={slug}` | Category + Category (Plus) + above |
-
-### Odysee
-
 Discovers RSS feeds for Odysee channels.
 
 | URL Pattern | Feeds Generated |
@@ -724,6 +715,19 @@ Discovers RSS and Atom feeds for InsaneJournal journals.
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | `*.insanejournal.com` | Posts feed (RSS + Atom) |
+
+### Lemmy
+
+Discovers RSS feeds for Lemmy instances, communities and users. Detected by the `Lemmy` generator meta tag or the `X-Powered-By` response header. There is no hardcoded instance list.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `{instance}/` or `/home` | All posts feed + local posts feed |
+| `{instance}/c/{community}` | Community feed |
+| `{instance}/u/{user}` | User feed |
+
+> [!NOTE]
+> Requires page content or response headers to detect Lemmy instances. The `?sort=` and `?limit=` query params are passed through to the generated feed URL. Unknown sort values are silently dropped.
 
 ### Libsyn
 
@@ -933,7 +937,8 @@ const feeds = await discoverFeeds('https://github.com/feedstand/feedstand', {
 Handlers are checked in order. The first matching handler generates the feeds:
 
 ```typescript
-import { githubHandler, youtubeHandler } from 'feedscout/platform'
+import { discoverFeeds } from 'feedscout'
+import { githubHandler, redditHandler, youtubeHandler } from 'feedscout/platform'
 
 const feeds = await discoverFeeds(url, {
   methods: {
@@ -1054,9 +1059,9 @@ import {
 Use the Platform discovery function directly to get URIs without validation:
 
 ```typescript
-import { discoverUrisFromPlatform } from 'feedscout/platform'
+import { discoverUrisFromPlatform, youtubeHandler } from 'feedscout/platform'
 
-const uris = discoverUrisFromPlatform(htmlContent, {
+const uris = await discoverUrisFromPlatform(htmlContent, undefined, {
   baseUrl: 'https://www.youtube.com/@mkbhd',
   handlers: [youtubeHandler],
 })
@@ -1071,15 +1076,39 @@ const uris = discoverUrisFromPlatform(htmlContent, {
 //   },
 //   {
 //     uri: 'https://www.youtube.com/feeds/videos.xml?playlist_id=UULFBJycsmduvYEL83R_U4JriQ',
-//     hint: { key: 'youtube:videos', label: 'Videos only' },
+//     hint: { key: 'youtube:videos', label: 'Videos' },
 //   },
 //   {
 //     uri: 'https://www.youtube.com/feeds/videos.xml?playlist_id=UUSHBJycsmduvYEL83R_U4JriQ',
-//     hint: { key: 'youtube:shorts', label: 'Shorts only' },
+//     hint: { key: 'youtube:shorts', label: 'Shorts' },
 //   },
 //   {
 //     uri: 'https://www.youtube.com/feeds/videos.xml?playlist_id=UULVBJycsmduvYEL83R_U4JriQ',
-//     hint: { key: 'youtube:live', label: 'Live streams only' },
+//     hint: { key: 'youtube:live', label: 'Live streams' },
+//   },
+//   {
+//     uri: 'https://www.youtube.com/feeds/videos.xml?playlist_id=UULPBJycsmduvYEL83R_U4JriQ',
+//     hint: { key: 'youtube:popular-videos', label: 'Popular videos' },
+//   },
+//   {
+//     uri: 'https://www.youtube.com/feeds/videos.xml?playlist_id=UUPSBJycsmduvYEL83R_U4JriQ',
+//     hint: { key: 'youtube:popular-shorts', label: 'Popular shorts' },
+//   },
+//   {
+//     uri: 'https://www.youtube.com/feeds/videos.xml?playlist_id=UUPVBJycsmduvYEL83R_U4JriQ',
+//     hint: { key: 'youtube:popular-live', label: 'Popular live streams' },
+//   },
+//   {
+//     uri: 'https://www.youtube.com/feeds/videos.xml?playlist_id=UUMOBJycsmduvYEL83R_U4JriQ',
+//     hint: { key: 'youtube:member-videos', label: 'Member videos' },
+//   },
+//   {
+//     uri: 'https://www.youtube.com/feeds/videos.xml?playlist_id=UUMSBJycsmduvYEL83R_U4JriQ',
+//     hint: { key: 'youtube:member-shorts', label: 'Member shorts' },
+//   },
+//   {
+//     uri: 'https://www.youtube.com/feeds/videos.xml?playlist_id=UUMVBJycsmduvYEL83R_U4JriQ',
+//     hint: { key: 'youtube:member-live', label: 'Member live streams' },
 //   },
 // ]
 ```

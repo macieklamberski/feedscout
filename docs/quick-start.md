@@ -59,7 +59,7 @@ const feeds = await discoverFeeds('https://example.com', {
 
 ### Discover Platform Feeds
 
-For YouTube, GitHub, Reddit, and 30+ other platforms, Feedscout can generate feed URLs directly from the page URL:
+For YouTube, GitHub, Reddit, and 80+ other platforms, Feedscout can generate feed URLs directly from the page URL:
 
 ```typescript
 const feeds = await discoverFeeds('https://www.youtube.com/@mkbhd', {
@@ -154,7 +154,7 @@ const blogrolls = await discoverBlogrolls('https://example.com')
 
 ### Using Existing Content
 
-The same [existing content pattern](#using-existing-content) works here — pass `{ url, content, headers }` to avoid extra fetches.
+The same [existing content pattern](#using-existing-content) works here: pass `{ url, content, headers }` to avoid extra fetches.
 
 ## Discover Favicons
 
@@ -169,7 +169,7 @@ const favicons = await discoverFavicons('https://example.com')
 // }]
 ```
 
-The same [existing content pattern](#using-existing-content) works here — pass `{ url, content, headers }` to avoid extra fetches.
+The same [existing content pattern](#using-existing-content) works here: pass `{ url, content, headers }` to avoid extra fetches.
 
 ## Discover WebSub Hubs
 
@@ -184,7 +184,7 @@ const hubs = await discoverHubs('https://example.com/feed.xml')
 // }]
 ```
 
-The same [existing content pattern](#using-existing-content) works here — pass `{ url, content, headers }` to avoid extra fetches.
+The same [existing content pattern](#using-existing-content) works here: pass `{ url, content, headers }` to avoid extra fetches.
 
 ## Next Steps
 

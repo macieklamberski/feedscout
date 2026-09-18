@@ -157,7 +157,7 @@ const feeds = await discoverFeeds('https://example.com', {
 
 Use a custom `fetchFn` when you need:
 
-- **Consistent HTTP client** — Use the same library across your app.
-- **Custom configuration** — Timeouts, proxies, retry logic.
-- **Request interceptors** — Logging, authentication, caching.
-- **Environment compatibility** — Some runtimes may not support native fetch.
+- **Consistent HTTP client**: Use the same library across your app.
+- **Custom configuration**: Timeouts, proxies, retry logic.
+- **Request interceptors**: Logging, authentication, caching.
+- **Environment compatibility**: Some runtimes may not support native fetch.
