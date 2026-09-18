@@ -45,7 +45,7 @@ const feeds = await discoverFeeds('https://example.com')
 //   format: 'rss',
 //   title: 'Example Blog',
 //   description: 'A blog about examples',
-//   siteUrl: 'https://example.com',
+//   siteUrl: 'https://example.com/',
 // }]
 ```
 
@@ -66,13 +66,16 @@ const feeds = await discoverFeeds('https://www.youtube.com/@mkbhd', {
   methods: ['platform'],
 })
 
-// [{
-//   url: 'https://www.youtube.com/feeds/videos.xml?channel_id=UCBJycsmduvYEL83R_U4JriQ',
-//   isValid: true,
-//   format: 'atom',
-//   title: 'Marques Brownlee',
-//   hint: { key: 'youtube:all', label: 'All uploads' },
-// }]
+// [
+//   {
+//     url: 'https://www.youtube.com/feeds/videos.xml?channel_id=UCBJycsmduvYEL83R_U4JriQ',
+//     isValid: true,
+//     format: 'atom',
+//     title: 'Marques Brownlee',
+//     hint: { key: 'youtube:all', label: 'All uploads' },
+//   },
+//   ...one result for each other feed variant, like videos, shorts and live streams.
+// ]
 ```
 
 ### Using Existing Content
@@ -103,7 +106,7 @@ const feeds = await discoverFeeds(
 //     format: 'rss',
 //     title: 'Example Blog',
 //     description: 'A blog about examples',
-//     siteUrl: 'https://example.com',
+//     siteUrl: 'https://example.com/',
 //   },
 //   {
 //     url: 'https://example.com/rss',
@@ -111,7 +114,7 @@ const feeds = await discoverFeeds(
 //     format: 'rss',
 //     title: 'Example Blog',
 //     description: 'A blog about examples',
-//     siteUrl: 'https://example.com',
+//     siteUrl: 'https://example.com/',
 //   },
 // ]
 ```
@@ -134,7 +137,7 @@ const feeds = await discoverFeeds(
 //   format: 'rss',
 //   title: 'Example Blog',
 //   description: 'A blog about examples',
-//   siteUrl: 'https://example.com',
+//   siteUrl: 'https://example.com/',
 // }]
 ```
 
@@ -179,7 +182,7 @@ import { discoverHubs } from 'feedscout'
 const hubs = await discoverHubs('https://example.com/feed.xml')
 
 // [{
-//   hub: 'https://pubsubhubbub.appspot.com',
+//   hub: 'https://pubsubhubbub.appspot.com/',
 //   topic: 'https://example.com/feed.xml',
 // }]
 ```

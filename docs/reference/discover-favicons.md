@@ -41,10 +41,10 @@ All options are optional. When not provided, sensible defaults are used.
 |----------|------|---------|-------------|
 | `methods` | `DiscoverMethodsConfig` | `['platform', 'feed', 'html', 'headers', 'guess']` | Which methods to use |
 | `fetchFn` | `DiscoverFetchFn` | native fetch | Custom fetch function |
-| `extractFn` | `DiscoverExtractFn` | status check | Custom extraction function |
+| `extractFn` | `DiscoverExtractFn` | image check | Custom extraction function |
 | `resolveUrlFn` | `DiscoverResolveUrlFn` | resolve relative | Custom URL resolution function |
 | `resolveSiteUrlFn` | `DiscoverResolveSiteUrlFn` | site link from feed | Resolves the site URL to scan when the input is a feed |
-| `stopOnFirstMethod` | `boolean` | `false` | Stop URI collection after first method with results |
+| `stopOnFirstMethod` | `boolean` | `false` | Stop after the first method that finds a valid result |
 | `stopOnFirstResult` | `boolean` | `false` | Stop after first valid favicon |
 | `concurrency` | `number` | `3` | Max parallel validations |
 | `maxUris` | `number` | `50` | Max total candidate URIs to fetch across all methods |
@@ -69,7 +69,7 @@ Returns a promise that resolves to an array of results:
   url: 'https://example.com/missing.png',
   isValid: false,
   method: 'guess',
-  error: Error,
+  error: Error, // Only set when the request itself failed
 }
 ```
 

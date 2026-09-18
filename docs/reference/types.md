@@ -14,8 +14,10 @@ import type {
   DiscoverResult,
   DiscoverProgress,
   DiscoverFetchFn,
+  DiscoverExtractFn,
   DiscoverResolveUrlFn,
   DiscoverResolveSiteUrlFn,
+  DiscoverOnProgressFn,
   DiscoverOnErrorFn,
   DiscoverErrorContext,
   DiscoverUriEntry,
@@ -25,9 +27,12 @@ import type {
 
 import type { FeedResult } from 'feedscout/feeds'
 import type { BlogrollResult } from 'feedscout/blogrolls'
+import type { FaviconResult } from 'feedscout/favicons'
 import type { HubResult, DiscoverHubsOptions } from 'feedscout/hubs'
 import type { PlatformHandler, PlatformMethodOptions } from 'feedscout/platform'
 ```
+
+The [method option types](#method-option-types), `LinkSelector` and `MaybePromise` are not exported by name. They are listed here to describe the shapes that `methods` accepts.
 
 ## Input Types
 
@@ -62,9 +67,9 @@ type DiscoverOptions<TValid, TMethods extends DiscoverMethod = DiscoverMethod> =
   stopOnFirstResult?: boolean
   concurrency?: number
   maxUris?: number
-  includeInvalid?: boolean
   onProgress?: DiscoverOnProgressFn
   onError?: DiscoverOnErrorFn
+  includeInvalid?: boolean
 }
 ```
 
@@ -159,6 +164,14 @@ type BlogrollResult = {
 }
 ```
 
+### FaviconResult
+
+Valid favicon results carry no extra properties yet:
+
+```typescript
+type FaviconResult = {}
+```
+
 ### HubResult
 
 Result from `discoverHubs`:
@@ -238,6 +251,9 @@ type DiscoverErrorContext = {
 }
 ```
 
+- `fetchInput`: Fetching the input URL failed. Discovery continues with the URL alone. Platform and Guess still run. HTML, Headers and Feed throw, because they need the content or headers.
+- `resolveSiteUrl`: Fetching the site URL taken from a feed failed. Discovery continues with the original input.
+
 ## Fetch Types
 
 ### DiscoverFetchFn
@@ -278,6 +294,8 @@ type DiscoverExtractFn<TValid> = (input: {
   status?: number
 }) => MaybePromise<DiscoverResult<TValid>>
 ```
+
+The `status` is the HTTP status of the fetched URL. It is not set when the extractor runs on content passed in as input.
 
 ## URL Resolution Types
 

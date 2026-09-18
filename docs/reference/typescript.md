@@ -81,6 +81,9 @@ type BlogrollResult = {
 The `DiscoverOptions` type is generic to support custom extractors:
 
 ```typescript
+import type { DiscoverOptions } from 'feedscout'
+import type { FeedResult } from 'feedscout/feeds'
+
 // Default usage with FeedResult
 const options: DiscoverOptions<FeedResult> = {
   methods: ['html', 'guess'],
@@ -91,7 +94,7 @@ type CustomResult = {
   customField: string
 }
 
-const options: DiscoverOptions<CustomResult> = {
+const customOptions: DiscoverOptions<CustomResult> = {
   methods: ['html'],
   extractFn: async ({ url, content }) => {
     return {
@@ -171,6 +174,9 @@ import type { FeedResult } from 'feedscout/feeds'
 
 // Blogroll-specific types
 import type { BlogrollResult } from 'feedscout/blogrolls'
+
+// Favicon-specific types
+import type { FaviconResult } from 'feedscout/favicons'
 
 // Hub-specific types
 import type { HubResult, DiscoverHubsOptions } from 'feedscout/hubs'
