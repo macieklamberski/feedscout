@@ -181,7 +181,7 @@ const uris = discoverUrisFromGuess({
 ```
 
 > [!NOTE]
-> Like the other direct functions, the Guess method returns URLs without checking if they exist. Validation happens during the main discovery process. Unlike them, it always returns absolute URLs.
+> The Guess method builds absolute URLs from the base URL. It does not check if they exist. Validation happens in `discoverFeeds`.
 
 ## When to Use
 

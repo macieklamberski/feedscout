@@ -115,10 +115,7 @@ const hubs = await discoverHubs(
 import type { DiscoverFetchFn } from 'feedscout'
 
 const myCustomFetch: DiscoverFetchFn = async (url, options) => {
-  const response = await fetch(url, {
-    method: options?.method ?? 'GET',
-    headers: options?.headers,
-  })
+  const response = await fetch(url, options)
 
   return {
     headers: response.headers,

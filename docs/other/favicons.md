@@ -33,7 +33,7 @@ const favicons = await discoverFavicons('https://example.com', {
 ```
 
 ::: warning Untrusted SVG favicons
-A favicon validated as an SVG is returned by URL only. Its contents are not sanitized. SVG files can carry active content (e.g. `<svg onload="...">`), so treat returned SVG favicon URLs as untrusted: render them as `<img src>` (which neutralizes scripts) rather than inlining the markup, or sanitize before use.
+A favicon validated as an SVG is returned by URL only. Its contents are not sanitized. SVG files can carry active content (e.g. `<svg onload="...">`), so treat returned SVG favicon URLs as untrusted: render them as `<img src>` (which neutralizes scripts), not as inlined markup, or sanitize before use.
 :::
 
 ## Discovery Methods
@@ -61,7 +61,7 @@ The Platform method extracts avatars and icons directly from known platforms usi
 | Bluesky | Profile avatar | Public API |
 | Reddit | Subreddit icon or user avatar | Public API |
 | Tumblr | Blog avatar | URL pattern |
-| Codeberg / Gitea | User avatar | URL pattern |
+| Gitea (Codeberg, gitea.com) | User avatar | URL pattern |
 | Lobsters | User avatar | URL pattern |
 | SourceForge | Project icon | URL pattern |
 | DeviantArt | User avatar | URL pattern |

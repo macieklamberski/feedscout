@@ -70,8 +70,7 @@ const uris = discoverUrisFromHeaders(headers, {
 // ['/feed.xml']
 ```
 
-> [!NOTE]
-> URIs come back as written in the header, so they can be relative. `discoverFeeds()` resolves them against the page URL before fetching.
+URIs come back as written in the `Link` header, so they can be relative. `discoverFeeds` resolves them against the page URL.
 
 ## Providing Headers
 

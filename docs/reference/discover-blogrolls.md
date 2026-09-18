@@ -42,8 +42,8 @@ All options are optional. When not provided, sensible defaults are used.
 | `methods` | `DiscoverMethodsConfig` | `['html', 'headers', 'guess']` | Which methods to use |
 | `fetchFn` | `DiscoverFetchFn` | native fetch | Custom fetch function |
 | `extractFn` | `DiscoverExtractFn` | feedsmith | Custom OPML extraction function |
-| `resolveUrlFn` | `DiscoverResolveUrlFn` | | Custom URL resolution function |
-| `resolveSiteUrlFn` | `DiscoverResolveSiteUrlFn` | feed's site link | Picks a site URL to scan as well when the input is a feed |
+| `resolveUrlFn` | `DiscoverResolveUrlFn` | resolve relative | Custom URL resolution function |
+| `resolveSiteUrlFn` | `DiscoverResolveSiteUrlFn` | site link from feed | Resolves the site URL to scan when the input is a feed |
 | `stopOnFirstMethod` | `boolean` | `false` | Stop URI collection after first method with results |
 | `stopOnFirstResult` | `boolean` | `false` | Stop after first valid blogroll |
 | `concurrency` | `number` | `3` | Max parallel validations |

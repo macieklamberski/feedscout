@@ -49,6 +49,13 @@ Import from `feedscout/utils`:
 | `endsWithAnyOf` | Check if string ends with any pattern |
 | `omitEmpty` | Drop empty values from an array |
 
+Import from `feedscout`:
+
+| Function | Description |
+|----------|-------------|
+| `getFeedSiteUrl` | Get the site URL from a feed parsed with Feedsmith |
+| `defaultResolveSiteUrlFn` | Default site URL resolution used by `discoverBlogrolls` and `discoverFavicons` |
+
 ## Export Paths
 
 Feedscout uses multiple export paths for tree-shaking:

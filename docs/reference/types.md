@@ -4,7 +4,7 @@ title: "Reference: Types"
 
 # Types
 
-Core types are exported from the main `feedscout` package. Result, hub, and platform types come from their own export paths.
+The shared types are exported from the main `feedscout` package. Result types and platform types come from the path of the discoverer they belong to.
 
 ```typescript
 import type {
@@ -227,7 +227,7 @@ type DiscoverOnProgressFn = (progress: DiscoverProgress) => void
 
 ### DiscoverOnErrorFn
 
-Error callback function type. Called when fetching the input URL or the resolved site URL fails. Discovery continues either way:
+Error callback function type. Called when a request made by discovery itself fails, so the error is not lost:
 
 ```typescript
 type DiscoverOnErrorFn = (error: unknown, context: DiscoverErrorContext) => void
@@ -283,7 +283,7 @@ type DiscoverExtractFn<TValid> = (input: {
 
 ### DiscoverResolveUrlFn
 
-Custom URL resolution function type. Return `undefined` to drop the URL:
+Custom URL resolution function type. Return `undefined` to keep the URL as discovered:
 
 ```typescript
 type DiscoverResolveUrlFn = (url: string, baseUrl: string | undefined) => string | undefined
@@ -291,7 +291,7 @@ type DiscoverResolveUrlFn = (url: string, baseUrl: string | undefined) => string
 
 ### DiscoverResolveSiteUrlFn
 
-Picks a site URL to scan when the input is a feed. Return `undefined` to skip the extra scan:
+Resolves the site URL to scan when the input is a feed. Used by `discoverBlogrolls` and `discoverFavicons`, where the default reads the site link from the feed and falls back to the origin of the feed URL. Return `undefined` to scan the input as is:
 
 ```typescript
 type DiscoverResolveSiteUrlFn = (
@@ -314,7 +314,7 @@ type FeedMethodOptions = {
 }
 ```
 
-`FeedMethodData` is the return type of feedsmith's `parseFeed`. It contains `format` (e.g. `'atom'`, `'json'`) and `feed` (the parsed feed object). The `extractUrls` callback should return an array of URLs. For favicons, the default extractor pulls `icon` from Atom feeds and `favicon`/`icon` from JSON Feeds.
+`FeedMethodData` is the return type of Feedsmith's `parseFeed`. It contains `format` (e.g. `'atom'`, `'json'`) and `feed` (the parsed feed object). The `extractUrls` callback should return an array of URLs. For favicons, the default extractor pulls `icon` from Atom feeds and `favicon`/`icon` from JSON Feeds.
 
 ### HtmlMethodOptions
 
