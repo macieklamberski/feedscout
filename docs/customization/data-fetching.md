@@ -10,7 +10,7 @@ Below are copy-paste examples for popular HTTP clients. See the [`DiscoverFetchF
 
 ## Axios
 
-[Axios](https://axios-http.com) throws errors for non-2xx responses by default. Use `validateStatus: () => true` to prevent this, since Feedscout handles HTTP errors internally.
+[Axios](https://axios-http.com) throws errors for non-2xx responses by default. Use `validateStatus: () => true` to prevent this, since Feedscout handles HTTP errors internally. Set `responseType: 'text'` as well, so Axios does not parse JSON Feed responses into objects.
 
 ```typescript
 import axios from 'axios'
@@ -21,11 +21,12 @@ const axiosFetch: DiscoverFetchFn = async (url, options) => {
     url,
     method: options?.method ?? 'GET',
     headers: options?.headers,
+    responseType: 'text',
     validateStatus: () => true,
   })
 
   return {
-    headers: new Headers(response.headers.toJSON() as Record<string, string>),
+    headers: new Headers(response.headers as Record<string, string>),
     body: response.data,
     url: response.request?.res?.responseUrl ?? url,
     status: response.status,
@@ -51,11 +52,12 @@ const axiosFetch: DiscoverFetchFn = async (url, options) => {
     url,
     method: options?.method ?? 'GET',
     headers: options?.headers,
+    responseType: 'text',
     validateStatus: () => true,
   })
 
   return {
-    headers: new Headers(response.headers.toJSON() as Record<string, string>),
+    headers: new Headers(response.headers as Record<string, string>),
     body: response.data,
     url: response.request?.res?.responseUrl ?? url,
     status: response.status,
@@ -157,7 +159,7 @@ const feeds = await discoverFeeds('https://example.com', {
 
 Use a custom `fetchFn` when you need:
 
-- **Consistent HTTP client** — Use the same library across your app.
-- **Custom configuration** — Timeouts, proxies, retry logic.
-- **Request interceptors** — Logging, authentication, caching.
-- **Environment compatibility** — Some runtimes may not support native fetch.
+- **Consistent HTTP client**: Use the same library across your app.
+- **Custom configuration**: Timeouts, proxies, retry logic.
+- **Request interceptors**: Logging, authentication, caching.
+- **Environment compatibility**: Some runtimes may not support native fetch.

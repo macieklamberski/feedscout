@@ -40,10 +40,12 @@ Results from the [Platform method](/feeds/platform) also include a [`hint`](/fee
 
 ## How Discovery Works
 
-1. **URI Collection** — Each enabled method extracts potential feed URLs.
-2. **Deduplication** — Duplicate URLs are removed.
-3. **Validation** — Each URL is fetched and parsed to confirm it's a valid feed.
-4. **Results** — Valid feeds are returned with metadata (format, title, etc.).
+1. **URI Collection**: Each enabled method extracts potential feed URLs.
+2. **Deduplication**: Duplicate URLs are removed.
+3. **Validation**: Each URL is fetched and parsed to confirm it's a valid feed.
+4. **Results**: Valid feeds are returned with metadata (format, title, etc.).
+
+If the input is already a valid feed, it is returned as the only result and no methods run.
 
 ## Specifying Methods
 
