@@ -3,15 +3,6 @@ import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
-//
-// Buzzsprout podcast pages at `buzzsprout.com/{id}` (and episode, about, and
-// contributor subpaths) advertise the canonical RSS via standard
-// `<link rel="alternate">` pointing at `feeds.buzzsprout.com/{id}.rss`, which
-// 301-redirects to `rss.buzzsprout.com/{id}.rss`. Vanity hosts
-// (`{slug}.buzzsprout.com`) and user-mapped custom domains are not statically
-// resolvable without a fetch.
-// The handler extracts the numeric podcast ID from any subpath and emits the
-// post-redirect `rss.buzzsprout.com` URL directly, saving a hop.
 
 const hosts = ['buzzsprout.com', 'www.buzzsprout.com']
 const numericRegex = /^\d+$/

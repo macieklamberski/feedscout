@@ -3,24 +3,7 @@ import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, hasMetaContent } from '../../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-//
-// BookWyrm instances expose per-user activity, reviews, quotes, and comments
-// feeds at `/user/{user}/{rss,rss-reviews,rss-quotes,rss-comments}`, plus
-// per-shelf feeds at `/user/{user}/(shelf|books)/{shelf-id}/rss`. Because
-// BookWyrm is self-hosted on arbitrary hostnames, matching relies on the page
-// HTML rather than a fixed host list: 64 instances, none of them dominant.
-// The handler emits all four per-user feeds plus the shelf feed when the URL
-// is a shelf page.
-//
-// Current BookWyrm serves no generator meta. Measured across the instance
-// directory on 2026-09-11: absent on 27 of 27 readable instances, present on
-// none. The source link the footer template renders is what identifies the
-// software now, and it was present on all 26 that served a real page. The
-// generator check stays for any install still emitting it.
-//
-// An instance that themes its footer away is not matched. Nothing else on the
-// page names the software: the theme stylesheet is a build artefact and the
-// opensearch title is translated per instance.
+// Generic partly covers profile, shelf.
 
 const profileRegex = /^\/user\/([^/]+)/
 const shelfRegex = /^\/user\/([^/]+)\/(?:shelf|books)\/([^/]+)\/?/

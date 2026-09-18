@@ -4,14 +4,8 @@ import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-//
-// itch.io serves RSS 2.0 by appending `.xml` to browse paths: `/games.xml`,
-// `/games/{sort}.xml`, `/games/tag-{t}.xml`, `/games/platform-{p}.xml`,
-// `/games/genre-{g}.xml`, `/games/made-with-{e}.xml`, `/games/by-{user}.xml`,
-// `/{section}.xml`, plus per-creator `{creator}.itch.io/{game}/devlog.rss`
-// and homepage cluster feeds (`/feed/featured.xml`, `/new.xml`, `/sales.xml`,
-// `/blog.rss`). itch.io pages do not advertise these via `<link rel="alternate">`,
-// so the handler maps each browse URL to its `.xml` twin.
+// Generic covers devlog (html), partly covers home.
+// Handler needed for: browseByUser, user.
 
 const mainHosts = ['itch.io', 'www.itch.io']
 const sections = [
