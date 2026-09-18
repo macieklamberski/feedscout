@@ -61,7 +61,7 @@ import { mimeTypes, urisBalanced } from 'feedscout/feeds'
 import { urisComprehensive } from 'feedscout/blogrolls'
 
 // Favicon-specific defaults and types
-import { defaultGuessPaths } from 'feedscout/favicons'
+import { defaultGuessPaths, defaultIconRels } from 'feedscout/favicons'
 
 // Hub-specific types
 import type { HubResult, DiscoverHubsOptions } from 'feedscout/hubs'
