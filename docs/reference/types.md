@@ -14,8 +14,10 @@ import type {
   DiscoverResult,
   DiscoverProgress,
   DiscoverFetchFn,
+  DiscoverExtractFn,
   DiscoverResolveUrlFn,
   DiscoverResolveSiteUrlFn,
+  DiscoverOnProgressFn,
   DiscoverOnErrorFn,
   DiscoverErrorContext,
   DiscoverUriEntry,
@@ -25,9 +27,12 @@ import type {
 
 import type { FeedResult } from 'feedscout/feeds'
 import type { BlogrollResult } from 'feedscout/blogrolls'
+import type { FaviconResult } from 'feedscout/favicons'
 import type { HubResult, DiscoverHubsOptions } from 'feedscout/hubs'
 import type { PlatformHandler, PlatformMethodOptions } from 'feedscout/platform'
 ```
+
+The [method option types](#method-option-types), `LinkSelector` and `MaybePromise` are not exported by name. They are listed here to describe the shapes that `methods` accepts.
 
 ## Input Types
 
@@ -62,9 +67,9 @@ type DiscoverOptions<TValid, TMethods extends DiscoverMethod = DiscoverMethod> =
   stopOnFirstResult?: boolean
   concurrency?: number
   maxUris?: number
-  includeInvalid?: boolean
   onProgress?: DiscoverOnProgressFn
   onError?: DiscoverOnErrorFn
+  includeInvalid?: boolean
 }
 ```
 
@@ -106,6 +111,7 @@ type DiscoverHubsOptions = {
   methods?: DiscoverHubsMethodsConfig
   fetchFn?: DiscoverFetchFn
   resolveUrlFn?: DiscoverResolveUrlFn
+  onError?: DiscoverOnErrorFn
 }
 
 type DiscoverHubsMethodsConfig = Array<'headers' | 'html' | 'feed'>
@@ -157,6 +163,14 @@ Valid blogroll result properties:
 type BlogrollResult = {
   title?: string
 }
+```
+
+### FaviconResult
+
+Valid favicon results carry no extra properties yet:
+
+```typescript
+type FaviconResult = {}
 ```
 
 ### HubResult
@@ -233,10 +247,25 @@ Error callback function type. Called when a request made by discovery itself fai
 type DiscoverOnErrorFn = (error: unknown, context: DiscoverErrorContext) => void
 
 type DiscoverErrorContext = {
-  phase: 'fetchInput' | 'resolveSiteUrl'
+  phase:
+    | 'fetchInput'
+    | 'resolveSiteUrl'
+    | 'resolveUrlFn'
+    | 'resolveSiteUrlFn'
+    | 'extractFn'
+    | 'onProgress'
   url?: string
 }
 ```
+
+- `fetchInput`: Fetching the input URL failed. Discovery continues with the URL alone: Platform and Guess still run, and the methods that need content or headers are skipped.
+- `resolveSiteUrl`: Fetching the site URL taken from a feed failed. Discovery continues with the original input.
+- `resolveUrlFn`: The URL resolution function threw. The URL is kept as discovered.
+- `resolveSiteUrlFn`: The site URL resolution function threw. Discovery continues with the original input.
+- `extractFn`: The extractor threw on the input content. The input is not returned as a result, and the methods run.
+- `onProgress`: The progress callback threw. The result it was called for is kept.
+
+A function you pass in never ends discovery by throwing. The error is reported here and discovery continues as described above. The default functions are reported the same way, for example when a page links to a malformed absolute URL. An error thrown from `onError` itself is ignored.
 
 ## Fetch Types
 
@@ -278,6 +307,8 @@ type DiscoverExtractFn<TValid> = (input: {
   status?: number
 }) => MaybePromise<DiscoverResult<TValid>>
 ```
+
+The `status` is the HTTP status of the fetched URL. It is not set when the extractor runs on content passed in as input.
 
 ## URL Resolution Types
 

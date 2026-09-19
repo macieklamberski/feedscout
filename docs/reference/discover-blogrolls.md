@@ -44,13 +44,13 @@ All options are optional. When not provided, sensible defaults are used.
 | `extractFn` | `DiscoverExtractFn` | feedsmith | Custom OPML extraction function |
 | `resolveUrlFn` | `DiscoverResolveUrlFn` | resolve relative | Custom URL resolution function |
 | `resolveSiteUrlFn` | `DiscoverResolveSiteUrlFn` | site link from feed | Resolves the site URL to scan when the input is a feed |
-| `stopOnFirstMethod` | `boolean` | `false` | Stop URI collection after first method with results |
+| `stopOnFirstMethod` | `boolean` | `false` | Stop after the first method that finds a valid result |
 | `stopOnFirstResult` | `boolean` | `false` | Stop after first valid blogroll |
 | `concurrency` | `number` | `3` | Max parallel validations |
 | `maxUris` | `number` | `50` | Max total candidate URIs to fetch across all methods |
 | `includeInvalid` | `boolean` | `false` | Include invalid results |
 | `onProgress` | `DiscoverOnProgressFn` | | Progress callback |
-| `onError` | `DiscoverOnErrorFn` | | Called when fetching the input or the site URL fails |
+| `onError` | `DiscoverOnErrorFn` | | Called when fetching the input or the site URL fails, or a function you passed in throws |
 
 ## Return Value
 
@@ -70,7 +70,7 @@ Returns a promise that resolves to an array of results:
   url: 'https://example.com/not-opml.xml',
   isValid: false,
   method: 'guess',
-  error: Error,
+  error: Error, // Only set when the request itself failed
 }
 ```
 
