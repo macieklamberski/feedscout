@@ -10,7 +10,13 @@ import {
 } from '../types.js'
 import { discoverUris } from '../uris/index.js'
 import { processConcurrently, toPositiveInteger } from '../utils.js'
-import { normalizeInput, normalizeMethodsConfig, normalizeUriEntry } from './utils.js'
+import {
+  isInputFetched,
+  normalizeInput,
+  normalizeMethodsConfig,
+  normalizeUriEntry,
+  pickUrlOnlyMethods,
+} from './utils.js'
 
 export const discover = async <TValid>(
   input: DiscoverInput,
@@ -39,6 +45,10 @@ export const discover = async <TValid>(
 
   // Normalize input: string → fetch URL, object → use provided content.
   const sourceInput = await normalizeInput(input, fetchFn, onError)
+
+  const availableMethods = isInputFetched(input, sourceInput)
+    ? methods
+    : pickUrlOnlyMethods(methods)
 
   // Step 1: Check if content is already valid (only if content is provided).
   if (sourceInput.content) {
@@ -75,7 +85,7 @@ export const discover = async <TValid>(
   }
 
   // Step 2: Build methods config from input and selected methods.
-  const methodsConfig = normalizeMethodsConfig(sourceInput, siteInput, methods, defaults)
+  const methodsConfig = normalizeMethodsConfig(sourceInput, siteInput, availableMethods, defaults)
 
   // Step 3: Discover URIs using selected methods.
   const urisByMethod = await discoverUris(methodsConfig, fetchFn)
