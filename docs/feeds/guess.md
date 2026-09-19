@@ -223,6 +223,14 @@ generateUrlCombinations(['https://example.com'], ['/feed', '/rss'])
 // ]
 ```
 
+## Default Values
+
+You can import the default Guess options:
+
+```typescript
+import { defaultGuessOptions } from 'feedscout/feeds'
+```
+
 ## Using Directly
 
 You can use the Guess discovery function directly:
