@@ -1,4 +1,4 @@
-import { isAnyOf, isHostOf } from 'trousse'
+import { isAnyOf, isHostOf, parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../../common/types.js'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
@@ -30,23 +30,25 @@ export const learnkuHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    try {
-      const { origin } = new URL(url)
-      const community = getCommunity(url)
-      const uris: Array<DiscoverUriEntry> = []
+    const parsedUrl = parseUrl(url)
 
-      if (community) {
-        uris.push({
-          uri: `${origin}/${community}/feed`,
-          hint: composeHint('learnku:community'),
-        })
-      }
+    if (!parsedUrl) {
+      return []
+    }
 
-      uris.push({ uri: `${origin}/feed`, hint: composeHint('learnku:site') })
+    const { origin } = parsedUrl
+    const community = getCommunity(url)
+    const uris: Array<DiscoverUriEntry> = []
 
-      return uris
-    } catch {}
+    if (community) {
+      uris.push({
+        uri: `${origin}/${community}/feed`,
+        hint: composeHint('learnku:community'),
+      })
+    }
 
-    return []
+    uris.push({ uri: `${origin}/feed`, hint: composeHint('learnku:site') })
+
+    return uris
   },
 }

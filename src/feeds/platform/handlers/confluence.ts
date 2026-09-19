@@ -1,3 +1,4 @@
+import { parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../../common/types.js'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, getMetaContent } from '../../../common/utils.js'
@@ -29,31 +30,33 @@ export const isConfluenceHtml = (content: string): boolean => {
 
 export const confluenceHandler: PlatformHandler = {
   match: (url, content) => {
-    return URL.canParse(url) && Boolean(content) && isConfluenceHtml(content ?? '')
+    return Boolean(parseUrl(url)) && Boolean(content) && isConfluenceHtml(content ?? '')
   },
 
   resolve: (url, content) => {
-    try {
-      const { origin } = new URL(url)
-      const baseUrl = getBaseUrl(origin, content ?? '')
-      const spaceKey = getMetaContent(content ?? '', 'confluence-space-key')
-      const uris: Array<DiscoverUriEntry> = []
+    const parsedUrl = parseUrl(url)
 
-      if (spaceKey) {
-        uris.push({
-          uri: `${baseUrl}/plugins/servlet/streams?key=${spaceKey}`,
-          hint: composeHint('confluence:space'),
-        })
-      }
+    if (!parsedUrl) {
+      return []
+    }
 
+    const { origin } = parsedUrl
+    const baseUrl = getBaseUrl(origin, content ?? '')
+    const spaceKey = getMetaContent(content ?? '', 'confluence-space-key')
+    const uris: Array<DiscoverUriEntry> = []
+
+    if (spaceKey) {
       uris.push({
-        uri: `${baseUrl}/plugins/servlet/streams`,
-        hint: composeHint('confluence:site'),
+        uri: `${baseUrl}/plugins/servlet/streams?key=${spaceKey}`,
+        hint: composeHint('confluence:space'),
       })
+    }
 
-      return uris
-    } catch {}
+    uris.push({
+      uri: `${baseUrl}/plugins/servlet/streams`,
+      hint: composeHint('confluence:site'),
+    })
 
-    return []
+    return uris
   },
 }

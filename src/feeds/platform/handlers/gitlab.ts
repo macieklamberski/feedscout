@@ -1,4 +1,4 @@
-import { isAnyOf, isHostOf } from 'trousse'
+import { isAnyOf, isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, hasMetaContent } from '../../../common/utils.js'
 
@@ -74,32 +74,36 @@ const splitProjectPath = (pathSegments: Array<string>): [Array<string>, Array<st
 
 export const gitlabHandler: PlatformHandler = {
   match: (url, content, headers) => {
-    try {
-      const { pathname } = new URL(url)
-      const [projectSegments] = splitProjectPath(pathname.split('/').filter(Boolean))
+    const parsedUrl = parseUrl(url)
 
-      if (projectSegments.length === 0 || isAnyOf(projectSegments[0], excludedPaths)) {
-        return false
-      }
+    if (!parsedUrl) {
+      return false
+    }
 
-      if (isHostOf(url, hosts)) {
-        return true
-      }
+    const { pathname } = parsedUrl
+    const [projectSegments] = splitProjectPath(pathname.split('/').filter(Boolean))
 
-      // `og:site_name` is operator-set text, so a self-hosted match also needs a
-      // project path or the `/-/` separator.
-      if (projectSegments.length < 2 && !pathname.includes('/-/')) {
-        return false
-      }
+    if (projectSegments.length === 0 || isAnyOf(projectSegments[0], excludedPaths)) {
+      return false
+    }
 
-      if (content && isGitlabHtml(content)) {
-        return true
-      }
+    if (isHostOf(url, hosts)) {
+      return true
+    }
 
-      if (headers && isGitlabHeaders(headers)) {
-        return true
-      }
-    } catch {}
+    // `og:site_name` is operator-set text, so a self-hosted match also needs a
+    // project path or the `/-/` separator.
+    if (projectSegments.length < 2 && !pathname.includes('/-/')) {
+      return false
+    }
+
+    if (content && isGitlabHtml(content)) {
+      return true
+    }
+
+    if (headers && isGitlabHeaders(headers)) {
+      return true
+    }
 
     return false
   },

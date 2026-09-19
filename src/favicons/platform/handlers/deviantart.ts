@@ -1,25 +1,27 @@
-import { isAnyOf, isHostOf } from 'trousse'
+import { isAnyOf, isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { excludedPaths, hosts } from '../../../feeds/platform/handlers/deviantart.js'
 
 export const deviantartHandler: PlatformHandler = {
   match: (url) => {
-    try {
-      const { pathname } = new URL(url)
-      const segments = pathname.split('/').filter(Boolean)
+    const parsedUrl = parseUrl(url)
 
-      if (!isHostOf(url, hosts) || segments.length === 0) {
-        return false
-      }
+    if (!parsedUrl) {
+      return false
+    }
 
-      if (segments[0] === 'tag') {
-        return false
-      }
+    const { pathname } = parsedUrl
+    const segments = pathname.split('/').filter(Boolean)
 
-      return !isAnyOf(segments[0], excludedPaths)
-    } catch {}
+    if (!isHostOf(url, hosts) || segments.length === 0) {
+      return false
+    }
 
-    return false
+    if (segments[0] === 'tag') {
+      return false
+    }
+
+    return !isAnyOf(segments[0], excludedPaths)
   },
 
   resolve: (url) => {

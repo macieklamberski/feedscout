@@ -1,3 +1,4 @@
+import { parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 
@@ -20,40 +21,44 @@ export const isPleromaHtml = (content: string): boolean => {
 
 export const pleromaHandler: PlatformHandler = {
   match: (url, content) => {
-    try {
-      if (!content || !isPleromaHtml(content)) {
-        return false
-      }
+    if (!content || !isPleromaHtml(content)) {
+      return false
+    }
 
-      const { pathname } = new URL(url)
+    const parsedUrl = parseUrl(url)
 
-      return profileRegex.test(pathname)
-    } catch {}
+    if (!parsedUrl) {
+      return false
+    }
 
-    return false
+    const { pathname } = parsedUrl
+
+    return profileRegex.test(pathname)
   },
 
   resolve: (url) => {
-    try {
-      const { origin, pathname } = new URL(url)
-      const match = pathname.match(profileRegex)
+    const parsedUrl = parseUrl(url)
 
-      if (!match?.[1]) {
-        return []
-      }
+    if (!parsedUrl) {
+      return []
+    }
 
-      return [
-        {
-          uri: `${origin}/users/${match[1]}/feed.atom`,
-          hint: composeHint('pleroma:posts'),
-        },
-        {
-          uri: `${origin}/users/${match[1]}/feed.rss`,
-          hint: composeHint('pleroma:posts-rss'),
-        },
-      ]
-    } catch {}
+    const { origin, pathname } = parsedUrl
+    const match = pathname.match(profileRegex)
 
-    return []
+    if (!match?.[1]) {
+      return []
+    }
+
+    return [
+      {
+        uri: `${origin}/users/${match[1]}/feed.atom`,
+        hint: composeHint('pleroma:posts'),
+      },
+      {
+        uri: `${origin}/users/${match[1]}/feed.rss`,
+        hint: composeHint('pleroma:posts-rss'),
+      },
+    ]
   },
 }

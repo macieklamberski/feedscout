@@ -1,4 +1,4 @@
-import { isSubdomainOf } from 'trousse'
+import { isSubdomainOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 
@@ -23,23 +23,25 @@ export const mailchimpHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    try {
-      const { origin, searchParams } = new URL(url)
-      const user = searchParams.get('u')
-      const id = searchParams.get('id')
+    const parsedUrl = parseUrl(url)
 
-      if (!user || !id) {
-        return []
-      }
+    if (!parsedUrl) {
+      return []
+    }
 
-      return [
-        {
-          uri: `${origin}/feed?u=${user}&id=${id}`,
-          hint: composeHint('mailchimp:archive'),
-        },
-      ]
-    } catch {}
+    const { origin, searchParams } = parsedUrl
+    const user = searchParams.get('u')
+    const id = searchParams.get('id')
 
-    return []
+    if (!user || !id) {
+      return []
+    }
+
+    return [
+      {
+        uri: `${origin}/feed?u=${user}&id=${id}`,
+        hint: composeHint('mailchimp:archive'),
+      },
+    ]
   },
 }

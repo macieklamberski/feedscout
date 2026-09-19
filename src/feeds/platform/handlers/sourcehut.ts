@@ -1,4 +1,4 @@
-import { isHostOf } from 'trousse'
+import { isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 
@@ -28,26 +28,28 @@ export const sourcehutHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    try {
-      const { origin } = new URL(url)
-      const repoPath = getRepoPath(url)
+    const parsedUrl = parseUrl(url)
 
-      if (!repoPath) {
-        return []
-      }
+    if (!parsedUrl) {
+      return []
+    }
 
-      return [
-        {
-          uri: `${origin}/${repoPath}/log/rss.xml`,
-          hint: composeHint('sourcehut:commits'),
-        },
-        {
-          uri: `${origin}/${repoPath}/refs/rss.xml`,
-          hint: composeHint('sourcehut:refs'),
-        },
-      ]
-    } catch {}
+    const { origin } = parsedUrl
+    const repoPath = getRepoPath(url)
 
-    return []
+    if (!repoPath) {
+      return []
+    }
+
+    return [
+      {
+        uri: `${origin}/${repoPath}/log/rss.xml`,
+        hint: composeHint('sourcehut:commits'),
+      },
+      {
+        uri: `${origin}/${repoPath}/refs/rss.xml`,
+        hint: composeHint('sourcehut:refs'),
+      },
+    ]
   },
 }

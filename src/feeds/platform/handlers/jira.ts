@@ -1,4 +1,4 @@
-import { isSubdomainOf } from 'trousse'
+import { isSubdomainOf, parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../../common/types.js'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, getMetaContent } from '../../../common/utils.js'
@@ -45,51 +45,55 @@ export const isJiraHtml = (content: string): boolean => {
 
 export const jiraHandler: PlatformHandler = {
   match: (url, content) => {
-    try {
-      const { pathname } = new URL(url)
+    const parsedUrl = parseUrl(url)
 
-      if (confluencePathRegex.test(pathname)) {
-        return false
-      }
+    if (!parsedUrl) {
+      return false
+    }
 
-      if (isCloudHost(url)) {
-        return true
-      }
+    const { pathname } = parsedUrl
 
-      return Boolean(content) && isJiraHtml(content ?? '') && isJiraPath(pathname)
-    } catch {}
+    if (confluencePathRegex.test(pathname)) {
+      return false
+    }
 
-    return false
+    if (isCloudHost(url)) {
+      return true
+    }
+
+    return Boolean(content) && isJiraHtml(content ?? '') && isJiraPath(pathname)
   },
 
   resolve: (url, content) => {
-    try {
-      const { origin, pathname } = new URL(url)
+    const parsedUrl = parseUrl(url)
 
-      if (confluencePathRegex.test(pathname)) {
-        return []
-      }
+    if (!parsedUrl) {
+      return []
+    }
 
-      const contextPath = getMetaContent(content ?? '', 'ajs-context-path') ?? ''
-      const baseUrl = `${origin}${contextPath}`.replace(trailingSlashRegex, '')
-      const projectKey = getProjectKey(pathname, content ?? '')
-      const uris: Array<DiscoverUriEntry> = []
+    const { origin, pathname } = parsedUrl
 
-      if (projectKey) {
-        uris.push({
-          uri: `${baseUrl}/plugins/servlet/streams?key=${projectKey}`,
-          hint: composeHint('jira:project'),
-        })
-      }
+    if (confluencePathRegex.test(pathname)) {
+      return []
+    }
 
+    const contextPath = getMetaContent(content ?? '', 'ajs-context-path') ?? ''
+    const baseUrl = `${origin}${contextPath}`.replace(trailingSlashRegex, '')
+    const projectKey = getProjectKey(pathname, content ?? '')
+    const uris: Array<DiscoverUriEntry> = []
+
+    if (projectKey) {
       uris.push({
-        uri: `${baseUrl}/plugins/servlet/streams`,
-        hint: composeHint('jira:site'),
+        uri: `${baseUrl}/plugins/servlet/streams?key=${projectKey}`,
+        hint: composeHint('jira:project'),
       })
+    }
 
-      return uris
-    } catch {}
+    uris.push({
+      uri: `${baseUrl}/plugins/servlet/streams`,
+      hint: composeHint('jira:site'),
+    })
 
-    return []
+    return uris
   },
 }

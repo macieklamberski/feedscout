@@ -1,3 +1,4 @@
+import { parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 
@@ -14,20 +15,24 @@ const blogHostRegex = /\.blog\d*\.fc2\.com$/i
 
 export const fc2Handler: PlatformHandler = {
   match: (url) => {
-    try {
-      return blogHostRegex.test(new URL(url).hostname)
-    } catch {}
+    const parsedUrl = parseUrl(url)
 
-    return false
+    if (!parsedUrl) {
+      return false
+    }
+
+    return blogHostRegex.test(parsedUrl.hostname)
   },
 
   resolve: (url) => {
-    try {
-      const { origin } = new URL(url)
+    const parsedUrl = parseUrl(url)
 
-      return [{ uri: `${origin}/?xml`, hint: composeHint('fc2:posts') }]
-    } catch {}
+    if (!parsedUrl) {
+      return []
+    }
 
-    return []
+    const { origin } = parsedUrl
+
+    return [{ uri: `${origin}/?xml`, hint: composeHint('fc2:posts') }]
   },
 }

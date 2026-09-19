@@ -1,3 +1,4 @@
+import { parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, hasMetaContent } from '../../../common/utils.js'
 
@@ -86,62 +87,70 @@ export const isLemmyHeaders = (headers: Headers): boolean => {
 
 export const lemmyHandler: PlatformHandler = {
   match: (url, content, headers) => {
-    try {
-      const { pathname } = new URL(url)
+    const parsedUrl = parseUrl(url)
 
-      if (!isCommunityPath(pathname) && !isUserPath(pathname) && !isHomePath(pathname)) {
-        return false
-      }
+    if (!parsedUrl) {
+      return false
+    }
 
-      if (content && isLemmyHtml(content)) {
-        return true
-      }
+    const { pathname } = parsedUrl
 
-      if (headers && isLemmyHeaders(headers)) {
-        return true
-      }
-    } catch {}
+    if (!isCommunityPath(pathname) && !isUserPath(pathname) && !isHomePath(pathname)) {
+      return false
+    }
+
+    if (content && isLemmyHtml(content)) {
+      return true
+    }
+
+    if (headers && isLemmyHeaders(headers)) {
+      return true
+    }
 
     return false
   },
 
   resolve: (url) => {
-    try {
-      const { origin, pathname, searchParams } = new URL(url)
-      const segments = pathname.split('/').filter(Boolean)
-      const sortSuffix = getQuerySuffix(searchParams)
+    const parsedUrl = parseUrl(url)
 
-      if (isCommunityPath(pathname) && segments[1]) {
-        return [
-          {
-            uri: `${origin}/feeds/c/${segments[1]}.xml${sortSuffix}`,
-            hint: composeHint('lemmy:community'),
-          },
-        ]
-      }
+    if (!parsedUrl) {
+      return []
+    }
 
-      if (isUserPath(pathname) && segments[1]) {
-        return [
-          {
-            uri: `${origin}/feeds/u/${segments[1]}.xml${sortSuffix}`,
-            hint: composeHint('lemmy:user'),
-          },
-        ]
-      }
+    const { origin, pathname, searchParams } = parsedUrl
+    const segments = pathname.split('/').filter(Boolean)
+    const sortSuffix = getQuerySuffix(searchParams)
 
-      if (isHomePath(pathname)) {
-        return [
-          {
-            uri: `${origin}/feeds/all.xml${sortSuffix}`,
-            hint: composeHint('lemmy:all'),
-          },
-          {
-            uri: `${origin}/feeds/local.xml${sortSuffix}`,
-            hint: composeHint('lemmy:local'),
-          },
-        ]
-      }
-    } catch {}
+    if (isCommunityPath(pathname) && segments[1]) {
+      return [
+        {
+          uri: `${origin}/feeds/c/${segments[1]}.xml${sortSuffix}`,
+          hint: composeHint('lemmy:community'),
+        },
+      ]
+    }
+
+    if (isUserPath(pathname) && segments[1]) {
+      return [
+        {
+          uri: `${origin}/feeds/u/${segments[1]}.xml${sortSuffix}`,
+          hint: composeHint('lemmy:user'),
+        },
+      ]
+    }
+
+    if (isHomePath(pathname)) {
+      return [
+        {
+          uri: `${origin}/feeds/all.xml${sortSuffix}`,
+          hint: composeHint('lemmy:all'),
+        },
+        {
+          uri: `${origin}/feeds/local.xml${sortSuffix}`,
+          hint: composeHint('lemmy:local'),
+        },
+      ]
+    }
 
     return []
   },

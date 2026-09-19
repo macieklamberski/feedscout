@@ -1,4 +1,4 @@
-import { isHostOf } from 'trousse'
+import { isHostOf, parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../../common/types.js'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
@@ -27,34 +27,36 @@ export const habrHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    try {
-      const { origin, pathname } = new URL(url)
-      const base = `${origin}/${getLanguage(pathname)}/rss`
-      const uris: Array<DiscoverUriEntry> = []
-      const hub = pathname.match(hubRegex)?.[1]
-      const user = pathname.match(userRegex)?.[1]
-      const company = pathname.match(companyRegex)?.[1]
+    const parsedUrl = parseUrl(url)
 
-      if (hub) {
-        uris.push({ uri: `${base}/hub/${hub}/`, hint: composeHint('habr:hub') })
-      }
+    if (!parsedUrl) {
+      return []
+    }
 
-      if (user) {
-        uris.push({ uri: `${base}/users/${user}/posts/`, hint: composeHint('habr:user') })
-      }
+    const { origin, pathname } = parsedUrl
+    const base = `${origin}/${getLanguage(pathname)}/rss`
+    const uris: Array<DiscoverUriEntry> = []
+    const hub = pathname.match(hubRegex)?.[1]
+    const user = pathname.match(userRegex)?.[1]
+    const company = pathname.match(companyRegex)?.[1]
 
-      if (company) {
-        uris.push({
-          uri: `${base}/companies/${company}/articles/`,
-          hint: composeHint('habr:company'),
-        })
-      }
+    if (hub) {
+      uris.push({ uri: `${base}/hub/${hub}/`, hint: composeHint('habr:hub') })
+    }
 
-      uris.push({ uri: `${base}/articles/`, hint: composeHint('habr:articles') })
+    if (user) {
+      uris.push({ uri: `${base}/users/${user}/posts/`, hint: composeHint('habr:user') })
+    }
 
-      return uris
-    } catch {}
+    if (company) {
+      uris.push({
+        uri: `${base}/companies/${company}/articles/`,
+        hint: composeHint('habr:company'),
+      })
+    }
 
-    return []
+    uris.push({ uri: `${base}/articles/`, hint: composeHint('habr:articles') })
+
+    return uris
   },
 }

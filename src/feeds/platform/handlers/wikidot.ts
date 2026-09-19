@@ -1,3 +1,4 @@
+import { parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 
@@ -16,25 +17,27 @@ export const isWikidotHtml = (content: string): boolean => {
 
 export const wikidotHandler: PlatformHandler = {
   match: (url, content) => {
-    return URL.canParse(url) && Boolean(content) && isWikidotHtml(content ?? '')
+    return Boolean(parseUrl(url)) && Boolean(content) && isWikidotHtml(content ?? '')
   },
 
   resolve: (url) => {
-    try {
-      const { origin } = new URL(url)
+    const parsedUrl = parseUrl(url)
 
-      return [
-        {
-          uri: `${origin}/feed/site-changes.xml`,
-          hint: composeHint('wikidot:site-changes'),
-        },
-        {
-          uri: `${origin}/feed/forum/threads.xml`,
-          hint: composeHint('wikidot:forum-threads'),
-        },
-      ]
-    } catch {}
+    if (!parsedUrl) {
+      return []
+    }
 
-    return []
+    const { origin } = parsedUrl
+
+    return [
+      {
+        uri: `${origin}/feed/site-changes.xml`,
+        hint: composeHint('wikidot:site-changes'),
+      },
+      {
+        uri: `${origin}/feed/forum/threads.xml`,
+        hint: composeHint('wikidot:forum-threads'),
+      },
+    ]
   },
 }

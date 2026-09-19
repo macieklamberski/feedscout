@@ -1,4 +1,4 @@
-import { isHostOf, isSubdomainOf } from 'trousse'
+import { isHostOf, isSubdomainOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 
@@ -14,55 +14,59 @@ const excludedSubdomains = ['www', 'api', 'cdn', 'i', 'blog-cdn']
 
 export const postypeHandler: PlatformHandler = {
   match: (url) => {
-    try {
-      const { hostname, pathname } = new URL(url)
+    const parsedUrl = parseUrl(url)
 
-      if (isHostOf(url, hosts)) {
-        const [first] = pathname.split('/').filter(Boolean)
+    if (!parsedUrl) {
+      return false
+    }
 
-        return first?.startsWith('@') ?? false
-      }
+    const { hostname, pathname } = parsedUrl
 
-      if (!isSubdomainOf(url, 'postype.com')) {
-        return false
-      }
+    if (isHostOf(url, hosts)) {
+      const [first] = pathname.split('/').filter(Boolean)
 
-      return !excludedSubdomains.includes(hostname.replace(domainSuffixRegex, ''))
-    } catch {}
+      return first?.startsWith('@') ?? false
+    }
 
-    return false
+    if (!isSubdomainOf(url, 'postype.com')) {
+      return false
+    }
+
+    return !excludedSubdomains.includes(hostname.replace(domainSuffixRegex, ''))
   },
 
   resolve: (url) => {
-    try {
-      const { origin, hostname, pathname } = new URL(url)
+    const parsedUrl = parseUrl(url)
 
-      if (isHostOf(url, hosts)) {
-        const [first] = pathname.split('/').filter(Boolean)
+    if (!parsedUrl) {
+      return []
+    }
 
-        if (!first?.startsWith('@') || first.length < 2) {
-          return []
-        }
+    const { origin, hostname, pathname } = parsedUrl
 
-        return [
-          {
-            uri: `https://www.postype.com/${first}/rss`,
-            hint: composeHint('postype:posts'),
-          },
-        ]
-      }
+    if (isHostOf(url, hosts)) {
+      const [first] = pathname.split('/').filter(Boolean)
 
-      if (!isSubdomainOf(url, 'postype.com')) {
+      if (!first?.startsWith('@') || first.length < 2) {
         return []
       }
 
-      if (excludedSubdomains.includes(hostname.replace(domainSuffixRegex, ''))) {
-        return []
-      }
+      return [
+        {
+          uri: `https://www.postype.com/${first}/rss`,
+          hint: composeHint('postype:posts'),
+        },
+      ]
+    }
 
-      return [{ uri: `${origin}/rss`, hint: composeHint('postype:posts') }]
-    } catch {}
+    if (!isSubdomainOf(url, 'postype.com')) {
+      return []
+    }
 
-    return []
+    if (excludedSubdomains.includes(hostname.replace(domainSuffixRegex, ''))) {
+      return []
+    }
+
+    return [{ uri: `${origin}/rss`, hint: composeHint('postype:posts') }]
   },
 }

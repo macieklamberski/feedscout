@@ -1,3 +1,4 @@
+import { getPathSegments, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 
@@ -18,32 +19,30 @@ export const isShopifyHeaders = (headers: Headers): boolean => {
 }
 
 const getBlogHandle = (url: string): string | undefined => {
-  const segments = new URL(url).pathname.split('/').filter(Boolean)
+  const segments = getPathSegments(url)
 
   return segments[0] === 'blogs' ? segments[1] : undefined
 }
 
 export const shopifyHandler: PlatformHandler = {
   match: (url, _content, headers) => {
-    try {
-      return Boolean(headers && isShopifyHeaders(headers)) && Boolean(getBlogHandle(url))
-    } catch {}
-
-    return false
+    return Boolean(headers && isShopifyHeaders(headers)) && Boolean(getBlogHandle(url))
   },
 
   resolve: (url) => {
-    try {
-      const { origin } = new URL(url)
-      const handle = getBlogHandle(url)
+    const parsedUrl = parseUrl(url)
 
-      if (!handle) {
-        return []
-      }
+    if (!parsedUrl) {
+      return []
+    }
 
-      return [{ uri: `${origin}/blogs/${handle}.atom`, hint: composeHint('shopify:blog') }]
-    } catch {}
+    const { origin } = parsedUrl
+    const handle = getBlogHandle(url)
 
-    return []
+    if (!handle) {
+      return []
+    }
+
+    return [{ uri: `${origin}/blogs/${handle}.atom`, hint: composeHint('shopify:blog') }]
   },
 }

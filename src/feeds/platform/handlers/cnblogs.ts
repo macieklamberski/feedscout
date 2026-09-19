@@ -1,4 +1,4 @@
-import { isAnyOf, isHostOf } from 'trousse'
+import { isAnyOf, isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 
@@ -28,17 +28,19 @@ export const cnblogsHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    try {
-      const { origin } = new URL(url)
-      const username = getUsername(url)
+    const parsedUrl = parseUrl(url)
 
-      if (!username) {
-        return []
-      }
+    if (!parsedUrl) {
+      return []
+    }
 
-      return [{ uri: `${origin}/${username}/rss`, hint: composeHint('cnblogs:posts') }]
-    } catch {}
+    const { origin } = parsedUrl
+    const username = getUsername(url)
 
-    return []
+    if (!username) {
+      return []
+    }
+
+    return [{ uri: `${origin}/${username}/rss`, hint: composeHint('cnblogs:posts') }]
   },
 }

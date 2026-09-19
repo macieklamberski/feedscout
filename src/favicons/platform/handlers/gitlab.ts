@@ -1,4 +1,4 @@
-import { isAnyOf, isHostOf, isNonEmptyString } from 'trousse'
+import { isAnyOf, isHostOf, isNonEmptyString, parseUrl } from 'trousse'
 import type { DiscoverFetchFn } from '../../../common/types.js'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import {
@@ -30,25 +30,29 @@ const fetchAvatarUrl = async (
 
 export const gitlabHandler: PlatformHandler = {
   match: (url, content, headers) => {
-    try {
-      if (isHostOf(url, hosts)) {
-        return true
-      }
+    if (isHostOf(url, hosts)) {
+      return true
+    }
 
-      const { pathname } = new URL(url)
+    const parsedUrl = parseUrl(url)
 
-      if (!userRegex.test(pathname)) {
-        return false
-      }
+    if (!parsedUrl) {
+      return false
+    }
 
-      if (content && isGitlabHtml(content)) {
-        return true
-      }
+    const { pathname } = parsedUrl
 
-      if (headers && isGitlabHeaders(headers)) {
-        return true
-      }
-    } catch {}
+    if (!userRegex.test(pathname)) {
+      return false
+    }
+
+    if (content && isGitlabHtml(content)) {
+      return true
+    }
+
+    if (headers && isGitlabHeaders(headers)) {
+      return true
+    }
 
     return false
   },

@@ -1,4 +1,4 @@
-import { isHostOf } from 'trousse'
+import { isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 
@@ -12,32 +12,36 @@ const hosts = ['bitchute.com', 'www.bitchute.com']
 
 export const bitchuteHandler: PlatformHandler = {
   match: (url) => {
-    try {
-      const { pathname } = new URL(url)
-      const segments = pathname.split('/').filter(Boolean)
+    const parsedUrl = parseUrl(url)
 
-      return isHostOf(url, hosts) && segments[0] === 'channel' && Boolean(segments[1])
-    } catch {}
+    if (!parsedUrl) {
+      return false
+    }
 
-    return false
+    const { pathname } = parsedUrl
+    const segments = pathname.split('/').filter(Boolean)
+
+    return isHostOf(url, hosts) && segments[0] === 'channel' && Boolean(segments[1])
   },
 
   resolve: (url) => {
-    try {
-      const segments = new URL(url).pathname.split('/').filter(Boolean)
+    const parsedUrl = parseUrl(url)
 
-      if (segments[0] !== 'channel' || !segments[1]) {
-        return []
-      }
+    if (!parsedUrl) {
+      return []
+    }
 
-      return [
-        {
-          uri: `https://www.bitchute.com/feeds/rss/channel/${segments[1]}/`,
-          hint: composeHint('bitchute:channel'),
-        },
-      ]
-    } catch {}
+    const segments = parsedUrl.pathname.split('/').filter(Boolean)
 
-    return []
+    if (segments[0] !== 'channel' || !segments[1]) {
+      return []
+    }
+
+    return [
+      {
+        uri: `https://www.bitchute.com/feeds/rss/channel/${segments[1]}/`,
+        hint: composeHint('bitchute:channel'),
+      },
+    ]
   },
 }

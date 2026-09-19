@@ -1,3 +1,4 @@
+import { parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, hasMetaContent } from '../../../common/utils.js'
 
@@ -24,54 +25,60 @@ export const isFriendicaHeaders = (headers: Headers): boolean => {
 
 export const friendicaHandler: PlatformHandler = {
   match: (url, content, headers) => {
-    try {
-      const { pathname } = new URL(url)
+    const parsedUrl = parseUrl(url)
 
-      if (!profileRegex.test(pathname)) {
-        return false
-      }
+    if (!parsedUrl) {
+      return false
+    }
 
-      if (content && isFriendicaHtml(content)) {
-        return true
-      }
+    const { pathname } = parsedUrl
 
-      if (headers && isFriendicaHeaders(headers)) {
-        return true
-      }
-    } catch {}
+    if (!profileRegex.test(pathname)) {
+      return false
+    }
+
+    if (content && isFriendicaHtml(content)) {
+      return true
+    }
+
+    if (headers && isFriendicaHeaders(headers)) {
+      return true
+    }
 
     return false
   },
 
   resolve: (url) => {
-    try {
-      const { origin, pathname } = new URL(url)
-      const match = pathname.match(profileRegex)
+    const parsedUrl = parseUrl(url)
 
-      if (!match?.[1]) {
-        return []
-      }
+    if (!parsedUrl) {
+      return []
+    }
 
-      return [
-        {
-          uri: `${origin}/feed/${match[1]}`,
-          hint: composeHint('friendica:posts'),
-        },
-        {
-          uri: `${origin}/feed/${match[1]}/comments`,
-          hint: composeHint('friendica:comments'),
-        },
-        {
-          uri: `${origin}/feed/${match[1]}/replies`,
-          hint: composeHint('friendica:replies'),
-        },
-        {
-          uri: `${origin}/feed/${match[1]}/activity`,
-          hint: composeHint('friendica:activity'),
-        },
-      ]
-    } catch {}
+    const { origin, pathname } = parsedUrl
+    const match = pathname.match(profileRegex)
 
-    return []
+    if (!match?.[1]) {
+      return []
+    }
+
+    return [
+      {
+        uri: `${origin}/feed/${match[1]}`,
+        hint: composeHint('friendica:posts'),
+      },
+      {
+        uri: `${origin}/feed/${match[1]}/comments`,
+        hint: composeHint('friendica:comments'),
+      },
+      {
+        uri: `${origin}/feed/${match[1]}/replies`,
+        hint: composeHint('friendica:replies'),
+      },
+      {
+        uri: `${origin}/feed/${match[1]}/activity`,
+        hint: composeHint('friendica:activity'),
+      },
+    ]
   },
 }
