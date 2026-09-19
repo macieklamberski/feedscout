@@ -1383,6 +1383,22 @@ describe('defaultResolveSiteUrlFn', () => {
     expect(defaultResolveSiteUrlFn(value, resolveUrlFn)).toBeUndefined()
   })
 
+  it('should return undefined when the input URL cannot be parsed', () => {
+    const value = {
+      url: 'not-a-url',
+      content: `
+        <?xml version="1.0"?>
+        <rss version="2.0">
+          <channel>
+            <link>https://example.com/blog</link>
+          </channel>
+        </rss>
+      `,
+    }
+
+    expect(defaultResolveSiteUrlFn(value, resolveUrlFn)).toBeUndefined()
+  })
+
   it('should throw for content that looks like JSON and is malformed', () => {
     const value = {
       url: 'https://example.com/feed.json',
