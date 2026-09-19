@@ -1,4 +1,3 @@
-import { defaultResolveUrlFn } from '../../common/discover/defaults.js'
 import type { DiscoverResolveUrlFn } from '../../common/types.js'
 import { discoverUrisFromHtml } from '../../common/uris/html/index.js'
 import type { HubResult } from '../discover/types.js'
@@ -15,7 +14,7 @@ const htmlOptions = {
 export const discoverHubsFromHtml = (
   content: string,
   baseUrl: string,
-  resolveUrlFn: DiscoverResolveUrlFn = defaultResolveUrlFn,
+  resolveUrlFn: DiscoverResolveUrlFn,
 ): Array<HubResult> => {
   const hubUris = discoverUrisFromHtml(content, { ...htmlOptions, linkSelectors: hubSelector })
 
