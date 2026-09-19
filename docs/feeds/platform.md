@@ -664,7 +664,7 @@ Discovers RSS feeds for Audioboom channels.
 
 ### BookWyrm
 
-Discovers RSS feeds for BookWyrm user activity, reviews, quotes, comments, and per-shelf feeds. Detected by the `BookWyrm` generator meta tag.
+Discovers RSS feeds for BookWyrm user activity, reviews, quotes, comments, and per-shelf feeds. Detected by the link to the BookWyrm source code in the page footer, or by the `BookWyrm` generator meta tag.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
@@ -1045,7 +1045,7 @@ Discovers the RSS feed of a Squarespace collection. Detected by the `Server: Squ
 
 ### Wikidot
 
-Discovers the site and forum feeds of a Wikidot wiki. Detected by the `application/wiki` edit link, so custom domains are covered as well as `*.wikidot.com` hosts.
+Discovers the site and forum feeds of a Wikidot wiki. Detected by the `WIKIDOT.page.listeners.editClick()` call in the page, so custom domains are covered as well as `*.wikidot.com` hosts.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|

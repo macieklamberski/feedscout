@@ -28,6 +28,10 @@ Provide a `resolveUrlFn` to customize URL resolution:
 import type { DiscoverResolveUrlFn } from 'feedscout'
 
 const customResolve: DiscoverResolveUrlFn = (url, baseUrl) => {
+  if (!URL.canParse(url, baseUrl)) {
+    return
+  }
+
   // Resolve relative URLs
   const resolved = new URL(url, baseUrl).href
 
@@ -57,7 +61,7 @@ const hubs = await discoverHubs(url, {
 type DiscoverResolveUrlFn = (url: string, baseUrl: string | undefined) => string | undefined
 ```
 
-Return `undefined` when the URL cannot be resolved. Feedscout then keeps the URL as discovered.
+Return `undefined` when the URL cannot be resolved. Feedscout then keeps the URL as discovered. Check the URL before parsing it, as the examples below do: a page can carry a malformed `href`, and an error thrown from `resolveUrlFn` stops discovery.
 
 ## Use Cases
 
@@ -67,6 +71,10 @@ Strip unnecessary query parameters:
 
 ```typescript
 const resolveUrl: DiscoverResolveUrlFn = (url, baseUrl) => {
+  if (!URL.canParse(url, baseUrl)) {
+    return
+  }
+
   const resolved = new URL(url, baseUrl)
 
   // Keep only essential parameters
@@ -89,6 +97,10 @@ Upgrade HTTP URLs to HTTPS:
 
 ```typescript
 const resolveUrl: DiscoverResolveUrlFn = (url, baseUrl) => {
+  if (!URL.canParse(url, baseUrl)) {
+    return
+  }
+
   const resolved = new URL(url, baseUrl)
   resolved.protocol = 'https:'
   return resolved.href
@@ -101,6 +113,10 @@ Remove trailing slashes from paths:
 
 ```typescript
 const resolveUrl: DiscoverResolveUrlFn = (url, baseUrl) => {
+  if (!URL.canParse(url, baseUrl)) {
+    return
+  }
+
   const resolved = new URL(url, baseUrl)
   resolved.pathname = resolved.pathname.replace(/\/+$/, '')
   return resolved.href
@@ -113,6 +129,10 @@ Rewrite URLs for specific domains:
 
 ```typescript
 const resolveUrl: DiscoverResolveUrlFn = (url, baseUrl) => {
+  if (!URL.canParse(url, baseUrl)) {
+    return
+  }
+
   const resolved = new URL(url, baseUrl)
 
   // Use feeds subdomain for specific sites
