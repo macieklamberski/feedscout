@@ -2,6 +2,7 @@ import type { Atom } from 'feedsmith'
 import { isObject } from 'trousse'
 import locales from '../locales.json' with { type: 'json' }
 import type {
+  DiscoverErrorContext,
   DiscoverFetchFn,
   DiscoverInput,
   DiscoverInputObject,
@@ -33,7 +34,7 @@ export const normalizeInput = async (
       headers: response.headers,
     }
   } catch (error) {
-    onError?.(error, { phase: 'fetchInput', url: input })
+    reportError(onError, error, { phase: 'fetchInput', url: input })
   }
 
   // When the fetch fails, return the URL without content so that URL-only
@@ -61,19 +62,77 @@ export const getFeedSiteUrl = (parsed: FeedMethodData): string | undefined => {
   }
 }
 
+// onError is where failures get reported, so an error thrown from it has nowhere to go. It is
+// swallowed, so that a broken callback cannot end discovery.
+export const reportError = (
+  onError: DiscoverOnErrorFn | undefined,
+  error: unknown,
+  context: DiscoverErrorContext,
+): void => {
+  try {
+    onError?.(error, context)
+  } catch {}
+}
+
+// Runs a user-supplied function. A throw never ends discovery: it is reported through onError
+// and the fallback is used. The fallback also stands in when the function returns nothing, and
+// it is the URL named in the report unless another one is given.
+export const attempt = <TValue, TFallback>(
+  callback: () => TValue,
+  fallback: TFallback,
+  phase: DiscoverErrorContext['phase'],
+  onError: DiscoverOnErrorFn | undefined,
+  url?: string,
+): NonNullable<TValue> | TFallback => {
+  try {
+    return callback() ?? fallback
+  } catch (error) {
+    reportError(onError, error, {
+      phase,
+      url: url ?? (typeof fallback === 'string' ? fallback : undefined),
+    })
+
+    return fallback
+  }
+}
+
 export const normalizeUriEntry = (
   entry: DiscoverUriEntry,
   resolveUrlFn: DiscoverResolveUrlFn,
   baseUrl: string | undefined,
+  onError?: DiscoverOnErrorFn,
 ): DiscoverUriEntry => {
-  if (typeof entry.uri === 'string') {
-    return { ...entry, uri: resolveUrlFn(entry.uri, baseUrl) ?? entry.uri }
+  const { uri } = entry
+
+  if (typeof uri === 'string') {
+    return {
+      ...entry,
+      uri: attempt(() => resolveUrlFn(uri, baseUrl), uri, 'resolveUrlFn', onError),
+    }
   }
 
   return {
     ...entry,
-    uri: entry.uri.map((uri) => resolveUrlFn(uri, baseUrl) ?? uri),
+    uri: uri.map((alternative) => {
+      return attempt(() => resolveUrlFn(alternative, baseUrl), alternative, 'resolveUrlFn', onError)
+    }),
   }
+}
+
+// A fetched input always carries headers, so a string input without them is a fetch that failed.
+// An input passed as an object counts as fetched: the caller supplied what a fetch would have.
+export const isInputFetched = (input: DiscoverInput, sourceInput: DiscoverInputObject): boolean => {
+  return typeof input !== 'string' || sourceInput.headers !== undefined
+}
+
+// Keeps the methods that work from the URL alone, for an input that could not be fetched. The
+// others need content or headers and would throw without them.
+export const pickUrlOnlyMethods = (methods: DiscoverMethodsConfig): DiscoverMethodsConfig => {
+  if (Array.isArray(methods)) {
+    return methods.filter((method) => method === 'platform' || method === 'guess')
+  }
+
+  return { platform: methods.platform, guess: methods.guess }
 }
 
 export const normalizeMethodsConfig = (
