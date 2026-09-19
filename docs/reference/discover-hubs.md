@@ -140,6 +140,10 @@ See [Customize Data Fetching](/customization/data-fetching) for examples with Ax
 import type { DiscoverResolveUrlFn } from 'feedscout'
 
 const resolveUrl: DiscoverResolveUrlFn = (url, baseUrl) => {
+  if (!URL.canParse(url, baseUrl)) {
+    return
+  }
+
   const resolved = new URL(url, baseUrl)
   resolved.protocol = 'https:'
   return resolved.href
