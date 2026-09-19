@@ -2,6 +2,7 @@ import {
   type DiscoverInput,
   type DiscoverInputObject,
   type DiscoverMethod,
+  type DiscoverMethodsConfig,
   type DiscoverMethodsConfigDefaults,
   type DiscoverOptionsInternal,
   type DiscoverResult,
@@ -40,6 +41,19 @@ export const discover = async <TValid>(
   // Normalize input: string → fetch URL, object → use provided content.
   const sourceInput = await normalizeInput(input, fetchFn, onError)
 
+  // A failed input fetch leaves only the URL (a fetched input always carries headers), so keep
+  // the methods that work from the URL alone instead of throwing on the ones that need content.
+  const pickUrlOnlyMethods = (config: DiscoverMethodsConfig): DiscoverMethodsConfig => {
+    if (Array.isArray(config)) {
+      return config.filter((method) => method === 'platform' || method === 'guess')
+    }
+
+    return { platform: config.platform, guess: config.guess }
+  }
+
+  const isInputFetchFailed = typeof input === 'string' && sourceInput.headers === undefined
+  const availableMethods = isInputFetchFailed ? pickUrlOnlyMethods(methods) : methods
+
   // Step 1: Check if content is already valid (only if content is provided).
   if (sourceInput.content) {
     const result = await extractFn({
@@ -75,7 +89,7 @@ export const discover = async <TValid>(
   }
 
   // Step 2: Build methods config from input and selected methods.
-  const methodsConfig = normalizeMethodsConfig(sourceInput, siteInput, methods, defaults)
+  const methodsConfig = normalizeMethodsConfig(sourceInput, siteInput, availableMethods, defaults)
 
   // Step 3: Discover URIs using selected methods.
   const urisByMethod = await discoverUris(methodsConfig, fetchFn)

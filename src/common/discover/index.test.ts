@@ -461,6 +461,74 @@ describe('discover', () => {
     })
   })
 
+  describe('failed input fetch', () => {
+    it('should skip content-based methods in array format and still run guess', async () => {
+      const mockFetch: DiscoverFetchFn = (url) => {
+        if (url === 'https://example.com') {
+          return Promise.reject(new Error('Input fetch failed'))
+        }
+
+        return createMockFetch({ 'https://example.com/feed': rss })(url)
+      }
+      const value = await discoverFeeds('https://example.com', {
+        methods: ['html', 'headers', 'guess'],
+        fetchFn: mockFetch,
+      })
+      const expected: Array<DiscoverResult<FeedResult>> = [
+        {
+          url: 'https://example.com/feed',
+          isValid: true,
+          method: 'guess',
+          format: 'rss',
+          title: 'Test RSS',
+          description: 'Test feed',
+          siteUrl: 'https://example.com/',
+        },
+      ]
+
+      expect(value).toEqual(expected)
+    })
+
+    it('should skip content-based methods in object format and still run guess', async () => {
+      const mockFetch: DiscoverFetchFn = (url) => {
+        if (url === 'https://example.com') {
+          return Promise.reject(new Error('Input fetch failed'))
+        }
+
+        return createMockFetch({ 'https://example.com/feed': rss })(url)
+      }
+      const value = await discoverFeeds('https://example.com', {
+        methods: { html: true, headers: true, guess: { uris: ['/feed'] } },
+        fetchFn: mockFetch,
+      })
+      const expected: Array<DiscoverResult<FeedResult>> = [
+        {
+          url: 'https://example.com/feed',
+          isValid: true,
+          method: 'guess',
+          format: 'rss',
+          title: 'Test RSS',
+          description: 'Test feed',
+          siteUrl: 'https://example.com/',
+        },
+      ]
+
+      expect(value).toEqual(expected)
+    })
+
+    it('should return no results when only content-based methods are requested', async () => {
+      const mockFetch: DiscoverFetchFn = () => {
+        return Promise.reject(new Error('Input fetch failed'))
+      }
+      const value = await discoverFeeds('https://example.com', {
+        methods: ['html', 'headers'],
+        fetchFn: mockFetch,
+      })
+
+      expect(value).toEqual([])
+    })
+  })
+
   describe('onError', () => {
     it('should call onError when the input fetch fails', async () => {
       const errors: Array<{ error: unknown; phase: string; url?: string }> = []
