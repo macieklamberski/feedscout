@@ -62,7 +62,7 @@ Discovers Atom feeds for channels and playlists. Generates ten feed variants for
 
 ### Reddit
 
-Discovers RSS feeds for subreddits, users, multireddits, and domains.
+Discovers Atom feeds for subreddits, users, multireddits, and domains.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
@@ -219,7 +219,7 @@ Discovers Atom feeds for GitLab users and repositories. Self-hosted instances ar
 
 ### Product Hunt
 
-Discovers RSS feeds for Product Hunt homepage, topics, and categories.
+Discovers Atom feeds for Product Hunt homepage, topics, and categories.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
@@ -265,9 +265,9 @@ Discovers RSS feeds for Mastodon user profiles and hashtag pages. Detects Mastod
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | `{instance}/@{username}` | User posts feed |
-| `{instance}/@{username}/tagged/{tag}` | User posts tagged feed |
-| `{instance}/@{username}/with_replies` | User posts with replies feed |
-| `{instance}/@{username}/media` | User media-only feed |
+| `{instance}/@{username}/tagged/{tag}` | User posts tagged feed + posts |
+| `{instance}/@{username}/with_replies` | User posts with replies feed + posts |
+| `{instance}/@{username}/media` | User media-only feed + posts |
 | `{instance}/tags/{tag}` | Hashtag feed |
 
 > [!NOTE]
@@ -361,7 +361,7 @@ Discovers RSS feeds for Steam game news and community groups.
 
 ### Stack Exchange
 
-Discovers RSS feeds for Stack Overflow, Server Fault, Super User, Ask Ubuntu, MathOverflow, Stack Apps, and all `*.stackexchange.com` sites.
+Discovers Atom feeds for Stack Overflow, Server Fault, Super User, Ask Ubuntu, MathOverflow, Stack Apps, and all `*.stackexchange.com` sites.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
@@ -683,7 +683,7 @@ Discovers Atom feeds for Friendica user profiles. Detected by the `Friendica` ge
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{instance}/profile/{user}` | Posts feed (Atom) + comments-only feed (Atom) |
+| `{instance}/profile/{user}` | Posts + comments + replies + activity feeds (Atom) |
 
 ### Ghost
 
@@ -814,11 +814,11 @@ Discovers Atom feeds for Pixelfed user profiles. Detected by the `pixelfed` gene
 
 ### Pleroma
 
-Discovers Atom feeds for Pleroma (and Akkoma) user profiles. Detected by Pleroma-specific API endpoint references in HTML.
+Discovers Atom and RSS feeds for Pleroma (and Akkoma) user profiles. Detected by Pleroma-specific API endpoint references in HTML.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{instance}/users/{user}` | Posts feed (Atom) |
+| `{instance}/users/{user}` | Posts feed (Atom + RSS) |
 
 ### Podbean
 
