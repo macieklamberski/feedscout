@@ -1,4 +1,4 @@
-import { isAnyOf, isHostOf } from 'trousse'
+import { getPathSegments, isAnyOf, isHostOf } from 'trousse'
 import type { DiscoverUriEntry } from '../../../common/types.js'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
@@ -42,26 +42,24 @@ export const isGiteaHeaders = (headers: Headers): boolean => {
 // `resolve` returns nothing without a usable first segment, so `match` tests the
 // same thing rather than claiming a page it cannot serve.
 export const hasResolvablePath = (url: string): boolean => {
-  const [first] = new URL(url).pathname.split('/').filter(Boolean)
+  const [first] = getPathSegments(url)
 
   return Boolean(first) && !isAnyOf(first, excludedPaths)
 }
 
 export const giteaHandler: PlatformHandler = {
   match: (url, _content, headers) => {
-    try {
-      if (!hasResolvablePath(url)) {
-        return false
-      }
+    if (!hasResolvablePath(url)) {
+      return false
+    }
 
-      if (isHostOf(url, hosts)) {
-        return true
-      }
+    if (isHostOf(url, hosts)) {
+      return true
+    }
 
-      if (headers && isGiteaHeaders(headers)) {
-        return true
-      }
-    } catch {}
+    if (headers && isGiteaHeaders(headers)) {
+      return true
+    }
 
     return false
   },

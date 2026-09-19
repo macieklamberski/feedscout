@@ -1,4 +1,4 @@
-import { isHostOf } from 'trousse'
+import { isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 
@@ -20,21 +20,23 @@ export const syosetuHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    try {
-      const writerId = new URL(url).pathname.match(writerIdRegex)?.[1]
+    const parsedUrl = parseUrl(url)
 
-      if (!writerId) {
-        return []
-      }
+    if (!parsedUrl) {
+      return []
+    }
 
-      return [
-        {
-          uri: `https://api.syosetu.com/writernovel/${writerId}.Atom`,
-          hint: composeHint('syosetu:author'),
-        },
-      ]
-    } catch {}
+    const writerId = parsedUrl.pathname.match(writerIdRegex)?.[1]
 
-    return []
+    if (!writerId) {
+      return []
+    }
+
+    return [
+      {
+        uri: `https://api.syosetu.com/writernovel/${writerId}.Atom`,
+        hint: composeHint('syosetu:author'),
+      },
+    ]
   },
 }

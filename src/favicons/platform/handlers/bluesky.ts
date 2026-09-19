@@ -1,4 +1,4 @@
-import { isHostOf, isNonEmptyString } from 'trousse'
+import { isHostOf, isNonEmptyString, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { parseBodyJson } from '../../utils.js'
 
@@ -12,11 +12,13 @@ export const isProfilePath = (pathname: string): boolean => {
 
 export const blueskyHandler: PlatformHandler = {
   match: (url) => {
-    try {
-      return isProfilePath(new URL(url).pathname) && isHostOf(url, hosts)
-    } catch {}
+    const parsedUrl = parseUrl(url)
 
-    return false
+    if (!parsedUrl) {
+      return false
+    }
+
+    return isProfilePath(parsedUrl.pathname) && isHostOf(url, hosts)
   },
 
   resolve: async (url, _content, _headers, fetchFn) => {

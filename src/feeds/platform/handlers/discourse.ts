@@ -1,3 +1,4 @@
+import { parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../../common/types.js'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, hasMetaContent } from '../../../common/utils.js'
@@ -61,71 +62,73 @@ export const discourseHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    try {
-      const { origin, pathname, searchParams } = new URL(url)
+    const parsedUrl = parseUrl(url)
 
-      const topicMatch = pathname.match(topicRegex)
+    if (!parsedUrl) {
+      return []
+    }
 
-      if (topicMatch?.[1] && topicMatch?.[2]) {
-        return [
-          {
-            uri: `${origin}/t/${topicMatch[1]}/${topicMatch[2]}.rss`,
-            hint: composeHint('discourse:topic'),
-          },
-        ]
-      }
+    const { origin, pathname, searchParams } = parsedUrl
 
-      const userMatch = pathname.match(userRegex)
+    const topicMatch = pathname.match(topicRegex)
 
-      if (userMatch?.[1]) {
-        return [
-          {
-            uri: `${origin}/u/${userMatch[1]}/activity.rss`,
-            hint: composeHint('discourse:activity'),
-          },
-        ]
-      }
+    if (topicMatch?.[1] && topicMatch?.[2]) {
+      return [
+        {
+          uri: `${origin}/t/${topicMatch[1]}/${topicMatch[2]}.rss`,
+          hint: composeHint('discourse:topic'),
+        },
+      ]
+    }
 
-      const categoryMatch = pathname.match(categoryRegex)
+    const userMatch = pathname.match(userRegex)
 
-      if (categoryMatch?.[1]) {
-        return [
-          {
-            uri: `${origin}/c/${categoryMatch[1]}.rss`,
-            hint: composeHint('discourse:category'),
-          },
-        ]
-      }
+    if (userMatch?.[1]) {
+      return [
+        {
+          uri: `${origin}/u/${userMatch[1]}/activity.rss`,
+          hint: composeHint('discourse:activity'),
+        },
+      ]
+    }
 
-      // Top topics: /top or /top/{period}
-      const topMatch = pathname.match(topRegex)
+    const categoryMatch = pathname.match(categoryRegex)
 
-      if (topMatch) {
-        const periodSuffix = getTopPeriodSuffix(topMatch[1], searchParams)
+    if (categoryMatch?.[1]) {
+      return [
+        {
+          uri: `${origin}/c/${categoryMatch[1]}.rss`,
+          hint: composeHint('discourse:category'),
+        },
+      ]
+    }
 
-        return [
-          {
-            uri: `${origin}/top.rss${periodSuffix}`,
-            hint: composeHint('discourse:top'),
-          },
-        ]
-      }
+    // Top topics: /top or /top/{period}
+    const topMatch = pathname.match(topRegex)
 
-      // Site root or unmatched path: latest topics + latest posts.
-      const uris: Array<DiscoverUriEntry> = []
+    if (topMatch) {
+      const periodSuffix = getTopPeriodSuffix(topMatch[1], searchParams)
 
-      uris.push({
-        uri: `${origin}/latest.rss`,
-        hint: composeHint('discourse:latest'),
-      })
-      uris.push({
-        uri: `${origin}/posts.rss`,
-        hint: composeHint('discourse:posts'),
-      })
+      return [
+        {
+          uri: `${origin}/top.rss${periodSuffix}`,
+          hint: composeHint('discourse:top'),
+        },
+      ]
+    }
 
-      return uris
-    } catch {}
+    // Site root or unmatched path: latest topics + latest posts.
+    const uris: Array<DiscoverUriEntry> = []
 
-    return []
+    uris.push({
+      uri: `${origin}/latest.rss`,
+      hint: composeHint('discourse:latest'),
+    })
+    uris.push({
+      uri: `${origin}/posts.rss`,
+      hint: composeHint('discourse:posts'),
+    })
+
+    return uris
   },
 }

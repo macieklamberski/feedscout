@@ -1,3 +1,4 @@
+import { parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 
@@ -27,34 +28,38 @@ export const isDiasporaHtml = (content: string): boolean => {
 
 export const diasporaHandler: PlatformHandler = {
   match: (url, content) => {
-    try {
-      if (!content || !isDiasporaHtml(content)) {
-        return false
-      }
+    if (!content || !isDiasporaHtml(content)) {
+      return false
+    }
 
-      return profileRegex.test(new URL(url).pathname)
-    } catch {}
+    const parsedUrl = parseUrl(url)
 
-    return false
+    if (!parsedUrl) {
+      return false
+    }
+
+    return profileRegex.test(parsedUrl.pathname)
   },
 
   resolve: (url) => {
-    try {
-      const { origin, pathname } = new URL(url)
-      const match = pathname.match(profileRegex)
+    const parsedUrl = parseUrl(url)
 
-      if (!match?.[1]) {
-        return []
-      }
+    if (!parsedUrl) {
+      return []
+    }
 
-      return [
-        {
-          uri: `${origin}/public/${match[1]}`,
-          hint: composeHint('diaspora:posts'),
-        },
-      ]
-    } catch {}
+    const { origin, pathname } = parsedUrl
+    const match = pathname.match(profileRegex)
 
-    return []
+    if (!match?.[1]) {
+      return []
+    }
+
+    return [
+      {
+        uri: `${origin}/public/${match[1]}`,
+        hint: composeHint('diaspora:posts'),
+      },
+    ]
   },
 }

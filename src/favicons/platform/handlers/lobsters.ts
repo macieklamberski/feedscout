@@ -1,4 +1,4 @@
-import { isHostOf } from 'trousse'
+import { isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { hosts } from '../../../feeds/platform/handlers/lobsters.js'
 
@@ -6,13 +6,15 @@ const userRegex = /^\/~([a-zA-Z0-9_-]+)/
 
 export const lobstersHandler: PlatformHandler = {
   match: (url) => {
-    try {
-      const { pathname } = new URL(url)
+    const parsedUrl = parseUrl(url)
 
-      return isHostOf(url, hosts) && userRegex.test(pathname)
-    } catch {}
+    if (!parsedUrl) {
+      return false
+    }
 
-    return false
+    const { pathname } = parsedUrl
+
+    return isHostOf(url, hosts) && userRegex.test(pathname)
   },
 
   resolve: (url) => {

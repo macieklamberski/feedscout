@@ -1,3 +1,4 @@
+import { parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, hasMetaContent } from '../../../common/utils.js'
 
@@ -38,12 +39,14 @@ export const drupalHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    try {
-      const { origin } = new URL(url)
+    const parsedUrl = parseUrl(url)
 
-      return [{ uri: `${origin}/rss.xml`, hint: composeHint('drupal:site') }]
-    } catch {}
+    if (!parsedUrl) {
+      return []
+    }
 
-    return []
+    const { origin } = parsedUrl
+
+    return [{ uri: `${origin}/rss.xml`, hint: composeHint('drupal:site') }]
   },
 }

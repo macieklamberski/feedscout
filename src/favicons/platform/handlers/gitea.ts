@@ -13,19 +13,17 @@ const userRegex = /^\/([^/.]+)/
 
 export const giteaHandler: PlatformHandler = {
   match: (url, _content, headers) => {
-    try {
-      if (!hasResolvablePath(url)) {
-        return false
-      }
+    if (!hasResolvablePath(url)) {
+      return false
+    }
 
-      if (isHostOf(url, hosts)) {
-        return true
-      }
+    if (isHostOf(url, hosts)) {
+      return true
+    }
 
-      if (headers && isGiteaHeaders(headers)) {
-        return true
-      }
-    } catch {}
+    if (headers && isGiteaHeaders(headers)) {
+      return true
+    }
 
     return false
   },

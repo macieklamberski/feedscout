@@ -1,4 +1,4 @@
-import { isHostOf, isNonEmptyString } from 'trousse'
+import { isHostOf, isNonEmptyString, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { hosts } from '../../../feeds/platform/handlers/reddit.js'
 import { parseBodyJson } from '../../utils.js'
@@ -18,13 +18,15 @@ export const isUserPath = (pathname: string): boolean => {
 
 export const redditHandler: PlatformHandler = {
   match: (url) => {
-    try {
-      const { pathname } = new URL(url)
+    const parsedUrl = parseUrl(url)
 
-      return isHostOf(url, hosts) && (isSubredditPath(pathname) || isUserPath(pathname))
-    } catch {}
+    if (!parsedUrl) {
+      return false
+    }
 
-    return false
+    const { pathname } = parsedUrl
+
+    return isHostOf(url, hosts) && (isSubredditPath(pathname) || isUserPath(pathname))
   },
 
   resolve: async (url, _content, _headers, fetchFn) => {

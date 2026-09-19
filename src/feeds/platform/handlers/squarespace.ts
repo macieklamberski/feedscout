@@ -1,3 +1,4 @@
+import { getPathSegments, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 
@@ -19,7 +20,7 @@ export const isSquarespaceHeaders = (headers: Headers): boolean => {
 }
 
 const getCollection = (url: string): string | undefined => {
-  const [first] = new URL(url).pathname.split('/').filter(Boolean)
+  const [first] = getPathSegments(url)
 
   if (!first || excludedPaths.includes(first.toLowerCase())) {
     return
@@ -30,34 +31,32 @@ const getCollection = (url: string): string | undefined => {
 
 export const squarespaceHandler: PlatformHandler = {
   match: (url, _content, headers) => {
-    try {
-      if (!headers || !isSquarespaceHeaders(headers)) {
-        return false
-      }
+    if (!headers || !isSquarespaceHeaders(headers)) {
+      return false
+    }
 
-      return Boolean(getCollection(url))
-    } catch {}
-
-    return false
+    return Boolean(getCollection(url))
   },
 
   resolve: (url) => {
-    try {
-      const { origin } = new URL(url)
-      const collection = getCollection(url)
+    const parsedUrl = parseUrl(url)
 
-      if (!collection) {
-        return []
-      }
+    if (!parsedUrl) {
+      return []
+    }
 
-      return [
-        {
-          uri: `${origin}/${collection}?format=rss`,
-          hint: composeHint('squarespace:collection'),
-        },
-      ]
-    } catch {}
+    const { origin } = parsedUrl
+    const collection = getCollection(url)
 
-    return []
+    if (!collection) {
+      return []
+    }
+
+    return [
+      {
+        uri: `${origin}/${collection}?format=rss`,
+        hint: composeHint('squarespace:collection'),
+      },
+    ]
   },
 }

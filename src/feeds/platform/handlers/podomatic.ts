@@ -1,4 +1,4 @@
-import { isHostOf, isSubdomainOf } from 'trousse'
+import { isHostOf, isSubdomainOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 
@@ -14,7 +14,13 @@ const directoryPathRegex = /^\/podcasts\/([^/]+)/
 const excludedSubdomains = ['www', 'api', 'assets', 'static']
 
 const getShow = (url: string): string | undefined => {
-  const { hostname, pathname } = new URL(url)
+  const parsedUrl = parseUrl(url)
+
+  if (!parsedUrl) {
+    return
+  }
+
+  const { hostname, pathname } = parsedUrl
 
   if (isHostOf(url, hosts)) {
     return pathname.match(directoryPathRegex)?.[1]
@@ -31,29 +37,21 @@ const getShow = (url: string): string | undefined => {
 
 export const podomaticHandler: PlatformHandler = {
   match: (url) => {
-    try {
-      return Boolean(getShow(url))
-    } catch {}
-
-    return false
+    return Boolean(getShow(url))
   },
 
   resolve: (url) => {
-    try {
-      const show = getShow(url)
+    const show = getShow(url)
 
-      if (!show) {
-        return []
-      }
+    if (!show) {
+      return []
+    }
 
-      return [
-        {
-          uri: `https://${show}.podomatic.com/rss2.xml`,
-          hint: composeHint('podomatic:show'),
-        },
-      ]
-    } catch {}
-
-    return []
+    return [
+      {
+        uri: `https://${show}.podomatic.com/rss2.xml`,
+        hint: composeHint('podomatic:show'),
+      },
+    ]
   },
 }

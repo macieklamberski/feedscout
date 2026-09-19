@@ -1,4 +1,4 @@
-import { isHostOf } from 'trousse'
+import { isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 
@@ -19,22 +19,24 @@ export const omnystudioHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    try {
-      const { origin, pathname } = new URL(url)
-      const slug = pathname.match(showPathRegex)?.[1]
+    const parsedUrl = parseUrl(url)
 
-      if (!slug) {
-        return []
-      }
+    if (!parsedUrl) {
+      return []
+    }
 
-      return [
-        {
-          uri: `${origin}/shows/${slug}/playlists/podcast.rss`,
-          hint: composeHint('omnystudio:show'),
-        },
-      ]
-    } catch {}
+    const { origin, pathname } = parsedUrl
+    const slug = pathname.match(showPathRegex)?.[1]
 
-    return []
+    if (!slug) {
+      return []
+    }
+
+    return [
+      {
+        uri: `${origin}/shows/${slug}/playlists/podcast.rss`,
+        hint: composeHint('omnystudio:show'),
+      },
+    ]
   },
 }

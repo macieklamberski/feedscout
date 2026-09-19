@@ -1,3 +1,4 @@
+import { parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../../common/types.js'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
@@ -28,23 +29,25 @@ export const xenforoHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    try {
-      const { origin, pathname } = new URL(url)
-      const forumPath = pathname.match(forumPathRegex)?.[1]
-      const uris: Array<DiscoverUriEntry> = []
+    const parsedUrl = parseUrl(url)
 
-      if (forumPath) {
-        uris.push({
-          uri: `${origin}/f/${forumPath}/index.rss`,
-          hint: composeHint('xenforo:forum'),
-        })
-      }
+    if (!parsedUrl) {
+      return []
+    }
 
-      uris.push({ uri: `${origin}/index.rss`, hint: composeHint('xenforo:site') })
+    const { origin, pathname } = parsedUrl
+    const forumPath = pathname.match(forumPathRegex)?.[1]
+    const uris: Array<DiscoverUriEntry> = []
 
-      return uris
-    } catch {}
+    if (forumPath) {
+      uris.push({
+        uri: `${origin}/f/${forumPath}/index.rss`,
+        hint: composeHint('xenforo:forum'),
+      })
+    }
 
-    return []
+    uris.push({ uri: `${origin}/index.rss`, hint: composeHint('xenforo:site') })
+
+    return uris
   },
 }

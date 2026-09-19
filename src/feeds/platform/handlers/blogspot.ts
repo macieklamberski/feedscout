@@ -1,3 +1,4 @@
+import { parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../../common/types.js'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
@@ -22,13 +23,15 @@ const postCommentsFeedRegex = /href="[^"]*\/feeds\/(\d+)\/comments\/default/
 
 export const blogspotHandler: PlatformHandler = {
   match: (url) => {
-    try {
-      const hostname = new URL(url).hostname.toLowerCase()
+    const parsedUrl = parseUrl(url)
 
-      return blogspotDomainRegex.test(hostname)
-    } catch {}
+    if (!parsedUrl) {
+      return false
+    }
 
-    return false
+    const hostname = parsedUrl.hostname.toLowerCase()
+
+    return blogspotDomainRegex.test(hostname)
   },
 
   resolve: (url, content) => {

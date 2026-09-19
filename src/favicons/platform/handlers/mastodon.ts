@@ -1,4 +1,4 @@
-import { isNonEmptyString } from 'trousse'
+import { isNonEmptyString, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { hasMetaContent } from '../../../common/utils.js'
 import { parseBodyJson } from '../../utils.js'
@@ -25,21 +25,25 @@ export const isMastodonHeaders = (headers: Headers): boolean => {
 
 export const mastodonHandler: PlatformHandler = {
   match: (url, content, headers) => {
-    try {
-      const { pathname } = new URL(url)
+    const parsedUrl = parseUrl(url)
 
-      if (!isProfilePath(pathname)) {
-        return false
-      }
+    if (!parsedUrl) {
+      return false
+    }
 
-      if (content && isMastodonHtml(content)) {
-        return true
-      }
+    const { pathname } = parsedUrl
 
-      if (headers && isMastodonHeaders(headers)) {
-        return true
-      }
-    } catch {}
+    if (!isProfilePath(pathname)) {
+      return false
+    }
+
+    if (content && isMastodonHtml(content)) {
+      return true
+    }
+
+    if (headers && isMastodonHeaders(headers)) {
+      return true
+    }
 
     return false
   },

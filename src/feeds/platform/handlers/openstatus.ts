@@ -1,3 +1,4 @@
+import { parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 
@@ -23,15 +24,17 @@ export const openstatusHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    try {
-      const { origin } = new URL(url)
+    const parsedUrl = parseUrl(url)
 
-      return [
-        { uri: `${origin}/feed/rss`, hint: composeHint('openstatus:updates-rss') },
-        { uri: `${origin}/feed/atom`, hint: composeHint('openstatus:updates-atom') },
-      ]
-    } catch {}
+    if (!parsedUrl) {
+      return []
+    }
 
-    return []
+    const { origin } = parsedUrl
+
+    return [
+      { uri: `${origin}/feed/rss`, hint: composeHint('openstatus:updates-rss') },
+      { uri: `${origin}/feed/atom`, hint: composeHint('openstatus:updates-atom') },
+    ]
   },
 }
