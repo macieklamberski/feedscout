@@ -1,11 +1,11 @@
+import type { Atom } from 'feedsmith'
 import { parseFeed } from 'feedsmith'
-import type { Atom, DeepPartial } from 'feedsmith/types'
 import { defaultResolveUrlFn } from '../../common/discover/defaults.js'
 import type { DiscoverResolveUrlFn } from '../../common/types.js'
 import type { HubResult } from '../discover/types.js'
 
 const getLinksWithRel = (
-  links: Array<DeepPartial<Atom.Link<string>>> | undefined,
+  links: Array<Atom.Link<string>> | undefined,
   rel: string,
 ): Array<string> => {
   return (

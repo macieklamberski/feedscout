@@ -3,14 +3,14 @@ import { tistoryHandler } from './tistory.js'
 
 describe('tistoryHandler', () => {
   describe('match', () => {
-    const cases = [
-      ['https://headstartup.tistory.com', true],
-      ['https://blog.example.tistory.com', true],
-      ['https://tistory.com', false],
-      ['https://example.com', false],
-    ] as const
+    const values: Array<[boolean, string]> = [
+      [true, 'https://headstartup.tistory.com'],
+      [true, 'https://blog.example.tistory.com'],
+      [false, 'https://tistory.com'],
+      [false, 'https://example.com'],
+    ]
 
-    it.each(cases)('%s -> %s', (url, expected) => {
+    it.each(values)('should return %s for %s', (expected, url) => {
       expect(tistoryHandler.match(url)).toBe(expected)
     })
 
@@ -42,6 +42,11 @@ describe('tistoryHandler', () => {
       ]
 
       expect(tistoryHandler.resolve(value)).toEqual(expected)
+    })
+
+    it.todo('should define behavior for invalid URL input', () => {
+      // resolve('not-a-url') currently throws a TypeError from the unguarded new URL call; the
+      // desired contract (throw vs empty array) is undecided.
     })
   })
 })

@@ -5,9 +5,9 @@ import type { HubResult } from './types.js'
 
 const createMockFetch = (body: string, headers: Record<string, string> = {}): DiscoverFetchFn => {
   return async (url: string) => ({
-    url,
-    body,
     headers: new Headers(headers),
+    body,
+    url,
     status: 200,
     statusText: 'OK',
   })
@@ -124,6 +124,19 @@ describe('discoverHubs', () => {
         fetchFn: mockFetch,
         methods: ['headers', 'html'],
       })
+
+      expect(value).toEqual([])
+    })
+
+    it('should return empty array for empty methods array', async () => {
+      const html = '<link rel="hub" href="https://html-hub.example.com/">'
+      const headers = new Headers({
+        link: '<https://header-hub.example.com/>; rel="hub"',
+      })
+      const value = await discoverHubs(
+        { url: 'https://example.com/', content: html, headers },
+        { methods: [] },
+      )
 
       expect(value).toEqual([])
     })

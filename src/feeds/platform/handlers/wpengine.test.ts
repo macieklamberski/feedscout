@@ -3,17 +3,17 @@ import { wpengineHandler } from './wpengine.js'
 
 describe('wpengineHandler', () => {
   describe('match', () => {
-    const cases = [
-      ['https://example.wpenginepowered.com', true],
-      ['https://blog.example.wpenginepowered.com', true],
-      ['https://example.wpengine.com', true],
-      ['https://blog.example.wpengine.com', true],
-      ['https://wpenginepowered.com', false],
-      ['https://wpengine.com', false],
-      ['https://example.com', false],
-    ] as const
+    const values: Array<[boolean, string]> = [
+      [true, 'https://example.wpenginepowered.com'],
+      [true, 'https://blog.example.wpenginepowered.com'],
+      [true, 'https://example.wpengine.com'],
+      [true, 'https://blog.example.wpengine.com'],
+      [false, 'https://wpenginepowered.com'],
+      [false, 'https://wpengine.com'],
+      [false, 'https://example.com'],
+    ]
 
-    it.each(cases)('%s -> %s', (url, expected) => {
+    it.each(values)('should return %s for %s', (expected, url) => {
       expect(wpengineHandler.match(url)).toBe(expected)
     })
 
@@ -662,6 +662,11 @@ describe('wpengineHandler', () => {
       ]
 
       expect(wpengineHandler.resolve(value)).toEqual(expected)
+    })
+
+    it.todo('should define behavior for invalid URL input', () => {
+      // resolve('not-a-url') currently throws a TypeError from the unguarded new URL call; the
+      // desired contract (throw vs empty array) is undecided.
     })
   })
 })

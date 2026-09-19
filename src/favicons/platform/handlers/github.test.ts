@@ -23,30 +23,26 @@ describe('githubHandler', () => {
 
   describe('resolve', () => {
     it('should resolve user avatar from user URL', () => {
-      const value = githubHandler.resolve('https://github.com/octocat')
       const expected: Array<DiscoverUriEntry> = [{ uri: 'https://github.com/octocat.png' }]
 
-      expect(value).toEqual(expected)
+      expect(githubHandler.resolve('https://github.com/octocat')).toEqual(expected)
     })
 
     it('should resolve user avatar from repo URL', () => {
-      const value = githubHandler.resolve('https://github.com/octocat/Hello-World')
       const expected: Array<DiscoverUriEntry> = [{ uri: 'https://github.com/octocat.png' }]
 
-      expect(value).toEqual(expected)
+      expect(githubHandler.resolve('https://github.com/octocat/Hello-World')).toEqual(expected)
     })
 
     it('should resolve user avatar from deep repo path', () => {
-      const value = githubHandler.resolve('https://github.com/octocat/Hello-World/tree/main/src')
+      const value = 'https://github.com/octocat/Hello-World/tree/main/src'
       const expected: Array<DiscoverUriEntry> = [{ uri: 'https://github.com/octocat.png' }]
 
-      expect(value).toEqual(expected)
+      expect(githubHandler.resolve(value)).toEqual(expected)
     })
 
     it('should return empty array for root URL', () => {
-      const value = githubHandler.resolve('https://github.com')
-
-      expect(value).toEqual([])
+      expect(githubHandler.resolve('https://github.com')).toEqual([])
     })
 
     it('should return empty array for excluded paths', () => {
@@ -62,24 +58,26 @@ describe('githubHandler', () => {
     })
 
     it('should resolve www.github.com URL', () => {
-      const value = githubHandler.resolve('https://www.github.com/octocat')
       const expected: Array<DiscoverUriEntry> = [{ uri: 'https://github.com/octocat.png' }]
 
-      expect(value).toEqual(expected)
+      expect(githubHandler.resolve('https://www.github.com/octocat')).toEqual(expected)
     })
 
     it('should resolve username with dashes', () => {
-      const value = githubHandler.resolve('https://github.com/my-org')
       const expected: Array<DiscoverUriEntry> = [{ uri: 'https://github.com/my-org.png' }]
 
-      expect(value).toEqual(expected)
+      expect(githubHandler.resolve('https://github.com/my-org')).toEqual(expected)
     })
 
     it('should strip feed extension from user URL', () => {
-      const value = githubHandler.resolve('https://github.com/octocat.atom')
       const expected: Array<DiscoverUriEntry> = [{ uri: 'https://github.com/octocat.png' }]
 
-      expect(value).toEqual(expected)
+      expect(githubHandler.resolve('https://github.com/octocat.atom')).toEqual(expected)
+    })
+
+    it.todo('should define behavior for invalid URL input', () => {
+      // resolve('not-a-url') currently throws a TypeError from the unguarded new URL call; the
+      // desired contract (throw vs empty array) is undecided.
     })
   })
 })

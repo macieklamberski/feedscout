@@ -3,13 +3,13 @@ import { deviantartHandler } from './deviantart.js'
 
 describe('deviantartHandler', () => {
   describe('match', () => {
-    const cases = [
-      ['https://deviantart.com/yuumei', true],
-      ['https://www.deviantart.com/yuumei', true],
-      ['https://example.com/yuumei', false],
-    ] as const
+    const values: Array<[boolean, string]> = [
+      [true, 'https://deviantart.com/yuumei'],
+      [true, 'https://www.deviantart.com/yuumei'],
+      [false, 'https://example.com/yuumei'],
+    ]
 
-    it.each(cases)('%s -> %s', (url, expected) => {
+    it.each(values)('should return %s for %s', (expected, url) => {
       expect(deviantartHandler.match(url)).toBe(expected)
     })
 
@@ -115,17 +115,15 @@ describe('deviantartHandler', () => {
       expect(deviantartHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return empty array for excluded paths', () => {
-      const excludedUrls = [
-        'https://deviantart.com/about',
-        'https://deviantart.com/join',
-        'https://deviantart.com/search',
-        'https://deviantart.com/shop',
-      ]
+    const excludedValues: Array<string> = [
+      'https://deviantart.com/about',
+      'https://deviantart.com/join',
+      'https://deviantart.com/search',
+      'https://deviantart.com/shop',
+    ]
 
-      for (const url of excludedUrls) {
-        expect(deviantartHandler.resolve(url)).toEqual([])
-      }
+    it.each(excludedValues)('should return empty array for %s', (value) => {
+      expect(deviantartHandler.resolve(value)).toEqual([])
     })
 
     it('should return curated daily-deviations feed', () => {
@@ -142,6 +140,30 @@ describe('deviantartHandler', () => {
 
     it('should return popular feed', () => {
       const value = 'https://deviantart.com/popular'
+      const expected = [
+        {
+          uri: 'https://backend.deviantart.com/rss.xml?type=deviation&q=boost%3Apopular',
+          hint: { key: 'deviantart:popular', label: 'Popular' },
+        },
+      ]
+
+      expect(deviantartHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return curated daily-deviations feed for trailing slash', () => {
+      const value = 'https://deviantart.com/daily-deviations/'
+      const expected = [
+        {
+          uri: 'https://backend.deviantart.com/rss.xml?q=special%3Add',
+          hint: { key: 'deviantart:daily-deviations', label: 'Daily Deviations' },
+        },
+      ]
+
+      expect(deviantartHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return popular feed for trailing slash', () => {
+      const value = 'https://deviantart.com/popular/'
       const expected = [
         {
           uri: 'https://backend.deviantart.com/rss.xml?type=deviation&q=boost%3Apopular',
@@ -180,6 +202,11 @@ describe('deviantartHandler', () => {
       ]
 
       expect(deviantartHandler.resolve(value)).toEqual(expected)
+    })
+
+    it.todo('should define behavior for invalid URL input', () => {
+      // resolve('not-a-url') currently throws a TypeError from the unguarded new URL call; the
+      // desired contract (throw vs empty array) is undecided.
     })
   })
 })

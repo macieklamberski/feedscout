@@ -3,16 +3,16 @@ import { letterboxdHandler } from './letterboxd.js'
 
 describe('letterboxdHandler', () => {
   describe('match', () => {
-    const cases = [
-      ['https://letterboxd.com/dave', true],
-      ['https://www.letterboxd.com/dave', true],
-      ['https://letterboxd.com/dave/films/', true],
-      ['https://letterboxd.com', true],
-      ['https://example.com/letterboxd', false],
-      ['https://twitter.com/letterboxd', false],
-    ] as const
+    const values: Array<[boolean, string]> = [
+      [true, 'https://letterboxd.com/dave'],
+      [true, 'https://www.letterboxd.com/dave'],
+      [true, 'https://letterboxd.com/dave/films/'],
+      [true, 'https://letterboxd.com'],
+      [false, 'https://example.com/letterboxd'],
+      [false, 'https://twitter.com/letterboxd'],
+    ]
 
-    it.each(cases)('%s -> %s', (url, expected) => {
+    it.each(values)('should return %s for %s', (expected, url) => {
       expect(letterboxdHandler.match(url)).toBe(expected)
     })
 
@@ -98,6 +98,23 @@ describe('letterboxdHandler', () => {
       ]
 
       expect(letterboxdHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return Journal feed for journal article subpath', () => {
+      const value = 'https://letterboxd.com/journal/the-best-films-of-the-year'
+      const expected = [
+        {
+          uri: 'https://letterboxd.com/journal/rss/',
+          hint: { key: 'letterboxd:journal', label: 'Journal' },
+        },
+      ]
+
+      expect(letterboxdHandler.resolve(value)).toEqual(expected)
+    })
+
+    it.todo('should define behavior for invalid URL input', () => {
+      // resolve('not-a-url') currently throws a TypeError from the unguarded new URL call; the
+      // desired contract (throw vs empty array) is undecided.
     })
   })
 })

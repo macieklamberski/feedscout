@@ -2,6 +2,7 @@ export { discoverBlogrolls } from '../blogrolls/index.js'
 export { defaultResolveSiteUrlFn } from '../common/discover/defaults.js'
 export { getFeedSiteUrl } from '../common/discover/utils.js'
 export type {
+  DiscoverErrorContext,
   DiscoverExtractFn,
   DiscoverFetchFn,
   DiscoverFetchFnOptions,
@@ -10,6 +11,7 @@ export type {
   DiscoverInputObject,
   DiscoverMethod,
   DiscoverMethodsConfig,
+  DiscoverOnErrorFn,
   DiscoverOnProgressFn,
   DiscoverOptions,
   DiscoverProgress,

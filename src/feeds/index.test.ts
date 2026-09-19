@@ -1,5 +1,10 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverFetchFn, DiscoverResult } from '../common/types.js'
+import type {
+  DiscoverExtractFn,
+  DiscoverFetchFn,
+  DiscoverResolveUrlFn,
+  DiscoverResult,
+} from '../common/types.js'
 import type { PlatformHandler } from '../common/uris/platform/types.js'
 import { defaultPlatformOptions, urisBalanced, urisComprehensive, urisMinimal } from './defaults.js'
 import { discoverFeeds } from './index.js'
@@ -7,9 +12,9 @@ import type { FeedResult } from './types.js'
 
 const createMockFetch = (responses: Record<string, string>): DiscoverFetchFn => {
   return async (url: string) => ({
-    url,
-    body: responses[url] ?? '',
     headers: new Headers(),
+    body: responses[url] ?? '',
+    url,
     status: 200,
     statusText: 'OK',
   })
@@ -29,7 +34,7 @@ describe('discoverFeeds', () => {
     const mockFetch = createMockFetch({
       'https://example.com/feed': rss,
     })
-    const value = await discoverFeeds('https://example.com', { fetchFn: mockFetch })
+    const result = await discoverFeeds('https://example.com', { fetchFn: mockFetch })
     const expected: Array<DiscoverResult<FeedResult>> = [
       {
         url: 'https://example.com/feed',
@@ -39,6 +44,80 @@ describe('discoverFeeds', () => {
         title: 'Test RSS',
         description: 'Test feed',
         siteUrl: 'https://example.com/',
+      },
+    ]
+
+    expect(result).toEqual(expected)
+  })
+
+  it('should find feeds at ancestor paths when the page has no feed hints', async () => {
+    const rss = `
+      <rss version="2.0">
+        <channel>
+          <title>Blog RSS</title>
+          <link>https://example.com/blog/</link>
+          <description>Blog feed</description>
+        </channel>
+      </rss>
+    `
+    const html = `
+      <html>
+        <head><title>Post</title></head>
+        <body><a href="/blog/">Blog</a></body>
+      </html>
+    `
+    const mockFetch = createMockFetch({
+      'https://example.com/blog/post-slug/': html,
+      'https://example.com/blog/feed.xml': rss,
+    })
+    const value = await discoverFeeds('https://example.com/blog/post-slug/', {
+      fetchFn: mockFetch,
+    })
+    const expected: Array<DiscoverResult<FeedResult>> = [
+      {
+        url: 'https://example.com/blog/feed.xml',
+        isValid: true,
+        method: 'guess',
+        format: 'rss',
+        title: 'Blog RSS',
+        description: 'Blog feed',
+        siteUrl: 'https://example.com/blog/',
+      },
+    ]
+
+    expect(value).toEqual(expected)
+  })
+
+  it('should find feeds under linked sections when the root has no feed hints', async () => {
+    const rss = `
+      <rss version="2.0">
+        <channel>
+          <title>Blog RSS</title>
+          <link>https://example.com/blog</link>
+          <description>Blog feed</description>
+        </channel>
+      </rss>
+    `
+    const html = `
+      <html>
+        <head><title>Home</title></head>
+        <body><nav><a href="/blog">Blog</a><a href="/about">About</a></nav></body>
+      </html>
+    `
+    const mockFetch = createMockFetch({
+      'https://example.com/': html,
+      'https://example.com/blog/rss.xml': rss,
+    })
+    const value = await discoverFeeds('https://example.com/', { fetchFn: mockFetch })
+    const expected: Array<DiscoverResult<FeedResult>> = [
+      {
+        url: 'https://example.com/blog/rss.xml',
+        isValid: true,
+        method: 'guess',
+        format: 'rss',
+        title: 'Blog RSS',
+        description: 'Blog feed',
+        siteUrl: 'https://example.com/blog',
       },
     ]
 
@@ -66,7 +145,7 @@ describe('discoverFeeds', () => {
       'https://example.com/feed': rss,
       'https://example.com/atom': atom,
     })
-    const value = await discoverFeeds(
+    const result = await discoverFeeds(
       { url: 'https://example.com' },
       {
         methods: { guess: { uris: ['/feed', '/atom', '/rss'] } },
@@ -94,7 +173,7 @@ describe('discoverFeeds', () => {
       },
     ]
 
-    expect(value).toEqual(expected)
+    expect(result).toEqual(expected)
   })
 
   it('should detect feed format from content', async () => {
@@ -110,7 +189,7 @@ describe('discoverFeeds', () => {
         </rss>
       `,
     })
-    const value = await discoverFeeds(
+    const result = await discoverFeeds(
       { url: 'https://example.com' },
       {
         methods: { guess: { uris: ['/feed'] } },
@@ -129,7 +208,7 @@ describe('discoverFeeds', () => {
       },
     ]
 
-    expect(value).toEqual(expected)
+    expect(result).toEqual(expected)
   })
 
   it('should work with minimal feed URIs array', async () => {
@@ -146,7 +225,7 @@ describe('discoverFeeds', () => {
       'https://example.com/feed': rss,
       'https://example.com/rss': rss,
     })
-    const value = await discoverFeeds(
+    const result = await discoverFeeds(
       { url: 'https://example.com' },
       {
         methods: { guess: { uris: urisMinimal } },
@@ -174,7 +253,7 @@ describe('discoverFeeds', () => {
       },
     ]
 
-    expect(value).toEqual(expected)
+    expect(result).toEqual(expected)
   })
 
   it('should work with balanced feed URIs array', async () => {
@@ -187,7 +266,7 @@ describe('discoverFeeds', () => {
         items: [],
       }),
     })
-    const value = await discoverFeeds(
+    const result = await discoverFeeds(
       { url: 'https://example.com' },
       {
         methods: { guess: { uris: urisBalanced } },
@@ -206,7 +285,7 @@ describe('discoverFeeds', () => {
       },
     ]
 
-    expect(value).toEqual(expected)
+    expect(result).toEqual(expected)
   })
 
   it('should work with comprehensive feed URIs array', async () => {
@@ -223,7 +302,7 @@ describe('discoverFeeds', () => {
       'https://example.com/?feed=rss': rss,
       'https://example.com/feeds/posts/default': rss,
     })
-    const value = await discoverFeeds(
+    const result = await discoverFeeds(
       { url: 'https://example.com' },
       {
         methods: { guess: { uris: urisComprehensive } },
@@ -251,7 +330,7 @@ describe('discoverFeeds', () => {
       },
     ]
 
-    expect(value).toEqual(expected)
+    expect(result).toEqual(expected)
   })
 
   it('should test additional base URLs alongside main baseUrl', async () => {
@@ -269,7 +348,7 @@ describe('discoverFeeds', () => {
       'https://www.example.com/feed': rss,
       'https://blog.example.com/feed': rss,
     })
-    const value = await discoverFeeds(
+    const result = await discoverFeeds(
       { url: 'https://example.com' },
       {
         methods: {
@@ -311,14 +390,14 @@ describe('discoverFeeds', () => {
       },
     ]
 
-    expect(value).toEqual(expected)
+    expect(result).toEqual(expected)
   })
 
   it('should return empty array when methods is empty array', async () => {
     const mockFetch = createMockFetch({
       'https://example.com/feed': '<rss><channel><title>Test</title></channel></rss>',
     })
-    const value = await discoverFeeds(
+    const result = await discoverFeeds(
       { url: 'https://example.com' },
       {
         methods: [],
@@ -326,7 +405,114 @@ describe('discoverFeeds', () => {
       },
     )
 
-    expect(value).toEqual([])
+    expect(result).toEqual([])
+  })
+
+  it('should fall back to guess method when initial URL fetch throws', async () => {
+    const rssContent = `
+      <?xml version="1.0"?>
+      <rss version="2.0">
+        <channel><title>Test</title></channel>
+      </rss>
+    `
+    const fetchFn: DiscoverFetchFn = (url: string) => {
+      if (url === 'https://example.com/') {
+        throw new Error('Connection refused')
+      }
+
+      return Promise.resolve({
+        headers: new Headers(),
+        body: url === 'https://example.com/feed.xml' ? rssContent : '',
+        url,
+        status: url === 'https://example.com/feed.xml' ? 200 : 404,
+        statusText: url === 'https://example.com/feed.xml' ? 'OK' : 'Not Found',
+      })
+    }
+    const result = await discoverFeeds('https://example.com/', {
+      methods: ['guess'],
+      fetchFn,
+    })
+    const expected: Array<DiscoverResult<FeedResult>> = [
+      {
+        url: 'https://example.com/feed.xml',
+        isValid: true,
+        method: 'guess',
+        format: 'rss',
+        title: 'Test',
+        description: undefined,
+        siteUrl: undefined,
+      },
+    ]
+
+    expect(result).toEqual(expected)
+  })
+
+  it('should use custom extractFn when provided', async () => {
+    const mockFetch = createMockFetch({
+      'https://example.com/feed': '<data>opaque payload</data>',
+    })
+    const extractFn: DiscoverExtractFn<FeedResult> = ({ url }) => ({
+      url,
+      isValid: true,
+      format: 'rss',
+      title: 'Custom Extract',
+    })
+    const result = await discoverFeeds('https://example.com', {
+      methods: { guess: { uris: ['/feed'] } },
+      fetchFn: mockFetch,
+      extractFn,
+    })
+    const expected: Array<DiscoverResult<FeedResult>> = [
+      {
+        url: 'https://example.com/feed',
+        isValid: true,
+        method: 'guess',
+        format: 'rss',
+        title: 'Custom Extract',
+      },
+    ]
+
+    expect(result).toEqual(expected)
+  })
+
+  it('should use custom resolveUrlFn when provided', async () => {
+    const rss = `
+      <rss version="2.0">
+        <channel>
+          <title>Test RSS</title>
+          <link>https://example.com</link>
+          <description>Test feed</description>
+        </channel>
+      </rss>
+    `
+    const mockFetch = createMockFetch({
+      'https://feeds.example.com/feed': rss,
+    })
+    const resolveUrlFn: DiscoverResolveUrlFn = (url, baseUrl) => {
+      const resolved = new URL(url, baseUrl)
+
+      resolved.hostname = 'feeds.example.com'
+
+      return resolved.href
+    }
+    const result = await discoverFeeds('https://example.com', {
+      methods: { guess: { uris: ['/feed'] } },
+      fetchFn: mockFetch,
+      resolveUrlFn,
+    })
+    const expected: Array<DiscoverResult<FeedResult>> = [
+      {
+        url: 'https://feeds.example.com/feed',
+        isValid: true,
+        method: 'guess',
+        format: 'rss',
+        title: 'Test RSS',
+        description: 'Test feed',
+        siteUrl: 'https://example.com/',
+      },
+    ]
+
+    expect(result).toEqual(expected)
   })
 
   describe('platform method', () => {
@@ -343,7 +529,7 @@ describe('discoverFeeds', () => {
       const mockFetch = createMockFetch({
         'https://www.reddit.com/r/programming/.rss': rss,
       })
-      const value = await discoverFeeds('https://reddit.com/r/programming', {
+      const result = await discoverFeeds('https://reddit.com/r/programming', {
         methods: ['platform'],
         fetchFn: mockFetch,
       })
@@ -352,15 +538,15 @@ describe('discoverFeeds', () => {
           url: 'https://www.reddit.com/r/programming/.rss',
           isValid: true,
           method: 'platform',
+          hint: { key: 'reddit:posts', label: 'Posts' },
           format: 'rss',
           title: 'Test RSS',
           description: 'Test feed',
           siteUrl: 'https://reddit.com/',
-          hint: { key: 'reddit:posts', label: 'Posts' },
         },
       ]
 
-      expect(value).toEqual(expected)
+      expect(result).toEqual(expected)
     })
 
     it('should discover feeds when platform method specified as true in object form', async () => {
@@ -375,7 +561,7 @@ describe('discoverFeeds', () => {
         'https://github.com/owner/repo/releases.atom': atom,
         'https://github.com/owner/repo/commits.atom': atom,
       })
-      const value = await discoverFeeds('https://github.com/owner/repo', {
+      const result = await discoverFeeds('https://github.com/owner/repo', {
         methods: { platform: true },
         fetchFn: mockFetch,
       })
@@ -384,25 +570,25 @@ describe('discoverFeeds', () => {
           url: 'https://github.com/owner/repo/releases.atom',
           isValid: true,
           method: 'platform',
+          hint: { key: 'github:releases', label: 'Releases' },
           format: 'atom',
           title: 'Test Atom',
           description: 'Test feed',
           siteUrl: 'https://github.com/owner/repo',
-          hint: { key: 'github:releases', label: 'Releases' },
         },
         {
           url: 'https://github.com/owner/repo/commits.atom',
           isValid: true,
           method: 'platform',
+          hint: { key: 'github:commits', label: 'Commits' },
           format: 'atom',
           title: 'Test Atom',
           description: 'Test feed',
           siteUrl: 'https://github.com/owner/repo',
-          hint: { key: 'github:commits', label: 'Commits' },
         },
       ]
 
-      expect(value).toEqual(expected)
+      expect(result).toEqual(expected)
     })
 
     it('should use custom handlers when provided in object form', async () => {
@@ -422,7 +608,7 @@ describe('discoverFeeds', () => {
       const mockFetch = createMockFetch({
         'https://custom.com/my-feed.xml': rss,
       })
-      const value = await discoverFeeds('https://custom.com/page', {
+      const result = await discoverFeeds('https://custom.com/page', {
         methods: { platform: { handlers: [customHandler] } },
         fetchFn: mockFetch,
       })
@@ -438,7 +624,7 @@ describe('discoverFeeds', () => {
         },
       ]
 
-      expect(value).toEqual(expected)
+      expect(result).toEqual(expected)
     })
 
     it('should combine platform URIs with other method URIs', async () => {
@@ -455,7 +641,7 @@ describe('discoverFeeds', () => {
         'https://www.reddit.com/r/programming/.rss': rss,
         'https://reddit.com/feed': rss,
       })
-      const value = await discoverFeeds(
+      const result = await discoverFeeds(
         { url: 'https://reddit.com/r/programming' },
         {
           methods: { platform: true, guess: { uris: ['/feed'] } },
@@ -467,11 +653,11 @@ describe('discoverFeeds', () => {
           url: 'https://www.reddit.com/r/programming/.rss',
           isValid: true,
           method: 'platform',
+          hint: { key: 'reddit:posts', label: 'Posts' },
           format: 'rss',
           title: 'Test RSS',
           description: 'Test feed',
           siteUrl: 'https://reddit.com/',
-          hint: { key: 'reddit:posts', label: 'Posts' },
         },
         {
           url: 'https://reddit.com/feed',
@@ -484,12 +670,12 @@ describe('discoverFeeds', () => {
         },
       ]
 
-      expect(value).toEqual(expected)
+      expect(result).toEqual(expected)
     })
 
     it('should return empty array when platform method not specified', async () => {
       const mockFetch = createMockFetch({})
-      const value = await discoverFeeds(
+      const result = await discoverFeeds(
         { url: 'https://reddit.com/r/programming' },
         {
           methods: { guess: { uris: [] } },
@@ -497,12 +683,12 @@ describe('discoverFeeds', () => {
         },
       )
 
-      expect(value).toEqual([])
+      expect(result).toEqual([])
     })
 
     it('should return empty array for invalid URLs', async () => {
       const mockFetch = createMockFetch({})
-      const value = await discoverFeeds(
+      const result = await discoverFeeds(
         { url: 'not-a-valid-url' },
         {
           methods: ['platform'],
@@ -510,7 +696,7 @@ describe('discoverFeeds', () => {
         },
       )
 
-      expect(value).toEqual([])
+      expect(result).toEqual([])
     })
 
     it('should return empty array when platform discovery throws error', async () => {
@@ -521,12 +707,12 @@ describe('discoverFeeds', () => {
         },
       }
       const mockFetch = createMockFetch({})
-      const value = await discoverFeeds('https://example.com', {
+      const result = await discoverFeeds('https://example.com', {
         methods: { platform: { handlers: [errorHandler] } },
         fetchFn: mockFetch,
       })
 
-      expect(value).toEqual([])
+      expect(result).toEqual([])
     })
 
     it('should pass content to platform handlers', async () => {
@@ -552,67 +738,115 @@ describe('discoverFeeds', () => {
       expect(receivedContent).toBe(htmlContent)
     })
   })
+
+  describe('html method', () => {
+    it('should discover feeds from link rel=alternate elements', async () => {
+      const html = `
+        <html>
+          <head>
+            <link rel="alternate" type="application/rss+xml" href="/feed.xml" />
+          </head>
+          <body>Example blog</body>
+        </html>
+      `
+      const rss = `
+        <rss version="2.0">
+          <channel>
+            <title>Test RSS</title>
+            <link>https://example.com</link>
+            <description>Test feed</description>
+          </channel>
+        </rss>
+      `
+      const mockFetch = createMockFetch({
+        'https://example.com': html,
+        'https://example.com/feed.xml': rss,
+      })
+      const result = await discoverFeeds('https://example.com', {
+        methods: ['html'],
+        fetchFn: mockFetch,
+      })
+      const expected: Array<DiscoverResult<FeedResult>> = [
+        {
+          url: 'https://example.com/feed.xml',
+          isValid: true,
+          method: 'html',
+          format: 'rss',
+          title: 'Test RSS',
+          description: 'Test feed',
+          siteUrl: 'https://example.com/',
+        },
+      ]
+
+      expect(result).toEqual(expected)
+    })
+  })
+
+  describe('headers method', () => {
+    it('should discover feeds from Link response header', async () => {
+      const rss = `
+        <rss version="2.0">
+          <channel>
+            <title>Test RSS</title>
+            <link>https://example.com</link>
+            <description>Test feed</description>
+          </channel>
+        </rss>
+      `
+      const fetchFn: DiscoverFetchFn = async (url: string) => ({
+        headers:
+          url === 'https://example.com'
+            ? new Headers({
+                link: '<https://example.com/feed.xml>; rel="alternate"; type="application/rss+xml"',
+              })
+            : new Headers(),
+        body: url === 'https://example.com/feed.xml' ? rss : '',
+        url,
+        status: 200,
+        statusText: 'OK',
+      })
+      const result = await discoverFeeds('https://example.com', {
+        methods: ['headers'],
+        fetchFn,
+      })
+      const expected: Array<DiscoverResult<FeedResult>> = [
+        {
+          url: 'https://example.com/feed.xml',
+          isValid: true,
+          method: 'headers',
+          format: 'rss',
+          title: 'Test RSS',
+          description: 'Test feed',
+          siteUrl: 'https://example.com/',
+        },
+      ]
+
+      expect(result).toEqual(expected)
+    })
+  })
 })
 
 describe('defaultPlatformOptions', () => {
   it('should contain handler that matches GitHub URLs', () => {
-    const value = defaultPlatformOptions.handlers.some((handler) =>
-      handler.match('https://github.com/owner/repo'),
-    )
+    const value = 'https://github.com/owner/repo'
+    const hasGithubHandler = defaultPlatformOptions.handlers.some((handler) => handler.match(value))
 
-    expect(value).toBe(true)
+    expect(hasGithubHandler).toBe(true)
   })
 
   it('should contain handler that matches Reddit URLs', () => {
-    const value = defaultPlatformOptions.handlers.some((handler) =>
-      handler.match('https://reddit.com/r/programming'),
-    )
+    const value = 'https://reddit.com/r/programming'
+    const hasRedditHandler = defaultPlatformOptions.handlers.some((handler) => handler.match(value))
 
-    expect(value).toBe(true)
+    expect(hasRedditHandler).toBe(true)
   })
 
   it('should contain handler that matches YouTube URLs', () => {
-    const value = defaultPlatformOptions.handlers.some((handler) =>
-      handler.match('https://youtube.com/@channel'),
+    const value = 'https://youtube.com/@channel'
+    const hasYoutubeHandler = defaultPlatformOptions.handlers.some((handler) =>
+      handler.match(value),
     )
 
-    expect(value).toBe(true)
-  })
-
-  it('should fall back to guess method when initial URL fetch throws', async () => {
-    const rssContent = `<?xml version="1.0"?>
-      <rss version="2.0">
-        <channel><title>Test</title></channel>
-      </rss>`
-    const fetchFn: DiscoverFetchFn = (url: string) => {
-      if (url === 'https://example.com/') {
-        throw new Error('Connection refused')
-      }
-
-      return Promise.resolve({
-        url,
-        body: url === 'https://example.com/feed.xml' ? rssContent : '',
-        headers: new Headers(),
-        status: url === 'https://example.com/feed.xml' ? 200 : 404,
-        statusText: url === 'https://example.com/feed.xml' ? 'OK' : 'Not Found',
-      })
-    }
-    const value = await discoverFeeds('https://example.com/', {
-      methods: ['guess'],
-      fetchFn,
-    })
-    const expected: Array<DiscoverResult<FeedResult>> = [
-      {
-        url: 'https://example.com/feed.xml',
-        isValid: true,
-        method: 'guess',
-        format: 'rss',
-        title: 'Test',
-        description: undefined,
-        siteUrl: undefined,
-      },
-    ]
-
-    expect(value).toEqual(expected)
+    expect(hasYoutubeHandler).toBe(true)
   })
 })

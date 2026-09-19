@@ -3,14 +3,14 @@ import { exblogHandler } from './exblog.js'
 
 describe('exblogHandler', () => {
   describe('match', () => {
-    const cases = [
-      ['https://petitcc.exblog.jp', true],
-      ['https://blog.example.exblog.jp', true],
-      ['https://exblog.jp', false],
-      ['https://example.com', false],
-    ] as const
+    const values: Array<[boolean, string]> = [
+      [true, 'https://petitcc.exblog.jp'],
+      [true, 'https://blog.example.exblog.jp'],
+      [false, 'https://exblog.jp'],
+      [false, 'https://example.com'],
+    ]
 
-    it.each(cases)('%s -> %s', (url, expected) => {
+    it.each(values)('should return %s for %s', (expected, url) => {
       expect(exblogHandler.match(url)).toBe(expected)
     })
 
@@ -74,6 +74,11 @@ describe('exblogHandler', () => {
       ]
 
       expect(exblogHandler.resolve(value)).toEqual(expected)
+    })
+
+    it.todo('should define behavior for invalid URL input', () => {
+      // resolve('not-a-url') currently throws a TypeError from the unguarded new URL call; the
+      // desired contract (throw vs empty array) is undecided.
     })
   })
 })

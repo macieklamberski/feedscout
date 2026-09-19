@@ -4,17 +4,17 @@ import { youtubeHandler } from './youtube.js'
 
 describe('youtubeHandler', () => {
   describe('match', () => {
-    const cases = [
-      ['https://youtube.com/@channel', true],
-      ['https://www.youtube.com/@channel', true],
-      ['https://m.youtube.com/@channel', true],
-      ['https://music.youtube.com/channel/UC1234567890', true],
-      ['https://youtu.be/dQw4w9WgXcQ', true],
-      ['https://www.youtu.be/dQw4w9WgXcQ', true],
-      ['https://vimeo.com/channel', false],
-    ] as const
+    const values: Array<[boolean, string]> = [
+      [true, 'https://youtube.com/@channel'],
+      [true, 'https://www.youtube.com/@channel'],
+      [true, 'https://m.youtube.com/@channel'],
+      [true, 'https://music.youtube.com/channel/UC1234567890'],
+      [true, 'https://youtu.be/dQw4w9WgXcQ'],
+      [true, 'https://www.youtu.be/dQw4w9WgXcQ'],
+      [false, 'https://vimeo.com/channel'],
+    ]
 
-    it.each(cases)('%s -> %s', (url, expected) => {
+    it.each(values)('should return %s for %s', (expected, url) => {
       expect(youtubeHandler.match(url)).toBe(expected)
     })
 
@@ -71,13 +71,13 @@ describe('youtubeHandler', () => {
     ]
 
     it('should return all feed variants for channel ID', () => {
-      const value = youtubeHandler.resolve('https://youtube.com/channel/UC1234567890')
+      const value = 'https://youtube.com/channel/UC1234567890'
 
-      expect(value).toEqual(expectedChannelFeeds)
+      expect(youtubeHandler.resolve(value)).toEqual(expectedChannelFeeds)
     })
 
     it('should return feed URL for playlist', () => {
-      const value = youtubeHandler.resolve('https://youtube.com/playlist?list=PL1234567890')
+      const value = 'https://youtube.com/playlist?list=PL1234567890'
       const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://www.youtube.com/feeds/videos.xml?playlist_id=PL1234567890',
@@ -85,124 +85,116 @@ describe('youtubeHandler', () => {
         },
       ]
 
-      expect(value).toEqual(expected)
+      expect(youtubeHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return only playlist feed for watch page with list param', () => {
+      const value = 'https://youtube.com/watch?v=abc123&list=PL1234567890'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://www.youtube.com/feeds/videos.xml?playlist_id=PL1234567890',
+          hint: { key: 'youtube:playlist', label: 'Playlist' },
+        },
+      ]
+
+      expect(youtubeHandler.resolve(value, '{"channelId":"UC1234567890"}')).toEqual(expected)
+    })
+
+    it('should return all feed variants for channel ID on music.youtube.com', () => {
+      const value = 'https://music.youtube.com/channel/UC1234567890'
+
+      expect(youtubeHandler.resolve(value)).toEqual(expectedChannelFeeds)
     })
 
     it('should extract channel ID from @handle page content', () => {
-      const value = youtubeHandler.resolve(
-        'https://youtube.com/@veritasium',
-        '{"channelId":"UC1234567890"}',
-      )
+      const value = 'https://youtube.com/@veritasium'
+      const content = '{"channelId":"UC1234567890"}'
 
-      expect(value).toEqual(expectedChannelFeeds)
+      expect(youtubeHandler.resolve(value, content)).toEqual(expectedChannelFeeds)
     })
 
     it('should extract channel ID from legacy /user/ page content', () => {
-      const value = youtubeHandler.resolve(
-        'https://youtube.com/user/pewdiepie',
-        '{"channelId":"UC1234567890"}',
-      )
+      const value = 'https://youtube.com/user/pewdiepie'
+      const content = '{"channelId":"UC1234567890"}'
 
-      expect(value).toEqual(expectedChannelFeeds)
+      expect(youtubeHandler.resolve(value, content)).toEqual(expectedChannelFeeds)
     })
 
     it('should extract channel ID from /c/ custom URL page content', () => {
-      const value = youtubeHandler.resolve(
-        'https://youtube.com/c/mkbhd',
-        '{"channelId":"UC1234567890"}',
-      )
+      const value = 'https://youtube.com/c/mkbhd'
+      const content = '{"channelId":"UC1234567890"}'
 
-      expect(value).toEqual(expectedChannelFeeds)
+      expect(youtubeHandler.resolve(value, content)).toEqual(expectedChannelFeeds)
     })
 
     it('should extract channel ID from externalId in consent page content', () => {
-      const value = youtubeHandler.resolve(
-        'https://youtube.com/@testchannel',
-        '{"externalId":"UC1234567890"}',
-      )
+      const value = 'https://youtube.com/@testchannel'
+      const content = '{"externalId":"UC1234567890"}'
 
-      expect(value).toEqual(expectedChannelFeeds)
+      expect(youtubeHandler.resolve(value, content)).toEqual(expectedChannelFeeds)
     })
 
     it('should return empty array when @handle content has no channel ID', () => {
-      const value = youtubeHandler.resolve(
-        'https://youtube.com/@nonexistent',
-        '<html>No channel ID here</html>',
-      )
+      const value = 'https://youtube.com/@nonexistent'
 
-      expect(value).toEqual([])
+      expect(youtubeHandler.resolve(value, '<html>No channel ID here</html>')).toEqual([])
     })
 
     it('should return empty array when /user/ content has no channel ID', () => {
-      const value = youtubeHandler.resolve(
-        'https://youtube.com/user/nonexistent',
-        '<html>No channel ID here</html>',
-      )
+      const value = 'https://youtube.com/user/nonexistent'
 
-      expect(value).toEqual([])
+      expect(youtubeHandler.resolve(value, '<html>No channel ID here</html>')).toEqual([])
     })
 
     it('should return empty array when /c/ content has no channel ID', () => {
-      const value = youtubeHandler.resolve(
-        'https://youtube.com/c/nonexistent',
-        '<html>No channel ID here</html>',
-      )
+      const value = 'https://youtube.com/c/nonexistent'
 
-      expect(value).toEqual([])
+      expect(youtubeHandler.resolve(value, '<html>No channel ID here</html>')).toEqual([])
     })
 
     it('should return empty array for video page without content', () => {
-      const value = youtubeHandler.resolve('https://youtube.com/watch?v=abc123')
-
-      expect(value).toEqual([])
+      expect(youtubeHandler.resolve('https://youtube.com/watch?v=abc123')).toEqual([])
     })
 
     it('should extract channel ID from video page content', () => {
-      const value = youtubeHandler.resolve(
-        'https://youtube.com/watch?v=abc123',
-        '{"channelId":"UC1234567890"}',
-      )
+      const value = 'https://youtube.com/watch?v=abc123'
+      const content = '{"channelId":"UC1234567890"}'
 
-      expect(value).toEqual(expectedChannelFeeds)
+      expect(youtubeHandler.resolve(value, content)).toEqual(expectedChannelFeeds)
     })
 
     it('should extract channel ID from youtu.be short URL content', () => {
-      const value = youtubeHandler.resolve(
-        'https://youtu.be/abc123',
-        '{"channelId":"UC1234567890"}',
-      )
+      const value = 'https://youtu.be/abc123'
+      const content = '{"channelId":"UC1234567890"}'
 
-      expect(value).toEqual(expectedChannelFeeds)
+      expect(youtubeHandler.resolve(value, content)).toEqual(expectedChannelFeeds)
     })
 
     it('should extract channel ID from /shorts/{id} URL content', () => {
-      const value = youtubeHandler.resolve(
-        'https://youtube.com/shorts/abc123',
-        '{"channelId":"UC1234567890"}',
-      )
+      const value = 'https://youtube.com/shorts/abc123'
+      const content = '{"channelId":"UC1234567890"}'
 
-      expect(value).toEqual(expectedChannelFeeds)
+      expect(youtubeHandler.resolve(value, content)).toEqual(expectedChannelFeeds)
     })
 
     it('should extract channel ID from /live/{id} URL content', () => {
-      const value = youtubeHandler.resolve(
-        'https://youtube.com/live/abc123',
-        '{"channelId":"UC1234567890"}',
-      )
+      const value = 'https://youtube.com/live/abc123'
+      const content = '{"channelId":"UC1234567890"}'
 
-      expect(value).toEqual(expectedChannelFeeds)
+      expect(youtubeHandler.resolve(value, content)).toEqual(expectedChannelFeeds)
     })
 
     it('should return empty array for /shorts/{id} without content', () => {
-      const value = youtubeHandler.resolve('https://youtube.com/shorts/abc123')
-
-      expect(value).toEqual([])
+      expect(youtubeHandler.resolve('https://youtube.com/shorts/abc123')).toEqual([])
     })
 
     it('should return empty array for /live/{id} without content', () => {
-      const value = youtubeHandler.resolve('https://youtube.com/live/abc123')
+      expect(youtubeHandler.resolve('https://youtube.com/live/abc123')).toEqual([])
+    })
 
-      expect(value).toEqual([])
+    it.todo('should define behavior for invalid URL input', () => {
+      // resolve('not-a-url') currently throws a TypeError from the unguarded new URL call; the
+      // desired contract (throw vs empty array) is undecided.
     })
   })
 })

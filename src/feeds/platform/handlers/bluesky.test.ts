@@ -3,13 +3,13 @@ import { blueskyHandler } from './bluesky.js'
 
 describe('blueskyHandler', () => {
   describe('match', () => {
-    const cases = [
-      ['https://bsky.app/profile/user.bsky.social', true],
-      ['https://www.bsky.app/profile/user.bsky.social', true],
-      ['https://twitter.com/user', false],
-    ] as const
+    const values: Array<[boolean, string]> = [
+      [true, 'https://bsky.app/profile/user.bsky.social'],
+      [true, 'https://www.bsky.app/profile/user.bsky.social'],
+      [false, 'https://twitter.com/user'],
+    ]
 
-    it.each(cases)('%s -> %s', (url, expected) => {
+    it.each(values)('should return %s for %s', (expected, url) => {
       expect(blueskyHandler.match(url)).toBe(expected)
     })
 
@@ -79,7 +79,7 @@ describe('blueskyHandler', () => {
       expect(blueskyHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return empty array for /profile/user/followers subpath extraction', () => {
+    it('should resolve /profile/user/followers using first segment as handle', () => {
       const value = 'https://bsky.app/profile/user.bsky.social/followers'
       const expected = [
         {
@@ -101,6 +101,11 @@ describe('blueskyHandler', () => {
       ]
 
       expect(blueskyHandler.resolve(value)).toEqual(expected)
+    })
+
+    it.todo('should define behavior for invalid URL input', () => {
+      // resolve('not-a-url') currently throws a TypeError from the unguarded new URL call; the
+      // desired contract (throw vs empty array) is undecided.
     })
   })
 })

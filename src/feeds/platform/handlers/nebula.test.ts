@@ -3,14 +3,14 @@ import { nebulaHandler } from './nebula.js'
 
 describe('nebulaHandler', () => {
   describe('match', () => {
-    const cases = [
-      ['https://nebula.tv/realengineering', true],
-      ['https://www.nebula.tv/realengineering', true],
-      ['https://nebula.tv', true],
-      ['https://example.com', false],
-    ] as const
+    const values: Array<[boolean, string]> = [
+      [true, 'https://nebula.tv/realengineering'],
+      [true, 'https://www.nebula.tv/realengineering'],
+      [true, 'https://nebula.tv'],
+      [false, 'https://example.com'],
+    ]
 
-    it.each(cases)('%s -> %s', (url, expected) => {
+    it.each(values)('should return %s for %s', (expected, url) => {
       expect(nebulaHandler.match(url)).toBe(expected)
     })
 
@@ -112,6 +112,26 @@ describe('nebulaHandler', () => {
       expect(nebulaHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return global feeds for /explore/{tab}', () => {
+      const value = 'https://nebula.tv/explore/podcasts'
+      const expected = [
+        {
+          uri: 'https://rss.nebula.app/video.rss',
+          hint: { key: 'nebula:videos-all', label: 'All Videos' },
+        },
+        {
+          uri: 'https://rss.nebula.app/video.rss?plus=true',
+          hint: { key: 'nebula:videos-all-plus', label: 'All Videos (Plus)' },
+        },
+        {
+          uri: 'https://rss.nebula.app/video/channels.rss',
+          hint: { key: 'nebula:channels', label: 'Recently Added Channels' },
+        },
+      ]
+
+      expect(nebulaHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return category feeds when category query is set', () => {
       const value = 'https://nebula.tv/videos?category=technology'
       const expected = [
@@ -169,9 +189,28 @@ describe('nebulaHandler', () => {
     })
 
     it('should return empty array for excluded paths', () => {
-      const value = 'https://nebula.tv/login'
+      const values = [
+        'https://nebula.tv/login',
+        'https://nebula.tv/about',
+        'https://nebula.tv/classes',
+        'https://nebula.tv/library',
+        'https://nebula.tv/originals',
+        'https://nebula.tv/pricing',
+        'https://nebula.tv/privacy',
+        'https://nebula.tv/search',
+        'https://nebula.tv/settings',
+        'https://nebula.tv/signup',
+        'https://nebula.tv/terms',
+      ]
 
-      expect(nebulaHandler.resolve(value)).toEqual([])
+      for (const value of values) {
+        expect(nebulaHandler.resolve(value)).toEqual([])
+      }
+    })
+
+    it.todo('should define behavior for invalid URL input', () => {
+      // resolve('not-a-url') currently throws a TypeError from the unguarded new URL call; the
+      // desired contract (throw vs empty array) is undecided.
     })
   })
 })

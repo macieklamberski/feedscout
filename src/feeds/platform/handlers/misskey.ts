@@ -1,54 +1,72 @@
+import { parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, hasMetaContent } from '../../../common/utils.js'
 
-// Discoverable without handler.
+// Discoverability: Not discoverable without handler.
+//
+// Misskey exposes per-profile feeds at `{instance}/@{user}.{atom,rss,json}` — the
+// only feed routes registered by upstream `ClientServerService.ts` and built by
+// `FeedService.ts`. The handler is content-keyed via the `application-name` meta
+// tag, `Misskey` or the `Sharkey` fork, or the `<script id="misskey_meta">` tag
+// (instances are not enumerable by host) and emits all three format variants for
+// the same profile path; there are no per-tag, channel, antenna, or timeline feed
+// routes upstream.
 
 const profileRegex = /^\/@([^/.]+)/
+const applicationNames = ['Misskey', 'Sharkey']
 
 export const isMisskeyHtml = (content: string): boolean => {
-  return hasMetaContent(content, 'application-name', 'Misskey')
+  if (content.includes('id="misskey_meta"')) {
+    return true
+  }
+
+  return applicationNames.some((name) => hasMetaContent(content, 'application-name', name))
 }
 
 export const misskeyHandler: PlatformHandler = {
   match: (url, content) => {
-    try {
-      if (!content || !isMisskeyHtml(content)) {
-        return false
-      }
+    if (!content || !isMisskeyHtml(content)) {
+      return false
+    }
 
-      const { pathname } = new URL(url)
+    const parsedUrl = parseUrl(url)
 
-      return profileRegex.test(pathname)
-    } catch {}
+    if (!parsedUrl) {
+      return false
+    }
 
-    return false
+    const { pathname } = parsedUrl
+
+    return profileRegex.test(pathname)
   },
 
   resolve: (url) => {
-    try {
-      const { origin, pathname } = new URL(url)
-      const match = pathname.match(profileRegex)
+    const parsedUrl = parseUrl(url)
 
-      if (!match?.[1]) {
-        return []
-      }
+    if (!parsedUrl) {
+      return []
+    }
 
-      return [
-        {
-          uri: `${origin}/@${match[1]}.atom`,
-          hint: composeHint('misskey:posts-atom'),
-        },
-        {
-          uri: `${origin}/@${match[1]}.rss`,
-          hint: composeHint('misskey:posts-rss'),
-        },
-        {
-          uri: `${origin}/@${match[1]}.json`,
-          hint: composeHint('misskey:posts-json'),
-        },
-      ]
-    } catch {}
+    const { origin, pathname } = parsedUrl
+    const match = pathname.match(profileRegex)
 
-    return []
+    if (!match?.[1]) {
+      return []
+    }
+
+    return [
+      {
+        uri: `${origin}/@${match[1]}.atom`,
+        hint: composeHint('misskey:posts-atom'),
+      },
+      {
+        uri: `${origin}/@${match[1]}.rss`,
+        hint: composeHint('misskey:posts-rss'),
+      },
+      {
+        uri: `${origin}/@${match[1]}.json`,
+        hint: composeHint('misskey:posts-json'),
+      },
+    ]
   },
 }

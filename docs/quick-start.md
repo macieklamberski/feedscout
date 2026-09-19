@@ -8,7 +8,7 @@ This guide will get you up and running with Feedscout in just a few minutes.
 
 ## Installation
 
-Feedscout works in both Node and modern browsers as either CommonJS or ES module.
+Feedscout works in both Node and modern browsers as an ES module.
 
 Install the package using your preferred package manager:
 
@@ -59,20 +59,23 @@ const feeds = await discoverFeeds('https://example.com', {
 
 ### Discover Platform Feeds
 
-For YouTube, GitHub, Reddit, and 30+ other platforms, Feedscout can generate feed URLs directly from the page URL:
+For YouTube, GitHub, Reddit, and 100+ other platforms, Feedscout can generate feed URLs directly from the page URL:
 
 ```typescript
 const feeds = await discoverFeeds('https://www.youtube.com/@mkbhd', {
   methods: ['platform'],
 })
 
-// [{
-//   url: 'https://www.youtube.com/feeds/videos.xml?channel_id=UCBJycsmduvYEL83R_U4JriQ',
-//   isValid: true,
-//   format: 'atom',
-//   title: 'Marques Brownlee',
-//   hint: { key: 'youtube:all', label: 'All uploads' },
-// }]
+// [
+//   {
+//     url: 'https://www.youtube.com/feeds/videos.xml?channel_id=UCBJycsmduvYEL83R_U4JriQ',
+//     isValid: true,
+//     format: 'atom',
+//     title: 'Marques Brownlee',
+//     hint: { key: 'youtube:all', label: 'All uploads' },
+//   },
+//   ...one result for each other feed variant, like videos, shorts and live streams.
+// ]
 ```
 
 ### Using Existing Content
@@ -154,7 +157,7 @@ const blogrolls = await discoverBlogrolls('https://example.com')
 
 ### Using Existing Content
 
-The same [existing content pattern](#using-existing-content) works here — pass `{ url, content, headers }` to avoid extra fetches.
+The same [existing content pattern](#using-existing-content) works here: pass `{ url, content, headers }` to avoid extra fetches.
 
 ## Discover Favicons
 
@@ -169,7 +172,7 @@ const favicons = await discoverFavicons('https://example.com')
 // }]
 ```
 
-The same [existing content pattern](#using-existing-content) works here — pass `{ url, content, headers }` to avoid extra fetches.
+The same [existing content pattern](#using-existing-content) works here: pass `{ url, content, headers }` to avoid extra fetches.
 
 ## Discover WebSub Hubs
 
@@ -184,7 +187,7 @@ const hubs = await discoverHubs('https://example.com/feed.xml')
 // }]
 ```
 
-The same [existing content pattern](#using-existing-content) works here — pass `{ url, content, headers }` to avoid extra fetches.
+The same [existing content pattern](#using-existing-content) works here: pass `{ url, content, headers }` to avoid extra fetches.
 
 ## Next Steps
 

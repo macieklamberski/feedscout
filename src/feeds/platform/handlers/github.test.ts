@@ -3,13 +3,13 @@ import { githubHandler } from './github.js'
 
 describe('githubHandler', () => {
   describe('match', () => {
-    const cases = [
-      ['https://github.com/owner/repo', true],
-      ['https://www.github.com/owner/repo', true],
-      ['https://gitlab.com/owner/repo', false],
-    ] as const
+    const values: Array<[boolean, string]> = [
+      [true, 'https://github.com/owner/repo'],
+      [true, 'https://www.github.com/owner/repo'],
+      [false, 'https://gitlab.com/owner/repo'],
+    ]
 
-    it.each(cases)('%s -> %s', (url, expected) => {
+    it.each(values)('should return %s for %s', (expected, url) => {
       expect(githubHandler.match(url)).toBe(expected)
     })
 
@@ -105,6 +105,26 @@ describe('githubHandler', () => {
         {
           uri: 'https://github.com/microsoft/vscode/commits/main.atom',
           hint: { key: 'github:branch-commits', label: 'Branch commits' },
+        },
+      ]
+
+      expect(githubHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should not include branch commits feed for tree path with subdirectory', () => {
+      const value = 'https://github.com/microsoft/vscode/tree/main/src'
+      const expected = [
+        {
+          uri: 'https://github.com/microsoft/vscode/releases.atom',
+          hint: { key: 'github:releases', label: 'Releases' },
+        },
+        {
+          uri: 'https://github.com/microsoft/vscode/commits.atom',
+          hint: { key: 'github:commits', label: 'Commits' },
+        },
+        {
+          uri: 'https://github.com/microsoft/vscode/tags.atom',
+          hint: { key: 'github:tags', label: 'Tags' },
         },
       ]
 
@@ -365,6 +385,11 @@ describe('githubHandler', () => {
       ]
 
       expect(githubHandler.resolve(value)).toEqual(expected)
+    })
+
+    it.todo('should define behavior for invalid URL input', () => {
+      // resolve('not-a-url') currently throws a TypeError from the unguarded new URL call; the
+      // desired contract (throw vs empty array) is undecided.
     })
   })
 })
