@@ -11,11 +11,13 @@ import {
 import { discoverUris } from '../uris/index.js'
 import { processConcurrently, toPositiveInteger } from '../utils.js'
 import {
+  attempt,
   isInputFetched,
   normalizeInput,
   normalizeMethodsConfig,
   normalizeUriEntry,
   pickUrlOnlyMethods,
+  reportError,
 } from './utils.js'
 
 export const discover = async <TValid>(
@@ -52,14 +54,18 @@ export const discover = async <TValid>(
 
   // Step 1: Check if content is already valid (only if content is provided).
   if (sourceInput.content) {
-    const result = await extractFn({
-      url: sourceInput.url,
-      content: sourceInput.content,
-      headers: sourceInput.headers,
-    })
+    try {
+      const result = await extractFn({
+        url: sourceInput.url,
+        content: sourceInput.content,
+        headers: sourceInput.headers,
+      })
 
-    if (result.isValid) {
-      return [result]
+      if (result.isValid) {
+        return [result]
+      }
+    } catch (error) {
+      reportError(onError, error, { phase: 'extractFn', url: sourceInput.url })
     }
   }
 
@@ -67,7 +73,13 @@ export const discover = async <TValid>(
   let siteInput: DiscoverInputObject | undefined
 
   if (resolveSiteUrlFn) {
-    const siteUrl = resolveSiteUrlFn(sourceInput, resolveUrlFn)
+    const siteUrl = attempt(
+      () => resolveSiteUrlFn(sourceInput, resolveUrlFn),
+      undefined,
+      'resolveSiteUrlFn',
+      onError,
+      sourceInput.url,
+    )
 
     if (siteUrl) {
       try {
@@ -79,7 +91,7 @@ export const discover = async <TValid>(
           headers: response.headers,
         }
       } catch (error) {
-        onError?.(error, { phase: 'resolveSiteUrl', url: siteUrl })
+        reportError(onError, error, { phase: 'resolveSiteUrl', url: siteUrl })
       }
     }
   }
@@ -107,7 +119,7 @@ export const discover = async <TValid>(
     }
 
     const normalized = rawUris.map((entry) => {
-      return normalizeUriEntry(entry, resolveUrlFn, sourceInput.url)
+      return normalizeUriEntry(entry, resolveUrlFn, sourceInput.url, onError)
     })
 
     const unique = normalized.filter((entry) => {
@@ -164,7 +176,13 @@ export const discover = async <TValid>(
         found += 1
       }
 
-      onProgress?.({ tested, total, found, current: url })
+      attempt(
+        () => onProgress?.({ tested, total, found, current: url }),
+        undefined,
+        'onProgress',
+        onError,
+        url,
+      )
 
       // Stop trying alternatives on first valid result.
       if (result.isValid) {
