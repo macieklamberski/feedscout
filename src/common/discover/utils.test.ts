@@ -13,6 +13,7 @@ import {
   normalizeInput,
   normalizeMethodsConfig,
   normalizeUriEntry,
+  resolveUrl,
 } from './utils.js'
 
 describe('defaultFetchFn', () => {
@@ -1548,6 +1549,32 @@ describe('defaultResolveSiteUrlFn', () => {
     const expected = 'https://example.com'
 
     expect(defaultResolveSiteUrlFn(value, resolveUrlFn)).toBe(expected)
+  })
+})
+
+describe('resolveUrl', () => {
+  it('should return the resolved URL', () => {
+    const resolveUrlFn: DiscoverResolveUrlFn = (url, baseUrl) => new URL(url, baseUrl).href
+    const value = resolveUrl(resolveUrlFn, '/feed.xml', 'https://example.com/blog/')
+    const expected = 'https://example.com/feed.xml'
+
+    expect(value).toBe(expected)
+  })
+
+  it('should return the URL as discovered when resolveUrlFn returns undefined', () => {
+    const resolveUrlFn: DiscoverResolveUrlFn = () => undefined
+    const value = resolveUrl(resolveUrlFn, '/feed.xml', 'https://example.com')
+    const expected = '/feed.xml'
+
+    expect(value).toBe(expected)
+  })
+
+  it('should return the URL as discovered when resolveUrlFn throws', () => {
+    const resolveUrlFn: DiscoverResolveUrlFn = (url, baseUrl) => new URL(url, baseUrl).href
+    const value = resolveUrl(resolveUrlFn, 'http://[malformed', 'https://example.com')
+    const expected = 'http://[malformed'
+
+    expect(value).toBe(expected)
   })
 })
 

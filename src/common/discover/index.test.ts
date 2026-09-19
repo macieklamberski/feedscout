@@ -1022,6 +1022,40 @@ describe('discoverFeeds', () => {
   })
 
   describe('resolveUrlFn', () => {
+    it('should keep discovering when resolveUrlFn throws on a malformed link', async () => {
+      const html = `
+        <a href="http://[malformed">RSS</a>
+        <link rel="alternate" type="application/rss+xml" href="/feed.xml">
+      `
+      const mockFetch = createMockFetch({
+        'https://example.com/feed.xml': rss,
+      })
+      const throwingResolveUrlFn: DiscoverResolveUrlFn = (url, baseUrl) => {
+        return new URL(url, baseUrl).href
+      }
+      const value = await discoverFeeds(
+        { url: 'https://example.com', content: html },
+        {
+          methods: ['html'],
+          fetchFn: mockFetch,
+          resolveUrlFn: throwingResolveUrlFn,
+        },
+      )
+      const expected: Array<DiscoverResult<FeedResult>> = [
+        {
+          url: 'https://example.com/feed.xml',
+          isValid: true,
+          method: 'html',
+          format: 'rss',
+          title: 'Test RSS',
+          description: 'Test feed',
+          siteUrl: 'https://example.com/',
+        },
+      ]
+
+      expect(value).toEqual(expected)
+    })
+
     it('should use custom resolveUrlFn to transform discovered URIs', async () => {
       const mockFetch = createMockFetch({
         'https://custom.example.com/feed': rss,
