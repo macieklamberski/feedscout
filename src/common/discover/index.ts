@@ -10,7 +10,15 @@ import {
 } from '../types.js'
 import { discoverUris } from '../uris/index.js'
 import { processConcurrently, toPositiveInteger } from '../utils.js'
-import { normalizeInput, normalizeMethodsConfig, normalizeUriEntry } from './utils.js'
+import {
+  attempt,
+  isInputFetched,
+  normalizeInput,
+  normalizeMethodsConfig,
+  normalizeUriEntry,
+  pickUrlOnlyMethods,
+  reportError,
+} from './utils.js'
 
 export const discover = async <TValid>(
   input: DiscoverInput,
@@ -40,16 +48,24 @@ export const discover = async <TValid>(
   // Normalize input: string → fetch URL, object → use provided content.
   const sourceInput = await normalizeInput(input, fetchFn, onError)
 
+  const availableMethods = isInputFetched(input, sourceInput)
+    ? methods
+    : pickUrlOnlyMethods(methods)
+
   // Step 1: Check if content is already valid (only if content is provided).
   if (sourceInput.content) {
-    const result = await extractFn({
-      url: sourceInput.url,
-      content: sourceInput.content,
-      headers: sourceInput.headers,
-    })
+    try {
+      const result = await extractFn({
+        url: sourceInput.url,
+        content: sourceInput.content,
+        headers: sourceInput.headers,
+      })
 
-    if (result.isValid) {
-      return [result]
+      if (result.isValid) {
+        return [result]
+      }
+    } catch (error) {
+      reportError(onError, error, { phase: 'extractFn', url: sourceInput.url })
     }
   }
 
@@ -57,7 +73,13 @@ export const discover = async <TValid>(
   let siteInput: DiscoverInputObject | undefined
 
   if (resolveSiteUrlFn) {
-    const siteUrl = resolveSiteUrlFn(sourceInput, resolveUrlFn)
+    const siteUrl = attempt(
+      () => resolveSiteUrlFn(sourceInput, resolveUrlFn),
+      undefined,
+      'resolveSiteUrlFn',
+      onError,
+      sourceInput.url,
+    )
 
     if (siteUrl) {
       try {
@@ -69,13 +91,13 @@ export const discover = async <TValid>(
           headers: response.headers,
         }
       } catch (error) {
-        onError?.(error, { phase: 'resolveSiteUrl', url: siteUrl })
+        reportError(onError, error, { phase: 'resolveSiteUrl', url: siteUrl })
       }
     }
   }
 
   // Step 2: Build methods config from input and selected methods.
-  const methodsConfig = normalizeMethodsConfig(sourceInput, siteInput, methods, defaults)
+  const methodsConfig = normalizeMethodsConfig(sourceInput, siteInput, availableMethods, defaults)
 
   // Step 3: Discover URIs using selected methods.
   const urisByMethod = await discoverUris(methodsConfig, fetchFn)
@@ -97,7 +119,7 @@ export const discover = async <TValid>(
     }
 
     const normalized = rawUris.map((entry) => {
-      return normalizeUriEntry(entry, resolveUrlFn, sourceInput.url)
+      return normalizeUriEntry(entry, resolveUrlFn, sourceInput.url, onError)
     })
 
     const unique = normalized.filter((entry) => {
@@ -154,7 +176,13 @@ export const discover = async <TValid>(
         found += 1
       }
 
-      onProgress?.({ tested, total, found, current: url })
+      attempt(
+        () => onProgress?.({ tested, total, found, current: url }),
+        undefined,
+        'onProgress',
+        onError,
+        url,
+      )
 
       // Stop trying alternatives on first valid result.
       if (result.isValid) {

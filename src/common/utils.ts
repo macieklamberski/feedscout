@@ -28,6 +28,14 @@ export const normalizeMimeType = (type: string): string => {
   return type.split(';')[0].trim().toLowerCase()
 }
 
+export const parseUrl = (value: string): URL | undefined => {
+  if (!URL.canParse(value)) {
+    return
+  }
+
+  return new URL(value)
+}
+
 export const isSubdomainOf = (url: string, domains: string | Array<string>): boolean => {
   try {
     const hostname = new URL(url).hostname.toLowerCase()
