@@ -1,5 +1,5 @@
 import { parseFeed } from 'feedsmith'
-import { defaultResolveUrlFn } from '../common/discover/defaults.js'
+import { parseUrl } from 'trousse'
 import { getFeedSiteUrl } from '../common/discover/utils.js'
 import type { DiscoverExtractFn } from '../common/types.js'
 import { isSuccessfulStatus } from '../common/utils.js'
@@ -15,7 +15,7 @@ export const defaultExtractFn: DiscoverExtractFn<FeedResult> = ({ content, url, 
     const parsed = parseFeed(content)
     const { format, feed } = parsed
     const rawSiteUrl = getFeedSiteUrl(parsed)
-    const siteUrl = rawSiteUrl ? defaultResolveUrlFn(rawSiteUrl, url) : undefined
+    const siteUrl = rawSiteUrl ? parseUrl(rawSiteUrl, url)?.href : undefined
 
     if (format === 'rss' || format === 'rdf') {
       return {

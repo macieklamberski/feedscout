@@ -2,6 +2,7 @@ import type { Atom } from 'feedsmith'
 import { isObject } from 'trousse'
 import locales from '../locales.json' with { type: 'json' }
 import type {
+  DiscoverErrorContext,
   DiscoverFetchFn,
   DiscoverInput,
   DiscoverInputObject,
@@ -33,7 +34,7 @@ export const normalizeInput = async (
       headers: response.headers,
     }
   } catch (error) {
-    onError?.(error, { phase: 'fetchInput', url: input })
+    reportError(onError, error, { phase: 'fetchInput', url: input })
   }
 
   // When the fetch fails, return the URL without content so that URL-only
@@ -61,33 +62,69 @@ export const getFeedSiteUrl = (parsed: FeedMethodData): string | undefined => {
   }
 }
 
-// A custom resolveUrlFn can throw where the default one returns nothing, since new URL() throws
-// on a malformed URL. One bad href on a page must not end discovery, so both cases fall back to
-// the URL as discovered.
+// onError is where failures get reported, so an error thrown from it has nowhere to go. It is
+// swallowed, so that a broken callback cannot end discovery.
+export const reportError = (
+  onError: DiscoverOnErrorFn | undefined,
+  error: unknown,
+  context: DiscoverErrorContext,
+): void => {
+  try {
+    onError?.(error, context)
+  } catch {}
+}
+
+// Runs a user-supplied function. A throw never ends discovery: it is reported through onError
+// and the fallback is used in place of the result.
+export const attempt = <TValue>(
+  callback: () => TValue,
+  options: {
+    fallback: TValue
+    onError: DiscoverOnErrorFn | undefined
+    phase: DiscoverErrorContext['phase']
+    url?: string
+  },
+): TValue => {
+  try {
+    return callback()
+  } catch (error) {
+    reportError(options.onError, error, { phase: options.phase, url: options.url })
+
+    return options.fallback
+  }
+}
+
+// Falls back to the URL as discovered when resolveUrlFn returns nothing or throws, so that one
+// malformed href on a page does not end discovery.
 export const resolveUrl = (
   resolveUrlFn: DiscoverResolveUrlFn,
   url: string,
   baseUrl: string | undefined,
+  onError?: DiscoverOnErrorFn,
 ): string => {
-  try {
-    return resolveUrlFn(url, baseUrl) ?? url
-  } catch {
-    return url
-  }
+  const resolved = attempt(() => resolveUrlFn(url, baseUrl), {
+    fallback: undefined,
+    onError,
+    phase: 'resolveUrlFn',
+    url,
+  })
+
+  return resolved ?? url
 }
 
 export const normalizeUriEntry = (
   entry: DiscoverUriEntry,
   resolveUrlFn: DiscoverResolveUrlFn,
   baseUrl: string | undefined,
+  onError?: DiscoverOnErrorFn,
 ): DiscoverUriEntry => {
   if (typeof entry.uri === 'string') {
-    return { ...entry, uri: resolveUrl(resolveUrlFn, entry.uri, baseUrl) }
+    return { ...entry, uri: resolveUrl(resolveUrlFn, entry.uri, baseUrl, onError) }
   }
 
   return {
     ...entry,
-    uri: entry.uri.map((uri) => resolveUrl(resolveUrlFn, uri, baseUrl)),
+    uri: entry.uri.map((uri) => resolveUrl(resolveUrlFn, uri, baseUrl, onError)),
   }
 }
 

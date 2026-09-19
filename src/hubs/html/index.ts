@@ -1,6 +1,6 @@
 import { defaultResolveUrlFn } from '../../common/discover/defaults.js'
 import { resolveUrl } from '../../common/discover/utils.js'
-import type { DiscoverResolveUrlFn } from '../../common/types.js'
+import type { DiscoverOnErrorFn, DiscoverResolveUrlFn } from '../../common/types.js'
 import { discoverUrisFromHtml } from '../../common/uris/html/index.js'
 import type { HubResult } from '../discover/types.js'
 
@@ -17,6 +17,7 @@ export const discoverHubsFromHtml = (
   content: string,
   baseUrl: string,
   resolveUrlFn: DiscoverResolveUrlFn = defaultResolveUrlFn,
+  onError?: DiscoverOnErrorFn,
 ): Array<HubResult> => {
   const hubUris = discoverUrisFromHtml(content, { ...htmlOptions, linkSelectors: hubSelector })
 
@@ -25,10 +26,10 @@ export const discoverHubsFromHtml = (
   }
 
   const selfUris = discoverUrisFromHtml(content, { ...htmlOptions, linkSelectors: selfSelector })
-  const topic = selfUris[0] ? resolveUrl(resolveUrlFn, selfUris[0], baseUrl) : baseUrl
+  const topic = selfUris[0] ? resolveUrl(resolveUrlFn, selfUris[0], baseUrl, onError) : baseUrl
 
   return hubUris.map((hub) => ({
-    hub: resolveUrl(resolveUrlFn, hub, baseUrl),
+    hub: resolveUrl(resolveUrlFn, hub, baseUrl, onError),
     topic,
   }))
 }
