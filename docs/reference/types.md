@@ -251,7 +251,7 @@ type DiscoverErrorContext = {
 }
 ```
 
-- `fetchInput`: Fetching the input URL failed. Methods that only need the URL, like Guess, still run.
+- `fetchInput`: Fetching the input URL failed. Discovery continues with the URL alone: Platform and Guess still run, and the methods that need content or headers are skipped.
 - `resolveSiteUrl`: Fetching the site URL taken from a feed failed. Discovery continues with the original input.
 
 ## Fetch Types
