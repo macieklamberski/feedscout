@@ -1,5 +1,9 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverFetchFn, DiscoverResolveUrlFn } from '../../common/types.js'
+import type {
+  DiscoverErrorContext,
+  DiscoverFetchFn,
+  DiscoverResolveUrlFn,
+} from '../../common/types.js'
 import { discoverHubs } from './index.js'
 import type { HubResult } from './types.js'
 
@@ -151,6 +155,48 @@ describe('discoverHubs', () => {
       ]
 
       expect(value).toEqual(expected)
+    })
+  })
+
+  describe('onError option', () => {
+    it('should report a failed input fetch', async () => {
+      const contexts: Array<DiscoverErrorContext> = []
+      const value = await discoverHubs('https://example.com/feed.xml', {
+        fetchFn: () => Promise.reject(new Error('Input fetch failed')),
+        onError: (_error, context) => {
+          contexts.push(context)
+        },
+      })
+      const expectedContexts: Array<DiscoverErrorContext> = [
+        { phase: 'fetchInput', url: 'https://example.com/feed.xml' },
+      ]
+
+      expect(value).toEqual([])
+      expect(contexts).toEqual(expectedContexts)
+    })
+
+    it('should report a throwing resolveUrlFn', async () => {
+      const contexts: Array<DiscoverErrorContext> = []
+      const html = '<link rel="hub" href="http://[malformed">'
+      const throwingResolveUrlFn: DiscoverResolveUrlFn = (url, baseUrl) => {
+        return new URL(url, baseUrl).href
+      }
+
+      await discoverHubs(
+        { url: 'https://example.com/', content: html },
+        {
+          methods: ['html'],
+          resolveUrlFn: throwingResolveUrlFn,
+          onError: (_error, context) => {
+            contexts.push(context)
+          },
+        },
+      )
+      const expectedContexts: Array<DiscoverErrorContext> = [
+        { phase: 'resolveUrlFn', url: 'http://[malformed' },
+      ]
+
+      expect(contexts).toEqual(expectedContexts)
     })
   })
 

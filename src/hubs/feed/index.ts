@@ -2,7 +2,7 @@ import { parseFeed } from 'feedsmith'
 import type { Atom, DeepPartial } from 'feedsmith/types'
 import { defaultResolveUrlFn } from '../../common/discover/defaults.js'
 import { resolveUrl } from '../../common/discover/utils.js'
-import type { DiscoverResolveUrlFn } from '../../common/types.js'
+import type { DiscoverOnErrorFn, DiscoverResolveUrlFn } from '../../common/types.js'
 import type { HubResult } from '../discover/types.js'
 
 const getLinksWithRel = (
@@ -18,6 +18,7 @@ export const discoverHubsFromFeed = (
   content: string,
   baseUrl: string,
   resolveUrlFn: DiscoverResolveUrlFn = defaultResolveUrlFn,
+  onError?: DiscoverOnErrorFn,
 ): Array<HubResult> => {
   try {
     const { format, feed } = parseFeed(content)
@@ -25,12 +26,14 @@ export const discoverHubsFromFeed = (
     // JSON Feed has native hubs support.
     if (format === 'json') {
       const hubs = feed.hubs ?? []
-      const topic = feed.feed_url ? resolveUrl(resolveUrlFn, feed.feed_url, baseUrl) : baseUrl
+      const topic = feed.feed_url
+        ? resolveUrl(resolveUrlFn, feed.feed_url, baseUrl, onError)
+        : baseUrl
 
       return hubs
         .filter((hub) => hub.url)
         .map((hub) => ({
-          hub: resolveUrl(resolveUrlFn, hub.url as string, baseUrl),
+          hub: resolveUrl(resolveUrlFn, hub.url as string, baseUrl, onError),
           topic,
         }))
     }
@@ -41,10 +44,10 @@ export const discoverHubsFromFeed = (
 
     if (hubUris.length > 0) {
       const selfUris = getLinksWithRel(links, 'self')
-      const topic = selfUris[0] ? resolveUrl(resolveUrlFn, selfUris[0], baseUrl) : baseUrl
+      const topic = selfUris[0] ? resolveUrl(resolveUrlFn, selfUris[0], baseUrl, onError) : baseUrl
 
       return hubUris.map((hub) => ({
-        hub: resolveUrl(resolveUrlFn, hub, baseUrl),
+        hub: resolveUrl(resolveUrlFn, hub, baseUrl, onError),
         topic,
       }))
     }

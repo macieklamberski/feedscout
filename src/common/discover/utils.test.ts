@@ -1,13 +1,15 @@
 import { afterEach, describe, expect, it, spyOn } from 'bun:test'
 import { parseFeed } from 'feedsmith'
 import locales from '../locales.json' with { type: 'json' }
-import type { DiscoverFetchFn, DiscoverResolveUrlFn } from '../types.js'
+import type { DiscoverErrorContext, DiscoverFetchFn, DiscoverResolveUrlFn } from '../types.js'
 import { defaultFetchFn, defaultResolveSiteUrlFn, defaultResolveUrlFn } from './defaults.js'
 import {
+  attempt,
   getFeedSiteUrl,
   normalizeInput,
   normalizeMethodsConfig,
   normalizeUriEntry,
+  reportError,
   resolveUrl,
 } from './utils.js'
 
@@ -1391,12 +1393,10 @@ describe('defaultResolveUrlFn', () => {
     expect(defaultResolveUrlFn(value, baseUrl)).toBe(expected)
   })
 
-  it('should return undefined when base URL is undefined and URL is relative', () => {
-    const value = '/feed.xml'
-    const baseUrl = undefined
-    const expected = undefined
+  it('should throw when base URL is undefined and URL is relative', () => {
+    const throwing = () => defaultResolveUrlFn('/feed.xml', undefined)
 
-    expect(defaultResolveUrlFn(value, baseUrl)).toBe(expected)
+    expect(throwing).toThrow()
   })
 
   it('should return absolute URL when base URL is undefined', () => {
@@ -1504,6 +1504,25 @@ describe('defaultResolveSiteUrlFn', () => {
           </channel>
         </rss>
       `,
+    }
+
+    expect(defaultResolveSiteUrlFn(value, resolveUrlFn)).toBeUndefined()
+  })
+
+  it('should throw for content that looks like JSON and is malformed', () => {
+    const value = {
+      url: 'https://example.com/feed.json',
+      content: '{ "version": "https://jsonfeed.org/version/1.1", ',
+    }
+    const throwing = () => defaultResolveSiteUrlFn(value, resolveUrlFn)
+
+    expect(throwing).toThrow()
+  })
+
+  it('should return undefined for JSON content that is not a feed', () => {
+    const value = {
+      url: 'https://example.com/data.json',
+      content: '{ "name": "Example" }',
     }
 
     expect(defaultResolveSiteUrlFn(value, resolveUrlFn)).toBeUndefined()
@@ -1788,6 +1807,79 @@ describe('normalizeMethodsConfig with siteInput', () => {
   })
 })
 
+describe('reportError', () => {
+  it('should pass the error and the context to onError', () => {
+    const calls: Array<{ error: unknown; context: DiscoverErrorContext }> = []
+    const error = new Error('Resolver failed')
+
+    reportError((error, context) => calls.push({ error, context }), error, {
+      phase: 'resolveUrlFn',
+      url: '/feed.xml',
+    })
+    const expected: Array<{ error: unknown; context: DiscoverErrorContext }> = [
+      { error, context: { phase: 'resolveUrlFn', url: '/feed.xml' } },
+    ]
+
+    expect(calls).toEqual(expected)
+  })
+
+  it('should swallow an error thrown from onError', () => {
+    const throwing = () => {
+      reportError(
+        () => {
+          throw new Error('Broken callback')
+        },
+        new Error('Resolver failed'),
+        { phase: 'resolveUrlFn' },
+      )
+    }
+
+    expect(throwing).not.toThrow()
+  })
+
+  it('should do nothing when onError is undefined', () => {
+    const throwing = () =>
+      reportError(undefined, new Error('Resolver failed'), { phase: 'extractFn' })
+
+    expect(throwing).not.toThrow()
+  })
+})
+
+describe('attempt', () => {
+  it('should return the callback result', () => {
+    const value = attempt(() => 'resolved', {
+      fallback: 'fallback',
+      onError: undefined,
+      phase: 'resolveUrlFn',
+    })
+    const expected = 'resolved'
+
+    expect(value).toBe(expected)
+  })
+
+  it('should return the fallback and report the error when the callback throws', () => {
+    const calls: Array<{ error: unknown; context: DiscoverErrorContext }> = []
+    const error = new Error('Callback failed')
+    const value = attempt(
+      () => {
+        throw error
+      },
+      {
+        fallback: 'fallback',
+        onError: (error, context) => calls.push({ error, context }),
+        phase: 'resolveSiteUrlFn',
+        url: 'https://example.com/feed.xml',
+      },
+    )
+    const expectedCalls: Array<{ error: unknown; context: DiscoverErrorContext }> = [
+      { error, context: { phase: 'resolveSiteUrlFn', url: 'https://example.com/feed.xml' } },
+    ]
+
+    expect(value).toBe('fallback')
+    expect(calls).toEqual(expectedCalls)
+  })
+})
+
 describe('resolveUrl', () => {
   it('should return the resolved URL', () => {
     const resolveUrlFn: DiscoverResolveUrlFn = (url, baseUrl) => new URL(url, baseUrl).href
@@ -1805,12 +1897,21 @@ describe('resolveUrl', () => {
     expect(value).toBe(expected)
   })
 
-  it('should return the URL as discovered when resolveUrlFn throws', () => {
+  it('should return the URL as discovered and report when resolveUrlFn throws', () => {
+    const contexts: Array<DiscoverErrorContext> = []
     const resolveUrlFn: DiscoverResolveUrlFn = (url, baseUrl) => new URL(url, baseUrl).href
-    const value = resolveUrl(resolveUrlFn, 'http://[malformed', 'https://example.com')
-    const expected = 'http://[malformed'
+    const value = resolveUrl(
+      resolveUrlFn,
+      'http://[malformed',
+      'https://example.com',
+      (_error, context) => contexts.push(context),
+    )
+    const expectedContexts: Array<DiscoverErrorContext> = [
+      { phase: 'resolveUrlFn', url: 'http://[malformed' },
+    ]
 
-    expect(value).toBe(expected)
+    expect(value).toBe('http://[malformed')
+    expect(contexts).toEqual(expectedContexts)
   })
 })
 
