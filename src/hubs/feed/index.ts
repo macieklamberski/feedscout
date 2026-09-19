@@ -1,6 +1,5 @@
 import type { Atom } from 'feedsmith'
 import { parseFeed } from 'feedsmith'
-import { defaultResolveUrlFn } from '../../common/discover/defaults.js'
 import { resolveUrl } from '../../common/discover/utils.js'
 import type { DiscoverOnErrorFn, DiscoverResolveUrlFn } from '../../common/types.js'
 import type { HubResult } from '../discover/types.js'
@@ -17,7 +16,7 @@ const getLinksWithRel = (
 export const discoverHubsFromFeed = (
   content: string,
   baseUrl: string,
-  resolveUrlFn: DiscoverResolveUrlFn = defaultResolveUrlFn,
+  resolveUrlFn: DiscoverResolveUrlFn,
   onError?: DiscoverOnErrorFn,
 ): Array<HubResult> => {
   try {
