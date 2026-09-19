@@ -68,7 +68,7 @@ Example result:
 
 ```typescript
 {
-  hub: 'https://pubsubhubbub.appspot.com',
+  hub: 'https://pubsubhubbub.appspot.com/',
   topic: 'https://example.com/feed.xml',
 }
 ```

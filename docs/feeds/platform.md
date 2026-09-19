@@ -62,13 +62,13 @@ Discovers Atom feeds for channels and playlists. Generates ten feed variants for
 
 ### Reddit
 
-Discovers RSS feeds for subreddits, users, multireddits, and domains.
+Discovers Atom feeds for subreddits, users, multireddits, and domains.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | `reddit.com` | Homepage feed |
 | `reddit.com/r/{subreddit}` | Subreddit posts + comments |
-| `reddit.com/r/{subreddit}/{sort}` | Sorted posts (hot/new/rising/top) |
+| `reddit.com/r/{subreddit}/{sort}` | Sorted posts (hot/new/rising/top) + comments |
 | `reddit.com/r/{subreddit}/comments/{id}` | Post comments |
 | `reddit.com/u/{username}` | User activity |
 | `reddit.com/user/{username}/m/{multireddit}` | Multireddit feed |
@@ -265,9 +265,9 @@ Discovers RSS feeds for Mastodon user profiles and hashtag pages. Detects Mastod
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | `{instance}/@{username}` | User posts feed |
-| `{instance}/@{username}/tagged/{tag}` | User posts tagged feed |
-| `{instance}/@{username}/with_replies` | User posts with replies feed |
-| `{instance}/@{username}/media` | User media-only feed |
+| `{instance}/@{username}/tagged/{tag}` | User posts tagged feed + posts |
+| `{instance}/@{username}/with_replies` | User posts with replies feed + posts |
+| `{instance}/@{username}/media` | User media-only feed + posts |
 | `{instance}/tags/{tag}` | Hashtag feed |
 
 > [!NOTE]
@@ -328,7 +328,7 @@ Discovers RSS feeds for SourceForge project activity, file releases, news, and d
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `sourceforge.net/projects/{project}` or `sourceforge.net/p/{project}` | Activity + files + news (RSS + Atom) + discussion |
+| `sourceforge.net/projects/{project}` or `sourceforge.net/p/{project}` | Activity + project + files + news (RSS + Atom) + discussion (RSS + Atom) + bugs |
 
 ### Kickstarter
 
@@ -361,7 +361,7 @@ Discovers RSS feeds for Steam game news and community groups.
 
 ### Stack Exchange
 
-Discovers RSS feeds for Stack Overflow, Server Fault, Super User, Ask Ubuntu, MathOverflow, Stack Apps, and all `*.stackexchange.com` sites.
+Discovers Atom feeds for Stack Overflow, Server Fault, Super User, Ask Ubuntu, MathOverflow, Stack Apps, and all `*.stackexchange.com` sites.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
@@ -527,7 +527,7 @@ Discovers RSS and Atom feeds for Dreamwidth blogs.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `*.dreamwidth.org` | Posts feed (RSS + Atom) |
+| `*.dreamwidth.org` | Posts feed (RSS + Atom) + userpics (Atom) |
 
 ### Excite Blog
 
@@ -582,8 +582,8 @@ Discovers RSS feeds for Nebula channels, the global video feed, and category fee
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | `nebula.tv/{channel}` | Videos + Videos (Plus) |
-| `nebula.tv` | All videos + All videos (Plus) |
-| `nebula.tv/videos` | All videos + All videos (Plus) |
+| `nebula.tv` | All videos + All videos (Plus) + recently added channels |
+| `nebula.tv/videos` | All videos + All videos (Plus) + recently added channels |
 | `nebula.tv/videos?category={slug}` | Category + Category (Plus) + above |
 
 ### note.com
@@ -664,7 +664,7 @@ Discovers RSS feeds for Audioboom channels.
 
 ### BookWyrm
 
-Discovers RSS feeds for BookWyrm user activity, reviews, quotes, comments, and per-shelf feeds. Detected by the `BookWyrm` generator meta tag.
+Discovers RSS feeds for BookWyrm user activity, reviews, quotes, comments, and per-shelf feeds. Detected by the link to the BookWyrm source code in the page footer, or by the `BookWyrm` generator meta tag.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
@@ -716,7 +716,7 @@ Discovers Atom feeds for Friendica user profiles. Detected by the `Friendica` ge
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{instance}/profile/{user}` | Posts feed (Atom) + comments-only feed (Atom) |
+| `{instance}/profile/{user}` | Posts + comments + replies + activity feeds (Atom) |
 
 ### Ghost
 
@@ -750,7 +750,7 @@ Discovers RSS and Atom feeds for InsaneJournal journals.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `*.insanejournal.com` | Posts feed (RSS + Atom) |
+| `*.insanejournal.com` | Posts feed (RSS + Atom) + userpics (Atom) |
 
 ### Lemmy
 
@@ -780,7 +780,7 @@ Discovers RSS and Atom feeds for LiveJournal blogs.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `*.livejournal.com` | Posts feed (RSS + Atom) |
+| `*.livejournal.com` | Posts feed (RSS + Atom) + userpics (Atom) |
 
 ### Mataroa
 
@@ -796,7 +796,7 @@ Discovers RSS, JSON, and podcast feeds for Micro.blog-hosted blogs, including ca
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `*.micro.blog` | Posts (RSS + JSON) + podcast |
+| `*.micro.blog` | Posts (RSS + JSON) + podcast (RSS + JSON) |
 | `*.micro.blog/categories/{slug}` | Category (RSS + JSON) + above |
 | `*.micro.blog/archive` | Archive feed + above |
 | `*.micro.blog/photos` | Photos feed + above |
@@ -847,11 +847,11 @@ Discovers Atom feeds for Pixelfed user profiles. Detected by the `pixelfed` gene
 
 ### Pleroma
 
-Discovers Atom feeds for Pleroma (and Akkoma) user profiles. Detected by Pleroma-specific API endpoint references in HTML.
+Discovers Atom and RSS feeds for Pleroma (and Akkoma) user profiles. Detected by Pleroma-specific API endpoint references in HTML.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{instance}/users/{user}` | Posts feed (Atom) |
+| `{instance}/users/{user}` | Posts feed (Atom + RSS) |
 
 ### Podbean
 
@@ -936,7 +936,7 @@ Discovers RSS feeds for Weebly-hosted blogs.
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | `*.weebly.com` | Blog feed |
-| `*.weebly.com/{slug}` | Blog feed (custom page slug) |
+| `*.weebly.com/{slug}` | Blog feed (custom page slug) + default blog feed |
 
 ### Zenn
 
@@ -1045,11 +1045,12 @@ Discovers the RSS feed of a Squarespace collection. Detected by the `Server: Squ
 
 ### Wikidot
 
-Discovers the site and forum feeds of a Wikidot wiki. Detected by the `application/wiki` edit link, so custom domains are covered as well as `*.wikidot.com` hosts.
+Discovers the site and forum feeds of a Wikidot wiki. Detected by the `WIKIDOT.page.listeners.editClick()` call in the page, so custom domains are covered as well as `*.wikidot.com` hosts.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | Any wiki page | Site changes feed + forum threads feed (RSS) |
+
 ### Drupal
 
 Discovers the site feed of a Drupal site. Detected by the `Generator` meta tag or the `X-Generator` response header.
