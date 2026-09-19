@@ -155,6 +155,28 @@ describe('discoverHubs', () => {
   })
 
   describe('resolveUrlFn option', () => {
+    it('should keep the hub URL as discovered when resolveUrlFn throws', async () => {
+      const html = '<link rel="hub" href="http://[malformed">'
+      const throwingResolveUrlFn: DiscoverResolveUrlFn = (url, baseUrl) => {
+        return new URL(url, baseUrl).href
+      }
+      const value = await discoverHubs(
+        { url: 'https://example.com/', content: html },
+        {
+          methods: ['html'],
+          resolveUrlFn: throwingResolveUrlFn,
+        },
+      )
+      const expected: Array<HubResult> = [
+        {
+          hub: 'http://[malformed',
+          topic: 'https://example.com/',
+        },
+      ]
+
+      expect(value).toEqual(expected)
+    })
+
     it('should use custom resolveUrlFn for HTML hubs', async () => {
       const html = '<link rel="hub" href="/hub">'
       const customResolveUrlFn: DiscoverResolveUrlFn = (url) => {

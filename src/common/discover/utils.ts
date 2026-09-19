@@ -61,18 +61,33 @@ export const getFeedSiteUrl = (parsed: ReturnType<typeof parseFeed>): string | u
   }
 }
 
+// A custom resolveUrlFn can throw where the default one returns nothing, since new URL() throws
+// on a malformed URL. One bad href on a page must not end discovery, so both cases fall back to
+// the URL as discovered.
+export const resolveUrl = (
+  resolveUrlFn: DiscoverResolveUrlFn,
+  url: string,
+  baseUrl: string | undefined,
+): string => {
+  try {
+    return resolveUrlFn(url, baseUrl) ?? url
+  } catch {
+    return url
+  }
+}
+
 export const normalizeUriEntry = (
   entry: DiscoverUriEntry,
   resolveUrlFn: DiscoverResolveUrlFn,
   baseUrl: string | undefined,
 ): DiscoverUriEntry => {
   if (typeof entry.uri === 'string') {
-    return { ...entry, uri: resolveUrlFn(entry.uri, baseUrl) ?? entry.uri }
+    return { ...entry, uri: resolveUrl(resolveUrlFn, entry.uri, baseUrl) }
   }
 
   return {
     ...entry,
-    uri: entry.uri.map((uri) => resolveUrlFn(uri, baseUrl) ?? uri),
+    uri: entry.uri.map((uri) => resolveUrl(resolveUrlFn, uri, baseUrl)),
   }
 }
 
