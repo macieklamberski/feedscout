@@ -76,6 +76,22 @@ export const normalizeUriEntry = (
   }
 }
 
+// A fetched input always carries headers, so a string input without them is a fetch that failed.
+// An input passed as an object counts as fetched: the caller supplied what a fetch would have.
+export const isInputFetched = (input: DiscoverInput, sourceInput: DiscoverInputObject): boolean => {
+  return typeof input !== 'string' || sourceInput.headers !== undefined
+}
+
+// Keeps the methods that work from the URL alone, for an input that could not be fetched. The
+// others need content or headers and would throw without them.
+export const pickUrlOnlyMethods = (methods: DiscoverMethodsConfig): DiscoverMethodsConfig => {
+  if (Array.isArray(methods)) {
+    return methods.filter((method) => method === 'platform' || method === 'guess')
+  }
+
+  return { platform: methods.platform, guess: methods.guess }
+}
+
 export const normalizeMethodsConfig = (
   sourceInput: DiscoverInputObject,
   siteInput: DiscoverInputObject | undefined,

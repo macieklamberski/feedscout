@@ -10,9 +10,11 @@ import type {
 import { defaultFetchFn, defaultResolveSiteUrlFn, defaultResolveUrlFn } from './defaults.js'
 import {
   getFeedSiteUrl,
+  isInputFetched,
   normalizeInput,
   normalizeMethodsConfig,
   normalizeUriEntry,
+  pickUrlOnlyMethods,
 } from './utils.js'
 
 describe('defaultFetchFn', () => {
@@ -411,6 +413,59 @@ describe('normalizeInput', () => {
     const expected = { url: 'https://example.com' }
 
     expect(await normalizeInput('https://example.com', throwingFetchFn)).toEqual(expected)
+  })
+})
+
+describe('isInputFetched', () => {
+  it('should return true for a string input that was fetched', () => {
+    const value = isInputFetched('https://example.com', {
+      url: 'https://example.com',
+      content: '<html></html>',
+      headers: new Headers(),
+    })
+
+    expect(value).toBe(true)
+  })
+
+  it('should return false for a string input whose fetch failed', () => {
+    const value = isInputFetched('https://example.com', { url: 'https://example.com' })
+
+    expect(value).toBe(false)
+  })
+
+  it('should return true for an object input without headers', () => {
+    const input = { url: 'https://example.com', content: '<html></html>' }
+    const value = isInputFetched(input, input)
+
+    expect(value).toBe(true)
+  })
+})
+
+describe('pickUrlOnlyMethods', () => {
+  it('should keep platform and guess in array format', () => {
+    const value: DiscoverMethodsConfig = ['platform', 'feed', 'html', 'headers', 'guess']
+    const expected: DiscoverMethodsConfig = ['platform', 'guess']
+
+    expect(pickUrlOnlyMethods(value)).toEqual(expected)
+  })
+
+  it('should keep platform and guess options in object format', () => {
+    const value: DiscoverMethodsConfig = {
+      platform: true,
+      html: true,
+      headers: true,
+      guess: { uris: ['/feed'] },
+    }
+    const expected: DiscoverMethodsConfig = { platform: true, guess: { uris: ['/feed'] } }
+
+    expect(pickUrlOnlyMethods(value)).toEqual(expected)
+  })
+
+  it('should return an empty array when only content-based methods are given', () => {
+    const value: DiscoverMethodsConfig = ['html', 'headers']
+    const expected: DiscoverMethodsConfig = []
+
+    expect(pickUrlOnlyMethods(value)).toEqual(expected)
   })
 })
 
