@@ -1,4 +1,3 @@
-import { defaultResolveUrlFn } from '../../common/discover/defaults.js'
 import { resolveUrl } from '../../common/discover/utils.js'
 import type { DiscoverOnErrorFn, DiscoverResolveUrlFn } from '../../common/types.js'
 import { discoverUrisFromHeaders } from '../../common/uris/headers/index.js'
@@ -10,7 +9,7 @@ const selfSelector = [{ rel: 'self' }]
 export const discoverHubsFromHeaders = (
   headers: Headers,
   baseUrl: string,
-  resolveUrlFn: DiscoverResolveUrlFn = defaultResolveUrlFn,
+  resolveUrlFn: DiscoverResolveUrlFn,
   onError?: DiscoverOnErrorFn,
 ): Array<HubResult> => {
   const hubUris = discoverUrisFromHeaders(headers, { linkSelectors: hubSelector })
