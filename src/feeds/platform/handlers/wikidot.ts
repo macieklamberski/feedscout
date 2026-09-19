@@ -17,7 +17,7 @@ export const isWikidotHtml = (content: string): boolean => {
 
 export const wikidotHandler: PlatformHandler = {
   match: (url, content) => {
-    return URL.canParse(url) && Boolean(content) && isWikidotHtml(content ?? '')
+    return Boolean(parseUrl(url)) && Boolean(content) && isWikidotHtml(content ?? '')
   },
 
   resolve: (url) => {

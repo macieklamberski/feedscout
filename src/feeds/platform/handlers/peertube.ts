@@ -23,7 +23,7 @@ export const isPeertubeHeaders = (headers: Headers): boolean => {
 
 export const peertubeHandler: PlatformHandler = {
   match: (url, _content, headers) => {
-    return URL.canParse(url) && Boolean(headers && isPeertubeHeaders(headers))
+    return Boolean(parseUrl(url)) && Boolean(headers && isPeertubeHeaders(headers))
   },
 
   resolve: (url) => {

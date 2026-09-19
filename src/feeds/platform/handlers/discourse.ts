@@ -46,7 +46,7 @@ export const isDiscourseHeaders = (headers: Headers): boolean => {
 
 export const discourseHandler: PlatformHandler = {
   match: (url, content, headers) => {
-    if (!URL.canParse(url)) {
+    if (!parseUrl(url)) {
       return false
     }
 

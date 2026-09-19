@@ -30,7 +30,7 @@ export const isConfluenceHtml = (content: string): boolean => {
 
 export const confluenceHandler: PlatformHandler = {
   match: (url, content) => {
-    return URL.canParse(url) && Boolean(content) && isConfluenceHtml(content ?? '')
+    return Boolean(parseUrl(url)) && Boolean(content) && isConfluenceHtml(content ?? '')
   },
 
   resolve: (url, content) => {

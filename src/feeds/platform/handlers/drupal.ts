@@ -23,7 +23,7 @@ export const isDrupalHeaders = (headers: Headers): boolean => {
 
 export const drupalHandler: PlatformHandler = {
   match: (url, content, headers) => {
-    if (!URL.canParse(url)) {
+    if (!parseUrl(url)) {
       return false
     }
 

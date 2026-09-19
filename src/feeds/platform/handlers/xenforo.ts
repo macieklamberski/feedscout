@@ -25,7 +25,7 @@ export const isXenforoHtml = (content: string): boolean => {
 
 export const xenforoHandler: PlatformHandler = {
   match: (url, content) => {
-    return URL.canParse(url) && Boolean(content) && isXenforoHtml(content ?? '')
+    return Boolean(parseUrl(url)) && Boolean(content) && isXenforoHtml(content ?? '')
   },
 
   resolve: (url) => {

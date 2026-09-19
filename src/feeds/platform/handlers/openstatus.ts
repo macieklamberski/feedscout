@@ -20,7 +20,7 @@ export const isOpenstatusHtml = (content: string): boolean => {
 
 export const openstatusHandler: PlatformHandler = {
   match: (url, content) => {
-    return URL.canParse(url) && Boolean(content) && isOpenstatusHtml(content ?? '')
+    return Boolean(parseUrl(url)) && Boolean(content) && isOpenstatusHtml(content ?? '')
   },
 
   resolve: (url) => {

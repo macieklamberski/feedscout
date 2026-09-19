@@ -18,7 +18,7 @@ export const isNodebbHeaders = (headers: Headers): boolean => {
 
 export const nodebbHandler: PlatformHandler = {
   match: (url, _content, headers) => {
-    return URL.canParse(url) && Boolean(headers && isNodebbHeaders(headers))
+    return Boolean(parseUrl(url)) && Boolean(headers && isNodebbHeaders(headers))
   },
 
   resolve: (url) => {
