@@ -13,6 +13,7 @@ import {
   matchesAnyOfLinkSelectors,
   normalizeMimeType,
   omitEmpty,
+  parseUrl,
   processConcurrently,
   toPositiveInteger,
 } from './utils.js'
@@ -136,6 +137,23 @@ describe('normalizeMimeType', () => {
     const expected = 'application/atom+xml'
 
     expect(normalizeMimeType(value)).toBe(expected)
+  })
+})
+
+describe('parseUrl', () => {
+  it('should return a URL for a valid absolute URL', () => {
+    const value = parseUrl('https://example.com/blog/feed.xml')
+    const expected = 'https://example.com/blog/feed.xml'
+
+    expect(value?.href).toBe(expected)
+  })
+
+  it('should return undefined for a malformed URL', () => {
+    expect(parseUrl('http://[malformed')).toBeUndefined()
+  })
+
+  it('should return undefined for a relative URL', () => {
+    expect(parseUrl('/feed.xml')).toBeUndefined()
   })
 })
 

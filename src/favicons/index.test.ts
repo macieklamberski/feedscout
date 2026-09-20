@@ -246,6 +246,29 @@ describe('discoverFavicons', () => {
     expect(value).toEqual(expected)
   })
 
+  it('should scan the site origin when the feed site link is malformed', async () => {
+    const feed = `
+      <?xml version="1.0"?>
+      <rss version="2.0">
+        <channel>
+          <title>Example</title>
+          <link>http://[malformed</link>
+        </channel>
+      </rss>
+    `
+    const mockFetch = createMockFetch({
+      'https://example.com/blog/feed.xml': feed,
+      'https://example.com': '<link rel="icon" href="/favicon.ico">',
+      'https://example.com/favicon.ico': 'binary',
+    })
+    const result = await discoverFavicons('https://example.com/blog/feed.xml', {
+      methods: ['html'],
+      fetchFn: mockFetch,
+    })
+
+    expect(result.map((favicon) => favicon.url)).toEqual(['https://example.com/favicon.ico'])
+  })
+
   it('should discover favicon from Atom feed content', async () => {
     const atomContent = `<?xml version="1.0" encoding="utf-8"?>
       <feed xmlns="http://www.w3.org/2005/Atom">
