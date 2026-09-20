@@ -47,8 +47,11 @@ type DiscoverInputObject = {
   url: string
   content?: string   // HTML content
   headers?: Headers  // HTTP headers
+  status?: number    // HTTP status of the response the content came from
 }
 ```
+
+When the input is a URL, `status` is set from the response. The default extractors reject an input whose status is outside the 2xx range, so a feed URL that answers 404 with a feed body is not returned as a result. Discovery then carries on with the methods, as it does for any input that is not a feed. Leave `status` out when you pass content you already trust.
 
 ## Options Types
 

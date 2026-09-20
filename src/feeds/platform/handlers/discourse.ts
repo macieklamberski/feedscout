@@ -1,6 +1,6 @@
 import type { DiscoverUriEntry } from '../../../common/types.js'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
-import { composeHint, hasMetaContent } from '../../../common/utils.js'
+import { composeHint, hasMetaContent, parseUrl } from '../../../common/utils.js'
 
 // Discoverable without handler.
 
@@ -30,7 +30,7 @@ export const isDiscourseHtml = (content: string): boolean => {
 
 export const discourseHandler: PlatformHandler = {
   match: (url, content) => {
-    if (!URL.canParse(url)) {
+    if (!parseUrl(url)) {
       return false
     }
 

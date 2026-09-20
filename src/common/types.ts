@@ -68,7 +68,13 @@ export type DiscoverProgress = {
 export type DiscoverOnProgressFn = (progress: DiscoverProgress) => void
 
 export type DiscoverErrorContext = {
-  phase: 'fetchInput' | 'resolveSiteUrl'
+  phase:
+    | 'fetchInput'
+    | 'resolveSiteUrl'
+    | 'resolveUrlFn'
+    | 'resolveSiteUrlFn'
+    | 'extractFn'
+    | 'onProgress'
   url?: string
 }
 
@@ -102,6 +108,7 @@ export type DiscoverInputObject = {
   url: string
   content?: string
   headers?: Headers
+  status?: number
 }
 
 export type DiscoverInput = string | DiscoverInputObject

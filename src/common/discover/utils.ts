@@ -2,6 +2,7 @@ import type { parseFeed } from 'feedsmith'
 import type { Atom, DeepPartial } from 'feedsmith/types'
 import locales from '../locales.json' with { type: 'json' }
 import type {
+  DiscoverErrorContext,
   DiscoverFetchFn,
   DiscoverInput,
   DiscoverInputObject,
@@ -31,9 +32,10 @@ export const normalizeInput = async (
       // TODO: Support streams here.
       content: typeof response.body === 'string' ? response.body : undefined,
       headers: response.headers,
+      status: response.status,
     }
   } catch (error) {
-    onError?.(error, { phase: 'fetchInput', url: input })
+    reportError(onError, error, { phase: 'fetchInput', url: input })
   }
 
   // When the fetch fails, return the URL without content so that URL-only
@@ -61,18 +63,81 @@ export const getFeedSiteUrl = (parsed: ReturnType<typeof parseFeed>): string | u
   }
 }
 
+const isThenable = (value: unknown): value is PromiseLike<unknown> => {
+  return isObject(value) && 'then' in value && typeof value.then === 'function'
+}
+
+// onError is where failures get reported, so an error thrown from it has nowhere to go. It is
+// swallowed, so that a broken callback cannot end discovery.
+export const reportError = (
+  onError: DiscoverOnErrorFn | undefined,
+  error: unknown,
+  context: DiscoverErrorContext,
+): void => {
+  try {
+    const result: unknown = onError?.(error, context)
+
+    // A function typed as sync can still be async. Its rejection has nowhere to go either.
+    if (isThenable(result)) {
+      void Promise.resolve(result).catch(() => {})
+    }
+  } catch {}
+}
+
+// Runs a user-supplied function. A throw never ends discovery: it is reported through onError
+// and the fallback is used. The fallback also stands in when the function returns nothing, and
+// it is the URL named in the report unless another one is given.
+export const attempt = <TValue, TFallback>(
+  callback: () => TValue,
+  fallback: TFallback,
+  phase: DiscoverErrorContext['phase'],
+  onError: DiscoverOnErrorFn | undefined,
+  url?: string,
+): NonNullable<TValue> | TFallback => {
+  const context: DiscoverErrorContext = {
+    phase,
+    url: url ?? (typeof fallback === 'string' ? fallback : undefined),
+  }
+
+  try {
+    const result = callback()
+
+    // A function typed as sync can still be async. A promise is no value to a sync caller, so
+    // the fallback is used, and a rejection is reported the same way as a throw.
+    if (isThenable(result)) {
+      void Promise.resolve(result).catch((error) => reportError(onError, error, context))
+
+      return fallback
+    }
+
+    return result ?? fallback
+  } catch (error) {
+    reportError(onError, error, context)
+
+    return fallback
+  }
+}
+
 export const normalizeUriEntry = (
   entry: DiscoverUriEntry,
   resolveUrlFn: DiscoverResolveUrlFn,
   baseUrl: string | undefined,
+  onError?: DiscoverOnErrorFn,
 ): DiscoverUriEntry => {
-  if (typeof entry.uri === 'string') {
-    return { ...entry, uri: resolveUrlFn(entry.uri, baseUrl) ?? entry.uri }
+  const { uri } = entry
+
+  if (typeof uri === 'string') {
+    return {
+      ...entry,
+      uri: attempt(() => resolveUrlFn(uri, baseUrl), uri, 'resolveUrlFn', onError),
+    }
   }
 
   return {
     ...entry,
-    uri: entry.uri.map((uri) => resolveUrlFn(uri, baseUrl) ?? uri),
+    uri: uri.map((alternative) => {
+      return attempt(() => resolveUrlFn(alternative, baseUrl), alternative, 'resolveUrlFn', onError)
+    }),
   }
 }
 
@@ -81,8 +146,23 @@ export const normalizeMethodsConfig = (
   siteInput: DiscoverInputObject | undefined,
   methods: DiscoverMethodsConfig,
   defaults: DiscoverMethodsConfigDefaults,
+  hasInputFetchFailed = false,
 ): DiscoverMethodsConfigInternal => {
   const resolvedInput = siteInput ?? sourceInput
+
+  // Missing content or headers is a usage error, so it throws. After a failed input fetch the
+  // caller did nothing wrong and the failure is already reported, so the method is skipped.
+  const isAvailable = <TValue>(value: TValue | undefined, message: string): value is TValue => {
+    if (value !== undefined) {
+      return true
+    }
+
+    if (!hasInputFetchFailed) {
+      throw new Error(message)
+    }
+
+    return false
+  }
 
   // Step 1: Normalize methods (array → object, true → {}).
   const methodsObj = Array.isArray(methods)
@@ -110,11 +190,11 @@ export const normalizeMethodsConfig = (
     }
   }
 
-  if (methodsObj.feed && defaults.feed) {
-    if (sourceInput.content === undefined) {
-      throw new Error(locales.errors.feedMethodRequiresContent)
-    }
-
+  if (
+    methodsObj.feed &&
+    defaults.feed &&
+    isAvailable(sourceInput.content, locales.errors.feedMethodRequiresContent)
+  ) {
     const feedOptions = methodsObj.feed === true ? {} : methodsObj.feed
 
     methodsConfig.feed = {
@@ -126,11 +206,11 @@ export const normalizeMethodsConfig = (
     }
   }
 
-  if (methodsObj.html && defaults.html) {
-    if (resolvedInput.content === undefined) {
-      throw new Error(locales.errors.htmlMethodRequiresContent)
-    }
-
+  if (
+    methodsObj.html &&
+    defaults.html &&
+    isAvailable(resolvedInput.content, locales.errors.htmlMethodRequiresContent)
+  ) {
     const htmlOptions = methodsObj.html === true ? {} : methodsObj.html
 
     methodsConfig.html = {
@@ -143,11 +223,11 @@ export const normalizeMethodsConfig = (
     }
   }
 
-  if (methodsObj.headers && defaults.headers) {
-    if (resolvedInput.headers === undefined) {
-      throw new Error(locales.errors.headersMethodRequiresHeaders)
-    }
-
+  if (
+    methodsObj.headers &&
+    defaults.headers &&
+    isAvailable(resolvedInput.headers, locales.errors.headersMethodRequiresHeaders)
+  ) {
     const headersOptions = methodsObj.headers === true ? {} : methodsObj.headers
 
     methodsConfig.headers = {
