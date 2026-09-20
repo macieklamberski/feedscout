@@ -58,6 +58,7 @@ const feeds = await discoverFeeds('https://example.com')
 // [{
 //   url: 'https://example.com/feed.xml',
 //   isValid: true,
+//   method: 'html',
 //   format: 'rss',
 //   title: 'Example Blog',
 //   description: 'A blog about examples',
@@ -94,6 +95,7 @@ const feeds = await discoverFeeds(
 //   {
 //     url: 'https://example.com/feed.xml',
 //     isValid: true,
+//     method: 'html',
 //     format: 'rss',
 //     title: 'Example Blog',
 //     description: 'A blog about examples',
@@ -102,6 +104,7 @@ const feeds = await discoverFeeds(
 //   {
 //     url: 'https://example.com/rss',
 //     isValid: true,
+//     method: 'html',
 //     format: 'rss',
 //     title: 'Example Blog',
 //     description: 'A blog about examples',
@@ -125,6 +128,7 @@ const feeds = await discoverFeeds(
 // [{
 //   url: 'https://example.com/feed.xml',
 //   isValid: true,
+//   method: 'headers',
 //   format: 'rss',
 //   title: 'Example Blog',
 //   description: 'A blog about examples',
@@ -142,6 +146,7 @@ const blogrolls = await discoverBlogrolls('https://example.com')
 // [{
 //   url: 'https://example.com/blogroll.opml',
 //   isValid: true,
+//   method: 'html',
 //   title: 'My Blogroll',
 // }]
 ```
@@ -156,6 +161,7 @@ const favicons = await discoverFavicons('https://example.com')
 // [{
 //   url: 'https://example.com/apple-touch-icon.png',
 //   isValid: true,
+//   method: 'html',
 // }]
 ```
 

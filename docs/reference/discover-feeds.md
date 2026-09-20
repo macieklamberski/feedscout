@@ -72,7 +72,7 @@ Returns a promise that resolves to an array of results:
   url: 'https://example.com/not-a-feed',
   isValid: false,
   method: 'guess',
-  error: Error, // Only set when the request itself failed
+  error: Error, // Only set when the request or the extractor threw
 }
 ```
 

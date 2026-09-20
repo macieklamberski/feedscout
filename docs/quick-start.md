@@ -42,6 +42,7 @@ const feeds = await discoverFeeds('https://example.com')
 // [{
 //   url: 'https://example.com/feed.xml',
 //   isValid: true,
+//   method: 'html',
 //   format: 'rss',
 //   title: 'Example Blog',
 //   description: 'A blog about examples',
@@ -70,11 +71,12 @@ const feeds = await discoverFeeds('https://www.youtube.com/@mkbhd', {
 //   {
 //     url: 'https://www.youtube.com/feeds/videos.xml?channel_id=UCBJycsmduvYEL83R_U4JriQ',
 //     isValid: true,
+//     method: 'platform',
 //     format: 'atom',
 //     title: 'Marques Brownlee',
 //     hint: { key: 'youtube:all', label: 'All uploads' },
 //   },
-//   ...one result for each other feed variant, like videos, shorts and live streams.
+//   ...one result for each other variant that has a valid feed, like videos and shorts.
 // ]
 ```
 
@@ -103,6 +105,7 @@ const feeds = await discoverFeeds(
 //   {
 //     url: 'https://example.com/feed.xml',
 //     isValid: true,
+//     method: 'html',
 //     format: 'rss',
 //     title: 'Example Blog',
 //     description: 'A blog about examples',
@@ -111,6 +114,7 @@ const feeds = await discoverFeeds(
 //   {
 //     url: 'https://example.com/rss',
 //     isValid: true,
+//     method: 'html',
 //     format: 'rss',
 //     title: 'Example Blog',
 //     description: 'A blog about examples',
@@ -134,6 +138,7 @@ const feeds = await discoverFeeds(
 // [{
 //   url: 'https://example.com/feed.xml',
 //   isValid: true,
+//   method: 'headers',
 //   format: 'rss',
 //   title: 'Example Blog',
 //   description: 'A blog about examples',
@@ -151,6 +156,7 @@ const blogrolls = await discoverBlogrolls('https://example.com')
 // [{
 //   url: 'https://example.com/blogroll.opml',
 //   isValid: true,
+//   method: 'html',
 //   title: 'My Blogroll',
 // }]
 ```
@@ -169,6 +175,7 @@ const favicons = await discoverFavicons('https://example.com')
 // [{
 //   url: 'https://example.com/apple-touch-icon.png',
 //   isValid: true,
+//   method: 'html',
 // }]
 ```
 
