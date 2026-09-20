@@ -50,7 +50,7 @@ All options are optional. When not provided, sensible defaults are used.
 | `maxUris` | `number` | `50` | Max total candidate URIs to fetch across all methods |
 | `includeInvalid` | `boolean` | `false` | Include invalid results |
 | `onProgress` | `DiscoverOnProgressFn` | | Progress callback |
-| `onError` | `DiscoverOnErrorFn` | | Called when fetching the input or the site URL fails |
+| `onError` | `DiscoverOnErrorFn` | | Called when fetching the input or the site URL fails. [`DiscoverOnErrorFn`](/reference/types#discoveronerrorfn) lists everything it reports |
 
 ## Return Value
 

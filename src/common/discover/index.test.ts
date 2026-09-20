@@ -3,6 +3,7 @@ import { discoverFeeds } from '../../feeds/index.js'
 import type { FeedResult } from '../../feeds/types.js'
 import locales from '../locales.json' with { type: 'json' }
 import type {
+  DiscoverErrorContext,
   DiscoverExtractFn,
   DiscoverFetchFn,
   DiscoverProgress,
@@ -468,6 +469,149 @@ describe('discoverFeeds', () => {
     })
   })
 
+  describe('failed input fetch', () => {
+    it('should skip content-based methods in array format and still run guess', async () => {
+      const mockFetch: DiscoverFetchFn = (url) => {
+        if (url === 'https://example.com') {
+          return Promise.reject(new Error('Input fetch failed'))
+        }
+
+        return createMockFetch({ 'https://example.com/feed': rss })(url)
+      }
+      const value = await discoverFeeds('https://example.com', {
+        methods: ['html', 'headers', 'guess'],
+        fetchFn: mockFetch,
+      })
+      const expected: Array<DiscoverResult<FeedResult>> = [
+        {
+          url: 'https://example.com/feed',
+          isValid: true,
+          method: 'guess',
+          format: 'rss',
+          title: 'Test RSS',
+          description: 'Test feed',
+          siteUrl: 'https://example.com/',
+        },
+      ]
+
+      expect(value).toEqual(expected)
+    })
+
+    it('should skip content-based methods in object format and still run guess', async () => {
+      const mockFetch: DiscoverFetchFn = (url) => {
+        if (url === 'https://example.com') {
+          return Promise.reject(new Error('Input fetch failed'))
+        }
+
+        return createMockFetch({ 'https://example.com/feed': rss })(url)
+      }
+      const value = await discoverFeeds('https://example.com', {
+        methods: { html: true, headers: true, guess: { uris: ['/feed'] } },
+        fetchFn: mockFetch,
+      })
+      const expected: Array<DiscoverResult<FeedResult>> = [
+        {
+          url: 'https://example.com/feed',
+          isValid: true,
+          method: 'guess',
+          format: 'rss',
+          title: 'Test RSS',
+          description: 'Test feed',
+          siteUrl: 'https://example.com/',
+        },
+      ]
+
+      expect(value).toEqual(expected)
+    })
+
+    it('should return no results when only content-based methods are requested', async () => {
+      const mockFetch: DiscoverFetchFn = () => {
+        return Promise.reject(new Error('Input fetch failed'))
+      }
+      const value = await discoverFeeds('https://example.com', {
+        methods: ['html', 'headers'],
+        fetchFn: mockFetch,
+      })
+
+      expect(value).toEqual([])
+    })
+
+    it('should report the fetch error once', async () => {
+      const messages: Array<string> = []
+      const mockFetch: DiscoverFetchFn = () => {
+        return Promise.reject(new Error('Input fetch failed'))
+      }
+
+      await discoverFeeds('https://example.com', {
+        methods: ['html', 'headers'],
+        fetchFn: mockFetch,
+        onError: (error, context) => {
+          messages.push(`${context.phase}: ${error instanceof Error ? error.message : error}`)
+        },
+      })
+      const expected = ['fetchInput: Input fetch failed']
+
+      expect(messages).toEqual(expected)
+    })
+
+    it('should run html on the site page when the input fetch fails and the site fetch works', async () => {
+      const sitePage = '<link rel="alternate" type="application/rss+xml" href="/feed">'
+      const mockFetch: DiscoverFetchFn = (url) => {
+        if (url === 'https://example.com/feed.xml') {
+          return Promise.reject(new Error('Input fetch failed'))
+        }
+
+        return createMockFetch({
+          'https://example.com/': sitePage,
+          'https://example.com/feed': rss,
+        })(url)
+      }
+      const value = await discoverFeeds('https://example.com/feed.xml', {
+        methods: ['html'],
+        fetchFn: mockFetch,
+        resolveSiteUrlFn: () => 'https://example.com/',
+      })
+
+      expect(value.map((result) => result.url)).toEqual(['https://example.com/feed'])
+    })
+
+    it('should throw when the input fetch succeeds without headers', () => {
+      const page = '<link rel="alternate" type="application/rss+xml" href="/feed">'
+      // @ts-expect-error: This is for testing purposes.
+      const mockFetch: DiscoverFetchFn = (url) => {
+        return Promise.resolve({ body: page, url, status: 200, statusText: 'OK' })
+      }
+      const throwing = () => {
+        return discoverFeeds('https://example.com', {
+          methods: ['html', 'headers'],
+          fetchFn: mockFetch,
+        })
+      }
+
+      expect(throwing()).rejects.toThrow(locales.errors.headersMethodRequiresHeaders)
+    })
+
+    it('should throw when the input fetch succeeds with a stream body', () => {
+      const mockFetch: DiscoverFetchFn = (url) => {
+        return Promise.resolve({
+          url,
+          status: 200,
+          statusText: 'OK',
+          headers: new Headers(),
+          body: new ReadableStream(),
+        })
+      }
+      const throwing = () => {
+        return discoverFeeds('https://example.com', {
+          methods: ['html'],
+          fetchFn: mockFetch,
+        })
+      }
+
+      expect(throwing()).rejects.toThrow(locales.errors.htmlMethodRequiresContent)
+    })
+  })
+
   describe('onError', () => {
     it('should call onError when the input fetch fails', async () => {
       const errors: Array<{ error: unknown; phase: string; url?: string }> = []
@@ -484,6 +628,170 @@ describe('discoverFeeds', () => {
       const expected = [{ error: fetchError, phase: 'fetchInput', url: 'https://example.com' }]
 
       expect(errors).toEqual(expected)
+    })
+
+    it('should report a throwing resolveUrlFn and keep discovering', async () => {
+      const contexts: Array<DiscoverErrorContext> = []
+      const html = `
+        <a href="http://[malformed">RSS</a>
+        <link rel="alternate" type="application/rss+xml" href="/feed.xml">
+      `
+      const throwingResolveUrlFn: DiscoverResolveUrlFn = (url, baseUrl) => {
+        return new URL(url, baseUrl).href
+      }
+      const value = await discoverFeeds(
+        { url: 'https://example.com', content: html },
+        {
+          methods: ['html'],
+          fetchFn: createMockFetch({ 'https://example.com/feed.xml': rss }),
+          resolveUrlFn: throwingResolveUrlFn,
+          onError: (_error, context) => {
+            contexts.push(context)
+          },
+        },
+      )
+      const expectedContexts: Array<DiscoverErrorContext> = [
+        { phase: 'resolveUrlFn', url: 'http://[malformed' },
+      ]
+
+      expect(value.map((result) => result.url)).toEqual(['https://example.com/feed.xml'])
+      expect(contexts).toEqual(expectedContexts)
+    })
+
+    it('should use the unresolved URL when resolveUrlFn is async', async () => {
+      const html = `
+        <link rel="alternate" type="application/rss+xml" href="https://example.com/feed.xml">
+      `
+      // @ts-expect-error: This is for testing purposes.
+      const asyncResolveUrlFn: DiscoverResolveUrlFn = (url, baseUrl) => {
+        return Promise.resolve(new URL(url, baseUrl).href)
+      }
+      const value = await discoverFeeds(
+        { url: 'https://example.com', content: html },
+        {
+          methods: ['html'],
+          fetchFn: createMockFetch({ 'https://example.com/feed.xml': rss }),
+          resolveUrlFn: asyncResolveUrlFn,
+        },
+      )
+
+      expect(value.map((result) => result.url)).toEqual(['https://example.com/feed.xml'])
+    })
+
+    it('should report an extractFn that throws on the input and keep discovering', async () => {
+      const contexts: Array<DiscoverErrorContext> = []
+      const html = '<link rel="alternate" type="application/rss+xml" href="/feed.xml">'
+      const throwingExtractFn: DiscoverExtractFn<FeedResult> = ({ url, content }) => {
+        if (content === html) {
+          throw new Error('Extractor failed')
+        }
+
+        return { url, isValid: true, format: 'rss' }
+      }
+      const value = await discoverFeeds(
+        { url: 'https://example.com', content: html },
+        {
+          methods: ['html'],
+          fetchFn: createMockFetch({ 'https://example.com/feed.xml': rss }),
+          extractFn: throwingExtractFn,
+          onError: (_error, context) => {
+            contexts.push(context)
+          },
+        },
+      )
+      const expectedContexts: Array<DiscoverErrorContext> = [
+        { phase: 'extractFn', url: 'https://example.com' },
+      ]
+
+      expect(value.map((result) => result.url)).toEqual(['https://example.com/feed.xml'])
+      expect(contexts).toEqual(expectedContexts)
+    })
+
+    it('should report a throwing resolveSiteUrlFn and keep discovering', async () => {
+      const contexts: Array<DiscoverErrorContext> = []
+      const value = await discoverFeeds(
+        { url: 'https://example.com', content: '<html></html>' },
+        {
+          methods: { guess: { uris: ['/feed'] } },
+          fetchFn: createMockFetch({ 'https://example.com/feed': rss }),
+          resolveSiteUrlFn: () => {
+            throw new Error('Site resolver failed')
+          },
+          onError: (_error, context) => {
+            contexts.push(context)
+          },
+        },
+      )
+      const expectedContexts: Array<DiscoverErrorContext> = [
+        { phase: 'resolveSiteUrlFn', url: 'https://example.com' },
+      ]
+
+      expect(value.map((result) => result.url)).toEqual(['https://example.com/feed'])
+      expect(contexts).toEqual(expectedContexts)
+    })
+
+    it('should report a throwing onProgress and keep the result', async () => {
+      const contexts: Array<DiscoverErrorContext> = []
+      const value = await discoverFeeds(
+        { url: 'https://example.com', content: '<html></html>' },
+        {
+          methods: { guess: { uris: ['/feed'] } },
+          fetchFn: createMockFetch({ 'https://example.com/feed': rss }),
+          onProgress: () => {
+            throw new Error('Progress failed')
+          },
+          onError: (_error, context) => {
+            contexts.push(context)
+          },
+        },
+      )
+      const expectedContexts: Array<DiscoverErrorContext> = [
+        { phase: 'onProgress', url: 'https://example.com/feed' },
+      ]
+
+      expect(value.map((result) => result.url)).toEqual(['https://example.com/feed'])
+      expect(contexts).toEqual(expectedContexts)
+    })
+
+    it('should report an async onProgress that rejects', async () => {
+      const contexts: Array<DiscoverErrorContext> = []
+      const value = await discoverFeeds(
+        { url: 'https://example.com', content: '<html></html>' },
+        {
+          methods: { guess: { uris: ['/feed'] } },
+          fetchFn: createMockFetch({ 'https://example.com/feed': rss }),
+          onProgress: () => Promise.reject(new Error('Progress failed')),
+          onError: (_error, context) => {
+            contexts.push(context)
+          },
+        },
+      )
+      await Promise.resolve()
+      const expectedContexts: Array<DiscoverErrorContext> = [
+        { phase: 'onProgress', url: 'https://example.com/feed' },
+      ]
+
+      expect(value.map((result) => result.url)).toEqual(['https://example.com/feed'])
+      expect(contexts).toEqual(expectedContexts)
+    })
+
+    it('should keep discovering when onError itself throws', async () => {
+      const mockFetch: DiscoverFetchFn = (url) => {
+        if (url === 'https://example.com') {
+          return Promise.reject(new Error('Input fetch failed'))
+        }
+
+        return createMockFetch({ 'https://example.com/feed': rss })(url)
+      }
+      const value = await discoverFeeds('https://example.com', {
+        methods: { guess: { uris: ['/feed'] } },
+        fetchFn: mockFetch,
+        onError: () => {
+          throw new Error('Broken callback')
+        },
+      })
+
+      expect(value.map((result) => result.url)).toEqual(['https://example.com/feed'])
     })
 
     it('should call onError when site URL resolution fails', async () => {
@@ -954,6 +1262,40 @@ describe('discoverFeeds', () => {
   })
 
   describe('resolveUrlFn', () => {
+    it('should keep discovering when resolveUrlFn throws on a malformed link', async () => {
+      const html = `
+        <a href="http://[malformed">RSS</a>
+        <link rel="alternate" type="application/rss+xml" href="/feed.xml">
+      `
+      const mockFetch = createMockFetch({
+        'https://example.com/feed.xml': rss,
+      })
+      const throwingResolveUrlFn: DiscoverResolveUrlFn = (url, baseUrl) => {
+        return new URL(url, baseUrl).href
+      }
+      const value = await discoverFeeds(
+        { url: 'https://example.com', content: html },
+        {
+          methods: ['html'],
+          fetchFn: mockFetch,
+          resolveUrlFn: throwingResolveUrlFn,
+        },
+      )
+      const expected: Array<DiscoverResult<FeedResult>> = [
+        {
+          url: 'https://example.com/feed.xml',
+          isValid: true,
+          method: 'html',
+          format: 'rss',
+          title: 'Test RSS',
+          description: 'Test feed',
+          siteUrl: 'https://example.com/',
+        },
+      ]
+
+      expect(value).toEqual(expected)
+    })
+
     it('should use custom resolveUrlFn to transform discovered URIs', async () => {
       const mockFetch = createMockFetch({
         'https://custom.example.com/feed': rss,
@@ -1132,6 +1474,33 @@ describe('discoverFeeds', () => {
       )
 
       expect(receivedHeaders).toBe(inputHeaders)
+    })
+
+    it('should reject a fetched input that answers with a non-2xx status', async () => {
+      const mockFetch: DiscoverFetchFn = (url) => {
+        return Promise.resolve({
+          headers: new Headers(),
+          body: rss,
+          url,
+          status: 404,
+          statusText: 'Not Found',
+        })
+      }
+      const value = await discoverFeeds('https://example.com/feed.xml', {
+        methods: ['html'],
+        fetchFn: mockFetch,
+      })
+
+      expect(value).toEqual([])
+    })
+
+    it('should reject an input object that carries a non-2xx status', async () => {
+      const value = await discoverFeeds(
+        { url: 'https://example.com/feed.xml', content: rss, status: 404 },
+        { methods: ['html'], fetchFn: createMockFetch({}) },
+      )
+
+      expect(value).toEqual([])
     })
   })
 
