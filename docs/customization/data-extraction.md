@@ -57,9 +57,9 @@ const feeds = await discoverFeeds(url, {
 // [{
 //   url: 'https://example.com/feed.xml',
 //   isValid: true,
-//   method: 'guess',
 //   format: 'rss',
 //   title: 'Example Blog',
 //   itemCount: 10,
+//   method: 'guess',
 // }]
 ```

@@ -57,6 +57,8 @@ const hubs = await discoverHubs(url, {
 type DiscoverResolveUrlFn = (url: string, baseUrl: string | undefined) => string | undefined
 ```
 
+Return `undefined` when the URL cannot be resolved. Feedscout then keeps the URL as discovered. The same happens when the function throws, and the error is reported to `onError`, so a malformed `href` on a page does not stop discovery.
+
 ## Use Cases
 
 ### Removing Query Parameters

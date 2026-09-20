@@ -23,7 +23,8 @@ Each result contains feed metadata:
   format: 'rss',        // 'rss' | 'atom' | 'json' | 'rdf'
   title: 'Example Blog',
   description: 'A blog about examples',
-  siteUrl: 'https://example.com',
+  siteUrl: 'https://example.com/',
+  method: 'html',
 }
 ```
 
@@ -44,6 +45,8 @@ Results from the [Platform method](/feeds/platform) also include a [`hint`](/fee
 2. **Deduplication**: Duplicate URLs are removed.
 3. **Validation**: Each URL is fetched and parsed to confirm it's a valid feed.
 4. **Results**: Valid feeds are returned with metadata (format, title, etc.).
+
+If the input is already a valid feed, it is returned as the only result and no methods run.
 
 ## Specifying Methods
 
@@ -103,14 +106,14 @@ const feeds = await discoverFeeds(
 
 ### Stop on First Method
 
-Stop URI collection after the first discovery method that produces results. Useful for platforms (like YouTube) where early methods find the correct feed and later methods (like guess) generate many unnecessary URLs:
+Stop after the first discovery method that finds a valid feed. Methods are validated in order: platform, html, headers, guess. A method whose URLs all turn out invalid does not stop discovery. Useful for platforms (like YouTube) where early methods find the correct feed and later methods (like guess) generate many unnecessary URLs:
 
 ```typescript
 const feeds = await discoverFeeds(url, {
   methods: ['platform', 'html', 'headers', 'guess'],
   stopOnFirstMethod: true,
 })
-// Only URIs from the first successful method are validated
+// Methods after the first one with a valid feed are skipped
 ```
 
 ### Stop on First Result

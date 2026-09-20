@@ -40,6 +40,7 @@ discoverHubs({
 | `methods` | `DiscoverHubsMethodsConfig` | all | Methods to use |
 | `fetchFn` | `DiscoverFetchFn` | native fetch | Custom fetch function |
 | `resolveUrlFn` | `DiscoverResolveUrlFn` | resolve relative | Custom URL resolution |
+| `onError` | `DiscoverOnErrorFn` | | Called when fetching the input fails or `resolveUrlFn` throws |
 
 #### methods
 
@@ -68,7 +69,7 @@ Example result:
 
 ```typescript
 {
-  hub: 'https://pubsubhubbub.appspot.com',
+  hub: 'https://pubsubhubbub.appspot.com/',
   topic: 'https://example.com/feed.xml',
 }
 ```

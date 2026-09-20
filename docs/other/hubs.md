@@ -32,10 +32,12 @@ Each result contains the hub and topic URLs:
 
 ```typescript
 {
-  hub: 'https://pubsubhubbub.appspot.com',
+  hub: 'https://pubsubhubbub.appspot.com/',
   topic: 'https://example.com/feed.xml',
 }
 ```
+
+Without a `rel="self"` link, `topic` falls back to the input URL. Results are not deduplicated, so a hub found by two methods appears twice.
 
 ## Discovery Methods
 
@@ -69,7 +71,7 @@ Extracts hub links from feed content:
 </feed>
 
 // [{
-//   hub: 'https://pubsubhubbub.appspot.com',
+//   hub: 'https://pubsubhubbub.appspot.com/',
 //   topic: 'https://example.com/feed.xml',
 // }]
 ```
@@ -85,7 +87,7 @@ Extracts hub links from feed content:
 </rss>
 
 // [{
-//   hub: 'https://pubsubhubbub.appspot.com',
+//   hub: 'https://pubsubhubbub.appspot.com/',
 //   topic: 'https://example.com/feed.xml',
 // }]
 ```
@@ -102,7 +104,7 @@ Extracts hub links from feed content:
 }
 
 // [{
-//   hub: 'https://pubsubhubbub.appspot.com',
+//   hub: 'https://pubsubhubbub.appspot.com/',
 //   topic: 'https://example.com/feed.json',
 // }]
 ```

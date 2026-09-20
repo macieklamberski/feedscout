@@ -14,8 +14,10 @@ import type {
   DiscoverResult,
   DiscoverProgress,
   DiscoverFetchFn,
+  DiscoverExtractFn,
   DiscoverResolveUrlFn,
   DiscoverResolveSiteUrlFn,
+  DiscoverOnProgressFn,
   DiscoverOnErrorFn,
   DiscoverErrorContext,
   DiscoverUriEntry,
@@ -25,9 +27,12 @@ import type {
 
 import type { FeedResult } from 'feedscout/feeds'
 import type { BlogrollResult } from 'feedscout/blogrolls'
+import type { FaviconResult } from 'feedscout/favicons'
 import type { HubResult, DiscoverHubsOptions } from 'feedscout/hubs'
 import type { PlatformHandler, PlatformMethodOptions } from 'feedscout/platform'
 ```
+
+The [method option types](#method-option-types) and `LinkSelector` are not exported by name. They are listed here to describe the shapes that `methods` accepts.
 
 ## Input Types
 
@@ -62,9 +67,9 @@ type DiscoverOptions<TValid, TMethods extends DiscoverMethod = DiscoverMethod> =
   stopOnFirstResult?: boolean
   concurrency?: number
   maxUris?: number
-  includeInvalid?: boolean
   onProgress?: DiscoverOnProgressFn
   onError?: DiscoverOnErrorFn
+  includeInvalid?: boolean
 }
 ```
 
@@ -95,7 +100,7 @@ type DiscoverMethodsConfig<TMethods extends DiscoverMethod = DiscoverMethod> =
     >
 ```
 
-The `baseUrl` is omitted because it's automatically derived from the input URL.
+The `baseUrl` is omitted because it's set for you: the input URL, or the site URL when the input is a feed.
 
 ### DiscoverHubsOptions
 
@@ -106,6 +111,7 @@ type DiscoverHubsOptions = {
   methods?: DiscoverHubsMethodsConfig
   fetchFn?: DiscoverFetchFn
   resolveUrlFn?: DiscoverResolveUrlFn
+  onError?: DiscoverOnErrorFn
 }
 
 type DiscoverHubsMethodsConfig = Array<'headers' | 'html' | 'feed'>
@@ -134,7 +140,7 @@ type DiscoverResult<TValid> =
     }
 ```
 
-The `method` field indicates which discovery method produced the result (`'platform'`, `'feed'`, `'html'`, `'headers'`, or `'guess'`). See [Platform method hints](/feeds/platform#hints) for details on the `hint` property.
+The `method` field indicates which discovery method produced the result (`'platform'`, `'feed'`, `'html'`, `'headers'`, or `'guess'`). It is absent when the input itself is a valid feed, because no method produced that result. See [Platform method hints](/feeds/platform#hints) for details on the `hint` property.
 
 ### FeedResult
 
@@ -157,6 +163,14 @@ Valid blogroll result properties:
 type BlogrollResult = {
   title?: string
 }
+```
+
+### FaviconResult
+
+Valid favicon results carry no extra properties yet:
+
+```typescript
+type FaviconResult = {}
 ```
 
 ### HubResult
@@ -227,16 +241,31 @@ type DiscoverOnProgressFn = (progress: DiscoverProgress) => void
 
 ### DiscoverOnErrorFn
 
-Error callback function type. Called when a request made by discovery itself fails, so the error is not lost:
+Error callback function type. Called when discovery hits a failure it can continue past, so the error is not lost:
 
 ```typescript
 type DiscoverOnErrorFn = (error: unknown, context: DiscoverErrorContext) => void
 
 type DiscoverErrorContext = {
-  phase: 'fetchInput' | 'resolveSiteUrl'
+  phase:
+    | 'fetchInput'
+    | 'resolveSiteUrl'
+    | 'resolveUrlFn'
+    | 'resolveSiteUrlFn'
+    | 'extractFn'
+    | 'onProgress'
   url?: string
 }
 ```
+
+- `fetchInput`: Fetching the input URL failed. Methods that need its content or headers are skipped, and discovery continues with the rest, so Platform and Guess still run on a host that is down. A fetch that worked is different, and so is an input object you pass in: a method left without content or headers there is a usage error and throws.
+- `resolveSiteUrl`: Fetching the site URL taken from a feed failed. Discovery continues with the original input.
+- `resolveUrlFn`: The URL resolution function threw. The URL is kept as discovered.
+- `resolveSiteUrlFn`: The site URL resolution function threw. Discovery continues with the original input.
+- `extractFn`: The extractor threw on the input content. The input is not returned as a result, and the methods run.
+- `onProgress`: The progress callback threw, or returned a promise that rejected. The result it was called for is kept.
+
+A function you pass in never ends discovery by throwing. The phases above are reported here. A throw from `fetchFn` or `extractFn` on a candidate URL is not: it marks that result as invalid and lands in its `error` field, which you see with `includeInvalid`. A throw inside a platform handler, from its `match` or `resolve`, is not reported either: that handler is skipped silently and the next one is tried. The default `resolveUrlFn` is reported the same way as a custom one, for example when a page links to a malformed absolute URL. `resolveUrlFn` and `resolveSiteUrlFn` are synchronous: one that returns a promise is treated as returning nothing, and a rejection is reported. An error thrown from `onError` itself is ignored, and so is a promise it returns that rejects.
 
 ## Fetch Types
 
@@ -278,6 +307,8 @@ type DiscoverExtractFn<TValid> = (input: {
   status?: number
 }) => MaybePromise<DiscoverResult<TValid>>
 ```
+
+The `status` is the HTTP status of the fetched URL. It is not set when the extractor runs on the input itself, whether you passed the content in or Feedscout fetched it.
 
 ## URL Resolution Types
 

@@ -14,7 +14,7 @@ import { discoverFavicons } from 'feedscout'
 const favicons = await discoverFavicons('https://example.com')
 ```
 
-Each result contains the favicon URL and validation status:
+Each result contains the favicon URL and validation status. A URL is valid when the response is 2xx and is an image, by its `Content-Type` or by its content:
 
 ```typescript
 {
@@ -44,7 +44,7 @@ Favicons use the same discovery pipeline as feeds. See the [Feeds](/feeds) secti
 |--------|-------------------|
 | Platform | Avatars/icons from known platforms (GitHub, Mastodon, Bluesky, etc.) |
 | Feed | `<icon>` in Atom feeds, `favicon`/`icon` in JSON Feeds |
-| HTML | `<link>` tags with `rel="icon"`, `rel="shortcut"`, `rel="apple-touch-icon"` |
+| HTML | `<link>` tags with `rel="icon"`, `rel="shortcut"`, `rel="alternate icon"`, `rel="apple-touch-icon"` |
 | Headers | `Link` headers with icon-related `rel` values |
 | Guess | Common paths like `/favicon.ico`, `/apple-touch-icon.png` |
 
