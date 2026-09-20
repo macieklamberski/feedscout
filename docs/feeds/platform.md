@@ -192,19 +192,14 @@ Discovers Atom feeds for GitHub Gist users, starred gists, forks, and the discov
 
 ### Codeberg / Gitea
 
-Discovers Atom feeds for Codeberg and Gitea users, repositories, releases and tags, with RSS as the fallback, and RSS feeds for branch commits.
+Discovers Atom feeds for Codeberg and Gitea users, repositories, releases and tags, with RSS as the fallback.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | `codeberg.org/{user}` | User activity feed |
 | `codeberg.org/{user}/{repo}` | Releases, tags, activity |
-| `codeberg.org/{user}/{repo}/src/branch/{branch}` | Branch commits (+ above) |
-| `codeberg.org/{user}/{repo}/src/branch/{branch}/{path}` | File history (+ above) |
 
 Also supports `gitea.com` with the same patterns.
-
-> [!NOTE]
-> The branch commits and file history feeds are emitted only on `gitea.com`, because Forgejo, which Codeberg runs, removed that route. Since `gitea.com` started asking anonymous visitors to sign in on branch pages, the two feeds fail validation there and are left out of the results.
 
 ### GitLab
 
