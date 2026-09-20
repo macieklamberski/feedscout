@@ -192,17 +192,15 @@ Discovers Atom feeds for GitHub Gist users, starred gists, forks, and the discov
 
 ### Gitea
 
-Discovers Atom feeds for Gitea users, repositories, releases and tags, with RSS as the fallback, and RSS feeds for branch commits. Codeberg and `gitea.com` are matched by host; any other instance is matched by the session cookie Gitea sets on a repository page.
+Discovers Atom feeds for Gitea users, repositories, releases and tags, with RSS as the fallback. Codeberg and `gitea.com` are matched by host; any other instance is matched by the session cookie Gitea sets on a repository page.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | `{instance}/{user}` | User activity feed |
 | `{instance}/{user}/{repo}` | Releases, tags, activity |
-| `{instance}/{user}/{repo}/src/branch/{branch}` | Branch commits (+ above) |
-| `{instance}/{user}/{repo}/src/branch/{branch}/{path}` | File history (+ above) |
 
 > [!NOTE]
-> The branch commits and file history feeds are emitted only on `gitea.com`, because Forgejo removed that route. A self-hosted Forgejo instance sets no cookie on an anonymous request and is not matched; Codeberg, which runs Forgejo, is covered by the host list. Since `gitea.com` started asking anonymous visitors to sign in on branch pages, the two feeds fail validation there and are left out of the results.
+> A self-hosted Forgejo instance sets no cookie on an anonymous request and is not matched; Codeberg, which runs Forgejo, is covered by the host list.
 
 ### GitLab
 

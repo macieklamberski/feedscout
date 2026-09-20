@@ -9,10 +9,8 @@ import { composeHint } from '../../../common/utils.js'
 // at `/{user}.atom|.rss` and repo activity at `/{user}/{repo}.atom|.rss`,
 // plus per-repo releases at `/{user}/{repo}/releases.atom|.rss` and tags at
 // `/{user}/{repo}/tags.atom|.rss`. The repo page advertises only the repo
-// activity feed via `<link rel="alternate">`; releases, tags, and per-branch
-// commit feeds are not autodiscovered.
-// The handler enumerates all four per-repo feeds and adds Gitea-only
-// `/rss/branch/{branch}` commit and file-history feeds (Forgejo removed them).
+// activity feed via `<link rel="alternate">`; releases and tags are not autodiscovered.
+// The handler enumerates all three per-repo feeds.
 //
 // A self-hosted instance is matched by the session cookie Gitea sets on any page
 // carrying a CSRF token, so a repo page has it and the instance root does not.
@@ -105,24 +103,6 @@ export const giteaHandler: PlatformHandler = {
             hint: composeHint('gitea:activity'),
           },
         ]
-
-        // Branch page: codeberg.org/{user}/{repo}/src/branch/{branch}
-        // Gitea still serves /rss/branch/{branch} but Forgejo (Codeberg's runtime)
-        // removed it — so gate this emission on Gitea hosts only.
-        if (
-          isHostOf(url, ['gitea.com', 'www.gitea.com']) &&
-          pathSegments[2] === 'src' &&
-          pathSegments[3] === 'branch' &&
-          pathSegments[4]
-        ) {
-          const branch = pathSegments[4]
-          const filePath = pathSegments.slice(5).join('/')
-
-          feeds.unshift({
-            uri: `${origin}/${user}/${repo}/rss/branch/${branch}${filePath ? `/${filePath}` : ''}`,
-            hint: composeHint(filePath ? 'gitea:file-history' : 'gitea:branch-commits'),
-          })
-        }
 
         return feeds
       }

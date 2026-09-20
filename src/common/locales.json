@@ -45,8 +45,6 @@
     "gitea:activity": "Activity",
     "gitea:releases": "Releases",
     "gitea:tags": "Tags",
-    "gitea:branch-commits": "Branch commits",
-    "gitea:file-history": "File history",
     "wordpress:category-rss": "Category (RSS)",
     "wordpress:category-atom": "Category (Atom)",
     "wordpress:category-rdf": "Category (RDF)",
