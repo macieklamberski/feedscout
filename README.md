@@ -58,11 +58,11 @@ const feeds = await discoverFeeds('https://example.com')
 // [{
 //   url: 'https://example.com/feed.xml',
 //   isValid: true,
-//   method: 'html',
 //   format: 'rss',
 //   title: 'Example Blog',
 //   description: 'A blog about examples',
 //   siteUrl: 'https://example.com/',
+//   method: 'html',
 // }]
 ```
 
@@ -95,20 +95,20 @@ const feeds = await discoverFeeds(
 //   {
 //     url: 'https://example.com/feed.xml',
 //     isValid: true,
-//     method: 'html',
 //     format: 'rss',
 //     title: 'Example Blog',
 //     description: 'A blog about examples',
 //     siteUrl: 'https://example.com/',
+//     method: 'html',
 //   },
 //   {
 //     url: 'https://example.com/rss',
 //     isValid: true,
-//     method: 'html',
 //     format: 'rss',
 //     title: 'Example Blog',
 //     description: 'A blog about examples',
 //     siteUrl: 'https://example.com/',
+//     method: 'html',
 //   },
 // ]
 ```
@@ -128,11 +128,11 @@ const feeds = await discoverFeeds(
 // [{
 //   url: 'https://example.com/feed.xml',
 //   isValid: true,
-//   method: 'headers',
 //   format: 'rss',
 //   title: 'Example Blog',
 //   description: 'A blog about examples',
 //   siteUrl: 'https://example.com/',
+//   method: 'headers',
 // }]
 ```
 
@@ -146,8 +146,8 @@ const blogrolls = await discoverBlogrolls('https://example.com')
 // [{
 //   url: 'https://example.com/blogroll.opml',
 //   isValid: true,
-//   method: 'html',
 //   title: 'My Blogroll',
+//   method: 'html',
 // }]
 ```
 
