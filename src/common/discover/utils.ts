@@ -32,6 +32,7 @@ export const normalizeInput = async (
       // TODO: Support streams here.
       content: typeof response.body === 'string' ? response.body : undefined,
       headers: response.headers,
+      status: response.status,
     }
   } catch (error) {
     reportError(onError, error, { phase: 'fetchInput', url: input })

@@ -1475,6 +1475,33 @@ describe('discoverFeeds', () => {
 
       expect(receivedHeaders).toBe(inputHeaders)
     })
+
+    it('should reject a fetched input that answers with a non-2xx status', async () => {
+      const mockFetch: DiscoverFetchFn = (url) => {
+        return Promise.resolve({
+          headers: new Headers(),
+          body: rss,
+          url,
+          status: 404,
+          statusText: 'Not Found',
+        })
+      }
+      const value = await discoverFeeds('https://example.com/feed.xml', {
+        methods: ['html'],
+        fetchFn: mockFetch,
+      })
+
+      expect(value).toEqual([])
+    })
+
+    it('should reject an input object that carries a non-2xx status', async () => {
+      const value = await discoverFeeds(
+        { url: 'https://example.com/feed.xml', content: rss, status: 404 },
+        { methods: ['html'], fetchFn: createMockFetch({}) },
+      )
+
+      expect(value).toEqual([])
+    })
   })
 
   describe.todo('resolveSiteUrlFn', () => {

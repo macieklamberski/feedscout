@@ -214,6 +214,7 @@ describe('normalizeInput', () => {
       url: 'https://example.com',
       content: '<html>content</html>',
       headers: expect.any(Headers),
+      status: 200,
     }
 
     expect(await normalizeInput('https://example.com', fetchFn)).toEqual(expected)
@@ -233,6 +234,7 @@ describe('normalizeInput', () => {
       url: 'https://example.com/redirected',
       content: '<html>content</html>',
       headers: expect.any(Headers),
+      status: 200,
     }
 
     expect(await normalizeInput('https://example.com', redirectFetchFn)).toEqual(expected)
@@ -252,6 +254,7 @@ describe('normalizeInput', () => {
       url: 'https://example.com',
       content: undefined,
       headers: expect.any(Headers),
+      status: 200,
     }
 
     expect(await normalizeInput('https://example.com', streamFetchFn)).toEqual(expected)
@@ -272,6 +275,7 @@ describe('normalizeInput', () => {
       url: 'https://example.com',
       content: '<html></html>',
       headers,
+      status: 200,
     }
 
     expect(await normalizeInput('https://example.com', headersFetchFn)).toEqual(expected)
@@ -309,6 +313,7 @@ describe('normalizeInput', () => {
       url: null,
       content: '<html>content</html>',
       headers: expect.any(Headers),
+      status: 200,
     }
 
     // null reports typeof 'object'; it must take the fetch path, not be returned as-is.
@@ -320,6 +325,7 @@ describe('normalizeInput', () => {
       url: [],
       content: '<html>content</html>',
       headers: expect.any(Headers),
+      status: 200,
     }
 
     // Arrays report typeof 'object'; they must take the fetch path, not be returned as-is.
@@ -361,6 +367,7 @@ describe('normalizeInput', () => {
       url: 'https://example.com',
       content: '',
       headers: expect.any(Headers),
+      status: 200,
     }
 
     expect(await normalizeInput('https://example.com', emptyFetchFn)).toEqual(expected)
@@ -402,6 +409,7 @@ describe('normalizeInput', () => {
       url: 'https://example.com',
       content: '<html>content</html>',
       headers: expect.any(Headers),
+      status: 301,
     }
 
     expect(await normalizeInput('https://example.com', statusFetchFn)).toEqual(expected)

@@ -108,6 +108,7 @@ export type DiscoverInputObject = {
   url: string
   content?: string
   headers?: Headers
+  status?: number
 }
 
 export type DiscoverInput = string | DiscoverInputObject
