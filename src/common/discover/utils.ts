@@ -122,21 +122,20 @@ export const normalizeUriEntry = (
   entry: DiscoverUriEntry,
   resolveUrlFn: DiscoverResolveUrlFn,
   baseUrl: string | undefined,
-  onError?: DiscoverOnErrorFn,
 ): DiscoverUriEntry => {
   const { uri } = entry
 
   if (typeof uri === 'string') {
     return {
       ...entry,
-      uri: attempt(() => resolveUrlFn(uri, baseUrl), uri, 'resolveUrlFn', onError),
+      uri: resolveUrlFn(uri, baseUrl) ?? uri,
     }
   }
 
   return {
     ...entry,
     uri: uri.map((alternative) => {
-      return attempt(() => resolveUrlFn(alternative, baseUrl), alternative, 'resolveUrlFn', onError)
+      return resolveUrlFn(alternative, baseUrl) ?? alternative
     }),
   }
 }

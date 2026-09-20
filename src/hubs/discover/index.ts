@@ -1,6 +1,6 @@
 import { defaultFetchFn, defaultResolveUrlFn } from '../../common/discover/defaults.js'
-import { normalizeInput } from '../../common/discover/utils.js'
-import type { DiscoverInput } from '../../common/types.js'
+import { attempt, normalizeInput } from '../../common/discover/utils.js'
+import type { DiscoverInput, DiscoverResolveUrlFn } from '../../common/types.js'
 import { discoverHubsFromFeed } from '../feed/index.js'
 import { discoverHubsFromHeaders } from '../headers/index.js'
 import { discoverHubsFromHtml } from '../html/index.js'
@@ -17,6 +17,11 @@ export const discoverHubs = async (
     onError,
   } = options
 
+  // The resolveUrlFn is wrapped where it enters: a throw is reported and the URL is kept as
+  // discovered, so the methods call it without a guard of their own.
+  const safeResolveUrlFn: DiscoverResolveUrlFn = (url, baseUrl) => {
+    return attempt(() => resolveUrlFn(url, baseUrl), url, 'resolveUrlFn', onError)
+  }
   const normalizedInput = await normalizeInput(input, fetchFn, onError)
   const results: Array<HubResult> = []
 
@@ -24,8 +29,7 @@ export const discoverHubs = async (
     const headerHubs = discoverHubsFromHeaders(
       normalizedInput.headers,
       normalizedInput.url,
-      resolveUrlFn,
-      onError,
+      safeResolveUrlFn,
     )
     results.push(...headerHubs)
   }
@@ -34,8 +38,7 @@ export const discoverHubs = async (
     const feedHubs = discoverHubsFromFeed(
       normalizedInput.content,
       normalizedInput.url,
-      resolveUrlFn,
-      onError,
+      safeResolveUrlFn,
     )
     results.push(...feedHubs)
   }
@@ -44,8 +47,7 @@ export const discoverHubs = async (
     const htmlHubs = discoverHubsFromHtml(
       normalizedInput.content,
       normalizedInput.url,
-      resolveUrlFn,
-      onError,
+      safeResolveUrlFn,
     )
     results.push(...htmlHubs)
   }
