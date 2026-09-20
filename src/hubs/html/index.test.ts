@@ -1,4 +1,6 @@
 import { describe, expect, it } from 'bun:test'
+import { defaultResolveUrlFn } from '../../common/discover/defaults.js'
+import type { DiscoverResolveUrlFn } from '../../common/types.js'
 import type { HubResult } from '../discover/types.js'
 import { discoverHubsFromHtml } from './index.js'
 
@@ -12,7 +14,7 @@ describe('discoverHubsFromHtml', () => {
         </head>
       </html>
     `
-    const value = discoverHubsFromHtml(html, 'https://example.com/')
+    const value = discoverHubsFromHtml(html, 'https://example.com/', defaultResolveUrlFn)
     const expected: Array<HubResult> = [
       {
         hub: 'https://hub.example.com/',
@@ -25,7 +27,7 @@ describe('discoverHubsFromHtml', () => {
 
   it('should use baseUrl as topic when self link is missing', () => {
     const html = '<link rel="hub" href="https://hub.example.com/">'
-    const value = discoverHubsFromHtml(html, 'https://example.com/')
+    const value = discoverHubsFromHtml(html, 'https://example.com/', defaultResolveUrlFn)
     const expected: Array<HubResult> = [
       {
         hub: 'https://hub.example.com/',
@@ -38,7 +40,7 @@ describe('discoverHubsFromHtml', () => {
 
   it('should resolve relative URLs against base URL', () => {
     const html = '<link rel="hub" href="/websub">'
-    const value = discoverHubsFromHtml(html, 'https://example.com/page')
+    const value = discoverHubsFromHtml(html, 'https://example.com/page', defaultResolveUrlFn)
     const expected: Array<HubResult> = [
       {
         hub: 'https://example.com/websub',
@@ -51,7 +53,7 @@ describe('discoverHubsFromHtml', () => {
 
   it('should handle case-insensitive rel attribute', () => {
     const html = '<link rel="HUB" href="https://hub.example.com/">'
-    const value = discoverHubsFromHtml(html, 'https://example.com/')
+    const value = discoverHubsFromHtml(html, 'https://example.com/', defaultResolveUrlFn)
     const expected: Array<HubResult> = [
       {
         hub: 'https://hub.example.com/',
@@ -64,13 +66,13 @@ describe('discoverHubsFromHtml', () => {
 
   it('should return empty array when no hub found', () => {
     const html = '<link rel="self" href="https://example.com/feed.xml">'
-    const value = discoverHubsFromHtml(html, 'https://example.com/')
+    const value = discoverHubsFromHtml(html, 'https://example.com/', defaultResolveUrlFn)
 
     expect(value).toEqual([])
   })
 
   it('should return empty array for empty content', () => {
-    const value = discoverHubsFromHtml('', 'https://example.com/')
+    const value = discoverHubsFromHtml('', 'https://example.com/', defaultResolveUrlFn)
 
     expect(value).toEqual([])
   })
@@ -80,7 +82,7 @@ describe('discoverHubsFromHtml', () => {
       <link rel="hub" href="https://hub1.example.com/">
       <link rel="hub" href="https://hub2.example.com/">
     `
-    const value = discoverHubsFromHtml(html, 'https://example.com/')
+    const value = discoverHubsFromHtml(html, 'https://example.com/', defaultResolveUrlFn)
     const expected: Array<HubResult> = [
       {
         hub: 'https://hub1.example.com/',
@@ -109,9 +111,23 @@ describe('discoverHubsFromHtml', () => {
     expect(value).toEqual(expected)
   })
 
+  it('should keep raw hub and topic when resolveUrlFn returns undefined', () => {
+    const html = '<link rel="hub" href="/hub"><link rel="self" href="/feed.xml">'
+    const resolveNothingFn: DiscoverResolveUrlFn = () => undefined
+    const value = discoverHubsFromHtml(html, 'https://example.com/', resolveNothingFn)
+    const expected: Array<HubResult> = [
+      {
+        hub: '/hub',
+        topic: '/feed.xml',
+      },
+    ]
+
+    expect(value).toEqual(expected)
+  })
+
   it('should use baseUrl as topic when self link has empty href', () => {
     const html = '<link rel="hub" href="https://hub.example.com/"><link rel="self" href="">'
-    const value = discoverHubsFromHtml(html, 'https://example.com/')
+    const value = discoverHubsFromHtml(html, 'https://example.com/', defaultResolveUrlFn)
     const expected: Array<HubResult> = [
       {
         hub: 'https://hub.example.com/',
@@ -124,7 +140,7 @@ describe('discoverHubsFromHtml', () => {
 
   it('should handle malformed HTML with unclosed tags', () => {
     const html = '<link rel="hub" href="https://hub.example.com/"><div><span'
-    const value = discoverHubsFromHtml(html, 'https://example.com/')
+    const value = discoverHubsFromHtml(html, 'https://example.com/', defaultResolveUrlFn)
     const expected: Array<HubResult> = [
       {
         hub: 'https://hub.example.com/',

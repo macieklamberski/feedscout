@@ -1,10 +1,25 @@
+import { isHostOf } from 'trousse'
 import type { DiscoverUriEntry } from '../../../common/types.js'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
-import { composeHint, isHostOf } from '../../../common/utils.js'
+import { composeHint } from '../../../common/utils.js'
 
-// Partially discoverable without handler.
+// Discoverability: Partially discoverable without handler.
+//
+// YouTube exposes per-channel Atom feeds at
+// `youtube.com/feeds/videos.xml?channel_id=UC…`, and channel pages embed an
+// HTML `<link rel="alternate">` pointing at it. The handler is needed to
+// map the modern `/@handle`, `/user/{name}`, `/c/{name}`, `/shorts/…` and
+// `/live/…` URL shapes onto the canonical channel feed, and to derive
+// filtered playlist feeds (uploads, livestreams, shorts, popular, members).
 
-const channelIdRegex = /"(?:channelId|externalId)":"(UC[a-zA-Z0-9_-]+)"/
+// A channel page also embeds the IDs of the channels it features, and a bare "channelId" matches
+// one of those before the page's own, which sits under "externalId". A video page has no
+// "externalId", and its uploader sits under "externalChannelId" and "channelId".
+const channelIdRegexes = [
+  /"externalId":"(UC[a-zA-Z0-9_-]+)"/,
+  /"externalChannelId":"(UC[a-zA-Z0-9_-]+)"/,
+  /"channelId":"(UC[a-zA-Z0-9_-]+)"/,
+]
 const channelRegex = /^\/channel\/(UC[a-zA-Z0-9_-]+)/
 const handleRegex = /^\/@([^/]+)/
 const userRegex = /^\/user\/([^/]+)/
@@ -23,9 +38,13 @@ const hosts = [
 ]
 
 const extractChannelIdFromContent = (content: string): string | undefined => {
-  const match = content.match(channelIdRegex)
+  for (const regex of channelIdRegexes) {
+    const match = content.match(regex)
 
-  return match?.[1]
+    if (match?.[1]) {
+      return match[1]
+    }
+  }
 }
 
 // Convert channel ID to playlist IDs for filtered feeds.

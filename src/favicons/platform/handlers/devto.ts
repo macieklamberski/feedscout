@@ -1,7 +1,7 @@
+import { isAnyOf, isHostOf, isNonEmptyString, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
-import { isAnyOf, isHostOf } from '../../../common/utils.js'
 import { excludedPaths, hosts } from '../../../feeds/platform/handlers/devto.js'
-import { isNonEmptyString, parseBodyJson } from '../../utils.js'
+import { parseBodyJson } from '../../utils.js'
 
 // Extracts the username from the path, excluding dots to avoid capturing
 // feed extensions that may be appended to the URL.
@@ -9,23 +9,25 @@ const userRegex = /^\/([^/.]+)/
 
 export const devtoHandler: PlatformHandler = {
   match: (url) => {
-    try {
-      const { pathname } = new URL(url)
-      const match = pathname.match(userRegex)
+    const parsedUrl = parseUrl(url)
 
-      if (!isHostOf(url, hosts) || !match?.[1]) {
-        return false
-      }
+    if (!parsedUrl) {
+      return false
+    }
 
-      // Tag pages do not correspond to a user profile.
-      if (match[1] === 't') {
-        return false
-      }
+    const { pathname } = parsedUrl
+    const match = pathname.match(userRegex)
 
-      return !isAnyOf(match[1], excludedPaths)
-    } catch {}
+    if (!isHostOf(url, hosts) || !match?.[1]) {
+      return false
+    }
 
-    return false
+    // Tag pages do not correspond to a user profile.
+    if (match[1] === 't') {
+      return false
+    }
+
+    return !isAnyOf(match[1], excludedPaths)
   },
 
   resolve: async (url, _content, _headers, fetchFn) => {

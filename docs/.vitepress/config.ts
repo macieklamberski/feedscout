@@ -72,6 +72,13 @@ export default defineConfig({
       { text: 'Quick Start', link: '/quick-start' },
       { text: 'Discover Feeds', link: '/feeds' },
       { text: 'Customization', link: '/customization/data-fetching' },
+      {
+        text: 'v2.x',
+        items: [
+          { text: 'v2.x (Latest)', link: 'https://feedscout.dev', target: '_self' },
+          { text: 'v1.x', link: 'https://v1.feedscout.dev', target: '_self' },
+        ],
+      },
     ],
     sidebar: [
       {
@@ -124,6 +131,10 @@ export default defineConfig({
           { text: 'Types', link: '/reference/types' },
           { text: 'TypeScript', link: '/reference/typescript' },
         ],
+      },
+      {
+        text: 'Migration',
+        items: [{ text: 'From 1.x to 2.x', link: '/migration/v1-to-v2' }],
       },
     ],
     search: {

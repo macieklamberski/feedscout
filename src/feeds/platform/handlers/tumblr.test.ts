@@ -3,14 +3,14 @@ import { tumblrHandler } from './tumblr.js'
 
 describe('tumblrHandler', () => {
   describe('match', () => {
-    const cases = [
-      ['https://example.tumblr.com', true],
-      ['https://blog.example.tumblr.com', true],
-      ['https://tumblr.com', false],
-      ['https://example.com', false],
-    ] as const
+    const values: Array<[boolean, string]> = [
+      [true, 'https://example.tumblr.com'],
+      [true, 'https://blog.example.tumblr.com'],
+      [false, 'https://tumblr.com'],
+      [false, 'https://example.com'],
+    ]
 
-    it.each(cases)('%s -> %s', (url, expected) => {
+    it.each(values)('should return %s for %s', (expected, url) => {
       expect(tumblrHandler.match(url)).toBe(expected)
     })
 
@@ -48,6 +48,16 @@ describe('tumblrHandler', () => {
       ]
 
       expect(tumblrHandler.resolve(value)).toEqual(expected)
+    })
+
+    it.todo('should resolve blog name from www.tumblr.com/{blog} URLs', () => {
+      // resolve currently emits https://www.tumblr.com/rss for www.tumblr.com/{blog},
+      // dropping the blog name from the feed URL; likely needs a source fix.
+    })
+
+    it.todo('should define behavior for invalid URL input', () => {
+      // resolve('not-a-url') currently throws a TypeError from the unguarded new URL call; the
+      // desired contract (throw vs empty array) is undecided.
     })
   })
 })

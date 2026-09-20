@@ -3,14 +3,14 @@ import { amebloHandler } from './ameblo.js'
 
 describe('amebloHandler', () => {
   describe('match', () => {
-    const cases = [
-      ['https://ameblo.jp/shibuya', true],
-      ['https://www.ameblo.jp/user', true],
-      ['https://ameblo.jp', true],
-      ['https://example.com', false],
-    ] as const
+    const values: Array<[boolean, string]> = [
+      [true, 'https://ameblo.jp/shibuya'],
+      [true, 'https://www.ameblo.jp/user'],
+      [true, 'https://ameblo.jp'],
+      [false, 'https://example.com'],
+    ]
 
-    it.each(cases)('%s -> %s', (url, expected) => {
+    it.each(values)('should return %s for %s', (expected, url) => {
       expect(amebloHandler.match(url)).toBe(expected)
     })
 
@@ -70,6 +70,11 @@ describe('amebloHandler', () => {
       const value = 'https://ameblo.jp/hashtag'
 
       expect(amebloHandler.resolve(value)).toEqual([])
+    })
+
+    it.todo('should define behavior for invalid URL input', () => {
+      // resolve('not-a-url') currently throws a TypeError from the unguarded new URL call; the
+      // desired contract (throw vs empty array) is undecided.
     })
   })
 })

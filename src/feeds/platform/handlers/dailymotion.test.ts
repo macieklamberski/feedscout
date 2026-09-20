@@ -3,16 +3,16 @@ import { dailymotionHandler } from './dailymotion.js'
 
 describe('dailymotionHandler', () => {
   describe('match', () => {
-    const cases = [
-      ['https://www.dailymotion.com/bfmtv', true],
-      ['https://dailymotion.com/nasa', true],
-      ['https://www.dailymotion.com/playlist/x7vjjm', true],
-      ['https://www.dailymotion.com/signin', true],
-      ['https://www.dailymotion.com/', true],
-      ['https://example.com/dailymotion', false],
-    ] as const
+    const values: Array<[boolean, string]> = [
+      [true, 'https://www.dailymotion.com/bfmtv'],
+      [true, 'https://dailymotion.com/nasa'],
+      [true, 'https://www.dailymotion.com/playlist/x7vjjm'],
+      [true, 'https://www.dailymotion.com/signin'],
+      [true, 'https://www.dailymotion.com/'],
+      [false, 'https://example.com/dailymotion'],
+    ]
 
-    it.each(cases)('%s -> %s', (url, expected) => {
+    it.each(values)('should return %s for %s', (expected, url) => {
       expect(dailymotionHandler.match(url)).toBe(expected)
     })
 
@@ -70,19 +70,17 @@ describe('dailymotionHandler', () => {
       expect(dailymotionHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return empty array for excluded paths', () => {
-      const values = [
-        'https://www.dailymotion.com/signin',
-        'https://www.dailymotion.com/upload',
-        'https://www.dailymotion.com/settings',
-        'https://www.dailymotion.com/video',
-        'https://www.dailymotion.com/login',
-        'https://www.dailymotion.com/live',
-      ]
+    const excludedValues: Array<string> = [
+      'https://www.dailymotion.com/signin',
+      'https://www.dailymotion.com/upload',
+      'https://www.dailymotion.com/settings',
+      'https://www.dailymotion.com/video',
+      'https://www.dailymotion.com/login',
+      'https://www.dailymotion.com/live',
+    ]
 
-      for (const value of values) {
-        expect(dailymotionHandler.resolve(value)).toEqual([])
-      }
+    it.each(excludedValues)('should return empty array for %s', (value) => {
+      expect(dailymotionHandler.resolve(value)).toEqual([])
     })
 
     it('should return trending feed for homepage', () => {
@@ -119,6 +117,11 @@ describe('dailymotionHandler', () => {
       ]
 
       expect(dailymotionHandler.resolve(value)).toEqual(expected)
+    })
+
+    it.todo('should define behavior for invalid URL input', () => {
+      // resolve('not-a-url') currently throws a TypeError from the unguarded new URL call; the
+      // desired contract (throw vs empty array) is undecided.
     })
   })
 })

@@ -3,16 +3,16 @@ import { itchioHandler } from './itchio.js'
 
 describe('itchioHandler', () => {
   describe('match', () => {
-    const cases = [
-      ['https://itch.io/games', true],
-      ['https://www.itch.io/games', true],
-      ['https://leafo.itch.io', true],
-      ['https://leafo.itch.io/x-moon', true],
-      ['https://example.com', false],
-      ['https://notitch.io', false],
-    ] as const
+    const values: Array<[boolean, string]> = [
+      [true, 'https://itch.io/games'],
+      [true, 'https://www.itch.io/games'],
+      [true, 'https://leafo.itch.io'],
+      [true, 'https://leafo.itch.io/x-moon'],
+      [false, 'https://example.com'],
+      [false, 'https://notitch.io'],
+    ]
 
-    it.each(cases)('%s -> %s', (url, expected) => {
+    it.each(values)('should return %s for %s', (expected, url) => {
       expect(itchioHandler.match(url)).toBe(expected)
     })
 
@@ -233,6 +233,11 @@ describe('itchioHandler', () => {
       ]
 
       expect(itchioHandler.resolve(value)).toEqual(expected)
+    })
+
+    it.todo('should define behavior for invalid URL input', () => {
+      // resolve('not-a-url') currently throws a TypeError from the unguarded new URL call; the
+      // desired contract (throw vs empty array) is undecided.
     })
   })
 })

@@ -3,16 +3,16 @@ import { lobstersHandler } from './lobsters.js'
 
 describe('lobstersHandler', () => {
   describe('match', () => {
-    const cases = [
-      ['https://lobste.rs/', true],
-      ['https://lobste.rs/newest', true],
-      ['https://lobste.rs/t/programming', true],
-      ['https://lobste.rs/t/programming,security', true],
-      ['https://lobste.rs/domains/github.com', true],
-      ['https://example.com/lobsters', false],
-    ] as const
+    const values: Array<[boolean, string]> = [
+      [true, 'https://lobste.rs/'],
+      [true, 'https://lobste.rs/newest'],
+      [true, 'https://lobste.rs/t/programming'],
+      [true, 'https://lobste.rs/t/programming,security'],
+      [true, 'https://lobste.rs/domains/github.com'],
+      [false, 'https://example.com/lobsters'],
+    ]
 
-    it.each(cases)('%s -> %s', (url, expected) => {
+    it.each(values)('should return %s for %s', (expected, url) => {
       expect(lobstersHandler.match(url)).toBe(expected)
     })
 
@@ -106,6 +106,28 @@ describe('lobstersHandler', () => {
       expect(lobstersHandler.resolve(value)).toEqual(expected)
     })
 
+    const topPeriodValues: Array<[string, string]> = [
+      ['https://lobste.rs/top/3d', 'https://lobste.rs/top/3d/rss'],
+      ['https://lobste.rs/top/1w', 'https://lobste.rs/top/1w/rss'],
+      ['https://lobste.rs/top/1m', 'https://lobste.rs/top/1m/rss'],
+      ['https://lobste.rs/top/1y', 'https://lobste.rs/top/1y/rss'],
+    ]
+
+    it.each(topPeriodValues)('should return top stories feed for %s', (value, uri) => {
+      const expected = [{ uri, hint: { key: 'lobsters:top', label: 'Top stories' } }]
+
+      expect(lobstersHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should fall back to main feed for invalid top period', () => {
+      const value = 'https://lobste.rs/top/2d'
+      const expected = [
+        { uri: 'https://lobste.rs/rss', hint: { key: 'lobsters:stories', label: 'Stories' } },
+      ]
+
+      expect(lobstersHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return comments feed for comments page', () => {
       const value = 'https://lobste.rs/comments'
       const expected = [
@@ -116,6 +138,11 @@ describe('lobstersHandler', () => {
       ]
 
       expect(lobstersHandler.resolve(value)).toEqual(expected)
+    })
+
+    it.todo('should define behavior for invalid URL input', () => {
+      // resolve('not-a-url') currently throws a TypeError from the unguarded new URL call; the
+      // desired contract (throw vs empty array) is undecided.
     })
   })
 })

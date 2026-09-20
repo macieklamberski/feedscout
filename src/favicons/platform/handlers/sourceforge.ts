@@ -1,17 +1,19 @@
+import { isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
-import { isHostOf } from '../../../common/utils.js'
 import { hosts } from '../../../feeds/platform/handlers/sourceforge.js'
 
 export const sourceforgeHandler: PlatformHandler = {
   match: (url) => {
-    try {
-      const { pathname } = new URL(url)
-      const segments = pathname.split('/').filter(Boolean)
+    const parsedUrl = parseUrl(url)
 
-      return isHostOf(url, hosts) && segments[0] === 'projects' && !!segments[1]
-    } catch {}
+    if (!parsedUrl) {
+      return false
+    }
 
-    return false
+    const { pathname } = parsedUrl
+    const segments = pathname.split('/').filter(Boolean)
+
+    return isHostOf(url, hosts) && segments[0] === 'projects' && !!segments[1]
   },
 
   resolve: (url) => {

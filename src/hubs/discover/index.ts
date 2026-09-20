@@ -14,9 +14,10 @@ export const discoverHubs = async (
     methods = ['headers', 'feed', 'html'],
     fetchFn = defaultFetchFn,
     resolveUrlFn = defaultResolveUrlFn,
+    onError,
   } = options
 
-  const normalizedInput = await normalizeInput(input, fetchFn)
+  const normalizedInput = await normalizeInput(input, fetchFn, onError)
   const results: Array<HubResult> = []
 
   if (methods.includes('headers') && normalizedInput.headers) {
@@ -24,6 +25,7 @@ export const discoverHubs = async (
       normalizedInput.headers,
       normalizedInput.url,
       resolveUrlFn,
+      onError,
     )
     results.push(...headerHubs)
   }
@@ -33,6 +35,7 @@ export const discoverHubs = async (
       normalizedInput.content,
       normalizedInput.url,
       resolveUrlFn,
+      onError,
     )
     results.push(...feedHubs)
   }
@@ -42,9 +45,23 @@ export const discoverHubs = async (
       normalizedInput.content,
       normalizedInput.url,
       resolveUrlFn,
+      onError,
     )
     results.push(...htmlHubs)
   }
 
-  return results
+  // An Atom feed carries its hub in a link element that the Feed and HTML methods both read.
+  const seen = new Set<string>()
+
+  return results.filter((result) => {
+    const key = `${result.hub}\0${result.topic}`
+
+    if (seen.has(key)) {
+      return false
+    }
+
+    seen.add(key)
+
+    return true
+  })
 }

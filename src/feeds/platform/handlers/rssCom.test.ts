@@ -3,14 +3,14 @@ import { rssComHandler } from './rssCom.js'
 
 describe('rssComHandler', () => {
   describe('match', () => {
-    const cases = [
-      ['https://rss.com/podcasts/podcasting101', true],
-      ['https://www.rss.com/podcasts/some-show', true],
-      ['https://rss.com', true],
-      ['https://example.com', false],
-    ] as const
+    const values: Array<[boolean, string]> = [
+      [true, 'https://rss.com/podcasts/podcasting101'],
+      [true, 'https://www.rss.com/podcasts/some-show'],
+      [true, 'https://rss.com'],
+      [false, 'https://example.com'],
+    ]
 
-    it.each(cases)('%s -> %s', (url, expected) => {
+    it.each(values)('should return %s for %s', (expected, url) => {
       expect(rssComHandler.match(url)).toBe(expected)
     })
 
@@ -78,6 +78,11 @@ describe('rssComHandler', () => {
       ]
 
       expect(rssComHandler.resolve(value)).toEqual(expected)
+    })
+
+    it.todo('should define behavior for invalid URL input', () => {
+      // resolve('not-a-url') currently throws a TypeError from the unguarded new URL call; the
+      // desired contract (throw vs empty array) is undecided.
     })
   })
 })

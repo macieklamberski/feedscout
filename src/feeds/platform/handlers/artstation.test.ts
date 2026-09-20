@@ -3,15 +3,15 @@ import { artstationHandler } from './artstation.js'
 
 describe('artstationHandler', () => {
   describe('match', () => {
-    const cases = [
-      ['https://www.artstation.com/rossdraws', true],
-      ['https://artstation.com/user', true],
-      ['https://artstation.com', true],
-      ['https://rossdraws.artstation.com', true],
-      ['https://example.com', false],
-    ] as const
+    const values: Array<[boolean, string]> = [
+      [true, 'https://www.artstation.com/rossdraws'],
+      [true, 'https://artstation.com/user'],
+      [true, 'https://artstation.com'],
+      [true, 'https://rossdraws.artstation.com'],
+      [false, 'https://example.com'],
+    ]
 
-    it.each(cases)('%s -> %s', (url, expected) => {
+    it.each(values)('should return %s for %s', (expected, url) => {
       expect(artstationHandler.match(url)).toBe(expected)
     })
 
@@ -57,6 +57,18 @@ describe('artstationHandler', () => {
       expect(artstationHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return feed URL for subdomain form regardless of subpath', () => {
+      const value = 'https://rossdraws.artstation.com/albums/all'
+      const expected = [
+        {
+          uri: 'https://www.artstation.com/rossdraws.rss',
+          hint: { key: 'artstation:portfolio', label: 'Portfolio' },
+        },
+      ]
+
+      expect(artstationHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return global artwork feeds for root path', () => {
       const value = 'https://www.artstation.com/'
       const expected = [
@@ -65,8 +77,8 @@ describe('artstationHandler', () => {
           hint: { key: 'artstation:artwork', label: 'Artwork' },
         },
         {
-          uri: 'https://www.artstation.com/artwork.rss?sorting=trending',
-          hint: { key: 'artstation:artwork-trending', label: 'Artwork (Trending)' },
+          uri: 'https://www.artstation.com/artwork.rss?sorting=latest',
+          hint: { key: 'artstation:artwork-latest', label: 'Artwork (Latest)' },
         },
       ]
 
@@ -81,8 +93,8 @@ describe('artstationHandler', () => {
           hint: { key: 'artstation:artwork', label: 'Artwork' },
         },
         {
-          uri: 'https://www.artstation.com/artwork.rss?sorting=trending',
-          hint: { key: 'artstation:artwork-trending', label: 'Artwork (Trending)' },
+          uri: 'https://www.artstation.com/artwork.rss?sorting=latest',
+          hint: { key: 'artstation:artwork-latest', label: 'Artwork (Latest)' },
         },
       ]
 
@@ -93,6 +105,11 @@ describe('artstationHandler', () => {
       const value = 'https://www.artstation.com/jobs'
 
       expect(artstationHandler.resolve(value)).toEqual([])
+    })
+
+    it.todo('should define behavior for invalid URL input', () => {
+      // resolve('not-a-url') currently throws a TypeError from the unguarded new URL call; the
+      // desired contract (throw vs empty array) is undecided.
     })
   })
 })

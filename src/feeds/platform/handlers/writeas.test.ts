@@ -3,14 +3,14 @@ import { writeasHandler } from './writeas.js'
 
 describe('writeasHandler', () => {
   describe('match', () => {
-    const cases = [
-      ['https://write.as/matt', true],
-      ['https://www.write.as/user', true],
-      ['https://write.as', true],
-      ['https://example.com', false],
-    ] as const
+    const values: Array<[boolean, string]> = [
+      [true, 'https://write.as/matt'],
+      [true, 'https://www.write.as/user'],
+      [true, 'https://write.as'],
+      [false, 'https://example.com'],
+    ]
 
-    it.each(cases)('%s -> %s', (url, expected) => {
+    it.each(values)('should return %s for %s', (expected, url) => {
       expect(writeasHandler.match(url)).toBe(expected)
     })
 
@@ -70,6 +70,11 @@ describe('writeasHandler', () => {
       const value = 'https://write.as/login'
 
       expect(writeasHandler.resolve(value)).toEqual([])
+    })
+
+    it.todo('should define behavior for invalid URL input', () => {
+      // resolve('not-a-url') currently throws a TypeError from the unguarded new URL call; the
+      // desired contract (throw vs empty array) is undecided.
     })
   })
 })

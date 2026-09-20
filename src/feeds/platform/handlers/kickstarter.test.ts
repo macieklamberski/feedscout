@@ -3,15 +3,15 @@ import { kickstarterHandler } from './kickstarter.js'
 
 describe('kickstarterHandler', () => {
   describe('match', () => {
-    const cases = [
-      ['https://www.kickstarter.com/projects/creator/project', true],
-      ['https://kickstarter.com/projects/creator/project', true],
-      ['https://kickstarter.com/discover', true],
-      ['https://kickstarter.com', true],
-      ['https://example.com', false],
-    ] as const
+    const values: Array<[boolean, string]> = [
+      [true, 'https://www.kickstarter.com/projects/creator/project'],
+      [true, 'https://kickstarter.com/projects/creator/project'],
+      [true, 'https://kickstarter.com/discover'],
+      [true, 'https://kickstarter.com'],
+      [false, 'https://example.com'],
+    ]
 
-    it.each(cases)('%s -> %s', (url, expected) => {
+    it.each(values)('should return %s for %s', (expected, url) => {
       expect(kickstarterHandler.match(url)).toBe(expected)
     })
 
@@ -69,6 +69,18 @@ describe('kickstarterHandler', () => {
       expect(kickstarterHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return global projects feed for other non-project paths', () => {
+      const value = 'https://www.kickstarter.com/help'
+      const expected = [
+        {
+          uri: 'https://www.kickstarter.com/projects/feed.atom',
+          hint: { key: 'kickstarter:projects', label: 'Projects' },
+        },
+      ]
+
+      expect(kickstarterHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should handle URLs with query params', () => {
       const value = 'https://www.kickstarter.com/projects/creator/project?ref=discovery'
       const expected = [
@@ -91,6 +103,11 @@ describe('kickstarterHandler', () => {
       ]
 
       expect(kickstarterHandler.resolve(value)).toEqual(expected)
+    })
+
+    it.todo('should define behavior for invalid URL input', () => {
+      // resolve('not-a-url') currently throws a TypeError from the unguarded new URL call; the
+      // desired contract (throw vs empty array) is undecided.
     })
   })
 })

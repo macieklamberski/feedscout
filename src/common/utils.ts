@@ -1,7 +1,6 @@
+import { anyWordMatchesAnyOf, escapeRegex, isAnyOf } from 'trousse'
 import locales from './locales.json' with { type: 'json' }
-import type { DiscoverUriHint, Pattern } from './types.js'
-
-const whitespaceRegex = /\s+/
+import type { DiscoverUriHint } from './types.js'
 
 export const composeHint = (key: string): DiscoverUriHint => ({
   key,
@@ -14,11 +13,6 @@ export const isSuccessfulStatus = (status: number | undefined): boolean => {
   return status === undefined || (status >= 200 && status < 300)
 }
 
-// Narrow to a plain object, excluding null and arrays (both report typeof 'object').
-export const isObject = (value: unknown): value is object => {
-  return value !== null && typeof value === 'object' && !Array.isArray(value)
-}
-
 // Coerce to a positive integer, falling back when missing or invalid (NaN, < 1, non-integer).
 export const toPositiveInteger = (value: number | undefined, fallback: number): number => {
   return typeof value === 'number' && Number.isInteger(value) && value >= 1 ? value : fallback
@@ -26,75 +20,6 @@ export const toPositiveInteger = (value: number | undefined, fallback: number): 
 
 export const normalizeMimeType = (type: string): string => {
   return type.split(';')[0].trim().toLowerCase()
-}
-
-export const isSubdomainOf = (url: string, domains: string | Array<string>): boolean => {
-  try {
-    const hostname = new URL(url).hostname.toLowerCase()
-    const list = Array.isArray(domains) ? domains : [domains]
-    return list.some((domain) => hostname.endsWith(`.${domain}`))
-  } catch {}
-
-  return false
-}
-
-export const isHostOf = (url: string, hosts: string | Array<string>): boolean => {
-  try {
-    const list = Array.isArray(hosts) ? hosts : [hosts]
-    return isAnyOf(new URL(url).hostname, list)
-  } catch {}
-
-  return false
-}
-
-export const includesAnyOf = (
-  value: string,
-  patterns: Array<Pattern>,
-  parser?: (value: string) => string,
-): boolean => {
-  const parsedValue = parser ? parser(value) : value?.toLowerCase()
-
-  return patterns.some((pattern) => {
-    if (pattern instanceof RegExp) {
-      return pattern.test(parsedValue)
-    }
-
-    return pattern && parsedValue?.includes(pattern.toLowerCase())
-  })
-}
-
-export const isAnyOf = (
-  value: string,
-  patterns: Array<Pattern>,
-  parser?: (value: string) => string,
-): boolean => {
-  const parsedValue = parser ? parser(value) : value?.toLowerCase()?.trim()
-
-  return patterns.some((pattern) => {
-    if (pattern instanceof RegExp) {
-      return pattern.test(parsedValue)
-    }
-
-    return parsedValue === pattern.toLowerCase().trim()
-  })
-}
-
-export const anyWordMatchesAnyOf = (value: string, patterns: Array<Pattern>): boolean => {
-  const words = value.toLowerCase().split(whitespaceRegex)
-
-  return words.some((word) => isAnyOf(word, patterns))
-}
-
-export const endsWithAnyOf = (value: string, patterns: Array<Pattern>): boolean => {
-  const lowerValue = value.toLowerCase()
-
-  return patterns.some((pattern) => {
-    if (pattern instanceof RegExp) {
-      return pattern.test(lowerValue)
-    }
-
-    return pattern && lowerValue.endsWith(pattern.toLowerCase())
-  })
 }
 
 export const isOfAllowedMimeType = (
@@ -115,8 +40,8 @@ export const isOfAllowedMimeType = (
 // Check if HTML contains a meta tag matching a name or property attribute with the given
 // content value (prefix match), regardless of attribute order.
 export const hasMetaContent = (content: string, name: string, value: string): boolean => {
-  const escapedName = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-  const escapedValue = value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+  const escapedName = escapeRegex(name)
+  const escapedValue = escapeRegex(value)
   const metaTagRegex = new RegExp(
     `<meta(?=[^>]*(?:name|property)=["']${escapedName}["'])(?=[^>]*content=["']${escapedValue})`,
     'i',
@@ -125,16 +50,16 @@ export const hasMetaContent = (content: string, name: string, value: string): bo
   return metaTagRegex.test(content)
 }
 
-export const omitEmpty = <T>(array: Array<T | null | undefined>): Array<T> => {
-  const result: Array<T> = []
+// Read the content value of a meta tag by its name or property attribute,
+// regardless of attribute order.
+export const getMetaContent = (content: string, name: string): string | undefined => {
+  const escapedName = escapeRegex(name)
+  const metaTagRegex = new RegExp(
+    `<meta(?=[^>]*(?:name|property)=["']${escapedName}["'])[^>]*content=["']([^"']*)["']`,
+    'i',
+  )
 
-  for (const item of array) {
-    if (item != null && item !== '') {
-      result.push(item as T)
-    }
-  }
-
-  return result
+  return content.match(metaTagRegex)?.[1]
 }
 
 export const matchesAnyOfLinkSelectors = (

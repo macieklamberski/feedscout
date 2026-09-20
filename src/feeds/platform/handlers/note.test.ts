@@ -3,14 +3,14 @@ import { noteHandler } from './note.js'
 
 describe('noteHandler', () => {
   describe('match', () => {
-    const cases = [
-      ['https://note.com/tsukasa_yamato', true],
-      ['https://www.note.com/user', true],
-      ['https://note.com', true],
-      ['https://example.com', false],
-    ] as const
+    const values: Array<[boolean, string]> = [
+      [true, 'https://note.com/tsukasa_yamato'],
+      [true, 'https://www.note.com/user'],
+      [true, 'https://note.com'],
+      [false, 'https://example.com'],
+    ]
 
-    it.each(cases)('%s -> %s', (url, expected) => {
+    it.each(values)('should return %s for %s', (expected, url) => {
       expect(noteHandler.match(url)).toBe(expected)
     })
 
@@ -81,9 +81,32 @@ describe('noteHandler', () => {
     })
 
     it('should return empty array for excluded paths', () => {
-      const value = 'https://note.com/login'
+      const values = [
+        'https://note.com/login',
+        'https://note.com/about',
+        'https://note.com/api',
+        'https://note.com/explore',
+        'https://note.com/hashtag',
+        'https://note.com/help',
+        'https://note.com/m',
+        'https://note.com/n',
+        'https://note.com/premium',
+        'https://note.com/privacy',
+        'https://note.com/ranking',
+        'https://note.com/search',
+        'https://note.com/settings',
+        'https://note.com/signup',
+        'https://note.com/terms',
+      ]
 
-      expect(noteHandler.resolve(value)).toEqual([])
+      for (const value of values) {
+        expect(noteHandler.resolve(value)).toEqual([])
+      }
+    })
+
+    it.todo('should define behavior for invalid URL input', () => {
+      // resolve('not-a-url') currently throws a TypeError from the unguarded new URL call; the
+      // desired contract (throw vs empty array) is undecided.
     })
   })
 })

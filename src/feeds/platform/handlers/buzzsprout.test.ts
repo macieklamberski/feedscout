@@ -3,14 +3,14 @@ import { buzzsproutHandler } from './buzzsprout.js'
 
 describe('buzzsproutHandler', () => {
   describe('match', () => {
-    const cases = [
-      ['https://www.buzzsprout.com/1765577', true],
-      ['https://buzzsprout.com/1765577', true],
-      ['https://buzzsprout.com', true],
-      ['https://example.com', false],
-    ] as const
+    const values: Array<[boolean, string]> = [
+      [true, 'https://www.buzzsprout.com/1765577'],
+      [true, 'https://buzzsprout.com/1765577'],
+      [true, 'https://buzzsprout.com'],
+      [false, 'https://example.com'],
+    ]
 
-    it.each(cases)('%s -> %s', (url, expected) => {
+    it.each(values)('should return %s for %s', (expected, url) => {
       expect(buzzsproutHandler.match(url)).toBe(expected)
     })
 
@@ -54,6 +54,11 @@ describe('buzzsproutHandler', () => {
       const value = 'https://www.buzzsprout.com/about'
 
       expect(buzzsproutHandler.resolve(value)).toEqual([])
+    })
+
+    it.todo('should define behavior for invalid URL input', () => {
+      // resolve('not-a-url') currently throws a TypeError from the unguarded new URL call; the
+      // desired contract (throw vs empty array) is undecided.
     })
   })
 })

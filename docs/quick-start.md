@@ -8,7 +8,7 @@ This guide will get you up and running with Feedscout in just a few minutes.
 
 ## Installation
 
-Feedscout works in both Node and modern browsers as either CommonJS or ES module.
+Feedscout works in both Node and modern browsers as an ES module.
 
 Install the package using your preferred package manager:
 
@@ -45,7 +45,8 @@ const feeds = await discoverFeeds('https://example.com')
 //   format: 'rss',
 //   title: 'Example Blog',
 //   description: 'A blog about examples',
-//   siteUrl: 'https://example.com',
+//   siteUrl: 'https://example.com/',
+//   method: 'html',
 // }]
 ```
 
@@ -59,23 +60,28 @@ const feeds = await discoverFeeds('https://example.com', {
 
 ### Discover Platform Feeds
 
-For YouTube, GitHub, Reddit, and 30+ other platforms, Feedscout can generate feed URLs directly from the page URL:
+For YouTube, GitHub, Reddit, and 100+ other platforms, Feedscout can generate feed URLs directly from the page URL:
 
 ```typescript
 const feeds = await discoverFeeds('https://www.youtube.com/@mkbhd', {
   methods: ['platform'],
 })
 
-// [{
-//   url: 'https://www.youtube.com/feeds/videos.xml?channel_id=UCBJycsmduvYEL83R_U4JriQ',
-//   isValid: true,
-//   format: 'atom',
-//   title: 'Marques Brownlee',
-//   hint: { key: 'youtube:all', label: 'All uploads' },
-// }]
+// [
+//   {
+//     url: 'https://www.youtube.com/feeds/videos.xml?channel_id=UCBJycsmduvYEL83R_U4JriQ',
+//     isValid: true,
+//     format: 'atom',
+//     title: 'Marques Brownlee',
+//     siteUrl: 'https://www.youtube.com/channel/UCBJycsmduvYEL83R_U4JriQ',
+//     method: 'platform',
+//     hint: { key: 'youtube:all', label: 'All uploads' },
+//   },
+//   ...one result for each other variant that has a valid feed, like videos and shorts.
+// ]
 ```
 
-### Using Existing Content
+### Using Existing Feed Content
 
 If you already have the HTML content and/or headers, pass them directly to avoid an extra fetch:
 
@@ -103,7 +109,8 @@ const feeds = await discoverFeeds(
 //     format: 'rss',
 //     title: 'Example Blog',
 //     description: 'A blog about examples',
-//     siteUrl: 'https://example.com',
+//     siteUrl: 'https://example.com/',
+//     method: 'html',
 //   },
 //   {
 //     url: 'https://example.com/rss',
@@ -111,7 +118,8 @@ const feeds = await discoverFeeds(
 //     format: 'rss',
 //     title: 'Example Blog',
 //     description: 'A blog about examples',
-//     siteUrl: 'https://example.com',
+//     siteUrl: 'https://example.com/',
+//     method: 'html',
 //   },
 // ]
 ```
@@ -134,7 +142,8 @@ const feeds = await discoverFeeds(
 //   format: 'rss',
 //   title: 'Example Blog',
 //   description: 'A blog about examples',
-//   siteUrl: 'https://example.com',
+//   siteUrl: 'https://example.com/',
+//   method: 'headers',
 // }]
 ```
 
@@ -149,12 +158,13 @@ const blogrolls = await discoverBlogrolls('https://example.com')
 //   url: 'https://example.com/blogroll.opml',
 //   isValid: true,
 //   title: 'My Blogroll',
+//   method: 'html',
 // }]
 ```
 
-### Using Existing Content
+### Using Existing Blogroll Content
 
-The same [existing content pattern](#using-existing-content) works here — pass `{ url, content, headers }` to avoid extra fetches.
+The same [existing content pattern](#using-existing-feed-content) works here: pass `{ url, content, headers }` to avoid extra fetches.
 
 ## Discover Favicons
 
@@ -166,10 +176,11 @@ const favicons = await discoverFavicons('https://example.com')
 // [{
 //   url: 'https://example.com/apple-touch-icon.png',
 //   isValid: true,
+//   method: 'html',
 // }]
 ```
 
-The same [existing content pattern](#using-existing-content) works here — pass `{ url, content, headers }` to avoid extra fetches.
+The same [existing content pattern](#using-existing-feed-content) works here: pass `{ url, content, headers }` to avoid extra fetches.
 
 ## Discover WebSub Hubs
 
@@ -179,12 +190,12 @@ import { discoverHubs } from 'feedscout'
 const hubs = await discoverHubs('https://example.com/feed.xml')
 
 // [{
-//   hub: 'https://pubsubhubbub.appspot.com',
+//   hub: 'https://pubsubhubbub.appspot.com/',
 //   topic: 'https://example.com/feed.xml',
 // }]
 ```
 
-The same [existing content pattern](#using-existing-content) works here — pass `{ url, content, headers }` to avoid extra fetches.
+The same [existing content pattern](#using-existing-feed-content) works here: pass `{ url, content, headers }` to avoid extra fetches.
 
 ## Next Steps
 

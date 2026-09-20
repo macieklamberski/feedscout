@@ -8,6 +8,10 @@ describe('githubGistHandler', () => {
       expect(githubGistHandler.match('https://gist.github.com/octocat')).toBe(true)
     })
 
+    it('should not match www.gist.github.com URLs', () => {
+      expect(githubGistHandler.match('https://www.gist.github.com/octocat')).toBe(false)
+    })
+
     it('should not match github.com URLs', () => {
       expect(githubGistHandler.match('https://github.com/octocat')).toBe(false)
     })
@@ -23,30 +27,26 @@ describe('githubGistHandler', () => {
 
   describe('resolve', () => {
     it('should resolve user avatar from user URL', () => {
-      const value = githubGistHandler.resolve('https://gist.github.com/octocat')
       const expected: Array<DiscoverUriEntry> = [{ uri: 'https://github.com/octocat.png' }]
 
-      expect(value).toEqual(expected)
+      expect(githubGistHandler.resolve('https://gist.github.com/octocat')).toEqual(expected)
     })
 
     it('should resolve user avatar from gist URL', () => {
-      const value = githubGistHandler.resolve('https://gist.github.com/octocat/abc123def456')
+      const value = 'https://gist.github.com/octocat/abc123def456'
       const expected: Array<DiscoverUriEntry> = [{ uri: 'https://github.com/octocat.png' }]
 
-      expect(value).toEqual(expected)
+      expect(githubGistHandler.resolve(value)).toEqual(expected)
     })
 
     it('should resolve user avatar from starred URL', () => {
-      const value = githubGistHandler.resolve('https://gist.github.com/octocat/starred')
       const expected: Array<DiscoverUriEntry> = [{ uri: 'https://github.com/octocat.png' }]
 
-      expect(value).toEqual(expected)
+      expect(githubGistHandler.resolve('https://gist.github.com/octocat/starred')).toEqual(expected)
     })
 
     it('should return empty array for root URL', () => {
-      const value = githubGistHandler.resolve('https://gist.github.com')
-
-      expect(value).toEqual([])
+      expect(githubGistHandler.resolve('https://gist.github.com')).toEqual([])
     })
 
     it('should return empty array for excluded paths', () => {
@@ -63,10 +63,14 @@ describe('githubGistHandler', () => {
     })
 
     it('should strip feed extension from user URL', () => {
-      const value = githubGistHandler.resolve('https://gist.github.com/octocat.atom')
       const expected: Array<DiscoverUriEntry> = [{ uri: 'https://github.com/octocat.png' }]
 
-      expect(value).toEqual(expected)
+      expect(githubGistHandler.resolve('https://gist.github.com/octocat.atom')).toEqual(expected)
+    })
+
+    it.todo('should define behavior for invalid URL input', () => {
+      // resolve('not-a-url') currently throws a TypeError from the unguarded new URL call; the
+      // desired contract (throw vs empty array) is undecided.
     })
   })
 })
