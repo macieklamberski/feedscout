@@ -119,8 +119,11 @@ export const discover = async <TValid>(
       continue
     }
 
+    // A relative URI belongs to the page it was found on. When the input is a feed, that is the
+    // site page for every method except Feed, which reads the feed itself.
+    const baseUrl = method === 'feed' ? sourceInput.url : (siteInput ?? sourceInput).url
     const normalized = rawUris.map((entry) => {
-      return normalizeUriEntry(entry, resolveUrlFn, sourceInput.url, onError)
+      return normalizeUriEntry(entry, resolveUrlFn, baseUrl, onError)
     })
 
     const unique = normalized.filter((entry) => {

@@ -252,6 +252,80 @@ describe('discoverFavicons', () => {
     expect(result).toEqual(expected)
   })
 
+  it('should resolve a relative link on the site page against the site, not the feed', async () => {
+    const feed = `
+      <?xml version="1.0"?>
+      <rss version="2.0">
+        <channel>
+          <title>Example</title>
+          <link>https://example.com/</link>
+        </channel>
+      </rss>
+    `
+    const mockFetch = createMockFetch({
+      'https://feeds.example.org/example': feed,
+      'https://example.com/': '<link rel="icon" href="/favicon.ico">',
+      'https://example.com/favicon.ico': 'binary',
+    })
+    const result = await discoverFavicons('https://feeds.example.org/example', {
+      methods: ['html'],
+      fetchFn: mockFetch,
+    })
+
+    expect(result.map((favicon) => favicon.url)).toEqual(['https://example.com/favicon.ico'])
+  })
+
+  it('should resolve a relative link in the site page headers against the site, not the feed', async () => {
+    const feed = `
+      <?xml version="1.0"?>
+      <rss version="2.0">
+        <channel>
+          <title>Example</title>
+          <link>https://example.com/</link>
+        </channel>
+      </rss>
+    `
+    const mockFetch: DiscoverFetchFn = async (url: string) => ({
+      headers: new Headers({
+        ...(url === 'https://example.com/' ? { link: '</favicon.png>; rel="icon"' } : {}),
+        ...(url.endsWith('.png') ? { 'content-type': 'image/png' } : {}),
+      }),
+      body: url === 'https://feeds.example.org/example' ? feed : '',
+      url,
+      status: 200,
+      statusText: 'OK',
+    })
+    const result = await discoverFavicons('https://feeds.example.org/example', {
+      methods: ['headers'],
+      fetchFn: mockFetch,
+    })
+
+    expect(result.map((favicon) => favicon.url)).toEqual(['https://example.com/favicon.png'])
+  })
+
+  it('should resolve a relative icon in the feed against the feed, not the site', async () => {
+    const feed = `
+      <?xml version="1.0"?>
+      <feed xmlns="http://www.w3.org/2005/Atom">
+        <title>Example</title>
+        <id>example</id>
+        <icon>/icon.png</icon>
+        <link rel="alternate" href="https://example.com/" />
+      </feed>
+    `
+    const mockFetch = createMockFetch({
+      'https://feeds.example.org/example': feed,
+      'https://example.com/': '<html></html>',
+      'https://feeds.example.org/icon.png': 'binary',
+    })
+    const result = await discoverFavicons('https://feeds.example.org/example', {
+      methods: ['feed'],
+      fetchFn: mockFetch,
+    })
+
+    expect(result.map((favicon) => favicon.url)).toEqual(['https://feeds.example.org/icon.png'])
+  })
+
   it('should scan the site origin when the feed site link is malformed', async () => {
     const feed = `
       <?xml version="1.0"?>
