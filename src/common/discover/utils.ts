@@ -81,8 +81,26 @@ export const normalizeMethodsConfig = (
   siteInput: DiscoverInputObject | undefined,
   methods: DiscoverMethodsConfig,
   defaults: DiscoverMethodsConfigDefaults,
+  onSkip?: (error: Error) => void,
 ): DiscoverMethodsConfigInternal => {
   const resolvedInput = siteInput ?? sourceInput
+
+  // Missing content or headers is a usage error when the caller supplied the input object, so it
+  // throws. With onSkip given, Feedscout fetched the input itself and the caller did nothing
+  // wrong, so the method is skipped and the reason is handed to onSkip.
+  const isAvailable = <TValue>(value: TValue | undefined, message: string): value is TValue => {
+    if (value !== undefined) {
+      return true
+    }
+
+    if (!onSkip) {
+      throw new Error(message)
+    }
+
+    onSkip(new Error(message))
+
+    return false
+  }
 
   // Step 1: Normalize methods (array → object, true → {}).
   const methodsObj = Array.isArray(methods)
@@ -110,11 +128,11 @@ export const normalizeMethodsConfig = (
     }
   }
 
-  if (methodsObj.feed && defaults.feed) {
-    if (sourceInput.content === undefined) {
-      throw new Error(locales.errors.feedMethodRequiresContent)
-    }
-
+  if (
+    methodsObj.feed &&
+    defaults.feed &&
+    isAvailable(sourceInput.content, locales.errors.feedMethodRequiresContent)
+  ) {
     const feedOptions = methodsObj.feed === true ? {} : methodsObj.feed
 
     methodsConfig.feed = {
@@ -126,11 +144,11 @@ export const normalizeMethodsConfig = (
     }
   }
 
-  if (methodsObj.html && defaults.html) {
-    if (resolvedInput.content === undefined) {
-      throw new Error(locales.errors.htmlMethodRequiresContent)
-    }
-
+  if (
+    methodsObj.html &&
+    defaults.html &&
+    isAvailable(resolvedInput.content, locales.errors.htmlMethodRequiresContent)
+  ) {
     const htmlOptions = methodsObj.html === true ? {} : methodsObj.html
 
     methodsConfig.html = {
@@ -143,11 +161,11 @@ export const normalizeMethodsConfig = (
     }
   }
 
-  if (methodsObj.headers && defaults.headers) {
-    if (resolvedInput.headers === undefined) {
-      throw new Error(locales.errors.headersMethodRequiresHeaders)
-    }
-
+  if (
+    methodsObj.headers &&
+    defaults.headers &&
+    isAvailable(resolvedInput.headers, locales.errors.headersMethodRequiresHeaders)
+  ) {
     const headersOptions = methodsObj.headers === true ? {} : methodsObj.headers
 
     methodsConfig.headers = {
