@@ -73,6 +73,7 @@ const feeds = await discoverFeeds('https://www.youtube.com/@mkbhd', {
 //     isValid: true,
 //     format: 'atom',
 //     title: 'Marques Brownlee',
+//     siteUrl: 'https://www.youtube.com/channel/UCBJycsmduvYEL83R_U4JriQ',
 //     method: 'platform',
 //     hint: { key: 'youtube:all', label: 'All uploads' },
 //   },
@@ -80,7 +81,7 @@ const feeds = await discoverFeeds('https://www.youtube.com/@mkbhd', {
 // ]
 ```
 
-### Using Existing Content
+### Using Existing Feed Content
 
 If you already have the HTML content and/or headers, pass them directly to avoid an extra fetch:
 
@@ -161,9 +162,9 @@ const blogrolls = await discoverBlogrolls('https://example.com')
 // }]
 ```
 
-### Using Existing Content
+### Using Existing Blogroll Content
 
-The same [existing content pattern](#using-existing-content) works here: pass `{ url, content, headers }` to avoid extra fetches.
+The same [existing content pattern](#using-existing-feed-content) works here: pass `{ url, content, headers }` to avoid extra fetches.
 
 ## Discover Favicons
 
@@ -179,7 +180,7 @@ const favicons = await discoverFavicons('https://example.com')
 // }]
 ```
 
-The same [existing content pattern](#using-existing-content) works here: pass `{ url, content, headers }` to avoid extra fetches.
+The same [existing content pattern](#using-existing-feed-content) works here: pass `{ url, content, headers }` to avoid extra fetches.
 
 ## Discover WebSub Hubs
 
@@ -194,7 +195,7 @@ const hubs = await discoverHubs('https://example.com/feed.xml')
 // }]
 ```
 
-The same [existing content pattern](#using-existing-content) works here: pass `{ url, content, headers }` to avoid extra fetches.
+The same [existing content pattern](#using-existing-feed-content) works here: pass `{ url, content, headers }` to avoid extra fetches.
 
 ## Next Steps
 
