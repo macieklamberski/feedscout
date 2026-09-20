@@ -536,7 +536,7 @@ describe('discoverFeeds', () => {
       expect(value).toEqual([])
     })
 
-    it('should report the fetch error and each skipped method', async () => {
+    it('should report the fetch error once', async () => {
       const messages: Array<string> = []
       const mockFetch: DiscoverFetchFn = () => {
         return Promise.reject(new Error('Input fetch failed'))
@@ -549,11 +549,7 @@ describe('discoverFeeds', () => {
           messages.push(`${context.phase}: ${error instanceof Error ? error.message : error}`)
         },
       })
-      const expected = [
-        'fetchInput: Input fetch failed',
-        `fetchInput: ${locales.errors.htmlMethodRequiresContent}`,
-        `fetchInput: ${locales.errors.headersMethodRequiresHeaders}`,
-      ]
+      const expected = ['fetchInput: Input fetch failed']
 
       expect(messages).toEqual(expected)
     })
@@ -579,22 +575,40 @@ describe('discoverFeeds', () => {
       expect(value.map((result) => result.url)).toEqual(['https://example.com/feed'])
     })
 
-    it('should run html when the input fetch succeeds without headers', async () => {
+    it('should throw when the input fetch succeeds without headers', () => {
       const page = '<link rel="alternate" type="application/rss+xml" href="/feed">'
       // @ts-expect-error: This is for testing purposes.
       const mockFetch: DiscoverFetchFn = (url) => {
-        if (url === 'https://example.com') {
-          return Promise.resolve({ body: page, url, status: 200, statusText: 'OK' })
-        }
-
-        return createMockFetch({ 'https://example.com/feed': rss })(url)
+        return Promise.resolve({ body: page, url, status: 200, statusText: 'OK' })
       }
-      const value = await discoverFeeds('https://example.com', {
-        methods: ['html', 'headers'],
-        fetchFn: mockFetch,
-      })
+      const throwing = () => {
+        return discoverFeeds('https://example.com', {
+          methods: ['html', 'headers'],
+          fetchFn: mockFetch,
+        })
+      }
 
-      expect(value.map((result) => result.url)).toEqual(['https://example.com/feed'])
+      expect(throwing()).rejects.toThrow(locales.errors.headersMethodRequiresHeaders)
+    })
+
+    it('should throw when the input fetch succeeds with a stream body', () => {
+      const mockFetch: DiscoverFetchFn = (url) => {
+        return Promise.resolve({
+          url,
+          status: 200,
+          statusText: 'OK',
+          headers: new Headers(),
+          body: new ReadableStream(),
+        })
+      }
+      const throwing = () => {
+        return discoverFeeds('https://example.com', {
+          methods: ['html'],
+          fetchFn: mockFetch,
+        })
+      }
+
+      expect(throwing()).rejects.toThrow(locales.errors.htmlMethodRequiresContent)
     })
   })
 
