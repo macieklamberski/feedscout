@@ -50,5 +50,18 @@ export const discoverHubs = async (
     results.push(...htmlHubs)
   }
 
-  return results
+  // An Atom feed carries its hub in a link element that the Feed and HTML methods both read.
+  const seen = new Set<string>()
+
+  return results.filter((result) => {
+    const key = `${result.hub}\0${result.topic}`
+
+    if (seen.has(key)) {
+      return false
+    }
+
+    seen.add(key)
+
+    return true
+  })
 }
