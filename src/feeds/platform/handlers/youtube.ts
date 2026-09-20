@@ -12,12 +12,10 @@ import { composeHint } from '../../../common/utils.js'
 // `/live/…` URL shapes onto the canonical channel feed, and to derive
 // filtered playlist feeds (uploads, livestreams, shorts, popular, members).
 
-// Ordered from the surest marker of the page's own channel to the least sure. A channel page also
-// embeds the IDs of the channels it features, and a bare "channelId" matches one of those before
-// the page's own. A video page has no canonical channel link or "externalId", and its uploader
-// sits under "externalChannelId" and "channelId".
+// A channel page also embeds the IDs of the channels it features, and a bare "channelId" matches
+// one of those before the page's own, which sits under "externalId". A video page has no
+// "externalId", and its uploader sits under "externalChannelId" and "channelId".
 const channelIdRegexes = [
-  /<link rel="canonical" href="https:\/\/www\.youtube\.com\/channel\/(UC[a-zA-Z0-9_-]+)"/,
   /"externalId":"(UC[a-zA-Z0-9_-]+)"/,
   /"externalChannelId":"(UC[a-zA-Z0-9_-]+)"/,
   /"channelId":"(UC[a-zA-Z0-9_-]+)"/,
