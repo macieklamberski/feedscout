@@ -41,6 +41,7 @@ Results include the blogroll URL and title:
 {
   url: 'https://example.com/blogroll.opml',
   isValid: true,
+  method: 'html',
   title: 'My Reading List',
 }
 ```

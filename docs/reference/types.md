@@ -295,7 +295,7 @@ type DiscoverExtractFn<TValid> = (input: {
 }) => MaybePromise<DiscoverResult<TValid>>
 ```
 
-The `status` is the HTTP status of the fetched URL. It is not set when the extractor runs on content passed in as input.
+The `status` is the HTTP status of the fetched URL. It is not set when the extractor runs on the input itself, whether you passed the content in or Feedscout fetched it.
 
 ## URL Resolution Types
 

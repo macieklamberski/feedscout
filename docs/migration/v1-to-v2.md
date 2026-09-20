@@ -29,6 +29,8 @@ Use this checklist to ensure a complete migration:
 - Replace `codebergHandler` with `giteaHandler` if you import it from `feedscout/platform`
 - Update code that matches on hint keys: `codeberg:*` is now `gitea:*`, `artstation:artwork-trending` is now `artstation:artwork-latest`, and `producthunt:topic` and `producthunt:category` are gone
 - Set `maxAncestorDepth: 0` and `sectionNames: []` on the Guess method if you need the 1.x set of guessed URLs
+- Add the new `phase` values to any exhaustive `switch` in your `onError` callback
+- Expect a failed input fetch to return results or an empty array, not to reject
 
 ## Breaking Changes
 
@@ -229,6 +231,42 @@ const rootOnlyFeeds = await discoverFeeds('https://example.com/blog/post-slug/',
 #### Migration Steps
 1. Check whether the extra requests fit your rate limits and timeouts
 2. Set `maxAncestorDepth: 0` and `sectionNames: []` to keep the 1.x set of guessed URLs
+
+### Failures Are Reported, Not Thrown
+
+Discovery no longer rejects when the input URL cannot be fetched, or when a function you passed in throws. It skips what it cannot do, carries on, and reports the failure through `onError`.
+
+- A failed input fetch used to reject with "HTML method requires content". It now returns whatever the URL-only methods find, which can be an empty array. An input object without content still throws, because that is a usage error.
+- The `phase` of `DiscoverErrorContext` gained `resolveUrlFn`, `resolveSiteUrlFn`, `extractFn` and `onProgress`. An exhaustive `switch` on it stops compiling until the new cases are added.
+- `onError` is called for things that were silent before, such as a malformed absolute URL on a page.
+- `discoverHubs` accepts `onError` too.
+
+#### Before (1.x)
+```typescript
+import { discoverFeeds } from 'feedscout'
+
+try {
+  const feeds = await discoverFeeds('https://example.com')
+} catch (error) {
+  // A host that is down ended up here
+}
+```
+
+#### After (2.x)
+```typescript
+import { discoverFeeds } from 'feedscout'
+
+const feeds = await discoverFeeds('https://example.com', {
+  onError: (error, { phase, url }) => {
+    // A host that is down is reported here, with phase 'fetchInput'
+  },
+})
+```
+
+#### Migration Steps
+1. Move handling of a failed input fetch from a `catch` block to `onError`
+2. Add the new `phase` values to any exhaustive `switch` on `phase`
+3. See [`DiscoverOnErrorFn`](/reference/types#discoveronerrorfn) for what each phase means
 
 ## New Features
 
