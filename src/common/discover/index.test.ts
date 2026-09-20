@@ -461,6 +461,135 @@ describe('discover', () => {
     })
   })
 
+  describe('failed input fetch', () => {
+    it('should skip content-based methods in array format and still run guess', async () => {
+      const mockFetch: DiscoverFetchFn = (url) => {
+        if (url === 'https://example.com') {
+          return Promise.reject(new Error('Input fetch failed'))
+        }
+
+        return createMockFetch({ 'https://example.com/feed': rss })(url)
+      }
+      const value = await discoverFeeds('https://example.com', {
+        methods: ['html', 'headers', 'guess'],
+        fetchFn: mockFetch,
+      })
+      const expected: Array<DiscoverResult<FeedResult>> = [
+        {
+          url: 'https://example.com/feed',
+          isValid: true,
+          method: 'guess',
+          format: 'rss',
+          title: 'Test RSS',
+          description: 'Test feed',
+          siteUrl: 'https://example.com/',
+        },
+      ]
+
+      expect(value).toEqual(expected)
+    })
+
+    it('should skip content-based methods in object format and still run guess', async () => {
+      const mockFetch: DiscoverFetchFn = (url) => {
+        if (url === 'https://example.com') {
+          return Promise.reject(new Error('Input fetch failed'))
+        }
+
+        return createMockFetch({ 'https://example.com/feed': rss })(url)
+      }
+      const value = await discoverFeeds('https://example.com', {
+        methods: { html: true, headers: true, guess: { uris: ['/feed'] } },
+        fetchFn: mockFetch,
+      })
+      const expected: Array<DiscoverResult<FeedResult>> = [
+        {
+          url: 'https://example.com/feed',
+          isValid: true,
+          method: 'guess',
+          format: 'rss',
+          title: 'Test RSS',
+          description: 'Test feed',
+          siteUrl: 'https://example.com/',
+        },
+      ]
+
+      expect(value).toEqual(expected)
+    })
+
+    it('should return no results when only content-based methods are requested', async () => {
+      const mockFetch: DiscoverFetchFn = () => {
+        return Promise.reject(new Error('Input fetch failed'))
+      }
+      const value = await discoverFeeds('https://example.com', {
+        methods: ['html', 'headers'],
+        fetchFn: mockFetch,
+      })
+
+      expect(value).toEqual([])
+    })
+
+    it('should report the fetch error and each skipped method', async () => {
+      const messages: Array<string> = []
+      const mockFetch: DiscoverFetchFn = () => {
+        return Promise.reject(new Error('Input fetch failed'))
+      }
+
+      await discoverFeeds('https://example.com', {
+        methods: ['html', 'headers'],
+        fetchFn: mockFetch,
+        onError: (error, context) => {
+          messages.push(`${context.phase}: ${error instanceof Error ? error.message : error}`)
+        },
+      })
+      const expected = [
+        'fetchInput: Input fetch failed',
+        `fetchInput: ${locales.errors.htmlMethodRequiresContent}`,
+        `fetchInput: ${locales.errors.headersMethodRequiresHeaders}`,
+      ]
+
+      expect(messages).toEqual(expected)
+    })
+
+    it('should run html on the site page when the input fetch fails and the site fetch works', async () => {
+      const sitePage = '<link rel="alternate" type="application/rss+xml" href="/feed">'
+      const mockFetch: DiscoverFetchFn = (url) => {
+        if (url === 'https://example.com/feed.xml') {
+          return Promise.reject(new Error('Input fetch failed'))
+        }
+
+        return createMockFetch({
+          'https://example.com/': sitePage,
+          'https://example.com/feed': rss,
+        })(url)
+      }
+      const value = await discoverFeeds('https://example.com/feed.xml', {
+        methods: ['html'],
+        fetchFn: mockFetch,
+        resolveSiteUrlFn: () => 'https://example.com/',
+      })
+
+      expect(value.map((result) => result.url)).toEqual(['https://example.com/feed'])
+    })
+
+    it('should run html when the input fetch succeeds without headers', async () => {
+      const page = '<link rel="alternate" type="application/rss+xml" href="/feed">'
+      // @ts-expect-error: This is for testing purposes.
+      const mockFetch: DiscoverFetchFn = (url) => {
+        if (url === 'https://example.com') {
+          return Promise.resolve({ body: page, url, status: 200, statusText: 'OK' })
+        }
+
+        return createMockFetch({ 'https://example.com/feed': rss })(url)
+      }
+      const value = await discoverFeeds('https://example.com', {
+        methods: ['html', 'headers'],
+        fetchFn: mockFetch,
+      })
+
+      expect(value.map((result) => result.url)).toEqual(['https://example.com/feed'])
+    })
+  })
+
   describe('onError', () => {
     it('should call onError when the input fetch fails', async () => {
       const errors: Array<{ error: unknown; phase: string; url?: string }> = []

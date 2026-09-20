@@ -934,6 +934,50 @@ describe('normalizeMethodsConfig', () => {
     expect(throwing).toThrow(locales.errors.feedMethodRequiresContent)
   })
 
+  it('should skip html method and call onSkip when content is missing', () => {
+    const errors: Array<Error> = []
+    const value = normalizeMethodsConfig(
+      { url: 'https://example.com' },
+      undefined,
+      ['html', 'guess'],
+      defaults,
+      (error) => errors.push(error),
+    )
+
+    expect(Object.keys(value)).toEqual(['guess'])
+    expect(errors.map((error) => error.message)).toEqual([locales.errors.htmlMethodRequiresContent])
+  })
+
+  it('should skip headers method and call onSkip when headers are missing', () => {
+    const errors: Array<Error> = []
+    const value = normalizeMethodsConfig(
+      { url: 'https://example.com', content: '<html></html>' },
+      undefined,
+      ['html', 'headers'],
+      defaults,
+      (error) => errors.push(error),
+    )
+
+    expect(Object.keys(value)).toEqual(['html'])
+    expect(errors.map((error) => error.message)).toEqual([
+      locales.errors.headersMethodRequiresHeaders,
+    ])
+  })
+
+  it('should take html content from the site input when the source input has none', () => {
+    const errors: Array<Error> = []
+    const value = normalizeMethodsConfig(
+      { url: 'https://example.com/feed.xml' },
+      { url: 'https://example.com/', content: '<html></html>', headers: new Headers() },
+      ['html'],
+      defaults,
+      (error) => errors.push(error),
+    )
+
+    expect(value.html?.html).toBe('<html></html>')
+    expect(errors).toEqual([])
+  })
+
   it('should throw error when html method requested without content', () => {
     const value = {
       url: 'https://example.com',
