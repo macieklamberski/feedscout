@@ -94,67 +94,7 @@ describe('codebergHandler', () => {
       expect(codebergHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return branch commits feed for Gitea branch page', () => {
-      const value = 'https://gitea.com/gitea/go-sdk/src/branch/main'
-      const expected = [
-        {
-          uri: 'https://gitea.com/gitea/go-sdk/rss/branch/main',
-          hint: { key: 'codeberg:branch-commits', label: 'Branch commits' },
-        },
-        {
-          uri: [
-            'https://gitea.com/gitea/go-sdk/releases.atom',
-            'https://gitea.com/gitea/go-sdk/releases.rss',
-          ],
-          hint: { key: 'codeberg:releases', label: 'Releases' },
-        },
-        {
-          uri: [
-            'https://gitea.com/gitea/go-sdk/tags.atom',
-            'https://gitea.com/gitea/go-sdk/tags.rss',
-          ],
-          hint: { key: 'codeberg:tags', label: 'Tags' },
-        },
-        {
-          uri: ['https://gitea.com/gitea/go-sdk.atom', 'https://gitea.com/gitea/go-sdk.rss'],
-          hint: { key: 'codeberg:activity', label: 'Activity' },
-        },
-      ]
-
-      expect(codebergHandler.resolve(value)).toEqual(expected)
-    })
-
-    it('should return file history feed for Gitea file page', () => {
-      const value = 'https://gitea.com/gitea/go-sdk/src/branch/main/README.md'
-      const expected = [
-        {
-          uri: 'https://gitea.com/gitea/go-sdk/rss/branch/main/README.md',
-          hint: { key: 'codeberg:file-history', label: 'File history' },
-        },
-        {
-          uri: [
-            'https://gitea.com/gitea/go-sdk/releases.atom',
-            'https://gitea.com/gitea/go-sdk/releases.rss',
-          ],
-          hint: { key: 'codeberg:releases', label: 'Releases' },
-        },
-        {
-          uri: [
-            'https://gitea.com/gitea/go-sdk/tags.atom',
-            'https://gitea.com/gitea/go-sdk/tags.rss',
-          ],
-          hint: { key: 'codeberg:tags', label: 'Tags' },
-        },
-        {
-          uri: ['https://gitea.com/gitea/go-sdk.atom', 'https://gitea.com/gitea/go-sdk.rss'],
-          hint: { key: 'codeberg:activity', label: 'Activity' },
-        },
-      ]
-
-      expect(codebergHandler.resolve(value)).toEqual(expected)
-    })
-
-    it('should not emit branch commits feed for Codeberg branch page (Forgejo dropped the route)', () => {
+    it('should return the repo feeds for a branch page', () => {
       const value = 'https://codeberg.org/forgejo/forgejo/src/branch/main'
       const expected = [
         {

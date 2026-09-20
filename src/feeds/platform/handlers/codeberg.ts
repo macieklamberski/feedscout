@@ -64,24 +64,6 @@ export const codebergHandler: PlatformHandler = {
           },
         ]
 
-        // Branch page: codeberg.org/{user}/{repo}/src/branch/{branch}
-        // Gitea still serves /rss/branch/{branch} but Forgejo (Codeberg's runtime)
-        // removed it — so gate this emission on Gitea hosts only.
-        if (
-          isHostOf(url, ['gitea.com', 'www.gitea.com']) &&
-          pathSegments[2] === 'src' &&
-          pathSegments[3] === 'branch' &&
-          pathSegments[4]
-        ) {
-          const branch = pathSegments[4]
-          const filePath = pathSegments.slice(5).join('/')
-
-          feeds.unshift({
-            uri: `${origin}/${user}/${repo}/rss/branch/${branch}${filePath ? `/${filePath}` : ''}`,
-            hint: composeHint(filePath ? 'codeberg:file-history' : 'codeberg:branch-commits'),
-          })
-        }
-
         return feeds
       }
     }
