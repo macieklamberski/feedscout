@@ -55,7 +55,7 @@ describe('discoverHubs', () => {
       expect(value).toEqual(expected)
     })
 
-    it('should return hubs from headers, feed, and HTML', async () => {
+    it('should return a hub found by both the feed and HTML methods once', async () => {
       const feed = `
         <?xml version="1.0" encoding="UTF-8"?>
         <feed xmlns="http://www.w3.org/2005/Atom">
@@ -70,10 +70,6 @@ describe('discoverHubs', () => {
       const expected: Array<HubResult> = [
         {
           hub: 'https://header-hub.example.com/',
-          topic: 'https://example.com/feed.xml',
-        },
-        {
-          hub: 'https://feed-hub.example.com/',
           topic: 'https://example.com/feed.xml',
         },
         {
