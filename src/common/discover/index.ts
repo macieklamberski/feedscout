@@ -44,14 +44,11 @@ export const discover = async <TValid>(
   const safeMaxUris = toPositiveInteger(maxUris, 50)
 
   // Normalize input: string → fetch URL, object → use provided content.
-  const sourceInput = await normalizeInput(input, fetchFn, onError)
-
-  // A URL string means Feedscout fetched the input itself. A method that the response left without
-  // content or headers is then skipped and reported, where an input object would be a usage error.
-  const onSkip =
-    typeof input === 'string'
-      ? (error: Error) => reportError(onError, error, { phase: 'fetchInput', url: sourceInput.url })
-      : undefined
+  let hasInputFetchFailed = false
+  const sourceInput = await normalizeInput(input, fetchFn, (error, context) => {
+    hasInputFetchFailed = true
+    reportError(onError, error, context)
+  })
 
   // Step 1: Check if content is already valid (only if content is provided).
   if (sourceInput.content) {
@@ -98,7 +95,13 @@ export const discover = async <TValid>(
   }
 
   // Step 2: Build methods config from input and selected methods.
-  const methodsConfig = normalizeMethodsConfig(sourceInput, siteInput, methods, defaults, onSkip)
+  const methodsConfig = normalizeMethodsConfig(
+    sourceInput,
+    siteInput,
+    methods,
+    defaults,
+    hasInputFetchFailed,
+  )
 
   // Step 3: Discover URIs using selected methods.
   const urisByMethod = await discoverUris(methodsConfig, fetchFn)

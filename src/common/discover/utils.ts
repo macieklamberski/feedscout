@@ -145,23 +145,20 @@ export const normalizeMethodsConfig = (
   siteInput: DiscoverInputObject | undefined,
   methods: DiscoverMethodsConfig,
   defaults: DiscoverMethodsConfigDefaults,
-  onSkip?: (error: Error) => void,
+  hasInputFetchFailed = false,
 ): DiscoverMethodsConfigInternal => {
   const resolvedInput = siteInput ?? sourceInput
 
-  // Missing content or headers is a usage error when the caller supplied the input object, so it
-  // throws. With onSkip given, Feedscout fetched the input itself and the caller did nothing
-  // wrong, so the method is skipped and the reason is handed to onSkip.
+  // Missing content or headers is a usage error, so it throws. After a failed input fetch the
+  // caller did nothing wrong and the failure is already reported, so the method is skipped.
   const isAvailable = <TValue>(value: TValue | undefined, message: string): value is TValue => {
     if (value !== undefined) {
       return true
     }
 
-    if (!onSkip) {
+    if (!hasInputFetchFailed) {
       throw new Error(message)
     }
-
-    onSkip(new Error(message))
 
     return false
   }
