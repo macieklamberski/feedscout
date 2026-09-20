@@ -20,11 +20,11 @@ Each result contains feed metadata:
 {
   url: 'https://example.com/feed.xml',
   isValid: true,
-  method: 'html',
   format: 'rss',        // 'rss' | 'atom' | 'json' | 'rdf'
   title: 'Example Blog',
   description: 'A blog about examples',
   siteUrl: 'https://example.com/',
+  method: 'html',
 }
 ```
 

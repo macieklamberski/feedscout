@@ -60,19 +60,19 @@ Returns a promise that resolves to an array of results:
 {
   url: 'https://example.com/feed.xml',
   isValid: true,
-  method: 'guess',       // 'platform' | 'html' | 'headers' | 'guess'
   format: 'rss',         // 'rss' | 'atom' | 'json' | 'rdf'
   title: 'Example Blog',
   description: 'A blog about examples',
   siteUrl: 'https://example.com/',
+  method: 'guess',       // 'platform' | 'html' | 'headers' | 'guess'
 }
 
 // Invalid result (when includeInvalid: true)
 {
   url: 'https://example.com/not-a-feed',
   isValid: false,
-  method: 'guess',
   error: Error, // Only set when the request or the extractor threw
+  method: 'guess',
 }
 ```
 

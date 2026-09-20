@@ -61,16 +61,16 @@ Returns a promise that resolves to an array of results:
 {
   url: 'https://example.com/blogroll.opml',
   isValid: true,
-  method: 'guess',
   title: 'My Reading List',
+  method: 'guess',
 }
 
 // Invalid result (when includeInvalid: true)
 {
   url: 'https://example.com/not-opml.xml',
   isValid: false,
-  method: 'guess',
   error: Error, // Only set when the request or the extractor threw
+  method: 'guess',
 }
 ```
 

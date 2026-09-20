@@ -42,11 +42,11 @@ const feeds = await discoverFeeds('https://example.com')
 // [{
 //   url: 'https://example.com/feed.xml',
 //   isValid: true,
-//   method: 'html',
 //   format: 'rss',
 //   title: 'Example Blog',
 //   description: 'A blog about examples',
 //   siteUrl: 'https://example.com/',
+//   method: 'html',
 // }]
 ```
 
@@ -71,9 +71,9 @@ const feeds = await discoverFeeds('https://www.youtube.com/@mkbhd', {
 //   {
 //     url: 'https://www.youtube.com/feeds/videos.xml?channel_id=UCBJycsmduvYEL83R_U4JriQ',
 //     isValid: true,
-//     method: 'platform',
 //     format: 'atom',
 //     title: 'Marques Brownlee',
+//     method: 'platform',
 //     hint: { key: 'youtube:all', label: 'All uploads' },
 //   },
 //   ...one result for each other variant that has a valid feed, like videos and shorts.
@@ -105,20 +105,20 @@ const feeds = await discoverFeeds(
 //   {
 //     url: 'https://example.com/feed.xml',
 //     isValid: true,
-//     method: 'html',
 //     format: 'rss',
 //     title: 'Example Blog',
 //     description: 'A blog about examples',
 //     siteUrl: 'https://example.com/',
+//     method: 'html',
 //   },
 //   {
 //     url: 'https://example.com/rss',
 //     isValid: true,
-//     method: 'html',
 //     format: 'rss',
 //     title: 'Example Blog',
 //     description: 'A blog about examples',
 //     siteUrl: 'https://example.com/',
+//     method: 'html',
 //   },
 // ]
 ```
@@ -138,11 +138,11 @@ const feeds = await discoverFeeds(
 // [{
 //   url: 'https://example.com/feed.xml',
 //   isValid: true,
-//   method: 'headers',
 //   format: 'rss',
 //   title: 'Example Blog',
 //   description: 'A blog about examples',
 //   siteUrl: 'https://example.com/',
+//   method: 'headers',
 // }]
 ```
 
@@ -156,8 +156,8 @@ const blogrolls = await discoverBlogrolls('https://example.com')
 // [{
 //   url: 'https://example.com/blogroll.opml',
 //   isValid: true,
-//   method: 'html',
 //   title: 'My Blogroll',
+//   method: 'html',
 // }]
 ```
 
