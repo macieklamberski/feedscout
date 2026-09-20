@@ -234,10 +234,10 @@ const rootOnlyFeeds = await discoverFeeds('https://example.com/blog/post-slug/',
 
 ### Failures Are Reported, Not Thrown
 
-Discovery no longer rejects when the input URL cannot be fetched. It skips what it cannot do, carries on, and reports the failure through `onError`. A throw from `resolveUrlFn`, `resolveSiteUrlFn`, `onProgress`, or from `extractFn` on the input, is handled the same way. Version 1.11 already behaves like 2.x here, so this section applies when you come from 1.10 or earlier.
+Discovery no longer rejects when the input URL cannot be fetched. It skips what it cannot do, carries on, and reports the failure through `onError`. A throw from `resolveUrlFn`, `resolveSiteUrlFn`, `onProgress`, `extractUrls`, a platform handler you passed in, or from `extractFn` on the input, is handled the same way. Version 1.11 already behaves like 2.x here, so this section applies when you come from 1.10 or earlier.
 
 - A failed input fetch used to reject whenever a method that needs content or headers was selected. The message named the first such method: "HTML method requires content" from `discoverFeeds`, "Feed method requires content" from `discoverFavicons`. With only URL-based methods, such as `methods: ['guess']`, it already resolved. It now returns whatever the URL-only methods find, which can be an empty array. An input object without content still throws, because that is a usage error.
-- The `phase` of `DiscoverErrorContext` gained `resolveUrlFn`, `resolveSiteUrlFn`, `extractFn` and `onProgress`. An exhaustive `switch` on it stops compiling until the new cases are added.
+- The `phase` of `DiscoverErrorContext` gained `resolveUrlFn`, `resolveSiteUrlFn`, `extractFn`, `extractUrls`, `platformHandler` and `onProgress`. An exhaustive `switch` on it stops compiling until the new cases are added.
 - `onError` is called for things that were silent before, such as a malformed absolute URL on a page.
 - `discoverHubs` accepts `onError` too.
 

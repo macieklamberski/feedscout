@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'bun:test'
 import type {
+  DiscoverErrorContext,
   DiscoverExtractFn,
   DiscoverFetchFn,
   DiscoverResolveSiteUrlFn,
@@ -783,5 +784,45 @@ describe('discoverFavicons', () => {
     })
 
     expect(result).toEqual([])
+  })
+
+  it('should report an extractUrls that throws and keep discovering', async () => {
+    const contexts: Array<DiscoverErrorContext> = []
+    const feed = `
+      <rss version="2.0">
+        <channel>
+          <title>Example Blog</title>
+          <link>https://example.com</link>
+          <description>Posts</description>
+        </channel>
+      </rss>
+    `
+    const value = await discoverFavicons(
+      { url: 'https://example.com/feed.xml', content: feed },
+      {
+        methods: {
+          feed: {
+            extractUrls: () => {
+              throw new Error('Extraction failed')
+            },
+          },
+          guess: { uris: ['/favicon.ico'] },
+        },
+        fetchFn: createMockFetch({ 'https://example.com/favicon.ico': 'binary' }),
+        resolveSiteUrlFn: () => undefined,
+        onError: (_error, context) => {
+          contexts.push(context)
+        },
+      },
+    )
+    const expected: Array<DiscoverResult<FaviconResult>> = [
+      { url: 'https://example.com/favicon.ico', isValid: true, method: 'guess' },
+    ]
+    const expectedContexts: Array<DiscoverErrorContext> = [
+      { phase: 'extractUrls', url: 'https://example.com/feed.xml' },
+    ]
+
+    expect(value).toEqual(expected)
+    expect(contexts).toEqual(expectedContexts)
   })
 })
