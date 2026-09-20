@@ -269,6 +269,34 @@ describe('discoverFavicons', () => {
     expect(result.map((favicon) => favicon.url)).toEqual(['https://example.com/favicon.ico'])
   })
 
+  it('should resolve a relative link in the site page headers against the site, not the feed', async () => {
+    const feed = `
+      <?xml version="1.0"?>
+      <rss version="2.0">
+        <channel>
+          <title>Example</title>
+          <link>https://example.com/</link>
+        </channel>
+      </rss>
+    `
+    const mockFetch: DiscoverFetchFn = async (url: string) => ({
+      headers: new Headers({
+        ...(url === 'https://example.com/' ? { link: '</favicon.png>; rel="icon"' } : {}),
+        ...(url.endsWith('.png') ? { 'content-type': 'image/png' } : {}),
+      }),
+      body: url === 'https://feeds.example.org/example' ? feed : '',
+      url,
+      status: 200,
+      statusText: 'OK',
+    })
+    const result = await discoverFavicons('https://feeds.example.org/example', {
+      methods: ['headers'],
+      fetchFn: mockFetch,
+    })
+
+    expect(result.map((favicon) => favicon.url)).toEqual(['https://example.com/favicon.png'])
+  })
+
   it('should resolve a relative icon in the feed against the feed, not the site', async () => {
     const feed = `
       <?xml version="1.0"?>
