@@ -4,6 +4,7 @@ import {
   type DiscoverMethod,
   type DiscoverMethodsConfigDefaults,
   type DiscoverOptionsInternal,
+  type DiscoverResolveUrlFn,
   type DiscoverResult,
   type DiscoverUriEntry,
   discoverMethodOrder,
@@ -37,6 +38,12 @@ export const discover = async <TValid>(
     onProgress,
     onError,
   } = options
+
+  // The resolveUrlFn is wrapped where it enters: a throw is reported and the URL is kept as
+  // discovered, so the code below calls it without a guard of its own.
+  const safeResolveUrlFn: DiscoverResolveUrlFn = (url, baseUrl) => {
+    return attempt(() => resolveUrlFn(url, baseUrl), url, 'resolveUrlFn', onError)
+  }
 
   // Sanitize numeric options: reject NaN, < 1, and non-integer values, which
   // would otherwise hang the worker loop or fetch nothing.
@@ -127,7 +134,7 @@ export const discover = async <TValid>(
     // site page for every method except Feed, which reads the feed itself.
     const baseUrl = method === 'feed' ? sourceInput.url : (siteInput ?? sourceInput).url
     const normalized = rawUris.map((entry) => {
-      return normalizeUriEntry(entry, resolveUrlFn, baseUrl, onError)
+      return normalizeUriEntry(entry, safeResolveUrlFn, baseUrl)
     })
 
     const unique = normalized.filter((entry) => {

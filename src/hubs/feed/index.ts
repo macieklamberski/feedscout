@@ -1,7 +1,6 @@
 import type { Atom } from 'feedsmith'
 import { parseFeed } from 'feedsmith'
-import { attempt } from '../../common/discover/utils.js'
-import type { DiscoverOnErrorFn, DiscoverResolveUrlFn } from '../../common/types.js'
+import type { DiscoverResolveUrlFn } from '../../common/types.js'
 import type { HubResult } from '../discover/types.js'
 
 const getLinksWithRel = (
@@ -17,7 +16,6 @@ export const discoverHubsFromFeed = (
   content: string,
   baseUrl: string,
   resolveUrlFn: DiscoverResolveUrlFn,
-  onError?: DiscoverOnErrorFn,
 ): Array<HubResult> => {
   try {
     const { format, feed } = parseFeed(content)
@@ -26,19 +24,12 @@ export const discoverHubsFromFeed = (
     if (format === 'json') {
       const hubs = feed.hubs ?? []
       const feedUrl = feed.feed_url
-      const topic = feedUrl
-        ? attempt(() => resolveUrlFn(feedUrl, baseUrl), feedUrl, 'resolveUrlFn', onError)
-        : baseUrl
+      const topic = feedUrl ? (resolveUrlFn(feedUrl, baseUrl) ?? feedUrl) : baseUrl
 
       return hubs
         .filter((hub) => hub.url)
         .map((hub) => ({
-          hub: attempt(
-            () => resolveUrlFn(hub.url as string, baseUrl),
-            hub.url as string,
-            'resolveUrlFn',
-            onError,
-          ),
+          hub: resolveUrlFn(hub.url as string, baseUrl) ?? (hub.url as string),
           topic,
         }))
     }
@@ -49,12 +40,10 @@ export const discoverHubsFromFeed = (
 
     if (hubUris.length > 0) {
       const selfUris = getLinksWithRel(links, 'self')
-      const topic = selfUris[0]
-        ? attempt(() => resolveUrlFn(selfUris[0], baseUrl), selfUris[0], 'resolveUrlFn', onError)
-        : baseUrl
+      const topic = selfUris[0] ? (resolveUrlFn(selfUris[0], baseUrl) ?? selfUris[0]) : baseUrl
 
       return hubUris.map((hub) => ({
-        hub: attempt(() => resolveUrlFn(hub, baseUrl), hub, 'resolveUrlFn', onError),
+        hub: resolveUrlFn(hub, baseUrl) ?? hub,
         topic,
       }))
     }
