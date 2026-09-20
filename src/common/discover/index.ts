@@ -57,6 +57,7 @@ export const discover = async <TValid>(
         url: sourceInput.url,
         content: sourceInput.content,
         headers: sourceInput.headers,
+        status: sourceInput.status,
       })
 
       if (result.isValid) {
