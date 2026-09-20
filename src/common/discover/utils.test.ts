@@ -1692,6 +1692,22 @@ describe('reportError', () => {
 
     expect(throwing).not.toThrow()
   })
+
+  it('should swallow a rejection from an async onError', async () => {
+    const rejections: Array<unknown> = []
+    const onUnhandledRejection = (reason: unknown) => {
+      rejections.push(reason)
+    }
+
+    process.on('unhandledRejection', onUnhandledRejection)
+    reportError(() => Promise.reject(new Error('Broken callback')), new Error('Resolver failed'), {
+      phase: 'resolveUrlFn',
+    })
+    await new Promise((resolve) => setTimeout(resolve))
+    process.off('unhandledRejection', onUnhandledRejection)
+
+    expect(rejections).toEqual([])
+  })
 })
 
 describe('attempt', () => {
@@ -1767,6 +1783,29 @@ describe('attempt', () => {
       { phase: 'onProgress', url: 'https://example.com/feed.xml' },
     ]
 
+    expect(contexts).toEqual(expectedContexts)
+  })
+
+  it('should return the fallback and report a thenable that rejects', async () => {
+    const contexts: Array<DiscoverErrorContext> = []
+    const thenable: PromiseLike<string> = {
+      // biome-ignore lint/suspicious/noThenProperty: A thenable is the input under test.
+      then: (_onFulfilled, onRejected) => {
+        return Promise.reject(new Error('Thenable failed')).then(undefined, onRejected)
+      },
+    }
+    const value = attempt(
+      () => thenable,
+      '/feed.xml',
+      'resolveUrlFn',
+      (_error, context) => contexts.push(context),
+    )
+    await new Promise((resolve) => setTimeout(resolve))
+    const expectedContexts: Array<DiscoverErrorContext> = [
+      { phase: 'resolveUrlFn', url: '/feed.xml' },
+    ]
+
+    expect(value).toBe('/feed.xml')
     expect(contexts).toEqual(expectedContexts)
   })
 })
