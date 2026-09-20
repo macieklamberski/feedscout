@@ -37,7 +37,7 @@ Each result contains the hub and topic URLs:
 }
 ```
 
-Without a `rel="self"` link, `topic` falls back to the input URL. Results are not deduplicated, so a hub found by two methods appears twice.
+Without a `rel="self"` link, `topic` falls back to the input URL. A hub found by two methods with the same topic is returned once.
 
 ## Discovery Methods
 
