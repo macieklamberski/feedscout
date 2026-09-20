@@ -192,7 +192,7 @@ Discovers Atom feeds for GitHub Gist users, starred gists, forks, and the discov
 
 ### Codeberg / Gitea
 
-Discovers RSS feeds for Codeberg and Gitea users, repositories, releases, tags, and branch commits.
+Discovers Atom feeds for Codeberg and Gitea users, repositories, releases and tags, with RSS as the fallback, and RSS feeds for branch commits.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
