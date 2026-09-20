@@ -26,8 +26,11 @@ Use this checklist to ensure a complete migration:
 - Replace `feedscout/utils` imports with imports from `trousse`
 - Handle `undefined` from `omitEmpty` if you use it
 - Update custom `extractUrls` callbacks to Feedsmith 3 feed shapes
+- Replace `codebergHandler` with `giteaHandler` if you import it from `feedscout/platform`
 - Update code that matches on hint keys: `codeberg:*` is now `gitea:*`, `artstation:artwork-trending` is now `artstation:artwork-latest`, and `producthunt:topic` and `producthunt:category` are gone
 - Set `maxAncestorDepth: 0` and `sectionNames: []` on the Guess method if you need the 1.x set of guessed URLs
+- Add the new `phase` values to any exhaustive `switch` in your `onError` callback, if you come from 1.10 or earlier
+- Expect a failed input fetch to return results or an empty array, not to reject, if you come from 1.10 or earlier
 
 ## Breaking Changes
 
@@ -171,7 +174,7 @@ Some platform handlers changed the hint keys they attach to discovered URLs. Thi
 | `producthunt:topic` | Removed |
 | `producthunt:category` | Removed |
 
-The Codeberg handler is now `giteaHandler`. It still covers codeberg.org and gitea.com, and also matches self-hosted Gitea instances. The ArtStation trending feed was a duplicate, so the handler now returns the latest artwork feed. Product Hunt topic and category pages now return only the main `https://www.producthunt.com/feed`, because the feed ignores the topic and category parameters.
+The Codeberg handler is now `giteaHandler`, and `codebergHandler` is no longer exported from `feedscout/platform`. It still covers codeberg.org and gitea.com, and also matches self-hosted Gitea instances. The ArtStation trending feed was a duplicate, so the handler now returns the latest artwork feed. Product Hunt topic and category pages now return only the main `https://www.producthunt.com/feed`, because the feed ignores the topic and category parameters.
 
 #### Before (1.x)
 ```typescript
@@ -190,9 +193,10 @@ const releases = feeds.find((feed) => feed.hint?.key === 'gitea:releases')
 ```
 
 #### Migration Steps
-1. Replace `codeberg:` hint key prefixes with `gitea:`
-2. Replace `artstation:artwork-trending` with `artstation:artwork-latest`
-3. Remove handling for `producthunt:topic` and `producthunt:category`
+1. Replace `codebergHandler` imports with `giteaHandler`
+2. Replace `codeberg:` hint key prefixes with `gitea:`
+3. Replace `artstation:artwork-trending` with `artstation:artwork-latest`
+4. Remove handling for `producthunt:topic` and `producthunt:category`
 
 ### Guess Method Tests More URLs by Default
 
@@ -228,30 +232,62 @@ const rootOnlyFeeds = await discoverFeeds('https://example.com/blog/post-slug/',
 1. Check whether the extra requests fit your rate limits and timeouts
 2. Set `maxAncestorDepth: 0` and `sectionNames: []` to keep the 1.x set of guessed URLs
 
+### Failures Are Reported, Not Thrown
+
+Discovery no longer rejects when the input URL cannot be fetched. It skips what it cannot do, carries on, and reports the failure through `onError`. A throw from `resolveUrlFn`, `resolveSiteUrlFn`, `onProgress`, or from `extractFn` on the input, is handled the same way. Version 1.11 already behaves like 2.x here, so this section applies when you come from 1.10 or earlier.
+
+- A failed input fetch used to reject whenever a method that needs content or headers was selected. The message named the first such method: "HTML method requires content" from `discoverFeeds`, "Feed method requires content" from `discoverFavicons`. With only URL-based methods, such as `methods: ['guess']`, it already resolved. It now returns whatever the URL-only methods find, which can be an empty array. An input object without content still throws, because that is a usage error.
+- The `phase` of `DiscoverErrorContext` gained `resolveUrlFn`, `resolveSiteUrlFn`, `extractFn` and `onProgress`. An exhaustive `switch` on it stops compiling until the new cases are added.
+- `onError` is called for things that were silent before, such as a malformed absolute URL on a page.
+- `discoverHubs` accepts `onError` too.
+
+#### Before (1.10 and earlier)
+```typescript
+import { discoverFeeds } from 'feedscout'
+
+try {
+  const feeds = await discoverFeeds('https://example.com')
+} catch (error) {
+  // A host that is down ended up here
+}
+```
+
+#### After (2.x and 1.11)
+```typescript
+import { discoverFeeds } from 'feedscout'
+
+const feeds = await discoverFeeds('https://example.com', {
+  onError: (error, { phase, url }) => {
+    // A host that is down is reported here, with phase 'fetchInput'
+  },
+})
+```
+
+#### Migration Steps
+1. Move handling of a failed input fetch from a `catch` block to `onError`
+2. Add the new `phase` values to any exhaustive `switch` on `phase`
+3. See [`DiscoverOnErrorFn`](/reference/types#discoveronerrorfn) for what each phase means
+
 ## New Features
 
-### Platform Subpath
+### More Platform Handlers
 
-The `feedscout/platform` entry point is now published. It exports `discoverUrisFromPlatform`, `defaultPlatformOptions`, the `PlatformHandler` and `PlatformMethodOptions` types, and every platform handler:
+Feed discovery now includes handlers for more platforms, among them Bitchute, Confluence, Drupal, Flickr, Jira, PeerTube, Shopify, SourceHut, Squarespace and XenForo. Each one is exported from `feedscout/platform`:
 
 ```typescript
 import { discoverFeeds } from 'feedscout'
-import { githubHandler, youtubeHandler } from 'feedscout/platform'
+import { flickrHandler, peertubeHandler } from 'feedscout/platform'
 
-const feeds = await discoverFeeds('https://www.youtube.com/@channel', {
+const feeds = await discoverFeeds('https://www.flickr.com/photos/12345678@N00', {
   methods: {
     platform: {
-      handlers: [youtubeHandler, githubHandler],
+      handlers: [flickrHandler, peertubeHandler],
     },
   },
 })
 ```
 
 See [Platform](/feeds/platform) for the full list of handlers.
-
-### More Platform Handlers
-
-Feed discovery now includes handlers for more platforms, among them Bitchute, Confluence, Drupal, Flickr, Jira, PeerTube, Shopify, SourceHut, Squarespace and XenForo.
 
 ### Ancestor Paths and Section Links in Guess Method
 

@@ -45,7 +45,8 @@ const feeds = await discoverFeeds('https://example.com')
 //   format: 'rss',
 //   title: 'Example Blog',
 //   description: 'A blog about examples',
-//   siteUrl: 'https://example.com',
+//   siteUrl: 'https://example.com/',
+//   method: 'html',
 // }]
 ```
 
@@ -72,13 +73,15 @@ const feeds = await discoverFeeds('https://www.youtube.com/@mkbhd', {
 //     isValid: true,
 //     format: 'atom',
 //     title: 'Marques Brownlee',
+//     siteUrl: 'https://www.youtube.com/channel/UCBJycsmduvYEL83R_U4JriQ',
+//     method: 'platform',
 //     hint: { key: 'youtube:all', label: 'All uploads' },
 //   },
-//   ...one result for each other feed variant, like videos, shorts and live streams.
+//   ...one result for each other variant that has a valid feed, like videos and shorts.
 // ]
 ```
 
-### Using Existing Content
+### Using Existing Feed Content
 
 If you already have the HTML content and/or headers, pass them directly to avoid an extra fetch:
 
@@ -106,7 +109,8 @@ const feeds = await discoverFeeds(
 //     format: 'rss',
 //     title: 'Example Blog',
 //     description: 'A blog about examples',
-//     siteUrl: 'https://example.com',
+//     siteUrl: 'https://example.com/',
+//     method: 'html',
 //   },
 //   {
 //     url: 'https://example.com/rss',
@@ -114,7 +118,8 @@ const feeds = await discoverFeeds(
 //     format: 'rss',
 //     title: 'Example Blog',
 //     description: 'A blog about examples',
-//     siteUrl: 'https://example.com',
+//     siteUrl: 'https://example.com/',
+//     method: 'html',
 //   },
 // ]
 ```
@@ -137,7 +142,8 @@ const feeds = await discoverFeeds(
 //   format: 'rss',
 //   title: 'Example Blog',
 //   description: 'A blog about examples',
-//   siteUrl: 'https://example.com',
+//   siteUrl: 'https://example.com/',
+//   method: 'headers',
 // }]
 ```
 
@@ -152,12 +158,13 @@ const blogrolls = await discoverBlogrolls('https://example.com')
 //   url: 'https://example.com/blogroll.opml',
 //   isValid: true,
 //   title: 'My Blogroll',
+//   method: 'html',
 // }]
 ```
 
-### Using Existing Content
+### Using Existing Blogroll Content
 
-The same [existing content pattern](#using-existing-content) works here: pass `{ url, content, headers }` to avoid extra fetches.
+The same [existing content pattern](#using-existing-feed-content) works here: pass `{ url, content, headers }` to avoid extra fetches.
 
 ## Discover Favicons
 
@@ -169,10 +176,11 @@ const favicons = await discoverFavicons('https://example.com')
 // [{
 //   url: 'https://example.com/apple-touch-icon.png',
 //   isValid: true,
+//   method: 'html',
 // }]
 ```
 
-The same [existing content pattern](#using-existing-content) works here: pass `{ url, content, headers }` to avoid extra fetches.
+The same [existing content pattern](#using-existing-feed-content) works here: pass `{ url, content, headers }` to avoid extra fetches.
 
 ## Discover WebSub Hubs
 
@@ -182,12 +190,12 @@ import { discoverHubs } from 'feedscout'
 const hubs = await discoverHubs('https://example.com/feed.xml')
 
 // [{
-//   hub: 'https://pubsubhubbub.appspot.com',
+//   hub: 'https://pubsubhubbub.appspot.com/',
 //   topic: 'https://example.com/feed.xml',
 // }]
 ```
 
-The same [existing content pattern](#using-existing-content) works here: pass `{ url, content, headers }` to avoid extra fetches.
+The same [existing content pattern](#using-existing-feed-content) works here: pass `{ url, content, headers }` to avoid extra fetches.
 
 ## Next Steps
 

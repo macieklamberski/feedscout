@@ -32,7 +32,7 @@ import type { HubResult, DiscoverHubsOptions } from 'feedscout/hubs'
 import type { PlatformHandler, PlatformMethodOptions } from 'feedscout/platform'
 ```
 
-The [method option types](#method-option-types), `LinkSelector` and `MaybePromise` are not exported by name. They are listed here to describe the shapes that `methods` accepts.
+The [method option types](#method-option-types) and `LinkSelector` are not exported by name. They are listed here to describe the shapes that `methods` accepts.
 
 ## Input Types
 
@@ -100,7 +100,7 @@ type DiscoverMethodsConfig<TMethods extends DiscoverMethod = DiscoverMethod> =
     >
 ```
 
-The `baseUrl` is omitted because it's automatically derived from the input URL.
+The `baseUrl` is omitted because it's set for you: the input URL, or the site URL when the input is a feed.
 
 ### DiscoverHubsOptions
 
@@ -295,7 +295,7 @@ type DiscoverExtractFn<TValid> = (input: {
 }) => MaybePromise<DiscoverResult<TValid>>
 ```
 
-The `status` is the HTTP status of the fetched URL. It is not set when the extractor runs on content passed in as input.
+The `status` is the HTTP status of the fetched URL. It is not set when the extractor runs on the input itself, whether you passed the content in or Feedscout fetched it.
 
 ## URL Resolution Types
 

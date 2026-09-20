@@ -43,7 +43,7 @@ All options are optional. When not provided, sensible defaults are used.
 | `fetchFn` | `DiscoverFetchFn` | native fetch | Custom fetch function |
 | `extractFn` | `DiscoverExtractFn` | feedsmith | Custom feed extraction function |
 | `resolveUrlFn` | `DiscoverResolveUrlFn` | resolve relative | Custom URL resolution function |
-| `stopOnFirstMethod` | `boolean` | `false` | Stop URI collection after first method with results |
+| `stopOnFirstMethod` | `boolean` | `false` | Stop after the first method that finds a valid result |
 | `stopOnFirstResult` | `boolean` | `false` | Stop after first valid feed |
 | `concurrency` | `number` | `3` | Max parallel validations |
 | `maxUris` | `number` | `50` | Max total candidate URIs to fetch across all methods |
@@ -60,19 +60,19 @@ Returns a promise that resolves to an array of results:
 {
   url: 'https://example.com/feed.xml',
   isValid: true,
-  method: 'guess',       // 'platform' | 'html' | 'headers' | 'guess'
   format: 'rss',         // 'rss' | 'atom' | 'json' | 'rdf'
   title: 'Example Blog',
   description: 'A blog about examples',
-  siteUrl: 'https://example.com',
+  siteUrl: 'https://example.com/',
+  method: 'guess',       // 'platform' | 'html' | 'headers' | 'guess'
 }
 
 // Invalid result (when includeInvalid: true)
 {
   url: 'https://example.com/not-a-feed',
   isValid: false,
+  error: Error, // Only set when the request or the extractor threw
   method: 'guess',
-  error: Error,
 }
 ```
 
