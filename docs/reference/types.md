@@ -256,6 +256,8 @@ type DiscoverErrorContext = {
     | 'resolveUrlFn'
     | 'resolveSiteUrlFn'
     | 'extractFn'
+    | 'extractUrls'
+    | 'platformHandler'
     | 'onProgress'
   url?: string
 }
@@ -266,9 +268,11 @@ type DiscoverErrorContext = {
 - `resolveUrlFn`: The URL resolution function threw. The URL is kept as discovered.
 - `resolveSiteUrlFn`: The site URL resolution function threw. Discovery continues with the original input.
 - `extractFn`: The extractor threw on the input content. The input is not returned as a result, and the methods run.
+- `extractUrls`: The `extractUrls` function of the Feed method threw. The Feed method finds nothing, and the other methods run.
+- `platformHandler`: The `match` or `resolve` of a platform handler you passed in threw. That handler is skipped and the next one is tried.
 - `onProgress`: The progress callback threw, or returned a promise that rejected. The result it was called for is kept.
 
-A function you pass in never ends discovery by throwing. The phases above are reported here. A throw from `fetchFn` or `extractFn` on a candidate URL is not: it marks that result as invalid and lands in its `error` field, which you see with `includeInvalid`. A throw inside a platform handler, from its `match` or `resolve`, is not reported either: that handler is skipped silently and the next one is tried. The default `resolveUrlFn` is reported the same way as a custom one, for example when a page links to a malformed absolute URL. `resolveUrlFn` and `resolveSiteUrlFn` are synchronous: one that returns a promise is treated as returning nothing, and a rejection is reported. An error thrown from `onError` itself is ignored, and so is a promise it returns that rejects.
+A function you pass in never ends discovery by throwing. The phases above are reported here. A throw from `fetchFn` or `extractFn` on a candidate URL is not: it marks that result as invalid and lands in its `error` field, which you see with `includeInvalid`. A throw inside one of the built-in platform handlers is not reported either: that handler is skipped silently and the next one is tried. The default `resolveUrlFn` is reported the same way as a custom one, for example when a page links to a malformed absolute URL. `resolveUrlFn` and `resolveSiteUrlFn` are synchronous: one that returns a promise is treated as returning nothing, and a rejection is reported. An error thrown from `onError` itself is ignored, and so is a promise it returns that rejects.
 
 ## Fetch Types
 

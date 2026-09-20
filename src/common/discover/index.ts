@@ -9,6 +9,7 @@ import {
   discoverMethodOrder,
 } from '../types.js'
 import { discoverUris } from '../uris/index.js'
+import type { PlatformHandler } from '../uris/platform/types.js'
 import { processConcurrently, toPositiveInteger } from '../utils.js'
 import {
   attempt,
@@ -103,6 +104,44 @@ export const discover = async <TValid>(
     defaults,
     hasInputFetchFailed,
   )
+
+  // Step 2.5: Wrap the functions the caller passed to a method, so that a throw is reported. The
+  // methods keep swallowing it: extractUrls yields nothing, and the next handler is tried.
+  if (methodsConfig.feed) {
+    const { extractUrls } = methodsConfig.feed.options
+
+    methodsConfig.feed.options.extractUrls = (data) => {
+      return attempt(() => extractUrls(data), [], 'extractUrls', onError, sourceInput.url)
+    }
+  }
+
+  if (methodsConfig.platform) {
+    const builtInHandlers = defaults.platform?.handlers ?? []
+    const { options } = methodsConfig.platform
+
+    options.handlers = options.handlers.map((handler): PlatformHandler => {
+      if (builtInHandlers.includes(handler)) {
+        return handler
+      }
+
+      return {
+        match: (url, content, headers) => {
+          const match = () => handler.match(url, content, headers)
+
+          return attempt(match, false, 'platformHandler', onError, url)
+        },
+        resolve: async (url, content, headers, handlerFetchFn) => {
+          try {
+            return await handler.resolve(url, content, headers, handlerFetchFn)
+          } catch (error) {
+            reportError(onError, error, { phase: 'platformHandler', url })
+
+            throw error
+          }
+        },
+      }
+    })
+  }
 
   // Step 3: Discover URIs using selected methods.
   const urisByMethod = await discoverUris(methodsConfig, fetchFn)

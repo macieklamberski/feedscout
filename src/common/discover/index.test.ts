@@ -768,6 +768,64 @@ describe('discover', () => {
       expect(contexts).toEqual(expectedContexts)
     })
 
+    it('should report a custom handler whose match throws and try the next one', async () => {
+      const contexts: Array<DiscoverErrorContext> = []
+      const throwingHandler: PlatformHandler = {
+        match: () => {
+          throw new Error('Match failed')
+        },
+        resolve: () => [],
+      }
+      const workingHandler: PlatformHandler = {
+        match: () => true,
+        resolve: () => [{ uri: 'https://example.com/feed' }],
+      }
+      const value = await discoverFeeds(
+        { url: 'https://example.com', content: '<html></html>' },
+        {
+          methods: { platform: { handlers: [throwingHandler, workingHandler] } },
+          fetchFn: createMockFetch({ 'https://example.com/feed': rss }),
+          onError: (_error, context) => {
+            contexts.push(context)
+          },
+        },
+      )
+      const expectedContexts: Array<DiscoverErrorContext> = [
+        { phase: 'platformHandler', url: 'https://example.com' },
+      ]
+
+      expect(value.map((result) => result.url)).toEqual(['https://example.com/feed'])
+      expect(contexts).toEqual(expectedContexts)
+    })
+
+    it('should report a custom handler whose resolve rejects and try the next one', async () => {
+      const contexts: Array<DiscoverErrorContext> = []
+      const rejectingHandler: PlatformHandler = {
+        match: () => true,
+        resolve: () => Promise.reject(new Error('Resolve failed')),
+      }
+      const workingHandler: PlatformHandler = {
+        match: () => true,
+        resolve: () => [{ uri: 'https://example.com/feed' }],
+      }
+      const value = await discoverFeeds(
+        { url: 'https://example.com', content: '<html></html>' },
+        {
+          methods: { platform: { handlers: [rejectingHandler, workingHandler] } },
+          fetchFn: createMockFetch({ 'https://example.com/feed': rss }),
+          onError: (_error, context) => {
+            contexts.push(context)
+          },
+        },
+      )
+      const expectedContexts: Array<DiscoverErrorContext> = [
+        { phase: 'platformHandler', url: 'https://example.com' },
+      ]
+
+      expect(value.map((result) => result.url)).toEqual(['https://example.com/feed'])
+      expect(contexts).toEqual(expectedContexts)
+    })
+
     it('should keep discovering when onError itself throws', async () => {
       const mockFetch: DiscoverFetchFn = (url) => {
         if (url === 'https://example.com') {

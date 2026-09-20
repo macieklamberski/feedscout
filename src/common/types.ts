@@ -74,6 +74,8 @@ export type DiscoverErrorContext = {
     | 'resolveUrlFn'
     | 'resolveSiteUrlFn'
     | 'extractFn'
+    | 'extractUrls'
+    | 'platformHandler'
     | 'onProgress'
   url?: string
 }
