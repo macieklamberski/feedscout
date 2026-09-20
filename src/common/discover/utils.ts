@@ -62,6 +62,10 @@ export const getFeedSiteUrl = (parsed: ReturnType<typeof parseFeed>): string | u
   }
 }
 
+const isThenable = (value: unknown): value is PromiseLike<unknown> => {
+  return isObject(value) && 'then' in value && typeof value.then === 'function'
+}
+
 // onError is where failures get reported, so an error thrown from it has nowhere to go. It is
 // swallowed, so that a broken callback cannot end discovery.
 export const reportError = (
@@ -70,7 +74,12 @@ export const reportError = (
   context: DiscoverErrorContext,
 ): void => {
   try {
-    onError?.(error, context)
+    const result: unknown = onError?.(error, context)
+
+    // A function typed as sync can still be async. Its rejection has nowhere to go either.
+    if (isThenable(result)) {
+      void Promise.resolve(result).catch(() => {})
+    }
   } catch {}
 }
 
@@ -92,10 +101,12 @@ export const attempt = <TValue, TFallback>(
   try {
     const result = callback()
 
-    // A function typed as sync can still be async. Its rejection would go unhandled, so it is
-    // reported the same way as a throw.
-    if (result instanceof Promise) {
-      result.catch((error) => reportError(onError, error, context))
+    // A function typed as sync can still be async. A promise is no value to a sync caller, so
+    // the fallback is used, and a rejection is reported the same way as a throw.
+    if (isThenable(result)) {
+      void Promise.resolve(result).catch((error) => reportError(onError, error, context))
+
+      return fallback
     }
 
     return result ?? fallback

@@ -637,6 +637,26 @@ describe('discover', () => {
       expect(contexts).toEqual(expectedContexts)
     })
 
+    it('should use the unresolved URL when resolveUrlFn is async', async () => {
+      const html = `
+        <link rel="alternate" type="application/rss+xml" href="https://example.com/feed.xml">
+      `
+      // @ts-expect-error: This is for testing purposes.
+      const asyncResolveUrlFn: DiscoverResolveUrlFn = (url, baseUrl) => {
+        return Promise.resolve(new URL(url, baseUrl).href)
+      }
+      const value = await discoverFeeds(
+        { url: 'https://example.com', content: html },
+        {
+          methods: ['html'],
+          fetchFn: createMockFetch({ 'https://example.com/feed.xml': rss }),
+          resolveUrlFn: asyncResolveUrlFn,
+        },
+      )
+
+      expect(value.map((result) => result.url)).toEqual(['https://example.com/feed.xml'])
+    })
+
     it('should report an extractFn that throws on the input and keep discovering', async () => {
       const contexts: Array<DiscoverErrorContext> = []
       const html = '<link rel="alternate" type="application/rss+xml" href="/feed.xml">'
