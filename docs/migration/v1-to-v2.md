@@ -29,8 +29,8 @@ Use this checklist to ensure a complete migration:
 - Replace `codebergHandler` with `giteaHandler` if you import it from `feedscout/platform`
 - Update code that matches on hint keys: `codeberg:*` is now `gitea:*`, `artstation:artwork-trending` is now `artstation:artwork-latest`, and `producthunt:topic` and `producthunt:category` are gone
 - Set `maxAncestorDepth: 0` and `sectionNames: []` on the Guess method if you need the 1.x set of guessed URLs
-- Add the new `phase` values to any exhaustive `switch` in your `onError` callback
-- Expect a failed input fetch to return results or an empty array, not to reject
+- Add the new `phase` values to any exhaustive `switch` in your `onError` callback, if you come from 1.10 or earlier
+- Expect a failed input fetch to return results or an empty array, not to reject, if you come from 1.10 or earlier
 
 ## Breaking Changes
 
@@ -234,14 +234,14 @@ const rootOnlyFeeds = await discoverFeeds('https://example.com/blog/post-slug/',
 
 ### Failures Are Reported, Not Thrown
 
-Discovery no longer rejects when the input URL cannot be fetched, or when a function you passed in throws. It skips what it cannot do, carries on, and reports the failure through `onError`.
+Discovery no longer rejects when the input URL cannot be fetched. It skips what it cannot do, carries on, and reports the failure through `onError`. A throw from `resolveUrlFn`, `resolveSiteUrlFn`, `onProgress`, or from `extractFn` on the input, is handled the same way. Version 1.11 already behaves like 2.x here, so this section applies when you come from 1.10 or earlier.
 
-- A failed input fetch used to reject with "HTML method requires content". It now returns whatever the URL-only methods find, which can be an empty array. An input object without content still throws, because that is a usage error.
+- A failed input fetch used to reject whenever a method that needs content or headers was selected. The message named the first such method: "HTML method requires content" from `discoverFeeds`, "Feed method requires content" from `discoverFavicons`. With only URL-based methods, such as `methods: ['guess']`, it already resolved. It now returns whatever the URL-only methods find, which can be an empty array. An input object without content still throws, because that is a usage error.
 - The `phase` of `DiscoverErrorContext` gained `resolveUrlFn`, `resolveSiteUrlFn`, `extractFn` and `onProgress`. An exhaustive `switch` on it stops compiling until the new cases are added.
 - `onError` is called for things that were silent before, such as a malformed absolute URL on a page.
 - `discoverHubs` accepts `onError` too.
 
-#### Before (1.x)
+#### Before (1.10 and earlier)
 ```typescript
 import { discoverFeeds } from 'feedscout'
 
@@ -252,7 +252,7 @@ try {
 }
 ```
 
-#### After (2.x)
+#### After (2.x and 1.11)
 ```typescript
 import { discoverFeeds } from 'feedscout'
 
