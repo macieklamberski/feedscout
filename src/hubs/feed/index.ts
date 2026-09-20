@@ -1,6 +1,5 @@
 import type { Atom } from 'feedsmith'
 import { parseFeed } from 'feedsmith'
-import { defaultResolveUrlFn } from '../../common/discover/defaults.js'
 import type { DiscoverResolveUrlFn } from '../../common/types.js'
 import type { HubResult } from '../discover/types.js'
 
@@ -16,7 +15,7 @@ const getLinksWithRel = (
 export const discoverHubsFromFeed = (
   content: string,
   baseUrl: string,
-  resolveUrlFn: DiscoverResolveUrlFn = defaultResolveUrlFn,
+  resolveUrlFn: DiscoverResolveUrlFn,
 ): Array<HubResult> => {
   try {
     const { format, feed } = parseFeed(content)
