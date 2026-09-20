@@ -134,6 +134,23 @@ describe('youtubeHandler', () => {
       expect(youtubeHandler.resolve(value, content)).toEqual(expectedChannelFeeds)
     })
 
+    it('should prefer the channel own externalId over a featured channel ID on a channel page', () => {
+      const value = 'https://youtube.com/@testchannel'
+      const content = `
+        {"channelId":"UC0000000000"}
+        {"externalId":"UC1234567890"}
+      `
+
+      expect(youtubeHandler.resolve(value, content)).toEqual(expectedChannelFeeds)
+    })
+
+    it('should extract channel ID from externalChannelId on a video page', () => {
+      const value = 'https://youtube.com/watch?v=dQw4w9WgXcQ'
+      const content = '{"externalChannelId":"UC1234567890"}'
+
+      expect(youtubeHandler.resolve(value, content)).toEqual(expectedChannelFeeds)
+    })
+
     it('should return empty array when @handle content has no channel ID', () => {
       const value = 'https://youtube.com/@nonexistent'
 
