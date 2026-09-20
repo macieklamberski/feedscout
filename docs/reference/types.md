@@ -140,7 +140,7 @@ type DiscoverResult<TValid> =
     }
 ```
 
-The `method` field indicates which discovery method produced the result (`'platform'`, `'feed'`, `'html'`, `'headers'`, or `'guess'`). See [Platform method hints](/feeds/platform#hints) for details on the `hint` property.
+The `method` field indicates which discovery method produced the result (`'platform'`, `'feed'`, `'html'`, `'headers'`, or `'guess'`). It is absent when the input itself is a valid feed, because no method produced that result. See [Platform method hints](/feeds/platform#hints) for details on the `hint` property.
 
 ### FeedResult
 
@@ -258,14 +258,14 @@ type DiscoverErrorContext = {
 }
 ```
 
-- `fetchInput`: Fetching the input URL failed, or the response left a method without the content or headers it needs. Each such method is skipped and reported, and discovery continues with the rest, so Platform and Guess still run on a host that is down. An input object you pass in is different: missing content or headers there is a usage error and throws.
+- `fetchInput`: Fetching the input URL failed. Methods that need its content or headers are skipped, and discovery continues with the rest, so Platform and Guess still run on a host that is down. A fetch that worked is different, and so is an input object you pass in: a method left without content or headers there is a usage error and throws.
 - `resolveSiteUrl`: Fetching the site URL taken from a feed failed. Discovery continues with the original input.
 - `resolveUrlFn`: The URL resolution function threw. The URL is kept as discovered.
 - `resolveSiteUrlFn`: The site URL resolution function threw. Discovery continues with the original input.
 - `extractFn`: The extractor threw on the input content. The input is not returned as a result, and the methods run.
 - `onProgress`: The progress callback threw, or returned a promise that rejected. The result it was called for is kept.
 
-A function you pass in never ends discovery by throwing. The phases above are reported here. A throw from `fetchFn` or `extractFn` on a candidate URL is not: it marks that result as invalid and lands in its `error` field, which you see with `includeInvalid`. The default `resolveUrlFn` is reported the same way as a custom one, for example when a page links to a malformed absolute URL. An error thrown from `onError` itself is ignored.
+A function you pass in never ends discovery by throwing. The phases above are reported here. A throw from `fetchFn` or `extractFn` on a candidate URL is not: it marks that result as invalid and lands in its `error` field, which you see with `includeInvalid`. A throw inside a platform handler, from its `match` or `resolve`, is not reported either: that handler is skipped silently and the next one is tried. The default `resolveUrlFn` is reported the same way as a custom one, for example when a page links to a malformed absolute URL. `resolveUrlFn` and `resolveSiteUrlFn` are synchronous: one that returns a promise is treated as returning nothing, and a rejection is reported. An error thrown from `onError` itself is ignored, and so is a promise it returns that rejects.
 
 ## Fetch Types
 
