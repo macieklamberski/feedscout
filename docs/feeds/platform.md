@@ -94,7 +94,9 @@ Discovers RSS feeds for Substack newsletters.
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | `*.substack.com` | Newsletter feed |
-| `substack.com/@{user}` | Newsletter feed |
+| `substack.com/@{user}` | Newsletter feed* |
+
+\* *The publication can differ from the handle and can sit on a custom domain. It is read from the page content when available, with the handle as the fallback.*
 
 ### WordPress.com
 
@@ -616,7 +618,9 @@ Discovers RSS feeds for Transistor-hosted podcasts.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `*.transistor.fm` | Podcast feed |
+| `*.transistor.fm` | Podcast feed* |
+
+\* *The feed slug can differ from the subdomain. It is read from the page content when available, with the subdomain as the fallback.*
 
 ### Velog
 
@@ -979,6 +983,9 @@ Discovers the Atom feed of a diaspora* profile. Detected by the `Diaspora.Page` 
 |-------------|-----------------|
 | `{pod}/u/{user}` | Posts feed (Atom) |
 | `{pod}/public/{user}` | Posts feed (Atom) |
+| `{pod}/people/{guid}` | Posts feed (Atom)* |
+
+\* *Requires HTML content to read the username from the profile's diaspora ID.*
 
 ### Jira
 

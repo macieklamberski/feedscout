@@ -4,8 +4,7 @@ import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic partly covers blog, tag, tildePath.
-// Handler needed for: userPath.
+// Generic partly covers blog, tag, tildePath, userPath.
 
 const usersPathRegex = /^\/(?:users\/|~)([^/]+)/
 const tagRegex = /^\/tag\/([^/]+)/
@@ -35,8 +34,9 @@ export const dreamwidthHandler: PlatformHandler = {
     if (isHostOf(url, ['www.dreamwidth.org', 'dreamwidth.org'])) {
       const userMatch = pathname.match(usersPathRegex)
 
+      // A username with `_` is served on a hostname with `-`.
       if (userMatch?.[1]) {
-        userOrigin = `https://${userMatch[1]}.dreamwidth.org`
+        userOrigin = `https://${userMatch[1].replaceAll('_', '-')}.dreamwidth.org`
       } else {
         return uris
       }
