@@ -3,15 +3,9 @@ import type { DiscoverUriEntry } from '../../../common/types.js'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 
-// Discoverability: Not discoverable without handler.
-//
-// MyAnimeList exposes per-user list feeds at
-// `myanimelist.net/rss.php?type={rw,rm,rrw,rrm}&u={user}` and site-wide feeds at
-// `myanimelist.net/rss/news.xml` and `myanimelist.net/rss/featured.xml`. None of
-// these are surfaced via HTML `<link rel="alternate">` on the corresponding human
-// pages (`/profile/`, `/animelist/`, `/news`, `/featured`). The handler maps the
-// profile/list/history/news/featured URL shapes onto the canonical `rss.php` query
-// or `/rss/*.xml` URLs and emits all four user list variants in one go.
+// Discoverability: Partially discoverable without handler.
+// Generic covers featured, news (html).
+// Handler needed for: animelist, mangalist, profile.
 
 const hosts = ['myanimelist.net', 'www.myanimelist.net']
 const userRegex = /^\/(?:profile|animelist|mangalist|history)\/([^/]+)/

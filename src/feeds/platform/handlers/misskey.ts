@@ -3,14 +3,7 @@ import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, hasAnyMeta } from '../../../common/utils.js'
 
 // Discoverability: Not discoverable without handler.
-//
-// Misskey exposes per-profile feeds at `{instance}/@{user}.{atom,rss,json}` — the
-// only feed routes registered by upstream `ClientServerService.ts` and built by
-// `FeedService.ts`. The handler is content-keyed via the `application-name` meta
-// tag, `Misskey` or the `Sharkey` fork, or the `<script id="misskey_meta">` tag
-// (instances are not enumerable by host) and emits all three format variants for
-// the same profile path; there are no per-tag, channel, antenna, or timeline feed
-// routes upstream.
+// Handler needed for: all shapes.
 
 const profileRegex = /^\/@([^/.]+)/
 const metaMarkers: Array<[string, string]> = [

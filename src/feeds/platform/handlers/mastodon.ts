@@ -5,15 +5,8 @@ import { composeHint } from '../../../common/utils.js'
 import { isMastodonHeaders, isMastodonHtml } from '../../../favicons/platform/handlers/mastodon.js'
 
 // Discoverability: Partially discoverable without handler.
-//
-// Mastodon instances serve RSS 2.0 per account at `/@{user}.rss`, per
-// hashtag at `/tags/{tag}.rss`, per-account-tag at
-// `/@{user}/tagged/{tag}.rss`, plus `with_replies.rss` and `media.rss`
-// profile variants. Detection is content-/header-keyed (no host whitelist):
-// the handler reads `<meta name="generator" content="Mastodon ...">`, the
-// `<div id="mastodon">` app root or the `Server: Mastodon` header. Profile HTML pages don't advertise these
-// variants via `<link rel="alternate">`, so the handler is what maps each
-// browse path to its `.rss` twin.
+// Generic covers profile (html).
+// Handler needed for: tag.
 
 const profileRegex = /^\/@([^/]+)/
 const taggedProfileRegex = /^\/@([^/]+)\/tagged\/([^/]+)/
