@@ -2,13 +2,8 @@ import { isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 
-// Discoverability: Not discoverable without handler.
-//
-// Sourcehut repository pages carry no `alternate` link. Commit and ref feeds
-// live at `/~{user}/{repo}/log/rss.xml` and `/~{user}/{repo}/refs/rss.xml`.
-//
-// The commit feed's own `<link>` holds a Python bytes repr,
-// `.../log/b'master'`, so the branch can never be read back out of it.
+// Discoverability: Partially discoverable without handler.
+// Generic partly covers log.
 
 const hosts = ['git.sr.ht']
 

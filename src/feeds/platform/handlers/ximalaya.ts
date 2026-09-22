@@ -3,13 +3,7 @@ import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 
 // Discoverability: Not discoverable without handler.
-//
-// Ximalaya exposes RSS 2.0 only for podcast albums, at
-// `www.ximalaya.com/album/{id}.xml` (with iTunes namespace and m4a
-// enclosures); album HTML pages are SPA shells that do not advertise the
-// feed via `<link rel="alternate">`, and no user/category/sound-level feed
-// exists. The handler extracts the numeric album id from both the canonical
-// `/album/{id}` form and the legacy `/{userid}/album/{id}` shape.
+// Handler needed for: all shapes.
 
 // Match /album/{id} (canonical) or /{userid}/album/{id} (legacy form).
 const albumRegex = /(?:^|\/)album\/(\d+)/

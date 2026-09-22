@@ -4,13 +4,7 @@ import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-//
-// Posthaven blogs expose a per-blog Atom feed at
-// `{sub}.posthaven.com/posts.atom`, advertised on the home page via
-// `<link rel="alternate" type="application/atom+xml">`. The handler adds
-// the undocumented but live per-tag feed at `/tag/{tag}.atom`, which tag
-// pages do not autodiscover (only the global posts feed appears in the
-// page head).
+// Generic covers blog (html), partly covers tag.
 
 const tagRegex = /^\/tag\/([^/]+)/
 

@@ -4,14 +4,7 @@ import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-//
-// Micro.blog serves per-user feeds under predictable Hugo-style paths on each
-// `{slug}.micro.blog` subdomain: `/feed.xml`, `/feed.json`, `/podcast.xml`,
-// `/podcast.json`, plus `/categories/{slug}/feed.{xml,json}`, `/archive/index.json`,
-// `/photos/index.json`, and `/replies.xml` when enabled. HTML autodiscovery is
-// present but may point off-platform when users configure custom domains
-// (e.g. `manton.micro.blog` advertises `www.manton.org/feed.xml`); the handler
-// guarantees the `{slug}.micro.blog/*` form regardless of redirect target.
+// Generic partly covers archive, blog, photos, replies.
 
 const categoryRegex = /^\/categories\/([^/]+)/
 

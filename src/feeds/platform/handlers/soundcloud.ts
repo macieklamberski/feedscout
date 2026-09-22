@@ -2,15 +2,7 @@ import { isAnyOf, isHostOf } from 'trousse'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 
-// Discoverability: Not discoverable without handler.
-//
-// SoundCloud profiles expose a per-user RSS feed at off-domain
-// `feeds.soundcloud.com/users/soundcloud:users:{id}/sounds.rss`, but the
-// profile HTML never emits `<link rel="alternate" type="application/rss+xml">`,
-// so generic discovery cannot find it. The handler extracts the numeric
-// user ID from the profile HTML (via `soundcloud://users:{id}` markers in
-// `al:ios:url`, `twitter:app:url:googleplay`, and `android-app`/`ios-app`
-// alternate links) and constructs the canonical feed URL.
+// Discoverability: Unmeasured, bot wall.
 
 const userIdRegex = /soundcloud:\/\/users:(\d+)/
 

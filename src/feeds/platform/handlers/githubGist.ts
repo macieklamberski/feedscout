@@ -3,14 +3,8 @@ import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-//
-// GitHub Gist exposes Atom feeds at `gist.github.com/{user}.atom`,
-// `/{user}/starred.atom`, `/{user}/forks.atom`, and `/discover.atom`, but
-// the user-facing gist pages do not advertise them via HTML
-// `<link rel="alternate">`. The handler is needed to map `/{user}`,
-// `/{user}/{gistId}` (collapsed to the user feed), `/{user}/starred`,
-// `/{user}/forks`, and `/discover` paths onto the corresponding `.atom`
-// URIs.
+// Generic covers starred, user (html).
+// Handler needed for: discover, forks.
 
 const gistRegex = /^\/([^/]+)\/([a-f0-9]+)/
 const starredRegex = /^\/([^/]+)\/starred\/?$/

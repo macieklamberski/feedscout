@@ -4,13 +4,8 @@ import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-//
-// YouTube exposes per-channel Atom feeds at
-// `youtube.com/feeds/videos.xml?channel_id=UC…`, and channel pages embed an
-// HTML `<link rel="alternate">` pointing at it. The handler is needed to
-// map the modern `/@handle`, `/user/{name}`, `/c/{name}`, `/shorts/…` and
-// `/live/…` URL shapes onto the canonical channel feed, and to derive
-// filtered playlist feeds (uploads, livestreams, shorts, popular, members).
+// Generic partly covers channelById.
+// Handler needed for: custom, handle, music, shortLink, user, watch.
 
 // A channel page also embeds the IDs of the channels it features, and a bare "channelId" matches
 // one of those before the page's own, which sits under "externalId". A video page has no

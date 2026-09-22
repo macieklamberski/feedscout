@@ -2,17 +2,8 @@ import { isHostOf } from 'trousse'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 
-// Discoverability: Partially discoverable without handler.
-//
-// Flickr serves its feeds from `/services/feeds/`, keyed by an NSID such as
-// `24662369@N07`. Photostream, favorites and group pages link theirs from
-// `<link rel="alternate">`; tag pages and the help forum link nothing. Only
-// a URL already carrying an NSID resolves without the page, because
-// `photos_public.gne?id={alias}` answers with a 404 page.
-//
-// `match` therefore tests the feed-bearing paths rather than the host alone.
-// A vanity alias such as `/photos/thomashawk` is the common shape and yields
-// no feed, so claiming it would shadow the page-linked feed for nothing.
+// Discoverability: Not discoverable without handler.
+// Handler needed for: all shapes.
 
 const hosts = ['flickr.com', 'www.flickr.com']
 const feedsBase = 'https://www.flickr.com/services/feeds'

@@ -4,20 +4,8 @@ import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-//
-// Gitea and its Forgejo fork expose Atom and RSS for user/org activity
-// at `/{user}.atom|.rss` and repo activity at `/{user}/{repo}.atom|.rss`,
-// plus per-repo releases at `/{user}/{repo}/releases.atom|.rss` and tags at
-// `/{user}/{repo}/tags.atom|.rss`. The repo page advertises only the repo
-// activity feed via `<link rel="alternate">`; releases and tags are not autodiscovered.
-// The handler enumerates all three per-repo feeds.
-//
-// A self-hosted instance is matched by the session cookie Gitea sets on any page
-// carrying a CSRF token, so a repo page has it and the instance root does not.
-// The name is `i_like_gitea` by default and operators rename it by prefix, so
-// any cookie name ending in `gitea` counts: opendev.org serves the default and
-// git.fsfe.org serves `fsfe-gitea`. Forgejo sets no cookie anonymously, so
-// self-hosted Forgejo stays unmatched and the host list is what covers Codeberg.
+// Generic covers user (guess, html), partly covers issues, repo.
+// Handler needed for: branch.
 
 export const hosts = ['codeberg.org', 'www.codeberg.org', 'gitea.com', 'www.gitea.com']
 const giteaCookieRegex = /(?:^|[;,\s])[\w-]*gitea=/

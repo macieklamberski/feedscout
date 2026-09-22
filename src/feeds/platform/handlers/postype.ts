@@ -3,10 +3,7 @@ import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 
 // Discoverability: Not discoverable without handler.
-//
-// Postype channel pages carry no `alternate` link. A channel is addressed two
-// ways, `postype.com/@{id}` and `{id}.postype.com`, and each has its own feed
-// path. The reversed `/rss/@{id}` form is a 404.
+// Handler needed for: all shapes.
 
 const hosts = ['postype.com', 'www.postype.com']
 const domainSuffixRegex = /\.postype\.com$/i
