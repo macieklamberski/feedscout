@@ -63,6 +63,10 @@ export const myanimelistHandler: PlatformHandler = {
       uri: `https://myanimelist.net/rss.php?type=rrm&u=${user}`,
       hint: composeHint('myanimelist:recently-read'),
     })
+    uris.push({
+      uri: `https://myanimelist.net/rss.php?type=blog&u=${user}`,
+      hint: composeHint('myanimelist:blog'),
+    })
 
     return uris
   },

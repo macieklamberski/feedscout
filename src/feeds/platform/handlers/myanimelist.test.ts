@@ -20,7 +20,7 @@ describe('myanimelistHandler', () => {
   })
 
   describe('resolve', () => {
-    it('should return all four feeds for /profile/{user}', () => {
+    it('should return all five feeds for /profile/{user}', () => {
       const value = 'https://myanimelist.net/profile/Xinil'
       const expected = [
         {
@@ -38,6 +38,10 @@ describe('myanimelistHandler', () => {
         {
           uri: 'https://myanimelist.net/rss.php?type=rrm&u=Xinil',
           hint: { key: 'myanimelist:recently-read', label: 'Recently read' },
+        },
+        {
+          uri: 'https://myanimelist.net/rss.php?type=blog&u=Xinil',
+          hint: { key: 'myanimelist:blog', label: 'Blog' },
         },
       ]
 
@@ -63,6 +67,10 @@ describe('myanimelistHandler', () => {
           uri: 'https://myanimelist.net/rss.php?type=rrm&u=Xinil',
           hint: { key: 'myanimelist:recently-read', label: 'Recently read' },
         },
+        {
+          uri: 'https://myanimelist.net/rss.php?type=blog&u=Xinil',
+          hint: { key: 'myanimelist:blog', label: 'Blog' },
+        },
       ]
 
       expect(myanimelistHandler.resolve(value)).toEqual(expected)
@@ -87,6 +95,10 @@ describe('myanimelistHandler', () => {
           uri: 'https://myanimelist.net/rss.php?type=rrm&u=Xinil',
           hint: { key: 'myanimelist:recently-read', label: 'Recently read' },
         },
+        {
+          uri: 'https://myanimelist.net/rss.php?type=blog&u=Xinil',
+          hint: { key: 'myanimelist:blog', label: 'Blog' },
+        },
       ]
 
       expect(myanimelistHandler.resolve(value)).toEqual(expected)
@@ -110,6 +122,10 @@ describe('myanimelistHandler', () => {
         {
           uri: 'https://myanimelist.net/rss.php?type=rrm&u=Xinil',
           hint: { key: 'myanimelist:recently-read', label: 'Recently read' },
+        },
+        {
+          uri: 'https://myanimelist.net/rss.php?type=blog&u=Xinil',
+          hint: { key: 'myanimelist:blog', label: 'Blog' },
         },
       ]
 

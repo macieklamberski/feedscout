@@ -65,7 +65,7 @@ describe('flickrHandler', () => {
       expect(flickrHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return pool and discussion feeds for a group page', () => {
+    it('should return pool, discussion and location feeds for a group page', () => {
       const value = 'https://www.flickr.com/groups/42097308@N00/'
       const expected = [
         {
@@ -76,17 +76,25 @@ describe('flickrHandler', () => {
           uri: `${feedsBase}/groups_discuss.gne?id=42097308@N00`,
           hint: { key: 'flickr:group-discuss', label: 'Group discussions' },
         },
+        {
+          uri: `${feedsBase}/geo/?g=42097308@N00`,
+          hint: { key: 'flickr:group-geo', label: 'Group pool with location' },
+        },
       ]
 
       expect(flickrHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return only the pool feed for a group pool page', () => {
+    it('should return the pool and location feeds for a group pool page', () => {
       const value = 'https://www.flickr.com/groups/42097308@N00/pool/'
       const expected = [
         {
           uri: `${feedsBase}/groups_pool.gne?id=42097308@N00`,
           hint: { key: 'flickr:group-pool', label: 'Group pool' },
+        },
+        {
+          uri: `${feedsBase}/geo/?g=42097308@N00`,
+          hint: { key: 'flickr:group-geo', label: 'Group pool with location' },
         },
       ]
 

@@ -46,7 +46,23 @@ describe('xenforoHandler', () => {
           uri: 'https://example.com/f/general.17/index.rss',
           hint: { key: 'xenforo:forum', label: 'Forum' },
         },
-        { uri: 'https://example.com/index.rss', hint: { key: 'xenforo:site', label: 'Site' } },
+        { uri: 'https://example.com/f/-/index.rss', hint: { key: 'xenforo:site', label: 'Site' } },
+      ]
+
+      expect(xenforoHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return the forum and site feeds for a forum on the default route', () => {
+      const value = 'https://example.com/forums/general.17/'
+      const expected = [
+        {
+          uri: 'https://example.com/forums/general.17/index.rss',
+          hint: { key: 'xenforo:forum', label: 'Forum' },
+        },
+        {
+          uri: 'https://example.com/forums/-/index.rss',
+          hint: { key: 'xenforo:site', label: 'Site' },
+        },
       ]
 
       expect(xenforoHandler.resolve(value)).toEqual(expected)
@@ -55,7 +71,11 @@ describe('xenforoHandler', () => {
     it('should return only the site feed on a thread page', () => {
       const value = 'https://example.com/threads/a-thread.123/'
       const expected = [
-        { uri: 'https://example.com/index.rss', hint: { key: 'xenforo:site', label: 'Site' } },
+        {
+          uri: 'https://example.com/forums/-/index.rss',
+          hint: { key: 'xenforo:site', label: 'Site' },
+        },
+        { uri: 'https://example.com/f/-/index.rss', hint: { key: 'xenforo:site', label: 'Site' } },
       ]
 
       expect(xenforoHandler.resolve(value)).toEqual(expected)
