@@ -80,11 +80,11 @@ describe('githubGistHandler', () => {
       expect(githubGistHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return forks gists feed for user forks page', () => {
+    it('should return the forked gists feed for user forks page', () => {
       const value = 'https://gist.github.com/defunkt/forks'
       const expected = [
         {
-          uri: 'https://gist.github.com/defunkt/forks.atom',
+          uri: 'https://gist.github.com/defunkt/forked.atom',
           hint: { key: 'github-gist:forks', label: 'Forks' },
         },
       ]
@@ -92,11 +92,23 @@ describe('githubGistHandler', () => {
       expect(githubGistHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return forks gists feed with trailing slash', () => {
+    it('should return the forked gists feed for user forked page', () => {
+      const value = 'https://gist.github.com/defunkt/forked'
+      const expected = [
+        {
+          uri: 'https://gist.github.com/defunkt/forked.atom',
+          hint: { key: 'github-gist:forks', label: 'Forks' },
+        },
+      ]
+
+      expect(githubGistHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return the forked gists feed for user forks page with trailing slash', () => {
       const value = 'https://gist.github.com/defunkt/forks/'
       const expected = [
         {
-          uri: 'https://gist.github.com/defunkt/forks.atom',
+          uri: 'https://gist.github.com/defunkt/forked.atom',
           hint: { key: 'github-gist:forks', label: 'Forks' },
         },
       ]

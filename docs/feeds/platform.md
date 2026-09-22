@@ -182,14 +182,14 @@ Discovers Atom feeds for users, organizations, and repositories.
 
 ### GitHub Gist
 
-Discovers Atom feeds for GitHub Gist users, starred gists, forks, and the discover stream.
+Discovers Atom feeds for GitHub Gist users, starred gists, forked gists, and the discover stream.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | `gist.github.com/{username}` | User gists feed |
 | `gist.github.com/{username}/{gist-id}` | User gists feed |
 | `gist.github.com/{username}/starred` | User starred gists feed |
-| `gist.github.com/{username}/forks` | User forks feed |
+| `gist.github.com/{username}/forks` or `/forked` | User forked gists feed |
 | `gist.github.com/discover` | Discover gists feed |
 
 ### Gitea
@@ -292,13 +292,15 @@ Discovers RSS feeds for Tumblr blogs and tagged posts.
 
 ### Behance
 
-Discovers RSS feeds for Behance user portfolios and appreciated works, plus the homepage Featured-projects and Featured-by-Adobe gallery feeds.
+Discovers RSS feeds for Behance user portfolios, plus the homepage Featured-projects feed.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `behance.net` or `behance.net/galleries` | Featured projects + Featured by Adobe |
+| `behance.net` or `behance.net/galleries` | Featured projects |
 | `behance.net/{username}` | User portfolio feed |
-| `behance.net/{username}/appreciated` | User appreciated feed |
+| `behance.net/{username}/appreciated` | User portfolio feed* |
+
+\* *Behance ignores `content=appreciated` and serves the user's own projects, so the appreciated page gets the portfolio feed.*
 
 ### SoundCloud
 

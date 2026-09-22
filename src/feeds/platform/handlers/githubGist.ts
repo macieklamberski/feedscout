@@ -8,7 +8,7 @@ import { composeHint } from '../../../common/utils.js'
 
 const gistRegex = /^\/([^/]+)\/([a-f0-9]+)/
 const starredRegex = /^\/([^/]+)\/starred\/?$/
-const forksRegex = /^\/([^/]+)\/forks\/?$/
+const forksRegex = /^\/([^/]+)\/fork(?:s|ed)\/?$/
 const userRegex = /^\/([^/]+)\/?$/
 const discoverRegex = /^\/discover\/?$/
 
@@ -47,7 +47,9 @@ export const githubGistHandler: PlatformHandler = {
       ]
     }
 
-    // Match /{username}/forks pattern (user's forked gists page).
+    // Match /{username}/forks or /{username}/forked (user's forked gists page).
+    // GitHub serves `/{username}/forks.atom` as the user's own gists, and the forked
+    // gists only at `/{username}/forked.atom`.
     const forksMatch = pathname.match(forksRegex)
 
     if (forksMatch?.[1] && !isAnyOf(forksMatch[1], excludedPaths)) {
@@ -55,7 +57,7 @@ export const githubGistHandler: PlatformHandler = {
 
       return [
         {
-          uri: `https://gist.github.com/${username}/forks.atom`,
+          uri: `https://gist.github.com/${username}/forked.atom`,
           hint: composeHint('github-gist:forks'),
         },
       ]

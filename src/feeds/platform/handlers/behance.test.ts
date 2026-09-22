@@ -57,12 +57,12 @@ describe('behanceHandler', () => {
       expect(behanceHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return appreciated feed for appreciated page', () => {
+    it('should return the portfolio feed for the appreciated page', () => {
       const value = 'https://www.behance.net/johndoe/appreciated'
       const expected = [
         {
-          uri: 'https://www.behance.net/feeds/user?username=johndoe&content=appreciated',
-          hint: { key: 'behance:appreciated', label: 'Appreciated' },
+          uri: 'https://www.behance.net/feeds/user?username=johndoe',
+          hint: { key: 'behance:portfolio', label: 'Portfolio' },
         },
       ]
 
@@ -79,32 +79,24 @@ describe('behanceHandler', () => {
       expect(behanceHandler.resolve(value)).toEqual([])
     })
 
-    it('should return featured projects + Featured-by-Adobe feed for homepage', () => {
+    it('should return featured projects feed for homepage', () => {
       const value = 'https://www.behance.net/'
       const expected = [
         {
           uri: 'https://www.behance.net/feeds/projects',
           hint: { key: 'behance:projects', label: 'Featured projects' },
         },
-        {
-          uri: 'https://feeds.feedburner.com/behance/vorr',
-          hint: { key: 'behance:featured', label: 'Featured by Adobe' },
-        },
       ]
 
       expect(behanceHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return featured projects + Featured-by-Adobe feed for /galleries', () => {
+    it('should return featured projects feed for /galleries', () => {
       const value = 'https://www.behance.net/galleries'
       const expected = [
         {
           uri: 'https://www.behance.net/feeds/projects',
           hint: { key: 'behance:projects', label: 'Featured projects' },
-        },
-        {
-          uri: 'https://feeds.feedburner.com/behance/vorr',
-          hint: { key: 'behance:featured', label: 'Featured by Adobe' },
         },
       ]
 
