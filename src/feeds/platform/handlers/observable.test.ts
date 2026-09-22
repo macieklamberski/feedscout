@@ -56,6 +56,42 @@ describe('observableHandler', () => {
       expect(observableHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return feed URL for collection in the live form', () => {
+      const value = 'https://observablehq.com/@observablehq/-/collection/working-with-data'
+      const expected = [
+        {
+          uri: 'https://api.observablehq.com/collection/@observablehq/working-with-data.rss',
+          hint: { key: 'observable:collection', label: 'Collection' },
+        },
+      ]
+
+      expect(observableHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return recent feed for /public sorted by publish time', () => {
+      const value = 'https://observablehq.com/public?sort=publish_time'
+      const expected = [
+        {
+          uri: 'https://api.observablehq.com/documents/public.rss',
+          hint: { key: 'observable:recent', label: 'Recent' },
+        },
+      ]
+
+      expect(observableHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return trending feed for /public', () => {
+      const value = 'https://observablehq.com/public'
+      const expected = [
+        {
+          uri: 'https://api.observablehq.com/documents/trending.rss',
+          hint: { key: 'observable:trending', label: 'Trending' },
+        },
+      ]
+
+      expect(observableHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return empty array for root path', () => {
       const value = 'https://observablehq.com/'
 
