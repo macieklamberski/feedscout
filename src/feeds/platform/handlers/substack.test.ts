@@ -60,6 +60,34 @@ describe('substackHandler', () => {
       expect(substackHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return the custom domain feed a profile page names', () => {
+      const value = 'https://substack.com/@govtrackus'
+      const content =
+        '{\\"primaryPublication\\":{\\"id\\":4330724,\\"subdomain\\":\\"govtrack\\",\\"custom_domain\\":\\"substack.govtrack.us\\"}}'
+      const expected = [
+        {
+          uri: 'https://substack.govtrack.us/feed',
+          hint: { key: 'substack:newsletter', label: 'Newsletter' },
+        },
+      ]
+
+      expect(substackHandler.resolve(value, content)).toEqual(expected)
+    })
+
+    it('should return the publication subdomain feed when it differs from the handle', () => {
+      const value = 'https://substack.com/@govtrackus'
+      const content =
+        '{"primaryPublication":{"id":4330724,"subdomain":"govtrack","custom_domain":null}}'
+      const expected = [
+        {
+          uri: 'https://govtrack.substack.com/feed',
+          hint: { key: 'substack:newsletter', label: 'Newsletter' },
+        },
+      ]
+
+      expect(substackHandler.resolve(value, content)).toEqual(expected)
+    })
+
     it('should return feed URL for profile page with subpath', () => {
       const value = 'https://substack.com/@theconsciouslee/recommendations'
       const expected = [

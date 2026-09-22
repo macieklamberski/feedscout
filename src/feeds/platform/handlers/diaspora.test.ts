@@ -56,7 +56,7 @@ describe('diasporaHandler', () => {
       const value = 'https://example.org/u/alice'
       const expected = [
         {
-          uri: 'https://example.org/public/alice',
+          uri: 'https://example.org/public/alice.atom',
           hint: { key: 'diaspora:posts', label: 'Posts' },
         },
       ]
@@ -68,12 +68,37 @@ describe('diasporaHandler', () => {
       const value = 'https://example.org/public/alice'
       const expected = [
         {
-          uri: 'https://example.org/public/alice',
+          uri: 'https://example.org/public/alice.atom',
           hint: { key: 'diaspora:posts', label: 'Posts' },
         },
       ]
 
       expect(diasporaHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return the public feed by username for a people path', () => {
+      const value = 'https://example.org/people/a6d160218ed02ee7'
+      const content = `${diasporaHtml}<script>{"diaspora_id":"alice@example.org"}</script>`
+      const expected = [
+        {
+          uri: 'https://example.org/public/alice.atom',
+          hint: { key: 'diaspora:posts', label: 'Posts' },
+        },
+      ]
+
+      expect(diasporaHandler.resolve(value, content)).toEqual(expected)
+    })
+
+    it('should fall back to the guid for a people path without a diaspora ID', () => {
+      const value = 'https://example.org/people/a6d160218ed02ee7'
+      const expected = [
+        {
+          uri: 'https://example.org/public/a6d160218ed02ee7.atom',
+          hint: { key: 'diaspora:posts', label: 'Posts' },
+        },
+      ]
+
+      expect(diasporaHandler.resolve(value, diasporaHtml)).toEqual(expected)
     })
 
     it('should return an empty array for the pod root', () => {
