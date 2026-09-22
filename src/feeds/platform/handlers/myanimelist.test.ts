@@ -32,7 +32,7 @@ describe('myanimelistHandler', () => {
           hint: { key: 'myanimelist:manga', label: 'Manga list' },
         },
         {
-          uri: 'https://myanimelist.net/rss.php?type=rrw&u=Xinil',
+          uri: 'https://myanimelist.net/rss.php?type=rwe&u=Xinil',
           hint: { key: 'myanimelist:recently-watched', label: 'Recently watched' },
         },
         {
@@ -56,7 +56,7 @@ describe('myanimelistHandler', () => {
           hint: { key: 'myanimelist:manga', label: 'Manga list' },
         },
         {
-          uri: 'https://myanimelist.net/rss.php?type=rrw&u=Xinil',
+          uri: 'https://myanimelist.net/rss.php?type=rwe&u=Xinil',
           hint: { key: 'myanimelist:recently-watched', label: 'Recently watched' },
         },
         {
@@ -80,7 +80,7 @@ describe('myanimelistHandler', () => {
           hint: { key: 'myanimelist:manga', label: 'Manga list' },
         },
         {
-          uri: 'https://myanimelist.net/rss.php?type=rrw&u=Xinil',
+          uri: 'https://myanimelist.net/rss.php?type=rwe&u=Xinil',
           hint: { key: 'myanimelist:recently-watched', label: 'Recently watched' },
         },
         {
@@ -104,7 +104,7 @@ describe('myanimelistHandler', () => {
           hint: { key: 'myanimelist:manga', label: 'Manga list' },
         },
         {
-          uri: 'https://myanimelist.net/rss.php?type=rrw&u=Xinil',
+          uri: 'https://myanimelist.net/rss.php?type=rwe&u=Xinil',
           hint: { key: 'myanimelist:recently-watched', label: 'Recently watched' },
         },
         {

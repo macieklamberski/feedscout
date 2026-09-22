@@ -824,7 +824,9 @@ Discovers RSS feeds for Observable user notebooks and collections.
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | `observablehq.com/@{user}` | Notebooks feed |
-| `observablehq.com/@{user}/collection/{slug}` | Collection feed |
+| `observablehq.com/@{user}/collection/{slug}` or `/@{user}/-/collection/{slug}` | Collection feed |
+| `observablehq.com/recent` or `/public?sort=publish_time` | Recent feed |
+| `observablehq.com/trending` or `/public` | Trending feed |
 
 ### Pika
 

@@ -56,7 +56,7 @@ export const myanimelistHandler: PlatformHandler = {
       hint: composeHint('myanimelist:manga'),
     })
     uris.push({
-      uri: `https://myanimelist.net/rss.php?type=rrw&u=${user}`,
+      uri: `https://myanimelist.net/rss.php?type=rwe&u=${user}`,
       hint: composeHint('myanimelist:recently-watched'),
     })
     uris.push({
