@@ -2,14 +2,7 @@ import { isSubdomainOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 
-// Discoverability: Partially discoverable without handler.
-//
-// A Mailchimp campaign archive serves RSS at `/feed?u={u}&id={id}`. The archive
-// home page links it; a single-campaign URL does not, and that is where the
-// handler earns its place.
-//
-// The datacentre prefix such as `us17` is part of the host and cannot be
-// derived, so both it and the two ids come from the input URL.
+// Discoverability: Unmeasured, no public page.
 
 export const mailchimpHandler: PlatformHandler = {
   match: (url) => {

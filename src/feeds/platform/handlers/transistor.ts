@@ -2,14 +2,7 @@ import { isSubdomainOf } from 'trousse'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 
-// Discoverability: Not discoverable without handler.
-//
-// Transistor serves one canonical RSS feed per show off-domain at
-// `feeds.transistor.fm/{slug}`, and show pages link to it via
-// `<link rel="alternate">` so HTML autodiscovery technically works once
-// the show URL is fetched. The handler maps `{slug}.transistor.fm` directly
-// to the canonical feed without fetching, and skips reserved subdomains
-// (`www`, `share`, `support`, …) that would otherwise resolve to 404s.
+// Discoverability: Unmeasured, handler emits no feed.
 
 const domainSuffixRegex = /\.transistor\.fm$/i
 

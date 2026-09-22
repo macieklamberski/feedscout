@@ -2,15 +2,7 @@ import { isHostOf, isSubdomainOf } from 'trousse'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 
-// Discoverability: Partially discoverable without handler.
-//
-// Pagecord serves one canonical RSS feed per blog at `{slug}.pagecord.com/feed.xml`,
-// which the blog page advertises via HTML `<link rel="alternate" type="application/rss+xml">`.
-// No Atom or JSON Feed variants exist (`/feed.atom`, `/feed.json`, `/rss`, `/atom`,
-// `/tag/{tag}/feed.xml` all 404); the only alternative shape is the undocumented
-// `/feed` alias which simply duplicates the canonical URL. The handler emits the
-// canonical `/feed.xml` for any `*.pagecord.com` subdomain (excluding `www`),
-// avoiding a redundant alias entry and Pagecord's apex marketing redirect.
+// Discoverability: Discoverable without handler.
 
 export const pagecordHandler: PlatformHandler = {
   match: (url) => {

@@ -2,16 +2,7 @@ import { parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, hasMetaContent } from '../../../common/utils.js'
 
-// Discoverability: Partially discoverable without handler.
-//
-// Friendica instances expose per-user Atom feeds at
-// `{instance}/feed/{nickname}` plus `comments`, `replies`, and `activity`
-// variants, identified by `<meta name="generator" content="Friendica">` or
-// the `x-friendica-version` response header.
-// Profile pages link the posts feed via `<link rel="alternate">`, so
-// generic discovery finds it; the handler is kept to emit the additional
-// comments, replies, and activity variants that the HTML does not
-// advertise.
+// Discoverability: Unmeasured, bot wall.
 
 const profileRegex = /^\/profile\/([^/]+)/
 

@@ -3,15 +3,7 @@ import type { DiscoverUriEntry } from '../../../common/types.js'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 
-// Discoverability: Not discoverable without handler.
-//
-// GitHub serves Atom feeds at predictable suffixes — `/{user}.atom`,
-// `/{owner}/{repo}/{releases,commits,tags,wiki,discussions}.atom`,
-// `/commits/{branch}.atom`, `/commits/{branch}/{file}.atom`, and
-// `/discussions/categories/{slug}.atom` — but none of the HTML pages
-// advertise them via `<link rel="alternate">` or HTTP Link headers. The
-// handler is required to map user, repo, wiki, discussions, tree, blob,
-// and commit URLs onto the correct `.atom` endpoints.
+// Discoverability: Unmeasured, bot wall.
 
 const userRegex = /^\/([^/]+)\/?$/
 const repoRegex = /^\/([^/]+)\/([^/]+)/

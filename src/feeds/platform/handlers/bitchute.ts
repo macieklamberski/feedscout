@@ -3,10 +3,7 @@ import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 
 // Discoverability: Not discoverable without handler.
-//
-// BitChute channel pages carry only an oEmbed `alternate` link, so discovery
-// finds no feed. Channel RSS lives at `/feeds/rss/channel/{slug}/`, keyed by
-// the vanity slug that also appears in the channel URL.
+// Handler needed for: all shapes.
 
 const hosts = ['bitchute.com', 'www.bitchute.com']
 

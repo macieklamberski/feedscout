@@ -3,11 +3,6 @@ import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
-//
-// Hatena Bookmark links an RSS 1.0 feed from every listing page, so generic
-// discovery finds these already. The handler resolves them from the URL
-// alone, without fetching the page first, and keeps the search and site
-// feeds free of the UI defaults the page-level link bakes in.
 
 const hosts = ['b.hatena.ne.jp']
 const listRegex = /^\/(hotentry|entrylist)(?:\/([a-z]+))?\/?$/
