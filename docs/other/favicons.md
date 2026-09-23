@@ -68,6 +68,7 @@ The Platform method extracts avatars and icons directly from known platforms usi
 | Dev.to | Profile image | Public API, through an [enricher](#enriching-platform-icons) |
 | Steam | Game icon | Page HTML |
 | Letterboxd | Member avatar from member subpages, such as films and lists | Page HTML |
+| Micro.blog | User avatar | URL pattern |
 
 ## Enriching Platform Icons
 

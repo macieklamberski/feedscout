@@ -15,6 +15,7 @@ import { gitlabEnricher, gitlabHandler } from './platform/handlers/gitlab.js'
 import { letterboxdHandler } from './platform/handlers/letterboxd.js'
 import { lobstersHandler } from './platform/handlers/lobsters.js'
 import { mastodonEnricher, mastodonHandler } from './platform/handlers/mastodon.js'
+import { microblogHandler } from './platform/handlers/microblog.js'
 import { redditEnricher, redditHandler } from './platform/handlers/reddit.js'
 import { sourceforgeHandler } from './platform/handlers/sourceforge.js'
 import { steamHandler } from './platform/handlers/steam.js'
@@ -83,6 +84,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     gitlabHandler,
     letterboxdHandler,
     mastodonHandler,
+    microblogHandler,
     blueskyHandler,
     redditHandler,
     tumblrHandler,
