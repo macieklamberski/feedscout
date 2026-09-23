@@ -5,8 +5,8 @@ import { composeHint } from '../../../common/utils.js'
 // Discoverability: Not discoverable without handler.
 // Handler needed for: all shapes.
 
-const hosts = ['pinterest.com', 'www.pinterest.com', 'pin.it']
-const excludedPaths = [
+export const hosts = ['pinterest.com', 'www.pinterest.com', 'pin.it']
+export const excludedPaths = [
   '_',
   'about',
   'business',
