@@ -382,7 +382,7 @@ type FeedMethodOptions = {
 }
 ```
 
-`FeedMethodData` is the return type of Feedsmith's `parseFeed`. It contains `format` (e.g. `'atom'`, `'json'`) and `feed` (the parsed feed object). The `extractUrls` callback should return an array of URLs, or `undefined` when it finds none. For favicons, the default extractor pulls `icon` from Atom feeds and `favicon`/`icon` from JSON Feeds.
+`FeedMethodData` is the return type of Feedsmith's `parseFeed`. It contains `format` (e.g. `'atom'`, `'json'`) and `feed` (the parsed feed object). The `extractUrls` callback should return an array of URLs, or `undefined` when it finds none. For favicons, the default extractor pulls `icon` and `itunes:image` from Atom feeds, `itunes:image` from RSS feeds, and `favicon`/`icon` from JSON Feeds.
 
 ### HtmlMethodOptions
 
