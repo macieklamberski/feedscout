@@ -590,8 +590,8 @@
     "https://forums.bunsenlabs.org/extern.php?action=feed&tid=7520&type=atom"
   ],
   "mobilizon": [
-    "https://mobilizon.fr/@framasoft/feed/atom",
-    "https://mobilizon.fr/feed/instance/atom"
+    "https://events.graz.social/@business_news/feed/atom",
+    "https://events.graz.social/feed/instance/atom"
   ],
   "hubzilla": ["https://zotum.net/feed/hub"],
   "snac": ["https://comam.es/snac/grunfink.rss"],
