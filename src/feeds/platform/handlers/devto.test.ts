@@ -56,6 +56,7 @@ describe('devtoHandler', () => {
       const value = 'https://dev.to/latest'
       const expected = [
         { uri: 'https://dev.to/feed/latest', hint: { key: 'devto:latest', label: 'Latest' } },
+        { uri: 'https://dev.to/feed', hint: { key: 'devto:community', label: 'Community' } },
       ]
 
       expect(devtoHandler.resolve(value)).toEqual(expected)

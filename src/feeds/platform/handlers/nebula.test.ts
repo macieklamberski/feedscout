@@ -64,6 +64,10 @@ describe('nebulaHandler', () => {
           hint: { key: 'nebula:videos-all-plus', label: 'All Videos (Plus)' },
         },
         {
+          uri: 'https://rss.nebula.app/video/categories/originals.rss',
+          hint: { key: 'nebula:originals', label: 'Nebula Originals' },
+        },
+        {
           uri: 'https://rss.nebula.app/video/channels.rss',
           hint: { key: 'nebula:channels', label: 'Recently Added Channels' },
         },
@@ -82,6 +86,10 @@ describe('nebulaHandler', () => {
         {
           uri: 'https://rss.nebula.app/video.rss?plus=true',
           hint: { key: 'nebula:videos-all-plus', label: 'All Videos (Plus)' },
+        },
+        {
+          uri: 'https://rss.nebula.app/video/categories/originals.rss',
+          hint: { key: 'nebula:originals', label: 'Nebula Originals' },
         },
         {
           uri: 'https://rss.nebula.app/video/channels.rss',
@@ -104,6 +112,10 @@ describe('nebulaHandler', () => {
           hint: { key: 'nebula:videos-all-plus', label: 'All Videos (Plus)' },
         },
         {
+          uri: 'https://rss.nebula.app/video/categories/originals.rss',
+          hint: { key: 'nebula:originals', label: 'Nebula Originals' },
+        },
+        {
           uri: 'https://rss.nebula.app/video/channels.rss',
           hint: { key: 'nebula:channels', label: 'Recently Added Channels' },
         },
@@ -122,6 +134,10 @@ describe('nebulaHandler', () => {
         {
           uri: 'https://rss.nebula.app/video.rss?plus=true',
           hint: { key: 'nebula:videos-all-plus', label: 'All Videos (Plus)' },
+        },
+        {
+          uri: 'https://rss.nebula.app/video/categories/originals.rss',
+          hint: { key: 'nebula:originals', label: 'Nebula Originals' },
         },
         {
           uri: 'https://rss.nebula.app/video/channels.rss',
@@ -152,6 +168,10 @@ describe('nebulaHandler', () => {
           hint: { key: 'nebula:videos-all-plus', label: 'All Videos (Plus)' },
         },
         {
+          uri: 'https://rss.nebula.app/video/categories/originals.rss',
+          hint: { key: 'nebula:originals', label: 'Nebula Originals' },
+        },
+        {
           uri: 'https://rss.nebula.app/video/channels.rss',
           hint: { key: 'nebula:channels', label: 'Recently Added Channels' },
         },
@@ -178,6 +198,10 @@ describe('nebulaHandler', () => {
         {
           uri: 'https://rss.nebula.app/video.rss?plus=true',
           hint: { key: 'nebula:videos-all-plus', label: 'All Videos (Plus)' },
+        },
+        {
+          uri: 'https://rss.nebula.app/video/categories/originals.rss',
+          hint: { key: 'nebula:originals', label: 'Nebula Originals' },
         },
         {
           uri: 'https://rss.nebula.app/video/channels.rss',

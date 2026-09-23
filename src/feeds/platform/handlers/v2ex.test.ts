@@ -62,6 +62,7 @@ describe('v2exHandler', () => {
           uri: 'https://www.v2ex.com/feed/tab/tech.xml',
           hint: { key: 'v2ex:tab', label: 'Tab' },
         },
+        { uri: 'https://www.v2ex.com/index.xml', hint: { key: 'v2ex:index', label: 'Index' } },
       ]
 
       expect(v2exHandler.resolve(value)).toEqual(expected)
@@ -92,6 +93,7 @@ describe('v2exHandler', () => {
           uri: 'https://www.v2ex.com/feed/tab/tech.xml',
           hint: { key: 'v2ex:tab', label: 'Tab' },
         },
+        { uri: 'https://www.v2ex.com/index.xml', hint: { key: 'v2ex:index', label: 'Index' } },
       ]
 
       expect(v2exHandler.resolve(value)).toEqual(expected)

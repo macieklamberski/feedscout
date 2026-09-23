@@ -214,6 +214,7 @@ describe('itchioHandler', () => {
         },
         { uri: 'https://itch.io/feed/new.xml', hint: { key: 'itchio:new', label: 'New' } },
         { uri: 'https://itch.io/feed/sales.xml', hint: { key: 'itchio:sales', label: 'Sales' } },
+        { uri: 'https://itch.io/devlogs.xml', hint: { key: 'itchio:devlogs', label: 'Devlogs' } },
         { uri: 'https://itch.io/blog.rss', hint: { key: 'itchio:blog', label: 'Blog' } },
       ]
 
@@ -229,6 +230,7 @@ describe('itchioHandler', () => {
         },
         { uri: 'https://itch.io/feed/new.xml', hint: { key: 'itchio:new', label: 'New' } },
         { uri: 'https://itch.io/feed/sales.xml', hint: { key: 'itchio:sales', label: 'Sales' } },
+        { uri: 'https://itch.io/devlogs.xml', hint: { key: 'itchio:devlogs', label: 'Devlogs' } },
         { uri: 'https://itch.io/blog.rss', hint: { key: 'itchio:blog', label: 'Blog' } },
       ]
 
