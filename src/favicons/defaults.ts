@@ -36,10 +36,17 @@ export const defaultGuessPaths = [
 
 export const linkSelectors: Array<LinkSelector> = defaultIconRels.map((rel) => ({ rel }))
 
+// Podcast artwork in `itunes:image` must be square, which RSS `<image>` is not:
+// that one is a logo up to 144 by 400 pixels.
+// See: https://help.apple.com/itc/podcasts_connect/en.lproj/static.html.
 export const defaultFeedOptions: FeedMethodOptions = {
   extractUrls: ({ format, feed }) => {
     if (format === 'atom') {
-      return omitEmpty([feed.icon])
+      return omitEmpty([feed.icon, feed.itunes?.image])
+    }
+
+    if (format === 'rss') {
+      return omitEmpty([feed.itunes?.image])
     }
 
     if (format === 'json') {
