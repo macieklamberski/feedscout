@@ -3,7 +3,8 @@ import type { DiscoverUriEntry } from '../../../common/types.js'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 
-// Discoverability: Unmeasured, bot wall.
+// Discoverability: Not discoverable without handler.
+// Handler needed for: all shapes.
 
 const userRegex = /^\/([^/]+)\/?$/
 const repoRegex = /^\/([^/]+)\/([^/]+)/
