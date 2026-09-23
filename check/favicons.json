@@ -10,5 +10,6 @@
   "sourceforge": ["https://sourceforge.net/projects/vlc"],
   "deviantart": ["https://www.deviantart.com/yuumei"],
   "devto": ["https://dev.to/ben"],
-  "gitea": ["https://codeberg.org/forgejo"]
+  "gitea": ["https://codeberg.org/forgejo"],
+  "velog": ["https://velog.io/@velopert"]
 }

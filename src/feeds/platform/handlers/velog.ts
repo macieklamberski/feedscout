@@ -5,8 +5,8 @@ import { composeHint } from '../../../common/utils.js'
 // Discoverability: Not discoverable without handler.
 // Handler needed for: all shapes.
 
-const hosts = ['velog.io', 'www.velog.io']
-const userRegex = /^\/@([^/]+)/
+export const hosts = ['velog.io', 'www.velog.io']
+export const userRegex = /^\/@([^/]+)/
 
 export const velogHandler: PlatformHandler = {
   match: (url) => {

@@ -17,6 +17,7 @@ import { mastodonHandler } from './platform/handlers/mastodon.js'
 import { redditHandler } from './platform/handlers/reddit.js'
 import { sourceforgeHandler } from './platform/handlers/sourceforge.js'
 import { tumblrHandler } from './platform/handlers/tumblr.js'
+import { velogHandler } from './platform/handlers/velog.js'
 
 export const defaultIconRels = [
   'icon',
@@ -82,6 +83,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     blueskyHandler,
     redditHandler,
     tumblrHandler,
+    velogHandler,
     lobstersHandler,
     sourceforgeHandler,
     deviantartHandler,
