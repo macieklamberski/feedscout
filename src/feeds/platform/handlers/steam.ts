@@ -6,10 +6,10 @@ import { composeHint } from '../../../common/utils.js'
 // Handler needed for: all shapes.
 
 // An age-gated store page redirects to /agecheck/app/{id}.
-const appRegex = /^\/(?:agecheck\/|news\/)?app\/(\d+)/
+export const appRegex = /^\/(?:agecheck\/|news\/)?app\/(\d+)/
 const groupRegex = /^\/groups\/([^/]+)/
 
-const hosts = ['store.steampowered.com', 'steamcommunity.com']
+export const hosts = ['store.steampowered.com', 'steamcommunity.com']
 
 export const steamHandler: PlatformHandler = {
   match: (url) => {
