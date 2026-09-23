@@ -4,8 +4,8 @@ import { composeHint } from '../../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
-const hosts = ['letterboxd.com', 'www.letterboxd.com']
-const excludedPaths = [
+export const hosts = ['letterboxd.com', 'www.letterboxd.com']
+export const excludedPaths = [
   'about',
   'activity',
   'actor',

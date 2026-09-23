@@ -1,3 +1,4 @@
+| Letterboxd | Member avatar | Page HTML |
 ---
 title: Discover Favicons
 ---

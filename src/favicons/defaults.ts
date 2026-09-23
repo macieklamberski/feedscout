@@ -12,6 +12,7 @@ import { giteaHandler } from './platform/handlers/gitea.js'
 import { githubHandler } from './platform/handlers/github.js'
 import { githubGistHandler } from './platform/handlers/githubGist.js'
 import { gitlabHandler } from './platform/handlers/gitlab.js'
+import { letterboxdHandler } from './platform/handlers/letterboxd.js'
 import { lobstersHandler } from './platform/handlers/lobsters.js'
 import { mastodonHandler } from './platform/handlers/mastodon.js'
 import { redditHandler } from './platform/handlers/reddit.js'
@@ -79,6 +80,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     githubHandler,
     githubGistHandler,
     gitlabHandler,
+    letterboxdHandler,
     mastodonHandler,
     blueskyHandler,
     redditHandler,
