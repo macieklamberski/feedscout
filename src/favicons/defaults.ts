@@ -21,6 +21,7 @@ import { redditEnricher, redditHandler } from './platform/handlers/reddit.js'
 import { sourceforgeHandler } from './platform/handlers/sourceforge.js'
 import { steamHandler } from './platform/handlers/steam.js'
 import { tumblrHandler } from './platform/handlers/tumblr.js'
+import { youtubeHandler } from './platform/handlers/youtube.js'
 import type { FaviconEnricher } from './types.js'
 
 export const defaultIconRels = [
@@ -90,6 +91,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     blueskyHandler,
     redditHandler,
     tumblrHandler,
+    youtubeHandler,
     lobstersHandler,
     sourceforgeHandler,
     steamHandler,
