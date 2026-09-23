@@ -82,6 +82,18 @@ describe('letterboxdHandler', () => {
       expect(letterboxdHandler.resolve(value)).toEqual([])
     })
 
+    it('should return empty array for a film page', () => {
+      const value = 'https://letterboxd.com/film/barbie/'
+
+      expect(letterboxdHandler.resolve(value)).toEqual([])
+    })
+
+    it('should return empty array for a filmography page', () => {
+      const value = 'https://letterboxd.com/director/greta-gerwig/'
+
+      expect(letterboxdHandler.resolve(value)).toEqual([])
+    })
+
     it('should return empty array for sign-in page', () => {
       const value = 'https://letterboxd.com/sign-in/'
 
