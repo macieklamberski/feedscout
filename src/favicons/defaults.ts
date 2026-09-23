@@ -23,6 +23,7 @@ import { sourceforgeHandler } from './platform/handlers/sourceforge.js'
 import { steamHandler } from './platform/handlers/steam.js'
 import { tumblrHandler } from './platform/handlers/tumblr.js'
 import { youtubeHandler } from './platform/handlers/youtube.js'
+import { zennHandler } from './platform/handlers/zenn.js'
 import type { FaviconEnricher } from './types.js'
 
 export const defaultIconRels = [
@@ -94,6 +95,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     redditHandler,
     tumblrHandler,
     youtubeHandler,
+    zennHandler,
     lobstersHandler,
     sourceforgeHandler,
     steamHandler,

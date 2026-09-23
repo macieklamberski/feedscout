@@ -4,8 +4,8 @@ import { composeHint } from '../../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
-const hosts = ['zenn.dev', 'www.zenn.dev']
-const excludedPaths = [
+export const hosts = ['zenn.dev', 'www.zenn.dev']
+export const excludedPaths = [
   'about',
   'api',
   'articles',
@@ -22,9 +22,9 @@ const excludedPaths = [
   'terms',
   'topics',
 ]
-const topicRegex = /^\/topics\/([^/]+)/
-const publicationShortRegex = /^\/p\/([^/]+)/
-const publicationLongRegex = /^\/publications\/([^/]+)/
+export const topicRegex = /^\/topics\/([^/]+)/
+export const publicationShortRegex = /^\/p\/([^/]+)/
+export const publicationLongRegex = /^\/publications\/([^/]+)/
 
 export const zennHandler: PlatformHandler = {
   match: (url) => {
