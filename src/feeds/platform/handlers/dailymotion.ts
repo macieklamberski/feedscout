@@ -5,12 +5,12 @@ import { composeHint } from '../../../common/utils.js'
 // Discoverability: Not discoverable without handler.
 // Handler needed for: all shapes.
 
-const hosts = ['dailymotion.com', 'www.dailymotion.com']
-const userRegex = /^\/([a-zA-Z0-9_-]+)$/
-const playlistRegex = /^\/playlist\/([a-zA-Z0-9_-]+)/
+export const hosts = ['dailymotion.com', 'www.dailymotion.com']
+export const userRegex = /^\/([a-zA-Z0-9_-]+)$/
+export const playlistRegex = /^\/playlist\/([a-zA-Z0-9_-]+)/
 const channelRegex = /^\/channel\/([a-zA-Z0-9_-]+)/
 const searchRegex = /^\/search\/([^/]+)/
-const excludedPaths = [
+export const excludedPaths = [
   'signin',
   'signout',
   'signup',
