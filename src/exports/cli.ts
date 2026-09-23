@@ -148,9 +148,9 @@ const discoverCommand = (
   }
 }
 
-const discover = async () => {
+const discover = async (args: Array<string>) => {
   const { values, positionals } = parseArgs({
-    args: process.argv.slice(2),
+    args,
     options,
     allowPositionals: true,
   })
@@ -202,9 +202,9 @@ const discover = async () => {
   console.log(JSON.stringify(results, replacer, 2))
 }
 
-export const run = async () => {
+export const run = async (args = process.argv.slice(2)) => {
   try {
-    await discover()
+    await discover(args)
   } catch (error) {
     clearProgress()
     console.error(error instanceof Error ? error.message : error)
