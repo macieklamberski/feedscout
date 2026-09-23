@@ -44,6 +44,18 @@ describe('noteHandler', () => {
       expect(noteHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return the hashtag feed for the tag page it redirects to', () => {
+      const value = 'https://note.com/tag/AI'
+      const expected = [
+        {
+          uri: 'https://note.com/hashtag/AI/rss',
+          hint: { key: 'note:hashtag', label: 'Hashtag' },
+        },
+      ]
+
+      expect(noteHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return feed URL for hashtag page', () => {
       const value = 'https://note.com/hashtag/AI'
       const expected = [
