@@ -5,6 +5,7 @@ import {
 } from '../common/discover/defaults.js'
 import { discover } from '../common/discover/index.js'
 import type { DiscoverInput, DiscoverOptions, DiscoverResult } from '../common/types.js'
+import { methods as defaultMethods } from './config.js'
 import { defaultGuessOptions, defaultHeadersOptions, defaultHtmlOptions } from './defaults.js'
 import { defaultExtractFn } from './extractors.js'
 import type { BlogrollResult } from './types.js'
@@ -17,7 +18,7 @@ export const discoverBlogrolls = <TValid extends BlogrollResult = BlogrollResult
     input,
     {
       ...options,
-      methods: options.methods ?? ['html', 'headers', 'guess'],
+      methods: options.methods ?? [...defaultMethods],
       fetchFn: options.fetchFn ?? defaultFetchFn,
       extractFn: options.extractFn ?? defaultExtractFn,
       resolveUrlFn: options.resolveUrlFn ?? defaultResolveUrlFn,
