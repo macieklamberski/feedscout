@@ -22,6 +22,7 @@ import { microblogHandler } from './platform/handlers/microblog.js'
 import { naverBlogEnricher, naverBlogHandler } from './platform/handlers/naverBlog.js'
 import { nebulaEnricher, nebulaHandler } from './platform/handlers/nebula.js'
 import { pinterestEnricher, pinterestHandler } from './platform/handlers/pinterest.js'
+import { producthuntHandler } from './platform/handlers/producthunt.js'
 import { redditEnricher, redditHandler } from './platform/handlers/reddit.js'
 import { soundcloudHandler } from './platform/handlers/soundcloud.js'
 import { sourceforgeHandler } from './platform/handlers/sourceforge.js'
@@ -99,6 +100,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     pinterestHandler,
     nebulaHandler,
     naverBlogHandler,
+    producthuntHandler,
     blueskyHandler,
     redditHandler,
     soundcloudHandler,

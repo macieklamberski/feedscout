@@ -4,7 +4,7 @@ import { composeHint } from '../../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
-const hosts = ['producthunt.com', 'www.producthunt.com']
+export const hosts = ['producthunt.com', 'www.producthunt.com']
 
 export const producthuntHandler: PlatformHandler = {
   match: (url) => {
