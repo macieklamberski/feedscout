@@ -253,10 +253,13 @@ describe('peertubeHandler', () => {
         expect(result).toEqual(expected)
       })
 
-      it('should return empty array when only small avatars exist', async () => {
+      it('should pick the largest avatar when only small ones exist', async () => {
         const mockFetch = createMockFetch({
           'https://example.com/api/v1/video-channels/news': JSON.stringify({
-            avatars: [{ width: 48, path: '/lazy-static/avatars/48.png' }],
+            avatars: [
+              { width: 48, path: '/lazy-static/avatars/48.png' },
+              { width: 120, path: '/lazy-static/avatars/120.png' },
+            ],
           }),
         })
         const result = await peertubeHandler.resolve(
@@ -265,8 +268,11 @@ describe('peertubeHandler', () => {
           undefined,
           mockFetch,
         )
+        const expected: Array<DiscoverUriEntry> = [
+          { uri: 'https://example.com/lazy-static/avatars/120.png' },
+        ]
 
-        expect(result).toEqual([])
+        expect(result).toEqual(expected)
       })
 
       it('should resolve remote channel through the local instance API', async () => {

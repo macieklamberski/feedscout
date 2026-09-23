@@ -14,7 +14,6 @@ type Avatar = {
 }
 
 const avatarPathPrefix = '/lazy-static/avatars/'
-const preferredAvatarWidths = [1500, 600]
 
 const getApiUrl = (origin: string, pathname: string): string | undefined => {
   const channel = pathname.match(channelPathRegex)?.[1]
@@ -72,12 +71,12 @@ export const peertubeHandler: PlatformHandler = {
       const data = parseBodyJson(response.body)
       const avatars: Array<Avatar> = Array.isArray(data?.avatars) ? data.avatars : []
 
-      for (const width of preferredAvatarWidths) {
-        const avatar = avatars.find((candidate) => candidate.width === width)
+      const largest = avatars
+        .filter((avatar) => isNonEmptyString(avatar.path))
+        .sort((a, b) => (b.width ?? 0) - (a.width ?? 0))[0]
 
-        if (isNonEmptyString(avatar?.path)) {
-          return [{ uri: `${origin}${avatar.path}` }]
-        }
+      if (largest?.path) {
+        return [{ uri: `${origin}${largest.path}` }]
       }
     } catch {}
 
