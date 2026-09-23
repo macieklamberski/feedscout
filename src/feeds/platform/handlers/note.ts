@@ -6,8 +6,8 @@ import { composeHint } from '../../../common/utils.js'
 // Generic covers home, profile (guess, html).
 // Handler needed for: hashtag, magazine, tagRedirect.
 
-const hosts = ['note.com', 'www.note.com']
-const excludedPaths = [
+export const hosts = ['note.com', 'www.note.com']
+export const excludedPaths = [
   'about',
   'api',
   'explore',
@@ -27,7 +27,7 @@ const excludedPaths = [
 ]
 // A hashtag page redirects to `/tag/{tag}`, and the feed stays under `/hashtag`.
 const hashtagRegex = /^\/(?:hashtag|tag)\/([^/]+)/
-const magazineRegex = /^\/([^/]+)\/m\/([^/]+)/
+export const magazineRegex = /^\/([^/]+)\/m\/([^/]+)/
 
 export const noteHandler: PlatformHandler = {
   match: (url) => {
