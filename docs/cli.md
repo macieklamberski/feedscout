@@ -1,8 +1,8 @@
 ---
-title: Command Line
+title: CLI
 ---
 
-# Command Line
+# CLI
 
 Feedscout ships a `feedscout` command that runs the discover functions from a terminal and prints the results as JSON. It is useful for checking what a site exposes before writing any code, or for scripting discovery in a shell.
 

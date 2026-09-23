@@ -189,7 +189,7 @@ The same [existing content pattern](#using-existing-content) works here — pass
 ## Next Steps
 
 - Learn about [feed discovery](/feeds) in detail.
-- Run discovery from a terminal with the [command line](/cli).
+- Run discovery from a terminal with the [CLI](/cli).
 - Discover [Blogrolls](/other/blogrolls), [Favicons](/other/favicons), and [WebSub Hubs](/other/hubs).
 - Use different HTTP clients with [Customize Data Fetching](/customization/data-fetching).
 - See the full [API Reference](/reference).
