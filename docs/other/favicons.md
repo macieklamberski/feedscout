@@ -86,6 +86,7 @@ The Platform method extracts avatars and icons directly from known platforms usi
 | PeerTube (self-hosted) | Channel or account avatar | Page HTML, or the public API through an [enricher](#enriching-platform-icons) |
 | BookWyrm | User avatar | Page HTML, or the user's actor JSON through an [enricher](#enriching-platform-icons) for shelf pages |
 | Ameblo | Blogger profile image | Page HTML |
+| Pixelfed (self-hosted) | Profile avatar | Page HTML |
 
 ## Enriching Platform Icons
 

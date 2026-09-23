@@ -4,12 +4,12 @@ import { composeHint, hasAnyMeta } from '../../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
-const profileRegex = /^\/(?:users\/)?([a-zA-Z0-9_]+)\/?$/
+export const profileRegex = /^\/(?:users\/)?([a-zA-Z0-9_]+)\/?$/
 const metaMarkers: Array<[string, string]> = [
   ['generator', 'pixelfed'],
   ['application-name', 'Pixelfed'],
 ]
-const excludedPaths = [
+export const excludedPaths = [
   'admin',
   'api',
   'discover',
