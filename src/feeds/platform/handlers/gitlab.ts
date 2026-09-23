@@ -4,7 +4,6 @@ import { composeHint, hasMetaContent } from '../../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers group (guess, html), partly covers commits, project, tree.
-// Handler needed for: issues.
 
 export const hosts = ['gitlab.com', 'www.gitlab.com']
 export const excludedPaths = [

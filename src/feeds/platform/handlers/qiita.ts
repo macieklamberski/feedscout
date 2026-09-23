@@ -2,9 +2,7 @@ import { isAnyOf, isHostOf } from 'trousse'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 
-// Discoverability: Partially discoverable without handler.
-// Generic covers officialColumns, organization (guess, html).
-// Handler needed for: profile, tag.
+// Discoverability: Discoverable without handler.
 
 const hosts = ['qiita.com', 'www.qiita.com']
 const excludedPaths = [

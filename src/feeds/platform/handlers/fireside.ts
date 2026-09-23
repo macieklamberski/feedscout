@@ -3,7 +3,7 @@ import type { DiscoverUriEntry } from '../../../common/types.js'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 
-// Discoverability: Unmeasured, handler emits no feed.
+// Discoverability: Discoverable without handler.
 
 const domainSuffixRegex = /\.fireside\.fm$/i
 

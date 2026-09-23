@@ -4,8 +4,8 @@ import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic covers featured, news (html).
-// Handler needed for: animelist, mangalist, profile.
+// Generic covers featured, news (html), partly covers profile.
+// Handler needed for: animelist, mangalist.
 
 const hosts = ['myanimelist.net', 'www.myanimelist.net']
 const userRegex = /^\/(?:profile|animelist|mangalist|history)\/([^/]+)/
