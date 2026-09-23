@@ -595,7 +595,7 @@ Discovers RSS feeds for note.com, including hashtag and magazine feeds.
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | `note.com/{user}` | Blog feed |
-| `note.com/hashtag/{tag}` | Hashtag feed |
+| `note.com/hashtag/{tag}` or `note.com/tag/{tag}` | Hashtag feed |
 | `note.com/{user}/m/{magazineId}` | Magazine feed |
 
 ### Odysee
