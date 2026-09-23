@@ -45,6 +45,13 @@ describe('hubspotHandler', () => {
       expect(hubspotHandler.match(value, hubspotHtml, headers)).toBe(false)
     })
 
+    it('should match a blog page whose worker header is not valid JSON', () => {
+      const value = 'https://example.com/blog/some-post'
+      const headers = new Headers({ 'x-hs-cfworker-meta': '{"contentType":' })
+
+      expect(hubspotHandler.match(value, hubspotHtml, headers)).toBe(true)
+    })
+
     it('should not match without content', () => {
       expect(hubspotHandler.match('https://example.com/blog')).toBe(false)
     })
