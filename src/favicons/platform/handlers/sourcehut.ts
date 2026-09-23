@@ -47,8 +47,9 @@ export const sourcehutHandler: PlatformHandler = {
       return []
     }
 
-    if (content && getPathSegments(url).length === 1) {
-      return parseAvatar(content)
+    // A user page carries its own avatar, while a repository page needs its owner's page.
+    if (getPathSegments(url).length === 1) {
+      return content ? parseAvatar(content) : []
     }
 
     if (!fetchFn) {

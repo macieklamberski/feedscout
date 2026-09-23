@@ -103,19 +103,16 @@ describe('sourcehutHandler', () => {
 
         expect(await sourcehutHandler.resolve(value, '', undefined, fetchFn)).toEqual(expected)
       })
-
-      it('should fetch the user page when content is missing', async () => {
-        const fetchFn = createMockFetch({ 'https://todo.sr.ht/~example/': userPage })
-        const value = 'https://todo.sr.ht/~example'
-        const expected: Array<DiscoverUriEntry> = [{ uri: avatarUrl }]
-
-        expect(await sourcehutHandler.resolve(value, undefined, undefined, fetchFn)).toEqual(
-          expected,
-        )
-      })
     })
 
     describe('sad paths', () => {
+      it('should return empty array for a user page passed without its content', async () => {
+        const fetchFn = createMockFetch({ 'https://todo.sr.ht/~example/': userPage })
+        const value = 'https://todo.sr.ht/~example'
+
+        expect(await sourcehutHandler.resolve(value, undefined, undefined, fetchFn)).toEqual([])
+      })
+
       it('should return empty array for a user without an avatar', async () => {
         const value = 'https://sr.ht/~example/'
 
