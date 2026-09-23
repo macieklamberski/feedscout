@@ -81,6 +81,7 @@ The Platform method extracts avatars and icons directly from known platforms usi
 | Product Hunt | Product logo | Page HTML |
 | note | User avatar, or magazine owner avatar | Page HTML, Public API through an [enricher](#enriching-platform-icons) |
 | Togetter | User avatar | Page HTML |
+| Are.na | User avatar, or the channel owner's avatar | Page HTML, Public API |
 
 ## Enriching Platform Icons
 

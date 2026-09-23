@@ -4,8 +4,8 @@ import { composeHint } from '../../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
-const hosts = ['are.na', 'www.are.na']
-const excludedPaths = [
+export const hosts = ['are.na', 'www.are.na']
+export const excludedPaths = [
   'about',
   'api',
   'explore',
