@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'bun:test'
 import {
   composeHint,
+  getCookieNames,
   hasAnyMeta,
   hasMetaContent,
   isOfAllowedMimeType,
@@ -517,6 +518,27 @@ describe('processConcurrently', () => {
   it.todo('should not process items when concurrency is negative', () => {
     // Call processConcurrently with { concurrency: -1 } and a few items.
     // Expected: returns immediately without processing any item, same as concurrency 0.
+  })
+})
+
+describe('getCookieNames', () => {
+  it('should return every cookie name from a joined Set-Cookie value', () => {
+    const value = new Headers()
+    value.append('set-cookie', 'a_saltkey=x; expires=Fri, 23-Oct-2026 06:37:31 GMT; path=/')
+    value.append('set-cookie', 'a_lastvisit=1; path=/')
+    const expected = ['a_saltkey', 'a_lastvisit']
+
+    expect(getCookieNames(value)).toEqual(expected)
+  })
+
+  it('should not return cookie attributes', () => {
+    const value = new Headers({ 'set-cookie': 'session=abc; Path=/; Domain=example.com' })
+
+    expect(getCookieNames(value)).toEqual(['session'])
+  })
+
+  it('should return an empty array without Set-Cookie', () => {
+    expect(getCookieNames(new Headers())).toEqual([])
   })
 })
 
