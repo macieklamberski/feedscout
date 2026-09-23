@@ -33,15 +33,15 @@ export const wordpressHandler: PlatformHandler = {
 
       uris.push({
         uri: [`${base}/feed/`, `${base}/?feed=rss`, `${base}/feed/rss2/`, `${base}/?feed=rss2`],
-        hint: composeHint('wordpress:category-rss'),
+        hint: composeHint('wordpress:category', 'rss'),
       })
       uris.push({
         uri: [`${base}/feed/atom/`, `${base}/?feed=atom`],
-        hint: composeHint('wordpress:category-atom'),
+        hint: composeHint('wordpress:category', 'atom'),
       })
       uris.push({
         uri: [`${base}/feed/rdf/`, `${base}/?feed=rdf`],
-        hint: composeHint('wordpress:category-rdf'),
+        hint: composeHint('wordpress:category', 'rdf'),
       })
     }
 
@@ -54,15 +54,15 @@ export const wordpressHandler: PlatformHandler = {
 
       uris.push({
         uri: [`${base}/feed/`, `${base}/?feed=rss`, `${base}/feed/rss2/`, `${base}/?feed=rss2`],
-        hint: composeHint('wordpress:tag-rss'),
+        hint: composeHint('wordpress:tag', 'rss'),
       })
       uris.push({
         uri: [`${base}/feed/atom/`, `${base}/?feed=atom`],
-        hint: composeHint('wordpress:tag-atom'),
+        hint: composeHint('wordpress:tag', 'atom'),
       })
       uris.push({
         uri: [`${base}/feed/rdf/`, `${base}/?feed=rdf`],
-        hint: composeHint('wordpress:tag-rdf'),
+        hint: composeHint('wordpress:tag', 'rdf'),
       })
     }
 
@@ -75,15 +75,15 @@ export const wordpressHandler: PlatformHandler = {
 
       uris.push({
         uri: [`${base}/feed/`, `${base}/?feed=rss`, `${base}/feed/rss2/`, `${base}/?feed=rss2`],
-        hint: composeHint('wordpress:author-rss'),
+        hint: composeHint('wordpress:author', 'rss'),
       })
       uris.push({
         uri: [`${base}/feed/atom/`, `${base}/?feed=atom`],
-        hint: composeHint('wordpress:author-atom'),
+        hint: composeHint('wordpress:author', 'atom'),
       })
       uris.push({
         uri: [`${base}/feed/rdf/`, `${base}/?feed=rdf`],
-        hint: composeHint('wordpress:author-rdf'),
+        hint: composeHint('wordpress:author', 'rdf'),
       })
     }
 
@@ -96,15 +96,15 @@ export const wordpressHandler: PlatformHandler = {
 
       uris.push({
         uri: [`${base}/feed/`, `${base}/?feed=rss`, `${base}/feed/rss2/`, `${base}/?feed=rss2`],
-        hint: composeHint('wordpress:date-archive-rss'),
+        hint: composeHint('wordpress:date-archive', 'rss'),
       })
       uris.push({
         uri: [`${base}/feed/atom/`, `${base}/?feed=atom`],
-        hint: composeHint('wordpress:date-archive-atom'),
+        hint: composeHint('wordpress:date-archive', 'atom'),
       })
       uris.push({
         uri: [`${base}/feed/rdf/`, `${base}/?feed=rdf`],
-        hint: composeHint('wordpress:date-archive-rdf'),
+        hint: composeHint('wordpress:date-archive', 'rdf'),
       })
     }
 
@@ -117,15 +117,15 @@ export const wordpressHandler: PlatformHandler = {
 
       uris.push({
         uri: [`${base}/feed/`, `${base}/?feed=rss`, `${base}/feed/rss2/`, `${base}/?feed=rss2`],
-        hint: composeHint('wordpress:date-archive-rss'),
+        hint: composeHint('wordpress:date-archive', 'rss'),
       })
       uris.push({
         uri: [`${base}/feed/atom/`, `${base}/?feed=atom`],
-        hint: composeHint('wordpress:date-archive-atom'),
+        hint: composeHint('wordpress:date-archive', 'atom'),
       })
       uris.push({
         uri: [`${base}/feed/rdf/`, `${base}/?feed=rdf`],
-        hint: composeHint('wordpress:date-archive-rdf'),
+        hint: composeHint('wordpress:date-archive', 'rdf'),
       })
     }
 
@@ -138,15 +138,15 @@ export const wordpressHandler: PlatformHandler = {
 
       uris.push({
         uri: [`${base}/feed/`, `${base}/?feed=rss`, `${base}/feed/rss2/`, `${base}/?feed=rss2`],
-        hint: composeHint('wordpress:date-archive-rss'),
+        hint: composeHint('wordpress:date-archive', 'rss'),
       })
       uris.push({
         uri: [`${base}/feed/atom/`, `${base}/?feed=atom`],
-        hint: composeHint('wordpress:date-archive-atom'),
+        hint: composeHint('wordpress:date-archive', 'atom'),
       })
       uris.push({
         uri: [`${base}/feed/rdf/`, `${base}/?feed=rdf`],
-        hint: composeHint('wordpress:date-archive-rdf'),
+        hint: composeHint('wordpress:date-archive', 'rdf'),
       })
     }
 
@@ -158,15 +158,15 @@ export const wordpressHandler: PlatformHandler = {
 
       uris.push({
         uri: [`${base}/feed/`, `${base}/?feed=rss`, `${base}/feed/rss2/`, `${base}/?feed=rss2`],
-        hint: composeHint('wordpress:post-comments-rss'),
+        hint: composeHint('wordpress:post-comments', 'rss'),
       })
       uris.push({
         uri: [`${base}/feed/atom/`, `${base}/?feed=atom`],
-        hint: composeHint('wordpress:post-comments-atom'),
+        hint: composeHint('wordpress:post-comments', 'atom'),
       })
       uris.push({
         uri: [`${base}/feed/rdf/`, `${base}/?feed=rdf`],
-        hint: composeHint('wordpress:post-comments-rdf'),
+        hint: composeHint('wordpress:post-comments', 'rdf'),
       })
     }
 
@@ -178,15 +178,15 @@ export const wordpressHandler: PlatformHandler = {
         `${origin}/feed/rss2/`,
         `${origin}/?feed=rss2`,
       ],
-      hint: composeHint('wordpress:posts-rss'),
+      hint: composeHint('wordpress:posts', 'rss'),
     })
     uris.push({
       uri: [`${origin}/feed/atom/`, `${origin}/?feed=atom`],
-      hint: composeHint('wordpress:posts-atom'),
+      hint: composeHint('wordpress:posts', 'atom'),
     })
     uris.push({
       uri: [`${origin}/feed/rdf/`, `${origin}/?feed=rdf`],
-      hint: composeHint('wordpress:posts-rdf'),
+      hint: composeHint('wordpress:posts', 'rdf'),
     })
     uris.push({
       uri: [
@@ -195,15 +195,15 @@ export const wordpressHandler: PlatformHandler = {
         `${origin}/comments/feed/rss2/`,
         `${origin}/?feed=comments-rss2`,
       ],
-      hint: composeHint('wordpress:comments-rss'),
+      hint: composeHint('wordpress:comments', 'rss'),
     })
     uris.push({
       uri: [`${origin}/comments/feed/atom/`, `${origin}/?feed=comments-atom`],
-      hint: composeHint('wordpress:comments-atom'),
+      hint: composeHint('wordpress:comments', 'atom'),
     })
     uris.push({
       uri: [`${origin}/comments/feed/rdf/`, `${origin}/?feed=comments-rdf`],
-      hint: composeHint('wordpress:comments-rdf'),
+      hint: composeHint('wordpress:comments', 'rdf'),
     })
 
     return uris

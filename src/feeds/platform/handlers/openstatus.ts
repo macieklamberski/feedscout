@@ -26,8 +26,8 @@ export const openstatusHandler: PlatformHandler = {
     const { origin } = parsedUrl
 
     return [
-      { uri: `${origin}/feed/rss`, hint: composeHint('openstatus:updates-rss') },
-      { uri: `${origin}/feed/atom`, hint: composeHint('openstatus:updates-atom') },
+      { uri: `${origin}/feed/rss`, hint: composeHint('openstatus:updates', 'rss') },
+      { uri: `${origin}/feed/atom`, hint: composeHint('openstatus:updates', 'atom') },
     ]
   },
 }

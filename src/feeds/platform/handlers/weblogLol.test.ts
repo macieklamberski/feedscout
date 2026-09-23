@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'bun:test'
+import type { DiscoverUriEntry } from '../../../common/types.js'
 import { weblogLolHandler } from './weblogLol.js'
 
 describe('weblogLolHandler', () => {
@@ -22,18 +23,18 @@ describe('weblogLolHandler', () => {
   describe('resolve', () => {
     it('should return RSS, Atom, and JSON feeds for blog', () => {
       const value = 'https://robb.weblog.lol'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://robb.weblog.lol/rss.xml',
-          hint: { key: 'weblog-lol:posts-rss', label: 'Posts (RSS)' },
+          hint: { key: 'weblog-lol:posts', label: 'Posts', format: 'rss' },
         },
         {
           uri: 'https://robb.weblog.lol/atom.xml',
-          hint: { key: 'weblog-lol:posts-atom', label: 'Posts (Atom)' },
+          hint: { key: 'weblog-lol:posts', label: 'Posts', format: 'atom' },
         },
         {
           uri: 'https://robb.weblog.lol/feed.json',
-          hint: { key: 'weblog-lol:posts-json', label: 'Posts (JSON)' },
+          hint: { key: 'weblog-lol:posts', label: 'Posts', format: 'json' },
         },
       ]
 
@@ -42,18 +43,18 @@ describe('weblogLolHandler', () => {
 
     it('should return feed URLs regardless of path', () => {
       const value = 'https://robb.weblog.lol/some-article-slug'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://robb.weblog.lol/rss.xml',
-          hint: { key: 'weblog-lol:posts-rss', label: 'Posts (RSS)' },
+          hint: { key: 'weblog-lol:posts', label: 'Posts', format: 'rss' },
         },
         {
           uri: 'https://robb.weblog.lol/atom.xml',
-          hint: { key: 'weblog-lol:posts-atom', label: 'Posts (Atom)' },
+          hint: { key: 'weblog-lol:posts', label: 'Posts', format: 'atom' },
         },
         {
           uri: 'https://robb.weblog.lol/feed.json',
-          hint: { key: 'weblog-lol:posts-json', label: 'Posts (JSON)' },
+          hint: { key: 'weblog-lol:posts', label: 'Posts', format: 'json' },
         },
       ]
 

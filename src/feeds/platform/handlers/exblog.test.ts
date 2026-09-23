@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'bun:test'
+import type { DiscoverUriEntry } from '../../../common/types.js'
 import { exblogHandler } from './exblog.js'
 
 describe('exblogHandler', () => {
@@ -22,14 +23,14 @@ describe('exblogHandler', () => {
   describe('resolve', () => {
     it('should return RSS and Atom feeds for blog', () => {
       const value = 'https://petitcc.exblog.jp'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://petitcc.exblog.jp/index.xml',
-          hint: { key: 'exblog:posts-rss', label: 'Posts (RSS)' },
+          hint: { key: 'exblog:posts', label: 'Posts', format: 'rss' },
         },
         {
           uri: 'https://petitcc.exblog.jp/atom.xml',
-          hint: { key: 'exblog:posts-atom', label: 'Posts (Atom)' },
+          hint: { key: 'exblog:posts', label: 'Posts', format: 'atom' },
         },
       ]
 
@@ -38,22 +39,22 @@ describe('exblogHandler', () => {
 
     it('should return category feeds for category page', () => {
       const value = 'https://petitcc.exblog.jp/i2'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://petitcc.exblog.jp/i2/index.xml',
-          hint: { key: 'exblog:category-rss', label: 'Category (RSS)' },
+          hint: { key: 'exblog:category', label: 'Category', format: 'rss' },
         },
         {
           uri: 'https://petitcc.exblog.jp/i2/atom.xml',
-          hint: { key: 'exblog:category-atom', label: 'Category (Atom)' },
+          hint: { key: 'exblog:category', label: 'Category', format: 'atom' },
         },
         {
           uri: 'https://petitcc.exblog.jp/index.xml',
-          hint: { key: 'exblog:posts-rss', label: 'Posts (RSS)' },
+          hint: { key: 'exblog:posts', label: 'Posts', format: 'rss' },
         },
         {
           uri: 'https://petitcc.exblog.jp/atom.xml',
-          hint: { key: 'exblog:posts-atom', label: 'Posts (Atom)' },
+          hint: { key: 'exblog:posts', label: 'Posts', format: 'atom' },
         },
       ]
 
@@ -62,14 +63,14 @@ describe('exblogHandler', () => {
 
     it('should return feed URLs regardless of path', () => {
       const value = 'https://petitcc.exblog.jp/30123456/'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://petitcc.exblog.jp/index.xml',
-          hint: { key: 'exblog:posts-rss', label: 'Posts (RSS)' },
+          hint: { key: 'exblog:posts', label: 'Posts', format: 'rss' },
         },
         {
           uri: 'https://petitcc.exblog.jp/atom.xml',
-          hint: { key: 'exblog:posts-atom', label: 'Posts (Atom)' },
+          hint: { key: 'exblog:posts', label: 'Posts', format: 'atom' },
         },
       ]
 

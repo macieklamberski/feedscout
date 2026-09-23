@@ -27,11 +27,11 @@ export const tildesHandler: PlatformHandler = {
 
       uris.push({
         uri: `https://tildes.net/~${group}/topics.rss${tagSuffix}`,
-        hint: composeHint('tildes:group-rss'),
+        hint: composeHint('tildes:group', 'rss'),
       })
       uris.push({
         uri: `https://tildes.net/~${group}/topics.atom${tagSuffix}`,
-        hint: composeHint('tildes:group-atom'),
+        hint: composeHint('tildes:group', 'atom'),
       })
 
       return uris
@@ -41,11 +41,11 @@ export const tildesHandler: PlatformHandler = {
     if (pathname === '/' || pathname === '') {
       uris.push({
         uri: `https://tildes.net/topics.rss${tagSuffix}`,
-        hint: composeHint('tildes:topics-rss'),
+        hint: composeHint('tildes:topics', 'rss'),
       })
       uris.push({
         uri: `https://tildes.net/topics.atom${tagSuffix}`,
-        hint: composeHint('tildes:topics-atom'),
+        hint: composeHint('tildes:topics', 'atom'),
       })
     }
 

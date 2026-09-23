@@ -24,16 +24,16 @@ export const exblogHandler: PlatformHandler = {
 
       uris.push({
         uri: `${origin}/i${categoryId}/index.xml`,
-        hint: composeHint('exblog:category-rss'),
+        hint: composeHint('exblog:category', 'rss'),
       })
       uris.push({
         uri: `${origin}/i${categoryId}/atom.xml`,
-        hint: composeHint('exblog:category-atom'),
+        hint: composeHint('exblog:category', 'atom'),
       })
     }
 
-    uris.push({ uri: `${origin}/index.xml`, hint: composeHint('exblog:posts-rss') })
-    uris.push({ uri: `${origin}/atom.xml`, hint: composeHint('exblog:posts-atom') })
+    uris.push({ uri: `${origin}/index.xml`, hint: composeHint('exblog:posts', 'rss') })
+    uris.push({ uri: `${origin}/atom.xml`, hint: composeHint('exblog:posts', 'atom') })
 
     return uris
   },

@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'bun:test'
+import type { DiscoverUriEntry } from '../../../common/types.js'
 import { isOpenstatusHtml, openstatusHandler } from './openstatus.js'
 
 const openstatusHtml = `
@@ -75,14 +76,14 @@ describe('openstatusHandler', () => {
   describe('resolve', () => {
     it('should return the updates feeds', () => {
       const value = 'https://status.example.com/'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://status.example.com/feed/rss',
-          hint: { key: 'openstatus:updates-rss', label: 'Updates (RSS)' },
+          hint: { key: 'openstatus:updates', label: 'Updates', format: 'rss' },
         },
         {
           uri: 'https://status.example.com/feed/atom',
-          hint: { key: 'openstatus:updates-atom', label: 'Updates (Atom)' },
+          hint: { key: 'openstatus:updates', label: 'Updates', format: 'atom' },
         },
       ]
 

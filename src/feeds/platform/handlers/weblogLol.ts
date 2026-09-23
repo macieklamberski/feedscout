@@ -14,9 +14,9 @@ export const weblogLolHandler: PlatformHandler = {
     const { origin } = new URL(url)
     const uris: Array<DiscoverUriEntry> = []
 
-    uris.push({ uri: `${origin}/rss.xml`, hint: composeHint('weblog-lol:posts-rss') })
-    uris.push({ uri: `${origin}/atom.xml`, hint: composeHint('weblog-lol:posts-atom') })
-    uris.push({ uri: `${origin}/feed.json`, hint: composeHint('weblog-lol:posts-json') })
+    uris.push({ uri: `${origin}/rss.xml`, hint: composeHint('weblog-lol:posts', 'rss') })
+    uris.push({ uri: `${origin}/atom.xml`, hint: composeHint('weblog-lol:posts', 'atom') })
+    uris.push({ uri: `${origin}/feed.json`, hint: composeHint('weblog-lol:posts', 'json') })
 
     return uris
   },

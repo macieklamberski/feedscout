@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'bun:test'
+import type { DiscoverUriEntry } from '../../../common/types.js'
 import { firesideHandler } from './fireside.js'
 
 describe('firesideHandler', () => {
@@ -22,14 +23,14 @@ describe('firesideHandler', () => {
   describe('resolve', () => {
     it('should return RSS and JSON feeds for podcast', () => {
       const value = 'https://office.fireside.fm'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://feeds.fireside.fm/office/rss',
-          hint: { key: 'fireside:podcast-rss', label: 'Podcast (RSS)' },
+          hint: { key: 'fireside:podcast', label: 'Podcast', format: 'rss' },
         },
         {
           uri: 'https://office.fireside.fm/json',
-          hint: { key: 'fireside:podcast-json', label: 'Podcast (JSON)' },
+          hint: { key: 'fireside:podcast', label: 'Podcast', format: 'json' },
         },
       ]
 
@@ -38,14 +39,14 @@ describe('firesideHandler', () => {
 
     it('should return feed URLs regardless of path', () => {
       const value = 'https://office.fireside.fm/episodes/some-episode'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://feeds.fireside.fm/office/rss',
-          hint: { key: 'fireside:podcast-rss', label: 'Podcast (RSS)' },
+          hint: { key: 'fireside:podcast', label: 'Podcast', format: 'rss' },
         },
         {
           uri: 'https://office.fireside.fm/json',
-          hint: { key: 'fireside:podcast-json', label: 'Podcast (JSON)' },
+          hint: { key: 'fireside:podcast', label: 'Podcast', format: 'json' },
         },
       ]
 

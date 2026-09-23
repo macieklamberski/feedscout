@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'bun:test'
+import type { DiscoverUriEntry } from '../../../common/types.js'
 import { hatenablogHandler } from './hatenablog.js'
 
 describe('hatenablogHandler', () => {
@@ -30,14 +31,14 @@ describe('hatenablogHandler', () => {
   describe('resolve', () => {
     it('should return RSS and Atom feed URLs for blog', () => {
       const value = 'https://example.hatenablog.com'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://example.hatenablog.com/rss',
-          hint: { key: 'hatenablog:posts-rss', label: 'Posts (RSS)' },
+          hint: { key: 'hatenablog:posts', label: 'Posts', format: 'rss' },
         },
         {
           uri: 'https://example.hatenablog.com/feed',
-          hint: { key: 'hatenablog:posts-atom', label: 'Posts (Atom)' },
+          hint: { key: 'hatenablog:posts', label: 'Posts', format: 'atom' },
         },
       ]
 
@@ -46,14 +47,14 @@ describe('hatenablogHandler', () => {
 
     it('should return feed URLs for hatenablog.jp domain', () => {
       const value = 'https://example.hatenablog.jp/entry/2024/01/01'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://example.hatenablog.jp/rss',
-          hint: { key: 'hatenablog:posts-rss', label: 'Posts (RSS)' },
+          hint: { key: 'hatenablog:posts', label: 'Posts', format: 'rss' },
         },
         {
           uri: 'https://example.hatenablog.jp/feed',
-          hint: { key: 'hatenablog:posts-atom', label: 'Posts (Atom)' },
+          hint: { key: 'hatenablog:posts', label: 'Posts', format: 'atom' },
         },
       ]
 
@@ -62,14 +63,14 @@ describe('hatenablogHandler', () => {
 
     it('should return feed URLs for hateblo.jp domain', () => {
       const value = 'https://example.hateblo.jp'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://example.hateblo.jp/rss',
-          hint: { key: 'hatenablog:posts-rss', label: 'Posts (RSS)' },
+          hint: { key: 'hatenablog:posts', label: 'Posts', format: 'rss' },
         },
         {
           uri: 'https://example.hateblo.jp/feed',
-          hint: { key: 'hatenablog:posts-atom', label: 'Posts (Atom)' },
+          hint: { key: 'hatenablog:posts', label: 'Posts', format: 'atom' },
         },
       ]
 
@@ -78,22 +79,22 @@ describe('hatenablogHandler', () => {
 
     it('should return category feeds and main feeds for category page', () => {
       const value = 'https://example.hatenablog.com/archive/category/programming'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://example.hatenablog.com/rss/category/programming',
-          hint: { key: 'hatenablog:category-rss', label: 'Category (RSS)' },
+          hint: { key: 'hatenablog:category', label: 'Category', format: 'rss' },
         },
         {
           uri: 'https://example.hatenablog.com/feed/category/programming',
-          hint: { key: 'hatenablog:category-atom', label: 'Category (Atom)' },
+          hint: { key: 'hatenablog:category', label: 'Category', format: 'atom' },
         },
         {
           uri: 'https://example.hatenablog.com/rss',
-          hint: { key: 'hatenablog:posts-rss', label: 'Posts (RSS)' },
+          hint: { key: 'hatenablog:posts', label: 'Posts', format: 'rss' },
         },
         {
           uri: 'https://example.hatenablog.com/feed',
-          hint: { key: 'hatenablog:posts-atom', label: 'Posts (Atom)' },
+          hint: { key: 'hatenablog:posts', label: 'Posts', format: 'atom' },
         },
       ]
 
@@ -102,22 +103,22 @@ describe('hatenablogHandler', () => {
 
     it('should return author feeds and main feeds for author page', () => {
       const value = 'https://example.hatenablog.com/archive/author/tanaka'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://example.hatenablog.com/rss/author/tanaka',
-          hint: { key: 'hatenablog:author-rss', label: 'Author (RSS)' },
+          hint: { key: 'hatenablog:author', label: 'Author', format: 'rss' },
         },
         {
           uri: 'https://example.hatenablog.com/feed/author/tanaka',
-          hint: { key: 'hatenablog:author-atom', label: 'Author (Atom)' },
+          hint: { key: 'hatenablog:author', label: 'Author', format: 'atom' },
         },
         {
           uri: 'https://example.hatenablog.com/rss',
-          hint: { key: 'hatenablog:posts-rss', label: 'Posts (RSS)' },
+          hint: { key: 'hatenablog:posts', label: 'Posts', format: 'rss' },
         },
         {
           uri: 'https://example.hatenablog.com/feed',
-          hint: { key: 'hatenablog:posts-atom', label: 'Posts (Atom)' },
+          hint: { key: 'hatenablog:posts', label: 'Posts', format: 'atom' },
         },
       ]
 

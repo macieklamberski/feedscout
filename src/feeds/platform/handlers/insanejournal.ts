@@ -82,25 +82,25 @@ export const insanejournalHandler: PlatformHandler = {
 
       uris.push({
         uri: `${feedOrigin}${feedPathPrefix}/data/rss?tag=${tag}`,
-        hint: composeHint('insanejournal:posts-tag-rss'),
+        hint: composeHint('insanejournal:posts-tag', 'rss'),
       })
       uris.push({
         uri: `${feedOrigin}${feedPathPrefix}/data/atom?tag=${tag}`,
-        hint: composeHint('insanejournal:posts-tag-atom'),
+        hint: composeHint('insanejournal:posts-tag', 'atom'),
       })
     }
 
     uris.push({
       uri: `${feedOrigin}${feedPathPrefix}/data/rss`,
-      hint: composeHint('insanejournal:posts-rss'),
+      hint: composeHint('insanejournal:posts', 'rss'),
     })
     uris.push({
       uri: `${feedOrigin}${feedPathPrefix}/data/atom`,
-      hint: composeHint('insanejournal:posts-atom'),
+      hint: composeHint('insanejournal:posts', 'atom'),
     })
     uris.push({
       uri: `${feedOrigin}${feedPathPrefix}/data/userpics`,
-      hint: composeHint('insanejournal:userpics-atom'),
+      hint: composeHint('insanejournal:userpics', 'atom'),
     })
 
     return uris

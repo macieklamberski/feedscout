@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'bun:test'
+import type { DiscoverUriEntry } from '../../../common/types.js'
 import { isMisskeyHtml, misskeyHandler } from './misskey.js'
 
 const misskeyHtml = '<html><head><meta name="application-name" content="Misskey"></head></html>'
@@ -59,18 +60,18 @@ describe('misskeyHandler', () => {
   describe('resolve', () => {
     it('should return atom, rss, and json feeds for profile', () => {
       const value = 'https://misskey.io/@ai'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://misskey.io/@ai.atom',
-          hint: { key: 'misskey:posts-atom', label: 'Posts (Atom)' },
+          hint: { key: 'misskey:posts', label: 'Posts', format: 'atom' },
         },
         {
           uri: 'https://misskey.io/@ai.rss',
-          hint: { key: 'misskey:posts-rss', label: 'Posts (RSS)' },
+          hint: { key: 'misskey:posts', label: 'Posts', format: 'rss' },
         },
         {
           uri: 'https://misskey.io/@ai.json',
-          hint: { key: 'misskey:posts-json', label: 'Posts (JSON)' },
+          hint: { key: 'misskey:posts', label: 'Posts', format: 'json' },
         },
       ]
 
@@ -79,18 +80,18 @@ describe('misskeyHandler', () => {
 
     it('should return all three formats regardless of subpath', () => {
       const value = 'https://misskey.io/@ai/notes'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://misskey.io/@ai.atom',
-          hint: { key: 'misskey:posts-atom', label: 'Posts (Atom)' },
+          hint: { key: 'misskey:posts', label: 'Posts', format: 'atom' },
         },
         {
           uri: 'https://misskey.io/@ai.rss',
-          hint: { key: 'misskey:posts-rss', label: 'Posts (RSS)' },
+          hint: { key: 'misskey:posts', label: 'Posts', format: 'rss' },
         },
         {
           uri: 'https://misskey.io/@ai.json',
-          hint: { key: 'misskey:posts-json', label: 'Posts (JSON)' },
+          hint: { key: 'misskey:posts', label: 'Posts', format: 'json' },
         },
       ]
 

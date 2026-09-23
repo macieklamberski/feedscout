@@ -13,6 +13,7 @@ export type UriEntry = string | Array<string>
 export type DiscoverUriHint = {
   key: string
   label: string
+  format?: 'rss' | 'atom' | 'rdf' | 'json'
 }
 
 export type DiscoverUriEntry = {

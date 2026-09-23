@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'bun:test'
+import type { DiscoverUriEntry } from '../../../common/types.js'
 import { gravHandler, isGravHtml } from './grav.js'
 
 const gravHtml = '<meta name="generator" content="GravCMS" />'
@@ -51,14 +52,14 @@ describe('gravHandler', () => {
   describe('resolve', () => {
     it('should return the page feeds', () => {
       const value = 'https://example.com/blog'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://example.com/blog.rss',
-          hint: { key: 'grav:page-rss', label: 'Page (RSS)' },
+          hint: { key: 'grav:page', label: 'Page', format: 'rss' },
         },
         {
           uri: 'https://example.com/blog.atom',
-          hint: { key: 'grav:page-atom', label: 'Page (Atom)' },
+          hint: { key: 'grav:page', label: 'Page', format: 'atom' },
         },
       ]
 
@@ -67,14 +68,14 @@ describe('gravHandler', () => {
 
     it('should drop a trailing slash', () => {
       const value = 'https://example.com/blog/'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://example.com/blog.rss',
-          hint: { key: 'grav:page-rss', label: 'Page (RSS)' },
+          hint: { key: 'grav:page', label: 'Page', format: 'rss' },
         },
         {
           uri: 'https://example.com/blog.atom',
-          hint: { key: 'grav:page-atom', label: 'Page (Atom)' },
+          hint: { key: 'grav:page', label: 'Page', format: 'atom' },
         },
       ]
 
@@ -83,14 +84,14 @@ describe('gravHandler', () => {
 
     it('should keep the host of the site root', () => {
       const value = 'https://example.com/'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://example.com/.rss',
-          hint: { key: 'grav:page-rss', label: 'Page (RSS)' },
+          hint: { key: 'grav:page', label: 'Page', format: 'rss' },
         },
         {
           uri: 'https://example.com/.atom',
-          hint: { key: 'grav:page-atom', label: 'Page (Atom)' },
+          hint: { key: 'grav:page', label: 'Page', format: 'atom' },
         },
       ]
 

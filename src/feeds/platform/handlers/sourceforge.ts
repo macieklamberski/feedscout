@@ -37,19 +37,19 @@ export const sourceforgeHandler: PlatformHandler = {
         },
         {
           uri: `${origin}/p/${project}/news/feed.rss`,
-          hint: composeHint('sourceforge:news-rss'),
+          hint: composeHint('sourceforge:news', 'rss'),
         },
         {
           uri: `${origin}/p/${project}/news/feed.atom`,
-          hint: composeHint('sourceforge:news-atom'),
+          hint: composeHint('sourceforge:news', 'atom'),
         },
         {
           uri: `${origin}/p/${project}/discussion/feed`,
-          hint: composeHint('sourceforge:discussion'),
+          hint: composeHint('sourceforge:discussion', 'rss'),
         },
         {
           uri: `${origin}/p/${project}/discussion/feed.atom`,
-          hint: composeHint('sourceforge:discussion-atom'),
+          hint: composeHint('sourceforge:discussion', 'atom'),
         },
         {
           uri: `${origin}/p/${project}/bugs/feed`,

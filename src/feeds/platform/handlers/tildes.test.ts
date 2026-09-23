@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'bun:test'
+import type { DiscoverUriEntry } from '../../../common/types.js'
 import { tildesHandler } from './tildes.js'
 
 describe('tildesHandler', () => {
@@ -22,14 +23,14 @@ describe('tildesHandler', () => {
   describe('resolve', () => {
     it('should return RSS and Atom feeds for group', () => {
       const value = 'https://tildes.net/~tech'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://tildes.net/~tech/topics.rss',
-          hint: { key: 'tildes:group-rss', label: 'Group (RSS)' },
+          hint: { key: 'tildes:group', label: 'Group', format: 'rss' },
         },
         {
           uri: 'https://tildes.net/~tech/topics.atom',
-          hint: { key: 'tildes:group-atom', label: 'Group (Atom)' },
+          hint: { key: 'tildes:group', label: 'Group', format: 'atom' },
         },
       ]
 
@@ -38,14 +39,14 @@ describe('tildesHandler', () => {
 
     it('should return group feeds regardless of subpath', () => {
       const value = 'https://tildes.net/~tech/some-topic'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://tildes.net/~tech/topics.rss',
-          hint: { key: 'tildes:group-rss', label: 'Group (RSS)' },
+          hint: { key: 'tildes:group', label: 'Group', format: 'rss' },
         },
         {
           uri: 'https://tildes.net/~tech/topics.atom',
-          hint: { key: 'tildes:group-atom', label: 'Group (Atom)' },
+          hint: { key: 'tildes:group', label: 'Group', format: 'atom' },
         },
       ]
 
@@ -54,14 +55,14 @@ describe('tildesHandler', () => {
 
     it('should return global topics feeds for root path', () => {
       const value = 'https://tildes.net/'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://tildes.net/topics.rss',
-          hint: { key: 'tildes:topics-rss', label: 'Topics (RSS)' },
+          hint: { key: 'tildes:topics', label: 'Topics', format: 'rss' },
         },
         {
           uri: 'https://tildes.net/topics.atom',
-          hint: { key: 'tildes:topics-atom', label: 'Topics (Atom)' },
+          hint: { key: 'tildes:topics', label: 'Topics', format: 'atom' },
         },
       ]
 
@@ -76,14 +77,14 @@ describe('tildesHandler', () => {
 
     it('should pass through tag query on group feeds', () => {
       const value = 'https://tildes.net/~tech?tag=programming'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://tildes.net/~tech/topics.rss?tag=programming',
-          hint: { key: 'tildes:group-rss', label: 'Group (RSS)' },
+          hint: { key: 'tildes:group', label: 'Group', format: 'rss' },
         },
         {
           uri: 'https://tildes.net/~tech/topics.atom?tag=programming',
-          hint: { key: 'tildes:group-atom', label: 'Group (Atom)' },
+          hint: { key: 'tildes:group', label: 'Group', format: 'atom' },
         },
       ]
 
@@ -92,14 +93,14 @@ describe('tildesHandler', () => {
 
     it('should pass through tag query on global topics feeds', () => {
       const value = 'https://tildes.net/?tag=programming'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://tildes.net/topics.rss?tag=programming',
-          hint: { key: 'tildes:topics-rss', label: 'Topics (RSS)' },
+          hint: { key: 'tildes:topics', label: 'Topics', format: 'rss' },
         },
         {
           uri: 'https://tildes.net/topics.atom?tag=programming',
-          hint: { key: 'tildes:topics-atom', label: 'Topics (Atom)' },
+          hint: { key: 'tildes:topics', label: 'Topics', format: 'atom' },
         },
       ]
 

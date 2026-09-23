@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'bun:test'
+import type { DiscoverUriHint } from './types.js'
 import {
   composeHint,
   getCookieNames,
@@ -30,6 +31,20 @@ describe('composeHint', () => {
     }
 
     expect(composeHint(value)).toEqual(expected)
+  })
+
+  it('should return hint with format when a format is given', () => {
+    const expected: DiscoverUriHint = {
+      key: 'wordpress:posts',
+      label: 'Posts',
+      format: 'atom',
+    }
+
+    expect(composeHint('wordpress:posts', 'atom')).toEqual(expected)
+  })
+
+  it('should not return format when no format is given', () => {
+    expect(composeHint('youtube:all')).not.toHaveProperty('format')
   })
 
   it('should return undefined label for unknown key', () => {

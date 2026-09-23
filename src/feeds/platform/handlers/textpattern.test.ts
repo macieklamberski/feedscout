@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'bun:test'
+import type { DiscoverUriEntry } from '../../../common/types.js'
 import { isTextpatternHtml, textpatternHandler } from './textpattern.js'
 
 const textpatternHtml = '<meta name="generator" content="Textpattern CMS">'
@@ -40,14 +41,14 @@ describe('textpatternHandler', () => {
   describe('resolve', () => {
     it('should return the RSS and Atom feeds', () => {
       const value = 'https://example.com/article/1'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://example.com/rss',
-          hint: { key: 'textpattern:posts-rss', label: 'Posts (RSS)' },
+          hint: { key: 'textpattern:posts', label: 'Posts', format: 'rss' },
         },
         {
           uri: 'https://example.com/atom',
-          hint: { key: 'textpattern:posts-atom', label: 'Posts (Atom)' },
+          hint: { key: 'textpattern:posts', label: 'Posts', format: 'atom' },
         },
       ]
 

@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'bun:test'
+import type { DiscoverUriEntry } from '../../../common/types.js'
 import { seesaaHandler } from './seesaa.js'
 
 describe('seesaaHandler', () => {
@@ -22,14 +23,14 @@ describe('seesaaHandler', () => {
   describe('resolve', () => {
     it('should return RSS 2.0 and RDF feeds for blog', () => {
       const value = 'https://jetstream777.seesaa.net'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://jetstream777.seesaa.net/index20.rdf',
           hint: { key: 'seesaa:posts-rss2', label: 'Posts (RSS 2.0)' },
         },
         {
           uri: 'https://jetstream777.seesaa.net/index.rdf',
-          hint: { key: 'seesaa:posts-rdf', label: 'Posts (RDF)' },
+          hint: { key: 'seesaa:posts', label: 'Posts', format: 'rdf' },
         },
       ]
 
@@ -38,14 +39,14 @@ describe('seesaaHandler', () => {
 
     it('should return feed URLs regardless of path', () => {
       const value = 'https://jetstream777.seesaa.net/article/123.html'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://jetstream777.seesaa.net/index20.rdf',
           hint: { key: 'seesaa:posts-rss2', label: 'Posts (RSS 2.0)' },
         },
         {
           uri: 'https://jetstream777.seesaa.net/index.rdf',
-          hint: { key: 'seesaa:posts-rdf', label: 'Posts (RDF)' },
+          hint: { key: 'seesaa:posts', label: 'Posts', format: 'rdf' },
         },
       ]
 

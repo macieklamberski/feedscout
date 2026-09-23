@@ -32,15 +32,15 @@ export const amebloHandler: PlatformHandler = {
 
     uris.push({
       uri: `https://ameblo.jp/${username}/rss20.xml`,
-      hint: composeHint('ameblo:posts-rss'),
+      hint: composeHint('ameblo:posts', 'rss'),
     })
     uris.push({
       uri: `https://ameblo.jp/${username}/atom.xml`,
-      hint: composeHint('ameblo:posts-atom'),
+      hint: composeHint('ameblo:posts', 'atom'),
     })
     uris.push({
       uri: `https://rssblog.ameba.jp/${username}/rss.html`,
-      hint: composeHint('ameblo:posts-rdf'),
+      hint: composeHint('ameblo:posts', 'rdf'),
     })
 
     return uris
