@@ -9,13 +9,9 @@ const initialPropsRegex = /<script[^>]*id="__PWS_INITIAL_PROPS__"[^>]*>([\s\S]*?
 const defaultAvatarRegex = /\/images\/user\/default_/
 
 const getUsername = (url: string): string | undefined => {
-  const [username, subpage, ...rest] = getPathSegments(url)
+  const [username, ...rest] = getPathSegments(url)
 
   if (!username || isAnyOf(username, excludedPaths) || rest.length > 0) {
-    return
-  }
-
-  if (subpage && subpage !== '_saved') {
     return
   }
 
@@ -51,34 +47,19 @@ export const pinterestHandler: PlatformHandler = {
     return isHostOf(url, profileHosts) && !!getUsername(url)
   },
 
-  resolve: async (url, content, _headers, fetchFn) => {
+  resolve: (url, content) => {
     const username = getUsername(url)
 
-    if (!username) {
+    if (!username || !content) {
       return []
     }
 
-    const contentImage = findProfileImage(content ?? '', username)
+    const image = findProfileImage(content, username)
 
-    if (contentImage) {
-      return [{ uri: contentImage }]
-    }
-
-    if (!fetchFn) {
+    if (!image) {
       return []
     }
 
-    // The _saved page carries no user in its initial Redux state, only the profile page does.
-    try {
-      const response = await fetchFn(`https://www.pinterest.com/${username}/`)
-      const body = typeof response.body === 'string' ? response.body : ''
-      const fetchedImage = findProfileImage(body, username)
-
-      if (fetchedImage) {
-        return [{ uri: fetchedImage }]
-      }
-    } catch {}
-
-    return []
+    return [{ uri: image }]
   },
 }

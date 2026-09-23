@@ -1,16 +1,6 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverFetchFn, DiscoverUriEntry } from '../../../common/types.js'
+import type { DiscoverUriEntry } from '../../../common/types.js'
 import { pinterestHandler } from './pinterest.js'
-
-const createMockFetch = (responses: Record<string, string>): DiscoverFetchFn => {
-  return async (url: string) => ({
-    headers: new Headers(),
-    body: responses[url] ?? '',
-    url,
-    status: url in responses ? 200 : 404,
-    statusText: url in responses ? 'OK' : 'Not Found',
-  })
-}
 
 const createPageHtml = (users: Record<string, unknown>): string => {
   const props = JSON.stringify({ initialReduxState: { users } })
@@ -27,7 +17,6 @@ const profileHtml = createPageHtml({
       'https://i.pinimg.com/280x280_RS/37/a1/75/37a175e6d2431425576f0b8f81389394.jpg',
   },
 })
-const savedHtml = createPageHtml({ '': {} })
 const expectedIcon: Array<DiscoverUriEntry> = [
   { uri: 'https://i.pinimg.com/280x280_RS/37/a1/75/37a175e6d2431425576f0b8f81389394.jpg' },
 ]
@@ -39,8 +28,8 @@ describe('pinterestHandler', () => {
       expect(pinterestHandler.match('https://pinterest.com/alice/')).toBe(true)
     })
 
-    it('should match saved pages', () => {
-      expect(pinterestHandler.match('https://www.pinterest.com/alice/_saved/')).toBe(true)
+    it('should not match saved pages', () => {
+      expect(pinterestHandler.match('https://www.pinterest.com/alice/_saved/')).toBe(false)
     })
 
     it('should not match board pages', () => {
@@ -75,43 +64,16 @@ describe('pinterestHandler', () => {
 
   describe('resolve', () => {
     describe('happy paths', () => {
-      it('should return the avatar from the profile page content', async () => {
-        const result = await pinterestHandler.resolve(
-          'https://www.pinterest.com/alice/',
-          profileHtml,
-        )
-
-        expect(result).toEqual(expectedIcon)
-      })
-
-      it('should fetch the profile page for a saved page', async () => {
-        const mockFetch = createMockFetch({ 'https://www.pinterest.com/alice/': profileHtml })
-        const result = await pinterestHandler.resolve(
-          'https://www.pinterest.com/alice/_saved/',
-          savedHtml,
-          undefined,
-          mockFetch,
-        )
-
-        expect(result).toEqual(expectedIcon)
-      })
-
-      it('should fetch the profile page when no content is given', async () => {
-        const mockFetch = createMockFetch({ 'https://www.pinterest.com/alice/': profileHtml })
-        const result = await pinterestHandler.resolve(
-          'https://www.pinterest.com/alice',
-          undefined,
-          undefined,
-          mockFetch,
-        )
+      it('should return the avatar from the profile page content', () => {
+        const result = pinterestHandler.resolve('https://www.pinterest.com/alice/', profileHtml)
 
         expect(result).toEqual(expectedIcon)
       })
     })
 
     describe('sad paths', () => {
-      it('should return empty array for board pages', async () => {
-        const result = await pinterestHandler.resolve(
+      it('should return empty array for board pages', () => {
+        const result = pinterestHandler.resolve(
           'https://www.pinterest.com/alice/recipes/',
           profileHtml,
         )
@@ -119,88 +81,60 @@ describe('pinterestHandler', () => {
         expect(result).toEqual([])
       })
 
-      it('should return empty array for the default avatar', async () => {
+      it('should return empty array for the default avatar', () => {
         const html = createPageHtml({
           '1': {
             username: 'alice',
             image_xlarge_url: 'https://s.pinimg.com/images/user/default_280.png',
           },
         })
-        const result = await pinterestHandler.resolve('https://www.pinterest.com/alice/', html)
+        const result = pinterestHandler.resolve('https://www.pinterest.com/alice/', html)
 
         expect(result).toEqual([])
       })
 
-      it('should return empty array when image_xlarge_url is missing', async () => {
+      it('should return empty array when image_xlarge_url is missing', () => {
         const html = createPageHtml({ '1': { username: 'alice' } })
-        const result = await pinterestHandler.resolve('https://www.pinterest.com/alice/', html)
+        const result = pinterestHandler.resolve('https://www.pinterest.com/alice/', html)
 
         expect(result).toEqual([])
       })
 
-      it('should return empty array when the page lists another user', async () => {
-        const result = await pinterestHandler.resolve('https://www.pinterest.com/bob/', profileHtml)
+      it('should return empty array when the page lists another user', () => {
+        const result = pinterestHandler.resolve('https://www.pinterest.com/bob/', profileHtml)
 
         expect(result).toEqual([])
       })
 
-      it('should return empty array when the initial props are not valid JSON', async () => {
+      it('should return empty array when the initial props are not valid JSON', () => {
         const html = '<script id="__PWS_INITIAL_PROPS__" type="application/json">{not-json</script>'
-        const result = await pinterestHandler.resolve('https://www.pinterest.com/alice/', html)
+        const result = pinterestHandler.resolve('https://www.pinterest.com/alice/', html)
 
         expect(result).toEqual([])
       })
 
-      it('should return empty array when fetchFn is not provided', async () => {
-        const result = await pinterestHandler.resolve(
-          'https://www.pinterest.com/alice/_saved/',
-          savedHtml,
-        )
+      it('should return empty array when content is missing', () => {
+        const result = pinterestHandler.resolve('https://www.pinterest.com/alice/')
 
         expect(result).toEqual([])
       })
 
-      it('should return empty array when fetch throws', async () => {
-        const mockFetch: DiscoverFetchFn = () => {
-          throw new Error('Network error')
-        }
-        const result = await pinterestHandler.resolve(
-          'https://www.pinterest.com/alice/_saved/',
-          savedHtml,
-          undefined,
-          mockFetch,
-        )
+      it('should return empty array when the page has no initial props', () => {
+        const result = pinterestHandler.resolve('https://www.pinterest.com/alice/', '<html></html>')
 
         expect(result).toEqual([])
       })
 
-      it('should return empty array when the fetched page has no initial props', async () => {
-        const mockFetch = createMockFetch({
-          'https://www.pinterest.com/alice/': '<html></html>',
-        })
-        const result = await pinterestHandler.resolve(
-          'https://www.pinterest.com/alice/_saved/',
-          savedHtml,
-          undefined,
-          mockFetch,
-        )
-
-        expect(result).toEqual([])
-      })
-
-      it('should return empty array for invalid URL', async () => {
-        const result = await pinterestHandler.resolve('not-a-url', profileHtml)
+      it('should return empty array for invalid URL', () => {
+        const result = pinterestHandler.resolve('not-a-url', profileHtml)
 
         expect(result).toEqual([])
       })
     })
 
     describe('edge cases', () => {
-      it('should match the username case-insensitively', async () => {
-        const result = await pinterestHandler.resolve(
-          'https://www.pinterest.com/Alice/',
-          profileHtml,
-        )
+      it('should match the username case-insensitively', () => {
+        const result = pinterestHandler.resolve('https://www.pinterest.com/Alice/', profileHtml)
 
         expect(result).toEqual(expectedIcon)
       })
