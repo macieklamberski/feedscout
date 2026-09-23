@@ -1,8 +1,8 @@
-import { isHostOf, isNonEmptyString, parseUrl } from 'trousse'
+import { isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
-import { appRegex, hosts } from '../../../feeds/platform/handlers/steam.js'
-import { parseBodyJson } from '../../utils.js'
+import { hosts } from '../../../feeds/platform/handlers/steam.js'
 
+const appPathRegex = /^\/app\/\d+/
 const appIconRegex = /class="apphub_AppIcon">\s*<img src="([^"]+)"/
 
 export const steamHandler: PlatformHandler = {
@@ -13,43 +13,16 @@ export const steamHandler: PlatformHandler = {
       return false
     }
 
-    return isHostOf(url, hosts) && appRegex.test(parsedUrl.pathname)
+    return isHostOf(url, hosts) && appPathRegex.test(parsedUrl.pathname)
   },
 
-  resolve: async (url, content, _headers, fetchFn) => {
+  resolve: (_url, content) => {
     const appIconMatch = content?.match(appIconRegex)
 
-    if (appIconMatch?.[1]) {
-      return [{ uri: appIconMatch[1] }]
-    }
-
-    if (!fetchFn) {
+    if (!appIconMatch?.[1]) {
       return []
     }
 
-    try {
-      const { pathname } = new URL(url)
-      const appId = pathname.match(appRegex)?.[1]
-
-      if (!appId) {
-        return []
-      }
-
-      // Age-gated store pages and news pages carry no app icon in their markup.
-      const apiUrl = `https://api.steampowered.com/ICommunityService/GetApps/v1/?appids[0]=${appId}`
-      const response = await fetchFn(apiUrl)
-      const data = parseBodyJson(response.body)
-      const icon = data?.response?.apps?.[0]?.icon
-
-      if (!isNonEmptyString(icon)) {
-        return []
-      }
-
-      const iconUrl = `https://shared.fastly.steamstatic.com/community_assets/images/apps/${appId}/${icon}.jpg`
-
-      return [{ uri: iconUrl }]
-    } catch {}
-
-    return []
+    return [{ uri: appIconMatch[1] }]
   },
 }
