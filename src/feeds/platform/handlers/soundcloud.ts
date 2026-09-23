@@ -2,7 +2,8 @@ import { isAnyOf, isHostOf } from 'trousse'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 
-// Discoverability: Unmeasured, bot wall.
+// Discoverability: Not discoverable without handler.
+// Handler needed for: all shapes.
 
 const userIdRegex = /soundcloud:\/\/users:(\d+)/
 
