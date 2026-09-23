@@ -1,6 +1,7 @@
 import { defaultFetchFn, defaultResolveUrlFn } from '../common/discover/defaults.js'
 import { discover } from '../common/discover/index.js'
 import type { DiscoverInput, DiscoverOptions, DiscoverResult } from '../common/types.js'
+import { methods as defaultMethods } from './config.js'
 import {
   defaultGuessOptions,
   defaultHeadersOptions,
@@ -18,7 +19,7 @@ export const discoverFeeds = <TValid extends FeedResult = FeedResult>(
     input,
     {
       ...options,
-      methods: options.methods ?? ['platform', 'html', 'headers', 'guess'],
+      methods: options.methods ?? [...defaultMethods],
       fetchFn: options.fetchFn ?? defaultFetchFn,
       extractFn: options.extractFn ?? defaultExtractFn,
       resolveUrlFn: options.resolveUrlFn ?? defaultResolveUrlFn,

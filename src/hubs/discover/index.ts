@@ -4,6 +4,7 @@ import type { DiscoverInput } from '../../common/types.js'
 import { discoverHubsFromFeed } from '../feed/index.js'
 import { discoverHubsFromHeaders } from '../headers/index.js'
 import { discoverHubsFromHtml } from '../html/index.js'
+import { methods as defaultMethods } from './config.js'
 import type { DiscoverHubsOptions, HubResult } from './types.js'
 
 export const discoverHubs = async (
@@ -11,7 +12,7 @@ export const discoverHubs = async (
   options: DiscoverHubsOptions = {},
 ): Promise<Array<HubResult>> => {
   const {
-    methods = ['headers', 'feed', 'html'],
+    methods = [...defaultMethods],
     fetchFn = defaultFetchFn,
     resolveUrlFn = defaultResolveUrlFn,
     onError,
