@@ -75,7 +75,7 @@ The Platform method extracts avatars and icons directly from known platforms usi
 | Zenn | Profile, publication or topic icon | Page HTML |
 | Pinterest | Profile avatar | Page HTML, or the profile page through an [enricher](#enriching-platform-icons) for saved pages |
 | Nebula | Channel avatar | Page HTML, or the content API through an [enricher](#enriching-platform-icons) |
-| Naver Blog | Blog profile picture | Page HTML |
+| Naver Blog | Mobile blog profile picture | Page HTML |
 
 ## Enriching Platform Icons
 

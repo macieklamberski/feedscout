@@ -6,7 +6,7 @@ import { composeHint } from '../../../common/utils.js'
 // Generic covers blog (html).
 // Handler needed for: mobile.
 
-export const hosts = ['blog.naver.com', 'm.blog.naver.com']
+const hosts = ['blog.naver.com', 'm.blog.naver.com']
 
 export const naverBlogHandler: PlatformHandler = {
   match: (url) => {
