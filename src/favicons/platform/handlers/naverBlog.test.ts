@@ -111,8 +111,10 @@ describe('naverBlogHandler', () => {
 
         expect(result).toEqual(expected)
       })
+    })
 
-      it('should fetch mobile page when mobile content is missing', async () => {
+    describe('sad paths', () => {
+      it('should return empty array for a mobile page passed without its content', async () => {
         const mockFetch = createMockFetch({ 'https://m.blog.naver.com/alice': mobilePage })
         const result = await naverBlogHandler.resolve(
           'https://m.blog.naver.com/alice',
@@ -120,13 +122,10 @@ describe('naverBlogHandler', () => {
           undefined,
           mockFetch,
         )
-        const expected: Array<DiscoverUriEntry> = [{ uri: profileImage }]
 
-        expect(result).toEqual(expected)
+        expect(result).toEqual([])
       })
-    })
 
-    describe('sad paths', () => {
       it('should return empty array for placeholder image', async () => {
         const result = await naverBlogHandler.resolve(
           'https://m.blog.naver.com/alice',

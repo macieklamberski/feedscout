@@ -43,9 +43,9 @@ export const naverBlogHandler: PlatformHandler = {
         return []
       }
 
-      let page = hostname === mobileHost ? content : undefined
+      let page = content
 
-      if (!page && fetchFn) {
+      if (hostname !== mobileHost && fetchFn) {
         const response = await fetchFn(`https://${mobileHost}/${blogId}`)
         page = typeof response.body === 'string' ? response.body : undefined
       }
