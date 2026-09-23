@@ -1,9 +1,14 @@
+import { parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
-import { composeHint, hasMetaContent } from '../../../common/utils.js'
+import { composeHint, hasAnyMeta } from '../../../common/utils.js'
 
-// Discoverable without handler.
+// Discoverability: Discoverable without handler.
 
 const profileRegex = /^\/(?:users\/)?([a-zA-Z0-9_]+)\/?$/
+const metaMarkers: Array<[string, string]> = [
+  ['generator', 'pixelfed'],
+  ['application-name', 'Pixelfed'],
+]
 const excludedPaths = [
   'admin',
   'api',
@@ -21,42 +26,46 @@ const excludedPaths = [
 ]
 
 export const isPixelfedHtml = (content: string): boolean => {
-  return hasMetaContent(content, 'generator', 'pixelfed')
+  return hasAnyMeta(content, metaMarkers)
 }
 
 export const pixelfedHandler: PlatformHandler = {
   match: (url, content) => {
-    try {
-      if (!content || !isPixelfedHtml(content)) {
-        return false
-      }
+    if (!content || !isPixelfedHtml(content)) {
+      return false
+    }
 
-      const { pathname } = new URL(url)
-      const match = pathname.match(profileRegex)
+    const parsedUrl = parseUrl(url)
 
-      return Boolean(match?.[1] && !excludedPaths.includes(match[1]))
-    } catch {}
+    if (!parsedUrl) {
+      return false
+    }
 
-    return false
+    const { pathname } = parsedUrl
+    const match = pathname.match(profileRegex)
+
+    return Boolean(match?.[1] && !excludedPaths.includes(match[1]))
   },
 
   resolve: (url) => {
-    try {
-      const { origin, pathname } = new URL(url)
-      const match = pathname.match(profileRegex)
+    const parsedUrl = parseUrl(url)
 
-      if (!match?.[1] || excludedPaths.includes(match[1])) {
-        return []
-      }
+    if (!parsedUrl) {
+      return []
+    }
 
-      return [
-        {
-          uri: `${origin}/users/${match[1]}.atom`,
-          hint: composeHint('pixelfed:posts'),
-        },
-      ]
-    } catch {}
+    const { origin, pathname } = parsedUrl
+    const match = pathname.match(profileRegex)
 
-    return []
+    if (!match?.[1] || excludedPaths.includes(match[1])) {
+      return []
+    }
+
+    return [
+      {
+        uri: `${origin}/users/${match[1]}.atom`,
+        hint: composeHint('pixelfed:posts'),
+      },
+    ]
   },
 }

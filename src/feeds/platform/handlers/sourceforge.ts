@@ -1,7 +1,9 @@
+import { isHostOf } from 'trousse'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
-import { composeHint, isHostOf } from '../../../common/utils.js'
+import { composeHint } from '../../../common/utils.js'
 
-// Discoverable without handler.
+// Discoverability: Partially discoverable without handler.
+// Generic partly covers activity, files, project.
 
 export const hosts = ['sourceforge.net', 'www.sourceforge.net']
 

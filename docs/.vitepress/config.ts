@@ -1,3 +1,5 @@
+import { vitepress } from 'ogier/adapters'
+import { dark } from 'ogier/themes'
 import { defineConfig } from 'vitepress'
 
 const indexMdRegex = /index\.md$/
@@ -5,6 +7,20 @@ const mdRegex = /\.md$/
 const trailingSlashRegex = /\/$/
 
 const hostname = 'https://feedscout.dev'
+const og = vitepress({
+  site: { hostname, favicon: { file: new URL('../public/favicon.svg', import.meta.url) } },
+  card: {
+    header: {
+      text: 'feedscout',
+      icon: { file: new URL('../public/favicon.svg', import.meta.url) },
+    },
+    footer: {
+      text: 'macieklamberski/feedscout',
+      icon: { file: new URL('./github.svg', import.meta.url) },
+    },
+  },
+  style: { theme: { ...dark, accent: '#a2e57b' }, background: { pattern: 'dots' } },
+})
 
 export default defineConfig({
   title: 'Feedscout',
@@ -16,15 +32,17 @@ export default defineConfig({
   sitemap: {
     hostname,
   },
-  transformHead: ({ pageData }) => {
-    const canonicalUrl = `${hostname}/${pageData.relativePath}`
+  buildEnd: og.buildEnd,
+  transformHead: (context) => {
+    const canonicalUrl = `${hostname}/${context.pageData.relativePath}`
       .replace(indexMdRegex, '')
       .replace(mdRegex, '')
       .replace(trailingSlashRegex, '')
 
-    return [['link', { rel: 'canonical', href: canonicalUrl }]]
+    return [['link', { rel: 'canonical', href: canonicalUrl }], ...og.transformHead(context)]
   },
   head: [
+    ['link', { rel: 'icon', href: '/favicon.svg', type: 'image/svg+xml' }],
     ['meta', { property: 'og:site_name', content: 'Feedscout' }],
     [
       'script',
@@ -54,6 +72,13 @@ export default defineConfig({
       { text: 'Quick Start', link: '/quick-start' },
       { text: 'Discover Feeds', link: '/feeds' },
       { text: 'Customization', link: '/customization/data-fetching' },
+      {
+        text: 'v2.x',
+        items: [
+          { text: 'v2.x (Latest)', link: 'https://feedscout.dev', target: '_self' },
+          { text: 'v1.x', link: 'https://v1.feedscout.dev', target: '_self' },
+        ],
+      },
     ],
     sidebar: [
       {
@@ -107,6 +132,10 @@ export default defineConfig({
           { text: 'Types', link: '/reference/types' },
           { text: 'TypeScript', link: '/reference/typescript' },
         ],
+      },
+      {
+        text: 'Migration',
+        items: [{ text: 'From 1.x to 2.x', link: '/migration/v1-to-v2' }],
       },
     ],
     search: {

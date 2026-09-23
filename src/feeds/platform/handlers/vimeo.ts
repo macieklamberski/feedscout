@@ -1,7 +1,9 @@
+import { isAnyOf, isHostOf } from 'trousse'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
-import { composeHint, isAnyOf, isHostOf } from '../../../common/utils.js'
+import { composeHint } from '../../../common/utils.js'
 
-// Partially discoverable without handler.
+// Discoverability: Partially discoverable without handler.
+// Generic covers channel, group, user, userVideos (guess, html), partly covers likes.
 
 const numericRegex = /^\d+$/
 

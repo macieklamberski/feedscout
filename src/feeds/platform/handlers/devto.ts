@@ -1,7 +1,10 @@
+import { isAnyOf, isHostOf } from 'trousse'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
-import { composeHint, isAnyOf, isHostOf } from '../../../common/utils.js'
+import { composeHint } from '../../../common/utils.js'
 
-// Partially discoverable without handler.
+// Discoverability: Partially discoverable without handler.
+// Generic covers home, profile (guess, html), partly covers latest.
+// Handler needed for: tag.
 
 export const hosts = ['dev.to', 'www.dev.to']
 const userRegex = /^\/([a-zA-Z0-9_]+)\/?$/
@@ -41,7 +44,10 @@ export const devtoHandler: PlatformHandler = {
 
     // Latest sort: /latest.
     if (pathname === '/latest' || pathname === '/latest/') {
-      return [{ uri: 'https://dev.to/feed/latest', hint: composeHint('devto:latest') }]
+      return [
+        { uri: 'https://dev.to/feed/latest', hint: composeHint('devto:latest') },
+        { uri: 'https://dev.to/feed', hint: composeHint('devto:community') },
+      ]
     }
 
     // User profile: /username.

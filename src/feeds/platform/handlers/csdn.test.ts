@@ -3,13 +3,13 @@ import { csdnHandler } from './csdn.js'
 
 describe('csdnHandler', () => {
   describe('match', () => {
-    const cases = [
-      ['https://blog.csdn.net/csdnnews', true],
-      ['https://www.csdn.net/', false],
-      ['https://example.com', false],
-    ] as const
+    const values: Array<[boolean, string]> = [
+      [true, 'https://blog.csdn.net/csdnnews'],
+      [false, 'https://www.csdn.net/'],
+      [false, 'https://example.com'],
+    ]
 
-    it.each(cases)('%s -> %s', (url, expected) => {
+    it.each(values)('should return %s for %s', (expected, url) => {
       expect(csdnHandler.match(url)).toBe(expected)
     })
 
@@ -47,6 +47,11 @@ describe('csdnHandler', () => {
       const value = 'https://blog.csdn.net/'
 
       expect(csdnHandler.resolve(value)).toEqual([])
+    })
+
+    it.todo('should define behavior for invalid URL input', () => {
+      // resolve('not-a-url') currently throws a TypeError from the unguarded new URL call; the
+      // desired contract (throw vs empty array) is undecided.
     })
   })
 })

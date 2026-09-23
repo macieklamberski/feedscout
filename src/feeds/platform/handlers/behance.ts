@@ -1,11 +1,8 @@
+import { isAnyOf, isHostOf } from 'trousse'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
-import { composeHint, isAnyOf, isHostOf } from '../../../common/utils.js'
+import { composeHint } from '../../../common/utils.js'
 
-// Not discoverable without handler.
-//
-// HTML autodiscovery on behance.net pages returns the generic site feed
-// (feeds.feedburner.com/behance/vorr) regardless of profile, not the user-specific
-// feed. The handler is the only path to per-user feeds via /feeds/user?username={user}.
+// Discoverability: Unmeasured, bot wall.
 
 const hosts = ['behance.net', 'www.behance.net']
 const userRegex = /^\/([a-zA-Z0-9_-]+)(?:\/(appreciated))?\/?$/
@@ -37,16 +34,12 @@ export const behanceHandler: PlatformHandler = {
   resolve: (url) => {
     const { pathname } = new URL(url)
 
-    // Homepage: featured projects feed + Featured-by-Adobe gallery.
+    // Homepage: featured projects. The page's own FeedBurner link serves the same items.
     if (pathname === '/' || pathname === '' || pathname === '/galleries') {
       return [
         {
           uri: 'https://www.behance.net/feeds/projects',
           hint: composeHint('behance:projects'),
-        },
-        {
-          uri: 'https://feeds.feedburner.com/behance/vorr',
-          hint: composeHint('behance:featured'),
         },
       ]
     }
@@ -54,20 +47,12 @@ export const behanceHandler: PlatformHandler = {
     // User profile: /{username} or /{username}/appreciated
     const userMatch = pathname.match(userRegex)
 
+    // The appreciated page gets the portfolio feed: Behance ignores
+    // `content=appreciated` and serves the user's own projects for it.
     if (userMatch?.[1]) {
       const username = userMatch[1]
-      const subpage = userMatch[2]
 
       if (!isAnyOf(username, excludedPaths)) {
-        if (subpage === 'appreciated') {
-          return [
-            {
-              uri: `https://www.behance.net/feeds/user?username=${username}&content=appreciated`,
-              hint: composeHint('behance:appreciated'),
-            },
-          ]
-        }
-
         return [
           {
             uri: `https://www.behance.net/feeds/user?username=${username}`,

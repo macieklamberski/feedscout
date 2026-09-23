@@ -1,7 +1,9 @@
+import { isAnyOf, isHostOf } from 'trousse'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
-import { composeHint, isAnyOf, isHostOf } from '../../../common/utils.js'
+import { composeHint } from '../../../common/utils.js'
 
-// Not discoverable without handler.
+// Discoverability: Not discoverable without handler.
+// Handler needed for: all shapes.
 
 const hosts = ['dailymotion.com', 'www.dailymotion.com']
 const userRegex = /^\/([a-zA-Z0-9_-]+)$/

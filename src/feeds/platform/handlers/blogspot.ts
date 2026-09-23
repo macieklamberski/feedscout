@@ -1,13 +1,10 @@
+import { parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../../common/types.js'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 
-// Discoverable without handler.
-//
-// HTML autodiscovery on Blogspot blogs commonly returns Feedburner aliases or, for
-// some Google-owned blogs, an entirely different consolidated URL (e.g.
-// googleblog.blogspot.com → blog.google/rss/). The handler emits native
-// /feeds/posts/default URLs which serve directly or redirect to equivalent content.
+// Discoverability: Partially discoverable without handler.
+// Generic partly covers blog, label.
 
 // Matches *.blogspot.com and country TLDs like *.blogspot.co.uk, *.blogspot.de, etc.
 const blogspotDomainRegex = /^.+\.blogspot\.(?:com|co\.[a-z]{2}|com\.[a-z]{2}|[a-z]{2,3})$/
@@ -17,13 +14,15 @@ const postCommentsFeedRegex = /href="[^"]*\/feeds\/(\d+)\/comments\/default/
 
 export const blogspotHandler: PlatformHandler = {
   match: (url) => {
-    try {
-      const hostname = new URL(url).hostname.toLowerCase()
+    const parsedUrl = parseUrl(url)
 
-      return blogspotDomainRegex.test(hostname)
-    } catch {}
+    if (!parsedUrl) {
+      return false
+    }
 
-    return false
+    const hostname = parsedUrl.hostname.toLowerCase()
+
+    return blogspotDomainRegex.test(hostname)
   },
 
   resolve: (url, content) => {

@@ -1,12 +1,10 @@
+import { isAnyOf, isHostOf } from 'trousse'
 import type { DiscoverUriEntry } from '../../../common/types.js'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
-import { composeHint, isAnyOf, isHostOf } from '../../../common/utils.js'
+import { composeHint } from '../../../common/utils.js'
 
-// Discoverable without handler.
-//
-// HTML autodiscovery on ameblo.jp/{user}/ pages returns the mirror URL
-// rssblog.ameba.jp/{user}/rss20.xml. Both URLs serve byte-identical content;
-// the handler emits the ameblo.jp form for consistency with the canonical site host.
+// Discoverability: Partially discoverable without handler.
+// Generic partly covers blog.
 
 const hosts = ['ameblo.jp', 'www.ameblo.jp']
 const excludedPaths = ['genre', 'hashtag', 'search']

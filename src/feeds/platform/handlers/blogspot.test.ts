@@ -1,22 +1,23 @@
 import { describe, expect, it } from 'bun:test'
+import type { DiscoverUriEntry } from '../../../common/types.js'
 import { blogspotHandler } from './blogspot.js'
 
 describe('blogspotHandler', () => {
   describe('match', () => {
-    const cases = [
-      ['https://example.blogspot.com', true],
-      ['https://blog.example.blogspot.com', true],
-      ['https://example.blogspot.co.uk', true],
-      ['https://example.blogspot.de', true],
-      ['https://example.blogspot.fr', true],
-      ['https://example.blogspot.in', true],
-      ['https://example.blogspot.jp', true],
-      ['https://example.blogspot.com.br', true],
-      ['https://blogspot.com', false],
-      ['https://example.com', false],
-    ] as const
+    const values: Array<[boolean, string]> = [
+      [true, 'https://example.blogspot.com'],
+      [true, 'https://blog.example.blogspot.com'],
+      [true, 'https://example.blogspot.co.uk'],
+      [true, 'https://example.blogspot.de'],
+      [true, 'https://example.blogspot.fr'],
+      [true, 'https://example.blogspot.in'],
+      [true, 'https://example.blogspot.jp'],
+      [true, 'https://example.blogspot.com.br'],
+      [false, 'https://blogspot.com'],
+      [false, 'https://example.com'],
+    ]
 
-    it.each(cases)('%s -> %s', (url, expected) => {
+    it.each(values)('should return %s for %s', (expected, url) => {
       expect(blogspotHandler.match(url)).toBe(expected)
     })
 
@@ -139,11 +140,67 @@ describe('blogspotHandler', () => {
     it('should not emit per-post feeds for non-post URLs even with content', () => {
       const value = 'https://blog.blogspot.com/'
       const content = '<link href="https://blog.blogspot.com/feeds/1234567890/comments/default" />'
-      const result = blogspotHandler.resolve(value, content) as Array<{ hint?: { key: string } }>
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://blog.blogspot.com/feeds/posts/default',
+          hint: { key: 'blogspot:posts-atom', label: 'Posts (Atom)' },
+        },
+        {
+          uri: 'https://blog.blogspot.com/feeds/posts/default?alt=rss',
+          hint: { key: 'blogspot:posts-rss', label: 'Posts (RSS)' },
+        },
+        {
+          uri: 'https://blog.blogspot.com/feeds/posts/summary',
+          hint: { key: 'blogspot:posts-summary-atom', label: 'Posts summary (Atom)' },
+        },
+        {
+          uri: 'https://blog.blogspot.com/feeds/posts/summary?alt=rss',
+          hint: { key: 'blogspot:posts-summary-rss', label: 'Posts summary (RSS)' },
+        },
+        {
+          uri: 'https://blog.blogspot.com/feeds/comments/default',
+          hint: { key: 'blogspot:comments-atom', label: 'Comments (Atom)' },
+        },
+        {
+          uri: 'https://blog.blogspot.com/feeds/comments/default?alt=rss',
+          hint: { key: 'blogspot:comments-rss', label: 'Comments (RSS)' },
+        },
+      ]
 
-      for (const entry of result) {
-        expect(entry.hint?.key?.startsWith('blogspot:post-comments')).toBe(false)
-      }
+      expect(blogspotHandler.resolve(value, content)).toEqual(expected)
+    })
+
+    it('should not emit per-post feeds for post URL when content has no comments feed link', () => {
+      const value = 'https://blog.blogspot.com/2024/01/some-post.html'
+      const content = '<html><head><title>Some post</title></head></html>'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://blog.blogspot.com/feeds/posts/default',
+          hint: { key: 'blogspot:posts-atom', label: 'Posts (Atom)' },
+        },
+        {
+          uri: 'https://blog.blogspot.com/feeds/posts/default?alt=rss',
+          hint: { key: 'blogspot:posts-rss', label: 'Posts (RSS)' },
+        },
+        {
+          uri: 'https://blog.blogspot.com/feeds/posts/summary',
+          hint: { key: 'blogspot:posts-summary-atom', label: 'Posts summary (Atom)' },
+        },
+        {
+          uri: 'https://blog.blogspot.com/feeds/posts/summary?alt=rss',
+          hint: { key: 'blogspot:posts-summary-rss', label: 'Posts summary (RSS)' },
+        },
+        {
+          uri: 'https://blog.blogspot.com/feeds/comments/default',
+          hint: { key: 'blogspot:comments-atom', label: 'Comments (Atom)' },
+        },
+        {
+          uri: 'https://blog.blogspot.com/feeds/comments/default?alt=rss',
+          hint: { key: 'blogspot:comments-rss', label: 'Comments (RSS)' },
+        },
+      ]
+
+      expect(blogspotHandler.resolve(value, content)).toEqual(expected)
     })
 
     it('should include label feeds when on label page', () => {
@@ -184,6 +241,11 @@ describe('blogspotHandler', () => {
       ]
 
       expect(blogspotHandler.resolve(value)).toEqual(expected)
+    })
+
+    it.todo('should define behavior for invalid URL input', () => {
+      // resolve('not-a-url') currently throws a TypeError from the unguarded new URL call; the
+      // desired contract (throw vs empty array) is undecided.
     })
   })
 })

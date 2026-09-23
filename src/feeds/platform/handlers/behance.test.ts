@@ -3,15 +3,15 @@ import { behanceHandler } from './behance.js'
 
 describe('behanceHandler', () => {
   describe('match', () => {
-    const cases = [
-      ['https://www.behance.net/johndoe', true],
-      ['https://behance.net/johndoe', true],
-      ['https://www.behance.net/', true],
-      ['https://www.behance.net/search', true],
-      ['https://example.com/behance', false],
-    ] as const
+    const values: Array<[boolean, string]> = [
+      [true, 'https://www.behance.net/johndoe'],
+      [true, 'https://behance.net/johndoe'],
+      [true, 'https://www.behance.net/'],
+      [true, 'https://www.behance.net/search'],
+      [false, 'https://example.com/behance'],
+    ]
 
-    it.each(cases)('%s -> %s', (url, expected) => {
+    it.each(values)('should return %s for %s', (expected, url) => {
       expect(behanceHandler.match(url)).toBe(expected)
     })
 
@@ -57,56 +57,46 @@ describe('behanceHandler', () => {
       expect(behanceHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return appreciated feed for appreciated page', () => {
+    it('should return the portfolio feed for the appreciated page', () => {
       const value = 'https://www.behance.net/johndoe/appreciated'
       const expected = [
         {
-          uri: 'https://www.behance.net/feeds/user?username=johndoe&content=appreciated',
-          hint: { key: 'behance:appreciated', label: 'Appreciated' },
+          uri: 'https://www.behance.net/feeds/user?username=johndoe',
+          hint: { key: 'behance:portfolio', label: 'Portfolio' },
         },
       ]
 
       expect(behanceHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return empty array for excluded paths', () => {
-      const values = [
-        'https://www.behance.net/search',
-        'https://www.behance.net/blog',
-        'https://www.behance.net/about',
-      ]
+    const excludedValues: Array<string> = [
+      'https://www.behance.net/search',
+      'https://www.behance.net/blog',
+      'https://www.behance.net/about',
+    ]
 
-      for (const value of values) {
-        expect(behanceHandler.resolve(value)).toEqual([])
-      }
+    it.each(excludedValues)('should return empty array for %s', (value) => {
+      expect(behanceHandler.resolve(value)).toEqual([])
     })
 
-    it('should return featured projects + Featured-by-Adobe feed for homepage', () => {
+    it('should return featured projects feed for homepage', () => {
       const value = 'https://www.behance.net/'
       const expected = [
         {
           uri: 'https://www.behance.net/feeds/projects',
           hint: { key: 'behance:projects', label: 'Featured projects' },
         },
-        {
-          uri: 'https://feeds.feedburner.com/behance/vorr',
-          hint: { key: 'behance:featured', label: 'Featured by Adobe' },
-        },
       ]
 
       expect(behanceHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return featured projects + Featured-by-Adobe feed for /galleries', () => {
+    it('should return featured projects feed for /galleries', () => {
       const value = 'https://www.behance.net/galleries'
       const expected = [
         {
           uri: 'https://www.behance.net/feeds/projects',
           hint: { key: 'behance:projects', label: 'Featured projects' },
-        },
-        {
-          uri: 'https://feeds.feedburner.com/behance/vorr',
-          hint: { key: 'behance:featured', label: 'Featured by Adobe' },
         },
       ]
 
@@ -117,6 +107,11 @@ describe('behanceHandler', () => {
       const value = 'https://www.behance.net/johndoe/projects'
 
       expect(behanceHandler.resolve(value)).toEqual([])
+    })
+
+    it.todo('should define behavior for invalid URL input', () => {
+      // resolve('not-a-url') currently throws a TypeError from the unguarded new URL call; the
+      // desired contract (throw vs empty array) is undecided.
     })
   })
 })

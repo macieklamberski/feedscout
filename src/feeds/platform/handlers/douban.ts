@@ -1,7 +1,9 @@
+import { isHostOf, isSubdomainOf } from 'trousse'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
-import { composeHint, isHostOf, isSubdomainOf } from '../../../common/utils.js'
+import { composeHint } from '../../../common/utils.js'
 
-// Discoverable without handler.
+// Discoverability: Partially discoverable without handler.
+// Generic covers subject (html), partly covers people.
 
 const userRegex = /^\/people\/([^/]+)/
 const subjectRegex = /^\/subject\/(\d+)/

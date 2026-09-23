@@ -1,7 +1,10 @@
+import { isHostOf } from 'trousse'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
-import { composeHint, isHostOf } from '../../../common/utils.js'
+import { composeHint } from '../../../common/utils.js'
 
-// Partially discoverable without handler.
+// Discoverability: Partially discoverable without handler.
+// Generic covers comments, domain, home, newest, tag (guess, html).
+// Handler needed for: user.
 
 export const hosts = ['lobste.rs']
 const tagRegex = /^\/t\/([a-zA-Z0-9,_-]+)/
@@ -88,6 +91,9 @@ export const lobstersHandler: PlatformHandler = {
     }
 
     // Homepage or other pages - return main feed.
-    return [{ uri: 'https://lobste.rs/rss', hint: composeHint('lobsters:stories') }]
+    return [
+      { uri: 'https://lobste.rs/rss', hint: composeHint('lobsters:stories') },
+      { uri: 'https://lobste.rs/comments.rss', hint: composeHint('lobsters:comments') },
+    ]
   },
 }

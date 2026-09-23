@@ -3,15 +3,15 @@ import { producthuntHandler } from './producthunt.js'
 
 describe('producthuntHandler', () => {
   describe('match', () => {
-    const cases = [
-      ['https://www.producthunt.com/', true],
-      ['https://producthunt.com/', true],
-      ['https://www.producthunt.com/topics/artificial-intelligence', true],
-      ['https://www.producthunt.com/categories/tech', true],
-      ['https://example.com/producthunt', false],
-    ] as const
+    const values: Array<[boolean, string]> = [
+      [true, 'https://www.producthunt.com/'],
+      [true, 'https://producthunt.com/'],
+      [true, 'https://www.producthunt.com/topics/artificial-intelligence'],
+      [true, 'https://www.producthunt.com/categories/tech'],
+      [false, 'https://example.com/producthunt'],
+    ]
 
-    it.each(cases)('%s -> %s', (url, expected) => {
+    it.each(values)('should return %s for %s', (expected, url) => {
       expect(producthuntHandler.match(url)).toBe(expected)
     })
 
@@ -21,50 +21,31 @@ describe('producthuntHandler', () => {
   })
 
   describe('resolve', () => {
-    it('should return main feed for homepage', () => {
-      const value = 'https://www.producthunt.com/'
-      const expected = [
-        {
-          uri: 'https://www.producthunt.com/feed',
-          hint: { key: 'producthunt:products', label: 'Products' },
-        },
-      ]
+    const expected = [
+      {
+        uri: 'https://www.producthunt.com/feed',
+        hint: { key: 'producthunt:products', label: 'Products' },
+      },
+    ]
 
-      expect(producthuntHandler.resolve(value)).toEqual(expected)
+    it('should return the products feed for the homepage', () => {
+      expect(producthuntHandler.resolve('https://www.producthunt.com/')).toEqual(expected)
     })
 
-    it('should return topic feed for topic page', () => {
+    it('should return the products feed for a topic page', () => {
       const value = 'https://www.producthunt.com/topics/artificial-intelligence'
-      const expected = [
-        {
-          uri: 'https://www.producthunt.com/feed?topic=artificial-intelligence',
-          hint: { key: 'producthunt:topic', label: 'Topic' },
-        },
-      ]
 
       expect(producthuntHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return category feed for category page', () => {
+    it('should return the products feed for a category page', () => {
       const value = 'https://www.producthunt.com/categories/tech'
-      const expected = [
-        {
-          uri: 'https://www.producthunt.com/feed?category=tech',
-          hint: { key: 'producthunt:category', label: 'Category' },
-        },
-      ]
 
       expect(producthuntHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return main feed for product page', () => {
+    it('should return the products feed for a product page', () => {
       const value = 'https://www.producthunt.com/posts/some-product'
-      const expected = [
-        {
-          uri: 'https://www.producthunt.com/feed',
-          hint: { key: 'producthunt:products', label: 'Products' },
-        },
-      ]
 
       expect(producthuntHandler.resolve(value)).toEqual(expected)
     })

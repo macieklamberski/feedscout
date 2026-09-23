@@ -1,13 +1,10 @@
+import { isSubdomainOf } from 'trousse'
 import type { DiscoverUriEntry } from '../../../common/types.js'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
-import { composeHint, isSubdomainOf } from '../../../common/utils.js'
+import { composeHint } from '../../../common/utils.js'
 
-// Discoverable without handler.
-//
-// Some Micro.blog users configure custom domains; HTML autodiscovery on those blogs
-// may point to off-platform URLs (e.g. manton.micro.blog → www.manton.org/feed.xml).
-// The handler always returns the {slug}.micro.blog/* form (the platform itself may
-// still 302-redirect to the user's custom domain).
+// Discoverability: Partially discoverable without handler.
+// Generic partly covers archive, blog, photos, replies.
 
 const categoryRegex = /^\/categories\/([^/]+)/
 

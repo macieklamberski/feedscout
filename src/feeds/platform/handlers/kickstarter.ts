@@ -1,7 +1,10 @@
+import { isHostOf } from 'trousse'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
-import { composeHint, isHostOf } from '../../../common/utils.js'
+import { composeHint } from '../../../common/utils.js'
 
-// Partially discoverable without handler.
+// Discoverability: Partially discoverable without handler.
+// Generic covers discover (guess, html).
+// Handler needed for: home, project.
 
 const hosts = ['kickstarter.com', 'www.kickstarter.com']
 

@@ -1,9 +1,12 @@
+import { isSubdomainOf } from 'trousse'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
-import { composeHint, isSubdomainOf } from '../../../common/utils.js'
+import { composeHint } from '../../../common/utils.js'
 
-// Not discoverable without handler.
+// Discoverability: Discoverable without handler.
 
 const domainSuffixRegex = /\.transistor\.fm$/i
+// The show page links its feed, and the feed slug is not always the subdomain.
+const feedSlugRegex = /https:\/\/feeds\.transistor\.fm\/([\w-]+)/
 
 // Reserved Transistor subdomains that aren't user shows. Without this guard the
 // handler emits feeds.transistor.fm/{www|share|support|...} URLs that 404.
@@ -29,9 +32,9 @@ export const transistorHandler: PlatformHandler = {
     return !reservedSlugs.has(slug)
   },
 
-  resolve: (url) => {
+  resolve: (url, content) => {
     const { hostname } = new URL(url)
-    const slug = hostname.replace(domainSuffixRegex, '')
+    const slug = content?.match(feedSlugRegex)?.[1] ?? hostname.replace(domainSuffixRegex, '')
 
     return [
       {

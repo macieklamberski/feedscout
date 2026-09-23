@@ -1,7 +1,8 @@
+import { isSubdomainOf } from 'trousse'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
-import { composeHint, isSubdomainOf } from '../../../common/utils.js'
+import { composeHint } from '../../../common/utils.js'
 
-// Not discoverable without handler.
+// Discoverability: Discoverable without handler.
 
 export const tistoryHandler: PlatformHandler = {
   match: (url) => {

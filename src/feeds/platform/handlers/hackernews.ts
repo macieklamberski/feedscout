@@ -1,7 +1,10 @@
+import { isHostOf } from 'trousse'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
-import { composeHint, isHostOf } from '../../../common/utils.js'
+import { composeHint } from '../../../common/utils.js'
 
-// Not discoverable without handler.
+// Discoverability: Partially discoverable without handler.
+// Generic covers home, news, show (guess, html).
+// Handler needed for: shownew.
 
 const hosts = ['news.ycombinator.com']
 

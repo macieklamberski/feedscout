@@ -1,8 +1,11 @@
+import { isHostOf, isSubdomainOf } from 'trousse'
 import type { DiscoverUriEntry } from '../../../common/types.js'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
-import { composeHint, isHostOf, isSubdomainOf } from '../../../common/utils.js'
+import { composeHint } from '../../../common/utils.js'
 
-// Partially discoverable without handler.
+// Discoverability: Partially discoverable without handler.
+// Generic covers blog (guess, html).
+// Handler needed for: home.
 
 const apexHosts = ['bearblog.dev', 'www.bearblog.dev']
 

@@ -1,13 +1,10 @@
+import { isHostOf, isSubdomainOf } from 'trousse'
 import type { DiscoverUriEntry } from '../../../common/types.js'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
-import { composeHint, isHostOf, isSubdomainOf } from '../../../common/utils.js'
+import { composeHint } from '../../../common/utils.js'
 
-// Partially discoverable without handler.
-//
-// Dreamwidth runs the dw-free LiveJournal fork. Per-user feeds live at
-// {user}.dreamwidth.org/data/{rss,atom,userpics}, with optional ?tag={tag} filter.
-// www.dreamwidth.org/users/{user} and /~{user} are alternate paths that resolve to
-// the same feeds; the handler canonicalises them to the subdomain form.
+// Discoverability: Partially discoverable without handler.
+// Generic partly covers blog, tag, tildePath, userPath.
 
 const usersPathRegex = /^\/(?:users\/|~)([^/]+)/
 const tagRegex = /^\/tag\/([^/]+)/
@@ -37,8 +34,9 @@ export const dreamwidthHandler: PlatformHandler = {
     if (isHostOf(url, ['www.dreamwidth.org', 'dreamwidth.org'])) {
       const userMatch = pathname.match(usersPathRegex)
 
+      // A username with `_` is served on a hostname with `-`.
       if (userMatch?.[1]) {
-        userOrigin = `https://${userMatch[1]}.dreamwidth.org`
+        userOrigin = `https://${userMatch[1].replaceAll('_', '-')}.dreamwidth.org`
       } else {
         return uris
       }

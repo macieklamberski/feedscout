@@ -1,9 +1,8 @@
+import { isHostOf } from 'trousse'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
-import { composeHint, isHostOf } from '../../../common/utils.js'
+import { composeHint } from '../../../common/utils.js'
 
-// Discoverable without handler.
-//
-// feeds.buzzsprout.com/{id}.rss also works but 301-redirects to rss.buzzsprout.com.
+// Discoverability: Discoverable without handler.
 
 const hosts = ['buzzsprout.com', 'www.buzzsprout.com']
 const numericRegex = /^\d+$/

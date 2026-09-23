@@ -1,11 +1,8 @@
+import { isHostOf } from 'trousse'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
-import { composeHint, isHostOf } from '../../../common/utils.js'
+import { composeHint } from '../../../common/utils.js'
 
-// Discoverable without handler.
-//
-// HTML autodiscovery on bsky.app profile pages returns the DID-based URL
-// (.../profile/did:plc:.../rss). The handler emits the handle-based URL which
-// 302-redirects to the DID form.
+// Discoverability: Discoverable without handler.
 
 const profileRegex = /^\/profile\/([^/]+)/
 

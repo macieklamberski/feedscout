@@ -1,7 +1,7 @@
+import { isHostOf, isNonEmptyString, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
-import { isHostOf } from '../../../common/utils.js'
 import { hosts } from '../../../feeds/platform/handlers/reddit.js'
-import { isNonEmptyString, parseBodyJson } from '../../utils.js'
+import { parseBodyJson } from '../../utils.js'
 
 // Extracts the subreddit or username from the path, excluding dots to avoid
 // capturing feed extensions like .rss in Reddit feed URLs (e.g., /r/sub.rss).
@@ -18,13 +18,15 @@ export const isUserPath = (pathname: string): boolean => {
 
 export const redditHandler: PlatformHandler = {
   match: (url) => {
-    try {
-      const { pathname } = new URL(url)
+    const parsedUrl = parseUrl(url)
 
-      return isHostOf(url, hosts) && (isSubredditPath(pathname) || isUserPath(pathname))
-    } catch {}
+    if (!parsedUrl) {
+      return false
+    }
 
-    return false
+    const { pathname } = parsedUrl
+
+    return isHostOf(url, hosts) && (isSubredditPath(pathname) || isUserPath(pathname))
   },
 
   resolve: async (url, _content, _headers, fetchFn) => {

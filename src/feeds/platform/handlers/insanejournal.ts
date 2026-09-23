@@ -1,15 +1,11 @@
+import { isSubdomainOf } from 'trousse'
 import type { DiscoverUriEntry } from '../../../common/types.js'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
-import { composeHint, isSubdomainOf } from '../../../common/utils.js'
+import { composeHint } from '../../../common/utils.js'
 
-// Discoverable without handler.
-//
-// InsaneJournal is an LJ fork. User journals live at {user}.insanejournal.com,
-// asylums (communities) at asylums.insanejournal.com/{name}, and syndicated feeds
-// at feeds.insanejournal.com/{name}. Each exposes /data/{rss,atom,userpics} with
-// optional ?tag={tag} filter. www.insanejournal.com/users/{user}, /~{user},
-// /asylum/{name}, and /community/{name} are alternate paths that the handler
-// canonicalises to the corresponding subdomain form.
+// Discoverability: Partially discoverable without handler.
+// Generic partly covers asylum, blog, tildePath, userPath.
+// Handler needed for: syndicated.
 
 const wwwUsersPathRegex = /^\/(?:users\/|~)([^/]+)/
 const wwwAsylumPathRegex = /^\/(?:asylum|community)\/([^/]+)/

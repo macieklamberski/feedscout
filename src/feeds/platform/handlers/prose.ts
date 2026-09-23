@@ -1,7 +1,8 @@
+import { isHostOf, isSubdomainOf } from 'trousse'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
-import { composeHint, isHostOf, isSubdomainOf } from '../../../common/utils.js'
+import { composeHint } from '../../../common/utils.js'
 
-// Partially discoverable without handler.
+// Discoverability: Discoverable without handler.
 
 const apexHosts = ['prose.sh', 'www.prose.sh']
 

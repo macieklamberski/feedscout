@@ -3,14 +3,14 @@ import { githubGistHandler } from './githubGist.js'
 
 describe('githubGistHandler', () => {
   describe('match', () => {
-    const cases = [
-      ['https://gist.github.com/defunkt', true],
-      ['https://gist.github.com/defunkt/1234567890abcdef', true],
-      ['https://github.com/defunkt', false],
-      ['https://example.com/gist', false],
-    ] as const
+    const values: Array<[boolean, string]> = [
+      [true, 'https://gist.github.com/defunkt'],
+      [true, 'https://gist.github.com/defunkt/1234567890abcdef'],
+      [false, 'https://github.com/defunkt'],
+      [false, 'https://example.com/gist'],
+    ]
 
-    it.each(cases)('%s -> %s', (url, expected) => {
+    it.each(values)('should return %s for %s', (expected, url) => {
       expect(githubGistHandler.match(url)).toBe(expected)
     })
 
@@ -80,11 +80,11 @@ describe('githubGistHandler', () => {
       expect(githubGistHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return forks gists feed for user forks page', () => {
+    it('should return the forked gists feed for user forks page', () => {
       const value = 'https://gist.github.com/defunkt/forks'
       const expected = [
         {
-          uri: 'https://gist.github.com/defunkt/forks.atom',
+          uri: 'https://gist.github.com/defunkt/forked.atom',
           hint: { key: 'github-gist:forks', label: 'Forks' },
         },
       ]
@@ -92,11 +92,23 @@ describe('githubGistHandler', () => {
       expect(githubGistHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return forks gists feed with trailing slash', () => {
+    it('should return the forked gists feed for user forked page', () => {
+      const value = 'https://gist.github.com/defunkt/forked'
+      const expected = [
+        {
+          uri: 'https://gist.github.com/defunkt/forked.atom',
+          hint: { key: 'github-gist:forks', label: 'Forks' },
+        },
+      ]
+
+      expect(githubGistHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return the forked gists feed for user forks page with trailing slash', () => {
       const value = 'https://gist.github.com/defunkt/forks/'
       const expected = [
         {
-          uri: 'https://gist.github.com/defunkt/forks.atom',
+          uri: 'https://gist.github.com/defunkt/forked.atom',
           hint: { key: 'github-gist:forks', label: 'Forks' },
         },
       ]
@@ -128,16 +140,14 @@ describe('githubGistHandler', () => {
       expect(githubGistHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return empty array for excluded paths', () => {
-      const excludedUrls = [
-        'https://gist.github.com/search',
-        'https://gist.github.com/login',
-        'https://gist.github.com/join',
-      ]
+    const excludedValues: Array<string> = [
+      'https://gist.github.com/search',
+      'https://gist.github.com/login',
+      'https://gist.github.com/join',
+    ]
 
-      for (const url of excludedUrls) {
-        expect(githubGistHandler.resolve(url)).toEqual([])
-      }
+    it.each(excludedValues)('should return empty array for %s', (value) => {
+      expect(githubGistHandler.resolve(value)).toEqual([])
     })
 
     it('should return empty array for gist URL with excluded username', () => {
@@ -150,6 +160,11 @@ describe('githubGistHandler', () => {
       const value = 'https://gist.github.com/'
 
       expect(githubGistHandler.resolve(value)).toEqual([])
+    })
+
+    it.todo('should define behavior for invalid URL input', () => {
+      // resolve('not-a-url') currently throws a TypeError from the unguarded new URL call; the
+      // desired contract (throw vs empty array) is undecided.
     })
   })
 })

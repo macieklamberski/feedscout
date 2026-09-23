@@ -1,7 +1,8 @@
+import { isHostOf } from 'trousse'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
-import { composeHint, isHostOf } from '../../../common/utils.js'
+import { composeHint } from '../../../common/utils.js'
 
-// Discoverable without handler.
+// Discoverability: Discoverable without handler.
 
 const nodeRegex = /^\/go\/([^/]+)/
 const memberRegex = /^\/member\/([^/]+)/
@@ -49,6 +50,7 @@ export const v2exHandler: PlatformHandler = {
           uri: `https://www.v2ex.com/feed/tab/${tab}.xml`,
           hint: composeHint('v2ex:tab'),
         },
+        { uri: 'https://www.v2ex.com/index.xml', hint: composeHint('v2ex:index') },
       ]
     }
 

@@ -3,22 +3,22 @@ import { hatenablogHandler } from './hatenablog.js'
 
 describe('hatenablogHandler', () => {
   describe('match', () => {
-    const cases = [
-      ['https://example.hatenablog.com', true],
-      ['https://example.hatenablog.jp', true],
-      ['https://example.hateblo.jp', true],
-      ['https://example.hatenadiary.com', true],
-      ['https://example.hatenadiary.jp', true],
-      ['https://example.hatenadiary.org', true],
-      ['https://blog.example.hatenablog.com', true],
-      ['https://hatenablog.com', false],
-      ['https://hatenablog.jp', false],
-      ['https://hateblo.jp', false],
-      ['https://hatenadiary.com', false],
-      ['https://example.com', false],
-    ] as const
+    const values: Array<[boolean, string]> = [
+      [true, 'https://example.hatenablog.com'],
+      [true, 'https://example.hatenablog.jp'],
+      [true, 'https://example.hateblo.jp'],
+      [true, 'https://example.hatenadiary.com'],
+      [true, 'https://example.hatenadiary.jp'],
+      [true, 'https://example.hatenadiary.org'],
+      [true, 'https://blog.example.hatenablog.com'],
+      [false, 'https://hatenablog.com'],
+      [false, 'https://hatenablog.jp'],
+      [false, 'https://hateblo.jp'],
+      [false, 'https://hatenadiary.com'],
+      [false, 'https://example.com'],
+    ]
 
-    it.each(cases)('%s -> %s', (url, expected) => {
+    it.each(values)('should return %s for %s', (expected, url) => {
       expect(hatenablogHandler.match(url)).toBe(expected)
     })
 
@@ -122,6 +122,11 @@ describe('hatenablogHandler', () => {
       ]
 
       expect(hatenablogHandler.resolve(value)).toEqual(expected)
+    })
+
+    it.todo('should define behavior for invalid URL input', () => {
+      // resolve('not-a-url') currently throws a TypeError from the unguarded new URL call; the
+      // desired contract (throw vs empty array) is undecided.
     })
   })
 })

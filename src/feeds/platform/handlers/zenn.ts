@@ -1,7 +1,8 @@
+import { isAnyOf, isHostOf } from 'trousse'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
-import { composeHint, isAnyOf, isHostOf } from '../../../common/utils.js'
+import { composeHint } from '../../../common/utils.js'
 
-// Discoverable without handler.
+// Discoverability: Discoverable without handler.
 
 const hosts = ['zenn.dev', 'www.zenn.dev']
 const excludedPaths = [

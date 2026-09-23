@@ -1,6 +1,7 @@
+import { isNonEmptyString, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { hasMetaContent } from '../../../common/utils.js'
-import { isNonEmptyString, parseBodyJson } from '../../utils.js'
+import { parseBodyJson } from '../../utils.js'
 
 const mastodonRegex = /mastodon/i
 
@@ -12,8 +13,10 @@ export const isProfilePath = (pathname: string): boolean => {
   return profileRegex.test(pathname)
 }
 
+// Current Mastodon serves no generator meta, so the `<div id="mastodon">` app
+// root is matched too.
 export const isMastodonHtml = (content: string): boolean => {
-  return hasMetaContent(content, 'generator', 'Mastodon')
+  return hasMetaContent(content, 'generator', 'Mastodon') || content.includes('id="mastodon"')
 }
 
 export const isMastodonHeaders = (headers: Headers): boolean => {
@@ -22,21 +25,25 @@ export const isMastodonHeaders = (headers: Headers): boolean => {
 
 export const mastodonHandler: PlatformHandler = {
   match: (url, content, headers) => {
-    try {
-      const { pathname } = new URL(url)
+    const parsedUrl = parseUrl(url)
 
-      if (!isProfilePath(pathname)) {
-        return false
-      }
+    if (!parsedUrl) {
+      return false
+    }
 
-      if (content && isMastodonHtml(content)) {
-        return true
-      }
+    const { pathname } = parsedUrl
 
-      if (headers && isMastodonHeaders(headers)) {
-        return true
-      }
-    } catch {}
+    if (!isProfilePath(pathname)) {
+      return false
+    }
+
+    if (content && isMastodonHtml(content)) {
+      return true
+    }
+
+    if (headers && isMastodonHeaders(headers)) {
+      return true
+    }
 
     return false
   },

@@ -14,7 +14,7 @@ import { discoverFavicons } from 'feedscout'
 const favicons = await discoverFavicons('https://example.com')
 ```
 
-Each result contains the favicon URL and validation status:
+Each result contains the favicon URL and validation status. A URL is valid when the response is 2xx and is an image, by its `Content-Type` or by its content:
 
 ```typescript
 {
@@ -33,18 +33,18 @@ const favicons = await discoverFavicons('https://example.com', {
 ```
 
 ::: warning Untrusted SVG favicons
-A favicon validated as an SVG is returned by URL only — its contents are not sanitized. SVG files can carry active content (e.g. `<svg onload="...">`), so treat returned SVG favicon URLs as untrusted: render them as `<img src>` (which neutralizes scripts) rather than inlining the markup, or sanitize before use.
+A favicon validated as an SVG is returned by URL only. Its contents are not sanitized. SVG files can carry active content (e.g. `<svg onload="...">`), so treat returned SVG favicon URLs as untrusted: render them as `<img src>` (which neutralizes scripts), not as inlined markup, or sanitize before use.
 :::
 
 ## Discovery Methods
 
-Favicons use the same discovery pipeline as feeds — see the [Feeds](/feeds) section for details on how each method works.
+Favicons use the same discovery pipeline as feeds. See the [Feeds](/feeds) section for details on how each method works.
 
 | Method | What It Looks For |
 |--------|-------------------|
 | Platform | Avatars/icons from known platforms (GitHub, Mastodon, Bluesky, etc.) |
 | Feed | `<icon>` in Atom feeds, `favicon`/`icon` in JSON Feeds |
-| HTML | `<link>` tags with `rel="icon"`, `rel="shortcut"`, `rel="apple-touch-icon"` |
+| HTML | `<link>` tags with `rel="icon"`, `rel="shortcut"`, `rel="alternate icon"`, `rel="apple-touch-icon"` |
 | Headers | `Link` headers with icon-related `rel` values |
 | Guess | Common paths like `/favicon.ico`, `/apple-touch-icon.png` |
 
@@ -61,7 +61,7 @@ The Platform method extracts avatars and icons directly from known platforms usi
 | Bluesky | Profile avatar | Public API |
 | Reddit | Subreddit icon or user avatar | Public API |
 | Tumblr | Blog avatar | URL pattern |
-| Codeberg | User avatar | URL pattern |
+| Gitea (Codeberg, gitea.com, self-hosted) | User avatar | URL pattern |
 | Lobsters | User avatar | URL pattern |
 | SourceForge | Project icon | URL pattern |
 | DeviantArt | User avatar | URL pattern |
@@ -118,5 +118,5 @@ Favicon discovery looks for these `rel` values in HTML `<link>` tags and HTTP `L
 ```typescript
 import { defaultIconRels, linkSelectors } from 'feedscout/favicons'
 
-// ['icon', 'shortcut', 'apple-touch-icon', 'apple-touch-icon-precomposed']
+// ['icon', 'shortcut', 'alternate icon', 'apple-touch-icon', 'apple-touch-icon-precomposed']
 ```

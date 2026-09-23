@@ -1,7 +1,10 @@
+import { isHostOf } from 'trousse'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
-import { composeHint, isHostOf } from '../../../common/utils.js'
+import { composeHint } from '../../../common/utils.js'
 
-// Discoverable without handler.
+// Discoverability: Partially discoverable without handler.
+// Generic covers blog (html).
+// Handler needed for: mobile.
 
 const hosts = ['blog.naver.com', 'm.blog.naver.com']
 

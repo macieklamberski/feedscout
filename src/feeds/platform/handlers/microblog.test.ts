@@ -3,14 +3,14 @@ import { microblogHandler } from './microblog.js'
 
 describe('microblogHandler', () => {
   describe('match', () => {
-    const cases = [
-      ['https://manton.micro.blog', true],
-      ['https://blog.example.micro.blog', true],
-      ['https://micro.blog', false],
-      ['https://example.com', false],
-    ] as const
+    const values: Array<[boolean, string]> = [
+      [true, 'https://manton.micro.blog'],
+      [true, 'https://blog.example.micro.blog'],
+      [false, 'https://micro.blog'],
+      [false, 'https://example.com'],
+    ]
 
-    it.each(cases)('%s -> %s', (url, expected) => {
+    it.each(values)('should return %s for %s', (expected, url) => {
       expect(microblogHandler.match(url)).toBe(expected)
     })
 
@@ -182,6 +182,11 @@ describe('microblogHandler', () => {
       ]
 
       expect(microblogHandler.resolve(value)).toEqual(expected)
+    })
+
+    it.todo('should define behavior for invalid URL input', () => {
+      // resolve('not-a-url') currently throws a TypeError from the unguarded new URL call; the
+      // desired contract (throw vs empty array) is undecided.
     })
   })
 })

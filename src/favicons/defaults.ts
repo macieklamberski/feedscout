@@ -1,14 +1,14 @@
+import { omitEmpty } from 'trousse'
 import type { LinkSelector } from '../common/types.js'
 import type { FeedMethodOptions } from '../common/uris/feed/types.js'
 import type { GuessMethodOptions } from '../common/uris/guess/types.js'
 import type { HeadersMethodOptions } from '../common/uris/headers/types.js'
 import type { HtmlMethodOptions } from '../common/uris/html/types.js'
 import type { PlatformMethodOptions } from '../common/uris/platform/types.js'
-import { omitEmpty } from '../common/utils.js'
 import { blueskyHandler } from './platform/handlers/bluesky.js'
-import { codebergHandler } from './platform/handlers/codeberg.js'
 import { deviantartHandler } from './platform/handlers/deviantart.js'
 import { devtoHandler } from './platform/handlers/devto.js'
+import { giteaHandler } from './platform/handlers/gitea.js'
 import { githubHandler } from './platform/handlers/github.js'
 import { githubGistHandler } from './platform/handlers/githubGist.js'
 import { gitlabHandler } from './platform/handlers/gitlab.js'
@@ -67,6 +67,7 @@ export const defaultGuessOptions: Omit<GuessMethodOptions, 'baseUrl'> = {
 
 export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
   handlers: [
+    giteaHandler,
     githubHandler,
     githubGistHandler,
     gitlabHandler,
@@ -74,7 +75,6 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     blueskyHandler,
     redditHandler,
     tumblrHandler,
-    codebergHandler,
     lobstersHandler,
     sourceforgeHandler,
     deviantartHandler,

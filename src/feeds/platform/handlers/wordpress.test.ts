@@ -1,16 +1,17 @@
 import { describe, expect, it } from 'bun:test'
+import type { DiscoverUriEntry } from '../../../common/types.js'
 import { wordpressHandler } from './wordpress.js'
 
 describe('wordpressHandler', () => {
   describe('match', () => {
-    const cases = [
-      ['https://example.wordpress.com', true],
-      ['https://blog.example.wordpress.com', true],
-      ['https://wordpress.com', false],
-      ['https://example.com', false],
-    ] as const
+    const values: Array<[boolean, string]> = [
+      [true, 'https://example.wordpress.com'],
+      [true, 'https://blog.example.wordpress.com'],
+      [false, 'https://wordpress.com'],
+      [false, 'https://example.com'],
+    ]
 
-    it.each(cases)('%s -> %s', (url, expected) => {
+    it.each(values)('should return %s for %s', (expected, url) => {
       expect(wordpressHandler.match(url)).toBe(expected)
     })
 
@@ -715,11 +716,55 @@ describe('wordpressHandler', () => {
 
     it('should not emit post comments feed when URL path is a feed URL', () => {
       const value = 'https://blog.wordpress.com/feed/atom/'
-      const result = wordpressHandler.resolve(value) as Array<{ hint?: { key: string } }>
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: [
+            'https://blog.wordpress.com/feed/',
+            'https://blog.wordpress.com/?feed=rss',
+            'https://blog.wordpress.com/feed/rss2/',
+            'https://blog.wordpress.com/?feed=rss2',
+          ],
+          hint: { key: 'wordpress:posts-rss', label: 'Posts (RSS)' },
+        },
+        {
+          uri: ['https://blog.wordpress.com/feed/atom/', 'https://blog.wordpress.com/?feed=atom'],
+          hint: { key: 'wordpress:posts-atom', label: 'Posts (Atom)' },
+        },
+        {
+          uri: ['https://blog.wordpress.com/feed/rdf/', 'https://blog.wordpress.com/?feed=rdf'],
+          hint: { key: 'wordpress:posts-rdf', label: 'Posts (RDF)' },
+        },
+        {
+          uri: [
+            'https://blog.wordpress.com/comments/feed/',
+            'https://blog.wordpress.com/?feed=comments-rss',
+            'https://blog.wordpress.com/comments/feed/rss2/',
+            'https://blog.wordpress.com/?feed=comments-rss2',
+          ],
+          hint: { key: 'wordpress:comments-rss', label: 'Comments (RSS)' },
+        },
+        {
+          uri: [
+            'https://blog.wordpress.com/comments/feed/atom/',
+            'https://blog.wordpress.com/?feed=comments-atom',
+          ],
+          hint: { key: 'wordpress:comments-atom', label: 'Comments (Atom)' },
+        },
+        {
+          uri: [
+            'https://blog.wordpress.com/comments/feed/rdf/',
+            'https://blog.wordpress.com/?feed=comments-rdf',
+          ],
+          hint: { key: 'wordpress:comments-rdf', label: 'Comments (RDF)' },
+        },
+      ]
 
-      for (const entry of result) {
-        expect(entry.hint?.key?.startsWith('wordpress:post-comments')).toBe(false)
-      }
+      expect(wordpressHandler.resolve(value)).toEqual(expected)
+    })
+
+    it.todo('should define behavior for invalid URL input', () => {
+      // resolve('not-a-url') currently throws a TypeError from the unguarded new URL call; the
+      // desired contract (throw vs empty array) is undecided.
     })
   })
 })

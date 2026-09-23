@@ -1,7 +1,10 @@
+import { isAnyOf, isHostOf } from 'trousse'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
-import { composeHint, isAnyOf, isHostOf } from '../../../common/utils.js'
+import { composeHint } from '../../../common/utils.js'
 
-// Discoverable without handler.
+// Discoverability: Partially discoverable without handler.
+// Generic covers player, show (html).
+// Handler needed for: embed.
 
 // shows.acast.com is the canonical web host. play.acast.com is a legacy host that
 // 302-redirects to shows.acast.com (slug at path index 1, after /s/). embed.acast.com

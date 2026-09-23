@@ -1,10 +1,13 @@
+import { isHostOf } from 'trousse'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
-import { composeHint, isHostOf } from '../../../common/utils.js'
+import { composeHint } from '../../../common/utils.js'
 
-// Discoverable without handler.
+// Discoverability: Not discoverable without handler.
+// Handler needed for: all shapes.
 
 const hosts = ['observablehq.com', 'www.observablehq.com']
-const collectionRegex = /^\/@([^/]+)\/collection\/([^/]+)/
+// The live form carries a `-` segment, `/@{user}/-/collection/{slug}`.
+const collectionRegex = /^\/@([^/]+)\/(?:-\/)?collection\/([^/]+)/
 const userRegex = /^\/@([^/]+)/
 
 export const observableHandler: PlatformHandler = {
@@ -13,10 +16,16 @@ export const observableHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    const { pathname } = new URL(url)
+    const { pathname, searchParams } = new URL(url)
+    const isPublic = pathname === '/public' || pathname === '/public/'
 
+    // `/recent` redirects to `/public?sort=publish_time` and `/trending` to `/public`.
     // Site-wide recent feed.
-    if (pathname === '/recent' || pathname === '/recent/') {
+    if (
+      pathname === '/recent' ||
+      pathname === '/recent/' ||
+      (isPublic && searchParams.get('sort') === 'publish_time')
+    ) {
       return [
         {
           uri: 'https://api.observablehq.com/documents/public.rss',
@@ -26,7 +35,7 @@ export const observableHandler: PlatformHandler = {
     }
 
     // Site-wide trending feed.
-    if (pathname === '/trending' || pathname === '/trending/') {
+    if (pathname === '/trending' || pathname === '/trending/' || isPublic) {
       return [
         {
           uri: 'https://api.observablehq.com/documents/trending.rss',

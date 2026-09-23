@@ -1,7 +1,9 @@
+import { isHostOf } from 'trousse'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
-import { composeHint, isHostOf } from '../../../common/utils.js'
+import { composeHint } from '../../../common/utils.js'
 
-// Not discoverable without handler.
+// Discoverability: Not discoverable without handler.
+// Handler needed for: all shapes.
 
 const hosts = ['odysee.com', 'www.odysee.com']
 const channelRegex = /^\/(@[^/:]+:[a-f0-9]+)/i

@@ -21,6 +21,64 @@ Many websites place feeds at predictable paths. The Guess method tests these pat
 
 Each path is appended to the base URL and checked for a valid feed.
 
+## Ancestor Paths
+
+Some sites serve their feed from a section directory, not the root. An example is a post at `/blog/post-slug/` with the feed at `/blog/feed.xml`. In addition to the root-level paths, the Guess method tests path-style URIs against the directory ancestors of the base URL:
+
+```
+https://example.com/blog/post-slug/
+→ https://example.com/feed.xml          (root)
+→ https://example.com/blog/feed.xml     (ancestor)
+→ https://example.com/blog/post-slug/feed.xml
+```
+
+The `maxAncestorDepth` option controls how many directory levels from the root are tested (default: `2` for feeds). Set it to `0` to only test root-level paths:
+
+```typescript
+const feeds = await discoverFeeds(url, {
+  methods: {
+    guess: {
+      maxAncestorDepth: 0,
+    },
+  },
+})
+```
+
+Every configured URI is tested against each ancestor directory the same way it is tested against the root: `/feed.xml` resolves under the directory, and a bare query URI like `?feed=rss` is appended to it (`https://example.com/blog/?feed=rss`).
+
+## Section Links
+
+Sites often keep their feed under a content section that isn't part of the current page's path. An example is a homepage linking to `/blog` with the feed at `/blog/rss.xml`. The Guess method scans the page HTML for same-origin links whose path is a single section segment and tests path-style URIs against them:
+
+```
+https://example.com/ with <a href="/blog">
+→ https://example.com/blog/rss.xml
+→ https://example.com/blog/feed.xml
+→ ...
+```
+
+The recognized section segments are exported as `sectionNames`:
+
+```typescript
+import { sectionNames } from 'feedscout/feeds'
+
+// ['blog', 'news', 'posts', 'articles', 'writing', 'notes', 'journal', 'podcast', 'changelog']
+```
+
+You can pass your own list:
+
+```typescript
+const feeds = await discoverFeeds(url, {
+  methods: {
+    guess: {
+      sectionNames: ['blog', 'updates'],
+    },
+  },
+})
+```
+
+Setting `sectionNames: []` disables section-link probing.
+
 ## URI Sets
 
 There are three predefined URI sets:
@@ -65,12 +123,16 @@ Includes WordPress, Blogger, and many other patterns:
 import { urisComprehensive } from 'feedscout/feeds'
 
 // urisBalanced + [
-//   '/?feed=rss',
-//   '/?feed=atom',
+//   '/atom',
+//   '/rss2.xml',
+//   '?format=rss',
+//   '?rss=1',
 //   '/feeds/posts/default',
 //   ...
 // ]
 ```
+
+Query URIs behave differently from path URIs: a bare `?format=rss` is appended to the current page's path (`https://example.com/blog?format=rss`), while `/`-prefixed paths always resolve from the site root. This matches platforms like WordPress and Squarespace that serve feeds via a query parameter on the page you're on.
 
 ## Configuration
 
@@ -161,6 +223,14 @@ generateUrlCombinations(['https://example.com'], ['/feed', '/rss'])
 // ]
 ```
 
+## Default Values
+
+You can import the default Guess options:
+
+```typescript
+import { defaultGuessOptions } from 'feedscout/feeds'
+```
+
 ## Using Directly
 
 You can use the Guess discovery function directly:
@@ -180,7 +250,7 @@ const uris = discoverUrisFromGuess({
 ```
 
 > [!NOTE]
-> Unlike `discoverUrisFromHtml` and `discoverUrisFromHeaders`, the Guess method returns URLs without checking if they exist. Validation happens during the main discovery process.
+> The Guess method builds absolute URLs from the base URL. It does not check if they exist. Validation happens in `discoverFeeds`.
 
 ## When to Use
 

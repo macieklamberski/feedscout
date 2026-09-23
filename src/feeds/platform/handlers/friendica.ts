@@ -1,7 +1,9 @@
+import { parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, hasMetaContent } from '../../../common/utils.js'
 
-// Discoverable without handler.
+// Discoverability: Partially discoverable without handler.
+// Generic partly covers profile.
 
 const profileRegex = /^\/profile\/([^/]+)/
 
@@ -9,50 +11,66 @@ export const isFriendicaHtml = (content: string): boolean => {
   return hasMetaContent(content, 'generator', 'Friendica')
 }
 
+export const isFriendicaHeaders = (headers: Headers): boolean => {
+  return headers.has('x-friendica-version')
+}
+
 export const friendicaHandler: PlatformHandler = {
-  match: (url, content) => {
-    try {
-      if (!content || !isFriendicaHtml(content)) {
-        return false
-      }
+  match: (url, content, headers) => {
+    const parsedUrl = parseUrl(url)
 
-      const { pathname } = new URL(url)
+    if (!parsedUrl) {
+      return false
+    }
 
-      return profileRegex.test(pathname)
-    } catch {}
+    const { pathname } = parsedUrl
+
+    if (!profileRegex.test(pathname)) {
+      return false
+    }
+
+    if (content && isFriendicaHtml(content)) {
+      return true
+    }
+
+    if (headers && isFriendicaHeaders(headers)) {
+      return true
+    }
 
     return false
   },
 
   resolve: (url) => {
-    try {
-      const { origin, pathname } = new URL(url)
-      const match = pathname.match(profileRegex)
+    const parsedUrl = parseUrl(url)
 
-      if (!match?.[1]) {
-        return []
-      }
+    if (!parsedUrl) {
+      return []
+    }
 
-      return [
-        {
-          uri: `${origin}/feed/${match[1]}`,
-          hint: composeHint('friendica:posts'),
-        },
-        {
-          uri: `${origin}/feed/${match[1]}/comments`,
-          hint: composeHint('friendica:comments'),
-        },
-        {
-          uri: `${origin}/feed/${match[1]}/replies`,
-          hint: composeHint('friendica:replies'),
-        },
-        {
-          uri: `${origin}/feed/${match[1]}/activity`,
-          hint: composeHint('friendica:activity'),
-        },
-      ]
-    } catch {}
+    const { origin, pathname } = parsedUrl
+    const match = pathname.match(profileRegex)
 
-    return []
+    if (!match?.[1]) {
+      return []
+    }
+
+    return [
+      {
+        uri: `${origin}/feed/${match[1]}`,
+        hint: composeHint('friendica:posts'),
+      },
+      {
+        uri: `${origin}/feed/${match[1]}/comments`,
+        hint: composeHint('friendica:comments'),
+      },
+      {
+        uri: `${origin}/feed/${match[1]}/replies`,
+        hint: composeHint('friendica:replies'),
+      },
+      {
+        uri: `${origin}/feed/${match[1]}/activity`,
+        hint: composeHint('friendica:activity'),
+      },
+    ]
   },
 }

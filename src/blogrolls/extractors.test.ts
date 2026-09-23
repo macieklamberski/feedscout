@@ -34,7 +34,8 @@ describe('defaultExtractFn', () => {
   })
 
   it('should detect OPML 1.0 format', async () => {
-    const opml = `<?xml version="1.0" encoding="UTF-8"?>
+    const opml = `
+      <?xml version="1.0" encoding="UTF-8"?>
       <opml version="1.0">
         <head>
           <title>My Blogroll</title>
@@ -59,7 +60,8 @@ describe('defaultExtractFn', () => {
   })
 
   it('should detect OPML 2.0 format', async () => {
-    const opml = `<?xml version="1.0" encoding="UTF-8"?>
+    const opml = `
+      <?xml version="1.0" encoding="UTF-8"?>
       <opml version="2.0">
         <head>
           <title>Subscriptions</title>
@@ -67,7 +69,7 @@ describe('defaultExtractFn', () => {
         </head>
         <body>
           <outline text="Tech" title="Technology">
-            <outline type="rss" text="TechCrunch" xmlUrl="https://techcrunch.com/feed/"/>
+            <outline type="rss" text="Example Tech Blog" xmlUrl="https://tech.example.com/feed/"/>
           </outline>
         </body>
       </opml>
@@ -87,7 +89,8 @@ describe('defaultExtractFn', () => {
   })
 
   it('should handle OPML without title', async () => {
-    const opml = `<?xml version="1.0" encoding="UTF-8"?>
+    const opml = `
+      <?xml version="1.0" encoding="UTF-8"?>
       <opml version="2.0">
         <head></head>
         <body>
@@ -125,7 +128,8 @@ describe('defaultExtractFn', () => {
   })
 
   it('should return isValid: false for RSS content', async () => {
-    const rss = `<?xml version="1.0" encoding="UTF-8"?>
+    const rss = `
+      <?xml version="1.0" encoding="UTF-8"?>
       <rss version="2.0">
         <channel>
           <title>Test</title>
@@ -147,7 +151,8 @@ describe('defaultExtractFn', () => {
   })
 
   it('should include URL in result', async () => {
-    const opml = `<?xml version="1.0" encoding="UTF-8"?>
+    const opml = `
+      <?xml version="1.0" encoding="UTF-8"?>
       <opml version="2.0">
         <head><title>Test</title></head>
         <body></body>

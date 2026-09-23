@@ -1,9 +1,8 @@
+import { isAnyOf, isHostOf } from 'trousse'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
-import { composeHint, isAnyOf, isHostOf } from '../../../common/utils.js'
+import { composeHint } from '../../../common/utils.js'
 
-// Discoverable without handler.
-//
-// hearthis.at/{user}/podcast.xml also serves the same feed.
+// Discoverability: Discoverable without handler.
 
 const hosts = ['hearthis.at', 'www.hearthis.at']
 const excludedPaths = [
@@ -42,6 +41,7 @@ export const hearthisHandler: PlatformHandler = {
         uri: `https://hearthis.at/${username}/podcast/`,
         hint: composeHint('hearthis:tracks'),
       },
+      { uri: 'https://hearthis.at/new_tracks.rss', hint: composeHint('hearthis:new-tracks') },
     ]
   },
 }

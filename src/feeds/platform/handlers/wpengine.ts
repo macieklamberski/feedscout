@@ -1,8 +1,9 @@
+import { isSubdomainOf } from 'trousse'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
-import { isSubdomainOf } from '../../../common/utils.js'
 import { wordpressHandler } from './wordpress.js'
 
-// Discoverable without handler.
+// Discoverability: Partially discoverable without handler.
+// Generic partly covers blog.
 
 export const wpengineHandler: PlatformHandler = {
   match: (url) => {

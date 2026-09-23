@@ -15,8 +15,22 @@ describe('misskeyHandler', () => {
       expect(isMisskeyHtml('<meta name="application-name" content="MISSKEY">')).toBe(true)
     })
 
+    it('should return true for Sharkey application-name meta tag', () => {
+      expect(isMisskeyHtml('<meta name="application-name" content="Sharkey">')).toBe(true)
+    })
+
+    it('should return true for the misskey_meta script without application-name', () => {
+      expect(isMisskeyHtml('<script type="application/json" id="misskey_meta">{}</script>')).toBe(
+        true,
+      )
+    })
+
     it('should return false for non-Misskey application-name', () => {
       expect(isMisskeyHtml(otherHtml)).toBe(false)
+    })
+
+    it('should return false for empty content', () => {
+      expect(isMisskeyHtml('')).toBe(false)
     })
   })
 

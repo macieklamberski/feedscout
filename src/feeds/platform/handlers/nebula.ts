@@ -1,8 +1,9 @@
+import { isAnyOf, isHostOf } from 'trousse'
 import type { DiscoverUriEntry } from '../../../common/types.js'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
-import { composeHint, isAnyOf, isHostOf } from '../../../common/utils.js'
+import { composeHint } from '../../../common/utils.js'
 
-// Partially discoverable without handler.
+// Discoverability: Discoverable without handler.
 
 const hosts = ['nebula.tv', 'www.nebula.tv']
 const excludedPaths = [
@@ -56,6 +57,10 @@ export const nebulaHandler: PlatformHandler = {
       uris.push({
         uri: 'https://rss.nebula.app/video.rss?plus=true',
         hint: composeHint('nebula:videos-all-plus'),
+      })
+      uris.push({
+        uri: 'https://rss.nebula.app/video/categories/originals.rss',
+        hint: composeHint('nebula:originals'),
       })
       uris.push({
         uri: 'https://rss.nebula.app/video/channels.rss',

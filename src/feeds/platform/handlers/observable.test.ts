@@ -3,14 +3,14 @@ import { observableHandler } from './observable.js'
 
 describe('observableHandler', () => {
   describe('match', () => {
-    const cases = [
-      ['https://observablehq.com/@mbostock', true],
-      ['https://www.observablehq.com/@user', true],
-      ['https://observablehq.com', true],
-      ['https://example.com', false],
-    ] as const
+    const values: Array<[boolean, string]> = [
+      [true, 'https://observablehq.com/@mbostock'],
+      [true, 'https://www.observablehq.com/@user'],
+      [true, 'https://observablehq.com'],
+      [false, 'https://example.com'],
+    ]
 
-    it.each(cases)('%s -> %s', (url, expected) => {
+    it.each(values)('should return %s for %s', (expected, url) => {
       expect(observableHandler.match(url)).toBe(expected)
     })
 
@@ -56,6 +56,42 @@ describe('observableHandler', () => {
       expect(observableHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return feed URL for collection in the live form', () => {
+      const value = 'https://observablehq.com/@observablehq/-/collection/working-with-data'
+      const expected = [
+        {
+          uri: 'https://api.observablehq.com/collection/@observablehq/working-with-data.rss',
+          hint: { key: 'observable:collection', label: 'Collection' },
+        },
+      ]
+
+      expect(observableHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return recent feed for /public sorted by publish time', () => {
+      const value = 'https://observablehq.com/public?sort=publish_time'
+      const expected = [
+        {
+          uri: 'https://api.observablehq.com/documents/public.rss',
+          hint: { key: 'observable:recent', label: 'Recent' },
+        },
+      ]
+
+      expect(observableHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return trending feed for /public', () => {
+      const value = 'https://observablehq.com/public'
+      const expected = [
+        {
+          uri: 'https://api.observablehq.com/documents/trending.rss',
+          hint: { key: 'observable:trending', label: 'Trending' },
+        },
+      ]
+
+      expect(observableHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return empty array for root path', () => {
       const value = 'https://observablehq.com/'
 
@@ -86,10 +122,39 @@ describe('observableHandler', () => {
       expect(observableHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return recent feed for /recent with trailing slash', () => {
+      const value = 'https://observablehq.com/recent/'
+      const expected = [
+        {
+          uri: 'https://api.observablehq.com/documents/public.rss',
+          hint: { key: 'observable:recent', label: 'Recent' },
+        },
+      ]
+
+      expect(observableHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return trending feed for /trending with trailing slash', () => {
+      const value = 'https://observablehq.com/trending/'
+      const expected = [
+        {
+          uri: 'https://api.observablehq.com/documents/trending.rss',
+          hint: { key: 'observable:trending', label: 'Trending' },
+        },
+      ]
+
+      expect(observableHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return empty array for paths without @ prefix', () => {
       const value = 'https://observablehq.com/about'
 
       expect(observableHandler.resolve(value)).toEqual([])
+    })
+
+    it.todo('should define behavior for invalid URL input', () => {
+      // resolve('not-a-url') currently throws a TypeError from the unguarded new URL call; the
+      // desired contract (throw vs empty array) is undecided.
     })
   })
 })

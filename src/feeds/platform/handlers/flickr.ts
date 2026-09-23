@@ -1,0 +1,104 @@
+import { isHostOf } from 'trousse'
+import type { PlatformHandler } from '../../../common/uris/platform/types.js'
+import { composeHint } from '../../../common/utils.js'
+
+// Discoverability: Partially discoverable without handler.
+// Generic covers favorites, photostream (html).
+// Handler needed for: group, tag.
+
+const hosts = ['flickr.com', 'www.flickr.com']
+const feedsBase = 'https://www.flickr.com/services/feeds'
+
+const tagRegex = /^\/photos\/tags\/([^/]+)/
+const photosRegex = /^\/photos\/(\d+@N\d+)(?:\/(favorites))?/
+const groupRegex = /^\/groups\/(\d+@N\d+)(?:\/(pool|discuss))?/
+const forumRegex = /^\/help\/forum/
+const feedPathRegexes = [tagRegex, photosRegex, groupRegex, forumRegex]
+
+export const flickrHandler: PlatformHandler = {
+  match: (url) => {
+    if (!isHostOf(url, hosts)) {
+      return false
+    }
+
+    const { pathname } = new URL(url)
+
+    return feedPathRegexes.some((regex) => regex.test(pathname))
+  },
+
+  resolve: (url) => {
+    const { pathname } = new URL(url)
+
+    // Tag page: /photos/tags/{tag}
+    const tagMatch = pathname.match(tagRegex)
+
+    if (tagMatch?.[1]) {
+      return [
+        {
+          uri: `${feedsBase}/photos_public.gne?tags=${tagMatch[1]}`,
+          hint: composeHint('flickr:tag'),
+        },
+      ]
+    }
+
+    // Photostream or favorites: /photos/{nsid}, /photos/{nsid}/favorites
+    const photosMatch = pathname.match(photosRegex)
+
+    if (photosMatch?.[1]) {
+      const [, nsid, section] = photosMatch
+
+      if (section === 'favorites') {
+        return [
+          {
+            uri: `${feedsBase}/photos_faves.gne?id=${nsid}`,
+            hint: composeHint('flickr:faves'),
+          },
+        ]
+      }
+
+      return [
+        {
+          uri: `${feedsBase}/photos_public.gne?id=${nsid}`,
+          hint: composeHint('flickr:photos'),
+        },
+      ]
+    }
+
+    // Group pool or discussion: /groups/{nsid}, /groups/{nsid}/pool, /groups/{nsid}/discuss
+    const groupMatch = pathname.match(groupRegex)
+
+    if (groupMatch?.[1]) {
+      const [, nsid, section] = groupMatch
+      const pool = {
+        uri: `${feedsBase}/groups_pool.gne?id=${nsid}`,
+        hint: composeHint('flickr:group-pool'),
+      }
+      const discuss = {
+        uri: `${feedsBase}/groups_discuss.gne?id=${nsid}`,
+        hint: composeHint('flickr:group-discuss'),
+      }
+      // The pool photos that carry a location.
+      const geo = {
+        uri: `${feedsBase}/geo/?g=${nsid}`,
+        hint: composeHint('flickr:group-geo'),
+      }
+
+      if (section === 'discuss') {
+        return [discuss]
+      }
+
+      if (section === 'pool') {
+        return [pool, geo]
+      }
+
+      return [pool, discuss, geo]
+    }
+
+    // Help forum: /help/forum/{locale}
+    if (forumRegex.test(pathname)) {
+      return [{ uri: `${feedsBase}/forums.gne`, hint: composeHint('flickr:forum') }]
+    }
+
+    return []
+  },
+}

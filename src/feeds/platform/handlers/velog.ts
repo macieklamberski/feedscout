@@ -1,5 +1,9 @@
+import { isHostOf } from 'trousse'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
-import { composeHint, isHostOf } from '../../../common/utils.js'
+import { composeHint } from '../../../common/utils.js'
+
+// Discoverability: Not discoverable without handler.
+// Handler needed for: all shapes.
 
 const hosts = ['velog.io', 'www.velog.io']
 const userRegex = /^\/@([^/]+)/

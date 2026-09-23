@@ -1,9 +1,8 @@
+import { isSubdomainOf } from 'trousse'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
-import { composeHint, isSubdomainOf } from '../../../common/utils.js'
+import { composeHint } from '../../../common/utils.js'
 
-// Discoverable without handler.
-//
-// {slug}.podbean.com/feed.xml also works but 302-redirects to feed.podbean.com.
+// Discoverability: Discoverable without handler.
 
 const domainSuffixRegex = /\.podbean\.com$/i
 

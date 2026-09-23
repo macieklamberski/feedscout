@@ -1,8 +1,11 @@
+import { isHostOf } from 'trousse'
 import type { DiscoverUriEntry } from '../../../common/types.js'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
-import { composeHint, isHostOf } from '../../../common/utils.js'
+import { composeHint } from '../../../common/utils.js'
 
-// Not discoverable without handler.
+// Discoverability: Partially discoverable without handler.
+// Generic covers featured, news (html), partly covers profile.
+// Handler needed for: animelist, mangalist.
 
 const hosts = ['myanimelist.net', 'www.myanimelist.net']
 const userRegex = /^\/(?:profile|animelist|mangalist|history)\/([^/]+)/
@@ -53,12 +56,16 @@ export const myanimelistHandler: PlatformHandler = {
       hint: composeHint('myanimelist:manga'),
     })
     uris.push({
-      uri: `https://myanimelist.net/rss.php?type=rrw&u=${user}`,
+      uri: `https://myanimelist.net/rss.php?type=rwe&u=${user}`,
       hint: composeHint('myanimelist:recently-watched'),
     })
     uris.push({
       uri: `https://myanimelist.net/rss.php?type=rrm&u=${user}`,
       hint: composeHint('myanimelist:recently-read'),
+    })
+    uris.push({
+      uri: `https://myanimelist.net/rss.php?type=blog&u=${user}`,
+      hint: composeHint('myanimelist:blog'),
     })
 
     return uris

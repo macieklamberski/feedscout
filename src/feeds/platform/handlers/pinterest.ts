@@ -1,7 +1,9 @@
+import { isAnyOf, isHostOf } from 'trousse'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
-import { composeHint, isAnyOf, isHostOf } from '../../../common/utils.js'
+import { composeHint } from '../../../common/utils.js'
 
-// Not discoverable without handler.
+// Discoverability: Not discoverable without handler.
+// Handler needed for: all shapes.
 
 const hosts = ['pinterest.com', 'www.pinterest.com', 'pin.it']
 const excludedPaths = [
@@ -46,7 +48,14 @@ export const pinterestHandler: PlatformHandler = {
 
     // Board page: /{user}/{board}. Reserved sub-routes (pins, _saved, etc.) are
     // not boards; fall through to the user feed.
-    const reservedBoardSlugs = new Set(['pins', 'boards', '_saved', '_created', 'followers', 'following'])
+    const reservedBoardSlugs = new Set([
+      'pins',
+      'boards',
+      '_saved',
+      '_created',
+      'followers',
+      'following',
+    ])
     const board = pathSegments[1]
 
     if (board && !reservedBoardSlugs.has(board)) {

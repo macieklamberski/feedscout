@@ -1,5 +1,6 @@
 import type { Handler } from 'htmlparser2'
-import { endsWithAnyOf, includesAnyOf, matchesAnyOfLinkSelectors } from '../../../common/utils.js'
+import { endsWithAnyOf, includesAnyOf, parseUrl } from 'trousse'
+import { matchesAnyOfLinkSelectors } from '../../../common/utils.js'
 import type { HtmlMethodContext } from './types.js'
 
 export const handleOpenTag = (
@@ -52,11 +53,7 @@ export const handleOpenTag = (
     // Match feed path segments against the pathname only, so a feed path embedded in a wrapper's
     // query string (e.g. ?add=https://site/rss/x) does not count as a feed.
     if (context.options.anchorPathSegments?.length) {
-      let pathname: string | undefined
-
-      try {
-        pathname = new URL(attribs.href, 'https://feedscout.invalid').pathname
-      } catch {}
+      const pathname = parseUrl(attribs.href, 'https://feedscout.invalid')?.pathname
 
       if (pathname && includesAnyOf(pathname, context.options.anchorPathSegments)) {
         context.discoveredUris.add(attribs.href)

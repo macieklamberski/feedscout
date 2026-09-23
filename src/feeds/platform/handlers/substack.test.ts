@@ -3,18 +3,18 @@ import { substackHandler } from './substack.js'
 
 describe('substackHandler', () => {
   describe('match', () => {
-    const cases = [
-      ['https://example.substack.com', true],
-      ['https://blog.example.substack.com', true],
-      ['https://substack.com/@govtrackus', true],
-      ['https://substack.com/@theconsciouslee', true],
-      ['https://substack.com/@user-name', true],
-      ['https://substack.com/home', false],
-      ['https://substack.com', false],
-      ['https://medium.com', false],
-    ] as const
+    const values: Array<[boolean, string]> = [
+      [true, 'https://example.substack.com'],
+      [true, 'https://blog.example.substack.com'],
+      [true, 'https://substack.com/@govtrackus'],
+      [true, 'https://substack.com/@theconsciouslee'],
+      [true, 'https://substack.com/@user-name'],
+      [false, 'https://substack.com/home'],
+      [false, 'https://substack.com'],
+      [false, 'https://medium.com'],
+    ]
 
-    it.each(cases)('%s -> %s', (url, expected) => {
+    it.each(values)('should return %s for %s', (expected, url) => {
       expect(substackHandler.match(url)).toBe(expected)
     })
 
@@ -60,6 +60,34 @@ describe('substackHandler', () => {
       expect(substackHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return the custom domain feed a profile page names', () => {
+      const value = 'https://substack.com/@govtrackus'
+      const content =
+        '{\\"primaryPublication\\":{\\"id\\":4330724,\\"subdomain\\":\\"govtrack\\",\\"custom_domain\\":\\"substack.govtrack.us\\"}}'
+      const expected = [
+        {
+          uri: 'https://substack.govtrack.us/feed',
+          hint: { key: 'substack:newsletter', label: 'Newsletter' },
+        },
+      ]
+
+      expect(substackHandler.resolve(value, content)).toEqual(expected)
+    })
+
+    it('should return the publication subdomain feed when it differs from the handle', () => {
+      const value = 'https://substack.com/@govtrackus'
+      const content =
+        '{"primaryPublication":{"id":4330724,"subdomain":"govtrack","custom_domain":null}}'
+      const expected = [
+        {
+          uri: 'https://govtrack.substack.com/feed',
+          hint: { key: 'substack:newsletter', label: 'Newsletter' },
+        },
+      ]
+
+      expect(substackHandler.resolve(value, content)).toEqual(expected)
+    })
+
     it('should return feed URL for profile page with subpath', () => {
       const value = 'https://substack.com/@theconsciouslee/recommendations'
       const expected = [
@@ -70,6 +98,23 @@ describe('substackHandler', () => {
       ]
 
       expect(substackHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should fall back to origin feed for apex URL without profile path', () => {
+      const value = 'https://substack.com/home'
+      const expected = [
+        {
+          uri: 'https://substack.com/feed',
+          hint: { key: 'substack:newsletter', label: 'Newsletter' },
+        },
+      ]
+
+      expect(substackHandler.resolve(value)).toEqual(expected)
+    })
+
+    it.todo('should define behavior for invalid URL input', () => {
+      // resolve('not-a-url') currently throws a TypeError from the unguarded new URL call; the
+      // desired contract (throw vs empty array) is undecided.
     })
   })
 })

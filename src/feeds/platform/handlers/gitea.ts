@@ -1,10 +1,14 @@
+import { getPathSegments, isAnyOf, isHostOf } from 'trousse'
 import type { DiscoverUriEntry } from '../../../common/types.js'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
-import { composeHint, isAnyOf, isHostOf } from '../../../common/utils.js'
+import { composeHint } from '../../../common/utils.js'
 
-// Discoverable without handler.
+// Discoverability: Partially discoverable without handler.
+// Generic covers user (guess, html), partly covers issues, repo.
+// Handler needed for: branch.
 
 export const hosts = ['codeberg.org', 'www.codeberg.org', 'gitea.com', 'www.gitea.com']
+const giteaCookieRegex = /(?:^|[;,\s])[\w-]*gitea=/
 export const excludedPaths = [
   'explore',
   'admin',
@@ -17,9 +21,33 @@ export const excludedPaths = [
   '-',
 ]
 
-export const codebergHandler: PlatformHandler = {
-  match: (url) => {
-    return isHostOf(url, hosts)
+export const isGiteaHeaders = (headers: Headers): boolean => {
+  return giteaCookieRegex.test(headers.get('set-cookie') ?? '')
+}
+
+// `resolve` returns nothing without a usable first segment, so `match` tests the
+// same thing rather than claiming a page it cannot serve.
+export const hasResolvablePath = (url: string): boolean => {
+  const [first] = getPathSegments(url)
+
+  return Boolean(first) && !isAnyOf(first, excludedPaths)
+}
+
+export const giteaHandler: PlatformHandler = {
+  match: (url, _content, headers) => {
+    if (!hasResolvablePath(url)) {
+      return false
+    }
+
+    if (isHostOf(url, hosts)) {
+      return true
+    }
+
+    if (headers && isGiteaHeaders(headers)) {
+      return true
+    }
+
+    return false
   },
 
   resolve: (url) => {
@@ -34,7 +62,7 @@ export const codebergHandler: PlatformHandler = {
         return [
           {
             uri: [`${origin}/${user}.atom`, `${origin}/${user}.rss`],
-            hint: composeHint('codeberg:activity'),
+            hint: composeHint('gitea:activity'),
           },
         ]
       }
@@ -52,35 +80,17 @@ export const codebergHandler: PlatformHandler = {
               `${origin}/${user}/${repo}/releases.atom`,
               `${origin}/${user}/${repo}/releases.rss`,
             ],
-            hint: composeHint('codeberg:releases'),
+            hint: composeHint('gitea:releases'),
           },
           {
             uri: [`${origin}/${user}/${repo}/tags.atom`, `${origin}/${user}/${repo}/tags.rss`],
-            hint: composeHint('codeberg:tags'),
+            hint: composeHint('gitea:tags'),
           },
           {
             uri: [`${origin}/${user}/${repo}.atom`, `${origin}/${user}/${repo}.rss`],
-            hint: composeHint('codeberg:activity'),
+            hint: composeHint('gitea:activity'),
           },
         ]
-
-        // Branch page: codeberg.org/{user}/{repo}/src/branch/{branch}
-        // Gitea still serves /rss/branch/{branch} but Forgejo (Codeberg's runtime)
-        // removed it — so gate this emission on Gitea hosts only.
-        if (
-          isHostOf(url, ['gitea.com', 'www.gitea.com']) &&
-          pathSegments[2] === 'src' &&
-          pathSegments[3] === 'branch' &&
-          pathSegments[4]
-        ) {
-          const branch = pathSegments[4]
-          const filePath = pathSegments.slice(5).join('/')
-
-          feeds.unshift({
-            uri: `${origin}/${user}/${repo}/rss/branch/${branch}${filePath ? `/${filePath}` : ''}`,
-            hint: composeHint(filePath ? 'codeberg:file-history' : 'codeberg:branch-commits'),
-          })
-        }
 
         return feeds
       }

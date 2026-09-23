@@ -1,7 +1,8 @@
+import { isHostOf } from 'trousse'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
-import { composeHint, isHostOf } from '../../../common/utils.js'
+import { composeHint } from '../../../common/utils.js'
 
-// Discoverable without handler.
+// Discoverability: Discoverable without handler.
 
 export const heyWorldHandler: PlatformHandler = {
   match: (url) => {

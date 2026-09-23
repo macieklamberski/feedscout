@@ -54,8 +54,10 @@ const hubs = await discoverHubs(url, {
 ## Interface
 
 ```typescript
-type DiscoverResolveUrlFn = (url: string, baseUrl: string | undefined) => string
+type DiscoverResolveUrlFn = (url: string, baseUrl: string | undefined) => string | undefined
 ```
+
+Return `undefined` when the URL cannot be resolved. Feedscout then keeps the URL as discovered. The same happens when the function throws, and the error is reported to `onError`, so a malformed `href` on a page does not stop discovery.
 
 ## Use Cases
 
@@ -124,7 +126,7 @@ const resolveUrl: DiscoverResolveUrlFn = (url, baseUrl) => {
 
 ## Combining with Other Options
 
-URL resolution works with `discoverFeeds`, `discoverBlogrolls`, and `discoverHubs`:
+URL resolution works with `discoverFeeds`, `discoverBlogrolls`, `discoverFavicons`, and `discoverHubs`:
 
 ```typescript
 const feeds = await discoverFeeds(url, {

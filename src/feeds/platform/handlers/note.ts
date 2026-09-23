@@ -1,7 +1,10 @@
+import { isAnyOf, isHostOf } from 'trousse'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
-import { composeHint, isAnyOf, isHostOf } from '../../../common/utils.js'
+import { composeHint } from '../../../common/utils.js'
 
-// Partially discoverable without handler.
+// Discoverability: Partially discoverable without handler.
+// Generic covers home, profile (guess, html).
+// Handler needed for: hashtag, magazine, tagRedirect.
 
 const hosts = ['note.com', 'www.note.com']
 const excludedPaths = [
@@ -17,11 +20,13 @@ const excludedPaths = [
   'privacy',
   'ranking',
   'search',
+  'tag',
   'settings',
   'signup',
   'terms',
 ]
-const hashtagRegex = /^\/hashtag\/([^/]+)/
+// A hashtag page redirects to `/tag/{tag}`, and the feed stays under `/hashtag`.
+const hashtagRegex = /^\/(?:hashtag|tag)\/([^/]+)/
 const magazineRegex = /^\/([^/]+)\/m\/([^/]+)/
 
 export const noteHandler: PlatformHandler = {
@@ -32,7 +37,7 @@ export const noteHandler: PlatformHandler = {
   resolve: (url) => {
     const { pathname } = new URL(url)
 
-    // Hashtag page: /hashtag/{tag}
+    // Hashtag page: /hashtag/{tag} or /tag/{tag}
     const hashtagMatch = pathname.match(hashtagRegex)
 
     if (hashtagMatch?.[1]) {

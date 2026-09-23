@@ -3,22 +3,22 @@ import { livejournalHandler } from './livejournal.js'
 
 describe('livejournalHandler', () => {
   describe('match', () => {
-    const cases = [
-      ['https://ohnotheydidnt.livejournal.com', true],
-      ['https://blog.example.livejournal.com', true],
-      ['https://www.livejournal.com/users/news', true],
-      ['https://www.livejournal.com/~news', true],
-      ['https://users.livejournal.com/news', true],
-      ['https://community.livejournal.com/ohnotheydidnt', true],
-      ['https://www.livejournal.com', false],
-      ['https://users.livejournal.com', false],
-      ['https://community.livejournal.com', false],
-      ['https://syndicated.livejournal.com', false],
-      ['https://livejournal.com', false],
-      ['https://example.com', false],
-    ] as const
+    const values: Array<[boolean, string]> = [
+      [true, 'https://ohnotheydidnt.livejournal.com'],
+      [true, 'https://blog.example.livejournal.com'],
+      [true, 'https://www.livejournal.com/users/news'],
+      [true, 'https://www.livejournal.com/~news'],
+      [true, 'https://users.livejournal.com/news'],
+      [true, 'https://community.livejournal.com/ohnotheydidnt'],
+      [false, 'https://www.livejournal.com'],
+      [false, 'https://users.livejournal.com'],
+      [false, 'https://community.livejournal.com'],
+      [false, 'https://syndicated.livejournal.com'],
+      [false, 'https://livejournal.com'],
+      [false, 'https://example.com'],
+    ]
 
-    it.each(cases)('%s -> %s', (url, expected) => {
+    it.each(values)('should return %s for %s', (expected, url) => {
       expect(livejournalHandler.match(url)).toBe(expected)
     })
 
@@ -162,6 +162,11 @@ describe('livejournalHandler', () => {
       ]
 
       expect(livejournalHandler.resolve(value)).toEqual(expected)
+    })
+
+    it.todo('should define behavior for invalid URL input', () => {
+      // resolve('not-a-url') currently throws a TypeError from the unguarded new URL call; the
+      // desired contract (throw vs empty array) is undecided.
     })
   })
 })
