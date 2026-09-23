@@ -43,23 +43,12 @@ export const zennHandler: PlatformHandler = {
     return isEntityPath(parsedUrl.pathname)
   },
 
-  resolve: async (url, content, _headers, fetchFn) => {
-    let html = content
-
-    // An input given as a URL object arrives without the page, so it is fetched here.
-    if (!html && fetchFn) {
-      try {
-        const response = await fetchFn(url)
-
-        html = typeof response.body === 'string' ? response.body : undefined
-      } catch {}
-    }
-
-    if (!html) {
+  resolve: (_url, content) => {
+    if (!content) {
       return []
     }
 
-    const image = getMetaContent(html, 'og:image')
+    const image = getMetaContent(content, 'og:image')
 
     if (!isNonEmptyString(image)) {
       return []

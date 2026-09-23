@@ -96,8 +96,10 @@ describe('zennHandler', () => {
 
         expect(await zennHandler.resolve('https://zenn.dev/topics/rust', content)).toEqual(expected)
       })
+    })
 
-      it('should fetch the page when content is not provided', async () => {
+    describe('sad paths', () => {
+      it('should return empty array without the page, even with a fetch function', async () => {
         const mockFetch = createMockFetch({
           'https://zenn.dev/alice': createPage(
             'https://static.zenn.studio/user-upload/avatar/9965dabc76.jpeg',
@@ -109,15 +111,10 @@ describe('zennHandler', () => {
           undefined,
           mockFetch,
         )
-        const expected: Array<DiscoverUriEntry> = [
-          { uri: 'https://static.zenn.studio/user-upload/avatar/9965dabc76.jpeg' },
-        ]
 
-        expect(result).toEqual(expected)
+        expect(result).toEqual([])
       })
-    })
 
-    describe('sad paths', () => {
       it('should return empty array for the logo served by a missing publication', async () => {
         const content = createPage('https://static.zenn.studio/images/logo-only-dark.png')
 
