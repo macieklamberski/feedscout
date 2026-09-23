@@ -1,16 +1,6 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverFetchFn, DiscoverUriEntry } from '../../../common/types.js'
+import type { DiscoverUriEntry } from '../../../common/types.js'
 import { letterboxdHandler } from './letterboxd.js'
-
-const createMockFetch = (responses: Record<string, string>): DiscoverFetchFn => {
-  return async (url: string) => ({
-    headers: new Headers(),
-    body: responses[url] ?? '',
-    url,
-    status: url in responses ? 200 : 404,
-    statusText: url in responses ? 'OK' : 'Not Found',
-  })
-}
 
 const uploadedAvatarHtml = `
   <div class="profile-mini-person -has-badge">
@@ -87,21 +77,8 @@ describe('letterboxdHandler', () => {
 
   describe('resolve', () => {
     describe('member subpage', () => {
-      it('should return the large avatar from the page HTML', async () => {
-        const mockFetch = createMockFetch({})
-        const result = await letterboxdHandler.resolve(
-          'https://letterboxd.com/alice/films/',
-          uploadedAvatarHtml,
-          undefined,
-          mockFetch,
-        )
-        const expected: Array<DiscoverUriEntry> = [{ uri: largeUploadedAvatar }]
-
-        expect(result).toEqual(expected)
-      })
-
-      it('should return the large avatar without fetchFn', async () => {
-        const result = await letterboxdHandler.resolve(
+      it('should return the large avatar from the page HTML', () => {
+        const result = letterboxdHandler.resolve(
           'https://letterboxd.com/alice/films/',
           uploadedAvatarHtml,
         )
@@ -112,8 +89,8 @@ describe('letterboxdHandler', () => {
     })
 
     describe('list page', () => {
-      it('should return the large avatar from the person summary', async () => {
-        const result = await letterboxdHandler.resolve(
+      it('should return the large avatar from the person summary', () => {
+        const result = letterboxdHandler.resolve(
           'https://letterboxd.com/alice/list/favorites/',
           listAvatarHtml,
         )
@@ -124,8 +101,8 @@ describe('letterboxdHandler', () => {
     })
 
     describe('gravatar avatar', () => {
-      it('should return the large Gravatar that answers 404 when missing', async () => {
-        const result = await letterboxdHandler.resolve(
+      it('should return the large Gravatar that answers 404 when missing', () => {
+        const result = letterboxdHandler.resolve(
           'https://letterboxd.com/alice/films/',
           gravatarAvatarHtml,
         )
@@ -140,81 +117,21 @@ describe('letterboxdHandler', () => {
     })
 
     describe('placeholder avatar', () => {
-      it('should return empty array', async () => {
-        const mockFetch = createMockFetch({
-          'https://letterboxd.com/alice/films/': placeholderAvatarHtml,
-        })
-        const result = await letterboxdHandler.resolve(
+      it('should return empty array', () => {
+        const result = letterboxdHandler.resolve(
           'https://letterboxd.com/alice/films/',
           placeholderAvatarHtml,
-          undefined,
-          mockFetch,
         )
 
         expect(result).toEqual([])
       })
     })
 
-    describe('profile root', () => {
-      it('should return the large avatar from the films page', async () => {
-        const mockFetch = createMockFetch({
-          'https://letterboxd.com/alice/films/': uploadedAvatarHtml,
-        })
-        const result = await letterboxdHandler.resolve(
+    describe('profile root challenge page', () => {
+      it('should return empty array', () => {
+        const result = letterboxdHandler.resolve(
           'https://letterboxd.com/alice/',
           '<html><title>Just a moment...</title></html>',
-          undefined,
-          mockFetch,
-        )
-        const expected: Array<DiscoverUriEntry> = [{ uri: largeUploadedAvatar }]
-
-        expect(result).toEqual(expected)
-      })
-
-      it('should return the large avatar from the films page when content is absent', async () => {
-        const mockFetch = createMockFetch({
-          'https://letterboxd.com/alice/films/': uploadedAvatarHtml,
-        })
-        const result = await letterboxdHandler.resolve(
-          'https://letterboxd.com/alice/',
-          undefined,
-          undefined,
-          mockFetch,
-        )
-        const expected: Array<DiscoverUriEntry> = [{ uri: largeUploadedAvatar }]
-
-        expect(result).toEqual(expected)
-      })
-
-      it('should return empty array when fetchFn is not provided', async () => {
-        const result = await letterboxdHandler.resolve('https://letterboxd.com/alice/')
-
-        expect(result).toEqual([])
-      })
-
-      it('should return empty array when fetch throws', async () => {
-        const mockFetch: DiscoverFetchFn = () => {
-          throw new Error('Network error')
-        }
-        const result = await letterboxdHandler.resolve(
-          'https://letterboxd.com/alice/',
-          undefined,
-          undefined,
-          mockFetch,
-        )
-
-        expect(result).toEqual([])
-      })
-
-      it('should return empty array when the films page has no avatar', async () => {
-        const mockFetch = createMockFetch({
-          'https://letterboxd.com/alice/films/': '<html><body></body></html>',
-        })
-        const result = await letterboxdHandler.resolve(
-          'https://letterboxd.com/alice/',
-          undefined,
-          undefined,
-          mockFetch,
         )
 
         expect(result).toEqual([])
@@ -222,8 +139,8 @@ describe('letterboxdHandler', () => {
     })
 
     describe('avatar of another member', () => {
-      it('should return empty array', async () => {
-        const result = await letterboxdHandler.resolve(
+      it('should return empty array', () => {
+        const result = letterboxdHandler.resolve(
           'https://letterboxd.com/alice/list/favorites/',
           otherMemberAvatarHtml,
         )
@@ -232,20 +149,23 @@ describe('letterboxdHandler', () => {
       })
     })
 
-    it('should return empty array for the journal', async () => {
-      const mockFetch = createMockFetch({})
-      const result = await letterboxdHandler.resolve(
+    it('should return empty array when content is absent', () => {
+      const result = letterboxdHandler.resolve('https://letterboxd.com/alice/films/')
+
+      expect(result).toEqual([])
+    })
+
+    it('should return empty array for the journal', () => {
+      const result = letterboxdHandler.resolve(
         'https://letterboxd.com/journal/',
         uploadedAvatarHtml,
-        undefined,
-        mockFetch,
       )
 
       expect(result).toEqual([])
     })
 
-    it('should return empty array for invalid URL', async () => {
-      const result = await letterboxdHandler.resolve('not-a-url', uploadedAvatarHtml)
+    it('should return empty array for invalid URL', () => {
+      const result = letterboxdHandler.resolve('not-a-url', uploadedAvatarHtml)
 
       expect(result).toEqual([])
     })

@@ -54,26 +54,15 @@ export const letterboxdHandler: PlatformHandler = {
     return !!getUsername(url)
   },
 
-  resolve: async (url, content, _headers, fetchFn) => {
+  resolve: (url, content) => {
     const username = getUsername(url)
 
-    if (!username) {
+    if (!username || !content) {
       return []
     }
 
-    let src = content ? getAvatarSrc(content, username) : undefined
-
-    // The profile root and some subpages answer 403 to non-browser clients, the films page does not.
-    if (!src && fetchFn) {
-      try {
-        const response = await fetchFn(`https://letterboxd.com/${username}/films/`)
-
-        if (typeof response.body === 'string') {
-          src = getAvatarSrc(response.body, username)
-        }
-      } catch {}
-    }
-
+    // The profile root answers 403 to non-browser clients, so its content carries no avatar.
+    const src = getAvatarSrc(content, username)
     const uri = src ? getLargeAvatarUri(src) : undefined
 
     if (!uri) {
