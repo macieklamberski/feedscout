@@ -106,7 +106,7 @@
   ],
   "scripts": {
     "prepare": "lefthook install",
-    "build": "tsdown src/exports/index.ts src/exports/feeds.ts src/exports/blogrolls.ts src/exports/favicons.ts src/exports/hubs.ts src/exports/methods.ts src/exports/utils.ts --format cjs,esm --dts --clean --unbundle --no-fixed-extension && tsdown src/cli.ts --format esm --clean=false --unbundle --no-fixed-extension",
+    "build": "tsdown src/exports/index.ts src/exports/feeds.ts src/exports/blogrolls.ts src/exports/favicons.ts src/exports/hubs.ts src/exports/methods.ts src/exports/utils.ts src/exports/cli.ts --format cjs,esm --dts --clean --unbundle --no-fixed-extension",
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs"
   },
