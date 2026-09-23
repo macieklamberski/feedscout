@@ -5,6 +5,7 @@ import {
   type DiscoverMethodsConfigDefaults,
   type DiscoverOptionsInternal,
   type DiscoverResult,
+  type DiscoverStep,
   type DiscoverUriEntry,
   discoverMethodOrder,
 } from '../types.js'
@@ -35,8 +36,15 @@ export const discover = async <TValid>(
     maxUris = 50,
     includeInvalid = false,
     onProgress,
+    onStep,
     onError,
   } = options
+
+  const reportStep = (step: DiscoverStep): void => {
+    const url = 'url' in step ? step.url : undefined
+
+    attempt(() => onStep?.(step), undefined, 'onStep', onError, url)
+  }
 
   // Sanitize numeric options: reject NaN, < 1, and non-integer values, which
   // would otherwise hang the worker loop or fetch nothing.
@@ -45,10 +53,20 @@ export const discover = async <TValid>(
 
   // Normalize input: string → fetch URL, object → use provided content.
   let hasInputFetchFailed = false
+  const inputUrl = typeof input === 'string' ? input : undefined
+
+  if (inputUrl) {
+    reportStep({ step: 'fetchInput', status: 'start', url: inputUrl })
+  }
+
   const sourceInput = await normalizeInput(input, fetchFn, (error, context) => {
     hasInputFetchFailed = true
     reportError(onError, error, context)
   })
+
+  if (inputUrl) {
+    reportStep({ step: 'fetchInput', status: 'end', url: inputUrl })
+  }
 
   // Step 1: Check if content is already valid (only if content is provided).
   if (sourceInput.content) {
@@ -81,6 +99,8 @@ export const discover = async <TValid>(
     )
 
     if (siteUrl) {
+      reportStep({ step: 'resolveSiteUrl', status: 'start', url: siteUrl })
+
       try {
         const response = await fetchFn(siteUrl)
 
@@ -92,6 +112,8 @@ export const discover = async <TValid>(
       } catch (error) {
         reportError(onError, error, { phase: 'resolveSiteUrl', url: siteUrl })
       }
+
+      reportStep({ step: 'resolveSiteUrl', status: 'end', url: siteUrl })
     }
   }
 
@@ -105,23 +127,30 @@ export const discover = async <TValid>(
   )
 
   // Step 3: Discover URIs using selected methods.
+  reportStep({ step: 'collect', status: 'start' })
+
   const urisByMethod = await discoverUris(methodsConfig, fetchFn)
+
+  reportStep({ step: 'collect', status: 'end' })
 
   // Step 4: Normalize and deduplicate URIs per method group, deduping across groups.
   const seen = new Set<string>()
   const methodGroups: Array<{ method: DiscoverMethod; entries: Array<DiscoverUriEntry> }> = []
   let remaining = safeMaxUris
 
+  // A method that ran keeps its group even when empty, so onStep reports it as a step with no
+  // candidates.
   for (const method of discoverMethodOrder) {
-    if (remaining <= 0) {
-      break
-    }
-
-    const rawUris = urisByMethod[method]
-
-    if (!rawUris || rawUris.length === 0) {
+    if (!methodsConfig[method]) {
       continue
     }
+
+    if (remaining <= 0) {
+      methodGroups.push({ method, entries: [] })
+      continue
+    }
+
+    const rawUris = urisByMethod[method] ?? []
 
     // A relative URI belongs to the page it was found on. When the input is a feed, that is the
     // site page for every method except Feed, which reads the feed itself.
@@ -143,11 +172,9 @@ export const discover = async <TValid>(
       return true
     })
 
-    if (unique.length > 0) {
-      const capped = unique.slice(0, remaining)
-      remaining -= capped.length
-      methodGroups.push({ method, entries: capped })
-    }
+    const capped = unique.slice(0, remaining)
+    remaining -= capped.length
+    methodGroups.push({ method, entries: capped })
   }
 
   // Step 5: Validate discovered URIs.
@@ -175,9 +202,12 @@ export const discover = async <TValid>(
     const alternatives = typeof entry.uri === 'string' ? [entry.uri] : entry.uri
 
     for (const url of alternatives) {
-      const result = await fetchAndExtract(url)
+      const extracted = await fetchAndExtract(url)
+      const result = entry.hint
+        ? { ...extracted, method, hint: entry.hint }
+        : { ...extracted, method }
 
-      results.push(entry.hint ? { ...result, method, hint: entry.hint } : { ...result, method })
+      results.push(result)
       tested += 1
 
       if (result.isValid) {
@@ -185,7 +215,7 @@ export const discover = async <TValid>(
       }
 
       attempt(
-        () => onProgress?.({ tested, total, found, current: url }),
+        () => onProgress?.({ tested, total, found, current: url, method, result }),
         undefined,
         'onProgress',
         onError,
@@ -200,13 +230,27 @@ export const discover = async <TValid>(
   }
 
   for (const { method, entries } of methodGroups) {
+    if (stopOnFirstResult && found > 0) {
+      break
+    }
+
     const foundBefore = found
+
+    reportStep({ step: 'validate', status: 'start', method, total: entries.length })
 
     await processConcurrently(entries, (entry) => processUri(entry, method), {
       concurrency: safeConcurrency,
       shouldStop: () => {
         return stopOnFirstResult && found > 0
       },
+    })
+
+    reportStep({
+      step: 'validate',
+      status: 'end',
+      method,
+      total: entries.length,
+      found: found - foundBefore,
     })
 
     if (stopOnFirstMethod && found > foundBefore) {
