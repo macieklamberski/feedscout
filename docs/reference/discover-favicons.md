@@ -74,6 +74,8 @@ Returns a promise that resolves to an array of results:
 }
 ```
 
+Each favicon URL appears once. When several candidates lead to the same favicon, for example `/favicon.ico` and `/favicon.png` both redirecting to one image, only the first is kept. The same applies to invalid results with `includeInvalid`.
+
 ## Examples
 
 ### Basic Usage

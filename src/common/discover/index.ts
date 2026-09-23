@@ -159,15 +159,18 @@ export const discover = async <TValid>(
       return normalizeUriEntry(entry, resolveUrlFn, baseUrl, onError)
     })
 
+    // Each alternative counts on its own, so a page link to a URL that a platform entry already
+    // offers as one of its alternatives is not fetched a second time.
     const unique = normalized.filter((entry) => {
-      // Sort array alternatives so the key is order-independent.
-      const key = typeof entry.uri === 'string' ? entry.uri : [...entry.uri].sort().join('\0')
+      const uris = typeof entry.uri === 'string' ? [entry.uri] : entry.uri
 
-      if (seen.has(key)) {
+      if (uris.some((uri) => seen.has(uri))) {
         return false
       }
 
-      seen.add(key)
+      for (const uri of uris) {
+        seen.add(uri)
+      }
 
       return true
     })
@@ -180,8 +183,28 @@ export const discover = async <TValid>(
   // Step 5: Validate discovered URIs.
   const total = methodGroups.reduce((sum, group) => sum + group.entries.length, 0)
   const results: Array<DiscoverResult<TValid>> = []
+  const validUrls = new Set<string>()
+  const invalidUrls = new Set<string>()
+
   let tested = 0
   let found = 0
+
+  // Candidates that redirect to one URL, like /feed and /rss on WordPress, all come back under
+  // the final URL. Only the first result for each URL is kept.
+  const recordResult = (result: DiscoverResult<TValid>): void => {
+    const seenUrls = result.isValid ? validUrls : invalidUrls
+
+    if (seenUrls.has(result.url)) {
+      return
+    }
+
+    seenUrls.add(result.url)
+    results.push(result)
+
+    if (result.isValid) {
+      found += 1
+    }
+  }
 
   const fetchAndExtract = async (url: string): Promise<DiscoverResult<TValid>> => {
     try {
@@ -207,12 +230,8 @@ export const discover = async <TValid>(
         ? { ...extracted, method, hint: entry.hint }
         : { ...extracted, method }
 
-      results.push(result)
+      recordResult(result)
       tested += 1
-
-      if (result.isValid) {
-        found += 1
-      }
 
       attempt(
         () => onProgress?.({ tested, total, found, current: url, method, result }),

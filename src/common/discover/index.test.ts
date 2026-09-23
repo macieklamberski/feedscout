@@ -1257,6 +1257,158 @@ describe('discoverFeeds', () => {
 
       expect(value).toEqual(expected)
     })
+
+    it('should return one result when several candidates redirect to the same feed', async () => {
+      const redirectingFetch: DiscoverFetchFn = async () => ({
+        headers: new Headers(),
+        body: rss,
+        url: 'https://example.com/feed/',
+        status: 200,
+        statusText: 'OK',
+      })
+      const value = await discoverFeeds(
+        { url: 'https://example.com', content: '<html></html>' },
+        {
+          methods: { guess: { uris: ['/feed', '/rss', '/index.xml'] } },
+          fetchFn: redirectingFetch,
+        },
+      )
+      const expected: Array<DiscoverResult<FeedResult>> = [
+        {
+          url: 'https://example.com/feed/',
+          isValid: true,
+          method: 'guess',
+          format: 'rss',
+          title: 'Test RSS',
+          description: 'Test feed',
+          siteUrl: 'https://example.com/',
+        },
+      ]
+
+      expect(value).toEqual(expected)
+    })
+
+    it('should count a redirect to an already found feed as tested but not found', async () => {
+      const progressUpdates: Array<DiscoverProgress> = []
+      const redirectingFetch: DiscoverFetchFn = async () => ({
+        headers: new Headers(),
+        body: rss,
+        url: 'https://example.com/feed/',
+        status: 200,
+        statusText: 'OK',
+      })
+
+      await discoverFeeds(
+        { url: 'https://example.com', content: '<html></html>' },
+        {
+          methods: { guess: { uris: ['/feed', '/rss'] } },
+          fetchFn: redirectingFetch,
+          concurrency: 1,
+          onProgress: (progress) => {
+            progressUpdates.push(progress)
+          },
+        },
+      )
+      const expected: Partial<DiscoverProgress> = {
+        tested: 2,
+        total: 2,
+        found: 1,
+      }
+
+      expect(progressUpdates[progressUpdates.length - 1]).toMatchObject(expected)
+    })
+
+    it('should return one invalid result when several candidates redirect to the same page', async () => {
+      const redirectingFetch: DiscoverFetchFn = async () => ({
+        headers: new Headers(),
+        body: '<html></html>',
+        url: 'https://example.com/',
+        status: 200,
+        statusText: 'OK',
+      })
+      const value = await discoverFeeds(
+        { url: 'https://example.com', content: '<html></html>' },
+        {
+          methods: { guess: { uris: ['/rss', '/atom.xml'] } },
+          fetchFn: redirectingFetch,
+          includeInvalid: true,
+        },
+      )
+      const expected: Array<DiscoverResult<FeedResult>> = [
+        {
+          url: 'https://example.com/',
+          isValid: false,
+          method: 'guess',
+        },
+      ]
+
+      expect(value).toEqual(expected)
+    })
+
+    it('should keep a valid result for a URL that failed earlier', async () => {
+      const mockFetch: DiscoverFetchFn = (url) => {
+        if (url === 'https://example.com/feed') {
+          throw new Error('Timeout')
+        }
+
+        return {
+          headers: new Headers(),
+          body: rss,
+          url: 'https://example.com/feed',
+          status: 200,
+          statusText: 'OK',
+        }
+      }
+      const value = await discoverFeeds(
+        { url: 'https://example.com', content: '<html></html>' },
+        {
+          methods: { guess: { uris: ['/feed', '/rss'] } },
+          fetchFn: mockFetch,
+          concurrency: 1,
+          includeInvalid: true,
+        },
+      )
+      const expected: Array<Partial<DiscoverResult<FeedResult>>> = [
+        { url: 'https://example.com/feed', isValid: false },
+        { url: 'https://example.com/feed', isValid: true },
+      ]
+
+      expect(value).toMatchObject(expected)
+    })
+
+    it('should not fetch a page link that a platform entry offers as an alternative', async () => {
+      const fetchedUrls: Array<string> = []
+      const platformHandler: PlatformHandler = {
+        match: () => true,
+        resolve: () => [{ uri: ['/channel.xml', '/uploads.xml'] }],
+      }
+      const mockFetch: DiscoverFetchFn = (url) => {
+        fetchedUrls.push(url)
+
+        return createMockFetch({ 'https://example.com/channel.xml': rss })(url)
+      }
+
+      await discoverFeeds(
+        {
+          url: 'https://example.com',
+          content: '<link rel="alternate" type="application/rss+xml" href="/channel.xml">',
+        },
+        {
+          methods: {
+            platform: { handlers: [platformHandler] },
+            html: {
+              linkSelectors: [{ rel: 'alternate', types: ['application/rss+xml'] }],
+              anchorUris: [],
+              anchorIgnoredUris: [],
+              anchorLabels: [],
+            },
+          },
+          fetchFn: mockFetch,
+        },
+      )
+
+      expect(fetchedUrls).toEqual(['https://example.com/channel.xml'])
+    })
   })
 
   describe('extractFn', () => {

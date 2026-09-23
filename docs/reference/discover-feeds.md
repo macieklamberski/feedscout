@@ -77,6 +77,8 @@ Returns a promise that resolves to an array of results:
 }
 ```
 
+Each feed URL appears once. When several candidates lead to the same feed, for example `/feed` and `/rss` both redirecting to `/feed/`, only the first is kept, so the result comes from the earliest method that found it. The same applies to invalid results with `includeInvalid`.
+
 The `method` field indicates which discovery method produced the result. Results from the [Platform method](/feeds/platform) also include a [`hint`](/feeds/platform#hints) that identifies the type of feed.
 
 ## Examples

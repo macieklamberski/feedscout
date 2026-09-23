@@ -237,6 +237,8 @@ type DiscoverProgress<TValid = object> = {
 }
 ```
 
+Every tested URL is reported, including one that led to a URL an earlier result already returned. Such a repeat comes with a valid `result` but does not raise `found`, and it is left out of the returned results. To build a list of feeds as they are found, add one when `found` goes up.
+
 ### DiscoverOnProgressFn
 
 Progress callback function type:

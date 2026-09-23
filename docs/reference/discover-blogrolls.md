@@ -75,6 +75,8 @@ Returns a promise that resolves to an array of results:
 }
 ```
 
+Each blogroll URL appears once. When several candidates lead to the same blogroll, for example `/blogroll.opml` and `/links.opml` both redirecting to one file, only the first is kept. The same applies to invalid results with `includeInvalid`.
+
 ## Examples
 
 ### Basic Usage
