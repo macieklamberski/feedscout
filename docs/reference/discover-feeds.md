@@ -49,6 +49,7 @@ All options are optional. When not provided, sensible defaults are used.
 | `maxUris` | `number` | `50` | Max total candidate URIs to fetch across all methods |
 | `includeInvalid` | `boolean` | `false` | Include invalid results |
 | `onProgress` | `DiscoverOnProgressFn` | | Progress callback |
+| `onStep` | `DiscoverOnStepFn` | | Called when each stage of discovery starts and ends |
 | `onError` | `DiscoverOnErrorFn` | | Called when fetching the input fails. [`DiscoverOnErrorFn`](/reference/types#discoveronerrorfn) lists everything it reports |
 
 ## Return Value
@@ -75,6 +76,8 @@ Returns a promise that resolves to an array of results:
   method: 'guess',
 }
 ```
+
+Each feed URL appears once. When several candidates lead to the same feed, for example `/feed` and `/rss` both redirecting to `/feed/`, only the first is kept, so the result comes from the earliest method that found it. The same applies to invalid results with `includeInvalid`.
 
 The `method` field indicates which discovery method produced the result. Results from the [Platform method](/feeds/platform) also include a [`hint`](/feeds/platform#hints) that identifies the type of feed.
 

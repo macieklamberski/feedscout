@@ -50,6 +50,7 @@ All options are optional. When not provided, sensible defaults are used.
 | `maxUris` | `number` | `50` | Max total candidate URIs to fetch across all methods |
 | `includeInvalid` | `boolean` | `false` | Include invalid results |
 | `onProgress` | `DiscoverOnProgressFn` | | Progress callback |
+| `onStep` | `DiscoverOnStepFn` | | Called when each stage of discovery starts and ends |
 | `onError` | `DiscoverOnErrorFn` | | Called when fetching the input or the site URL fails. [`DiscoverOnErrorFn`](/reference/types#discoveronerrorfn) lists everything it reports |
 
 ## Return Value
@@ -72,6 +73,8 @@ Returns a promise that resolves to an array of results:
   method: 'guess',
 }
 ```
+
+Each favicon URL appears once. When several candidates lead to the same favicon, for example `/favicon.ico` and `/favicon.png` both redirecting to one image, only the first is kept. The same applies to invalid results with `includeInvalid`.
 
 ## Examples
 

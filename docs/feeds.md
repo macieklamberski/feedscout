@@ -171,3 +171,15 @@ const feeds = await discoverFeeds(url, {
   },
 })
 ```
+
+Follow the stages of discovery with `onStep`, for example to show which method is running:
+
+```typescript
+const feeds = await discoverFeeds(url, {
+  onStep: (step) => {
+    if (step.step === 'validate' && step.status === 'start') {
+      console.log(`Testing ${step.total} URLs from ${step.method}`)
+    }
+  },
+})
+```

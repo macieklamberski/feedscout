@@ -18,6 +18,8 @@ import type {
   DiscoverResolveUrlFn,
   DiscoverResolveSiteUrlFn,
   DiscoverOnProgressFn,
+  DiscoverStep,
+  DiscoverOnStepFn,
   DiscoverOnErrorFn,
   DiscoverErrorContext,
   DiscoverUriEntry,
@@ -70,7 +72,8 @@ type DiscoverOptions<TValid, TMethods extends DiscoverMethod = DiscoverMethod> =
   stopOnFirstResult?: boolean
   concurrency?: number
   maxUris?: number
-  onProgress?: DiscoverOnProgressFn
+  onProgress?: DiscoverOnProgressFn<TValid>
+  onStep?: DiscoverOnStepFn
   onError?: DiscoverOnErrorFn
   includeInvalid?: boolean
 }
@@ -221,23 +224,52 @@ type DiscoverUriEntry = {
 
 ### DiscoverProgress
 
-Progress information passed to `onProgress` callback:
+Progress information passed to the `onProgress` callback after each candidate URL is tested:
 
 ```typescript
-type DiscoverProgress = {
-  tested: number   // Number of URLs tested
-  total: number    // Total URLs to test
-  found: number    // Valid results found
-  current: string  // Current URL being tested
+type DiscoverProgress<TValid = object> = {
+  tested: number                  // Number of URLs tested
+  total: number                   // Total URLs to test
+  found: number                   // Valid results found
+  current: string                 // URL that was just tested
+  method: DiscoverMethod          // Method the URL came from
+  result: DiscoverResult<TValid>  // Result of testing the URL, with its hint
 }
 ```
+
+Every tested URL is reported, including one that led to a URL an earlier result already returned. Such a repeat comes with a valid `result` but does not raise `found`, and it is left out of the returned results. To build a list of feeds as they are found, add one when `found` goes up.
 
 ### DiscoverOnProgressFn
 
 Progress callback function type:
 
 ```typescript
-type DiscoverOnProgressFn = (progress: DiscoverProgress) => void
+type DiscoverOnProgressFn<TValid = object> = (progress: DiscoverProgress<TValid>) => void
+```
+
+### DiscoverStep
+
+A stage of discovery, passed to the `onStep` callback when it starts and when it ends:
+
+```typescript
+type DiscoverStep =
+  | { step: 'fetchInput' | 'resolveSiteUrl'; status: 'start' | 'end'; url: string }
+  | { step: 'collect'; status: 'start' | 'end' }
+  | { step: 'validate'; status: 'start'; method: DiscoverMethod; total: number }
+  | { step: 'validate'; status: 'end'; method: DiscoverMethod; total: number; found: number }
+```
+
+- `fetchInput`: Fetching the input URL. Skipped when you pass the content in.
+- `resolveSiteUrl`: Fetching the site page of a feed, when `resolveSiteUrlFn` returns one.
+- `collect`: Gathering candidate URLs from every method. Platform handlers that fetch a page to build their URLs do it here.
+- `validate`: Testing the candidates of one method. Every method that ran gets one, including a method that found nothing to test, which reports a `total` of 0. A method skipped by `stopOnFirstMethod` or `stopOnFirstResult` gets none.
+
+### DiscoverOnStepFn
+
+Step callback function type:
+
+```typescript
+type DiscoverOnStepFn = (step: DiscoverStep) => void
 ```
 
 ## Error Types
@@ -257,6 +289,7 @@ type DiscoverErrorContext = {
     | 'resolveSiteUrlFn'
     | 'extractFn'
     | 'onProgress'
+    | 'onStep'
   url?: string
 }
 ```
@@ -267,6 +300,7 @@ type DiscoverErrorContext = {
 - `resolveSiteUrlFn`: The site URL resolution function threw. Discovery continues with the original input.
 - `extractFn`: The extractor threw on the input content. The input is not returned as a result, and the methods run.
 - `onProgress`: The progress callback threw, or returned a promise that rejected. The result it was called for is kept.
+- `onStep`: The step callback threw, or returned a promise that rejected. Discovery continues.
 
 A function you pass in never ends discovery by throwing. The phases above are reported here. A throw from `fetchFn` or `extractFn` on a candidate URL is not: it marks that result as invalid and lands in its `error` field, which you see with `includeInvalid`. A throw inside a platform handler, from its `match` or `resolve`, is not reported either: that handler is skipped silently and the next one is tried. The default `resolveUrlFn` is reported the same way as a custom one, for example when a page links to a malformed absolute URL. `resolveUrlFn` and `resolveSiteUrlFn` are synchronous: one that returns a promise is treated as returning nothing, and a rejection is reported. An error thrown from `onError` itself is ignored, and so is a promise it returns that rejects.
 

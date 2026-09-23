@@ -58,14 +58,24 @@ export type DiscoverFetchFn = (
   options?: DiscoverFetchFnOptions,
 ) => MaybePromise<DiscoverFetchFnResponse>
 
-export type DiscoverProgress = {
+export type DiscoverProgress<TValid = object> = {
   tested: number
   total: number
   found: number
   current: string
+  method: DiscoverMethod
+  result: DiscoverResult<TValid>
 }
 
-export type DiscoverOnProgressFn = (progress: DiscoverProgress) => void
+export type DiscoverOnProgressFn<TValid = object> = (progress: DiscoverProgress<TValid>) => void
+
+export type DiscoverStep =
+  | { step: 'fetchInput' | 'resolveSiteUrl'; status: 'start' | 'end'; url: string }
+  | { step: 'collect'; status: 'start' | 'end' }
+  | { step: 'validate'; status: 'start'; method: DiscoverMethod; total: number }
+  | { step: 'validate'; status: 'end'; method: DiscoverMethod; total: number; found: number }
+
+export type DiscoverOnStepFn = (step: DiscoverStep) => void
 
 export type DiscoverErrorContext = {
   phase:
@@ -75,6 +85,7 @@ export type DiscoverErrorContext = {
     | 'resolveSiteUrlFn'
     | 'extractFn'
     | 'onProgress'
+    | 'onStep'
   url?: string
 }
 
@@ -171,7 +182,8 @@ export type DiscoverOptions<TValid, TMethods extends DiscoverMethod = DiscoverMe
   stopOnFirstResult?: boolean
   concurrency?: number
   maxUris?: number
-  onProgress?: DiscoverOnProgressFn
+  onProgress?: DiscoverOnProgressFn<TValid>
+  onStep?: DiscoverOnStepFn
   onError?: DiscoverOnErrorFn
   includeInvalid?: boolean
 }
@@ -188,6 +200,7 @@ export type DiscoverOptionsInternal<TValid> = {
   concurrency?: number
   maxUris?: number
   includeInvalid?: boolean
-  onProgress?: DiscoverOnProgressFn
+  onProgress?: DiscoverOnProgressFn<TValid>
+  onStep?: DiscoverOnStepFn
   onError?: DiscoverOnErrorFn
 }
