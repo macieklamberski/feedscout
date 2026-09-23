@@ -104,5 +104,11 @@ describe('producthuntHandler', () => {
     it('should return empty array without content', () => {
       expect(producthuntHandler.resolve('https://www.producthunt.com/products/notion')).toEqual([])
     })
+
+    it('should return empty array for a page outside a product', () => {
+      const value = '{"slug":"notion","name":"Notion","logoUuid":"abc123.png"}'
+
+      expect(producthuntHandler.resolve('https://www.producthunt.com/topics/ai', value)).toEqual([])
+    })
   })
 })
