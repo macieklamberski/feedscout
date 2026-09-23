@@ -5,9 +5,9 @@ import { composeHint } from '../../../common/utils.js'
 // Discoverability: Not discoverable without handler.
 // Handler needed for: all shapes.
 
-const hosts = ['observablehq.com', 'www.observablehq.com']
+export const hosts = ['observablehq.com', 'www.observablehq.com']
 // The live form carries a `-` segment, `/@{user}/-/collection/{slug}`.
-const collectionRegex = /^\/@([^/]+)\/(?:-\/)?collection\/([^/]+)/
+export const collectionRegex = /^\/@([^/]+)\/(?:-\/)?collection\/([^/]+)/
 const userRegex = /^\/@([^/]+)/
 
 export const observableHandler: PlatformHandler = {
