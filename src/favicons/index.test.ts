@@ -397,6 +397,84 @@ describe('discoverFavicons', () => {
     expect(result).toEqual(expected)
   })
 
+  it('should discover podcast artwork from RSS feed content', async () => {
+    const rssContent = `
+      <?xml version="1.0"?>
+      <rss version="2.0" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd">
+        <channel>
+          <title>Example</title>
+          <link>https://example.com</link>
+          <itunes:image href="https://example.com/artwork.jpg" />
+        </channel>
+      </rss>
+    `
+    const mockFetch = createMockFetch({
+      'https://example.com/artwork.jpg': 'binary',
+    })
+    const result = await discoverFavicons(
+      { url: 'https://example.com/feed.xml', content: rssContent },
+      { methods: ['feed'], fetchFn: mockFetch },
+    )
+    const expected: Array<DiscoverResult<FaviconResult>> = [
+      { url: 'https://example.com/artwork.jpg', isValid: true, method: 'feed' },
+    ]
+
+    expect(result).toEqual(expected)
+  })
+
+  it('should not discover the RSS channel logo from RSS feed content', async () => {
+    const rssContent = `
+      <?xml version="1.0"?>
+      <rss version="2.0">
+        <channel>
+          <title>Example</title>
+          <link>https://example.com</link>
+          <image>
+            <url>https://example.com/logo.png</url>
+            <title>Example</title>
+            <link>https://example.com</link>
+          </image>
+        </channel>
+      </rss>
+    `
+    const mockFetch = createMockFetch({
+      'https://example.com/logo.png': 'binary',
+    })
+    const result = await discoverFavicons(
+      { url: 'https://example.com/feed.xml', content: rssContent },
+      { methods: ['feed'], fetchFn: mockFetch },
+    )
+
+    expect(result).toEqual([])
+  })
+
+  it('should discover podcast artwork after the icon from Atom feed content', async () => {
+    const atomContent = `
+      <?xml version="1.0" encoding="utf-8"?>
+      <feed xmlns="http://www.w3.org/2005/Atom" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd">
+        <title>Example</title>
+        <icon>https://example.com/icon.png</icon>
+        <itunes:image href="https://example.com/artwork.jpg" />
+        <id>urn:uuid:1</id>
+        <updated>2024-01-01T00:00:00Z</updated>
+      </feed>
+    `
+    const mockFetch = createMockFetch({
+      'https://example.com/icon.png': 'binary',
+      'https://example.com/artwork.jpg': 'binary',
+    })
+    const result = await discoverFavicons(
+      { url: 'https://example.com/feed.xml', content: atomContent },
+      { methods: ['feed'], fetchFn: mockFetch },
+    )
+    const expected: Array<DiscoverResult<FaviconResult>> = [
+      { url: 'https://example.com/icon.png', isValid: true, method: 'feed' },
+      { url: 'https://example.com/artwork.jpg', isValid: true, method: 'feed' },
+    ]
+
+    expect(result).toEqual(expected)
+  })
+
   it('should return empty array from feed method for RSS content', async () => {
     const rssContent = `
       <?xml version="1.0"?>
