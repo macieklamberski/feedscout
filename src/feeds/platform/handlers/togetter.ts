@@ -6,8 +6,8 @@ import { composeHint } from '../../../common/utils.js'
 // Discoverability: Not discoverable without handler.
 // Handler needed for: all shapes.
 
-const hosts = ['togetter.com', 'www.togetter.com']
-const curatorPathRegex = /^\/id\/([^/]+)/
+export const hosts = ['togetter.com', 'www.togetter.com']
+export const curatorPathRegex = /^\/id\/([^/]+)/
 
 export const togetterHandler: PlatformHandler = {
   match: (url) => {
