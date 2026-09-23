@@ -9,6 +9,7 @@ import { arenaEnricher, arenaHandler } from './platform/handlers/arena.js'
 import { behanceHandler } from './platform/handlers/behance.js'
 import { bitchuteHandler } from './platform/handlers/bitchute.js'
 import { blueskyEnricher, blueskyHandler } from './platform/handlers/bluesky.js'
+import { bookwyrmHandler } from './platform/handlers/bookwyrm.js'
 import { deviantartHandler } from './platform/handlers/deviantart.js'
 import { devtoEnricher, devtoHandler } from './platform/handlers/devto.js'
 import { flickrHandler } from './platform/handlers/flickr.js'
@@ -111,6 +112,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     noteHandler,
     peertubeHandler,
     blueskyHandler,
+    bookwyrmHandler,
     redditHandler,
     soundcloudHandler,
     tumblrHandler,
