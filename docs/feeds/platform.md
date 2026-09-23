@@ -1082,6 +1082,97 @@ Discovers the Atom feed of a Shopify store's blog. Detected by the `Powered-By` 
 > [!NOTE]
 > There is no store-wide feed, so the blog handle is required. A missing blog answers 404 with an Atom content type and an empty body.
 
+### HubSpot
+
+Discovers the RSS feeds of a HubSpot blog. Detected by the `HubSpot` generator meta tag or the `x-hs-hub-id` response header. A page the `x-hs-cfworker-meta` header marks as something other than a blog page is not matched.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `{site}/{blog-path}` | Blog feed (RSS) |
+| `{site}/{blog-path}/author/{slug}` | Author feed + blog feed (RSS) |
+| `{site}/{blog-path}/topic/{slug}` | Tag feed + blog feed (RSS) |
+
+> [!NOTE]
+> The feed hangs off the blog path, never the host root, which answers 404.
+
+### Publii
+
+Discovers the feeds of a Publii-built site. Detected by the `Publii` generator meta tag or by media linked under `/media/website/` or `/media/posts/`. The media links also name the site root, so a site under a sub-path gets its own feeds.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| Any page | Posts feed (Atom) + JSON Feed |
+
+> [!NOTE]
+> `/feed.xml` is Atom despite the name, and the theme decides whether either file is linked.
+
+### Wix
+
+Discovers the blog feed of a Wix site. Detected by the `Wix.com` generator meta tag, `static.parastorage.com` assets or the `x-wix-request-id` response header.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `{account}.wixsite.com/{site}/…` | Blog feed (RSS), under the site path |
+| Any other page | Blog feed (RSS) |
+
+> [!NOTE]
+> The feed sits at the site root wherever the blog appears in navigation, and only sites with the Wix Blog app installed have it.
+
+### Joomla
+
+Discovers the feed forms of a Joomla list view. Detected by the `Joomla!` generator meta tag or the `joomla-script-options` script every Joomla 3, 4 and 5 page ships.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| Any list view | View feed (RSS + Atom) |
+
+> [!NOTE]
+> Only list views produce a feed. A non-list view answers 404 as `application/xml` with an `<error>` root. The `?format=feed` form is used because it works with and without search-engine friendly URLs, while the `.feed` suffix answers 404 on a site without the `.html` suffix.
+
+### WriteFreely
+
+Discovers the feeds of a WriteFreely blog. Detected by the `WriteFreely` generator meta tag or the `/css/write.css` stylesheet.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `{instance}/{blog}` | Blog feed + instance reader feed (RSS) |
+| `{instance}/{blog}/tag:{tag}` | Tag feed + blog feed + instance reader feed (RSS) |
+| `{instance}/{post}` on a single-user instance | Blog feed (RSS) |
+
+> [!NOTE]
+> A single-user instance serves its blog at the root, so the blog path is read from the link in the blog title rather than from the URL.
+
+### Svbtle
+
+Discovers the Atom feed of a Svbtle blog. Detected by the `Svbtle.com` generator meta tag or `lightning.svbtle.com/cargo/` assets.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| Any page on a blog host | Posts feed (Atom) |
+
+> [!NOTE]
+> `svbtle.com` itself is excluded: its `/feed` answers 200 with an HTML discovery page, and the `svbtle.com/{user}/feed` form does not exist.
+
+### Textpattern
+
+Discovers the feeds of a Textpattern site. Detected by the `Textpattern` generator meta tag.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| Any page | Posts feed (RSS + Atom) |
+
+### Grav
+
+Discovers the feed forms of a Grav listing page. Detected by the `GravCMS` generator meta tag, a `/user/themes/` or `/user/plugins/` asset path, or the `grav-site-{hash}` cookie.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `{site}/` | Site root feed (RSS + Atom) at `/.rss` and `/.atom` |
+| Any listing page | Page feed (RSS + Atom) |
+
+> [!NOTE]
+> The generator value is matched in full, because the meta content is compared as a prefix and `Grav` alone also matches Gravity Forms.
+
 ### Mailchimp
 
 Discovers the RSS feed of a Mailchimp campaign archive.
@@ -1092,6 +1183,18 @@ Discovers the RSS feed of a Mailchimp campaign archive.
 
 > [!NOTE]
 > The datacentre prefix and both ids come from the input URL; none of them can be derived.
+
+### Discuz!
+
+Discovers the feeds of a Discuz! board. Detected by the `Discuz!` generator meta tag or the `{prefix}_saltkey` cookie.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `{board}/forum-{fid}-1.html` | Board feed + site feed (RSS) |
+| Any other page | Site feed (RSS) |
+
+> [!NOTE]
+> Many installs gate the feed behind a login and answer with an HTML notice at status 200, so the body is what decides.
 
 ### XenForo
 
@@ -1150,6 +1253,15 @@ Discovers the feed of a Cnblogs blog.
 > [!NOTE]
 > The response says RSS while the document is Atom, and the body opens with a byte order mark before the XML declaration.
 
+### Homeland
+
+Discovers the feeds of a Homeland forum. Detected by the `Homeland` generator meta tag or the `_homeland_session` cookie.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `{site}/topics/node{id}` | Node feed + topics feed (RSS) |
+| Any other page | Topics feed (RSS) |
+
 ### LearnKu
 
 Discovers the feeds of a LearnKu community.
@@ -1173,6 +1285,18 @@ Discovers the feeds of a Habr hub, user or company, plus the site articles feed.
 > [!NOTE]
 > The language segment is taken from the page URL and every one of these paths needs its trailing slash.
 
+### phpBB
+
+Discovers the feeds of a phpBB board. Detected by the `phpbb` body id or the `{name}_u`, `{name}_k` and `{name}_sid` cookies.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `{board}/viewforum.php?f={id}` | Forum feed + board feed (RSS) |
+| Any other page | Board feed (RSS) |
+
+> [!NOTE]
+> A board is routinely mounted under a sub-path, so the feed is built from the directory holding the script. The feeds are an administrator toggle, so an install can carry the marker and answer 404.
+
 ### NodeBB
 
 Discovers the feeds of a NodeBB forum. Detected by the `X-Powered-By` response header.
@@ -1182,6 +1306,55 @@ Discovers the feeds of a NodeBB forum. Detected by the `X-Powered-By` response h
 | `{forum}/category/{cid}` | Category feed + site feeds (RSS) |
 | `{forum}/topic/{tid}` | Topic feed + site feeds (RSS) |
 | Any other page | Recent feed + popular feed (RSS) |
+
+### FluxBB
+
+Discovers the feeds of a FluxBB board. Detected by the `brdheader` and `brdmain` ids together, or the `brdmenu` and `brdfooter` ids together, which the board prints whatever its template.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `{board}/viewforum.php?id={id}` | Forum feed (Atom) + posts feed (RSS + Atom) |
+| `{board}/viewtopic.php?id={id}` | Topic feed (Atom) + posts feed (RSS + Atom) |
+| Any other page | Posts feed (RSS + Atom) |
+
+### Mobilizon
+
+Discovers the feeds of a Mobilizon instance or group. Detected by the noscript notice, which is the only text the server renders on every page.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `{instance}/@{group}` | Group feed + instance feed (Atom) |
+| Any other page | Instance feed (Atom) |
+
+### Hubzilla
+
+Discovers the Atom feed of a Hubzilla channel. Detected by the `hubzilla` generator meta tag or the `var zid` script core prints in every page head.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `{hub}/channel/{name}`, `{hub}/profile/{name}` or `{hub}/@{name}` | Channel feed (Atom) |
+
+> [!NOTE]
+> There is no site-wide feed, so a page outside a channel is not matched.
+
+### snac
+
+Discovers the RSS feed of a snac user. Detected by the `snac/` generator meta tag or the `x-creator: snac/…` response header.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `{instance}/{user}`, `{instance}/{user}/p/{id}` or `{instance}/{user}/h/{month}.html` | Posts feed (RSS) |
+
+> [!NOTE]
+> An instance is routinely mounted under a sub-path, so the feed is built from the page path and never from the origin.
+
+### Shaarli
+
+Discovers the feeds of a Shaarli instance. Detected by the `shaarli-menu` id or the `shaarli` cookie. An instance under a sub-path gets its feeds there, read from `js_base_path` or from the page directory.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| Any page | Posts feed (RSS + Atom), plus the pre-0.12 shape |
 
 ### PeerTube
 
@@ -1195,6 +1368,18 @@ Discovers the feeds of a PeerTube instance, channel or account. Detected by the 
 
 > [!NOTE]
 > A channel federated from another instance is addressed as `handle@remote.host`, and the bare handle answers 404.
+
+### Funkwhale
+
+Discovers the RSS feed of a Funkwhale channel. Detected by the `Funkwhale` generator meta tag or the `fake-app` element of its app shell.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `{instance}/channels/{handle}` | Channel feed (RSS) |
+| `{instance}/channels/{handle}@{domain}` | Channel feed (RSS) on the channel's own instance |
+
+> [!NOTE]
+> The v1 API path is emitted rather than v2, which one instance advertises in its own link tag while another answers 404 for it. An unknown channel answers 404 carrying an RSS content type and an `<rss>` root.
 
 ### Art19
 
@@ -1217,6 +1402,17 @@ Discovers the RSS feed of an Omny Studio show.
 
 > [!NOTE]
 > A show whose page answers 404 can still resolve through this shortcut, which redirects to an identifier path on the content host.
+
+### Blubrry PowerPress
+
+Discovers the podcast feed of a WordPress site running the PowerPress plugin. Detected by the player function the plugin writes into the page.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| Any page | Podcast feed (RSS) |
+
+> [!NOTE]
+> Generic discovery finds `{site}/feed/`, which is the blog feed. This adds the podcast feed. A site can redirect it to its podcast host, which resolves normally.
 
 ### Podomatic
 

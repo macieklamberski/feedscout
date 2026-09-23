@@ -3,7 +3,7 @@ import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic covers comments, domain, home, newest, tag (guess, html).
+// Generic covers comments, domain, home, newest, tag, top (guess, html).
 // Handler needed for: user.
 
 export const hosts = ['lobste.rs']
