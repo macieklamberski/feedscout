@@ -6,10 +6,12 @@ const isImageContentType = (headers?: Headers): boolean => {
   return headers?.get('content-type')?.startsWith('image/') ?? false
 }
 
-// TODO: Consider exposing byte data from fetch responses to detect JPEG and ICO
-// via magic bytes. Their signatures are fully non-ASCII and get mangled by UTF-8
-// decoding, making them undetectable from string content.
-//
+// Decoding a body as text keeps the ICO signature, whose bytes are valid UTF-8,
+// and turns JPEG's leading `FF D8 FF` into replacement characters, so a JPEG is
+// found by the JFIF or Exif label that follows them.
+const icoSignature = '\u0000\u0000\u0001\u0000'
+const jpegLabelRegex = /^\uFFFD{3,4}[\s\S]{2}(?:JFIF|Exif)/
+
 // Security: SVG favicons are accepted here but returned unvalidated. An SVG can
 // carry active content (e.g. <svg onload=...>), so consumers must treat returned
 // SVG favicon URLs as untrusted and never inline them without sanitization.
@@ -24,6 +26,8 @@ const isImageContent = (content: string): boolean => {
   return (
     trimmed.startsWith('<svg') ||
     (trimmed.startsWith('<?xml') && head.includes('<svg')) ||
+    content.startsWith(icoSignature) ||
+    jpegLabelRegex.test(content) ||
     content.slice(1, 4) === 'PNG' ||
     content.startsWith('GIF8') ||
     (content.startsWith('RIFF') && content.includes('WEBP'))

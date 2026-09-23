@@ -86,6 +86,49 @@ describe('defaultExtractFn', () => {
       expect(await defaultExtractFn(value)).toEqual(expected)
     })
 
+    it('should return isValid: true for ICO magic bytes served as text/html', async () => {
+      const value = {
+        url: 'https://example.com/favicon.ico',
+        content: new TextDecoder().decode(new Uint8Array([0x00, 0x00, 0x01, 0x00, 0x01, 0x00])),
+        headers: new Headers({ 'content-type': 'text/html' }),
+      }
+      const expected = { url: 'https://example.com/favicon.ico', isValid: true }
+
+      expect(await defaultExtractFn(value)).toEqual(expected)
+    })
+
+    it('should return isValid: true for JFIF JPEG bytes decoded as text', async () => {
+      const bytes = [0xff, 0xd8, 0xff, 0xe0, 0x00, 0x10, 0x4a, 0x46, 0x49, 0x46, 0x00, 0x01]
+      const value = {
+        url: 'https://example.com/avatar.jpg',
+        content: new TextDecoder().decode(new Uint8Array(bytes)),
+      }
+      const expected = { url: 'https://example.com/avatar.jpg', isValid: true }
+
+      expect(await defaultExtractFn(value)).toEqual(expected)
+    })
+
+    it('should return isValid: true for Exif JPEG bytes decoded as text', async () => {
+      const bytes = [0xff, 0xd8, 0xff, 0xe1, 0x1c, 0x45, 0x45, 0x78, 0x69, 0x66, 0x00, 0x00]
+      const value = {
+        url: 'https://example.com/avatar.jpg',
+        content: new TextDecoder().decode(new Uint8Array(bytes)),
+      }
+      const expected = { url: 'https://example.com/avatar.jpg', isValid: true }
+
+      expect(await defaultExtractFn(value)).toEqual(expected)
+    })
+
+    it('should return isValid: false for replacement characters without a JPEG label', async () => {
+      const value = {
+        url: 'https://example.com/favicon.ico',
+        content: '\uFFFD\uFFFD\uFFFD\uFFFD\u0000\u0010DATA',
+      }
+      const expected = { url: 'https://example.com/favicon.ico', isValid: false }
+
+      expect(await defaultExtractFn(value)).toEqual(expected)
+    })
+
     it('should return isValid: true for PNG magic bytes', async () => {
       const value = {
         url: 'https://example.com/icon.png',
