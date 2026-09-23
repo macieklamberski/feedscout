@@ -14,6 +14,7 @@ import { githubGistHandler } from './platform/handlers/githubGist.js'
 import { gitlabHandler } from './platform/handlers/gitlab.js'
 import { lobstersHandler } from './platform/handlers/lobsters.js'
 import { mastodonHandler } from './platform/handlers/mastodon.js'
+import { mediumHandler } from './platform/handlers/medium.js'
 import { redditHandler } from './platform/handlers/reddit.js'
 import { sourceforgeHandler } from './platform/handlers/sourceforge.js'
 import { tumblrHandler } from './platform/handlers/tumblr.js'
@@ -79,6 +80,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     githubGistHandler,
     gitlabHandler,
     mastodonHandler,
+    mediumHandler,
     blueskyHandler,
     redditHandler,
     tumblrHandler,
