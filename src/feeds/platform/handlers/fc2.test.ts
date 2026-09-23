@@ -29,6 +29,14 @@ describe('fc2Handler', () => {
       const value = 'https://example.blog.fc2.com/blog-entry-1.html'
       const expected = [
         { uri: 'https://example.blog.fc2.com/?xml', hint: { key: 'fc2:posts', label: 'Posts' } },
+        {
+          uri: 'https://example.blog.fc2.com/?xml&comment',
+          hint: { key: 'fc2:comments', label: 'Comments' },
+        },
+        {
+          uri: 'https://example.blog.fc2.com/?xml&trackback',
+          hint: { key: 'fc2:trackbacks', label: 'Trackbacks' },
+        },
       ]
 
       expect(fc2Handler.resolve(value)).toEqual(expected)

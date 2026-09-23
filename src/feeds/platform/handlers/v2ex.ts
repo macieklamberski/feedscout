@@ -50,6 +50,7 @@ export const v2exHandler: PlatformHandler = {
           uri: `https://www.v2ex.com/feed/tab/${tab}.xml`,
           hint: composeHint('v2ex:tab'),
         },
+        { uri: 'https://www.v2ex.com/index.xml', hint: composeHint('v2ex:index') },
       ]
     }
 

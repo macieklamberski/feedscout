@@ -41,6 +41,7 @@ export const hearthisHandler: PlatformHandler = {
         uri: `https://hearthis.at/${username}/podcast/`,
         hint: composeHint('hearthis:tracks'),
       },
+      { uri: 'https://hearthis.at/new_tracks.rss', hint: composeHint('hearthis:new-tracks') },
     ]
   },
 }

@@ -27,6 +27,10 @@ describe('hearthisHandler', () => {
           uri: 'https://hearthis.at/james-monty-montgomery/podcast/',
           hint: { key: 'hearthis:tracks', label: 'Tracks' },
         },
+        {
+          uri: 'https://hearthis.at/new_tracks.rss',
+          hint: { key: 'hearthis:new-tracks', label: 'New tracks' },
+        },
       ]
 
       expect(hearthisHandler.resolve(value)).toEqual(expected)
@@ -38,6 +42,10 @@ describe('hearthisHandler', () => {
         {
           uri: 'https://hearthis.at/james-monty-montgomery/podcast/',
           hint: { key: 'hearthis:tracks', label: 'Tracks' },
+        },
+        {
+          uri: 'https://hearthis.at/new_tracks.rss',
+          hint: { key: 'hearthis:new-tracks', label: 'New tracks' },
         },
       ]
 

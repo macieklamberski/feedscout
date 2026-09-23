@@ -26,6 +26,10 @@ describe('lobstersHandler', () => {
       const value = 'https://lobste.rs/'
       const expected = [
         { uri: 'https://lobste.rs/rss', hint: { key: 'lobsters:stories', label: 'Stories' } },
+        {
+          uri: 'https://lobste.rs/comments.rss',
+          hint: { key: 'lobsters:comments', label: 'Comments' },
+        },
       ]
 
       expect(lobstersHandler.resolve(value)).toEqual(expected)
@@ -123,6 +127,10 @@ describe('lobstersHandler', () => {
       const value = 'https://lobste.rs/top/2d'
       const expected = [
         { uri: 'https://lobste.rs/rss', hint: { key: 'lobsters:stories', label: 'Stories' } },
+        {
+          uri: 'https://lobste.rs/comments.rss',
+          hint: { key: 'lobsters:comments', label: 'Comments' },
+        },
       ]
 
       expect(lobstersHandler.resolve(value)).toEqual(expected)

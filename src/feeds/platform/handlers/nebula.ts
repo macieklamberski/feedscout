@@ -59,6 +59,10 @@ export const nebulaHandler: PlatformHandler = {
         hint: composeHint('nebula:videos-all-plus'),
       })
       uris.push({
+        uri: 'https://rss.nebula.app/video/categories/originals.rss',
+        hint: composeHint('nebula:originals'),
+      })
+      uris.push({
         uri: 'https://rss.nebula.app/video/channels.rss',
         hint: composeHint('nebula:channels'),
       })

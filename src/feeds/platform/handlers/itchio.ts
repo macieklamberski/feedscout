@@ -5,7 +5,7 @@ import { composeHint } from '../../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers devlog (html), partly covers home.
-// Handler needed for: browseByUser, user.
+// Handler needed for: browseByTag, browseByUser, games, user.
 
 const mainHosts = ['itch.io', 'www.itch.io']
 const sections = [
@@ -161,6 +161,7 @@ export const itchioHandler: PlatformHandler = {
     uris.push({ uri: 'https://itch.io/feed/featured.xml', hint: composeHint('itchio:featured') })
     uris.push({ uri: 'https://itch.io/feed/new.xml', hint: composeHint('itchio:new') })
     uris.push({ uri: 'https://itch.io/feed/sales.xml', hint: composeHint('itchio:sales') })
+    uris.push({ uri: 'https://itch.io/devlogs.xml', hint: composeHint('itchio:devlogs') })
     uris.push({ uri: 'https://itch.io/blog.rss', hint: composeHint('itchio:blog') })
 
     return uris

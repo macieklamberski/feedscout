@@ -137,7 +137,7 @@ Discovers RSS feeds for DEV.to user profiles, tags, the global community, and th
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | `dev.to` | Community feed |
-| `dev.to/latest` | Latest sort feed |
+| `dev.to/latest` | Latest sort feed + community feed |
 | `dev.to/{username}` | User posts feed |
 | `dev.to/t/{tag}` | Tag posts feed |
 
@@ -147,7 +147,7 @@ Discovers RSS feeds for Lobsters homepage, users, tags, and domains.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `lobste.rs` | Homepage feed |
+| `lobste.rs` | Homepage feed + site-wide comments feed |
 | `lobste.rs/newest` | Newest posts feed |
 | `lobste.rs/top` | Top stories feed |
 | `lobste.rs/top/{period}` | Top stories by period (1d/3d/1w/1m/1y) |
@@ -433,7 +433,7 @@ Discovers RSS feeds for Itch.io games, creators, devlogs, and browse pages.
 | `itch.io/games/{sort}` | Sorted games feed (newest/top-rated/top-sellers/on-sale) |
 | `itch.io/{section}` | Section feed (tools/game-assets/soundtracks/physical-games/books/comics/misc) |
 | `itch.io/devlogs` | All devlogs feed |
-| `itch.io` | Featured + new + sales feeds + itch.io blog |
+| `itch.io` | Featured + new + sales + all devlogs feeds + itch.io blog |
 
 ### CSDN
 
@@ -462,7 +462,7 @@ Discovers Atom feeds for V2EX index, nodes, members, and tabs.
 | `v2ex.com` | Index feed |
 | `v2ex.com/go/{node}` | Node feed |
 | `v2ex.com/member/{username}` | Member feed |
-| `v2ex.com/?tab={tab}` | Tab feed |
+| `v2ex.com/?tab={tab}` | Tab feed + index feed |
 
 ### Ximalaya
 
@@ -584,8 +584,8 @@ Discovers RSS feeds for Nebula channels, the global video feed, and category fee
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | `nebula.tv/{channel}` | Videos + Videos (Plus) |
-| `nebula.tv` | All videos + All videos (Plus) + recently added channels |
-| `nebula.tv/videos` | All videos + All videos (Plus) + recently added channels |
+| `nebula.tv` | All videos + All videos (Plus) + Nebula Originals + recently added channels |
+| `nebula.tv/videos` | All videos + All videos (Plus) + Nebula Originals + recently added channels |
 | `nebula.tv/videos?category={slug}` | Category + Category (Plus) + above |
 
 ### note.com
@@ -734,11 +734,11 @@ Discovers RSS feeds for Ghost-hosted blogs, including tag and author feeds.
 
 ### Hearthis.at
 
-Discovers RSS feeds for Hearthis.at user profiles.
+Discovers RSS feeds for Hearthis.at user profiles, plus the site-wide new tracks feed every page links.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `hearthis.at/{user}` | Tracks feed |
+| `hearthis.at/{user}` | Tracks feed + new tracks feed |
 
 ### HEY World
 
@@ -1109,12 +1109,12 @@ Discovers the feeds of a XenForo board. Detected by the `XF` or `XenForo` id on 
 
 ### FC2 Blog
 
-Discovers the RSS feed of an FC2 blog.
+Discovers the RSS feeds of an FC2 blog.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{user}.blog.fc2.com` | Posts feed (RSS) |
-| `{user}.blog{n}.fc2.com` | Posts feed (RSS) |
+| `{user}.blog.fc2.com` | Posts + comments + trackbacks feeds (RSS) |
+| `{user}.blog{n}.fc2.com` | Posts + comments + trackbacks feeds (RSS) |
 
 > [!NOTE]
 > The canonical host redirects to a numbered host from the old sharding scheme, so both shapes are matched and the feed is built from whichever host answers.
