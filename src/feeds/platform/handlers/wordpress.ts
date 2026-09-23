@@ -3,7 +3,8 @@ import type { DiscoverUriEntry } from '../../../common/types.js'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 
-// Discoverability: Unmeasured, handler emits no feed.
+// Discoverability: Partially discoverable without handler.
+// Generic partly covers blog.
 
 const categoryRegex = /^\/category\/([^/]+)/
 const tagRegex = /^\/tag\/([^/]+)/

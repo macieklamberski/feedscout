@@ -2,8 +2,9 @@ import { parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, hasMetaContent } from '../../../common/utils.js'
 
-// Discoverability: Not discoverable without handler.
-// Handler needed for: all shapes.
+// Discoverability: Partially discoverable without handler.
+// Generic covers community (html).
+// Handler needed for: home, user.
 
 const lemmyPoweredByRegex = /lemmy/i
 const validSorts = new Set([

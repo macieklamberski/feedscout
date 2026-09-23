@@ -3,8 +3,7 @@ import type { DiscoverUriEntry } from '../../../common/types.js'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 
-// Discoverability: Partially discoverable without handler.
-// Generic covers instance (html), partly covers channel.
+// Discoverability: Discoverable without handler.
 
 const peertubeRegex = /peertube/i
 const channelPathRegex = /^\/c\/([^/]+)/

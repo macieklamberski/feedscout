@@ -2,8 +2,9 @@ import { isHostOf } from 'trousse'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 
-// Discoverability: Not discoverable without handler.
-// Handler needed for: all shapes.
+// Discoverability: Partially discoverable without handler.
+// Generic covers photostream (html), partly covers group.
+// Handler needed for: favorites, tag.
 
 const hosts = ['flickr.com', 'www.flickr.com']
 const feedsBase = 'https://www.flickr.com/services/feeds'

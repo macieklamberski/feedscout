@@ -2,7 +2,8 @@ import { parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, hasMetaContent } from '../../../common/utils.js'
 
-// Discoverability: Unmeasured, bot wall.
+// Discoverability: Partially discoverable without handler.
+// Generic partly covers profile.
 
 const profileRegex = /^\/profile\/([^/]+)/
 

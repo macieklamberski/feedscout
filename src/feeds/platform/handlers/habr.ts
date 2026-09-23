@@ -3,8 +3,7 @@ import type { DiscoverUriEntry } from '../../../common/types.js'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 
-// Discoverability: Partially discoverable without handler.
-// Generic covers home (guess, html), partly covers hub, user.
+// Discoverability: Discoverable without handler.
 
 const hosts = ['habr.com', 'www.habr.com']
 const languages = ['ru', 'en']
