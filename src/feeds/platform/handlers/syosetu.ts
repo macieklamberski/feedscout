@@ -2,8 +2,8 @@ import { isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 
-// Discoverability: Not discoverable without handler.
-// Handler needed for: all shapes.
+// Discoverability: Partially discoverable without handler.
+// Generic partly covers author.
 
 const hosts = ['mypage.syosetu.com']
 const writerIdRegex = /^\/(\d+)/
@@ -30,6 +30,10 @@ export const syosetuHandler: PlatformHandler = {
       {
         uri: `https://api.syosetu.com/writernovel/${writerId}.Atom`,
         hint: composeHint('syosetu:author'),
+      },
+      {
+        uri: `https://api.syosetu.com/writer/${writerId}.Atom`,
+        hint: composeHint('syosetu:activity'),
       },
     ]
   },

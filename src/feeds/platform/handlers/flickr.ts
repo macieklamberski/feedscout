@@ -76,16 +76,21 @@ export const flickrHandler: PlatformHandler = {
         uri: `${feedsBase}/groups_discuss.gne?id=${nsid}`,
         hint: composeHint('flickr:group-discuss'),
       }
+      // The pool photos that carry a location.
+      const geo = {
+        uri: `${feedsBase}/geo/?g=${nsid}`,
+        hint: composeHint('flickr:group-geo'),
+      }
 
       if (section === 'discuss') {
         return [discuss]
       }
 
       if (section === 'pool') {
-        return [pool]
+        return [pool, geo]
       }
 
-      return [pool, discuss]
+      return [pool, discuss, geo]
     }
 
     // Help forum: /help/forum/{locale}

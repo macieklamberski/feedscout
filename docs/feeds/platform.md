@@ -571,7 +571,7 @@ Discovers RSS feeds for MyAnimeList user lists and site-wide news.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `myanimelist.net/profile/{user}` | Anime list, Manga list, Recently watched, Recently read (RSS) |
+| `myanimelist.net/profile/{user}` | Anime list, Manga list, Recently watched, Recently read, Blog (RSS) |
 | `myanimelist.net/animelist/{user}` | (same as above) |
 | `myanimelist.net/mangalist/{user}` | (same as above) |
 | `myanimelist.net/history/{user}` | (same as above) |
@@ -707,8 +707,8 @@ Discovers Atom feeds for Flickr photostreams, favorites, tags, groups and the he
 | `flickr.com/photos/tags/{tag}` | Tag feed |
 | `flickr.com/photos/{nsid}` | Photostream feed |
 | `flickr.com/photos/{nsid}/favorites` | Favorites feed |
-| `flickr.com/groups/{nsid}` | Group pool + discussions feeds |
-| `flickr.com/groups/{nsid}/pool` | Group pool feed |
+| `flickr.com/groups/{nsid}` | Group pool + discussions + pool with location feeds |
+| `flickr.com/groups/{nsid}/pool` | Group pool + pool with location feeds |
 | `flickr.com/groups/{nsid}/discuss` | Group discussions feed |
 | `flickr.com/help/forum` | Forum feed |
 
@@ -1099,8 +1099,10 @@ Discovers the feeds of a XenForo board. Detected by the `XF` or `XenForo` id on 
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{board}/f/{slug}.{id}` | Forum feed + site feed (RSS) |
-| Any other page | Site feed (RSS) |
+| `{board}/f/{slug}.{id}` or `{board}/forums/{slug}.{id}` | Forum feed + board feed (RSS) |
+| Any other page | Board feed (RSS)* |
+
+\* *The board feed sits under the forum route prefix, `/forums/-/index.rss` by default and `/f/-/index.rss` where the board renames it. A page outside a forum carries no prefix, so both are emitted.*
 
 > [!NOTE]
 > A missing forum answers with an XML error document rather than HTML, so a check for well-formed XML passes on a 404.
@@ -1128,11 +1130,11 @@ Discovers the feeds of a Togetter curator or the site-wide popular feed.
 
 ### Syosetu
 
-Discovers the Atom feed of a Syosetu author.
+Discovers the Atom feeds of a Syosetu author.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `mypage.syosetu.com/{writerId}` | Author feed (Atom) |
+| `mypage.syosetu.com/{writerId}` | Author novels + activity feeds (Atom) |
 
 > [!NOTE]
 > There is no per-work feed, and a novel URL carries an ncode rather than the numeric writer id, so only an author page resolves.
