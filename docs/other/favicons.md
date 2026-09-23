@@ -66,7 +66,7 @@ The Platform method extracts avatars and icons directly from known platforms usi
 | SourceForge | Project icon | URL pattern |
 | DeviantArt | User avatar | URL pattern |
 | Dev.to | Profile image | Public API |
-| Lemmy | Community icon | Page HTML or Public API |
+| Lemmy | Community icon | Page HTML |
 
 ## Extracting Icons from Feeds
 

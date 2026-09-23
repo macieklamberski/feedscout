@@ -1,16 +1,6 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverFetchFn, DiscoverUriEntry } from '../../../common/types.js'
+import type { DiscoverUriEntry } from '../../../common/types.js'
 import { lemmyHandler } from './lemmy.js'
-
-const createMockFetch = (responses: Record<string, string>): DiscoverFetchFn => {
-  return async (url: string) => ({
-    headers: new Headers(),
-    body: responses[url] ?? '',
-    url,
-    status: url in responses ? 200 : 404,
-    statusText: url in responses ? 'OK' : 'Not Found',
-  })
-}
 
 const communityHtml = `
   <html>
@@ -25,7 +15,6 @@ const communityHtml = `
   </html>
 `
 const communityHtmlWithoutIcon = '<html><body class="lemmy-site"></body></html>'
-const apiUrl = 'https://lemmy.example.com/api/v3/community?name=technology'
 
 describe('lemmyHandler', () => {
   describe('match', () => {
@@ -58,125 +47,33 @@ describe('lemmyHandler', () => {
 
   describe('resolve', () => {
     describe('happy paths', () => {
-      it('should resolve community icon from og:image', async () => {
+      it('should resolve community icon from og:image', () => {
         const value = 'https://lemmy.example.com/c/technology'
         const expected: Array<DiscoverUriEntry> = [
           { uri: 'https://lemmy.example.com/pictrs/image/community.png' },
         ]
 
-        expect(await lemmyHandler.resolve(value, communityHtml)).toEqual(expected)
-      })
-
-      it('should resolve community icon from API when page has no content', async () => {
-        const mockFetch = createMockFetch({
-          [apiUrl]: JSON.stringify({
-            community_view: {
-              community: {
-                name: 'technology',
-                icon: 'https://lemmy.example.com/pictrs/image/community.png',
-              },
-            },
-          }),
-        })
-        const result = await lemmyHandler.resolve(
-          'https://lemmy.example.com/c/technology',
-          undefined,
-          undefined,
-          mockFetch,
-        )
-        const expected: Array<DiscoverUriEntry> = [
-          { uri: 'https://lemmy.example.com/pictrs/image/community.png' },
-        ]
-
-        expect(result).toEqual(expected)
-      })
-
-      it('should resolve federated community icon from API', async () => {
-        const mockFetch = createMockFetch({
-          'https://lemmy.example.com/api/v3/community?name=rust%40lemmy.example.org':
-            JSON.stringify({
-              community_view: {
-                community: { icon: 'https://lemmy.example.org/pictrs/image/rust.png' },
-              },
-            }),
-        })
-        const result = await lemmyHandler.resolve(
-          'https://lemmy.example.com/c/rust@lemmy.example.org',
-          undefined,
-          undefined,
-          mockFetch,
-        )
-        const expected: Array<DiscoverUriEntry> = [
-          { uri: 'https://lemmy.example.org/pictrs/image/rust.png' },
-        ]
-
-        expect(result).toEqual(expected)
+        expect(lemmyHandler.resolve(value, communityHtml)).toEqual(expected)
       })
     })
 
     describe('sad paths', () => {
-      it('should return empty array when community has no icon', async () => {
-        const mockFetch = createMockFetch({
-          [apiUrl]: JSON.stringify({ community_view: { community: { name: 'technology' } } }),
-        })
-        const result = await lemmyHandler.resolve(
-          'https://lemmy.example.com/c/technology',
-          communityHtmlWithoutIcon,
-          undefined,
-          mockFetch,
-        )
-
-        expect(result).toEqual([])
-      })
-
-      it('should return empty array for user path', async () => {
-        const mockFetch = createMockFetch({})
-        const result = await lemmyHandler.resolve(
-          'https://lemmy.example.com/u/alice',
-          communityHtml,
-          undefined,
-          mockFetch,
-        )
-
-        expect(result).toEqual([])
-      })
-
-      it('should return empty array when fetchFn is not provided', async () => {
+      it('should return empty array when community has no icon', () => {
         const value = 'https://lemmy.example.com/c/technology'
 
-        expect(await lemmyHandler.resolve(value, communityHtmlWithoutIcon)).toEqual([])
+        expect(lemmyHandler.resolve(value, communityHtmlWithoutIcon)).toEqual([])
       })
 
-      it('should return empty array when API returns invalid JSON', async () => {
-        const mockFetch = createMockFetch({ [apiUrl]: 'not json' })
-        const result = await lemmyHandler.resolve(
-          'https://lemmy.example.com/c/technology',
-          undefined,
-          undefined,
-          mockFetch,
-        )
-
-        expect(result).toEqual([])
+      it('should return empty array when content is absent', () => {
+        expect(lemmyHandler.resolve('https://lemmy.example.com/c/technology')).toEqual([])
       })
 
-      it('should return empty array when fetch throws', async () => {
-        const mockFetch: DiscoverFetchFn = () => {
-          throw new Error('Network error')
-        }
-        const result = await lemmyHandler.resolve(
-          'https://lemmy.example.com/c/technology',
-          undefined,
-          undefined,
-          mockFetch,
-        )
-
-        expect(result).toEqual([])
+      it('should return empty array for user path', () => {
+        expect(lemmyHandler.resolve('https://lemmy.example.com/u/alice', communityHtml)).toEqual([])
       })
 
-      it('should return empty array for invalid URL', async () => {
-        const mockFetch = createMockFetch({})
-
-        expect(await lemmyHandler.resolve('not-a-url', undefined, undefined, mockFetch)).toEqual([])
+      it('should return empty array for invalid URL', () => {
+        expect(lemmyHandler.resolve('not-a-url', communityHtml)).toEqual([])
       })
     })
   })

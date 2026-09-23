@@ -6,7 +6,6 @@ import {
   isLemmyHeaders,
   isLemmyHtml,
 } from '../../../feeds/platform/handlers/lemmy.js'
-import { parseBodyJson } from '../../utils.js'
 
 // User pages are left out: an uploaded avatar is not cropped square.
 export const lemmyHandler: PlatformHandler = {
@@ -28,36 +27,20 @@ export const lemmyHandler: PlatformHandler = {
     return false
   },
 
-  resolve: async (url, content, _headers, fetchFn) => {
+  resolve: (url, content) => {
     const parsedUrl = parseUrl(url)
 
-    if (!parsedUrl || !isCommunityPath(parsedUrl.pathname)) {
+    if (!content || !parsedUrl || !isCommunityPath(parsedUrl.pathname)) {
       return []
     }
 
     // The page carries the community icon as og:image, and no og:image when it has none.
-    const ogImage = content ? getMetaContent(content, 'og:image') : undefined
+    const ogImage = getMetaContent(content, 'og:image')
 
-    if (isNonEmptyString(ogImage)) {
-      return [{ uri: ogImage }]
-    }
-
-    if (!fetchFn) {
+    if (!isNonEmptyString(ogImage)) {
       return []
     }
 
-    try {
-      const name = parsedUrl.pathname.split('/').filter(Boolean)[1]
-      const apiUrl = `${parsedUrl.origin}/api/v3/community?name=${encodeURIComponent(name)}`
-      const response = await fetchFn(apiUrl)
-      const data = parseBodyJson(response.body)
-      const icon = data?.community_view?.community?.icon
-
-      if (isNonEmptyString(icon)) {
-        return [{ uri: icon }]
-      }
-    } catch {}
-
-    return []
+    return [{ uri: ogImage }]
   },
 }
