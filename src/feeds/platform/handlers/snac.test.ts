@@ -32,6 +32,20 @@ describe('snacHandler', () => {
       expect(snacHandler.match('https://example.org/', snacHtml)).toBe(false)
     })
 
+    it('should match a user page by the creator header', () => {
+      const value = 'https://example.org/alice'
+      const headers = new Headers({ 'x-creator': 'snac/2.95' })
+
+      expect(snacHandler.match(value, '<html></html>', headers)).toBe(true)
+    })
+
+    it('should not match another creator header', () => {
+      const value = 'https://example.org/alice'
+      const headers = new Headers({ 'x-creator': 'snacks/1.0' })
+
+      expect(snacHandler.match(value, '<html></html>', headers)).toBe(false)
+    })
+
     it('should not match without content', () => {
       expect(snacHandler.match('https://example.org/alice')).toBe(false)
     })
@@ -55,6 +69,30 @@ describe('snacHandler', () => {
       const value = 'https://example.org/snac/alice/'
       const expected = [
         { uri: 'https://example.org/snac/alice.rss', hint: { key: 'snac:posts', label: 'Posts' } },
+      ]
+
+      expect(snacHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should build the user feed from a post page', () => {
+      const value = 'https://example.org/social/alice/p/1790085034.546035'
+      const expected = [
+        {
+          uri: 'https://example.org/social/alice.rss',
+          hint: { key: 'snac:posts', label: 'Posts' },
+        },
+      ]
+
+      expect(snacHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should build the user feed from a history page', () => {
+      const value = 'https://example.org/alice/h/2026-05.html'
+      const expected = [
+        {
+          uri: 'https://example.org/alice.rss',
+          hint: { key: 'snac:posts', label: 'Posts' },
+        },
       ]
 
       expect(snacHandler.resolve(value)).toEqual(expected)

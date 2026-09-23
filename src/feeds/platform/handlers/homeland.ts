@@ -1,13 +1,9 @@
 import type { DiscoverUriEntry } from '../../../common/types.js'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
-import { composeHint, hasMetaContent } from '../../../common/utils.js'
+import { composeHint, getCookieNames, hasMetaContent } from '../../../common/utils.js'
 
-// Discoverability: Discoverable without handler.
-//
-// Homeland serves a topics feed at `/topics/feed` and a per-node feed at
-// `/topics/node{id}/feed`.
-//
-// There is no per-user feed.
+// Discoverability: Partially discoverable without handler.
+// Generic covers topics (html), partly covers node.
 
 const nodePathRegex = /\/topics\/(node\d+)/
 
@@ -15,9 +11,25 @@ export const isHomelandHtml = (content: string): boolean => {
   return hasMetaContent(content, 'generator', 'Homeland')
 }
 
+export const isHomelandHeaders = (headers: Headers): boolean => {
+  return getCookieNames(headers).includes('_homeland_session')
+}
+
 export const homelandHandler: PlatformHandler = {
-  match: (url, content) => {
-    return URL.canParse(url) && Boolean(content) && isHomelandHtml(content ?? '')
+  match: (url, content, headers) => {
+    if (!URL.canParse(url)) {
+      return false
+    }
+
+    if (content && isHomelandHtml(content)) {
+      return true
+    }
+
+    if (headers && isHomelandHeaders(headers)) {
+      return true
+    }
+
+    return false
   },
 
   resolve: (url) => {

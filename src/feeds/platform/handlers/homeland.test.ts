@@ -24,6 +24,13 @@ describe('homelandHandler', () => {
       expect(homelandHandler.match('https://example.org/topics', homelandHtml)).toBe(true)
     })
 
+    it('should match a site without the generator by its session cookie', () => {
+      const value = 'https://example.com/topics'
+      const headers = new Headers({ 'set-cookie': '_homeland_session=abc; path=/; HttpOnly' })
+
+      expect(homelandHandler.match(value, '<html></html>', headers)).toBe(true)
+    })
+
     it('should not match without content', () => {
       expect(homelandHandler.match('https://example.org/topics')).toBe(false)
     })

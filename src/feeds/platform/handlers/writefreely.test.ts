@@ -9,6 +9,14 @@ describe('isWritefreelyHtml', () => {
     expect(isWritefreelyHtml(writefreelyHtml)).toBe(true)
   })
 
+  it('should return true for the stylesheet a theme keeps', () => {
+    expect(isWritefreelyHtml('<link rel="stylesheet" href="/css/write.css?v=1" />')).toBe(true)
+  })
+
+  it('should return true for a Write.as blog on its own domain', () => {
+    expect(isWritefreelyHtml('<meta name="generator" content="Write.as">')).toBe(true)
+  })
+
   it('should return false for another generator', () => {
     expect(isWritefreelyHtml(otherHtml)).toBe(false)
   })
@@ -72,6 +80,56 @@ describe('writefreelyHandler', () => {
       ]
 
       expect(writefreelyHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should add the tag feed for a tag page', () => {
+      const value = 'https://example.org/alice/tag:coolify'
+      const expected = [
+        {
+          uri: 'https://example.org/alice/tag:coolify/feed/',
+          hint: { key: 'writefreely:tag', label: 'Tag' },
+        },
+        {
+          uri: 'https://example.org/alice/feed/',
+          hint: { key: 'writefreely:blog', label: 'Blog' },
+        },
+        {
+          uri: 'https://example.org/read/feed/',
+          hint: { key: 'writefreely:reader', label: 'Reader' },
+        },
+      ]
+
+      expect(writefreelyHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should build the feeds of a single-user instance from the blog title link', () => {
+      const value = 'https://example.org/a-post'
+      const content = '<h1 id="blog-title"><a href="/" class="h-card p-author">Blog</a></h1>'
+      const expected = [
+        {
+          uri: 'https://example.org/feed/',
+          hint: { key: 'writefreely:blog', label: 'Blog' },
+        },
+      ]
+
+      expect(writefreelyHandler.resolve(value, content)).toEqual(expected)
+    })
+
+    it('should build the tag feed of a single-user instance', () => {
+      const value = 'https://example.org/tag:coolify'
+      const content = '<h1 id="blog-title"><a href="/" class="h-card p-author">Blog</a></h1>'
+      const expected = [
+        {
+          uri: 'https://example.org/tag:coolify/feed/',
+          hint: { key: 'writefreely:tag', label: 'Tag' },
+        },
+        {
+          uri: 'https://example.org/feed/',
+          hint: { key: 'writefreely:blog', label: 'Blog' },
+        },
+      ]
+
+      expect(writefreelyHandler.resolve(value, content)).toEqual(expected)
     })
 
     it('should return an empty array for the instance root', () => {

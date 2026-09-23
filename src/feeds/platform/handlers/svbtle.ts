@@ -3,17 +3,15 @@ import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, hasMetaContent } from '../../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
-//
-// A Svbtle blog serves Atom at `/feed` on its own host.
-//
-// `www.svbtle.com/feed` is not a feed: it answers 200 with an HTML discovery
-// page, and the path form `svbtle.com/{user}/feed` does not exist either, so
-// the platform's own host is excluded.
 
+// `www.svbtle.com/feed` answers 200 with an HTML page, and `svbtle.com/{user}/feed` does not exist.
 const excludedHosts = ['svbtle.com', 'www.svbtle.com']
 
 export const isSvbtleHtml = (content: string): boolean => {
-  return hasMetaContent(content, 'generator', 'Svbtle.com')
+  return (
+    hasMetaContent(content, 'generator', 'Svbtle.com') ||
+    content.includes('https://lightning.svbtle.com/cargo/')
+  )
 }
 
 export const svbtleHandler: PlatformHandler = {

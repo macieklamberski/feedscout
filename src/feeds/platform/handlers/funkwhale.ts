@@ -2,19 +2,11 @@ import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, hasMetaContent } from '../../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
-//
-// Funkwhale serves a per-channel RSS feed at `/api/v1/channels/{handle}/rss`.
-//
-// The v1 path is emitted rather than v2, which an instance advertises in its
-// own link tag while a second instance answers 404 for it. v1 answered on both.
-//
-// An unknown channel answers 404 carrying an `<rss>` root and an RSS content
-// type, so neither tells a live channel from a dead one.
 
 const channelPathRegex = /^\/channels\/([^/]+)/
 
 export const isFunkwhaleHtml = (content: string): boolean => {
-  return hasMetaContent(content, 'generator', 'Funkwhale')
+  return hasMetaContent(content, 'generator', 'Funkwhale') || content.includes('id="fake-app"')
 }
 
 const getChannel = (url: string): string | undefined => {
@@ -43,9 +35,16 @@ export const funkwhaleHandler: PlatformHandler = {
         return []
       }
 
+      // A remote channel, `{name}@{domain}`, has its feed on its own instance only.
+      const [name, domain] = decodeURIComponent(channel).split('@')
+      const channelUrl = domain
+        ? `https://${domain}/api/v1/channels/${name}`
+        : `${origin}/api/v1/channels/${channel}`
+
       return [
         {
-          uri: `${origin}/api/v1/channels/${channel}/rss`,
+          // v2 answers 404 on some instances that still serve v1.
+          uri: `${channelUrl}/rss`,
           hint: composeHint('funkwhale:channel'),
         },
       ]

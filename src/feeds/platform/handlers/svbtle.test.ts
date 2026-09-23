@@ -9,6 +9,12 @@ describe('isSvbtleHtml', () => {
     expect(isSvbtleHtml(svbtleHtml)).toBe(true)
   })
 
+  it('should return true for the Svbtle asset host', () => {
+    const value = '<link rel="stylesheet" href="https://lightning.svbtle.com/cargo/blog.css">'
+
+    expect(isSvbtleHtml(value)).toBe(true)
+  })
+
   it('should return false for another generator', () => {
     expect(isSvbtleHtml(otherHtml)).toBe(false)
   })

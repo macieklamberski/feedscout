@@ -24,6 +24,20 @@ describe('discuzHandler', () => {
       expect(discuzHandler.match('https://example.com/forum-22-1.html', discuzHtml)).toBe(true)
     })
 
+    it('should match an install without the generator by the salt key cookie', () => {
+      const value = 'https://example.com/forum-22-1.html'
+      const headers = new Headers({ 'set-cookie': 'K1VB_e732_saltkey=abc; path=/; HttpOnly' })
+
+      expect(discuzHandler.match(value, '<html></html>', headers)).toBe(true)
+    })
+
+    it('should not match a cookie that only contains the salt key suffix', () => {
+      const value = 'https://example.com/forum-22-1.html'
+      const headers = new Headers({ 'set-cookie': 'session=a_saltkey; path=/' })
+
+      expect(discuzHandler.match(value, '<html></html>', headers)).toBe(false)
+    })
+
     it('should not match without content', () => {
       expect(discuzHandler.match('https://example.com/forum-22-1.html')).toBe(false)
     })

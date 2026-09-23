@@ -24,6 +24,23 @@ describe('phpbbHandler', () => {
       expect(phpbbHandler.match('https://example.com/community/', phpbbHtml)).toBe(true)
     })
 
+    it('should match a themed board by its session cookies', () => {
+      const value = 'https://example.com/community/'
+      const headers = new Headers()
+      headers.append('set-cookie', 'phpbb3_7ybyg_can_u=1; path=/')
+      headers.append('set-cookie', 'phpbb3_7ybyg_can_k=; path=/')
+      headers.append('set-cookie', 'phpbb3_7ybyg_can_sid=abc; path=/')
+
+      expect(phpbbHandler.match(value, '<html></html>', headers)).toBe(true)
+    })
+
+    it('should not match a lone session id cookie', () => {
+      const value = 'https://example.com/community/'
+      const headers = new Headers({ 'set-cookie': 'app_sid=abc; path=/' })
+
+      expect(phpbbHandler.match(value, '<html></html>', headers)).toBe(false)
+    })
+
     it('should not match without content', () => {
       expect(phpbbHandler.match('https://example.com/community/')).toBe(false)
     })

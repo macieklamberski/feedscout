@@ -9,6 +9,10 @@ describe('isGravHtml', () => {
     expect(isGravHtml(gravHtml)).toBe(true)
   })
 
+  it('should return true for a theme asset path', () => {
+    expect(isGravHtml('<link href="/user/themes/quark/css/theme.css">')).toBe(true)
+  })
+
   it('should return false for Gravity Forms', () => {
     expect(isGravHtml(gravityFormsHtml)).toBe(false)
   })
@@ -26,6 +30,13 @@ describe('gravHandler', () => {
 
     it('should not match a page running Gravity Forms', () => {
       expect(gravHandler.match('https://example.com/blog', gravityFormsHtml)).toBe(false)
+    })
+
+    it('should match a site without the generator by its session cookie', () => {
+      const value = 'https://example.com/blog'
+      const headers = new Headers({ 'set-cookie': 'grav-site-9a6a5fc=abc; path=/' })
+
+      expect(gravHandler.match(value, '<html></html>', headers)).toBe(true)
     })
 
     it('should not match without content', () => {
@@ -63,6 +74,22 @@ describe('gravHandler', () => {
         },
         {
           uri: 'https://example.com/blog.atom',
+          hint: { key: 'grav:page-atom', label: 'Page (Atom)' },
+        },
+      ]
+
+      expect(gravHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should keep the host of the site root', () => {
+      const value = 'https://example.com/'
+      const expected = [
+        {
+          uri: 'https://example.com/.rss',
+          hint: { key: 'grav:page-rss', label: 'Page (RSS)' },
+        },
+        {
+          uri: 'https://example.com/.atom',
           hint: { key: 'grav:page-atom', label: 'Page (Atom)' },
         },
       ]

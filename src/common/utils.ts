@@ -50,6 +50,15 @@ export const hasMetaContent = (content: string, name: string, value: string): bo
   return metaTagRegex.test(content)
 }
 
+// Fetch joins every Set-Cookie header into one comma-separated value.
+const cookieNameRegex = /(?:^|,)\s*([^=;,\s]+)=/g
+
+export const getCookieNames = (headers: Headers): Array<string> => {
+  const cookies = headers.get('set-cookie') ?? ''
+
+  return Array.from(cookies.matchAll(cookieNameRegex), (match) => match[1])
+}
+
 export const hasAnyMeta = (content: string, markers: Array<[string, string]>): boolean => {
   return markers.some(([name, value]) => hasMetaContent(content, name, value))
 }

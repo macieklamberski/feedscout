@@ -1,18 +1,8 @@
 import type { DiscoverUriEntry } from '../../../common/types.js'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
-import { composeHint } from '../../../common/utils.js'
+import { composeHint, getCookieNames } from '../../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
-//
-// phpBB serves a board feed at `{board}/feed.php` and a per-forum feed at
-// `?f={id}`.
-//
-// A board is routinely mounted under a sub-path such as `/community`, so the
-// feed is built from the directory holding the script and never from the
-// origin.
-//
-// The feeds are an administrator toggle, so an install can carry the marker and
-// answer 404 for the feed.
 
 const forumIdRegex = /[?&]f=(\d+)/
 const scriptSegmentRegex = /\/[^/]*\.php$/
@@ -22,14 +12,42 @@ export const isPhpbbHtml = (content: string): boolean => {
   return content.includes('id="phpbb"')
 }
 
+// phpBB sets `{name}_u`, `{name}_k` and `{name}_sid`, where the board picks the name.
+export const isPhpbbHeaders = (headers: Headers): boolean => {
+  const names = getCookieNames(headers)
+
+  return names.some((name) => {
+    if (!name.endsWith('_sid')) {
+      return false
+    }
+
+    const prefix = name.slice(0, -'_sid'.length)
+
+    return names.includes(`${prefix}_u`) && names.includes(`${prefix}_k`)
+  })
+}
+
 export const phpbbHandler: PlatformHandler = {
-  match: (url, content) => {
-    return URL.canParse(url) && Boolean(content) && isPhpbbHtml(content ?? '')
+  match: (url, content, headers) => {
+    if (!URL.canParse(url)) {
+      return false
+    }
+
+    if (content && isPhpbbHtml(content)) {
+      return true
+    }
+
+    if (headers && isPhpbbHeaders(headers)) {
+      return true
+    }
+
+    return false
   },
 
   resolve: (url) => {
     try {
       const { origin, pathname, search } = new URL(url)
+      // A board is routinely mounted under a sub-path such as `/community`.
       const boardPath = pathname.replace(scriptSegmentRegex, '').replace(trailingSlashRegex, '')
       const boardUrl = `${origin}${boardPath}`
       const forumId = search.match(forumIdRegex)?.[1]

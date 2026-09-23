@@ -9,6 +9,15 @@ describe('isJoomlaHtml', () => {
     expect(isJoomlaHtml(joomlaHtml)).toBe(true)
   })
 
+  it('should return true for the script options a template keeps', () => {
+    const value = `
+      <meta name="generator" content="Helix Ultimate - The Most Popular Joomla! Template Framework.">
+      <script type="application/json" class="joomla-script-options new">{}</script>
+    `
+
+    expect(isJoomlaHtml(value)).toBe(true)
+  })
+
   it('should return false for another generator', () => {
     expect(isJoomlaHtml(otherHtml)).toBe(false)
   })
@@ -42,11 +51,11 @@ describe('joomlaHandler', () => {
       const value = 'https://example.com/announcements'
       const expected = [
         {
-          uri: 'https://example.com/announcements.feed?type=rss',
+          uri: 'https://example.com/announcements?format=feed&type=rss',
           hint: { key: 'joomla:view-rss', label: 'View (RSS)' },
         },
         {
-          uri: 'https://example.com/announcements.feed?type=atom',
+          uri: 'https://example.com/announcements?format=feed&type=atom',
           hint: { key: 'joomla:view-atom', label: 'View (Atom)' },
         },
       ]
@@ -54,15 +63,15 @@ describe('joomlaHandler', () => {
       expect(joomlaHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should replace a search-engine friendly html suffix', () => {
+    it('should keep a search-engine friendly html suffix', () => {
       const value = 'https://example.com/blogs.html'
       const expected = [
         {
-          uri: 'https://example.com/blogs.feed?type=rss',
+          uri: 'https://example.com/blogs.html?format=feed&type=rss',
           hint: { key: 'joomla:view-rss', label: 'View (RSS)' },
         },
         {
-          uri: 'https://example.com/blogs.feed?type=atom',
+          uri: 'https://example.com/blogs.html?format=feed&type=atom',
           hint: { key: 'joomla:view-atom', label: 'View (Atom)' },
         },
       ]
@@ -70,15 +79,31 @@ describe('joomlaHandler', () => {
       expect(joomlaHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should drop a trailing slash and an existing query string', () => {
-      const value = 'https://example.com/announcements/?start=20'
+    it('should build the feeds of the home page on the site root', () => {
+      const value = 'https://example.com/'
       const expected = [
         {
-          uri: 'https://example.com/announcements.feed?type=rss',
+          uri: 'https://example.com/?format=feed&type=rss',
           hint: { key: 'joomla:view-rss', label: 'View (RSS)' },
         },
         {
-          uri: 'https://example.com/announcements.feed?type=atom',
+          uri: 'https://example.com/?format=feed&type=atom',
+          hint: { key: 'joomla:view-atom', label: 'View (Atom)' },
+        },
+      ]
+
+      expect(joomlaHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should drop an existing query string', () => {
+      const value = 'https://example.com/announcements/?start=20'
+      const expected = [
+        {
+          uri: 'https://example.com/announcements/?format=feed&type=rss',
+          hint: { key: 'joomla:view-rss', label: 'View (RSS)' },
+        },
+        {
+          uri: 'https://example.com/announcements/?format=feed&type=atom',
           hint: { key: 'joomla:view-atom', label: 'View (Atom)' },
         },
       ]

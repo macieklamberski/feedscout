@@ -2,25 +2,45 @@ import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, hasMetaContent } from '../../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
-//
-// A Wix site with the Blog app installed serves `/blog-feed.xml` at the site
-// root, wherever the blog sits in navigation. Home pages link it, so the
-// handler earns its place on deep post pages that do not.
 
 export const isWixHtml = (content: string): boolean => {
-  return hasMetaContent(content, 'generator', 'Wix.com')
+  return (
+    hasMetaContent(content, 'generator', 'Wix.com') || content.includes('static.parastorage.com')
+  )
+}
+
+export const isWixHeaders = (headers: Headers): boolean => {
+  return headers.has('x-wix-request-id')
+}
+
+// A free site lives under a path on `{account}.wixsite.com`, whose root answers 404.
+const getSiteUrl = (url: string): string => {
+  const { hostname, origin, pathname } = new URL(url)
+  const [site] = pathname.split('/').filter(Boolean)
+
+  return hostname.endsWith('.wixsite.com') && site ? `${origin}/${site}` : origin
 }
 
 export const wixHandler: PlatformHandler = {
-  match: (url, content) => {
-    return URL.canParse(url) && Boolean(content) && isWixHtml(content ?? '')
+  match: (url, content, headers) => {
+    if (!URL.canParse(url)) {
+      return false
+    }
+
+    if (content && isWixHtml(content)) {
+      return true
+    }
+
+    if (headers && isWixHeaders(headers)) {
+      return true
+    }
+
+    return false
   },
 
   resolve: (url) => {
     try {
-      const { origin } = new URL(url)
-
-      return [{ uri: `${origin}/blog-feed.xml`, hint: composeHint('wix:blog') }]
+      return [{ uri: `${getSiteUrl(url)}/blog-feed.xml`, hint: composeHint('wix:blog') }]
     } catch {}
 
     return []

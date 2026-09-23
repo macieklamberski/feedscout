@@ -2,22 +2,13 @@ import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, hasMetaContent } from '../../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
-//
-// Joomla turns a list view into a feed by giving it a `.feed` suffix and a
-// `type` parameter. It emits both alternates by default, so the handler exists
-// to resolve them without a page fetch.
-//
-// The suffix form is used rather than `?format=feed`, because a search-engine
-// friendly path ends in `.html` and answers that query with the HTML page.
-//
-// Only list views produce a feed. A non-list view answers 404 as
-// `application/xml` with an `<error>` root, so the content type never proves a
-// hit on its own.
 
-const viewSuffixRegex = /(?:\.html)?\/?$/
-
+// Templates such as Helix Ultimate rewrite the generator to a string that only
+// contains `Joomla!`, while every Joomla 3, 4 and 5 page ships the script options.
 export const isJoomlaHtml = (content: string): boolean => {
-  return hasMetaContent(content, 'generator', 'Joomla!')
+  return (
+    hasMetaContent(content, 'generator', 'Joomla!') || content.includes('joomla-script-options')
+  )
 }
 
 export const joomlaHandler: PlatformHandler = {
@@ -28,15 +19,15 @@ export const joomlaHandler: PlatformHandler = {
   resolve: (url) => {
     try {
       const { origin, pathname } = new URL(url)
-      const viewUrl = `${origin}${pathname}`.replace(viewSuffixRegex, '')
+      const viewUrl = `${origin}${pathname}`
 
       return [
         {
-          uri: `${viewUrl}.feed?type=rss`,
+          uri: `${viewUrl}?format=feed&type=rss`,
           hint: composeHint('joomla:view-rss'),
         },
         {
-          uri: `${viewUrl}.feed?type=atom`,
+          uri: `${viewUrl}?format=feed&type=atom`,
           hint: composeHint('joomla:view-atom'),
         },
       ]

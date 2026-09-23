@@ -544,16 +544,24 @@
   ],
   "drupal": ["https://dri.es/rss.xml", "https://www.acquia.com/rss.xml"],
   "shopify": ["https://www.allbirds.com/blogs/news.atom"],
-  "hubspot": ["https://www.smartbugmedia.com/blog/rss.xml"],
+  "hubspot": [
+    "https://www.smartbugmedia.com/blog/rss.xml",
+    "https://weidert.com/blog/author/frank-isca/rss.xml",
+    "https://bluleadz.com/blog/topic/hubspot/rss.xml"
+  ],
   "publii": ["https://getpublii.com/feed.xml", "https://falk.plus/feed.json"],
-  "wix": ["https://www.allthefood.ie/blog-feed.xml"],
+  "wix": [
+    "https://www.allthefood.ie/blog-feed.xml",
+    "https://k4lxycw.wixsite.com/blog/blog-feed.xml"
+  ],
   "joomla": [
-    "https://www.joomla.org/announcements.feed?type=rss",
-    "https://community.joomla.org/blogs.feed?type=rss"
+    "https://www.joomla.org/announcements.html?format=feed&type=rss",
+    "https://www.headqr.com/en/blog-en?format=feed&type=atom"
   ],
   "writefreely": [
     "https://people.kernel.org/monsieuricon/feed/",
-    "https://people.kernel.org/read/feed/"
+    "https://people.kernel.org/read/feed/",
+    "https://blog.kaisbettaieb.dev/tag:coolify/feed/"
   ],
   "svbtle": ["https://dcurt.is/feed"],
   "textpattern": ["https://textpattern.com/rss", "https://textpattern.com/atom"],
@@ -575,8 +583,12 @@
     "https://habr.com/ru/rss/users/alizar/posts/"
   ],
   "nodebb": ["https://community.nodebb.org/recent.rss", "https://community.nodebb.org/popular.rss"],
-  "phpbb": ["https://www.phpbb.com/community/feed.php"],
-  "fluxbb": ["https://bbs.archlinux.org/extern.php?action=feed&type=RSS"],
+  "phpbb": ["https://forums.gentoo.org/feed.php"],
+  "fluxbb": [
+    "https://bbs.archlinux.org/extern.php?action=feed&type=RSS",
+    "https://bbs.archlinux.org/extern.php?action=feed&fid=23&type=atom",
+    "https://forums.bunsenlabs.org/extern.php?action=feed&tid=7520&type=atom"
+  ],
   "mobilizon": [
     "https://mobilizon.fr/@framasoft/feed/atom",
     "https://mobilizon.fr/feed/instance/atom"

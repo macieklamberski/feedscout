@@ -1,18 +1,23 @@
+import type { DiscoverUriEntry } from '../../../common/types.js'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 
-// Discoverability: Discoverable without handler.
-//
-// FluxBB serves its feeds through `extern.php`, which takes the format in a
-// query parameter rather than a path.
-//
-// The two board wrapper ids are matched together, because either one alone is
-// a plausible id on an unrelated page.
+// Discoverability: Partially discoverable without handler.
+// Generic partly covers board, forum, topic.
 
-const boardMarkers = ['id="brdheader"', 'id="brdmain"']
+// Each id of a pair alone is a plausible id on an unrelated page.
+const templateMarkers = ['id="brdheader"', 'id="brdmain"']
+// `header.php` and `footer.php` print these whatever template the board uses.
+const coreMarkers = ['id="brdmenu"', 'id="brdfooter"']
+const scriptSegmentRegex = /\/[^/]*$/
+const forumPathRegex = /\/viewforum\.php$/
+const topicPathRegex = /\/viewtopic\.php$/
 
 export const isFluxbbHtml = (content: string): boolean => {
-  return boardMarkers.every((marker) => content.includes(marker))
+  return (
+    templateMarkers.every((marker) => content.includes(marker)) ||
+    coreMarkers.every((marker) => content.includes(marker))
+  )
 }
 
 export const fluxbbHandler: PlatformHandler = {
@@ -22,18 +27,25 @@ export const fluxbbHandler: PlatformHandler = {
 
   resolve: (url) => {
     try {
-      const { origin } = new URL(url)
+      const { origin, pathname, searchParams } = new URL(url)
+      const feedUrl = `${origin}${pathname.replace(scriptSegmentRegex, '')}/extern.php?action=feed`
+      const id = searchParams.get('id')
+      const uris: Array<DiscoverUriEntry> = []
 
-      return [
-        {
-          uri: `${origin}/extern.php?action=feed&type=RSS`,
-          hint: composeHint('fluxbb:posts-rss'),
-        },
-        {
-          uri: `${origin}/extern.php?action=feed&type=atom`,
-          hint: composeHint('fluxbb:posts-atom'),
-        },
-      ]
+      if (id && forumPathRegex.test(pathname)) {
+        uris.push({ uri: `${feedUrl}&fid=${id}&type=atom`, hint: composeHint('fluxbb:forum') })
+      }
+
+      if (id && topicPathRegex.test(pathname)) {
+        uris.push({ uri: `${feedUrl}&tid=${id}&type=atom`, hint: composeHint('fluxbb:topic') })
+      }
+
+      uris.push(
+        { uri: `${feedUrl}&type=RSS`, hint: composeHint('fluxbb:posts-rss') },
+        { uri: `${feedUrl}&type=atom`, hint: composeHint('fluxbb:posts-atom') },
+      )
+
+      return uris
     } catch {}
 
     return []

@@ -1,23 +1,21 @@
 import type { DiscoverUriEntry } from '../../../common/types.js'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
-import { composeHint, hasMetaContent } from '../../../common/utils.js'
+import { composeHint, getCookieNames, hasMetaContent } from '../../../common/utils.js'
 
-// Discoverability: Not discoverable without handler.
-//
-// Discuz! serves a site feed at `/forum.php?mod=rss` and a per-board feed at
-// `&fid={fid}`. Board pages carry no `alternate` link, so nothing finds either.
-//
-// The board id is numeric and appears as `forum-{fid}-1.html` or as a `fid`
-// query parameter.
-//
-// Many installs gate the feed behind a login and answer with an HTML notice at
-// status 200, so the response body is what decides, never the status.
+// Discoverability: Partially discoverable without handler.
+// Generic partly covers board.
+// Handler needed for: home.
 
 const boardPathRegex = /\/forum-(\d+)-/
 const numericRegex = /^\d+$/
 
 export const isDiscuzHtml = (content: string): boolean => {
   return hasMetaContent(content, 'generator', 'Discuz!')
+}
+
+// Discuz! prefixes its cookies per install, as in `K1VB_e732_saltkey`.
+export const isDiscuzHeaders = (headers: Headers): boolean => {
+  return getCookieNames(headers).some((name) => name.endsWith('_saltkey'))
 }
 
 const getBoardId = (url: string): string | undefined => {
@@ -32,8 +30,20 @@ const getBoardId = (url: string): string | undefined => {
 }
 
 export const discuzHandler: PlatformHandler = {
-  match: (url, content) => {
-    return URL.canParse(url) && Boolean(content) && isDiscuzHtml(content ?? '')
+  match: (url, content, headers) => {
+    if (!URL.canParse(url)) {
+      return false
+    }
+
+    if (content && isDiscuzHtml(content)) {
+      return true
+    }
+
+    if (headers && isDiscuzHeaders(headers)) {
+      return true
+    }
+
+    return false
   },
 
   resolve: (url) => {

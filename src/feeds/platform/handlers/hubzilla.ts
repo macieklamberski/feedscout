@@ -2,16 +2,12 @@ import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, hasMetaContent } from '../../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
-//
-// Hubzilla serves a per-channel Atom feed at `/feed/{channel}`.
-//
-// There is no site-wide feed, so a page outside a channel is not matched:
-// there would be nothing to resolve.
 
-const channelPathRegex = /^\/(?:channel|feed)\/([^/]+)/
+const channelPathRegex = /^\/(?:(?:channel|feed|profile)\/|@)([^/]+)/
 
+// A custom theme can drop the generator, while core prints `var zid` in every page head.
 export const isHubzillaHtml = (content: string): boolean => {
-  return hasMetaContent(content, 'generator', 'hubzilla')
+  return hasMetaContent(content, 'generator', 'hubzilla') || content.includes('var zid =')
 }
 
 const getChannel = (url: string): string | undefined => {

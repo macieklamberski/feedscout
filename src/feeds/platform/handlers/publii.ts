@@ -2,15 +2,13 @@ import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, hasMetaContent } from '../../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
-//
-// Publii writes a feed to `/feed.xml` and a JSON Feed to `/feed.json` on every
-// site it builds. The theme decides whether either is linked, so the vendor's
-// own site advertises neither.
-//
-// `/feed.xml` is Atom despite the name.
+
+// Publii links its media by absolute URL under the site root, as in
+// `https://example.com/blog/media/posts/12/cover.jpg`.
+const mediaUrlRegex = /["'](https?:\/\/[^"'\s]+?)\/media\/(?:website|posts)\//
 
 export const isPubliiHtml = (content: string): boolean => {
-  return hasMetaContent(content, 'generator', 'Publii')
+  return hasMetaContent(content, 'generator', 'Publii') || mediaUrlRegex.test(content)
 }
 
 export const publiiHandler: PlatformHandler = {
@@ -18,13 +16,14 @@ export const publiiHandler: PlatformHandler = {
     return URL.canParse(url) && Boolean(content) && isPubliiHtml(content ?? '')
   },
 
-  resolve: (url) => {
+  resolve: (url, content) => {
     try {
       const { origin } = new URL(url)
+      const siteUrl = content?.match(mediaUrlRegex)?.[1] ?? origin
 
       return [
-        { uri: `${origin}/feed.xml`, hint: composeHint('publii:posts') },
-        { uri: `${origin}/feed.json`, hint: composeHint('publii:posts-json') },
+        { uri: `${siteUrl}/feed.xml`, hint: composeHint('publii:posts') },
+        { uri: `${siteUrl}/feed.json`, hint: composeHint('publii:posts-json') },
       ]
     } catch {}
 

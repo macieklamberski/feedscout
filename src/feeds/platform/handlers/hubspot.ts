@@ -1,13 +1,12 @@
+import type { DiscoverUriEntry } from '../../../common/types.js'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, hasMetaContent } from '../../../common/utils.js'
 
-// Discoverability: Discoverable without handler.
-//
-// A HubSpot blog serves RSS at `{blog-path}/rss.xml`. The feed hangs off the
-// blog path, never the host root, which answers 404.
-//
-// A site can serve the same blog at two paths, so the path a page advertises
-// and the path derived from the URL are not always the same feed URL.
+// Discoverability: Partially discoverable without handler.
+// Generic covers blog, post (html), partly covers author, tag.
+
+const listingPathRegex = /^\/[^/]+\/(author|tag|topic)\/[^/]+/
+const blogContentTypes = ['BLOG_LISTING_PAGE', 'BLOG_POST', 'BLOG_AUTHOR', 'TAG']
 
 const getBlogPath = (url: string): string | undefined => {
   const [first] = new URL(url).pathname.split('/').filter(Boolean)
@@ -19,10 +18,28 @@ export const isHubspotHtml = (content: string): boolean => {
   return hasMetaContent(content, 'generator', 'HubSpot')
 }
 
+export const isHubspotHeaders = (headers: Headers): boolean => {
+  return headers.has('x-hs-hub-id')
+}
+
+// HubSpot names the page type in `x-hs-cfworker-meta`, and only blog pages have a feed.
+const isNonBlogPage = (headers: Headers): boolean => {
+  try {
+    const { contentType } = JSON.parse(headers.get('x-hs-cfworker-meta') ?? '{}')
+
+    return Boolean(contentType) && !blogContentTypes.includes(contentType)
+  } catch {}
+
+  return false
+}
+
 export const hubspotHandler: PlatformHandler = {
-  match: (url, content) => {
+  match: (url, content, headers) => {
     try {
-      if (!content || !isHubspotHtml(content)) {
+      const isHubspot =
+        (content && isHubspotHtml(content)) || (headers && isHubspotHeaders(headers))
+
+      if (!isHubspot || (headers && isNonBlogPage(headers))) {
         return false
       }
 
@@ -34,14 +51,26 @@ export const hubspotHandler: PlatformHandler = {
 
   resolve: (url) => {
     try {
-      const { origin } = new URL(url)
+      const { origin, pathname } = new URL(url)
       const blogPath = getBlogPath(url)
 
       if (!blogPath) {
         return []
       }
 
-      return [{ uri: `${origin}/${blogPath}/rss.xml`, hint: composeHint('hubspot:blog') }]
+      const uris: Array<DiscoverUriEntry> = []
+      const [listingPath, kind] = pathname.match(listingPathRegex) ?? []
+
+      if (listingPath) {
+        uris.push({
+          uri: `${origin}${listingPath}/rss.xml`,
+          hint: composeHint(kind === 'author' ? 'hubspot:author' : 'hubspot:tag'),
+        })
+      }
+
+      uris.push({ uri: `${origin}/${blogPath}/rss.xml`, hint: composeHint('hubspot:blog') })
+
+      return uris
     } catch {}
 
     return []

@@ -9,6 +9,12 @@ describe('isPubliiHtml', () => {
     expect(isPubliiHtml(publiiHtml)).toBe(true)
   })
 
+  it('should return true for media under the site root', () => {
+    const value = '<img src="https://example.com/media/website/logo.png">'
+
+    expect(isPubliiHtml(value)).toBe(true)
+  })
+
   it('should return false for another generator', () => {
     expect(isPubliiHtml(otherHtml)).toBe(false)
   })
@@ -49,6 +55,23 @@ describe('publiiHandler', () => {
       ]
 
       expect(publiiHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should build the feeds from the site root the media links name', () => {
+      const value = 'https://example.com/blog/some-post/'
+      const content = '<img src="https://example.com/blog/media/posts/12/cover.jpg">'
+      const expected = [
+        {
+          uri: 'https://example.com/blog/feed.xml',
+          hint: { key: 'publii:posts', label: 'Posts' },
+        },
+        {
+          uri: 'https://example.com/blog/feed.json',
+          hint: { key: 'publii:posts-json', label: 'Posts (JSON)' },
+        },
+      ]
+
+      expect(publiiHandler.resolve(value, content)).toEqual(expected)
     })
 
     it('should return an empty array for invalid URLs', () => {

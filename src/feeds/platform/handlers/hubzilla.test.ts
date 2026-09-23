@@ -9,6 +9,10 @@ describe('isHubzillaHtml', () => {
     expect(isHubzillaHtml(hubzillaHtml)).toBe(true)
   })
 
+  it('should return true for the zid script a custom theme keeps', () => {
+    expect(isHubzillaHtml("<script>var zid = '';</script>")).toBe(true)
+  })
+
   it('should return false for another platform', () => {
     expect(isHubzillaHtml(otherHtml)).toBe(false)
   })
@@ -22,6 +26,14 @@ describe('hubzillaHandler', () => {
   describe('match', () => {
     it('should match a channel page', () => {
       expect(hubzillaHandler.match('https://example.org/channel/alice', hubzillaHtml)).toBe(true)
+    })
+
+    it('should match a profile page', () => {
+      expect(hubzillaHandler.match('https://example.org/profile/alice', hubzillaHtml)).toBe(true)
+    })
+
+    it('should match a handle page', () => {
+      expect(hubzillaHandler.match('https://example.org/@alice', hubzillaHtml)).toBe(true)
     })
 
     it('should not match a page outside a channel', () => {

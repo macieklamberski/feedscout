@@ -28,6 +28,23 @@ describe('hubspotHandler', () => {
       expect(hubspotHandler.match('https://example.com/', hubspotHtml)).toBe(false)
     })
 
+    it('should match a blog page by the hub id header', () => {
+      const value = 'https://example.com/blog/some-post'
+      const headers = new Headers({ 'x-hs-hub-id': '65360' })
+
+      expect(hubspotHandler.match(value, '<html></html>', headers)).toBe(true)
+    })
+
+    it('should not match a site page the worker marks as not a blog', () => {
+      const value = 'https://example.com/topic/customer-service'
+      const headers = new Headers({
+        'x-hs-hub-id': '53',
+        'x-hs-cfworker-meta': '{"contentType":"SITE_PAGE"}',
+      })
+
+      expect(hubspotHandler.match(value, hubspotHtml, headers)).toBe(false)
+    })
+
     it('should not match without content', () => {
       expect(hubspotHandler.match('https://example.com/blog')).toBe(false)
     })
@@ -52,6 +69,38 @@ describe('hubspotHandler', () => {
       const expected = [
         {
           uri: 'https://example.com/marketing/rss.xml',
+          hint: { key: 'hubspot:blog', label: 'Blog' },
+        },
+      ]
+
+      expect(hubspotHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return the author and blog feeds for an author page', () => {
+      const value = 'https://example.com/blog/author/jane-doe'
+      const expected = [
+        {
+          uri: 'https://example.com/blog/author/jane-doe/rss.xml',
+          hint: { key: 'hubspot:author', label: 'Author' },
+        },
+        {
+          uri: 'https://example.com/blog/rss.xml',
+          hint: { key: 'hubspot:blog', label: 'Blog' },
+        },
+      ]
+
+      expect(hubspotHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return the tag and blog feeds for a topic page', () => {
+      const value = 'https://example.com/blog/topic/inbound'
+      const expected = [
+        {
+          uri: 'https://example.com/blog/topic/inbound/rss.xml',
+          hint: { key: 'hubspot:tag', label: 'Tag' },
+        },
+        {
+          uri: 'https://example.com/blog/rss.xml',
           hint: { key: 'hubspot:blog', label: 'Blog' },
         },
       ]

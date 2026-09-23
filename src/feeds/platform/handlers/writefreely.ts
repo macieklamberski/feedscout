@@ -1,15 +1,12 @@
+import type { DiscoverUriEntry } from '../../../common/types.js'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, hasMetaContent } from '../../../common/utils.js'
 
-// Discoverability: Discoverable without handler.
-//
-// A WriteFreely blog serves RSS at `{instance}/{user}/feed/` and the instance
-// reader at `{instance}/read/feed/`. The trailing slash is required and
-// `{instance}/feed/` answers 404.
-//
-// The generator meta appears on blog pages and is often missing from the
-// instance root.
+// Discoverability: Partially discoverable without handler.
+// Generic covers singleUserPost, tag (guess, html), partly covers blog, post.
 
+const tagPathRegex = /\/(tag:[^/]+)/
+const blogPathRegex = /id="blog-title"[^>]*>\s*<a[^>]*?href="(\/(?:[^"/]+\/)?)"/
 const excludedPaths = ['read', 'about', 'login', 'signup', 'me', 'api', 'pad', 'privacy']
 
 const getBlogName = (url: string): string | undefined => {
@@ -23,7 +20,12 @@ const getBlogName = (url: string): string | undefined => {
 }
 
 export const isWritefreelyHtml = (content: string): boolean => {
-  return hasMetaContent(content, 'generator', 'WriteFreely')
+  return (
+    hasMetaContent(content, 'generator', 'WriteFreely') ||
+    content.includes('href="/css/write.css') ||
+    // A Write.as blog on its own domain runs the same routes under the `Write.as` generator.
+    hasMetaContent(content, 'generator', 'Write.as')
+  )
 }
 
 export const writefreelyHandler: PlatformHandler = {
@@ -39,19 +41,34 @@ export const writefreelyHandler: PlatformHandler = {
     return false
   },
 
-  resolve: (url) => {
+  resolve: (url, content) => {
     try {
-      const { origin } = new URL(url)
+      const { origin, pathname } = new URL(url)
       const blogName = getBlogName(url)
 
       if (!blogName) {
         return []
       }
 
-      return [
-        { uri: `${origin}/${blogName}/feed/`, hint: composeHint('writefreely:blog') },
-        { uri: `${origin}/read/feed/`, hint: composeHint('writefreely:reader') },
-      ]
+      // A single-user instance serves its one blog at the root, and the blog title links to it.
+      const blogPath = content?.match(blogPathRegex)?.[1] ?? `/${blogName}/`
+      const tag = pathname.match(tagPathRegex)?.[1]
+      const uris: Array<DiscoverUriEntry> = []
+
+      if (tag) {
+        uris.push({
+          uri: `${origin}${blogPath}${tag}/feed/`,
+          hint: composeHint('writefreely:tag'),
+        })
+      }
+
+      uris.push({ uri: `${origin}${blogPath}feed/`, hint: composeHint('writefreely:blog') })
+
+      if (blogPath !== '/') {
+        uris.push({ uri: `${origin}/read/feed/`, hint: composeHint('writefreely:reader') })
+      }
+
+      return uris
     } catch {}
 
     return []

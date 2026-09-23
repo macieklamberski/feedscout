@@ -2,8 +2,6 @@ import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint, hasMetaContent } from '../../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
-//
-// Textpattern serves RSS at `/rss` and Atom at `/atom` on the site root.
 
 export const isTextpatternHtml = (content: string): boolean => {
   return hasMetaContent(content, 'generator', 'Textpattern')

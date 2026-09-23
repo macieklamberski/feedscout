@@ -9,6 +9,10 @@ describe('isFunkwhaleHtml', () => {
     expect(isFunkwhaleHtml(funkwhaleHtml)).toBe(true)
   })
 
+  it('should return true for the app shell a custom page keeps', () => {
+    expect(isFunkwhaleHtml('<div id="fake-app"></div>')).toBe(true)
+  })
+
   it('should return false for another platform', () => {
     expect(isFunkwhaleHtml(otherHtml)).toBe(false)
   })
@@ -43,6 +47,18 @@ describe('funkwhaleHandler', () => {
       const expected = [
         {
           uri: 'https://example.org/api/v1/channels/alice/rss',
+          hint: { key: 'funkwhale:channel', label: 'Channel' },
+        },
+      ]
+
+      expect(funkwhaleHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return the feed of a remote channel on its own instance', () => {
+      const value = 'https://example.org/channels/alice@remote.example'
+      const expected = [
+        {
+          uri: 'https://remote.example/api/v1/channels/alice/rss',
           hint: { key: 'funkwhale:channel', label: 'Channel' },
         },
       ]
