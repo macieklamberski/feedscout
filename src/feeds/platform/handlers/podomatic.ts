@@ -2,7 +2,7 @@ import { isHostOf, isSubdomainOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 
-// Discoverability: Unmeasured, bot wall.
+// Discoverability: Unmeasured, podomatic.com no longer resolves in DNS, from any resolver.
 
 const hosts = ['podomatic.com', 'www.podomatic.com']
 const domainSuffixRegex = /\.podomatic\.com$/i

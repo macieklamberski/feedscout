@@ -4,7 +4,7 @@ import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic covers devlog (html), partly covers home.
+// Generic covers devlog, game (html), partly covers home.
 // Handler needed for: browseByTag, browseByUser, games, user.
 
 const mainHosts = ['itch.io', 'www.itch.io']

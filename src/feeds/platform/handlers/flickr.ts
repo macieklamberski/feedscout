@@ -3,8 +3,8 @@ import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic covers photostream (html), partly covers group.
-// Handler needed for: favorites, tag.
+// Generic covers favorites, photostream (html).
+// Handler needed for: group, tag.
 
 const hosts = ['flickr.com', 'www.flickr.com']
 const feedsBase = 'https://www.flickr.com/services/feeds'

@@ -2,8 +2,7 @@ import { isHostOf } from 'trousse'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 
-// Discoverability: Not discoverable without handler.
-// Handler needed for: all shapes.
+// Discoverability: Discoverable without handler.
 
 const hosts = ['paragraph.com', 'www.paragraph.com']
 const userRegex = /^\/@([^/]+)/

@@ -2,9 +2,7 @@ import { isAnyOf, isHostOf } from 'trousse'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 
-// Discoverability: Partially discoverable without handler.
-// Generic covers archive (guess).
-// Handler needed for: newsletter.
+// Discoverability: Discoverable without handler.
 const hosts = ['buttondown.com', 'www.buttondown.com', 'buttondown.email', 'www.buttondown.email']
 const excludedPaths = [
   'about',

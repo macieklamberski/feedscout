@@ -2,8 +2,9 @@ import { isAnyOf, isHostOf, isSubdomainOf } from 'trousse'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 
-// Discoverability: Not discoverable without handler.
-// Handler needed for: all shapes.
+// Discoverability: Partially discoverable without handler.
+// Generic covers profileSubdomain (html).
+// Handler needed for: albums, explore, profile.
 
 const hosts = ['artstation.com', 'www.artstation.com']
 const domainSuffixRegex = /\.artstation\.com$/i
