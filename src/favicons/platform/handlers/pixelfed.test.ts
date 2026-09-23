@@ -1,18 +1,7 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverFetchFn, DiscoverUriEntry } from '../../../common/types.js'
+import type { DiscoverUriEntry } from '../../../common/types.js'
 import { pixelfedHandler } from './pixelfed.js'
 
-const createMockFetch = (responses: Record<string, string>): DiscoverFetchFn => {
-  return async (url: string) => ({
-    headers: new Headers(),
-    body: responses[url] ?? '',
-    url,
-    status: url in responses ? 200 : 404,
-    statusText: url in responses ? 'OK' : 'Not Found',
-  })
-}
-
-const lookupUrl = 'https://example.com/api/v1/accounts/lookup?acct=alice'
 const pixelfedHtml = '<html><head><meta name="generator" content="pixelfed"></head></html>'
 const profileHtml = `
   <html>
@@ -64,8 +53,8 @@ describe('pixelfedHandler', () => {
 
   describe('resolve', () => {
     describe('happy paths', () => {
-      it('should resolve avatar from og:image on /{user}', async () => {
-        const result = await pixelfedHandler.resolve('https://example.com/alice', profileHtml)
+      it('should resolve avatar from og:image on /{user}', () => {
+        const result = pixelfedHandler.resolve('https://example.com/alice', profileHtml)
         const expected: Array<DiscoverUriEntry> = [
           { uri: 'https://example.com/storage/avatars/000/000/000/002/abc_avatar.jpg?v=57' },
         ]
@@ -73,49 +62,10 @@ describe('pixelfedHandler', () => {
         expect(result).toEqual(expected)
       })
 
-      it('should resolve avatar from og:image on /users/{user}', async () => {
-        const result = await pixelfedHandler.resolve('https://example.com/users/alice', profileHtml)
+      it('should resolve avatar from og:image on /users/{user}', () => {
+        const result = pixelfedHandler.resolve('https://example.com/users/alice', profileHtml)
         const expected: Array<DiscoverUriEntry> = [
           { uri: 'https://example.com/storage/avatars/000/000/000/002/abc_avatar.jpg?v=57' },
-        ]
-
-        expect(result).toEqual(expected)
-      })
-
-      it('should resolve avatar from API when page has no og:image', async () => {
-        const mockFetch = createMockFetch({
-          [lookupUrl]: JSON.stringify({
-            username: 'alice',
-            avatar: 'https://example.com/storage/avatars/561598194146945883/krwzqr.jpg?v=1',
-          }),
-        })
-        const result = await pixelfedHandler.resolve(
-          'https://example.com/alice',
-          pixelfedHtml,
-          undefined,
-          mockFetch,
-        )
-        const expected: Array<DiscoverUriEntry> = [
-          { uri: 'https://example.com/storage/avatars/561598194146945883/krwzqr.jpg?v=1' },
-        ]
-
-        expect(result).toEqual(expected)
-      })
-
-      it('should resolve avatar from API when content is missing', async () => {
-        const mockFetch = createMockFetch({
-          [lookupUrl]: JSON.stringify({
-            avatar: 'https://cdn.example.com/cache/avatars/550096353336233985/avatar_lyn3g6.png',
-          }),
-        })
-        const result = await pixelfedHandler.resolve(
-          'https://example.com/users/alice',
-          undefined,
-          undefined,
-          mockFetch,
-        )
-        const expected: Array<DiscoverUriEntry> = [
-          { uri: 'https://cdn.example.com/cache/avatars/550096353336233985/avatar_lyn3g6.png' },
         ]
 
         expect(result).toEqual(expected)
@@ -123,88 +73,52 @@ describe('pixelfedHandler', () => {
     })
 
     describe('sad paths', () => {
-      it('should return empty array for excluded path', async () => {
-        const result = await pixelfedHandler.resolve('https://example.com/discover', profileHtml)
+      it('should return empty array for excluded path', () => {
+        const result = pixelfedHandler.resolve('https://example.com/discover', profileHtml)
 
         expect(result).toEqual([])
       })
 
-      it('should return empty array for invalid URL', async () => {
-        const result = await pixelfedHandler.resolve('not-a-url', profileHtml)
+      it('should return empty array for invalid URL', () => {
+        const result = pixelfedHandler.resolve('not-a-url', profileHtml)
 
         expect(result).toEqual([])
       })
 
-      it('should return empty array when page has no og:image and fetchFn is missing', async () => {
-        const result = await pixelfedHandler.resolve('https://example.com/alice', pixelfedHtml)
+      it('should return empty array without content', () => {
+        const result = pixelfedHandler.resolve('https://example.com/alice')
 
         expect(result).toEqual([])
       })
 
-      it('should return empty array when fetch throws', async () => {
-        const mockFetch: DiscoverFetchFn = () => {
-          throw new Error('Network error')
-        }
-        const result = await pixelfedHandler.resolve(
-          'https://example.com/alice',
-          pixelfedHtml,
-          undefined,
-          mockFetch,
-        )
-
-        expect(result).toEqual([])
-      })
-
-      it('should return empty array when API returns invalid JSON', async () => {
-        const mockFetch = createMockFetch({ [lookupUrl]: '<html>Not Found</html>' })
-        const result = await pixelfedHandler.resolve(
-          'https://example.com/alice',
-          pixelfedHtml,
-          undefined,
-          mockFetch,
-        )
-
-        expect(result).toEqual([])
-      })
-
-      it('should return empty array when API returns no avatar', async () => {
-        const mockFetch = createMockFetch({ [lookupUrl]: JSON.stringify({ username: 'alice' }) })
-        const result = await pixelfedHandler.resolve(
-          'https://example.com/alice',
-          pixelfedHtml,
-          undefined,
-          mockFetch,
-        )
+      it('should return empty array when page has no og:image', () => {
+        const result = pixelfedHandler.resolve('https://example.com/alice', pixelfedHtml)
 
         expect(result).toEqual([])
       })
     })
 
     describe('edge cases', () => {
-      it('should return empty array for default avatar in og:image', async () => {
+      it('should return empty array for default avatar in og:image', () => {
         const value = `
           <meta
             property="og:image"
             content="https://example.com/storage/avatars/default.jpg"
           >
         `
-        const result = await pixelfedHandler.resolve('https://example.com/alice', value)
+        const result = pixelfedHandler.resolve('https://example.com/alice', value)
 
         expect(result).toEqual([])
       })
 
-      it('should return empty array for default avatar from API', async () => {
-        const mockFetch = createMockFetch({
-          [lookupUrl]: JSON.stringify({
-            avatar: 'https://example.com/storage/avatars/default.png?v=0',
-          }),
-        })
-        const result = await pixelfedHandler.resolve(
-          'https://example.com/alice',
-          pixelfedHtml,
-          undefined,
-          mockFetch,
-        )
+      it('should return empty array for default avatar with query in og:image', () => {
+        const value = `
+          <meta
+            property="og:image"
+            content="https://example.com/storage/avatars/default.png?v=0"
+          >
+        `
+        const result = pixelfedHandler.resolve('https://example.com/alice', value)
 
         expect(result).toEqual([])
       })

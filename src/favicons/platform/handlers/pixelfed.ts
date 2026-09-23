@@ -6,7 +6,6 @@ import {
   isPixelfedHtml,
   profileRegex,
 } from '../../../feeds/platform/handlers/pixelfed.js'
-import { parseBodyJson } from '../../utils.js'
 
 // An account without an uploaded avatar carries /storage/avatars/default.jpg or default.png.
 const defaultAvatarRegex = /\/avatars\/default\.[a-z]+(?:\?|$)/
@@ -40,33 +39,17 @@ export const pixelfedHandler: PlatformHandler = {
     return Boolean(getUsername(url))
   },
 
-  resolve: async (url, content, _headers, fetchFn) => {
-    const username = getUsername(url)
-
-    if (!username) {
+  resolve: (url, content) => {
+    if (!content || !getUsername(url)) {
       return []
     }
 
-    const ogImage = getMetaContent(content ?? '', 'og:image')
+    const ogImage = getMetaContent(content, 'og:image')
 
-    if (isAvatar(ogImage)) {
-      return [{ uri: ogImage }]
-    }
-
-    if (!fetchFn) {
+    if (!isAvatar(ogImage)) {
       return []
     }
 
-    try {
-      const { origin } = new URL(url)
-      const response = await fetchFn(`${origin}/api/v1/accounts/lookup?acct=${username}`)
-      const data = parseBodyJson(response.body)
-
-      if (isAvatar(data?.avatar)) {
-        return [{ uri: data.avatar }]
-      }
-    } catch {}
-
-    return []
+    return [{ uri: ogImage }]
   },
 }
