@@ -6,8 +6,8 @@ import { composeHint } from '../../../common/utils.js'
 // Discoverability: Partially discoverable without handler.
 // Generic partly covers blog.
 
-const hosts = ['ameblo.jp', 'www.ameblo.jp']
-const excludedPaths = ['genre', 'hashtag', 'search']
+export const hosts = ['ameblo.jp', 'www.ameblo.jp']
+export const excludedPaths = ['genre', 'hashtag', 'search']
 
 export const amebloHandler: PlatformHandler = {
   match: (url) => {

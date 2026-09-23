@@ -5,6 +5,7 @@ import type { GuessMethodOptions } from '../common/uris/guess/types.js'
 import type { HeadersMethodOptions } from '../common/uris/headers/types.js'
 import type { HtmlMethodOptions } from '../common/uris/html/types.js'
 import type { PlatformMethodOptions } from '../common/uris/platform/types.js'
+import { amebloHandler } from './platform/handlers/ameblo.js'
 import { arenaEnricher, arenaHandler } from './platform/handlers/arena.js'
 import { behanceHandler } from './platform/handlers/behance.js'
 import { bitchuteHandler } from './platform/handlers/bitchute.js'
@@ -97,6 +98,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     bitchuteHandler,
     behanceHandler,
     arenaHandler,
+    amebloHandler,
     giteaHandler,
     githubHandler,
     githubGistHandler,
