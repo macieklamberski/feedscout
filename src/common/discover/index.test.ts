@@ -517,6 +517,35 @@ describe('discoverFeeds', () => {
       expect(steps.slice(2, 4)).toEqual(expected)
     })
 
+    it('should report a method past the maxUris limit as a step with a total of zero', async () => {
+      const steps: Array<DiscoverStep> = []
+      const platformHandler: PlatformHandler = {
+        match: () => true,
+        resolve: () => [{ uri: '/platform-feed' }],
+      }
+
+      await discoverFeeds(
+        { url: 'https://example.com', content: '<html></html>' },
+        {
+          methods: {
+            platform: { handlers: [platformHandler] },
+            guess: { uris: ['/feed'] },
+          },
+          fetchFn: createMockFetch({ 'https://example.com/platform-feed': rss }),
+          maxUris: 1,
+          onStep: (step) => {
+            steps.push(step)
+          },
+        },
+      )
+      const expected: Array<DiscoverStep> = [
+        { step: 'validate', status: 'start', method: 'guess', total: 0 },
+        { step: 'validate', status: 'end', method: 'guess', total: 0, found: 0 },
+      ]
+
+      expect(steps.slice(4, 6)).toEqual(expected)
+    })
+
     it('should not report fetching the input when content is provided', async () => {
       const steps: Array<DiscoverStep> = []
 
