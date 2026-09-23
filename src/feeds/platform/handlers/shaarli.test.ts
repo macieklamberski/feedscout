@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'bun:test'
+import type { DiscoverUriEntry } from '../../../common/types.js'
 import { isShaarliHtml, shaarliHandler } from './shaarli.js'
 
 const shaarliHtml = '<div id="shaarli-menu" class="pure-menu"></div>'
@@ -50,14 +51,14 @@ describe('shaarliHandler', () => {
   describe('resolve', () => {
     it('should return the current and legacy feed shapes', () => {
       const value = 'https://example.org/'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://example.org/feed/rss',
-          hint: { key: 'shaarli:posts-rss', label: 'Posts (RSS)' },
+          hint: { key: 'shaarli:posts', label: 'Posts', format: 'rss' },
         },
         {
           uri: 'https://example.org/feed/atom',
-          hint: { key: 'shaarli:posts-atom', label: 'Posts (Atom)' },
+          hint: { key: 'shaarli:posts', label: 'Posts', format: 'atom' },
         },
         {
           uri: 'https://example.org/?do=rss',
@@ -71,14 +72,14 @@ describe('shaarliHandler', () => {
     it('should build the feeds from the base path the page declares', () => {
       const value = 'https://example.org/links/shaare/abc123'
       const content = '<input type="hidden" name="js_base_path" value="/links" />'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://example.org/links/feed/rss',
-          hint: { key: 'shaarli:posts-rss', label: 'Posts (RSS)' },
+          hint: { key: 'shaarli:posts', label: 'Posts', format: 'rss' },
         },
         {
           uri: 'https://example.org/links/feed/atom',
-          hint: { key: 'shaarli:posts-atom', label: 'Posts (Atom)' },
+          hint: { key: 'shaarli:posts', label: 'Posts', format: 'atom' },
         },
         {
           uri: 'https://example.org/links/?do=rss',
@@ -91,14 +92,14 @@ describe('shaarliHandler', () => {
 
     it('should build the feeds from the directory of a legacy install', () => {
       const value = 'https://example.org/links/?searchtags=web'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://example.org/links/feed/rss',
-          hint: { key: 'shaarli:posts-rss', label: 'Posts (RSS)' },
+          hint: { key: 'shaarli:posts', label: 'Posts', format: 'rss' },
         },
         {
           uri: 'https://example.org/links/feed/atom',
-          hint: { key: 'shaarli:posts-atom', label: 'Posts (Atom)' },
+          hint: { key: 'shaarli:posts', label: 'Posts', format: 'atom' },
         },
         {
           uri: 'https://example.org/links/?do=rss',

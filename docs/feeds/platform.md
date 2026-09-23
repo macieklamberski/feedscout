@@ -23,10 +23,13 @@ Platform handlers attach a `hint` to each feed URI they generate. Hints provide 
 
 Hints are propagated to the final [`DiscoverResult`](/reference/types#discoverresult) objects returned by `discoverFeeds`. Results from non-platform methods (HTML, headers, guess) do not include hints.
 
+When a platform serves the same feed in several formats, like WordPress posts in RSS, Atom and RDF, each variant gets the same `label` and its own `format`. The hint carries the format the platform serves at that URL, so it is there for results that failed to validate too.
+
 ```typescript
 type DiscoverUriHint = {
-  key: string    // e.g., 'youtube:all', 'youtube:videos'
-  label: string  // e.g., 'All uploads', 'Videos'
+  key: string                              // e.g., 'youtube:all', 'wordpress:posts'
+  label: string                            // e.g., 'All uploads', 'Posts'
+  format?: 'rss' | 'atom' | 'rdf' | 'json' // e.g., 'atom'
 }
 ```
 

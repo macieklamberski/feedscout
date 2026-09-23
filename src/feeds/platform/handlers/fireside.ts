@@ -19,11 +19,11 @@ export const firesideHandler: PlatformHandler = {
 
     uris.push({
       uri: `https://feeds.fireside.fm/${slug}/rss`,
-      hint: composeHint('fireside:podcast-rss'),
+      hint: composeHint('fireside:podcast', 'rss'),
     })
     uris.push({
       uri: `https://${slug}.fireside.fm/json`,
-      hint: composeHint('fireside:podcast-json'),
+      hint: composeHint('fireside:podcast', 'json'),
     })
 
     return uris

@@ -22,11 +22,11 @@ export const bearblogHandler: PlatformHandler = {
     if (isHostOf(url, apexHosts)) {
       uris.push({
         uri: 'https://bearblog.dev/discover/feed/',
-        hint: composeHint('bearblog:discover-atom'),
+        hint: composeHint('bearblog:discover', 'atom'),
       })
       uris.push({
         uri: 'https://bearblog.dev/discover/feed/?type=rss',
-        hint: composeHint('bearblog:discover-rss'),
+        hint: composeHint('bearblog:discover', 'rss'),
       })
 
       return uris
@@ -38,16 +38,16 @@ export const bearblogHandler: PlatformHandler = {
     if (tag) {
       uris.push({
         uri: `${origin}/feed/?q=${encodeURIComponent(tag)}`,
-        hint: composeHint('bearblog:tag-atom'),
+        hint: composeHint('bearblog:tag', 'atom'),
       })
       uris.push({
         uri: `${origin}/feed/?type=rss&q=${encodeURIComponent(tag)}`,
-        hint: composeHint('bearblog:tag-rss'),
+        hint: composeHint('bearblog:tag', 'rss'),
       })
     }
 
-    uris.push({ uri: `${origin}/feed/`, hint: composeHint('bearblog:posts-atom') })
-    uris.push({ uri: `${origin}/feed/?type=rss`, hint: composeHint('bearblog:posts-rss') })
+    uris.push({ uri: `${origin}/feed/`, hint: composeHint('bearblog:posts', 'atom') })
+    uris.push({ uri: `${origin}/feed/?type=rss`, hint: composeHint('bearblog:posts', 'rss') })
 
     return uris
   },

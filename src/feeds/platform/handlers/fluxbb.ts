@@ -41,8 +41,8 @@ export const fluxbbHandler: PlatformHandler = {
       }
 
       uris.push(
-        { uri: `${feedUrl}&type=RSS`, hint: composeHint('fluxbb:posts-rss') },
-        { uri: `${feedUrl}&type=atom`, hint: composeHint('fluxbb:posts-atom') },
+        { uri: `${feedUrl}&type=RSS`, hint: composeHint('fluxbb:posts', 'rss') },
+        { uri: `${feedUrl}&type=atom`, hint: composeHint('fluxbb:posts', 'atom') },
       )
 
       return uris

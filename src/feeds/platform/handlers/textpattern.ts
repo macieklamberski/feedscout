@@ -17,8 +17,8 @@ export const textpatternHandler: PlatformHandler = {
       const { origin } = new URL(url)
 
       return [
-        { uri: `${origin}/rss`, hint: composeHint('textpattern:posts-rss') },
-        { uri: `${origin}/atom`, hint: composeHint('textpattern:posts-atom') },
+        { uri: `${origin}/rss`, hint: composeHint('textpattern:posts', 'rss') },
+        { uri: `${origin}/atom`, hint: composeHint('textpattern:posts', 'atom') },
       ]
     } catch {}
 

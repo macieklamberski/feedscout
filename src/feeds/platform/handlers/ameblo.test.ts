@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'bun:test'
+import type { DiscoverUriEntry } from '../../../common/types.js'
 import { amebloHandler } from './ameblo.js'
 
 describe('amebloHandler', () => {
@@ -22,18 +23,18 @@ describe('amebloHandler', () => {
   describe('resolve', () => {
     it('should return RSS 2.0, Atom, and RDF feeds for blog', () => {
       const value = 'https://ameblo.jp/shibuya'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://ameblo.jp/shibuya/rss20.xml',
-          hint: { key: 'ameblo:posts-rss', label: 'Posts (RSS)' },
+          hint: { key: 'ameblo:posts', label: 'Posts', format: 'rss' },
         },
         {
           uri: 'https://ameblo.jp/shibuya/atom.xml',
-          hint: { key: 'ameblo:posts-atom', label: 'Posts (Atom)' },
+          hint: { key: 'ameblo:posts', label: 'Posts', format: 'atom' },
         },
         {
           uri: 'https://rssblog.ameba.jp/shibuya/rss.html',
-          hint: { key: 'ameblo:posts-rdf', label: 'Posts (RDF)' },
+          hint: { key: 'ameblo:posts', label: 'Posts', format: 'rdf' },
         },
       ]
 
@@ -42,18 +43,18 @@ describe('amebloHandler', () => {
 
     it('should return feed URLs regardless of subpath', () => {
       const value = 'https://ameblo.jp/shibuya/entry-12345.html'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://ameblo.jp/shibuya/rss20.xml',
-          hint: { key: 'ameblo:posts-rss', label: 'Posts (RSS)' },
+          hint: { key: 'ameblo:posts', label: 'Posts', format: 'rss' },
         },
         {
           uri: 'https://ameblo.jp/shibuya/atom.xml',
-          hint: { key: 'ameblo:posts-atom', label: 'Posts (Atom)' },
+          hint: { key: 'ameblo:posts', label: 'Posts', format: 'atom' },
         },
         {
           uri: 'https://rssblog.ameba.jp/shibuya/rss.html',
-          hint: { key: 'ameblo:posts-rdf', label: 'Posts (RDF)' },
+          hint: { key: 'ameblo:posts', label: 'Posts', format: 'rdf' },
         },
       ]
 

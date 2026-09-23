@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'bun:test'
+import type { DiscoverUriEntry } from '../../../common/types.js'
 import { livejournalHandler } from './livejournal.js'
 
 describe('livejournalHandler', () => {
@@ -30,18 +31,18 @@ describe('livejournalHandler', () => {
   describe('resolve', () => {
     it('should return RSS, Atom, and userpics feeds for blog', () => {
       const value = 'https://ohnotheydidnt.livejournal.com'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://ohnotheydidnt.livejournal.com/data/rss',
-          hint: { key: 'livejournal:posts-rss', label: 'Posts (RSS)' },
+          hint: { key: 'livejournal:posts', label: 'Posts', format: 'rss' },
         },
         {
           uri: 'https://ohnotheydidnt.livejournal.com/data/atom',
-          hint: { key: 'livejournal:posts-atom', label: 'Posts (Atom)' },
+          hint: { key: 'livejournal:posts', label: 'Posts', format: 'atom' },
         },
         {
           uri: 'https://ohnotheydidnt.livejournal.com/data/userpics',
-          hint: { key: 'livejournal:userpics-atom', label: 'Userpics (Atom)' },
+          hint: { key: 'livejournal:userpics', label: 'Userpics', format: 'atom' },
         },
       ]
 
@@ -50,18 +51,18 @@ describe('livejournalHandler', () => {
 
     it('should return feed URLs regardless of path', () => {
       const value = 'https://ohnotheydidnt.livejournal.com/123456.html'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://ohnotheydidnt.livejournal.com/data/rss',
-          hint: { key: 'livejournal:posts-rss', label: 'Posts (RSS)' },
+          hint: { key: 'livejournal:posts', label: 'Posts', format: 'rss' },
         },
         {
           uri: 'https://ohnotheydidnt.livejournal.com/data/atom',
-          hint: { key: 'livejournal:posts-atom', label: 'Posts (Atom)' },
+          hint: { key: 'livejournal:posts', label: 'Posts', format: 'atom' },
         },
         {
           uri: 'https://ohnotheydidnt.livejournal.com/data/userpics',
-          hint: { key: 'livejournal:userpics-atom', label: 'Userpics (Atom)' },
+          hint: { key: 'livejournal:userpics', label: 'Userpics', format: 'atom' },
         },
       ]
 
@@ -70,26 +71,26 @@ describe('livejournalHandler', () => {
 
     it('should add tag-filtered feeds for /tag/ paths', () => {
       const value = 'https://ohnotheydidnt.livejournal.com/tag/television'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://ohnotheydidnt.livejournal.com/data/rss?tag=television',
-          hint: { key: 'livejournal:posts-tag-rss', label: 'Tag (RSS)' },
+          hint: { key: 'livejournal:posts-tag', label: 'Tag', format: 'rss' },
         },
         {
           uri: 'https://ohnotheydidnt.livejournal.com/data/atom?tag=television',
-          hint: { key: 'livejournal:posts-tag-atom', label: 'Tag (Atom)' },
+          hint: { key: 'livejournal:posts-tag', label: 'Tag', format: 'atom' },
         },
         {
           uri: 'https://ohnotheydidnt.livejournal.com/data/rss',
-          hint: { key: 'livejournal:posts-rss', label: 'Posts (RSS)' },
+          hint: { key: 'livejournal:posts', label: 'Posts', format: 'rss' },
         },
         {
           uri: 'https://ohnotheydidnt.livejournal.com/data/atom',
-          hint: { key: 'livejournal:posts-atom', label: 'Posts (Atom)' },
+          hint: { key: 'livejournal:posts', label: 'Posts', format: 'atom' },
         },
         {
           uri: 'https://ohnotheydidnt.livejournal.com/data/userpics',
-          hint: { key: 'livejournal:userpics-atom', label: 'Userpics (Atom)' },
+          hint: { key: 'livejournal:userpics', label: 'Userpics', format: 'atom' },
         },
       ]
 
@@ -98,18 +99,18 @@ describe('livejournalHandler', () => {
 
     it('should canonicalise www.livejournal.com/users/{user} to subdomain', () => {
       const value = 'https://www.livejournal.com/users/news'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://news.livejournal.com/data/rss',
-          hint: { key: 'livejournal:posts-rss', label: 'Posts (RSS)' },
+          hint: { key: 'livejournal:posts', label: 'Posts', format: 'rss' },
         },
         {
           uri: 'https://news.livejournal.com/data/atom',
-          hint: { key: 'livejournal:posts-atom', label: 'Posts (Atom)' },
+          hint: { key: 'livejournal:posts', label: 'Posts', format: 'atom' },
         },
         {
           uri: 'https://news.livejournal.com/data/userpics',
-          hint: { key: 'livejournal:userpics-atom', label: 'Userpics (Atom)' },
+          hint: { key: 'livejournal:userpics', label: 'Userpics', format: 'atom' },
         },
       ]
 
@@ -118,18 +119,18 @@ describe('livejournalHandler', () => {
 
     it('should canonicalise users.livejournal.com/{user} legacy host', () => {
       const value = 'https://users.livejournal.com/news'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://news.livejournal.com/data/rss',
-          hint: { key: 'livejournal:posts-rss', label: 'Posts (RSS)' },
+          hint: { key: 'livejournal:posts', label: 'Posts', format: 'rss' },
         },
         {
           uri: 'https://news.livejournal.com/data/atom',
-          hint: { key: 'livejournal:posts-atom', label: 'Posts (Atom)' },
+          hint: { key: 'livejournal:posts', label: 'Posts', format: 'atom' },
         },
         {
           uri: 'https://news.livejournal.com/data/userpics',
-          hint: { key: 'livejournal:userpics-atom', label: 'Userpics (Atom)' },
+          hint: { key: 'livejournal:userpics', label: 'Userpics', format: 'atom' },
         },
       ]
 
@@ -146,18 +147,18 @@ describe('livejournalHandler', () => {
 
     it('should canonicalise community.livejournal.com/{user} legacy host', () => {
       const value = 'https://community.livejournal.com/ohnotheydidnt'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://ohnotheydidnt.livejournal.com/data/rss',
-          hint: { key: 'livejournal:posts-rss', label: 'Posts (RSS)' },
+          hint: { key: 'livejournal:posts', label: 'Posts', format: 'rss' },
         },
         {
           uri: 'https://ohnotheydidnt.livejournal.com/data/atom',
-          hint: { key: 'livejournal:posts-atom', label: 'Posts (Atom)' },
+          hint: { key: 'livejournal:posts', label: 'Posts', format: 'atom' },
         },
         {
           uri: 'https://ohnotheydidnt.livejournal.com/data/userpics',
-          hint: { key: 'livejournal:userpics-atom', label: 'Userpics (Atom)' },
+          hint: { key: 'livejournal:userpics', label: 'Userpics', format: 'atom' },
         },
       ]
 

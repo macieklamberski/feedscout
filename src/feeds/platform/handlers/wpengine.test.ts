@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'bun:test'
+import type { DiscoverUriEntry } from '../../../common/types.js'
 import { wpengineHandler } from './wpengine.js'
 
 describe('wpengineHandler', () => {
@@ -25,7 +26,7 @@ describe('wpengineHandler', () => {
   describe('resolve', () => {
     it('should return feed URLs for blog', () => {
       const value = 'https://example.wpenginepowered.com'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: [
             'https://example.wpenginepowered.com/feed/',
@@ -33,21 +34,21 @@ describe('wpengineHandler', () => {
             'https://example.wpenginepowered.com/feed/rss2/',
             'https://example.wpenginepowered.com/?feed=rss2',
           ],
-          hint: { key: 'wordpress:posts-rss', label: 'Posts (RSS)' },
+          hint: { key: 'wordpress:posts', label: 'Posts', format: 'rss' },
         },
         {
           uri: [
             'https://example.wpenginepowered.com/feed/atom/',
             'https://example.wpenginepowered.com/?feed=atom',
           ],
-          hint: { key: 'wordpress:posts-atom', label: 'Posts (Atom)' },
+          hint: { key: 'wordpress:posts', label: 'Posts', format: 'atom' },
         },
         {
           uri: [
             'https://example.wpenginepowered.com/feed/rdf/',
             'https://example.wpenginepowered.com/?feed=rdf',
           ],
-          hint: { key: 'wordpress:posts-rdf', label: 'Posts (RDF)' },
+          hint: { key: 'wordpress:posts', label: 'Posts', format: 'rdf' },
         },
         {
           uri: [
@@ -56,21 +57,21 @@ describe('wpengineHandler', () => {
             'https://example.wpenginepowered.com/comments/feed/rss2/',
             'https://example.wpenginepowered.com/?feed=comments-rss2',
           ],
-          hint: { key: 'wordpress:comments-rss', label: 'Comments (RSS)' },
+          hint: { key: 'wordpress:comments', label: 'Comments', format: 'rss' },
         },
         {
           uri: [
             'https://example.wpenginepowered.com/comments/feed/atom/',
             'https://example.wpenginepowered.com/?feed=comments-atom',
           ],
-          hint: { key: 'wordpress:comments-atom', label: 'Comments (Atom)' },
+          hint: { key: 'wordpress:comments', label: 'Comments', format: 'atom' },
         },
         {
           uri: [
             'https://example.wpenginepowered.com/comments/feed/rdf/',
             'https://example.wpenginepowered.com/?feed=comments-rdf',
           ],
-          hint: { key: 'wordpress:comments-rdf', label: 'Comments (RDF)' },
+          hint: { key: 'wordpress:comments', label: 'Comments', format: 'rdf' },
         },
       ]
 
@@ -79,7 +80,7 @@ describe('wpengineHandler', () => {
 
     it('should return feed URLs for legacy domain', () => {
       const value = 'https://example.wpengine.com'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: [
             'https://example.wpengine.com/feed/',
@@ -87,18 +88,18 @@ describe('wpengineHandler', () => {
             'https://example.wpengine.com/feed/rss2/',
             'https://example.wpengine.com/?feed=rss2',
           ],
-          hint: { key: 'wordpress:posts-rss', label: 'Posts (RSS)' },
+          hint: { key: 'wordpress:posts', label: 'Posts', format: 'rss' },
         },
         {
           uri: [
             'https://example.wpengine.com/feed/atom/',
             'https://example.wpengine.com/?feed=atom',
           ],
-          hint: { key: 'wordpress:posts-atom', label: 'Posts (Atom)' },
+          hint: { key: 'wordpress:posts', label: 'Posts', format: 'atom' },
         },
         {
           uri: ['https://example.wpengine.com/feed/rdf/', 'https://example.wpengine.com/?feed=rdf'],
-          hint: { key: 'wordpress:posts-rdf', label: 'Posts (RDF)' },
+          hint: { key: 'wordpress:posts', label: 'Posts', format: 'rdf' },
         },
         {
           uri: [
@@ -107,21 +108,21 @@ describe('wpengineHandler', () => {
             'https://example.wpengine.com/comments/feed/rss2/',
             'https://example.wpengine.com/?feed=comments-rss2',
           ],
-          hint: { key: 'wordpress:comments-rss', label: 'Comments (RSS)' },
+          hint: { key: 'wordpress:comments', label: 'Comments', format: 'rss' },
         },
         {
           uri: [
             'https://example.wpengine.com/comments/feed/atom/',
             'https://example.wpengine.com/?feed=comments-atom',
           ],
-          hint: { key: 'wordpress:comments-atom', label: 'Comments (Atom)' },
+          hint: { key: 'wordpress:comments', label: 'Comments', format: 'atom' },
         },
         {
           uri: [
             'https://example.wpengine.com/comments/feed/rdf/',
             'https://example.wpengine.com/?feed=comments-rdf',
           ],
-          hint: { key: 'wordpress:comments-rdf', label: 'Comments (RDF)' },
+          hint: { key: 'wordpress:comments', label: 'Comments', format: 'rdf' },
         },
       ]
 
@@ -130,7 +131,7 @@ describe('wpengineHandler', () => {
 
     it('should include category feed when on category page', () => {
       const value = 'https://example.wpenginepowered.com/category/tech/'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: [
             'https://example.wpenginepowered.com/category/tech/feed/',
@@ -138,21 +139,21 @@ describe('wpengineHandler', () => {
             'https://example.wpenginepowered.com/category/tech/feed/rss2/',
             'https://example.wpenginepowered.com/category/tech/?feed=rss2',
           ],
-          hint: { key: 'wordpress:category-rss', label: 'Category (RSS)' },
+          hint: { key: 'wordpress:category', label: 'Category', format: 'rss' },
         },
         {
           uri: [
             'https://example.wpenginepowered.com/category/tech/feed/atom/',
             'https://example.wpenginepowered.com/category/tech/?feed=atom',
           ],
-          hint: { key: 'wordpress:category-atom', label: 'Category (Atom)' },
+          hint: { key: 'wordpress:category', label: 'Category', format: 'atom' },
         },
         {
           uri: [
             'https://example.wpenginepowered.com/category/tech/feed/rdf/',
             'https://example.wpenginepowered.com/category/tech/?feed=rdf',
           ],
-          hint: { key: 'wordpress:category-rdf', label: 'Category (RDF)' },
+          hint: { key: 'wordpress:category', label: 'Category', format: 'rdf' },
         },
         {
           uri: [
@@ -161,21 +162,21 @@ describe('wpengineHandler', () => {
             'https://example.wpenginepowered.com/feed/rss2/',
             'https://example.wpenginepowered.com/?feed=rss2',
           ],
-          hint: { key: 'wordpress:posts-rss', label: 'Posts (RSS)' },
+          hint: { key: 'wordpress:posts', label: 'Posts', format: 'rss' },
         },
         {
           uri: [
             'https://example.wpenginepowered.com/feed/atom/',
             'https://example.wpenginepowered.com/?feed=atom',
           ],
-          hint: { key: 'wordpress:posts-atom', label: 'Posts (Atom)' },
+          hint: { key: 'wordpress:posts', label: 'Posts', format: 'atom' },
         },
         {
           uri: [
             'https://example.wpenginepowered.com/feed/rdf/',
             'https://example.wpenginepowered.com/?feed=rdf',
           ],
-          hint: { key: 'wordpress:posts-rdf', label: 'Posts (RDF)' },
+          hint: { key: 'wordpress:posts', label: 'Posts', format: 'rdf' },
         },
         {
           uri: [
@@ -184,21 +185,21 @@ describe('wpengineHandler', () => {
             'https://example.wpenginepowered.com/comments/feed/rss2/',
             'https://example.wpenginepowered.com/?feed=comments-rss2',
           ],
-          hint: { key: 'wordpress:comments-rss', label: 'Comments (RSS)' },
+          hint: { key: 'wordpress:comments', label: 'Comments', format: 'rss' },
         },
         {
           uri: [
             'https://example.wpenginepowered.com/comments/feed/atom/',
             'https://example.wpenginepowered.com/?feed=comments-atom',
           ],
-          hint: { key: 'wordpress:comments-atom', label: 'Comments (Atom)' },
+          hint: { key: 'wordpress:comments', label: 'Comments', format: 'atom' },
         },
         {
           uri: [
             'https://example.wpenginepowered.com/comments/feed/rdf/',
             'https://example.wpenginepowered.com/?feed=comments-rdf',
           ],
-          hint: { key: 'wordpress:comments-rdf', label: 'Comments (RDF)' },
+          hint: { key: 'wordpress:comments', label: 'Comments', format: 'rdf' },
         },
       ]
 
@@ -207,7 +208,7 @@ describe('wpengineHandler', () => {
 
     it('should include tag feed when on tag page', () => {
       const value = 'https://example.wpenginepowered.com/tag/javascript/'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: [
             'https://example.wpenginepowered.com/tag/javascript/feed/',
@@ -215,21 +216,21 @@ describe('wpengineHandler', () => {
             'https://example.wpenginepowered.com/tag/javascript/feed/rss2/',
             'https://example.wpenginepowered.com/tag/javascript/?feed=rss2',
           ],
-          hint: { key: 'wordpress:tag-rss', label: 'Tag (RSS)' },
+          hint: { key: 'wordpress:tag', label: 'Tag', format: 'rss' },
         },
         {
           uri: [
             'https://example.wpenginepowered.com/tag/javascript/feed/atom/',
             'https://example.wpenginepowered.com/tag/javascript/?feed=atom',
           ],
-          hint: { key: 'wordpress:tag-atom', label: 'Tag (Atom)' },
+          hint: { key: 'wordpress:tag', label: 'Tag', format: 'atom' },
         },
         {
           uri: [
             'https://example.wpenginepowered.com/tag/javascript/feed/rdf/',
             'https://example.wpenginepowered.com/tag/javascript/?feed=rdf',
           ],
-          hint: { key: 'wordpress:tag-rdf', label: 'Tag (RDF)' },
+          hint: { key: 'wordpress:tag', label: 'Tag', format: 'rdf' },
         },
         {
           uri: [
@@ -238,21 +239,21 @@ describe('wpengineHandler', () => {
             'https://example.wpenginepowered.com/feed/rss2/',
             'https://example.wpenginepowered.com/?feed=rss2',
           ],
-          hint: { key: 'wordpress:posts-rss', label: 'Posts (RSS)' },
+          hint: { key: 'wordpress:posts', label: 'Posts', format: 'rss' },
         },
         {
           uri: [
             'https://example.wpenginepowered.com/feed/atom/',
             'https://example.wpenginepowered.com/?feed=atom',
           ],
-          hint: { key: 'wordpress:posts-atom', label: 'Posts (Atom)' },
+          hint: { key: 'wordpress:posts', label: 'Posts', format: 'atom' },
         },
         {
           uri: [
             'https://example.wpenginepowered.com/feed/rdf/',
             'https://example.wpenginepowered.com/?feed=rdf',
           ],
-          hint: { key: 'wordpress:posts-rdf', label: 'Posts (RDF)' },
+          hint: { key: 'wordpress:posts', label: 'Posts', format: 'rdf' },
         },
         {
           uri: [
@@ -261,21 +262,21 @@ describe('wpengineHandler', () => {
             'https://example.wpenginepowered.com/comments/feed/rss2/',
             'https://example.wpenginepowered.com/?feed=comments-rss2',
           ],
-          hint: { key: 'wordpress:comments-rss', label: 'Comments (RSS)' },
+          hint: { key: 'wordpress:comments', label: 'Comments', format: 'rss' },
         },
         {
           uri: [
             'https://example.wpenginepowered.com/comments/feed/atom/',
             'https://example.wpenginepowered.com/?feed=comments-atom',
           ],
-          hint: { key: 'wordpress:comments-atom', label: 'Comments (Atom)' },
+          hint: { key: 'wordpress:comments', label: 'Comments', format: 'atom' },
         },
         {
           uri: [
             'https://example.wpenginepowered.com/comments/feed/rdf/',
             'https://example.wpenginepowered.com/?feed=comments-rdf',
           ],
-          hint: { key: 'wordpress:comments-rdf', label: 'Comments (RDF)' },
+          hint: { key: 'wordpress:comments', label: 'Comments', format: 'rdf' },
         },
       ]
 
@@ -284,7 +285,7 @@ describe('wpengineHandler', () => {
 
     it('should include author feed when on author page', () => {
       const value = 'https://example.wpenginepowered.com/author/johndoe/'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: [
             'https://example.wpenginepowered.com/author/johndoe/feed/',
@@ -292,21 +293,21 @@ describe('wpengineHandler', () => {
             'https://example.wpenginepowered.com/author/johndoe/feed/rss2/',
             'https://example.wpenginepowered.com/author/johndoe/?feed=rss2',
           ],
-          hint: { key: 'wordpress:author-rss', label: 'Author (RSS)' },
+          hint: { key: 'wordpress:author', label: 'Author', format: 'rss' },
         },
         {
           uri: [
             'https://example.wpenginepowered.com/author/johndoe/feed/atom/',
             'https://example.wpenginepowered.com/author/johndoe/?feed=atom',
           ],
-          hint: { key: 'wordpress:author-atom', label: 'Author (Atom)' },
+          hint: { key: 'wordpress:author', label: 'Author', format: 'atom' },
         },
         {
           uri: [
             'https://example.wpenginepowered.com/author/johndoe/feed/rdf/',
             'https://example.wpenginepowered.com/author/johndoe/?feed=rdf',
           ],
-          hint: { key: 'wordpress:author-rdf', label: 'Author (RDF)' },
+          hint: { key: 'wordpress:author', label: 'Author', format: 'rdf' },
         },
         {
           uri: [
@@ -315,21 +316,21 @@ describe('wpengineHandler', () => {
             'https://example.wpenginepowered.com/feed/rss2/',
             'https://example.wpenginepowered.com/?feed=rss2',
           ],
-          hint: { key: 'wordpress:posts-rss', label: 'Posts (RSS)' },
+          hint: { key: 'wordpress:posts', label: 'Posts', format: 'rss' },
         },
         {
           uri: [
             'https://example.wpenginepowered.com/feed/atom/',
             'https://example.wpenginepowered.com/?feed=atom',
           ],
-          hint: { key: 'wordpress:posts-atom', label: 'Posts (Atom)' },
+          hint: { key: 'wordpress:posts', label: 'Posts', format: 'atom' },
         },
         {
           uri: [
             'https://example.wpenginepowered.com/feed/rdf/',
             'https://example.wpenginepowered.com/?feed=rdf',
           ],
-          hint: { key: 'wordpress:posts-rdf', label: 'Posts (RDF)' },
+          hint: { key: 'wordpress:posts', label: 'Posts', format: 'rdf' },
         },
         {
           uri: [
@@ -338,21 +339,21 @@ describe('wpengineHandler', () => {
             'https://example.wpenginepowered.com/comments/feed/rss2/',
             'https://example.wpenginepowered.com/?feed=comments-rss2',
           ],
-          hint: { key: 'wordpress:comments-rss', label: 'Comments (RSS)' },
+          hint: { key: 'wordpress:comments', label: 'Comments', format: 'rss' },
         },
         {
           uri: [
             'https://example.wpenginepowered.com/comments/feed/atom/',
             'https://example.wpenginepowered.com/?feed=comments-atom',
           ],
-          hint: { key: 'wordpress:comments-atom', label: 'Comments (Atom)' },
+          hint: { key: 'wordpress:comments', label: 'Comments', format: 'atom' },
         },
         {
           uri: [
             'https://example.wpenginepowered.com/comments/feed/rdf/',
             'https://example.wpenginepowered.com/?feed=comments-rdf',
           ],
-          hint: { key: 'wordpress:comments-rdf', label: 'Comments (RDF)' },
+          hint: { key: 'wordpress:comments', label: 'Comments', format: 'rdf' },
         },
       ]
 
@@ -361,7 +362,7 @@ describe('wpengineHandler', () => {
 
     it('should include year archive feed when on year page', () => {
       const value = 'https://example.wpenginepowered.com/2024/'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: [
             'https://example.wpenginepowered.com/2024/feed/',
@@ -369,21 +370,21 @@ describe('wpengineHandler', () => {
             'https://example.wpenginepowered.com/2024/feed/rss2/',
             'https://example.wpenginepowered.com/2024/?feed=rss2',
           ],
-          hint: { key: 'wordpress:date-archive-rss', label: 'Date archive (RSS)' },
+          hint: { key: 'wordpress:date-archive', label: 'Date archive', format: 'rss' },
         },
         {
           uri: [
             'https://example.wpenginepowered.com/2024/feed/atom/',
             'https://example.wpenginepowered.com/2024/?feed=atom',
           ],
-          hint: { key: 'wordpress:date-archive-atom', label: 'Date archive (Atom)' },
+          hint: { key: 'wordpress:date-archive', label: 'Date archive', format: 'atom' },
         },
         {
           uri: [
             'https://example.wpenginepowered.com/2024/feed/rdf/',
             'https://example.wpenginepowered.com/2024/?feed=rdf',
           ],
-          hint: { key: 'wordpress:date-archive-rdf', label: 'Date archive (RDF)' },
+          hint: { key: 'wordpress:date-archive', label: 'Date archive', format: 'rdf' },
         },
         {
           uri: [
@@ -392,21 +393,21 @@ describe('wpengineHandler', () => {
             'https://example.wpenginepowered.com/feed/rss2/',
             'https://example.wpenginepowered.com/?feed=rss2',
           ],
-          hint: { key: 'wordpress:posts-rss', label: 'Posts (RSS)' },
+          hint: { key: 'wordpress:posts', label: 'Posts', format: 'rss' },
         },
         {
           uri: [
             'https://example.wpenginepowered.com/feed/atom/',
             'https://example.wpenginepowered.com/?feed=atom',
           ],
-          hint: { key: 'wordpress:posts-atom', label: 'Posts (Atom)' },
+          hint: { key: 'wordpress:posts', label: 'Posts', format: 'atom' },
         },
         {
           uri: [
             'https://example.wpenginepowered.com/feed/rdf/',
             'https://example.wpenginepowered.com/?feed=rdf',
           ],
-          hint: { key: 'wordpress:posts-rdf', label: 'Posts (RDF)' },
+          hint: { key: 'wordpress:posts', label: 'Posts', format: 'rdf' },
         },
         {
           uri: [
@@ -415,21 +416,21 @@ describe('wpengineHandler', () => {
             'https://example.wpenginepowered.com/comments/feed/rss2/',
             'https://example.wpenginepowered.com/?feed=comments-rss2',
           ],
-          hint: { key: 'wordpress:comments-rss', label: 'Comments (RSS)' },
+          hint: { key: 'wordpress:comments', label: 'Comments', format: 'rss' },
         },
         {
           uri: [
             'https://example.wpenginepowered.com/comments/feed/atom/',
             'https://example.wpenginepowered.com/?feed=comments-atom',
           ],
-          hint: { key: 'wordpress:comments-atom', label: 'Comments (Atom)' },
+          hint: { key: 'wordpress:comments', label: 'Comments', format: 'atom' },
         },
         {
           uri: [
             'https://example.wpenginepowered.com/comments/feed/rdf/',
             'https://example.wpenginepowered.com/?feed=comments-rdf',
           ],
-          hint: { key: 'wordpress:comments-rdf', label: 'Comments (RDF)' },
+          hint: { key: 'wordpress:comments', label: 'Comments', format: 'rdf' },
         },
       ]
 
@@ -438,7 +439,7 @@ describe('wpengineHandler', () => {
 
     it('should include month archive feed when on year/month page', () => {
       const value = 'https://example.wpenginepowered.com/2024/06/'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: [
             'https://example.wpenginepowered.com/2024/06/feed/',
@@ -446,21 +447,21 @@ describe('wpengineHandler', () => {
             'https://example.wpenginepowered.com/2024/06/feed/rss2/',
             'https://example.wpenginepowered.com/2024/06/?feed=rss2',
           ],
-          hint: { key: 'wordpress:date-archive-rss', label: 'Date archive (RSS)' },
+          hint: { key: 'wordpress:date-archive', label: 'Date archive', format: 'rss' },
         },
         {
           uri: [
             'https://example.wpenginepowered.com/2024/06/feed/atom/',
             'https://example.wpenginepowered.com/2024/06/?feed=atom',
           ],
-          hint: { key: 'wordpress:date-archive-atom', label: 'Date archive (Atom)' },
+          hint: { key: 'wordpress:date-archive', label: 'Date archive', format: 'atom' },
         },
         {
           uri: [
             'https://example.wpenginepowered.com/2024/06/feed/rdf/',
             'https://example.wpenginepowered.com/2024/06/?feed=rdf',
           ],
-          hint: { key: 'wordpress:date-archive-rdf', label: 'Date archive (RDF)' },
+          hint: { key: 'wordpress:date-archive', label: 'Date archive', format: 'rdf' },
         },
         {
           uri: [
@@ -469,21 +470,21 @@ describe('wpengineHandler', () => {
             'https://example.wpenginepowered.com/feed/rss2/',
             'https://example.wpenginepowered.com/?feed=rss2',
           ],
-          hint: { key: 'wordpress:posts-rss', label: 'Posts (RSS)' },
+          hint: { key: 'wordpress:posts', label: 'Posts', format: 'rss' },
         },
         {
           uri: [
             'https://example.wpenginepowered.com/feed/atom/',
             'https://example.wpenginepowered.com/?feed=atom',
           ],
-          hint: { key: 'wordpress:posts-atom', label: 'Posts (Atom)' },
+          hint: { key: 'wordpress:posts', label: 'Posts', format: 'atom' },
         },
         {
           uri: [
             'https://example.wpenginepowered.com/feed/rdf/',
             'https://example.wpenginepowered.com/?feed=rdf',
           ],
-          hint: { key: 'wordpress:posts-rdf', label: 'Posts (RDF)' },
+          hint: { key: 'wordpress:posts', label: 'Posts', format: 'rdf' },
         },
         {
           uri: [
@@ -492,21 +493,21 @@ describe('wpengineHandler', () => {
             'https://example.wpenginepowered.com/comments/feed/rss2/',
             'https://example.wpenginepowered.com/?feed=comments-rss2',
           ],
-          hint: { key: 'wordpress:comments-rss', label: 'Comments (RSS)' },
+          hint: { key: 'wordpress:comments', label: 'Comments', format: 'rss' },
         },
         {
           uri: [
             'https://example.wpenginepowered.com/comments/feed/atom/',
             'https://example.wpenginepowered.com/?feed=comments-atom',
           ],
-          hint: { key: 'wordpress:comments-atom', label: 'Comments (Atom)' },
+          hint: { key: 'wordpress:comments', label: 'Comments', format: 'atom' },
         },
         {
           uri: [
             'https://example.wpenginepowered.com/comments/feed/rdf/',
             'https://example.wpenginepowered.com/?feed=comments-rdf',
           ],
-          hint: { key: 'wordpress:comments-rdf', label: 'Comments (RDF)' },
+          hint: { key: 'wordpress:comments', label: 'Comments', format: 'rdf' },
         },
       ]
 
@@ -515,7 +516,7 @@ describe('wpengineHandler', () => {
 
     it('should include day archive feed when on year/month/day page', () => {
       const value = 'https://example.wpenginepowered.com/2024/06/15/'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: [
             'https://example.wpenginepowered.com/2024/06/15/feed/',
@@ -523,21 +524,21 @@ describe('wpengineHandler', () => {
             'https://example.wpenginepowered.com/2024/06/15/feed/rss2/',
             'https://example.wpenginepowered.com/2024/06/15/?feed=rss2',
           ],
-          hint: { key: 'wordpress:date-archive-rss', label: 'Date archive (RSS)' },
+          hint: { key: 'wordpress:date-archive', label: 'Date archive', format: 'rss' },
         },
         {
           uri: [
             'https://example.wpenginepowered.com/2024/06/15/feed/atom/',
             'https://example.wpenginepowered.com/2024/06/15/?feed=atom',
           ],
-          hint: { key: 'wordpress:date-archive-atom', label: 'Date archive (Atom)' },
+          hint: { key: 'wordpress:date-archive', label: 'Date archive', format: 'atom' },
         },
         {
           uri: [
             'https://example.wpenginepowered.com/2024/06/15/feed/rdf/',
             'https://example.wpenginepowered.com/2024/06/15/?feed=rdf',
           ],
-          hint: { key: 'wordpress:date-archive-rdf', label: 'Date archive (RDF)' },
+          hint: { key: 'wordpress:date-archive', label: 'Date archive', format: 'rdf' },
         },
         {
           uri: [
@@ -546,21 +547,21 @@ describe('wpengineHandler', () => {
             'https://example.wpenginepowered.com/feed/rss2/',
             'https://example.wpenginepowered.com/?feed=rss2',
           ],
-          hint: { key: 'wordpress:posts-rss', label: 'Posts (RSS)' },
+          hint: { key: 'wordpress:posts', label: 'Posts', format: 'rss' },
         },
         {
           uri: [
             'https://example.wpenginepowered.com/feed/atom/',
             'https://example.wpenginepowered.com/?feed=atom',
           ],
-          hint: { key: 'wordpress:posts-atom', label: 'Posts (Atom)' },
+          hint: { key: 'wordpress:posts', label: 'Posts', format: 'atom' },
         },
         {
           uri: [
             'https://example.wpenginepowered.com/feed/rdf/',
             'https://example.wpenginepowered.com/?feed=rdf',
           ],
-          hint: { key: 'wordpress:posts-rdf', label: 'Posts (RDF)' },
+          hint: { key: 'wordpress:posts', label: 'Posts', format: 'rdf' },
         },
         {
           uri: [
@@ -569,21 +570,21 @@ describe('wpengineHandler', () => {
             'https://example.wpenginepowered.com/comments/feed/rss2/',
             'https://example.wpenginepowered.com/?feed=comments-rss2',
           ],
-          hint: { key: 'wordpress:comments-rss', label: 'Comments (RSS)' },
+          hint: { key: 'wordpress:comments', label: 'Comments', format: 'rss' },
         },
         {
           uri: [
             'https://example.wpenginepowered.com/comments/feed/atom/',
             'https://example.wpenginepowered.com/?feed=comments-atom',
           ],
-          hint: { key: 'wordpress:comments-atom', label: 'Comments (Atom)' },
+          hint: { key: 'wordpress:comments', label: 'Comments', format: 'atom' },
         },
         {
           uri: [
             'https://example.wpenginepowered.com/comments/feed/rdf/',
             'https://example.wpenginepowered.com/?feed=comments-rdf',
           ],
-          hint: { key: 'wordpress:comments-rdf', label: 'Comments (RDF)' },
+          hint: { key: 'wordpress:comments', label: 'Comments', format: 'rdf' },
         },
       ]
 
@@ -592,7 +593,7 @@ describe('wpengineHandler', () => {
 
     it('should include post comments feeds for post URLs', () => {
       const value = 'https://example.wpengine.com/2024/06/hello-world/'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: [
             'https://example.wpengine.com/2024/06/hello-world/feed/',
@@ -600,21 +601,21 @@ describe('wpengineHandler', () => {
             'https://example.wpengine.com/2024/06/hello-world/feed/rss2/',
             'https://example.wpengine.com/2024/06/hello-world/?feed=rss2',
           ],
-          hint: { key: 'wordpress:post-comments-rss', label: 'Post comments (RSS)' },
+          hint: { key: 'wordpress:post-comments', label: 'Post comments', format: 'rss' },
         },
         {
           uri: [
             'https://example.wpengine.com/2024/06/hello-world/feed/atom/',
             'https://example.wpengine.com/2024/06/hello-world/?feed=atom',
           ],
-          hint: { key: 'wordpress:post-comments-atom', label: 'Post comments (Atom)' },
+          hint: { key: 'wordpress:post-comments', label: 'Post comments', format: 'atom' },
         },
         {
           uri: [
             'https://example.wpengine.com/2024/06/hello-world/feed/rdf/',
             'https://example.wpengine.com/2024/06/hello-world/?feed=rdf',
           ],
-          hint: { key: 'wordpress:post-comments-rdf', label: 'Post comments (RDF)' },
+          hint: { key: 'wordpress:post-comments', label: 'Post comments', format: 'rdf' },
         },
         {
           uri: [
@@ -623,18 +624,18 @@ describe('wpengineHandler', () => {
             'https://example.wpengine.com/feed/rss2/',
             'https://example.wpengine.com/?feed=rss2',
           ],
-          hint: { key: 'wordpress:posts-rss', label: 'Posts (RSS)' },
+          hint: { key: 'wordpress:posts', label: 'Posts', format: 'rss' },
         },
         {
           uri: [
             'https://example.wpengine.com/feed/atom/',
             'https://example.wpengine.com/?feed=atom',
           ],
-          hint: { key: 'wordpress:posts-atom', label: 'Posts (Atom)' },
+          hint: { key: 'wordpress:posts', label: 'Posts', format: 'atom' },
         },
         {
           uri: ['https://example.wpengine.com/feed/rdf/', 'https://example.wpengine.com/?feed=rdf'],
-          hint: { key: 'wordpress:posts-rdf', label: 'Posts (RDF)' },
+          hint: { key: 'wordpress:posts', label: 'Posts', format: 'rdf' },
         },
         {
           uri: [
@@ -643,21 +644,21 @@ describe('wpengineHandler', () => {
             'https://example.wpengine.com/comments/feed/rss2/',
             'https://example.wpengine.com/?feed=comments-rss2',
           ],
-          hint: { key: 'wordpress:comments-rss', label: 'Comments (RSS)' },
+          hint: { key: 'wordpress:comments', label: 'Comments', format: 'rss' },
         },
         {
           uri: [
             'https://example.wpengine.com/comments/feed/atom/',
             'https://example.wpengine.com/?feed=comments-atom',
           ],
-          hint: { key: 'wordpress:comments-atom', label: 'Comments (Atom)' },
+          hint: { key: 'wordpress:comments', label: 'Comments', format: 'atom' },
         },
         {
           uri: [
             'https://example.wpengine.com/comments/feed/rdf/',
             'https://example.wpengine.com/?feed=comments-rdf',
           ],
-          hint: { key: 'wordpress:comments-rdf', label: 'Comments (RDF)' },
+          hint: { key: 'wordpress:comments', label: 'Comments', format: 'rdf' },
         },
       ]
 

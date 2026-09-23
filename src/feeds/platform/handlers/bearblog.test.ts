@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'bun:test'
+import type { DiscoverUriEntry } from '../../../common/types.js'
 import { bearblogHandler } from './bearblog.js'
 
 describe('bearblogHandler', () => {
@@ -23,14 +24,14 @@ describe('bearblogHandler', () => {
   describe('resolve', () => {
     it('should return Atom and RSS feeds for blog', () => {
       const value = 'https://herman.bearblog.dev'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://herman.bearblog.dev/feed/',
-          hint: { key: 'bearblog:posts-atom', label: 'Posts (Atom)' },
+          hint: { key: 'bearblog:posts', label: 'Posts', format: 'atom' },
         },
         {
           uri: 'https://herman.bearblog.dev/feed/?type=rss',
-          hint: { key: 'bearblog:posts-rss', label: 'Posts (RSS)' },
+          hint: { key: 'bearblog:posts', label: 'Posts', format: 'rss' },
         },
       ]
 
@@ -39,14 +40,14 @@ describe('bearblogHandler', () => {
 
     it('should return feed URLs regardless of path', () => {
       const value = 'https://herman.bearblog.dev/some-article-slug'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://herman.bearblog.dev/feed/',
-          hint: { key: 'bearblog:posts-atom', label: 'Posts (Atom)' },
+          hint: { key: 'bearblog:posts', label: 'Posts', format: 'atom' },
         },
         {
           uri: 'https://herman.bearblog.dev/feed/?type=rss',
-          hint: { key: 'bearblog:posts-rss', label: 'Posts (RSS)' },
+          hint: { key: 'bearblog:posts', label: 'Posts', format: 'rss' },
         },
       ]
 
@@ -55,14 +56,14 @@ describe('bearblogHandler', () => {
 
     it('should return apex discover feeds for bearblog.dev', () => {
       const value = 'https://bearblog.dev/'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://bearblog.dev/discover/feed/',
-          hint: { key: 'bearblog:discover-atom', label: 'Trending (Atom)' },
+          hint: { key: 'bearblog:discover', label: 'Trending', format: 'atom' },
         },
         {
           uri: 'https://bearblog.dev/discover/feed/?type=rss',
-          hint: { key: 'bearblog:discover-rss', label: 'Trending (RSS)' },
+          hint: { key: 'bearblog:discover', label: 'Trending', format: 'rss' },
         },
       ]
 
@@ -71,22 +72,22 @@ describe('bearblogHandler', () => {
 
     it('should return tag-filtered and main feeds when q query param is set', () => {
       const value = 'https://herman.bearblog.dev/blog/?q=tips'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://herman.bearblog.dev/feed/?q=tips',
-          hint: { key: 'bearblog:tag-atom', label: 'Tag (Atom)' },
+          hint: { key: 'bearblog:tag', label: 'Tag', format: 'atom' },
         },
         {
           uri: 'https://herman.bearblog.dev/feed/?type=rss&q=tips',
-          hint: { key: 'bearblog:tag-rss', label: 'Tag (RSS)' },
+          hint: { key: 'bearblog:tag', label: 'Tag', format: 'rss' },
         },
         {
           uri: 'https://herman.bearblog.dev/feed/',
-          hint: { key: 'bearblog:posts-atom', label: 'Posts (Atom)' },
+          hint: { key: 'bearblog:posts', label: 'Posts', format: 'atom' },
         },
         {
           uri: 'https://herman.bearblog.dev/feed/?type=rss',
-          hint: { key: 'bearblog:posts-rss', label: 'Posts (RSS)' },
+          hint: { key: 'bearblog:posts', label: 'Posts', format: 'rss' },
         },
       ]
 

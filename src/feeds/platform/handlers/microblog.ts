@@ -25,11 +25,11 @@ export const microblogHandler: PlatformHandler = {
 
       uris.push({
         uri: `${origin}/categories/${category}/feed.xml`,
-        hint: composeHint('microblog:category-rss'),
+        hint: composeHint('microblog:category', 'rss'),
       })
       uris.push({
         uri: `${origin}/categories/${category}/feed.json`,
-        hint: composeHint('microblog:category-json'),
+        hint: composeHint('microblog:category', 'json'),
       })
     }
 
@@ -58,10 +58,10 @@ export const microblogHandler: PlatformHandler = {
     }
 
     // Always include main feeds.
-    uris.push({ uri: `${origin}/feed.xml`, hint: composeHint('microblog:posts-rss') })
-    uris.push({ uri: `${origin}/feed.json`, hint: composeHint('microblog:posts-json') })
-    uris.push({ uri: `${origin}/podcast.xml`, hint: composeHint('microblog:podcast') })
-    uris.push({ uri: `${origin}/podcast.json`, hint: composeHint('microblog:podcast-json') })
+    uris.push({ uri: `${origin}/feed.xml`, hint: composeHint('microblog:posts', 'rss') })
+    uris.push({ uri: `${origin}/feed.json`, hint: composeHint('microblog:posts', 'json') })
+    uris.push({ uri: `${origin}/podcast.xml`, hint: composeHint('microblog:podcast', 'rss') })
+    uris.push({ uri: `${origin}/podcast.json`, hint: composeHint('microblog:podcast', 'json') })
 
     return uris
   },

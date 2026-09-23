@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'bun:test'
+import type { DiscoverUriEntry } from '../../../common/types.js'
 import { isJoomlaHtml, joomlaHandler } from './joomla.js'
 
 const joomlaHtml = '<meta name="generator" content="Joomla! - Open Source Content Management">'
@@ -49,14 +50,14 @@ describe('joomlaHandler', () => {
   describe('resolve', () => {
     it('should return the RSS and Atom forms of the view', () => {
       const value = 'https://example.com/announcements'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://example.com/announcements?format=feed&type=rss',
-          hint: { key: 'joomla:view-rss', label: 'View (RSS)' },
+          hint: { key: 'joomla:view', label: 'View', format: 'rss' },
         },
         {
           uri: 'https://example.com/announcements?format=feed&type=atom',
-          hint: { key: 'joomla:view-atom', label: 'View (Atom)' },
+          hint: { key: 'joomla:view', label: 'View', format: 'atom' },
         },
       ]
 
@@ -65,14 +66,14 @@ describe('joomlaHandler', () => {
 
     it('should keep a search-engine friendly html suffix', () => {
       const value = 'https://example.com/blogs.html'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://example.com/blogs.html?format=feed&type=rss',
-          hint: { key: 'joomla:view-rss', label: 'View (RSS)' },
+          hint: { key: 'joomla:view', label: 'View', format: 'rss' },
         },
         {
           uri: 'https://example.com/blogs.html?format=feed&type=atom',
-          hint: { key: 'joomla:view-atom', label: 'View (Atom)' },
+          hint: { key: 'joomla:view', label: 'View', format: 'atom' },
         },
       ]
 
@@ -81,14 +82,14 @@ describe('joomlaHandler', () => {
 
     it('should build the feeds of the home page on the site root', () => {
       const value = 'https://example.com/'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://example.com/?format=feed&type=rss',
-          hint: { key: 'joomla:view-rss', label: 'View (RSS)' },
+          hint: { key: 'joomla:view', label: 'View', format: 'rss' },
         },
         {
           uri: 'https://example.com/?format=feed&type=atom',
-          hint: { key: 'joomla:view-atom', label: 'View (Atom)' },
+          hint: { key: 'joomla:view', label: 'View', format: 'atom' },
         },
       ]
 
@@ -97,14 +98,14 @@ describe('joomlaHandler', () => {
 
     it('should drop an existing query string', () => {
       const value = 'https://example.com/announcements/?start=20'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://example.com/announcements/?format=feed&type=rss',
-          hint: { key: 'joomla:view-rss', label: 'View (RSS)' },
+          hint: { key: 'joomla:view', label: 'View', format: 'rss' },
         },
         {
           uri: 'https://example.com/announcements/?format=feed&type=atom',
-          hint: { key: 'joomla:view-atom', label: 'View (Atom)' },
+          hint: { key: 'joomla:view', label: 'View', format: 'atom' },
         },
       ]
 

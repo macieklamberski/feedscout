@@ -33,11 +33,11 @@ export const hatenablogHandler: PlatformHandler = {
 
       uris.push({
         uri: `${origin}/rss/category/${category}`,
-        hint: composeHint('hatenablog:category-rss'),
+        hint: composeHint('hatenablog:category', 'rss'),
       })
       uris.push({
         uri: `${origin}/feed/category/${category}`,
-        hint: composeHint('hatenablog:category-atom'),
+        hint: composeHint('hatenablog:category', 'atom'),
       })
     }
 
@@ -49,17 +49,17 @@ export const hatenablogHandler: PlatformHandler = {
 
       uris.push({
         uri: `${origin}/rss/author/${author}`,
-        hint: composeHint('hatenablog:author-rss'),
+        hint: composeHint('hatenablog:author', 'rss'),
       })
       uris.push({
         uri: `${origin}/feed/author/${author}`,
-        hint: composeHint('hatenablog:author-atom'),
+        hint: composeHint('hatenablog:author', 'atom'),
       })
     }
 
     // Always include main blog feeds.
-    uris.push({ uri: `${origin}/rss`, hint: composeHint('hatenablog:posts-rss') })
-    uris.push({ uri: `${origin}/feed`, hint: composeHint('hatenablog:posts-atom') })
+    uris.push({ uri: `${origin}/rss`, hint: composeHint('hatenablog:posts', 'rss') })
+    uris.push({ uri: `${origin}/feed`, hint: composeHint('hatenablog:posts', 'atom') })
 
     return uris
   },

@@ -198,6 +198,7 @@ A hint describing the type of feed a URI represents. See [Platform method hints]
 type DiscoverUriHint = {
   key: string
   label: string
+  format?: 'rss' | 'atom' | 'rdf' | 'json'
 }
 ```
 

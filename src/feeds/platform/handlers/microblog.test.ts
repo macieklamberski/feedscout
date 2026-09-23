@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'bun:test'
+import type { DiscoverUriEntry } from '../../../common/types.js'
 import { microblogHandler } from './microblog.js'
 
 describe('microblogHandler', () => {
@@ -22,22 +23,22 @@ describe('microblogHandler', () => {
   describe('resolve', () => {
     it('should return RSS, JSON, and podcast feeds for blog', () => {
       const value = 'https://manton.micro.blog'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://manton.micro.blog/feed.xml',
-          hint: { key: 'microblog:posts-rss', label: 'Posts (RSS)' },
+          hint: { key: 'microblog:posts', label: 'Posts', format: 'rss' },
         },
         {
           uri: 'https://manton.micro.blog/feed.json',
-          hint: { key: 'microblog:posts-json', label: 'Posts (JSON)' },
+          hint: { key: 'microblog:posts', label: 'Posts', format: 'json' },
         },
         {
           uri: 'https://manton.micro.blog/podcast.xml',
-          hint: { key: 'microblog:podcast', label: 'Podcast' },
+          hint: { key: 'microblog:podcast', label: 'Podcast', format: 'rss' },
         },
         {
           uri: 'https://manton.micro.blog/podcast.json',
-          hint: { key: 'microblog:podcast-json', label: 'Podcast (JSON)' },
+          hint: { key: 'microblog:podcast', label: 'Podcast', format: 'json' },
         },
       ]
 
@@ -46,30 +47,30 @@ describe('microblogHandler', () => {
 
     it('should return category feeds for category page', () => {
       const value = 'https://manton.micro.blog/categories/test'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://manton.micro.blog/categories/test/feed.xml',
-          hint: { key: 'microblog:category-rss', label: 'Category (RSS)' },
+          hint: { key: 'microblog:category', label: 'Category', format: 'rss' },
         },
         {
           uri: 'https://manton.micro.blog/categories/test/feed.json',
-          hint: { key: 'microblog:category-json', label: 'Category (JSON)' },
+          hint: { key: 'microblog:category', label: 'Category', format: 'json' },
         },
         {
           uri: 'https://manton.micro.blog/feed.xml',
-          hint: { key: 'microblog:posts-rss', label: 'Posts (RSS)' },
+          hint: { key: 'microblog:posts', label: 'Posts', format: 'rss' },
         },
         {
           uri: 'https://manton.micro.blog/feed.json',
-          hint: { key: 'microblog:posts-json', label: 'Posts (JSON)' },
+          hint: { key: 'microblog:posts', label: 'Posts', format: 'json' },
         },
         {
           uri: 'https://manton.micro.blog/podcast.xml',
-          hint: { key: 'microblog:podcast', label: 'Podcast' },
+          hint: { key: 'microblog:podcast', label: 'Podcast', format: 'rss' },
         },
         {
           uri: 'https://manton.micro.blog/podcast.json',
-          hint: { key: 'microblog:podcast-json', label: 'Podcast (JSON)' },
+          hint: { key: 'microblog:podcast', label: 'Podcast', format: 'json' },
         },
       ]
 
@@ -78,26 +79,26 @@ describe('microblogHandler', () => {
 
     it('should return archive feed for archive page', () => {
       const value = 'https://manton.micro.blog/archive'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://manton.micro.blog/archive/index.json',
           hint: { key: 'microblog:archive', label: 'Archive' },
         },
         {
           uri: 'https://manton.micro.blog/feed.xml',
-          hint: { key: 'microblog:posts-rss', label: 'Posts (RSS)' },
+          hint: { key: 'microblog:posts', label: 'Posts', format: 'rss' },
         },
         {
           uri: 'https://manton.micro.blog/feed.json',
-          hint: { key: 'microblog:posts-json', label: 'Posts (JSON)' },
+          hint: { key: 'microblog:posts', label: 'Posts', format: 'json' },
         },
         {
           uri: 'https://manton.micro.blog/podcast.xml',
-          hint: { key: 'microblog:podcast', label: 'Podcast' },
+          hint: { key: 'microblog:podcast', label: 'Podcast', format: 'rss' },
         },
         {
           uri: 'https://manton.micro.blog/podcast.json',
-          hint: { key: 'microblog:podcast-json', label: 'Podcast (JSON)' },
+          hint: { key: 'microblog:podcast', label: 'Podcast', format: 'json' },
         },
       ]
 
@@ -106,26 +107,26 @@ describe('microblogHandler', () => {
 
     it('should return photos feed for photos page', () => {
       const value = 'https://manton.micro.blog/photos'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://manton.micro.blog/photos/index.json',
           hint: { key: 'microblog:photos', label: 'Photos' },
         },
         {
           uri: 'https://manton.micro.blog/feed.xml',
-          hint: { key: 'microblog:posts-rss', label: 'Posts (RSS)' },
+          hint: { key: 'microblog:posts', label: 'Posts', format: 'rss' },
         },
         {
           uri: 'https://manton.micro.blog/feed.json',
-          hint: { key: 'microblog:posts-json', label: 'Posts (JSON)' },
+          hint: { key: 'microblog:posts', label: 'Posts', format: 'json' },
         },
         {
           uri: 'https://manton.micro.blog/podcast.xml',
-          hint: { key: 'microblog:podcast', label: 'Podcast' },
+          hint: { key: 'microblog:podcast', label: 'Podcast', format: 'rss' },
         },
         {
           uri: 'https://manton.micro.blog/podcast.json',
-          hint: { key: 'microblog:podcast-json', label: 'Podcast (JSON)' },
+          hint: { key: 'microblog:podcast', label: 'Podcast', format: 'json' },
         },
       ]
 
@@ -134,26 +135,26 @@ describe('microblogHandler', () => {
 
     it('should return replies feed for replies page', () => {
       const value = 'https://manton.micro.blog/replies'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://manton.micro.blog/replies.xml',
           hint: { key: 'microblog:replies', label: 'Replies' },
         },
         {
           uri: 'https://manton.micro.blog/feed.xml',
-          hint: { key: 'microblog:posts-rss', label: 'Posts (RSS)' },
+          hint: { key: 'microblog:posts', label: 'Posts', format: 'rss' },
         },
         {
           uri: 'https://manton.micro.blog/feed.json',
-          hint: { key: 'microblog:posts-json', label: 'Posts (JSON)' },
+          hint: { key: 'microblog:posts', label: 'Posts', format: 'json' },
         },
         {
           uri: 'https://manton.micro.blog/podcast.xml',
-          hint: { key: 'microblog:podcast', label: 'Podcast' },
+          hint: { key: 'microblog:podcast', label: 'Podcast', format: 'rss' },
         },
         {
           uri: 'https://manton.micro.blog/podcast.json',
-          hint: { key: 'microblog:podcast-json', label: 'Podcast (JSON)' },
+          hint: { key: 'microblog:podcast', label: 'Podcast', format: 'json' },
         },
       ]
 
@@ -162,22 +163,22 @@ describe('microblogHandler', () => {
 
     it('should return feed URLs regardless of path', () => {
       const value = 'https://manton.micro.blog/2024/01/01/some-post'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://manton.micro.blog/feed.xml',
-          hint: { key: 'microblog:posts-rss', label: 'Posts (RSS)' },
+          hint: { key: 'microblog:posts', label: 'Posts', format: 'rss' },
         },
         {
           uri: 'https://manton.micro.blog/feed.json',
-          hint: { key: 'microblog:posts-json', label: 'Posts (JSON)' },
+          hint: { key: 'microblog:posts', label: 'Posts', format: 'json' },
         },
         {
           uri: 'https://manton.micro.blog/podcast.xml',
-          hint: { key: 'microblog:podcast', label: 'Podcast' },
+          hint: { key: 'microblog:podcast', label: 'Podcast', format: 'rss' },
         },
         {
           uri: 'https://manton.micro.blog/podcast.json',
-          hint: { key: 'microblog:podcast-json', label: 'Podcast (JSON)' },
+          hint: { key: 'microblog:podcast', label: 'Podcast', format: 'json' },
         },
       ]
 

@@ -37,11 +37,11 @@ export const blogspotHandler: PlatformHandler = {
 
       uris.push({
         uri: `${origin}/feeds/posts/default/-/${label}`,
-        hint: composeHint('blogspot:label-atom'),
+        hint: composeHint('blogspot:label', 'atom'),
       })
       uris.push({
         uri: `${origin}/feeds/posts/default/-/${label}?alt=rss`,
-        hint: composeHint('blogspot:label-rss'),
+        hint: composeHint('blogspot:label', 'rss'),
       })
     }
 
@@ -54,11 +54,11 @@ export const blogspotHandler: PlatformHandler = {
 
         uris.push({
           uri: `${origin}/feeds/${postId}/comments/default`,
-          hint: composeHint('blogspot:post-comments-atom'),
+          hint: composeHint('blogspot:post-comments', 'atom'),
         })
         uris.push({
           uri: `${origin}/feeds/${postId}/comments/default?alt=rss`,
-          hint: composeHint('blogspot:post-comments-rss'),
+          hint: composeHint('blogspot:post-comments', 'rss'),
         })
       }
     }
@@ -66,27 +66,27 @@ export const blogspotHandler: PlatformHandler = {
     // Always include main blog feeds.
     uris.push({
       uri: `${origin}/feeds/posts/default`,
-      hint: composeHint('blogspot:posts-atom'),
+      hint: composeHint('blogspot:posts', 'atom'),
     })
     uris.push({
       uri: `${origin}/feeds/posts/default?alt=rss`,
-      hint: composeHint('blogspot:posts-rss'),
+      hint: composeHint('blogspot:posts', 'rss'),
     })
     uris.push({
       uri: `${origin}/feeds/posts/summary`,
-      hint: composeHint('blogspot:posts-summary-atom'),
+      hint: composeHint('blogspot:posts-summary', 'atom'),
     })
     uris.push({
       uri: `${origin}/feeds/posts/summary?alt=rss`,
-      hint: composeHint('blogspot:posts-summary-rss'),
+      hint: composeHint('blogspot:posts-summary', 'rss'),
     })
     uris.push({
       uri: `${origin}/feeds/comments/default`,
-      hint: composeHint('blogspot:comments-atom'),
+      hint: composeHint('blogspot:comments', 'atom'),
     })
     uris.push({
       uri: `${origin}/feeds/comments/default?alt=rss`,
-      hint: composeHint('blogspot:comments-rss'),
+      hint: composeHint('blogspot:comments', 'rss'),
     })
 
     return uris

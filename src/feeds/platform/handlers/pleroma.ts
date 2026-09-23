@@ -46,11 +46,11 @@ export const pleromaHandler: PlatformHandler = {
     return [
       {
         uri: `${origin}/users/${match[1]}/feed.atom`,
-        hint: composeHint('pleroma:posts'),
+        hint: composeHint('pleroma:posts', 'atom'),
       },
       {
         uri: `${origin}/users/${match[1]}/feed.rss`,
-        hint: composeHint('pleroma:posts-rss'),
+        hint: composeHint('pleroma:posts', 'rss'),
       },
     ]
   },
