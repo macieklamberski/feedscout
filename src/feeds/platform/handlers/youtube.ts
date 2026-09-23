@@ -4,8 +4,8 @@ import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic partly covers channelById, custom, handle, user.
-// Handler needed for: music, shortLink, watch.
+// Generic partly covers channelById, custom, handle.
+// Handler needed for: music, shortLink, user, watch.
 
 // A channel page also embeds the IDs of the channels it features, and a bare "channelId" matches
 // one of those before the page's own, which sits under "externalId". A video page has no

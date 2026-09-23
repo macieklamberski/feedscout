@@ -2,8 +2,9 @@ import { isHostOf, isSubdomainOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 
-// Discoverability: Not discoverable without handler.
-// Handler needed for: all shapes.
+// Discoverability: Partially discoverable without handler.
+// Generic covers profile (html).
+// Handler needed for: subdomain.
 
 const hosts = ['postype.com', 'www.postype.com']
 const domainSuffixRegex = /\.postype\.com$/i

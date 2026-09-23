@@ -4,6 +4,7 @@ import { composeHint } from '../../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic partly covers log.
+// Handler needed for: repo.
 
 const hosts = ['git.sr.ht']
 

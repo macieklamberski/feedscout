@@ -3,8 +3,7 @@ import type { DiscoverUriEntry } from '../../../common/types.js'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { composeHint } from '../../../common/utils.js'
 
-// Discoverability: Partially discoverable without handler.
-// Generic covers forum (html), partly covers forumDefaultRoute.
+// Discoverability: Discoverable without handler.
 
 // XF2 serves a forum at `/f/{slug.id}` or, on the default route, `/forums/{slug.id}`.
 const forumPathRegex = /\/(f|forums)\/([^/]+\.\d+)/
