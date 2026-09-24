@@ -22,10 +22,9 @@ export const mediumHandler: PlatformHandler = {
 
   resolve: (url) => {
     const { hostname, pathname } = new URL(url)
-    const lowerHostname = hostname.toLowerCase()
 
     // Medium.com user profiles: /@username.
-    if (hosts.includes(lowerHostname)) {
+    if (isHostOf(url, hosts)) {
       // User profile: /@username.
       const userMatch = pathname.match(userRegex)
 
@@ -84,12 +83,8 @@ export const mediumHandler: PlatformHandler = {
     }
 
     // Custom domain: subdomain.medium.com (excluding www).
-    if (
-      lowerHostname.endsWith('.medium.com') &&
-      lowerHostname !== 'medium.com' &&
-      lowerHostname !== 'www.medium.com'
-    ) {
-      const subdomain = lowerHostname.replace('.medium.com', '')
+    if (isSubdomainOf(url, 'medium.com') && !isHostOf(url, hosts)) {
+      const subdomain = hostname.replace('.medium.com', '')
 
       // Subdomain tagged feed: subdomain.medium.com/tagged/tag-name.
       // Emit {subdomain}.medium.com form directly — Medium routes it correctly for

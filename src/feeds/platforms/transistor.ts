@@ -18,7 +18,7 @@ export const transistorHandler: PlatformHandler = {
       return false
     }
 
-    const slug = new URL(url).hostname.toLowerCase().replace(domainSuffixRegex, '')
+    const slug = new URL(url).hostname.replace(domainSuffixRegex, '')
 
     return !isAnyOf(slug, reservedSlugs)
   },

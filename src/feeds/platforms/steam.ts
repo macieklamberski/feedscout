@@ -17,7 +17,7 @@ export const steamHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    const { hostname, pathname } = new URL(url)
+    const { pathname } = new URL(url)
 
     const appMatch = pathname.match(appRegex)
 
@@ -30,7 +30,7 @@ export const steamHandler: PlatformHandler = {
       ]
     }
 
-    if (hostname === 'steamcommunity.com') {
+    if (isHostOf(url, 'steamcommunity.com')) {
       const groupMatch = pathname.match(groupRegex)
 
       if (groupMatch?.[1]) {
@@ -45,7 +45,7 @@ export const steamHandler: PlatformHandler = {
 
     // Global news feed on store root or /news/
     if (
-      hostname === 'store.steampowered.com' &&
+      isHostOf(url, 'store.steampowered.com') &&
       (pathname === '/' || pathname === '' || pathname.startsWith('/news'))
     ) {
       return [

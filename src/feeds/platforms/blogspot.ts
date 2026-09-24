@@ -20,9 +20,7 @@ export const blogspotHandler: PlatformHandler = {
       return false
     }
 
-    const hostname = parsedUrl.hostname.toLowerCase()
-
-    return blogspotDomainRegex.test(hostname)
+    return blogspotDomainRegex.test(parsedUrl.hostname)
   },
 
   resolve: (url, content) => {
