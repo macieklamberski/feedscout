@@ -6,8 +6,8 @@ import { composeHint } from '../../../common/utils.js'
 // Discoverability: Discoverable without handler.
 
 const peertubeRegex = /peertube/i
-const channelPathRegex = /^\/c\/([^/]+)/
-const accountPathRegex = /^\/a\/([^/]+)/
+export const channelPathRegex = /^\/c\/([^/]+)/
+export const accountPathRegex = /^\/a\/([^/]+)/
 
 export const isPeertubeHeaders = (headers: Headers): boolean => {
   return peertubeRegex.test(headers.get('x-powered-by') ?? '')
