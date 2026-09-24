@@ -71,8 +71,6 @@ The Platform method extracts avatars and icons directly from known platforms usi
 | Micro.blog | User avatar | URL pattern |
 | BitChute | Channel image | Page HTML |
 | YouTube | Channel avatar | Page HTML |
-| YouTube | Channel avatar | Page HTML |
-| Behance | Profile avatar | Page HTML |
 | Behance | Profile avatar | Page HTML |
 | Zenn | Profile, publication or topic icon | Page HTML |
 | Pinterest | Profile avatar | Page HTML, or the profile page through an [enricher](#enriching-platform-icons) for saved pages |
