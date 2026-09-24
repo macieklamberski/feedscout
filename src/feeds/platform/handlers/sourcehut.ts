@@ -6,9 +6,9 @@ import { composeHint } from '../../../common/utils.js'
 // Generic partly covers log.
 // Handler needed for: repo.
 
-const hosts = ['git.sr.ht']
+export const hosts = ['git.sr.ht']
 
-const getRepoPath = (url: string): string | undefined => {
+export const getRepoPath = (url: string): string | undefined => {
   const segments = new URL(url).pathname.split('/').filter(Boolean)
 
   if (!segments[0]?.startsWith('~') || segments[0].length < 2 || !segments[1]) {
