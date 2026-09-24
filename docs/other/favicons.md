@@ -78,6 +78,7 @@ The Platform method extracts avatars and icons directly from known platforms usi
 | Nebula | Channel avatar | Page HTML, or the content API through an [enricher](#enriching-platform-icons) |
 | note | User avatar, or magazine owner avatar | Page HTML, Public API through an [enricher](#enriching-platform-icons) |
 | Observable | User avatar, or the collection owner's avatar | Public API, through an [enricher](#enriching-platform-icons) |
+| Odysee | Channel avatar | Public API, through an [enricher](#enriching-platform-icons) |
 | PeerTube (self-hosted) | Channel or account avatar | Page HTML, or the public API through an [enricher](#enriching-platform-icons) |
 | Pinterest | Profile avatar | Page HTML, or the profile page through an [enricher](#enriching-platform-icons) for saved pages |
 | Pixelfed (self-hosted) | Profile avatar | Page HTML, or the public API through an [enricher](#enriching-platform-icons) when the page has no avatar |

@@ -1,0 +1,185 @@
+import { describe, expect, it } from 'bun:test'
+import type { DiscoverRef, FetchFn, FetchFnOptions } from '../../common/types.js'
+import type { FaviconEnricherContext } from '../types.js'
+import { odyseeEnricher, odyseeHandler } from './odysee.js'
+
+type Request = {
+  url: string
+  options?: FetchFnOptions
+}
+
+const apiUrl = 'https://api.na-backend.odysee.com/api/v1/proxy?m=resolve'
+
+const createContext = (body: string, requests: Array<Request> = []): FaviconEnricherContext => {
+  const fetchFn: FetchFn = (url, options) => {
+    requests.push({ url, options })
+
+    return { headers: new Headers(), body, url, status: 200 }
+  }
+
+  return { fetchFn }
+}
+
+const createResponse = (thumbnail: unknown): string => {
+  return JSON.stringify({ result: { 'lbry://@alice:3f': { value: { thumbnail } } } })
+}
+
+const ref: DiscoverRef = {
+  platform: 'odysee',
+  id: 'alice:3f',
+  url: 'https://odysee.com/@alice:3f',
+}
+
+describe('odyseeHandler', () => {
+  describe('match', () => {
+    it('should match channel URLs', () => {
+      expect(odyseeHandler.match('https://odysee.com/@alice')).toBe(true)
+    })
+
+    it('should match channel URLs with a claim id prefix', () => {
+      expect(odyseeHandler.match('https://odysee.com/@alice:3f')).toBe(true)
+    })
+
+    it('should match pages under a channel', () => {
+      expect(odyseeHandler.match('https://odysee.com/@alice:3f/hello-world:a')).toBe(true)
+    })
+
+    it('should match www.odysee.com channel URLs', () => {
+      expect(odyseeHandler.match('https://www.odysee.com/@alice')).toBe(true)
+    })
+
+    it('should not match the home page', () => {
+      expect(odyseeHandler.match('https://odysee.com/')).toBe(false)
+    })
+
+    it('should not match non-channel pages', () => {
+      expect(odyseeHandler.match('https://odysee.com/$/discover')).toBe(false)
+      expect(odyseeHandler.match('https://odysee.com/hello-world:a')).toBe(false)
+    })
+
+    it('should not match other hosts', () => {
+      expect(odyseeHandler.match('https://example.com/@alice')).toBe(false)
+    })
+
+    it('should not match invalid URLs', () => {
+      expect(odyseeHandler.match('not-a-url')).toBe(false)
+    })
+  })
+
+  describe('resolve', () => {
+    it('should return a ref for a channel URL', async () => {
+      const url = 'https://odysee.com/@alice'
+      const expected: Array<DiscoverRef> = [{ platform: 'odysee', id: 'alice', url }]
+
+      expect(await odyseeHandler.resolve(url)).toEqual(expected)
+    })
+
+    it('should return a ref with the claim id prefix', async () => {
+      const url = 'https://odysee.com/@alice:3f'
+      const expected: Array<DiscoverRef> = [{ platform: 'odysee', id: 'alice:3f', url }]
+
+      expect(await odyseeHandler.resolve(url)).toEqual(expected)
+    })
+
+    it('should return a ref for a page under a channel', async () => {
+      const url = 'https://odysee.com/@alice:3f/hello-world:a'
+      const expected: Array<DiscoverRef> = [{ platform: 'odysee', id: 'alice:3f', url }]
+
+      expect(await odyseeHandler.resolve(url)).toEqual(expected)
+    })
+
+    it('should decode an encoded channel name', async () => {
+      const url = 'https://odysee.com/@%C3%A9lise'
+      const expected: Array<DiscoverRef> = [{ platform: 'odysee', id: 'élise', url }]
+
+      expect(await odyseeHandler.resolve(url)).toEqual(expected)
+    })
+
+    it('should return empty array for a non-channel page', async () => {
+      expect(await odyseeHandler.resolve('https://odysee.com/$/discover')).toEqual([])
+    })
+
+    it('should return empty array for a malformed encoded name', async () => {
+      expect(await odyseeHandler.resolve('https://odysee.com/@%E0%A4%A')).toEqual([])
+    })
+
+    it('should return empty array for other hosts', async () => {
+      expect(await odyseeHandler.resolve('https://example.com/@alice')).toEqual([])
+    })
+  })
+})
+
+describe('odyseeEnricher', () => {
+  it('should return the channel thumbnail from the resolve API', async () => {
+    const requests: Array<Request> = []
+    const context = createContext(
+      createResponse({ url: 'https://thumbs.odycdn.com/0f3c.webp' }),
+      requests,
+    )
+    const expected: Array<Request> = [
+      {
+        url: apiUrl,
+        options: {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: '{"method":"resolve","params":{"urls":["lbry://@alice:3f"]}}',
+        },
+      },
+    ]
+
+    expect(await odyseeEnricher(ref, context)).toEqual(['https://thumbs.odycdn.com/0f3c.webp'])
+    expect(requests).toEqual(expected)
+  })
+
+  it('should return undefined for a ref of another platform', async () => {
+    const otherRef: DiscoverRef = {
+      platform: 'mastodon',
+      id: 'alice',
+      url: 'https://example.com/@alice',
+    }
+
+    expect(await odyseeEnricher(otherRef, createContext(''))).toBeUndefined()
+  })
+
+  it('should return empty array when thumbnail is missing', async () => {
+    const context = createContext(JSON.stringify({ result: { 'lbry://@alice:3f': { value: {} } } }))
+
+    expect(await odyseeEnricher(ref, context)).toEqual([])
+  })
+
+  it('should return empty array when channel is not in the result', async () => {
+    const context = createContext(JSON.stringify({ result: {} }))
+
+    expect(await odyseeEnricher(ref, context)).toEqual([])
+  })
+
+  it('should return empty array when thumbnail URL is not a string', async () => {
+    const context = createContext(createResponse({ url: 123 }))
+
+    expect(await odyseeEnricher(ref, context)).toEqual([])
+  })
+
+  it('should return empty array when thumbnail URL is empty', async () => {
+    const context = createContext(createResponse({ url: '' }))
+
+    expect(await odyseeEnricher(ref, context)).toEqual([])
+  })
+
+  it('should return empty array when thumbnail URL is not http', async () => {
+    const context = createContext(createResponse({ url: 'lbry://@alice:3f/avatar' }))
+
+    expect(await odyseeEnricher(ref, context)).toEqual([])
+  })
+
+  it('should return empty array when API returns invalid JSON', async () => {
+    expect(await odyseeEnricher(ref, createContext('not json'))).toEqual([])
+  })
+
+  it('should return empty array when fetch throws', async () => {
+    const fetchFn: FetchFn = () => {
+      throw new Error('Network error')
+    }
+
+    expect(await odyseeEnricher(ref, { fetchFn })).toEqual([])
+  })
+})
