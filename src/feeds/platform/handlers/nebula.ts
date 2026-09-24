@@ -5,8 +5,8 @@ import { composeHint } from '../../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
-const hosts = ['nebula.tv', 'www.nebula.tv']
-const excludedPaths = [
+export const hosts = ['nebula.tv', 'www.nebula.tv']
+export const excludedPaths = [
   'about',
   'classes',
   'library',
@@ -22,7 +22,7 @@ const excludedPaths = [
 
 // /explore is the canonical landing page (Nebula 301s root and /videos to it).
 // Treated as the global feed surface, not a creator slug.
-const globalPaths = new Set(['videos', 'explore'])
+export const globalPaths = new Set(['videos', 'explore'])
 
 export const nebulaHandler: PlatformHandler = {
   match: (url) => {
