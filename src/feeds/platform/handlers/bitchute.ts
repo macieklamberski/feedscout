@@ -5,7 +5,7 @@ import { composeHint } from '../../../common/utils.js'
 // Discoverability: Not discoverable without handler.
 // Handler needed for: all shapes.
 
-const hosts = ['bitchute.com', 'www.bitchute.com']
+export const hosts = ['bitchute.com', 'www.bitchute.com']
 
 export const bitchuteHandler: PlatformHandler = {
   match: (url) => {

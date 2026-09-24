@@ -5,6 +5,7 @@ import type { GuessMethodOptions } from '../common/uris/guess/types.js'
 import type { HeadersMethodOptions } from '../common/uris/headers/types.js'
 import type { HtmlMethodOptions } from '../common/uris/html/types.js'
 import type { PlatformMethodOptions } from '../common/uris/platform/types.js'
+import { bitchuteHandler } from './platform/handlers/bitchute.js'
 import { blueskyEnricher, blueskyHandler } from './platform/handlers/bluesky.js'
 import { deviantartHandler } from './platform/handlers/deviantart.js'
 import { devtoEnricher, devtoHandler } from './platform/handlers/devto.js'
@@ -78,6 +79,7 @@ export const defaultGuessOptions: Omit<GuessMethodOptions, 'baseUrl'> = {
 
 export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
   handlers: [
+    bitchuteHandler,
     giteaHandler,
     githubHandler,
     githubGistHandler,
