@@ -5,11 +5,11 @@ import locales from '../locales.json' with { type: 'json' }
 import type {
   DiscoverErrorContext,
   DiscoverExtractFn,
-  DiscoverFetchFn,
   DiscoverProgress,
   DiscoverResolveUrlFn,
   DiscoverResult,
   DiscoverStep,
+  FetchFn,
 } from '../types.js'
 import type { PlatformHandler } from '../uris/platform/types.js'
 
@@ -23,7 +23,7 @@ const rss = `
   </rss>
 `
 
-const createMockFetch = (responses: Record<string, string>): DiscoverFetchFn => {
+const createMockFetch = (responses: Record<string, string>): FetchFn => {
   return async (url: string) => ({
     headers: new Headers(),
     body: responses[url] ?? '',
@@ -84,7 +84,7 @@ describe('discoverFeeds', () => {
         match: () => true,
         resolve: () => [{ uri: '/platform-feed' }],
       }
-      const mockFetch: DiscoverFetchFn = (url) => {
+      const mockFetch: FetchFn = (url) => {
         fetchedUrls.push(url)
 
         return Promise.resolve({
@@ -129,7 +129,7 @@ describe('discoverFeeds', () => {
         match: () => true,
         resolve: () => [{ uri: '/shared-feed' }],
       }
-      const mockFetch: DiscoverFetchFn = (url) => {
+      const mockFetch: FetchFn = (url) => {
         fetchedUrls.push(url)
 
         return Promise.resolve({
@@ -177,7 +177,7 @@ describe('discoverFeeds', () => {
         match: () => true,
         resolve: () => [{ uri: '/invalid-feed' }],
       }
-      const mockFetch: DiscoverFetchFn = (url) => {
+      const mockFetch: FetchFn = (url) => {
         fetchedUrls.push(url)
 
         return Promise.resolve({
@@ -256,7 +256,7 @@ describe('discoverFeeds', () => {
   describe('stopOnFirstResult', () => {
     it('should stop on first valid result when stopOnFirstResult is true', async () => {
       let fetchCount = 0
-      const mockFetch: DiscoverFetchFn = (url) => {
+      const mockFetch: FetchFn = (url) => {
         fetchCount++
         return Promise.resolve({
           headers: new Headers(),
@@ -295,7 +295,7 @@ describe('discoverFeeds', () => {
   describe('alternatives', () => {
     it('should stop trying alternatives when first alternative is valid', async () => {
       const fetchedUrls: Array<string> = []
-      const mockFetch: DiscoverFetchFn = (url) => {
+      const mockFetch: FetchFn = (url) => {
         fetchedUrls.push(url)
         return Promise.resolve({
           headers: new Headers(),
@@ -330,7 +330,7 @@ describe('discoverFeeds', () => {
 
     it('should try second alternative when first alternative is not valid', async () => {
       const fetchedUrls: Array<string> = []
-      const mockFetch: DiscoverFetchFn = (url) => {
+      const mockFetch: FetchFn = (url) => {
         fetchedUrls.push(url)
         return Promise.resolve({
           headers: new Headers(),
@@ -616,7 +616,7 @@ describe('discoverFeeds', () => {
 
   describe('error handling', () => {
     it('should handle fetch errors gracefully', async () => {
-      const mockFetch: DiscoverFetchFn = () => {
+      const mockFetch: FetchFn = () => {
         return Promise.reject(new Error('Network error'))
       }
       const value = await discoverFeeds(
@@ -631,7 +631,7 @@ describe('discoverFeeds', () => {
     })
 
     it('should include errors when includeInvalid is true', async () => {
-      const mockFetch: DiscoverFetchFn = () => {
+      const mockFetch: FetchFn = () => {
         return Promise.reject(new Error('Network error'))
       }
       const value = await discoverFeeds(
@@ -657,7 +657,7 @@ describe('discoverFeeds', () => {
 
   describe('failed input fetch', () => {
     it('should skip content-based methods in array format and still run guess', async () => {
-      const mockFetch: DiscoverFetchFn = (url) => {
+      const mockFetch: FetchFn = (url) => {
         if (url === 'https://example.com') {
           return Promise.reject(new Error('Input fetch failed'))
         }
@@ -684,7 +684,7 @@ describe('discoverFeeds', () => {
     })
 
     it('should skip content-based methods in object format and still run guess', async () => {
-      const mockFetch: DiscoverFetchFn = (url) => {
+      const mockFetch: FetchFn = (url) => {
         if (url === 'https://example.com') {
           return Promise.reject(new Error('Input fetch failed'))
         }
@@ -711,7 +711,7 @@ describe('discoverFeeds', () => {
     })
 
     it('should return no results when only content-based methods are requested', async () => {
-      const mockFetch: DiscoverFetchFn = () => {
+      const mockFetch: FetchFn = () => {
         return Promise.reject(new Error('Input fetch failed'))
       }
       const value = await discoverFeeds('https://example.com', {
@@ -724,7 +724,7 @@ describe('discoverFeeds', () => {
 
     it('should report the fetch error once', async () => {
       const messages: Array<string> = []
-      const mockFetch: DiscoverFetchFn = () => {
+      const mockFetch: FetchFn = () => {
         return Promise.reject(new Error('Input fetch failed'))
       }
 
@@ -742,7 +742,7 @@ describe('discoverFeeds', () => {
 
     it('should run html on the site page when the input fetch fails and the site fetch works', async () => {
       const sitePage = '<link rel="alternate" type="application/rss+xml" href="/feed">'
-      const mockFetch: DiscoverFetchFn = (url) => {
+      const mockFetch: FetchFn = (url) => {
         if (url === 'https://example.com/feed.xml') {
           return Promise.reject(new Error('Input fetch failed'))
         }
@@ -764,7 +764,7 @@ describe('discoverFeeds', () => {
     it('should throw when the input fetch succeeds without headers', () => {
       const page = '<link rel="alternate" type="application/rss+xml" href="/feed">'
       // @ts-expect-error: This is for testing purposes.
-      const mockFetch: DiscoverFetchFn = (url) => {
+      const mockFetch: FetchFn = (url) => {
         return Promise.resolve({ body: page, url, status: 200, statusText: 'OK' })
       }
       const throwing = () => {
@@ -778,7 +778,7 @@ describe('discoverFeeds', () => {
     })
 
     it('should throw when the input fetch succeeds with a stream body', () => {
-      const mockFetch: DiscoverFetchFn = (url) => {
+      const mockFetch: FetchFn = (url) => {
         return Promise.resolve({
           url,
           status: 200,
@@ -802,7 +802,7 @@ describe('discoverFeeds', () => {
     it('should call onError when the input fetch fails', async () => {
       const errors: Array<{ error: unknown; phase: string; url?: string }> = []
       const fetchError = new Error('Input fetch failed')
-      const mockFetch: DiscoverFetchFn = () => Promise.reject(fetchError)
+      const mockFetch: FetchFn = () => Promise.reject(fetchError)
 
       await discoverFeeds('https://example.com', {
         methods: ['guess'],
@@ -988,7 +988,7 @@ describe('discoverFeeds', () => {
     })
 
     it('should keep discovering when onError itself throws', async () => {
-      const mockFetch: DiscoverFetchFn = (url) => {
+      const mockFetch: FetchFn = (url) => {
         if (url === 'https://example.com') {
           return Promise.reject(new Error('Input fetch failed'))
         }
@@ -1009,7 +1009,7 @@ describe('discoverFeeds', () => {
     it('should call onError when site URL resolution fails', async () => {
       const errors: Array<{ error: unknown; phase: string; url?: string }> = []
       const fetchError = new Error('Site fetch failed')
-      const mockFetch: DiscoverFetchFn = (url) => {
+      const mockFetch: FetchFn = (url) => {
         if (url === 'https://example.com/site') {
           return Promise.reject(fetchError)
         }
@@ -1046,7 +1046,7 @@ describe('discoverFeeds', () => {
     it('should respect concurrency limit', async () => {
       let maxConcurrent = 0
       let currentConcurrent = 0
-      const mockFetch: DiscoverFetchFn = async (url) => {
+      const mockFetch: FetchFn = async (url) => {
         currentConcurrent++
         maxConcurrent = Math.max(maxConcurrent, currentConcurrent)
         await new Promise((resolve) => {
@@ -1259,7 +1259,7 @@ describe('discoverFeeds', () => {
     })
 
     it('should return one result when several candidates redirect to the same feed', async () => {
-      const redirectingFetch: DiscoverFetchFn = async () => ({
+      const redirectingFetch: FetchFn = async () => ({
         headers: new Headers(),
         body: rss,
         url: 'https://example.com/feed/',
@@ -1290,7 +1290,7 @@ describe('discoverFeeds', () => {
 
     it('should count a redirect to an already found feed as tested but not found', async () => {
       const progressUpdates: Array<DiscoverProgress> = []
-      const redirectingFetch: DiscoverFetchFn = async () => ({
+      const redirectingFetch: FetchFn = async () => ({
         headers: new Headers(),
         body: rss,
         url: 'https://example.com/feed/',
@@ -1319,7 +1319,7 @@ describe('discoverFeeds', () => {
     })
 
     it('should return one invalid result when several candidates redirect to the same page', async () => {
-      const redirectingFetch: DiscoverFetchFn = async () => ({
+      const redirectingFetch: FetchFn = async () => ({
         headers: new Headers(),
         body: '<html></html>',
         url: 'https://example.com/',
@@ -1346,7 +1346,7 @@ describe('discoverFeeds', () => {
     })
 
     it('should keep a valid result for a URL that failed earlier', async () => {
-      const mockFetch: DiscoverFetchFn = (url) => {
+      const mockFetch: FetchFn = (url) => {
         if (url === 'https://example.com/feed') {
           throw new Error('Timeout')
         }
@@ -1382,7 +1382,7 @@ describe('discoverFeeds', () => {
         match: () => true,
         resolve: () => [{ uri: ['/channel.xml', '/uploads.xml'] }],
       }
-      const mockFetch: DiscoverFetchFn = (url) => {
+      const mockFetch: FetchFn = (url) => {
         fetchedUrls.push(url)
 
         return createMockFetch({ 'https://example.com/channel.xml': rss })(url)
@@ -1580,7 +1580,7 @@ describe('discoverFeeds', () => {
       type ExtendedFeedResult = FeedResult & {
         etag?: string
       }
-      const mockFetch: DiscoverFetchFn = (url) =>
+      const mockFetch: FetchFn = (url) =>
         Promise.resolve({
           headers: new Headers({ etag: '"abc123"' }),
           body: '<rss><channel><title>Test</title></channel></rss>',
@@ -1800,7 +1800,7 @@ describe('discoverFeeds', () => {
 
         return { url, isValid: false }
       }
-      const mockFetch: DiscoverFetchFn = (url: string) =>
+      const mockFetch: FetchFn = (url: string) =>
         Promise.resolve({
           headers: responseHeaders,
           body: rss,
@@ -1841,7 +1841,7 @@ describe('discoverFeeds', () => {
     })
 
     it('should reject a fetched input that answers with a non-2xx status', async () => {
-      const mockFetch: DiscoverFetchFn = (url) => {
+      const mockFetch: FetchFn = (url) => {
         return Promise.resolve({
           headers: new Headers(),
           body: rss,

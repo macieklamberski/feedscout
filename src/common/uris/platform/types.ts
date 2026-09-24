@@ -1,8 +1,8 @@
 import type {
   DiscoverEnrichFn,
-  DiscoverFetchFn,
   DiscoverRef,
   DiscoverUriEntry,
+  FetchFn,
   MaybePromise,
 } from '../../types.js'
 
@@ -15,7 +15,7 @@ export type PlatformHandler = {
     url: string,
     content?: string,
     headers?: Headers,
-    fetchFn?: DiscoverFetchFn,
+    fetchFn?: FetchFn,
   ) => MaybePromise<Array<DiscoverUriEntry | DiscoverRef>>
 }
 

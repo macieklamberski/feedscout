@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'bun:test'
 import { omitEmpty } from 'trousse'
-import type { DiscoverFetchFn } from '../types.js'
+import type { FetchFn } from '../types.js'
 import { discoverUris } from './index.js'
 
 describe('discoverUris', () => {
@@ -276,11 +276,11 @@ describe('discoverUris', () => {
     let received: {
       content: string | undefined
       headers: Headers | undefined
-      fetchFn: DiscoverFetchFn | undefined
+      fetchFn: FetchFn | undefined
     } = { content: undefined, headers: undefined, fetchFn: undefined }
     const content = '<html>platform page</html>'
     const headers = new Headers({ 'content-type': 'text/html' })
-    const fetchFn: DiscoverFetchFn = (url) => {
+    const fetchFn: FetchFn = (url) => {
       return Promise.resolve({
         url,
         body: '',

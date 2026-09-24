@@ -57,7 +57,7 @@ The Platform method extracts avatars and icons directly from known platforms usi
 | GitHub | User avatar | URL pattern |
 | GitHub Gist | User avatar | URL pattern |
 | GitLab | User or group avatar | Public API |
-| Mastodon | Profile avatar | Public API |
+| Mastodon | Profile avatar | Public API, through an [enricher](#enriching-platform-icons) |
 | Bluesky | Profile avatar | Public API |
 | Reddit | Subreddit icon or user avatar | Public API |
 | Tumblr | Blog avatar | URL pattern |
@@ -71,16 +71,24 @@ The Platform method extracts avatars and icons directly from known platforms usi
 
 ## Enriching Platform Icons
 
-A platform handler reads only the page URL and the page content. On some platforms the icon takes an extra request to reach, such as a call to the platform's API. For those pages the handler returns a [`DiscoverRef`](/reference/types#discoverref) naming the platform and the account, and discovery hands every ref to `enrichFn`. Without it, refs are dropped and no extra request is made.
+A platform handler reads only the page URL and the page content. On some platforms the icon takes an extra request to reach, such as a call to the platform's API. For those pages the handler returns a [`DiscoverRef`](/reference/types#discoverref) naming the platform and the account, and discovery hands every ref to `enrichFn`.
 
-`createEnrichFaviconFn` builds one from `defaultFaviconEnrichers`, or from the enrichers you pass in `enrichers`. Enrichers make their requests through the `fetchFn` you pass it, a [`FetchFn`](/reference/types#fetchfn) that also takes a POST with a body. It is required, and discovery's own `fetchFn` is not used for enrichers, so pass the same one to both. `defaultFetchFn` is the native fetch one discovery uses when you pass none:
+By default, `enrichFn` runs the built-in enrichers in `defaultFaviconEnrichers`, making their requests through discovery's `fetchFn`. Set `enrichFn: false` to make no extra request, in which case refs are dropped:
 
 ```typescript
-import { createEnrichFaviconFn } from 'feedscout/favicons'
+const favicons = await discoverFavicons(url, {
+  enrichFn: false,
+})
+```
+
+To pick the enrichers, build the function with `createEnrichFaviconFn` and the enrichers you want. Each built-in enricher is exported on its own, such as `mastodonEnricher`. A function you build this way makes its requests through the `fetchFn` you pass it, not discovery's, so pass the same one to both:
+
+```typescript
+import { createEnrichFaviconFn, mastodonEnricher } from 'feedscout/favicons'
 
 const favicons = await discoverFavicons(url, {
   fetchFn: myCustomFetch,
-  enrichFn: createEnrichFaviconFn({ fetchFn: myCustomFetch }),
+  enrichFn: createEnrichFaviconFn({ enrichers: [mastodonEnricher], fetchFn: myCustomFetch }),
 })
 ```
 

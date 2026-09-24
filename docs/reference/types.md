@@ -13,7 +13,7 @@ import type {
   DiscoverOptions,
   DiscoverResult,
   DiscoverProgress,
-  DiscoverFetchFn,
+  FetchFn,
   DiscoverExtractFn,
   DiscoverResolveUrlFn,
   DiscoverResolveSiteUrlFn,
@@ -64,7 +64,7 @@ Options for discovery functions. All fields are optional for simple usage. The `
 ```typescript
 type DiscoverOptions<TValid, TMethods extends DiscoverMethod = DiscoverMethod> = {
   methods?: DiscoverMethodsConfig<TMethods>
-  fetchFn?: DiscoverFetchFn
+  fetchFn?: FetchFn
   extractFn?: DiscoverExtractFn<TValid>
   resolveUrlFn?: DiscoverResolveUrlFn
   resolveSiteUrlFn?: DiscoverResolveSiteUrlFn
@@ -115,7 +115,7 @@ Options for `discoverHubs`:
 ```typescript
 type DiscoverHubsOptions = {
   methods?: DiscoverHubsMethodsConfig
-  fetchFn?: DiscoverFetchFn
+  fetchFn?: FetchFn
   resolveUrlFn?: DiscoverResolveUrlFn
   onError?: DiscoverOnErrorFn
 }
@@ -348,33 +348,9 @@ A function you pass in never ends discovery by throwing. The phases above are re
 
 ## Fetch Types
 
-### DiscoverFetchFn
-
-Custom fetch function type:
-
-```typescript
-type DiscoverFetchFn = (
-  url: string,
-  options?: DiscoverFetchFnOptions,
-) => MaybePromise<DiscoverFetchFnResponse>
-
-type DiscoverFetchFnOptions = {
-  method?: 'GET' | 'HEAD'
-  headers?: Record<string, string>
-}
-
-type DiscoverFetchFnResponse = {
-  headers: Headers
-  body: string | ReadableStream<Uint8Array>
-  url: string
-  status: number
-  statusText?: string
-}
-```
-
 ### FetchFn
 
-The fetch function enrichers use. It also takes a POST with a body. The response can carry more fields than the ones listed:
+Custom fetch function type, used by discovery and by enrichers. The response can carry more fields than the ones listed:
 
 ```typescript
 type FetchFn<TResponse extends FetchFnResponse = FetchFnResponse> = (
@@ -390,11 +366,13 @@ type FetchFnOptions = {
 
 type FetchFnResponse = {
   headers: Headers
-  body: string
+  body: string | ReadableStream<Uint8Array> // A stream is read as empty content
   url: string // Final URL after redirects
   status: number
 }
 ```
+
+`DiscoverFetchFn`, `DiscoverFetchFnOptions` and `DiscoverFetchFnResponse` are deprecated names for the same types.
 
 ## Extractor Types
 

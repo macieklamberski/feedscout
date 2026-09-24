@@ -1,16 +1,16 @@
 import { describe, expect, it } from 'bun:test'
 import type {
   DiscoverExtractFn,
-  DiscoverFetchFn,
   DiscoverResolveUrlFn,
   DiscoverResult,
+  FetchFn,
 } from '../common/types.js'
 import type { PlatformHandler } from '../common/uris/platform/types.js'
 import { defaultPlatformOptions, urisBalanced, urisComprehensive, urisMinimal } from './defaults.js'
 import { discoverFeeds } from './index.js'
 import type { FeedResult } from './types.js'
 
-const createMockFetch = (responses: Record<string, string>): DiscoverFetchFn => {
+const createMockFetch = (responses: Record<string, string>): FetchFn => {
   return async (url: string) => ({
     headers: new Headers(),
     body: responses[url] ?? '',
@@ -415,7 +415,7 @@ describe('discoverFeeds', () => {
         <channel><title>Test</title></channel>
       </rss>
     `
-    const fetchFn: DiscoverFetchFn = (url: string) => {
+    const fetchFn: FetchFn = (url: string) => {
       if (url === 'https://example.com/') {
         throw new Error('Connection refused')
       }
@@ -793,7 +793,7 @@ describe('discoverFeeds', () => {
           </channel>
         </rss>
       `
-      const fetchFn: DiscoverFetchFn = async (url: string) => ({
+      const fetchFn: FetchFn = async (url: string) => ({
         headers:
           url === 'https://example.com'
             ? new Headers({

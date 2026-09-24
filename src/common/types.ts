@@ -41,24 +41,6 @@ export type DiscoverResolveSiteUrlFn = (
   resolveUrlFn: DiscoverResolveUrlFn,
 ) => string | undefined
 
-export type DiscoverFetchFnOptions = {
-  method?: 'GET' | 'HEAD'
-  headers?: Record<string, string>
-}
-
-export type DiscoverFetchFnResponse = {
-  headers: Headers
-  body: string | ReadableStream<Uint8Array>
-  url: string
-  status: number
-  statusText?: string
-}
-
-export type DiscoverFetchFn = (
-  url: string,
-  options?: DiscoverFetchFnOptions,
-) => MaybePromise<DiscoverFetchFnResponse>
-
 export type FetchFnOptions = {
   method?: 'GET' | 'HEAD' | 'POST'
   headers?: Record<string, string>
@@ -67,7 +49,7 @@ export type FetchFnOptions = {
 
 export type FetchFnResponse = {
   headers: Headers
-  body: string
+  body: string | ReadableStream<Uint8Array>
   url: string // Final URL after redirects
   status: number
 }
@@ -76,6 +58,15 @@ export type FetchFn<TResponse extends FetchFnResponse = FetchFnResponse> = (
   url: string,
   options?: FetchFnOptions,
 ) => MaybePromise<TResponse>
+
+/** @deprecated Use `FetchFnOptions`. */
+export type DiscoverFetchFnOptions = FetchFnOptions
+
+/** @deprecated Use `FetchFnResponse`. */
+export type DiscoverFetchFnResponse = FetchFnResponse & { statusText?: string }
+
+/** @deprecated Use `FetchFn`. */
+export type DiscoverFetchFn = FetchFn<DiscoverFetchFnResponse>
 
 export type DiscoverProgress<TValid = object> = {
   tested: number
@@ -207,7 +198,7 @@ export type DiscoverMethodsConfigInternal = {
 // User-facing options - all fields optional for simple usage.
 export type DiscoverOptions<TValid, TMethods extends DiscoverMethod = DiscoverMethod> = {
   methods?: DiscoverMethodsConfig<TMethods>
-  fetchFn?: DiscoverFetchFn
+  fetchFn?: FetchFn
   extractFn?: DiscoverExtractFn<TValid>
   resolveUrlFn?: DiscoverResolveUrlFn
   resolveSiteUrlFn?: DiscoverResolveSiteUrlFn
@@ -224,7 +215,7 @@ export type DiscoverOptions<TValid, TMethods extends DiscoverMethod = DiscoverMe
 // Internal options - required fetchFn, extractFn, resolveUrlFn.
 export type DiscoverOptionsInternal<TValid> = {
   methods: DiscoverMethodsConfig
-  fetchFn: DiscoverFetchFn
+  fetchFn: FetchFn
   extractFn: DiscoverExtractFn<TValid>
   resolveUrlFn: DiscoverResolveUrlFn
   resolveSiteUrlFn?: DiscoverResolveSiteUrlFn

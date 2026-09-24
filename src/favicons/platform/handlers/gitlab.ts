@@ -1,5 +1,5 @@
 import { isAnyOf, isHostOf, isNonEmptyString, parseUrl } from 'trousse'
-import type { DiscoverFetchFn } from '../../../common/types.js'
+import type { FetchFn } from '../../../common/types.js'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import {
   excludedPaths,
@@ -13,10 +13,7 @@ import { parseBodyJson } from '../../utils.js'
 // so the regex strips the .atom feed extension instead of excluding dots.
 const userRegex = /^\/([^/]+?)(?:\.atom)?(?:\/|$)/
 
-const fetchAvatarUrl = async (
-  apiUrl: string,
-  fetchFn: DiscoverFetchFn,
-): Promise<string | undefined> => {
+const fetchAvatarUrl = async (apiUrl: string, fetchFn: FetchFn): Promise<string | undefined> => {
   const response = await fetchFn(apiUrl)
   const data = parseBodyJson(response.body)
 
