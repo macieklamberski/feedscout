@@ -12,7 +12,7 @@ The Platform method uses handlers for each supported platform:
 
 1. **Pattern Matching**: Each handler checks if the URL matches its platform (e.g., `github.com`, `youtube.com`).
 2. **URL Generation**: The matching handler generates feed URLs based on the URL structure.
-3. **First Match**: The first matching handler wins. Subsequent handlers are skipped.
+3. **First Match**: The first matching handler that generates feeds wins. Subsequent handlers are skipped. A handler that matches but generates nothing passes the page to the next one.
 
 > [!TIP]
 > Even when feeds are discoverable via HTML `<link>` tags, the Platform method is useful because it generates feed variants the page does not advertise, like a channel's Shorts feed or a repository's releases feed. Handlers that work from the URL alone need no page content, which helps when you [use the method directly](#using-directly) and only have a URL.
@@ -1446,7 +1446,7 @@ const feeds = await discoverFeeds('https://github.com/macieklamberski/feedsmith'
 
 ### Handler Order
 
-Handlers are checked in order. The first matching handler generates the feeds:
+Handlers are checked in order. The first matching handler that generates feeds wins:
 
 ```typescript
 import { githubHandler, redditHandler, youtubeHandler } from 'feedscout/platform'
