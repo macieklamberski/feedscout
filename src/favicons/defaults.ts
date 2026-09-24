@@ -34,7 +34,7 @@ import { redditEnricher, redditHandler } from './platforms/reddit.js'
 import { soundcloudHandler } from './platforms/soundcloud.js'
 import { sourceforgeHandler } from './platforms/sourceforge.js'
 import { sourcehutEnricher, sourcehutHandler } from './platforms/sourcehut.js'
-import { steamHandler } from './platforms/steam.js'
+import { steamEnricher, steamHandler } from './platforms/steam.js'
 import { togetterHandler } from './platforms/togetter.js'
 import { tumblrHandler } from './platforms/tumblr.js'
 import { youtubeHandler } from './platforms/youtube.js'
@@ -149,4 +149,5 @@ export const defaultFaviconEnrichers: Array<FaviconEnricher> = [
   pixelfedEnricher,
   redditEnricher,
   sourcehutEnricher,
+  steamEnricher,
 ]
