@@ -23,12 +23,12 @@ const domains = [
 ]
 
 // Sort values accepted by feeds.tag. Documented at api.stackexchange.com.
-const validSorts = new Set(['newest', 'active', 'votes', 'creation', 'hot', 'week', 'month'])
+const validSorts = ['newest', 'active', 'votes', 'creation', 'hot', 'week', 'month']
 
 const getSortSuffix = (searchParams: URLSearchParams): string => {
   const sort = searchParams.get('sort') ?? searchParams.get('tab')?.toLowerCase()
 
-  if (sort && validSorts.has(sort)) {
+  if (sort && validSorts.includes(sort)) {
     return `?sort=${sort}`
   }
 

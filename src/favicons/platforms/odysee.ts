@@ -10,7 +10,7 @@ const apiUrl = 'https://api.na-backend.odysee.com/api/v1/proxy?m=resolve'
 
 const channelRegex = /^\/@([^/:]+(?::[a-f0-9]+)?)(?:\/|$)/i
 
-const imageProtocols = new Set(['http:', 'https:'])
+const imageProtocols = ['http:', 'https:']
 
 const getChannel = (url: string): string | undefined => {
   const parsedUrl = parseUrl(url)
@@ -61,10 +61,11 @@ export const odyseeEnricher: FaviconEnricher = async (ref, context) => {
     })
     const data = parseBodyJson(response.body)
     const thumbnail = data?.result?.[lbryUrl]?.value?.thumbnail?.url
+    const thumbnailProtocol = parseUrl(String(thumbnail))?.protocol ?? ''
 
     // The thumbnail is the channel's raw upload. The upload form crops it to square, but other
     // clients may not, so a few avatars are not square.
-    if (isNonEmptyString(thumbnail) && imageProtocols.has(parseUrl(thumbnail)?.protocol ?? '')) {
+    if (isNonEmptyString(thumbnail) && imageProtocols.includes(thumbnailProtocol)) {
       return [thumbnail]
     }
   } catch {}
