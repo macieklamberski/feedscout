@@ -1,5 +1,5 @@
 import LinkHeader from 'http-link-header'
-import { matchesAnyOfLinkSelectors } from '../../../common/utils.js'
+import { matchesAnyOfLinkSelectors } from '../../utils.js'
 import type { HeadersMethodOptions } from './types.js'
 
 export const discoverUrisFromHeaders = (

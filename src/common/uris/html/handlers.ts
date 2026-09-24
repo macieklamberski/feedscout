@@ -1,6 +1,6 @@
 import type { Handler } from 'htmlparser2'
 import { endsWithAnyOf, includesAnyOf, parseUrl } from 'trousse'
-import { matchesAnyOfLinkSelectors } from '../../../common/utils.js'
+import { matchesAnyOfLinkSelectors } from '../../utils.js'
 import type { HtmlMethodContext } from './types.js'
 
 export const handleOpenTag = (
