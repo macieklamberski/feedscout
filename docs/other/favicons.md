@@ -77,6 +77,7 @@ The Platform method extracts avatars and icons directly from known platforms usi
 | Mastodon | Profile avatar | Public API, through an [enricher](#enriching-platform-icons) |
 | Medium | Profile avatar or publication icon | Public feed, through an [enricher](#enriching-platform-icons) |
 | Micro.blog | User avatar | URL pattern |
+| MyAnimeList | User avatar | Page HTML, or the profile page through an [enricher](#enriching-platform-icons) for list and history pages |
 | Naver Blog | Blog profile picture | Page HTML, and the mobile page through an [enricher](#enriching-platform-icons) for desktop blog pages |
 | Nebula | Channel avatar | Page HTML, or the content API through an [enricher](#enriching-platform-icons) |
 | note | User avatar, or magazine owner avatar | Page HTML, Public API through an [enricher](#enriching-platform-icons) |

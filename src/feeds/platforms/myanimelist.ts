@@ -7,8 +7,8 @@ import { composeHint } from '../../common/utils.js'
 // Generic covers featured, news (html), partly covers profile.
 // Handler needed for: animelist, mangalist.
 
-const hosts = ['myanimelist.net', 'www.myanimelist.net']
-const userRegex = /^\/(?:profile|animelist|mangalist|history)\/([^/]+)/
+export const hosts = ['myanimelist.net', 'www.myanimelist.net']
+export const userRegex = /^\/(?:profile|animelist|mangalist|history)\/([^/]+)/
 
 export const myanimelistHandler: PlatformHandler = {
   match: (url) => {
