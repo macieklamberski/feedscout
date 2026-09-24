@@ -1,4 +1,4 @@
-import { isSubdomainOf } from 'trousse'
+import { isHostOf, isSubdomainOf } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, decodePathSegment } from '../../common/utils.js'
@@ -10,6 +10,7 @@ const wwwUsersPathRegex = /^\/(?:users\/|~)([^/]+)/
 const legacyUserPathRegex = /^\/([^/]+)/
 const tagRegex = /^\/tag\/([^/]+)/
 
+const legacyUserHosts = ['users.livejournal.com', 'community.livejournal.com']
 const reservedHosts = [
   'livejournal.com',
   'www.livejournal.com',
@@ -26,15 +27,14 @@ export const livejournalHandler: PlatformHandler = {
 
     // Bare www/users/community/syndicated hosts have no per-user context and would
     // emit 404 URLs. Allow them only when a user selector is in the path.
-    const { hostname, pathname } = new URL(url)
-    const lower = hostname.toLowerCase()
+    const { pathname } = new URL(url)
 
-    if (reservedHosts.includes(lower)) {
-      if (lower === 'www.livejournal.com') {
+    if (isHostOf(url, reservedHosts)) {
+      if (isHostOf(url, 'www.livejournal.com')) {
         return wwwUsersPathRegex.test(pathname)
       }
 
-      if (lower === 'users.livejournal.com' || lower === 'community.livejournal.com') {
+      if (isHostOf(url, legacyUserHosts)) {
         return legacyUserPathRegex.test(pathname)
       }
 
@@ -45,14 +45,13 @@ export const livejournalHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    const { origin, hostname, pathname } = new URL(url)
-    const lowerHostname = hostname.toLowerCase()
+    const { origin, pathname } = new URL(url)
     const uris: Array<DiscoverUriEntry> = []
 
     let userOrigin = origin
 
     // www.livejournal.com/users/{user} or /~{user} — canonicalise to subdomain form.
-    if (lowerHostname === 'www.livejournal.com') {
+    if (isHostOf(url, 'www.livejournal.com')) {
       const userMatch = pathname.match(wwwUsersPathRegex)
 
       if (userMatch?.[1]) {
@@ -63,10 +62,7 @@ export const livejournalHandler: PlatformHandler = {
     }
 
     // Legacy users./community. hosts — first path segment is the user.
-    if (
-      lowerHostname === 'users.livejournal.com' ||
-      lowerHostname === 'community.livejournal.com'
-    ) {
+    if (isHostOf(url, legacyUserHosts)) {
       const userMatch = pathname.match(legacyUserPathRegex)
 
       if (userMatch?.[1]) {

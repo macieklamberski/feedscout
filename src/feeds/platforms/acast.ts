@@ -18,7 +18,7 @@ export const acastHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    const { hostname, pathname } = new URL(url)
+    const { pathname } = new URL(url)
     const pathSegments = pathname.split('/').filter(Boolean)
 
     if (pathSegments.length === 0) {
@@ -26,7 +26,7 @@ export const acastHandler: PlatformHandler = {
     }
 
     // play.acast.com/s/{slug} — slug is at index 1.
-    const slugIndex = hostname.toLowerCase() === 'play.acast.com' ? 1 : 0
+    const slugIndex = isHostOf(url, 'play.acast.com') ? 1 : 0
     const slug = pathSegments[slugIndex]
 
     if (!slug || isAnyOf(slug, excludedPaths)) {

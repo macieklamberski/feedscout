@@ -35,11 +35,10 @@ export const itchioHandler: PlatformHandler = {
 
   resolve: (url) => {
     const { hostname, pathname } = new URL(url)
-    const lowerHostname = hostname.toLowerCase()
 
     // Subdomain: creator pages ({creator}.itch.io).
-    if (!mainHosts.includes(lowerHostname) && lowerHostname.endsWith('.itch.io')) {
-      const creator = lowerHostname.replace('.itch.io', '')
+    if (!isHostOf(url, mainHosts) && isSubdomainOf(url, 'itch.io')) {
+      const creator = hostname.replace('.itch.io', '')
       const gameMatch = pathname.match(gameRegex)
 
       // Game page: {creator}.itch.io/{game}

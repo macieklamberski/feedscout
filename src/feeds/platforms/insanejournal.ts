@@ -1,4 +1,4 @@
-import { isSubdomainOf } from 'trousse'
+import { isHostOf, isSubdomainOf } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, decodePathSegment } from '../../common/utils.js'
@@ -6,6 +6,8 @@ import { composeHint, decodePathSegment } from '../../common/utils.js'
 // Discoverability: Partially discoverable without handler.
 // Generic partly covers asylum, blog, tildePath, userPath.
 // Handler needed for: syndicated.
+
+const wwwHosts = ['www.insanejournal.com', 'insanejournal.com']
 
 const wwwUsersPathRegex = /^\/(?:users\/|~)([^/]+)/
 const wwwAsylumPathRegex = /^\/(?:asylum|community)\/([^/]+)/
@@ -18,14 +20,13 @@ export const insanejournalHandler: PlatformHandler = {
       return false
     }
 
-    const { hostname, pathname } = new URL(url)
-    const lower = hostname.toLowerCase()
+    const { pathname } = new URL(url)
 
-    if (lower === 'www.insanejournal.com' || lower === 'insanejournal.com') {
+    if (isHostOf(url, wwwHosts)) {
       return wwwUsersPathRegex.test(pathname) || wwwAsylumPathRegex.test(pathname)
     }
 
-    if (lower === 'asylums.insanejournal.com' || lower === 'feeds.insanejournal.com') {
+    if (isHostOf(url, ['asylums.insanejournal.com', 'feeds.insanejournal.com'])) {
       return firstSegmentRegex.test(pathname)
     }
 
@@ -33,14 +34,13 @@ export const insanejournalHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    const { origin, hostname, pathname } = new URL(url)
-    const lowerHostname = hostname.toLowerCase()
+    const { origin, pathname } = new URL(url)
     const uris: Array<DiscoverUriEntry> = []
 
     let feedOrigin = origin
     let feedPathPrefix = ''
 
-    if (lowerHostname === 'www.insanejournal.com' || lowerHostname === 'insanejournal.com') {
+    if (isHostOf(url, wwwHosts)) {
       const userMatch = pathname.match(wwwUsersPathRegex)
 
       if (userMatch?.[1]) {
@@ -55,7 +55,7 @@ export const insanejournalHandler: PlatformHandler = {
           return uris
         }
       }
-    } else if (lowerHostname === 'asylums.insanejournal.com') {
+    } else if (isHostOf(url, 'asylums.insanejournal.com')) {
       const segMatch = pathname.match(firstSegmentRegex)
 
       if (segMatch?.[1]) {
@@ -63,7 +63,7 @@ export const insanejournalHandler: PlatformHandler = {
       } else {
         return uris
       }
-    } else if (lowerHostname === 'feeds.insanejournal.com') {
+    } else if (isHostOf(url, 'feeds.insanejournal.com')) {
       const segMatch = pathname.match(firstSegmentRegex)
 
       if (segMatch?.[1]) {
