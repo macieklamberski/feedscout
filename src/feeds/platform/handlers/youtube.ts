@@ -15,15 +15,15 @@ const channelIdRegexes = [
   /"externalChannelId":"(UC[a-zA-Z0-9_-]+)"/,
   /"channelId":"(UC[a-zA-Z0-9_-]+)"/,
 ]
-const channelRegex = /^\/channel\/(UC[a-zA-Z0-9_-]+)/
-const handleRegex = /^\/@([^/]+)/
-const userRegex = /^\/user\/([^/]+)/
-const customRegex = /^\/c\/([^/]+)/
+export const channelRegex = /^\/channel\/(UC[a-zA-Z0-9_-]+)/
+export const handleRegex = /^\/@([^/]+)/
+export const userRegex = /^\/user\/([^/]+)/
+export const customRegex = /^\/c\/([^/]+)/
 const shortsRegex = /^\/shorts\/[\w-]+/
 const liveRegex = /^\/live\/[\w-]+/
 const channelPrefixRegex = /^UC/
 
-const hosts = [
+export const hosts = [
   'youtube.com',
   'www.youtube.com',
   'm.youtube.com',

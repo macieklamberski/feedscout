@@ -70,6 +70,8 @@ The Platform method extracts avatars and icons directly from known platforms usi
 | Letterboxd | Member avatar from member subpages, such as films and lists | Page HTML |
 | Micro.blog | User avatar | URL pattern |
 | BitChute | Channel image | Page HTML |
+| YouTube | Channel avatar | Page HTML |
+| YouTube | Channel avatar | Page HTML |
 
 ## Enriching Platform Icons
 
