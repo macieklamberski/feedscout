@@ -6,7 +6,7 @@ import { composeHint } from '../../../common/utils.js'
 // Generic covers favorites, photostream (html).
 // Handler needed for: group, tag.
 
-const hosts = ['flickr.com', 'www.flickr.com']
+export const hosts = ['flickr.com', 'www.flickr.com']
 const feedsBase = 'https://www.flickr.com/services/feeds'
 
 const tagRegex = /^\/photos\/tags\/([^/]+)/

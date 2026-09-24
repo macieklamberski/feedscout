@@ -10,6 +10,7 @@ import { bitchuteHandler } from './platform/handlers/bitchute.js'
 import { blueskyEnricher, blueskyHandler } from './platform/handlers/bluesky.js'
 import { deviantartHandler } from './platform/handlers/deviantart.js'
 import { devtoEnricher, devtoHandler } from './platform/handlers/devto.js'
+import { flickrHandler } from './platform/handlers/flickr.js'
 import { giteaHandler } from './platform/handlers/gitea.js'
 import { githubHandler } from './platform/handlers/github.js'
 import { githubGistHandler } from './platform/handlers/githubGist.js'
@@ -107,6 +108,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     steamHandler,
     deviantartHandler,
     devtoHandler,
+    flickrHandler,
   ],
 }
 
