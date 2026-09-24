@@ -20,6 +20,7 @@ import { githubHandler } from './platforms/github.js'
 import { githubGistHandler } from './platforms/githubGist.js'
 import { gitlabEnricher, gitlabHandler } from './platforms/gitlab.js'
 import { habrHandler } from './platforms/habr.js'
+import { hatenaBookmarkEnricher, hatenaBookmarkHandler } from './platforms/hatenaBookmark.js'
 import { letterboxdEnricher, letterboxdHandler } from './platforms/letterboxd.js'
 import { lobstersHandler } from './platforms/lobsters.js'
 import { mastodonEnricher, mastodonHandler } from './platforms/mastodon.js'
@@ -116,6 +117,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     githubGistHandler,
     gitlabHandler,
     habrHandler,
+    hatenaBookmarkHandler,
     letterboxdHandler,
     lobstersHandler,
     mastodonHandler,
@@ -149,6 +151,7 @@ export const defaultFaviconEnrichers: Array<FaviconEnricher> = [
   dailymotionEnricher,
   devtoEnricher,
   gitlabEnricher,
+  hatenaBookmarkEnricher,
   letterboxdEnricher,
   mastodonEnricher,
   mediumEnricher,
