@@ -384,4 +384,26 @@ describe('discoverUrisFromPlatform', () => {
 
     expect(reported).toEqual(expected)
   })
+
+  it('should report a handler throw to onError with the page URL', async () => {
+    const reported: Array<[unknown, DiscoverErrorContext]> = []
+    const error = new Error('Resolve error')
+    const throwingHandler: PlatformHandler = {
+      match: () => true,
+      resolve: () => {
+        throw error
+      },
+    }
+    const onError: DiscoverOnErrorFn = (error, context) => {
+      reported.push([error, context])
+    }
+    const options = { baseUrl: 'https://example.com/page', handlers: [throwingHandler] }
+    const expected: Array<[unknown, DiscoverErrorContext]> = [
+      [error, { phase: 'platformHandler', url: 'https://example.com/page' }],
+    ]
+
+    await discoverUrisFromPlatform(undefined, undefined, options, undefined, onError)
+
+    expect(reported).toEqual(expected)
+  })
 })

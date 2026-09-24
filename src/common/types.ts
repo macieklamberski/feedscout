@@ -103,6 +103,7 @@ export type DiscoverErrorContext = {
     | 'resolveUrlFn'
     | 'resolveSiteUrlFn'
     | 'extractFn'
+    | 'platformHandler'
     | 'enrichFn'
     | 'onProgress'
     | 'onStep'

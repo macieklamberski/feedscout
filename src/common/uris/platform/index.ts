@@ -36,8 +36,8 @@ export const discoverUrisFromPlatform = async (
       }
 
       break
-    } catch {
-      // Handler error - continue to next.
+    } catch (error) {
+      reportError(onError, error, { phase: 'platformHandler', url: baseUrl })
     }
   }
 

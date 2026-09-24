@@ -1651,7 +1651,7 @@ const uris = await discoverUrisFromPlatform(htmlContent, undefined, {
 // ]
 ```
 
-The arguments are the page content, the response headers, the options, an optional `fetchFn` that is passed on to handlers, and an optional `onError` that receives a throw from `enrichFn`. Pass `undefined` for content or headers you do not have.
+The arguments are the page content, the response headers, the options, an optional `fetchFn` that is passed on to handlers, and an optional `onError` that receives a throw from a handler or from `enrichFn`. Pass `undefined` for content or headers you do not have.
 
 > [!NOTE]
 > The YouTube handler requires HTML content for `@handle`, `/user/`, `/c/`, and video URLs to extract the channel ID. For `/channel/UC...` URLs, no content is needed.
