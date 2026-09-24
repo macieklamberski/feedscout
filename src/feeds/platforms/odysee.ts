@@ -5,7 +5,7 @@ import { composeHint } from '../../common/utils.js'
 // Discoverability: Not discoverable without handler.
 // Handler needed for: all shapes.
 
-const hosts = ['odysee.com', 'www.odysee.com']
+export const hosts = ['odysee.com', 'www.odysee.com']
 const channelRegex = /^\/(@[^/:]+:[a-f0-9]+)/i
 
 export const odyseeHandler: PlatformHandler = {
