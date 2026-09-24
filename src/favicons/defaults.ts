@@ -19,6 +19,7 @@ import { redditHandler } from './platform/handlers/reddit.js'
 import { sourceforgeHandler } from './platform/handlers/sourceforge.js'
 import { steamHandler } from './platform/handlers/steam.js'
 import { tumblrHandler } from './platform/handlers/tumblr.js'
+import type { FaviconEnricher } from './types.js'
 
 export const defaultIconRels = [
   'icon',
@@ -92,3 +93,5 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     devtoHandler,
   ],
 }
+
+export const defaultFaviconEnrichers: Array<FaviconEnricher> = []

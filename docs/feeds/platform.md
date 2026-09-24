@@ -1651,7 +1651,7 @@ const uris = await discoverUrisFromPlatform(htmlContent, undefined, {
 // ]
 ```
 
-The arguments are the page content, the response headers, the options, and an optional `fetchFn` that is passed on to handlers. Pass `undefined` for content or headers you do not have.
+The arguments are the page content, the response headers, the options, an optional `fetchFn` that is passed on to handlers, and an optional `onError` that receives a throw from a handler or from `enrichFn`. Pass `undefined` for content or headers you do not have.
 
 > [!NOTE]
 > The YouTube handler requires HTML content for `@handle`, `/user/`, `/c/`, and video URLs to extract the channel ID. For `/channel/UC...` URLs, no content is needed.
@@ -1672,14 +1672,14 @@ type PlatformHandler = {
     content?: string,
     headers?: Headers,
     fetchFn?: DiscoverFetchFn,
-  ) => Array<DiscoverUriEntry> | Promise<Array<DiscoverUriEntry>>
+  ) => MaybePromise<Array<DiscoverUriEntry | DiscoverRef>>
 }
 ```
 
 | Method | Description |
 |--------|-------------|
 | `match(url, content?, headers?)` | Returns `true` if this handler should process the URL |
-| `resolve(url, content?, headers?, fetchFn?)` | Returns an array of [`DiscoverUriEntry`](/reference/types#discoverurientry) objects for the given page URL |
+| `resolve(url, content?, headers?, fetchFn?)` | Returns an array of [`DiscoverUriEntry`](/reference/types#discoverurientry) objects for the given page URL. A favicon handler can also return a [`DiscoverRef`](/reference/types#discoverref) for an icon that takes an extra request. See [Enriching Platform Icons](/other/favicons#enriching-platform-icons) |
 
 ### Basic Example
 

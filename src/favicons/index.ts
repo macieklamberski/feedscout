@@ -4,7 +4,7 @@ import {
   defaultResolveUrlFn,
 } from '../common/discover/defaults.js'
 import { discover } from '../common/discover/index.js'
-import type { DiscoverInput, DiscoverOptions, DiscoverResult } from '../common/types.js'
+import type { DiscoverInput, DiscoverResult } from '../common/types.js'
 import {
   defaultFeedOptions,
   defaultGuessOptions,
@@ -13,16 +13,18 @@ import {
   defaultPlatformOptions,
 } from './defaults.js'
 import { defaultExtractFn } from './extractors.js'
-import type { FaviconResult } from './types.js'
+import type { DiscoverFaviconsOptions, FaviconResult } from './types.js'
 
 export const discoverFavicons = <TValid extends FaviconResult = FaviconResult>(
   input: DiscoverInput,
-  options: DiscoverOptions<TValid> = {},
+  options: DiscoverFaviconsOptions<TValid> = {},
 ): Promise<Array<DiscoverResult<TValid>>> => {
+  const { enrichFn, ...discoverOptions } = options
+
   return discover<TValid>(
     input,
     {
-      ...options,
+      ...discoverOptions,
       methods: options.methods ?? ['platform', 'feed', 'html', 'headers', 'guess'],
       fetchFn: options.fetchFn ?? defaultFetchFn,
       extractFn: options.extractFn ?? defaultExtractFn,
@@ -30,7 +32,7 @@ export const discoverFavicons = <TValid extends FaviconResult = FaviconResult>(
       resolveSiteUrlFn: options.resolveSiteUrlFn ?? defaultResolveSiteUrlFn,
     },
     {
-      platform: defaultPlatformOptions,
+      platform: { ...defaultPlatformOptions, enrichFn },
       feed: defaultFeedOptions,
       html: defaultHtmlOptions,
       headers: defaultHeadersOptions,

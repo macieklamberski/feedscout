@@ -179,6 +179,43 @@ Valid favicon results carry no extra properties yet:
 type FaviconResult = {}
 ```
 
+### DiscoverRef
+
+A page whose icon takes an extra request to reach, returned by a platform handler:
+
+```typescript
+type DiscoverRef = {
+  platform: string
+  id: string
+  url: string
+}
+```
+
+### DiscoverEnrichFn
+
+Receives every ref from the platform method in one call. It returns one entry per ref, in the same order, with the icon addresses found or `undefined`:
+
+```typescript
+type DiscoverEnrichFn = (
+  refs: Array<DiscoverRef>,
+) => MaybePromise<Array<Array<string> | undefined>>
+```
+
+### FaviconEnricher
+
+Finds the icon for the refs of one platform and returns `undefined` for any other ref. `createEnrichFaviconFn` answers each ref with the first enricher that returns URIs for it:
+
+```typescript
+type FaviconEnricher = (
+  ref: DiscoverRef,
+  context: FaviconEnricherContext,
+) => MaybePromise<Array<string> | undefined>
+
+type FaviconEnricherContext = {
+  fetchFn: FetchFn
+}
+```
+
 ### HubResult
 
 Result from `discoverHubs`:
@@ -289,6 +326,8 @@ type DiscoverErrorContext = {
     | 'resolveUrlFn'
     | 'resolveSiteUrlFn'
     | 'extractFn'
+    | 'platformHandler'
+    | 'enrichFn'
     | 'onProgress'
     | 'onStep'
   url?: string
@@ -300,10 +339,12 @@ type DiscoverErrorContext = {
 - `resolveUrlFn`: The URL resolution function threw. The URL is kept as discovered.
 - `resolveSiteUrlFn`: The site URL resolution function threw. Discovery continues with the original input.
 - `extractFn`: The extractor threw on the input content. The input is not returned as a result, and the methods run.
+- `platformHandler`: A platform handler threw from its `match` or `resolve`. That handler is skipped and the next one is tried. The URL is the page's.
+- `enrichFn`: The enrich function threw, or an enricher inside it did. The platform handler's own URLs are kept and the refs are dropped. The URL is the page's.
 - `onProgress`: The progress callback threw, or returned a promise that rejected. The result it was called for is kept.
 - `onStep`: The step callback threw, or returned a promise that rejected. Discovery continues.
 
-A function you pass in never ends discovery by throwing. The phases above are reported here. A throw from `fetchFn` or `extractFn` on a candidate URL is not: it marks that result as invalid and lands in its `error` field, which you see with `includeInvalid`. A throw inside a platform handler, from its `match` or `resolve`, is not reported either: that handler is skipped silently and the next one is tried. The default `resolveUrlFn` is reported the same way as a custom one, for example when a page links to a malformed absolute URL. `resolveUrlFn` and `resolveSiteUrlFn` are synchronous: one that returns a promise is treated as returning nothing, and a rejection is reported. An error thrown from `onError` itself is ignored, and so is a promise it returns that rejects.
+A function you pass in never ends discovery by throwing. The phases above are reported here. A throw from `fetchFn` or `extractFn` on a candidate URL is not: it marks that result as invalid and lands in its `error` field, which you see with `includeInvalid`. The default `resolveUrlFn` is reported the same way as a custom one, for example when a page links to a malformed absolute URL. `resolveUrlFn` and `resolveSiteUrlFn` are synchronous: one that returns a promise is treated as returning nothing, and a rejection is reported. An error thrown from `onError` itself is ignored, and so is a promise it returns that rejects.
 
 ## Fetch Types
 
@@ -327,7 +368,31 @@ type DiscoverFetchFnResponse = {
   body: string | ReadableStream<Uint8Array>
   url: string
   status: number
-  statusText: string
+  statusText?: string
+}
+```
+
+### FetchFn
+
+The fetch function enrichers use. It also takes a POST with a body. The response can carry more fields than the ones listed:
+
+```typescript
+type FetchFn<TResponse extends FetchFnResponse = FetchFnResponse> = (
+  url: string,
+  options?: FetchFnOptions,
+) => MaybePromise<TResponse>
+
+type FetchFnOptions = {
+  method?: 'GET' | 'HEAD' | 'POST'
+  headers?: Record<string, string>
+  body?: string
+}
+
+type FetchFnResponse = {
+  headers: Headers
+  body: string
+  url: string // Final URL after redirects
+  status: number
 }
 ```
 

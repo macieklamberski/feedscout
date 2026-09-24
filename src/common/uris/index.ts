@@ -1,6 +1,7 @@
 import type {
   DiscoverFetchFn,
   DiscoverMethodsConfigInternal,
+  DiscoverOnErrorFn,
   DiscoverUrisResult,
 } from '../types.js'
 import { discoverUrisFromFeed } from './feed/index.js'
@@ -12,6 +13,7 @@ import { discoverUrisFromPlatform } from './platform/index.js'
 export const discoverUris = async (
   config: DiscoverMethodsConfigInternal,
   fetchFn?: DiscoverFetchFn,
+  onError?: DiscoverOnErrorFn,
 ): Promise<DiscoverUrisResult> => {
   const result: DiscoverUrisResult = {}
 
@@ -21,6 +23,7 @@ export const discoverUris = async (
       config.platform.headers,
       config.platform.options,
       fetchFn,
+      onError,
     )
 
     if (uris.length > 0) {
