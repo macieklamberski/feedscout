@@ -78,6 +78,7 @@ The Platform method extracts avatars and icons directly from known platforms usi
 | Naver Blog | Blog profile picture | Page HTML, and the mobile page through an [enricher](#enriching-platform-icons) for desktop blog pages |
 | Flickr | User buddyicon | Page HTML |
 | SoundCloud | User avatar | Page HTML |
+| Product Hunt | Product logo | Page HTML |
 
 ## Enriching Platform Icons
 
