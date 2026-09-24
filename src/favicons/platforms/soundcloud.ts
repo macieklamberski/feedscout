@@ -1,9 +1,9 @@
 import { isAnyOf, isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
+import { getMetaContent } from '../../common/utils.js'
 import { excludedPaths, hosts } from '../../feeds/platforms/soundcloud.js'
 
-const avatarRegex =
-  /<meta\s+property="og:image"\s+content="(https:\/\/i\d+\.sndcdn\.com\/avatars-[^"]+)"/
+const avatarUrlRegex = /^https:\/\/i\d+\.sndcdn\.com\/avatars-/
 
 export const soundcloudHandler: PlatformHandler = {
   match: (url) => {
@@ -23,9 +23,9 @@ export const soundcloudHandler: PlatformHandler = {
   },
 
   resolve: (_url, content) => {
-    const avatarUrl = content?.match(avatarRegex)?.[1]
+    const avatarUrl = getMetaContent(content ?? '', 'og:image')
 
-    if (!avatarUrl) {
+    if (!avatarUrl || !avatarUrlRegex.test(avatarUrl)) {
       return []
     }
 

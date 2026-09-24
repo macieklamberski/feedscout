@@ -80,6 +80,20 @@ describe('soundcloudHandler', () => {
       )
     })
 
+    it('should return avatar when content comes before property', () => {
+      const value = `
+        <meta
+          content="https://i1.sndcdn.com/avatars-000012345678-abcdef-t500x500.jpg"
+          property="og:image"
+        >
+      `
+      const expected: Array<DiscoverUriEntry> = [
+        { uri: 'https://i1.sndcdn.com/avatars-000012345678-abcdef-t500x500.jpg' },
+      ]
+
+      expect(soundcloudHandler.resolve('https://soundcloud.com/alice', value)).toEqual(expected)
+    })
+
     it('should return empty array when og:image is missing', () => {
       const value = '<head><meta property="og:type" content="music.musician"></head>'
 

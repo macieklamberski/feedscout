@@ -4,6 +4,7 @@ import {
   composeHint,
   decodePathSegment,
   getCookieNames,
+  getMetaContent,
   hasAnyMeta,
   hasMetaContent,
   isOfAllowedMimeType,
@@ -670,15 +671,141 @@ describe('hasMetaContent', () => {
     expect(hasMetaContent('', 'generator', 'Mastodon')).toBe(false)
   })
 
-  it.todo('should escape regex metacharacters in name and value', () => {
-    // hasMetaContent builds a RegExp from the raw name and value, escaping metacharacters first.
-    // Expected: a value like "C++ Blog" or a name like "og:site_name(beta)" matches literally
-    // instead of breaking the pattern.
+  it('should match a name and value with regex metacharacters literally', () => {
+    const value = '<meta name="og:site_name(beta)" content="C++ Blog">'
+
+    expect(hasMetaContent(value, 'og:site_name(beta)', 'C++ Blog')).toBe(true)
   })
 
-  it.todo('should match single-quoted attribute values', () => {
-    // Expected: "<meta name='generator' content='Mastodon v4.2.0'>" with single-quoted attributes
-    // returns true for ('generator', 'Mastodon').
+  it('should match single-quoted attribute values', () => {
+    const value = "<meta name='generator' content='Mastodon v4.2.0'>"
+
+    expect(hasMetaContent(value, 'generator', 'Mastodon')).toBe(true)
+  })
+
+  it('should match unquoted attribute values', () => {
+    const value = '<meta name=generator content=Mastodon>'
+
+    expect(hasMetaContent(value, 'generator', 'Mastodon')).toBe(true)
+  })
+
+  it('should return false when the name is in a data attribute', () => {
+    const value = `
+      <meta
+        data-name="generator"
+        data-content="Mastodon"
+      >
+    `
+
+    expect(hasMetaContent(value, 'generator', 'Mastodon')).toBe(false)
+  })
+
+  it('should return false when the meta tag is in a comment', () => {
+    const value = '<!-- <meta name="generator" content="Mastodon"> -->'
+
+    expect(hasMetaContent(value, 'generator', 'Mastodon')).toBe(false)
+  })
+
+  it('should return false when the meta tag is in a script string', () => {
+    const value = `<script>const tag = '<meta name="generator" content="Mastodon">'</script>`
+
+    expect(hasMetaContent(value, 'generator', 'Mastodon')).toBe(false)
+  })
+})
+
+describe('getMetaContent', () => {
+  it('should return the content of a meta tag by name', () => {
+    const value = '<meta name="generator" content="Mastodon v4.2.0">'
+
+    expect(getMetaContent(value, 'generator')).toBe('Mastodon v4.2.0')
+  })
+
+  it('should return the content of a meta tag by property', () => {
+    const value = '<meta property="og:image" content="https://example.com/avatar.png">'
+
+    expect(getMetaContent(value, 'og:image')).toBe('https://example.com/avatar.png')
+  })
+
+  it('should return the content when content comes before property', () => {
+    const value = '<meta content="https://example.com/avatar.png" property="og:image">'
+
+    expect(getMetaContent(value, 'og:image')).toBe('https://example.com/avatar.png')
+  })
+
+  it('should return the first matching meta tag', () => {
+    const value = `
+      <meta
+        property="og:image"
+        content="https://example.com/first.png"
+      >
+      <meta
+        property="og:image"
+        content="https://example.com/second.png"
+      >
+    `
+
+    expect(getMetaContent(value, 'og:image')).toBe('https://example.com/first.png')
+  })
+
+  it('should keep an apostrophe inside a double-quoted value', () => {
+    const value = `<meta property="og:title" content="Tom's blog">`
+
+    expect(getMetaContent(value, 'og:title')).toBe("Tom's blog")
+  })
+
+  it('should keep a double quote inside a single-quoted value', () => {
+    const value = `<meta property="og:title" content='Say "hi"'>`
+
+    expect(getMetaContent(value, 'og:title')).toBe('Say "hi"')
+  })
+
+  it('should decode entities in the value', () => {
+    const value = '<meta property="og:image" content="https://example.com/a.png?w=1&amp;h=2">'
+
+    expect(getMetaContent(value, 'og:image')).toBe('https://example.com/a.png?w=1&h=2')
+  })
+
+  it('should ignore a data-content attribute after content', () => {
+    const value = `
+      <meta
+        name="generator"
+        content="Drupal"
+        data-content="other"
+      >
+    `
+
+    expect(getMetaContent(value, 'generator')).toBe('Drupal')
+  })
+
+  it('should return the content when attributes have whitespace around equals signs', () => {
+    const value = '<meta name = "generator" content = "Drupal">'
+
+    expect(getMetaContent(value, 'generator')).toBe('Drupal')
+  })
+
+  it('should return an empty string for an empty content attribute', () => {
+    expect(getMetaContent('<meta name="generator" content="">', 'generator')).toBe('')
+  })
+
+  it('should return undefined when no meta tag matches', () => {
+    const value = '<meta name="description" content="A blog">'
+
+    expect(getMetaContent(value, 'generator')).toBeUndefined()
+  })
+
+  it('should return undefined when the meta tag is in a comment', () => {
+    const value = '<!-- <meta name="generator" content="Drupal"> -->'
+
+    expect(getMetaContent(value, 'generator')).toBeUndefined()
+  })
+
+  it('should read each page when called with different pages in turn', () => {
+    const first = '<meta name="generator" content="Drupal">'
+    const second = '<meta name="generator" content="Joomla">'
+
+    expect(getMetaContent(first, 'generator')).toBe('Drupal')
+    expect(getMetaContent(second, 'generator')).toBe('Joomla')
+    expect(getMetaContent(first, 'generator')).toBe('Drupal')
   })
 })
 
