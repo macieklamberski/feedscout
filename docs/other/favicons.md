@@ -54,40 +54,40 @@ The Platform method extracts avatars and icons directly from known platforms usi
 
 | Platform | What It Extracts | Method |
 |----------|-----------------|--------|
+| Ameblo | Blogger profile image | Page HTML |
+| Are.na | User avatar, or the channel owner's avatar | Page HTML, or the public API through an [enricher](#enriching-platform-icons) |
+| Behance | Profile avatar | Page HTML |
+| BitChute | Channel image | Page HTML |
+| Bluesky | Profile avatar | Public API, through an [enricher](#enriching-platform-icons) |
+| BookWyrm | User avatar | Page HTML, or the user's actor JSON through an [enricher](#enriching-platform-icons) for shelf pages |
+| Dev.to | Profile image | Public API, through an [enricher](#enriching-platform-icons) |
+| DeviantArt | User avatar | URL pattern |
+| Flickr | User buddyicon | Page HTML |
+| Gitea (Codeberg, gitea.com, self-hosted) | User avatar | URL pattern |
 | GitHub | User avatar | URL pattern |
 | GitHub Gist | User avatar | URL pattern |
 | GitLab | User or group avatar | Public API, through an [enricher](#enriching-platform-icons) |
-| Mastodon | Profile avatar | Public API, through an [enricher](#enriching-platform-icons) |
-| Bluesky | Profile avatar | Public API, through an [enricher](#enriching-platform-icons) |
-| Reddit | Subreddit icon or user avatar | Public API, through an [enricher](#enriching-platform-icons) |
-| Tumblr | Blog avatar | URL pattern |
-| Gitea (Codeberg, gitea.com, self-hosted) | User avatar | URL pattern |
-| Lobsters | User avatar | URL pattern |
-| SourceForge | Project icon | URL pattern |
-| DeviantArt | User avatar | URL pattern |
-| Dev.to | Profile image | Public API, through an [enricher](#enriching-platform-icons) |
-| Steam | Game icon | Page HTML |
-| Letterboxd | Member avatar from member subpages, such as films and lists | Page HTML |
-| Micro.blog | User avatar | URL pattern |
-| BitChute | Channel image | Page HTML |
-| YouTube | Channel avatar | Page HTML |
-| Behance | Profile avatar | Page HTML |
-| Zenn | Profile, publication or topic icon | Page HTML |
-| Pinterest | Profile avatar | Page HTML, or the profile page through an [enricher](#enriching-platform-icons) for saved pages |
-| Nebula | Channel avatar | Page HTML, or the content API through an [enricher](#enriching-platform-icons) |
-| Naver Blog | Blog profile picture | Page HTML, and the mobile page through an [enricher](#enriching-platform-icons) for desktop blog pages |
-| Flickr | User buddyicon | Page HTML |
-| SoundCloud | User avatar | Page HTML |
-| Product Hunt | Product logo | Page HTML |
-| note | User avatar, or magazine owner avatar | Page HTML, Public API through an [enricher](#enriching-platform-icons) |
-| Togetter | User avatar | Page HTML |
-| Are.na | User avatar, or the channel owner's avatar | Page HTML, or the public API through an [enricher](#enriching-platform-icons) |
 | Habr | Hub icon or user avatar | Page HTML |
+| Letterboxd | Member avatar from member subpages, such as films and lists | Page HTML |
+| Lobsters | User avatar | URL pattern |
+| Mastodon | Profile avatar | Public API, through an [enricher](#enriching-platform-icons) |
+| Micro.blog | User avatar | URL pattern |
+| Naver Blog | Blog profile picture | Page HTML, and the mobile page through an [enricher](#enriching-platform-icons) for desktop blog pages |
+| Nebula | Channel avatar | Page HTML, or the content API through an [enricher](#enriching-platform-icons) |
+| note | User avatar, or magazine owner avatar | Page HTML, Public API through an [enricher](#enriching-platform-icons) |
 | PeerTube (self-hosted) | Channel or account avatar | Page HTML, or the public API through an [enricher](#enriching-platform-icons) |
-| BookWyrm | User avatar | Page HTML, or the user's actor JSON through an [enricher](#enriching-platform-icons) for shelf pages |
-| Ameblo | Blogger profile image | Page HTML |
+| Pinterest | Profile avatar | Page HTML, or the profile page through an [enricher](#enriching-platform-icons) for saved pages |
 | Pixelfed (self-hosted) | Profile avatar | Page HTML, or the public API through an [enricher](#enriching-platform-icons) when the page has no avatar |
+| Product Hunt | Product logo | Page HTML |
+| Reddit | Subreddit icon or user avatar | Public API, through an [enricher](#enriching-platform-icons) |
+| SoundCloud | User avatar | Page HTML |
+| SourceForge | Project icon | URL pattern |
 | SourceHut | User avatar, or the owner's avatar on repository pages | Page HTML, the owner's page through an [enricher](#enriching-platform-icons) |
+| Steam | Game icon | Page HTML |
+| Togetter | User avatar | Page HTML |
+| Tumblr | Blog avatar | URL pattern |
+| YouTube | Channel avatar | Page HTML |
+| Zenn | Profile, publication or topic icon | Page HTML |
 
 ## Enriching Platform Icons
 
