@@ -1,13 +1,11 @@
 import { isHostOf, isSubdomainOf } from 'trousse'
-import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, decodePathSegment } from '../../common/utils.js'
+import { getJournalFeeds } from './livejournal.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic partly covers blog, tag, tildePath, userPath.
 
 const usersPathRegex = /^\/(?:users\/|~)([^/]+)/
-const tagRegex = /^\/tag\/([^/]+)/
 
 export const dreamwidthHandler: PlatformHandler = {
   match: (url) => {
@@ -26,7 +24,6 @@ export const dreamwidthHandler: PlatformHandler = {
 
   resolve: (url) => {
     const { origin, pathname } = new URL(url)
-    const uris: Array<DiscoverUriEntry> = []
 
     let userOrigin = origin
 
@@ -38,33 +35,10 @@ export const dreamwidthHandler: PlatformHandler = {
       if (userMatch?.[1]) {
         userOrigin = `https://${userMatch[1].replaceAll('_', '-')}.dreamwidth.org`
       } else {
-        return uris
+        return []
       }
     }
 
-    // Tag-filtered feeds for /tag/{tag}.
-    const tagMatch = pathname.match(tagRegex)
-
-    if (tagMatch?.[1]) {
-      const tag = encodeURIComponent(decodePathSegment(tagMatch[1]))
-
-      uris.push({
-        uri: `${userOrigin}/data/rss?tag=${tag}`,
-        hint: composeHint('dreamwidth:posts-tag', 'rss'),
-      })
-      uris.push({
-        uri: `${userOrigin}/data/atom?tag=${tag}`,
-        hint: composeHint('dreamwidth:posts-tag', 'atom'),
-      })
-    }
-
-    uris.push({ uri: `${userOrigin}/data/rss`, hint: composeHint('dreamwidth:posts', 'rss') })
-    uris.push({ uri: `${userOrigin}/data/atom`, hint: composeHint('dreamwidth:posts', 'atom') })
-    uris.push({
-      uri: `${userOrigin}/data/userpics`,
-      hint: composeHint('dreamwidth:userpics', 'atom'),
-    })
-
-    return uris
+    return getJournalFeeds(userOrigin, pathname, 'dreamwidth')
   },
 }
