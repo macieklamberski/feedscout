@@ -43,7 +43,7 @@ Favicons use the same discovery pipeline as feeds. See the [Feeds](/feeds) secti
 | Method | What It Looks For |
 |--------|-------------------|
 | Platform | Avatars/icons from known platforms (GitHub, Mastodon, Bluesky, etc.) |
-| Feed | `<icon>` in Atom feeds, `favicon`/`icon` in JSON Feeds |
+| Feed | `<icon>` in Atom feeds, `itunes:image` podcast artwork in RSS and Atom feeds, `favicon`/`icon` in JSON Feeds |
 | HTML | `<link>` tags with `rel="icon"`, `rel="shortcut"`, `rel="alternate icon"`, `rel="apple-touch-icon"` |
 | Headers | `Link` headers with icon-related `rel` values |
 | Guess | Common paths like `/favicon.ico`, `/apple-touch-icon.png` |
@@ -104,7 +104,7 @@ const favicons = await discoverFavicons(url, {
 
 ## Extracting Icons from Feeds
 
-When given a feed URL, favicon discovery can extract icons directly from the feed content. Atom feeds provide an `<icon>` element, and JSON Feeds include `favicon` and `icon` fields:
+When given a feed URL, favicon discovery can extract icons directly from the feed content. Atom feeds provide an `<icon>` element, podcast feeds in RSS or Atom provide their square `itunes:image` artwork, and JSON Feeds include `favicon` and `icon` fields. The RSS `<image>` element is not used, since it is a channel logo that is usually wide:
 
 ```typescript
 // Pass a feed URL to extract its icon
