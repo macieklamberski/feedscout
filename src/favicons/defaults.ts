@@ -26,6 +26,7 @@ import { microblogHandler } from './platforms/microblog.js'
 import { naverBlogEnricher, naverBlogHandler } from './platforms/naverBlog.js'
 import { nebulaEnricher, nebulaHandler } from './platforms/nebula.js'
 import { noteEnricher, noteHandler } from './platforms/note.js'
+import { observableEnricher, observableHandler } from './platforms/observable.js'
 import { peertubeEnricher, peertubeHandler } from './platforms/peertube.js'
 import { pinterestEnricher, pinterestHandler } from './platforms/pinterest.js'
 import { pixelfedEnricher, pixelfedHandler } from './platforms/pixelfed.js'
@@ -118,6 +119,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     naverBlogHandler,
     nebulaHandler,
     noteHandler,
+    observableHandler,
     peertubeHandler,
     pinterestHandler,
     pixelfedHandler,
@@ -144,6 +146,7 @@ export const defaultFaviconEnrichers: Array<FaviconEnricher> = [
   naverBlogEnricher,
   nebulaEnricher,
   noteEnricher,
+  observableEnricher,
   peertubeEnricher,
   pinterestEnricher,
   pixelfedEnricher,
