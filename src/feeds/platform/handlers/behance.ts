@@ -4,9 +4,9 @@ import { composeHint } from '../../../common/utils.js'
 
 // Discoverability: Unmeasured, bot wall.
 
-const hosts = ['behance.net', 'www.behance.net']
-const userRegex = /^\/([a-zA-Z0-9_-]+)(?:\/(appreciated))?\/?$/
-const excludedPaths = [
+export const hosts = ['behance.net', 'www.behance.net']
+export const userRegex = /^\/([a-zA-Z0-9_-]+)(?:\/(appreciated))?\/?$/
+export const excludedPaths = [
   'search',
   'galleries',
   'curated',

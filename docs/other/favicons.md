@@ -72,6 +72,8 @@ The Platform method extracts avatars and icons directly from known platforms usi
 | BitChute | Channel image | Page HTML |
 | YouTube | Channel avatar | Page HTML |
 | YouTube | Channel avatar | Page HTML |
+| Behance | Profile avatar | Page HTML |
+| Behance | Profile avatar | Page HTML |
 
 ## Enriching Platform Icons
 
