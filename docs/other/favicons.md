@@ -63,6 +63,7 @@ The Platform method extracts avatars and icons directly from known platforms usi
 | Dailymotion | User avatar, or the playlist owner's avatar | Public API, through an [enricher](#enriching-platform-icons) |
 | Dev.to | Profile image | Public API, through an [enricher](#enriching-platform-icons) |
 | DeviantArt | User avatar | URL pattern |
+| Exblog | Blog logo | Page HTML, or the blog's top page through an [enricher](#enriching-platform-icons) |
 | Flickr | User buddyicon | Page HTML |
 | Gitea (Codeberg, gitea.com, self-hosted) | User avatar | URL pattern |
 | GitHub | User avatar | URL pattern |

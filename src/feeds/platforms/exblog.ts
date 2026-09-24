@@ -7,9 +7,11 @@ import { composeHint } from '../../common/utils.js'
 
 const categoryRegex = /^\/i(\d+)/
 
+export const domains = ['exblog.jp']
+
 export const exblogHandler: PlatformHandler = {
   match: (url) => {
-    return isSubdomainOf(url, 'exblog.jp')
+    return isSubdomainOf(url, domains)
   },
 
   resolve: (url) => {

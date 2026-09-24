@@ -14,6 +14,7 @@ import { bookwyrmEnricher, bookwyrmHandler } from './platforms/bookwyrm.js'
 import { dailymotionEnricher, dailymotionHandler } from './platforms/dailymotion.js'
 import { deviantartHandler } from './platforms/deviantart.js'
 import { devtoEnricher, devtoHandler } from './platforms/devto.js'
+import { exblogEnricher, exblogHandler } from './platforms/exblog.js'
 import { flickrHandler } from './platforms/flickr.js'
 import { giteaHandler } from './platforms/gitea.js'
 import { githubHandler } from './platforms/github.js'
@@ -112,6 +113,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     dailymotionHandler,
     deviantartHandler,
     devtoHandler,
+    exblogHandler,
     flickrHandler,
     giteaHandler,
     githubHandler,
@@ -152,6 +154,7 @@ export const defaultFaviconEnrichers: Array<FaviconEnricher> = [
   bookwyrmEnricher,
   dailymotionEnricher,
   devtoEnricher,
+  exblogEnricher,
   gitlabEnricher,
   hatenaBookmarkEnricher,
   letterboxdEnricher,
