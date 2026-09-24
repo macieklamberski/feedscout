@@ -81,6 +81,10 @@ describe('nebulaHandler', () => {
       expect(nebulaHandler.match('https://nebula.tv/explore')).toBe(false)
     })
 
+    it('should not match explore pages in any case', () => {
+      expect(nebulaHandler.match('https://nebula.tv/Explore')).toBe(false)
+    })
+
     it('should not match excluded paths', () => {
       expect(nebulaHandler.match('https://nebula.tv/login')).toBe(false)
       expect(nebulaHandler.match('https://nebula.tv/settings')).toBe(false)

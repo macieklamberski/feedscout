@@ -1,4 +1,4 @@
-import { isSubdomainOf } from 'trousse'
+import { isAnyOf, isSubdomainOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
@@ -9,7 +9,7 @@ const domainSuffixRegex = /\.podigee\.io$/i
 // Reserved Podigee subdomains that aren't user shows. Without this guard the handler
 // emits 404-bound URLs (e.g. https://www.podigee.io/feed/mp3 redirects to a 404 on
 // podigee.com).
-const reservedSlugs = new Set(['www', 'app', 'help', 'hilfe', 'blog', 'status', 'player', 'cdn'])
+const reservedSlugs = ['www', 'app', 'help', 'hilfe', 'blog', 'status', 'player', 'cdn']
 
 export const podigeeHandler: PlatformHandler = {
   match: (url) => {
@@ -19,7 +19,7 @@ export const podigeeHandler: PlatformHandler = {
 
     const slug = new URL(url).hostname.toLowerCase().replace(domainSuffixRegex, '')
 
-    return !reservedSlugs.has(slug)
+    return !isAnyOf(slug, reservedSlugs)
   },
 
   resolve: (url) => {
