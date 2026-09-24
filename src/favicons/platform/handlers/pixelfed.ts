@@ -6,6 +6,10 @@ import {
   isPixelfedHtml,
   profileRegex,
 } from '../../../feeds/platform/handlers/pixelfed.js'
+import type { FaviconEnricher } from '../../types.js'
+import { parseBodyJson } from '../../utils.js'
+
+const platform = 'pixelfed'
 
 // An account without an uploaded avatar carries /storage/avatars/default.jpg or default.png.
 const defaultAvatarRegex = /\/avatars\/default\.[a-z]+(?:\?|$)/
@@ -40,16 +44,36 @@ export const pixelfedHandler: PlatformHandler = {
   },
 
   resolve: (url, content) => {
-    if (!content || !getUsername(url)) {
+    const username = getUsername(url)
+
+    if (!username) {
       return []
     }
 
-    const ogImage = getMetaContent(content, 'og:image')
+    const ogImage = getMetaContent(content ?? '', 'og:image')
 
-    if (!isAvatar(ogImage)) {
-      return []
+    if (isAvatar(ogImage)) {
+      return [{ uri: ogImage }]
     }
 
-    return [{ uri: ogImage }]
+    return [{ platform, id: username, url }]
   },
+}
+
+export const pixelfedEnricher: FaviconEnricher = async (ref, context) => {
+  if (ref.platform !== platform) {
+    return
+  }
+
+  try {
+    const { origin } = new URL(ref.url)
+    const response = await context.fetchFn(`${origin}/api/v1/accounts/lookup?acct=${ref.id}`)
+    const data = parseBodyJson(response.body)
+
+    if (isAvatar(data.avatar)) {
+      return [data.avatar]
+    }
+  } catch {}
+
+  return []
 }

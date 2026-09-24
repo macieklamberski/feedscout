@@ -28,7 +28,7 @@ import { nebulaEnricher, nebulaHandler } from './platform/handlers/nebula.js'
 import { noteEnricher, noteHandler } from './platform/handlers/note.js'
 import { peertubeEnricher, peertubeHandler } from './platform/handlers/peertube.js'
 import { pinterestEnricher, pinterestHandler } from './platform/handlers/pinterest.js'
-import { pixelfedHandler } from './platform/handlers/pixelfed.js'
+import { pixelfedEnricher, pixelfedHandler } from './platform/handlers/pixelfed.js'
 import { producthuntHandler } from './platform/handlers/producthunt.js'
 import { redditEnricher, redditHandler } from './platform/handlers/reddit.js'
 import { soundcloudHandler } from './platform/handlers/soundcloud.js'
@@ -137,6 +137,7 @@ export const defaultFaviconEnrichers: Array<FaviconEnricher> = [
   mastodonEnricher,
   pinterestEnricher,
   noteEnricher,
+  pixelfedEnricher,
   blueskyEnricher,
   bookwyrmEnricher,
   redditEnricher,
