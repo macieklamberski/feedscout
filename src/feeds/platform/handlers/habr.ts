@@ -5,10 +5,10 @@ import { composeHint } from '../../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
-const hosts = ['habr.com', 'www.habr.com']
+export const hosts = ['habr.com', 'www.habr.com']
 const languages = ['ru', 'en']
-const hubRegex = /\/hubs?\/([^/]+)/
-const userRegex = /\/users\/([^/]+)/
+export const hubRegex = /\/hubs?\/([^/]+)/
+export const userRegex = /\/users\/([^/]+)/
 const companyRegex = /\/compan(?:y|ies)\/([^/]+)/
 
 const getLanguage = (pathname: string): string => {
