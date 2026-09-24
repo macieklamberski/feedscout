@@ -23,6 +23,7 @@ import { naverBlogEnricher, naverBlogHandler } from './platform/handlers/naverBl
 import { nebulaEnricher, nebulaHandler } from './platform/handlers/nebula.js'
 import { pinterestEnricher, pinterestHandler } from './platform/handlers/pinterest.js'
 import { redditEnricher, redditHandler } from './platform/handlers/reddit.js'
+import { soundcloudHandler } from './platform/handlers/soundcloud.js'
 import { sourceforgeHandler } from './platform/handlers/sourceforge.js'
 import { steamHandler } from './platform/handlers/steam.js'
 import { tumblrHandler } from './platform/handlers/tumblr.js'
@@ -100,6 +101,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     naverBlogHandler,
     blueskyHandler,
     redditHandler,
+    soundcloudHandler,
     tumblrHandler,
     youtubeHandler,
     zennHandler,
