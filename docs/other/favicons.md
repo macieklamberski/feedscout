@@ -69,7 +69,7 @@ The Platform method extracts avatars and icons directly from known platforms usi
 | GitHub Gist | User avatar | URL pattern |
 | GitLab | User or group avatar | Public API, through an [enricher](#enriching-platform-icons) |
 | Habr | Hub icon or user avatar | Page HTML |
-| Letterboxd | Member avatar from member subpages, such as films and lists | Page HTML |
+| Letterboxd | Member avatar | Page HTML, or the member's films page through an [enricher](#enriching-platform-icons) |
 | Lobsters | User avatar | URL pattern |
 | Mastodon | Profile avatar | Public API, through an [enricher](#enriching-platform-icons) |
 | Micro.blog | User avatar | URL pattern |
