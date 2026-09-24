@@ -1,3 +1,4 @@
+import { isAnyOf } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, hasMetaContent } from '../../common/utils.js'
@@ -12,7 +13,7 @@ const excludedPaths = ['read', 'about', 'login', 'signup', 'me', 'api', 'pad', '
 const getBlogName = (url: string): string | undefined => {
   const [first] = new URL(url).pathname.split('/').filter(Boolean)
 
-  if (!first || excludedPaths.includes(first.toLowerCase())) {
+  if (!first || isAnyOf(first, excludedPaths)) {
     return
   }
 

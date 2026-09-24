@@ -1,4 +1,4 @@
-import { isSubdomainOf } from 'trousse'
+import { isAnyOf, isSubdomainOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
@@ -10,16 +10,7 @@ const feedSlugRegex = /https:\/\/feeds\.transistor\.fm\/([\w-]+)/
 
 // Reserved Transistor subdomains that aren't user shows. Without this guard the
 // handler emits feeds.transistor.fm/{www|share|support|...} URLs that 404.
-const reservedSlugs = new Set([
-  'www',
-  'feeds',
-  'share',
-  'support',
-  'help',
-  'developers',
-  'api',
-  'cdn',
-])
+const reservedSlugs = ['www', 'feeds', 'share', 'support', 'help', 'developers', 'api', 'cdn']
 
 export const transistorHandler: PlatformHandler = {
   match: (url) => {
@@ -29,7 +20,7 @@ export const transistorHandler: PlatformHandler = {
 
     const slug = new URL(url).hostname.toLowerCase().replace(domainSuffixRegex, '')
 
-    return !reservedSlugs.has(slug)
+    return !isAnyOf(slug, reservedSlugs)
   },
 
   resolve: (url, content) => {

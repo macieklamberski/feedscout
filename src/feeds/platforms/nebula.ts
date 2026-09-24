@@ -22,7 +22,7 @@ export const excludedPaths = [
 
 // /explore is the canonical landing page (Nebula 301s root and /videos to it).
 // Treated as the global feed surface, not a creator slug.
-export const globalPaths = new Set(['videos', 'explore'])
+export const globalPaths = ['videos', 'explore']
 
 export const nebulaHandler: PlatformHandler = {
   match: (url) => {
@@ -34,7 +34,7 @@ export const nebulaHandler: PlatformHandler = {
     const pathSegments = pathname.split('/').filter(Boolean)
 
     // Root, /videos, or /explore[/{tab}] — global feed (optionally filtered by category).
-    if (pathSegments.length === 0 || globalPaths.has(pathSegments[0].toLowerCase())) {
+    if (pathSegments.length === 0 || isAnyOf(pathSegments[0], globalPaths)) {
       const rawCategory = searchParams.get('category')
       const category = rawCategory ? rawCategory.toLowerCase() : null
       const uris: Array<DiscoverUriEntry> = []

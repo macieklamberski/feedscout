@@ -1,4 +1,4 @@
-import { getPathSegments, parseUrl } from 'trousse'
+import { getPathSegments, isAnyOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
@@ -14,7 +14,7 @@ export const isSquarespaceHeaders = (headers: Headers): boolean => {
 const getCollection = (url: string): string | undefined => {
   const [first] = getPathSegments(url)
 
-  if (!first || excludedPaths.includes(first.toLowerCase())) {
+  if (!first || isAnyOf(first, excludedPaths)) {
     return
   }
 

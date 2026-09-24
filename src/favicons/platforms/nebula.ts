@@ -17,7 +17,7 @@ const getChannelSlug = (url: string): string | undefined => {
 
   const slug = parsedUrl.pathname.split('/').find(Boolean)
 
-  if (!slug || globalPaths.has(slug.toLowerCase()) || isAnyOf(slug, excludedPaths)) {
+  if (!slug || isAnyOf(slug, globalPaths) || isAnyOf(slug, excludedPaths)) {
     return
   }
 

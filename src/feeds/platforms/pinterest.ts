@@ -48,17 +48,10 @@ export const pinterestHandler: PlatformHandler = {
 
     // Board page: /{user}/{board}. Reserved sub-routes (pins, _saved, etc.) are
     // not boards; fall through to the user feed.
-    const reservedBoardSlugs = new Set([
-      'pins',
-      'boards',
-      '_saved',
-      '_created',
-      'followers',
-      'following',
-    ])
+    const reservedBoardSlugs = ['pins', 'boards', '_saved', '_created', 'followers', 'following']
     const board = pathSegments[1]
 
-    if (board && !reservedBoardSlugs.has(board.toLowerCase())) {
+    if (board && !isAnyOf(board, reservedBoardSlugs)) {
       return [
         {
           uri: `https://www.pinterest.com/${username}/${board}.rss`,
