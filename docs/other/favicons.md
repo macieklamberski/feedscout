@@ -72,6 +72,7 @@ The Platform method extracts avatars and icons directly from known platforms usi
 | Letterboxd | Member avatar | Page HTML, or the member's films page through an [enricher](#enriching-platform-icons) |
 | Lobsters | User avatar | URL pattern |
 | Mastodon | Profile avatar | Public API, through an [enricher](#enriching-platform-icons) |
+| Medium | Profile avatar or publication icon | Public feed, through an [enricher](#enriching-platform-icons) |
 | Micro.blog | User avatar | URL pattern |
 | Naver Blog | Blog profile picture | Page HTML, and the mobile page through an [enricher](#enriching-platform-icons) for desktop blog pages |
 | Nebula | Channel avatar | Page HTML, or the content API through an [enricher](#enriching-platform-icons) |

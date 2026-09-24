@@ -6,14 +6,14 @@ import { composeHint } from '../../common/utils.js'
 // Generic covers customDomain, profile, publication, publicationTag (guess, html).
 // Handler needed for: tag.
 
-const userRegex = /^\/@([^/]+)/
-const tagRegex = /^\/tag\/([^/]+)/
+export const userRegex = /^\/@([^/]+)/
+export const tagRegex = /^\/tag\/([^/]+)/
 const publicationTagRegex = /^\/([^/@][^/]+)\/tagged\/([^/]+)/
-const publicationRegex = /^\/([^/@][^/]+)/
+export const publicationRegex = /^\/([^/@][^/]+)/
 const subdomainTagRegex = /^\/tagged\/([^/]+)/
 
-const hosts = ['medium.com', 'www.medium.com']
-const excludedPaths = ['search', 'me', 'new-story', 'plans', 'membership']
+export const hosts = ['medium.com', 'www.medium.com']
+export const excludedPaths = ['search', 'me', 'new-story', 'plans', 'membership']
 
 export const mediumHandler: PlatformHandler = {
   match: (url) => {
