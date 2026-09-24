@@ -1,6 +1,18 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverUriEntry } from '../../../common/types.js'
-import { arenaHandler } from './arena.js'
+import type { DiscoverRef, DiscoverUriEntry, FetchFn } from '../../../common/types.js'
+import type { FaviconEnricherContext } from '../../types.js'
+import { arenaEnricher, arenaHandler } from './arena.js'
+
+const createContext = (responses: Record<string, string>): FaviconEnricherContext => {
+  const fetchFn: FetchFn = async (url) => ({
+    headers: new Headers(),
+    body: responses[url] ?? '',
+    url,
+    status: url in responses ? 200 : 404,
+  })
+
+  return { fetchFn }
+}
 
 const profileHtml = `
   <html>
@@ -31,6 +43,28 @@ const placeholderProfileHtml = `
   </html>
 `
 
+const channelRef: DiscoverRef = {
+  platform: 'arena',
+  id: 'meg-miller/good-sign-offs',
+  url: 'https://www.are.na/meg-miller/good-sign-offs',
+}
+
+const channelApiUrl = 'https://api.are.na/v2/channels/good-sign-offs?per=1'
+
+const channelJson = JSON.stringify({
+  id: 207511,
+  slug: 'good-sign-offs',
+  user: {
+    slug: 'meg-miller',
+    avatar_image: {
+      thumb:
+        'https://static.avatars.are.na/4094/small_f3db7f44de1bb70e00b733c71b6ac80e.jpg?1496713662',
+      display:
+        'https://static.avatars.are.na/4094/medium_f3db7f44de1bb70e00b733c71b6ac80e.jpg?1496713662',
+    },
+  },
+})
+
 describe('arenaHandler', () => {
   describe('match', () => {
     it('should match profile URLs', () => {
@@ -56,8 +90,14 @@ describe('arenaHandler', () => {
       expect(arenaHandler.match('https://www.are.na/settings')).toBe(false)
     })
 
-    it('should not match channel URLs', () => {
-      expect(arenaHandler.match('https://www.are.na/meg-miller/good-sign-offs')).toBe(false)
+    it('should match channel URLs', () => {
+      expect(arenaHandler.match('https://www.are.na/meg-miller/good-sign-offs')).toBe(true)
+    })
+
+    it('should not match paths deeper than a channel', () => {
+      expect(arenaHandler.match('https://www.are.na/meg-miller/good-sign-offs/feed/rss')).toBe(
+        false,
+      )
     })
 
     it('should not match non-Are.na URLs', () => {
@@ -110,13 +150,14 @@ describe('arenaHandler', () => {
       })
     })
 
-    it('should return empty array for channel pages', async () => {
+    it('should return a ref for channel pages', async () => {
       const result = await arenaHandler.resolve(
         'https://www.are.na/meg-miller/good-sign-offs',
         profileHtml,
       )
+      const expected: Array<DiscoverRef> = [channelRef]
 
-      expect(result).toEqual([])
+      expect(result).toEqual(expected)
     })
 
     it('should return empty array for editorial pages', async () => {
@@ -124,5 +165,87 @@ describe('arenaHandler', () => {
 
       expect(result).toEqual([])
     })
+  })
+})
+
+describe('arenaEnricher', () => {
+  it('should return the channel owner avatar in the large size', async () => {
+    const context = createContext({ [channelApiUrl]: channelJson })
+    const expected = [
+      'https://static.avatars.are.na/4094/large_f3db7f44de1bb70e00b733c71b6ac80e.jpg?1496713662',
+    ]
+
+    expect(await arenaEnricher(channelRef, context)).toEqual(expected)
+  })
+
+  it('should return undefined for a ref of another platform', async () => {
+    const ref: DiscoverRef = {
+      platform: 'mastodon',
+      id: 'user',
+      url: 'https://example.com/@user',
+    }
+
+    expect(await arenaEnricher(ref, createContext({}))).toBeUndefined()
+  })
+
+  it('should return empty array when the channel belongs to another user', async () => {
+    const context = createContext({ [channelApiUrl]: channelJson })
+    const ref: DiscoverRef = {
+      platform: 'arena',
+      id: 'charles-broskoski/good-sign-offs',
+      url: 'https://www.are.na/charles-broskoski/good-sign-offs',
+    }
+
+    expect(await arenaEnricher(ref, context)).toEqual([])
+  })
+
+  it('should return empty array when the owner has no avatar', async () => {
+    const json = JSON.stringify({
+      user: {
+        slug: 'meg-miller',
+        avatar_image: {
+          thumb: '',
+          display: '',
+        },
+      },
+    })
+    const context = createContext({ [channelApiUrl]: json })
+
+    expect(await arenaEnricher(channelRef, context)).toEqual([])
+  })
+
+  it('should return empty array when the avatar is not on the avatars host', async () => {
+    const json = JSON.stringify({
+      user: {
+        slug: 'meg-miller',
+        avatar_image: {
+          display: 'https://example.com/medium_avatar.jpg',
+        },
+      },
+    })
+    const context = createContext({ [channelApiUrl]: json })
+
+    expect(await arenaEnricher(channelRef, context)).toEqual([])
+  })
+
+  it('should return empty array when avatar_image is missing', async () => {
+    const json = JSON.stringify({ user: { slug: 'meg-miller' } })
+    const context = createContext({ [channelApiUrl]: json })
+
+    expect(await arenaEnricher(channelRef, context)).toEqual([])
+  })
+
+  it('should return empty array when the API returns invalid JSON', async () => {
+    const context = createContext({ [channelApiUrl]: 'not-json' })
+
+    expect(await arenaEnricher(channelRef, context)).toEqual([])
+  })
+
+  it('should return empty array when fetch throws', async () => {
+    const fetchFn: FetchFn = () => {
+      throw new Error('Network error')
+    }
+
+    expect(await arenaEnricher(channelRef, { fetchFn })).toEqual([])
   })
 })

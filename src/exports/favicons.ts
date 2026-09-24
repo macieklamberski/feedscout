@@ -1,6 +1,7 @@
 export * from '../favicons/defaults.js'
 export * from '../favicons/enrich.js'
 export * from '../favicons/extractors.js'
+export { arenaEnricher } from '../favicons/platform/handlers/arena.js'
 export { blueskyEnricher } from '../favicons/platform/handlers/bluesky.js'
 export { devtoEnricher } from '../favicons/platform/handlers/devto.js'
 export { gitlabEnricher } from '../favicons/platform/handlers/gitlab.js'
