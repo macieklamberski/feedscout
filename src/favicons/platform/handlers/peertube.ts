@@ -1,4 +1,4 @@
-import { parseUrl } from 'trousse'
+import { isNonEmptyString, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { getMetaContent } from '../../../common/utils.js'
 import {
@@ -6,11 +6,35 @@ import {
   channelPathRegex,
   isPeertubeHeaders,
 } from '../../../feeds/platform/handlers/peertube.js'
+import type { FaviconEnricher } from '../../types.js'
+import { parseBodyJson } from '../../utils.js'
+
+type Avatar = {
+  width?: number
+  path?: string
+}
+
+const platform = 'peertube'
 
 const avatarPathPrefix = '/lazy-static/avatars/'
 
-const isProfilePath = (pathname: string): boolean => {
-  return channelPathRegex.test(pathname) || accountPathRegex.test(pathname)
+const apiPaths: Record<string, string> = {
+  c: 'video-channels',
+  a: 'accounts',
+}
+
+const getProfileId = (pathname: string): string | undefined => {
+  const channel = pathname.match(channelPathRegex)?.[1]
+
+  if (channel) {
+    return `c/${channel}`
+  }
+
+  const account = pathname.match(accountPathRegex)?.[1]
+
+  if (account) {
+    return `a/${account}`
+  }
 }
 
 export const peertubeHandler: PlatformHandler = {
@@ -21,22 +45,53 @@ export const peertubeHandler: PlatformHandler = {
       return false
     }
 
-    return isProfilePath(parsedUrl.pathname)
+    return Boolean(getProfileId(parsedUrl.pathname))
   },
 
   resolve: (url, content) => {
     const parsedUrl = parseUrl(url)
+    const id = parsedUrl ? getProfileId(parsedUrl.pathname) : undefined
 
-    if (!parsedUrl || !content || !isProfilePath(parsedUrl.pathname)) {
+    if (!id) {
       return []
     }
 
-    const ogImage = getMetaContent(content, 'og:image')
+    const ogImage = content ? getMetaContent(content, 'og:image') : undefined
 
-    if (!ogImage || !parseUrl(ogImage)?.pathname.startsWith(avatarPathPrefix)) {
-      return []
+    if (ogImage && parseUrl(ogImage)?.pathname.startsWith(avatarPathPrefix)) {
+      return [{ uri: ogImage }]
     }
 
-    return [{ uri: ogImage }]
+    return [{ platform, id, url }]
   },
+}
+
+export const peertubeEnricher: FaviconEnricher = async (ref, context) => {
+  if (ref.platform !== platform) {
+    return
+  }
+
+  try {
+    const { origin } = new URL(ref.url)
+    const [kind, name] = ref.id.split('/')
+    const apiPath = apiPaths[kind]
+
+    if (!apiPath || !name) {
+      return []
+    }
+
+    const response = await context.fetchFn(`${origin}/api/v1/${apiPath}/${name}`)
+    const data = parseBodyJson(response.body)
+    const avatars: Array<Avatar> = Array.isArray(data?.avatars) ? data.avatars : []
+
+    const largest = avatars
+      .filter((avatar) => isNonEmptyString(avatar.path))
+      .sort((a, b) => (b.width ?? 0) - (a.width ?? 0))[0]
+
+    if (largest?.path) {
+      return [`${origin}${largest.path}`]
+    }
+  } catch {}
+
+  return []
 }
