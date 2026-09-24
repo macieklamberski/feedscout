@@ -40,6 +40,7 @@ import { sourcehutEnricher, sourcehutHandler } from './platforms/sourcehut.js'
 import { steamEnricher, steamHandler } from './platforms/steam.js'
 import { togetterHandler } from './platforms/togetter.js'
 import { tumblrHandler } from './platforms/tumblr.js'
+import { velogEnricher, velogHandler } from './platforms/velog.js'
 import { youtubeHandler } from './platforms/youtube.js'
 import { zennHandler } from './platforms/zenn.js'
 import type { FaviconEnricher } from './types.js'
@@ -135,6 +136,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     steamHandler,
     togetterHandler,
     tumblrHandler,
+    velogHandler,
     youtubeHandler,
     zennHandler,
   ],
@@ -160,4 +162,5 @@ export const defaultFaviconEnrichers: Array<FaviconEnricher> = [
   redditEnricher,
   sourcehutEnricher,
   steamEnricher,
+  velogEnricher,
 ]

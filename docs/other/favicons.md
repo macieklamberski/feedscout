@@ -89,6 +89,7 @@ The Platform method extracts avatars and icons directly from known platforms usi
 | Steam | Game icon | Page HTML, or the public API through an [enricher](#enriching-platform-icons) |
 | Togetter | User avatar | Page HTML |
 | Tumblr | Blog avatar | URL pattern |
+| Velog | User avatar | Page HTML, or the GraphQL API through an [enricher](#enriching-platform-icons) |
 | YouTube | Channel avatar | Page HTML |
 | Zenn | Profile, publication or topic icon | Page HTML |
 
