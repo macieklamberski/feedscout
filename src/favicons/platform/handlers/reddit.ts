@@ -1,7 +1,10 @@
 import { isHostOf, isNonEmptyString, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { hosts } from '../../../feeds/platform/handlers/reddit.js'
+import type { FaviconEnricher } from '../../types.js'
 import { parseBodyJson } from '../../utils.js'
+
+const platform = 'reddit'
 
 // Extracts the subreddit or username from the path, excluding dots to avoid
 // capturing feed extensions like .rss in Reddit feed URLs (e.g., /r/sub.rss).
@@ -29,42 +32,42 @@ export const redditHandler: PlatformHandler = {
     return isHostOf(url, hosts) && (isSubredditPath(pathname) || isUserPath(pathname))
   },
 
-  resolve: async (url, _content, _headers, fetchFn) => {
-    if (!fetchFn) {
-      return []
+  // The id keeps its `r/` or `user/` prefix: a subreddit and a user share one name grammar and
+  // answer with different icon fields.
+  resolve: (url) => {
+    const pathname = parseUrl(url)?.pathname ?? ''
+    const subreddit = pathname.match(subredditRegex)?.[1]
+
+    if (subreddit) {
+      return [{ platform, id: `r/${subreddit}`, url }]
     }
 
-    try {
-      const { pathname } = new URL(url)
-      const subredditMatch = pathname.match(subredditRegex)
+    const username = pathname.match(userRegex)?.[2]
 
-      if (subredditMatch?.[1]) {
-        const subreddit = subredditMatch[1]
-        const apiUrl = `https://www.reddit.com/r/${subreddit}/about.json`
-        const response = await fetchFn(apiUrl)
-        const data = parseBodyJson(response.body)
-        const icon = data?.data?.community_icon?.split('?')[0] || data?.data?.icon_img
-
-        if (isNonEmptyString(icon)) {
-          return [{ uri: icon }]
-        }
-      }
-
-      const userMatch = pathname.match(userRegex)
-
-      if (userMatch?.[2]) {
-        const username = userMatch[2]
-        const apiUrl = `https://www.reddit.com/user/${username}/about.json`
-        const response = await fetchFn(apiUrl)
-        const data = parseBodyJson(response.body)
-        const icon = data?.data?.icon_img || data?.data?.snoovatar_img
-
-        if (isNonEmptyString(icon)) {
-          return [{ uri: icon }]
-        }
-      }
-    } catch {}
+    if (username) {
+      return [{ platform, id: `user/${username}`, url }]
+    }
 
     return []
   },
+}
+
+export const redditEnricher: FaviconEnricher = async (ref, context) => {
+  if (ref.platform !== platform) {
+    return
+  }
+
+  try {
+    const response = await context.fetchFn(`https://www.reddit.com/${ref.id}/about.json`)
+    const data = parseBodyJson(response.body)?.data
+    const icon = ref.id.startsWith('r/')
+      ? data?.community_icon?.split('?')[0] || data?.icon_img
+      : data?.icon_img || data?.snoovatar_img
+
+    if (isNonEmptyString(icon)) {
+      return [icon]
+    }
+  } catch {}
+
+  return []
 }

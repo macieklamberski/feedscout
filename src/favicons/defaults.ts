@@ -5,17 +5,17 @@ import type { GuessMethodOptions } from '../common/uris/guess/types.js'
 import type { HeadersMethodOptions } from '../common/uris/headers/types.js'
 import type { HtmlMethodOptions } from '../common/uris/html/types.js'
 import type { PlatformMethodOptions } from '../common/uris/platform/types.js'
-import { blueskyHandler } from './platform/handlers/bluesky.js'
+import { blueskyEnricher, blueskyHandler } from './platform/handlers/bluesky.js'
 import { deviantartHandler } from './platform/handlers/deviantart.js'
-import { devtoHandler } from './platform/handlers/devto.js'
+import { devtoEnricher, devtoHandler } from './platform/handlers/devto.js'
 import { giteaHandler } from './platform/handlers/gitea.js'
 import { githubHandler } from './platform/handlers/github.js'
 import { githubGistHandler } from './platform/handlers/githubGist.js'
-import { gitlabHandler } from './platform/handlers/gitlab.js'
+import { gitlabEnricher, gitlabHandler } from './platform/handlers/gitlab.js'
 import { letterboxdHandler } from './platform/handlers/letterboxd.js'
 import { lobstersHandler } from './platform/handlers/lobsters.js'
 import { mastodonEnricher, mastodonHandler } from './platform/handlers/mastodon.js'
-import { redditHandler } from './platform/handlers/reddit.js'
+import { redditEnricher, redditHandler } from './platform/handlers/reddit.js'
 import { sourceforgeHandler } from './platform/handlers/sourceforge.js'
 import { steamHandler } from './platform/handlers/steam.js'
 import { tumblrHandler } from './platform/handlers/tumblr.js'
@@ -94,4 +94,10 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
   ],
 }
 
-export const defaultFaviconEnrichers: Array<FaviconEnricher> = [mastodonEnricher]
+export const defaultFaviconEnrichers: Array<FaviconEnricher> = [
+  mastodonEnricher,
+  blueskyEnricher,
+  redditEnricher,
+  gitlabEnricher,
+  devtoEnricher,
+]

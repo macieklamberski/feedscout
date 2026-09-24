@@ -1,7 +1,10 @@
 import { isAnyOf, isHostOf, isNonEmptyString, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { excludedPaths, hosts } from '../../../feeds/platform/handlers/devto.js'
+import type { FaviconEnricher } from '../../types.js'
 import { parseBodyJson } from '../../utils.js'
+
+const platform = 'devto'
 
 // Extracts the username from the path, excluding dots to avoid capturing
 // feed extensions that may be appended to the URL.
@@ -30,30 +33,32 @@ export const devtoHandler: PlatformHandler = {
     return !isAnyOf(match[1], excludedPaths)
   },
 
-  resolve: async (url, _content, _headers, fetchFn) => {
-    if (!fetchFn) {
+  resolve: (url) => {
+    const username = parseUrl(url)?.pathname.match(userRegex)?.[1]
+
+    if (!username || username === 't') {
       return []
     }
 
-    try {
-      const { pathname } = new URL(url)
-      const match = pathname.match(userRegex)
-
-      if (!match?.[1] || match[1] === 't') {
-        return []
-      }
-
-      const username = match[1]
-      const apiUrl = `https://dev.to/api/users/by_username?url=${encodeURIComponent(username)}`
-      const response = await fetchFn(apiUrl)
-      const data = parseBodyJson(response.body)
-      const profileImage = data?.profile_image
-
-      if (isNonEmptyString(profileImage)) {
-        return [{ uri: profileImage }]
-      }
-    } catch {}
-
-    return []
+    return [{ platform, id: username, url }]
   },
+}
+
+export const devtoEnricher: FaviconEnricher = async (ref, context) => {
+  if (ref.platform !== platform) {
+    return
+  }
+
+  try {
+    const apiUrl = `https://dev.to/api/users/by_username?url=${encodeURIComponent(ref.id)}`
+    const response = await context.fetchFn(apiUrl)
+    const data = parseBodyJson(response.body)
+    const profileImage = data?.profile_image
+
+    if (isNonEmptyString(profileImage)) {
+      return [profileImage]
+    }
+  } catch {}
+
+  return []
 }

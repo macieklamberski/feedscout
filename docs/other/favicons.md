@@ -56,16 +56,16 @@ The Platform method extracts avatars and icons directly from known platforms usi
 |----------|-----------------|--------|
 | GitHub | User avatar | URL pattern |
 | GitHub Gist | User avatar | URL pattern |
-| GitLab | User or group avatar | Public API |
+| GitLab | User or group avatar | Public API, through an [enricher](#enriching-platform-icons) |
 | Mastodon | Profile avatar | Public API, through an [enricher](#enriching-platform-icons) |
-| Bluesky | Profile avatar | Public API |
-| Reddit | Subreddit icon or user avatar | Public API |
+| Bluesky | Profile avatar | Public API, through an [enricher](#enriching-platform-icons) |
+| Reddit | Subreddit icon or user avatar | Public API, through an [enricher](#enriching-platform-icons) |
 | Tumblr | Blog avatar | URL pattern |
 | Gitea (Codeberg, gitea.com, self-hosted) | User avatar | URL pattern |
 | Lobsters | User avatar | URL pattern |
 | SourceForge | Project icon | URL pattern |
 | DeviantArt | User avatar | URL pattern |
-| Dev.to | Profile image | Public API |
+| Dev.to | Profile image | Public API, through an [enricher](#enriching-platform-icons) |
 | Steam | Game icon | Page HTML |
 | Letterboxd | Member avatar from member subpages, such as films and lists | Page HTML |
 
