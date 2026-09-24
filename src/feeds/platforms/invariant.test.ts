@@ -152,10 +152,10 @@ const cases: Array<Case> = [
   ['xenforo', xenforoHandler, '<html id="XF">'],
 ]
 
+// Under it.each, a row without headers gets the done callback in their place.
 describe('platform handler invariant', () => {
-  it.each(cases)(
-    'should resolve a feed wherever %s matches',
-    async (_platform, handler, value, headers) => {
+  for (const [platform, handler, value, headers] of cases) {
+    it(`should resolve a feed wherever ${platform} matches`, async () => {
       const violations: Array<string> = []
       let matched = 0
 
@@ -180,12 +180,11 @@ describe('platform handler invariant', () => {
       // A marker the handler no longer reads would pass every path vacuously.
       expect(matched).toBeGreaterThan(0)
       expect(violations).toEqual([])
-    },
-  )
+    })
+  }
 
   // Two handlers matching one page leave the result to their order in the defaults. Only the
   // neutral host is tried, since gitlab.com never serves another platform's markup.
-  // A row without headers leaves it.each passing its done callback in their place.
   for (const [platform, , value, headers] of cases) {
     it(`should match ${platform} pages with no other default handler`, () => {
       const violations: Array<string> = []
