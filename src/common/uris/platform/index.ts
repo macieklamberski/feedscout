@@ -21,6 +21,11 @@ export const discoverUrisFromPlatform = async (
 
       const resolved = await handler.resolve(baseUrl, content, headers, fetchFn)
 
+      // A handler that matched but found nothing leaves the page to the handlers after it.
+      if (resolved.length === 0) {
+        continue
+      }
+
       for (const item of resolved) {
         if ('uri' in item) {
           entries.push(item)

@@ -41,8 +41,8 @@ import { writefreelyHandler } from './writefreely.js'
 import { xenforoHandler } from './xenforo.js'
 
 // Every path shape is tried against every content-matched handler, because a
-// handler that matches a path it cannot resolve shadows the later handlers that
-// could: dispatch stops at the first passing `match`.
+// handler that matches a path it cannot resolve has a `match` that drifted from
+// its `resolve`.
 const hosts = ['https://example.org', 'https://gitlab.com']
 const paths = [
   '/',

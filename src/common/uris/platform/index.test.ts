@@ -207,6 +207,24 @@ describe('discoverUrisFromPlatform', () => {
     expect(secondResolvedCalled).toBe(false)
   })
 
+  it('should continue to next handler if a matching handler resolves nothing', async () => {
+    const emptyHandler: PlatformHandler = {
+      match: () => true,
+      resolve: () => [],
+    }
+    const workingHandler: PlatformHandler = {
+      match: () => true,
+      resolve: () => [{ uri: 'https://example.com/feed.xml' }],
+    }
+    const options = {
+      baseUrl: 'https://example.com',
+      handlers: [emptyHandler, workingHandler],
+    }
+    const expected = [{ uri: 'https://example.com/feed.xml' }]
+
+    expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
+  })
+
   it('should continue to next handler if async resolve rejects', async () => {
     const throwingHandler: PlatformHandler = {
       match: () => true,
