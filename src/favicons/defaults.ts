@@ -20,7 +20,7 @@ import { githubHandler } from './platforms/github.js'
 import { githubGistHandler } from './platforms/githubGist.js'
 import { gitlabEnricher, gitlabHandler } from './platforms/gitlab.js'
 import { habrHandler } from './platforms/habr.js'
-import { letterboxdHandler } from './platforms/letterboxd.js'
+import { letterboxdEnricher, letterboxdHandler } from './platforms/letterboxd.js'
 import { lobstersHandler } from './platforms/lobsters.js'
 import { mastodonEnricher, mastodonHandler } from './platforms/mastodon.js'
 import { microblogHandler } from './platforms/microblog.js'
@@ -145,6 +145,7 @@ export const defaultFaviconEnrichers: Array<FaviconEnricher> = [
   dailymotionEnricher,
   devtoEnricher,
   gitlabEnricher,
+  letterboxdEnricher,
   mastodonEnricher,
   naverBlogEnricher,
   nebulaEnricher,

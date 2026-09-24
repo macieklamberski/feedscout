@@ -1,6 +1,9 @@
 import { escapeRegex, getPathSegments, isAnyOf, isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { excludedPaths, hosts } from '../../feeds/platforms/letterboxd.js'
+import type { FaviconEnricher } from '../types.js'
+
+const platform = 'letterboxd'
 
 // Resized avatars carry the crop box in the file name, e.g. `-0-48-0-48-crop.jpg`.
 const cropRegex = /-0-\d+-0-\d+-crop\./
@@ -57,13 +60,19 @@ export const letterboxdHandler: PlatformHandler = {
   resolve: (url, content) => {
     const username = getUsername(url)
 
-    if (!username || !content) {
+    if (!username) {
       return []
     }
 
-    // The profile root answers 403 to non-browser clients, so its content carries no avatar.
-    const src = getAvatarSrc(content, username)
-    const uri = src ? getLargeAvatarUri(src) : undefined
+    // The profile root and the diary answer 403 to non-browser clients, so their content
+    // carries no avatar.
+    const src = content ? getAvatarSrc(content, username) : undefined
+
+    if (!src) {
+      return [{ platform, id: username, url }]
+    }
+
+    const uri = getLargeAvatarUri(src)
 
     if (!uri) {
       return []
@@ -71,4 +80,28 @@ export const letterboxdHandler: PlatformHandler = {
 
     return [{ uri }]
   },
+}
+
+// The films page answers non-browser clients where the profile root does not.
+export const letterboxdEnricher: FaviconEnricher = async (ref, context) => {
+  if (ref.platform !== platform) {
+    return
+  }
+
+  try {
+    const response = await context.fetchFn(`https://letterboxd.com/${ref.id}/films/`)
+
+    if (typeof response.body !== 'string') {
+      return []
+    }
+
+    const src = getAvatarSrc(response.body, ref.id)
+    const uri = src ? getLargeAvatarUri(src) : undefined
+
+    if (uri) {
+      return [uri]
+    }
+  } catch {}
+
+  return []
 }

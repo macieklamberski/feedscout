@@ -1,6 +1,24 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverUriEntry } from '../../common/types.js'
-import { letterboxdHandler } from './letterboxd.js'
+import type { DiscoverRef, DiscoverUriEntry, FetchFn } from '../../common/types.js'
+import type { FaviconEnricherContext } from '../types.js'
+import { letterboxdEnricher, letterboxdHandler } from './letterboxd.js'
+
+const createContext = (responses: Record<string, string>): FaviconEnricherContext => {
+  const fetchFn: FetchFn = async (url) => ({
+    headers: new Headers(),
+    body: responses[url] ?? '',
+    url,
+    status: url in responses ? 200 : 404,
+  })
+
+  return { fetchFn }
+}
+
+const aliceRef: DiscoverRef = {
+  platform: 'letterboxd',
+  id: 'alice',
+  url: 'https://letterboxd.com/alice/',
+}
 
 const uploadedAvatarHtml = `
   <div class="profile-mini-person -has-badge">
@@ -128,31 +146,36 @@ describe('letterboxdHandler', () => {
     })
 
     describe('profile root challenge page', () => {
-      it('should return empty array', () => {
+      it('should return a ref for the member', () => {
         const result = letterboxdHandler.resolve(
           'https://letterboxd.com/alice/',
           '<html><title>Just a moment...</title></html>',
         )
 
-        expect(result).toEqual([])
+        expect(result).toEqual([aliceRef])
+      })
+    })
+
+    describe('member subpage without the avatar', () => {
+      it('should return a ref for the member', () => {
+        const url = 'https://letterboxd.com/alice/films/diary/'
+        const expected: Array<DiscoverRef> = [{ platform: 'letterboxd', id: 'alice', url }]
+
+        expect(letterboxdHandler.resolve(url, '<html><body></body></html>')).toEqual(expected)
       })
     })
 
     describe('avatar of another member', () => {
-      it('should return empty array', () => {
-        const result = letterboxdHandler.resolve(
-          'https://letterboxd.com/alice/list/favorites/',
-          otherMemberAvatarHtml,
-        )
+      it('should return a ref for the member', () => {
+        const url = 'https://letterboxd.com/alice/list/favorites/'
+        const expected: Array<DiscoverRef> = [{ platform: 'letterboxd', id: 'alice', url }]
 
-        expect(result).toEqual([])
+        expect(letterboxdHandler.resolve(url, otherMemberAvatarHtml)).toEqual(expected)
       })
     })
 
-    it('should return empty array when content is absent', () => {
-      const result = letterboxdHandler.resolve('https://letterboxd.com/alice/films/')
-
-      expect(result).toEqual([])
+    it('should return a ref when content is absent', () => {
+      expect(letterboxdHandler.resolve('https://letterboxd.com/alice/')).toEqual([aliceRef])
     })
 
     it('should return empty array for the journal', () => {
@@ -169,5 +192,79 @@ describe('letterboxdHandler', () => {
 
       expect(result).toEqual([])
     })
+  })
+})
+
+describe('letterboxdEnricher', () => {
+  it('should return the large avatar from the films page', async () => {
+    const context = createContext({
+      'https://letterboxd.com/alice/films/': uploadedAvatarHtml,
+    })
+
+    expect(await letterboxdEnricher(aliceRef, context)).toEqual([largeUploadedAvatar])
+  })
+
+  it('should return the large Gravatar that answers 404 when missing', async () => {
+    const context = createContext({
+      'https://letterboxd.com/alice/films/': gravatarAvatarHtml,
+    })
+    const expected = [
+      'https://secure.gravatar.com/avatar/b7b59a60d69cdb2ff36f363fb953cdbc?rating=PG&size=500&border=&default=404',
+    ]
+
+    expect(await letterboxdEnricher(aliceRef, context)).toEqual(expected)
+  })
+
+  it('should return undefined for a ref of another platform', async () => {
+    const ref: DiscoverRef = {
+      platform: 'mastodon',
+      id: 'alice',
+      url: 'https://example.com/@alice',
+    }
+
+    expect(await letterboxdEnricher(ref, createContext({}))).toBeUndefined()
+  })
+
+  it('should return empty array for the placeholder avatar', async () => {
+    const context = createContext({
+      'https://letterboxd.com/alice/films/': placeholderAvatarHtml,
+    })
+
+    expect(await letterboxdEnricher(aliceRef, context)).toEqual([])
+  })
+
+  it('should return empty array when the films page has no avatar', async () => {
+    const context = createContext({
+      'https://letterboxd.com/alice/films/': '<html><body></body></html>',
+    })
+
+    expect(await letterboxdEnricher(aliceRef, context)).toEqual([])
+  })
+
+  it('should return empty array when only another member has an avatar', async () => {
+    const context = createContext({
+      'https://letterboxd.com/alice/films/': otherMemberAvatarHtml,
+    })
+
+    expect(await letterboxdEnricher(aliceRef, context)).toEqual([])
+  })
+
+  it('should return empty array when the body is not a string', async () => {
+    const fetchFn: FetchFn = async (url) => ({
+      headers: new Headers(),
+      body: new ReadableStream(),
+      url,
+      status: 200,
+    })
+
+    expect(await letterboxdEnricher(aliceRef, { fetchFn })).toEqual([])
+  })
+
+  it('should return empty array when fetch throws', async () => {
+    const fetchFn: FetchFn = () => {
+      throw new Error('Network error')
+    }
+
+    expect(await letterboxdEnricher(aliceRef, { fetchFn })).toEqual([])
   })
 })
