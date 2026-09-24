@@ -6,7 +6,7 @@ import { composeHint } from '../../common/utils.js'
 // Generic covers profile (html).
 // Handler needed for: subdomain.
 
-const hosts = ['postype.com', 'www.postype.com']
+export const hosts = ['postype.com', 'www.postype.com']
 const domainSuffixRegex = /\.postype\.com$/i
 const excludedSubdomains = ['www', 'api', 'cdn', 'i', 'blog-cdn']
 
