@@ -91,6 +91,18 @@ describe('deviantartHandler', () => {
       expect(deviantartHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should keep a percent-encoded tag encoded once', () => {
+      const value = 'https://deviantart.com/tag/caf%C3%A9'
+      const expected = [
+        {
+          uri: 'https://backend.deviantart.com/rss.xml?type=deviation&q=tag%3Acaf%C3%A9',
+          hint: { key: 'deviantart:tag', label: 'Tag' },
+        },
+      ]
+
+      expect(deviantartHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return RSS feed URL for journal page', () => {
       const value = 'https://deviantart.com/yuumei/journal'
       const expected = [

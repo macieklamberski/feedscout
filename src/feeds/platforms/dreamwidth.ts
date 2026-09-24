@@ -1,7 +1,7 @@
 import { isHostOf, isSubdomainOf } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
+import { composeHint, decodePathSegment } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic partly covers blog, tag, tildePath, userPath.
@@ -46,7 +46,7 @@ export const dreamwidthHandler: PlatformHandler = {
     const tagMatch = pathname.match(tagRegex)
 
     if (tagMatch?.[1]) {
-      const tag = encodeURIComponent(tagMatch[1])
+      const tag = encodeURIComponent(decodePathSegment(tagMatch[1]))
 
       uris.push({
         uri: `${userOrigin}/data/rss?tag=${tag}`,

@@ -43,6 +43,15 @@ export const isOfAllowedMimeType = (
   return isAnyOf(type, allowedTypes, normalizeMimeType)
 }
 
+// A path segment arrives percent-encoded, so it is decoded before going into a query value.
+export const decodePathSegment = (segment: string): string => {
+  try {
+    return decodeURIComponent(segment)
+  } catch {}
+
+  return segment
+}
+
 // Contents of every meta tag in the page, keyed by its lowercased name or property attribute.
 type MetaContents = Record<string, Array<string>>
 

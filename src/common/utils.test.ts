@@ -2,6 +2,7 @@ import { describe, expect, it } from 'bun:test'
 import type { DiscoverUriHint } from './types.js'
 import {
   composeHint,
+  decodePathSegment,
   getCookieNames,
   getMetaContent,
   hasAnyMeta,
@@ -805,6 +806,20 @@ describe('getMetaContent', () => {
     expect(getMetaContent(first, 'generator')).toBe('Drupal')
     expect(getMetaContent(second, 'generator')).toBe('Joomla')
     expect(getMetaContent(first, 'generator')).toBe('Drupal')
+  })
+})
+
+describe('decodePathSegment', () => {
+  it('should decode a percent-encoded segment', () => {
+    expect(decodePathSegment('caf%C3%A9')).toBe('café')
+  })
+
+  it('should return a plain segment unchanged', () => {
+    expect(decodePathSegment('photography')).toBe('photography')
+  })
+
+  it('should return a malformed segment unchanged', () => {
+    expect(decodePathSegment('100%')).toBe('100%')
   })
 })
 
