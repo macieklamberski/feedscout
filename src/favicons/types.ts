@@ -26,5 +26,5 @@ export type CreateEnrichFaviconFnOptions = {
 }
 
 export type DiscoverFaviconsOptions<TValid> = DiscoverOptions<TValid> & {
-  enrichFn?: DiscoverEnrichFn
+  enrichFn?: DiscoverEnrichFn | false
 }

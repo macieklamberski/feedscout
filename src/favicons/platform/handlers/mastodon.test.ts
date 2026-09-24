@@ -1,15 +1,27 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverUriEntry, FetchFn } from '../../../common/types.js'
-import { isMastodonHeaders, isMastodonHtml, isProfilePath, mastodonHandler } from './mastodon.js'
+import type { DiscoverRef, FetchFn } from '../../../common/types.js'
+import type { FaviconEnricherContext } from '../../types.js'
+import {
+  isMastodonHeaders,
+  isMastodonHtml,
+  isProfilePath,
+  mastodonEnricher,
+  mastodonHandler,
+} from './mastodon.js'
 
-const createMockFetch = (responses: Record<string, string>): FetchFn => {
-  return async (url: string) => ({
+const createContext = (responses: Record<string, string>): FaviconEnricherContext => {
+  const fetchFn: FetchFn = async (url) => ({
     headers: new Headers(),
     body: responses[url] ?? '',
     url,
     status: url in responses ? 200 : 404,
-    statusText: url in responses ? 'OK' : 'Not Found',
   })
+
+  return { fetchFn }
+}
+
+const createRef = (url: string, id: string): DiscoverRef => {
+  return { platform: 'mastodon', id, url }
 }
 
 describe('isProfilePath', () => {
@@ -158,193 +170,141 @@ describe('mastodonHandler', () => {
   })
 
   describe('resolve', () => {
-    it('should resolve avatar from Mastodon API', async () => {
-      const mockFetch = createMockFetch({
-        'https://mastodon.social/api/v1/accounts/lookup?acct=user': JSON.stringify({
-          avatar: 'https://files.mastodon.social/accounts/avatars/000/123/original/avatar.png',
-        }),
-      })
-      const result = await mastodonHandler.resolve(
-        'https://mastodon.social/@user',
-        undefined,
-        undefined,
-        mockFetch,
-      )
-      const expected: Array<DiscoverUriEntry> = [
-        { uri: 'https://files.mastodon.social/accounts/avatars/000/123/original/avatar.png' },
+    it('should return a ref for the profile', async () => {
+      const expected: Array<DiscoverRef> = [
+        { platform: 'mastodon', id: 'user', url: 'https://mastodon.social/@user' },
       ]
 
-      expect(result).toEqual(expected)
+      expect(await mastodonHandler.resolve('https://mastodon.social/@user')).toEqual(expected)
     })
 
-    it('should resolve avatar from different instance', async () => {
-      const mockFetch = createMockFetch({
-        'https://hachyderm.io/api/v1/accounts/lookup?acct=dev': JSON.stringify({
-          avatar: 'https://media.hachyderm.io/avatars/dev.png',
-        }),
-      })
-      const result = await mastodonHandler.resolve(
-        'https://hachyderm.io/@dev',
-        undefined,
-        undefined,
-        mockFetch,
-      )
-      const expected: Array<DiscoverUriEntry> = [
-        { uri: 'https://media.hachyderm.io/avatars/dev.png' },
-      ]
+    it('should return a ref with the remote handle for /@user@domain', async () => {
+      const url = 'https://mastodon.social/@user@remote.social'
+      const expected: Array<DiscoverRef> = [{ platform: 'mastodon', id: 'user@remote.social', url }]
 
-      expect(result).toEqual(expected)
-    })
-
-    it('should return empty array when fetchFn is not provided', async () => {
-      const result = await mastodonHandler.resolve('https://mastodon.social/@user')
-
-      expect(result).toEqual([])
-    })
-
-    it('should return empty array when avatar is empty string', async () => {
-      const mockFetch = createMockFetch({
-        'https://mastodon.social/api/v1/accounts/lookup?acct=user': JSON.stringify({ avatar: '' }),
-      })
-      const result = await mastodonHandler.resolve(
-        'https://mastodon.social/@user',
-        undefined,
-        undefined,
-        mockFetch,
-      )
-
-      expect(result).toEqual([])
-    })
-
-    it('should return empty array when avatar is not a string', async () => {
-      const mockFetch = createMockFetch({
-        'https://mastodon.social/api/v1/accounts/lookup?acct=user': JSON.stringify({ avatar: 123 }),
-      })
-      const result = await mastodonHandler.resolve(
-        'https://mastodon.social/@user',
-        undefined,
-        undefined,
-        mockFetch,
-      )
-
-      expect(result).toEqual([])
-    })
-
-    it('should return empty array when API returns no avatar', async () => {
-      const mockFetch = createMockFetch({
-        'https://mastodon.social/api/v1/accounts/lookup?acct=user': JSON.stringify({}),
-      })
-      const result = await mastodonHandler.resolve(
-        'https://mastodon.social/@user',
-        undefined,
-        undefined,
-        mockFetch,
-      )
-
-      expect(result).toEqual([])
-    })
-
-    it('should return empty array when API returns invalid JSON', async () => {
-      const mockFetch = createMockFetch({
-        'https://mastodon.social/api/v1/accounts/lookup?acct=user': 'not json',
-      })
-      const result = await mastodonHandler.resolve(
-        'https://mastodon.social/@user',
-        undefined,
-        undefined,
-        mockFetch,
-      )
-
-      expect(result).toEqual([])
-    })
-
-    it('should return empty array when fetch throws', async () => {
-      const mockFetch: FetchFn = () => {
-        throw new Error('Network error')
-      }
-      const result = await mastodonHandler.resolve(
-        'https://mastodon.social/@user',
-        undefined,
-        undefined,
-        mockFetch,
-      )
-
-      expect(result).toEqual([])
-    })
-
-    it('should return empty array for invalid URL', async () => {
-      const mockFetch = createMockFetch({})
-      const result = await mastodonHandler.resolve('not-a-url', undefined, undefined, mockFetch)
-
-      expect(result).toEqual([])
-    })
-
-    // Port is stripped from API URL because handler uses hostname (not host).
-    it('should resolve avatar from instance with port number', async () => {
-      const mockFetch = createMockFetch({
-        'https://mastodon.local/api/v1/accounts/lookup?acct=user': JSON.stringify({
-          avatar: 'https://mastodon.local:3000/avatars/user.png',
-        }),
-      })
-      const result = await mastodonHandler.resolve(
-        'https://mastodon.local:3000/@user',
-        undefined,
-        undefined,
-        mockFetch,
-      )
-      const expected: Array<DiscoverUriEntry> = [
-        { uri: 'https://mastodon.local:3000/avatars/user.png' },
-      ]
-
-      expect(result).toEqual(expected)
-    })
-
-    it('should resolve avatar from /@user@domain format', async () => {
-      const mockFetch = createMockFetch({
-        'https://mastodon.social/api/v1/accounts/lookup?acct=user@remote.social': JSON.stringify({
-          avatar: 'https://remote.social/avatars/user.png',
-        }),
-      })
-      const result = await mastodonHandler.resolve(
-        'https://mastodon.social/@user@remote.social',
-        undefined,
-        undefined,
-        mockFetch,
-      )
-      const expected: Array<DiscoverUriEntry> = [{ uri: 'https://remote.social/avatars/user.png' }]
-
-      expect(result).toEqual(expected)
-    })
-
-    it('should return empty array for non-profile path', async () => {
-      const mockFetch = createMockFetch({})
-      const result = await mastodonHandler.resolve(
-        'https://mastodon.social/about',
-        undefined,
-        undefined,
-        mockFetch,
-      )
-
-      expect(result).toEqual([])
+      expect(await mastodonHandler.resolve(url)).toEqual(expected)
     })
 
     it('should strip feed extension from profile URL', async () => {
-      const mockFetch = createMockFetch({
-        'https://mastodon.social/api/v1/accounts/lookup?acct=user': JSON.stringify({
-          avatar: 'https://mastodon.social/avatars/user.png',
-        }),
-      })
-      const result = await mastodonHandler.resolve(
-        'https://mastodon.social/@user.rss',
-        undefined,
-        undefined,
-        mockFetch,
-      )
-      const expected: Array<DiscoverUriEntry> = [
-        { uri: 'https://mastodon.social/avatars/user.png' },
-      ]
+      const url = 'https://mastodon.social/@user.rss'
+      const expected: Array<DiscoverRef> = [{ platform: 'mastodon', id: 'user', url }]
 
-      expect(result).toEqual(expected)
+      expect(await mastodonHandler.resolve(url)).toEqual(expected)
     })
+
+    it('should return empty array for non-profile path', async () => {
+      expect(await mastodonHandler.resolve('https://mastodon.social/about')).toEqual([])
+    })
+
+    it('should return empty array for invalid URL', async () => {
+      expect(await mastodonHandler.resolve('not-a-url')).toEqual([])
+    })
+  })
+})
+
+describe('mastodonEnricher', () => {
+  it('should resolve avatar from Mastodon API', async () => {
+    const context = createContext({
+      'https://mastodon.social/api/v1/accounts/lookup?acct=user': JSON.stringify({
+        avatar: 'https://files.mastodon.social/accounts/avatars/000/123/original/avatar.png',
+      }),
+    })
+    const ref = createRef('https://mastodon.social/@user', 'user')
+    const expected = ['https://files.mastodon.social/accounts/avatars/000/123/original/avatar.png']
+
+    expect(await mastodonEnricher(ref, context)).toEqual(expected)
+  })
+
+  it('should resolve avatar from different instance', async () => {
+    const context = createContext({
+      'https://hachyderm.io/api/v1/accounts/lookup?acct=dev': JSON.stringify({
+        avatar: 'https://media.hachyderm.io/avatars/dev.png',
+      }),
+    })
+    const ref = createRef('https://hachyderm.io/@dev', 'dev')
+
+    expect(await mastodonEnricher(ref, context)).toEqual([
+      'https://media.hachyderm.io/avatars/dev.png',
+    ])
+  })
+
+  // Port is stripped from API URL because the enricher uses hostname (not host).
+  it('should resolve avatar from instance with port number', async () => {
+    const context = createContext({
+      'https://mastodon.local/api/v1/accounts/lookup?acct=user': JSON.stringify({
+        avatar: 'https://mastodon.local:3000/avatars/user.png',
+      }),
+    })
+    const ref = createRef('https://mastodon.local:3000/@user', 'user')
+
+    expect(await mastodonEnricher(ref, context)).toEqual([
+      'https://mastodon.local:3000/avatars/user.png',
+    ])
+  })
+
+  it('should resolve avatar for a remote handle', async () => {
+    const context = createContext({
+      'https://mastodon.social/api/v1/accounts/lookup?acct=user@remote.social': JSON.stringify({
+        avatar: 'https://remote.social/avatars/user.png',
+      }),
+    })
+    const ref = createRef('https://mastodon.social/@user@remote.social', 'user@remote.social')
+
+    expect(await mastodonEnricher(ref, context)).toEqual(['https://remote.social/avatars/user.png'])
+  })
+
+  it('should return undefined for a ref of another platform', async () => {
+    const ref: DiscoverRef = {
+      platform: 'bluesky',
+      id: 'user',
+      url: 'https://bsky.app/profile/user',
+    }
+
+    expect(await mastodonEnricher(ref, createContext({}))).toBeUndefined()
+  })
+
+  it('should return empty array when avatar is empty string', async () => {
+    const context = createContext({
+      'https://mastodon.social/api/v1/accounts/lookup?acct=user': JSON.stringify({ avatar: '' }),
+    })
+    const ref = createRef('https://mastodon.social/@user', 'user')
+
+    expect(await mastodonEnricher(ref, context)).toEqual([])
+  })
+
+  it('should return empty array when avatar is not a string', async () => {
+    const context = createContext({
+      'https://mastodon.social/api/v1/accounts/lookup?acct=user': JSON.stringify({ avatar: 123 }),
+    })
+    const ref = createRef('https://mastodon.social/@user', 'user')
+
+    expect(await mastodonEnricher(ref, context)).toEqual([])
+  })
+
+  it('should return empty array when API returns no avatar', async () => {
+    const context = createContext({
+      'https://mastodon.social/api/v1/accounts/lookup?acct=user': JSON.stringify({}),
+    })
+    const ref = createRef('https://mastodon.social/@user', 'user')
+
+    expect(await mastodonEnricher(ref, context)).toEqual([])
+  })
+
+  it('should return empty array when API returns invalid JSON', async () => {
+    const context = createContext({
+      'https://mastodon.social/api/v1/accounts/lookup?acct=user': 'not json',
+    })
+    const ref = createRef('https://mastodon.social/@user', 'user')
+
+    expect(await mastodonEnricher(ref, context)).toEqual([])
+  })
+
+  it('should return empty array when fetch throws', async () => {
+    const fetchFn: FetchFn = () => {
+      throw new Error('Network error')
+    }
+    const ref = createRef('https://mastodon.social/@user', 'user')
+
+    expect(await mastodonEnricher(ref, { fetchFn })).toEqual([])
   })
 })

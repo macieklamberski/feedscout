@@ -24,7 +24,6 @@ const createMockFetch = (responses: Record<string, string>): FetchFn => {
       body,
       headers,
       status: found ? 200 : 404,
-      statusText: found ? 'OK' : 'Not Found',
     }
   }
 }
@@ -233,6 +232,27 @@ describe('discoverFavicons', () => {
     ]
 
     expect(result).toEqual(expected)
+  })
+
+  it('should not call the mastodon API when enrichFn is false', async () => {
+    const requestedUrls: Array<string> = []
+    const mockFetch = createMockFetch({
+      'https://mastodon.social/@user':
+        '<html><head><meta name="generator" content="Mastodon v4.2.0"></head></html>',
+    })
+    const recordingFetch: FetchFn = (url, options) => {
+      requestedUrls.push(url)
+
+      return mockFetch(url, options)
+    }
+
+    await discoverFavicons('https://mastodon.social/@user', {
+      methods: ['platform'],
+      fetchFn: recordingFetch,
+      enrichFn: false,
+    })
+
+    expect(requestedUrls).toEqual(['https://mastodon.social/@user'])
   })
 
   it('should discover favicon from bluesky platform handler', async () => {
