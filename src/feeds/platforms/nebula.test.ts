@@ -100,6 +100,30 @@ describe('nebulaHandler', () => {
       expect(nebulaHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return global feeds for /videos in any case', () => {
+      const value = 'https://nebula.tv/Videos'
+      const expected = [
+        {
+          uri: 'https://rss.nebula.app/video.rss',
+          hint: { key: 'nebula:videos-all', label: 'All Videos' },
+        },
+        {
+          uri: 'https://rss.nebula.app/video.rss?plus=true',
+          hint: { key: 'nebula:videos-all-plus', label: 'All Videos (Plus)' },
+        },
+        {
+          uri: 'https://rss.nebula.app/video/categories/originals.rss',
+          hint: { key: 'nebula:originals', label: 'Nebula Originals' },
+        },
+        {
+          uri: 'https://rss.nebula.app/video/channels.rss',
+          hint: { key: 'nebula:channels', label: 'Recently Added Channels' },
+        },
+      ]
+
+      expect(nebulaHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return global feeds for /explore', () => {
       const value = 'https://nebula.tv/explore'
       const expected = [

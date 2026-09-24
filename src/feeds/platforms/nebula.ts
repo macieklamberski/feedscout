@@ -34,7 +34,7 @@ export const nebulaHandler: PlatformHandler = {
     const pathSegments = pathname.split('/').filter(Boolean)
 
     // Root, /videos, or /explore[/{tab}] — global feed (optionally filtered by category).
-    if (pathSegments.length === 0 || globalPaths.has(pathSegments[0])) {
+    if (pathSegments.length === 0 || globalPaths.has(pathSegments[0].toLowerCase())) {
       const rawCategory = searchParams.get('category')
       const category = rawCategory ? rawCategory.toLowerCase() : null
       const uris: Array<DiscoverUriEntry> = []

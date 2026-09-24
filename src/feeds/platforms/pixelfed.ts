@@ -1,4 +1,4 @@
-import { parseUrl } from 'trousse'
+import { isAnyOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, hasAnyMeta } from '../../common/utils.js'
 
@@ -44,7 +44,7 @@ export const pixelfedHandler: PlatformHandler = {
     const { pathname } = parsedUrl
     const match = pathname.match(profileRegex)
 
-    return Boolean(match?.[1] && !excludedPaths.includes(match[1]))
+    return Boolean(match?.[1] && !isAnyOf(match[1], excludedPaths))
   },
 
   resolve: (url) => {
@@ -57,7 +57,7 @@ export const pixelfedHandler: PlatformHandler = {
     const { origin, pathname } = parsedUrl
     const match = pathname.match(profileRegex)
 
-    if (!match?.[1] || excludedPaths.includes(match[1])) {
+    if (!match?.[1] || isAnyOf(match[1], excludedPaths)) {
       return []
     }
 

@@ -58,7 +58,7 @@ export const pinterestHandler: PlatformHandler = {
     ])
     const board = pathSegments[1]
 
-    if (board && !reservedBoardSlugs.has(board)) {
+    if (board && !reservedBoardSlugs.has(board.toLowerCase())) {
       return [
         {
           uri: `https://www.pinterest.com/${username}/${board}.rss`,

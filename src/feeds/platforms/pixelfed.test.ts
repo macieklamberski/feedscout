@@ -50,6 +50,10 @@ describe('pixelfedHandler', () => {
       expect(pixelfedHandler.match('https://pixelfed.social/api', pixelfedHtml)).toBe(false)
     })
 
+    it('should return false for excluded paths in any case', () => {
+      expect(pixelfedHandler.match('https://pixelfed.social/Discover', pixelfedHtml)).toBe(false)
+    })
+
     it('should return false for non-profile paths', () => {
       expect(pixelfedHandler.match('https://pixelfed.social/p/12345', pixelfedHtml)).toBe(false)
     })
@@ -90,6 +94,10 @@ describe('pixelfedHandler', () => {
 
     it('should return empty array for excluded paths', () => {
       expect(pixelfedHandler.resolve('https://pixelfed.social/discover')).toEqual([])
+    })
+
+    it('should return empty array for excluded paths in any case', () => {
+      expect(pixelfedHandler.resolve('https://pixelfed.social/Discover')).toEqual([])
     })
 
     it('should return empty array for invalid URL', () => {
