@@ -1,6 +1,10 @@
 import { isAnyOf, isHostOf, isNonEmptyString, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { excludedPaths, globalPaths, hosts } from '../../../feeds/platform/handlers/nebula.js'
+import type { FaviconEnricher } from '../../types.js'
+import { parseBodyJson } from '../../utils.js'
+
+const platform = 'nebula'
 
 const queryDataRegex = /window\.__QUERY_DATA__\s*=\s*(\{.*?\});?\s*<\/script>/s
 
@@ -20,6 +24,15 @@ const getChannelSlug = (url: string): string | undefined => {
   return slug
 }
 
+// biome-ignore lint/suspicious/noExplicitAny: Channel JSON from the page or the content API.
+const getAvatar = (channel: any): string | undefined => {
+  const avatar = channel?.assets?.avatar?.['512']?.original
+
+  if (isNonEmptyString(avatar)) {
+    return avatar
+  }
+}
+
 const getPageAvatar = (content: string | undefined): string | undefined => {
   const match = content?.match(queryDataRegex)
 
@@ -35,9 +48,9 @@ const getPageAvatar = (content: string | undefined): string | undefined => {
         continue
       }
 
-      const avatar = query.state?.data?.assets?.avatar?.['512']?.original
+      const avatar = getAvatar(query.state?.data)
 
-      if (isNonEmptyString(avatar)) {
+      if (avatar) {
         return avatar
       }
     }
@@ -50,16 +63,35 @@ export const nebulaHandler: PlatformHandler = {
   },
 
   resolve: (url, content) => {
-    if (!getChannelSlug(url)) {
+    const slug = getChannelSlug(url)
+
+    if (!slug) {
       return []
     }
 
     const avatar = getPageAvatar(content)
 
     if (!avatar) {
-      return []
+      return [{ platform, id: slug, url }]
     }
 
     return [{ uri: avatar }]
   },
+}
+
+export const nebulaEnricher: FaviconEnricher = async (ref, context) => {
+  if (ref.platform !== platform) {
+    return
+  }
+
+  try {
+    const response = await context.fetchFn(`https://content.api.nebula.app/content/${ref.id}/`)
+    const avatar = getAvatar(parseBodyJson(response.body))
+
+    if (avatar) {
+      return [avatar]
+    }
+  } catch {}
+
+  return []
 }
