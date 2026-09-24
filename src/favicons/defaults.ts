@@ -19,6 +19,7 @@ import { giteaHandler } from './platforms/gitea.js'
 import { githubHandler } from './platforms/github.js'
 import { githubGistHandler } from './platforms/githubGist.js'
 import { gitlabEnricher, gitlabHandler } from './platforms/gitlab.js'
+import { goodreadsEnricher, goodreadsHandler } from './platforms/goodreads.js'
 import { habrHandler } from './platforms/habr.js'
 import { hatenaBookmarkEnricher, hatenaBookmarkHandler } from './platforms/hatenaBookmark.js'
 import { letterboxdEnricher, letterboxdHandler } from './platforms/letterboxd.js'
@@ -117,6 +118,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     githubHandler,
     githubGistHandler,
     gitlabHandler,
+    goodreadsHandler,
     habrHandler,
     hatenaBookmarkHandler,
     letterboxdHandler,
@@ -153,6 +155,7 @@ export const defaultFaviconEnrichers: Array<FaviconEnricher> = [
   dailymotionEnricher,
   devtoEnricher,
   gitlabEnricher,
+  goodreadsEnricher,
   hatenaBookmarkEnricher,
   letterboxdEnricher,
   mastodonEnricher,

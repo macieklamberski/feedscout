@@ -5,9 +5,9 @@ import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
-const hosts = ['goodreads.com', 'www.goodreads.com']
+export const hosts = ['goodreads.com', 'www.goodreads.com']
 
-const parseUserId = (segment: string): number | undefined => {
+export const parseUserId = (segment: string): number | undefined => {
   const id = Number.parseInt(segment, 10)
 
   return Number.isNaN(id) ? undefined : id
