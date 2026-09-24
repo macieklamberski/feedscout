@@ -10,13 +10,13 @@ const wwwUsersPathRegex = /^\/(?:users\/|~)([^/]+)/
 const legacyUserPathRegex = /^\/([^/]+)/
 const tagRegex = /^\/tag\/([^/]+)/
 
-const reservedHosts = new Set([
+const reservedHosts = [
   'livejournal.com',
   'www.livejournal.com',
   'users.livejournal.com',
   'community.livejournal.com',
   'syndicated.livejournal.com',
-])
+]
 
 export const livejournalHandler: PlatformHandler = {
   match: (url) => {
@@ -29,7 +29,7 @@ export const livejournalHandler: PlatformHandler = {
     const { hostname, pathname } = new URL(url)
     const lower = hostname.toLowerCase()
 
-    if (reservedHosts.has(lower)) {
+    if (reservedHosts.includes(lower)) {
       if (lower === 'www.livejournal.com') {
         return wwwUsersPathRegex.test(pathname)
       }

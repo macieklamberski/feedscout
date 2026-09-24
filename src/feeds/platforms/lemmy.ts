@@ -7,7 +7,7 @@ import { composeHint, hasMetaContent } from '../../common/utils.js'
 // Handler needed for: home, user.
 
 const lemmyPoweredByRegex = /lemmy/i
-const validSorts = new Set([
+const validSorts = [
   'Active',
   'Hot',
   'New',
@@ -27,7 +27,7 @@ const validSorts = new Set([
   'Scaled',
   'MostComments',
   'NewComments',
-])
+]
 
 const numericRegex = /^\d+$/
 
@@ -35,7 +35,7 @@ const getQuerySuffix = (searchParams: URLSearchParams): string => {
   const params = new URLSearchParams()
   const sort = searchParams.get('sort')
 
-  if (sort && validSorts.has(sort)) {
+  if (sort && validSorts.includes(sort)) {
     params.set('sort', sort)
   }
 

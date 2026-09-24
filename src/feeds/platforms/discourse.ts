@@ -12,7 +12,7 @@ const categoryRegex = /^\/c\/(.+?)\/?$/
 const topicRegex = /^\/t\/([^/]+)\/(\d+)/
 const topRegex = /^\/top(?:\/([^/]+))?\/?$/
 
-const validTopPeriods = new Set(['daily', 'weekly', 'monthly', 'quarterly', 'yearly', 'all'])
+const validTopPeriods = ['daily', 'weekly', 'monthly', 'quarterly', 'yearly', 'all']
 
 const getTopPeriodSuffix = (
   pathPeriod: string | undefined,
@@ -20,7 +20,7 @@ const getTopPeriodSuffix = (
 ): string => {
   const period = pathPeriod ?? searchParams.get('period') ?? undefined
 
-  if (period && validTopPeriods.has(period)) {
+  if (period && validTopPeriods.includes(period)) {
     return `?period=${period}`
   }
 

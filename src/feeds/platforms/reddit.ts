@@ -18,17 +18,17 @@ const subredditsRegex = /^\/(?:subreddits|reddits)(?:\/(new|popular))?/
 
 export const hosts = ['reddit.com', 'www.reddit.com', 'old.reddit.com', 'new.reddit.com']
 const sortOptions = ['hot', 'new', 'rising', 'controversial', 'top', 'best']
-const timeOptions = new Set(['hour', 'day', 'week', 'month', 'year', 'all'])
-const timeFilteredSorts = new Set(['top', 'controversial'])
+const timeOptions = ['hour', 'day', 'week', 'month', 'year', 'all']
+const timeFilteredSorts = ['top', 'controversial']
 
 const getTimeframeSuffix = (sort: string, searchParams: URLSearchParams): string => {
-  if (!timeFilteredSorts.has(sort)) {
+  if (!timeFilteredSorts.includes(sort)) {
     return ''
   }
 
   const timeframe = searchParams.get('t')
 
-  if (timeframe && timeOptions.has(timeframe)) {
+  if (timeframe && timeOptions.includes(timeframe)) {
     return `?t=${timeframe}`
   }
 
