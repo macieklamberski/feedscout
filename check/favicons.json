@@ -26,7 +26,7 @@
   "sourceforge": ["https://sourceforge.net/projects/vlc"],
   "steam": ["https://store.steampowered.com/app/620/"],
   "togetter": ["https://togetter.com/id/togetter_jp"],
-  "sourcehut": ["https://sr.ht/~sircmpwn/"],
+  "sourcehut": ["https://sr.ht/~sircmpwn/", "https://git.sr.ht/~sircmpwn/scdoc"],
   "deviantart": ["https://www.deviantart.com/yuumei"],
   "devto": ["https://dev.to/ben"],
   "gitea": ["https://codeberg.org/forgejo"],

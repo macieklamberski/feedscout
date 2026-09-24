@@ -87,7 +87,7 @@ The Platform method extracts avatars and icons directly from known platforms usi
 | BookWyrm | User avatar | Page HTML, or the user's actor JSON through an [enricher](#enriching-platform-icons) for shelf pages |
 | Ameblo | Blogger profile image | Page HTML |
 | Pixelfed (self-hosted) | Profile avatar | Page HTML, or the public API through an [enricher](#enriching-platform-icons) when the page has no avatar |
-| SourceHut | User avatar | Page HTML |
+| SourceHut | User avatar, or the owner's avatar on repository pages | Page HTML, the owner's page through an [enricher](#enriching-platform-icons) |
 
 ## Enriching Platform Icons
 

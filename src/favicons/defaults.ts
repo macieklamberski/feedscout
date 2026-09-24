@@ -33,7 +33,7 @@ import { producthuntHandler } from './platform/handlers/producthunt.js'
 import { redditEnricher, redditHandler } from './platform/handlers/reddit.js'
 import { soundcloudHandler } from './platform/handlers/soundcloud.js'
 import { sourceforgeHandler } from './platform/handlers/sourceforge.js'
-import { sourcehutHandler } from './platform/handlers/sourcehut.js'
+import { sourcehutEnricher, sourcehutHandler } from './platform/handlers/sourcehut.js'
 import { steamHandler } from './platform/handlers/steam.js'
 import { togetterHandler } from './platform/handlers/togetter.js'
 import { tumblrHandler } from './platform/handlers/tumblr.js'
@@ -148,4 +148,5 @@ export const defaultFaviconEnrichers: Array<FaviconEnricher> = [
   nebulaEnricher,
   naverBlogEnricher,
   peertubeEnricher,
+  sourcehutEnricher,
 ]
