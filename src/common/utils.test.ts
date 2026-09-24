@@ -2,6 +2,7 @@ import { describe, expect, it } from 'bun:test'
 import type { DiscoverUriHint } from './types.js'
 import {
   composeHint,
+  decodePathSegment,
   getCookieNames,
   hasAnyMeta,
   hasMetaContent,
@@ -678,6 +679,20 @@ describe('hasMetaContent', () => {
   it.todo('should match single-quoted attribute values', () => {
     // Expected: "<meta name='generator' content='Mastodon v4.2.0'>" with single-quoted attributes
     // returns true for ('generator', 'Mastodon').
+  })
+})
+
+describe('decodePathSegment', () => {
+  it('should decode a percent-encoded segment', () => {
+    expect(decodePathSegment('caf%C3%A9')).toBe('café')
+  })
+
+  it('should return a plain segment unchanged', () => {
+    expect(decodePathSegment('photography')).toBe('photography')
+  })
+
+  it('should return a malformed segment unchanged', () => {
+    expect(decodePathSegment('100%')).toBe('100%')
   })
 })
 

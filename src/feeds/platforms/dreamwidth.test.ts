@@ -92,6 +92,34 @@ describe('dreamwidthHandler', () => {
       expect(dreamwidthHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should keep a percent-encoded tag encoded once', () => {
+      const value = 'https://terriko.dreamwidth.org/tag/caf%C3%A9'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://terriko.dreamwidth.org/data/rss?tag=caf%C3%A9',
+          hint: { key: 'dreamwidth:posts-tag', label: 'Tag', format: 'rss' },
+        },
+        {
+          uri: 'https://terriko.dreamwidth.org/data/atom?tag=caf%C3%A9',
+          hint: { key: 'dreamwidth:posts-tag', label: 'Tag', format: 'atom' },
+        },
+        {
+          uri: 'https://terriko.dreamwidth.org/data/rss',
+          hint: { key: 'dreamwidth:posts', label: 'Posts', format: 'rss' },
+        },
+        {
+          uri: 'https://terriko.dreamwidth.org/data/atom',
+          hint: { key: 'dreamwidth:posts', label: 'Posts', format: 'atom' },
+        },
+        {
+          uri: 'https://terriko.dreamwidth.org/data/userpics',
+          hint: { key: 'dreamwidth:userpics', label: 'Userpics', format: 'atom' },
+        },
+      ]
+
+      expect(dreamwidthHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return empty array for www host without user selector', () => {
       expect(dreamwidthHandler.resolve('https://www.dreamwidth.org/random')).toEqual([])
     })
