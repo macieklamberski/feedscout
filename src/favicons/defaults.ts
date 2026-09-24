@@ -23,6 +23,7 @@ import { habrHandler } from './platforms/habr.js'
 import { letterboxdEnricher, letterboxdHandler } from './platforms/letterboxd.js'
 import { lobstersHandler } from './platforms/lobsters.js'
 import { mastodonEnricher, mastodonHandler } from './platforms/mastodon.js'
+import { mediumEnricher, mediumHandler } from './platforms/medium.js'
 import { microblogHandler } from './platforms/microblog.js'
 import { naverBlogEnricher, naverBlogHandler } from './platforms/naverBlog.js'
 import { nebulaEnricher, nebulaHandler } from './platforms/nebula.js'
@@ -117,6 +118,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     letterboxdHandler,
     lobstersHandler,
     mastodonHandler,
+    mediumHandler,
     microblogHandler,
     naverBlogHandler,
     nebulaHandler,
@@ -147,6 +149,7 @@ export const defaultFaviconEnrichers: Array<FaviconEnricher> = [
   gitlabEnricher,
   letterboxdEnricher,
   mastodonEnricher,
+  mediumEnricher,
   naverBlogEnricher,
   nebulaEnricher,
   noteEnricher,
