@@ -6,17 +6,19 @@
     "https://rssblog.ameba.jp/shibuya/rss.html"
   ],
   "arena": ["https://www.are.na/charles-broskoski/feed/rss"],
-  "audioboom": ["https://audioboom.com/channels/5071123.rss"],
-  "bearblog": ["https://herman.bearblog.dev/feed/", "https://herman.bearblog.dev/feed/?type=rss"],
+  "art19": ["https://rss.art19.com/american-scandal"],
   "artstation": [
     "https://www.artstation.com/rossdraws.rss",
     "https://www.artstation.com/artwork.rss",
     "https://www.artstation.com/artwork.rss?sorting=latest"
   ],
+  "audioboom": ["https://audioboom.com/channels/5071123.rss"],
+  "bearblog": ["https://herman.bearblog.dev/feed/", "https://herman.bearblog.dev/feed/?type=rss"],
   "behance": [
     "https://www.behance.net/feeds/user?username=matejlatin",
     "https://www.behance.net/feeds/projects"
   ],
+  "bitchute": ["https://www.bitchute.com/feeds/rss/channel/bcsupport/"],
   "blogspot": [
     "https://googleblog.blogspot.com/feeds/posts/default",
     "https://googleblog.blogspot.com/feeds/posts/default?alt=rss",
@@ -38,6 +40,12 @@
   ],
   "buttondown": ["https://buttondown.com/jmduke/rss"],
   "buzzsprout": ["https://rss.buzzsprout.com/231452.rss"],
+  "cnblogs": ["https://www.cnblogs.com/vamei/rss"],
+  "confluence": [
+    "https://cwiki.apache.org/confluence/plugins/servlet/streams?key=KAFKA",
+    "https://cwiki.apache.org/confluence/plugins/servlet/streams"
+  ],
+  "csdn": ["https://rss.csdn.net/csdnnews/rss/map", "https://blog.csdn.net/csdnnews/rss/list"],
   "dailymotion": [
     "https://www.dailymotion.com/rss/Euronews-en",
     "https://www.dailymotion.com/rss/playlist/x5e4h5",
@@ -57,6 +65,7 @@
     "https://dev.to/feed",
     "https://dev.to/feed/latest"
   ],
+  "diaspora": ["https://despora.de/public/jaeger", "https://pod.geraspora.de/public/denschub"],
   "discourse": [
     "https://users.rust-lang.org/latest.rss",
     "https://users.rust-lang.org/c/help.rss",
@@ -65,12 +74,28 @@
     "https://meta.discourse.org/top.rss",
     "https://meta.discourse.org/top.rss?period=weekly"
   ],
-  "fireside": ["https://feeds.fireside.fm/office/rss", "https://office.fireside.fm/json"],
-  "exblog": ["https://petitcc.exblog.jp/index.xml", "https://petitcc.exblog.jp/atom.xml"],
+  "discuz": [
+    "https://bbs.kafan.cn/forum.php?mod=rss",
+    "https://bbs.kafan.cn/forum.php?mod=rss&fid=22"
+  ],
+  "douban": [
+    "https://www.douban.com/feed/people/ahbei/interests",
+    "https://www.douban.com/feed/people/ahbei/reviews",
+    "https://www.douban.com/feed/people/ahbei/notes",
+    "https://www.douban.com/feed/subject/1084336/reviews",
+    "https://www.douban.com/feed/review/book",
+    "https://www.douban.com/feed/review/movie",
+    "https://www.douban.com/feed/review/music",
+    "https://www.douban.com/feed/review/drama"
+  ],
   "dreamwidth": [
     "https://dw-news.dreamwidth.org/data/rss",
     "https://dw-news.dreamwidth.org/data/atom"
   ],
+  "drupal": ["https://dri.es/rss.xml", "https://www.acquia.com/rss.xml"],
+  "exblog": ["https://petitcc.exblog.jp/index.xml", "https://petitcc.exblog.jp/atom.xml"],
+  "fc2": ["https://tetsujin.blog.fc2.com/?xml"],
+  "fireside": ["https://feeds.fireside.fm/office/rss", "https://office.fireside.fm/json"],
   "flickr": [
     "https://www.flickr.com/services/feeds/photos_public.gne?tags=cats",
     "https://www.flickr.com/services/feeds/photos_public.gne?id=24662369@N07",
@@ -79,7 +104,13 @@
     "https://www.flickr.com/services/feeds/groups_discuss.gne?id=42097308@N00",
     "https://www.flickr.com/services/feeds/forums.gne"
   ],
+  "fluxbb": [
+    "https://bbs.archlinux.org/extern.php?action=feed&type=RSS",
+    "https://bbs.archlinux.org/extern.php?action=feed&fid=23&type=atom",
+    "https://forums.bunsenlabs.org/extern.php?action=feed&tid=7520&type=atom"
+  ],
   "friendica": ["https://libranet.de/feed/admin", "https://friendica.world/feed/surazeus/comments"],
+  "funkwhale": ["https://open.audio/api/v1/channels/stralci/rss"],
   "ghost": [
     "https://demo.ghost.io/rss/",
     "https://demo.ghost.io/tag/getting-started/rss/",
@@ -128,17 +159,81 @@
     "https://www.goodreads.com/review/list_rss/1",
     "https://www.goodreads.com/review/list_rss/1?shelf=read"
   ],
+  "grav": ["https://getgrav.org/blog.rss", "https://getgrav.org/blog.atom"],
+  "habr": [
+    "https://habr.com/ru/rss/articles/",
+    "https://habr.com/ru/rss/hub/programming/",
+    "https://habr.com/ru/rss/users/alizar/posts/"
+  ],
   "hackernews": ["https://news.ycombinator.com/rss", "https://news.ycombinator.com/showrss"],
+  "hashnode": ["https://townhall.hashnode.com/rss.xml"],
+  "hatenaBookmark": [
+    "https://b.hatena.ne.jp/hotentry.rss",
+    "https://b.hatena.ne.jp/hotentry/it.rss",
+    "https://b.hatena.ne.jp/entrylist.rss",
+    "https://b.hatena.ne.jp/entrylist/game.rss",
+    "https://b.hatena.ne.jp/search/tag?q=rss&mode=rss",
+    "https://b.hatena.ne.jp/site/example.com?mode=rss"
+  ],
+  "hatenablog": [
+    "https://staff.hatenablog.com/rss",
+    "https://staff.hatenablog.com/feed",
+    "https://staff.hatenablog.com/rss/category/news",
+    "https://staff.hatenablog.com/feed/category/news",
+    "https://blog.hatenablog.com/rss/author/hatenablog-editors",
+    "https://blog.hatenablog.com/feed/author/hatenablog-editors"
+  ],
   "hearthis": ["https://hearthis.at/james-monty-montgomery/podcast/"],
   "heyWorld": ["https://world.hey.com/dhh/feed.atom"],
+  "homeland": ["https://ruby-china.org/topics/feed", "https://ruby-china.org/topics/node41/feed"],
+  "hubspot": [
+    "https://www.smartbugmedia.com/blog/rss.xml",
+    "https://weidert.com/blog/author/frank-isca/rss.xml",
+    "https://bluleadz.com/blog/topic/hubspot/rss.xml"
+  ],
+  "hubzilla": ["https://zotum.net/feed/hub"],
   "insanejournal": [
     "https://random.insanejournal.com/data/rss",
     "https://random.insanejournal.com/data/atom"
+  ],
+  "itchio": [
+    "https://qeresi.itch.io/a-tale-of-crowns/devlog.rss",
+    "https://itch.io/games/by-leafo.xml",
+    "https://itch.io/games/tag-horror.xml",
+    "https://itch.io/games/platform-web.xml",
+    "https://itch.io/games/genre-puzzle.xml",
+    "https://itch.io/games/made-with-unity.xml",
+    "https://itch.io/games/newest.xml",
+    "https://itch.io/games/top-rated.xml",
+    "https://itch.io/games/top-sellers.xml",
+    "https://itch.io/games/on-sale.xml",
+    "https://itch.io/games.xml",
+    "https://itch.io/devlogs.xml",
+    "https://itch.io/tools.xml",
+    "https://itch.io/game-assets.xml",
+    "https://itch.io/soundtracks.xml",
+    "https://itch.io/physical-games.xml",
+    "https://itch.io/books.xml",
+    "https://itch.io/comics.xml",
+    "https://itch.io/misc.xml",
+    "https://itch.io/feed/featured.xml",
+    "https://itch.io/feed/new.xml",
+    "https://itch.io/feed/sales.xml",
+    "https://itch.io/blog.rss"
+  ],
+  "jira": [
+    "https://jira.atlassian.com/plugins/servlet/streams?key=JRASERVER",
+    "https://ecosystem.atlassian.net/plugins/servlet/streams"
+  ],
+  "joomla": [
+    "https://www.joomla.org/announcements.html?format=feed&type=rss",
+    "https://www.headqr.com/en/blog-en?format=feed&type=atom"
   ],
   "kickstarter": [
     "https://www.kickstarter.com/projects/elanlee/exploding-kittens/posts.atom",
     "https://www.kickstarter.com/projects/feed.atom"
   ],
+  "learnku": ["https://learnku.com/feed", "https://learnku.com/laravel/feed"],
   "lemmy": [
     "https://lemmy.ml/feeds/c/lemmy.xml",
     "https://lemmy.ml/feeds/u/dessalines.xml",
@@ -162,17 +257,17 @@
     "https://lobste.rs/comments.rss",
     "https://lobste.rs/rss"
   ],
+  "mastodon": [
+    "https://mastodon.social/@Mastodon.rss",
+    "https://mastodon.social/tags/mastodon.rss",
+    "https://mastodon.social/@Gargron/tagged/mastodev.rss"
+  ],
   "mataroa": ["https://hey.mataroa.blog/rss/"],
   "medium": [
     "https://medium.com/feed/@ev",
     "https://medium.com/feed/tag/programming",
     "https://medium.com/feed/towards-data-science/tagged/python",
     "https://medium.com/feed/towards-data-science"
-  ],
-  "mastodon": [
-    "https://mastodon.social/@Mastodon.rss",
-    "https://mastodon.social/tags/mastodon.rss",
-    "https://mastodon.social/@Gargron/tagged/mastodev.rss"
   ],
   "microblog": [
     "https://vincent.micro.blog/feed.xml",
@@ -188,30 +283,47 @@
     "https://misskey.io/@ai.json",
     "https://blahaj.zone/@ada.atom"
   ],
-  "naverBlog": ["https://rss.blog.naver.com/naverofficial.xml"],
-  "observable": [
-    "https://api.observablehq.com/documents/@mbostock.rss",
-    "https://api.observablehq.com/collection/@observablehq/visualization.rss"
+  "mobilizon": [
+    "https://events.graz.social/@business_news/feed/atom",
+    "https://events.graz.social/feed/instance/atom"
   ],
-  "pagecord": ["https://blog.pagecord.com/feed.xml"],
-  "note": [
-    "https://note.com/info/rss",
-    "https://note.com/hashtag/AI/rss",
-    "https://note.com/notemag/m/m7244518f06ae/rss"
-  ],
-  "nebula": [
-    "https://rss.nebula.app/video/channels/realengineering.rss",
-    "https://rss.nebula.app/video/channels/realengineering.rss?plus=true",
-    "https://rss.nebula.app/video.rss",
-    "https://rss.nebula.app/video/categories/technology.rss"
-  ],
-  "odysee": ["https://odysee.com/$/rss/@Odysee:8"],
   "myanimelist": [
     "https://myanimelist.net/rss.php?type=rw&u=Xinil",
     "https://myanimelist.net/rss.php?type=rm&u=Xinil",
     "https://myanimelist.net/rss.php?type=rrm&u=Xinil",
     "https://myanimelist.net/rss/news.xml"
   ],
+  "naverBlog": ["https://rss.blog.naver.com/naverofficial.xml"],
+  "nebula": [
+    "https://rss.nebula.app/video/channels/realengineering.rss",
+    "https://rss.nebula.app/video/channels/realengineering.rss?plus=true",
+    "https://rss.nebula.app/video.rss",
+    "https://rss.nebula.app/video/categories/technology.rss"
+  ],
+  "neocities": ["https://neocities.org/site/lazer-bunny.rss"],
+  "nodebb": ["https://community.nodebb.org/recent.rss", "https://community.nodebb.org/popular.rss"],
+  "note": [
+    "https://note.com/info/rss",
+    "https://note.com/hashtag/AI/rss",
+    "https://note.com/notemag/m/m7244518f06ae/rss"
+  ],
+  "observable": [
+    "https://api.observablehq.com/documents/@mbostock.rss",
+    "https://api.observablehq.com/collection/@observablehq/visualization.rss"
+  ],
+  "odysee": ["https://odysee.com/$/rss/@Odysee:8"],
+  "omnystudio": ["https://omny.fm/shows/stuff-you-should-know/playlists/podcast.rss"],
+  "openstatus": [
+    "https://status.openstatus.dev/feed/rss",
+    "https://status.openstatus.dev/feed/atom"
+  ],
+  "pagecord": ["https://blog.pagecord.com/feed.xml"],
+  "paragraph": ["https://paragraph.com/@blog/feed", "https://paragraph.com/@optimism/rss"],
+  "peertube": [
+    "https://framatube.org/feeds/videos.xml?videoChannelName=joinpeertube",
+    "https://framatube.org/feeds/videos.xml"
+  ],
+  "phpbb": ["https://forums.gentoo.org/feed.php"],
   "pika": [
     "https://pika.pika.page/posts_feed",
     "https://pika.pika.page/posts_feed.rss",
@@ -223,9 +335,16 @@
   "pleroma": ["https://lain.com/users/lain/feed.atom"],
   "podbean": ["https://feed.podbean.com/podcast/feed.xml"],
   "podigee": ["https://cui-bono.podigee.io/feed/mp3"],
+  "podomatic": ["https://asquaredpodcast10.podomatic.com/rss2.xml"],
   "posthaven": ["https://blog.posthaven.com/posts.atom"],
+  "postype": ["https://www.postype.com/@blog/rss", "https://blog.postype.com/rss"],
+  "powerpress": [
+    "https://www.rvfta.com/feed/podcast/",
+    "https://www.thisweekinphoto.com/feed/podcast/"
+  ],
   "producthunt": ["https://www.producthunt.com/feed"],
   "prose": ["https://hey.prose.sh/rss"],
+  "publii": ["https://getpublii.com/feed.xml", "https://falk.plus/feed.json"],
   "qiita": [
     "https://qiita.com/Qiita/feed.atom",
     "https://qiita.com/tags/javascript/feed.atom",
@@ -248,6 +367,9 @@
   ],
   "rssCom": ["https://media.rss.com/podcasting101/feed.xml"],
   "seesaa": ["https://info.seesaa.net/index20.rdf", "https://info.seesaa.net/index.rdf"],
+  "shaarli": ["https://demo.shaarli.org/feed/rss", "https://demo.shaarli.org/feed/atom"],
+  "shopify": ["https://www.allbirds.com/blogs/news.atom"],
+  "snac": ["https://comam.es/snac/grunfink.rss"],
   "soundcloud": ["https://feeds.soundcloud.com/users/soundcloud:users:1613713/sounds.rss"],
   "sourceforge": [
     "https://sourceforge.net/p/filezilla/activity/feed",
@@ -258,7 +380,12 @@
     "https://sourceforge.net/p/sevenzip/news/feed.atom",
     "https://sourceforge.net/p/sevenzip/discussion/feed"
   ],
+  "sourcehut": [
+    "https://git.sr.ht/~sircmpwn/hare/log/rss.xml",
+    "https://git.sr.ht/~sircmpwn/hare/refs/rss.xml"
+  ],
   "spreaker": ["https://www.spreaker.com/show/1433865/episodes/feed"],
+  "squarespace": ["https://www.squarespace.com/blog?format=rss"],
   "stackExchange": [
     "https://stackoverflow.com/feeds",
     "https://stackoverflow.com/feeds/tag/javascript",
@@ -286,15 +413,26 @@
     "https://newsletter.pragmaticengineer.com/feed",
     "https://garymarcus.substack.com/feed"
   ],
+  "svbtle": ["https://dcurt.is/feed"],
+  "syosetu": ["https://api.syosetu.com/writernovel/372556.Atom"],
+  "textpattern": ["https://textpattern.com/rss", "https://textpattern.com/atom"],
   "tildes": [
     "https://tildes.net/topics.rss",
     "https://tildes.net/topics.atom",
     "https://tildes.net/~tildes/topics.rss",
     "https://tildes.net/~tildes/topics.atom"
   ],
-  "transistor": ["https://feeds.transistor.fm/build-your-saas"],
   "tistory": ["https://notice.tistory.com/rss"],
+  "togetter": ["https://togetter.com/rss/id/tarareba722", "https://togetter.com/rss/hot"],
+  "transistor": ["https://feeds.transistor.fm/build-your-saas"],
   "tumblr": ["https://staff.tumblr.com/rss", "https://staff.tumblr.com/tagged/updates/rss"],
+  "v2ex": [
+    "https://www.v2ex.com/index.xml",
+    "https://www.v2ex.com/feed/programmer.xml",
+    "https://www.v2ex.com/feed/member/livid.xml",
+    "https://www.v2ex.com/feed/tab/tech.xml"
+  ],
+  "velog": ["https://v2.velog.io/rss/velopert", "https://v2.velog.io/rss"],
   "vimeo": [
     "https://vimeo.com/casey/videos/rss",
     "https://vimeo.com/casey/likes/rss",
@@ -308,6 +446,14 @@
     "https://adam.weblog.lol/feed.json"
   ],
   "weebly": ["https://ukiyaseed.weebly.com/1/feed"],
+  "wikidot": [
+    "https://scpwiki.com/feed/site-changes.xml",
+    "https://scpwiki.com/feed/forum/threads.xml"
+  ],
+  "wix": [
+    "https://www.allthefood.ie/blog-feed.xml",
+    "https://k4lxycw.wixsite.com/blog/blog-feed.xml"
+  ],
   "wordpress": [
     "https://wordpress.org/news/feed/",
     "https://wordpress.org/news/?feed=rss",
@@ -440,68 +586,13 @@
     "https://developer.wpengine.com/2023/06/14/feed/rdf/",
     "https://developer.wpengine.com/2023/06/14/?feed=rdf"
   ],
-  "hashnode": ["https://townhall.hashnode.com/rss.xml"],
-  "paragraph": ["https://paragraph.com/@blog/feed", "https://paragraph.com/@optimism/rss"],
-  "hatenaBookmark": [
-    "https://b.hatena.ne.jp/hotentry.rss",
-    "https://b.hatena.ne.jp/hotentry/it.rss",
-    "https://b.hatena.ne.jp/entrylist.rss",
-    "https://b.hatena.ne.jp/entrylist/game.rss",
-    "https://b.hatena.ne.jp/search/tag?q=rss&mode=rss",
-    "https://b.hatena.ne.jp/site/example.com?mode=rss"
-  ],
-  "hatenablog": [
-    "https://staff.hatenablog.com/rss",
-    "https://staff.hatenablog.com/feed",
-    "https://staff.hatenablog.com/rss/category/news",
-    "https://staff.hatenablog.com/feed/category/news",
-    "https://blog.hatenablog.com/rss/author/hatenablog-editors",
-    "https://blog.hatenablog.com/feed/author/hatenablog-editors"
-  ],
-  "itchio": [
-    "https://qeresi.itch.io/a-tale-of-crowns/devlog.rss",
-    "https://itch.io/games/by-leafo.xml",
-    "https://itch.io/games/tag-horror.xml",
-    "https://itch.io/games/platform-web.xml",
-    "https://itch.io/games/genre-puzzle.xml",
-    "https://itch.io/games/made-with-unity.xml",
-    "https://itch.io/games/newest.xml",
-    "https://itch.io/games/top-rated.xml",
-    "https://itch.io/games/top-sellers.xml",
-    "https://itch.io/games/on-sale.xml",
-    "https://itch.io/games.xml",
-    "https://itch.io/devlogs.xml",
-    "https://itch.io/tools.xml",
-    "https://itch.io/game-assets.xml",
-    "https://itch.io/soundtracks.xml",
-    "https://itch.io/physical-games.xml",
-    "https://itch.io/books.xml",
-    "https://itch.io/comics.xml",
-    "https://itch.io/misc.xml",
-    "https://itch.io/feed/featured.xml",
-    "https://itch.io/feed/new.xml",
-    "https://itch.io/feed/sales.xml",
-    "https://itch.io/blog.rss"
-  ],
-  "csdn": ["https://rss.csdn.net/csdnnews/rss/map", "https://blog.csdn.net/csdnnews/rss/list"],
-  "douban": [
-    "https://www.douban.com/feed/people/ahbei/interests",
-    "https://www.douban.com/feed/people/ahbei/reviews",
-    "https://www.douban.com/feed/people/ahbei/notes",
-    "https://www.douban.com/feed/subject/1084336/reviews",
-    "https://www.douban.com/feed/review/book",
-    "https://www.douban.com/feed/review/movie",
-    "https://www.douban.com/feed/review/music",
-    "https://www.douban.com/feed/review/drama"
-  ],
-  "v2ex": [
-    "https://www.v2ex.com/index.xml",
-    "https://www.v2ex.com/feed/programmer.xml",
-    "https://www.v2ex.com/feed/member/livid.xml",
-    "https://www.v2ex.com/feed/tab/tech.xml"
-  ],
   "writeas": ["https://write.as/matt/feed/", "https://write.as/matt/tag:reading/feed/"],
-  "velog": ["https://v2.velog.io/rss/velopert", "https://v2.velog.io/rss"],
+  "writefreely": [
+    "https://people.kernel.org/monsieuricon/feed/",
+    "https://people.kernel.org/read/feed/",
+    "https://blog.kaisbettaieb.dev/tag:coolify/feed/"
+  ],
+  "xenforo": ["https://voz.vn/f/diem-bao.33/index.rss"],
   "ximalaya": ["https://www.ximalaya.com/album/203355.xml"],
   "youtube": [
     "https://www.youtube.com/feeds/videos.xml?channel_id=UCXuqSBlHAE6Xw-yeJA0Tunw",
@@ -516,96 +607,5 @@
     "https://zenn.dev/topics/react/feed",
     "https://zenn.dev/p/team_zenn/feed",
     "https://zenn.dev/feed"
-  ],
-  "bitchute": ["https://www.bitchute.com/feeds/rss/channel/bcsupport/"],
-  "confluence": [
-    "https://cwiki.apache.org/confluence/plugins/servlet/streams?key=KAFKA",
-    "https://cwiki.apache.org/confluence/plugins/servlet/streams"
-  ],
-  "diaspora": ["https://despora.de/public/jaeger", "https://pod.geraspora.de/public/denschub"],
-  "jira": [
-    "https://jira.atlassian.com/plugins/servlet/streams?key=JRASERVER",
-    "https://ecosystem.atlassian.net/plugins/servlet/streams"
-  ],
-  "neocities": ["https://neocities.org/site/lazer-bunny.rss"],
-  "openstatus": [
-    "https://status.openstatus.dev/feed/rss",
-    "https://status.openstatus.dev/feed/atom"
-  ],
-  "postype": ["https://www.postype.com/@blog/rss", "https://blog.postype.com/rss"],
-  "sourcehut": [
-    "https://git.sr.ht/~sircmpwn/hare/log/rss.xml",
-    "https://git.sr.ht/~sircmpwn/hare/refs/rss.xml"
-  ],
-  "squarespace": ["https://www.squarespace.com/blog?format=rss"],
-  "wikidot": [
-    "https://scpwiki.com/feed/site-changes.xml",
-    "https://scpwiki.com/feed/forum/threads.xml"
-  ],
-  "drupal": ["https://dri.es/rss.xml", "https://www.acquia.com/rss.xml"],
-  "shopify": ["https://www.allbirds.com/blogs/news.atom"],
-  "hubspot": [
-    "https://www.smartbugmedia.com/blog/rss.xml",
-    "https://weidert.com/blog/author/frank-isca/rss.xml",
-    "https://bluleadz.com/blog/topic/hubspot/rss.xml"
-  ],
-  "publii": ["https://getpublii.com/feed.xml", "https://falk.plus/feed.json"],
-  "wix": [
-    "https://www.allthefood.ie/blog-feed.xml",
-    "https://k4lxycw.wixsite.com/blog/blog-feed.xml"
-  ],
-  "joomla": [
-    "https://www.joomla.org/announcements.html?format=feed&type=rss",
-    "https://www.headqr.com/en/blog-en?format=feed&type=atom"
-  ],
-  "writefreely": [
-    "https://people.kernel.org/monsieuricon/feed/",
-    "https://people.kernel.org/read/feed/",
-    "https://blog.kaisbettaieb.dev/tag:coolify/feed/"
-  ],
-  "svbtle": ["https://dcurt.is/feed"],
-  "textpattern": ["https://textpattern.com/rss", "https://textpattern.com/atom"],
-  "grav": ["https://getgrav.org/blog.rss", "https://getgrav.org/blog.atom"],
-  "discuz": [
-    "https://bbs.kafan.cn/forum.php?mod=rss",
-    "https://bbs.kafan.cn/forum.php?mod=rss&fid=22"
-  ],
-  "xenforo": ["https://voz.vn/f/diem-bao.33/index.rss"],
-  "fc2": ["https://tetsujin.blog.fc2.com/?xml"],
-  "togetter": ["https://togetter.com/rss/id/tarareba722", "https://togetter.com/rss/hot"],
-  "syosetu": ["https://api.syosetu.com/writernovel/372556.Atom"],
-  "cnblogs": ["https://www.cnblogs.com/vamei/rss"],
-  "homeland": ["https://ruby-china.org/topics/feed", "https://ruby-china.org/topics/node41/feed"],
-  "learnku": ["https://learnku.com/feed", "https://learnku.com/laravel/feed"],
-  "habr": [
-    "https://habr.com/ru/rss/articles/",
-    "https://habr.com/ru/rss/hub/programming/",
-    "https://habr.com/ru/rss/users/alizar/posts/"
-  ],
-  "nodebb": ["https://community.nodebb.org/recent.rss", "https://community.nodebb.org/popular.rss"],
-  "phpbb": ["https://forums.gentoo.org/feed.php"],
-  "fluxbb": [
-    "https://bbs.archlinux.org/extern.php?action=feed&type=RSS",
-    "https://bbs.archlinux.org/extern.php?action=feed&fid=23&type=atom",
-    "https://forums.bunsenlabs.org/extern.php?action=feed&tid=7520&type=atom"
-  ],
-  "mobilizon": [
-    "https://events.graz.social/@business_news/feed/atom",
-    "https://events.graz.social/feed/instance/atom"
-  ],
-  "hubzilla": ["https://zotum.net/feed/hub"],
-  "snac": ["https://comam.es/snac/grunfink.rss"],
-  "shaarli": ["https://demo.shaarli.org/feed/rss", "https://demo.shaarli.org/feed/atom"],
-  "peertube": [
-    "https://framatube.org/feeds/videos.xml?videoChannelName=joinpeertube",
-    "https://framatube.org/feeds/videos.xml"
-  ],
-  "art19": ["https://rss.art19.com/american-scandal"],
-  "omnystudio": ["https://omny.fm/shows/stuff-you-should-know/playlists/podcast.rss"],
-  "podomatic": ["https://asquaredpodcast10.podomatic.com/rss2.xml"],
-  "funkwhale": ["https://open.audio/api/v1/channels/stralci/rss"],
-  "powerpress": [
-    "https://www.rvfta.com/feed/podcast/",
-    "https://www.thisweekinphoto.com/feed/podcast/"
   ]
 }
