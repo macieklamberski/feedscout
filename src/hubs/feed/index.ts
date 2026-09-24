@@ -1,8 +1,9 @@
 import type { Atom } from 'feedsmith'
 import { parseFeed } from 'feedsmith'
-import { attempt } from '../../common/discover/utils.js'
+import { isNonEmptyString } from 'trousse'
 import type { DiscoverOnErrorFn, DiscoverResolveUrlFn } from '../../common/types.js'
 import type { HubResult } from '../discover/types.js'
+import { toHubResults } from '../utils.js'
 
 const getLinksWithRel = (
   links: Array<Atom.Link<string>> | undefined,
@@ -24,23 +25,9 @@ export const discoverHubsFromFeed = (
 
     // JSON Feed has native hubs support.
     if (format === 'json') {
-      const hubs = feed.hubs ?? []
-      const feedUrl = feed.feed_url
-      const topic = feedUrl
-        ? attempt(() => resolveUrlFn(feedUrl, baseUrl), feedUrl, 'resolveUrlFn', onError)
-        : baseUrl
+      const hubUris = (feed.hubs ?? []).map((hub) => hub.url).filter(isNonEmptyString)
 
-      return hubs
-        .filter((hub) => hub.url)
-        .map((hub) => ({
-          hub: attempt(
-            () => resolveUrlFn(hub.url as string, baseUrl),
-            hub.url as string,
-            'resolveUrlFn',
-            onError,
-          ),
-          topic,
-        }))
+      return toHubResults(hubUris, feed.feed_url, baseUrl, resolveUrlFn, onError)
     }
 
     // Get links array based on format.
@@ -49,14 +36,8 @@ export const discoverHubsFromFeed = (
 
     if (hubUris.length > 0) {
       const selfUris = getLinksWithRel(links, 'self')
-      const topic = selfUris[0]
-        ? attempt(() => resolveUrlFn(selfUris[0], baseUrl), selfUris[0], 'resolveUrlFn', onError)
-        : baseUrl
 
-      return hubUris.map((hub) => ({
-        hub: attempt(() => resolveUrlFn(hub, baseUrl), hub, 'resolveUrlFn', onError),
-        topic,
-      }))
+      return toHubResults(hubUris, selfUris[0], baseUrl, resolveUrlFn, onError)
     }
   } catch {
     // Silently fail - content is not a valid feed.
