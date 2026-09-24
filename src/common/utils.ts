@@ -1,4 +1,5 @@
-import { anyWordMatchesAnyOf, escapeRegex, isAnyOf } from 'trousse'
+import { Parser } from 'htmlparser2'
+import { anyWordMatchesAnyOf, isAnyOf } from 'trousse'
 import locales from './locales.json' with { type: 'json' }
 import type { DiscoverUriHint } from './types.js'
 
@@ -42,17 +43,54 @@ export const isOfAllowedMimeType = (
   return isAnyOf(type, allowedTypes, normalizeMimeType)
 }
 
-// Check if HTML contains a meta tag matching a name or property attribute with the given
-// content value (prefix match), regardless of attribute order.
-export const hasMetaContent = (content: string, name: string, value: string): boolean => {
-  const escapedName = escapeRegex(name)
-  const escapedValue = escapeRegex(value)
-  const metaTagRegex = new RegExp(
-    `<meta(?=[^>]*(?:name|property)=["']${escapedName}["'])(?=[^>]*content=["']${escapedValue})`,
-    'i',
-  )
+// Contents of every meta tag in the page, keyed by its lowercased name or property attribute.
+type MetaContents = Record<string, Array<string>>
 
-  return metaTagRegex.test(content)
+let lastParsedContent: string | undefined
+let lastMetaContents: MetaContents = {}
+
+// Every platform handler reads meta tags from the same page, so the last page is parsed once.
+const getMetaContents = (content: string): MetaContents => {
+  if (content === lastParsedContent) {
+    return lastMetaContents
+  }
+
+  const metaContents: MetaContents = {}
+  const parser = new Parser({
+    onopentag: (tag, attributes) => {
+      if (tag !== 'meta' || attributes.content === undefined) {
+        return
+      }
+
+      for (const key of [attributes.name, attributes.property]) {
+        if (!key) {
+          continue
+        }
+
+        const normalizedKey = key.toLowerCase()
+
+        metaContents[normalizedKey] ??= []
+        metaContents[normalizedKey].push(attributes.content)
+      }
+    },
+  })
+
+  parser.write(content)
+  parser.end()
+
+  lastParsedContent = content
+  lastMetaContents = metaContents
+
+  return metaContents
+}
+
+// Check if HTML contains a meta tag matching a name or property attribute with the given
+// content value (case-insensitive prefix match).
+export const hasMetaContent = (content: string, name: string, value: string): boolean => {
+  const contents = getMetaContents(content)[name.toLowerCase()] ?? []
+  const lowercasedValue = value.toLowerCase()
+
+  return contents.some((metaContent) => metaContent.toLowerCase().startsWith(lowercasedValue))
 }
 
 // Fetch joins every Set-Cookie header into one comma-separated value.
@@ -68,16 +106,9 @@ export const hasAnyMeta = (content: string, markers: Array<[string, string]>): b
   return markers.some(([name, value]) => hasMetaContent(content, name, value))
 }
 
-// Read the content value of a meta tag by its name or property attribute,
-// regardless of attribute order.
+// Read the content value of the first meta tag with the given name or property attribute.
 export const getMetaContent = (content: string, name: string): string | undefined => {
-  const escapedName = escapeRegex(name)
-  const metaTagRegex = new RegExp(
-    `<meta(?=[^>]*(?:name|property)=["']${escapedName}["'])[^>]*content=["']([^"']*)["']`,
-    'i',
-  )
-
-  return content.match(metaTagRegex)?.[1]
+  return getMetaContents(content)[name.toLowerCase()]?.[0]
 }
 
 export const matchesAnyOfLinkSelectors = (
