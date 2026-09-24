@@ -11,7 +11,7 @@ import { devtoHandler } from './platform/handlers/devto.js'
 import { giteaHandler } from './platform/handlers/gitea.js'
 import { githubHandler } from './platform/handlers/github.js'
 import { githubGistHandler } from './platform/handlers/githubGist.js'
-import { gitlabHandler } from './platform/handlers/gitlab.js'
+import { gitlabEnricher, gitlabHandler } from './platform/handlers/gitlab.js'
 import { letterboxdHandler } from './platform/handlers/letterboxd.js'
 import { lobstersHandler } from './platform/handlers/lobsters.js'
 import { mastodonEnricher, mastodonHandler } from './platform/handlers/mastodon.js'
@@ -98,4 +98,5 @@ export const defaultFaviconEnrichers: Array<FaviconEnricher> = [
   mastodonEnricher,
   blueskyEnricher,
   redditEnricher,
+  gitlabEnricher,
 ]

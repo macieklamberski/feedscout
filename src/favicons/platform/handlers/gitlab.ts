@@ -7,7 +7,10 @@ import {
   isGitlabHeaders,
   isGitlabHtml,
 } from '../../../feeds/platform/handlers/gitlab.js'
+import type { FaviconEnricher } from '../../types.js'
 import { parseBodyJson } from '../../utils.js'
+
+const platform = 'gitlab'
 
 // Extracts the username from the path. GitLab usernames can contain dots,
 // so the regex strips the .atom feed extension instead of excluding dots.
@@ -54,36 +57,35 @@ export const gitlabHandler: PlatformHandler = {
     return false
   },
 
-  resolve: async (url, _content, _headers, fetchFn) => {
-    if (!fetchFn) {
+  resolve: (url) => {
+    const username = parseUrl(url)?.pathname.match(userRegex)?.[1]
+
+    if (!username || isAnyOf(username, excludedPaths)) {
       return []
     }
 
-    try {
-      const { origin, pathname } = new URL(url)
-      const match = pathname.match(userRegex)
-
-      if (!match?.[1]) {
-        return []
-      }
-
-      const username = match[1]
-
-      if (isAnyOf(username, excludedPaths)) {
-        return []
-      }
-
-      // Try users API first, then fall back to groups API.
-      const encodedName = encodeURIComponent(username)
-      const avatarUrl =
-        (await fetchAvatarUrl(`${origin}/api/v4/users?username=${encodedName}`, fetchFn)) ??
-        (await fetchAvatarUrl(`${origin}/api/v4/groups/${encodedName}`, fetchFn))
-
-      if (avatarUrl) {
-        return [{ uri: avatarUrl }]
-      }
-    } catch {}
-
-    return []
+    return [{ platform, id: username, url }]
   },
+}
+
+export const gitlabEnricher: FaviconEnricher = async (ref, context) => {
+  if (ref.platform !== platform) {
+    return
+  }
+
+  try {
+    const { origin } = new URL(ref.url)
+
+    // Try users API first, then fall back to groups API.
+    const encodedName = encodeURIComponent(ref.id)
+    const avatarUrl =
+      (await fetchAvatarUrl(`${origin}/api/v4/users?username=${encodedName}`, context.fetchFn)) ??
+      (await fetchAvatarUrl(`${origin}/api/v4/groups/${encodedName}`, context.fetchFn))
+
+    if (avatarUrl) {
+      return [avatarUrl]
+    }
+  } catch {}
+
+  return []
 }
