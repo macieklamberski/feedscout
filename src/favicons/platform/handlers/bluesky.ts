@@ -1,6 +1,9 @@
 import { isHostOf, isNonEmptyString, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
+import type { FaviconEnricher } from '../../types.js'
 import { parseBodyJson } from '../../utils.js'
+
+const platform = 'bluesky'
 
 export const hosts = ['bsky.app', 'www.bsky.app']
 
@@ -21,24 +24,31 @@ export const blueskyHandler: PlatformHandler = {
     return isProfilePath(parsedUrl.pathname) && isHostOf(url, hosts)
   },
 
-  resolve: async (url, _content, _headers, fetchFn) => {
-    if (!fetchFn) {
+  resolve: (url) => {
+    const handle = parseUrl(url)?.pathname.split('/').filter(Boolean)[1]
+
+    if (!handle) {
       return []
     }
 
-    try {
-      const { pathname } = new URL(url)
-      const segments = pathname.split('/').filter(Boolean)
-      const handle = segments[1]
-      const apiUrl = `https://public.api.bsky.app/xrpc/app.bsky.actor.getProfile?actor=${handle}`
-      const response = await fetchFn(apiUrl)
-      const data = parseBodyJson(response.body)
-
-      if (isNonEmptyString(data.avatar)) {
-        return [{ uri: data.avatar }]
-      }
-    } catch {}
-
-    return []
+    return [{ platform, id: handle, url }]
   },
+}
+
+export const blueskyEnricher: FaviconEnricher = async (ref, context) => {
+  if (ref.platform !== platform) {
+    return
+  }
+
+  try {
+    const apiUrl = `https://public.api.bsky.app/xrpc/app.bsky.actor.getProfile?actor=${ref.id}`
+    const response = await context.fetchFn(apiUrl)
+    const data = parseBodyJson(response.body)
+
+    if (isNonEmptyString(data.avatar)) {
+      return [data.avatar]
+    }
+  } catch {}
+
+  return []
 }

@@ -5,7 +5,7 @@ import type { GuessMethodOptions } from '../common/uris/guess/types.js'
 import type { HeadersMethodOptions } from '../common/uris/headers/types.js'
 import type { HtmlMethodOptions } from '../common/uris/html/types.js'
 import type { PlatformMethodOptions } from '../common/uris/platform/types.js'
-import { blueskyHandler } from './platform/handlers/bluesky.js'
+import { blueskyEnricher, blueskyHandler } from './platform/handlers/bluesky.js'
 import { deviantartHandler } from './platform/handlers/deviantart.js'
 import { devtoHandler } from './platform/handlers/devto.js'
 import { giteaHandler } from './platform/handlers/gitea.js'
@@ -94,4 +94,4 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
   ],
 }
 
-export const defaultFaviconEnrichers: Array<FaviconEnricher> = [mastodonEnricher]
+export const defaultFaviconEnrichers: Array<FaviconEnricher> = [mastodonEnricher, blueskyEnricher]
