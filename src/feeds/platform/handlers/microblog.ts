@@ -6,11 +6,13 @@ import { composeHint } from '../../../common/utils.js'
 // Discoverability: Partially discoverable without handler.
 // Generic partly covers archive, blog, photos, replies.
 
+export const domains = ['micro.blog']
+
 const categoryRegex = /^\/categories\/([^/]+)/
 
 export const microblogHandler: PlatformHandler = {
   match: (url) => {
-    return isSubdomainOf(url, 'micro.blog')
+    return isSubdomainOf(url, domains)
   },
 
   resolve: (url) => {

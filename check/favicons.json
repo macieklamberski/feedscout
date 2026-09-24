@@ -4,6 +4,7 @@
   "gitlab": ["https://gitlab.com/gitlab-org", "https://gitlab.com/john.doe"],
   "letterboxd": ["https://letterboxd.com/kurstboy/films/"],
   "mastodon": ["https://mastodon.social/@Gargron"],
+  "microblog": ["https://manton.micro.blog"],
   "bluesky": ["https://bsky.app/profile/jay.bsky.team"],
   "reddit": ["https://www.reddit.com/r/programming"],
   "tumblr": ["https://staff.tumblr.com"],
