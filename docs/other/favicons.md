@@ -60,6 +60,7 @@ The Platform method extracts avatars and icons directly from known platforms usi
 | BitChute | Channel image | Page HTML |
 | Bluesky | Profile avatar | Public API, through an [enricher](#enriching-platform-icons) |
 | BookWyrm | User avatar | Page HTML, or the user's actor JSON through an [enricher](#enriching-platform-icons) for shelf pages |
+| Dailymotion | User avatar, or the playlist owner's avatar | Public API, through an [enricher](#enriching-platform-icons) |
 | Dev.to | Profile image | Public API, through an [enricher](#enriching-platform-icons) |
 | DeviantArt | User avatar | URL pattern |
 | Flickr | User buddyicon | Page HTML |
