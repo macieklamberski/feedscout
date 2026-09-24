@@ -16,6 +16,7 @@ import { lobstersHandler } from './platform/handlers/lobsters.js'
 import { mastodonHandler } from './platform/handlers/mastodon.js'
 import { redditHandler } from './platform/handlers/reddit.js'
 import { sourceforgeHandler } from './platform/handlers/sourceforge.js'
+import { steamHandler } from './platform/handlers/steam.js'
 import { tumblrHandler } from './platform/handlers/tumblr.js'
 
 export const defaultIconRels = [
@@ -84,6 +85,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     tumblrHandler,
     lobstersHandler,
     sourceforgeHandler,
+    steamHandler,
     deviantartHandler,
     devtoHandler,
   ],
