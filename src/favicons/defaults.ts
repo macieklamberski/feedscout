@@ -18,7 +18,7 @@ import { letterboxdHandler } from './platform/handlers/letterboxd.js'
 import { lobstersHandler } from './platform/handlers/lobsters.js'
 import { mastodonEnricher, mastodonHandler } from './platform/handlers/mastodon.js'
 import { microblogHandler } from './platform/handlers/microblog.js'
-import { naverBlogHandler } from './platform/handlers/naverBlog.js'
+import { naverBlogEnricher, naverBlogHandler } from './platform/handlers/naverBlog.js'
 import { nebulaEnricher, nebulaHandler } from './platform/handlers/nebula.js'
 import { pinterestEnricher, pinterestHandler } from './platform/handlers/pinterest.js'
 import { redditEnricher, redditHandler } from './platform/handlers/reddit.js'
@@ -118,4 +118,5 @@ export const defaultFaviconEnrichers: Array<FaviconEnricher> = [
   gitlabEnricher,
   devtoEnricher,
   nebulaEnricher,
+  naverBlogEnricher,
 ]
