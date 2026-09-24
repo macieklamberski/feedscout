@@ -1,6 +1,18 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverUriEntry } from '../../../common/types.js'
-import { pinterestHandler } from './pinterest.js'
+import type { DiscoverRef, DiscoverUriEntry, FetchFn } from '../../../common/types.js'
+import type { FaviconEnricherContext } from '../../types.js'
+import { pinterestEnricher, pinterestHandler } from './pinterest.js'
+
+const createContext = (responses: Record<string, string>): FaviconEnricherContext => {
+  const fetchFn: FetchFn = async (url) => ({
+    headers: new Headers(),
+    body: responses[url] ?? '',
+    url,
+    status: url in responses ? 200 : 404,
+  })
+
+  return { fetchFn }
+}
 
 const createPageHtml = (users: Record<string, unknown>): string => {
   const props = JSON.stringify({ initialReduxState: { users } })
@@ -17,6 +29,12 @@ const profileHtml = createPageHtml({
       'https://i.pinimg.com/280x280_RS/37/a1/75/37a175e6d2431425576f0b8f81389394.jpg',
   },
 })
+const savedHtml = createPageHtml({ '': {} })
+const ref: DiscoverRef = {
+  platform: 'pinterest',
+  id: 'alice',
+  url: 'https://www.pinterest.com/alice/_saved/',
+}
 const expectedIcon: Array<DiscoverUriEntry> = [
   { uri: 'https://i.pinimg.com/280x280_RS/37/a1/75/37a175e6d2431425576f0b8f81389394.jpg' },
 ]
@@ -28,8 +46,8 @@ describe('pinterestHandler', () => {
       expect(pinterestHandler.match('https://pinterest.com/alice/')).toBe(true)
     })
 
-    it('should not match saved pages', () => {
-      expect(pinterestHandler.match('https://www.pinterest.com/alice/_saved/')).toBe(false)
+    it('should match saved pages', () => {
+      expect(pinterestHandler.match('https://www.pinterest.com/alice/_saved/')).toBe(true)
     })
 
     it('should not match board pages', () => {
@@ -68,6 +86,20 @@ describe('pinterestHandler', () => {
         const result = pinterestHandler.resolve('https://www.pinterest.com/alice/', profileHtml)
 
         expect(result).toEqual(expectedIcon)
+      })
+
+      it('should return a ref for saved pages', () => {
+        const url = 'https://www.pinterest.com/alice/_saved/'
+        const expected: Array<DiscoverRef> = [{ platform: 'pinterest', id: 'alice', url }]
+
+        expect(pinterestHandler.resolve(url, savedHtml)).toEqual(expected)
+      })
+
+      it('should return a ref for profile pages when content is missing', () => {
+        const url = 'https://www.pinterest.com/alice/'
+        const expected: Array<DiscoverRef> = [{ platform: 'pinterest', id: 'alice', url }]
+
+        expect(pinterestHandler.resolve(url)).toEqual(expected)
       })
     })
 
@@ -113,12 +145,6 @@ describe('pinterestHandler', () => {
         expect(result).toEqual([])
       })
 
-      it('should return empty array when content is missing', () => {
-        const result = pinterestHandler.resolve('https://www.pinterest.com/alice/')
-
-        expect(result).toEqual([])
-      })
-
       it('should return empty array when the page has no initial props', () => {
         const result = pinterestHandler.resolve('https://www.pinterest.com/alice/', '<html></html>')
 
@@ -139,5 +165,66 @@ describe('pinterestHandler', () => {
         expect(result).toEqual(expectedIcon)
       })
     })
+  })
+})
+
+describe('pinterestEnricher', () => {
+  it('should resolve the avatar from the profile page', async () => {
+    const context = createContext({ 'https://www.pinterest.com/alice/': profileHtml })
+    const expected = [
+      'https://i.pinimg.com/280x280_RS/37/a1/75/37a175e6d2431425576f0b8f81389394.jpg',
+    ]
+
+    expect(await pinterestEnricher(ref, context)).toEqual(expected)
+  })
+
+  it('should return undefined for a ref of another platform', async () => {
+    const otherRef: DiscoverRef = {
+      platform: 'mastodon',
+      id: 'alice',
+      url: 'https://example.com/@alice',
+    }
+
+    expect(await pinterestEnricher(otherRef, createContext({}))).toBeUndefined()
+  })
+
+  it('should return empty array for the default avatar', async () => {
+    const html = createPageHtml({
+      '1': {
+        username: 'alice',
+        image_xlarge_url: 'https://s.pinimg.com/images/user/default_280.png',
+      },
+    })
+    const context = createContext({ 'https://www.pinterest.com/alice/': html })
+
+    expect(await pinterestEnricher(ref, context)).toEqual([])
+  })
+
+  it('should return empty array when image_xlarge_url is missing', async () => {
+    const html = createPageHtml({ '1': { username: 'alice' } })
+    const context = createContext({ 'https://www.pinterest.com/alice/': html })
+
+    expect(await pinterestEnricher(ref, context)).toEqual([])
+  })
+
+  it('should return empty array when the profile page has no initial props', async () => {
+    const context = createContext({ 'https://www.pinterest.com/alice/': '<html></html>' })
+
+    expect(await pinterestEnricher(ref, context)).toEqual([])
+  })
+
+  it('should return empty array when the initial props are not valid JSON', async () => {
+    const html = '<script id="__PWS_INITIAL_PROPS__" type="application/json">{not-json</script>'
+    const context = createContext({ 'https://www.pinterest.com/alice/': html })
+
+    expect(await pinterestEnricher(ref, context)).toEqual([])
+  })
+
+  it('should return empty array when fetch throws', async () => {
+    const fetchFn: FetchFn = () => {
+      throw new Error('Network error')
+    }
+
+    expect(await pinterestEnricher(ref, { fetchFn })).toEqual([])
   })
 })

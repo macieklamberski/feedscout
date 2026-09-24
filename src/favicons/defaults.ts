@@ -18,7 +18,7 @@ import { letterboxdHandler } from './platform/handlers/letterboxd.js'
 import { lobstersHandler } from './platform/handlers/lobsters.js'
 import { mastodonEnricher, mastodonHandler } from './platform/handlers/mastodon.js'
 import { microblogHandler } from './platform/handlers/microblog.js'
-import { pinterestHandler } from './platform/handlers/pinterest.js'
+import { pinterestEnricher, pinterestHandler } from './platform/handlers/pinterest.js'
 import { redditEnricher, redditHandler } from './platform/handlers/reddit.js'
 import { sourceforgeHandler } from './platform/handlers/sourceforge.js'
 import { steamHandler } from './platform/handlers/steam.js'
@@ -108,6 +108,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
 
 export const defaultFaviconEnrichers: Array<FaviconEnricher> = [
   mastodonEnricher,
+  pinterestEnricher,
   blueskyEnricher,
   redditEnricher,
   gitlabEnricher,
