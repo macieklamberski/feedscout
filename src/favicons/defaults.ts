@@ -28,6 +28,7 @@ import { redditEnricher, redditHandler } from './platform/handlers/reddit.js'
 import { soundcloudHandler } from './platform/handlers/soundcloud.js'
 import { sourceforgeHandler } from './platform/handlers/sourceforge.js'
 import { steamHandler } from './platform/handlers/steam.js'
+import { togetterHandler } from './platform/handlers/togetter.js'
 import { tumblrHandler } from './platform/handlers/tumblr.js'
 import { youtubeHandler } from './platform/handlers/youtube.js'
 import { zennHandler } from './platform/handlers/zenn.js'
@@ -112,6 +113,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     lobstersHandler,
     sourceforgeHandler,
     steamHandler,
+    togetterHandler,
     deviantartHandler,
     devtoHandler,
     flickrHandler,
