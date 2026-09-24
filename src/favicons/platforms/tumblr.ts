@@ -1,0 +1,20 @@
+import { isSubdomainOf } from 'trousse'
+import type { PlatformHandler } from '../../common/uris/platform/types.js'
+import { domains } from '../../feeds/platforms/tumblr.js'
+
+export const tumblrHandler: PlatformHandler = {
+  match: (url) => {
+    return isSubdomainOf(url, domains)
+  },
+
+  resolve: (url) => {
+    const { hostname } = new URL(url)
+    const blog = hostname.split('.')[0]
+
+    if (!blog || blog === 'www') {
+      return []
+    }
+
+    return [{ uri: `https://api.tumblr.com/v2/blog/${blog}/avatar/512` }]
+  },
+}
