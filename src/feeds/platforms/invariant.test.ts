@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'bun:test'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import { bookwyrmHandler } from './bookwyrm.js'
 import { confluenceHandler } from './confluence.js'
 import { diasporaHandler } from './diaspora.js'
@@ -181,4 +182,26 @@ describe('platform handler invariant', () => {
       expect(violations).toEqual([])
     },
   )
+
+  // Two handlers matching one page leave the result to their order in the defaults. Only the
+  // neutral host is tried, since gitlab.com never serves another platform's markup.
+  // A row without headers leaves it.each passing its done callback in their place.
+  for (const [platform, , value, headers] of cases) {
+    it(`should match ${platform} pages with no other default handler`, () => {
+      const violations: Array<string> = []
+
+      for (const path of paths) {
+        const url = `https://example.org${path}`
+        const matching = defaultPlatformOptions.handlers.filter((handler) => {
+          return handler.match(url, value, headers)
+        })
+
+        if (matching.length > 1) {
+          violations.push(url)
+        }
+      }
+
+      expect(violations).toEqual([])
+    })
+  }
 })
