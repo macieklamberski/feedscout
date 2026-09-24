@@ -7,6 +7,25 @@ const productJson =
 const relatedProductJson =
   '{"__typename":"Product","id":"187207","slug":"craft-do","name":"Craft.do","tagline":"Docs and notes","logoUuid":"f311c239-8bb3-466f-b115-e7cc9228f438.png","isNoLongerOnline":false}'
 
+const topicPage = `
+  <meta
+    property="og:image"
+    content="https://ph-files.imgix.net/5e906c86-5776-4ef0-9841-2b76dea8e255.jpeg?auto=format"
+  />
+`
+const genericPage = `
+  <meta
+    property="og:image"
+    content="https://ph-static.imgix.net/product-hunt-logo-horizontal-orange-background.png?auto=format"
+  />
+`
+const foreignImagePage = `
+  <meta
+    property="og:image"
+    content="https://example.com/5e906c86-5776-4ef0-9841-2b76dea8e255.jpeg"
+  />
+`
+
 describe('producthuntHandler', () => {
   describe('match', () => {
     it('should match product URLs', () => {
@@ -23,10 +42,24 @@ describe('producthuntHandler', () => {
       )
     })
 
-    it('should not match topic pages', () => {
-      expect(producthuntHandler.match('https://www.producthunt.com/topics/productivity')).toBe(
-        false,
+    it('should match topic pages', () => {
+      expect(producthuntHandler.match('https://www.producthunt.com/topics/productivity')).toBe(true)
+    })
+
+    it('should match topic pages with a trailing slash', () => {
+      expect(producthuntHandler.match('https://www.producthunt.com/topics/productivity/')).toBe(
+        true,
       )
+    })
+
+    it('should not match the topics index', () => {
+      expect(producthuntHandler.match('https://www.producthunt.com/topics')).toBe(false)
+    })
+
+    it('should not match topic subpages', () => {
+      expect(
+        producthuntHandler.match('https://www.producthunt.com/topics/productivity/launches'),
+      ).toBe(false)
     })
 
     it('should not match category pages', () => {
@@ -108,7 +141,42 @@ describe('producthuntHandler', () => {
     it('should return empty array for a page outside a product', () => {
       const value = '{"slug":"notion","name":"Notion","logoUuid":"abc123.png"}'
 
-      expect(producthuntHandler.resolve('https://www.producthunt.com/topics/ai', value)).toEqual([])
+      expect(
+        producthuntHandler.resolve('https://www.producthunt.com/categories/notion', value),
+      ).toEqual([])
+    })
+
+    it('should return the topic image cropped to a square', () => {
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://ph-files.imgix.net/5e906c86-5776-4ef0-9841-2b76dea8e255.jpeg?fit=crop&w=256&h=256',
+        },
+      ]
+
+      expect(
+        producthuntHandler.resolve('https://www.producthunt.com/topics/productivity', topicPage),
+      ).toEqual(expected)
+    })
+
+    it('should return empty array for the generic share image on a topic page', () => {
+      expect(
+        producthuntHandler.resolve('https://www.producthunt.com/topics/productivity', genericPage),
+      ).toEqual([])
+    })
+
+    it('should return empty array for a topic og:image outside ph-files.imgix.net', () => {
+      expect(
+        producthuntHandler.resolve(
+          'https://www.producthunt.com/topics/productivity',
+          foreignImagePage,
+        ),
+      ).toEqual([])
+    })
+
+    it('should return empty array for a topic page without content', () => {
+      expect(producthuntHandler.resolve('https://www.producthunt.com/topics/productivity')).toEqual(
+        [],
+      )
     })
   })
 })

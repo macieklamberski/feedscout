@@ -31,7 +31,10 @@
   "peertube": ["https://framatube.org/a/framasoft"],
   "pinterest": ["https://www.pinterest.com/nasa"],
   "pixelfed": ["https://pixelfed.social/dansup"],
-  "producthunt": ["https://www.producthunt.com/products/notion"],
+  "producthunt": [
+    "https://www.producthunt.com/products/notion",
+    "https://www.producthunt.com/topics/productivity"
+  ],
   "reddit": ["https://www.reddit.com/r/programming"],
   "soundcloud": ["https://soundcloud.com/diplo"],
   "sourceforge": ["https://sourceforge.net/projects/vlc"],
