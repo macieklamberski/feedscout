@@ -86,6 +86,7 @@ The Platform method extracts avatars and icons directly from known platforms usi
 | PeerTube (self-hosted) | Channel or account avatar | Page HTML, or the public API through an [enricher](#enriching-platform-icons) |
 | Pinterest | Profile avatar | Page HTML, or the profile page through an [enricher](#enriching-platform-icons) for saved pages |
 | Pixelfed (self-hosted) | Profile avatar | Page HTML, or the public API through an [enricher](#enriching-platform-icons) when the page has no avatar |
+| Postype | Channel avatar | Page HTML, or the channel page through an [enricher](#enriching-platform-icons) for post pages |
 | Product Hunt | Product logo, or topic image cropped to a square | Page HTML |
 | Reddit | Subreddit icon or user avatar | Public API, through an [enricher](#enriching-platform-icons) |
 | SoundCloud | User avatar | Page HTML |

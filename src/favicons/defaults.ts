@@ -37,6 +37,7 @@ import { odyseeEnricher, odyseeHandler } from './platforms/odysee.js'
 import { peertubeEnricher, peertubeHandler } from './platforms/peertube.js'
 import { pinterestEnricher, pinterestHandler } from './platforms/pinterest.js'
 import { pixelfedEnricher, pixelfedHandler } from './platforms/pixelfed.js'
+import { postypeEnricher, postypeHandler } from './platforms/postype.js'
 import { producthuntHandler } from './platforms/producthunt.js'
 import { redditEnricher, redditHandler } from './platforms/reddit.js'
 import { soundcloudHandler } from './platforms/soundcloud.js'
@@ -138,6 +139,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     peertubeHandler,
     pinterestHandler,
     pixelfedHandler,
+    postypeHandler,
     producthuntHandler,
     redditHandler,
     soundcloudHandler,
@@ -174,6 +176,7 @@ export const defaultFaviconEnrichers: Array<FaviconEnricher> = [
   peertubeEnricher,
   pinterestEnricher,
   pixelfedEnricher,
+  postypeEnricher,
   redditEnricher,
   sourcehutEnricher,
   steamEnricher,
