@@ -7,7 +7,7 @@ import type { HtmlMethodOptions } from '../common/uris/html/types.js'
 import type { PlatformMethodOptions } from '../common/uris/platform/types.js'
 import { blueskyEnricher, blueskyHandler } from './platform/handlers/bluesky.js'
 import { deviantartHandler } from './platform/handlers/deviantart.js'
-import { devtoHandler } from './platform/handlers/devto.js'
+import { devtoEnricher, devtoHandler } from './platform/handlers/devto.js'
 import { giteaHandler } from './platform/handlers/gitea.js'
 import { githubHandler } from './platform/handlers/github.js'
 import { githubGistHandler } from './platform/handlers/githubGist.js'
@@ -99,4 +99,5 @@ export const defaultFaviconEnrichers: Array<FaviconEnricher> = [
   blueskyEnricher,
   redditEnricher,
   gitlabEnricher,
+  devtoEnricher,
 ]
