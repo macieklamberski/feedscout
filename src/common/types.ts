@@ -51,13 +51,31 @@ export type DiscoverFetchFnResponse = {
   body: string | ReadableStream<Uint8Array>
   url: string
   status: number
-  statusText: string
+  statusText?: string
 }
 
 export type DiscoverFetchFn = (
   url: string,
   options?: DiscoverFetchFnOptions,
 ) => MaybePromise<DiscoverFetchFnResponse>
+
+export type FetchFnOptions = {
+  method?: 'GET' | 'HEAD' | 'POST'
+  headers?: Record<string, string>
+  body?: string
+}
+
+export type FetchFnResponse = {
+  headers: Headers
+  body: string
+  url: string // Final URL after redirects
+  status: number
+}
+
+export type FetchFn<TResponse extends FetchFnResponse = FetchFnResponse> = (
+  url: string,
+  options?: FetchFnOptions,
+) => MaybePromise<TResponse>
 
 export type DiscoverProgress<TValid = object> = {
   tested: number
@@ -85,6 +103,7 @@ export type DiscoverErrorContext = {
     | 'resolveUrlFn'
     | 'resolveSiteUrlFn'
     | 'extractFn'
+    | 'enrichFn'
     | 'onProgress'
     | 'onStep'
   url?: string
@@ -107,6 +126,18 @@ export type DiscoverResult<TValid = object> =
       hint?: DiscoverUriHint
       error?: unknown
     }
+
+// A page whose URI takes an extra request to reach, handed to the enrich function.
+export type DiscoverRef = {
+  platform: string
+  id: string
+  url: string
+}
+
+// Positional: one entry per ref, undefined where nothing was found.
+export type DiscoverEnrichFn = (
+  refs: Array<DiscoverRef>,
+) => MaybePromise<Array<Array<string> | undefined>>
 
 // Extract function uses TValid generic.
 export type DiscoverExtractFn<TValid> = (input: {

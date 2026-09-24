@@ -1,11 +1,13 @@
 import { describe, expect, it } from 'bun:test'
 import type {
+  DiscoverEnrichFn,
   DiscoverExtractFn,
   DiscoverFetchFn,
   DiscoverResolveSiteUrlFn,
   DiscoverResolveUrlFn,
   DiscoverResult,
 } from '../common/types.js'
+import type { PlatformHandler } from '../common/uris/platform/types.js'
 import { discoverFavicons } from './index.js'
 import type { FaviconResult } from './types.js'
 
@@ -844,6 +846,30 @@ describe('discoverFavicons', () => {
     })
     const expected: Array<DiscoverResult<FaviconResult>> = [
       { url: 'https://example.com/favicon.ico', isValid: true, method: 'html' },
+    ]
+
+    expect(result).toEqual(expected)
+  })
+
+  it('should validate URIs from enrichFn with the platform method', async () => {
+    const handler: PlatformHandler = {
+      match: () => true,
+      resolve: (url) => [{ platform: 'example', id: 'alice', url }],
+    }
+    const enrichFn: DiscoverEnrichFn = () => [['https://cdn.example.com/alice.png']]
+    const mockFetch = createMockFetch({
+      'https://cdn.example.com/alice.png': 'binary',
+    })
+    const result = await discoverFavicons(
+      { url: 'https://example.com/@alice', content: '<html></html>' },
+      {
+        methods: { platform: { handlers: [handler] } },
+        fetchFn: mockFetch,
+        enrichFn,
+      },
+    )
+    const expected: Array<DiscoverResult<FaviconResult>> = [
+      { url: 'https://cdn.example.com/alice.png', isValid: true, method: 'platform' },
     ]
 
     expect(result).toEqual(expected)

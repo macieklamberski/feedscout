@@ -64,7 +64,6 @@ describe('defaultFetchFn', () => {
       body: 'response body',
       url: 'https://example.com/feed.xml',
       status: 200,
-      statusText: 'OK',
     }
 
     expect(await defaultFetchFn('https://example.com/feed.xml')).toEqual(expected)
@@ -114,6 +113,26 @@ describe('defaultFetchFn', () => {
     expect(capturedOptions?.headers).toEqual({ 'X-Custom': 'value' })
   })
 
+  it('should pass POST method and body to fetch', async () => {
+    let capturedOptions: RequestInit | undefined
+    fetchSpy.mockImplementation(
+      createFetchMock((_url: string, options?: RequestInit) => {
+        capturedOptions = options
+        return createMockResponse({})
+      }),
+    )
+
+    await defaultFetchFn('https://api.example.com/resolve', {
+      method: 'POST',
+      body: '{"method":"resolve"}',
+    })
+
+    expect(capturedOptions).toMatchObject({
+      method: 'POST',
+      body: '{"method":"resolve"}',
+    })
+  })
+
   it('should return response with correct structure', async () => {
     fetchSpy.mockImplementation(
       createFetchMock(() => {
@@ -132,7 +151,6 @@ describe('defaultFetchFn', () => {
       body: 'feed content',
       url: 'https://example.com/feed.xml',
       status: 200,
-      statusText: 'OK',
     }
 
     expect(result).toEqual(expected)
@@ -152,7 +170,6 @@ describe('defaultFetchFn', () => {
       body: '',
       url: 'https://redirect.example.com/feed.xml',
       status: 200,
-      statusText: 'OK',
     }
 
     expect(await defaultFetchFn('https://example.com/feed.xml')).toEqual(expected)
@@ -171,13 +188,12 @@ describe('defaultFetchFn', () => {
       body: '<rss>feed content</rss>',
       url: '',
       status: 200,
-      statusText: 'OK',
     }
 
     expect(await defaultFetchFn('https://example.com/feed.xml')).toEqual(expected)
   })
 
-  it('should pass through status and statusText', async () => {
+  it('should pass through status', async () => {
     fetchSpy.mockImplementation(
       createFetchMock(() => {
         return createMockResponse({
@@ -191,7 +207,6 @@ describe('defaultFetchFn', () => {
       body: '',
       url: '',
       status: 404,
-      statusText: 'Not Found',
     }
 
     expect(await defaultFetchFn('https://example.com/feed.xml')).toEqual(expected)

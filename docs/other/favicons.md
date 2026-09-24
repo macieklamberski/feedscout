@@ -69,6 +69,31 @@ The Platform method extracts avatars and icons directly from known platforms usi
 | Steam | Game icon | Page HTML |
 | Letterboxd | Member avatar from member subpages, such as films and lists | Page HTML |
 
+## Enriching Platform Icons
+
+A platform handler reads only the page URL and the page content. On some platforms the icon takes an extra request to reach, such as a call to the platform's API. For those pages the handler returns a [`DiscoverRef`](/reference/types#discoverref) naming the platform and the account, and discovery hands every ref to `enrichFn`. Without it, refs are dropped and no extra request is made.
+
+`createEnrichFaviconFn` builds one from `defaultFaviconEnrichers`, or from the enrichers you pass in `enrichers`. Enrichers make their requests through the `fetchFn` you pass it, a [`FetchFn`](/reference/types#fetchfn) that also takes a POST with a body. It is required, and discovery's own `fetchFn` is not used for enrichers, so pass the same one to both. `defaultFetchFn` is the native fetch one discovery uses when you pass none:
+
+```typescript
+import { createEnrichFaviconFn } from 'feedscout/favicons'
+
+const favicons = await discoverFavicons(url, {
+  fetchFn: myCustomFetch,
+  enrichFn: createEnrichFaviconFn({ fetchFn: myCustomFetch }),
+})
+```
+
+The addresses it returns are validated like any other platform candidate. You can pass your own function too, for example one that answers from a cache:
+
+```typescript
+const favicons = await discoverFavicons(url, {
+  enrichFn: (refs) => {
+    return refs.map((ref) => cache.get(`${ref.platform}:${ref.id}`))
+  },
+})
+```
+
 ## Extracting Icons from Feeds
 
 When given a feed URL, favicon discovery can extract icons directly from the feed content. Atom feeds provide an `<icon>` element, and JSON Feeds include `favicon` and `icon` fields:

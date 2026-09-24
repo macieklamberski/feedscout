@@ -1,12 +1,13 @@
 import { detectAtomFeed, detectJsonFeed, detectRdfFeed, detectRssFeed, parseFeed } from 'feedsmith'
 import { parseUrl } from 'trousse'
-import type { DiscoverFetchFn, DiscoverResolveSiteUrlFn, DiscoverResolveUrlFn } from '../types.js'
+import type { DiscoverResolveSiteUrlFn, DiscoverResolveUrlFn, FetchFn } from '../types.js'
 import { attempt, getFeedSiteUrl } from './utils.js'
 
-export const defaultFetchFn: DiscoverFetchFn = async (url, options) => {
+export const defaultFetchFn: FetchFn = async (url, options) => {
   const response = await fetch(url, {
     method: options?.method ?? 'GET',
     headers: options?.headers,
+    body: options?.body,
   })
 
   return {
@@ -14,7 +15,6 @@ export const defaultFetchFn: DiscoverFetchFn = async (url, options) => {
     body: await response.text(),
     url: response.url,
     status: response.status,
-    statusText: response.statusText,
   }
 }
 

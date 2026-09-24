@@ -179,6 +179,43 @@ Valid favicon results carry no extra properties yet:
 type FaviconResult = {}
 ```
 
+### DiscoverRef
+
+A page whose icon takes an extra request to reach, returned by a platform handler:
+
+```typescript
+type DiscoverRef = {
+  platform: string
+  id: string
+  url: string
+}
+```
+
+### DiscoverEnrichFn
+
+Receives every ref from the platform method in one call. It returns one entry per ref, in the same order, with the icon addresses found or `undefined`:
+
+```typescript
+type DiscoverEnrichFn = (
+  refs: Array<DiscoverRef>,
+) => MaybePromise<Array<Array<string> | undefined>>
+```
+
+### FaviconEnricher
+
+Finds the icon for the refs of one platform and returns `undefined` for any other ref. `createEnrichFaviconFn` answers each ref with the first enricher that returns URIs for it:
+
+```typescript
+type FaviconEnricher = (
+  ref: DiscoverRef,
+  context: FaviconEnricherContext,
+) => MaybePromise<Array<string> | undefined>
+
+type FaviconEnricherContext = {
+  fetchFn: FetchFn
+}
+```
+
 ### HubResult
 
 Result from `discoverHubs`:
@@ -289,6 +326,7 @@ type DiscoverErrorContext = {
     | 'resolveUrlFn'
     | 'resolveSiteUrlFn'
     | 'extractFn'
+    | 'enrichFn'
     | 'onProgress'
     | 'onStep'
   url?: string
@@ -300,6 +338,7 @@ type DiscoverErrorContext = {
 - `resolveUrlFn`: The URL resolution function threw. The URL is kept as discovered.
 - `resolveSiteUrlFn`: The site URL resolution function threw. Discovery continues with the original input.
 - `extractFn`: The extractor threw on the input content. The input is not returned as a result, and the methods run.
+- `enrichFn`: The enrich function threw, or an enricher inside it did. The platform handler's own URLs are kept and the refs are dropped. The URL is the page's.
 - `onProgress`: The progress callback threw, or returned a promise that rejected. The result it was called for is kept.
 - `onStep`: The step callback threw, or returned a promise that rejected. Discovery continues.
 
@@ -327,7 +366,31 @@ type DiscoverFetchFnResponse = {
   body: string | ReadableStream<Uint8Array>
   url: string
   status: number
-  statusText: string
+  statusText?: string
+}
+```
+
+### FetchFn
+
+The fetch function enrichers use. It also takes a POST with a body. The response can carry more fields than the ones listed:
+
+```typescript
+type FetchFn<TResponse extends FetchFnResponse = FetchFnResponse> = (
+  url: string,
+  options?: FetchFnOptions,
+) => MaybePromise<TResponse>
+
+type FetchFnOptions = {
+  method?: 'GET' | 'HEAD' | 'POST'
+  headers?: Record<string, string>
+  body?: string
+}
+
+type FetchFnResponse = {
+  headers: Headers
+  body: string
+  url: string // Final URL after redirects
+  status: number
 }
 ```
 
