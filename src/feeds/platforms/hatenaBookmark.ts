@@ -4,14 +4,14 @@ import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
-const hosts = ['b.hatena.ne.jp']
+export const hosts = ['b.hatena.ne.jp']
 const listRegex = /^\/(hotentry|entrylist)(?:\/([a-z]+))?\/?$/
 const searchRegex = /^\/search\/(tag|text|title)\/?$/
 const siteRegex = /^\/site\/[^/]+/
 const userRegex = /^\/([a-zA-Z0-9_-]+)/
 
 // Reserved first segments that are site sections, not usernames.
-const excludedPaths = [
+export const excludedPaths = [
   'articles',
   'config',
   'entry',
