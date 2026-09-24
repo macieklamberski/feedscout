@@ -1671,7 +1671,7 @@ type PlatformHandler = {
     url: string,
     content?: string,
     headers?: Headers,
-    fetchFn?: DiscoverFetchFn,
+    fetchFn?: FetchFn,
   ) => MaybePromise<Array<DiscoverUriEntry | DiscoverRef>>
 }
 ```

@@ -40,7 +40,7 @@ All options are optional. When not provided, sensible defaults are used.
 | Property | Type | Default | Description |
 |----------|------|---------|-------------|
 | `methods` | `DiscoverMethodsConfig` | `['platform', 'feed', 'html', 'headers', 'guess']` | Which methods to use |
-| `fetchFn` | `DiscoverFetchFn` | native fetch | Custom fetch function |
+| `fetchFn` | `FetchFn` | native fetch | Custom fetch function |
 | `enrichFn` | [`DiscoverEnrichFn`](/reference/types#discoverenrichfn) | | Finds icons that take an extra request to reach. See [Enriching Platform Icons](/other/favicons#enriching-platform-icons) |
 | `extractFn` | `DiscoverExtractFn` | image check | Custom extraction function |
 | `resolveUrlFn` | `DiscoverResolveUrlFn` | resolve relative | Custom URL resolution function |

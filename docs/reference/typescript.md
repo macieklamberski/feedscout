@@ -126,18 +126,17 @@ const feeds = await discoverFeeds(url, {
 
 ## Fetch Function Type
 
-Custom fetch functions must match `DiscoverFetchFn`:
+Custom fetch functions must match `FetchFn`:
 
 ```typescript
-import type { DiscoverFetchFn } from 'feedscout'
+import type { FetchFn } from 'feedscout'
 
-const customFetch: DiscoverFetchFn = async (url, options) => {
+const customFetch: FetchFn = async (url, options) => {
   const response = await myClient.request(url, options)
 
   return {
     url: response.url,
     status: response.status,
-    statusText: response.statusText,
     headers: new Headers(response.headers),
     body: response.data,
   }

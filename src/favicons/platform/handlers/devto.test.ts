@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverFetchFn, DiscoverUriEntry } from '../../../common/types.js'
+import type { DiscoverUriEntry, FetchFn } from '../../../common/types.js'
 import { devtoHandler } from './devto.js'
 
-const createMockFetch = (responses: Record<string, string>): DiscoverFetchFn => {
+const createMockFetch = (responses: Record<string, string>): FetchFn => {
   return async (url: string) => ({
     headers: new Headers(),
     body: responses[url] ?? '',
@@ -128,7 +128,7 @@ describe('devtoHandler', () => {
     })
 
     it('should return empty array when fetch throws', async () => {
-      const mockFetch: DiscoverFetchFn = () => {
+      const mockFetch: FetchFn = () => {
         throw new Error('Network error')
       }
       const result = await devtoHandler.resolve(

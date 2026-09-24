@@ -2,9 +2,9 @@ import { describe, expect, it } from 'bun:test'
 import type {
   DiscoverEnrichFn,
   DiscoverErrorContext,
-  DiscoverFetchFn,
   DiscoverOnErrorFn,
   DiscoverRef,
+  FetchFn,
 } from '../../types.js'
 import { discoverUrisFromPlatform } from './index.js'
 import type { PlatformHandler } from './types.js'
@@ -140,7 +140,7 @@ describe('discoverUrisFromPlatform', () => {
   })
 
   it('should pass fetchFn to handler resolve method', async () => {
-    let receivedFetchFn: DiscoverFetchFn | undefined
+    let receivedFetchFn: FetchFn | undefined
     const handler: PlatformHandler = {
       match: () => true,
       resolve: (_url, _content, _headers, fetchFn) => {
@@ -149,7 +149,7 @@ describe('discoverUrisFromPlatform', () => {
         return []
       },
     }
-    const fetchFn: DiscoverFetchFn = (url) => {
+    const fetchFn: FetchFn = (url) => {
       return Promise.resolve({
         url,
         body: '',

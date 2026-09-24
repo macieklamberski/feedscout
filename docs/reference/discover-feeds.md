@@ -40,7 +40,7 @@ All options are optional. When not provided, sensible defaults are used.
 | Property | Type | Default | Description |
 |----------|------|---------|-------------|
 | `methods` | `DiscoverMethodsConfig` | `['platform', 'html', 'headers', 'guess']` | Which methods to use |
-| `fetchFn` | `DiscoverFetchFn` | native fetch | Custom fetch function |
+| `fetchFn` | `FetchFn` | native fetch | Custom fetch function |
 | `extractFn` | `DiscoverExtractFn` | feedsmith | Custom feed extraction function |
 | `resolveUrlFn` | `DiscoverResolveUrlFn` | resolve relative | Custom URL resolution function |
 | `stopOnFirstMethod` | `boolean` | `false` | Stop after the first method that finds a valid result |
@@ -143,9 +143,9 @@ const feeds = await discoverFeeds('https://example.com', {
 ### With Custom HTTP Client
 
 ```typescript
-import type { DiscoverFetchFn } from 'feedscout'
+import type { FetchFn } from 'feedscout'
 
-const myCustomFetch: DiscoverFetchFn = async (url, options) => {
+const myCustomFetch: FetchFn = async (url, options) => {
   const response = await fetch(url, options)
 
   return {
@@ -153,7 +153,6 @@ const myCustomFetch: DiscoverFetchFn = async (url, options) => {
     body: await response.text(),
     url: response.url,
     status: response.status,
-    statusText: response.statusText,
   }
 }
 

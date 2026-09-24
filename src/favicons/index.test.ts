@@ -2,16 +2,16 @@ import { describe, expect, it } from 'bun:test'
 import type {
   DiscoverEnrichFn,
   DiscoverExtractFn,
-  DiscoverFetchFn,
   DiscoverResolveSiteUrlFn,
   DiscoverResolveUrlFn,
   DiscoverResult,
+  FetchFn,
 } from '../common/types.js'
 import type { PlatformHandler } from '../common/uris/platform/types.js'
 import { discoverFavicons } from './index.js'
 import type { FaviconResult } from './types.js'
 
-const createMockFetch = (responses: Record<string, string>): DiscoverFetchFn => {
+const createMockFetch = (responses: Record<string, string>): FetchFn => {
   return (url: string) => {
     const found = url in responses
     const body = responses[url] ?? ''
@@ -48,7 +48,7 @@ describe('discoverFavicons', () => {
   })
 
   it('should discover favicons from headers', async () => {
-    const mockFetch: DiscoverFetchFn = async (url: string) => ({
+    const mockFetch: FetchFn = async (url: string) => ({
       headers: new Headers({
         link: '</favicon.png>; rel="icon"',
         ...(url.endsWith('.png') ? { 'content-type': 'image/png' } : {}),
@@ -287,7 +287,7 @@ describe('discoverFavicons', () => {
         </channel>
       </rss>
     `
-    const mockFetch: DiscoverFetchFn = async (url: string) => ({
+    const mockFetch: FetchFn = async (url: string) => ({
       headers: new Headers({
         ...(url === 'https://example.com/' ? { link: '</favicon.png>; rel="icon"' } : {}),
         ...(url.endsWith('.png') ? { 'content-type': 'image/png' } : {}),
@@ -507,7 +507,7 @@ describe('discoverFavicons', () => {
   })
 
   it('should recognize direct favicon URL via image content-type', async () => {
-    const mockFetch: DiscoverFetchFn = async (url: string) => ({
+    const mockFetch: FetchFn = async (url: string) => ({
       headers: new Headers({ 'content-type': 'image/png' }),
       body: 'binary',
       url,
@@ -524,7 +524,7 @@ describe('discoverFavicons', () => {
 
   it('should recognize direct SVG favicon via content', async () => {
     const svgContent = '<svg xmlns="http://www.w3.org/2000/svg"><circle r="10"/></svg>'
-    const mockFetch: DiscoverFetchFn = async (url: string) => ({
+    const mockFetch: FetchFn = async (url: string) => ({
       headers: new Headers(),
       body: svgContent,
       url,
@@ -744,7 +744,7 @@ describe('discoverFavicons', () => {
         </channel>
       </rss>
     `
-    const mockFetch: DiscoverFetchFn = (url: string) => {
+    const mockFetch: FetchFn = (url: string) => {
       if (url === 'https://dead-site.com') {
         return Promise.reject(new Error('Connection refused'))
       }
@@ -767,7 +767,7 @@ describe('discoverFavicons', () => {
 
   it('should fall back to guess method when initial URL fetch throws', async () => {
     const pngContent = '\x89PNG\r\n\x1a\n'
-    const mockFetch: DiscoverFetchFn = (url: string) => {
+    const mockFetch: FetchFn = (url: string) => {
       if (url === 'https://example.com/') {
         throw new Error('Connection refused')
       }
