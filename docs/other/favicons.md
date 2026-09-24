@@ -83,7 +83,7 @@ The Platform method extracts avatars and icons directly from known platforms usi
 | SoundCloud | User avatar | Page HTML |
 | SourceForge | Project icon | URL pattern |
 | SourceHut | User avatar, or the owner's avatar on repository pages | Page HTML, the owner's page through an [enricher](#enriching-platform-icons) |
-| Steam | Game icon | Page HTML |
+| Steam | Game icon | Page HTML, or the public API through an [enricher](#enriching-platform-icons) |
 | Togetter | User avatar | Page HTML |
 | Tumblr | Blog avatar | URL pattern |
 | YouTube | Channel avatar | Page HTML |
