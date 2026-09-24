@@ -11,6 +11,7 @@ import { behanceHandler } from './platforms/behance.js'
 import { bitchuteHandler } from './platforms/bitchute.js'
 import { blueskyEnricher, blueskyHandler } from './platforms/bluesky.js'
 import { bookwyrmEnricher, bookwyrmHandler } from './platforms/bookwyrm.js'
+import { dailymotionEnricher, dailymotionHandler } from './platforms/dailymotion.js'
 import { deviantartHandler } from './platforms/deviantart.js'
 import { devtoEnricher, devtoHandler } from './platforms/devto.js'
 import { flickrHandler } from './platforms/flickr.js'
@@ -104,6 +105,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     bitchuteHandler,
     blueskyHandler,
     bookwyrmHandler,
+    dailymotionHandler,
     deviantartHandler,
     devtoHandler,
     flickrHandler,
@@ -140,6 +142,7 @@ export const defaultFaviconEnrichers: Array<FaviconEnricher> = [
   arenaEnricher,
   blueskyEnricher,
   bookwyrmEnricher,
+  dailymotionEnricher,
   devtoEnricher,
   gitlabEnricher,
   mastodonEnricher,
