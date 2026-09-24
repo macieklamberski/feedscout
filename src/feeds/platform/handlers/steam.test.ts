@@ -69,6 +69,18 @@ describe('steamHandler', () => {
       expect(steamHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return news feed for age-gated store app page', () => {
+      const value = 'https://store.steampowered.com/agecheck/app/730/'
+      const expected = [
+        {
+          uri: 'https://store.steampowered.com/feeds/news/app/730/',
+          hint: { key: 'steam:news', label: 'News' },
+        },
+      ]
+
+      expect(steamHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return group RSS feed for community group page', () => {
       const value = 'https://steamcommunity.com/groups/Valve'
       const expected = [

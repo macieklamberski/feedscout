@@ -129,7 +129,7 @@ export const discover = async <TValid>(
   // Step 3: Discover URIs using selected methods.
   reportStep({ step: 'collect', status: 'start' })
 
-  const urisByMethod = await discoverUris(methodsConfig, fetchFn)
+  const urisByMethod = await discoverUris(methodsConfig, fetchFn, onError)
 
   reportStep({ step: 'collect', status: 'end' })
 

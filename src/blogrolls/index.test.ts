@@ -1,11 +1,11 @@
 import { describe, expect, it } from 'bun:test'
 import locales from '../common/locales.json' with { type: 'json' }
-import type { DiscoverFetchFn, DiscoverResult } from '../common/types.js'
+import type { DiscoverResult, FetchFn } from '../common/types.js'
 import { urisBalanced, urisComprehensive, urisMinimal } from './defaults.js'
 import { discoverBlogrolls } from './index.js'
 import type { BlogrollResult } from './types.js'
 
-const createMockFetch = (responses: Record<string, string>): DiscoverFetchFn => {
+const createMockFetch = (responses: Record<string, string>): FetchFn => {
   return async (url: string) => ({
     headers: new Headers(),
     body: responses[url] ?? '',
@@ -401,7 +401,7 @@ describe('discoverBlogrolls', () => {
   })
 
   it('should filter out invalid results when fetchFn returns 404', async () => {
-    const mockFetch: DiscoverFetchFn = async (url: string) => ({
+    const mockFetch: FetchFn = async (url: string) => ({
       headers: new Headers(),
       body: 'Not Found',
       url,
@@ -451,7 +451,7 @@ describe('discoverBlogrolls', () => {
   })
 
   it('should fall back to guess method when initial URL fetch throws', async () => {
-    const fetchFn: DiscoverFetchFn = (url: string) => {
+    const fetchFn: FetchFn = (url: string) => {
       if (url === 'https://example.com/') {
         throw new Error('Connection refused')
       }

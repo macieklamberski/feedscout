@@ -40,7 +40,7 @@ All options are optional. When not provided, sensible defaults are used.
 | Property | Type | Default | Description |
 |----------|------|---------|-------------|
 | `methods` | `DiscoverMethodsConfig` | `['html', 'headers', 'guess']` | Which methods to use |
-| `fetchFn` | `DiscoverFetchFn` | native fetch | Custom fetch function |
+| `fetchFn` | `FetchFn` | native fetch | Custom fetch function |
 | `extractFn` | `DiscoverExtractFn` | feedsmith | Custom OPML extraction function |
 | `resolveUrlFn` | `DiscoverResolveUrlFn` | resolve relative | Custom URL resolution function |
 | `resolveSiteUrlFn` | `DiscoverResolveSiteUrlFn` | site link from feed | Resolves the site URL to scan when the input is a feed |

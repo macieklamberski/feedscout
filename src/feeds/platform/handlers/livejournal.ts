@@ -84,19 +84,19 @@ export const livejournalHandler: PlatformHandler = {
 
       uris.push({
         uri: `${userOrigin}/data/rss?tag=${tag}`,
-        hint: composeHint('livejournal:posts-tag-rss'),
+        hint: composeHint('livejournal:posts-tag', 'rss'),
       })
       uris.push({
         uri: `${userOrigin}/data/atom?tag=${tag}`,
-        hint: composeHint('livejournal:posts-tag-atom'),
+        hint: composeHint('livejournal:posts-tag', 'atom'),
       })
     }
 
-    uris.push({ uri: `${userOrigin}/data/rss`, hint: composeHint('livejournal:posts-rss') })
-    uris.push({ uri: `${userOrigin}/data/atom`, hint: composeHint('livejournal:posts-atom') })
+    uris.push({ uri: `${userOrigin}/data/rss`, hint: composeHint('livejournal:posts', 'rss') })
+    uris.push({ uri: `${userOrigin}/data/atom`, hint: composeHint('livejournal:posts', 'atom') })
     uris.push({
       uri: `${userOrigin}/data/userpics`,
-      hint: composeHint('livejournal:userpics-atom'),
+      hint: composeHint('livejournal:userpics', 'atom'),
     })
 
     return uris

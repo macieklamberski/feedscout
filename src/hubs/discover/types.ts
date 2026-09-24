@@ -1,8 +1,4 @@
-import type {
-  DiscoverFetchFn,
-  DiscoverOnErrorFn,
-  DiscoverResolveUrlFn,
-} from '../../common/types.js'
+import type { DiscoverOnErrorFn, DiscoverResolveUrlFn, FetchFn } from '../../common/types.js'
 
 export type HubResult = {
   hub: string
@@ -13,7 +9,7 @@ export type DiscoverHubsMethodsConfig = Array<'headers' | 'html' | 'feed'>
 
 export type DiscoverHubsOptions = {
   methods?: DiscoverHubsMethodsConfig
-  fetchFn?: DiscoverFetchFn
+  fetchFn?: FetchFn
   resolveUrlFn?: DiscoverResolveUrlFn
   onError?: DiscoverOnErrorFn
 }

@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'bun:test'
+import type { DiscoverUriEntry } from '../../../common/types.js'
 import { insanejournalHandler } from './insanejournal.js'
 
 describe('insanejournalHandler', () => {
@@ -31,18 +32,18 @@ describe('insanejournalHandler', () => {
   describe('resolve', () => {
     it('should return RSS, Atom, and userpics feeds for journal subdomain', () => {
       const value = 'https://random.insanejournal.com'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://random.insanejournal.com/data/rss',
-          hint: { key: 'insanejournal:posts-rss', label: 'Posts (RSS)' },
+          hint: { key: 'insanejournal:posts', label: 'Posts', format: 'rss' },
         },
         {
           uri: 'https://random.insanejournal.com/data/atom',
-          hint: { key: 'insanejournal:posts-atom', label: 'Posts (Atom)' },
+          hint: { key: 'insanejournal:posts', label: 'Posts', format: 'atom' },
         },
         {
           uri: 'https://random.insanejournal.com/data/userpics',
-          hint: { key: 'insanejournal:userpics-atom', label: 'Userpics (Atom)' },
+          hint: { key: 'insanejournal:userpics', label: 'Userpics', format: 'atom' },
         },
       ]
 
@@ -51,18 +52,18 @@ describe('insanejournalHandler', () => {
 
     it('should return feeds regardless of path', () => {
       const value = 'https://random.insanejournal.com/123456.html'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://random.insanejournal.com/data/rss',
-          hint: { key: 'insanejournal:posts-rss', label: 'Posts (RSS)' },
+          hint: { key: 'insanejournal:posts', label: 'Posts', format: 'rss' },
         },
         {
           uri: 'https://random.insanejournal.com/data/atom',
-          hint: { key: 'insanejournal:posts-atom', label: 'Posts (Atom)' },
+          hint: { key: 'insanejournal:posts', label: 'Posts', format: 'atom' },
         },
         {
           uri: 'https://random.insanejournal.com/data/userpics',
-          hint: { key: 'insanejournal:userpics-atom', label: 'Userpics (Atom)' },
+          hint: { key: 'insanejournal:userpics', label: 'Userpics', format: 'atom' },
         },
       ]
 
@@ -71,26 +72,26 @@ describe('insanejournalHandler', () => {
 
     it('should add tag-filtered feeds for /tag/ paths on journal', () => {
       const value = 'https://random.insanejournal.com/tag/photography'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://random.insanejournal.com/data/rss?tag=photography',
-          hint: { key: 'insanejournal:posts-tag-rss', label: 'Tag (RSS)' },
+          hint: { key: 'insanejournal:posts-tag', label: 'Tag', format: 'rss' },
         },
         {
           uri: 'https://random.insanejournal.com/data/atom?tag=photography',
-          hint: { key: 'insanejournal:posts-tag-atom', label: 'Tag (Atom)' },
+          hint: { key: 'insanejournal:posts-tag', label: 'Tag', format: 'atom' },
         },
         {
           uri: 'https://random.insanejournal.com/data/rss',
-          hint: { key: 'insanejournal:posts-rss', label: 'Posts (RSS)' },
+          hint: { key: 'insanejournal:posts', label: 'Posts', format: 'rss' },
         },
         {
           uri: 'https://random.insanejournal.com/data/atom',
-          hint: { key: 'insanejournal:posts-atom', label: 'Posts (Atom)' },
+          hint: { key: 'insanejournal:posts', label: 'Posts', format: 'atom' },
         },
         {
           uri: 'https://random.insanejournal.com/data/userpics',
-          hint: { key: 'insanejournal:userpics-atom', label: 'Userpics (Atom)' },
+          hint: { key: 'insanejournal:userpics', label: 'Userpics', format: 'atom' },
         },
       ]
 
@@ -99,18 +100,18 @@ describe('insanejournalHandler', () => {
 
     it('should canonicalise www.insanejournal.com/users/{user} to subdomain', () => {
       const value = 'https://www.insanejournal.com/users/news'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://news.insanejournal.com/data/rss',
-          hint: { key: 'insanejournal:posts-rss', label: 'Posts (RSS)' },
+          hint: { key: 'insanejournal:posts', label: 'Posts', format: 'rss' },
         },
         {
           uri: 'https://news.insanejournal.com/data/atom',
-          hint: { key: 'insanejournal:posts-atom', label: 'Posts (Atom)' },
+          hint: { key: 'insanejournal:posts', label: 'Posts', format: 'atom' },
         },
         {
           uri: 'https://news.insanejournal.com/data/userpics',
-          hint: { key: 'insanejournal:userpics-atom', label: 'Userpics (Atom)' },
+          hint: { key: 'insanejournal:userpics', label: 'Userpics', format: 'atom' },
         },
       ]
 
@@ -119,18 +120,18 @@ describe('insanejournalHandler', () => {
 
     it('should route www.insanejournal.com/asylum/{name} to asylums subdomain', () => {
       const value = 'https://www.insanejournal.com/asylum/squeaky'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://asylums.insanejournal.com/squeaky/data/rss',
-          hint: { key: 'insanejournal:posts-rss', label: 'Posts (RSS)' },
+          hint: { key: 'insanejournal:posts', label: 'Posts', format: 'rss' },
         },
         {
           uri: 'https://asylums.insanejournal.com/squeaky/data/atom',
-          hint: { key: 'insanejournal:posts-atom', label: 'Posts (Atom)' },
+          hint: { key: 'insanejournal:posts', label: 'Posts', format: 'atom' },
         },
         {
           uri: 'https://asylums.insanejournal.com/squeaky/data/userpics',
-          hint: { key: 'insanejournal:userpics-atom', label: 'Userpics (Atom)' },
+          hint: { key: 'insanejournal:userpics', label: 'Userpics', format: 'atom' },
         },
       ]
 
@@ -139,18 +140,18 @@ describe('insanejournalHandler', () => {
 
     it('should keep asylums.insanejournal.com path-scoped feeds', () => {
       const value = 'https://asylums.insanejournal.com/squeaky'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://asylums.insanejournal.com/squeaky/data/rss',
-          hint: { key: 'insanejournal:posts-rss', label: 'Posts (RSS)' },
+          hint: { key: 'insanejournal:posts', label: 'Posts', format: 'rss' },
         },
         {
           uri: 'https://asylums.insanejournal.com/squeaky/data/atom',
-          hint: { key: 'insanejournal:posts-atom', label: 'Posts (Atom)' },
+          hint: { key: 'insanejournal:posts', label: 'Posts', format: 'atom' },
         },
         {
           uri: 'https://asylums.insanejournal.com/squeaky/data/userpics',
-          hint: { key: 'insanejournal:userpics-atom', label: 'Userpics (Atom)' },
+          hint: { key: 'insanejournal:userpics', label: 'Userpics', format: 'atom' },
         },
       ]
 
@@ -171,18 +172,18 @@ describe('insanejournalHandler', () => {
 
     it('should keep feeds.insanejournal.com path-scoped feeds', () => {
       const value = 'https://feeds.insanejournal.com/dw_code_feed'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://feeds.insanejournal.com/dw_code_feed/data/rss',
-          hint: { key: 'insanejournal:posts-rss', label: 'Posts (RSS)' },
+          hint: { key: 'insanejournal:posts', label: 'Posts', format: 'rss' },
         },
         {
           uri: 'https://feeds.insanejournal.com/dw_code_feed/data/atom',
-          hint: { key: 'insanejournal:posts-atom', label: 'Posts (Atom)' },
+          hint: { key: 'insanejournal:posts', label: 'Posts', format: 'atom' },
         },
         {
           uri: 'https://feeds.insanejournal.com/dw_code_feed/data/userpics',
-          hint: { key: 'insanejournal:userpics-atom', label: 'Userpics (Atom)' },
+          hint: { key: 'insanejournal:userpics', label: 'Userpics', format: 'atom' },
         },
       ]
 

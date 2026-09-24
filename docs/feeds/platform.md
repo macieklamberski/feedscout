@@ -23,10 +23,13 @@ Platform handlers attach a `hint` to each feed URI they generate. Hints provide 
 
 Hints are propagated to the final [`DiscoverResult`](/reference/types#discoverresult) objects returned by `discoverFeeds`. Results from non-platform methods (HTML, headers, guess) do not include hints.
 
+When a platform serves the same feed in several formats, like WordPress posts in RSS, Atom and RDF, each variant gets the same `label` and its own `format`. The hint carries the format the platform serves at that URL, so it is there for results that failed to validate too.
+
 ```typescript
 type DiscoverUriHint = {
-  key: string    // e.g., 'youtube:all', 'youtube:videos'
-  label: string  // e.g., 'All uploads', 'Videos'
+  key: string                              // e.g., 'youtube:all', 'wordpress:posts'
+  label: string                            // e.g., 'All uploads', 'Posts'
+  format?: 'rss' | 'atom' | 'rdf' | 'json' // e.g., 'atom'
 }
 ```
 
@@ -1648,7 +1651,7 @@ const uris = await discoverUrisFromPlatform(htmlContent, undefined, {
 // ]
 ```
 
-The arguments are the page content, the response headers, the options, and an optional `fetchFn` that is passed on to handlers. Pass `undefined` for content or headers you do not have.
+The arguments are the page content, the response headers, the options, an optional `fetchFn` that is passed on to handlers, and an optional `onError` that receives a throw from a handler or from `enrichFn`. Pass `undefined` for content or headers you do not have.
 
 > [!NOTE]
 > The YouTube handler requires HTML content for `@handle`, `/user/`, `/c/`, and video URLs to extract the channel ID. For `/channel/UC...` URLs, no content is needed.
@@ -1668,15 +1671,15 @@ type PlatformHandler = {
     url: string,
     content?: string,
     headers?: Headers,
-    fetchFn?: DiscoverFetchFn,
-  ) => Array<DiscoverUriEntry> | Promise<Array<DiscoverUriEntry>>
+    fetchFn?: FetchFn,
+  ) => MaybePromise<Array<DiscoverUriEntry | DiscoverRef>>
 }
 ```
 
 | Method | Description |
 |--------|-------------|
 | `match(url, content?, headers?)` | Returns `true` if this handler should process the URL |
-| `resolve(url, content?, headers?, fetchFn?)` | Returns an array of [`DiscoverUriEntry`](/reference/types#discoverurientry) objects for the given page URL |
+| `resolve(url, content?, headers?, fetchFn?)` | Returns an array of [`DiscoverUriEntry`](/reference/types#discoverurientry) objects for the given page URL. A favicon handler can also return a [`DiscoverRef`](/reference/types#discoverref) for an icon that takes an extra request. See [Enriching Platform Icons](/other/favicons#enriching-platform-icons) |
 
 ### Basic Example
 

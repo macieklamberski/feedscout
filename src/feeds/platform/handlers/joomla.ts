@@ -24,11 +24,11 @@ export const joomlaHandler: PlatformHandler = {
       return [
         {
           uri: `${viewUrl}?format=feed&type=rss`,
-          hint: composeHint('joomla:view-rss'),
+          hint: composeHint('joomla:view', 'rss'),
         },
         {
           uri: `${viewUrl}?format=feed&type=atom`,
-          hint: composeHint('joomla:view-atom'),
+          hint: composeHint('joomla:view', 'atom'),
         },
       ]
     } catch {}

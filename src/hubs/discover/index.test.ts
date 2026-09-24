@@ -1,13 +1,9 @@
 import { describe, expect, it } from 'bun:test'
-import type {
-  DiscoverErrorContext,
-  DiscoverFetchFn,
-  DiscoverResolveUrlFn,
-} from '../../common/types.js'
+import type { DiscoverErrorContext, DiscoverResolveUrlFn, FetchFn } from '../../common/types.js'
 import { discoverHubs } from './index.js'
 import type { HubResult } from './types.js'
 
-const createMockFetch = (body: string, headers: Record<string, string> = {}): DiscoverFetchFn => {
+const createMockFetch = (body: string, headers: Record<string, string> = {}): FetchFn => {
   return async (url: string) => ({
     headers: new Headers(headers),
     body,
@@ -369,7 +365,7 @@ describe('discoverHubs', () => {
     })
 
     it('should return empty array when initial URL fetch throws', async () => {
-      const fetchFn: DiscoverFetchFn = () => {
+      const fetchFn: FetchFn = () => {
         throw new Error('Connection refused')
       }
       const value = await discoverHubs('https://example.com/', { fetchFn })

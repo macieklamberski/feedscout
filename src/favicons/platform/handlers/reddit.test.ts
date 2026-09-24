@@ -1,15 +1,29 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverFetchFn, DiscoverUriEntry } from '../../../common/types.js'
-import { isSubredditPath, isUserPath, redditHandler } from './reddit.js'
+import type { DiscoverRef, FetchFn } from '../../../common/types.js'
+import type { FaviconEnricherContext } from '../../types.js'
+import { isSubredditPath, isUserPath, redditEnricher, redditHandler } from './reddit.js'
 
-const createMockFetch = (responses: Record<string, string>): DiscoverFetchFn => {
-  return async (url: string) => ({
+const createContext = (responses: Record<string, string>): FaviconEnricherContext => {
+  const fetchFn: FetchFn = async (url) => ({
     headers: new Headers(),
     body: responses[url] ?? '',
     url,
     status: url in responses ? 200 : 404,
-    statusText: url in responses ? 'OK' : 'Not Found',
   })
+
+  return { fetchFn }
+}
+
+const subredditRef: DiscoverRef = {
+  platform: 'reddit',
+  id: 'r/javascript',
+  url: 'https://reddit.com/r/javascript',
+}
+
+const userRef: DiscoverRef = {
+  platform: 'reddit',
+  id: 'user/spez',
+  url: 'https://reddit.com/u/spez',
 }
 
 describe('isSubredditPath', () => {
@@ -149,242 +163,158 @@ describe('redditHandler', () => {
   })
 
   describe('resolve', () => {
-    it('should resolve subreddit icon from community_icon', async () => {
-      const mockFetch = createMockFetch({
-        'https://www.reddit.com/r/javascript/about.json': JSON.stringify({
-          data: { community_icon: 'https://styles.redditmedia.com/icon.png?v=1' },
-        }),
-      })
-      const result = await redditHandler.resolve(
-        'https://reddit.com/r/javascript',
-        undefined,
-        undefined,
-        mockFetch,
-      )
-      const expected: Array<DiscoverUriEntry> = [{ uri: 'https://styles.redditmedia.com/icon.png' }]
-
-      expect(result).toEqual(expected)
+    it('should return a subreddit ref', async () => {
+      expect(await redditHandler.resolve('https://reddit.com/r/javascript')).toEqual([subredditRef])
     })
 
-    it('should resolve subreddit icon from icon_img when community_icon is empty', async () => {
-      const mockFetch = createMockFetch({
-        'https://www.reddit.com/r/programming/about.json': JSON.stringify({
-          data: { community_icon: '', icon_img: 'https://b.thumbs.redditmedia.com/icon.png' },
-        }),
-      })
-      const result = await redditHandler.resolve(
-        'https://reddit.com/r/programming',
-        undefined,
-        undefined,
-        mockFetch,
-      )
-      const expected: Array<DiscoverUriEntry> = [
-        { uri: 'https://b.thumbs.redditmedia.com/icon.png' },
-      ]
-
-      expect(result).toEqual(expected)
+    it('should return a user ref for /u/ paths', async () => {
+      expect(await redditHandler.resolve('https://reddit.com/u/spez')).toEqual([userRef])
     })
 
-    it('should resolve user icon from icon_img', async () => {
-      const mockFetch = createMockFetch({
-        'https://www.reddit.com/user/spez/about.json': JSON.stringify({
-          data: { icon_img: 'https://styles.redditmedia.com/user-icon.png' },
-        }),
-      })
-      const result = await redditHandler.resolve(
-        'https://reddit.com/u/spez',
-        undefined,
-        undefined,
-        mockFetch,
-      )
-      const expected: Array<DiscoverUriEntry> = [
-        { uri: 'https://styles.redditmedia.com/user-icon.png' },
-      ]
+    it('should return a user ref for /user/ paths', async () => {
+      const url = 'https://reddit.com/user/spez'
+      const expected: Array<DiscoverRef> = [{ platform: 'reddit', id: 'user/spez', url }]
 
-      expect(result).toEqual(expected)
-    })
-
-    it('should resolve user icon from snoovatar_img when icon_img is empty', async () => {
-      const mockFetch = createMockFetch({
-        'https://www.reddit.com/user/spez/about.json': JSON.stringify({
-          data: { icon_img: '', snoovatar_img: 'https://i.redd.it/snoovatar/snoo.png' },
-        }),
-      })
-      const result = await redditHandler.resolve(
-        'https://reddit.com/user/spez',
-        undefined,
-        undefined,
-        mockFetch,
-      )
-      const expected: Array<DiscoverUriEntry> = [{ uri: 'https://i.redd.it/snoovatar/snoo.png' }]
-
-      expect(result).toEqual(expected)
+      expect(await redditHandler.resolve(url)).toEqual(expected)
     })
 
     it('should strip feed extension from subreddit URL', async () => {
-      const mockFetch = createMockFetch({
-        'https://www.reddit.com/r/javascript/about.json': JSON.stringify({
-          data: { community_icon: 'https://styles.redditmedia.com/icon.png' },
-        }),
-      })
-      const result = await redditHandler.resolve(
-        'https://reddit.com/r/javascript.rss',
-        undefined,
-        undefined,
-        mockFetch,
-      )
-      const expected: Array<DiscoverUriEntry> = [{ uri: 'https://styles.redditmedia.com/icon.png' }]
+      const url = 'https://reddit.com/r/javascript.rss'
+      const expected: Array<DiscoverRef> = [{ platform: 'reddit', id: 'r/javascript', url }]
 
-      expect(result).toEqual(expected)
+      expect(await redditHandler.resolve(url)).toEqual(expected)
     })
 
     it('should strip feed extension from user URL', async () => {
-      const mockFetch = createMockFetch({
-        'https://www.reddit.com/user/spez/about.json': JSON.stringify({
-          data: { icon_img: 'https://styles.redditmedia.com/user-icon.png' },
-        }),
-      })
-      const result = await redditHandler.resolve(
-        'https://reddit.com/u/spez.rss',
-        undefined,
-        undefined,
-        mockFetch,
-      )
-      const expected: Array<DiscoverUriEntry> = [
-        { uri: 'https://styles.redditmedia.com/user-icon.png' },
-      ]
+      const url = 'https://reddit.com/u/spez.rss'
+      const expected: Array<DiscoverRef> = [{ platform: 'reddit', id: 'user/spez', url }]
 
-      expect(result).toEqual(expected)
-    })
-
-    it('should return empty array when fetchFn is not provided', async () => {
-      const result = await redditHandler.resolve('https://reddit.com/r/javascript')
-
-      expect(result).toEqual([])
+      expect(await redditHandler.resolve(url)).toEqual(expected)
     })
 
     it('should return empty array for non-subreddit and non-user path', async () => {
-      const mockFetch = createMockFetch({})
-      const result = await redditHandler.resolve(
-        'https://reddit.com/about',
-        undefined,
-        undefined,
-        mockFetch,
-      )
-
-      expect(result).toEqual([])
-    })
-
-    it('should return empty array when subreddit icon fields are empty', async () => {
-      const mockFetch = createMockFetch({
-        'https://www.reddit.com/r/javascript/about.json': JSON.stringify({
-          data: { community_icon: '', icon_img: '' },
-        }),
-      })
-      const result = await redditHandler.resolve(
-        'https://reddit.com/r/javascript',
-        undefined,
-        undefined,
-        mockFetch,
-      )
-
-      expect(result).toEqual([])
-    })
-
-    it('should return empty array when subreddit data fields are missing', async () => {
-      const mockFetch = createMockFetch({
-        'https://www.reddit.com/r/javascript/about.json': JSON.stringify({ data: {} }),
-      })
-      const result = await redditHandler.resolve(
-        'https://reddit.com/r/javascript',
-        undefined,
-        undefined,
-        mockFetch,
-      )
-
-      expect(result).toEqual([])
-    })
-
-    it('should return empty array when user icon fields are empty', async () => {
-      const mockFetch = createMockFetch({
-        'https://www.reddit.com/user/spez/about.json': JSON.stringify({
-          data: { icon_img: '', snoovatar_img: '' },
-        }),
-      })
-      const result = await redditHandler.resolve(
-        'https://reddit.com/u/spez',
-        undefined,
-        undefined,
-        mockFetch,
-      )
-
-      expect(result).toEqual([])
-    })
-
-    it('should return empty array when user data fields are missing', async () => {
-      const mockFetch = createMockFetch({
-        'https://www.reddit.com/user/spez/about.json': JSON.stringify({ data: {} }),
-      })
-      const result = await redditHandler.resolve(
-        'https://reddit.com/u/spez',
-        undefined,
-        undefined,
-        mockFetch,
-      )
-
-      expect(result).toEqual([])
-    })
-
-    it('should return empty array when API returns invalid JSON', async () => {
-      const mockFetch = createMockFetch({
-        'https://www.reddit.com/r/javascript/about.json': 'not json',
-      })
-      const result = await redditHandler.resolve(
-        'https://reddit.com/r/javascript',
-        undefined,
-        undefined,
-        mockFetch,
-      )
-
-      expect(result).toEqual([])
-    })
-
-    it('should return empty array when fetch throws', async () => {
-      const mockFetch: DiscoverFetchFn = () => {
-        throw new Error('Network error')
-      }
-      const result = await redditHandler.resolve(
-        'https://reddit.com/r/javascript',
-        undefined,
-        undefined,
-        mockFetch,
-      )
-
-      expect(result).toEqual([])
+      expect(await redditHandler.resolve('https://reddit.com/about')).toEqual([])
     })
 
     it('should return empty array for invalid URL', async () => {
-      const mockFetch = createMockFetch({})
-      const result = await redditHandler.resolve('not-a-url', undefined, undefined, mockFetch)
+      expect(await redditHandler.resolve('not-a-url')).toEqual([])
+    })
+  })
+})
 
-      expect(result).toEqual([])
+describe('redditEnricher', () => {
+  it('should resolve subreddit icon from community_icon', async () => {
+    const context = createContext({
+      'https://www.reddit.com/r/javascript/about.json': JSON.stringify({
+        data: { community_icon: 'https://styles.redditmedia.com/icon.png?v=1' },
+      }),
     })
 
-    it('should return empty array when community_icon is non-string type', async () => {
-      // When community_icon is a number, .split() throws and the catch block returns [].
-      const mockFetch = createMockFetch({
-        'https://www.reddit.com/r/javascript/about.json': JSON.stringify({
-          data: { community_icon: 42, icon_img: 'https://b.thumbs.redditmedia.com/fallback.png' },
-        }),
-      })
-      const result = await redditHandler.resolve(
-        'https://reddit.com/r/javascript',
-        undefined,
-        undefined,
-        mockFetch,
-      )
+    expect(await redditEnricher(subredditRef, context)).toEqual([
+      'https://styles.redditmedia.com/icon.png',
+    ])
+  })
 
-      expect(result).toEqual([])
+  it('should resolve subreddit icon from icon_img when community_icon is empty', async () => {
+    const context = createContext({
+      'https://www.reddit.com/r/javascript/about.json': JSON.stringify({
+        data: { community_icon: '', icon_img: 'https://b.thumbs.redditmedia.com/icon.png' },
+      }),
     })
+
+    expect(await redditEnricher(subredditRef, context)).toEqual([
+      'https://b.thumbs.redditmedia.com/icon.png',
+    ])
+  })
+
+  it('should resolve user icon from icon_img', async () => {
+    const context = createContext({
+      'https://www.reddit.com/user/spez/about.json': JSON.stringify({
+        data: { icon_img: 'https://styles.redditmedia.com/user-icon.png' },
+      }),
+    })
+
+    expect(await redditEnricher(userRef, context)).toEqual([
+      'https://styles.redditmedia.com/user-icon.png',
+    ])
+  })
+
+  it('should resolve user icon from snoovatar_img when icon_img is empty', async () => {
+    const context = createContext({
+      'https://www.reddit.com/user/spez/about.json': JSON.stringify({
+        data: { icon_img: '', snoovatar_img: 'https://i.redd.it/snoovatar/snoo.png' },
+      }),
+    })
+
+    expect(await redditEnricher(userRef, context)).toEqual(['https://i.redd.it/snoovatar/snoo.png'])
+  })
+
+  it('should return undefined for a ref of another platform', async () => {
+    const ref: DiscoverRef = { platform: 'mastodon', id: 'user', url: 'https://example.com/@user' }
+
+    expect(await redditEnricher(ref, createContext({}))).toBeUndefined()
+  })
+
+  it('should return empty array when subreddit icon fields are empty', async () => {
+    const context = createContext({
+      'https://www.reddit.com/r/javascript/about.json': JSON.stringify({
+        data: { community_icon: '', icon_img: '' },
+      }),
+    })
+
+    expect(await redditEnricher(subredditRef, context)).toEqual([])
+  })
+
+  it('should return empty array when subreddit data fields are missing', async () => {
+    const context = createContext({
+      'https://www.reddit.com/r/javascript/about.json': JSON.stringify({ data: {} }),
+    })
+
+    expect(await redditEnricher(subredditRef, context)).toEqual([])
+  })
+
+  it('should return empty array when user icon fields are empty', async () => {
+    const context = createContext({
+      'https://www.reddit.com/user/spez/about.json': JSON.stringify({
+        data: { icon_img: '', snoovatar_img: '' },
+      }),
+    })
+
+    expect(await redditEnricher(userRef, context)).toEqual([])
+  })
+
+  it('should return empty array when user data fields are missing', async () => {
+    const context = createContext({
+      'https://www.reddit.com/user/spez/about.json': JSON.stringify({ data: {} }),
+    })
+
+    expect(await redditEnricher(userRef, context)).toEqual([])
+  })
+
+  it('should return empty array when API returns invalid JSON', async () => {
+    const context = createContext({
+      'https://www.reddit.com/r/javascript/about.json': 'not json',
+    })
+
+    expect(await redditEnricher(subredditRef, context)).toEqual([])
+  })
+
+  it('should return empty array when fetch throws', async () => {
+    const fetchFn: FetchFn = () => {
+      throw new Error('Network error')
+    }
+
+    expect(await redditEnricher(subredditRef, { fetchFn })).toEqual([])
+  })
+
+  it('should return empty array when community_icon is non-string type', async () => {
+    // When community_icon is a number, .split() throws and the catch block returns [].
+    const context = createContext({
+      'https://www.reddit.com/r/javascript/about.json': JSON.stringify({
+        data: { community_icon: 42, icon_img: 'https://b.thumbs.redditmedia.com/fallback.png' },
+      }),
+    })
+
+    expect(await redditEnricher(subredditRef, context)).toEqual([])
   })
 })

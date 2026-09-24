@@ -56,16 +56,51 @@ The Platform method extracts avatars and icons directly from known platforms usi
 |----------|-----------------|--------|
 | GitHub | User avatar | URL pattern |
 | GitHub Gist | User avatar | URL pattern |
-| GitLab | User or group avatar | Public API |
-| Mastodon | Profile avatar | Public API |
-| Bluesky | Profile avatar | Public API |
-| Reddit | Subreddit icon or user avatar | Public API |
+| GitLab | User or group avatar | Public API, through an [enricher](#enriching-platform-icons) |
+| Mastodon | Profile avatar | Public API, through an [enricher](#enriching-platform-icons) |
+| Bluesky | Profile avatar | Public API, through an [enricher](#enriching-platform-icons) |
+| Reddit | Subreddit icon or user avatar | Public API, through an [enricher](#enriching-platform-icons) |
 | Tumblr | Blog avatar | URL pattern |
 | Gitea (Codeberg, gitea.com, self-hosted) | User avatar | URL pattern |
 | Lobsters | User avatar | URL pattern |
 | SourceForge | Project icon | URL pattern |
 | DeviantArt | User avatar | URL pattern |
-| Dev.to | Profile image | Public API |
+| Dev.to | Profile image | Public API, through an [enricher](#enriching-platform-icons) |
+| Steam | Game icon | Page HTML |
+| Letterboxd | Member avatar from member subpages, such as films and lists | Page HTML |
+
+## Enriching Platform Icons
+
+A platform handler reads only the page URL and the page content. On some platforms the icon takes an extra request to reach, such as a call to the platform's API. For those pages the handler returns a [`DiscoverRef`](/reference/types#discoverref) naming the platform and the account, and discovery hands every ref to `enrichFn`.
+
+By default, `enrichFn` runs the built-in enrichers in `defaultFaviconEnrichers`, making their requests through discovery's `fetchFn`. Set `enrichFn: false` to make no extra request, in which case refs are dropped:
+
+```typescript
+const favicons = await discoverFavicons(url, {
+  enrichFn: false,
+})
+```
+
+To pick the enrichers, build the function with `createEnrichFaviconFn` and the enrichers you want. Each built-in enricher is exported on its own, such as `mastodonEnricher`. A function you build this way makes its requests through the `fetchFn` you pass it, not discovery's, so pass the same one to both:
+
+```typescript
+import { createEnrichFaviconFn, mastodonEnricher } from 'feedscout/favicons'
+
+const favicons = await discoverFavicons(url, {
+  fetchFn: myCustomFetch,
+  enrichFn: createEnrichFaviconFn({ enrichers: [mastodonEnricher], fetchFn: myCustomFetch }),
+})
+```
+
+The addresses it returns are validated like any other platform candidate. You can pass your own function too, for example one that answers from a cache:
+
+```typescript
+const favicons = await discoverFavicons(url, {
+  enrichFn: (refs) => {
+    return refs.map((ref) => cache.get(`${ref.platform}:${ref.id}`))
+  },
+})
+```
 
 ## Extracting Icons from Feeds
 

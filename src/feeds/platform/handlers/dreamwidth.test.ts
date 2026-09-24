@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'bun:test'
+import type { DiscoverUriEntry } from '../../../common/types.js'
 import { dreamwidthHandler } from './dreamwidth.js'
 
 describe('dreamwidthHandler', () => {
@@ -25,18 +26,18 @@ describe('dreamwidthHandler', () => {
   describe('resolve', () => {
     it('should return RSS, Atom, and userpics feeds for blog', () => {
       const value = 'https://news.dreamwidth.org'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://news.dreamwidth.org/data/rss',
-          hint: { key: 'dreamwidth:posts-rss', label: 'Posts (RSS)' },
+          hint: { key: 'dreamwidth:posts', label: 'Posts', format: 'rss' },
         },
         {
           uri: 'https://news.dreamwidth.org/data/atom',
-          hint: { key: 'dreamwidth:posts-atom', label: 'Posts (Atom)' },
+          hint: { key: 'dreamwidth:posts', label: 'Posts', format: 'atom' },
         },
         {
           uri: 'https://news.dreamwidth.org/data/userpics',
-          hint: { key: 'dreamwidth:userpics-atom', label: 'Userpics (Atom)' },
+          hint: { key: 'dreamwidth:userpics', label: 'Userpics', format: 'atom' },
         },
       ]
 
@@ -45,18 +46,18 @@ describe('dreamwidthHandler', () => {
 
     it('should return feed URLs regardless of path', () => {
       const value = 'https://news.dreamwidth.org/123456.html'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://news.dreamwidth.org/data/rss',
-          hint: { key: 'dreamwidth:posts-rss', label: 'Posts (RSS)' },
+          hint: { key: 'dreamwidth:posts', label: 'Posts', format: 'rss' },
         },
         {
           uri: 'https://news.dreamwidth.org/data/atom',
-          hint: { key: 'dreamwidth:posts-atom', label: 'Posts (Atom)' },
+          hint: { key: 'dreamwidth:posts', label: 'Posts', format: 'atom' },
         },
         {
           uri: 'https://news.dreamwidth.org/data/userpics',
-          hint: { key: 'dreamwidth:userpics-atom', label: 'Userpics (Atom)' },
+          hint: { key: 'dreamwidth:userpics', label: 'Userpics', format: 'atom' },
         },
       ]
 
@@ -65,26 +66,26 @@ describe('dreamwidthHandler', () => {
 
     it('should add tag-filtered feeds for /tag/ paths', () => {
       const value = 'https://terriko.dreamwidth.org/tag/ghc09'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://terriko.dreamwidth.org/data/rss?tag=ghc09',
-          hint: { key: 'dreamwidth:posts-tag-rss', label: 'Tag (RSS)' },
+          hint: { key: 'dreamwidth:posts-tag', label: 'Tag', format: 'rss' },
         },
         {
           uri: 'https://terriko.dreamwidth.org/data/atom?tag=ghc09',
-          hint: { key: 'dreamwidth:posts-tag-atom', label: 'Tag (Atom)' },
+          hint: { key: 'dreamwidth:posts-tag', label: 'Tag', format: 'atom' },
         },
         {
           uri: 'https://terriko.dreamwidth.org/data/rss',
-          hint: { key: 'dreamwidth:posts-rss', label: 'Posts (RSS)' },
+          hint: { key: 'dreamwidth:posts', label: 'Posts', format: 'rss' },
         },
         {
           uri: 'https://terriko.dreamwidth.org/data/atom',
-          hint: { key: 'dreamwidth:posts-atom', label: 'Posts (Atom)' },
+          hint: { key: 'dreamwidth:posts', label: 'Posts', format: 'atom' },
         },
         {
           uri: 'https://terriko.dreamwidth.org/data/userpics',
-          hint: { key: 'dreamwidth:userpics-atom', label: 'Userpics (Atom)' },
+          hint: { key: 'dreamwidth:userpics', label: 'Userpics', format: 'atom' },
         },
       ]
 
@@ -97,18 +98,18 @@ describe('dreamwidthHandler', () => {
 
     it('should canonicalise www.dreamwidth.org/users/{user} to subdomain with a hyphen', () => {
       const value = 'https://www.dreamwidth.org/users/dw_news'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://dw-news.dreamwidth.org/data/rss',
-          hint: { key: 'dreamwidth:posts-rss', label: 'Posts (RSS)' },
+          hint: { key: 'dreamwidth:posts', label: 'Posts', format: 'rss' },
         },
         {
           uri: 'https://dw-news.dreamwidth.org/data/atom',
-          hint: { key: 'dreamwidth:posts-atom', label: 'Posts (Atom)' },
+          hint: { key: 'dreamwidth:posts', label: 'Posts', format: 'atom' },
         },
         {
           uri: 'https://dw-news.dreamwidth.org/data/userpics',
-          hint: { key: 'dreamwidth:userpics-atom', label: 'Userpics (Atom)' },
+          hint: { key: 'dreamwidth:userpics', label: 'Userpics', format: 'atom' },
         },
       ]
 
@@ -117,18 +118,18 @@ describe('dreamwidthHandler', () => {
 
     it('should canonicalise www.dreamwidth.org/~{user} to subdomain', () => {
       const value = 'https://www.dreamwidth.org/~dw-news'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://dw-news.dreamwidth.org/data/rss',
-          hint: { key: 'dreamwidth:posts-rss', label: 'Posts (RSS)' },
+          hint: { key: 'dreamwidth:posts', label: 'Posts', format: 'rss' },
         },
         {
           uri: 'https://dw-news.dreamwidth.org/data/atom',
-          hint: { key: 'dreamwidth:posts-atom', label: 'Posts (Atom)' },
+          hint: { key: 'dreamwidth:posts', label: 'Posts', format: 'atom' },
         },
         {
           uri: 'https://dw-news.dreamwidth.org/data/userpics',
-          hint: { key: 'dreamwidth:userpics-atom', label: 'Userpics (Atom)' },
+          hint: { key: 'dreamwidth:userpics', label: 'Userpics', format: 'atom' },
         },
       ]
 

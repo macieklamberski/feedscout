@@ -3,10 +3,10 @@ import { parseFeed } from 'feedsmith'
 import locales from '../locales.json' with { type: 'json' }
 import type {
   DiscoverErrorContext,
-  DiscoverFetchFn,
   DiscoverMethodsConfig,
   DiscoverMethodsConfigDefaults,
   DiscoverResolveUrlFn,
+  FetchFn,
 } from '../types.js'
 import { defaultFetchFn, defaultResolveSiteUrlFn, defaultResolveUrlFn } from './defaults.js'
 import {
@@ -64,7 +64,6 @@ describe('defaultFetchFn', () => {
       body: 'response body',
       url: 'https://example.com/feed.xml',
       status: 200,
-      statusText: 'OK',
     }
 
     expect(await defaultFetchFn('https://example.com/feed.xml')).toEqual(expected)
@@ -114,6 +113,26 @@ describe('defaultFetchFn', () => {
     expect(capturedOptions?.headers).toEqual({ 'X-Custom': 'value' })
   })
 
+  it('should pass POST method and body to fetch', async () => {
+    let capturedOptions: RequestInit | undefined
+    fetchSpy.mockImplementation(
+      createFetchMock((_url: string, options?: RequestInit) => {
+        capturedOptions = options
+        return createMockResponse({})
+      }),
+    )
+
+    await defaultFetchFn('https://api.example.com/resolve', {
+      method: 'POST',
+      body: '{"method":"resolve"}',
+    })
+
+    expect(capturedOptions).toMatchObject({
+      method: 'POST',
+      body: '{"method":"resolve"}',
+    })
+  })
+
   it('should return response with correct structure', async () => {
     fetchSpy.mockImplementation(
       createFetchMock(() => {
@@ -132,7 +151,6 @@ describe('defaultFetchFn', () => {
       body: 'feed content',
       url: 'https://example.com/feed.xml',
       status: 200,
-      statusText: 'OK',
     }
 
     expect(result).toEqual(expected)
@@ -152,7 +170,6 @@ describe('defaultFetchFn', () => {
       body: '',
       url: 'https://redirect.example.com/feed.xml',
       status: 200,
-      statusText: 'OK',
     }
 
     expect(await defaultFetchFn('https://example.com/feed.xml')).toEqual(expected)
@@ -171,13 +188,12 @@ describe('defaultFetchFn', () => {
       body: '<rss>feed content</rss>',
       url: '',
       status: 200,
-      statusText: 'OK',
     }
 
     expect(await defaultFetchFn('https://example.com/feed.xml')).toEqual(expected)
   })
 
-  it('should pass through status and statusText', async () => {
+  it('should pass through status', async () => {
     fetchSpy.mockImplementation(
       createFetchMock(() => {
         return createMockResponse({
@@ -191,7 +207,6 @@ describe('defaultFetchFn', () => {
       body: '',
       url: '',
       status: 404,
-      statusText: 'Not Found',
     }
 
     expect(await defaultFetchFn('https://example.com/feed.xml')).toEqual(expected)
@@ -199,7 +214,7 @@ describe('defaultFetchFn', () => {
 })
 
 describe('normalizeInput', () => {
-  const fetchFn: DiscoverFetchFn = (url) => {
+  const fetchFn: FetchFn = (url) => {
     return Promise.resolve({
       headers: new Headers({ 'content-type': 'text/html' }),
       body: '<html>content</html>',
@@ -221,7 +236,7 @@ describe('normalizeInput', () => {
   })
 
   it('should preserve redirected URL from fetch response', async () => {
-    const redirectFetchFn: DiscoverFetchFn = () => {
+    const redirectFetchFn: FetchFn = () => {
       return Promise.resolve({
         headers: new Headers(),
         body: '<html>content</html>',
@@ -241,7 +256,7 @@ describe('normalizeInput', () => {
   })
 
   it('should handle ReadableStream body by returning undefined content', async () => {
-    const streamFetchFn: DiscoverFetchFn = (url) => {
+    const streamFetchFn: FetchFn = (url) => {
       return Promise.resolve({
         headers: new Headers(),
         body: new ReadableStream(),
@@ -262,7 +277,7 @@ describe('normalizeInput', () => {
 
   it('should preserve headers from fetch response', async () => {
     const headers = new Headers({ 'content-type': 'text/html', link: '</feed>; rel="alternate"' })
-    const headersFetchFn: DiscoverFetchFn = (url) => {
+    const headersFetchFn: FetchFn = (url) => {
       return Promise.resolve({
         headers,
         body: '<html></html>',
@@ -354,7 +369,7 @@ describe('normalizeInput', () => {
   })
 
   it('should handle empty string content from fetch', async () => {
-    const emptyFetchFn: DiscoverFetchFn = (url) => {
+    const emptyFetchFn: FetchFn = (url) => {
       return Promise.resolve({
         headers: new Headers(),
         body: '',
@@ -375,7 +390,7 @@ describe('normalizeInput', () => {
 
   it('should not call fetchFn when object input provided', async () => {
     let fetchCalled = false
-    const trackingFetchFn: DiscoverFetchFn = (url) => {
+    const trackingFetchFn: FetchFn = (url) => {
       fetchCalled = true
       return Promise.resolve({
         headers: new Headers(),
@@ -396,7 +411,7 @@ describe('normalizeInput', () => {
   })
 
   it('should handle fetch response with different status codes', async () => {
-    const statusFetchFn: DiscoverFetchFn = (url) => {
+    const statusFetchFn: FetchFn = (url) => {
       return Promise.resolve({
         headers: new Headers(),
         body: '<html>content</html>',
@@ -416,7 +431,7 @@ describe('normalizeInput', () => {
   })
 
   it('should return url-only object when fetchFn throws for string input', async () => {
-    const throwingFetchFn: DiscoverFetchFn = () => {
+    const throwingFetchFn: FetchFn = () => {
       throw new Error('Network error')
     }
     const expected = { url: 'https://example.com' }

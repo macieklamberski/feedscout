@@ -4,7 +4,7 @@ import {
   defaultResolveUrlFn,
 } from '../common/discover/defaults.js'
 import { discover } from '../common/discover/index.js'
-import type { DiscoverInput, DiscoverOptions, DiscoverResult } from '../common/types.js'
+import type { DiscoverEnrichFn, DiscoverInput, DiscoverResult } from '../common/types.js'
 import {
   defaultFeedOptions,
   defaultGuessOptions,
@@ -12,25 +12,38 @@ import {
   defaultHtmlOptions,
   defaultPlatformOptions,
 } from './defaults.js'
+import { createEnrichFaviconFn } from './enrich.js'
 import { defaultExtractFn } from './extractors.js'
-import type { FaviconResult } from './types.js'
+import type { DiscoverFaviconsOptions, FaviconResult } from './types.js'
 
 export const discoverFavicons = <TValid extends FaviconResult = FaviconResult>(
   input: DiscoverInput,
-  options: DiscoverOptions<TValid> = {},
+  options: DiscoverFaviconsOptions<TValid> = {},
 ): Promise<Array<DiscoverResult<TValid>>> => {
+  const { enrichFn, ...discoverOptions } = options
+  const fetchFn = options.fetchFn ?? defaultFetchFn
+
+  // The built-in enrichers run with discovery's own fetch unless the consumer turns them off.
+  const getEnrichFn = (): DiscoverEnrichFn | undefined => {
+    if (enrichFn === false) {
+      return
+    }
+
+    return enrichFn ?? createEnrichFaviconFn({ fetchFn })
+  }
+
   return discover<TValid>(
     input,
     {
-      ...options,
+      ...discoverOptions,
       methods: options.methods ?? ['platform', 'feed', 'html', 'headers', 'guess'],
-      fetchFn: options.fetchFn ?? defaultFetchFn,
+      fetchFn,
       extractFn: options.extractFn ?? defaultExtractFn,
       resolveUrlFn: options.resolveUrlFn ?? defaultResolveUrlFn,
       resolveSiteUrlFn: options.resolveSiteUrlFn ?? defaultResolveSiteUrlFn,
     },
     {
-      platform: defaultPlatformOptions,
+      platform: { ...defaultPlatformOptions, enrichFn: getEnrichFn() },
       feed: defaultFeedOptions,
       html: defaultHtmlOptions,
       headers: defaultHeadersOptions,

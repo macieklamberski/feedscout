@@ -2,10 +2,15 @@ import { anyWordMatchesAnyOf, escapeRegex, isAnyOf } from 'trousse'
 import locales from './locales.json' with { type: 'json' }
 import type { DiscoverUriHint } from './types.js'
 
-export const composeHint = (key: string): DiscoverUriHint => ({
-  key,
-  label: locales.hints[key as keyof typeof locales.hints],
-})
+export const composeHint = (key: string, format?: DiscoverUriHint['format']): DiscoverUriHint => {
+  const label = locales.hints[key as keyof typeof locales.hints]
+
+  if (!format) {
+    return { key, label }
+  }
+
+  return { key, label, format }
+}
 
 // A response is only acceptable when its status is in the 2xx range. A missing
 // status means the body was supplied directly (no fetch), so treat it as valid.

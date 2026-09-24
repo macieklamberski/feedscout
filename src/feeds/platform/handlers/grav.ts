@@ -41,8 +41,8 @@ export const gravHandler: PlatformHandler = {
         pathname === '/' ? `${origin}/` : `${origin}${pathname}`.replace(trailingSlashRegex, '')
 
       return [
-        { uri: `${pagePath}.rss`, hint: composeHint('grav:page-rss') },
-        { uri: `${pagePath}.atom`, hint: composeHint('grav:page-atom') },
+        { uri: `${pagePath}.rss`, hint: composeHint('grav:page', 'rss') },
+        { uri: `${pagePath}.atom`, hint: composeHint('grav:page', 'atom') },
       ]
     } catch {}
 

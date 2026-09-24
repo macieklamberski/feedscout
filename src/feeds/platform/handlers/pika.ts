@@ -25,16 +25,16 @@ export const pikaHandler: PlatformHandler = {
 
       uris.push({
         uri: `${origin}/tag/${tag}/feed`,
-        hint: composeHint('pika:tag-atom'),
+        hint: composeHint('pika:tag', 'atom'),
       })
       uris.push({
         uri: `${origin}/tag/${tag}/feed.rss`,
-        hint: composeHint('pika:tag-rss'),
+        hint: composeHint('pika:tag', 'rss'),
       })
     }
 
-    uris.push({ uri: `${origin}/posts_feed`, hint: composeHint('pika:posts-atom') })
-    uris.push({ uri: `${origin}/posts_feed.rss`, hint: composeHint('pika:posts-rss') })
+    uris.push({ uri: `${origin}/posts_feed`, hint: composeHint('pika:posts', 'atom') })
+    uris.push({ uri: `${origin}/posts_feed.rss`, hint: composeHint('pika:posts', 'rss') })
 
     return uris
   },

@@ -1,15 +1,17 @@
 import { describe, expect, it } from 'bun:test'
 import type {
+  DiscoverEnrichFn,
   DiscoverExtractFn,
-  DiscoverFetchFn,
   DiscoverResolveSiteUrlFn,
   DiscoverResolveUrlFn,
   DiscoverResult,
+  FetchFn,
 } from '../common/types.js'
+import type { PlatformHandler } from '../common/uris/platform/types.js'
 import { discoverFavicons } from './index.js'
 import type { FaviconResult } from './types.js'
 
-const createMockFetch = (responses: Record<string, string>): DiscoverFetchFn => {
+const createMockFetch = (responses: Record<string, string>): FetchFn => {
   return (url: string) => {
     const found = url in responses
     const body = responses[url] ?? ''
@@ -22,7 +24,6 @@ const createMockFetch = (responses: Record<string, string>): DiscoverFetchFn => 
       body,
       headers,
       status: found ? 200 : 404,
-      statusText: found ? 'OK' : 'Not Found',
     }
   }
 }
@@ -46,7 +47,7 @@ describe('discoverFavicons', () => {
   })
 
   it('should discover favicons from headers', async () => {
-    const mockFetch: DiscoverFetchFn = async (url: string) => ({
+    const mockFetch: FetchFn = async (url: string) => ({
       headers: new Headers({
         link: '</favicon.png>; rel="icon"',
         ...(url.endsWith('.png') ? { 'content-type': 'image/png' } : {}),
@@ -233,6 +234,27 @@ describe('discoverFavicons', () => {
     expect(result).toEqual(expected)
   })
 
+  it('should not call the mastodon API when enrichFn is false', async () => {
+    const requestedUrls: Array<string> = []
+    const mockFetch = createMockFetch({
+      'https://mastodon.social/@user':
+        '<html><head><meta name="generator" content="Mastodon v4.2.0"></head></html>',
+    })
+    const recordingFetch: FetchFn = (url, options) => {
+      requestedUrls.push(url)
+
+      return mockFetch(url, options)
+    }
+
+    await discoverFavicons('https://mastodon.social/@user', {
+      methods: ['platform'],
+      fetchFn: recordingFetch,
+      enrichFn: false,
+    })
+
+    expect(requestedUrls).toEqual(['https://mastodon.social/@user'])
+  })
+
   it('should discover favicon from bluesky platform handler', async () => {
     const avatarUrl = 'https://cdn.bsky.app/img/avatar/plain/did:plc:abc123/avatar.jpg'
     const mockFetch = createMockFetch({
@@ -285,7 +307,7 @@ describe('discoverFavicons', () => {
         </channel>
       </rss>
     `
-    const mockFetch: DiscoverFetchFn = async (url: string) => ({
+    const mockFetch: FetchFn = async (url: string) => ({
       headers: new Headers({
         ...(url === 'https://example.com/' ? { link: '</favicon.png>; rel="icon"' } : {}),
         ...(url.endsWith('.png') ? { 'content-type': 'image/png' } : {}),
@@ -505,7 +527,7 @@ describe('discoverFavicons', () => {
   })
 
   it('should recognize direct favicon URL via image content-type', async () => {
-    const mockFetch: DiscoverFetchFn = async (url: string) => ({
+    const mockFetch: FetchFn = async (url: string) => ({
       headers: new Headers({ 'content-type': 'image/png' }),
       body: 'binary',
       url,
@@ -522,7 +544,7 @@ describe('discoverFavicons', () => {
 
   it('should recognize direct SVG favicon via content', async () => {
     const svgContent = '<svg xmlns="http://www.w3.org/2000/svg"><circle r="10"/></svg>'
-    const mockFetch: DiscoverFetchFn = async (url: string) => ({
+    const mockFetch: FetchFn = async (url: string) => ({
       headers: new Headers(),
       body: svgContent,
       url,
@@ -742,7 +764,7 @@ describe('discoverFavicons', () => {
         </channel>
       </rss>
     `
-    const mockFetch: DiscoverFetchFn = (url: string) => {
+    const mockFetch: FetchFn = (url: string) => {
       if (url === 'https://dead-site.com') {
         return Promise.reject(new Error('Connection refused'))
       }
@@ -765,7 +787,7 @@ describe('discoverFavicons', () => {
 
   it('should fall back to guess method when initial URL fetch throws', async () => {
     const pngContent = '\x89PNG\r\n\x1a\n'
-    const mockFetch: DiscoverFetchFn = (url: string) => {
+    const mockFetch: FetchFn = (url: string) => {
       if (url === 'https://example.com/') {
         throw new Error('Connection refused')
       }
@@ -844,6 +866,30 @@ describe('discoverFavicons', () => {
     })
     const expected: Array<DiscoverResult<FaviconResult>> = [
       { url: 'https://example.com/favicon.ico', isValid: true, method: 'html' },
+    ]
+
+    expect(result).toEqual(expected)
+  })
+
+  it('should validate URIs from enrichFn with the platform method', async () => {
+    const handler: PlatformHandler = {
+      match: () => true,
+      resolve: (url) => [{ platform: 'example', id: 'alice', url }],
+    }
+    const enrichFn: DiscoverEnrichFn = () => [['https://cdn.example.com/alice.png']]
+    const mockFetch = createMockFetch({
+      'https://cdn.example.com/alice.png': 'binary',
+    })
+    const result = await discoverFavicons(
+      { url: 'https://example.com/@alice', content: '<html></html>' },
+      {
+        methods: { platform: { handlers: [handler] } },
+        fetchFn: mockFetch,
+        enrichFn,
+      },
+    )
+    const expected: Array<DiscoverResult<FaviconResult>> = [
+      { url: 'https://cdn.example.com/alice.png', isValid: true, method: 'platform' },
     ]
 
     expect(result).toEqual(expected)

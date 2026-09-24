@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'bun:test'
+import type { DiscoverUriEntry } from '../../../common/types.js'
 import { fluxbbHandler, isFluxbbHtml } from './fluxbb.js'
 
 const fluxbbHtml = '<div id="brdheader"></div><div id="brdmain"></div>'
@@ -40,14 +41,14 @@ describe('fluxbbHandler', () => {
   describe('resolve', () => {
     it('should return both feed formats', () => {
       const value = 'https://example.org/index.php'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://example.org/extern.php?action=feed&type=RSS',
-          hint: { key: 'fluxbb:posts-rss', label: 'Posts (RSS)' },
+          hint: { key: 'fluxbb:posts', label: 'Posts', format: 'rss' },
         },
         {
           uri: 'https://example.org/extern.php?action=feed&type=atom',
-          hint: { key: 'fluxbb:posts-atom', label: 'Posts (Atom)' },
+          hint: { key: 'fluxbb:posts', label: 'Posts', format: 'atom' },
         },
       ]
 
@@ -56,18 +57,18 @@ describe('fluxbbHandler', () => {
 
     it('should add the forum feed for a forum page', () => {
       const value = 'https://example.org/viewforum.php?id=3'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://example.org/extern.php?action=feed&fid=3&type=atom',
           hint: { key: 'fluxbb:forum', label: 'Forum' },
         },
         {
           uri: 'https://example.org/extern.php?action=feed&type=RSS',
-          hint: { key: 'fluxbb:posts-rss', label: 'Posts (RSS)' },
+          hint: { key: 'fluxbb:posts', label: 'Posts', format: 'rss' },
         },
         {
           uri: 'https://example.org/extern.php?action=feed&type=atom',
-          hint: { key: 'fluxbb:posts-atom', label: 'Posts (Atom)' },
+          hint: { key: 'fluxbb:posts', label: 'Posts', format: 'atom' },
         },
       ]
 
@@ -76,18 +77,18 @@ describe('fluxbbHandler', () => {
 
     it('should add the topic feed for a topic page', () => {
       const value = 'https://example.org/viewtopic.php?id=7520'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://example.org/extern.php?action=feed&tid=7520&type=atom',
           hint: { key: 'fluxbb:topic', label: 'Topic' },
         },
         {
           uri: 'https://example.org/extern.php?action=feed&type=RSS',
-          hint: { key: 'fluxbb:posts-rss', label: 'Posts (RSS)' },
+          hint: { key: 'fluxbb:posts', label: 'Posts', format: 'rss' },
         },
         {
           uri: 'https://example.org/extern.php?action=feed&type=atom',
-          hint: { key: 'fluxbb:posts-atom', label: 'Posts (Atom)' },
+          hint: { key: 'fluxbb:posts', label: 'Posts', format: 'atom' },
         },
       ]
 
@@ -96,14 +97,14 @@ describe('fluxbbHandler', () => {
 
     it('should build the feeds from a board under a sub-path', () => {
       const value = 'https://example.org/forums/index.php'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://example.org/forums/extern.php?action=feed&type=RSS',
-          hint: { key: 'fluxbb:posts-rss', label: 'Posts (RSS)' },
+          hint: { key: 'fluxbb:posts', label: 'Posts', format: 'rss' },
         },
         {
           uri: 'https://example.org/forums/extern.php?action=feed&type=atom',
-          hint: { key: 'fluxbb:posts-atom', label: 'Posts (Atom)' },
+          hint: { key: 'fluxbb:posts', label: 'Posts', format: 'atom' },
         },
       ]
 

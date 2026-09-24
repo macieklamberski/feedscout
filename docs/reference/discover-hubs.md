@@ -38,7 +38,7 @@ discoverHubs({
 | Property | Type | Default | Description |
 |----------|------|---------|-------------|
 | `methods` | `DiscoverHubsMethodsConfig` | all | Methods to use |
-| `fetchFn` | `DiscoverFetchFn` | native fetch | Custom fetch function |
+| `fetchFn` | `FetchFn` | native fetch | Custom fetch function |
 | `resolveUrlFn` | `DiscoverResolveUrlFn` | resolve relative | Custom URL resolution |
 | `onError` | `DiscoverOnErrorFn` | | Called when fetching the input fails or `resolveUrlFn` throws |
 
@@ -113,9 +113,9 @@ const hubs = await discoverHubs(
 ### With Custom HTTP Client
 
 ```typescript
-import type { DiscoverFetchFn } from 'feedscout'
+import type { FetchFn } from 'feedscout'
 
-const myCustomFetch: DiscoverFetchFn = async (url, options) => {
+const myCustomFetch: FetchFn = async (url, options) => {
   const response = await fetch(url, options)
 
   return {
@@ -123,7 +123,6 @@ const myCustomFetch: DiscoverFetchFn = async (url, options) => {
     body: await response.text(),
     url: response.url,
     status: response.status,
-    statusText: response.statusText,
   }
 }
 

@@ -1,7 +1,10 @@
 import { isNonEmptyString, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
 import { hasMetaContent } from '../../../common/utils.js'
+import type { FaviconEnricher } from '../../types.js'
 import { parseBodyJson } from '../../utils.js'
+
+const platform = 'mastodon'
 
 const mastodonRegex = /mastodon/i
 
@@ -48,29 +51,33 @@ export const mastodonHandler: PlatformHandler = {
     return false
   },
 
-  resolve: async (url, _content, _headers, fetchFn) => {
-    if (!fetchFn) {
+  resolve: (url) => {
+    const parsedUrl = parseUrl(url)
+    const username = parsedUrl?.pathname.match(profileRegex)?.[1]
+
+    if (!username) {
       return []
     }
 
-    try {
-      const { hostname, pathname } = new URL(url)
-      const match = pathname.match(profileRegex)
-
-      if (!match?.[1]) {
-        return []
-      }
-
-      const username = match[1]
-      const apiUrl = `https://${hostname}/api/v1/accounts/lookup?acct=${username}`
-      const response = await fetchFn(apiUrl)
-      const data = parseBodyJson(response.body)
-
-      if (isNonEmptyString(data.avatar)) {
-        return [{ uri: data.avatar }]
-      }
-    } catch {}
-
-    return []
+    return [{ platform, id: username, url }]
   },
+}
+
+export const mastodonEnricher: FaviconEnricher = async (ref, context) => {
+  if (ref.platform !== platform) {
+    return
+  }
+
+  try {
+    const { hostname } = new URL(ref.url)
+    const apiUrl = `https://${hostname}/api/v1/accounts/lookup?acct=${ref.id}`
+    const response = await context.fetchFn(apiUrl)
+    const data = parseBodyJson(response.body)
+
+    if (isNonEmptyString(data.avatar)) {
+      return [data.avatar]
+    }
+  } catch {}
+
+  return []
 }

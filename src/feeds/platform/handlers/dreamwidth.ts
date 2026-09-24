@@ -50,19 +50,19 @@ export const dreamwidthHandler: PlatformHandler = {
 
       uris.push({
         uri: `${userOrigin}/data/rss?tag=${tag}`,
-        hint: composeHint('dreamwidth:posts-tag-rss'),
+        hint: composeHint('dreamwidth:posts-tag', 'rss'),
       })
       uris.push({
         uri: `${userOrigin}/data/atom?tag=${tag}`,
-        hint: composeHint('dreamwidth:posts-tag-atom'),
+        hint: composeHint('dreamwidth:posts-tag', 'atom'),
       })
     }
 
-    uris.push({ uri: `${userOrigin}/data/rss`, hint: composeHint('dreamwidth:posts-rss') })
-    uris.push({ uri: `${userOrigin}/data/atom`, hint: composeHint('dreamwidth:posts-atom') })
+    uris.push({ uri: `${userOrigin}/data/rss`, hint: composeHint('dreamwidth:posts', 'rss') })
+    uris.push({ uri: `${userOrigin}/data/atom`, hint: composeHint('dreamwidth:posts', 'atom') })
     uris.push({
       uri: `${userOrigin}/data/userpics`,
-      hint: composeHint('dreamwidth:userpics-atom'),
+      hint: composeHint('dreamwidth:userpics', 'atom'),
     })
 
     return uris

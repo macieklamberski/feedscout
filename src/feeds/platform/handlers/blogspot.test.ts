@@ -29,30 +29,30 @@ describe('blogspotHandler', () => {
   describe('resolve', () => {
     it('should return feed URLs for blog', () => {
       const value = 'https://example.blogspot.com'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://example.blogspot.com/feeds/posts/default',
-          hint: { key: 'blogspot:posts-atom', label: 'Posts (Atom)' },
+          hint: { key: 'blogspot:posts', label: 'Posts', format: 'atom' },
         },
         {
           uri: 'https://example.blogspot.com/feeds/posts/default?alt=rss',
-          hint: { key: 'blogspot:posts-rss', label: 'Posts (RSS)' },
+          hint: { key: 'blogspot:posts', label: 'Posts', format: 'rss' },
         },
         {
           uri: 'https://example.blogspot.com/feeds/posts/summary',
-          hint: { key: 'blogspot:posts-summary-atom', label: 'Posts summary (Atom)' },
+          hint: { key: 'blogspot:posts-summary', label: 'Posts summary', format: 'atom' },
         },
         {
           uri: 'https://example.blogspot.com/feeds/posts/summary?alt=rss',
-          hint: { key: 'blogspot:posts-summary-rss', label: 'Posts summary (RSS)' },
+          hint: { key: 'blogspot:posts-summary', label: 'Posts summary', format: 'rss' },
         },
         {
           uri: 'https://example.blogspot.com/feeds/comments/default',
-          hint: { key: 'blogspot:comments-atom', label: 'Comments (Atom)' },
+          hint: { key: 'blogspot:comments', label: 'Comments', format: 'atom' },
         },
         {
           uri: 'https://example.blogspot.com/feeds/comments/default?alt=rss',
-          hint: { key: 'blogspot:comments-rss', label: 'Comments (RSS)' },
+          hint: { key: 'blogspot:comments', label: 'Comments', format: 'rss' },
         },
       ]
 
@@ -61,30 +61,30 @@ describe('blogspotHandler', () => {
 
     it('should return feed URLs for post page without content', () => {
       const value = 'https://blog.blogspot.com/2024/01/some-post.html'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://blog.blogspot.com/feeds/posts/default',
-          hint: { key: 'blogspot:posts-atom', label: 'Posts (Atom)' },
+          hint: { key: 'blogspot:posts', label: 'Posts', format: 'atom' },
         },
         {
           uri: 'https://blog.blogspot.com/feeds/posts/default?alt=rss',
-          hint: { key: 'blogspot:posts-rss', label: 'Posts (RSS)' },
+          hint: { key: 'blogspot:posts', label: 'Posts', format: 'rss' },
         },
         {
           uri: 'https://blog.blogspot.com/feeds/posts/summary',
-          hint: { key: 'blogspot:posts-summary-atom', label: 'Posts summary (Atom)' },
+          hint: { key: 'blogspot:posts-summary', label: 'Posts summary', format: 'atom' },
         },
         {
           uri: 'https://blog.blogspot.com/feeds/posts/summary?alt=rss',
-          hint: { key: 'blogspot:posts-summary-rss', label: 'Posts summary (RSS)' },
+          hint: { key: 'blogspot:posts-summary', label: 'Posts summary', format: 'rss' },
         },
         {
           uri: 'https://blog.blogspot.com/feeds/comments/default',
-          hint: { key: 'blogspot:comments-atom', label: 'Comments (Atom)' },
+          hint: { key: 'blogspot:comments', label: 'Comments', format: 'atom' },
         },
         {
           uri: 'https://blog.blogspot.com/feeds/comments/default?alt=rss',
-          hint: { key: 'blogspot:comments-rss', label: 'Comments (RSS)' },
+          hint: { key: 'blogspot:comments', label: 'Comments', format: 'rss' },
         },
       ]
 
@@ -99,38 +99,38 @@ describe('blogspotHandler', () => {
           href="https://blog.blogspot.com/feeds/1234567890/comments/default" />
         </head></html>
       `
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://blog.blogspot.com/feeds/1234567890/comments/default',
-          hint: { key: 'blogspot:post-comments-atom', label: 'Post comments (Atom)' },
+          hint: { key: 'blogspot:post-comments', label: 'Post comments', format: 'atom' },
         },
         {
           uri: 'https://blog.blogspot.com/feeds/1234567890/comments/default?alt=rss',
-          hint: { key: 'blogspot:post-comments-rss', label: 'Post comments (RSS)' },
+          hint: { key: 'blogspot:post-comments', label: 'Post comments', format: 'rss' },
         },
         {
           uri: 'https://blog.blogspot.com/feeds/posts/default',
-          hint: { key: 'blogspot:posts-atom', label: 'Posts (Atom)' },
+          hint: { key: 'blogspot:posts', label: 'Posts', format: 'atom' },
         },
         {
           uri: 'https://blog.blogspot.com/feeds/posts/default?alt=rss',
-          hint: { key: 'blogspot:posts-rss', label: 'Posts (RSS)' },
+          hint: { key: 'blogspot:posts', label: 'Posts', format: 'rss' },
         },
         {
           uri: 'https://blog.blogspot.com/feeds/posts/summary',
-          hint: { key: 'blogspot:posts-summary-atom', label: 'Posts summary (Atom)' },
+          hint: { key: 'blogspot:posts-summary', label: 'Posts summary', format: 'atom' },
         },
         {
           uri: 'https://blog.blogspot.com/feeds/posts/summary?alt=rss',
-          hint: { key: 'blogspot:posts-summary-rss', label: 'Posts summary (RSS)' },
+          hint: { key: 'blogspot:posts-summary', label: 'Posts summary', format: 'rss' },
         },
         {
           uri: 'https://blog.blogspot.com/feeds/comments/default',
-          hint: { key: 'blogspot:comments-atom', label: 'Comments (Atom)' },
+          hint: { key: 'blogspot:comments', label: 'Comments', format: 'atom' },
         },
         {
           uri: 'https://blog.blogspot.com/feeds/comments/default?alt=rss',
-          hint: { key: 'blogspot:comments-rss', label: 'Comments (RSS)' },
+          hint: { key: 'blogspot:comments', label: 'Comments', format: 'rss' },
         },
       ]
 
@@ -143,27 +143,27 @@ describe('blogspotHandler', () => {
       const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://blog.blogspot.com/feeds/posts/default',
-          hint: { key: 'blogspot:posts-atom', label: 'Posts (Atom)' },
+          hint: { key: 'blogspot:posts', label: 'Posts', format: 'atom' },
         },
         {
           uri: 'https://blog.blogspot.com/feeds/posts/default?alt=rss',
-          hint: { key: 'blogspot:posts-rss', label: 'Posts (RSS)' },
+          hint: { key: 'blogspot:posts', label: 'Posts', format: 'rss' },
         },
         {
           uri: 'https://blog.blogspot.com/feeds/posts/summary',
-          hint: { key: 'blogspot:posts-summary-atom', label: 'Posts summary (Atom)' },
+          hint: { key: 'blogspot:posts-summary', label: 'Posts summary', format: 'atom' },
         },
         {
           uri: 'https://blog.blogspot.com/feeds/posts/summary?alt=rss',
-          hint: { key: 'blogspot:posts-summary-rss', label: 'Posts summary (RSS)' },
+          hint: { key: 'blogspot:posts-summary', label: 'Posts summary', format: 'rss' },
         },
         {
           uri: 'https://blog.blogspot.com/feeds/comments/default',
-          hint: { key: 'blogspot:comments-atom', label: 'Comments (Atom)' },
+          hint: { key: 'blogspot:comments', label: 'Comments', format: 'atom' },
         },
         {
           uri: 'https://blog.blogspot.com/feeds/comments/default?alt=rss',
-          hint: { key: 'blogspot:comments-rss', label: 'Comments (RSS)' },
+          hint: { key: 'blogspot:comments', label: 'Comments', format: 'rss' },
         },
       ]
 
@@ -176,27 +176,27 @@ describe('blogspotHandler', () => {
       const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://blog.blogspot.com/feeds/posts/default',
-          hint: { key: 'blogspot:posts-atom', label: 'Posts (Atom)' },
+          hint: { key: 'blogspot:posts', label: 'Posts', format: 'atom' },
         },
         {
           uri: 'https://blog.blogspot.com/feeds/posts/default?alt=rss',
-          hint: { key: 'blogspot:posts-rss', label: 'Posts (RSS)' },
+          hint: { key: 'blogspot:posts', label: 'Posts', format: 'rss' },
         },
         {
           uri: 'https://blog.blogspot.com/feeds/posts/summary',
-          hint: { key: 'blogspot:posts-summary-atom', label: 'Posts summary (Atom)' },
+          hint: { key: 'blogspot:posts-summary', label: 'Posts summary', format: 'atom' },
         },
         {
           uri: 'https://blog.blogspot.com/feeds/posts/summary?alt=rss',
-          hint: { key: 'blogspot:posts-summary-rss', label: 'Posts summary (RSS)' },
+          hint: { key: 'blogspot:posts-summary', label: 'Posts summary', format: 'rss' },
         },
         {
           uri: 'https://blog.blogspot.com/feeds/comments/default',
-          hint: { key: 'blogspot:comments-atom', label: 'Comments (Atom)' },
+          hint: { key: 'blogspot:comments', label: 'Comments', format: 'atom' },
         },
         {
           uri: 'https://blog.blogspot.com/feeds/comments/default?alt=rss',
-          hint: { key: 'blogspot:comments-rss', label: 'Comments (RSS)' },
+          hint: { key: 'blogspot:comments', label: 'Comments', format: 'rss' },
         },
       ]
 
@@ -205,38 +205,38 @@ describe('blogspotHandler', () => {
 
     it('should include label feeds when on label page', () => {
       const value = 'https://blog.blogspot.com/search/label/technology'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://blog.blogspot.com/feeds/posts/default/-/technology',
-          hint: { key: 'blogspot:label-atom', label: 'Label (Atom)' },
+          hint: { key: 'blogspot:label', label: 'Label', format: 'atom' },
         },
         {
           uri: 'https://blog.blogspot.com/feeds/posts/default/-/technology?alt=rss',
-          hint: { key: 'blogspot:label-rss', label: 'Label (RSS)' },
+          hint: { key: 'blogspot:label', label: 'Label', format: 'rss' },
         },
         {
           uri: 'https://blog.blogspot.com/feeds/posts/default',
-          hint: { key: 'blogspot:posts-atom', label: 'Posts (Atom)' },
+          hint: { key: 'blogspot:posts', label: 'Posts', format: 'atom' },
         },
         {
           uri: 'https://blog.blogspot.com/feeds/posts/default?alt=rss',
-          hint: { key: 'blogspot:posts-rss', label: 'Posts (RSS)' },
+          hint: { key: 'blogspot:posts', label: 'Posts', format: 'rss' },
         },
         {
           uri: 'https://blog.blogspot.com/feeds/posts/summary',
-          hint: { key: 'blogspot:posts-summary-atom', label: 'Posts summary (Atom)' },
+          hint: { key: 'blogspot:posts-summary', label: 'Posts summary', format: 'atom' },
         },
         {
           uri: 'https://blog.blogspot.com/feeds/posts/summary?alt=rss',
-          hint: { key: 'blogspot:posts-summary-rss', label: 'Posts summary (RSS)' },
+          hint: { key: 'blogspot:posts-summary', label: 'Posts summary', format: 'rss' },
         },
         {
           uri: 'https://blog.blogspot.com/feeds/comments/default',
-          hint: { key: 'blogspot:comments-atom', label: 'Comments (Atom)' },
+          hint: { key: 'blogspot:comments', label: 'Comments', format: 'atom' },
         },
         {
           uri: 'https://blog.blogspot.com/feeds/comments/default?alt=rss',
-          hint: { key: 'blogspot:comments-rss', label: 'Comments (RSS)' },
+          hint: { key: 'blogspot:comments', label: 'Comments', format: 'rss' },
         },
       ]
 

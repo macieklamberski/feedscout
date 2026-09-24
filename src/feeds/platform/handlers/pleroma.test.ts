@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'bun:test'
+import type { DiscoverUriEntry } from '../../../common/types.js'
 import { isPleromaHtml, pleromaHandler } from './pleroma.js'
 
 const pleromaHtml =
@@ -45,14 +46,14 @@ describe('pleromaHandler', () => {
   describe('resolve', () => {
     it('should return atom feed for profile', () => {
       const value = 'https://lain.com/users/lain'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://lain.com/users/lain/feed.atom',
-          hint: { key: 'pleroma:posts', label: 'Posts' },
+          hint: { key: 'pleroma:posts', label: 'Posts', format: 'atom' },
         },
         {
           uri: 'https://lain.com/users/lain/feed.rss',
-          hint: { key: 'pleroma:posts-rss', label: 'Posts (RSS)' },
+          hint: { key: 'pleroma:posts', label: 'Posts', format: 'rss' },
         },
       ]
 
@@ -61,14 +62,14 @@ describe('pleromaHandler', () => {
 
     it('should return atom feed regardless of subpath', () => {
       const value = 'https://lain.com/users/lain/statuses'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://lain.com/users/lain/feed.atom',
-          hint: { key: 'pleroma:posts', label: 'Posts' },
+          hint: { key: 'pleroma:posts', label: 'Posts', format: 'atom' },
         },
         {
           uri: 'https://lain.com/users/lain/feed.rss',
-          hint: { key: 'pleroma:posts-rss', label: 'Posts (RSS)' },
+          hint: { key: 'pleroma:posts', label: 'Posts', format: 'rss' },
         },
       ]
 

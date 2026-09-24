@@ -22,8 +22,8 @@ export const publiiHandler: PlatformHandler = {
       const siteUrl = content?.match(mediaUrlRegex)?.[1] ?? origin
 
       return [
-        { uri: `${siteUrl}/feed.xml`, hint: composeHint('publii:posts') },
-        { uri: `${siteUrl}/feed.json`, hint: composeHint('publii:posts-json') },
+        { uri: `${siteUrl}/feed.xml`, hint: composeHint('publii:posts', 'atom') },
+        { uri: `${siteUrl}/feed.json`, hint: composeHint('publii:posts', 'json') },
       ]
     } catch {}
 

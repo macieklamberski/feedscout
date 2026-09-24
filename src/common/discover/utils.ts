@@ -3,7 +3,6 @@ import { isObject } from 'trousse'
 import locales from '../locales.json' with { type: 'json' }
 import type {
   DiscoverErrorContext,
-  DiscoverFetchFn,
   DiscoverInput,
   DiscoverInputObject,
   DiscoverMethodsConfig,
@@ -12,12 +11,13 @@ import type {
   DiscoverOnErrorFn,
   DiscoverResolveUrlFn,
   DiscoverUriEntry,
+  FetchFn,
 } from '../types.js'
 import type { FeedMethodData } from '../uris/feed/types.js'
 
 export const normalizeInput = async (
   input: DiscoverInput,
-  fetchFn: DiscoverFetchFn,
+  fetchFn: FetchFn,
   onError?: DiscoverOnErrorFn,
 ): Promise<DiscoverInputObject> => {
   if (isObject(input)) {
