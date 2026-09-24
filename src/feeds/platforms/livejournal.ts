@@ -19,6 +19,36 @@ const reservedHosts = [
   'syndicated.livejournal.com',
 ]
 
+// Dreamwidth and InsaneJournal run the LiveJournal engine, so a journal on any of them serves
+// the same feeds, plus a tag's feeds on a tag page.
+export const getJournalFeeds = (
+  base: string,
+  pathname: string,
+  platform: string,
+): Array<DiscoverUriEntry> => {
+  const uris: Array<DiscoverUriEntry> = []
+  const tagMatch = pathname.match(tagRegex)
+
+  if (tagMatch?.[1]) {
+    const tag = encodeURIComponent(decodePathSegment(tagMatch[1]))
+
+    uris.push({
+      uri: `${base}/data/rss?tag=${tag}`,
+      hint: composeHint(`${platform}:posts-tag`, 'rss'),
+    })
+    uris.push({
+      uri: `${base}/data/atom?tag=${tag}`,
+      hint: composeHint(`${platform}:posts-tag`, 'atom'),
+    })
+  }
+
+  uris.push({ uri: `${base}/data/rss`, hint: composeHint(`${platform}:posts`, 'rss') })
+  uris.push({ uri: `${base}/data/atom`, hint: composeHint(`${platform}:posts`, 'atom') })
+  uris.push({ uri: `${base}/data/userpics`, hint: composeHint(`${platform}:userpics`, 'atom') })
+
+  return uris
+}
+
 export const livejournalHandler: PlatformHandler = {
   match: (url) => {
     if (!isSubdomainOf(url, 'livejournal.com')) {
@@ -46,7 +76,6 @@ export const livejournalHandler: PlatformHandler = {
 
   resolve: (url) => {
     const { origin, pathname } = new URL(url)
-    const uris: Array<DiscoverUriEntry> = []
 
     let userOrigin = origin
 
@@ -57,7 +86,7 @@ export const livejournalHandler: PlatformHandler = {
       if (userMatch?.[1]) {
         userOrigin = `https://${userMatch[1]}.livejournal.com`
       } else {
-        return uris
+        return []
       }
     }
 
@@ -68,33 +97,10 @@ export const livejournalHandler: PlatformHandler = {
       if (userMatch?.[1]) {
         userOrigin = `https://${userMatch[1]}.livejournal.com`
       } else {
-        return uris
+        return []
       }
     }
 
-    // Tag-filtered feeds for /tag/{tag}.
-    const tagMatch = pathname.match(tagRegex)
-
-    if (tagMatch?.[1]) {
-      const tag = encodeURIComponent(decodePathSegment(tagMatch[1]))
-
-      uris.push({
-        uri: `${userOrigin}/data/rss?tag=${tag}`,
-        hint: composeHint('livejournal:posts-tag', 'rss'),
-      })
-      uris.push({
-        uri: `${userOrigin}/data/atom?tag=${tag}`,
-        hint: composeHint('livejournal:posts-tag', 'atom'),
-      })
-    }
-
-    uris.push({ uri: `${userOrigin}/data/rss`, hint: composeHint('livejournal:posts', 'rss') })
-    uris.push({ uri: `${userOrigin}/data/atom`, hint: composeHint('livejournal:posts', 'atom') })
-    uris.push({
-      uri: `${userOrigin}/data/userpics`,
-      hint: composeHint('livejournal:userpics', 'atom'),
-    })
-
-    return uris
+    return getJournalFeeds(userOrigin, pathname, 'livejournal')
   },
 }

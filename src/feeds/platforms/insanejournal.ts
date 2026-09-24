@@ -1,7 +1,6 @@
 import { isHostOf, isSubdomainOf } from 'trousse'
-import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, decodePathSegment } from '../../common/utils.js'
+import { getJournalFeeds } from './livejournal.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic partly covers asylum, blog, tildePath, userPath.
@@ -12,7 +11,6 @@ const wwwHosts = ['www.insanejournal.com', 'insanejournal.com']
 const wwwUsersPathRegex = /^\/(?:users\/|~)([^/]+)/
 const wwwAsylumPathRegex = /^\/(?:asylum|community)\/([^/]+)/
 const firstSegmentRegex = /^\/([^/]+)/
-const tagRegex = /^\/tag\/([^/]+)/
 
 export const insanejournalHandler: PlatformHandler = {
   match: (url) => {
@@ -35,7 +33,6 @@ export const insanejournalHandler: PlatformHandler = {
 
   resolve: (url) => {
     const { origin, pathname } = new URL(url)
-    const uris: Array<DiscoverUriEntry> = []
 
     let feedOrigin = origin
     let feedPathPrefix = ''
@@ -52,7 +49,7 @@ export const insanejournalHandler: PlatformHandler = {
           feedOrigin = 'https://asylums.insanejournal.com'
           feedPathPrefix = `/${asylumMatch[1]}`
         } else {
-          return uris
+          return []
         }
       }
     } else if (isHostOf(url, 'asylums.insanejournal.com')) {
@@ -61,7 +58,7 @@ export const insanejournalHandler: PlatformHandler = {
       if (segMatch?.[1]) {
         feedPathPrefix = `/${segMatch[1]}`
       } else {
-        return uris
+        return []
       }
     } else if (isHostOf(url, 'feeds.insanejournal.com')) {
       const segMatch = pathname.match(firstSegmentRegex)
@@ -69,40 +66,10 @@ export const insanejournalHandler: PlatformHandler = {
       if (segMatch?.[1]) {
         feedPathPrefix = `/${segMatch[1]}`
       } else {
-        return uris
+        return []
       }
     }
 
-    // Tag-filtered feeds for /tag/{tag} (only meaningful on personal journal subdomains
-    // and asylum/feed sub-paths).
-    const tagMatch = pathname.match(tagRegex)
-
-    if (tagMatch?.[1]) {
-      const tag = encodeURIComponent(decodePathSegment(tagMatch[1]))
-
-      uris.push({
-        uri: `${feedOrigin}${feedPathPrefix}/data/rss?tag=${tag}`,
-        hint: composeHint('insanejournal:posts-tag', 'rss'),
-      })
-      uris.push({
-        uri: `${feedOrigin}${feedPathPrefix}/data/atom?tag=${tag}`,
-        hint: composeHint('insanejournal:posts-tag', 'atom'),
-      })
-    }
-
-    uris.push({
-      uri: `${feedOrigin}${feedPathPrefix}/data/rss`,
-      hint: composeHint('insanejournal:posts', 'rss'),
-    })
-    uris.push({
-      uri: `${feedOrigin}${feedPathPrefix}/data/atom`,
-      hint: composeHint('insanejournal:posts', 'atom'),
-    })
-    uris.push({
-      uri: `${feedOrigin}${feedPathPrefix}/data/userpics`,
-      hint: composeHint('insanejournal:userpics', 'atom'),
-    })
-
-    return uris
+    return getJournalFeeds(`${feedOrigin}${feedPathPrefix}`, pathname, 'insanejournal')
   },
 }
