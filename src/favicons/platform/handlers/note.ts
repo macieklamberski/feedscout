@@ -1,21 +1,30 @@
 import { isAnyOf, isHostOf, isNonEmptyString, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../../common/uris/platform/types.js'
-import { excludedPaths, hosts } from '../../../feeds/platform/handlers/note.js'
+import { excludedPaths, hosts, magazineRegex } from '../../../feeds/platform/handlers/note.js'
+import type { FaviconEnricher } from '../../types.js'
+import { parseBodyJson } from '../../utils.js'
+
+const platform = 'note'
 
 const profileRegex = /^\/([^/]+)\/?$/
 // The page payload is a JSON string inside `self.__next_f.push`, so its quotes arrive escaped.
 const profileImageUrlRegex = /profileImageUrl\\?":\\?"((?:[^"\\]|\\u[\da-f]{4})+)/i
 
-const isProfileUrl = (url: string): boolean => {
+const getOwner = (url: string): string | undefined => {
   const parsedUrl = parseUrl(url)
 
   if (!parsedUrl || !isHostOf(url, hosts)) {
-    return false
+    return
   }
 
-  const owner = parsedUrl.pathname.match(profileRegex)?.[1]
+  const { pathname } = parsedUrl
+  const owner = pathname.match(magazineRegex)?.[1] ?? pathname.match(profileRegex)?.[1]
 
-  return !!owner && !isAnyOf(owner, excludedPaths)
+  if (!owner || isAnyOf(owner, excludedPaths)) {
+    return
+  }
+
+  return owner
 }
 
 const parseProfileImageUrl = (content: string): string | undefined => {
@@ -32,20 +41,45 @@ const parseProfileImageUrl = (content: string): string | undefined => {
 
 export const noteHandler: PlatformHandler = {
   match: (url) => {
-    return isProfileUrl(url)
+    return !!getOwner(url)
   },
 
   resolve: (url, content) => {
-    if (!content || !isProfileUrl(url)) {
+    const owner = getOwner(url)
+
+    if (!owner) {
       return []
     }
 
-    const profileImageUrl = parseProfileImageUrl(content)
+    // A magazine page payload describes the magazine, not its owner.
+    const isProfile = profileRegex.test(new URL(url).pathname)
 
-    if (!isNonEmptyString(profileImageUrl)) {
-      return []
+    if (isProfile && content) {
+      const profileImageUrl = parseProfileImageUrl(content)
+
+      if (isNonEmptyString(profileImageUrl)) {
+        return [{ uri: profileImageUrl }]
+      }
     }
 
-    return [{ uri: profileImageUrl }]
+    return [{ platform, id: owner, url }]
   },
+}
+
+// An unknown creator returns `data` as a string, so it yields no avatar.
+export const noteEnricher: FaviconEnricher = async (ref, context) => {
+  if (ref.platform !== platform) {
+    return
+  }
+
+  try {
+    const response = await context.fetchFn(`https://note.com/api/v2/creators/${ref.id}`)
+    const profileImageUrl = parseBodyJson(response.body)?.data?.profileImageUrl
+
+    if (isNonEmptyString(profileImageUrl)) {
+      return [profileImageUrl]
+    }
+  } catch {}
+
+  return []
 }
