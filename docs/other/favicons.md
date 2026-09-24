@@ -67,6 +67,7 @@ The Platform method extracts avatars and icons directly from known platforms usi
 | DeviantArt | User avatar | URL pattern |
 | Dev.to | Profile image | Public API |
 | Steam | Game icon | Page HTML |
+| Letterboxd | Member avatar from member subpages, such as films and lists | Page HTML |
 
 ## Extracting Icons from Feeds
 
