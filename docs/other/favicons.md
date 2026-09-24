@@ -79,6 +79,7 @@ The Platform method extracts avatars and icons directly from known platforms usi
 | Flickr | User buddyicon | Page HTML |
 | SoundCloud | User avatar | Page HTML |
 | Product Hunt | Product logo | Page HTML |
+| note | User avatar, or magazine owner avatar | Page HTML, Public API through an [enricher](#enriching-platform-icons) |
 
 ## Enriching Platform Icons
 

@@ -21,6 +21,7 @@ import { mastodonEnricher, mastodonHandler } from './platform/handlers/mastodon.
 import { microblogHandler } from './platform/handlers/microblog.js'
 import { naverBlogEnricher, naverBlogHandler } from './platform/handlers/naverBlog.js'
 import { nebulaEnricher, nebulaHandler } from './platform/handlers/nebula.js'
+import { noteEnricher, noteHandler } from './platform/handlers/note.js'
 import { pinterestEnricher, pinterestHandler } from './platform/handlers/pinterest.js'
 import { producthuntHandler } from './platform/handlers/producthunt.js'
 import { redditEnricher, redditHandler } from './platform/handlers/reddit.js'
@@ -101,6 +102,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     nebulaHandler,
     naverBlogHandler,
     producthuntHandler,
+    noteHandler,
     blueskyHandler,
     redditHandler,
     soundcloudHandler,
@@ -119,6 +121,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
 export const defaultFaviconEnrichers: Array<FaviconEnricher> = [
   mastodonEnricher,
   pinterestEnricher,
+  noteEnricher,
   blueskyEnricher,
   redditEnricher,
   gitlabEnricher,
