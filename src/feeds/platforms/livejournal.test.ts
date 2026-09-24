@@ -97,6 +97,34 @@ describe('livejournalHandler', () => {
       expect(livejournalHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should keep a percent-encoded tag encoded once', () => {
+      const value = 'https://ohnotheydidnt.livejournal.com/tag/caf%C3%A9'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://ohnotheydidnt.livejournal.com/data/rss?tag=caf%C3%A9',
+          hint: { key: 'livejournal:posts-tag', label: 'Tag', format: 'rss' },
+        },
+        {
+          uri: 'https://ohnotheydidnt.livejournal.com/data/atom?tag=caf%C3%A9',
+          hint: { key: 'livejournal:posts-tag', label: 'Tag', format: 'atom' },
+        },
+        {
+          uri: 'https://ohnotheydidnt.livejournal.com/data/rss',
+          hint: { key: 'livejournal:posts', label: 'Posts', format: 'rss' },
+        },
+        {
+          uri: 'https://ohnotheydidnt.livejournal.com/data/atom',
+          hint: { key: 'livejournal:posts', label: 'Posts', format: 'atom' },
+        },
+        {
+          uri: 'https://ohnotheydidnt.livejournal.com/data/userpics',
+          hint: { key: 'livejournal:userpics', label: 'Userpics', format: 'atom' },
+        },
+      ]
+
+      expect(livejournalHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should canonicalise www.livejournal.com/users/{user} to subdomain', () => {
       const value = 'https://www.livejournal.com/users/news'
       const expected: Array<DiscoverUriEntry> = [

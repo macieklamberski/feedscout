@@ -42,6 +42,15 @@ export const isOfAllowedMimeType = (
   return isAnyOf(type, allowedTypes, normalizeMimeType)
 }
 
+// A path segment arrives percent-encoded, so it is decoded before going into a query value.
+export const decodePathSegment = (segment: string): string => {
+  try {
+    return decodeURIComponent(segment)
+  } catch {}
+
+  return segment
+}
+
 // Check if HTML contains a meta tag matching a name or property attribute with the given
 // content value (prefix match), regardless of attribute order.
 export const hasMetaContent = (content: string, name: string, value: string): boolean => {

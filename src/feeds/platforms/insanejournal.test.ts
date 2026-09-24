@@ -98,6 +98,34 @@ describe('insanejournalHandler', () => {
       expect(insanejournalHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should keep a percent-encoded tag encoded once', () => {
+      const value = 'https://random.insanejournal.com/tag/caf%C3%A9'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://random.insanejournal.com/data/rss?tag=caf%C3%A9',
+          hint: { key: 'insanejournal:posts-tag', label: 'Tag', format: 'rss' },
+        },
+        {
+          uri: 'https://random.insanejournal.com/data/atom?tag=caf%C3%A9',
+          hint: { key: 'insanejournal:posts-tag', label: 'Tag', format: 'atom' },
+        },
+        {
+          uri: 'https://random.insanejournal.com/data/rss',
+          hint: { key: 'insanejournal:posts', label: 'Posts', format: 'rss' },
+        },
+        {
+          uri: 'https://random.insanejournal.com/data/atom',
+          hint: { key: 'insanejournal:posts', label: 'Posts', format: 'atom' },
+        },
+        {
+          uri: 'https://random.insanejournal.com/data/userpics',
+          hint: { key: 'insanejournal:userpics', label: 'Userpics', format: 'atom' },
+        },
+      ]
+
+      expect(insanejournalHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should canonicalise www.insanejournal.com/users/{user} to subdomain', () => {
       const value = 'https://www.insanejournal.com/users/news'
       const expected: Array<DiscoverUriEntry> = [
