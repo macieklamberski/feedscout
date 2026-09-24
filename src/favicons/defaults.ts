@@ -22,6 +22,7 @@ import { gitlabEnricher, gitlabHandler } from './platforms/gitlab.js'
 import { goodreadsEnricher, goodreadsHandler } from './platforms/goodreads.js'
 import { habrHandler } from './platforms/habr.js'
 import { hatenaBookmarkEnricher, hatenaBookmarkHandler } from './platforms/hatenaBookmark.js'
+import { lemmyEnricher, lemmyHandler } from './platforms/lemmy.js'
 import { letterboxdEnricher, letterboxdHandler } from './platforms/letterboxd.js'
 import { lobstersHandler } from './platforms/lobsters.js'
 import { mastodonEnricher, mastodonHandler } from './platforms/mastodon.js'
@@ -121,6 +122,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     goodreadsHandler,
     habrHandler,
     hatenaBookmarkHandler,
+    lemmyHandler,
     letterboxdHandler,
     lobstersHandler,
     mastodonHandler,
@@ -157,6 +159,7 @@ export const defaultFaviconEnrichers: Array<FaviconEnricher> = [
   gitlabEnricher,
   goodreadsEnricher,
   hatenaBookmarkEnricher,
+  lemmyEnricher,
   letterboxdEnricher,
   mastodonEnricher,
   mediumEnricher,
