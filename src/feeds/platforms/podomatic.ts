@@ -4,6 +4,7 @@ import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Unmeasured, podomatic.com no longer resolves in DNS, from any resolver.
 
+const domains = ['podomatic.com']
 const hosts = ['podomatic.com', 'www.podomatic.com']
 const directoryPathRegex = /^\/podcasts\/([^/]+)/
 const excludedSubdomains = ['www', 'api', 'assets', 'static']
@@ -21,7 +22,7 @@ const getShow = (url: string): string | undefined => {
     return pathname.match(directoryPathRegex)?.[1]
   }
 
-  const subdomain = getSubdomain(url, 'podomatic.com')
+  const subdomain = getSubdomain(url, domains)
 
   if (!subdomain) {
     return

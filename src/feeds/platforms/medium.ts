@@ -18,6 +18,7 @@ const publicationTagRegex = /^\/([^/@][^/]+)\/tagged\/([^/]+)/
 const publicationRegex = /^\/([^/@][^/]+)/
 const subdomainTagRegex = /^\/tagged\/([^/]+)/
 
+const domains = ['medium.com']
 export const hosts = ['medium.com', 'www.medium.com']
 const excludedPaths = ['search', 'me', 'new-story', 'plans', 'membership', 'feed']
 // Their /feed answers 404 or redirects away from a feed.
@@ -39,7 +40,7 @@ export const parseMediumUrl = (url: string): MediumUrl | undefined => {
   }
 
   const { pathname } = parsedUrl
-  const subdomain = getSubdomain(parsedUrl, 'medium.com')
+  const subdomain = getSubdomain(parsedUrl, domains)
 
   if (subdomain && !isHostOf(parsedUrl, hosts)) {
     // A nested subdomain like a.b.medium.com fails TLS, since the certificate covers one label.
@@ -93,7 +94,7 @@ export const parseMediumUrl = (url: string): MediumUrl | undefined => {
 
 export const mediumHandler: PlatformHandler = {
   match: (url) => {
-    return isHostOrSubdomainOf(url, 'medium.com')
+    return isHostOrSubdomainOf(url, domains)
   },
 
   resolve: (url) => {

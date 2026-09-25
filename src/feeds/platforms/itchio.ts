@@ -7,6 +7,7 @@ import { composeHint } from '../../common/utils.js'
 // Generic covers devlog, game (html), partly covers home.
 // Handler needed for: browseByTag, browseByUser, games, user.
 
+const domains = ['itch.io']
 const mainHosts = ['itch.io', 'www.itch.io']
 const sections = [
   'tools',
@@ -30,14 +31,14 @@ const gameRegex = /^\/([^/]+)/
 
 export const itchioHandler: PlatformHandler = {
   match: (url) => {
-    return isHostOrSubdomainOf(url, 'itch.io')
+    return isHostOrSubdomainOf(url, domains)
   },
 
   resolve: (url) => {
     const { hostname, pathname } = new URL(url)
 
     // Subdomain: creator pages ({creator}.itch.io).
-    if (!isHostOf(url, mainHosts) && isSubdomainOf(url, 'itch.io')) {
+    if (!isHostOf(url, mainHosts) && isSubdomainOf(url, domains)) {
       const creator = hostname.replace('.itch.io', '')
       const gameMatch = pathname.match(gameRegex)
 

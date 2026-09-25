@@ -6,7 +6,10 @@ import { getJournalFeeds } from './livejournal.js'
 // Generic partly covers asylum, blog, tildePath, userPath.
 // Handler needed for: syndicated.
 
+const domains = ['insanejournal.com']
 const wwwHosts = ['www.insanejournal.com', 'insanejournal.com']
+const asylumHosts = ['asylums.insanejournal.com']
+const feedHosts = ['feeds.insanejournal.com']
 
 const wwwUsersPathRegex = /^\/(?:users\/|~)([^/]+)/
 const wwwAsylumPathRegex = /^\/(?:asylum|community)\/([^/]+)/
@@ -14,7 +17,7 @@ const firstSegmentRegex = /^\/([^/]+)/
 
 export const insanejournalHandler: PlatformHandler = {
   match: (url) => {
-    if (!isSubdomainOf(url, 'insanejournal.com')) {
+    if (!isSubdomainOf(url, domains)) {
       return false
     }
 
@@ -24,7 +27,7 @@ export const insanejournalHandler: PlatformHandler = {
       return wwwUsersPathRegex.test(pathname) || wwwAsylumPathRegex.test(pathname)
     }
 
-    if (isHostOf(url, ['asylums.insanejournal.com', 'feeds.insanejournal.com'])) {
+    if (isHostOf(url, [...asylumHosts, ...feedHosts])) {
       return firstSegmentRegex.test(pathname)
     }
 
@@ -52,7 +55,7 @@ export const insanejournalHandler: PlatformHandler = {
           return []
         }
       }
-    } else if (isHostOf(url, 'asylums.insanejournal.com')) {
+    } else if (isHostOf(url, asylumHosts)) {
       const segMatch = pathname.match(firstSegmentRegex)
 
       if (segMatch?.[1]) {
@@ -60,7 +63,7 @@ export const insanejournalHandler: PlatformHandler = {
       } else {
         return []
       }
-    } else if (isHostOf(url, 'feeds.insanejournal.com')) {
+    } else if (isHostOf(url, feedHosts)) {
       const segMatch = pathname.match(firstSegmentRegex)
 
       if (segMatch?.[1]) {

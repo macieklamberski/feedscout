@@ -5,11 +5,12 @@ import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
+const domains = ['weebly.com']
 const numericRegex = /^\d+$/
 
 export const weeblyHandler: PlatformHandler = {
   match: (url) => {
-    return isSubdomainOf(url, 'weebly.com')
+    return isSubdomainOf(url, domains)
   },
 
   resolve: (url) => {

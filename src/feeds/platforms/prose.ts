@@ -4,11 +4,12 @@ import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
+const domains = ['prose.sh']
 const apexHosts = ['prose.sh', 'www.prose.sh']
 
 export const proseHandler: PlatformHandler = {
   match: (url) => {
-    return isSubdomainOf(url, 'prose.sh') || isHostOf(url, apexHosts)
+    return isSubdomainOf(url, domains) || isHostOf(url, apexHosts)
   },
 
   resolve: (url) => {

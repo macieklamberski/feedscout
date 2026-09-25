@@ -4,9 +4,12 @@ import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
+const domains = ['pagecord.com']
+const excludedHosts = ['www.pagecord.com']
+
 export const pagecordHandler: PlatformHandler = {
   match: (url) => {
-    return isSubdomainOf(url, 'pagecord.com') && !isHostOf(url, 'www.pagecord.com')
+    return isSubdomainOf(url, domains) && !isHostOf(url, excludedHosts)
   },
 
   resolve: (url) => {

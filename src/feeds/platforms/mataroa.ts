@@ -4,9 +4,11 @@ import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
+const domains = ['mataroa.blog']
+
 export const mataroaHandler: PlatformHandler = {
   match: (url) => {
-    return isSubdomainOf(url, 'mataroa.blog')
+    return isSubdomainOf(url, domains)
   },
 
   resolve: (url) => {

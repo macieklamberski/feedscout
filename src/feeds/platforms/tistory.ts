@@ -4,9 +4,11 @@ import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
+const domains = ['tistory.com']
+
 export const tistoryHandler: PlatformHandler = {
   match: (url) => {
-    return isSubdomainOf(url, 'tistory.com')
+    return isSubdomainOf(url, domains)
   },
 
   resolve: (url) => {

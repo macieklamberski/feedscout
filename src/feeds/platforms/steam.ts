@@ -11,7 +11,9 @@ export type SteamUrl = { kind: 'app'; appId: string } | { kind: 'group'; group: 
 const appRegex = /^\/(?:agecheck\/|news\/)?app\/(\d+)/
 const groupRegex = /^\/groups\/([^/]+)/
 
-const hosts = ['store.steampowered.com', 'steamcommunity.com']
+const storeHosts = ['store.steampowered.com']
+const communityHosts = ['steamcommunity.com']
+const hosts = [...storeHosts, ...communityHosts]
 
 export const parseSteamUrl = (url: string): SteamUrl | undefined => {
   const parsedUrl = parseUrl(url)
@@ -28,7 +30,7 @@ export const parseSteamUrl = (url: string): SteamUrl | undefined => {
 
   const group = parsedUrl.pathname.match(groupRegex)?.[1]
 
-  if (group && isHostOf(parsedUrl, 'steamcommunity.com')) {
+  if (group && isHostOf(parsedUrl, communityHosts)) {
     return { kind: 'group', group }
   }
 }
@@ -62,7 +64,7 @@ export const steamHandler: PlatformHandler = {
 
     // Global news feed on store root or /news/
     if (
-      isHostOf(url, 'store.steampowered.com') &&
+      isHostOf(url, storeHosts) &&
       (pathname === '/' || pathname === '' || pathname.startsWith('/news'))
     ) {
       return [
