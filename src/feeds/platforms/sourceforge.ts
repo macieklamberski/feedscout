@@ -19,7 +19,7 @@ export const parseSourceforgeUrl = (url: string): SourceforgeUrl | undefined => 
 
   const [prefix, project] = parsedUrl.pathname.split('/').filter(Boolean)
 
-  if (!prefix || !project || !isAnyOf(prefix, projectPrefixes)) {
+  if (!project || !isAnyOf(prefix, projectPrefixes)) {
     return
   }
 

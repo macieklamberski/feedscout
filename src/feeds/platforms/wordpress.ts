@@ -1,4 +1,4 @@
-import { isAnyOf, isSubdomainOf } from 'trousse'
+import { isSubdomainOf } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
@@ -14,6 +14,7 @@ const yearRegex = /^\/(\d{4})\/?$/
 const yearMonthRegex = /^\/(\d{4})\/(\d{2})\/?$/
 const dayRegex = /^\/(\d{4})\/(\d{2})\/(\d{2})\/?$/
 const trailingSlashRegex = /\/$/
+const feedSegmentRegex = /\/feed(?:\/|$)/i
 
 // The route word is emitted as listed, so a capitalized path still yields the canonical feed.
 const archives: Array<[RegExp, string, string?]> = [
@@ -68,13 +69,7 @@ export const wordpressHandler: PlatformHandler = {
     }
 
     // Post page: any non-root, non-archive, non-feed path.
-    const segments = pathname.split('/').filter(Boolean)
-
-    if (
-      !archiveMatched &&
-      segments.length > 0 &&
-      !segments.some((segment) => isAnyOf(segment, 'feed'))
-    ) {
+    if (!archiveMatched && pathname !== '/' && !feedSegmentRegex.test(pathname)) {
       const base = `${origin}${pathname.replace(trailingSlashRegex, '')}`
 
       uris.push(...getFeedEntries(base, 'wordpress:post-comments'))
