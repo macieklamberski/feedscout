@@ -8,7 +8,9 @@ import { composeHint, hasElementWithId, hasMetaContent } from '../../common/util
 // Handler needed for: user.
 
 const userRegex = /^\/u\/([^/]+)/i
-const categoryRegex = /^\/c\/(.+?)\/?$/i
+// A category page takes a `/none` or `/all` subcategory tail and an `/l/{filter}` list tail, and the
+// category feed answers only without them.
+const categoryRegex = /^\/c\/(.+?)(?:\/(?:none|all))?(?:\/l\/.+)?\/?$/i
 const topicRegex = /^\/t\/([^/]+)\/(\d+)/i
 const topRegex = /^\/top(?:\/([^/]+))?\/?$/i
 

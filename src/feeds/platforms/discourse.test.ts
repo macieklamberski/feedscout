@@ -122,6 +122,54 @@ describe('discourseHandler', () => {
       expect(discourseHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return category feed for a category list filter path', () => {
+      const value = 'https://meta.discourse.org/c/support/6/l/latest'
+      const expected = [
+        {
+          uri: 'https://meta.discourse.org/c/support/6.rss',
+          hint: { key: 'discourse:category', label: 'Category' },
+        },
+      ]
+
+      expect(discourseHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return category feed for a capitalized category list filter path', () => {
+      const value = 'https://meta.discourse.org/c/support/6/L/Latest'
+      const expected = [
+        {
+          uri: 'https://meta.discourse.org/c/support/6.rss',
+          hint: { key: 'discourse:category', label: 'Category' },
+        },
+      ]
+
+      expect(discourseHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return category feed for a category without subcategories path', () => {
+      const value = 'https://meta.discourse.org/c/support/6/none'
+      const expected = [
+        {
+          uri: 'https://meta.discourse.org/c/support/6.rss',
+          hint: { key: 'discourse:category', label: 'Category' },
+        },
+      ]
+
+      expect(discourseHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return category feed for a category with all subcategories path', () => {
+      const value = 'https://meta.discourse.org/c/support/6/all'
+      const expected = [
+        {
+          uri: 'https://meta.discourse.org/c/support/6.rss',
+          hint: { key: 'discourse:category', label: 'Category' },
+        },
+      ]
+
+      expect(discourseHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return topic feed for /t/{slug}/{id} path', () => {
       const value = 'https://users.rust-lang.org/t/welcome-to-the-rust-users-forum/2'
       const expected = [

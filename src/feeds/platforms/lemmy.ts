@@ -33,27 +33,18 @@ const validSorts = [
   'NewComments',
 ]
 
-// The page advertises its feeds with the instance's default sort, which a feed URL without a sort
-// does not follow.
-const getAdvertisedSort = (content: string | undefined): string | undefined => {
-  if (!content) {
-    return
-  }
-
+const getQuerySuffix = (searchParams: URLSearchParams, content: string | undefined): string => {
+  const params = new URLSearchParams()
+  // The page advertises its feeds with the instance's default sort, which a feed URL without a sort
+  // does not follow.
   const link = findElement(content, (element) => {
     return element.name === 'link' && element.attribs.rel === 'alternate'
   })
+  const feedUrl = parseUrl(link?.attribs.href ?? '', 'https://example.com')
+  const sorts = [searchParams.get('sort'), feedUrl?.searchParams.get('sort')]
+  const sort = sorts.find((value) => value && validSorts.includes(value))
 
-  return (
-    parseUrl(link?.attribs.href ?? '', 'https://example.com')?.searchParams.get('sort') ?? undefined
-  )
-}
-
-const getQuerySuffix = (searchParams: URLSearchParams, content: string | undefined): string => {
-  const params = new URLSearchParams()
-  const sort = searchParams.get('sort') ?? getAdvertisedSort(content)
-
-  if (sort && validSorts.includes(sort)) {
+  if (sort) {
     params.set('sort', sort)
   }
 

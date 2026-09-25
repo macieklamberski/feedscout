@@ -773,7 +773,7 @@ Discovers RSS feeds for Lemmy instances, communities and users. Detected by the 
 | `{instance}/u/{user}` | User feed |
 
 > [!NOTE]
-> Requires page content or response headers to detect Lemmy instances. The `?sort=` and `?limit=` query params are passed through to the generated feed URL. Unknown sort values are silently dropped.
+> Requires page content or response headers to detect Lemmy instances. The `?sort=` and `?limit=` query params are passed through to the generated feed URL. Unknown sort values are silently dropped. When the page URL has no valid sort, the feed takes the sort the page advertises.
 
 ### Libsyn
 

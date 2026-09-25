@@ -290,6 +290,56 @@ describe('lemmyHandler', () => {
       expect(lemmyHandler.resolve(value, content)).toEqual(expected)
     })
 
+    it('should take the advertised sort when the page URL sort is unknown', () => {
+      const value = 'https://lemmy.ml/?sort=bogus'
+      const content =
+        '<link rel="alternate" type="application/atom+xml" href="/feeds/local.xml?sort=Active">'
+      const expected = [
+        {
+          uri: 'https://lemmy.ml/feeds/all.xml?sort=Active',
+          hint: { key: 'lemmy:all', label: 'All' },
+        },
+        {
+          uri: 'https://lemmy.ml/feeds/local.xml?sort=Active',
+          hint: { key: 'lemmy:local', label: 'Local' },
+        },
+      ]
+
+      expect(lemmyHandler.resolve(value, content)).toEqual(expected)
+    })
+
+    it('should take the advertised sort when the page URL sort has the wrong case', () => {
+      const value = 'https://lemmy.ml/?sort=hot'
+      const content =
+        '<link rel="alternate" type="application/atom+xml" href="/feeds/local.xml?sort=Active">'
+      const expected = [
+        {
+          uri: 'https://lemmy.ml/feeds/all.xml?sort=Active',
+          hint: { key: 'lemmy:all', label: 'All' },
+        },
+        {
+          uri: 'https://lemmy.ml/feeds/local.xml?sort=Active',
+          hint: { key: 'lemmy:local', label: 'Local' },
+        },
+      ]
+
+      expect(lemmyHandler.resolve(value, content)).toEqual(expected)
+    })
+
+    it('should drop an unknown advertised sort', () => {
+      const value = 'https://lemmy.ml/c/programming'
+      const content =
+        '<link rel="alternate" type="application/atom+xml" href="/feeds/c/programming.xml?sort=bogus">'
+      const expected = [
+        {
+          uri: 'https://lemmy.ml/feeds/c/programming.xml',
+          hint: { key: 'lemmy:community', label: 'Community' },
+        },
+      ]
+
+      expect(lemmyHandler.resolve(value, content)).toEqual(expected)
+    })
+
     it('should drop unknown ?sort= values', () => {
       const value = 'https://lemmy.ml/c/programming?sort=garbage'
       const expected = [
