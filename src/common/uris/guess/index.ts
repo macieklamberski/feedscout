@@ -1,4 +1,5 @@
 import type { UriEntry } from '../../types.js'
+import { isHttpUrl } from '../../utils.js'
 import type { GuessMethodOptions } from './types.js'
 import {
   extractSectionBaseUrls,
@@ -9,6 +10,11 @@ import {
 
 export const discoverUrisFromGuess = (options: GuessMethodOptions): Array<UriEntry> => {
   const { baseUrl, uris, additionalBaseUrls = [], maxAncestorDepth = 0 } = options
+
+  // Guesses live under the page's own origin, which a `file:` or `data:` page does not have.
+  if (!isHttpUrl(baseUrl)) {
+    return []
+  }
   const { content, sectionNames } = options
   const baseUrls = [baseUrl, ...additionalBaseUrls]
 

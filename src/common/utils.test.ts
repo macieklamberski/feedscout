@@ -7,12 +7,31 @@ import {
   getMetaContent,
   hasAnyMeta,
   hasMetaContent,
+  isHttpUrl,
   isOfAllowedMimeType,
   matchesAnyOfLinkSelectors,
   normalizeMimeType,
   processConcurrently,
   toPositiveInteger,
 } from './utils.js'
+
+describe('isHttpUrl', () => {
+  it('should return true for http and https URLs', () => {
+    expect(isHttpUrl('https://example.com/feed.xml')).toBe(true)
+    expect(isHttpUrl('http://example.com/feed.xml')).toBe(true)
+  })
+
+  it('should return false for other schemes', () => {
+    expect(isHttpUrl('javascript:subscribe()')).toBe(false)
+    expect(isHttpUrl('mailto:rss@example.com')).toBe(false)
+    expect(isHttpUrl('file:///Users/alice/feed.xml')).toBe(false)
+  })
+
+  it('should return false for a relative or invalid URL', () => {
+    expect(isHttpUrl('/feed.xml')).toBe(false)
+    expect(isHttpUrl('not a url')).toBe(false)
+  })
+})
 
 describe('composeHint', () => {
   it('should return hint with key and label for valid key', () => {
