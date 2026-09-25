@@ -1,6 +1,7 @@
 import { defaultFetchFn, defaultResolveUrlFn } from '../../common/discover/defaults.js'
 import { normalizeInput } from '../../common/discover/utils.js'
 import type { DiscoverInput } from '../../common/types.js'
+import { withTextBody } from '../../common/utils.js'
 import { discoverHubsFromFeed } from '../feed/index.js'
 import { discoverHubsFromHeaders } from '../headers/index.js'
 import { discoverHubsFromHtml } from '../html/index.js'
@@ -17,7 +18,7 @@ export const discoverHubs = async (
     onError,
   } = options
 
-  const normalizedInput = await normalizeInput(input, fetchFn, onError)
+  const normalizedInput = await normalizeInput(input, withTextBody(fetchFn), onError)
   const results: Array<HubResult> = []
 
   if (methods.includes('headers') && normalizedInput.headers) {

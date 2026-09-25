@@ -1,7 +1,7 @@
 import { DomUtils, parseDocument } from 'htmlparser2'
 import { anyWordMatchesAnyOf, isAnyOf } from 'trousse'
 import locales from './locales.json' with { type: 'json' }
-import type { DiscoverUriHint } from './types.js'
+import type { DiscoverUriHint, FetchFn } from './types.js'
 
 export const composeHint = (key: string, format?: DiscoverUriHint['format']): DiscoverUriHint => {
   const label = locales.hints[key as keyof typeof locales.hints]
@@ -17,6 +17,23 @@ export const composeHint = (key: string, format?: DiscoverUriHint['format']): Di
 // status means the body was supplied directly (no fetch), so treat it as valid.
 export const isSuccessfulStatus = (status: number | undefined): boolean => {
   return status === undefined || (status >= 200 && status < 300)
+}
+
+// A fetch function may return the body as a stream. It is read to text here, so every reader after
+// the fetch function works on a string.
+export const withTextBody = (fetchFn: FetchFn): FetchFn => {
+  return async (url, options) => {
+    const response = await fetchFn(url, options)
+
+    if (typeof response.body === 'string') {
+      return response
+    }
+
+    return {
+      ...response,
+      body: await new Response(response.body).text(),
+    }
+  }
 }
 
 // Coerce to a positive integer, falling back when missing or invalid (NaN, < 1, non-integer).

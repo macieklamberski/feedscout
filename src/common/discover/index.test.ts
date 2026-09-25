@@ -655,6 +655,40 @@ describe('discoverFeeds', () => {
     })
   })
 
+  describe('stream bodies', () => {
+    const createStreamFetch = (body: string): FetchFn => {
+      return async (url: string) => ({
+        headers: new Headers(),
+        body: new Response(body).body as ReadableStream<Uint8Array>,
+        url,
+        status: 200,
+      })
+    }
+
+    it('should read a stream body of a candidate', async () => {
+      const value = await discoverFeeds(
+        { url: 'https://example.com' },
+        {
+          methods: { guess: { uris: ['/feed'] } },
+          fetchFn: createStreamFetch(rss),
+        },
+      )
+      const expected: Array<DiscoverResult<FeedResult>> = [
+        {
+          url: 'https://example.com/feed',
+          isValid: true,
+          method: 'guess',
+          format: 'rss',
+          title: 'Test RSS',
+          description: 'Test feed',
+          siteUrl: 'https://example.com/',
+        },
+      ]
+
+      expect(value).toEqual(expected)
+    })
+  })
+
   describe('failed input fetch', () => {
     it('should skip content-based methods in array format and still run guess', async () => {
       const mockFetch: FetchFn = (url) => {
@@ -775,26 +809,6 @@ describe('discoverFeeds', () => {
       }
 
       expect(throwing()).rejects.toThrow(locales.errors.headersMethodRequiresHeaders)
-    })
-
-    it('should throw when the input fetch succeeds with a stream body', () => {
-      const mockFetch: FetchFn = (url) => {
-        return Promise.resolve({
-          url,
-          status: 200,
-          statusText: 'OK',
-          headers: new Headers(),
-          body: new ReadableStream(),
-        })
-      }
-      const throwing = () => {
-        return discoverFeeds('https://example.com', {
-          methods: ['html'],
-          fetchFn: mockFetch,
-        })
-      }
-
-      expect(throwing()).rejects.toThrow(locales.errors.htmlMethodRequiresContent)
     })
   })
 

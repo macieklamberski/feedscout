@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverUriHint } from './types.js'
+import type { DiscoverUriHint, FetchFn } from './types.js'
 import {
   composeHint,
   type Element,
@@ -18,6 +18,7 @@ import {
   normalizeMimeType,
   processConcurrently,
   toPositiveInteger,
+  withTextBody,
 } from './utils.js'
 
 describe('composeHint', () => {
@@ -1045,5 +1046,56 @@ describe('toPositiveInteger', () => {
 
   it('should fall back for non-integer values', () => {
     expect(toPositiveInteger(2.5, 3)).toBe(3)
+  })
+})
+
+describe('withTextBody', () => {
+  const encoder = new TextEncoder()
+
+  const createFetchFn = (body: string | ReadableStream<Uint8Array>): FetchFn => {
+    return (url) => {
+      return { url, body, headers: new Headers({ etag: '"1"' }), status: 200 }
+    }
+  }
+
+  const createStream = (chunks: Array<Uint8Array>): ReadableStream<Uint8Array> => {
+    return new ReadableStream({
+      start: (controller) => {
+        for (const chunk of chunks) {
+          controller.enqueue(chunk)
+        }
+
+        controller.close()
+      },
+    })
+  }
+
+  it('should read a stream body to text and keep the rest of the response', async () => {
+    const value = withTextBody(createFetchFn(createStream([encoder.encode('<rss></rss>')])))
+    const expected = {
+      url: 'https://example.com/feed.xml',
+      body: '<rss></rss>',
+      headers: new Headers({ etag: '"1"' }),
+      status: 200,
+    }
+
+    expect(await value('https://example.com/feed.xml')).toEqual(expected)
+  })
+
+  it('should decode a multi-byte character split across chunks', async () => {
+    const bytes = encoder.encode('<title>Zażółć</title>')
+    const value = withTextBody(createFetchFn(createStream([bytes.slice(0, 10), bytes.slice(10)])))
+
+    expect(await value('https://example.com/feed.xml')).toMatchObject({
+      body: '<title>Zażółć</title>',
+    })
+  })
+
+  it('should pass a string body through', async () => {
+    const value = withTextBody(createFetchFn('<rss></rss>'))
+
+    expect(await value('https://example.com/feed.xml')).toMatchObject({
+      body: '<rss></rss>',
+    })
   })
 })

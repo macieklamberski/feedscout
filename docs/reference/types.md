@@ -364,7 +364,7 @@ type FetchFnOptions = {
 
 type FetchFnResponse = {
   headers: Headers
-  body: string | ReadableStream<Uint8Array> // A stream is read as empty content
+  body: string | ReadableStream<Uint8Array> // A stream is read to text
   url: string // Final URL after redirects
   status: number
 }
