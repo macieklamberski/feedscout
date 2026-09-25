@@ -190,7 +190,6 @@ export const redditHandler: PlatformHandler = {
     }
 
     // A subreddit search without a query shows the subreddit.
-    // biome-ignore lint/plugin/no-literal-equality-chain: An `.includes()` check cannot narrow `parsed`.
     if (parsed?.kind === 'subreddit' || parsed?.kind === 'search') {
       const { subreddit } = parsed
       const sort = parsed.kind === 'subreddit' ? parsed.sort : undefined
