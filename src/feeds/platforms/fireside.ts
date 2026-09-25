@@ -1,11 +1,9 @@
-import { isSubdomainOf } from 'trousse'
+import { getSubdomain, isSubdomainOf } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
-
-const domainSuffixRegex = /\.fireside\.fm$/i
 
 export const firesideHandler: PlatformHandler = {
   match: (url) => {
@@ -13,8 +11,7 @@ export const firesideHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    const { hostname } = new URL(url)
-    const slug = hostname.replace(domainSuffixRegex, '')
+    const slug = getSubdomain(url, 'fireside.fm')
     const uris: Array<DiscoverUriEntry> = []
 
     uris.push({
