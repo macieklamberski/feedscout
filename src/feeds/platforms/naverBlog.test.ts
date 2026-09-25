@@ -1,22 +1,54 @@
 import { describe, expect, it } from 'bun:test'
-import { naverBlogHandler } from './naverBlog.js'
+import type { NaverBlogUrl } from './naverBlog.js'
+import { naverBlogHandler, parseNaverBlogUrl } from './naverBlog.js'
+
+describe('parseNaverBlogUrl', () => {
+  it('should return the blog for a desktop blog URL', () => {
+    const expected: NaverBlogUrl = { kind: 'blog', blogId: 'prologue' }
+
+    expect(parseNaverBlogUrl('https://blog.naver.com/prologue')).toEqual(expected)
+  })
+
+  it('should return the blog for a mobile blog URL', () => {
+    const expected: NaverBlogUrl = { kind: 'blog', blogId: 'prologue' }
+
+    expect(parseNaverBlogUrl('https://m.blog.naver.com/prologue')).toEqual(expected)
+  })
+
+  it('should return the blog for a post URL', () => {
+    const value = 'https://m.blog.naver.com/prologue/223000000000'
+    const expected: NaverBlogUrl = { kind: 'blog', blogId: 'prologue' }
+
+    expect(parseNaverBlogUrl(value)).toEqual(expected)
+  })
+
+  it('should return undefined for paths with dots', () => {
+    expect(parseNaverBlogUrl('https://blog.naver.com/BlogList.naver')).toBeUndefined()
+  })
+
+  it('should return undefined for the root', () => {
+    expect(parseNaverBlogUrl('https://blog.naver.com/')).toBeUndefined()
+    expect(parseNaverBlogUrl('https://blog.naver.com')).toBeUndefined()
+  })
+
+  it('should return undefined for another host', () => {
+    expect(parseNaverBlogUrl('https://naver.com/prologue')).toBeUndefined()
+    expect(parseNaverBlogUrl('https://example.com/prologue')).toBeUndefined()
+  })
+
+  it('should return undefined for an invalid URL', () => {
+    expect(parseNaverBlogUrl('not-a-url')).toBeUndefined()
+  })
+})
 
 describe('naverBlogHandler', () => {
   describe('match', () => {
-    const values: Array<[boolean, string]> = [
-      [true, 'https://blog.naver.com/prologue'],
-      [true, 'https://m.blog.naver.com/prologue'],
-      [true, 'https://blog.naver.com'],
-      [false, 'https://naver.com'],
-      [false, 'https://example.com'],
-    ]
-
-    it.each(values)('should return %s for %s', (expected, url) => {
-      expect(naverBlogHandler.match(url)).toBe(expected)
+    it('should match a Naver Blog URL', () => {
+      expect(naverBlogHandler.match('https://blog.naver.com/prologue')).toBe(true)
     })
 
-    it('should return false for invalid URL', () => {
-      expect(naverBlogHandler.match('not-a-url')).toBe(false)
+    it('should not match another host', () => {
+      expect(naverBlogHandler.match('https://naver.com')).toBe(false)
     })
   })
 
@@ -33,40 +65,8 @@ describe('naverBlogHandler', () => {
       expect(naverBlogHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return feed URL for mobile domain', () => {
-      const value = 'https://m.blog.naver.com/prologue'
-      const expected = [
-        {
-          uri: 'https://rss.blog.naver.com/prologue.xml',
-          hint: { key: 'naver-blog:blog', label: 'Blog' },
-        },
-      ]
-
-      expect(naverBlogHandler.resolve(value)).toEqual(expected)
-    })
-
-    it('should return feed URL regardless of subpath', () => {
-      const value = 'https://blog.naver.com/prologue/123'
-      const expected = [
-        {
-          uri: 'https://rss.blog.naver.com/prologue.xml',
-          hint: { key: 'naver-blog:blog', label: 'Blog' },
-        },
-      ]
-
-      expect(naverBlogHandler.resolve(value)).toEqual(expected)
-    })
-
-    it('should return empty array for root path', () => {
-      const value = 'https://blog.naver.com/'
-
-      expect(naverBlogHandler.resolve(value)).toEqual([])
-    })
-
-    it('should return empty array for paths with dots', () => {
-      const value = 'https://blog.naver.com/BlogList.naver'
-
-      expect(naverBlogHandler.resolve(value)).toEqual([])
+    it('should return empty array for the root', () => {
+      expect(naverBlogHandler.resolve('https://blog.naver.com/')).toEqual([])
     })
   })
 })

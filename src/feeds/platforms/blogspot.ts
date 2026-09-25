@@ -1,7 +1,7 @@
 import { parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
+import { composeHint, findElement } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic partly covers blog, label.
@@ -10,7 +10,7 @@ import { composeHint } from '../../common/utils.js'
 const blogspotDomainRegex = /^.+\.blogspot\.(?:com|co\.[a-z]{2}|com\.[a-z]{2}|[a-z]{2,3})$/
 const labelRegex = /^\/search\/label\/([^/]+)/
 const postRegex = /^\/\d{4}\/\d{2}\/[^/]+\.html$/
-const postCommentsFeedRegex = /href="[^"]*\/feeds\/(\d+)\/comments\/default/
+const postCommentsFeedRegex = /\/feeds\/(\d+)\/comments\/default/
 
 export const blogspotHandler: PlatformHandler = {
   match: (url) => {
@@ -45,7 +45,10 @@ export const blogspotHandler: PlatformHandler = {
 
     // Post page: /{year}/{month}/{slug}.html — extract postId from content.
     if (content && postRegex.test(pathname)) {
-      const postIdMatch = content.match(postCommentsFeedRegex)
+      const commentsFeedLink = findElement(content, (element) => {
+        return postCommentsFeedRegex.test(element.attribs.href ?? '')
+      })
+      const postIdMatch = commentsFeedLink?.attribs.href?.match(postCommentsFeedRegex)
 
       if (postIdMatch?.[1]) {
         const postId = postIdMatch[1]

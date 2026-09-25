@@ -1,13 +1,7 @@
 import { describe, expect, it } from 'bun:test'
 import type { DiscoverRef, FetchFn } from '../../common/types.js'
 import type { FaviconEnricherContext } from '../types.js'
-import {
-  isMastodonHeaders,
-  isMastodonHtml,
-  isProfilePath,
-  mastodonEnricher,
-  mastodonHandler,
-} from './mastodon.js'
+import { mastodonEnricher, mastodonHandler } from './mastodon.js'
 
 const createContext = (responses: Record<string, string>): FaviconEnricherContext => {
   const fetchFn: FetchFn = async (url) => ({
@@ -24,108 +18,12 @@ const createRef = (url: string, id: string): DiscoverRef => {
   return { platform: 'mastodon', id, url }
 }
 
-describe('isProfilePath', () => {
-  it('should return true for /@ paths', () => {
-    expect(isProfilePath('/@user')).toBe(true)
-    expect(isProfilePath('/@admin')).toBe(true)
-  })
-
-  it('should return true for /@ path with trailing slash', () => {
-    expect(isProfilePath('/@user/')).toBe(true)
-  })
-
-  it('should return false for multi-segment /@ paths', () => {
-    expect(isProfilePath('/@user/123456789')).toBe(false)
-    expect(isProfilePath('/@user/with/extra')).toBe(false)
-  })
-
-  it('should return false for paths without @', () => {
-    expect(isProfilePath('/user')).toBe(false)
-    expect(isProfilePath('/about')).toBe(false)
-  })
-
-  it('should return false for root path', () => {
-    expect(isProfilePath('/')).toBe(false)
-  })
-
-  it('should return false for empty string', () => {
-    expect(isProfilePath('')).toBe(false)
-  })
-})
-
-describe('isMastodonHtml', () => {
-  it('should return true for standard Mastodon generator meta tag', () => {
-    expect(isMastodonHtml('<meta name="generator" content="Mastodon v4.2.0">')).toBe(true)
-  })
-
-  it('should return true for case variations', () => {
-    expect(isMastodonHtml('<meta name="generator" content="mastodon v4.0.0">')).toBe(true)
-    expect(isMastodonHtml('<meta name="generator" content="MASTODON v4.0.0">')).toBe(true)
-  })
-
-  it('should return true for generator tag with single quotes', () => {
-    expect(isMastodonHtml("<meta name='generator' content='Mastodon v4.2.0'>")).toBe(true)
-  })
-
-  it('should return true for tag within full HTML document', () => {
-    const value = '<html><head><meta name="generator" content="Mastodon v4.2.0"></head></html>'
-
-    expect(isMastodonHtml(value)).toBe(true)
-  })
-
-  it('should return true for the mastodon app root without generator', () => {
-    expect(isMastodonHtml('<body><div class="app-holder" id="mastodon"></div></body>')).toBe(true)
-  })
-
-  it('should return false for non-Mastodon generator', () => {
-    expect(isMastodonHtml('<meta name="generator" content="WordPress 6.0">')).toBe(false)
-  })
-
-  it('should return false for HTML without generator tag', () => {
-    expect(isMastodonHtml('<html><head><title>Test</title></head></html>')).toBe(false)
-  })
-
-  it('should return false for empty string', () => {
-    expect(isMastodonHtml('')).toBe(false)
-  })
-})
-
-describe('isMastodonHeaders', () => {
-  it('should return true for Mastodon server header', () => {
-    expect(isMastodonHeaders(new Headers({ server: 'Mastodon' }))).toBe(true)
-  })
-
-  it('should return true for case variations', () => {
-    expect(isMastodonHeaders(new Headers({ server: 'mastodon' }))).toBe(true)
-    expect(isMastodonHeaders(new Headers({ server: 'MASTODON' }))).toBe(true)
-  })
-
-  it('should return true for server header with version', () => {
-    expect(isMastodonHeaders(new Headers({ server: 'Mastodon/4.2.0' }))).toBe(true)
-  })
-
-  it('should return true for server header containing Mastodon as substring', () => {
-    expect(isMastodonHeaders(new Headers({ server: 'nginx (Mastodon)' }))).toBe(true)
-  })
-
-  it('should return false for non-Mastodon server', () => {
-    expect(isMastodonHeaders(new Headers({ server: 'nginx' }))).toBe(false)
-    expect(isMastodonHeaders(new Headers({ server: 'Apache' }))).toBe(false)
-  })
-
-  it('should return false for missing server header', () => {
-    expect(isMastodonHeaders(new Headers())).toBe(false)
-    expect(isMastodonHeaders(new Headers({ 'content-type': 'text/html' }))).toBe(false)
-  })
-})
-
 describe('mastodonHandler', () => {
   describe('match', () => {
     it('should match profile path with Mastodon HTML', () => {
       const value = '<meta name="generator" content="Mastodon v4.2.0">'
 
       expect(mastodonHandler.match('https://mastodon.social/@user', value)).toBe(true)
-      expect(mastodonHandler.match('https://example.com/@user', value)).toBe(true)
     })
 
     it('should match profile path with Mastodon server header', () => {
@@ -146,8 +44,17 @@ describe('mastodonHandler', () => {
       ).toBe(true)
     })
 
-    it('should not match without Mastodon signals', () => {
+    it('should not match tag pages', () => {
+      const value = '<meta name="generator" content="Mastodon v4.2.0">'
+
+      expect(mastodonHandler.match('https://example.com/tags/news', value)).toBe(false)
+    })
+
+    it('should not match without Mastodon HTML signals', () => {
       expect(mastodonHandler.match('https://example.com/@user', '<html></html>')).toBe(false)
+    })
+
+    it('should not match without Mastodon header signals', () => {
       expect(
         mastodonHandler.match('https://example.com/@user', '', new Headers({ server: 'nginx' })),
       ).toBe(false)
@@ -161,11 +68,6 @@ describe('mastodonHandler', () => {
       const value = '<meta name="generator" content="Mastodon v4.2.0">'
 
       expect(mastodonHandler.match('https://mastodon.social/about', value)).toBe(false)
-      expect(mastodonHandler.match('https://mastodon.social/', value)).toBe(false)
-    })
-
-    it('should not match invalid URLs', () => {
-      expect(mastodonHandler.match('not-a-url')).toBe(false)
     })
   })
 
@@ -176,20 +78,6 @@ describe('mastodonHandler', () => {
       ]
 
       expect(await mastodonHandler.resolve('https://mastodon.social/@user')).toEqual(expected)
-    })
-
-    it('should return a ref with the remote handle for /@user@domain', async () => {
-      const url = 'https://mastodon.social/@user@remote.social'
-      const expected: Array<DiscoverRef> = [{ platform: 'mastodon', id: 'user@remote.social', url }]
-
-      expect(await mastodonHandler.resolve(url)).toEqual(expected)
-    })
-
-    it('should strip feed extension from profile URL', async () => {
-      const url = 'https://mastodon.social/@user.rss'
-      const expected: Array<DiscoverRef> = [{ platform: 'mastodon', id: 'user', url }]
-
-      expect(await mastodonHandler.resolve(url)).toEqual(expected)
     })
 
     it('should return empty array for non-profile path', async () => {

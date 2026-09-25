@@ -1,4 +1,4 @@
-import { isHostOf } from 'trousse'
+import { isHostOf, parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
@@ -6,8 +6,26 @@ import { composeHint } from '../../common/utils.js'
 // Discoverability: Not discoverable without handler.
 // Handler needed for: all shapes.
 
+export type TogetterUrl = { kind: 'user'; username: string }
+
 export const hosts = ['togetter.com', 'www.togetter.com']
-export const curatorPathRegex = /^\/id\/([^/]+)/
+const userPathRegex = /^\/id\/([^/]+)/
+
+export const parseTogetterUrl = (url: string): TogetterUrl | undefined => {
+  const parsedUrl = parseUrl(url)
+
+  if (!parsedUrl || !isHostOf(parsedUrl, hosts)) {
+    return
+  }
+
+  const username = parsedUrl.pathname.match(userPathRegex)?.[1]
+
+  if (!username) {
+    return
+  }
+
+  return { kind: 'user', username }
+}
 
 export const togetterHandler: PlatformHandler = {
   match: (url) => {
@@ -15,13 +33,13 @@ export const togetterHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    const { origin, pathname } = new URL(url)
-    const curator = pathname.match(curatorPathRegex)?.[1]
+    const { origin } = new URL(url)
+    const username = parseTogetterUrl(url)?.username
     const uris: Array<DiscoverUriEntry> = []
 
-    if (curator) {
+    if (username) {
       uris.push({
-        uri: `${origin}/rss/id/${curator}`,
+        uri: `${origin}/rss/id/${username}`,
         hint: composeHint('togetter:curator'),
       })
     }

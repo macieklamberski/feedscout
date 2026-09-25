@@ -1,12 +1,14 @@
-import { isAnyOf, isHostOf } from 'trousse'
+import { getPathSegments, isAnyOf, isHostOf, parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
+export type NebulaUrl = { kind: 'channel'; slug: string }
+
 export const hosts = ['nebula.tv', 'www.nebula.tv']
-export const excludedPaths = [
+const excludedPaths = [
   'about',
   'classes',
   'library',
@@ -22,7 +24,23 @@ export const excludedPaths = [
 
 // /explore is the canonical landing page (Nebula 301s root and /videos to it).
 // Treated as the global feed surface, not a creator slug.
-export const globalPaths = ['videos', 'explore']
+const globalPaths = ['videos', 'explore']
+
+export const parseNebulaUrl = (url: string): NebulaUrl | undefined => {
+  const parsedUrl = parseUrl(url)
+
+  if (!parsedUrl || !isHostOf(parsedUrl, hosts)) {
+    return
+  }
+
+  const [slug] = getPathSegments(parsedUrl)
+
+  if (!slug || isAnyOf(slug, globalPaths) || isAnyOf(slug, excludedPaths)) {
+    return
+  }
+
+  return { kind: 'channel', slug }
+}
 
 export const nebulaHandler: PlatformHandler = {
   match: (url) => {
@@ -70,9 +88,9 @@ export const nebulaHandler: PlatformHandler = {
       return uris
     }
 
-    const slug = pathSegments[0]
+    const slug = parseNebulaUrl(url)?.slug
 
-    if (isAnyOf(slug, excludedPaths)) {
+    if (!slug) {
       return []
     }
 

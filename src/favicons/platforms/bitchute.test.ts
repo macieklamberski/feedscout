@@ -19,24 +19,8 @@ describe('bitchuteHandler', () => {
       expect(bitchuteHandler.match('https://www.bitchute.com/channel/example/')).toBe(true)
     })
 
-    it('should match channel URLs without www', () => {
-      expect(bitchuteHandler.match('https://bitchute.com/channel/example')).toBe(true)
-    })
-
-    it('should not match channel path without slug', () => {
-      expect(bitchuteHandler.match('https://www.bitchute.com/channel/')).toBe(false)
-    })
-
     it('should not match video pages', () => {
       expect(bitchuteHandler.match('https://www.bitchute.com/video/aBcDeFgH1234/')).toBe(false)
-    })
-
-    it('should not match non-BitChute URLs', () => {
-      expect(bitchuteHandler.match('https://example.com/channel/example/')).toBe(false)
-    })
-
-    it('should not match invalid URLs', () => {
-      expect(bitchuteHandler.match('not-a-url')).toBe(false)
     })
   })
 

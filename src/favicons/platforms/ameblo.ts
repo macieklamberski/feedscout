@@ -1,24 +1,12 @@
-import { isAnyOf, isHostOf, isNonEmptyString, parseUrl } from 'trousse'
+import { isNonEmptyString } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { excludedPaths, hosts } from '../../feeds/platforms/ameblo.js'
+import { parseAmebloUrl } from '../../feeds/platforms/ameblo.js'
 
 const initDataPrefix = 'window.INIT_DATA='
 
-const getUsername = (pathname: string): string | undefined => {
-  return pathname.split('/').find(Boolean)
-}
-
 export const amebloHandler: PlatformHandler = {
   match: (url) => {
-    const parsedUrl = parseUrl(url)
-
-    if (!parsedUrl || !isHostOf(url, hosts)) {
-      return false
-    }
-
-    const username = getUsername(parsedUrl.pathname)
-
-    return !!username && !isAnyOf(username, excludedPaths)
+    return parseAmebloUrl(url) !== undefined
   },
 
   resolve: (url, content) => {
@@ -26,7 +14,7 @@ export const amebloHandler: PlatformHandler = {
       return []
     }
 
-    const username = getUsername(new URL(url).pathname)
+    const username = parseAmebloUrl(url)?.username
     const start = content.indexOf(initDataPrefix)
     // The same inline script assigns more globals right after INIT_DATA.
     const end = content.indexOf(';window.', start)

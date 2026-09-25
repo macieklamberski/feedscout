@@ -1,17 +1,13 @@
-import { isSubdomainOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { domains } from '../../feeds/platforms/tumblr.js'
+import { parseTumblrUrl, tumblrHandler as tumblrFeedHandler } from '../../feeds/platforms/tumblr.js'
 
 export const tumblrHandler: PlatformHandler = {
-  match: (url) => {
-    return isSubdomainOf(url, domains)
-  },
+  match: tumblrFeedHandler.match,
 
   resolve: (url) => {
-    const { hostname } = new URL(url)
-    const blog = hostname.split('.')[0]
+    const blog = parseTumblrUrl(url)?.blog
 
-    if (!blog || blog === 'www') {
+    if (!blog) {
       return []
     }
 

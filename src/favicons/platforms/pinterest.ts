@@ -1,33 +1,17 @@
-import { getPathSegments, isAnyOf, isHostOf, isNonEmptyString } from 'trousse'
+import { getPathSegments, isNonEmptyString } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { excludedPaths, hosts } from '../../feeds/platforms/pinterest.js'
+import { getScriptText } from '../../common/utils.js'
+import { parsePinterestUrl } from '../../feeds/platforms/pinterest.js'
 import type { FaviconEnricher } from '../types.js'
 import { getResponseText } from '../utils.js'
 
 const platform = 'pinterest'
 
-// pin.it serves short links to pins, not profiles.
-const profileHosts = hosts.filter((host) => host !== 'pin.it')
-const initialPropsRegex = /<script[^>]*id="__PWS_INITIAL_PROPS__"[^>]*>([\s\S]*?)<\/script>/
 // A user without an avatar gets the generic s.pinimg.com/images/user/default_280.png.
 const defaultAvatarRegex = /\/images\/user\/default_/
 
-const getProfile = (url: string): { username: string; isSaved: boolean } | undefined => {
-  const [username, subpage, ...rest] = getPathSegments(url)
-
-  if (!username || isAnyOf(username, excludedPaths) || rest.length > 0) {
-    return
-  }
-
-  if (subpage && subpage !== '_saved') {
-    return
-  }
-
-  return { username, isSaved: subpage === '_saved' }
-}
-
 const findProfileImage = (content: string, username: string): string | undefined => {
-  const json = content.match(initialPropsRegex)?.[1]
+  const json = getScriptText(content, '__PWS_INITIAL_PROPS__')
 
   if (!json) {
     return
@@ -50,22 +34,22 @@ const findProfileImage = (content: string, username: string): string | undefined
 
 export const pinterestHandler: PlatformHandler = {
   match: (url) => {
-    return isHostOf(url, profileHosts) && !!getProfile(url)
+    return parsePinterestUrl(url) !== undefined
   },
 
   resolve: (url, content) => {
-    const profile = getProfile(url)
+    const username = parsePinterestUrl(url)?.username
 
-    if (!profile) {
+    if (!username) {
       return []
     }
 
-    // The _saved page carries no user in its initial Redux state, only the profile page does.
-    if (profile.isSaved || !content) {
-      return [{ platform, id: profile.username, url }]
+    // Only the profile page carries the user in its initial Redux state.
+    if (getPathSegments(url).length > 1 || !content) {
+      return [{ platform, id: username, url }]
     }
 
-    const image = findProfileImage(content, profile.username)
+    const image = findProfileImage(content, username)
 
     if (!image) {
       return []

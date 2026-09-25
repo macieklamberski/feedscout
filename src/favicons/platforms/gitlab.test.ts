@@ -29,14 +29,6 @@ describe('gitlabHandler', () => {
       expect(gitlabHandler.match('https://gitlab.com/gitlab-org')).toBe(true)
     })
 
-    it('should match gitlab.com repo URLs without content', () => {
-      expect(gitlabHandler.match('https://gitlab.com/gitlab-org/gitlab')).toBe(true)
-    })
-
-    it('should match www.gitlab.com without content', () => {
-      expect(gitlabHandler.match('https://www.gitlab.com/user')).toBe(true)
-    })
-
     it('should match self-hosted instance with GitLab HTML', () => {
       expect(gitlabHandler.match('https://gitlab.mycompany.com/user', gitlabHtml)).toBe(true)
     })
@@ -45,26 +37,8 @@ describe('gitlabHandler', () => {
       expect(gitlabHandler.match('https://gitlab.mycompany.com/user', '', gitlabHeaders)).toBe(true)
     })
 
-    it('should not match self-hosted root path even with GitLab HTML', () => {
-      expect(gitlabHandler.match('https://gitlab.mycompany.com', gitlabHtml)).toBe(false)
-    })
-
-    it('should not match non-GitLab sites', () => {
-      expect(gitlabHandler.match('https://github.com/user')).toBe(false)
-      expect(gitlabHandler.match('https://example.com/user')).toBe(false)
-    })
-
     it('should not match self-hosted without content or headers', () => {
       expect(gitlabHandler.match('https://gitlab.mycompany.com/user')).toBe(false)
-    })
-
-    it('should match URLs with feed extensions', () => {
-      expect(gitlabHandler.match('https://gitlab.com/alice.atom')).toBe(true)
-      expect(gitlabHandler.match('https://gitlab.com/john.doe.atom')).toBe(true)
-    })
-
-    it('should not match invalid URLs', () => {
-      expect(gitlabHandler.match('not-a-url')).toBe(false)
     })
   })
 
@@ -83,28 +57,6 @@ describe('gitlabHandler', () => {
       const url = 'https://gitlab.com/gitlab-org/gitlab'
 
       expect(await gitlabHandler.resolve(url)).toEqual([createRef(url, 'gitlab-org')])
-    })
-
-    it('should strip feed extension from user URL', async () => {
-      const url = 'https://gitlab.com/alice.atom'
-
-      expect(await gitlabHandler.resolve(url)).toEqual([createRef(url, 'alice')])
-    })
-
-    it('should preserve dots in usernames', async () => {
-      const url = 'https://gitlab.com/john.doe'
-
-      expect(await gitlabHandler.resolve(url)).toEqual([createRef(url, 'john.doe')])
-    })
-
-    it('should strip feed extension from dotted username', async () => {
-      const url = 'https://gitlab.com/john.doe.atom'
-
-      expect(await gitlabHandler.resolve(url)).toEqual([createRef(url, 'john.doe')])
-    })
-
-    it('should return empty array for root URL', async () => {
-      expect(await gitlabHandler.resolve('https://gitlab.com')).toEqual([])
     })
 
     it('should return empty array for excluded paths', async () => {

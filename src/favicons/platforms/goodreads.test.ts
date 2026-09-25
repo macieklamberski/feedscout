@@ -52,32 +52,8 @@ describe('goodreadsHandler', () => {
       expect(goodreadsHandler.match(value)).toBe(true)
     })
 
-    it('should match a user page without a slug', () => {
-      expect(goodreadsHandler.match('https://www.goodreads.com/user/show/1')).toBe(true)
-    })
-
-    it('should match a user page on the bare host', () => {
-      expect(goodreadsHandler.match('https://goodreads.com/user/show/1')).toBe(true)
-    })
-
     it('should not match a review list page', () => {
       expect(goodreadsHandler.match('https://www.goodreads.com/review/list/1')).toBe(false)
-    })
-
-    it('should not match an author page', () => {
-      expect(goodreadsHandler.match('https://www.goodreads.com/author/show/1.Example')).toBe(false)
-    })
-
-    it('should not match a user page with a non-numeric id', () => {
-      expect(goodreadsHandler.match('https://www.goodreads.com/user/show/example')).toBe(false)
-    })
-
-    it('should not match other hosts', () => {
-      expect(goodreadsHandler.match('https://example.com/user/show/1')).toBe(false)
-    })
-
-    it('should not match invalid URLs', () => {
-      expect(goodreadsHandler.match('not-a-url')).toBe(false)
     })
   })
 
@@ -88,6 +64,19 @@ describe('goodreadsHandler', () => {
         const expected: Array<DiscoverUriEntry> = [{ uri: avatarUrl }]
 
         expect(goodreadsHandler.resolve(value, userPage)).toEqual(expected)
+      })
+
+      it('should return the avatar from unquoted attributes', () => {
+        const value = 'https://www.goodreads.com/user/show/1-otis-chandler'
+        const content = `
+          <img
+            class=profilePictureIcon
+            src=https://images.gr-assets.com/users/1506617226p6/1.jpg
+          />
+        `
+        const expected: Array<DiscoverUriEntry> = [{ uri: avatarUrl }]
+
+        expect(goodreadsHandler.resolve(value, content)).toEqual(expected)
       })
 
       it('should return the largest variant of og:image when the page has no avatar image', () => {

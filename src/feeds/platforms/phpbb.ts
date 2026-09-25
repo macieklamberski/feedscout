@@ -1,6 +1,6 @@
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, getCookieNames } from '../../common/utils.js'
+import { composeHint, getCookieNames, hasElementWithId } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -9,7 +9,7 @@ const scriptSegmentRegex = /\/[^/]*\.php$/
 const trailingSlashRegex = /\/$/
 
 export const isPhpbbHtml = (content: string): boolean => {
-  return content.includes('id="phpbb"')
+  return hasElementWithId(content, 'phpbb')
 }
 
 // phpBB sets `{name}_u`, `{name}_k` and `{name}_sid`, where the board picks the name.

@@ -41,59 +41,18 @@ describe('mediumHandler', () => {
       expect(mediumHandler.match('https://medium.com/@alice')).toBe(true)
     })
 
-    it('should match profile article URLs', () => {
-      expect(mediumHandler.match('https://medium.com/@alice/hello-world-1a2b3c')).toBe(true)
-    })
-
-    it('should match publication URLs', () => {
-      expect(mediumHandler.match('https://medium.com/the-startup')).toBe(true)
-    })
-
-    it('should match www.medium.com URLs', () => {
-      expect(mediumHandler.match('https://www.medium.com/@alice')).toBe(true)
+    it('should match subdomains', () => {
+      expect(mediumHandler.match('https://alice.medium.com')).toBe(true)
     })
 
     it('should not match tag pages', () => {
       expect(mediumHandler.match('https://medium.com/tag/javascript')).toBe(false)
-    })
-
-    it('should not match excluded paths', () => {
-      expect(mediumHandler.match('https://medium.com/search')).toBe(false)
-      expect(mediumHandler.match('https://medium.com/me')).toBe(false)
-    })
-
-    it('should not match feed URLs', () => {
-      expect(mediumHandler.match('https://medium.com/feed/the-startup')).toBe(false)
-    })
-
-    it('should not match medium.com root URL', () => {
-      expect(mediumHandler.match('https://medium.com')).toBe(false)
-      expect(mediumHandler.match('https://medium.com/')).toBe(false)
-    })
-
-    it('should not match medium.com subdomains', () => {
-      expect(mediumHandler.match('https://alice.medium.com')).toBe(false)
-    })
-
-    it('should not match custom domains', () => {
-      expect(mediumHandler.match('https://example.com/@alice')).toBe(false)
-    })
-
-    it('should not match invalid URLs', () => {
-      expect(mediumHandler.match('not-a-url')).toBe(false)
     })
   })
 
   describe('resolve', () => {
     it('should return a ref for a profile', async () => {
       const url = 'https://medium.com/@alice'
-      const expected: Array<DiscoverRef> = [{ platform: 'medium', id: '@alice', url }]
-
-      expect(await mediumHandler.resolve(url)).toEqual(expected)
-    })
-
-    it('should return a profile ref for a profile article', async () => {
-      const url = 'https://medium.com/@alice/hello-world-1a2b3c'
       const expected: Array<DiscoverRef> = [{ platform: 'medium', id: '@alice', url }]
 
       expect(await mediumHandler.resolve(url)).toEqual(expected)
@@ -106,12 +65,15 @@ describe('mediumHandler', () => {
       expect(await mediumHandler.resolve(url)).toEqual(expected)
     })
 
-    it('should return empty array for tag pages', async () => {
-      expect(await mediumHandler.resolve('https://medium.com/tag/javascript')).toEqual([])
+    it('should return a ref for a subdomain', async () => {
+      const url = 'https://alice.medium.com/hello-world-1a2b3c'
+      const expected: Array<DiscoverRef> = [{ platform: 'medium', id: 'alice', url }]
+
+      expect(await mediumHandler.resolve(url)).toEqual(expected)
     })
 
-    it('should return empty array for custom domains', async () => {
-      expect(await mediumHandler.resolve('https://example.com/@alice')).toEqual([])
+    it('should return empty array for tag pages', async () => {
+      expect(await mediumHandler.resolve('https://medium.com/tag/javascript')).toEqual([])
     })
   })
 })
@@ -137,6 +99,18 @@ describe('mediumEnricher', () => {
     })
     const ref = createRef('https://medium.com/the-startup', 'the-startup')
     const expected = ['https://cdn-images-1.medium.com/fit/c/150/150/0*def456.jpeg']
+
+    expect(await mediumEnricher(ref, context)).toEqual(expected)
+  })
+
+  it('should return the avatar from the feed on a subdomain', async () => {
+    const context = createContext({
+      'https://alice.medium.com/feed': createFeed(
+        'https://cdn-images-1.medium.com/fit/c/150/150/0*ghi789.jpeg',
+      ),
+    })
+    const ref = createRef('https://alice.medium.com/', 'alice')
+    const expected = ['https://cdn-images-1.medium.com/fit/c/150/150/0*ghi789.jpeg']
 
     expect(await mediumEnricher(ref, context)).toEqual(expected)
   })

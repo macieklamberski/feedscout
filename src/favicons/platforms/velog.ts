@@ -1,6 +1,7 @@
-import { isHostOf, isNonEmptyString, parseUrl } from 'trousse'
+import { isAnyOf, isHostOf, isNonEmptyString, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { hosts, userRegex } from '../../feeds/platforms/velog.js'
+import { findElement } from '../../common/utils.js'
+import { parseVelogUrl } from '../../feeds/platforms/velog.js'
 import type { FaviconEnricher } from '../types.js'
 import { parseResponseJson } from '../utils.js'
 
@@ -8,28 +9,8 @@ const platform = 'velog'
 
 const imageHosts = ['images.velog.io', 'velog.velcdn.com']
 
-const profileImageRegex = /<img(?=[^>]*\balt=["']profile["'])[^>]*\bsrc=["']([^"']+)["']/i
-
 // Velog shows this image for every user who has not uploaded an avatar.
 const placeholderRegex = /\/images\/user-thumbnail\.png$/
-
-const getUsername = (url: string): string | undefined => {
-  const parsedUrl = parseUrl(url)
-
-  if (!parsedUrl || !isHostOf(url, hosts)) {
-    return
-  }
-
-  const match = parsedUrl.pathname.match(userRegex)
-
-  if (!match?.[1]) {
-    return
-  }
-
-  try {
-    return decodeURIComponent(match[1])
-  } catch {}
-}
 
 const getSquareAvatar = (value: unknown): string | undefined => {
   if (!isNonEmptyString(value) || placeholderRegex.test(value) || !isHostOf(value, imageHosts)) {
@@ -47,19 +28,31 @@ const getSquareAvatar = (value: unknown): string | undefined => {
   return `https://velog.velcdn.com/cdn-cgi/image/width=256,height=256,fit=cover${parsedUrl.pathname}`
 }
 
+const findProfileImageSrc = (content: string | undefined): string | undefined => {
+  const image = findElement(content, (element) => {
+    return (
+      element.name === 'img' &&
+      isAnyOf(element.attribs.alt ?? '', ['profile']) &&
+      Boolean(element.attribs.src)
+    )
+  })
+
+  return image?.attribs.src
+}
+
 export const velogHandler: PlatformHandler = {
   match: (url) => {
-    return getUsername(url) !== undefined
+    return parseVelogUrl(url) !== undefined
   },
 
   resolve: (url, content) => {
-    const username = getUsername(url)
+    const username = parseVelogUrl(url)?.username
 
     if (!username) {
       return []
     }
 
-    const avatar = getSquareAvatar(content?.match(profileImageRegex)?.[1])
+    const avatar = getSquareAvatar(findProfileImageSrc(content))
 
     if (!avatar) {
       return [{ platform, id: username, url }]

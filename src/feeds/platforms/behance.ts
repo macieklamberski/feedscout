@@ -1,12 +1,15 @@
-import { isAnyOf, isHostOf } from 'trousse'
+import { isAnyOf, isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Unmeasured, bot wall.
 
-export const hosts = ['behance.net', 'www.behance.net']
-export const userRegex = /^\/([a-zA-Z0-9_-]+)(?:\/(appreciated))?\/?$/
-export const excludedPaths = [
+export type BehanceUrl = { kind: 'profile'; username: string }
+
+const hosts = ['behance.net', 'www.behance.net']
+// User profile: /{username} or /{username}/appreciated.
+const userRegex = /^\/([a-zA-Z0-9_-]+)(?:\/(appreciated))?\/?$/
+const excludedPaths = [
   'search',
   'galleries',
   'curated',
@@ -26,6 +29,22 @@ export const excludedPaths = [
   'adobe',
 ]
 
+export const parseBehanceUrl = (url: string): BehanceUrl | undefined => {
+  const parsedUrl = parseUrl(url)
+
+  if (!parsedUrl || !isHostOf(parsedUrl, hosts)) {
+    return
+  }
+
+  const username = parsedUrl.pathname.match(userRegex)?.[1]
+
+  if (!username || isAnyOf(username, excludedPaths)) {
+    return
+  }
+
+  return { kind: 'profile', username }
+}
+
 export const behanceHandler: PlatformHandler = {
   match: (url) => {
     return isHostOf(url, hosts)
@@ -44,22 +63,17 @@ export const behanceHandler: PlatformHandler = {
       ]
     }
 
-    // User profile: /{username} or /{username}/appreciated
-    const userMatch = pathname.match(userRegex)
+    const username = parseBehanceUrl(url)?.username
 
     // The appreciated page gets the portfolio feed: Behance ignores
     // `content=appreciated` and serves the user's own projects for it.
-    if (userMatch?.[1]) {
-      const username = userMatch[1]
-
-      if (!isAnyOf(username, excludedPaths)) {
-        return [
-          {
-            uri: `https://www.behance.net/feeds/user?username=${username}`,
-            hint: composeHint('behance:portfolio'),
-          },
-        ]
-      }
+    if (username) {
+      return [
+        {
+          uri: `https://www.behance.net/feeds/user?username=${username}`,
+          hint: composeHint('behance:portfolio'),
+        },
+      ]
     }
 
     return []

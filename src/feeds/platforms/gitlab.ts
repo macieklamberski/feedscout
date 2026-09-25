@@ -1,12 +1,18 @@
-import { isAnyOf, isHostOf, parseUrl } from 'trousse'
+import { getPathSegments, isAnyOf, isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, hasMetaContent } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers group (guess, html), partly covers commits, project, tree.
 
+export type GitlabUrl =
+  | { kind: 'namespace'; namespace: string }
+  | { kind: 'project'; namespace: string; projectPath: string; branch?: string }
+
 export const hosts = ['gitlab.com', 'www.gitlab.com']
-export const excludedPaths = [
+// GitLab names may contain dots, so only the feed suffix is cut off.
+const feedSuffixRegex = /\.atom$/
+const excludedPaths = [
   'explore',
   'dashboard',
   'projects',
@@ -61,18 +67,34 @@ const splitProjectPath = (pathSegments: Array<string>): [Array<string>, Array<st
   return [pathSegments.slice(0, featureIndex), pathSegments.slice(featureIndex)]
 }
 
+export const parseGitlabUrl = (url: string): GitlabUrl | undefined => {
+  const [projectSegments, featureSegments] = splitProjectPath(getPathSegments(url))
+  const [first, ...rest] = projectSegments
+  const namespace = first?.replace(feedSuffixRegex, '')
+
+  if (!namespace || isAnyOf(namespace, excludedPaths)) {
+    return
+  }
+
+  if (rest.length === 0) {
+    return { kind: 'namespace', namespace }
+  }
+
+  const projectPath = [namespace, ...rest].join('/')
+
+  // Branch commits or tree page: .../-/(commits|tree)/{branch}.
+  if (isAnyOf(featureSegments[0], legacyFeaturePaths) && featureSegments[1]) {
+    return { kind: 'project', namespace, projectPath, branch: featureSegments[1] }
+  }
+
+  return { kind: 'project', namespace, projectPath }
+}
+
 export const gitlabHandler: PlatformHandler = {
   match: (url, content, headers) => {
-    const parsedUrl = parseUrl(url)
+    const parsed = parseGitlabUrl(url)
 
-    if (!parsedUrl) {
-      return false
-    }
-
-    const { pathname } = parsedUrl
-    const [projectSegments] = splitProjectPath(pathname.split('/').filter(Boolean))
-
-    if (projectSegments.length === 0 || isAnyOf(projectSegments[0], excludedPaths)) {
+    if (!parsed) {
       return false
     }
 
@@ -82,7 +104,7 @@ export const gitlabHandler: PlatformHandler = {
 
     // `og:site_name` is operator-set text, so a self-hosted match also needs a
     // project path or the `/-/` separator.
-    if (projectSegments.length < 2 && !pathname.includes('/-/')) {
+    if (parsed.kind === 'namespace' && !parseUrl(url)?.pathname.includes('/-/')) {
       return false
     }
 
@@ -98,20 +120,20 @@ export const gitlabHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    const { origin, pathname } = new URL(url)
-    const [projectSegments, featureSegments] = splitProjectPath(pathname.split('/').filter(Boolean))
+    const { origin } = new URL(url)
+    const parsed = parseGitlabUrl(url)
 
-    if (projectSegments.length === 0 || isAnyOf(projectSegments[0], excludedPaths)) {
+    // User or group page: gitlab.com/{namespace}.
+    if (parsed?.kind === 'namespace') {
+      return [{ uri: `${origin}/${parsed.namespace}.atom`, hint: composeHint('gitlab:activity') }]
+    }
+
+    if (parsed?.kind !== 'project') {
       return []
     }
 
-    // User, org or group page: gitlab.com/{user}
-    if (projectSegments.length === 1) {
-      return [{ uri: `${origin}/${projectSegments[0]}.atom`, hint: composeHint('gitlab:activity') }]
-    }
-
-    // Project page: gitlab.com/{group}/{subgroup...}/{project}
-    const projectPath = projectSegments.join('/')
+    // Project page: gitlab.com/{group}/{subgroup...}/{project}.
+    const { projectPath, branch } = parsed
     const repoFeeds = [
       {
         uri: `${origin}/${projectPath}/-/releases.atom`,
@@ -135,10 +157,9 @@ export const gitlabHandler: PlatformHandler = {
       },
     ]
 
-    // Branch commits or tree page: .../-/(commits|tree)/{branch}
-    if (isAnyOf(featureSegments[0], legacyFeaturePaths) && featureSegments[1]) {
+    if (branch) {
       repoFeeds.unshift({
-        uri: `${origin}/${projectPath}/-/commits/${featureSegments[1]}?format=atom`,
+        uri: `${origin}/${projectPath}/-/commits/${branch}?format=atom`,
         hint: composeHint('gitlab:branch-commits'),
       })
     }

@@ -1,42 +1,20 @@
-import { isNonEmptyString, parseUrl } from 'trousse'
+import { isNonEmptyString } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { hasMetaContent } from '../../common/utils.js'
+import {
+  isMastodonHeaders,
+  isMastodonHtml,
+  parseMastodonUrl,
+} from '../../feeds/platforms/mastodon.js'
 import type { FaviconEnricher } from '../types.js'
 import { parseResponseJson } from '../utils.js'
 
 const platform = 'mastodon'
 
-const mastodonRegex = /mastodon/i
-
-// Extracts the username from the path, stripping the .rss feed extension
-// that Mastodon appends to profile URLs (e.g., /@user.rss).
-const profileRegex = /^\/@([^/.]+(?:@[^/.]+\.[^/.]+)?)(?:\.rss)?\/?$/
-
-export const isProfilePath = (pathname: string): boolean => {
-  return profileRegex.test(pathname)
-}
-
-// Current Mastodon serves no generator meta, so the `<div id="mastodon">` app
-// root is matched too.
-export const isMastodonHtml = (content: string): boolean => {
-  return hasMetaContent(content, 'generator', 'Mastodon') || content.includes('id="mastodon"')
-}
-
-export const isMastodonHeaders = (headers: Headers): boolean => {
-  return mastodonRegex.test(headers.get('server') ?? '')
-}
-
 export const mastodonHandler: PlatformHandler = {
   match: (url, content, headers) => {
-    const parsedUrl = parseUrl(url)
+    const parsed = parseMastodonUrl(url)
 
-    if (!parsedUrl) {
-      return false
-    }
-
-    const { pathname } = parsedUrl
-
-    if (!isProfilePath(pathname)) {
+    if (!parsed || parsed.kind === 'tag') {
       return false
     }
 
@@ -52,13 +30,13 @@ export const mastodonHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    const username = new URL(url).pathname.match(profileRegex)?.[1]
+    const parsed = parseMastodonUrl(url)
 
-    if (!username) {
+    if (!parsed || parsed.kind === 'tag') {
       return []
     }
 
-    return [{ platform, id: username, url }]
+    return [{ platform, id: parsed.username, url }]
   },
 }
 

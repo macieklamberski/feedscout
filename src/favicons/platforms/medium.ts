@@ -1,13 +1,7 @@
 import { parseFeed } from 'feedsmith'
-import { isAnyOf, isHostOf, isNonEmptyString, parseUrl } from 'trousse'
+import { isHostOf, isNonEmptyString } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import {
-  excludedPaths,
-  hosts,
-  publicationRegex,
-  tagRegex,
-  userRegex,
-} from '../../feeds/platforms/medium.js'
+import { hosts, parseMediumUrl } from '../../feeds/platforms/medium.js'
 import type { FaviconEnricher } from '../types.js'
 import { getResponseText } from '../utils.js'
 
@@ -19,32 +13,20 @@ const squareImageRegex = /\/fit\/c\/(\d+)\/\1\//
 // Publications without a logo carry Medium's 545x106 wordmark.
 const wordmarkImageId = '1*TGH72Nnw24QL3iV9IOm4VA'
 
-// Returns the feed path segment: `@{username}` for a profile, the slug for a publication.
 const getFeedId = (url: string): string | undefined => {
-  const parsedUrl = parseUrl(url)
+  const parsed = parseMediumUrl(url)
 
-  if (!parsedUrl || !isHostOf(url, hosts)) {
-    return
+  if (parsed?.kind === 'user') {
+    return `@${parsed.username}`
   }
 
-  const { pathname } = parsedUrl
-  const userMatch = pathname.match(userRegex)
-
-  if (userMatch?.[1]) {
-    return `@${userMatch[1]}`
+  if (parsed?.kind === 'publication') {
+    return parsed.publication
   }
 
-  if (tagRegex.test(pathname)) {
-    return
+  if (parsed?.kind === 'subdomain') {
+    return parsed.subdomain
   }
-
-  const publicationMatch = pathname.match(publicationRegex)
-
-  if (!publicationMatch?.[1] || isAnyOf(publicationMatch[1], [...excludedPaths, 'feed'])) {
-    return
-  }
-
-  return publicationMatch[1]
 }
 
 export const mediumHandler: PlatformHandler = {
@@ -68,7 +50,11 @@ export const mediumEnricher: FaviconEnricher = async (ref, context) => {
     return
   }
 
-  const response = await context.fetchFn(`https://medium.com/feed/${ref.id}`)
+  // A user subdomain answers 404 at medium.com/feed/{subdomain}, and its own host serves the feed.
+  const feedUrl = isHostOf(ref.url, hosts)
+    ? `https://medium.com/feed/${ref.id}`
+    : `https://${ref.id}.medium.com/feed`
+  const response = await context.fetchFn(feedUrl)
   const result = parseFeed(getResponseText(response))
   const imageUrl = result.format === 'rss' ? result.feed.image?.url : undefined
 

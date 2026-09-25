@@ -1,20 +1,126 @@
 import { describe, expect, it } from 'bun:test'
-import { giteaHandler } from './gitea.js'
+import type { GiteaUrl } from './gitea.js'
+import { giteaHandler, parseGiteaUrl } from './gitea.js'
+
+describe('parseGiteaUrl', () => {
+  it('should return the user for a user page', () => {
+    const expected: GiteaUrl = { kind: 'user', owner: 'forgejo' }
+
+    expect(parseGiteaUrl('https://codeberg.org/forgejo')).toEqual(expected)
+  })
+
+  it('should return the repo for a repo page', () => {
+    const expected: GiteaUrl = { kind: 'repo', owner: 'forgejo', repo: 'forgejo' }
+
+    expect(parseGiteaUrl('https://codeberg.org/forgejo/forgejo')).toEqual(expected)
+  })
+
+  it('should return the repo for a repo subpage', () => {
+    const expected: GiteaUrl = { kind: 'repo', owner: 'forgejo', repo: 'forgejo' }
+
+    expect(parseGiteaUrl('https://codeberg.org/forgejo/forgejo/issues')).toEqual(expected)
+  })
+
+  it('should return the repo for a branch page', () => {
+    const value = 'https://codeberg.org/forgejo/forgejo/src/branch/main'
+    const expected: GiteaUrl = { kind: 'repo', owner: 'forgejo', repo: 'forgejo' }
+
+    expect(parseGiteaUrl(value)).toEqual(expected)
+  })
+
+  it('should return the repo on any host', () => {
+    const expected: GiteaUrl = { kind: 'repo', owner: 'owner', repo: 'project' }
+
+    expect(parseGiteaUrl('https://git.example.org/owner/project')).toEqual(expected)
+  })
+
+  const userRouteValues: Array<string> = [
+    'https://codeberg.org/forgejo.rss',
+    'https://codeberg.org/forgejo.atom',
+    'https://codeberg.org/forgejo.keys',
+    'https://codeberg.org/forgejo.gpg',
+    'https://codeberg.org/forgejo.png',
+  ]
+
+  it.each(userRouteValues)('should strip the user route suffix from %s', (value) => {
+    const expected: GiteaUrl = { kind: 'user', owner: 'forgejo' }
+
+    expect(parseGiteaUrl(value)).toEqual(expected)
+  })
+
+  it('should strip the user route suffix in another case', () => {
+    const expected: GiteaUrl = { kind: 'user', owner: 'forgejo' }
+
+    expect(parseGiteaUrl('https://codeberg.org/forgejo.RSS')).toEqual(expected)
+  })
+
+  it('should keep dots in a username', () => {
+    const expected: GiteaUrl = { kind: 'user', owner: 'a.bianco' }
+
+    expect(parseGiteaUrl('https://codeberg.org/a.bianco')).toEqual(expected)
+  })
+
+  it('should keep dots in the username of a repo page', () => {
+    const expected: GiteaUrl = { kind: 'repo', owner: 'a.bianco', repo: 'notes' }
+
+    expect(parseGiteaUrl('https://codeberg.org/a.bianco/notes')).toEqual(expected)
+  })
+
+  const excludedValues: Array<string> = [
+    'https://codeberg.org/explore',
+    'https://codeberg.org/admin',
+    'https://codeberg.org/user',
+    'https://codeberg.org/assets',
+    'https://codeberg.org/api',
+    'https://codeberg.org/-',
+  ]
+
+  it.each(excludedValues)('should return undefined for %s', (value) => {
+    expect(parseGiteaUrl(value)).toBeUndefined()
+  })
+
+  it('should return undefined for an excluded path in another case', () => {
+    expect(parseGiteaUrl('https://codeberg.org/Explore')).toBeUndefined()
+    expect(parseGiteaUrl('https://codeberg.org/ADMIN')).toBeUndefined()
+  })
+
+  const excludedRepoValues: Array<string> = [
+    'https://codeberg.org/explore/repos',
+    'https://codeberg.org/admin/users',
+    'https://codeberg.org/user/login',
+  ]
+
+  it.each(excludedRepoValues)('should return undefined for %s', (value) => {
+    expect(parseGiteaUrl(value)).toBeUndefined()
+  })
+
+  it('should return undefined for an excluded path with a route suffix', () => {
+    expect(parseGiteaUrl('https://codeberg.org/explore.rss')).toBeUndefined()
+  })
+
+  it('should return undefined for a route suffix without a user', () => {
+    expect(parseGiteaUrl('https://codeberg.org/.rss')).toBeUndefined()
+  })
+
+  it('should return undefined for the instance root', () => {
+    expect(parseGiteaUrl('https://codeberg.org/')).toBeUndefined()
+  })
+
+  it('should return undefined for an invalid URL', () => {
+    expect(parseGiteaUrl('not-a-url')).toBeUndefined()
+  })
+})
 
 describe('giteaHandler', () => {
   describe('match', () => {
     const values: Array<[boolean, string]> = [
       [true, 'https://codeberg.org/forgejo'],
-      [true, 'https://codeberg.org/forgejo/forgejo'],
       [true, 'https://www.codeberg.org/forgejo'],
       [true, 'https://gitea.com/gitea'],
-      [true, 'https://gitea.com/gitea/go-sdk'],
       [true, 'https://www.gitea.com/gitea'],
       [false, 'https://codeberg.org/user'],
-      [false, 'https://gitea.com/explore'],
-      [false, 'https://codeberg.org/'],
       [false, 'https://github.com/user/repo'],
-      [false, 'https://example.com'],
+      [false, 'https://example.com/owner'],
     ]
 
     it.each(values)('should return %s for %s', (expected, url) => {
@@ -56,10 +162,6 @@ describe('giteaHandler', () => {
 
       expect(giteaHandler.match(value, '', headers)).toBe(false)
     })
-
-    it('should return false for invalid URL', () => {
-      expect(giteaHandler.match('not-a-url')).toBe(false)
-    })
   })
 
   describe('resolve', () => {
@@ -77,64 +179,6 @@ describe('giteaHandler', () => {
 
     it('should return releases, tags, and activity feeds for repo page', () => {
       const value = 'https://codeberg.org/forgejo/forgejo'
-      const expected = [
-        {
-          uri: [
-            'https://codeberg.org/forgejo/forgejo/releases.atom',
-            'https://codeberg.org/forgejo/forgejo/releases.rss',
-          ],
-          hint: { key: 'gitea:releases', label: 'Releases' },
-        },
-        {
-          uri: [
-            'https://codeberg.org/forgejo/forgejo/tags.atom',
-            'https://codeberg.org/forgejo/forgejo/tags.rss',
-          ],
-          hint: { key: 'gitea:tags', label: 'Tags' },
-        },
-        {
-          uri: [
-            'https://codeberg.org/forgejo/forgejo.atom',
-            'https://codeberg.org/forgejo/forgejo.rss',
-          ],
-          hint: { key: 'gitea:activity', label: 'Activity' },
-        },
-      ]
-
-      expect(giteaHandler.resolve(value)).toEqual(expected)
-    })
-
-    it('should return feeds for repo subpage', () => {
-      const value = 'https://codeberg.org/forgejo/forgejo/issues'
-      const expected = [
-        {
-          uri: [
-            'https://codeberg.org/forgejo/forgejo/releases.atom',
-            'https://codeberg.org/forgejo/forgejo/releases.rss',
-          ],
-          hint: { key: 'gitea:releases', label: 'Releases' },
-        },
-        {
-          uri: [
-            'https://codeberg.org/forgejo/forgejo/tags.atom',
-            'https://codeberg.org/forgejo/forgejo/tags.rss',
-          ],
-          hint: { key: 'gitea:tags', label: 'Tags' },
-        },
-        {
-          uri: [
-            'https://codeberg.org/forgejo/forgejo.atom',
-            'https://codeberg.org/forgejo/forgejo.rss',
-          ],
-          hint: { key: 'gitea:activity', label: 'Activity' },
-        },
-      ]
-
-      expect(giteaHandler.resolve(value)).toEqual(expected)
-    })
-
-    it('should return the repo feeds for a branch page', () => {
-      const value = 'https://codeberg.org/forgejo/forgejo/src/branch/main'
       const expected = [
         {
           uri: [
@@ -188,32 +232,8 @@ describe('giteaHandler', () => {
       expect(giteaHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return empty array for root page', () => {
-      const value = 'https://codeberg.org'
-
-      expect(giteaHandler.resolve(value)).toEqual([])
-    })
-
-    const excludedValues: Array<string> = [
-      'https://codeberg.org/explore',
-      'https://codeberg.org/admin',
-      'https://codeberg.org/user',
-      'https://codeberg.org/assets',
-      'https://codeberg.org/-',
-    ]
-
-    it.each(excludedValues)('should return empty array for %s', (value) => {
-      expect(giteaHandler.resolve(value)).toEqual([])
-    })
-
-    const excludedRepoValues: Array<string> = [
-      'https://codeberg.org/explore/repos',
-      'https://codeberg.org/admin/users',
-      'https://codeberg.org/user/login',
-    ]
-
-    it.each(excludedRepoValues)('should return empty array for %s', (value) => {
-      expect(giteaHandler.resolve(value)).toEqual([])
+    it('should return empty array for an excluded path', () => {
+      expect(giteaHandler.resolve('https://codeberg.org/explore')).toEqual([])
     })
   })
 })

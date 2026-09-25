@@ -27,35 +27,8 @@ describe('behanceHandler', () => {
       expect(behanceHandler.match('https://www.behance.net/alice')).toBe(true)
     })
 
-    it('should match profile URLs without www', () => {
-      expect(behanceHandler.match('https://behance.net/alice')).toBe(true)
-    })
-
-    it('should match profile appreciated pages', () => {
-      expect(behanceHandler.match('https://www.behance.net/alice/appreciated')).toBe(true)
-    })
-
-    it('should not match gallery pages', () => {
-      expect(behanceHandler.match('https://www.behance.net/gallery/123456/Brand-Identity')).toBe(
-        false,
-      )
-    })
-
-    it('should not match excluded paths', () => {
+    it('should not match URLs that name no profile', () => {
       expect(behanceHandler.match('https://www.behance.net/search')).toBe(false)
-      expect(behanceHandler.match('https://www.behance.net/galleries')).toBe(false)
-    })
-
-    it('should not match the homepage', () => {
-      expect(behanceHandler.match('https://www.behance.net/')).toBe(false)
-    })
-
-    it('should not match other hosts', () => {
-      expect(behanceHandler.match('https://example.com/alice')).toBe(false)
-    })
-
-    it('should not match invalid URLs', () => {
-      expect(behanceHandler.match('not-a-url')).toBe(false)
     })
   })
 
@@ -63,6 +36,19 @@ describe('behanceHandler', () => {
     describe('happy paths', () => {
       it('should return the largest JSON-LD Person image', async () => {
         const content = createPage(personJsonLd)
+        const result = await behanceHandler.resolve('https://www.behance.net/alice', content)
+        const expected: Array<DiscoverUriEntry> = [{ uri: `${avatarBase}/276` }]
+
+        expect(result).toEqual(expected)
+      })
+
+      it('should return the image from a JSON-LD script with another attribute', async () => {
+        const content = `
+          <script
+            data-rh="true"
+            type="application/ld+json"
+          >${personJsonLd}</script>
+        `
         const result = await behanceHandler.resolve('https://www.behance.net/alice', content)
         const expected: Array<DiscoverUriEntry> = [{ uri: `${avatarBase}/276` }]
 

@@ -29,36 +29,12 @@ const appPageHtml = `
 
 describe('steamHandler', () => {
   describe('match', () => {
-    it('should match store app pages', () => {
+    it('should return true for a store app page', () => {
       expect(steamHandler.match('https://store.steampowered.com/app/620/Portal_2/')).toBe(true)
     })
 
-    it('should match community app pages', () => {
-      expect(steamHandler.match('https://steamcommunity.com/app/620')).toBe(true)
-    })
-
-    it('should match age-gated store app pages', () => {
-      expect(steamHandler.match('https://store.steampowered.com/agecheck/app/620/')).toBe(true)
-    })
-
-    it('should match store app news pages', () => {
-      expect(steamHandler.match('https://store.steampowered.com/news/app/620')).toBe(true)
-    })
-
-    it('should not match community group pages', () => {
-      expect(steamHandler.match('https://steamcommunity.com/groups/Valve')).toBe(false)
-    })
-
-    it('should not match the store homepage', () => {
+    it('should return false for the store homepage', () => {
       expect(steamHandler.match('https://store.steampowered.com/')).toBe(false)
-    })
-
-    it('should not match app paths on other hosts', () => {
-      expect(steamHandler.match('https://example.com/app/620')).toBe(false)
-    })
-
-    it('should not match invalid URLs', () => {
-      expect(steamHandler.match('not-a-url')).toBe(false)
     })
   })
 
@@ -67,6 +43,21 @@ describe('steamHandler', () => {
       const result = steamHandler.resolve(
         'https://store.steampowered.com/app/620/Portal_2/',
         appPageHtml,
+      )
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://shared.fastly.steamstatic.com/community_assets/images/apps/620/25a5a16b2423bf7487ac5340b5b0948cef48c5f8.jpg',
+        },
+      ]
+
+      expect(result).toEqual(expected)
+    })
+
+    it('should return the app icon when the icon wrapper carries another class', () => {
+      const content = appPageHtml.replace('class="apphub_AppIcon"', 'class="apphub_AppIcon large"')
+      const result = steamHandler.resolve(
+        'https://store.steampowered.com/app/620/Portal_2/',
+        content,
       )
       const expected: Array<DiscoverUriEntry> = [
         {
@@ -111,13 +102,6 @@ describe('steamHandler', () => {
       expect(result).toEqual(expected)
     })
 
-    it('should return a ref for a community app page without the icon', () => {
-      const url = 'https://steamcommunity.com/app/620'
-      const expected: Array<DiscoverRef> = [{ platform: 'steam', id: '620', url }]
-
-      expect(steamHandler.resolve(url, '<html></html>')).toEqual(expected)
-    })
-
     it('should return a ref when the icon has no src', () => {
       const url = 'https://store.steampowered.com/app/620/Portal_2/'
       const result = steamHandler.resolve(url, '<div class="apphub_AppIcon"><img src=""></div>')
@@ -126,8 +110,32 @@ describe('steamHandler', () => {
       expect(result).toEqual(expected)
     })
 
-    it('should return empty array for a URL without an app id', () => {
-      expect(steamHandler.resolve('https://steamcommunity.com/groups/Valve')).toEqual([])
+    it('should return the group avatar from a community group page', () => {
+      const value = `
+        <meta
+          content="https://avatars.fastly.steamstatic.com/7ba781b5f0b8a99d4cc0b0b0dcaa22df73db7db2_full.jpg"
+          property="og:image"
+        >
+      `
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://avatars.fastly.steamstatic.com/7ba781b5f0b8a99d4cc0b0b0dcaa22df73db7db2_full.jpg',
+        },
+      ]
+
+      expect(steamHandler.resolve('https://steamcommunity.com/groups/Valve', value)).toEqual(
+        expected,
+      )
+    })
+
+    it('should return empty array for a community group page without a preview image', () => {
+      expect(
+        steamHandler.resolve('https://steamcommunity.com/groups/Valve', '<html></html>'),
+      ).toEqual([])
+    })
+
+    it('should return empty array for a URL the parser rejects', () => {
+      expect(steamHandler.resolve('https://store.steampowered.com/')).toEqual([])
     })
   })
 })

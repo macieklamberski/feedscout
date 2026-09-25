@@ -1,4 +1,4 @@
-import { isAnyOf, isHostOf } from 'trousse'
+import { getPathSegments, isAnyOf, isHostOf } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
@@ -6,8 +6,24 @@ import { composeHint } from '../../common/utils.js'
 // Discoverability: Partially discoverable without handler.
 // Generic partly covers blog.
 
-export const hosts = ['ameblo.jp', 'www.ameblo.jp']
-export const excludedPaths = ['genre', 'hashtag', 'search']
+export type AmebloUrl = { kind: 'blog'; username: string }
+
+const hosts = ['ameblo.jp', 'www.ameblo.jp']
+const excludedPaths = ['genre', 'hashtag', 'search']
+
+export const parseAmebloUrl = (url: string): AmebloUrl | undefined => {
+  if (!isHostOf(url, hosts)) {
+    return
+  }
+
+  const [username] = getPathSegments(url)
+
+  if (!username || isAnyOf(username, excludedPaths)) {
+    return
+  }
+
+  return { kind: 'blog', username }
+}
 
 export const amebloHandler: PlatformHandler = {
   match: (url) => {
@@ -15,16 +31,9 @@ export const amebloHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    const { pathname } = new URL(url)
-    const pathSegments = pathname.split('/').filter(Boolean)
+    const username = parseAmebloUrl(url)?.username
 
-    if (pathSegments.length === 0) {
-      return []
-    }
-
-    const username = pathSegments[0]
-
-    if (isAnyOf(username, excludedPaths)) {
+    if (!username) {
       return []
     }
 

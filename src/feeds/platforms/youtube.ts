@@ -1,4 +1,4 @@
-import { isHostOf } from 'trousse'
+import { isHostOf, parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
@@ -6,6 +6,13 @@ import { composeHint } from '../../common/utils.js'
 // Discoverability: Partially discoverable without handler.
 // Generic partly covers channelById, custom, handle.
 // Handler needed for: music, shortLink, user, watch.
+
+export type YoutubeUrl =
+  | { kind: 'channel'; channelId?: string; playlistId?: string }
+  | { kind: 'watch'; playlistId?: string }
+  | { kind: 'short'; playlistId?: string }
+  | { kind: 'player'; playlistId?: string }
+  | { kind: 'playlist'; playlistId: string }
 
 // A channel page also embeds the IDs of the channels it features, and a bare "channelId" matches
 // one of those before the page's own, which sits under "externalId". A video page has no
@@ -15,10 +22,8 @@ const channelIdRegexes = [
   /"externalChannelId":"(UC[a-zA-Z0-9_-]+)"/,
   /"channelId":"(UC[a-zA-Z0-9_-]+)"/,
 ]
-export const channelRegex = /^\/channel\/(UC[a-zA-Z0-9_-]+)/
-export const handleRegex = /^\/@([^/]+)/
-export const userRegex = /^\/user\/([^/]+)/
-export const customRegex = /^\/c\/([^/]+)/
+const channelRegex = /^\/channel\/(UC[a-zA-Z0-9_-]+)/
+const channelPathRegexes = [/^\/@[^/]+/, /^\/user\/[^/]+/, /^\/c\/[^/]+/]
 const shortsRegex = /^\/shorts\/[\w-]+/
 const liveRegex = /^\/live\/[\w-]+/
 const channelPrefixRegex = /^UC/
@@ -31,6 +36,7 @@ export const hosts = [
   'youtu.be',
   'www.youtu.be',
 ]
+const shortLinkHosts = ['youtu.be', 'www.youtu.be']
 
 const extractChannelIdFromContent = (content: string): string | undefined => {
   for (const regex of channelIdRegexes) {
@@ -102,59 +108,72 @@ const pushChannelUris = (uris: Array<DiscoverUriEntry>, channelId: string): void
   })
 }
 
+export const parseYoutubeUrl = (url: string): YoutubeUrl | undefined => {
+  const parsedUrl = parseUrl(url)
+
+  if (!parsedUrl || !isHostOf(parsedUrl, hosts)) {
+    return
+  }
+
+  const { pathname, searchParams } = parsedUrl
+  const playlistId = searchParams.get('list') ?? undefined
+  const channelId = pathname.match(channelRegex)?.[1]
+
+  if (channelId) {
+    return { kind: 'channel', channelId, playlistId }
+  }
+
+  if (channelPathRegexes.some((regex) => regex.test(pathname))) {
+    return { kind: 'channel', playlistId }
+  }
+
+  if (
+    (pathname === '/watch' && searchParams.has('v')) ||
+    (isHostOf(parsedUrl, shortLinkHosts) && pathname.length > 1) ||
+    liveRegex.test(pathname)
+  ) {
+    return { kind: 'watch', playlistId }
+  }
+
+  if (shortsRegex.test(pathname)) {
+    return { kind: 'short', playlistId }
+  }
+
+  if (searchParams.has('v')) {
+    return { kind: 'player', playlistId }
+  }
+
+  if (playlistId) {
+    return { kind: 'playlist', playlistId }
+  }
+}
+
 export const youtubeHandler: PlatformHandler = {
   match: (url) => {
     return isHostOf(url, hosts)
   },
 
   resolve: (url, content) => {
-    const parsedUrl = new URL(url)
+    const parsed = parseYoutubeUrl(url)
     const uris: Array<DiscoverUriEntry> = []
 
-    // Direct channel ID: /channel/UC...
-    const channelMatch = parsedUrl.pathname.match(channelRegex)
-
-    if (channelMatch?.[1]) {
-      const channelId = channelMatch[1]
-
-      pushChannelUris(uris, channelId)
+    if (parsed?.kind === 'channel' && parsed.channelId) {
+      pushChannelUris(uris, parsed.channelId)
     }
 
-    // Playlist: /playlist?list=PL...
-    const playlistId = parsedUrl.searchParams.get('list')
-
-    if (playlistId) {
+    if (parsed?.playlistId) {
       uris.push({
-        uri: feedUrl('playlist_id', playlistId),
+        uri: feedUrl('playlist_id', parsed.playlistId),
         hint: composeHint('youtube:playlist'),
       })
     }
 
-    // For URL formats that require content parsing to get channel ID:
-    // - Handle: /@username
-    // - Legacy user: /user/username
-    // - Custom URL: /c/customname
-    // - Video pages: /watch?v= or youtu.be/videoId
-    // - Shorts: /shorts/videoId
-    // - Live stream: /live/videoId
-    if (uris.length === 0 && content) {
-      const isVideoPage =
-        parsedUrl.searchParams.has('v') ||
-        (parsedUrl.hostname.includes('youtu.be') && parsedUrl.pathname.length > 1) ||
-        shortsRegex.test(parsedUrl.pathname) ||
-        liveRegex.test(parsedUrl.pathname)
-      const needsContentParsing =
-        isVideoPage ||
-        parsedUrl.pathname.match(handleRegex) ||
-        parsedUrl.pathname.match(userRegex) ||
-        parsedUrl.pathname.match(customRegex)
+    // Handle, legacy user, custom URL and video pages carry the channel ID only in their content.
+    if (uris.length === 0 && content && parsed && parsed.kind !== 'playlist') {
+      const channelId = extractChannelIdFromContent(content)
 
-      if (needsContentParsing) {
-        const channelId = extractChannelIdFromContent(content)
-
-        if (channelId) {
-          pushChannelUris(uris, channelId)
-        }
+      if (channelId) {
+        pushChannelUris(uris, channelId)
       }
     }
 

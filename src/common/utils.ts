@@ -1,4 +1,4 @@
-import { Parser } from 'htmlparser2'
+import { DomUtils, parseDocument } from 'htmlparser2'
 import { anyWordMatchesAnyOf, isAnyOf } from 'trousse'
 import locales from './locales.json' with { type: 'json' }
 import type { DiscoverUriHint } from './types.js'
@@ -43,54 +43,116 @@ export const isOfAllowedMimeType = (
   return isAnyOf(type, allowedTypes, normalizeMimeType)
 }
 
-// Contents of every meta tag in the page, keyed by its lowercased name or property attribute.
-type MetaContents = Record<string, Array<string>>
+export type Element = NonNullable<ReturnType<typeof DomUtils.findOne>>
+
+type ParsedPage = {
+  document: ReturnType<typeof parseDocument>
+  metas: Array<Element>
+}
 
 let lastParsedContent: string | undefined
-let lastMetaContents: MetaContents = {}
+let lastParsedPage: ParsedPage | undefined
 
-// Every platform handler reads meta tags from the same page, so the last page is parsed once.
-const getMetaContents = (content: string): MetaContents => {
-  if (content === lastParsedContent) {
-    return lastMetaContents
+// Every platform handler reads the same page, so the last page is parsed once. Meta tags are
+// collected up front because the content-matched handlers each look one up on every page.
+const getParsedPage = (content: string): ParsedPage => {
+  if (content === lastParsedContent && lastParsedPage) {
+    return lastParsedPage
   }
 
-  const metaContents: MetaContents = {}
-  const parser = new Parser({
-    onopentag: (tag, attributes) => {
-      if (tag !== 'meta' || attributes.content === undefined) {
-        return
-      }
-
-      for (const key of [attributes.name, attributes.property]) {
-        if (!key) {
-          continue
-        }
-
-        const normalizedKey = key.toLowerCase()
-
-        metaContents[normalizedKey] ??= []
-        metaContents[normalizedKey].push(attributes.content)
-      }
-    },
-  })
-
-  parser.write(content)
-  parser.end()
+  const document = parseDocument(content)
 
   lastParsedContent = content
-  lastMetaContents = metaContents
+  lastParsedPage = {
+    document,
+    metas: DomUtils.getElementsByTagName('meta', document),
+  }
 
-  return metaContents
+  return lastParsedPage
+}
+
+export const findElement = (
+  content: string | undefined,
+  test: (element: Element) => boolean,
+): Element | undefined => {
+  if (!content) {
+    return
+  }
+
+  return DomUtils.findOne(test, getParsedPage(content).document.children) ?? undefined
+}
+
+export const findDescendant = (
+  element: Element,
+  test: (descendant: Element) => boolean,
+): Element | undefined => {
+  return DomUtils.findOne(test, element.children) ?? undefined
+}
+
+export const hasElementWithId = (content: string, id: string): boolean => {
+  return DomUtils.getElementById(id, getParsedPage(content).document.children) !== null
+}
+
+// Takes any node so a test can check `element.parent`, which may be the document.
+export const hasClass = (
+  node: Element | Element['parent'] | undefined,
+  className: string,
+): boolean => {
+  if (!node || !('attribs' in node)) {
+    return false
+  }
+
+  return anyWordMatchesAnyOf(node.attribs.class ?? '', [className])
+}
+
+export const getScriptText = (content: string, id: string): string | undefined => {
+  const script = findElement(content, (element) => {
+    return element.name === 'script' && element.attribs.id === id
+  })
+
+  if (!script) {
+    return
+  }
+
+  return DomUtils.textContent(script)
+}
+
+export const getJsonLd = (content: string): Array<unknown> => {
+  const scripts = DomUtils.findAll((element) => {
+    return element.name === 'script' && isAnyOf(element.attribs.type ?? '', ['application/ld+json'])
+  }, getParsedPage(content).document.children)
+  const blocks: Array<unknown> = []
+
+  for (const script of scripts) {
+    try {
+      blocks.push(JSON.parse(DomUtils.textContent(script)))
+    } catch {}
+  }
+
+  return blocks
+}
+
+const isMetaWithKey = (element: Element, key: string): boolean => {
+  const { name, property } = element.attribs
+
+  if (element.attribs.content === undefined) {
+    return false
+  }
+
+  return name?.toLowerCase() === key || property?.toLowerCase() === key
 }
 
 // Check if HTML contains a meta tag matching a name or property attribute with the given
 // content value (case-insensitive prefix match).
 export const hasMetaContent = (content: string, name: string, value: string): boolean => {
-  const contents = getMetaContents(content)[name.toLowerCase()] ?? []
+  const key = name.toLowerCase()
   const lowercasedValue = value.toLowerCase()
 
-  return contents.some((metaContent) => metaContent.toLowerCase().startsWith(lowercasedValue))
+  return getParsedPage(content).metas.some((meta) => {
+    return (
+      isMetaWithKey(meta, key) && meta.attribs.content.toLowerCase().startsWith(lowercasedValue)
+    )
+  })
 }
 
 // Fetch joins every Set-Cookie header into one comma-separated value.
@@ -108,7 +170,9 @@ export const hasAnyMeta = (content: string, markers: Array<[string, string]>): b
 
 // Read the content value of the first meta tag with the given name or property attribute.
 export const getMetaContent = (content: string, name: string): string | undefined => {
-  return getMetaContents(content)[name.toLowerCase()]?.[0]
+  const key = name.toLowerCase()
+
+  return getParsedPage(content).metas.find((meta) => isMetaWithKey(meta, key))?.attribs.content
 }
 
 export const matchesAnyOfLinkSelectors = (

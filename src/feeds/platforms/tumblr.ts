@@ -1,16 +1,29 @@
-import { isSubdomainOf } from 'trousse'
+import { getSubdomain } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Unmeasured, bot wall.
 
+export type TumblrUrl = { kind: 'blog'; blog: string }
+
 export const domains = ['tumblr.com']
 
 const tagRegex = /^\/tagged\/([^/]+)/
 
+export const parseTumblrUrl = (url: string): TumblrUrl | undefined => {
+  const blog = getSubdomain(url, domains)
+
+  // Only {blog}.tumblr.com names a blog, www.tumblr.com serves no feed.
+  if (!blog || blog.includes('.') || blog === 'www') {
+    return
+  }
+
+  return { kind: 'blog', blog }
+}
+
 export const tumblrHandler: PlatformHandler = {
   match: (url) => {
-    return isSubdomainOf(url, domains)
+    return parseTumblrUrl(url) !== undefined
   },
 
   resolve: (url) => {

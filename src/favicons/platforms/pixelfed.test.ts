@@ -38,10 +38,6 @@ describe('pixelfedHandler', () => {
       expect(pixelfedHandler.match('https://example.com/alice', pixelfedHtml)).toBe(true)
     })
 
-    it('should match /users/{user} with Pixelfed content', () => {
-      expect(pixelfedHandler.match('https://example.com/users/alice', pixelfedHtml)).toBe(true)
-    })
-
     it('should not match profile path without Pixelfed content', () => {
       const value = '<meta name="generator" content="WordPress 6.0">'
 
@@ -52,17 +48,8 @@ describe('pixelfedHandler', () => {
       expect(pixelfedHandler.match('https://example.com/alice')).toBe(false)
     })
 
-    it('should not match excluded paths', () => {
-      expect(pixelfedHandler.match('https://example.com/discover', pixelfedHtml)).toBe(false)
-      expect(pixelfedHandler.match('https://example.com/settings', pixelfedHtml)).toBe(false)
-    })
-
     it('should not match post paths', () => {
       expect(pixelfedHandler.match('https://example.com/p/alice/123', pixelfedHtml)).toBe(false)
-    })
-
-    it('should not match invalid URLs', () => {
-      expect(pixelfedHandler.match('not-a-url', pixelfedHtml)).toBe(false)
     })
   })
 
@@ -76,24 +63,9 @@ describe('pixelfedHandler', () => {
 
         expect(result).toEqual(expected)
       })
-
-      it('should resolve avatar from og:image on /users/{user}', () => {
-        const result = pixelfedHandler.resolve('https://example.com/users/alice', profileHtml)
-        const expected: Array<DiscoverUriEntry> = [
-          { uri: 'https://example.com/storage/avatars/000/000/000/002/abc_avatar.jpg?v=57' },
-        ]
-
-        expect(result).toEqual(expected)
-      })
     })
 
     describe('sad paths', () => {
-      it('should return empty array for excluded path', () => {
-        const result = pixelfedHandler.resolve('https://example.com/discover', profileHtml)
-
-        expect(result).toEqual([])
-      })
-
       it('should return a ref without content', () => {
         const result = pixelfedHandler.resolve('https://example.com/alice')
         const expected: Array<DiscoverRef> = [
@@ -112,12 +84,8 @@ describe('pixelfedHandler', () => {
         expect(result).toEqual(expected)
       })
 
-      it('should return a ref on /users/{user} when page has no og:image', () => {
-        const url = 'https://example.com/users/alice'
-        const result = pixelfedHandler.resolve(url, pixelfedHtml)
-        const expected: Array<DiscoverRef> = [{ platform: 'pixelfed', id: 'alice', url }]
-
-        expect(result).toEqual(expected)
+      it('should return empty array for post paths', () => {
+        expect(pixelfedHandler.resolve('https://example.com/p/alice/123', profileHtml)).toEqual([])
       })
     })
 

@@ -1,10 +1,15 @@
-import { isAnyOf, isHostOf } from 'trousse'
+import { getPathSegments, isAnyOf, isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers home, profile (guess, html).
 // Handler needed for: hashtag, magazine, tagRedirect.
+
+export type NoteUrl =
+  | { kind: 'hashtag'; tag: string }
+  | { kind: 'magazine'; username: string; magazine: string }
+  | { kind: 'user'; username: string }
 
 export const hosts = ['note.com', 'www.note.com']
 export const excludedPaths = [
@@ -27,7 +32,36 @@ export const excludedPaths = [
 ]
 // A hashtag page redirects to `/tag/{tag}`, and the feed stays under `/hashtag`.
 const hashtagRegex = /^\/(?:hashtag|tag)\/([^/]+)/
-export const magazineRegex = /^\/([^/]+)\/m\/([^/]+)/
+const magazineRegex = /^\/([^/]+)\/m\/([^/]+)/
+
+export const parseNoteUrl = (url: string): NoteUrl | undefined => {
+  const parsedUrl = parseUrl(url)
+
+  if (!parsedUrl || !isHostOf(parsedUrl, hosts)) {
+    return
+  }
+
+  const { pathname } = parsedUrl
+  const tag = pathname.match(hashtagRegex)?.[1]
+
+  if (tag) {
+    return { kind: 'hashtag', tag }
+  }
+
+  const magazineMatch = pathname.match(magazineRegex)
+
+  if (magazineMatch?.[1] && magazineMatch[2]) {
+    return { kind: 'magazine', username: magazineMatch[1], magazine: magazineMatch[2] }
+  }
+
+  const [username] = getPathSegments(parsedUrl)
+
+  if (!username || isAnyOf(username, excludedPaths)) {
+    return
+  }
+
+  return { kind: 'user', username }
+}
 
 export const noteHandler: PlatformHandler = {
   match: (url) => {
@@ -35,35 +69,36 @@ export const noteHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    const { pathname } = new URL(url)
+    const parsed = parseNoteUrl(url)
 
-    // Hashtag page: /hashtag/{tag} or /tag/{tag}
-    const hashtagMatch = pathname.match(hashtagRegex)
-
-    if (hashtagMatch?.[1]) {
+    if (parsed?.kind === 'hashtag') {
       return [
         {
-          uri: `https://note.com/hashtag/${hashtagMatch[1]}/rss`,
+          uri: `https://note.com/hashtag/${parsed.tag}/rss`,
           hint: composeHint('note:hashtag'),
         },
       ]
     }
 
-    // Magazine page: /{user}/m/{magazineId}
-    const magazineMatch = pathname.match(magazineRegex)
-
-    if (magazineMatch?.[1] && magazineMatch?.[2]) {
+    if (parsed?.kind === 'magazine') {
       return [
         {
-          uri: `https://note.com/${magazineMatch[1]}/m/${magazineMatch[2]}/rss`,
+          uri: `https://note.com/${parsed.username}/m/${parsed.magazine}/rss`,
           hint: composeHint('note:magazine'),
         },
       ]
     }
 
-    const pathSegments = pathname.split('/').filter(Boolean)
+    if (parsed?.kind === 'user') {
+      return [
+        {
+          uri: `https://note.com/${parsed.username}/rss`,
+          hint: composeHint('note:blog'),
+        },
+      ]
+    }
 
-    if (pathSegments.length === 0) {
+    if (getPathSegments(url).length === 0) {
       return [
         {
           uri: 'https://note.com/rss',
@@ -72,17 +107,6 @@ export const noteHandler: PlatformHandler = {
       ]
     }
 
-    const username = pathSegments[0]
-
-    if (isAnyOf(username, excludedPaths)) {
-      return []
-    }
-
-    return [
-      {
-        uri: `https://note.com/${username}/rss`,
-        hint: composeHint('note:blog'),
-      },
-    ]
+    return []
   },
 }

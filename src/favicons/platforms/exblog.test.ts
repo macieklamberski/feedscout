@@ -48,32 +48,8 @@ describe('exblogHandler', () => {
       expect(exblogHandler.match('https://example.exblog.jp/')).toBe(true)
     })
 
-    it('should match a post page', () => {
-      expect(exblogHandler.match('https://example.exblog.jp/37927093')).toBe(true)
-    })
-
-    it('should match a category page', () => {
-      expect(exblogHandler.match('https://example.exblog.jp/i2/')).toBe(true)
-    })
-
     it('should not match the portal', () => {
       expect(exblogHandler.match('https://www.exblog.jp/')).toBe(false)
-    })
-
-    it('should not match the apex domain', () => {
-      expect(exblogHandler.match('https://exblog.jp/')).toBe(false)
-    })
-
-    it('should not match a nested subdomain', () => {
-      expect(exblogHandler.match('https://blog.example.exblog.jp/')).toBe(false)
-    })
-
-    it('should not match other hosts', () => {
-      expect(exblogHandler.match('https://example.com/')).toBe(false)
-    })
-
-    it('should not match invalid URLs', () => {
-      expect(exblogHandler.match('not-a-url')).toBe(false)
     })
   })
 
@@ -83,13 +59,6 @@ describe('exblogHandler', () => {
         const expected: Array<DiscoverUriEntry> = [{ uri: logoUrl }]
 
         expect(exblogHandler.resolve('https://example.exblog.jp/', blogPage)).toEqual(expected)
-      })
-
-      it('should return the logo from the post page content', () => {
-        const value = 'https://example.exblog.jp/37927093'
-        const expected: Array<DiscoverUriEntry> = [{ uri: logoUrl }]
-
-        expect(exblogHandler.resolve(value, blogPage)).toEqual(expected)
       })
 
       it('should return a ref to the blog for a page passed without its content', () => {
@@ -107,7 +76,7 @@ describe('exblogHandler', () => {
         expect(exblogHandler.resolve(value, blogPageWithoutLogo)).toEqual([])
       })
 
-      it('should return empty array for an unmatched URL', () => {
+      it('should return empty array for the portal', () => {
         expect(exblogHandler.resolve('https://www.exblog.jp/', blogPage)).toEqual([])
       })
     })

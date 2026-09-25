@@ -8,6 +8,8 @@ const userAvatar =
   '//habrastorage.org/getpro/habr/avatars/353/8eb/088/3538eb088997a0fd418ce85841dd0996.png'
 const authorAvatar =
   '//habrastorage.org/r/w48/getpro/habr/avatars/812/2ca/59d/8122ca59d6f9b159564625bfde4e35cf.jpeg'
+const companyLogo =
+  '//habrastorage.org/getpro/habr/company/b02/d9b/1d4/b02d9b1d4a6e64ff069e2ab32fdedae2.png'
 const placeholder = 'https://assets.habr.com/habr-web/release_2.350.0/client/img/avatars/082.png'
 
 const authorCard = `
@@ -61,42 +63,40 @@ const createUserPage = (src: string): string => {
   `
 }
 
+const createCompanyPage = (src: string): string => {
+  return `
+    <div
+      class="company-card tm-company-profile-card__info"
+      data-v-a85a3e89
+    ><div
+      class="header"
+      data-v-a85a3e89
+    ><a
+      href="/ru/companies/example/profile/"
+      class="avatar"
+      data-v-a85a3e89
+    ><div
+      class="tm-entity-image"
+      data-v-a85a3e89
+    ><img
+      alt=""
+      class="tm-entity-image__pic"
+      height="48"
+      src="${src}"
+      width="48"
+    ></div></a></div></div>
+    ${authorCard}
+  `
+}
+
 describe('habrHandler', () => {
   describe('match', () => {
     it('should match hub pages', () => {
       expect(habrHandler.match('https://habr.com/ru/hubs/javascript/')).toBe(true)
     })
 
-    it('should match hub article lists', () => {
-      expect(habrHandler.match('https://habr.com/ru/hubs/javascript/articles/')).toBe(true)
-    })
-
-    it('should match user pages', () => {
-      expect(habrHandler.match('https://habr.com/ru/users/alice/')).toBe(true)
-    })
-
-    it('should match user post lists', () => {
-      expect(habrHandler.match('https://habr.com/en/users/alice/posts/')).toBe(true)
-    })
-
-    it('should match www host', () => {
-      expect(habrHandler.match('https://www.habr.com/ru/users/alice/')).toBe(true)
-    })
-
-    it('should not match the home page', () => {
+    it('should not match the article list', () => {
       expect(habrHandler.match('https://habr.com/ru/articles/')).toBe(false)
-    })
-
-    it('should not match company pages', () => {
-      expect(habrHandler.match('https://habr.com/ru/companies/example/articles/')).toBe(false)
-    })
-
-    it('should not match other hosts', () => {
-      expect(habrHandler.match('https://example.com/ru/users/alice/')).toBe(false)
-    })
-
-    it('should not match invalid URLs', () => {
-      expect(habrHandler.match('not-a-url')).toBe(false)
     })
   })
 
@@ -110,10 +110,30 @@ describe('habrHandler', () => {
         expect(result).toEqual(expected)
       })
 
+      it('should return the hub icon when the hub card carries another class', async () => {
+        const content = createHubPage(hubIcon).replace(
+          'class="tm-hub-card__avatar"',
+          'class="tm-hub-card__avatar tm-hub-card__avatar_small"',
+        )
+        const result = await habrHandler.resolve('https://habr.com/ru/hubs/javascript/', content)
+        const expected: Array<DiscoverUriEntry> = [{ uri: hubIcon }]
+
+        expect(result).toEqual(expected)
+      })
+
       it('should return the user avatar from the user card', async () => {
         const content = createUserPage(userAvatar)
         const result = await habrHandler.resolve('https://habr.com/ru/users/alice/', content)
         const expected: Array<DiscoverUriEntry> = [{ uri: userAvatar }]
+
+        expect(result).toEqual(expected)
+      })
+
+      it('should return the company logo from the company card', async () => {
+        const value = 'https://habr.com/ru/companies/example/articles/'
+        const content = createCompanyPage(companyLogo)
+        const result = await habrHandler.resolve(value, content)
+        const expected: Array<DiscoverUriEntry> = [{ uri: companyLogo }]
 
         expect(result).toEqual(expected)
       })
@@ -136,13 +156,6 @@ describe('habrHandler', () => {
       it('should return empty array when the page has no card', async () => {
         const content = '<html><head><title>Habr</title></head></html>'
         const result = await habrHandler.resolve('https://habr.com/ru/users/alice/', content)
-
-        expect(result).toEqual([])
-      })
-
-      it('should return empty array for the home page', async () => {
-        const content = createUserPage(userAvatar)
-        const result = await habrHandler.resolve('https://habr.com/ru/articles/', content)
 
         expect(result).toEqual([])
       })

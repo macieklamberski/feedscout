@@ -14,6 +14,10 @@ describe('isXenforoHtml', () => {
     expect(isXenforoHtml(legacyHtml)).toBe(true)
   })
 
+  it('should return true for a single-quoted app root id', () => {
+    expect(isXenforoHtml("<html id='XF'>")).toBe(true)
+  })
+
   it('should return false for another forum platform', () => {
     expect(isXenforoHtml(otherHtml)).toBe(false)
   })

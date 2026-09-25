@@ -1,30 +1,138 @@
 import { describe, expect, it } from 'bun:test'
-import { flickrHandler } from './flickr.js'
+import type { FlickrUrl } from './flickr.js'
+import { flickrHandler, parseFlickrUrl } from './flickr.js'
 
 const feedsBase = 'https://www.flickr.com/services/feeds'
 
+describe('parseFlickrUrl', () => {
+  it('should return the tag for a tag page', () => {
+    const expected: FlickrUrl = { kind: 'tag', tag: 'cats' }
+
+    expect(parseFlickrUrl('https://flickr.com/photos/tags/cats')).toEqual(expected)
+  })
+
+  it('should return the photostream for an NSID photostream page', () => {
+    const expected: FlickrUrl = { kind: 'photostream', userId: '24662369@N07' }
+
+    expect(parseFlickrUrl('https://www.flickr.com/photos/24662369@N07')).toEqual(expected)
+  })
+
+  it('should return the photostream for a path alias', () => {
+    const expected: FlickrUrl = { kind: 'photostream', userId: 'alice' }
+
+    expect(parseFlickrUrl('https://www.flickr.com/photos/alice')).toEqual(expected)
+  })
+
+  it('should return the photostream for the bare host', () => {
+    const expected: FlickrUrl = { kind: 'photostream', userId: 'alice' }
+
+    expect(parseFlickrUrl('https://flickr.com/photos/alice')).toEqual(expected)
+  })
+
+  it('should return the favorites for a favorites page', () => {
+    const value = 'https://www.flickr.com/photos/24662369@N07/favorites'
+    const expected: FlickrUrl = { kind: 'favorites', userId: '24662369@N07' }
+
+    expect(parseFlickrUrl(value)).toEqual(expected)
+  })
+
+  it('should return the favorites for a later favorites page', () => {
+    const value = 'https://www.flickr.com/photos/24662369@N07/favorites/page2'
+    const expected: FlickrUrl = { kind: 'favorites', userId: '24662369@N07' }
+
+    expect(parseFlickrUrl(value)).toEqual(expected)
+  })
+
+  it('should return the albums for an albums page', () => {
+    const expected: FlickrUrl = { kind: 'albums', userId: 'alice' }
+
+    expect(parseFlickrUrl('https://www.flickr.com/photos/alice/albums')).toEqual(expected)
+  })
+
+  it('should return the galleries for a galleries page', () => {
+    const expected: FlickrUrl = { kind: 'galleries', userId: 'alice' }
+
+    expect(parseFlickrUrl('https://www.flickr.com/photos/alice/galleries')).toEqual(expected)
+  })
+
+  it('should return a subpage for a photo page', () => {
+    const value = 'https://www.flickr.com/photos/alice/53012345678'
+    const expected: FlickrUrl = { kind: 'subpage', userId: 'alice' }
+
+    expect(parseFlickrUrl(value)).toEqual(expected)
+  })
+
+  it('should return a subpage for an album page', () => {
+    const value = 'https://www.flickr.com/photos/alice/albums/72177720335744738'
+    const expected: FlickrUrl = { kind: 'subpage', userId: 'alice' }
+
+    expect(parseFlickrUrl(value)).toEqual(expected)
+  })
+
+  it('should return the group for an NSID group page', () => {
+    const expected: FlickrUrl = { kind: 'group', group: '42097308@N00' }
+
+    expect(parseFlickrUrl('https://www.flickr.com/groups/42097308@N00/')).toEqual(expected)
+  })
+
+  it('should return the section for a group discussion page', () => {
+    const value = 'https://www.flickr.com/groups/42097308@N00/discuss'
+    const expected: FlickrUrl = { kind: 'group', group: '42097308@N00', section: 'discuss' }
+
+    expect(parseFlickrUrl(value)).toEqual(expected)
+  })
+
+  it('should return undefined for the tags landing page', () => {
+    expect(parseFlickrUrl('https://www.flickr.com/photos/tags/')).toBeUndefined()
+  })
+
+  it('should return undefined for a group path alias', () => {
+    expect(parseFlickrUrl('https://www.flickr.com/groups/mygroup')).toBeUndefined()
+  })
+
+  it('should return undefined for site-wide pages', () => {
+    expect(parseFlickrUrl('https://www.flickr.com')).toBeUndefined()
+    expect(parseFlickrUrl('https://www.flickr.com/explore')).toBeUndefined()
+    expect(parseFlickrUrl('https://www.flickr.com/help/forum')).toBeUndefined()
+  })
+
+  it('should return undefined for a host that only ends in the Flickr host', () => {
+    expect(parseFlickrUrl('https://flickr.com.example.com')).toBeUndefined()
+  })
+
+  it('should return undefined for another host', () => {
+    expect(parseFlickrUrl('https://example.com/photos/alice')).toBeUndefined()
+  })
+
+  it('should return undefined for an invalid URL', () => {
+    expect(parseFlickrUrl('not-a-url')).toBeUndefined()
+  })
+})
+
 describe('flickrHandler', () => {
   describe('match', () => {
-    const values: Array<[boolean, string]> = [
-      [true, 'https://flickr.com/photos/tags/cats'],
-      [true, 'https://www.flickr.com/photos/24662369@N07'],
-      [true, 'https://www.flickr.com/photos/24662369@N07/favorites'],
-      [true, 'https://www.flickr.com/groups/42097308@N00/discuss'],
-      [true, 'https://www.flickr.com/help/forum'],
-      [false, 'https://www.flickr.com'],
-      [false, 'https://www.flickr.com/explore'],
-      [false, 'https://www.flickr.com/photos/thomashawk'],
-      [false, 'https://www.flickr.com/groups/mygroup'],
-      [false, 'https://flickr.com.example.com'],
-      [false, 'https://example.com'],
-    ]
-
-    it.each(values)('should return %s for %s', (expected, url) => {
-      expect(flickrHandler.match(url)).toBe(expected)
+    it('should match a tag page', () => {
+      expect(flickrHandler.match('https://flickr.com/photos/tags/cats')).toBe(true)
     })
 
-    it('should return false for invalid URL', () => {
-      expect(flickrHandler.match('not-a-url')).toBe(false)
+    it('should match a group page', () => {
+      expect(flickrHandler.match('https://www.flickr.com/groups/42097308@N00/')).toBe(true)
+    })
+
+    it('should match a help forum page', () => {
+      expect(flickrHandler.match('https://www.flickr.com/help/forum/en-us/')).toBe(true)
+    })
+
+    it('should not match the explore page', () => {
+      expect(flickrHandler.match('https://www.flickr.com/explore')).toBe(false)
+    })
+
+    it('should match a photostream named by NSID', () => {
+      expect(flickrHandler.match('https://www.flickr.com/photos/12345678@N00')).toBe(true)
+    })
+
+    it('should not match a photostream named by path alias', () => {
+      expect(flickrHandler.match('https://www.flickr.com/photos/nasacommons')).toBe(false)
     })
   })
 
@@ -63,6 +171,10 @@ describe('flickrHandler', () => {
       ]
 
       expect(flickrHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return empty array for a photostream named by path alias', () => {
+      expect(flickrHandler.resolve('https://www.flickr.com/photos/nasacommons')).toEqual([])
     })
 
     it('should return pool, discussion and location feeds for a group page', () => {
@@ -123,18 +235,6 @@ describe('flickrHandler', () => {
       ]
 
       expect(flickrHandler.resolve(value)).toEqual(expected)
-    })
-
-    it('should return nothing for an alias photostream page', () => {
-      expect(flickrHandler.resolve('https://www.flickr.com/photos/nasacommons')).toEqual([])
-    })
-
-    it('should return nothing for an alias group page', () => {
-      expect(flickrHandler.resolve('https://www.flickr.com/groups/flickrcentral/pool/')).toEqual([])
-    })
-
-    it('should return nothing for the homepage', () => {
-      expect(flickrHandler.resolve('https://www.flickr.com')).toEqual([])
     })
   })
 })

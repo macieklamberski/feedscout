@@ -13,6 +13,10 @@ describe('isFunkwhaleHtml', () => {
     expect(isFunkwhaleHtml('<div id="fake-app"></div>')).toBe(true)
   })
 
+  it('should return true for a single-quoted app shell id', () => {
+    expect(isFunkwhaleHtml("<div id='fake-app'></div>")).toBe(true)
+  })
+
   it('should return false for another platform', () => {
     expect(isFunkwhaleHtml(otherHtml)).toBe(false)
   })

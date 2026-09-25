@@ -1,16 +1,34 @@
-import { isHostOf } from 'trousse'
+import { getPathSegments, isHostOf } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
-export const hosts = ['goodreads.com', 'www.goodreads.com']
+export type GoodreadsUrl = { kind: 'user'; userId: string } | { kind: 'reviews'; userId: string }
 
-export const parseUserId = (segment: string): number | undefined => {
-  const id = Number.parseInt(segment, 10)
+const hosts = ['goodreads.com', 'www.goodreads.com']
 
-  return Number.isNaN(id) ? undefined : id
+// A user page is /user/show/{id}-{slug} and their review list /review/list/{id}-{slug}.
+export const parseGoodreadsUrl = (url: string): GoodreadsUrl | undefined => {
+  if (!isHostOf(url, hosts)) {
+    return
+  }
+
+  const [section, action, segment] = getPathSegments(url)
+  const userId = Number.parseInt(segment ?? '', 10)
+
+  if (!userId) {
+    return
+  }
+
+  if (section === 'user' && action === 'show') {
+    return { kind: 'user', userId: String(userId) }
+  }
+
+  if (section === 'review' && action === 'list') {
+    return { kind: 'reviews', userId: String(userId) }
+  }
 }
 
 export const goodreadsHandler: PlatformHandler = {
@@ -19,55 +37,45 @@ export const goodreadsHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    const { origin, pathname, searchParams } = new URL(url)
-    const pathSegments = pathname.split('/').filter(Boolean)
+    const { origin, searchParams } = new URL(url)
+    const parsed = parseGoodreadsUrl(url)
     const shelf = searchParams.get('shelf')
 
-    // User page: goodreads.com/user/show/{id}-{slug}
-    if (pathSegments[0] === 'user' && pathSegments[1] === 'show' && pathSegments[2]) {
-      const userId = parseUserId(pathSegments[2])
-
-      if (userId) {
-        return [
-          {
-            uri: `${origin}/user/updates_rss/${userId}`,
-            hint: composeHint('goodreads:updates'),
-          },
-          {
-            uri: `${origin}/review/list_rss/${userId}`,
-            hint: composeHint('goodreads:reviews'),
-          },
-        ]
-      }
-    }
-
-    // Review list page: goodreads.com/review/list/{id}-{slug}
-    if (pathSegments[0] === 'review' && pathSegments[1] === 'list' && pathSegments[2]) {
-      const userId = parseUserId(pathSegments[2])
-
-      if (userId) {
-        const uris: Array<DiscoverUriEntry> = []
-
-        if (shelf) {
-          uris.push({
-            uri: `${origin}/review/list_rss/${userId}?shelf=${encodeURIComponent(shelf)}`,
-            hint: composeHint('goodreads:shelf'),
-          })
-        }
-
-        uris.push({
-          uri: `${origin}/review/list_rss/${userId}`,
-          hint: composeHint('goodreads:reviews'),
-        })
-        uris.push({
-          uri: `${origin}/user/updates_rss/${userId}`,
+    if (parsed?.kind === 'user') {
+      return [
+        {
+          uri: `${origin}/user/updates_rss/${parsed.userId}`,
           hint: composeHint('goodreads:updates'),
-        })
-
-        return uris
-      }
+        },
+        {
+          uri: `${origin}/review/list_rss/${parsed.userId}`,
+          hint: composeHint('goodreads:reviews'),
+        },
+      ]
     }
 
-    return []
+    if (parsed?.kind !== 'reviews') {
+      return []
+    }
+
+    const uris: Array<DiscoverUriEntry> = []
+
+    if (shelf) {
+      uris.push({
+        uri: `${origin}/review/list_rss/${parsed.userId}?shelf=${encodeURIComponent(shelf)}`,
+        hint: composeHint('goodreads:shelf'),
+      })
+    }
+
+    uris.push({
+      uri: `${origin}/review/list_rss/${parsed.userId}`,
+      hint: composeHint('goodreads:reviews'),
+    })
+    uris.push({
+      uri: `${origin}/user/updates_rss/${parsed.userId}`,
+      hint: composeHint('goodreads:updates'),
+    })
+
+    return uris
   },
 }

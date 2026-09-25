@@ -1,47 +1,17 @@
-import { isAnyOf, isHostOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import {
-  excludedPaths,
-  hasResolvablePath,
-  hosts,
-  isGiteaHeaders,
-} from '../../feeds/platforms/gitea.js'
-
-// Extracts the username from the path, excluding dots to avoid capturing
-// feed extensions like .rss in Gitea feed URLs (e.g., /user.rss).
-const userRegex = /^\/([^/.]+)/
+import { giteaHandler as giteaFeedHandler, parseGiteaUrl } from '../../feeds/platforms/gitea.js'
 
 export const giteaHandler: PlatformHandler = {
-  match: (url, _content, headers) => {
-    if (!hasResolvablePath(url)) {
-      return false
-    }
-
-    if (isHostOf(url, hosts)) {
-      return true
-    }
-
-    if (headers && isGiteaHeaders(headers)) {
-      return true
-    }
-
-    return false
-  },
+  match: giteaFeedHandler.match,
 
   resolve: (url) => {
-    const { origin, pathname } = new URL(url)
-    const match = pathname.match(userRegex)
+    const { origin } = new URL(url)
+    const owner = parseGiteaUrl(url)?.owner
 
-    if (!match?.[1]) {
+    if (!owner) {
       return []
     }
 
-    const username = match[1]
-
-    if (isAnyOf(username, excludedPaths)) {
-      return []
-    }
-
-    return [{ uri: `${origin}/user/avatar/${username}/512` }]
+    return [{ uri: `${origin}/user/avatar/${owner}/512` }]
   },
 }

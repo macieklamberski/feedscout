@@ -1,12 +1,15 @@
-import { parseUrl } from 'trousse'
+import { getPathSegments, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, hasMetaContent } from '../../common/utils.js'
+import { composeHint, findElement, hasClass, hasMetaContent } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers community (html).
 // Handler needed for: home, user.
 
+export type LemmyUrl = { kind: 'community'; community: string } | { kind: 'user'; username: string }
+
 const lemmyPoweredByRegex = /lemmy/i
+const homePaths = ['/', '/home']
 const validSorts = [
   'Active',
   'Hot',
@@ -50,26 +53,28 @@ const getQuerySuffix = (searchParams: URLSearchParams): string => {
   return query ? `?${query}` : ''
 }
 
-export const isCommunityPath = (pathname: string): boolean => {
-  const segments = pathname.split('/').filter(Boolean)
+export const parseLemmyUrl = (url: string): LemmyUrl | undefined => {
+  const [section, name] = getPathSegments(url)
 
-  return segments.length >= 2 && segments[0] === 'c'
+  if (!name) {
+    return
+  }
+
+  if (section === 'c') {
+    return { kind: 'community', community: name }
+  }
+
+  if (section === 'u') {
+    return { kind: 'user', username: name }
+  }
 }
 
-export const isUserPath = (pathname: string): boolean => {
-  const segments = pathname.split('/').filter(Boolean)
-
-  return segments.length >= 2 && segments[0] === 'u'
-}
-
-export const isHomePath = (pathname: string): boolean => {
-  return pathname === '/' || pathname === '' || pathname === '/home'
-}
-
-// Current Lemmy serves no generator meta, and the page also mentions the
-// `#lemmy-space:matrix.org` room, so the class is matched with its quotes.
+// Current Lemmy serves no generator meta.
 export const isLemmyHtml = (content: string): boolean => {
-  return content.includes('class="lemmy-site"') || hasMetaContent(content, 'generator', 'Lemmy')
+  return (
+    findElement(content, (element) => hasClass(element, 'lemmy-site')) !== undefined ||
+    hasMetaContent(content, 'generator', 'Lemmy')
+  )
 }
 
 export const isLemmyHeaders = (headers: Headers): boolean => {
@@ -86,9 +91,7 @@ export const lemmyHandler: PlatformHandler = {
       return false
     }
 
-    const { pathname } = parsedUrl
-
-    if (!isCommunityPath(pathname) && !isUserPath(pathname) && !isHomePath(pathname)) {
+    if (!homePaths.includes(parsedUrl.pathname) && !parseLemmyUrl(url)) {
       return false
     }
 
@@ -104,41 +107,38 @@ export const lemmyHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    const { origin, pathname, searchParams } = new URL(url)
-    const segments = pathname.split('/').filter(Boolean)
+    const { origin, searchParams } = new URL(url)
+    const parsed = parseLemmyUrl(url)
     const sortSuffix = getQuerySuffix(searchParams)
 
-    if (isCommunityPath(pathname) && segments[1]) {
+    if (parsed?.kind === 'community') {
       return [
         {
-          uri: `${origin}/feeds/c/${segments[1]}.xml${sortSuffix}`,
+          uri: `${origin}/feeds/c/${parsed.community}.xml${sortSuffix}`,
           hint: composeHint('lemmy:community'),
         },
       ]
     }
 
-    if (isUserPath(pathname) && segments[1]) {
+    if (parsed?.kind === 'user') {
       return [
         {
-          uri: `${origin}/feeds/u/${segments[1]}.xml${sortSuffix}`,
+          uri: `${origin}/feeds/u/${parsed.username}.xml${sortSuffix}`,
           hint: composeHint('lemmy:user'),
         },
       ]
     }
 
-    if (isHomePath(pathname)) {
-      return [
-        {
-          uri: `${origin}/feeds/all.xml${sortSuffix}`,
-          hint: composeHint('lemmy:all'),
-        },
-        {
-          uri: `${origin}/feeds/local.xml${sortSuffix}`,
-          hint: composeHint('lemmy:local'),
-        },
-      ]
-    }
-
-    return []
+    // Home page, / or /home, and any other page: the instance feeds.
+    return [
+      {
+        uri: `${origin}/feeds/all.xml${sortSuffix}`,
+        hint: composeHint('lemmy:all'),
+      },
+      {
+        uri: `${origin}/feeds/local.xml${sortSuffix}`,
+        hint: composeHint('lemmy:local'),
+      },
+    ]
   },
 }

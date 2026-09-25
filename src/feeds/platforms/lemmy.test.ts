@@ -1,85 +1,76 @@
 import { describe, expect, it } from 'bun:test'
-import {
-  isCommunityPath,
-  isHomePath,
-  isLemmyHeaders,
-  isLemmyHtml,
-  isUserPath,
-  lemmyHandler,
-} from './lemmy.js'
+import type { LemmyUrl } from './lemmy.js'
+import { isLemmyHeaders, isLemmyHtml, lemmyHandler, parseLemmyUrl } from './lemmy.js'
 
 const lemmyHtml = '<html><head><meta name="generator" content="Lemmy v0.19.5"></head></html>'
 const lemmyHeaders = new Headers({ 'x-powered-by': 'Lemmy' })
 
-describe('isCommunityPath', () => {
-  it('should return true for /c/community paths', () => {
-    expect(isCommunityPath('/c/programming')).toBe(true)
-    expect(isCommunityPath('/c/world_news')).toBe(true)
+describe('parseLemmyUrl', () => {
+  it('should return the community for a community page', () => {
+    const expected: LemmyUrl = { kind: 'community', community: 'programming' }
+
+    expect(parseLemmyUrl('https://lemmy.ml/c/programming')).toEqual(expected)
   })
 
-  it('should return true for /c/community with extra segments', () => {
-    expect(isCommunityPath('/c/programming/hot')).toBe(true)
+  it('should return the community for a community subpage', () => {
+    const expected: LemmyUrl = { kind: 'community', community: 'programming' }
+
+    expect(parseLemmyUrl('https://lemmy.ml/c/programming/hot')).toEqual(expected)
   })
 
-  it('should return true for /c/community with trailing slash', () => {
-    expect(isCommunityPath('/c/programming/')).toBe(true)
+  it('should return a federated community with its instance', () => {
+    const expected: LemmyUrl = { kind: 'community', community: 'rust@lemmy.world' }
+
+    expect(parseLemmyUrl('https://lemmy.ml/c/rust@lemmy.world')).toEqual(expected)
   })
 
-  it('should return false for /c without community name', () => {
-    expect(isCommunityPath('/c')).toBe(false)
-    expect(isCommunityPath('/c/')).toBe(false)
+  it('should return the user for a user page', () => {
+    const expected: LemmyUrl = { kind: 'user', username: 'alice' }
+
+    expect(parseLemmyUrl('https://lemmy.ml/u/alice')).toEqual(expected)
   })
 
-  it('should return false for non-community paths', () => {
-    expect(isCommunityPath('/u/user')).toBe(false)
-    expect(isCommunityPath('/about')).toBe(false)
+  it('should return the user for a user subpage', () => {
+    const expected: LemmyUrl = { kind: 'user', username: 'alice' }
+
+    expect(parseLemmyUrl('https://lemmy.ml/u/alice/posts')).toEqual(expected)
   })
 
-  it('should return false for empty string', () => {
-    expect(isCommunityPath('')).toBe(false)
-  })
-})
+  it('should return a federated user with its instance', () => {
+    const expected: LemmyUrl = { kind: 'user', username: 'alice@lemmy.world' }
 
-describe('isUserPath', () => {
-  it('should return true for /u/username paths', () => {
-    expect(isUserPath('/u/alice')).toBe(true)
-    expect(isUserPath('/u/bob')).toBe(true)
+    expect(parseLemmyUrl('https://lemmy.ml/u/alice@lemmy.world')).toEqual(expected)
   })
 
-  it('should return true for /u/username with extra segments', () => {
-    expect(isUserPath('/u/alice/posts')).toBe(true)
+  it('should return the community on any host', () => {
+    const expected: LemmyUrl = { kind: 'community', community: 'worldnews' }
+
+    expect(parseLemmyUrl('https://beehaw.org/c/worldnews')).toEqual(expected)
   })
 
-  it('should return true for /u/username with trailing slash', () => {
-    expect(isUserPath('/u/alice/')).toBe(true)
+  it('should return undefined for a prefix without a name', () => {
+    expect(parseLemmyUrl('https://lemmy.ml/c')).toBeUndefined()
+    expect(parseLemmyUrl('https://lemmy.ml/c/')).toBeUndefined()
+    expect(parseLemmyUrl('https://lemmy.ml/u')).toBeUndefined()
+    expect(parseLemmyUrl('https://lemmy.ml/u/')).toBeUndefined()
   })
 
-  it('should return false for /u without username', () => {
-    expect(isUserPath('/u')).toBe(false)
-    expect(isUserPath('/u/')).toBe(false)
+  it('should return undefined for an uppercase prefix', () => {
+    expect(parseLemmyUrl('https://lemmy.ml/C/programming')).toBeUndefined()
   })
 
-  it('should return false for non-user paths', () => {
-    expect(isUserPath('/c/programming')).toBe(false)
-    expect(isUserPath('/about')).toBe(false)
+  it('should return undefined for the home page', () => {
+    expect(parseLemmyUrl('https://lemmy.ml/')).toBeUndefined()
+    expect(parseLemmyUrl('https://lemmy.ml/home')).toBeUndefined()
   })
 
-  it('should return false for empty string', () => {
-    expect(isUserPath('')).toBe(false)
-  })
-})
-
-describe('isHomePath', () => {
-  it('should return true for root paths', () => {
-    expect(isHomePath('/')).toBe(true)
-    expect(isHomePath('')).toBe(true)
-    expect(isHomePath('/home')).toBe(true)
+  it('should return undefined for other paths', () => {
+    expect(parseLemmyUrl('https://lemmy.ml/about')).toBeUndefined()
+    expect(parseLemmyUrl('https://lemmy.ml/post/123')).toBeUndefined()
   })
 
-  it('should return false for non-root paths', () => {
-    expect(isHomePath('/c/programming')).toBe(false)
-    expect(isHomePath('/u/alice')).toBe(false)
-    expect(isHomePath('/about')).toBe(false)
+  it('should return undefined for an invalid URL', () => {
+    expect(parseLemmyUrl('not-a-url')).toBeUndefined()
   })
 })
 
@@ -99,6 +90,10 @@ describe('isLemmyHtml', () => {
 
   it('should return true for the lemmy-site app root without generator meta', () => {
     expect(isLemmyHtml('<body><div class="lemmy-site" id="app"></div></body>')).toBe(true)
+  })
+
+  it('should return true for the lemmy-site app root with another class', () => {
+    expect(isLemmyHtml('<body><div class="lemmy-site dark"></div></body>')).toBe(true)
   })
 
   it('should return false for a lemmy-site substring outside a class attribute', () => {
@@ -142,29 +137,16 @@ describe('lemmyHandler', () => {
       expect(lemmyHandler.match('https://lemmy.ml/c/programming', lemmyHtml)).toBe(true)
     })
 
-    it('should match user path with Lemmy HTML', () => {
-      expect(lemmyHandler.match('https://lemmy.ml/u/alice', lemmyHtml)).toBe(true)
+    it('should match the home page with Lemmy HTML', () => {
+      expect(lemmyHandler.match('https://lemmy.ml/home', lemmyHtml)).toBe(true)
     })
 
     it('should match community path with Lemmy server header', () => {
       expect(lemmyHandler.match('https://lemmy.ml/c/programming', '', lemmyHeaders)).toBe(true)
     })
 
-    it('should match user path with Lemmy server header', () => {
-      expect(lemmyHandler.match('https://beehaw.org/u/alice', '', lemmyHeaders)).toBe(true)
-    })
-
-    it('should match on a different Lemmy instance', () => {
-      expect(lemmyHandler.match('https://beehaw.org/c/worldnews', lemmyHtml)).toBe(true)
-    })
-
     it('should not match without content or headers', () => {
       expect(lemmyHandler.match('https://lemmy.ml/c/programming')).toBe(false)
-    })
-
-    it('should match home path with Lemmy HTML', () => {
-      expect(lemmyHandler.match('https://lemmy.ml/', lemmyHtml)).toBe(true)
-      expect(lemmyHandler.match('https://lemmy.ml/home', lemmyHtml)).toBe(true)
     })
 
     it('should not match non-community, non-user, non-home paths even with Lemmy HTML', () => {
@@ -175,10 +157,6 @@ describe('lemmyHandler', () => {
       const plainHtml = '<html><head></head></html>'
 
       expect(lemmyHandler.match('https://lemmy.ml/c/programming', plainHtml)).toBe(false)
-    })
-
-    it('should not match invalid URLs', () => {
-      expect(lemmyHandler.match('not-a-url')).toBe(false)
     })
   })
 
@@ -212,18 +190,6 @@ describe('lemmyHandler', () => {
       const expected = [
         {
           uri: 'https://beehaw.org/feeds/c/worldnews.xml',
-          hint: { key: 'lemmy:community', label: 'Community' },
-        },
-      ]
-
-      expect(lemmyHandler.resolve(value)).toEqual(expected)
-    })
-
-    it('should use only the first path segment after the prefix', () => {
-      const value = 'https://lemmy.ml/c/programming/hot'
-      const expected = [
-        {
-          uri: 'https://lemmy.ml/feeds/c/programming.xml',
           hint: { key: 'lemmy:community', label: 'Community' },
         },
       ]
@@ -299,10 +265,6 @@ describe('lemmyHandler', () => {
       expect(lemmyHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return empty array for non-community, non-user, non-home paths', () => {
-      expect(lemmyHandler.resolve('https://lemmy.ml/about')).toEqual([])
-    })
-
     it('should accept extended sort values', () => {
       const value = 'https://lemmy.ml/c/programming?sort=Controversial'
       const expected = [
@@ -345,22 +307,6 @@ describe('lemmyHandler', () => {
         {
           uri: 'https://lemmy.ml/feeds/c/programming.xml?limit=10',
           hint: { key: 'lemmy:community', label: 'Community' },
-        },
-      ]
-
-      expect(lemmyHandler.resolve(value)).toEqual(expected)
-    })
-
-    it('should return site-wide feeds for /home path', () => {
-      const value = 'https://lemmy.ml/home'
-      const expected = [
-        {
-          uri: 'https://lemmy.ml/feeds/all.xml',
-          hint: { key: 'lemmy:all', label: 'All' },
-        },
-        {
-          uri: 'https://lemmy.ml/feeds/local.xml',
-          hint: { key: 'lemmy:local', label: 'Local' },
         },
       ]
 
