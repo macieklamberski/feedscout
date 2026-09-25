@@ -2,9 +2,7 @@ import { getPathSegments, getSubdomain, isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
-// Discoverability: Partially discoverable without handler.
-// Generic covers profile (html).
-// Handler needed for: subdomain.
+// Discoverability: Discoverable without handler.
 
 // A channel subdomain redirects to www.postype.com/@{channel}.
 export type PostypeUrl =

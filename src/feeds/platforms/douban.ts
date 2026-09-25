@@ -4,6 +4,7 @@ import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers subject (html), partly covers people.
+// Handler needed for: book, home, movie, music.
 
 const domains = ['douban.com']
 const userRegex = /^\/people\/([^/]+)/
