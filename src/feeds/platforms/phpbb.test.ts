@@ -55,16 +55,26 @@ describe('phpbbHandler', () => {
   })
 
   describe('resolve', () => {
-    it('should build the feed from a board mounted under a sub-path', () => {
-      const value = 'https://example.com/community/'
-      const expected = [
+    const getBoardFeeds = (boardUrl: string) => {
+      return [
+        { uri: `${boardUrl}/feed.php`, hint: { key: 'phpbb:site', label: 'Site' } },
+        { uri: `${boardUrl}/feed.php?mode=news`, hint: { key: 'phpbb:news', label: 'News' } },
         {
-          uri: 'https://example.com/community/feed.php',
-          hint: { key: 'phpbb:site', label: 'Site' },
+          uri: `${boardUrl}/feed.php?mode=topics`,
+          hint: { key: 'phpbb:new-topics', label: 'New topics' },
         },
+        {
+          uri: `${boardUrl}/feed.php?mode=topics_active`,
+          hint: { key: 'phpbb:active-topics', label: 'Active topics' },
+        },
+        { uri: `${boardUrl}/feed.php?mode=forums`, hint: { key: 'phpbb:forums', label: 'Forums' } },
       ]
+    }
 
-      expect(phpbbHandler.resolve(value)).toEqual(expected)
+    it('should build the board feeds from a board mounted under a sub-path', () => {
+      expect(phpbbHandler.resolve('https://example.com/community/')).toEqual(
+        getBoardFeeds('https://example.com/community'),
+      )
     })
 
     it('should drop the script segment and add the forum feed', () => {
@@ -74,22 +84,33 @@ describe('phpbbHandler', () => {
           uri: 'https://example.com/community/feed.php?f=12',
           hint: { key: 'phpbb:forum', label: 'Forum' },
         },
+        ...getBoardFeeds('https://example.com/community'),
+      ]
+
+      expect(phpbbHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should add the topic feed before the forum feed', () => {
+      const value = 'https://example.com/community/viewtopic.php?f=12&t=345'
+      const expected = [
         {
-          uri: 'https://example.com/community/feed.php',
-          hint: { key: 'phpbb:site', label: 'Site' },
+          uri: 'https://example.com/community/feed.php?t=345',
+          hint: { key: 'phpbb:topic', label: 'Topic' },
         },
+        {
+          uri: 'https://example.com/community/feed.php?f=12',
+          hint: { key: 'phpbb:forum', label: 'Forum' },
+        },
+        ...getBoardFeeds('https://example.com/community'),
       ]
 
       expect(phpbbHandler.resolve(value)).toEqual(expected)
     })
 
     it('should handle a board at the origin root', () => {
-      const value = 'https://example.com/'
-      const expected = [
-        { uri: 'https://example.com/feed.php', hint: { key: 'phpbb:site', label: 'Site' } },
-      ]
+      const expected = getBoardFeeds('https://example.com')
 
-      expect(phpbbHandler.resolve(value)).toEqual(expected)
+      expect(phpbbHandler.resolve('https://example.com/')).toEqual(expected)
     })
   })
 })
