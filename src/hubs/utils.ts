@@ -1,3 +1,4 @@
+import { isHttpUrl, parseUrl } from 'trousse'
 import { attempt } from '../common/discover/utils.js'
 import type { DiscoverOnErrorFn, DiscoverResolveUrlFn } from '../common/types.js'
 import type { HubResult } from './discover/types.js'
@@ -14,7 +15,16 @@ export const toHubResults = (
     return attempt(() => resolveUrlFn(uri, baseUrl), uri, 'resolveUrlFn', onError)
   }
 
+  // A hub with another scheme, such as a `javascript:` link, cannot be subscribed to. One that does
+  // not parse is kept as discovered, as a resolver that answers nothing leaves it.
+  const isSubscribable = (hub: string): boolean => {
+    return !parseUrl(hub) || isHttpUrl(hub)
+  }
+
   const topic = selfUri ? resolve(selfUri) : baseUrl
 
-  return hubUris.map((hub) => ({ hub: resolve(hub), topic }))
+  return hubUris
+    .map(resolve)
+    .filter(isSubscribable)
+    .map((hub) => ({ hub, topic }))
 }
