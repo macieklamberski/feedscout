@@ -1,4 +1,4 @@
-import { isAnyOf, isHostOf, isSubdomainOf } from 'trousse'
+import { getSubdomain, isAnyOf, isHostOf, isHostOrSubdomainOf, isSubdomainOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
@@ -7,7 +7,6 @@ import { composeHint } from '../../common/utils.js'
 // Handler needed for: albums, explore, profile.
 
 const hosts = ['artstation.com', 'www.artstation.com']
-const domainSuffixRegex = /\.artstation\.com$/i
 const excludedPaths = [
   'blogs',
   'channels',
@@ -26,7 +25,7 @@ const excludedPaths = [
 
 export const artstationHandler: PlatformHandler = {
   match: (url) => {
-    return isHostOf(url, hosts) || isSubdomainOf(url, 'artstation.com')
+    return isHostOrSubdomainOf(url, 'artstation.com')
   },
 
   resolve: (url) => {
@@ -34,7 +33,7 @@ export const artstationHandler: PlatformHandler = {
 
     // Subdomain form: {user}.artstation.com
     if (!isHostOf(url, hosts) && isSubdomainOf(url, 'artstation.com')) {
-      const username = parsed.hostname.replace(domainSuffixRegex, '')
+      const username = getSubdomain(parsed, 'artstation.com')
 
       return [
         {

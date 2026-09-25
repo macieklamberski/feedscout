@@ -1889,3 +1889,44 @@ describe('discoverFeeds', () => {
     })
   })
 })
+
+describe('discoverFeeds with non-http URLs', () => {
+  it('should find the feeds a saved page links to without throwing', async () => {
+    const content = `
+      <link
+        rel="alternate"
+        type="application/rss+xml"
+        href="https://example.com/feed.xml"
+      >
+    `
+    const mockFetch = createMockFetch({ 'https://example.com/feed.xml': rss })
+    const value = await discoverFeeds(
+      { url: 'file:///Users/alice/saved.html', content },
+      { methods: ['html', 'guess'], fetchFn: mockFetch },
+    )
+
+    expect(value).toMatchObject([
+      {
+        url: 'https://example.com/feed.xml',
+        isValid: true,
+      },
+    ])
+  })
+
+  it('should not fetch javascript and mailto links', async () => {
+    const content = `
+      <a href="javascript:subscribe()">RSS feed</a>
+      <a href="mailto:rss@example.com">Subscribe via RSS</a>
+    `
+    const fetchedUrls: Array<string> = []
+    const fetchFn: FetchFn = (url) => {
+      fetchedUrls.push(url)
+
+      return { headers: new Headers(), body: '', url, status: 404 }
+    }
+
+    await discoverFeeds({ url: 'https://example.com/', content }, { methods: ['html'], fetchFn })
+
+    expect(fetchedUrls).toEqual([])
+  })
+})

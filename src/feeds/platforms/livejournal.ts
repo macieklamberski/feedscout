@@ -1,7 +1,7 @@
-import { isHostOf, isSubdomainOf } from 'trousse'
+import { decodeSegment, isHostOf, isSubdomainOf } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, decodePathSegment } from '../../common/utils.js'
+import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic partly covers blog, community, tag, tildePath, userPath, usersHost.
@@ -30,7 +30,7 @@ export const getJournalFeeds = (
   const tagMatch = pathname.match(tagRegex)
 
   if (tagMatch?.[1]) {
-    const tag = encodeURIComponent(decodePathSegment(tagMatch[1]))
+    const tag = encodeURIComponent(decodeSegment(tagMatch[1]) ?? tagMatch[1])
 
     uris.push({
       uri: `${base}/data/rss?tag=${tag}`,

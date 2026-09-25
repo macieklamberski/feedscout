@@ -1888,6 +1888,33 @@ describe('normalizeUriEntry', () => {
     expect(normalizeUriEntry(value, resolveUrlFn, 'https://example.com')).toEqual(expected)
   })
 
+  it('should return undefined for a uri with a non-http scheme', () => {
+    const value = { uri: 'javascript:subscribe()' }
+
+    expect(normalizeUriEntry(value, defaultResolveUrlFn, 'https://example.com/')).toBeUndefined()
+  })
+
+  it('should drop alternatives with a non-http scheme', () => {
+    const value = { uri: ['mailto:rss@example.com', '/feed.xml'] }
+    const expected = { uri: ['https://example.com/feed.xml'] }
+
+    expect(normalizeUriEntry(value, defaultResolveUrlFn, 'https://example.com/')).toEqual(expected)
+  })
+
+  it('should return undefined when no alternative has an http scheme', () => {
+    const value = { uri: ['javascript:subscribe()', 'mailto:rss@example.com'] }
+
+    expect(normalizeUriEntry(value, defaultResolveUrlFn, 'https://example.com/')).toBeUndefined()
+  })
+
+  it('should return undefined for a relative uri resolved against a file base', () => {
+    const value = { uri: '/feed.xml' }
+
+    expect(
+      normalizeUriEntry(value, defaultResolveUrlFn, 'file:///Users/alice/saved.html'),
+    ).toBeUndefined()
+  })
+
   it('should keep original string uri when resolveUrlFn returns undefined', () => {
     const resolveNothingFn: DiscoverResolveUrlFn = () => undefined
     const value = { uri: '/feed.xml' }

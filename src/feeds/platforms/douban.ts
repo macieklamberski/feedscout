@@ -1,4 +1,4 @@
-import { isHostOf, isSubdomainOf } from 'trousse'
+import { isHostOrSubdomainOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
@@ -10,7 +10,7 @@ const subjectRegex = /^\/subject\/(\d+)/
 
 export const doubanHandler: PlatformHandler = {
   match: (url) => {
-    return isHostOf(url, 'douban.com') || isSubdomainOf(url, 'douban.com')
+    return isHostOrSubdomainOf(url, 'douban.com')
   },
 
   resolve: (url) => {

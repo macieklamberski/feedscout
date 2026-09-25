@@ -1,10 +1,9 @@
-import { isAnyOf, isSubdomainOf } from 'trousse'
+import { getSubdomain, isAnyOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
-const domainSuffixRegex = /\.transistor\.fm$/i
 // The show page links its feed, and the feed slug is not always the subdomain.
 const feedSlugRegex = /https:\/\/feeds\.transistor\.fm\/([\w-]+)/
 
@@ -14,18 +13,17 @@ const reservedSlugs = ['www', 'feeds', 'share', 'support', 'help', 'developers',
 
 export const transistorHandler: PlatformHandler = {
   match: (url) => {
-    if (!isSubdomainOf(url, 'transistor.fm')) {
+    const slug = getSubdomain(url, 'transistor.fm')
+
+    if (!slug) {
       return false
     }
-
-    const slug = new URL(url).hostname.replace(domainSuffixRegex, '')
 
     return !isAnyOf(slug, reservedSlugs)
   },
 
   resolve: (url, content) => {
-    const { hostname } = new URL(url)
-    const slug = content?.match(feedSlugRegex)?.[1] ?? hostname.replace(domainSuffixRegex, '')
+    const slug = content?.match(feedSlugRegex)?.[1] ?? getSubdomain(url, 'transistor.fm')
 
     return [
       {

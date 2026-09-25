@@ -1,6 +1,6 @@
-import { isAnyOf, isHostOf } from 'trousse'
+import { decodeSegment, isAnyOf, isHostOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, decodePathSegment } from '../../common/utils.js'
+import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Not discoverable without handler.
 // Handler needed for: all shapes.
@@ -61,7 +61,7 @@ export const deviantartHandler: PlatformHandler = {
     const tagMatch = pathname.match(tagRegex)
 
     if (tagMatch?.[1]) {
-      const tag = decodePathSegment(tagMatch[1])
+      const tag = decodeSegment(tagMatch[1]) ?? tagMatch[1]
 
       return [
         {

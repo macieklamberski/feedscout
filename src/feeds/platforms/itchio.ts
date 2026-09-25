@@ -1,4 +1,4 @@
-import { isAnyOf, isHostOf, isSubdomainOf } from 'trousse'
+import { isAnyOf, isHostOf, isHostOrSubdomainOf, isSubdomainOf } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
@@ -30,7 +30,7 @@ const gameRegex = /^\/([^/]+)/
 
 export const itchioHandler: PlatformHandler = {
   match: (url) => {
-    return isHostOf(url, mainHosts) || isSubdomainOf(url, 'itch.io')
+    return isHostOrSubdomainOf(url, 'itch.io')
   },
 
   resolve: (url) => {
