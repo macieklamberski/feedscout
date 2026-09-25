@@ -146,13 +146,14 @@ describe('sourcehutEnricher', () => {
     expect(await sourcehutEnricher(ref, context)).toEqual([])
   })
 
-  it('should reject when the owner page is missing', async () => {
+  it('should reject when the owner page is missing', () => {
     const ref = createRef('https://git.sr.ht/~example/project', 'example')
+    const throwing = () => sourcehutEnricher(ref, createContext({}))
 
-    await expect(sourcehutEnricher(ref, createContext({}))).rejects.toThrow()
+    expect(throwing()).rejects.toThrow('Unexpected status 404 from https://git.sr.ht/~example/')
   })
 
-  it('should reject when the body is a stream', async () => {
+  it('should reject when the body is a stream', () => {
     const fetchFn: FetchFn = async (url) => ({
       headers: new Headers(),
       body: new ReadableStream(),
@@ -160,16 +161,18 @@ describe('sourcehutEnricher', () => {
       status: 200,
     })
     const ref = createRef('https://git.sr.ht/~example/project', 'example')
+    const throwing = () => sourcehutEnricher(ref, { fetchFn })
 
-    await expect(sourcehutEnricher(ref, { fetchFn })).rejects.toThrow('Unexpected stream body')
+    expect(throwing()).rejects.toThrow('Unexpected stream body')
   })
 
-  it('should reject when fetch throws', async () => {
+  it('should reject when fetch throws', () => {
     const fetchFn: FetchFn = () => {
       throw new Error('Network error')
     }
     const ref = createRef('https://git.sr.ht/~example/project', 'example')
+    const throwing = () => sourcehutEnricher(ref, { fetchFn })
 
-    await expect(sourcehutEnricher(ref, { fetchFn })).rejects.toThrow()
+    expect(throwing()).rejects.toThrow('Network error')
   })
 })

@@ -92,11 +92,12 @@ describe('hatenaBookmarkEnricher', () => {
     expect(throwing()).rejects.toThrow('Unexpected status 503')
   })
 
-  it('should reject when fetch throws', async () => {
+  it('should reject when fetch throws', () => {
     const fetchFn: FetchFn = () => {
       throw new Error('Network error')
     }
+    const throwing = () => hatenaBookmarkEnricher(ref, { fetchFn })
 
-    await expect(hatenaBookmarkEnricher(ref, { fetchFn })).rejects.toThrow()
+    expect(throwing()).rejects.toThrow('Network error')
   })
 })

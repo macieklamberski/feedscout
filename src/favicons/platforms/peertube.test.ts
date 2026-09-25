@@ -195,28 +195,32 @@ describe('peertubeEnricher', () => {
       expect(await peertubeEnricher(ref, context)).toEqual([])
     })
 
-    it('should reject when API returns invalid JSON', async () => {
+    it('should reject when API returns invalid JSON', () => {
       const context = createContext({
         'https://example.com/api/v1/video-channels/news': 'not json',
       })
       const ref = createRef('https://example.com/c/news', 'c/news')
+      const throwing = () => peertubeEnricher(ref, context)
 
-      await expect(peertubeEnricher(ref, context)).rejects.toThrow()
+      expect(throwing()).rejects.toThrow('JSON Parse error: Unexpected identifier "not"')
     })
 
-    it('should reject when fetch throws', async () => {
+    it('should reject when fetch throws', () => {
       const fetchFn: FetchFn = () => {
         throw new Error('Network error')
       }
       const ref = createRef('https://example.com/c/news', 'c/news')
+      const throwing = () => peertubeEnricher(ref, { fetchFn })
 
-      await expect(peertubeEnricher(ref, { fetchFn })).rejects.toThrow()
+      expect(throwing()).rejects.toThrow('Network error')
     })
 
-    it('should reject when the response is not 2xx', async () => {
+    it('should reject when the response is not 2xx', () => {
       const ref = createRef('https://example.com/c/news', 'c/news')
+      const throwing = () => peertubeEnricher(ref, createContext({}))
+      const expected = 'Unexpected status 404 from https://example.com/api/v1/video-channels/news'
 
-      await expect(peertubeEnricher(ref, createContext({}))).rejects.toThrow()
+      expect(throwing()).rejects.toThrow(expected)
     })
   })
 

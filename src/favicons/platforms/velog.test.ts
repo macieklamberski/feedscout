@@ -207,21 +207,27 @@ describe('velogEnricher', () => {
     expect(await velogEnricher(ref, context)).toEqual([])
   })
 
-  it('should reject when API returns invalid JSON', async () => {
+  it('should reject when API returns invalid JSON', () => {
     const context = createContext({ [apiUrl]: 'not json' })
+    const throwing = () => velogEnricher(ref, context)
 
-    await expect(velogEnricher(ref, context)).rejects.toThrow()
+    expect(throwing()).rejects.toThrow('JSON Parse error: Unexpected identifier "not"')
   })
 
-  it('should reject when fetch throws', async () => {
+  it('should reject when fetch throws', () => {
     const fetchFn: FetchFn = () => {
       throw new Error('Network error')
     }
+    const throwing = () => velogEnricher(ref, { fetchFn })
 
-    await expect(velogEnricher(ref, { fetchFn })).rejects.toThrow()
+    expect(throwing()).rejects.toThrow('Network error')
   })
 
-  it('should reject when the response is not 2xx', async () => {
-    await expect(velogEnricher(ref, createContext({}))).rejects.toThrow()
+  it('should reject when the response is not 2xx', () => {
+    const throwing = () => velogEnricher(ref, createContext({}))
+    const expected =
+      'Unexpected status 404 from https://v2.velog.io/graphql?query=%7Buser%28username%3A%22alice%22%29%7Bprofile%7Bthumbnail%7D%7D%7D'
+
+    expect(throwing()).rejects.toThrow(expected)
   })
 })

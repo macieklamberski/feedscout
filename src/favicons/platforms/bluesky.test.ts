@@ -102,21 +102,27 @@ describe('blueskyEnricher', () => {
     expect(await blueskyEnricher(userRef, context)).toEqual([])
   })
 
-  it('should reject when API returns invalid JSON', async () => {
+  it('should reject when API returns invalid JSON', () => {
     const context = createContext({ [userApiUrl]: 'not json' })
+    const throwing = () => blueskyEnricher(userRef, context)
 
-    await expect(blueskyEnricher(userRef, context)).rejects.toThrow()
+    expect(throwing()).rejects.toThrow('JSON Parse error: Unexpected identifier "not"')
   })
 
-  it('should reject when fetch throws', async () => {
+  it('should reject when fetch throws', () => {
     const fetchFn: FetchFn = () => {
       throw new Error('Network error')
     }
+    const throwing = () => blueskyEnricher(userRef, { fetchFn })
 
-    await expect(blueskyEnricher(userRef, { fetchFn })).rejects.toThrow()
+    expect(throwing()).rejects.toThrow('Network error')
   })
 
-  it('should reject when the response is not 2xx', async () => {
-    await expect(blueskyEnricher(userRef, createContext({}))).rejects.toThrow()
+  it('should reject when the response is not 2xx', () => {
+    const throwing = () => blueskyEnricher(userRef, createContext({}))
+    const expected =
+      'Unexpected status 404 from https://public.api.bsky.app/xrpc/app.bsky.actor.getProfile?actor=user.bsky.social'
+
+    expect(throwing()).rejects.toThrow(expected)
   })
 })

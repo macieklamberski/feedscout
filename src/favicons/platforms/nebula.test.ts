@@ -185,21 +185,27 @@ describe('nebulaEnricher', () => {
     expect(await nebulaEnricher(ref, context)).toEqual([])
   })
 
-  it('should reject when the content API returns invalid JSON', async () => {
+  it('should reject when the content API returns invalid JSON', () => {
     const context = createContext({ [apiUrl]: 'not-json' })
+    const throwing = () => nebulaEnricher(ref, context)
 
-    await expect(nebulaEnricher(ref, context)).rejects.toThrow()
+    expect(throwing()).rejects.toThrow('JSON Parse error: Unexpected identifier "not"')
   })
 
-  it('should reject when fetch throws', async () => {
+  it('should reject when fetch throws', () => {
     const fetchFn: FetchFn = () => {
       throw new Error('Network error')
     }
+    const throwing = () => nebulaEnricher(ref, { fetchFn })
 
-    await expect(nebulaEnricher(ref, { fetchFn })).rejects.toThrow()
+    expect(throwing()).rejects.toThrow('Network error')
   })
 
-  it('should reject when the response is not 2xx', async () => {
-    await expect(nebulaEnricher(ref, createContext({}))).rejects.toThrow()
+  it('should reject when the response is not 2xx', () => {
+    const throwing = () => nebulaEnricher(ref, createContext({}))
+    const expected =
+      'Unexpected status 404 from https://content.api.nebula.app/content/realengineering/'
+
+    expect(throwing()).rejects.toThrow(expected)
   })
 })

@@ -153,20 +153,22 @@ describe('gitlabEnricher', () => {
     expect(await gitlabEnricher(aliceRef, context)).toEqual([])
   })
 
-  it('should reject when API returns invalid JSON', async () => {
+  it('should reject when API returns invalid JSON', () => {
     const context = createContext({
       'https://gitlab.com/api/v4/users?username=alice': 'not-json',
     })
+    const throwing = () => gitlabEnricher(aliceRef, context)
 
-    await expect(gitlabEnricher(aliceRef, context)).rejects.toThrow()
+    expect(throwing()).rejects.toThrow('JSON Parse error: Unexpected identifier "not"')
   })
 
-  it('should reject when fetch throws', async () => {
+  it('should reject when fetch throws', () => {
     const fetchFn: FetchFn = () => {
       throw new Error('Network error')
     }
+    const throwing = () => gitlabEnricher(aliceRef, { fetchFn })
 
-    await expect(gitlabEnricher(aliceRef, { fetchFn })).rejects.toThrow()
+    expect(throwing()).rejects.toThrow('Network error')
   })
 
   it('should return empty array when the groups API does not know the name', async () => {
@@ -177,11 +179,14 @@ describe('gitlabEnricher', () => {
     expect(await gitlabEnricher(aliceRef, context)).toEqual([])
   })
 
-  it('should reject when the users API response is not 2xx', async () => {
-    await expect(gitlabEnricher(aliceRef, createContext({}))).rejects.toThrow()
+  it('should reject when the users API response is not 2xx', () => {
+    const throwing = () => gitlabEnricher(aliceRef, createContext({}))
+    const expected = 'Unexpected status 404 from https://gitlab.com/api/v4/users?username=alice'
+
+    expect(throwing()).rejects.toThrow(expected)
   })
 
-  it('should reject when the groups API fails with a status other than 404', async () => {
+  it('should reject when the groups API fails with a status other than 404', () => {
     const fetchFn: FetchFn = (url) => {
       const isUsersApi = url.includes('/users?')
 
@@ -192,7 +197,9 @@ describe('gitlabEnricher', () => {
         status: isUsersApi ? 200 : 500,
       }
     }
+    const throwing = () => gitlabEnricher(aliceRef, { fetchFn })
+    const expected = 'Unexpected status 500 from https://gitlab.com/api/v4/groups/alice'
 
-    await expect(gitlabEnricher(aliceRef, { fetchFn })).rejects.toThrow()
+    expect(throwing()).rejects.toThrow(expected)
   })
 })

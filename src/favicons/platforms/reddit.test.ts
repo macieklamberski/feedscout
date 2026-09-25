@@ -148,24 +148,29 @@ describe('redditEnricher', () => {
     expect(await redditEnricher(userRef, context)).toEqual([])
   })
 
-  it('should reject when API returns invalid JSON', async () => {
+  it('should reject when API returns invalid JSON', () => {
     const context = createContext({
       'https://www.reddit.com/r/javascript/about.json': 'not json',
     })
+    const throwing = () => redditEnricher(subredditRef, context)
 
-    await expect(redditEnricher(subredditRef, context)).rejects.toThrow()
+    expect(throwing()).rejects.toThrow('JSON Parse error: Unexpected identifier "not"')
   })
 
-  it('should reject when fetch throws', async () => {
+  it('should reject when fetch throws', () => {
     const fetchFn: FetchFn = () => {
       throw new Error('Network error')
     }
+    const throwing = () => redditEnricher(subredditRef, { fetchFn })
 
-    await expect(redditEnricher(subredditRef, { fetchFn })).rejects.toThrow()
+    expect(throwing()).rejects.toThrow('Network error')
   })
 
-  it('should reject when the response is not 2xx', async () => {
-    await expect(redditEnricher(subredditRef, createContext({}))).rejects.toThrow()
+  it('should reject when the response is not 2xx', () => {
+    const throwing = () => redditEnricher(subredditRef, createContext({}))
+    const expected = 'Unexpected status 404 from https://www.reddit.com/r/javascript/about.json'
+
+    expect(throwing()).rejects.toThrow(expected)
   })
 
   it('should fall back to icon_img when community_icon is not a string', async () => {

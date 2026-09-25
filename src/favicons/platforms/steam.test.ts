@@ -192,21 +192,27 @@ describe('steamEnricher', () => {
     expect(await steamEnricher(createRef('620'), context)).toEqual([])
   })
 
-  it('should reject when the API returns invalid JSON', async () => {
+  it('should reject when the API returns invalid JSON', () => {
     const context = createContext({ [apiUrl]: 'not json' })
+    const throwing = () => steamEnricher(createRef('620'), context)
 
-    await expect(steamEnricher(createRef('620'), context)).rejects.toThrow()
+    expect(throwing()).rejects.toThrow('JSON Parse error: Unexpected identifier "not"')
   })
 
-  it('should reject when fetch throws', async () => {
+  it('should reject when fetch throws', () => {
     const fetchFn: FetchFn = () => {
       throw new Error('Network error')
     }
+    const throwing = () => steamEnricher(createRef('620'), { fetchFn })
 
-    await expect(steamEnricher(createRef('620'), { fetchFn })).rejects.toThrow()
+    expect(throwing()).rejects.toThrow('Network error')
   })
 
-  it('should reject when the response is not 2xx', async () => {
-    await expect(steamEnricher(createRef('620'), createContext({}))).rejects.toThrow()
+  it('should reject when the response is not 2xx', () => {
+    const throwing = () => steamEnricher(createRef('620'), createContext({}))
+    const expected =
+      'Unexpected status 404 from https://api.steampowered.com/ICommunityService/GetApps/v1/?appids[0]=620'
+
+    expect(throwing()).rejects.toThrow(expected)
   })
 })
