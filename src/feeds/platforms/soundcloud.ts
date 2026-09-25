@@ -7,9 +7,10 @@ import { composeHint } from '../../common/utils.js'
 
 export type SoundcloudUrl = { kind: 'user'; username: string }
 
+export const hosts = ['soundcloud.com', 'www.soundcloud.com', 'm.soundcloud.com']
+
 const userIdRegex = /soundcloud:\/\/users:(\d+)/
 
-export const hosts = ['soundcloud.com', 'www.soundcloud.com', 'm.soundcloud.com']
 const excludedPaths = ['discover', 'stream', 'search', 'upload', 'you', 'settings', 'messages']
 
 const extractUserIdFromContent = (content: string): string | undefined => {

@@ -4,10 +4,10 @@ import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
+const hosts = ['www.v2ex.com', 'v2ex.com']
+
 const nodeRegex = /^\/go\/([^/]+)/
 const memberRegex = /^\/member\/([^/]+)/
-
-const hosts = ['www.v2ex.com', 'v2ex.com']
 
 export const v2exHandler: PlatformHandler = {
   match: (url) => {

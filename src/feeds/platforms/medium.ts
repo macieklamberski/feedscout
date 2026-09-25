@@ -12,14 +12,15 @@ export type MediumUrl =
   | { kind: 'publication'; publication: string; tag?: string }
   | { kind: 'subdomain'; subdomain: string; tag?: string }
 
+const domains = ['medium.com']
+export const hosts = ['medium.com', 'www.medium.com']
+
 const userRegex = /^\/@([^/]+)/
 const tagRegex = /^\/tag\/([^/]+)/
 const publicationTagRegex = /^\/([^/@][^/]+)\/tagged\/([^/]+)/
 const publicationRegex = /^\/([^/@][^/]+)/
 const subdomainTagRegex = /^\/tagged\/([^/]+)/
 
-const domains = ['medium.com']
-export const hosts = ['medium.com', 'www.medium.com']
 const excludedPaths = ['search', 'me', 'new-story', 'plans', 'membership', 'feed']
 // Their /feed answers 404 or redirects away from a feed.
 const excludedSubdomains = [

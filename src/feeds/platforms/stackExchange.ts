@@ -6,11 +6,6 @@ import { composeHint } from '../../common/utils.js'
 // Generic covers home, meta, question (html).
 // Handler needed for: collective, otherSite, tagged, user.
 
-const tagRegex = /^\/questions\/tagged\/([\w.+-]+)/
-const questionRegex = /^\/questions\/(\d+)/
-const userRegex = /^\/users\/(\d+)/
-const collectiveRegex = /^\/collectives\/([^/]+)/
-
 // Standalone domains from SE API: https://api.stackexchange.com/2.3/sites
 const domains = [
   'stackoverflow.com',
@@ -21,6 +16,11 @@ const domains = [
   'mathoverflow.net',
   'stackexchange.com',
 ]
+
+const tagRegex = /^\/questions\/tagged\/([\w.+-]+)/
+const questionRegex = /^\/questions\/(\d+)/
+const userRegex = /^\/users\/(\d+)/
+const collectiveRegex = /^\/collectives\/([^/]+)/
 
 // Sort values accepted by feeds.tag. Documented at api.stackexchange.com.
 const validSorts = ['newest', 'active', 'votes', 'creation', 'hot', 'week', 'month']

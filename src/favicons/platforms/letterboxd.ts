@@ -5,12 +5,12 @@ import { parseLetterboxdUrl } from '../../feeds/platforms/letterboxd.js'
 import type { FaviconEnricher } from '../types.js'
 import { getResponseText } from '../utils.js'
 
-const platform = 'letterboxd'
-
 const gravatarHosts = ['gravatar.com', 'secure.gravatar.com']
 
 // Resized avatars carry the crop box in the file name, e.g. `-0-48-0-48-crop.jpg`.
 const cropRegex = /-0-\d+-0-\d+-crop\./
+
+const platform = 'letterboxd'
 
 // Member pages link the member's own avatar to their profile root, while avatars of other
 // members on the same page link elsewhere.

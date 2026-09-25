@@ -4,9 +4,9 @@ import { parseOdyseeUrl } from '../../feeds/platforms/odysee.js'
 import type { FaviconEnricher } from '../types.js'
 import { parseResponseJson } from '../utils.js'
 
-const platform = 'odysee'
-
 const apiUrl = 'https://api.na-backend.odysee.com/api/v1/proxy?m=resolve'
+
+const platform = 'odysee'
 
 const getChannel = (url: string): string | undefined => {
   const parsed = parseOdyseeUrl(url)

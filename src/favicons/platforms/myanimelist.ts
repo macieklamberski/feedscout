@@ -5,9 +5,9 @@ import { parseMyanimelistUrl } from '../../feeds/platforms/myanimelist.js'
 import type { FaviconEnricher } from '../types.js'
 import { getResponseText } from '../utils.js'
 
-const platform = 'myanimelist'
-
 const userImageRegex = /^https:\/\/cdn\.myanimelist\.net\/s\/common\/userimages\//
+
+const platform = 'myanimelist'
 
 // A user without an avatar gets a "No Picture" block and no image.
 const parseAvatar = (html: string): Array<string> => {

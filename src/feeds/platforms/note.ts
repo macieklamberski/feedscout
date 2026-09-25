@@ -12,6 +12,11 @@ export type NoteUrl =
   | { kind: 'user'; username: string }
 
 export const hosts = ['note.com', 'www.note.com']
+
+// A hashtag page redirects to `/tag/{tag}`, and the feed stays under `/hashtag`.
+const hashtagRegex = /^\/(?:hashtag|tag)\/([^/]+)/
+const magazineRegex = /^\/([^/]+)\/m\/([^/]+)/
+
 export const excludedPaths = [
   'about',
   'api',
@@ -30,9 +35,6 @@ export const excludedPaths = [
   'signup',
   'terms',
 ]
-// A hashtag page redirects to `/tag/{tag}`, and the feed stays under `/hashtag`.
-const hashtagRegex = /^\/(?:hashtag|tag)\/([^/]+)/
-const magazineRegex = /^\/([^/]+)\/m\/([^/]+)/
 
 export const parseNoteUrl = (url: string): NoteUrl | undefined => {
   const parsedUrl = parseUrl(url)

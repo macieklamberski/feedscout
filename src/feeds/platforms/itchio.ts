@@ -9,6 +9,16 @@ import { composeHint } from '../../common/utils.js'
 
 const domains = ['itch.io']
 const mainHosts = ['itch.io', 'www.itch.io']
+
+const byUserRegex = /^\/games\/by-([^/]+)/
+const tagRegex = /^\/games\/tag-([^/]+)/
+const platformRegex = /^\/games\/platform-([^/.]+)/
+const genreRegex = /^\/games\/genre-([^/.]+)/
+const madeWithRegex = /^\/games\/made-with-([^/.]+)/
+const sortRegex = /^\/games\/([^/.]+)/
+const sectionRegex = /^\/([^/.]+)/
+const gameRegex = /^\/([^/]+)/
+
 const sections = [
   'tools',
   'game-assets',
@@ -19,15 +29,6 @@ const sections = [
   'misc',
 ]
 const sorts = ['newest', 'top-rated', 'top-sellers', 'on-sale', 'free']
-
-const byUserRegex = /^\/games\/by-([^/]+)/
-const tagRegex = /^\/games\/tag-([^/]+)/
-const platformRegex = /^\/games\/platform-([^/.]+)/
-const genreRegex = /^\/games\/genre-([^/.]+)/
-const madeWithRegex = /^\/games\/made-with-([^/.]+)/
-const sortRegex = /^\/games\/([^/.]+)/
-const sectionRegex = /^\/([^/.]+)/
-const gameRegex = /^\/([^/]+)/
 
 export const itchioHandler: PlatformHandler = {
   match: (url) => {

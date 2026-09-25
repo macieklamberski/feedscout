@@ -4,12 +4,12 @@ import { parseArenaUrl } from '../../feeds/platforms/arena.js'
 import type { FaviconEnricher } from '../types.js'
 import { parseResponseJson } from '../utils.js'
 
-const platform = 'arena'
-
 // Accounts without an avatar get the site-wide og-image.png on the profile page
 // and an empty `display` in the API, neither of which is on this host.
 const largeAvatarRegex = /^https:\/\/static\.avatars\.are\.na\/\d+\/large_/
 const mediumAvatarRegex = /^(https:\/\/static\.avatars\.are\.na\/\d+\/)medium_/
+
+const platform = 'arena'
 
 export const arenaHandler: PlatformHandler = {
   match: (url) => {

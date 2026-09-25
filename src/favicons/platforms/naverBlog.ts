@@ -5,13 +5,13 @@ import { parseNaverBlogUrl } from '../../feeds/platforms/naverBlog.js'
 import type { FaviconEnricher } from '../types.js'
 import { getResponseText } from '../utils.js'
 
-const platform = 'naverBlog'
-
 // The desktop blog.naver.com page is a frameset without og:image.
 const mobileHost = 'm.blog.naver.com'
 
 // A blog that does not exist carries the generic ssl.pstatic.net/static/blog/icon/og_270x270.png.
 const profileImageHosts = ['blogpfthumb-phinf.pstatic.net']
+
+const platform = 'naverBlog'
 
 const getProfileImage = (content: string): string | undefined => {
   const image = getMetaContent(content, 'og:image')

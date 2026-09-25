@@ -5,12 +5,12 @@ import { parseVelogUrl } from '../../feeds/platforms/velog.js'
 import type { FaviconEnricher } from '../types.js'
 import { parseResponseJson } from '../utils.js'
 
-const platform = 'velog'
-
 const imageHosts = ['images.velog.io', 'velog.velcdn.com']
 
 // Velog shows this image for every user who has not uploaded an avatar.
 const placeholderRegex = /\/images\/user-thumbnail\.png$/
+
+const platform = 'velog'
 
 const getSquareAvatar = (value: unknown): string | undefined => {
   if (!isNonEmptyString(value) || placeholderRegex.test(value) || !isHostOf(value, imageHosts)) {

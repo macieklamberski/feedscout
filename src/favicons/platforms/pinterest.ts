@@ -5,10 +5,10 @@ import { parsePinterestUrl } from '../../feeds/platforms/pinterest.js'
 import type { FaviconEnricher } from '../types.js'
 import { getResponseText } from '../utils.js'
 
-const platform = 'pinterest'
-
 // A user without an avatar gets the generic s.pinimg.com/images/user/default_280.png.
 const defaultAvatarRegex = /\/images\/user\/default_/
+
+const platform = 'pinterest'
 
 const findProfileImage = (content: string, username: string): string | undefined => {
   const json = getScriptText(content, '__PWS_INITIAL_PROPS__')

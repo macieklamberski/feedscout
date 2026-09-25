@@ -7,10 +7,6 @@ import { composeHint } from '../../common/utils.js'
 // Generic partly covers blog, community, tag, tildePath, userPath, usersHost.
 
 const domains = ['livejournal.com']
-const wwwUsersPathRegex = /^\/(?:users\/|~)([^/]+)/
-const legacyUserPathRegex = /^\/([^/]+)/
-const tagRegex = /^\/tag\/([^/]+)/
-
 const wwwHosts = ['www.livejournal.com']
 const legacyUserHosts = ['users.livejournal.com', 'community.livejournal.com']
 const reservedHosts = [
@@ -20,6 +16,10 @@ const reservedHosts = [
   'community.livejournal.com',
   'syndicated.livejournal.com',
 ]
+
+const wwwUsersPathRegex = /^\/(?:users\/|~)([^/]+)/
+const legacyUserPathRegex = /^\/([^/]+)/
+const tagRegex = /^\/tag\/([^/]+)/
 
 // Dreamwidth and InsaneJournal run the LiveJournal engine, so a journal on any of them serves
 // the same feeds, plus a tag's feeds on a tag page.

@@ -10,13 +10,14 @@ export type GithubUrl =
   | { kind: 'user'; owner: string }
   | { kind: 'repo'; owner: string; repo: string }
 
+const hosts = ['github.com', 'www.github.com']
+
 const wikiRegex = /\/wiki(\/|$)/
 const discussionsRegex = /\/discussions(\/|$)/
 const discussionCategoryRegex = /\/discussions\/categories\/([^/]+)/
 const branchRegex = /^\/[^/]+\/[^/]+\/tree\/([^/]+)\/?$/
 const fileRegex = /^\/[^/]+\/[^/]+\/(?:blob|commits)\/([^/]+)\/(.+)/
 
-const hosts = ['github.com', 'www.github.com']
 const excludedPaths = [
   'about',
   'account',

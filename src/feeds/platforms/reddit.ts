@@ -18,12 +18,13 @@ export type RedditUrl =
   | { kind: 'multireddit'; username: string; multireddit: string }
   | { kind: 'domain'; domain: string }
 
+export const hosts = ['reddit.com', 'www.reddit.com', 'old.reddit.com', 'new.reddit.com']
+
 const subredditsRegex = /^\/(?:subreddits|reddits)(?:\/(new|popular))?/
 // Stops at a dot, so a feed URL like /r/{sub}.rss or /user/{user}/submitted.rss yields the
 // name and the section.
 const nameRegex = /^[^.]+/
 
-export const hosts = ['reddit.com', 'www.reddit.com', 'old.reddit.com', 'new.reddit.com']
 const sortOptions = ['hot', 'new', 'rising', 'controversial', 'top', 'best']
 const timeOptions = ['hour', 'day', 'week', 'month', 'year', 'all']
 const timeFilteredSorts = ['top', 'controversial']

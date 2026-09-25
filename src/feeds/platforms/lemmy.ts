@@ -9,6 +9,8 @@ import { composeHint, findElement, hasClass, hasMetaContent } from '../../common
 export type LemmyUrl = { kind: 'community'; community: string } | { kind: 'user'; username: string }
 
 const lemmyPoweredByRegex = /lemmy/i
+const numericRegex = /^\d+$/
+
 const homePaths = ['/', '/home']
 const validSorts = [
   'Active',
@@ -31,8 +33,6 @@ const validSorts = [
   'MostComments',
   'NewComments',
 ]
-
-const numericRegex = /^\d+$/
 
 const getQuerySuffix = (searchParams: URLSearchParams): string => {
   const params = new URLSearchParams()

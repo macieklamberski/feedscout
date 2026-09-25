@@ -11,12 +11,13 @@ export type GithubGistUrl =
   | { kind: 'starred'; username: string }
   | { kind: 'forks'; username: string }
 
-const discoverRegex = /^\/discover\/?$/
-
 const hosts = ['gist.github.com']
+
+const discoverRegex = /^\/discover\/?$/
+const feedSuffixRegex = /\.atom$/
+
 const excludedPaths = ['discover', 'search', 'login', 'join', 'settings']
 const forksSections = ['forks', 'forked']
-const feedSuffixRegex = /\.atom$/
 
 // A gist page, /{username}/{gist-id}, and the /public and /secret listings belong to the
 // user's gists.
