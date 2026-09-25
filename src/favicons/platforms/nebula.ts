@@ -4,9 +4,9 @@ import { parseNebulaUrl } from '../../feeds/platforms/nebula.js'
 import type { FaviconEnricher } from '../types.js'
 import { parseResponseJson } from '../utils.js'
 
-const queryDataRegex = /window\.__QUERY_DATA__\s*=\s*(\{.*?\});?\s*<\/script>/s
-
 const platform = 'nebula'
+
+const queryDataRegex = /window\.__QUERY_DATA__\s*=\s*(\{.*?\});?\s*<\/script>/s
 
 // biome-ignore lint/suspicious/noExplicitAny: Channel JSON from the page or the content API.
 const getAvatar = (channel: any): string | undefined => {

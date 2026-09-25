@@ -5,10 +5,10 @@ import { isPixelfedHtml, parsePixelfedUrl } from '../../feeds/platforms/pixelfed
 import type { FaviconEnricher } from '../types.js'
 import { parseResponseJson } from '../utils.js'
 
+const platform = 'pixelfed'
+
 // An account without an uploaded avatar carries /storage/avatars/default.jpg or default.png.
 const defaultAvatarRegex = /\/avatars\/default\.[a-z]+(?:\?|$)/
-
-const platform = 'pixelfed'
 
 const isAvatar = (value: unknown): value is string => {
   return isNonEmptyString(value) && !defaultAvatarRegex.test(value)

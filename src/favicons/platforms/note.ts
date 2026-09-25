@@ -4,10 +4,10 @@ import { excludedPaths, parseNoteUrl } from '../../feeds/platforms/note.js'
 import type { FaviconEnricher } from '../types.js'
 import { parseResponseJson } from '../utils.js'
 
+const platform = 'note'
+
 // The page payload is a JSON string inside `self.__next_f.push`, so its quotes arrive escaped.
 const profileImageUrlRegex = /profileImageUrl\\?":\\?"((?:[^"\\]|\\u[\da-f]{4})+)/i
-
-const platform = 'note'
 
 const getOwner = (url: string): string | undefined => {
   const parsed = parseNoteUrl(url)
