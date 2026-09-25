@@ -155,6 +155,10 @@ describe('hatenaBookmarkHandler', () => {
       expect(hatenaBookmarkHandler.resolve(`${base}/Hotentry/IT`)).toEqual(expected)
     })
 
+    it('should return hot entries for an unknown category page', () => {
+      expect(hatenaBookmarkHandler.resolve(`${base}/hotentry/Foo`)).toEqual(hotEntries)
+    })
+
     it('should return new entries for the entrylist page', () => {
       const expected = [
         {

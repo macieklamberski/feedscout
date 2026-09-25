@@ -21,6 +21,19 @@ const userRegex = /^\/([a-zA-Z][a-zA-Z0-9_-]{1,30}[a-zA-Z0-9])(?:\.rss)?(?:\/|$)
 
 const bookmarkLists = ['hotentry', 'entrylist']
 
+const categories = [
+  'all',
+  'economics',
+  'entertainment',
+  'fun',
+  'game',
+  'general',
+  'it',
+  'knowledge',
+  'life',
+  'social',
+]
+
 const searchTypes = ['tag', 'text', 'title']
 
 // Reserved first segments that are site sections, not usernames.
@@ -78,11 +91,12 @@ export const hatenaBookmarkHandler: PlatformHandler = {
 
     // Hot and new entry listings, site-wide or per category.
     if (listMatch?.[1]) {
-      const [, rawList, category] = listMatch
+      const [, rawList, rawCategory] = listMatch
       const list = getAnyOf(rawList, bookmarkLists)
+      const category = getAnyOf(rawCategory, categories)
       const isHot = list === 'hotentry'
-      // Hatena's category slugs are lowercase and not listed anywhere to match against.
-      const suffix = category ? `/${category.toLowerCase()}` : ''
+      // An unknown category falls back to the whole list.
+      const suffix = category ? `/${category}` : ''
 
       return [
         {
