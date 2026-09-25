@@ -43,15 +43,6 @@ export const isOfAllowedMimeType = (
   return isAnyOf(type, allowedTypes, normalizeMimeType)
 }
 
-// A path segment arrives percent-encoded, so it is decoded before going into a query value.
-export const decodePathSegment = (segment: string): string => {
-  try {
-    return decodeURIComponent(segment)
-  } catch {}
-
-  return segment
-}
-
 // Contents of every meta tag in the page, keyed by its lowercased name or property attribute.
 type MetaContents = Record<string, Array<string>>
 
@@ -146,39 +137,21 @@ export const processConcurrently = async <T>(
     shouldStop?: () => boolean
   },
 ): Promise<void> => {
-  // Guard against < 1 and non-numeric (NaN) concurrency, which would otherwise
-  // spin the loop forever since `active.size < NaN` is always false.
-  if (!(options.concurrency >= 1)) {
-    return
-  }
-
-  const active = new Set<Promise<void>>()
-
   let index = 0
 
-  while (index < items.length || active.size > 0) {
-    if (options.shouldStop?.()) {
-      break
-    }
-
-    // Fill up active slots.
-    while (active.size < options.concurrency && index < items.length) {
+  const runWorker = async (): Promise<void> => {
+    while (index < items.length && !options.shouldStop?.()) {
       const item = items[index++]
 
-      const promise = processFn(item)
-        .catch(() => {
-          // Swallow errors - let processFn handle its own error logic.
-        })
-        .finally(() => {
-          active.delete(promise)
-        })
-
-      active.add(promise)
-    }
-
-    // Wait for at least one to complete.
-    if (active.size > 0) {
-      await Promise.race(active)
+      // processFn reports its own errors, so one failure does not stop the others.
+      try {
+        await processFn(item)
+      } catch {}
     }
   }
+
+  // A concurrency below 1 or NaN yields no workers, so nothing runs.
+  const workerCount = Math.min(options.concurrency, items.length)
+
+  await Promise.all(Array.from({ length: workerCount }, runWorker))
 }

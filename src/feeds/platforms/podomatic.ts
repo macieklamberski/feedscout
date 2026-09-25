@@ -1,11 +1,10 @@
-import { isHostOf, isSubdomainOf, parseUrl } from 'trousse'
+import { getSubdomain, isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Unmeasured, podomatic.com no longer resolves in DNS, from any resolver.
 
 const hosts = ['podomatic.com', 'www.podomatic.com']
-const domainSuffixRegex = /\.podomatic\.com$/i
 const directoryPathRegex = /^\/podcasts\/([^/]+)/
 const excludedSubdomains = ['www', 'api', 'assets', 'static']
 
@@ -16,17 +15,17 @@ const getShow = (url: string): string | undefined => {
     return
   }
 
-  const { hostname, pathname } = parsedUrl
+  const { pathname } = parsedUrl
 
   if (isHostOf(url, hosts)) {
     return pathname.match(directoryPathRegex)?.[1]
   }
 
-  if (!isSubdomainOf(url, 'podomatic.com')) {
+  const subdomain = getSubdomain(url, 'podomatic.com')
+
+  if (!subdomain) {
     return
   }
-
-  const subdomain = hostname.replace(domainSuffixRegex, '')
 
   return excludedSubdomains.includes(subdomain) ? undefined : subdomain
 }

@@ -1,5 +1,5 @@
 import type { Atom } from 'feedsmith'
-import { isObject } from 'trousse'
+import { isHttpUrl, isObject, parseUrl } from 'trousse'
 import locales from '../locales.json' with { type: 'json' }
 import type {
   DiscoverErrorContext,
@@ -118,26 +118,46 @@ export const attempt = <TValue, TFallback>(
   }
 }
 
+// A URI that parses with another scheme, such as a `javascript:` or `mailto:` link, cannot be
+// fetched. One that does not parse is kept as discovered, as a resolver that answers nothing
+// leaves it.
+const isFetchableUri = (uri: string): boolean => {
+  return !parseUrl(uri) || isHttpUrl(uri)
+}
+
 export const normalizeUriEntry = (
   entry: DiscoverUriEntry,
   resolveUrlFn: DiscoverResolveUrlFn,
   baseUrl: string | undefined,
   onError?: DiscoverOnErrorFn,
-): DiscoverUriEntry => {
+): DiscoverUriEntry | undefined => {
   const { uri } = entry
 
   if (typeof uri === 'string') {
+    const resolvedUri = attempt(() => resolveUrlFn(uri, baseUrl), uri, 'resolveUrlFn', onError)
+
+    if (!isFetchableUri(resolvedUri)) {
+      return
+    }
+
     return {
       ...entry,
-      uri: attempt(() => resolveUrlFn(uri, baseUrl), uri, 'resolveUrlFn', onError),
+      uri: resolvedUri,
     }
+  }
+
+  const resolvedUris = uri.map((alternative) => {
+    return attempt(() => resolveUrlFn(alternative, baseUrl), alternative, 'resolveUrlFn', onError)
+  })
+  const fetchableUris = resolvedUris.filter(isFetchableUri)
+
+  if (fetchableUris.length === 0) {
+    return
   }
 
   return {
     ...entry,
-    uri: uri.map((alternative) => {
-      return attempt(() => resolveUrlFn(alternative, baseUrl), alternative, 'resolveUrlFn', onError)
-    }),
+    uri: fetchableUris,
   }
 }
 

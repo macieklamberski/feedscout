@@ -59,6 +59,8 @@ type DiscoverResolveUrlFn = (url: string, baseUrl: string | undefined) => string
 
 Return `undefined` when the URL cannot be resolved. Feedscout then keeps the URL as discovered. The same happens when the function throws, and the error is reported to `onError`, so a malformed `href` on a page does not stop discovery.
 
+A resolved URL with a scheme other than `http` or `https`, such as a `javascript:` or `mailto:` link, is dropped, since it cannot be fetched. The Guess method finds nothing on a page without an http origin, such as a saved `file:` page, since the URLs it builds start from that origin.
+
 ## Use Cases
 
 ### Removing Query Parameters

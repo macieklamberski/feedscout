@@ -1,10 +1,8 @@
-import { isAnyOf, isSubdomainOf } from 'trousse'
+import { getSubdomain, isAnyOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
-
-const domainSuffixRegex = /\.podbean\.com$/i
 
 // Reserved Podbean subdomains that aren't user shows. Without this guard, hitting
 // podbean.com corporate/infra hosts produces feed.podbean.com/{reserved}/feed.xml
@@ -13,18 +11,17 @@ const reservedSlugs = ['www', 'feed', 'pbcdn1', 'sponsorship', 'podads', 'help',
 
 export const podbeanHandler: PlatformHandler = {
   match: (url) => {
-    if (!isSubdomainOf(url, 'podbean.com')) {
+    const slug = getSubdomain(url, 'podbean.com')
+
+    if (!slug) {
       return false
     }
-
-    const slug = new URL(url).hostname.replace(domainSuffixRegex, '')
 
     return !isAnyOf(slug, reservedSlugs)
   },
 
   resolve: (url) => {
-    const { hostname } = new URL(url)
-    const slug = hostname.replace(domainSuffixRegex, '')
+    const slug = getSubdomain(url, 'podbean.com')
 
     return [
       {

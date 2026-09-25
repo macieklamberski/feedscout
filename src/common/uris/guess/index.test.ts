@@ -110,10 +110,18 @@ describe('discoverUrisFromGuess', () => {
     expect(value).toEqual(expected)
   })
 
-  it('should throw for invalid base URL', () => {
-    const throwing = () => discoverUrisFromGuess({ baseUrl: 'not-a-url', uris: ['/feed'] })
+  it('should return empty array for invalid base URL', () => {
+    expect(discoverUrisFromGuess({ baseUrl: 'not-a-url', uris: ['/feed'] })).toEqual([])
+  })
 
-    expect(throwing).toThrow(TypeError)
+  it('should return empty array for a base URL without an http origin', () => {
+    const value = discoverUrisFromGuess({
+      baseUrl: 'file:///Users/alice/saved.html',
+      uris: ['/feed', 'feed'],
+      maxAncestorDepth: 2,
+    })
+
+    expect(value).toEqual([])
   })
 
   it('should not probe ancestor paths by default', () => {
