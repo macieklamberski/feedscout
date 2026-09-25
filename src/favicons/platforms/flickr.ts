@@ -1,9 +1,11 @@
-import { isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { type Element, findElement, hasClass } from '../../common/utils.js'
-import { hosts } from '../../feeds/platforms/flickr.js'
+import type { FlickrUrl } from '../../feeds/platforms/flickr.js'
+import { parseFlickrUrl } from '../../feeds/platforms/flickr.js'
 
-const profileRegex = /^\/photos\/([^/]+)(?:\/favorites)?\/?$/
+// Pages that show the owner's avatar. Tag pages carry other users' icons, and single photo
+// and album pages carry none.
+const ownerKinds: Array<FlickrUrl['kind']> = ['photostream', 'favorites', 'albums', 'galleries']
 const buddyiconRegex = /background-image:\s*url\(\s*["']?(\/\/[^)"'#]+\/buddyicons\/[^)"'#]+)/
 
 const isOwnerAvatar = (element: Element): boolean => {
@@ -12,16 +14,9 @@ const isOwnerAvatar = (element: Element): boolean => {
 
 export const flickrHandler: PlatformHandler = {
   match: (url) => {
-    const parsedUrl = parseUrl(url)
+    const parsed = parseFlickrUrl(url)
 
-    if (!parsedUrl || !isHostOf(url, hosts)) {
-      return false
-    }
-
-    const match = parsedUrl.pathname.match(profileRegex)
-
-    // Tag pages carry other users' icons, never an owner's.
-    return !!match?.[1] && match[1] !== 'tags'
+    return parsed !== undefined && ownerKinds.includes(parsed.kind)
   },
 
   resolve: (_url, content) => {

@@ -1,20 +1,82 @@
 import { describe, expect, it } from 'bun:test'
-import { blueskyHandler } from './bluesky.js'
+import type { BlueskyUrl } from './bluesky.js'
+import { blueskyHandler, parseBlueskyUrl } from './bluesky.js'
+
+describe('parseBlueskyUrl', () => {
+  it('should return the handle for a profile page', () => {
+    const expected: BlueskyUrl = { kind: 'profile', handle: 'user.bsky.social' }
+
+    expect(parseBlueskyUrl('https://bsky.app/profile/user.bsky.social')).toEqual(expected)
+  })
+
+  it('should return a custom domain handle', () => {
+    const expected: BlueskyUrl = { kind: 'profile', handle: 'example.com' }
+
+    expect(parseBlueskyUrl('https://bsky.app/profile/example.com')).toEqual(expected)
+  })
+
+  it('should return a DID handle', () => {
+    const expected: BlueskyUrl = { kind: 'profile', handle: 'did:plc:z72i7hdynmk6r22z27h6tvur' }
+
+    expect(parseBlueskyUrl('https://bsky.app/profile/did:plc:z72i7hdynmk6r22z27h6tvur')).toEqual(
+      expected,
+    )
+  })
+
+  it('should return the handle for a post page', () => {
+    const expected: BlueskyUrl = { kind: 'profile', handle: 'user.bsky.social' }
+
+    expect(parseBlueskyUrl('https://bsky.app/profile/user.bsky.social/post/123')).toEqual(expected)
+  })
+
+  it('should return the handle for a profile subpage', () => {
+    const expected: BlueskyUrl = { kind: 'profile', handle: 'user.bsky.social' }
+
+    expect(parseBlueskyUrl('https://bsky.app/profile/user.bsky.social/followers')).toEqual(expected)
+  })
+
+  it('should return the handle for the www host', () => {
+    const expected: BlueskyUrl = { kind: 'profile', handle: 'user.bsky.social' }
+
+    expect(parseBlueskyUrl('https://www.bsky.app/profile/user.bsky.social')).toEqual(expected)
+  })
+
+  it('should return undefined for a profile path without a handle', () => {
+    expect(parseBlueskyUrl('https://bsky.app/profile')).toBeUndefined()
+    expect(parseBlueskyUrl('https://bsky.app/profile/')).toBeUndefined()
+  })
+
+  it('should return undefined for an uppercase profile prefix', () => {
+    expect(parseBlueskyUrl('https://bsky.app/Profile/user.bsky.social')).toBeUndefined()
+    expect(parseBlueskyUrl('https://bsky.app/PROFILE/user.bsky.social')).toBeUndefined()
+  })
+
+  it('should return undefined for non-profile paths', () => {
+    expect(parseBlueskyUrl('https://bsky.app/about')).toBeUndefined()
+    expect(parseBlueskyUrl('https://bsky.app/settings')).toBeUndefined()
+  })
+
+  it('should return undefined for the homepage', () => {
+    expect(parseBlueskyUrl('https://bsky.app/')).toBeUndefined()
+  })
+
+  it('should return undefined for another host', () => {
+    expect(parseBlueskyUrl('https://example.com/profile/user')).toBeUndefined()
+  })
+
+  it('should return undefined for an invalid URL', () => {
+    expect(parseBlueskyUrl('not-a-url')).toBeUndefined()
+  })
+})
 
 describe('blueskyHandler', () => {
   describe('match', () => {
-    const values: Array<[boolean, string]> = [
-      [true, 'https://bsky.app/profile/user.bsky.social'],
-      [true, 'https://www.bsky.app/profile/user.bsky.social'],
-      [false, 'https://twitter.com/user'],
-    ]
-
-    it.each(values)('should return %s for %s', (expected, url) => {
-      expect(blueskyHandler.match(url)).toBe(expected)
+    it('should match any Bluesky URL', () => {
+      expect(blueskyHandler.match('https://bsky.app/profile/user.bsky.social')).toBe(true)
     })
 
-    it('should return false for invalid URL', () => {
-      expect(blueskyHandler.match('not-a-url')).toBe(false)
+    it('should not match other hosts', () => {
+      expect(blueskyHandler.match('https://example.com/user')).toBe(false)
     })
   })
 
@@ -31,76 +93,8 @@ describe('blueskyHandler', () => {
       expect(blueskyHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should handle custom domain handles', () => {
-      const value = 'https://bsky.app/profile/example.com'
-      const expected = [
-        {
-          uri: 'https://bsky.app/profile/example.com/rss',
-          hint: { key: 'bluesky:posts', label: 'Posts' },
-        },
-      ]
-
-      expect(blueskyHandler.resolve(value)).toEqual(expected)
-    })
-
-    it('should handle DID-based profile URLs', () => {
-      const value = 'https://bsky.app/profile/did:plc:z72i7hdynmk6r22z27h6tvur'
-      const expected = [
-        {
-          uri: 'https://bsky.app/profile/did:plc:z72i7hdynmk6r22z27h6tvur/rss',
-          hint: { key: 'bluesky:posts', label: 'Posts' },
-        },
-      ]
-
-      expect(blueskyHandler.resolve(value)).toEqual(expected)
-    })
-
-    it('should return empty array for non-profile paths', () => {
-      const value = 'https://bsky.app/about'
-
-      expect(blueskyHandler.resolve(value)).toEqual([])
-    })
-
-    it('should return empty array for /profile/ without handle', () => {
-      const value = 'https://bsky.app/profile/'
-
-      expect(blueskyHandler.resolve(value)).toEqual([])
-    })
-
-    it('should resolve /profile/user/post/123 using first segment as handle', () => {
-      const value = 'https://bsky.app/profile/user.bsky.social/post/123'
-      const expected = [
-        {
-          uri: 'https://bsky.app/profile/user.bsky.social/rss',
-          hint: { key: 'bluesky:posts', label: 'Posts' },
-        },
-      ]
-
-      expect(blueskyHandler.resolve(value)).toEqual(expected)
-    })
-
-    it('should resolve /profile/user/followers using first segment as handle', () => {
-      const value = 'https://bsky.app/profile/user.bsky.social/followers'
-      const expected = [
-        {
-          uri: 'https://bsky.app/profile/user.bsky.social/rss',
-          hint: { key: 'bluesky:posts', label: 'Posts' },
-        },
-      ]
-
-      expect(blueskyHandler.resolve(value)).toEqual(expected)
-    })
-
-    it('should return native RSS feed URL for www profile', () => {
-      const value = 'https://www.bsky.app/profile/user.bsky.social'
-      const expected = [
-        {
-          uri: 'https://bsky.app/profile/user.bsky.social/rss',
-          hint: { key: 'bluesky:posts', label: 'Posts' },
-        },
-      ]
-
-      expect(blueskyHandler.resolve(value)).toEqual(expected)
+    it('should return empty array when the URL names no profile', () => {
+      expect(blueskyHandler.resolve('https://bsky.app/about')).toEqual([])
     })
   })
 })

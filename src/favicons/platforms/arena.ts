@@ -1,7 +1,6 @@
-import { isAnyOf, isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getMetaContent } from '../../common/utils.js'
-import { excludedPaths, hosts } from '../../feeds/platforms/arena.js'
+import { parseArenaUrl } from '../../feeds/platforms/arena.js'
 import type { FaviconEnricher } from '../types.js'
 import { parseResponseJson } from '../utils.js'
 
@@ -12,43 +11,21 @@ const platform = 'arena'
 const largeAvatarRegex = /^https:\/\/static\.avatars\.are\.na\/\d+\/large_/
 const mediumAvatarRegex = /^(https:\/\/static\.avatars\.are\.na\/\d+\/)medium_/
 
-const getPathSegments = (url: string): Array<string> | undefined => {
-  const parsedUrl = parseUrl(url)
-
-  if (!parsedUrl || !isHostOf(url, hosts)) {
-    return
-  }
-
-  const segments = parsedUrl.pathname.split('/').filter(Boolean)
-
-  if (segments.length === 0 || segments.length > 2) {
-    return
-  }
-
-  if (segments[0] === 'editorial' || isAnyOf(segments[0], excludedPaths)) {
-    return
-  }
-
-  return segments
-}
-
 export const arenaHandler: PlatformHandler = {
   match: (url) => {
-    return !!getPathSegments(url)
+    return parseArenaUrl(url) !== undefined
   },
 
   resolve: (url, content) => {
-    const segments = getPathSegments(url)
-
-    if (!segments) {
-      return []
-    }
-
-    const [username, channel] = segments
+    const parsed = parseArenaUrl(url)
 
     // The og:image of a channel page is one of its blocks, not the owner's avatar.
-    if (channel) {
-      return [{ platform, id: `${username}/${channel}`, url }]
+    if (parsed?.kind === 'channel') {
+      return [{ platform, id: `${parsed.username}/${parsed.channel}`, url }]
+    }
+
+    if (parsed?.kind !== 'profile') {
+      return []
     }
 
     const image = content ? getMetaContent(content, 'og:image') : undefined

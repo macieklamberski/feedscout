@@ -52,32 +52,8 @@ describe('goodreadsHandler', () => {
       expect(goodreadsHandler.match(value)).toBe(true)
     })
 
-    it('should match a user page without a slug', () => {
-      expect(goodreadsHandler.match('https://www.goodreads.com/user/show/1')).toBe(true)
-    })
-
-    it('should match a user page on the bare host', () => {
-      expect(goodreadsHandler.match('https://goodreads.com/user/show/1')).toBe(true)
-    })
-
     it('should not match a review list page', () => {
       expect(goodreadsHandler.match('https://www.goodreads.com/review/list/1')).toBe(false)
-    })
-
-    it('should not match an author page', () => {
-      expect(goodreadsHandler.match('https://www.goodreads.com/author/show/1.Example')).toBe(false)
-    })
-
-    it('should not match a user page with a non-numeric id', () => {
-      expect(goodreadsHandler.match('https://www.goodreads.com/user/show/example')).toBe(false)
-    })
-
-    it('should not match other hosts', () => {
-      expect(goodreadsHandler.match('https://example.com/user/show/1')).toBe(false)
-    })
-
-    it('should not match invalid URLs', () => {
-      expect(goodreadsHandler.match('not-a-url')).toBe(false)
     })
   })
 

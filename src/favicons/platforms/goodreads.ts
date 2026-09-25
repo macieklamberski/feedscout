@@ -1,7 +1,6 @@
-import { getPathSegments, isHostOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement, getMetaContent, hasClass } from '../../common/utils.js'
-import { hosts, parseUserId } from '../../feeds/platforms/goodreads.js'
+import { parseGoodreadsUrl } from '../../feeds/platforms/goodreads.js'
 import type { FaviconEnricher } from '../types.js'
 import { getResponseText } from '../utils.js'
 
@@ -10,20 +9,6 @@ const platform = 'goodreads'
 // Avatars carry a size token before the file name, e.g. `1506617226p5/1.jpg`: p8 is the largest.
 const sizeTokenRegex = /(\/\d+)p\d\//
 const placeholderRegex = /\/nophoto\//
-
-const getUserId = (url: string): string | undefined => {
-  if (!isHostOf(url, hosts)) {
-    return
-  }
-
-  const [section, action, segment] = getPathSegments(url)
-
-  if (section !== 'user' || action !== 'show' || !segment) {
-    return
-  }
-
-  return parseUserId(segment)?.toString()
-}
 
 // Users without a photo get a silhouette from s.gr-assets.com/assets/nophoto/.
 const parseAvatar = (html: string): Array<string> => {
@@ -44,19 +29,21 @@ const parseAvatar = (html: string): Array<string> => {
 }
 
 export const goodreadsHandler: PlatformHandler = {
+  // A review list redirects clients that are not signed in to the sign-in page, which carries
+  // no avatar.
   match: (url) => {
-    return Boolean(getUserId(url))
+    return parseGoodreadsUrl(url)?.kind === 'user'
   },
 
   resolve: (url, content) => {
-    const id = getUserId(url)
+    const parsed = parseGoodreadsUrl(url)
 
-    if (!id) {
+    if (parsed?.kind !== 'user') {
       return []
     }
 
     if (!content) {
-      return [{ platform, id, url }]
+      return [{ platform, id: parsed.userId, url }]
     }
 
     return parseAvatar(content).map((uri) => ({ uri }))

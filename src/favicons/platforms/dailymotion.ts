@@ -1,11 +1,6 @@
-import { isAnyOf, isHostOf, isNonEmptyString, parseUrl } from 'trousse'
+import { isNonEmptyString, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import {
-  excludedPaths,
-  hosts,
-  playlistRegex,
-  userRegex,
-} from '../../feeds/platforms/dailymotion.js'
+import { parseDailymotionUrl } from '../../feeds/platforms/dailymotion.js'
 import type { FaviconEnricher } from '../types.js'
 import { parseResponseJson } from '../utils.js'
 
@@ -13,26 +8,15 @@ const platform = 'dailymotion'
 
 // The id is the API path, `user/{name}` or `playlist/{id}`.
 const getApiPath = (url: string): string | undefined => {
-  const parsedUrl = parseUrl(url)
+  const parsed = parseDailymotionUrl(url)
 
-  if (!parsedUrl || !isHostOf(url, hosts)) {
-    return
+  if (parsed?.kind === 'playlist') {
+    return `playlist/${parsed.playlistId}`
   }
 
-  const { pathname } = parsedUrl
-  const playlistId = pathname.match(playlistRegex)?.[1]
-
-  if (playlistId) {
-    return `playlist/${playlistId}`
+  if (parsed?.kind === 'user') {
+    return `user/${parsed.username}`
   }
-
-  const username = pathname.match(userRegex)?.[1]
-
-  if (!username || isAnyOf(username, excludedPaths)) {
-    return
-  }
-
-  return `user/${username}`
 }
 
 export const dailymotionHandler: PlatformHandler = {

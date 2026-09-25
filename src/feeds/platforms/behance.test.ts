@@ -1,22 +1,78 @@
 import { describe, expect, it } from 'bun:test'
-import { behanceHandler } from './behance.js'
+import type { BehanceUrl } from './behance.js'
+import { behanceHandler, parseBehanceUrl } from './behance.js'
+
+describe('parseBehanceUrl', () => {
+  it('should return the username for a profile page', () => {
+    const expected: BehanceUrl = { kind: 'profile', username: 'johndoe' }
+
+    expect(parseBehanceUrl('https://www.behance.net/johndoe')).toEqual(expected)
+  })
+
+  it('should return the username for a profile page with a trailing slash', () => {
+    const expected: BehanceUrl = { kind: 'profile', username: 'johndoe' }
+
+    expect(parseBehanceUrl('https://www.behance.net/johndoe/')).toEqual(expected)
+  })
+
+  it('should return the username for the appreciated page', () => {
+    const expected: BehanceUrl = { kind: 'profile', username: 'johndoe' }
+
+    expect(parseBehanceUrl('https://www.behance.net/johndoe/appreciated')).toEqual(expected)
+  })
+
+  it('should return the username for the host without www', () => {
+    const expected: BehanceUrl = { kind: 'profile', username: 'johndoe' }
+
+    expect(parseBehanceUrl('https://behance.net/johndoe')).toEqual(expected)
+  })
+
+  it('should keep the username case', () => {
+    const expected: BehanceUrl = { kind: 'profile', username: 'JohnDoe' }
+
+    expect(parseBehanceUrl('https://www.behance.net/JohnDoe')).toEqual(expected)
+  })
+
+  it('should return undefined for excluded paths', () => {
+    expect(parseBehanceUrl('https://www.behance.net/search')).toBeUndefined()
+    expect(parseBehanceUrl('https://www.behance.net/blog')).toBeUndefined()
+    expect(parseBehanceUrl('https://www.behance.net/about')).toBeUndefined()
+    expect(parseBehanceUrl('https://www.behance.net/galleries')).toBeUndefined()
+  })
+
+  it('should return undefined for an excluded path in another case', () => {
+    expect(parseBehanceUrl('https://www.behance.net/Search')).toBeUndefined()
+  })
+
+  it('should return undefined for other nested profile paths', () => {
+    expect(parseBehanceUrl('https://www.behance.net/johndoe/projects')).toBeUndefined()
+  })
+
+  it('should return undefined for a gallery page', () => {
+    expect(parseBehanceUrl('https://www.behance.net/gallery/123456/Brand-Identity')).toBeUndefined()
+  })
+
+  it('should return undefined for the homepage', () => {
+    expect(parseBehanceUrl('https://www.behance.net/')).toBeUndefined()
+  })
+
+  it('should return undefined for another host', () => {
+    expect(parseBehanceUrl('https://example.com/johndoe')).toBeUndefined()
+  })
+
+  it('should return undefined for an invalid URL', () => {
+    expect(parseBehanceUrl('not-a-url')).toBeUndefined()
+  })
+})
 
 describe('behanceHandler', () => {
   describe('match', () => {
-    const values: Array<[boolean, string]> = [
-      [true, 'https://www.behance.net/johndoe'],
-      [true, 'https://behance.net/johndoe'],
-      [true, 'https://www.behance.net/'],
-      [true, 'https://www.behance.net/search'],
-      [false, 'https://example.com/behance'],
-    ]
-
-    it.each(values)('should return %s for %s', (expected, url) => {
-      expect(behanceHandler.match(url)).toBe(expected)
+    it('should match any Behance URL', () => {
+      expect(behanceHandler.match('https://www.behance.net/search')).toBe(true)
     })
 
-    it('should return false for invalid URL', () => {
-      expect(behanceHandler.match('not-a-url')).toBe(false)
+    it('should not match other hosts', () => {
+      expect(behanceHandler.match('https://example.com/behance')).toBe(false)
     })
   })
 
@@ -31,52 +87,6 @@ describe('behanceHandler', () => {
       ]
 
       expect(behanceHandler.resolve(value)).toEqual(expected)
-    })
-
-    it('should handle mixed case usernames', () => {
-      const value = 'https://www.behance.net/JohnDoe'
-      const expected = [
-        {
-          uri: 'https://www.behance.net/feeds/user?username=JohnDoe',
-          hint: { key: 'behance:portfolio', label: 'Portfolio' },
-        },
-      ]
-
-      expect(behanceHandler.resolve(value)).toEqual(expected)
-    })
-
-    it('should handle trailing slash', () => {
-      const value = 'https://www.behance.net/johndoe/'
-      const expected = [
-        {
-          uri: 'https://www.behance.net/feeds/user?username=johndoe',
-          hint: { key: 'behance:portfolio', label: 'Portfolio' },
-        },
-      ]
-
-      expect(behanceHandler.resolve(value)).toEqual(expected)
-    })
-
-    it('should return the portfolio feed for the appreciated page', () => {
-      const value = 'https://www.behance.net/johndoe/appreciated'
-      const expected = [
-        {
-          uri: 'https://www.behance.net/feeds/user?username=johndoe',
-          hint: { key: 'behance:portfolio', label: 'Portfolio' },
-        },
-      ]
-
-      expect(behanceHandler.resolve(value)).toEqual(expected)
-    })
-
-    const excludedValues: Array<string> = [
-      'https://www.behance.net/search',
-      'https://www.behance.net/blog',
-      'https://www.behance.net/about',
-    ]
-
-    it.each(excludedValues)('should return empty array for %s', (value) => {
-      expect(behanceHandler.resolve(value)).toEqual([])
     })
 
     it('should return featured projects feed for homepage', () => {
@@ -103,10 +113,8 @@ describe('behanceHandler', () => {
       expect(behanceHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return empty array for other nested paths', () => {
-      const value = 'https://www.behance.net/johndoe/projects'
-
-      expect(behanceHandler.resolve(value)).toEqual([])
+    it('should return empty array when the URL names no profile', () => {
+      expect(behanceHandler.resolve('https://www.behance.net/search')).toEqual([])
     })
   })
 })

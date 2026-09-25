@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'bun:test'
 import type { DiscoverRef, FetchFn } from '../../common/types.js'
 import type { FaviconEnricherContext } from '../types.js'
-import { blueskyEnricher, blueskyHandler, isProfilePath } from './bluesky.js'
+import { blueskyEnricher, blueskyHandler } from './bluesky.js'
 
 const createContext = (responses: Record<string, string>): FaviconEnricherContext => {
   const fetchFn: FetchFn = async (url) => ({
@@ -23,70 +23,14 @@ const userRef: DiscoverRef = {
 const userApiUrl =
   'https://public.api.bsky.app/xrpc/app.bsky.actor.getProfile?actor=user.bsky.social'
 
-describe('isProfilePath', () => {
-  it('should return true for /profile/handle paths', () => {
-    expect(isProfilePath('/profile/user.bsky.social')).toBe(true)
-    expect(isProfilePath('/profile/example.com')).toBe(true)
-  })
-
-  it('should return true for /profile/handle with extra segments', () => {
-    expect(isProfilePath('/profile/user.bsky.social/posts')).toBe(true)
-    expect(isProfilePath('/profile/user.bsky.social/followers')).toBe(true)
-  })
-
-  it('should return true for /profile/handle with trailing slash', () => {
-    expect(isProfilePath('/profile/user.bsky.social/')).toBe(true)
-  })
-
-  it('should return false for /profile without handle', () => {
-    expect(isProfilePath('/profile')).toBe(false)
-    expect(isProfilePath('/profile/')).toBe(false)
-  })
-
-  it('should return false for non-profile paths', () => {
-    expect(isProfilePath('/about')).toBe(false)
-    expect(isProfilePath('/settings')).toBe(false)
-  })
-
-  it('should return false for case variation of /profile', () => {
-    expect(isProfilePath('/Profile/user.bsky.social')).toBe(false)
-    expect(isProfilePath('/PROFILE/user.bsky.social')).toBe(false)
-  })
-
-  it('should return false for root path', () => {
-    expect(isProfilePath('/')).toBe(false)
-  })
-
-  it('should return false for empty string', () => {
-    expect(isProfilePath('')).toBe(false)
-  })
-})
-
 describe('blueskyHandler', () => {
   describe('match', () => {
-    it('should match bsky.app profile URLs', () => {
+    it('should match profile URLs', () => {
       expect(blueskyHandler.match('https://bsky.app/profile/user.bsky.social')).toBe(true)
-    })
-
-    it('should match www.bsky.app profile URLs', () => {
-      expect(blueskyHandler.match('https://www.bsky.app/profile/user.bsky.social')).toBe(true)
-    })
-
-    it('should match profile URLs with extra path segments', () => {
-      expect(blueskyHandler.match('https://bsky.app/profile/user.bsky.social/posts')).toBe(true)
     })
 
     it('should not match non-profile paths', () => {
       expect(blueskyHandler.match('https://bsky.app/about')).toBe(false)
-      expect(blueskyHandler.match('https://bsky.app/')).toBe(false)
-    })
-
-    it('should not match non-bsky URLs', () => {
-      expect(blueskyHandler.match('https://example.com/profile/user')).toBe(false)
-    })
-
-    it('should not match invalid URLs', () => {
-      expect(blueskyHandler.match('not-a-url')).toBe(false)
     })
   })
 
@@ -99,21 +43,7 @@ describe('blueskyHandler', () => {
       )
     })
 
-    it('should return a ref for a custom domain handle', async () => {
-      const url = 'https://bsky.app/profile/example.com'
-      const expected: Array<DiscoverRef> = [{ platform: 'bluesky', id: 'example.com', url }]
-
-      expect(await blueskyHandler.resolve(url)).toEqual(expected)
-    })
-
-    it('should return a ref for the www.bsky.app variant', async () => {
-      const url = 'https://www.bsky.app/profile/user.bsky.social'
-      const expected: Array<DiscoverRef> = [{ platform: 'bluesky', id: 'user.bsky.social', url }]
-
-      expect(await blueskyHandler.resolve(url)).toEqual(expected)
-    })
-
-    it('should return empty array for non-profile path', async () => {
+    it('should return empty array for a page without a profile', async () => {
       expect(await blueskyHandler.resolve('https://bsky.app/about')).toEqual([])
     })
   })

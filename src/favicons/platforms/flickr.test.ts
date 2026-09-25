@@ -15,44 +15,34 @@ const profileContent = `
 
 describe('flickrHandler', () => {
   describe('match', () => {
-    it('should match photostream URLs with a path alias', () => {
+    it('should match a photostream page', () => {
       expect(flickrHandler.match('https://www.flickr.com/photos/alice')).toBe(true)
     })
 
-    it('should match photostream URLs with an NSID', () => {
-      expect(flickrHandler.match('https://www.flickr.com/photos/12345678@N00/')).toBe(true)
-    })
-
-    it('should match favorites URLs', () => {
+    it('should match a favorites page', () => {
       expect(flickrHandler.match('https://www.flickr.com/photos/alice/favorites')).toBe(true)
     })
 
-    it('should match the bare flickr.com host', () => {
-      expect(flickrHandler.match('https://flickr.com/photos/alice')).toBe(true)
+    it('should match an albums page', () => {
+      expect(flickrHandler.match('https://www.flickr.com/photos/alice/albums')).toBe(true)
+    })
+
+    it('should match a galleries page', () => {
+      expect(flickrHandler.match('https://www.flickr.com/photos/alice/galleries')).toBe(true)
     })
 
     it('should not match tag pages', () => {
       expect(flickrHandler.match('https://www.flickr.com/photos/tags/sunset')).toBe(false)
     })
 
-    it('should not match the tags landing page', () => {
-      expect(flickrHandler.match('https://www.flickr.com/photos/tags/')).toBe(false)
-    })
-
     it('should not match photo pages', () => {
       expect(flickrHandler.match('https://www.flickr.com/photos/alice/53012345678')).toBe(false)
     })
 
-    it('should not match group pages', () => {
-      expect(flickrHandler.match('https://www.flickr.com/groups/11111111@N01')).toBe(false)
-    })
+    it('should not match album pages', () => {
+      const value = 'https://www.flickr.com/photos/alice/albums/72177720335744738'
 
-    it('should not match non-Flickr URLs', () => {
-      expect(flickrHandler.match('https://example.com/photos/alice')).toBe(false)
-    })
-
-    it('should not match invalid URLs', () => {
-      expect(flickrHandler.match('not-a-url')).toBe(false)
+      expect(flickrHandler.match(value)).toBe(false)
     })
   })
 
@@ -85,14 +75,13 @@ describe('flickrHandler', () => {
       )
     })
 
-    it('should return the owner buddyicon from a favorites page', () => {
+    it('should return the owner buddyicon from an albums page', () => {
+      const value = 'https://www.flickr.com/photos/alice/albums'
       const expected: Array<DiscoverUriEntry> = [
         { uri: 'https://live.staticflickr.com/2852/buddyicons/12345678@N00_r.jpg?1369154786' },
       ]
 
-      expect(
-        flickrHandler.resolve('https://www.flickr.com/photos/alice/favorites', profileContent),
-      ).toEqual(expected)
+      expect(flickrHandler.resolve(value, profileContent)).toEqual(expected)
     })
 
     it('should return empty array when the page has no owner avatar', () => {

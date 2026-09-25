@@ -59,18 +59,18 @@ The Platform method extracts avatars and icons directly from known platforms usi
 | Behance | Profile avatar | Page HTML |
 | BitChute | Channel image | Page HTML |
 | Bluesky | Profile avatar | Public API, through an [enricher](#enriching-platform-icons) |
-| BookWyrm | User avatar | Page HTML, or the user's actor JSON through an [enricher](#enriching-platform-icons) for shelf pages |
+| BookWyrm | User avatar | Page HTML, or the user's actor JSON through an [enricher](#enriching-platform-icons) for shelf and other user pages |
 | Dailymotion | User avatar, or the playlist owner's avatar | Public API, through an [enricher](#enriching-platform-icons) |
 | Dev.to | Profile or organization image, also on article pages | Public API, through an [enricher](#enriching-platform-icons) |
 | DeviantArt | User avatar | URL pattern |
 | Exblog | Blog logo | Page HTML, or the blog's top page through an [enricher](#enriching-platform-icons) |
-| Flickr | User buddyicon | Page HTML |
+| Flickr | User buddyicon, also on favorites, albums and galleries pages | Page HTML |
 | Gitea (Codeberg, gitea.com, self-hosted) | User avatar | URL pattern |
 | GitHub | User avatar | URL pattern |
 | GitHub Gist | User avatar | URL pattern |
 | GitLab | User or group avatar | Public API, through an [enricher](#enriching-platform-icons) |
 | Goodreads | User avatar | Page HTML, or the user page through an [enricher](#enriching-platform-icons) |
-| Habr | Hub icon or user avatar | Page HTML |
+| Habr | Hub icon, user avatar or company logo | Page HTML |
 | Hatena Bookmark | User avatar | URL pattern, checked through an [enricher](#enriching-platform-icons) |
 | Lemmy (self-hosted) | Community icon or user avatar | Page HTML, or the public API through an [enricher](#enriching-platform-icons) |
 | Letterboxd | Member avatar | Page HTML, or the member's films page through an [enricher](#enriching-platform-icons) |

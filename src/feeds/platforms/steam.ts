@@ -11,7 +11,7 @@ export type SteamUrl = { kind: 'app'; appId: string } | { kind: 'group'; group: 
 const appRegex = /^\/(?:agecheck\/|news\/)?app\/(\d+)/
 const groupRegex = /^\/groups\/([^/]+)/
 
-export const hosts = ['store.steampowered.com', 'steamcommunity.com']
+const hosts = ['store.steampowered.com', 'steamcommunity.com']
 
 export const parseSteamUrl = (url: string): SteamUrl | undefined => {
   const parsedUrl = parseUrl(url)

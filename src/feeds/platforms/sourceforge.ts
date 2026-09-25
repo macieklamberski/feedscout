@@ -7,7 +7,7 @@ import { composeHint } from '../../common/utils.js'
 
 export type SourceforgeUrl = { kind: 'project'; project: string }
 
-export const hosts = ['sourceforge.net', 'www.sourceforge.net']
+const hosts = ['sourceforge.net', 'www.sourceforge.net']
 const projectPrefixes = ['projects', 'p']
 
 export const parseSourceforgeUrl = (url: string): SourceforgeUrl | undefined => {

@@ -176,7 +176,7 @@ Discovers Atom feeds for users, organizations, and repositories.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `github.com/{user}` | User activity feed |
+| `github.com/{user}`, `github.com/{user}.atom` or `github.com/{user}.png` | User activity feed |
 | `github.com/{owner}/{repo}` | Releases, commits, tags |
 | `github.com/{owner}/{repo}/wiki` | Wiki changes (+ above) |
 | `github.com/{owner}/{repo}/discussions` | Discussions (+ above) |
@@ -192,7 +192,8 @@ Discovers Atom feeds for GitHub Gist users, starred gists, forked gists, and the
 |-------------|-----------------|
 | `gist.github.com/{username}` | User gists feed |
 | `gist.github.com/{username}/{gist-id}` | User gists feed |
-| `gist.github.com/{username}/starred` | User starred gists feed |
+| `gist.github.com/{username}/public` or `/secret` | User gists feed |
+| `gist.github.com/{username}/starred` or `/starred.atom` | User starred gists feed |
 | `gist.github.com/{username}/forks` or `/forked` | User forked gists feed |
 | `gist.github.com/discover` | Discover gists feed |
 
@@ -202,7 +203,7 @@ Discovers Atom feeds for Gitea users, repositories, releases and tags, with RSS 
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{instance}/{user}` | User activity feed |
+| `{instance}/{user}`, `{instance}/{user}.rss`, `.atom` or `.keys` | User activity feed |
 | `{instance}/{user}/{repo}` | Releases, tags, activity |
 
 > [!NOTE]
@@ -214,7 +215,7 @@ Discovers Atom feeds for GitLab users and repositories. Self-hosted instances ar
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `gitlab.com/{user}` | User activity feed |
+| `gitlab.com/{user}` or `gitlab.com/{user}.atom` | User activity feed |
 | `gitlab.com/{project}` | Releases, tags, issues, merge requests, activity |
 | `gitlab.com/{project}/-/commits/{branch}` | Branch commits feed (+ above) |
 | `gitlab.com/{project}/-/tree/{branch}` | Branch commits feed (+ above) |
@@ -541,8 +542,8 @@ Discovers RSS and Atom feeds for Excite Blog, including category feeds.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `*.exblog.jp` | Posts feed (RSS + Atom) |
-| `*.exblog.jp/i{N}` | Category feed (RSS + Atom) + posts |
+| `{blog}.exblog.jp` | Posts feed (RSS + Atom) |
+| `{blog}.exblog.jp/i{N}` | Category feed (RSS + Atom) + posts |
 
 ### Fireside.fm
 

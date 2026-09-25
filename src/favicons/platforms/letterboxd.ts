@@ -1,7 +1,7 @@
-import { getPathSegments, isAnyOf, isHostOf, parseUrl } from 'trousse'
+import { isAnyOf, isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findDescendant, findElement, hasClass } from '../../common/utils.js'
-import { excludedPaths, hosts } from '../../feeds/platforms/letterboxd.js'
+import { parseLetterboxdUrl } from '../../feeds/platforms/letterboxd.js'
 import type { FaviconEnricher } from '../types.js'
 import { getResponseText } from '../utils.js'
 
@@ -9,20 +9,6 @@ const platform = 'letterboxd'
 
 // Resized avatars carry the crop box in the file name, e.g. `-0-48-0-48-crop.jpg`.
 const cropRegex = /-0-\d+-0-\d+-crop\./
-
-const getUsername = (url: string): string | undefined => {
-  if (!isHostOf(url, hosts)) {
-    return
-  }
-
-  const [username] = getPathSegments(url)
-
-  if (!username || isAnyOf(username, excludedPaths)) {
-    return
-  }
-
-  return username
-}
 
 // Member pages link the member's own avatar to their profile root, while avatars of other
 // members on the same page link elsewhere.
@@ -65,15 +51,17 @@ const getLargeAvatarUri = (src: string): string | undefined => {
 
 export const letterboxdHandler: PlatformHandler = {
   match: (url) => {
-    return !!getUsername(url)
+    return parseLetterboxdUrl(url) !== undefined
   },
 
   resolve: (url, content) => {
-    const username = getUsername(url)
+    const parsed = parseLetterboxdUrl(url)
 
-    if (!username) {
+    if (!parsed) {
       return []
     }
+
+    const { username } = parsed
 
     // The profile root and the diary answer 403 to non-browser clients, so their content
     // carries no avatar.

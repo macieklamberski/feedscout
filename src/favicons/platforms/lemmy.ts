@@ -1,50 +1,31 @@
-import { isNonEmptyString, parseUrl } from 'trousse'
+import { isNonEmptyString } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getMetaContent } from '../../common/utils.js'
-import {
-  isCommunityPath,
-  isLemmyHeaders,
-  isLemmyHtml,
-  isUserPath,
-} from '../../feeds/platforms/lemmy.js'
+import { lemmyHandler as lemmyFeedHandler, parseLemmyUrl } from '../../feeds/platforms/lemmy.js'
 import type { FaviconEnricher } from '../types.js'
 import { parseResponseJson } from '../utils.js'
 
 const platform = 'lemmy'
 
-const getProfileId = (pathname: string): string | undefined => {
-  const name = pathname.split('/').filter(Boolean)[1]
+const getProfileId = (url: string): string | undefined => {
+  const parsed = parseLemmyUrl(url)
 
-  if (isCommunityPath(pathname)) {
-    return `c/${name}`
+  if (parsed?.kind === 'community') {
+    return `c/${parsed.community}`
   }
 
-  if (isUserPath(pathname)) {
-    return `u/${name}`
+  if (parsed?.kind === 'user') {
+    return `u/${parsed.username}`
   }
 }
 
 export const lemmyHandler: PlatformHandler = {
   match: (url, content, headers) => {
-    const parsedUrl = parseUrl(url)
-
-    if (!parsedUrl || !getProfileId(parsedUrl.pathname)) {
-      return false
-    }
-
-    if (content && isLemmyHtml(content)) {
-      return true
-    }
-
-    if (headers && isLemmyHeaders(headers)) {
-      return true
-    }
-
-    return false
+    return !!getProfileId(url) && lemmyFeedHandler.match(url, content, headers)
   },
 
   resolve: (url, content) => {
-    const id = getProfileId(new URL(url).pathname)
+    const id = getProfileId(url)
 
     if (!id) {
       return []

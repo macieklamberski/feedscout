@@ -1,7 +1,7 @@
-import { isAnyOf, isHostOf, isNonEmptyString, isPlainObject, parseUrl } from 'trousse'
+import { isNonEmptyString, isPlainObject } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getJsonLd } from '../../common/utils.js'
-import { excludedPaths, hosts, userRegex } from '../../feeds/platforms/behance.js'
+import { parseBehanceUrl } from '../../feeds/platforms/behance.js'
 
 // Profile pages carry a JSON-LD Person whose `image` lists the same square avatar
 // in several sizes, not sorted, topping out at 138 or 276 pixels depending on the account.
@@ -31,19 +31,7 @@ const getPersonImage = (content: string): string | undefined => {
 
 export const behanceHandler: PlatformHandler = {
   match: (url) => {
-    const parsedUrl = parseUrl(url)
-
-    if (!parsedUrl || !isHostOf(url, hosts)) {
-      return false
-    }
-
-    const match = parsedUrl.pathname.match(userRegex)
-
-    if (!match?.[1]) {
-      return false
-    }
-
-    return !isAnyOf(match[1], excludedPaths)
+    return parseBehanceUrl(url) !== undefined
   },
 
   resolve: (_url, content) => {

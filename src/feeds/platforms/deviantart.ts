@@ -1,19 +1,26 @@
-import { decodeSegment, isAnyOf, isHostOf } from 'trousse'
+import { decodeSegment, isAnyOf, isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Not discoverable without handler.
 // Handler needed for: all shapes.
 
-const tagRegex = /^\/tag\/([^/]+)/
-const favouritesRegex = /^\/([a-zA-Z0-9_-]+)\/favourites\/?$/
-const folderRegex = /^\/([a-zA-Z0-9_-]+)\/gallery\/(\d+)(?:\/|$)/
-const journalRegex = /^\/([a-zA-Z0-9_-]+)\/journal(?:\/|$)/
-const profileRegex = /^\/([a-zA-Z0-9_-]+)(?:\/gallery(?:\/all)?)?(?:\/|$)/
+export type DeviantartUrl =
+  | { kind: 'tag'; tag: string }
+  | { kind: 'favourites'; username: string }
+  | { kind: 'folder'; username: string; folderId: string }
+  | { kind: 'journal'; username: string }
+  | { kind: 'profile'; username: string }
 
-export const hosts = ['deviantart.com', 'www.deviantart.com']
+const tagRegex = /^\/tag\/([^/]+)/
+const userRegex = /^\/([a-zA-Z0-9_-]+)(?:\/|$)/
+const favouritesRegex = /^\/[^/]+\/favourites\/?$/
+const folderRegex = /^\/[^/]+\/gallery\/(\d+)(?:\/|$)/
+const journalRegex = /^\/[^/]+\/journal(?:\/|$)/
+
+const hosts = ['deviantart.com', 'www.deviantart.com']
 const feedBaseUrl = 'https://backend.deviantart.com/rss.xml'
-export const excludedPaths = [
+const excludedPaths = [
   'about',
   'core-membership',
   'daily-deviations',
@@ -25,10 +32,48 @@ export const excludedPaths = [
   'settings',
   'shop',
   'submit',
+  'tag',
   'team',
   'topic',
   'watch',
 ]
+
+export const parseDeviantartUrl = (url: string): DeviantartUrl | undefined => {
+  const parsedUrl = parseUrl(url)
+
+  if (!parsedUrl || !isHostOf(parsedUrl, hosts)) {
+    return
+  }
+
+  const { pathname } = parsedUrl
+  const tag = pathname.match(tagRegex)?.[1]
+
+  if (tag) {
+    return { kind: 'tag', tag: decodeSegment(tag) ?? tag }
+  }
+
+  const username = pathname.match(userRegex)?.[1]
+
+  if (!username || isAnyOf(username, excludedPaths)) {
+    return
+  }
+
+  if (favouritesRegex.test(pathname)) {
+    return { kind: 'favourites', username }
+  }
+
+  const folderId = pathname.match(folderRegex)?.[1]
+
+  if (folderId) {
+    return { kind: 'folder', username, folderId }
+  }
+
+  if (journalRegex.test(pathname)) {
+    return { kind: 'journal', username }
+  }
+
+  return { kind: 'profile', username }
+}
 
 export const deviantartHandler: PlatformHandler = {
   match: (url) => {
@@ -57,82 +102,51 @@ export const deviantartHandler: PlatformHandler = {
       ]
     }
 
-    // Match tag page: /tag/{tagname}
-    const tagMatch = pathname.match(tagRegex)
+    const parsed = parseDeviantartUrl(url)
 
-    if (tagMatch?.[1]) {
-      const tag = decodeSegment(tagMatch[1]) ?? tagMatch[1]
-
+    if (parsed?.kind === 'tag') {
       return [
         {
-          uri: `${feedBaseUrl}?type=deviation&q=${encodeURIComponent(`tag:${tag}`)}`,
+          uri: `${feedBaseUrl}?type=deviation&q=${encodeURIComponent(`tag:${parsed.tag}`)}`,
           hint: composeHint('deviantart:tag'),
         },
       ]
     }
 
-    // Match favourites: /{username}/favourites
-    const favMatch = pathname.match(favouritesRegex)
-
-    if (favMatch?.[1]) {
-      const username = favMatch[1]
-
-      if (!isAnyOf(username, excludedPaths)) {
-        return [
-          {
-            uri: `${feedBaseUrl}?type=deviation&q=${encodeURIComponent(`favby:${username}`)}`,
-            hint: composeHint('deviantart:favorites'),
-          },
-        ]
-      }
+    if (parsed?.kind === 'favourites') {
+      return [
+        {
+          uri: `${feedBaseUrl}?type=deviation&q=${encodeURIComponent(`favby:${parsed.username}`)}`,
+          hint: composeHint('deviantart:favorites'),
+        },
+      ]
     }
 
-    // Match gallery folder: /{username}/gallery/{folder-id}/{folder-name}.
-    const folderMatch = pathname.match(folderRegex)
+    if (parsed?.kind === 'folder') {
+      const query = `gallery:${parsed.username}/${parsed.folderId}`
 
-    if (folderMatch?.[1] && folderMatch?.[2]) {
-      const username = folderMatch[1]
-      const folderId = folderMatch[2]
-
-      if (!isAnyOf(username, excludedPaths)) {
-        return [
-          {
-            uri: `${feedBaseUrl}?type=deviation&q=${encodeURIComponent(`gallery:${username}/${folderId}`)}`,
-            hint: composeHint('deviantart:gallery'),
-          },
-        ]
-      }
+      return [
+        {
+          uri: `${feedBaseUrl}?type=deviation&q=${encodeURIComponent(query)}`,
+          hint: composeHint('deviantart:gallery'),
+        },
+      ]
     }
 
-    // Match journal: /{username}/journal or /{username}/journal/{slug}
-    const journalMatch = pathname.match(journalRegex)
-
-    if (journalMatch?.[1]) {
-      const username = journalMatch[1]
-
-      if (!isAnyOf(username, excludedPaths)) {
-        return [
-          {
-            uri: `${feedBaseUrl}?q=${encodeURIComponent(`journal:${username}`)}`,
-            hint: composeHint('deviantart:journal'),
-          },
-        ]
-      }
+    if (parsed?.kind === 'journal') {
+      return [
+        {
+          uri: `${feedBaseUrl}?q=${encodeURIComponent(`journal:${parsed.username}`)}`,
+          hint: composeHint('deviantart:journal'),
+        },
+      ]
     }
 
-    // Match username from profile/gallery paths like:
-    // /{username}
-    // /{username}/gallery
-    // /{username}/gallery/all
-    const userMatch = pathname.match(profileRegex)
-    const username = userMatch?.[1]
-
-    if (!username || isAnyOf(username, excludedPaths)) {
+    if (parsed?.kind !== 'profile') {
       return []
     }
 
-    // Build RSS feed URL with query for user's deviations sorted by time.
-    const query = `by:${username} sort:time meta:all`
+    const query = `by:${parsed.username} sort:time meta:all`
 
     return [
       {

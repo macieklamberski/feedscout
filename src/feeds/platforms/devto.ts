@@ -8,7 +8,7 @@ import { composeHint } from '../../common/utils.js'
 
 export type DevtoUrl = { kind: 'profile'; owner: string } | { kind: 'tag'; tag: string }
 
-export const hosts = ['dev.to', 'www.dev.to']
+const hosts = ['dev.to', 'www.dev.to']
 // An article lives under its author's name, a user or an organization: /{name}/{slug}.
 const ownerRegex = /^\/([a-zA-Z0-9_-]+)(?:\/|$)/
 const tagRegex = /^\/t\/([^/]+)/

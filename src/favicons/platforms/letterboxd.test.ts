@@ -61,35 +61,8 @@ describe('letterboxdHandler', () => {
       expect(letterboxdHandler.match('https://letterboxd.com/alice/')).toBe(true)
     })
 
-    it('should match member subpage URLs', () => {
-      expect(letterboxdHandler.match('https://letterboxd.com/alice/films/')).toBe(true)
-      expect(letterboxdHandler.match('https://letterboxd.com/alice/list/favorites/')).toBe(true)
-      expect(letterboxdHandler.match('https://letterboxd.com/alice/films/diary/')).toBe(true)
-    })
-
-    it('should match www.letterboxd.com URLs', () => {
-      expect(letterboxdHandler.match('https://www.letterboxd.com/alice/')).toBe(true)
-    })
-
     it('should not match the journal', () => {
       expect(letterboxdHandler.match('https://letterboxd.com/journal/')).toBe(false)
-    })
-
-    it('should not match excluded paths', () => {
-      expect(letterboxdHandler.match('https://letterboxd.com/films/')).toBe(false)
-      expect(letterboxdHandler.match('https://letterboxd.com/settings/')).toBe(false)
-    })
-
-    it('should not match the root URL', () => {
-      expect(letterboxdHandler.match('https://letterboxd.com/')).toBe(false)
-    })
-
-    it('should not match non-Letterboxd URLs', () => {
-      expect(letterboxdHandler.match('https://example.com/alice/')).toBe(false)
-    })
-
-    it('should not match invalid URLs', () => {
-      expect(letterboxdHandler.match('not-a-url')).toBe(false)
     })
   })
 
@@ -188,13 +161,8 @@ describe('letterboxdHandler', () => {
       expect(letterboxdHandler.resolve('https://letterboxd.com/alice/')).toEqual([aliceRef])
     })
 
-    it('should return empty array for the journal', () => {
-      const result = letterboxdHandler.resolve(
-        'https://letterboxd.com/journal/',
-        uploadedAvatarHtml,
-      )
-
-      expect(result).toEqual([])
+    it('should return empty array for a page without a member', () => {
+      expect(letterboxdHandler.resolve('https://letterboxd.com/films/')).toEqual([])
     })
   })
 })

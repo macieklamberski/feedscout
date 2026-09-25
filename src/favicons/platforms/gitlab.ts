@@ -1,20 +1,16 @@
-import { isAnyOf, isHostOf, isNonEmptyString, parseUrl } from 'trousse'
+import { isHostOf, isNonEmptyString } from 'trousse'
 import type { FetchFnResponse } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import {
-  excludedPaths,
   hosts,
   isGitlabHeaders,
   isGitlabHtml,
+  parseGitlabUrl,
 } from '../../feeds/platforms/gitlab.js'
 import type { FaviconEnricher } from '../types.js'
 import { parseResponseJson } from '../utils.js'
 
 const platform = 'gitlab'
-
-// Extracts the username from the path. GitLab usernames can contain dots,
-// so the regex strips the .atom feed extension instead of excluding dots.
-const userRegex = /^\/([^/]+?)(?:\.atom)?(?:\/|$)/
 
 const getAvatarUrl = (response: FetchFnResponse): string | undefined => {
   const data = parseResponseJson(response)
@@ -29,20 +25,12 @@ const getAvatarUrl = (response: FetchFnResponse): string | undefined => {
 
 export const gitlabHandler: PlatformHandler = {
   match: (url, content, headers) => {
+    if (!parseGitlabUrl(url)) {
+      return false
+    }
+
     if (isHostOf(url, hosts)) {
       return true
-    }
-
-    const parsedUrl = parseUrl(url)
-
-    if (!parsedUrl) {
-      return false
-    }
-
-    const { pathname } = parsedUrl
-
-    if (!userRegex.test(pathname)) {
-      return false
     }
 
     if (content && isGitlabHtml(content)) {
@@ -57,13 +45,13 @@ export const gitlabHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    const username = new URL(url).pathname.match(userRegex)?.[1]
+    const namespace = parseGitlabUrl(url)?.namespace
 
-    if (!username || isAnyOf(username, excludedPaths)) {
+    if (!namespace) {
       return []
     }
 
-    return [{ platform, id: username, url }]
+    return [{ platform, id: namespace, url }]
   },
 }
 
