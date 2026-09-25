@@ -1,7 +1,7 @@
 import { parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, hasMetaContent } from '../../common/utils.js'
+import { composeHint, hasElementWithId, hasMetaContent } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers category, home, top (html).
@@ -30,7 +30,7 @@ const getTopPeriodSuffix = (
 export const isDiscourseHtml = (content: string): boolean => {
   return (
     hasMetaContent(content, 'generator', 'Discourse') ||
-    content.includes('id="data-discourse-setup"')
+    hasElementWithId(content, 'data-discourse-setup')
   )
 }
 

@@ -26,6 +26,10 @@ describe('misskeyHandler', () => {
       )
     })
 
+    it('should return true for a single-quoted misskey_meta id', () => {
+      expect(isMisskeyHtml("<script id='misskey_meta'>{}</script>")).toBe(true)
+    })
+
     it('should return false for non-Misskey application-name', () => {
       expect(isMisskeyHtml(otherHtml)).toBe(false)
     })

@@ -69,6 +69,19 @@ describe('behanceHandler', () => {
         expect(result).toEqual(expected)
       })
 
+      it('should return the image from a JSON-LD script with another attribute', async () => {
+        const content = `
+          <script
+            data-rh="true"
+            type="application/ld+json"
+          >${personJsonLd}</script>
+        `
+        const result = await behanceHandler.resolve('https://www.behance.net/alice', content)
+        const expected: Array<DiscoverUriEntry> = [{ uri: `${avatarBase}/276` }]
+
+        expect(result).toEqual(expected)
+      })
+
       it('should skip JSON-LD blocks that are not a Person', async () => {
         const organization = JSON.stringify({
           '@type': 'Organization',

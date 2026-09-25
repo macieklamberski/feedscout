@@ -109,6 +109,30 @@ describe('velogHandler', () => {
         expect(await velogHandler.resolve('https://velog.io/@alice', profileHtml)).toEqual(expected)
       })
 
+      it('should return square avatar from unquoted attributes', async () => {
+        const content = `
+          <img
+            alt=profile
+            src=https://images.velog.io/images/alice/profile/0f3c/avatar.png
+          />
+        `
+        const expected: Array<DiscoverUriEntry> = [{ uri: squareAvatar }]
+
+        expect(await velogHandler.resolve('https://velog.io/@alice', content)).toEqual(expected)
+      })
+
+      it('should return square avatar for an alt in another case', async () => {
+        const content = `
+          <img
+            alt="Profile"
+            src="https://images.velog.io/images/alice/profile/0f3c/avatar.png"
+          />
+        `
+        const expected: Array<DiscoverUriEntry> = [{ uri: squareAvatar }]
+
+        expect(await velogHandler.resolve('https://velog.io/@alice', content)).toEqual(expected)
+      })
+
       it('should return square avatar from post page HTML', async () => {
         const url = 'https://velog.io/@alice/hello-world'
         const expected: Array<DiscoverUriEntry> = [{ uri: squareAvatar }]

@@ -88,6 +88,16 @@ describe('pinterestHandler', () => {
         expect(result).toEqual(expectedIcon)
       })
 
+      it('should return the avatar when the props script id is single-quoted', () => {
+        const content = profileHtml.replace(
+          'id="__PWS_INITIAL_PROPS__"',
+          "id='__PWS_INITIAL_PROPS__'",
+        )
+        const result = pinterestHandler.resolve('https://www.pinterest.com/alice/', content)
+
+        expect(result).toEqual(expectedIcon)
+      })
+
       it('should return a ref for saved pages', () => {
         const url = 'https://www.pinterest.com/alice/_saved/'
         const expected: Array<DiscoverRef> = [{ platform: 'pinterest', id: 'alice', url }]

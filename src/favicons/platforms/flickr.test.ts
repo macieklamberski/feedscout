@@ -67,6 +67,24 @@ describe('flickrHandler', () => {
       )
     })
 
+    it('should return the owner buddyicon when style comes before class', () => {
+      const content = `
+        <div class="avatar-container">
+          <div
+            style="background-image: url(//live.staticflickr.com/2852/buddyicons/12345678@N00_r.jpg?1369154786#12345678@N00);"
+            class="avatar no-menu person large no-edit"
+          ></div>
+        </div>
+      `
+      const expected: Array<DiscoverUriEntry> = [
+        { uri: 'https://live.staticflickr.com/2852/buddyicons/12345678@N00_r.jpg?1369154786' },
+      ]
+
+      expect(flickrHandler.resolve('https://www.flickr.com/photos/alice', content)).toEqual(
+        expected,
+      )
+    })
+
     it('should return the owner buddyicon from a favorites page', () => {
       const expected: Array<DiscoverUriEntry> = [
         { uri: 'https://live.staticflickr.com/2852/buddyicons/12345678@N00_r.jpg?1369154786' },

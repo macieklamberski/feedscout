@@ -77,6 +77,21 @@ describe('steamHandler', () => {
       expect(result).toEqual(expected)
     })
 
+    it('should return the app icon when the icon wrapper carries another class', () => {
+      const content = appPageHtml.replace('class="apphub_AppIcon"', 'class="apphub_AppIcon large"')
+      const result = steamHandler.resolve(
+        'https://store.steampowered.com/app/620/Portal_2/',
+        content,
+      )
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://shared.fastly.steamstatic.com/community_assets/images/apps/620/25a5a16b2423bf7487ac5340b5b0948cef48c5f8.jpg',
+        },
+      ]
+
+      expect(result).toEqual(expected)
+    })
+
     it('should return the app icon from a community app page', () => {
       const result = steamHandler.resolve('https://steamcommunity.com/app/620', appPageHtml)
       const expected: Array<DiscoverUriEntry> = [

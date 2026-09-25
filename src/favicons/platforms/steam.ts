@@ -1,12 +1,11 @@
 import { isHostOf, isNonEmptyString, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
+import { findElement, hasClass } from '../../common/utils.js'
 import { appRegex, hosts } from '../../feeds/platforms/steam.js'
 import type { FaviconEnricher } from '../types.js'
 import { parseResponseJson } from '../utils.js'
 
 const platform = 'steam'
-
-const appIconRegex = /class="apphub_AppIcon">\s*<img src="([^"]+)"/
 
 const getAppId = (url: string): string | undefined => {
   const parsedUrl = parseUrl(url)
@@ -18,6 +17,18 @@ const getAppId = (url: string): string | undefined => {
   return parsedUrl.pathname.match(appRegex)?.[1]
 }
 
+const findAppIcon = (content: string | undefined): string | undefined => {
+  const image = findElement(content, (element) => {
+    return (
+      element.name === 'img' &&
+      hasClass(element.parent, 'apphub_AppIcon') &&
+      Boolean(element.attribs.src)
+    )
+  })
+
+  return image?.attribs.src
+}
+
 export const steamHandler: PlatformHandler = {
   match: (url) => {
     return getAppId(url) !== undefined
@@ -25,10 +36,10 @@ export const steamHandler: PlatformHandler = {
 
   // Age-gated store pages and store app news pages carry no app icon in their markup.
   resolve: (url, content) => {
-    const appIconMatch = content?.match(appIconRegex)
+    const appIcon = findAppIcon(content)
 
-    if (appIconMatch?.[1]) {
-      return [{ uri: appIconMatch[1] }]
+    if (appIcon) {
+      return [{ uri: appIcon }]
     }
 
     const appId = getAppId(url)

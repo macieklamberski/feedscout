@@ -138,6 +138,18 @@ describe('sourcehutHandler', () => {
         expect(sourcehutHandler.resolve('https://sr.ht/~example/', content)).toEqual([])
       })
 
+      it('should decode entities in the avatar URL', () => {
+        const content = `
+          <img
+            class="avatar"
+            src="${avatarUrl}?size=256&amp;v=2"
+          />
+        `
+        const expected: Array<DiscoverUriEntry> = [{ uri: `${avatarUrl}?size=256&v=2` }]
+
+        expect(sourcehutHandler.resolve('https://sr.ht/~example/', content)).toEqual(expected)
+      })
+
       it('should read the avatar when class comes before src', () => {
         const content = `
           <img

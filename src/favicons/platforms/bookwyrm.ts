@@ -1,5 +1,6 @@
 import { isNonEmptyString, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
+import { findElement, hasClass } from '../../common/utils.js'
 import { isBookwyrmHtml } from '../../feeds/platforms/bookwyrm.js'
 import type { FaviconEnricher } from '../types.js'
 import { parseResponseJson } from '../utils.js'
@@ -9,9 +10,16 @@ const platform = 'bookwyrm'
 // Profile page, the all-books page, and a single shelf.
 const pageRegex = /^\/user\/([^/]+)(?:\/(?:shelf|books)(?:\/[^/]+)?)?\/?$/
 const profileRegex = /^\/user\/[^/]+\/?$/
-const avatarRegex = /<img(?=[^>]*\bclass=["'][^"']*\bavatar\b)[^>]*\bsrc=["']([^"']+)["']/i
 // Served in place of an avatar to users who never uploaded one.
 const defaultAvatarRegex = /\/images\/default_avi\.jpg$/
+
+const findAvatarSrc = (content: string | undefined): string | undefined => {
+  const avatar = findElement(content, (element) => {
+    return element.name === 'img' && hasClass(element, 'avatar') && Boolean(element.attribs.src)
+  })
+
+  return avatar?.attribs.src
+}
 
 export const bookwyrmHandler: PlatformHandler = {
   match: (url, content) => {
@@ -37,9 +45,7 @@ export const bookwyrmHandler: PlatformHandler = {
     }
 
     // Shelf pages carry no avatar, so they go to the actor JSON.
-    const avatarSrc = profileRegex.test(parsedUrl.pathname)
-      ? content?.match(avatarRegex)?.[1]
-      : undefined
+    const avatarSrc = profileRegex.test(parsedUrl.pathname) ? findAvatarSrc(content) : undefined
 
     if (!avatarSrc) {
       return [{ platform, id: name, url }]

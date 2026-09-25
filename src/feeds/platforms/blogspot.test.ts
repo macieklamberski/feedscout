@@ -137,6 +137,22 @@ describe('blogspotHandler', () => {
       expect(blogspotHandler.resolve(value, content)).toEqual(expected)
     })
 
+    it('should include per-post comments feeds when the link href is single-quoted', () => {
+      const value = 'https://blog.blogspot.com/2024/01/some-post.html'
+      const content = `
+        <link
+          rel='alternate'
+          href='https://blog.blogspot.com/feeds/1234567890/comments/default'
+        />
+      `
+      const expected: DiscoverUriEntry = {
+        uri: 'https://blog.blogspot.com/feeds/1234567890/comments/default',
+        hint: { key: 'blogspot:post-comments', label: 'Post comments', format: 'atom' },
+      }
+
+      expect(blogspotHandler.resolve(value, content)).toContainEqual(expected)
+    })
+
     it('should not emit per-post feeds for non-post URLs even with content', () => {
       const value = 'https://blog.blogspot.com/'
       const content = '<link href="https://blog.blogspot.com/feeds/1234567890/comments/default" />'

@@ -110,6 +110,17 @@ describe('habrHandler', () => {
         expect(result).toEqual(expected)
       })
 
+      it('should return the hub icon when the hub card carries another class', async () => {
+        const content = createHubPage(hubIcon).replace(
+          'class="tm-hub-card__avatar"',
+          'class="tm-hub-card__avatar tm-hub-card__avatar_small"',
+        )
+        const result = await habrHandler.resolve('https://habr.com/ru/hubs/javascript/', content)
+        const expected: Array<DiscoverUriEntry> = [{ uri: hubIcon }]
+
+        expect(result).toEqual(expected)
+      })
+
       it('should return the user avatar from the user card', async () => {
         const content = createUserPage(userAvatar)
         const result = await habrHandler.resolve('https://habr.com/ru/users/alice/', content)

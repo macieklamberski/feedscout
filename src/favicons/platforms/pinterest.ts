@@ -1,5 +1,6 @@
 import { getPathSegments, isAnyOf, isHostOf, isNonEmptyString } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
+import { getScriptText } from '../../common/utils.js'
 import { excludedPaths, hosts } from '../../feeds/platforms/pinterest.js'
 import type { FaviconEnricher } from '../types.js'
 import { getResponseText } from '../utils.js'
@@ -8,7 +9,6 @@ const platform = 'pinterest'
 
 // pin.it serves short links to pins, not profiles.
 const profileHosts = hosts.filter((host) => host !== 'pin.it')
-const initialPropsRegex = /<script[^>]*id="__PWS_INITIAL_PROPS__"[^>]*>([\s\S]*?)<\/script>/
 // A user without an avatar gets the generic s.pinimg.com/images/user/default_280.png.
 const defaultAvatarRegex = /\/images\/user\/default_/
 
@@ -27,7 +27,7 @@ const getProfile = (url: string): { username: string; isSaved: boolean } | undef
 }
 
 const findProfileImage = (content: string, username: string): string | undefined => {
-  const json = content.match(initialPropsRegex)?.[1]
+  const json = getScriptText(content, '__PWS_INITIAL_PROPS__')
 
   if (!json) {
     return

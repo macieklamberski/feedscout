@@ -1,5 +1,6 @@
 import { getPathSegments, isHostOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
+import { findElement, hasClass } from '../../common/utils.js'
 import { getRepoPath, hosts } from '../../feeds/platforms/sourcehut.js'
 import type { FaviconEnricher } from '../types.js'
 import { getResponseText } from '../utils.js'
@@ -7,8 +8,6 @@ import { getResponseText } from '../utils.js'
 const platform = 'sourcehut'
 
 const userHosts = ['sr.ht', 'todo.sr.ht', ...hosts]
-
-const avatarRegex = /<img(?=[^>]*\sclass=["'](?:[^"']*\s)?avatar[\s"'])[^>]*\ssrc=["']([^"']+)["']/i
 
 const getOwner = (url: string): string | undefined => {
   const segments = getPathSegments(url)
@@ -29,7 +28,10 @@ const getOwner = (url: string): string | undefined => {
 
 // A user without an avatar gets no `img.avatar` on the page.
 const parseAvatar = (html: string): Array<string> => {
-  const src = html.match(avatarRegex)?.[1]
+  const avatar = findElement(html, (element) => {
+    return element.name === 'img' && hasClass(element, 'avatar') && Boolean(element.attribs.src)
+  })
+  const src = avatar?.attribs.src
 
   if (!src) {
     return []

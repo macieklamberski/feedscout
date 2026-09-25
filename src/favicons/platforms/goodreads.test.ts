@@ -90,6 +90,19 @@ describe('goodreadsHandler', () => {
         expect(goodreadsHandler.resolve(value, userPage)).toEqual(expected)
       })
 
+      it('should return the avatar from unquoted attributes', () => {
+        const value = 'https://www.goodreads.com/user/show/1-otis-chandler'
+        const content = `
+          <img
+            class=profilePictureIcon
+            src=https://images.gr-assets.com/users/1506617226p6/1.jpg
+          />
+        `
+        const expected: Array<DiscoverUriEntry> = [{ uri: avatarUrl }]
+
+        expect(goodreadsHandler.resolve(value, content)).toEqual(expected)
+      })
+
       it('should return the largest variant of og:image when the page has no avatar image', () => {
         const value = 'https://www.goodreads.com/user/show/1-otis-chandler'
         const content = `

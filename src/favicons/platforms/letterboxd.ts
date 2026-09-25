@@ -1,5 +1,6 @@
-import { escapeRegex, getPathSegments, isAnyOf, isHostOf, parseUrl } from 'trousse'
+import { getPathSegments, isAnyOf, isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
+import { findDescendant, findElement, hasClass } from '../../common/utils.js'
 import { excludedPaths, hosts } from '../../feeds/platforms/letterboxd.js'
 import type { FaviconEnricher } from '../types.js'
 import { getResponseText } from '../utils.js'
@@ -26,12 +27,21 @@ const getUsername = (url: string): string | undefined => {
 // Member pages link the member's own avatar to their profile root, while avatars of other
 // members on the same page link elsewhere.
 const getAvatarSrc = (content: string, username: string): string | undefined => {
-  const avatarRegex = new RegExp(
-    `<a(?=[^>]*class="avatar[\\s"])(?=[^>]*href="/${escapeRegex(username)}/")[^>]*>\\s*<img[^>]*\\ssrc="([^"]+)"`,
-    'i',
-  )
+  const link = findElement(content, (element) => {
+    return (
+      element.name === 'a' &&
+      hasClass(element, 'avatar') &&
+      isAnyOf(element.attribs.href ?? '', [`/${username}/`])
+    )
+  })
 
-  return content.match(avatarRegex)?.[1]?.replaceAll('&amp;', '&')
+  if (!link) {
+    return
+  }
+
+  const image = findDescendant(link, (element) => element.name === 'img')
+
+  return image?.attribs.src
 }
 
 // Members without an avatar get a placeholder from s.ltrbxd.com, which neither branch accepts.

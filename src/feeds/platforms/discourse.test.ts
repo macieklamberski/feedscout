@@ -21,6 +21,10 @@ describe('discourseHandler', () => {
       expect(isDiscourseHtml('<meta id="data-discourse-setup" data-base-url="/">')).toBe(true)
     })
 
+    it('should return true for a single-quoted data-discourse-setup id', () => {
+      expect(isDiscourseHtml("<meta id='data-discourse-setup'>")).toBe(true)
+    })
+
     it('should return false for non-Discourse generator', () => {
       expect(isDiscourseHtml(otherHtml)).toBe(false)
     })

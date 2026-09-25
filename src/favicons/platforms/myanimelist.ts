@@ -1,12 +1,12 @@
 import { getPathSegments, isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
+import { findElement, hasClass } from '../../common/utils.js'
 import { hosts, userRegex } from '../../feeds/platforms/myanimelist.js'
 import type { FaviconEnricher } from '../types.js'
 import { getResponseText } from '../utils.js'
 
 const platform = 'myanimelist'
 
-const avatarRegex = /<div class="user-image[\s"][^>]*>\s*<img[^>]*\sdata-src="([^"]+)"/i
 const userImageRegex = /^https:\/\/cdn\.myanimelist\.net\/s\/common\/userimages\//
 
 const getUser = (url: string): string | undefined => {
@@ -19,7 +19,14 @@ const getUser = (url: string): string | undefined => {
 
 // A user without an avatar gets a "No Picture" block and no image.
 const parseAvatar = (html: string): Array<string> => {
-  const src = html.match(avatarRegex)?.[1]
+  const avatar = findElement(html, (element) => {
+    return (
+      element.name === 'img' &&
+      Boolean(element.attribs['data-src']) &&
+      hasClass(element.parent, 'user-image')
+    )
+  })
+  const src = avatar?.attribs['data-src']
 
   if (!src || !userImageRegex.test(src)) {
     return []

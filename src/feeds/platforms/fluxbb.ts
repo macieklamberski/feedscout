@@ -1,22 +1,22 @@
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
+import { composeHint, hasElementWithId } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic partly covers board, forum, topic.
 
 // Each id of a pair alone is a plausible id on an unrelated page.
-const templateMarkers = ['id="brdheader"', 'id="brdmain"']
+const templateIds = ['brdheader', 'brdmain']
 // `header.php` and `footer.php` print these whatever template the board uses.
-const coreMarkers = ['id="brdmenu"', 'id="brdfooter"']
+const coreIds = ['brdmenu', 'brdfooter']
 const scriptSegmentRegex = /\/[^/]*$/
 const forumPathRegex = /\/viewforum\.php$/
 const topicPathRegex = /\/viewtopic\.php$/
 
 export const isFluxbbHtml = (content: string): boolean => {
   return (
-    templateMarkers.every((marker) => content.includes(marker)) ||
-    coreMarkers.every((marker) => content.includes(marker))
+    templateIds.every((id) => hasElementWithId(content, id)) ||
+    coreIds.every((id) => hasElementWithId(content, id))
   )
 }
 

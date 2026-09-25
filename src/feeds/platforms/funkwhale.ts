@@ -1,13 +1,13 @@
 import { decodeSegment } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, hasMetaContent } from '../../common/utils.js'
+import { composeHint, hasElementWithId, hasMetaContent } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
 const channelPathRegex = /^\/channels\/([^/]+)/
 
 export const isFunkwhaleHtml = (content: string): boolean => {
-  return hasMetaContent(content, 'generator', 'Funkwhale') || content.includes('id="fake-app"')
+  return hasMetaContent(content, 'generator', 'Funkwhale') || hasElementWithId(content, 'fake-app')
 }
 
 const getChannel = (url: string): string | undefined => {

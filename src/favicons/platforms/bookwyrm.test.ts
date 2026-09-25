@@ -152,6 +152,27 @@ describe('bookwyrmHandler', () => {
         expect(result).toEqual(expected)
       })
 
+      it('should skip an image whose class only starts with avatar', () => {
+        const content = `
+          <img
+            class="avatar-placeholder"
+            src="https://books.example.com/static/images/placeholder.png"
+          >
+          <img
+            class="avatar image is-96x96"
+            src="https://books.example.com/images/avatars/abc.jpeg"
+          >
+          ${sourceLink}
+        `
+        const expected: Array<DiscoverUriEntry> = [
+          { uri: 'https://books.example.com/images/avatars/abc.jpeg' },
+        ]
+
+        expect(bookwyrmHandler.resolve('https://books.example.com/user/reader', content)).toEqual(
+          expected,
+        )
+      })
+
       it('should resolve a relative avatar against the page URL', () => {
         const result = bookwyrmHandler.resolve(
           'https://books.example.com/user/reader',

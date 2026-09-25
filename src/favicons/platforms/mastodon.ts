@@ -1,6 +1,6 @@
 import { isNonEmptyString, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { hasMetaContent } from '../../common/utils.js'
+import { hasElementWithId, hasMetaContent } from '../../common/utils.js'
 import type { FaviconEnricher } from '../types.js'
 import { parseResponseJson } from '../utils.js'
 
@@ -19,7 +19,7 @@ export const isProfilePath = (pathname: string): boolean => {
 // Current Mastodon serves no generator meta, so the `<div id="mastodon">` app
 // root is matched too.
 export const isMastodonHtml = (content: string): boolean => {
-  return hasMetaContent(content, 'generator', 'Mastodon') || content.includes('id="mastodon"')
+  return hasMetaContent(content, 'generator', 'Mastodon') || hasElementWithId(content, 'mastodon')
 }
 
 export const isMastodonHeaders = (headers: Headers): boolean => {

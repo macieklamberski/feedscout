@@ -10,6 +10,10 @@ describe('isShaarliHtml', () => {
     expect(isShaarliHtml(shaarliHtml)).toBe(true)
   })
 
+  it('should return true for a single-quoted Shaarli menu id', () => {
+    expect(isShaarliHtml("<div id='shaarli-menu'></div>")).toBe(true)
+  })
+
   it('should return false for another bookmark manager', () => {
     expect(isShaarliHtml(otherHtml)).toBe(false)
   })
@@ -88,6 +92,23 @@ describe('shaarliHandler', () => {
       ]
 
       expect(shaarliHandler.resolve(value, content)).toEqual(expected)
+    })
+
+    it('should read the base path when value comes before name', () => {
+      const value = 'https://example.org/links/shaare/abc123'
+      const content = `
+        <input
+          type="hidden"
+          value="/links"
+          name="js_base_path"
+        />
+      `
+      const expected: DiscoverUriEntry = {
+        uri: 'https://example.org/links/feed/rss',
+        hint: { key: 'shaarli:posts', label: 'Posts', format: 'rss' },
+      }
+
+      expect(shaarliHandler.resolve(value, content)).toContainEqual(expected)
     })
 
     it('should build the feeds from the directory of a legacy install', () => {

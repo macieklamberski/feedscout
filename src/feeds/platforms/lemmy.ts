@@ -1,6 +1,6 @@
 import { parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, hasMetaContent } from '../../common/utils.js'
+import { composeHint, findElement, hasClass, hasMetaContent } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers community (html).
@@ -66,10 +66,12 @@ export const isHomePath = (pathname: string): boolean => {
   return pathname === '/' || pathname === '' || pathname === '/home'
 }
 
-// Current Lemmy serves no generator meta, and the page also mentions the
-// `#lemmy-space:matrix.org` room, so the class is matched with its quotes.
+// Current Lemmy serves no generator meta.
 export const isLemmyHtml = (content: string): boolean => {
-  return content.includes('class="lemmy-site"') || hasMetaContent(content, 'generator', 'Lemmy')
+  return (
+    findElement(content, (element) => hasClass(element, 'lemmy-site')) !== undefined ||
+    hasMetaContent(content, 'generator', 'Lemmy')
+  )
 }
 
 export const isLemmyHeaders = (headers: Headers): boolean => {

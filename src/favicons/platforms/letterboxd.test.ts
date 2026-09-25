@@ -106,6 +106,16 @@ describe('letterboxdHandler', () => {
       })
     })
 
+    describe('avatar link with the size class first', () => {
+      it('should return the large avatar', () => {
+        const content = uploadedAvatarHtml.replace('class="avatar -a24"', 'class="-a24 avatar"')
+        const result = letterboxdHandler.resolve('https://letterboxd.com/alice/films/', content)
+        const expected: Array<DiscoverUriEntry> = [{ uri: largeUploadedAvatar }]
+
+        expect(result).toEqual(expected)
+      })
+    })
+
     describe('list page', () => {
       it('should return the large avatar from the person summary', () => {
         const result = letterboxdHandler.resolve(

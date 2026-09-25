@@ -63,6 +63,27 @@ describe('togetterHandler', () => {
         expect(togetterHandler.resolve('https://togetter.com/id/example', value)).toEqual(expected)
       })
 
+      it('should return the avatar from a JSON-LD script with another attribute', () => {
+        const jsonLd = JSON.stringify({
+          '@type': 'ProfilePage',
+          mainEntity: {
+            '@type': 'Person',
+            image: 'https://example.com/profile_images/123/abc_normal.png',
+          },
+        })
+        const value = `
+          <script
+            type="application/ld+json"
+            data-next-head=""
+          >${jsonLd}</script>
+        `
+        const expected: Array<DiscoverUriEntry> = [
+          { uri: 'https://example.com/profile_images/123/abc_400x400.png' },
+        ]
+
+        expect(togetterHandler.resolve('https://togetter.com/id/example', value)).toEqual(expected)
+      })
+
       it('should return the avatar from a single JSON-LD object', () => {
         const jsonLd = JSON.stringify({
           '@type': 'ProfilePage',

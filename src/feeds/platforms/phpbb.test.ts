@@ -9,6 +9,10 @@ describe('isPhpbbHtml', () => {
     expect(isPhpbbHtml(phpbbHtml)).toBe(true)
   })
 
+  it('should return true for an unquoted phpBB body id', () => {
+    expect(isPhpbbHtml('<body id=phpbb>')).toBe(true)
+  })
+
   it('should return false for another forum platform', () => {
     expect(isPhpbbHtml(otherHtml)).toBe(false)
   })

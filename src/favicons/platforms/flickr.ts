@@ -1,11 +1,14 @@
 import { isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
+import { type Element, findElement, hasClass } from '../../common/utils.js'
 import { hosts } from '../../feeds/platforms/flickr.js'
 
 const profileRegex = /^\/photos\/([^/]+)(?:\/favorites)?\/?$/
-// The page owner's 300x300 buddyicon.
-const avatarRegex =
-  /<div class="avatar-container">\s*<div\s+class="avatar [^"]*"\s*style="background-image: url\((\/\/[^)#]+\/buddyicons\/[^)#]+)/
+const buddyiconRegex = /background-image:\s*url\(\s*["']?(\/\/[^)"'#]+\/buddyicons\/[^)"'#]+)/
+
+const isOwnerAvatar = (element: Element): boolean => {
+  return hasClass(element, 'avatar') && hasClass(element.parent, 'avatar-container')
+}
 
 export const flickrHandler: PlatformHandler = {
   match: (url) => {
@@ -22,7 +25,9 @@ export const flickrHandler: PlatformHandler = {
   },
 
   resolve: (_url, content) => {
-    const match = content?.match(avatarRegex)
+    // The page owner's 300x300 buddyicon.
+    const avatar = findElement(content, isOwnerAvatar)
+    const match = avatar?.attribs.style?.match(buddyiconRegex)
 
     if (!match?.[1]) {
       return []
