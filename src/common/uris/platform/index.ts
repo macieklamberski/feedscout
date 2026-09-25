@@ -1,3 +1,4 @@
+import { isHttpUrl } from 'trousse'
 import { reportError } from '../../discover/utils.js'
 import type { DiscoverOnErrorFn, DiscoverRef, DiscoverUriEntry, FetchFn } from '../../types.js'
 import type { PlatformMethodOptions } from './types.js'
@@ -12,6 +13,11 @@ export const discoverUrisFromPlatform = async (
   const { baseUrl, handlers, enrichFn } = options
   const entries: Array<DiscoverUriEntry> = []
   const refs: Array<DiscoverRef> = []
+
+  // Host checks pass a `foo://` URL on a platform host, whose empty pathname no handler expects.
+  if (!isHttpUrl(baseUrl)) {
+    return entries
+  }
 
   for (const handler of handlers) {
     try {

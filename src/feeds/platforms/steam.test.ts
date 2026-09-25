@@ -154,6 +154,22 @@ describe('steamHandler', () => {
       expect(steamHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return global news and daily deals feeds for the store news hub link', () => {
+      const value = 'https://store.steampowered.com/newshub/'
+      const expected = [
+        {
+          uri: 'https://store.steampowered.com/feeds/news.xml',
+          hint: { key: 'steam:news-global', label: 'News (global)' },
+        },
+        {
+          uri: 'https://store.steampowered.com/feeds/daily_deals.xml',
+          hint: { key: 'steam:daily-deals', label: 'Daily deals' },
+        },
+      ]
+
+      expect(steamHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return empty array for community homepage', () => {
       expect(steamHandler.resolve('https://steamcommunity.com/')).toEqual([])
     })

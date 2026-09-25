@@ -66,8 +66,10 @@ describe('parseDailymotionUrl', () => {
     expect(parseDailymotionUrl(value)).toBeUndefined()
   })
 
-  it('should return undefined for a user page with a trailing slash', () => {
-    expect(parseDailymotionUrl('https://www.dailymotion.com/bfmtv/')).toBeUndefined()
+  it('should return the user for a user page with a trailing slash', () => {
+    const expected: DailymotionUrl = { kind: 'user', username: 'bfmtv' }
+
+    expect(parseDailymotionUrl('https://www.dailymotion.com/bfmtv/')).toEqual(expected)
   })
 
   it('should return undefined for a video page', () => {

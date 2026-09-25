@@ -140,6 +140,10 @@ describe('flickrHandler', () => {
       expect(flickrHandler.match('https://www.flickr.com/help/forum/en-us/')).toBe(true)
     })
 
+    it('should not match the help forums link to another site', () => {
+      expect(flickrHandler.match('https://www.flickr.com/help/forums')).toBe(false)
+    })
+
     it('should not match the explore page', () => {
       expect(flickrHandler.match('https://www.flickr.com/explore')).toBe(false)
     })

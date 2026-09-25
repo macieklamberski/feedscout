@@ -10,7 +10,6 @@ export type LemmyUrl = { kind: 'community'; community: string } | { kind: 'user'
 
 const lemmyPoweredByRegex = /lemmy/i
 const numericRegex = /^\d+$/
-const homeRegex = /^\/(?:home\/?)?$/i
 
 const validSorts = [
   'Active',
@@ -34,9 +33,25 @@ const validSorts = [
   'NewComments',
 ]
 
-const getQuerySuffix = (searchParams: URLSearchParams): string => {
+// The page advertises its feeds with the instance's default sort, which a feed URL without a sort
+// does not follow.
+const getAdvertisedSort = (content: string | undefined): string | undefined => {
+  if (!content) {
+    return
+  }
+
+  const link = findElement(content, (element) => {
+    return element.name === 'link' && element.attribs.rel === 'alternate'
+  })
+
+  return (
+    parseUrl(link?.attribs.href ?? '', 'https://example.com')?.searchParams.get('sort') ?? undefined
+  )
+}
+
+const getQuerySuffix = (searchParams: URLSearchParams, content: string | undefined): string => {
   const params = new URLSearchParams()
-  const sort = searchParams.get('sort')
+  const sort = searchParams.get('sort') ?? getAdvertisedSort(content)
 
   if (sort && validSorts.includes(sort)) {
     params.set('sort', sort)
@@ -85,13 +100,7 @@ export const isLemmyHeaders = (headers: Headers): boolean => {
 
 export const lemmyHandler: PlatformHandler = {
   match: (url, content, headers) => {
-    const parsedUrl = parseUrl(url)
-
-    if (!parsedUrl) {
-      return false
-    }
-
-    if (!homeRegex.test(parsedUrl.pathname) && !parseLemmyUrl(url)) {
+    if (parseUrl(url)?.pathname !== '/' && !parseLemmyUrl(url)) {
       return false
     }
 
@@ -106,10 +115,10 @@ export const lemmyHandler: PlatformHandler = {
     return false
   },
 
-  resolve: (url) => {
+  resolve: (url, content) => {
     const { origin, searchParams } = new URL(url)
     const parsed = parseLemmyUrl(url)
-    const sortSuffix = getQuerySuffix(searchParams)
+    const sortSuffix = getQuerySuffix(searchParams, content)
 
     if (parsed?.kind === 'community') {
       return [
@@ -129,7 +138,7 @@ export const lemmyHandler: PlatformHandler = {
       ]
     }
 
-    // Home page, / or /home, and any other page: the instance feeds.
+    // Home page and any other page: the instance feeds.
     return [
       {
         uri: `${origin}/feeds/all.xml${sortSuffix}`,

@@ -140,8 +140,12 @@ describe('parseRedditUrl', () => {
     expect(parseRedditUrl(value)).toEqual(expected)
   })
 
-  it('should return the user for a /u/ multireddit page', () => {
-    const expected: RedditUrl = { kind: 'user', username: 'kjoneslol' }
+  it('should return the multireddit for a /u/ multireddit page', () => {
+    const expected: RedditUrl = {
+      kind: 'multireddit',
+      username: 'kjoneslol',
+      multireddit: 'sfwpornnetwork',
+    }
 
     expect(parseRedditUrl('https://reddit.com/u/kjoneslol/m/sfwpornnetwork')).toEqual(expected)
   })

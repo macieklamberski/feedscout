@@ -138,6 +138,16 @@ describe('microblogHandler', () => {
       expect(microblogHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should not return archive feed for a sibling path of the archive page', () => {
+      const value = 'https://manton.micro.blog/archive_months.css'
+      const unexpected: DiscoverUriEntry = {
+        uri: 'https://manton.micro.blog/archive/index.json',
+        hint: { key: 'microblog:archive', label: 'Archive' },
+      }
+
+      expect(microblogHandler.resolve(value)).not.toContainEqual(unexpected)
+    })
+
     it('should return photos feed for photos page', () => {
       const value = 'https://manton.micro.blog/photos'
       const expected: Array<DiscoverUriEntry> = [

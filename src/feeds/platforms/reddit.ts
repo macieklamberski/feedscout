@@ -88,7 +88,7 @@ export const parseRedditUrl = (url: string): RedditUrl | undefined => {
     return { kind: 'subreddit', subreddit: name }
   }
 
-  if (isAnyOf(prefix, 'user') && isAnyOf(section, 'm') && item) {
+  if (isAnyOf(prefix, userPrefixes) && isAnyOf(section, 'm') && item) {
     return { kind: 'multireddit', username: name, multireddit: item }
   }
 

@@ -768,7 +768,7 @@ Discovers RSS feeds for Lemmy instances, communities and users. Detected by the 
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{instance}/` or `/home` | All posts feed + local posts feed |
+| `{instance}/` | All posts feed + local posts feed |
 | `{instance}/c/{community}` | Community feed |
 | `{instance}/u/{user}` | User feed |
 

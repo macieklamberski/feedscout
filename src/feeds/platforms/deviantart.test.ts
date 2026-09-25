@@ -230,16 +230,8 @@ describe('deviantartHandler', () => {
       expect(deviantartHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return popular feed', () => {
-      const value = 'https://deviantart.com/popular'
-      const expected = [
-        {
-          uri: 'https://backend.deviantart.com/rss.xml?type=deviation&q=boost%3Apopular',
-          hint: { key: 'deviantart:popular', label: 'Popular' },
-        },
-      ]
-
-      expect(deviantartHandler.resolve(value)).toEqual(expected)
+    it('should return empty array for the retired popular page', () => {
+      expect(deviantartHandler.resolve('https://deviantart.com/popular')).toEqual([])
     })
 
     it('should return curated daily-deviations feed for trailing slash', () => {
@@ -248,18 +240,6 @@ describe('deviantartHandler', () => {
         {
           uri: 'https://backend.deviantart.com/rss.xml?q=special%3Add',
           hint: { key: 'deviantart:daily-deviations', label: 'Daily Deviations' },
-        },
-      ]
-
-      expect(deviantartHandler.resolve(value)).toEqual(expected)
-    })
-
-    it('should return popular feed for trailing slash', () => {
-      const value = 'https://deviantart.com/popular/'
-      const expected = [
-        {
-          uri: 'https://backend.deviantart.com/rss.xml?type=deviation&q=boost%3Apopular',
-          hint: { key: 'deviantart:popular', label: 'Popular' },
         },
       ]
 
