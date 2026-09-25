@@ -5,7 +5,8 @@ import { composeHint, hasElementWithId } from '../../common/utils.js'
 // Discoverability: Partially discoverable without handler.
 // Generic covers board (html), partly covers forum, topic.
 
-const scriptSegmentRegex = /\/[^/]*$/
+const scriptSegmentRegex = /\/[^/]*\.php$/i
+const trailingSlashRegex = /\/$/
 const forumPathRegex = /\/viewforum\.php$/i
 const topicPathRegex = /\/viewtopic\.php$/i
 
@@ -28,7 +29,8 @@ export const fluxbbHandler: PlatformHandler = {
 
   resolve: (url) => {
     const { origin, pathname, searchParams } = new URL(url)
-    const feedUrl = `${origin}${pathname.replace(scriptSegmentRegex, '')}/extern.php?action=feed`
+    const boardPath = pathname.replace(scriptSegmentRegex, '').replace(trailingSlashRegex, '')
+    const feedUrl = `${origin}${boardPath}/extern.php?action=feed`
     const id = searchParams.get('id')
     const uris: Array<DiscoverUriEntry> = []
 

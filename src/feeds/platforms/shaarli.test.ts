@@ -130,5 +130,25 @@ describe('shaarliHandler', () => {
 
       expect(shaarliHandler.resolve(value)).toEqual(expected)
     })
+
+    it('should build the feeds from a legacy install path without a trailing slash', () => {
+      const value = 'https://example.org/links'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://example.org/links/feed/rss',
+          hint: { key: 'shaarli:posts', label: 'Posts', format: 'rss' },
+        },
+        {
+          uri: 'https://example.org/links/feed/atom',
+          hint: { key: 'shaarli:posts', label: 'Posts', format: 'atom' },
+        },
+        {
+          uri: 'https://example.org/links/?do=rss',
+          hint: { key: 'shaarli:posts-legacy', label: 'Posts (legacy)' },
+        },
+      ]
+
+      expect(shaarliHandler.resolve(value)).toEqual(expected)
+    })
   })
 })

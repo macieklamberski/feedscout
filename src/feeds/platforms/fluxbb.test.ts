@@ -134,5 +134,21 @@ describe('fluxbbHandler', () => {
 
       expect(fluxbbHandler.resolve(value)).toEqual(expected)
     })
+
+    it('should build the feeds from a sub-path without a trailing slash', () => {
+      const value = 'https://example.org/forums'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://example.org/forums/extern.php?action=feed&type=RSS',
+          hint: { key: 'fluxbb:posts', label: 'Posts', format: 'rss' },
+        },
+        {
+          uri: 'https://example.org/forums/extern.php?action=feed&type=atom',
+          hint: { key: 'fluxbb:posts', label: 'Posts', format: 'atom' },
+        },
+      ]
+
+      expect(fluxbbHandler.resolve(value)).toEqual(expected)
+    })
   })
 })
