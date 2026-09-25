@@ -1,4 +1,4 @@
-import { getPathSegments } from 'trousse'
+import { getPathSegments, isAnyOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement, hasClass } from '../../common/utils.js'
 import { parseMyanimelistUrl } from '../../feeds/platforms/myanimelist.js'
@@ -42,7 +42,7 @@ export const myanimelistHandler: PlatformHandler = {
     const [section, ...rest] = getPathSegments(url)
 
     // List and history pages carry no avatar, while the user's profile page does.
-    if (!content || section !== 'profile' || rest.length !== 1) {
+    if (!content || !isAnyOf(section, 'profile') || rest.length !== 1) {
       return [{ platform, id: username, url }]
     }
 

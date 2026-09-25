@@ -83,6 +83,22 @@ describe('jiraHandler', () => {
   })
 
   describe('resolve', () => {
+    it('should return the project and site feeds for a capitalized browse segment', () => {
+      const value = 'https://example.atlassian.net/Browse/ABC-1'
+      const expected = [
+        {
+          uri: 'https://example.atlassian.net/plugins/servlet/streams?key=ABC',
+          hint: { key: 'jira:project', label: 'Project' },
+        },
+        {
+          uri: 'https://example.atlassian.net/plugins/servlet/streams',
+          hint: { key: 'jira:site', label: 'Site activity' },
+        },
+      ]
+
+      expect(jiraHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return the project and site streams for an issue path', () => {
       const value = 'https://jira.example.org/browse/ABC-1'
       const expected = [

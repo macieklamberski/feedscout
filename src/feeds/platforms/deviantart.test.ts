@@ -70,6 +70,13 @@ describe('parseDeviantartUrl', () => {
     expect(parseDeviantartUrl(value)).toEqual(expected)
   })
 
+  it('should return the folder for a gallery folder page with a capitalized gallery segment', () => {
+    const value = 'https://deviantart.com/yuumei/Gallery/123456/folder-name'
+    const expected: DeviantartUrl = { kind: 'folder', username: 'yuumei', folderId: '123456' }
+
+    expect(parseDeviantartUrl(value)).toEqual(expected)
+  })
+
   it('should return the favourites for a favourites page', () => {
     const expected: DeviantartUrl = { kind: 'favourites', username: 'yuumei' }
 

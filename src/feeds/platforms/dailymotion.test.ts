@@ -37,6 +37,12 @@ describe('parseDailymotionUrl', () => {
     expect(parseDailymotionUrl('https://www.dailymotion.com/playlist/x7vjjm')).toEqual(expected)
   })
 
+  it('should return the playlist for a playlist page with a capitalized playlist segment', () => {
+    const expected: DailymotionUrl = { kind: 'playlist', playlistId: 'x7vjjm' }
+
+    expect(parseDailymotionUrl('https://www.dailymotion.com/Playlist/x7vjjm')).toEqual(expected)
+  })
+
   it('should return the playlist with underscores and dashes', () => {
     const value = 'https://www.dailymotion.com/playlist/x7vjjm_BFM-Story_bfm-story'
     const expected: DailymotionUrl = { kind: 'playlist', playlistId: 'x7vjjm_BFM-Story_bfm-story' }

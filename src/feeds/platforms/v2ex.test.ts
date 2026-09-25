@@ -43,6 +43,18 @@ describe('v2exHandler', () => {
       expect(v2exHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return node feed for node page with a capitalized go segment', () => {
+      const value = 'https://www.v2ex.com/Go/programmer'
+      const expected = [
+        {
+          uri: 'https://www.v2ex.com/feed/programmer.xml',
+          hint: { key: 'v2ex:node', label: 'Node' },
+        },
+      ]
+
+      expect(v2exHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return member feed for member page', () => {
       const value = 'https://www.v2ex.com/member/livid'
       const expected = [

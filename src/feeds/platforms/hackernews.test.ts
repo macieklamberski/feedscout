@@ -57,6 +57,18 @@ describe('hackernewsHandler', () => {
       expect(hackernewsHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return Show HN feed for /show with a capitalized show segment', () => {
+      const value = 'https://news.ycombinator.com/Show'
+      const expected = [
+        {
+          uri: 'https://news.ycombinator.com/showrss',
+          hint: { key: 'hackernews:show', label: 'Show HN' },
+        },
+      ]
+
+      expect(hackernewsHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return Show HN feed for /show with trailing slash', () => {
       const value = 'https://news.ycombinator.com/show/'
       const expected = [

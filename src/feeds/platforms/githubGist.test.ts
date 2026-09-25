@@ -39,6 +39,12 @@ describe('parseGithubGistUrl', () => {
     expect(parseGithubGistUrl('https://gist.github.com/defunkt/starred')).toEqual(expected)
   })
 
+  it('should return the starred gists for a starred page with a capitalized starred segment', () => {
+    const expected: GithubGistUrl = { kind: 'starred', username: 'defunkt' }
+
+    expect(parseGithubGistUrl('https://gist.github.com/defunkt/Starred')).toEqual(expected)
+  })
+
   it('should return the starred gists for the starred feed URL', () => {
     const expected: GithubGistUrl = { kind: 'starred', username: 'defunkt' }
 

@@ -41,6 +41,12 @@ describe('parseArenaUrl', () => {
     expect(parseArenaUrl('https://www.are.na/meg-miller/feed/rss')).toEqual(expected)
   })
 
+  it('should return the profile for the profile feed URL with a capitalized feed segment', () => {
+    const expected: ArenaUrl = { kind: 'profile', username: 'meg-miller' }
+
+    expect(parseArenaUrl('https://www.are.na/meg-miller/Feed/rss')).toEqual(expected)
+  })
+
   it('should return undefined for excluded paths', () => {
     expect(parseArenaUrl('https://www.are.na/editorial')).toBeUndefined()
     expect(parseArenaUrl('https://www.are.na/explore')).toBeUndefined()

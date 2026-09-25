@@ -476,6 +476,18 @@ describe('redditHandler', () => {
       expect(redditHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return sitewide search feed for /search?q= with a capitalized search segment', () => {
+      const value = 'https://www.reddit.com/Search?q=typescript'
+      const expected = [
+        {
+          uri: 'https://www.reddit.com/search.rss?q=typescript',
+          hint: { key: 'reddit:search', label: 'Search' },
+        },
+      ]
+
+      expect(redditHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should fall through to base subreddit feed for /r/{sub}/search without q', () => {
       const value = 'https://www.reddit.com/r/programming/search'
       const expected = [

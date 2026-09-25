@@ -42,6 +42,18 @@ describe('stackExchangeHandler', () => {
       expect(stackExchangeHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return tag feed for tag page on Stack Overflow with a capitalized questions segment', () => {
+      const value = 'https://stackoverflow.com/Questions/tagged/javascript'
+      const expected = [
+        {
+          uri: 'https://stackoverflow.com/feeds/tag/javascript',
+          hint: { key: 'stackexchange:tag', label: 'Tag' },
+        },
+      ]
+
+      expect(stackExchangeHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return tag feed for combined tags on Stack Overflow', () => {
       const value = 'https://stackoverflow.com/questions/tagged/javascript+typescript'
       const expected = [

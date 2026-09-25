@@ -1,4 +1,4 @@
-import { getPathSegments, isHostOf, parseUrl } from 'trousse'
+import { getAnyOf, getPathSegments, isAnyOf, isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
@@ -18,10 +18,12 @@ export type FlickrUrl =
 const hosts = ['flickr.com', 'www.flickr.com']
 const feedsBase = 'https://www.flickr.com/services/feeds'
 
-const tagRegex = /^\/photos\/tags\/([^/]+)/
-const groupRegex = /^\/groups\/(\d+@N\d+)(?:\/(pool|discuss))?/
-const forumRegex = /^\/help\/forum/
+const tagRegex = /^\/photos\/tags\/([^/]+)/i
+const groupRegex = /^\/groups\/([^/]+)(?:\/([^/]+))?/i
+const forumRegex = /^\/help\/forum/i
 const nsidRegex = /^\d+@N\d+$/
+
+const groupSections = ['pool', 'discuss']
 
 export const parseFlickrUrl = (url: string): FlickrUrl | undefined => {
   const parsedUrl = parseUrl(url)
@@ -40,20 +42,20 @@ export const parseFlickrUrl = (url: string): FlickrUrl | undefined => {
   const [prefix, userId, section, ...rest] = getPathSegments(parsedUrl)
 
   // The user is an NSID such as 12345678@N00 or the path alias the account picked.
-  if (prefix === 'photos' && userId && userId !== 'tags') {
+  if (isAnyOf(prefix, 'photos') && userId && !isAnyOf(userId, 'tags')) {
     if (!section) {
       return { kind: 'photostream', userId }
     }
 
-    if (section === 'favorites') {
+    if (isAnyOf(section, 'favorites')) {
       return { kind: 'favorites', userId }
     }
 
-    if (section === 'albums' && rest.length === 0) {
+    if (isAnyOf(section, 'albums') && rest.length === 0) {
       return { kind: 'albums', userId }
     }
 
-    if (section === 'galleries' && rest.length === 0) {
+    if (isAnyOf(section, 'galleries') && rest.length === 0) {
       return { kind: 'galleries', userId }
     }
 
@@ -62,8 +64,8 @@ export const parseFlickrUrl = (url: string): FlickrUrl | undefined => {
 
   const groupMatch = pathname.match(groupRegex)
 
-  if (groupMatch?.[1]) {
-    return { kind: 'group', group: groupMatch[1], section: groupMatch[2] }
+  if (groupMatch?.[1] && nsidRegex.test(groupMatch[1])) {
+    return { kind: 'group', group: groupMatch[1], section: getAnyOf(groupMatch[2], groupSections) }
   }
 }
 

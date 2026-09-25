@@ -32,6 +32,18 @@ describe('audioboomHandler', () => {
       expect(audioboomHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return podcast feed for channel with a capitalized channels segment', () => {
+      const value = 'https://audioboom.com/Channels/5071123'
+      const expected = [
+        {
+          uri: 'https://audioboom.com/channels/5071123.rss',
+          hint: { key: 'audioboom:podcast', label: 'Podcast' },
+        },
+      ]
+
+      expect(audioboomHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return feed URL regardless of subpath', () => {
       const value = 'https://audioboom.com/channels/5071123/some-episode'
       const expected = [

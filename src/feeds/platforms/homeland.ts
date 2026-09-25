@@ -5,7 +5,7 @@ import { composeHint, getCookieNames, hasMetaContent } from '../../common/utils.
 // Discoverability: Partially discoverable without handler.
 // Generic covers topics (html), partly covers node.
 
-const nodePathRegex = /\/topics\/(node\d+)/
+const nodePathRegex = /\/topics\/node(\d+)/i
 
 export const isHomelandHtml = (content: string): boolean => {
   return hasMetaContent(content, 'generator', 'Homeland')
@@ -39,7 +39,7 @@ export const homelandHandler: PlatformHandler = {
 
     if (node) {
       uris.push({
-        uri: `${origin}/topics/${node}/feed`,
+        uri: `${origin}/topics/node${node}/feed`,
         hint: composeHint('homeland:node'),
       })
     }

@@ -71,5 +71,17 @@ describe('weeblyHandler', () => {
 
       expect(weeblyHandler.resolve(value)).toEqual(expected)
     })
+
+    it('should return default feed once for blog page with a capitalized blog segment', () => {
+      const value = 'https://example.weebly.com/Blog'
+      const expected = [
+        {
+          uri: 'https://example.weebly.com/blog/feed',
+          hint: { key: 'weebly:blog', label: 'Blog' },
+        },
+      ]
+
+      expect(weeblyHandler.resolve(value)).toEqual(expected)
+    })
   })
 })

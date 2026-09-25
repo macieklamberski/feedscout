@@ -11,8 +11,8 @@ const wwwHosts = ['www.insanejournal.com', 'insanejournal.com']
 const asylumHosts = ['asylums.insanejournal.com']
 const feedHosts = ['feeds.insanejournal.com']
 
-const wwwUsersPathRegex = /^\/(?:users\/|~)([^/]+)/
-const wwwAsylumPathRegex = /^\/(?:asylum|community)\/([^/]+)/
+const wwwUsersPathRegex = /^\/(?:users\/|~)([^/]+)/i
+const wwwAsylumPathRegex = /^\/(?:asylum|community)\/([^/]+)/i
 const firstSegmentRegex = /^\/([^/]+)/
 
 export const insanejournalHandler: PlatformHandler = {

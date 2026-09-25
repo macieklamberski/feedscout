@@ -21,6 +21,12 @@ describe('parseBehanceUrl', () => {
     expect(parseBehanceUrl('https://www.behance.net/johndoe/appreciated')).toEqual(expected)
   })
 
+  it('should return the username for the appreciated page with a capitalized appreciated segment', () => {
+    const expected: BehanceUrl = { kind: 'profile', username: 'johndoe' }
+
+    expect(parseBehanceUrl('https://www.behance.net/johndoe/Appreciated')).toEqual(expected)
+  })
+
   it('should return the username for the host without www', () => {
     const expected: BehanceUrl = { kind: 'profile', username: 'johndoe' }
 

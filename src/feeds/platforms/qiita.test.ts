@@ -56,6 +56,18 @@ describe('qiitaHandler', () => {
       expect(qiitaHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return feed URL for tag page with a capitalized tags segment', () => {
+      const value = 'https://qiita.com/Tags/javascript'
+      const expected = [
+        {
+          uri: 'https://qiita.com/tags/javascript/feed.atom',
+          hint: { key: 'qiita:tag', label: 'Tag' },
+        },
+      ]
+
+      expect(qiitaHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return feed URL for organization page', () => {
       const value = 'https://qiita.com/organizations/qiita-inc'
       const expected = [

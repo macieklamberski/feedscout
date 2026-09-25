@@ -12,9 +12,9 @@ export type HabrUrl =
 
 const hosts = ['habr.com', 'www.habr.com']
 
-const hubRegex = /\/hubs?\/([^/]+)/
-const userRegex = /\/users\/([^/]+)/
-const companyRegex = /\/compan(?:y|ies)\/([^/]+)/
+const hubRegex = /\/hubs?\/([^/]+)/i
+const userRegex = /\/users\/([^/]+)/i
+const companyRegex = /\/compan(?:y|ies)\/([^/]+)/i
 
 const languages = ['ru', 'en']
 

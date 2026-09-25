@@ -27,6 +27,12 @@ describe('parseMediumUrl', () => {
     expect(parseMediumUrl('https://medium.com/tag/javascript')).toEqual(expected)
   })
 
+  it('should return the tag for a tag page with a capitalized tag segment', () => {
+    const expected: MediumUrl = { kind: 'tag', tag: 'javascript' }
+
+    expect(parseMediumUrl('https://medium.com/Tag/javascript')).toEqual(expected)
+  })
+
   it('should return the publication for a publication page', () => {
     const expected: MediumUrl = { kind: 'publication', publication: 'towards-data-science' }
 

@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'bun:test'
+import type { DiscoverUriEntry } from '../../common/types.js'
 import { isXenforoHtml, xenforoHandler } from './xenforo.js'
 
 const xenforoHtml = '<html id="XF" lang="en-US" data-xf="2.3" data-app="public">'
@@ -43,6 +44,16 @@ describe('xenforoHandler', () => {
   })
 
   describe('resolve', () => {
+    it('should return the forum feed for a capitalized f segment', () => {
+      const value = 'https://example.com/F/general.17/'
+      const expected: DiscoverUriEntry = {
+        uri: 'https://example.com/f/general.17/index.rss',
+        hint: { key: 'xenforo:forum', label: 'Forum' },
+      }
+
+      expect(xenforoHandler.resolve(value)).toContainEqual(expected)
+    })
+
     it('should return the forum and site feeds for a forum path', () => {
       const value = 'https://example.com/f/general.17/'
       const expected = [

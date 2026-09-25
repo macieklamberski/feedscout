@@ -7,8 +7,8 @@ import { composeHint } from '../../common/utils.js'
 // Handler needed for: book, home, movie, music.
 
 const domains = ['douban.com']
-const userRegex = /^\/people\/([^/]+)/
-const subjectRegex = /^\/subject\/(\d+)/
+const userRegex = /^\/people\/([^/]+)/i
+const subjectRegex = /^\/subject\/(\d+)/i
 
 export const doubanHandler: PlatformHandler = {
   match: (url) => {

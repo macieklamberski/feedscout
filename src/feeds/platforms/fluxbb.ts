@@ -6,8 +6,8 @@ import { composeHint, hasElementWithId } from '../../common/utils.js'
 // Generic covers board (html), partly covers forum, topic.
 
 const scriptSegmentRegex = /\/[^/]*$/
-const forumPathRegex = /\/viewforum\.php$/
-const topicPathRegex = /\/viewtopic\.php$/
+const forumPathRegex = /\/viewforum\.php$/i
+const topicPathRegex = /\/viewtopic\.php$/i
 
 // Each id of a pair alone is a plausible id on an unrelated page.
 const templateIds = ['brdheader', 'brdmain']

@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'bun:test'
+import type { DiscoverUriEntry } from '../../common/types.js'
 import { discourseHandler, isDiscourseHeaders, isDiscourseHtml } from './discourse.js'
 
 const discourseHtml =
@@ -73,6 +74,16 @@ describe('discourseHandler', () => {
   })
 
   describe('resolve', () => {
+    it('should return the activity feed for a capitalized u segment', () => {
+      const value = 'https://users.rust-lang.org/U/steveklabnik'
+      const expected: DiscoverUriEntry = {
+        uri: 'https://users.rust-lang.org/u/steveklabnik/activity.rss',
+        hint: { key: 'discourse:activity', label: 'Activity' },
+      }
+
+      expect(discourseHandler.resolve(value)).toContainEqual(expected)
+    })
+
     it('should return user activity feed for /u/{user} path', () => {
       const value = 'https://users.rust-lang.org/u/steveklabnik'
       const expected = [

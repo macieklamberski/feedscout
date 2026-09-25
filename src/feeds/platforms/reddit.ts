@@ -20,11 +20,12 @@ export type RedditUrl =
 
 export const hosts = ['reddit.com', 'www.reddit.com', 'old.reddit.com', 'new.reddit.com']
 
-const subredditsRegex = /^\/(?:subreddits|reddits)(?:\/(new|popular))?/
+const subredditsRegex = /^\/(?:subreddits|reddits)(?:\/([^/]+))?/i
 // Stops at a dot, so a feed URL like /r/{sub}.rss or /user/{user}/submitted.rss yields the
 // name and the section.
 const nameRegex = /^[^.]+/
 
+const subredditsSorts = ['new', 'popular']
 const sortOptions = ['hot', 'new', 'rising', 'controversial', 'top', 'best']
 const timeOptions = ['hour', 'day', 'week', 'month', 'year', 'all']
 const timeFilteredSorts = ['top', 'controversial']
@@ -133,7 +134,7 @@ export const redditHandler: PlatformHandler = {
     }
 
     // Sitewide search: /search?q=...
-    if (pathSegments[0] === 'search') {
+    if (isAnyOf(pathSegments[0], 'search')) {
       const query = searchParams.get('q')
 
       if (query) {
@@ -150,8 +151,8 @@ export const redditHandler: PlatformHandler = {
     const subredditsMatch = pathname.match(subredditsRegex)
 
     if (subredditsMatch) {
-      const sort = subredditsMatch[1]
-      const path = sort ? `subreddits/${sort}` : 'subreddits'
+      const listSort = getAnyOf(subredditsMatch[1], subredditsSorts)
+      const path = listSort ? `subreddits/${listSort}` : 'subreddits'
 
       return [
         {

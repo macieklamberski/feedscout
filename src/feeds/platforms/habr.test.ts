@@ -9,6 +9,12 @@ describe('parseHabrUrl', () => {
     expect(parseHabrUrl('https://habr.com/ru/hubs/javascript/')).toEqual(expected)
   })
 
+  it('should return the hub for a hub page with a capitalized hubs segment', () => {
+    const expected: HabrUrl = { kind: 'hub', hub: 'javascript' }
+
+    expect(parseHabrUrl('https://habr.com/ru/Hubs/javascript/')).toEqual(expected)
+  })
+
   it('should return the hub for a hub article list', () => {
     const expected: HabrUrl = { kind: 'hub', hub: 'programming' }
 

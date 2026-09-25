@@ -43,6 +43,16 @@ describe('fluxbbHandler', () => {
   })
 
   describe('resolve', () => {
+    it('should return the forum feed for a capitalized viewforum.php segment', () => {
+      const value = 'https://example.org/Viewforum.php?id=3'
+      const expected: DiscoverUriEntry = {
+        uri: 'https://example.org/extern.php?action=feed&fid=3&type=atom',
+        hint: { key: 'fluxbb:forum', label: 'Forum' },
+      }
+
+      expect(fluxbbHandler.resolve(value)).toContainEqual(expected)
+    })
+
     it('should return both feed formats', () => {
       const value = 'https://example.org/index.php'
       const expected: Array<DiscoverUriEntry> = [

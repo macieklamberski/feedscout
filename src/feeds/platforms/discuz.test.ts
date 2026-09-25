@@ -48,6 +48,22 @@ describe('discuzHandler', () => {
   })
 
   describe('resolve', () => {
+    it('should return the board and site feeds for a capitalized forum segment', () => {
+      const value = 'https://example.com/Forum-22-1.html'
+      const expected = [
+        {
+          uri: 'https://example.com/forum.php?mod=rss&fid=22',
+          hint: { key: 'discuz:board', label: 'Board' },
+        },
+        {
+          uri: 'https://example.com/forum.php?mod=rss',
+          hint: { key: 'discuz:site', label: 'Site' },
+        },
+      ]
+
+      expect(discuzHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return the board and site feeds for a board path', () => {
       const value = 'https://example.com/forum-22-1.html'
       const expected = [

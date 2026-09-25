@@ -10,16 +10,16 @@ import { composeHint } from '../../common/utils.js'
 const domains = ['itch.io']
 const mainHosts = ['itch.io', 'www.itch.io']
 
-const byUserRegex = /^\/games\/by-([^/]+)/
-const tagRegex = /^\/games\/tag-([^/]+)/
-const platformRegex = /^\/games\/platform-([^/.]+)/
-const genreRegex = /^\/games\/genre-([^/.]+)/
-const madeWithRegex = /^\/games\/made-with-([^/.]+)/
-const sortRegex = /^\/games\/([^/.]+)/
+const byUserRegex = /^\/games\/by-([^/]+)/i
+const tagRegex = /^\/games\/tag-([^/]+)/i
+const platformRegex = /^\/games\/platform-([^/.]+)/i
+const genreRegex = /^\/games\/genre-([^/.]+)/i
+const madeWithRegex = /^\/games\/made-with-([^/.]+)/i
+const sortRegex = /^\/games\/([^/.]+)/i
 const sectionRegex = /^\/([^/.]+)/
 const gameRegex = /^\/([^/]+)/
-const gamesRegex = /^\/games\/?$/
-const devlogsRegex = /^\/devlogs\/?$/
+const gamesRegex = /^\/games\/?$/i
+const devlogsRegex = /^\/devlogs\/?$/i
 
 const sections = [
   'tools',

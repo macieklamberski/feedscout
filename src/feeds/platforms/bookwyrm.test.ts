@@ -12,6 +12,12 @@ describe('parseBookwyrmUrl', () => {
     expect(parseBookwyrmUrl('https://bookwyrm.social/user/mouse')).toEqual(expected)
   })
 
+  it('should return the profile for a profile page with a capitalized user segment', () => {
+    const expected: BookwyrmUrl = { kind: 'profile', username: 'mouse' }
+
+    expect(parseBookwyrmUrl('https://bookwyrm.social/User/mouse')).toEqual(expected)
+  })
+
   it('should return the profile of a remote user', () => {
     const value = 'https://books.example.com/user/reader@remote.example.org'
     const expected: BookwyrmUrl = { kind: 'profile', username: 'reader@remote.example.org' }

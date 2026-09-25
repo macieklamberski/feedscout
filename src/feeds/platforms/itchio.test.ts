@@ -175,6 +175,15 @@ describe('itchioHandler', () => {
       expect(itchioHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return games feed for /games path with a capitalized games segment', () => {
+      const value = 'https://itch.io/Games'
+      const expected = [
+        { uri: 'https://itch.io/games.xml', hint: { key: 'itchio:games', label: 'Games' } },
+      ]
+
+      expect(itchioHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return games feed for /games path with trailing slash', () => {
       const value = 'https://itch.io/games/'
       const expected = [

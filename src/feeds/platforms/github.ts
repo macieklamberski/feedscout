@@ -12,11 +12,11 @@ export type GithubUrl =
 
 const hosts = ['github.com', 'www.github.com']
 
-const wikiRegex = /\/wiki(\/|$)/
-const discussionsRegex = /\/discussions(\/|$)/
-const discussionCategoryRegex = /\/discussions\/categories\/([^/]+)/
-const branchRegex = /^\/[^/]+\/[^/]+\/tree\/([^/]+)\/?$/
-const fileRegex = /^\/[^/]+\/[^/]+\/(?:blob|commits)\/([^/]+)\/(.+)/
+const wikiRegex = /\/wiki(\/|$)/i
+const discussionsRegex = /\/discussions(\/|$)/i
+const discussionCategoryRegex = /\/discussions\/categories\/([^/]+)/i
+const branchRegex = /^\/[^/]+\/[^/]+\/tree\/([^/]+)\/?$/i
+const fileRegex = /^\/[^/]+\/[^/]+\/(?:blob|commits)\/([^/]+)\/(.+)/i
 
 const excludedPaths = [
   'about',

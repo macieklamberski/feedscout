@@ -6,7 +6,7 @@ import { composeHint } from '../../common/utils.js'
 
 const hosts = ['rss.com', 'www.rss.com']
 // Optional 2-letter locale prefix, e.g. /es/podcasts/, /it/podcasts/.
-const podcastRegex = /^\/(?:[a-z]{2}\/)?podcasts\/([^/]+)/
+const podcastRegex = /^\/(?:[a-z]{2}\/)?podcasts\/([^/]+)/i
 
 export const rssComHandler: PlatformHandler = {
   match: (url) => {

@@ -33,6 +33,12 @@ describe('parseDevtoUrl', () => {
     expect(parseDevtoUrl('https://dev.to/t/javascript')).toEqual(expected)
   })
 
+  it('should return the tag for a tag page with a capitalized t segment', () => {
+    const expected: DevtoUrl = { kind: 'tag', tag: 'javascript' }
+
+    expect(parseDevtoUrl('https://dev.to/T/javascript')).toEqual(expected)
+  })
+
   it('should return undefined for an excluded path', () => {
     expect(parseDevtoUrl('https://dev.to/settings')).toBeUndefined()
   })

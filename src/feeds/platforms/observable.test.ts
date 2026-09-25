@@ -32,6 +32,17 @@ describe('parseObservableUrl', () => {
     expect(parseObservableUrl(value)).toEqual(expected)
   })
 
+  it('should return the collection for a collection page with a capitalized collection segment', () => {
+    const value = 'https://observablehq.com/@observablehq/Collection/visualization'
+    const expected: ObservableUrl = {
+      kind: 'collection',
+      owner: 'observablehq',
+      collection: 'visualization',
+    }
+
+    expect(parseObservableUrl(value)).toEqual(expected)
+  })
+
   it('should return the collection for a collection page in the live form', () => {
     const value = 'https://observablehq.com/@observablehq/-/collection/working-with-data'
     const expected: ObservableUrl = {

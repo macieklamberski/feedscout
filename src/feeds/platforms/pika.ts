@@ -7,7 +7,7 @@ import { composeHint } from '../../common/utils.js'
 // Generic partly covers blog, tag.
 
 const domains = ['pika.page']
-const tagRegex = /^\/tag\/([^/]+)/
+const tagRegex = /^\/tag\/([^/]+)/i
 
 export const pikaHandler: PlatformHandler = {
   match: (url) => {

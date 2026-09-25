@@ -21,6 +21,21 @@ describe('wordpressHandler', () => {
   })
 
   describe('resolve', () => {
+    it('should not return the post comments feed for a capitalized feed segment', () => {
+      const value = 'https://example.wordpress.com/Feed/'
+      const unexpected: DiscoverUriEntry = {
+        uri: [
+          'https://example.wordpress.com/Feed/feed/',
+          'https://example.wordpress.com/Feed/?feed=rss',
+          'https://example.wordpress.com/Feed/feed/rss2/',
+          'https://example.wordpress.com/Feed/?feed=rss2',
+        ],
+        hint: { key: 'wordpress:post-comments', label: 'Post comments', format: 'rss' },
+      }
+
+      expect(wordpressHandler.resolve(value)).not.toContainEqual(unexpected)
+    })
+
     it('should return feed URLs for blog', () => {
       const value = 'https://example.wordpress.com'
       const expected: Array<DiscoverUriEntry> = [
@@ -148,6 +163,77 @@ describe('wordpressHandler', () => {
 
     it('should include category feed when on category page', () => {
       const value = 'https://blog.wordpress.com/category/tech/'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: [
+            'https://blog.wordpress.com/category/tech/feed/',
+            'https://blog.wordpress.com/category/tech/?feed=rss',
+            'https://blog.wordpress.com/category/tech/feed/rss2/',
+            'https://blog.wordpress.com/category/tech/?feed=rss2',
+          ],
+          hint: { key: 'wordpress:category', label: 'Category', format: 'rss' },
+        },
+        {
+          uri: [
+            'https://blog.wordpress.com/category/tech/feed/atom/',
+            'https://blog.wordpress.com/category/tech/?feed=atom',
+          ],
+          hint: { key: 'wordpress:category', label: 'Category', format: 'atom' },
+        },
+        {
+          uri: [
+            'https://blog.wordpress.com/category/tech/feed/rdf/',
+            'https://blog.wordpress.com/category/tech/?feed=rdf',
+          ],
+          hint: { key: 'wordpress:category', label: 'Category', format: 'rdf' },
+        },
+        {
+          uri: [
+            'https://blog.wordpress.com/feed/',
+            'https://blog.wordpress.com/?feed=rss',
+            'https://blog.wordpress.com/feed/rss2/',
+            'https://blog.wordpress.com/?feed=rss2',
+          ],
+          hint: { key: 'wordpress:posts', label: 'Posts', format: 'rss' },
+        },
+        {
+          uri: ['https://blog.wordpress.com/feed/atom/', 'https://blog.wordpress.com/?feed=atom'],
+          hint: { key: 'wordpress:posts', label: 'Posts', format: 'atom' },
+        },
+        {
+          uri: ['https://blog.wordpress.com/feed/rdf/', 'https://blog.wordpress.com/?feed=rdf'],
+          hint: { key: 'wordpress:posts', label: 'Posts', format: 'rdf' },
+        },
+        {
+          uri: [
+            'https://blog.wordpress.com/comments/feed/',
+            'https://blog.wordpress.com/?feed=comments-rss',
+            'https://blog.wordpress.com/comments/feed/rss2/',
+            'https://blog.wordpress.com/?feed=comments-rss2',
+          ],
+          hint: { key: 'wordpress:comments', label: 'Comments', format: 'rss' },
+        },
+        {
+          uri: [
+            'https://blog.wordpress.com/comments/feed/atom/',
+            'https://blog.wordpress.com/?feed=comments-atom',
+          ],
+          hint: { key: 'wordpress:comments', label: 'Comments', format: 'atom' },
+        },
+        {
+          uri: [
+            'https://blog.wordpress.com/comments/feed/rdf/',
+            'https://blog.wordpress.com/?feed=comments-rdf',
+          ],
+          hint: { key: 'wordpress:comments', label: 'Comments', format: 'rdf' },
+        },
+      ]
+
+      expect(wordpressHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should include category feed when on category page with a capitalized category segment', () => {
+      const value = 'https://blog.wordpress.com/Category/tech/'
       const expected: Array<DiscoverUriEntry> = [
         {
           uri: [

@@ -63,6 +63,12 @@ describe('parseGitlabUrl', () => {
     expect(parseGitlabUrl('https://gitlab.com/alice.atom')).toEqual(expected)
   })
 
+  it('should strip a capitalized feed suffix from a namespace feed URL', () => {
+    const expected: GitlabUrl = { kind: 'namespace', namespace: 'alice' }
+
+    expect(parseGitlabUrl('https://gitlab.com/alice.ATOM')).toEqual(expected)
+  })
+
   it('should strip the feed suffix from a dotted namespace', () => {
     const expected: GitlabUrl = { kind: 'namespace', namespace: 'john.doe' }
 

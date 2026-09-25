@@ -1,4 +1,4 @@
-import { getPathSegments, isHostOf } from 'trousse'
+import { getPathSegments, isAnyOf, isHostOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
@@ -15,7 +15,7 @@ export const parseBlueskyUrl = (url: string): BlueskyUrl | undefined => {
 
   const [section, handle] = getPathSegments(url)
 
-  if (section !== 'profile' || !handle) {
+  if (!isAnyOf(section, 'profile') || !handle) {
     return
   }
 

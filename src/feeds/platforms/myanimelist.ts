@@ -10,9 +10,9 @@ import { composeHint } from '../../common/utils.js'
 export type MyanimelistUrl = { kind: 'user'; username: string }
 
 export const hosts = ['myanimelist.net', 'www.myanimelist.net']
-const userRegex = /^\/(?:profile|animelist|mangalist|history)\/([^/]+)/
-const newsRegex = /^\/news(?:\/|$)/
-const featuredRegex = /^\/featured(?:\/|$)/
+const userRegex = /^\/(?:profile|animelist|mangalist|history)\/([^/]+)/i
+const newsRegex = /^\/news(?:\/|$)/i
+const featuredRegex = /^\/featured(?:\/|$)/i
 
 export const parseMyanimelistUrl = (url: string): MyanimelistUrl | undefined => {
   const parsedUrl = parseUrl(url)

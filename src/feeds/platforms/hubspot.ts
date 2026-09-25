@@ -1,3 +1,4 @@
+import { getAnyOf } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, hasMetaContent } from '../../common/utils.js'
@@ -5,7 +6,10 @@ import { composeHint, hasMetaContent } from '../../common/utils.js'
 // Discoverability: Partially discoverable without handler.
 // Generic covers blog, post (html), partly covers author, tag.
 
-const listingPathRegex = /^\/[^/]+\/(author|tag|topic)\/[^/]+/
+const listingPathRegex = /^\/([^/]+)\/([^/]+)\/([^/]+)/
+
+const listingKinds = ['author', 'tag', 'topic']
+
 const blogContentTypes = ['BLOG_LISTING_PAGE', 'BLOG_POST', 'BLOG_AUTHOR', 'TAG']
 
 const getBlogPath = (url: string): string | undefined => {
@@ -58,11 +62,12 @@ export const hubspotHandler: PlatformHandler = {
     }
 
     const uris: Array<DiscoverUriEntry> = []
-    const [listingPath, kind] = pathname.match(listingPathRegex) ?? []
+    const [, listingBlog, rawKind, listingName] = pathname.match(listingPathRegex) ?? []
+    const kind = getAnyOf(rawKind, listingKinds)
 
-    if (listingPath) {
+    if (kind) {
       uris.push({
-        uri: `${origin}${listingPath}/rss.xml`,
+        uri: `${origin}/${listingBlog}/${kind}/${listingName}/rss.xml`,
         hint: composeHint(kind === 'author' ? 'hubspot:author' : 'hubspot:tag'),
       })
     }

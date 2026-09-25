@@ -29,6 +29,10 @@ describe('diasporaHandler', () => {
       expect(diasporaHandler.match('https://example.org/u/alice', diasporaHtml)).toBe(true)
     })
 
+    it('should match a profile path with a capitalized u segment', () => {
+      expect(diasporaHandler.match('https://example.org/U/alice', diasporaHtml)).toBe(true)
+    })
+
     it('should match the feed and legacy profile paths', () => {
       expect(diasporaHandler.match('https://example.org/public/alice', diasporaHtml)).toBe(true)
       expect(diasporaHandler.match('https://example.org/people/alice', diasporaHtml)).toBe(true)

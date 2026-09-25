@@ -22,6 +22,12 @@ describe('parseExblogUrl', () => {
     expect(parseExblogUrl('https://petitcc.exblog.jp/i2')).toEqual(expected)
   })
 
+  it('should return the blog and category for a category page with a capitalized category segment', () => {
+    const expected: ExblogUrl = { kind: 'category', blog: 'petitcc', category: '2' }
+
+    expect(parseExblogUrl('https://petitcc.exblog.jp/I2')).toEqual(expected)
+  })
+
   it('should return the category for a category page with a trailing slash', () => {
     const expected: ExblogUrl = { kind: 'category', blog: 'petitcc', category: '2' }
 

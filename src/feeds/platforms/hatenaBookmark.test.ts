@@ -11,6 +11,12 @@ describe('parseHatenaBookmarkUrl', () => {
     expect(parseHatenaBookmarkUrl('https://b.hatena.ne.jp/search/tag?q=rss')).toEqual(expected)
   })
 
+  it('should return a search for a tag search with a capitalized search segment', () => {
+    const expected: HatenaBookmarkUrl = { kind: 'search' }
+
+    expect(parseHatenaBookmarkUrl('https://b.hatena.ne.jp/Search/tag?q=rss')).toEqual(expected)
+  })
+
   it('should return a search for a text search', () => {
     const expected: HatenaBookmarkUrl = { kind: 'search' }
 
@@ -169,6 +175,17 @@ describe('hatenaBookmarkHandler', () => {
       ]
 
       expect(hatenaBookmarkHandler.resolve(`${base}/search/tag?q=rss`)).toEqual(expected)
+    })
+
+    it('should return the canonical search feed for a capitalized search path', () => {
+      const expected = [
+        {
+          uri: `${base}/search/tag?q=rss&mode=rss`,
+          hint: { key: 'hatena-bookmark:search', label: 'Search' },
+        },
+      ]
+
+      expect(hatenaBookmarkHandler.resolve(`${base}/Search/Tag?q=rss`)).toEqual(expected)
     })
 
     it('should keep existing search filters', () => {

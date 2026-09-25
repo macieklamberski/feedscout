@@ -99,6 +99,22 @@ describe('hubspotHandler', () => {
       expect(hubspotHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return the author and blog feeds for an author page with a capitalized author segment', () => {
+      const value = 'https://example.com/blog/Author/jane-doe'
+      const expected = [
+        {
+          uri: 'https://example.com/blog/author/jane-doe/rss.xml',
+          hint: { key: 'hubspot:author', label: 'Author' },
+        },
+        {
+          uri: 'https://example.com/blog/rss.xml',
+          hint: { key: 'hubspot:blog', label: 'Blog' },
+        },
+      ]
+
+      expect(hubspotHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return the tag and blog feeds for a topic page', () => {
       const value = 'https://example.com/blog/topic/inbound'
       const expected = [

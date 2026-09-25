@@ -21,6 +21,16 @@ describe('pikaHandler', () => {
   })
 
   describe('resolve', () => {
+    it('should return the tag feed for a capitalized tag segment', () => {
+      const value = 'https://discardpile.pika.page/Tag/tech'
+      const expected: DiscoverUriEntry = {
+        uri: 'https://discardpile.pika.page/tag/tech/feed',
+        hint: { key: 'pika:tag', label: 'Tag', format: 'atom' },
+      }
+
+      expect(pikaHandler.resolve(value)).toContainEqual(expected)
+    })
+
     it('should return Atom and RSS feeds for blog', () => {
       const value = 'https://pika.pika.page'
       const expected: Array<DiscoverUriEntry> = [

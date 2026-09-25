@@ -109,6 +109,18 @@ describe('letterboxdHandler', () => {
       expect(letterboxdHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return Journal feed for /journal with a capitalized journal segment', () => {
+      const value = 'https://letterboxd.com/Journal'
+      const expected = [
+        {
+          uri: 'https://letterboxd.com/journal/rss/',
+          hint: { key: 'letterboxd:journal', label: 'Journal' },
+        },
+      ]
+
+      expect(letterboxdHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return Journal feed for a journal article', () => {
       const value = 'https://letterboxd.com/journal/the-best-films-of-the-year'
       const expected = [

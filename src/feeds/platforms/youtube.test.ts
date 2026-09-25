@@ -24,6 +24,16 @@ describe('parseYoutubeUrl', () => {
     expect(parseYoutubeUrl('https://youtube.com/c/mkbhd')).toEqual(expected)
   })
 
+  it('should return a channel for a capitalized channel path', () => {
+    const expected: YoutubeUrl = { kind: 'channel' }
+
+    expect(parseYoutubeUrl('https://youtube.com/User/pewdiepie')).toEqual(expected)
+  })
+
+  it('should return undefined for a channel ID without the uppercase UC prefix', () => {
+    expect(parseYoutubeUrl('https://youtube.com/channel/ucabc123')).toBeUndefined()
+  })
+
   it('should return a channel for the www and mobile hosts', () => {
     const expected: YoutubeUrl = { kind: 'channel' }
 
@@ -41,6 +51,12 @@ describe('parseYoutubeUrl', () => {
     const expected: YoutubeUrl = { kind: 'watch' }
 
     expect(parseYoutubeUrl('https://youtube.com/watch?v=abc123')).toEqual(expected)
+  })
+
+  it('should return a watch page for a watch URL with a capitalized watch segment', () => {
+    const expected: YoutubeUrl = { kind: 'watch' }
+
+    expect(parseYoutubeUrl('https://youtube.com/Watch?v=abc123')).toEqual(expected)
   })
 
   it('should return a watch page for a watch URL with trailing slash', () => {

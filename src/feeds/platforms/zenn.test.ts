@@ -27,6 +27,12 @@ describe('parseZennUrl', () => {
     expect(parseZennUrl('https://zenn.dev/topics/react')).toEqual(expected)
   })
 
+  it('should return the topic for a topic page with a capitalized topics segment', () => {
+    const expected: ZennUrl = { kind: 'topic', topic: 'react' }
+
+    expect(parseZennUrl('https://zenn.dev/Topics/react')).toEqual(expected)
+  })
+
   it('should return the topic for a topic feed URL', () => {
     const expected: ZennUrl = { kind: 'topic', topic: 'react' }
 

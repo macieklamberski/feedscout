@@ -6,8 +6,8 @@ import { composeHint } from '../../common/utils.js'
 
 const hosts = ['www.v2ex.com', 'v2ex.com']
 
-const nodeRegex = /^\/go\/([^/]+)/
-const memberRegex = /^\/member\/([^/]+)/
+const nodeRegex = /^\/go\/([^/]+)/i
+const memberRegex = /^\/member\/([^/]+)/i
 
 export const v2exHandler: PlatformHandler = {
   match: (url) => {

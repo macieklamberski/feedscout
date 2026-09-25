@@ -1,4 +1,4 @@
-import { isAnyOf, isHostOf, parseUrl } from 'trousse'
+import { getAnyOf, isAnyOf, isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
@@ -11,16 +11,17 @@ export type HatenaBookmarkUrl =
 
 const hosts = ['b.hatena.ne.jp']
 
-const listRegex = /^\/(hotentry|entrylist)(?:\/([a-z]+))?\/?$/
-const searchRegex = /^\/search\/(tag|text|title)\/?$/
-const siteRegex = /^\/site\/[^/]+/
+const listRegex = /^\/(hotentry|entrylist)(?:\/([a-z]+))?\/?$/i
+const searchRegex = /^\/search\/(tag|text|title)\/?$/i
+const siteRegex = /^\/site\/([^/].*)/i
 
 // A Hatena ID: 3 to 32 characters, starting with a letter and ending with a letter or digit.
 // The user feed at /{id}.rss carries the ID too.
-const userRegex = /^\/([a-zA-Z][a-zA-Z0-9_-]{1,30}[a-zA-Z0-9])(?:\.rss)?(?:\/|$)/
+const userRegex = /^\/([a-zA-Z][a-zA-Z0-9_-]{1,30}[a-zA-Z0-9])(?:\.rss)?(?:\/|$)/i
 
-// Search and per-site listings answer with RSS when `mode=rss` is set.
-const rssModeKinds = ['search', 'site']
+const bookmarkLists = ['hotentry', 'entrylist']
+
+const searchTypes = ['tag', 'text', 'title']
 
 // Reserved first segments that are site sections, not usernames.
 const excludedPaths = [
@@ -77,9 +78,11 @@ export const hatenaBookmarkHandler: PlatformHandler = {
 
     // Hot and new entry listings, site-wide or per category.
     if (listMatch?.[1]) {
-      const [, list, category] = listMatch
+      const [, rawList, category] = listMatch
+      const list = getAnyOf(rawList, bookmarkLists)
       const isHot = list === 'hotentry'
-      const suffix = category ? `/${category}` : ''
+      // Hatena's category slugs are lowercase and not listed anywhere to match against.
+      const suffix = category ? `/${category.toLowerCase()}` : ''
 
       return [
         {
@@ -91,15 +94,28 @@ export const hatenaBookmarkHandler: PlatformHandler = {
 
     const parsed = parseHatenaBookmarkUrl(url)
 
-    if (parsed && rssModeKinds.includes(parsed.kind)) {
-      searchParams.set('mode', 'rss')
+    // Search and per-site listings answer with RSS when `mode=rss` is set.
+    searchParams.set('mode', 'rss')
+
+    if (parsed?.kind === 'search') {
+      const [, rawType] = pathname.match(searchRegex) ?? []
+      const type = getAnyOf(rawType, searchTypes)
 
       return [
         {
-          uri: `${origin}${pathname}?${searchParams}`,
-          hint: composeHint(
-            parsed.kind === 'site' ? 'hatena-bookmark:site' : 'hatena-bookmark:search',
-          ),
+          uri: `${origin}/search/${type}?${searchParams}`,
+          hint: composeHint('hatena-bookmark:search'),
+        },
+      ]
+    }
+
+    if (parsed?.kind === 'site') {
+      const [, site] = pathname.match(siteRegex) ?? []
+
+      return [
+        {
+          uri: `${origin}/site/${site}?${searchParams}`,
+          hint: composeHint('hatena-bookmark:site'),
         },
       ]
     }

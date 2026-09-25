@@ -8,7 +8,7 @@ import { composeHint } from '../../common/utils.js'
 
 const hosts = ['news.ycombinator.com']
 
-const showRegex = /^\/show(?:new)?\/?$/
+const showRegex = /^\/show(?:new)?\/?$/i
 
 export const hackernewsHandler: PlatformHandler = {
   match: (url) => {

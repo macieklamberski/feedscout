@@ -11,6 +11,12 @@ describe('parseFlickrUrl', () => {
     expect(parseFlickrUrl('https://flickr.com/photos/tags/cats')).toEqual(expected)
   })
 
+  it('should return the tag for a tag page with a capitalized photos segment', () => {
+    const expected: FlickrUrl = { kind: 'tag', tag: 'cats' }
+
+    expect(parseFlickrUrl('https://flickr.com/Photos/tags/cats')).toEqual(expected)
+  })
+
   it('should return the photostream for an NSID photostream page', () => {
     const expected: FlickrUrl = { kind: 'photostream', userId: '24662369@N07' }
 
@@ -73,6 +79,17 @@ describe('parseFlickrUrl', () => {
     const expected: FlickrUrl = { kind: 'group', group: '42097308@N00' }
 
     expect(parseFlickrUrl('https://www.flickr.com/groups/42097308@N00/')).toEqual(expected)
+  })
+
+  it('should return undefined for a group NSID with a lowercase marker', () => {
+    expect(parseFlickrUrl('https://www.flickr.com/groups/42097308@n00/pool')).toBeUndefined()
+  })
+
+  it('should return the canonical section for a capitalized group section', () => {
+    const value = 'https://www.flickr.com/groups/42097308@N00/Discuss'
+    const expected: FlickrUrl = { kind: 'group', group: '42097308@N00', section: 'discuss' }
+
+    expect(parseFlickrUrl(value)).toEqual(expected)
   })
 
   it('should return the section for a group discussion page', () => {

@@ -32,6 +32,10 @@ describe('producthuntHandler', () => {
       expect(producthuntHandler.match('https://www.producthunt.com/products/notion')).toBe(true)
     })
 
+    it('should match product URLs with a capitalized products segment', () => {
+      expect(producthuntHandler.match('https://www.producthunt.com/Products/notion')).toBe(true)
+    })
+
     it('should match product URLs without www', () => {
       expect(producthuntHandler.match('https://producthunt.com/products/notion')).toBe(true)
     })

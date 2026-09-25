@@ -1,4 +1,4 @@
-import { getPathSegments, parseUrl } from 'trousse'
+import { getPathSegments, isAnyOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, findElement, hasClass, hasMetaContent } from '../../common/utils.js'
 
@@ -10,7 +10,7 @@ export type LemmyUrl = { kind: 'community'; community: string } | { kind: 'user'
 
 const lemmyPoweredByRegex = /lemmy/i
 const numericRegex = /^\d+$/
-const homeRegex = /^\/(?:home\/?)?$/
+const homeRegex = /^\/(?:home\/?)?$/i
 
 const validSorts = [
   'Active',
@@ -60,11 +60,11 @@ export const parseLemmyUrl = (url: string): LemmyUrl | undefined => {
     return
   }
 
-  if (section === 'c') {
+  if (isAnyOf(section, 'c')) {
     return { kind: 'community', community: name }
   }
 
-  if (section === 'u') {
+  if (isAnyOf(section, 'u')) {
     return { kind: 'user', username: name }
   }
 }

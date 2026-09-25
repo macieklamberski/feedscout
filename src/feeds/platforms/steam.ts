@@ -1,4 +1,4 @@
-import { isHostOf, parseUrl } from 'trousse'
+import { isHostOf, parseUrl, startsWithAnyOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
@@ -12,8 +12,8 @@ const communityHosts = ['steamcommunity.com']
 const hosts = [...storeHosts, ...communityHosts]
 
 // An age-gated store page redirects to /agecheck/app/{id}.
-const appRegex = /^\/(?:agecheck\/|news\/)?app\/(\d+)/
-const groupRegex = /^\/groups\/([^/]+)/
+const appRegex = /^\/(?:agecheck\/|news\/)?app\/(\d+)/i
+const groupRegex = /^\/groups\/([^/]+)/i
 
 export const parseSteamUrl = (url: string): SteamUrl | undefined => {
   const parsedUrl = parseUrl(url)
@@ -63,7 +63,7 @@ export const steamHandler: PlatformHandler = {
     }
 
     // Global news feed on store root or /news/
-    if (isHostOf(url, storeHosts) && (pathname === '/' || pathname.startsWith('/news'))) {
+    if (isHostOf(url, storeHosts) && (pathname === '/' || startsWithAnyOf(pathname, ['/news']))) {
       return [
         {
           uri: 'https://store.steampowered.com/feeds/news.xml',

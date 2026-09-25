@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'bun:test'
+import type { DiscoverUriEntry } from '../../common/types.js'
 import type { TumblrUrl } from './tumblr.js'
 import { parseTumblrUrl, tumblrHandler } from './tumblr.js'
 
@@ -84,6 +85,16 @@ describe('parseTumblrUrl', () => {
 
 describe('tumblrHandler', () => {
   describe('resolve', () => {
+    it('should return the tag feed for a capitalized tagged segment', () => {
+      const value = 'https://staff.tumblr.com/Tagged/updates'
+      const expected: DiscoverUriEntry = {
+        uri: 'https://staff.tumblr.com/tagged/updates/rss',
+        hint: { key: 'tumblr:tag', label: 'Tag' },
+      }
+
+      expect(tumblrHandler.resolve(value)).toContainEqual(expected)
+    })
+
     it('should return feed URL for blog', () => {
       const value = 'https://example.tumblr.com'
       const expected = [

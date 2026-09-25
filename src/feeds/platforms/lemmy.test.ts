@@ -55,8 +55,10 @@ describe('parseLemmyUrl', () => {
     expect(parseLemmyUrl('https://lemmy.ml/u/')).toBeUndefined()
   })
 
-  it('should return undefined for an uppercase prefix', () => {
-    expect(parseLemmyUrl('https://lemmy.ml/C/programming')).toBeUndefined()
+  it('should return the community for a capitalized prefix', () => {
+    const expected: LemmyUrl = { kind: 'community', community: 'programming' }
+
+    expect(parseLemmyUrl('https://lemmy.ml/C/programming')).toEqual(expected)
   })
 
   it('should return undefined for the home page', () => {

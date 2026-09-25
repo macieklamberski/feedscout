@@ -11,11 +11,11 @@ export type ObservableUrl =
 
 export const hosts = ['observablehq.com', 'www.observablehq.com']
 // The live form carries a `-` segment, `/@{owner}/-/collection/{slug}`.
-const collectionRegex = /^\/@([^/]+)\/(?:-\/)?collection\/([^/]+)/
+const collectionRegex = /^\/@([^/]+)\/(?:-\/)?collection\/([^/]+)/i
 const ownerRegex = /^\/@([^/]+)/
-const publicRegex = /^\/public\/?$/
-const recentRegex = /^\/recent\/?$/
-const trendingRegex = /^\/trending\/?$/
+const publicRegex = /^\/public\/?$/i
+const recentRegex = /^\/recent\/?$/i
+const trendingRegex = /^\/trending\/?$/i
 
 export const parseObservableUrl = (url: string): ObservableUrl | undefined => {
   const parsedUrl = parseUrl(url)

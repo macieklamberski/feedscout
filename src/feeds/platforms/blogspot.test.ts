@@ -27,6 +27,16 @@ describe('blogspotHandler', () => {
   })
 
   describe('resolve', () => {
+    it('should return the label feed for a capitalized search segment', () => {
+      const value = 'https://blog.blogspot.com/Search/label/technology'
+      const expected: DiscoverUriEntry = {
+        uri: 'https://blog.blogspot.com/feeds/posts/default/-/technology',
+        hint: { key: 'blogspot:label', label: 'Label', format: 'atom' },
+      }
+
+      expect(blogspotHandler.resolve(value)).toContainEqual(expected)
+    })
+
     it('should return feed URLs for blog', () => {
       const value = 'https://example.blogspot.com'
       const expected: Array<DiscoverUriEntry> = [

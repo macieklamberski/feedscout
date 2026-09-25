@@ -32,12 +32,14 @@ const channelIdRegexes = [
   /"externalChannelId":"(UC[a-zA-Z0-9_-]+)"/,
   /"channelId":"(UC[a-zA-Z0-9_-]+)"/,
 ]
-const channelRegex = /^\/channel\/(UC[a-zA-Z0-9_-]+)/
-const channelPathRegexes = [/^\/@[^/]+/, /^\/user\/[^/]+/, /^\/c\/[^/]+/]
-const shortsRegex = /^\/shorts\/[\w-]+/
-const liveRegex = /^\/live\/[\w-]+/
-const watchRegex = /^\/watch\/?$/
+const channelRegex = /^\/channel\/([^/]+)/i
+const channelPathRegexes = [/^\/@[^/]+/, /^\/user\/[^/]+/i, /^\/c\/[^/]+/i]
+const shortsRegex = /^\/shorts\/[\w-]+/i
+const liveRegex = /^\/live\/[\w-]+/i
+const watchRegex = /^\/watch\/?$/i
 const channelPrefixRegex = /^UC/
+// Channel IDs are case-sensitive, so the ID is checked apart from the case-insensitive route.
+const channelIdRegex = /^UC[a-zA-Z0-9_-]+$/
 
 const extractChannelIdFromContent = (content: string): string | undefined => {
   for (const regex of channelIdRegexes) {
@@ -120,7 +122,7 @@ export const parseYoutubeUrl = (url: string): YoutubeUrl | undefined => {
   const playlistId = searchParams.get('list') ?? undefined
   const channelId = pathname.match(channelRegex)?.[1]
 
-  if (channelId) {
+  if (channelId && channelIdRegex.test(channelId)) {
     return { kind: 'channel', channelId, playlistId }
   }
 

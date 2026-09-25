@@ -10,6 +10,13 @@ describe('parseGoodreadsUrl', () => {
     expect(parseGoodreadsUrl(value)).toEqual(expected)
   })
 
+  it('should return the user for a user page with a slug with a capitalized user segment', () => {
+    const value = 'https://www.goodreads.com/User/show/1-otis-chandler'
+    const expected: GoodreadsUrl = { kind: 'user', userId: '1' }
+
+    expect(parseGoodreadsUrl(value)).toEqual(expected)
+  })
+
   it('should return the user for a user page with a numeric id only', () => {
     const expected: GoodreadsUrl = { kind: 'user', userId: '4082853' }
 

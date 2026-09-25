@@ -101,6 +101,22 @@ describe('artstationHandler', () => {
       expect(artstationHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return global artwork feeds for /artwork page with a capitalized artwork segment', () => {
+      const value = 'https://www.artstation.com/Artwork'
+      const expected = [
+        {
+          uri: 'https://www.artstation.com/artwork.rss',
+          hint: { key: 'artstation:artwork', label: 'Artwork' },
+        },
+        {
+          uri: 'https://www.artstation.com/artwork.rss?sorting=latest',
+          hint: { key: 'artstation:artwork-latest', label: 'Artwork (Latest)' },
+        },
+      ]
+
+      expect(artstationHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return empty array for excluded paths', () => {
       const value = 'https://www.artstation.com/jobs'
 

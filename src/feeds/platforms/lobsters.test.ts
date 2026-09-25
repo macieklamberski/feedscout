@@ -9,6 +9,12 @@ describe('parseLobstersUrl', () => {
     expect(parseLobstersUrl('https://lobste.rs/t/programming')).toEqual(expected)
   })
 
+  it('should return the tag for a tag page with a capitalized t segment', () => {
+    const expected: LobstersUrl = { kind: 'tag', tags: 'programming' }
+
+    expect(parseLobstersUrl('https://lobste.rs/T/programming')).toEqual(expected)
+  })
+
   it('should return every tag for a multiple tags page', () => {
     const expected: LobstersUrl = { kind: 'tag', tags: 'programming,security' }
 

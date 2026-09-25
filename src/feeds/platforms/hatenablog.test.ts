@@ -29,6 +29,16 @@ describe('hatenablogHandler', () => {
   })
 
   describe('resolve', () => {
+    it('should return the category feed for a capitalized archive segment', () => {
+      const value = 'https://example.hatenablog.com/Archive/category/programming'
+      const expected: DiscoverUriEntry = {
+        uri: 'https://example.hatenablog.com/rss/category/programming',
+        hint: { key: 'hatenablog:category', label: 'Category', format: 'rss' },
+      }
+
+      expect(hatenablogHandler.resolve(value)).toContainEqual(expected)
+    })
+
     it('should return RSS and Atom feed URLs for blog', () => {
       const value = 'https://example.hatenablog.com'
       const expected: Array<DiscoverUriEntry> = [

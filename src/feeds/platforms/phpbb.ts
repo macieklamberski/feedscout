@@ -5,7 +5,7 @@ import { composeHint, getCookieNames, hasElementWithId } from '../../common/util
 // Discoverability: Discoverable without handler.
 
 const forumIdRegex = /[?&]f=(\d+)/
-const scriptSegmentRegex = /\/[^/]*\.php$/
+const scriptSegmentRegex = /\/[^/]*\.php$/i
 const trailingSlashRegex = /\/$/
 
 export const isPhpbbHtml = (content: string): boolean => {

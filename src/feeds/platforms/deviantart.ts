@@ -15,13 +15,13 @@ export type DeviantartUrl =
 const hosts = ['deviantart.com', 'www.deviantart.com']
 const feedBaseUrl = 'https://backend.deviantart.com/rss.xml'
 
-const tagRegex = /^\/tag\/([^/]+)/
-const userRegex = /^\/([a-zA-Z0-9_-]+)(?:\/|$)/
-const favouritesRegex = /^\/[^/]+\/favourites\/?$/
-const folderRegex = /^\/[^/]+\/gallery\/(\d+)(?:\/|$)/
-const journalRegex = /^\/[^/]+\/journal(?:\/|$)/
-const dailyDeviationsRegex = /^\/daily-deviations\/?$/
-const popularRegex = /^\/popular\/?$/
+const tagRegex = /^\/tag\/([^/]+)/i
+const userRegex = /^\/([a-zA-Z0-9_-]+)(?:\/|$)/i
+const favouritesRegex = /^\/[^/]+\/favourites\/?$/i
+const folderRegex = /^\/[^/]+\/gallery\/(\d+)(?:\/|$)/i
+const journalRegex = /^\/[^/]+\/journal(?:\/|$)/i
+const dailyDeviationsRegex = /^\/daily-deviations\/?$/i
+const popularRegex = /^\/popular\/?$/i
 
 const excludedPaths = [
   'about',

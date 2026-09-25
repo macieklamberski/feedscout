@@ -70,6 +70,12 @@ describe('parseMastodonUrl', () => {
     expect(parseMastodonUrl('https://example.com/@user/with_replies')).toEqual(expected)
   })
 
+  it('should return replies for /@user/with_replies with a capitalized with_replies segment', () => {
+    const expected: MastodonUrl = { kind: 'replies', username: 'user' }
+
+    expect(parseMastodonUrl('https://example.com/@user/With_replies')).toEqual(expected)
+  })
+
   it('should return media for /@user/media', () => {
     const expected: MastodonUrl = { kind: 'media', username: 'user' }
 
@@ -128,8 +134,10 @@ describe('parseMastodonUrl', () => {
     expect(parseMastodonUrl('https://example.com/tags')).toBeUndefined()
   })
 
-  it('should return undefined for an uppercase /Tags prefix', () => {
-    expect(parseMastodonUrl('https://example.com/Tags/javascript')).toBeUndefined()
+  it('should return the tag for a capitalized /Tags prefix', () => {
+    const expected: MastodonUrl = { kind: 'tag', tag: 'javascript' }
+
+    expect(parseMastodonUrl('https://example.com/Tags/javascript')).toEqual(expected)
   })
 
   it('should return undefined for a bare /@', () => {

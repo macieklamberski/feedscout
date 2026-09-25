@@ -8,6 +8,11 @@ describe('art19Handler', () => {
       expect(art19Handler.match('https://www.art19.com/shows/example-show')).toBe(true)
     })
 
+    it('should match a show page with a capitalized shows segment', () => {
+      expect(art19Handler.match('https://art19.com/Shows/example-show')).toBe(true)
+      expect(art19Handler.match('https://www.art19.com/shows/example-show')).toBe(true)
+    })
+
     it('should not match the site root', () => {
       expect(art19Handler.match('https://art19.com/')).toBe(false)
     })

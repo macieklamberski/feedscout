@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'bun:test'
+import type { DiscoverUriEntry } from '../../common/types.js'
 import { isNodebbHeaders, nodebbHandler } from './nodebb.js'
 
 const nodebbHeaders = new Headers({ 'x-powered-by': 'NodeBB' })
@@ -30,6 +31,16 @@ describe('nodebbHandler', () => {
   })
 
   describe('resolve', () => {
+    it('should return the category feed for a capitalized category segment', () => {
+      const value = 'https://example.org/Category/2/general'
+      const expected: DiscoverUriEntry = {
+        uri: 'https://example.org/category/2.rss',
+        hint: { key: 'nodebb:category', label: 'Category' },
+      }
+
+      expect(nodebbHandler.resolve(value)).toContainEqual(expected)
+    })
+
     it('should return the site feeds', () => {
       const value = 'https://example.org/'
       const expected = [

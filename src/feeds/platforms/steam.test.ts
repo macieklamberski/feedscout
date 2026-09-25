@@ -29,6 +29,12 @@ describe('parseSteamUrl', () => {
     expect(parseSteamUrl('https://store.steampowered.com/news/app/730')).toEqual(expected)
   })
 
+  it('should return the app for a store app news page with a capitalized app segment', () => {
+    const expected: SteamUrl = { kind: 'app', appId: '730' }
+
+    expect(parseSteamUrl('https://store.steampowered.com/news/App/730')).toEqual(expected)
+  })
+
   it('should return the app for a community app page', () => {
     const expected: SteamUrl = { kind: 'app', appId: '730' }
 

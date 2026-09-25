@@ -49,6 +49,22 @@ describe('vimeoHandler', () => {
       expect(vimeoHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return likes and videos feeds for likes page with a capitalized likes segment', () => {
+      const value = 'https://vimeo.com/casey/Likes'
+      const expected = [
+        {
+          uri: 'https://vimeo.com/casey/likes/rss',
+          hint: { key: 'vimeo:likes', label: 'Likes' },
+        },
+        {
+          uri: 'https://vimeo.com/casey/videos/rss',
+          hint: { key: 'vimeo:videos', label: 'Videos' },
+        },
+      ]
+
+      expect(vimeoHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return videos feed for user subpage', () => {
       const value = 'https://vimeo.com/casey/videos'
       const expected = [

@@ -43,8 +43,10 @@ describe('parseMyanimelistUrl', () => {
     expect(parseMyanimelistUrl(value)).toEqual(expected)
   })
 
-  it('should return undefined for an uppercase section', () => {
-    expect(parseMyanimelistUrl('https://myanimelist.net/Profile/Xinil')).toBeUndefined()
+  it('should return the user for a capitalized section', () => {
+    const expected: MyanimelistUrl = { kind: 'user', username: 'Xinil' }
+
+    expect(parseMyanimelistUrl('https://myanimelist.net/Profile/Xinil')).toEqual(expected)
   })
 
   it('should return undefined for the news page', () => {

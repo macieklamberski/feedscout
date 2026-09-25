@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'bun:test'
+import type { DiscoverUriEntry } from '../../common/types.js'
 import type { GithubUrl } from './github.js'
 import { githubHandler, parseGithubUrl } from './github.js'
 
@@ -110,6 +111,16 @@ describe('githubHandler', () => {
   })
 
   describe('resolve', () => {
+    it('should return the wiki feed for a capitalized wiki segment', () => {
+      const value = 'https://github.com/microsoft/vscode/Wiki'
+      const expected: DiscoverUriEntry = {
+        uri: 'https://github.com/microsoft/vscode/wiki.atom',
+        hint: { key: 'github:wiki', label: 'Wiki' },
+      }
+
+      expect(githubHandler.resolve(value)).toContainEqual(expected)
+    })
+
     it('should return releases, commits, and tags feeds for repository', () => {
       const value = 'https://github.com/microsoft/vscode'
       const expected = [

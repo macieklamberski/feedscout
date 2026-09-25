@@ -44,6 +44,16 @@ describe('parseMicroblogUrl', () => {
 
 describe('microblogHandler', () => {
   describe('resolve', () => {
+    it('should return the category feed for a capitalized categories segment', () => {
+      const value = 'https://manton.micro.blog/Categories/test'
+      const expected: DiscoverUriEntry = {
+        uri: 'https://manton.micro.blog/categories/test/feed.xml',
+        hint: { key: 'microblog:category', label: 'Category', format: 'rss' },
+      }
+
+      expect(microblogHandler.resolve(value)).toContainEqual(expected)
+    })
+
     it('should return RSS, JSON, and podcast feeds for blog', () => {
       const value = 'https://manton.micro.blog'
       const expected: Array<DiscoverUriEntry> = [

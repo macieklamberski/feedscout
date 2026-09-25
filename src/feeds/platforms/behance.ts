@@ -8,8 +8,8 @@ export type BehanceUrl = { kind: 'profile'; username: string }
 
 const hosts = ['behance.net', 'www.behance.net']
 // User profile: /{username} or /{username}/appreciated.
-const userRegex = /^\/([a-zA-Z0-9_-]+)(?:\/(appreciated))?\/?$/
-const homeRegex = /^\/(?:galleries\/?)?$/
+const userRegex = /^\/([a-zA-Z0-9_-]+)(?:\/(appreciated))?\/?$/i
+const homeRegex = /^\/(?:galleries\/?)?$/i
 const excludedPaths = [
   'search',
   'galleries',

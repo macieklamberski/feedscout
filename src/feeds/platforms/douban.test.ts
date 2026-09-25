@@ -42,6 +42,26 @@ describe('doubanHandler', () => {
       expect(doubanHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return interests, reviews, and notes feeds for user page with a capitalized people segment', () => {
+      const value = 'https://www.douban.com/People/ahbei/'
+      const expected = [
+        {
+          uri: 'https://www.douban.com/feed/people/ahbei/interests',
+          hint: { key: 'douban:interests', label: 'Interests' },
+        },
+        {
+          uri: 'https://www.douban.com/feed/people/ahbei/reviews',
+          hint: { key: 'douban:reviews', label: 'Reviews' },
+        },
+        {
+          uri: 'https://www.douban.com/feed/people/ahbei/notes',
+          hint: { key: 'douban:notes', label: 'Notes' },
+        },
+      ]
+
+      expect(doubanHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return subject reviews feed for subject page', () => {
       const value = 'https://book.douban.com/subject/1084336/'
       const expected = [

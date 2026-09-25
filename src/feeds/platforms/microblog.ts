@@ -1,4 +1,4 @@
-import { getSubdomain } from 'trousse'
+import { getSubdomain, startsWithAnyOf } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
@@ -10,7 +10,7 @@ export type MicroblogUrl = { kind: 'blog'; username: string }
 
 export const domains = ['micro.blog']
 
-const categoryRegex = /^\/categories\/([^/]+)/
+const categoryRegex = /^\/categories\/([^/]+)/i
 
 export const parseMicroblogUrl = (url: string): MicroblogUrl | undefined => {
   const username = getSubdomain(url, domains)
@@ -49,7 +49,7 @@ export const microblogHandler: PlatformHandler = {
     }
 
     // Archive page: /archive
-    if (pathname.startsWith('/archive')) {
+    if (startsWithAnyOf(pathname, ['/archive'])) {
       uris.push({
         uri: `${origin}/archive/index.json`,
         hint: composeHint('microblog:archive'),
@@ -57,7 +57,7 @@ export const microblogHandler: PlatformHandler = {
     }
 
     // Photos page: /photos
-    if (pathname.startsWith('/photos')) {
+    if (startsWithAnyOf(pathname, ['/photos'])) {
       uris.push({
         uri: `${origin}/photos/index.json`,
         hint: composeHint('microblog:photos'),
@@ -65,7 +65,7 @@ export const microblogHandler: PlatformHandler = {
     }
 
     // Replies page: /replies
-    if (pathname.startsWith('/replies')) {
+    if (startsWithAnyOf(pathname, ['/replies'])) {
       uris.push({
         uri: `${origin}/replies.xml`,
         hint: composeHint('microblog:replies'),

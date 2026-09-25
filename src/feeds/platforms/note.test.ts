@@ -27,6 +27,12 @@ describe('parseNoteUrl', () => {
     expect(parseNoteUrl('https://note.com/notemag/m/m7244518f06ae')).toEqual(expected)
   })
 
+  it('should return the magazine for a magazine page with a capitalized m segment', () => {
+    const expected: NoteUrl = { kind: 'magazine', username: 'notemag', magazine: 'm7244518f06ae' }
+
+    expect(parseNoteUrl('https://note.com/notemag/M/m7244518f06ae')).toEqual(expected)
+  })
+
   it('should return the magazine for a magazine under a reserved path', () => {
     const expected: NoteUrl = { kind: 'magazine', username: 'search', magazine: 'm7244518f06ae' }
 
