@@ -46,12 +46,18 @@ describe('xenforoHandler', () => {
   describe('resolve', () => {
     it('should return the forum feed for a capitalized f segment', () => {
       const value = 'https://example.com/F/general.17/'
-      const expected: DiscoverUriEntry = {
-        uri: 'https://example.com/f/general.17/index.rss',
-        hint: { key: 'xenforo:forum', label: 'Forum' },
-      }
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://example.com/f/general.17/index.rss',
+          hint: { key: 'xenforo:forum', label: 'Forum' },
+        },
+        {
+          uri: 'https://example.com/f/-/index.rss',
+          hint: { key: 'xenforo:site', label: 'Site' },
+        },
+      ]
 
-      expect(xenforoHandler.resolve(value)).toContainEqual(expected)
+      expect(xenforoHandler.resolve(value)).toEqual(expected)
     })
 
     it('should return the forum and site feeds for a forum path', () => {

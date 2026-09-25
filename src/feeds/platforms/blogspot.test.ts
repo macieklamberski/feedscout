@@ -29,12 +29,42 @@ describe('blogspotHandler', () => {
   describe('resolve', () => {
     it('should return the label feed for a capitalized search segment', () => {
       const value = 'https://blog.blogspot.com/Search/label/technology'
-      const expected: DiscoverUriEntry = {
-        uri: 'https://blog.blogspot.com/feeds/posts/default/-/technology',
-        hint: { key: 'blogspot:label', label: 'Label', format: 'atom' },
-      }
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://blog.blogspot.com/feeds/posts/default/-/technology',
+          hint: { key: 'blogspot:label', label: 'Label', format: 'atom' },
+        },
+        {
+          uri: 'https://blog.blogspot.com/feeds/posts/default/-/technology?alt=rss',
+          hint: { key: 'blogspot:label', label: 'Label', format: 'rss' },
+        },
+        {
+          uri: 'https://blog.blogspot.com/feeds/posts/default',
+          hint: { key: 'blogspot:posts', label: 'Posts', format: 'atom' },
+        },
+        {
+          uri: 'https://blog.blogspot.com/feeds/posts/default?alt=rss',
+          hint: { key: 'blogspot:posts', label: 'Posts', format: 'rss' },
+        },
+        {
+          uri: 'https://blog.blogspot.com/feeds/posts/summary',
+          hint: { key: 'blogspot:posts-summary', label: 'Posts summary', format: 'atom' },
+        },
+        {
+          uri: 'https://blog.blogspot.com/feeds/posts/summary?alt=rss',
+          hint: { key: 'blogspot:posts-summary', label: 'Posts summary', format: 'rss' },
+        },
+        {
+          uri: 'https://blog.blogspot.com/feeds/comments/default',
+          hint: { key: 'blogspot:comments', label: 'Comments', format: 'atom' },
+        },
+        {
+          uri: 'https://blog.blogspot.com/feeds/comments/default?alt=rss',
+          hint: { key: 'blogspot:comments', label: 'Comments', format: 'rss' },
+        },
+      ]
 
-      expect(blogspotHandler.resolve(value)).toContainEqual(expected)
+      expect(blogspotHandler.resolve(value)).toEqual(expected)
     })
 
     it('should return feed URLs for blog', () => {

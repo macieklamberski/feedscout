@@ -80,6 +80,19 @@ describe('v2exHandler', () => {
       expect(v2exHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return lowercase tab feed for a capitalized tab', () => {
+      const value = 'https://www.v2ex.com/?tab=TECH'
+      const expected = [
+        {
+          uri: 'https://www.v2ex.com/feed/tab/tech.xml',
+          hint: { key: 'v2ex:tab', label: 'Tab' },
+        },
+        { uri: 'https://www.v2ex.com/index.xml', hint: { key: 'v2ex:index', label: 'Index' } },
+      ]
+
+      expect(v2exHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return index feed for root without www', () => {
       const value = 'https://v2ex.com/'
       const expected = [

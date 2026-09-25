@@ -51,6 +51,12 @@ describe('parseGithubGistUrl', () => {
     expect(parseGithubGistUrl('https://gist.github.com/defunkt/starred.atom')).toEqual(expected)
   })
 
+  it('should return the starred gists for a capitalized starred feed suffix', () => {
+    const expected: GithubGistUrl = { kind: 'starred', username: 'defunkt' }
+
+    expect(parseGithubGistUrl('https://gist.github.com/defunkt/starred.ATOM')).toEqual(expected)
+  })
+
   const forksValues: Array<string> = [
     'https://gist.github.com/defunkt/forks',
     'https://gist.github.com/defunkt/forked',

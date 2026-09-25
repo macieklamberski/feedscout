@@ -31,12 +31,30 @@ describe('livejournalHandler', () => {
   describe('resolve', () => {
     it('should return the tag feed for a capitalized tag segment', () => {
       const value = 'https://ohnotheydidnt.livejournal.com/Tag/television'
-      const expected: DiscoverUriEntry = {
-        uri: 'https://ohnotheydidnt.livejournal.com/data/rss?tag=television',
-        hint: { key: 'livejournal:posts-tag', label: 'Tag', format: 'rss' },
-      }
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://ohnotheydidnt.livejournal.com/data/rss?tag=television',
+          hint: { key: 'livejournal:posts-tag', label: 'Tag', format: 'rss' },
+        },
+        {
+          uri: 'https://ohnotheydidnt.livejournal.com/data/atom?tag=television',
+          hint: { key: 'livejournal:posts-tag', label: 'Tag', format: 'atom' },
+        },
+        {
+          uri: 'https://ohnotheydidnt.livejournal.com/data/rss',
+          hint: { key: 'livejournal:posts', label: 'Posts', format: 'rss' },
+        },
+        {
+          uri: 'https://ohnotheydidnt.livejournal.com/data/atom',
+          hint: { key: 'livejournal:posts', label: 'Posts', format: 'atom' },
+        },
+        {
+          uri: 'https://ohnotheydidnt.livejournal.com/data/userpics',
+          hint: { key: 'livejournal:userpics', label: 'Userpics', format: 'atom' },
+        },
+      ]
 
-      expect(livejournalHandler.resolve(value)).toContainEqual(expected)
+      expect(livejournalHandler.resolve(value)).toEqual(expected)
     })
 
     it('should return RSS, Atom, and userpics feeds for blog', () => {

@@ -144,6 +144,17 @@ describe('hatenaBookmarkHandler', () => {
       expect(hatenaBookmarkHandler.resolve(`${base}/hotentry/it`)).toEqual(expected)
     })
 
+    it('should return lowercase hot entries for a capitalized category page', () => {
+      const expected = [
+        {
+          uri: `${base}/hotentry/it.rss`,
+          hint: { key: 'hatena-bookmark:hot', label: 'Hot entries' },
+        },
+      ]
+
+      expect(hatenaBookmarkHandler.resolve(`${base}/Hotentry/IT`)).toEqual(expected)
+    })
+
     it('should return new entries for the entrylist page', () => {
       const expected = [
         {

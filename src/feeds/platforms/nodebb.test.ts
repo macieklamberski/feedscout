@@ -33,12 +33,22 @@ describe('nodebbHandler', () => {
   describe('resolve', () => {
     it('should return the category feed for a capitalized category segment', () => {
       const value = 'https://example.org/Category/2/general'
-      const expected: DiscoverUriEntry = {
-        uri: 'https://example.org/category/2.rss',
-        hint: { key: 'nodebb:category', label: 'Category' },
-      }
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://example.org/category/2.rss',
+          hint: { key: 'nodebb:category', label: 'Category' },
+        },
+        {
+          uri: 'https://example.org/recent.rss',
+          hint: { key: 'nodebb:recent', label: 'Recent' },
+        },
+        {
+          uri: 'https://example.org/popular.rss',
+          hint: { key: 'nodebb:popular', label: 'Popular' },
+        },
+      ]
 
-      expect(nodebbHandler.resolve(value)).toContainEqual(expected)
+      expect(nodebbHandler.resolve(value)).toEqual(expected)
     })
 
     it('should return the site feeds', () => {

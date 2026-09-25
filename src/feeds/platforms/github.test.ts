@@ -113,12 +113,66 @@ describe('githubHandler', () => {
   describe('resolve', () => {
     it('should return the wiki feed for a capitalized wiki segment', () => {
       const value = 'https://github.com/microsoft/vscode/Wiki'
-      const expected: DiscoverUriEntry = {
-        uri: 'https://github.com/microsoft/vscode/wiki.atom',
-        hint: { key: 'github:wiki', label: 'Wiki' },
-      }
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://github.com/microsoft/vscode/releases.atom',
+          hint: { key: 'github:releases', label: 'Releases' },
+        },
+        {
+          uri: 'https://github.com/microsoft/vscode/commits.atom',
+          hint: { key: 'github:commits', label: 'Commits' },
+        },
+        {
+          uri: 'https://github.com/microsoft/vscode/tags.atom',
+          hint: { key: 'github:tags', label: 'Tags' },
+        },
+        {
+          uri: 'https://github.com/microsoft/vscode/wiki.atom',
+          hint: { key: 'github:wiki', label: 'Wiki' },
+        },
+      ]
 
-      expect(githubHandler.resolve(value)).toContainEqual(expected)
+      expect(githubHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should not return the wiki feed for a repository named wiki', () => {
+      const value = 'https://github.com/owner/Wiki'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://github.com/owner/Wiki/releases.atom',
+          hint: { key: 'github:releases', label: 'Releases' },
+        },
+        {
+          uri: 'https://github.com/owner/Wiki/commits.atom',
+          hint: { key: 'github:commits', label: 'Commits' },
+        },
+        {
+          uri: 'https://github.com/owner/Wiki/tags.atom',
+          hint: { key: 'github:tags', label: 'Tags' },
+        },
+      ]
+
+      expect(githubHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should not return the discussions feed for a repository named discussions', () => {
+      const value = 'https://github.com/owner/Discussions'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://github.com/owner/Discussions/releases.atom',
+          hint: { key: 'github:releases', label: 'Releases' },
+        },
+        {
+          uri: 'https://github.com/owner/Discussions/commits.atom',
+          hint: { key: 'github:commits', label: 'Commits' },
+        },
+        {
+          uri: 'https://github.com/owner/Discussions/tags.atom',
+          hint: { key: 'github:tags', label: 'Tags' },
+        },
+      ]
+
+      expect(githubHandler.resolve(value)).toEqual(expected)
     })
 
     it('should return releases, commits, and tags feeds for repository', () => {

@@ -31,12 +31,26 @@ describe('hatenablogHandler', () => {
   describe('resolve', () => {
     it('should return the category feed for a capitalized archive segment', () => {
       const value = 'https://example.hatenablog.com/Archive/category/programming'
-      const expected: DiscoverUriEntry = {
-        uri: 'https://example.hatenablog.com/rss/category/programming',
-        hint: { key: 'hatenablog:category', label: 'Category', format: 'rss' },
-      }
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://example.hatenablog.com/rss/category/programming',
+          hint: { key: 'hatenablog:category', label: 'Category', format: 'rss' },
+        },
+        {
+          uri: 'https://example.hatenablog.com/feed/category/programming',
+          hint: { key: 'hatenablog:category', label: 'Category', format: 'atom' },
+        },
+        {
+          uri: 'https://example.hatenablog.com/rss',
+          hint: { key: 'hatenablog:posts', label: 'Posts', format: 'rss' },
+        },
+        {
+          uri: 'https://example.hatenablog.com/feed',
+          hint: { key: 'hatenablog:posts', label: 'Posts', format: 'atom' },
+        },
+      ]
 
-      expect(hatenablogHandler.resolve(value)).toContainEqual(expected)
+      expect(hatenablogHandler.resolve(value)).toEqual(expected)
     })
 
     it('should return RSS and Atom feed URLs for blog', () => {

@@ -184,6 +184,7 @@ describe('lobstersHandler', () => {
       ['https://lobste.rs/top/1w', 'https://lobste.rs/top/1w/rss'],
       ['https://lobste.rs/top/1m', 'https://lobste.rs/top/1m/rss'],
       ['https://lobste.rs/top/1y', 'https://lobste.rs/top/1y/rss'],
+      ['https://lobste.rs/top/1W', 'https://lobste.rs/top/1w/rss'],
     ]
 
     it.each(topPeriodValues)('should return top stories feed for %s', (value, uri) => {

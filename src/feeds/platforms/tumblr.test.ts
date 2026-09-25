@@ -87,12 +87,14 @@ describe('tumblrHandler', () => {
   describe('resolve', () => {
     it('should return the tag feed for a capitalized tagged segment', () => {
       const value = 'https://staff.tumblr.com/Tagged/updates'
-      const expected: DiscoverUriEntry = {
-        uri: 'https://staff.tumblr.com/tagged/updates/rss',
-        hint: { key: 'tumblr:tag', label: 'Tag' },
-      }
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://staff.tumblr.com/tagged/updates/rss',
+          hint: { key: 'tumblr:tag', label: 'Tag' },
+        },
+      ]
 
-      expect(tumblrHandler.resolve(value)).toContainEqual(expected)
+      expect(tumblrHandler.resolve(value)).toEqual(expected)
     })
 
     it('should return feed URL for blog', () => {

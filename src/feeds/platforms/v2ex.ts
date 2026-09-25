@@ -47,7 +47,8 @@ export const v2exHandler: PlatformHandler = {
     if (tab) {
       return [
         {
-          uri: `https://www.v2ex.com/feed/tab/${tab}.xml`,
+          // V2EX serves tab feeds in lowercase only: /feed/tab/TECH.xml answers 404.
+          uri: `https://www.v2ex.com/feed/tab/${tab.toLowerCase()}.xml`,
           hint: composeHint('v2ex:tab'),
         },
         { uri: 'https://www.v2ex.com/index.xml', hint: composeHint('v2ex:index') },

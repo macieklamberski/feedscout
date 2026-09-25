@@ -150,6 +150,17 @@ describe('parseRedditUrl', () => {
     expect(parseRedditUrl('https://reddit.com/u/kjoneslol/m/sfwpornnetwork')).toEqual(expected)
   })
 
+  it('should return the multireddit without a feed extension', () => {
+    const value = 'https://www.reddit.com/user/kjoneslol/m/sfwpornnetwork.rss'
+    const expected: RedditUrl = {
+      kind: 'multireddit',
+      username: 'kjoneslol',
+      multireddit: 'sfwpornnetwork',
+    }
+
+    expect(parseRedditUrl(value)).toEqual(expected)
+  })
+
   it('should return the domain for a domain page', () => {
     const expected: RedditUrl = { kind: 'domain', domain: 'github.com' }
 
@@ -181,6 +192,37 @@ describe('parseRedditUrl', () => {
     const expected: RedditUrl = { kind: 'submitted', username: 'spez' }
 
     expect(parseRedditUrl('https://reddit.com/U/spez/Submitted')).toEqual(expected)
+  })
+
+  it('should return the domain for a capitalized domain prefix', () => {
+    const expected: RedditUrl = { kind: 'domain', domain: 'github.com' }
+
+    expect(parseRedditUrl('https://reddit.com/Domain/github.com')).toEqual(expected)
+  })
+
+  it('should return the search for a capitalized subreddit search path', () => {
+    const expected: RedditUrl = { kind: 'search', subreddit: 'programming' }
+
+    expect(parseRedditUrl('https://reddit.com/r/programming/Search?q=rust')).toEqual(expected)
+  })
+
+  it('should return the wiki for a capitalized subreddit wiki path', () => {
+    const expected: RedditUrl = { kind: 'wiki', subreddit: 'programming' }
+
+    expect(parseRedditUrl('https://reddit.com/r/programming/Wiki')).toEqual(expected)
+  })
+
+  it('should return the post for a capitalized comments path', () => {
+    const value = 'https://reddit.com/r/AskReddit/Comments/abc123/whats_your_favorite'
+    const expected: RedditUrl = { kind: 'post', subreddit: 'AskReddit', postId: 'abc123' }
+
+    expect(parseRedditUrl(value)).toEqual(expected)
+  })
+
+  it('should return the comments page of a user for a capitalized comments path', () => {
+    const expected: RedditUrl = { kind: 'comments', username: 'spez' }
+
+    expect(parseRedditUrl('https://reddit.com/user/spez/Comments')).toEqual(expected)
   })
 
   it('should return undefined for a prefix without a name', () => {
@@ -568,6 +610,30 @@ describe('redditHandler', () => {
       expect(redditHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return lowercase subreddit-list feed for /Subreddits/New', () => {
+      const value = 'https://www.reddit.com/Subreddits/New'
+      const expected = [
+        {
+          uri: 'https://www.reddit.com/subreddits/new/.rss',
+          hint: { key: 'reddit:subreddits', label: 'Subreddits' },
+        },
+      ]
+
+      expect(redditHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should keep the sort of a subreddit-list feed URL', () => {
+      const value = 'https://www.reddit.com/subreddits/new.rss'
+      const expected = [
+        {
+          uri: 'https://www.reddit.com/subreddits/new/.rss',
+          hint: { key: 'reddit:subreddits', label: 'Subreddits' },
+        },
+      ]
+
+      expect(redditHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return subreddit-list feed for /reddits alias', () => {
       const value = 'https://www.reddit.com/reddits'
       const expected = [
@@ -650,6 +716,18 @@ describe('redditHandler', () => {
 
     it('should return RSS feed URL for multireddit', () => {
       const value = 'https://reddit.com/user/kjoneslol/m/sfwpornnetwork'
+      const expected = [
+        {
+          uri: 'https://www.reddit.com/user/kjoneslol/m/sfwpornnetwork/.rss',
+          hint: { key: 'reddit:multireddit', label: 'Multireddit' },
+        },
+      ]
+
+      expect(redditHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should strip a feed extension from the multireddit', () => {
+      const value = 'https://www.reddit.com/user/kjoneslol/m/sfwpornnetwork.rss'
       const expected = [
         {
           uri: 'https://www.reddit.com/user/kjoneslol/m/sfwpornnetwork/.rss',

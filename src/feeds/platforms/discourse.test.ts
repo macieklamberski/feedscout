@@ -76,12 +76,14 @@ describe('discourseHandler', () => {
   describe('resolve', () => {
     it('should return the activity feed for a capitalized u segment', () => {
       const value = 'https://users.rust-lang.org/U/steveklabnik'
-      const expected: DiscoverUriEntry = {
-        uri: 'https://users.rust-lang.org/u/steveklabnik/activity.rss',
-        hint: { key: 'discourse:activity', label: 'Activity' },
-      }
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://users.rust-lang.org/u/steveklabnik/activity.rss',
+          hint: { key: 'discourse:activity', label: 'Activity' },
+        },
+      ]
 
-      expect(discourseHandler.resolve(value)).toContainEqual(expected)
+      expect(discourseHandler.resolve(value)).toEqual(expected)
     })
 
     it('should return user activity feed for /u/{user} path', () => {
@@ -220,6 +222,30 @@ describe('discourseHandler', () => {
       const expected = [
         {
           uri: 'https://users.rust-lang.org/top.rss?period=daily',
+          hint: { key: 'discourse:top', label: 'Top' },
+        },
+      ]
+
+      expect(discourseHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return lowercase period for a capitalized path period', () => {
+      const value = 'https://users.rust-lang.org/top/Daily'
+      const expected = [
+        {
+          uri: 'https://users.rust-lang.org/top.rss?period=daily',
+          hint: { key: 'discourse:top', label: 'Top' },
+        },
+      ]
+
+      expect(discourseHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should fall back to ?period= query param for an unknown path period', () => {
+      const value = 'https://users.rust-lang.org/top/invalid?period=weekly'
+      const expected = [
+        {
+          uri: 'https://users.rust-lang.org/top.rss?period=weekly',
           hint: { key: 'discourse:top', label: 'Top' },
         },
       ]

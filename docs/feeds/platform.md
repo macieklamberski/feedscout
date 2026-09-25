@@ -702,7 +702,7 @@ Discovers RSS feeds for Discourse forums. Detected by the `Discourse` generator 
 | `{instance}/` (or any other path) | Latest topics feed + latest posts feed (RSS) |
 
 > [!NOTE]
-> The top topics feed accepts `{daily|weekly|monthly|quarterly|yearly|all}` via either the `/top/{period}` path or `?period={period}` query param. Unknown values are silently dropped.
+> The top topics feed accepts `{daily|weekly|monthly|quarterly|yearly|all}` via either the `/top/{period}` path or `?period={period}` query param. An unknown path period falls back to the query param, and an unknown value in both is dropped.
 
 ### Flickr
 

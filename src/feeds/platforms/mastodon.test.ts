@@ -46,6 +46,12 @@ describe('parseMastodonUrl', () => {
     expect(parseMastodonUrl('https://example.com/@user.atom')).toEqual(expected)
   })
 
+  it('should strip a capitalized feed extension from the username', () => {
+    const expected: MastodonUrl = { kind: 'profile', username: 'user' }
+
+    expect(parseMastodonUrl('https://example.com/@user.RSS')).toEqual(expected)
+  })
+
   it('should strip the ActivityPub JSON extension from a /users path', () => {
     const expected: MastodonUrl = { kind: 'profile', username: 'user' }
 
