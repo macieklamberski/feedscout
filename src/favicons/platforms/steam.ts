@@ -1,21 +1,11 @@
-import { isHostOf, isNonEmptyString, parseUrl } from 'trousse'
+import { isNonEmptyString } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { findElement, hasClass } from '../../common/utils.js'
-import { appRegex, hosts } from '../../feeds/platforms/steam.js'
+import { findElement, getMetaContent, hasClass } from '../../common/utils.js'
+import { parseSteamUrl } from '../../feeds/platforms/steam.js'
 import type { FaviconEnricher } from '../types.js'
 import { parseResponseJson } from '../utils.js'
 
 const platform = 'steam'
-
-const getAppId = (url: string): string | undefined => {
-  const parsedUrl = parseUrl(url)
-
-  if (!parsedUrl || !isHostOf(url, hosts)) {
-    return
-  }
-
-  return parsedUrl.pathname.match(appRegex)?.[1]
-}
 
 const findAppIcon = (content: string | undefined): string | undefined => {
   const image = findElement(content, (element) => {
@@ -31,7 +21,7 @@ const findAppIcon = (content: string | undefined): string | undefined => {
 
 export const steamHandler: PlatformHandler = {
   match: (url) => {
-    return getAppId(url) !== undefined
+    return parseSteamUrl(url) !== undefined
   },
 
   // Age-gated store pages and store app news pages carry no app icon in their markup.
@@ -42,13 +32,24 @@ export const steamHandler: PlatformHandler = {
       return [{ uri: appIcon }]
     }
 
-    const appId = getAppId(url)
+    const parsed = parseSteamUrl(url)
 
-    if (!appId) {
+    // A group page carries the group avatar in its preview image.
+    if (parsed?.kind === 'group') {
+      const avatar = getMetaContent(content ?? '', 'og:image')
+
+      if (!avatar) {
+        return []
+      }
+
+      return [{ uri: avatar }]
+    }
+
+    if (parsed?.kind !== 'app') {
       return []
     }
 
-    return [{ platform, id: appId, url }]
+    return [{ platform, id: parsed.appId, url }]
   },
 }
 

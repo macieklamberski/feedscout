@@ -61,7 +61,7 @@ The Platform method extracts avatars and icons directly from known platforms usi
 | Bluesky | Profile avatar | Public API, through an [enricher](#enriching-platform-icons) |
 | BookWyrm | User avatar | Page HTML, or the user's actor JSON through an [enricher](#enriching-platform-icons) for shelf pages |
 | Dailymotion | User avatar, or the playlist owner's avatar | Public API, through an [enricher](#enriching-platform-icons) |
-| Dev.to | Profile image | Public API, through an [enricher](#enriching-platform-icons) |
+| Dev.to | Profile or organization image, also on article pages | Public API, through an [enricher](#enriching-platform-icons) |
 | DeviantArt | User avatar | URL pattern |
 | Exblog | Blog logo | Page HTML, or the blog's top page through an [enricher](#enriching-platform-icons) |
 | Flickr | User buddyicon | Page HTML |
@@ -93,7 +93,7 @@ The Platform method extracts avatars and icons directly from known platforms usi
 | SoundCloud | User avatar | Page HTML |
 | SourceForge | Project icon | URL pattern |
 | SourceHut | User avatar, or the owner's avatar on repository pages | Page HTML, the owner's page through an [enricher](#enriching-platform-icons) |
-| Steam | Game icon | Page HTML, or the public API through an [enricher](#enriching-platform-icons) |
+| Steam | Game icon or group avatar | Page HTML, or the public API through an [enricher](#enriching-platform-icons) |
 | Togetter | User avatar | Page HTML |
 | Tumblr | Blog avatar | URL pattern |
 | Velog | User avatar | Page HTML, or the GraphQL API through an [enricher](#enriching-platform-icons) |

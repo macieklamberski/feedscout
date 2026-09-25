@@ -141,7 +141,8 @@ Discovers RSS feeds for DEV.to user profiles, tags, the global community, and th
 |-------------|-----------------|
 | `dev.to` | Community feed |
 | `dev.to/latest` | Latest sort feed + community feed |
-| `dev.to/{username}` | User posts feed |
+| `dev.to/{username}` | User or organization posts feed |
+| `dev.to/{username}/{article}` | Author's posts feed |
 | `dev.to/t/{tag}` | Tag posts feed |
 
 ### Lobsters
@@ -267,7 +268,7 @@ Discovers RSS feeds for Mastodon user profiles and hashtag pages. Detects Mastod
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{instance}/@{username}` | User posts feed |
+| `{instance}/@{username}` or `{instance}/users/{username}` | User posts feed |
 | `{instance}/@{username}/tagged/{tag}` | User posts tagged feed + posts |
 | `{instance}/@{username}/with_replies` | User posts with replies feed + posts |
 | `{instance}/@{username}/media` | User media-only feed + posts |
