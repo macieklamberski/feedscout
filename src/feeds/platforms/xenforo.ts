@@ -6,7 +6,7 @@ import { composeHint, hasElementWithId } from '../../common/utils.js'
 // Discoverability: Discoverable without handler.
 
 // XF2 serves a forum at `/f/{slug.id}` or, on the default route, `/forums/{slug.id}`.
-const forumPathRegex = /\/(f|forums)\/([^/]+\.\d+)/i
+const forumPathRegex = /\/(f|forums)\/([^/]+\.\d+)(?:\/|$)/i
 // The board feed sits under the same route prefix as the forums. A page outside a
 // forum does not carry the prefix, so both spellings are emitted and the one the
 // board does not serve fails validation.

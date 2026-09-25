@@ -220,6 +220,10 @@ describe('myanimelistHandler', () => {
       expect(myanimelistHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should not return news feed for a path that starts with news', () => {
+      expect(myanimelistHandler.resolve('https://myanimelist.net/newsletter')).toEqual([])
+    })
+
     it('should return featured feed for /featured', () => {
       const value = 'https://myanimelist.net/featured'
       const expected = [

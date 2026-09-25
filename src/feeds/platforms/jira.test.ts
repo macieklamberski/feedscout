@@ -63,6 +63,10 @@ describe('jiraHandler', () => {
       expect(jiraHandler.match('https://jira.example.org/projects/ABC', jiraHtml)).toBe(true)
     })
 
+    it('should match a context path without a trailing slash', () => {
+      expect(jiraHandler.match('https://example.org/jira', jiraHtml)).toBe(true)
+    })
+
     it('should not match a Bitbucket repository path', () => {
       expect(jiraHandler.match('https://code.example.org/projects/ABC/repos/app', jiraHtml)).toBe(
         false,

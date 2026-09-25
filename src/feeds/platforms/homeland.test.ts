@@ -89,6 +89,18 @@ describe('homelandHandler', () => {
       expect(homelandHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return only the topics feed when the node id runs into letters', () => {
+      const value = 'https://example.org/topics/node41x'
+      const expected = [
+        {
+          uri: 'https://example.org/topics/feed',
+          hint: { key: 'homeland:topics', label: 'Topics' },
+        },
+      ]
+
+      expect(homelandHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return only the topics feed elsewhere', () => {
       const value = 'https://example.org/topics'
       const expected = [

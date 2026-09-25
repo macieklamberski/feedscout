@@ -89,6 +89,19 @@ describe('xenforoHandler', () => {
       expect(xenforoHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return only the site feeds when the forum id runs into letters', () => {
+      const value = 'https://example.com/forums/general.17x/'
+      const expected = [
+        {
+          uri: 'https://example.com/forums/-/index.rss',
+          hint: { key: 'xenforo:site', label: 'Site' },
+        },
+        { uri: 'https://example.com/f/-/index.rss', hint: { key: 'xenforo:site', label: 'Site' } },
+      ]
+
+      expect(xenforoHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return only the site feed on a thread page', () => {
       const value = 'https://example.com/threads/a-thread.123/'
       const expected = [

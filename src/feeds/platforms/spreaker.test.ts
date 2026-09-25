@@ -68,6 +68,12 @@ describe('spreakerHandler', () => {
       expect(spreakerHandler.resolve(value)).toEqual([])
     })
 
+    it('should return empty array when the podcast ID runs into letters', () => {
+      const value = 'https://www.spreaker.com/podcast/my-show--12345x'
+
+      expect(spreakerHandler.resolve(value)).toEqual([])
+    })
+
     it('should return feed URL for bare /show/{id} numeric path', () => {
       const value = 'https://www.spreaker.com/show/1433865'
       const expected = [

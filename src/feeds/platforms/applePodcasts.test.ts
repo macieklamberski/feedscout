@@ -12,6 +12,7 @@ describe('applePodcastsHandler', () => {
       [true, 'https://podcasts.apple.com/podcast/id1200361736'],
       [true, 'https://podcasts.apple.com/US/Podcast/the-daily/id1200361736'],
       [false, 'https://podcasts.apple.com/us/artist/the-new-york-times/id121664449'],
+      [false, 'https://podcasts.apple.com/us/podcast/the-daily/id123x'],
       [false, 'https://podcasts.apple.com/us/charts'],
       [false, 'https://podcasts.apple.com/'],
       [false, 'https://music.apple.com/us/album/something/id123'],

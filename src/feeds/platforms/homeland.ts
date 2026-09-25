@@ -5,7 +5,7 @@ import { composeHint, getCookieNames, hasMetaContent } from '../../common/utils.
 // Discoverability: Partially discoverable without handler.
 // Generic covers topics (html), partly covers node.
 
-const nodePathRegex = /\/topics\/node(\d+)/i
+const nodePathRegex = /\/topics\/node(\d+)(?:\/|$)/i
 
 export const isHomelandHtml = (content: string): boolean => {
   return hasMetaContent(content, 'generator', 'Homeland')

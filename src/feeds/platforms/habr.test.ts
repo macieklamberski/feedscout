@@ -45,6 +45,18 @@ describe('parseHabrUrl', () => {
     expect(parseHabrUrl('https://habr.com/ru/companies/example/articles/')).toEqual(expected)
   })
 
+  it('should return the company for a company named like the hub route', () => {
+    const expected: HabrUrl = { kind: 'company', company: 'hub' }
+
+    expect(parseHabrUrl('https://habr.com/ru/companies/hub/articles/')).toEqual(expected)
+  })
+
+  it('should return the company for a company named like the user route', () => {
+    const expected: HabrUrl = { kind: 'company', company: 'users' }
+
+    expect(parseHabrUrl('https://habr.com/ru/companies/users/articles/')).toEqual(expected)
+  })
+
   it('should return undefined for site-wide pages', () => {
     expect(parseHabrUrl('https://habr.com/ru/articles/')).toBeUndefined()
     expect(parseHabrUrl('https://habr.com/')).toBeUndefined()
