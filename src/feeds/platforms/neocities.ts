@@ -1,4 +1,4 @@
-import { isHostOf, isSubdomainOf, parseUrl } from 'trousse'
+import { getSubdomain, isHostOf, isSubdomainOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
@@ -6,7 +6,6 @@ import { composeHint } from '../../common/utils.js'
 // Handler needed for: all shapes.
 
 const hosts = ['neocities.org', 'www.neocities.org']
-const domainSuffixRegex = /\.neocities\.org$/i
 
 const getUsername = (url: string): string | undefined => {
   const parsedUrl = parseUrl(url)
@@ -15,11 +14,11 @@ const getUsername = (url: string): string | undefined => {
     return
   }
 
-  const { hostname, pathname } = parsedUrl
+  const { pathname } = parsedUrl
   const segments = pathname.split('/').filter(Boolean)
 
   if (isSubdomainOf(url, 'neocities.org')) {
-    return hostname.replace(domainSuffixRegex, '')
+    return getSubdomain(url, 'neocities.org')
   }
 
   if (isHostOf(url, hosts) && segments[0] === 'site') {

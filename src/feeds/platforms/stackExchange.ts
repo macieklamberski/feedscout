@@ -1,4 +1,4 @@
-import { isHostOf, isSubdomainOf } from 'trousse'
+import { isHostOrSubdomainOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
@@ -37,7 +37,7 @@ const getSortSuffix = (searchParams: URLSearchParams): string => {
 
 export const stackExchangeHandler: PlatformHandler = {
   match: (url) => {
-    return isHostOf(url, domains) || isSubdomainOf(url, domains)
+    return isHostOrSubdomainOf(url, domains)
   },
 
   resolve: (url) => {
