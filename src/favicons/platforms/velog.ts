@@ -2,7 +2,7 @@ import { isHostOf, isNonEmptyString, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { hosts, userRegex } from '../../feeds/platforms/velog.js'
 import type { FaviconEnricher } from '../types.js'
-import { parseBodyJson } from '../utils.js'
+import { parseResponseJson } from '../utils.js'
 
 const platform = 'velog'
 
@@ -74,18 +74,16 @@ export const velogEnricher: FaviconEnricher = async (ref, context) => {
     return
   }
 
-  try {
-    const query = new URLSearchParams({
-      query: `{user(username:${JSON.stringify(ref.id)}){profile{thumbnail}}}`,
-    })
-    const response = await context.fetchFn(`https://v2.velog.io/graphql?${query}`)
-    const data = parseBodyJson(response.body)
-    const avatar = getSquareAvatar(data?.data?.user?.profile?.thumbnail)
+  const query = new URLSearchParams({
+    query: `{user(username:${JSON.stringify(ref.id)}){profile{thumbnail}}}`,
+  })
+  const response = await context.fetchFn(`https://v2.velog.io/graphql?${query}`)
+  const data = parseResponseJson(response)
+  const avatar = getSquareAvatar(data?.data?.user?.profile?.thumbnail)
 
-    if (avatar) {
-      return [avatar]
-    }
-  } catch {}
+  if (avatar) {
+    return [avatar]
+  }
 
   return []
 }

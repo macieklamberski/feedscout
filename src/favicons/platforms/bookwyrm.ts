@@ -2,7 +2,7 @@ import { isNonEmptyString, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { isBookwyrmHtml } from '../../feeds/platforms/bookwyrm.js'
 import type { FaviconEnricher } from '../types.js'
-import { parseBodyJson } from '../utils.js'
+import { parseResponseJson } from '../utils.js'
 
 const platform = 'bookwyrm'
 
@@ -29,10 +29,10 @@ export const bookwyrmHandler: PlatformHandler = {
   },
 
   resolve: (url, content) => {
-    const parsedUrl = parseUrl(url)
-    const name = parsedUrl?.pathname.match(pageRegex)?.[1]
+    const parsedUrl = new URL(url)
+    const name = parsedUrl.pathname.match(pageRegex)?.[1]
 
-    if (!parsedUrl || !name) {
+    if (!name) {
       return []
     }
 
@@ -64,16 +64,14 @@ export const bookwyrmEnricher: FaviconEnricher = async (ref, context) => {
     return
   }
 
-  try {
-    const { origin } = new URL(ref.url)
-    const response = await context.fetchFn(`${origin}/user/${ref.id}.json`)
-    const data = parseBodyJson(response.body)
-    const iconUrl = data?.icon?.url
+  const { origin } = new URL(ref.url)
+  const response = await context.fetchFn(`${origin}/user/${ref.id}.json`)
+  const data = parseResponseJson(response)
+  const iconUrl = data?.icon?.url
 
-    if (isNonEmptyString(iconUrl) && !defaultAvatarRegex.test(iconUrl)) {
-      return [iconUrl]
-    }
-  } catch {}
+  if (isNonEmptyString(iconUrl) && !defaultAvatarRegex.test(iconUrl)) {
+    return [iconUrl]
+  }
 
   return []
 }

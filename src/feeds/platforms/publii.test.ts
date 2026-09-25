@@ -77,9 +77,5 @@ describe('publiiHandler', () => {
 
       expect(publiiHandler.resolve(value, content)).toEqual(expected)
     })
-
-    it('should return an empty array for invalid URLs', () => {
-      expect(publiiHandler.resolve('not-a-url')).toEqual([])
-    })
   })
 })

@@ -77,9 +77,5 @@ describe('habrHandler', () => {
 
       expect(habrHandler.resolve(value)).toEqual(expected)
     })
-
-    it('should return an empty array for invalid URLs', () => {
-      expect(habrHandler.resolve('not-a-url')).toEqual([])
-    })
   })
 })

@@ -111,9 +111,5 @@ describe('joomlaHandler', () => {
 
       expect(joomlaHandler.resolve(value)).toEqual(expected)
     })
-
-    it('should return an empty array for invalid URLs', () => {
-      expect(joomlaHandler.resolve('not-a-url')).toEqual([])
-    })
   })
 })

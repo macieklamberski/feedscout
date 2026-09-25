@@ -236,12 +236,6 @@ describe('bookwyrmHandler', () => {
 
         expect(result).toEqual([])
       })
-
-      it('should return empty array for invalid URL', () => {
-        const result = bookwyrmHandler.resolve('not-a-url', profileHtml)
-
-        expect(result).toEqual([])
-      })
     })
   })
 })
@@ -312,19 +306,25 @@ describe('bookwyrmEnricher', () => {
     expect(await bookwyrmEnricher(createRef(shelfUrl, 'reader'), context)).toEqual([])
   })
 
-  it('should return empty array when the actor JSON is invalid', async () => {
+  it('should reject when the actor JSON is invalid', async () => {
     const context = createContext({
       [actorJsonUrl]: 'not json',
     })
 
-    expect(await bookwyrmEnricher(createRef(shelfUrl, 'reader'), context)).toEqual([])
+    await expect(bookwyrmEnricher(createRef(shelfUrl, 'reader'), context)).rejects.toThrow()
   })
 
-  it('should return empty array when fetch throws', async () => {
+  it('should reject when fetch throws', async () => {
     const fetchFn: FetchFn = () => {
       throw new Error('Network error')
     }
 
-    expect(await bookwyrmEnricher(createRef(shelfUrl, 'reader'), { fetchFn })).toEqual([])
+    await expect(bookwyrmEnricher(createRef(shelfUrl, 'reader'), { fetchFn })).rejects.toThrow()
+  })
+
+  it('should reject when the response is not 2xx', async () => {
+    await expect(
+      bookwyrmEnricher(createRef(shelfUrl, 'reader'), createContext({})),
+    ).rejects.toThrow()
   })
 })

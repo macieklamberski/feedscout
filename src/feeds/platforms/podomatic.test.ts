@@ -56,9 +56,5 @@ describe('podomaticHandler', () => {
     it('should return an empty array for the directory index', () => {
       expect(podomaticHandler.resolve('https://www.podomatic.com/podcasts')).toEqual([])
     })
-
-    it('should return an empty array for invalid URLs', () => {
-      expect(podomaticHandler.resolve('not-a-url')).toEqual([])
-    })
   })
 })

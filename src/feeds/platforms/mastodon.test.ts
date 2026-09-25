@@ -165,10 +165,6 @@ describe('mastodonHandler', () => {
       expect(mastodonHandler.resolve('https://mastodon.social/about')).toEqual([])
     })
 
-    it('should return empty array for invalid URL', () => {
-      expect(mastodonHandler.resolve('not-a-url')).toEqual([])
-    })
-
     it('should return replies and profile feeds for /@user/with_replies', () => {
       const value = 'https://mastodon.social/@Gargron/with_replies'
       const expected = [

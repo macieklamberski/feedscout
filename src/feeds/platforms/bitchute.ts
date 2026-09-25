@@ -22,13 +22,8 @@ export const bitchuteHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    const parsedUrl = parseUrl(url)
-
-    if (!parsedUrl) {
-      return []
-    }
-
-    const segments = parsedUrl.pathname.split('/').filter(Boolean)
+    const { pathname } = new URL(url)
+    const segments = pathname.split('/').filter(Boolean)
 
     if (segments[0] !== 'channel' || !segments[1]) {
       return []

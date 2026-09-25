@@ -2,7 +2,7 @@ import { isNonEmptyString, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { hasMetaContent } from '../../common/utils.js'
 import type { FaviconEnricher } from '../types.js'
-import { parseBodyJson } from '../utils.js'
+import { parseResponseJson } from '../utils.js'
 
 const platform = 'mastodon'
 
@@ -52,8 +52,7 @@ export const mastodonHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    const parsedUrl = parseUrl(url)
-    const username = parsedUrl?.pathname.match(profileRegex)?.[1]
+    const username = new URL(url).pathname.match(profileRegex)?.[1]
 
     if (!username) {
       return []
@@ -68,16 +67,14 @@ export const mastodonEnricher: FaviconEnricher = async (ref, context) => {
     return
   }
 
-  try {
-    const { hostname } = new URL(ref.url)
-    const apiUrl = `https://${hostname}/api/v1/accounts/lookup?acct=${ref.id}`
-    const response = await context.fetchFn(apiUrl)
-    const data = parseBodyJson(response.body)
+  const { hostname } = new URL(ref.url)
+  const apiUrl = `https://${hostname}/api/v1/accounts/lookup?acct=${ref.id}`
+  const response = await context.fetchFn(apiUrl)
+  const data = parseResponseJson(response)
 
-    if (isNonEmptyString(data.avatar)) {
-      return [data.avatar]
-    }
-  } catch {}
+  if (isNonEmptyString(data.avatar)) {
+    return [data.avatar]
+  }
 
   return []
 }

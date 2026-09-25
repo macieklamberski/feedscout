@@ -61,9 +61,5 @@ describe('microblogHandler', () => {
     it('should return empty array for a nested subdomain', () => {
       expect(microblogHandler.resolve('https://blog.example.micro.blog')).toEqual([])
     })
-
-    it('should return empty array for an invalid URL', () => {
-      expect(microblogHandler.resolve('not-a-url')).toEqual([])
-    })
   })
 })

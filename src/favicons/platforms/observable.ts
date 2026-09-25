@@ -2,7 +2,7 @@ import { isHostOf, isNonEmptyString, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { collectionRegex, hosts } from '../../feeds/platforms/observable.js'
 import type { FaviconEnricher } from '../types.js'
-import { parseBodyJson } from '../utils.js'
+import { parseResponseJson } from '../utils.js'
 
 const platform = 'observable'
 
@@ -42,14 +42,12 @@ export const observableEnricher: FaviconEnricher = async (ref, context) => {
     return
   }
 
-  try {
-    const response = await context.fetchFn(`https://api.observablehq.com/user/@${ref.id}`)
-    const data = parseBodyJson(response.body)
+  const response = await context.fetchFn(`https://api.observablehq.com/user/@${ref.id}`)
+  const data = parseResponseJson(response)
 
-    if (isNonEmptyString(data?.avatar_url)) {
-      return [data.avatar_url]
-    }
-  } catch {}
+  if (isNonEmptyString(data?.avatar_url)) {
+    return [data.avatar_url]
+  }
 
   return []
 }

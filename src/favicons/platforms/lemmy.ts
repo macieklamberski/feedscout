@@ -8,7 +8,7 @@ import {
   isUserPath,
 } from '../../feeds/platforms/lemmy.js'
 import type { FaviconEnricher } from '../types.js'
-import { parseBodyJson } from '../utils.js'
+import { parseResponseJson } from '../utils.js'
 
 const platform = 'lemmy'
 
@@ -44,8 +44,7 @@ export const lemmyHandler: PlatformHandler = {
   },
 
   resolve: (url, content) => {
-    const parsedUrl = parseUrl(url)
-    const id = parsedUrl ? getProfileId(parsedUrl.pathname) : undefined
+    const id = getProfileId(new URL(url).pathname)
 
     if (!id) {
       return []
@@ -67,30 +66,28 @@ export const lemmyEnricher: FaviconEnricher = async (ref, context) => {
     return
   }
 
-  try {
-    const { origin } = new URL(ref.url)
-    const [kind, name] = ref.id.split('/')
+  const { origin } = new URL(ref.url)
+  const [kind, name] = ref.id.split('/')
 
-    if (kind === 'c') {
-      const apiUrl = `${origin}/api/v3/community?name=${encodeURIComponent(name)}`
-      const response = await context.fetchFn(apiUrl)
-      const icon = parseBodyJson(response.body)?.community_view?.community?.icon
+  if (kind === 'c') {
+    const apiUrl = `${origin}/api/v3/community?name=${encodeURIComponent(name)}`
+    const response = await context.fetchFn(apiUrl)
+    const icon = parseResponseJson(response)?.community_view?.community?.icon
 
-      if (isNonEmptyString(icon)) {
-        return [icon]
-      }
+    if (isNonEmptyString(icon)) {
+      return [icon]
     }
+  }
 
-    if (kind === 'u') {
-      const apiUrl = `${origin}/api/v3/user?username=${encodeURIComponent(name)}&limit=1`
-      const response = await context.fetchFn(apiUrl)
-      const avatar = parseBodyJson(response.body)?.person_view?.person?.avatar
+  if (kind === 'u') {
+    const apiUrl = `${origin}/api/v3/user?username=${encodeURIComponent(name)}&limit=1`
+    const response = await context.fetchFn(apiUrl)
+    const avatar = parseResponseJson(response)?.person_view?.person?.avatar
 
-      if (isNonEmptyString(avatar)) {
-        return [avatar]
-      }
+    if (isNonEmptyString(avatar)) {
+      return [avatar]
     }
-  } catch {}
+  }
 
   return []
 }

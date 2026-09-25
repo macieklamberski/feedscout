@@ -15,12 +15,8 @@ export const powerpressHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    try {
-      const { origin } = new URL(url)
+    const { origin } = new URL(url)
 
-      return [{ uri: `${origin}/feed/podcast/`, hint: composeHint('powerpress:podcast') }]
-    } catch {}
-
-    return []
+    return [{ uri: `${origin}/feed/podcast/`, hint: composeHint('powerpress:podcast') }]
   },
 }

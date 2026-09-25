@@ -73,9 +73,5 @@ describe('nodebbHandler', () => {
 
       expect(nodebbHandler.resolve(value)).toEqual(expected)
     })
-
-    it('should return an empty array for invalid URLs', () => {
-      expect(nodebbHandler.resolve('not-a-url')).toEqual([])
-    })
   })
 })

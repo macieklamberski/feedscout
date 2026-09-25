@@ -43,35 +43,31 @@ export const writefreelyHandler: PlatformHandler = {
   },
 
   resolve: (url, content) => {
-    try {
-      const { origin, pathname } = new URL(url)
-      const blogName = getBlogName(url)
+    const { origin, pathname } = new URL(url)
+    const blogName = getBlogName(url)
 
-      if (!blogName) {
-        return []
-      }
+    if (!blogName) {
+      return []
+    }
 
-      // A single-user instance serves its one blog at the root, and the blog title links to it.
-      const blogPath = content?.match(blogPathRegex)?.[1] ?? `/${blogName}/`
-      const tag = pathname.match(tagPathRegex)?.[1]
-      const uris: Array<DiscoverUriEntry> = []
+    // A single-user instance serves its one blog at the root, and the blog title links to it.
+    const blogPath = content?.match(blogPathRegex)?.[1] ?? `/${blogName}/`
+    const tag = pathname.match(tagPathRegex)?.[1]
+    const uris: Array<DiscoverUriEntry> = []
 
-      if (tag) {
-        uris.push({
-          uri: `${origin}${blogPath}${tag}/feed/`,
-          hint: composeHint('writefreely:tag'),
-        })
-      }
+    if (tag) {
+      uris.push({
+        uri: `${origin}${blogPath}${tag}/feed/`,
+        hint: composeHint('writefreely:tag'),
+      })
+    }
 
-      uris.push({ uri: `${origin}${blogPath}feed/`, hint: composeHint('writefreely:blog') })
+    uris.push({ uri: `${origin}${blogPath}feed/`, hint: composeHint('writefreely:blog') })
 
-      if (blogPath !== '/') {
-        uris.push({ uri: `${origin}/read/feed/`, hint: composeHint('writefreely:reader') })
-      }
+    if (blogPath !== '/') {
+      uris.push({ uri: `${origin}/read/feed/`, hint: composeHint('writefreely:reader') })
+    }
 
-      return uris
-    } catch {}
-
-    return []
+    return uris
   },
 }

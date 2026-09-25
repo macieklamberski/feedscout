@@ -7,7 +7,7 @@ import {
   isPeertubeHeaders,
 } from '../../feeds/platforms/peertube.js'
 import type { FaviconEnricher } from '../types.js'
-import { parseBodyJson } from '../utils.js'
+import { parseResponseJson } from '../utils.js'
 
 type Avatar = {
   width?: number
@@ -49,8 +49,7 @@ export const peertubeHandler: PlatformHandler = {
   },
 
   resolve: (url, content) => {
-    const parsedUrl = parseUrl(url)
-    const id = parsedUrl ? getProfileId(parsedUrl.pathname) : undefined
+    const id = getProfileId(new URL(url).pathname)
 
     if (!id) {
       return []
@@ -71,27 +70,25 @@ export const peertubeEnricher: FaviconEnricher = async (ref, context) => {
     return
   }
 
-  try {
-    const { origin } = new URL(ref.url)
-    const [kind, name] = ref.id.split('/')
-    const apiPath = apiPaths[kind]
+  const { origin } = new URL(ref.url)
+  const [kind, name] = ref.id.split('/')
+  const apiPath = apiPaths[kind]
 
-    if (!apiPath || !name) {
-      return []
-    }
+  if (!apiPath || !name) {
+    return []
+  }
 
-    const response = await context.fetchFn(`${origin}/api/v1/${apiPath}/${name}`)
-    const data = parseBodyJson(response.body)
-    const avatars: Array<Avatar> = Array.isArray(data?.avatars) ? data.avatars : []
+  const response = await context.fetchFn(`${origin}/api/v1/${apiPath}/${name}`)
+  const data = parseResponseJson(response)
+  const avatars: Array<Avatar> = Array.isArray(data?.avatars) ? data.avatars : []
 
-    const largest = avatars
-      .filter((avatar) => isNonEmptyString(avatar.path))
-      .sort((a, b) => (b.width ?? 0) - (a.width ?? 0))[0]
+  const largest = avatars
+    .filter((avatar) => isNonEmptyString(avatar.path))
+    .sort((a, b) => (b.width ?? 0) - (a.width ?? 0))[0]
 
-    if (largest?.path) {
-      return [`${origin}${largest.path}`]
-    }
-  } catch {}
+  if (largest?.path) {
+    return [`${origin}${largest.path}`]
+  }
 
   return []
 }

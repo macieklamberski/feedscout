@@ -71,9 +71,5 @@ describe('postypeHandler', () => {
     it('should return an empty array for an infrastructure subdomain', () => {
       expect(postypeHandler.resolve('https://api.postype.com/')).toEqual([])
     })
-
-    it('should return an empty array for invalid URLs', () => {
-      expect(postypeHandler.resolve('not-a-url')).toEqual([])
-    })
   })
 })

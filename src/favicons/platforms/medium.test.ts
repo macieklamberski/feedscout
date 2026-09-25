@@ -113,10 +113,6 @@ describe('mediumHandler', () => {
     it('should return empty array for custom domains', async () => {
       expect(await mediumHandler.resolve('https://example.com/@alice')).toEqual([])
     })
-
-    it('should return empty array for invalid URL', async () => {
-      expect(await mediumHandler.resolve('not-a-url')).toEqual([])
-    })
   })
 })
 
@@ -197,21 +193,27 @@ describe('mediumEnricher', () => {
     expect(await mediumEnricher(ref, context)).toEqual([])
   })
 
-  it('should return empty array when the feed is invalid', async () => {
+  it('should reject when the feed is invalid', async () => {
     const context = createContext({
       'https://medium.com/feed/@alice': '<html><body>Not Found</body></html>',
     })
     const ref = createRef('https://medium.com/@alice', '@alice')
 
-    expect(await mediumEnricher(ref, context)).toEqual([])
+    await expect(mediumEnricher(ref, context)).rejects.toThrow()
   })
 
-  it('should return empty array when fetch throws', async () => {
+  it('should reject when fetch throws', async () => {
     const fetchFn: FetchFn = () => {
       throw new Error('Network error')
     }
     const ref = createRef('https://medium.com/@alice', '@alice')
 
-    expect(await mediumEnricher(ref, { fetchFn })).toEqual([])
+    await expect(mediumEnricher(ref, { fetchFn })).rejects.toThrow()
+  })
+
+  it('should reject when the response is not 2xx', async () => {
+    const ref = createRef('https://medium.com/@alice', '@alice')
+
+    await expect(mediumEnricher(ref, createContext({}))).rejects.toThrow()
   })
 })

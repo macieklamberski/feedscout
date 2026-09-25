@@ -23,6 +23,10 @@ export const podbeanHandler: PlatformHandler = {
   resolve: (url) => {
     const slug = getSubdomain(url, 'podbean.com')
 
+    if (!slug) {
+      return []
+    }
+
     return [
       {
         uri: `https://feed.podbean.com/${slug}/feed.xml`,

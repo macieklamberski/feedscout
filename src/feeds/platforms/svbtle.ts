@@ -24,16 +24,12 @@ export const svbtleHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    try {
-      const { origin } = new URL(url)
+    const { origin } = new URL(url)
 
-      if (isHostOf(url, excludedHosts)) {
-        return []
-      }
+    if (isHostOf(url, excludedHosts)) {
+      return []
+    }
 
-      return [{ uri: `${origin}/feed`, hint: composeHint('svbtle:posts') }]
-    } catch {}
-
-    return []
+    return [{ uri: `${origin}/feed`, hint: composeHint('svbtle:posts') }]
   },
 }

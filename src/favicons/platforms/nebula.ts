@@ -2,7 +2,7 @@ import { isAnyOf, isHostOf, isNonEmptyString, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { excludedPaths, globalPaths, hosts } from '../../feeds/platforms/nebula.js'
 import type { FaviconEnricher } from '../types.js'
-import { parseBodyJson } from '../utils.js'
+import { parseResponseJson } from '../utils.js'
 
 const platform = 'nebula'
 
@@ -40,6 +40,7 @@ const getPageAvatar = (content: string | undefined): string | undefined => {
     return
   }
 
+  // A broken page payload must not hide the content API, which the ref falls back to.
   try {
     const queryData = JSON.parse(match[1])
 
@@ -84,14 +85,12 @@ export const nebulaEnricher: FaviconEnricher = async (ref, context) => {
     return
   }
 
-  try {
-    const response = await context.fetchFn(`https://content.api.nebula.app/content/${ref.id}/`)
-    const avatar = getAvatar(parseBodyJson(response.body))
+  const response = await context.fetchFn(`https://content.api.nebula.app/content/${ref.id}/`)
+  const avatar = getAvatar(parseResponseJson(response))
 
-    if (avatar) {
-      return [avatar]
-    }
-  } catch {}
+  if (avatar) {
+    return [avatar]
+  }
 
   return []
 }

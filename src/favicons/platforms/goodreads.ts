@@ -3,6 +3,7 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getMetaContent } from '../../common/utils.js'
 import { hosts, parseUserId } from '../../feeds/platforms/goodreads.js'
 import type { FaviconEnricher } from '../types.js'
+import { getResponseText } from '../utils.js'
 
 const platform = 'goodreads'
 
@@ -62,13 +63,7 @@ export const goodreadsEnricher: FaviconEnricher = async (ref, context) => {
     return
   }
 
-  try {
-    const response = await context.fetchFn(`https://www.goodreads.com/user/show/${ref.id}`)
+  const response = await context.fetchFn(`https://www.goodreads.com/user/show/${ref.id}`)
 
-    if (typeof response.body === 'string') {
-      return parseAvatar(response.body)
-    }
-  } catch {}
-
-  return []
+  return parseAvatar(getResponseText(response))
 }

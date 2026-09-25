@@ -12,6 +12,11 @@ export const firesideHandler: PlatformHandler = {
 
   resolve: (url) => {
     const slug = getSubdomain(url, 'fireside.fm')
+
+    if (!slug) {
+      return []
+    }
+
     const uris: Array<DiscoverUriEntry> = []
 
     uris.push({

@@ -195,10 +195,6 @@ describe('mastodonHandler', () => {
     it('should return empty array for non-profile path', async () => {
       expect(await mastodonHandler.resolve('https://mastodon.social/about')).toEqual([])
     })
-
-    it('should return empty array for invalid URL', async () => {
-      expect(await mastodonHandler.resolve('not-a-url')).toEqual([])
-    })
   })
 })
 
@@ -290,21 +286,27 @@ describe('mastodonEnricher', () => {
     expect(await mastodonEnricher(ref, context)).toEqual([])
   })
 
-  it('should return empty array when API returns invalid JSON', async () => {
+  it('should reject when API returns invalid JSON', async () => {
     const context = createContext({
       'https://mastodon.social/api/v1/accounts/lookup?acct=user': 'not json',
     })
     const ref = createRef('https://mastodon.social/@user', 'user')
 
-    expect(await mastodonEnricher(ref, context)).toEqual([])
+    await expect(mastodonEnricher(ref, context)).rejects.toThrow()
   })
 
-  it('should return empty array when fetch throws', async () => {
+  it('should reject when fetch throws', async () => {
     const fetchFn: FetchFn = () => {
       throw new Error('Network error')
     }
     const ref = createRef('https://mastodon.social/@user', 'user')
 
-    expect(await mastodonEnricher(ref, { fetchFn })).toEqual([])
+    await expect(mastodonEnricher(ref, { fetchFn })).rejects.toThrow()
+  })
+
+  it('should reject when the response is not 2xx', async () => {
+    const ref = createRef('https://mastodon.social/@user', 'user')
+
+    await expect(mastodonEnricher(ref, createContext({}))).rejects.toThrow()
   })
 })

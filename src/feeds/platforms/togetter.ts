@@ -1,4 +1,4 @@
-import { isHostOf, parseUrl } from 'trousse'
+import { isHostOf } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
@@ -15,13 +15,7 @@ export const togetterHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    const parsedUrl = parseUrl(url)
-
-    if (!parsedUrl) {
-      return []
-    }
-
-    const { origin, pathname } = parsedUrl
+    const { origin, pathname } = new URL(url)
     const curator = pathname.match(curatorPathRegex)?.[1]
     const uris: Array<DiscoverUriEntry> = []
 

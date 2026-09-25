@@ -158,10 +158,5 @@ describe('pinterestHandler', () => {
       // pin.it short codes are redirect tokens, not usernames, but resolve currently
       // emits https://www.pinterest.com/{code}/feed.rss for them; likely needs a fix.
     })
-
-    it.todo('should define behavior for invalid URL input', () => {
-      // resolve('not-a-url') currently throws a TypeError from the unguarded new URL call; the
-      // desired contract (throw vs empty array) is undecided.
-    })
   })
 })

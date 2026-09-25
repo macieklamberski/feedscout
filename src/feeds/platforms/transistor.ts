@@ -25,6 +25,10 @@ export const transistorHandler: PlatformHandler = {
   resolve: (url, content) => {
     const slug = content?.match(feedSlugRegex)?.[1] ?? getSubdomain(url, 'transistor.fm')
 
+    if (!slug) {
+      return []
+    }
+
     return [
       {
         uri: `https://feeds.transistor.fm/${slug}`,

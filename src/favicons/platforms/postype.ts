@@ -3,6 +3,7 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getMetaContent } from '../../common/utils.js'
 import { hosts } from '../../feeds/platforms/postype.js'
 import type { FaviconEnricher } from '../types.js'
+import { getResponseText } from '../utils.js'
 
 const platform = 'postype'
 
@@ -73,17 +74,12 @@ export const postypeEnricher: FaviconEnricher = async (ref, context) => {
     return
   }
 
-  try {
-    const response = await context.fetchFn(`https://www.postype.com/@${ref.id}`)
+  const response = await context.fetchFn(`https://www.postype.com/@${ref.id}`)
+  const avatar = parseAvatar(getResponseText(response))
 
-    if (typeof response.body === 'string') {
-      const avatar = parseAvatar(response.body)
-
-      if (avatar) {
-        return [avatar]
-      }
-    }
-  } catch {}
+  if (avatar) {
+    return [avatar]
+  }
 
   return []
 }

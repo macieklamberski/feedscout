@@ -129,10 +129,6 @@ describe('steamHandler', () => {
     it('should return empty array for a URL without an app id', () => {
       expect(steamHandler.resolve('https://steamcommunity.com/groups/Valve')).toEqual([])
     })
-
-    it('should return empty array for an invalid URL', () => {
-      expect(steamHandler.resolve('not-a-url')).toEqual([])
-    })
   })
 })
 
@@ -188,17 +184,21 @@ describe('steamEnricher', () => {
     expect(await steamEnricher(createRef('620'), context)).toEqual([])
   })
 
-  it('should return empty array when the API returns invalid JSON', async () => {
+  it('should reject when the API returns invalid JSON', async () => {
     const context = createContext({ [apiUrl]: 'not json' })
 
-    expect(await steamEnricher(createRef('620'), context)).toEqual([])
+    await expect(steamEnricher(createRef('620'), context)).rejects.toThrow()
   })
 
-  it('should return empty array when fetch throws', async () => {
+  it('should reject when fetch throws', async () => {
     const fetchFn: FetchFn = () => {
       throw new Error('Network error')
     }
 
-    expect(await steamEnricher(createRef('620'), { fetchFn })).toEqual([])
+    await expect(steamEnricher(createRef('620'), { fetchFn })).rejects.toThrow()
+  })
+
+  it('should reject when the response is not 2xx', async () => {
+    await expect(steamEnricher(createRef('620'), createContext({}))).rejects.toThrow()
   })
 })

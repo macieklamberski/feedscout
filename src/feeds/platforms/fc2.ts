@@ -18,13 +18,7 @@ export const fc2Handler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    const parsedUrl = parseUrl(url)
-
-    if (!parsedUrl) {
-      return []
-    }
-
-    const { origin } = parsedUrl
+    const { origin } = new URL(url)
 
     return [
       { uri: `${origin}/?xml`, hint: composeHint('fc2:posts') },

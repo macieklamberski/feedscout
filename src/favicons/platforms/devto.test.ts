@@ -73,10 +73,6 @@ describe('devtoHandler', () => {
     it('should return empty array for tag pages', async () => {
       expect(await devtoHandler.resolve('https://dev.to/t/javascript')).toEqual([])
     })
-
-    it('should return empty array for invalid URL', async () => {
-      expect(await devtoHandler.resolve('not-a-url')).toEqual([])
-    })
   })
 })
 
@@ -115,19 +111,23 @@ describe('devtoEnricher', () => {
     expect(await devtoEnricher(aliceRef, context)).toEqual([])
   })
 
-  it('should return empty array when API returns invalid JSON', async () => {
+  it('should reject when API returns invalid JSON', async () => {
     const context = createContext({
       'https://dev.to/api/users/by_username?url=alice': 'not-json',
     })
 
-    expect(await devtoEnricher(aliceRef, context)).toEqual([])
+    await expect(devtoEnricher(aliceRef, context)).rejects.toThrow()
   })
 
-  it('should return empty array when fetch throws', async () => {
+  it('should reject when fetch throws', async () => {
     const fetchFn: FetchFn = () => {
       throw new Error('Network error')
     }
 
-    expect(await devtoEnricher(aliceRef, { fetchFn })).toEqual([])
+    await expect(devtoEnricher(aliceRef, { fetchFn })).rejects.toThrow()
+  })
+
+  it('should reject when the response is not 2xx', async () => {
+    await expect(devtoEnricher(aliceRef, createContext({}))).rejects.toThrow()
   })
 })

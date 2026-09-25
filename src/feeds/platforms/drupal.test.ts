@@ -62,9 +62,5 @@ describe('drupalHandler', () => {
 
       expect(drupalHandler.resolve(value)).toEqual(expected)
     })
-
-    it('should return an empty array for invalid URLs', () => {
-      expect(drupalHandler.resolve('not-a-url')).toEqual([])
-    })
   })
 })

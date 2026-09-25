@@ -235,17 +235,21 @@ describe('arenaEnricher', () => {
     expect(await arenaEnricher(channelRef, context)).toEqual([])
   })
 
-  it('should return empty array when the API returns invalid JSON', async () => {
+  it('should reject when the API returns invalid JSON', async () => {
     const context = createContext({ [channelApiUrl]: 'not-json' })
 
-    expect(await arenaEnricher(channelRef, context)).toEqual([])
+    await expect(arenaEnricher(channelRef, context)).rejects.toThrow()
   })
 
-  it('should return empty array when fetch throws', async () => {
+  it('should reject when fetch throws', async () => {
     const fetchFn: FetchFn = () => {
       throw new Error('Network error')
     }
 
-    expect(await arenaEnricher(channelRef, { fetchFn })).toEqual([])
+    await expect(arenaEnricher(channelRef, { fetchFn })).rejects.toThrow()
+  })
+
+  it('should reject when the response is not 2xx', async () => {
+    await expect(arenaEnricher(channelRef, createContext({}))).rejects.toThrow()
   })
 })

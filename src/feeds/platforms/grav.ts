@@ -34,18 +34,14 @@ export const gravHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    try {
-      const { origin, pathname } = new URL(url)
-      // The site root has no path to suffix, so its feed is `/.rss`.
-      const pagePath =
-        pathname === '/' ? `${origin}/` : `${origin}${pathname}`.replace(trailingSlashRegex, '')
+    const { origin, pathname } = new URL(url)
+    // The site root has no path to suffix, so its feed is `/.rss`.
+    const pagePath =
+      pathname === '/' ? `${origin}/` : `${origin}${pathname}`.replace(trailingSlashRegex, '')
 
-      return [
-        { uri: `${pagePath}.rss`, hint: composeHint('grav:page', 'rss') },
-        { uri: `${pagePath}.atom`, hint: composeHint('grav:page', 'atom') },
-      ]
-    } catch {}
-
-    return []
+    return [
+      { uri: `${pagePath}.rss`, hint: composeHint('grav:page', 'rss') },
+      { uri: `${pagePath}.atom`, hint: composeHint('grav:page', 'atom') },
+    ]
   },
 }

@@ -104,10 +104,6 @@ describe('noteHandler', () => {
       it('should return empty array for hashtag pages', () => {
         expect(noteHandler.resolve('https://note.com/hashtag/design')).toEqual([])
       })
-
-      it('should return empty array for invalid URL', () => {
-        expect(noteHandler.resolve('not-a-url', profileContent)).toEqual([])
-      })
     })
 
     describe('edge cases', () => {
@@ -162,19 +158,23 @@ describe('noteEnricher', () => {
     expect(await noteEnricher(ref, context)).toEqual([])
   })
 
-  it('should return empty array when API returns invalid JSON', async () => {
+  it('should reject when API returns invalid JSON', async () => {
     const context = createContext({
       'https://note.com/api/v2/creators/alice': 'not json',
     })
 
-    expect(await noteEnricher(ref, context)).toEqual([])
+    await expect(noteEnricher(ref, context)).rejects.toThrow()
   })
 
-  it('should return empty array when fetch throws', async () => {
+  it('should reject when fetch throws', async () => {
     const fetchFn: FetchFn = () => {
       throw new Error('Network error')
     }
 
-    expect(await noteEnricher(ref, { fetchFn })).toEqual([])
+    await expect(noteEnricher(ref, { fetchFn })).rejects.toThrow()
+  })
+
+  it('should reject when the response is not 2xx', async () => {
+    await expect(noteEnricher(ref, createContext({}))).rejects.toThrow()
   })
 })

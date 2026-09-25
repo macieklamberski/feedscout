@@ -1,5 +1,5 @@
 import { isAnyOf, isHostOf, isNonEmptyString, parseUrl } from 'trousse'
-import type { FetchFn } from '../../common/types.js'
+import type { FetchFnResponse } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import {
   excludedPaths,
@@ -8,7 +8,7 @@ import {
   isGitlabHtml,
 } from '../../feeds/platforms/gitlab.js'
 import type { FaviconEnricher } from '../types.js'
-import { parseBodyJson } from '../utils.js'
+import { parseResponseJson } from '../utils.js'
 
 const platform = 'gitlab'
 
@@ -16,9 +16,8 @@ const platform = 'gitlab'
 // so the regex strips the .atom feed extension instead of excluding dots.
 const userRegex = /^\/([^/]+?)(?:\.atom)?(?:\/|$)/
 
-const fetchAvatarUrl = async (apiUrl: string, fetchFn: FetchFn): Promise<string | undefined> => {
-  const response = await fetchFn(apiUrl)
-  const data = parseBodyJson(response.body)
+const getAvatarUrl = (response: FetchFnResponse): string | undefined => {
+  const data = parseResponseJson(response)
 
   // Users API returns an array, groups API returns an object.
   const entry = Array.isArray(data) ? data[0] : data
@@ -58,7 +57,7 @@ export const gitlabHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    const username = parseUrl(url)?.pathname.match(userRegex)?.[1]
+    const username = new URL(url).pathname.match(userRegex)?.[1]
 
     if (!username || isAnyOf(username, excludedPaths)) {
       return []
@@ -73,19 +72,29 @@ export const gitlabEnricher: FaviconEnricher = async (ref, context) => {
     return
   }
 
-  try {
-    const { origin } = new URL(ref.url)
+  const { origin } = new URL(ref.url)
 
-    // Try users API first, then fall back to groups API.
-    const encodedName = encodeURIComponent(ref.id)
-    const avatarUrl =
-      (await fetchAvatarUrl(`${origin}/api/v4/users?username=${encodedName}`, context.fetchFn)) ??
-      (await fetchAvatarUrl(`${origin}/api/v4/groups/${encodedName}`, context.fetchFn))
+  const encodedName = encodeURIComponent(ref.id)
+  const userResponse = await context.fetchFn(`${origin}/api/v4/users?username=${encodedName}`)
+  const userAvatarUrl = getAvatarUrl(userResponse)
 
-    if (avatarUrl) {
-      return [avatarUrl]
-    }
-  } catch {}
+  if (userAvatarUrl) {
+    return [userAvatarUrl]
+  }
+
+  const groupResponse = await context.fetchFn(`${origin}/api/v4/groups/${encodedName}`)
+
+  // The groups API answers 404 for a private group or a name that is no group, as the users API
+  // answers an empty list for a name that is no user: nothing public to show.
+  if (groupResponse.status === 404) {
+    return []
+  }
+
+  const groupAvatarUrl = getAvatarUrl(groupResponse)
+
+  if (groupAvatarUrl) {
+    return [groupAvatarUrl]
+  }
 
   return []
 }

@@ -54,10 +54,5 @@ describe('tumblrHandler', () => {
       // resolve currently emits https://www.tumblr.com/rss for www.tumblr.com/{blog},
       // dropping the blog name from the feed URL; likely needs a source fix.
     })
-
-    it.todo('should define behavior for invalid URL input', () => {
-      // resolve('not-a-url') currently throws a TypeError from the unguarded new URL call; the
-      // desired contract (throw vs empty array) is undecided.
-    })
   })
 })

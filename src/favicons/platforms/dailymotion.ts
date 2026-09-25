@@ -7,7 +7,7 @@ import {
   userRegex,
 } from '../../feeds/platforms/dailymotion.js'
 import type { FaviconEnricher } from '../types.js'
-import { parseBodyJson } from '../utils.js'
+import { parseResponseJson } from '../utils.js'
 
 const platform = 'dailymotion'
 
@@ -58,15 +58,13 @@ export const dailymotionEnricher: FaviconEnricher = async (ref, context) => {
 
   const field = ref.id.startsWith('playlist/') ? 'owner.avatar_720_url' : 'avatar_720_url'
 
-  try {
-    const response = await context.fetchFn(`https://api.dailymotion.com/${ref.id}?fields=${field}`)
-    const avatar = parseBodyJson(response.body)?.[field]
+  const response = await context.fetchFn(`https://api.dailymotion.com/${ref.id}?fields=${field}`)
+  const avatar = parseResponseJson(response)?.[field]
 
-    // An account without an avatar gets the generic silhouette served under /d/.
-    if (isNonEmptyString(avatar) && !parseUrl(avatar)?.pathname.startsWith('/d/')) {
-      return [avatar]
-    }
-  } catch {}
+  // An account without an avatar gets the generic silhouette served under /d/.
+  if (isNonEmptyString(avatar) && !parseUrl(avatar)?.pathname.startsWith('/d/')) {
+    return [avatar]
+  }
 
   return []
 }

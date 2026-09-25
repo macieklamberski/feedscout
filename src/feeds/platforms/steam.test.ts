@@ -144,10 +144,5 @@ describe('steamHandler', () => {
     it('should return empty array for unrecognized store path', () => {
       expect(steamHandler.resolve('https://store.steampowered.com/about/')).toEqual([])
     })
-
-    it.todo('should define behavior for invalid URL input', () => {
-      // resolve('not-a-url') currently throws a TypeError from the unguarded new URL call; the
-      // desired contract (throw vs empty array) is undecided.
-    })
   })
 })

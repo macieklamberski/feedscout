@@ -13,15 +13,11 @@ export const textpatternHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    try {
-      const { origin } = new URL(url)
+    const { origin } = new URL(url)
 
-      return [
-        { uri: `${origin}/rss`, hint: composeHint('textpattern:posts', 'rss') },
-        { uri: `${origin}/atom`, hint: composeHint('textpattern:posts', 'atom') },
-      ]
-    } catch {}
-
-    return []
+    return [
+      { uri: `${origin}/rss`, hint: composeHint('textpattern:posts', 'rss') },
+      { uri: `${origin}/atom`, hint: composeHint('textpattern:posts', 'atom') },
+    ]
   },
 }

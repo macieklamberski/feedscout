@@ -175,7 +175,7 @@ describe('myanimelistEnricher', () => {
     expect(await myanimelistEnricher(ref, context)).toEqual([])
   })
 
-  it('should return empty array when the body is a stream', async () => {
+  it('should reject when the body is a stream', async () => {
     const fetchFn: FetchFn = async (url) => ({
       headers: new Headers(),
       body: new ReadableStream(),
@@ -184,15 +184,21 @@ describe('myanimelistEnricher', () => {
     })
     const ref = createRef('https://myanimelist.net/animelist/example')
 
-    expect(await myanimelistEnricher(ref, { fetchFn })).toEqual([])
+    await expect(myanimelistEnricher(ref, { fetchFn })).rejects.toThrow('Unexpected stream body')
   })
 
-  it('should return empty array when fetch throws', async () => {
+  it('should reject when fetch throws', async () => {
     const fetchFn: FetchFn = () => {
       throw new Error('Network error')
     }
     const ref = createRef('https://myanimelist.net/animelist/example')
 
-    expect(await myanimelistEnricher(ref, { fetchFn })).toEqual([])
+    await expect(myanimelistEnricher(ref, { fetchFn })).rejects.toThrow()
+  })
+
+  it('should reject when the response is not 2xx', async () => {
+    const ref = createRef('https://myanimelist.net/animelist/example')
+
+    await expect(myanimelistEnricher(ref, createContext({}))).rejects.toThrow()
   })
 })

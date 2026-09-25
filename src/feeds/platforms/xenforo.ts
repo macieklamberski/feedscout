@@ -25,13 +25,7 @@ export const xenforoHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    const parsedUrl = parseUrl(url)
-
-    if (!parsedUrl) {
-      return []
-    }
-
-    const { origin, pathname } = parsedUrl
+    const { origin, pathname } = new URL(url)
     const [, route, forumPath] = pathname.match(forumPathRegex) ?? []
     const uris: Array<DiscoverUriEntry> = []
 

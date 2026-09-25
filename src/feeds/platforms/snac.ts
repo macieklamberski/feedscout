@@ -40,17 +40,13 @@ export const snacHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    try {
-      const { origin } = new URL(url)
-      const userPath = getUserPath(url)
+    const { origin } = new URL(url)
+    const userPath = getUserPath(url)
 
-      if (!userPath) {
-        return []
-      }
+    if (!userPath) {
+      return []
+    }
 
-      return [{ uri: `${origin}${userPath}.rss`, hint: composeHint('snac:posts') }]
-    } catch {}
-
-    return []
+    return [{ uri: `${origin}${userPath}.rss`, hint: composeHint('snac:posts') }]
   },
 }

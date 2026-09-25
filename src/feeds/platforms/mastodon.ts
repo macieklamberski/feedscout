@@ -52,13 +52,7 @@ export const mastodonHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    const parsedUrl = parseUrl(url)
-
-    if (!parsedUrl) {
-      return []
-    }
-
-    const { origin, pathname } = parsedUrl
+    const { origin, pathname } = new URL(url)
 
     // Replies-included feed: /@user/with_replies
     const repliesMatch = pathname.match(repliesProfileRegex)

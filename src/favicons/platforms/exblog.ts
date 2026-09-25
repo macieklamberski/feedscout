@@ -3,6 +3,7 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getMetaContent } from '../../common/utils.js'
 import { domains } from '../../feeds/platforms/exblog.js'
 import type { FaviconEnricher } from '../types.js'
+import { getResponseText } from '../utils.js'
 
 const platform = 'exblog'
 
@@ -57,13 +58,7 @@ export const exblogEnricher: FaviconEnricher = async (ref, context) => {
     return
   }
 
-  try {
-    const response = await context.fetchFn(`https://${ref.id}.exblog.jp/`)
+  const response = await context.fetchFn(`https://${ref.id}.exblog.jp/`)
 
-    if (typeof response.body === 'string') {
-      return parseLogo(response.body)
-    }
-  } catch {}
-
-  return []
+  return parseLogo(getResponseText(response))
 }

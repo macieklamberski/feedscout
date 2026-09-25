@@ -56,13 +56,7 @@ export const discourseHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    const parsedUrl = parseUrl(url)
-
-    if (!parsedUrl) {
-      return []
-    }
-
-    const { origin, pathname, searchParams } = parsedUrl
+    const { origin, pathname, searchParams } = new URL(url)
 
     const topicMatch = pathname.match(topicRegex)
 

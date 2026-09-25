@@ -26,28 +26,24 @@ export const fluxbbHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    try {
-      const { origin, pathname, searchParams } = new URL(url)
-      const feedUrl = `${origin}${pathname.replace(scriptSegmentRegex, '')}/extern.php?action=feed`
-      const id = searchParams.get('id')
-      const uris: Array<DiscoverUriEntry> = []
+    const { origin, pathname, searchParams } = new URL(url)
+    const feedUrl = `${origin}${pathname.replace(scriptSegmentRegex, '')}/extern.php?action=feed`
+    const id = searchParams.get('id')
+    const uris: Array<DiscoverUriEntry> = []
 
-      if (id && forumPathRegex.test(pathname)) {
-        uris.push({ uri: `${feedUrl}&fid=${id}&type=atom`, hint: composeHint('fluxbb:forum') })
-      }
+    if (id && forumPathRegex.test(pathname)) {
+      uris.push({ uri: `${feedUrl}&fid=${id}&type=atom`, hint: composeHint('fluxbb:forum') })
+    }
 
-      if (id && topicPathRegex.test(pathname)) {
-        uris.push({ uri: `${feedUrl}&tid=${id}&type=atom`, hint: composeHint('fluxbb:topic') })
-      }
+    if (id && topicPathRegex.test(pathname)) {
+      uris.push({ uri: `${feedUrl}&tid=${id}&type=atom`, hint: composeHint('fluxbb:topic') })
+    }
 
-      uris.push(
-        { uri: `${feedUrl}&type=RSS`, hint: composeHint('fluxbb:posts', 'rss') },
-        { uri: `${feedUrl}&type=atom`, hint: composeHint('fluxbb:posts', 'atom') },
-      )
+    uris.push(
+      { uri: `${feedUrl}&type=RSS`, hint: composeHint('fluxbb:posts', 'rss') },
+      { uri: `${feedUrl}&type=atom`, hint: composeHint('fluxbb:posts', 'atom') },
+    )
 
-      return uris
-    } catch {}
-
-    return []
+    return uris
   },
 }

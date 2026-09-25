@@ -2,7 +2,7 @@ import { isHostOf, isNonEmptyString, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { hosts } from '../../feeds/platforms/reddit.js'
 import type { FaviconEnricher } from '../types.js'
-import { parseBodyJson } from '../utils.js'
+import { parseResponseJson } from '../utils.js'
 
 const platform = 'reddit'
 
@@ -35,7 +35,7 @@ export const redditHandler: PlatformHandler = {
   // The id keeps its `r/` or `user/` prefix: a subreddit and a user share one name grammar and
   // answer with different icon fields.
   resolve: (url) => {
-    const pathname = parseUrl(url)?.pathname ?? ''
+    const { pathname } = new URL(url)
     const subreddit = pathname.match(subredditRegex)?.[1]
 
     if (subreddit) {
@@ -57,17 +57,18 @@ export const redditEnricher: FaviconEnricher = async (ref, context) => {
     return
   }
 
-  try {
-    const response = await context.fetchFn(`https://www.reddit.com/${ref.id}/about.json`)
-    const data = parseBodyJson(response.body)?.data
-    const icon = ref.id.startsWith('r/')
-      ? data?.community_icon?.split('?')[0] || data?.icon_img
-      : data?.icon_img || data?.snoovatar_img
+  const response = await context.fetchFn(`https://www.reddit.com/${ref.id}/about.json`)
+  const data = parseResponseJson(response)?.data
+  const communityIcon = isNonEmptyString(data?.community_icon)
+    ? data.community_icon.split('?')[0]
+    : undefined
+  const icon = ref.id.startsWith('r/')
+    ? communityIcon || data?.icon_img
+    : data?.icon_img || data?.snoovatar_img
 
-    if (isNonEmptyString(icon)) {
-      return [icon]
-    }
-  } catch {}
+  if (isNonEmptyString(icon)) {
+    return [icon]
+  }
 
   return []
 }

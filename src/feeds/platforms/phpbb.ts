@@ -45,26 +45,22 @@ export const phpbbHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    try {
-      const { origin, pathname, search } = new URL(url)
-      // A board is routinely mounted under a sub-path such as `/community`.
-      const boardPath = pathname.replace(scriptSegmentRegex, '').replace(trailingSlashRegex, '')
-      const boardUrl = `${origin}${boardPath}`
-      const forumId = search.match(forumIdRegex)?.[1]
-      const uris: Array<DiscoverUriEntry> = []
+    const { origin, pathname, search } = new URL(url)
+    // A board is routinely mounted under a sub-path such as `/community`.
+    const boardPath = pathname.replace(scriptSegmentRegex, '').replace(trailingSlashRegex, '')
+    const boardUrl = `${origin}${boardPath}`
+    const forumId = search.match(forumIdRegex)?.[1]
+    const uris: Array<DiscoverUriEntry> = []
 
-      if (forumId) {
-        uris.push({
-          uri: `${boardUrl}/feed.php?f=${forumId}`,
-          hint: composeHint('phpbb:forum'),
-        })
-      }
+    if (forumId) {
+      uris.push({
+        uri: `${boardUrl}/feed.php?f=${forumId}`,
+        hint: composeHint('phpbb:forum'),
+      })
+    }
 
-      uris.push({ uri: `${boardUrl}/feed.php`, hint: composeHint('phpbb:site') })
+    uris.push({ uri: `${boardUrl}/feed.php`, hint: composeHint('phpbb:site') })
 
-      return uris
-    } catch {}
-
-    return []
+    return uris
   },
 }

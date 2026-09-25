@@ -3,7 +3,7 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getMetaContent } from '../../common/utils.js'
 import { excludedPaths, isPixelfedHtml, profileRegex } from '../../feeds/platforms/pixelfed.js'
 import type { FaviconEnricher } from '../types.js'
-import { parseBodyJson } from '../utils.js'
+import { parseResponseJson } from '../utils.js'
 
 const platform = 'pixelfed'
 
@@ -61,15 +61,13 @@ export const pixelfedEnricher: FaviconEnricher = async (ref, context) => {
     return
   }
 
-  try {
-    const { origin } = new URL(ref.url)
-    const response = await context.fetchFn(`${origin}/api/v1/accounts/lookup?acct=${ref.id}`)
-    const data = parseBodyJson(response.body)
+  const { origin } = new URL(ref.url)
+  const response = await context.fetchFn(`${origin}/api/v1/accounts/lookup?acct=${ref.id}`)
+  const data = parseResponseJson(response)
 
-    if (isAvatar(data.avatar)) {
-      return [data.avatar]
-    }
-  } catch {}
+  if (isAvatar(data.avatar)) {
+    return [data.avatar]
+  }
 
   return []
 }

@@ -157,11 +157,7 @@ describe('goodreadsEnricher', () => {
     expect(await goodreadsEnricher(createRef('10'), context)).toEqual([])
   })
 
-  it('should return empty array when the user page has no avatar', async () => {
-    expect(await goodreadsEnricher(createRef('1'), createContext({}))).toEqual([])
-  })
-
-  it('should return empty array when the body is a stream', async () => {
+  it('should reject when the body is a stream', async () => {
     const fetchFn: FetchFn = async (url) => ({
       headers: new Headers(),
       body: new ReadableStream(),
@@ -169,14 +165,20 @@ describe('goodreadsEnricher', () => {
       status: 200,
     })
 
-    expect(await goodreadsEnricher(createRef('1'), { fetchFn })).toEqual([])
+    await expect(goodreadsEnricher(createRef('1'), { fetchFn })).rejects.toThrow(
+      'Unexpected stream body',
+    )
   })
 
-  it('should return empty array when fetch throws', async () => {
+  it('should reject when fetch throws', async () => {
     const fetchFn: FetchFn = () => {
       throw new Error('Network error')
     }
 
-    expect(await goodreadsEnricher(createRef('1'), { fetchFn })).toEqual([])
+    await expect(goodreadsEnricher(createRef('1'), { fetchFn })).rejects.toThrow()
+  })
+
+  it('should reject when the response is not 2xx', async () => {
+    await expect(goodreadsEnricher(createRef('1'), createContext({}))).rejects.toThrow()
   })
 })

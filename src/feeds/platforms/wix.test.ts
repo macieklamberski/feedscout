@@ -71,9 +71,5 @@ describe('wixHandler', () => {
 
       expect(wixHandler.resolve(value)).toEqual(expected)
     })
-
-    it('should return an empty array for invalid URLs', () => {
-      expect(wixHandler.resolve('not-a-url')).toEqual([])
-    })
   })
 })

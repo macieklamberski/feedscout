@@ -38,18 +38,14 @@ export const shaarliHandler: PlatformHandler = {
   },
 
   resolve: (url, content) => {
-    try {
-      const { origin, pathname } = new URL(url)
-      const baseUrl = `${origin}${getBasePath(pathname, content)}`
+    const { origin, pathname } = new URL(url)
+    const baseUrl = `${origin}${getBasePath(pathname, content)}`
 
-      return [
-        { uri: `${baseUrl}/feed/rss`, hint: composeHint('shaarli:posts', 'rss') },
-        { uri: `${baseUrl}/feed/atom`, hint: composeHint('shaarli:posts', 'atom') },
-        // Installs older than 0.12 answer 404 on `/feed/*` and serve this instead.
-        { uri: `${baseUrl}/?do=rss`, hint: composeHint('shaarli:posts-legacy') },
-      ]
-    } catch {}
-
-    return []
+    return [
+      { uri: `${baseUrl}/feed/rss`, hint: composeHint('shaarli:posts', 'rss') },
+      { uri: `${baseUrl}/feed/atom`, hint: composeHint('shaarli:posts', 'atom') },
+      // Installs older than 0.12 answer 404 on `/feed/*` and serve this instead.
+      { uri: `${baseUrl}/?do=rss`, hint: composeHint('shaarli:posts-legacy') },
+    ]
   },
 }

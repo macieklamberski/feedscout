@@ -116,10 +116,6 @@ describe('blueskyHandler', () => {
     it('should return empty array for non-profile path', async () => {
       expect(await blueskyHandler.resolve('https://bsky.app/about')).toEqual([])
     })
-
-    it('should return empty array for invalid URL', async () => {
-      expect(await blueskyHandler.resolve('not-a-url')).toEqual([])
-    })
   })
 })
 
@@ -176,17 +172,21 @@ describe('blueskyEnricher', () => {
     expect(await blueskyEnricher(userRef, context)).toEqual([])
   })
 
-  it('should return empty array when API returns invalid JSON', async () => {
+  it('should reject when API returns invalid JSON', async () => {
     const context = createContext({ [userApiUrl]: 'not json' })
 
-    expect(await blueskyEnricher(userRef, context)).toEqual([])
+    await expect(blueskyEnricher(userRef, context)).rejects.toThrow()
   })
 
-  it('should return empty array when fetch throws', async () => {
+  it('should reject when fetch throws', async () => {
     const fetchFn: FetchFn = () => {
       throw new Error('Network error')
     }
 
-    expect(await blueskyEnricher(userRef, { fetchFn })).toEqual([])
+    await expect(blueskyEnricher(userRef, { fetchFn })).rejects.toThrow()
+  })
+
+  it('should reject when the response is not 2xx', async () => {
+    await expect(blueskyEnricher(userRef, createContext({}))).rejects.toThrow()
   })
 })

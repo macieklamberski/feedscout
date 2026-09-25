@@ -141,13 +141,7 @@ describe('postypeEnricher', () => {
     expect(await postypeEnricher(ref, context)).toEqual([])
   })
 
-  it('should return empty array when the channel page is missing', async () => {
-    const ref = createRef('https://www.postype.com/@example')
-
-    expect(await postypeEnricher(ref, createContext({}))).toEqual([])
-  })
-
-  it('should return empty array when the body is a stream', async () => {
+  it('should reject when the body is a stream', async () => {
     const fetchFn: FetchFn = async (url) => ({
       headers: new Headers(),
       body: new ReadableStream(),
@@ -156,15 +150,21 @@ describe('postypeEnricher', () => {
     })
     const ref = createRef('https://www.postype.com/@example')
 
-    expect(await postypeEnricher(ref, { fetchFn })).toEqual([])
+    await expect(postypeEnricher(ref, { fetchFn })).rejects.toThrow('Unexpected stream body')
   })
 
-  it('should return empty array when fetch throws', async () => {
+  it('should reject when fetch throws', async () => {
     const fetchFn: FetchFn = () => {
       throw new Error('Network error')
     }
     const ref = createRef('https://www.postype.com/@example')
 
-    expect(await postypeEnricher(ref, { fetchFn })).toEqual([])
+    await expect(postypeEnricher(ref, { fetchFn })).rejects.toThrow()
+  })
+
+  it('should reject when the response is not 2xx', async () => {
+    const ref = createRef('https://www.postype.com/@example')
+
+    await expect(postypeEnricher(ref, createContext({}))).rejects.toThrow()
   })
 })

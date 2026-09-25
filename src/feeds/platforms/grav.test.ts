@@ -97,9 +97,5 @@ describe('gravHandler', () => {
 
       expect(gravHandler.resolve(value)).toEqual(expected)
     })
-
-    it('should return an empty array for invalid URLs', () => {
-      expect(gravHandler.resolve('not-a-url')).toEqual([])
-    })
   })
 })

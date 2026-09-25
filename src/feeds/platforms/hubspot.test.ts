@@ -118,9 +118,5 @@ describe('hubspotHandler', () => {
     it('should return an empty array for the host root', () => {
       expect(hubspotHandler.resolve('https://example.com/')).toEqual([])
     })
-
-    it('should return an empty array for invalid URLs', () => {
-      expect(hubspotHandler.resolve('not-a-url')).toEqual([])
-    })
   })
 })

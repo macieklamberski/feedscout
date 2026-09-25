@@ -171,15 +171,26 @@ describe('odyseeEnricher', () => {
     expect(await odyseeEnricher(ref, context)).toEqual([])
   })
 
-  it('should return empty array when API returns invalid JSON', async () => {
-    expect(await odyseeEnricher(ref, createContext('not json'))).toEqual([])
+  it('should reject when API returns invalid JSON', async () => {
+    await expect(odyseeEnricher(ref, createContext('not json'))).rejects.toThrow()
   })
 
-  it('should return empty array when fetch throws', async () => {
+  it('should reject when fetch throws', async () => {
     const fetchFn: FetchFn = () => {
       throw new Error('Network error')
     }
 
-    expect(await odyseeEnricher(ref, { fetchFn })).toEqual([])
+    await expect(odyseeEnricher(ref, { fetchFn })).rejects.toThrow()
+  })
+
+  it('should reject when the API answers a non-2xx status', async () => {
+    const fetchFn: FetchFn = async (url) => ({
+      headers: new Headers(),
+      body: '',
+      url,
+      status: 503,
+    })
+
+    await expect(odyseeEnricher(ref, { fetchFn })).rejects.toThrow()
   })
 })

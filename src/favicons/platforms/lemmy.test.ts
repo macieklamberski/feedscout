@@ -113,10 +113,6 @@ describe('lemmyHandler', () => {
       it('should return empty array for home page', () => {
         expect(lemmyHandler.resolve('https://lemmy.ml/', lemmyHtml)).toEqual([])
       })
-
-      it('should return empty array for invalid URL', () => {
-        expect(lemmyHandler.resolve('not-a-url')).toEqual([])
-      })
     })
 
     describe('edge cases', () => {
@@ -214,20 +210,26 @@ describe('lemmyEnricher', () => {
       expect(await lemmyEnricher(ref, context)).toEqual([])
     })
 
-    it('should return empty array when API returns invalid JSON', async () => {
+    it('should reject when API returns invalid JSON', async () => {
       const context = createContext({ [communityApiUrl]: 'not json' })
       const ref = createRef('https://lemmy.ml/c/technology', 'c/technology')
 
-      expect(await lemmyEnricher(ref, context)).toEqual([])
+      await expect(lemmyEnricher(ref, context)).rejects.toThrow()
     })
 
-    it('should return empty array when fetch throws', async () => {
+    it('should reject when fetch throws', async () => {
       const fetchFn: FetchFn = () => {
         throw new Error('Network error')
       }
       const ref = createRef('https://lemmy.ml/c/technology', 'c/technology')
 
-      expect(await lemmyEnricher(ref, { fetchFn })).toEqual([])
+      await expect(lemmyEnricher(ref, { fetchFn })).rejects.toThrow()
+    })
+
+    it('should reject when the response is not 2xx', async () => {
+      const ref = createRef('https://lemmy.ml/c/technology', 'c/technology')
+
+      await expect(lemmyEnricher(ref, createContext({}))).rejects.toThrow()
     })
   })
 

@@ -876,7 +876,7 @@ describe('discoverFavicons', () => {
       match: () => true,
       resolve: (url) => [{ platform: 'example', id: 'alice', url }],
     }
-    const enrichFn: DiscoverEnrichFn = () => [['https://cdn.example.com/alice.png']]
+    const enrichFn: DiscoverEnrichFn = () => ['https://cdn.example.com/alice.png']
     const mockFetch = createMockFetch({
       'https://cdn.example.com/alice.png': 'binary',
     })

@@ -2,7 +2,7 @@ import { isAnyOf, isHostOf, isNonEmptyString, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { excludedPaths, hosts, magazineRegex } from '../../feeds/platforms/note.js'
 import type { FaviconEnricher } from '../types.js'
-import { parseBodyJson } from '../utils.js'
+import { parseResponseJson } from '../utils.js'
 
 const platform = 'note'
 
@@ -34,6 +34,7 @@ const parseProfileImageUrl = (content: string): string | undefined => {
     return
   }
 
+  // A broken page payload must not hide the creators API, which the ref falls back to.
   try {
     return JSON.parse(`"${match[1]}"`)
   } catch {}
@@ -72,14 +73,12 @@ export const noteEnricher: FaviconEnricher = async (ref, context) => {
     return
   }
 
-  try {
-    const response = await context.fetchFn(`https://note.com/api/v2/creators/${ref.id}`)
-    const profileImageUrl = parseBodyJson(response.body)?.data?.profileImageUrl
+  const response = await context.fetchFn(`https://note.com/api/v2/creators/${ref.id}`)
+  const profileImageUrl = parseResponseJson(response)?.data?.profileImageUrl
 
-    if (isNonEmptyString(profileImageUrl)) {
-      return [profileImageUrl]
-    }
-  } catch {}
+  if (isNonEmptyString(profileImageUrl)) {
+    return [profileImageUrl]
+  }
 
   return []
 }

@@ -93,11 +93,10 @@ describe('amebloHandler', () => {
       expect(result).toEqual([])
     })
 
-    it('should return empty array when INIT_DATA is invalid JSON', async () => {
+    it('should throw when INIT_DATA is invalid JSON', () => {
       const value = createPage('{"bloggerState":')
-      const result = await amebloHandler.resolve('https://ameblo.jp/alice/', value)
 
-      expect(result).toEqual([])
+      expect(() => amebloHandler.resolve('https://ameblo.jp/alice/', value)).toThrow()
     })
 
     it('should return empty array when page has no INIT_DATA', async () => {
@@ -115,12 +114,6 @@ describe('amebloHandler', () => {
 
     it('should return empty array for root URL', async () => {
       const result = await amebloHandler.resolve('https://ameblo.jp/', alicePage)
-
-      expect(result).toEqual([])
-    })
-
-    it('should return empty array for invalid URL', async () => {
-      const result = await amebloHandler.resolve('not-a-url', alicePage)
 
       expect(result).toEqual([])
     })

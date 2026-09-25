@@ -195,10 +195,6 @@ describe('redditHandler', () => {
     it('should return empty array for non-subreddit and non-user path', async () => {
       expect(await redditHandler.resolve('https://reddit.com/about')).toEqual([])
     })
-
-    it('should return empty array for invalid URL', async () => {
-      expect(await redditHandler.resolve('not-a-url')).toEqual([])
-    })
   })
 })
 
@@ -291,30 +287,34 @@ describe('redditEnricher', () => {
     expect(await redditEnricher(userRef, context)).toEqual([])
   })
 
-  it('should return empty array when API returns invalid JSON', async () => {
+  it('should reject when API returns invalid JSON', async () => {
     const context = createContext({
       'https://www.reddit.com/r/javascript/about.json': 'not json',
     })
 
-    expect(await redditEnricher(subredditRef, context)).toEqual([])
+    await expect(redditEnricher(subredditRef, context)).rejects.toThrow()
   })
 
-  it('should return empty array when fetch throws', async () => {
+  it('should reject when fetch throws', async () => {
     const fetchFn: FetchFn = () => {
       throw new Error('Network error')
     }
 
-    expect(await redditEnricher(subredditRef, { fetchFn })).toEqual([])
+    await expect(redditEnricher(subredditRef, { fetchFn })).rejects.toThrow()
   })
 
-  it('should return empty array when community_icon is non-string type', async () => {
-    // When community_icon is a number, .split() throws and the catch block returns [].
+  it('should reject when the response is not 2xx', async () => {
+    await expect(redditEnricher(subredditRef, createContext({}))).rejects.toThrow()
+  })
+
+  it('should fall back to icon_img when community_icon is not a string', async () => {
     const context = createContext({
       'https://www.reddit.com/r/javascript/about.json': JSON.stringify({
         data: { community_icon: 42, icon_img: 'https://b.thumbs.redditmedia.com/fallback.png' },
       }),
     })
+    const expected = ['https://b.thumbs.redditmedia.com/fallback.png']
 
-    expect(await redditEnricher(subredditRef, context)).toEqual([])
+    expect(await redditEnricher(subredditRef, context)).toEqual(expected)
   })
 })

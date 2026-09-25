@@ -17,26 +17,22 @@ export const mobilizonHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    try {
-      const { origin, pathname } = new URL(url)
-      const group = pathname.match(groupPathRegex)?.[1]
-      const uris: Array<DiscoverUriEntry> = []
+    const { origin, pathname } = new URL(url)
+    const group = pathname.match(groupPathRegex)?.[1]
+    const uris: Array<DiscoverUriEntry> = []
 
-      if (group) {
-        uris.push({
-          uri: `${origin}/@${group}/feed/atom`,
-          hint: composeHint('mobilizon:group'),
-        })
-      }
-
+    if (group) {
       uris.push({
-        uri: `${origin}/feed/instance/atom`,
-        hint: composeHint('mobilizon:instance'),
+        uri: `${origin}/@${group}/feed/atom`,
+        hint: composeHint('mobilizon:group'),
       })
+    }
 
-      return uris
-    } catch {}
+    uris.push({
+      uri: `${origin}/feed/instance/atom`,
+      hint: composeHint('mobilizon:instance'),
+    })
 
-    return []
+    return uris
   },
 }

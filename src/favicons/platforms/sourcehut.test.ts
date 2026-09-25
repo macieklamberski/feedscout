@@ -178,13 +178,13 @@ describe('sourcehutEnricher', () => {
     expect(await sourcehutEnricher(ref, context)).toEqual([])
   })
 
-  it('should return empty array when the owner page is missing', async () => {
+  it('should reject when the owner page is missing', async () => {
     const ref = createRef('https://git.sr.ht/~example/project', 'example')
 
-    expect(await sourcehutEnricher(ref, createContext({}))).toEqual([])
+    await expect(sourcehutEnricher(ref, createContext({}))).rejects.toThrow()
   })
 
-  it('should return empty array when the body is a stream', async () => {
+  it('should reject when the body is a stream', async () => {
     const fetchFn: FetchFn = async (url) => ({
       headers: new Headers(),
       body: new ReadableStream(),
@@ -193,15 +193,15 @@ describe('sourcehutEnricher', () => {
     })
     const ref = createRef('https://git.sr.ht/~example/project', 'example')
 
-    expect(await sourcehutEnricher(ref, { fetchFn })).toEqual([])
+    await expect(sourcehutEnricher(ref, { fetchFn })).rejects.toThrow('Unexpected stream body')
   })
 
-  it('should return empty array when fetch throws', async () => {
+  it('should reject when fetch throws', async () => {
     const fetchFn: FetchFn = () => {
       throw new Error('Network error')
     }
     const ref = createRef('https://git.sr.ht/~example/project', 'example')
 
-    expect(await sourcehutEnricher(ref, { fetchFn })).toEqual([])
+    await expect(sourcehutEnricher(ref, { fetchFn })).rejects.toThrow()
   })
 })

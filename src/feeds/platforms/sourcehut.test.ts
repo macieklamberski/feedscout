@@ -64,9 +64,5 @@ describe('sourcehutHandler', () => {
     it('should return an empty array for a user path', () => {
       expect(sourcehutHandler.resolve('https://git.sr.ht/~example')).toEqual([])
     })
-
-    it('should return an empty array for invalid URLs', () => {
-      expect(sourcehutHandler.resolve('not-a-url')).toEqual([])
-    })
   })
 })

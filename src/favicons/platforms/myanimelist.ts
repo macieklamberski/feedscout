@@ -2,6 +2,7 @@ import { getPathSegments, isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { hosts, userRegex } from '../../feeds/platforms/myanimelist.js'
 import type { FaviconEnricher } from '../types.js'
+import { getResponseText } from '../utils.js'
 
 const platform = 'myanimelist'
 
@@ -55,13 +56,7 @@ export const myanimelistEnricher: FaviconEnricher = async (ref, context) => {
     return
   }
 
-  try {
-    const response = await context.fetchFn(`https://myanimelist.net/profile/${ref.id}`)
+  const response = await context.fetchFn(`https://myanimelist.net/profile/${ref.id}`)
 
-    if (typeof response.body === 'string') {
-      return parseAvatar(response.body)
-    }
-  } catch {}
-
-  return []
+  return parseAvatar(getResponseText(response))
 }

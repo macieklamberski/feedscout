@@ -41,20 +41,21 @@ export const discoverUrisFromPlatform = async (
     }
   }
 
-  if (!enrichFn || refs.length === 0) {
+  if (!enrichFn) {
     return entries
   }
 
-  try {
-    const enriched = await enrichFn(refs)
+  // Each ref is enriched on its own, so one that fails leaves the icons of the others.
+  for (const ref of refs) {
+    try {
+      const uris = await enrichFn(ref)
 
-    for (const uris of enriched) {
       for (const uri of uris ?? []) {
         entries.push({ uri })
       }
+    } catch (error) {
+      reportError(onError, error, { phase: 'enrichFn', url: baseUrl })
     }
-  } catch (error) {
-    reportError(onError, error, { phase: 'enrichFn', url: baseUrl })
   }
 
   return entries

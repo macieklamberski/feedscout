@@ -66,12 +66,20 @@ describe('funkwhaleHandler', () => {
       expect(funkwhaleHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return an empty array outside a channel', () => {
-      expect(funkwhaleHandler.resolve('https://example.org/library')).toEqual([])
+    it('should keep a channel name with a malformed escape as written', () => {
+      const value = 'https://example.org/channels/100%'
+      const expected = [
+        {
+          uri: 'https://example.org/api/v1/channels/100%/rss',
+          hint: { key: 'funkwhale:channel', label: 'Channel' },
+        },
+      ]
+
+      expect(funkwhaleHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return an empty array for invalid URLs', () => {
-      expect(funkwhaleHandler.resolve('not-a-url')).toEqual([])
+    it('should return an empty array outside a channel', () => {
+      expect(funkwhaleHandler.resolve('https://example.org/library')).toEqual([])
     })
   })
 })

@@ -125,10 +125,6 @@ describe('peertubeHandler', () => {
 
         expect(peertubeHandler.resolve('https://example.com/', value)).toEqual([])
       })
-
-      it('should return empty array for invalid URL', () => {
-        expect(peertubeHandler.resolve('not-a-url')).toEqual([])
-      })
     })
 
     describe('edge cases', () => {
@@ -254,22 +250,28 @@ describe('peertubeEnricher', () => {
       expect(await peertubeEnricher(ref, context)).toEqual([])
     })
 
-    it('should return empty array when API returns invalid JSON', async () => {
+    it('should reject when API returns invalid JSON', async () => {
       const context = createContext({
         'https://example.com/api/v1/video-channels/news': 'not json',
       })
       const ref = createRef('https://example.com/c/news', 'c/news')
 
-      expect(await peertubeEnricher(ref, context)).toEqual([])
+      await expect(peertubeEnricher(ref, context)).rejects.toThrow()
     })
 
-    it('should return empty array when fetch throws', async () => {
+    it('should reject when fetch throws', async () => {
       const fetchFn: FetchFn = () => {
         throw new Error('Network error')
       }
       const ref = createRef('https://example.com/c/news', 'c/news')
 
-      expect(await peertubeEnricher(ref, { fetchFn })).toEqual([])
+      await expect(peertubeEnricher(ref, { fetchFn })).rejects.toThrow()
+    })
+
+    it('should reject when the response is not 2xx', async () => {
+      const ref = createRef('https://example.com/c/news', 'c/news')
+
+      await expect(peertubeEnricher(ref, createContext({}))).rejects.toThrow()
     })
   })
 

@@ -2,6 +2,7 @@ import { getPathSegments, isAnyOf, isHostOf, isNonEmptyString } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { excludedPaths, hosts } from '../../feeds/platforms/pinterest.js'
 import type { FaviconEnricher } from '../types.js'
+import { getResponseText } from '../utils.js'
 
 const platform = 'pinterest'
 
@@ -32,21 +33,19 @@ const findProfileImage = (content: string, username: string): string | undefined
     return
   }
 
-  try {
-    const users = JSON.parse(json)?.initialReduxState?.users ?? {}
+  const users = JSON.parse(json)?.initialReduxState?.users ?? {}
 
-    for (const user of Object.values<{ username?: string; image_xlarge_url?: string }>(users)) {
-      if (user?.username?.toLowerCase() !== username.toLowerCase()) {
-        continue
-      }
-
-      const image = user.image_xlarge_url
-
-      if (isNonEmptyString(image) && !defaultAvatarRegex.test(image)) {
-        return image
-      }
+  for (const user of Object.values<{ username?: string; image_xlarge_url?: string }>(users)) {
+    if (user?.username?.toLowerCase() !== username.toLowerCase()) {
+      continue
     }
-  } catch {}
+
+    const image = user.image_xlarge_url
+
+    if (isNonEmptyString(image) && !defaultAvatarRegex.test(image)) {
+      return image
+    }
+  }
 }
 
 export const pinterestHandler: PlatformHandler = {
@@ -81,15 +80,13 @@ export const pinterestEnricher: FaviconEnricher = async (ref, context) => {
     return
   }
 
-  try {
-    const response = await context.fetchFn(`https://www.pinterest.com/${ref.id}/`)
-    const body = typeof response.body === 'string' ? response.body : ''
-    const image = findProfileImage(body, ref.id)
+  const response = await context.fetchFn(`https://www.pinterest.com/${ref.id}/`)
+  const body = getResponseText(response)
+  const image = findProfileImage(body, ref.id)
 
-    if (image) {
-      return [image]
-    }
-  } catch {}
+  if (image) {
+    return [image]
+  }
 
   return []
 }

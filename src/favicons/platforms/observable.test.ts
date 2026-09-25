@@ -90,10 +90,6 @@ describe('observableHandler', () => {
 
       expect(await observableHandler.resolve(url)).toEqual([])
     })
-
-    it('should return empty array for invalid URL', async () => {
-      expect(await observableHandler.resolve('not-a-url')).toEqual([])
-    })
   })
 })
 
@@ -137,17 +133,21 @@ describe('observableEnricher', () => {
     expect(await observableEnricher(ref, context)).toEqual([])
   })
 
-  it('should return empty array when API returns invalid JSON', async () => {
+  it('should reject when API returns invalid JSON', async () => {
     const context = createContext({ [apiUrl]: 'not-json' })
 
-    expect(await observableEnricher(ref, context)).toEqual([])
+    await expect(observableEnricher(ref, context)).rejects.toThrow()
   })
 
-  it('should return empty array when fetch throws', async () => {
+  it('should reject when fetch throws', async () => {
     const fetchFn: FetchFn = () => {
       throw new Error('Network error')
     }
 
-    expect(await observableEnricher(ref, { fetchFn })).toEqual([])
+    await expect(observableEnricher(ref, { fetchFn })).rejects.toThrow()
+  })
+
+  it('should reject when the response is not 2xx', async () => {
+    await expect(observableEnricher(ref, createContext({}))).rejects.toThrow()
   })
 })

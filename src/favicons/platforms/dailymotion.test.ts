@@ -162,19 +162,23 @@ describe('dailymotionEnricher', () => {
     expect(await dailymotionEnricher(userRef, context)).toEqual([])
   })
 
-  it('should return empty array when the API returns invalid JSON', async () => {
+  it('should reject when the API returns invalid JSON', async () => {
     const context = createContext({
       [userApiUrl]: 'not-json',
     })
 
-    expect(await dailymotionEnricher(userRef, context)).toEqual([])
+    await expect(dailymotionEnricher(userRef, context)).rejects.toThrow()
   })
 
-  it('should return empty array when fetch throws', async () => {
+  it('should reject when fetch throws', async () => {
     const fetchFn: FetchFn = () => {
       throw new Error('Network error')
     }
 
-    expect(await dailymotionEnricher(userRef, { fetchFn })).toEqual([])
+    await expect(dailymotionEnricher(userRef, { fetchFn })).rejects.toThrow()
+  })
+
+  it('should reject when the response is not 2xx', async () => {
+    await expect(dailymotionEnricher(userRef, createContext({}))).rejects.toThrow()
   })
 })

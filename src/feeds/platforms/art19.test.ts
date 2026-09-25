@@ -43,9 +43,5 @@ describe('art19Handler', () => {
     it('should return an empty array for the site root', () => {
       expect(art19Handler.resolve('https://art19.com/')).toEqual([])
     })
-
-    it('should return an empty array for invalid URLs', () => {
-      expect(art19Handler.resolve('not-a-url')).toEqual([])
-    })
   })
 })

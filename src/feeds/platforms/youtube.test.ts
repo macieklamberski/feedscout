@@ -208,10 +208,5 @@ describe('youtubeHandler', () => {
     it('should return empty array for /live/{id} without content', () => {
       expect(youtubeHandler.resolve('https://youtube.com/live/abc123')).toEqual([])
     })
-
-    it.todo('should define behavior for invalid URL input', () => {
-      // resolve('not-a-url') currently throws a TypeError from the unguarded new URL call; the
-      // desired contract (throw vs empty array) is undecided.
-    })
   })
 })

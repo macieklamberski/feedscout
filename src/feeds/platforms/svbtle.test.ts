@@ -57,9 +57,5 @@ describe('svbtleHandler', () => {
     it('should return an empty array for the platform host', () => {
       expect(svbtleHandler.resolve('https://www.svbtle.com/alice')).toEqual([])
     })
-
-    it('should return an empty array for invalid URLs', () => {
-      expect(svbtleHandler.resolve('not-a-url')).toEqual([])
-    })
   })
 })

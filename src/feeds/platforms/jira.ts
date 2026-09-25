@@ -54,13 +54,7 @@ export const jiraHandler: PlatformHandler = {
   },
 
   resolve: (url, content) => {
-    const parsedUrl = parseUrl(url)
-
-    if (!parsedUrl) {
-      return []
-    }
-
-    const { origin, pathname } = parsedUrl
+    const { origin, pathname } = new URL(url)
 
     if (confluencePathRegex.test(pathname)) {
       return []

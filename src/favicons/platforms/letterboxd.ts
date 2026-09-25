@@ -2,6 +2,7 @@ import { escapeRegex, getPathSegments, isAnyOf, isHostOf, parseUrl } from 'trous
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { excludedPaths, hosts } from '../../feeds/platforms/letterboxd.js'
 import type { FaviconEnricher } from '../types.js'
+import { getResponseText } from '../utils.js'
 
 const platform = 'letterboxd'
 
@@ -88,20 +89,14 @@ export const letterboxdEnricher: FaviconEnricher = async (ref, context) => {
     return
   }
 
-  try {
-    const response = await context.fetchFn(`https://letterboxd.com/${ref.id}/films/`)
+  const response = await context.fetchFn(`https://letterboxd.com/${ref.id}/films/`)
 
-    if (typeof response.body !== 'string') {
-      return []
-    }
+  const src = getAvatarSrc(getResponseText(response), ref.id)
+  const uri = src ? getLargeAvatarUri(src) : undefined
 
-    const src = getAvatarSrc(response.body, ref.id)
-    const uri = src ? getLargeAvatarUri(src) : undefined
-
-    if (uri) {
-      return [uri]
-    }
-  } catch {}
+  if (uri) {
+    return [uri]
+  }
 
   return []
 }

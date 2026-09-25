@@ -3,7 +3,7 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getMetaContent } from '../../common/utils.js'
 import { excludedPaths, hosts } from '../../feeds/platforms/arena.js'
 import type { FaviconEnricher } from '../types.js'
-import { parseBodyJson } from '../utils.js'
+import { parseResponseJson } from '../utils.js'
 
 const platform = 'arena'
 
@@ -72,24 +72,20 @@ export const arenaEnricher: FaviconEnricher = async (ref, context) => {
     return []
   }
 
-  try {
-    const apiUrl = `https://api.are.na/v2/channels/${encodeURIComponent(channel)}?per=1`
-    const response = await context.fetchFn(apiUrl)
-    const data = parseBodyJson(response.body)
-    const display = data?.user?.avatar_image?.display
+  const apiUrl = `https://api.are.na/v2/channels/${encodeURIComponent(channel)}?per=1`
+  const response = await context.fetchFn(apiUrl)
+  const data = parseResponseJson(response)
+  const display = data?.user?.avatar_image?.display
 
-    // The API also looks channels up by numeric id, so /block/{id} and profile
-    // subpages would otherwise resolve to another user's channel.
-    if (data?.user?.slug !== username || typeof display !== 'string') {
-      return []
-    }
+  // The API also looks channels up by numeric id, so /block/{id} and profile
+  // subpages would otherwise resolve to another user's channel.
+  if (data?.user?.slug !== username || typeof display !== 'string') {
+    return []
+  }
 
-    if (!mediumAvatarRegex.test(display)) {
-      return []
-    }
+  if (!mediumAvatarRegex.test(display)) {
+    return []
+  }
 
-    return [display.replace(mediumAvatarRegex, '$1large_')]
-  } catch {}
-
-  return []
+  return [display.replace(mediumAvatarRegex, '$1large_')]
 }

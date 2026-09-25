@@ -2,7 +2,7 @@ import { isAnyOf, isHostOf, isNonEmptyString, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { excludedPaths, hosts } from '../../feeds/platforms/devto.js'
 import type { FaviconEnricher } from '../types.js'
-import { parseBodyJson } from '../utils.js'
+import { parseResponseJson } from '../utils.js'
 
 const platform = 'devto'
 
@@ -34,7 +34,7 @@ export const devtoHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    const username = parseUrl(url)?.pathname.match(userRegex)?.[1]
+    const username = new URL(url).pathname.match(userRegex)?.[1]
 
     if (!username || username === 't') {
       return []
@@ -49,16 +49,14 @@ export const devtoEnricher: FaviconEnricher = async (ref, context) => {
     return
   }
 
-  try {
-    const apiUrl = `https://dev.to/api/users/by_username?url=${encodeURIComponent(ref.id)}`
-    const response = await context.fetchFn(apiUrl)
-    const data = parseBodyJson(response.body)
-    const profileImage = data?.profile_image
+  const apiUrl = `https://dev.to/api/users/by_username?url=${encodeURIComponent(ref.id)}`
+  const response = await context.fetchFn(apiUrl)
+  const data = parseResponseJson(response)
+  const profileImage = data?.profile_image
 
-    if (isNonEmptyString(profileImage)) {
-      return [profileImage]
-    }
-  } catch {}
+  if (isNonEmptyString(profileImage)) {
+    return [profileImage]
+  }
 
   return []
 }

@@ -139,7 +139,7 @@ describe('exblogEnricher', () => {
     expect(await exblogEnricher(ref, context)).toEqual([])
   })
 
-  it('should return empty array when the body is a stream', async () => {
+  it('should reject when the body is a stream', async () => {
     const fetchFn: FetchFn = async (url) => ({
       headers: new Headers(),
       body: new ReadableStream(),
@@ -148,15 +148,21 @@ describe('exblogEnricher', () => {
     })
     const ref = createRef('https://example.exblog.jp/37927093')
 
-    expect(await exblogEnricher(ref, { fetchFn })).toEqual([])
+    await expect(exblogEnricher(ref, { fetchFn })).rejects.toThrow('Unexpected stream body')
   })
 
-  it('should return empty array when fetch throws', async () => {
+  it('should reject when fetch throws', async () => {
     const fetchFn: FetchFn = () => {
       throw new Error('Network error')
     }
     const ref = createRef('https://example.exblog.jp/37927093')
 
-    expect(await exblogEnricher(ref, { fetchFn })).toEqual([])
+    await expect(exblogEnricher(ref, { fetchFn })).rejects.toThrow()
+  })
+
+  it('should reject when the response is not 2xx', async () => {
+    const ref = createRef('https://example.exblog.jp/37927093')
+
+    await expect(exblogEnricher(ref, createContext({}))).rejects.toThrow()
   })
 })

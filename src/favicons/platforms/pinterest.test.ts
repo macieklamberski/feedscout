@@ -138,21 +138,13 @@ describe('pinterestHandler', () => {
         expect(result).toEqual([])
       })
 
-      it('should return empty array when the initial props are not valid JSON', () => {
+      it('should throw when the initial props are not valid JSON', () => {
         const html = '<script id="__PWS_INITIAL_PROPS__" type="application/json">{not-json</script>'
-        const result = pinterestHandler.resolve('https://www.pinterest.com/alice/', html)
-
-        expect(result).toEqual([])
+        expect(() => pinterestHandler.resolve('https://www.pinterest.com/alice/', html)).toThrow()
       })
 
       it('should return empty array when the page has no initial props', () => {
         const result = pinterestHandler.resolve('https://www.pinterest.com/alice/', '<html></html>')
-
-        expect(result).toEqual([])
-      })
-
-      it('should return empty array for invalid URL', () => {
-        const result = pinterestHandler.resolve('not-a-url', profileHtml)
 
         expect(result).toEqual([])
       })
@@ -213,18 +205,22 @@ describe('pinterestEnricher', () => {
     expect(await pinterestEnricher(ref, context)).toEqual([])
   })
 
-  it('should return empty array when the initial props are not valid JSON', async () => {
+  it('should reject when the initial props are not valid JSON', async () => {
     const html = '<script id="__PWS_INITIAL_PROPS__" type="application/json">{not-json</script>'
     const context = createContext({ 'https://www.pinterest.com/alice/': html })
 
-    expect(await pinterestEnricher(ref, context)).toEqual([])
+    await expect(pinterestEnricher(ref, context)).rejects.toThrow()
   })
 
-  it('should return empty array when fetch throws', async () => {
+  it('should reject when fetch throws', async () => {
     const fetchFn: FetchFn = () => {
       throw new Error('Network error')
     }
 
-    expect(await pinterestEnricher(ref, { fetchFn })).toEqual([])
+    await expect(pinterestEnricher(ref, { fetchFn })).rejects.toThrow()
+  })
+
+  it('should reject when the response is not 2xx', async () => {
+    await expect(pinterestEnricher(ref, createContext({}))).rejects.toThrow()
   })
 })

@@ -94,12 +94,6 @@ describe('pixelfedHandler', () => {
         expect(result).toEqual([])
       })
 
-      it('should return empty array for invalid URL', () => {
-        const result = pixelfedHandler.resolve('not-a-url', profileHtml)
-
-        expect(result).toEqual([])
-      })
-
       it('should return a ref without content', () => {
         const result = pixelfedHandler.resolve('https://example.com/alice')
         const expected: Array<DiscoverRef> = [
@@ -230,17 +224,21 @@ describe('pixelfedEnricher', () => {
     expect(await pixelfedEnricher(ref, context)).toEqual([])
   })
 
-  it('should return empty array when API returns invalid JSON', async () => {
+  it('should reject when API returns invalid JSON', async () => {
     const context = createContext({ [lookupUrl]: '<html>Not Found</html>' })
 
-    expect(await pixelfedEnricher(ref, context)).toEqual([])
+    await expect(pixelfedEnricher(ref, context)).rejects.toThrow()
   })
 
-  it('should return empty array when fetch throws', async () => {
+  it('should reject when fetch throws', async () => {
     const fetchFn: FetchFn = () => {
       throw new Error('Network error')
     }
 
-    expect(await pixelfedEnricher(ref, { fetchFn })).toEqual([])
+    await expect(pixelfedEnricher(ref, { fetchFn })).rejects.toThrow()
+  })
+
+  it('should reject when the response is not 2xx', async () => {
+    await expect(pixelfedEnricher(ref, createContext({}))).rejects.toThrow()
   })
 })

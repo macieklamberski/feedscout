@@ -2,6 +2,7 @@ import { getPathSegments, isHostOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getRepoPath, hosts } from '../../feeds/platforms/sourcehut.js'
 import type { FaviconEnricher } from '../types.js'
+import { getResponseText } from '../utils.js'
 
 const platform = 'sourcehut'
 
@@ -67,14 +68,8 @@ export const sourcehutEnricher: FaviconEnricher = async (ref, context) => {
     return
   }
 
-  try {
-    const { origin } = new URL(ref.url)
-    const response = await context.fetchFn(`${origin}/~${ref.id}/`)
+  const { origin } = new URL(ref.url)
+  const response = await context.fetchFn(`${origin}/~${ref.id}/`)
 
-    if (typeof response.body === 'string') {
-      return parseAvatar(response.body)
-    }
-  } catch {}
-
-  return []
+  return parseAvatar(getResponseText(response))
 }

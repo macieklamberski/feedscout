@@ -39,9 +39,5 @@ describe('togetterHandler', () => {
 
       expect(togetterHandler.resolve(value)).toEqual(expected)
     })
-
-    it('should return an empty array for invalid URLs', () => {
-      expect(togetterHandler.resolve('not-a-url')).toEqual([])
-    })
   })
 })

@@ -45,9 +45,5 @@ describe('mailchimpHandler', () => {
     it('should return an empty array without both ids', () => {
       expect(mailchimpHandler.resolve('https://us17.campaign-archive.com/?u=abc123')).toEqual([])
     })
-
-    it('should return an empty array for invalid URLs', () => {
-      expect(mailchimpHandler.resolve('not-a-url')).toEqual([])
-    })
   })
 })

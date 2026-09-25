@@ -19,13 +19,7 @@ export const peertubeHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    const parsedUrl = parseUrl(url)
-
-    if (!parsedUrl) {
-      return []
-    }
-
-    const { origin, pathname } = parsedUrl
+    const { origin, pathname } = new URL(url)
     const channel = pathname.match(channelPathRegex)?.[1]
     const account = pathname.match(accountPathRegex)?.[1]
     const uris: Array<DiscoverUriEntry> = []

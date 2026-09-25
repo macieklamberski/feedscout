@@ -105,9 +105,5 @@ describe('youtubeHandler', () => {
 
       expect(await youtubeHandler.resolve(value, channelHtml)).toEqual([])
     })
-
-    it('should return empty array for invalid URL', async () => {
-      expect(await youtubeHandler.resolve('not-a-url', channelHtml)).toEqual([])
-    })
   })
 })

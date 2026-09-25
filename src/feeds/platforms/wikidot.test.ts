@@ -72,9 +72,5 @@ describe('wikidotHandler', () => {
 
       expect(wikidotHandler.resolve(value)).toEqual(expected)
     })
-
-    it('should return an empty array for invalid URLs', () => {
-      expect(wikidotHandler.resolve('not-a-url')).toEqual([])
-    })
   })
 })

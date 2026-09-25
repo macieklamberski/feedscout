@@ -60,9 +60,5 @@ describe('soundcloudHandler', () => {
 
       expect(soundcloudHandler.resolve(value, content)).toEqual([])
     })
-
-    it('should return empty array for invalid URL without content', () => {
-      expect(soundcloudHandler.resolve('not-a-url')).toEqual([])
-    })
   })
 })

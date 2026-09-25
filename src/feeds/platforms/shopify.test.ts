@@ -73,9 +73,5 @@ describe('shopifyHandler', () => {
     it('should return an empty array for the store root', () => {
       expect(shopifyHandler.resolve('https://example.com/')).toEqual([])
     })
-
-    it('should return an empty array for invalid URLs', () => {
-      expect(shopifyHandler.resolve('not-a-url')).toEqual([])
-    })
   })
 })

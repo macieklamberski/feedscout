@@ -32,9 +32,9 @@ export const youtubeHandler: PlatformHandler = {
   },
 
   resolve: (url, content) => {
-    const parsedUrl = parseUrl(url)
+    const parsedUrl = new URL(url)
 
-    if (!parsedUrl || !content) {
+    if (!content) {
       return []
     }
 

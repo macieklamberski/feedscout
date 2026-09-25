@@ -303,10 +303,6 @@ describe('lemmyHandler', () => {
       expect(lemmyHandler.resolve('https://lemmy.ml/about')).toEqual([])
     })
 
-    it('should return empty array for invalid URL', () => {
-      expect(lemmyHandler.resolve('not-a-url')).toEqual([])
-    })
-
     it('should accept extended sort values', () => {
       const value = 'https://lemmy.ml/c/programming?sort=Controversial'
       const expected = [

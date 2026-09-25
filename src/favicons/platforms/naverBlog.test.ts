@@ -159,12 +159,6 @@ describe('naverBlogHandler', () => {
 
         expect(result).toEqual([])
       })
-
-      it('should return empty array for invalid URL', () => {
-        const result = naverBlogHandler.resolve('not-a-url', mobilePage)
-
-        expect(result).toEqual([])
-      })
     })
   })
 })
@@ -198,7 +192,7 @@ describe('naverBlogEnricher', () => {
     expect(await naverBlogEnricher(ref, context)).toEqual([])
   })
 
-  it('should return empty array when the response body is not a string', async () => {
+  it('should reject when the body is a stream', async () => {
     const fetchFn: FetchFn = async (url) => ({
       headers: new Headers(),
       body: new ReadableStream<Uint8Array>(),
@@ -206,14 +200,18 @@ describe('naverBlogEnricher', () => {
       status: 200,
     })
 
-    expect(await naverBlogEnricher(ref, { fetchFn })).toEqual([])
+    await expect(naverBlogEnricher(ref, { fetchFn })).rejects.toThrow('Unexpected stream body')
   })
 
-  it('should return empty array when fetch throws', async () => {
+  it('should reject when fetch throws', async () => {
     const fetchFn: FetchFn = () => {
       throw new Error('Network error')
     }
 
-    expect(await naverBlogEnricher(ref, { fetchFn })).toEqual([])
+    await expect(naverBlogEnricher(ref, { fetchFn })).rejects.toThrow()
+  })
+
+  it('should reject when the response is not 2xx', async () => {
+    await expect(naverBlogEnricher(ref, createContext({}))).rejects.toThrow()
   })
 })

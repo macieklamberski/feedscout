@@ -45,9 +45,5 @@ describe('powerpressHandler', () => {
 
       expect(powerpressHandler.resolve(value)).toEqual(expected)
     })
-
-    it('should return an empty array for invalid URLs', () => {
-      expect(powerpressHandler.resolve('not-a-url')).toEqual([])
-    })
   })
 })

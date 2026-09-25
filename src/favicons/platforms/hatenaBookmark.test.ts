@@ -99,10 +99,6 @@ describe('hatenaBookmarkHandler', () => {
     it('should return empty array for category pages', async () => {
       expect(await hatenaBookmarkHandler.resolve('https://b.hatena.ne.jp/hotentry/it')).toEqual([])
     })
-
-    it('should return empty array for invalid URLs', async () => {
-      expect(await hatenaBookmarkHandler.resolve('not-a-url')).toEqual([])
-    })
   })
 })
 
@@ -142,11 +138,20 @@ describe('hatenaBookmarkEnricher', () => {
     expect(await hatenaBookmarkEnricher(ref, createContext({}))).toEqual([])
   })
 
-  it('should return empty array when fetch throws', async () => {
+  it('should reject when the avatar request fails with another status', () => {
+    const fetchFn: FetchFn = (url) => {
+      return { headers: new Headers(), body: '', url, status: 503 }
+    }
+    const throwing = () => hatenaBookmarkEnricher(ref, { fetchFn })
+
+    expect(throwing()).rejects.toThrow('Unexpected status 503')
+  })
+
+  it('should reject when fetch throws', async () => {
     const fetchFn: FetchFn = () => {
       throw new Error('Network error')
     }
 
-    expect(await hatenaBookmarkEnricher(ref, { fetchFn })).toEqual([])
+    await expect(hatenaBookmarkEnricher(ref, { fetchFn })).rejects.toThrow()
   })
 })

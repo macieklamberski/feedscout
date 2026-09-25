@@ -186,12 +186,6 @@ describe('letterboxdHandler', () => {
 
       expect(result).toEqual([])
     })
-
-    it('should return empty array for invalid URL', () => {
-      const result = letterboxdHandler.resolve('not-a-url', uploadedAvatarHtml)
-
-      expect(result).toEqual([])
-    })
   })
 })
 
@@ -249,7 +243,7 @@ describe('letterboxdEnricher', () => {
     expect(await letterboxdEnricher(aliceRef, context)).toEqual([])
   })
 
-  it('should return empty array when the body is not a string', async () => {
+  it('should reject when the body is a stream', async () => {
     const fetchFn: FetchFn = async (url) => ({
       headers: new Headers(),
       body: new ReadableStream(),
@@ -257,14 +251,20 @@ describe('letterboxdEnricher', () => {
       status: 200,
     })
 
-    expect(await letterboxdEnricher(aliceRef, { fetchFn })).toEqual([])
+    await expect(letterboxdEnricher(aliceRef, { fetchFn })).rejects.toThrow(
+      'Unexpected stream body',
+    )
   })
 
-  it('should return empty array when fetch throws', async () => {
+  it('should reject when fetch throws', async () => {
     const fetchFn: FetchFn = () => {
       throw new Error('Network error')
     }
 
-    expect(await letterboxdEnricher(aliceRef, { fetchFn })).toEqual([])
+    await expect(letterboxdEnricher(aliceRef, { fetchFn })).rejects.toThrow()
+  })
+
+  it('should reject when the response is not 2xx', async () => {
+    await expect(letterboxdEnricher(aliceRef, createContext({}))).rejects.toThrow()
   })
 })

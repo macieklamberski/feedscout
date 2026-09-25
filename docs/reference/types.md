@@ -193,17 +193,15 @@ type DiscoverRef = {
 
 ### DiscoverEnrichFn
 
-Receives every ref from the platform method in one call. It returns one entry per ref, in the same order, with the icon addresses found or `undefined`:
+Receives one ref from the platform method and returns the icon addresses found for it, or `undefined`. Discovery calls it once per ref, so a ref that throws does not cost the others their icons:
 
 ```typescript
-type DiscoverEnrichFn = (
-  refs: Array<DiscoverRef>,
-) => MaybePromise<Array<Array<string> | undefined>>
+type DiscoverEnrichFn = (ref: DiscoverRef) => MaybePromise<Array<string> | undefined>
 ```
 
 ### FaviconEnricher
 
-Finds the icon for the refs of one platform and returns `undefined` for any other ref. `createEnrichFaviconFn` answers each ref with the first enricher that returns URIs for it:
+Finds the icon for the refs of one platform and returns `undefined` for any other ref. A failed request, such as a non-2xx response, throws, and discovery reports it to `onError` as `enrichFn`. A non-2xx error carries `{ status, url }` as its `cause`. `createEnrichFaviconFn` answers each ref with the first enricher that returns URIs for it:
 
 ```typescript
 type FaviconEnricher = (
@@ -340,7 +338,7 @@ type DiscoverErrorContext = {
 - `resolveSiteUrlFn`: The site URL resolution function threw. Discovery continues with the original input.
 - `extractFn`: The extractor threw on the input content. The input is not returned as a result, and the methods run.
 - `platformHandler`: A platform handler threw from its `match` or `resolve`. That handler is skipped and the next one is tried. The URL is the page's.
-- `enrichFn`: The enrich function threw, or an enricher inside it did. The platform handler's own URLs are kept and the refs are dropped. The URL is the page's.
+- `enrichFn`: The enrich function threw for a ref, or an enricher inside it did. That ref is dropped, while the platform handler's own URLs and the other refs' icons are kept. The URL is the page's.
 - `onProgress`: The progress callback threw, or returned a promise that rejected. The result it was called for is kept.
 - `onStep`: The step callback threw, or returned a promise that rejected. Discovery continues.
 

@@ -33,23 +33,19 @@ export const homelandHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    try {
-      const { origin, pathname } = new URL(url)
-      const node = pathname.match(nodePathRegex)?.[1]
-      const uris: Array<DiscoverUriEntry> = []
+    const { origin, pathname } = new URL(url)
+    const node = pathname.match(nodePathRegex)?.[1]
+    const uris: Array<DiscoverUriEntry> = []
 
-      if (node) {
-        uris.push({
-          uri: `${origin}/topics/${node}/feed`,
-          hint: composeHint('homeland:node'),
-        })
-      }
+    if (node) {
+      uris.push({
+        uri: `${origin}/topics/${node}/feed`,
+        hint: composeHint('homeland:node'),
+      })
+    }
 
-      uris.push({ uri: `${origin}/topics/feed`, hint: composeHint('homeland:topics') })
+    uris.push({ uri: `${origin}/topics/feed`, hint: composeHint('homeland:topics') })
 
-      return uris
-    } catch {}
-
-    return []
+    return uris
   },
 }

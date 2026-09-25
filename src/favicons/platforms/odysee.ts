@@ -2,7 +2,7 @@ import { isHostOf, isNonEmptyString, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { hosts } from '../../feeds/platforms/odysee.js'
 import type { FaviconEnricher } from '../types.js'
-import { parseBodyJson } from '../utils.js'
+import { parseResponseJson } from '../utils.js'
 
 const platform = 'odysee'
 
@@ -51,24 +51,22 @@ export const odyseeEnricher: FaviconEnricher = async (ref, context) => {
     return
   }
 
-  try {
-    const lbryUrl = `lbry://@${ref.id}`
-    const body = JSON.stringify({ method: 'resolve', params: { urls: [lbryUrl] } })
-    const response = await context.fetchFn(apiUrl, {
-      method: 'POST',
-      headers: { 'content-type': 'application/json' },
-      body,
-    })
-    const data = parseBodyJson(response.body)
-    const thumbnail = data?.result?.[lbryUrl]?.value?.thumbnail?.url
-    const thumbnailProtocol = parseUrl(String(thumbnail))?.protocol ?? ''
+  const lbryUrl = `lbry://@${ref.id}`
+  const body = JSON.stringify({ method: 'resolve', params: { urls: [lbryUrl] } })
+  const response = await context.fetchFn(apiUrl, {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body,
+  })
+  const data = parseResponseJson(response)
+  const thumbnail = data?.result?.[lbryUrl]?.value?.thumbnail?.url
+  const thumbnailProtocol = parseUrl(String(thumbnail))?.protocol ?? ''
 
-    // The thumbnail is the channel's raw upload. The upload form crops it to square, but other
-    // clients may not, so a few avatars are not square.
-    if (isNonEmptyString(thumbnail) && imageProtocols.includes(thumbnailProtocol)) {
-      return [thumbnail]
-    }
-  } catch {}
+  // The thumbnail is the channel's raw upload. The upload form crops it to square, but other
+  // clients may not, so a few avatars are not square.
+  if (isNonEmptyString(thumbnail) && imageProtocols.includes(thumbnailProtocol)) {
+    return [thumbnail]
+  }
 
   return []
 }

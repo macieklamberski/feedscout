@@ -146,7 +146,7 @@ describe('nebulaHandler', () => {
       })
 
       it('should return a ref when the page query data is not valid JSON', () => {
-        const value = createPage('{"queries":[')
+        const value = createPage('{"queries":[}')
 
         expect(nebulaHandler.resolve('https://nebula.tv/realengineering', value)).toEqual([ref])
       })
@@ -229,17 +229,21 @@ describe('nebulaEnricher', () => {
     expect(await nebulaEnricher(ref, context)).toEqual([])
   })
 
-  it('should return empty array when the content API returns invalid JSON', async () => {
+  it('should reject when the content API returns invalid JSON', async () => {
     const context = createContext({ [apiUrl]: 'not-json' })
 
-    expect(await nebulaEnricher(ref, context)).toEqual([])
+    await expect(nebulaEnricher(ref, context)).rejects.toThrow()
   })
 
-  it('should return empty array when fetch throws', async () => {
+  it('should reject when fetch throws', async () => {
     const fetchFn: FetchFn = () => {
       throw new Error('Network error')
     }
 
-    expect(await nebulaEnricher(ref, { fetchFn })).toEqual([])
+    await expect(nebulaEnricher(ref, { fetchFn })).rejects.toThrow()
+  })
+
+  it('should reject when the response is not 2xx', async () => {
+    await expect(nebulaEnricher(ref, createContext({}))).rejects.toThrow()
   })
 })

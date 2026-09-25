@@ -54,9 +54,5 @@ describe('bitchuteHandler', () => {
     it('should return an empty array for non-channel paths', () => {
       expect(bitchuteHandler.resolve('https://www.bitchute.com/video/abc123/')).toEqual([])
     })
-
-    it('should return an empty array for invalid URLs', () => {
-      expect(bitchuteHandler.resolve('not-a-url')).toEqual([])
-    })
   })
 })

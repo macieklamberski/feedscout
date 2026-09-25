@@ -17,22 +17,18 @@ export const joomlaHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    try {
-      const { origin, pathname } = new URL(url)
-      const viewUrl = `${origin}${pathname}`
+    const { origin, pathname } = new URL(url)
+    const viewUrl = `${origin}${pathname}`
 
-      return [
-        {
-          uri: `${viewUrl}?format=feed&type=rss`,
-          hint: composeHint('joomla:view', 'rss'),
-        },
-        {
-          uri: `${viewUrl}?format=feed&type=atom`,
-          hint: composeHint('joomla:view', 'atom'),
-        },
-      ]
-    } catch {}
-
-    return []
+    return [
+      {
+        uri: `${viewUrl}?format=feed&type=rss`,
+        hint: composeHint('joomla:view', 'rss'),
+      },
+      {
+        uri: `${viewUrl}?format=feed&type=atom`,
+        hint: composeHint('joomla:view', 'atom'),
+      },
+    ]
   },
 }

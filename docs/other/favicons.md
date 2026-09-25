@@ -102,7 +102,7 @@ The Platform method extracts avatars and icons directly from known platforms usi
 
 ## Enriching Platform Icons
 
-A platform handler reads only the page URL and the page content. On some platforms the icon takes an extra request to reach, such as a call to the platform's API. For those pages the handler returns a [`DiscoverRef`](/reference/types#discoverref) naming the platform and the account, and discovery hands every ref to `enrichFn`.
+A platform handler reads only the page URL and the page content. On some platforms the icon takes an extra request to reach, such as a call to the platform's API. For those pages the handler returns a [`DiscoverRef`](/reference/types#discoverref) naming the platform and the account, and discovery hands each ref to `enrichFn`.
 
 By default, `enrichFn` runs the built-in enrichers in `defaultFaviconEnrichers`, making their requests through discovery's `fetchFn`. Set `enrichFn: false` to make no extra request, in which case refs are dropped:
 
@@ -127,8 +127,8 @@ The addresses it returns are validated like any other platform candidate. You ca
 
 ```typescript
 const favicons = await discoverFavicons(url, {
-  enrichFn: (refs) => {
-    return refs.map((ref) => cache.get(`${ref.platform}:${ref.id}`))
+  enrichFn: (ref) => {
+    return cache.get(`${ref.platform}:${ref.id}`)
   },
 })
 ```

@@ -34,13 +34,7 @@ export const postypeHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    const parsedUrl = parseUrl(url)
-
-    if (!parsedUrl) {
-      return []
-    }
-
-    const { origin, hostname, pathname } = parsedUrl
+    const { origin, hostname, pathname } = new URL(url)
 
     if (isHostOf(url, hosts)) {
       const [first] = pathname.split('/').filter(Boolean)

@@ -33,13 +33,7 @@ export const bookwyrmHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    const parsedUrl = parseUrl(url)
-
-    if (!parsedUrl) {
-      return []
-    }
-
-    const { origin, pathname } = parsedUrl
+    const { origin, pathname } = new URL(url)
     const match = pathname.match(profileRegex)
 
     if (!match?.[1]) {

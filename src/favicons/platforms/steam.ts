@@ -2,7 +2,7 @@ import { isHostOf, isNonEmptyString, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { appRegex, hosts } from '../../feeds/platforms/steam.js'
 import type { FaviconEnricher } from '../types.js'
-import { parseBodyJson } from '../utils.js'
+import { parseResponseJson } from '../utils.js'
 
 const platform = 'steam'
 
@@ -46,17 +46,15 @@ export const steamEnricher: FaviconEnricher = async (ref, context) => {
     return
   }
 
-  try {
-    const apiUrl = `https://api.steampowered.com/ICommunityService/GetApps/v1/?appids[0]=${ref.id}`
-    const response = await context.fetchFn(apiUrl)
-    const icon = parseBodyJson(response.body)?.response?.apps?.[0]?.icon
+  const apiUrl = `https://api.steampowered.com/ICommunityService/GetApps/v1/?appids[0]=${ref.id}`
+  const response = await context.fetchFn(apiUrl)
+  const icon = parseResponseJson(response)?.response?.apps?.[0]?.icon
 
-    if (isNonEmptyString(icon)) {
-      return [
-        `https://shared.fastly.steamstatic.com/community_assets/images/apps/${ref.id}/${icon}.jpg`,
-      ]
-    }
-  } catch {}
+  if (isNonEmptyString(icon)) {
+    return [
+      `https://shared.fastly.steamstatic.com/community_assets/images/apps/${ref.id}/${icon}.jpg`,
+    ]
+  }
 
   return []
 }

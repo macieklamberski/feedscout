@@ -9,6 +9,7 @@ import {
   userRegex,
 } from '../../feeds/platforms/medium.js'
 import type { FaviconEnricher } from '../types.js'
+import { getResponseText } from '../utils.js'
 
 const platform = 'medium'
 
@@ -67,19 +68,17 @@ export const mediumEnricher: FaviconEnricher = async (ref, context) => {
     return
   }
 
-  try {
-    const response = await context.fetchFn(`https://medium.com/feed/${ref.id}`)
-    const result = parseFeed(typeof response.body === 'string' ? response.body : '')
-    const imageUrl = result.format === 'rss' ? result.feed.image?.url : undefined
+  const response = await context.fetchFn(`https://medium.com/feed/${ref.id}`)
+  const result = parseFeed(getResponseText(response))
+  const imageUrl = result.format === 'rss' ? result.feed.image?.url : undefined
 
-    if (
-      isNonEmptyString(imageUrl) &&
-      squareImageRegex.test(imageUrl) &&
-      !imageUrl.includes(wordmarkImageId)
-    ) {
-      return [imageUrl]
-    }
-  } catch {}
+  if (
+    isNonEmptyString(imageUrl) &&
+    squareImageRegex.test(imageUrl) &&
+    !imageUrl.includes(wordmarkImageId)
+  ) {
+    return [imageUrl]
+  }
 
   return []
 }

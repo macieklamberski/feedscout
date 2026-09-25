@@ -109,9 +109,5 @@ describe('shaarliHandler', () => {
 
       expect(shaarliHandler.resolve(value)).toEqual(expected)
     })
-
-    it('should return an empty array for invalid URLs', () => {
-      expect(shaarliHandler.resolve('not-a-url')).toEqual([])
-    })
   })
 })

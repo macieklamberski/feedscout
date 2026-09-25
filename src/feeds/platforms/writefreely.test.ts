@@ -135,9 +135,5 @@ describe('writefreelyHandler', () => {
     it('should return an empty array for the instance root', () => {
       expect(writefreelyHandler.resolve('https://example.org/')).toEqual([])
     })
-
-    it('should return an empty array for invalid URLs', () => {
-      expect(writefreelyHandler.resolve('not-a-url')).toEqual([])
-    })
   })
 })

@@ -110,9 +110,5 @@ describe('fluxbbHandler', () => {
 
       expect(fluxbbHandler.resolve(value)).toEqual(expected)
     })
-
-    it('should return an empty array for invalid URLs', () => {
-      expect(fluxbbHandler.resolve('not-a-url')).toEqual([])
-    })
   })
 })

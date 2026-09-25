@@ -1,7 +1,9 @@
 import { isAnyOf, isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
+import { isSuccessfulStatus } from '../../common/utils.js'
 import { excludedPaths, hosts } from '../../feeds/platforms/hatenaBookmark.js'
 import type { FaviconEnricher } from '../types.js'
+import { createStatusError } from '../utils.js'
 
 const platform = 'hatenaBookmark'
 
@@ -33,7 +35,7 @@ export const hatenaBookmarkHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    const user = getUser(parseUrl(url)?.pathname ?? '')
+    const user = getUser(new URL(url).pathname)
 
     if (!user) {
       return []
@@ -50,14 +52,16 @@ export const hatenaBookmarkEnricher: FaviconEnricher = async (ref, context) => {
     return
   }
 
-  try {
-    const avatarUrl = `https://cdn.profile-image.st-hatena.com/users/${ref.id}/profile_256x256.png`
-    const response = await context.fetchFn(avatarUrl, { method: 'HEAD' })
+  const avatarUrl = `https://cdn.profile-image.st-hatena.com/users/${ref.id}/profile_256x256.png`
+  const response = await context.fetchFn(avatarUrl, { method: 'HEAD' })
 
-    if (response.status === 200 && !response.url.includes(defaultImagePath)) {
-      return [avatarUrl]
-    }
-  } catch {}
+  if (response.status === 404 || response.url.includes(defaultImagePath)) {
+    return []
+  }
 
-  return []
+  if (!isSuccessfulStatus(response.status)) {
+    throw createStatusError(response)
+  }
+
+  return [avatarUrl]
 }

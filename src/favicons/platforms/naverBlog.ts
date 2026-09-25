@@ -3,6 +3,7 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getMetaContent } from '../../common/utils.js'
 import { hosts } from '../../feeds/platforms/naverBlog.js'
 import type { FaviconEnricher } from '../types.js'
+import { getResponseText } from '../utils.js'
 
 const platform = 'naverBlog'
 
@@ -37,14 +38,14 @@ export const naverBlogHandler: PlatformHandler = {
   },
 
   resolve: (url, content) => {
-    const parsedUrl = parseUrl(url)
-    const blogId = parsedUrl?.pathname.match(blogRegex)?.[1]
+    const { hostname, pathname } = new URL(url)
+    const blogId = pathname.match(blogRegex)?.[1]
 
     if (!blogId || !naverBlogHandler.match(url)) {
       return []
     }
 
-    if (parsedUrl?.hostname !== mobileHost) {
+    if (hostname !== mobileHost) {
       return [{ platform, id: blogId, url }]
     }
 
@@ -67,19 +68,12 @@ export const naverBlogEnricher: FaviconEnricher = async (ref, context) => {
     return
   }
 
-  try {
-    const response = await context.fetchFn(`https://${mobileHost}/${ref.id}`)
+  const response = await context.fetchFn(`https://${mobileHost}/${ref.id}`)
+  const image = getProfileImage(getResponseText(response))
 
-    if (typeof response.body !== 'string') {
-      return []
-    }
-
-    const image = getProfileImage(response.body)
-
-    if (image) {
-      return [image]
-    }
-  } catch {}
+  if (image) {
+    return [image]
+  }
 
   return []
 }

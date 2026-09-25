@@ -1,4 +1,4 @@
-import { isHostOf, parseUrl } from 'trousse'
+import { isHostOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
@@ -13,13 +13,8 @@ export const art19Handler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    const parsedUrl = parseUrl(url)
-
-    if (!parsedUrl) {
-      return []
-    }
-
-    const slug = parsedUrl.pathname.match(showPathRegex)?.[1]
+    const { pathname } = new URL(url)
+    const slug = pathname.match(showPathRegex)?.[1]
 
     if (!slug) {
       return []

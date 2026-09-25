@@ -146,9 +146,5 @@ describe('jiraHandler', () => {
     it('should return an empty array for a Confluence path', () => {
       expect(jiraHandler.resolve('https://example.atlassian.net/wiki/spaces/DOCS')).toEqual([])
     })
-
-    it('should return an empty array for invalid URLs', () => {
-      expect(jiraHandler.resolve('not-a-url')).toEqual([])
-    })
   })
 })

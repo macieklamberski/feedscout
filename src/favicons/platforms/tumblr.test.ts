@@ -59,10 +59,5 @@ describe('tumblrHandler', () => {
       // because the hostname label is treated as the blog name and only match guards the bare
       // domain; the desired contract is undecided.
     })
-
-    it.todo('should define behavior for invalid URL input', () => {
-      // resolve('not-a-url') currently throws a TypeError from the unguarded new URL call; the
-      // desired contract (throw vs empty array) is undecided.
-    })
   })
 })

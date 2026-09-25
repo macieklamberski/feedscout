@@ -1,7 +1,7 @@
 import { isHostOf, isNonEmptyString, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import type { FaviconEnricher } from '../types.js'
-import { parseBodyJson } from '../utils.js'
+import { parseResponseJson } from '../utils.js'
 
 const platform = 'bluesky'
 
@@ -25,7 +25,7 @@ export const blueskyHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    const handle = parseUrl(url)?.pathname.split('/').filter(Boolean)[1]
+    const handle = new URL(url).pathname.split('/').filter(Boolean)[1]
 
     if (!handle) {
       return []
@@ -40,15 +40,13 @@ export const blueskyEnricher: FaviconEnricher = async (ref, context) => {
     return
   }
 
-  try {
-    const apiUrl = `https://public.api.bsky.app/xrpc/app.bsky.actor.getProfile?actor=${ref.id}`
-    const response = await context.fetchFn(apiUrl)
-    const data = parseBodyJson(response.body)
+  const apiUrl = `https://public.api.bsky.app/xrpc/app.bsky.actor.getProfile?actor=${ref.id}`
+  const response = await context.fetchFn(apiUrl)
+  const data = parseResponseJson(response)
 
-    if (isNonEmptyString(data.avatar)) {
-      return [data.avatar]
-    }
-  } catch {}
+  if (isNonEmptyString(data.avatar)) {
+    return [data.avatar]
+  }
 
   return []
 }
