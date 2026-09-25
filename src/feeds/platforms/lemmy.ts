@@ -3,8 +3,8 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, findElement, hasClass, hasMetaContent } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic covers community (html).
-// Handler needed for: home, user.
+// Generic covers community, user (html).
+// Handler needed for: home.
 
 export type LemmyUrl = { kind: 'community'; community: string } | { kind: 'user'; username: string }
 

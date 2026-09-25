@@ -4,8 +4,8 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic partly covers channelById, custom, handle.
-// Handler needed for: music, shortLink, user, watch.
+// Generic partly covers channelById, custom, handle, user.
+// Handler needed for: music, shortLink, watch.
 
 export type YoutubeUrl =
   | { kind: 'channel'; channelId?: string; playlistId?: string }
