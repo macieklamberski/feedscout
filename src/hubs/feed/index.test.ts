@@ -347,14 +347,52 @@ describe('discoverHubsFromFeed', () => {
     expect(value).toEqual(expected)
   })
 
-  it.todo('should use baseUrl as topic when RSS feed has hub but no self link', () => {
-    // RSS feed with an atom:link rel="hub" but no atom:link rel="self".
-    // Expected: one result with the hub URL and topic equal to the baseUrl argument.
+  it('should use baseUrl as topic when RSS feed has hub but no self link', () => {
+    const content = `
+      <?xml version="1.0" encoding="utf-8"?>
+      <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+        <channel>
+          <title>Example Feed</title>
+          <atom:link href="https://hub.example.com/" rel="hub"/>
+        </channel>
+      </rss>
+    `
+    const value = discoverHubsFromFeed(content, 'https://example.com/feed.xml', defaultResolveUrlFn)
+    const expected: Array<HubResult> = [
+      {
+        hub: 'https://hub.example.com/',
+        topic: 'https://example.com/feed.xml',
+      },
+    ]
+
+    expect(value).toEqual(expected)
   })
 
-  it.todo('should discover hub from RDF feed with atom namespace links', () => {
-    // RDF (RSS 1.0) feed with atom:link rel="hub" and rel="self" entries reads links from
-    // feed.atom.links, the same branch as RSS.
-    // Expected: one result with the hub URL and the self URL as topic.
+  it('should discover hub from RDF feed with atom namespace links', () => {
+    const content = `
+      <?xml version="1.0" encoding="utf-8"?>
+      <rdf:RDF
+        xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+        xmlns="http://purl.org/rss/1.0/"
+        xmlns:atom="http://www.w3.org/2005/Atom"
+      >
+        <channel rdf:about="https://example.com/">
+          <title>Example Feed</title>
+          <link>https://example.com/</link>
+          <description>Example description</description>
+          <atom:link href="https://hub.example.com/" rel="hub"/>
+          <atom:link href="https://example.com/feed.rdf" rel="self"/>
+        </channel>
+      </rdf:RDF>
+    `
+    const value = discoverHubsFromFeed(content, 'https://example.com/rdf.xml', defaultResolveUrlFn)
+    const expected: Array<HubResult> = [
+      {
+        hub: 'https://hub.example.com/',
+        topic: 'https://example.com/feed.rdf',
+      },
+    ]
+
+    expect(value).toEqual(expected)
   })
 })

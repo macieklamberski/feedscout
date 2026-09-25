@@ -1,4 +1,4 @@
-import { getSubdomain, isSubdomainOf } from 'trousse'
+import { getSubdomain } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
@@ -7,9 +7,14 @@ import { composeHint } from '../../common/utils.js'
 
 const domains = ['fireside.fm']
 
+// Fireside's own services, not shows.
+const excludedSubdomains = ['app', 'assets', 'blog', 'feeds', 'help', 'media', 'status', 'www']
+
 export const firesideHandler: PlatformHandler = {
   match: (url) => {
-    return isSubdomainOf(url, domains)
+    const slug = getSubdomain(url, domains)
+
+    return slug !== undefined && !excludedSubdomains.includes(slug)
   },
 
   resolve: (url) => {

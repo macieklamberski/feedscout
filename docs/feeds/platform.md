@@ -294,6 +294,7 @@ Discovers RSS feeds for Tumblr blogs and tagged posts.
 |-------------|-----------------|
 | `*.tumblr.com` | Blog posts feed |
 | `*.tumblr.com/tagged/{tag}` | Tagged posts feed |
+| `www.tumblr.com/{blog}` | Blog posts feed |
 
 ### Behance
 
