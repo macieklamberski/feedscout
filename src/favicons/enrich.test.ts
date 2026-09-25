@@ -31,18 +31,42 @@ describe('createEnrichFaviconFn', () => {
     expect(await enrichFn(aliceRef)).toEqual(['https://cdn.example.com/alice.png'])
   })
 
-  it('should pass the given fetchFn to the enricher in its context', async () => {
-    let receivedFetchFn: FetchFn | undefined
-    const enricher: FaviconEnricher = (_ref, context) => {
-      receivedFetchFn = context.fetchFn
+  it('should make the enricher requests through the given fetchFn', async () => {
+    const requested: Array<string> = []
+    const trackingFetchFn: FetchFn = (url) => {
+      requested.push(url)
+
+      return { url, body: '', headers: new Headers(), status: 200 }
+    }
+    const enricher: FaviconEnricher = async (ref, context) => {
+      await context.fetchFn(`https://api.example.com/${ref.id}`)
 
       return []
     }
-    const enrichFn = createEnrichFaviconFn({ enrichers: [enricher], fetchFn })
+    const enrichFn = createEnrichFaviconFn({ enrichers: [enricher], fetchFn: trackingFetchFn })
 
     await enrichFn(aliceRef)
 
-    expect(receivedFetchFn).toBe(fetchFn)
+    expect(requested).toEqual(['https://api.example.com/alice'])
+  })
+
+  it('should hand the enricher a stream body read to text', async () => {
+    const streamFetchFn: FetchFn = (url) => {
+      const body = new Response('{"avatar":"a.png"}').body as ReadableStream<Uint8Array>
+
+      return { url, body, headers: new Headers(), status: 200 }
+    }
+    let receivedBody: unknown
+    const enricher: FaviconEnricher = async (ref, context) => {
+      receivedBody = (await context.fetchFn(`https://api.example.com/${ref.id}`)).body
+
+      return []
+    }
+    const enrichFn = createEnrichFaviconFn({ enrichers: [enricher], fetchFn: streamFetchFn })
+
+    await enrichFn(aliceRef)
+
+    expect(receivedBody).toBe('{"avatar":"a.png"}')
   })
 
   it('should try the next enricher when one returns undefined', async () => {

@@ -10,7 +10,7 @@ import {
   discoverMethodOrder,
 } from '../types.js'
 import { discoverUris } from '../uris/index.js'
-import { processConcurrently, toPositiveInteger } from '../utils.js'
+import { processConcurrently, toPositiveInteger, withTextBody } from '../utils.js'
 import {
   attempt,
   normalizeInput,
@@ -26,7 +26,6 @@ export const discover = async <TValid>(
 ): Promise<Array<DiscoverResult<TValid>>> => {
   const {
     methods,
-    fetchFn,
     extractFn,
     resolveUrlFn,
     resolveSiteUrlFn,
@@ -39,6 +38,7 @@ export const discover = async <TValid>(
     onStep,
     onError,
   } = options
+  const fetchFn = withTextBody(options.fetchFn)
 
   const reportStep = (step: DiscoverStep): void => {
     const url = 'url' in step ? step.url : undefined
