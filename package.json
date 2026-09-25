@@ -26,41 +26,44 @@
   "type": "module",
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
-      "default": "./dist/index.js"
+      "types": "./dist/index.d.mts",
+      "default": "./dist/index.mjs"
     },
     "./feeds": {
-      "types": "./dist/feeds.d.ts",
-      "default": "./dist/feeds.js"
+      "types": "./dist/feeds.d.mts",
+      "default": "./dist/feeds.mjs"
     },
     "./blogrolls": {
-      "types": "./dist/blogrolls.d.ts",
-      "default": "./dist/blogrolls.js"
+      "types": "./dist/blogrolls.d.mts",
+      "default": "./dist/blogrolls.mjs"
     },
     "./favicons": {
-      "types": "./dist/favicons.d.ts",
-      "default": "./dist/favicons.js"
+      "types": "./dist/favicons.d.mts",
+      "default": "./dist/favicons.mjs"
     },
     "./hubs": {
-      "types": "./dist/hubs.d.ts",
-      "default": "./dist/hubs.js"
+      "types": "./dist/hubs.d.mts",
+      "default": "./dist/hubs.mjs"
     },
     "./methods": {
-      "types": "./dist/methods.d.ts",
-      "default": "./dist/methods.js"
+      "types": "./dist/methods.d.mts",
+      "default": "./dist/methods.mjs"
     },
     "./platform": {
-      "types": "./dist/platform.d.ts",
-      "default": "./dist/platform.js"
+      "types": "./dist/platform.d.mts",
+      "default": "./dist/platform.mjs"
     },
     "./package.json": "./package.json"
   },
   "files": [
     "dist"
   ],
+  "engines": {
+    "node": ">=18"
+  },
   "scripts": {
     "prepare": "lefthook install",
-    "build": "tsdown src/exports/index.ts src/exports/feeds.ts src/exports/blogrolls.ts src/exports/favicons.ts src/exports/hubs.ts src/exports/methods.ts src/exports/platform.ts --format esm --dts --clean --unbundle --no-fixed-extension",
+    "build": "tsdown src/exports/index.ts src/exports/feeds.ts src/exports/blogrolls.ts src/exports/favicons.ts src/exports/hubs.ts src/exports/methods.ts src/exports/platform.ts --format esm --dts --clean --unbundle",
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs"
   },

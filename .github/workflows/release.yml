@@ -18,10 +18,17 @@ on:
 jobs:
   test:
     uses: macieklamberski/kvalita/.github/workflows/shared-test.yml@main
+    with:
+      ref: ${{ inputs.branch }}
     secrets: inherit
 
+  package:
+    uses: ./.github/workflows/package.yml
+    with:
+      ref: ${{ inputs.branch }}
+
   release:
-    needs: test
+    needs: [test, package]
     permissions:
       contents: write
       issues: write
