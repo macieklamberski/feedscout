@@ -75,72 +75,6 @@ const invalidAvatarHtml = `
 `
 
 describe('bookwyrmHandler', () => {
-  describe('match', () => {
-    it('should match a profile page', () => {
-      expect(bookwyrmHandler.match('https://books.example.com/user/reader', profileHtml)).toBe(true)
-    })
-
-    it('should match a profile page with a trailing slash', () => {
-      expect(bookwyrmHandler.match('https://books.example.com/user/reader/', profileHtml)).toBe(
-        true,
-      )
-    })
-
-    it('should match a remote user profile', () => {
-      const value = 'https://books.example.com/user/reader@remote.example.org'
-
-      expect(bookwyrmHandler.match(value, profileHtml)).toBe(true)
-    })
-
-    it('should match with the generator meta tag', () => {
-      const value = '<meta name="generator" content="BookWyrm">'
-
-      expect(bookwyrmHandler.match('https://books.example.com/user/reader', value)).toBe(true)
-    })
-
-    it('should not match without BookWyrm markers', () => {
-      const value = '<img class="avatar" src="https://example.com/avatar.jpg">'
-
-      expect(bookwyrmHandler.match('https://example.com/user/reader', value)).toBe(false)
-    })
-
-    it('should not match without content', () => {
-      expect(bookwyrmHandler.match('https://books.example.com/user/reader')).toBe(false)
-    })
-
-    it('should match the all-books page', () => {
-      const value = 'https://books.example.com/user/reader/books'
-
-      expect(bookwyrmHandler.match(value, noAvatarHtml)).toBe(true)
-    })
-
-    it('should match a shelf page', () => {
-      const value = 'https://books.example.com/user/reader/books/to-read'
-
-      expect(bookwyrmHandler.match(value, noAvatarHtml)).toBe(true)
-    })
-
-    it('should match a shelf page under the shelf path', () => {
-      const value = 'https://books.example.com/user/reader/shelf/read'
-
-      expect(bookwyrmHandler.match(value, noAvatarHtml)).toBe(true)
-    })
-
-    it('should not match other user subpages', () => {
-      const value = 'https://books.example.com/user/reader/followers'
-
-      expect(bookwyrmHandler.match(value, profileHtml)).toBe(false)
-    })
-
-    it('should not match non-user paths', () => {
-      expect(bookwyrmHandler.match('https://books.example.com/book/123', profileHtml)).toBe(false)
-    })
-
-    it('should not match invalid URLs', () => {
-      expect(bookwyrmHandler.match('not-a-url', profileHtml)).toBe(false)
-    })
-  })
-
   describe('resolve', () => {
     describe('happy paths', () => {
       it('should resolve the avatar from the profile page', () => {
@@ -150,6 +84,27 @@ describe('bookwyrmHandler', () => {
         ]
 
         expect(result).toEqual(expected)
+      })
+
+      it('should skip an image whose class only starts with avatar', () => {
+        const content = `
+          <img
+            class="avatar-placeholder"
+            src="https://books.example.com/static/images/placeholder.png"
+          >
+          <img
+            class="avatar image is-96x96"
+            src="https://books.example.com/images/avatars/abc.jpeg"
+          >
+          ${sourceLink}
+        `
+        const expected: Array<DiscoverUriEntry> = [
+          { uri: 'https://books.example.com/images/avatars/abc.jpeg' },
+        ]
+
+        expect(bookwyrmHandler.resolve('https://books.example.com/user/reader', content)).toEqual(
+          expected,
+        )
       })
 
       it('should resolve a relative avatar against the page URL', () => {
@@ -171,20 +126,11 @@ describe('bookwyrmHandler', () => {
         expect(bookwyrmHandler.resolve(value, noAvatarHtml)).toEqual(expected)
       })
 
-      it('should return a ref for the all-books page', () => {
-        const value = 'https://books.example.com/user/reader/books'
+      it('should return a ref for another user subpage', () => {
+        const value = 'https://books.example.com/user/reader/reviews'
         const expected: Array<DiscoverRef> = [{ platform: 'bookwyrm', id: 'reader', url: value }]
 
-        expect(bookwyrmHandler.resolve(value, noAvatarHtml)).toEqual(expected)
-      })
-
-      it('should return a ref for a remote user shelf page', () => {
-        const value = 'https://books.example.com/user/reader@remote.example.org/shelf/read'
-        const expected: Array<DiscoverRef> = [
-          { platform: 'bookwyrm', id: 'reader@remote.example.org', url: value },
-        ]
-
-        expect(bookwyrmHandler.resolve(value, noAvatarHtml)).toEqual(expected)
+        expect(bookwyrmHandler.resolve(value, profileHtml)).toEqual(expected)
       })
 
       it('should return a ref for a profile page without an avatar', () => {
@@ -228,19 +174,8 @@ describe('bookwyrmHandler', () => {
         expect(result).toEqual([])
       })
 
-      it('should return empty array for other user subpages', () => {
-        const result = bookwyrmHandler.resolve(
-          'https://books.example.com/user/reader/followers',
-          profileHtml,
-        )
-
-        expect(result).toEqual([])
-      })
-
-      it('should return empty array for invalid URL', () => {
-        const result = bookwyrmHandler.resolve('not-a-url', profileHtml)
-
-        expect(result).toEqual([])
+      it('should return empty array for a page outside a user', () => {
+        expect(bookwyrmHandler.resolve('https://books.example.com/about', profileHtml)).toEqual([])
       })
     })
   })
@@ -312,19 +247,25 @@ describe('bookwyrmEnricher', () => {
     expect(await bookwyrmEnricher(createRef(shelfUrl, 'reader'), context)).toEqual([])
   })
 
-  it('should return empty array when the actor JSON is invalid', async () => {
+  it('should reject when the actor JSON is invalid', async () => {
     const context = createContext({
       [actorJsonUrl]: 'not json',
     })
 
-    expect(await bookwyrmEnricher(createRef(shelfUrl, 'reader'), context)).toEqual([])
+    await expect(bookwyrmEnricher(createRef(shelfUrl, 'reader'), context)).rejects.toThrow()
   })
 
-  it('should return empty array when fetch throws', async () => {
+  it('should reject when fetch throws', async () => {
     const fetchFn: FetchFn = () => {
       throw new Error('Network error')
     }
 
-    expect(await bookwyrmEnricher(createRef(shelfUrl, 'reader'), { fetchFn })).toEqual([])
+    await expect(bookwyrmEnricher(createRef(shelfUrl, 'reader'), { fetchFn })).rejects.toThrow()
+  })
+
+  it('should reject when the response is not 2xx', async () => {
+    await expect(
+      bookwyrmEnricher(createRef(shelfUrl, 'reader'), createContext({})),
+    ).rejects.toThrow()
   })
 })

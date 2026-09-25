@@ -2,9 +2,16 @@ import { describe, expect, it } from 'bun:test'
 import type { DiscoverUriHint } from './types.js'
 import {
   composeHint,
+  type Element,
+  findDescendant,
+  findElement,
   getCookieNames,
+  getJsonLd,
   getMetaContent,
+  getScriptText,
   hasAnyMeta,
+  hasClass,
+  hasElementWithId,
   hasMetaContent,
   isOfAllowedMimeType,
   matchesAnyOfLinkSelectors,
@@ -805,6 +812,215 @@ describe('getMetaContent', () => {
     expect(getMetaContent(first, 'generator')).toBe('Drupal')
     expect(getMetaContent(second, 'generator')).toBe('Joomla')
     expect(getMetaContent(first, 'generator')).toBe('Drupal')
+  })
+})
+
+describe('findDescendant', () => {
+  const value = '<div id="card"><span><img src="nested.png"></span></div><img src="outside.png">'
+
+  it('should return a nested descendant that passes the test', () => {
+    const card = findElement(value, (element) => element.attribs.id === 'card') as Element
+
+    expect(findDescendant(card, (element) => element.name === 'img')).toMatchObject({
+      attribs: { src: 'nested.png' },
+    })
+  })
+
+  it('should return undefined when no descendant passes the test', () => {
+    const card = findElement(value, (element) => element.attribs.id === 'card') as Element
+
+    expect(findDescendant(card, (element) => element.name === 'a')).toBeUndefined()
+  })
+})
+
+describe('findElement', () => {
+  it('should return the first element passing the test', () => {
+    const value = `
+      <img src="https://example.com/first.png">
+      <img src="https://example.com/second.png">
+    `
+    const element = findElement(value, (element) => element.name === 'img')
+
+    expect(element).toMatchObject({
+      attribs: {
+        src: 'https://example.com/first.png',
+      },
+    })
+  })
+
+  it('should let the test read the parent element', () => {
+    const value = `
+      <img src="https://example.com/logo.png">
+      <div class="avatar"><img src="https://example.com/avatar.png"></div>
+    `
+    const element = findElement(value, (element) => hasClass(element.parent, 'avatar'))
+
+    expect(element).toMatchObject({
+      attribs: {
+        src: 'https://example.com/avatar.png',
+      },
+    })
+  })
+
+  it('should decode entities in attribute values', () => {
+    const value = '<a href="https://example.com/?a=1&amp;b=2">Link</a>'
+    const element = findElement(value, (element) => element.name === 'a')
+
+    expect(element).toMatchObject({
+      attribs: {
+        href: 'https://example.com/?a=1&b=2',
+      },
+    })
+  })
+
+  it('should not match markup inside a comment', () => {
+    const value = '<!-- <img src="https://example.com/avatar.png"> -->'
+
+    expect(findElement(value, (element) => element.name === 'img')).toBeUndefined()
+  })
+
+  it('should not match markup inside script text', () => {
+    const value = '<script>const html = \'<img src="https://example.com/avatar.png">\'</script>'
+
+    expect(findElement(value, (element) => element.name === 'img')).toBeUndefined()
+  })
+
+  it('should return undefined for empty content', () => {
+    expect(findElement('', () => true)).toBeUndefined()
+  })
+
+  it('should return undefined for undefined content', () => {
+    expect(findElement(undefined, () => true)).toBeUndefined()
+  })
+})
+
+describe('hasElementWithId', () => {
+  it('should return true for an element with the id', () => {
+    expect(hasElementWithId('<body id="phpbb"></body>', 'phpbb')).toBe(true)
+  })
+
+  it('should return true for a single-quoted id', () => {
+    expect(hasElementWithId("<body id='phpbb'></body>", 'phpbb')).toBe(true)
+  })
+
+  it('should return false for an id with another value', () => {
+    expect(hasElementWithId('<body id="phpbb-forum"></body>', 'phpbb')).toBe(false)
+  })
+
+  it('should return false for the id inside a comment', () => {
+    expect(hasElementWithId('<!-- <body id="phpbb"> -->', 'phpbb')).toBe(false)
+  })
+})
+
+describe('hasClass', () => {
+  it('should return true for a class among others', () => {
+    const element = findElement('<img class="image avatar is-96x96">', () => true)
+
+    expect(hasClass(element, 'avatar')).toBe(true)
+  })
+
+  it('should return true for a class in another case', () => {
+    const element = findElement('<div class="Lemmy-Site">', () => true)
+
+    expect(hasClass(element, 'lemmy-site')).toBe(true)
+  })
+
+  it('should return false for a class that only starts with the name', () => {
+    const element = findElement('<img class="avatar-placeholder">', () => true)
+
+    expect(hasClass(element, 'avatar')).toBe(false)
+  })
+
+  it('should return false for an element without a class', () => {
+    const element = findElement('<img>', () => true)
+
+    expect(hasClass(element, 'avatar')).toBe(false)
+  })
+
+  it('should return false for the document as parent', () => {
+    const element = findElement('<img class="avatar">', () => true)
+
+    expect(hasClass(element?.parent, 'avatar')).toBe(false)
+  })
+
+  it('should return false for null', () => {
+    expect(hasClass(null, 'avatar')).toBe(false)
+  })
+})
+
+describe('getScriptText', () => {
+  it('should return the text of the script with the id', () => {
+    const value = `
+      <script
+        id="__INITIAL_STATE__"
+        type="application/json"
+      >{"user":"alice"}</script>
+    `
+
+    expect(getScriptText(value, '__INITIAL_STATE__')).toBe('{"user":"alice"}')
+  })
+
+  it('should return an empty string for an empty script', () => {
+    expect(getScriptText('<script id="state"></script>', 'state')).toBe('')
+  })
+
+  it('should return undefined for a non-script element with the id', () => {
+    expect(getScriptText('<div id="state">{}</div>', 'state')).toBeUndefined()
+  })
+
+  it('should return undefined without a script with the id', () => {
+    expect(getScriptText('<script id="other">{}</script>', 'state')).toBeUndefined()
+  })
+})
+
+describe('getJsonLd', () => {
+  it('should return every parsed JSON-LD block', () => {
+    const value = `
+      <script type="application/ld+json">{"@type":"Person"}</script>
+      <script type="application/ld+json">[{"@type":"WebSite"}]</script>
+    `
+    const expected: Array<unknown> = [{ '@type': 'Person' }, [{ '@type': 'WebSite' }]]
+
+    expect(getJsonLd(value)).toEqual(expected)
+  })
+
+  it('should read a block with other attributes in any order', () => {
+    const value = `
+      <script
+        data-rh="true"
+        type="application/ld+json"
+      >{"@type":"Person"}</script>
+    `
+    const expected: Array<unknown> = [{ '@type': 'Person' }]
+
+    expect(getJsonLd(value)).toEqual(expected)
+  })
+
+  it('should read a block whose JSON contains a less-than sign', () => {
+    const value = '<script type="application/ld+json">{"name":"A <3 B"}</script>'
+    const expected: Array<unknown> = [{ name: 'A <3 B' }]
+
+    expect(getJsonLd(value)).toEqual(expected)
+  })
+
+  it('should skip a block with invalid JSON', () => {
+    const value = `
+      <script type="application/ld+json">{invalid</script>
+      <script type="application/ld+json">{"@type":"Person"}</script>
+    `
+    const expected: Array<unknown> = [{ '@type': 'Person' }]
+
+    expect(getJsonLd(value)).toEqual(expected)
+  })
+
+  it('should skip scripts of another type', () => {
+    const value = '<script type="application/json">{"@type":"Person"}</script>'
+
+    expect(getJsonLd(value)).toEqual([])
+  })
+
+  it('should return empty array for empty content', () => {
+    expect(getJsonLd('')).toEqual([])
   })
 })
 

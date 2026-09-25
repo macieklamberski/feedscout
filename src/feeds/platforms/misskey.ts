@@ -1,6 +1,6 @@
 import { parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, hasAnyMeta } from '../../common/utils.js'
+import { composeHint, hasAnyMeta, hasElementWithId } from '../../common/utils.js'
 
 // Discoverability: Not discoverable without handler.
 // Handler needed for: all shapes.
@@ -12,7 +12,7 @@ const metaMarkers: Array<[string, string]> = [
 ]
 
 export const isMisskeyHtml = (content: string): boolean => {
-  return content.includes('id="misskey_meta"') || hasAnyMeta(content, metaMarkers)
+  return hasElementWithId(content, 'misskey_meta') || hasAnyMeta(content, metaMarkers)
 }
 
 export const misskeyHandler: PlatformHandler = {
@@ -33,13 +33,7 @@ export const misskeyHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    const parsedUrl = parseUrl(url)
-
-    if (!parsedUrl) {
-      return []
-    }
-
-    const { origin, pathname } = parsedUrl
+    const { origin, pathname } = new URL(url)
     const match = pathname.match(profileRegex)
 
     if (!match?.[1]) {

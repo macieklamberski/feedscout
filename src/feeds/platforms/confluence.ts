@@ -24,13 +24,7 @@ export const confluenceHandler: PlatformHandler = {
   },
 
   resolve: (url, content) => {
-    const parsedUrl = parseUrl(url)
-
-    if (!parsedUrl) {
-      return []
-    }
-
-    const { origin } = parsedUrl
+    const { origin } = new URL(url)
     const baseUrl = getBaseUrl(origin, content ?? '')
     const spaceKey = getMetaContent(content ?? '', 'confluence-space-key')
     const uris: Array<DiscoverUriEntry> = []

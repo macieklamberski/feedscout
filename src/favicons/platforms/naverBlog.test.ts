@@ -69,36 +69,8 @@ describe('naverBlogHandler', () => {
       expect(naverBlogHandler.match('https://m.blog.naver.com/alice')).toBe(true)
     })
 
-    it('should match mobile blog URLs with trailing slash', () => {
-      expect(naverBlogHandler.match('https://m.blog.naver.com/alice/')).toBe(true)
-    })
-
-    it('should match desktop blog URLs', () => {
-      expect(naverBlogHandler.match('https://blog.naver.com/alice')).toBe(true)
-    })
-
-    it('should match desktop blog URLs with trailing slash', () => {
-      expect(naverBlogHandler.match('https://blog.naver.com/alice/')).toBe(true)
-    })
-
-    it('should not match post URLs', () => {
-      expect(naverBlogHandler.match('https://m.blog.naver.com/alice/223000000000')).toBe(false)
-    })
-
     it('should not match paths with dots', () => {
       expect(naverBlogHandler.match('https://m.blog.naver.com/BlogList.naver')).toBe(false)
-    })
-
-    it('should not match root URL', () => {
-      expect(naverBlogHandler.match('https://m.blog.naver.com/')).toBe(false)
-    })
-
-    it('should not match non-Naver Blog URLs', () => {
-      expect(naverBlogHandler.match('https://naver.com/alice')).toBe(false)
-    })
-
-    it('should not match invalid URLs', () => {
-      expect(naverBlogHandler.match('not-a-url')).toBe(false)
     })
   })
 
@@ -118,15 +90,10 @@ describe('naverBlogHandler', () => {
         expect(result).toEqual(expected)
       })
 
-      it('should return ref for desktop blog URLs with trailing slash', () => {
-        const result = naverBlogHandler.resolve('https://blog.naver.com/alice/')
-        const expected: Array<DiscoverRef> = [
-          {
-            platform: 'naverBlog',
-            id: 'alice',
-            url: 'https://blog.naver.com/alice/',
-          },
-        ]
+      it('should return ref for mobile post URLs', () => {
+        const value = 'https://m.blog.naver.com/alice/223000000000'
+        const result = naverBlogHandler.resolve(value, mobilePage)
+        const expected: Array<DiscoverRef> = [{ platform: 'naverBlog', id: 'alice', url: value }]
 
         expect(result).toEqual(expected)
       })
@@ -151,19 +118,10 @@ describe('naverBlogHandler', () => {
         expect(result).toEqual([])
       })
 
-      it('should return empty array for post URLs', () => {
-        const result = naverBlogHandler.resolve(
-          'https://m.blog.naver.com/alice/223000000000',
-          mobilePage,
-        )
-
-        expect(result).toEqual([])
-      })
-
-      it('should return empty array for invalid URL', () => {
-        const result = naverBlogHandler.resolve('not-a-url', mobilePage)
-
-        expect(result).toEqual([])
+      it('should return empty array for paths with dots', () => {
+        expect(
+          naverBlogHandler.resolve('https://m.blog.naver.com/BlogList.naver', mobilePage),
+        ).toEqual([])
       })
     })
   })
@@ -198,7 +156,7 @@ describe('naverBlogEnricher', () => {
     expect(await naverBlogEnricher(ref, context)).toEqual([])
   })
 
-  it('should return empty array when the response body is not a string', async () => {
+  it('should reject when the body is a stream', async () => {
     const fetchFn: FetchFn = async (url) => ({
       headers: new Headers(),
       body: new ReadableStream<Uint8Array>(),
@@ -206,14 +164,18 @@ describe('naverBlogEnricher', () => {
       status: 200,
     })
 
-    expect(await naverBlogEnricher(ref, { fetchFn })).toEqual([])
+    await expect(naverBlogEnricher(ref, { fetchFn })).rejects.toThrow('Unexpected stream body')
   })
 
-  it('should return empty array when fetch throws', async () => {
+  it('should reject when fetch throws', async () => {
     const fetchFn: FetchFn = () => {
       throw new Error('Network error')
     }
 
-    expect(await naverBlogEnricher(ref, { fetchFn })).toEqual([])
+    await expect(naverBlogEnricher(ref, { fetchFn })).rejects.toThrow()
+  })
+
+  it('should reject when the response is not 2xx', async () => {
+    await expect(naverBlogEnricher(ref, createContext({}))).rejects.toThrow()
   })
 })

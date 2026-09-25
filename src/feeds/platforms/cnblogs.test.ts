@@ -53,9 +53,5 @@ describe('cnblogsHandler', () => {
     it('should return an empty array for the site root', () => {
       expect(cnblogsHandler.resolve('https://www.cnblogs.com/')).toEqual([])
     })
-
-    it('should return an empty array for invalid URLs', () => {
-      expect(cnblogsHandler.resolve('not-a-url')).toEqual([])
-    })
   })
 })

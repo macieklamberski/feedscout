@@ -68,9 +68,5 @@ describe('applePodcastsHandler', () => {
 
       expect(applePodcastsHandler.resolve(value, content)).toEqual(expected)
     })
-
-    it('should return empty array for invalid URL', () => {
-      expect(applePodcastsHandler.resolve('not-a-url')).toEqual([])
-    })
   })
 })

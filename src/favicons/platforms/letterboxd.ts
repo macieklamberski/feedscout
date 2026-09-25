@@ -1,36 +1,33 @@
-import { escapeRegex, getPathSegments, isAnyOf, isHostOf, parseUrl } from 'trousse'
+import { isAnyOf, isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { excludedPaths, hosts } from '../../feeds/platforms/letterboxd.js'
+import { findDescendant, findElement, hasClass } from '../../common/utils.js'
+import { parseLetterboxdUrl } from '../../feeds/platforms/letterboxd.js'
 import type { FaviconEnricher } from '../types.js'
+import { getResponseText } from '../utils.js'
 
 const platform = 'letterboxd'
 
 // Resized avatars carry the crop box in the file name, e.g. `-0-48-0-48-crop.jpg`.
 const cropRegex = /-0-\d+-0-\d+-crop\./
 
-const getUsername = (url: string): string | undefined => {
-  if (!isHostOf(url, hosts)) {
-    return
-  }
-
-  const [username] = getPathSegments(url)
-
-  if (!username || isAnyOf(username, excludedPaths)) {
-    return
-  }
-
-  return username
-}
-
 // Member pages link the member's own avatar to their profile root, while avatars of other
 // members on the same page link elsewhere.
 const getAvatarSrc = (content: string, username: string): string | undefined => {
-  const avatarRegex = new RegExp(
-    `<a(?=[^>]*class="avatar[\\s"])(?=[^>]*href="/${escapeRegex(username)}/")[^>]*>\\s*<img[^>]*\\ssrc="([^"]+)"`,
-    'i',
-  )
+  const link = findElement(content, (element) => {
+    return (
+      element.name === 'a' &&
+      hasClass(element, 'avatar') &&
+      isAnyOf(element.attribs.href ?? '', [`/${username}/`])
+    )
+  })
 
-  return content.match(avatarRegex)?.[1]?.replaceAll('&amp;', '&')
+  if (!link) {
+    return
+  }
+
+  const image = findDescendant(link, (element) => element.name === 'img')
+
+  return image?.attribs.src
 }
 
 // Members without an avatar get a placeholder from s.ltrbxd.com, which neither branch accepts.
@@ -54,15 +51,17 @@ const getLargeAvatarUri = (src: string): string | undefined => {
 
 export const letterboxdHandler: PlatformHandler = {
   match: (url) => {
-    return !!getUsername(url)
+    return parseLetterboxdUrl(url) !== undefined
   },
 
   resolve: (url, content) => {
-    const username = getUsername(url)
+    const parsed = parseLetterboxdUrl(url)
 
-    if (!username) {
+    if (!parsed) {
       return []
     }
+
+    const { username } = parsed
 
     // The profile root and the diary answer 403 to non-browser clients, so their content
     // carries no avatar.
@@ -88,20 +87,14 @@ export const letterboxdEnricher: FaviconEnricher = async (ref, context) => {
     return
   }
 
-  try {
-    const response = await context.fetchFn(`https://letterboxd.com/${ref.id}/films/`)
+  const response = await context.fetchFn(`https://letterboxd.com/${ref.id}/films/`)
 
-    if (typeof response.body !== 'string') {
-      return []
-    }
+  const src = getAvatarSrc(getResponseText(response), ref.id)
+  const uri = src ? getLargeAvatarUri(src) : undefined
 
-    const src = getAvatarSrc(response.body, ref.id)
-    const uri = src ? getLargeAvatarUri(src) : undefined
-
-    if (uri) {
-      return [uri]
-    }
-  } catch {}
+  if (uri) {
+    return [uri]
+  }
 
   return []
 }

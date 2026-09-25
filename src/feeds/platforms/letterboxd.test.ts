@@ -1,23 +1,86 @@
 import { describe, expect, it } from 'bun:test'
-import { letterboxdHandler } from './letterboxd.js'
+import type { LetterboxdUrl } from './letterboxd.js'
+import { letterboxdHandler, parseLetterboxdUrl } from './letterboxd.js'
+
+describe('parseLetterboxdUrl', () => {
+  it('should return the member for a profile page', () => {
+    const expected: LetterboxdUrl = { kind: 'member', username: 'dave' }
+
+    expect(parseLetterboxdUrl('https://letterboxd.com/dave')).toEqual(expected)
+  })
+
+  it('should return the member for a films page', () => {
+    const expected: LetterboxdUrl = { kind: 'member', username: 'dave' }
+
+    expect(parseLetterboxdUrl('https://letterboxd.com/dave/films/')).toEqual(expected)
+  })
+
+  it('should return the member for a diary page', () => {
+    const expected: LetterboxdUrl = { kind: 'member', username: 'dave' }
+
+    expect(parseLetterboxdUrl('https://letterboxd.com/dave/films/diary/')).toEqual(expected)
+  })
+
+  it('should return the member for a list page', () => {
+    const value = 'https://letterboxd.com/dave/list/official-top-250-narrative-feature-films/'
+    const expected: LetterboxdUrl = { kind: 'member', username: 'dave' }
+
+    expect(parseLetterboxdUrl(value)).toEqual(expected)
+  })
+
+  it('should return the member for the www host', () => {
+    const expected: LetterboxdUrl = { kind: 'member', username: 'dave' }
+
+    expect(parseLetterboxdUrl('https://www.letterboxd.com/dave')).toEqual(expected)
+  })
+
+  it('should keep the username case', () => {
+    const expected: LetterboxdUrl = { kind: 'member', username: 'Dave' }
+
+    expect(parseLetterboxdUrl('https://letterboxd.com/Dave')).toEqual(expected)
+  })
+
+  it('should return undefined for an excluded path', () => {
+    expect(parseLetterboxdUrl('https://letterboxd.com/journal')).toBeUndefined()
+    expect(parseLetterboxdUrl('https://letterboxd.com/films')).toBeUndefined()
+    expect(parseLetterboxdUrl('https://letterboxd.com/settings/')).toBeUndefined()
+    expect(parseLetterboxdUrl('https://letterboxd.com/sign-in/')).toBeUndefined()
+  })
+
+  it('should return undefined for an excluded path in another case', () => {
+    expect(parseLetterboxdUrl('https://letterboxd.com/Films')).toBeUndefined()
+  })
+
+  it('should return undefined for a film page', () => {
+    expect(parseLetterboxdUrl('https://letterboxd.com/film/barbie/')).toBeUndefined()
+  })
+
+  it('should return undefined for a filmography page', () => {
+    expect(parseLetterboxdUrl('https://letterboxd.com/director/greta-gerwig/')).toBeUndefined()
+  })
+
+  it('should return undefined for the homepage', () => {
+    expect(parseLetterboxdUrl('https://letterboxd.com')).toBeUndefined()
+  })
+
+  it('should return undefined for another host', () => {
+    expect(parseLetterboxdUrl('https://example.com/letterboxd')).toBeUndefined()
+    expect(parseLetterboxdUrl('https://twitter.com/letterboxd')).toBeUndefined()
+  })
+
+  it('should return undefined for an invalid URL', () => {
+    expect(parseLetterboxdUrl('not-a-url')).toBeUndefined()
+  })
+})
 
 describe('letterboxdHandler', () => {
   describe('match', () => {
-    const values: Array<[boolean, string]> = [
-      [true, 'https://letterboxd.com/dave'],
-      [true, 'https://www.letterboxd.com/dave'],
-      [true, 'https://letterboxd.com/dave/films/'],
-      [true, 'https://letterboxd.com'],
-      [false, 'https://example.com/letterboxd'],
-      [false, 'https://twitter.com/letterboxd'],
-    ]
-
-    it.each(values)('should return %s for %s', (expected, url) => {
-      expect(letterboxdHandler.match(url)).toBe(expected)
+    it('should match a Letterboxd URL', () => {
+      expect(letterboxdHandler.match('https://letterboxd.com/dave')).toBe(true)
     })
 
-    it('should return false for invalid URL', () => {
-      expect(letterboxdHandler.match('not-a-url')).toBe(false)
+    it('should not match other hosts', () => {
+      expect(letterboxdHandler.match('https://example.com/letterboxd')).toBe(false)
     })
   })
 
@@ -34,72 +97,6 @@ describe('letterboxdHandler', () => {
       expect(letterboxdHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return RSS feed for user films page', () => {
-      const value = 'https://letterboxd.com/dave/films/'
-      const expected = [
-        {
-          uri: 'https://letterboxd.com/dave/rss/',
-          hint: { key: 'letterboxd:diary', label: 'Diary' },
-        },
-      ]
-
-      expect(letterboxdHandler.resolve(value)).toEqual(expected)
-    })
-
-    it('should return RSS feed for user list page', () => {
-      const value = 'https://letterboxd.com/dave/list/official-top-250-narrative-feature-films/'
-      const expected = [
-        {
-          uri: 'https://letterboxd.com/dave/rss/',
-          hint: { key: 'letterboxd:diary', label: 'Diary' },
-        },
-      ]
-
-      expect(letterboxdHandler.resolve(value)).toEqual(expected)
-    })
-
-    it('should normalize www to canonical domain', () => {
-      const value = 'https://www.letterboxd.com/dave'
-      const expected = [
-        {
-          uri: 'https://letterboxd.com/dave/rss/',
-          hint: { key: 'letterboxd:diary', label: 'Diary' },
-        },
-      ]
-
-      expect(letterboxdHandler.resolve(value)).toEqual(expected)
-    })
-
-    it('should return empty array for homepage', () => {
-      const value = 'https://letterboxd.com'
-
-      expect(letterboxdHandler.resolve(value)).toEqual([])
-    })
-
-    it('should return empty array for excluded paths', () => {
-      const value = 'https://letterboxd.com/films'
-
-      expect(letterboxdHandler.resolve(value)).toEqual([])
-    })
-
-    it('should return empty array for a film page', () => {
-      const value = 'https://letterboxd.com/film/barbie/'
-
-      expect(letterboxdHandler.resolve(value)).toEqual([])
-    })
-
-    it('should return empty array for a filmography page', () => {
-      const value = 'https://letterboxd.com/director/greta-gerwig/'
-
-      expect(letterboxdHandler.resolve(value)).toEqual([])
-    })
-
-    it('should return empty array for sign-in page', () => {
-      const value = 'https://letterboxd.com/sign-in/'
-
-      expect(letterboxdHandler.resolve(value)).toEqual([])
-    })
-
     it('should return Journal feed for /journal', () => {
       const value = 'https://letterboxd.com/journal'
       const expected = [
@@ -112,7 +109,7 @@ describe('letterboxdHandler', () => {
       expect(letterboxdHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return Journal feed for journal article subpath', () => {
+    it('should return Journal feed for a journal article', () => {
       const value = 'https://letterboxd.com/journal/the-best-films-of-the-year'
       const expected = [
         {
@@ -124,9 +121,8 @@ describe('letterboxdHandler', () => {
       expect(letterboxdHandler.resolve(value)).toEqual(expected)
     })
 
-    it.todo('should define behavior for invalid URL input', () => {
-      // resolve('not-a-url') currently throws a TypeError from the unguarded new URL call; the
-      // desired contract (throw vs empty array) is undecided.
+    it('should return empty array for a page without a feed', () => {
+      expect(letterboxdHandler.resolve('https://letterboxd.com/films/')).toEqual([])
     })
   })
 })

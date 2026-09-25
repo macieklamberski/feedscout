@@ -28,7 +28,7 @@ describe('createEnrichFaviconFn', () => {
     const enricher: FaviconEnricher = (ref) => [`https://cdn.example.com/${ref.id}.png`]
     const enrichFn = createEnrichFaviconFn({ enrichers: [enricher], fetchFn })
 
-    expect(await enrichFn([aliceRef])).toEqual([['https://cdn.example.com/alice.png']])
+    expect(await enrichFn(aliceRef)).toEqual(['https://cdn.example.com/alice.png'])
   })
 
   it('should pass the given fetchFn to the enricher in its context', async () => {
@@ -40,7 +40,7 @@ describe('createEnrichFaviconFn', () => {
     }
     const enrichFn = createEnrichFaviconFn({ enrichers: [enricher], fetchFn })
 
-    await enrichFn([aliceRef])
+    await enrichFn(aliceRef)
 
     expect(receivedFetchFn).toBe(fetchFn)
   })
@@ -52,17 +52,18 @@ describe('createEnrichFaviconFn', () => {
     ]
     const enrichFn = createEnrichFaviconFn({ enrichers, fetchFn })
 
-    expect(await enrichFn([aliceRef])).toEqual([['https://cdn.example.com/example.png']])
+    expect(await enrichFn(aliceRef)).toEqual(['https://cdn.example.com/example.png'])
   })
 
-  it('should reject when an enricher throws', async () => {
+  it('should reject when an enricher throws', () => {
     const error = new Error('Enrich error')
     const enricher: FaviconEnricher = () => {
       throw error
     }
     const enrichFn = createEnrichFaviconFn({ enrichers: [enricher], fetchFn })
+    const throwing = () => enrichFn(aliceRef)
 
-    await expect(enrichFn([aliceRef])).rejects.toBe(error)
+    expect(throwing()).rejects.toBe(error)
   })
 
   it('should return undefined for a ref no enricher answers', async () => {
@@ -71,26 +72,6 @@ describe('createEnrichFaviconFn', () => {
     ]
     const enrichFn = createEnrichFaviconFn({ enrichers, fetchFn })
 
-    expect(await enrichFn([aliceRef])).toEqual([undefined])
-  })
-
-  it('should return one entry per ref in the order of the refs', async () => {
-    const enrichers: Array<FaviconEnricher> = [
-      createEnricher('first', 'https://cdn.example.com/first.png'),
-      createEnricher('second', 'https://cdn.example.com/second.png'),
-    ]
-    const refs: Array<DiscoverRef> = [
-      { platform: 'second', id: 'bob', url: 'https://example.com/@bob' },
-      { platform: 'missing', id: 'carol', url: 'https://example.com/@carol' },
-      { platform: 'first', id: 'alice', url: 'https://example.com/@alice' },
-    ]
-    const enrichFn = createEnrichFaviconFn({ enrichers, fetchFn })
-    const expected = [
-      ['https://cdn.example.com/second.png'],
-      undefined,
-      ['https://cdn.example.com/first.png'],
-    ]
-
-    expect(await enrichFn(refs)).toEqual(expected)
+    expect(await enrichFn(aliceRef)).toBeUndefined()
   })
 })

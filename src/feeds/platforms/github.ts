@@ -1,4 +1,4 @@
-import { isAnyOf, isHostOf } from 'trousse'
+import { getPathSegments, isAnyOf, isHostOf } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
@@ -6,16 +6,18 @@ import { composeHint } from '../../common/utils.js'
 // Discoverability: Not discoverable without handler.
 // Handler needed for: all shapes.
 
-const userRegex = /^\/([^/]+)\/?$/
-const repoRegex = /^\/([^/]+)\/([^/]+)/
+export type GithubUrl =
+  | { kind: 'user'; owner: string }
+  | { kind: 'repo'; owner: string; repo: string }
+
 const wikiRegex = /\/wiki(\/|$)/
 const discussionsRegex = /\/discussions(\/|$)/
 const discussionCategoryRegex = /\/discussions\/categories\/([^/]+)/
 const branchRegex = /^\/[^/]+\/[^/]+\/tree\/([^/]+)\/?$/
 const fileRegex = /^\/[^/]+\/[^/]+\/(?:blob|commits)\/([^/]+)\/(.+)/
 
-export const hosts = ['github.com', 'www.github.com']
-export const excludedPaths = [
+const hosts = ['github.com', 'www.github.com']
+const excludedPaths = [
   'about',
   'account',
   'apps',
@@ -63,6 +65,26 @@ export const excludedPaths = [
   'watching',
 ]
 
+export const parseGithubUrl = (url: string): GithubUrl | undefined => {
+  if (!isHostOf(url, hosts)) {
+    return
+  }
+
+  const [first, repo] = getPathSegments(url)
+  // GitHub names carry no dots, so a dot starts a route suffix such as .atom or .png.
+  const owner = first?.split('.')[0]
+
+  if (!owner || isAnyOf(owner, excludedPaths)) {
+    return
+  }
+
+  if (repo) {
+    return { kind: 'repo', owner, repo }
+  }
+
+  return { kind: 'user', owner }
+}
+
 export const githubHandler: PlatformHandler = {
   match: (url) => {
     return isHostOf(url, hosts)
@@ -70,30 +92,24 @@ export const githubHandler: PlatformHandler = {
 
   resolve: (url) => {
     const { pathname } = new URL(url)
-    const uris: Array<DiscoverUriEntry> = []
+    const parsed = parseGithubUrl(url)
 
-    // Match /{owner} pattern (user/org profile page).
-    const userMatch = pathname.match(userRegex)
-
-    if (userMatch?.[1] && !isAnyOf(userMatch[1], excludedPaths)) {
-      const user = userMatch[1]
-
+    // User or organization profile page: /{owner}.
+    if (parsed?.kind === 'user') {
       return [
         {
-          uri: `https://github.com/${user}.atom`,
+          uri: `https://github.com/${parsed.owner}.atom`,
           hint: composeHint('github:activity'),
         },
       ]
     }
 
-    // Match /{owner}/{repo} pattern.
-    const repoMatch = pathname.match(repoRegex)
-    const owner = repoMatch?.[1]
-    const repo = repoMatch?.[2]
-
-    if (!owner || !repo || isAnyOf(owner, excludedPaths)) {
+    if (parsed?.kind !== 'repo') {
       return []
     }
+
+    const { owner, repo } = parsed
+    const uris: Array<DiscoverUriEntry> = []
 
     // Repository feeds.
     uris.push({

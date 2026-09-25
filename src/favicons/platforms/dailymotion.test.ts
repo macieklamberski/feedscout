@@ -33,37 +33,8 @@ describe('dailymotionHandler', () => {
       expect(dailymotionHandler.match('https://www.dailymotion.com/alice')).toBe(true)
     })
 
-    it('should match user pages without www', () => {
-      expect(dailymotionHandler.match('https://dailymotion.com/alice')).toBe(true)
-    })
-
-    it('should match playlist pages', () => {
-      expect(dailymotionHandler.match('https://www.dailymotion.com/playlist/x6abc1')).toBe(true)
-    })
-
     it('should not match channel pages', () => {
       expect(dailymotionHandler.match('https://www.dailymotion.com/channel/news')).toBe(false)
-    })
-
-    it('should not match the home page', () => {
-      expect(dailymotionHandler.match('https://www.dailymotion.com/')).toBe(false)
-    })
-
-    it('should not match excluded paths', () => {
-      expect(dailymotionHandler.match('https://www.dailymotion.com/trending')).toBe(false)
-      expect(dailymotionHandler.match('https://www.dailymotion.com/signin')).toBe(false)
-    })
-
-    it('should not match video pages', () => {
-      expect(dailymotionHandler.match('https://www.dailymotion.com/video/x8abc12')).toBe(false)
-    })
-
-    it('should not match other hosts', () => {
-      expect(dailymotionHandler.match('https://example.com/alice')).toBe(false)
-    })
-
-    it('should not match invalid URLs', () => {
-      expect(dailymotionHandler.match('not-a-url')).toBe(false)
     })
   })
 
@@ -84,14 +55,10 @@ describe('dailymotionHandler', () => {
       ).toEqual(expected)
     })
 
-    it('should return empty array for channel pages', async () => {
-      expect(await dailymotionHandler.resolve('https://www.dailymotion.com/channel/news')).toEqual(
+    it('should return empty array for a page without a user or playlist', async () => {
+      expect(await dailymotionHandler.resolve('https://www.dailymotion.com/video/x8abc12')).toEqual(
         [],
       )
-    })
-
-    it('should return empty array for the home page', async () => {
-      expect(await dailymotionHandler.resolve('https://www.dailymotion.com/')).toEqual([])
     })
   })
 })
@@ -162,19 +129,23 @@ describe('dailymotionEnricher', () => {
     expect(await dailymotionEnricher(userRef, context)).toEqual([])
   })
 
-  it('should return empty array when the API returns invalid JSON', async () => {
+  it('should reject when the API returns invalid JSON', async () => {
     const context = createContext({
       [userApiUrl]: 'not-json',
     })
 
-    expect(await dailymotionEnricher(userRef, context)).toEqual([])
+    await expect(dailymotionEnricher(userRef, context)).rejects.toThrow()
   })
 
-  it('should return empty array when fetch throws', async () => {
+  it('should reject when fetch throws', async () => {
     const fetchFn: FetchFn = () => {
       throw new Error('Network error')
     }
 
-    expect(await dailymotionEnricher(userRef, { fetchFn })).toEqual([])
+    await expect(dailymotionEnricher(userRef, { fetchFn })).rejects.toThrow()
+  })
+
+  it('should reject when the response is not 2xx', async () => {
+    await expect(dailymotionEnricher(userRef, createContext({}))).rejects.toThrow()
   })
 })

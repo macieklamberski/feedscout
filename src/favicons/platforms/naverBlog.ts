@@ -1,16 +1,14 @@
-import { isHostOf, parseUrl } from 'trousse'
+import { getPathSegments, isHostOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getMetaContent } from '../../common/utils.js'
-import { hosts } from '../../feeds/platforms/naverBlog.js'
+import { parseNaverBlogUrl } from '../../feeds/platforms/naverBlog.js'
 import type { FaviconEnricher } from '../types.js'
+import { getResponseText } from '../utils.js'
 
 const platform = 'naverBlog'
 
 // The desktop blog.naver.com page is a frameset without og:image.
 const mobileHost = 'm.blog.naver.com'
-
-// Excludes dots to skip pages like /BlogList.naver.
-const blogRegex = /^\/([^/.]+)\/?$/
 
 // A blog that does not exist carries the generic ssl.pstatic.net/static/blog/icon/og_270x270.png.
 const profileImageHosts = ['blogpfthumb-phinf.pstatic.net']
@@ -27,24 +25,18 @@ const getProfileImage = (content: string): string | undefined => {
 
 export const naverBlogHandler: PlatformHandler = {
   match: (url) => {
-    const parsedUrl = parseUrl(url)
-
-    if (!parsedUrl || !isHostOf(url, hosts)) {
-      return false
-    }
-
-    return blogRegex.test(parsedUrl.pathname)
+    return parseNaverBlogUrl(url) !== undefined
   },
 
   resolve: (url, content) => {
-    const parsedUrl = parseUrl(url)
-    const blogId = parsedUrl?.pathname.match(blogRegex)?.[1]
+    const blogId = parseNaverBlogUrl(url)?.blogId
 
-    if (!blogId || !naverBlogHandler.match(url)) {
+    if (!blogId) {
       return []
     }
 
-    if (parsedUrl?.hostname !== mobileHost) {
+    // A post page carries the post image, not the profile image.
+    if (!isHostOf(url, mobileHost) || getPathSegments(url).length > 1) {
       return [{ platform, id: blogId, url }]
     }
 
@@ -67,19 +59,12 @@ export const naverBlogEnricher: FaviconEnricher = async (ref, context) => {
     return
   }
 
-  try {
-    const response = await context.fetchFn(`https://${mobileHost}/${ref.id}`)
+  const response = await context.fetchFn(`https://${mobileHost}/${ref.id}`)
+  const image = getProfileImage(getResponseText(response))
 
-    if (typeof response.body !== 'string') {
-      return []
-    }
-
-    const image = getProfileImage(response.body)
-
-    if (image) {
-      return [image]
-    }
-  } catch {}
+  if (image) {
+    return [image]
+  }
 
   return []
 }

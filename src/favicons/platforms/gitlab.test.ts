@@ -29,14 +29,6 @@ describe('gitlabHandler', () => {
       expect(gitlabHandler.match('https://gitlab.com/gitlab-org')).toBe(true)
     })
 
-    it('should match gitlab.com repo URLs without content', () => {
-      expect(gitlabHandler.match('https://gitlab.com/gitlab-org/gitlab')).toBe(true)
-    })
-
-    it('should match www.gitlab.com without content', () => {
-      expect(gitlabHandler.match('https://www.gitlab.com/user')).toBe(true)
-    })
-
     it('should match self-hosted instance with GitLab HTML', () => {
       expect(gitlabHandler.match('https://gitlab.mycompany.com/user', gitlabHtml)).toBe(true)
     })
@@ -45,26 +37,8 @@ describe('gitlabHandler', () => {
       expect(gitlabHandler.match('https://gitlab.mycompany.com/user', '', gitlabHeaders)).toBe(true)
     })
 
-    it('should not match self-hosted root path even with GitLab HTML', () => {
-      expect(gitlabHandler.match('https://gitlab.mycompany.com', gitlabHtml)).toBe(false)
-    })
-
-    it('should not match non-GitLab sites', () => {
-      expect(gitlabHandler.match('https://github.com/user')).toBe(false)
-      expect(gitlabHandler.match('https://example.com/user')).toBe(false)
-    })
-
     it('should not match self-hosted without content or headers', () => {
       expect(gitlabHandler.match('https://gitlab.mycompany.com/user')).toBe(false)
-    })
-
-    it('should match URLs with feed extensions', () => {
-      expect(gitlabHandler.match('https://gitlab.com/alice.atom')).toBe(true)
-      expect(gitlabHandler.match('https://gitlab.com/john.doe.atom')).toBe(true)
-    })
-
-    it('should not match invalid URLs', () => {
-      expect(gitlabHandler.match('not-a-url')).toBe(false)
     })
   })
 
@@ -85,34 +59,8 @@ describe('gitlabHandler', () => {
       expect(await gitlabHandler.resolve(url)).toEqual([createRef(url, 'gitlab-org')])
     })
 
-    it('should strip feed extension from user URL', async () => {
-      const url = 'https://gitlab.com/alice.atom'
-
-      expect(await gitlabHandler.resolve(url)).toEqual([createRef(url, 'alice')])
-    })
-
-    it('should preserve dots in usernames', async () => {
-      const url = 'https://gitlab.com/john.doe'
-
-      expect(await gitlabHandler.resolve(url)).toEqual([createRef(url, 'john.doe')])
-    })
-
-    it('should strip feed extension from dotted username', async () => {
-      const url = 'https://gitlab.com/john.doe.atom'
-
-      expect(await gitlabHandler.resolve(url)).toEqual([createRef(url, 'john.doe')])
-    })
-
-    it('should return empty array for root URL', async () => {
-      expect(await gitlabHandler.resolve('https://gitlab.com')).toEqual([])
-    })
-
     it('should return empty array for excluded paths', async () => {
       expect(await gitlabHandler.resolve('https://gitlab.com/explore')).toEqual([])
-    })
-
-    it('should return empty array for invalid URL', async () => {
-      expect(await gitlabHandler.resolve('not-a-url')).toEqual([])
     })
   })
 })
@@ -189,6 +137,7 @@ describe('gitlabEnricher', () => {
   it('should return empty array when API returns empty array', async () => {
     const context = createContext({
       'https://gitlab.com/api/v4/users?username=nonexistent': JSON.stringify([]),
+      'https://gitlab.com/api/v4/groups/nonexistent': JSON.stringify({ avatar_url: null }),
     })
     const ref = createRef('https://gitlab.com/nonexistent', 'nonexistent')
 
@@ -198,24 +147,52 @@ describe('gitlabEnricher', () => {
   it('should return empty array when avatar_url is empty', async () => {
     const context = createContext({
       'https://gitlab.com/api/v4/users?username=alice': JSON.stringify([{ avatar_url: '' }]),
+      'https://gitlab.com/api/v4/groups/alice': JSON.stringify({ avatar_url: '' }),
     })
 
     expect(await gitlabEnricher(aliceRef, context)).toEqual([])
   })
 
-  it('should return empty array when API returns invalid JSON', async () => {
+  it('should reject when API returns invalid JSON', async () => {
     const context = createContext({
       'https://gitlab.com/api/v4/users?username=alice': 'not-json',
     })
 
-    expect(await gitlabEnricher(aliceRef, context)).toEqual([])
+    await expect(gitlabEnricher(aliceRef, context)).rejects.toThrow()
   })
 
-  it('should return empty array when fetch throws', async () => {
+  it('should reject when fetch throws', async () => {
     const fetchFn: FetchFn = () => {
       throw new Error('Network error')
     }
 
-    expect(await gitlabEnricher(aliceRef, { fetchFn })).toEqual([])
+    await expect(gitlabEnricher(aliceRef, { fetchFn })).rejects.toThrow()
+  })
+
+  it('should return empty array when the groups API does not know the name', async () => {
+    const context = createContext({
+      'https://gitlab.com/api/v4/users?username=alice': JSON.stringify([]),
+    })
+
+    expect(await gitlabEnricher(aliceRef, context)).toEqual([])
+  })
+
+  it('should reject when the users API response is not 2xx', async () => {
+    await expect(gitlabEnricher(aliceRef, createContext({}))).rejects.toThrow()
+  })
+
+  it('should reject when the groups API fails with a status other than 404', async () => {
+    const fetchFn: FetchFn = (url) => {
+      const isUsersApi = url.includes('/users?')
+
+      return {
+        headers: new Headers(),
+        body: isUsersApi ? '[]' : '',
+        url,
+        status: isUsersApi ? 200 : 500,
+      }
+    }
+
+    await expect(gitlabEnricher(aliceRef, { fetchFn })).rejects.toThrow()
   })
 })

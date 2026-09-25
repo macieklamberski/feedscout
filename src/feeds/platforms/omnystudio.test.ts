@@ -48,9 +48,5 @@ describe('omnystudioHandler', () => {
     it('should return an empty array for the site root', () => {
       expect(omnystudioHandler.resolve('https://omny.fm/')).toEqual([])
     })
-
-    it('should return an empty array for invalid URLs', () => {
-      expect(omnystudioHandler.resolve('not-a-url')).toEqual([])
-    })
   })
 })

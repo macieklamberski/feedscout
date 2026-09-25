@@ -14,6 +14,10 @@ describe('isFluxbbHtml', () => {
     expect(isFluxbbHtml('<div id="brdmenu"></div><div id="brdfooter"></div>')).toBe(true)
   })
 
+  it('should return true for single-quoted board wrapper ids', () => {
+    expect(isFluxbbHtml("<div id='brdheader'></div><div id='brdmain'></div>")).toBe(true)
+  })
+
   it('should return false when only one wrapper is present', () => {
     expect(isFluxbbHtml(partialHtml)).toBe(false)
   })
@@ -109,10 +113,6 @@ describe('fluxbbHandler', () => {
       ]
 
       expect(fluxbbHandler.resolve(value)).toEqual(expected)
-    })
-
-    it('should return an empty array for invalid URLs', () => {
-      expect(fluxbbHandler.resolve('not-a-url')).toEqual([])
     })
   })
 })

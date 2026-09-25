@@ -1,21 +1,83 @@
 import { describe, expect, it } from 'bun:test'
-import { myanimelistHandler } from './myanimelist.js'
+import type { MyanimelistUrl } from './myanimelist.js'
+import { myanimelistHandler, parseMyanimelistUrl } from './myanimelist.js'
+
+describe('parseMyanimelistUrl', () => {
+  it('should return the user for a profile page', () => {
+    const expected: MyanimelistUrl = { kind: 'user', username: 'Xinil' }
+
+    expect(parseMyanimelistUrl('https://myanimelist.net/profile/Xinil')).toEqual(expected)
+  })
+
+  it('should return the user for an anime list page', () => {
+    const value = 'https://myanimelist.net/animelist/Xinil'
+    const expected: MyanimelistUrl = { kind: 'user', username: 'Xinil' }
+
+    expect(parseMyanimelistUrl(value)).toEqual(expected)
+  })
+
+  it('should return the user for a manga list page', () => {
+    const value = 'https://myanimelist.net/mangalist/Xinil'
+    const expected: MyanimelistUrl = { kind: 'user', username: 'Xinil' }
+
+    expect(parseMyanimelistUrl(value)).toEqual(expected)
+  })
+
+  it('should return the user for a history page', () => {
+    const expected: MyanimelistUrl = { kind: 'user', username: 'Xinil' }
+
+    expect(parseMyanimelistUrl('https://myanimelist.net/history/Xinil')).toEqual(expected)
+  })
+
+  it('should return the user for a page below the profile', () => {
+    const value = 'https://myanimelist.net/profile/Xinil/reviews'
+    const expected: MyanimelistUrl = { kind: 'user', username: 'Xinil' }
+
+    expect(parseMyanimelistUrl(value)).toEqual(expected)
+  })
+
+  it('should return the user for the www host', () => {
+    const value = 'https://www.myanimelist.net/animelist/Xinil'
+    const expected: MyanimelistUrl = { kind: 'user', username: 'Xinil' }
+
+    expect(parseMyanimelistUrl(value)).toEqual(expected)
+  })
+
+  it('should return undefined for an uppercase section', () => {
+    expect(parseMyanimelistUrl('https://myanimelist.net/Profile/Xinil')).toBeUndefined()
+  })
+
+  it('should return undefined for the news page', () => {
+    expect(parseMyanimelistUrl('https://myanimelist.net/news')).toBeUndefined()
+  })
+
+  it('should return undefined for an anime page', () => {
+    const value = 'https://myanimelist.net/anime/1/Cowboy_Bebop'
+
+    expect(parseMyanimelistUrl(value)).toBeUndefined()
+  })
+
+  it('should return undefined for the root', () => {
+    expect(parseMyanimelistUrl('https://myanimelist.net/')).toBeUndefined()
+  })
+
+  it('should return undefined for another host', () => {
+    expect(parseMyanimelistUrl('https://example.com/profile/Xinil')).toBeUndefined()
+  })
+
+  it('should return undefined for an invalid URL', () => {
+    expect(parseMyanimelistUrl('not-a-url')).toBeUndefined()
+  })
+})
 
 describe('myanimelistHandler', () => {
   describe('match', () => {
-    const values: Array<[boolean, string]> = [
-      [true, 'https://myanimelist.net/profile/Xinil'],
-      [true, 'https://www.myanimelist.net/animelist/Xinil'],
-      [true, 'https://myanimelist.net'],
-      [false, 'https://example.com'],
-    ]
-
-    it.each(values)('should return %s for %s', (expected, url) => {
-      expect(myanimelistHandler.match(url)).toBe(expected)
+    it('should match a myanimelist.net URL', () => {
+      expect(myanimelistHandler.match('https://myanimelist.net/profile/Xinil')).toBe(true)
     })
 
-    it('should return false for invalid URL', () => {
-      expect(myanimelistHandler.match('not-a-url')).toBe(false)
+    it('should not match another host', () => {
+      expect(myanimelistHandler.match('https://example.com')).toBe(false)
     })
   })
 
@@ -180,17 +242,8 @@ describe('myanimelistHandler', () => {
       expect(myanimelistHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return empty array for non-user paths', () => {
-      expect(myanimelistHandler.resolve('https://myanimelist.net/anime/1')).toEqual([])
-    })
-
     it('should return empty array for root', () => {
       expect(myanimelistHandler.resolve('https://myanimelist.net/')).toEqual([])
-    })
-
-    it.todo('should define behavior for invalid URL input', () => {
-      // resolve('not-a-url') currently throws a TypeError from the unguarded new URL call; the
-      // desired contract (throw vs empty array) is undecided.
     })
   })
 })

@@ -36,33 +36,8 @@ describe('odyseeHandler', () => {
       expect(odyseeHandler.match('https://odysee.com/@alice')).toBe(true)
     })
 
-    it('should match channel URLs with a claim id prefix', () => {
-      expect(odyseeHandler.match('https://odysee.com/@alice:3f')).toBe(true)
-    })
-
-    it('should match pages under a channel', () => {
-      expect(odyseeHandler.match('https://odysee.com/@alice:3f/hello-world:a')).toBe(true)
-    })
-
-    it('should match www.odysee.com channel URLs', () => {
-      expect(odyseeHandler.match('https://www.odysee.com/@alice')).toBe(true)
-    })
-
     it('should not match the home page', () => {
       expect(odyseeHandler.match('https://odysee.com/')).toBe(false)
-    })
-
-    it('should not match non-channel pages', () => {
-      expect(odyseeHandler.match('https://odysee.com/$/discover')).toBe(false)
-      expect(odyseeHandler.match('https://odysee.com/hello-world:a')).toBe(false)
-    })
-
-    it('should not match other hosts', () => {
-      expect(odyseeHandler.match('https://example.com/@alice')).toBe(false)
-    })
-
-    it('should not match invalid URLs', () => {
-      expect(odyseeHandler.match('not-a-url')).toBe(false)
     })
   })
 
@@ -81,30 +56,8 @@ describe('odyseeHandler', () => {
       expect(await odyseeHandler.resolve(url)).toEqual(expected)
     })
 
-    it('should return a ref for a page under a channel', async () => {
-      const url = 'https://odysee.com/@alice:3f/hello-world:a'
-      const expected: Array<DiscoverRef> = [{ platform: 'odysee', id: 'alice:3f', url }]
-
-      expect(await odyseeHandler.resolve(url)).toEqual(expected)
-    })
-
-    it('should decode an encoded channel name', async () => {
-      const url = 'https://odysee.com/@%C3%A9lise'
-      const expected: Array<DiscoverRef> = [{ platform: 'odysee', id: 'élise', url }]
-
-      expect(await odyseeHandler.resolve(url)).toEqual(expected)
-    })
-
-    it('should return empty array for a non-channel page', async () => {
-      expect(await odyseeHandler.resolve('https://odysee.com/$/discover')).toEqual([])
-    })
-
-    it('should return empty array for a malformed encoded name', async () => {
-      expect(await odyseeHandler.resolve('https://odysee.com/@%E0%A4%A')).toEqual([])
-    })
-
-    it('should return empty array for other hosts', async () => {
-      expect(await odyseeHandler.resolve('https://example.com/@alice')).toEqual([])
+    it('should return empty array for the home page', async () => {
+      expect(await odyseeHandler.resolve('https://odysee.com/')).toEqual([])
     })
   })
 })
@@ -171,15 +124,26 @@ describe('odyseeEnricher', () => {
     expect(await odyseeEnricher(ref, context)).toEqual([])
   })
 
-  it('should return empty array when API returns invalid JSON', async () => {
-    expect(await odyseeEnricher(ref, createContext('not json'))).toEqual([])
+  it('should reject when API returns invalid JSON', async () => {
+    await expect(odyseeEnricher(ref, createContext('not json'))).rejects.toThrow()
   })
 
-  it('should return empty array when fetch throws', async () => {
+  it('should reject when fetch throws', async () => {
     const fetchFn: FetchFn = () => {
       throw new Error('Network error')
     }
 
-    expect(await odyseeEnricher(ref, { fetchFn })).toEqual([])
+    await expect(odyseeEnricher(ref, { fetchFn })).rejects.toThrow()
+  })
+
+  it('should reject when the API answers a non-2xx status', async () => {
+    const fetchFn: FetchFn = async (url) => ({
+      headers: new Headers(),
+      body: '',
+      url,
+      status: 503,
+    })
+
+    await expect(odyseeEnricher(ref, { fetchFn })).rejects.toThrow()
   })
 })

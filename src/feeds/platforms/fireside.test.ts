@@ -53,14 +53,13 @@ describe('firesideHandler', () => {
       expect(firesideHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return empty array for the bare host', () => {
+      expect(firesideHandler.resolve('https://fireside.fm/')).toEqual([])
+    })
+
     it.todo('should define behavior for www.fireside.fm', () => {
       // resolve('https://www.fireside.fm') currently treats www as a podcast slug and emits
       // https://feeds.fireside.fm/www/rss, which is likely a source bug.
-    })
-
-    it.todo('should define behavior for invalid URL input', () => {
-      // resolve('not-a-url') currently throws a TypeError from the unguarded new URL call; the
-      // desired contract (throw vs empty array) is undecided.
     })
   })
 })

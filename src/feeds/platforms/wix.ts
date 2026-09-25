@@ -40,10 +40,6 @@ export const wixHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    try {
-      return [{ uri: `${getSiteUrl(url)}/blog-feed.xml`, hint: composeHint('wix:blog') }]
-    } catch {}
-
-    return []
+    return [{ uri: `${getSiteUrl(url)}/blog-feed.xml`, hint: composeHint('wix:blog') }]
   },
 }

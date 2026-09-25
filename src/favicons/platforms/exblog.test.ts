@@ -48,32 +48,8 @@ describe('exblogHandler', () => {
       expect(exblogHandler.match('https://example.exblog.jp/')).toBe(true)
     })
 
-    it('should match a post page', () => {
-      expect(exblogHandler.match('https://example.exblog.jp/37927093')).toBe(true)
-    })
-
-    it('should match a category page', () => {
-      expect(exblogHandler.match('https://example.exblog.jp/i2/')).toBe(true)
-    })
-
     it('should not match the portal', () => {
       expect(exblogHandler.match('https://www.exblog.jp/')).toBe(false)
-    })
-
-    it('should not match the apex domain', () => {
-      expect(exblogHandler.match('https://exblog.jp/')).toBe(false)
-    })
-
-    it('should not match a nested subdomain', () => {
-      expect(exblogHandler.match('https://blog.example.exblog.jp/')).toBe(false)
-    })
-
-    it('should not match other hosts', () => {
-      expect(exblogHandler.match('https://example.com/')).toBe(false)
-    })
-
-    it('should not match invalid URLs', () => {
-      expect(exblogHandler.match('not-a-url')).toBe(false)
     })
   })
 
@@ -83,13 +59,6 @@ describe('exblogHandler', () => {
         const expected: Array<DiscoverUriEntry> = [{ uri: logoUrl }]
 
         expect(exblogHandler.resolve('https://example.exblog.jp/', blogPage)).toEqual(expected)
-      })
-
-      it('should return the logo from the post page content', () => {
-        const value = 'https://example.exblog.jp/37927093'
-        const expected: Array<DiscoverUriEntry> = [{ uri: logoUrl }]
-
-        expect(exblogHandler.resolve(value, blogPage)).toEqual(expected)
       })
 
       it('should return a ref to the blog for a page passed without its content', () => {
@@ -107,7 +76,7 @@ describe('exblogHandler', () => {
         expect(exblogHandler.resolve(value, blogPageWithoutLogo)).toEqual([])
       })
 
-      it('should return empty array for an unmatched URL', () => {
+      it('should return empty array for the portal', () => {
         expect(exblogHandler.resolve('https://www.exblog.jp/', blogPage)).toEqual([])
       })
     })
@@ -139,7 +108,7 @@ describe('exblogEnricher', () => {
     expect(await exblogEnricher(ref, context)).toEqual([])
   })
 
-  it('should return empty array when the body is a stream', async () => {
+  it('should reject when the body is a stream', async () => {
     const fetchFn: FetchFn = async (url) => ({
       headers: new Headers(),
       body: new ReadableStream(),
@@ -148,15 +117,21 @@ describe('exblogEnricher', () => {
     })
     const ref = createRef('https://example.exblog.jp/37927093')
 
-    expect(await exblogEnricher(ref, { fetchFn })).toEqual([])
+    await expect(exblogEnricher(ref, { fetchFn })).rejects.toThrow('Unexpected stream body')
   })
 
-  it('should return empty array when fetch throws', async () => {
+  it('should reject when fetch throws', async () => {
     const fetchFn: FetchFn = () => {
       throw new Error('Network error')
     }
     const ref = createRef('https://example.exblog.jp/37927093')
 
-    expect(await exblogEnricher(ref, { fetchFn })).toEqual([])
+    await expect(exblogEnricher(ref, { fetchFn })).rejects.toThrow()
+  })
+
+  it('should reject when the response is not 2xx', async () => {
+    const ref = createRef('https://example.exblog.jp/37927093')
+
+    await expect(exblogEnricher(ref, createContext({}))).rejects.toThrow()
   })
 })

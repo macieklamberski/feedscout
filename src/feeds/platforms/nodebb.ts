@@ -20,13 +20,7 @@ export const nodebbHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    const parsedUrl = parseUrl(url)
-
-    if (!parsedUrl) {
-      return []
-    }
-
-    const { origin, pathname } = parsedUrl
+    const { origin, pathname } = new URL(url)
     const categoryId = pathname.match(categoryRegex)?.[1]
     const topicId = pathname.match(topicRegex)?.[1]
     const uris: Array<DiscoverUriEntry> = []

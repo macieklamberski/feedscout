@@ -1,4 +1,4 @@
-import { parseUrl } from 'trousse'
+import { getPathSegments } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, hasMetaContent } from '../../common/utils.js'
@@ -6,13 +6,35 @@ import { composeHint, hasMetaContent } from '../../common/utils.js'
 // Discoverability: Partially discoverable without handler.
 // Generic partly covers profile, shelf.
 
-const profileRegex = /^\/user\/([^/]+)/
-const shelfRegex = /^\/user\/([^/]+)\/(?:shelf|books)\/([^/]+)\/?/
+export type BookwyrmUrl =
+  | { kind: 'profile'; username: string }
+  | { kind: 'shelf'; username: string; section: string; shelf: string }
+  | { kind: 'subpage'; username: string }
+
+const shelfSections = ['shelf', 'books']
 // The trailing boundary keeps sibling repositories such as `bookwyrm-docs` out.
 const sourceLinkRegex = /github\.com\/bookwyrm-social\/bookwyrm(?![\w-])/
 
 export const isBookwyrmHtml = (content: string): boolean => {
   return sourceLinkRegex.test(content) || hasMetaContent(content, 'generator', 'BookWyrm')
+}
+
+export const parseBookwyrmUrl = (url: string): BookwyrmUrl | undefined => {
+  const [prefix, username, section, shelf] = getPathSegments(url)
+
+  if (prefix !== 'user' || !username) {
+    return
+  }
+
+  if (!section) {
+    return { kind: 'profile', username }
+  }
+
+  if (shelfSections.includes(section) && shelf) {
+    return { kind: 'shelf', username, section, shelf }
+  }
+
+  return { kind: 'subpage', username }
 }
 
 export const bookwyrmHandler: PlatformHandler = {
@@ -21,59 +43,43 @@ export const bookwyrmHandler: PlatformHandler = {
       return false
     }
 
-    const parsedUrl = parseUrl(url)
-
-    if (!parsedUrl) {
-      return false
-    }
-
-    const { pathname } = parsedUrl
-
-    return profileRegex.test(pathname)
+    return parseBookwyrmUrl(url) !== undefined
   },
 
   resolve: (url) => {
-    const parsedUrl = parseUrl(url)
+    const { origin } = new URL(url)
+    const parsed = parseBookwyrmUrl(url)
 
-    if (!parsedUrl) {
+    if (!parsed) {
       return []
     }
 
-    const { origin, pathname } = parsedUrl
-    const match = pathname.match(profileRegex)
-
-    if (!match?.[1]) {
-      return []
-    }
-
-    const user = match[1]
+    const { username } = parsed
     const uris: Array<DiscoverUriEntry> = []
 
-    // Shelf page: /user/{user}/(shelf|books)/{shelf-id} — emit shelf feed first.
-    const shelfMatch = pathname.match(shelfRegex)
-
-    if (shelfMatch?.[2]) {
+    // Shelf page: /user/{username}/(shelf|books)/{shelf-id}, so the shelf feed goes first.
+    if (parsed.kind === 'shelf') {
       uris.push({
-        uri: `${origin}/user/${user}/${pathname.split('/')[3]}/${shelfMatch[2]}/rss`,
+        uri: `${origin}/user/${username}/${parsed.section}/${parsed.shelf}/rss`,
         hint: composeHint('bookwyrm:shelf'),
       })
     }
 
     uris.push(
       {
-        uri: `${origin}/user/${user}/rss`,
+        uri: `${origin}/user/${username}/rss`,
         hint: composeHint('bookwyrm:activity'),
       },
       {
-        uri: `${origin}/user/${user}/rss-reviews`,
+        uri: `${origin}/user/${username}/rss-reviews`,
         hint: composeHint('bookwyrm:reviews'),
       },
       {
-        uri: `${origin}/user/${user}/rss-quotes`,
+        uri: `${origin}/user/${username}/rss-quotes`,
         hint: composeHint('bookwyrm:quotes'),
       },
       {
-        uri: `${origin}/user/${user}/rss-comments`,
+        uri: `${origin}/user/${username}/rss-comments`,
         hint: composeHint('bookwyrm:comments'),
       },
     )

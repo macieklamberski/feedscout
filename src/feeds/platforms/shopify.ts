@@ -1,4 +1,4 @@
-import { getPathSegments, parseUrl } from 'trousse'
+import { getPathSegments } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
@@ -22,13 +22,7 @@ export const shopifyHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    const parsedUrl = parseUrl(url)
-
-    if (!parsedUrl) {
-      return []
-    }
-
-    const { origin } = parsedUrl
+    const { origin } = new URL(url)
     const handle = getBlogHandle(url)
 
     if (!handle) {

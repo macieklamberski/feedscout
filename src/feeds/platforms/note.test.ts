@@ -1,21 +1,89 @@
 import { describe, expect, it } from 'bun:test'
-import { noteHandler } from './note.js'
+import type { NoteUrl } from './note.js'
+import { noteHandler, parseNoteUrl } from './note.js'
+
+describe('parseNoteUrl', () => {
+  it('should return the user for a profile page', () => {
+    const expected: NoteUrl = { kind: 'user', username: 'tsukasa_yamato' }
+
+    expect(parseNoteUrl('https://note.com/tsukasa_yamato')).toEqual(expected)
+  })
+
+  it('should return the user for an article page', () => {
+    const expected: NoteUrl = { kind: 'user', username: 'tsukasa_yamato' }
+
+    expect(parseNoteUrl('https://note.com/tsukasa_yamato/n/some-note')).toEqual(expected)
+  })
+
+  it('should return the user for the www host', () => {
+    const expected: NoteUrl = { kind: 'user', username: 'alice' }
+
+    expect(parseNoteUrl('https://www.note.com/alice')).toEqual(expected)
+  })
+
+  it('should return the magazine for a magazine page', () => {
+    const expected: NoteUrl = { kind: 'magazine', username: 'notemag', magazine: 'm7244518f06ae' }
+
+    expect(parseNoteUrl('https://note.com/notemag/m/m7244518f06ae')).toEqual(expected)
+  })
+
+  it('should return the magazine for a magazine under a reserved path', () => {
+    const expected: NoteUrl = { kind: 'magazine', username: 'search', magazine: 'm7244518f06ae' }
+
+    expect(parseNoteUrl('https://note.com/search/m/m7244518f06ae')).toEqual(expected)
+  })
+
+  it('should return the tag for a hashtag page', () => {
+    const expected: NoteUrl = { kind: 'hashtag', tag: 'AI' }
+
+    expect(parseNoteUrl('https://note.com/hashtag/AI')).toEqual(expected)
+  })
+
+  it('should return the tag for the tag page a hashtag redirects to', () => {
+    const expected: NoteUrl = { kind: 'hashtag', tag: 'AI' }
+
+    expect(parseNoteUrl('https://note.com/tag/AI')).toEqual(expected)
+  })
+
+  it('should return undefined for excluded paths', () => {
+    expect(parseNoteUrl('https://note.com/login')).toBeUndefined()
+    expect(parseNoteUrl('https://note.com/about')).toBeUndefined()
+    expect(parseNoteUrl('https://note.com/api')).toBeUndefined()
+    expect(parseNoteUrl('https://note.com/explore')).toBeUndefined()
+    expect(parseNoteUrl('https://note.com/hashtag')).toBeUndefined()
+    expect(parseNoteUrl('https://note.com/help')).toBeUndefined()
+    expect(parseNoteUrl('https://note.com/m')).toBeUndefined()
+    expect(parseNoteUrl('https://note.com/n')).toBeUndefined()
+    expect(parseNoteUrl('https://note.com/premium')).toBeUndefined()
+    expect(parseNoteUrl('https://note.com/privacy')).toBeUndefined()
+    expect(parseNoteUrl('https://note.com/ranking')).toBeUndefined()
+    expect(parseNoteUrl('https://note.com/search')).toBeUndefined()
+    expect(parseNoteUrl('https://note.com/settings')).toBeUndefined()
+    expect(parseNoteUrl('https://note.com/signup')).toBeUndefined()
+    expect(parseNoteUrl('https://note.com/terms')).toBeUndefined()
+  })
+
+  it('should return undefined for the root', () => {
+    expect(parseNoteUrl('https://note.com/')).toBeUndefined()
+  })
+
+  it('should return undefined for another host', () => {
+    expect(parseNoteUrl('https://example.com/alice')).toBeUndefined()
+  })
+
+  it('should return undefined for an invalid URL', () => {
+    expect(parseNoteUrl('not-a-url')).toBeUndefined()
+  })
+})
 
 describe('noteHandler', () => {
   describe('match', () => {
-    const values: Array<[boolean, string]> = [
-      [true, 'https://note.com/tsukasa_yamato'],
-      [true, 'https://www.note.com/user'],
-      [true, 'https://note.com'],
-      [false, 'https://example.com'],
-    ]
-
-    it.each(values)('should return %s for %s', (expected, url) => {
-      expect(noteHandler.match(url)).toBe(expected)
+    it('should match a note.com URL', () => {
+      expect(noteHandler.match('https://note.com')).toBe(true)
     })
 
-    it('should return false for invalid URL', () => {
-      expect(noteHandler.match('not-a-url')).toBe(false)
+    it('should not match another host', () => {
+      expect(noteHandler.match('https://example.com')).toBe(false)
     })
   })
 
@@ -26,30 +94,6 @@ describe('noteHandler', () => {
         {
           uri: 'https://note.com/tsukasa_yamato/rss',
           hint: { key: 'note:blog', label: 'Blog' },
-        },
-      ]
-
-      expect(noteHandler.resolve(value)).toEqual(expected)
-    })
-
-    it('should return feed URL regardless of subpath', () => {
-      const value = 'https://note.com/tsukasa_yamato/n/some-note'
-      const expected = [
-        {
-          uri: 'https://note.com/tsukasa_yamato/rss',
-          hint: { key: 'note:blog', label: 'Blog' },
-        },
-      ]
-
-      expect(noteHandler.resolve(value)).toEqual(expected)
-    })
-
-    it('should return the hashtag feed for the tag page it redirects to', () => {
-      const value = 'https://note.com/tag/AI'
-      const expected = [
-        {
-          uri: 'https://note.com/hashtag/AI/rss',
-          hint: { key: 'note:hashtag', label: 'Hashtag' },
         },
       ]
 
@@ -93,32 +137,7 @@ describe('noteHandler', () => {
     })
 
     it('should return empty array for excluded paths', () => {
-      const values = [
-        'https://note.com/login',
-        'https://note.com/about',
-        'https://note.com/api',
-        'https://note.com/explore',
-        'https://note.com/hashtag',
-        'https://note.com/help',
-        'https://note.com/m',
-        'https://note.com/n',
-        'https://note.com/premium',
-        'https://note.com/privacy',
-        'https://note.com/ranking',
-        'https://note.com/search',
-        'https://note.com/settings',
-        'https://note.com/signup',
-        'https://note.com/terms',
-      ]
-
-      for (const value of values) {
-        expect(noteHandler.resolve(value)).toEqual([])
-      }
-    })
-
-    it.todo('should define behavior for invalid URL input', () => {
-      // resolve('not-a-url') currently throws a TypeError from the unguarded new URL call; the
-      // desired contract (throw vs empty array) is undecided.
+      expect(noteHandler.resolve('https://note.com/login')).toEqual([])
     })
   })
 })

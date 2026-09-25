@@ -1,7 +1,7 @@
 import { parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
+import { composeHint, hasElementWithId } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -13,10 +13,10 @@ const forumPathRegex = /\/(f|forums)\/([^/]+\.\d+)/
 const routePrefixes = ['forums', 'f']
 
 // XF2 puts `id="XF"` on the html element and XF1 put `id="XenForo"` there.
-const appRootMarkers = ['id="XF"', 'id="XenForo"']
+const appRootIds = ['XF', 'XenForo']
 
 export const isXenforoHtml = (content: string): boolean => {
-  return appRootMarkers.some((marker) => content.includes(marker))
+  return appRootIds.some((id) => hasElementWithId(content, id))
 }
 
 export const xenforoHandler: PlatformHandler = {
@@ -25,13 +25,7 @@ export const xenforoHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    const parsedUrl = parseUrl(url)
-
-    if (!parsedUrl) {
-      return []
-    }
-
-    const { origin, pathname } = parsedUrl
+    const { origin, pathname } = new URL(url)
     const [, route, forumPath] = pathname.match(forumPathRegex) ?? []
     const uris: Array<DiscoverUriEntry> = []
 

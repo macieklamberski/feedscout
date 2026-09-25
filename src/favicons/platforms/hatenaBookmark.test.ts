@@ -31,52 +31,8 @@ describe('hatenaBookmarkHandler', () => {
       expect(hatenaBookmarkHandler.match('https://b.hatena.ne.jp/jkondo/')).toBe(true)
     })
 
-    it('should match user page URLs without trailing slash', () => {
-      expect(hatenaBookmarkHandler.match('https://b.hatena.ne.jp/jkondo')).toBe(true)
-    })
-
-    it('should match user subpage URLs', () => {
-      expect(hatenaBookmarkHandler.match('https://b.hatena.ne.jp/jkondo/bookmark')).toBe(true)
-    })
-
-    it('should match user IDs with hyphens and underscores', () => {
-      expect(hatenaBookmarkHandler.match('https://b.hatena.ne.jp/web-dev_jp/')).toBe(true)
-    })
-
-    it('should not match the home page', () => {
-      expect(hatenaBookmarkHandler.match('https://b.hatena.ne.jp/')).toBe(false)
-    })
-
     it('should not match category pages', () => {
       expect(hatenaBookmarkHandler.match('https://b.hatena.ne.jp/hotentry/it')).toBe(false)
-      expect(hatenaBookmarkHandler.match('https://b.hatena.ne.jp/entrylist/it')).toBe(false)
-    })
-
-    it('should not match site section pages', () => {
-      expect(hatenaBookmarkHandler.match('https://b.hatena.ne.jp/site/example.com/')).toBe(false)
-      expect(hatenaBookmarkHandler.match('https://b.hatena.ne.jp/search/tag?q=rss')).toBe(false)
-      expect(hatenaBookmarkHandler.match('https://b.hatena.ne.jp/guide/')).toBe(false)
-    })
-
-    it('should not match files at the root', () => {
-      expect(hatenaBookmarkHandler.match('https://b.hatena.ne.jp/favicon.ico')).toBe(false)
-      expect(hatenaBookmarkHandler.match('https://b.hatena.ne.jp/hotentry.rss')).toBe(false)
-    })
-
-    it('should not match paths shorter than a Hatena ID', () => {
-      expect(hatenaBookmarkHandler.match('https://b.hatena.ne.jp/q/rss')).toBe(false)
-    })
-
-    it('should not match paths starting with a non-letter', () => {
-      expect(hatenaBookmarkHandler.match('https://b.hatena.ne.jp/-/my/config')).toBe(false)
-    })
-
-    it('should not match other hosts', () => {
-      expect(hatenaBookmarkHandler.match('https://example.com/jkondo/')).toBe(false)
-    })
-
-    it('should not match invalid URLs', () => {
-      expect(hatenaBookmarkHandler.match('not-a-url')).toBe(false)
     })
   })
 
@@ -85,23 +41,8 @@ describe('hatenaBookmarkHandler', () => {
       expect(await hatenaBookmarkHandler.resolve('https://b.hatena.ne.jp/jkondo/')).toEqual([ref])
     })
 
-    it('should return a ref for a user subpage', async () => {
-      const url = 'https://b.hatena.ne.jp/jkondo/bookmark'
-      const expected: Array<DiscoverRef> = [{ platform: 'hatenaBookmark', id: 'jkondo', url }]
-
-      expect(await hatenaBookmarkHandler.resolve(url)).toEqual(expected)
-    })
-
-    it('should return empty array for the home page', async () => {
-      expect(await hatenaBookmarkHandler.resolve('https://b.hatena.ne.jp/')).toEqual([])
-    })
-
     it('should return empty array for category pages', async () => {
       expect(await hatenaBookmarkHandler.resolve('https://b.hatena.ne.jp/hotentry/it')).toEqual([])
-    })
-
-    it('should return empty array for invalid URLs', async () => {
-      expect(await hatenaBookmarkHandler.resolve('not-a-url')).toEqual([])
     })
   })
 })
@@ -142,11 +83,20 @@ describe('hatenaBookmarkEnricher', () => {
     expect(await hatenaBookmarkEnricher(ref, createContext({}))).toEqual([])
   })
 
-  it('should return empty array when fetch throws', async () => {
+  it('should reject when the avatar request fails with another status', () => {
+    const fetchFn: FetchFn = (url) => {
+      return { headers: new Headers(), body: '', url, status: 503 }
+    }
+    const throwing = () => hatenaBookmarkEnricher(ref, { fetchFn })
+
+    expect(throwing()).rejects.toThrow('Unexpected status 503')
+  })
+
+  it('should reject when fetch throws', async () => {
     const fetchFn: FetchFn = () => {
       throw new Error('Network error')
     }
 
-    expect(await hatenaBookmarkEnricher(ref, { fetchFn })).toEqual([])
+    await expect(hatenaBookmarkEnricher(ref, { fetchFn })).rejects.toThrow()
   })
 })

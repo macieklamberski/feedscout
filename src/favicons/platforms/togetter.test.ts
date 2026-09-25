@@ -31,24 +31,8 @@ describe('togetterHandler', () => {
       expect(togetterHandler.match('https://togetter.com/id/example')).toBe(true)
     })
 
-    it('should match user pages on www host', () => {
-      expect(togetterHandler.match('https://www.togetter.com/id/example')).toBe(true)
-    })
-
     it('should not match summary pages', () => {
       expect(togetterHandler.match('https://togetter.com/li/123456')).toBe(false)
-    })
-
-    it('should not match the home page', () => {
-      expect(togetterHandler.match('https://togetter.com/')).toBe(false)
-    })
-
-    it('should not match other hosts', () => {
-      expect(togetterHandler.match('https://example.com/id/example')).toBe(false)
-    })
-
-    it('should not match invalid URLs', () => {
-      expect(togetterHandler.match('not-a-url')).toBe(false)
     })
   })
 
@@ -58,6 +42,27 @@ describe('togetterHandler', () => {
         const value = createProfilePage('https://example.com/profile_images/123/abc_normal.jpg')
         const expected: Array<DiscoverUriEntry> = [
           { uri: 'https://example.com/profile_images/123/abc_400x400.jpg' },
+        ]
+
+        expect(togetterHandler.resolve('https://togetter.com/id/example', value)).toEqual(expected)
+      })
+
+      it('should return the avatar from a JSON-LD script with another attribute', () => {
+        const jsonLd = JSON.stringify({
+          '@type': 'ProfilePage',
+          mainEntity: {
+            '@type': 'Person',
+            image: 'https://example.com/profile_images/123/abc_normal.png',
+          },
+        })
+        const value = `
+          <script
+            type="application/ld+json"
+            data-next-head=""
+          >${jsonLd}</script>
+        `
+        const expected: Array<DiscoverUriEntry> = [
+          { uri: 'https://example.com/profile_images/123/abc_400x400.png' },
         ]
 
         expect(togetterHandler.resolve('https://togetter.com/id/example', value)).toEqual(expected)

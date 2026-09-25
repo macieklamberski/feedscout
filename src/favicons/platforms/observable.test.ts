@@ -28,46 +28,8 @@ describe('observableHandler', () => {
       expect(observableHandler.match('https://observablehq.com/@alice')).toBe(true)
     })
 
-    it('should match profile URLs with trailing slash', () => {
-      expect(observableHandler.match('https://observablehq.com/@alice/')).toBe(true)
-    })
-
-    it('should match www profile URLs', () => {
-      expect(observableHandler.match('https://www.observablehq.com/@alice')).toBe(true)
-    })
-
-    it('should match collection URLs', () => {
-      expect(observableHandler.match('https://observablehq.com/@alice/-/collection/maps')).toBe(
-        true,
-      )
-    })
-
-    it('should match collection URLs without the dash segment', () => {
-      expect(observableHandler.match('https://observablehq.com/@alice/collection/maps')).toBe(true)
-    })
-
-    it('should not match notebook URLs', () => {
-      expect(observableHandler.match('https://observablehq.com/@alice/hello-world')).toBe(false)
-    })
-
     it('should not match recent URL', () => {
       expect(observableHandler.match('https://observablehq.com/recent')).toBe(false)
-    })
-
-    it('should not match trending URL', () => {
-      expect(observableHandler.match('https://observablehq.com/trending')).toBe(false)
-    })
-
-    it('should not match root URL', () => {
-      expect(observableHandler.match('https://observablehq.com/')).toBe(false)
-    })
-
-    it('should not match non-Observable URLs', () => {
-      expect(observableHandler.match('https://example.com/@alice')).toBe(false)
-    })
-
-    it('should not match invalid URLs', () => {
-      expect(observableHandler.match('not-a-url')).toBe(false)
     })
   })
 
@@ -85,14 +47,15 @@ describe('observableHandler', () => {
       expect(await observableHandler.resolve(url)).toEqual(expected)
     })
 
-    it('should return empty array for a notebook page', async () => {
+    it('should return the owner ref for a notebook page', async () => {
       const url = 'https://observablehq.com/@alice/hello-world'
+      const expected: Array<DiscoverRef> = [{ platform: 'observable', id: 'alice', url }]
 
-      expect(await observableHandler.resolve(url)).toEqual([])
+      expect(await observableHandler.resolve(url)).toEqual(expected)
     })
 
-    it('should return empty array for invalid URL', async () => {
-      expect(await observableHandler.resolve('not-a-url')).toEqual([])
+    it('should return empty array for a non-profile page', async () => {
+      expect(await observableHandler.resolve('https://observablehq.com/recent')).toEqual([])
     })
   })
 })
@@ -137,17 +100,21 @@ describe('observableEnricher', () => {
     expect(await observableEnricher(ref, context)).toEqual([])
   })
 
-  it('should return empty array when API returns invalid JSON', async () => {
+  it('should reject when API returns invalid JSON', async () => {
     const context = createContext({ [apiUrl]: 'not-json' })
 
-    expect(await observableEnricher(ref, context)).toEqual([])
+    await expect(observableEnricher(ref, context)).rejects.toThrow()
   })
 
-  it('should return empty array when fetch throws', async () => {
+  it('should reject when fetch throws', async () => {
     const fetchFn: FetchFn = () => {
       throw new Error('Network error')
     }
 
-    expect(await observableEnricher(ref, { fetchFn })).toEqual([])
+    await expect(observableEnricher(ref, { fetchFn })).rejects.toThrow()
+  })
+
+  it('should reject when the response is not 2xx', async () => {
+    await expect(observableEnricher(ref, createContext({}))).rejects.toThrow()
   })
 })

@@ -104,9 +104,5 @@ describe('diasporaHandler', () => {
     it('should return an empty array for the pod root', () => {
       expect(diasporaHandler.resolve('https://example.org/')).toEqual([])
     })
-
-    it('should return an empty array for invalid URLs', () => {
-      expect(diasporaHandler.resolve('not-a-url')).toEqual([])
-    })
   })
 })

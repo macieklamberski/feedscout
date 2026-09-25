@@ -1,32 +1,77 @@
 import { describe, expect, it } from 'bun:test'
-import { soundcloudHandler } from './soundcloud.js'
+import type { SoundcloudUrl } from './soundcloud.js'
+import { parseSoundcloudUrl, soundcloudHandler } from './soundcloud.js'
+
+describe('parseSoundcloudUrl', () => {
+  it('should return the user for a profile page', () => {
+    const expected: SoundcloudUrl = { kind: 'user', username: 'diplo' }
+
+    expect(parseSoundcloudUrl('https://soundcloud.com/diplo')).toEqual(expected)
+  })
+
+  it('should return the user for a trailing slash', () => {
+    const expected: SoundcloudUrl = { kind: 'user', username: 'diplo' }
+
+    expect(parseSoundcloudUrl('https://soundcloud.com/diplo/')).toEqual(expected)
+  })
+
+  it('should return the user for the www and mobile hosts', () => {
+    const expected: SoundcloudUrl = { kind: 'user', username: 'diplo' }
+
+    expect(parseSoundcloudUrl('https://www.soundcloud.com/diplo')).toEqual(expected)
+    expect(parseSoundcloudUrl('https://m.soundcloud.com/diplo')).toEqual(expected)
+  })
+
+  it('should return the user for user subpages', () => {
+    const expected: SoundcloudUrl = { kind: 'user', username: 'diplo' }
+
+    expect(parseSoundcloudUrl('https://soundcloud.com/diplo/tracks')).toEqual(expected)
+    expect(parseSoundcloudUrl('https://soundcloud.com/diplo/likes')).toEqual(expected)
+  })
+
+  it('should return the user for track and playlist pages', () => {
+    const expected: SoundcloudUrl = { kind: 'user', username: 'diplo' }
+
+    expect(parseSoundcloudUrl('https://soundcloud.com/diplo/first-song')).toEqual(expected)
+    expect(parseSoundcloudUrl('https://soundcloud.com/diplo/sets/summer')).toEqual(expected)
+  })
+
+  it('should return undefined for excluded paths', () => {
+    expect(parseSoundcloudUrl('https://soundcloud.com/discover')).toBeUndefined()
+    expect(parseSoundcloudUrl('https://soundcloud.com/stream')).toBeUndefined()
+    expect(parseSoundcloudUrl('https://soundcloud.com/search')).toBeUndefined()
+    expect(parseSoundcloudUrl('https://soundcloud.com/upload')).toBeUndefined()
+    expect(parseSoundcloudUrl('https://soundcloud.com/you')).toBeUndefined()
+    expect(parseSoundcloudUrl('https://soundcloud.com/settings')).toBeUndefined()
+    expect(parseSoundcloudUrl('https://soundcloud.com/messages')).toBeUndefined()
+  })
+
+  it('should return undefined for excluded paths in any case', () => {
+    expect(parseSoundcloudUrl('https://soundcloud.com/Discover')).toBeUndefined()
+    expect(parseSoundcloudUrl('https://soundcloud.com/STREAM')).toBeUndefined()
+  })
+
+  it('should return undefined for the root', () => {
+    expect(parseSoundcloudUrl('https://soundcloud.com')).toBeUndefined()
+  })
+
+  it('should return undefined for another host', () => {
+    expect(parseSoundcloudUrl('https://example.com/diplo')).toBeUndefined()
+  })
+
+  it('should return undefined for an invalid URL', () => {
+    expect(parseSoundcloudUrl('not-a-url')).toBeUndefined()
+  })
+})
 
 describe('soundcloudHandler', () => {
   describe('match', () => {
-    const values: Array<[boolean, string]> = [
-      [true, 'https://soundcloud.com/diplo'],
-      [true, 'https://www.soundcloud.com/diplo'],
-      [true, 'https://m.soundcloud.com/diplo'],
-      [true, 'https://soundcloud.com/diplo/tracks'],
-      [false, 'https://soundcloud.com/discover'],
-      [false, 'https://soundcloud.com/stream'],
-      [false, 'https://soundcloud.com/search'],
-      [false, 'https://soundcloud.com/upload'],
-      [false, 'https://soundcloud.com/you'],
-      [false, 'https://soundcloud.com/settings'],
-      [false, 'https://soundcloud.com/messages'],
-      [false, 'https://soundcloud.com/Discover'],
-      [false, 'https://soundcloud.com/STREAM'],
-      [false, 'https://soundcloud.com'],
-      [false, 'https://example.com/diplo'],
-    ]
-
-    it.each(values)('should return %s for %s', (expected, url) => {
-      expect(soundcloudHandler.match(url)).toBe(expected)
+    it('should match a profile page', () => {
+      expect(soundcloudHandler.match('https://soundcloud.com/diplo')).toBe(true)
     })
 
-    it('should return false for invalid URL', () => {
-      expect(soundcloudHandler.match('not-a-url')).toBe(false)
+    it('should not match an excluded path', () => {
+      expect(soundcloudHandler.match('https://soundcloud.com/discover')).toBe(false)
     })
   })
 
@@ -59,10 +104,6 @@ describe('soundcloudHandler', () => {
       const content = '<html><body>No user ID here</body></html>'
 
       expect(soundcloudHandler.resolve(value, content)).toEqual([])
-    })
-
-    it('should return empty array for invalid URL without content', () => {
-      expect(soundcloudHandler.resolve('not-a-url')).toEqual([])
     })
   })
 })

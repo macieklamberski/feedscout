@@ -47,26 +47,22 @@ export const discuzHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    try {
-      const { origin } = new URL(url)
-      const boardId = getBoardId(url)
-      const uris: Array<DiscoverUriEntry> = []
+    const { origin } = new URL(url)
+    const boardId = getBoardId(url)
+    const uris: Array<DiscoverUriEntry> = []
 
-      if (boardId) {
-        uris.push({
-          uri: `${origin}/forum.php?mod=rss&fid=${boardId}`,
-          hint: composeHint('discuz:board'),
-        })
-      }
-
+    if (boardId) {
       uris.push({
-        uri: `${origin}/forum.php?mod=rss`,
-        hint: composeHint('discuz:site'),
+        uri: `${origin}/forum.php?mod=rss&fid=${boardId}`,
+        hint: composeHint('discuz:board'),
       })
+    }
 
-      return uris
-    } catch {}
+    uris.push({
+      uri: `${origin}/forum.php?mod=rss`,
+      hint: composeHint('discuz:site'),
+    })
 
-    return []
+    return uris
   },
 }

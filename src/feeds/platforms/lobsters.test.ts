@@ -1,23 +1,89 @@
 import { describe, expect, it } from 'bun:test'
-import { lobstersHandler } from './lobsters.js'
+import type { LobstersUrl } from './lobsters.js'
+import { lobstersHandler, parseLobstersUrl } from './lobsters.js'
+
+describe('parseLobstersUrl', () => {
+  it('should return the tag for a tag page', () => {
+    const expected: LobstersUrl = { kind: 'tag', tags: 'programming' }
+
+    expect(parseLobstersUrl('https://lobste.rs/t/programming')).toEqual(expected)
+  })
+
+  it('should return every tag for a multiple tags page', () => {
+    const expected: LobstersUrl = { kind: 'tag', tags: 'programming,security' }
+
+    expect(parseLobstersUrl('https://lobste.rs/t/programming,security')).toEqual(expected)
+  })
+
+  it('should return the domain for a domain page', () => {
+    const expected: LobstersUrl = { kind: 'domain', domain: 'github.com' }
+
+    expect(parseLobstersUrl('https://lobste.rs/domains/github.com')).toEqual(expected)
+  })
+
+  it('should return the user for a user page', () => {
+    const expected: LobstersUrl = { kind: 'user', username: 'jcs' }
+
+    expect(parseLobstersUrl('https://lobste.rs/~jcs')).toEqual(expected)
+  })
+
+  it('should return the user for a user page with a trailing slash', () => {
+    const expected: LobstersUrl = { kind: 'user', username: 'pushcx' }
+
+    expect(parseLobstersUrl('https://lobste.rs/~pushcx/')).toEqual(expected)
+  })
+
+  it('should return the user for a user subpage', () => {
+    const expected: LobstersUrl = { kind: 'user', username: 'pushcx' }
+
+    expect(parseLobstersUrl('https://lobste.rs/~pushcx/stories')).toEqual(expected)
+  })
+
+  it('should keep the username case', () => {
+    const expected: LobstersUrl = { kind: 'user', username: 'PushCX' }
+
+    expect(parseLobstersUrl('https://lobste.rs/~PushCX')).toEqual(expected)
+  })
+
+  it('should return undefined for the site-wide top page', () => {
+    expect(parseLobstersUrl('https://lobste.rs/top/1d')).toBeUndefined()
+  })
+
+  it('should return undefined for a username with an @ character', () => {
+    expect(parseLobstersUrl('https://lobste.rs/~@invalid')).toBeUndefined()
+  })
+
+  it('should return undefined for the newest and comments pages', () => {
+    expect(parseLobstersUrl('https://lobste.rs/newest')).toBeUndefined()
+    expect(parseLobstersUrl('https://lobste.rs/comments')).toBeUndefined()
+  })
+
+  it('should return undefined for the homepage', () => {
+    expect(parseLobstersUrl('https://lobste.rs')).toBeUndefined()
+    expect(parseLobstersUrl('https://lobste.rs/')).toBeUndefined()
+  })
+
+  it('should return undefined for the www host', () => {
+    expect(parseLobstersUrl('https://www.lobste.rs/~jcs')).toBeUndefined()
+  })
+
+  it('should return undefined for another host', () => {
+    expect(parseLobstersUrl('https://example.com/~user')).toBeUndefined()
+  })
+
+  it('should return undefined for an invalid URL', () => {
+    expect(parseLobstersUrl('not-a-url')).toBeUndefined()
+  })
+})
 
 describe('lobstersHandler', () => {
   describe('match', () => {
-    const values: Array<[boolean, string]> = [
-      [true, 'https://lobste.rs/'],
-      [true, 'https://lobste.rs/newest'],
-      [true, 'https://lobste.rs/t/programming'],
-      [true, 'https://lobste.rs/t/programming,security'],
-      [true, 'https://lobste.rs/domains/github.com'],
-      [false, 'https://example.com/lobsters'],
-    ]
-
-    it.each(values)('should return %s for %s', (expected, url) => {
-      expect(lobstersHandler.match(url)).toBe(expected)
+    it('should match a Lobsters URL', () => {
+      expect(lobstersHandler.match('https://lobste.rs/')).toBe(true)
     })
 
-    it('should return false for invalid URL', () => {
-      expect(lobstersHandler.match('not-a-url')).toBe(false)
+    it('should not match other hosts', () => {
+      expect(lobstersHandler.match('https://example.com/lobsters')).toBe(false)
     })
   })
 
@@ -48,18 +114,6 @@ describe('lobstersHandler', () => {
       const value = 'https://lobste.rs/t/programming'
       const expected = [
         { uri: 'https://lobste.rs/t/programming.rss', hint: { key: 'lobsters:tag', label: 'Tag' } },
-      ]
-
-      expect(lobstersHandler.resolve(value)).toEqual(expected)
-    })
-
-    it('should return tag RSS feed for multiple tags page', () => {
-      const value = 'https://lobste.rs/t/programming,security'
-      const expected = [
-        {
-          uri: 'https://lobste.rs/t/programming,security.rss',
-          hint: { key: 'lobsters:tag', label: 'Tag' },
-        },
       ]
 
       expect(lobstersHandler.resolve(value)).toEqual(expected)
@@ -123,19 +177,6 @@ describe('lobstersHandler', () => {
       expect(lobstersHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should fall back to main feed for invalid top period', () => {
-      const value = 'https://lobste.rs/top/2d'
-      const expected = [
-        { uri: 'https://lobste.rs/rss', hint: { key: 'lobsters:stories', label: 'Stories' } },
-        {
-          uri: 'https://lobste.rs/comments.rss',
-          hint: { key: 'lobsters:comments', label: 'Comments' },
-        },
-      ]
-
-      expect(lobstersHandler.resolve(value)).toEqual(expected)
-    })
-
     it('should return comments feed for comments page', () => {
       const value = 'https://lobste.rs/comments'
       const expected = [
@@ -146,11 +187,6 @@ describe('lobstersHandler', () => {
       ]
 
       expect(lobstersHandler.resolve(value)).toEqual(expected)
-    })
-
-    it.todo('should define behavior for invalid URL input', () => {
-      // resolve('not-a-url') currently throws a TypeError from the unguarded new URL call; the
-      // desired contract (throw vs empty array) is undecided.
     })
   })
 })

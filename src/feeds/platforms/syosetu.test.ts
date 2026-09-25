@@ -40,9 +40,5 @@ describe('syosetuHandler', () => {
     it('should return an empty array without an author id', () => {
       expect(syosetuHandler.resolve('https://mypage.syosetu.com/')).toEqual([])
     })
-
-    it('should return an empty array for invalid URLs', () => {
-      expect(syosetuHandler.resolve('not-a-url')).toEqual([])
-    })
   })
 })

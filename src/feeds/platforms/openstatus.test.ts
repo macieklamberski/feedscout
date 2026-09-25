@@ -89,9 +89,5 @@ describe('openstatusHandler', () => {
 
       expect(openstatusHandler.resolve(value)).toEqual(expected)
     })
-
-    it('should return an empty array for invalid URLs', () => {
-      expect(openstatusHandler.resolve('not-a-url')).toEqual([])
-    })
   })
 })

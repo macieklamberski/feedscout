@@ -4,12 +4,14 @@ import { composeHint, hasAnyMeta } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
-export const profileRegex = /^\/(?:users\/)?([a-zA-Z0-9_]+)\/?$/
+export type PixelfedUrl = { kind: 'user'; username: string }
+
+const profileRegex = /^\/(?:users\/)?([a-zA-Z0-9_]+)\/?$/
 const metaMarkers: Array<[string, string]> = [
   ['generator', 'pixelfed'],
   ['application-name', 'Pixelfed'],
 ]
-export const excludedPaths = [
+const excludedPaths = [
   'admin',
   'api',
   'discover',
@@ -29,41 +31,42 @@ export const isPixelfedHtml = (content: string): boolean => {
   return hasAnyMeta(content, metaMarkers)
 }
 
+export const parsePixelfedUrl = (url: string): PixelfedUrl | undefined => {
+  const parsedUrl = parseUrl(url)
+
+  if (!parsedUrl) {
+    return
+  }
+
+  const username = parsedUrl.pathname.match(profileRegex)?.[1]
+
+  if (!username || isAnyOf(username, excludedPaths)) {
+    return
+  }
+
+  return { kind: 'user', username }
+}
+
 export const pixelfedHandler: PlatformHandler = {
   match: (url, content) => {
     if (!content || !isPixelfedHtml(content)) {
       return false
     }
 
-    const parsedUrl = parseUrl(url)
-
-    if (!parsedUrl) {
-      return false
-    }
-
-    const { pathname } = parsedUrl
-    const match = pathname.match(profileRegex)
-
-    return Boolean(match?.[1] && !isAnyOf(match[1], excludedPaths))
+    return parsePixelfedUrl(url) !== undefined
   },
 
   resolve: (url) => {
-    const parsedUrl = parseUrl(url)
+    const { origin } = new URL(url)
+    const username = parsePixelfedUrl(url)?.username
 
-    if (!parsedUrl) {
-      return []
-    }
-
-    const { origin, pathname } = parsedUrl
-    const match = pathname.match(profileRegex)
-
-    if (!match?.[1] || isAnyOf(match[1], excludedPaths)) {
+    if (!username) {
       return []
     }
 
     return [
       {
-        uri: `${origin}/users/${match[1]}.atom`,
+        uri: `${origin}/users/${username}.atom`,
         hint: composeHint('pixelfed:posts'),
       },
     ]

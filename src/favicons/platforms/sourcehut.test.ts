@@ -43,52 +43,8 @@ describe('sourcehutHandler', () => {
       expect(sourcehutHandler.match('https://sr.ht/~example/')).toBe(true)
     })
 
-    it('should match a user page on git.sr.ht', () => {
-      expect(sourcehutHandler.match('https://git.sr.ht/~example')).toBe(true)
-    })
-
-    it('should match a user page on todo.sr.ht', () => {
-      expect(sourcehutHandler.match('https://todo.sr.ht/~example/')).toBe(true)
-    })
-
-    it('should match a repository page on git.sr.ht', () => {
-      expect(sourcehutHandler.match('https://git.sr.ht/~example/project')).toBe(true)
-    })
-
-    it('should match a path below the repository', () => {
-      expect(sourcehutHandler.match('https://git.sr.ht/~example/project/tree')).toBe(true)
-    })
-
     it('should not match a project page on sr.ht', () => {
       expect(sourcehutHandler.match('https://sr.ht/~example/project/')).toBe(false)
-    })
-
-    it('should not match a tracker page on todo.sr.ht', () => {
-      expect(sourcehutHandler.match('https://todo.sr.ht/~example/project')).toBe(false)
-    })
-
-    it('should not match a path without the tilde prefix', () => {
-      expect(sourcehutHandler.match('https://git.sr.ht/example/project')).toBe(false)
-    })
-
-    it('should not match a bare tilde', () => {
-      expect(sourcehutHandler.match('https://sr.ht/~/')).toBe(false)
-    })
-
-    it('should not match the root', () => {
-      expect(sourcehutHandler.match('https://sr.ht/')).toBe(false)
-    })
-
-    it('should not match other sr.ht services', () => {
-      expect(sourcehutHandler.match('https://lists.sr.ht/~example')).toBe(false)
-    })
-
-    it('should not match other hosts', () => {
-      expect(sourcehutHandler.match('https://example.com/~example')).toBe(false)
-    })
-
-    it('should not match invalid URLs', () => {
-      expect(sourcehutHandler.match('not-a-url')).toBe(false)
     })
   })
 
@@ -119,7 +75,7 @@ describe('sourcehutHandler', () => {
         expect(sourcehutHandler.resolve(value, userPageWithoutAvatar)).toEqual([])
       })
 
-      it('should return empty array for an unmatched URL', () => {
+      it('should return empty array for a project page', () => {
         expect(sourcehutHandler.resolve('https://sr.ht/~example/project/', userPage)).toEqual([])
       })
     })
@@ -136,6 +92,18 @@ describe('sourcehutHandler', () => {
         `
 
         expect(sourcehutHandler.resolve('https://sr.ht/~example/', content)).toEqual([])
+      })
+
+      it('should decode entities in the avatar URL', () => {
+        const content = `
+          <img
+            class="avatar"
+            src="${avatarUrl}?size=256&amp;v=2"
+          />
+        `
+        const expected: Array<DiscoverUriEntry> = [{ uri: `${avatarUrl}?size=256&v=2` }]
+
+        expect(sourcehutHandler.resolve('https://sr.ht/~example/', content)).toEqual(expected)
       })
 
       it('should read the avatar when class comes before src', () => {
@@ -178,13 +146,13 @@ describe('sourcehutEnricher', () => {
     expect(await sourcehutEnricher(ref, context)).toEqual([])
   })
 
-  it('should return empty array when the owner page is missing', async () => {
+  it('should reject when the owner page is missing', async () => {
     const ref = createRef('https://git.sr.ht/~example/project', 'example')
 
-    expect(await sourcehutEnricher(ref, createContext({}))).toEqual([])
+    await expect(sourcehutEnricher(ref, createContext({}))).rejects.toThrow()
   })
 
-  it('should return empty array when the body is a stream', async () => {
+  it('should reject when the body is a stream', async () => {
     const fetchFn: FetchFn = async (url) => ({
       headers: new Headers(),
       body: new ReadableStream(),
@@ -193,15 +161,15 @@ describe('sourcehutEnricher', () => {
     })
     const ref = createRef('https://git.sr.ht/~example/project', 'example')
 
-    expect(await sourcehutEnricher(ref, { fetchFn })).toEqual([])
+    await expect(sourcehutEnricher(ref, { fetchFn })).rejects.toThrow('Unexpected stream body')
   })
 
-  it('should return empty array when fetch throws', async () => {
+  it('should reject when fetch throws', async () => {
     const fetchFn: FetchFn = () => {
       throw new Error('Network error')
     }
     const ref = createRef('https://git.sr.ht/~example/project', 'example')
 
-    expect(await sourcehutEnricher(ref, { fetchFn })).toEqual([])
+    await expect(sourcehutEnricher(ref, { fetchFn })).rejects.toThrow()
   })
 })

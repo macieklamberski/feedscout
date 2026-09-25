@@ -36,40 +36,6 @@ const createRef = (url: string): DiscoverRef => {
 }
 
 describe('postypeHandler', () => {
-  describe('match', () => {
-    it('should match a channel page', () => {
-      expect(postypeHandler.match('https://www.postype.com/@example')).toBe(true)
-    })
-
-    it('should match a channel page on the bare host', () => {
-      expect(postypeHandler.match('https://postype.com/@example')).toBe(true)
-    })
-
-    it('should match a post page', () => {
-      expect(postypeHandler.match('https://www.postype.com/@example/post/23216701')).toBe(true)
-    })
-
-    it('should not match a bare at sign', () => {
-      expect(postypeHandler.match('https://www.postype.com/@')).toBe(false)
-    })
-
-    it('should not match a page outside a channel', () => {
-      expect(postypeHandler.match('https://www.postype.com/explore')).toBe(false)
-    })
-
-    it('should not match the root', () => {
-      expect(postypeHandler.match('https://www.postype.com/')).toBe(false)
-    })
-
-    it('should not match other hosts', () => {
-      expect(postypeHandler.match('https://example.com/@example')).toBe(false)
-    })
-
-    it('should not match invalid URLs', () => {
-      expect(postypeHandler.match('not-a-url')).toBe(false)
-    })
-  })
-
   describe('resolve', () => {
     describe('happy paths', () => {
       it('should return the square avatar from the channel page content', () => {
@@ -84,6 +50,13 @@ describe('postypeHandler', () => {
         const expected: Array<DiscoverRef> = [createRef(value)]
 
         expect(postypeHandler.resolve(value)).toEqual(expected)
+      })
+
+      it('should return a ref to the channel for a channel subdomain', () => {
+        const value = 'https://example.postype.com/series'
+        const expected: Array<DiscoverRef> = [createRef(value)]
+
+        expect(postypeHandler.resolve(value, channelPage)).toEqual(expected)
       })
 
       it('should return a ref to the channel for a post page', () => {
@@ -109,7 +82,7 @@ describe('postypeHandler', () => {
         expect(postypeHandler.resolve(value, '<title>Example</title>')).toEqual(expected)
       })
 
-      it('should return empty array for an unmatched URL', () => {
+      it('should return empty array for a page outside a channel', () => {
         expect(postypeHandler.resolve('https://www.postype.com/explore', channelPage)).toEqual([])
       })
     })
@@ -141,13 +114,7 @@ describe('postypeEnricher', () => {
     expect(await postypeEnricher(ref, context)).toEqual([])
   })
 
-  it('should return empty array when the channel page is missing', async () => {
-    const ref = createRef('https://www.postype.com/@example')
-
-    expect(await postypeEnricher(ref, createContext({}))).toEqual([])
-  })
-
-  it('should return empty array when the body is a stream', async () => {
+  it('should reject when the body is a stream', async () => {
     const fetchFn: FetchFn = async (url) => ({
       headers: new Headers(),
       body: new ReadableStream(),
@@ -156,15 +123,21 @@ describe('postypeEnricher', () => {
     })
     const ref = createRef('https://www.postype.com/@example')
 
-    expect(await postypeEnricher(ref, { fetchFn })).toEqual([])
+    await expect(postypeEnricher(ref, { fetchFn })).rejects.toThrow('Unexpected stream body')
   })
 
-  it('should return empty array when fetch throws', async () => {
+  it('should reject when fetch throws', async () => {
     const fetchFn: FetchFn = () => {
       throw new Error('Network error')
     }
     const ref = createRef('https://www.postype.com/@example')
 
-    expect(await postypeEnricher(ref, { fetchFn })).toEqual([])
+    await expect(postypeEnricher(ref, { fetchFn })).rejects.toThrow()
+  })
+
+  it('should reject when the response is not 2xx', async () => {
+    const ref = createRef('https://www.postype.com/@example')
+
+    await expect(postypeEnricher(ref, createContext({}))).rejects.toThrow()
   })
 })

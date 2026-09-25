@@ -139,9 +139,5 @@ describe('confluenceHandler', () => {
 
       expect(confluenceHandler.resolve(value, content)).toEqual(expected)
     })
-
-    it('should return an empty array for invalid URLs', () => {
-      expect(confluenceHandler.resolve('not-a-url', confluenceHtml)).toEqual([])
-    })
   })
 })

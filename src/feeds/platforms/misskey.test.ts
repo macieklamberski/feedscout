@@ -26,6 +26,10 @@ describe('misskeyHandler', () => {
       )
     })
 
+    it('should return true for a single-quoted misskey_meta id', () => {
+      expect(isMisskeyHtml("<script id='misskey_meta'>{}</script>")).toBe(true)
+    })
+
     it('should return false for non-Misskey application-name', () => {
       expect(isMisskeyHtml(otherHtml)).toBe(false)
     })
@@ -100,10 +104,6 @@ describe('misskeyHandler', () => {
 
     it('should return empty array for non-profile paths', () => {
       expect(misskeyHandler.resolve('https://misskey.io/explore')).toEqual([])
-    })
-
-    it('should return empty array for invalid URL', () => {
-      expect(misskeyHandler.resolve('not-a-url')).toEqual([])
     })
   })
 })

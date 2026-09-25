@@ -1,4 +1,4 @@
-import { isHostOf, parseUrl } from 'trousse'
+import { getPathSegments, isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
@@ -6,44 +6,57 @@ import { composeHint } from '../../common/utils.js'
 // Generic partly covers log.
 // Handler needed for: repo.
 
+export type SourcehutUrl =
+  | { kind: 'user'; owner: string }
+  | { kind: 'repo'; owner: string; repo: string }
+
 export const hosts = ['git.sr.ht']
+const userHosts = ['sr.ht', 'todo.sr.ht', ...hosts]
 
-export const getRepoPath = (url: string): string | undefined => {
-  const segments = new URL(url).pathname.split('/').filter(Boolean)
+export const parseSourcehutUrl = (url: string): SourcehutUrl | undefined => {
+  const parsedUrl = parseUrl(url)
 
-  if (!segments[0]?.startsWith('~') || segments[0].length < 2 || !segments[1]) {
+  if (!parsedUrl) {
     return
   }
 
-  return `${segments[0]}/${segments[1]}`
+  const [first, repo] = getPathSegments(parsedUrl)
+
+  if (!first?.startsWith('~') || first.length < 2) {
+    return
+  }
+
+  const owner = first.slice(1)
+
+  if (repo && isHostOf(parsedUrl, hosts)) {
+    return { kind: 'repo', owner, repo }
+  }
+
+  if (!repo && isHostOf(parsedUrl, userHosts)) {
+    return { kind: 'user', owner }
+  }
 }
 
 export const sourcehutHandler: PlatformHandler = {
   match: (url) => {
-    return isHostOf(url, hosts) && Boolean(getRepoPath(url))
+    return parseSourcehutUrl(url)?.kind === 'repo'
   },
 
   resolve: (url) => {
-    const parsedUrl = parseUrl(url)
+    const { origin } = new URL(url)
+    const parsed = parseSourcehutUrl(url)
 
-    if (!parsedUrl) {
-      return []
-    }
-
-    const { origin } = parsedUrl
-    const repoPath = getRepoPath(url)
-
-    if (!repoPath) {
+    if (parsed?.kind !== 'repo') {
       return []
     }
 
     return [
       {
-        uri: `${origin}/${repoPath}/log/rss.xml`,
+        uri: `${origin}/~${parsed.owner}/${parsed.repo}/log/rss.xml`,
         hint: composeHint('sourcehut:commits'),
       },
       {
-        uri: `${origin}/${repoPath}/refs/rss.xml`,
+        uri: `${origin}/~${parsed.owner}/${parsed.repo}/refs/rss.xml`,
         hint: composeHint('sourcehut:refs'),
       },
     ]

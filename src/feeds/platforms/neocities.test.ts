@@ -53,9 +53,5 @@ describe('neocitiesHandler', () => {
     it('should return an empty array for the main host root', () => {
       expect(neocitiesHandler.resolve('https://neocities.org/')).toEqual([])
     })
-
-    it('should return an empty array for invalid URLs', () => {
-      expect(neocitiesHandler.resolve('not-a-url')).toEqual([])
-    })
   })
 })

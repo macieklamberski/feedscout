@@ -1,30 +1,25 @@
-import { isAnyOf, isHostOf, isNonEmptyString, parseUrl } from 'trousse'
+import { getPathSegments, isAnyOf, isNonEmptyString } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { excludedPaths, hosts, magazineRegex } from '../../feeds/platforms/note.js'
+import { excludedPaths, parseNoteUrl } from '../../feeds/platforms/note.js'
 import type { FaviconEnricher } from '../types.js'
-import { parseBodyJson } from '../utils.js'
+import { parseResponseJson } from '../utils.js'
 
 const platform = 'note'
 
-const profileRegex = /^\/([^/]+)\/?$/
 // The page payload is a JSON string inside `self.__next_f.push`, so its quotes arrive escaped.
 const profileImageUrlRegex = /profileImageUrl\\?":\\?"((?:[^"\\]|\\u[\da-f]{4})+)/i
 
 const getOwner = (url: string): string | undefined => {
-  const parsedUrl = parseUrl(url)
+  const parsed = parseNoteUrl(url)
 
-  if (!parsedUrl || !isHostOf(url, hosts)) {
-    return
+  if (parsed?.kind === 'user') {
+    return parsed.username
   }
 
-  const { pathname } = parsedUrl
-  const owner = pathname.match(magazineRegex)?.[1] ?? pathname.match(profileRegex)?.[1]
-
-  if (!owner || isAnyOf(owner, excludedPaths)) {
-    return
+  // A magazine page under a reserved path names no owner.
+  if (parsed?.kind === 'magazine' && !isAnyOf(parsed.username, excludedPaths)) {
+    return parsed.username
   }
-
-  return owner
 }
 
 const parseProfileImageUrl = (content: string): string | undefined => {
@@ -34,6 +29,7 @@ const parseProfileImageUrl = (content: string): string | undefined => {
     return
   }
 
+  // A broken page payload must not hide the creators API, which the ref falls back to.
   try {
     return JSON.parse(`"${match[1]}"`)
   } catch {}
@@ -51,8 +47,8 @@ export const noteHandler: PlatformHandler = {
       return []
     }
 
-    // A magazine page payload describes the magazine, not its owner.
-    const isProfile = profileRegex.test(new URL(url).pathname)
+    // A magazine or article page payload describes the magazine or article, not its owner.
+    const isProfile = getPathSegments(url).length === 1
 
     if (isProfile && content) {
       const profileImageUrl = parseProfileImageUrl(content)
@@ -72,14 +68,12 @@ export const noteEnricher: FaviconEnricher = async (ref, context) => {
     return
   }
 
-  try {
-    const response = await context.fetchFn(`https://note.com/api/v2/creators/${ref.id}`)
-    const profileImageUrl = parseBodyJson(response.body)?.data?.profileImageUrl
+  const response = await context.fetchFn(`https://note.com/api/v2/creators/${ref.id}`)
+  const profileImageUrl = parseResponseJson(response)?.data?.profileImageUrl
 
-    if (isNonEmptyString(profileImageUrl)) {
-      return [profileImageUrl]
-    }
-  } catch {}
+  if (isNonEmptyString(profileImageUrl)) {
+    return [profileImageUrl]
+  }
 
   return []
 }

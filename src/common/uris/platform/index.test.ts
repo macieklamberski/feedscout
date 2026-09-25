@@ -279,7 +279,7 @@ describe('discoverUrisFromPlatform', () => {
         { platform: 'example', id: 'alice', url: 'https://example.com/@alice' },
       ],
     }
-    const enrichFn: DiscoverEnrichFn = () => [['https://cdn.example.com/alice.png']]
+    const enrichFn: DiscoverEnrichFn = () => ['https://cdn.example.com/alice.png']
     const options = { baseUrl: 'https://example.com', handlers: [handler], enrichFn }
     const expected = [
       { uri: 'https://example.com/avatar.png' },
@@ -289,8 +289,8 @@ describe('discoverUrisFromPlatform', () => {
     expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
   })
 
-  it('should pass every ref to enrichFn in one call', async () => {
-    const receivedCalls: Array<Array<DiscoverRef>> = []
+  it('should call enrichFn once per ref', async () => {
+    const receivedRefs: Array<DiscoverRef> = []
     const handler: PlatformHandler = {
       match: () => true,
       resolve: () => [
@@ -298,22 +298,20 @@ describe('discoverUrisFromPlatform', () => {
         { platform: 'example', id: 'bob', url: 'https://example.com/@bob' },
       ],
     }
-    const enrichFn: DiscoverEnrichFn = (refs) => {
-      receivedCalls.push(refs)
+    const enrichFn: DiscoverEnrichFn = (ref) => {
+      receivedRefs.push(ref)
 
       return []
     }
     const options = { baseUrl: 'https://example.com', handlers: [handler], enrichFn }
-    const expected = [
-      [
-        { platform: 'example', id: 'alice', url: 'https://example.com/@alice' },
-        { platform: 'example', id: 'bob', url: 'https://example.com/@bob' },
-      ],
+    const expected: Array<DiscoverRef> = [
+      { platform: 'example', id: 'alice', url: 'https://example.com/@alice' },
+      { platform: 'example', id: 'bob', url: 'https://example.com/@bob' },
     ]
 
     await discoverUrisFromPlatform(undefined, undefined, options)
 
-    expect(receivedCalls).toEqual(expected)
+    expect(receivedRefs).toEqual(expected)
   })
 
   it('should drop refs when enrichFn is not provided', async () => {
@@ -356,7 +354,13 @@ describe('discoverUrisFromPlatform', () => {
         { platform: 'example', id: 'bob', url: 'https://example.com/@bob' },
       ],
     }
-    const enrichFn: DiscoverEnrichFn = () => [undefined, ['https://cdn.example.com/bob.png']]
+    const enrichFn: DiscoverEnrichFn = (ref) => {
+      if (ref.id !== 'bob') {
+        return
+      }
+
+      return ['https://cdn.example.com/bob.png']
+    }
     const options = { baseUrl: 'https://example.com', handlers: [handler], enrichFn }
     const expected = [{ uri: 'https://cdn.example.com/bob.png' }]
 
@@ -376,6 +380,27 @@ describe('discoverUrisFromPlatform', () => {
     }
     const options = { baseUrl: 'https://example.com', handlers: [handler], enrichFn }
     const expected = [{ uri: 'https://example.com/avatar.png' }]
+
+    expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
+  })
+
+  it('should keep the other refs when enrichFn throws for one', async () => {
+    const handler: PlatformHandler = {
+      match: () => true,
+      resolve: () => [
+        { platform: 'example', id: 'alice', url: 'https://example.com/@alice' },
+        { platform: 'example', id: 'bob', url: 'https://example.com/@bob' },
+      ],
+    }
+    const enrichFn: DiscoverEnrichFn = (ref) => {
+      if (ref.id === 'alice') {
+        throw new Error('Enrich error')
+      }
+
+      return ['https://cdn.example.com/bob.png']
+    }
+    const options = { baseUrl: 'https://example.com', handlers: [handler], enrichFn }
+    const expected = [{ uri: 'https://cdn.example.com/bob.png' }]
 
     expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
   })

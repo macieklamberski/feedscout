@@ -1,43 +1,55 @@
-import { isHostOf, isNonEmptyString, parseUrl } from 'trousse'
+import { isNonEmptyString } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { appRegex, hosts } from '../../feeds/platforms/steam.js'
+import { findElement, getMetaContent, hasClass } from '../../common/utils.js'
+import { parseSteamUrl } from '../../feeds/platforms/steam.js'
 import type { FaviconEnricher } from '../types.js'
-import { parseBodyJson } from '../utils.js'
+import { parseResponseJson } from '../utils.js'
 
 const platform = 'steam'
 
-const appIconRegex = /class="apphub_AppIcon">\s*<img src="([^"]+)"/
+const findAppIcon = (content: string | undefined): string | undefined => {
+  const image = findElement(content, (element) => {
+    return (
+      element.name === 'img' &&
+      hasClass(element.parent, 'apphub_AppIcon') &&
+      Boolean(element.attribs.src)
+    )
+  })
 
-const getAppId = (url: string): string | undefined => {
-  const parsedUrl = parseUrl(url)
-
-  if (!parsedUrl || !isHostOf(url, hosts)) {
-    return
-  }
-
-  return parsedUrl.pathname.match(appRegex)?.[1]
+  return image?.attribs.src
 }
 
 export const steamHandler: PlatformHandler = {
   match: (url) => {
-    return getAppId(url) !== undefined
+    return parseSteamUrl(url) !== undefined
   },
 
   // Age-gated store pages and store app news pages carry no app icon in their markup.
   resolve: (url, content) => {
-    const appIconMatch = content?.match(appIconRegex)
+    const appIcon = findAppIcon(content)
 
-    if (appIconMatch?.[1]) {
-      return [{ uri: appIconMatch[1] }]
+    if (appIcon) {
+      return [{ uri: appIcon }]
     }
 
-    const appId = getAppId(url)
+    const parsed = parseSteamUrl(url)
 
-    if (!appId) {
+    // A group page carries the group avatar in its preview image.
+    if (parsed?.kind === 'group') {
+      const avatar = getMetaContent(content ?? '', 'og:image')
+
+      if (!avatar) {
+        return []
+      }
+
+      return [{ uri: avatar }]
+    }
+
+    if (parsed?.kind !== 'app') {
       return []
     }
 
-    return [{ platform, id: appId, url }]
+    return [{ platform, id: parsed.appId, url }]
   },
 }
 
@@ -46,17 +58,15 @@ export const steamEnricher: FaviconEnricher = async (ref, context) => {
     return
   }
 
-  try {
-    const apiUrl = `https://api.steampowered.com/ICommunityService/GetApps/v1/?appids[0]=${ref.id}`
-    const response = await context.fetchFn(apiUrl)
-    const icon = parseBodyJson(response.body)?.response?.apps?.[0]?.icon
+  const apiUrl = `https://api.steampowered.com/ICommunityService/GetApps/v1/?appids[0]=${ref.id}`
+  const response = await context.fetchFn(apiUrl)
+  const icon = parseResponseJson(response)?.response?.apps?.[0]?.icon
 
-    if (isNonEmptyString(icon)) {
-      return [
-        `https://shared.fastly.steamstatic.com/community_assets/images/apps/${ref.id}/${icon}.jpg`,
-      ]
-    }
-  } catch {}
+  if (isNonEmptyString(icon)) {
+    return [
+      `https://shared.fastly.steamstatic.com/community_assets/images/apps/${ref.id}/${icon}.jpg`,
+    ]
+  }
 
   return []
 }

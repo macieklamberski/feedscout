@@ -1,12 +1,26 @@
-import { isHostOf } from 'trousse'
+import { getPathSegments, isHostOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
-const profileRegex = /^\/profile\/([^/]+)/
+export type BlueskyUrl = { kind: 'profile'; handle: string }
 
 const hosts = ['bsky.app', 'www.bsky.app']
+
+export const parseBlueskyUrl = (url: string): BlueskyUrl | undefined => {
+  if (!isHostOf(url, hosts)) {
+    return
+  }
+
+  const [section, handle] = getPathSegments(url)
+
+  if (section !== 'profile' || !handle) {
+    return
+  }
+
+  return { kind: 'profile', handle }
+}
 
 export const blueskyHandler: PlatformHandler = {
   match: (url) => {
@@ -14,9 +28,7 @@ export const blueskyHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    const { pathname } = new URL(url)
-    const profileMatch = pathname.match(profileRegex)
-    const handle = profileMatch?.[1]
+    const handle = parseBlueskyUrl(url)?.handle
 
     if (!handle) {
       return []

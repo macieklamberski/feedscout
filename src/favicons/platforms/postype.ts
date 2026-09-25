@@ -1,8 +1,12 @@
-import { getPathSegments, isHostOf, parseUrl } from 'trousse'
+import { getPathSegments, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getMetaContent } from '../../common/utils.js'
-import { hosts } from '../../feeds/platforms/postype.js'
+import {
+  parsePostypeUrl,
+  postypeHandler as postypeFeedHandler,
+} from '../../feeds/platforms/postype.js'
 import type { FaviconEnricher } from '../types.js'
+import { getResponseText } from '../utils.js'
 
 const platform = 'postype'
 
@@ -12,20 +16,6 @@ const avatarHost = 'd3mcojo3jv0dbr.cloudfront.net'
 // The CDN center-crops to a square only when both sides fit inside the raw file, which is
 // often under 400 pixels on a side. Postype's own channel thumbnail asks for 200.
 const avatarQuery = '?w=200&h=200'
-
-const getChannel = (url: string): string | undefined => {
-  if (!isHostOf(url, hosts)) {
-    return
-  }
-
-  const [first] = getPathSegments(url)
-
-  if (!first?.startsWith('@') || first.length < 2) {
-    return
-  }
-
-  return first.slice(1)
-}
 
 const parseAvatar = (html: string): string | undefined => {
   const image = getMetaContent(html, 'og:image')
@@ -44,19 +34,17 @@ const parseAvatar = (html: string): string | undefined => {
 }
 
 export const postypeHandler: PlatformHandler = {
-  match: (url) => {
-    return Boolean(getChannel(url))
-  },
+  match: postypeFeedHandler.match,
 
   resolve: (url, content) => {
-    const channel = getChannel(url)
+    const parsed = parsePostypeUrl(url)
 
-    if (!channel) {
+    if (!parsed) {
       return []
     }
 
     // A post page carries the post cover as its og:image.
-    if (content && getPathSegments(url).length === 1) {
+    if (content && parsed.kind === 'channel' && getPathSegments(url).length === 1) {
       const avatar = parseAvatar(content)
 
       if (avatar) {
@@ -64,7 +52,7 @@ export const postypeHandler: PlatformHandler = {
       }
     }
 
-    return [{ platform, id: channel, url }]
+    return [{ platform, id: parsed.channel, url }]
   },
 }
 
@@ -73,17 +61,12 @@ export const postypeEnricher: FaviconEnricher = async (ref, context) => {
     return
   }
 
-  try {
-    const response = await context.fetchFn(`https://www.postype.com/@${ref.id}`)
+  const response = await context.fetchFn(`https://www.postype.com/@${ref.id}`)
+  const avatar = parseAvatar(getResponseText(response))
 
-    if (typeof response.body === 'string') {
-      const avatar = parseAvatar(response.body)
-
-      if (avatar) {
-        return [avatar]
-      }
-    }
-  } catch {}
+  if (avatar) {
+    return [avatar]
+  }
 
   return []
 }

@@ -1,46 +1,24 @@
-import { isAnyOf, isHostOf, isNonEmptyString, parseUrl } from 'trousse'
+import { isNonEmptyString } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { excludedPaths, hosts } from '../../feeds/platforms/devto.js'
+import { parseDevtoUrl } from '../../feeds/platforms/devto.js'
 import type { FaviconEnricher } from '../types.js'
-import { parseBodyJson } from '../utils.js'
+import { parseResponseJson } from '../utils.js'
 
 const platform = 'devto'
 
-// Extracts the username from the path, excluding dots to avoid capturing
-// feed extensions that may be appended to the URL.
-const userRegex = /^\/([^/.]+)/
-
 export const devtoHandler: PlatformHandler = {
   match: (url) => {
-    const parsedUrl = parseUrl(url)
-
-    if (!parsedUrl) {
-      return false
-    }
-
-    const { pathname } = parsedUrl
-    const match = pathname.match(userRegex)
-
-    if (!isHostOf(url, hosts) || !match?.[1]) {
-      return false
-    }
-
-    // Tag pages do not correspond to a user profile.
-    if (match[1] === 't') {
-      return false
-    }
-
-    return !isAnyOf(match[1], excludedPaths)
+    return parseDevtoUrl(url)?.kind === 'profile'
   },
 
   resolve: (url) => {
-    const username = parseUrl(url)?.pathname.match(userRegex)?.[1]
+    const parsed = parseDevtoUrl(url)
 
-    if (!username || username === 't') {
+    if (parsed?.kind !== 'profile') {
       return []
     }
 
-    return [{ platform, id: username, url }]
+    return [{ platform, id: parsed.owner, url }]
   },
 }
 
@@ -49,16 +27,19 @@ export const devtoEnricher: FaviconEnricher = async (ref, context) => {
     return
   }
 
-  try {
-    const apiUrl = `https://dev.to/api/users/by_username?url=${encodeURIComponent(ref.id)}`
-    const response = await context.fetchFn(apiUrl)
-    const data = parseBodyJson(response.body)
-    const profileImage = data?.profile_image
+  const name = encodeURIComponent(ref.id)
+  let response = await context.fetchFn(`https://dev.to/api/users/by_username?url=${name}`)
 
-    if (isNonEmptyString(profileImage)) {
-      return [profileImage]
-    }
-  } catch {}
+  // An organization's name answers 404 from the users API, and the organizations API has it.
+  if (response.status === 404) {
+    response = await context.fetchFn(`https://dev.to/api/organizations/${name}`)
+  }
+
+  const profileImage = parseResponseJson(response)?.profile_image
+
+  if (isNonEmptyString(profileImage)) {
+    return [profileImage]
+  }
 
   return []
 }

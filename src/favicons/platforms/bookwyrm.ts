@@ -1,55 +1,48 @@
 import { isNonEmptyString, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { isBookwyrmHtml } from '../../feeds/platforms/bookwyrm.js'
+import { findElement, hasClass } from '../../common/utils.js'
+import {
+  bookwyrmHandler as bookwyrmFeedHandler,
+  parseBookwyrmUrl,
+} from '../../feeds/platforms/bookwyrm.js'
 import type { FaviconEnricher } from '../types.js'
-import { parseBodyJson } from '../utils.js'
+import { parseResponseJson } from '../utils.js'
 
 const platform = 'bookwyrm'
 
-// Profile page, the all-books page, and a single shelf.
-const pageRegex = /^\/user\/([^/]+)(?:\/(?:shelf|books)(?:\/[^/]+)?)?\/?$/
-const profileRegex = /^\/user\/[^/]+\/?$/
-const avatarRegex = /<img(?=[^>]*\bclass=["'][^"']*\bavatar\b)[^>]*\bsrc=["']([^"']+)["']/i
 // Served in place of an avatar to users who never uploaded one.
 const defaultAvatarRegex = /\/images\/default_avi\.jpg$/
 
+const findAvatarSrc = (content: string | undefined): string | undefined => {
+  const avatar = findElement(content, (element) => {
+    return element.name === 'img' && hasClass(element, 'avatar') && Boolean(element.attribs.src)
+  })
+
+  return avatar?.attribs.src
+}
+
 export const bookwyrmHandler: PlatformHandler = {
-  match: (url, content) => {
-    if (!content || !isBookwyrmHtml(content)) {
-      return false
-    }
-
-    const parsedUrl = parseUrl(url)
-
-    if (!parsedUrl) {
-      return false
-    }
-
-    return pageRegex.test(parsedUrl.pathname)
-  },
+  match: bookwyrmFeedHandler.match,
 
   resolve: (url, content) => {
-    const parsedUrl = parseUrl(url)
-    const name = parsedUrl?.pathname.match(pageRegex)?.[1]
+    const parsed = parseBookwyrmUrl(url)
 
-    if (!parsedUrl || !name) {
+    if (!parsed) {
       return []
     }
 
-    // Shelf pages carry no avatar, so they go to the actor JSON.
-    const avatarSrc = profileRegex.test(parsedUrl.pathname)
-      ? content?.match(avatarRegex)?.[1]
-      : undefined
+    // Only the profile page carries the avatar, so other user pages go to the actor JSON.
+    const avatarSrc = parsed.kind === 'profile' ? findAvatarSrc(content) : undefined
 
     if (!avatarSrc) {
-      return [{ platform, id: name, url }]
+      return [{ platform, id: parsed.username, url }]
     }
 
     if (defaultAvatarRegex.test(avatarSrc)) {
       return []
     }
 
-    const avatarUrl = parseUrl(avatarSrc, parsedUrl)
+    const avatarUrl = parseUrl(avatarSrc, url)
 
     if (!avatarUrl) {
       return []
@@ -64,16 +57,14 @@ export const bookwyrmEnricher: FaviconEnricher = async (ref, context) => {
     return
   }
 
-  try {
-    const { origin } = new URL(ref.url)
-    const response = await context.fetchFn(`${origin}/user/${ref.id}.json`)
-    const data = parseBodyJson(response.body)
-    const iconUrl = data?.icon?.url
+  const { origin } = new URL(ref.url)
+  const response = await context.fetchFn(`${origin}/user/${ref.id}.json`)
+  const data = parseResponseJson(response)
+  const iconUrl = data?.icon?.url
 
-    if (isNonEmptyString(iconUrl) && !defaultAvatarRegex.test(iconUrl)) {
-      return [iconUrl]
-    }
-  } catch {}
+  if (isNonEmptyString(iconUrl) && !defaultAvatarRegex.test(iconUrl)) {
+    return [iconUrl]
+  }
 
   return []
 }

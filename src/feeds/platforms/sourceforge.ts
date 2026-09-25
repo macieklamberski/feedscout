@@ -1,11 +1,32 @@
-import { isHostOf } from 'trousse'
+import { isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic partly covers activity, files, project.
 
-export const hosts = ['sourceforge.net', 'www.sourceforge.net']
+export type SourceforgeUrl = { kind: 'project'; project: string }
+
+const hosts = ['sourceforge.net', 'www.sourceforge.net']
+const projectPrefixes = ['projects', 'p']
+
+export const parseSourceforgeUrl = (url: string): SourceforgeUrl | undefined => {
+  const parsedUrl = parseUrl(url)
+
+  if (!parsedUrl || !isHostOf(parsedUrl, hosts)) {
+    return
+  }
+
+  const [prefix, project] = parsedUrl.pathname.split('/').filter(Boolean)
+
+  if (!prefix || !project || !projectPrefixes.includes(prefix)) {
+    return
+  }
+
+  // SourceForge redirects a project name in any case to the lowercase one its feed and icon URLs
+  // answer under.
+  return { kind: 'project', project: project.toLowerCase() }
+}
 
 export const sourceforgeHandler: PlatformHandler = {
   match: (url) => {
@@ -13,51 +34,46 @@ export const sourceforgeHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    const { origin, pathname } = new URL(url)
-    const pathSegments = pathname.split('/').filter(Boolean)
+    const { origin } = new URL(url)
+    const project = parseSourceforgeUrl(url)?.project
 
-    // Project pages can be at either /projects/{project} or /p/{project}.
-    const isProject = (pathSegments[0] === 'projects' || pathSegments[0] === 'p') && pathSegments[1]
-
-    if (isProject) {
-      const project = pathSegments[1]
-
-      return [
-        {
-          uri: `${origin}/p/${project}/activity/feed`,
-          hint: composeHint('sourceforge:activity'),
-        },
-        {
-          uri: `${origin}/p/${project}/feed`,
-          hint: composeHint('sourceforge:project-feed'),
-        },
-        {
-          uri: `${origin}/projects/${project}/rss`,
-          hint: composeHint('sourceforge:files'),
-        },
-        {
-          uri: `${origin}/p/${project}/news/feed.rss`,
-          hint: composeHint('sourceforge:news', 'rss'),
-        },
-        {
-          uri: `${origin}/p/${project}/news/feed.atom`,
-          hint: composeHint('sourceforge:news', 'atom'),
-        },
-        {
-          uri: `${origin}/p/${project}/discussion/feed`,
-          hint: composeHint('sourceforge:discussion', 'rss'),
-        },
-        {
-          uri: `${origin}/p/${project}/discussion/feed.atom`,
-          hint: composeHint('sourceforge:discussion', 'atom'),
-        },
-        {
-          uri: `${origin}/p/${project}/bugs/feed`,
-          hint: composeHint('sourceforge:bugs'),
-        },
-      ]
+    if (!project) {
+      return []
     }
 
-    return []
+    return [
+      {
+        uri: `${origin}/p/${project}/activity/feed`,
+        hint: composeHint('sourceforge:activity'),
+      },
+      {
+        uri: `${origin}/p/${project}/feed`,
+        hint: composeHint('sourceforge:project-feed'),
+      },
+      {
+        uri: `${origin}/projects/${project}/rss`,
+        hint: composeHint('sourceforge:files'),
+      },
+      {
+        uri: `${origin}/p/${project}/news/feed.rss`,
+        hint: composeHint('sourceforge:news', 'rss'),
+      },
+      {
+        uri: `${origin}/p/${project}/news/feed.atom`,
+        hint: composeHint('sourceforge:news', 'atom'),
+      },
+      {
+        uri: `${origin}/p/${project}/discussion/feed`,
+        hint: composeHint('sourceforge:discussion', 'rss'),
+      },
+      {
+        uri: `${origin}/p/${project}/discussion/feed.atom`,
+        hint: composeHint('sourceforge:discussion', 'atom'),
+      },
+      {
+        uri: `${origin}/p/${project}/bugs/feed`,
+        hint: composeHint('sourceforge:bugs'),
+      },
+    ]
   },
 }

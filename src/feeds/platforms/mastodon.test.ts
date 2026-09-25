@@ -1,63 +1,221 @@
 import { describe, expect, it } from 'bun:test'
-import { isProfilePath, isTagPath, mastodonHandler } from './mastodon.js'
+import type { MastodonUrl } from './mastodon.js'
+import { isMastodonHeaders, isMastodonHtml, mastodonHandler, parseMastodonUrl } from './mastodon.js'
 
 const mastodonHtml = '<html><head><meta name="generator" content="Mastodon v4.2.0"></head></html>'
 const mastodonHeaders = new Headers({ server: 'Mastodon' })
 
-describe('isProfilePath', () => {
-  it('should return true for /@user paths', () => {
-    expect(isProfilePath('/@user')).toBe(true)
-    expect(isProfilePath('/@Gargron')).toBe(true)
+describe('parseMastodonUrl', () => {
+  it('should return the profile for /@user', () => {
+    const expected: MastodonUrl = { kind: 'profile', username: 'Gargron' }
+
+    expect(parseMastodonUrl('https://mastodon.social/@Gargron')).toEqual(expected)
   })
 
-  it('should return true for /@user with trailing slash', () => {
-    expect(isProfilePath('/@user/')).toBe(true)
+  it('should return the profile for /users/{user}', () => {
+    const expected: MastodonUrl = { kind: 'profile', username: 'Gargron' }
+
+    expect(parseMastodonUrl('https://mastodon.social/users/Gargron')).toEqual(expected)
   })
 
-  it('should return true for /@user with extra segments', () => {
-    expect(isProfilePath('/@user/123456789')).toBe(true)
+  it('should return the profile for a /users/{user} status page', () => {
+    const expected: MastodonUrl = { kind: 'profile', username: 'Gargron' }
+
+    expect(parseMastodonUrl('https://mastodon.social/users/Gargron/statuses/1')).toEqual(expected)
   })
 
-  it('should return false for paths without @', () => {
-    expect(isProfilePath('/user')).toBe(false)
-    expect(isProfilePath('/about')).toBe(false)
+  it('should return undefined for /users without a user', () => {
+    expect(parseMastodonUrl('https://mastodon.social/users')).toBeUndefined()
   })
 
-  it('should return false for root path', () => {
-    expect(isProfilePath('/')).toBe(false)
+  it('should return the profile for /@user with a trailing slash', () => {
+    const expected: MastodonUrl = { kind: 'profile', username: 'user' }
+
+    expect(parseMastodonUrl('https://example.com/@user/')).toEqual(expected)
   })
 
-  it('should return false for empty string', () => {
-    expect(isProfilePath('')).toBe(false)
+  it('should strip the feed extension from the username', () => {
+    const expected: MastodonUrl = { kind: 'profile', username: 'user' }
+
+    expect(parseMastodonUrl('https://example.com/@user.rss')).toEqual(expected)
+  })
+
+  it('should strip the legacy Atom extension from the username', () => {
+    const expected: MastodonUrl = { kind: 'profile', username: 'user' }
+
+    expect(parseMastodonUrl('https://example.com/@user.atom')).toEqual(expected)
+  })
+
+  it('should strip the ActivityPub JSON extension from a /users path', () => {
+    const expected: MastodonUrl = { kind: 'profile', username: 'user' }
+
+    expect(parseMastodonUrl('https://example.com/users/user.json')).toEqual(expected)
+  })
+
+  it('should keep the remote handle', () => {
+    const expected: MastodonUrl = { kind: 'profile', username: 'user@remote.social' }
+
+    expect(parseMastodonUrl('https://example.com/@user@remote.social')).toEqual(expected)
+  })
+
+  it('should return the profile for a status page', () => {
+    const expected: MastodonUrl = { kind: 'profile', username: 'user' }
+
+    expect(parseMastodonUrl('https://example.com/@user/117299324947033108')).toEqual(expected)
+  })
+
+  it('should return replies for /@user/with_replies', () => {
+    const expected: MastodonUrl = { kind: 'replies', username: 'user' }
+
+    expect(parseMastodonUrl('https://example.com/@user/with_replies')).toEqual(expected)
+  })
+
+  it('should return media for /@user/media', () => {
+    const expected: MastodonUrl = { kind: 'media', username: 'user' }
+
+    expect(parseMastodonUrl('https://example.com/@user/media')).toEqual(expected)
+  })
+
+  it('should return tagged for /@user/tagged/{tag}', () => {
+    const expected: MastodonUrl = { kind: 'tagged', username: 'user', tag: 'news' }
+
+    expect(parseMastodonUrl('https://example.com/@user/tagged/news')).toEqual(expected)
+  })
+
+  it('should return the profile for /@user/tagged without a tag', () => {
+    const expected: MastodonUrl = { kind: 'profile', username: 'user' }
+
+    expect(parseMastodonUrl('https://example.com/@user/tagged')).toEqual(expected)
+  })
+
+  it('should return the tag for /tags/{tag}', () => {
+    const expected: MastodonUrl = { kind: 'tag', tag: 'javascript' }
+
+    expect(parseMastodonUrl('https://example.com/tags/javascript/')).toEqual(expected)
+  })
+
+  it('should return the tag for /tags/{tag} without a trailing slash', () => {
+    const expected: MastodonUrl = { kind: 'tag', tag: 'javascript' }
+
+    expect(parseMastodonUrl('https://example.com/tags/javascript')).toEqual(expected)
+  })
+
+  it('should strip the feed extension from /@user/with_replies.rss', () => {
+    const expected: MastodonUrl = { kind: 'replies', username: 'user' }
+
+    expect(parseMastodonUrl('https://example.com/@user/with_replies.rss')).toEqual(expected)
+  })
+
+  it('should strip the feed extension from /@user/media.rss', () => {
+    const expected: MastodonUrl = { kind: 'media', username: 'user' }
+
+    expect(parseMastodonUrl('https://example.com/@user/media.rss')).toEqual(expected)
+  })
+
+  it('should strip the feed extension from /@user/tagged/{tag}.rss', () => {
+    const expected: MastodonUrl = { kind: 'tagged', username: 'user', tag: 'news' }
+
+    expect(parseMastodonUrl('https://example.com/@user/tagged/news.rss')).toEqual(expected)
+  })
+
+  it('should strip the feed extension from /tags/{tag}.rss', () => {
+    const expected: MastodonUrl = { kind: 'tag', tag: 'javascript' }
+
+    expect(parseMastodonUrl('https://example.com/tags/javascript.rss')).toEqual(expected)
+  })
+
+  it('should return undefined for /tags without a tag', () => {
+    expect(parseMastodonUrl('https://example.com/tags')).toBeUndefined()
+  })
+
+  it('should return undefined for an uppercase /Tags prefix', () => {
+    expect(parseMastodonUrl('https://example.com/Tags/javascript')).toBeUndefined()
+  })
+
+  it('should return undefined for a bare /@', () => {
+    expect(parseMastodonUrl('https://example.com/@')).toBeUndefined()
+  })
+
+  it('should return undefined for a path without @', () => {
+    expect(parseMastodonUrl('https://example.com/about')).toBeUndefined()
+  })
+
+  it('should return undefined for the root path', () => {
+    expect(parseMastodonUrl('https://example.com/')).toBeUndefined()
+  })
+
+  it('should return undefined for an invalid URL', () => {
+    expect(parseMastodonUrl('not-a-url')).toBeUndefined()
   })
 })
 
-describe('isTagPath', () => {
-  it('should return true for /tags/name paths', () => {
-    expect(isTagPath('/tags/javascript')).toBe(true)
-    expect(isTagPath('/tags/mastodon')).toBe(true)
+describe('isMastodonHtml', () => {
+  it('should return true for standard Mastodon generator meta tag', () => {
+    expect(isMastodonHtml('<meta name="generator" content="Mastodon v4.2.0">')).toBe(true)
   })
 
-  it('should return true for /tags/name with trailing slash', () => {
-    expect(isTagPath('/tags/javascript/')).toBe(true)
+  it('should return true for case variations', () => {
+    expect(isMastodonHtml('<meta name="generator" content="mastodon v4.0.0">')).toBe(true)
+    expect(isMastodonHtml('<meta name="generator" content="MASTODON v4.0.0">')).toBe(true)
   })
 
-  it('should return false for /tags without name', () => {
-    expect(isTagPath('/tags')).toBe(false)
-    expect(isTagPath('/tags/')).toBe(false)
+  it('should return true for generator tag with single quotes', () => {
+    expect(isMastodonHtml("<meta name='generator' content='Mastodon v4.2.0'>")).toBe(true)
   })
 
-  it('should return false for non-tags paths', () => {
-    expect(isTagPath('/about')).toBe(false)
-    expect(isTagPath('/@user')).toBe(false)
+  it('should return true for tag within full HTML document', () => {
+    const value = '<html><head><meta name="generator" content="Mastodon v4.2.0"></head></html>'
+
+    expect(isMastodonHtml(value)).toBe(true)
   })
 
-  it('should return false for case variation of /tags', () => {
-    expect(isTagPath('/Tags/javascript')).toBe(false)
+  it('should return true for the mastodon app root without generator', () => {
+    expect(isMastodonHtml('<body><div class="app-holder" id="mastodon"></div></body>')).toBe(true)
+  })
+
+  it('should return true for a single-quoted mastodon app root', () => {
+    expect(isMastodonHtml("<body><div id='mastodon'></div></body>")).toBe(true)
+  })
+
+  it('should return false for non-Mastodon generator', () => {
+    expect(isMastodonHtml('<meta name="generator" content="WordPress 6.0">')).toBe(false)
+  })
+
+  it('should return false for HTML without generator tag', () => {
+    expect(isMastodonHtml('<html><head><title>Test</title></head></html>')).toBe(false)
   })
 
   it('should return false for empty string', () => {
-    expect(isTagPath('')).toBe(false)
+    expect(isMastodonHtml('')).toBe(false)
+  })
+})
+
+describe('isMastodonHeaders', () => {
+  it('should return true for Mastodon server header', () => {
+    expect(isMastodonHeaders(new Headers({ server: 'Mastodon' }))).toBe(true)
+  })
+
+  it('should return true for case variations', () => {
+    expect(isMastodonHeaders(new Headers({ server: 'mastodon' }))).toBe(true)
+    expect(isMastodonHeaders(new Headers({ server: 'MASTODON' }))).toBe(true)
+  })
+
+  it('should return true for server header with version', () => {
+    expect(isMastodonHeaders(new Headers({ server: 'Mastodon/4.2.0' }))).toBe(true)
+  })
+
+  it('should return true for server header containing Mastodon as substring', () => {
+    expect(isMastodonHeaders(new Headers({ server: 'nginx (Mastodon)' }))).toBe(true)
+  })
+
+  it('should return false for non-Mastodon server', () => {
+    expect(isMastodonHeaders(new Headers({ server: 'nginx' }))).toBe(false)
+    expect(isMastodonHeaders(new Headers({ server: 'Apache' }))).toBe(false)
+  })
+
+  it('should return false for missing server header', () => {
+    expect(isMastodonHeaders(new Headers())).toBe(false)
+    expect(isMastodonHeaders(new Headers({ 'content-type': 'text/html' }))).toBe(false)
   })
 })
 
@@ -65,23 +223,10 @@ describe('mastodonHandler', () => {
   describe('match', () => {
     it('should match profile path with Mastodon HTML', () => {
       expect(mastodonHandler.match('https://mastodon.social/@Gargron', mastodonHtml)).toBe(true)
-      expect(mastodonHandler.match('https://example.com/@user', mastodonHtml)).toBe(true)
     })
 
     it('should match profile path with Mastodon server header', () => {
       expect(mastodonHandler.match('https://mastodon.social/@user', '', mastodonHeaders)).toBe(true)
-    })
-
-    it('should match tag path with Mastodon HTML', () => {
-      const value = 'https://mastodon.social/tags/javascript'
-
-      expect(mastodonHandler.match(value, mastodonHtml)).toBe(true)
-    })
-
-    it('should match tag path with Mastodon server header', () => {
-      const value = 'https://mastodon.social/tags/javascript'
-
-      expect(mastodonHandler.match(value, '', mastodonHeaders)).toBe(true)
     })
 
     it('should not match without Mastodon HTML signals', () => {
@@ -100,11 +245,6 @@ describe('mastodonHandler', () => {
 
     it('should not match non-profile and non-tag paths', () => {
       expect(mastodonHandler.match('https://mastodon.social/about', mastodonHtml)).toBe(false)
-      expect(mastodonHandler.match('https://mastodon.social/', mastodonHtml)).toBe(false)
-    })
-
-    it('should not match invalid URLs', () => {
-      expect(mastodonHandler.match('not-a-url')).toBe(false)
     })
   })
 
@@ -133,18 +273,6 @@ describe('mastodonHandler', () => {
       expect(mastodonHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return RSS feed URL for different instance', () => {
-      const value = 'https://fosstodon.org/@kev'
-      const expected = [
-        {
-          uri: 'https://fosstodon.org/@kev.rss',
-          hint: { key: 'mastodon:posts', label: 'Posts' },
-        },
-      ]
-
-      expect(mastodonHandler.resolve(value)).toEqual(expected)
-    })
-
     it('should return tagged and profile feeds for /@user/tagged/{tag}', () => {
       const value = 'https://mastodon.social/@Gargron/tagged/mastodev'
       const expected = [
@@ -163,10 +291,6 @@ describe('mastodonHandler', () => {
 
     it('should return empty array for non-matching paths', () => {
       expect(mastodonHandler.resolve('https://mastodon.social/about')).toEqual([])
-    })
-
-    it('should return empty array for invalid URL', () => {
-      expect(mastodonHandler.resolve('not-a-url')).toEqual([])
     })
 
     it('should return replies and profile feeds for /@user/with_replies', () => {

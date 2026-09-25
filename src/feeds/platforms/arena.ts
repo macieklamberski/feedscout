@@ -1,13 +1,18 @@
-import { isAnyOf, isHostOf } from 'trousse'
+import { getPathSegments, isAnyOf, isHostOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
-export const hosts = ['are.na', 'www.are.na']
-export const excludedPaths = [
+export type ArenaUrl =
+  | { kind: 'profile'; username: string }
+  | { kind: 'channel'; username: string; channel: string }
+
+const hosts = ['are.na', 'www.are.na']
+const excludedPaths = [
   'about',
   'api',
+  'editorial',
   'explore',
   'login',
   'premium',
@@ -19,22 +24,39 @@ export const excludedPaths = [
   'terms',
 ]
 
+export const parseArenaUrl = (url: string): ArenaUrl | undefined => {
+  if (!isHostOf(url, hosts)) {
+    return
+  }
+
+  const [username, channel] = getPathSegments(url)
+
+  if (!username) {
+    return
+  }
+
+  if (isAnyOf(username, excludedPaths)) {
+    return
+  }
+
+  // The profile feed itself sits at /{username}/feed/rss, so `feed` names no channel.
+  if (channel && channel !== 'feed') {
+    return { kind: 'channel', username, channel }
+  }
+
+  return { kind: 'profile', username }
+}
+
 export const arenaHandler: PlatformHandler = {
   match: (url) => {
     return isHostOf(url, hosts)
   },
 
   resolve: (url) => {
-    const { pathname } = new URL(url)
-    const pathSegments = pathname.split('/').filter(Boolean)
+    const [section] = getPathSegments(url)
 
-    if (pathSegments.length === 0) {
-      return []
-    }
-
-    // Editorial section: /editorial[/{article-slug}] resolves to the dedicated
-    // editorial feed (article-slug pages have no per-article feed).
-    if (pathSegments[0] === 'editorial') {
+    // Article pages under /editorial have no feed of their own.
+    if (section === 'editorial') {
       return [
         {
           uri: 'https://www.are.na/editorial/feed/rss',
@@ -43,26 +65,26 @@ export const arenaHandler: PlatformHandler = {
       ]
     }
 
-    const username = pathSegments[0]
+    const parsed = parseArenaUrl(url)
 
-    if (isAnyOf(username, excludedPaths)) {
-      return []
-    }
-
-    if (pathSegments[1]) {
+    if (parsed?.kind === 'channel') {
       return [
         {
-          uri: `https://www.are.na/${username}/${pathSegments[1]}/feed/rss`,
+          uri: `https://www.are.na/${parsed.username}/${parsed.channel}/feed/rss`,
           hint: composeHint('arena:channel'),
         },
       ]
     }
 
-    return [
-      {
-        uri: `https://www.are.na/${username}/feed/rss`,
-        hint: composeHint('arena:profile'),
-      },
-    ]
+    if (parsed?.kind === 'profile') {
+      return [
+        {
+          uri: `https://www.are.na/${parsed.username}/feed/rss`,
+          hint: composeHint('arena:profile'),
+        },
+      ]
+    }
+
+    return []
   },
 }

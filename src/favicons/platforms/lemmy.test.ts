@@ -29,16 +29,8 @@ describe('lemmyHandler', () => {
       expect(lemmyHandler.match('https://lemmy.ml/c/technology', lemmyHtml)).toBe(true)
     })
 
-    it('should match user page with Lemmy HTML', () => {
-      expect(lemmyHandler.match('https://lemmy.ml/u/alice', lemmyHtml)).toBe(true)
-    })
-
     it('should match community page with Lemmy header', () => {
       expect(lemmyHandler.match('https://lemmy.ml/c/technology', '', lemmyHeaders)).toBe(true)
-    })
-
-    it('should match user page with Lemmy header', () => {
-      expect(lemmyHandler.match('https://lemmy.ml/u/alice', '', lemmyHeaders)).toBe(true)
     })
 
     it('should not match community page without Lemmy markers', () => {
@@ -53,14 +45,6 @@ describe('lemmyHandler', () => {
 
     it('should not match home page', () => {
       expect(lemmyHandler.match('https://lemmy.ml/', lemmyHtml)).toBe(false)
-    })
-
-    it('should not match post page', () => {
-      expect(lemmyHandler.match('https://lemmy.ml/post/123', lemmyHtml)).toBe(false)
-    })
-
-    it('should not match invalid URL', () => {
-      expect(lemmyHandler.match('not-a-url', lemmyHtml)).toBe(false)
     })
   })
 
@@ -80,20 +64,6 @@ describe('lemmyHandler', () => {
         expect(lemmyHandler.resolve('https://lemmy.ml/c/technology', value)).toEqual(expected)
       })
 
-      it('should resolve user avatar from og:image', () => {
-        const value = `
-          <meta
-            property="og:image"
-            content="https://lemmy.ml/pictrs/image/avatar.jpeg"
-          >
-        `
-        const expected: Array<DiscoverUriEntry> = [
-          { uri: 'https://lemmy.ml/pictrs/image/avatar.jpeg' },
-        ]
-
-        expect(lemmyHandler.resolve('https://lemmy.ml/u/alice', value)).toEqual(expected)
-      })
-
       it('should return a community ref without content', () => {
         const url = 'https://lemmy.ml/c/technology'
         const expected: Array<DiscoverRef> = [createRef(url, 'c/technology')]
@@ -109,16 +79,6 @@ describe('lemmyHandler', () => {
       })
     })
 
-    describe('sad paths', () => {
-      it('should return empty array for home page', () => {
-        expect(lemmyHandler.resolve('https://lemmy.ml/', lemmyHtml)).toEqual([])
-      })
-
-      it('should return empty array for invalid URL', () => {
-        expect(lemmyHandler.resolve('not-a-url')).toEqual([])
-      })
-    })
-
     describe('edge cases', () => {
       it('should return a ref when page has no og:image', () => {
         const url = 'https://lemmy.ml/c/technology'
@@ -126,19 +86,11 @@ describe('lemmyHandler', () => {
 
         expect(lemmyHandler.resolve(url, lemmyHtml)).toEqual(expected)
       })
+    })
 
-      it('should return a ref with the instance for federated community', () => {
-        const url = 'https://lemmy.ml/c/rust@lemmy.world'
-        const expected: Array<DiscoverRef> = [createRef(url, 'c/rust@lemmy.world')]
-
-        expect(lemmyHandler.resolve(url)).toEqual(expected)
-      })
-
-      it('should return a ref with the instance for federated user', () => {
-        const url = 'https://lemmy.ml/u/alice@lemmy.world'
-        const expected: Array<DiscoverRef> = [createRef(url, 'u/alice@lemmy.world')]
-
-        expect(lemmyHandler.resolve(url)).toEqual(expected)
+    describe('sad paths', () => {
+      it('should return empty array for a page without a community or user', () => {
+        expect(lemmyHandler.resolve('https://lemmy.ml/', lemmyHtml)).toEqual([])
       })
     })
   })
@@ -214,20 +166,26 @@ describe('lemmyEnricher', () => {
       expect(await lemmyEnricher(ref, context)).toEqual([])
     })
 
-    it('should return empty array when API returns invalid JSON', async () => {
+    it('should reject when API returns invalid JSON', async () => {
       const context = createContext({ [communityApiUrl]: 'not json' })
       const ref = createRef('https://lemmy.ml/c/technology', 'c/technology')
 
-      expect(await lemmyEnricher(ref, context)).toEqual([])
+      await expect(lemmyEnricher(ref, context)).rejects.toThrow()
     })
 
-    it('should return empty array when fetch throws', async () => {
+    it('should reject when fetch throws', async () => {
       const fetchFn: FetchFn = () => {
         throw new Error('Network error')
       }
       const ref = createRef('https://lemmy.ml/c/technology', 'c/technology')
 
-      expect(await lemmyEnricher(ref, { fetchFn })).toEqual([])
+      await expect(lemmyEnricher(ref, { fetchFn })).rejects.toThrow()
+    })
+
+    it('should reject when the response is not 2xx', async () => {
+      const ref = createRef('https://lemmy.ml/c/technology', 'c/technology')
+
+      await expect(lemmyEnricher(ref, createContext({}))).rejects.toThrow()
     })
   })
 

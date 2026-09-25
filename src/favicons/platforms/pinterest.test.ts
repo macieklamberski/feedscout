@@ -43,40 +43,10 @@ describe('pinterestHandler', () => {
   describe('match', () => {
     it('should match profile URLs', () => {
       expect(pinterestHandler.match('https://www.pinterest.com/alice')).toBe(true)
-      expect(pinterestHandler.match('https://pinterest.com/alice/')).toBe(true)
-    })
-
-    it('should match saved pages', () => {
-      expect(pinterestHandler.match('https://www.pinterest.com/alice/_saved/')).toBe(true)
-    })
-
-    it('should not match board pages', () => {
-      expect(pinterestHandler.match('https://www.pinterest.com/alice/recipes/')).toBe(false)
-    })
-
-    it('should not match pin pages', () => {
-      expect(pinterestHandler.match('https://www.pinterest.com/pin/123456789/')).toBe(false)
-    })
-
-    it('should not match excluded paths', () => {
-      expect(pinterestHandler.match('https://www.pinterest.com/search')).toBe(false)
-      expect(pinterestHandler.match('https://www.pinterest.com/ideas')).toBe(false)
     })
 
     it('should not match pin.it short links', () => {
       expect(pinterestHandler.match('https://pin.it/abc123')).toBe(false)
-    })
-
-    it('should not match the root URL', () => {
-      expect(pinterestHandler.match('https://www.pinterest.com/')).toBe(false)
-    })
-
-    it('should not match non-Pinterest URLs', () => {
-      expect(pinterestHandler.match('https://example.com/alice')).toBe(false)
-    })
-
-    it('should not match invalid URLs', () => {
-      expect(pinterestHandler.match('not-a-url')).toBe(false)
     })
   })
 
@@ -88,11 +58,35 @@ describe('pinterestHandler', () => {
         expect(result).toEqual(expectedIcon)
       })
 
+      it('should return the avatar when the props script id is single-quoted', () => {
+        const content = profileHtml.replace(
+          'id="__PWS_INITIAL_PROPS__"',
+          "id='__PWS_INITIAL_PROPS__'",
+        )
+        const result = pinterestHandler.resolve('https://www.pinterest.com/alice/', content)
+
+        expect(result).toEqual(expectedIcon)
+      })
+
       it('should return a ref for saved pages', () => {
         const url = 'https://www.pinterest.com/alice/_saved/'
         const expected: Array<DiscoverRef> = [{ platform: 'pinterest', id: 'alice', url }]
 
         expect(pinterestHandler.resolve(url, savedHtml)).toEqual(expected)
+      })
+
+      it('should return a ref for board pages', () => {
+        const url = 'https://www.pinterest.com/alice/recipes/'
+        const expected: Array<DiscoverRef> = [{ platform: 'pinterest', id: 'alice', url }]
+
+        expect(pinterestHandler.resolve(url, profileHtml)).toEqual(expected)
+      })
+
+      it('should return a ref for user subpages', () => {
+        const url = 'https://www.pinterest.com/alice/_created/'
+        const expected: Array<DiscoverRef> = [{ platform: 'pinterest', id: 'alice', url }]
+
+        expect(pinterestHandler.resolve(url, profileHtml)).toEqual(expected)
       })
 
       it('should return a ref for profile pages when content is missing', () => {
@@ -104,15 +98,6 @@ describe('pinterestHandler', () => {
     })
 
     describe('sad paths', () => {
-      it('should return empty array for board pages', () => {
-        const result = pinterestHandler.resolve(
-          'https://www.pinterest.com/alice/recipes/',
-          profileHtml,
-        )
-
-        expect(result).toEqual([])
-      })
-
       it('should return empty array for the default avatar', () => {
         const html = createPageHtml({
           '1': {
@@ -138,11 +123,9 @@ describe('pinterestHandler', () => {
         expect(result).toEqual([])
       })
 
-      it('should return empty array when the initial props are not valid JSON', () => {
+      it('should throw when the initial props are not valid JSON', () => {
         const html = '<script id="__PWS_INITIAL_PROPS__" type="application/json">{not-json</script>'
-        const result = pinterestHandler.resolve('https://www.pinterest.com/alice/', html)
-
-        expect(result).toEqual([])
+        expect(() => pinterestHandler.resolve('https://www.pinterest.com/alice/', html)).toThrow()
       })
 
       it('should return empty array when the page has no initial props', () => {
@@ -151,10 +134,10 @@ describe('pinterestHandler', () => {
         expect(result).toEqual([])
       })
 
-      it('should return empty array for invalid URL', () => {
-        const result = pinterestHandler.resolve('not-a-url', profileHtml)
-
-        expect(result).toEqual([])
+      it('should return empty array for a pin page', () => {
+        expect(
+          pinterestHandler.resolve('https://www.pinterest.com/pin/123456789', profileHtml),
+        ).toEqual([])
       })
     })
 
@@ -213,18 +196,22 @@ describe('pinterestEnricher', () => {
     expect(await pinterestEnricher(ref, context)).toEqual([])
   })
 
-  it('should return empty array when the initial props are not valid JSON', async () => {
+  it('should reject when the initial props are not valid JSON', async () => {
     const html = '<script id="__PWS_INITIAL_PROPS__" type="application/json">{not-json</script>'
     const context = createContext({ 'https://www.pinterest.com/alice/': html })
 
-    expect(await pinterestEnricher(ref, context)).toEqual([])
+    await expect(pinterestEnricher(ref, context)).rejects.toThrow()
   })
 
-  it('should return empty array when fetch throws', async () => {
+  it('should reject when fetch throws', async () => {
     const fetchFn: FetchFn = () => {
       throw new Error('Network error')
     }
 
-    expect(await pinterestEnricher(ref, { fetchFn })).toEqual([])
+    await expect(pinterestEnricher(ref, { fetchFn })).rejects.toThrow()
+  })
+
+  it('should reject when the response is not 2xx', async () => {
+    await expect(pinterestEnricher(ref, createContext({}))).rejects.toThrow()
   })
 })

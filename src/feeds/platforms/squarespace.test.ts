@@ -79,9 +79,5 @@ describe('squarespaceHandler', () => {
     it('should return an empty array for the site root', () => {
       expect(squarespaceHandler.resolve('https://example.com/')).toEqual([])
     })
-
-    it('should return an empty array for invalid URLs', () => {
-      expect(squarespaceHandler.resolve('not-a-url')).toEqual([])
-    })
   })
 })

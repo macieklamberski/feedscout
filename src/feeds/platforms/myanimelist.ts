@@ -1,4 +1,4 @@
-import { isHostOf } from 'trousse'
+import { isHostOf, parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
@@ -7,8 +7,26 @@ import { composeHint } from '../../common/utils.js'
 // Generic covers featured, news (html), partly covers profile.
 // Handler needed for: animelist, mangalist.
 
+export type MyanimelistUrl = { kind: 'user'; username: string }
+
 export const hosts = ['myanimelist.net', 'www.myanimelist.net']
-export const userRegex = /^\/(?:profile|animelist|mangalist|history)\/([^/]+)/
+const userRegex = /^\/(?:profile|animelist|mangalist|history)\/([^/]+)/
+
+export const parseMyanimelistUrl = (url: string): MyanimelistUrl | undefined => {
+  const parsedUrl = parseUrl(url)
+
+  if (!parsedUrl || !isHostOf(parsedUrl, hosts)) {
+    return
+  }
+
+  const username = parsedUrl.pathname.match(userRegex)?.[1]
+
+  if (!username) {
+    return
+  }
+
+  return { kind: 'user', username }
+}
 
 export const myanimelistHandler: PlatformHandler = {
   match: (url) => {
@@ -38,33 +56,32 @@ export const myanimelistHandler: PlatformHandler = {
       ]
     }
 
-    const match = pathname.match(userRegex)
+    const username = parseMyanimelistUrl(url)?.username
 
-    if (!match?.[1]) {
+    if (!username) {
       return []
     }
 
-    const user = match[1]
     const uris: Array<DiscoverUriEntry> = []
 
     uris.push({
-      uri: `https://myanimelist.net/rss.php?type=rw&u=${user}`,
+      uri: `https://myanimelist.net/rss.php?type=rw&u=${username}`,
       hint: composeHint('myanimelist:anime'),
     })
     uris.push({
-      uri: `https://myanimelist.net/rss.php?type=rm&u=${user}`,
+      uri: `https://myanimelist.net/rss.php?type=rm&u=${username}`,
       hint: composeHint('myanimelist:manga'),
     })
     uris.push({
-      uri: `https://myanimelist.net/rss.php?type=rwe&u=${user}`,
+      uri: `https://myanimelist.net/rss.php?type=rwe&u=${username}`,
       hint: composeHint('myanimelist:recently-watched'),
     })
     uris.push({
-      uri: `https://myanimelist.net/rss.php?type=rrm&u=${user}`,
+      uri: `https://myanimelist.net/rss.php?type=rrm&u=${username}`,
       hint: composeHint('myanimelist:recently-read'),
     })
     uris.push({
-      uri: `https://myanimelist.net/rss.php?type=blog&u=${user}`,
+      uri: `https://myanimelist.net/rss.php?type=blog&u=${username}`,
       hint: composeHint('myanimelist:blog'),
     })
 

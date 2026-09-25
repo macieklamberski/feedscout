@@ -14,6 +14,10 @@ describe('isXenforoHtml', () => {
     expect(isXenforoHtml(legacyHtml)).toBe(true)
   })
 
+  it('should return true for a single-quoted app root id', () => {
+    expect(isXenforoHtml("<html id='XF'>")).toBe(true)
+  })
+
   it('should return false for another forum platform', () => {
     expect(isXenforoHtml(otherHtml)).toBe(false)
   })
@@ -79,10 +83,6 @@ describe('xenforoHandler', () => {
       ]
 
       expect(xenforoHandler.resolve(value)).toEqual(expected)
-    })
-
-    it('should return an empty array for invalid URLs', () => {
-      expect(xenforoHandler.resolve('not-a-url')).toEqual([])
     })
   })
 })

@@ -50,29 +50,25 @@ export const hubspotHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    try {
-      const { origin, pathname } = new URL(url)
-      const blogPath = getBlogPath(url)
+    const { origin, pathname } = new URL(url)
+    const blogPath = getBlogPath(url)
 
-      if (!blogPath) {
-        return []
-      }
+    if (!blogPath) {
+      return []
+    }
 
-      const uris: Array<DiscoverUriEntry> = []
-      const [listingPath, kind] = pathname.match(listingPathRegex) ?? []
+    const uris: Array<DiscoverUriEntry> = []
+    const [listingPath, kind] = pathname.match(listingPathRegex) ?? []
 
-      if (listingPath) {
-        uris.push({
-          uri: `${origin}${listingPath}/rss.xml`,
-          hint: composeHint(kind === 'author' ? 'hubspot:author' : 'hubspot:tag'),
-        })
-      }
+    if (listingPath) {
+      uris.push({
+        uri: `${origin}${listingPath}/rss.xml`,
+        hint: composeHint(kind === 'author' ? 'hubspot:author' : 'hubspot:tag'),
+      })
+    }
 
-      uris.push({ uri: `${origin}/${blogPath}/rss.xml`, hint: composeHint('hubspot:blog') })
+    uris.push({ uri: `${origin}/${blogPath}/rss.xml`, hint: composeHint('hubspot:blog') })
 
-      return uris
-    } catch {}
-
-    return []
+    return uris
   },
 }

@@ -52,32 +52,8 @@ describe('goodreadsHandler', () => {
       expect(goodreadsHandler.match(value)).toBe(true)
     })
 
-    it('should match a user page without a slug', () => {
-      expect(goodreadsHandler.match('https://www.goodreads.com/user/show/1')).toBe(true)
-    })
-
-    it('should match a user page on the bare host', () => {
-      expect(goodreadsHandler.match('https://goodreads.com/user/show/1')).toBe(true)
-    })
-
     it('should not match a review list page', () => {
       expect(goodreadsHandler.match('https://www.goodreads.com/review/list/1')).toBe(false)
-    })
-
-    it('should not match an author page', () => {
-      expect(goodreadsHandler.match('https://www.goodreads.com/author/show/1.Example')).toBe(false)
-    })
-
-    it('should not match a user page with a non-numeric id', () => {
-      expect(goodreadsHandler.match('https://www.goodreads.com/user/show/example')).toBe(false)
-    })
-
-    it('should not match other hosts', () => {
-      expect(goodreadsHandler.match('https://example.com/user/show/1')).toBe(false)
-    })
-
-    it('should not match invalid URLs', () => {
-      expect(goodreadsHandler.match('not-a-url')).toBe(false)
     })
   })
 
@@ -88,6 +64,19 @@ describe('goodreadsHandler', () => {
         const expected: Array<DiscoverUriEntry> = [{ uri: avatarUrl }]
 
         expect(goodreadsHandler.resolve(value, userPage)).toEqual(expected)
+      })
+
+      it('should return the avatar from unquoted attributes', () => {
+        const value = 'https://www.goodreads.com/user/show/1-otis-chandler'
+        const content = `
+          <img
+            class=profilePictureIcon
+            src=https://images.gr-assets.com/users/1506617226p6/1.jpg
+          />
+        `
+        const expected: Array<DiscoverUriEntry> = [{ uri: avatarUrl }]
+
+        expect(goodreadsHandler.resolve(value, content)).toEqual(expected)
       })
 
       it('should return the largest variant of og:image when the page has no avatar image', () => {
@@ -157,11 +146,7 @@ describe('goodreadsEnricher', () => {
     expect(await goodreadsEnricher(createRef('10'), context)).toEqual([])
   })
 
-  it('should return empty array when the user page has no avatar', async () => {
-    expect(await goodreadsEnricher(createRef('1'), createContext({}))).toEqual([])
-  })
-
-  it('should return empty array when the body is a stream', async () => {
+  it('should reject when the body is a stream', async () => {
     const fetchFn: FetchFn = async (url) => ({
       headers: new Headers(),
       body: new ReadableStream(),
@@ -169,14 +154,20 @@ describe('goodreadsEnricher', () => {
       status: 200,
     })
 
-    expect(await goodreadsEnricher(createRef('1'), { fetchFn })).toEqual([])
+    await expect(goodreadsEnricher(createRef('1'), { fetchFn })).rejects.toThrow(
+      'Unexpected stream body',
+    )
   })
 
-  it('should return empty array when fetch throws', async () => {
+  it('should reject when fetch throws', async () => {
     const fetchFn: FetchFn = () => {
       throw new Error('Network error')
     }
 
-    expect(await goodreadsEnricher(createRef('1'), { fetchFn })).toEqual([])
+    await expect(goodreadsEnricher(createRef('1'), { fetchFn })).rejects.toThrow()
+  })
+
+  it('should reject when the response is not 2xx', async () => {
+    await expect(goodreadsEnricher(createRef('1'), createContext({}))).rejects.toThrow()
   })
 })

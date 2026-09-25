@@ -18,36 +18,12 @@ const aliceRef: DiscoverRef = { platform: 'devto', id: 'alice', url: 'https://de
 
 describe('devtoHandler', () => {
   describe('match', () => {
-    it('should match dev.to user profile URLs', () => {
+    it('should return true for a user profile', () => {
       expect(devtoHandler.match('https://dev.to/alice')).toBe(true)
-      expect(devtoHandler.match('https://dev.to/thepracticaldev')).toBe(true)
     })
 
-    it('should match www.dev.to user profile URLs', () => {
-      expect(devtoHandler.match('https://www.dev.to/alice')).toBe(true)
-    })
-
-    it('should not match tag pages', () => {
+    it('should return false for a tag page', () => {
       expect(devtoHandler.match('https://dev.to/t/javascript')).toBe(false)
-    })
-
-    it('should not match excluded paths', () => {
-      expect(devtoHandler.match('https://dev.to/search')).toBe(false)
-      expect(devtoHandler.match('https://dev.to/settings')).toBe(false)
-      expect(devtoHandler.match('https://dev.to/dashboard')).toBe(false)
-    })
-
-    it('should not match dev.to root URL', () => {
-      expect(devtoHandler.match('https://dev.to')).toBe(false)
-      expect(devtoHandler.match('https://dev.to/')).toBe(false)
-    })
-
-    it('should not match non-dev.to URLs', () => {
-      expect(devtoHandler.match('https://example.com/alice')).toBe(false)
-    })
-
-    it('should not match invalid URLs', () => {
-      expect(devtoHandler.match('not-a-url')).toBe(false)
     })
   })
 
@@ -56,26 +32,8 @@ describe('devtoHandler', () => {
       expect(await devtoHandler.resolve('https://dev.to/alice')).toEqual([aliceRef])
     })
 
-    it('should return a ref for a www.dev.to URL', async () => {
-      const url = 'https://www.dev.to/alice'
-      const expected: Array<DiscoverRef> = [{ platform: 'devto', id: 'alice', url }]
-
-      expect(await devtoHandler.resolve(url)).toEqual(expected)
-    })
-
-    it('should return a ref for excluded paths, since only match guards them', async () => {
-      const url = 'https://dev.to/search'
-      const expected: Array<DiscoverRef> = [{ platform: 'devto', id: 'search', url }]
-
-      expect(await devtoHandler.resolve(url)).toEqual(expected)
-    })
-
-    it('should return empty array for tag pages', async () => {
+    it('should return empty array for a tag page', async () => {
       expect(await devtoHandler.resolve('https://dev.to/t/javascript')).toEqual([])
-    })
-
-    it('should return empty array for invalid URL', async () => {
-      expect(await devtoHandler.resolve('not-a-url')).toEqual([])
     })
   })
 })
@@ -115,19 +73,48 @@ describe('devtoEnricher', () => {
     expect(await devtoEnricher(aliceRef, context)).toEqual([])
   })
 
-  it('should return empty array when API returns invalid JSON', async () => {
+  it('should reject when API returns invalid JSON', async () => {
     const context = createContext({
       'https://dev.to/api/users/by_username?url=alice': 'not-json',
     })
 
-    expect(await devtoEnricher(aliceRef, context)).toEqual([])
+    await expect(devtoEnricher(aliceRef, context)).rejects.toThrow()
   })
 
-  it('should return empty array when fetch throws', async () => {
+  it('should reject when fetch throws', async () => {
     const fetchFn: FetchFn = () => {
       throw new Error('Network error')
     }
 
-    expect(await devtoEnricher(aliceRef, { fetchFn })).toEqual([])
+    await expect(devtoEnricher(aliceRef, { fetchFn })).rejects.toThrow()
+  })
+
+  it('should return the organization image when the users API does not know the name', async () => {
+    const ref: DiscoverRef = { platform: 'devto', id: 'gde', url: 'https://dev.to/gde' }
+    const context = createContext({
+      'https://dev.to/api/organizations/gde': JSON.stringify({
+        profile_image: 'https://media2.dev.to/uploads/organization/profile_image/11939/gde.png',
+      }),
+    })
+
+    expect(await devtoEnricher(ref, context)).toEqual([
+      'https://media2.dev.to/uploads/organization/profile_image/11939/gde.png',
+    ])
+  })
+
+  it('should reject when neither API knows the name', async () => {
+    await expect(devtoEnricher(aliceRef, createContext({}))).rejects.toThrow()
+  })
+
+  it('should reject without trying the organizations API when the users API fails', async () => {
+    const requestedUrls: Array<string> = []
+    const fetchFn: FetchFn = (url) => {
+      requestedUrls.push(url)
+
+      return { headers: new Headers(), body: '', url, status: 500 }
+    }
+
+    await expect(devtoEnricher(aliceRef, { fetchFn })).rejects.toThrow()
+    expect(requestedUrls).toEqual(['https://dev.to/api/users/by_username?url=alice'])
   })
 })

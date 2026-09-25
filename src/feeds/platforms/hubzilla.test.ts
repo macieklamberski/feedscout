@@ -65,9 +65,5 @@ describe('hubzillaHandler', () => {
     it('should return an empty array outside a channel', () => {
       expect(hubzillaHandler.resolve('https://example.org/')).toEqual([])
     })
-
-    it('should return an empty array for invalid URLs', () => {
-      expect(hubzillaHandler.resolve('not-a-url')).toEqual([])
-    })
   })
 })

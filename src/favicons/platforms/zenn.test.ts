@@ -22,22 +22,6 @@ describe('zennHandler', () => {
       expect(zennHandler.match('https://zenn.dev/alice')).toBe(true)
     })
 
-    it('should match profile URLs with trailing slash', () => {
-      expect(zennHandler.match('https://zenn.dev/alice/')).toBe(true)
-    })
-
-    it('should match www.zenn.dev profile URLs', () => {
-      expect(zennHandler.match('https://www.zenn.dev/alice')).toBe(true)
-    })
-
-    it('should match publication URLs', () => {
-      expect(zennHandler.match('https://zenn.dev/p/acme')).toBe(true)
-    })
-
-    it('should match long publication URLs', () => {
-      expect(zennHandler.match('https://zenn.dev/publications/acme')).toBe(true)
-    })
-
     it('should match topic URLs', () => {
       expect(zennHandler.match('https://zenn.dev/topics/rust')).toBe(true)
     })
@@ -50,21 +34,8 @@ describe('zennHandler', () => {
       expect(zennHandler.match('https://zenn.dev/topics/rust/feed')).toBe(false)
     })
 
-    it('should not match excluded paths', () => {
-      expect(zennHandler.match('https://zenn.dev/search')).toBe(false)
-      expect(zennHandler.match('https://zenn.dev/topics')).toBe(false)
-    })
-
-    it('should not match root URL', () => {
-      expect(zennHandler.match('https://zenn.dev/')).toBe(false)
-    })
-
-    it('should not match non-Zenn URLs', () => {
-      expect(zennHandler.match('https://example.com/alice')).toBe(false)
-    })
-
-    it('should not match invalid URLs', () => {
-      expect(zennHandler.match('not-a-url')).toBe(false)
+    it('should not match a scrap page', () => {
+      expect(zennHandler.match('https://zenn.dev/scraps/5a3b9c1d2e')).toBe(false)
     })
   })
 

@@ -1,4 +1,4 @@
-import { isHostOf } from 'trousse'
+import { getPathSegments, isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
@@ -6,69 +6,112 @@ import { composeHint } from '../../common/utils.js'
 // Generic covers favorites, photostream (html).
 // Handler needed for: group, tag.
 
-export const hosts = ['flickr.com', 'www.flickr.com']
+export type FlickrUrl =
+  | { kind: 'tag'; tag: string }
+  | { kind: 'photostream'; userId: string }
+  | { kind: 'favorites'; userId: string }
+  | { kind: 'albums'; userId: string }
+  | { kind: 'galleries'; userId: string }
+  | { kind: 'subpage'; userId: string }
+  | { kind: 'group'; group: string; section?: string }
+
+const hosts = ['flickr.com', 'www.flickr.com']
 const feedsBase = 'https://www.flickr.com/services/feeds'
 
 const tagRegex = /^\/photos\/tags\/([^/]+)/
-const photosRegex = /^\/photos\/(\d+@N\d+)(?:\/(favorites))?/
 const groupRegex = /^\/groups\/(\d+@N\d+)(?:\/(pool|discuss))?/
 const forumRegex = /^\/help\/forum/
-const feedPathRegexes = [tagRegex, photosRegex, groupRegex, forumRegex]
+const nsidRegex = /^\d+@N\d+$/
+
+export const parseFlickrUrl = (url: string): FlickrUrl | undefined => {
+  const parsedUrl = parseUrl(url)
+
+  if (!parsedUrl || !isHostOf(parsedUrl, hosts)) {
+    return
+  }
+
+  const { pathname } = parsedUrl
+  const tag = pathname.match(tagRegex)?.[1]
+
+  if (tag) {
+    return { kind: 'tag', tag }
+  }
+
+  const [prefix, userId, section, ...rest] = getPathSegments(parsedUrl)
+
+  // The user is an NSID such as 12345678@N00 or the path alias the account picked.
+  if (prefix === 'photos' && userId && userId !== 'tags') {
+    if (!section) {
+      return { kind: 'photostream', userId }
+    }
+
+    if (section === 'favorites') {
+      return { kind: 'favorites', userId }
+    }
+
+    if (section === 'albums' && rest.length === 0) {
+      return { kind: 'albums', userId }
+    }
+
+    if (section === 'galleries' && rest.length === 0) {
+      return { kind: 'galleries', userId }
+    }
+
+    return { kind: 'subpage', userId }
+  }
+
+  const groupMatch = pathname.match(groupRegex)
+
+  if (groupMatch?.[1]) {
+    return { kind: 'group', group: groupMatch[1], section: groupMatch[2] }
+  }
+}
 
 export const flickrHandler: PlatformHandler = {
   match: (url) => {
-    if (!isHostOf(url, hosts)) {
+    const parsedUrl = parseUrl(url)
+
+    if (!parsedUrl || !isHostOf(parsedUrl, hosts)) {
       return false
     }
 
-    const { pathname } = new URL(url)
+    if (forumRegex.test(parsedUrl.pathname)) {
+      return true
+    }
 
-    return feedPathRegexes.some((regex) => regex.test(pathname))
+    const parsed = parseFlickrUrl(url)
+
+    if (!parsed) {
+      return false
+    }
+
+    if (parsed.kind === 'tag') {
+      return true
+    }
+
+    if (parsed.kind === 'group') {
+      return true
+    }
+
+    return nsidRegex.test(parsed.userId)
   },
 
   resolve: (url) => {
-    const { pathname } = new URL(url)
+    const parsed = parseFlickrUrl(url)
 
     // Tag page: /photos/tags/{tag}
-    const tagMatch = pathname.match(tagRegex)
-
-    if (tagMatch?.[1]) {
+    if (parsed?.kind === 'tag') {
       return [
         {
-          uri: `${feedsBase}/photos_public.gne?tags=${tagMatch[1]}`,
+          uri: `${feedsBase}/photos_public.gne?tags=${parsed.tag}`,
           hint: composeHint('flickr:tag'),
         },
       ]
     }
 
-    // Photostream or favorites: /photos/{nsid}, /photos/{nsid}/favorites
-    const photosMatch = pathname.match(photosRegex)
-
-    if (photosMatch?.[1]) {
-      const [, nsid, section] = photosMatch
-
-      if (section === 'favorites') {
-        return [
-          {
-            uri: `${feedsBase}/photos_faves.gne?id=${nsid}`,
-            hint: composeHint('flickr:faves'),
-          },
-        ]
-      }
-
-      return [
-        {
-          uri: `${feedsBase}/photos_public.gne?id=${nsid}`,
-          hint: composeHint('flickr:photos'),
-        },
-      ]
-    }
-
     // Group pool or discussion: /groups/{nsid}, /groups/{nsid}/pool, /groups/{nsid}/discuss
-    const groupMatch = pathname.match(groupRegex)
-
-    if (groupMatch?.[1]) {
-      const [, nsid, section] = groupMatch
+    if (parsed?.kind === 'group') {
+      const { group: nsid, section } = parsed
       const pool = {
         uri: `${feedsBase}/groups_pool.gne?id=${nsid}`,
         hint: composeHint('flickr:group-pool'),
@@ -94,11 +137,30 @@ export const flickrHandler: PlatformHandler = {
       return [pool, discuss, geo]
     }
 
-    // Help forum: /help/forum/{locale}
-    if (forumRegex.test(pathname)) {
+    // Help forum, /help/forum/{locale}, and any other page.
+    if (!parsed) {
       return [{ uri: `${feedsBase}/forums.gne`, hint: composeHint('flickr:forum') }]
     }
 
-    return []
+    // The feeds take only the NSID and answer 404 for a path alias.
+    if (!nsidRegex.test(parsed.userId)) {
+      return []
+    }
+
+    if (parsed.kind === 'favorites') {
+      return [
+        {
+          uri: `${feedsBase}/photos_faves.gne?id=${parsed.userId}`,
+          hint: composeHint('flickr:faves'),
+        },
+      ]
+    }
+
+    return [
+      {
+        uri: `${feedsBase}/photos_public.gne?id=${parsed.userId}`,
+        hint: composeHint('flickr:photos'),
+      },
+    ]
   },
 }

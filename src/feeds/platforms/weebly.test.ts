@@ -64,10 +64,5 @@ describe('weeblyHandler', () => {
       // resolve('https://example.weebly.com/blog') currently returns the same
       // /blog/feed entry twice (custom slug branch plus default); likely needs a source fix.
     })
-
-    it.todo('should define behavior for invalid URL input', () => {
-      // resolve('not-a-url') currently throws a TypeError from the unguarded new URL call; the
-      // desired contract (throw vs empty array) is undecided.
-    })
   })
 })

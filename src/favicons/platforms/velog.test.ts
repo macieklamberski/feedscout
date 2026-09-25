@@ -69,35 +69,8 @@ describe('velogHandler', () => {
       expect(velogHandler.match('https://velog.io/@alice')).toBe(true)
     })
 
-    it('should match profile subpages', () => {
-      expect(velogHandler.match('https://velog.io/@alice/posts')).toBe(true)
-      expect(velogHandler.match('https://velog.io/@alice/series')).toBe(true)
-      expect(velogHandler.match('https://velog.io/@alice/about')).toBe(true)
-    })
-
-    it('should match post URLs', () => {
-      expect(velogHandler.match('https://velog.io/@alice/hello-world')).toBe(true)
-    })
-
-    it('should match www.velog.io profile URLs', () => {
-      expect(velogHandler.match('https://www.velog.io/@alice')).toBe(true)
-    })
-
     it('should not match the home page', () => {
       expect(velogHandler.match('https://velog.io/')).toBe(false)
-    })
-
-    it('should not match non-profile paths', () => {
-      expect(velogHandler.match('https://velog.io/recent')).toBe(false)
-      expect(velogHandler.match('https://velog.io/tags/react')).toBe(false)
-    })
-
-    it('should not match non-velog URLs', () => {
-      expect(velogHandler.match('https://example.com/@alice')).toBe(false)
-    })
-
-    it('should not match invalid URLs', () => {
-      expect(velogHandler.match('not-a-url')).toBe(false)
     })
   })
 
@@ -107,6 +80,30 @@ describe('velogHandler', () => {
         const expected: Array<DiscoverUriEntry> = [{ uri: squareAvatar }]
 
         expect(await velogHandler.resolve('https://velog.io/@alice', profileHtml)).toEqual(expected)
+      })
+
+      it('should return square avatar from unquoted attributes', async () => {
+        const content = `
+          <img
+            alt=profile
+            src=https://images.velog.io/images/alice/profile/0f3c/avatar.png
+          />
+        `
+        const expected: Array<DiscoverUriEntry> = [{ uri: squareAvatar }]
+
+        expect(await velogHandler.resolve('https://velog.io/@alice', content)).toEqual(expected)
+      })
+
+      it('should return square avatar for an alt in another case', async () => {
+        const content = `
+          <img
+            alt="Profile"
+            src="https://images.velog.io/images/alice/profile/0f3c/avatar.png"
+          />
+        `
+        const expected: Array<DiscoverUriEntry> = [{ uri: squareAvatar }]
+
+        expect(await velogHandler.resolve('https://velog.io/@alice', content)).toEqual(expected)
       })
 
       it('should return square avatar from post page HTML', async () => {
@@ -135,10 +132,6 @@ describe('velogHandler', () => {
       it('should return empty array for the home page', async () => {
         expect(await velogHandler.resolve('https://velog.io/', profileHtml)).toEqual([])
       })
-
-      it('should return empty array for invalid URL', async () => {
-        expect(await velogHandler.resolve('not-a-url', profileHtml)).toEqual([])
-      })
     })
 
     describe('edge cases', () => {
@@ -154,13 +147,6 @@ describe('velogHandler', () => {
         const expected: Array<DiscoverRef> = [{ platform: 'velog', id: 'alice', url }]
 
         expect(await velogHandler.resolve(url, otherHostHtml)).toEqual(expected)
-      })
-
-      it('should decode an encoded username', async () => {
-        const url = 'https://velog.io/@%EA%B9%80'
-        const expected: Array<DiscoverRef> = [{ platform: 'velog', id: '김', url }]
-
-        expect(await velogHandler.resolve(url)).toEqual(expected)
       })
     })
   })
@@ -221,17 +207,21 @@ describe('velogEnricher', () => {
     expect(await velogEnricher(ref, context)).toEqual([])
   })
 
-  it('should return empty array when API returns invalid JSON', async () => {
+  it('should reject when API returns invalid JSON', async () => {
     const context = createContext({ [apiUrl]: 'not json' })
 
-    expect(await velogEnricher(ref, context)).toEqual([])
+    await expect(velogEnricher(ref, context)).rejects.toThrow()
   })
 
-  it('should return empty array when fetch throws', async () => {
+  it('should reject when fetch throws', async () => {
     const fetchFn: FetchFn = () => {
       throw new Error('Network error')
     }
 
-    expect(await velogEnricher(ref, { fetchFn })).toEqual([])
+    await expect(velogEnricher(ref, { fetchFn })).rejects.toThrow()
+  })
+
+  it('should reject when the response is not 2xx', async () => {
+    await expect(velogEnricher(ref, createContext({}))).rejects.toThrow()
   })
 })

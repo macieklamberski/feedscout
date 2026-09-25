@@ -1,13 +1,19 @@
 import { isAnyOf } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, hasMetaContent } from '../../common/utils.js'
+import {
+  composeHint,
+  type Element,
+  findDescendant,
+  findElement,
+  hasMetaContent,
+} from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers singleUserPost, tag (guess, html), partly covers blog, post.
 
 const tagPathRegex = /\/(tag:[^/]+)/
-const blogPathRegex = /id="blog-title"[^>]*>\s*<a[^>]*?href="(\/(?:[^"/]+\/)?)"/
+const blogPathRegex = /^\/(?:[^/]+\/)?$/
 const excludedPaths = ['read', 'about', 'login', 'signup', 'me', 'api', 'pad', 'privacy']
 
 const getBlogName = (url: string): string | undefined => {
@@ -20,10 +26,31 @@ const getBlogName = (url: string): string | undefined => {
   return first
 }
 
+// A single-user instance serves its one blog at the root, and the blog title links to it.
+const getBlogPath = (content: string | undefined): string | undefined => {
+  const title = findElement(content, (element) => element.attribs.id === 'blog-title')
+
+  if (!title) {
+    return
+  }
+
+  const href = findDescendant(title, (element) => element.name === 'a')?.attribs.href
+
+  if (!href || !blogPathRegex.test(href)) {
+    return
+  }
+
+  return href
+}
+
+const isWriteStylesheet = (element: Element): boolean => {
+  return element.attribs.href?.startsWith('/css/write.css') ?? false
+}
+
 export const isWritefreelyHtml = (content: string): boolean => {
   return (
     hasMetaContent(content, 'generator', 'WriteFreely') ||
-    content.includes('href="/css/write.css') ||
+    findElement(content, isWriteStylesheet) !== undefined ||
     // A Write.as blog on its own domain runs the same routes under the `Write.as` generator.
     hasMetaContent(content, 'generator', 'Write.as')
   )
@@ -43,35 +70,30 @@ export const writefreelyHandler: PlatformHandler = {
   },
 
   resolve: (url, content) => {
-    try {
-      const { origin, pathname } = new URL(url)
-      const blogName = getBlogName(url)
+    const { origin, pathname } = new URL(url)
+    const blogName = getBlogName(url)
 
-      if (!blogName) {
-        return []
-      }
+    if (!blogName) {
+      return []
+    }
 
-      // A single-user instance serves its one blog at the root, and the blog title links to it.
-      const blogPath = content?.match(blogPathRegex)?.[1] ?? `/${blogName}/`
-      const tag = pathname.match(tagPathRegex)?.[1]
-      const uris: Array<DiscoverUriEntry> = []
+    const blogPath = getBlogPath(content) ?? `/${blogName}/`
+    const tag = pathname.match(tagPathRegex)?.[1]
+    const uris: Array<DiscoverUriEntry> = []
 
-      if (tag) {
-        uris.push({
-          uri: `${origin}${blogPath}${tag}/feed/`,
-          hint: composeHint('writefreely:tag'),
-        })
-      }
+    if (tag) {
+      uris.push({
+        uri: `${origin}${blogPath}${tag}/feed/`,
+        hint: composeHint('writefreely:tag'),
+      })
+    }
 
-      uris.push({ uri: `${origin}${blogPath}feed/`, hint: composeHint('writefreely:blog') })
+    uris.push({ uri: `${origin}${blogPath}feed/`, hint: composeHint('writefreely:blog') })
 
-      if (blogPath !== '/') {
-        uris.push({ uri: `${origin}/read/feed/`, hint: composeHint('writefreely:reader') })
-      }
+    if (blogPath !== '/') {
+      uris.push({ uri: `${origin}/read/feed/`, hint: composeHint('writefreely:reader') })
+    }
 
-      return uris
-    } catch {}
-
-    return []
+    return uris
   },
 }

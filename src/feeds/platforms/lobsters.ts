@@ -1,4 +1,4 @@
-import { isHostOf } from 'trousse'
+import { isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
@@ -6,11 +6,44 @@ import { composeHint } from '../../common/utils.js'
 // Generic covers comments, domain, home, newest, tag, top (guess, html).
 // Handler needed for: user.
 
-export const hosts = ['lobste.rs']
+export type LobstersUrl =
+  | { kind: 'tag'; tags: string }
+  | { kind: 'domain'; domain: string }
+  | { kind: 'user'; username: string }
+
+const hosts = ['lobste.rs']
 const tagRegex = /^\/t\/([a-zA-Z0-9,_-]+)/
 const domainRegex = /^\/domains\/([^/]+)/
 const userRegex = /^\/~([a-zA-Z0-9_-]+)/
 const topRegex = /^\/top(?:\/(1d|3d|1w|1m|1y))?\/?$/
+
+export const parseLobstersUrl = (url: string): LobstersUrl | undefined => {
+  const parsedUrl = parseUrl(url)
+
+  if (!parsedUrl || !isHostOf(parsedUrl, hosts)) {
+    return
+  }
+
+  const { pathname } = parsedUrl
+  // A comma joins several tags: /t/{tag1},{tag2}.
+  const tags = pathname.match(tagRegex)?.[1]
+
+  if (tags) {
+    return { kind: 'tag', tags }
+  }
+
+  const domain = pathname.match(domainRegex)?.[1]
+
+  if (domain) {
+    return { kind: 'domain', domain }
+  }
+
+  const username = pathname.match(userRegex)?.[1]
+
+  if (username) {
+    return { kind: 'user', username }
+  }
+}
 
 export const lobstersHandler: PlatformHandler = {
   match: (url) => {
@@ -19,49 +52,35 @@ export const lobstersHandler: PlatformHandler = {
 
   resolve: (url) => {
     const { pathname } = new URL(url)
+    const parsed = parseLobstersUrl(url)
 
-    // Tag page: /t/{tag} or /t/{tag1},{tag2}
-    const tagMatch = pathname.match(tagRegex)
-
-    if (tagMatch?.[1]) {
-      const tags = tagMatch[1]
-
-      return [{ uri: `https://lobste.rs/t/${tags}.rss`, hint: composeHint('lobsters:tag') }]
+    if (parsed?.kind === 'tag') {
+      return [{ uri: `https://lobste.rs/t/${parsed.tags}.rss`, hint: composeHint('lobsters:tag') }]
     }
 
-    // Domain page: /domains/{domain}
-    const domainMatch = pathname.match(domainRegex)
-
-    if (domainMatch?.[1]) {
-      const domain = domainMatch[1]
-
+    if (parsed?.kind === 'domain') {
       return [
         {
-          uri: `https://lobste.rs/domains/${domain}.rss`,
+          uri: `https://lobste.rs/domains/${parsed.domain}.rss`,
           hint: composeHint('lobsters:domain'),
         },
       ]
     }
 
-    // User page: /~{username}
-    const userMatch = pathname.match(userRegex)
-
-    if (userMatch?.[1]) {
-      const username = userMatch[1]
-
+    if (parsed?.kind === 'user') {
       return [
         {
-          uri: `https://lobste.rs/~${username}/stories.rss`,
+          uri: `https://lobste.rs/~${parsed.username}/stories.rss`,
           hint: composeHint('lobsters:stories'),
         },
       ]
     }
 
-    // Top stories page: /top or /top/{period}
     const topMatch = pathname.match(topRegex)
 
+    // Top page, all time or for a period: /top or /top/{period}.
     if (topMatch) {
-      const period = topMatch[1]
+      const [, period] = topMatch
 
       if (period) {
         return [

@@ -1,4 +1,4 @@
-import { isHostOf, parseUrl } from 'trousse'
+import { isHostOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
@@ -14,13 +14,8 @@ export const syosetuHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    const parsedUrl = parseUrl(url)
-
-    if (!parsedUrl) {
-      return []
-    }
-
-    const writerId = parsedUrl.pathname.match(writerIdRegex)?.[1]
+    const { pathname } = new URL(url)
+    const writerId = pathname.match(writerIdRegex)?.[1]
 
     if (!writerId) {
       return []

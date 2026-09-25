@@ -1,22 +1,93 @@
 import { describe, expect, it } from 'bun:test'
-import { steamHandler } from './steam.js'
+import type { SteamUrl } from './steam.js'
+import { parseSteamUrl, steamHandler } from './steam.js'
+
+describe('parseSteamUrl', () => {
+  it('should return the app for a store app page', () => {
+    const expected: SteamUrl = { kind: 'app', appId: '730' }
+
+    expect(parseSteamUrl('https://store.steampowered.com/app/730/Counter_Strike_2/')).toEqual(
+      expected,
+    )
+  })
+
+  it('should return the app for a store app page without a slug', () => {
+    const expected: SteamUrl = { kind: 'app', appId: '730' }
+
+    expect(parseSteamUrl('https://store.steampowered.com/app/730')).toEqual(expected)
+  })
+
+  it('should return the app for an age-gated store app page', () => {
+    const expected: SteamUrl = { kind: 'app', appId: '730' }
+
+    expect(parseSteamUrl('https://store.steampowered.com/agecheck/app/730/')).toEqual(expected)
+  })
+
+  it('should return the app for a store app news page', () => {
+    const expected: SteamUrl = { kind: 'app', appId: '730' }
+
+    expect(parseSteamUrl('https://store.steampowered.com/news/app/730')).toEqual(expected)
+  })
+
+  it('should return the app for a community app page', () => {
+    const expected: SteamUrl = { kind: 'app', appId: '730' }
+
+    expect(parseSteamUrl('https://steamcommunity.com/app/730')).toEqual(expected)
+  })
+
+  it('should return the app for an uppercase host', () => {
+    const expected: SteamUrl = { kind: 'app', appId: '730' }
+
+    expect(parseSteamUrl('https://Store.SteamPowered.com/app/730')).toEqual(expected)
+  })
+
+  it('should return the group for a community group page', () => {
+    const expected: SteamUrl = { kind: 'group', group: 'Valve' }
+
+    expect(parseSteamUrl('https://steamcommunity.com/groups/Valve/')).toEqual(expected)
+  })
+
+  it('should return the group for a community group page without a trailing slash', () => {
+    const expected: SteamUrl = { kind: 'group', group: 'Valve' }
+
+    expect(parseSteamUrl('https://steamcommunity.com/groups/Valve')).toEqual(expected)
+  })
+
+  it('should return undefined for a group path on the store host', () => {
+    expect(parseSteamUrl('https://store.steampowered.com/groups/Valve')).toBeUndefined()
+  })
+
+  it('should return undefined for an app path without a numeric id', () => {
+    expect(parseSteamUrl('https://store.steampowered.com/app/portal')).toBeUndefined()
+  })
+
+  it('should return undefined for the store homepage', () => {
+    expect(parseSteamUrl('https://store.steampowered.com/')).toBeUndefined()
+  })
+
+  it('should return undefined for another host', () => {
+    expect(parseSteamUrl('https://example.com/app/730')).toBeUndefined()
+  })
+
+  it('should return undefined for an invalid URL', () => {
+    expect(parseSteamUrl('not-a-url')).toBeUndefined()
+  })
+})
 
 describe('steamHandler', () => {
   describe('match', () => {
-    const values: Array<[boolean, string]> = [
-      [true, 'https://store.steampowered.com/app/730/Counter_Strike_2/'],
-      [true, 'https://store.steampowered.com/news/app/730/'],
-      [true, 'https://steamcommunity.com/app/730'],
-      [true, 'https://steamcommunity.com/groups/Valve'],
-      [false, 'https://example.com/app/730'],
-    ]
-
-    it.each(values)('should return %s for %s', (expected, url) => {
-      expect(steamHandler.match(url)).toBe(expected)
+    it('should return true for a store page', () => {
+      expect(steamHandler.match('https://store.steampowered.com/app/730/Counter_Strike_2/')).toBe(
+        true,
+      )
     })
 
-    it('should return false for invalid URL', () => {
-      expect(steamHandler.match('not-a-url')).toBe(false)
+    it('should return true for a community page', () => {
+      expect(steamHandler.match('https://steamcommunity.com/app/730')).toBe(true)
+    })
+
+    it('should return false for another host', () => {
+      expect(steamHandler.match('https://example.com/app/730')).toBe(false)
     })
   })
 
@@ -33,68 +104,8 @@ describe('steamHandler', () => {
       expect(steamHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return news feed for store app page without slug', () => {
-      const value = 'https://store.steampowered.com/app/730'
-      const expected = [
-        {
-          uri: 'https://store.steampowered.com/feeds/news/app/730/',
-          hint: { key: 'steam:news', label: 'News' },
-        },
-      ]
-
-      expect(steamHandler.resolve(value)).toEqual(expected)
-    })
-
-    it('should return news feed for store news page', () => {
-      const value = 'https://store.steampowered.com/news/app/730/'
-      const expected = [
-        {
-          uri: 'https://store.steampowered.com/feeds/news/app/730/',
-          hint: { key: 'steam:news', label: 'News' },
-        },
-      ]
-
-      expect(steamHandler.resolve(value)).toEqual(expected)
-    })
-
-    it('should return news feed for community app page', () => {
-      const value = 'https://steamcommunity.com/app/730'
-      const expected = [
-        {
-          uri: 'https://store.steampowered.com/feeds/news/app/730/',
-          hint: { key: 'steam:news', label: 'News' },
-        },
-      ]
-
-      expect(steamHandler.resolve(value)).toEqual(expected)
-    })
-
-    it('should return news feed for age-gated store app page', () => {
-      const value = 'https://store.steampowered.com/agecheck/app/730/'
-      const expected = [
-        {
-          uri: 'https://store.steampowered.com/feeds/news/app/730/',
-          hint: { key: 'steam:news', label: 'News' },
-        },
-      ]
-
-      expect(steamHandler.resolve(value)).toEqual(expected)
-    })
-
     it('should return group RSS feed for community group page', () => {
       const value = 'https://steamcommunity.com/groups/Valve'
-      const expected = [
-        {
-          uri: 'https://steamcommunity.com/groups/Valve/rss',
-          hint: { key: 'steam:group', label: 'Group' },
-        },
-      ]
-
-      expect(steamHandler.resolve(value)).toEqual(expected)
-    })
-
-    it('should return group RSS feed for community group with trailing slash', () => {
-      const value = 'https://steamcommunity.com/groups/Valve/'
       const expected = [
         {
           uri: 'https://steamcommunity.com/groups/Valve/rss',
@@ -143,11 +154,6 @@ describe('steamHandler', () => {
 
     it('should return empty array for unrecognized store path', () => {
       expect(steamHandler.resolve('https://store.steampowered.com/about/')).toEqual([])
-    })
-
-    it.todo('should define behavior for invalid URL input', () => {
-      // resolve('not-a-url') currently throws a TypeError from the unguarded new URL call; the
-      // desired contract (throw vs empty array) is undecided.
     })
   })
 })

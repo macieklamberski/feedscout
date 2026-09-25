@@ -7,9 +7,16 @@ import { composeHint } from '../../common/utils.js'
 // Generic covers user (guess, html), partly covers issues, repo.
 // Handler needed for: branch.
 
-export const hosts = ['codeberg.org', 'www.codeberg.org', 'gitea.com', 'www.gitea.com']
+export type GiteaUrl =
+  | { kind: 'user'; owner: string }
+  | { kind: 'repo'; owner: string; repo: string }
+
+const hosts = ['codeberg.org', 'www.codeberg.org', 'gitea.com', 'www.gitea.com']
 const giteaCookieRegex = /(?:^|[;,\s])[\w-]*gitea=/
-export const excludedPaths = [
+// Gitea reserves these suffixes for routes of a user, such as /{user}.rss, so no username ends
+// with one.
+const userRouteSuffixRegex = /\.(?:atom|gpg|keys|png|rss)$/i
+const excludedPaths = [
   'explore',
   'admin',
   'user',
@@ -25,17 +32,24 @@ export const isGiteaHeaders = (headers: Headers): boolean => {
   return giteaCookieRegex.test(headers.get('set-cookie') ?? '')
 }
 
-// `resolve` returns nothing without a usable first segment, so `match` tests the
-// same thing rather than claiming a page it cannot serve.
-export const hasResolvablePath = (url: string): boolean => {
-  const [first] = getPathSegments(url)
+export const parseGiteaUrl = (url: string): GiteaUrl | undefined => {
+  const [first, repo] = getPathSegments(url)
+  const owner = repo ? first : first?.replace(userRouteSuffixRegex, '')
 
-  return Boolean(first) && !isAnyOf(first, excludedPaths)
+  if (!owner || isAnyOf(owner, excludedPaths)) {
+    return
+  }
+
+  if (repo) {
+    return { kind: 'repo', owner, repo }
+  }
+
+  return { kind: 'user', owner }
 }
 
 export const giteaHandler: PlatformHandler = {
   match: (url, _content, headers) => {
-    if (!hasResolvablePath(url)) {
+    if (!parseGiteaUrl(url)) {
       return false
     }
 
@@ -51,51 +65,45 @@ export const giteaHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    const { origin, pathname } = new URL(url)
-    const pathSegments = pathname.split('/').filter(Boolean)
+    const { origin } = new URL(url)
+    const parsed = parseGiteaUrl(url)
 
-    // User/org page: codeberg.org/{user}
-    if (pathSegments.length === 1) {
-      const user = pathSegments[0]
+    // User or organization page: codeberg.org/{owner}.
+    if (parsed?.kind === 'user') {
+      const { owner } = parsed
 
-      if (!isAnyOf(user, excludedPaths)) {
-        return [
-          {
-            uri: [`${origin}/${user}.atom`, `${origin}/${user}.rss`],
-            hint: composeHint('gitea:activity'),
-          },
-        ]
-      }
+      return [
+        {
+          uri: [`${origin}/${owner}.atom`, `${origin}/${owner}.rss`],
+          hint: composeHint('gitea:activity'),
+        },
+      ]
     }
 
-    // Repo page: codeberg.org/{user}/{repo}
-    if (pathSegments.length >= 2) {
-      const user = pathSegments[0]
-      const repo = pathSegments[1]
-
-      if (!isAnyOf(user, excludedPaths)) {
-        const feeds: Array<DiscoverUriEntry> = [
-          {
-            uri: [
-              `${origin}/${user}/${repo}/releases.atom`,
-              `${origin}/${user}/${repo}/releases.rss`,
-            ],
-            hint: composeHint('gitea:releases'),
-          },
-          {
-            uri: [`${origin}/${user}/${repo}/tags.atom`, `${origin}/${user}/${repo}/tags.rss`],
-            hint: composeHint('gitea:tags'),
-          },
-          {
-            uri: [`${origin}/${user}/${repo}.atom`, `${origin}/${user}/${repo}.rss`],
-            hint: composeHint('gitea:activity'),
-          },
-        ]
-
-        return feeds
-      }
+    if (parsed?.kind !== 'repo') {
+      return []
     }
 
-    return []
+    // Repo page: codeberg.org/{owner}/{repo}.
+    const { owner, repo } = parsed
+    const feeds: Array<DiscoverUriEntry> = [
+      {
+        uri: [
+          `${origin}/${owner}/${repo}/releases.atom`,
+          `${origin}/${owner}/${repo}/releases.rss`,
+        ],
+        hint: composeHint('gitea:releases'),
+      },
+      {
+        uri: [`${origin}/${owner}/${repo}/tags.atom`, `${origin}/${owner}/${repo}/tags.rss`],
+        hint: composeHint('gitea:tags'),
+      },
+      {
+        uri: [`${origin}/${owner}/${repo}.atom`, `${origin}/${owner}/${repo}.rss`],
+        hint: composeHint('gitea:activity'),
+      },
+    ]
+
+    return feeds
   },
 }

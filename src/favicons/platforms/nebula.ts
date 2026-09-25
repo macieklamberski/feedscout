@@ -1,28 +1,12 @@
-import { isAnyOf, isHostOf, isNonEmptyString, parseUrl } from 'trousse'
+import { isNonEmptyString } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { excludedPaths, globalPaths, hosts } from '../../feeds/platforms/nebula.js'
+import { parseNebulaUrl } from '../../feeds/platforms/nebula.js'
 import type { FaviconEnricher } from '../types.js'
-import { parseBodyJson } from '../utils.js'
+import { parseResponseJson } from '../utils.js'
 
 const platform = 'nebula'
 
 const queryDataRegex = /window\.__QUERY_DATA__\s*=\s*(\{.*?\});?\s*<\/script>/s
-
-const getChannelSlug = (url: string): string | undefined => {
-  const parsedUrl = parseUrl(url)
-
-  if (!parsedUrl || !isHostOf(url, hosts)) {
-    return
-  }
-
-  const slug = parsedUrl.pathname.split('/').find(Boolean)
-
-  if (!slug || isAnyOf(slug, globalPaths) || isAnyOf(slug, excludedPaths)) {
-    return
-  }
-
-  return slug
-}
 
 // biome-ignore lint/suspicious/noExplicitAny: Channel JSON from the page or the content API.
 const getAvatar = (channel: any): string | undefined => {
@@ -40,6 +24,7 @@ const getPageAvatar = (content: string | undefined): string | undefined => {
     return
   }
 
+  // A broken page payload must not hide the content API, which the ref falls back to.
   try {
     const queryData = JSON.parse(match[1])
 
@@ -59,11 +44,11 @@ const getPageAvatar = (content: string | undefined): string | undefined => {
 
 export const nebulaHandler: PlatformHandler = {
   match: (url) => {
-    return getChannelSlug(url) !== undefined
+    return parseNebulaUrl(url) !== undefined
   },
 
   resolve: (url, content) => {
-    const slug = getChannelSlug(url)
+    const slug = parseNebulaUrl(url)?.slug
 
     if (!slug) {
       return []
@@ -84,14 +69,12 @@ export const nebulaEnricher: FaviconEnricher = async (ref, context) => {
     return
   }
 
-  try {
-    const response = await context.fetchFn(`https://content.api.nebula.app/content/${ref.id}/`)
-    const avatar = getAvatar(parseBodyJson(response.body))
+  const response = await context.fetchFn(`https://content.api.nebula.app/content/${ref.id}/`)
+  const avatar = getAvatar(parseResponseJson(response))
 
-    if (avatar) {
-      return [avatar]
-    }
-  } catch {}
+  if (avatar) {
+    return [avatar]
+  }
 
   return []
 }

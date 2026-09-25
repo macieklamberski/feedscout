@@ -101,9 +101,5 @@ describe('snacHandler', () => {
     it('should return an empty array for the origin root', () => {
       expect(snacHandler.resolve('https://example.org/')).toEqual([])
     })
-
-    it('should return an empty array for invalid URLs', () => {
-      expect(snacHandler.resolve('not-a-url')).toEqual([])
-    })
   })
 })

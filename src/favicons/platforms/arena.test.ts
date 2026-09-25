@@ -71,41 +71,8 @@ describe('arenaHandler', () => {
       expect(arenaHandler.match('https://www.are.na/charles-broskoski')).toBe(true)
     })
 
-    it('should match URLs without www', () => {
-      expect(arenaHandler.match('https://are.na/charles-broskoski')).toBe(true)
-    })
-
-    it('should not match the root URL', () => {
-      expect(arenaHandler.match('https://www.are.na')).toBe(false)
-      expect(arenaHandler.match('https://www.are.na/')).toBe(false)
-    })
-
     it('should not match editorial pages', () => {
       expect(arenaHandler.match('https://www.are.na/editorial')).toBe(false)
-      expect(arenaHandler.match('https://www.are.na/editorial/some-article')).toBe(false)
-    })
-
-    it('should not match excluded paths', () => {
-      expect(arenaHandler.match('https://www.are.na/explore')).toBe(false)
-      expect(arenaHandler.match('https://www.are.na/settings')).toBe(false)
-    })
-
-    it('should match channel URLs', () => {
-      expect(arenaHandler.match('https://www.are.na/meg-miller/good-sign-offs')).toBe(true)
-    })
-
-    it('should not match paths deeper than a channel', () => {
-      expect(arenaHandler.match('https://www.are.na/meg-miller/good-sign-offs/feed/rss')).toBe(
-        false,
-      )
-    })
-
-    it('should not match non-Are.na URLs', () => {
-      expect(arenaHandler.match('https://example.com/charles-broskoski')).toBe(false)
-    })
-
-    it('should not match invalid URLs', () => {
-      expect(arenaHandler.match('not-a-url')).toBe(false)
     })
   })
 
@@ -160,6 +127,15 @@ describe('arenaHandler', () => {
       expect(result).toEqual(expected)
     })
 
+    it('should return a ref for channel subpages', async () => {
+      const value = 'https://www.are.na/meg-miller/good-sign-offs/table'
+      const expected: Array<DiscoverRef> = [
+        { platform: 'arena', id: 'meg-miller/good-sign-offs', url: value },
+      ]
+
+      expect(await arenaHandler.resolve(value, profileHtml)).toEqual(expected)
+    })
+
     it('should return empty array for editorial pages', async () => {
       const result = await arenaHandler.resolve('https://www.are.na/editorial', profileHtml)
 
@@ -186,6 +162,16 @@ describe('arenaEnricher', () => {
     }
 
     expect(await arenaEnricher(ref, createContext({}))).toBeUndefined()
+  })
+
+  it('should return empty array for a ref without a channel', async () => {
+    const ref: DiscoverRef = {
+      platform: 'arena',
+      id: 'meg-miller',
+      url: 'https://www.are.na/meg-miller',
+    }
+
+    expect(await arenaEnricher(ref, createContext({}))).toEqual([])
   })
 
   it('should return empty array when the channel belongs to another user', async () => {
@@ -235,17 +221,21 @@ describe('arenaEnricher', () => {
     expect(await arenaEnricher(channelRef, context)).toEqual([])
   })
 
-  it('should return empty array when the API returns invalid JSON', async () => {
+  it('should reject when the API returns invalid JSON', async () => {
     const context = createContext({ [channelApiUrl]: 'not-json' })
 
-    expect(await arenaEnricher(channelRef, context)).toEqual([])
+    await expect(arenaEnricher(channelRef, context)).rejects.toThrow()
   })
 
-  it('should return empty array when fetch throws', async () => {
+  it('should reject when fetch throws', async () => {
     const fetchFn: FetchFn = () => {
       throw new Error('Network error')
     }
 
-    expect(await arenaEnricher(channelRef, { fetchFn })).toEqual([])
+    await expect(arenaEnricher(channelRef, { fetchFn })).rejects.toThrow()
+  })
+
+  it('should reject when the response is not 2xx', async () => {
+    await expect(arenaEnricher(channelRef, createContext({}))).rejects.toThrow()
   })
 })

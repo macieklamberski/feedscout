@@ -1,20 +1,111 @@
 import { describe, expect, it } from 'bun:test'
-import { githubHandler } from './github.js'
+import type { GithubUrl } from './github.js'
+import { githubHandler, parseGithubUrl } from './github.js'
+
+describe('parseGithubUrl', () => {
+  it('should return the owner for a profile page', () => {
+    const expected: GithubUrl = { kind: 'user', owner: 'microsoft' }
+
+    expect(parseGithubUrl('https://github.com/microsoft')).toEqual(expected)
+  })
+
+  it('should return the owner for a name with dashes', () => {
+    const expected: GithubUrl = { kind: 'user', owner: 'my-org' }
+
+    expect(parseGithubUrl('https://github.com/my-org')).toEqual(expected)
+  })
+
+  it('should keep the owner case', () => {
+    const expected: GithubUrl = { kind: 'user', owner: 'Octocat' }
+
+    expect(parseGithubUrl('https://github.com/Octocat')).toEqual(expected)
+  })
+
+  it('should return the owner for the www host', () => {
+    const expected: GithubUrl = { kind: 'user', owner: 'octocat' }
+
+    expect(parseGithubUrl('https://www.github.com/octocat')).toEqual(expected)
+  })
+
+  const routeSuffixValues: Array<string> = [
+    'https://github.com/octocat.atom',
+    'https://github.com/octocat.png',
+  ]
+
+  it.each(routeSuffixValues)('should strip the route suffix from %s', (value) => {
+    const expected: GithubUrl = { kind: 'user', owner: 'octocat' }
+
+    expect(parseGithubUrl(value)).toEqual(expected)
+  })
+
+  it('should return the repo for a repository page', () => {
+    const expected: GithubUrl = { kind: 'repo', owner: 'octocat', repo: 'Hello-World' }
+
+    expect(parseGithubUrl('https://github.com/octocat/Hello-World')).toEqual(expected)
+  })
+
+  it('should return the repo for a repository subpage', () => {
+    const value = 'https://github.com/octocat/Hello-World/tree/main/src'
+    const expected: GithubUrl = { kind: 'repo', owner: 'octocat', repo: 'Hello-World' }
+
+    expect(parseGithubUrl(value)).toEqual(expected)
+  })
+
+  it('should keep a URL-encoded repo name', () => {
+    const expected: GithubUrl = { kind: 'repo', owner: 'owner', repo: 'my%20repo' }
+
+    expect(parseGithubUrl('https://github.com/owner/my%20repo')).toEqual(expected)
+  })
+
+  const excludedValues: Array<string> = [
+    'https://github.com/explore',
+    'https://github.com/copilot',
+    'https://github.com/dashboard',
+    'https://github.com/features',
+    'https://github.com/login',
+    'https://github.com/marketplace',
+  ]
+
+  it.each(excludedValues)('should return undefined for %s', (value) => {
+    expect(parseGithubUrl(value)).toBeUndefined()
+  })
+
+  const nestedExcludedValues: Array<string> = [
+    'https://github.com/settings/profile',
+    'https://github.com/features/actions',
+    'https://github.com/orgs/github/teams',
+  ]
+
+  it.each(nestedExcludedValues)('should return undefined for %s', (value) => {
+    expect(parseGithubUrl(value)).toBeUndefined()
+  })
+
+  it('should return undefined for an excluded path in another case', () => {
+    expect(parseGithubUrl('https://github.com/Features')).toBeUndefined()
+    expect(parseGithubUrl('https://github.com/EXPLORE')).toBeUndefined()
+  })
+
+  it('should return undefined for the homepage', () => {
+    expect(parseGithubUrl('https://github.com')).toBeUndefined()
+  })
+
+  it('should return undefined for another host', () => {
+    expect(parseGithubUrl('https://gitlab.com/owner/repo')).toBeUndefined()
+  })
+
+  it('should return undefined for an invalid URL', () => {
+    expect(parseGithubUrl('not-a-url')).toBeUndefined()
+  })
+})
 
 describe('githubHandler', () => {
   describe('match', () => {
-    const values: Array<[boolean, string]> = [
-      [true, 'https://github.com/owner/repo'],
-      [true, 'https://www.github.com/owner/repo'],
-      [false, 'https://gitlab.com/owner/repo'],
-    ]
-
-    it.each(values)('should return %s for %s', (expected, url) => {
-      expect(githubHandler.match(url)).toBe(expected)
+    it('should match a GitHub URL', () => {
+      expect(githubHandler.match('https://github.com/owner/repo')).toBe(true)
     })
 
-    it('should return false for invalid URL', () => {
-      expect(githubHandler.match('not-a-url')).toBe(false)
+    it('should not match another host', () => {
+      expect(githubHandler.match('https://gitlab.com/owner/repo')).toBe(false)
     })
   })
 
@@ -41,30 +132,6 @@ describe('githubHandler', () => {
 
     it('should include wiki feed when on wiki page', () => {
       const value = 'https://github.com/microsoft/vscode/wiki'
-      const expected = [
-        {
-          uri: 'https://github.com/microsoft/vscode/releases.atom',
-          hint: { key: 'github:releases', label: 'Releases' },
-        },
-        {
-          uri: 'https://github.com/microsoft/vscode/commits.atom',
-          hint: { key: 'github:commits', label: 'Commits' },
-        },
-        {
-          uri: 'https://github.com/microsoft/vscode/tags.atom',
-          hint: { key: 'github:tags', label: 'Tags' },
-        },
-        {
-          uri: 'https://github.com/microsoft/vscode/wiki.atom',
-          hint: { key: 'github:wiki', label: 'Wiki' },
-        },
-      ]
-
-      expect(githubHandler.resolve(value)).toEqual(expected)
-    })
-
-    it('should include wiki feed when on specific wiki subpage', () => {
-      const value = 'https://github.com/microsoft/vscode/wiki/Roadmap'
       const expected = [
         {
           uri: 'https://github.com/microsoft/vscode/releases.atom',
@@ -155,30 +222,6 @@ describe('githubHandler', () => {
       expect(githubHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should include discussions feed when on specific discussion', () => {
-      const value = 'https://github.com/microsoft/vscode/discussions/12345'
-      const expected = [
-        {
-          uri: 'https://github.com/microsoft/vscode/releases.atom',
-          hint: { key: 'github:releases', label: 'Releases' },
-        },
-        {
-          uri: 'https://github.com/microsoft/vscode/commits.atom',
-          hint: { key: 'github:commits', label: 'Commits' },
-        },
-        {
-          uri: 'https://github.com/microsoft/vscode/tags.atom',
-          hint: { key: 'github:tags', label: 'Tags' },
-        },
-        {
-          uri: 'https://github.com/microsoft/vscode/discussions.atom',
-          hint: { key: 'github:discussions', label: 'Discussions' },
-        },
-      ]
-
-      expect(githubHandler.resolve(value)).toEqual(expected)
-    })
-
     it('should include category-scoped discussion feed when on category page', () => {
       const value = 'https://github.com/microsoft/vscode/discussions/categories/announcements'
       const expected = [
@@ -219,8 +262,12 @@ describe('githubHandler', () => {
       expect(githubHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return user activity feed for user profile page with trailing slash', () => {
-      const value = 'https://github.com/torvalds/'
+    const routeSuffixValues: Array<string> = [
+      'https://github.com/torvalds.atom',
+      'https://github.com/torvalds.png',
+    ]
+
+    it.each(routeSuffixValues)('should return the user activity feed for %s', (value) => {
       const expected = [
         {
           uri: 'https://github.com/torvalds.atom',
@@ -231,72 +278,8 @@ describe('githubHandler', () => {
       expect(githubHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should resolve www.github.com URL', () => {
-      const value = 'https://www.github.com/octocat'
-      const expected = [
-        {
-          uri: 'https://github.com/octocat.atom',
-          hint: { key: 'github:activity', label: 'Activity' },
-        },
-      ]
-
-      expect(githubHandler.resolve(value)).toEqual(expected)
-    })
-
-    it('should resolve deeply nested file path', () => {
-      const value = 'https://github.com/owner/repo/blob/main/src/deeply/nested/file.ts'
-      const expected = [
-        {
-          uri: 'https://github.com/owner/repo/releases.atom',
-          hint: { key: 'github:releases', label: 'Releases' },
-        },
-        {
-          uri: 'https://github.com/owner/repo/commits.atom',
-          hint: { key: 'github:commits', label: 'Commits' },
-        },
-        {
-          uri: 'https://github.com/owner/repo/tags.atom',
-          hint: { key: 'github:tags', label: 'Tags' },
-        },
-        {
-          uri: 'https://github.com/owner/repo/commits/main/src/deeply/nested/file.ts.atom',
-          hint: { key: 'github:file-history', label: 'File history' },
-        },
-      ]
-
-      expect(githubHandler.resolve(value)).toEqual(expected)
-    })
-
-    it('should resolve URL-encoded repo name', () => {
-      const value = 'https://github.com/owner/my%20repo'
-      const expected = [
-        {
-          uri: 'https://github.com/owner/my%20repo/releases.atom',
-          hint: { key: 'github:releases', label: 'Releases' },
-        },
-        {
-          uri: 'https://github.com/owner/my%20repo/commits.atom',
-          hint: { key: 'github:commits', label: 'Commits' },
-        },
-        {
-          uri: 'https://github.com/owner/my%20repo/tags.atom',
-          hint: { key: 'github:tags', label: 'Tags' },
-        },
-      ]
-
-      expect(githubHandler.resolve(value)).toEqual(expected)
-    })
-
     it('should return empty array for excluded paths', () => {
       expect(githubHandler.resolve('https://github.com/explore')).toEqual([])
-      expect(githubHandler.resolve('https://github.com/copilot')).toEqual([])
-      expect(githubHandler.resolve('https://github.com/dashboard')).toEqual([])
-    })
-
-    it('should return empty array for nested excluded paths', () => {
-      expect(githubHandler.resolve('https://github.com/settings/profile')).toEqual([])
-      expect(githubHandler.resolve('https://github.com/features/actions')).toEqual([])
-      expect(githubHandler.resolve('https://github.com/orgs/github/teams')).toEqual([])
     })
 
     it('should not include wiki feed for repos with wiki in name', () => {
@@ -385,11 +368,6 @@ describe('githubHandler', () => {
       ]
 
       expect(githubHandler.resolve(value)).toEqual(expected)
-    })
-
-    it.todo('should define behavior for invalid URL input', () => {
-      // resolve('not-a-url') currently throws a TypeError from the unguarded new URL call; the
-      // desired contract (throw vs empty array) is undecided.
     })
   })
 })

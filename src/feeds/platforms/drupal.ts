@@ -32,13 +32,7 @@ export const drupalHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    const parsedUrl = parseUrl(url)
-
-    if (!parsedUrl) {
-      return []
-    }
-
-    const { origin } = parsedUrl
+    const { origin } = new URL(url)
 
     return [{ uri: `${origin}/rss.xml`, hint: composeHint('drupal:site') }]
   },

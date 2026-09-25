@@ -24,41 +24,12 @@ describe('noteHandler', () => {
       expect(noteHandler.match('https://note.com/alice')).toBe(true)
     })
 
-    it('should match profile URLs with trailing slash', () => {
-      expect(noteHandler.match('https://note.com/alice/')).toBe(true)
-    })
-
-    it('should match www.note.com profile URLs', () => {
-      expect(noteHandler.match('https://www.note.com/alice')).toBe(true)
-    })
-
-    it('should match magazine URLs', () => {
-      expect(noteHandler.match('https://note.com/alice/m/m1861fae39074')).toBe(true)
-    })
-
     it('should not match hashtag pages', () => {
       expect(noteHandler.match('https://note.com/hashtag/design')).toBe(false)
-      expect(noteHandler.match('https://note.com/tag/design')).toBe(false)
     })
 
-    it('should not match article pages', () => {
-      expect(noteHandler.match('https://note.com/alice/n/n1234567890ab')).toBe(false)
-    })
-
-    it('should not match excluded paths', () => {
-      expect(noteHandler.match('https://note.com/search')).toBe(false)
-    })
-
-    it('should not match root URL', () => {
-      expect(noteHandler.match('https://note.com/')).toBe(false)
-    })
-
-    it('should not match non-note URLs', () => {
-      expect(noteHandler.match('https://example.com/alice')).toBe(false)
-    })
-
-    it('should not match invalid URLs', () => {
-      expect(noteHandler.match('not-a-url')).toBe(false)
+    it('should not match a magazine under a reserved path', () => {
+      expect(noteHandler.match('https://note.com/search/m/m1861fae39074')).toBe(false)
     })
   })
 
@@ -104,15 +75,18 @@ describe('noteHandler', () => {
       it('should return empty array for hashtag pages', () => {
         expect(noteHandler.resolve('https://note.com/hashtag/design')).toEqual([])
       })
-
-      it('should return empty array for invalid URL', () => {
-        expect(noteHandler.resolve('not-a-url', profileContent)).toEqual([])
-      })
     })
 
     describe('edge cases', () => {
       it('should ignore page payload on magazine pages', () => {
         const url = 'https://note.com/alice/m/m1861fae39074'
+        const expected: Array<DiscoverRef> = [{ platform: 'note', id: 'alice', url }]
+
+        expect(noteHandler.resolve(url, profileContent)).toEqual(expected)
+      })
+
+      it('should return a ref with the owner for article pages, ignoring the payload', () => {
+        const url = 'https://note.com/alice/n/n1234567890ab'
         const expected: Array<DiscoverRef> = [{ platform: 'note', id: 'alice', url }]
 
         expect(noteHandler.resolve(url, profileContent)).toEqual(expected)
@@ -162,19 +136,23 @@ describe('noteEnricher', () => {
     expect(await noteEnricher(ref, context)).toEqual([])
   })
 
-  it('should return empty array when API returns invalid JSON', async () => {
+  it('should reject when API returns invalid JSON', async () => {
     const context = createContext({
       'https://note.com/api/v2/creators/alice': 'not json',
     })
 
-    expect(await noteEnricher(ref, context)).toEqual([])
+    await expect(noteEnricher(ref, context)).rejects.toThrow()
   })
 
-  it('should return empty array when fetch throws', async () => {
+  it('should reject when fetch throws', async () => {
     const fetchFn: FetchFn = () => {
       throw new Error('Network error')
     }
 
-    expect(await noteEnricher(ref, { fetchFn })).toEqual([])
+    await expect(noteEnricher(ref, { fetchFn })).rejects.toThrow()
+  })
+
+  it('should reject when the response is not 2xx', async () => {
+    await expect(noteEnricher(ref, createContext({}))).rejects.toThrow()
   })
 })

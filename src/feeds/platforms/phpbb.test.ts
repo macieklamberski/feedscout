@@ -9,6 +9,10 @@ describe('isPhpbbHtml', () => {
     expect(isPhpbbHtml(phpbbHtml)).toBe(true)
   })
 
+  it('should return true for an unquoted phpBB body id', () => {
+    expect(isPhpbbHtml('<body id=phpbb>')).toBe(true)
+  })
+
   it('should return false for another forum platform', () => {
     expect(isPhpbbHtml(otherHtml)).toBe(false)
   })
@@ -86,10 +90,6 @@ describe('phpbbHandler', () => {
       ]
 
       expect(phpbbHandler.resolve(value)).toEqual(expected)
-    })
-
-    it('should return an empty array for invalid URLs', () => {
-      expect(phpbbHandler.resolve('not-a-url')).toEqual([])
     })
   })
 })

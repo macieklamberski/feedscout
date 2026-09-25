@@ -1,33 +1,21 @@
-import { isHostOf, isNonEmptyString, parseUrl } from 'trousse'
+import { isHttpUrl, isNonEmptyString } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { hosts } from '../../feeds/platforms/odysee.js'
+import { parseOdyseeUrl } from '../../feeds/platforms/odysee.js'
 import type { FaviconEnricher } from '../types.js'
-import { parseBodyJson } from '../utils.js'
+import { parseResponseJson } from '../utils.js'
 
 const platform = 'odysee'
 
 const apiUrl = 'https://api.na-backend.odysee.com/api/v1/proxy?m=resolve'
 
-const channelRegex = /^\/@([^/:]+(?::[a-f0-9]+)?)(?:\/|$)/i
-
-const imageProtocols = ['http:', 'https:']
-
 const getChannel = (url: string): string | undefined => {
-  const parsedUrl = parseUrl(url)
+  const parsed = parseOdyseeUrl(url)
 
-  if (!parsedUrl || !isHostOf(url, hosts)) {
-    return
+  if (!parsed?.claimId) {
+    return parsed?.name
   }
 
-  const match = parsedUrl.pathname.match(channelRegex)
-
-  if (!match?.[1]) {
-    return
-  }
-
-  try {
-    return decodeURIComponent(match[1])
-  } catch {}
+  return `${parsed.name}:${parsed.claimId}`
 }
 
 export const odyseeHandler: PlatformHandler = {
@@ -51,24 +39,21 @@ export const odyseeEnricher: FaviconEnricher = async (ref, context) => {
     return
   }
 
-  try {
-    const lbryUrl = `lbry://@${ref.id}`
-    const body = JSON.stringify({ method: 'resolve', params: { urls: [lbryUrl] } })
-    const response = await context.fetchFn(apiUrl, {
-      method: 'POST',
-      headers: { 'content-type': 'application/json' },
-      body,
-    })
-    const data = parseBodyJson(response.body)
-    const thumbnail = data?.result?.[lbryUrl]?.value?.thumbnail?.url
-    const thumbnailProtocol = parseUrl(String(thumbnail))?.protocol ?? ''
+  const lbryUrl = `lbry://@${ref.id}`
+  const body = JSON.stringify({ method: 'resolve', params: { urls: [lbryUrl] } })
+  const response = await context.fetchFn(apiUrl, {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body,
+  })
+  const data = parseResponseJson(response)
+  const thumbnail = data?.result?.[lbryUrl]?.value?.thumbnail?.url
 
-    // The thumbnail is the channel's raw upload. The upload form crops it to square, but other
-    // clients may not, so a few avatars are not square.
-    if (isNonEmptyString(thumbnail) && imageProtocols.includes(thumbnailProtocol)) {
-      return [thumbnail]
-    }
-  } catch {}
+  // The thumbnail is the channel's raw upload. The upload form crops it to square, but other
+  // clients may not, so a few avatars are not square.
+  if (isNonEmptyString(thumbnail) && isHttpUrl(thumbnail)) {
+    return [thumbnail]
+  }
 
   return []
 }

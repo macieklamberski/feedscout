@@ -28,17 +28,13 @@ export const hubzillaHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    try {
-      const { origin } = new URL(url)
-      const channel = getChannel(url)
+    const { origin } = new URL(url)
+    const channel = getChannel(url)
 
-      if (!channel) {
-        return []
-      }
+    if (!channel) {
+      return []
+    }
 
-      return [{ uri: `${origin}/feed/${channel}`, hint: composeHint('hubzilla:channel') }]
-    } catch {}
-
-    return []
+    return [{ uri: `${origin}/feed/${channel}`, hint: composeHint('hubzilla:channel') }]
   },
 }

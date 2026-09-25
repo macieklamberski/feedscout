@@ -21,6 +21,10 @@ describe('discourseHandler', () => {
       expect(isDiscourseHtml('<meta id="data-discourse-setup" data-base-url="/">')).toBe(true)
     })
 
+    it('should return true for a single-quoted data-discourse-setup id', () => {
+      expect(isDiscourseHtml("<meta id='data-discourse-setup'>")).toBe(true)
+    })
+
     it('should return false for non-Discourse generator', () => {
       expect(isDiscourseHtml(otherHtml)).toBe(false)
     })
@@ -222,10 +226,6 @@ describe('discourseHandler', () => {
       ]
 
       expect(discourseHandler.resolve(value)).toEqual(expected)
-    })
-
-    it('should return empty array for invalid URL', () => {
-      expect(discourseHandler.resolve('not-a-url')).toEqual([])
     })
   })
 })

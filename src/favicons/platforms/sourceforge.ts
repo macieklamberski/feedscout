@@ -1,30 +1,17 @@
-import { isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { hosts } from '../../feeds/platforms/sourceforge.js'
+import { parseSourceforgeUrl } from '../../feeds/platforms/sourceforge.js'
 
 export const sourceforgeHandler: PlatformHandler = {
   match: (url) => {
-    const parsedUrl = parseUrl(url)
-
-    if (!parsedUrl) {
-      return false
-    }
-
-    const { pathname } = parsedUrl
-    const segments = pathname.split('/').filter(Boolean)
-
-    return isHostOf(url, hosts) && segments[0] === 'projects' && !!segments[1]
+    return parseSourceforgeUrl(url) !== undefined
   },
 
   resolve: (url) => {
-    const { pathname } = new URL(url)
-    const segments = pathname.split('/').filter(Boolean)
+    const project = parseSourceforgeUrl(url)?.project
 
-    if (segments[0] !== 'projects' || !segments[1]) {
+    if (!project) {
       return []
     }
-
-    const project = segments[1]
 
     return [{ uri: `https://a.fsdn.com/allura/p/${project}/icon` }]
   },

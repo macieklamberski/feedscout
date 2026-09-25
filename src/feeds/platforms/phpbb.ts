@@ -1,6 +1,6 @@
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, getCookieNames } from '../../common/utils.js'
+import { composeHint, getCookieNames, hasElementWithId } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -9,7 +9,7 @@ const scriptSegmentRegex = /\/[^/]*\.php$/
 const trailingSlashRegex = /\/$/
 
 export const isPhpbbHtml = (content: string): boolean => {
-  return content.includes('id="phpbb"')
+  return hasElementWithId(content, 'phpbb')
 }
 
 // phpBB sets `{name}_u`, `{name}_k` and `{name}_sid`, where the board picks the name.
@@ -45,26 +45,22 @@ export const phpbbHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    try {
-      const { origin, pathname, search } = new URL(url)
-      // A board is routinely mounted under a sub-path such as `/community`.
-      const boardPath = pathname.replace(scriptSegmentRegex, '').replace(trailingSlashRegex, '')
-      const boardUrl = `${origin}${boardPath}`
-      const forumId = search.match(forumIdRegex)?.[1]
-      const uris: Array<DiscoverUriEntry> = []
+    const { origin, pathname, search } = new URL(url)
+    // A board is routinely mounted under a sub-path such as `/community`.
+    const boardPath = pathname.replace(scriptSegmentRegex, '').replace(trailingSlashRegex, '')
+    const boardUrl = `${origin}${boardPath}`
+    const forumId = search.match(forumIdRegex)?.[1]
+    const uris: Array<DiscoverUriEntry> = []
 
-      if (forumId) {
-        uris.push({
-          uri: `${boardUrl}/feed.php?f=${forumId}`,
-          hint: composeHint('phpbb:forum'),
-        })
-      }
+    if (forumId) {
+      uris.push({
+        uri: `${boardUrl}/feed.php?f=${forumId}`,
+        hint: composeHint('phpbb:forum'),
+      })
+    }
 
-      uris.push({ uri: `${boardUrl}/feed.php`, hint: composeHint('phpbb:site') })
+    uris.push({ uri: `${boardUrl}/feed.php`, hint: composeHint('phpbb:site') })
 
-      return uris
-    } catch {}
-
-    return []
+    return uris
   },
 }

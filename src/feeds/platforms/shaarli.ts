@@ -1,13 +1,12 @@
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, getCookieNames } from '../../common/utils.js'
+import { composeHint, findElement, getCookieNames, hasElementWithId } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
-const basePathRegex = /name="js_base_path" value="([^"]*)"/
 const lastSegmentRegex = /\/[^/]*$/
 
 export const isShaarliHtml = (content: string): boolean => {
-  return content.includes('id="shaarli-menu"')
+  return hasElementWithId(content, 'shaarli-menu')
 }
 
 export const isShaarliHeaders = (headers: Headers): boolean => {
@@ -17,7 +16,12 @@ export const isShaarliHeaders = (headers: Headers): boolean => {
 // Shaarli 0.12 and later print the mount path in `js_base_path`. Older installs
 // route every page through one `index.php`, so its directory is the mount path.
 const getBasePath = (pathname: string, content?: string): string => {
-  return content?.match(basePathRegex)?.[1] ?? pathname.replace(lastSegmentRegex, '')
+  const directory = pathname.replace(lastSegmentRegex, '')
+  const input = findElement(content, (element) => {
+    return element.name === 'input' && element.attribs.name === 'js_base_path'
+  })
+
+  return input?.attribs.value ?? directory
 }
 
 export const shaarliHandler: PlatformHandler = {
@@ -38,18 +42,14 @@ export const shaarliHandler: PlatformHandler = {
   },
 
   resolve: (url, content) => {
-    try {
-      const { origin, pathname } = new URL(url)
-      const baseUrl = `${origin}${getBasePath(pathname, content)}`
+    const { origin, pathname } = new URL(url)
+    const baseUrl = `${origin}${getBasePath(pathname, content)}`
 
-      return [
-        { uri: `${baseUrl}/feed/rss`, hint: composeHint('shaarli:posts', 'rss') },
-        { uri: `${baseUrl}/feed/atom`, hint: composeHint('shaarli:posts', 'atom') },
-        // Installs older than 0.12 answer 404 on `/feed/*` and serve this instead.
-        { uri: `${baseUrl}/?do=rss`, hint: composeHint('shaarli:posts-legacy') },
-      ]
-    } catch {}
-
-    return []
+    return [
+      { uri: `${baseUrl}/feed/rss`, hint: composeHint('shaarli:posts', 'rss') },
+      { uri: `${baseUrl}/feed/atom`, hint: composeHint('shaarli:posts', 'atom') },
+      // Installs older than 0.12 answer 404 on `/feed/*` and serve this instead.
+      { uri: `${baseUrl}/?do=rss`, hint: composeHint('shaarli:posts-legacy') },
+    ]
   },
 }
