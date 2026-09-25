@@ -60,9 +60,16 @@ describe('weeblyHandler', () => {
       expect(weeblyHandler.resolve(value)).toEqual(expected)
     })
 
-    it.todo('should not emit duplicate entries for /blog paths', () => {
-      // resolve('https://example.weebly.com/blog') currently returns the same
-      // /blog/feed entry twice (custom slug branch plus default); likely needs a source fix.
+    it('should return default feed once for blog page', () => {
+      const value = 'https://example.weebly.com/blog'
+      const expected = [
+        {
+          uri: 'https://example.weebly.com/blog/feed',
+          hint: { key: 'weebly:blog', label: 'Blog' },
+        },
+      ]
+
+      expect(weeblyHandler.resolve(value)).toEqual(expected)
     })
   })
 })

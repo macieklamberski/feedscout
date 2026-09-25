@@ -12,6 +12,14 @@ describe('tumblrHandler', () => {
       expect(tumblrHandler.resolve('https://staff.tumblr.com')).toEqual(expected)
     })
 
+    it('should resolve blog avatar from www.tumblr.com path URL', () => {
+      const expected: Array<DiscoverUriEntry> = [
+        { uri: 'https://api.tumblr.com/v2/blog/staff/avatar/512' },
+      ]
+
+      expect(tumblrHandler.resolve('https://www.tumblr.com/staff')).toEqual(expected)
+    })
+
     it('should return empty array for the tumblr.com root', () => {
       expect(tumblrHandler.resolve('https://tumblr.com')).toEqual([])
     })

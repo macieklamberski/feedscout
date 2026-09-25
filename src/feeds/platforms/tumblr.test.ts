@@ -21,6 +21,42 @@ describe('parseTumblrUrl', () => {
     expect(parseTumblrUrl('https://staff.tumblr.com/tagged/updates')).toEqual(expected)
   })
 
+  it('should return the blog for a www.tumblr.com blog path', () => {
+    const expected: TumblrUrl = { kind: 'blog', blog: 'staff' }
+
+    expect(parseTumblrUrl('https://www.tumblr.com/staff')).toEqual(expected)
+  })
+
+  it('should return the blog for a www.tumblr.com post path', () => {
+    const expected: TumblrUrl = { kind: 'blog', blog: 'staff' }
+
+    expect(parseTumblrUrl('https://www.tumblr.com/staff/123/example-post')).toEqual(expected)
+  })
+
+  it('should return the blog for a www.tumblr.com/blog/view path', () => {
+    const expected: TumblrUrl = { kind: 'blog', blog: 'staff' }
+
+    expect(parseTumblrUrl('https://www.tumblr.com/blog/view/staff')).toEqual(expected)
+  })
+
+  it('should return the blog for a tumblr.com apex blog path', () => {
+    const expected: TumblrUrl = { kind: 'blog', blog: 'staff' }
+
+    expect(parseTumblrUrl('https://tumblr.com/staff')).toEqual(expected)
+  })
+
+  it('should return undefined for a www.tumblr.com site route', () => {
+    expect(parseTumblrUrl('https://www.tumblr.com/explore')).toBeUndefined()
+  })
+
+  it('should return undefined for a www.tumblr.com tag route', () => {
+    expect(parseTumblrUrl('https://www.tumblr.com/tagged/photography')).toBeUndefined()
+  })
+
+  it('should return undefined for a www.tumblr.com/blog path without a blog', () => {
+    expect(parseTumblrUrl('https://www.tumblr.com/blog/view')).toBeUndefined()
+  })
+
   it('should return undefined for www.tumblr.com', () => {
     expect(parseTumblrUrl('https://www.tumblr.com/')).toBeUndefined()
   })
@@ -65,9 +101,17 @@ describe('tumblrHandler', () => {
       expect(tumblrHandler.resolve(value)).toEqual(expected)
     })
 
-    it.todo('should resolve blog name from www.tumblr.com/{blog} URLs', () => {
-      // www.tumblr.com/{blog} is not matched, so resolve never reads the blog name from its
-      // path; likely needs a source fix.
+    it('should return blog subdomain feed URL for www.tumblr.com blog path', () => {
+      const value = 'https://www.tumblr.com/example/123/example-post'
+      const expected = [
+        { uri: 'https://example.tumblr.com/rss', hint: { key: 'tumblr:posts', label: 'Posts' } },
+      ]
+
+      expect(tumblrHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return empty array for a URL that names no blog', () => {
+      expect(tumblrHandler.resolve('https://www.tumblr.com/explore')).toEqual([])
     })
   })
 })

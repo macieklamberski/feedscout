@@ -18,10 +18,10 @@ export const weeblyHandler: PlatformHandler = {
     const pathSegments = pathname.split('/').filter(Boolean)
     const uris: Array<DiscoverUriEntry> = []
 
-    // Custom blog page slug (e.g., /blog/feed when page is named "blog").
+    // Custom blog page slug (e.g., /articles/feed when page is named "articles").
     const firstSegment = pathSegments[0]
 
-    if (firstSegment && !numericRegex.test(firstSegment)) {
+    if (firstSegment && firstSegment !== 'blog' && !numericRegex.test(firstSegment)) {
       uris.push({
         uri: `${origin}/${firstSegment}/feed`,
         hint: composeHint('weebly:blog'),

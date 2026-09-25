@@ -7,6 +7,7 @@ describe('firesideHandler', () => {
     const values: Array<[boolean, string]> = [
       [true, 'https://office.fireside.fm'],
       [true, 'https://blog.example.fireside.fm'],
+      [false, 'https://www.fireside.fm'],
       [false, 'https://fireside.fm'],
       [false, 'https://example.com'],
     ]
@@ -55,11 +56,6 @@ describe('firesideHandler', () => {
 
     it('should return empty array for the bare host', () => {
       expect(firesideHandler.resolve('https://fireside.fm/')).toEqual([])
-    })
-
-    it.todo('should define behavior for www.fireside.fm', () => {
-      // resolve('https://www.fireside.fm') currently treats www as a podcast slug and emits
-      // https://feeds.fireside.fm/www/rss, which is likely a source bug.
     })
   })
 })
