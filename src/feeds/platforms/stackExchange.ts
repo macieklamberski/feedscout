@@ -25,6 +25,8 @@ const collectiveRegex = /^\/collectives\/([^/]+)/
 // Sort values accepted by feeds.tag. Documented at api.stackexchange.com.
 const validSorts = ['newest', 'active', 'votes', 'creation', 'hot', 'week', 'month']
 
+const homePaths = ['/', '']
+
 const getSortSuffix = (searchParams: URLSearchParams): string => {
   const sort = searchParams.get('sort') ?? searchParams.get('tab')?.toLowerCase()
 
@@ -88,7 +90,7 @@ export const stackExchangeHandler: PlatformHandler = {
     }
 
     // Homepage: site-wide newest questions feed.
-    if (pathname === '/' || pathname === '') {
+    if (homePaths.includes(pathname)) {
       return [
         {
           uri: `${origin}/feeds`,

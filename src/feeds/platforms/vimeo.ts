@@ -43,6 +43,8 @@ const excludedPaths = [
   'watch',
 ]
 
+const albumSegments = ['album', 'showcase']
+
 export const vimeoHandler: PlatformHandler = {
   match: (url) => {
     return isHostOf(url, hosts)
@@ -80,7 +82,7 @@ export const vimeoHandler: PlatformHandler = {
     // returns RSS; /showcase/{id}/rss returns 404. /album/{id} 301-redirects to
     // /showcase/{id} in the browser, so users will most often paste the showcase URL.
     if (
-      (pathSegments[0] === 'album' || pathSegments[0] === 'showcase') &&
+      albumSegments.includes(pathSegments[0]) &&
       pathSegments[1] &&
       numericRegex.test(pathSegments[1])
     ) {

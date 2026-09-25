@@ -89,6 +89,9 @@ const excludedPaths = [
   'welcome',
 ]
 
+const homePaths = ['/', '']
+const latestPaths = ['/latest', '/latest/']
+
 export const parseDevtoUrl = (url: string): DevtoUrl | undefined => {
   const parsedUrl = parseUrl(url)
 
@@ -121,12 +124,12 @@ export const devtoHandler: PlatformHandler = {
     const { pathname } = new URL(url)
 
     // Homepage: global community feed.
-    if (pathname === '/' || pathname === '') {
+    if (homePaths.includes(pathname)) {
       return [{ uri: 'https://dev.to/feed', hint: composeHint('devto:community') }]
     }
 
     // Latest sort: /latest.
-    if (pathname === '/latest' || pathname === '/latest/') {
+    if (latestPaths.includes(pathname)) {
       return [
         { uri: 'https://dev.to/feed/latest', hint: composeHint('devto:latest') },
         { uri: 'https://dev.to/feed', hint: composeHint('devto:community') },

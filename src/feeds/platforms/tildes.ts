@@ -8,6 +8,8 @@ import { composeHint } from '../../common/utils.js'
 const hosts = ['tildes.net', 'www.tildes.net']
 const groupRegex = /^\/~([^/]+)/
 
+const homePaths = ['/', '']
+
 export const tildesHandler: PlatformHandler = {
   match: (url) => {
     return isHostOf(url, hosts)
@@ -38,7 +40,7 @@ export const tildesHandler: PlatformHandler = {
     }
 
     // Global home feed only for root path.
-    if (pathname === '/' || pathname === '') {
+    if (homePaths.includes(pathname)) {
       uris.push({
         uri: `https://tildes.net/topics.rss${tagSuffix}`,
         hint: composeHint('tildes:topics', 'rss'),

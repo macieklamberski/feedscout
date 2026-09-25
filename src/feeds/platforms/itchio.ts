@@ -30,6 +30,9 @@ const sections = [
 ]
 const sorts = ['newest', 'top-rated', 'top-sellers', 'on-sale', 'free']
 
+const gamesPaths = ['/games', '/games/']
+const devlogsPaths = ['/devlogs', '/devlogs/']
+
 export const itchioHandler: PlatformHandler = {
   match: (url) => {
     return isHostOrSubdomainOf(url, domains)
@@ -135,12 +138,12 @@ export const itchioHandler: PlatformHandler = {
     }
 
     // /games
-    if (pathname === '/games' || pathname === '/games/') {
+    if (gamesPaths.includes(pathname)) {
       return [{ uri: 'https://itch.io/games.xml', hint: composeHint('itchio:games') }]
     }
 
     // /devlogs
-    if (pathname === '/devlogs' || pathname === '/devlogs/') {
+    if (devlogsPaths.includes(pathname)) {
       return [{ uri: 'https://itch.io/devlogs.xml', hint: composeHint('itchio:devlog') }]
     }
 

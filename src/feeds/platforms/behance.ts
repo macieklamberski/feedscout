@@ -29,6 +29,8 @@ const excludedPaths = [
   'adobe',
 ]
 
+const homePaths = ['/', '', '/galleries']
+
 export const parseBehanceUrl = (url: string): BehanceUrl | undefined => {
   const parsedUrl = parseUrl(url)
 
@@ -54,7 +56,7 @@ export const behanceHandler: PlatformHandler = {
     const { pathname } = new URL(url)
 
     // Homepage: featured projects. The page's own FeedBurner link serves the same items.
-    if (pathname === '/' || pathname === '' || pathname === '/galleries') {
+    if (homePaths.includes(pathname)) {
       return [
         {
           uri: 'https://www.behance.net/feeds/projects',

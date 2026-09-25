@@ -1,3 +1,15 @@
 {
-  "extends": ["kvalita/biome"]
+  "extends": ["kvalita/biome"],
+  "overrides": [
+    {
+      "includes": ["check/**"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noProcessEnv": "off"
+          }
+        }
+      }
+    }
+  ]
 }

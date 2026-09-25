@@ -17,6 +17,9 @@ const domainRegex = /^\/domains\/([^/]+)/
 const userRegex = /^\/~([a-zA-Z0-9_-]+)/
 const topRegex = /^\/top(?:\/(1d|3d|1w|1m|1y))?\/?$/
 
+const newestPaths = ['/newest', '/newest/']
+const commentsPaths = ['/comments', '/comments/']
+
 export const parseLobstersUrl = (url: string): LobstersUrl | undefined => {
   const parsedUrl = parseUrl(url)
 
@@ -95,12 +98,12 @@ export const lobstersHandler: PlatformHandler = {
     }
 
     // Newest page.
-    if (pathname === '/newest' || pathname === '/newest/') {
+    if (newestPaths.includes(pathname)) {
       return [{ uri: 'https://lobste.rs/newest.rss', hint: composeHint('lobsters:newest') }]
     }
 
     // Comments page.
-    if (pathname === '/comments' || pathname === '/comments/') {
+    if (commentsPaths.includes(pathname)) {
       return [
         {
           uri: 'https://lobste.rs/comments.rss',

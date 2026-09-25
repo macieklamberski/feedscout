@@ -9,6 +9,8 @@ const domains = ['douban.com']
 const userRegex = /^\/people\/([^/]+)/
 const subjectRegex = /^\/subject\/(\d+)/
 
+const homePaths = ['/', '']
+
 export const doubanHandler: PlatformHandler = {
   match: (url) => {
     return isHostOrSubdomainOf(url, domains)
@@ -54,7 +56,7 @@ export const doubanHandler: PlatformHandler = {
     }
 
     // Root page: category review feeds.
-    if (pathname === '/' || pathname === '') {
+    if (homePaths.includes(pathname)) {
       return [
         {
           uri: 'https://www.douban.com/feed/review/book',

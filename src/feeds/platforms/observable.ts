@@ -14,6 +14,10 @@ export const hosts = ['observablehq.com', 'www.observablehq.com']
 const collectionRegex = /^\/@([^/]+)\/(?:-\/)?collection\/([^/]+)/
 const ownerRegex = /^\/@([^/]+)/
 
+const publicPaths = ['/public', '/public/']
+const recentPaths = ['/recent', '/recent/']
+const trendingPaths = ['/trending', '/trending/']
+
 export const parseObservableUrl = (url: string): ObservableUrl | undefined => {
   const parsedUrl = parseUrl(url)
 
@@ -44,13 +48,12 @@ export const observableHandler: PlatformHandler = {
 
   resolve: (url) => {
     const { pathname, searchParams } = new URL(url)
-    const isPublic = pathname === '/public' || pathname === '/public/'
+    const isPublic = publicPaths.includes(pathname)
 
     // `/recent` redirects to `/public?sort=publish_time` and `/trending` to `/public`.
     // Site-wide recent feed.
     if (
-      pathname === '/recent' ||
-      pathname === '/recent/' ||
+      recentPaths.includes(pathname) ||
       (isPublic && searchParams.get('sort') === 'publish_time')
     ) {
       return [
@@ -62,7 +65,7 @@ export const observableHandler: PlatformHandler = {
     }
 
     // Site-wide trending feed.
-    if (pathname === '/trending' || pathname === '/trending/' || isPublic) {
+    if (trendingPaths.includes(pathname) || isPublic) {
       return [
         {
           uri: 'https://api.observablehq.com/documents/trending.rss',

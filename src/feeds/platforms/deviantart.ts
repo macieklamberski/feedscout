@@ -39,6 +39,9 @@ const excludedPaths = [
   'watch',
 ]
 
+const dailyDeviationsPaths = ['/daily-deviations', '/daily-deviations/']
+const popularPaths = ['/popular', '/popular/']
+
 export const parseDeviantartUrl = (url: string): DeviantartUrl | undefined => {
   const parsedUrl = parseUrl(url)
 
@@ -85,7 +88,7 @@ export const deviantartHandler: PlatformHandler = {
     const { pathname } = new URL(url)
 
     // Site-wide curated feeds.
-    if (pathname === '/daily-deviations' || pathname === '/daily-deviations/') {
+    if (dailyDeviationsPaths.includes(pathname)) {
       return [
         {
           uri: `${feedBaseUrl}?q=${encodeURIComponent('special:dd')}`,
@@ -94,7 +97,7 @@ export const deviantartHandler: PlatformHandler = {
       ]
     }
 
-    if (pathname === '/popular' || pathname === '/popular/') {
+    if (popularPaths.includes(pathname)) {
       return [
         {
           uri: `${feedBaseUrl}?type=deviation&q=${encodeURIComponent('boost:popular')}`,

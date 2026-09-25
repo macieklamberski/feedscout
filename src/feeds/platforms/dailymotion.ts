@@ -58,6 +58,8 @@ const excludedPaths = [
   'community',
 ]
 
+const trendingPaths = ['/', '', '/trending']
+
 export const parseDailymotionUrl = (url: string): DailymotionUrl | undefined => {
   const parsedUrl = parseUrl(url)
 
@@ -102,7 +104,7 @@ export const dailymotionHandler: PlatformHandler = {
     const { pathname } = new URL(url)
 
     // Homepage or /trending: global trending feed.
-    if (pathname === '/' || pathname === '' || pathname === '/trending') {
+    if (trendingPaths.includes(pathname)) {
       return [
         {
           uri: 'https://www.dailymotion.com/rss/trending',
