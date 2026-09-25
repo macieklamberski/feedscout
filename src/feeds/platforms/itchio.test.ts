@@ -163,8 +163,26 @@ describe('itchioHandler', () => {
       expect(itchioHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return games feed for /games path with trailing slash', () => {
+      const value = 'https://itch.io/games/'
+      const expected = [
+        { uri: 'https://itch.io/games.xml', hint: { key: 'itchio:games', label: 'Games' } },
+      ]
+
+      expect(itchioHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return devlogs feed for /devlogs path', () => {
       const value = 'https://itch.io/devlogs'
+      const expected = [
+        { uri: 'https://itch.io/devlogs.xml', hint: { key: 'itchio:devlog', label: 'Devlog' } },
+      ]
+
+      expect(itchioHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return devlogs feed for /devlogs path with trailing slash', () => {
+      const value = 'https://itch.io/devlogs/'
       const expected = [
         { uri: 'https://itch.io/devlogs.xml', hint: { key: 'itchio:devlog', label: 'Devlog' } },
       ]

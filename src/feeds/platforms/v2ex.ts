@@ -9,8 +9,6 @@ const hosts = ['www.v2ex.com', 'v2ex.com']
 const nodeRegex = /^\/go\/([^/]+)/
 const memberRegex = /^\/member\/([^/]+)/
 
-const homePaths = ['/', '']
-
 export const v2exHandler: PlatformHandler = {
   match: (url) => {
     return isHostOf(url, hosts)
@@ -57,7 +55,7 @@ export const v2exHandler: PlatformHandler = {
     }
 
     // Root page.
-    if (homePaths.includes(pathname)) {
+    if (pathname === '/') {
       return [
         {
           uri: 'https://www.v2ex.com/index.xml',

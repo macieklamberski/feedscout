@@ -11,6 +11,8 @@ export type MyanimelistUrl = { kind: 'user'; username: string }
 
 export const hosts = ['myanimelist.net', 'www.myanimelist.net']
 const userRegex = /^\/(?:profile|animelist|mangalist|history)\/([^/]+)/
+const newsRegex = /^\/news(?:\/|$)/
+const featuredRegex = /^\/featured(?:\/|$)/
 
 export const parseMyanimelistUrl = (url: string): MyanimelistUrl | undefined => {
   const parsedUrl = parseUrl(url)
@@ -37,7 +39,7 @@ export const myanimelistHandler: PlatformHandler = {
     const { pathname } = new URL(url)
 
     // Site-wide news feed: /news
-    if (pathname === '/news' || pathname.startsWith('/news/')) {
+    if (newsRegex.test(pathname)) {
       return [
         {
           uri: 'https://myanimelist.net/rss/news.xml',
@@ -47,7 +49,7 @@ export const myanimelistHandler: PlatformHandler = {
     }
 
     // Featured articles feed: /featured
-    if (pathname === '/featured' || pathname.startsWith('/featured/')) {
+    if (featuredRegex.test(pathname)) {
       return [
         {
           uri: 'https://myanimelist.net/rss/featured.xml',

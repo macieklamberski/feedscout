@@ -15,8 +15,6 @@ const hosts = [...storeHosts, ...communityHosts]
 const appRegex = /^\/(?:agecheck\/|news\/)?app\/(\d+)/
 const groupRegex = /^\/groups\/([^/]+)/
 
-const homePaths = ['/', '']
-
 export const parseSteamUrl = (url: string): SteamUrl | undefined => {
   const parsedUrl = parseUrl(url)
 
@@ -65,10 +63,7 @@ export const steamHandler: PlatformHandler = {
     }
 
     // Global news feed on store root or /news/
-    if (
-      isHostOf(url, storeHosts) &&
-      (homePaths.includes(pathname) || pathname.startsWith('/news'))
-    ) {
+    if (isHostOf(url, storeHosts) && (pathname === '/' || pathname.startsWith('/news'))) {
       return [
         {
           uri: 'https://store.steampowered.com/feeds/news.xml',

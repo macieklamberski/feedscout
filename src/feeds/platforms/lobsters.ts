@@ -16,9 +16,8 @@ const tagRegex = /^\/t\/([a-zA-Z0-9,_-]+)/
 const domainRegex = /^\/domains\/([^/]+)/
 const userRegex = /^\/~([a-zA-Z0-9_-]+)/
 const topRegex = /^\/top(?:\/(1d|3d|1w|1m|1y))?\/?$/
-
-const newestPaths = ['/newest', '/newest/']
-const commentsPaths = ['/comments', '/comments/']
+const newestRegex = /^\/newest\/?$/
+const commentsRegex = /^\/comments\/?$/
 
 export const parseLobstersUrl = (url: string): LobstersUrl | undefined => {
   const parsedUrl = parseUrl(url)
@@ -98,12 +97,12 @@ export const lobstersHandler: PlatformHandler = {
     }
 
     // Newest page.
-    if (newestPaths.includes(pathname)) {
+    if (newestRegex.test(pathname)) {
       return [{ uri: 'https://lobste.rs/newest.rss', hint: composeHint('lobsters:newest') }]
     }
 
     // Comments page.
-    if (commentsPaths.includes(pathname)) {
+    if (commentsRegex.test(pathname)) {
       return [
         {
           uri: 'https://lobste.rs/comments.rss',

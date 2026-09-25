@@ -10,8 +10,6 @@ export type VelogUrl = { kind: 'user'; username: string }
 export const hosts = ['velog.io', 'www.velog.io']
 const userRegex = /^\/@([^/]+)/
 
-const homePaths = ['/', '']
-
 export const parseVelogUrl = (url: string): VelogUrl | undefined => {
   const parsedUrl = parseUrl(url)
 
@@ -53,7 +51,7 @@ export const velogHandler: PlatformHandler = {
     }
 
     // Homepage: trending posts feed.
-    if (homePaths.includes(pathname)) {
+    if (pathname === '/') {
       return [
         {
           uri: 'https://v2.velog.io/rss',

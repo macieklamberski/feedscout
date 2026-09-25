@@ -122,6 +122,18 @@ describe('observableHandler', () => {
       expect(observableHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return trending feed for /public with trailing slash', () => {
+      const value = 'https://observablehq.com/public/'
+      const expected = [
+        {
+          uri: 'https://api.observablehq.com/documents/trending.rss',
+          hint: { key: 'observable:trending', label: 'Trending' },
+        },
+      ]
+
+      expect(observableHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return empty array for root path', () => {
       const value = 'https://observablehq.com/'
 

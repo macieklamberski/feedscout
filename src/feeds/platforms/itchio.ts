@@ -18,6 +18,8 @@ const madeWithRegex = /^\/games\/made-with-([^/.]+)/
 const sortRegex = /^\/games\/([^/.]+)/
 const sectionRegex = /^\/([^/.]+)/
 const gameRegex = /^\/([^/]+)/
+const gamesRegex = /^\/games\/?$/
+const devlogsRegex = /^\/devlogs\/?$/
 
 const sections = [
   'tools',
@@ -29,9 +31,6 @@ const sections = [
   'misc',
 ]
 const sorts = ['newest', 'top-rated', 'top-sellers', 'on-sale', 'free']
-
-const gamesPaths = ['/games', '/games/']
-const devlogsPaths = ['/devlogs', '/devlogs/']
 
 export const itchioHandler: PlatformHandler = {
   match: (url) => {
@@ -138,12 +137,12 @@ export const itchioHandler: PlatformHandler = {
     }
 
     // /games
-    if (gamesPaths.includes(pathname)) {
+    if (gamesRegex.test(pathname)) {
       return [{ uri: 'https://itch.io/games.xml', hint: composeHint('itchio:games') }]
     }
 
     // /devlogs
-    if (devlogsPaths.includes(pathname)) {
+    if (devlogsRegex.test(pathname)) {
       return [{ uri: 'https://itch.io/devlogs.xml', hint: composeHint('itchio:devlog') }]
     }
 
