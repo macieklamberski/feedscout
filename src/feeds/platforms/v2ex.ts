@@ -23,7 +23,8 @@ export const v2exHandler: PlatformHandler = {
     if (nodeMatch?.[1]) {
       return [
         {
-          uri: `https://www.v2ex.com/feed/${nodeMatch[1]}.xml`,
+          // V2EX serves node feeds in lowercase only: /feed/Python.xml answers 404.
+          uri: `https://www.v2ex.com/feed/${nodeMatch[1].toLowerCase()}.xml`,
           hint: composeHint('v2ex:node'),
         },
       ]

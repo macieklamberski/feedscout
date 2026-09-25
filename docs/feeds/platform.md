@@ -364,6 +364,7 @@ Discovers RSS feeds for Steam game news and community groups.
 |-------------|-----------------|
 | `store.steampowered.com/app/{id}` | Game news feed |
 | `store.steampowered.com/news/app/{id}` | Game news feed |
+| `store.steampowered.com/newshub/app/{id}` | Game news feed |
 | `steamcommunity.com/app/{id}` | Game news feed |
 | `steamcommunity.com/groups/{name}` | Group RSS feed |
 

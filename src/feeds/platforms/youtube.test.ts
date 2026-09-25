@@ -16,6 +16,14 @@ describe('parseYoutubeUrl', () => {
     expect(parseYoutubeUrl('https://music.youtube.com/channel/UC1234567890')).toEqual(expected)
   })
 
+  it('should return the channel ID for a channel ID with a feed extension', () => {
+    const expected: YoutubeUrl = { kind: 'channel', channelId: 'UCBR8-60-B28hp2BmDPdntcQ' }
+
+    expect(parseYoutubeUrl('https://youtube.com/channel/UCBR8-60-B28hp2BmDPdntcQ.rss')).toEqual(
+      expected,
+    )
+  })
+
   it('should return a channel for handle, legacy user and custom URL pages', () => {
     const expected: YoutubeUrl = { kind: 'channel' }
 

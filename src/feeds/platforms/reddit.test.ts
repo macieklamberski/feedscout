@@ -646,6 +646,12 @@ describe('redditHandler', () => {
       expect(redditHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should not return subreddit-list feed for a path extending /subreddits', () => {
+      const value = 'https://www.reddit.com/subredditsfoo'
+
+      expect(redditHandler.resolve(value)).toEqual([])
+    })
+
     it('should return RSS feed URL for post comments', () => {
       const value = 'https://reddit.com/r/AskReddit/comments/abc123/whats_your_favorite'
       const expected = [

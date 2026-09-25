@@ -29,6 +29,12 @@ describe('parseSteamUrl', () => {
     expect(parseSteamUrl('https://store.steampowered.com/news/app/730')).toEqual(expected)
   })
 
+  it('should return the app for a store app news hub page', () => {
+    const expected: SteamUrl = { kind: 'app', appId: '730' }
+
+    expect(parseSteamUrl('https://store.steampowered.com/newshub/app/730')).toEqual(expected)
+  })
+
   it('should return the app for a store app news page with a capitalized app segment', () => {
     const expected: SteamUrl = { kind: 'app', appId: '730' }
 
@@ -65,6 +71,10 @@ describe('parseSteamUrl', () => {
 
   it('should return undefined for an app path without a numeric id', () => {
     expect(parseSteamUrl('https://store.steampowered.com/app/portal')).toBeUndefined()
+  })
+
+  it('should return undefined for an app id followed by letters', () => {
+    expect(parseSteamUrl('https://store.steampowered.com/app/620x')).toBeUndefined()
   })
 
   it('should return undefined for the store homepage', () => {

@@ -20,7 +20,7 @@ export type RedditUrl =
 
 export const hosts = ['reddit.com', 'www.reddit.com', 'old.reddit.com', 'new.reddit.com']
 
-const subredditsRegex = /^\/(?:subreddits|reddits)(?:\/([^/.]+))?/i
+const subredditsRegex = /^\/(?:subreddits|reddits)(?:\/([^/.]+))?(?:[/.]|$)/i
 // Stops at a dot, so a feed URL like /r/{sub}.rss, /user/{user}/submitted.rss or
 // /user/{user}/m/{multi}.rss yields the name, the section and the multireddit.
 const nameRegex = /^[^.]+/
@@ -94,7 +94,7 @@ export const parseRedditUrl = (url: string): RedditUrl | undefined => {
     return { kind: 'multireddit', username: name, multireddit }
   }
 
-  if (!prefix || !isAnyOf(prefix, userPrefixes)) {
+  if (!isAnyOf(prefix, userPrefixes)) {
     return
   }
 
