@@ -7,7 +7,18 @@ import { composeHint } from '../../common/utils.js'
 // Generic covers devlog, game (html), partly covers home.
 // Handler needed for: browseByTag, browseByUser, games, user.
 
+const domains = ['itch.io']
 const mainHosts = ['itch.io', 'www.itch.io']
+
+const byUserRegex = /^\/games\/by-([^/]+)/
+const tagRegex = /^\/games\/tag-([^/]+)/
+const platformRegex = /^\/games\/platform-([^/.]+)/
+const genreRegex = /^\/games\/genre-([^/.]+)/
+const madeWithRegex = /^\/games\/made-with-([^/.]+)/
+const sortRegex = /^\/games\/([^/.]+)/
+const sectionRegex = /^\/([^/.]+)/
+const gameRegex = /^\/([^/]+)/
+
 const sections = [
   'tools',
   'game-assets',
@@ -19,25 +30,16 @@ const sections = [
 ]
 const sorts = ['newest', 'top-rated', 'top-sellers', 'on-sale', 'free']
 
-const byUserRegex = /^\/games\/by-([^/]+)/
-const tagRegex = /^\/games\/tag-([^/]+)/
-const platformRegex = /^\/games\/platform-([^/.]+)/
-const genreRegex = /^\/games\/genre-([^/.]+)/
-const madeWithRegex = /^\/games\/made-with-([^/.]+)/
-const sortRegex = /^\/games\/([^/.]+)/
-const sectionRegex = /^\/([^/.]+)/
-const gameRegex = /^\/([^/]+)/
-
 export const itchioHandler: PlatformHandler = {
   match: (url) => {
-    return isHostOrSubdomainOf(url, 'itch.io')
+    return isHostOrSubdomainOf(url, domains)
   },
 
   resolve: (url) => {
     const { hostname, pathname } = new URL(url)
 
     // Subdomain: creator pages ({creator}.itch.io).
-    if (!isHostOf(url, mainHosts) && isSubdomainOf(url, 'itch.io')) {
+    if (!isHostOf(url, mainHosts) && isSubdomainOf(url, domains)) {
       const creator = hostname.replace('.itch.io', '')
       const gameMatch = pathname.match(gameRegex)
 

@@ -5,6 +5,7 @@ import { composeHint } from '../../common/utils.js'
 // Discoverability: Not discoverable without handler.
 // Handler needed for: all shapes.
 
+const domains = ['neocities.org']
 const hosts = ['neocities.org', 'www.neocities.org']
 
 const getUsername = (url: string): string | undefined => {
@@ -17,8 +18,8 @@ const getUsername = (url: string): string | undefined => {
   const { pathname } = parsedUrl
   const segments = pathname.split('/').filter(Boolean)
 
-  if (isSubdomainOf(url, 'neocities.org')) {
-    return getSubdomain(url, 'neocities.org')
+  if (isSubdomainOf(url, domains)) {
+    return getSubdomain(url, domains)
   }
 
   if (isHostOf(url, hosts) && segments[0] === 'site') {

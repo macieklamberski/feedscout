@@ -6,11 +6,12 @@ import { composeHint } from '../../common/utils.js'
 // Discoverability: Partially discoverable without handler.
 // Generic covers blog (html), partly covers tag.
 
+const domains = ['posthaven.com']
 const tagRegex = /^\/tag\/([^/]+)/
 
 export const posthavenHandler: PlatformHandler = {
   match: (url) => {
-    return isSubdomainOf(url, 'posthaven.com')
+    return isSubdomainOf(url, domains)
   },
 
   resolve: (url) => {

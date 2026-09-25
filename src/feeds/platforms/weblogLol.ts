@@ -5,9 +5,11 @@ import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
+const domains = ['weblog.lol']
+
 export const weblogLolHandler: PlatformHandler = {
   match: (url) => {
-    return isSubdomainOf(url, 'weblog.lol')
+    return isSubdomainOf(url, domains)
   },
 
   resolve: (url) => {

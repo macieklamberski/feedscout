@@ -4,6 +4,8 @@ import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
+const domains = ['podigee.io']
+
 // Reserved Podigee subdomains that aren't user shows. Without this guard the handler
 // emits 404-bound URLs (e.g. https://www.podigee.io/feed/mp3 redirects to a 404 on
 // podigee.com).
@@ -11,7 +13,7 @@ const reservedSlugs = ['www', 'app', 'help', 'hilfe', 'blog', 'status', 'player'
 
 export const podigeeHandler: PlatformHandler = {
   match: (url) => {
-    const slug = getSubdomain(url, 'podigee.io')
+    const slug = getSubdomain(url, domains)
 
     if (!slug) {
       return false

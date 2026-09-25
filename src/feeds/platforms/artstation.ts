@@ -6,6 +6,7 @@ import { composeHint } from '../../common/utils.js'
 // Generic covers profileSubdomain (html).
 // Handler needed for: albums, explore, profile.
 
+const domains = ['artstation.com']
 const hosts = ['artstation.com', 'www.artstation.com']
 const excludedPaths = [
   'blogs',
@@ -25,15 +26,15 @@ const excludedPaths = [
 
 export const artstationHandler: PlatformHandler = {
   match: (url) => {
-    return isHostOrSubdomainOf(url, 'artstation.com')
+    return isHostOrSubdomainOf(url, domains)
   },
 
   resolve: (url) => {
     const parsed = new URL(url)
 
     // Subdomain form: {user}.artstation.com
-    if (!isHostOf(url, hosts) && isSubdomainOf(url, 'artstation.com')) {
-      const username = getSubdomain(parsed, 'artstation.com')
+    if (!isHostOf(url, hosts) && isSubdomainOf(url, domains)) {
+      const username = getSubdomain(parsed, domains)
 
       return [
         {

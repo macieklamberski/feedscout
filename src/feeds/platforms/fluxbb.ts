@@ -5,13 +5,14 @@ import { composeHint, hasElementWithId } from '../../common/utils.js'
 // Discoverability: Partially discoverable without handler.
 // Generic partly covers board, forum, topic.
 
+const scriptSegmentRegex = /\/[^/]*$/
+const forumPathRegex = /\/viewforum\.php$/
+const topicPathRegex = /\/viewtopic\.php$/
+
 // Each id of a pair alone is a plausible id on an unrelated page.
 const templateIds = ['brdheader', 'brdmain']
 // `header.php` and `footer.php` print these whatever template the board uses.
 const coreIds = ['brdmenu', 'brdfooter']
-const scriptSegmentRegex = /\/[^/]*$/
-const forumPathRegex = /\/viewforum\.php$/
-const topicPathRegex = /\/viewtopic\.php$/
 
 export const isFluxbbHtml = (content: string): boolean => {
   return (

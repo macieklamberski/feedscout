@@ -4,6 +4,8 @@ import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
+const domains = ['transistor.fm']
+
 // The show page links its feed, and the feed slug is not always the subdomain.
 const feedSlugRegex = /https:\/\/feeds\.transistor\.fm\/([\w-]+)/
 
@@ -13,7 +15,7 @@ const reservedSlugs = ['www', 'feeds', 'share', 'support', 'help', 'developers',
 
 export const transistorHandler: PlatformHandler = {
   match: (url) => {
-    const slug = getSubdomain(url, 'transistor.fm')
+    const slug = getSubdomain(url, domains)
 
     if (!slug) {
       return false
@@ -23,7 +25,7 @@ export const transistorHandler: PlatformHandler = {
   },
 
   resolve: (url, content) => {
-    const slug = content?.match(feedSlugRegex)?.[1] ?? getSubdomain(url, 'transistor.fm')
+    const slug = content?.match(feedSlugRegex)?.[1] ?? getSubdomain(url, domains)
 
     if (!slug) {
       return []

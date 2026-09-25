@@ -4,6 +4,8 @@ import { composeHint, hasMetaContent } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
+const domains = ['wixsite.com']
+
 export const isWixHtml = (content: string): boolean => {
   return (
     hasMetaContent(content, 'generator', 'Wix.com') || content.includes('static.parastorage.com')
@@ -19,7 +21,7 @@ const getSiteUrl = (url: string): string => {
   const { origin, pathname } = new URL(url)
   const [site] = pathname.split('/').filter(Boolean)
 
-  return isSubdomainOf(url, 'wixsite.com') && site ? `${origin}/${site}` : origin
+  return isSubdomainOf(url, domains) && site ? `${origin}/${site}` : origin
 }
 
 export const wixHandler: PlatformHandler = {

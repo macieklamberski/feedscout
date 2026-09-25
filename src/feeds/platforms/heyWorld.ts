@@ -4,9 +4,11 @@ import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
+const hosts = ['world.hey.com']
+
 export const heyWorldHandler: PlatformHandler = {
   match: (url) => {
-    return isHostOf(url, 'world.hey.com')
+    return isHostOf(url, hosts)
   },
 
   resolve: (url) => {

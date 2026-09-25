@@ -6,11 +6,12 @@ import { composeHint } from '../../common/utils.js'
 // Discoverability: Partially discoverable without handler.
 // Generic partly covers blog, tag.
 
+const domains = ['pika.page']
 const tagRegex = /^\/tag\/([^/]+)/
 
 export const pikaHandler: PlatformHandler = {
   match: (url) => {
-    return isSubdomainOf(url, 'pika.page')
+    return isSubdomainOf(url, domains)
   },
 
   resolve: (url) => {

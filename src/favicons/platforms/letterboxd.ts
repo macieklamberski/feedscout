@@ -7,6 +7,8 @@ import { getResponseText } from '../utils.js'
 
 const platform = 'letterboxd'
 
+const gravatarHosts = ['gravatar.com', 'secure.gravatar.com']
+
 // Resized avatars carry the crop box in the file name, e.g. `-0-48-0-48-crop.jpg`.
 const cropRegex = /-0-\d+-0-\d+-crop\./
 
@@ -38,7 +40,7 @@ const getLargeAvatarUri = (src: string): string | undefined => {
 
   const parsedSrc = parseUrl(src)
 
-  if (!parsedSrc || !isHostOf(src, ['gravatar.com', 'secure.gravatar.com'])) {
+  if (!parsedSrc || !isHostOf(src, gravatarHosts)) {
     return
   }
 

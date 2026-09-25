@@ -12,14 +12,15 @@ export type DeviantartUrl =
   | { kind: 'journal'; username: string }
   | { kind: 'profile'; username: string }
 
+const hosts = ['deviantart.com', 'www.deviantart.com']
+const feedBaseUrl = 'https://backend.deviantart.com/rss.xml'
+
 const tagRegex = /^\/tag\/([^/]+)/
 const userRegex = /^\/([a-zA-Z0-9_-]+)(?:\/|$)/
 const favouritesRegex = /^\/[^/]+\/favourites\/?$/
 const folderRegex = /^\/[^/]+\/gallery\/(\d+)(?:\/|$)/
 const journalRegex = /^\/[^/]+\/journal(?:\/|$)/
 
-const hosts = ['deviantart.com', 'www.deviantart.com']
-const feedBaseUrl = 'https://backend.deviantart.com/rss.xml'
 const excludedPaths = [
   'about',
   'core-membership',

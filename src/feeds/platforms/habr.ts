@@ -11,10 +11,12 @@ export type HabrUrl =
   | { kind: 'company'; company: string }
 
 const hosts = ['habr.com', 'www.habr.com']
-const languages = ['ru', 'en']
+
 const hubRegex = /\/hubs?\/([^/]+)/
 const userRegex = /\/users\/([^/]+)/
 const companyRegex = /\/compan(?:y|ies)\/([^/]+)/
+
+const languages = ['ru', 'en']
 
 const getLanguage = (url: string): string => {
   const [first] = getPathSegments(url)

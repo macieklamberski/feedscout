@@ -10,6 +10,10 @@ export type ZennUrl =
   | { kind: 'publication'; publication: string }
 
 export const hosts = ['zenn.dev', 'www.zenn.dev']
+
+const topicRegex = /^\/topics\/([^/]+)/
+const publicationRegex = /^\/(?:p|publications)\/([^/]+)/
+
 const excludedPaths = [
   'about',
   'api',
@@ -27,8 +31,6 @@ const excludedPaths = [
   'terms',
   'topics',
 ]
-const topicRegex = /^\/topics\/([^/]+)/
-const publicationRegex = /^\/(?:p|publications)\/([^/]+)/
 
 export const parseZennUrl = (url: string): ZennUrl | undefined => {
   const parsedUrl = parseUrl(url)

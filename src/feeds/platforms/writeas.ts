@@ -6,6 +6,9 @@ import { composeHint } from '../../common/utils.js'
 // Discoverability: Discoverable without handler.
 
 const hosts = ['write.as', 'www.write.as']
+
+const tagRegex = /^\/([^/]+)\/tag:([^/]+)/
+
 const excludedPaths = [
   'about',
   'api',
@@ -20,7 +23,6 @@ const excludedPaths = [
   'signup',
   'terms',
 ]
-const tagRegex = /^\/([^/]+)\/tag:([^/]+)/
 
 export const writeasHandler: PlatformHandler = {
   match: (url) => {

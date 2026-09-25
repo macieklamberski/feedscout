@@ -5,9 +5,9 @@ import { composeHint } from '../../common/utils.js'
 // Discoverability: Not discoverable without handler.
 // Handler needed for: all shapes.
 
-const userRegex = /^\/([^/]+)/
-
 const hosts = ['blog.csdn.net']
+
+const userRegex = /^\/([^/]+)/
 
 export const csdnHandler: PlatformHandler = {
   match: (url) => {

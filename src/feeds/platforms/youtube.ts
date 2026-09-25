@@ -14,6 +14,16 @@ export type YoutubeUrl =
   | { kind: 'player'; playlistId?: string }
   | { kind: 'playlist'; playlistId: string }
 
+export const hosts = [
+  'youtube.com',
+  'www.youtube.com',
+  'm.youtube.com',
+  'music.youtube.com',
+  'youtu.be',
+  'www.youtu.be',
+]
+const shortLinkHosts = ['youtu.be', 'www.youtu.be']
+
 // A channel page also embeds the IDs of the channels it features, and a bare "channelId" matches
 // one of those before the page's own, which sits under "externalId". A video page has no
 // "externalId", and its uploader sits under "externalChannelId" and "channelId".
@@ -27,16 +37,6 @@ const channelPathRegexes = [/^\/@[^/]+/, /^\/user\/[^/]+/, /^\/c\/[^/]+/]
 const shortsRegex = /^\/shorts\/[\w-]+/
 const liveRegex = /^\/live\/[\w-]+/
 const channelPrefixRegex = /^UC/
-
-export const hosts = [
-  'youtube.com',
-  'www.youtube.com',
-  'm.youtube.com',
-  'music.youtube.com',
-  'youtu.be',
-  'www.youtu.be',
-]
-const shortLinkHosts = ['youtu.be', 'www.youtu.be']
 
 const extractChannelIdFromContent = (content: string): string | undefined => {
   for (const regex of channelIdRegexes) {

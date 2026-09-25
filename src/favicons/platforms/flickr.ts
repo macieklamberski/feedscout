@@ -3,10 +3,11 @@ import { type Element, findElement, hasClass } from '../../common/utils.js'
 import type { FlickrUrl } from '../../feeds/platforms/flickr.js'
 import { parseFlickrUrl } from '../../feeds/platforms/flickr.js'
 
+const buddyiconRegex = /background-image:\s*url\(\s*["']?(\/\/[^)"'#]+\/buddyicons\/[^)"'#]+)/
+
 // Pages that show the owner's avatar. Tag pages carry other users' icons, and single photo
 // and album pages carry none.
 const ownerKinds: Array<FlickrUrl['kind']> = ['photostream', 'favorites', 'albums', 'galleries']
-const buddyiconRegex = /background-image:\s*url\(\s*["']?(\/\/[^)"'#]+\/buddyicons\/[^)"'#]+)/
 
 const isOwnerAvatar = (element: Element): boolean => {
   return hasClass(element, 'avatar') && hasClass(element.parent, 'avatar-container')

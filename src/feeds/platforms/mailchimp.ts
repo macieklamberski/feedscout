@@ -4,9 +4,11 @@ import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Unmeasured, no public page.
 
+const domains = ['campaign-archive.com']
+
 export const mailchimpHandler: PlatformHandler = {
   match: (url) => {
-    if (!isSubdomainOf(url, 'campaign-archive.com')) {
+    if (!isSubdomainOf(url, domains)) {
       return false
     }
 

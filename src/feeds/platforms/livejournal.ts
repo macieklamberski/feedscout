@@ -6,10 +6,8 @@ import { composeHint } from '../../common/utils.js'
 // Discoverability: Partially discoverable without handler.
 // Generic partly covers blog, community, tag, tildePath, userPath, usersHost.
 
-const wwwUsersPathRegex = /^\/(?:users\/|~)([^/]+)/
-const legacyUserPathRegex = /^\/([^/]+)/
-const tagRegex = /^\/tag\/([^/]+)/
-
+const domains = ['livejournal.com']
+const wwwHosts = ['www.livejournal.com']
 const legacyUserHosts = ['users.livejournal.com', 'community.livejournal.com']
 const reservedHosts = [
   'livejournal.com',
@@ -18,6 +16,10 @@ const reservedHosts = [
   'community.livejournal.com',
   'syndicated.livejournal.com',
 ]
+
+const wwwUsersPathRegex = /^\/(?:users\/|~)([^/]+)/
+const legacyUserPathRegex = /^\/([^/]+)/
+const tagRegex = /^\/tag\/([^/]+)/
 
 // Dreamwidth and InsaneJournal run the LiveJournal engine, so a journal on any of them serves
 // the same feeds, plus a tag's feeds on a tag page.
@@ -51,7 +53,7 @@ export const getJournalFeeds = (
 
 export const livejournalHandler: PlatformHandler = {
   match: (url) => {
-    if (!isSubdomainOf(url, 'livejournal.com')) {
+    if (!isSubdomainOf(url, domains)) {
       return false
     }
 
@@ -60,7 +62,7 @@ export const livejournalHandler: PlatformHandler = {
     const { pathname } = new URL(url)
 
     if (isHostOf(url, reservedHosts)) {
-      if (isHostOf(url, 'www.livejournal.com')) {
+      if (isHostOf(url, wwwHosts)) {
         return wwwUsersPathRegex.test(pathname)
       }
 
@@ -80,7 +82,7 @@ export const livejournalHandler: PlatformHandler = {
     let userOrigin = origin
 
     // www.livejournal.com/users/{user} or /~{user} — canonicalise to subdomain form.
-    if (isHostOf(url, 'www.livejournal.com')) {
+    if (isHostOf(url, wwwHosts)) {
       const userMatch = pathname.match(wwwUsersPathRegex)
 
       if (userMatch?.[1]) {

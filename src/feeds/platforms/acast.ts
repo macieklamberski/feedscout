@@ -10,6 +10,7 @@ import { composeHint } from '../../common/utils.js'
 // 302-redirects to shows.acast.com (slug at path index 1, after /s/). embed.acast.com
 // is the embed-player host (slug at path index 0).
 const hosts = ['shows.acast.com', 'play.acast.com', 'embed.acast.com']
+const legacyHosts = ['play.acast.com']
 const excludedPaths = ['discover']
 
 export const acastHandler: PlatformHandler = {
@@ -26,7 +27,7 @@ export const acastHandler: PlatformHandler = {
     }
 
     // play.acast.com/s/{slug} — slug is at index 1.
-    const slugIndex = isHostOf(url, 'play.acast.com') ? 1 : 0
+    const slugIndex = isHostOf(url, legacyHosts) ? 1 : 0
     const slug = pathSegments[slugIndex]
 
     if (!slug || isAnyOf(slug, excludedPaths)) {

@@ -6,6 +6,7 @@ import { composeHint } from '../../common/utils.js'
 // Discoverability: Partially discoverable without handler.
 // Generic partly covers blog.
 
+const domains = ['wordpress.com']
 const categoryRegex = /^\/category\/([^/]+)/
 const tagRegex = /^\/tag\/([^/]+)/
 const authorRegex = /^\/author\/([^/]+)/
@@ -43,7 +44,7 @@ const getFeedEntries = (base: string, key: string): Array<DiscoverUriEntry> => {
 
 export const wordpressHandler: PlatformHandler = {
   match: (url) => {
-    return isSubdomainOf(url, 'wordpress.com')
+    return isSubdomainOf(url, domains)
   },
 
   resolve: (url) => {

@@ -4,6 +4,8 @@ import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
+const domains = ['podbean.com']
+
 // Reserved Podbean subdomains that aren't user shows. Without this guard, hitting
 // podbean.com corporate/infra hosts produces feed.podbean.com/{reserved}/feed.xml
 // URLs that resolve to real but unrelated user-owned shows (e.g. "The www's Podcast").
@@ -11,7 +13,7 @@ const reservedSlugs = ['www', 'feed', 'pbcdn1', 'sponsorship', 'podads', 'help',
 
 export const podbeanHandler: PlatformHandler = {
   match: (url) => {
-    const slug = getSubdomain(url, 'podbean.com')
+    const slug = getSubdomain(url, domains)
 
     if (!slug) {
       return false
@@ -21,7 +23,7 @@ export const podbeanHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    const slug = getSubdomain(url, 'podbean.com')
+    const slug = getSubdomain(url, domains)
 
     if (!slug) {
       return []

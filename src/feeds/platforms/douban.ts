@@ -5,12 +5,13 @@ import { composeHint } from '../../common/utils.js'
 // Discoverability: Partially discoverable without handler.
 // Generic covers subject (html), partly covers people.
 
+const domains = ['douban.com']
 const userRegex = /^\/people\/([^/]+)/
 const subjectRegex = /^\/subject\/(\d+)/
 
 export const doubanHandler: PlatformHandler = {
   match: (url) => {
-    return isHostOrSubdomainOf(url, 'douban.com')
+    return isHostOrSubdomainOf(url, domains)
   },
 
   resolve: (url) => {

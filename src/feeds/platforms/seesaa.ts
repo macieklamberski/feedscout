@@ -5,9 +5,11 @@ import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
+const domains = ['seesaa.net']
+
 export const seesaaHandler: PlatformHandler = {
   match: (url) => {
-    return isSubdomainOf(url, 'seesaa.net')
+    return isSubdomainOf(url, domains)
   },
 
   resolve: (url) => {

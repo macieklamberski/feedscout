@@ -7,11 +7,13 @@ import { composeHint } from '../../common/utils.js'
 
 export type SteamUrl = { kind: 'app'; appId: string } | { kind: 'group'; group: string }
 
+const storeHosts = ['store.steampowered.com']
+const communityHosts = ['steamcommunity.com']
+const hosts = [...storeHosts, ...communityHosts]
+
 // An age-gated store page redirects to /agecheck/app/{id}.
 const appRegex = /^\/(?:agecheck\/|news\/)?app\/(\d+)/
 const groupRegex = /^\/groups\/([^/]+)/
-
-const hosts = ['store.steampowered.com', 'steamcommunity.com']
 
 export const parseSteamUrl = (url: string): SteamUrl | undefined => {
   const parsedUrl = parseUrl(url)
@@ -28,7 +30,7 @@ export const parseSteamUrl = (url: string): SteamUrl | undefined => {
 
   const group = parsedUrl.pathname.match(groupRegex)?.[1]
 
-  if (group && isHostOf(parsedUrl, 'steamcommunity.com')) {
+  if (group && isHostOf(parsedUrl, communityHosts)) {
     return { kind: 'group', group }
   }
 }
@@ -62,7 +64,7 @@ export const steamHandler: PlatformHandler = {
 
     // Global news feed on store root or /news/
     if (
-      isHostOf(url, 'store.steampowered.com') &&
+      isHostOf(url, storeHosts) &&
       (pathname === '/' || pathname === '' || pathname.startsWith('/news'))
     ) {
       return [

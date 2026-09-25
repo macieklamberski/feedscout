@@ -6,6 +6,7 @@ import { composeHint } from '../../common/utils.js'
 // Generic covers blog (guess, html).
 // Handler needed for: profile.
 
+const domains = ['substack.com']
 const profileRegex = /^\/@([\w-]+)/
 // A profile page embeds its primary publication as escaped JSON. The publication
 // subdomain is not always the handle, and a custom domain replaces it.
@@ -24,18 +25,18 @@ const getPublicationOrigin = (content: string | undefined): string | undefined =
 
 export const substackHandler: PlatformHandler = {
   match: (url) => {
-    if (isSubdomainOf(url, 'substack.com')) {
+    if (isSubdomainOf(url, domains)) {
       return true
     }
 
-    return isHostOf(url, 'substack.com') && profileRegex.test(new URL(url).pathname)
+    return isHostOf(url, domains) && profileRegex.test(new URL(url).pathname)
   },
 
   resolve: (url, content) => {
     const parsed = new URL(url)
     const profileMatch = parsed.pathname.match(profileRegex)
 
-    if (isHostOf(url, 'substack.com') && profileMatch?.[1]) {
+    if (isHostOf(url, domains) && profileMatch?.[1]) {
       const origin = getPublicationOrigin(content) ?? `https://${profileMatch[1]}.substack.com`
 
       return [

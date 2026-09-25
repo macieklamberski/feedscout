@@ -5,9 +5,10 @@ import { composeHint } from '../../common/utils.js'
 // Discoverability: Partially discoverable without handler.
 // Generic covers channel, group, user, userVideos (guess, html), partly covers likes.
 
+const hosts = ['vimeo.com', 'www.vimeo.com']
+
 const numericRegex = /^\d+$/
 
-const hosts = ['vimeo.com', 'www.vimeo.com']
 const excludedPaths = [
   'about',
   'album',

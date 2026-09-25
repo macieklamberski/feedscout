@@ -4,17 +4,19 @@ import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
+const domains = ['libsyn.com']
+const feedHosts = ['feeds.libsyn.com']
 const numericRegex = /^\d+$/
 
 export const libsynHandler: PlatformHandler = {
   match: (url) => {
-    return isSubdomainOf(url, 'libsyn.com')
+    return isSubdomainOf(url, domains)
   },
 
   resolve: (url) => {
     const { origin, pathname } = new URL(url)
 
-    if (isHostOf(url, 'feeds.libsyn.com')) {
+    if (isHostOf(url, feedHosts)) {
       const showId = pathname.split('/').find(Boolean)
 
       if (showId && numericRegex.test(showId)) {

@@ -10,14 +10,17 @@ export type HatenaBookmarkUrl =
   | { kind: 'user'; username: string }
 
 const hosts = ['b.hatena.ne.jp']
+
 const listRegex = /^\/(hotentry|entrylist)(?:\/([a-z]+))?\/?$/
 const searchRegex = /^\/search\/(tag|text|title)\/?$/
 const siteRegex = /^\/site\/[^/]+/
-// Search and per-site listings answer with RSS when `mode=rss` is set.
-const rssModeKinds = ['search', 'site']
+
 // A Hatena ID: 3 to 32 characters, starting with a letter and ending with a letter or digit.
 // The user feed at /{id}.rss carries the ID too.
 const userRegex = /^\/([a-zA-Z][a-zA-Z0-9_-]{1,30}[a-zA-Z0-9])(?:\.rss)?(?:\/|$)/
+
+// Search and per-site listings answer with RSS when `mode=rss` is set.
+const rssModeKinds = ['search', 'site']
 
 // Reserved first segments that are site sections, not usernames.
 const excludedPaths = [

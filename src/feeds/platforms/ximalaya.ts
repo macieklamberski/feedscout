@@ -5,10 +5,10 @@ import { composeHint } from '../../common/utils.js'
 // Discoverability: Not discoverable without handler.
 // Handler needed for: all shapes.
 
+const hosts = ['www.ximalaya.com', 'ximalaya.com']
+
 // Match /album/{id} (canonical) or /{userid}/album/{id} (legacy form).
 const albumRegex = /(?:^|\/)album\/(\d+)/
-
-const hosts = ['www.ximalaya.com', 'ximalaya.com']
 
 export const ximalayaHandler: PlatformHandler = {
   match: (url) => {

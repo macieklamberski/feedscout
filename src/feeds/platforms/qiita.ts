@@ -5,6 +5,12 @@ import { composeHint } from '../../common/utils.js'
 // Discoverability: Discoverable without handler.
 
 const hosts = ['qiita.com', 'www.qiita.com']
+
+const tagRegex = /^\/tags\/([^/]+)/
+const organizationRegex = /^\/organizations\/([^/]+)/
+const popularItemsRegex = /^\/popular-items(\/|$)/
+const officialColumnsRegex = /^\/official-columns(\/|$)/
+
 const excludedPaths = [
   'about',
   'api',
@@ -20,10 +26,6 @@ const excludedPaths = [
   'terms',
   'trend',
 ]
-const tagRegex = /^\/tags\/([^/]+)/
-const organizationRegex = /^\/organizations\/([^/]+)/
-const popularItemsRegex = /^\/popular-items(\/|$)/
-const officialColumnsRegex = /^\/official-columns(\/|$)/
 
 export const qiitaHandler: PlatformHandler = {
   match: (url) => {

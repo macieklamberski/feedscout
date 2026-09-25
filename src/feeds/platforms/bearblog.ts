@@ -7,11 +7,12 @@ import { composeHint } from '../../common/utils.js'
 // Generic covers blog (guess, html).
 // Handler needed for: home.
 
+const domains = ['bearblog.dev']
 const apexHosts = ['bearblog.dev', 'www.bearblog.dev']
 
 export const bearblogHandler: PlatformHandler = {
   match: (url) => {
-    return isSubdomainOf(url, 'bearblog.dev') || isHostOf(url, apexHosts)
+    return isSubdomainOf(url, domains) || isHostOf(url, apexHosts)
   },
 
   resolve: (url) => {

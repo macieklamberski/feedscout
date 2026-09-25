@@ -11,9 +11,10 @@ export type BookwyrmUrl =
   | { kind: 'shelf'; username: string; section: string; shelf: string }
   | { kind: 'subpage'; username: string }
 
-const shelfSections = ['shelf', 'books']
 // The trailing boundary keeps sibling repositories such as `bookwyrm-docs` out.
 const sourceLinkRegex = /github\.com\/bookwyrm-social\/bookwyrm(?![\w-])/
+
+const shelfSections = ['shelf', 'books']
 
 export const isBookwyrmHtml = (content: string): boolean => {
   return sourceLinkRegex.test(content) || hasMetaContent(content, 'generator', 'BookWyrm')

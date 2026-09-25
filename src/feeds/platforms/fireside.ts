@@ -5,13 +5,15 @@ import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
+const domains = ['fireside.fm']
+
 export const firesideHandler: PlatformHandler = {
   match: (url) => {
-    return isSubdomainOf(url, 'fireside.fm')
+    return isSubdomainOf(url, domains)
   },
 
   resolve: (url) => {
-    const slug = getSubdomain(url, 'fireside.fm')
+    const slug = getSubdomain(url, domains)
 
     if (!slug) {
       return []

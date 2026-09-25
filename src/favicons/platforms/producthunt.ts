@@ -3,11 +3,11 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getMetaContent } from '../../common/utils.js'
 import { hosts } from '../../feeds/platforms/producthunt.js'
 
-const productRegex = /^\/products\/([\w-]+)(?:\/|$)/
-const topicRegex = /^\/topics\/[\w-]+\/?$/
-
 // The topics index and a missing topic carry the generic ph-static.imgix.net share image.
 const topicImageHosts = ['ph-files.imgix.net']
+
+const productRegex = /^\/products\/([\w-]+)(?:\/|$)/
+const topicRegex = /^\/topics\/[\w-]+\/?$/
 
 export const producthuntHandler: PlatformHandler = {
   match: (url) => {

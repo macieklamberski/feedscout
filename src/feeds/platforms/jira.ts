@@ -6,6 +6,8 @@ import { composeHint, getMetaContent } from '../../common/utils.js'
 // Discoverability: Not discoverable without handler.
 // Handler needed for: all shapes.
 
+const domains = ['atlassian.net']
+
 // Data Center installs sit under a context path such as `/jira`, so none of
 // these can anchor at the start of the pathname.
 const issueRegex = /\/browse\/([A-Za-z][A-Za-z0-9_]+)-\d+/
@@ -15,7 +17,7 @@ const trailingSlashRegex = /\/$/
 const confluencePathRegex = /^\/wiki(?:\/|$)/
 
 const isCloudHost = (url: string): boolean => {
-  return isSubdomainOf(url, 'atlassian.net')
+  return isSubdomainOf(url, domains)
 }
 
 const isJiraPath = (pathname: string): boolean => {
