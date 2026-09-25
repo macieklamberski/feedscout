@@ -100,21 +100,26 @@ describe('observableEnricher', () => {
     expect(await observableEnricher(ref, context)).toEqual([])
   })
 
-  it('should reject when API returns invalid JSON', async () => {
+  it('should reject when API returns invalid JSON', () => {
     const context = createContext({ [apiUrl]: 'not-json' })
+    const throwing = () => observableEnricher(ref, context)
 
-    await expect(observableEnricher(ref, context)).rejects.toThrow()
+    expect(throwing()).rejects.toThrow('JSON Parse error: Unexpected identifier "not"')
   })
 
-  it('should reject when fetch throws', async () => {
+  it('should reject when fetch throws', () => {
     const fetchFn: FetchFn = () => {
       throw new Error('Network error')
     }
+    const throwing = () => observableEnricher(ref, { fetchFn })
 
-    await expect(observableEnricher(ref, { fetchFn })).rejects.toThrow()
+    expect(throwing()).rejects.toThrow('Network error')
   })
 
-  it('should reject when the response is not 2xx', async () => {
-    await expect(observableEnricher(ref, createContext({}))).rejects.toThrow()
+  it('should reject when the response is not 2xx', () => {
+    const throwing = () => observableEnricher(ref, createContext({}))
+    const expected = 'Unexpected status 404 from https://api.observablehq.com/user/@alice'
+
+    expect(throwing()).rejects.toThrow(expected)
   })
 })

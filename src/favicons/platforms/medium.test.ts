@@ -167,27 +167,30 @@ describe('mediumEnricher', () => {
     expect(await mediumEnricher(ref, context)).toEqual([])
   })
 
-  it('should reject when the feed is invalid', async () => {
+  it('should reject when the feed is invalid', () => {
     const context = createContext({
       'https://medium.com/feed/@alice': '<html><body>Not Found</body></html>',
     })
     const ref = createRef('https://medium.com/@alice', '@alice')
+    const throwing = () => mediumEnricher(ref, context)
 
-    await expect(mediumEnricher(ref, context)).rejects.toThrow()
+    expect(throwing()).rejects.toThrow('Unrecognized feed format')
   })
 
-  it('should reject when fetch throws', async () => {
+  it('should reject when fetch throws', () => {
     const fetchFn: FetchFn = () => {
       throw new Error('Network error')
     }
     const ref = createRef('https://medium.com/@alice', '@alice')
+    const throwing = () => mediumEnricher(ref, { fetchFn })
 
-    await expect(mediumEnricher(ref, { fetchFn })).rejects.toThrow()
+    expect(throwing()).rejects.toThrow('Network error')
   })
 
-  it('should reject when the response is not 2xx', async () => {
+  it('should reject when the response is not 2xx', () => {
     const ref = createRef('https://medium.com/@alice', '@alice')
+    const throwing = () => mediumEnricher(ref, createContext({}))
 
-    await expect(mediumEnricher(ref, createContext({}))).rejects.toThrow()
+    expect(throwing()).rejects.toThrow('Unexpected status 404 from https://medium.com/feed/@alice')
   })
 })

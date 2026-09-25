@@ -108,7 +108,7 @@ describe('exblogEnricher', () => {
     expect(await exblogEnricher(ref, context)).toEqual([])
   })
 
-  it('should reject when the body is a stream', async () => {
+  it('should reject when the body is a stream', () => {
     const fetchFn: FetchFn = async (url) => ({
       headers: new Headers(),
       body: new ReadableStream(),
@@ -116,22 +116,25 @@ describe('exblogEnricher', () => {
       status: 200,
     })
     const ref = createRef('https://example.exblog.jp/37927093')
+    const throwing = () => exblogEnricher(ref, { fetchFn })
 
-    await expect(exblogEnricher(ref, { fetchFn })).rejects.toThrow('Unexpected stream body')
+    expect(throwing()).rejects.toThrow('Unexpected stream body')
   })
 
-  it('should reject when fetch throws', async () => {
+  it('should reject when fetch throws', () => {
     const fetchFn: FetchFn = () => {
       throw new Error('Network error')
     }
     const ref = createRef('https://example.exblog.jp/37927093')
+    const throwing = () => exblogEnricher(ref, { fetchFn })
 
-    await expect(exblogEnricher(ref, { fetchFn })).rejects.toThrow()
+    expect(throwing()).rejects.toThrow('Network error')
   })
 
-  it('should reject when the response is not 2xx', async () => {
+  it('should reject when the response is not 2xx', () => {
     const ref = createRef('https://example.exblog.jp/37927093')
+    const throwing = () => exblogEnricher(ref, createContext({}))
 
-    await expect(exblogEnricher(ref, createContext({}))).rejects.toThrow()
+    expect(throwing()).rejects.toThrow('Unexpected status 404 from https://example.exblog.jp/')
   })
 })

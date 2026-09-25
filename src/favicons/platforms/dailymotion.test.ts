@@ -129,23 +129,29 @@ describe('dailymotionEnricher', () => {
     expect(await dailymotionEnricher(userRef, context)).toEqual([])
   })
 
-  it('should reject when the API returns invalid JSON', async () => {
+  it('should reject when the API returns invalid JSON', () => {
     const context = createContext({
       [userApiUrl]: 'not-json',
     })
+    const throwing = () => dailymotionEnricher(userRef, context)
 
-    await expect(dailymotionEnricher(userRef, context)).rejects.toThrow()
+    expect(throwing()).rejects.toThrow('JSON Parse error: Unexpected identifier "not"')
   })
 
-  it('should reject when fetch throws', async () => {
+  it('should reject when fetch throws', () => {
     const fetchFn: FetchFn = () => {
       throw new Error('Network error')
     }
+    const throwing = () => dailymotionEnricher(userRef, { fetchFn })
 
-    await expect(dailymotionEnricher(userRef, { fetchFn })).rejects.toThrow()
+    expect(throwing()).rejects.toThrow('Network error')
   })
 
-  it('should reject when the response is not 2xx', async () => {
-    await expect(dailymotionEnricher(userRef, createContext({}))).rejects.toThrow()
+  it('should reject when the response is not 2xx', () => {
+    const throwing = () => dailymotionEnricher(userRef, createContext({}))
+    const expected =
+      'Unexpected status 404 from https://api.dailymotion.com/user/alice?fields=avatar_720_url'
+
+    expect(throwing()).rejects.toThrow(expected)
   })
 })

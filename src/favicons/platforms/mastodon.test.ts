@@ -174,27 +174,32 @@ describe('mastodonEnricher', () => {
     expect(await mastodonEnricher(ref, context)).toEqual([])
   })
 
-  it('should reject when API returns invalid JSON', async () => {
+  it('should reject when API returns invalid JSON', () => {
     const context = createContext({
       'https://mastodon.social/api/v1/accounts/lookup?acct=user': 'not json',
     })
     const ref = createRef('https://mastodon.social/@user', 'user')
+    const throwing = () => mastodonEnricher(ref, context)
 
-    await expect(mastodonEnricher(ref, context)).rejects.toThrow()
+    expect(throwing()).rejects.toThrow('JSON Parse error: Unexpected identifier "not"')
   })
 
-  it('should reject when fetch throws', async () => {
+  it('should reject when fetch throws', () => {
     const fetchFn: FetchFn = () => {
       throw new Error('Network error')
     }
     const ref = createRef('https://mastodon.social/@user', 'user')
+    const throwing = () => mastodonEnricher(ref, { fetchFn })
 
-    await expect(mastodonEnricher(ref, { fetchFn })).rejects.toThrow()
+    expect(throwing()).rejects.toThrow('Network error')
   })
 
-  it('should reject when the response is not 2xx', async () => {
+  it('should reject when the response is not 2xx', () => {
     const ref = createRef('https://mastodon.social/@user', 'user')
+    const throwing = () => mastodonEnricher(ref, createContext({}))
+    const expected =
+      'Unexpected status 404 from https://mastodon.social/api/v1/accounts/lookup?acct=user'
 
-    await expect(mastodonEnricher(ref, createContext({}))).rejects.toThrow()
+    expect(throwing()).rejects.toThrow(expected)
   })
 })

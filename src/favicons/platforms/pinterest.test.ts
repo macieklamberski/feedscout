@@ -125,7 +125,9 @@ describe('pinterestHandler', () => {
 
       it('should throw when the initial props are not valid JSON', () => {
         const html = '<script id="__PWS_INITIAL_PROPS__" type="application/json">{not-json</script>'
-        expect(() => pinterestHandler.resolve('https://www.pinterest.com/alice/', html)).toThrow()
+        const throwing = () => pinterestHandler.resolve('https://www.pinterest.com/alice/', html)
+
+        expect(throwing).toThrow()
       })
 
       it('should return empty array when the page has no initial props', () => {
@@ -196,22 +198,27 @@ describe('pinterestEnricher', () => {
     expect(await pinterestEnricher(ref, context)).toEqual([])
   })
 
-  it('should reject when the initial props are not valid JSON', async () => {
+  it('should reject when the initial props are not valid JSON', () => {
     const html = '<script id="__PWS_INITIAL_PROPS__" type="application/json">{not-json</script>'
     const context = createContext({ 'https://www.pinterest.com/alice/': html })
+    const throwing = () => pinterestEnricher(ref, context)
 
-    await expect(pinterestEnricher(ref, context)).rejects.toThrow()
+    expect(throwing()).rejects.toThrow("JSON Parse error: Expected '}'")
   })
 
-  it('should reject when fetch throws', async () => {
+  it('should reject when fetch throws', () => {
     const fetchFn: FetchFn = () => {
       throw new Error('Network error')
     }
+    const throwing = () => pinterestEnricher(ref, { fetchFn })
 
-    await expect(pinterestEnricher(ref, { fetchFn })).rejects.toThrow()
+    expect(throwing()).rejects.toThrow('Network error')
   })
 
-  it('should reject when the response is not 2xx', async () => {
-    await expect(pinterestEnricher(ref, createContext({}))).rejects.toThrow()
+  it('should reject when the response is not 2xx', () => {
+    const throwing = () => pinterestEnricher(ref, createContext({}))
+    const expected = 'Unexpected status 404 from https://www.pinterest.com/alice/'
+
+    expect(throwing()).rejects.toThrow(expected)
   })
 })

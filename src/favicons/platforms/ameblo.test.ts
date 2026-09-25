@@ -59,8 +59,9 @@ describe('amebloHandler', () => {
 
     it('should throw when INIT_DATA is invalid JSON', () => {
       const value = createPage('{"bloggerState":')
+      const throwing = () => amebloHandler.resolve('https://ameblo.jp/alice/', value)
 
-      expect(() => amebloHandler.resolve('https://ameblo.jp/alice/', value)).toThrow()
+      expect(throwing).toThrow()
     })
 
     it('should return empty array when page has no INIT_DATA', async () => {

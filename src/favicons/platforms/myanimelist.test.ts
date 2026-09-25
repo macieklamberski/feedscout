@@ -148,7 +148,7 @@ describe('myanimelistEnricher', () => {
     expect(await myanimelistEnricher(ref, context)).toEqual([])
   })
 
-  it('should reject when the body is a stream', async () => {
+  it('should reject when the body is a stream', () => {
     const fetchFn: FetchFn = async (url) => ({
       headers: new Headers(),
       body: new ReadableStream(),
@@ -156,22 +156,26 @@ describe('myanimelistEnricher', () => {
       status: 200,
     })
     const ref = createRef('https://myanimelist.net/animelist/example')
+    const throwing = () => myanimelistEnricher(ref, { fetchFn })
 
-    await expect(myanimelistEnricher(ref, { fetchFn })).rejects.toThrow('Unexpected stream body')
+    expect(throwing()).rejects.toThrow('Unexpected stream body')
   })
 
-  it('should reject when fetch throws', async () => {
+  it('should reject when fetch throws', () => {
     const fetchFn: FetchFn = () => {
       throw new Error('Network error')
     }
     const ref = createRef('https://myanimelist.net/animelist/example')
+    const throwing = () => myanimelistEnricher(ref, { fetchFn })
 
-    await expect(myanimelistEnricher(ref, { fetchFn })).rejects.toThrow()
+    expect(throwing()).rejects.toThrow('Network error')
   })
 
-  it('should reject when the response is not 2xx', async () => {
+  it('should reject when the response is not 2xx', () => {
     const ref = createRef('https://myanimelist.net/animelist/example')
+    const throwing = () => myanimelistEnricher(ref, createContext({}))
+    const expected = 'Unexpected status 404 from https://myanimelist.net/profile/example'
 
-    await expect(myanimelistEnricher(ref, createContext({}))).rejects.toThrow()
+    expect(throwing()).rejects.toThrow(expected)
   })
 })
