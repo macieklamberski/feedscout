@@ -1,11 +1,7 @@
 import { isNonEmptyString, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getMetaContent } from '../../common/utils.js'
-import {
-  accountPathRegex,
-  channelPathRegex,
-  isPeertubeHeaders,
-} from '../../feeds/platforms/peertube.js'
+import { isPeertubeHeaders, parsePeertubeUrl } from '../../feeds/platforms/peertube.js'
 import type { FaviconEnricher } from '../types.js'
 import { parseResponseJson } from '../utils.js'
 
@@ -23,33 +19,27 @@ const apiPaths: Record<string, string> = {
   a: 'accounts',
 }
 
-const getProfileId = (pathname: string): string | undefined => {
-  const channel = pathname.match(channelPathRegex)?.[1]
+const getProfileId = (url: string): string | undefined => {
+  const parsed = parsePeertubeUrl(url)
 
-  if (channel) {
-    return `c/${channel}`
+  if (!parsed) {
+    return
   }
 
-  const account = pathname.match(accountPathRegex)?.[1]
-
-  if (account) {
-    return `a/${account}`
-  }
+  return `${parsed.kind === 'channel' ? 'c' : 'a'}/${parsed.name}`
 }
 
 export const peertubeHandler: PlatformHandler = {
   match: (url, _content, headers) => {
-    const parsedUrl = parseUrl(url)
-
-    if (!parsedUrl || !headers || !isPeertubeHeaders(headers)) {
+    if (!headers || !isPeertubeHeaders(headers)) {
       return false
     }
 
-    return Boolean(getProfileId(parsedUrl.pathname))
+    return Boolean(getProfileId(url))
   },
 
   resolve: (url, content) => {
-    const id = getProfileId(new URL(url).pathname)
+    const id = getProfileId(url)
 
     if (!id) {
       return []

@@ -69,36 +69,8 @@ describe('naverBlogHandler', () => {
       expect(naverBlogHandler.match('https://m.blog.naver.com/alice')).toBe(true)
     })
 
-    it('should match mobile blog URLs with trailing slash', () => {
-      expect(naverBlogHandler.match('https://m.blog.naver.com/alice/')).toBe(true)
-    })
-
-    it('should match desktop blog URLs', () => {
-      expect(naverBlogHandler.match('https://blog.naver.com/alice')).toBe(true)
-    })
-
-    it('should match desktop blog URLs with trailing slash', () => {
-      expect(naverBlogHandler.match('https://blog.naver.com/alice/')).toBe(true)
-    })
-
-    it('should not match post URLs', () => {
-      expect(naverBlogHandler.match('https://m.blog.naver.com/alice/223000000000')).toBe(false)
-    })
-
     it('should not match paths with dots', () => {
       expect(naverBlogHandler.match('https://m.blog.naver.com/BlogList.naver')).toBe(false)
-    })
-
-    it('should not match root URL', () => {
-      expect(naverBlogHandler.match('https://m.blog.naver.com/')).toBe(false)
-    })
-
-    it('should not match non-Naver Blog URLs', () => {
-      expect(naverBlogHandler.match('https://naver.com/alice')).toBe(false)
-    })
-
-    it('should not match invalid URLs', () => {
-      expect(naverBlogHandler.match('not-a-url')).toBe(false)
     })
   })
 
@@ -118,15 +90,10 @@ describe('naverBlogHandler', () => {
         expect(result).toEqual(expected)
       })
 
-      it('should return ref for desktop blog URLs with trailing slash', () => {
-        const result = naverBlogHandler.resolve('https://blog.naver.com/alice/')
-        const expected: Array<DiscoverRef> = [
-          {
-            platform: 'naverBlog',
-            id: 'alice',
-            url: 'https://blog.naver.com/alice/',
-          },
-        ]
+      it('should return ref for mobile post URLs', () => {
+        const value = 'https://m.blog.naver.com/alice/223000000000'
+        const result = naverBlogHandler.resolve(value, mobilePage)
+        const expected: Array<DiscoverRef> = [{ platform: 'naverBlog', id: 'alice', url: value }]
 
         expect(result).toEqual(expected)
       })
@@ -151,13 +118,10 @@ describe('naverBlogHandler', () => {
         expect(result).toEqual([])
       })
 
-      it('should return empty array for post URLs', () => {
-        const result = naverBlogHandler.resolve(
-          'https://m.blog.naver.com/alice/223000000000',
-          mobilePage,
-        )
-
-        expect(result).toEqual([])
+      it('should return empty array for paths with dots', () => {
+        expect(
+          naverBlogHandler.resolve('https://m.blog.naver.com/BlogList.naver', mobilePage),
+        ).toEqual([])
       })
     })
   })

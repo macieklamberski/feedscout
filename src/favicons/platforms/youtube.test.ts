@@ -30,29 +30,16 @@ const watchHtml = `
 
 describe('youtubeHandler', () => {
   describe('match', () => {
-    const matchingUrls = [
-      'https://www.youtube.com/channel/UCabc123',
-      'https://www.youtube.com/@creator',
-      'https://www.youtube.com/user/creator',
-      'https://www.youtube.com/c/creator',
-      'https://www.youtube.com/watch?v=abc123',
-      'https://m.youtube.com/@creator',
-    ]
-    const nonMatchingUrls = [
-      'https://www.youtube.com/',
-      'https://www.youtube.com/playlist?list=PLabc123',
-      'https://www.youtube.com/shorts/abc123',
-      'https://www.youtube.com/watch',
-      'https://example.com/@creator',
-      'not-a-url',
-    ]
-
-    it.each(matchingUrls)('should match %s', (value) => {
-      expect(youtubeHandler.match(value)).toBe(true)
+    it('should match a handle page', () => {
+      expect(youtubeHandler.match('https://www.youtube.com/@creator')).toBe(true)
     })
 
-    it.each(nonMatchingUrls)('should not match %s', (value) => {
-      expect(youtubeHandler.match(value)).toBe(false)
+    it('should not match a shorts page', () => {
+      expect(youtubeHandler.match('https://www.youtube.com/shorts/abc123')).toBe(false)
+    })
+
+    it('should not match a playlist page', () => {
+      expect(youtubeHandler.match('https://www.youtube.com/playlist?list=PLabc123')).toBe(false)
     })
   })
 
@@ -77,6 +64,24 @@ describe('youtubeHandler', () => {
 
     it('should return owner thumbnail at s900 for a watch page', async () => {
       const value = 'https://www.youtube.com/watch?v=abc123'
+      const expected: Array<DiscoverUriEntry> = [
+        { uri: 'https://yt3.ggpht.com/def456=s900-c-k-c0x00ffffff-no-rj' },
+      ]
+
+      expect(await youtubeHandler.resolve(value, watchHtml)).toEqual(expected)
+    })
+
+    it('should return owner thumbnail at s900 for a youtu.be short link', async () => {
+      const value = 'https://youtu.be/abc123'
+      const expected: Array<DiscoverUriEntry> = [
+        { uri: 'https://yt3.ggpht.com/def456=s900-c-k-c0x00ffffff-no-rj' },
+      ]
+
+      expect(await youtubeHandler.resolve(value, watchHtml)).toEqual(expected)
+    })
+
+    it('should return owner thumbnail at s900 for a live page', async () => {
+      const value = 'https://www.youtube.com/live/abc123'
       const expected: Array<DiscoverUriEntry> = [
         { uri: 'https://yt3.ggpht.com/def456=s900-c-k-c0x00ffffff-no-rj' },
       ]

@@ -43,40 +43,10 @@ describe('pinterestHandler', () => {
   describe('match', () => {
     it('should match profile URLs', () => {
       expect(pinterestHandler.match('https://www.pinterest.com/alice')).toBe(true)
-      expect(pinterestHandler.match('https://pinterest.com/alice/')).toBe(true)
-    })
-
-    it('should match saved pages', () => {
-      expect(pinterestHandler.match('https://www.pinterest.com/alice/_saved/')).toBe(true)
-    })
-
-    it('should not match board pages', () => {
-      expect(pinterestHandler.match('https://www.pinterest.com/alice/recipes/')).toBe(false)
-    })
-
-    it('should not match pin pages', () => {
-      expect(pinterestHandler.match('https://www.pinterest.com/pin/123456789/')).toBe(false)
-    })
-
-    it('should not match excluded paths', () => {
-      expect(pinterestHandler.match('https://www.pinterest.com/search')).toBe(false)
-      expect(pinterestHandler.match('https://www.pinterest.com/ideas')).toBe(false)
     })
 
     it('should not match pin.it short links', () => {
       expect(pinterestHandler.match('https://pin.it/abc123')).toBe(false)
-    })
-
-    it('should not match the root URL', () => {
-      expect(pinterestHandler.match('https://www.pinterest.com/')).toBe(false)
-    })
-
-    it('should not match non-Pinterest URLs', () => {
-      expect(pinterestHandler.match('https://example.com/alice')).toBe(false)
-    })
-
-    it('should not match invalid URLs', () => {
-      expect(pinterestHandler.match('not-a-url')).toBe(false)
     })
   })
 
@@ -105,6 +75,20 @@ describe('pinterestHandler', () => {
         expect(pinterestHandler.resolve(url, savedHtml)).toEqual(expected)
       })
 
+      it('should return a ref for board pages', () => {
+        const url = 'https://www.pinterest.com/alice/recipes/'
+        const expected: Array<DiscoverRef> = [{ platform: 'pinterest', id: 'alice', url }]
+
+        expect(pinterestHandler.resolve(url, profileHtml)).toEqual(expected)
+      })
+
+      it('should return a ref for user subpages', () => {
+        const url = 'https://www.pinterest.com/alice/_created/'
+        const expected: Array<DiscoverRef> = [{ platform: 'pinterest', id: 'alice', url }]
+
+        expect(pinterestHandler.resolve(url, profileHtml)).toEqual(expected)
+      })
+
       it('should return a ref for profile pages when content is missing', () => {
         const url = 'https://www.pinterest.com/alice/'
         const expected: Array<DiscoverRef> = [{ platform: 'pinterest', id: 'alice', url }]
@@ -114,15 +98,6 @@ describe('pinterestHandler', () => {
     })
 
     describe('sad paths', () => {
-      it('should return empty array for board pages', () => {
-        const result = pinterestHandler.resolve(
-          'https://www.pinterest.com/alice/recipes/',
-          profileHtml,
-        )
-
-        expect(result).toEqual([])
-      })
-
       it('should return empty array for the default avatar', () => {
         const html = createPageHtml({
           '1': {
@@ -157,6 +132,12 @@ describe('pinterestHandler', () => {
         const result = pinterestHandler.resolve('https://www.pinterest.com/alice/', '<html></html>')
 
         expect(result).toEqual([])
+      })
+
+      it('should return empty array for a pin page', () => {
+        expect(
+          pinterestHandler.resolve('https://www.pinterest.com/pin/123456789', profileHtml),
+        ).toEqual([])
       })
     })
 

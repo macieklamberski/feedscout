@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'bun:test'
 import type { DiscoverRef, FetchFn } from '../../common/types.js'
 import type { FaviconEnricherContext } from '../types.js'
-import { isSubredditPath, isUserPath, redditEnricher, redditHandler } from './reddit.js'
+import { redditEnricher, redditHandler } from './reddit.js'
 
 const createContext = (responses: Record<string, string>): FaviconEnricherContext => {
   const fetchFn: FetchFn = async (url) => ({
@@ -26,139 +26,14 @@ const userRef: DiscoverRef = {
   url: 'https://reddit.com/u/spez',
 }
 
-describe('isSubredditPath', () => {
-  it('should return true for /r/subreddit paths', () => {
-    expect(isSubredditPath('/r/javascript')).toBe(true)
-    expect(isSubredditPath('/r/programming')).toBe(true)
-  })
-
-  it('should return true for /r/subreddit with extra segments', () => {
-    expect(isSubredditPath('/r/javascript/hot')).toBe(true)
-    expect(isSubredditPath('/r/javascript/comments/abc123')).toBe(true)
-  })
-
-  it('should return true for /r/subreddit with trailing slash', () => {
-    expect(isSubredditPath('/r/javascript/')).toBe(true)
-  })
-
-  it('should return true for /r/subreddit with feed extension', () => {
-    expect(isSubredditPath('/r/javascript.rss')).toBe(true)
-    expect(isSubredditPath('/r/javascript.atom')).toBe(true)
-  })
-
-  it('should return false for /r without subreddit', () => {
-    expect(isSubredditPath('/r')).toBe(false)
-    expect(isSubredditPath('/r/')).toBe(false)
-  })
-
-  it('should return false for non-subreddit paths', () => {
-    expect(isSubredditPath('/about')).toBe(false)
-    expect(isSubredditPath('/u/user')).toBe(false)
-  })
-
-  it('should return false for case variation of /r', () => {
-    expect(isSubredditPath('/R/javascript')).toBe(false)
-  })
-
-  it('should return false for root path', () => {
-    expect(isSubredditPath('/')).toBe(false)
-  })
-
-  it('should return false for empty string', () => {
-    expect(isSubredditPath('')).toBe(false)
-  })
-})
-
-describe('isUserPath', () => {
-  it('should return true for /u/username paths', () => {
-    expect(isUserPath('/u/spez')).toBe(true)
-    expect(isUserPath('/u/admin')).toBe(true)
-  })
-
-  it('should return true for /user/username paths', () => {
-    expect(isUserPath('/user/spez')).toBe(true)
-    expect(isUserPath('/user/admin')).toBe(true)
-  })
-
-  it('should return true for user paths with extra segments', () => {
-    expect(isUserPath('/u/spez/comments')).toBe(true)
-    expect(isUserPath('/user/spez/submitted')).toBe(true)
-  })
-
-  it('should return true for user paths with trailing slash', () => {
-    expect(isUserPath('/u/spez/')).toBe(true)
-    expect(isUserPath('/user/spez/')).toBe(true)
-  })
-
-  it('should return true for user paths with feed extension', () => {
-    expect(isUserPath('/u/spez.rss')).toBe(true)
-    expect(isUserPath('/user/spez.atom')).toBe(true)
-  })
-
-  it('should return false for /u or /user without username', () => {
-    expect(isUserPath('/u')).toBe(false)
-    expect(isUserPath('/u/')).toBe(false)
-    expect(isUserPath('/user')).toBe(false)
-    expect(isUserPath('/user/')).toBe(false)
-  })
-
-  it('should return false for non-user paths', () => {
-    expect(isUserPath('/r/javascript')).toBe(false)
-    expect(isUserPath('/about')).toBe(false)
-  })
-
-  it('should return false for case variation of /u and /user', () => {
-    expect(isUserPath('/U/spez')).toBe(false)
-    expect(isUserPath('/User/spez')).toBe(false)
-  })
-
-  it('should return false for root path', () => {
-    expect(isUserPath('/')).toBe(false)
-  })
-
-  it('should return false for empty string', () => {
-    expect(isUserPath('')).toBe(false)
-  })
-})
-
 describe('redditHandler', () => {
   describe('match', () => {
     it('should match subreddit URLs', () => {
       expect(redditHandler.match('https://reddit.com/r/javascript')).toBe(true)
-      expect(redditHandler.match('https://www.reddit.com/r/programming')).toBe(true)
     })
 
-    it('should match user URLs', () => {
-      expect(redditHandler.match('https://reddit.com/u/spez')).toBe(true)
-      expect(redditHandler.match('https://reddit.com/user/spez')).toBe(true)
-    })
-
-    it('should match old.reddit.com and new.reddit.com', () => {
-      expect(redditHandler.match('https://old.reddit.com/r/javascript')).toBe(true)
-      expect(redditHandler.match('https://new.reddit.com/u/spez')).toBe(true)
-    })
-
-    it('should not match Reddit homepage', () => {
-      expect(redditHandler.match('https://reddit.com/')).toBe(false)
-      expect(redditHandler.match('https://reddit.com')).toBe(false)
-    })
-
-    it('should not match non-subreddit and non-user Reddit paths', () => {
-      expect(redditHandler.match('https://reddit.com/about')).toBe(false)
-      expect(redditHandler.match('https://reddit.com/wiki')).toBe(false)
-    })
-
-    it('should match URLs with feed extensions', () => {
-      expect(redditHandler.match('https://www.reddit.com/r/javascript.rss')).toBe(true)
-      expect(redditHandler.match('https://www.reddit.com/u/spez.rss')).toBe(true)
-    })
-
-    it('should not match non-Reddit URLs', () => {
-      expect(redditHandler.match('https://example.com/r/javascript')).toBe(false)
-    })
-
-    it('should not match invalid URLs', () => {
-      expect(redditHandler.match('not-a-url')).toBe(false)
+    it('should not match domain pages', () => {
+      expect(redditHandler.match('https://reddit.com/domain/github.com')).toBe(false)
     })
   })
 
@@ -171,29 +46,15 @@ describe('redditHandler', () => {
       expect(await redditHandler.resolve('https://reddit.com/u/spez')).toEqual([userRef])
     })
 
-    it('should return a user ref for /user/ paths', async () => {
-      const url = 'https://reddit.com/user/spez'
+    it('should return the owner ref for a multireddit', async () => {
+      const url = 'https://reddit.com/user/spez/m/news'
       const expected: Array<DiscoverRef> = [{ platform: 'reddit', id: 'user/spez', url }]
 
       expect(await redditHandler.resolve(url)).toEqual(expected)
     })
 
-    it('should strip feed extension from subreddit URL', async () => {
-      const url = 'https://reddit.com/r/javascript.rss'
-      const expected: Array<DiscoverRef> = [{ platform: 'reddit', id: 'r/javascript', url }]
-
-      expect(await redditHandler.resolve(url)).toEqual(expected)
-    })
-
-    it('should strip feed extension from user URL', async () => {
-      const url = 'https://reddit.com/u/spez.rss'
-      const expected: Array<DiscoverRef> = [{ platform: 'reddit', id: 'user/spez', url }]
-
-      expect(await redditHandler.resolve(url)).toEqual(expected)
-    })
-
-    it('should return empty array for non-subreddit and non-user path', async () => {
-      expect(await redditHandler.resolve('https://reddit.com/about')).toEqual([])
+    it('should return empty array for domain pages', async () => {
+      expect(await redditHandler.resolve('https://reddit.com/domain/github.com')).toEqual([])
     })
   })
 })

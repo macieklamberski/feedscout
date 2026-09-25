@@ -1,21 +1,75 @@
 import { describe, expect, it } from 'bun:test'
-import { observableHandler } from './observable.js'
+import type { ObservableUrl } from './observable.js'
+import { observableHandler, parseObservableUrl } from './observable.js'
+
+describe('parseObservableUrl', () => {
+  it('should return the user for a profile page', () => {
+    const expected: ObservableUrl = { kind: 'user', owner: 'mbostock' }
+
+    expect(parseObservableUrl('https://observablehq.com/@mbostock')).toEqual(expected)
+  })
+
+  it('should return the user for a notebook page', () => {
+    const expected: ObservableUrl = { kind: 'user', owner: 'mbostock' }
+
+    expect(parseObservableUrl('https://observablehq.com/@mbostock/some-notebook')).toEqual(expected)
+  })
+
+  it('should return the user for the www host', () => {
+    const expected: ObservableUrl = { kind: 'user', owner: 'mbostock' }
+
+    expect(parseObservableUrl('https://www.observablehq.com/@mbostock')).toEqual(expected)
+  })
+
+  it('should return the collection for a collection page', () => {
+    const value = 'https://observablehq.com/@observablehq/collection/visualization'
+    const expected: ObservableUrl = {
+      kind: 'collection',
+      owner: 'observablehq',
+      collection: 'visualization',
+    }
+
+    expect(parseObservableUrl(value)).toEqual(expected)
+  })
+
+  it('should return the collection for a collection page in the live form', () => {
+    const value = 'https://observablehq.com/@observablehq/-/collection/working-with-data'
+    const expected: ObservableUrl = {
+      kind: 'collection',
+      owner: 'observablehq',
+      collection: 'working-with-data',
+    }
+
+    expect(parseObservableUrl(value)).toEqual(expected)
+  })
+
+  it('should return undefined for paths without @ prefix', () => {
+    expect(parseObservableUrl('https://observablehq.com/about')).toBeUndefined()
+    expect(parseObservableUrl('https://observablehq.com/recent')).toBeUndefined()
+    expect(parseObservableUrl('https://observablehq.com/trending')).toBeUndefined()
+  })
+
+  it('should return undefined for the root', () => {
+    expect(parseObservableUrl('https://observablehq.com/')).toBeUndefined()
+  })
+
+  it('should return undefined for another host', () => {
+    expect(parseObservableUrl('https://example.com/@mbostock')).toBeUndefined()
+  })
+
+  it('should return undefined for an invalid URL', () => {
+    expect(parseObservableUrl('not-a-url')).toBeUndefined()
+  })
+})
 
 describe('observableHandler', () => {
   describe('match', () => {
-    const values: Array<[boolean, string]> = [
-      [true, 'https://observablehq.com/@mbostock'],
-      [true, 'https://www.observablehq.com/@user'],
-      [true, 'https://observablehq.com'],
-      [false, 'https://example.com'],
-    ]
-
-    it.each(values)('should return %s for %s', (expected, url) => {
-      expect(observableHandler.match(url)).toBe(expected)
+    it('should match an observablehq.com URL', () => {
+      expect(observableHandler.match('https://observablehq.com')).toBe(true)
     })
 
-    it('should return false for invalid URL', () => {
-      expect(observableHandler.match('not-a-url')).toBe(false)
+    it('should not match another host', () => {
+      expect(observableHandler.match('https://example.com')).toBe(false)
     })
   })
 
@@ -32,35 +86,11 @@ describe('observableHandler', () => {
       expect(observableHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return feed URL regardless of subpath', () => {
-      const value = 'https://observablehq.com/@mbostock/some-notebook'
-      const expected = [
-        {
-          uri: 'https://api.observablehq.com/documents/@mbostock.rss',
-          hint: { key: 'observable:notebooks', label: 'Notebooks' },
-        },
-      ]
-
-      expect(observableHandler.resolve(value)).toEqual(expected)
-    })
-
     it('should return feed URL for collection', () => {
       const value = 'https://observablehq.com/@observablehq/collection/visualization'
       const expected = [
         {
           uri: 'https://api.observablehq.com/collection/@observablehq/visualization.rss',
-          hint: { key: 'observable:collection', label: 'Collection' },
-        },
-      ]
-
-      expect(observableHandler.resolve(value)).toEqual(expected)
-    })
-
-    it('should return feed URL for collection in the live form', () => {
-      const value = 'https://observablehq.com/@observablehq/-/collection/working-with-data'
-      const expected = [
-        {
-          uri: 'https://api.observablehq.com/collection/@observablehq/working-with-data.rss',
           hint: { key: 'observable:collection', label: 'Collection' },
         },
       ]
@@ -144,12 +174,6 @@ describe('observableHandler', () => {
       ]
 
       expect(observableHandler.resolve(value)).toEqual(expected)
-    })
-
-    it('should return empty array for paths without @ prefix', () => {
-      const value = 'https://observablehq.com/about'
-
-      expect(observableHandler.resolve(value)).toEqual([])
     })
   })
 })

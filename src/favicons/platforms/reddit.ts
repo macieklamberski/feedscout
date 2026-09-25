@@ -1,54 +1,38 @@
-import { isHostOf, isNonEmptyString, parseUrl } from 'trousse'
+import { isNonEmptyString } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { hosts } from '../../feeds/platforms/reddit.js'
+import { parseRedditUrl } from '../../feeds/platforms/reddit.js'
 import type { FaviconEnricher } from '../types.js'
 import { parseResponseJson } from '../utils.js'
 
 const platform = 'reddit'
 
-// Extracts the subreddit or username from the path, excluding dots to avoid
-// capturing feed extensions like .rss in Reddit feed URLs (e.g., /r/sub.rss).
-const subredditRegex = /^\/r\/([^/.]+)/
-const userRegex = /^\/(u|user)\/([^/.]+)/
+// The id keeps its `r/` or `user/` prefix: a subreddit and a user share one name grammar and
+// answer with different icon fields.
+const getProfileId = (url: string): string | undefined => {
+  const parsed = parseRedditUrl(url)
 
-export const isSubredditPath = (pathname: string): boolean => {
-  return subredditRegex.test(pathname)
-}
+  if (parsed && 'subreddit' in parsed) {
+    return `r/${parsed.subreddit}`
+  }
 
-export const isUserPath = (pathname: string): boolean => {
-  return userRegex.test(pathname)
+  if (parsed && 'username' in parsed) {
+    return `user/${parsed.username}`
+  }
 }
 
 export const redditHandler: PlatformHandler = {
   match: (url) => {
-    const parsedUrl = parseUrl(url)
-
-    if (!parsedUrl) {
-      return false
-    }
-
-    const { pathname } = parsedUrl
-
-    return isHostOf(url, hosts) && (isSubredditPath(pathname) || isUserPath(pathname))
+    return getProfileId(url) !== undefined
   },
 
-  // The id keeps its `r/` or `user/` prefix: a subreddit and a user share one name grammar and
-  // answer with different icon fields.
   resolve: (url) => {
-    const { pathname } = new URL(url)
-    const subreddit = pathname.match(subredditRegex)?.[1]
+    const id = getProfileId(url)
 
-    if (subreddit) {
-      return [{ platform, id: `r/${subreddit}`, url }]
+    if (!id) {
+      return []
     }
 
-    const username = pathname.match(userRegex)?.[2]
-
-    if (username) {
-      return [{ platform, id: `user/${username}`, url }]
-    }
-
-    return []
+    return [{ platform, id, url }]
   },
 }
 

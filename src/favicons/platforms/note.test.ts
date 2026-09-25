@@ -24,41 +24,12 @@ describe('noteHandler', () => {
       expect(noteHandler.match('https://note.com/alice')).toBe(true)
     })
 
-    it('should match profile URLs with trailing slash', () => {
-      expect(noteHandler.match('https://note.com/alice/')).toBe(true)
-    })
-
-    it('should match www.note.com profile URLs', () => {
-      expect(noteHandler.match('https://www.note.com/alice')).toBe(true)
-    })
-
-    it('should match magazine URLs', () => {
-      expect(noteHandler.match('https://note.com/alice/m/m1861fae39074')).toBe(true)
-    })
-
     it('should not match hashtag pages', () => {
       expect(noteHandler.match('https://note.com/hashtag/design')).toBe(false)
-      expect(noteHandler.match('https://note.com/tag/design')).toBe(false)
     })
 
-    it('should not match article pages', () => {
-      expect(noteHandler.match('https://note.com/alice/n/n1234567890ab')).toBe(false)
-    })
-
-    it('should not match excluded paths', () => {
-      expect(noteHandler.match('https://note.com/search')).toBe(false)
-    })
-
-    it('should not match root URL', () => {
-      expect(noteHandler.match('https://note.com/')).toBe(false)
-    })
-
-    it('should not match non-note URLs', () => {
-      expect(noteHandler.match('https://example.com/alice')).toBe(false)
-    })
-
-    it('should not match invalid URLs', () => {
-      expect(noteHandler.match('not-a-url')).toBe(false)
+    it('should not match a magazine under a reserved path', () => {
+      expect(noteHandler.match('https://note.com/search/m/m1861fae39074')).toBe(false)
     })
   })
 
@@ -109,6 +80,13 @@ describe('noteHandler', () => {
     describe('edge cases', () => {
       it('should ignore page payload on magazine pages', () => {
         const url = 'https://note.com/alice/m/m1861fae39074'
+        const expected: Array<DiscoverRef> = [{ platform: 'note', id: 'alice', url }]
+
+        expect(noteHandler.resolve(url, profileContent)).toEqual(expected)
+      })
+
+      it('should return a ref with the owner for article pages, ignoring the payload', () => {
+        const url = 'https://note.com/alice/n/n1234567890ab'
         const expected: Array<DiscoverRef> = [{ platform: 'note', id: 'alice', url }]
 
         expect(noteHandler.resolve(url, profileContent)).toEqual(expected)

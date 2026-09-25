@@ -1,7 +1,7 @@
-import { isAnyOf, isNonEmptyString, parseUrl } from 'trousse'
+import { isNonEmptyString } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getMetaContent } from '../../common/utils.js'
-import { excludedPaths, isPixelfedHtml, profileRegex } from '../../feeds/platforms/pixelfed.js'
+import { isPixelfedHtml, parsePixelfedUrl } from '../../feeds/platforms/pixelfed.js'
 import type { FaviconEnricher } from '../types.js'
 import { parseResponseJson } from '../utils.js'
 
@@ -9,22 +9,6 @@ const platform = 'pixelfed'
 
 // An account without an uploaded avatar carries /storage/avatars/default.jpg or default.png.
 const defaultAvatarRegex = /\/avatars\/default\.[a-z]+(?:\?|$)/
-
-const getUsername = (url: string): string | undefined => {
-  const parsedUrl = parseUrl(url)
-
-  if (!parsedUrl) {
-    return
-  }
-
-  const match = parsedUrl.pathname.match(profileRegex)
-
-  if (!match?.[1] || isAnyOf(match[1], excludedPaths)) {
-    return
-  }
-
-  return match[1]
-}
 
 const isAvatar = (value: unknown): value is string => {
   return isNonEmptyString(value) && !defaultAvatarRegex.test(value)
@@ -36,11 +20,11 @@ export const pixelfedHandler: PlatformHandler = {
       return false
     }
 
-    return Boolean(getUsername(url))
+    return parsePixelfedUrl(url) !== undefined
   },
 
   resolve: (url, content) => {
-    const username = getUsername(url)
+    const username = parsePixelfedUrl(url)?.username
 
     if (!username) {
       return []

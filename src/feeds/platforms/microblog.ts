@@ -1,4 +1,4 @@
-import { isSubdomainOf } from 'trousse'
+import { getSubdomain } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
@@ -6,13 +6,26 @@ import { composeHint } from '../../common/utils.js'
 // Discoverability: Partially discoverable without handler.
 // Generic partly covers archive, blog, photos, replies.
 
+export type MicroblogUrl = { kind: 'blog'; username: string }
+
 export const domains = ['micro.blog']
 
 const categoryRegex = /^\/categories\/([^/]+)/
 
+export const parseMicroblogUrl = (url: string): MicroblogUrl | undefined => {
+  const username = getSubdomain(url, domains)
+
+  // Only {username}.micro.blog names a blog, www.micro.blog serves nothing.
+  if (!username || username.includes('.') || username === 'www') {
+    return
+  }
+
+  return { kind: 'blog', username }
+}
+
 export const microblogHandler: PlatformHandler = {
   match: (url) => {
-    return isSubdomainOf(url, domains)
+    return parseMicroblogUrl(url) !== undefined
   },
 
   resolve: (url) => {

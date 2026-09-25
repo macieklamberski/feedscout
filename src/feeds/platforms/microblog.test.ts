@@ -1,25 +1,48 @@
 import { describe, expect, it } from 'bun:test'
 import type { DiscoverUriEntry } from '../../common/types.js'
-import { microblogHandler } from './microblog.js'
+import type { MicroblogUrl } from './microblog.js'
+import { microblogHandler, parseMicroblogUrl } from './microblog.js'
 
-describe('microblogHandler', () => {
-  describe('match', () => {
-    const values: Array<[boolean, string]> = [
-      [true, 'https://manton.micro.blog'],
-      [true, 'https://blog.example.micro.blog'],
-      [false, 'https://micro.blog'],
-      [false, 'https://example.com'],
-    ]
+describe('parseMicroblogUrl', () => {
+  it('should return the user for a blog subdomain', () => {
+    const expected: MicroblogUrl = { kind: 'blog', username: 'manton' }
 
-    it.each(values)('should return %s for %s', (expected, url) => {
-      expect(microblogHandler.match(url)).toBe(expected)
-    })
-
-    it('should return false for invalid URL', () => {
-      expect(microblogHandler.match('not-a-url')).toBe(false)
-    })
+    expect(parseMicroblogUrl('https://manton.micro.blog')).toEqual(expected)
   })
 
+  it('should return the user for a post on a blog subdomain', () => {
+    const value = 'https://manton.micro.blog/2026/09/24/hello.html'
+    const expected: MicroblogUrl = { kind: 'blog', username: 'manton' }
+
+    expect(parseMicroblogUrl(value)).toEqual(expected)
+  })
+
+  it('should return undefined for the micro.blog apex', () => {
+    expect(parseMicroblogUrl('https://micro.blog/manton')).toBeUndefined()
+  })
+
+  it('should return undefined for www.micro.blog', () => {
+    expect(parseMicroblogUrl('https://www.micro.blog')).toBeUndefined()
+  })
+
+  it('should return undefined for a nested subdomain', () => {
+    expect(parseMicroblogUrl('https://blog.example.micro.blog')).toBeUndefined()
+  })
+
+  it('should return undefined for a lookalike host', () => {
+    expect(parseMicroblogUrl('https://example.notmicro.blog')).toBeUndefined()
+  })
+
+  it('should return undefined for another host', () => {
+    expect(parseMicroblogUrl('https://example.com')).toBeUndefined()
+  })
+
+  it('should return undefined for an invalid URL', () => {
+    expect(parseMicroblogUrl('not-a-url')).toBeUndefined()
+  })
+})
+
+describe('microblogHandler', () => {
   describe('resolve', () => {
     it('should return RSS, JSON, and podcast feeds for blog', () => {
       const value = 'https://manton.micro.blog'

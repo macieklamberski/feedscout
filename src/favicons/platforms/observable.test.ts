@@ -28,46 +28,8 @@ describe('observableHandler', () => {
       expect(observableHandler.match('https://observablehq.com/@alice')).toBe(true)
     })
 
-    it('should match profile URLs with trailing slash', () => {
-      expect(observableHandler.match('https://observablehq.com/@alice/')).toBe(true)
-    })
-
-    it('should match www profile URLs', () => {
-      expect(observableHandler.match('https://www.observablehq.com/@alice')).toBe(true)
-    })
-
-    it('should match collection URLs', () => {
-      expect(observableHandler.match('https://observablehq.com/@alice/-/collection/maps')).toBe(
-        true,
-      )
-    })
-
-    it('should match collection URLs without the dash segment', () => {
-      expect(observableHandler.match('https://observablehq.com/@alice/collection/maps')).toBe(true)
-    })
-
-    it('should not match notebook URLs', () => {
-      expect(observableHandler.match('https://observablehq.com/@alice/hello-world')).toBe(false)
-    })
-
     it('should not match recent URL', () => {
       expect(observableHandler.match('https://observablehq.com/recent')).toBe(false)
-    })
-
-    it('should not match trending URL', () => {
-      expect(observableHandler.match('https://observablehq.com/trending')).toBe(false)
-    })
-
-    it('should not match root URL', () => {
-      expect(observableHandler.match('https://observablehq.com/')).toBe(false)
-    })
-
-    it('should not match non-Observable URLs', () => {
-      expect(observableHandler.match('https://example.com/@alice')).toBe(false)
-    })
-
-    it('should not match invalid URLs', () => {
-      expect(observableHandler.match('not-a-url')).toBe(false)
     })
   })
 
@@ -85,10 +47,15 @@ describe('observableHandler', () => {
       expect(await observableHandler.resolve(url)).toEqual(expected)
     })
 
-    it('should return empty array for a notebook page', async () => {
+    it('should return the owner ref for a notebook page', async () => {
       const url = 'https://observablehq.com/@alice/hello-world'
+      const expected: Array<DiscoverRef> = [{ platform: 'observable', id: 'alice', url }]
 
-      expect(await observableHandler.resolve(url)).toEqual([])
+      expect(await observableHandler.resolve(url)).toEqual(expected)
+    })
+
+    it('should return empty array for a non-profile page', async () => {
+      expect(await observableHandler.resolve('https://observablehq.com/recent')).toEqual([])
     })
   })
 })

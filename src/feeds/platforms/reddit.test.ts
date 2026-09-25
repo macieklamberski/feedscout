@@ -1,23 +1,196 @@
 import { describe, expect, it } from 'bun:test'
 import type { DiscoverUriEntry } from '../../common/types.js'
-import { redditHandler } from './reddit.js'
+import type { RedditUrl } from './reddit.js'
+import { parseRedditUrl, redditHandler } from './reddit.js'
+
+describe('parseRedditUrl', () => {
+  it('should return the subreddit for a subreddit page', () => {
+    const expected: RedditUrl = { kind: 'subreddit', subreddit: 'programming' }
+
+    expect(parseRedditUrl('https://reddit.com/r/programming')).toEqual(expected)
+  })
+
+  it('should return the subreddit for every Reddit host', () => {
+    const expected: RedditUrl = { kind: 'subreddit', subreddit: 'programming' }
+
+    expect(parseRedditUrl('https://www.reddit.com/r/programming')).toEqual(expected)
+    expect(parseRedditUrl('https://old.reddit.com/r/programming')).toEqual(expected)
+    expect(parseRedditUrl('https://new.reddit.com/r/programming')).toEqual(expected)
+  })
+
+  it('should return the subreddit for a trailing slash', () => {
+    const expected: RedditUrl = { kind: 'subreddit', subreddit: 'programming' }
+
+    expect(parseRedditUrl('https://reddit.com/r/programming/')).toEqual(expected)
+  })
+
+  it('should return the subreddit for a URL with query params', () => {
+    const expected: RedditUrl = { kind: 'subreddit', subreddit: 'programming' }
+
+    expect(parseRedditUrl('https://reddit.com/r/programming?sort=new')).toEqual(expected)
+  })
+
+  it('should return the combined subreddits as one name', () => {
+    const expected: RedditUrl = { kind: 'subreddit', subreddit: 'programming+javascript' }
+
+    expect(parseRedditUrl('https://reddit.com/r/programming+javascript')).toEqual(expected)
+  })
+
+  it('should return the subreddit without a feed extension', () => {
+    const expected: RedditUrl = { kind: 'subreddit', subreddit: 'programming' }
+
+    expect(parseRedditUrl('https://www.reddit.com/r/programming.rss')).toEqual(expected)
+    expect(parseRedditUrl('https://www.reddit.com/r/programming.atom')).toEqual(expected)
+  })
+
+  it('should return the subreddit with its sort', () => {
+    const expected: RedditUrl = { kind: 'subreddit', subreddit: 'programming', sort: 'hot' }
+
+    expect(parseRedditUrl('https://reddit.com/r/programming/hot')).toEqual(expected)
+  })
+
+  it('should return the subreddit without an unknown section', () => {
+    const expected: RedditUrl = { kind: 'subreddit', subreddit: 'programming' }
+
+    expect(parseRedditUrl('https://reddit.com/r/programming/about')).toEqual(expected)
+  })
+
+  it('should return the search for a subreddit search page', () => {
+    const expected: RedditUrl = { kind: 'search', subreddit: 'programming' }
+
+    expect(parseRedditUrl('https://reddit.com/r/programming/search?q=rust')).toEqual(expected)
+  })
+
+  it('should return the wiki for a subreddit wiki page', () => {
+    const expected: RedditUrl = { kind: 'wiki', subreddit: 'programming' }
+
+    expect(parseRedditUrl('https://reddit.com/r/programming/wiki')).toEqual(expected)
+  })
+
+  it('should return the post for a post page', () => {
+    const value = 'https://reddit.com/r/AskReddit/comments/abc123/whats_your_favorite'
+    const expected: RedditUrl = { kind: 'post', subreddit: 'AskReddit', postId: 'abc123' }
+
+    expect(parseRedditUrl(value)).toEqual(expected)
+  })
+
+  it('should return the subreddit for a comments path without a post', () => {
+    const expected: RedditUrl = { kind: 'subreddit', subreddit: 'AskReddit' }
+
+    expect(parseRedditUrl('https://reddit.com/r/AskReddit/comments')).toEqual(expected)
+  })
+
+  it('should return the user for a /user/ page', () => {
+    const expected: RedditUrl = { kind: 'user', username: 'spez' }
+
+    expect(parseRedditUrl('https://reddit.com/user/spez')).toEqual(expected)
+  })
+
+  it('should return the user for a /u/ page', () => {
+    const expected: RedditUrl = { kind: 'user', username: 'spez' }
+
+    expect(parseRedditUrl('https://reddit.com/u/spez')).toEqual(expected)
+  })
+
+  it('should return the user without a feed extension', () => {
+    const expected: RedditUrl = { kind: 'user', username: 'spez' }
+
+    expect(parseRedditUrl('https://www.reddit.com/u/spez.rss')).toEqual(expected)
+    expect(parseRedditUrl('https://www.reddit.com/user/spez.atom')).toEqual(expected)
+  })
+
+  it('should return the submitted page of a user', () => {
+    const expected: RedditUrl = { kind: 'submitted', username: 'spez' }
+
+    expect(parseRedditUrl('https://reddit.com/user/spez/submitted')).toEqual(expected)
+  })
+
+  it('should return the submitted page without a feed extension', () => {
+    const expected: RedditUrl = { kind: 'submitted', username: 'spez' }
+
+    expect(parseRedditUrl('https://www.reddit.com/user/spez/submitted.rss')).toEqual(expected)
+  })
+
+  it('should return the comments page of a user', () => {
+    const expected: RedditUrl = { kind: 'comments', username: 'spez' }
+
+    expect(parseRedditUrl('https://reddit.com/user/spez/comments')).toEqual(expected)
+  })
+
+  it('should return the user for an unknown user section', () => {
+    const expected: RedditUrl = { kind: 'user', username: 'spez' }
+
+    expect(parseRedditUrl('https://reddit.com/user/spez/upvoted')).toEqual(expected)
+  })
+
+  it('should return the multireddit for a /user/ multireddit page', () => {
+    const value = 'https://reddit.com/user/kjoneslol/m/sfwpornnetwork'
+    const expected: RedditUrl = {
+      kind: 'multireddit',
+      username: 'kjoneslol',
+      multireddit: 'sfwpornnetwork',
+    }
+
+    expect(parseRedditUrl(value)).toEqual(expected)
+  })
+
+  it('should return the user for a /u/ multireddit page', () => {
+    const expected: RedditUrl = { kind: 'user', username: 'kjoneslol' }
+
+    expect(parseRedditUrl('https://reddit.com/u/kjoneslol/m/sfwpornnetwork')).toEqual(expected)
+  })
+
+  it('should return the domain for a domain page', () => {
+    const expected: RedditUrl = { kind: 'domain', domain: 'github.com' }
+
+    expect(parseRedditUrl('https://reddit.com/domain/github.com')).toEqual(expected)
+  })
+
+  it('should return undefined for an uppercase prefix', () => {
+    expect(parseRedditUrl('https://reddit.com/R/programming')).toBeUndefined()
+    expect(parseRedditUrl('https://reddit.com/U/spez')).toBeUndefined()
+    expect(parseRedditUrl('https://reddit.com/User/spez')).toBeUndefined()
+  })
+
+  it('should return undefined for a prefix without a name', () => {
+    expect(parseRedditUrl('https://reddit.com/r/')).toBeUndefined()
+    expect(parseRedditUrl('https://reddit.com/r')).toBeUndefined()
+    expect(parseRedditUrl('https://reddit.com/u/')).toBeUndefined()
+    expect(parseRedditUrl('https://reddit.com/user')).toBeUndefined()
+  })
+
+  it('should return undefined for a name that is only a feed extension', () => {
+    expect(parseRedditUrl('https://reddit.com/r/.rss')).toBeUndefined()
+  })
+
+  it('should return undefined for other Reddit paths', () => {
+    expect(parseRedditUrl('https://reddit.com/about')).toBeUndefined()
+    expect(parseRedditUrl('https://reddit.com/wiki')).toBeUndefined()
+    expect(parseRedditUrl('https://reddit.com/search?q=typescript')).toBeUndefined()
+  })
+
+  it('should return undefined for the homepage', () => {
+    expect(parseRedditUrl('https://reddit.com/')).toBeUndefined()
+    expect(parseRedditUrl('https://reddit.com')).toBeUndefined()
+  })
+
+  it('should return undefined for another host', () => {
+    expect(parseRedditUrl('https://example.com/r/programming')).toBeUndefined()
+  })
+
+  it('should return undefined for an invalid URL', () => {
+    expect(parseRedditUrl('not-a-url')).toBeUndefined()
+  })
+})
 
 describe('redditHandler', () => {
   describe('match', () => {
-    const values: Array<[boolean, string]> = [
-      [true, 'https://reddit.com/r/programming'],
-      [true, 'https://www.reddit.com/r/programming'],
-      [true, 'https://old.reddit.com/r/programming'],
-      [true, 'https://new.reddit.com/r/programming'],
-      [false, 'https://example.com/r/test'],
-    ]
-
-    it.each(values)('should return %s for %s', (expected, url) => {
-      expect(redditHandler.match(url)).toBe(expected)
+    it('should match a Reddit URL', () => {
+      expect(redditHandler.match('https://reddit.com/r/programming')).toBe(true)
     })
 
-    it('should return false for invalid URL', () => {
-      expect(redditHandler.match('not-a-url')).toBe(false)
+    it('should not match another host', () => {
+      expect(redditHandler.match('https://example.com/r/test')).toBe(false)
     })
   })
 
@@ -388,18 +561,6 @@ describe('redditHandler', () => {
       expect(redditHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should handle u/ format for user profiles', () => {
-      const value = 'https://reddit.com/u/spez'
-      const expected = [
-        {
-          uri: 'https://www.reddit.com/user/spez/.rss',
-          hint: { key: 'reddit:posts', label: 'Posts' },
-        },
-      ]
-
-      expect(redditHandler.resolve(value)).toEqual(expected)
-    })
-
     it('should return submitted and profile feeds for /user/{user}/submitted', () => {
       const value = 'https://reddit.com/user/spez/submitted'
       const expected = [
@@ -432,22 +593,6 @@ describe('redditHandler', () => {
       expect(redditHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return RSS feed URL for combined subreddits', () => {
-      const value = 'https://reddit.com/r/programming+javascript'
-      const expected = [
-        {
-          uri: 'https://www.reddit.com/r/programming+javascript/.rss',
-          hint: { key: 'reddit:posts', label: 'Posts' },
-        },
-        {
-          uri: 'https://www.reddit.com/r/programming+javascript/comments/.rss',
-          hint: { key: 'reddit:comments', label: 'Comments' },
-        },
-      ]
-
-      expect(redditHandler.resolve(value)).toEqual(expected)
-    })
-
     it('should return RSS feed URL for multireddit', () => {
       const value = 'https://reddit.com/user/kjoneslol/m/sfwpornnetwork'
       const expected = [
@@ -460,20 +605,8 @@ describe('redditHandler', () => {
       expect(redditHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return empty array for invalid paths', () => {
-      const value = 'https://reddit.com/about'
-
-      expect(redditHandler.resolve(value)).toEqual([])
-    })
-
-    it('should return empty array for /r/ without subreddit', () => {
-      const value = 'https://reddit.com/r/'
-
-      expect(redditHandler.resolve(value)).toEqual([])
-    })
-
-    it('should ignore query params in subreddit URL', () => {
-      const value = 'https://reddit.com/r/programming?sort=new'
+    it('should strip a feed extension from the subreddit', () => {
+      const value = 'https://www.reddit.com/r/programming.rss'
       const expected = [
         {
           uri: 'https://www.reddit.com/r/programming/.rss',
@@ -486,6 +619,12 @@ describe('redditHandler', () => {
       ]
 
       expect(redditHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return empty array for invalid paths', () => {
+      const value = 'https://reddit.com/about'
+
+      expect(redditHandler.resolve(value)).toEqual([])
     })
 
     it('should return RSS feed URL for homepage', () => {

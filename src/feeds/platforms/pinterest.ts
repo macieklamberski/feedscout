@@ -1,12 +1,16 @@
-import { isAnyOf, isHostOf } from 'trousse'
+import { getPathSegments, isAnyOf, isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Not discoverable without handler.
 // Handler needed for: all shapes.
 
-export const hosts = ['pinterest.com', 'www.pinterest.com', 'pin.it']
-export const excludedPaths = [
+export type PinterestUrl =
+  | { kind: 'user'; username: string }
+  | { kind: 'board'; username: string; board: string }
+
+export const hosts = ['pinterest.com', 'www.pinterest.com']
+const excludedPaths = [
   '_',
   'about',
   'business',
@@ -26,45 +30,55 @@ export const excludedPaths = [
   'topics',
 ]
 
+// Reserved sub-routes of a user are not boards.
+const userSubpaths = ['pins', 'boards', '_saved', '_created', 'followers', 'following']
+
+export const parsePinterestUrl = (url: string): PinterestUrl | undefined => {
+  const parsedUrl = parseUrl(url)
+
+  if (!parsedUrl || !isHostOf(parsedUrl, hosts)) {
+    return
+  }
+
+  const [username, board] = getPathSegments(parsedUrl)
+
+  if (!username || isAnyOf(username, excludedPaths)) {
+    return
+  }
+
+  if (board && !isAnyOf(board, userSubpaths)) {
+    return { kind: 'board', username, board }
+  }
+
+  return { kind: 'user', username }
+}
+
 export const pinterestHandler: PlatformHandler = {
   match: (url) => {
     return isHostOf(url, hosts)
   },
 
   resolve: (url) => {
-    const { pathname } = new URL(url)
-    const pathSegments = pathname.split('/').filter(Boolean)
+    const parsed = parsePinterestUrl(url)
 
-    // Need at least a username.
-    if (pathSegments.length === 0) {
-      return []
-    }
-
-    const username = pathSegments[0]
-
-    if (isAnyOf(username, excludedPaths)) {
-      return []
-    }
-
-    // Board page: /{user}/{board}. Reserved sub-routes (pins, _saved, etc.) are
-    // not boards; fall through to the user feed.
-    const reservedBoardSlugs = ['pins', 'boards', '_saved', '_created', 'followers', 'following']
-    const board = pathSegments[1]
-
-    if (board && !isAnyOf(board, reservedBoardSlugs)) {
+    if (parsed?.kind === 'board') {
       return [
         {
-          uri: `https://www.pinterest.com/${username}/${board}.rss`,
+          uri: `https://www.pinterest.com/${parsed.username}/${parsed.board}.rss`,
           hint: composeHint('pinterest:board'),
         },
       ]
     }
 
-    return [
-      {
-        uri: `https://www.pinterest.com/${username}/feed.rss`,
-        hint: composeHint('pinterest:pins'),
-      },
-    ]
+    if (parsed?.kind === 'user') {
+      return [
+        {
+          uri: `https://www.pinterest.com/${parsed.username}/feed.rss`,
+          hint: composeHint('pinterest:pins'),
+        },
+      ]
+    }
+
+    return []
   },
 }

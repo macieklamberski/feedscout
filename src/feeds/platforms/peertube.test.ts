@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'bun:test'
-import { isPeertubeHeaders, peertubeHandler } from './peertube.js'
+import type { PeertubeUrl } from './peertube.js'
+import { isPeertubeHeaders, parsePeertubeUrl, peertubeHandler } from './peertube.js'
 
 const peertubeHeaders = new Headers({ 'x-powered-by': 'PeerTube' })
 
@@ -14,6 +15,54 @@ describe('isPeertubeHeaders', () => {
   })
 })
 
+describe('parsePeertubeUrl', () => {
+  it('should return the channel for a channel page', () => {
+    const expected: PeertubeUrl = { kind: 'channel', name: 'news' }
+
+    expect(parsePeertubeUrl('https://example.org/c/news')).toEqual(expected)
+  })
+
+  it('should return the channel for a channel subpage', () => {
+    const expected: PeertubeUrl = { kind: 'channel', name: 'news' }
+
+    expect(parsePeertubeUrl('https://example.org/c/news/videos')).toEqual(expected)
+  })
+
+  it('should return the channel with its remote handle', () => {
+    const expected: PeertubeUrl = { kind: 'channel', name: 'news@example.com' }
+
+    expect(parsePeertubeUrl('https://example.org/c/news@example.com')).toEqual(expected)
+  })
+
+  it('should return the account for an account page', () => {
+    const expected: PeertubeUrl = { kind: 'account', name: 'alice' }
+
+    expect(parsePeertubeUrl('https://example.org/a/alice')).toEqual(expected)
+  })
+
+  it('should return the account for an account subpage', () => {
+    const expected: PeertubeUrl = { kind: 'account', name: 'alice' }
+
+    expect(parsePeertubeUrl('https://example.org/a/alice/video-channels')).toEqual(expected)
+  })
+
+  it('should return undefined for an uppercase prefix', () => {
+    expect(parsePeertubeUrl('https://example.org/C/news')).toBeUndefined()
+  })
+
+  it('should return undefined for a video page', () => {
+    expect(parsePeertubeUrl('https://example.org/w/abc123')).toBeUndefined()
+  })
+
+  it('should return undefined for the instance home', () => {
+    expect(parsePeertubeUrl('https://example.org/')).toBeUndefined()
+  })
+
+  it('should return undefined for an invalid URL', () => {
+    expect(parsePeertubeUrl('not-a-url')).toBeUndefined()
+  })
+})
+
 describe('peertubeHandler', () => {
   describe('match', () => {
     it('should match a PeerTube page', () => {
@@ -22,10 +71,6 @@ describe('peertubeHandler', () => {
 
     it('should not match without the header', () => {
       expect(peertubeHandler.match('https://example.org/c/channel')).toBe(false)
-    })
-
-    it('should not match invalid URLs', () => {
-      expect(peertubeHandler.match('not-a-url', '', peertubeHeaders)).toBe(false)
     })
   })
 

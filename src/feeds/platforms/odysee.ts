@@ -1,12 +1,36 @@
-import { isHostOf } from 'trousse'
+import { decodeSegment, isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Not discoverable without handler.
 // Handler needed for: all shapes.
 
+export type OdyseeUrl = { kind: 'channel'; name: string; claimId?: string }
+
 export const hosts = ['odysee.com', 'www.odysee.com']
-const channelRegex = /^\/(@[^/:]+:[a-f0-9]+)/i
+const channelRegex = /^\/@([^/:]+)(?::([a-f0-9]+))?/i
+
+export const parseOdyseeUrl = (url: string): OdyseeUrl | undefined => {
+  const parsedUrl = parseUrl(url)
+
+  if (!parsedUrl || !isHostOf(parsedUrl, hosts)) {
+    return
+  }
+
+  const match = parsedUrl.pathname.match(channelRegex)
+
+  if (!match?.[1]) {
+    return
+  }
+
+  const name = decodeSegment(match[1])
+
+  if (!name) {
+    return
+  }
+
+  return { kind: 'channel', name, claimId: match[2] }
+}
 
 export const odyseeHandler: PlatformHandler = {
   match: (url) => {
@@ -14,16 +38,16 @@ export const odyseeHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    const { pathname } = new URL(url)
-    const match = pathname.match(channelRegex)
+    const parsed = parseOdyseeUrl(url)
 
-    if (!match?.[1]) {
+    // The feed answers "Invalid URL" for a channel without its claim ID.
+    if (!parsed?.claimId) {
       return []
     }
 
     return [
       {
-        uri: `https://odysee.com/$/rss/${match[1]}`,
+        uri: `https://odysee.com/$/rss/@${encodeURIComponent(parsed.name)}:${parsed.claimId}`,
         hint: composeHint('odysee:videos'),
       },
     ]

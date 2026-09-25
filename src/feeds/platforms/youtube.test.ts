@@ -1,25 +1,116 @@
 import { describe, expect, it } from 'bun:test'
 import type { DiscoverUriEntry } from '../../common/types.js'
-import { youtubeHandler } from './youtube.js'
+import type { YoutubeUrl } from './youtube.js'
+import { parseYoutubeUrl, youtubeHandler } from './youtube.js'
+
+describe('parseYoutubeUrl', () => {
+  it('should return the channel ID for a channel ID page', () => {
+    const expected: YoutubeUrl = { kind: 'channel', channelId: 'UC1234567890' }
+
+    expect(parseYoutubeUrl('https://youtube.com/channel/UC1234567890')).toEqual(expected)
+  })
+
+  it('should return the channel ID for a channel ID page on music.youtube.com', () => {
+    const expected: YoutubeUrl = { kind: 'channel', channelId: 'UC1234567890' }
+
+    expect(parseYoutubeUrl('https://music.youtube.com/channel/UC1234567890')).toEqual(expected)
+  })
+
+  it('should return a channel for handle, legacy user and custom URL pages', () => {
+    const expected: YoutubeUrl = { kind: 'channel' }
+
+    expect(parseYoutubeUrl('https://youtube.com/@veritasium')).toEqual(expected)
+    expect(parseYoutubeUrl('https://youtube.com/user/pewdiepie')).toEqual(expected)
+    expect(parseYoutubeUrl('https://youtube.com/c/mkbhd')).toEqual(expected)
+  })
+
+  it('should return a channel for the www and mobile hosts', () => {
+    const expected: YoutubeUrl = { kind: 'channel' }
+
+    expect(parseYoutubeUrl('https://www.youtube.com/@channel')).toEqual(expected)
+    expect(parseYoutubeUrl('https://m.youtube.com/@channel')).toEqual(expected)
+  })
+
+  it('should return a channel with its playlist', () => {
+    const expected: YoutubeUrl = { kind: 'channel', playlistId: 'PL1234567890' }
+
+    expect(parseYoutubeUrl('https://youtube.com/@veritasium?list=PL1234567890')).toEqual(expected)
+  })
+
+  it('should return a watch page for a watch URL', () => {
+    const expected: YoutubeUrl = { kind: 'watch' }
+
+    expect(parseYoutubeUrl('https://youtube.com/watch?v=abc123')).toEqual(expected)
+  })
+
+  it('should return a watch page with its playlist', () => {
+    const value = 'https://youtube.com/watch?v=abc123&list=PL1234567890'
+    const expected: YoutubeUrl = { kind: 'watch', playlistId: 'PL1234567890' }
+
+    expect(parseYoutubeUrl(value)).toEqual(expected)
+  })
+
+  it('should return a watch page for a youtu.be short link', () => {
+    const expected: YoutubeUrl = { kind: 'watch' }
+
+    expect(parseYoutubeUrl('https://youtu.be/dQw4w9WgXcQ')).toEqual(expected)
+    expect(parseYoutubeUrl('https://www.youtu.be/dQw4w9WgXcQ')).toEqual(expected)
+  })
+
+  it('should return a watch page for a live URL', () => {
+    const expected: YoutubeUrl = { kind: 'watch' }
+
+    expect(parseYoutubeUrl('https://youtube.com/live/abc123')).toEqual(expected)
+  })
+
+  it('should return a short for a shorts URL', () => {
+    const expected: YoutubeUrl = { kind: 'short' }
+
+    expect(parseYoutubeUrl('https://youtube.com/shorts/abc123')).toEqual(expected)
+  })
+
+  it('should return a player page for a video ID outside the watch path', () => {
+    const expected: YoutubeUrl = { kind: 'player' }
+
+    expect(parseYoutubeUrl('https://youtube.com/watch_popup?v=abc123')).toEqual(expected)
+  })
+
+  it('should return the playlist for a playlist page', () => {
+    const expected: YoutubeUrl = { kind: 'playlist', playlistId: 'PL1234567890' }
+
+    expect(parseYoutubeUrl('https://youtube.com/playlist?list=PL1234567890')).toEqual(expected)
+  })
+
+  it('should return undefined for a channel path without a UC ID', () => {
+    expect(parseYoutubeUrl('https://youtube.com/channel/abc')).toBeUndefined()
+  })
+
+  it('should return undefined for a watch path without a video ID', () => {
+    expect(parseYoutubeUrl('https://youtube.com/watch')).toBeUndefined()
+  })
+
+  it('should return undefined for the root', () => {
+    expect(parseYoutubeUrl('https://youtube.com/')).toBeUndefined()
+    expect(parseYoutubeUrl('https://youtu.be/')).toBeUndefined()
+  })
+
+  it('should return undefined for another host', () => {
+    expect(parseYoutubeUrl('https://vimeo.com/@channel')).toBeUndefined()
+  })
+
+  it('should return undefined for an invalid URL', () => {
+    expect(parseYoutubeUrl('not-a-url')).toBeUndefined()
+  })
+})
 
 describe('youtubeHandler', () => {
   describe('match', () => {
-    const values: Array<[boolean, string]> = [
-      [true, 'https://youtube.com/@channel'],
-      [true, 'https://www.youtube.com/@channel'],
-      [true, 'https://m.youtube.com/@channel'],
-      [true, 'https://music.youtube.com/channel/UC1234567890'],
-      [true, 'https://youtu.be/dQw4w9WgXcQ'],
-      [true, 'https://www.youtu.be/dQw4w9WgXcQ'],
-      [false, 'https://vimeo.com/channel'],
-    ]
-
-    it.each(values)('should return %s for %s', (expected, url) => {
-      expect(youtubeHandler.match(url)).toBe(expected)
+    it('should match a YouTube URL', () => {
+      expect(youtubeHandler.match('https://youtube.com/@channel')).toBe(true)
     })
 
-    it('should return false for invalid URL', () => {
-      expect(youtubeHandler.match('not-a-url')).toBe(false)
+    it('should not match another host', () => {
+      expect(youtubeHandler.match('https://vimeo.com/channel')).toBe(false)
     })
   })
 
@@ -100,28 +191,8 @@ describe('youtubeHandler', () => {
       expect(youtubeHandler.resolve(value, '{"channelId":"UC1234567890"}')).toEqual(expected)
     })
 
-    it('should return all feed variants for channel ID on music.youtube.com', () => {
-      const value = 'https://music.youtube.com/channel/UC1234567890'
-
-      expect(youtubeHandler.resolve(value)).toEqual(expectedChannelFeeds)
-    })
-
     it('should extract channel ID from @handle page content', () => {
       const value = 'https://youtube.com/@veritasium'
-      const content = '{"channelId":"UC1234567890"}'
-
-      expect(youtubeHandler.resolve(value, content)).toEqual(expectedChannelFeeds)
-    })
-
-    it('should extract channel ID from legacy /user/ page content', () => {
-      const value = 'https://youtube.com/user/pewdiepie'
-      const content = '{"channelId":"UC1234567890"}'
-
-      expect(youtubeHandler.resolve(value, content)).toEqual(expectedChannelFeeds)
-    })
-
-    it('should extract channel ID from /c/ custom URL page content', () => {
-      const value = 'https://youtube.com/c/mkbhd'
       const content = '{"channelId":"UC1234567890"}'
 
       expect(youtubeHandler.resolve(value, content)).toEqual(expectedChannelFeeds)
@@ -157,18 +228,6 @@ describe('youtubeHandler', () => {
       expect(youtubeHandler.resolve(value, '<html>No channel ID here</html>')).toEqual([])
     })
 
-    it('should return empty array when /user/ content has no channel ID', () => {
-      const value = 'https://youtube.com/user/nonexistent'
-
-      expect(youtubeHandler.resolve(value, '<html>No channel ID here</html>')).toEqual([])
-    })
-
-    it('should return empty array when /c/ content has no channel ID', () => {
-      const value = 'https://youtube.com/c/nonexistent'
-
-      expect(youtubeHandler.resolve(value, '<html>No channel ID here</html>')).toEqual([])
-    })
-
     it('should return empty array for video page without content', () => {
       expect(youtubeHandler.resolve('https://youtube.com/watch?v=abc123')).toEqual([])
     })
@@ -180,33 +239,11 @@ describe('youtubeHandler', () => {
       expect(youtubeHandler.resolve(value, content)).toEqual(expectedChannelFeeds)
     })
 
-    it('should extract channel ID from youtu.be short URL content', () => {
-      const value = 'https://youtu.be/abc123'
-      const content = '{"channelId":"UC1234567890"}'
-
-      expect(youtubeHandler.resolve(value, content)).toEqual(expectedChannelFeeds)
-    })
-
     it('should extract channel ID from /shorts/{id} URL content', () => {
       const value = 'https://youtube.com/shorts/abc123'
       const content = '{"channelId":"UC1234567890"}'
 
       expect(youtubeHandler.resolve(value, content)).toEqual(expectedChannelFeeds)
-    })
-
-    it('should extract channel ID from /live/{id} URL content', () => {
-      const value = 'https://youtube.com/live/abc123'
-      const content = '{"channelId":"UC1234567890"}'
-
-      expect(youtubeHandler.resolve(value, content)).toEqual(expectedChannelFeeds)
-    })
-
-    it('should return empty array for /shorts/{id} without content', () => {
-      expect(youtubeHandler.resolve('https://youtube.com/shorts/abc123')).toEqual([])
-    })
-
-    it('should return empty array for /live/{id} without content', () => {
-      expect(youtubeHandler.resolve('https://youtube.com/live/abc123')).toEqual([])
     })
   })
 })

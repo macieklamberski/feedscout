@@ -1,7 +1,7 @@
 import { isAnyOf, isHostOf, isNonEmptyString, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement } from '../../common/utils.js'
-import { hosts, userRegex } from '../../feeds/platforms/velog.js'
+import { parseVelogUrl } from '../../feeds/platforms/velog.js'
 import type { FaviconEnricher } from '../types.js'
 import { parseResponseJson } from '../utils.js'
 
@@ -11,24 +11,6 @@ const imageHosts = ['images.velog.io', 'velog.velcdn.com']
 
 // Velog shows this image for every user who has not uploaded an avatar.
 const placeholderRegex = /\/images\/user-thumbnail\.png$/
-
-const getUsername = (url: string): string | undefined => {
-  const parsedUrl = parseUrl(url)
-
-  if (!parsedUrl || !isHostOf(url, hosts)) {
-    return
-  }
-
-  const match = parsedUrl.pathname.match(userRegex)
-
-  if (!match?.[1]) {
-    return
-  }
-
-  try {
-    return decodeURIComponent(match[1])
-  } catch {}
-}
 
 const getSquareAvatar = (value: unknown): string | undefined => {
   if (!isNonEmptyString(value) || placeholderRegex.test(value) || !isHostOf(value, imageHosts)) {
@@ -60,11 +42,11 @@ const findProfileImageSrc = (content: string | undefined): string | undefined =>
 
 export const velogHandler: PlatformHandler = {
   match: (url) => {
-    return getUsername(url) !== undefined
+    return parseVelogUrl(url) !== undefined
   },
 
   resolve: (url, content) => {
-    const username = getUsername(url)
+    const username = parseVelogUrl(url)?.username
 
     if (!username) {
       return []
