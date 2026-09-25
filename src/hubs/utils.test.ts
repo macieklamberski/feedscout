@@ -34,6 +34,20 @@ describe('toHubResults', () => {
     expect(value).toEqual(expected)
   })
 
+  it('should drop a hub with a non-http scheme', () => {
+    const value = toHubResults(
+      ['javascript:subscribe()', 'mailto:hub@example.com', 'https://hub.example.com/'],
+      undefined,
+      'https://example.com/page',
+      defaultResolveUrlFn,
+    )
+    const expected: Array<HubResult> = [
+      { hub: 'https://hub.example.com/', topic: 'https://example.com/page' },
+    ]
+
+    expect(value).toEqual(expected)
+  })
+
   it('should return an empty array without hub URIs', () => {
     expect(toHubResults([], '/feed.xml', 'https://example.com/', defaultResolveUrlFn)).toEqual([])
   })
