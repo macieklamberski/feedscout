@@ -1,5 +1,5 @@
 import { Parser } from 'htmlparser2'
-import { anyWordMatchesAnyOf, isAnyOf, parseUrl } from 'trousse'
+import { anyWordMatchesAnyOf, isAnyOf } from 'trousse'
 import locales from './locales.json' with { type: 'json' }
 import type { DiscoverUriHint } from './types.js'
 
@@ -11,20 +11,6 @@ export const composeHint = (key: string, format?: DiscoverUriHint['format']): Di
   }
 
   return { key, label, format }
-}
-
-const httpProtocols = ['http:', 'https:']
-
-// Only an http or https URL can be fetched, so a `javascript:`, `mailto:` or `file:` URL, or one
-// built on a page without an origin, is no candidate.
-export const isHttpUrl = (url: string): boolean => {
-  const protocol = parseUrl(url)?.protocol
-
-  if (!protocol) {
-    return false
-  }
-
-  return httpProtocols.includes(protocol)
 }
 
 // A response is only acceptable when its status is in the 2xx range. A missing

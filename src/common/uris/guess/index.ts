@@ -1,5 +1,5 @@
+import { isHttpUrl } from 'trousse'
 import type { UriEntry } from '../../types.js'
-import { isHttpUrl } from '../../utils.js'
 import type { GuessMethodOptions } from './types.js'
 import {
   extractSectionBaseUrls,
