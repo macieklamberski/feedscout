@@ -45,6 +45,12 @@ describe('parseZennUrl', () => {
     expect(parseZennUrl('https://zenn.dev/p/team_zenn')).toEqual(expected)
   })
 
+  it('should return the publication for a short publication page with a capitalized p segment', () => {
+    const expected: ZennUrl = { kind: 'publication', publication: 'team_zenn' }
+
+    expect(parseZennUrl('https://zenn.dev/P/team_zenn')).toEqual(expected)
+  })
+
   it('should return the publication for a long publication page', () => {
     const expected: ZennUrl = { kind: 'publication', publication: 'team_zenn' }
 
@@ -67,6 +73,10 @@ describe('parseZennUrl', () => {
     expect(parseZennUrl('https://zenn.dev/settings')).toBeUndefined()
     expect(parseZennUrl('https://zenn.dev/signup')).toBeUndefined()
     expect(parseZennUrl('https://zenn.dev/terms')).toBeUndefined()
+  })
+
+  it('should return undefined for a capitalized excluded path', () => {
+    expect(parseZennUrl('https://zenn.dev/Topics')).toBeUndefined()
   })
 
   it('should return undefined for the root', () => {

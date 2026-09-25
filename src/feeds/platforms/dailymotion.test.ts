@@ -56,10 +56,26 @@ describe('parseDailymotionUrl', () => {
     expect(parseDailymotionUrl('https://www.dailymotion.com/channel/news')).toEqual(expected)
   })
 
+  it('should return the channel for a channel page with a capitalized channel segment', () => {
+    const expected: DailymotionUrl = { kind: 'channel', channel: 'news' }
+
+    expect(parseDailymotionUrl('https://www.dailymotion.com/Channel/news')).toEqual(expected)
+  })
+
   it('should return the query for a search page', () => {
     const expected: DailymotionUrl = { kind: 'search', query: 'cats' }
 
     expect(parseDailymotionUrl('https://www.dailymotion.com/search/cats')).toEqual(expected)
+  })
+
+  it('should return the query for a search page with a capitalized search segment', () => {
+    const expected: DailymotionUrl = { kind: 'search', query: 'cats' }
+
+    expect(parseDailymotionUrl('https://www.dailymotion.com/Search/cats')).toEqual(expected)
+  })
+
+  it('should return undefined for a capitalized excluded path', () => {
+    expect(parseDailymotionUrl('https://www.dailymotion.com/Signin')).toBeUndefined()
   })
 
   it.each(excludedValues)('should return undefined for %s', (value) => {
@@ -151,6 +167,18 @@ describe('dailymotionHandler', () => {
 
     it('should return trending feed for /trending', () => {
       const value = 'https://www.dailymotion.com/trending'
+      const expected = [
+        {
+          uri: 'https://www.dailymotion.com/rss/trending',
+          hint: { key: 'dailymotion:trending', label: 'Trending' },
+        },
+      ]
+
+      expect(dailymotionHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return trending feed for /trending with a capitalized trending segment', () => {
+      const value = 'https://www.dailymotion.com/Trending'
       const expected = [
         {
           uri: 'https://www.dailymotion.com/rss/trending',

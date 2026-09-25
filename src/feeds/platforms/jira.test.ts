@@ -55,6 +55,10 @@ describe('jiraHandler', () => {
       expect(jiraHandler.match('https://example.atlassian.net/wiki/spaces/DOCS')).toBe(false)
     })
 
+    it('should not match Confluence on a Cloud site with a capitalized wiki segment', () => {
+      expect(jiraHandler.match('https://example.atlassian.net/Wiki/spaces/DOCS')).toBe(false)
+    })
+
     it('should match a Data Center issue path with content', () => {
       expect(jiraHandler.match('https://jira.example.org/browse/ABC-1', jiraHtml)).toBe(true)
     })
@@ -63,8 +67,16 @@ describe('jiraHandler', () => {
       expect(jiraHandler.match('https://jira.example.org/projects/ABC', jiraHtml)).toBe(true)
     })
 
+    it('should match a Data Center project path with content with a capitalized projects segment', () => {
+      expect(jiraHandler.match('https://jira.example.org/Projects/ABC', jiraHtml)).toBe(true)
+    })
+
     it('should match a context path without a trailing slash', () => {
       expect(jiraHandler.match('https://example.org/jira', jiraHtml)).toBe(true)
+    })
+
+    it('should match a capitalized context path without a trailing slash', () => {
+      expect(jiraHandler.match('https://example.org/Jira', jiraHtml)).toBe(true)
     })
 
     it('should not match a Bitbucket repository path', () => {

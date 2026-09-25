@@ -87,5 +87,11 @@ describe('writeasHandler', () => {
 
       expect(writeasHandler.resolve(value)).toEqual([])
     })
+
+    it('should return empty array for a capitalized excluded path', () => {
+      const value = 'https://write.as/Login'
+
+      expect(writeasHandler.resolve(value)).toEqual([])
+    })
   })
 })

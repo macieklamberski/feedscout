@@ -40,6 +40,18 @@ describe('parseTumblrUrl', () => {
     expect(parseTumblrUrl('https://www.tumblr.com/blog/view/staff')).toEqual(expected)
   })
 
+  it('should return the blog for a www.tumblr.com/blog/view path with a capitalized view segment', () => {
+    const expected: TumblrUrl = { kind: 'blog', blog: 'staff' }
+
+    expect(parseTumblrUrl('https://www.tumblr.com/blog/View/staff')).toEqual(expected)
+  })
+
+  it('should return the blog for a www.tumblr.com/blog/view path with a capitalized blog segment', () => {
+    const expected: TumblrUrl = { kind: 'blog', blog: 'staff' }
+
+    expect(parseTumblrUrl('https://www.tumblr.com/Blog/view/staff')).toEqual(expected)
+  })
+
   it('should return the blog for a tumblr.com apex blog path', () => {
     const expected: TumblrUrl = { kind: 'blog', blog: 'staff' }
 

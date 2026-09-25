@@ -119,8 +119,44 @@ describe('fluxbbHandler', () => {
       expect(fluxbbHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should add the topic feed for a topic page with a capitalized viewtopic.php segment', () => {
+      const value = 'https://example.org/Viewtopic.php?id=7520'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://example.org/extern.php?action=feed&tid=7520&type=atom',
+          hint: { key: 'fluxbb:topic', label: 'Topic' },
+        },
+        {
+          uri: 'https://example.org/extern.php?action=feed&type=RSS',
+          hint: { key: 'fluxbb:posts', label: 'Posts', format: 'rss' },
+        },
+        {
+          uri: 'https://example.org/extern.php?action=feed&type=atom',
+          hint: { key: 'fluxbb:posts', label: 'Posts', format: 'atom' },
+        },
+      ]
+
+      expect(fluxbbHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should build the feeds from a board under a sub-path', () => {
       const value = 'https://example.org/forums/index.php'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://example.org/forums/extern.php?action=feed&type=RSS',
+          hint: { key: 'fluxbb:posts', label: 'Posts', format: 'rss' },
+        },
+        {
+          uri: 'https://example.org/forums/extern.php?action=feed&type=atom',
+          hint: { key: 'fluxbb:posts', label: 'Posts', format: 'atom' },
+        },
+      ]
+
+      expect(fluxbbHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should build the feeds from a board under a sub-path with a capitalized php extension', () => {
+      const value = 'https://example.org/forums/index.PHP'
       const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://example.org/forums/extern.php?action=feed&type=RSS',

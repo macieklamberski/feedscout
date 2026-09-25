@@ -189,6 +189,18 @@ describe('githubGistHandler', () => {
       expect(githubGistHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return discover feed for discover page with a capitalized discover segment', () => {
+      const value = 'https://gist.github.com/Discover'
+      const expected = [
+        {
+          uri: 'https://gist.github.com/discover.atom',
+          hint: { key: 'github-gist:discover', label: 'Discover' },
+        },
+      ]
+
+      expect(githubGistHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return discover feed with trailing slash', () => {
       const value = 'https://gist.github.com/discover/'
       const expected = [

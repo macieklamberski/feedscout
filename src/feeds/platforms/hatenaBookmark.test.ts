@@ -29,6 +29,12 @@ describe('parseHatenaBookmarkUrl', () => {
     expect(parseHatenaBookmarkUrl('https://b.hatena.ne.jp/site/example.com/')).toEqual(expected)
   })
 
+  it('should return a site for a domain page with a capitalized site segment', () => {
+    const expected: HatenaBookmarkUrl = { kind: 'site' }
+
+    expect(parseHatenaBookmarkUrl('https://b.hatena.ne.jp/Site/example.com/')).toEqual(expected)
+  })
+
   it('should return the user for a user page', () => {
     const expected: HatenaBookmarkUrl = { kind: 'user', username: 'jkondo' }
 
@@ -65,6 +71,12 @@ describe('parseHatenaBookmarkUrl', () => {
     expect(parseHatenaBookmarkUrl('https://b.hatena.ne.jp/jkondo.rss')).toEqual(expected)
   })
 
+  it('should return the user for a user feed URL with a capitalized rss extension', () => {
+    const expected: HatenaBookmarkUrl = { kind: 'user', username: 'jkondo' }
+
+    expect(parseHatenaBookmarkUrl('https://b.hatena.ne.jp/jkondo.RSS')).toEqual(expected)
+  })
+
   it('should return undefined for the site-wide entry lists', () => {
     expect(parseHatenaBookmarkUrl('https://b.hatena.ne.jp/hotentry/it')).toBeUndefined()
     expect(parseHatenaBookmarkUrl('https://b.hatena.ne.jp/entrylist')).toBeUndefined()
@@ -73,6 +85,10 @@ describe('parseHatenaBookmarkUrl', () => {
   it('should return undefined for a site section', () => {
     expect(parseHatenaBookmarkUrl('https://b.hatena.ne.jp/guide/')).toBeUndefined()
     expect(parseHatenaBookmarkUrl('https://b.hatena.ne.jp/entry/12345')).toBeUndefined()
+  })
+
+  it('should return undefined for a capitalized site section', () => {
+    expect(parseHatenaBookmarkUrl('https://b.hatena.ne.jp/Guide/')).toBeUndefined()
   })
 
   it('should return undefined for files at the root', () => {

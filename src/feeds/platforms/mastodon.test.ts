@@ -18,6 +18,12 @@ describe('parseMastodonUrl', () => {
     expect(parseMastodonUrl('https://mastodon.social/users/Gargron')).toEqual(expected)
   })
 
+  it('should return the profile for /users/{user} with a capitalized users segment', () => {
+    const expected: MastodonUrl = { kind: 'profile', username: 'Gargron' }
+
+    expect(parseMastodonUrl('https://mastodon.social/Users/Gargron')).toEqual(expected)
+  })
+
   it('should return the profile for a /users/{user} status page', () => {
     const expected: MastodonUrl = { kind: 'profile', username: 'Gargron' }
 
@@ -88,10 +94,22 @@ describe('parseMastodonUrl', () => {
     expect(parseMastodonUrl('https://example.com/@user/media')).toEqual(expected)
   })
 
+  it('should return media for /@user/media with a capitalized media segment', () => {
+    const expected: MastodonUrl = { kind: 'media', username: 'user' }
+
+    expect(parseMastodonUrl('https://example.com/@user/Media')).toEqual(expected)
+  })
+
   it('should return tagged for /@user/tagged/{tag}', () => {
     const expected: MastodonUrl = { kind: 'tagged', username: 'user', tag: 'news' }
 
     expect(parseMastodonUrl('https://example.com/@user/tagged/news')).toEqual(expected)
+  })
+
+  it('should return tagged for /@user/tagged/{tag} with a capitalized tagged segment', () => {
+    const expected: MastodonUrl = { kind: 'tagged', username: 'user', tag: 'news' }
+
+    expect(parseMastodonUrl('https://example.com/@user/Tagged/news')).toEqual(expected)
   })
 
   it('should return the profile for /@user/tagged without a tag', () => {

@@ -182,6 +182,18 @@ describe('discourseHandler', () => {
       expect(discourseHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return topic feed for /t/{slug}/{id} path with a capitalized t segment', () => {
+      const value = 'https://users.rust-lang.org/T/welcome-to-the-rust-users-forum/2'
+      const expected = [
+        {
+          uri: 'https://users.rust-lang.org/t/welcome-to-the-rust-users-forum/2.rss',
+          hint: { key: 'discourse:topic', label: 'Topic' },
+        },
+      ]
+
+      expect(discourseHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return latest topics + latest posts feeds for root path', () => {
       const value = 'https://users.rust-lang.org/'
       const expected = [
@@ -216,6 +228,18 @@ describe('discourseHandler', () => {
 
     it('should return top feed for /top path', () => {
       const value = 'https://users.rust-lang.org/top'
+      const expected = [
+        {
+          uri: 'https://users.rust-lang.org/top.rss',
+          hint: { key: 'discourse:top', label: 'Top' },
+        },
+      ]
+
+      expect(discourseHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return top feed for /top path with a capitalized top segment', () => {
+      const value = 'https://users.rust-lang.org/Top'
       const expected = [
         {
           uri: 'https://users.rust-lang.org/top.rss',

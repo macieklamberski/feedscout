@@ -10,6 +10,12 @@ describe('parseYoutubeUrl', () => {
     expect(parseYoutubeUrl('https://youtube.com/channel/UC1234567890')).toEqual(expected)
   })
 
+  it('should return the channel ID for a channel ID page with a capitalized channel segment', () => {
+    const expected: YoutubeUrl = { kind: 'channel', channelId: 'UC1234567890' }
+
+    expect(parseYoutubeUrl('https://youtube.com/Channel/UC1234567890')).toEqual(expected)
+  })
+
   it('should return the channel ID for a channel ID page on music.youtube.com', () => {
     const expected: YoutubeUrl = { kind: 'channel', channelId: 'UC1234567890' }
 
@@ -36,6 +42,12 @@ describe('parseYoutubeUrl', () => {
     const expected: YoutubeUrl = { kind: 'channel' }
 
     expect(parseYoutubeUrl('https://youtube.com/User/pewdiepie')).toEqual(expected)
+  })
+
+  it('should return a channel for a custom URL page with a capitalized c segment', () => {
+    const expected: YoutubeUrl = { kind: 'channel' }
+
+    expect(parseYoutubeUrl('https://youtube.com/C/mkbhd')).toEqual(expected)
   })
 
   it('should return undefined for a channel ID without the uppercase UC prefix', () => {
@@ -93,10 +105,22 @@ describe('parseYoutubeUrl', () => {
     expect(parseYoutubeUrl('https://youtube.com/live/abc123')).toEqual(expected)
   })
 
+  it('should return a watch page for a live URL with a capitalized live segment', () => {
+    const expected: YoutubeUrl = { kind: 'watch' }
+
+    expect(parseYoutubeUrl('https://youtube.com/Live/abc123')).toEqual(expected)
+  })
+
   it('should return a short for a shorts URL', () => {
     const expected: YoutubeUrl = { kind: 'short' }
 
     expect(parseYoutubeUrl('https://youtube.com/shorts/abc123')).toEqual(expected)
+  })
+
+  it('should return a short for a shorts URL with a capitalized shorts segment', () => {
+    const expected: YoutubeUrl = { kind: 'short' }
+
+    expect(parseYoutubeUrl('https://youtube.com/Shorts/abc123')).toEqual(expected)
   })
 
   it('should return a player page for a video ID outside the watch path', () => {

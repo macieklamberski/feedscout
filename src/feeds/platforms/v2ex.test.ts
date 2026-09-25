@@ -79,6 +79,18 @@ describe('v2exHandler', () => {
       expect(v2exHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return member feed for member page with a capitalized member segment', () => {
+      const value = 'https://www.v2ex.com/Member/livid'
+      const expected = [
+        {
+          uri: 'https://www.v2ex.com/feed/member/livid.xml',
+          hint: { key: 'v2ex:member', label: 'Member' },
+        },
+      ]
+
+      expect(v2exHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return tab feed for tab page', () => {
       const value = 'https://www.v2ex.com/?tab=tech'
       const expected = [

@@ -177,6 +177,52 @@ describe('blogspotHandler', () => {
       expect(blogspotHandler.resolve(value, content)).toEqual(expected)
     })
 
+    it('should include per-post comments feeds for a post URL with a capitalized html extension', () => {
+      const value = 'https://blog.blogspot.com/2024/01/some-post.HTML'
+      const content = `
+        <html><head>
+        <link rel="alternate" type="application/atom+xml" title="Post Comments"
+          href="https://blog.blogspot.com/feeds/1234567890/comments/default" />
+        </head></html>
+      `
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://blog.blogspot.com/feeds/1234567890/comments/default',
+          hint: { key: 'blogspot:post-comments', label: 'Post comments', format: 'atom' },
+        },
+        {
+          uri: 'https://blog.blogspot.com/feeds/1234567890/comments/default?alt=rss',
+          hint: { key: 'blogspot:post-comments', label: 'Post comments', format: 'rss' },
+        },
+        {
+          uri: 'https://blog.blogspot.com/feeds/posts/default',
+          hint: { key: 'blogspot:posts', label: 'Posts', format: 'atom' },
+        },
+        {
+          uri: 'https://blog.blogspot.com/feeds/posts/default?alt=rss',
+          hint: { key: 'blogspot:posts', label: 'Posts', format: 'rss' },
+        },
+        {
+          uri: 'https://blog.blogspot.com/feeds/posts/summary',
+          hint: { key: 'blogspot:posts-summary', label: 'Posts summary', format: 'atom' },
+        },
+        {
+          uri: 'https://blog.blogspot.com/feeds/posts/summary?alt=rss',
+          hint: { key: 'blogspot:posts-summary', label: 'Posts summary', format: 'rss' },
+        },
+        {
+          uri: 'https://blog.blogspot.com/feeds/comments/default',
+          hint: { key: 'blogspot:comments', label: 'Comments', format: 'atom' },
+        },
+        {
+          uri: 'https://blog.blogspot.com/feeds/comments/default?alt=rss',
+          hint: { key: 'blogspot:comments', label: 'Comments', format: 'rss' },
+        },
+      ]
+
+      expect(blogspotHandler.resolve(value, content)).toEqual(expected)
+    })
+
     it('should include per-post comments feeds when the link href is single-quoted', () => {
       const value = 'https://blog.blogspot.com/2024/01/some-post.html'
       const content = `

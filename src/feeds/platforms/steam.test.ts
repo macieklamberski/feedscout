@@ -59,6 +59,12 @@ describe('parseSteamUrl', () => {
     expect(parseSteamUrl('https://steamcommunity.com/groups/Valve/')).toEqual(expected)
   })
 
+  it('should return the group for a community group page with a capitalized groups segment', () => {
+    const expected: SteamUrl = { kind: 'group', group: 'Valve' }
+
+    expect(parseSteamUrl('https://steamcommunity.com/Groups/Valve/')).toEqual(expected)
+  })
+
   it('should return the group for a community group page without a trailing slash', () => {
     const expected: SteamUrl = { kind: 'group', group: 'Valve' }
 

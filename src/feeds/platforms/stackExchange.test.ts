@@ -78,8 +78,32 @@ describe('stackExchangeHandler', () => {
       expect(stackExchangeHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return question feed for question page on Stack Overflow with a capitalized questions segment', () => {
+      const value = 'https://stackoverflow.com/Questions/12345/how-to-do-something'
+      const expected = [
+        {
+          uri: 'https://stackoverflow.com/feeds/question/12345',
+          hint: { key: 'stackexchange:question', label: 'Question' },
+        },
+      ]
+
+      expect(stackExchangeHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return user feed for user page on Stack Overflow', () => {
       const value = 'https://stackoverflow.com/users/123/username'
+      const expected = [
+        {
+          uri: 'https://stackoverflow.com/feeds/user/123',
+          hint: { key: 'stackexchange:user', label: 'User' },
+        },
+      ]
+
+      expect(stackExchangeHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return user feed for user page on Stack Overflow with a capitalized users segment', () => {
+      const value = 'https://stackoverflow.com/Users/123/username'
       const expected = [
         {
           uri: 'https://stackoverflow.com/feeds/user/123',
@@ -164,6 +188,18 @@ describe('stackExchangeHandler', () => {
 
     it('should return collective feed for collectives page', () => {
       const value = 'https://stackoverflow.com/collectives/aws'
+      const expected = [
+        {
+          uri: 'https://stackoverflow.com/feeds/collectives/aws',
+          hint: { key: 'stackexchange:collective', label: 'Collective' },
+        },
+      ]
+
+      expect(stackExchangeHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return collective feed for collectives page with a capitalized collectives segment', () => {
+      const value = 'https://stackoverflow.com/Collectives/aws'
       const expected = [
         {
           uri: 'https://stackoverflow.com/feeds/collectives/aws',

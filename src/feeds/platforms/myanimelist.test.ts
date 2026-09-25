@@ -208,6 +208,18 @@ describe('myanimelistHandler', () => {
       expect(myanimelistHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return news feed for /news with a capitalized news segment', () => {
+      const value = 'https://myanimelist.net/News'
+      const expected = [
+        {
+          uri: 'https://myanimelist.net/rss/news.xml',
+          hint: { key: 'myanimelist:news', label: 'News' },
+        },
+      ]
+
+      expect(myanimelistHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return news feed for /news/{slug}', () => {
       const value = 'https://myanimelist.net/news/12345-some-anime-news'
       const expected = [
@@ -226,6 +238,18 @@ describe('myanimelistHandler', () => {
 
     it('should return featured feed for /featured', () => {
       const value = 'https://myanimelist.net/featured'
+      const expected = [
+        {
+          uri: 'https://myanimelist.net/rss/featured.xml',
+          hint: { key: 'myanimelist:featured', label: 'Featured' },
+        },
+      ]
+
+      expect(myanimelistHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return featured feed for /featured with a capitalized featured segment', () => {
+      const value = 'https://myanimelist.net/Featured'
       const expected = [
         {
           uri: 'https://myanimelist.net/rss/featured.xml',

@@ -94,5 +94,19 @@ describe('nodebbHandler', () => {
 
       expect(nodebbHandler.resolve(value)).toEqual(expected)
     })
+
+    it('should add the topic feed on a topic page with a capitalized topic segment', () => {
+      const value = 'https://example.org/Topic/345/a-topic'
+      const expected = [
+        { uri: 'https://example.org/topic/345.rss', hint: { key: 'nodebb:topic', label: 'Topic' } },
+        { uri: 'https://example.org/recent.rss', hint: { key: 'nodebb:recent', label: 'Recent' } },
+        {
+          uri: 'https://example.org/popular.rss',
+          hint: { key: 'nodebb:popular', label: 'Popular' },
+        },
+      ]
+
+      expect(nodebbHandler.resolve(value)).toEqual(expected)
+    })
   })
 })

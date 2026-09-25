@@ -122,5 +122,11 @@ describe('artstationHandler', () => {
 
       expect(artstationHandler.resolve(value)).toEqual([])
     })
+
+    it('should return empty array for a capitalized excluded path', () => {
+      const value = 'https://www.artstation.com/Jobs'
+
+      expect(artstationHandler.resolve(value)).toEqual([])
+    })
   })
 })

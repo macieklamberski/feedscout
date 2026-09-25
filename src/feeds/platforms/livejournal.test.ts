@@ -173,6 +173,26 @@ describe('livejournalHandler', () => {
       expect(livejournalHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should canonicalise www.livejournal.com/users/{user} to subdomain with a capitalized users segment', () => {
+      const value = 'https://www.livejournal.com/Users/news'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://news.livejournal.com/data/rss',
+          hint: { key: 'livejournal:posts', label: 'Posts', format: 'rss' },
+        },
+        {
+          uri: 'https://news.livejournal.com/data/atom',
+          hint: { key: 'livejournal:posts', label: 'Posts', format: 'atom' },
+        },
+        {
+          uri: 'https://news.livejournal.com/data/userpics',
+          hint: { key: 'livejournal:userpics', label: 'Userpics', format: 'atom' },
+        },
+      ]
+
+      expect(livejournalHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should canonicalise users.livejournal.com/{user} legacy host', () => {
       const value = 'https://users.livejournal.com/news'
       const expected: Array<DiscoverUriEntry> = [

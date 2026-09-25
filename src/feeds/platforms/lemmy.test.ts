@@ -61,6 +61,12 @@ describe('parseLemmyUrl', () => {
     expect(parseLemmyUrl('https://lemmy.ml/C/programming')).toEqual(expected)
   })
 
+  it('should return the user for a capitalized prefix', () => {
+    const expected: LemmyUrl = { kind: 'user', username: 'alice' }
+
+    expect(parseLemmyUrl('https://lemmy.ml/U/alice')).toEqual(expected)
+  })
+
   it('should return undefined for the home page', () => {
     expect(parseLemmyUrl('https://lemmy.ml/')).toBeUndefined()
   })

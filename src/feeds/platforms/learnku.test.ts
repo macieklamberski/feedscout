@@ -39,5 +39,14 @@ describe('learnkuHandler', () => {
 
       expect(learnkuHandler.resolve(value)).toEqual(expected)
     })
+
+    it('should return only the site feed on a capitalized reserved path', () => {
+      const value = 'https://learnku.com/Search'
+      const expected = [
+        { uri: 'https://learnku.com/feed', hint: { key: 'learnku:site', label: 'Site' } },
+      ]
+
+      expect(learnkuHandler.resolve(value)).toEqual(expected)
+    })
   })
 })

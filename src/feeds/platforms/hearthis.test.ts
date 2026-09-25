@@ -63,5 +63,11 @@ describe('hearthisHandler', () => {
 
       expect(hearthisHandler.resolve(value)).toEqual([])
     })
+
+    it('should return empty array for a capitalized excluded path', () => {
+      const value = 'https://hearthis.at/Login'
+
+      expect(hearthisHandler.resolve(value)).toEqual([])
+    })
   })
 })

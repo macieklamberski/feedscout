@@ -45,6 +45,12 @@ describe('parseHabrUrl', () => {
     expect(parseHabrUrl('https://habr.com/ru/companies/example/articles/')).toEqual(expected)
   })
 
+  it('should return the company for a company page with a capitalized companies segment', () => {
+    const expected: HabrUrl = { kind: 'company', company: 'example' }
+
+    expect(parseHabrUrl('https://habr.com/ru/Companies/example/articles/')).toEqual(expected)
+  })
+
   it('should return the company for a company named like the hub route', () => {
     const expected: HabrUrl = { kind: 'company', company: 'hub' }
 
