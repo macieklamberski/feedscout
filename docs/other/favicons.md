@@ -76,18 +76,18 @@ The Platform method extracts avatars and icons directly from known platforms usi
 | Letterboxd | Member avatar | Page HTML, or the member's films page through an [enricher](#enriching-platform-icons) |
 | Lobsters | User avatar | URL pattern |
 | Mastodon | Profile avatar | Public API, through an [enricher](#enriching-platform-icons) |
-| Medium | Profile avatar or publication icon | Public feed, through an [enricher](#enriching-platform-icons) |
+| Medium | Profile avatar or publication icon, also on subdomains | Public feed, through an [enricher](#enriching-platform-icons) |
 | Micro.blog | User avatar | URL pattern |
 | MyAnimeList | User avatar | Page HTML, or the profile page through an [enricher](#enriching-platform-icons) for list and history pages |
-| Naver Blog | Blog profile picture | Page HTML, and the mobile page through an [enricher](#enriching-platform-icons) for desktop blog pages |
+| Naver Blog | Blog profile picture | Page HTML, and the mobile page through an [enricher](#enriching-platform-icons) for desktop blog pages and post pages |
 | Nebula | Channel avatar | Page HTML, or the content API through an [enricher](#enriching-platform-icons) |
-| note | User avatar, or magazine owner avatar | Page HTML, Public API through an [enricher](#enriching-platform-icons) |
-| Observable | User avatar, or the collection owner's avatar | Public API, through an [enricher](#enriching-platform-icons) |
+| note | User avatar, or the magazine or article owner's avatar | Page HTML, Public API through an [enricher](#enriching-platform-icons) |
+| Observable | User avatar, or the collection or notebook owner's avatar | Public API, through an [enricher](#enriching-platform-icons) |
 | Odysee | Channel avatar | Public API, through an [enricher](#enriching-platform-icons) |
 | PeerTube (self-hosted) | Channel or account avatar | Page HTML, or the public API through an [enricher](#enriching-platform-icons) |
-| Pinterest | Profile avatar | Page HTML, or the profile page through an [enricher](#enriching-platform-icons) for saved pages |
+| Pinterest | Profile avatar | Page HTML, or the profile page through an [enricher](#enriching-platform-icons) for board and other user pages |
 | Pixelfed (self-hosted) | Profile avatar | Page HTML, or the public API through an [enricher](#enriching-platform-icons) when the page has no avatar |
-| Postype | Channel avatar | Page HTML, or the channel page through an [enricher](#enriching-platform-icons) for post pages |
+| Postype | Channel avatar | Page HTML, or the channel page through an [enricher](#enriching-platform-icons) for post pages and channel subdomains |
 | Product Hunt | Product logo, or topic image cropped to a square | Page HTML |
 | Reddit | Subreddit icon or user avatar | Public API, through an [enricher](#enriching-platform-icons) |
 | SoundCloud | User avatar | Page HTML |
@@ -97,7 +97,7 @@ The Platform method extracts avatars and icons directly from known platforms usi
 | Togetter | User avatar | Page HTML |
 | Tumblr | Blog avatar | URL pattern |
 | Velog | User avatar | Page HTML, or the GraphQL API through an [enricher](#enriching-platform-icons) |
-| YouTube | Channel avatar | Page HTML |
+| YouTube | Channel avatar, also on watch, youtu.be and live pages | Page HTML |
 | Zenn | Profile, publication or topic icon | Page HTML |
 
 ## Enriching Platform Icons

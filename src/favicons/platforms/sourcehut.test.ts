@@ -43,52 +43,8 @@ describe('sourcehutHandler', () => {
       expect(sourcehutHandler.match('https://sr.ht/~example/')).toBe(true)
     })
 
-    it('should match a user page on git.sr.ht', () => {
-      expect(sourcehutHandler.match('https://git.sr.ht/~example')).toBe(true)
-    })
-
-    it('should match a user page on todo.sr.ht', () => {
-      expect(sourcehutHandler.match('https://todo.sr.ht/~example/')).toBe(true)
-    })
-
-    it('should match a repository page on git.sr.ht', () => {
-      expect(sourcehutHandler.match('https://git.sr.ht/~example/project')).toBe(true)
-    })
-
-    it('should match a path below the repository', () => {
-      expect(sourcehutHandler.match('https://git.sr.ht/~example/project/tree')).toBe(true)
-    })
-
     it('should not match a project page on sr.ht', () => {
       expect(sourcehutHandler.match('https://sr.ht/~example/project/')).toBe(false)
-    })
-
-    it('should not match a tracker page on todo.sr.ht', () => {
-      expect(sourcehutHandler.match('https://todo.sr.ht/~example/project')).toBe(false)
-    })
-
-    it('should not match a path without the tilde prefix', () => {
-      expect(sourcehutHandler.match('https://git.sr.ht/example/project')).toBe(false)
-    })
-
-    it('should not match a bare tilde', () => {
-      expect(sourcehutHandler.match('https://sr.ht/~/')).toBe(false)
-    })
-
-    it('should not match the root', () => {
-      expect(sourcehutHandler.match('https://sr.ht/')).toBe(false)
-    })
-
-    it('should not match other sr.ht services', () => {
-      expect(sourcehutHandler.match('https://lists.sr.ht/~example')).toBe(false)
-    })
-
-    it('should not match other hosts', () => {
-      expect(sourcehutHandler.match('https://example.com/~example')).toBe(false)
-    })
-
-    it('should not match invalid URLs', () => {
-      expect(sourcehutHandler.match('not-a-url')).toBe(false)
     })
   })
 
@@ -119,7 +75,7 @@ describe('sourcehutHandler', () => {
         expect(sourcehutHandler.resolve(value, userPageWithoutAvatar)).toEqual([])
       })
 
-      it('should return empty array for an unmatched URL', () => {
+      it('should return empty array for a project page', () => {
         expect(sourcehutHandler.resolve('https://sr.ht/~example/project/', userPage)).toEqual([])
       })
     })

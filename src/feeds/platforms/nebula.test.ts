@@ -1,43 +1,84 @@
 import { describe, expect, it } from 'bun:test'
-import { nebulaHandler } from './nebula.js'
+import type { NebulaUrl } from './nebula.js'
+import { nebulaHandler, parseNebulaUrl } from './nebula.js'
+
+describe('parseNebulaUrl', () => {
+  it('should return the slug for a channel page', () => {
+    const expected: NebulaUrl = { kind: 'channel', slug: 'realengineering' }
+
+    expect(parseNebulaUrl('https://nebula.tv/realengineering')).toEqual(expected)
+  })
+
+  it('should return the slug for a channel subpage', () => {
+    const value = 'https://nebula.tv/realengineering/videos/some-video'
+    const expected: NebulaUrl = { kind: 'channel', slug: 'realengineering' }
+
+    expect(parseNebulaUrl(value)).toEqual(expected)
+  })
+
+  it('should return the slug for the www host', () => {
+    const value = 'https://www.nebula.tv/realengineering'
+    const expected: NebulaUrl = { kind: 'channel', slug: 'realengineering' }
+
+    expect(parseNebulaUrl(value)).toEqual(expected)
+  })
+
+  it('should return undefined for the home page', () => {
+    expect(parseNebulaUrl('https://nebula.tv/')).toBeUndefined()
+  })
+
+  it('should return undefined for videos pages', () => {
+    expect(parseNebulaUrl('https://nebula.tv/videos')).toBeUndefined()
+    expect(
+      parseNebulaUrl('https://nebula.tv/videos/realengineering-why-ships-float'),
+    ).toBeUndefined()
+  })
+
+  it('should return undefined for explore pages', () => {
+    expect(parseNebulaUrl('https://nebula.tv/explore')).toBeUndefined()
+  })
+
+  it('should return undefined for explore pages in any case', () => {
+    expect(parseNebulaUrl('https://nebula.tv/Explore')).toBeUndefined()
+  })
+
+  it('should return undefined for excluded paths', () => {
+    expect(parseNebulaUrl('https://nebula.tv/login')).toBeUndefined()
+    expect(parseNebulaUrl('https://nebula.tv/about')).toBeUndefined()
+    expect(parseNebulaUrl('https://nebula.tv/classes')).toBeUndefined()
+    expect(parseNebulaUrl('https://nebula.tv/library')).toBeUndefined()
+    expect(parseNebulaUrl('https://nebula.tv/originals')).toBeUndefined()
+    expect(parseNebulaUrl('https://nebula.tv/pricing')).toBeUndefined()
+    expect(parseNebulaUrl('https://nebula.tv/privacy')).toBeUndefined()
+    expect(parseNebulaUrl('https://nebula.tv/search')).toBeUndefined()
+    expect(parseNebulaUrl('https://nebula.tv/settings')).toBeUndefined()
+    expect(parseNebulaUrl('https://nebula.tv/signup')).toBeUndefined()
+    expect(parseNebulaUrl('https://nebula.tv/terms')).toBeUndefined()
+  })
+
+  it('should return undefined for another host', () => {
+    expect(parseNebulaUrl('https://example.com/realengineering')).toBeUndefined()
+  })
+
+  it('should return undefined for an invalid URL', () => {
+    expect(parseNebulaUrl('not-a-url')).toBeUndefined()
+  })
+})
 
 describe('nebulaHandler', () => {
   describe('match', () => {
-    const values: Array<[boolean, string]> = [
-      [true, 'https://nebula.tv/realengineering'],
-      [true, 'https://www.nebula.tv/realengineering'],
-      [true, 'https://nebula.tv'],
-      [false, 'https://example.com'],
-    ]
-
-    it.each(values)('should return %s for %s', (expected, url) => {
-      expect(nebulaHandler.match(url)).toBe(expected)
+    it('should match a nebula.tv URL', () => {
+      expect(nebulaHandler.match('https://nebula.tv')).toBe(true)
     })
 
-    it('should return false for invalid URL', () => {
-      expect(nebulaHandler.match('not-a-url')).toBe(false)
+    it('should not match another host', () => {
+      expect(nebulaHandler.match('https://example.com')).toBe(false)
     })
   })
 
   describe('resolve', () => {
     it('should return free and Plus feeds for channel', () => {
       const value = 'https://nebula.tv/realengineering'
-      const expected = [
-        {
-          uri: 'https://rss.nebula.app/video/channels/realengineering.rss',
-          hint: { key: 'nebula:videos', label: 'Videos' },
-        },
-        {
-          uri: 'https://rss.nebula.app/video/channels/realengineering.rss?plus=true',
-          hint: { key: 'nebula:videos-plus', label: 'Videos (Plus)' },
-        },
-      ]
-
-      expect(nebulaHandler.resolve(value)).toEqual(expected)
-    })
-
-    it('should return feed URL regardless of subpath', () => {
-      const value = 'https://nebula.tv/realengineering/videos/some-video'
       const expected = [
         {
           uri: 'https://rss.nebula.app/video/channels/realengineering.rss',
@@ -237,23 +278,7 @@ describe('nebulaHandler', () => {
     })
 
     it('should return empty array for excluded paths', () => {
-      const values = [
-        'https://nebula.tv/login',
-        'https://nebula.tv/about',
-        'https://nebula.tv/classes',
-        'https://nebula.tv/library',
-        'https://nebula.tv/originals',
-        'https://nebula.tv/pricing',
-        'https://nebula.tv/privacy',
-        'https://nebula.tv/search',
-        'https://nebula.tv/settings',
-        'https://nebula.tv/signup',
-        'https://nebula.tv/terms',
-      ]
-
-      for (const value of values) {
-        expect(nebulaHandler.resolve(value)).toEqual([])
-      }
+      expect(nebulaHandler.resolve('https://nebula.tv/login')).toEqual([])
     })
   })
 })

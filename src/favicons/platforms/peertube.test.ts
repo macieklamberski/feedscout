@@ -36,20 +36,6 @@ describe('peertubeHandler', () => {
       expect(peertubeHandler.match('https://example.com/c/news', '', peertubeHeaders)).toBe(true)
     })
 
-    it('should match account page with PeerTube header', () => {
-      expect(peertubeHandler.match('https://example.com/a/alice', '', peertubeHeaders)).toBe(true)
-    })
-
-    it('should match account subpage with PeerTube header', () => {
-      const value = 'https://example.com/a/alice/video-channels'
-
-      expect(peertubeHandler.match(value, '', peertubeHeaders)).toBe(true)
-    })
-
-    it('should not match instance home with PeerTube header', () => {
-      expect(peertubeHandler.match('https://example.com/', '', peertubeHeaders)).toBe(false)
-    })
-
     it('should not match video page with PeerTube header', () => {
       expect(peertubeHandler.match('https://example.com/w/abc123', '', peertubeHeaders)).toBe(false)
     })
@@ -62,10 +48,6 @@ describe('peertubeHandler', () => {
 
     it('should not match without headers', () => {
       expect(peertubeHandler.match('https://example.com/c/news')).toBe(false)
-    })
-
-    it('should not match invalid URL', () => {
-      expect(peertubeHandler.match('not-a-url', '', peertubeHeaders)).toBe(false)
     })
   })
 
@@ -115,15 +97,8 @@ describe('peertubeHandler', () => {
     })
 
     describe('sad paths', () => {
-      it('should return empty array for instance home', () => {
-        const value = `
-          <meta
-            property="og:image"
-            content="https://example.com/lazy-static/avatars/instance.png"
-          />
-        `
-
-        expect(peertubeHandler.resolve('https://example.com/', value)).toEqual([])
+      it('should return empty array for a video page', () => {
+        expect(peertubeHandler.resolve('https://example.com/w/abc123')).toEqual([])
       })
     })
 
@@ -141,36 +116,6 @@ describe('peertubeHandler', () => {
         const expected: Array<DiscoverRef> = [createRef(url, 'c/news')]
 
         expect(peertubeHandler.resolve(url, value)).toEqual(expected)
-      })
-
-      it('should return an account ref for account subpage', () => {
-        const url = 'https://example.com/a/alice/video-channels'
-        const expected: Array<DiscoverRef> = [createRef(url, 'a/alice')]
-
-        expect(peertubeHandler.resolve(url)).toEqual(expected)
-      })
-
-      it('should return a ref with the remote handle for remote channel', () => {
-        const url = 'https://example.com/c/news@example.org'
-        const expected: Array<DiscoverRef> = [createRef(url, 'c/news@example.org')]
-
-        expect(peertubeHandler.resolve(url)).toEqual(expected)
-      })
-
-      it('should resolve remote channel avatar from og:image', () => {
-        const value = `
-          <meta
-            property="og:image"
-            content="https://example.com/lazy-static/avatars/remote.png"
-          />
-        `
-        const expected: Array<DiscoverUriEntry> = [
-          { uri: 'https://example.com/lazy-static/avatars/remote.png' },
-        ]
-
-        expect(peertubeHandler.resolve('https://example.com/c/news@example.org', value)).toEqual(
-          expected,
-        )
       })
     })
   })

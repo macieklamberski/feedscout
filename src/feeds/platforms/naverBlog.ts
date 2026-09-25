@@ -1,4 +1,4 @@
-import { isHostOf } from 'trousse'
+import { getPathSegments, isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
@@ -6,7 +6,26 @@ import { composeHint } from '../../common/utils.js'
 // Generic covers blog (html).
 // Handler needed for: mobile.
 
+export type NaverBlogUrl = { kind: 'blog'; blogId: string }
+
 export const hosts = ['blog.naver.com', 'm.blog.naver.com']
+
+export const parseNaverBlogUrl = (url: string): NaverBlogUrl | undefined => {
+  const parsedUrl = parseUrl(url)
+
+  if (!parsedUrl || !isHostOf(parsedUrl, hosts)) {
+    return
+  }
+
+  const [blogId] = getPathSegments(parsedUrl)
+
+  // Excludes dots to skip pages like /BlogList.naver.
+  if (!blogId || blogId.includes('.')) {
+    return
+  }
+
+  return { kind: 'blog', blogId }
+}
 
 export const naverBlogHandler: PlatformHandler = {
   match: (url) => {
@@ -14,16 +33,9 @@ export const naverBlogHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    const { pathname } = new URL(url)
-    const pathSegments = pathname.split('/').filter(Boolean)
+    const blogId = parseNaverBlogUrl(url)?.blogId
 
-    if (pathSegments.length === 0) {
-      return []
-    }
-
-    const blogId = pathSegments[0]
-
-    if (blogId.includes('.')) {
+    if (!blogId) {
       return []
     }
 

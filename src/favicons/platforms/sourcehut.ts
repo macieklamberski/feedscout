@@ -1,30 +1,10 @@
-import { getPathSegments, isHostOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement, hasClass } from '../../common/utils.js'
-import { getRepoPath, hosts } from '../../feeds/platforms/sourcehut.js'
+import { parseSourcehutUrl } from '../../feeds/platforms/sourcehut.js'
 import type { FaviconEnricher } from '../types.js'
 import { getResponseText } from '../utils.js'
 
 const platform = 'sourcehut'
-
-const userHosts = ['sr.ht', 'todo.sr.ht', ...hosts]
-
-const getOwner = (url: string): string | undefined => {
-  const segments = getPathSegments(url)
-  const owner = segments[0]
-
-  if (!owner?.startsWith('~') || owner.length < 2) {
-    return
-  }
-
-  if (segments.length === 1 && isHostOf(url, userHosts)) {
-    return owner
-  }
-
-  if (isHostOf(url, hosts) && getRepoPath(url)) {
-    return owner
-  }
-}
 
 // A user without an avatar gets no `img.avatar` on the page.
 const parseAvatar = (html: string): Array<string> => {
@@ -42,19 +22,19 @@ const parseAvatar = (html: string): Array<string> => {
 
 export const sourcehutHandler: PlatformHandler = {
   match: (url) => {
-    return Boolean(getOwner(url))
+    return parseSourcehutUrl(url) !== undefined
   },
 
   resolve: (url, content) => {
-    const owner = getOwner(url)
+    const parsed = parseSourcehutUrl(url)
 
-    if (!owner) {
+    if (!parsed) {
       return []
     }
 
     // A repository page carries no avatar, while its owner's page does.
-    if (getPathSegments(url).length > 1) {
-      return [{ platform, id: owner.slice(1), url }]
+    if (parsed.kind === 'repo') {
+      return [{ platform, id: parsed.owner, url }]
     }
 
     if (!content) {

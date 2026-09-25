@@ -1,4 +1,4 @@
-import { isAnyOf, isHostOf } from 'trousse'
+import { getPathSegments, isAnyOf, isHostOf, parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
@@ -7,19 +7,27 @@ import { composeHint } from '../../common/utils.js'
 // Generic covers domain, subreddits (guess, html), partly covers multiSubreddit.
 // Handler needed for: home, search, subreddit, user, userSubmitted.
 
-const commentsRegex = /^\/r\/([^/]+)\/comments\/([^/]+)/
-const subredditWikiRegex = /^\/r\/([^/]+)\/wiki/
-const subredditSearchRegex = /^\/r\/([^/]+)\/search/
-const subredditRegex = /^\/r\/([^/]+)(?:\/([^/]+))?/
-const multiredditRegex = /^\/user\/([^/]+)\/m\/([^/]+)/
-const userRegex = /^\/(?:u|user)\/([^/]+)(?:\/(submitted|comments))?/
-const domainRegex = /^\/domain\/([^/]+)/
+export type RedditUrl =
+  | { kind: 'subreddit'; subreddit: string; sort?: string }
+  | { kind: 'search'; subreddit: string }
+  | { kind: 'wiki'; subreddit: string }
+  | { kind: 'post'; subreddit: string; postId: string }
+  | { kind: 'user'; username: string }
+  | { kind: 'submitted'; username: string }
+  | { kind: 'comments'; username: string }
+  | { kind: 'multireddit'; username: string; multireddit: string }
+  | { kind: 'domain'; domain: string }
+
 const subredditsRegex = /^\/(?:subreddits|reddits)(?:\/(new|popular))?/
+// Stops at a dot, so a feed URL like /r/{sub}.rss or /user/{user}/submitted.rss yields the
+// name and the section.
+const nameRegex = /^[^.]+/
 
 export const hosts = ['reddit.com', 'www.reddit.com', 'old.reddit.com', 'new.reddit.com']
 const sortOptions = ['hot', 'new', 'rising', 'controversial', 'top', 'best']
 const timeOptions = ['hour', 'day', 'week', 'month', 'year', 'all']
 const timeFilteredSorts = ['top', 'controversial']
+const userPrefixes = ['u', 'user']
 
 const getTimeframeSuffix = (sort: string, searchParams: URLSearchParams): string => {
   if (!timeFilteredSorts.includes(sort)) {
@@ -35,7 +43,65 @@ const getTimeframeSuffix = (sort: string, searchParams: URLSearchParams): string
   return ''
 }
 
-// Combined subreddits work transparently: /r/{sub1}+{sub2} is captured by the same regex.
+// Combined subreddits work transparently: /r/{sub1}+{sub2} is captured as one name.
+export const parseRedditUrl = (url: string): RedditUrl | undefined => {
+  const parsedUrl = parseUrl(url)
+
+  if (!parsedUrl || !isHostOf(parsedUrl, hosts)) {
+    return
+  }
+
+  const [prefix, rawName, rawSection, item] = getPathSegments(parsedUrl)
+
+  if (prefix === 'domain' && rawName) {
+    return { kind: 'domain', domain: rawName }
+  }
+
+  const name = rawName?.match(nameRegex)?.[0]
+  const section = rawSection?.match(nameRegex)?.[0]
+
+  if (!name) {
+    return
+  }
+
+  if (prefix === 'r') {
+    if (section === 'search') {
+      return { kind: 'search', subreddit: name }
+    }
+
+    if (section === 'wiki') {
+      return { kind: 'wiki', subreddit: name }
+    }
+
+    if (section === 'comments' && item) {
+      return { kind: 'post', subreddit: name, postId: item }
+    }
+
+    if (section && isAnyOf(section, sortOptions)) {
+      return { kind: 'subreddit', subreddit: name, sort: section }
+    }
+
+    return { kind: 'subreddit', subreddit: name }
+  }
+
+  if (prefix === 'user' && section === 'm' && item) {
+    return { kind: 'multireddit', username: name, multireddit: item }
+  }
+
+  if (!prefix || !userPrefixes.includes(prefix)) {
+    return
+  }
+
+  if (section === 'submitted') {
+    return { kind: 'submitted', username: name }
+  }
+
+  if (section === 'comments') {
+    return { kind: 'comments', username: name }
+  }
+
+  return { kind: 'user', username: name }
+}
 
 export const redditHandler: PlatformHandler = {
   match: (url) => {
@@ -92,59 +158,43 @@ export const redditHandler: PlatformHandler = {
       ]
     }
 
-    // Subreddit search: /r/{sub}/search?q=...
-    const subredditSearchMatch = pathname.match(subredditSearchRegex)
+    const parsed = parseRedditUrl(url)
+    const query = searchParams.get('q')
 
-    if (subredditSearchMatch?.[1]) {
-      const subreddit = subredditSearchMatch[1]
-      const query = searchParams.get('q')
-
-      if (query) {
-        return [
-          {
-            uri: `https://www.reddit.com/r/${subreddit}/search.rss?q=${encodeURIComponent(query)}&restrict_sr=on`,
-            hint: composeHint('reddit:search'),
-          },
-        ]
-      }
-    }
-
-    // Subreddit wiki: /r/{sub}/wiki[/...]
-    const subredditWikiMatch = pathname.match(subredditWikiRegex)
-
-    if (subredditWikiMatch?.[1]) {
+    if (parsed?.kind === 'search' && query) {
       return [
         {
-          uri: `https://www.reddit.com/r/${subredditWikiMatch[1]}/wiki/index.rss`,
+          uri: `https://www.reddit.com/r/${parsed.subreddit}/search.rss?q=${encodeURIComponent(query)}&restrict_sr=on`,
+          hint: composeHint('reddit:search'),
+        },
+      ]
+    }
+
+    if (parsed?.kind === 'wiki') {
+      return [
+        {
+          uri: `https://www.reddit.com/r/${parsed.subreddit}/wiki/index.rss`,
           hint: composeHint('reddit:wiki'),
         },
       ]
     }
 
-    // Match /r/subreddit/comments/id pattern (post comments feed).
-    const commentsMatch = pathname.match(commentsRegex)
-
-    if (commentsMatch?.[1] && commentsMatch?.[2]) {
-      const subreddit = commentsMatch[1]
-      const postId = commentsMatch[2]
-
+    if (parsed?.kind === 'post') {
       return [
         {
-          uri: `https://www.reddit.com/r/${subreddit}/comments/${postId}/.rss`,
+          uri: `https://www.reddit.com/r/${parsed.subreddit}/comments/${parsed.postId}/.rss`,
           hint: composeHint('reddit:post-comments'),
         },
       ]
     }
 
-    // Match /r/subreddit with optional sort.
-    const subredditMatch = pathname.match(subredditRegex)
-
-    if (subredditMatch?.[1]) {
-      const subreddit = subredditMatch[1]
-      const sort = subredditMatch[2]
+    // A subreddit search without a query shows the subreddit.
+    if (parsed?.kind === 'subreddit' || parsed?.kind === 'search') {
+      const { subreddit } = parsed
+      const sort = parsed.kind === 'subreddit' ? parsed.sort : undefined
       const uris: Array<DiscoverUriEntry> = []
 
-      if (sort && isAnyOf(sort, sortOptions)) {
+      if (sort) {
         uris.push({
           uri: `https://www.reddit.com/r/${subreddit}/${sort}/.rss${getTimeframeSuffix(sort, searchParams)}`,
           hint: composeHint('reddit:posts'),
@@ -156,7 +206,6 @@ export const redditHandler: PlatformHandler = {
         })
       }
 
-      // Add all comments feed for subreddit.
       uris.push({
         uri: `https://www.reddit.com/r/${subreddit}/comments/.rss`,
         hint: composeHint('reddit:comments'),
@@ -165,71 +214,54 @@ export const redditHandler: PlatformHandler = {
       return uris
     }
 
-    // Match multireddit: /user/{username}/m/{multireddit}.
-    const multiredditMatch = pathname.match(multiredditRegex)
-
-    if (multiredditMatch?.[1] && multiredditMatch?.[2]) {
-      const username = multiredditMatch[1]
-      const multireddit = multiredditMatch[2]
-
+    if (parsed?.kind === 'multireddit') {
       return [
         {
-          uri: `https://www.reddit.com/user/${username}/m/${multireddit}/.rss`,
+          uri: `https://www.reddit.com/user/${parsed.username}/m/${parsed.multireddit}/.rss`,
           hint: composeHint('reddit:multireddit'),
         },
       ]
     }
 
-    // Match /u/username or /user/username pattern, with optional /submitted or /comments.
-    const userMatch = pathname.match(userRegex)
-
-    if (userMatch?.[1]) {
-      const username = userMatch[1]
-      const filter = userMatch[2]
-
-      if (filter === 'submitted') {
-        return [
-          {
-            uri: `https://www.reddit.com/user/${username}/submitted/.rss`,
-            hint: composeHint('reddit:user-submitted'),
-          },
-          {
-            uri: `https://www.reddit.com/user/${username}/.rss`,
-            hint: composeHint('reddit:posts'),
-          },
-        ]
-      }
-
-      if (filter === 'comments') {
-        return [
-          {
-            uri: `https://www.reddit.com/user/${username}/comments/.rss`,
-            hint: composeHint('reddit:user-comments'),
-          },
-          {
-            uri: `https://www.reddit.com/user/${username}/.rss`,
-            hint: composeHint('reddit:posts'),
-          },
-        ]
-      }
-
+    if (parsed?.kind === 'submitted') {
       return [
         {
-          uri: `https://www.reddit.com/user/${username}/.rss`,
+          uri: `https://www.reddit.com/user/${parsed.username}/submitted/.rss`,
+          hint: composeHint('reddit:user-submitted'),
+        },
+        {
+          uri: `https://www.reddit.com/user/${parsed.username}/.rss`,
           hint: composeHint('reddit:posts'),
         },
       ]
     }
 
-    // Match /domain/site pattern.
-    const domainMatch = pathname.match(domainRegex)
-
-    if (domainMatch?.[1]) {
-      const domain = domainMatch[1]
-
+    if (parsed?.kind === 'comments') {
       return [
         {
-          uri: `https://www.reddit.com/domain/${domain}/.rss`,
+          uri: `https://www.reddit.com/user/${parsed.username}/comments/.rss`,
+          hint: composeHint('reddit:user-comments'),
+        },
+        {
+          uri: `https://www.reddit.com/user/${parsed.username}/.rss`,
+          hint: composeHint('reddit:posts'),
+        },
+      ]
+    }
+
+    if (parsed?.kind === 'user') {
+      return [
+        {
+          uri: `https://www.reddit.com/user/${parsed.username}/.rss`,
+          hint: composeHint('reddit:posts'),
+        },
+      ]
+    }
+
+    if (parsed?.kind === 'domain') {
+      return [
+        {
+          uri: `https://www.reddit.com/domain/${parsed.domain}/.rss`,
           hint: composeHint('reddit:posts'),
         },
       ]

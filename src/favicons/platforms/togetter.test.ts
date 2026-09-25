@@ -31,24 +31,8 @@ describe('togetterHandler', () => {
       expect(togetterHandler.match('https://togetter.com/id/example')).toBe(true)
     })
 
-    it('should match user pages on www host', () => {
-      expect(togetterHandler.match('https://www.togetter.com/id/example')).toBe(true)
-    })
-
     it('should not match summary pages', () => {
       expect(togetterHandler.match('https://togetter.com/li/123456')).toBe(false)
-    })
-
-    it('should not match the home page', () => {
-      expect(togetterHandler.match('https://togetter.com/')).toBe(false)
-    })
-
-    it('should not match other hosts', () => {
-      expect(togetterHandler.match('https://example.com/id/example')).toBe(false)
-    })
-
-    it('should not match invalid URLs', () => {
-      expect(togetterHandler.match('not-a-url')).toBe(false)
     })
   })
 

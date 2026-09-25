@@ -1,7 +1,7 @@
-import { isHostOf, isNonEmptyString, isPlainObject, parseUrl } from 'trousse'
+import { isNonEmptyString, isPlainObject } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getJsonLd } from '../../common/utils.js'
-import { curatorPathRegex, hosts } from '../../feeds/platforms/togetter.js'
+import { parseTogetterUrl } from '../../feeds/platforms/togetter.js'
 
 const twitterSizeRegex = /_normal(\.\w+)$/
 
@@ -23,13 +23,7 @@ const getProfileImage = (content: string): string | undefined => {
 
 export const togetterHandler: PlatformHandler = {
   match: (url) => {
-    const parsedUrl = parseUrl(url)
-
-    if (!parsedUrl) {
-      return false
-    }
-
-    return isHostOf(url, hosts) && curatorPathRegex.test(parsedUrl.pathname)
+    return parseTogetterUrl(url) !== undefined
   },
 
   resolve: (_url, content) => {

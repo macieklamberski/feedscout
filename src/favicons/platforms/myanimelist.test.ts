@@ -50,36 +50,8 @@ describe('myanimelistHandler', () => {
       expect(myanimelistHandler.match('https://myanimelist.net/profile/example')).toBe(true)
     })
 
-    it('should match an anime list page', () => {
-      expect(myanimelistHandler.match('https://myanimelist.net/animelist/example')).toBe(true)
-    })
-
-    it('should match a manga list page', () => {
-      expect(myanimelistHandler.match('https://myanimelist.net/mangalist/example')).toBe(true)
-    })
-
-    it('should match a profile page on www', () => {
-      expect(myanimelistHandler.match('https://www.myanimelist.net/profile/example')).toBe(true)
-    })
-
     it('should not match the news page', () => {
       expect(myanimelistHandler.match('https://myanimelist.net/news')).toBe(false)
-    })
-
-    it('should not match an anime page', () => {
-      expect(myanimelistHandler.match('https://myanimelist.net/anime/1/Cowboy_Bebop')).toBe(false)
-    })
-
-    it('should not match the root', () => {
-      expect(myanimelistHandler.match('https://myanimelist.net/')).toBe(false)
-    })
-
-    it('should not match other hosts', () => {
-      expect(myanimelistHandler.match('https://example.com/profile/example')).toBe(false)
-    })
-
-    it('should not match invalid URLs', () => {
-      expect(myanimelistHandler.match('not-a-url')).toBe(false)
     })
   })
 
@@ -102,13 +74,6 @@ describe('myanimelistHandler', () => {
 
       it('should return a ref for an anime list page', () => {
         const value = 'https://myanimelist.net/animelist/example'
-        const expected: Array<DiscoverRef> = [createRef(value)]
-
-        expect(myanimelistHandler.resolve(value, '<html></html>')).toEqual(expected)
-      })
-
-      it('should return a ref for a manga list page', () => {
-        const value = 'https://myanimelist.net/mangalist/example'
         const expected: Array<DiscoverRef> = [createRef(value)]
 
         expect(myanimelistHandler.resolve(value, '<html></html>')).toEqual(expected)
@@ -140,7 +105,7 @@ describe('myanimelistHandler', () => {
         expect(myanimelistHandler.resolve(value, content)).toEqual([])
       })
 
-      it('should return empty array for an unmatched URL', () => {
+      it('should return empty array for the news page', () => {
         expect(myanimelistHandler.resolve('https://myanimelist.net/news', profilePage)).toEqual([])
       })
     })

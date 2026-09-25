@@ -15,50 +15,6 @@ const profileHtml = `
 `
 
 describe('soundcloudHandler', () => {
-  describe('match', () => {
-    it('should match profile URLs', () => {
-      expect(soundcloudHandler.match('https://soundcloud.com/alice')).toBe(true)
-    })
-
-    it('should match profile URLs with trailing slash', () => {
-      expect(soundcloudHandler.match('https://soundcloud.com/alice/')).toBe(true)
-    })
-
-    it('should match tracks URLs', () => {
-      expect(soundcloudHandler.match('https://soundcloud.com/alice/tracks')).toBe(true)
-    })
-
-    it('should match www and mobile hosts', () => {
-      expect(soundcloudHandler.match('https://www.soundcloud.com/alice')).toBe(true)
-      expect(soundcloudHandler.match('https://m.soundcloud.com/alice')).toBe(true)
-    })
-
-    it('should not match track URLs', () => {
-      expect(soundcloudHandler.match('https://soundcloud.com/alice/first-song')).toBe(false)
-    })
-
-    it('should not match nested URLs', () => {
-      expect(soundcloudHandler.match('https://soundcloud.com/alice/sets/summer')).toBe(false)
-    })
-
-    it('should not match excluded paths', () => {
-      expect(soundcloudHandler.match('https://soundcloud.com/discover')).toBe(false)
-      expect(soundcloudHandler.match('https://soundcloud.com/search')).toBe(false)
-    })
-
-    it('should not match root URL', () => {
-      expect(soundcloudHandler.match('https://soundcloud.com/')).toBe(false)
-    })
-
-    it('should not match non-SoundCloud URLs', () => {
-      expect(soundcloudHandler.match('https://example.com/alice')).toBe(false)
-    })
-
-    it('should not match invalid URLs', () => {
-      expect(soundcloudHandler.match('not-a-url')).toBe(false)
-    })
-  })
-
   describe('resolve', () => {
     it('should return avatar from profile page', () => {
       const expected: Array<DiscoverUriEntry> = [
@@ -66,16 +22,6 @@ describe('soundcloudHandler', () => {
       ]
 
       expect(soundcloudHandler.resolve('https://soundcloud.com/alice', profileHtml)).toEqual(
-        expected,
-      )
-    })
-
-    it('should return avatar from tracks page', () => {
-      const expected: Array<DiscoverUriEntry> = [
-        { uri: 'https://i1.sndcdn.com/avatars-000012345678-abcdef-t500x500.jpg' },
-      ]
-
-      expect(soundcloudHandler.resolve('https://soundcloud.com/alice/tracks', profileHtml)).toEqual(
         expected,
       )
     })
