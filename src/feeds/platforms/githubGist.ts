@@ -40,7 +40,7 @@ export const parseGithubGistUrl = (url: string): GithubGistUrl | undefined => {
     return { kind: 'starred', username }
   }
 
-  if (section && forksSections.includes(section) && rest.length === 0) {
+  if (section && isAnyOf(section, forksSections) && rest.length === 0) {
     return { kind: 'forks', username }
   }
 

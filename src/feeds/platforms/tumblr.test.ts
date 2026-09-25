@@ -49,6 +49,10 @@ describe('parseTumblrUrl', () => {
     expect(parseTumblrUrl('https://www.tumblr.com/explore')).toBeUndefined()
   })
 
+  it('should return undefined for a capitalized www.tumblr.com site route', () => {
+    expect(parseTumblrUrl('https://www.tumblr.com/Explore')).toBeUndefined()
+  })
+
   it('should return undefined for a www.tumblr.com tag route', () => {
     expect(parseTumblrUrl('https://www.tumblr.com/tagged/photography')).toBeUndefined()
   })

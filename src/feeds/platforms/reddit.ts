@@ -1,4 +1,4 @@
-import { getPathSegments, isAnyOf, isHostOf, parseUrl } from 'trousse'
+import { getAnyOf, getPathSegments, isAnyOf, isHostOf, parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
@@ -31,7 +31,7 @@ const timeFilteredSorts = ['top', 'controversial']
 const userPrefixes = ['u', 'user']
 
 const getTimeframeSuffix = (sort: string, searchParams: URLSearchParams): string => {
-  if (!timeFilteredSorts.includes(sort)) {
+  if (!isAnyOf(sort, timeFilteredSorts)) {
     return ''
   }
 
@@ -54,7 +54,7 @@ export const parseRedditUrl = (url: string): RedditUrl | undefined => {
 
   const [prefix, rawName, rawSection, item] = getPathSegments(parsedUrl)
 
-  if (prefix === 'domain' && rawName) {
+  if (isAnyOf(prefix, 'domain') && rawName) {
     return { kind: 'domain', domain: rawName }
   }
 
@@ -65,39 +65,41 @@ export const parseRedditUrl = (url: string): RedditUrl | undefined => {
     return
   }
 
-  if (prefix === 'r') {
-    if (section === 'search') {
+  if (isAnyOf(prefix, 'r')) {
+    if (isAnyOf(section, 'search')) {
       return { kind: 'search', subreddit: name }
     }
 
-    if (section === 'wiki') {
+    if (isAnyOf(section, 'wiki')) {
       return { kind: 'wiki', subreddit: name }
     }
 
-    if (section === 'comments' && item) {
+    if (isAnyOf(section, 'comments') && item) {
       return { kind: 'post', subreddit: name, postId: item }
     }
 
-    if (section && isAnyOf(section, sortOptions)) {
-      return { kind: 'subreddit', subreddit: name, sort: section }
+    const sort = getAnyOf(section, sortOptions)
+
+    if (sort) {
+      return { kind: 'subreddit', subreddit: name, sort }
     }
 
     return { kind: 'subreddit', subreddit: name }
   }
 
-  if (prefix === 'user' && section === 'm' && item) {
+  if (isAnyOf(prefix, 'user') && isAnyOf(section, 'm') && item) {
     return { kind: 'multireddit', username: name, multireddit: item }
   }
 
-  if (!prefix || !userPrefixes.includes(prefix)) {
+  if (!prefix || !isAnyOf(prefix, userPrefixes)) {
     return
   }
 
-  if (section === 'submitted') {
+  if (isAnyOf(section, 'submitted')) {
     return { kind: 'submitted', username: name }
   }
 
-  if (section === 'comments') {
+  if (isAnyOf(section, 'comments')) {
     return { kind: 'comments', username: name }
   }
 
@@ -119,9 +121,9 @@ export const redditHandler: PlatformHandler = {
     }
 
     // Sitewide sort: /hot, /new, /rising, /controversial, /top, /best
-    if (pathSegments.length === 1 && isAnyOf(pathSegments[0], sortOptions)) {
-      const sort = pathSegments[0]
+    const sort = pathSegments.length === 1 ? getAnyOf(pathSegments[0], sortOptions) : undefined
 
+    if (sort) {
       return [
         {
           uri: `https://www.reddit.com/${sort}/.rss${getTimeframeSuffix(sort, searchParams)}`,

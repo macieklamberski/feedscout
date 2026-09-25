@@ -141,6 +141,10 @@ describe('lemmyHandler', () => {
       expect(lemmyHandler.match('https://lemmy.ml/home', lemmyHtml)).toBe(true)
     })
 
+    it('should match the home page with trailing slash', () => {
+      expect(lemmyHandler.match('https://lemmy.ml/home/', lemmyHtml)).toBe(true)
+    })
+
     it('should match community path with Lemmy server header', () => {
       expect(lemmyHandler.match('https://lemmy.ml/c/programming', '', lemmyHeaders)).toBe(true)
     })

@@ -8,7 +8,7 @@ import { composeHint } from '../../common/utils.js'
 
 const hosts = ['news.ycombinator.com']
 
-const showPaths = ['/show', '/shownew']
+const showRegex = /^\/show(?:new)?\/?$/
 
 export const hackernewsHandler: PlatformHandler = {
   match: (url) => {
@@ -19,7 +19,7 @@ export const hackernewsHandler: PlatformHandler = {
     const { pathname } = new URL(url)
 
     // Show HN section.
-    if (showPaths.includes(pathname)) {
+    if (showRegex.test(pathname)) {
       return [
         {
           uri: 'https://news.ycombinator.com/showrss',

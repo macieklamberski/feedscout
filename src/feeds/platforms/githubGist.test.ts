@@ -50,6 +50,7 @@ describe('parseGithubGistUrl', () => {
     'https://gist.github.com/defunkt/forked',
     'https://gist.github.com/defunkt/forks/',
     'https://gist.github.com/defunkt/forked.atom',
+    'https://gist.github.com/defunkt/Forks',
   ]
 
   it.each(forksValues)('should return the forked gists for %s', (value) => {

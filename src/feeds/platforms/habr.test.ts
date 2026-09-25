@@ -103,6 +103,22 @@ describe('habrHandler', () => {
       expect(habrHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return the lowercase language for a capitalized language path', () => {
+      const value = 'https://habr.com/EN/users/example/posts/'
+      const expected = [
+        {
+          uri: 'https://habr.com/en/rss/users/example/posts/',
+          hint: { key: 'habr:user', label: 'User' },
+        },
+        {
+          uri: 'https://habr.com/en/rss/articles/',
+          hint: { key: 'habr:articles', label: 'Articles' },
+        },
+      ]
+
+      expect(habrHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return the company feed for a company page', () => {
       const value = 'https://habr.com/ru/companies/example/articles/'
       const expected = [

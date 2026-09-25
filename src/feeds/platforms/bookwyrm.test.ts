@@ -43,6 +43,18 @@ describe('parseBookwyrmUrl', () => {
     expect(parseBookwyrmUrl(value)).toEqual(expected)
   })
 
+  it('should return the lowercase section for a capitalized shelf path', () => {
+    const value = 'https://bookwyrm.social/user/mouse/Shelf/to-read'
+    const expected: BookwyrmUrl = {
+      kind: 'shelf',
+      username: 'mouse',
+      section: 'shelf',
+      shelf: 'to-read',
+    }
+
+    expect(parseBookwyrmUrl(value)).toEqual(expected)
+  })
+
   it('should return the shelf of a remote user', () => {
     const value = 'https://books.example.com/user/reader@remote.example.org/shelf/read'
     const expected: BookwyrmUrl = {

@@ -142,6 +142,18 @@ describe('itchioHandler', () => {
       expect(itchioHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return lowercase sort feed for a capitalized top-rated path', () => {
+      const value = 'https://itch.io/games/Top-Rated'
+      const expected = [
+        {
+          uri: 'https://itch.io/games/top-rated.xml',
+          hint: { key: 'itchio:games', label: 'Games' },
+        },
+      ]
+
+      expect(itchioHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return sort feed for free path', () => {
       const value = 'https://itch.io/games/free'
       const expected = [
@@ -192,6 +204,15 @@ describe('itchioHandler', () => {
 
     it('should return section feed for tools path', () => {
       const value = 'https://itch.io/tools'
+      const expected = [
+        { uri: 'https://itch.io/tools.xml', hint: { key: 'itchio:section', label: 'Section' } },
+      ]
+
+      expect(itchioHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return lowercase section feed for a capitalized tools path', () => {
+      const value = 'https://itch.io/Tools'
       const expected = [
         { uri: 'https://itch.io/tools.xml', hint: { key: 'itchio:section', label: 'Section' } },
       ]

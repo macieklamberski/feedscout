@@ -57,8 +57,32 @@ describe('hackernewsHandler', () => {
       expect(hackernewsHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return Show HN feed for /show with trailing slash', () => {
+      const value = 'https://news.ycombinator.com/show/'
+      const expected = [
+        {
+          uri: 'https://news.ycombinator.com/showrss',
+          hint: { key: 'hackernews:show', label: 'Show HN' },
+        },
+      ]
+
+      expect(hackernewsHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return Show HN feed for /shownew', () => {
       const value = 'https://news.ycombinator.com/shownew'
+      const expected = [
+        {
+          uri: 'https://news.ycombinator.com/showrss',
+          hint: { key: 'hackernews:show', label: 'Show HN' },
+        },
+      ]
+
+      expect(hackernewsHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return Show HN feed for /shownew with trailing slash', () => {
+      const value = 'https://news.ycombinator.com/shownew/'
       const expected = [
         {
           uri: 'https://news.ycombinator.com/showrss',

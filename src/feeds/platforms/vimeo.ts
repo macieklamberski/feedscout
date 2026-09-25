@@ -82,7 +82,7 @@ export const vimeoHandler: PlatformHandler = {
     // returns RSS; /showcase/{id}/rss returns 404. /album/{id} 301-redirects to
     // /showcase/{id} in the browser, so users will most often paste the showcase URL.
     if (
-      albumSegments.includes(pathSegments[0]) &&
+      isAnyOf(pathSegments[0], albumSegments) &&
       pathSegments[1] &&
       numericRegex.test(pathSegments[1])
     ) {

@@ -10,8 +10,8 @@ export type LemmyUrl = { kind: 'community'; community: string } | { kind: 'user'
 
 const lemmyPoweredByRegex = /lemmy/i
 const numericRegex = /^\d+$/
+const homeRegex = /^\/(?:home\/?)?$/
 
-const homePaths = ['/', '/home']
 const validSorts = [
   'Active',
   'Hot',
@@ -91,7 +91,7 @@ export const lemmyHandler: PlatformHandler = {
       return false
     }
 
-    if (!homePaths.includes(parsedUrl.pathname) && !parseLemmyUrl(url)) {
+    if (!homeRegex.test(parsedUrl.pathname) && !parseLemmyUrl(url)) {
       return false
     }
 

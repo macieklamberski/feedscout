@@ -36,6 +36,7 @@ const channelRegex = /^\/channel\/(UC[a-zA-Z0-9_-]+)/
 const channelPathRegexes = [/^\/@[^/]+/, /^\/user\/[^/]+/, /^\/c\/[^/]+/]
 const shortsRegex = /^\/shorts\/[\w-]+/
 const liveRegex = /^\/live\/[\w-]+/
+const watchRegex = /^\/watch\/?$/
 const channelPrefixRegex = /^UC/
 
 const extractChannelIdFromContent = (content: string): string | undefined => {
@@ -128,7 +129,7 @@ export const parseYoutubeUrl = (url: string): YoutubeUrl | undefined => {
   }
 
   if (
-    (pathname === '/watch' && searchParams.has('v')) ||
+    (watchRegex.test(pathname) && searchParams.has('v')) ||
     (isHostOf(parsedUrl, shortLinkHosts) && pathname.length > 1) ||
     liveRegex.test(pathname)
   ) {

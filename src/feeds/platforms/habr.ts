@@ -1,4 +1,4 @@
-import { getPathSegments, isHostOf, parseUrl } from 'trousse'
+import { getAnyOf, getPathSegments, isHostOf, parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
@@ -21,11 +21,7 @@ const languages = ['ru', 'en']
 const getLanguage = (url: string): string => {
   const [first] = getPathSegments(url)
 
-  if (first && languages.includes(first)) {
-    return first
-  }
-
-  return 'ru'
+  return getAnyOf(first, languages) ?? 'ru'
 }
 
 export const parseHabrUrl = (url: string): HabrUrl | undefined => {

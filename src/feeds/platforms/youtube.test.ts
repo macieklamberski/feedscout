@@ -43,6 +43,12 @@ describe('parseYoutubeUrl', () => {
     expect(parseYoutubeUrl('https://youtube.com/watch?v=abc123')).toEqual(expected)
   })
 
+  it('should return a watch page for a watch URL with trailing slash', () => {
+    const expected: YoutubeUrl = { kind: 'watch' }
+
+    expect(parseYoutubeUrl('https://youtube.com/watch/?v=abc123')).toEqual(expected)
+  })
+
   it('should return a watch page with its playlist', () => {
     const value = 'https://youtube.com/watch?v=abc123&list=PL1234567890'
     const expected: YoutubeUrl = { kind: 'watch', playlistId: 'PL1234567890' }

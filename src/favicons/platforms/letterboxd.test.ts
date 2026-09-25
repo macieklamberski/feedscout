@@ -89,6 +89,45 @@ describe('letterboxdHandler', () => {
       })
     })
 
+    describe('avatar link without a trailing slash', () => {
+      it('should return the large avatar', () => {
+        const content = uploadedAvatarHtml.replace(
+          'class="avatar -a24" href="/alice/"',
+          'class="avatar -a24" href="/alice"',
+        )
+        const result = letterboxdHandler.resolve('https://letterboxd.com/alice/films/', content)
+        const expected: Array<DiscoverUriEntry> = [{ uri: largeUploadedAvatar }]
+
+        expect(result).toEqual(expected)
+      })
+    })
+
+    describe('avatar link in another case than the URL', () => {
+      it('should return the large avatar', () => {
+        const content = uploadedAvatarHtml.replace(
+          'class="avatar -a24" href="/alice/"',
+          'class="avatar -a24" href="/Alice/"',
+        )
+        const result = letterboxdHandler.resolve('https://letterboxd.com/alice/films/', content)
+        const expected: Array<DiscoverUriEntry> = [{ uri: largeUploadedAvatar }]
+
+        expect(result).toEqual(expected)
+      })
+    })
+
+    describe('username with a regex metacharacter', () => {
+      it('should not match an avatar link the metacharacter would match', () => {
+        const url = 'https://letterboxd.com/a.b/films/'
+        const content = uploadedAvatarHtml.replace(
+          'class="avatar -a24" href="/alice/"',
+          'class="avatar -a24" href="/axb/"',
+        )
+        const expected: Array<DiscoverRef> = [{ platform: 'letterboxd', id: 'a.b', url }]
+
+        expect(letterboxdHandler.resolve(url, content)).toEqual(expected)
+      })
+    })
+
     describe('list page', () => {
       it('should return the large avatar from the person summary', () => {
         const result = letterboxdHandler.resolve(

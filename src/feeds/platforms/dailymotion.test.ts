@@ -153,6 +153,18 @@ describe('dailymotionHandler', () => {
       expect(dailymotionHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return trending feed for /trending with trailing slash', () => {
+      const value = 'https://www.dailymotion.com/trending/'
+      const expected = [
+        {
+          uri: 'https://www.dailymotion.com/rss/trending',
+          hint: { key: 'dailymotion:trending', label: 'Trending' },
+        },
+      ]
+
+      expect(dailymotionHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return search feed for /search/{query}', () => {
       const value = 'https://www.dailymotion.com/search/cats'
       const expected = [

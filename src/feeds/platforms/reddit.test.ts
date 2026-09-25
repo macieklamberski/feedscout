@@ -49,6 +49,12 @@ describe('parseRedditUrl', () => {
     expect(parseRedditUrl('https://reddit.com/r/programming/hot')).toEqual(expected)
   })
 
+  it('should return the lowercase sort for a capitalized subreddit sort', () => {
+    const expected: RedditUrl = { kind: 'subreddit', subreddit: 'programming', sort: 'hot' }
+
+    expect(parseRedditUrl('https://reddit.com/r/programming/Hot')).toEqual(expected)
+  })
+
   it('should return the subreddit without an unknown section', () => {
     const expected: RedditUrl = { kind: 'subreddit', subreddit: 'programming' }
 
@@ -146,10 +152,31 @@ describe('parseRedditUrl', () => {
     expect(parseRedditUrl('https://reddit.com/domain/github.com')).toEqual(expected)
   })
 
-  it('should return undefined for an uppercase prefix', () => {
-    expect(parseRedditUrl('https://reddit.com/R/programming')).toBeUndefined()
-    expect(parseRedditUrl('https://reddit.com/U/spez')).toBeUndefined()
-    expect(parseRedditUrl('https://reddit.com/User/spez')).toBeUndefined()
+  it('should return undefined for an unknown prefix', () => {
+    expect(parseRedditUrl('https://reddit.com/settings/profile')).toBeUndefined()
+  })
+
+  it('should return the subreddit for a capitalized /R/ prefix', () => {
+    const expected: RedditUrl = { kind: 'subreddit', subreddit: 'programming' }
+
+    expect(parseRedditUrl('https://reddit.com/R/programming')).toEqual(expected)
+  })
+
+  it('should return the multireddit for a capitalized multireddit path', () => {
+    const value = 'https://reddit.com/User/kjoneslol/M/sfwpornnetwork'
+    const expected: RedditUrl = {
+      kind: 'multireddit',
+      username: 'kjoneslol',
+      multireddit: 'sfwpornnetwork',
+    }
+
+    expect(parseRedditUrl(value)).toEqual(expected)
+  })
+
+  it('should return the submitted posts for a capitalized submitted path', () => {
+    const expected: RedditUrl = { kind: 'submitted', username: 'spez' }
+
+    expect(parseRedditUrl('https://reddit.com/U/spez/Submitted')).toEqual(expected)
   })
 
   it('should return undefined for a prefix without a name', () => {
@@ -397,6 +424,18 @@ describe('redditHandler', () => {
 
     it('should return sitewide sort feed with timeframe for /top?t=week', () => {
       const value = 'https://www.reddit.com/top?t=week'
+      const expected = [
+        {
+          uri: 'https://www.reddit.com/top/.rss?t=week',
+          hint: { key: 'reddit:posts', label: 'Posts' },
+        },
+      ]
+
+      expect(redditHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return lowercase sitewide sort feed with timeframe for /Top?t=week', () => {
+      const value = 'https://www.reddit.com/Top?t=week'
       const expected = [
         {
           uri: 'https://www.reddit.com/top/.rss?t=week',

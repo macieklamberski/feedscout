@@ -1,4 +1,4 @@
-import { isHostOf, parseUrl } from 'trousse'
+import { isAnyOf, isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
@@ -19,7 +19,7 @@ export const parseSourceforgeUrl = (url: string): SourceforgeUrl | undefined => 
 
   const [prefix, project] = parsedUrl.pathname.split('/').filter(Boolean)
 
-  if (!prefix || !project || !projectPrefixes.includes(prefix)) {
+  if (!prefix || !project || !isAnyOf(prefix, projectPrefixes)) {
     return
   }
 

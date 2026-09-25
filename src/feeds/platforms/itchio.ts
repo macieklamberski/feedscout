@@ -1,4 +1,4 @@
-import { isAnyOf, isHostOf, isHostOrSubdomainOf, isSubdomainOf } from 'trousse'
+import { getAnyOf, isHostOf, isHostOrSubdomainOf, isSubdomainOf } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
@@ -127,10 +127,12 @@ export const itchioHandler: PlatformHandler = {
     // /games/{sort}
     const sortMatch = pathname.match(sortRegex)
 
-    if (sortMatch?.[1] && isAnyOf(sortMatch[1], sorts)) {
+    const sort = getAnyOf(sortMatch?.[1], sorts)
+
+    if (sort) {
       return [
         {
-          uri: `https://itch.io/games/${sortMatch[1]}.xml`,
+          uri: `https://itch.io/games/${sort}.xml`,
           hint: composeHint('itchio:games'),
         },
       ]
@@ -149,10 +151,12 @@ export const itchioHandler: PlatformHandler = {
     // /{section} (tools, game-assets, soundtracks, physical-games, books, comics, misc)
     const sectionMatch = pathname.match(sectionRegex)
 
-    if (sectionMatch?.[1] && isAnyOf(sectionMatch[1], sections)) {
+    const section = getAnyOf(sectionMatch?.[1], sections)
+
+    if (section) {
       return [
         {
-          uri: `https://itch.io/${sectionMatch[1]}.xml`,
+          uri: `https://itch.io/${section}.xml`,
           hint: composeHint('itchio:section'),
         },
       ]

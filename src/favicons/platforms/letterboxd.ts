@@ -1,4 +1,4 @@
-import { isAnyOf, isHostOf, parseUrl } from 'trousse'
+import { escapeRegex, isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findDescendant, findElement, hasClass } from '../../common/utils.js'
 import { parseLetterboxdUrl } from '../../feeds/platforms/letterboxd.js'
@@ -15,11 +15,12 @@ const cropRegex = /-0-\d+-0-\d+-crop\./
 // Member pages link the member's own avatar to their profile root, while avatars of other
 // members on the same page link elsewhere.
 const getAvatarSrc = (content: string, username: string): string | undefined => {
+  const profileRegex = new RegExp(`^/${escapeRegex(username)}/?$`, 'i')
   const link = findElement(content, (element) => {
     return (
       element.name === 'a' &&
       hasClass(element, 'avatar') &&
-      isAnyOf(element.attribs.href ?? '', [`/${username}/`])
+      profileRegex.test(element.attribs.href ?? '')
     )
   })
 

@@ -113,6 +113,18 @@ describe('behanceHandler', () => {
       expect(behanceHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return featured projects feed for /galleries with trailing slash', () => {
+      const value = 'https://www.behance.net/galleries/'
+      const expected = [
+        {
+          uri: 'https://www.behance.net/feeds/projects',
+          hint: { key: 'behance:projects', label: 'Featured projects' },
+        },
+      ]
+
+      expect(behanceHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return empty array when the URL names no profile', () => {
       expect(behanceHandler.resolve('https://www.behance.net/search')).toEqual([])
     })

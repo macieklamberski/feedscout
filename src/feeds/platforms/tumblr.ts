@@ -1,4 +1,4 @@
-import { getPathSegments, getSubdomain, isHostOf } from 'trousse'
+import { getPathSegments, getSubdomain, isAnyOf, isHostOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
@@ -49,7 +49,7 @@ export const parseTumblrUrl = (url: string): TumblrUrl | undefined => {
     const [first, second, third] = getPathSegments(url)
     const blog = first === 'blog' && second === 'view' ? third : first
 
-    if (!blog || reservedPaths.includes(blog)) {
+    if (!blog || isAnyOf(blog, reservedPaths)) {
       return
     }
 
