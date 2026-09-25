@@ -8,10 +8,10 @@ import {
 import type { FaviconEnricher } from '../types.js'
 import { parseResponseJson } from '../utils.js'
 
+const platform = 'bookwyrm'
+
 // Served in place of an avatar to users who never uploaded one.
 const defaultAvatarRegex = /\/images\/default_avi\.jpg$/
-
-const platform = 'bookwyrm'
 
 const findAvatarSrc = (content: string | undefined): string | undefined => {
   const avatar = findElement(content, (element) => {

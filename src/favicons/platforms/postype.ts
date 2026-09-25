@@ -8,10 +8,10 @@ import {
 import type { FaviconEnricher } from '../types.js'
 import { getResponseText } from '../utils.js'
 
+const platform = 'postype'
+
 // A channel without an avatar carries a placeholder from d33pksfia2a94m.cloudfront.net.
 const avatarHost = 'd3mcojo3jv0dbr.cloudfront.net'
-
-const platform = 'postype'
 
 // The CDN center-crops to a square only when both sides fit inside the raw file, which is
 // often under 400 pixels on a side. Postype's own channel thumbnail asks for 200.
