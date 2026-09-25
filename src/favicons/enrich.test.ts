@@ -79,7 +79,7 @@ describe('createEnrichFaviconFn', () => {
     expect(await enrichFn(aliceRef)).toEqual(['https://cdn.example.com/example.png'])
   })
 
-  it('should reject when an enricher throws', () => {
+  it('should reject when an enricher throws', async () => {
     const error = new Error('Enrich error')
     const enricher: FaviconEnricher = () => {
       throw error
@@ -87,7 +87,7 @@ describe('createEnrichFaviconFn', () => {
     const enrichFn = createEnrichFaviconFn({ enrichers: [enricher], fetchFn })
     const throwing = () => enrichFn(aliceRef)
 
-    expect(throwing()).rejects.toBe(error)
+    await expect(throwing()).rejects.toBe(error)
   })
 
   it('should return undefined for a ref no enricher answers', async () => {

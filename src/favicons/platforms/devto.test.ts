@@ -73,22 +73,22 @@ describe('devtoEnricher', () => {
     expect(await devtoEnricher(aliceRef, context)).toEqual([])
   })
 
-  it('should reject when API returns invalid JSON', () => {
+  it('should reject when API returns invalid JSON', async () => {
     const context = createContext({
       'https://dev.to/api/users/by_username?url=alice': 'not-json',
     })
     const throwing = () => devtoEnricher(aliceRef, context)
 
-    expect(throwing()).rejects.toThrow('JSON Parse error: Unexpected identifier "not"')
+    await expect(throwing()).rejects.toThrow('JSON Parse error: Unexpected identifier "not"')
   })
 
-  it('should reject when fetch throws', () => {
+  it('should reject when fetch throws', async () => {
     const fetchFn: FetchFn = () => {
       throw new Error('Network error')
     }
     const throwing = () => devtoEnricher(aliceRef, { fetchFn })
 
-    expect(throwing()).rejects.toThrow('Network error')
+    await expect(throwing()).rejects.toThrow('Network error')
   })
 
   it('should return the organization image when the users API does not know the name', async () => {
@@ -104,14 +104,14 @@ describe('devtoEnricher', () => {
     ])
   })
 
-  it('should reject when neither API knows the name', () => {
+  it('should reject when neither API knows the name', async () => {
     const throwing = () => devtoEnricher(aliceRef, createContext({}))
     const expected = 'Unexpected status 404 from https://dev.to/api/organizations/alice'
 
-    expect(throwing()).rejects.toThrow(expected)
+    await expect(throwing()).rejects.toThrow(expected)
   })
 
-  it('should reject without trying the organizations API when the users API fails', () => {
+  it('should reject without trying the organizations API when the users API fails', async () => {
     const requestedUrls: Array<string> = []
     const fetchFn: FetchFn = (url) => {
       requestedUrls.push(url)
@@ -121,7 +121,7 @@ describe('devtoEnricher', () => {
     const throwing = () => devtoEnricher(aliceRef, { fetchFn })
     const expected = 'Unexpected status 500 from https://dev.to/api/users/by_username?url=alice'
 
-    expect(throwing()).rejects.toThrow(expected)
+    await expect(throwing()).rejects.toThrow(expected)
     expect(requestedUrls).toEqual(['https://dev.to/api/users/by_username?url=alice'])
   })
 })
