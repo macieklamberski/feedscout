@@ -4,7 +4,7 @@ import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers home, profile (guess, html), partly covers latest.
-// Handler needed for: tag.
+// Handler needed for: article, tag.
 
 export type DevtoUrl = { kind: 'profile'; owner: string } | { kind: 'tag'; tag: string }
 

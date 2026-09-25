@@ -2,8 +2,7 @@ import { parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, hasMetaContent } from '../../common/utils.js'
 
-// Discoverability: Partially discoverable without handler.
-// Generic partly covers profile.
+// Discoverability: Discoverable without handler.
 
 const profileRegex = /^\/profile\/([^/]+)/
 
