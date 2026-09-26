@@ -1453,6 +1453,22 @@ Discovers the RSS feed of an iVoox podcast.
 | `ivoox.com/{slug}_sq_f{id}_1.html` | Podcast feed (RSS) |
 | `ivoox.com/{slug}_rf_{episode}_1.html` | Podcast feed (RSS), read from the episode page's series link |
 
+### Atypon
+
+Discovers the table of contents feed of a journal hosted on Atypon Literatum: ACM, ASCE, Health Affairs, INFORMS, Mary Ann Liebert, NEJM, Sage, Science, SIAM, Taylor & Francis, University of Chicago Press and Wiley.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `{host}/toc/{code}/…` | Journal feed (RDF) |
+| `{host}/journal/{code}` | Journal feed (RDF) |
+| `{host}/loi/{code}` | Journal feed (RDF) |
+| `tandfonline.com/journals/{code}` | Journal feed (RDF) |
+| `journals.sagepub.com/home/{code}` | Journal feed (RDF) |
+| `onlinelibrary.wiley.com/journal/{code}` | Journal feed (RSS) + Most cited (RSS) |
+
+> [!NOTE]
+> Journal pages answer a server-side fetch with a Cloudflare challenge, so the feed is derived from the URL alone. Article pages under `/doi/` name no journal and are not matched.
+
 ## Basic Usage
 
 ```typescript
@@ -1505,6 +1521,7 @@ import {
   arenaHandler,
   art19Handler,
   artstationHandler,
+  atyponHandler,
   audioboomHandler,
   bearblogHandler,
   behanceHandler,

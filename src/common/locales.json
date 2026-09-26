@@ -369,6 +369,8 @@
     "peertube:instance": "Instance",
     "podomatic:show": "Show",
     "powerpress:podcast": "Podcast",
-    "ivoox:podcast": "Podcast"
+    "ivoox:podcast": "Podcast",
+    "atypon:journal": "Journal",
+    "atypon:most-cited": "Most cited"
   }
 }
