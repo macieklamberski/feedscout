@@ -20,6 +20,7 @@ const sectionRegex = /^\/([^/.]+)/
 const gameRegex = /^\/([^/]+)/
 const gamesRegex = /^\/games\/?$/i
 const devlogsRegex = /^\/devlogs\/?$/i
+const blogRegex = /^\/blog\/?$/i
 const feedSuffixRegex = /\.xml$/i
 
 const sections = [
@@ -31,7 +32,15 @@ const sections = [
   'comics',
   'misc',
 ]
-const sorts = ['newest', 'top-rated', 'top-sellers', 'on-sale', 'free']
+const sorts = [
+  'newest',
+  'top-rated',
+  'top-sellers',
+  'on-sale',
+  'free',
+  'released',
+  'in-development',
+]
 
 export const itchioHandler: PlatformHandler = {
   match: (url) => {
@@ -150,6 +159,11 @@ export const itchioHandler: PlatformHandler = {
     // /devlogs
     if (devlogsRegex.test(listingPath)) {
       return [{ uri: 'https://itch.io/devlogs.xml', hint: composeHint('itchio:devlogs') }]
+    }
+
+    // /blog
+    if (blogRegex.test(listingPath)) {
+      return [{ uri: 'https://itch.io/blog.rss', hint: composeHint('itchio:blog') }]
     }
 
     // /{section} (tools, game-assets, soundtracks, physical-games, books, comics, misc)

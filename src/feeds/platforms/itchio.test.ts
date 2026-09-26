@@ -214,6 +214,54 @@ describe('itchioHandler', () => {
       expect(itchioHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return sort feed for released path', () => {
+      const value = 'https://itch.io/games/released'
+      const expected = [
+        {
+          uri: 'https://itch.io/games/released.xml',
+          hint: { key: 'itchio:games', label: 'Games' },
+        },
+      ]
+
+      expect(itchioHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return sort feed for in-development path', () => {
+      const value = 'https://itch.io/games/in-development'
+      const expected = [
+        {
+          uri: 'https://itch.io/games/in-development.xml',
+          hint: { key: 'itchio:games', label: 'Games' },
+        },
+      ]
+
+      expect(itchioHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return only the blog feed for the blog page', () => {
+      const value = 'https://itch.io/blog'
+      const expected = [
+        {
+          uri: 'https://itch.io/blog.rss',
+          hint: { key: 'itchio:blog', label: 'Blog' },
+        },
+      ]
+
+      expect(itchioHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return only the blog feed for a capitalized blog segment', () => {
+      const value = 'https://itch.io/Blog'
+      const expected = [
+        {
+          uri: 'https://itch.io/blog.rss',
+          hint: { key: 'itchio:blog', label: 'Blog' },
+        },
+      ]
+
+      expect(itchioHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return sort feed for sort path with a capitalized games segment', () => {
       const value = 'https://itch.io/Games/newest'
       const expected = [
