@@ -207,8 +207,17 @@ export const urisComprehensive: Array<UriEntry> = [
 // a fetch, so ignore any anchor whose href carries an embedded URL.
 const wrappedFeedUrlRegex = /[?&][^=&]*=(https?:|https?%3a|aHR0c)/i
 
+// An audio or video file is never a feed, but a podcast host's tracking prefix can put a feed
+// segment in its path (`pscrb.fm/rss/p/…/episode.mp3`), and validating it downloads the file.
+const mediaFileRegex = /\.(?:aac|flac|m4a|m4v|mov|mp3|mp4|oga|ogg|ogv|opus|wav|webm)(?:[?#]|$)/i
+
 // URIs to ignore when discovering feeds from anchor elements.
-export const ignoredUris: Array<Pattern> = ['wp-json/oembed/', 'wp-json/wp/', wrappedFeedUrlRegex]
+export const ignoredUris: Array<Pattern> = [
+  'wp-json/oembed/',
+  'wp-json/wp/',
+  wrappedFeedUrlRegex,
+  mediaFileRegex,
+]
 
 // Text labels used to identify feed links in anchor elements. "subscribe" is deliberately
 // excluded: on its own it overwhelmingly marks podcast-app, YouTube, and newsletter buttons

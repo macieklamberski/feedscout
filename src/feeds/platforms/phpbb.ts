@@ -5,6 +5,7 @@ import { composeHint, getCookieNames, hasElementWithId } from '../../common/util
 // Discoverability: Discoverable without handler.
 
 const forumIdRegex = /[?&]f=(\d+)/
+const topicIdRegex = /[?&]t=(\d+)/
 const scriptSegmentRegex = /\/[^/]*\.php$/i
 const trailingSlashRegex = /\/$/
 
@@ -50,7 +51,15 @@ export const phpbbHandler: PlatformHandler = {
     const boardPath = pathname.replace(scriptSegmentRegex, '').replace(trailingSlashRegex, '')
     const boardUrl = `${origin}${boardPath}`
     const forumId = search.match(forumIdRegex)?.[1]
+    const topicId = search.match(topicIdRegex)?.[1]
     const uris: Array<DiscoverUriEntry> = []
+
+    if (topicId) {
+      uris.push({
+        uri: `${boardUrl}/feed.php?t=${topicId}`,
+        hint: composeHint('phpbb:topic'),
+      })
+    }
 
     if (forumId) {
       uris.push({
@@ -59,7 +68,14 @@ export const phpbbHandler: PlatformHandler = {
       })
     }
 
-    uris.push({ uri: `${boardUrl}/feed.php`, hint: composeHint('phpbb:site') })
+    // Each board-wide feed is an administrator toggle, so a board serves any subset of them.
+    uris.push(
+      { uri: `${boardUrl}/feed.php`, hint: composeHint('phpbb:site') },
+      { uri: `${boardUrl}/feed.php?mode=news`, hint: composeHint('phpbb:news') },
+      { uri: `${boardUrl}/feed.php?mode=topics`, hint: composeHint('phpbb:new-topics') },
+      { uri: `${boardUrl}/feed.php?mode=topics_active`, hint: composeHint('phpbb:active-topics') },
+      { uri: `${boardUrl}/feed.php?mode=forums`, hint: composeHint('phpbb:forums') },
+    )
 
     return uris
   },

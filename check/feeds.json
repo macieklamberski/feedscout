@@ -323,7 +323,15 @@
     "https://framatube.org/feeds/videos.xml?videoChannelName=joinpeertube",
     "https://framatube.org/feeds/videos.xml"
   ],
-  "phpbb": ["https://forums.gentoo.org/feed.php"],
+  "phpbb": [
+    "https://forums.gentoo.org/feed.php",
+    "https://forum.openmw.org/feed.php?f=2",
+    "https://forums.gentoo.org/feed.php?t=410444",
+    "https://forum.openoffice.org/en/forum/feed.php?mode=news",
+    "https://forums.gentoo.org/feed.php?mode=topics",
+    "https://forum.openoffice.org/en/forum/feed.php?mode=topics_active",
+    "https://forum.openoffice.org/en/forum/feed.php?mode=forums"
+  ],
   "pika": [
     "https://pika.pika.page/posts_feed",
     "https://pika.pika.page/posts_feed.rss",
