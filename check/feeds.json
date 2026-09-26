@@ -62,6 +62,11 @@
     "https://cwiki.apache.org/confluence/plugins/servlet/streams?key=KAFKA",
     "https://cwiki.apache.org/confluence/plugins/servlet/streams"
   ],
+  "cratesIo": [
+    "https://static.crates.io/rss/crates/serde.xml",
+    "https://static.crates.io/rss/crates.xml",
+    "https://static.crates.io/rss/updates.xml"
+  ],
   "csdn": ["https://rss.csdn.net/csdnnews/rss/map", "https://blog.csdn.net/csdnnews/rss/list"],
   "dailymotion": [
     "https://www.dailymotion.com/rss/Euronews-en",

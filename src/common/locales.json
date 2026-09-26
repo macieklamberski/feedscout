@@ -378,6 +378,9 @@
     "ivoox:podcast": "Podcast",
     "atypon:journal": "Journal",
     "atypon:most-cited": "Most cited",
-    "soundon:podcast": "Podcast"
+    "soundon:podcast": "Podcast",
+    "crates-io:releases": "Releases",
+    "crates-io:new-crates": "New crates",
+    "crates-io:updates": "Recent updates"
   }
 }

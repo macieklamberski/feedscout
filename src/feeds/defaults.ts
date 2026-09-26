@@ -35,6 +35,7 @@ import { buzzsproutHandler } from './platforms/buzzsprout.js'
 import { captivateHandler } from './platforms/captivate.js'
 import { cnblogsHandler } from './platforms/cnblogs.js'
 import { confluenceHandler } from './platforms/confluence.js'
+import { cratesIoHandler } from './platforms/cratesIo.js'
 import { csdnHandler } from './platforms/csdn.js'
 import { dailymotionHandler } from './platforms/dailymotion.js'
 import { deviantartHandler } from './platforms/deviantart.js'
@@ -321,6 +322,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     captivateHandler,
     cnblogsHandler,
     confluenceHandler,
+    cratesIoHandler,
     csdnHandler,
     dailymotionHandler,
     deviantartHandler,
