@@ -1,6 +1,6 @@
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, getCookieNames, hasElementWithId } from '../../common/utils.js'
+import { composeHint, findElement, getCookieNames, hasElementWithId } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -45,13 +45,18 @@ export const phpbbHandler: PlatformHandler = {
     return false
   },
 
-  resolve: (url) => {
+  resolve: (url, content) => {
     const { origin, pathname, search } = new URL(url)
     // A board is routinely mounted under a sub-path such as `/community`.
     const boardPath = pathname.replace(scriptSegmentRegex, '').replace(trailingSlashRegex, '')
     const boardUrl = `${origin}${boardPath}`
     const forumId = search.match(forumIdRegex)?.[1]
-    const topicId = search.match(topicIdRegex)?.[1]
+    // A post link, `viewtopic.php?p={id}`, names no topic, and the page's canonical link does.
+    const canonicalLink = findElement(content, (element) => {
+      return element.name === 'link' && element.attribs.rel === 'canonical'
+    })
+    const topicId =
+      search.match(topicIdRegex)?.[1] ?? canonicalLink?.attribs.href?.match(topicIdRegex)?.[1]
     const uris: Array<DiscoverUriEntry> = []
 
     if (topicId) {
