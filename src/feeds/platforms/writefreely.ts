@@ -13,19 +13,20 @@ import {
 // Generic covers singleUserPost, tag (guess, html), partly covers blog, post.
 
 const tagPathRegex = /\/tag:([^/]+)/i
-const tagSegmentRegex = /^tag:/i
+const rootRouteRegex = /^\/(?:(?:tag|lang):|page\/\d+(?:\/|$))/i
 const blogPathRegex = /^\/(?:[^/]+\/)?$/
 const excludedPaths = ['read', 'about', 'login', 'signup', 'me', 'api', 'pad', 'privacy']
 
 const getUrlBlogPath = (url: string): string | undefined => {
-  const [first] = new URL(url).pathname.split('/').filter(Boolean)
+  const { pathname } = new URL(url)
+  const [first] = pathname.split('/').filter(Boolean)
 
   if (!first || isAnyOf(first, excludedPaths)) {
     return
   }
 
-  // A single-user instance serves its tag pages at the root, as /tag:{tag}.
-  if (tagSegmentRegex.test(first)) {
+  // A single-user instance serves its tag, language and page routes at the root.
+  if (rootRouteRegex.test(pathname)) {
     return '/'
   }
 

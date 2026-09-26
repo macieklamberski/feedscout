@@ -1145,6 +1145,8 @@ Discovers the feeds of a WriteFreely blog. Detected by the `WriteFreely` generat
 | `{instance}/{blog}` | Blog feed + instance reader feed (RSS) |
 | `{instance}/{blog}/tag:{tag}` | Tag feed + blog feed + instance reader feed (RSS) |
 | `{instance}/{post}` on a single-user instance | Blog feed (RSS) |
+| `{instance}/page/{n}` on a single-user instance | Blog feed (RSS) |
+| `{instance}/lang:{code}` on a single-user instance | Blog feed (RSS) |
 | `{instance}/tag:{tag}` on a single-user instance | Tag feed + blog feed (RSS) |
 
 > [!NOTE]
