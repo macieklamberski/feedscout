@@ -928,6 +928,18 @@ Discovers RSS 2.0 and RDF feeds for Seesaa Blog.
 |-------------|-----------------|
 | `*.seesaa.net` | Posts feed (RSS 2.0 + RDF) |
 
+### Spotify for Creators
+
+Discovers RSS feeds for Spotify for Creators (formerly Anchor) podcasts by extracting the station ID from the page content.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `creators.spotify.com/pod/profile/{name}` | Podcast feed* |
+| `creators.spotify.com/pod/show/{name}` | Podcast feed* |
+| `creators.spotify.com/pod/profile/{name}/episodes/{slug}` | Podcast feed* |
+
+\* *Requires HTML content to extract the station ID.*
+
 ### Spreaker
 
 Discovers RSS feeds for Spreaker-hosted podcasts.
@@ -1594,6 +1606,7 @@ import {
   soundcloudHandler,
   sourceforgeHandler,
   sourcehutHandler,
+  spotifyForCreatorsHandler,
   spreakerHandler,
   squarespaceHandler,
   stackExchangeHandler,

@@ -397,6 +397,7 @@
     "https://git.sr.ht/~sircmpwn/hare/log/rss.xml",
     "https://git.sr.ht/~sircmpwn/hare/refs/rss.xml"
   ],
+  "spotifyForCreators": ["https://anchor.fm/s/133d445c/podcast/rss"],
   "spreaker": ["https://www.spreaker.com/show/1433865/episodes/feed"],
   "squarespace": ["https://www.squarespace.com/blog?format=rss"],
   "stackExchange": [
