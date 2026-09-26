@@ -1,5 +1,4 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverUriEntry } from '../../common/types.js'
 import { bitchuteHandler } from './bitchute.js'
 
 const channelHtml = `
@@ -30,7 +29,7 @@ describe('bitchuteHandler', () => {
         'https://www.bitchute.com/channel/example/',
         channelHtml,
       )
-      const expected: Array<DiscoverUriEntry> = [
+      const expected = [
         {
           uri: 'https://static-3.bitchute.com/live/channel_images/aBcDeFgH1234/xYz987_medium.jpg',
         },

@@ -1,5 +1,4 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverUriEntry } from '../../common/types.js'
 import { discourseHandler, isDiscourseHeaders, isDiscourseHtml } from './discourse.js'
 
 const discourseHtml =
@@ -48,24 +47,22 @@ describe('discourseHandler', () => {
 
   describe('match', () => {
     it('should return true for any URL with Discourse content', () => {
-      expect(discourseHandler.match('https://users.rust-lang.org/', discourseHtml)).toBe(true)
+      expect(discourseHandler.match('https://forum.example.com/', discourseHtml)).toBe(true)
       expect(
-        discourseHandler.match('https://users.rust-lang.org/u/steveklabnik', discourseHtml),
+        discourseHandler.match('https://forum.example.com/u/steveklabnik', discourseHtml),
       ).toBe(true)
     })
 
     it('should return true for any URL with Discourse headers', () => {
-      expect(discourseHandler.match('https://users.rust-lang.org/', '', discourseHeaders)).toBe(
-        true,
-      )
+      expect(discourseHandler.match('https://forum.example.com/', '', discourseHeaders)).toBe(true)
     })
 
     it('should return false without content or headers', () => {
-      expect(discourseHandler.match('https://users.rust-lang.org/')).toBe(false)
+      expect(discourseHandler.match('https://forum.example.com/')).toBe(false)
     })
 
     it('should return false for non-Discourse content', () => {
-      expect(discourseHandler.match('https://users.rust-lang.org/', otherHtml)).toBe(false)
+      expect(discourseHandler.match('https://forum.example.com/', otherHtml)).toBe(false)
     })
 
     it('should return false for invalid URL', () => {
@@ -75,10 +72,10 @@ describe('discourseHandler', () => {
 
   describe('resolve', () => {
     it('should return the activity feed for a capitalized u segment', () => {
-      const value = 'https://users.rust-lang.org/U/steveklabnik'
-      const expected: Array<DiscoverUriEntry> = [
+      const value = 'https://forum.example.com/U/steveklabnik'
+      const expected = [
         {
-          uri: 'https://users.rust-lang.org/u/steveklabnik/activity.rss',
+          uri: 'https://forum.example.com/u/steveklabnik/activity.rss',
           hint: { key: 'discourse:activity', label: 'Activity' },
         },
       ]
@@ -87,10 +84,10 @@ describe('discourseHandler', () => {
     })
 
     it('should return user activity feed for /u/{user} path', () => {
-      const value = 'https://users.rust-lang.org/u/steveklabnik'
+      const value = 'https://forum.example.com/u/steveklabnik'
       const expected = [
         {
-          uri: 'https://users.rust-lang.org/u/steveklabnik/activity.rss',
+          uri: 'https://forum.example.com/u/steveklabnik/activity.rss',
           hint: { key: 'discourse:activity', label: 'Activity' },
         },
       ]
@@ -99,10 +96,10 @@ describe('discourseHandler', () => {
     })
 
     it('should return category feed for /c/{slug} path', () => {
-      const value = 'https://users.rust-lang.org/c/help'
+      const value = 'https://forum.example.com/c/help'
       const expected = [
         {
-          uri: 'https://users.rust-lang.org/c/help.rss',
+          uri: 'https://forum.example.com/c/help.rss',
           hint: { key: 'discourse:category', label: 'Category' },
         },
       ]
@@ -111,10 +108,10 @@ describe('discourseHandler', () => {
     })
 
     it('should return category feed for nested /c/{slug}/{slug}/{id} path', () => {
-      const value = 'https://meta.discourse.org/c/contribute/feature/2'
+      const value = 'https://forum.example.org/c/contribute/feature/2'
       const expected = [
         {
-          uri: 'https://meta.discourse.org/c/contribute/feature/2.rss',
+          uri: 'https://forum.example.org/c/contribute/feature/2.rss',
           hint: { key: 'discourse:category', label: 'Category' },
         },
       ]
@@ -123,10 +120,10 @@ describe('discourseHandler', () => {
     })
 
     it('should return category feed for a category list filter path', () => {
-      const value = 'https://meta.discourse.org/c/support/6/l/latest'
+      const value = 'https://forum.example.org/c/support/6/l/latest'
       const expected = [
         {
-          uri: 'https://meta.discourse.org/c/support/6.rss',
+          uri: 'https://forum.example.org/c/support/6.rss',
           hint: { key: 'discourse:category', label: 'Category' },
         },
       ]
@@ -135,10 +132,10 @@ describe('discourseHandler', () => {
     })
 
     it('should return category feed for a capitalized category list filter path', () => {
-      const value = 'https://meta.discourse.org/c/support/6/L/Latest'
+      const value = 'https://forum.example.org/c/support/6/L/Latest'
       const expected = [
         {
-          uri: 'https://meta.discourse.org/c/support/6.rss',
+          uri: 'https://forum.example.org/c/support/6.rss',
           hint: { key: 'discourse:category', label: 'Category' },
         },
       ]
@@ -147,10 +144,10 @@ describe('discourseHandler', () => {
     })
 
     it('should return category feed for a category without subcategories path', () => {
-      const value = 'https://meta.discourse.org/c/support/6/none'
+      const value = 'https://forum.example.org/c/support/6/none'
       const expected = [
         {
-          uri: 'https://meta.discourse.org/c/support/6.rss',
+          uri: 'https://forum.example.org/c/support/6.rss',
           hint: { key: 'discourse:category', label: 'Category' },
         },
       ]
@@ -159,10 +156,10 @@ describe('discourseHandler', () => {
     })
 
     it('should return category feed for a category with all subcategories path', () => {
-      const value = 'https://meta.discourse.org/c/support/6/all'
+      const value = 'https://forum.example.org/c/support/6/all'
       const expected = [
         {
-          uri: 'https://meta.discourse.org/c/support/6.rss',
+          uri: 'https://forum.example.org/c/support/6.rss',
           hint: { key: 'discourse:category', label: 'Category' },
         },
       ]
@@ -171,10 +168,10 @@ describe('discourseHandler', () => {
     })
 
     it('should return topic feed for /t/{slug}/{id} path', () => {
-      const value = 'https://users.rust-lang.org/t/welcome-to-the-rust-users-forum/2'
+      const value = 'https://forum.example.com/t/welcome-to-the-rust-users-forum/2'
       const expected = [
         {
-          uri: 'https://users.rust-lang.org/t/welcome-to-the-rust-users-forum/2.rss',
+          uri: 'https://forum.example.com/t/welcome-to-the-rust-users-forum/2.rss',
           hint: { key: 'discourse:topic', label: 'Topic' },
         },
       ]
@@ -183,10 +180,10 @@ describe('discourseHandler', () => {
     })
 
     it('should return topic feed for /t/{slug}/{id} path with a capitalized t segment', () => {
-      const value = 'https://users.rust-lang.org/T/welcome-to-the-rust-users-forum/2'
+      const value = 'https://forum.example.com/T/welcome-to-the-rust-users-forum/2'
       const expected = [
         {
-          uri: 'https://users.rust-lang.org/t/welcome-to-the-rust-users-forum/2.rss',
+          uri: 'https://forum.example.com/t/welcome-to-the-rust-users-forum/2.rss',
           hint: { key: 'discourse:topic', label: 'Topic' },
         },
       ]
@@ -195,14 +192,14 @@ describe('discourseHandler', () => {
     })
 
     it('should return latest topics + latest posts feeds for root path', () => {
-      const value = 'https://users.rust-lang.org/'
+      const value = 'https://forum.example.com/'
       const expected = [
         {
-          uri: 'https://users.rust-lang.org/latest.rss',
+          uri: 'https://forum.example.com/latest.rss',
           hint: { key: 'discourse:latest', label: 'Latest' },
         },
         {
-          uri: 'https://users.rust-lang.org/posts.rss',
+          uri: 'https://forum.example.com/posts.rss',
           hint: { key: 'discourse:posts', label: 'Latest posts' },
         },
       ]
@@ -211,14 +208,14 @@ describe('discourseHandler', () => {
     })
 
     it('should return latest + posts feeds for unknown paths', () => {
-      const value = 'https://users.rust-lang.org/about'
+      const value = 'https://forum.example.com/about'
       const expected = [
         {
-          uri: 'https://users.rust-lang.org/latest.rss',
+          uri: 'https://forum.example.com/latest.rss',
           hint: { key: 'discourse:latest', label: 'Latest' },
         },
         {
-          uri: 'https://users.rust-lang.org/posts.rss',
+          uri: 'https://forum.example.com/posts.rss',
           hint: { key: 'discourse:posts', label: 'Latest posts' },
         },
       ]
@@ -227,10 +224,10 @@ describe('discourseHandler', () => {
     })
 
     it('should return top feed for /top path', () => {
-      const value = 'https://users.rust-lang.org/top'
+      const value = 'https://forum.example.com/top'
       const expected = [
         {
-          uri: 'https://users.rust-lang.org/top.rss',
+          uri: 'https://forum.example.com/top.rss',
           hint: { key: 'discourse:top', label: 'Top' },
         },
       ]
@@ -239,10 +236,10 @@ describe('discourseHandler', () => {
     })
 
     it('should return top feed for /top path with a capitalized top segment', () => {
-      const value = 'https://users.rust-lang.org/Top'
+      const value = 'https://forum.example.com/Top'
       const expected = [
         {
-          uri: 'https://users.rust-lang.org/top.rss',
+          uri: 'https://forum.example.com/top.rss',
           hint: { key: 'discourse:top', label: 'Top' },
         },
       ]
@@ -251,24 +248,15 @@ describe('discourseHandler', () => {
     })
 
     const topPeriodValues: Array<[string, string]> = [
-      ['https://users.rust-lang.org/top/daily', 'https://users.rust-lang.org/top.rss?period=daily'],
+      ['https://forum.example.com/top/daily', 'https://forum.example.com/top.rss?period=daily'],
+      ['https://forum.example.com/top/weekly', 'https://forum.example.com/top.rss?period=weekly'],
+      ['https://forum.example.com/top/monthly', 'https://forum.example.com/top.rss?period=monthly'],
       [
-        'https://users.rust-lang.org/top/weekly',
-        'https://users.rust-lang.org/top.rss?period=weekly',
+        'https://forum.example.com/top/quarterly',
+        'https://forum.example.com/top.rss?period=quarterly',
       ],
-      [
-        'https://users.rust-lang.org/top/monthly',
-        'https://users.rust-lang.org/top.rss?period=monthly',
-      ],
-      [
-        'https://users.rust-lang.org/top/quarterly',
-        'https://users.rust-lang.org/top.rss?period=quarterly',
-      ],
-      [
-        'https://users.rust-lang.org/top/yearly',
-        'https://users.rust-lang.org/top.rss?period=yearly',
-      ],
-      ['https://users.rust-lang.org/top/all', 'https://users.rust-lang.org/top.rss?period=all'],
+      ['https://forum.example.com/top/yearly', 'https://forum.example.com/top.rss?period=yearly'],
+      ['https://forum.example.com/top/all', 'https://forum.example.com/top.rss?period=all'],
     ]
 
     it.each(topPeriodValues)('should pass through period for %s', (value, uri) => {
@@ -278,10 +266,10 @@ describe('discourseHandler', () => {
     })
 
     it('should pass through period via ?period= query param', () => {
-      const value = 'https://users.rust-lang.org/top?period=weekly'
+      const value = 'https://forum.example.com/top?period=weekly'
       const expected = [
         {
-          uri: 'https://users.rust-lang.org/top.rss?period=weekly',
+          uri: 'https://forum.example.com/top.rss?period=weekly',
           hint: { key: 'discourse:top', label: 'Top' },
         },
       ]
@@ -290,10 +278,10 @@ describe('discourseHandler', () => {
     })
 
     it('should prefer path period over ?period= query param', () => {
-      const value = 'https://users.rust-lang.org/top/daily?period=weekly'
+      const value = 'https://forum.example.com/top/daily?period=weekly'
       const expected = [
         {
-          uri: 'https://users.rust-lang.org/top.rss?period=daily',
+          uri: 'https://forum.example.com/top.rss?period=daily',
           hint: { key: 'discourse:top', label: 'Top' },
         },
       ]
@@ -302,10 +290,10 @@ describe('discourseHandler', () => {
     })
 
     it('should return lowercase period for a capitalized path period', () => {
-      const value = 'https://users.rust-lang.org/top/Daily'
+      const value = 'https://forum.example.com/top/Daily'
       const expected = [
         {
-          uri: 'https://users.rust-lang.org/top.rss?period=daily',
+          uri: 'https://forum.example.com/top.rss?period=daily',
           hint: { key: 'discourse:top', label: 'Top' },
         },
       ]
@@ -314,10 +302,10 @@ describe('discourseHandler', () => {
     })
 
     it('should fall back to ?period= query param for an unknown path period', () => {
-      const value = 'https://users.rust-lang.org/top/invalid?period=weekly'
+      const value = 'https://forum.example.com/top/invalid?period=weekly'
       const expected = [
         {
-          uri: 'https://users.rust-lang.org/top.rss?period=weekly',
+          uri: 'https://forum.example.com/top.rss?period=weekly',
           hint: { key: 'discourse:top', label: 'Top' },
         },
       ]
@@ -326,10 +314,10 @@ describe('discourseHandler', () => {
     })
 
     it('should drop unknown period values silently', () => {
-      const value = 'https://users.rust-lang.org/top/invalid'
+      const value = 'https://forum.example.com/top/invalid'
       const expected = [
         {
-          uri: 'https://users.rust-lang.org/top.rss',
+          uri: 'https://forum.example.com/top.rss',
           hint: { key: 'discourse:top', label: 'Top' },
         },
       ]

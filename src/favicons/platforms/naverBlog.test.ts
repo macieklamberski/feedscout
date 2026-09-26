@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverRef, DiscoverUriEntry, FetchFn } from '../../common/types.js'
+import type { DiscoverRef, FetchFn } from '../../common/types.js'
 import type { FaviconEnricherContext } from '../types.js'
 import { naverBlogEnricher, naverBlogHandler } from './naverBlog.js'
 
@@ -78,14 +78,14 @@ describe('naverBlogHandler', () => {
     describe('happy paths', () => {
       it('should return profile image from mobile page content', () => {
         const result = naverBlogHandler.resolve('https://m.blog.naver.com/alice', mobilePage)
-        const expected: Array<DiscoverUriEntry> = [{ uri: profileImage }]
+        const expected = [{ uri: profileImage }]
 
         expect(result).toEqual(expected)
       })
 
       it('should return ref for desktop blog URLs', () => {
         const result = naverBlogHandler.resolve('https://blog.naver.com/alice', desktopPage)
-        const expected: Array<DiscoverRef> = [ref]
+        const expected = [ref]
 
         expect(result).toEqual(expected)
       })
@@ -93,7 +93,7 @@ describe('naverBlogHandler', () => {
       it('should return ref for mobile post URLs', () => {
         const value = 'https://m.blog.naver.com/alice/223000000000'
         const result = naverBlogHandler.resolve(value, mobilePage)
-        const expected: Array<DiscoverRef> = [{ platform: 'naverBlog', id: 'alice', url: value }]
+        const expected = [{ platform: 'naverBlog', id: 'alice', url: value }]
 
         expect(result).toEqual(expected)
       })

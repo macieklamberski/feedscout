@@ -4,7 +4,7 @@ import { pagecordHandler } from './pagecord.js'
 describe('pagecordHandler', () => {
   describe('match', () => {
     const values: Array<[boolean, string]> = [
-      [true, 'https://unfiltered.pagecord.com'],
+      [true, 'https://alice.pagecord.com'],
       [true, 'https://blog.example.pagecord.com'],
       [false, 'https://pagecord.com'],
       [false, 'https://www.pagecord.com'],
@@ -22,10 +22,10 @@ describe('pagecordHandler', () => {
 
   describe('resolve', () => {
     it('should return feed URL for blog', () => {
-      const value = 'https://unfiltered.pagecord.com'
+      const value = 'https://alice.pagecord.com'
       const expected = [
         {
-          uri: 'https://unfiltered.pagecord.com/feed.xml',
+          uri: 'https://alice.pagecord.com/feed.xml',
           hint: { key: 'pagecord:blog', label: 'Blog' },
         },
       ]
@@ -34,10 +34,10 @@ describe('pagecordHandler', () => {
     })
 
     it('should return feed URL regardless of path', () => {
-      const value = 'https://unfiltered.pagecord.com/some-post-slug'
+      const value = 'https://alice.pagecord.com/some-post-slug'
       const expected = [
         {
-          uri: 'https://unfiltered.pagecord.com/feed.xml',
+          uri: 'https://alice.pagecord.com/feed.xml',
           hint: { key: 'pagecord:blog', label: 'Blog' },
         },
       ]

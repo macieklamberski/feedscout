@@ -5,7 +5,7 @@ import { firesideHandler } from './fireside.js'
 describe('firesideHandler', () => {
   describe('match', () => {
     const values: Array<[boolean, string]> = [
-      [true, 'https://office.fireside.fm'],
+      [true, 'https://alice.fireside.fm'],
       [true, 'https://blog.example.fireside.fm'],
       [false, 'https://www.fireside.fm'],
       [false, 'https://fireside.fm'],
@@ -23,14 +23,14 @@ describe('firesideHandler', () => {
 
   describe('resolve', () => {
     it('should return RSS and JSON feeds for podcast', () => {
-      const value = 'https://office.fireside.fm'
+      const value = 'https://alice.fireside.fm'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://feeds.fireside.fm/office/rss',
+          uri: 'https://feeds.fireside.fm/alice/rss',
           hint: { key: 'fireside:podcast', label: 'Podcast', format: 'rss' },
         },
         {
-          uri: 'https://office.fireside.fm/json',
+          uri: 'https://alice.fireside.fm/json',
           hint: { key: 'fireside:podcast', label: 'Podcast', format: 'json' },
         },
       ]
@@ -39,14 +39,14 @@ describe('firesideHandler', () => {
     })
 
     it('should return feed URLs regardless of path', () => {
-      const value = 'https://office.fireside.fm/episodes/some-episode'
+      const value = 'https://alice.fireside.fm/episodes/some-episode'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://feeds.fireside.fm/office/rss',
+          uri: 'https://feeds.fireside.fm/alice/rss',
           hint: { key: 'fireside:podcast', label: 'Podcast', format: 'rss' },
         },
         {
-          uri: 'https://office.fireside.fm/json',
+          uri: 'https://alice.fireside.fm/json',
           hint: { key: 'fireside:podcast', label: 'Podcast', format: 'json' },
         },
       ]

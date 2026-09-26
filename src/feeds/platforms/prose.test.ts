@@ -4,7 +4,7 @@ import { proseHandler } from './prose.js'
 describe('proseHandler', () => {
   describe('match', () => {
     const values: Array<[boolean, string]> = [
-      [true, 'https://hey.prose.sh'],
+      [true, 'https://alice.prose.sh'],
       [true, 'https://blog.example.prose.sh'],
       [true, 'https://prose.sh'],
       [true, 'https://www.prose.sh'],
@@ -22,10 +22,10 @@ describe('proseHandler', () => {
 
   describe('resolve', () => {
     it('should return feed URL for blog', () => {
-      const value = 'https://hey.prose.sh'
+      const value = 'https://alice.prose.sh'
       const expected = [
         {
-          uri: 'https://hey.prose.sh/rss',
+          uri: 'https://alice.prose.sh/rss',
           hint: { key: 'prose:blog', label: 'Blog' },
         },
       ]
@@ -34,10 +34,10 @@ describe('proseHandler', () => {
     })
 
     it('should return feed URL regardless of path', () => {
-      const value = 'https://hey.prose.sh/some-article-slug'
+      const value = 'https://alice.prose.sh/some-article-slug'
       const expected = [
         {
-          uri: 'https://hey.prose.sh/rss',
+          uri: 'https://alice.prose.sh/rss',
           hint: { key: 'prose:blog', label: 'Blog' },
         },
       ]
@@ -46,10 +46,10 @@ describe('proseHandler', () => {
     })
 
     it('should return tag-filtered feed when tag query is set', () => {
-      const value = 'https://hey.prose.sh/?tag=announcement'
+      const value = 'https://alice.prose.sh/?tag=announcement'
       const expected = [
         {
-          uri: 'https://hey.prose.sh/rss?tag=announcement',
+          uri: 'https://alice.prose.sh/rss?tag=announcement',
           hint: { key: 'prose:tag', label: 'Tag' },
         },
       ]

@@ -4,7 +4,7 @@ import { tistoryHandler } from './tistory.js'
 describe('tistoryHandler', () => {
   describe('match', () => {
     const values: Array<[boolean, string]> = [
-      [true, 'https://headstartup.tistory.com'],
+      [true, 'https://alice.tistory.com'],
       [true, 'https://blog.example.tistory.com'],
       [false, 'https://tistory.com'],
       [false, 'https://example.com'],
@@ -21,10 +21,10 @@ describe('tistoryHandler', () => {
 
   describe('resolve', () => {
     it('should return feed URL for blog', () => {
-      const value = 'https://headstartup.tistory.com'
+      const value = 'https://alice.tistory.com'
       const expected = [
         {
-          uri: 'https://headstartup.tistory.com/rss',
+          uri: 'https://alice.tistory.com/rss',
           hint: { key: 'tistory:blog', label: 'Blog' },
         },
       ]
@@ -33,10 +33,10 @@ describe('tistoryHandler', () => {
     })
 
     it('should return feed URL regardless of path', () => {
-      const value = 'https://headstartup.tistory.com/123'
+      const value = 'https://alice.tistory.com/123'
       const expected = [
         {
-          uri: 'https://headstartup.tistory.com/rss',
+          uri: 'https://alice.tistory.com/rss',
           hint: { key: 'tistory:blog', label: 'Blog' },
         },
       ]

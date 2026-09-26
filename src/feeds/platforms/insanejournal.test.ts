@@ -5,10 +5,10 @@ import { insanejournalHandler } from './insanejournal.js'
 describe('insanejournalHandler', () => {
   describe('match', () => {
     const values: Array<[boolean, string]> = [
-      [true, 'https://random.insanejournal.com'],
+      [true, 'https://alice.insanejournal.com'],
       [true, 'https://anything.insanejournal.com/post'],
-      [true, 'https://www.insanejournal.com/users/news'],
-      [true, 'https://www.insanejournal.com/~news'],
+      [true, 'https://www.insanejournal.com/users/bob'],
+      [true, 'https://www.insanejournal.com/~bob'],
       [true, 'https://www.insanejournal.com/asylum/squeaky'],
       [true, 'https://www.insanejournal.com/community/squeaky'],
       [true, 'https://asylums.insanejournal.com/squeaky'],
@@ -31,18 +31,18 @@ describe('insanejournalHandler', () => {
 
   describe('resolve', () => {
     it('should return RSS, Atom, and userpics feeds for journal subdomain', () => {
-      const value = 'https://random.insanejournal.com'
+      const value = 'https://alice.insanejournal.com'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://random.insanejournal.com/data/rss',
+          uri: 'https://alice.insanejournal.com/data/rss',
           hint: { key: 'insanejournal:posts', label: 'Posts', format: 'rss' },
         },
         {
-          uri: 'https://random.insanejournal.com/data/atom',
+          uri: 'https://alice.insanejournal.com/data/atom',
           hint: { key: 'insanejournal:posts', label: 'Posts', format: 'atom' },
         },
         {
-          uri: 'https://random.insanejournal.com/data/userpics',
+          uri: 'https://alice.insanejournal.com/data/userpics',
           hint: { key: 'insanejournal:userpics', label: 'Userpics', format: 'atom' },
         },
       ]
@@ -51,18 +51,18 @@ describe('insanejournalHandler', () => {
     })
 
     it('should return feeds regardless of path', () => {
-      const value = 'https://random.insanejournal.com/123456.html'
+      const value = 'https://alice.insanejournal.com/123456.html'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://random.insanejournal.com/data/rss',
+          uri: 'https://alice.insanejournal.com/data/rss',
           hint: { key: 'insanejournal:posts', label: 'Posts', format: 'rss' },
         },
         {
-          uri: 'https://random.insanejournal.com/data/atom',
+          uri: 'https://alice.insanejournal.com/data/atom',
           hint: { key: 'insanejournal:posts', label: 'Posts', format: 'atom' },
         },
         {
-          uri: 'https://random.insanejournal.com/data/userpics',
+          uri: 'https://alice.insanejournal.com/data/userpics',
           hint: { key: 'insanejournal:userpics', label: 'Userpics', format: 'atom' },
         },
       ]
@@ -71,26 +71,26 @@ describe('insanejournalHandler', () => {
     })
 
     it('should add tag-filtered feeds for /tag/ paths on journal', () => {
-      const value = 'https://random.insanejournal.com/tag/photography'
+      const value = 'https://alice.insanejournal.com/tag/photography'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://random.insanejournal.com/data/rss?tag=photography',
+          uri: 'https://alice.insanejournal.com/data/rss?tag=photography',
           hint: { key: 'insanejournal:posts-tag', label: 'Tag', format: 'rss' },
         },
         {
-          uri: 'https://random.insanejournal.com/data/atom?tag=photography',
+          uri: 'https://alice.insanejournal.com/data/atom?tag=photography',
           hint: { key: 'insanejournal:posts-tag', label: 'Tag', format: 'atom' },
         },
         {
-          uri: 'https://random.insanejournal.com/data/rss',
+          uri: 'https://alice.insanejournal.com/data/rss',
           hint: { key: 'insanejournal:posts', label: 'Posts', format: 'rss' },
         },
         {
-          uri: 'https://random.insanejournal.com/data/atom',
+          uri: 'https://alice.insanejournal.com/data/atom',
           hint: { key: 'insanejournal:posts', label: 'Posts', format: 'atom' },
         },
         {
-          uri: 'https://random.insanejournal.com/data/userpics',
+          uri: 'https://alice.insanejournal.com/data/userpics',
           hint: { key: 'insanejournal:userpics', label: 'Userpics', format: 'atom' },
         },
       ]
@@ -99,26 +99,26 @@ describe('insanejournalHandler', () => {
     })
 
     it('should keep a percent-encoded tag encoded once', () => {
-      const value = 'https://random.insanejournal.com/tag/caf%C3%A9'
+      const value = 'https://alice.insanejournal.com/tag/caf%C3%A9'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://random.insanejournal.com/data/rss?tag=caf%C3%A9',
+          uri: 'https://alice.insanejournal.com/data/rss?tag=caf%C3%A9',
           hint: { key: 'insanejournal:posts-tag', label: 'Tag', format: 'rss' },
         },
         {
-          uri: 'https://random.insanejournal.com/data/atom?tag=caf%C3%A9',
+          uri: 'https://alice.insanejournal.com/data/atom?tag=caf%C3%A9',
           hint: { key: 'insanejournal:posts-tag', label: 'Tag', format: 'atom' },
         },
         {
-          uri: 'https://random.insanejournal.com/data/rss',
+          uri: 'https://alice.insanejournal.com/data/rss',
           hint: { key: 'insanejournal:posts', label: 'Posts', format: 'rss' },
         },
         {
-          uri: 'https://random.insanejournal.com/data/atom',
+          uri: 'https://alice.insanejournal.com/data/atom',
           hint: { key: 'insanejournal:posts', label: 'Posts', format: 'atom' },
         },
         {
-          uri: 'https://random.insanejournal.com/data/userpics',
+          uri: 'https://alice.insanejournal.com/data/userpics',
           hint: { key: 'insanejournal:userpics', label: 'Userpics', format: 'atom' },
         },
       ]
@@ -127,18 +127,18 @@ describe('insanejournalHandler', () => {
     })
 
     it('should canonicalise www.insanejournal.com/users/{user} to subdomain', () => {
-      const value = 'https://www.insanejournal.com/users/news'
+      const value = 'https://www.insanejournal.com/users/bob'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://news.insanejournal.com/data/rss',
+          uri: 'https://bob.insanejournal.com/data/rss',
           hint: { key: 'insanejournal:posts', label: 'Posts', format: 'rss' },
         },
         {
-          uri: 'https://news.insanejournal.com/data/atom',
+          uri: 'https://bob.insanejournal.com/data/atom',
           hint: { key: 'insanejournal:posts', label: 'Posts', format: 'atom' },
         },
         {
-          uri: 'https://news.insanejournal.com/data/userpics',
+          uri: 'https://bob.insanejournal.com/data/userpics',
           hint: { key: 'insanejournal:userpics', label: 'Userpics', format: 'atom' },
         },
       ]
@@ -147,18 +147,18 @@ describe('insanejournalHandler', () => {
     })
 
     it('should canonicalise www.insanejournal.com/users/{user} to subdomain with a capitalized users segment', () => {
-      const value = 'https://www.insanejournal.com/Users/news'
+      const value = 'https://www.insanejournal.com/Users/bob'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://news.insanejournal.com/data/rss',
+          uri: 'https://bob.insanejournal.com/data/rss',
           hint: { key: 'insanejournal:posts', label: 'Posts', format: 'rss' },
         },
         {
-          uri: 'https://news.insanejournal.com/data/atom',
+          uri: 'https://bob.insanejournal.com/data/atom',
           hint: { key: 'insanejournal:posts', label: 'Posts', format: 'atom' },
         },
         {
-          uri: 'https://news.insanejournal.com/data/userpics',
+          uri: 'https://bob.insanejournal.com/data/userpics',
           hint: { key: 'insanejournal:userpics', label: 'Userpics', format: 'atom' },
         },
       ]

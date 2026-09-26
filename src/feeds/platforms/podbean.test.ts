@@ -4,7 +4,7 @@ import { podbeanHandler } from './podbean.js'
 describe('podbeanHandler', () => {
   describe('match', () => {
     const values: Array<[boolean, string]> = [
-      [true, 'https://kickstartcommerce.podbean.com'],
+      [true, 'https://alice.podbean.com'],
       [true, 'https://blog.example.podbean.com'],
       [false, 'https://podbean.com'],
       [false, 'https://example.com'],
@@ -26,10 +26,10 @@ describe('podbeanHandler', () => {
 
   describe('resolve', () => {
     it('should return feed URL for podcast', () => {
-      const value = 'https://kickstartcommerce.podbean.com'
+      const value = 'https://alice.podbean.com'
       const expected = [
         {
-          uri: 'https://feed.podbean.com/kickstartcommerce/feed.xml',
+          uri: 'https://feed.podbean.com/alice/feed.xml',
           hint: { key: 'podbean:podcast', label: 'Podcast' },
         },
       ]
@@ -38,10 +38,10 @@ describe('podbeanHandler', () => {
     })
 
     it('should return feed URL regardless of path', () => {
-      const value = 'https://kickstartcommerce.podbean.com/e/some-episode'
+      const value = 'https://alice.podbean.com/e/some-episode'
       const expected = [
         {
-          uri: 'https://feed.podbean.com/kickstartcommerce/feed.xml',
+          uri: 'https://feed.podbean.com/alice/feed.xml',
           hint: { key: 'podbean:podcast', label: 'Podcast' },
         },
       ]

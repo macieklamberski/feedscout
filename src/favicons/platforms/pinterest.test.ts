@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverRef, DiscoverUriEntry, FetchFn } from '../../common/types.js'
+import type { DiscoverRef, FetchFn } from '../../common/types.js'
 import type { FaviconEnricherContext } from '../types.js'
 import { pinterestEnricher, pinterestHandler } from './pinterest.js'
 
@@ -35,7 +35,7 @@ const ref: DiscoverRef = {
   id: 'alice',
   url: 'https://www.pinterest.com/alice/_saved/',
 }
-const expectedIcon: Array<DiscoverUriEntry> = [
+const expectedIcon = [
   { uri: 'https://i.pinimg.com/280x280_RS/37/a1/75/37a175e6d2431425576f0b8f81389394.jpg' },
 ]
 
@@ -70,28 +70,28 @@ describe('pinterestHandler', () => {
 
       it('should return a ref for saved pages', () => {
         const url = 'https://www.pinterest.com/alice/_saved/'
-        const expected: Array<DiscoverRef> = [{ platform: 'pinterest', id: 'alice', url }]
+        const expected = [{ platform: 'pinterest', id: 'alice', url }]
 
         expect(pinterestHandler.resolve(url, savedHtml)).toEqual(expected)
       })
 
       it('should return a ref for board pages', () => {
         const url = 'https://www.pinterest.com/alice/recipes/'
-        const expected: Array<DiscoverRef> = [{ platform: 'pinterest', id: 'alice', url }]
+        const expected = [{ platform: 'pinterest', id: 'alice', url }]
 
         expect(pinterestHandler.resolve(url, profileHtml)).toEqual(expected)
       })
 
       it('should return a ref for user subpages', () => {
         const url = 'https://www.pinterest.com/alice/_created/'
-        const expected: Array<DiscoverRef> = [{ platform: 'pinterest', id: 'alice', url }]
+        const expected = [{ platform: 'pinterest', id: 'alice', url }]
 
         expect(pinterestHandler.resolve(url, profileHtml)).toEqual(expected)
       })
 
       it('should return a ref for profile pages when content is missing', () => {
         const url = 'https://www.pinterest.com/alice/'
-        const expected: Array<DiscoverRef> = [{ platform: 'pinterest', id: 'alice', url }]
+        const expected = [{ platform: 'pinterest', id: 'alice', url }]
 
         expect(pinterestHandler.resolve(url)).toEqual(expected)
       })

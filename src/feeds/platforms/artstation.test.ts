@@ -4,10 +4,10 @@ import { artstationHandler } from './artstation.js'
 describe('artstationHandler', () => {
   describe('match', () => {
     const values: Array<[boolean, string]> = [
-      [true, 'https://www.artstation.com/rossdraws'],
+      [true, 'https://www.artstation.com/alice'],
       [true, 'https://artstation.com/user'],
       [true, 'https://artstation.com'],
-      [true, 'https://rossdraws.artstation.com'],
+      [true, 'https://alice.artstation.com'],
       [false, 'https://example.com'],
     ]
 
@@ -22,10 +22,10 @@ describe('artstationHandler', () => {
 
   describe('resolve', () => {
     it('should return feed URL for portfolio', () => {
-      const value = 'https://www.artstation.com/rossdraws'
+      const value = 'https://www.artstation.com/alice'
       const expected = [
         {
-          uri: 'https://www.artstation.com/rossdraws.rss',
+          uri: 'https://www.artstation.com/alice.rss',
           hint: { key: 'artstation:portfolio', label: 'Portfolio' },
         },
       ]
@@ -34,10 +34,10 @@ describe('artstationHandler', () => {
     })
 
     it('should return feed URL regardless of subpath', () => {
-      const value = 'https://www.artstation.com/rossdraws/albums/all'
+      const value = 'https://www.artstation.com/alice/albums/all'
       const expected = [
         {
-          uri: 'https://www.artstation.com/rossdraws.rss',
+          uri: 'https://www.artstation.com/alice.rss',
           hint: { key: 'artstation:portfolio', label: 'Portfolio' },
         },
       ]
@@ -46,10 +46,10 @@ describe('artstationHandler', () => {
     })
 
     it('should return feed URL for subdomain form', () => {
-      const value = 'https://rossdraws.artstation.com'
+      const value = 'https://alice.artstation.com'
       const expected = [
         {
-          uri: 'https://www.artstation.com/rossdraws.rss',
+          uri: 'https://www.artstation.com/alice.rss',
           hint: { key: 'artstation:portfolio', label: 'Portfolio' },
         },
       ]
@@ -58,10 +58,10 @@ describe('artstationHandler', () => {
     })
 
     it('should return feed URL for subdomain form regardless of subpath', () => {
-      const value = 'https://rossdraws.artstation.com/albums/all'
+      const value = 'https://alice.artstation.com/albums/all'
       const expected = [
         {
-          uri: 'https://www.artstation.com/rossdraws.rss',
+          uri: 'https://www.artstation.com/alice.rss',
           hint: { key: 'artstation:portfolio', label: 'Portfolio' },
         },
       ]

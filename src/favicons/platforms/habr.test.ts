@@ -1,5 +1,4 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverUriEntry } from '../../common/types.js'
 import { habrHandler } from './habr.js'
 
 const hubIcon =
@@ -105,7 +104,7 @@ describe('habrHandler', () => {
       it('should return the hub icon from the hub card', async () => {
         const content = createHubPage(hubIcon)
         const result = await habrHandler.resolve('https://habr.com/ru/hubs/javascript/', content)
-        const expected: Array<DiscoverUriEntry> = [{ uri: hubIcon }]
+        const expected = [{ uri: hubIcon }]
 
         expect(result).toEqual(expected)
       })
@@ -116,7 +115,7 @@ describe('habrHandler', () => {
           'class="tm-hub-card__avatar tm-hub-card__avatar_small"',
         )
         const result = await habrHandler.resolve('https://habr.com/ru/hubs/javascript/', content)
-        const expected: Array<DiscoverUriEntry> = [{ uri: hubIcon }]
+        const expected = [{ uri: hubIcon }]
 
         expect(result).toEqual(expected)
       })
@@ -124,7 +123,7 @@ describe('habrHandler', () => {
       it('should return the user avatar from the user card', async () => {
         const content = createUserPage(userAvatar)
         const result = await habrHandler.resolve('https://habr.com/ru/users/alice/', content)
-        const expected: Array<DiscoverUriEntry> = [{ uri: userAvatar }]
+        const expected = [{ uri: userAvatar }]
 
         expect(result).toEqual(expected)
       })
@@ -133,7 +132,7 @@ describe('habrHandler', () => {
         const value = 'https://habr.com/ru/companies/example/articles/'
         const content = createCompanyPage(companyLogo)
         const result = await habrHandler.resolve(value, content)
-        const expected: Array<DiscoverUriEntry> = [{ uri: companyLogo }]
+        const expected = [{ uri: companyLogo }]
 
         expect(result).toEqual(expected)
       })

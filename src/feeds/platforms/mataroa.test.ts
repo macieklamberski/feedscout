@@ -4,7 +4,7 @@ import { mataroaHandler } from './mataroa.js'
 describe('mataroaHandler', () => {
   describe('match', () => {
     const values: Array<[boolean, string]> = [
-      [true, 'https://hey.mataroa.blog'],
+      [true, 'https://alice.mataroa.blog'],
       [true, 'https://blog.example.mataroa.blog'],
       [false, 'https://mataroa.blog'],
       [false, 'https://example.com'],
@@ -21,10 +21,10 @@ describe('mataroaHandler', () => {
 
   describe('resolve', () => {
     it('should return feed URL for blog', () => {
-      const value = 'https://hey.mataroa.blog'
+      const value = 'https://alice.mataroa.blog'
       const expected = [
         {
-          uri: 'https://hey.mataroa.blog/rss/',
+          uri: 'https://alice.mataroa.blog/rss/',
           hint: { key: 'mataroa:blog', label: 'Blog' },
         },
       ]
@@ -33,10 +33,10 @@ describe('mataroaHandler', () => {
     })
 
     it('should return feed URL regardless of path', () => {
-      const value = 'https://hey.mataroa.blog/some-article-slug'
+      const value = 'https://alice.mataroa.blog/some-article-slug'
       const expected = [
         {
-          uri: 'https://hey.mataroa.blog/rss/',
+          uri: 'https://alice.mataroa.blog/rss/',
           hint: { key: 'mataroa:blog', label: 'Blog' },
         },
       ]

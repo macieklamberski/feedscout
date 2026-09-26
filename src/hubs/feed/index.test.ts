@@ -1,7 +1,6 @@
 import { describe, expect, it } from 'bun:test'
 import { defaultResolveUrlFn } from '../../common/discover/defaults.js'
 import type { DiscoverResolveUrlFn } from '../../common/types.js'
-import type { HubResult } from '../discover/types.js'
 import { discoverHubsFromFeed } from './index.js'
 
 describe('discoverHubsFromFeed', () => {
@@ -15,7 +14,7 @@ describe('discoverHubsFromFeed', () => {
       </feed>
     `
     const value = discoverHubsFromFeed(content, 'https://example.com/feed.xml', defaultResolveUrlFn)
-    const expected: Array<HubResult> = [
+    const expected = [
       {
         hub: 'https://hub.example.com/',
         topic: 'https://example.com/feed.xml',
@@ -34,7 +33,7 @@ describe('discoverHubsFromFeed', () => {
       </feed>
     `
     const value = discoverHubsFromFeed(content, 'https://example.com/feed.xml', defaultResolveUrlFn)
-    const expected: Array<HubResult> = [
+    const expected = [
       {
         hub: 'https://hub.example.com/',
         topic: 'https://example.com/feed.xml',
@@ -55,7 +54,7 @@ describe('discoverHubsFromFeed', () => {
       </feed>
     `
     const value = discoverHubsFromFeed(content, 'https://example.com/feed.xml', defaultResolveUrlFn)
-    const expected: Array<HubResult> = [
+    const expected = [
       {
         hub: 'https://hub1.example.com/',
         topic: 'https://example.com/feed.xml',
@@ -94,7 +93,7 @@ describe('discoverHubsFromFeed', () => {
       </rss>
     `
     const value = discoverHubsFromFeed(content, 'https://example.com/feed.xml', defaultResolveUrlFn)
-    const expected: Array<HubResult> = [
+    const expected = [
       {
         hub: 'https://hub.example.com/',
         topic: 'https://example.com/feed.xml',
@@ -131,7 +130,7 @@ describe('discoverHubsFromFeed', () => {
       'https://example.com/feed.json',
       defaultResolveUrlFn,
     )
-    const expected: Array<HubResult> = [
+    const expected = [
       {
         hub: 'https://hub.example.com/',
         topic: 'https://example.com/feed.json',
@@ -152,7 +151,7 @@ describe('discoverHubsFromFeed', () => {
       'https://example.com/feed.json',
       defaultResolveUrlFn,
     )
-    const expected: Array<HubResult> = [
+    const expected = [
       {
         hub: 'https://hub.example.com/',
         topic: 'https://example.com/feed.json',
@@ -177,7 +176,7 @@ describe('discoverHubsFromFeed', () => {
       'https://example.com/feed.json',
       defaultResolveUrlFn,
     )
-    const expected: Array<HubResult> = [
+    const expected = [
       {
         hub: 'https://hub1.example.com/',
         topic: 'https://example.com/feed.json',
@@ -271,7 +270,7 @@ describe('discoverHubsFromFeed', () => {
       </feed>
     `
     const value = discoverHubsFromFeed(content, 'https://example.com/feed.xml', defaultResolveUrlFn)
-    const expected: Array<HubResult> = [
+    const expected = [
       {
         hub: 'https://example.com/hub',
         topic: 'https://example.com/feed.xml',
@@ -293,7 +292,7 @@ describe('discoverHubsFromFeed', () => {
       'https://example.com/feed.json',
       defaultResolveUrlFn,
     )
-    const expected: Array<HubResult> = [
+    const expected = [
       {
         hub: 'https://example.com/hub',
         topic: 'https://example.com/feed.json',
@@ -316,7 +315,7 @@ describe('discoverHubsFromFeed', () => {
       return `https://custom.example.com${url}`
     }
     const value = discoverHubsFromFeed(content, 'https://example.com/feed.xml', customResolveUrlFn)
-    const expected: Array<HubResult> = [
+    const expected = [
       {
         hub: 'https://custom.example.com/hub',
         topic: 'https://custom.example.com/feed.xml',
@@ -337,7 +336,7 @@ describe('discoverHubsFromFeed', () => {
     `
     const resolveNothingFn: DiscoverResolveUrlFn = () => undefined
     const value = discoverHubsFromFeed(content, 'https://example.com/feed.xml', resolveNothingFn)
-    const expected: Array<HubResult> = [
+    const expected = [
       {
         hub: '/hub',
         topic: '/feed.xml',
@@ -358,7 +357,7 @@ describe('discoverHubsFromFeed', () => {
       </rss>
     `
     const value = discoverHubsFromFeed(content, 'https://example.com/feed.xml', defaultResolveUrlFn)
-    const expected: Array<HubResult> = [
+    const expected = [
       {
         hub: 'https://hub.example.com/',
         topic: 'https://example.com/feed.xml',
@@ -386,7 +385,7 @@ describe('discoverHubsFromFeed', () => {
       </rdf:RDF>
     `
     const value = discoverHubsFromFeed(content, 'https://example.com/rdf.xml', defaultResolveUrlFn)
-    const expected: Array<HubResult> = [
+    const expected = [
       {
         hub: 'https://hub.example.com/',
         topic: 'https://example.com/feed.rdf',

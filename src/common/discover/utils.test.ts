@@ -1829,7 +1829,9 @@ describe('normalizeUriEntry', () => {
 
   it('should normalize array entry', () => {
     const value = { uri: ['/feed/', '?feed=rss'] }
-    const expected = { uri: ['https://example.com/feed/', 'https://example.com/?feed=rss'] }
+    const expected = {
+      uri: ['https://example.com/feed/', 'https://example.com/?feed=rss'],
+    }
 
     expect(normalizeUriEntry(value, resolveUrlFn, 'https://example.com')).toEqual(expected)
   })
@@ -1856,7 +1858,9 @@ describe('normalizeUriEntry', () => {
 
   it('should handle undefined baseUrl for array entry', () => {
     const value = { uri: ['https://example.com/feed/', 'https://example.com/?feed=rss'] }
-    const expected = { uri: ['https://example.com/feed/', 'https://example.com/?feed=rss'] }
+    const expected = {
+      uri: ['https://example.com/feed/', 'https://example.com/?feed=rss'],
+    }
 
     expect(normalizeUriEntry(value, resolveUrlFn, undefined)).toEqual(expected)
   })
@@ -1917,7 +1921,7 @@ describe('normalizeUriEntry', () => {
 
   it('should return undefined for an episode behind a tracking prefix with a feed segment', () => {
     const value = {
-      uri: 'https://pdcn.co/e/dts.podtrac.com/redirect.mp3/prfx.byspotify.com/e/pscrb.fm/rss/p/traffic.libsyn.com/forcedn/broadway/20260923-grosses.mp3',
+      uri: 'https://prefix.example.com/e/tracker.example.com/redirect.mp3/prefix.example.org/e/tracker.example.org/rss/p/media.example.net/show/episode.mp3',
     }
 
     expect(

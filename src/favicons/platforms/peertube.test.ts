@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverRef, DiscoverUriEntry, FetchFn } from '../../common/types.js'
+import type { DiscoverRef, FetchFn } from '../../common/types.js'
 import type { FaviconEnricherContext } from '../types.js'
 import { peertubeEnricher, peertubeHandler } from './peertube.js'
 
@@ -60,9 +60,7 @@ describe('peertubeHandler', () => {
             content="https://example.com/lazy-static/avatars/abc.png"
           />
         `
-        const expected: Array<DiscoverUriEntry> = [
-          { uri: 'https://example.com/lazy-static/avatars/abc.png' },
-        ]
+        const expected = [{ uri: 'https://example.com/lazy-static/avatars/abc.png' }]
 
         expect(peertubeHandler.resolve('https://example.com/c/news', value)).toEqual(expected)
       })
@@ -74,23 +72,21 @@ describe('peertubeHandler', () => {
             content="https://example.com/lazy-static/avatars/def.jpg"
           />
         `
-        const expected: Array<DiscoverUriEntry> = [
-          { uri: 'https://example.com/lazy-static/avatars/def.jpg' },
-        ]
+        const expected = [{ uri: 'https://example.com/lazy-static/avatars/def.jpg' }]
 
         expect(peertubeHandler.resolve('https://example.com/a/alice', value)).toEqual(expected)
       })
 
       it('should return a channel ref without content', () => {
         const url = 'https://example.com/c/news'
-        const expected: Array<DiscoverRef> = [createRef(url, 'c/news')]
+        const expected = [createRef(url, 'c/news')]
 
         expect(peertubeHandler.resolve(url)).toEqual(expected)
       })
 
       it('should return an account ref without content', () => {
         const url = 'https://example.com/a/alice'
-        const expected: Array<DiscoverRef> = [createRef(url, 'a/alice')]
+        const expected = [createRef(url, 'a/alice')]
 
         expect(peertubeHandler.resolve(url)).toEqual(expected)
       })
@@ -105,7 +101,7 @@ describe('peertubeHandler', () => {
     describe('edge cases', () => {
       it('should return a ref without og:image', () => {
         const url = 'https://example.com/c/news'
-        const expected: Array<DiscoverRef> = [createRef(url, 'c/news')]
+        const expected = [createRef(url, 'c/news')]
 
         expect(peertubeHandler.resolve(url, '<html></html>')).toEqual(expected)
       })
@@ -113,7 +109,7 @@ describe('peertubeHandler', () => {
       it('should return a ref when og:image is outside the avatars path', () => {
         const url = 'https://example.com/c/news'
         const value = '<meta property="og:image" content="https://example.com/client/og.png" />'
-        const expected: Array<DiscoverRef> = [createRef(url, 'c/news')]
+        const expected = [createRef(url, 'c/news')]
 
         expect(peertubeHandler.resolve(url, value)).toEqual(expected)
       })

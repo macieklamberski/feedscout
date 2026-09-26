@@ -1,5 +1,4 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverUriEntry } from '../../common/types.js'
 import { sourceforgeHandler } from './sourceforge.js'
 
 describe('sourceforgeHandler', () => {
@@ -16,7 +15,7 @@ describe('sourceforgeHandler', () => {
   describe('resolve', () => {
     it('should resolve the project icon', () => {
       const value = 'https://sourceforge.net/projects/mingw'
-      const expected: Array<DiscoverUriEntry> = [{ uri: 'https://a.fsdn.com/allura/p/mingw/icon' }]
+      const expected = [{ uri: 'https://a.fsdn.com/allura/p/mingw/icon' }]
 
       expect(sourceforgeHandler.resolve(value)).toEqual(expected)
     })

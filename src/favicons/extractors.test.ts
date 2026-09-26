@@ -9,7 +9,10 @@ describe('defaultExtractFn', () => {
         content: '',
         headers: new Headers({ 'content-type': 'image/png' }),
       }
-      const expected = { url: 'https://example.com/icon.png', isValid: true }
+      const expected = {
+        url: 'https://example.com/icon.png',
+        isValid: true,
+      }
 
       expect(await defaultExtractFn(value)).toEqual(expected)
     })
@@ -20,7 +23,10 @@ describe('defaultExtractFn', () => {
         content: '',
         headers: new Headers({ 'content-type': 'image/x-icon' }),
       }
-      const expected = { url: 'https://example.com/favicon.ico', isValid: true }
+      const expected = {
+        url: 'https://example.com/favicon.ico',
+        isValid: true,
+      }
 
       expect(await defaultExtractFn(value)).toEqual(expected)
     })
@@ -31,7 +37,10 @@ describe('defaultExtractFn', () => {
         content: '',
         headers: new Headers({ 'content-type': 'image/svg+xml' }),
       }
-      const expected = { url: 'https://example.com/icon.svg', isValid: true }
+      const expected = {
+        url: 'https://example.com/icon.svg',
+        isValid: true,
+      }
 
       expect(await defaultExtractFn(value)).toEqual(expected)
     })
@@ -42,14 +51,20 @@ describe('defaultExtractFn', () => {
         content: '',
         headers: new Headers({ 'content-type': 'text/html' }),
       }
-      const expected = { url: 'https://example.com/icon.png', isValid: false }
+      const expected = {
+        url: 'https://example.com/icon.png',
+        isValid: false,
+      }
 
       expect(await defaultExtractFn(value)).toEqual(expected)
     })
 
     it('should return isValid: false for missing content-type without other signals', async () => {
       const value = { url: 'https://example.com/icon.png', content: '', headers: new Headers() }
-      const expected = { url: 'https://example.com/icon.png', isValid: false }
+      const expected = {
+        url: 'https://example.com/icon.png',
+        isValid: false,
+      }
 
       expect(await defaultExtractFn(value)).toEqual(expected)
     })
@@ -61,7 +76,10 @@ describe('defaultExtractFn', () => {
         url: 'https://example.com/icon.svg',
         content: '<svg xmlns="http://www.w3.org/2000/svg"><circle/></svg>',
       }
-      const expected = { url: 'https://example.com/icon.svg', isValid: true }
+      const expected = {
+        url: 'https://example.com/icon.svg',
+        isValid: true,
+      }
 
       expect(await defaultExtractFn(value)).toEqual(expected)
     })
@@ -71,7 +89,10 @@ describe('defaultExtractFn', () => {
         url: 'https://example.com/icon.svg',
         content: '<?xml version="1.0"?><svg xmlns="http://www.w3.org/2000/svg"></svg>',
       }
-      const expected = { url: 'https://example.com/icon.svg', isValid: true }
+      const expected = {
+        url: 'https://example.com/icon.svg',
+        isValid: true,
+      }
 
       expect(await defaultExtractFn(value)).toEqual(expected)
     })
@@ -81,7 +102,10 @@ describe('defaultExtractFn', () => {
         url: 'https://example.com/icon.svg',
         content: '  \n  <svg xmlns="http://www.w3.org/2000/svg"></svg>',
       }
-      const expected = { url: 'https://example.com/icon.svg', isValid: true }
+      const expected = {
+        url: 'https://example.com/icon.svg',
+        isValid: true,
+      }
 
       expect(await defaultExtractFn(value)).toEqual(expected)
     })
@@ -92,7 +116,10 @@ describe('defaultExtractFn', () => {
         content: new TextDecoder().decode(new Uint8Array([0x00, 0x00, 0x01, 0x00, 0x01, 0x00])),
         headers: new Headers({ 'content-type': 'text/html' }),
       }
-      const expected = { url: 'https://example.com/favicon.ico', isValid: true }
+      const expected = {
+        url: 'https://example.com/favicon.ico',
+        isValid: true,
+      }
 
       expect(await defaultExtractFn(value)).toEqual(expected)
     })
@@ -103,7 +130,10 @@ describe('defaultExtractFn', () => {
         url: 'https://example.com/avatar.jpg',
         content: new TextDecoder().decode(new Uint8Array(bytes)),
       }
-      const expected = { url: 'https://example.com/avatar.jpg', isValid: true }
+      const expected = {
+        url: 'https://example.com/avatar.jpg',
+        isValid: true,
+      }
 
       expect(await defaultExtractFn(value)).toEqual(expected)
     })
@@ -114,7 +144,10 @@ describe('defaultExtractFn', () => {
         url: 'https://example.com/avatar.jpg',
         content: new TextDecoder().decode(new Uint8Array(bytes)),
       }
-      const expected = { url: 'https://example.com/avatar.jpg', isValid: true }
+      const expected = {
+        url: 'https://example.com/avatar.jpg',
+        isValid: true,
+      }
 
       expect(await defaultExtractFn(value)).toEqual(expected)
     })
@@ -124,7 +157,10 @@ describe('defaultExtractFn', () => {
         url: 'https://example.com/favicon.ico',
         content: '\uFFFD\uFFFD\uFFFD\uFFFD\u0000\u0010DATA',
       }
-      const expected = { url: 'https://example.com/favicon.ico', isValid: false }
+      const expected = {
+        url: 'https://example.com/favicon.ico',
+        isValid: false,
+      }
 
       expect(await defaultExtractFn(value)).toEqual(expected)
     })
@@ -134,7 +170,10 @@ describe('defaultExtractFn', () => {
         url: 'https://example.com/icon.png',
         content: '\x89PNG\r\n\x1a\n',
       }
-      const expected = { url: 'https://example.com/icon.png', isValid: true }
+      const expected = {
+        url: 'https://example.com/icon.png',
+        isValid: true,
+      }
 
       expect(await defaultExtractFn(value)).toEqual(expected)
     })
@@ -144,7 +183,10 @@ describe('defaultExtractFn', () => {
         url: 'https://example.com/icon.gif',
         content: 'GIF89a\x00\x00',
       }
-      const expected = { url: 'https://example.com/icon.gif', isValid: true }
+      const expected = {
+        url: 'https://example.com/icon.gif',
+        isValid: true,
+      }
 
       expect(await defaultExtractFn(value)).toEqual(expected)
     })
@@ -154,7 +196,10 @@ describe('defaultExtractFn', () => {
         url: 'https://example.com/icon.gif',
         content: 'GIF87a\x00\x00',
       }
-      const expected = { url: 'https://example.com/icon.gif', isValid: true }
+      const expected = {
+        url: 'https://example.com/icon.gif',
+        isValid: true,
+      }
 
       expect(await defaultExtractFn(value)).toEqual(expected)
     })
@@ -164,7 +209,10 @@ describe('defaultExtractFn', () => {
         url: 'https://example.com/icon.webp',
         content: 'RIFF\x00\x00\x00\x00WEBP',
       }
-      const expected = { url: 'https://example.com/icon.webp', isValid: true }
+      const expected = {
+        url: 'https://example.com/icon.webp',
+        isValid: true,
+      }
 
       expect(await defaultExtractFn(value)).toEqual(expected)
     })
@@ -175,7 +223,10 @@ describe('defaultExtractFn', () => {
         content:
           '<?xml version="1.0"?><rss><channel><item><description>&lt;svg xmlns="http://www.w3.org/2000/svg"&gt;&lt;/svg&gt;</description></item></channel></rss>',
       }
-      const expected = { url: 'https://example.com/feed.xml', isValid: false }
+      const expected = {
+        url: 'https://example.com/feed.xml',
+        isValid: false,
+      }
 
       expect(await defaultExtractFn(value)).toEqual(expected)
     })
@@ -185,7 +236,10 @@ describe('defaultExtractFn', () => {
         url: 'https://example.com/feed.xml',
         content: '<?xml version="1.0"?><rss><channel></channel></rss>',
       }
-      const expected = { url: 'https://example.com/feed.xml', isValid: false }
+      const expected = {
+        url: 'https://example.com/feed.xml',
+        isValid: false,
+      }
 
       expect(await defaultExtractFn(value)).toEqual(expected)
     })
@@ -221,56 +275,80 @@ describe('defaultExtractFn', () => {
   describe('status code', () => {
     it('should return isValid: false for status 200 without an image signal', async () => {
       const value = { url: 'https://example.com/icon.png', content: '', status: 200 }
-      const expected = { url: 'https://example.com/icon.png', isValid: false }
+      const expected = {
+        url: 'https://example.com/icon.png',
+        isValid: false,
+      }
 
       expect(await defaultExtractFn(value)).toEqual(expected)
     })
 
     it('should return isValid: false for status 299 without an image signal', async () => {
       const value = { url: 'https://example.com/icon.png', content: '', status: 299 }
-      const expected = { url: 'https://example.com/icon.png', isValid: false }
+      const expected = {
+        url: 'https://example.com/icon.png',
+        isValid: false,
+      }
 
       expect(await defaultExtractFn(value)).toEqual(expected)
     })
 
     it('should return isValid: false for status 301 without an image signal', async () => {
       const value = { url: 'https://example.com/icon.png', content: '', status: 301 }
-      const expected = { url: 'https://example.com/icon.png', isValid: false }
+      const expected = {
+        url: 'https://example.com/icon.png',
+        isValid: false,
+      }
 
       expect(await defaultExtractFn(value)).toEqual(expected)
     })
 
     it('should return isValid: false for status 400', async () => {
       const value = { url: 'https://example.com/icon.png', content: '', status: 400 }
-      const expected = { url: 'https://example.com/icon.png', isValid: false }
+      const expected = {
+        url: 'https://example.com/icon.png',
+        isValid: false,
+      }
 
       expect(await defaultExtractFn(value)).toEqual(expected)
     })
 
     it('should return isValid: false for status 404', async () => {
       const value = { url: 'https://example.com/icon.png', content: '', status: 404 }
-      const expected = { url: 'https://example.com/icon.png', isValid: false }
+      const expected = {
+        url: 'https://example.com/icon.png',
+        isValid: false,
+      }
 
       expect(await defaultExtractFn(value)).toEqual(expected)
     })
 
     it('should return isValid: false for status 500', async () => {
       const value = { url: 'https://example.com/icon.png', content: '', status: 500 }
-      const expected = { url: 'https://example.com/icon.png', isValid: false }
+      const expected = {
+        url: 'https://example.com/icon.png',
+        isValid: false,
+      }
 
       expect(await defaultExtractFn(value)).toEqual(expected)
     })
 
     it('should return isValid: false for status 199', async () => {
       const value = { url: 'https://example.com/icon.png', content: '', status: 199 }
-      const expected = { url: 'https://example.com/icon.png', isValid: false }
+      const expected = {
+        url: 'https://example.com/icon.png',
+        isValid: false,
+      }
 
       expect(await defaultExtractFn(value)).toEqual(expected)
     })
 
     it('should return isValid: false for undefined status without other signals', async () => {
       const value = { url: 'https://example.com/icon.png', content: '' }
-      const expected = { url: 'https://example.com/icon.png', isValid: false }
+      const expected = {
+        url: 'https://example.com/icon.png',
+        isValid: false,
+      }
 
       expect(await defaultExtractFn(value)).toEqual(expected)
     })
@@ -282,7 +360,10 @@ describe('defaultExtractFn', () => {
         headers: new Headers({ 'content-type': 'image/png' }),
         status: 200,
       }
-      const expected = { url: 'https://example.com/icon.png', isValid: true }
+      const expected = {
+        url: 'https://example.com/icon.png',
+        isValid: true,
+      }
 
       expect(await defaultExtractFn(value)).toEqual(expected)
     })
@@ -293,7 +374,10 @@ describe('defaultExtractFn', () => {
         content: '<svg xmlns="http://www.w3.org/2000/svg"></svg>',
         status: 404,
       }
-      const expected = { url: 'https://example.com/icon.png', isValid: false }
+      const expected = {
+        url: 'https://example.com/icon.png',
+        isValid: false,
+      }
 
       expect(await defaultExtractFn(value)).toEqual(expected)
     })

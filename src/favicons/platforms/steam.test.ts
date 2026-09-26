@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverRef, DiscoverUriEntry, FetchFn } from '../../common/types.js'
+import type { DiscoverRef, FetchFn } from '../../common/types.js'
 import type { FaviconEnricherContext } from '../types.js'
 import { steamEnricher, steamHandler } from './steam.js'
 
@@ -44,7 +44,7 @@ describe('steamHandler', () => {
         'https://store.steampowered.com/app/620/Portal_2/',
         appPageHtml,
       )
-      const expected: Array<DiscoverUriEntry> = [
+      const expected = [
         {
           uri: 'https://shared.fastly.steamstatic.com/community_assets/images/apps/620/25a5a16b2423bf7487ac5340b5b0948cef48c5f8.jpg',
         },
@@ -59,7 +59,7 @@ describe('steamHandler', () => {
         'https://store.steampowered.com/app/620/Portal_2/',
         content,
       )
-      const expected: Array<DiscoverUriEntry> = [
+      const expected = [
         {
           uri: 'https://shared.fastly.steamstatic.com/community_assets/images/apps/620/25a5a16b2423bf7487ac5340b5b0948cef48c5f8.jpg',
         },
@@ -70,7 +70,7 @@ describe('steamHandler', () => {
 
     it('should return the app icon from a community app page', () => {
       const result = steamHandler.resolve('https://steamcommunity.com/app/620', appPageHtml)
-      const expected: Array<DiscoverUriEntry> = [
+      const expected = [
         {
           uri: 'https://shared.fastly.steamstatic.com/community_assets/images/apps/620/25a5a16b2423bf7487ac5340b5b0948cef48c5f8.jpg',
         },
@@ -82,14 +82,14 @@ describe('steamHandler', () => {
     it('should return a ref for an age-gated store app page', () => {
       const url = 'https://store.steampowered.com/agecheck/app/620/'
       const result = steamHandler.resolve(url, '<div class="agegate_birthday_selector"></div>')
-      const expected: Array<DiscoverRef> = [{ platform: 'steam', id: '620', url }]
+      const expected = [{ platform: 'steam', id: '620', url }]
 
       expect(result).toEqual(expected)
     })
 
     it('should return a ref for a store app news page', () => {
       const url = 'https://store.steampowered.com/news/app/620'
-      const expected: Array<DiscoverRef> = [{ platform: 'steam', id: '620', url }]
+      const expected = [{ platform: 'steam', id: '620', url }]
 
       expect(steamHandler.resolve(url)).toEqual(expected)
     })
@@ -97,7 +97,7 @@ describe('steamHandler', () => {
     it('should return a ref for a store app page redirected to the age gate', () => {
       const url = 'https://store.steampowered.com/app/620/Portal_2/'
       const result = steamHandler.resolve(url, '<div class="agegate_birthday_selector"></div>')
-      const expected: Array<DiscoverRef> = [{ platform: 'steam', id: '620', url }]
+      const expected = [{ platform: 'steam', id: '620', url }]
 
       expect(result).toEqual(expected)
     })
@@ -105,7 +105,7 @@ describe('steamHandler', () => {
     it('should return a ref when the icon has no src', () => {
       const url = 'https://store.steampowered.com/app/620/Portal_2/'
       const result = steamHandler.resolve(url, '<div class="apphub_AppIcon"><img src=""></div>')
-      const expected: Array<DiscoverRef> = [{ platform: 'steam', id: '620', url }]
+      const expected = [{ platform: 'steam', id: '620', url }]
 
       expect(result).toEqual(expected)
     })
@@ -117,7 +117,7 @@ describe('steamHandler', () => {
           property="og:image"
         >
       `
-      const expected: Array<DiscoverUriEntry> = [
+      const expected = [
         {
           uri: 'https://avatars.fastly.steamstatic.com/7ba781b5f0b8a99d4cc0b0b0dcaa22df73db7db2_full.jpg',
         },

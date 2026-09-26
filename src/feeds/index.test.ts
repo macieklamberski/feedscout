@@ -596,31 +596,31 @@ describe('discoverFeeds', () => {
         <rss version="2.0">
           <channel>
             <title>Custom Feed</title>
-            <link>https://custom.com</link>
+            <link>https://custom.example.com</link>
             <description>Custom feed</description>
           </channel>
         </rss>
       `
       const customHandler: PlatformHandler = {
-        match: (url) => new URL(url).hostname === 'custom.com',
-        resolve: () => [{ uri: 'https://custom.com/my-feed.xml' }],
+        match: (url) => new URL(url).hostname === 'custom.example.com',
+        resolve: () => [{ uri: 'https://custom.example.com/my-feed.xml' }],
       }
       const mockFetch = createMockFetch({
-        'https://custom.com/my-feed.xml': rss,
+        'https://custom.example.com/my-feed.xml': rss,
       })
-      const result = await discoverFeeds('https://custom.com/page', {
+      const result = await discoverFeeds('https://custom.example.com/page', {
         methods: { platform: { handlers: [customHandler] } },
         fetchFn: mockFetch,
       })
       const expected: Array<DiscoverResult<FeedResult>> = [
         {
-          url: 'https://custom.com/my-feed.xml',
+          url: 'https://custom.example.com/my-feed.xml',
           isValid: true,
           method: 'platform',
           format: 'rss',
           title: 'Custom Feed',
           description: 'Custom feed',
-          siteUrl: 'https://custom.com/',
+          siteUrl: 'https://custom.example.com/',
         },
       ]
 

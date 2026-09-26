@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverRef, DiscoverUriEntry, FetchFn } from '../../common/types.js'
+import type { DiscoverRef, FetchFn } from '../../common/types.js'
 import type { FaviconEnricherContext } from '../types.js'
 import { goodreadsEnricher, goodreadsHandler } from './goodreads.js'
 
@@ -61,7 +61,7 @@ describe('goodreadsHandler', () => {
     describe('happy paths', () => {
       it('should return the largest variant of the avatar', () => {
         const value = 'https://www.goodreads.com/user/show/1-otis-chandler'
-        const expected: Array<DiscoverUriEntry> = [{ uri: avatarUrl }]
+        const expected = [{ uri: avatarUrl }]
 
         expect(goodreadsHandler.resolve(value, userPage)).toEqual(expected)
       })
@@ -74,7 +74,7 @@ describe('goodreadsHandler', () => {
             src=https://images.gr-assets.com/users/1506617226p6/1.jpg
           />
         `
-        const expected: Array<DiscoverUriEntry> = [{ uri: avatarUrl }]
+        const expected = [{ uri: avatarUrl }]
 
         expect(goodreadsHandler.resolve(value, content)).toEqual(expected)
       })
@@ -87,14 +87,14 @@ describe('goodreadsHandler', () => {
             content="https://images.gr-assets.com/users/1506617226p5/1.jpg"
           />
         `
-        const expected: Array<DiscoverUriEntry> = [{ uri: avatarUrl }]
+        const expected = [{ uri: avatarUrl }]
 
         expect(goodreadsHandler.resolve(value, content)).toEqual(expected)
       })
 
       it('should return a ref to the user when content is absent', () => {
         const value = 'https://www.goodreads.com/user/show/1-otis-chandler'
-        const expected: Array<DiscoverRef> = [{ platform: 'goodreads', id: '1', url: value }]
+        const expected = [{ platform: 'goodreads', id: '1', url: value }]
 
         expect(goodreadsHandler.resolve(value)).toEqual(expected)
       })
@@ -133,7 +133,7 @@ describe('goodreadsEnricher', () => {
     const ref: DiscoverRef = {
       platform: 'mastodon',
       id: 'example',
-      url: 'https://mastodon.social/@example',
+      url: 'https://example.com/@example',
     }
 
     expect(await goodreadsEnricher(ref, createContext({}))).toBeUndefined()

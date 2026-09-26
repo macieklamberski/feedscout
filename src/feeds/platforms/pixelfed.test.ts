@@ -9,48 +9,48 @@ describe('parsePixelfedUrl', () => {
   it('should return the username for a profile page', () => {
     const expected: PixelfedUrl = { kind: 'user', username: 'dansup' }
 
-    expect(parsePixelfedUrl('https://pixelfed.social/dansup')).toEqual(expected)
+    expect(parsePixelfedUrl('https://example.com/dansup')).toEqual(expected)
   })
 
   it('should return the username for a trailing slash', () => {
     const expected: PixelfedUrl = { kind: 'user', username: 'dansup' }
 
-    expect(parsePixelfedUrl('https://pixelfed.social/dansup/')).toEqual(expected)
+    expect(parsePixelfedUrl('https://example.com/dansup/')).toEqual(expected)
   })
 
   it('should return the username for a /users/{user} URL', () => {
     const expected: PixelfedUrl = { kind: 'user', username: 'dansup' }
 
-    expect(parsePixelfedUrl('https://pixelfed.social/users/dansup')).toEqual(expected)
+    expect(parsePixelfedUrl('https://example.com/users/dansup')).toEqual(expected)
   })
 
   it('should return the username for a /users/{user} URL with a capitalized users segment', () => {
     const expected: PixelfedUrl = { kind: 'user', username: 'dansup' }
 
-    expect(parsePixelfedUrl('https://pixelfed.social/Users/dansup')).toEqual(expected)
+    expect(parsePixelfedUrl('https://example.com/Users/dansup')).toEqual(expected)
   })
 
   it('should return undefined for excluded paths', () => {
-    expect(parsePixelfedUrl('https://pixelfed.social/discover')).toBeUndefined()
-    expect(parsePixelfedUrl('https://pixelfed.social/api')).toBeUndefined()
-    expect(parsePixelfedUrl('https://pixelfed.social/settings')).toBeUndefined()
+    expect(parsePixelfedUrl('https://example.com/discover')).toBeUndefined()
+    expect(parsePixelfedUrl('https://example.com/api')).toBeUndefined()
+    expect(parsePixelfedUrl('https://example.com/settings')).toBeUndefined()
   })
 
   it('should return undefined for excluded paths in any case', () => {
-    expect(parsePixelfedUrl('https://pixelfed.social/Discover')).toBeUndefined()
+    expect(parsePixelfedUrl('https://example.com/Discover')).toBeUndefined()
   })
 
   it('should return undefined for non-profile paths', () => {
-    expect(parsePixelfedUrl('https://pixelfed.social/p/12345')).toBeUndefined()
-    expect(parsePixelfedUrl('https://pixelfed.social/p/dansup/123')).toBeUndefined()
+    expect(parsePixelfedUrl('https://example.com/p/12345')).toBeUndefined()
+    expect(parsePixelfedUrl('https://example.com/p/dansup/123')).toBeUndefined()
   })
 
   it('should return undefined for a name with characters outside the username set', () => {
-    expect(parsePixelfedUrl('https://pixelfed.social/dan-sup')).toBeUndefined()
+    expect(parsePixelfedUrl('https://example.com/dan-sup')).toBeUndefined()
   })
 
   it('should return undefined for the root', () => {
-    expect(parsePixelfedUrl('https://pixelfed.social/')).toBeUndefined()
+    expect(parsePixelfedUrl('https://example.com/')).toBeUndefined()
   })
 
   it('should return undefined for an invalid URL', () => {
@@ -84,28 +84,28 @@ describe('pixelfedHandler', () => {
 
   describe('match', () => {
     it('should return true for profile URL with Pixelfed content', () => {
-      expect(pixelfedHandler.match('https://pixelfed.social/dansup', pixelfedHtml)).toBe(true)
+      expect(pixelfedHandler.match('https://example.com/dansup', pixelfedHtml)).toBe(true)
     })
 
     it('should return false without content', () => {
-      expect(pixelfedHandler.match('https://pixelfed.social/dansup')).toBe(false)
+      expect(pixelfedHandler.match('https://example.com/dansup')).toBe(false)
     })
 
     it('should return false for non-Pixelfed content', () => {
-      expect(pixelfedHandler.match('https://pixelfed.social/dansup', otherHtml)).toBe(false)
+      expect(pixelfedHandler.match('https://example.com/dansup', otherHtml)).toBe(false)
     })
 
     it('should return false for non-profile paths', () => {
-      expect(pixelfedHandler.match('https://pixelfed.social/p/12345', pixelfedHtml)).toBe(false)
+      expect(pixelfedHandler.match('https://example.com/p/12345', pixelfedHtml)).toBe(false)
     })
   })
 
   describe('resolve', () => {
     it('should return atom feed for profile', () => {
-      const value = 'https://pixelfed.social/dansup'
+      const value = 'https://example.com/dansup'
       const expected = [
         {
-          uri: 'https://pixelfed.social/users/dansup.atom',
+          uri: 'https://example.com/users/dansup.atom',
           hint: { key: 'pixelfed:posts', label: 'Posts' },
         },
       ]
@@ -114,7 +114,7 @@ describe('pixelfedHandler', () => {
     })
 
     it('should return empty array for non-profile paths', () => {
-      expect(pixelfedHandler.resolve('https://pixelfed.social/p/12345')).toEqual([])
+      expect(pixelfedHandler.resolve('https://example.com/p/12345')).toEqual([])
     })
   })
 })

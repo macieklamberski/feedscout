@@ -65,7 +65,7 @@ describe('parseLetterboxdUrl', () => {
 
   it('should return undefined for another host', () => {
     expect(parseLetterboxdUrl('https://example.com/letterboxd')).toBeUndefined()
-    expect(parseLetterboxdUrl('https://twitter.com/letterboxd')).toBeUndefined()
+    expect(parseLetterboxdUrl('https://example.org/letterboxd')).toBeUndefined()
   })
 
   it('should return undefined for an invalid URL', () => {

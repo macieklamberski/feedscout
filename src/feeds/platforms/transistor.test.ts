@@ -4,7 +4,7 @@ import { transistorHandler } from './transistor.js'
 describe('transistorHandler', () => {
   describe('match', () => {
     const values: Array<[boolean, string]> = [
-      [true, 'https://build-your-saas.transistor.fm'],
+      [true, 'https://alice-podcast.transistor.fm'],
       [true, 'https://blog.example.transistor.fm'],
       [false, 'https://transistor.fm'],
       [false, 'https://example.com'],
@@ -25,10 +25,10 @@ describe('transistorHandler', () => {
 
   describe('resolve', () => {
     it('should return feed URL for podcast', () => {
-      const value = 'https://build-your-saas.transistor.fm'
+      const value = 'https://alice-podcast.transistor.fm'
       const expected = [
         {
-          uri: 'https://feeds.transistor.fm/build-your-saas',
+          uri: 'https://feeds.transistor.fm/alice-podcast',
           hint: { key: 'transistor:podcast', label: 'Podcast' },
         },
       ]
@@ -37,11 +37,11 @@ describe('transistorHandler', () => {
     })
 
     it('should return the feed slug the show page links when it differs from the subdomain', () => {
-      const value = 'https://saas.transistor.fm'
-      const content = '<link rel="alternate" href="https://feeds.transistor.fm/build-your-saas">'
+      const value = 'https://alice.transistor.fm'
+      const content = '<link rel="alternate" href="https://feeds.transistor.fm/alice-podcast">'
       const expected = [
         {
-          uri: 'https://feeds.transistor.fm/build-your-saas',
+          uri: 'https://feeds.transistor.fm/alice-podcast',
           hint: { key: 'transistor:podcast', label: 'Podcast' },
         },
       ]
@@ -50,10 +50,10 @@ describe('transistorHandler', () => {
     })
 
     it('should fall back to the subdomain when the page links no feed', () => {
-      const value = 'https://saas.transistor.fm'
+      const value = 'https://alice.transistor.fm'
       const expected = [
         {
-          uri: 'https://feeds.transistor.fm/saas',
+          uri: 'https://feeds.transistor.fm/alice',
           hint: { key: 'transistor:podcast', label: 'Podcast' },
         },
       ]
@@ -62,10 +62,10 @@ describe('transistorHandler', () => {
     })
 
     it('should return feed URL regardless of path', () => {
-      const value = 'https://build-your-saas.transistor.fm/episodes/some-episode'
+      const value = 'https://alice-podcast.transistor.fm/episodes/some-episode'
       const expected = [
         {
-          uri: 'https://feeds.transistor.fm/build-your-saas',
+          uri: 'https://feeds.transistor.fm/alice-podcast',
           hint: { key: 'transistor:podcast', label: 'Podcast' },
         },
       ]

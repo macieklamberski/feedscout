@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverRef, DiscoverUriEntry, FetchFn } from '../../common/types.js'
+import type { DiscoverRef, FetchFn } from '../../common/types.js'
 import type { FaviconEnricherContext } from '../types.js'
 import { letterboxdEnricher, letterboxdHandler } from './letterboxd.js'
 
@@ -73,7 +73,7 @@ describe('letterboxdHandler', () => {
           'https://letterboxd.com/alice/films/',
           uploadedAvatarHtml,
         )
-        const expected: Array<DiscoverUriEntry> = [{ uri: largeUploadedAvatar }]
+        const expected = [{ uri: largeUploadedAvatar }]
 
         expect(result).toEqual(expected)
       })
@@ -83,7 +83,7 @@ describe('letterboxdHandler', () => {
       it('should return the large avatar', () => {
         const content = uploadedAvatarHtml.replace('class="avatar -a24"', 'class="-a24 avatar"')
         const result = letterboxdHandler.resolve('https://letterboxd.com/alice/films/', content)
-        const expected: Array<DiscoverUriEntry> = [{ uri: largeUploadedAvatar }]
+        const expected = [{ uri: largeUploadedAvatar }]
 
         expect(result).toEqual(expected)
       })
@@ -96,7 +96,7 @@ describe('letterboxdHandler', () => {
           'class="avatar -a24" href="/alice"',
         )
         const result = letterboxdHandler.resolve('https://letterboxd.com/alice/films/', content)
-        const expected: Array<DiscoverUriEntry> = [{ uri: largeUploadedAvatar }]
+        const expected = [{ uri: largeUploadedAvatar }]
 
         expect(result).toEqual(expected)
       })
@@ -109,7 +109,7 @@ describe('letterboxdHandler', () => {
           'class="avatar -a24" href="/Alice/"',
         )
         const result = letterboxdHandler.resolve('https://letterboxd.com/alice/films/', content)
-        const expected: Array<DiscoverUriEntry> = [{ uri: largeUploadedAvatar }]
+        const expected = [{ uri: largeUploadedAvatar }]
 
         expect(result).toEqual(expected)
       })
@@ -122,7 +122,7 @@ describe('letterboxdHandler', () => {
           'class="avatar -a24" href="/alice/"',
           'class="avatar -a24" href="/axb/"',
         )
-        const expected: Array<DiscoverRef> = [{ platform: 'letterboxd', id: 'a.b', url }]
+        const expected = [{ platform: 'letterboxd', id: 'a.b', url }]
 
         expect(letterboxdHandler.resolve(url, content)).toEqual(expected)
       })
@@ -134,7 +134,7 @@ describe('letterboxdHandler', () => {
           'https://letterboxd.com/alice/list/favorites/',
           listAvatarHtml,
         )
-        const expected: Array<DiscoverUriEntry> = [{ uri: largeUploadedAvatar }]
+        const expected = [{ uri: largeUploadedAvatar }]
 
         expect(result).toEqual(expected)
       })
@@ -146,7 +146,7 @@ describe('letterboxdHandler', () => {
           'https://letterboxd.com/alice/films/',
           gravatarAvatarHtml,
         )
-        const expected: Array<DiscoverUriEntry> = [
+        const expected = [
           {
             uri: 'https://secure.gravatar.com/avatar/b7b59a60d69cdb2ff36f363fb953cdbc?rating=PG&size=500&border=&default=404',
           },
@@ -181,7 +181,7 @@ describe('letterboxdHandler', () => {
     describe('member subpage without the avatar', () => {
       it('should return a ref for the member', () => {
         const url = 'https://letterboxd.com/alice/films/diary/'
-        const expected: Array<DiscoverRef> = [{ platform: 'letterboxd', id: 'alice', url }]
+        const expected = [{ platform: 'letterboxd', id: 'alice', url }]
 
         expect(letterboxdHandler.resolve(url, '<html><body></body></html>')).toEqual(expected)
       })
@@ -190,7 +190,7 @@ describe('letterboxdHandler', () => {
     describe('avatar of another member', () => {
       it('should return a ref for the member', () => {
         const url = 'https://letterboxd.com/alice/list/favorites/'
-        const expected: Array<DiscoverRef> = [{ platform: 'letterboxd', id: 'alice', url }]
+        const expected = [{ platform: 'letterboxd', id: 'alice', url }]
 
         expect(letterboxdHandler.resolve(url, otherMemberAvatarHtml)).toEqual(expected)
       })

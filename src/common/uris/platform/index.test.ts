@@ -314,7 +314,7 @@ describe('discoverUrisFromPlatform', () => {
       return []
     }
     const options = { baseUrl: 'https://example.com', handlers: [handler], enrichFn }
-    const expected: Array<DiscoverRef> = [
+    const expected = [
       { platform: 'example', id: 'alice', url: 'https://example.com/@alice' },
       { platform: 'example', id: 'bob', url: 'https://example.com/@bob' },
     ]

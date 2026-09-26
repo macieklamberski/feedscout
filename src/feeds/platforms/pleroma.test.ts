@@ -23,23 +23,23 @@ describe('pleromaHandler', () => {
 
   describe('match', () => {
     it('should return true for profile URL with Pleroma content', () => {
-      expect(pleromaHandler.match('https://lain.com/users/lain', pleromaHtml)).toBe(true)
+      expect(pleromaHandler.match('https://example.com/users/lain', pleromaHtml)).toBe(true)
     })
 
     it('should return true for profile URL with Pleroma content with a capitalized users segment', () => {
-      expect(pleromaHandler.match('https://lain.com/Users/lain', pleromaHtml)).toBe(true)
+      expect(pleromaHandler.match('https://example.com/Users/lain', pleromaHtml)).toBe(true)
     })
 
     it('should return false without content', () => {
-      expect(pleromaHandler.match('https://lain.com/users/lain')).toBe(false)
+      expect(pleromaHandler.match('https://example.com/users/lain')).toBe(false)
     })
 
     it('should return false for non-Pleroma content', () => {
-      expect(pleromaHandler.match('https://lain.com/users/lain', otherHtml)).toBe(false)
+      expect(pleromaHandler.match('https://example.com/users/lain', otherHtml)).toBe(false)
     })
 
     it('should return false for non-profile paths', () => {
-      expect(pleromaHandler.match('https://lain.com/about', pleromaHtml)).toBe(false)
+      expect(pleromaHandler.match('https://example.com/about', pleromaHtml)).toBe(false)
     })
 
     it('should return false for invalid URL', () => {
@@ -49,14 +49,14 @@ describe('pleromaHandler', () => {
 
   describe('resolve', () => {
     it('should return atom feed for profile', () => {
-      const value = 'https://lain.com/users/lain'
+      const value = 'https://example.com/users/lain'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://lain.com/users/lain/feed.atom',
+          uri: 'https://example.com/users/lain/feed.atom',
           hint: { key: 'pleroma:posts', label: 'Posts', format: 'atom' },
         },
         {
-          uri: 'https://lain.com/users/lain/feed.rss',
+          uri: 'https://example.com/users/lain/feed.rss',
           hint: { key: 'pleroma:posts', label: 'Posts', format: 'rss' },
         },
       ]
@@ -65,14 +65,14 @@ describe('pleromaHandler', () => {
     })
 
     it('should return atom feed regardless of subpath', () => {
-      const value = 'https://lain.com/users/lain/statuses'
+      const value = 'https://example.com/users/lain/statuses'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://lain.com/users/lain/feed.atom',
+          uri: 'https://example.com/users/lain/feed.atom',
           hint: { key: 'pleroma:posts', label: 'Posts', format: 'atom' },
         },
         {
-          uri: 'https://lain.com/users/lain/feed.rss',
+          uri: 'https://example.com/users/lain/feed.rss',
           hint: { key: 'pleroma:posts', label: 'Posts', format: 'rss' },
         },
       ]
@@ -81,7 +81,7 @@ describe('pleromaHandler', () => {
     })
 
     it('should return empty array for non-profile paths', () => {
-      expect(pleromaHandler.resolve('https://lain.com/about')).toEqual([])
+      expect(pleromaHandler.resolve('https://example.com/about')).toEqual([])
     })
   })
 })

@@ -36,7 +36,7 @@ describe('blueskyHandler', () => {
 
   describe('resolve', () => {
     it('should return a ref for the profile handle', async () => {
-      const expected: Array<DiscoverRef> = [userRef]
+      const expected = [userRef]
 
       expect(await blueskyHandler.resolve('https://bsky.app/profile/user.bsky.social')).toEqual(
         expected,

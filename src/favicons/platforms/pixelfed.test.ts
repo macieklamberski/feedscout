@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverRef, DiscoverUriEntry, FetchFn } from '../../common/types.js'
+import type { DiscoverRef, FetchFn } from '../../common/types.js'
 import type { FaviconEnricherContext } from '../types.js'
 import { pixelfedEnricher, pixelfedHandler } from './pixelfed.js'
 
@@ -57,7 +57,7 @@ describe('pixelfedHandler', () => {
     describe('happy paths', () => {
       it('should resolve avatar from og:image on /{user}', () => {
         const result = pixelfedHandler.resolve('https://example.com/alice', profileHtml)
-        const expected: Array<DiscoverUriEntry> = [
+        const expected = [
           { uri: 'https://example.com/storage/avatars/000/000/000/002/abc_avatar.jpg?v=57' },
         ]
 
@@ -68,18 +68,14 @@ describe('pixelfedHandler', () => {
     describe('sad paths', () => {
       it('should return a ref without content', () => {
         const result = pixelfedHandler.resolve('https://example.com/alice')
-        const expected: Array<DiscoverRef> = [
-          { platform: 'pixelfed', id: 'alice', url: 'https://example.com/alice' },
-        ]
+        const expected = [{ platform: 'pixelfed', id: 'alice', url: 'https://example.com/alice' }]
 
         expect(result).toEqual(expected)
       })
 
       it('should return a ref when page has no og:image', () => {
         const result = pixelfedHandler.resolve('https://example.com/alice', pixelfedHtml)
-        const expected: Array<DiscoverRef> = [
-          { platform: 'pixelfed', id: 'alice', url: 'https://example.com/alice' },
-        ]
+        const expected = [{ platform: 'pixelfed', id: 'alice', url: 'https://example.com/alice' }]
 
         expect(result).toEqual(expected)
       })
@@ -98,9 +94,7 @@ describe('pixelfedHandler', () => {
           >
         `
         const result = pixelfedHandler.resolve('https://example.com/alice', value)
-        const expected: Array<DiscoverRef> = [
-          { platform: 'pixelfed', id: 'alice', url: 'https://example.com/alice' },
-        ]
+        const expected = [{ platform: 'pixelfed', id: 'alice', url: 'https://example.com/alice' }]
 
         expect(result).toEqual(expected)
       })
@@ -113,9 +107,7 @@ describe('pixelfedHandler', () => {
           >
         `
         const result = pixelfedHandler.resolve('https://example.com/alice', value)
-        const expected: Array<DiscoverRef> = [
-          { platform: 'pixelfed', id: 'alice', url: 'https://example.com/alice' },
-        ]
+        const expected = [{ platform: 'pixelfed', id: 'alice', url: 'https://example.com/alice' }]
 
         expect(result).toEqual(expected)
       })

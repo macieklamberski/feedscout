@@ -74,27 +74,27 @@ describe('parseMediumUrl', () => {
   })
 
   it('should return the subdomain for a subdomain page', () => {
-    const expected: MediumUrl = { kind: 'subdomain', subdomain: 'blog' }
+    const expected: MediumUrl = { kind: 'subdomain', subdomain: 'alice' }
 
-    expect(parseMediumUrl('https://blog.medium.com/some-article')).toEqual(expected)
+    expect(parseMediumUrl('https://alice.medium.com/some-article')).toEqual(expected)
   })
 
   it('should return the subdomain for a subdomain root', () => {
-    const expected: MediumUrl = { kind: 'subdomain', subdomain: 'blog' }
+    const expected: MediumUrl = { kind: 'subdomain', subdomain: 'alice' }
 
-    expect(parseMediumUrl('https://blog.medium.com')).toEqual(expected)
+    expect(parseMediumUrl('https://alice.medium.com')).toEqual(expected)
   })
 
   it('should return the subdomain and tag for a subdomain tagged page', () => {
-    const expected: MediumUrl = { kind: 'subdomain', subdomain: 'blog', tag: 'engineering' }
+    const expected: MediumUrl = { kind: 'subdomain', subdomain: 'alice', tag: 'engineering' }
 
-    expect(parseMediumUrl('https://blog.medium.com/tagged/engineering')).toEqual(expected)
+    expect(parseMediumUrl('https://alice.medium.com/tagged/engineering')).toEqual(expected)
   })
 
   it('should return the subdomain and tag for a subdomain tagged page with a capitalized tagged segment', () => {
-    const expected: MediumUrl = { kind: 'subdomain', subdomain: 'blog', tag: 'engineering' }
+    const expected: MediumUrl = { kind: 'subdomain', subdomain: 'alice', tag: 'engineering' }
 
-    expect(parseMediumUrl('https://blog.medium.com/Tagged/engineering')).toEqual(expected)
+    expect(parseMediumUrl('https://alice.medium.com/Tagged/engineering')).toEqual(expected)
   })
 
   it('should return undefined for a nested subdomain', () => {
@@ -177,10 +177,10 @@ describe('mediumHandler', () => {
     })
 
     it('should return RSS feed URL for subdomain publication', () => {
-      const value = 'https://blog.medium.com/some-article'
+      const value = 'https://alice.medium.com/some-article'
       const expected = [
         {
-          uri: 'https://blog.medium.com/feed',
+          uri: 'https://alice.medium.com/feed',
           hint: { key: 'medium:publication', label: 'Publication' },
         },
       ]
@@ -213,10 +213,10 @@ describe('mediumHandler', () => {
     })
 
     it('should return RSS feed URL for subdomain tagged page', () => {
-      const value = 'https://blog.medium.com/tagged/engineering'
+      const value = 'https://alice.medium.com/tagged/engineering'
       const expected = [
         {
-          uri: 'https://blog.medium.com/feed/tagged/engineering',
+          uri: 'https://alice.medium.com/feed/tagged/engineering',
           hint: { key: 'medium:tagged', label: 'Tagged' },
         },
       ]

@@ -1,5 +1,4 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverUriEntry } from '../../common/types.js'
 import { behanceHandler } from './behance.js'
 
 const avatarBase = 'https://pps.services.adobe.com/api/profile/ABC123@AdobeID/image/0f1e2d3c'
@@ -37,7 +36,7 @@ describe('behanceHandler', () => {
       it('should return the largest JSON-LD Person image', async () => {
         const content = createPage(personJsonLd)
         const result = await behanceHandler.resolve('https://www.behance.net/alice', content)
-        const expected: Array<DiscoverUriEntry> = [{ uri: `${avatarBase}/276` }]
+        const expected = [{ uri: `${avatarBase}/276` }]
 
         expect(result).toEqual(expected)
       })
@@ -50,7 +49,7 @@ describe('behanceHandler', () => {
           >${personJsonLd}</script>
         `
         const result = await behanceHandler.resolve('https://www.behance.net/alice', content)
-        const expected: Array<DiscoverUriEntry> = [{ uri: `${avatarBase}/276` }]
+        const expected = [{ uri: `${avatarBase}/276` }]
 
         expect(result).toEqual(expected)
       })
@@ -62,7 +61,7 @@ describe('behanceHandler', () => {
         })
         const content = `${createPage(organization)}${createPage(personJsonLd)}`
         const result = await behanceHandler.resolve('https://www.behance.net/alice', content)
-        const expected: Array<DiscoverUriEntry> = [{ uri: `${avatarBase}/276` }]
+        const expected = [{ uri: `${avatarBase}/276` }]
 
         expect(result).toEqual(expected)
       })
@@ -105,7 +104,7 @@ describe('behanceHandler', () => {
         })
         const content = createPage(jsonLd)
         const result = await behanceHandler.resolve('https://www.behance.net/alice', content)
-        const expected: Array<DiscoverUriEntry> = [{ uri: `${avatarBase}/100` }]
+        const expected = [{ uri: `${avatarBase}/100` }]
 
         expect(result).toEqual(expected)
       })

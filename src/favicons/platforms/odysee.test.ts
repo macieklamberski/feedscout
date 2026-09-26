@@ -44,14 +44,14 @@ describe('odyseeHandler', () => {
   describe('resolve', () => {
     it('should return a ref for a channel URL', async () => {
       const url = 'https://odysee.com/@alice'
-      const expected: Array<DiscoverRef> = [{ platform: 'odysee', id: 'alice', url }]
+      const expected = [{ platform: 'odysee', id: 'alice', url }]
 
       expect(await odyseeHandler.resolve(url)).toEqual(expected)
     })
 
     it('should return a ref with the claim id prefix', async () => {
       const url = 'https://odysee.com/@alice:3f'
-      const expected: Array<DiscoverRef> = [{ platform: 'odysee', id: 'alice:3f', url }]
+      const expected = [{ platform: 'odysee', id: 'alice:3f', url }]
 
       expect(await odyseeHandler.resolve(url)).toEqual(expected)
     })

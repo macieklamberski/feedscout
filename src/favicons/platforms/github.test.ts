@@ -1,5 +1,4 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverUriEntry } from '../../common/types.js'
 import { githubHandler } from './github.js'
 
 describe('githubHandler', () => {
@@ -11,13 +10,13 @@ describe('githubHandler', () => {
 
   describe('resolve', () => {
     it('should resolve user avatar from user URL', () => {
-      const expected: Array<DiscoverUriEntry> = [{ uri: 'https://github.com/octocat.png' }]
+      const expected = [{ uri: 'https://github.com/octocat.png' }]
 
       expect(githubHandler.resolve('https://github.com/octocat')).toEqual(expected)
     })
 
     it('should resolve user avatar from repo URL', () => {
-      const expected: Array<DiscoverUriEntry> = [{ uri: 'https://github.com/octocat.png' }]
+      const expected = [{ uri: 'https://github.com/octocat.png' }]
 
       expect(githubHandler.resolve('https://github.com/octocat/Hello-World')).toEqual(expected)
     })

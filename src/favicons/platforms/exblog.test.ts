@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverRef, DiscoverUriEntry, FetchFn } from '../../common/types.js'
+import type { DiscoverRef, FetchFn } from '../../common/types.js'
 import type { FaviconEnricherContext } from '../types.js'
 import { exblogEnricher, exblogHandler } from './exblog.js'
 
@@ -56,14 +56,14 @@ describe('exblogHandler', () => {
   describe('resolve', () => {
     describe('happy paths', () => {
       it('should return the logo from the blog page content', () => {
-        const expected: Array<DiscoverUriEntry> = [{ uri: logoUrl }]
+        const expected = [{ uri: logoUrl }]
 
         expect(exblogHandler.resolve('https://example.exblog.jp/', blogPage)).toEqual(expected)
       })
 
       it('should return a ref to the blog for a page passed without its content', () => {
         const value = 'https://example.exblog.jp/37927093'
-        const expected: Array<DiscoverRef> = [{ platform: 'exblog', id: 'example', url: value }]
+        const expected = [{ platform: 'exblog', id: 'example', url: value }]
 
         expect(exblogHandler.resolve(value)).toEqual(expected)
       })

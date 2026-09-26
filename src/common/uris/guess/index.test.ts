@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'bun:test'
+import type { UriEntry } from '../../types.js'
 import { discoverUrisFromGuess } from './index.js'
 
 describe('discoverUrisFromGuess', () => {
@@ -84,7 +85,10 @@ describe('discoverUrisFromGuess', () => {
       uris: ['/feed.xml'],
       additionalBaseUrls: ['https://www.example.com'],
     })
-    const expected = ['https://example.com/feed.xml', 'https://www.example.com/feed.xml']
+    const expected: Array<UriEntry> = [
+      'https://example.com/feed.xml',
+      'https://www.example.com/feed.xml',
+    ]
 
     expect(value).toEqual(expected)
   })

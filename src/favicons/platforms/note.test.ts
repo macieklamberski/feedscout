@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverRef, DiscoverUriEntry, FetchFn } from '../../common/types.js'
+import type { DiscoverRef, FetchFn } from '../../common/types.js'
 import type { FaviconEnricherContext } from '../types.js'
 import { noteEnricher, noteHandler } from './note.js'
 
@@ -40,28 +40,28 @@ describe('noteHandler', () => {
   describe('resolve', () => {
     describe('happy paths', () => {
       it('should return avatar from profile page payload', () => {
-        const expected: Array<DiscoverUriEntry> = [{ uri: avatarUrl }]
+        const expected = [{ uri: avatarUrl }]
 
         expect(noteHandler.resolve('https://note.com/alice', profileContent)).toEqual(expected)
       })
 
       it('should return a ref when content is absent', () => {
         const url = 'https://note.com/alice'
-        const expected: Array<DiscoverRef> = [{ platform: 'note', id: 'alice', url }]
+        const expected = [{ platform: 'note', id: 'alice', url }]
 
         expect(noteHandler.resolve(url)).toEqual(expected)
       })
 
       it('should return a ref when page has no payload', () => {
         const url = 'https://note.com/alice'
-        const expected: Array<DiscoverRef> = [{ platform: 'note', id: 'alice', url }]
+        const expected = [{ platform: 'note', id: 'alice', url }]
 
         expect(noteHandler.resolve(url, '<html></html>')).toEqual(expected)
       })
 
       it('should return a ref with the owner for magazine pages', () => {
         const url = 'https://note.com/alice/m/m1861fae39074'
-        const expected: Array<DiscoverRef> = [{ platform: 'note', id: 'alice', url }]
+        const expected = [{ platform: 'note', id: 'alice', url }]
 
         expect(noteHandler.resolve(url)).toEqual(expected)
       })
@@ -71,7 +71,7 @@ describe('noteHandler', () => {
       it('should return a ref when profileImageUrl is not valid JSON', () => {
         const url = 'https://note.com/alice'
         const content = '{\\"profileImageUrl\\":\\"https://example.com/\tprofile.png\\"}'
-        const expected: Array<DiscoverRef> = [{ platform: 'note', id: 'alice', url }]
+        const expected = [{ platform: 'note', id: 'alice', url }]
 
         expect(noteHandler.resolve(url, content)).toEqual(expected)
       })
@@ -84,14 +84,14 @@ describe('noteHandler', () => {
     describe('edge cases', () => {
       it('should ignore page payload on magazine pages', () => {
         const url = 'https://note.com/alice/m/m1861fae39074'
-        const expected: Array<DiscoverRef> = [{ platform: 'note', id: 'alice', url }]
+        const expected = [{ platform: 'note', id: 'alice', url }]
 
         expect(noteHandler.resolve(url, profileContent)).toEqual(expected)
       })
 
       it('should return a ref with the owner for article pages, ignoring the payload', () => {
         const url = 'https://note.com/alice/n/n1234567890ab'
-        const expected: Array<DiscoverRef> = [{ platform: 'note', id: 'alice', url }]
+        const expected = [{ platform: 'note', id: 'alice', url }]
 
         expect(noteHandler.resolve(url, profileContent)).toEqual(expected)
       })

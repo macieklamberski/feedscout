@@ -1,5 +1,4 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverUriEntry } from '../../common/types.js'
 import { flickrHandler } from './flickr.js'
 
 const profileContent = `
@@ -48,7 +47,7 @@ describe('flickrHandler', () => {
 
   describe('resolve', () => {
     it('should return the owner buddyicon from a photostream page', () => {
-      const expected: Array<DiscoverUriEntry> = [
+      const expected = [
         { uri: 'https://live.staticflickr.com/2852/buddyicons/12345678@N00_r.jpg?1369154786' },
       ]
 
@@ -66,7 +65,7 @@ describe('flickrHandler', () => {
           ></div>
         </div>
       `
-      const expected: Array<DiscoverUriEntry> = [
+      const expected = [
         { uri: 'https://live.staticflickr.com/2852/buddyicons/12345678@N00_r.jpg?1369154786' },
       ]
 
@@ -77,7 +76,7 @@ describe('flickrHandler', () => {
 
     it('should return the owner buddyicon from an albums page', () => {
       const value = 'https://www.flickr.com/photos/alice/albums'
-      const expected: Array<DiscoverUriEntry> = [
+      const expected = [
         { uri: 'https://live.staticflickr.com/2852/buddyicons/12345678@N00_r.jpg?1369154786' },
       ]
 
