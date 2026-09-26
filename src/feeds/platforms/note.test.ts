@@ -45,6 +45,12 @@ describe('parseNoteUrl', () => {
     expect(parseNoteUrl('https://note.com/hashtag/AI')).toEqual(expected)
   })
 
+  it('should return the tag for a hashtag page with a capitalized hashtag segment', () => {
+    const expected: NoteUrl = { kind: 'hashtag', tag: 'AI' }
+
+    expect(parseNoteUrl('https://note.com/Hashtag/AI')).toEqual(expected)
+  })
+
   it('should return the tag for the tag page a hashtag redirects to', () => {
     const expected: NoteUrl = { kind: 'hashtag', tag: 'AI' }
 
@@ -67,6 +73,10 @@ describe('parseNoteUrl', () => {
     expect(parseNoteUrl('https://note.com/settings')).toBeUndefined()
     expect(parseNoteUrl('https://note.com/signup')).toBeUndefined()
     expect(parseNoteUrl('https://note.com/terms')).toBeUndefined()
+  })
+
+  it('should return undefined for a capitalized excluded path', () => {
+    expect(parseNoteUrl('https://note.com/Login')).toBeUndefined()
   })
 
   it('should return undefined for the root', () => {

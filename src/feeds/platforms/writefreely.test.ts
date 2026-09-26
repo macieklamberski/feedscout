@@ -52,6 +52,10 @@ describe('writefreelyHandler', () => {
       expect(writefreelyHandler.match('https://example.org/read', writefreelyHtml)).toBe(false)
     })
 
+    it('should not match a capitalized reader path', () => {
+      expect(writefreelyHandler.match('https://example.org/Read', writefreelyHtml)).toBe(false)
+    })
+
     it('should not match without content', () => {
       expect(writefreelyHandler.match('https://example.org/alice')).toBe(false)
     })

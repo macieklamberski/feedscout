@@ -20,7 +20,7 @@ const feedsBase = 'https://www.flickr.com/services/feeds'
 
 const tagRegex = /^\/photos\/tags\/([^/]+)/i
 const groupRegex = /^\/groups\/([^/]+)(?:\/([^/]+))?/i
-const forumRegex = /^\/help\/forum/i
+const forumRegex = /^\/help\/forum(?:\/|$)/i
 const nsidRegex = /^\d+@N\d+$/
 
 const groupSections = ['pool', 'discuss']

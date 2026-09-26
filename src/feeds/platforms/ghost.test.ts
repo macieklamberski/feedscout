@@ -80,6 +80,22 @@ describe('ghostHandler', () => {
       expect(ghostHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return author and blog feeds for author page with a capitalized author segment', () => {
+      const value = 'https://demo.ghost.io/Author/ghost'
+      const expected = [
+        {
+          uri: 'https://demo.ghost.io/author/ghost/rss/',
+          hint: { key: 'ghost:author', label: 'Author' },
+        },
+        {
+          uri: 'https://demo.ghost.io/rss/',
+          hint: { key: 'ghost:blog', label: 'Blog' },
+        },
+      ]
+
+      expect(ghostHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return feed URL regardless of path', () => {
       const value = 'https://demo.ghost.io/some-article-slug'
       const expected = [

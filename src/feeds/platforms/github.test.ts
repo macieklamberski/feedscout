@@ -113,12 +113,66 @@ describe('githubHandler', () => {
   describe('resolve', () => {
     it('should return the wiki feed for a capitalized wiki segment', () => {
       const value = 'https://github.com/microsoft/vscode/Wiki'
-      const expected: DiscoverUriEntry = {
-        uri: 'https://github.com/microsoft/vscode/wiki.atom',
-        hint: { key: 'github:wiki', label: 'Wiki' },
-      }
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://github.com/microsoft/vscode/releases.atom',
+          hint: { key: 'github:releases', label: 'Releases' },
+        },
+        {
+          uri: 'https://github.com/microsoft/vscode/commits.atom',
+          hint: { key: 'github:commits', label: 'Commits' },
+        },
+        {
+          uri: 'https://github.com/microsoft/vscode/tags.atom',
+          hint: { key: 'github:tags', label: 'Tags' },
+        },
+        {
+          uri: 'https://github.com/microsoft/vscode/wiki.atom',
+          hint: { key: 'github:wiki', label: 'Wiki' },
+        },
+      ]
 
-      expect(githubHandler.resolve(value)).toContainEqual(expected)
+      expect(githubHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should not return the wiki feed for a repository named wiki', () => {
+      const value = 'https://github.com/owner/Wiki'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://github.com/owner/Wiki/releases.atom',
+          hint: { key: 'github:releases', label: 'Releases' },
+        },
+        {
+          uri: 'https://github.com/owner/Wiki/commits.atom',
+          hint: { key: 'github:commits', label: 'Commits' },
+        },
+        {
+          uri: 'https://github.com/owner/Wiki/tags.atom',
+          hint: { key: 'github:tags', label: 'Tags' },
+        },
+      ]
+
+      expect(githubHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should not return the discussions feed for a repository named discussions', () => {
+      const value = 'https://github.com/owner/Discussions'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://github.com/owner/Discussions/releases.atom',
+          hint: { key: 'github:releases', label: 'Releases' },
+        },
+        {
+          uri: 'https://github.com/owner/Discussions/commits.atom',
+          hint: { key: 'github:commits', label: 'Commits' },
+        },
+        {
+          uri: 'https://github.com/owner/Discussions/tags.atom',
+          hint: { key: 'github:tags', label: 'Tags' },
+        },
+      ]
+
+      expect(githubHandler.resolve(value)).toEqual(expected)
     })
 
     it('should return releases, commits, and tags feeds for repository', () => {
@@ -189,6 +243,30 @@ describe('githubHandler', () => {
       expect(githubHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should include branch-specific commits feed when on branch page with a capitalized tree segment', () => {
+      const value = 'https://github.com/microsoft/vscode/Tree/main'
+      const expected = [
+        {
+          uri: 'https://github.com/microsoft/vscode/releases.atom',
+          hint: { key: 'github:releases', label: 'Releases' },
+        },
+        {
+          uri: 'https://github.com/microsoft/vscode/commits.atom',
+          hint: { key: 'github:commits', label: 'Commits' },
+        },
+        {
+          uri: 'https://github.com/microsoft/vscode/tags.atom',
+          hint: { key: 'github:tags', label: 'Tags' },
+        },
+        {
+          uri: 'https://github.com/microsoft/vscode/commits/main.atom',
+          hint: { key: 'github:branch-commits', label: 'Branch commits' },
+        },
+      ]
+
+      expect(githubHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should not include branch commits feed for tree path with subdirectory', () => {
       const value = 'https://github.com/microsoft/vscode/tree/main/src'
       const expected = [
@@ -233,8 +311,60 @@ describe('githubHandler', () => {
       expect(githubHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should include discussions feed when on discussions page with a capitalized discussions segment', () => {
+      const value = 'https://github.com/microsoft/vscode/Discussions'
+      const expected = [
+        {
+          uri: 'https://github.com/microsoft/vscode/releases.atom',
+          hint: { key: 'github:releases', label: 'Releases' },
+        },
+        {
+          uri: 'https://github.com/microsoft/vscode/commits.atom',
+          hint: { key: 'github:commits', label: 'Commits' },
+        },
+        {
+          uri: 'https://github.com/microsoft/vscode/tags.atom',
+          hint: { key: 'github:tags', label: 'Tags' },
+        },
+        {
+          uri: 'https://github.com/microsoft/vscode/discussions.atom',
+          hint: { key: 'github:discussions', label: 'Discussions' },
+        },
+      ]
+
+      expect(githubHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should include category-scoped discussion feed when on category page', () => {
       const value = 'https://github.com/microsoft/vscode/discussions/categories/announcements'
+      const expected = [
+        {
+          uri: 'https://github.com/microsoft/vscode/releases.atom',
+          hint: { key: 'github:releases', label: 'Releases' },
+        },
+        {
+          uri: 'https://github.com/microsoft/vscode/commits.atom',
+          hint: { key: 'github:commits', label: 'Commits' },
+        },
+        {
+          uri: 'https://github.com/microsoft/vscode/tags.atom',
+          hint: { key: 'github:tags', label: 'Tags' },
+        },
+        {
+          uri: 'https://github.com/microsoft/vscode/discussions.atom',
+          hint: { key: 'github:discussions', label: 'Discussions' },
+        },
+        {
+          uri: 'https://github.com/microsoft/vscode/discussions/categories/announcements.atom',
+          hint: { key: 'github:discussion-category', label: 'Discussion category' },
+        },
+      ]
+
+      expect(githubHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should include category-scoped discussion feed when on category page with a capitalized categories segment', () => {
+      const value = 'https://github.com/microsoft/vscode/discussions/Categories/announcements'
       const expected = [
         {
           uri: 'https://github.com/microsoft/vscode/releases.atom',
@@ -335,6 +465,30 @@ describe('githubHandler', () => {
 
     it('should include file-specific commits feed when viewing a file', () => {
       const value = 'https://github.com/anthropics/sdk/blob/main/src/index.ts'
+      const expected = [
+        {
+          uri: 'https://github.com/anthropics/sdk/releases.atom',
+          hint: { key: 'github:releases', label: 'Releases' },
+        },
+        {
+          uri: 'https://github.com/anthropics/sdk/commits.atom',
+          hint: { key: 'github:commits', label: 'Commits' },
+        },
+        {
+          uri: 'https://github.com/anthropics/sdk/tags.atom',
+          hint: { key: 'github:tags', label: 'Tags' },
+        },
+        {
+          uri: 'https://github.com/anthropics/sdk/commits/main/src/index.ts.atom',
+          hint: { key: 'github:file-history', label: 'File history' },
+        },
+      ]
+
+      expect(githubHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should include file-specific commits feed when viewing a file with a capitalized blob segment', () => {
+      const value = 'https://github.com/anthropics/sdk/Blob/main/src/index.ts'
       const expected = [
         {
           uri: 'https://github.com/anthropics/sdk/releases.atom',

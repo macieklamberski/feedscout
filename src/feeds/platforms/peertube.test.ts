@@ -40,6 +40,12 @@ describe('parsePeertubeUrl', () => {
     expect(parsePeertubeUrl('https://example.org/a/alice')).toEqual(expected)
   })
 
+  it('should return the account for a capitalized prefix', () => {
+    const expected: PeertubeUrl = { kind: 'account', name: 'alice' }
+
+    expect(parsePeertubeUrl('https://example.org/A/alice')).toEqual(expected)
+  })
+
   it('should return the account for an account subpage', () => {
     const expected: PeertubeUrl = { kind: 'account', name: 'alice' }
 

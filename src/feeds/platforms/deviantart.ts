@@ -21,7 +21,6 @@ const favouritesRegex = /^\/[^/]+\/favourites\/?$/i
 const folderRegex = /^\/[^/]+\/gallery\/(\d+)(?:\/|$)/i
 const journalRegex = /^\/[^/]+\/journal(?:\/|$)/i
 const dailyDeviationsRegex = /^\/daily-deviations\/?$/i
-const popularRegex = /^\/popular\/?$/i
 
 const excludedPaths = [
   'about',
@@ -92,15 +91,6 @@ export const deviantartHandler: PlatformHandler = {
         {
           uri: `${feedBaseUrl}?q=${encodeURIComponent('special:dd')}`,
           hint: composeHint('deviantart:daily-deviations'),
-        },
-      ]
-    }
-
-    if (popularRegex.test(pathname)) {
-      return [
-        {
-          uri: `${feedBaseUrl}?type=deviation&q=${encodeURIComponent('boost:popular')}`,
-          hint: composeHint('deviantart:popular'),
         },
       ]
     }

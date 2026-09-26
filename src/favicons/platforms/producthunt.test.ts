@@ -56,6 +56,10 @@ describe('producthuntHandler', () => {
       )
     })
 
+    it('should match topic pages with a capitalized topics segment', () => {
+      expect(producthuntHandler.match('https://www.producthunt.com/Topics/productivity')).toBe(true)
+    })
+
     it('should not match the topics index', () => {
       expect(producthuntHandler.match('https://www.producthunt.com/topics')).toBe(false)
     })

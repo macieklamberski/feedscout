@@ -119,6 +119,18 @@ describe('arenaHandler', () => {
       expect(arenaHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return editorial feed for the editorial section with a capitalized editorial segment', () => {
+      const value = 'https://www.are.na/Editorial'
+      const expected = [
+        {
+          uri: 'https://www.are.na/editorial/feed/rss',
+          hint: { key: 'arena:editorial', label: 'Editorial' },
+        },
+      ]
+
+      expect(arenaHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return editorial feed for an editorial article', () => {
       const value = 'https://www.are.na/editorial/learning-to-float'
       const expected = [

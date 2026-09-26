@@ -23,12 +23,26 @@ describe('pikaHandler', () => {
   describe('resolve', () => {
     it('should return the tag feed for a capitalized tag segment', () => {
       const value = 'https://discardpile.pika.page/Tag/tech'
-      const expected: DiscoverUriEntry = {
-        uri: 'https://discardpile.pika.page/tag/tech/feed',
-        hint: { key: 'pika:tag', label: 'Tag', format: 'atom' },
-      }
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://discardpile.pika.page/tag/tech/feed',
+          hint: { key: 'pika:tag', label: 'Tag', format: 'atom' },
+        },
+        {
+          uri: 'https://discardpile.pika.page/tag/tech/feed.rss',
+          hint: { key: 'pika:tag', label: 'Tag', format: 'rss' },
+        },
+        {
+          uri: 'https://discardpile.pika.page/posts_feed',
+          hint: { key: 'pika:posts', label: 'Posts', format: 'atom' },
+        },
+        {
+          uri: 'https://discardpile.pika.page/posts_feed.rss',
+          hint: { key: 'pika:posts', label: 'Posts', format: 'rss' },
+        },
+      ]
 
-      expect(pikaHandler.resolve(value)).toContainEqual(expected)
+      expect(pikaHandler.resolve(value)).toEqual(expected)
     })
 
     it('should return Atom and RSS feeds for blog', () => {

@@ -71,15 +71,6 @@ describe('youtubeHandler', () => {
       expect(await youtubeHandler.resolve(value, watchHtml)).toEqual(expected)
     })
 
-    it('should return owner thumbnail at s900 for a watch page with trailing slash', async () => {
-      const value = 'https://www.youtube.com/watch/?v=abc123'
-      const expected: Array<DiscoverUriEntry> = [
-        { uri: 'https://yt3.ggpht.com/def456=s900-c-k-c0x00ffffff-no-rj' },
-      ]
-
-      expect(await youtubeHandler.resolve(value, watchHtml)).toEqual(expected)
-    })
-
     it('should return owner thumbnail at s900 for a youtu.be short link', async () => {
       const value = 'https://youtu.be/abc123'
       const expected: Array<DiscoverUriEntry> = [

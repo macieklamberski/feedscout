@@ -74,6 +74,18 @@ describe('doubanHandler', () => {
       expect(doubanHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return subject reviews feed for subject page with a capitalized subject segment', () => {
+      const value = 'https://book.douban.com/Subject/1084336/'
+      const expected = [
+        {
+          uri: 'https://www.douban.com/feed/subject/1084336/reviews',
+          hint: { key: 'douban:subjectReviews', label: 'Subject reviews' },
+        },
+      ]
+
+      expect(doubanHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return category review feeds for root page', () => {
       const value = 'https://www.douban.com/'
       const expected = [

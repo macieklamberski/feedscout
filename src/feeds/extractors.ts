@@ -22,6 +22,7 @@ export const defaultExtractFn: DiscoverExtractFn<FeedResult> = ({ content, url, 
     switch (format) {
       case 'rss':
       case 'rdf':
+      case 'json':
         return {
           url,
           isValid: true,
@@ -37,15 +38,6 @@ export const defaultExtractFn: DiscoverExtractFn<FeedResult> = ({ content, url, 
           format,
           title: feed.title?.value,
           description: feed.subtitle?.value,
-          siteUrl,
-        }
-      case 'json':
-        return {
-          url,
-          isValid: true,
-          format,
-          title: feed.title,
-          description: feed.description,
           siteUrl,
         }
     }

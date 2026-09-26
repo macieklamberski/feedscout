@@ -3,7 +3,7 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getJournalFeeds } from './livejournal.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic covers asylum (html), partly covers blog, tildePath, userPath.
+// Generic partly covers asylum, blog, tildePath, userPath.
 // Handler needed for: syndicated.
 
 const domains = ['insanejournal.com']

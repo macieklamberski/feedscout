@@ -57,6 +57,22 @@ describe('homelandHandler', () => {
       expect(homelandHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return the node and topics feeds for a node page with a capitalized node segment', () => {
+      const value = 'https://example.org/topics/Node41'
+      const expected = [
+        {
+          uri: 'https://example.org/topics/node41/feed',
+          hint: { key: 'homeland:node', label: 'Node' },
+        },
+        {
+          uri: 'https://example.org/topics/feed',
+          hint: { key: 'homeland:topics', label: 'Topics' },
+        },
+      ]
+
+      expect(homelandHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return the node and topics feeds for a node page with a capitalized topics segment', () => {
       const value = 'https://example.org/Topics/node41'
       const expected = [
@@ -64,6 +80,18 @@ describe('homelandHandler', () => {
           uri: 'https://example.org/topics/node41/feed',
           hint: { key: 'homeland:node', label: 'Node' },
         },
+        {
+          uri: 'https://example.org/topics/feed',
+          hint: { key: 'homeland:topics', label: 'Topics' },
+        },
+      ]
+
+      expect(homelandHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return only the topics feed when the node id runs into letters', () => {
+      const value = 'https://example.org/topics/node41x'
+      const expected = [
         {
           uri: 'https://example.org/topics/feed',
           hint: { key: 'homeland:topics', label: 'Topics' },

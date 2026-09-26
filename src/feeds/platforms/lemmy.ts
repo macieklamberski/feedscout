@@ -3,14 +3,12 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, findElement, hasClass, hasMetaContent } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic covers community, user (html).
-// Handler needed for: home.
+// Generic covers community, user (html), partly covers home.
 
 export type LemmyUrl = { kind: 'community'; community: string } | { kind: 'user'; username: string }
 
 const lemmyPoweredByRegex = /lemmy/i
 const numericRegex = /^\d+$/
-const homeRegex = /^\/(?:home\/?)?$/i
 
 const validSorts = [
   'Active',
@@ -34,11 +32,18 @@ const validSorts = [
   'NewComments',
 ]
 
-const getQuerySuffix = (searchParams: URLSearchParams): string => {
+const getQuerySuffix = (searchParams: URLSearchParams, content: string | undefined): string => {
   const params = new URLSearchParams()
-  const sort = searchParams.get('sort')
+  // The page advertises its feeds with the instance's default sort, which a feed URL without a sort
+  // does not follow.
+  const link = findElement(content, (element) => {
+    return element.name === 'link' && element.attribs.rel === 'alternate'
+  })
+  const feedUrl = parseUrl(link?.attribs.href ?? '', 'https://example.com')
+  const sorts = [searchParams.get('sort'), feedUrl?.searchParams.get('sort')]
+  const sort = sorts.find((value) => value && validSorts.includes(value))
 
-  if (sort && validSorts.includes(sort)) {
+  if (sort) {
     params.set('sort', sort)
   }
 
@@ -85,13 +90,7 @@ export const isLemmyHeaders = (headers: Headers): boolean => {
 
 export const lemmyHandler: PlatformHandler = {
   match: (url, content, headers) => {
-    const parsedUrl = parseUrl(url)
-
-    if (!parsedUrl) {
-      return false
-    }
-
-    if (!homeRegex.test(parsedUrl.pathname) && !parseLemmyUrl(url)) {
+    if (parseUrl(url)?.pathname !== '/' && !parseLemmyUrl(url)) {
       return false
     }
 
@@ -106,10 +105,10 @@ export const lemmyHandler: PlatformHandler = {
     return false
   },
 
-  resolve: (url) => {
+  resolve: (url, content) => {
     const { origin, searchParams } = new URL(url)
     const parsed = parseLemmyUrl(url)
-    const sortSuffix = getQuerySuffix(searchParams)
+    const sortSuffix = getQuerySuffix(searchParams, content)
 
     if (parsed?.kind === 'community') {
       return [
@@ -129,7 +128,7 @@ export const lemmyHandler: PlatformHandler = {
       ]
     }
 
-    // Home page, / or /home, and any other page: the instance feeds.
+    // Home page and any other page: the instance feeds.
     return [
       {
         uri: `${origin}/feeds/all.xml${sortSuffix}`,

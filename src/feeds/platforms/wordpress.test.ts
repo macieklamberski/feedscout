@@ -21,19 +21,58 @@ describe('wordpressHandler', () => {
   })
 
   describe('resolve', () => {
-    it('should not return the post comments feed for a capitalized feed segment', () => {
+    it('should return the site feeds without the post comments feed for a capitalized feed segment', () => {
       const value = 'https://example.wordpress.com/Feed/'
-      const unexpected: DiscoverUriEntry = {
-        uri: [
-          'https://example.wordpress.com/Feed/feed/',
-          'https://example.wordpress.com/Feed/?feed=rss',
-          'https://example.wordpress.com/Feed/feed/rss2/',
-          'https://example.wordpress.com/Feed/?feed=rss2',
-        ],
-        hint: { key: 'wordpress:post-comments', label: 'Post comments', format: 'rss' },
-      }
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: [
+            'https://example.wordpress.com/feed/',
+            'https://example.wordpress.com/?feed=rss',
+            'https://example.wordpress.com/feed/rss2/',
+            'https://example.wordpress.com/?feed=rss2',
+          ],
+          hint: { key: 'wordpress:posts', label: 'Posts', format: 'rss' },
+        },
+        {
+          uri: [
+            'https://example.wordpress.com/feed/atom/',
+            'https://example.wordpress.com/?feed=atom',
+          ],
+          hint: { key: 'wordpress:posts', label: 'Posts', format: 'atom' },
+        },
+        {
+          uri: [
+            'https://example.wordpress.com/feed/rdf/',
+            'https://example.wordpress.com/?feed=rdf',
+          ],
+          hint: { key: 'wordpress:posts', label: 'Posts', format: 'rdf' },
+        },
+        {
+          uri: [
+            'https://example.wordpress.com/comments/feed/',
+            'https://example.wordpress.com/?feed=comments-rss',
+            'https://example.wordpress.com/comments/feed/rss2/',
+            'https://example.wordpress.com/?feed=comments-rss2',
+          ],
+          hint: { key: 'wordpress:comments', label: 'Comments', format: 'rss' },
+        },
+        {
+          uri: [
+            'https://example.wordpress.com/comments/feed/atom/',
+            'https://example.wordpress.com/?feed=comments-atom',
+          ],
+          hint: { key: 'wordpress:comments', label: 'Comments', format: 'atom' },
+        },
+        {
+          uri: [
+            'https://example.wordpress.com/comments/feed/rdf/',
+            'https://example.wordpress.com/?feed=comments-rdf',
+          ],
+          hint: { key: 'wordpress:comments', label: 'Comments', format: 'rdf' },
+        },
+      ]
 
-      expect(wordpressHandler.resolve(value)).not.toContainEqual(unexpected)
+      expect(wordpressHandler.resolve(value)).toEqual(expected)
     })
 
     it('should return feed URLs for blog', () => {
@@ -374,6 +413,77 @@ describe('wordpressHandler', () => {
       expect(wordpressHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should include tag feed when on tag page with a capitalized tag segment', () => {
+      const value = 'https://blog.wordpress.com/Tag/javascript/'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: [
+            'https://blog.wordpress.com/tag/javascript/feed/',
+            'https://blog.wordpress.com/tag/javascript/?feed=rss',
+            'https://blog.wordpress.com/tag/javascript/feed/rss2/',
+            'https://blog.wordpress.com/tag/javascript/?feed=rss2',
+          ],
+          hint: { key: 'wordpress:tag', label: 'Tag', format: 'rss' },
+        },
+        {
+          uri: [
+            'https://blog.wordpress.com/tag/javascript/feed/atom/',
+            'https://blog.wordpress.com/tag/javascript/?feed=atom',
+          ],
+          hint: { key: 'wordpress:tag', label: 'Tag', format: 'atom' },
+        },
+        {
+          uri: [
+            'https://blog.wordpress.com/tag/javascript/feed/rdf/',
+            'https://blog.wordpress.com/tag/javascript/?feed=rdf',
+          ],
+          hint: { key: 'wordpress:tag', label: 'Tag', format: 'rdf' },
+        },
+        {
+          uri: [
+            'https://blog.wordpress.com/feed/',
+            'https://blog.wordpress.com/?feed=rss',
+            'https://blog.wordpress.com/feed/rss2/',
+            'https://blog.wordpress.com/?feed=rss2',
+          ],
+          hint: { key: 'wordpress:posts', label: 'Posts', format: 'rss' },
+        },
+        {
+          uri: ['https://blog.wordpress.com/feed/atom/', 'https://blog.wordpress.com/?feed=atom'],
+          hint: { key: 'wordpress:posts', label: 'Posts', format: 'atom' },
+        },
+        {
+          uri: ['https://blog.wordpress.com/feed/rdf/', 'https://blog.wordpress.com/?feed=rdf'],
+          hint: { key: 'wordpress:posts', label: 'Posts', format: 'rdf' },
+        },
+        {
+          uri: [
+            'https://blog.wordpress.com/comments/feed/',
+            'https://blog.wordpress.com/?feed=comments-rss',
+            'https://blog.wordpress.com/comments/feed/rss2/',
+            'https://blog.wordpress.com/?feed=comments-rss2',
+          ],
+          hint: { key: 'wordpress:comments', label: 'Comments', format: 'rss' },
+        },
+        {
+          uri: [
+            'https://blog.wordpress.com/comments/feed/atom/',
+            'https://blog.wordpress.com/?feed=comments-atom',
+          ],
+          hint: { key: 'wordpress:comments', label: 'Comments', format: 'atom' },
+        },
+        {
+          uri: [
+            'https://blog.wordpress.com/comments/feed/rdf/',
+            'https://blog.wordpress.com/?feed=comments-rdf',
+          ],
+          hint: { key: 'wordpress:comments', label: 'Comments', format: 'rdf' },
+        },
+      ]
+
+      expect(wordpressHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should handle URL-encoded category names', () => {
       const value = 'https://blog.wordpress.com/category/c%2B%2B/'
       const expected: Array<DiscoverUriEntry> = [
@@ -447,6 +557,77 @@ describe('wordpressHandler', () => {
 
     it('should include author feed when on author page', () => {
       const value = 'https://blog.wordpress.com/author/johndoe/'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: [
+            'https://blog.wordpress.com/author/johndoe/feed/',
+            'https://blog.wordpress.com/author/johndoe/?feed=rss',
+            'https://blog.wordpress.com/author/johndoe/feed/rss2/',
+            'https://blog.wordpress.com/author/johndoe/?feed=rss2',
+          ],
+          hint: { key: 'wordpress:author', label: 'Author', format: 'rss' },
+        },
+        {
+          uri: [
+            'https://blog.wordpress.com/author/johndoe/feed/atom/',
+            'https://blog.wordpress.com/author/johndoe/?feed=atom',
+          ],
+          hint: { key: 'wordpress:author', label: 'Author', format: 'atom' },
+        },
+        {
+          uri: [
+            'https://blog.wordpress.com/author/johndoe/feed/rdf/',
+            'https://blog.wordpress.com/author/johndoe/?feed=rdf',
+          ],
+          hint: { key: 'wordpress:author', label: 'Author', format: 'rdf' },
+        },
+        {
+          uri: [
+            'https://blog.wordpress.com/feed/',
+            'https://blog.wordpress.com/?feed=rss',
+            'https://blog.wordpress.com/feed/rss2/',
+            'https://blog.wordpress.com/?feed=rss2',
+          ],
+          hint: { key: 'wordpress:posts', label: 'Posts', format: 'rss' },
+        },
+        {
+          uri: ['https://blog.wordpress.com/feed/atom/', 'https://blog.wordpress.com/?feed=atom'],
+          hint: { key: 'wordpress:posts', label: 'Posts', format: 'atom' },
+        },
+        {
+          uri: ['https://blog.wordpress.com/feed/rdf/', 'https://blog.wordpress.com/?feed=rdf'],
+          hint: { key: 'wordpress:posts', label: 'Posts', format: 'rdf' },
+        },
+        {
+          uri: [
+            'https://blog.wordpress.com/comments/feed/',
+            'https://blog.wordpress.com/?feed=comments-rss',
+            'https://blog.wordpress.com/comments/feed/rss2/',
+            'https://blog.wordpress.com/?feed=comments-rss2',
+          ],
+          hint: { key: 'wordpress:comments', label: 'Comments', format: 'rss' },
+        },
+        {
+          uri: [
+            'https://blog.wordpress.com/comments/feed/atom/',
+            'https://blog.wordpress.com/?feed=comments-atom',
+          ],
+          hint: { key: 'wordpress:comments', label: 'Comments', format: 'atom' },
+        },
+        {
+          uri: [
+            'https://blog.wordpress.com/comments/feed/rdf/',
+            'https://blog.wordpress.com/?feed=comments-rdf',
+          ],
+          hint: { key: 'wordpress:comments', label: 'Comments', format: 'rdf' },
+        },
+      ]
+
+      expect(wordpressHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should include author feed when on author page with a capitalized author segment', () => {
+      const value = 'https://blog.wordpress.com/Author/johndoe/'
       const expected: Array<DiscoverUriEntry> = [
         {
           uri: [

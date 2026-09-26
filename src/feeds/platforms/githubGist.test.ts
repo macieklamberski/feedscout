@@ -51,6 +51,12 @@ describe('parseGithubGistUrl', () => {
     expect(parseGithubGistUrl('https://gist.github.com/defunkt/starred.atom')).toEqual(expected)
   })
 
+  it('should return the starred gists for a capitalized starred feed suffix', () => {
+    const expected: GithubGistUrl = { kind: 'starred', username: 'defunkt' }
+
+    expect(parseGithubGistUrl('https://gist.github.com/defunkt/starred.ATOM')).toEqual(expected)
+  })
+
   const forksValues: Array<string> = [
     'https://gist.github.com/defunkt/forks',
     'https://gist.github.com/defunkt/forked',
@@ -173,6 +179,18 @@ describe('githubGistHandler', () => {
 
     it('should return discover feed for discover page', () => {
       const value = 'https://gist.github.com/discover'
+      const expected = [
+        {
+          uri: 'https://gist.github.com/discover.atom',
+          hint: { key: 'github-gist:discover', label: 'Discover' },
+        },
+      ]
+
+      expect(githubGistHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return discover feed for discover page with a capitalized discover segment', () => {
+      const value = 'https://gist.github.com/Discover'
       const expected = [
         {
           uri: 'https://gist.github.com/discover.atom',

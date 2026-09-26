@@ -43,6 +43,18 @@ describe('v2exHandler', () => {
       expect(v2exHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return lowercase node feed for a capitalized node', () => {
+      const value = 'https://www.v2ex.com/go/Python'
+      const expected = [
+        {
+          uri: 'https://www.v2ex.com/feed/python.xml',
+          hint: { key: 'v2ex:node', label: 'Node' },
+        },
+      ]
+
+      expect(v2exHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return node feed for node page with a capitalized go segment', () => {
       const value = 'https://www.v2ex.com/Go/programmer'
       const expected = [
@@ -67,8 +79,33 @@ describe('v2exHandler', () => {
       expect(v2exHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return member feed for member page with a capitalized member segment', () => {
+      const value = 'https://www.v2ex.com/Member/livid'
+      const expected = [
+        {
+          uri: 'https://www.v2ex.com/feed/member/livid.xml',
+          hint: { key: 'v2ex:member', label: 'Member' },
+        },
+      ]
+
+      expect(v2exHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return tab feed for tab page', () => {
       const value = 'https://www.v2ex.com/?tab=tech'
+      const expected = [
+        {
+          uri: 'https://www.v2ex.com/feed/tab/tech.xml',
+          hint: { key: 'v2ex:tab', label: 'Tab' },
+        },
+        { uri: 'https://www.v2ex.com/index.xml', hint: { key: 'v2ex:index', label: 'Index' } },
+      ]
+
+      expect(v2exHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return lowercase tab feed for a capitalized tab', () => {
+      const value = 'https://www.v2ex.com/?tab=TECH'
       const expected = [
         {
           uri: 'https://www.v2ex.com/feed/tab/tech.xml',

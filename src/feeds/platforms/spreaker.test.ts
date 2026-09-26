@@ -68,8 +68,26 @@ describe('spreakerHandler', () => {
       expect(spreakerHandler.resolve(value)).toEqual([])
     })
 
+    it('should return empty array when the podcast ID runs into letters', () => {
+      const value = 'https://www.spreaker.com/podcast/my-show--12345x'
+
+      expect(spreakerHandler.resolve(value)).toEqual([])
+    })
+
     it('should return feed URL for bare /show/{id} numeric path', () => {
       const value = 'https://www.spreaker.com/show/1433865'
+      const expected = [
+        {
+          uri: 'https://www.spreaker.com/show/1433865/episodes/feed',
+          hint: { key: 'spreaker:podcast', label: 'Podcast' },
+        },
+      ]
+
+      expect(spreakerHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return feed URL for bare /show/{id} numeric path with a capitalized show segment', () => {
+      const value = 'https://www.spreaker.com/Show/1433865'
       const expected = [
         {
           uri: 'https://www.spreaker.com/show/1433865/episodes/feed',

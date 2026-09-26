@@ -29,6 +29,12 @@ describe('parseSteamUrl', () => {
     expect(parseSteamUrl('https://store.steampowered.com/news/app/730')).toEqual(expected)
   })
 
+  it('should return the app for a store app news hub page', () => {
+    const expected: SteamUrl = { kind: 'app', appId: '730' }
+
+    expect(parseSteamUrl('https://store.steampowered.com/newshub/app/730')).toEqual(expected)
+  })
+
   it('should return the app for a store app news page with a capitalized app segment', () => {
     const expected: SteamUrl = { kind: 'app', appId: '730' }
 
@@ -53,6 +59,12 @@ describe('parseSteamUrl', () => {
     expect(parseSteamUrl('https://steamcommunity.com/groups/Valve/')).toEqual(expected)
   })
 
+  it('should return the group for a community group page with a capitalized groups segment', () => {
+    const expected: SteamUrl = { kind: 'group', group: 'Valve' }
+
+    expect(parseSteamUrl('https://steamcommunity.com/Groups/Valve/')).toEqual(expected)
+  })
+
   it('should return the group for a community group page without a trailing slash', () => {
     const expected: SteamUrl = { kind: 'group', group: 'Valve' }
 
@@ -65,6 +77,10 @@ describe('parseSteamUrl', () => {
 
   it('should return undefined for an app path without a numeric id', () => {
     expect(parseSteamUrl('https://store.steampowered.com/app/portal')).toBeUndefined()
+  })
+
+  it('should return undefined for an app id followed by letters', () => {
+    expect(parseSteamUrl('https://store.steampowered.com/app/620x')).toBeUndefined()
   })
 
   it('should return undefined for the store homepage', () => {
@@ -140,6 +156,38 @@ describe('steamHandler', () => {
 
     it('should return global news and daily deals feeds for store news index', () => {
       const value = 'https://store.steampowered.com/news/'
+      const expected = [
+        {
+          uri: 'https://store.steampowered.com/feeds/news.xml',
+          hint: { key: 'steam:news-global', label: 'News (global)' },
+        },
+        {
+          uri: 'https://store.steampowered.com/feeds/daily_deals.xml',
+          hint: { key: 'steam:daily-deals', label: 'Daily deals' },
+        },
+      ]
+
+      expect(steamHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return global news and daily deals feeds for a capitalized store news index', () => {
+      const value = 'https://store.steampowered.com/News/'
+      const expected = [
+        {
+          uri: 'https://store.steampowered.com/feeds/news.xml',
+          hint: { key: 'steam:news-global', label: 'News (global)' },
+        },
+        {
+          uri: 'https://store.steampowered.com/feeds/daily_deals.xml',
+          hint: { key: 'steam:daily-deals', label: 'Daily deals' },
+        },
+      ]
+
+      expect(steamHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return global news and daily deals feeds for the store news hub link', () => {
+      const value = 'https://store.steampowered.com/newshub/'
       const expected = [
         {
           uri: 'https://store.steampowered.com/feeds/news.xml',

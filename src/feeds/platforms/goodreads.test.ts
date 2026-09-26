@@ -17,6 +17,13 @@ describe('parseGoodreadsUrl', () => {
     expect(parseGoodreadsUrl(value)).toEqual(expected)
   })
 
+  it('should return the user for a user page with a slug with a capitalized show segment', () => {
+    const value = 'https://www.goodreads.com/user/Show/1-otis-chandler'
+    const expected: GoodreadsUrl = { kind: 'user', userId: '1' }
+
+    expect(parseGoodreadsUrl(value)).toEqual(expected)
+  })
+
   it('should return the user for a user page with a numeric id only', () => {
     const expected: GoodreadsUrl = { kind: 'user', userId: '4082853' }
 
@@ -31,6 +38,20 @@ describe('parseGoodreadsUrl', () => {
 
   it('should return the reviews for a review list page with a slug', () => {
     const value = 'https://www.goodreads.com/review/list/1-otis-chandler'
+    const expected: GoodreadsUrl = { kind: 'reviews', userId: '1' }
+
+    expect(parseGoodreadsUrl(value)).toEqual(expected)
+  })
+
+  it('should return the reviews for a review list page with a capitalized review segment', () => {
+    const value = 'https://www.goodreads.com/Review/list/1-otis-chandler'
+    const expected: GoodreadsUrl = { kind: 'reviews', userId: '1' }
+
+    expect(parseGoodreadsUrl(value)).toEqual(expected)
+  })
+
+  it('should return the reviews for a review list page with a capitalized list segment', () => {
+    const value = 'https://www.goodreads.com/review/List/1-otis-chandler'
     const expected: GoodreadsUrl = { kind: 'reviews', userId: '1' }
 
     expect(parseGoodreadsUrl(value)).toEqual(expected)

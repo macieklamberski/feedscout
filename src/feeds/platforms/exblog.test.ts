@@ -34,6 +34,12 @@ describe('parseExblogUrl', () => {
     expect(parseExblogUrl('https://petitcc.exblog.jp/i2/')).toEqual(expected)
   })
 
+  it('should return the blog when the category id runs into letters', () => {
+    const expected: ExblogUrl = { kind: 'blog', blog: 'petitcc' }
+
+    expect(parseExblogUrl('https://petitcc.exblog.jp/i2x/')).toEqual(expected)
+  })
+
   it('should return undefined for the portal', () => {
     expect(parseExblogUrl('https://www.exblog.jp/')).toBeUndefined()
   })

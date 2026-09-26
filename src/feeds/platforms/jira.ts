@@ -12,7 +12,7 @@ const domains = ['atlassian.net']
 // these can anchor at the start of the pathname.
 const issueRegex = /\/browse\/([A-Za-z][A-Za-z0-9_]+)-\d+/i
 const projectRegex = /\/projects\/([A-Za-z][A-Za-z0-9_]+)(?:\/(?!repos\b)|$)/i
-const jiraPathRegex = /\/(?:jira|secure|issues)\//i
+const jiraPathRegex = /\/(?:jira|secure|issues)(?:\/|$)/i
 const trailingSlashRegex = /\/$/
 const confluencePathRegex = /^\/wiki(?:\/|$)/i
 

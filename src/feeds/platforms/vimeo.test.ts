@@ -89,6 +89,18 @@ describe('vimeoHandler', () => {
       expect(vimeoHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return channel feed for channel page with a capitalized channels segment', () => {
+      const value = 'https://vimeo.com/Channels/staffpicks'
+      const expected = [
+        {
+          uri: 'https://vimeo.com/channels/staffpicks/videos/rss',
+          hint: { key: 'vimeo:channel', label: 'Channel' },
+        },
+      ]
+
+      expect(vimeoHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return channel feed for channel subpage', () => {
       const value = 'https://vimeo.com/channels/staffpicks/videos'
       const expected = [
@@ -103,6 +115,18 @@ describe('vimeoHandler', () => {
 
     it('should return group feed for group page', () => {
       const value = 'https://vimeo.com/groups/animation'
+      const expected = [
+        {
+          uri: 'https://vimeo.com/groups/animation/videos/rss',
+          hint: { key: 'vimeo:group', label: 'Group' },
+        },
+      ]
+
+      expect(vimeoHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return group feed for group page with a capitalized groups segment', () => {
+      const value = 'https://vimeo.com/Groups/animation'
       const expected = [
         {
           uri: 'https://vimeo.com/groups/animation/videos/rss',
@@ -231,6 +255,10 @@ describe('vimeoHandler', () => {
       for (const value of values) {
         expect(vimeoHandler.resolve(value)).toEqual([])
       }
+    })
+
+    it('should return empty array for a capitalized excluded path', () => {
+      expect(vimeoHandler.resolve('https://vimeo.com/Search')).toEqual([])
     })
 
     it('should return empty array for excluded paths with subpage', () => {

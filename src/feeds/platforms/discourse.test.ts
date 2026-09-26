@@ -76,12 +76,14 @@ describe('discourseHandler', () => {
   describe('resolve', () => {
     it('should return the activity feed for a capitalized u segment', () => {
       const value = 'https://users.rust-lang.org/U/steveklabnik'
-      const expected: DiscoverUriEntry = {
-        uri: 'https://users.rust-lang.org/u/steveklabnik/activity.rss',
-        hint: { key: 'discourse:activity', label: 'Activity' },
-      }
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://users.rust-lang.org/u/steveklabnik/activity.rss',
+          hint: { key: 'discourse:activity', label: 'Activity' },
+        },
+      ]
 
-      expect(discourseHandler.resolve(value)).toContainEqual(expected)
+      expect(discourseHandler.resolve(value)).toEqual(expected)
     })
 
     it('should return user activity feed for /u/{user} path', () => {
@@ -120,8 +122,68 @@ describe('discourseHandler', () => {
       expect(discourseHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return category feed for a category list filter path', () => {
+      const value = 'https://meta.discourse.org/c/support/6/l/latest'
+      const expected = [
+        {
+          uri: 'https://meta.discourse.org/c/support/6.rss',
+          hint: { key: 'discourse:category', label: 'Category' },
+        },
+      ]
+
+      expect(discourseHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return category feed for a capitalized category list filter path', () => {
+      const value = 'https://meta.discourse.org/c/support/6/L/Latest'
+      const expected = [
+        {
+          uri: 'https://meta.discourse.org/c/support/6.rss',
+          hint: { key: 'discourse:category', label: 'Category' },
+        },
+      ]
+
+      expect(discourseHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return category feed for a category without subcategories path', () => {
+      const value = 'https://meta.discourse.org/c/support/6/none'
+      const expected = [
+        {
+          uri: 'https://meta.discourse.org/c/support/6.rss',
+          hint: { key: 'discourse:category', label: 'Category' },
+        },
+      ]
+
+      expect(discourseHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return category feed for a category with all subcategories path', () => {
+      const value = 'https://meta.discourse.org/c/support/6/all'
+      const expected = [
+        {
+          uri: 'https://meta.discourse.org/c/support/6.rss',
+          hint: { key: 'discourse:category', label: 'Category' },
+        },
+      ]
+
+      expect(discourseHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return topic feed for /t/{slug}/{id} path', () => {
       const value = 'https://users.rust-lang.org/t/welcome-to-the-rust-users-forum/2'
+      const expected = [
+        {
+          uri: 'https://users.rust-lang.org/t/welcome-to-the-rust-users-forum/2.rss',
+          hint: { key: 'discourse:topic', label: 'Topic' },
+        },
+      ]
+
+      expect(discourseHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return topic feed for /t/{slug}/{id} path with a capitalized t segment', () => {
+      const value = 'https://users.rust-lang.org/T/welcome-to-the-rust-users-forum/2'
       const expected = [
         {
           uri: 'https://users.rust-lang.org/t/welcome-to-the-rust-users-forum/2.rss',
@@ -176,6 +238,18 @@ describe('discourseHandler', () => {
       expect(discourseHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return top feed for /top path with a capitalized top segment', () => {
+      const value = 'https://users.rust-lang.org/Top'
+      const expected = [
+        {
+          uri: 'https://users.rust-lang.org/top.rss',
+          hint: { key: 'discourse:top', label: 'Top' },
+        },
+      ]
+
+      expect(discourseHandler.resolve(value)).toEqual(expected)
+    })
+
     const topPeriodValues: Array<[string, string]> = [
       ['https://users.rust-lang.org/top/daily', 'https://users.rust-lang.org/top.rss?period=daily'],
       [
@@ -220,6 +294,30 @@ describe('discourseHandler', () => {
       const expected = [
         {
           uri: 'https://users.rust-lang.org/top.rss?period=daily',
+          hint: { key: 'discourse:top', label: 'Top' },
+        },
+      ]
+
+      expect(discourseHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return lowercase period for a capitalized path period', () => {
+      const value = 'https://users.rust-lang.org/top/Daily'
+      const expected = [
+        {
+          uri: 'https://users.rust-lang.org/top.rss?period=daily',
+          hint: { key: 'discourse:top', label: 'Top' },
+        },
+      ]
+
+      expect(discourseHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should fall back to ?period= query param for an unknown path period', () => {
+      const value = 'https://users.rust-lang.org/top/invalid?period=weekly'
+      const expected = [
+        {
+          uri: 'https://users.rust-lang.org/top.rss?period=weekly',
           hint: { key: 'discourse:top', label: 'Top' },
         },
       ]

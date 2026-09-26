@@ -62,6 +62,17 @@ describe('parseMediumUrl', () => {
     expect(parseMediumUrl(value)).toEqual(expected)
   })
 
+  it('should return the publication and tag for a publication tagged page with a capitalized tagged segment', () => {
+    const value = 'https://medium.com/towards-data-science/Tagged/machine-learning'
+    const expected: MediumUrl = {
+      kind: 'publication',
+      publication: 'towards-data-science',
+      tag: 'machine-learning',
+    }
+
+    expect(parseMediumUrl(value)).toEqual(expected)
+  })
+
   it('should return the subdomain for a subdomain page', () => {
     const expected: MediumUrl = { kind: 'subdomain', subdomain: 'blog' }
 
@@ -78,6 +89,12 @@ describe('parseMediumUrl', () => {
     const expected: MediumUrl = { kind: 'subdomain', subdomain: 'blog', tag: 'engineering' }
 
     expect(parseMediumUrl('https://blog.medium.com/tagged/engineering')).toEqual(expected)
+  })
+
+  it('should return the subdomain and tag for a subdomain tagged page with a capitalized tagged segment', () => {
+    const expected: MediumUrl = { kind: 'subdomain', subdomain: 'blog', tag: 'engineering' }
+
+    expect(parseMediumUrl('https://blog.medium.com/Tagged/engineering')).toEqual(expected)
   })
 
   it('should return undefined for a nested subdomain', () => {
