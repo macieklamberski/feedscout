@@ -406,6 +406,7 @@
   "shopify": ["https://www.allbirds.com/blogs/news.atom"],
   "snac": ["https://comam.es/snac/grunfink.rss"],
   "soundcloud": ["https://feeds.soundcloud.com/users/soundcloud:users:1613713/sounds.rss"],
+  "soundon": ["https://feeds.soundon.fm/podcasts/954689a5-3096-43a4-a80b-7810b219cef3.xml"],
   "sourceforge": [
     "https://sourceforge.net/p/filezilla/activity/feed",
     "https://sourceforge.net/projects/filezilla/rss",

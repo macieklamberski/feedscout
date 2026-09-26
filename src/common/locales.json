@@ -377,6 +377,7 @@
     "powerpress:podcast": "Podcast",
     "ivoox:podcast": "Podcast",
     "atypon:journal": "Journal",
-    "atypon:most-cited": "Most cited"
+    "atypon:most-cited": "Most cited",
+    "soundon:podcast": "Podcast"
   }
 }
