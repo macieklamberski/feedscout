@@ -17,13 +17,13 @@ const trailingSlashRegex = /\/$/
 const feedSegmentRegex = /\/feed(?:\/|$)/i
 
 // The route word is emitted as listed, so a capitalized path still yields the canonical feed.
-const archives: Array<[RegExp, string, string?]> = [
-  [categoryRegex, 'wordpress:category', 'category'],
-  [tagRegex, 'wordpress:tag', 'tag'],
-  [authorRegex, 'wordpress:author', 'author'],
-  [dayRegex, 'wordpress:date-archive'],
-  [yearMonthRegex, 'wordpress:date-archive'],
-  [yearRegex, 'wordpress:date-archive'],
+const archives: Array<{ regex: RegExp; hintKey: string; route?: string }> = [
+  { regex: categoryRegex, hintKey: 'wordpress:category', route: 'category' },
+  { regex: tagRegex, hintKey: 'wordpress:tag', route: 'tag' },
+  { regex: authorRegex, hintKey: 'wordpress:author', route: 'author' },
+  { regex: dayRegex, hintKey: 'wordpress:date-archive' },
+  { regex: yearMonthRegex, hintKey: 'wordpress:date-archive' },
+  { regex: yearRegex, hintKey: 'wordpress:date-archive' },
 ]
 
 // WordPress serves every feed of a page both under its /feed/ path and as a ?feed= query.
@@ -54,7 +54,7 @@ export const wordpressHandler: PlatformHandler = {
     const uris: Array<DiscoverUriEntry> = []
     let archiveMatched = false
 
-    for (const [regex, key, route] of archives) {
+    for (const { regex, hintKey, route } of archives) {
       const archiveMatch = pathname.match(regex)
 
       if (!archiveMatch) {
@@ -65,7 +65,7 @@ export const wordpressHandler: PlatformHandler = {
       const archivePath = route
         ? `/${route}/${archiveMatch[1]}`
         : archiveMatch[0].replace(trailingSlashRegex, '')
-      uris.push(...getFeedEntries(`${origin}${archivePath}`, key))
+      uris.push(...getFeedEntries(`${origin}${archivePath}`, hintKey))
     }
 
     // Post page: any non-root, non-archive, non-feed path.

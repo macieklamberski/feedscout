@@ -5,8 +5,8 @@ import { composeHint } from '../../common/utils.js'
 // Discoverability: Discoverable without handler.
 
 export type HatenaBookmarkUrl =
-  | { kind: 'search' }
-  | { kind: 'site' }
+  | { kind: 'search'; searchType: string }
+  | { kind: 'site'; site: string }
   | { kind: 'user'; username: string }
 
 const hosts = ['b.hatena.ne.jp']
@@ -62,13 +62,16 @@ export const parseHatenaBookmarkUrl = (url: string): HatenaBookmarkUrl | undefin
   }
 
   const { pathname } = parsedUrl
+  const searchType = getAnyOf(pathname.match(searchRegex)?.[1], searchTypes)
 
-  if (searchRegex.test(pathname)) {
-    return { kind: 'search' }
+  if (searchType) {
+    return { kind: 'search', searchType }
   }
 
-  if (siteRegex.test(pathname)) {
-    return { kind: 'site' }
+  const site = pathname.match(siteRegex)?.[1]
+
+  if (site) {
+    return { kind: 'site', site }
   }
 
   const username = pathname.match(userRegex)?.[1]
@@ -112,23 +115,18 @@ export const hatenaBookmarkHandler: PlatformHandler = {
     searchParams.set('mode', 'rss')
 
     if (parsed?.kind === 'search') {
-      const [, rawType] = pathname.match(searchRegex) ?? []
-      const type = getAnyOf(rawType, searchTypes)
-
       return [
         {
-          uri: `${origin}/search/${type}?${searchParams}`,
+          uri: `${origin}/search/${parsed.searchType}?${searchParams}`,
           hint: composeHint('hatena-bookmark:search'),
         },
       ]
     }
 
     if (parsed?.kind === 'site') {
-      const [, site] = pathname.match(siteRegex) ?? []
-
       return [
         {
-          uri: `${origin}/site/${site}?${searchParams}`,
+          uri: `${origin}/site/${parsed.site}?${searchParams}`,
           hint: composeHint('hatena-bookmark:site'),
         },
       ]
