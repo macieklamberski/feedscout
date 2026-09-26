@@ -1,7 +1,9 @@
-import { isHttpUrl } from 'trousse'
+import { isHttpUrl, parseUrl } from 'trousse'
 import { reportError } from '../../discover/utils.js'
 import type { DiscoverOnErrorFn, DiscoverRef, DiscoverUriEntry, FetchFn } from '../../types.js'
 import type { PlatformMethodOptions } from './types.js'
+
+const repeatedSlashRegex = /\/{2,}/g
 
 export const discoverUrisFromPlatform = async (
   content: string | undefined,
@@ -19,13 +21,23 @@ export const discoverUrisFromPlatform = async (
     return entries
   }
 
+  // A sloppy link can double a slash in the path, which handlers that split the path and handlers
+  // that match it with a regex read differently, so every handler sees the path collapsed.
+  const parsedUrl = parseUrl(baseUrl)
+  let pageUrl = baseUrl
+
+  if (parsedUrl?.pathname.includes('//')) {
+    parsedUrl.pathname = parsedUrl.pathname.replace(repeatedSlashRegex, '/')
+    pageUrl = parsedUrl.href
+  }
+
   for (const handler of handlers) {
     try {
-      if (!handler.match(baseUrl, content, headers)) {
+      if (!handler.match(pageUrl, content, headers)) {
         continue
       }
 
-      const resolved = await handler.resolve(baseUrl, content, headers, fetchFn)
+      const resolved = await handler.resolve(pageUrl, content, headers, fetchFn)
 
       // A handler that matched but found nothing leaves the page to the handlers after it.
       if (resolved.length === 0) {
@@ -43,7 +55,7 @@ export const discoverUrisFromPlatform = async (
 
       break
     } catch (error) {
-      reportError(onError, error, { phase: 'platformHandler', url: baseUrl })
+      reportError(onError, error, { phase: 'platformHandler', url: pageUrl })
     }
   }
 
