@@ -1538,6 +1538,18 @@ Discovers the RSS feeds of crates.io, built from the URL, since the page answers
 > [!NOTE]
 > The feed path takes the crate name exactly as crates.io spells it, so a page URL with another case or `-` in place of `_` leads to a feed that answers 403.
 
+### Plurk
+
+Discovers Atom feeds for Plurk users and single plurks.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `plurk.com/{username}` | User plurks feed (Atom) |
+| `plurk.com/u/{username}` | User plurks feed (Atom) |
+| `plurk.com/m/{username}` | User plurks feed (Atom) |
+| `plurk.com/p/{id}` | Plurk responses feed (Atom) |
+| `plurk.com/m/p/{id}` | Plurk responses feed (Atom) |
+
 ## Basic Usage
 
 ```typescript
@@ -1668,6 +1680,7 @@ import {
   pinterestHandler,
   pixelfedHandler,
   pleromaHandler,
+  plurkHandler,
   podbeanHandler,
   podigeeHandler,
   podomaticHandler,
