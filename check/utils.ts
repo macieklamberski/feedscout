@@ -1,4 +1,5 @@
 import { type Browser, chromium } from 'playwright'
+import * as fetchConstants from './constants/fetch.js'
 
 export const timeoutMs = 30_000
 export const delayMs = 1_000
@@ -27,7 +28,7 @@ const fetchOnce = (url: string, options?: FetchOptions) =>
     method: options?.method ?? 'GET',
     headers: { 'User-Agent': userAgent, ...options?.headers },
     signal: AbortSignal.timeout(timeoutMs),
-    proxy: process.env.FETCH_PROXY,
+    proxy: fetchConstants.proxy,
   })
 
 const fetchWithRetry = async (url: string, options?: FetchOptions): Promise<FetchResult> => {
@@ -113,7 +114,7 @@ const parseProxy = (url: string | undefined) => {
 export const getBrowser = async () => {
   if (!browser) {
     browser = await chromium.launch({
-      proxy: parseProxy(process.env.FETCH_PROXY),
+      proxy: parseProxy(fetchConstants.proxy),
     })
   }
   return browser
