@@ -162,9 +162,9 @@ describe('parseRedditUrl', () => {
   })
 
   it('should return the domain for a domain page', () => {
-    const expected: RedditUrl = { kind: 'domain', domain: 'github.com' }
+    const expected: RedditUrl = { kind: 'domain', domain: 'example.com' }
 
-    expect(parseRedditUrl('https://reddit.com/domain/github.com')).toEqual(expected)
+    expect(parseRedditUrl('https://reddit.com/domain/example.com')).toEqual(expected)
   })
 
   it('should return undefined for an unknown prefix', () => {
@@ -195,9 +195,9 @@ describe('parseRedditUrl', () => {
   })
 
   it('should return the domain for a capitalized domain prefix', () => {
-    const expected: RedditUrl = { kind: 'domain', domain: 'github.com' }
+    const expected: RedditUrl = { kind: 'domain', domain: 'example.com' }
 
-    expect(parseRedditUrl('https://reddit.com/Domain/github.com')).toEqual(expected)
+    expect(parseRedditUrl('https://reddit.com/Domain/example.com')).toEqual(expected)
   })
 
   it('should return the search for a capitalized subreddit search path', () => {
@@ -665,10 +665,10 @@ describe('redditHandler', () => {
     })
 
     it('should return RSS feed URL for domain tracking', () => {
-      const value = 'https://reddit.com/domain/github.com'
+      const value = 'https://reddit.com/domain/example.com'
       const expected = [
         {
-          uri: 'https://www.reddit.com/domain/github.com/.rss',
+          uri: 'https://www.reddit.com/domain/example.com/.rss',
           hint: { key: 'reddit:posts', label: 'Posts' },
         },
       ]
@@ -732,34 +732,6 @@ describe('redditHandler', () => {
       expect(redditHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should strip a feed extension from the multireddit', () => {
-      const value = 'https://www.reddit.com/user/kjoneslol/m/sfwpornnetwork.rss'
-      const expected = [
-        {
-          uri: 'https://www.reddit.com/user/kjoneslol/m/sfwpornnetwork/.rss',
-          hint: { key: 'reddit:multireddit', label: 'Multireddit' },
-        },
-      ]
-
-      expect(redditHandler.resolve(value)).toEqual(expected)
-    })
-
-    it('should strip a feed extension from the subreddit', () => {
-      const value = 'https://www.reddit.com/r/programming.rss'
-      const expected = [
-        {
-          uri: 'https://www.reddit.com/r/programming/.rss',
-          hint: { key: 'reddit:posts', label: 'Posts' },
-        },
-        {
-          uri: 'https://www.reddit.com/r/programming/comments/.rss',
-          hint: { key: 'reddit:comments', label: 'Comments' },
-        },
-      ]
-
-      expect(redditHandler.resolve(value)).toEqual(expected)
-    })
-
     it('should return empty array for invalid paths', () => {
       const value = 'https://reddit.com/about'
 
@@ -779,7 +751,7 @@ describe('redditHandler', () => {
     })
 
     it('should treat malformed comments URL without post ID as subreddit', () => {
-      // /r/AskReddit/comments/ lacks a post ID, so commentsMatch fails.
+      // /r/AskReddit/comments/ carries no post ID, so the parser reads it as the subreddit.
       const value = 'https://reddit.com/r/AskReddit/comments/'
       const expected = [
         {

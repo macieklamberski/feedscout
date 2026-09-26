@@ -119,7 +119,7 @@ describe('giteaHandler', () => {
       [true, 'https://gitea.com/gitea'],
       [true, 'https://www.gitea.com/gitea'],
       [false, 'https://codeberg.org/user'],
-      [false, 'https://github.com/user/repo'],
+      [false, 'https://example.org/user/repo'],
       [false, 'https://example.com/owner'],
     ]
 

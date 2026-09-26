@@ -9,71 +9,71 @@ describe('parseLemmyUrl', () => {
   it('should return the community for a community page', () => {
     const expected: LemmyUrl = { kind: 'community', community: 'programming' }
 
-    expect(parseLemmyUrl('https://lemmy.ml/c/programming')).toEqual(expected)
+    expect(parseLemmyUrl('https://example.com/c/programming')).toEqual(expected)
   })
 
   it('should return the community for a community subpage', () => {
     const expected: LemmyUrl = { kind: 'community', community: 'programming' }
 
-    expect(parseLemmyUrl('https://lemmy.ml/c/programming/hot')).toEqual(expected)
+    expect(parseLemmyUrl('https://example.com/c/programming/hot')).toEqual(expected)
   })
 
   it('should return a federated community with its instance', () => {
-    const expected: LemmyUrl = { kind: 'community', community: 'rust@lemmy.world' }
+    const expected: LemmyUrl = { kind: 'community', community: 'rust@example.net' }
 
-    expect(parseLemmyUrl('https://lemmy.ml/c/rust@lemmy.world')).toEqual(expected)
+    expect(parseLemmyUrl('https://example.com/c/rust@example.net')).toEqual(expected)
   })
 
   it('should return the user for a user page', () => {
     const expected: LemmyUrl = { kind: 'user', username: 'alice' }
 
-    expect(parseLemmyUrl('https://lemmy.ml/u/alice')).toEqual(expected)
+    expect(parseLemmyUrl('https://example.com/u/alice')).toEqual(expected)
   })
 
   it('should return the user for a user subpage', () => {
     const expected: LemmyUrl = { kind: 'user', username: 'alice' }
 
-    expect(parseLemmyUrl('https://lemmy.ml/u/alice/posts')).toEqual(expected)
+    expect(parseLemmyUrl('https://example.com/u/alice/posts')).toEqual(expected)
   })
 
   it('should return a federated user with its instance', () => {
-    const expected: LemmyUrl = { kind: 'user', username: 'alice@lemmy.world' }
+    const expected: LemmyUrl = { kind: 'user', username: 'alice@example.net' }
 
-    expect(parseLemmyUrl('https://lemmy.ml/u/alice@lemmy.world')).toEqual(expected)
+    expect(parseLemmyUrl('https://example.com/u/alice@example.net')).toEqual(expected)
   })
 
   it('should return the community on any host', () => {
     const expected: LemmyUrl = { kind: 'community', community: 'worldnews' }
 
-    expect(parseLemmyUrl('https://beehaw.org/c/worldnews')).toEqual(expected)
+    expect(parseLemmyUrl('https://example.org/c/worldnews')).toEqual(expected)
   })
 
   it('should return undefined for a prefix without a name', () => {
-    expect(parseLemmyUrl('https://lemmy.ml/c')).toBeUndefined()
-    expect(parseLemmyUrl('https://lemmy.ml/c/')).toBeUndefined()
-    expect(parseLemmyUrl('https://lemmy.ml/u')).toBeUndefined()
-    expect(parseLemmyUrl('https://lemmy.ml/u/')).toBeUndefined()
+    expect(parseLemmyUrl('https://example.com/c')).toBeUndefined()
+    expect(parseLemmyUrl('https://example.com/c/')).toBeUndefined()
+    expect(parseLemmyUrl('https://example.com/u')).toBeUndefined()
+    expect(parseLemmyUrl('https://example.com/u/')).toBeUndefined()
   })
 
   it('should return the community for a capitalized prefix', () => {
     const expected: LemmyUrl = { kind: 'community', community: 'programming' }
 
-    expect(parseLemmyUrl('https://lemmy.ml/C/programming')).toEqual(expected)
+    expect(parseLemmyUrl('https://example.com/C/programming')).toEqual(expected)
   })
 
   it('should return the user for a capitalized prefix', () => {
     const expected: LemmyUrl = { kind: 'user', username: 'alice' }
 
-    expect(parseLemmyUrl('https://lemmy.ml/U/alice')).toEqual(expected)
+    expect(parseLemmyUrl('https://example.com/U/alice')).toEqual(expected)
   })
 
   it('should return undefined for the home page', () => {
-    expect(parseLemmyUrl('https://lemmy.ml/')).toBeUndefined()
+    expect(parseLemmyUrl('https://example.com/')).toBeUndefined()
   })
 
   it('should return undefined for other paths', () => {
-    expect(parseLemmyUrl('https://lemmy.ml/about')).toBeUndefined()
-    expect(parseLemmyUrl('https://lemmy.ml/post/123')).toBeUndefined()
+    expect(parseLemmyUrl('https://example.com/about')).toBeUndefined()
+    expect(parseLemmyUrl('https://example.com/post/123')).toBeUndefined()
   })
 
   it('should return undefined for an invalid URL', () => {
@@ -104,7 +104,7 @@ describe('isLemmyHtml', () => {
   })
 
   it('should return false for a lemmy-site substring outside a class attribute', () => {
-    expect(isLemmyHtml('<a href="#/#lemmy-space:matrix.org">room</a>')).toBe(false)
+    expect(isLemmyHtml('<a href="#/#lemmy-space:example.org">room</a>')).toBe(false)
     expect(isLemmyHtml('<p>class lemmy-site</p>')).toBe(false)
   })
 
@@ -141,42 +141,42 @@ describe('isLemmyHeaders', () => {
 describe('lemmyHandler', () => {
   describe('match', () => {
     it('should match community path with Lemmy HTML', () => {
-      expect(lemmyHandler.match('https://lemmy.ml/c/programming', lemmyHtml)).toBe(true)
+      expect(lemmyHandler.match('https://example.com/c/programming', lemmyHtml)).toBe(true)
     })
 
     it('should match the home page with Lemmy HTML', () => {
-      expect(lemmyHandler.match('https://lemmy.ml/', lemmyHtml)).toBe(true)
+      expect(lemmyHandler.match('https://example.com/', lemmyHtml)).toBe(true)
     })
 
     it('should not match the retired /home path', () => {
-      expect(lemmyHandler.match('https://lemmy.ml/home', lemmyHtml)).toBe(false)
+      expect(lemmyHandler.match('https://example.com/home', lemmyHtml)).toBe(false)
     })
 
     it('should match community path with Lemmy server header', () => {
-      expect(lemmyHandler.match('https://lemmy.ml/c/programming', '', lemmyHeaders)).toBe(true)
+      expect(lemmyHandler.match('https://example.com/c/programming', '', lemmyHeaders)).toBe(true)
     })
 
     it('should not match without content or headers', () => {
-      expect(lemmyHandler.match('https://lemmy.ml/c/programming')).toBe(false)
+      expect(lemmyHandler.match('https://example.com/c/programming')).toBe(false)
     })
 
     it('should not match non-community, non-user, non-home paths even with Lemmy HTML', () => {
-      expect(lemmyHandler.match('https://lemmy.ml/about', lemmyHtml)).toBe(false)
+      expect(lemmyHandler.match('https://example.com/about', lemmyHtml)).toBe(false)
     })
 
     it('should not match without Lemmy signals', () => {
       const plainHtml = '<html><head></head></html>'
 
-      expect(lemmyHandler.match('https://lemmy.ml/c/programming', plainHtml)).toBe(false)
+      expect(lemmyHandler.match('https://example.com/c/programming', plainHtml)).toBe(false)
     })
   })
 
   describe('resolve', () => {
     it('should return community feed URL', () => {
-      const value = 'https://lemmy.ml/c/programming'
+      const value = 'https://example.com/c/programming'
       const expected = [
         {
-          uri: 'https://lemmy.ml/feeds/c/programming.xml',
+          uri: 'https://example.com/feeds/c/programming.xml',
           hint: { key: 'lemmy:community', label: 'Community' },
         },
       ]
@@ -185,10 +185,10 @@ describe('lemmyHandler', () => {
     })
 
     it('should return user feed URL', () => {
-      const value = 'https://lemmy.ml/u/alice'
+      const value = 'https://example.com/u/alice'
       const expected = [
         {
-          uri: 'https://lemmy.ml/feeds/u/alice.xml',
+          uri: 'https://example.com/feeds/u/alice.xml',
           hint: { key: 'lemmy:user', label: 'User' },
         },
       ]
@@ -197,10 +197,10 @@ describe('lemmyHandler', () => {
     })
 
     it('should preserve the instance origin', () => {
-      const value = 'https://beehaw.org/c/worldnews'
+      const value = 'https://example.org/c/worldnews'
       const expected = [
         {
-          uri: 'https://beehaw.org/feeds/c/worldnews.xml',
+          uri: 'https://example.org/feeds/c/worldnews.xml',
           hint: { key: 'lemmy:community', label: 'Community' },
         },
       ]
@@ -209,14 +209,14 @@ describe('lemmyHandler', () => {
     })
 
     it('should return site-wide feeds for home path', () => {
-      const value = 'https://lemmy.ml/'
+      const value = 'https://example.com/'
       const expected = [
         {
-          uri: 'https://lemmy.ml/feeds/all.xml',
+          uri: 'https://example.com/feeds/all.xml',
           hint: { key: 'lemmy:all', label: 'All' },
         },
         {
-          uri: 'https://lemmy.ml/feeds/local.xml',
+          uri: 'https://example.com/feeds/local.xml',
           hint: { key: 'lemmy:local', label: 'Local' },
         },
       ]
@@ -225,10 +225,10 @@ describe('lemmyHandler', () => {
     })
 
     it('should forward ?sort= on community feed', () => {
-      const value = 'https://lemmy.ml/c/programming?sort=TopWeek'
+      const value = 'https://example.com/c/programming?sort=TopWeek'
       const expected = [
         {
-          uri: 'https://lemmy.ml/feeds/c/programming.xml?sort=TopWeek',
+          uri: 'https://example.com/feeds/c/programming.xml?sort=TopWeek',
           hint: { key: 'lemmy:community', label: 'Community' },
         },
       ]
@@ -237,10 +237,10 @@ describe('lemmyHandler', () => {
     })
 
     it('should forward ?sort= on user feed', () => {
-      const value = 'https://lemmy.ml/u/alice?sort=New'
+      const value = 'https://example.com/u/alice?sort=New'
       const expected = [
         {
-          uri: 'https://lemmy.ml/feeds/u/alice.xml?sort=New',
+          uri: 'https://example.com/feeds/u/alice.xml?sort=New',
           hint: { key: 'lemmy:user', label: 'User' },
         },
       ]
@@ -249,14 +249,14 @@ describe('lemmyHandler', () => {
     })
 
     it('should forward ?sort= on home feeds', () => {
-      const value = 'https://lemmy.ml/?sort=Active'
+      const value = 'https://example.com/?sort=Active'
       const expected = [
         {
-          uri: 'https://lemmy.ml/feeds/all.xml?sort=Active',
+          uri: 'https://example.com/feeds/all.xml?sort=Active',
           hint: { key: 'lemmy:all', label: 'All' },
         },
         {
-          uri: 'https://lemmy.ml/feeds/local.xml?sort=Active',
+          uri: 'https://example.com/feeds/local.xml?sort=Active',
           hint: { key: 'lemmy:local', label: 'Local' },
         },
       ]
@@ -265,16 +265,21 @@ describe('lemmyHandler', () => {
     })
 
     it('should take the sort the home page advertises', () => {
-      const value = 'https://lemmy.ml/'
-      const content =
-        '<link rel="alternate" type="application/atom+xml" href="/feeds/local.xml?sort=Active">'
+      const value = 'https://example.com/'
+      const content = `
+        <link
+          rel="alternate"
+          type="application/atom+xml"
+          href="/feeds/local.xml?sort=Active"
+        >
+      `
       const expected = [
         {
-          uri: 'https://lemmy.ml/feeds/all.xml?sort=Active',
+          uri: 'https://example.com/feeds/all.xml?sort=Active',
           hint: { key: 'lemmy:all', label: 'All' },
         },
         {
-          uri: 'https://lemmy.ml/feeds/local.xml?sort=Active',
+          uri: 'https://example.com/feeds/local.xml?sort=Active',
           hint: { key: 'lemmy:local', label: 'Local' },
         },
       ]
@@ -283,12 +288,17 @@ describe('lemmyHandler', () => {
     })
 
     it('should prefer the ?sort= of the page URL over the advertised sort', () => {
-      const value = 'https://lemmy.ml/c/programming?sort=New'
-      const content =
-        '<link rel="alternate" type="application/atom+xml" href="/feeds/c/programming.xml?sort=Active">'
+      const value = 'https://example.com/c/programming?sort=New'
+      const content = `
+        <link
+          rel="alternate"
+          type="application/atom+xml"
+          href="/feeds/c/programming.xml?sort=Active"
+        >
+      `
       const expected = [
         {
-          uri: 'https://lemmy.ml/feeds/c/programming.xml?sort=New',
+          uri: 'https://example.com/feeds/c/programming.xml?sort=New',
           hint: { key: 'lemmy:community', label: 'Community' },
         },
       ]
@@ -297,16 +307,21 @@ describe('lemmyHandler', () => {
     })
 
     it('should take the advertised sort when the page URL sort is unknown', () => {
-      const value = 'https://lemmy.ml/?sort=bogus'
-      const content =
-        '<link rel="alternate" type="application/atom+xml" href="/feeds/local.xml?sort=Active">'
+      const value = 'https://example.com/?sort=bogus'
+      const content = `
+        <link
+          rel="alternate"
+          type="application/atom+xml"
+          href="/feeds/local.xml?sort=Active"
+        >
+      `
       const expected = [
         {
-          uri: 'https://lemmy.ml/feeds/all.xml?sort=Active',
+          uri: 'https://example.com/feeds/all.xml?sort=Active',
           hint: { key: 'lemmy:all', label: 'All' },
         },
         {
-          uri: 'https://lemmy.ml/feeds/local.xml?sort=Active',
+          uri: 'https://example.com/feeds/local.xml?sort=Active',
           hint: { key: 'lemmy:local', label: 'Local' },
         },
       ]
@@ -315,16 +330,21 @@ describe('lemmyHandler', () => {
     })
 
     it('should take the advertised sort when the page URL sort has the wrong case', () => {
-      const value = 'https://lemmy.ml/?sort=hot'
-      const content =
-        '<link rel="alternate" type="application/atom+xml" href="/feeds/local.xml?sort=Active">'
+      const value = 'https://example.com/?sort=hot'
+      const content = `
+        <link
+          rel="alternate"
+          type="application/atom+xml"
+          href="/feeds/local.xml?sort=Active"
+        >
+      `
       const expected = [
         {
-          uri: 'https://lemmy.ml/feeds/all.xml?sort=Active',
+          uri: 'https://example.com/feeds/all.xml?sort=Active',
           hint: { key: 'lemmy:all', label: 'All' },
         },
         {
-          uri: 'https://lemmy.ml/feeds/local.xml?sort=Active',
+          uri: 'https://example.com/feeds/local.xml?sort=Active',
           hint: { key: 'lemmy:local', label: 'Local' },
         },
       ]
@@ -333,12 +353,17 @@ describe('lemmyHandler', () => {
     })
 
     it('should drop an unknown advertised sort', () => {
-      const value = 'https://lemmy.ml/c/programming'
-      const content =
-        '<link rel="alternate" type="application/atom+xml" href="/feeds/c/programming.xml?sort=bogus">'
+      const value = 'https://example.com/c/programming'
+      const content = `
+        <link
+          rel="alternate"
+          type="application/atom+xml"
+          href="/feeds/c/programming.xml?sort=bogus"
+        >
+      `
       const expected = [
         {
-          uri: 'https://lemmy.ml/feeds/c/programming.xml',
+          uri: 'https://example.com/feeds/c/programming.xml',
           hint: { key: 'lemmy:community', label: 'Community' },
         },
       ]
@@ -347,10 +372,10 @@ describe('lemmyHandler', () => {
     })
 
     it('should drop unknown ?sort= values', () => {
-      const value = 'https://lemmy.ml/c/programming?sort=garbage'
+      const value = 'https://example.com/c/programming?sort=garbage'
       const expected = [
         {
-          uri: 'https://lemmy.ml/feeds/c/programming.xml',
+          uri: 'https://example.com/feeds/c/programming.xml',
           hint: { key: 'lemmy:community', label: 'Community' },
         },
       ]
@@ -359,10 +384,10 @@ describe('lemmyHandler', () => {
     })
 
     it('should accept extended sort values', () => {
-      const value = 'https://lemmy.ml/c/programming?sort=Controversial'
+      const value = 'https://example.com/c/programming?sort=Controversial'
       const expected = [
         {
-          uri: 'https://lemmy.ml/feeds/c/programming.xml?sort=Controversial',
+          uri: 'https://example.com/feeds/c/programming.xml?sort=Controversial',
           hint: { key: 'lemmy:community', label: 'Community' },
         },
       ]
@@ -371,10 +396,10 @@ describe('lemmyHandler', () => {
     })
 
     it('should pass through numeric ?limit= values', () => {
-      const value = 'https://lemmy.ml/c/programming?sort=Hot&limit=5'
+      const value = 'https://example.com/c/programming?sort=Hot&limit=5'
       const expected = [
         {
-          uri: 'https://lemmy.ml/feeds/c/programming.xml?sort=Hot&limit=5',
+          uri: 'https://example.com/feeds/c/programming.xml?sort=Hot&limit=5',
           hint: { key: 'lemmy:community', label: 'Community' },
         },
       ]
@@ -383,10 +408,10 @@ describe('lemmyHandler', () => {
     })
 
     it('should drop non-numeric ?limit= values', () => {
-      const value = 'https://lemmy.ml/c/programming?limit=garbage'
+      const value = 'https://example.com/c/programming?limit=garbage'
       const expected = [
         {
-          uri: 'https://lemmy.ml/feeds/c/programming.xml',
+          uri: 'https://example.com/feeds/c/programming.xml',
           hint: { key: 'lemmy:community', label: 'Community' },
         },
       ]
@@ -395,10 +420,10 @@ describe('lemmyHandler', () => {
     })
 
     it('should pass through ?limit= without sort', () => {
-      const value = 'https://lemmy.ml/c/programming?limit=10'
+      const value = 'https://example.com/c/programming?limit=10'
       const expected = [
         {
-          uri: 'https://lemmy.ml/feeds/c/programming.xml?limit=10',
+          uri: 'https://example.com/feeds/c/programming.xml?limit=10',
           hint: { key: 'lemmy:community', label: 'Community' },
         },
       ]

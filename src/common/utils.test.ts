@@ -8,6 +8,7 @@ import {
   getCookieNames,
   getJsonLd,
   getMetaContent,
+  getScriptDirectory,
   getScriptText,
   hasAnyMeta,
   hasClass,
@@ -566,6 +567,28 @@ describe('getCookieNames', () => {
   })
 })
 
+describe('getScriptDirectory', () => {
+  it('should return the directory of a script', () => {
+    expect(getScriptDirectory('/community/viewtopic.php')).toBe('/community')
+  })
+
+  it('should return the directory of a script with a capitalized extension', () => {
+    expect(getScriptDirectory('/forums/index.PHP')).toBe('/forums')
+  })
+
+  it('should return a directory without its trailing slash', () => {
+    expect(getScriptDirectory('/links/')).toBe('/links')
+  })
+
+  it('should return an empty string for a script at the root', () => {
+    expect(getScriptDirectory('/index.php')).toBe('')
+  })
+
+  it('should return an empty string for the root', () => {
+    expect(getScriptDirectory('/')).toBe('')
+  })
+})
+
 describe('hasAnyMeta', () => {
   const markers: Array<[string, string]> = [
     ['generator', 'pixelfed'],
@@ -980,7 +1003,7 @@ describe('getJsonLd', () => {
       <script type="application/ld+json">{"@type":"Person"}</script>
       <script type="application/ld+json">[{"@type":"WebSite"}]</script>
     `
-    const expected: Array<unknown> = [{ '@type': 'Person' }, [{ '@type': 'WebSite' }]]
+    const expected = [{ '@type': 'Person' }, [{ '@type': 'WebSite' }]]
 
     expect(getJsonLd(value)).toEqual(expected)
   })
@@ -992,14 +1015,14 @@ describe('getJsonLd', () => {
         type="application/ld+json"
       >{"@type":"Person"}</script>
     `
-    const expected: Array<unknown> = [{ '@type': 'Person' }]
+    const expected = [{ '@type': 'Person' }]
 
     expect(getJsonLd(value)).toEqual(expected)
   })
 
   it('should read a block whose JSON contains a less-than sign', () => {
     const value = '<script type="application/ld+json">{"name":"A <3 B"}</script>'
-    const expected: Array<unknown> = [{ name: 'A <3 B' }]
+    const expected = [{ name: 'A <3 B' }]
 
     expect(getJsonLd(value)).toEqual(expected)
   })
@@ -1009,7 +1032,7 @@ describe('getJsonLd', () => {
       <script type="application/ld+json">{invalid</script>
       <script type="application/ld+json">{"@type":"Person"}</script>
     `
-    const expected: Array<unknown> = [{ '@type': 'Person' }]
+    const expected = [{ '@type': 'Person' }]
 
     expect(getJsonLd(value)).toEqual(expected)
   })

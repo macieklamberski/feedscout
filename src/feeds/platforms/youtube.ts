@@ -39,7 +39,7 @@ const liveRegex = /^\/live\/[\w-]+/i
 const watchRegex = /^\/watch\/?$/i
 const channelPrefixRegex = /^UC/
 // Channel IDs are case-sensitive, so the ID is checked apart from the case-insensitive route.
-const channelIdRegex = /^UC[a-zA-Z0-9_-]+/
+const channelIdFormatRegex = /^UC[a-zA-Z0-9_-]+/
 
 const extractChannelIdFromContent = (content: string): string | undefined => {
   for (const regex of channelIdRegexes) {
@@ -120,7 +120,8 @@ export const parseYoutubeUrl = (url: string): YoutubeUrl | undefined => {
 
   const { pathname, searchParams } = parsedUrl
   const playlistId = searchParams.get('list') ?? undefined
-  const channelId = pathname.match(channelRegex)?.[1]?.match(channelIdRegex)?.[0]
+  const rawChannelId = pathname.match(channelRegex)?.[1]
+  const channelId = rawChannelId?.match(channelIdFormatRegex)?.[0]
 
   if (channelId) {
     return { kind: 'channel', channelId, playlistId }

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverRef, DiscoverUriEntry, FetchFn } from '../../common/types.js'
+import type { DiscoverRef, FetchFn } from '../../common/types.js'
 import type { FaviconEnricherContext } from '../types.js'
 import { sourcehutEnricher, sourcehutHandler } from './sourcehut.js'
 
@@ -51,14 +51,14 @@ describe('sourcehutHandler', () => {
   describe('resolve', () => {
     describe('happy paths', () => {
       it('should return the avatar from the user page content', () => {
-        const expected: Array<DiscoverUriEntry> = [{ uri: avatarUrl }]
+        const expected = [{ uri: avatarUrl }]
 
         expect(sourcehutHandler.resolve('https://sr.ht/~example/', userPage)).toEqual(expected)
       })
 
       it('should return a ref to the owner for a repository page', () => {
         const value = 'https://git.sr.ht/~example/project/tree'
-        const expected: Array<DiscoverRef> = [{ platform: 'sourcehut', id: 'example', url: value }]
+        const expected = [{ platform: 'sourcehut', id: 'example', url: value }]
 
         expect(sourcehutHandler.resolve(value)).toEqual(expected)
       })
@@ -101,7 +101,7 @@ describe('sourcehutHandler', () => {
             src="${avatarUrl}?size=256&amp;v=2"
           />
         `
-        const expected: Array<DiscoverUriEntry> = [{ uri: `${avatarUrl}?size=256&v=2` }]
+        const expected = [{ uri: `${avatarUrl}?size=256&v=2` }]
 
         expect(sourcehutHandler.resolve('https://sr.ht/~example/', content)).toEqual(expected)
       })
@@ -113,7 +113,7 @@ describe('sourcehutHandler', () => {
             src="${avatarUrl}"
           />
         `
-        const expected: Array<DiscoverUriEntry> = [{ uri: avatarUrl }]
+        const expected = [{ uri: avatarUrl }]
 
         expect(sourcehutHandler.resolve('https://sr.ht/~example/', content)).toEqual(expected)
       })
@@ -133,7 +133,7 @@ describe('sourcehutEnricher', () => {
     const ref: DiscoverRef = {
       platform: 'mastodon',
       id: 'example',
-      url: 'https://mastodon.social/@example',
+      url: 'https://example.com/@example',
     }
 
     expect(await sourcehutEnricher(ref, createContext({}))).toBeUndefined()

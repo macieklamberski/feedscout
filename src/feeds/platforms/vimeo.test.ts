@@ -7,7 +7,7 @@ describe('vimeoHandler', () => {
       [true, 'https://vimeo.com/casey'],
       [true, 'https://vimeo.com/channels/staffpicks'],
       [true, 'https://www.vimeo.com/user'],
-      [false, 'https://youtube.com/user'],
+      [false, 'https://example.org/user'],
       [false, 'https://example.com'],
     ]
 

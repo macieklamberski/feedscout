@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverFetchFn, DiscoverUriEntry } from '../../common/types.js'
+import type { DiscoverFetchFn } from '../../common/types.js'
 import { zennHandler } from './zenn.js'
 
 const createPage = (image: string): string => {
@@ -43,27 +43,21 @@ describe('zennHandler', () => {
     describe('happy paths', () => {
       it('should return avatar from profile page', async () => {
         const content = createPage('https://static.zenn.studio/user-upload/avatar/9965dabc76.jpeg')
-        const expected: Array<DiscoverUriEntry> = [
-          { uri: 'https://static.zenn.studio/user-upload/avatar/9965dabc76.jpeg' },
-        ]
+        const expected = [{ uri: 'https://static.zenn.studio/user-upload/avatar/9965dabc76.jpeg' }]
 
         expect(await zennHandler.resolve('https://zenn.dev/alice', content)).toEqual(expected)
       })
 
       it('should return avatar from publication page', async () => {
         const content = createPage('https://static.zenn.studio/user-upload/avatar/6399678e6b.jpeg')
-        const expected: Array<DiscoverUriEntry> = [
-          { uri: 'https://static.zenn.studio/user-upload/avatar/6399678e6b.jpeg' },
-        ]
+        const expected = [{ uri: 'https://static.zenn.studio/user-upload/avatar/6399678e6b.jpeg' }]
 
         expect(await zennHandler.resolve('https://zenn.dev/p/acme', content)).toEqual(expected)
       })
 
       it('should return image from topic page', async () => {
         const content = createPage('https://static.zenn.studio/user-upload/topics/ba09661577.png')
-        const expected: Array<DiscoverUriEntry> = [
-          { uri: 'https://static.zenn.studio/user-upload/topics/ba09661577.png' },
-        ]
+        const expected = [{ uri: 'https://static.zenn.studio/user-upload/topics/ba09661577.png' }]
 
         expect(await zennHandler.resolve('https://zenn.dev/topics/rust', content)).toEqual(expected)
       })

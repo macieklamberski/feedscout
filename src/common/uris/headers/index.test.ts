@@ -334,9 +334,9 @@ describe('discoverUrisFromHeaders', () => {
 
     it('should handle punycode domains in URL', () => {
       const headers = new Headers({
-        Link: '<https://xn--r8jz45g.jp/feed.xml>; rel="alternate"; type="application/rss+xml"',
+        Link: '<https://xn--r8jz45g.example.com/feed.xml>; rel="alternate"; type="application/rss+xml"',
       })
-      const expected = ['https://xn--r8jz45g.jp/feed.xml']
+      const expected = ['https://xn--r8jz45g.example.com/feed.xml']
 
       expect(discoverUrisFromHeaders(headers, defaultOptions)).toEqual(expected)
     })

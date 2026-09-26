@@ -9,13 +9,13 @@ describe('parseBookwyrmUrl', () => {
   it('should return the profile for a profile page', () => {
     const expected: BookwyrmUrl = { kind: 'profile', username: 'mouse' }
 
-    expect(parseBookwyrmUrl('https://bookwyrm.social/user/mouse')).toEqual(expected)
+    expect(parseBookwyrmUrl('https://books.example.com/user/mouse')).toEqual(expected)
   })
 
   it('should return the profile for a profile page with a capitalized user segment', () => {
     const expected: BookwyrmUrl = { kind: 'profile', username: 'mouse' }
 
-    expect(parseBookwyrmUrl('https://bookwyrm.social/User/mouse')).toEqual(expected)
+    expect(parseBookwyrmUrl('https://books.example.com/User/mouse')).toEqual(expected)
   })
 
   it('should return the profile of a remote user', () => {
@@ -26,7 +26,7 @@ describe('parseBookwyrmUrl', () => {
   })
 
   it('should return the shelf for /user/{user}/books/{shelf}', () => {
-    const value = 'https://bookwyrm.social/user/mouse/books/read'
+    const value = 'https://books.example.com/user/mouse/books/read'
     const expected: BookwyrmUrl = {
       kind: 'shelf',
       username: 'mouse',
@@ -38,7 +38,7 @@ describe('parseBookwyrmUrl', () => {
   })
 
   it('should return the shelf for /user/{user}/shelf/{shelf}', () => {
-    const value = 'https://bookwyrm.social/user/mouse/shelf/to-read'
+    const value = 'https://books.example.com/user/mouse/shelf/to-read'
     const expected: BookwyrmUrl = {
       kind: 'shelf',
       username: 'mouse',
@@ -50,7 +50,7 @@ describe('parseBookwyrmUrl', () => {
   })
 
   it('should return the lowercase section for a capitalized shelf path', () => {
-    const value = 'https://bookwyrm.social/user/mouse/Shelf/to-read'
+    const value = 'https://books.example.com/user/mouse/Shelf/to-read'
     const expected: BookwyrmUrl = {
       kind: 'shelf',
       username: 'mouse',
@@ -91,7 +91,7 @@ describe('parseBookwyrmUrl', () => {
   })
 
   it('should return undefined for non-user paths', () => {
-    expect(parseBookwyrmUrl('https://bookwyrm.social/about')).toBeUndefined()
+    expect(parseBookwyrmUrl('https://books.example.com/about')).toBeUndefined()
     expect(parseBookwyrmUrl('https://books.example.com/book/123')).toBeUndefined()
   })
 
@@ -134,40 +134,40 @@ describe('bookwyrmHandler', () => {
 
   describe('match', () => {
     it('should return true for profile URL with BookWyrm content', () => {
-      expect(bookwyrmHandler.match('https://bookwyrm.social/user/mouse', bookwyrmHtml)).toBe(true)
+      expect(bookwyrmHandler.match('https://books.example.com/user/mouse', bookwyrmHtml)).toBe(true)
     })
 
     it('should return false without content', () => {
-      expect(bookwyrmHandler.match('https://bookwyrm.social/user/mouse')).toBe(false)
+      expect(bookwyrmHandler.match('https://books.example.com/user/mouse')).toBe(false)
     })
 
     it('should return false for non-BookWyrm content', () => {
-      expect(bookwyrmHandler.match('https://bookwyrm.social/user/mouse', otherHtml)).toBe(false)
+      expect(bookwyrmHandler.match('https://books.example.com/user/mouse', otherHtml)).toBe(false)
     })
 
     it('should return false for non-user paths', () => {
-      expect(bookwyrmHandler.match('https://bookwyrm.social/about', bookwyrmHtml)).toBe(false)
+      expect(bookwyrmHandler.match('https://books.example.com/about', bookwyrmHtml)).toBe(false)
     })
   })
 
   describe('resolve', () => {
     it('should return activity, reviews, quotes, and comments feeds for profile', () => {
-      const value = 'https://bookwyrm.social/user/mouse'
+      const value = 'https://books.example.com/user/mouse'
       const expected = [
         {
-          uri: 'https://bookwyrm.social/user/mouse/rss',
+          uri: 'https://books.example.com/user/mouse/rss',
           hint: { key: 'bookwyrm:activity', label: 'Activity' },
         },
         {
-          uri: 'https://bookwyrm.social/user/mouse/rss-reviews',
+          uri: 'https://books.example.com/user/mouse/rss-reviews',
           hint: { key: 'bookwyrm:reviews', label: 'Reviews' },
         },
         {
-          uri: 'https://bookwyrm.social/user/mouse/rss-quotes',
+          uri: 'https://books.example.com/user/mouse/rss-quotes',
           hint: { key: 'bookwyrm:quotes', label: 'Quotes' },
         },
         {
-          uri: 'https://bookwyrm.social/user/mouse/rss-comments',
+          uri: 'https://books.example.com/user/mouse/rss-comments',
           hint: { key: 'bookwyrm:comments', label: 'Comments' },
         },
       ]
@@ -176,22 +176,22 @@ describe('bookwyrmHandler', () => {
     })
 
     it('should return all four feeds for a user subpage', () => {
-      const value = 'https://bookwyrm.social/user/mouse/books'
+      const value = 'https://books.example.com/user/mouse/books'
       const expected = [
         {
-          uri: 'https://bookwyrm.social/user/mouse/rss',
+          uri: 'https://books.example.com/user/mouse/rss',
           hint: { key: 'bookwyrm:activity', label: 'Activity' },
         },
         {
-          uri: 'https://bookwyrm.social/user/mouse/rss-reviews',
+          uri: 'https://books.example.com/user/mouse/rss-reviews',
           hint: { key: 'bookwyrm:reviews', label: 'Reviews' },
         },
         {
-          uri: 'https://bookwyrm.social/user/mouse/rss-quotes',
+          uri: 'https://books.example.com/user/mouse/rss-quotes',
           hint: { key: 'bookwyrm:quotes', label: 'Quotes' },
         },
         {
-          uri: 'https://bookwyrm.social/user/mouse/rss-comments',
+          uri: 'https://books.example.com/user/mouse/rss-comments',
           hint: { key: 'bookwyrm:comments', label: 'Comments' },
         },
       ]
@@ -200,26 +200,26 @@ describe('bookwyrmHandler', () => {
     })
 
     it('should prepend shelf feed for /user/{user}/books/{shelf}', () => {
-      const value = 'https://bookwyrm.social/user/mouse/books/read'
+      const value = 'https://books.example.com/user/mouse/books/read'
       const expected = [
         {
-          uri: 'https://bookwyrm.social/user/mouse/books/read/rss',
+          uri: 'https://books.example.com/user/mouse/books/read/rss',
           hint: { key: 'bookwyrm:shelf', label: 'Shelf' },
         },
         {
-          uri: 'https://bookwyrm.social/user/mouse/rss',
+          uri: 'https://books.example.com/user/mouse/rss',
           hint: { key: 'bookwyrm:activity', label: 'Activity' },
         },
         {
-          uri: 'https://bookwyrm.social/user/mouse/rss-reviews',
+          uri: 'https://books.example.com/user/mouse/rss-reviews',
           hint: { key: 'bookwyrm:reviews', label: 'Reviews' },
         },
         {
-          uri: 'https://bookwyrm.social/user/mouse/rss-quotes',
+          uri: 'https://books.example.com/user/mouse/rss-quotes',
           hint: { key: 'bookwyrm:quotes', label: 'Quotes' },
         },
         {
-          uri: 'https://bookwyrm.social/user/mouse/rss-comments',
+          uri: 'https://books.example.com/user/mouse/rss-comments',
           hint: { key: 'bookwyrm:comments', label: 'Comments' },
         },
       ]

@@ -48,7 +48,7 @@ describe('parseGitlabUrl', () => {
   it('should return the namespace on any host', () => {
     const expected: GitlabUrl = { kind: 'namespace', namespace: 'team' }
 
-    expect(parseGitlabUrl('https://gitlab.mycompany.com/team')).toEqual(expected)
+    expect(parseGitlabUrl('https://gitlab.example.com/team')).toEqual(expected)
   })
 
   it('should keep dots in a namespace', () => {
@@ -245,39 +245,37 @@ describe('gitlabHandler', () => {
     })
 
     it('should match self-hosted project path with GitLab HTML', () => {
-      expect(gitlabHandler.match('https://gitlab.mycompany.com/user/repo', selfHostedHtml)).toBe(
-        true,
-      )
+      expect(gitlabHandler.match('https://gitlab.example.com/user/repo', selfHostedHtml)).toBe(true)
     })
 
     it('should match self-hosted dash path with GitLab HTML', () => {
-      const value = 'https://gitlab.mycompany.com/user/repo/-/issues'
+      const value = 'https://gitlab.example.com/user/repo/-/issues'
 
       expect(gitlabHandler.match(value, selfHostedHtml)).toBe(true)
     })
 
     it('should match self-hosted project path with GitLab header', () => {
-      const value = 'https://gitlab.mycompany.com/user/repo'
+      const value = 'https://gitlab.example.com/user/repo'
 
       expect(gitlabHandler.match(value, '', selfHostedHeaders)).toBe(true)
     })
 
     it('should match self-hosted instance with non-GitLab content but GitLab header', () => {
-      const value = 'https://gitlab.mycompany.com/user/repo'
+      const value = 'https://gitlab.example.com/user/repo'
       const content = '<html><head><title>Projects</title></head></html>'
 
       expect(gitlabHandler.match(value, content, selfHostedHeaders)).toBe(true)
     })
 
     it('should not match self-hosted single-segment path even with GitLab signals', () => {
-      expect(gitlabHandler.match('https://gitlab.mycompany.com/user', selfHostedHtml)).toBe(false)
-      expect(gitlabHandler.match('https://gitlab.mycompany.com/user', '', selfHostedHeaders)).toBe(
+      expect(gitlabHandler.match('https://gitlab.example.com/user', selfHostedHtml)).toBe(false)
+      expect(gitlabHandler.match('https://gitlab.example.com/user', '', selfHostedHeaders)).toBe(
         false,
       )
     })
 
     it('should not match self-hosted without content or headers', () => {
-      expect(gitlabHandler.match('https://gitlab.mycompany.com/user/repo')).toBe(false)
+      expect(gitlabHandler.match('https://gitlab.example.com/user/repo')).toBe(false)
     })
   })
 
@@ -359,10 +357,10 @@ describe('gitlabHandler', () => {
     })
 
     it('should keep self-hosted origin in resolved feeds', () => {
-      const value = 'https://gitlab.mycompany.com/team'
+      const value = 'https://gitlab.example.com/team'
       const expected = [
         {
-          uri: 'https://gitlab.mycompany.com/team.atom',
+          uri: 'https://gitlab.example.com/team.atom',
           hint: { key: 'gitlab:activity', label: 'Activity' },
         },
       ]

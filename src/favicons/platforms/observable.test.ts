@@ -35,21 +35,21 @@ describe('observableHandler', () => {
 
   describe('resolve', () => {
     it('should return a ref for a profile page', async () => {
-      const expected: Array<DiscoverRef> = [ref]
+      const expected = [ref]
 
       expect(await observableHandler.resolve('https://observablehq.com/@alice')).toEqual(expected)
     })
 
     it('should return the owner ref for a collection page', async () => {
       const url = 'https://observablehq.com/@alice/-/collection/maps'
-      const expected: Array<DiscoverRef> = [{ platform: 'observable', id: 'alice', url }]
+      const expected = [{ platform: 'observable', id: 'alice', url }]
 
       expect(await observableHandler.resolve(url)).toEqual(expected)
     })
 
     it('should return the owner ref for a notebook page', async () => {
       const url = 'https://observablehq.com/@alice/hello-world'
-      const expected: Array<DiscoverRef> = [{ platform: 'observable', id: 'alice', url }]
+      const expected = [{ platform: 'observable', id: 'alice', url }]
 
       expect(await observableHandler.resolve(url)).toEqual(expected)
     })

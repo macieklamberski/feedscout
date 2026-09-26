@@ -32,7 +32,7 @@ const timeFilteredSorts = ['top', 'controversial']
 const userPrefixes = ['u', 'user']
 
 const getTimeframeSuffix = (sort: string, searchParams: URLSearchParams): string => {
-  if (!isAnyOf(sort, timeFilteredSorts)) {
+  if (!timeFilteredSorts.includes(sort)) {
     return ''
   }
 
@@ -88,14 +88,14 @@ export const parseRedditUrl = (url: string): RedditUrl | undefined => {
     return { kind: 'subreddit', subreddit: name }
   }
 
-  const multireddit = item?.match(nameRegex)?.[0]
-
-  if (isAnyOf(prefix, userPrefixes) && isAnyOf(section, 'm') && multireddit) {
-    return { kind: 'multireddit', username: name, multireddit }
-  }
-
   if (!isAnyOf(prefix, userPrefixes)) {
     return
+  }
+
+  const multireddit = item?.match(nameRegex)?.[0]
+
+  if (isAnyOf(section, 'm') && multireddit) {
+    return { kind: 'multireddit', username: name, multireddit }
   }
 
   if (isAnyOf(section, 'submitted')) {
@@ -124,15 +124,17 @@ export const redditHandler: PlatformHandler = {
     }
 
     // Sitewide sort: /hot, /new, /rising, /controversial, /top, /best
-    const sort = pathSegments.length === 1 ? getAnyOf(pathSegments[0], sortOptions) : undefined
+    if (pathSegments.length === 1) {
+      const sort = getAnyOf(pathSegments[0], sortOptions)
 
-    if (sort) {
-      return [
-        {
-          uri: `https://www.reddit.com/${sort}/.rss${getTimeframeSuffix(sort, searchParams)}`,
-          hint: composeHint('reddit:posts'),
-        },
-      ]
+      if (sort) {
+        return [
+          {
+            uri: `https://www.reddit.com/${sort}/.rss${getTimeframeSuffix(sort, searchParams)}`,
+            hint: composeHint('reddit:posts'),
+          },
+        ]
+      }
     }
 
     // Sitewide search: /search?q=...

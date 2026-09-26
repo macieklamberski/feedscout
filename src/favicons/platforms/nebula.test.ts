@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverRef, DiscoverUriEntry, FetchFn } from '../../common/types.js'
+import type { DiscoverRef, FetchFn } from '../../common/types.js'
 import type { FaviconEnricherContext } from '../types.js'
 import { nebulaEnricher, nebulaHandler } from './nebula.js'
 
@@ -71,16 +71,14 @@ describe('nebulaHandler', () => {
     describe('happy paths', () => {
       it('should return the 512 channel avatar from the page query data', () => {
         const value = createPage(channelQueryData)
-        const expected: Array<DiscoverUriEntry> = [
-          { uri: 'https://images.nebula.tv/e816edc6.jpeg?width=512' },
-        ]
+        const expected = [{ uri: 'https://images.nebula.tv/e816edc6.jpeg?width=512' }]
 
         expect(nebulaHandler.resolve('https://nebula.tv/realengineering', value)).toEqual(expected)
       })
 
       it('should return a ref with the channel slug without page content', () => {
         const url = 'https://nebula.tv/realengineering'
-        const expected: Array<DiscoverRef> = [{ platform: 'nebula', id: 'realengineering', url }]
+        const expected = [{ platform: 'nebula', id: 'realengineering', url }]
 
         expect(nebulaHandler.resolve(url)).toEqual(expected)
       })
@@ -88,7 +86,7 @@ describe('nebulaHandler', () => {
       it('should return a ref with the channel slug when the page has no query data', () => {
         const url = 'https://nebula.tv/realengineering'
         const value = '<html><head><title>Nebula</title></head></html>'
-        const expected: Array<DiscoverRef> = [{ platform: 'nebula', id: 'realengineering', url }]
+        const expected = [{ platform: 'nebula', id: 'realengineering', url }]
 
         expect(nebulaHandler.resolve(url, value)).toEqual(expected)
       })

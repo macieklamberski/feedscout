@@ -6,7 +6,7 @@ describe('hashnodeHandler', () => {
     const values: Array<[boolean, string]> = [
       [true, 'https://example.hashnode.dev'],
       [true, 'https://blog.example.hashnode.dev'],
-      [true, 'https://townhall.hashnode.com'],
+      [true, 'https://example.hashnode.com'],
       [false, 'https://hashnode.dev'],
       [false, 'https://hashnode.com'],
       [false, 'https://example.com'],

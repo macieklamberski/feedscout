@@ -1,5 +1,4 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverUriEntry } from '../../common/types.js'
 import { youtubeHandler } from './youtube.js'
 
 const channelHtml = `
@@ -46,7 +45,7 @@ describe('youtubeHandler', () => {
   describe('resolve', () => {
     it('should return og:image avatar for a handle page', async () => {
       const value = 'https://www.youtube.com/@creator'
-      const expected: Array<DiscoverUriEntry> = [
+      const expected = [
         { uri: 'https://yt3.googleusercontent.com/abc123=s900-c-k-c0x00ffffff-no-rj' },
       ]
 
@@ -55,7 +54,7 @@ describe('youtubeHandler', () => {
 
     it('should return og:image avatar for a channel ID page', async () => {
       const value = 'https://www.youtube.com/channel/UCabc123'
-      const expected: Array<DiscoverUriEntry> = [
+      const expected = [
         { uri: 'https://yt3.googleusercontent.com/abc123=s900-c-k-c0x00ffffff-no-rj' },
       ]
 
@@ -64,27 +63,21 @@ describe('youtubeHandler', () => {
 
     it('should return owner thumbnail at s900 for a watch page', async () => {
       const value = 'https://www.youtube.com/watch?v=abc123'
-      const expected: Array<DiscoverUriEntry> = [
-        { uri: 'https://yt3.ggpht.com/def456=s900-c-k-c0x00ffffff-no-rj' },
-      ]
+      const expected = [{ uri: 'https://yt3.ggpht.com/def456=s900-c-k-c0x00ffffff-no-rj' }]
 
       expect(await youtubeHandler.resolve(value, watchHtml)).toEqual(expected)
     })
 
     it('should return owner thumbnail at s900 for a youtu.be short link', async () => {
       const value = 'https://youtu.be/abc123'
-      const expected: Array<DiscoverUriEntry> = [
-        { uri: 'https://yt3.ggpht.com/def456=s900-c-k-c0x00ffffff-no-rj' },
-      ]
+      const expected = [{ uri: 'https://yt3.ggpht.com/def456=s900-c-k-c0x00ffffff-no-rj' }]
 
       expect(await youtubeHandler.resolve(value, watchHtml)).toEqual(expected)
     })
 
     it('should return owner thumbnail at s900 for a live page', async () => {
       const value = 'https://www.youtube.com/live/abc123'
-      const expected: Array<DiscoverUriEntry> = [
-        { uri: 'https://yt3.ggpht.com/def456=s900-c-k-c0x00ffffff-no-rj' },
-      ]
+      const expected = [{ uri: 'https://yt3.ggpht.com/def456=s900-c-k-c0x00ffffff-no-rj' }]
 
       expect(await youtubeHandler.resolve(value, watchHtml)).toEqual(expected)
     })

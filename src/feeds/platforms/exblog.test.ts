@@ -5,39 +5,39 @@ import { exblogHandler, parseExblogUrl } from './exblog.js'
 
 describe('parseExblogUrl', () => {
   it('should return the blog for a blog page', () => {
-    const expected: ExblogUrl = { kind: 'blog', blog: 'petitcc' }
+    const expected: ExblogUrl = { kind: 'blog', blog: 'example' }
 
-    expect(parseExblogUrl('https://petitcc.exblog.jp')).toEqual(expected)
+    expect(parseExblogUrl('https://example.exblog.jp')).toEqual(expected)
   })
 
   it('should return the blog for a post page', () => {
-    const expected: ExblogUrl = { kind: 'blog', blog: 'petitcc' }
+    const expected: ExblogUrl = { kind: 'blog', blog: 'example' }
 
-    expect(parseExblogUrl('https://petitcc.exblog.jp/30123456/')).toEqual(expected)
+    expect(parseExblogUrl('https://example.exblog.jp/30123456/')).toEqual(expected)
   })
 
   it('should return the blog and category for a category page', () => {
-    const expected: ExblogUrl = { kind: 'category', blog: 'petitcc', category: '2' }
+    const expected: ExblogUrl = { kind: 'category', blog: 'example', category: '2' }
 
-    expect(parseExblogUrl('https://petitcc.exblog.jp/i2')).toEqual(expected)
+    expect(parseExblogUrl('https://example.exblog.jp/i2')).toEqual(expected)
   })
 
   it('should return the blog and category for a category page with a capitalized category segment', () => {
-    const expected: ExblogUrl = { kind: 'category', blog: 'petitcc', category: '2' }
+    const expected: ExblogUrl = { kind: 'category', blog: 'example', category: '2' }
 
-    expect(parseExblogUrl('https://petitcc.exblog.jp/I2')).toEqual(expected)
+    expect(parseExblogUrl('https://example.exblog.jp/I2')).toEqual(expected)
   })
 
   it('should return the category for a category page with a trailing slash', () => {
-    const expected: ExblogUrl = { kind: 'category', blog: 'petitcc', category: '2' }
+    const expected: ExblogUrl = { kind: 'category', blog: 'example', category: '2' }
 
-    expect(parseExblogUrl('https://petitcc.exblog.jp/i2/')).toEqual(expected)
+    expect(parseExblogUrl('https://example.exblog.jp/i2/')).toEqual(expected)
   })
 
   it('should return the blog when the category id runs into letters', () => {
-    const expected: ExblogUrl = { kind: 'blog', blog: 'petitcc' }
+    const expected: ExblogUrl = { kind: 'blog', blog: 'example' }
 
-    expect(parseExblogUrl('https://petitcc.exblog.jp/i2x/')).toEqual(expected)
+    expect(parseExblogUrl('https://example.exblog.jp/i2x/')).toEqual(expected)
   })
 
   it('should return undefined for the portal', () => {
@@ -64,7 +64,7 @@ describe('parseExblogUrl', () => {
 describe('exblogHandler', () => {
   describe('match', () => {
     it('should match Exblog URLs', () => {
-      expect(exblogHandler.match('https://petitcc.exblog.jp')).toBe(true)
+      expect(exblogHandler.match('https://example.exblog.jp')).toBe(true)
     })
 
     it('should not match the portal', () => {
@@ -74,14 +74,14 @@ describe('exblogHandler', () => {
 
   describe('resolve', () => {
     it('should return RSS and Atom feeds for blog', () => {
-      const value = 'https://petitcc.exblog.jp'
+      const value = 'https://example.exblog.jp'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://petitcc.exblog.jp/index.xml',
+          uri: 'https://example.exblog.jp/index.xml',
           hint: { key: 'exblog:posts', label: 'Posts', format: 'rss' },
         },
         {
-          uri: 'https://petitcc.exblog.jp/atom.xml',
+          uri: 'https://example.exblog.jp/atom.xml',
           hint: { key: 'exblog:posts', label: 'Posts', format: 'atom' },
         },
       ]
@@ -90,22 +90,22 @@ describe('exblogHandler', () => {
     })
 
     it('should return category feeds for category page', () => {
-      const value = 'https://petitcc.exblog.jp/i2'
+      const value = 'https://example.exblog.jp/i2'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://petitcc.exblog.jp/i2/index.xml',
+          uri: 'https://example.exblog.jp/i2/index.xml',
           hint: { key: 'exblog:category', label: 'Category', format: 'rss' },
         },
         {
-          uri: 'https://petitcc.exblog.jp/i2/atom.xml',
+          uri: 'https://example.exblog.jp/i2/atom.xml',
           hint: { key: 'exblog:category', label: 'Category', format: 'atom' },
         },
         {
-          uri: 'https://petitcc.exblog.jp/index.xml',
+          uri: 'https://example.exblog.jp/index.xml',
           hint: { key: 'exblog:posts', label: 'Posts', format: 'rss' },
         },
         {
-          uri: 'https://petitcc.exblog.jp/atom.xml',
+          uri: 'https://example.exblog.jp/atom.xml',
           hint: { key: 'exblog:posts', label: 'Posts', format: 'atom' },
         },
       ]

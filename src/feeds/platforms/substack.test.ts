@@ -6,12 +6,12 @@ describe('substackHandler', () => {
     const values: Array<[boolean, string]> = [
       [true, 'https://example.substack.com'],
       [true, 'https://blog.example.substack.com'],
-      [true, 'https://substack.com/@govtrackus'],
-      [true, 'https://substack.com/@theconsciouslee'],
+      [true, 'https://substack.com/@alice'],
+      [true, 'https://substack.com/@bob'],
       [true, 'https://substack.com/@user-name'],
       [false, 'https://substack.com/home'],
       [false, 'https://substack.com'],
-      [false, 'https://medium.com'],
+      [false, 'https://example.com'],
     ]
 
     it.each(values)('should return %s for %s', (expected, url) => {
@@ -37,10 +37,10 @@ describe('substackHandler', () => {
     })
 
     it('should return feed URL regardless of path', () => {
-      const value = 'https://newsletter.substack.com/p/some-article'
+      const value = 'https://example.substack.com/p/some-article'
       const expected = [
         {
-          uri: 'https://newsletter.substack.com/feed',
+          uri: 'https://example.substack.com/feed',
           hint: { key: 'substack:newsletter', label: 'Newsletter' },
         },
       ]
@@ -49,10 +49,10 @@ describe('substackHandler', () => {
     })
 
     it('should return feed URL for profile page', () => {
-      const value = 'https://substack.com/@govtrackus'
+      const value = 'https://substack.com/@alice'
       const expected = [
         {
-          uri: 'https://govtrackus.substack.com/feed',
+          uri: 'https://alice.substack.com/feed',
           hint: { key: 'substack:newsletter', label: 'Newsletter' },
         },
       ]
@@ -61,12 +61,12 @@ describe('substackHandler', () => {
     })
 
     it('should return the custom domain feed a profile page names', () => {
-      const value = 'https://substack.com/@govtrackus'
+      const value = 'https://substack.com/@alice'
       const content =
-        '{\\"primaryPublication\\":{\\"id\\":4330724,\\"subdomain\\":\\"govtrack\\",\\"custom_domain\\":\\"substack.govtrack.us\\"}}'
+        '{\\"primaryPublication\\":{\\"id\\":4330724,\\"subdomain\\":\\"alicewrites\\",\\"custom_domain\\":\\"newsletter.example.com\\"}}'
       const expected = [
         {
-          uri: 'https://substack.govtrack.us/feed',
+          uri: 'https://newsletter.example.com/feed',
           hint: { key: 'substack:newsletter', label: 'Newsletter' },
         },
       ]
@@ -75,12 +75,12 @@ describe('substackHandler', () => {
     })
 
     it('should return the publication subdomain feed when it differs from the handle', () => {
-      const value = 'https://substack.com/@govtrackus'
+      const value = 'https://substack.com/@alice'
       const content =
-        '{"primaryPublication":{"id":4330724,"subdomain":"govtrack","custom_domain":null}}'
+        '{"primaryPublication":{"id":4330724,"subdomain":"alicewrites","custom_domain":null}}'
       const expected = [
         {
-          uri: 'https://govtrack.substack.com/feed',
+          uri: 'https://alicewrites.substack.com/feed',
           hint: { key: 'substack:newsletter', label: 'Newsletter' },
         },
       ]
@@ -89,10 +89,10 @@ describe('substackHandler', () => {
     })
 
     it('should return feed URL for profile page with subpath', () => {
-      const value = 'https://substack.com/@theconsciouslee/recommendations'
+      const value = 'https://substack.com/@bob/recommendations'
       const expected = [
         {
-          uri: 'https://theconsciouslee.substack.com/feed',
+          uri: 'https://bob.substack.com/feed',
           hint: { key: 'substack:newsletter', label: 'Newsletter' },
         },
       ]

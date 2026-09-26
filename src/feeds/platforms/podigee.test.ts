@@ -4,7 +4,7 @@ import { podigeeHandler } from './podigee.js'
 describe('podigeeHandler', () => {
   describe('match', () => {
     const values: Array<[boolean, string]> = [
-      [true, 'https://cui-bono.podigee.io'],
+      [true, 'https://alice.podigee.io'],
       [true, 'https://anything.podigee.io/episodes'],
       [false, 'https://podigee.io'],
       [false, 'https://example.com'],
@@ -25,10 +25,10 @@ describe('podigeeHandler', () => {
 
   describe('resolve', () => {
     it('should return podcast feed for show', () => {
-      const value = 'https://cui-bono.podigee.io'
+      const value = 'https://alice.podigee.io'
       const expected = [
         {
-          uri: 'https://cui-bono.podigee.io/feed/mp3',
+          uri: 'https://alice.podigee.io/feed/mp3',
           hint: { key: 'podigee:podcast', label: 'Podcast' },
         },
       ]
@@ -37,10 +37,10 @@ describe('podigeeHandler', () => {
     })
 
     it('should return feed URL regardless of path', () => {
-      const value = 'https://cui-bono.podigee.io/episodes/123'
+      const value = 'https://alice.podigee.io/episodes/123'
       const expected = [
         {
-          uri: 'https://cui-bono.podigee.io/feed/mp3',
+          uri: 'https://alice.podigee.io/feed/mp3',
           hint: { key: 'podigee:podcast', label: 'Podcast' },
         },
       ]

@@ -22,15 +22,15 @@ describe('parseLobstersUrl', () => {
   })
 
   it('should return the domain for a domain page', () => {
-    const expected: LobstersUrl = { kind: 'domain', domain: 'github.com' }
+    const expected: LobstersUrl = { kind: 'domain', domain: 'example.com' }
 
-    expect(parseLobstersUrl('https://lobste.rs/domains/github.com')).toEqual(expected)
+    expect(parseLobstersUrl('https://lobste.rs/domains/example.com')).toEqual(expected)
   })
 
   it('should return the domain for a domain page with a capitalized domains segment', () => {
-    const expected: LobstersUrl = { kind: 'domain', domain: 'github.com' }
+    const expected: LobstersUrl = { kind: 'domain', domain: 'example.com' }
 
-    expect(parseLobstersUrl('https://lobste.rs/Domains/github.com')).toEqual(expected)
+    expect(parseLobstersUrl('https://lobste.rs/Domains/example.com')).toEqual(expected)
   })
 
   it('should return the user for a user page', () => {
@@ -150,10 +150,10 @@ describe('lobstersHandler', () => {
     })
 
     it('should return domain RSS feed for domain page', () => {
-      const value = 'https://lobste.rs/domains/github.com'
+      const value = 'https://lobste.rs/domains/example.com'
       const expected = [
         {
-          uri: 'https://lobste.rs/domains/github.com.rss',
+          uri: 'https://lobste.rs/domains/example.com.rss',
           hint: { key: 'lobsters:domain', label: 'Domain' },
         },
       ]

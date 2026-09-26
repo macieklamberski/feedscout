@@ -4,11 +4,11 @@ import { defaultHtmlOptions } from './defaults.js'
 
 describe('defaultHtmlOptions ignores subscribe/share links that wrap a feed URL', () => {
   const wrappers = [
-    'https://add.my.yahoo.com/content?url=http%3A%2F%2Fexample.com%2Ffeed',
-    'https://www.netvibes.com/subscribe.php?url=http%3A%2F%2Fexample.com%2Ffeed',
-    'https://podcasts.google.com/?feed=aHR0cDovL2V4YW1wbGUuY29tL2ZlZWQ',
-    'http://apicdn.viglink.com/api/click?u=http%3A%2F%2Fexample.com%2Ffeed',
-    'http://www.addthis.com/feed.php?h1=http%3A%2F%2Fexample.com%2Ffeed',
+    'https://add.example.org/content?url=http%3A%2F%2Fexample.com%2Ffeed',
+    'https://www.example.org/subscribe.php?url=http%3A%2F%2Fexample.com%2Ffeed',
+    'https://podcasts.example.org/?feed=aHR0cDovL2V4YW1wbGUuY29tL2ZlZWQ',
+    'http://api.example.org/api/click?u=http%3A%2F%2Fexample.com%2Ffeed',
+    'http://share.example.org/feed.php?h1=http%3A%2F%2Fexample.com%2Ffeed',
   ]
 
   for (const href of wrappers) {
@@ -53,7 +53,7 @@ describe('defaultHtmlOptions matches feed path segments in the pathname only', (
 
 describe('defaultHtmlOptions does not treat "subscribe" alone as a feed label', () => {
   it('should ignore a "Subscribe" link to a podcast app or newsletter', () => {
-    const value = '<a href="https://www.youtube.com/c/example">Subscribe</a>'
+    const value = '<a href="https://video.example.org/c/example">Subscribe</a>'
     const expected: Array<string> = []
 
     expect(discoverUrisFromHtml(value, defaultHtmlOptions)).toEqual(expected)

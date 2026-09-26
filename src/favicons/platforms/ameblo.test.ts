@@ -1,5 +1,4 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverUriEntry } from '../../common/types.js'
 import { amebloHandler } from './ameblo.js'
 
 const createPage = (initData: string): string => {
@@ -24,7 +23,7 @@ describe('amebloHandler', () => {
   describe('resolve', () => {
     it('should return square crop of profile image from blog home page', async () => {
       const result = await amebloHandler.resolve('https://ameblo.jp/alice/', alicePage)
-      const expected: Array<DiscoverUriEntry> = [
+      const expected = [
         {
           uri: 'https://stat.profile.ameba.jp/profile_images/20191219/16/6e/Nh/j/o44805236p_1576738801201_mk6hy.jpg?cpd=200',
         },

@@ -23,7 +23,7 @@ describe('mastodonHandler', () => {
     it('should match profile path with Mastodon HTML', () => {
       const value = '<meta name="generator" content="Mastodon v4.2.0">'
 
-      expect(mastodonHandler.match('https://mastodon.social/@user', value)).toBe(true)
+      expect(mastodonHandler.match('https://example.com/@user', value)).toBe(true)
     })
 
     it('should match profile path with Mastodon server header', () => {
@@ -61,27 +61,25 @@ describe('mastodonHandler', () => {
     })
 
     it('should not match without content and headers', () => {
-      expect(mastodonHandler.match('https://mastodon.social/@user')).toBe(false)
+      expect(mastodonHandler.match('https://example.com/@user')).toBe(false)
     })
 
     it('should not match non-profile paths', () => {
       const value = '<meta name="generator" content="Mastodon v4.2.0">'
 
-      expect(mastodonHandler.match('https://mastodon.social/about', value)).toBe(false)
+      expect(mastodonHandler.match('https://example.com/about', value)).toBe(false)
     })
   })
 
   describe('resolve', () => {
     it('should return a ref for the profile', async () => {
-      const expected: Array<DiscoverRef> = [
-        { platform: 'mastodon', id: 'user', url: 'https://mastodon.social/@user' },
-      ]
+      const expected = [{ platform: 'mastodon', id: 'user', url: 'https://example.com/@user' }]
 
-      expect(await mastodonHandler.resolve('https://mastodon.social/@user')).toEqual(expected)
+      expect(await mastodonHandler.resolve('https://example.com/@user')).toEqual(expected)
     })
 
     it('should return empty array for non-profile path', async () => {
-      expect(await mastodonHandler.resolve('https://mastodon.social/about')).toEqual([])
+      expect(await mastodonHandler.resolve('https://example.com/about')).toEqual([])
     })
   })
 })
@@ -89,26 +87,26 @@ describe('mastodonHandler', () => {
 describe('mastodonEnricher', () => {
   it('should resolve avatar from Mastodon API', async () => {
     const context = createContext({
-      'https://mastodon.social/api/v1/accounts/lookup?acct=user': JSON.stringify({
-        avatar: 'https://files.mastodon.social/accounts/avatars/000/123/original/avatar.png',
+      'https://example.com/api/v1/accounts/lookup?acct=user': JSON.stringify({
+        avatar: 'https://files.example.com/accounts/avatars/000/123/original/avatar.png',
       }),
     })
-    const ref = createRef('https://mastodon.social/@user', 'user')
-    const expected = ['https://files.mastodon.social/accounts/avatars/000/123/original/avatar.png']
+    const ref = createRef('https://example.com/@user', 'user')
+    const expected = ['https://files.example.com/accounts/avatars/000/123/original/avatar.png']
 
     expect(await mastodonEnricher(ref, context)).toEqual(expected)
   })
 
   it('should resolve avatar from different instance', async () => {
     const context = createContext({
-      'https://hachyderm.io/api/v1/accounts/lookup?acct=dev': JSON.stringify({
-        avatar: 'https://media.hachyderm.io/avatars/dev.png',
+      'https://example.org/api/v1/accounts/lookup?acct=dev': JSON.stringify({
+        avatar: 'https://media.example.org/avatars/dev.png',
       }),
     })
-    const ref = createRef('https://hachyderm.io/@dev', 'dev')
+    const ref = createRef('https://example.org/@dev', 'dev')
 
     expect(await mastodonEnricher(ref, context)).toEqual([
-      'https://media.hachyderm.io/avatars/dev.png',
+      'https://media.example.org/avatars/dev.png',
     ])
   })
 
@@ -128,20 +126,20 @@ describe('mastodonEnricher', () => {
 
   it('should resolve avatar for a remote handle', async () => {
     const context = createContext({
-      'https://mastodon.social/api/v1/accounts/lookup?acct=user@remote.social': JSON.stringify({
-        avatar: 'https://remote.social/avatars/user.png',
+      'https://example.com/api/v1/accounts/lookup?acct=user@example.net': JSON.stringify({
+        avatar: 'https://example.net/avatars/user.png',
       }),
     })
-    const ref = createRef('https://mastodon.social/@user@remote.social', 'user@remote.social')
+    const ref = createRef('https://example.com/@user@example.net', 'user@example.net')
 
-    expect(await mastodonEnricher(ref, context)).toEqual(['https://remote.social/avatars/user.png'])
+    expect(await mastodonEnricher(ref, context)).toEqual(['https://example.net/avatars/user.png'])
   })
 
   it('should return undefined for a ref of another platform', async () => {
     const ref: DiscoverRef = {
       platform: 'bluesky',
       id: 'user',
-      url: 'https://bsky.app/profile/user',
+      url: 'https://example.com/profile/user',
     }
 
     expect(await mastodonEnricher(ref, createContext({}))).toBeUndefined()
@@ -149,36 +147,36 @@ describe('mastodonEnricher', () => {
 
   it('should return empty array when avatar is empty string', async () => {
     const context = createContext({
-      'https://mastodon.social/api/v1/accounts/lookup?acct=user': JSON.stringify({ avatar: '' }),
+      'https://example.com/api/v1/accounts/lookup?acct=user': JSON.stringify({ avatar: '' }),
     })
-    const ref = createRef('https://mastodon.social/@user', 'user')
+    const ref = createRef('https://example.com/@user', 'user')
 
     expect(await mastodonEnricher(ref, context)).toEqual([])
   })
 
   it('should return empty array when avatar is not a string', async () => {
     const context = createContext({
-      'https://mastodon.social/api/v1/accounts/lookup?acct=user': JSON.stringify({ avatar: 123 }),
+      'https://example.com/api/v1/accounts/lookup?acct=user': JSON.stringify({ avatar: 123 }),
     })
-    const ref = createRef('https://mastodon.social/@user', 'user')
+    const ref = createRef('https://example.com/@user', 'user')
 
     expect(await mastodonEnricher(ref, context)).toEqual([])
   })
 
   it('should return empty array when API returns no avatar', async () => {
     const context = createContext({
-      'https://mastodon.social/api/v1/accounts/lookup?acct=user': JSON.stringify({}),
+      'https://example.com/api/v1/accounts/lookup?acct=user': JSON.stringify({}),
     })
-    const ref = createRef('https://mastodon.social/@user', 'user')
+    const ref = createRef('https://example.com/@user', 'user')
 
     expect(await mastodonEnricher(ref, context)).toEqual([])
   })
 
   it('should reject when API returns invalid JSON', async () => {
     const context = createContext({
-      'https://mastodon.social/api/v1/accounts/lookup?acct=user': 'not json',
+      'https://example.com/api/v1/accounts/lookup?acct=user': 'not json',
     })
-    const ref = createRef('https://mastodon.social/@user', 'user')
+    const ref = createRef('https://example.com/@user', 'user')
     const throwing = () => mastodonEnricher(ref, context)
 
     await expect(throwing()).rejects.toThrow('JSON Parse error: Unexpected identifier "not"')
@@ -188,17 +186,17 @@ describe('mastodonEnricher', () => {
     const fetchFn: FetchFn = () => {
       throw new Error('Network error')
     }
-    const ref = createRef('https://mastodon.social/@user', 'user')
+    const ref = createRef('https://example.com/@user', 'user')
     const throwing = () => mastodonEnricher(ref, { fetchFn })
 
     await expect(throwing()).rejects.toThrow('Network error')
   })
 
   it('should reject when the response is not 2xx', async () => {
-    const ref = createRef('https://mastodon.social/@user', 'user')
+    const ref = createRef('https://example.com/@user', 'user')
     const throwing = () => mastodonEnricher(ref, createContext({}))
     const expected =
-      'Unexpected status 404 from https://mastodon.social/api/v1/accounts/lookup?acct=user'
+      'Unexpected status 404 from https://example.com/api/v1/accounts/lookup?acct=user'
 
     await expect(throwing()).rejects.toThrow(expected)
   })

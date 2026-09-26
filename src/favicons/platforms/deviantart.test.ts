@@ -1,5 +1,4 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverUriEntry } from '../../common/types.js'
 import { deviantartHandler } from './deviantart.js'
 
 describe('deviantartHandler', () => {
@@ -15,7 +14,7 @@ describe('deviantartHandler', () => {
 
   describe('resolve', () => {
     it('should resolve user avatar with 3 URI alternatives', () => {
-      const expected: Array<DiscoverUriEntry> = [
+      const expected = [
         { uri: 'https://a.deviantart.net/avatars-big/a/r/artistname.jpg' },
         { uri: 'https://a.deviantart.net/avatars-big/a/r/artistname.gif' },
         { uri: 'https://a.deviantart.net/avatars-big/a/r/artistname.png' },
@@ -25,7 +24,7 @@ describe('deviantartHandler', () => {
     })
 
     it('should normalize username to lowercase', () => {
-      const expected: Array<DiscoverUriEntry> = [
+      const expected = [
         { uri: 'https://a.deviantart.net/avatars-big/a/r/artistname.jpg' },
         { uri: 'https://a.deviantart.net/avatars-big/a/r/artistname.gif' },
         { uri: 'https://a.deviantart.net/avatars-big/a/r/artistname.png' },

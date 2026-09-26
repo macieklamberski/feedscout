@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverRef, DiscoverUriEntry, FetchFn } from '../../common/types.js'
+import type { DiscoverRef, FetchFn } from '../../common/types.js'
 import type { FaviconEnricherContext } from '../types.js'
 import { postypeEnricher, postypeHandler } from './postype.js'
 
@@ -40,28 +40,28 @@ describe('postypeHandler', () => {
     describe('happy paths', () => {
       it('should return the square avatar from the channel page content', () => {
         const value = 'https://www.postype.com/@example'
-        const expected: Array<DiscoverUriEntry> = [{ uri: avatarUrl }]
+        const expected = [{ uri: avatarUrl }]
 
         expect(postypeHandler.resolve(value, channelPage)).toEqual(expected)
       })
 
       it('should return a ref to the channel when the content is missing', () => {
         const value = 'https://www.postype.com/@example'
-        const expected: Array<DiscoverRef> = [createRef(value)]
+        const expected = [createRef(value)]
 
         expect(postypeHandler.resolve(value)).toEqual(expected)
       })
 
       it('should return a ref to the channel for a channel subdomain', () => {
         const value = 'https://example.postype.com/series'
-        const expected: Array<DiscoverRef> = [createRef(value)]
+        const expected = [createRef(value)]
 
         expect(postypeHandler.resolve(value, channelPage)).toEqual(expected)
       })
 
       it('should return a ref to the channel for a post page', () => {
         const value = 'https://www.postype.com/@example/post/23216701'
-        const expected: Array<DiscoverRef> = [createRef(value)]
+        const expected = [createRef(value)]
 
         expect(postypeHandler.resolve(value, channelPage)).toEqual(expected)
       })
@@ -70,14 +70,14 @@ describe('postypeHandler', () => {
     describe('sad paths', () => {
       it('should return a ref to the channel when the page carries the placeholder', () => {
         const value = 'https://www.postype.com/@example'
-        const expected: Array<DiscoverRef> = [createRef(value)]
+        const expected = [createRef(value)]
 
         expect(postypeHandler.resolve(value, channelPageWithoutAvatar)).toEqual(expected)
       })
 
       it('should return a ref to the channel when the page has no og:image', () => {
         const value = 'https://www.postype.com/@example'
-        const expected: Array<DiscoverRef> = [createRef(value)]
+        const expected = [createRef(value)]
 
         expect(postypeHandler.resolve(value, '<title>Example</title>')).toEqual(expected)
       })

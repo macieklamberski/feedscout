@@ -1,5 +1,4 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverUriEntry } from '../../common/types.js'
 import { itchioHandler } from './itchio.js'
 
 describe('itchioHandler', () => {
@@ -7,8 +6,8 @@ describe('itchioHandler', () => {
     const values: Array<[boolean, string]> = [
       [true, 'https://itch.io/games'],
       [true, 'https://www.itch.io/games'],
-      [true, 'https://leafo.itch.io'],
-      [true, 'https://leafo.itch.io/x-moon'],
+      [true, 'https://alice.itch.io'],
+      [true, 'https://alice.itch.io/x-moon'],
       [false, 'https://example.com'],
       [false, 'https://notitch.io'],
     ]
@@ -24,10 +23,10 @@ describe('itchioHandler', () => {
 
   describe('resolve', () => {
     it('should return devlog feed for game page on subdomain', () => {
-      const value = 'https://npckc.itch.io/a-tavern-for-tea'
+      const value = 'https://bob.itch.io/a-tavern-for-tea'
       const expected = [
         {
-          uri: 'https://npckc.itch.io/a-tavern-for-tea/devlog.rss',
+          uri: 'https://bob.itch.io/a-tavern-for-tea/devlog.rss',
           hint: { key: 'itchio:devlog', label: 'Devlog' },
         },
       ]
@@ -36,10 +35,10 @@ describe('itchioHandler', () => {
     })
 
     it('should return devlog feed for game page with subpath', () => {
-      const value = 'https://leafo.itch.io/x-moon/devlog'
+      const value = 'https://alice.itch.io/x-moon/devlog'
       const expected = [
         {
-          uri: 'https://leafo.itch.io/x-moon/devlog.rss',
+          uri: 'https://alice.itch.io/x-moon/devlog.rss',
           hint: { key: 'itchio:devlog', label: 'Devlog' },
         },
       ]
@@ -48,10 +47,10 @@ describe('itchioHandler', () => {
     })
 
     it('should return games-by-creator feed for creator root', () => {
-      const value = 'https://leafo.itch.io/'
+      const value = 'https://alice.itch.io/'
       const expected = [
         {
-          uri: 'https://itch.io/games/by-leafo.xml',
+          uri: 'https://itch.io/games/by-alice.xml',
           hint: { key: 'itchio:games', label: 'Games' },
         },
       ]
@@ -60,10 +59,10 @@ describe('itchioHandler', () => {
     })
 
     it('should return games-by-user feed for by-username path', () => {
-      const value = 'https://itch.io/games/by-leafo'
+      const value = 'https://itch.io/games/by-alice'
       const expected = [
         {
-          uri: 'https://itch.io/games/by-leafo.xml',
+          uri: 'https://itch.io/games/by-alice.xml',
           hint: { key: 'itchio:games', label: 'Games' },
         },
       ]
@@ -72,10 +71,10 @@ describe('itchioHandler', () => {
     })
 
     it('should return games-by-user feed for by-username path with a capitalized games segment', () => {
-      const value = 'https://itch.io/Games/by-leafo'
+      const value = 'https://itch.io/Games/by-alice'
       const expected = [
         {
-          uri: 'https://itch.io/games/by-leafo.xml',
+          uri: 'https://itch.io/games/by-alice.xml',
           hint: { key: 'itchio:games', label: 'Games' },
         },
       ]
@@ -85,7 +84,7 @@ describe('itchioHandler', () => {
 
     it('should return games-by-user feed for by-username feed URL', () => {
       const value = 'https://itch.io/games/by-alice.xml'
-      const expected: Array<DiscoverUriEntry> = [
+      const expected = [
         {
           uri: 'https://itch.io/games/by-alice.xml',
           hint: { key: 'itchio:games', label: 'Games' },
@@ -121,7 +120,7 @@ describe('itchioHandler', () => {
 
     it('should return tag feed for tag feed URL', () => {
       const value = 'https://itch.io/games/tag-horror.xml'
-      const expected: Array<DiscoverUriEntry> = [
+      const expected = [
         {
           uri: 'https://itch.io/games/tag-horror.xml',
           hint: { key: 'itchio:tag', label: 'Tag' },
@@ -292,7 +291,7 @@ describe('itchioHandler', () => {
 
     it('should return games feed for /games feed URL', () => {
       const value = 'https://itch.io/games.xml'
-      const expected: Array<DiscoverUriEntry> = [
+      const expected = [
         {
           uri: 'https://itch.io/games.xml',
           hint: { key: 'itchio:games', label: 'Games' },
@@ -331,7 +330,7 @@ describe('itchioHandler', () => {
 
     it('should return devlogs feed for /devlogs feed URL', () => {
       const value = 'https://itch.io/devlogs.xml'
-      const expected: Array<DiscoverUriEntry> = [
+      const expected = [
         {
           uri: 'https://itch.io/devlogs.xml',
           hint: { key: 'itchio:devlog', label: 'Devlog' },
