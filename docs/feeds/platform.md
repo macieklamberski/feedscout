@@ -177,9 +177,12 @@ Discovers Atom feeds for users, organizations, and repositories.
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | `github.com/{user}`, `github.com/{user}.atom` or `github.com/{user}.png` | User activity feed |
+| `github.com/orgs/{org}/discussions` | Organization discussions |
+| `github.com/orgs/{org}/discussions/categories/{category}` | Discussion category (+ above) |
 | `github.com/{owner}/{repo}` | Releases, commits, tags |
 | `github.com/{owner}/{repo}/wiki` | Wiki changes (+ above) |
 | `github.com/{owner}/{repo}/discussions` | Discussions (+ above) |
+| `github.com/{owner}/{repo}/discussions/categories/{category}` | Discussion category (+ above) |
 | `github.com/{owner}/{repo}/tree/{branch}` | Branch commits (+ above) |
 | `github.com/{owner}/{repo}/blob/{branch}/{path}` | File commits (+ above) |
 | `github.com/{owner}/{repo}/commits/{branch}/{path}` | File commits (+ above) |
