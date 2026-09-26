@@ -60,6 +60,22 @@ describe('writeasHandler', () => {
       expect(writeasHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return tag and blog feeds for tag page with a capitalized tag segment', () => {
+      const value = 'https://write.as/matt/Tag:reading'
+      const expected = [
+        {
+          uri: 'https://write.as/matt/tag:reading/feed/',
+          hint: { key: 'writeas:tag', label: 'Tag' },
+        },
+        {
+          uri: 'https://write.as/matt/feed/',
+          hint: { key: 'writeas:blog', label: 'Blog' },
+        },
+      ]
+
+      expect(writeasHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return empty array for root path', () => {
       const value = 'https://write.as/'
 
@@ -68,6 +84,12 @@ describe('writeasHandler', () => {
 
     it('should return empty array for excluded paths', () => {
       const value = 'https://write.as/login'
+
+      expect(writeasHandler.resolve(value)).toEqual([])
+    })
+
+    it('should return empty array for a capitalized excluded path', () => {
+      const value = 'https://write.as/Login'
 
       expect(writeasHandler.resolve(value)).toEqual([])
     })

@@ -1,4 +1,4 @@
-import { parseUrl } from 'trousse'
+import { getAnyOf, parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, hasElementWithId, hasMetaContent } from '../../common/utils.js'
@@ -7,10 +7,12 @@ import { composeHint, hasElementWithId, hasMetaContent } from '../../common/util
 // Generic covers category, home, top (html).
 // Handler needed for: user.
 
-const userRegex = /^\/u\/([^/]+)/
-const categoryRegex = /^\/c\/(.+?)\/?$/
-const topicRegex = /^\/t\/([^/]+)\/(\d+)/
-const topRegex = /^\/top(?:\/([^/]+))?\/?$/
+const userRegex = /^\/u\/([^/]+)/i
+// A category page takes a `/none` or `/all` subcategory tail and an `/l/{filter}` list tail, and the
+// category feed answers only without them.
+const categoryRegex = /^\/c\/(.+?)(?:\/(?:none|all))?(?:\/l\/.+)?\/?$/i
+const topicRegex = /^\/t\/([^/]+)\/(\d+)/i
+const topRegex = /^\/top(?:\/([^/]+))?\/?$/i
 
 const validTopPeriods = ['daily', 'weekly', 'monthly', 'quarterly', 'yearly', 'all']
 
@@ -18,7 +20,7 @@ const getTopPeriodSuffix = (
   pathPeriod: string | undefined,
   searchParams: URLSearchParams,
 ): string => {
-  const period = pathPeriod ?? searchParams.get('period') ?? undefined
+  const period = getAnyOf(pathPeriod, validTopPeriods) ?? searchParams.get('period')
 
   if (period && validTopPeriods.includes(period)) {
     return `?period=${period}`

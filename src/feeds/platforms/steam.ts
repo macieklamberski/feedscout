@@ -12,10 +12,10 @@ const communityHosts = ['steamcommunity.com']
 const hosts = [...storeHosts, ...communityHosts]
 
 // An age-gated store page redirects to /agecheck/app/{id}.
-const appRegex = /^\/(?:agecheck\/|news\/)?app\/(\d+)/
-const groupRegex = /^\/groups\/([^/]+)/
-
-const homePaths = ['/', '']
+const appRegex = /^\/(?:agecheck\/|news(?:hub)?\/)?app\/(\d+)(?:\/|$)/i
+const groupRegex = /^\/groups\/([^/]+)/i
+// The store front links to `/newshub/`, which redirects to `/news/`.
+const newsRegex = /^\/news(?:hub)?(?:\/|$)/i
 
 export const parseSteamUrl = (url: string): SteamUrl | undefined => {
   const parsedUrl = parseUrl(url)
@@ -65,10 +65,7 @@ export const steamHandler: PlatformHandler = {
     }
 
     // Global news feed on store root or /news/
-    if (
-      isHostOf(url, storeHosts) &&
-      (homePaths.includes(pathname) || pathname.startsWith('/news'))
-    ) {
+    if (isHostOf(url, storeHosts) && (pathname === '/' || newsRegex.test(pathname))) {
       return [
         {
           uri: 'https://store.steampowered.com/feeds/news.xml',

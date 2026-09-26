@@ -3,7 +3,7 @@ import { composeHint, hasMetaContent } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
-const channelPathRegex = /^\/(?:(?:channel|feed|profile)\/|@)([^/]+)/
+const channelPathRegex = /^\/(?:(?:channel|feed|profile)\/|@)([^/]+)/i
 
 // A custom theme can drop the generator, while core prints `var zid` in every page head.
 export const isHubzillaHtml = (content: string): boolean => {

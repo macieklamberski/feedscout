@@ -3,7 +3,7 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getJournalFeeds } from './livejournal.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic covers asylum (html), partly covers blog, tildePath, userPath.
+// Generic partly covers asylum, blog, tildePath, userPath.
 // Handler needed for: syndicated.
 
 const domains = ['insanejournal.com']
@@ -11,8 +11,8 @@ const wwwHosts = ['www.insanejournal.com', 'insanejournal.com']
 const asylumHosts = ['asylums.insanejournal.com']
 const feedHosts = ['feeds.insanejournal.com']
 
-const wwwUsersPathRegex = /^\/(?:users\/|~)([^/]+)/
-const wwwAsylumPathRegex = /^\/(?:asylum|community)\/([^/]+)/
+const wwwUsersPathRegex = /^\/(?:users\/|~)([^/]+)/i
+const wwwAsylumPathRegex = /^\/(?:asylum|community)\/([^/]+)/i
 const firstSegmentRegex = /^\/([^/]+)/
 
 export const insanejournalHandler: PlatformHandler = {

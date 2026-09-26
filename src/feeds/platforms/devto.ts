@@ -10,8 +10,9 @@ export type DevtoUrl = { kind: 'profile'; owner: string } | { kind: 'tag'; tag: 
 
 const hosts = ['dev.to', 'www.dev.to']
 // An article lives under its author's name, a user or an organization: /{name}/{slug}.
-const ownerRegex = /^\/([a-zA-Z0-9_-]+)(?:\/|$)/
-const tagRegex = /^\/t\/([^/]+)/
+const ownerRegex = /^\/([a-zA-Z0-9_-]+)(?:\/|$)/i
+const tagRegex = /^\/t\/([^/]+)/i
+const latestRegex = /^\/latest\/?$/i
 // See: https://github.com/forem/forem/blob/main/config/routes.rb.
 const excludedPaths = [
   'tag',
@@ -89,9 +90,6 @@ const excludedPaths = [
   'welcome',
 ]
 
-const homePaths = ['/', '']
-const latestPaths = ['/latest', '/latest/']
-
 export const parseDevtoUrl = (url: string): DevtoUrl | undefined => {
   const parsedUrl = parseUrl(url)
 
@@ -124,12 +122,12 @@ export const devtoHandler: PlatformHandler = {
     const { pathname } = new URL(url)
 
     // Homepage: global community feed.
-    if (homePaths.includes(pathname)) {
+    if (pathname === '/') {
       return [{ uri: 'https://dev.to/feed', hint: composeHint('devto:community') }]
     }
 
     // Latest sort: /latest.
-    if (latestPaths.includes(pathname)) {
+    if (latestRegex.test(pathname)) {
       return [
         { uri: 'https://dev.to/feed/latest', hint: composeHint('devto:latest') },
         { uri: 'https://dev.to/feed', hint: composeHint('devto:community') },

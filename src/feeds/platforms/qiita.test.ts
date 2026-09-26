@@ -56,6 +56,18 @@ describe('qiitaHandler', () => {
       expect(qiitaHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return feed URL for tag page with a capitalized tags segment', () => {
+      const value = 'https://qiita.com/Tags/javascript'
+      const expected = [
+        {
+          uri: 'https://qiita.com/tags/javascript/feed.atom',
+          hint: { key: 'qiita:tag', label: 'Tag' },
+        },
+      ]
+
+      expect(qiitaHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return feed URL for organization page', () => {
       const value = 'https://qiita.com/organizations/qiita-inc'
       const expected = [
@@ -68,8 +80,32 @@ describe('qiitaHandler', () => {
       expect(qiitaHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return feed URL for organization page with a capitalized organizations segment', () => {
+      const value = 'https://qiita.com/Organizations/qiita-inc'
+      const expected = [
+        {
+          uri: 'https://qiita.com/organizations/qiita-inc/activities.atom',
+          hint: { key: 'qiita:organization', label: 'Organization' },
+        },
+      ]
+
+      expect(qiitaHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return feed URL for popular items page', () => {
       const value = 'https://qiita.com/popular-items'
+      const expected = [
+        {
+          uri: 'https://qiita.com/popular-items/feed.atom',
+          hint: { key: 'qiita:popular', label: 'Popular items' },
+        },
+      ]
+
+      expect(qiitaHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return feed URL for popular items page with a capitalized popular-items segment', () => {
+      const value = 'https://qiita.com/Popular-Items'
       const expected = [
         {
           uri: 'https://qiita.com/popular-items/feed.atom',
@@ -111,8 +147,24 @@ describe('qiitaHandler', () => {
       }
     })
 
+    it('should return empty array for a capitalized excluded path', () => {
+      expect(qiitaHandler.resolve('https://qiita.com/About')).toEqual([])
+    })
+
     it('should return Qiita Zine feed for /official-columns', () => {
       const value = 'https://qiita.com/official-columns'
+      const expected = [
+        {
+          uri: 'https://qiita.com/official-columns/feed/',
+          hint: { key: 'qiita:zine', label: 'Qiita Zine' },
+        },
+      ]
+
+      expect(qiitaHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return Qiita Zine feed for /official-columns with a capitalized official-columns segment', () => {
+      const value = 'https://qiita.com/Official-Columns'
       const expected = [
         {
           uri: 'https://qiita.com/official-columns/feed/',

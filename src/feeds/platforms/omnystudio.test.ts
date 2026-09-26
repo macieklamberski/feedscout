@@ -7,6 +7,10 @@ describe('omnystudioHandler', () => {
       expect(omnystudioHandler.match('https://omny.fm/shows/example-show')).toBe(true)
     })
 
+    it('should match a show page with a capitalized shows segment', () => {
+      expect(omnystudioHandler.match('https://omny.fm/Shows/example-show')).toBe(true)
+    })
+
     it('should not match the site root', () => {
       expect(omnystudioHandler.match('https://omny.fm/')).toBe(false)
     })

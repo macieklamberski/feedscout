@@ -1,4 +1,4 @@
-import { getPathSegments, isHostOf } from 'trousse'
+import { getPathSegments, isAnyOf, isHostOf } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
@@ -22,11 +22,11 @@ export const parseGoodreadsUrl = (url: string): GoodreadsUrl | undefined => {
     return
   }
 
-  if (section === 'user' && action === 'show') {
+  if (isAnyOf(section, 'user') && isAnyOf(action, 'show')) {
     return { kind: 'user', userId: String(userId) }
   }
 
-  if (section === 'review' && action === 'list') {
+  if (isAnyOf(section, 'review') && isAnyOf(action, 'list')) {
     return { kind: 'reviews', userId: String(userId) }
   }
 }

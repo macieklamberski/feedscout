@@ -40,7 +40,7 @@ export const parseArenaUrl = (url: string): ArenaUrl | undefined => {
   }
 
   // The profile feed itself sits at /{username}/feed/rss, so `feed` names no channel.
-  if (channel && channel !== 'feed') {
+  if (channel && !isAnyOf(channel, 'feed')) {
     return { kind: 'channel', username, channel }
   }
 
@@ -56,7 +56,7 @@ export const arenaHandler: PlatformHandler = {
     const [section] = getPathSegments(url)
 
     // Article pages under /editorial have no feed of their own.
-    if (section === 'editorial') {
+    if (isAnyOf(section, 'editorial')) {
       return [
         {
           uri: 'https://www.are.na/editorial/feed/rss',

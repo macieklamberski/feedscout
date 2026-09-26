@@ -12,6 +12,12 @@ describe('parseBookwyrmUrl', () => {
     expect(parseBookwyrmUrl('https://bookwyrm.social/user/mouse')).toEqual(expected)
   })
 
+  it('should return the profile for a profile page with a capitalized user segment', () => {
+    const expected: BookwyrmUrl = { kind: 'profile', username: 'mouse' }
+
+    expect(parseBookwyrmUrl('https://bookwyrm.social/User/mouse')).toEqual(expected)
+  })
+
   it('should return the profile of a remote user', () => {
     const value = 'https://books.example.com/user/reader@remote.example.org'
     const expected: BookwyrmUrl = { kind: 'profile', username: 'reader@remote.example.org' }
@@ -33,6 +39,18 @@ describe('parseBookwyrmUrl', () => {
 
   it('should return the shelf for /user/{user}/shelf/{shelf}', () => {
     const value = 'https://bookwyrm.social/user/mouse/shelf/to-read'
+    const expected: BookwyrmUrl = {
+      kind: 'shelf',
+      username: 'mouse',
+      section: 'shelf',
+      shelf: 'to-read',
+    }
+
+    expect(parseBookwyrmUrl(value)).toEqual(expected)
+  })
+
+  it('should return the lowercase section for a capitalized shelf path', () => {
+    const value = 'https://bookwyrm.social/user/mouse/Shelf/to-read'
     const expected: BookwyrmUrl = {
       kind: 'shelf',
       username: 'mouse',

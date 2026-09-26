@@ -32,6 +32,18 @@ describe('rssComHandler', () => {
       expect(rssComHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return feed URL for podcast with a capitalized podcasts segment', () => {
+      const value = 'https://rss.com/Podcasts/podcasting101'
+      const expected = [
+        {
+          uri: 'https://media.rss.com/podcasting101/feed.xml',
+          hint: { key: 'rss-com:podcast', label: 'Podcast' },
+        },
+      ]
+
+      expect(rssComHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return feed URL regardless of subpath', () => {
       const value = 'https://rss.com/podcasts/podcasting101/episodes/some-episode'
       const expected = [

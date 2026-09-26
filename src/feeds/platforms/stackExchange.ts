@@ -17,15 +17,13 @@ const domains = [
   'stackexchange.com',
 ]
 
-const tagRegex = /^\/questions\/tagged\/([\w.+-]+)/
-const questionRegex = /^\/questions\/(\d+)/
-const userRegex = /^\/users\/(\d+)/
-const collectiveRegex = /^\/collectives\/([^/]+)/
+const tagRegex = /^\/questions\/tagged\/([\w.+-]+)/i
+const questionRegex = /^\/questions\/(\d+)/i
+const userRegex = /^\/users\/(\d+)/i
+const collectiveRegex = /^\/collectives\/([^/]+)/i
 
 // Sort values accepted by feeds.tag. Documented at api.stackexchange.com.
 const validSorts = ['newest', 'active', 'votes', 'creation', 'hot', 'week', 'month']
-
-const homePaths = ['/', '']
 
 const getSortSuffix = (searchParams: URLSearchParams): string => {
   const sort = searchParams.get('sort') ?? searchParams.get('tab')?.toLowerCase()
@@ -90,7 +88,7 @@ export const stackExchangeHandler: PlatformHandler = {
     }
 
     // Homepage: site-wide newest questions feed.
-    if (homePaths.includes(pathname)) {
+    if (pathname === '/') {
       return [
         {
           uri: `${origin}/feeds`,

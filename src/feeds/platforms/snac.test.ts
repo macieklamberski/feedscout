@@ -86,6 +86,18 @@ describe('snacHandler', () => {
       expect(snacHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should build the user feed from a post page with a capitalized p segment', () => {
+      const value = 'https://example.org/social/alice/P/1790085034.546035'
+      const expected = [
+        {
+          uri: 'https://example.org/social/alice.rss',
+          hint: { key: 'snac:posts', label: 'Posts' },
+        },
+      ]
+
+      expect(snacHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should build the user feed from a history page', () => {
       const value = 'https://example.org/alice/h/2026-05.html'
       const expected = [

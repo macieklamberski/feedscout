@@ -52,6 +52,10 @@ describe('writefreelyHandler', () => {
       expect(writefreelyHandler.match('https://example.org/read', writefreelyHtml)).toBe(false)
     })
 
+    it('should not match a capitalized reader path', () => {
+      expect(writefreelyHandler.match('https://example.org/Read', writefreelyHtml)).toBe(false)
+    })
+
     it('should not match without content', () => {
       expect(writefreelyHandler.match('https://example.org/alice')).toBe(false)
     })
@@ -142,6 +146,23 @@ describe('writefreelyHandler', () => {
 
     it('should build the tag feed of a single-user instance', () => {
       const value = 'https://example.org/tag:coolify'
+      const content = '<h1 id="blog-title"><a href="/" class="h-card p-author">Blog</a></h1>'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://example.org/tag:coolify/feed/',
+          hint: { key: 'writefreely:tag', label: 'Tag' },
+        },
+        {
+          uri: 'https://example.org/feed/',
+          hint: { key: 'writefreely:blog', label: 'Blog' },
+        },
+      ]
+
+      expect(writefreelyHandler.resolve(value, content)).toEqual(expected)
+    })
+
+    it('should build the tag feed of a single-user instance with a capitalized tag segment', () => {
+      const value = 'https://example.org/Tag:coolify'
       const content = '<h1 id="blog-title"><a href="/" class="h-card p-author">Blog</a></h1>'
       const expected: Array<DiscoverUriEntry> = [
         {

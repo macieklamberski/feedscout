@@ -29,6 +29,10 @@ describe('diasporaHandler', () => {
       expect(diasporaHandler.match('https://example.org/u/alice', diasporaHtml)).toBe(true)
     })
 
+    it('should match a profile path with a capitalized u segment', () => {
+      expect(diasporaHandler.match('https://example.org/U/alice', diasporaHtml)).toBe(true)
+    })
+
     it('should match the feed and legacy profile paths', () => {
       expect(diasporaHandler.match('https://example.org/public/alice', diasporaHtml)).toBe(true)
       expect(diasporaHandler.match('https://example.org/people/alice', diasporaHtml)).toBe(true)
@@ -78,6 +82,19 @@ describe('diasporaHandler', () => {
 
     it('should return the public feed by username for a people path', () => {
       const value = 'https://example.org/people/a6d160218ed02ee7'
+      const content = `${diasporaHtml}<script>{"diaspora_id":"alice@example.org"}</script>`
+      const expected = [
+        {
+          uri: 'https://example.org/public/alice.atom',
+          hint: { key: 'diaspora:posts', label: 'Posts' },
+        },
+      ]
+
+      expect(diasporaHandler.resolve(value, content)).toEqual(expected)
+    })
+
+    it('should return the public feed by username for a people path with a capitalized people segment', () => {
+      const value = 'https://example.org/People/a6d160218ed02ee7'
       const content = `${diasporaHtml}<script>{"diaspora_id":"alice@example.org"}</script>`
       const expected = [
         {

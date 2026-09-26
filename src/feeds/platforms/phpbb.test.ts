@@ -83,6 +83,22 @@ describe('phpbbHandler', () => {
       expect(phpbbHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should drop the script segment and add the forum feed with a capitalized viewforum segment', () => {
+      const value = 'https://example.com/community/VIEWFORUM.PHP?f=12'
+      const expected = [
+        {
+          uri: 'https://example.com/community/feed.php?f=12',
+          hint: { key: 'phpbb:forum', label: 'Forum' },
+        },
+        {
+          uri: 'https://example.com/community/feed.php',
+          hint: { key: 'phpbb:site', label: 'Site' },
+        },
+      ]
+
+      expect(phpbbHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should handle a board at the origin root', () => {
       const value = 'https://example.com/'
       const expected = [

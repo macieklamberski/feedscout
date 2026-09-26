@@ -40,14 +40,22 @@ describe('parsePeertubeUrl', () => {
     expect(parsePeertubeUrl('https://example.org/a/alice')).toEqual(expected)
   })
 
+  it('should return the account for a capitalized prefix', () => {
+    const expected: PeertubeUrl = { kind: 'account', name: 'alice' }
+
+    expect(parsePeertubeUrl('https://example.org/A/alice')).toEqual(expected)
+  })
+
   it('should return the account for an account subpage', () => {
     const expected: PeertubeUrl = { kind: 'account', name: 'alice' }
 
     expect(parsePeertubeUrl('https://example.org/a/alice/video-channels')).toEqual(expected)
   })
 
-  it('should return undefined for an uppercase prefix', () => {
-    expect(parsePeertubeUrl('https://example.org/C/news')).toBeUndefined()
+  it('should return the channel for a capitalized prefix', () => {
+    const expected: PeertubeUrl = { kind: 'channel', name: 'news' }
+
+    expect(parsePeertubeUrl('https://example.org/C/news')).toEqual(expected)
   })
 
   it('should return undefined for a video page', () => {

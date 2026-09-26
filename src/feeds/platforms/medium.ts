@@ -16,10 +16,10 @@ const domains = ['medium.com']
 export const hosts = ['medium.com', 'www.medium.com']
 
 const userRegex = /^\/@([^/]+)/
-const tagRegex = /^\/tag\/([^/]+)/
-const publicationTagRegex = /^\/([^/@][^/]+)\/tagged\/([^/]+)/
+const tagRegex = /^\/tag\/([^/]+)/i
+const publicationTagRegex = /^\/([^/@][^/]+)\/tagged\/([^/]+)/i
 const publicationRegex = /^\/([^/@][^/]+)/
-const subdomainTagRegex = /^\/tagged\/([^/]+)/
+const subdomainTagRegex = /^\/tagged\/([^/]+)/i
 
 const excludedPaths = ['search', 'me', 'new-story', 'plans', 'membership', 'feed']
 // Their /feed answers 404 or redirects away from a feed.

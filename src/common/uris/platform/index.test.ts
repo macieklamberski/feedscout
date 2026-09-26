@@ -31,6 +31,16 @@ describe('discoverUrisFromPlatform', () => {
     expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual([])
   })
 
+  it('should return empty array for a page without an http origin', async () => {
+    const handler: PlatformHandler = {
+      match: () => true,
+      resolve: () => [{ uri: 'https://example.com/feed.xml' }],
+    }
+    const options = { baseUrl: 'foo://example.com', handlers: [handler] }
+
+    expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual([])
+  })
+
   it('should return empty array when handlers array is empty', async () => {
     const options = { baseUrl: 'https://example.com', handlers: [] }
 

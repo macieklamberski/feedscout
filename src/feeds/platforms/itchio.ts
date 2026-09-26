@@ -1,4 +1,4 @@
-import { isAnyOf, isHostOf, isHostOrSubdomainOf, isSubdomainOf } from 'trousse'
+import { getAnyOf, isHostOf, isHostOrSubdomainOf, isSubdomainOf } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
@@ -10,14 +10,16 @@ import { composeHint } from '../../common/utils.js'
 const domains = ['itch.io']
 const mainHosts = ['itch.io', 'www.itch.io']
 
-const byUserRegex = /^\/games\/by-([^/]+)/
-const tagRegex = /^\/games\/tag-([^/]+)/
-const platformRegex = /^\/games\/platform-([^/.]+)/
-const genreRegex = /^\/games\/genre-([^/.]+)/
-const madeWithRegex = /^\/games\/made-with-([^/.]+)/
-const sortRegex = /^\/games\/([^/.]+)/
+const byUserRegex = /^\/games\/by-([^/]+)/i
+const tagRegex = /^\/games\/tag-([^/]+)/i
+const platformRegex = /^\/games\/platform-([^/.]+)/i
+const genreRegex = /^\/games\/genre-([^/.]+)/i
+const madeWithRegex = /^\/games\/made-with-([^/.]+)/i
+const sortRegex = /^\/games\/([^/.]+)/i
 const sectionRegex = /^\/([^/.]+)/
 const gameRegex = /^\/([^/]+)/
+const gamesRegex = /^\/games\/?$/i
+const devlogsRegex = /^\/devlogs\/?$/i
 
 const sections = [
   'tools',
@@ -29,9 +31,6 @@ const sections = [
   'misc',
 ]
 const sorts = ['newest', 'top-rated', 'top-sellers', 'on-sale', 'free']
-
-const gamesPaths = ['/games', '/games/']
-const devlogsPaths = ['/devlogs', '/devlogs/']
 
 export const itchioHandler: PlatformHandler = {
   match: (url) => {
@@ -128,32 +127,36 @@ export const itchioHandler: PlatformHandler = {
     // /games/{sort}
     const sortMatch = pathname.match(sortRegex)
 
-    if (sortMatch?.[1] && isAnyOf(sortMatch[1], sorts)) {
+    const sort = getAnyOf(sortMatch?.[1], sorts)
+
+    if (sort) {
       return [
         {
-          uri: `https://itch.io/games/${sortMatch[1]}.xml`,
+          uri: `https://itch.io/games/${sort}.xml`,
           hint: composeHint('itchio:games'),
         },
       ]
     }
 
     // /games
-    if (gamesPaths.includes(pathname)) {
+    if (gamesRegex.test(pathname)) {
       return [{ uri: 'https://itch.io/games.xml', hint: composeHint('itchio:games') }]
     }
 
     // /devlogs
-    if (devlogsPaths.includes(pathname)) {
+    if (devlogsRegex.test(pathname)) {
       return [{ uri: 'https://itch.io/devlogs.xml', hint: composeHint('itchio:devlog') }]
     }
 
     // /{section} (tools, game-assets, soundtracks, physical-games, books, comics, misc)
     const sectionMatch = pathname.match(sectionRegex)
 
-    if (sectionMatch?.[1] && isAnyOf(sectionMatch[1], sections)) {
+    const section = getAnyOf(sectionMatch?.[1], sections)
+
+    if (section) {
       return [
         {
-          uri: `https://itch.io/${sectionMatch[1]}.xml`,
+          uri: `https://itch.io/${section}.xml`,
           hint: composeHint('itchio:section'),
         },
       ]

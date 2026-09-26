@@ -11,6 +11,10 @@ describe('podomaticHandler', () => {
       expect(podomaticHandler.match('https://www.podomatic.com/podcasts/example-show')).toBe(true)
     })
 
+    it('should match a directory path with a capitalized podcasts segment', () => {
+      expect(podomaticHandler.match('https://www.podomatic.com/Podcasts/example-show')).toBe(true)
+    })
+
     it('should not match the directory index', () => {
       expect(podomaticHandler.match('https://www.podomatic.com/podcasts')).toBe(false)
     })

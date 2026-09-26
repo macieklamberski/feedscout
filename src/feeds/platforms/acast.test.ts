@@ -58,6 +58,12 @@ describe('acastHandler', () => {
       expect(acastHandler.resolve(value)).toEqual([])
     })
 
+    it('should return empty array for a capitalized excluded path', () => {
+      const value = 'https://shows.acast.com/Discover'
+
+      expect(acastHandler.resolve(value)).toEqual([])
+    })
+
     it('should return podcast feed for play.acast.com/s/{slug}', () => {
       const value = 'https://play.acast.com/s/my-dad-wrote-a-porno'
       const expected = [

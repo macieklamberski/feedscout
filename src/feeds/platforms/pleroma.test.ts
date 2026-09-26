@@ -26,6 +26,10 @@ describe('pleromaHandler', () => {
       expect(pleromaHandler.match('https://lain.com/users/lain', pleromaHtml)).toBe(true)
     })
 
+    it('should return true for profile URL with Pleroma content with a capitalized users segment', () => {
+      expect(pleromaHandler.match('https://lain.com/Users/lain', pleromaHtml)).toBe(true)
+    })
+
     it('should return false without content', () => {
       expect(pleromaHandler.match('https://lain.com/users/lain')).toBe(false)
     })

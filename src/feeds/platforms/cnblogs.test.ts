@@ -16,6 +16,10 @@ describe('cnblogsHandler', () => {
       expect(cnblogsHandler.match('https://www.cnblogs.com/news/')).toBe(false)
     })
 
+    it('should not match a capitalized reserved path', () => {
+      expect(cnblogsHandler.match('https://www.cnblogs.com/News/')).toBe(false)
+    })
+
     it('should not match other hosts', () => {
       expect(cnblogsHandler.match('https://example.com/user')).toBe(false)
     })

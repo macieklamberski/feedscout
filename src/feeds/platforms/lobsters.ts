@@ -1,4 +1,4 @@
-import { isHostOf, parseUrl } from 'trousse'
+import { getAnyOf, isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
@@ -12,13 +12,14 @@ export type LobstersUrl =
   | { kind: 'user'; username: string }
 
 const hosts = ['lobste.rs']
-const tagRegex = /^\/t\/([a-zA-Z0-9,_-]+)/
-const domainRegex = /^\/domains\/([^/]+)/
-const userRegex = /^\/~([a-zA-Z0-9_-]+)/
-const topRegex = /^\/top(?:\/(1d|3d|1w|1m|1y))?\/?$/
+const tagRegex = /^\/t\/([a-zA-Z0-9,_-]+)/i
+const domainRegex = /^\/domains\/([^/]+)/i
+const userRegex = /^\/~([a-zA-Z0-9_-]+)/i
+const topRegex = /^\/top(?:\/(1d|3d|1w|1m|1y))?\/?$/i
+const newestRegex = /^\/newest\/?$/i
+const commentsRegex = /^\/comments\/?$/i
 
-const newestPaths = ['/newest', '/newest/']
-const commentsPaths = ['/comments', '/comments/']
+const topPeriods = ['1d', '3d', '1w', '1m', '1y']
 
 export const parseLobstersUrl = (url: string): LobstersUrl | undefined => {
   const parsedUrl = parseUrl(url)
@@ -83,7 +84,7 @@ export const lobstersHandler: PlatformHandler = {
 
     // Top page, all time or for a period: /top or /top/{period}.
     if (topMatch) {
-      const [, period] = topMatch
+      const period = getAnyOf(topMatch[1], topPeriods)
 
       if (period) {
         return [
@@ -98,12 +99,12 @@ export const lobstersHandler: PlatformHandler = {
     }
 
     // Newest page.
-    if (newestPaths.includes(pathname)) {
+    if (newestRegex.test(pathname)) {
       return [{ uri: 'https://lobste.rs/newest.rss', hint: composeHint('lobsters:newest') }]
     }
 
     // Comments page.
-    if (commentsPaths.includes(pathname)) {
+    if (commentsRegex.test(pathname)) {
       return [
         {
           uri: 'https://lobste.rs/comments.rss',

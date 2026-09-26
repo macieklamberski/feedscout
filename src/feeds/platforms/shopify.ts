@@ -1,4 +1,4 @@
-import { getPathSegments } from 'trousse'
+import { getPathSegments, isAnyOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
@@ -13,7 +13,7 @@ export const isShopifyHeaders = (headers: Headers): boolean => {
 const getBlogHandle = (url: string): string | undefined => {
   const segments = getPathSegments(url)
 
-  return segments[0] === 'blogs' ? segments[1] : undefined
+  return isAnyOf(segments[0], 'blogs') ? segments[1] : undefined
 }
 
 export const shopifyHandler: PlatformHandler = {
