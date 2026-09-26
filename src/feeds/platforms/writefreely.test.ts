@@ -97,6 +97,38 @@ describe('writefreelyHandler', () => {
       expect(writefreelyHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should use the blog name from a later page of a blog', () => {
+      const value = 'https://example.org/alice/page/2'
+      const expected = [
+        {
+          uri: 'https://example.org/alice/feed/',
+          hint: { key: 'writefreely:blog', label: 'Blog' },
+        },
+        {
+          uri: 'https://example.org/read/feed/',
+          hint: { key: 'writefreely:reader', label: 'Reader' },
+        },
+      ]
+
+      expect(writefreelyHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should use the blog name of a blog named page', () => {
+      const value = 'https://example.org/page/'
+      const expected = [
+        {
+          uri: 'https://example.org/page/feed/',
+          hint: { key: 'writefreely:blog', label: 'Blog' },
+        },
+        {
+          uri: 'https://example.org/read/feed/',
+          hint: { key: 'writefreely:reader', label: 'Reader' },
+        },
+      ]
+
+      expect(writefreelyHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should add the tag feed for a tag page', () => {
       const value = 'https://example.org/alice/tag:coolify'
       const expected = [
@@ -200,6 +232,54 @@ describe('writefreelyHandler', () => {
           uri: 'https://example.org/tag:coolify/feed/',
           hint: { key: 'writefreely:tag', label: 'Tag' },
         },
+        {
+          uri: 'https://example.org/feed/',
+          hint: { key: 'writefreely:blog', label: 'Blog' },
+        },
+      ]
+
+      expect(writefreelyHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should build the blog feed of a single-user instance from a later page without a blog title link', () => {
+      const value = 'https://example.org/page/2'
+      const expected = [
+        {
+          uri: 'https://example.org/feed/',
+          hint: { key: 'writefreely:blog', label: 'Blog' },
+        },
+      ]
+
+      expect(writefreelyHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should build the blog feed of a single-user instance from a capitalized page segment without a blog title link', () => {
+      const value = 'https://example.org/Page/2'
+      const expected = [
+        {
+          uri: 'https://example.org/feed/',
+          hint: { key: 'writefreely:blog', label: 'Blog' },
+        },
+      ]
+
+      expect(writefreelyHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should build the blog feed of a single-user instance from a language page without a blog title link', () => {
+      const value = 'https://example.org/lang:en'
+      const expected = [
+        {
+          uri: 'https://example.org/feed/',
+          hint: { key: 'writefreely:blog', label: 'Blog' },
+        },
+      ]
+
+      expect(writefreelyHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should build the blog feed of a single-user instance from an uppercase language segment without a blog title link', () => {
+      const value = 'https://example.org/LANG:en'
+      const expected = [
         {
           uri: 'https://example.org/feed/',
           hint: { key: 'writefreely:blog', label: 'Blog' },
