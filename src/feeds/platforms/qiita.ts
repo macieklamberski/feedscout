@@ -6,10 +6,10 @@ import { composeHint } from '../../common/utils.js'
 
 const hosts = ['qiita.com', 'www.qiita.com']
 
-const tagRegex = /^\/tags\/([^/]+)/
-const organizationRegex = /^\/organizations\/([^/]+)/
-const popularItemsRegex = /^\/popular-items(\/|$)/
-const officialColumnsRegex = /^\/official-columns(\/|$)/
+const tagRegex = /^\/tags\/([^/]+)/i
+const organizationRegex = /^\/organizations\/([^/]+)/i
+const popularItemsRegex = /^\/popular-items(\/|$)/i
+const officialColumnsRegex = /^\/official-columns(\/|$)/i
 
 const excludedPaths = [
   'about',

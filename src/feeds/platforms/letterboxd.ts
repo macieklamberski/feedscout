@@ -59,7 +59,7 @@ export const letterboxdHandler: PlatformHandler = {
     const [section] = getPathSegments(url)
 
     // Editorial Letterboxd Journal feed.
-    if (section === 'journal') {
+    if (isAnyOf(section, 'journal')) {
       return [
         {
           uri: 'https://letterboxd.com/journal/rss/',

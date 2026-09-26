@@ -7,8 +7,8 @@ import { composeHint } from '../../common/utils.js'
 // Handler needed for: book, home, movie, music.
 
 const domains = ['douban.com']
-const userRegex = /^\/people\/([^/]+)/
-const subjectRegex = /^\/subject\/(\d+)/
+const userRegex = /^\/people\/([^/]+)/i
+const subjectRegex = /^\/subject\/(\d+)/i
 
 export const doubanHandler: PlatformHandler = {
   match: (url) => {
@@ -55,7 +55,7 @@ export const doubanHandler: PlatformHandler = {
     }
 
     // Root page: category review feeds.
-    if (pathname === '/' || pathname === '') {
+    if (pathname === '/') {
       return [
         {
           uri: 'https://www.douban.com/feed/review/book',

@@ -6,8 +6,8 @@ import { composeHint } from '../../common/utils.js'
 
 const hosts = ['www.v2ex.com', 'v2ex.com']
 
-const nodeRegex = /^\/go\/([^/]+)/
-const memberRegex = /^\/member\/([^/]+)/
+const nodeRegex = /^\/go\/([^/]+)/i
+const memberRegex = /^\/member\/([^/]+)/i
 
 export const v2exHandler: PlatformHandler = {
   match: (url) => {
@@ -23,7 +23,8 @@ export const v2exHandler: PlatformHandler = {
     if (nodeMatch?.[1]) {
       return [
         {
-          uri: `https://www.v2ex.com/feed/${nodeMatch[1]}.xml`,
+          // V2EX serves node feeds in lowercase only: /feed/Python.xml answers 404.
+          uri: `https://www.v2ex.com/feed/${nodeMatch[1].toLowerCase()}.xml`,
           hint: composeHint('v2ex:node'),
         },
       ]
@@ -47,7 +48,8 @@ export const v2exHandler: PlatformHandler = {
     if (tab) {
       return [
         {
-          uri: `https://www.v2ex.com/feed/tab/${tab}.xml`,
+          // V2EX serves tab feeds in lowercase only: /feed/tab/TECH.xml answers 404.
+          uri: `https://www.v2ex.com/feed/tab/${tab.toLowerCase()}.xml`,
           hint: composeHint('v2ex:tab'),
         },
         { uri: 'https://www.v2ex.com/index.xml', hint: composeHint('v2ex:index') },
@@ -55,7 +57,7 @@ export const v2exHandler: PlatformHandler = {
     }
 
     // Root page.
-    if (pathname === '/' || pathname === '') {
+    if (pathname === '/') {
       return [
         {
           uri: 'https://www.v2ex.com/index.xml',

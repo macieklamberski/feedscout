@@ -11,6 +11,10 @@ describe('neocitiesHandler', () => {
       expect(neocitiesHandler.match('https://neocities.org/site/example-site')).toBe(true)
     })
 
+    it('should match a profile path on the main host with a capitalized site segment', () => {
+      expect(neocitiesHandler.match('https://neocities.org/Site/example-site')).toBe(true)
+    })
+
     it('should not match the main host without a site path', () => {
       expect(neocitiesHandler.match('https://neocities.org/')).toBe(false)
       expect(neocitiesHandler.match('https://neocities.org/browse')).toBe(false)

@@ -3,11 +3,12 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, hasElementWithId } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic covers board (html), partly covers forum, topic.
+// Generic partly covers board, forum, topic.
 
-const scriptSegmentRegex = /\/[^/]*$/
-const forumPathRegex = /\/viewforum\.php$/
-const topicPathRegex = /\/viewtopic\.php$/
+const scriptSegmentRegex = /\/[^/]*\.php$/i
+const trailingSlashRegex = /\/$/
+const forumPathRegex = /\/viewforum\.php$/i
+const topicPathRegex = /\/viewtopic\.php$/i
 
 // Each id of a pair alone is a plausible id on an unrelated page.
 const templateIds = ['brdheader', 'brdmain']
@@ -28,7 +29,8 @@ export const fluxbbHandler: PlatformHandler = {
 
   resolve: (url) => {
     const { origin, pathname, searchParams } = new URL(url)
-    const feedUrl = `${origin}${pathname.replace(scriptSegmentRegex, '')}/extern.php?action=feed`
+    const boardPath = pathname.replace(scriptSegmentRegex, '').replace(trailingSlashRegex, '')
+    const feedUrl = `${origin}${boardPath}/extern.php?action=feed`
     const id = searchParams.get('id')
     const uris: Array<DiscoverUriEntry> = []
 

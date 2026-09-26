@@ -1,4 +1,4 @@
-import { isHostOf } from 'trousse'
+import { isAnyOf, isHostOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
@@ -18,7 +18,7 @@ export const kickstarterHandler: PlatformHandler = {
     const pathSegments = pathname.split('/').filter(Boolean)
 
     // Project page: kickstarter.com/projects/{creator}/{project}
-    if (pathSegments.length >= 3 && pathSegments[0] === 'projects') {
+    if (pathSegments.length >= 3 && isAnyOf(pathSegments[0], 'projects')) {
       const creator = pathSegments[1]
       const project = pathSegments[2]
 

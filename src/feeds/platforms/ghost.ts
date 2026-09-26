@@ -6,8 +6,8 @@ import { composeHint } from '../../common/utils.js'
 // Discoverability: Discoverable without handler.
 
 const domains = ['ghost.io']
-const tagRegex = /^\/tag\/([^/]+)/
-const authorRegex = /^\/author\/([^/]+)/
+const tagRegex = /^\/tag\/([^/]+)/i
+const authorRegex = /^\/author\/([^/]+)/i
 
 export const ghostHandler: PlatformHandler = {
   match: (url) => {

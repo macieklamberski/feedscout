@@ -4,10 +4,10 @@ import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
-const profileRegex = /^\/(?:u|public|people)\/([^/.]+)/
+const profileRegex = /^\/(?:u|public|people)\/([^/.]+)/i
 // A `/people/{guid}` page is keyed by guid, and the feed by username. The page
 // carries the username in its diaspora ID.
-const peoplePathRegex = /^\/people\//
+const peoplePathRegex = /^\/people\//i
 const diasporaIdRegex = /"diaspora_id":"([^"@]+)@/
 
 export const isDiasporaHtml = (content: string): boolean => {

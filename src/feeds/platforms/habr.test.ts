@@ -9,6 +9,12 @@ describe('parseHabrUrl', () => {
     expect(parseHabrUrl('https://habr.com/ru/hubs/javascript/')).toEqual(expected)
   })
 
+  it('should return the hub for a hub page with a capitalized hubs segment', () => {
+    const expected: HabrUrl = { kind: 'hub', hub: 'javascript' }
+
+    expect(parseHabrUrl('https://habr.com/ru/Hubs/javascript/')).toEqual(expected)
+  })
+
   it('should return the hub for a hub article list', () => {
     const expected: HabrUrl = { kind: 'hub', hub: 'programming' }
 
@@ -37,6 +43,24 @@ describe('parseHabrUrl', () => {
     const expected: HabrUrl = { kind: 'company', company: 'example' }
 
     expect(parseHabrUrl('https://habr.com/ru/companies/example/articles/')).toEqual(expected)
+  })
+
+  it('should return the company for a company page with a capitalized companies segment', () => {
+    const expected: HabrUrl = { kind: 'company', company: 'example' }
+
+    expect(parseHabrUrl('https://habr.com/ru/Companies/example/articles/')).toEqual(expected)
+  })
+
+  it('should return the company for a company named like the hub route', () => {
+    const expected: HabrUrl = { kind: 'company', company: 'hub' }
+
+    expect(parseHabrUrl('https://habr.com/ru/companies/hub/articles/')).toEqual(expected)
+  })
+
+  it('should return the company for a company named like the user route', () => {
+    const expected: HabrUrl = { kind: 'company', company: 'users' }
+
+    expect(parseHabrUrl('https://habr.com/ru/companies/users/articles/')).toEqual(expected)
   })
 
   it('should return undefined for site-wide pages', () => {
@@ -89,6 +113,22 @@ describe('habrHandler', () => {
 
     it('should return the user feed for a user page', () => {
       const value = 'https://habr.com/en/users/example/posts/'
+      const expected = [
+        {
+          uri: 'https://habr.com/en/rss/users/example/posts/',
+          hint: { key: 'habr:user', label: 'User' },
+        },
+        {
+          uri: 'https://habr.com/en/rss/articles/',
+          hint: { key: 'habr:articles', label: 'Articles' },
+        },
+      ]
+
+      expect(habrHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return the lowercase language for a capitalized language path', () => {
+      const value = 'https://habr.com/EN/users/example/posts/'
       const expected = [
         {
           uri: 'https://habr.com/en/rss/users/example/posts/',

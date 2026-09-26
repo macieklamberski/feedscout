@@ -46,9 +46,10 @@ describe('parseBlueskyUrl', () => {
     expect(parseBlueskyUrl('https://bsky.app/profile/')).toBeUndefined()
   })
 
-  it('should return undefined for an uppercase profile prefix', () => {
-    expect(parseBlueskyUrl('https://bsky.app/Profile/user.bsky.social')).toBeUndefined()
-    expect(parseBlueskyUrl('https://bsky.app/PROFILE/user.bsky.social')).toBeUndefined()
+  it('should return the profile for a capitalized profile prefix', () => {
+    const expected: BlueskyUrl = { kind: 'profile', handle: 'user.bsky.social' }
+
+    expect(parseBlueskyUrl('https://bsky.app/Profile/user.bsky.social')).toEqual(expected)
   })
 
   it('should return undefined for non-profile paths', () => {

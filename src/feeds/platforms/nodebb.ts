@@ -7,8 +7,8 @@ import { composeHint } from '../../common/utils.js'
 // Handler needed for: all shapes.
 
 const nodebbRegex = /nodebb/i
-const categoryRegex = /\/category\/(\d+)/
-const topicRegex = /\/topic\/(\d+)/
+const categoryRegex = /\/category\/(\d+)/i
+const topicRegex = /\/topic\/(\d+)/i
 
 export const isNodebbHeaders = (headers: Headers): boolean => {
   return nodebbRegex.test(headers.get('x-powered-by') ?? '')

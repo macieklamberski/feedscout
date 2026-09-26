@@ -57,9 +57,10 @@ describe('discoverUrisFromFeed', () => {
         </channel>
       </rss>
     `
+    const reachingFormats = ['atom', 'json']
     const value = discoverUrisFromFeed(content, {
       extractUrls: ({ format }) => {
-        if (format === 'atom' || format === 'json') {
+        if (reachingFormats.includes(format)) {
           return ['should-not-reach']
         }
         return []

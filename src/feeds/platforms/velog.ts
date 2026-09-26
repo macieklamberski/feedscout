@@ -51,7 +51,7 @@ export const velogHandler: PlatformHandler = {
     }
 
     // Homepage: trending posts feed.
-    if (pathname === '/' || pathname === '') {
+    if (pathname === '/') {
       return [
         {
           uri: 'https://v2.velog.io/rss',

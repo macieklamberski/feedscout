@@ -1,4 +1,4 @@
-import { parseUrl } from 'trousse'
+import { isAnyOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, hasElementWithId, hasMetaContent } from '../../common/utils.js'
 
@@ -15,7 +15,7 @@ export type MastodonUrl =
 
 const mastodonRegex = /mastodon/i
 // A profile URL can end in .rss, a legacy .atom or the ActivityPub .json. Names carry no dots.
-const feedExtensionRegex = /\.(rss|atom|json)$/
+const feedExtensionRegex = /\.(rss|atom|json)$/i
 
 // Current Mastodon serves no generator meta, so the `<div id="mastodon">` app
 // root is matched too.
@@ -38,13 +38,13 @@ export const parseMastodonUrl = (url: string): MastodonUrl | undefined => {
   const segments = parsedUrl.pathname.split('/').filter(Boolean)
   const [first, second, third] = segments.map((segment) => segment.replace(feedExtensionRegex, ''))
 
-  if (first === 'tags' && second) {
+  if (isAnyOf(first, 'tags') && second) {
     return { kind: 'tag', tag: second }
   }
 
   // Mastodon serves the profile at /users/{user} too, without redirecting, unless HTML is
   // asked for.
-  if (first === 'users' && second) {
+  if (isAnyOf(first, 'users') && second) {
     return { kind: 'profile', username: second }
   }
 
@@ -58,15 +58,15 @@ export const parseMastodonUrl = (url: string): MastodonUrl | undefined => {
     return
   }
 
-  if (second === 'with_replies') {
+  if (isAnyOf(second, 'with_replies')) {
     return { kind: 'replies', username }
   }
 
-  if (second === 'media') {
+  if (isAnyOf(second, 'media')) {
     return { kind: 'media', username }
   }
 
-  if (second === 'tagged' && third) {
+  if (isAnyOf(second, 'tagged') && third) {
     return { kind: 'tagged', username, tag: third }
   }
 

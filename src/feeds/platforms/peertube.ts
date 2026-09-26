@@ -8,8 +8,8 @@ import { composeHint } from '../../common/utils.js'
 export type PeertubeUrl = { kind: 'channel' | 'account'; name: string }
 
 const peertubeRegex = /peertube/i
-const channelPathRegex = /^\/c\/([^/]+)/
-const accountPathRegex = /^\/a\/([^/]+)/
+const channelPathRegex = /^\/c\/([^/]+)/i
+const accountPathRegex = /^\/a\/([^/]+)/i
 
 export const isPeertubeHeaders = (headers: Headers): boolean => {
   return peertubeRegex.test(headers.get('x-powered-by') ?? '')

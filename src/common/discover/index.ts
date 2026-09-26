@@ -220,7 +220,7 @@ export const discover = async <TValid>(
         status: fetchResult.status,
       })
     } catch (error) {
-      return { url, isValid: false, error } as DiscoverResult<TValid>
+      return { url, isValid: false, error }
     }
   }
 

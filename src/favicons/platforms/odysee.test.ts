@@ -124,22 +124,22 @@ describe('odyseeEnricher', () => {
     expect(await odyseeEnricher(ref, context)).toEqual([])
   })
 
-  it('should reject when API returns invalid JSON', () => {
+  it('should reject when API returns invalid JSON', async () => {
     const throwing = () => odyseeEnricher(ref, createContext('not json'))
 
-    expect(throwing()).rejects.toThrow('JSON Parse error: Unexpected identifier "not"')
+    await expect(throwing()).rejects.toThrow('JSON Parse error: Unexpected identifier "not"')
   })
 
-  it('should reject when fetch throws', () => {
+  it('should reject when fetch throws', async () => {
     const fetchFn: FetchFn = () => {
       throw new Error('Network error')
     }
     const throwing = () => odyseeEnricher(ref, { fetchFn })
 
-    expect(throwing()).rejects.toThrow('Network error')
+    await expect(throwing()).rejects.toThrow('Network error')
   })
 
-  it('should reject when the API answers a non-2xx status', () => {
+  it('should reject when the API answers a non-2xx status', async () => {
     const fetchFn: FetchFn = async (url) => ({
       headers: new Headers(),
       body: '',
@@ -150,6 +150,6 @@ describe('odyseeEnricher', () => {
     const expected =
       'Unexpected status 503 from https://api.na-backend.odysee.com/api/v1/proxy?m=resolve'
 
-    expect(throwing()).rejects.toThrow(expected)
+    await expect(throwing()).rejects.toThrow(expected)
   })
 })

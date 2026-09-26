@@ -49,16 +49,14 @@ const getLinkOfType = (links: Array<Atom.Link<string>> | undefined, rel: string)
 export const getFeedSiteUrl = (parsed: FeedMethodData): string | undefined => {
   const { format, feed } = parsed
 
-  if (format === 'rss' || format === 'rdf') {
-    return getLinkOfType(feed.atom?.links, 'alternate')?.href ?? feed.link
-  }
-
-  if (format === 'atom') {
-    return getLinkOfType(feed.links, 'alternate')?.href
-  }
-
-  if (format === 'json') {
-    return feed.home_page_url
+  switch (format) {
+    case 'rss':
+    case 'rdf':
+      return getLinkOfType(feed.atom?.links, 'alternate')?.href ?? feed.link
+    case 'atom':
+      return getLinkOfType(feed.links, 'alternate')?.href
+    case 'json':
+      return feed.home_page_url
   }
 }
 

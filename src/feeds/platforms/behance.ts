@@ -8,7 +8,8 @@ export type BehanceUrl = { kind: 'profile'; username: string }
 
 const hosts = ['behance.net', 'www.behance.net']
 // User profile: /{username} or /{username}/appreciated.
-const userRegex = /^\/([a-zA-Z0-9_-]+)(?:\/(appreciated))?\/?$/
+const userRegex = /^\/([a-zA-Z0-9_-]+)(?:\/(appreciated))?\/?$/i
+const homeRegex = /^\/(?:galleries\/?)?$/i
 const excludedPaths = [
   'search',
   'galleries',
@@ -54,7 +55,7 @@ export const behanceHandler: PlatformHandler = {
     const { pathname } = new URL(url)
 
     // Homepage: featured projects. The page's own FeedBurner link serves the same items.
-    if (pathname === '/' || pathname === '' || pathname === '/galleries') {
+    if (homeRegex.test(pathname)) {
       return [
         {
           uri: 'https://www.behance.net/feeds/projects',

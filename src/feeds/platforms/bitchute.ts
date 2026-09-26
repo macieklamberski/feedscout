@@ -1,4 +1,4 @@
-import { getPathSegments, isHostOf } from 'trousse'
+import { getPathSegments, isAnyOf, isHostOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
@@ -16,7 +16,7 @@ export const parseBitchuteUrl = (url: string): BitchuteUrl | undefined => {
 
   const [section, channel] = getPathSegments(url)
 
-  if (section !== 'channel' || !channel) {
+  if (!isAnyOf(section, 'channel') || !channel) {
     return
   }
 

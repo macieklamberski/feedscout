@@ -6,7 +6,7 @@ import { composeHint } from '../../common/utils.js'
 // Handler needed for: all shapes.
 
 const hosts = ['podcasts.apple.com']
-const podcastRegex = /^(?:\/[a-z]{2})?\/podcast\/(?:[^/]+\/)?id\d+/
+const podcastRegex = /^(?:\/[a-z]{2})?\/podcast\/(?:[^/]+\/)?id\d+(?:\/|$)/i
 const feedUrlRegex = /"feedUrl"\s*:\s*"([^"]+)"/
 
 const extractFeedUrlFromContent = (content: string): string | undefined => {

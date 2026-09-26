@@ -7,18 +7,20 @@ import { composeHint } from '../../common/utils.js'
 // Generic partly covers blog.
 
 const domains = ['wordpress.com']
-const categoryRegex = /^\/category\/([^/]+)/
-const tagRegex = /^\/tag\/([^/]+)/
-const authorRegex = /^\/author\/([^/]+)/
+const categoryRegex = /^\/category\/([^/]+)/i
+const tagRegex = /^\/tag\/([^/]+)/i
+const authorRegex = /^\/author\/([^/]+)/i
 const yearRegex = /^\/(\d{4})\/?$/
 const yearMonthRegex = /^\/(\d{4})\/(\d{2})\/?$/
 const dayRegex = /^\/(\d{4})\/(\d{2})\/(\d{2})\/?$/
 const trailingSlashRegex = /\/$/
+const feedSegmentRegex = /\/feed(?:\/|$)/i
 
-const archives: Array<[RegExp, string]> = [
-  [categoryRegex, 'wordpress:category'],
-  [tagRegex, 'wordpress:tag'],
-  [authorRegex, 'wordpress:author'],
+// The route word is emitted as listed, so a capitalized path still yields the canonical feed.
+const archives: Array<[RegExp, string, string?]> = [
+  [categoryRegex, 'wordpress:category', 'category'],
+  [tagRegex, 'wordpress:tag', 'tag'],
+  [authorRegex, 'wordpress:author', 'author'],
   [dayRegex, 'wordpress:date-archive'],
   [yearMonthRegex, 'wordpress:date-archive'],
   [yearRegex, 'wordpress:date-archive'],
@@ -52,21 +54,22 @@ export const wordpressHandler: PlatformHandler = {
     const uris: Array<DiscoverUriEntry> = []
     let archiveMatched = false
 
-    for (const [regex, key] of archives) {
-      const archivePath = pathname.match(regex)?.[0]
+    for (const [regex, key, route] of archives) {
+      const archiveMatch = pathname.match(regex)
 
-      if (!archivePath) {
+      if (!archiveMatch) {
         continue
       }
 
       archiveMatched = true
-      uris.push(...getFeedEntries(`${origin}${archivePath.replace(trailingSlashRegex, '')}`, key))
+      const archivePath = route
+        ? `/${route}/${archiveMatch[1]}`
+        : archiveMatch[0].replace(trailingSlashRegex, '')
+      uris.push(...getFeedEntries(`${origin}${archivePath}`, key))
     }
 
     // Post page: any non-root, non-archive, non-feed path.
-    const segments = pathname.split('/').filter(Boolean)
-
-    if (!archiveMatched && segments.length > 0 && !segments.includes('feed')) {
+    if (!archiveMatched && pathname !== '/' && !feedSegmentRegex.test(pathname)) {
       const base = `${origin}${pathname.replace(trailingSlashRegex, '')}`
 
       uris.push(...getFeedEntries(base, 'wordpress:post-comments'))

@@ -31,6 +31,10 @@ describe('noteHandler', () => {
     it('should not match a magazine under a reserved path', () => {
       expect(noteHandler.match('https://note.com/search/m/m1861fae39074')).toBe(false)
     })
+
+    it('should not match a magazine under a capitalized reserved path', () => {
+      expect(noteHandler.match('https://note.com/Search/m/m1861fae39074')).toBe(false)
+    })
   })
 
   describe('resolve', () => {
@@ -136,28 +140,28 @@ describe('noteEnricher', () => {
     expect(await noteEnricher(ref, context)).toEqual([])
   })
 
-  it('should reject when API returns invalid JSON', () => {
+  it('should reject when API returns invalid JSON', async () => {
     const context = createContext({
       'https://note.com/api/v2/creators/alice': 'not json',
     })
     const throwing = () => noteEnricher(ref, context)
 
-    expect(throwing()).rejects.toThrow('JSON Parse error: Unexpected identifier "not"')
+    await expect(throwing()).rejects.toThrow('JSON Parse error: Unexpected identifier "not"')
   })
 
-  it('should reject when fetch throws', () => {
+  it('should reject when fetch throws', async () => {
     const fetchFn: FetchFn = () => {
       throw new Error('Network error')
     }
     const throwing = () => noteEnricher(ref, { fetchFn })
 
-    expect(throwing()).rejects.toThrow('Network error')
+    await expect(throwing()).rejects.toThrow('Network error')
   })
 
-  it('should reject when the response is not 2xx', () => {
+  it('should reject when the response is not 2xx', async () => {
     const throwing = () => noteEnricher(ref, createContext({}))
     const expected = 'Unexpected status 404 from https://note.com/api/v2/creators/alice'
 
-    expect(throwing()).rejects.toThrow(expected)
+    await expect(throwing()).rejects.toThrow(expected)
   })
 })

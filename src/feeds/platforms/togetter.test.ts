@@ -9,6 +9,12 @@ describe('parseTogetterUrl', () => {
     expect(parseTogetterUrl('https://togetter.com/id/example')).toEqual(expected)
   })
 
+  it('should return the user for a user page with a capitalized id segment', () => {
+    const expected: TogetterUrl = { kind: 'user', username: 'example' }
+
+    expect(parseTogetterUrl('https://togetter.com/Id/example')).toEqual(expected)
+  })
+
   it('should return the user for the www host', () => {
     const expected: TogetterUrl = { kind: 'user', username: 'example' }
 

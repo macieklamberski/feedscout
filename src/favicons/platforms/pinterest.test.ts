@@ -198,27 +198,27 @@ describe('pinterestEnricher', () => {
     expect(await pinterestEnricher(ref, context)).toEqual([])
   })
 
-  it('should reject when the initial props are not valid JSON', () => {
+  it('should reject when the initial props are not valid JSON', async () => {
     const html = '<script id="__PWS_INITIAL_PROPS__" type="application/json">{not-json</script>'
     const context = createContext({ 'https://www.pinterest.com/alice/': html })
     const throwing = () => pinterestEnricher(ref, context)
 
-    expect(throwing()).rejects.toThrow("JSON Parse error: Expected '}'")
+    await expect(throwing()).rejects.toThrow("JSON Parse error: Expected '}'")
   })
 
-  it('should reject when fetch throws', () => {
+  it('should reject when fetch throws', async () => {
     const fetchFn: FetchFn = () => {
       throw new Error('Network error')
     }
     const throwing = () => pinterestEnricher(ref, { fetchFn })
 
-    expect(throwing()).rejects.toThrow('Network error')
+    await expect(throwing()).rejects.toThrow('Network error')
   })
 
-  it('should reject when the response is not 2xx', () => {
+  it('should reject when the response is not 2xx', async () => {
     const throwing = () => pinterestEnricher(ref, createContext({}))
     const expected = 'Unexpected status 404 from https://www.pinterest.com/alice/'
 
-    expect(throwing()).rejects.toThrow(expected)
+    await expect(throwing()).rejects.toThrow(expected)
   })
 })

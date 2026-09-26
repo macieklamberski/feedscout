@@ -166,31 +166,31 @@ describe('lemmyEnricher', () => {
       expect(await lemmyEnricher(ref, context)).toEqual([])
     })
 
-    it('should reject when API returns invalid JSON', () => {
+    it('should reject when API returns invalid JSON', async () => {
       const context = createContext({ [communityApiUrl]: 'not json' })
       const ref = createRef('https://lemmy.ml/c/technology', 'c/technology')
       const throwing = () => lemmyEnricher(ref, context)
 
-      expect(throwing()).rejects.toThrow('JSON Parse error: Unexpected identifier "not"')
+      await expect(throwing()).rejects.toThrow('JSON Parse error: Unexpected identifier "not"')
     })
 
-    it('should reject when fetch throws', () => {
+    it('should reject when fetch throws', async () => {
       const fetchFn: FetchFn = () => {
         throw new Error('Network error')
       }
       const ref = createRef('https://lemmy.ml/c/technology', 'c/technology')
       const throwing = () => lemmyEnricher(ref, { fetchFn })
 
-      expect(throwing()).rejects.toThrow('Network error')
+      await expect(throwing()).rejects.toThrow('Network error')
     })
 
-    it('should reject when the response is not 2xx', () => {
+    it('should reject when the response is not 2xx', async () => {
       const ref = createRef('https://lemmy.ml/c/technology', 'c/technology')
       const throwing = () => lemmyEnricher(ref, createContext({}))
       const expected =
         'Unexpected status 404 from https://lemmy.ml/api/v3/community?name=technology'
 
-      expect(throwing()).rejects.toThrow(expected)
+      await expect(throwing()).rejects.toThrow(expected)
     })
   })
 

@@ -1,4 +1,4 @@
-import { parseUrl } from 'trousse'
+import { getAnyOf, parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, hasElementWithId } from '../../common/utils.js'
@@ -6,7 +6,7 @@ import { composeHint, hasElementWithId } from '../../common/utils.js'
 // Discoverability: Discoverable without handler.
 
 // XF2 serves a forum at `/f/{slug.id}` or, on the default route, `/forums/{slug.id}`.
-const forumPathRegex = /\/(f|forums)\/([^/]+\.\d+)/
+const forumPathRegex = /\/(f|forums)\/([^/]+\.\d+)(?:\/|$)/i
 // The board feed sits under the same route prefix as the forums. A page outside a
 // forum does not carry the prefix, so both spellings are emitted and the one the
 // board does not serve fails validation.
@@ -26,7 +26,8 @@ export const xenforoHandler: PlatformHandler = {
 
   resolve: (url) => {
     const { origin, pathname } = new URL(url)
-    const [, route, forumPath] = pathname.match(forumPathRegex) ?? []
+    const [, rawRoute, forumPath] = pathname.match(forumPathRegex) ?? []
+    const route = getAnyOf(rawRoute, routePrefixes)
     const uris: Array<DiscoverUriEntry> = []
 
     if (route && forumPath) {

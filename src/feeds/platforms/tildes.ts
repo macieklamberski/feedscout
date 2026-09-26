@@ -38,7 +38,7 @@ export const tildesHandler: PlatformHandler = {
     }
 
     // Global home feed only for root path.
-    if (pathname === '/' || pathname === '') {
+    if (pathname === '/') {
       uris.push({
         uri: `https://tildes.net/topics.rss${tagSuffix}`,
         hint: composeHint('tildes:topics', 'rss'),

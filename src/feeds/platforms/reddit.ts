@@ -1,4 +1,4 @@
-import { getPathSegments, isAnyOf, isHostOf, parseUrl } from 'trousse'
+import { getAnyOf, getPathSegments, isAnyOf, isHostOf, parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
@@ -20,18 +20,19 @@ export type RedditUrl =
 
 export const hosts = ['reddit.com', 'www.reddit.com', 'old.reddit.com', 'new.reddit.com']
 
-const subredditsRegex = /^\/(?:subreddits|reddits)(?:\/(new|popular))?/
-// Stops at a dot, so a feed URL like /r/{sub}.rss or /user/{user}/submitted.rss yields the
-// name and the section.
+const subredditsRegex = /^\/(?:subreddits|reddits)(?:\/([^/.]+))?(?:[/.]|$)/i
+// Stops at a dot, so a feed URL like /r/{sub}.rss, /user/{user}/submitted.rss or
+// /user/{user}/m/{multi}.rss yields the name, the section and the multireddit.
 const nameRegex = /^[^.]+/
 
+const subredditsSorts = ['new', 'popular']
 const sortOptions = ['hot', 'new', 'rising', 'controversial', 'top', 'best']
 const timeOptions = ['hour', 'day', 'week', 'month', 'year', 'all']
 const timeFilteredSorts = ['top', 'controversial']
 const userPrefixes = ['u', 'user']
 
 const getTimeframeSuffix = (sort: string, searchParams: URLSearchParams): string => {
-  if (!timeFilteredSorts.includes(sort)) {
+  if (!isAnyOf(sort, timeFilteredSorts)) {
     return ''
   }
 
@@ -54,7 +55,7 @@ export const parseRedditUrl = (url: string): RedditUrl | undefined => {
 
   const [prefix, rawName, rawSection, item] = getPathSegments(parsedUrl)
 
-  if (prefix === 'domain' && rawName) {
+  if (isAnyOf(prefix, 'domain') && rawName) {
     return { kind: 'domain', domain: rawName }
   }
 
@@ -65,39 +66,43 @@ export const parseRedditUrl = (url: string): RedditUrl | undefined => {
     return
   }
 
-  if (prefix === 'r') {
-    if (section === 'search') {
+  if (isAnyOf(prefix, 'r')) {
+    if (isAnyOf(section, 'search')) {
       return { kind: 'search', subreddit: name }
     }
 
-    if (section === 'wiki') {
+    if (isAnyOf(section, 'wiki')) {
       return { kind: 'wiki', subreddit: name }
     }
 
-    if (section === 'comments' && item) {
+    if (isAnyOf(section, 'comments') && item) {
       return { kind: 'post', subreddit: name, postId: item }
     }
 
-    if (section && isAnyOf(section, sortOptions)) {
-      return { kind: 'subreddit', subreddit: name, sort: section }
+    const sort = getAnyOf(section, sortOptions)
+
+    if (sort) {
+      return { kind: 'subreddit', subreddit: name, sort }
     }
 
     return { kind: 'subreddit', subreddit: name }
   }
 
-  if (prefix === 'user' && section === 'm' && item) {
-    return { kind: 'multireddit', username: name, multireddit: item }
+  const multireddit = item?.match(nameRegex)?.[0]
+
+  if (isAnyOf(prefix, userPrefixes) && isAnyOf(section, 'm') && multireddit) {
+    return { kind: 'multireddit', username: name, multireddit }
   }
 
-  if (!prefix || !userPrefixes.includes(prefix)) {
+  if (!isAnyOf(prefix, userPrefixes)) {
     return
   }
 
-  if (section === 'submitted') {
+  if (isAnyOf(section, 'submitted')) {
     return { kind: 'submitted', username: name }
   }
 
-  if (section === 'comments') {
+  if (isAnyOf(section, 'comments')) {
     return { kind: 'comments', username: name }
   }
 
@@ -119,9 +124,9 @@ export const redditHandler: PlatformHandler = {
     }
 
     // Sitewide sort: /hot, /new, /rising, /controversial, /top, /best
-    if (pathSegments.length === 1 && isAnyOf(pathSegments[0], sortOptions)) {
-      const sort = pathSegments[0]
+    const sort = pathSegments.length === 1 ? getAnyOf(pathSegments[0], sortOptions) : undefined
 
+    if (sort) {
       return [
         {
           uri: `https://www.reddit.com/${sort}/.rss${getTimeframeSuffix(sort, searchParams)}`,
@@ -131,7 +136,7 @@ export const redditHandler: PlatformHandler = {
     }
 
     // Sitewide search: /search?q=...
-    if (pathSegments[0] === 'search') {
+    if (isAnyOf(pathSegments[0], 'search')) {
       const query = searchParams.get('q')
 
       if (query) {
@@ -148,8 +153,8 @@ export const redditHandler: PlatformHandler = {
     const subredditsMatch = pathname.match(subredditsRegex)
 
     if (subredditsMatch) {
-      const sort = subredditsMatch[1]
-      const path = sort ? `subreddits/${sort}` : 'subreddits'
+      const listSort = getAnyOf(subredditsMatch[1], subredditsSorts)
+      const path = listSort ? `subreddits/${listSort}` : 'subreddits'
 
       return [
         {

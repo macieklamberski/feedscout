@@ -192,27 +192,27 @@ describe('pixelfedEnricher', () => {
     expect(await pixelfedEnricher(ref, context)).toEqual([])
   })
 
-  it('should reject when API returns invalid JSON', () => {
+  it('should reject when API returns invalid JSON', async () => {
     const context = createContext({ [lookupUrl]: '<html>Not Found</html>' })
     const throwing = () => pixelfedEnricher(ref, context)
 
-    expect(throwing()).rejects.toThrow("JSON Parse error: Unrecognized token '<'")
+    await expect(throwing()).rejects.toThrow("JSON Parse error: Unrecognized token '<'")
   })
 
-  it('should reject when fetch throws', () => {
+  it('should reject when fetch throws', async () => {
     const fetchFn: FetchFn = () => {
       throw new Error('Network error')
     }
     const throwing = () => pixelfedEnricher(ref, { fetchFn })
 
-    expect(throwing()).rejects.toThrow('Network error')
+    await expect(throwing()).rejects.toThrow('Network error')
   })
 
-  it('should reject when the response is not 2xx', () => {
+  it('should reject when the response is not 2xx', async () => {
     const throwing = () => pixelfedEnricher(ref, createContext({}))
     const expected =
       'Unexpected status 404 from https://example.com/api/v1/accounts/lookup?acct=alice'
 
-    expect(throwing()).rejects.toThrow(expected)
+    await expect(throwing()).rejects.toThrow(expected)
   })
 })

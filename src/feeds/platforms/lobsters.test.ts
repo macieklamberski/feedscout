@@ -9,6 +9,12 @@ describe('parseLobstersUrl', () => {
     expect(parseLobstersUrl('https://lobste.rs/t/programming')).toEqual(expected)
   })
 
+  it('should return the tag for a tag page with a capitalized t segment', () => {
+    const expected: LobstersUrl = { kind: 'tag', tags: 'programming' }
+
+    expect(parseLobstersUrl('https://lobste.rs/T/programming')).toEqual(expected)
+  })
+
   it('should return every tag for a multiple tags page', () => {
     const expected: LobstersUrl = { kind: 'tag', tags: 'programming,security' }
 
@@ -19,6 +25,12 @@ describe('parseLobstersUrl', () => {
     const expected: LobstersUrl = { kind: 'domain', domain: 'github.com' }
 
     expect(parseLobstersUrl('https://lobste.rs/domains/github.com')).toEqual(expected)
+  })
+
+  it('should return the domain for a domain page with a capitalized domains segment', () => {
+    const expected: LobstersUrl = { kind: 'domain', domain: 'github.com' }
+
+    expect(parseLobstersUrl('https://lobste.rs/Domains/github.com')).toEqual(expected)
   })
 
   it('should return the user for a user page', () => {
@@ -110,6 +122,24 @@ describe('lobstersHandler', () => {
       expect(lobstersHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return newest RSS feed for newest page with trailing slash', () => {
+      const value = 'https://lobste.rs/newest/'
+      const expected = [
+        { uri: 'https://lobste.rs/newest.rss', hint: { key: 'lobsters:newest', label: 'Newest' } },
+      ]
+
+      expect(lobstersHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return newest RSS feed for newest page with a capitalized newest segment', () => {
+      const value = 'https://lobste.rs/Newest'
+      const expected = [
+        { uri: 'https://lobste.rs/newest.rss', hint: { key: 'lobsters:newest', label: 'Newest' } },
+      ]
+
+      expect(lobstersHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return tag RSS feed for single tag page', () => {
       const value = 'https://lobste.rs/t/programming'
       const expected = [
@@ -169,6 +199,7 @@ describe('lobstersHandler', () => {
       ['https://lobste.rs/top/1w', 'https://lobste.rs/top/1w/rss'],
       ['https://lobste.rs/top/1m', 'https://lobste.rs/top/1m/rss'],
       ['https://lobste.rs/top/1y', 'https://lobste.rs/top/1y/rss'],
+      ['https://lobste.rs/top/1W', 'https://lobste.rs/top/1w/rss'],
     ]
 
     it.each(topPeriodValues)('should return top stories feed for %s', (value, uri) => {
@@ -179,6 +210,30 @@ describe('lobstersHandler', () => {
 
     it('should return comments feed for comments page', () => {
       const value = 'https://lobste.rs/comments'
+      const expected = [
+        {
+          uri: 'https://lobste.rs/comments.rss',
+          hint: { key: 'lobsters:comments', label: 'Comments' },
+        },
+      ]
+
+      expect(lobstersHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return comments feed for comments page with trailing slash', () => {
+      const value = 'https://lobste.rs/comments/'
+      const expected = [
+        {
+          uri: 'https://lobste.rs/comments.rss',
+          hint: { key: 'lobsters:comments', label: 'Comments' },
+        },
+      ]
+
+      expect(lobstersHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return comments feed for comments page with a capitalized comments segment', () => {
+      const value = 'https://lobste.rs/Comments'
       const expected = [
         {
           uri: 'https://lobste.rs/comments.rss',

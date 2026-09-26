@@ -5,7 +5,7 @@ import { composeHint } from '../../common/utils.js'
 // Discoverability: Partially discoverable without handler.
 // Generic partly covers profile.
 
-const profileRegex = /^\/users\/([^/]+)/
+const profileRegex = /^\/users\/([^/]+)/i
 const pleromaApiRegex = /\/api\/pleroma\//i
 
 export const isPleromaHtml = (content: string): boolean => {

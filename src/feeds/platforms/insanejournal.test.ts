@@ -146,8 +146,48 @@ describe('insanejournalHandler', () => {
       expect(insanejournalHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should canonicalise www.insanejournal.com/users/{user} to subdomain with a capitalized users segment', () => {
+      const value = 'https://www.insanejournal.com/Users/news'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://news.insanejournal.com/data/rss',
+          hint: { key: 'insanejournal:posts', label: 'Posts', format: 'rss' },
+        },
+        {
+          uri: 'https://news.insanejournal.com/data/atom',
+          hint: { key: 'insanejournal:posts', label: 'Posts', format: 'atom' },
+        },
+        {
+          uri: 'https://news.insanejournal.com/data/userpics',
+          hint: { key: 'insanejournal:userpics', label: 'Userpics', format: 'atom' },
+        },
+      ]
+
+      expect(insanejournalHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should route www.insanejournal.com/asylum/{name} to asylums subdomain', () => {
       const value = 'https://www.insanejournal.com/asylum/squeaky'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://asylums.insanejournal.com/squeaky/data/rss',
+          hint: { key: 'insanejournal:posts', label: 'Posts', format: 'rss' },
+        },
+        {
+          uri: 'https://asylums.insanejournal.com/squeaky/data/atom',
+          hint: { key: 'insanejournal:posts', label: 'Posts', format: 'atom' },
+        },
+        {
+          uri: 'https://asylums.insanejournal.com/squeaky/data/userpics',
+          hint: { key: 'insanejournal:userpics', label: 'Userpics', format: 'atom' },
+        },
+      ]
+
+      expect(insanejournalHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should route www.insanejournal.com/asylum/{name} to asylums subdomain with a capitalized asylum segment', () => {
+      const value = 'https://www.insanejournal.com/Asylum/squeaky'
       const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://asylums.insanejournal.com/squeaky/data/rss',

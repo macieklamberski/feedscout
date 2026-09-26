@@ -8,7 +8,7 @@ import { composeHint } from '../../common/utils.js'
 const hosts = ['www.ximalaya.com', 'ximalaya.com']
 
 // Match /album/{id} (canonical) or /{userid}/album/{id} (legacy form).
-const albumRegex = /(?:^|\/)album\/(\d+)/
+const albumRegex = /(?:^|\/)album\/(\d+)/i
 
 export const ximalayaHandler: PlatformHandler = {
   match: (url) => {

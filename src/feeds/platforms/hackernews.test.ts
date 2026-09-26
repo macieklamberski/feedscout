@@ -45,8 +45,14 @@ describe('hackernewsHandler', () => {
       expect(hackernewsHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return Show HN feed for /show', () => {
-      const value = 'https://news.ycombinator.com/show'
+    const showValues: Array<string> = [
+      'https://news.ycombinator.com/show',
+      'https://news.ycombinator.com/show/',
+      'https://news.ycombinator.com/shownew',
+      'https://news.ycombinator.com/shownew/',
+    ]
+
+    it.each(showValues)('should return Show HN feed for %s', (value) => {
       const expected = [
         {
           uri: 'https://news.ycombinator.com/showrss',
@@ -57,8 +63,8 @@ describe('hackernewsHandler', () => {
       expect(hackernewsHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return Show HN feed for /shownew', () => {
-      const value = 'https://news.ycombinator.com/shownew'
+    it('should return Show HN feed for /show with a capitalized show segment', () => {
+      const value = 'https://news.ycombinator.com/Show'
       const expected = [
         {
           uri: 'https://news.ycombinator.com/showrss',

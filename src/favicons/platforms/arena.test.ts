@@ -221,27 +221,27 @@ describe('arenaEnricher', () => {
     expect(await arenaEnricher(channelRef, context)).toEqual([])
   })
 
-  it('should reject when the API returns invalid JSON', () => {
+  it('should reject when the API returns invalid JSON', async () => {
     const context = createContext({ [channelApiUrl]: 'not-json' })
     const throwing = () => arenaEnricher(channelRef, context)
 
-    expect(throwing()).rejects.toThrow('JSON Parse error: Unexpected identifier "not"')
+    await expect(throwing()).rejects.toThrow('JSON Parse error: Unexpected identifier "not"')
   })
 
-  it('should reject when fetch throws', () => {
+  it('should reject when fetch throws', async () => {
     const fetchFn: FetchFn = () => {
       throw new Error('Network error')
     }
     const throwing = () => arenaEnricher(channelRef, { fetchFn })
 
-    expect(throwing()).rejects.toThrow('Network error')
+    await expect(throwing()).rejects.toThrow('Network error')
   })
 
-  it('should reject when the response is not 2xx', () => {
+  it('should reject when the response is not 2xx', async () => {
     const throwing = () => arenaEnricher(channelRef, createContext({}))
     const expected =
       'Unexpected status 404 from https://api.are.na/v2/channels/good-sign-offs?per=1'
 
-    expect(throwing()).rejects.toThrow(expected)
+    await expect(throwing()).rejects.toThrow(expected)
   })
 })

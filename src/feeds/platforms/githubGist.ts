@@ -13,8 +13,8 @@ export type GithubGistUrl =
 
 const hosts = ['gist.github.com']
 
-const discoverRegex = /^\/discover\/?$/
-const feedSuffixRegex = /\.atom$/
+const discoverRegex = /^\/discover\/?$/i
+const feedSuffixRegex = /\.atom$/i
 
 const excludedPaths = ['discover', 'search', 'login', 'join', 'settings']
 const forksSections = ['forks', 'forked']
@@ -36,11 +36,11 @@ export const parseGithubGistUrl = (url: string): GithubGistUrl | undefined => {
     return
   }
 
-  if (section === 'starred' && rest.length === 0) {
+  if (isAnyOf(section, 'starred') && rest.length === 0) {
     return { kind: 'starred', username }
   }
 
-  if (section && forksSections.includes(section) && rest.length === 0) {
+  if (isAnyOf(section, forksSections) && rest.length === 0) {
     return { kind: 'forks', username }
   }
 

@@ -19,37 +19,27 @@ export const defaultExtractFn: DiscoverExtractFn<FeedResult> = ({ content, url, 
       ? attempt(() => defaultResolveUrlFn(rawSiteUrl, url), undefined, 'resolveUrlFn', undefined)
       : undefined
 
-    if (format === 'rss' || format === 'rdf') {
-      return {
-        url,
-        isValid: true,
-        format,
-        title: feed.title,
-        description: feed.description,
-        siteUrl,
-      }
-    }
-
-    if (format === 'atom') {
-      return {
-        url,
-        isValid: true,
-        format,
-        title: feed.title?.value,
-        description: feed.subtitle?.value,
-        siteUrl,
-      }
-    }
-
-    if (format === 'json') {
-      return {
-        url,
-        isValid: true,
-        format,
-        title: feed.title,
-        description: feed.description,
-        siteUrl,
-      }
+    switch (format) {
+      case 'rss':
+      case 'rdf':
+      case 'json':
+        return {
+          url,
+          isValid: true,
+          format,
+          title: feed.title,
+          description: feed.description,
+          siteUrl,
+        }
+      case 'atom':
+        return {
+          url,
+          isValid: true,
+          format,
+          title: feed.title?.value,
+          description: feed.subtitle?.value,
+          siteUrl,
+        }
     }
   } catch {
     // Silently fail and go further with the default return.

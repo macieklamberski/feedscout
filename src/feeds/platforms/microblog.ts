@@ -10,7 +10,10 @@ export type MicroblogUrl = { kind: 'blog'; username: string }
 
 export const domains = ['micro.blog']
 
-const categoryRegex = /^\/categories\/([^/]+)/
+const categoryRegex = /^\/categories\/([^/]+)/i
+const archiveRegex = /^\/archive(?:\/|$)/i
+const photosRegex = /^\/photos(?:\/|$)/i
+const repliesRegex = /^\/replies(?:\/|$)/i
 
 export const parseMicroblogUrl = (url: string): MicroblogUrl | undefined => {
   const username = getSubdomain(url, domains)
@@ -49,7 +52,7 @@ export const microblogHandler: PlatformHandler = {
     }
 
     // Archive page: /archive
-    if (pathname.startsWith('/archive')) {
+    if (archiveRegex.test(pathname)) {
       uris.push({
         uri: `${origin}/archive/index.json`,
         hint: composeHint('microblog:archive'),
@@ -57,7 +60,7 @@ export const microblogHandler: PlatformHandler = {
     }
 
     // Photos page: /photos
-    if (pathname.startsWith('/photos')) {
+    if (photosRegex.test(pathname)) {
       uris.push({
         uri: `${origin}/photos/index.json`,
         hint: composeHint('microblog:photos'),
@@ -65,7 +68,7 @@ export const microblogHandler: PlatformHandler = {
     }
 
     // Replies page: /replies
-    if (pathname.startsWith('/replies')) {
+    if (repliesRegex.test(pathname)) {
       uris.push({
         uri: `${origin}/replies.xml`,
         hint: composeHint('microblog:replies'),

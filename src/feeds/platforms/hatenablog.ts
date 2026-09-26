@@ -13,8 +13,8 @@ const domains = [
   'hatenadiary.jp',
   'hatenadiary.org',
 ]
-const categoryRegex = /^\/archive\/category\/([^/]+)/
-const authorRegex = /^\/archive\/author\/([^/]+)/
+const categoryRegex = /^\/archive\/category\/([^/]+)/i
+const authorRegex = /^\/archive\/author\/([^/]+)/i
 
 export const hatenablogHandler: PlatformHandler = {
   match: (url) => {

@@ -5,7 +5,7 @@ import { parseZennUrl } from '../../feeds/platforms/zenn.js'
 
 // Zenn serves its own logo for a missing profile or publication and a generic topic.png for a
 // topic without an image, both under /images/. Uploaded icons live under /user-upload/.
-const placeholderPathRegex = /^\/images\//
+const placeholderPathRegex = /^\/images\//i
 
 // Article and book pages carry a wide generated card, so only the entity pages themselves match.
 const isEntityPage = (url: string): boolean => {

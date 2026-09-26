@@ -1,4 +1,4 @@
-import { getPathSegments, getSubdomain, isHostOf } from 'trousse'
+import { getPathSegments, getSubdomain, isAnyOf, isHostOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
@@ -9,7 +9,7 @@ export type TumblrUrl = { kind: 'blog'; blog: string }
 const hosts = ['tumblr.com', 'www.tumblr.com']
 export const domains = ['tumblr.com']
 
-const tagRegex = /^\/tagged\/([^/]+)/
+const tagRegex = /^\/tagged\/([^/]+)/i
 
 // Top-level routes of www.tumblr.com that are not blogs.
 const reservedPaths = [
@@ -47,9 +47,9 @@ export const parseTumblrUrl = (url: string): TumblrUrl | undefined => {
   // www.tumblr.com/{blog} and the legacy www.tumblr.com/blog/view/{blog} show a blog.
   if (isHostOf(url, hosts)) {
     const [first, second, third] = getPathSegments(url)
-    const blog = first === 'blog' && second === 'view' ? third : first
+    const blog = isAnyOf(first, 'blog') && isAnyOf(second, 'view') ? third : first
 
-    if (!blog || reservedPaths.includes(blog)) {
+    if (!blog || isAnyOf(blog, reservedPaths)) {
       return
     }
 

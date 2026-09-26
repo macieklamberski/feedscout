@@ -25,8 +25,10 @@ describe('parseBitchuteUrl', () => {
     expect(parseBitchuteUrl('https://www.bitchute.com/channel/')).toBeUndefined()
   })
 
-  it('should return undefined for an uppercase channel prefix', () => {
-    expect(parseBitchuteUrl('https://www.bitchute.com/Channel/example/')).toBeUndefined()
+  it('should return the channel for a capitalized channel prefix', () => {
+    const expected: BitchuteUrl = { kind: 'channel', channel: 'example' }
+
+    expect(parseBitchuteUrl('https://www.bitchute.com/Channel/example/')).toEqual(expected)
   })
 
   it('should return undefined for a video page', () => {
