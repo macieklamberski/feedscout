@@ -181,6 +181,13 @@ export const getCookieNames = (headers: Headers): Array<string> => {
   return Array.from(cookies.matchAll(cookieNameRegex), (match) => match[1])
 }
 
+const scriptSegmentRegex = /\/[^/]*\.php$/i
+const trailingSlashRegex = /\/$/
+
+export const getScriptDirectory = (pathname: string): string => {
+  return pathname.replace(scriptSegmentRegex, '').replace(trailingSlashRegex, '')
+}
+
 export const hasAnyMeta = (content: string, markers: Array<[string, string]>): boolean => {
   return markers.some(([name, value]) => hasMetaContent(content, name, value))
 }

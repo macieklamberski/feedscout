@@ -1,13 +1,17 @@
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, findElement, getCookieNames, hasElementWithId } from '../../common/utils.js'
+import {
+  composeHint,
+  findElement,
+  getCookieNames,
+  getScriptDirectory,
+  hasElementWithId,
+} from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
 const forumIdRegex = /[?&]f=(\d+)/
 const topicIdRegex = /[?&]t=(\d+)/
-const scriptSegmentRegex = /\/[^/]*\.php$/i
-const trailingSlashRegex = /\/$/
 
 export const isPhpbbHtml = (content: string): boolean => {
   return hasElementWithId(content, 'phpbb')
@@ -48,7 +52,7 @@ export const phpbbHandler: PlatformHandler = {
   resolve: (url, content) => {
     const { origin, pathname, search } = new URL(url)
     // A board is routinely mounted under a sub-path such as `/community`.
-    const boardPath = pathname.replace(scriptSegmentRegex, '').replace(trailingSlashRegex, '')
+    const boardPath = getScriptDirectory(pathname)
     const boardUrl = `${origin}${boardPath}`
     const forumId = search.match(forumIdRegex)?.[1]
     // A post link, `viewtopic.php?p={id}`, names no topic, and the page's canonical link does.

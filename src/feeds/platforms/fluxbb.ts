@@ -1,12 +1,10 @@
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, hasElementWithId } from '../../common/utils.js'
+import { composeHint, getScriptDirectory, hasElementWithId } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic partly covers board, forum, topic.
 
-const scriptSegmentRegex = /\/[^/]*\.php$/i
-const trailingSlashRegex = /\/$/
 const forumPathRegex = /\/viewforum\.php$/i
 const topicPathRegex = /\/viewtopic\.php$/i
 
@@ -29,7 +27,7 @@ export const fluxbbHandler: PlatformHandler = {
 
   resolve: (url) => {
     const { origin, pathname, searchParams } = new URL(url)
-    const boardPath = pathname.replace(scriptSegmentRegex, '').replace(trailingSlashRegex, '')
+    const boardPath = getScriptDirectory(pathname)
     const feedUrl = `${origin}${boardPath}/extern.php?action=feed`
     const id = searchParams.get('id')
     const uris: Array<DiscoverUriEntry> = []

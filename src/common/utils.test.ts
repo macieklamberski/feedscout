@@ -8,6 +8,7 @@ import {
   getCookieNames,
   getJsonLd,
   getMetaContent,
+  getScriptDirectory,
   getScriptText,
   hasAnyMeta,
   hasClass,
@@ -563,6 +564,28 @@ describe('getCookieNames', () => {
 
   it('should return an empty array without Set-Cookie', () => {
     expect(getCookieNames(new Headers())).toEqual([])
+  })
+})
+
+describe('getScriptDirectory', () => {
+  it('should return the directory of a script', () => {
+    expect(getScriptDirectory('/community/viewtopic.php')).toBe('/community')
+  })
+
+  it('should return the directory of a script with a capitalized extension', () => {
+    expect(getScriptDirectory('/forums/index.PHP')).toBe('/forums')
+  })
+
+  it('should return a directory without its trailing slash', () => {
+    expect(getScriptDirectory('/links/')).toBe('/links')
+  })
+
+  it('should return an empty string for a script at the root', () => {
+    expect(getScriptDirectory('/index.php')).toBe('')
+  })
+
+  it('should return an empty string for the root', () => {
+    expect(getScriptDirectory('/')).toBe('')
   })
 })
 
