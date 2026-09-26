@@ -122,8 +122,12 @@ describe('phpbbHandler', () => {
 
     it('should read the topic from the canonical link of a post link', () => {
       const value = 'https://example.com/community/viewtopic.php?p=678'
-      const content =
-        '<link rel="canonical" href="https://example.com/community/viewtopic.php?t=345">'
+      const content = `
+        <link
+          rel="canonical"
+          href="https://example.com/community/viewtopic.php?t=345"
+        >
+      `
       const expected = [
         {
           uri: 'https://example.com/community/feed.php?t=345',
@@ -137,8 +141,12 @@ describe('phpbbHandler', () => {
 
     it('should prefer the topic in the url over the canonical link', () => {
       const value = 'https://example.com/community/viewtopic.php?t=345'
-      const content =
-        '<link rel="canonical" href="https://example.com/community/viewtopic.php?t=999">'
+      const content = `
+        <link
+          rel="canonical"
+          href="https://example.com/community/viewtopic.php?t=999"
+        >
+      `
       const expected = [
         {
           uri: 'https://example.com/community/feed.php?t=345',
