@@ -1550,6 +1550,15 @@ Discovers Atom feeds for Plurk users and single plurks.
 | `plurk.com/p/{id}` | Plurk responses feed (Atom) |
 | `plurk.com/m/p/{id}` | Plurk responses feed (Atom) |
 
+### Internet Archive
+
+Discovers the RSS feeds of Internet Archive collections and searches. A collection page is told from an item page by its markup: collections serve the app shell that loads `/offshoot_assets/`, and items serve full HTML. Item pages resolve nothing.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `archive.org/details/{collection}` | Collection feed (RSS) |
+| `archive.org/search?query={query}` | Search feed (RSS) |
+
 ## Basic Usage
 
 ```typescript
@@ -1645,6 +1654,7 @@ import {
   hearthisHandler,
   heyWorldHandler,
   insanejournalHandler,
+  internetArchiveHandler,
   itchioHandler,
   ivooxHandler,
   jiraHandler,
