@@ -179,7 +179,7 @@ describe('writefreelyHandler', () => {
 
     it('should build the tag feed of a single-user instance without a blog title link', () => {
       const value = 'https://example.org/tag:coolify'
-      const expected: Array<DiscoverUriEntry> = [
+      const expected = [
         {
           uri: 'https://example.org/tag:coolify/feed/',
           hint: { key: 'writefreely:tag', label: 'Tag' },
@@ -195,7 +195,7 @@ describe('writefreelyHandler', () => {
 
     it('should build the tag feed of a single-user instance from an uppercase tag segment without a blog title link', () => {
       const value = 'https://example.org/TAG:coolify'
-      const expected: Array<DiscoverUriEntry> = [
+      const expected = [
         {
           uri: 'https://example.org/tag:coolify/feed/',
           hint: { key: 'writefreely:tag', label: 'Tag' },
