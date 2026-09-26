@@ -84,10 +84,10 @@ describe('itchioHandler', () => {
     })
 
     it('should return games-by-user feed for by-username feed URL', () => {
-      const value = 'https://itch.io/games/by-leafo.xml'
+      const value = 'https://itch.io/games/by-alice.xml'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://itch.io/games/by-leafo.xml',
+          uri: 'https://itch.io/games/by-alice.xml',
           hint: { key: 'itchio:games', label: 'Games' },
         },
       ]
