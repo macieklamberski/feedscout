@@ -437,10 +437,15 @@ Discovers RSS feeds for Itch.io games, creators, devlogs, and browse pages.
 | `itch.io/games` or `/games.xml` | Games feed |
 | `itch.io/games/by-{username}` or `/by-{username}.xml` | Creator's games feed |
 | `itch.io/games/tag-{tag}` or `/tag-{tag}.xml` | Tag feed |
-| `itch.io/games/{sort}` or `/{sort}.xml` | Sorted games feed (newest/top-rated/top-sellers/on-sale) |
+| `itch.io/games/platform-{platform}` or `/platform-{platform}.xml` | Platform feed |
+| `itch.io/games/genre-{genre}` or `/genre-{genre}.xml` | Genre feed |
+| `itch.io/games/made-with-{engine}` or `/made-with-{engine}.xml` | Engine feed |
+| `itch.io/games/{sort}` or `/{sort}.xml` | Sorted games feed (newest/top-rated/top-sellers/on-sale/free) |
 | `itch.io/{section}` or `/{section}.xml` | Section feed (tools/game-assets/soundtracks/physical-games/books/comics/misc) |
 | `itch.io/devlogs` or `/devlogs.xml` | All devlogs feed |
 | `itch.io` | Featured + new + sales + all devlogs feeds + itch.io blog |
+| `itch.io/feed/{feed}.xml` | Curated feed (featured/new/sales) |
+| `itch.io/blog.rss` | itch.io blog |
 
 ### CSDN
 

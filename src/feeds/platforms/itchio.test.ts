@@ -304,7 +304,7 @@ describe('itchioHandler', () => {
     it('should return devlogs feed for /devlogs path', () => {
       const value = 'https://itch.io/devlogs'
       const expected = [
-        { uri: 'https://itch.io/devlogs.xml', hint: { key: 'itchio:devlog', label: 'Devlog' } },
+        { uri: 'https://itch.io/devlogs.xml', hint: { key: 'itchio:devlogs', label: 'Devlogs' } },
       ]
 
       expect(itchioHandler.resolve(value)).toEqual(expected)
@@ -313,7 +313,7 @@ describe('itchioHandler', () => {
     it('should return devlogs feed for /devlogs path with a capitalized devlogs segment', () => {
       const value = 'https://itch.io/Devlogs'
       const expected = [
-        { uri: 'https://itch.io/devlogs.xml', hint: { key: 'itchio:devlog', label: 'Devlog' } },
+        { uri: 'https://itch.io/devlogs.xml', hint: { key: 'itchio:devlogs', label: 'Devlogs' } },
       ]
 
       expect(itchioHandler.resolve(value)).toEqual(expected)
@@ -322,7 +322,7 @@ describe('itchioHandler', () => {
     it('should return devlogs feed for /devlogs path with trailing slash', () => {
       const value = 'https://itch.io/devlogs/'
       const expected = [
-        { uri: 'https://itch.io/devlogs.xml', hint: { key: 'itchio:devlog', label: 'Devlog' } },
+        { uri: 'https://itch.io/devlogs.xml', hint: { key: 'itchio:devlogs', label: 'Devlogs' } },
       ]
 
       expect(itchioHandler.resolve(value)).toEqual(expected)
@@ -333,7 +333,7 @@ describe('itchioHandler', () => {
       const expected = [
         {
           uri: 'https://itch.io/devlogs.xml',
-          hint: { key: 'itchio:devlog', label: 'Devlog' },
+          hint: { key: 'itchio:devlogs', label: 'Devlogs' },
         },
       ]
 
@@ -409,6 +409,66 @@ describe('itchioHandler', () => {
         { uri: 'https://itch.io/feed/sales.xml', hint: { key: 'itchio:sales', label: 'Sales' } },
         { uri: 'https://itch.io/devlogs.xml', hint: { key: 'itchio:devlogs', label: 'Devlogs' } },
         { uri: 'https://itch.io/blog.rss', hint: { key: 'itchio:blog', label: 'Blog' } },
+      ]
+
+      expect(itchioHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return featured feed for featured feed URL', () => {
+      const value = 'https://itch.io/feed/featured.xml'
+      const expected = [
+        {
+          uri: 'https://itch.io/feed/featured.xml',
+          hint: { key: 'itchio:featured', label: 'Featured' },
+        },
+      ]
+
+      expect(itchioHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return lowercase featured feed for a capitalized featured feed URL', () => {
+      const value = 'https://itch.io/Feed/Featured.xml'
+      const expected = [
+        {
+          uri: 'https://itch.io/feed/featured.xml',
+          hint: { key: 'itchio:featured', label: 'Featured' },
+        },
+      ]
+
+      expect(itchioHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return new feed for new feed URL', () => {
+      const value = 'https://itch.io/feed/new.xml'
+      const expected = [
+        {
+          uri: 'https://itch.io/feed/new.xml',
+          hint: { key: 'itchio:new', label: 'New' },
+        },
+      ]
+
+      expect(itchioHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return sales feed for sales feed URL', () => {
+      const value = 'https://itch.io/feed/sales.xml'
+      const expected = [
+        {
+          uri: 'https://itch.io/feed/sales.xml',
+          hint: { key: 'itchio:sales', label: 'Sales' },
+        },
+      ]
+
+      expect(itchioHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return blog feed for blog feed URL', () => {
+      const value = 'https://itch.io/blog.rss'
+      const expected = [
+        {
+          uri: 'https://itch.io/blog.rss',
+          hint: { key: 'itchio:blog', label: 'Blog' },
+        },
       ]
 
       expect(itchioHandler.resolve(value)).toEqual(expected)
