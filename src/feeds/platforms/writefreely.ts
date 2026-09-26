@@ -10,7 +10,7 @@ import {
 } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic covers singleUserPost, tag (guess, html), partly covers blog, post.
+// Generic covers singleUserLanguage, singleUserPage, singleUserPost, tag (guess, html), partly covers blog, post.
 
 const tagPathRegex = /\/tag:([^/]+)/i
 const rootRouteRegex = /^\/(?:(?:tag|lang):|page\/\d+(?:\/|$))/i
