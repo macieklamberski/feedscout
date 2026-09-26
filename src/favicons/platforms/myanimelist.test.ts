@@ -64,6 +64,13 @@ describe('myanimelistHandler', () => {
         expect(myanimelistHandler.resolve(value, profilePage)).toEqual(expected)
       })
 
+      it('should return the avatar from the profile page content with a capitalized profile segment', () => {
+        const value = 'https://myanimelist.net/Profile/example'
+        const expected: Array<DiscoverUriEntry> = [{ uri: avatarUrl }]
+
+        expect(myanimelistHandler.resolve(value, profilePage)).toEqual(expected)
+      })
+
       it('should return the avatar when another class comes before user-image', () => {
         const value = 'https://myanimelist.net/profile/example'
         const content = profilePage.replace('class="user-image mb8"', 'class="mb8 user-image"')

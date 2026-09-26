@@ -47,7 +47,7 @@ export const artstationHandler: PlatformHandler = {
     const pathSegments = parsed.pathname.split('/').filter(Boolean)
 
     // Global artwork page: /artwork
-    if (pathSegments[0] === 'artwork' || pathSegments.length === 0) {
+    if (isAnyOf(pathSegments[0], 'artwork') || pathSegments.length === 0) {
       return [
         {
           uri: 'https://www.artstation.com/artwork.rss',

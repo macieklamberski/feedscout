@@ -14,8 +14,8 @@ export type NoteUrl =
 export const hosts = ['note.com', 'www.note.com']
 
 // A hashtag page redirects to `/tag/{tag}`, and the feed stays under `/hashtag`.
-const hashtagRegex = /^\/(?:hashtag|tag)\/([^/]+)/
-const magazineRegex = /^\/([^/]+)\/m\/([^/]+)/
+const hashtagRegex = /^\/(?:hashtag|tag)\/([^/]+)/i
+const magazineRegex = /^\/([^/]+)\/m\/([^/]+)/i
 
 export const excludedPaths = [
   'about',

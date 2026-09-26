@@ -31,6 +31,18 @@ describe('ximalayaHandler', () => {
       expect(ximalayaHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return XML feed URL for album page with a capitalized album segment', () => {
+      const value = 'https://www.ximalaya.com/Album/203355'
+      const expected = [
+        {
+          uri: 'https://www.ximalaya.com/album/203355.xml',
+          hint: { key: 'ximalaya:album', label: 'Album' },
+        },
+      ]
+
+      expect(ximalayaHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should handle album page with trailing path', () => {
       const value = 'https://www.ximalaya.com/album/203355/track/12345'
       const expected = [

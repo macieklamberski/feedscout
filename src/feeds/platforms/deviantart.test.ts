@@ -70,16 +70,35 @@ describe('parseDeviantartUrl', () => {
     expect(parseDeviantartUrl(value)).toEqual(expected)
   })
 
+  it('should return the folder for a gallery folder page with a capitalized gallery segment', () => {
+    const value = 'https://deviantart.com/yuumei/Gallery/123456/folder-name'
+    const expected: DeviantartUrl = { kind: 'folder', username: 'yuumei', folderId: '123456' }
+
+    expect(parseDeviantartUrl(value)).toEqual(expected)
+  })
+
   it('should return the favourites for a favourites page', () => {
     const expected: DeviantartUrl = { kind: 'favourites', username: 'yuumei' }
 
     expect(parseDeviantartUrl('https://deviantart.com/yuumei/favourites')).toEqual(expected)
   })
 
+  it('should return the favourites for a favourites page with a capitalized favourites segment', () => {
+    const expected: DeviantartUrl = { kind: 'favourites', username: 'yuumei' }
+
+    expect(parseDeviantartUrl('https://deviantart.com/yuumei/Favourites')).toEqual(expected)
+  })
+
   it('should return the journal for a journal page', () => {
     const expected: DeviantartUrl = { kind: 'journal', username: 'yuumei' }
 
     expect(parseDeviantartUrl('https://deviantart.com/yuumei/journal')).toEqual(expected)
+  })
+
+  it('should return the journal for a journal page with a capitalized journal segment', () => {
+    const expected: DeviantartUrl = { kind: 'journal', username: 'yuumei' }
+
+    expect(parseDeviantartUrl('https://deviantart.com/yuumei/Journal')).toEqual(expected)
   })
 
   it('should return the journal for a journal post', () => {
@@ -95,6 +114,12 @@ describe('parseDeviantartUrl', () => {
     expect(parseDeviantartUrl('https://deviantart.com/tag/photography')).toEqual(expected)
   })
 
+  it('should return the tag for a tag page with a capitalized tag segment', () => {
+    const expected: DeviantartUrl = { kind: 'tag', tag: 'photography' }
+
+    expect(parseDeviantartUrl('https://deviantart.com/Tag/photography')).toEqual(expected)
+  })
+
   it('should decode a percent-encoded tag', () => {
     const expected: DeviantartUrl = { kind: 'tag', tag: 'café' }
 
@@ -107,6 +132,10 @@ describe('parseDeviantartUrl', () => {
 
   it('should return undefined for the tag prefix without a tag', () => {
     expect(parseDeviantartUrl('https://www.deviantart.com/tag')).toBeUndefined()
+  })
+
+  it('should return undefined for a capitalized excluded path', () => {
+    expect(parseDeviantartUrl('https://deviantart.com/About')).toBeUndefined()
   })
 
   it('should return undefined for a first segment with a dot', () => {
@@ -223,20 +252,8 @@ describe('deviantartHandler', () => {
       expect(deviantartHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return popular feed', () => {
-      const value = 'https://deviantart.com/popular'
-      const expected = [
-        {
-          uri: 'https://backend.deviantart.com/rss.xml?type=deviation&q=boost%3Apopular',
-          hint: { key: 'deviantart:popular', label: 'Popular' },
-        },
-      ]
-
-      expect(deviantartHandler.resolve(value)).toEqual(expected)
-    })
-
-    it('should return curated daily-deviations feed for trailing slash', () => {
-      const value = 'https://deviantart.com/daily-deviations/'
+    it('should return curated daily-deviations feed with a capitalized daily-deviations segment', () => {
+      const value = 'https://deviantart.com/Daily-Deviations'
       const expected = [
         {
           uri: 'https://backend.deviantart.com/rss.xml?q=special%3Add',
@@ -247,12 +264,16 @@ describe('deviantartHandler', () => {
       expect(deviantartHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return popular feed for trailing slash', () => {
-      const value = 'https://deviantart.com/popular/'
+    it('should return empty array for the retired popular page', () => {
+      expect(deviantartHandler.resolve('https://deviantart.com/popular')).toEqual([])
+    })
+
+    it('should return curated daily-deviations feed for trailing slash', () => {
+      const value = 'https://deviantart.com/daily-deviations/'
       const expected = [
         {
-          uri: 'https://backend.deviantart.com/rss.xml?type=deviation&q=boost%3Apopular',
-          hint: { key: 'deviantart:popular', label: 'Popular' },
+          uri: 'https://backend.deviantart.com/rss.xml?q=special%3Add',
+          hint: { key: 'deviantart:daily-deviations', label: 'Daily Deviations' },
         },
       ]
 

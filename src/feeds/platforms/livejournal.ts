@@ -17,9 +17,9 @@ const reservedHosts = [
   'syndicated.livejournal.com',
 ]
 
-const wwwUsersPathRegex = /^\/(?:users\/|~)([^/]+)/
+const wwwUsersPathRegex = /^\/(?:users\/|~)([^/]+)/i
 const legacyUserPathRegex = /^\/([^/]+)/
-const tagRegex = /^\/tag\/([^/]+)/
+const tagRegex = /^\/tag\/([^/]+)/i
 
 // Dreamwidth and InsaneJournal run the LiveJournal engine, so a journal on any of them serves
 // the same feeds, plus a tag's feeds on a tag page.

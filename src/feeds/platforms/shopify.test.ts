@@ -20,6 +20,10 @@ describe('shopifyHandler', () => {
       expect(shopifyHandler.match('https://example.com/blogs/news', '', shopifyHeaders)).toBe(true)
     })
 
+    it('should match a blog page with a capitalized blogs segment', () => {
+      expect(shopifyHandler.match('https://example.com/Blogs/news', '', shopifyHeaders)).toBe(true)
+    })
+
     it('should match a blog post page', () => {
       const value = 'https://example.com/blogs/news/a-post'
 

@@ -5,7 +5,7 @@ import { composeHint } from '../../common/utils.js'
 // Discoverability: Unmeasured, no public page.
 
 const hosts = ['omny.fm', 'www.omny.fm']
-const showPathRegex = /^\/shows\/([^/]+)/
+const showPathRegex = /^\/shows\/([^/]+)/i
 
 export const omnystudioHandler: PlatformHandler = {
   match: (url) => {

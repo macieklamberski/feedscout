@@ -6,7 +6,7 @@ import { composeHint, getCookieNames, hasMetaContent } from '../../common/utils.
 // Generic partly covers board.
 // Handler needed for: home.
 
-const boardPathRegex = /\/forum-(\d+)-/
+const boardPathRegex = /\/forum-(\d+)-/i
 const numericRegex = /^\d+$/
 
 export const isDiscuzHtml = (content: string): boolean => {

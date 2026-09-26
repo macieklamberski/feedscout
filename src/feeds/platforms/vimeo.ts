@@ -55,7 +55,7 @@ export const vimeoHandler: PlatformHandler = {
     const pathSegments = pathname.split('/').filter(Boolean)
 
     // Channel page: vimeo.com/channels/{channel}
-    if (pathSegments[0] === 'channels' && pathSegments[1]) {
+    if (isAnyOf(pathSegments[0], 'channels') && pathSegments[1]) {
       const channel = pathSegments[1]
 
       return [
@@ -67,7 +67,7 @@ export const vimeoHandler: PlatformHandler = {
     }
 
     // Group page: vimeo.com/groups/{group}
-    if (pathSegments[0] === 'groups' && pathSegments[1]) {
+    if (isAnyOf(pathSegments[0], 'groups') && pathSegments[1]) {
       const group = pathSegments[1]
 
       return [
@@ -104,7 +104,7 @@ export const vimeoHandler: PlatformHandler = {
       if (!isAnyOf(user, excludedPaths) && !numericRegex.test(user)) {
         const feeds = [{ uri: `${origin}/${user}/videos/rss`, hint: composeHint('vimeo:videos') }]
 
-        if (pathSegments[1] === 'likes') {
+        if (isAnyOf(pathSegments[1], 'likes')) {
           feeds.unshift({
             uri: `${origin}/${user}/likes/rss`,
             hint: composeHint('vimeo:likes'),

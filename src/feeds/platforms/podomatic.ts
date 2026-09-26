@@ -6,7 +6,7 @@ import { composeHint } from '../../common/utils.js'
 
 const domains = ['podomatic.com']
 const hosts = ['podomatic.com', 'www.podomatic.com']
-const directoryPathRegex = /^\/podcasts\/([^/]+)/
+const directoryPathRegex = /^\/podcasts\/([^/]+)/i
 const excludedSubdomains = ['www', 'api', 'assets', 'static']
 
 const getShow = (url: string): string | undefined => {

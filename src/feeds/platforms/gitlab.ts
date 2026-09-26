@@ -11,7 +11,7 @@ export type GitlabUrl =
 
 export const hosts = ['gitlab.com', 'www.gitlab.com']
 // GitLab names may contain dots, so only the feed suffix is cut off.
-const feedSuffixRegex = /\.atom$/
+const feedSuffixRegex = /\.atom$/i
 const excludedPaths = [
   'explore',
   'dashboard',

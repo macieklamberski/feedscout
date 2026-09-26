@@ -29,6 +29,34 @@ describe('livejournalHandler', () => {
   })
 
   describe('resolve', () => {
+    it('should return the tag feed for a capitalized tag segment', () => {
+      const value = 'https://ohnotheydidnt.livejournal.com/Tag/television'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://ohnotheydidnt.livejournal.com/data/rss?tag=television',
+          hint: { key: 'livejournal:posts-tag', label: 'Tag', format: 'rss' },
+        },
+        {
+          uri: 'https://ohnotheydidnt.livejournal.com/data/atom?tag=television',
+          hint: { key: 'livejournal:posts-tag', label: 'Tag', format: 'atom' },
+        },
+        {
+          uri: 'https://ohnotheydidnt.livejournal.com/data/rss',
+          hint: { key: 'livejournal:posts', label: 'Posts', format: 'rss' },
+        },
+        {
+          uri: 'https://ohnotheydidnt.livejournal.com/data/atom',
+          hint: { key: 'livejournal:posts', label: 'Posts', format: 'atom' },
+        },
+        {
+          uri: 'https://ohnotheydidnt.livejournal.com/data/userpics',
+          hint: { key: 'livejournal:userpics', label: 'Userpics', format: 'atom' },
+        },
+      ]
+
+      expect(livejournalHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return RSS, Atom, and userpics feeds for blog', () => {
       const value = 'https://ohnotheydidnt.livejournal.com'
       const expected: Array<DiscoverUriEntry> = [
@@ -127,6 +155,26 @@ describe('livejournalHandler', () => {
 
     it('should canonicalise www.livejournal.com/users/{user} to subdomain', () => {
       const value = 'https://www.livejournal.com/users/news'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://news.livejournal.com/data/rss',
+          hint: { key: 'livejournal:posts', label: 'Posts', format: 'rss' },
+        },
+        {
+          uri: 'https://news.livejournal.com/data/atom',
+          hint: { key: 'livejournal:posts', label: 'Posts', format: 'atom' },
+        },
+        {
+          uri: 'https://news.livejournal.com/data/userpics',
+          hint: { key: 'livejournal:userpics', label: 'Userpics', format: 'atom' },
+        },
+      ]
+
+      expect(livejournalHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should canonicalise www.livejournal.com/users/{user} to subdomain with a capitalized users segment', () => {
+      const value = 'https://www.livejournal.com/Users/news'
       const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://news.livejournal.com/data/rss',

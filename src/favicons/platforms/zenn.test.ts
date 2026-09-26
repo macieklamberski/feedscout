@@ -92,6 +92,12 @@ describe('zennHandler', () => {
         expect(await zennHandler.resolve('https://zenn.dev/p/acme', content)).toEqual([])
       })
 
+      it('should return empty array for the logo served by a missing publication with a capitalized images segment', async () => {
+        const content = createPage('https://static.zenn.studio/Images/logo-only-dark.png')
+
+        expect(await zennHandler.resolve('https://zenn.dev/p/acme', content)).toEqual([])
+      })
+
       it('should return empty array for the placeholder of a topic without image', async () => {
         const content = createPage('https://zenn.dev/images/topic.png')
 

@@ -12,11 +12,11 @@ export type DailymotionUrl =
   | { kind: 'search'; query: string }
 
 const hosts = ['dailymotion.com', 'www.dailymotion.com']
-const userRegex = /^\/([a-zA-Z0-9_-]+)$/
-const playlistRegex = /^\/playlist\/([a-zA-Z0-9_-]+)/
-const channelRegex = /^\/channel\/([a-zA-Z0-9_-]+)/
-const searchRegex = /^\/search\/([^/]+)/
-const trendingRegex = /^\/(?:trending\/?)?$/
+const userRegex = /^\/([a-zA-Z0-9_-]+)\/?$/i
+const playlistRegex = /^\/playlist\/([a-zA-Z0-9_-]+)/i
+const channelRegex = /^\/channel\/([a-zA-Z0-9_-]+)/i
+const searchRegex = /^\/search\/([^/]+)/i
+const trendingRegex = /^\/(?:trending\/?)?$/i
 const excludedPaths = [
   'signin',
   'signout',

@@ -11,7 +11,7 @@ export type ExblogUrl =
 
 const domains = ['exblog.jp']
 
-const categoryRegex = /^\/i(\d+)/
+const categoryRegex = /^\/i(\d+)(?:\/|$)/i
 
 export const parseExblogUrl = (url: string): ExblogUrl | undefined => {
   const blog = getSubdomain(url, domains)

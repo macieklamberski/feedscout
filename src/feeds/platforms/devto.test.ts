@@ -33,6 +33,12 @@ describe('parseDevtoUrl', () => {
     expect(parseDevtoUrl('https://dev.to/t/javascript')).toEqual(expected)
   })
 
+  it('should return the tag for a tag page with a capitalized t segment', () => {
+    const expected: DevtoUrl = { kind: 'tag', tag: 'javascript' }
+
+    expect(parseDevtoUrl('https://dev.to/T/javascript')).toEqual(expected)
+  })
+
   it('should return undefined for an excluded path', () => {
     expect(parseDevtoUrl('https://dev.to/settings')).toBeUndefined()
   })
@@ -145,6 +151,16 @@ describe('devtoHandler', () => {
 
     it('should return latest feed for /latest', () => {
       const value = 'https://dev.to/latest'
+      const expected = [
+        { uri: 'https://dev.to/feed/latest', hint: { key: 'devto:latest', label: 'Latest' } },
+        { uri: 'https://dev.to/feed', hint: { key: 'devto:community', label: 'Community' } },
+      ]
+
+      expect(devtoHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return latest feed for /latest with a capitalized latest segment', () => {
+      const value = 'https://dev.to/Latest'
       const expected = [
         { uri: 'https://dev.to/feed/latest', hint: { key: 'devto:latest', label: 'Latest' } },
         { uri: 'https://dev.to/feed', hint: { key: 'devto:community', label: 'Community' } },

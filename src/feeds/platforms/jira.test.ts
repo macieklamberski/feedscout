@@ -55,12 +55,28 @@ describe('jiraHandler', () => {
       expect(jiraHandler.match('https://example.atlassian.net/wiki/spaces/DOCS')).toBe(false)
     })
 
+    it('should not match Confluence on a Cloud site with a capitalized wiki segment', () => {
+      expect(jiraHandler.match('https://example.atlassian.net/Wiki/spaces/DOCS')).toBe(false)
+    })
+
     it('should match a Data Center issue path with content', () => {
       expect(jiraHandler.match('https://jira.example.org/browse/ABC-1', jiraHtml)).toBe(true)
     })
 
     it('should match a Data Center project path with content', () => {
       expect(jiraHandler.match('https://jira.example.org/projects/ABC', jiraHtml)).toBe(true)
+    })
+
+    it('should match a Data Center project path with content with a capitalized projects segment', () => {
+      expect(jiraHandler.match('https://jira.example.org/Projects/ABC', jiraHtml)).toBe(true)
+    })
+
+    it('should match a context path without a trailing slash', () => {
+      expect(jiraHandler.match('https://example.org/jira', jiraHtml)).toBe(true)
+    })
+
+    it('should match a capitalized context path without a trailing slash', () => {
+      expect(jiraHandler.match('https://example.org/Jira', jiraHtml)).toBe(true)
     })
 
     it('should not match a Bitbucket repository path', () => {
@@ -83,6 +99,22 @@ describe('jiraHandler', () => {
   })
 
   describe('resolve', () => {
+    it('should return the project and site feeds for a capitalized browse segment', () => {
+      const value = 'https://example.atlassian.net/Browse/ABC-1'
+      const expected = [
+        {
+          uri: 'https://example.atlassian.net/plugins/servlet/streams?key=ABC',
+          hint: { key: 'jira:project', label: 'Project' },
+        },
+        {
+          uri: 'https://example.atlassian.net/plugins/servlet/streams',
+          hint: { key: 'jira:site', label: 'Site activity' },
+        },
+      ]
+
+      expect(jiraHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return the project and site streams for an issue path', () => {
       const value = 'https://jira.example.org/browse/ABC-1'
       const expected = [

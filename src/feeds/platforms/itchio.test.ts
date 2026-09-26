@@ -70,8 +70,32 @@ describe('itchioHandler', () => {
       expect(itchioHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return games-by-user feed for by-username path with a capitalized games segment', () => {
+      const value = 'https://itch.io/Games/by-leafo'
+      const expected = [
+        {
+          uri: 'https://itch.io/games/by-leafo.xml',
+          hint: { key: 'itchio:games', label: 'Games' },
+        },
+      ]
+
+      expect(itchioHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return tag feed for tag path', () => {
       const value = 'https://itch.io/games/tag-horror'
+      const expected = [
+        {
+          uri: 'https://itch.io/games/tag-horror.xml',
+          hint: { key: 'itchio:tag', label: 'Tag' },
+        },
+      ]
+
+      expect(itchioHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return tag feed for tag path with a capitalized games segment', () => {
+      const value = 'https://itch.io/Games/tag-horror'
       const expected = [
         {
           uri: 'https://itch.io/games/tag-horror.xml',
@@ -94,8 +118,32 @@ describe('itchioHandler', () => {
       expect(itchioHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return platform feed for platform path with a capitalized games segment', () => {
+      const value = 'https://itch.io/Games/platform-web'
+      const expected = [
+        {
+          uri: 'https://itch.io/games/platform-web.xml',
+          hint: { key: 'itchio:platform', label: 'Platform' },
+        },
+      ]
+
+      expect(itchioHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return genre feed for genre path', () => {
       const value = 'https://itch.io/games/genre-puzzle'
+      const expected = [
+        {
+          uri: 'https://itch.io/games/genre-puzzle.xml',
+          hint: { key: 'itchio:genre', label: 'Genre' },
+        },
+      ]
+
+      expect(itchioHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return genre feed for genre path with a capitalized games segment', () => {
+      const value = 'https://itch.io/Games/genre-puzzle'
       const expected = [
         {
           uri: 'https://itch.io/games/genre-puzzle.xml',
@@ -118,8 +166,32 @@ describe('itchioHandler', () => {
       expect(itchioHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return made-with feed for made-with path with a capitalized games segment', () => {
+      const value = 'https://itch.io/Games/made-with-unity'
+      const expected = [
+        {
+          uri: 'https://itch.io/games/made-with-unity.xml',
+          hint: { key: 'itchio:made-with', label: 'Made with' },
+        },
+      ]
+
+      expect(itchioHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return sort feed for sort path', () => {
       const value = 'https://itch.io/games/newest'
+      const expected = [
+        {
+          uri: 'https://itch.io/games/newest.xml',
+          hint: { key: 'itchio:games', label: 'Games' },
+        },
+      ]
+
+      expect(itchioHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return sort feed for sort path with a capitalized games segment', () => {
+      const value = 'https://itch.io/Games/newest'
       const expected = [
         {
           uri: 'https://itch.io/games/newest.xml',
@@ -175,6 +247,15 @@ describe('itchioHandler', () => {
       expect(itchioHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return games feed for /games path with a capitalized games segment', () => {
+      const value = 'https://itch.io/Games'
+      const expected = [
+        { uri: 'https://itch.io/games.xml', hint: { key: 'itchio:games', label: 'Games' } },
+      ]
+
+      expect(itchioHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return games feed for /games path with trailing slash', () => {
       const value = 'https://itch.io/games/'
       const expected = [
@@ -186,6 +267,15 @@ describe('itchioHandler', () => {
 
     it('should return devlogs feed for /devlogs path', () => {
       const value = 'https://itch.io/devlogs'
+      const expected = [
+        { uri: 'https://itch.io/devlogs.xml', hint: { key: 'itchio:devlog', label: 'Devlog' } },
+      ]
+
+      expect(itchioHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return devlogs feed for /devlogs path with a capitalized devlogs segment', () => {
+      const value = 'https://itch.io/Devlogs'
       const expected = [
         { uri: 'https://itch.io/devlogs.xml', hint: { key: 'itchio:devlog', label: 'Devlog' } },
       ]

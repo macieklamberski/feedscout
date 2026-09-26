@@ -32,6 +32,17 @@ describe('parseObservableUrl', () => {
     expect(parseObservableUrl(value)).toEqual(expected)
   })
 
+  it('should return the collection for a collection page with a capitalized collection segment', () => {
+    const value = 'https://observablehq.com/@observablehq/Collection/visualization'
+    const expected: ObservableUrl = {
+      kind: 'collection',
+      owner: 'observablehq',
+      collection: 'visualization',
+    }
+
+    expect(parseObservableUrl(value)).toEqual(expected)
+  })
+
   it('should return the collection for a collection page in the live form', () => {
     const value = 'https://observablehq.com/@observablehq/-/collection/working-with-data'
     const expected: ObservableUrl = {
@@ -122,6 +133,18 @@ describe('observableHandler', () => {
       expect(observableHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return trending feed for /public with a capitalized public segment', () => {
+      const value = 'https://observablehq.com/Public'
+      const expected = [
+        {
+          uri: 'https://api.observablehq.com/documents/trending.rss',
+          hint: { key: 'observable:trending', label: 'Trending' },
+        },
+      ]
+
+      expect(observableHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return trending feed for /public with trailing slash', () => {
       const value = 'https://observablehq.com/public/'
       const expected = [
@@ -152,8 +175,32 @@ describe('observableHandler', () => {
       expect(observableHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return recent feed for /recent with a capitalized recent segment', () => {
+      const value = 'https://observablehq.com/Recent'
+      const expected = [
+        {
+          uri: 'https://api.observablehq.com/documents/public.rss',
+          hint: { key: 'observable:recent', label: 'Recent' },
+        },
+      ]
+
+      expect(observableHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return trending feed for /trending', () => {
       const value = 'https://observablehq.com/trending'
+      const expected = [
+        {
+          uri: 'https://api.observablehq.com/documents/trending.rss',
+          hint: { key: 'observable:trending', label: 'Trending' },
+        },
+      ]
+
+      expect(observableHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return trending feed for /trending with a capitalized trending segment', () => {
+      const value = 'https://observablehq.com/Trending'
       const expected = [
         {
           uri: 'https://api.observablehq.com/documents/trending.rss',

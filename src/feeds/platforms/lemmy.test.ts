@@ -55,13 +55,20 @@ describe('parseLemmyUrl', () => {
     expect(parseLemmyUrl('https://lemmy.ml/u/')).toBeUndefined()
   })
 
-  it('should return undefined for an uppercase prefix', () => {
-    expect(parseLemmyUrl('https://lemmy.ml/C/programming')).toBeUndefined()
+  it('should return the community for a capitalized prefix', () => {
+    const expected: LemmyUrl = { kind: 'community', community: 'programming' }
+
+    expect(parseLemmyUrl('https://lemmy.ml/C/programming')).toEqual(expected)
+  })
+
+  it('should return the user for a capitalized prefix', () => {
+    const expected: LemmyUrl = { kind: 'user', username: 'alice' }
+
+    expect(parseLemmyUrl('https://lemmy.ml/U/alice')).toEqual(expected)
   })
 
   it('should return undefined for the home page', () => {
     expect(parseLemmyUrl('https://lemmy.ml/')).toBeUndefined()
-    expect(parseLemmyUrl('https://lemmy.ml/home')).toBeUndefined()
   })
 
   it('should return undefined for other paths', () => {
@@ -138,11 +145,11 @@ describe('lemmyHandler', () => {
     })
 
     it('should match the home page with Lemmy HTML', () => {
-      expect(lemmyHandler.match('https://lemmy.ml/home', lemmyHtml)).toBe(true)
+      expect(lemmyHandler.match('https://lemmy.ml/', lemmyHtml)).toBe(true)
     })
 
-    it('should match the home page with trailing slash', () => {
-      expect(lemmyHandler.match('https://lemmy.ml/home/', lemmyHtml)).toBe(true)
+    it('should not match the retired /home path', () => {
+      expect(lemmyHandler.match('https://lemmy.ml/home', lemmyHtml)).toBe(false)
     })
 
     it('should match community path with Lemmy server header', () => {
@@ -255,6 +262,88 @@ describe('lemmyHandler', () => {
       ]
 
       expect(lemmyHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should take the sort the home page advertises', () => {
+      const value = 'https://lemmy.ml/'
+      const content =
+        '<link rel="alternate" type="application/atom+xml" href="/feeds/local.xml?sort=Active">'
+      const expected = [
+        {
+          uri: 'https://lemmy.ml/feeds/all.xml?sort=Active',
+          hint: { key: 'lemmy:all', label: 'All' },
+        },
+        {
+          uri: 'https://lemmy.ml/feeds/local.xml?sort=Active',
+          hint: { key: 'lemmy:local', label: 'Local' },
+        },
+      ]
+
+      expect(lemmyHandler.resolve(value, content)).toEqual(expected)
+    })
+
+    it('should prefer the ?sort= of the page URL over the advertised sort', () => {
+      const value = 'https://lemmy.ml/c/programming?sort=New'
+      const content =
+        '<link rel="alternate" type="application/atom+xml" href="/feeds/c/programming.xml?sort=Active">'
+      const expected = [
+        {
+          uri: 'https://lemmy.ml/feeds/c/programming.xml?sort=New',
+          hint: { key: 'lemmy:community', label: 'Community' },
+        },
+      ]
+
+      expect(lemmyHandler.resolve(value, content)).toEqual(expected)
+    })
+
+    it('should take the advertised sort when the page URL sort is unknown', () => {
+      const value = 'https://lemmy.ml/?sort=bogus'
+      const content =
+        '<link rel="alternate" type="application/atom+xml" href="/feeds/local.xml?sort=Active">'
+      const expected = [
+        {
+          uri: 'https://lemmy.ml/feeds/all.xml?sort=Active',
+          hint: { key: 'lemmy:all', label: 'All' },
+        },
+        {
+          uri: 'https://lemmy.ml/feeds/local.xml?sort=Active',
+          hint: { key: 'lemmy:local', label: 'Local' },
+        },
+      ]
+
+      expect(lemmyHandler.resolve(value, content)).toEqual(expected)
+    })
+
+    it('should take the advertised sort when the page URL sort has the wrong case', () => {
+      const value = 'https://lemmy.ml/?sort=hot'
+      const content =
+        '<link rel="alternate" type="application/atom+xml" href="/feeds/local.xml?sort=Active">'
+      const expected = [
+        {
+          uri: 'https://lemmy.ml/feeds/all.xml?sort=Active',
+          hint: { key: 'lemmy:all', label: 'All' },
+        },
+        {
+          uri: 'https://lemmy.ml/feeds/local.xml?sort=Active',
+          hint: { key: 'lemmy:local', label: 'Local' },
+        },
+      ]
+
+      expect(lemmyHandler.resolve(value, content)).toEqual(expected)
+    })
+
+    it('should drop an unknown advertised sort', () => {
+      const value = 'https://lemmy.ml/c/programming'
+      const content =
+        '<link rel="alternate" type="application/atom+xml" href="/feeds/c/programming.xml?sort=bogus">'
+      const expected = [
+        {
+          uri: 'https://lemmy.ml/feeds/c/programming.xml',
+          hint: { key: 'lemmy:community', label: 'Community' },
+        },
+      ]
+
+      expect(lemmyHandler.resolve(value, content)).toEqual(expected)
     })
 
     it('should drop unknown ?sort= values', () => {

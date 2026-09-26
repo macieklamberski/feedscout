@@ -33,6 +33,18 @@ describe('kickstarterHandler', () => {
       expect(kickstarterHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return atom feed for project page with a capitalized projects segment', () => {
+      const value = 'https://www.kickstarter.com/Projects/reinnesplace/reinnes-place'
+      const expected = [
+        {
+          uri: 'https://www.kickstarter.com/projects/reinnesplace/reinnes-place/posts.atom',
+          hint: { key: 'kickstarter:updates', label: 'Updates' },
+        },
+      ]
+
+      expect(kickstarterHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return atom feed for project subpage', () => {
       const value = 'https://www.kickstarter.com/projects/reinnesplace/reinnes-place/description'
       const expected = [

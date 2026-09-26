@@ -1,4 +1,4 @@
-import { getSubdomain, isHostOf, isSubdomainOf, parseUrl } from 'trousse'
+import { getSubdomain, isAnyOf, isHostOf, isSubdomainOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
@@ -22,7 +22,7 @@ const getUsername = (url: string): string | undefined => {
     return getSubdomain(url, domains)
   }
 
-  if (isHostOf(url, hosts) && segments[0] === 'site') {
+  if (isHostOf(url, hosts) && isAnyOf(segments[0], 'site')) {
     return segments[1]
   }
 }

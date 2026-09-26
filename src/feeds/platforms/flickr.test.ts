@@ -11,6 +11,12 @@ describe('parseFlickrUrl', () => {
     expect(parseFlickrUrl('https://flickr.com/photos/tags/cats')).toEqual(expected)
   })
 
+  it('should return the tag for a tag page with a capitalized photos segment', () => {
+    const expected: FlickrUrl = { kind: 'tag', tag: 'cats' }
+
+    expect(parseFlickrUrl('https://flickr.com/Photos/tags/cats')).toEqual(expected)
+  })
+
   it('should return the photostream for an NSID photostream page', () => {
     const expected: FlickrUrl = { kind: 'photostream', userId: '24662369@N07' }
 
@@ -23,6 +29,12 @@ describe('parseFlickrUrl', () => {
     expect(parseFlickrUrl('https://www.flickr.com/photos/alice')).toEqual(expected)
   })
 
+  it('should return the photostream for a path alias with a capitalized photos segment', () => {
+    const expected: FlickrUrl = { kind: 'photostream', userId: 'alice' }
+
+    expect(parseFlickrUrl('https://www.flickr.com/Photos/alice')).toEqual(expected)
+  })
+
   it('should return the photostream for the bare host', () => {
     const expected: FlickrUrl = { kind: 'photostream', userId: 'alice' }
 
@@ -31,6 +43,13 @@ describe('parseFlickrUrl', () => {
 
   it('should return the favorites for a favorites page', () => {
     const value = 'https://www.flickr.com/photos/24662369@N07/favorites'
+    const expected: FlickrUrl = { kind: 'favorites', userId: '24662369@N07' }
+
+    expect(parseFlickrUrl(value)).toEqual(expected)
+  })
+
+  it('should return the favorites for a favorites page with a capitalized favorites segment', () => {
+    const value = 'https://www.flickr.com/photos/24662369@N07/Favorites'
     const expected: FlickrUrl = { kind: 'favorites', userId: '24662369@N07' }
 
     expect(parseFlickrUrl(value)).toEqual(expected)
@@ -49,10 +68,22 @@ describe('parseFlickrUrl', () => {
     expect(parseFlickrUrl('https://www.flickr.com/photos/alice/albums')).toEqual(expected)
   })
 
+  it('should return the albums for an albums page with a capitalized albums segment', () => {
+    const expected: FlickrUrl = { kind: 'albums', userId: 'alice' }
+
+    expect(parseFlickrUrl('https://www.flickr.com/photos/alice/Albums')).toEqual(expected)
+  })
+
   it('should return the galleries for a galleries page', () => {
     const expected: FlickrUrl = { kind: 'galleries', userId: 'alice' }
 
     expect(parseFlickrUrl('https://www.flickr.com/photos/alice/galleries')).toEqual(expected)
+  })
+
+  it('should return the galleries for a galleries page with a capitalized galleries segment', () => {
+    const expected: FlickrUrl = { kind: 'galleries', userId: 'alice' }
+
+    expect(parseFlickrUrl('https://www.flickr.com/photos/alice/Galleries')).toEqual(expected)
   })
 
   it('should return a subpage for a photo page', () => {
@@ -75,6 +106,23 @@ describe('parseFlickrUrl', () => {
     expect(parseFlickrUrl('https://www.flickr.com/groups/42097308@N00/')).toEqual(expected)
   })
 
+  it('should return the group for an NSID group page with a capitalized groups segment', () => {
+    const expected: FlickrUrl = { kind: 'group', group: '42097308@N00' }
+
+    expect(parseFlickrUrl('https://www.flickr.com/Groups/42097308@N00/')).toEqual(expected)
+  })
+
+  it('should return undefined for a group NSID with a lowercase marker', () => {
+    expect(parseFlickrUrl('https://www.flickr.com/groups/42097308@n00/pool')).toBeUndefined()
+  })
+
+  it('should return the canonical section for a capitalized group section', () => {
+    const value = 'https://www.flickr.com/groups/42097308@N00/Discuss'
+    const expected: FlickrUrl = { kind: 'group', group: '42097308@N00', section: 'discuss' }
+
+    expect(parseFlickrUrl(value)).toEqual(expected)
+  })
+
   it('should return the section for a group discussion page', () => {
     const value = 'https://www.flickr.com/groups/42097308@N00/discuss'
     const expected: FlickrUrl = { kind: 'group', group: '42097308@N00', section: 'discuss' }
@@ -84,6 +132,10 @@ describe('parseFlickrUrl', () => {
 
   it('should return undefined for the tags landing page', () => {
     expect(parseFlickrUrl('https://www.flickr.com/photos/tags/')).toBeUndefined()
+  })
+
+  it('should return undefined for the tags landing page with a capitalized tags segment', () => {
+    expect(parseFlickrUrl('https://www.flickr.com/photos/Tags/')).toBeUndefined()
   })
 
   it('should return undefined for a group path alias', () => {
@@ -121,6 +173,14 @@ describe('flickrHandler', () => {
 
     it('should match a help forum page', () => {
       expect(flickrHandler.match('https://www.flickr.com/help/forum/en-us/')).toBe(true)
+    })
+
+    it('should match a help forum page with a capitalized help segment', () => {
+      expect(flickrHandler.match('https://www.flickr.com/Help/forum/en-us/')).toBe(true)
+    })
+
+    it('should not match the help forums link to another site', () => {
+      expect(flickrHandler.match('https://www.flickr.com/help/forums')).toBe(false)
     })
 
     it('should not match the explore page', () => {

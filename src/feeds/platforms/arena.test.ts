@@ -41,6 +41,12 @@ describe('parseArenaUrl', () => {
     expect(parseArenaUrl('https://www.are.na/meg-miller/feed/rss')).toEqual(expected)
   })
 
+  it('should return the profile for the profile feed URL with a capitalized feed segment', () => {
+    const expected: ArenaUrl = { kind: 'profile', username: 'meg-miller' }
+
+    expect(parseArenaUrl('https://www.are.na/meg-miller/Feed/rss')).toEqual(expected)
+  })
+
   it('should return undefined for excluded paths', () => {
     expect(parseArenaUrl('https://www.are.na/editorial')).toBeUndefined()
     expect(parseArenaUrl('https://www.are.na/explore')).toBeUndefined()
@@ -103,6 +109,18 @@ describe('arenaHandler', () => {
 
     it('should return editorial feed for the editorial section', () => {
       const value = 'https://www.are.na/editorial'
+      const expected = [
+        {
+          uri: 'https://www.are.na/editorial/feed/rss',
+          hint: { key: 'arena:editorial', label: 'Editorial' },
+        },
+      ]
+
+      expect(arenaHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return editorial feed for the editorial section with a capitalized editorial segment', () => {
+      const value = 'https://www.are.na/Editorial'
       const expected = [
         {
           uri: 'https://www.are.na/editorial/feed/rss',

@@ -77,6 +77,10 @@ describe('parsePinterestUrl', () => {
     expect(parsePinterestUrl('https://www.pinterest.com/topics')).toBeUndefined()
   })
 
+  it('should return undefined for a capitalized excluded path', () => {
+    expect(parsePinterestUrl('https://www.pinterest.com/Explore')).toBeUndefined()
+  })
+
   it('should return undefined for a pin page', () => {
     expect(parsePinterestUrl('https://www.pinterest.com/pin/123456789')).toBeUndefined()
   })

@@ -1,4 +1,4 @@
-import { isSubdomainOf } from 'trousse'
+import { isAnyOf, isSubdomainOf } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
@@ -21,7 +21,7 @@ export const weeblyHandler: PlatformHandler = {
     // Custom blog page slug (e.g., /articles/feed when page is named "articles").
     const firstSegment = pathSegments[0]
 
-    if (firstSegment && firstSegment !== 'blog' && !numericRegex.test(firstSegment)) {
+    if (firstSegment && !isAnyOf(firstSegment, 'blog') && !numericRegex.test(firstSegment)) {
       uris.push({
         uri: `${origin}/${firstSegment}/feed`,
         hint: composeHint('weebly:blog'),
