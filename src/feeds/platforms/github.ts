@@ -9,6 +9,7 @@ import { composeHint } from '../../common/utils.js'
 export type GithubUrl =
   | { kind: 'user'; owner: string }
   | { kind: 'repo'; owner: string; repo: string }
+  | { kind: 'discussions'; org: string }
 
 const hosts = ['github.com', 'www.github.com']
 
@@ -66,12 +67,41 @@ const excludedPaths = [
   'watching',
 ]
 
+// Repository and organization discussions sit at the same path depth:
+// /{owner}/{repo}/discussions and /orgs/{org}/discussions.
+const getDiscussionFeeds = (base: string, pathname: string): Array<DiscoverUriEntry> => {
+  const uris: Array<DiscoverUriEntry> = []
+
+  if (discussionsRegex.test(pathname)) {
+    uris.push({
+      uri: `${base}/discussions.atom`,
+      hint: composeHint('github:discussions'),
+    })
+  }
+
+  const discussionCategoryMatch = pathname.match(discussionCategoryRegex)
+
+  if (discussionCategoryMatch?.[1]) {
+    uris.push({
+      uri: `${base}/discussions/categories/${discussionCategoryMatch[1]}.atom`,
+      hint: composeHint('github:discussion-category'),
+    })
+  }
+
+  return uris
+}
+
 export const parseGithubUrl = (url: string): GithubUrl | undefined => {
   if (!isHostOf(url, hosts)) {
     return
   }
 
-  const [first, repo] = getPathSegments(url)
+  const [first, second, third] = getPathSegments(url)
+
+  if (isAnyOf(first, 'orgs') && second && isAnyOf(third, 'discussions')) {
+    return { kind: 'discussions', org: second }
+  }
+
   // GitHub names carry no dots, so a dot starts a route suffix such as .atom or .png.
   const owner = first?.split('.')[0]
 
@@ -79,8 +109,8 @@ export const parseGithubUrl = (url: string): GithubUrl | undefined => {
     return
   }
 
-  if (repo) {
-    return { kind: 'repo', owner, repo }
+  if (second) {
+    return { kind: 'repo', owner, repo: second }
   }
 
   return { kind: 'user', owner }
@@ -103,6 +133,11 @@ export const githubHandler: PlatformHandler = {
           hint: composeHint('github:activity'),
         },
       ]
+    }
+
+    // Organization discussions page: /orgs/{org}/discussions.
+    if (parsed?.kind === 'discussions') {
+      return getDiscussionFeeds(`https://github.com/orgs/${parsed.org}`, pathname)
     }
 
     if (parsed?.kind !== 'repo') {
@@ -134,23 +169,7 @@ export const githubHandler: PlatformHandler = {
       })
     }
 
-    // If on discussions page, add discussions feed.
-    if (discussionsRegex.test(pathname)) {
-      uris.push({
-        uri: `https://github.com/${owner}/${repo}/discussions.atom`,
-        hint: composeHint('github:discussions'),
-      })
-    }
-
-    // If on discussion category page, add category-scoped discussions feed.
-    const discussionCategoryMatch = pathname.match(discussionCategoryRegex)
-
-    if (discussionCategoryMatch?.[1]) {
-      uris.push({
-        uri: `https://github.com/${owner}/${repo}/discussions/categories/${discussionCategoryMatch[1]}.atom`,
-        hint: composeHint('github:discussion-category'),
-      })
-    }
+    uris.push(...getDiscussionFeeds(`https://github.com/${owner}/${repo}`, pathname))
 
     // If on a specific branch, add branch-specific commits feed.
     const branchMatch = pathname.match(branchRegex)
