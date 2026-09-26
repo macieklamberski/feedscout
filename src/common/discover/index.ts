@@ -29,6 +29,7 @@ export const discover = async <TValid>(
     extractFn,
     resolveUrlFn,
     resolveSiteUrlFn,
+    ignoredExtensions,
     stopOnFirstMethod = false,
     stopOnFirstResult = false,
     concurrency = 3,
@@ -156,7 +157,9 @@ export const discover = async <TValid>(
     // site page for every method except Feed, which reads the feed itself.
     const baseUrl = method === 'feed' ? sourceInput.url : (siteInput ?? sourceInput).url
     const normalized = rawUris
-      .map((entry) => normalizeUriEntry(entry, resolveUrlFn, baseUrl, onError))
+      .map((entry) => {
+        return normalizeUriEntry(entry, resolveUrlFn, baseUrl, onError, ignoredExtensions)
+      })
       .filter((entry) => entry !== undefined)
 
     // Each alternative counts on its own, so a page link to a URL that a platform entry already

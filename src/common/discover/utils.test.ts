@@ -1907,24 +1907,12 @@ describe('normalizeUriEntry', () => {
     expect(normalizeUriEntry(value, defaultResolveUrlFn, 'https://example.com/')).toBeUndefined()
   })
 
-  it.each([
-    'aac',
-    'flac',
-    'm4a',
-    'm4v',
-    'mov',
-    'mp3',
-    'mp4',
-    'oga',
-    'ogg',
-    'ogv',
-    'opus',
-    'wav',
-    'webm',
-  ])('should return undefined for a .%s file', (extension) => {
-    const value = { uri: `https://example.com/rss/episode.${extension}` }
+  it('should return undefined for a file with an ignored extension', () => {
+    const value = { uri: 'https://example.com/rss/episode.mp3' }
 
-    expect(normalizeUriEntry(value, defaultResolveUrlFn, 'https://example.com/')).toBeUndefined()
+    expect(
+      normalizeUriEntry(value, defaultResolveUrlFn, 'https://example.com/', undefined, ['mp3']),
+    ).toBeUndefined()
   })
 
   it('should return undefined for an episode behind a tracking prefix with a feed segment', () => {
@@ -1932,34 +1920,60 @@ describe('normalizeUriEntry', () => {
       uri: 'https://pdcn.co/e/dts.podtrac.com/redirect.mp3/prfx.byspotify.com/e/pscrb.fm/rss/p/traffic.libsyn.com/forcedn/broadway/20260923-grosses.mp3',
     }
 
-    expect(normalizeUriEntry(value, defaultResolveUrlFn, 'https://example.com/')).toBeUndefined()
+    expect(
+      normalizeUriEntry(value, defaultResolveUrlFn, 'https://example.com/', undefined, ['mp3']),
+    ).toBeUndefined()
   })
 
-  it('should return undefined for a media file with a query string', () => {
+  it('should return undefined for an ignored file with a query string', () => {
     const value = { uri: 'https://example.com/episode.MP3?ref=feed' }
 
-    expect(normalizeUriEntry(value, defaultResolveUrlFn, 'https://example.com/')).toBeUndefined()
+    expect(
+      normalizeUriEntry(value, defaultResolveUrlFn, 'https://example.com/', undefined, ['mp3']),
+    ).toBeUndefined()
   })
 
-  it('should drop media alternatives', () => {
+  it('should drop ignored alternatives', () => {
     const value = { uri: ['/episode.mp3', '/feed.xml'] }
     const expected = { uri: ['https://example.com/feed.xml'] }
 
+    expect(
+      normalizeUriEntry(value, defaultResolveUrlFn, 'https://example.com/', undefined, ['mp3']),
+    ).toEqual(expected)
+  })
+
+  it('should keep a file whose extension is not ignored', () => {
+    const value = { uri: 'https://example.com/favicon.png' }
+    const expected = { uri: 'https://example.com/favicon.png' }
+
+    expect(
+      normalizeUriEntry(value, defaultResolveUrlFn, 'https://example.com/', undefined, ['mp3']),
+    ).toEqual(expected)
+  })
+
+  it('should keep every file when no extensions are ignored', () => {
+    const value = { uri: 'https://example.com/episode.mp3' }
+    const expected = { uri: 'https://example.com/episode.mp3' }
+
     expect(normalizeUriEntry(value, defaultResolveUrlFn, 'https://example.com/')).toEqual(expected)
   })
 
-  it('should keep a feed named after a media format', () => {
+  it('should keep a path segment named after an ignored extension', () => {
     const value = { uri: 'https://example.com/feed/mp3/' }
     const expected = { uri: 'https://example.com/feed/mp3/' }
 
-    expect(normalizeUriEntry(value, defaultResolveUrlFn, 'https://example.com/')).toEqual(expected)
+    expect(
+      normalizeUriEntry(value, defaultResolveUrlFn, 'https://example.com/', undefined, ['mp3']),
+    ).toEqual(expected)
   })
 
-  it('should keep a feed whose query names a media file', () => {
+  it('should keep a uri whose query names an ignored file', () => {
     const value = { uri: 'https://example.com/feed.php?file=episode.mp3' }
     const expected = { uri: 'https://example.com/feed.php?file=episode.mp3' }
 
-    expect(normalizeUriEntry(value, defaultResolveUrlFn, 'https://example.com/')).toEqual(expected)
+    expect(
+      normalizeUriEntry(value, defaultResolveUrlFn, 'https://example.com/', undefined, ['mp3']),
+    ).toEqual(expected)
   })
 
   it('should return undefined for a relative uri resolved against a file base', () => {

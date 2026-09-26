@@ -1,3 +1,15 @@
+import {
+  archiveExtensions,
+  audioExtensions,
+  codeExtensions,
+  documentExtensions,
+  flashExtensions,
+  fontExtensions,
+  imageExtensions,
+  installerExtensions,
+  subtitleExtensions,
+  videoExtensions,
+} from 'trousse'
 import type { LinkSelector, Pattern, UriEntry } from '../common/types.js'
 import type { GuessMethodOptions } from '../common/uris/guess/types.js'
 import type { HeadersMethodOptions } from '../common/uris/headers/types.js'
@@ -209,6 +221,21 @@ const wrappedFeedUrlRegex = /[?&][^=&]*=(https?:|https?%3a|aHR0c)/i
 
 // URIs to ignore when discovering feeds from anchor elements.
 export const ignoredUris: Array<Pattern> = ['wp-json/oembed/', 'wp-json/wp/', wrappedFeedUrlRegex]
+
+// A podcast host's tracking prefix can put a feed segment in an episode's path, as in
+// `pscrb.fm/rss/p/…/episode.mp3`, so a page link or a platform handler can offer a media file.
+export const ignoredExtensions = [
+  ...archiveExtensions,
+  ...audioExtensions,
+  ...codeExtensions,
+  ...documentExtensions,
+  ...flashExtensions,
+  ...fontExtensions,
+  ...imageExtensions,
+  ...installerExtensions,
+  ...subtitleExtensions,
+  ...videoExtensions,
+]
 
 // Text labels used to identify feed links in anchor elements. "subscribe" is deliberately
 // excluded: on its own it overwhelmingly marks podcast-app, YouTube, and newsletter buttons

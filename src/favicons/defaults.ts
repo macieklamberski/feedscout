@@ -1,4 +1,15 @@
-import { omitEmpty } from 'trousse'
+import {
+  archiveExtensions,
+  audioExtensions,
+  codeExtensions,
+  documentExtensions,
+  flashExtensions,
+  fontExtensions,
+  installerExtensions,
+  omitEmpty,
+  subtitleExtensions,
+  videoExtensions,
+} from 'trousse'
 import type { LinkSelector } from '../common/types.js'
 import type { FeedMethodOptions } from '../common/uris/feed/types.js'
 import type { GuessMethodOptions } from '../common/uris/guess/types.js'
@@ -69,6 +80,18 @@ export const defaultGuessPaths = [
 ]
 
 export const linkSelectors: Array<LinkSelector> = defaultIconRels.map((rel) => ({ rel }))
+
+export const ignoredExtensions = [
+  ...archiveExtensions,
+  ...audioExtensions,
+  ...codeExtensions,
+  ...documentExtensions,
+  ...flashExtensions,
+  ...fontExtensions,
+  ...installerExtensions,
+  ...subtitleExtensions,
+  ...videoExtensions,
+]
 
 // Podcast artwork in `itunes:image` must be square, which RSS `<image>` is not:
 // that one is a logo up to 144 by 400 pixels.

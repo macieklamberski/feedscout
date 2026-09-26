@@ -11,6 +11,7 @@ import {
   defaultHeadersOptions,
   defaultHtmlOptions,
   defaultPlatformOptions,
+  ignoredExtensions,
 } from './defaults.js'
 import { createEnrichFaviconFn } from './enrich.js'
 import { defaultExtractFn } from './extractors.js'
@@ -41,6 +42,7 @@ export const discoverFavicons = <TValid extends FaviconResult = FaviconResult>(
       extractFn: options.extractFn ?? defaultExtractFn,
       resolveUrlFn: options.resolveUrlFn ?? defaultResolveUrlFn,
       resolveSiteUrlFn: options.resolveSiteUrlFn ?? defaultResolveSiteUrlFn,
+      ignoredExtensions,
     },
     {
       platform: { ...defaultPlatformOptions, enrichFn: getEnrichFn() },

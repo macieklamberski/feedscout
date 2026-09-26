@@ -6,6 +6,7 @@ import {
   defaultHeadersOptions,
   defaultHtmlOptions,
   defaultPlatformOptions,
+  ignoredExtensions,
 } from './defaults.js'
 import { defaultExtractFn } from './extractors.js'
 import type { FeedResult } from './types.js'
@@ -22,6 +23,7 @@ export const discoverFeeds = <TValid extends FeedResult = FeedResult>(
       fetchFn: options.fetchFn ?? defaultFetchFn,
       extractFn: options.extractFn ?? defaultExtractFn,
       resolveUrlFn: options.resolveUrlFn ?? defaultResolveUrlFn,
+      ignoredExtensions,
       // No resolveSiteUrlFn — feeds discoverer early-returns in extractFn before site resolution.
     },
     {
