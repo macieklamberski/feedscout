@@ -461,6 +461,10 @@
     "https://garymarcus.substack.com/feed"
   ],
   "svbtle": ["https://dcurt.is/feed"],
+  "sverigesRadio": [
+    "https://public-api.sr.se/rss/vetenskapsradion",
+    "https://api.sr.se/api/rss/program/412"
+  ],
   "syosetu": ["https://api.syosetu.com/writernovel/372556.Atom"],
   "textpattern": ["https://textpattern.com/rss", "https://textpattern.com/atom"],
   "tildes": [

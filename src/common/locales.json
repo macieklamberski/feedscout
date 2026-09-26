@@ -385,6 +385,7 @@
     "crates-io:new-crates": "New crates",
     "crates-io:updates": "Recent updates",
     "plurk:plurks": "Plurks",
-    "plurk:responses": "Responses"
+    "plurk:responses": "Responses",
+    "sverigesRadio:program": "Program"
   }
 }

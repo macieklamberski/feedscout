@@ -138,6 +138,7 @@ import { stackExchangeHandler } from './platforms/stackExchange.js'
 import { steamHandler } from './platforms/steam.js'
 import { substackHandler } from './platforms/substack.js'
 import { svbtleHandler } from './platforms/svbtle.js'
+import { sverigesRadioHandler } from './platforms/sverigesRadio.js'
 import { syosetuHandler } from './platforms/syosetu.js'
 import { textpatternHandler } from './platforms/textpattern.js'
 import { tildesHandler } from './platforms/tildes.js'
@@ -427,6 +428,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     steamHandler,
     substackHandler,
     svbtleHandler,
+    sverigesRadioHandler,
     syosetuHandler,
     textpatternHandler,
     tildesHandler,
