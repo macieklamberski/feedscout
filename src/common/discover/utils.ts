@@ -117,11 +117,22 @@ export const attempt = <TValue, TFallback>(
   }
 }
 
+// An audio or video file is never a candidate, and fetching one to validate it downloads the whole
+// file. A podcast host's tracking prefix can put a feed segment in an episode's path, as in
+// `pscrb.fm/rss/p/…/episode.mp3`, so a page link or a platform handler can offer one.
+const mediaFileRegex = /\.(?:aac|flac|m4a|m4v|mov|mp3|mp4|oga|ogg|ogv|opus|wav|webm)$/i
+
 // A URI that parses with another scheme, such as a `javascript:` or `mailto:` link, cannot be
 // fetched. One that does not parse is kept as discovered, as a resolver that answers nothing
 // leaves it.
 const isFetchableUri = (uri: string): boolean => {
-  return !parseUrl(uri) || isHttpUrl(uri)
+  const url = parseUrl(uri)
+
+  if (!url) {
+    return true
+  }
+
+  return isHttpUrl(uri) && !mediaFileRegex.test(url.pathname)
 }
 
 export const normalizeUriEntry = (

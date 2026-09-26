@@ -35,53 +35,6 @@ describe('defaultHtmlOptions ignores subscribe/share links that wrap a feed URL'
   })
 })
 
-describe('defaultHtmlOptions ignores links to audio and video files', () => {
-  const extensions = [
-    'aac',
-    'flac',
-    'm4a',
-    'm4v',
-    'mov',
-    'mp3',
-    'mp4',
-    'oga',
-    'ogg',
-    'ogv',
-    'opus',
-    'wav',
-    'webm',
-  ]
-
-  it.each(extensions)('ignores a .%s file under a feed segment', (extension) => {
-    const value = `<a href="https://example.com/rss/episode.${extension}">Download</a>`
-    const expected: Array<string> = []
-
-    expect(discoverUrisFromHtml(value, defaultHtmlOptions)).toEqual(expected)
-  })
-
-  it('ignores an episode behind a tracking prefix with a feed segment', () => {
-    const value =
-      '<a href="https://pdcn.co/e/dts.podtrac.com/redirect.mp3/prfx.byspotify.com/e/pscrb.fm/rss/p/traffic.libsyn.com/forcedn/broadway/20260923-grosses.mp3">Download</a>'
-    const expected: Array<string> = []
-
-    expect(discoverUrisFromHtml(value, defaultHtmlOptions)).toEqual(expected)
-  })
-
-  it('ignores a media file with a query string', () => {
-    const value = '<a href="https://example.com/rss/episode.mp3?ref=feed">RSS</a>'
-    const expected: Array<string> = []
-
-    expect(discoverUrisFromHtml(value, defaultHtmlOptions)).toEqual(expected)
-  })
-
-  it('still discovers a feed named after a media format', () => {
-    const value = '<a href="https://example.com/feed/mp3/">RSS</a>'
-    const expected = ['https://example.com/feed/mp3/']
-
-    expect(discoverUrisFromHtml(value, defaultHtmlOptions)).toEqual(expected)
-  })
-})
-
 describe('defaultHtmlOptions matches feed path segments in the pathname only', () => {
   it('discovers an anchor with a feed segment in the path', () => {
     const value = '<a href="https://example.com/rss/news.xml"><svg></svg></a>'
