@@ -57,6 +57,36 @@ describe('parseGithubUrl', () => {
     expect(parseGithubUrl('https://github.com/owner/my%20repo')).toEqual(expected)
   })
 
+  it('should return the org for an organization discussions page', () => {
+    const expected: GithubUrl = { kind: 'discussions', org: 'acme' }
+
+    expect(parseGithubUrl('https://github.com/orgs/acme/discussions')).toEqual(expected)
+  })
+
+  it('should return the org for an organization discussions subpage', () => {
+    const value = 'https://github.com/orgs/acme/discussions/categories/announcements'
+    const expected: GithubUrl = { kind: 'discussions', org: 'acme' }
+
+    expect(parseGithubUrl(value)).toEqual(expected)
+  })
+
+  const capitalizedRouteValues: Array<string> = [
+    'https://github.com/Orgs/acme/discussions',
+    'https://github.com/orgs/acme/Discussions',
+  ]
+
+  it.each(capitalizedRouteValues)('should return the org for %s', (value) => {
+    const expected: GithubUrl = { kind: 'discussions', org: 'acme' }
+
+    expect(parseGithubUrl(value)).toEqual(expected)
+  })
+
+  it('should keep the org case', () => {
+    const expected: GithubUrl = { kind: 'discussions', org: 'Acme' }
+
+    expect(parseGithubUrl('https://github.com/orgs/Acme/discussions')).toEqual(expected)
+  })
+
   const excludedValues: Array<string> = [
     'https://github.com/explore',
     'https://github.com/copilot',
@@ -383,6 +413,50 @@ describe('githubHandler', () => {
         },
         {
           uri: 'https://github.com/microsoft/vscode/discussions/categories/announcements.atom',
+          hint: { key: 'github:discussion-category', label: 'Discussion category' },
+        },
+      ]
+
+      expect(githubHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return the discussions feed for an organization discussions page', () => {
+      const value = 'https://github.com/orgs/acme/discussions'
+      const expected = [
+        {
+          uri: 'https://github.com/orgs/acme/discussions.atom',
+          hint: { key: 'github:discussions', label: 'Discussions' },
+        },
+      ]
+
+      expect(githubHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should include category-scoped discussion feed when on organization category page', () => {
+      const value = 'https://github.com/orgs/acme/discussions/categories/announcements'
+      const expected = [
+        {
+          uri: 'https://github.com/orgs/acme/discussions.atom',
+          hint: { key: 'github:discussions', label: 'Discussions' },
+        },
+        {
+          uri: 'https://github.com/orgs/acme/discussions/categories/announcements.atom',
+          hint: { key: 'github:discussion-category', label: 'Discussion category' },
+        },
+      ]
+
+      expect(githubHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should include category-scoped discussion feed when on organization category page with a capitalized categories segment', () => {
+      const value = 'https://github.com/orgs/acme/discussions/Categories/announcements'
+      const expected = [
+        {
+          uri: 'https://github.com/orgs/acme/discussions.atom',
+          hint: { key: 'github:discussions', label: 'Discussions' },
+        },
+        {
+          uri: 'https://github.com/orgs/acme/discussions/categories/announcements.atom',
           hint: { key: 'github:discussion-category', label: 'Discussion category' },
         },
       ]

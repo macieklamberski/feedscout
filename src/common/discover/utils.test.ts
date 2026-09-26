@@ -255,6 +255,57 @@ describe('normalizeInput', () => {
     expect(await normalizeInput('https://example.com', redirectFetchFn)).toEqual(expected)
   })
 
+  it('should fetch a feed:// URL over https', async () => {
+    const receivedUrls: Array<string> = []
+    const recordingFetchFn: FetchFn = (url) => {
+      receivedUrls.push(url)
+
+      return fetchFn(url)
+    }
+    const expected = ['https://example.com/rss.xml']
+
+    await normalizeInput('feed://example.com/rss.xml', recordingFetchFn)
+
+    expect(receivedUrls).toEqual(expected)
+  })
+
+  it('should fetch the URL a feed: scheme wraps', async () => {
+    const receivedUrls: Array<string> = []
+    const recordingFetchFn: FetchFn = (url) => {
+      receivedUrls.push(url)
+
+      return fetchFn(url)
+    }
+    const expected = ['http://example.com/rss.xml']
+
+    await normalizeInput('feed:http://example.com/rss.xml', recordingFetchFn)
+
+    expect(receivedUrls).toEqual(expected)
+  })
+
+  it('should fetch a podcast scheme URL over https', async () => {
+    const receivedUrls: Array<string> = []
+    const recordingFetchFn: FetchFn = (url) => {
+      receivedUrls.push(url)
+
+      return fetchFn(url)
+    }
+    const expected = ['https://example.com/podcast.xml']
+
+    await normalizeInput('itpc://example.com/podcast.xml', recordingFetchFn)
+
+    expect(receivedUrls).toEqual(expected)
+  })
+
+  it('should return the https URL when a feed:// URL fails to fetch', async () => {
+    const failingFetchFn: FetchFn = () => {
+      return Promise.reject(new Error('Network error'))
+    }
+    const expected = { url: 'https://example.com/rss.xml' }
+
+    expect(await normalizeInput('feed://example.com/rss.xml', failingFetchFn)).toEqual(expected)
+  })
+
   it('should handle ReadableStream body by returning undefined content', async () => {
     const streamFetchFn: FetchFn = (url) => {
       return Promise.resolve({

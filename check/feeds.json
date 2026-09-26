@@ -135,6 +135,9 @@
     "https://github.com/macieklamberski/feedscout/tags.atom",
     "https://github.com/microsoft/vscode/wiki.atom",
     "https://github.com/vercel/next.js/discussions.atom",
+    "https://github.com/vercel/next.js/discussions/categories/help.atom",
+    "https://github.com/orgs/community/discussions.atom",
+    "https://github.com/orgs/community/discussions/categories/announcements.atom",
     "https://github.com/macieklamberski/feedscout/commits/main.atom",
     "https://github.com/macieklamberski/feedscout/commits/main/package.json.atom"
   ],
