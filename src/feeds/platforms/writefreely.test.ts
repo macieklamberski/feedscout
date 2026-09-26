@@ -178,6 +178,38 @@ describe('writefreelyHandler', () => {
       expect(writefreelyHandler.resolve(value, content)).toEqual(expected)
     })
 
+    it('should build the tag feed of a single-user instance without a blog title link', () => {
+      const value = 'https://example.org/tag:coolify'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://example.org/tag:coolify/feed/',
+          hint: { key: 'writefreely:tag', label: 'Tag' },
+        },
+        {
+          uri: 'https://example.org/feed/',
+          hint: { key: 'writefreely:blog', label: 'Blog' },
+        },
+      ]
+
+      expect(writefreelyHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should build the tag feed of a single-user instance from an uppercase tag segment without a blog title link', () => {
+      const value = 'https://example.org/TAG:coolify'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://example.org/tag:coolify/feed/',
+          hint: { key: 'writefreely:tag', label: 'Tag' },
+        },
+        {
+          uri: 'https://example.org/feed/',
+          hint: { key: 'writefreely:blog', label: 'Blog' },
+        },
+      ]
+
+      expect(writefreelyHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should fall back to the blog name when the blog title links elsewhere', () => {
       const value = 'https://example.org/alice/a-post'
       const content = '<h1 id="blog-title"><a href="https://alice.example.com/">Blog</a></h1>'
