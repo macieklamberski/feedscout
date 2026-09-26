@@ -1,5 +1,4 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverUriEntry } from '../../common/types.js'
 import { lobstersHandler } from './lobsters.js'
 
 describe('lobstersHandler', () => {
@@ -15,7 +14,7 @@ describe('lobstersHandler', () => {
 
   describe('resolve', () => {
     it('should resolve user avatar from user URL', () => {
-      const expected: Array<DiscoverUriEntry> = [{ uri: 'https://lobste.rs/avatars/jcs-100.png' }]
+      const expected = [{ uri: 'https://lobste.rs/avatars/jcs-100.png' }]
 
       expect(lobstersHandler.resolve('https://lobste.rs/~jcs')).toEqual(expected)
     })

@@ -30,15 +30,15 @@ describe('gitlabHandler', () => {
     })
 
     it('should match self-hosted instance with GitLab HTML', () => {
-      expect(gitlabHandler.match('https://gitlab.mycompany.com/user', gitlabHtml)).toBe(true)
+      expect(gitlabHandler.match('https://gitlab.example.com/user', gitlabHtml)).toBe(true)
     })
 
     it('should match self-hosted instance with GitLab header', () => {
-      expect(gitlabHandler.match('https://gitlab.mycompany.com/user', '', gitlabHeaders)).toBe(true)
+      expect(gitlabHandler.match('https://gitlab.example.com/user', '', gitlabHeaders)).toBe(true)
     })
 
     it('should not match self-hosted without content or headers', () => {
-      expect(gitlabHandler.match('https://gitlab.mycompany.com/user')).toBe(false)
+      expect(gitlabHandler.match('https://gitlab.example.com/user')).toBe(false)
     })
   })
 
@@ -48,7 +48,7 @@ describe('gitlabHandler', () => {
     })
 
     it('should return a ref for a self-hosted instance', async () => {
-      const url = 'https://gitlab.mycompany.com/alice'
+      const url = 'https://gitlab.example.com/alice'
 
       expect(await gitlabHandler.resolve(url)).toEqual([createRef(url, 'alice')])
     })
@@ -93,14 +93,14 @@ describe('gitlabEnricher', () => {
 
   it('should use origin from self-hosted instance', async () => {
     const context = createContext({
-      'https://gitlab.mycompany.com/api/v4/users?username=alice': JSON.stringify([
-        { avatar_url: 'https://gitlab.mycompany.com/uploads/user/avatar/1/alice.png' },
+      'https://gitlab.example.com/api/v4/users?username=alice': JSON.stringify([
+        { avatar_url: 'https://gitlab.example.com/uploads/user/avatar/1/alice.png' },
       ]),
     })
-    const ref = createRef('https://gitlab.mycompany.com/alice', 'alice')
+    const ref = createRef('https://gitlab.example.com/alice', 'alice')
 
     expect(await gitlabEnricher(ref, context)).toEqual([
-      'https://gitlab.mycompany.com/uploads/user/avatar/1/alice.png',
+      'https://gitlab.example.com/uploads/user/avatar/1/alice.png',
     ])
   })
 

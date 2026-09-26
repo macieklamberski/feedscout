@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverRef, DiscoverUriEntry, FetchFn } from '../../common/types.js'
+import type { DiscoverRef, FetchFn } from '../../common/types.js'
 import type { FaviconEnricherContext } from '../types.js'
 import { myanimelistEnricher, myanimelistHandler } from './myanimelist.js'
 
@@ -59,14 +59,14 @@ describe('myanimelistHandler', () => {
     describe('happy paths', () => {
       it('should return the avatar from the profile page content', () => {
         const value = 'https://myanimelist.net/profile/example'
-        const expected: Array<DiscoverUriEntry> = [{ uri: avatarUrl }]
+        const expected = [{ uri: avatarUrl }]
 
         expect(myanimelistHandler.resolve(value, profilePage)).toEqual(expected)
       })
 
       it('should return the avatar from the profile page content with a capitalized profile segment', () => {
         const value = 'https://myanimelist.net/Profile/example'
-        const expected: Array<DiscoverUriEntry> = [{ uri: avatarUrl }]
+        const expected = [{ uri: avatarUrl }]
 
         expect(myanimelistHandler.resolve(value, profilePage)).toEqual(expected)
       })
@@ -74,21 +74,21 @@ describe('myanimelistHandler', () => {
       it('should return the avatar when another class comes before user-image', () => {
         const value = 'https://myanimelist.net/profile/example'
         const content = profilePage.replace('class="user-image mb8"', 'class="mb8 user-image"')
-        const expected: Array<DiscoverUriEntry> = [{ uri: avatarUrl }]
+        const expected = [{ uri: avatarUrl }]
 
         expect(myanimelistHandler.resolve(value, content)).toEqual(expected)
       })
 
       it('should return a ref for an anime list page', () => {
         const value = 'https://myanimelist.net/animelist/example'
-        const expected: Array<DiscoverRef> = [createRef(value)]
+        const expected = [createRef(value)]
 
         expect(myanimelistHandler.resolve(value, '<html></html>')).toEqual(expected)
       })
 
       it('should return a ref for a profile page passed without its content', () => {
         const value = 'https://myanimelist.net/profile/example'
-        const expected: Array<DiscoverRef> = [createRef(value)]
+        const expected = [createRef(value)]
 
         expect(myanimelistHandler.resolve(value)).toEqual(expected)
       })
@@ -120,7 +120,7 @@ describe('myanimelistHandler', () => {
     describe('edge cases', () => {
       it('should return a ref for a page below the profile', () => {
         const value = 'https://myanimelist.net/profile/example/reviews'
-        const expected: Array<DiscoverRef> = [createRef(value)]
+        const expected = [createRef(value)]
 
         expect(myanimelistHandler.resolve(value, profilePage)).toEqual(expected)
       })

@@ -244,7 +244,7 @@ describe('discoverFeeds', () => {
           },
         },
       )
-      const expected: Array<Partial<DiscoverProgress>> = [
+      const expected = [
         { tested: 1, total: 2, found: 0, current: 'https://example.com/platform-feed' },
         { tested: 2, total: 2, found: 1, current: 'https://example.com/guess-feed' },
       ]
@@ -381,7 +381,7 @@ describe('discoverFeeds', () => {
           },
         },
       )
-      const expected: Array<Partial<DiscoverProgress>> = [
+      const expected = [
         {
           tested: 1,
           total: 2,
@@ -418,7 +418,7 @@ describe('discoverFeeds', () => {
           },
         },
       )
-      const expected: Partial<DiscoverProgress> = {
+      const expected = {
         tested: 2,
         total: 2,
         found: 0,
@@ -445,7 +445,7 @@ describe('discoverFeeds', () => {
           },
         },
       )
-      const expected: Array<Partial<DiscoverProgress>> = [
+      const expected = [
         {
           method: 'platform',
           result: {
@@ -1323,7 +1323,7 @@ describe('discoverFeeds', () => {
           },
         },
       )
-      const expected: Partial<DiscoverProgress> = {
+      const expected = {
         tested: 2,
         total: 2,
         found: 1,
@@ -1382,7 +1382,7 @@ describe('discoverFeeds', () => {
           includeInvalid: true,
         },
       )
-      const expected: Array<Partial<DiscoverResult<FeedResult>>> = [
+      const expected = [
         { url: 'https://example.com/feed', isValid: false },
         { url: 'https://example.com/feed', isValid: true },
       ]

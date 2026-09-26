@@ -1,5 +1,4 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverUriEntry } from '../../common/types.js'
 import { togetterHandler } from './togetter.js'
 
 const createProfilePage = (image: string): string => {
@@ -40,9 +39,7 @@ describe('togetterHandler', () => {
     describe('happy paths', () => {
       it('should return the 400x400 avatar from the ProfilePage JSON-LD', () => {
         const value = createProfilePage('https://example.com/profile_images/123/abc_normal.jpg')
-        const expected: Array<DiscoverUriEntry> = [
-          { uri: 'https://example.com/profile_images/123/abc_400x400.jpg' },
-        ]
+        const expected = [{ uri: 'https://example.com/profile_images/123/abc_400x400.jpg' }]
 
         expect(togetterHandler.resolve('https://togetter.com/id/example', value)).toEqual(expected)
       })
@@ -61,9 +58,7 @@ describe('togetterHandler', () => {
             data-next-head=""
           >${jsonLd}</script>
         `
-        const expected: Array<DiscoverUriEntry> = [
-          { uri: 'https://example.com/profile_images/123/abc_400x400.png' },
-        ]
+        const expected = [{ uri: 'https://example.com/profile_images/123/abc_400x400.png' }]
 
         expect(togetterHandler.resolve('https://togetter.com/id/example', value)).toEqual(expected)
       })
@@ -77,9 +72,7 @@ describe('togetterHandler', () => {
           },
         })
         const value = `<script type="application/ld+json">${jsonLd}</script>`
-        const expected: Array<DiscoverUriEntry> = [
-          { uri: 'https://example.com/profile_images/123/abc_400x400.png' },
-        ]
+        const expected = [{ uri: 'https://example.com/profile_images/123/abc_400x400.png' }]
 
         expect(togetterHandler.resolve('https://togetter.com/id/example', value)).toEqual(expected)
       })
@@ -129,9 +122,7 @@ describe('togetterHandler', () => {
     describe('edge cases', () => {
       it('should return the image unchanged when it has no size suffix', () => {
         const value = createProfilePage('https://example.com/profile_images/123/abc.jpg')
-        const expected: Array<DiscoverUriEntry> = [
-          { uri: 'https://example.com/profile_images/123/abc.jpg' },
-        ]
+        const expected = [{ uri: 'https://example.com/profile_images/123/abc.jpg' }]
 
         expect(togetterHandler.resolve('https://togetter.com/id/example', value)).toEqual(expected)
       })
@@ -141,9 +132,7 @@ describe('togetterHandler', () => {
           'https://example.com/profile_images/123/abc_normal.jpg',
         )
         const value = `<script type="application/ld+json">{not json</script>${profilePage}`
-        const expected: Array<DiscoverUriEntry> = [
-          { uri: 'https://example.com/profile_images/123/abc_400x400.jpg' },
-        ]
+        const expected = [{ uri: 'https://example.com/profile_images/123/abc_400x400.jpg' }]
 
         expect(togetterHandler.resolve('https://togetter.com/id/example', value)).toEqual(expected)
       })

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverRef, DiscoverUriEntry, FetchFn } from '../../common/types.js'
+import type { DiscoverRef, FetchFn } from '../../common/types.js'
 import type { FaviconEnricherContext } from '../types.js'
 import { velogEnricher, velogHandler } from './velog.js'
 
@@ -77,7 +77,7 @@ describe('velogHandler', () => {
   describe('resolve', () => {
     describe('happy paths', () => {
       it('should return square avatar from profile page HTML', async () => {
-        const expected: Array<DiscoverUriEntry> = [{ uri: squareAvatar }]
+        const expected = [{ uri: squareAvatar }]
 
         expect(await velogHandler.resolve('https://velog.io/@alice', profileHtml)).toEqual(expected)
       })
@@ -89,7 +89,7 @@ describe('velogHandler', () => {
             src=https://images.velog.io/images/alice/profile/0f3c/avatar.png
           />
         `
-        const expected: Array<DiscoverUriEntry> = [{ uri: squareAvatar }]
+        const expected = [{ uri: squareAvatar }]
 
         expect(await velogHandler.resolve('https://velog.io/@alice', content)).toEqual(expected)
       })
@@ -101,28 +101,28 @@ describe('velogHandler', () => {
             src="https://images.velog.io/images/alice/profile/0f3c/avatar.png"
           />
         `
-        const expected: Array<DiscoverUriEntry> = [{ uri: squareAvatar }]
+        const expected = [{ uri: squareAvatar }]
 
         expect(await velogHandler.resolve('https://velog.io/@alice', content)).toEqual(expected)
       })
 
       it('should return square avatar from post page HTML', async () => {
         const url = 'https://velog.io/@alice/hello-world'
-        const expected: Array<DiscoverUriEntry> = [{ uri: squareAvatar }]
+        const expected = [{ uri: squareAvatar }]
 
         expect(await velogHandler.resolve(url, postHtml)).toEqual(expected)
       })
 
       it('should return a ref when content is absent', async () => {
         const url = 'https://velog.io/@alice/series'
-        const expected: Array<DiscoverRef> = [{ platform: 'velog', id: 'alice', url }]
+        const expected = [{ platform: 'velog', id: 'alice', url }]
 
         expect(await velogHandler.resolve(url)).toEqual(expected)
       })
 
       it('should return a ref when HTML has no profile image', async () => {
         const url = 'https://velog.io/@alice'
-        const expected: Array<DiscoverRef> = [{ platform: 'velog', id: 'alice', url }]
+        const expected = [{ platform: 'velog', id: 'alice', url }]
 
         expect(await velogHandler.resolve(url, '<html><body></body></html>')).toEqual(expected)
       })
@@ -137,14 +137,14 @@ describe('velogHandler', () => {
     describe('edge cases', () => {
       it('should return a ref instead of the placeholder image', async () => {
         const url = 'https://velog.io/@alice'
-        const expected: Array<DiscoverRef> = [{ platform: 'velog', id: 'alice', url }]
+        const expected = [{ platform: 'velog', id: 'alice', url }]
 
         expect(await velogHandler.resolve(url, placeholderHtml)).toEqual(expected)
       })
 
       it('should return a ref instead of an image on another host', async () => {
         const url = 'https://velog.io/@alice'
-        const expected: Array<DiscoverRef> = [{ platform: 'velog', id: 'alice', url }]
+        const expected = [{ platform: 'velog', id: 'alice', url }]
 
         expect(await velogHandler.resolve(url, otherHostHtml)).toEqual(expected)
       })

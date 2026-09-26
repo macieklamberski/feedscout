@@ -343,7 +343,7 @@ describe('discoverUrisFromHtml', () => {
 
     it('should not match a feed path segment that only appears in the query string', () => {
       const value =
-        '<a href="https://www.live.com/Default.aspx?add=https://site.example/rss/section">x</a>'
+        '<a href="https://www.example.com/Default.aspx?add=https://site.example/rss/section">x</a>'
       const expected: Array<string> = []
 
       expect(discoverUrisFromHtml(value, defaultOptions)).toEqual(expected)
@@ -973,16 +973,16 @@ describe('discoverUrisFromHtml', () => {
 
     it('should handle international domain names in href', () => {
       const value =
-        '<link rel="alternate" type="application/rss+xml" href="https://例え.jp/feed.xml">'
-      const expected = ['https://例え.jp/feed.xml']
+        '<link rel="alternate" type="application/rss+xml" href="https://例え.example.com/feed.xml">'
+      const expected = ['https://例え.example.com/feed.xml']
 
       expect(discoverUrisFromHtml(value, defaultOptions)).toEqual(expected)
     })
 
     it('should handle punycode domains in href', () => {
       const value =
-        '<link rel="alternate" type="application/rss+xml" href="https://xn--r8jz45g.jp/feed.xml">'
-      const expected = ['https://xn--r8jz45g.jp/feed.xml']
+        '<link rel="alternate" type="application/rss+xml" href="https://xn--r8jz45g.example.com/feed.xml">'
+      const expected = ['https://xn--r8jz45g.example.com/feed.xml']
 
       expect(discoverUrisFromHtml(value, defaultOptions)).toEqual(expected)
     })

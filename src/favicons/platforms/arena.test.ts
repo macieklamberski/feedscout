@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverRef, DiscoverUriEntry, FetchFn } from '../../common/types.js'
+import type { DiscoverRef, FetchFn } from '../../common/types.js'
 import type { FaviconEnricherContext } from '../types.js'
 import { arenaEnricher, arenaHandler } from './arena.js'
 
@@ -83,7 +83,7 @@ describe('arenaHandler', () => {
           'https://www.are.na/charles-broskoski',
           profileHtml,
         )
-        const expected: Array<DiscoverUriEntry> = [
+        const expected = [
           {
             uri: 'https://static.avatars.are.na/15/large_f91bdac52d14ef988c9818884d6865db.jpg?1616377630',
           },
@@ -122,16 +122,14 @@ describe('arenaHandler', () => {
         'https://www.are.na/meg-miller/good-sign-offs',
         profileHtml,
       )
-      const expected: Array<DiscoverRef> = [channelRef]
+      const expected = [channelRef]
 
       expect(result).toEqual(expected)
     })
 
     it('should return a ref for channel subpages', async () => {
       const value = 'https://www.are.na/meg-miller/good-sign-offs/table'
-      const expected: Array<DiscoverRef> = [
-        { platform: 'arena', id: 'meg-miller/good-sign-offs', url: value },
-      ]
+      const expected = [{ platform: 'arena', id: 'meg-miller/good-sign-offs', url: value }]
 
       expect(await arenaHandler.resolve(value, profileHtml)).toEqual(expected)
     })

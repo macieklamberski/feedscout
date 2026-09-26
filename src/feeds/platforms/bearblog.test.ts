@@ -5,7 +5,7 @@ import { bearblogHandler } from './bearblog.js'
 describe('bearblogHandler', () => {
   describe('match', () => {
     const values: Array<[boolean, string]> = [
-      [true, 'https://herman.bearblog.dev'],
+      [true, 'https://alice.bearblog.dev'],
       [true, 'https://blog.example.bearblog.dev'],
       [true, 'https://bearblog.dev'],
       [true, 'https://www.bearblog.dev'],
@@ -23,14 +23,14 @@ describe('bearblogHandler', () => {
 
   describe('resolve', () => {
     it('should return Atom and RSS feeds for blog', () => {
-      const value = 'https://herman.bearblog.dev'
+      const value = 'https://alice.bearblog.dev'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://herman.bearblog.dev/feed/',
+          uri: 'https://alice.bearblog.dev/feed/',
           hint: { key: 'bearblog:posts', label: 'Posts', format: 'atom' },
         },
         {
-          uri: 'https://herman.bearblog.dev/feed/?type=rss',
+          uri: 'https://alice.bearblog.dev/feed/?type=rss',
           hint: { key: 'bearblog:posts', label: 'Posts', format: 'rss' },
         },
       ]
@@ -39,14 +39,14 @@ describe('bearblogHandler', () => {
     })
 
     it('should return feed URLs regardless of path', () => {
-      const value = 'https://herman.bearblog.dev/some-article-slug'
+      const value = 'https://alice.bearblog.dev/some-article-slug'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://herman.bearblog.dev/feed/',
+          uri: 'https://alice.bearblog.dev/feed/',
           hint: { key: 'bearblog:posts', label: 'Posts', format: 'atom' },
         },
         {
-          uri: 'https://herman.bearblog.dev/feed/?type=rss',
+          uri: 'https://alice.bearblog.dev/feed/?type=rss',
           hint: { key: 'bearblog:posts', label: 'Posts', format: 'rss' },
         },
       ]
@@ -71,22 +71,22 @@ describe('bearblogHandler', () => {
     })
 
     it('should return tag-filtered and main feeds when q query param is set', () => {
-      const value = 'https://herman.bearblog.dev/blog/?q=tips'
+      const value = 'https://alice.bearblog.dev/blog/?q=tips'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://herman.bearblog.dev/feed/?q=tips',
+          uri: 'https://alice.bearblog.dev/feed/?q=tips',
           hint: { key: 'bearblog:tag', label: 'Tag', format: 'atom' },
         },
         {
-          uri: 'https://herman.bearblog.dev/feed/?type=rss&q=tips',
+          uri: 'https://alice.bearblog.dev/feed/?type=rss&q=tips',
           hint: { key: 'bearblog:tag', label: 'Tag', format: 'rss' },
         },
         {
-          uri: 'https://herman.bearblog.dev/feed/',
+          uri: 'https://alice.bearblog.dev/feed/',
           hint: { key: 'bearblog:posts', label: 'Posts', format: 'atom' },
         },
         {
-          uri: 'https://herman.bearblog.dev/feed/?type=rss',
+          uri: 'https://alice.bearblog.dev/feed/?type=rss',
           hint: { key: 'bearblog:posts', label: 'Posts', format: 'rss' },
         },
       ]

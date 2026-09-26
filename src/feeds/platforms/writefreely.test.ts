@@ -1,5 +1,4 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverUriEntry } from '../../common/types.js'
 import { isWritefreelyHtml, writefreelyHandler } from './writefreely.js'
 
 const writefreelyHtml = '<meta name="generator" content="WriteFreely">'
@@ -68,7 +67,7 @@ describe('writefreelyHandler', () => {
   describe('resolve', () => {
     it('should return the blog and reader feeds', () => {
       const value = 'https://example.org/alice'
-      const expected: Array<DiscoverUriEntry> = [
+      const expected = [
         {
           uri: 'https://example.org/alice/feed/',
           hint: { key: 'writefreely:blog', label: 'Blog' },
@@ -84,7 +83,7 @@ describe('writefreelyHandler', () => {
 
     it('should use the blog name from a post page', () => {
       const value = 'https://example.org/alice/a-post'
-      const expected: Array<DiscoverUriEntry> = [
+      const expected = [
         {
           uri: 'https://example.org/alice/feed/',
           hint: { key: 'writefreely:blog', label: 'Blog' },
@@ -100,7 +99,7 @@ describe('writefreelyHandler', () => {
 
     it('should add the tag feed for a tag page', () => {
       const value = 'https://example.org/alice/tag:coolify'
-      const expected: Array<DiscoverUriEntry> = [
+      const expected = [
         {
           uri: 'https://example.org/alice/tag:coolify/feed/',
           hint: { key: 'writefreely:tag', label: 'Tag' },
@@ -121,7 +120,7 @@ describe('writefreelyHandler', () => {
     it('should build the feeds of a single-user instance from the blog title link', () => {
       const value = 'https://example.org/a-post'
       const content = '<h1 id="blog-title"><a href="/" class="h-card p-author">Blog</a></h1>'
-      const expected: Array<DiscoverUriEntry> = [
+      const expected = [
         {
           uri: 'https://example.org/feed/',
           hint: { key: 'writefreely:blog', label: 'Blog' },
@@ -134,7 +133,7 @@ describe('writefreelyHandler', () => {
     it('should build the feeds of a single-user instance from a single-quoted blog title', () => {
       const value = 'https://example.org/a-post'
       const content = "<h1 id='blog-title'><a href='/'>Blog</a></h1>"
-      const expected: Array<DiscoverUriEntry> = [
+      const expected = [
         {
           uri: 'https://example.org/feed/',
           hint: { key: 'writefreely:blog', label: 'Blog' },
@@ -147,7 +146,7 @@ describe('writefreelyHandler', () => {
     it('should build the tag feed of a single-user instance', () => {
       const value = 'https://example.org/tag:coolify'
       const content = '<h1 id="blog-title"><a href="/" class="h-card p-author">Blog</a></h1>'
-      const expected: Array<DiscoverUriEntry> = [
+      const expected = [
         {
           uri: 'https://example.org/tag:coolify/feed/',
           hint: { key: 'writefreely:tag', label: 'Tag' },
@@ -164,7 +163,7 @@ describe('writefreelyHandler', () => {
     it('should build the tag feed of a single-user instance with a capitalized tag segment', () => {
       const value = 'https://example.org/Tag:coolify'
       const content = '<h1 id="blog-title"><a href="/" class="h-card p-author">Blog</a></h1>'
-      const expected: Array<DiscoverUriEntry> = [
+      const expected = [
         {
           uri: 'https://example.org/tag:coolify/feed/',
           hint: { key: 'writefreely:tag', label: 'Tag' },
@@ -181,7 +180,7 @@ describe('writefreelyHandler', () => {
     it('should fall back to the blog name when the blog title links elsewhere', () => {
       const value = 'https://example.org/alice/a-post'
       const content = '<h1 id="blog-title"><a href="https://alice.example.com/">Blog</a></h1>'
-      const expected: Array<DiscoverUriEntry> = [
+      const expected = [
         {
           uri: 'https://example.org/alice/feed/',
           hint: { key: 'writefreely:blog', label: 'Blog' },

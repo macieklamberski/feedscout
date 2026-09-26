@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'bun:test'
+import type { DiscoverUriEntry } from '../../common/types.js'
 import type { HatenaBookmarkUrl } from './hatenaBookmark.js'
 import { hatenaBookmarkHandler, parseHatenaBookmarkUrl } from './hatenaBookmark.js'
 
@@ -137,7 +138,7 @@ describe('hatenaBookmarkHandler', () => {
   })
 
   describe('resolve', () => {
-    const hotEntries = [
+    const hotEntries: Array<DiscoverUriEntry> = [
       { uri: `${base}/hotentry.rss`, hint: { key: 'hatena-bookmark:hot', label: 'Hot entries' } },
     ]
 
@@ -241,7 +242,7 @@ describe('hatenaBookmarkHandler', () => {
       expect(hatenaBookmarkHandler.resolve(`${base}/site/example.com`)).toEqual(expected)
     })
 
-    const userBookmarks = [
+    const userBookmarks: Array<DiscoverUriEntry> = [
       {
         uri: `${base}/mizdra/bookmark.rss`,
         hint: { key: 'hatena-bookmark:bookmarks', label: 'Bookmarks' },

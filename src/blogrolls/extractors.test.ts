@@ -1,7 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverResult } from '../common/types.js'
 import { defaultExtractFn } from './extractors.js'
-import type { BlogrollResult } from './types.js'
 
 describe('defaultExtractFn', () => {
   it('should return isValid: false when content is empty', async () => {
@@ -10,7 +8,7 @@ describe('defaultExtractFn', () => {
       headers: new Headers(),
       url: 'https://example.com/blogroll.opml',
     })
-    const expected: DiscoverResult<BlogrollResult> = {
+    const expected = {
       url: 'https://example.com/blogroll.opml',
       isValid: false,
     }
@@ -25,7 +23,7 @@ describe('defaultExtractFn', () => {
       headers: new Headers(),
       url: 'https://example.com/index.html',
     })
-    const expected: DiscoverResult<BlogrollResult> = {
+    const expected = {
       url: 'https://example.com/index.html',
       isValid: false,
     }
@@ -50,7 +48,7 @@ describe('defaultExtractFn', () => {
       headers: new Headers(),
       url: 'https://example.com/blogroll.opml',
     })
-    const expected: DiscoverResult<BlogrollResult> = {
+    const expected = {
       url: 'https://example.com/blogroll.opml',
       isValid: true,
       title: 'My Blogroll',
@@ -79,7 +77,7 @@ describe('defaultExtractFn', () => {
       headers: new Headers(),
       url: 'https://example.com/subscriptions.opml',
     })
-    const expected: DiscoverResult<BlogrollResult> = {
+    const expected = {
       url: 'https://example.com/subscriptions.opml',
       isValid: true,
       title: 'Subscriptions',
@@ -103,7 +101,7 @@ describe('defaultExtractFn', () => {
       headers: new Headers(),
       url: 'https://example.com/blogroll.opml',
     })
-    const expected: DiscoverResult<BlogrollResult> = {
+    const expected = {
       url: 'https://example.com/blogroll.opml',
       isValid: true,
       title: undefined,
@@ -119,7 +117,7 @@ describe('defaultExtractFn', () => {
       headers: new Headers(),
       url: 'https://example.com/blogroll.opml',
     })
-    const expected: DiscoverResult<BlogrollResult> = {
+    const expected = {
       url: 'https://example.com/blogroll.opml',
       isValid: false,
     }
@@ -142,7 +140,7 @@ describe('defaultExtractFn', () => {
       headers: new Headers(),
       url: 'https://example.com/feed.xml',
     })
-    const expected: DiscoverResult<BlogrollResult> = {
+    const expected = {
       url: 'https://example.com/feed.xml',
       isValid: false,
     }
@@ -163,7 +161,7 @@ describe('defaultExtractFn', () => {
       headers: new Headers(),
       url: 'https://redirect.example.com/blogroll.opml',
     })
-    const expected: DiscoverResult<BlogrollResult> = {
+    const expected = {
       url: 'https://redirect.example.com/blogroll.opml',
       isValid: true,
       title: 'Test',
@@ -178,7 +176,7 @@ describe('defaultExtractFn', () => {
       headers: new Headers(),
       url: 'https://example.com/blogroll.opml',
     })
-    const expected: DiscoverResult<BlogrollResult> = {
+    const expected = {
       url: 'https://example.com/blogroll.opml',
       isValid: false,
     }
@@ -198,7 +196,7 @@ describe('defaultExtractFn', () => {
       headers: new Headers(),
       url: 'https://example.com/blogroll.opml',
     })
-    const expected: DiscoverResult<BlogrollResult> = {
+    const expected = {
       url: 'https://example.com/blogroll.opml',
       isValid: true,
       title: 'Test',
@@ -215,7 +213,7 @@ describe('defaultExtractFn', () => {
       headers: new Headers(),
       url: 'https://example.com/blogroll.opml',
     })
-    const expected: DiscoverResult<BlogrollResult> = {
+    const expected = {
       url: 'https://example.com/blogroll.opml',
       isValid: false,
     }

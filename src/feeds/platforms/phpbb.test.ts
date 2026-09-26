@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'bun:test'
+import type { DiscoverUriEntry } from '../../common/types.js'
 import { isPhpbbHtml, phpbbHandler } from './phpbb.js'
 
 const phpbbHtml = '<body id="phpbb" class="section-index">'
@@ -55,7 +56,7 @@ describe('phpbbHandler', () => {
   })
 
   describe('resolve', () => {
-    const getBoardFeeds = (boardUrl: string) => {
+    const getBoardFeeds = (boardUrl: string): Array<DiscoverUriEntry> => {
       return [
         { uri: `${boardUrl}/feed.php`, hint: { key: 'phpbb:site', label: 'Site' } },
         { uri: `${boardUrl}/feed.php?mode=news`, hint: { key: 'phpbb:news', label: 'News' } },

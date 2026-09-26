@@ -1,5 +1,4 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverUriEntry } from '../../common/types.js'
 import type { GithubUrl } from './github.js'
 import { githubHandler, parseGithubUrl } from './github.js'
 
@@ -91,7 +90,7 @@ describe('parseGithubUrl', () => {
   })
 
   it('should return undefined for another host', () => {
-    expect(parseGithubUrl('https://gitlab.com/owner/repo')).toBeUndefined()
+    expect(parseGithubUrl('https://example.com/owner/repo')).toBeUndefined()
   })
 
   it('should return undefined for an invalid URL', () => {
@@ -106,14 +105,14 @@ describe('githubHandler', () => {
     })
 
     it('should not match another host', () => {
-      expect(githubHandler.match('https://gitlab.com/owner/repo')).toBe(false)
+      expect(githubHandler.match('https://example.com/owner/repo')).toBe(false)
     })
   })
 
   describe('resolve', () => {
     it('should return the wiki feed for a capitalized wiki segment', () => {
       const value = 'https://github.com/microsoft/vscode/Wiki'
-      const expected: Array<DiscoverUriEntry> = [
+      const expected = [
         {
           uri: 'https://github.com/microsoft/vscode/releases.atom',
           hint: { key: 'github:releases', label: 'Releases' },
@@ -137,7 +136,7 @@ describe('githubHandler', () => {
 
     it('should not return the wiki feed for a repository named wiki', () => {
       const value = 'https://github.com/owner/Wiki'
-      const expected: Array<DiscoverUriEntry> = [
+      const expected = [
         {
           uri: 'https://github.com/owner/Wiki/releases.atom',
           hint: { key: 'github:releases', label: 'Releases' },
@@ -157,7 +156,7 @@ describe('githubHandler', () => {
 
     it('should not return the discussions feed for a repository named discussions', () => {
       const value = 'https://github.com/owner/Discussions'
-      const expected: Array<DiscoverUriEntry> = [
+      const expected = [
         {
           uri: 'https://github.com/owner/Discussions/releases.atom',
           hint: { key: 'github:releases', label: 'Releases' },

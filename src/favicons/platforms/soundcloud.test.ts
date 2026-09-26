@@ -1,5 +1,4 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverUriEntry } from '../../common/types.js'
 import { soundcloudHandler } from './soundcloud.js'
 
 const profileHtml = `
@@ -17,9 +16,7 @@ const profileHtml = `
 describe('soundcloudHandler', () => {
   describe('resolve', () => {
     it('should return avatar from profile page', () => {
-      const expected: Array<DiscoverUriEntry> = [
-        { uri: 'https://i1.sndcdn.com/avatars-000012345678-abcdef-t500x500.jpg' },
-      ]
+      const expected = [{ uri: 'https://i1.sndcdn.com/avatars-000012345678-abcdef-t500x500.jpg' }]
 
       expect(soundcloudHandler.resolve('https://soundcloud.com/alice', profileHtml)).toEqual(
         expected,
@@ -33,9 +30,7 @@ describe('soundcloudHandler', () => {
           property="og:image"
         >
       `
-      const expected: Array<DiscoverUriEntry> = [
-        { uri: 'https://i1.sndcdn.com/avatars-000012345678-abcdef-t500x500.jpg' },
-      ]
+      const expected = [{ uri: 'https://i1.sndcdn.com/avatars-000012345678-abcdef-t500x500.jpg' }]
 
       expect(soundcloudHandler.resolve('https://soundcloud.com/alice', value)).toEqual(expected)
     })

@@ -1,61 +1,60 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverUriEntry } from '../../common/types.js'
 import type { TumblrUrl } from './tumblr.js'
 import { parseTumblrUrl, tumblrHandler } from './tumblr.js'
 
 describe('parseTumblrUrl', () => {
   it('should return the blog for a blog subdomain', () => {
-    const expected: TumblrUrl = { kind: 'blog', blog: 'staff' }
+    const expected: TumblrUrl = { kind: 'blog', blog: 'example' }
 
-    expect(parseTumblrUrl('https://staff.tumblr.com')).toEqual(expected)
+    expect(parseTumblrUrl('https://example.tumblr.com')).toEqual(expected)
   })
 
   it('should return the blog for a post page', () => {
-    const expected: TumblrUrl = { kind: 'blog', blog: 'engineering' }
+    const expected: TumblrUrl = { kind: 'blog', blog: 'alice' }
 
-    expect(parseTumblrUrl('https://engineering.tumblr.com/post/123')).toEqual(expected)
+    expect(parseTumblrUrl('https://alice.tumblr.com/post/123')).toEqual(expected)
   })
 
   it('should return the blog for a tagged page', () => {
-    const expected: TumblrUrl = { kind: 'blog', blog: 'staff' }
+    const expected: TumblrUrl = { kind: 'blog', blog: 'example' }
 
-    expect(parseTumblrUrl('https://staff.tumblr.com/tagged/updates')).toEqual(expected)
+    expect(parseTumblrUrl('https://example.tumblr.com/tagged/updates')).toEqual(expected)
   })
 
   it('should return the blog for a www.tumblr.com blog path', () => {
-    const expected: TumblrUrl = { kind: 'blog', blog: 'staff' }
+    const expected: TumblrUrl = { kind: 'blog', blog: 'example' }
 
-    expect(parseTumblrUrl('https://www.tumblr.com/staff')).toEqual(expected)
+    expect(parseTumblrUrl('https://www.tumblr.com/example')).toEqual(expected)
   })
 
   it('should return the blog for a www.tumblr.com post path', () => {
-    const expected: TumblrUrl = { kind: 'blog', blog: 'staff' }
+    const expected: TumblrUrl = { kind: 'blog', blog: 'example' }
 
-    expect(parseTumblrUrl('https://www.tumblr.com/staff/123/example-post')).toEqual(expected)
+    expect(parseTumblrUrl('https://www.tumblr.com/example/123/example-post')).toEqual(expected)
   })
 
   it('should return the blog for a www.tumblr.com/blog/view path', () => {
-    const expected: TumblrUrl = { kind: 'blog', blog: 'staff' }
+    const expected: TumblrUrl = { kind: 'blog', blog: 'example' }
 
-    expect(parseTumblrUrl('https://www.tumblr.com/blog/view/staff')).toEqual(expected)
+    expect(parseTumblrUrl('https://www.tumblr.com/blog/view/example')).toEqual(expected)
   })
 
   it('should return the blog for a www.tumblr.com/blog/view path with a capitalized view segment', () => {
-    const expected: TumblrUrl = { kind: 'blog', blog: 'staff' }
+    const expected: TumblrUrl = { kind: 'blog', blog: 'example' }
 
-    expect(parseTumblrUrl('https://www.tumblr.com/blog/View/staff')).toEqual(expected)
+    expect(parseTumblrUrl('https://www.tumblr.com/blog/View/example')).toEqual(expected)
   })
 
   it('should return the blog for a www.tumblr.com/blog/view path with a capitalized blog segment', () => {
-    const expected: TumblrUrl = { kind: 'blog', blog: 'staff' }
+    const expected: TumblrUrl = { kind: 'blog', blog: 'example' }
 
-    expect(parseTumblrUrl('https://www.tumblr.com/Blog/view/staff')).toEqual(expected)
+    expect(parseTumblrUrl('https://www.tumblr.com/Blog/view/example')).toEqual(expected)
   })
 
   it('should return the blog for a tumblr.com apex blog path', () => {
-    const expected: TumblrUrl = { kind: 'blog', blog: 'staff' }
+    const expected: TumblrUrl = { kind: 'blog', blog: 'example' }
 
-    expect(parseTumblrUrl('https://tumblr.com/staff')).toEqual(expected)
+    expect(parseTumblrUrl('https://tumblr.com/example')).toEqual(expected)
   })
 
   it('should return undefined for a www.tumblr.com site route', () => {
@@ -98,10 +97,10 @@ describe('parseTumblrUrl', () => {
 describe('tumblrHandler', () => {
   describe('resolve', () => {
     it('should return the tag feed for a capitalized tagged segment', () => {
-      const value = 'https://staff.tumblr.com/Tagged/updates'
-      const expected: Array<DiscoverUriEntry> = [
+      const value = 'https://example.tumblr.com/Tagged/updates'
+      const expected = [
         {
-          uri: 'https://staff.tumblr.com/tagged/updates/rss',
+          uri: 'https://example.tumblr.com/tagged/updates/rss',
           hint: { key: 'tumblr:tag', label: 'Tag' },
         },
       ]

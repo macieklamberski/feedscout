@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverRef, DiscoverUriEntry, FetchFn } from '../../common/types.js'
+import type { DiscoverRef, FetchFn } from '../../common/types.js'
 import type { FaviconEnricherContext } from '../types.js'
 import { bookwyrmEnricher, bookwyrmHandler } from './bookwyrm.js'
 
@@ -79,9 +79,7 @@ describe('bookwyrmHandler', () => {
     describe('happy paths', () => {
       it('should resolve the avatar from the profile page', () => {
         const result = bookwyrmHandler.resolve('https://books.example.com/user/reader', profileHtml)
-        const expected: Array<DiscoverUriEntry> = [
-          { uri: 'https://books.example.com/images/avatars/abc.jpeg' },
-        ]
+        const expected = [{ uri: 'https://books.example.com/images/avatars/abc.jpeg' }]
 
         expect(result).toEqual(expected)
       })
@@ -98,9 +96,7 @@ describe('bookwyrmHandler', () => {
           >
           ${sourceLink}
         `
-        const expected: Array<DiscoverUriEntry> = [
-          { uri: 'https://books.example.com/images/avatars/abc.jpeg' },
-        ]
+        const expected = [{ uri: 'https://books.example.com/images/avatars/abc.jpeg' }]
 
         expect(bookwyrmHandler.resolve('https://books.example.com/user/reader', content)).toEqual(
           expected,
@@ -112,44 +108,42 @@ describe('bookwyrmHandler', () => {
           'https://books.example.com/user/reader',
           relativeAvatarHtml,
         )
-        const expected: Array<DiscoverUriEntry> = [
-          { uri: 'https://books.example.com/images/avatars/abc.jpeg' },
-        ]
+        const expected = [{ uri: 'https://books.example.com/images/avatars/abc.jpeg' }]
 
         expect(result).toEqual(expected)
       })
 
       it('should return a ref for a shelf page', () => {
         const value = 'https://books.example.com/user/reader/books/read'
-        const expected: Array<DiscoverRef> = [{ platform: 'bookwyrm', id: 'reader', url: value }]
+        const expected = [{ platform: 'bookwyrm', id: 'reader', url: value }]
 
         expect(bookwyrmHandler.resolve(value, noAvatarHtml)).toEqual(expected)
       })
 
       it('should return a ref for another user subpage', () => {
         const value = 'https://books.example.com/user/reader/reviews'
-        const expected: Array<DiscoverRef> = [{ platform: 'bookwyrm', id: 'reader', url: value }]
+        const expected = [{ platform: 'bookwyrm', id: 'reader', url: value }]
 
         expect(bookwyrmHandler.resolve(value, profileHtml)).toEqual(expected)
       })
 
       it('should return a ref for a profile page without an avatar', () => {
         const value = 'https://books.example.com/user/reader'
-        const expected: Array<DiscoverRef> = [{ platform: 'bookwyrm', id: 'reader', url: value }]
+        const expected = [{ platform: 'bookwyrm', id: 'reader', url: value }]
 
         expect(bookwyrmHandler.resolve(value, noAvatarHtml)).toEqual(expected)
       })
 
       it('should return a ref for a profile page without content', () => {
         const value = 'https://books.example.com/user/reader'
-        const expected: Array<DiscoverRef> = [{ platform: 'bookwyrm', id: 'reader', url: value }]
+        const expected = [{ platform: 'bookwyrm', id: 'reader', url: value }]
 
         expect(bookwyrmHandler.resolve(value)).toEqual(expected)
       })
 
       it('should return a ref instead of reading an avatar on a shelf page', () => {
         const value = 'https://books.example.com/user/reader/books/read'
-        const expected: Array<DiscoverRef> = [{ platform: 'bookwyrm', id: 'reader', url: value }]
+        const expected = [{ platform: 'bookwyrm', id: 'reader', url: value }]
 
         expect(bookwyrmHandler.resolve(value, profileHtml)).toEqual(expected)
       })

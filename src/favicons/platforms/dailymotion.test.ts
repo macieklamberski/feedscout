@@ -40,7 +40,7 @@ describe('dailymotionHandler', () => {
 
   describe('resolve', () => {
     it('should return a ref for a user page', async () => {
-      const expected: Array<DiscoverRef> = [userRef]
+      const expected = [userRef]
 
       expect(await dailymotionHandler.resolve('https://www.dailymotion.com/alice')).toEqual(
         expected,
@@ -48,7 +48,7 @@ describe('dailymotionHandler', () => {
     })
 
     it('should return a ref for a playlist page', async () => {
-      const expected: Array<DiscoverRef> = [playlistRef]
+      const expected = [playlistRef]
 
       expect(
         await dailymotionHandler.resolve('https://www.dailymotion.com/playlist/x6abc1'),

@@ -1,5 +1,4 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverUriEntry } from '../../common/types.js'
 import type { YoutubeUrl } from './youtube.js'
 import { parseYoutubeUrl, youtubeHandler } from './youtube.js'
 
@@ -149,7 +148,7 @@ describe('parseYoutubeUrl', () => {
   })
 
   it('should return undefined for another host', () => {
-    expect(parseYoutubeUrl('https://vimeo.com/@channel')).toBeUndefined()
+    expect(parseYoutubeUrl('https://example.com/@channel')).toBeUndefined()
   })
 
   it('should return undefined for an invalid URL', () => {
@@ -164,12 +163,12 @@ describe('youtubeHandler', () => {
     })
 
     it('should not match another host', () => {
-      expect(youtubeHandler.match('https://vimeo.com/channel')).toBe(false)
+      expect(youtubeHandler.match('https://example.com/channel')).toBe(false)
     })
   })
 
   describe('resolve', () => {
-    const expectedChannelFeeds: Array<DiscoverUriEntry> = [
+    const expectedChannelFeeds = [
       {
         uri: [
           'https://www.youtube.com/feeds/videos.xml?channel_id=UC1234567890',
@@ -223,7 +222,7 @@ describe('youtubeHandler', () => {
 
     it('should return feed URL for playlist', () => {
       const value = 'https://youtube.com/playlist?list=PL1234567890'
-      const expected: Array<DiscoverUriEntry> = [
+      const expected = [
         {
           uri: 'https://www.youtube.com/feeds/videos.xml?playlist_id=PL1234567890',
           hint: { key: 'youtube:playlist', label: 'Playlist' },
@@ -235,7 +234,7 @@ describe('youtubeHandler', () => {
 
     it('should return only playlist feed for watch page with list param', () => {
       const value = 'https://youtube.com/watch?v=abc123&list=PL1234567890'
-      const expected: Array<DiscoverUriEntry> = [
+      const expected = [
         {
           uri: 'https://www.youtube.com/feeds/videos.xml?playlist_id=PL1234567890',
           hint: { key: 'youtube:playlist', label: 'Playlist' },

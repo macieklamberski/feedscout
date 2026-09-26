@@ -4,7 +4,7 @@ import { libsynHandler } from './libsyn.js'
 describe('libsynHandler', () => {
   describe('match', () => {
     const values: Array<[boolean, string]> = [
-      [true, 'https://podcastingforcoaches.libsyn.com'],
+      [true, 'https://alice.libsyn.com'],
       [true, 'https://blog.example.libsyn.com'],
       [false, 'https://libsyn.com'],
       [false, 'https://example.com'],
@@ -21,10 +21,10 @@ describe('libsynHandler', () => {
 
   describe('resolve', () => {
     it('should return feed URL for podcast', () => {
-      const value = 'https://podcastingforcoaches.libsyn.com'
+      const value = 'https://alice.libsyn.com'
       const expected = [
         {
-          uri: 'https://podcastingforcoaches.libsyn.com/rss',
+          uri: 'https://alice.libsyn.com/rss',
           hint: { key: 'libsyn:podcast', label: 'Podcast' },
         },
       ]
@@ -33,10 +33,10 @@ describe('libsynHandler', () => {
     })
 
     it('should return feed URL regardless of path', () => {
-      const value = 'https://podcastingforcoaches.libsyn.com/website'
+      const value = 'https://alice.libsyn.com/website'
       const expected = [
         {
-          uri: 'https://podcastingforcoaches.libsyn.com/rss',
+          uri: 'https://alice.libsyn.com/rss',
           hint: { key: 'libsyn:podcast', label: 'Podcast' },
         },
       ]

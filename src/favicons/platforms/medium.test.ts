@@ -53,21 +53,21 @@ describe('mediumHandler', () => {
   describe('resolve', () => {
     it('should return a ref for a profile', async () => {
       const url = 'https://medium.com/@alice'
-      const expected: Array<DiscoverRef> = [{ platform: 'medium', id: '@alice', url }]
+      const expected = [{ platform: 'medium', id: '@alice', url }]
 
       expect(await mediumHandler.resolve(url)).toEqual(expected)
     })
 
     it('should return a ref for a publication', async () => {
       const url = 'https://medium.com/the-startup'
-      const expected: Array<DiscoverRef> = [{ platform: 'medium', id: 'the-startup', url }]
+      const expected = [{ platform: 'medium', id: 'the-startup', url }]
 
       expect(await mediumHandler.resolve(url)).toEqual(expected)
     })
 
     it('should return a ref for a subdomain', async () => {
       const url = 'https://alice.medium.com/hello-world-1a2b3c'
-      const expected: Array<DiscoverRef> = [{ platform: 'medium', id: 'alice', url }]
+      const expected = [{ platform: 'medium', id: 'alice', url }]
 
       expect(await mediumHandler.resolve(url)).toEqual(expected)
     })
@@ -119,7 +119,7 @@ describe('mediumEnricher', () => {
     const ref: DiscoverRef = {
       platform: 'bluesky',
       id: 'alice',
-      url: 'https://bsky.app/profile/alice',
+      url: 'https://example.com/profile/alice',
     }
 
     expect(await mediumEnricher(ref, createContext({}))).toBeUndefined()

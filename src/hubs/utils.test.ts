@@ -1,7 +1,6 @@
 import { describe, expect, it } from 'bun:test'
 import { defaultResolveUrlFn } from '../common/discover/defaults.js'
 import type { DiscoverResolveUrlFn } from '../common/types.js'
-import type { HubResult } from './discover/types.js'
 import { toHubResults } from './utils.js'
 
 describe('toHubResults', () => {
@@ -12,9 +11,7 @@ describe('toHubResults', () => {
       'https://example.com/page',
       defaultResolveUrlFn,
     )
-    const expected: Array<HubResult> = [
-      { hub: 'https://hub.example.com/', topic: 'https://example.com/page' },
-    ]
+    const expected = [{ hub: 'https://hub.example.com/', topic: 'https://example.com/page' }]
 
     expect(value).toEqual(expected)
   })
@@ -33,7 +30,7 @@ describe('toHubResults', () => {
         errors.push(error)
       },
     )
-    const expected: Array<HubResult> = [{ hub: '/hub', topic: '/feed.xml' }]
+    const expected = [{ hub: '/hub', topic: '/feed.xml' }]
 
     expect(value).toEqual(expected)
     expect(errors).toHaveLength(2)

@@ -1,7 +1,6 @@
 import { describe, expect, it } from 'bun:test'
 import type { DiscoverErrorContext, DiscoverResolveUrlFn, FetchFn } from '../../common/types.js'
 import { discoverHubs } from './index.js'
-import type { HubResult } from './types.js'
 
 const createMockFetch = (body: string, headers: Record<string, string> = {}): FetchFn => {
   return async (url: string) => ({
@@ -21,7 +20,7 @@ describe('discoverHubs', () => {
         link: '<https://header-hub.example.com/>; rel="hub"',
       })
       const value = await discoverHubs('https://example.com/', { fetchFn: mockFetch })
-      const expected: Array<HubResult> = [
+      const expected = [
         {
           hub: 'https://header-hub.example.com/',
           topic: 'https://example.com/',
@@ -41,7 +40,7 @@ describe('discoverHubs', () => {
         link: '<https://example.com/feed.xml>; rel="self"',
       })
       const value = await discoverHubs('https://example.com/', { fetchFn: mockFetch })
-      const expected: Array<HubResult> = [
+      const expected = [
         {
           hub: 'https://html-hub.example.com/',
           topic: 'https://example.com/',
@@ -63,7 +62,7 @@ describe('discoverHubs', () => {
         link: '<https://header-hub.example.com/>; rel="hub"',
       })
       const value = await discoverHubs('https://example.com/feed.xml', { fetchFn: mockFetch })
-      const expected: Array<HubResult> = [
+      const expected = [
         {
           hub: 'https://header-hub.example.com/',
           topic: 'https://example.com/feed.xml',
@@ -88,7 +87,7 @@ describe('discoverHubs', () => {
         fetchFn: mockFetch,
         methods: ['html'],
       })
-      const expected: Array<HubResult> = [
+      const expected = [
         {
           hub: 'https://html-hub.example.com/',
           topic: 'https://example.com/',
@@ -152,7 +151,7 @@ describe('discoverHubs', () => {
         fetchFn: mockFetch,
         methods: ['feed'],
       })
-      const expected: Array<HubResult> = [
+      const expected = [
         {
           hub: 'https://feed-hub.example.com/',
           topic: 'https://example.com/feed.xml',
@@ -218,7 +217,7 @@ describe('discoverHubs', () => {
           resolveUrlFn: throwingResolveUrlFn,
         },
       )
-      const expected: Array<HubResult> = [
+      const expected = [
         {
           hub: 'http://[malformed',
           topic: 'https://example.com/',
@@ -240,7 +239,7 @@ describe('discoverHubs', () => {
           resolveUrlFn: customResolveUrlFn,
         },
       )
-      const expected: Array<HubResult> = [
+      const expected = [
         {
           hub: 'https://custom.example.com/hub',
           topic: 'https://example.com/',
@@ -264,7 +263,7 @@ describe('discoverHubs', () => {
           resolveUrlFn: customResolveUrlFn,
         },
       )
-      const expected: Array<HubResult> = [
+      const expected = [
         {
           hub: 'https://custom.example.com/hub',
           topic: 'https://example.com/',
@@ -290,7 +289,7 @@ describe('discoverHubs', () => {
           resolveUrlFn: customResolveUrlFn,
         },
       )
-      const expected: Array<HubResult> = [
+      const expected = [
         {
           hub: 'https://hub.example.com/',
           topic: 'https://normalized.example.com/feed.xml',
@@ -310,7 +309,7 @@ describe('discoverHubs', () => {
         url: 'https://example.com/feed.xml',
         headers,
       })
-      const expected: Array<HubResult> = [
+      const expected = [
         {
           hub: 'https://hub.example.com/',
           topic: 'https://example.com/feed.xml',
@@ -326,7 +325,7 @@ describe('discoverHubs', () => {
         url: 'https://example.com/',
         content: html,
       })
-      const expected: Array<HubResult> = [
+      const expected = [
         {
           hub: 'https://hub.example.com/',
           topic: 'https://example.com/',
@@ -348,7 +347,7 @@ describe('discoverHubs', () => {
         { url: 'https://example.com/feed.xml', content: feed },
         { methods: ['feed'] },
       )
-      const expected: Array<HubResult> = [
+      const expected = [
         {
           hub: 'https://hub.example.com/',
           topic: 'https://example.com/feed.xml',

@@ -214,16 +214,16 @@ describe('discoverFavicons', () => {
   })
 
   it('should discover favicon from mastodon platform handler', async () => {
-    const avatarUrl = 'https://files.mastodon.social/accounts/avatars/000/123/original/avatar.png'
+    const avatarUrl = 'https://files.example.com/accounts/avatars/000/123/original/avatar.png'
     const mockFetch = createMockFetch({
-      'https://mastodon.social/@user':
+      'https://example.com/@user':
         '<html><head><meta name="generator" content="Mastodon v4.2.0"></head></html>',
-      'https://mastodon.social/api/v1/accounts/lookup?acct=user': JSON.stringify({
+      'https://example.com/api/v1/accounts/lookup?acct=user': JSON.stringify({
         avatar: avatarUrl,
       }),
       [avatarUrl]: 'binary',
     })
-    const result = await discoverFavicons('https://mastodon.social/@user', {
+    const result = await discoverFavicons('https://example.com/@user', {
       methods: ['platform'],
       fetchFn: mockFetch,
     })
@@ -237,7 +237,7 @@ describe('discoverFavicons', () => {
   it('should not call the mastodon API when enrichFn is false', async () => {
     const requestedUrls: Array<string> = []
     const mockFetch = createMockFetch({
-      'https://mastodon.social/@user':
+      'https://example.com/@user':
         '<html><head><meta name="generator" content="Mastodon v4.2.0"></head></html>',
     })
     const recordingFetch: FetchFn = (url, options) => {
@@ -246,13 +246,13 @@ describe('discoverFavicons', () => {
       return mockFetch(url, options)
     }
 
-    await discoverFavicons('https://mastodon.social/@user', {
+    await discoverFavicons('https://example.com/@user', {
       methods: ['platform'],
       fetchFn: recordingFetch,
       enrichFn: false,
     })
 
-    expect(requestedUrls).toEqual(['https://mastodon.social/@user'])
+    expect(requestedUrls).toEqual(['https://example.com/@user'])
   })
 
   it('should discover favicon from bluesky platform handler', async () => {
@@ -535,9 +535,7 @@ describe('discoverFavicons', () => {
       statusText: 'OK',
     })
     const result = await discoverFavicons('https://example.com/icon.png', { fetchFn: mockFetch })
-    const expected: Array<DiscoverResult<FaviconResult>> = [
-      { url: 'https://example.com/icon.png', isValid: true },
-    ]
+    const expected = [{ url: 'https://example.com/icon.png', isValid: true }]
 
     expect(result).toEqual(expected)
   })
@@ -552,9 +550,7 @@ describe('discoverFavicons', () => {
       statusText: 'OK',
     })
     const result = await discoverFavicons('https://example.com/icon.svg', { fetchFn: mockFetch })
-    const expected: Array<DiscoverResult<FaviconResult>> = [
-      { url: 'https://example.com/icon.svg', isValid: true },
-    ]
+    const expected = [{ url: 'https://example.com/icon.svg', isValid: true }]
 
     expect(result).toEqual(expected)
   })
@@ -566,9 +562,7 @@ describe('discoverFavicons', () => {
       { url: 'https://example.com/icon.svg', content: svgContent },
       { fetchFn: mockFetch },
     )
-    const expected: Array<DiscoverResult<FaviconResult>> = [
-      { url: 'https://example.com/icon.svg', isValid: true },
-    ]
+    const expected = [{ url: 'https://example.com/icon.svg', isValid: true }]
 
     expect(result).toEqual(expected)
   })
@@ -760,12 +754,12 @@ describe('discoverFavicons', () => {
       <?xml version="1.0"?>
       <rss version="2.0">
         <channel>
-          <link>https://dead-site.com</link>
+          <link>https://dead-site.example.org</link>
         </channel>
       </rss>
     `
     const mockFetch: FetchFn = (url: string) => {
-      if (url === 'https://dead-site.com') {
+      if (url === 'https://dead-site.example.org') {
         return Promise.reject(new Error('Connection refused'))
       }
 

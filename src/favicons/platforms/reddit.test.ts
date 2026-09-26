@@ -33,7 +33,7 @@ describe('redditHandler', () => {
     })
 
     it('should not match domain pages', () => {
-      expect(redditHandler.match('https://reddit.com/domain/github.com')).toBe(false)
+      expect(redditHandler.match('https://reddit.com/domain/example.com')).toBe(false)
     })
   })
 
@@ -48,13 +48,13 @@ describe('redditHandler', () => {
 
     it('should return the owner ref for a multireddit', async () => {
       const url = 'https://reddit.com/user/spez/m/news'
-      const expected: Array<DiscoverRef> = [{ platform: 'reddit', id: 'user/spez', url }]
+      const expected = [{ platform: 'reddit', id: 'user/spez', url }]
 
       expect(await redditHandler.resolve(url)).toEqual(expected)
     })
 
     it('should return empty array for domain pages', async () => {
-      expect(await redditHandler.resolve('https://reddit.com/domain/github.com')).toEqual([])
+      expect(await redditHandler.resolve('https://reddit.com/domain/example.com')).toEqual([])
     })
   })
 })

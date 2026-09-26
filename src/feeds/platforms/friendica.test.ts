@@ -39,33 +39,33 @@ describe('friendicaHandler', () => {
 
   describe('match', () => {
     it('should return true for profile URL with Friendica content', () => {
-      expect(friendicaHandler.match('https://libranet.de/profile/admin', friendicaHtml)).toBe(true)
+      expect(friendicaHandler.match('https://example.com/profile/admin', friendicaHtml)).toBe(true)
     })
 
     it('should return true for profile URL with Friendica content with a capitalized profile segment', () => {
-      expect(friendicaHandler.match('https://libranet.de/Profile/admin', friendicaHtml)).toBe(true)
+      expect(friendicaHandler.match('https://example.com/Profile/admin', friendicaHtml)).toBe(true)
     })
 
     it('should return true for profile URL with Friendica headers', () => {
       expect(
-        friendicaHandler.match('https://libranet.de/profile/admin', '', friendicaHeaders),
+        friendicaHandler.match('https://example.com/profile/admin', '', friendicaHeaders),
       ).toBe(true)
     })
 
     it('should return false without content or headers', () => {
-      expect(friendicaHandler.match('https://libranet.de/profile/admin')).toBe(false)
+      expect(friendicaHandler.match('https://example.com/profile/admin')).toBe(false)
     })
 
     it('should return false for non-profile paths with Friendica headers', () => {
-      expect(friendicaHandler.match('https://libranet.de/about', '', friendicaHeaders)).toBe(false)
+      expect(friendicaHandler.match('https://example.com/about', '', friendicaHeaders)).toBe(false)
     })
 
     it('should return false for non-Friendica content', () => {
-      expect(friendicaHandler.match('https://libranet.de/profile/admin', otherHtml)).toBe(false)
+      expect(friendicaHandler.match('https://example.com/profile/admin', otherHtml)).toBe(false)
     })
 
     it('should return false for non-profile paths', () => {
-      expect(friendicaHandler.match('https://libranet.de/about', friendicaHtml)).toBe(false)
+      expect(friendicaHandler.match('https://example.com/about', friendicaHtml)).toBe(false)
     })
 
     it('should return false for invalid URL', () => {
@@ -75,22 +75,22 @@ describe('friendicaHandler', () => {
 
   describe('resolve', () => {
     it('should return posts/comments/replies/activity feeds for profile', () => {
-      const value = 'https://libranet.de/profile/admin'
+      const value = 'https://example.com/profile/admin'
       const expected = [
         {
-          uri: 'https://libranet.de/feed/admin',
+          uri: 'https://example.com/feed/admin',
           hint: { key: 'friendica:posts', label: 'Posts' },
         },
         {
-          uri: 'https://libranet.de/feed/admin/comments',
+          uri: 'https://example.com/feed/admin/comments',
           hint: { key: 'friendica:comments', label: 'Comments' },
         },
         {
-          uri: 'https://libranet.de/feed/admin/replies',
+          uri: 'https://example.com/feed/admin/replies',
           hint: { key: 'friendica:replies', label: 'Replies' },
         },
         {
-          uri: 'https://libranet.de/feed/admin/activity',
+          uri: 'https://example.com/feed/admin/activity',
           hint: { key: 'friendica:activity', label: 'Activity' },
         },
       ]
@@ -99,22 +99,22 @@ describe('friendicaHandler', () => {
     })
 
     it('should return all feeds regardless of subpath', () => {
-      const value = 'https://libranet.de/profile/admin/photos'
+      const value = 'https://example.com/profile/admin/photos'
       const expected = [
         {
-          uri: 'https://libranet.de/feed/admin',
+          uri: 'https://example.com/feed/admin',
           hint: { key: 'friendica:posts', label: 'Posts' },
         },
         {
-          uri: 'https://libranet.de/feed/admin/comments',
+          uri: 'https://example.com/feed/admin/comments',
           hint: { key: 'friendica:comments', label: 'Comments' },
         },
         {
-          uri: 'https://libranet.de/feed/admin/replies',
+          uri: 'https://example.com/feed/admin/replies',
           hint: { key: 'friendica:replies', label: 'Replies' },
         },
         {
-          uri: 'https://libranet.de/feed/admin/activity',
+          uri: 'https://example.com/feed/admin/activity',
           hint: { key: 'friendica:activity', label: 'Activity' },
         },
       ]
@@ -123,7 +123,7 @@ describe('friendicaHandler', () => {
     })
 
     it('should return empty array for non-profile paths', () => {
-      expect(friendicaHandler.resolve('https://libranet.de/about')).toEqual([])
+      expect(friendicaHandler.resolve('https://example.com/about')).toEqual([])
     })
   })
 })

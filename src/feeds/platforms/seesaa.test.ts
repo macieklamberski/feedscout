@@ -5,7 +5,7 @@ import { seesaaHandler } from './seesaa.js'
 describe('seesaaHandler', () => {
   describe('match', () => {
     const values: Array<[boolean, string]> = [
-      [true, 'https://jetstream777.seesaa.net'],
+      [true, 'https://alice.seesaa.net'],
       [true, 'https://blog.example.seesaa.net'],
       [false, 'https://seesaa.net'],
       [false, 'https://example.com'],
@@ -22,14 +22,14 @@ describe('seesaaHandler', () => {
 
   describe('resolve', () => {
     it('should return RSS 2.0 and RDF feeds for blog', () => {
-      const value = 'https://jetstream777.seesaa.net'
+      const value = 'https://alice.seesaa.net'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://jetstream777.seesaa.net/index20.rdf',
+          uri: 'https://alice.seesaa.net/index20.rdf',
           hint: { key: 'seesaa:posts-rss2', label: 'Posts (RSS 2.0)' },
         },
         {
-          uri: 'https://jetstream777.seesaa.net/index.rdf',
+          uri: 'https://alice.seesaa.net/index.rdf',
           hint: { key: 'seesaa:posts', label: 'Posts', format: 'rdf' },
         },
       ]
@@ -38,14 +38,14 @@ describe('seesaaHandler', () => {
     })
 
     it('should return feed URLs regardless of path', () => {
-      const value = 'https://jetstream777.seesaa.net/article/123.html'
+      const value = 'https://alice.seesaa.net/article/123.html'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://jetstream777.seesaa.net/index20.rdf',
+          uri: 'https://alice.seesaa.net/index20.rdf',
           hint: { key: 'seesaa:posts-rss2', label: 'Posts (RSS 2.0)' },
         },
         {
-          uri: 'https://jetstream777.seesaa.net/index.rdf',
+          uri: 'https://alice.seesaa.net/index.rdf',
           hint: { key: 'seesaa:posts', label: 'Posts', format: 'rdf' },
         },
       ]

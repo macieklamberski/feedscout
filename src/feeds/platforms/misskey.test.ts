@@ -41,19 +41,19 @@ describe('misskeyHandler', () => {
 
   describe('match', () => {
     it('should return true for profile URL with Misskey content', () => {
-      expect(misskeyHandler.match('https://misskey.io/@ai', misskeyHtml)).toBe(true)
+      expect(misskeyHandler.match('https://example.com/@ai', misskeyHtml)).toBe(true)
     })
 
     it('should return false without content', () => {
-      expect(misskeyHandler.match('https://misskey.io/@ai')).toBe(false)
+      expect(misskeyHandler.match('https://example.com/@ai')).toBe(false)
     })
 
     it('should return false for non-Misskey content', () => {
-      expect(misskeyHandler.match('https://misskey.io/@ai', otherHtml)).toBe(false)
+      expect(misskeyHandler.match('https://example.com/@ai', otherHtml)).toBe(false)
     })
 
     it('should return false for non-profile paths', () => {
-      expect(misskeyHandler.match('https://misskey.io/explore', misskeyHtml)).toBe(false)
+      expect(misskeyHandler.match('https://example.com/explore', misskeyHtml)).toBe(false)
     })
 
     it('should return false for invalid URL', () => {
@@ -63,18 +63,18 @@ describe('misskeyHandler', () => {
 
   describe('resolve', () => {
     it('should return atom, rss, and json feeds for profile', () => {
-      const value = 'https://misskey.io/@ai'
+      const value = 'https://example.com/@ai'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://misskey.io/@ai.atom',
+          uri: 'https://example.com/@ai.atom',
           hint: { key: 'misskey:posts', label: 'Posts', format: 'atom' },
         },
         {
-          uri: 'https://misskey.io/@ai.rss',
+          uri: 'https://example.com/@ai.rss',
           hint: { key: 'misskey:posts', label: 'Posts', format: 'rss' },
         },
         {
-          uri: 'https://misskey.io/@ai.json',
+          uri: 'https://example.com/@ai.json',
           hint: { key: 'misskey:posts', label: 'Posts', format: 'json' },
         },
       ]
@@ -83,18 +83,18 @@ describe('misskeyHandler', () => {
     })
 
     it('should return all three formats regardless of subpath', () => {
-      const value = 'https://misskey.io/@ai/notes'
+      const value = 'https://example.com/@ai/notes'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://misskey.io/@ai.atom',
+          uri: 'https://example.com/@ai.atom',
           hint: { key: 'misskey:posts', label: 'Posts', format: 'atom' },
         },
         {
-          uri: 'https://misskey.io/@ai.rss',
+          uri: 'https://example.com/@ai.rss',
           hint: { key: 'misskey:posts', label: 'Posts', format: 'rss' },
         },
         {
-          uri: 'https://misskey.io/@ai.json',
+          uri: 'https://example.com/@ai.json',
           hint: { key: 'misskey:posts', label: 'Posts', format: 'json' },
         },
       ]
@@ -103,7 +103,7 @@ describe('misskeyHandler', () => {
     })
 
     it('should return empty array for non-profile paths', () => {
-      expect(misskeyHandler.resolve('https://misskey.io/explore')).toEqual([])
+      expect(misskeyHandler.resolve('https://example.com/explore')).toEqual([])
     })
   })
 })

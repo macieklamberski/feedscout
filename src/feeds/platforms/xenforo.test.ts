@@ -1,5 +1,4 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverUriEntry } from '../../common/types.js'
 import { isXenforoHtml, xenforoHandler } from './xenforo.js'
 
 const xenforoHtml = '<html id="XF" lang="en-US" data-xf="2.3" data-app="public">'
@@ -46,7 +45,7 @@ describe('xenforoHandler', () => {
   describe('resolve', () => {
     it('should return the forum feed for a capitalized f segment', () => {
       const value = 'https://example.com/F/general.17/'
-      const expected: Array<DiscoverUriEntry> = [
+      const expected = [
         {
           uri: 'https://example.com/f/general.17/index.rss',
           hint: { key: 'xenforo:forum', label: 'Forum' },
