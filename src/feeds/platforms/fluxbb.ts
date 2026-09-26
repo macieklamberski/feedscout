@@ -3,7 +3,7 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, hasElementWithId } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic covers board (html), partly covers forum, topic.
+// Generic partly covers board, forum, topic.
 
 const scriptSegmentRegex = /\/[^/]*\.php$/i
 const trailingSlashRegex = /\/$/
