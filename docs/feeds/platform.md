@@ -1299,6 +1299,7 @@ Discovers the feeds of a phpBB board. Detected by the `phpbb` body id or the `{n
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | `{board}/viewtopic.php?t={id}` | Topic feed + forum feed + board feeds (Atom) |
+| `{board}/viewtopic.php?p={id}` | Topic feed from the page's canonical link + board feeds (Atom) |
 | `{board}/viewforum.php?f={id}` | Forum feed + board feeds (Atom) |
 | Any other page | Board feeds: all posts, news, new topics, active topics, forums (Atom) |
 
