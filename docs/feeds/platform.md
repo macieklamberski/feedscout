@@ -434,12 +434,12 @@ Discovers RSS feeds for Itch.io games, creators, devlogs, and browse pages.
 |-------------|-----------------|
 | `{creator}.itch.io/{game}` | Game devlog feed |
 | `{creator}.itch.io` | Creator's games feed |
-| `itch.io/games` | Games feed |
-| `itch.io/games/by-{username}` | Creator's games feed |
-| `itch.io/games/tag-{tag}` | Tag feed |
-| `itch.io/games/{sort}` | Sorted games feed (newest/top-rated/top-sellers/on-sale) |
-| `itch.io/{section}` | Section feed (tools/game-assets/soundtracks/physical-games/books/comics/misc) |
-| `itch.io/devlogs` | All devlogs feed |
+| `itch.io/games` or `/games.xml` | Games feed |
+| `itch.io/games/by-{username}` or `/by-{username}.xml` | Creator's games feed |
+| `itch.io/games/tag-{tag}` or `/tag-{tag}.xml` | Tag feed |
+| `itch.io/games/{sort}` or `/{sort}.xml` | Sorted games feed (newest/top-rated/top-sellers/on-sale) |
+| `itch.io/{section}` or `/{section}.xml` | Section feed (tools/game-assets/soundtracks/physical-games/books/comics/misc) |
+| `itch.io/devlogs` or `/devlogs.xml` | All devlogs feed |
 | `itch.io` | Featured + new + sales + all devlogs feeds + itch.io blog |
 
 ### CSDN
@@ -1145,9 +1145,10 @@ Discovers the feeds of a WriteFreely blog. Detected by the `WriteFreely` generat
 | `{instance}/{blog}` | Blog feed + instance reader feed (RSS) |
 | `{instance}/{blog}/tag:{tag}` | Tag feed + blog feed + instance reader feed (RSS) |
 | `{instance}/{post}` on a single-user instance | Blog feed (RSS) |
+| `{instance}/tag:{tag}` on a single-user instance | Tag feed + blog feed (RSS) |
 
 > [!NOTE]
-> A single-user instance serves its blog at the root, so the blog path is read from the link in the blog title rather than from the URL.
+> A single-user instance serves its blog at the root, so the blog path of a post is read from the link in the blog title rather than from the URL.
 
 ### Svbtle
 

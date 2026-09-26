@@ -13,17 +13,23 @@ import {
 // Generic covers singleUserPost, tag (guess, html), partly covers blog, post.
 
 const tagPathRegex = /\/tag:([^/]+)/i
+const tagSegmentRegex = /^tag:/i
 const blogPathRegex = /^\/(?:[^/]+\/)?$/
 const excludedPaths = ['read', 'about', 'login', 'signup', 'me', 'api', 'pad', 'privacy']
 
-const getBlogName = (url: string): string | undefined => {
+const getUrlBlogPath = (url: string): string | undefined => {
   const [first] = new URL(url).pathname.split('/').filter(Boolean)
 
   if (!first || isAnyOf(first, excludedPaths)) {
     return
   }
 
-  return first
+  // A single-user instance serves its tag pages at the root, as /tag:{tag}.
+  if (tagSegmentRegex.test(first)) {
+    return '/'
+  }
+
+  return `/${first}/`
 }
 
 // A single-user instance serves its one blog at the root, and the blog title links to it.
@@ -63,7 +69,7 @@ export const writefreelyHandler: PlatformHandler = {
         return false
       }
 
-      return Boolean(getBlogName(url))
+      return Boolean(getUrlBlogPath(url))
     } catch {}
 
     return false
@@ -71,13 +77,13 @@ export const writefreelyHandler: PlatformHandler = {
 
   resolve: (url, content) => {
     const { origin, pathname } = new URL(url)
-    const blogName = getBlogName(url)
+    const urlBlogPath = getUrlBlogPath(url)
 
-    if (!blogName) {
+    if (!urlBlogPath) {
       return []
     }
 
-    const blogPath = getBlogPath(content) ?? `/${blogName}/`
+    const blogPath = getBlogPath(content) ?? urlBlogPath
     const tag = pathname.match(tagPathRegex)?.[1]
     const uris: Array<DiscoverUriEntry> = []
 

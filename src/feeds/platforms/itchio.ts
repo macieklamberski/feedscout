@@ -20,6 +20,7 @@ const sectionRegex = /^\/([^/.]+)/
 const gameRegex = /^\/([^/]+)/
 const gamesRegex = /^\/games\/?$/i
 const devlogsRegex = /^\/devlogs\/?$/i
+const feedSuffixRegex = /\.xml$/i
 
 const sections = [
   'tools',
@@ -64,8 +65,11 @@ export const itchioHandler: PlatformHandler = {
       ]
     }
 
+    // A listing's feed URL, such as /games/tag-horror.xml, names its page too.
+    const listingPath = pathname.replace(feedSuffixRegex, '')
+
     // /games/by-{username}
-    const byUserMatch = pathname.match(byUserRegex)
+    const byUserMatch = listingPath.match(byUserRegex)
 
     if (byUserMatch?.[1]) {
       return [
@@ -77,7 +81,7 @@ export const itchioHandler: PlatformHandler = {
     }
 
     // /games/tag-{tag}
-    const tagMatch = pathname.match(tagRegex)
+    const tagMatch = listingPath.match(tagRegex)
 
     if (tagMatch?.[1]) {
       return [
@@ -89,7 +93,7 @@ export const itchioHandler: PlatformHandler = {
     }
 
     // /games/platform-{platform}
-    const platformMatch = pathname.match(platformRegex)
+    const platformMatch = listingPath.match(platformRegex)
 
     if (platformMatch?.[1]) {
       return [
@@ -101,7 +105,7 @@ export const itchioHandler: PlatformHandler = {
     }
 
     // /games/genre-{genre}
-    const genreMatch = pathname.match(genreRegex)
+    const genreMatch = listingPath.match(genreRegex)
 
     if (genreMatch?.[1]) {
       return [
@@ -113,7 +117,7 @@ export const itchioHandler: PlatformHandler = {
     }
 
     // /games/made-with-{engine}
-    const madeWithMatch = pathname.match(madeWithRegex)
+    const madeWithMatch = listingPath.match(madeWithRegex)
 
     if (madeWithMatch?.[1]) {
       return [
@@ -125,7 +129,7 @@ export const itchioHandler: PlatformHandler = {
     }
 
     // /games/{sort}
-    const sortMatch = pathname.match(sortRegex)
+    const sortMatch = listingPath.match(sortRegex)
 
     const sort = getAnyOf(sortMatch?.[1], sorts)
 
@@ -139,17 +143,17 @@ export const itchioHandler: PlatformHandler = {
     }
 
     // /games
-    if (gamesRegex.test(pathname)) {
+    if (gamesRegex.test(listingPath)) {
       return [{ uri: 'https://itch.io/games.xml', hint: composeHint('itchio:games') }]
     }
 
     // /devlogs
-    if (devlogsRegex.test(pathname)) {
+    if (devlogsRegex.test(listingPath)) {
       return [{ uri: 'https://itch.io/devlogs.xml', hint: composeHint('itchio:devlog') }]
     }
 
     // /{section} (tools, game-assets, soundtracks, physical-games, books, comics, misc)
-    const sectionMatch = pathname.match(sectionRegex)
+    const sectionMatch = listingPath.match(sectionRegex)
 
     const section = getAnyOf(sectionMatch?.[1], sections)
 
