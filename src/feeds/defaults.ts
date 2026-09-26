@@ -22,6 +22,7 @@ import { arenaHandler } from './platforms/arena.js'
 import { art19Handler } from './platforms/art19.js'
 import { artstationHandler } from './platforms/artstation.js'
 import { audioboomHandler } from './platforms/audioboom.js'
+import { aushaHandler } from './platforms/ausha.js'
 import { bearblogHandler } from './platforms/bearblog.js'
 import { behanceHandler } from './platforms/behance.js'
 import { bitchuteHandler } from './platforms/bitchute.js'
@@ -303,6 +304,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     art19Handler,
     artstationHandler,
     audioboomHandler,
+    aushaHandler,
     bearblogHandler,
     behanceHandler,
     bitchuteHandler,

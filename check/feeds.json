@@ -13,6 +13,7 @@
     "https://www.artstation.com/artwork.rss?sorting=latest"
   ],
   "audioboom": ["https://audioboom.com/channels/5071123.rss"],
+  "ausha": ["https://feed.ausha.co/VODwGU7PMQGG"],
   "bearblog": ["https://herman.bearblog.dev/feed/", "https://herman.bearblog.dev/feed/?type=rss"],
   "behance": [
     "https://www.behance.net/feeds/user?username=matejlatin",
