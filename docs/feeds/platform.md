@@ -1297,11 +1297,12 @@ Discovers the feeds of a phpBB board. Detected by the `phpbb` body id or the `{n
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{board}/viewforum.php?f={id}` | Forum feed + board feed (RSS) |
-| Any other page | Board feed (RSS) |
+| `{board}/viewtopic.php?t={id}` | Topic feed + forum feed + board feeds (Atom) |
+| `{board}/viewforum.php?f={id}` | Forum feed + board feeds (Atom) |
+| Any other page | Board feeds: all posts, news, new topics, active topics, forums (Atom) |
 
 > [!NOTE]
-> A board is routinely mounted under a sub-path, so the feed is built from the directory holding the script. The feeds are an administrator toggle, so an install can carry the marker and answer 404.
+> A board is routinely mounted under a sub-path, so the feed is built from the directory holding the script. Each feed is an administrator toggle, so a board serves any subset of them.
 
 ### NodeBB
 
