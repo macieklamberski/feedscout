@@ -1,3 +1,15 @@
+import {
+  archiveExtensions,
+  audioExtensions,
+  codeExtensions,
+  documentExtensions,
+  flashExtensions,
+  fontExtensions,
+  imageExtensions,
+  installerExtensions,
+  subtitleExtensions,
+  videoExtensions,
+} from 'trousse'
 import type { LinkSelector, Pattern, UriEntry } from '../common/types.js'
 import type { GuessMethodOptions } from '../common/uris/guess/types.js'
 import type { HeadersMethodOptions } from '../common/uris/headers/types.js'
@@ -207,16 +219,22 @@ export const urisComprehensive: Array<UriEntry> = [
 // a fetch, so ignore any anchor whose href carries an embedded URL.
 const wrappedFeedUrlRegex = /[?&][^=&]*=(https?:|https?%3a|aHR0c)/i
 
-// An audio or video file is never a feed, but a podcast host's tracking prefix can put a feed
-// segment in its path (`pscrb.fm/rss/p/…/episode.mp3`), and validating it downloads the file.
-const mediaFileRegex = /\.(?:aac|flac|m4a|m4v|mov|mp3|mp4|oga|ogg|ogv|opus|wav|webm)(?:[?#]|$)/i
-
 // URIs to ignore when discovering feeds from anchor elements.
-export const ignoredUris: Array<Pattern> = [
-  'wp-json/oembed/',
-  'wp-json/wp/',
-  wrappedFeedUrlRegex,
-  mediaFileRegex,
+export const ignoredUris: Array<Pattern> = ['wp-json/oembed/', 'wp-json/wp/', wrappedFeedUrlRegex]
+
+// A podcast host's tracking prefix can put a feed segment in an episode's path, as in
+// `pscrb.fm/rss/p/…/episode.mp3`, so a page link or a platform handler can offer a media file.
+export const ignoredExtensions = [
+  ...archiveExtensions,
+  ...audioExtensions,
+  ...codeExtensions,
+  ...documentExtensions,
+  ...flashExtensions,
+  ...fontExtensions,
+  ...imageExtensions,
+  ...installerExtensions,
+  ...subtitleExtensions,
+  ...videoExtensions,
 ]
 
 // Text labels used to identify feed links in anchor elements. "subscribe" is deliberately

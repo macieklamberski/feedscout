@@ -5,7 +5,12 @@ import {
 } from '../common/discover/defaults.js'
 import { discover } from '../common/discover/index.js'
 import type { DiscoverInput, DiscoverOptions, DiscoverResult } from '../common/types.js'
-import { defaultGuessOptions, defaultHeadersOptions, defaultHtmlOptions } from './defaults.js'
+import {
+  defaultGuessOptions,
+  defaultHeadersOptions,
+  defaultHtmlOptions,
+  ignoredExtensions,
+} from './defaults.js'
 import { defaultExtractFn } from './extractors.js'
 import type { BlogrollResult } from './types.js'
 
@@ -22,6 +27,7 @@ export const discoverBlogrolls = <TValid extends BlogrollResult = BlogrollResult
       extractFn: options.extractFn ?? defaultExtractFn,
       resolveUrlFn: options.resolveUrlFn ?? defaultResolveUrlFn,
       resolveSiteUrlFn: options.resolveSiteUrlFn ?? defaultResolveSiteUrlFn,
+      ignoredExtensions,
     },
     {
       html: defaultHtmlOptions,
