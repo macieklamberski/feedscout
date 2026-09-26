@@ -1,3 +1,4 @@
+import { resolveFeedProtocol } from 'feedcanon'
 import type { Atom } from 'feedsmith'
 import { isAnyOf, isHttpUrl, isObject, parseUrl } from 'trousse'
 import locales from '../locales.json' with { type: 'json' }
@@ -24,8 +25,12 @@ export const normalizeInput = async (
     return input
   }
 
+  // A feed or podcast scheme, such as feed:// or itpc://, names an https URL. A JavaScript caller
+  // can still pass null or an array here, which goes to the fetch as it is.
+  const url = typeof input === 'string' ? resolveFeedProtocol(input) : input
+
   try {
-    const response = await fetchFn(input)
+    const response = await fetchFn(url)
 
     return {
       url: response.url,
@@ -34,12 +39,12 @@ export const normalizeInput = async (
       status: response.status,
     }
   } catch (error) {
-    reportError(onError, error, { phase: 'fetchInput', url: input })
+    reportError(onError, error, { phase: 'fetchInput', url })
   }
 
   // When the fetch fails, return the URL without content so that URL-only
   // methods like guess can still run.
-  return { url: input }
+  return { url }
 }
 
 const getLinkOfType = (links: Array<Atom.Link<string>> | undefined, rel: string) => {
