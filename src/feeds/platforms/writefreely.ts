@@ -13,7 +13,7 @@ import {
 // Generic covers singleUserLanguage, singleUserPage, singleUserPost, tag (guess, html), partly covers blog, post.
 
 const tagPathRegex = /\/tag:([^/]+)/i
-const rootRouteRegex = /^\/(?:(?:tag|lang):|page\/\d+(?:\/|$))/i
+const rootRouteRegex = /^\/(?:(?:tag|lang):|page\/\d+(?:\/|$)|archive\/?$)/i
 const blogPathRegex = /^\/(?:[^/]+\/)?$/
 const excludedPaths = ['read', 'about', 'login', 'signup', 'me', 'api', 'pad', 'privacy']
 
@@ -25,7 +25,7 @@ const getUrlBlogPath = (url: string): string | undefined => {
     return
   }
 
-  // A single-user instance serves its tag, language and page routes at the root.
+  // A single-user instance serves its tag, language, page and archive routes at the root.
   if (rootRouteRegex.test(pathname)) {
     return '/'
   }

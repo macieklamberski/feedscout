@@ -289,6 +289,30 @@ describe('writefreelyHandler', () => {
       expect(writefreelyHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should build the blog feed of a single-user instance from the archive page without a blog title link', () => {
+      const value = 'https://example.org/archive/'
+      const expected = [
+        {
+          uri: 'https://example.org/feed/',
+          hint: { key: 'writefreely:blog', label: 'Blog' },
+        },
+      ]
+
+      expect(writefreelyHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should build the blog feed of a single-user instance from a capitalized archive segment without a blog title link', () => {
+      const value = 'https://example.org/Archive'
+      const expected = [
+        {
+          uri: 'https://example.org/feed/',
+          hint: { key: 'writefreely:blog', label: 'Blog' },
+        },
+      ]
+
+      expect(writefreelyHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should fall back to the blog name when the blog title links elsewhere', () => {
       const value = 'https://example.org/alice/a-post'
       const content = '<h1 id="blog-title"><a href="https://alice.example.com/">Blog</a></h1>'
