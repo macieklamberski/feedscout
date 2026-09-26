@@ -49,6 +49,12 @@ describe('parseRedditUrl', () => {
     expect(parseRedditUrl('https://reddit.com/r/programming/hot')).toEqual(expected)
   })
 
+  it('should return the lowercase sort for a capitalized subreddit sort', () => {
+    const expected: RedditUrl = { kind: 'subreddit', subreddit: 'programming', sort: 'hot' }
+
+    expect(parseRedditUrl('https://reddit.com/r/programming/Hot')).toEqual(expected)
+  })
+
   it('should return the subreddit without an unknown section', () => {
     const expected: RedditUrl = { kind: 'subreddit', subreddit: 'programming' }
 
@@ -134,10 +140,25 @@ describe('parseRedditUrl', () => {
     expect(parseRedditUrl(value)).toEqual(expected)
   })
 
-  it('should return the user for a /u/ multireddit page', () => {
-    const expected: RedditUrl = { kind: 'user', username: 'kjoneslol' }
+  it('should return the multireddit for a /u/ multireddit page', () => {
+    const expected: RedditUrl = {
+      kind: 'multireddit',
+      username: 'kjoneslol',
+      multireddit: 'sfwpornnetwork',
+    }
 
     expect(parseRedditUrl('https://reddit.com/u/kjoneslol/m/sfwpornnetwork')).toEqual(expected)
+  })
+
+  it('should return the multireddit without a feed extension', () => {
+    const value = 'https://www.reddit.com/user/kjoneslol/m/sfwpornnetwork.rss'
+    const expected: RedditUrl = {
+      kind: 'multireddit',
+      username: 'kjoneslol',
+      multireddit: 'sfwpornnetwork',
+    }
+
+    expect(parseRedditUrl(value)).toEqual(expected)
   })
 
   it('should return the domain for a domain page', () => {
@@ -146,10 +167,62 @@ describe('parseRedditUrl', () => {
     expect(parseRedditUrl('https://reddit.com/domain/github.com')).toEqual(expected)
   })
 
-  it('should return undefined for an uppercase prefix', () => {
-    expect(parseRedditUrl('https://reddit.com/R/programming')).toBeUndefined()
-    expect(parseRedditUrl('https://reddit.com/U/spez')).toBeUndefined()
-    expect(parseRedditUrl('https://reddit.com/User/spez')).toBeUndefined()
+  it('should return undefined for an unknown prefix', () => {
+    expect(parseRedditUrl('https://reddit.com/settings/profile')).toBeUndefined()
+  })
+
+  it('should return the subreddit for a capitalized /R/ prefix', () => {
+    const expected: RedditUrl = { kind: 'subreddit', subreddit: 'programming' }
+
+    expect(parseRedditUrl('https://reddit.com/R/programming')).toEqual(expected)
+  })
+
+  it('should return the multireddit for a capitalized multireddit path', () => {
+    const value = 'https://reddit.com/User/kjoneslol/M/sfwpornnetwork'
+    const expected: RedditUrl = {
+      kind: 'multireddit',
+      username: 'kjoneslol',
+      multireddit: 'sfwpornnetwork',
+    }
+
+    expect(parseRedditUrl(value)).toEqual(expected)
+  })
+
+  it('should return the submitted posts for a capitalized submitted path', () => {
+    const expected: RedditUrl = { kind: 'submitted', username: 'spez' }
+
+    expect(parseRedditUrl('https://reddit.com/U/spez/Submitted')).toEqual(expected)
+  })
+
+  it('should return the domain for a capitalized domain prefix', () => {
+    const expected: RedditUrl = { kind: 'domain', domain: 'github.com' }
+
+    expect(parseRedditUrl('https://reddit.com/Domain/github.com')).toEqual(expected)
+  })
+
+  it('should return the search for a capitalized subreddit search path', () => {
+    const expected: RedditUrl = { kind: 'search', subreddit: 'programming' }
+
+    expect(parseRedditUrl('https://reddit.com/r/programming/Search?q=rust')).toEqual(expected)
+  })
+
+  it('should return the wiki for a capitalized subreddit wiki path', () => {
+    const expected: RedditUrl = { kind: 'wiki', subreddit: 'programming' }
+
+    expect(parseRedditUrl('https://reddit.com/r/programming/Wiki')).toEqual(expected)
+  })
+
+  it('should return the post for a capitalized comments path', () => {
+    const value = 'https://reddit.com/r/AskReddit/Comments/abc123/whats_your_favorite'
+    const expected: RedditUrl = { kind: 'post', subreddit: 'AskReddit', postId: 'abc123' }
+
+    expect(parseRedditUrl(value)).toEqual(expected)
+  })
+
+  it('should return the comments page of a user for a capitalized comments path', () => {
+    const expected: RedditUrl = { kind: 'comments', username: 'spez' }
+
+    expect(parseRedditUrl('https://reddit.com/user/spez/Comments')).toEqual(expected)
   })
 
   it('should return undefined for a prefix without a name', () => {
@@ -407,6 +480,18 @@ describe('redditHandler', () => {
       expect(redditHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return lowercase sitewide sort feed with timeframe for /Top?t=week', () => {
+      const value = 'https://www.reddit.com/Top?t=week'
+      const expected = [
+        {
+          uri: 'https://www.reddit.com/top/.rss?t=week',
+          hint: { key: 'reddit:posts', label: 'Posts' },
+        },
+      ]
+
+      expect(redditHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return sitewide sort feed for /best', () => {
       const value = 'https://www.reddit.com/best'
       const expected = [
@@ -427,6 +512,18 @@ describe('redditHandler', () => {
 
     it('should return sitewide search feed for /search?q=', () => {
       const value = 'https://www.reddit.com/search?q=typescript'
+      const expected = [
+        {
+          uri: 'https://www.reddit.com/search.rss?q=typescript',
+          hint: { key: 'reddit:search', label: 'Search' },
+        },
+      ]
+
+      expect(redditHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return sitewide search feed for /search?q= with a capitalized search segment', () => {
+      const value = 'https://www.reddit.com/Search?q=typescript'
       const expected = [
         {
           uri: 'https://www.reddit.com/search.rss?q=typescript',
@@ -513,6 +610,30 @@ describe('redditHandler', () => {
       expect(redditHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return lowercase subreddit-list feed for /Subreddits/New', () => {
+      const value = 'https://www.reddit.com/Subreddits/New'
+      const expected = [
+        {
+          uri: 'https://www.reddit.com/subreddits/new/.rss',
+          hint: { key: 'reddit:subreddits', label: 'Subreddits' },
+        },
+      ]
+
+      expect(redditHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should keep the sort of a subreddit-list feed URL', () => {
+      const value = 'https://www.reddit.com/subreddits/new.rss'
+      const expected = [
+        {
+          uri: 'https://www.reddit.com/subreddits/new/.rss',
+          hint: { key: 'reddit:subreddits', label: 'Subreddits' },
+        },
+      ]
+
+      expect(redditHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return subreddit-list feed for /reddits alias', () => {
       const value = 'https://www.reddit.com/reddits'
       const expected = [
@@ -523,6 +644,12 @@ describe('redditHandler', () => {
       ]
 
       expect(redditHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should not return subreddit-list feed for a path extending /subreddits', () => {
+      const value = 'https://www.reddit.com/subredditsfoo'
+
+      expect(redditHandler.resolve(value)).toEqual([])
     })
 
     it('should return RSS feed URL for post comments', () => {
@@ -595,6 +722,18 @@ describe('redditHandler', () => {
 
     it('should return RSS feed URL for multireddit', () => {
       const value = 'https://reddit.com/user/kjoneslol/m/sfwpornnetwork'
+      const expected = [
+        {
+          uri: 'https://www.reddit.com/user/kjoneslol/m/sfwpornnetwork/.rss',
+          hint: { key: 'reddit:multireddit', label: 'Multireddit' },
+        },
+      ]
+
+      expect(redditHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should strip a feed extension from the multireddit', () => {
+      const value = 'https://www.reddit.com/user/kjoneslol/m/sfwpornnetwork.rss'
       const expected = [
         {
           uri: 'https://www.reddit.com/user/kjoneslol/m/sfwpornnetwork/.rss',

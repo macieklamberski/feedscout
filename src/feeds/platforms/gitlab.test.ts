@@ -63,6 +63,12 @@ describe('parseGitlabUrl', () => {
     expect(parseGitlabUrl('https://gitlab.com/alice.atom')).toEqual(expected)
   })
 
+  it('should strip a capitalized feed suffix from a namespace feed URL', () => {
+    const expected: GitlabUrl = { kind: 'namespace', namespace: 'alice' }
+
+    expect(parseGitlabUrl('https://gitlab.com/alice.ATOM')).toEqual(expected)
+  })
+
   it('should strip the feed suffix from a dotted namespace', () => {
     const expected: GitlabUrl = { kind: 'namespace', namespace: 'john.doe' }
 
@@ -135,6 +141,18 @@ describe('parseGitlabUrl', () => {
     expect(parseGitlabUrl(value)).toEqual(expected)
   })
 
+  it('should return the branch for /-/tree/{branch} with a capitalized tree segment', () => {
+    const value = 'https://gitlab.com/gitlab-org/gitlab/-/Tree/main'
+    const expected: GitlabUrl = {
+      kind: 'project',
+      namespace: 'gitlab-org',
+      projectPath: 'gitlab-org/gitlab',
+      branch: 'main',
+    }
+
+    expect(parseGitlabUrl(value)).toEqual(expected)
+  })
+
   it('should return the branch for a nested group project', () => {
     const value = 'https://gitlab.com/gitlab-org/security-products/analyzers/semgrep/-/commits/main'
     const expected: GitlabUrl = {
@@ -149,6 +167,18 @@ describe('parseGitlabUrl', () => {
 
   it('should stop the project path at a legacy feature segment', () => {
     const value = 'https://gitlab.com/gitlab-org/security-products/analyzers/semgrep/tree/main'
+    const expected: GitlabUrl = {
+      kind: 'project',
+      namespace: 'gitlab-org',
+      projectPath: 'gitlab-org/security-products/analyzers/semgrep',
+      branch: 'main',
+    }
+
+    expect(parseGitlabUrl(value)).toEqual(expected)
+  })
+
+  it('should stop the project path at a capitalized legacy feature segment', () => {
+    const value = 'https://gitlab.com/gitlab-org/security-products/analyzers/semgrep/Tree/main'
     const expected: GitlabUrl = {
       kind: 'project',
       namespace: 'gitlab-org',

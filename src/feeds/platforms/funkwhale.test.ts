@@ -32,6 +32,10 @@ describe('funkwhaleHandler', () => {
       expect(funkwhaleHandler.match('https://example.org/channels/alice', funkwhaleHtml)).toBe(true)
     })
 
+    it('should match a channel page with a capitalized channels segment', () => {
+      expect(funkwhaleHandler.match('https://example.org/Channels/alice', funkwhaleHtml)).toBe(true)
+    })
+
     it('should not match a page outside a channel', () => {
       expect(funkwhaleHandler.match('https://example.org/library', funkwhaleHtml)).toBe(false)
     })

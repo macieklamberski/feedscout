@@ -24,6 +24,12 @@ describe('parsePixelfedUrl', () => {
     expect(parsePixelfedUrl('https://pixelfed.social/users/dansup')).toEqual(expected)
   })
 
+  it('should return the username for a /users/{user} URL with a capitalized users segment', () => {
+    const expected: PixelfedUrl = { kind: 'user', username: 'dansup' }
+
+    expect(parsePixelfedUrl('https://pixelfed.social/Users/dansup')).toEqual(expected)
+  })
+
   it('should return undefined for excluded paths', () => {
     expect(parsePixelfedUrl('https://pixelfed.social/discover')).toBeUndefined()
     expect(parsePixelfedUrl('https://pixelfed.social/api')).toBeUndefined()

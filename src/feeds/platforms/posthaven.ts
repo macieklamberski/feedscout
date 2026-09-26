@@ -7,7 +7,7 @@ import { composeHint } from '../../common/utils.js'
 // Generic covers blog (html), partly covers tag.
 
 const domains = ['posthaven.com']
-const tagRegex = /^\/tag\/([^/]+)/
+const tagRegex = /^\/tag\/([^/]+)/i
 
 export const posthavenHandler: PlatformHandler = {
   match: (url) => {

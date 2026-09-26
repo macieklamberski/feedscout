@@ -4,7 +4,7 @@ import { composeHint, hasMetaContent } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
-const profileRegex = /^\/profile\/([^/]+)/
+const profileRegex = /^\/profile\/([^/]+)/i
 
 export const isFriendicaHtml = (content: string): boolean => {
   return hasMetaContent(content, 'generator', 'Friendica')

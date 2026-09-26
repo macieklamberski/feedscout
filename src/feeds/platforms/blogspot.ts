@@ -8,9 +8,9 @@ import { composeHint, findElement } from '../../common/utils.js'
 
 // Matches *.blogspot.com and country TLDs like *.blogspot.co.uk, *.blogspot.de, etc.
 const blogspotDomainRegex = /^.+\.blogspot\.(?:com|co\.[a-z]{2}|com\.[a-z]{2}|[a-z]{2,3})$/
-const labelRegex = /^\/search\/label\/([^/]+)/
-const postRegex = /^\/\d{4}\/\d{2}\/[^/]+\.html$/
-const postCommentsFeedRegex = /\/feeds\/(\d+)\/comments\/default/
+const labelRegex = /^\/search\/label\/([^/]+)/i
+const postRegex = /^\/\d{4}\/\d{2}\/[^/]+\.html$/i
+const postCommentsFeedRegex = /\/feeds\/(\d+)\/comments\/default/i
 
 export const blogspotHandler: PlatformHandler = {
   match: (url) => {

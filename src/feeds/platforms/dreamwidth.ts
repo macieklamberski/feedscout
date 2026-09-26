@@ -7,7 +7,7 @@ import { getJournalFeeds } from './livejournal.js'
 
 const domains = ['dreamwidth.org']
 const wwwHosts = ['www.dreamwidth.org', 'dreamwidth.org']
-const usersPathRegex = /^\/(?:users\/|~)([^/]+)/
+const usersPathRegex = /^\/(?:users\/|~)([^/]+)/i
 
 export const dreamwidthHandler: PlatformHandler = {
   match: (url) => {

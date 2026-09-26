@@ -144,6 +144,26 @@ describe('dreamwidthHandler', () => {
       expect(dreamwidthHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should canonicalise www.dreamwidth.org/users/{user} to subdomain with a hyphen with a capitalized users segment', () => {
+      const value = 'https://www.dreamwidth.org/Users/dw_news'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://dw-news.dreamwidth.org/data/rss',
+          hint: { key: 'dreamwidth:posts', label: 'Posts', format: 'rss' },
+        },
+        {
+          uri: 'https://dw-news.dreamwidth.org/data/atom',
+          hint: { key: 'dreamwidth:posts', label: 'Posts', format: 'atom' },
+        },
+        {
+          uri: 'https://dw-news.dreamwidth.org/data/userpics',
+          hint: { key: 'dreamwidth:userpics', label: 'Userpics', format: 'atom' },
+        },
+      ]
+
+      expect(dreamwidthHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should canonicalise www.dreamwidth.org/~{user} to subdomain', () => {
       const value = 'https://www.dreamwidth.org/~dw-news'
       const expected: Array<DiscoverUriEntry> = [

@@ -48,8 +48,40 @@ describe('ghostHandler', () => {
       expect(ghostHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return tag and blog feeds for tag page with a capitalized tag segment', () => {
+      const value = 'https://demo.ghost.io/Tag/getting-started'
+      const expected = [
+        {
+          uri: 'https://demo.ghost.io/tag/getting-started/rss/',
+          hint: { key: 'ghost:tag', label: 'Tag' },
+        },
+        {
+          uri: 'https://demo.ghost.io/rss/',
+          hint: { key: 'ghost:blog', label: 'Blog' },
+        },
+      ]
+
+      expect(ghostHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return author and blog feeds for author page', () => {
       const value = 'https://demo.ghost.io/author/ghost'
+      const expected = [
+        {
+          uri: 'https://demo.ghost.io/author/ghost/rss/',
+          hint: { key: 'ghost:author', label: 'Author' },
+        },
+        {
+          uri: 'https://demo.ghost.io/rss/',
+          hint: { key: 'ghost:blog', label: 'Blog' },
+        },
+      ]
+
+      expect(ghostHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return author and blog feeds for author page with a capitalized author segment', () => {
+      const value = 'https://demo.ghost.io/Author/ghost'
       const expected = [
         {
           uri: 'https://demo.ghost.io/author/ghost/rss/',

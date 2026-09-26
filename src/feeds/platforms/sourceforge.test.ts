@@ -22,6 +22,12 @@ describe('parseSourceforgeUrl', () => {
     expect(parseSourceforgeUrl('https://sourceforge.net/p/nmap')).toEqual(expected)
   })
 
+  it('should return the project for a capitalized /P/ prefix', () => {
+    const expected: SourceforgeUrl = { kind: 'project', project: 'nmap' }
+
+    expect(parseSourceforgeUrl('https://sourceforge.net/P/nmap')).toEqual(expected)
+  })
+
   it('should return the project for a project subpage', () => {
     const expected: SourceforgeUrl = { kind: 'project', project: 'nmap' }
 
@@ -45,10 +51,6 @@ describe('parseSourceforgeUrl', () => {
     const expected: SourceforgeUrl = { kind: 'project', project: 'nmap' }
 
     expect(parseSourceforgeUrl('https://SourceForge.net/projects/nmap')).toEqual(expected)
-  })
-
-  it('should return undefined for an uppercase path prefix', () => {
-    expect(parseSourceforgeUrl('https://sourceforge.net/Projects/nmap')).toBeUndefined()
   })
 
   it('should return undefined for /projects/ without a project', () => {

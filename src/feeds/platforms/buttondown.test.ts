@@ -58,6 +58,12 @@ describe('buttondownHandler', () => {
       expect(buttondownHandler.resolve(value)).toEqual([])
     })
 
+    it('should return empty array for a capitalized excluded path', () => {
+      const value = 'https://buttondown.com/Login'
+
+      expect(buttondownHandler.resolve(value)).toEqual([])
+    })
+
     it('should canonicalise legacy buttondown.email host to buttondown.com feed', () => {
       const value = 'https://buttondown.email/cassidoo'
       const expected = [

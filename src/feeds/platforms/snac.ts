@@ -4,7 +4,7 @@ import { composeHint, hasMetaContent } from '../../common/utils.js'
 // Discoverability: Discoverable without handler.
 
 const trailingSlashRegex = /\/$/
-const postOrHistoryRegex = /\/[ph]\/[^/]+$/
+const postOrHistoryRegex = /\/[ph]\/[^/]+$/i
 
 // `snac/` with the slash, since the value is compared as a prefix and `snac` matches `snacks`.
 export const isSnacHtml = (content: string): boolean => {

@@ -364,6 +364,7 @@ Discovers RSS feeds for Steam game news and community groups.
 |-------------|-----------------|
 | `store.steampowered.com/app/{id}` | Game news feed |
 | `store.steampowered.com/news/app/{id}` | Game news feed |
+| `store.steampowered.com/newshub/app/{id}` | Game news feed |
 | `steamcommunity.com/app/{id}` | Game news feed |
 | `steamcommunity.com/groups/{name}` | Group RSS feed |
 
@@ -702,7 +703,7 @@ Discovers RSS feeds for Discourse forums. Detected by the `Discourse` generator 
 | `{instance}/` (or any other path) | Latest topics feed + latest posts feed (RSS) |
 
 > [!NOTE]
-> The top topics feed accepts `{daily|weekly|monthly|quarterly|yearly|all}` via either the `/top/{period}` path or `?period={period}` query param. Unknown values are silently dropped.
+> The top topics feed accepts `{daily|weekly|monthly|quarterly|yearly|all}` via either the `/top/{period}` path or `?period={period}` query param. An unknown path period falls back to the query param, and an unknown value in both is dropped.
 
 ### Flickr
 
@@ -768,12 +769,12 @@ Discovers RSS feeds for Lemmy instances, communities and users. Detected by the 
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{instance}/` or `/home` | All posts feed + local posts feed |
+| `{instance}/` | All posts feed + local posts feed |
 | `{instance}/c/{community}` | Community feed |
 | `{instance}/u/{user}` | User feed |
 
 > [!NOTE]
-> Requires page content or response headers to detect Lemmy instances. The `?sort=` and `?limit=` query params are passed through to the generated feed URL. Unknown sort values are silently dropped.
+> Requires page content or response headers to detect Lemmy instances. The `?sort=` and `?limit=` query params are passed through to the generated feed URL. Unknown sort values are silently dropped. When the page URL has no valid sort, the feed takes the sort the page advertises.
 
 ### Libsyn
 

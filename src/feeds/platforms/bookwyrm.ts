@@ -1,4 +1,4 @@
-import { getPathSegments } from 'trousse'
+import { getAnyOf, getPathSegments, isAnyOf } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, hasMetaContent } from '../../common/utils.js'
@@ -23,7 +23,7 @@ export const isBookwyrmHtml = (content: string): boolean => {
 export const parseBookwyrmUrl = (url: string): BookwyrmUrl | undefined => {
   const [prefix, username, section, shelf] = getPathSegments(url)
 
-  if (prefix !== 'user' || !username) {
+  if (!isAnyOf(prefix, 'user') || !username) {
     return
   }
 
@@ -31,8 +31,10 @@ export const parseBookwyrmUrl = (url: string): BookwyrmUrl | undefined => {
     return { kind: 'profile', username }
   }
 
-  if (shelfSections.includes(section) && shelf) {
-    return { kind: 'shelf', username, section, shelf }
+  const shelfSection = getAnyOf(section, shelfSections)
+
+  if (shelfSection && shelf) {
+    return { kind: 'shelf', username, section: shelfSection, shelf }
   }
 
   return { kind: 'subpage', username }

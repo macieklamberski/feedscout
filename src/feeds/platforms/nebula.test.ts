@@ -56,6 +56,10 @@ describe('parseNebulaUrl', () => {
     expect(parseNebulaUrl('https://nebula.tv/terms')).toBeUndefined()
   })
 
+  it('should return undefined for a capitalized excluded path', () => {
+    expect(parseNebulaUrl('https://nebula.tv/Login')).toBeUndefined()
+  })
+
   it('should return undefined for another host', () => {
     expect(parseNebulaUrl('https://example.com/realengineering')).toBeUndefined()
   })

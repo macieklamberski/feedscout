@@ -42,6 +42,12 @@ describe('squarespaceHandler', () => {
       )
     })
 
+    it('should not match a capitalized reserved path', () => {
+      expect(squarespaceHandler.match('https://example.com/Config', '', squarespaceHeaders)).toBe(
+        false,
+      )
+    })
+
     it('should not match without the header', () => {
       expect(squarespaceHandler.match('https://example.com/blog')).toBe(false)
     })

@@ -12,10 +12,11 @@ export type DailymotionUrl =
   | { kind: 'search'; query: string }
 
 const hosts = ['dailymotion.com', 'www.dailymotion.com']
-const userRegex = /^\/([a-zA-Z0-9_-]+)$/
-const playlistRegex = /^\/playlist\/([a-zA-Z0-9_-]+)/
-const channelRegex = /^\/channel\/([a-zA-Z0-9_-]+)/
-const searchRegex = /^\/search\/([^/]+)/
+const userRegex = /^\/([a-zA-Z0-9_-]+)\/?$/i
+const playlistRegex = /^\/playlist\/([a-zA-Z0-9_-]+)/i
+const channelRegex = /^\/channel\/([a-zA-Z0-9_-]+)/i
+const searchRegex = /^\/search\/([^/]+)/i
+const trendingRegex = /^\/(?:trending\/?)?$/i
 const excludedPaths = [
   'signin',
   'signout',
@@ -57,8 +58,6 @@ const excludedPaths = [
   'copyright',
   'community',
 ]
-
-const trendingPaths = ['/', '', '/trending']
 
 export const parseDailymotionUrl = (url: string): DailymotionUrl | undefined => {
   const parsedUrl = parseUrl(url)
@@ -104,7 +103,7 @@ export const dailymotionHandler: PlatformHandler = {
     const { pathname } = new URL(url)
 
     // Homepage or /trending: global trending feed.
-    if (trendingPaths.includes(pathname)) {
+    if (trendingRegex.test(pathname)) {
       return [
         {
           uri: 'https://www.dailymotion.com/rss/trending',

@@ -6,7 +6,7 @@ import { composeHint } from '../../common/utils.js'
 // Discoverability: Discoverable without handler.
 
 const hosts = ['audioboom.com', 'www.audioboom.com']
-const channelRegex = /^\/channels\/(\d+)/
+const channelRegex = /^\/channels\/(\d+)/i
 
 export const audioboomHandler: PlatformHandler = {
   match: (url) => {

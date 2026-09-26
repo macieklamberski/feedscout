@@ -5,9 +5,9 @@ import { composeHint } from '../../common/utils.js'
 // Discoverability: Discoverable without handler.
 
 const hosts = ['spreaker.com', 'www.spreaker.com']
-const podcastRegex = /^\/podcast\/[\w-]+--(\d+)/
+const podcastRegex = /^\/podcast\/[\w-]+--(\d+)(?:\/|$)/i
 // /show/{id} bare numeric form 301-redirects to the slug-suffixed canonical.
-const showRegex = /^\/show\/(\d+)(?:\/|$)/
+const showRegex = /^\/show\/(\d+)(?:\/|$)/i
 
 export const spreakerHandler: PlatformHandler = {
   match: (url) => {

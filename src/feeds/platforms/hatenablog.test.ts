@@ -29,6 +29,30 @@ describe('hatenablogHandler', () => {
   })
 
   describe('resolve', () => {
+    it('should return the category feed for a capitalized archive segment', () => {
+      const value = 'https://example.hatenablog.com/Archive/category/programming'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://example.hatenablog.com/rss/category/programming',
+          hint: { key: 'hatenablog:category', label: 'Category', format: 'rss' },
+        },
+        {
+          uri: 'https://example.hatenablog.com/feed/category/programming',
+          hint: { key: 'hatenablog:category', label: 'Category', format: 'atom' },
+        },
+        {
+          uri: 'https://example.hatenablog.com/rss',
+          hint: { key: 'hatenablog:posts', label: 'Posts', format: 'rss' },
+        },
+        {
+          uri: 'https://example.hatenablog.com/feed',
+          hint: { key: 'hatenablog:posts', label: 'Posts', format: 'atom' },
+        },
+      ]
+
+      expect(hatenablogHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return RSS and Atom feed URLs for blog', () => {
       const value = 'https://example.hatenablog.com'
       const expected: Array<DiscoverUriEntry> = [
@@ -103,6 +127,30 @@ describe('hatenablogHandler', () => {
 
     it('should return author feeds and main feeds for author page', () => {
       const value = 'https://example.hatenablog.com/archive/author/tanaka'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://example.hatenablog.com/rss/author/tanaka',
+          hint: { key: 'hatenablog:author', label: 'Author', format: 'rss' },
+        },
+        {
+          uri: 'https://example.hatenablog.com/feed/author/tanaka',
+          hint: { key: 'hatenablog:author', label: 'Author', format: 'atom' },
+        },
+        {
+          uri: 'https://example.hatenablog.com/rss',
+          hint: { key: 'hatenablog:posts', label: 'Posts', format: 'rss' },
+        },
+        {
+          uri: 'https://example.hatenablog.com/feed',
+          hint: { key: 'hatenablog:posts', label: 'Posts', format: 'atom' },
+        },
+      ]
+
+      expect(hatenablogHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return author feeds and main feeds for author page with a capitalized archive segment', () => {
+      const value = 'https://example.hatenablog.com/Archive/author/tanaka'
       const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://example.hatenablog.com/rss/author/tanaka',

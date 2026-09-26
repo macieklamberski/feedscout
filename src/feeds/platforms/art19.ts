@@ -5,7 +5,7 @@ import { composeHint } from '../../common/utils.js'
 // Discoverability: Discoverable without handler.
 
 const hosts = ['art19.com', 'www.art19.com']
-const showPathRegex = /^\/shows\/([^/]+)/
+const showPathRegex = /^\/shows\/([^/]+)/i
 
 export const art19Handler: PlatformHandler = {
   match: (url) => {

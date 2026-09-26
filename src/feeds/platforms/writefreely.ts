@@ -12,7 +12,7 @@ import {
 // Discoverability: Partially discoverable without handler.
 // Generic covers singleUserPost, tag (guess, html), partly covers blog, post.
 
-const tagPathRegex = /\/(tag:[^/]+)/
+const tagPathRegex = /\/tag:([^/]+)/i
 const blogPathRegex = /^\/(?:[^/]+\/)?$/
 const excludedPaths = ['read', 'about', 'login', 'signup', 'me', 'api', 'pad', 'privacy']
 
@@ -83,7 +83,7 @@ export const writefreelyHandler: PlatformHandler = {
 
     if (tag) {
       uris.push({
-        uri: `${origin}${blogPath}${tag}/feed/`,
+        uri: `${origin}${blogPath}tag:${tag}/feed/`,
         hint: composeHint('writefreely:tag'),
       })
     }

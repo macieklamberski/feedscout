@@ -7,7 +7,7 @@ import { composeHint } from '../../common/utils.js'
 
 const hosts = ['write.as', 'www.write.as']
 
-const tagRegex = /^\/([^/]+)\/tag:([^/]+)/
+const tagRegex = /^\/([^/]+)\/tag:([^/]+)/i
 
 const excludedPaths = [
   'about',

@@ -4,7 +4,7 @@ import { composeHint, hasElementWithId, hasMetaContent } from '../../common/util
 
 // Discoverability: Discoverable without handler.
 
-const channelPathRegex = /^\/channels\/([^/]+)/
+const channelPathRegex = /^\/channels\/([^/]+)/i
 
 export const isFunkwhaleHtml = (content: string): boolean => {
   return hasMetaContent(content, 'generator', 'Funkwhale') || hasElementWithId(content, 'fake-app')

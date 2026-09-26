@@ -28,6 +28,10 @@ describe('hubzillaHandler', () => {
       expect(hubzillaHandler.match('https://example.org/channel/alice', hubzillaHtml)).toBe(true)
     })
 
+    it('should match a channel page with a capitalized channel segment', () => {
+      expect(hubzillaHandler.match('https://example.org/Channel/alice', hubzillaHtml)).toBe(true)
+    })
+
     it('should match a profile page', () => {
       expect(hubzillaHandler.match('https://example.org/profile/alice', hubzillaHtml)).toBe(true)
     })

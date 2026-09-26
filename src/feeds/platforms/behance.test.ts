@@ -21,6 +21,12 @@ describe('parseBehanceUrl', () => {
     expect(parseBehanceUrl('https://www.behance.net/johndoe/appreciated')).toEqual(expected)
   })
 
+  it('should return the username for the appreciated page with a capitalized appreciated segment', () => {
+    const expected: BehanceUrl = { kind: 'profile', username: 'johndoe' }
+
+    expect(parseBehanceUrl('https://www.behance.net/johndoe/Appreciated')).toEqual(expected)
+  })
+
   it('should return the username for the host without www', () => {
     const expected: BehanceUrl = { kind: 'profile', username: 'johndoe' }
 
@@ -103,6 +109,30 @@ describe('behanceHandler', () => {
 
     it('should return featured projects feed for /galleries', () => {
       const value = 'https://www.behance.net/galleries'
+      const expected = [
+        {
+          uri: 'https://www.behance.net/feeds/projects',
+          hint: { key: 'behance:projects', label: 'Featured projects' },
+        },
+      ]
+
+      expect(behanceHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return featured projects feed for /galleries with a capitalized galleries segment', () => {
+      const value = 'https://www.behance.net/Galleries'
+      const expected = [
+        {
+          uri: 'https://www.behance.net/feeds/projects',
+          hint: { key: 'behance:projects', label: 'Featured projects' },
+        },
+      ]
+
+      expect(behanceHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return featured projects feed for /galleries with trailing slash', () => {
+      const value = 'https://www.behance.net/galleries/'
       const expected = [
         {
           uri: 'https://www.behance.net/feeds/projects',

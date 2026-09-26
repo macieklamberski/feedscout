@@ -2,7 +2,7 @@
   "extends": ["kvalita/biome"],
   "overrides": [
     {
-      "includes": ["check/**"],
+      "includes": ["check/utils.ts"],
       "linter": {
         "rules": {
           "style": {

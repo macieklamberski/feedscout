@@ -6,7 +6,7 @@ import { composeHint, hasAnyMeta } from '../../common/utils.js'
 
 export type PixelfedUrl = { kind: 'user'; username: string }
 
-const profileRegex = /^\/(?:users\/)?([a-zA-Z0-9_]+)\/?$/
+const profileRegex = /^\/(?:users\/)?([a-zA-Z0-9_]+)\/?$/i
 const metaMarkers: Array<[string, string]> = [
   ['generator', 'pixelfed'],
   ['application-name', 'Pixelfed'],

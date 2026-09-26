@@ -42,6 +42,10 @@ describe('friendicaHandler', () => {
       expect(friendicaHandler.match('https://libranet.de/profile/admin', friendicaHtml)).toBe(true)
     })
 
+    it('should return true for profile URL with Friendica content with a capitalized profile segment', () => {
+      expect(friendicaHandler.match('https://libranet.de/Profile/admin', friendicaHtml)).toBe(true)
+    })
+
     it('should return true for profile URL with Friendica headers', () => {
       expect(
         friendicaHandler.match('https://libranet.de/profile/admin', '', friendicaHeaders),
