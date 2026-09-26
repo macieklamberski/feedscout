@@ -1,5 +1,5 @@
 import type { Atom } from 'feedsmith'
-import { isHttpUrl, isObject, parseUrl } from 'trousse'
+import { isAnyOf, isHttpUrl, isObject, parseUrl } from 'trousse'
 import locales from '../locales.json' with { type: 'json' }
 import type {
   DiscoverErrorContext,
@@ -117,11 +117,25 @@ export const attempt = <TValue, TFallback>(
   }
 }
 
+const fileExtensionRegex = /\.([^./]+)$/
+
 // A URI that parses with another scheme, such as a `javascript:` or `mailto:` link, cannot be
 // fetched. One that does not parse is kept as discovered, as a resolver that answers nothing
-// leaves it.
-const isFetchableUri = (uri: string): boolean => {
-  return !parseUrl(uri) || isHttpUrl(uri)
+// leaves it. A file with an ignored extension is skipped, as validating it downloads the whole file.
+const isFetchableUri = (uri: string, ignoredExtensions: Array<string>): boolean => {
+  const url = parseUrl(uri)
+
+  if (!url) {
+    return true
+  }
+
+  if (!isHttpUrl(uri)) {
+    return false
+  }
+
+  const extension = url.pathname.match(fileExtensionRegex)?.[1]
+
+  return !isAnyOf(extension, ignoredExtensions)
 }
 
 export const normalizeUriEntry = (
@@ -129,13 +143,14 @@ export const normalizeUriEntry = (
   resolveUrlFn: DiscoverResolveUrlFn,
   baseUrl: string | undefined,
   onError?: DiscoverOnErrorFn,
+  ignoredExtensions: Array<string> = [],
 ): DiscoverUriEntry | undefined => {
   const { uri } = entry
 
   if (typeof uri === 'string') {
     const resolvedUri = attempt(() => resolveUrlFn(uri, baseUrl), uri, 'resolveUrlFn', onError)
 
-    if (!isFetchableUri(resolvedUri)) {
+    if (!isFetchableUri(resolvedUri, ignoredExtensions)) {
       return
     }
 
@@ -148,7 +163,9 @@ export const normalizeUriEntry = (
   const resolvedUris = uri.map((alternative) => {
     return attempt(() => resolveUrlFn(alternative, baseUrl), alternative, 'resolveUrlFn', onError)
   })
-  const fetchableUris = resolvedUris.filter(isFetchableUri)
+  const fetchableUris = resolvedUris.filter((resolvedUri) => {
+    return isFetchableUri(resolvedUri, ignoredExtensions)
+  })
 
   if (fetchableUris.length === 0) {
     return
