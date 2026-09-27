@@ -134,6 +134,7 @@ import { proseHandler } from './platforms/prose.js'
 import { publiiHandler } from './platforms/publii.js'
 import { pypiHandler } from './platforms/pypi.js'
 import { qiitaHandler } from './platforms/qiita.js'
+import { redcircleHandler } from './platforms/redcircle.js'
 import { redditHandler } from './platforms/reddit.js'
 import { rssComHandler } from './platforms/rssCom.js'
 import { rubygemsHandler } from './platforms/rubygems.js'
@@ -440,6 +441,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     publiiHandler,
     pypiHandler,
     qiitaHandler,
+    redcircleHandler,
     redditHandler,
     rssComHandler,
     rubygemsHandler,

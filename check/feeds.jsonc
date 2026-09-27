@@ -749,6 +749,9 @@
     "qiita:tag": "https://qiita.com/tags/javascript/feed.atom",
     "qiita:zine": "https://qiita.com/official-columns/feed/"
   },
+  "redcircle": {
+    "redcircle:show": "https://feeds.redcircle.com/e8ab057c-683d-4375-a197-2dcc42d4f851"
+  },
   "reddit": {
     "reddit:comments": "https://www.reddit.com/r/programming/comments/.rss",
     "reddit:multireddit": "https://www.reddit.com/user/kjoneslol/m/sfwpornnetwork/.rss",

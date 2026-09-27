@@ -422,6 +422,7 @@
     "pypi:new-packages": "New packages",
     "pypi:updates": "Recent updates",
     "rubygems:versions": "Versions",
-    "rubygems:latest-gems": "Latest gems"
+    "rubygems:latest-gems": "Latest gems",
+    "redcircle:show": "Show"
   }
 }
