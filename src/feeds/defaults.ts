@@ -21,6 +21,7 @@ import { applePodcastsHandler } from './platforms/applePodcasts.js'
 import { arenaHandler } from './platforms/arena.js'
 import { art19Handler } from './platforms/art19.js'
 import { artstationHandler } from './platforms/artstation.js'
+import { atyponHandler } from './platforms/atypon.js'
 import { audioboomHandler } from './platforms/audioboom.js'
 import { bearblogHandler } from './platforms/bearblog.js'
 import { behanceHandler } from './platforms/behance.js'
@@ -303,6 +304,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     arenaHandler,
     art19Handler,
     artstationHandler,
+    atyponHandler,
     audioboomHandler,
     bearblogHandler,
     behanceHandler,
