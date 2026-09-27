@@ -25,6 +25,13 @@
     "artstation:artwork-latest": "https://www.artstation.com/artwork.rss?sorting=latest",
     "artstation:portfolio": "https://www.artstation.com/rossdraws.rss"
   },
+  "atwiki": {
+    "atwiki:new-pages": "https://w.atwiki.jp/aniwotawiki/rss10_new.xml",
+    "atwiki:updated-pages": [
+      "https://w.atwiki.jp/aniwotawiki/rss10.xml",
+      "https://w.atwiki.jp/aniwotawiki/feed.atom"
+    ]
+  },
   "atypon": {
     "atypon:journal": [
       "https://ascelibrary.org/action/showFeed?type=etoc&feed=rss&jc=jsendh",
@@ -112,6 +119,9 @@
   },
   "castopod": {
     "castopod:podcast": "https://castopod.it/@PlinPlon/feed.xml"
+  },
+  "castos": {
+    "castos:podcast": "https://feeds.castos.com/x42p4"
   },
   "cnblogs": {
     "cnblogs:posts": "https://www.cnblogs.com/vamei/rss"
@@ -222,6 +232,9 @@
   "fireside": {
     "fireside:podcast": ["https://feeds.fireside.fm/office/rss", "https://office.fireside.fm/json"]
   },
+  "firstory": {
+    "firstory:podcast": "https://feed.firstory.me/rss/user/cklqae6gy388f0892i2qmv851"
+  },
   "flickr": {
     "flickr:faves": "https://www.flickr.com/services/feeds/photos_faves.gne?id=24662369@N07",
     "flickr:forum": "https://www.flickr.com/services/feeds/forums.gne",
@@ -230,6 +243,11 @@
     "flickr:group-pool": "https://www.flickr.com/services/feeds/groups_pool.gne?id=42097308@N00",
     "flickr:photos": "https://www.flickr.com/services/feeds/photos_public.gne?id=24662369@N07",
     "flickr:tag": "https://www.flickr.com/services/feeds/photos_public.gne?tags=cats"
+  },
+  "flipboard": {
+    "flipboard:magazine": "https://flipboard.com/@theverge/business-arsskhdiz.rss",
+    "flipboard:profile": "https://flipboard.com/@theverge.rss",
+    "flipboard:topic": "https://flipboard.com/topic/technology.rss"
   },
   "fluxbb": {
     "fluxbb:forum": "https://bbs.archlinux.org/extern.php?action=feed&fid=23&type=atom",
@@ -393,6 +411,12 @@
     ],
     "insanejournal:userpics": "https://ela.insanejournal.com/data/userpics"
   },
+  "instatus": {
+    "instatus:history": [
+      "https://status.mastodon.social/history.rss",
+      "https://status.mastodon.social/history.atom"
+    ]
+  },
   "internetArchive": {
     "internet-archive:collection": "https://archive.org/services/collection-rss.php?collection=oldtimeradio",
     "internet-archive:search": "https://archive.org/services/collection-rss.php?query=subject%3Atrance"
@@ -439,9 +463,27 @@
       "https://www.headqr.com/en/blog-en?format=feed&type=atom"
     ]
   },
+  "jugem": {
+    "jugem:posts": ["https://info.jugem.jp/?mode=rss", "https://info.jugem.jp/?mode=atom"]
+  },
   "kickstarter": {
     "kickstarter:projects": "https://www.kickstarter.com/projects/feed.atom",
     "kickstarter:updates": "https://www.kickstarter.com/projects/elanlee/exploding-kittens/posts.atom"
+  },
+  "launchpad": {
+    "launchpad:announcements": [
+      "http://feeds.launchpad.net/announcements.atom",
+      "http://feeds.launchpad.net/launchpad/announcements.atom"
+    ],
+    "launchpad:branch": "http://feeds.launchpad.net/~bzr-pqm/bzr/bzr.dev/branch.atom",
+    "launchpad:branches": "http://feeds.launchpad.net/launchpad/branches.atom",
+    "launchpad:bug": "http://feeds.launchpad.net/bugs/1/bug.atom",
+    "launchpad:bugs": [
+      "http://feeds.launchpad.net/bugs/latest-bugs.atom",
+      "http://feeds.launchpad.net/launchpad/latest-bugs.atom",
+      "http://feeds.launchpad.net/ubuntu/+source/bash/latest-bugs.atom"
+    ],
+    "launchpad:revisions": "http://feeds.launchpad.net/launchpad/revisions.atom"
   },
   "learnku": {
     "learnku:community": "https://learnku.com/laravel/feed",
@@ -457,8 +499,22 @@
     "letterboxd:diary": ["https://letterboxd.com/dave/rss/", "https://letterboxd.com/lynch/rss/"],
     "letterboxd:journal": "https://letterboxd.com/journal/rss/"
   },
+  "librivox": {
+    "librivox:audiobook": "https://librivox.org/rss/253"
+  },
   "libsyn": {
     "libsyn:podcast": "https://thefeed.libsyn.com/rss"
+  },
+  "lichess": {
+    "lichess:blog": [
+      "https://lichess.org/@/Lichess/blog.atom",
+      "https://lichess.org/@/thibault/blog.atom"
+    ],
+    "lichess:community": [
+      "https://lichess.org/blog/community.atom",
+      "https://lichess.org/blog/community.atom?lang=fr"
+    ],
+    "lichess:updates": "https://lichess.org/feed.atom"
   },
   "listed": {
     "listed:blog": "https://listed.to/@Listed/feed.rss"
@@ -504,6 +560,9 @@
     "medium:publication": "https://medium.com/feed/towards-data-science",
     "medium:tag": "https://medium.com/feed/tag/programming",
     "medium:tagged": "https://medium.com/feed/towards-data-science/tagged/python"
+  },
+  "megaphone": {
+    "megaphone:podcast": "https://feeds.megaphone.fm/GLT1412515089"
   },
   "microblog": {
     "microblog:archive": "https://vincent.micro.blog/archive/index.json",
@@ -601,6 +660,32 @@
       "https://status.openstatus.dev/feed/atom"
     ]
   },
+  "packagist": {
+    "packagist:extension-releases": [
+      "https://packagist.org/feeds/extension-releases.rss",
+      "https://packagist.org/feeds/extension-releases.atom"
+    ],
+    "packagist:new-extensions": [
+      "https://packagist.org/feeds/extensions.rss",
+      "https://packagist.org/feeds/extensions.atom"
+    ],
+    "packagist:new-packages": [
+      "https://packagist.org/feeds/packages.rss",
+      "https://packagist.org/feeds/packages.atom"
+    ],
+    "packagist:new-releases": [
+      "https://packagist.org/feeds/releases.rss",
+      "https://packagist.org/feeds/releases.atom"
+    ],
+    "packagist:releases": [
+      "https://packagist.org/feeds/package.monolog/monolog.rss",
+      "https://packagist.org/feeds/package.monolog/monolog.atom"
+    ],
+    "packagist:vendor": [
+      "https://packagist.org/feeds/vendor.monolog.rss",
+      "https://packagist.org/feeds/vendor.monolog.atom"
+    ]
+  },
   "pagecord": {
     "pagecord:blog": "https://blog.pagecord.com/feed.xml"
   },
@@ -663,6 +748,9 @@
   "podbean": {
     "podbean:podcast": "https://feed.podbean.com/podcast/feed.xml"
   },
+  "podhome": {
+    "podhome:podcast": "https://serve.podhome.fm/rss/6d610788-42f7-4cc8-9184-7e651cf101e2"
+  },
   "podigee": {
     "podigee:podcast": "https://cui-bono.podigee.io/feed/mp3"
   },
@@ -696,12 +784,20 @@
   "publii": {
     "publii:posts": ["https://getpublii.com/feed.xml", "https://falk.plus/feed.json"]
   },
+  "pypi": {
+    "pypi:new-packages": "https://pypi.org/rss/packages.xml",
+    "pypi:releases": "https://pypi.org/rss/project/requests/releases.xml",
+    "pypi:updates": "https://pypi.org/rss/updates.xml"
+  },
   "qiita": {
     "qiita:organization": "https://qiita.com/organizations/qiita-inc/activities.atom",
     "qiita:popular": "https://qiita.com/popular-items/feed.atom",
     "qiita:posts": "https://qiita.com/Qiita/feed.atom",
     "qiita:tag": "https://qiita.com/tags/javascript/feed.atom",
     "qiita:zine": "https://qiita.com/official-columns/feed/"
+  },
+  "redcircle": {
+    "redcircle:show": "https://feeds.redcircle.com/e8ab057c-683d-4375-a197-2dcc42d4f851"
   },
   "reddit": {
     "reddit:comments": "https://www.reddit.com/r/programming/comments/.rss",
@@ -724,8 +820,15 @@
       "skip": "empty feed on every subreddit tried"
     }
   },
+  "royalroad": {
+    "royalroad:fiction": "https://www.royalroad.com/syndication/21220"
+  },
   "rssCom": {
     "rss-com:podcast": "https://media.rss.com/podcasting101/feed.xml"
+  },
+  "rubygems": {
+    "rubygems:latest-gems": "https://rubygems.org/gems.atom",
+    "rubygems:versions": "https://rubygems.org/gems/rails/versions.atom"
   },
   "seesaa": {
     "seesaa:posts": "https://info.seesaa.net/index.rdf",
@@ -890,6 +993,12 @@
       "https://adam.weblog.lol/rss.xml",
       "https://adam.weblog.lol/atom.xml",
       "https://adam.weblog.lol/feed.json"
+    ]
+  },
+  "webtoons": {
+    "webtoons:series": [
+      "https://www.webtoons.com/en/fantasy/tower-of-god/rss?title_no=95",
+      "https://www.webtoons.com/en/challenge/barcoded/rss?title_no=803012"
     ]
   },
   "weebly": {
