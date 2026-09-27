@@ -7,31 +7,55 @@ const base = 'https://b.hatena.ne.jp'
 
 describe('parseHatenaBookmarkUrl', () => {
   it('should return a search for a tag search', () => {
-    const expected: HatenaBookmarkUrl = { kind: 'search' }
+    const expected: HatenaBookmarkUrl = {
+      kind: 'search',
+      searchType: 'tag',
+    }
 
     expect(parseHatenaBookmarkUrl('https://b.hatena.ne.jp/search/tag?q=rss')).toEqual(expected)
   })
 
   it('should return a search for a tag search with a capitalized search segment', () => {
-    const expected: HatenaBookmarkUrl = { kind: 'search' }
+    const expected: HatenaBookmarkUrl = {
+      kind: 'search',
+      searchType: 'tag',
+    }
 
     expect(parseHatenaBookmarkUrl('https://b.hatena.ne.jp/Search/tag?q=rss')).toEqual(expected)
   })
 
+  it('should return the lowercase search type for a capitalized search type', () => {
+    const expected: HatenaBookmarkUrl = {
+      kind: 'search',
+      searchType: 'tag',
+    }
+
+    expect(parseHatenaBookmarkUrl('https://b.hatena.ne.jp/search/Tag?q=rss')).toEqual(expected)
+  })
+
   it('should return a search for a text search', () => {
-    const expected: HatenaBookmarkUrl = { kind: 'search' }
+    const expected: HatenaBookmarkUrl = {
+      kind: 'search',
+      searchType: 'text',
+    }
 
     expect(parseHatenaBookmarkUrl('https://b.hatena.ne.jp/search/text?q=feed')).toEqual(expected)
   })
 
   it('should return a site for a domain page', () => {
-    const expected: HatenaBookmarkUrl = { kind: 'site' }
+    const expected: HatenaBookmarkUrl = {
+      kind: 'site',
+      site: 'example.com/',
+    }
 
     expect(parseHatenaBookmarkUrl('https://b.hatena.ne.jp/site/example.com/')).toEqual(expected)
   })
 
   it('should return a site for a domain page with a capitalized site segment', () => {
-    const expected: HatenaBookmarkUrl = { kind: 'site' }
+    const expected: HatenaBookmarkUrl = {
+      kind: 'site',
+      site: 'example.com/',
+    }
 
     expect(parseHatenaBookmarkUrl('https://b.hatena.ne.jp/Site/example.com/')).toEqual(expected)
   })
