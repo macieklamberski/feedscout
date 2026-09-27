@@ -384,6 +384,12 @@
     "https://myanimelist.net/rss.php?type=blog&u=Xinil",
     "https://myanimelist.net/rss/featured.xml"
   ],
+  "mybb": [
+    "https://forum.pine64.org/syndication.php",
+    "https://forum.pine64.org/syndication.php?type=atom1.0",
+    "https://forum.pine64.org/syndication.php?fid=2",
+    "https://forum.pine64.org/syndication.php?type=atom1.0&fid=2"
+  ],
   "naverBlog": ["https://rss.blog.naver.com/naverofficial.xml"],
   "nebula": [
     "https://rss.nebula.app/video/channels/realengineering.rss",

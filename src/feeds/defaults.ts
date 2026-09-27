@@ -93,6 +93,7 @@ import { microblogHandler } from './platforms/microblog.js'
 import { misskeyHandler } from './platforms/misskey.js'
 import { mobilizonHandler } from './platforms/mobilizon.js'
 import { myanimelistHandler } from './platforms/myanimelist.js'
+import { mybbHandler } from './platforms/mybb.js'
 import { naverBlogHandler } from './platforms/naverBlog.js'
 import { nebulaHandler } from './platforms/nebula.js'
 import { neocitiesHandler } from './platforms/neocities.js'
@@ -384,6 +385,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     misskeyHandler,
     mobilizonHandler,
     myanimelistHandler,
+    mybbHandler,
     naverBlogHandler,
     nebulaHandler,
     neocitiesHandler,

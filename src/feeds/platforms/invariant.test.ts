@@ -23,6 +23,7 @@ import { lemmyHandler } from './lemmy.js'
 import { mastodonHandler } from './mastodon.js'
 import { misskeyHandler } from './misskey.js'
 import { mobilizonHandler } from './mobilizon.js'
+import { mybbHandler } from './mybb.js'
 import { nodebbHandler } from './nodebb.js'
 import { openstatusHandler } from './openstatus.js'
 import { peertubeHandler } from './peertube.js'
@@ -130,6 +131,7 @@ const cases: Array<Case> = [
     mobilizonHandler,
     "<noscript>Mobilizon doesn't work properly without JavaScript</noscript>",
   ],
+  ['mybb', mybbHandler, '', new Headers({ 'set-cookie': 'mybb[lastvisit]=1790000000; path=/' })],
   ['nodebb', nodebbHandler, '', new Headers({ 'x-powered-by': 'NodeBB' })],
   ['openstatus', openstatusHandler, '<link href="/api/status/summary.json">'],
   ['peertube', peertubeHandler, '', new Headers({ 'x-powered-by': 'PeerTube' })],
