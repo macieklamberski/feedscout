@@ -126,6 +126,7 @@ import { snacHandler } from './platforms/snac.js'
 import { soundcloudHandler } from './platforms/soundcloud.js'
 import { sourceforgeHandler } from './platforms/sourceforge.js'
 import { sourcehutHandler } from './platforms/sourcehut.js'
+import { spotifyForCreatorsHandler } from './platforms/spotifyForCreators.js'
 import { spreakerHandler } from './platforms/spreaker.js'
 import { squarespaceHandler } from './platforms/squarespace.js'
 import { stackExchangeHandler } from './platforms/stackExchange.js'
@@ -409,6 +410,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     soundcloudHandler,
     sourceforgeHandler,
     sourcehutHandler,
+    spotifyForCreatorsHandler,
     spreakerHandler,
     squarespaceHandler,
     stackExchangeHandler,
