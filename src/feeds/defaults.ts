@@ -68,6 +68,7 @@ import { hubspotHandler } from './platforms/hubspot.js'
 import { hubzillaHandler } from './platforms/hubzilla.js'
 import { insanejournalHandler } from './platforms/insanejournal.js'
 import { itchioHandler } from './platforms/itchio.js'
+import { ivooxHandler } from './platforms/ivoox.js'
 import { jiraHandler } from './platforms/jira.js'
 import { joomlaHandler } from './platforms/joomla.js'
 import { kickstarterHandler } from './platforms/kickstarter.js'
@@ -347,6 +348,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     hubzillaHandler,
     insanejournalHandler,
     itchioHandler,
+    ivooxHandler,
     jiraHandler,
     joomlaHandler,
     kickstarterHandler,

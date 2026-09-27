@@ -367,6 +367,7 @@
     "peertube:account": "Account",
     "peertube:instance": "Instance",
     "podomatic:show": "Show",
-    "powerpress:podcast": "Podcast"
+    "powerpress:podcast": "Podcast",
+    "ivoox:podcast": "Podcast"
   }
 }
