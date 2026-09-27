@@ -151,8 +151,8 @@
   },
   "diaspora": {
     "diaspora:posts": [
-      "https://despora.de/public/jaeger",
-      "https://pod.geraspora.de/public/denschub",
+      "https://despora.de/public/guenter.atom",
+      "https://pod.geraspora.de/public/bbauer.atom",
       "https://pod.diaspora.software/public/hq.atom"
     ]
   },
