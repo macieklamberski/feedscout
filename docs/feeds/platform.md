@@ -1806,6 +1806,17 @@ Discovers the episode feed of a WEBTOON series, Originals and Canvas alike.
 | `webtoons.com/{language}/{genre}/{name}/{episode}/viewer?title_no={id}` | Series feed |
 | `webtoons.com/{language}/canvas/{name}/list?title_no={id}` | Series feed |
 
+### Lichess
+
+Discovers Atom feeds for Lichess user blogs, the official blog and the community blogs.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `lichess.org/@/{user}/blog` or `lichess.org/@/{user}/blog/{slug}/{id}` | User blog feed |
+| `lichess.org/blog` or `lichess.org/blog/{id}/{slug}` | Official Lichess blog feed |
+| `lichess.org/blog/community` or `lichess.org/{lang}/blog/community` | Community blogs feed, in that language when the URL names one |
+| Any other page | Site-wide updates feed |
+
 ## Basic Usage
 
 ```typescript
@@ -1919,6 +1930,7 @@ import {
   letterboxdHandler,
   librivoxHandler,
   libsynHandler,
+  lichessHandler,
   listedHandler,
   livejournalHandler,
   lobstersHandler,
