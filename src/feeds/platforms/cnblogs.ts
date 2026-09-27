@@ -1,4 +1,4 @@
-import { isAnyOf, isHostOf } from 'trousse'
+import { getPathSegments, isAnyOf, isHostOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
@@ -8,7 +8,7 @@ const hosts = ['cnblogs.com', 'www.cnblogs.com']
 const excludedPaths = ['news', 'aggsite', 'question', 'ing', 'search', 'kb', 'sitehome', 'util']
 
 const getUsername = (url: string): string | undefined => {
-  const [first] = new URL(url).pathname.split('/').filter(Boolean)
+  const [first] = getPathSegments(url)
 
   if (!first || isAnyOf(first, excludedPaths)) {
     return

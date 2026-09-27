@@ -1,4 +1,4 @@
-import { isAnyOf, isHostOf } from 'trousse'
+import { getPathSegments, isAnyOf, isHostOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
@@ -51,8 +51,8 @@ export const vimeoHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    const { origin, pathname } = new URL(url)
-    const pathSegments = pathname.split('/').filter(Boolean)
+    const { origin } = new URL(url)
+    const pathSegments = getPathSegments(url)
 
     // Channel page: vimeo.com/channels/{channel}
     if (isAnyOf(pathSegments[0], 'channels') && pathSegments[1]) {

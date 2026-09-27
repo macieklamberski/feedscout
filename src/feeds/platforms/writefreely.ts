@@ -1,4 +1,4 @@
-import { isAnyOf } from 'trousse'
+import { getPathSegments, isAnyOf } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import {
@@ -19,7 +19,7 @@ const excludedPaths = ['read', 'about', 'login', 'signup', 'me', 'api', 'pad', '
 
 const getUrlBlogPath = (url: string): string | undefined => {
   const { pathname } = new URL(url)
-  const [first] = pathname.split('/').filter(Boolean)
+  const [first] = getPathSegments(url)
 
   if (!first || isAnyOf(first, excludedPaths)) {
     return

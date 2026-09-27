@@ -1,4 +1,4 @@
-import { isSubdomainOf } from 'trousse'
+import { getPathSegments, isSubdomainOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, hasMetaContent } from '../../common/utils.js'
 
@@ -18,8 +18,8 @@ export const isWixHeaders = (headers: Headers): boolean => {
 
 // A free site lives under a path on `{account}.wixsite.com`, whose root answers 404.
 const getSiteUrl = (url: string): string => {
-  const { origin, pathname } = new URL(url)
-  const [site] = pathname.split('/').filter(Boolean)
+  const { origin } = new URL(url)
+  const [site] = getPathSegments(url)
 
   return isSubdomainOf(url, domains) && site ? `${origin}/${site}` : origin
 }
