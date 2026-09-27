@@ -53,7 +53,6 @@ describe('wpengineHandler', () => {
         {
           uri: [
             'https://example.wpenginepowered.com/comments/feed/',
-            'https://example.wpenginepowered.com/?feed=comments-rss',
             'https://example.wpenginepowered.com/comments/feed/rss2/',
             'https://example.wpenginepowered.com/?feed=comments-rss2',
           ],
@@ -65,13 +64,6 @@ describe('wpengineHandler', () => {
             'https://example.wpenginepowered.com/?feed=comments-atom',
           ],
           hint: { key: 'wordpress:comments', label: 'Comments', format: 'atom' },
-        },
-        {
-          uri: [
-            'https://example.wpenginepowered.com/comments/feed/rdf/',
-            'https://example.wpenginepowered.com/?feed=comments-rdf',
-          ],
-          hint: { key: 'wordpress:comments', label: 'Comments', format: 'rdf' },
         },
       ]
 
@@ -104,7 +96,6 @@ describe('wpengineHandler', () => {
         {
           uri: [
             'https://example.wpengine.com/comments/feed/',
-            'https://example.wpengine.com/?feed=comments-rss',
             'https://example.wpengine.com/comments/feed/rss2/',
             'https://example.wpengine.com/?feed=comments-rss2',
           ],
@@ -116,13 +107,6 @@ describe('wpengineHandler', () => {
             'https://example.wpengine.com/?feed=comments-atom',
           ],
           hint: { key: 'wordpress:comments', label: 'Comments', format: 'atom' },
-        },
-        {
-          uri: [
-            'https://example.wpengine.com/comments/feed/rdf/',
-            'https://example.wpengine.com/?feed=comments-rdf',
-          ],
-          hint: { key: 'wordpress:comments', label: 'Comments', format: 'rdf' },
         },
       ]
 
@@ -181,7 +165,6 @@ describe('wpengineHandler', () => {
         {
           uri: [
             'https://example.wpenginepowered.com/comments/feed/',
-            'https://example.wpenginepowered.com/?feed=comments-rss',
             'https://example.wpenginepowered.com/comments/feed/rss2/',
             'https://example.wpenginepowered.com/?feed=comments-rss2',
           ],
@@ -193,13 +176,6 @@ describe('wpengineHandler', () => {
             'https://example.wpenginepowered.com/?feed=comments-atom',
           ],
           hint: { key: 'wordpress:comments', label: 'Comments', format: 'atom' },
-        },
-        {
-          uri: [
-            'https://example.wpenginepowered.com/comments/feed/rdf/',
-            'https://example.wpenginepowered.com/?feed=comments-rdf',
-          ],
-          hint: { key: 'wordpress:comments', label: 'Comments', format: 'rdf' },
         },
       ]
 
@@ -258,7 +234,6 @@ describe('wpengineHandler', () => {
         {
           uri: [
             'https://example.wpenginepowered.com/comments/feed/',
-            'https://example.wpenginepowered.com/?feed=comments-rss',
             'https://example.wpenginepowered.com/comments/feed/rss2/',
             'https://example.wpenginepowered.com/?feed=comments-rss2',
           ],
@@ -270,13 +245,6 @@ describe('wpengineHandler', () => {
             'https://example.wpenginepowered.com/?feed=comments-atom',
           ],
           hint: { key: 'wordpress:comments', label: 'Comments', format: 'atom' },
-        },
-        {
-          uri: [
-            'https://example.wpenginepowered.com/comments/feed/rdf/',
-            'https://example.wpenginepowered.com/?feed=comments-rdf',
-          ],
-          hint: { key: 'wordpress:comments', label: 'Comments', format: 'rdf' },
         },
       ]
 
@@ -335,7 +303,6 @@ describe('wpengineHandler', () => {
         {
           uri: [
             'https://example.wpenginepowered.com/comments/feed/',
-            'https://example.wpenginepowered.com/?feed=comments-rss',
             'https://example.wpenginepowered.com/comments/feed/rss2/',
             'https://example.wpenginepowered.com/?feed=comments-rss2',
           ],
@@ -347,13 +314,6 @@ describe('wpengineHandler', () => {
             'https://example.wpenginepowered.com/?feed=comments-atom',
           ],
           hint: { key: 'wordpress:comments', label: 'Comments', format: 'atom' },
-        },
-        {
-          uri: [
-            'https://example.wpenginepowered.com/comments/feed/rdf/',
-            'https://example.wpenginepowered.com/?feed=comments-rdf',
-          ],
-          hint: { key: 'wordpress:comments', label: 'Comments', format: 'rdf' },
         },
       ]
 
@@ -412,7 +372,6 @@ describe('wpengineHandler', () => {
         {
           uri: [
             'https://example.wpenginepowered.com/comments/feed/',
-            'https://example.wpenginepowered.com/?feed=comments-rss',
             'https://example.wpenginepowered.com/comments/feed/rss2/',
             'https://example.wpenginepowered.com/?feed=comments-rss2',
           ],
@@ -424,13 +383,6 @@ describe('wpengineHandler', () => {
             'https://example.wpenginepowered.com/?feed=comments-atom',
           ],
           hint: { key: 'wordpress:comments', label: 'Comments', format: 'atom' },
-        },
-        {
-          uri: [
-            'https://example.wpenginepowered.com/comments/feed/rdf/',
-            'https://example.wpenginepowered.com/?feed=comments-rdf',
-          ],
-          hint: { key: 'wordpress:comments', label: 'Comments', format: 'rdf' },
         },
       ]
 
@@ -489,7 +441,6 @@ describe('wpengineHandler', () => {
         {
           uri: [
             'https://example.wpenginepowered.com/comments/feed/',
-            'https://example.wpenginepowered.com/?feed=comments-rss',
             'https://example.wpenginepowered.com/comments/feed/rss2/',
             'https://example.wpenginepowered.com/?feed=comments-rss2',
           ],
@@ -501,13 +452,6 @@ describe('wpengineHandler', () => {
             'https://example.wpenginepowered.com/?feed=comments-atom',
           ],
           hint: { key: 'wordpress:comments', label: 'Comments', format: 'atom' },
-        },
-        {
-          uri: [
-            'https://example.wpenginepowered.com/comments/feed/rdf/',
-            'https://example.wpenginepowered.com/?feed=comments-rdf',
-          ],
-          hint: { key: 'wordpress:comments', label: 'Comments', format: 'rdf' },
         },
       ]
 
@@ -566,7 +510,6 @@ describe('wpengineHandler', () => {
         {
           uri: [
             'https://example.wpenginepowered.com/comments/feed/',
-            'https://example.wpenginepowered.com/?feed=comments-rss',
             'https://example.wpenginepowered.com/comments/feed/rss2/',
             'https://example.wpenginepowered.com/?feed=comments-rss2',
           ],
@@ -578,13 +521,6 @@ describe('wpengineHandler', () => {
             'https://example.wpenginepowered.com/?feed=comments-atom',
           ],
           hint: { key: 'wordpress:comments', label: 'Comments', format: 'atom' },
-        },
-        {
-          uri: [
-            'https://example.wpenginepowered.com/comments/feed/rdf/',
-            'https://example.wpenginepowered.com/?feed=comments-rdf',
-          ],
-          hint: { key: 'wordpress:comments', label: 'Comments', format: 'rdf' },
         },
       ]
 
@@ -612,13 +548,6 @@ describe('wpengineHandler', () => {
         },
         {
           uri: [
-            'https://example.wpengine.com/2024/06/hello-world/feed/rdf/',
-            'https://example.wpengine.com/2024/06/hello-world/?feed=rdf',
-          ],
-          hint: { key: 'wordpress:post-comments', label: 'Post comments', format: 'rdf' },
-        },
-        {
-          uri: [
             'https://example.wpengine.com/feed/',
             'https://example.wpengine.com/?feed=rss',
             'https://example.wpengine.com/feed/rss2/',
@@ -640,7 +569,6 @@ describe('wpengineHandler', () => {
         {
           uri: [
             'https://example.wpengine.com/comments/feed/',
-            'https://example.wpengine.com/?feed=comments-rss',
             'https://example.wpengine.com/comments/feed/rss2/',
             'https://example.wpengine.com/?feed=comments-rss2',
           ],
@@ -652,13 +580,6 @@ describe('wpengineHandler', () => {
             'https://example.wpengine.com/?feed=comments-atom',
           ],
           hint: { key: 'wordpress:comments', label: 'Comments', format: 'atom' },
-        },
-        {
-          uri: [
-            'https://example.wpengine.com/comments/feed/rdf/',
-            'https://example.wpengine.com/?feed=comments-rdf',
-          ],
-          hint: { key: 'wordpress:comments', label: 'Comments', format: 'rdf' },
         },
       ]
 
