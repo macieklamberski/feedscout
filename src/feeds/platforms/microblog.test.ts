@@ -132,6 +132,38 @@ describe('microblogHandler', () => {
       expect(microblogHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return the lowercase category feeds for a capitalized category', () => {
+      const value = 'https://example.micro.blog/categories/Tech'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://example.micro.blog/categories/tech/feed.xml',
+          hint: { key: 'microblog:category', label: 'Category', format: 'rss' },
+        },
+        {
+          uri: 'https://example.micro.blog/categories/tech/feed.json',
+          hint: { key: 'microblog:category', label: 'Category', format: 'json' },
+        },
+        {
+          uri: 'https://example.micro.blog/feed.xml',
+          hint: { key: 'microblog:posts', label: 'Posts', format: 'rss' },
+        },
+        {
+          uri: 'https://example.micro.blog/feed.json',
+          hint: { key: 'microblog:posts', label: 'Posts', format: 'json' },
+        },
+        {
+          uri: 'https://example.micro.blog/podcast.xml',
+          hint: { key: 'microblog:podcast', label: 'Podcast', format: 'rss' },
+        },
+        {
+          uri: 'https://example.micro.blog/podcast.json',
+          hint: { key: 'microblog:podcast', label: 'Podcast', format: 'json' },
+        },
+      ]
+
+      expect(microblogHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return archive feed for archive page', () => {
       const value = 'https://example.micro.blog/archive'
       const expected: Array<DiscoverUriEntry> = [
