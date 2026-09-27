@@ -1516,6 +1516,16 @@ Discovers the table of contents feed of a journal hosted on Atypon Literatum: AC
 > [!NOTE]
 > Journal pages answer a server-side fetch with a Cloudflare challenge, so the feed is derived from the URL alone. Article pages under `/doi/` name no journal and are not matched.
 
+### SoundOn
+
+Discovers the RSS feed of a SoundOn podcast. The player page is a script-only shell with no feed link.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `player.soundon.fm/p/{id}` | Podcast feed (RSS) |
+| `player.soundon.fm/p/{id}/episodes/{episodeId}` | Podcast feed (RSS) |
+| `player.soundon.fm/embed?podcast={id}` | Podcast feed (RSS) |
+
 ## Basic Usage
 
 ```typescript
@@ -1658,6 +1668,7 @@ import {
   seesaaHandler,
   shopifyHandler,
   soundcloudHandler,
+  soundonHandler,
   sourceforgeHandler,
   sourcehutHandler,
   spotifyForCreatorsHandler,

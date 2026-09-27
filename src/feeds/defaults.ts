@@ -125,6 +125,7 @@ import { shaarliHandler } from './platforms/shaarli.js'
 import { shopifyHandler } from './platforms/shopify.js'
 import { snacHandler } from './platforms/snac.js'
 import { soundcloudHandler } from './platforms/soundcloud.js'
+import { soundonHandler } from './platforms/soundon.js'
 import { sourceforgeHandler } from './platforms/sourceforge.js'
 import { sourcehutHandler } from './platforms/sourcehut.js'
 import { spotifyForCreatorsHandler } from './platforms/spotifyForCreators.js'
@@ -410,6 +411,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     shopifyHandler,
     snacHandler,
     soundcloudHandler,
+    soundonHandler,
     sourceforgeHandler,
     sourcehutHandler,
     spotifyForCreatorsHandler,
