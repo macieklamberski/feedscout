@@ -1,6 +1,7 @@
 import { isHttpUrl } from 'trousse'
 import { reportError } from '../../discover/utils.js'
 import type { DiscoverOnErrorFn, DiscoverRef, DiscoverUriEntry, FetchFn } from '../../types.js'
+import { collapsePathSlashes } from '../../utils.js'
 import type { PlatformMethodOptions } from './types.js'
 
 export type PlatformResolution = {
@@ -25,9 +26,11 @@ export const resolveFromPlatform = async (
     return { entries, guessExclusionRegexes }
   }
 
+  const pageUrl = collapsePathSlashes(baseUrl)
+
   for (const handler of handlers) {
     try {
-      if (!handler.match(baseUrl, content, headers)) {
+      if (!handler.match(pageUrl, content, headers)) {
         continue
       }
 
@@ -36,7 +39,7 @@ export const resolveFromPlatform = async (
         guessExclusionRegexes.push(handler.guessExclusionRegex)
       }
 
-      const resolved = await handler.resolve(baseUrl, content, headers, fetchFn)
+      const resolved = await handler.resolve(pageUrl, content, headers, fetchFn)
 
       // A handler that matched but found nothing leaves the page to the handlers after it.
       if (resolved.length === 0) {
@@ -54,7 +57,7 @@ export const resolveFromPlatform = async (
 
       break
     } catch (error) {
-      reportError(onError, error, { phase: 'platformHandler', url: baseUrl })
+      reportError(onError, error, { phase: 'platformHandler', url: pageUrl })
     }
   }
 
