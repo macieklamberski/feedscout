@@ -39,7 +39,9 @@ export const microblogHandler: PlatformHandler = {
     const categoryMatch = pathname.match(categoryRegex)
 
     if (categoryMatch?.[1]) {
-      const category = categoryMatch[1]
+      // Micro.blog serves categories in lowercase only: /categories/Tech/feed.json answers 404
+      // and /categories/Tech/feed.xml redirects to the blog's main feed.
+      const category = categoryMatch[1].toLowerCase()
 
       uris.push({
         uri: `${origin}/categories/${category}/feed.xml`,
