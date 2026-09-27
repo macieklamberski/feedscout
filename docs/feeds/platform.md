@@ -1817,6 +1817,14 @@ Discovers Atom feeds for Lichess user blogs, the official blog and the community
 | `lichess.org/blog/community` or `lichess.org/{lang}/blog/community` | Community blogs feed, in that language when the URL names one |
 | Any other page | Site-wide updates feed |
 
+### @wiki
+
+Discovers the updated pages and new pages feeds of an @wiki (atwiki.jp) wiki. Links to the legacy `www{N}.atwiki.jp` hosts redirect to `w.atwiki.jp`.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `w.atwiki.jp/{wiki}/…` | Updated pages (RDF + Atom) + new pages (RDF) |
+
 ## Basic Usage
 
 ```typescript
@@ -1869,6 +1877,7 @@ import {
   arenaHandler,
   art19Handler,
   artstationHandler,
+  atwikiHandler,
   atyponHandler,
   audioboomHandler,
   aushaHandler,

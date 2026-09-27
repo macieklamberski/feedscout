@@ -25,6 +25,13 @@
     "artstation:artwork-latest": "https://www.artstation.com/artwork.rss?sorting=latest",
     "artstation:portfolio": "https://www.artstation.com/rossdraws.rss"
   },
+  "atwiki": {
+    "atwiki:new-pages": "https://w.atwiki.jp/aniwotawiki/rss10_new.xml",
+    "atwiki:updated-pages": [
+      "https://w.atwiki.jp/aniwotawiki/rss10.xml",
+      "https://w.atwiki.jp/aniwotawiki/feed.atom"
+    ]
+  },
   "atypon": {
     "atypon:journal": [
       "https://ascelibrary.org/action/showFeed?type=etoc&feed=rss&jc=jsendh",
