@@ -235,6 +235,20 @@ Discovers the Atom feed for Product Hunt.
 
 > There is one feed. Topic and category pages have no feed of their own, and the `?topic=` and `?category=` parameters are ignored.
 
+### Pinboard
+
+Discovers RSS feeds for Pinboard users, user tags, and the popular and recent lists.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `pinboard.in` | Popular bookmarks feed |
+| `pinboard.in/popular` | Popular bookmarks feed |
+| `pinboard.in/recent` | Recent bookmarks feed |
+| `pinboard.in/u:{username}` | User bookmarks feed |
+| `pinboard.in/u:{username}/t:{tag}` | User tag feed |
+| `pinboard.in/u:{username}/t:{tag1}/t:{tag2}` | User multi-tag feed |
+| `pinboard.in/t:{tag}` | Site-wide tag feed |
+
 ### Pinterest
 
 Discovers RSS feeds for Pinterest user profiles.
@@ -1593,6 +1607,7 @@ import {
   paragraphHandler,
   peertubeHandler,
   pikaHandler,
+  pinboardHandler,
   pinterestHandler,
   pixelfedHandler,
   pleromaHandler,
@@ -1708,7 +1723,7 @@ You can create handlers for platforms not included by default.
 
 ### Handler Interface
 
-A `PlatformHandler` has two methods:
+A `PlatformHandler` has two methods and an optional regex:
 
 ```typescript
 type PlatformHandler = {
@@ -1719,13 +1734,15 @@ type PlatformHandler = {
     headers?: Headers,
     fetchFn?: FetchFn,
   ) => MaybePromise<Array<DiscoverUriEntry | DiscoverRef>>
+  guessExclusionRegex?: RegExp
 }
 ```
 
-| Method | Description |
+| Member | Description |
 |--------|-------------|
 | `match(url, content?, headers?)` | Returns `true` if this handler should process the URL |
 | `resolve(url, content?, headers?, fetchFn?)` | Returns an array of [`DiscoverUriEntry`](/reference/types#discoverurientry) objects for the given page URL. A favicon handler can also return a [`DiscoverRef`](/reference/types#discoverref) for an icon that takes an extra request. See [Enriching Platform Icons](/other/favicons#enriching-platform-icons) |
+| `guessExclusionRegex` | Matches the full URL of any user's feed on the platform's host. When the handler matches the page, the [Guess method](/feeds/guess) drops URLs matching it, unless the handler generated them. Set it on a platform where a path like `/feed.xml` can be the feed of a user named `feed` |
 
 ### Basic Example
 

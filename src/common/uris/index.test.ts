@@ -3,6 +3,8 @@ import { omitEmpty } from 'trousse'
 import type { FetchFn } from '../types.js'
 import { discoverUris } from './index.js'
 
+const guessExclusionRegex = /^https:\/\/example\.com\/[^/]+\.xml$/
+
 describe('discoverUris', () => {
   it('should return empty object when no methods configured', async () => {
     const value = await discoverUris({})
@@ -319,5 +321,176 @@ describe('discoverUris', () => {
     const expected = { content, headers, fetchFn }
 
     expect(received).toEqual(expected)
+  })
+
+  describe('guess exclusion', () => {
+    it('should drop guesses matching the regex of a matched handler', async () => {
+      const value = await discoverUris({
+        platform: {
+          options: {
+            baseUrl: 'https://example.com/alice',
+            handlers: [
+              {
+                match: () => true,
+                resolve: () => [{ uri: 'https://example.com/alice.xml' }],
+                guessExclusionRegex,
+              },
+            ],
+          },
+        },
+        guess: {
+          options: {
+            baseUrl: 'https://example.com',
+            uris: ['/feed.xml', '/feed', '/rss.xml'],
+          },
+        },
+      })
+      const expected = {
+        platform: [{ uri: 'https://example.com/alice.xml' }],
+        guess: [{ uri: 'https://example.com/feed' }],
+      }
+
+      expect(value).toEqual(expected)
+    })
+
+    it('should keep a guess the platform method emitted', async () => {
+      const value = await discoverUris({
+        platform: {
+          options: {
+            baseUrl: 'https://example.com/feed',
+            handlers: [
+              {
+                match: () => true,
+                resolve: () => [{ uri: 'https://example.com/feed.xml' }],
+                guessExclusionRegex,
+              },
+            ],
+          },
+        },
+        guess: {
+          options: {
+            baseUrl: 'https://example.com',
+            uris: ['/feed.xml', '/rss.xml'],
+          },
+        },
+      })
+      const expected = {
+        platform: [{ uri: 'https://example.com/feed.xml' }],
+        guess: [{ uri: 'https://example.com/feed.xml' }],
+      }
+
+      expect(value).toEqual(expected)
+    })
+
+    it('should drop guesses when the matched handler resolves nothing', async () => {
+      const value = await discoverUris({
+        platform: {
+          options: {
+            baseUrl: 'https://example.com',
+            handlers: [
+              {
+                match: () => true,
+                resolve: () => [],
+                guessExclusionRegex,
+              },
+            ],
+          },
+        },
+        guess: {
+          options: {
+            baseUrl: 'https://example.com',
+            uris: ['/feed.xml', '/feed'],
+          },
+        },
+      })
+      const expected = { guess: [{ uri: 'https://example.com/feed' }] }
+
+      expect(value).toEqual(expected)
+    })
+
+    it('should keep the alternatives of a guess that do not match the regex', async () => {
+      const value = await discoverUris({
+        platform: {
+          options: {
+            baseUrl: 'https://example.com',
+            handlers: [
+              {
+                match: () => true,
+                resolve: () => [],
+                guessExclusionRegex,
+              },
+            ],
+          },
+        },
+        guess: {
+          options: {
+            baseUrl: 'https://example.com',
+            uris: [
+              ['/feed.xml', '/feed'],
+              ['/rss.xml', '/index.xml'],
+            ],
+          },
+        },
+      })
+      const expected = { guess: [{ uri: ['https://example.com/feed'] }] }
+
+      expect(value).toEqual(expected)
+    })
+
+    it('should keep all guesses when the handler does not match', async () => {
+      const value = await discoverUris({
+        platform: {
+          options: {
+            baseUrl: 'https://example.com',
+            handlers: [
+              {
+                match: () => false,
+                resolve: () => [],
+                guessExclusionRegex,
+              },
+            ],
+          },
+        },
+        guess: {
+          options: {
+            baseUrl: 'https://example.com',
+            uris: ['/feed.xml', '/rss.xml'],
+          },
+        },
+      })
+      const expected = {
+        guess: [{ uri: 'https://example.com/feed.xml' }, { uri: 'https://example.com/rss.xml' }],
+      }
+
+      expect(value).toEqual(expected)
+    })
+
+    it('should keep all guesses when the matched handler has no regex', async () => {
+      const value = await discoverUris({
+        platform: {
+          options: {
+            baseUrl: 'https://example.com/alice',
+            handlers: [
+              {
+                match: () => true,
+                resolve: () => [{ uri: 'https://example.com/alice.xml' }],
+              },
+            ],
+          },
+        },
+        guess: {
+          options: {
+            baseUrl: 'https://example.com',
+            uris: ['/feed.xml', '/rss.xml'],
+          },
+        },
+      })
+      const expected = {
+        platform: [{ uri: 'https://example.com/alice.xml' }],
+        guess: [{ uri: 'https://example.com/feed.xml' }, { uri: 'https://example.com/rss.xml' }],
+      }
+
+      expect(value).toEqual(expected)
+    })
   })
 })
