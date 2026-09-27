@@ -26,6 +26,7 @@ const excludedPaths = [
   'sitemap.xml',
   '-',
 ]
+const branchViews = ['src', 'commits']
 
 export const isGiteaHeaders = (headers: Headers): boolean => {
   return giteaCookieRegex.test(headers.get('set-cookie') ?? '')
@@ -41,7 +42,7 @@ export const parseGiteaUrl = (url: string): GiteaUrl | undefined => {
 
   // A branch name can contain a slash, as in v11.0/forgejo, and only Gitea knows where it ends,
   // so splitting the branch from the file path here breaks the feed URL.
-  if (repo && isAnyOf(section, 'src') && isAnyOf(refType, 'branch') && refPath.length > 0) {
+  if (repo && isAnyOf(section, branchViews) && isAnyOf(refType, 'branch') && refPath.length > 0) {
     return { kind: 'repo', owner, repo, branchPath: refPath.join('/') }
   }
 
@@ -109,7 +110,7 @@ export const giteaHandler: PlatformHandler = {
       },
     ]
 
-    // Branch or file page: codeberg.org/{owner}/{repo}/src/branch/{branch}/{path}.
+    // Branch or file page and its history: {owner}/{repo}/{src|commits}/branch/{branch}/{path}.
     if (branchPath) {
       feeds.unshift({
         // gitea.com sends an anonymous /rss/branch request to its sign-in page, and Codeberg

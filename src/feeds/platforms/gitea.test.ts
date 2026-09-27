@@ -45,6 +45,30 @@ describe('parseGiteaUrl', () => {
     expect(parseGiteaUrl(value)).toEqual(expected)
   })
 
+  it('should return the branch path for a commit history page', () => {
+    const value = 'https://codeberg.org/forgejo/forgejo/commits/branch/forgejo'
+    const expected: GiteaUrl = {
+      kind: 'repo',
+      owner: 'forgejo',
+      repo: 'forgejo',
+      branchPath: 'forgejo',
+    }
+
+    expect(parseGiteaUrl(value)).toEqual(expected)
+  })
+
+  it('should return the branch and file path for a file history page', () => {
+    const value = 'https://codeberg.org/forgejo/forgejo/commits/branch/forgejo/README.md'
+    const expected: GiteaUrl = {
+      kind: 'repo',
+      owner: 'forgejo',
+      repo: 'forgejo',
+      branchPath: 'forgejo/README.md',
+    }
+
+    expect(parseGiteaUrl(value)).toEqual(expected)
+  })
+
   it('should keep a branch name with a slash whole', () => {
     const value = 'https://codeberg.org/forgejo/forgejo/src/branch/v11.0/forgejo'
     const expected: GiteaUrl = {

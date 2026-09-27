@@ -210,9 +210,11 @@ Discovers Atom feeds for Gitea users, repositories, releases, tags, branch commi
 | `{instance}/{user}/{repo}` | Releases, tags, activity |
 | `{instance}/{user}/{repo}/src/branch/{branch}` | Branch commits (+ above) |
 | `{instance}/{user}/{repo}/src/branch/{branch}/{path}` | File history (+ above) |
+| `{instance}/{user}/{repo}/commits/branch/{branch}` | Branch commits (+ above) |
+| `{instance}/{user}/{repo}/commits/branch/{branch}/{path}` | File history (+ above) |
 
 > [!NOTE]
-> A self-hosted Forgejo instance sets no cookie on an anonymous request and is not matched; Codeberg, which runs Forgejo, is covered by the host list. `gitea.com` sends anonymous visitors of branch and file pages to its sign-in page, so discovery from those pages finds no feeds there.
+> A self-hosted Forgejo instance sets no cookie on an anonymous request and is not matched; Codeberg, which runs Forgejo, is covered by the host list. `gitea.com` sends anonymous visitors of branch, file and commit history pages to its sign-in page, so discovery from those pages finds no feeds there.
 
 ### GitLab
 
