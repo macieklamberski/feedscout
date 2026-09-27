@@ -52,6 +52,7 @@ import { drupalHandler } from './platforms/drupal.js'
 import { exblogHandler } from './platforms/exblog.js'
 import { fc2Handler } from './platforms/fc2.js'
 import { firesideHandler } from './platforms/fireside.js'
+import { firstoryHandler } from './platforms/firstory.js'
 import { flickrHandler } from './platforms/flickr.js'
 import { flipboardHandler } from './platforms/flipboard.js'
 import { fluxbbHandler } from './platforms/fluxbb.js'
@@ -362,6 +363,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     exblogHandler,
     fc2Handler,
     firesideHandler,
+    firstoryHandler,
     flickrHandler,
     flipboardHandler,
     fluxbbHandler,
