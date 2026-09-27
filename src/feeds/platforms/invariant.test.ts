@@ -12,6 +12,7 @@ import { drupalHandler } from './drupal.js'
 import { fluxbbHandler } from './fluxbb.js'
 import { friendicaHandler } from './friendica.js'
 import { funkwhaleHandler } from './funkwhale.js'
+import { gancioHandler } from './gancio.js'
 import { giteaHandler } from './gitea.js'
 import { gitlabHandler } from './gitlab.js'
 import { gravHandler } from './grav.js'
@@ -120,6 +121,7 @@ const cases: Array<Case> = [
   ['fluxbb', fluxbbHandler, '<div id="brdmenu"></div><div id="brdfooter"></div>'],
   ['friendica', friendicaHandler, '<meta name="generator" content="Friendica 2026.05">'],
   ['funkwhale', funkwhaleHandler, '<div id="fake-app"></div>'],
+  ['gancio', gancioHandler, '<link rel="stylesheet" href="/custom_css">'],
   ['gitea', giteaHandler, '', new Headers({ 'set-cookie': 'i_like_gitea=abc; Path=/' })],
   ['gitlab', gitlabHandler, '<meta property="og:site_name" content="GitLab">'],
   ['grav', gravHandler, '', new Headers({ 'set-cookie': 'grav-site-9a6a5fc=abc; path=/' })],

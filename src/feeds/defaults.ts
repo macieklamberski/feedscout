@@ -55,6 +55,7 @@ import { flickrHandler } from './platforms/flickr.js'
 import { fluxbbHandler } from './platforms/fluxbb.js'
 import { friendicaHandler } from './platforms/friendica.js'
 import { funkwhaleHandler } from './platforms/funkwhale.js'
+import { gancioHandler } from './platforms/gancio.js'
 import { ghostHandler } from './platforms/ghost.js'
 import { giteaHandler } from './platforms/gitea.js'
 import { githubHandler } from './platforms/github.js'
@@ -351,6 +352,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     fluxbbHandler,
     friendicaHandler,
     funkwhaleHandler,
+    gancioHandler,
     ghostHandler,
     giteaHandler,
     githubHandler,

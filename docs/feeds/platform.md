@@ -1637,6 +1637,20 @@ Discovers the page history and recent changes feeds of a MediaWiki wiki. Detecte
 | Any page with a title | Page history + recent changes |
 | A special page | Recent changes |
 
+### Gancio
+
+Discovers the RSS feeds of a Gancio event calendar. Detected by the `custom_css` stylesheet its layout prints in every page head, which also gives the install root, so a calendar under a sub-path gets its feeds there.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `{instance}/tag/{tag}` | Tag feed (RSS) |
+| `{instance}/place/{id}/{name}` | Place feed (RSS) |
+| `{instance}/collection/{name}` | Collection feed (RSS) |
+| Any other page | Site feed (RSS) |
+
+> [!NOTE]
+> The iCal feeds Gancio serves beside each RSS feed are not emitted, since they are not RSS, Atom or JSON feeds. Gancio 2 answers 404 on the tag and place feed paths its own pages advertise.
+
 ## Basic Usage
 
 ```typescript
@@ -1720,6 +1734,7 @@ import {
   firesideHandler,
   flickrHandler,
   friendicaHandler,
+  gancioHandler,
   ghostHandler,
   giteaHandler,
   githubHandler,
