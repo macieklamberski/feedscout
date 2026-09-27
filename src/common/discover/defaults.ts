@@ -1,5 +1,5 @@
 import { detectAtomFeed, detectJsonFeed, detectRdfFeed, detectRssFeed, parseFeed } from 'feedsmith'
-import { parseUrl } from 'trousse'
+import { parseUrl, resolveUrl } from 'trousse'
 import type { DiscoverResolveSiteUrlFn, DiscoverResolveUrlFn, FetchFn } from '../types.js'
 import { attempt, getFeedSiteUrl } from './utils.js'
 
@@ -19,7 +19,10 @@ export const defaultFetchFn: FetchFn = async (url, options) => {
 }
 
 export const defaultResolveUrlFn: DiscoverResolveUrlFn = (url, baseUrl) => {
-  return new URL(url, baseUrl).href
+  // resolveUrl answers nothing for a URL of another scheme, and discovery keeps a URL that resolves
+  // to nothing. Resolving it anyway lets discovery drop a `javascript:` link, or a relative link on
+  // a `file:` page.
+  return resolveUrl(url, baseUrl) ?? parseUrl(url, baseUrl)?.href
 }
 
 // TODO: parseFeed is called here and again in discoverUrisFromFeed for the favicons

@@ -1364,10 +1364,8 @@ describe('defaultResolveUrlFn', () => {
     expect(defaultResolveUrlFn(value, baseUrl)).toBe(expected)
   })
 
-  it('should throw when base URL is undefined and URL is relative', () => {
-    const throwing = () => defaultResolveUrlFn('/feed.xml', undefined)
-
-    expect(throwing).toThrow()
+  it('should return undefined when base URL is undefined and URL is relative', () => {
+    expect(defaultResolveUrlFn('/feed.xml', undefined)).toBeUndefined()
   })
 
   it('should return absolute URL when base URL is undefined', () => {
@@ -1390,6 +1388,30 @@ describe('defaultResolveUrlFn', () => {
     const value = '../feed.xml'
     const baseUrl = 'https://example.com/blog/posts/'
     const expected = 'https://example.com/blog/feed.xml'
+
+    expect(defaultResolveUrlFn(value, baseUrl)).toBe(expected)
+  })
+
+  it('should decode an HTML entity in the URL', () => {
+    const value = '/feed?format=rss&amp;lang=en'
+    const baseUrl = 'https://example.com'
+    const expected = 'https://example.com/feed?format=rss&lang=en'
+
+    expect(defaultResolveUrlFn(value, baseUrl)).toBe(expected)
+  })
+
+  it('should convert a feed protocol to https', () => {
+    const value = 'feed://example.com/rss.xml'
+    const baseUrl = 'https://example.com'
+    const expected = 'https://example.com/rss.xml'
+
+    expect(defaultResolveUrlFn(value, baseUrl)).toBe(expected)
+  })
+
+  it('should repair a malformed http protocol', () => {
+    const value = 'htp://example.com/feed.xml'
+    const baseUrl = 'https://example.com'
+    const expected = 'http://example.com/feed.xml'
 
     expect(defaultResolveUrlFn(value, baseUrl)).toBe(expected)
   })
