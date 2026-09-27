@@ -733,6 +733,15 @@ Discovers RSS feeds for Captivate-hosted podcasts.
 |-------------|-----------------|
 | `*.captivate.fm` | Podcast feed (RSS) |
 
+### Castopod
+
+Discovers the RSS feed of a podcast hosted on a Castopod instance. Detected by the theme colors stylesheet that Castopod prints in every page head.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `{instance}/@{handle}` | Podcast feed (RSS) |
+| `{instance}/@{handle}/episodes/{slug}` | Podcast feed (RSS) |
+
 ### Discourse
 
 Discovers RSS feeds for Discourse forums. Detected by the `Discourse` generator meta tag, the `data-discourse-setup` meta tag or the `X-Discourse-Route` response header.
@@ -1682,6 +1691,7 @@ import {
   buttondownHandler,
   buzzsproutHandler,
   captivateHandler,
+  castopodHandler,
   cnblogsHandler,
   confluenceHandler,
   cratesIoHandler,
