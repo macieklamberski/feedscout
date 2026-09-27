@@ -117,6 +117,7 @@ import { pleromaHandler } from './platforms/pleroma.js'
 import { plurkHandler } from './platforms/plurk.js'
 import { podbeanHandler } from './platforms/podbean.js'
 import { podigeeHandler } from './platforms/podigee.js'
+import { podloveHandler } from './platforms/podlove.js'
 import { podomaticHandler } from './platforms/podomatic.js'
 import { posthavenHandler } from './platforms/posthaven.js'
 import { postypeHandler } from './platforms/postype.js'
@@ -413,6 +414,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     plurkHandler,
     podbeanHandler,
     podigeeHandler,
+    podloveHandler,
     podomaticHandler,
     posthavenHandler,
     postypeHandler,

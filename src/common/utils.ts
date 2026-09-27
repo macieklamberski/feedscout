@@ -99,6 +99,13 @@ export const findElement = (
   return DomUtils.findOne(test, getParsedPage(content).document.children) ?? undefined
 }
 
+export const findElements = (
+  content: string,
+  test: (element: Element) => boolean,
+): Array<Element> => {
+  return DomUtils.findAll(test, getParsedPage(content).document.children)
+}
+
 export const findDescendant = (
   element: Element,
   test: (descendant: Element) => boolean,

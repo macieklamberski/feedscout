@@ -4,12 +4,11 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic covers user (guess, html), partly covers issues, repo.
-// Handler needed for: branch.
+// Generic covers user (guess, html), partly covers branch, file, issues, repo.
 
 export type GiteaUrl =
   | { kind: 'user'; owner: string }
-  | { kind: 'repo'; owner: string; repo: string }
+  | { kind: 'repo'; owner: string; repo: string; branchPath?: string }
 
 const hosts = ['codeberg.org', 'www.codeberg.org', 'gitea.com', 'www.gitea.com']
 const giteaCookieRegex = /(?:^|[;,\s])[\w-]*gitea=/
@@ -33,11 +32,17 @@ export const isGiteaHeaders = (headers: Headers): boolean => {
 }
 
 export const parseGiteaUrl = (url: string): GiteaUrl | undefined => {
-  const [first, repo] = getPathSegments(url)
+  const [first, repo, section, refType, ...refPath] = getPathSegments(url)
   const owner = repo ? first : first?.replace(userRouteSuffixRegex, '')
 
   if (!owner || isAnyOf(owner, excludedPaths)) {
     return
+  }
+
+  // A branch name can contain a slash, as in v11.0/forgejo, and only Gitea knows where it ends,
+  // so splitting the branch from the file path here breaks the feed URL.
+  if (repo && isAnyOf(section, 'src') && isAnyOf(refType, 'branch') && refPath.length > 0) {
+    return { kind: 'repo', owner, repo, branchPath: refPath.join('/') }
   }
 
   if (repo) {
@@ -85,7 +90,7 @@ export const giteaHandler: PlatformHandler = {
     }
 
     // Repo page: codeberg.org/{owner}/{repo}.
-    const { owner, repo } = parsed
+    const { owner, repo, branchPath } = parsed
     const feeds: Array<DiscoverUriEntry> = [
       {
         uri: [
@@ -103,6 +108,20 @@ export const giteaHandler: PlatformHandler = {
         hint: composeHint('gitea:activity'),
       },
     ]
+
+    // Branch or file page: codeberg.org/{owner}/{repo}/src/branch/{branch}/{path}.
+    if (branchPath) {
+      feeds.unshift({
+        // gitea.com sends an anonymous /rss/branch request to its sign-in page, and Codeberg
+        // answers /atom/branch with a cookie challenge.
+        uri: [
+          `${origin}/${owner}/${repo}/atom/branch/${branchPath}`,
+          `${origin}/${owner}/${repo}/rss/branch/${branchPath}`,
+        ],
+        // A slashed branch, such as v11.0/forgejo, gets the file history label.
+        hint: composeHint(branchPath.includes('/') ? 'gitea:file-history' : 'gitea:branch-commits'),
+      })
+    }
 
     return feeds
   },
