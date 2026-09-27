@@ -706,6 +706,16 @@ describe('discoverUrisFromHtml', () => {
         expected,
       )
     })
+
+    it('should match a type listed in an @type array', () => {
+      const value =
+        '<script type="application/ld+json">{"@type": ["DataFeed", "Thing"], "url": "https://example.com/feed.xml"}</script>'
+      const expected = ['https://example.com/feed.xml']
+
+      expect(discoverUrisFromHtml(value, { ...defaultOptions, jsonLdTypes: ['DataFeed'] })).toEqual(
+        expected,
+      )
+    })
   })
 
   describe('custom options', () => {

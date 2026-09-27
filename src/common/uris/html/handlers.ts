@@ -3,63 +3,6 @@ import { endsWithAnyOf, includesAnyOf, parseUrl } from 'trousse'
 import { matchesAnyOfLinkSelectors } from '../../utils.js'
 import type { HtmlMethodContext } from './types.js'
 
-const extractJsonLdUris = (item: Record<string, unknown>, context: HtmlMethodContext): void => {
-  const types = context.options.jsonLdTypes
-
-  if (!types?.length) {
-    return
-  }
-
-  let itemType: Array<string> = []
-
-  if (typeof item['@type'] === 'string') {
-    itemType = [item['@type']]
-  } else if (Array.isArray(item['@type'])) {
-    itemType = item['@type'] as Array<string>
-  }
-
-  const matches = itemType.some((type) => {
-    return types.some((allowed) => {
-      return type.toLowerCase() === allowed.toLowerCase()
-    })
-  })
-
-  if (matches) {
-    // Extract URL-like properties from matching types.
-    const urlProperties = ['url', 'mainEntityOfPage', 'sameAs']
-
-    for (const property of urlProperties) {
-      const value = item[property]
-
-      if (typeof value === 'string' && (value.startsWith('http') || value.startsWith('/'))) {
-        context.discoveredUris.add(value)
-      }
-
-      if (Array.isArray(value)) {
-        for (const entry of value) {
-          if (typeof entry === 'string' && (entry.startsWith('http') || entry.startsWith('/'))) {
-            context.discoveredUris.add(entry)
-          }
-        }
-      }
-    }
-
-    // For DataFeed type, the page itself is the feed.
-    if (itemType.some((type) => type.toLowerCase() === 'datafeed') && context.options.baseUrl) {
-      context.discoveredUris.add(context.options.baseUrl)
-    }
-  }
-
-  // Recurse into @graph for nested JSON-LD.
-  if (Array.isArray(item['@graph'])) {
-    for (const nested of item['@graph']) {
-      if (typeof nested === 'object' && nested !== null) {
-        extractJsonLdUris(nested as Record<string, unknown>, context)
-      }
-    }
-  }
-}
-
 export const handleOpenTag = (
   context: HtmlMethodContext,
   name: string,
@@ -133,24 +76,9 @@ export const handleOpenTag = (
       }
     }
   }
-
-  // Track JSON-LD script blocks for feed type detection.
-  if (
-    name === 'script' &&
-    attribs.type?.toLowerCase() === 'application/ld+json' &&
-    context.options.jsonLdTypes?.length
-  ) {
-    context.currentScript = { isJsonLd: true, content: '' }
-  }
 }
 
 export const handleText = (context: HtmlMethodContext, text: string): void => {
-  // Accumulate JSON-LD script content.
-  if (context.currentScript?.isJsonLd) {
-    context.currentScript.content += text
-    return
-  }
-
   // Accumulate text content for current anchor.
   if (context.currentAnchor.href) {
     context.currentAnchor.text += text
@@ -162,22 +90,6 @@ export const handleCloseTag = (
   name: string,
   _isImplied?: boolean,
 ): void => {
-  // Parse JSON-LD content when script tag closes.
-  if (name === 'script' && context.currentScript?.isJsonLd) {
-    try {
-      const jsonLd = JSON.parse(context.currentScript.content)
-      const items = Array.isArray(jsonLd) ? jsonLd : [jsonLd]
-
-      for (const item of items) {
-        if (typeof item === 'object' && item !== null) {
-          extractJsonLdUris(item as Record<string, unknown>, context)
-        }
-      }
-    } catch {}
-
-    context.currentScript = null
-  }
-
   // Check anchor text patterns when anchor closes.
   if (name === 'a' && context.currentAnchor.href && context.currentAnchor.text) {
     const normalizedText = context.currentAnchor.text.toLowerCase().trim()

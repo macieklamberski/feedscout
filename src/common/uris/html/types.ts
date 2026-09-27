@@ -24,6 +24,5 @@ export type HtmlMethodContext = {
     text: string
   }
   baseHref?: string
-  currentScript: { isJsonLd: boolean; content: string } | null
   options: HtmlMethodOptions
 }
