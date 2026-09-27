@@ -1385,6 +1385,19 @@ Discovers the feeds of a FluxBB board. Detected by the `brdheader` and `brdmain`
 | `{board}/viewtopic.php?id={id}` | Topic feed (Atom) + posts feed (RSS + Atom) |
 | Any other page | Posts feed (RSS + Atom) |
 
+### MyBB
+
+Discovers the feeds of a MyBB board. Detected by the `mybb[lastvisit]` cookie, under any cookie prefix, or the `cookiePrefix` and `cookieDomain` script variables core prints in every page head.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `{board}/forumdisplay.php?fid={id}` or `{board}/forum-{id}.html` | Forum feed + latest threads feed (RSS + Atom) |
+| `{board}/showthread.php?tid={id}` or `{board}/thread-{id}.html` | Forum feed from the breadcrumb + latest threads feed (RSS + Atom) |
+| Any other page | Latest threads feed (RSS + Atom) |
+
+> [!NOTE]
+> A board is routinely mounted under a sub-path, so the feed is built from the board URL the page prints as `rootpath`, or from the page's directory on a board older than 1.8.
+
 ### Mobilizon
 
 Discovers the feeds of a Mobilizon instance or group. Detected by the noscript notice, which is the only text the server renders on every page.

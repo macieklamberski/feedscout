@@ -359,6 +359,8 @@
     "nodebb:popular": "Popular",
     "nodebb:category": "Category",
     "nodebb:topic": "Topic",
+    "mybb:threads": "Threads",
+    "mybb:forum": "Forum",
     "art19:show": "Show",
     "phpbb:site": "Site",
     "phpbb:forum": "Forum",
