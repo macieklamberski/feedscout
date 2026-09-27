@@ -111,6 +111,7 @@ import { observableHandler } from './platforms/observable.js'
 import { odyseeHandler } from './platforms/odysee.js'
 import { omnystudioHandler } from './platforms/omnystudio.js'
 import { openstatusHandler } from './platforms/openstatus.js'
+import { packagistHandler } from './platforms/packagist.js'
 import { pagecordHandler } from './platforms/pagecord.js'
 import { paragraphHandler } from './platforms/paragraph.js'
 import { peertubeHandler } from './platforms/peertube.js'
@@ -416,6 +417,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     odyseeHandler,
     omnystudioHandler,
     openstatusHandler,
+    packagistHandler,
     pagecordHandler,
     paragraphHandler,
     peertubeHandler,

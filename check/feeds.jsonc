@@ -616,6 +616,32 @@
       "https://status.openstatus.dev/feed/atom"
     ]
   },
+  "packagist": {
+    "packagist:extension-releases": [
+      "https://packagist.org/feeds/extension-releases.rss",
+      "https://packagist.org/feeds/extension-releases.atom"
+    ],
+    "packagist:new-extensions": [
+      "https://packagist.org/feeds/extensions.rss",
+      "https://packagist.org/feeds/extensions.atom"
+    ],
+    "packagist:new-packages": [
+      "https://packagist.org/feeds/packages.rss",
+      "https://packagist.org/feeds/packages.atom"
+    ],
+    "packagist:new-releases": [
+      "https://packagist.org/feeds/releases.rss",
+      "https://packagist.org/feeds/releases.atom"
+    ],
+    "packagist:releases": [
+      "https://packagist.org/feeds/package.monolog/monolog.rss",
+      "https://packagist.org/feeds/package.monolog/monolog.atom"
+    ],
+    "packagist:vendor": [
+      "https://packagist.org/feeds/vendor.monolog.rss",
+      "https://packagist.org/feeds/vendor.monolog.atom"
+    ]
+  },
   "pagecord": {
     "pagecord:blog": "https://blog.pagecord.com/feed.xml"
   },

@@ -1628,6 +1628,17 @@ Discovers the RSS feeds of crates.io, built from the URL, since the page answers
 > [!NOTE]
 > The feed path takes the crate name exactly as crates.io spells it, so a page URL with another case or `-` in place of `_` leads to a feed that answers 403.
 
+### Packagist
+
+Discovers the RSS and Atom feeds of Packagist packages, vendors and the site.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `packagist.org/packages/{vendor}/{package}` | Package releases feed (RSS + Atom) |
+| `packagist.org/packages/{vendor}` | Vendor releases feed (RSS + Atom) |
+| `packagist.org/extensions` | New extensions + extension releases feeds (RSS + Atom) |
+| `packagist.org/*` | New packages + new releases feeds (RSS + Atom) |
+
 ### Plurk
 
 Discovers Atom feeds for Plurk users and single plurks.
@@ -1857,6 +1868,7 @@ import {
   odyseeHandler,
   omnystudioHandler,
   openstatusHandler,
+  packagistHandler,
   pagecordHandler,
   paragraphHandler,
   peertubeHandler,
