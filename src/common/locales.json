@@ -411,6 +411,9 @@
     "dokuwiki:recent-changes": "Recent changes",
     "mediawiki:history": "Page history",
     "mediawiki:recent-changes": "Recent changes",
-    "librivox:audiobook": "Audiobook"
+    "librivox:audiobook": "Audiobook",
+    "pypi:releases": "Releases",
+    "pypi:new-packages": "New packages",
+    "pypi:updates": "Recent updates"
   }
 }

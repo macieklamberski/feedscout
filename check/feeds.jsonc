@@ -711,6 +711,11 @@
   "publii": {
     "publii:posts": ["https://getpublii.com/feed.xml", "https://falk.plus/feed.json"]
   },
+  "pypi": {
+    "pypi:new-packages": "https://pypi.org/rss/packages.xml",
+    "pypi:releases": "https://pypi.org/rss/project/requests/releases.xml",
+    "pypi:updates": "https://pypi.org/rss/updates.xml"
+  },
   "qiita": {
     "qiita:organization": "https://qiita.com/organizations/qiita-inc/activities.atom",
     "qiita:popular": "https://qiita.com/popular-items/feed.atom",
