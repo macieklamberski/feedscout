@@ -1364,8 +1364,16 @@ describe('defaultResolveUrlFn', () => {
     expect(defaultResolveUrlFn(value, baseUrl)).toBe(expected)
   })
 
-  it('should return undefined when base URL is undefined and URL is relative', () => {
-    expect(defaultResolveUrlFn('/feed.xml', undefined)).toBeUndefined()
+  it('should throw when base URL is undefined and URL is relative', () => {
+    const throwing = () => defaultResolveUrlFn('/feed.xml', undefined)
+
+    expect(throwing).toThrow()
+  })
+
+  it('should throw on a malformed absolute URL', () => {
+    const throwing = () => defaultResolveUrlFn('http://exa mple.com/feed', 'https://example.com')
+
+    expect(throwing).toThrow()
   })
 
   it('should return absolute URL when base URL is undefined', () => {
