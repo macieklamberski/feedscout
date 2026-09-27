@@ -1,0 +1,152 @@
+import { getAnyOf, isAnyOf, isHostOf, parseUrl } from 'trousse'
+import type { PlatformHandler } from '../../common/uris/platform/types.js'
+import { composeHint } from '../../common/utils.js'
+
+// Discoverability: Discoverable without handler.
+
+export type HatenaBookmarkUrl =
+  | { kind: 'search'; searchType: string }
+  | { kind: 'site'; site: string }
+  | { kind: 'user'; username: string }
+
+const hosts = ['b.hatena.ne.jp']
+
+const listRegex = /^\/(hotentry|entrylist)(?:\/([a-z]+))?\/?$/i
+const searchRegex = /^\/search\/(tag|text|title)\/?$/i
+const siteRegex = /^\/site\/([^/].*)/i
+
+// A Hatena ID: 3 to 32 characters, starting with a letter and ending with a letter or digit.
+// The user feed at /{id}.rss carries the ID too.
+const userRegex = /^\/([a-zA-Z][a-zA-Z0-9_-]{1,30}[a-zA-Z0-9])(?:\.rss)?(?:\/|$)/i
+
+const bookmarkLists = ['hotentry', 'entrylist']
+
+const categories = [
+  'all',
+  'economics',
+  'entertainment',
+  'fun',
+  'game',
+  'general',
+  'it',
+  'knowledge',
+  'life',
+  'social',
+]
+
+const searchTypes = ['tag', 'text', 'title']
+
+// Reserved first segments that are site sections, not usernames.
+const excludedPaths = [
+  'articles',
+  'config',
+  'entry',
+  'entrylist',
+  'guide',
+  'help',
+  'hotentry',
+  'images',
+  'login',
+  'my',
+  'q',
+  'register',
+  'search',
+  'site',
+]
+
+export const parseHatenaBookmarkUrl = (url: string): HatenaBookmarkUrl | undefined => {
+  const parsedUrl = parseUrl(url)
+
+  if (!parsedUrl || !isHostOf(parsedUrl, hosts)) {
+    return
+  }
+
+  const { pathname } = parsedUrl
+  const searchType = getAnyOf(pathname.match(searchRegex)?.[1], searchTypes)
+
+  if (searchType) {
+    return { kind: 'search', searchType }
+  }
+
+  const site = pathname.match(siteRegex)?.[1]
+
+  if (site) {
+    return { kind: 'site', site }
+  }
+
+  const username = pathname.match(userRegex)?.[1]
+
+  if (!username || isAnyOf(username, excludedPaths)) {
+    return
+  }
+
+  return { kind: 'user', username }
+}
+
+export const hatenaBookmarkHandler: PlatformHandler = {
+  match: (url) => {
+    return isHostOf(url, hosts)
+  },
+
+  resolve: (url) => {
+    const { origin, pathname, searchParams } = new URL(url)
+    const listMatch = pathname.match(listRegex)
+
+    // Hot and new entry listings, site-wide or per category.
+    if (listMatch?.[1]) {
+      const [, rawList, rawCategory] = listMatch
+      const list = getAnyOf(rawList, bookmarkLists)
+      const category = getAnyOf(rawCategory, categories)
+      const isHot = list === 'hotentry'
+      // An unknown category falls back to the whole list.
+      const suffix = category ? `/${category}` : ''
+
+      return [
+        {
+          uri: `${origin}/${list}${suffix}.rss`,
+          hint: composeHint(isHot ? 'hatena-bookmark:hot' : 'hatena-bookmark:new'),
+        },
+      ]
+    }
+
+    const parsed = parseHatenaBookmarkUrl(url)
+
+    // Search and per-site listings answer with RSS when `mode=rss` is set.
+    searchParams.set('mode', 'rss')
+
+    if (parsed?.kind === 'search') {
+      return [
+        {
+          uri: `${origin}/search/${parsed.searchType}?${searchParams}`,
+          hint: composeHint('hatena-bookmark:search'),
+        },
+      ]
+    }
+
+    if (parsed?.kind === 'site') {
+      return [
+        {
+          uri: `${origin}/site/${parsed.site}?${searchParams}`,
+          hint: composeHint('hatena-bookmark:site'),
+        },
+      ]
+    }
+
+    // User bookmarks: /{username} or /{username}/bookmark.
+    if (parsed?.kind === 'user') {
+      return [
+        {
+          uri: `${origin}/${parsed.username}/bookmark.rss`,
+          hint: composeHint('hatena-bookmark:bookmarks'),
+        },
+      ]
+    }
+
+    return [
+      {
+        uri: `${origin}/hotentry.rss`,
+        hint: composeHint('hatena-bookmark:hot'),
+      },
+    ]
+  },
+}

@@ -1,30 +1,68 @@
 import type {
-  DiscoverFetchFn,
   DiscoverMethodsConfigInternal,
+  DiscoverOnErrorFn,
   DiscoverUrisResult,
+  FetchFn,
+  UriEntry,
 } from '../types.js'
 import { discoverUrisFromFeed } from './feed/index.js'
 import { discoverUrisFromGuess } from './guess/index.js'
 import { discoverUrisFromHeaders } from './headers/index.js'
 import { discoverUrisFromHtml } from './html/index.js'
-import { discoverUrisFromPlatform } from './platform/index.js'
+import { resolveFromPlatform } from './platform/index.js'
+
+// A guess is kept when no regex matches it or the platform emitted it. An entry with alternatives
+// keeps the ones that pass and is dropped when none do.
+const excludeGuesses = (
+  guesses: Array<UriEntry>,
+  regexes: Array<RegExp>,
+  platformUris: Array<string>,
+): Array<UriEntry> => {
+  const isKept = (uri: string) => {
+    return platformUris.includes(uri) || !regexes.some((regex) => regex.test(uri))
+  }
+  const kept: Array<UriEntry> = []
+
+  for (const guess of guesses) {
+    if (typeof guess === 'string') {
+      if (isKept(guess)) {
+        kept.push(guess)
+      }
+
+      continue
+    }
+
+    const alternatives = guess.filter(isKept)
+
+    if (alternatives.length > 0) {
+      kept.push(alternatives)
+    }
+  }
+
+  return kept
+}
 
 export const discoverUris = async (
   config: DiscoverMethodsConfigInternal,
-  fetchFn?: DiscoverFetchFn,
+  fetchFn?: FetchFn,
+  onError?: DiscoverOnErrorFn,
 ): Promise<DiscoverUrisResult> => {
   const result: DiscoverUrisResult = {}
+  let guessExclusionRegexes: Array<RegExp> = []
 
   if (config.platform) {
-    const uris = await discoverUrisFromPlatform(
+    const resolution = await resolveFromPlatform(
       config.platform.content,
       config.platform.headers,
       config.platform.options,
       fetchFn,
+      onError,
     )
 
-    if (uris.length > 0) {
-      result.platform = uris
+    guessExclusionRegexes = resolution.guessExclusionRegexes
+
+    if (resolution.entries.length > 0) {
+      result.platform = resolution.entries
     }
   }
 
@@ -53,7 +91,12 @@ export const discoverUris = async (
   }
 
   if (config.guess) {
-    const uris = discoverUrisFromGuess(config.guess.options)
+    let uris = discoverUrisFromGuess(config.guess.options)
+
+    if (guessExclusionRegexes.length > 0) {
+      const platformUris = result.platform?.flatMap((entry) => entry.uri) ?? []
+      uris = excludeGuesses(uris, guessExclusionRegexes, platformUris)
+    }
 
     if (uris.length > 0) {
       result.guess = uris.map((uri) => ({ uri }))

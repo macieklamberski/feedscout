@@ -21,22 +21,23 @@ Finds feeds by scanning links and anchors in HTML content, parsing HTTP headers,
 | Type | Description |
 | --- | --- |
 | Feeds | RSS, Atom, JSON Feed, and RDF. Each feed is validated and returns metadata like format, title, description, and site URL. |
-| Blogrolls | OPML files containing feed subscriptions. Validated and returns title. |
+| Blogrolls | OPML files containing feed subscriptions. Each blogroll is validated and returns its title. |
 | Favicons | Site icons from HTML, feeds, platform APIs, and common paths. Validated to ensure URLs point to actual images. |
-| WebSub | Find hubs for real-time feed update notifications. |
+| WebSub | Hubs for real-time feed update notifications. |
 
 ### Discovery Methods
 
 | Method | Description |
 | --- | --- |
-| Platform | Generates feed URLs for YouTube, GitHub, WordPress, and 30+ other popular platforms using URL pattern matching. |
-| HTML | Scans `<link>` elements with feed MIME types and `<a>` elements matching feed patterns or labels like "RSS", "Subscribe". |
-| Headers | Parses HTTP `Link` headers for `rel="alternate"` with feed MIME types per RFC 8288. |
+| Platform | Generates feed URLs for YouTube, GitHub, WordPress, and 100+ other popular platforms using URL pattern matching. |
+| HTML | Scans `<link>` elements with feed MIME types or `rel="feed"`, and `<a>` elements matching feed patterns or labels like "RSS", "Feed" or "Atom". |
+| Headers | Parses HTTP `Link` headers for `rel="alternate"` with feed MIME types, or `rel="feed"`, per RFC 8288. |
 | Guess | Tests common paths (e.g. `/feed`, `/rss.xml`, `/atom.xml`) against the base URL as a fallback. |
 
 ### Customization
 
 Uses native fetch by default but supports custom adapters for Axios, Got, Ky, or any other HTTP client. Discovery methods can be individually enabled or disabled and their options adjusted. Custom extractors let you override the default parser to pull additional metadata from feeds and blogrolls.
+
 ## Quick Start
 
 For a full overview of all the features, [visit the documentation](https://feedscout.dev).
@@ -60,7 +61,8 @@ const feeds = await discoverFeeds('https://example.com')
 //   format: 'rss',
 //   title: 'Example Blog',
 //   description: 'A blog about examples',
-//   siteUrl: 'https://example.com',
+//   siteUrl: 'https://example.com/',
+//   method: 'html',
 // }]
 ```
 
@@ -96,7 +98,8 @@ const feeds = await discoverFeeds(
 //     format: 'rss',
 //     title: 'Example Blog',
 //     description: 'A blog about examples',
-//     siteUrl: 'https://example.com',
+//     siteUrl: 'https://example.com/',
+//     method: 'html',
 //   },
 //   {
 //     url: 'https://example.com/rss',
@@ -104,7 +107,8 @@ const feeds = await discoverFeeds(
 //     format: 'rss',
 //     title: 'Example Blog',
 //     description: 'A blog about examples',
-//     siteUrl: 'https://example.com',
+//     siteUrl: 'https://example.com/',
+//     method: 'html',
 //   },
 // ]
 ```
@@ -127,7 +131,8 @@ const feeds = await discoverFeeds(
 //   format: 'rss',
 //   title: 'Example Blog',
 //   description: 'A blog about examples',
-//   siteUrl: 'https://example.com',
+//   siteUrl: 'https://example.com/',
+//   method: 'headers',
 // }]
 ```
 
@@ -142,6 +147,7 @@ const blogrolls = await discoverBlogrolls('https://example.com')
 //   url: 'https://example.com/blogroll.opml',
 //   isValid: true,
 //   title: 'My Blogroll',
+//   method: 'html',
 // }]
 ```
 
@@ -155,6 +161,7 @@ const favicons = await discoverFavicons('https://example.com')
 // [{
 //   url: 'https://example.com/apple-touch-icon.png',
 //   isValid: true,
+//   method: 'html',
 // }]
 ```
 
@@ -166,7 +173,7 @@ import { discoverHubs } from 'feedscout'
 const hubs = await discoverHubs('https://example.com/feed.xml')
 
 // [{
-//   hub: 'https://pubsubhubbub.appspot.com',
+//   hub: 'https://pubsubhubbub.appspot.com/',
 //   topic: 'https://example.com/feed.xml',
 // }]
 ```

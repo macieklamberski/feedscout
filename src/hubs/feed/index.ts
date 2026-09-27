@@ -1,11 +1,12 @@
+import type { Atom } from 'feedsmith'
 import { parseFeed } from 'feedsmith'
-import type { Atom, DeepPartial } from 'feedsmith/types'
-import { defaultResolveUrlFn } from '../../common/discover/defaults.js'
-import type { DiscoverResolveUrlFn } from '../../common/types.js'
+import { isNonEmptyString } from 'trousse'
+import type { DiscoverOnErrorFn, DiscoverResolveUrlFn } from '../../common/types.js'
 import type { HubResult } from '../discover/types.js'
+import { toHubResults } from '../utils.js'
 
 const getLinksWithRel = (
-  links: Array<DeepPartial<Atom.Link<string>>> | undefined,
+  links: Array<Atom.Link<string>> | undefined,
   rel: string,
 ): Array<string> => {
   return (
@@ -16,24 +17,17 @@ const getLinksWithRel = (
 export const discoverHubsFromFeed = (
   content: string,
   baseUrl: string,
-  resolveUrlFn: DiscoverResolveUrlFn = defaultResolveUrlFn,
+  resolveUrlFn: DiscoverResolveUrlFn,
+  onError?: DiscoverOnErrorFn,
 ): Array<HubResult> => {
   try {
     const { format, feed } = parseFeed(content)
 
     // JSON Feed has native hubs support.
     if (format === 'json') {
-      const hubs = feed.hubs ?? []
-      const topic = feed.feed_url
-        ? (resolveUrlFn(feed.feed_url, baseUrl) ?? feed.feed_url)
-        : baseUrl
+      const hubUris = (feed.hubs ?? []).map((hub) => hub.url).filter(isNonEmptyString)
 
-      return hubs
-        .filter((hub) => hub.url)
-        .map((hub) => ({
-          hub: resolveUrlFn(hub.url as string, baseUrl) ?? (hub.url as string),
-          topic,
-        }))
+      return toHubResults(hubUris, feed.feed_url, baseUrl, resolveUrlFn, onError)
     }
 
     // Get links array based on format.
@@ -42,12 +36,8 @@ export const discoverHubsFromFeed = (
 
     if (hubUris.length > 0) {
       const selfUris = getLinksWithRel(links, 'self')
-      const topic = selfUris[0] ? (resolveUrlFn(selfUris[0], baseUrl) ?? selfUris[0]) : baseUrl
 
-      return hubUris.map((hub) => ({
-        hub: resolveUrlFn(hub, baseUrl) ?? hub,
-        topic,
-      }))
+      return toHubResults(hubUris, selfUris[0], baseUrl, resolveUrlFn, onError)
     }
   } catch {
     // Silently fail - content is not a valid feed.

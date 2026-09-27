@@ -42,12 +42,13 @@ Results include the blogroll URL and title:
   url: 'https://example.com/blogroll.opml',
   isValid: true,
   title: 'My Reading List',
+  method: 'html',
 }
 ```
 
 ## Discovery Methods
 
-Blogrolls use the same three discovery methods as feeds — see the [Feeds](/feeds) section for details on how each method works.
+Blogrolls use the HTML, Headers and Guess methods the same way feeds do. See the [Feeds](/feeds) section for details on how each method works.
 
 | Method | What It Looks For |
 |--------|-------------------|
@@ -125,10 +126,11 @@ import { urisComprehensive } from 'feedscout/blogrolls'
 Blogroll discovery uses these link selectors:
 
 ```typescript
-import { linkSelectors, mimeTypes } from 'feedscout/blogrolls'
+import { linkSelectors } from 'feedscout/blogrolls'
 
 // [
 //   { rel: 'blogroll' },
-//   { rel: 'outline', types: mimeTypes },
+//   { rel: 'outline', types: ['text/x-opml', 'application/opml+xml', 'application/xml', 'text/xml'] },
+//   { rel: 'alternate', types: ['text/x-opml', 'application/opml+xml'] },
 // ]
 ```

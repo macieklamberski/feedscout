@@ -40,14 +40,17 @@ All options are optional. When not provided, sensible defaults are used.
 | Property | Type | Default | Description |
 |----------|------|---------|-------------|
 | `methods` | `DiscoverMethodsConfig` | `['platform', 'html', 'headers', 'guess']` | Which methods to use |
-| `fetchFn` | `DiscoverFetchFn` | native fetch | Custom fetch function |
+| `fetchFn` | `FetchFn` | native fetch | Custom fetch function |
 | `extractFn` | `DiscoverExtractFn` | feedsmith | Custom feed extraction function |
-| `resolveUrlFn` | `DiscoverResolveUrlFn` | | Custom URL resolution function |
-| `stopOnFirstMethod` | `boolean` | `false` | Stop URI collection after first method with results |
+| `resolveUrlFn` | `DiscoverResolveUrlFn` | resolve relative | Custom URL resolution function |
+| `stopOnFirstMethod` | `boolean` | `false` | Stop after the first method that finds a valid result |
 | `stopOnFirstResult` | `boolean` | `false` | Stop after first valid feed |
 | `concurrency` | `number` | `3` | Max parallel validations |
+| `maxUris` | `number` | `50` | Max total candidate URIs to fetch across all methods |
 | `includeInvalid` | `boolean` | `false` | Include invalid results |
 | `onProgress` | `DiscoverOnProgressFn` | | Progress callback |
+| `onStep` | `DiscoverOnStepFn` | | Called when each stage of discovery starts and ends |
+| `onError` | `DiscoverOnErrorFn` | | Called when fetching the input fails. [`DiscoverOnErrorFn`](/reference/types#discoveronerrorfn) lists everything it reports |
 
 ## Return Value
 
@@ -58,21 +61,23 @@ Returns a promise that resolves to an array of results:
 {
   url: 'https://example.com/feed.xml',
   isValid: true,
-  method: 'guess',       // 'platform' | 'html' | 'headers' | 'guess'
   format: 'rss',         // 'rss' | 'atom' | 'json' | 'rdf'
   title: 'Example Blog',
   description: 'A blog about examples',
-  siteUrl: 'https://example.com',
+  siteUrl: 'https://example.com/',
+  method: 'guess',       // 'platform' | 'html' | 'headers' | 'guess'
 }
 
 // Invalid result (when includeInvalid: true)
 {
   url: 'https://example.com/not-a-feed',
   isValid: false,
+  error: Error, // Only set when the request or the extractor threw
   method: 'guess',
-  error: Error,
 }
 ```
+
+Each feed URL appears once. When several candidates lead to the same feed, for example `/feed` and `/rss` both redirecting to `/feed/`, only the first is kept, so the result comes from the earliest method that found it. The same applies to invalid results with `includeInvalid`.
 
 The `method` field indicates which discovery method produced the result. Results from the [Platform method](/feeds/platform) also include a [`hint`](/feeds/platform#hints) that identifies the type of feed.
 
@@ -138,10 +143,17 @@ const feeds = await discoverFeeds('https://example.com', {
 ### With Custom HTTP Client
 
 ```typescript
-import type { DiscoverFetchFn } from 'feedscout'
+import type { FetchFn } from 'feedscout'
 
-const myCustomFetch: DiscoverFetchFn = async (url, options) => {
-  // Handle the request and return response here.
+const myCustomFetch: FetchFn = async (url, options) => {
+  const response = await fetch(url, options)
+
+  return {
+    headers: response.headers,
+    body: await response.text(),
+    url: response.url,
+    status: response.status,
+  }
 }
 
 const feeds = await discoverFeeds('https://example.com', {

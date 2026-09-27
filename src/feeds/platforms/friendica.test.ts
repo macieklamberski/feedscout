@@ -1,0 +1,129 @@
+import { describe, expect, it } from 'bun:test'
+import { friendicaHandler, isFriendicaHeaders, isFriendicaHtml } from './friendica.js'
+
+const friendicaHtml =
+  '<html><head><meta name="generator" content="Friendica 2026.01"></head></html>'
+const otherHtml = '<html><head><meta name="generator" content="WordPress"></head></html>'
+const friendicaHeaders = new Headers({ 'x-friendica-version': '2026.05' })
+
+describe('friendicaHandler', () => {
+  describe('isFriendicaHtml', () => {
+    it('should return true for Friendica generator meta tag', () => {
+      expect(isFriendicaHtml(friendicaHtml)).toBe(true)
+    })
+
+    it('should be case-insensitive', () => {
+      expect(isFriendicaHtml('<meta name="generator" content="friendica 2026">')).toBe(true)
+      expect(isFriendicaHtml('<meta name="generator" content="FRIENDICA">')).toBe(true)
+    })
+
+    it('should return false for non-Friendica generator', () => {
+      expect(isFriendicaHtml(otherHtml)).toBe(false)
+    })
+
+    it('should return false for empty content', () => {
+      expect(isFriendicaHtml('')).toBe(false)
+    })
+  })
+
+  describe('isFriendicaHeaders', () => {
+    it('should return true when x-friendica-version header is present', () => {
+      expect(isFriendicaHeaders(friendicaHeaders)).toBe(true)
+    })
+
+    it('should return false when header is absent', () => {
+      expect(isFriendicaHeaders(new Headers())).toBe(false)
+      expect(isFriendicaHeaders(new Headers({ server: 'Apache' }))).toBe(false)
+    })
+  })
+
+  describe('match', () => {
+    it('should return true for profile URL with Friendica content', () => {
+      expect(friendicaHandler.match('https://example.com/profile/admin', friendicaHtml)).toBe(true)
+    })
+
+    it('should return true for profile URL with Friendica content with a capitalized profile segment', () => {
+      expect(friendicaHandler.match('https://example.com/Profile/admin', friendicaHtml)).toBe(true)
+    })
+
+    it('should return true for profile URL with Friendica headers', () => {
+      expect(
+        friendicaHandler.match('https://example.com/profile/admin', '', friendicaHeaders),
+      ).toBe(true)
+    })
+
+    it('should return false without content or headers', () => {
+      expect(friendicaHandler.match('https://example.com/profile/admin')).toBe(false)
+    })
+
+    it('should return false for non-profile paths with Friendica headers', () => {
+      expect(friendicaHandler.match('https://example.com/about', '', friendicaHeaders)).toBe(false)
+    })
+
+    it('should return false for non-Friendica content', () => {
+      expect(friendicaHandler.match('https://example.com/profile/admin', otherHtml)).toBe(false)
+    })
+
+    it('should return false for non-profile paths', () => {
+      expect(friendicaHandler.match('https://example.com/about', friendicaHtml)).toBe(false)
+    })
+
+    it('should return false for invalid URL', () => {
+      expect(friendicaHandler.match('not-a-url', friendicaHtml)).toBe(false)
+    })
+  })
+
+  describe('resolve', () => {
+    it('should return posts/comments/replies/activity feeds for profile', () => {
+      const value = 'https://example.com/profile/admin'
+      const expected = [
+        {
+          uri: 'https://example.com/feed/admin',
+          hint: { key: 'friendica:posts', label: 'Posts' },
+        },
+        {
+          uri: 'https://example.com/feed/admin/comments',
+          hint: { key: 'friendica:comments', label: 'Comments' },
+        },
+        {
+          uri: 'https://example.com/feed/admin/replies',
+          hint: { key: 'friendica:replies', label: 'Replies' },
+        },
+        {
+          uri: 'https://example.com/feed/admin/activity',
+          hint: { key: 'friendica:activity', label: 'Activity' },
+        },
+      ]
+
+      expect(friendicaHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return all feeds regardless of subpath', () => {
+      const value = 'https://example.com/profile/admin/photos'
+      const expected = [
+        {
+          uri: 'https://example.com/feed/admin',
+          hint: { key: 'friendica:posts', label: 'Posts' },
+        },
+        {
+          uri: 'https://example.com/feed/admin/comments',
+          hint: { key: 'friendica:comments', label: 'Comments' },
+        },
+        {
+          uri: 'https://example.com/feed/admin/replies',
+          hint: { key: 'friendica:replies', label: 'Replies' },
+        },
+        {
+          uri: 'https://example.com/feed/admin/activity',
+          hint: { key: 'friendica:activity', label: 'Activity' },
+        },
+      ]
+
+      expect(friendicaHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return empty array for non-profile paths', () => {
+      expect(friendicaHandler.resolve('https://example.com/about')).toEqual([])
+    })
+  })
+})

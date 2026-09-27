@@ -1,4 +1,11 @@
 import { describe, expect, it } from 'bun:test'
+import type {
+  DiscoverEnrichFn,
+  DiscoverErrorContext,
+  DiscoverOnErrorFn,
+  DiscoverRef,
+  FetchFn,
+} from '../../types.js'
 import { discoverUrisFromPlatform } from './index.js'
 import type { PlatformHandler } from './types.js'
 
@@ -8,10 +15,10 @@ describe('discoverUrisFromPlatform', () => {
       match: () => true,
       resolve: () => [{ uri: 'https://example.com/feed.xml' }],
     }
-    const value = { baseUrl: 'https://example.com', handlers: [handler] }
+    const options = { baseUrl: 'https://example.com', handlers: [handler] }
     const expected = [{ uri: 'https://example.com/feed.xml' }]
 
-    expect(await discoverUrisFromPlatform(undefined, undefined, value)).toEqual(expected)
+    expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
   })
 
   it('should return empty array when no handler matches', async () => {
@@ -19,15 +26,25 @@ describe('discoverUrisFromPlatform', () => {
       match: () => false,
       resolve: () => [{ uri: 'https://example.com/feed.xml' }],
     }
-    const value = { baseUrl: 'https://example.com', handlers: [handler] }
+    const options = { baseUrl: 'https://example.com', handlers: [handler] }
 
-    expect(await discoverUrisFromPlatform(undefined, undefined, value)).toEqual([])
+    expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual([])
+  })
+
+  it('should return empty array for a page without an http origin', async () => {
+    const handler: PlatformHandler = {
+      match: () => true,
+      resolve: () => [{ uri: 'https://example.com/feed.xml' }],
+    }
+    const options = { baseUrl: 'foo://example.com', handlers: [handler] }
+
+    expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual([])
   })
 
   it('should return empty array when handlers array is empty', async () => {
-    const value = { baseUrl: 'https://example.com', handlers: [] }
+    const options = { baseUrl: 'https://example.com', handlers: [] }
 
-    expect(await discoverUrisFromPlatform(undefined, undefined, value)).toEqual([])
+    expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual([])
   })
 
   it('should continue to next handler if first handler throws', async () => {
@@ -41,13 +58,13 @@ describe('discoverUrisFromPlatform', () => {
       match: () => true,
       resolve: () => [{ uri: 'https://example.com/feed.xml' }],
     }
-    const value = {
+    const options = {
       baseUrl: 'https://example.com',
       handlers: [throwingHandler, workingHandler],
     }
     const expected = [{ uri: 'https://example.com/feed.xml' }]
 
-    expect(await discoverUrisFromPlatform(undefined, undefined, value)).toEqual(expected)
+    expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
   })
 
   it('should continue to next handler if resolve throws', async () => {
@@ -61,13 +78,13 @@ describe('discoverUrisFromPlatform', () => {
       match: () => true,
       resolve: () => [{ uri: 'https://example.com/feed.xml' }],
     }
-    const value = {
+    const options = {
       baseUrl: 'https://example.com',
       handlers: [throwingHandler, workingHandler],
     }
     const expected = [{ uri: 'https://example.com/feed.xml' }]
 
-    expect(await discoverUrisFromPlatform(undefined, undefined, value)).toEqual(expected)
+    expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
   })
 
   it('should pass html content to handler resolve method', async () => {
@@ -81,34 +98,146 @@ describe('discoverUrisFromPlatform', () => {
       },
     }
     const html = '<html><body>Test</body></html>'
-    const value = { baseUrl: 'https://example.com', handlers: [handler] }
+    const options = { baseUrl: 'https://example.com', handlers: [handler] }
 
-    await discoverUrisFromPlatform(html, undefined, value)
+    await discoverUrisFromPlatform(html, undefined, options)
 
     expect(receivedHtml).toBe(html)
   })
 
   it('should pass baseUrl to handler match and resolve methods', async () => {
-    let matchedUrl = ''
-    let resolvedUrl = ''
+    const receivedUrls: Array<string> = []
     const handler: PlatformHandler = {
       match: (url) => {
-        matchedUrl = url
+        receivedUrls.push(`match:${url}`)
 
         return true
       },
       resolve: (url) => {
-        resolvedUrl = url
+        receivedUrls.push(`resolve:${url}`)
 
         return []
       },
     }
-    const value = { baseUrl: 'https://example.com/page', handlers: [handler] }
+    const options = { baseUrl: 'https://example.com/page', handlers: [handler] }
 
-    await discoverUrisFromPlatform(undefined, undefined, value)
+    await discoverUrisFromPlatform(undefined, undefined, options)
+    const expected = ['match:https://example.com/page', 'resolve:https://example.com/page']
 
-    expect(matchedUrl).toBe('https://example.com/page')
-    expect(resolvedUrl).toBe('https://example.com/page')
+    expect(receivedUrls).toEqual(expected)
+  })
+
+  it('should collapse repeated slashes in the page path before handlers see it', async () => {
+    const receivedUrls: Array<string> = []
+    const handler: PlatformHandler = {
+      match: (url) => {
+        receivedUrls.push(`match:${url}`)
+
+        return true
+      },
+      resolve: (url) => {
+        receivedUrls.push(`resolve:${url}`)
+
+        return []
+      },
+    }
+    const options = { baseUrl: 'https://example.com/r//programming///hot', handlers: [handler] }
+
+    await discoverUrisFromPlatform(undefined, undefined, options)
+    const expected = [
+      'match:https://example.com/r/programming/hot',
+      'resolve:https://example.com/r/programming/hot',
+    ]
+
+    expect(receivedUrls).toEqual(expected)
+  })
+
+  it('should keep repeated slashes in the query string', async () => {
+    const receivedUrls: Array<string> = []
+    const handler: PlatformHandler = {
+      match: (url) => {
+        receivedUrls.push(url)
+
+        return false
+      },
+      resolve: () => {
+        return []
+      },
+    }
+    const options = { baseUrl: 'https://example.com//page?next=//example.org', handlers: [handler] }
+
+    await discoverUrisFromPlatform(undefined, undefined, options)
+    const expected = ['https://example.com/page?next=//example.org']
+
+    expect(receivedUrls).toEqual(expected)
+  })
+
+  it('should pass handlers the page url in its standard form', async () => {
+    const receivedUrls: Array<string> = []
+    const handler: PlatformHandler = {
+      match: (url) => {
+        receivedUrls.push(url)
+
+        return false
+      },
+      resolve: () => {
+        return []
+      },
+    }
+    const options = { baseUrl: 'https://EXAMPLE.com:443', handlers: [handler] }
+
+    await discoverUrisFromPlatform(undefined, undefined, options)
+    const expected = ['https://example.com/']
+
+    expect(receivedUrls).toEqual(expected)
+  })
+
+  it('should pass headers to handler match and resolve methods', async () => {
+    const receivedHeaders: Array<Headers | undefined> = []
+    const handler: PlatformHandler = {
+      match: (_url, _content, headers) => {
+        receivedHeaders.push(headers)
+
+        return true
+      },
+      resolve: (_url, _content, headers) => {
+        receivedHeaders.push(headers)
+
+        return []
+      },
+    }
+    const headers = new Headers({ 'content-type': 'text/html' })
+    const options = { baseUrl: 'https://example.com', handlers: [handler] }
+
+    await discoverUrisFromPlatform(undefined, headers, options)
+
+    expect(receivedHeaders).toEqual([headers, headers])
+  })
+
+  it('should pass fetchFn to handler resolve method', async () => {
+    let receivedFetchFn: FetchFn | undefined
+    const handler: PlatformHandler = {
+      match: () => true,
+      resolve: (_url, _content, _headers, fetchFn) => {
+        receivedFetchFn = fetchFn
+
+        return []
+      },
+    }
+    const fetchFn: FetchFn = (url) => {
+      return Promise.resolve({
+        url,
+        body: '',
+        headers: new Headers(),
+        status: 200,
+        statusText: 'OK',
+      })
+    }
+    const options = { baseUrl: 'https://example.com', handlers: [handler] }
+
+    await discoverUrisFromPlatform(undefined, undefined, options, fetchFn)
+
+    expect(receivedFetchFn).toBe(fetchFn)
   })
 
   it('should use first matching handler when multiple handlers match', async () => {
@@ -120,13 +249,13 @@ describe('discoverUrisFromPlatform', () => {
       match: () => true,
       resolve: () => [{ uri: 'https://example.com/second.xml' }],
     }
-    const value = {
+    const options = {
       baseUrl: 'https://example.com',
       handlers: [firstHandler, secondHandler],
     }
     const expected = [{ uri: 'https://example.com/first.xml' }]
 
-    expect(await discoverUrisFromPlatform(undefined, undefined, value)).toEqual(expected)
+    expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
   })
 
   it('should not call resolve on non-matching handlers', async () => {
@@ -143,34 +272,50 @@ describe('discoverUrisFromPlatform', () => {
         return [{ uri: 'https://example.com/second.xml' }]
       },
     }
-    const value = {
+    const options = {
       baseUrl: 'https://example.com',
       handlers: [firstHandler, secondHandler],
     }
 
-    await discoverUrisFromPlatform(undefined, undefined, value)
+    await discoverUrisFromPlatform(undefined, undefined, options)
 
     expect(secondResolvedCalled).toBe(false)
   })
 
-  it('should continue to next handler if async resolve throws', async () => {
-    const throwingHandler: PlatformHandler = {
+  it('should continue to next handler if a matching handler resolves nothing', async () => {
+    const emptyHandler: PlatformHandler = {
       match: () => true,
-      resolve: () => {
-        throw new Error('Async resolve error')
-      },
+      resolve: () => [],
     }
     const workingHandler: PlatformHandler = {
       match: () => true,
       resolve: () => [{ uri: 'https://example.com/feed.xml' }],
     }
-    const value = {
+    const options = {
+      baseUrl: 'https://example.com',
+      handlers: [emptyHandler, workingHandler],
+    }
+    const expected = [{ uri: 'https://example.com/feed.xml' }]
+
+    expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
+  })
+
+  it('should continue to next handler if async resolve rejects', async () => {
+    const throwingHandler: PlatformHandler = {
+      match: () => true,
+      resolve: () => Promise.reject(new Error('Async resolve error')),
+    }
+    const workingHandler: PlatformHandler = {
+      match: () => true,
+      resolve: () => [{ uri: 'https://example.com/feed.xml' }],
+    }
+    const options = {
       baseUrl: 'https://example.com',
       handlers: [throwingHandler, workingHandler],
     }
     const expected = [{ uri: 'https://example.com/feed.xml' }]
 
-    expect(await discoverUrisFromPlatform(undefined, undefined, value)).toEqual(expected)
+    expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
   })
 
   it('should check handlers in provided order', async () => {
@@ -191,13 +336,192 @@ describe('discoverUrisFromPlatform', () => {
       },
       resolve: () => [],
     }
-    const value = {
+    const options = {
       baseUrl: 'https://example.com',
       handlers: [firstHandler, secondHandler],
     }
 
-    await discoverUrisFromPlatform(undefined, undefined, value)
+    await discoverUrisFromPlatform(undefined, undefined, options)
 
     expect(callOrder).toEqual(['first', 'second'])
+  })
+
+  it('should append URIs from enrichFn after the handler URIs', async () => {
+    const handler: PlatformHandler = {
+      match: () => true,
+      resolve: () => [
+        { uri: 'https://example.com/avatar.png' },
+        { platform: 'example', id: 'alice', url: 'https://example.com/@alice' },
+      ],
+    }
+    const enrichFn: DiscoverEnrichFn = () => ['https://cdn.example.com/alice.png']
+    const options = { baseUrl: 'https://example.com', handlers: [handler], enrichFn }
+    const expected = [
+      { uri: 'https://example.com/avatar.png' },
+      { uri: 'https://cdn.example.com/alice.png' },
+    ]
+
+    expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
+  })
+
+  it('should call enrichFn once per ref', async () => {
+    const receivedRefs: Array<DiscoverRef> = []
+    const handler: PlatformHandler = {
+      match: () => true,
+      resolve: () => [
+        { platform: 'example', id: 'alice', url: 'https://example.com/@alice' },
+        { platform: 'example', id: 'bob', url: 'https://example.com/@bob' },
+      ],
+    }
+    const enrichFn: DiscoverEnrichFn = (ref) => {
+      receivedRefs.push(ref)
+
+      return []
+    }
+    const options = { baseUrl: 'https://example.com', handlers: [handler], enrichFn }
+    const expected = [
+      { platform: 'example', id: 'alice', url: 'https://example.com/@alice' },
+      { platform: 'example', id: 'bob', url: 'https://example.com/@bob' },
+    ]
+
+    await discoverUrisFromPlatform(undefined, undefined, options)
+
+    expect(receivedRefs).toEqual(expected)
+  })
+
+  it('should drop refs when enrichFn is not provided', async () => {
+    const handler: PlatformHandler = {
+      match: () => true,
+      resolve: () => [
+        { uri: 'https://example.com/avatar.png' },
+        { platform: 'example', id: 'alice', url: 'https://example.com/@alice' },
+      ],
+    }
+    const options = { baseUrl: 'https://example.com', handlers: [handler] }
+    const expected = [{ uri: 'https://example.com/avatar.png' }]
+
+    expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
+  })
+
+  it('should not call enrichFn when the handler returns no refs', async () => {
+    let isEnrichCalled = false
+    const handler: PlatformHandler = {
+      match: () => true,
+      resolve: () => [{ uri: 'https://example.com/avatar.png' }],
+    }
+    const enrichFn: DiscoverEnrichFn = () => {
+      isEnrichCalled = true
+
+      return []
+    }
+    const options = { baseUrl: 'https://example.com', handlers: [handler], enrichFn }
+
+    await discoverUrisFromPlatform(undefined, undefined, options)
+
+    expect(isEnrichCalled).toBe(false)
+  })
+
+  it('should skip refs that enrichFn found nothing for', async () => {
+    const handler: PlatformHandler = {
+      match: () => true,
+      resolve: () => [
+        { platform: 'example', id: 'alice', url: 'https://example.com/@alice' },
+        { platform: 'example', id: 'bob', url: 'https://example.com/@bob' },
+      ],
+    }
+    const enrichFn: DiscoverEnrichFn = (ref) => {
+      if (ref.id !== 'bob') {
+        return
+      }
+
+      return ['https://cdn.example.com/bob.png']
+    }
+    const options = { baseUrl: 'https://example.com', handlers: [handler], enrichFn }
+    const expected = [{ uri: 'https://cdn.example.com/bob.png' }]
+
+    expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
+  })
+
+  it('should keep the handler URIs when enrichFn throws', async () => {
+    const handler: PlatformHandler = {
+      match: () => true,
+      resolve: () => [
+        { uri: 'https://example.com/avatar.png' },
+        { platform: 'example', id: 'alice', url: 'https://example.com/@alice' },
+      ],
+    }
+    const enrichFn: DiscoverEnrichFn = () => {
+      throw new Error('Enrich error')
+    }
+    const options = { baseUrl: 'https://example.com', handlers: [handler], enrichFn }
+    const expected = [{ uri: 'https://example.com/avatar.png' }]
+
+    expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
+  })
+
+  it('should keep the other refs when enrichFn throws for one', async () => {
+    const handler: PlatformHandler = {
+      match: () => true,
+      resolve: () => [
+        { platform: 'example', id: 'alice', url: 'https://example.com/@alice' },
+        { platform: 'example', id: 'bob', url: 'https://example.com/@bob' },
+      ],
+    }
+    const enrichFn: DiscoverEnrichFn = (ref) => {
+      if (ref.id === 'alice') {
+        throw new Error('Enrich error')
+      }
+
+      return ['https://cdn.example.com/bob.png']
+    }
+    const options = { baseUrl: 'https://example.com', handlers: [handler], enrichFn }
+    const expected = [{ uri: 'https://cdn.example.com/bob.png' }]
+
+    expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
+  })
+
+  it('should report an enrichFn throw to onError with the page URL', async () => {
+    const reported: Array<[unknown, DiscoverErrorContext]> = []
+    const error = new Error('Enrich error')
+    const handler: PlatformHandler = {
+      match: () => true,
+      resolve: () => [{ platform: 'example', id: 'alice', url: 'https://example.com/@alice' }],
+    }
+    const enrichFn: DiscoverEnrichFn = () => {
+      throw error
+    }
+    const onError: DiscoverOnErrorFn = (error, context) => {
+      reported.push([error, context])
+    }
+    const options = { baseUrl: 'https://example.com/@alice', handlers: [handler], enrichFn }
+    const expected: Array<[unknown, DiscoverErrorContext]> = [
+      [error, { phase: 'enrichFn', url: 'https://example.com/@alice' }],
+    ]
+
+    await discoverUrisFromPlatform(undefined, undefined, options, undefined, onError)
+
+    expect(reported).toEqual(expected)
+  })
+
+  it('should report a handler throw to onError with the page URL', async () => {
+    const reported: Array<[unknown, DiscoverErrorContext]> = []
+    const error = new Error('Resolve error')
+    const throwingHandler: PlatformHandler = {
+      match: () => true,
+      resolve: () => {
+        throw error
+      },
+    }
+    const onError: DiscoverOnErrorFn = (error, context) => {
+      reported.push([error, context])
+    }
+    const options = { baseUrl: 'https://example.com/page', handlers: [throwingHandler] }
+    const expected: Array<[unknown, DiscoverErrorContext]> = [
+      [error, { phase: 'platformHandler', url: 'https://example.com/page' }],
+    ]
+
+    await discoverUrisFromPlatform(undefined, undefined, options, undefined, onError)
+
+    expect(reported).toEqual(expected)
   })
 })

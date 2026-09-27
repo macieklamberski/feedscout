@@ -1,0 +1,83 @@
+import {
+  getPathSegments,
+  getSubdomain,
+  isAnyOf,
+  isHostOf,
+  isHostOrSubdomainOf,
+  isSubdomainOf,
+} from 'trousse'
+import type { PlatformHandler } from '../../common/uris/platform/types.js'
+import { composeHint } from '../../common/utils.js'
+
+// Discoverability: Partially discoverable without handler.
+// Generic covers profileSubdomain (html).
+// Handler needed for: albums, explore, profile.
+
+const domains = ['artstation.com']
+const hosts = ['artstation.com', 'www.artstation.com']
+const excludedPaths = [
+  'blogs',
+  'channels',
+  'contests',
+  'features',
+  'jobs',
+  'learning',
+  'login',
+  'marketplace',
+  'prints',
+  'search',
+  'signup',
+  'studios',
+  'terms',
+]
+
+export const artstationHandler: PlatformHandler = {
+  match: (url) => {
+    return isHostOrSubdomainOf(url, domains)
+  },
+
+  resolve: (url) => {
+    const parsed = new URL(url)
+
+    // Subdomain form: {user}.artstation.com
+    if (!isHostOf(url, hosts) && isSubdomainOf(url, domains)) {
+      const username = getSubdomain(parsed, domains)
+
+      return [
+        {
+          uri: `https://www.artstation.com/${username}.rss`,
+          hint: composeHint('artstation:portfolio'),
+        },
+      ]
+    }
+
+    const pathSegments = getPathSegments(parsed)
+
+    // Global artwork page: /artwork
+    if (isAnyOf(pathSegments[0], 'artwork') || pathSegments.length === 0) {
+      return [
+        {
+          uri: 'https://www.artstation.com/artwork.rss',
+          hint: composeHint('artstation:artwork'),
+        },
+        {
+          uri: 'https://www.artstation.com/artwork.rss?sorting=latest',
+          hint: composeHint('artstation:artwork-latest'),
+        },
+      ]
+    }
+
+    const username = pathSegments[0]
+
+    if (isAnyOf(username, excludedPaths)) {
+      return []
+    }
+
+    return [
+      {
+        uri: `https://www.artstation.com/${username}.rss`,
+        hint: composeHint('artstation:portfolio'),
+      },
+    ]
+  },
+}

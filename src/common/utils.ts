@@ -1,84 +1,48 @@
+import { DomUtils, parseDocument } from 'htmlparser2'
+import { anyWordMatchesAnyOf, isAnyOf } from 'trousse'
 import locales from './locales.json' with { type: 'json' }
-import type { DiscoverUriHint, Pattern } from './types.js'
+import type { DiscoverUriHint, FetchFn } from './types.js'
 
-const whitespaceRegex = /\s+/
+export const composeHint = (key: string, format?: DiscoverUriHint['format']): DiscoverUriHint => {
+  const label = locales.hints[key as keyof typeof locales.hints]
 
-export const composeHint = (key: string): DiscoverUriHint => ({
-  key,
-  label: locales.hints[key as keyof typeof locales.hints],
-})
+  if (!format) {
+    return { key, label }
+  }
+
+  return { key, label, format }
+}
+
+// A response is only acceptable when its status is in the 2xx range. A missing
+// status means the body was supplied directly (no fetch), so treat it as valid.
+export const isSuccessfulStatus = (status: number | undefined): boolean => {
+  return status === undefined || (status >= 200 && status < 300)
+}
+
+// A fetch function may return the body as a stream. It is read to text here, so every reader after
+// the fetch function works on a string.
+export const withTextBody = (fetchFn: FetchFn): FetchFn => {
+  return async (url, options) => {
+    const response = await fetchFn(url, options)
+
+    if (typeof response.body === 'string') {
+      return response
+    }
+
+    return {
+      ...response,
+      body: await new Response(response.body).text(),
+    }
+  }
+}
+
+// Coerce to a positive integer, falling back when missing or invalid (NaN, < 1, non-integer).
+export const toPositiveInteger = (value: number | undefined, fallback: number): number => {
+  return typeof value === 'number' && Number.isInteger(value) && value >= 1 ? value : fallback
+}
 
 export const normalizeMimeType = (type: string): string => {
   return type.split(';')[0].trim().toLowerCase()
-}
-
-export const isSubdomainOf = (url: string, domains: string | Array<string>): boolean => {
-  try {
-    const hostname = new URL(url).hostname.toLowerCase()
-    const list = Array.isArray(domains) ? domains : [domains]
-    return list.some((domain) => hostname.endsWith(`.${domain}`))
-  } catch {}
-
-  return false
-}
-
-export const isHostOf = (url: string, hosts: string | Array<string>): boolean => {
-  try {
-    const list = Array.isArray(hosts) ? hosts : [hosts]
-    return isAnyOf(new URL(url).hostname, list)
-  } catch {}
-
-  return false
-}
-
-export const includesAnyOf = (
-  value: string,
-  patterns: Array<Pattern>,
-  parser?: (value: string) => string,
-): boolean => {
-  const parsedValue = parser ? parser(value) : value?.toLowerCase()
-
-  return patterns.some((pattern) => {
-    if (pattern instanceof RegExp) {
-      return pattern.test(parsedValue)
-    }
-
-    return pattern && parsedValue?.includes(pattern.toLowerCase())
-  })
-}
-
-export const isAnyOf = (
-  value: string,
-  patterns: Array<Pattern>,
-  parser?: (value: string) => string,
-): boolean => {
-  const parsedValue = parser ? parser(value) : value?.toLowerCase()?.trim()
-
-  return patterns.some((pattern) => {
-    if (pattern instanceof RegExp) {
-      return pattern.test(parsedValue)
-    }
-
-    return parsedValue === pattern.toLowerCase().trim()
-  })
-}
-
-export const anyWordMatchesAnyOf = (value: string, patterns: Array<Pattern>): boolean => {
-  const words = value.toLowerCase().split(whitespaceRegex)
-
-  return words.some((word) => isAnyOf(word, patterns))
-}
-
-export const endsWithAnyOf = (value: string, patterns: Array<Pattern>): boolean => {
-  const lowerValue = value.toLowerCase()
-
-  return patterns.some((pattern) => {
-    if (pattern instanceof RegExp) {
-      return pattern.test(lowerValue)
-    }
-
-    return pattern && lowerValue.endsWith(pattern.toLowerCase())
-  })
 }
 
 export const isOfAllowedMimeType = (
@@ -96,29 +60,143 @@ export const isOfAllowedMimeType = (
   return isAnyOf(type, allowedTypes, normalizeMimeType)
 }
 
-// Check if HTML contains a meta tag matching a name or property attribute with the given
-// content value (prefix match), regardless of attribute order.
-export const hasMetaContent = (content: string, name: string, value: string): boolean => {
-  const escapedName = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-  const escapedValue = value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-  const regex = new RegExp(
-    `<meta(?=[^>]*(?:name|property)=["']${escapedName}["'])(?=[^>]*content=["']${escapedValue})`,
-    'i',
-  )
+export type Element = NonNullable<ReturnType<typeof DomUtils.findOne>>
 
-  return regex.test(content)
+type ParsedPage = {
+  document: ReturnType<typeof parseDocument>
+  metas: Array<Element>
 }
 
-export const omitEmpty = <T>(array: Array<T | null | undefined>): Array<T> => {
-  const result: Array<T> = []
+let lastParsedContent: string | undefined
+let lastParsedPage: ParsedPage | undefined
 
-  for (const item of array) {
-    if (item != null && item !== '') {
-      result.push(item as T)
-    }
+// Every platform handler reads the same page, so the last page is parsed once. Meta tags are
+// collected up front because the content-matched handlers each look one up on every page.
+const getParsedPage = (content: string): ParsedPage => {
+  if (content === lastParsedContent && lastParsedPage) {
+    return lastParsedPage
   }
 
-  return result
+  const document = parseDocument(content)
+
+  lastParsedContent = content
+  lastParsedPage = {
+    document,
+    metas: DomUtils.getElementsByTagName('meta', document),
+  }
+
+  return lastParsedPage
+}
+
+export const findElement = (
+  content: string | undefined,
+  test: (element: Element) => boolean,
+): Element | undefined => {
+  if (!content) {
+    return
+  }
+
+  return DomUtils.findOne(test, getParsedPage(content).document.children) ?? undefined
+}
+
+export const findDescendant = (
+  element: Element,
+  test: (descendant: Element) => boolean,
+): Element | undefined => {
+  return DomUtils.findOne(test, element.children) ?? undefined
+}
+
+export const hasElementWithId = (content: string, id: string): boolean => {
+  return DomUtils.getElementById(id, getParsedPage(content).document.children) !== null
+}
+
+// Takes any node so a test can check `element.parent`, which may be the document.
+export const hasClass = (
+  node: Element | Element['parent'] | undefined,
+  className: string,
+): boolean => {
+  if (!node || !('attribs' in node)) {
+    return false
+  }
+
+  return anyWordMatchesAnyOf(node.attribs.class ?? '', [className])
+}
+
+export const getScriptText = (content: string, id: string): string | undefined => {
+  const script = findElement(content, (element) => {
+    return element.name === 'script' && element.attribs.id === id
+  })
+
+  if (!script) {
+    return
+  }
+
+  return DomUtils.textContent(script)
+}
+
+export const getJsonLd = (content: string): Array<unknown> => {
+  const scripts = DomUtils.findAll((element) => {
+    return element.name === 'script' && isAnyOf(element.attribs.type ?? '', ['application/ld+json'])
+  }, getParsedPage(content).document.children)
+  const blocks: Array<unknown> = []
+
+  for (const script of scripts) {
+    try {
+      blocks.push(JSON.parse(DomUtils.textContent(script)))
+    } catch {}
+  }
+
+  return blocks
+}
+
+const isMetaWithKey = (element: Element, key: string): boolean => {
+  const { name, property } = element.attribs
+
+  if (element.attribs.content === undefined) {
+    return false
+  }
+
+  return name?.toLowerCase() === key || property?.toLowerCase() === key
+}
+
+// Check if HTML contains a meta tag matching a name or property attribute with the given
+// content value (case-insensitive prefix match).
+export const hasMetaContent = (content: string, name: string, value: string): boolean => {
+  const key = name.toLowerCase()
+  const lowercasedValue = value.toLowerCase()
+
+  return getParsedPage(content).metas.some((meta) => {
+    return (
+      isMetaWithKey(meta, key) && meta.attribs.content.toLowerCase().startsWith(lowercasedValue)
+    )
+  })
+}
+
+// Fetch joins every Set-Cookie header into one comma-separated value.
+const cookieNameRegex = /(?:^|,)\s*([^=;,\s]+)=/g
+
+export const getCookieNames = (headers: Headers): Array<string> => {
+  const cookies = headers.get('set-cookie') ?? ''
+
+  return Array.from(cookies.matchAll(cookieNameRegex), (match) => match[1])
+}
+
+const scriptSegmentRegex = /\/[^/]*\.php$/i
+const trailingSlashRegex = /\/$/
+
+export const getScriptDirectory = (pathname: string): string => {
+  return pathname.replace(scriptSegmentRegex, '').replace(trailingSlashRegex, '')
+}
+
+export const hasAnyMeta = (content: string, markers: Array<[string, string]>): boolean => {
+  return markers.some(([name, value]) => hasMetaContent(content, name, value))
+}
+
+// Read the content value of the first meta tag with the given name or property attribute.
+export const getMetaContent = (content: string, name: string): string | undefined => {
+  const key = name.toLowerCase()
+
+  return getParsedPage(content).metas.find((meta) => isMetaWithKey(meta, key))?.attribs.content
 }
 
 export const matchesAnyOfLinkSelectors = (
@@ -147,37 +225,21 @@ export const processConcurrently = async <T>(
     shouldStop?: () => boolean
   },
 ): Promise<void> => {
-  if (options.concurrency < 1) {
-    return
-  }
-
-  const active = new Set<Promise<void>>()
-
   let index = 0
 
-  while (index < items.length || active.size > 0) {
-    if (options.shouldStop?.()) {
-      break
-    }
-
-    // Fill up active slots.
-    while (active.size < options.concurrency && index < items.length) {
+  const runWorker = async (): Promise<void> => {
+    while (index < items.length && !options.shouldStop?.()) {
       const item = items[index++]
 
-      const promise = processFn(item)
-        .catch(() => {
-          // Swallow errors - let processFn handle its own error logic.
-        })
-        .finally(() => {
-          active.delete(promise)
-        })
-
-      active.add(promise)
-    }
-
-    // Wait for at least one to complete.
-    if (active.size > 0) {
-      await Promise.race(active)
+      // processFn reports its own errors, so one failure does not stop the others.
+      try {
+        await processFn(item)
+      } catch {}
     }
   }
+
+  // A concurrency below 1 or NaN yields no workers, so nothing runs.
+  const workerCount = Math.min(options.concurrency, items.length)
+
+  await Promise.all(Array.from({ length: workerCount }, runWorker))
 }

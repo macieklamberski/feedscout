@@ -1,20 +1,22 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverFetchFn, DiscoverResult } from '../common/types.js'
+import locales from '../common/locales.json' with { type: 'json' }
+import type { DiscoverResult, FetchFn } from '../common/types.js'
 import { urisBalanced, urisComprehensive, urisMinimal } from './defaults.js'
 import { discoverBlogrolls } from './index.js'
 import type { BlogrollResult } from './types.js'
 
-const createMockFetch = (responses: Record<string, string>): DiscoverFetchFn => {
+const createMockFetch = (responses: Record<string, string>): FetchFn => {
   return async (url: string) => ({
-    url,
-    body: responses[url] ?? '',
     headers: new Headers(),
+    body: responses[url] ?? '',
+    url,
     status: 200,
     statusText: 'OK',
   })
 }
 
-const opml = `<?xml version="1.0" encoding="UTF-8"?>
+const opml = `
+  <?xml version="1.0" encoding="UTF-8"?>
   <opml version="2.0">
     <head><title>My Blogroll</title></head>
     <body>
@@ -205,6 +207,52 @@ describe('discoverBlogrolls', () => {
     expect(value).toEqual(expected)
   })
 
+  it('should discover blogrolls from HTML link elements with rel="alternate" and OPML type', async () => {
+    const mockFetch = createMockFetch({
+      'https://example.com/blogroll.opml': opml,
+    })
+    const value = await discoverBlogrolls(
+      {
+        url: 'https://example.com',
+        content:
+          '<link rel="alternate" type="application/opml+xml" title="Outline" href="/blogroll.opml">',
+      },
+      {
+        methods: { html: true },
+        fetchFn: mockFetch,
+      },
+    )
+    const expected: Array<DiscoverResult<BlogrollResult>> = [
+      {
+        url: 'https://example.com/blogroll.opml',
+        isValid: true,
+        method: 'html',
+        title: 'My Blogroll',
+      },
+    ]
+
+    expect(value).toEqual(expected)
+  })
+
+  it('should not discover regular feeds advertised as rel="alternate" with a feed MIME type', async () => {
+    const mockFetch = createMockFetch({
+      'https://example.com/feed.xml': opml,
+    })
+    const value = await discoverBlogrolls(
+      {
+        url: 'https://example.com',
+        content: '<link rel="alternate" type="application/rss+xml" href="/feed.xml">',
+      },
+      {
+        methods: { html: true },
+        fetchFn: mockFetch,
+      },
+    )
+    const expected: Array<DiscoverResult<BlogrollResult>> = []
+
+    expect(value).toEqual(expected)
+  })
+
   it('should discover blogrolls from anchor elements with .opml href', async () => {
     const mockFetch = createMockFetch({
       'https://example.com/reading-list.opml': opml,
@@ -257,6 +305,66 @@ describe('discoverBlogrolls', () => {
     expect(value).toEqual(expected)
   })
 
+  it('should discover blogrolls from Link header with rel="blogroll"', async () => {
+    const mockFetch = createMockFetch({
+      'https://example.com/blogroll.opml': opml,
+    })
+    const headers = new Headers({
+      Link: '</blogroll.opml>; rel="blogroll"',
+    })
+    const value = await discoverBlogrolls(
+      { url: 'https://example.com', headers },
+      {
+        methods: ['headers'],
+        fetchFn: mockFetch,
+      },
+    )
+    const expected: Array<DiscoverResult<BlogrollResult>> = [
+      {
+        url: 'https://example.com/blogroll.opml',
+        isValid: true,
+        method: 'headers',
+        title: 'My Blogroll',
+      },
+    ]
+
+    expect(value).toEqual(expected)
+  })
+
+  it('should discover blogrolls from Link header with rel="outline" and OPML type', async () => {
+    const mockFetch = createMockFetch({
+      'https://example.com/subscriptions.opml': opml,
+    })
+    const headers = new Headers({
+      Link: '</subscriptions.opml>; rel="outline"; type="text/x-opml"',
+    })
+    const value = await discoverBlogrolls(
+      { url: 'https://example.com', headers },
+      {
+        methods: ['headers'],
+        fetchFn: mockFetch,
+      },
+    )
+    const expected: Array<DiscoverResult<BlogrollResult>> = [
+      {
+        url: 'https://example.com/subscriptions.opml',
+        isValid: true,
+        method: 'headers',
+        title: 'My Blogroll',
+      },
+    ]
+
+    expect(value).toEqual(expected)
+  })
+
+  it('should throw error when html method requested without content', async () => {
+    const mockFetch = createMockFetch({})
+    const throwing = () =>
+      discoverBlogrolls({ url: 'https://example.com' }, { methods: ['html'], fetchFn: mockFetch })
+
+    await expect(throwing()).rejects.toThrow(locales.errors.htmlMethodRequiresContent)
+  })
+
   it('should test additional base URLs alongside main baseUrl', async () => {
     const mockFetch = createMockFetch({
       'https://example.com/blogroll.opml': opml,
@@ -293,10 +401,10 @@ describe('discoverBlogrolls', () => {
   })
 
   it('should filter out invalid results when fetchFn returns 404', async () => {
-    const mockFetch: DiscoverFetchFn = async (url: string) => ({
-      url,
-      body: 'Not Found',
+    const mockFetch: FetchFn = async (url: string) => ({
       headers: new Headers(),
+      body: 'Not Found',
+      url,
       status: 404,
       statusText: 'Not Found',
     })
@@ -343,15 +451,15 @@ describe('discoverBlogrolls', () => {
   })
 
   it('should fall back to guess method when initial URL fetch throws', async () => {
-    const fetchFn: DiscoverFetchFn = (url: string) => {
+    const fetchFn: FetchFn = (url: string) => {
       if (url === 'https://example.com/') {
         throw new Error('Connection refused')
       }
 
       return Promise.resolve({
-        url,
-        body: url === 'https://example.com/blogroll.opml' ? opml : '',
         headers: new Headers(),
+        body: url === 'https://example.com/blogroll.opml' ? opml : '',
+        url,
         status: url === 'https://example.com/blogroll.opml' ? 200 : 404,
         statusText: url === 'https://example.com/blogroll.opml' ? 'OK' : 'Not Found',
       })

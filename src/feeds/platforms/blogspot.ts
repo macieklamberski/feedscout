@@ -1,0 +1,95 @@
+import { parseUrl } from 'trousse'
+import type { DiscoverUriEntry } from '../../common/types.js'
+import type { PlatformHandler } from '../../common/uris/platform/types.js'
+import { composeHint, findElement } from '../../common/utils.js'
+
+// Discoverability: Partially discoverable without handler.
+// Generic partly covers blog, label.
+
+// Matches *.blogspot.com and country TLDs like *.blogspot.co.uk, *.blogspot.de, etc.
+const blogspotDomainRegex = /^.+\.blogspot\.(?:com|co\.[a-z]{2}|com\.[a-z]{2}|[a-z]{2,3})$/
+const labelRegex = /^\/search\/label\/([^/]+)/i
+const postRegex = /^\/\d{4}\/\d{2}\/[^/]+\.html$/i
+const postCommentsFeedRegex = /\/feeds\/(\d+)\/comments\/default/i
+
+export const blogspotHandler: PlatformHandler = {
+  match: (url) => {
+    const parsedUrl = parseUrl(url)
+
+    if (!parsedUrl) {
+      return false
+    }
+
+    return blogspotDomainRegex.test(parsedUrl.hostname)
+  },
+
+  resolve: (url, content) => {
+    const { origin, pathname } = new URL(url)
+    const uris: Array<DiscoverUriEntry> = []
+
+    // Label page: /search/label/{label}
+    const labelMatch = pathname.match(labelRegex)
+
+    if (labelMatch?.[1]) {
+      const label = labelMatch[1]
+
+      uris.push({
+        uri: `${origin}/feeds/posts/default/-/${label}`,
+        hint: composeHint('blogspot:label', 'atom'),
+      })
+      uris.push({
+        uri: `${origin}/feeds/posts/default/-/${label}?alt=rss`,
+        hint: composeHint('blogspot:label', 'rss'),
+      })
+    }
+
+    // Post page: /{year}/{month}/{slug}.html — extract postId from content.
+    if (content && postRegex.test(pathname)) {
+      const commentsFeedLink = findElement(content, (element) => {
+        return postCommentsFeedRegex.test(element.attribs.href ?? '')
+      })
+      const postIdMatch = commentsFeedLink?.attribs.href?.match(postCommentsFeedRegex)
+
+      if (postIdMatch?.[1]) {
+        const postId = postIdMatch[1]
+
+        uris.push({
+          uri: `${origin}/feeds/${postId}/comments/default`,
+          hint: composeHint('blogspot:post-comments', 'atom'),
+        })
+        uris.push({
+          uri: `${origin}/feeds/${postId}/comments/default?alt=rss`,
+          hint: composeHint('blogspot:post-comments', 'rss'),
+        })
+      }
+    }
+
+    // Always include main blog feeds.
+    uris.push({
+      uri: `${origin}/feeds/posts/default`,
+      hint: composeHint('blogspot:posts', 'atom'),
+    })
+    uris.push({
+      uri: `${origin}/feeds/posts/default?alt=rss`,
+      hint: composeHint('blogspot:posts', 'rss'),
+    })
+    uris.push({
+      uri: `${origin}/feeds/posts/summary`,
+      hint: composeHint('blogspot:posts-summary', 'atom'),
+    })
+    uris.push({
+      uri: `${origin}/feeds/posts/summary?alt=rss`,
+      hint: composeHint('blogspot:posts-summary', 'rss'),
+    })
+    uris.push({
+      uri: `${origin}/feeds/comments/default`,
+      hint: composeHint('blogspot:comments', 'atom'),
+    })
+    uris.push({
+      uri: `${origin}/feeds/comments/default?alt=rss`,
+      hint: composeHint('blogspot:comments', 'rss'),
+    })
+
+    return uris
+  },
+}

@@ -15,8 +15,8 @@ Feedscout can discover WebSub (formerly PubSubHubbub) hubs from feeds and webpag
 
 Each hub result contains:
 
-- **hub** — The hub URL to subscribe to.
-- **topic** — The feed URL that the hub serves updates for.
+- **hub**: The hub URL to subscribe to.
+- **topic**: The feed URL that the hub serves updates for.
 
 ## Basic Usage
 
@@ -32,10 +32,12 @@ Each result contains the hub and topic URLs:
 
 ```typescript
 {
-  hub: 'https://pubsubhubbub.appspot.com',
+  hub: 'https://pubsubhubbub.appspot.com/',
   topic: 'https://example.com/feed.xml',
 }
 ```
+
+Without a `rel="self"` link, `topic` falls back to the input URL. A hub found by two methods with the same topic is returned once.
 
 ## Discovery Methods
 
@@ -69,7 +71,7 @@ Extracts hub links from feed content:
 </feed>
 
 // [{
-//   hub: 'https://pubsubhubbub.appspot.com',
+//   hub: 'https://pubsubhubbub.appspot.com/',
 //   topic: 'https://example.com/feed.xml',
 // }]
 ```
@@ -85,7 +87,7 @@ Extracts hub links from feed content:
 </rss>
 
 // [{
-//   hub: 'https://pubsubhubbub.appspot.com',
+//   hub: 'https://pubsubhubbub.appspot.com/',
 //   topic: 'https://example.com/feed.xml',
 // }]
 ```
@@ -102,7 +104,7 @@ Extracts hub links from feed content:
 }
 
 // [{
-//   hub: 'https://pubsubhubbub.appspot.com',
+//   hub: 'https://pubsubhubbub.appspot.com/',
 //   topic: 'https://example.com/feed.json',
 // }]
 ```
@@ -143,7 +145,7 @@ const content = await response.text()
 const hubs = await discoverHubs(
   {
     url: 'https://example.com/feed.xml',
-    content: await response.text(),
+    content,
     headers: response.headers,
   },
   {

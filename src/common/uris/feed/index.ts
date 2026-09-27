@@ -1,5 +1,5 @@
 import { parseFeed } from 'feedsmith'
-import { omitEmpty } from '../../utils.js'
+import { omitEmpty } from 'trousse'
 import type { FeedMethodOptions } from './types.js'
 
 export const discoverUrisFromFeed = (
@@ -8,9 +8,9 @@ export const discoverUrisFromFeed = (
 ): Array<string> => {
   try {
     const result = parseFeed(content)
-    const urls = options.extractUrls(result)
+    const urls = options.extractUrls(result) ?? []
 
-    return omitEmpty(urls)
+    return omitEmpty(urls) ?? []
   } catch {}
 
   return []

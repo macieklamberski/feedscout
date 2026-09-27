@@ -14,7 +14,7 @@ import { discoverFavicons } from 'feedscout'
 const favicons = await discoverFavicons('https://example.com')
 ```
 
-Each result contains the favicon URL and validation status:
+Each result contains the favicon URL and validation status. A URL is valid when the response is 2xx and is an image, by its `Content-Type` or by its content:
 
 ```typescript
 {
@@ -32,15 +32,19 @@ const favicons = await discoverFavicons('https://example.com', {
 })
 ```
 
+::: warning Untrusted SVG favicons
+A favicon validated as an SVG is returned by URL only. Its contents are not sanitized. SVG files can carry active content (e.g. `<svg onload="...">`), so treat returned SVG favicon URLs as untrusted: render them as `<img src>` (which neutralizes scripts), not as inlined markup, or sanitize before use.
+:::
+
 ## Discovery Methods
 
-Favicons use the same discovery pipeline as feeds — see the [Feeds](/feeds) section for details on how each method works.
+Favicons use the same discovery pipeline as feeds. See the [Feeds](/feeds) section for details on how each method works.
 
 | Method | What It Looks For |
 |--------|-------------------|
 | Platform | Avatars/icons from known platforms (GitHub, Mastodon, Bluesky, etc.) |
-| Feed | `<icon>` in Atom feeds, `favicon`/`icon` in JSON Feeds |
-| HTML | `<link>` tags with `rel="icon"`, `rel="shortcut"`, `rel="apple-touch-icon"` |
+| Feed | `<icon>` in Atom feeds, `itunes:image` podcast artwork in RSS and Atom feeds, `favicon`/`icon` in JSON Feeds |
+| HTML | `<link>` tags with `rel="icon"`, `rel="shortcut"`, `rel="alternate icon"`, `rel="apple-touch-icon"` |
 | Headers | `Link` headers with icon-related `rel` values |
 | Guess | Common paths like `/favicon.ico`, `/apple-touch-icon.png` |
 
@@ -50,22 +54,88 @@ The Platform method extracts avatars and icons directly from known platforms usi
 
 | Platform | What It Extracts | Method |
 |----------|-----------------|--------|
+| Ameblo | Blogger profile image | Page HTML |
+| Are.na | User avatar, or the channel owner's avatar | Page HTML, or the public API through an [enricher](#enriching-platform-icons) |
+| Behance | Profile avatar | Page HTML |
+| BitChute | Channel image | Page HTML |
+| Bluesky | Profile avatar | Public API, through an [enricher](#enriching-platform-icons) |
+| BookWyrm | User avatar | Page HTML, or the user's actor JSON through an [enricher](#enriching-platform-icons) for shelf and other user pages |
+| Dailymotion | User avatar, or the playlist owner's avatar | Public API, through an [enricher](#enriching-platform-icons) |
+| Dev.to | Profile or organization image, also on article pages | Public API, through an [enricher](#enriching-platform-icons) |
+| DeviantArt | User avatar | URL pattern |
+| Exblog | Blog logo | Page HTML, or the blog's top page through an [enricher](#enriching-platform-icons) |
+| Flickr | User buddyicon, also on favorites, albums and galleries pages | Page HTML |
+| Gitea (Codeberg, gitea.com, self-hosted) | User avatar | URL pattern |
 | GitHub | User avatar | URL pattern |
 | GitHub Gist | User avatar | URL pattern |
-| GitLab | User or group avatar | Public API |
-| Mastodon | Profile avatar | Public API |
-| Bluesky | Profile avatar | Public API |
-| Reddit | Subreddit icon or user avatar | Public API |
-| Tumblr | Blog avatar | URL pattern |
-| Codeberg | User avatar | URL pattern |
+| GitLab | User or group avatar | Public API, through an [enricher](#enriching-platform-icons) |
+| Goodreads | User avatar | Page HTML, or the user page through an [enricher](#enriching-platform-icons) |
+| Habr | Hub icon, user avatar or company logo | Page HTML |
+| Hatena Bookmark | User avatar | URL pattern, checked through an [enricher](#enriching-platform-icons) |
+| Lemmy (self-hosted) | Community icon or user avatar | Page HTML, or the public API through an [enricher](#enriching-platform-icons) |
+| Letterboxd | Member avatar | Page HTML, or the member's films page through an [enricher](#enriching-platform-icons) |
 | Lobsters | User avatar | URL pattern |
+| Mastodon | Profile avatar | Public API, through an [enricher](#enriching-platform-icons) |
+| Medium | Profile avatar or publication icon, also on subdomains | Public feed, through an [enricher](#enriching-platform-icons) |
+| Micro.blog | User avatar | URL pattern |
+| MyAnimeList | User avatar | Page HTML, or the profile page through an [enricher](#enriching-platform-icons) for list and history pages |
+| Naver Blog | Blog profile picture | Page HTML, and the mobile page through an [enricher](#enriching-platform-icons) for desktop blog pages and post pages |
+| Nebula | Channel avatar | Page HTML, or the content API through an [enricher](#enriching-platform-icons) |
+| note | User avatar, or the magazine or article owner's avatar | Page HTML, Public API through an [enricher](#enriching-platform-icons) |
+| Observable | User avatar, or the collection or notebook owner's avatar | Public API, through an [enricher](#enriching-platform-icons) |
+| Odysee | Channel avatar | Public API, through an [enricher](#enriching-platform-icons) |
+| PeerTube (self-hosted) | Channel or account avatar | Page HTML, or the public API through an [enricher](#enriching-platform-icons) |
+| Pinterest | Profile avatar | Page HTML, or the profile page through an [enricher](#enriching-platform-icons) for board and other user pages |
+| Pixelfed (self-hosted) | Profile avatar | Page HTML, or the public API through an [enricher](#enriching-platform-icons) when the page has no avatar |
+| Postype | Channel avatar | Page HTML, or the channel page through an [enricher](#enriching-platform-icons) for post pages and channel subdomains |
+| Product Hunt | Product logo, or topic image cropped to a square | Page HTML |
+| Reddit | Subreddit icon or user avatar | Public API, through an [enricher](#enriching-platform-icons) |
+| SoundCloud | User avatar | Page HTML |
 | SourceForge | Project icon | URL pattern |
-| DeviantArt | User avatar | URL pattern |
-| Dev.to | Profile image | Public API |
+| SourceHut | User avatar, or the owner's avatar on repository pages | Page HTML, the owner's page through an [enricher](#enriching-platform-icons) |
+| Steam | Game icon or group avatar | Page HTML, or the public API through an [enricher](#enriching-platform-icons) |
+| Togetter | User avatar | Page HTML |
+| Tumblr | Blog avatar | URL pattern |
+| Velog | User avatar | Page HTML, or the GraphQL API through an [enricher](#enriching-platform-icons) |
+| YouTube | Channel avatar, also on watch, youtu.be and live pages | Page HTML |
+| Zenn | Profile, publication or topic icon | Page HTML |
+
+## Enriching Platform Icons
+
+A platform handler reads only the page URL and the page content. On some platforms the icon takes an extra request to reach, such as a call to the platform's API. For those pages the handler returns a [`DiscoverRef`](/reference/types#discoverref) naming the platform and the account, and discovery hands each ref to `enrichFn`.
+
+By default, `enrichFn` runs the built-in enrichers in `defaultFaviconEnrichers`, making their requests through discovery's `fetchFn`. Set `enrichFn: false` to make no extra request, in which case refs are dropped:
+
+```typescript
+const favicons = await discoverFavicons(url, {
+  enrichFn: false,
+})
+```
+
+To pick the enrichers, build the function with `createEnrichFaviconFn` and the enrichers you want. Each built-in enricher is exported on its own, such as `mastodonEnricher`. A function you build this way makes its requests through the `fetchFn` you pass it, not discovery's, so pass the same one to both:
+
+```typescript
+import { createEnrichFaviconFn, mastodonEnricher } from 'feedscout/favicons'
+
+const favicons = await discoverFavicons(url, {
+  fetchFn: myCustomFetch,
+  enrichFn: createEnrichFaviconFn({ enrichers: [mastodonEnricher], fetchFn: myCustomFetch }),
+})
+```
+
+The addresses it returns are validated like any other platform candidate. You can pass your own function too, for example one that answers from a cache:
+
+```typescript
+const favicons = await discoverFavicons(url, {
+  enrichFn: (ref) => {
+    return cache.get(`${ref.platform}:${ref.id}`)
+  },
+})
+```
 
 ## Extracting Icons from Feeds
 
-When given a feed URL, favicon discovery can extract icons directly from the feed content. Atom feeds provide an `<icon>` element, and JSON Feeds include `favicon` and `icon` fields:
+When given a feed URL, favicon discovery can extract icons directly from the feed content. Atom feeds provide an `<icon>` element, podcast feeds in RSS or Atom provide their square `itunes:image` artwork, and JSON Feeds include `favicon` and `icon` fields. The RSS `<image>` element is not used, since it is a channel logo that is usually wide:
 
 ```typescript
 // Pass a feed URL to extract its icon
@@ -114,5 +184,5 @@ Favicon discovery looks for these `rel` values in HTML `<link>` tags and HTTP `L
 ```typescript
 import { defaultIconRels, linkSelectors } from 'feedscout/favicons'
 
-// ['icon', 'shortcut', 'apple-touch-icon', 'apple-touch-icon-precomposed']
+// ['icon', 'shortcut', 'alternate icon', 'apple-touch-icon', 'apple-touch-icon-precomposed']
 ```

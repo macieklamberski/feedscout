@@ -1,73 +1,181 @@
-import type { parseFeed } from 'feedsmith'
-import type { Atom, DeepPartial } from 'feedsmith/types'
+import type { Atom } from 'feedsmith'
+import { isAnyOf, isHttpUrl, isObject, parseUrl, resolveFeedProtocol } from 'trousse'
 import locales from '../locales.json' with { type: 'json' }
 import type {
-  DiscoverFetchFn,
+  DiscoverErrorContext,
   DiscoverInput,
   DiscoverInputObject,
   DiscoverMethodsConfig,
   DiscoverMethodsConfigDefaults,
   DiscoverMethodsConfigInternal,
+  DiscoverOnErrorFn,
   DiscoverResolveUrlFn,
   DiscoverUriEntry,
+  FetchFn,
 } from '../types.js'
+import type { FeedMethodData } from '../uris/feed/types.js'
 
 export const normalizeInput = async (
   input: DiscoverInput,
-  fetchFn: DiscoverFetchFn,
+  fetchFn: FetchFn,
+  onError?: DiscoverOnErrorFn,
 ): Promise<DiscoverInputObject> => {
-  if (typeof input === 'object') {
+  if (isObject(input)) {
     return input
   }
 
+  // A feed or podcast scheme, such as feed:// or itpc://, names an https URL. A JavaScript caller
+  // can still pass null or an array here, which goes to the fetch as it is.
+  const url = typeof input === 'string' ? resolveFeedProtocol(input) : input
+
   try {
-    const response = await fetchFn(input)
+    const response = await fetchFn(url)
 
     return {
       url: response.url,
-      // TODO: Support streams here.
       content: typeof response.body === 'string' ? response.body : undefined,
       headers: response.headers,
+      status: response.status,
     }
-  } catch {}
+  } catch (error) {
+    reportError(onError, error, { phase: 'fetchInput', url })
+  }
 
   // When the fetch fails, return the URL without content so that URL-only
   // methods like guess can still run.
-  return { url: input }
+  return { url }
 }
 
-const getLinkOfType = (links: Array<DeepPartial<Atom.Link<string>>> | undefined, rel: string) => {
+const getLinkOfType = (links: Array<Atom.Link<string>> | undefined, rel: string) => {
   return links?.find((link) => link.rel === rel)
 }
 
-export const getFeedSiteUrl = (parsed: ReturnType<typeof parseFeed>): string | undefined => {
+export const getFeedSiteUrl = (parsed: FeedMethodData): string | undefined => {
   const { format, feed } = parsed
 
-  if (format === 'rss' || format === 'rdf') {
-    return getLinkOfType(feed.atom?.links, 'alternate')?.href ?? feed.link
+  switch (format) {
+    case 'rss':
+    case 'rdf':
+      return getLinkOfType(feed.atom?.links, 'alternate')?.href ?? feed.link
+    case 'atom':
+      return getLinkOfType(feed.links, 'alternate')?.href
+    case 'json':
+      return feed.home_page_url
+  }
+}
+
+const isThenable = (value: unknown): value is PromiseLike<unknown> => {
+  return isObject(value) && 'then' in value && typeof value.then === 'function'
+}
+
+// onError is where failures get reported, so an error thrown from it has nowhere to go. It is
+// swallowed, so that a broken callback cannot end discovery.
+export const reportError = (
+  onError: DiscoverOnErrorFn | undefined,
+  error: unknown,
+  context: DiscoverErrorContext,
+): void => {
+  try {
+    const result: unknown = onError?.(error, context)
+
+    // A function typed as sync can still be async. Its rejection has nowhere to go either.
+    if (isThenable(result)) {
+      void Promise.resolve(result).catch(() => {})
+    }
+  } catch {}
+}
+
+// Runs a user-supplied function. A throw never ends discovery: it is reported through onError
+// and the fallback is used. The fallback also stands in when the function returns nothing, and
+// it is the URL named in the report unless another one is given.
+export const attempt = <TValue, TFallback>(
+  callback: () => TValue,
+  fallback: TFallback,
+  phase: DiscoverErrorContext['phase'],
+  onError: DiscoverOnErrorFn | undefined,
+  url?: string,
+): NonNullable<TValue> | TFallback => {
+  const context: DiscoverErrorContext = {
+    phase,
+    url: url ?? (typeof fallback === 'string' ? fallback : undefined),
   }
 
-  if (format === 'atom') {
-    return getLinkOfType(feed.links, 'alternate')?.href
+  try {
+    const result = callback()
+
+    // A function typed as sync can still be async. A promise is no value to a sync caller, so
+    // the fallback is used, and a rejection is reported the same way as a throw.
+    if (isThenable(result)) {
+      void Promise.resolve(result).catch((error) => reportError(onError, error, context))
+
+      return fallback
+    }
+
+    return result ?? fallback
+  } catch (error) {
+    reportError(onError, error, context)
+
+    return fallback
+  }
+}
+
+const fileExtensionRegex = /\.([^./]+)$/
+
+// A URI that parses with another scheme, such as a `javascript:` or `mailto:` link, cannot be
+// fetched. One that does not parse is kept as discovered, as a resolver that answers nothing
+// leaves it. A file with an ignored extension is skipped, as validating it downloads the whole file.
+const isFetchableUri = (uri: string, ignoredExtensions: Array<string>): boolean => {
+  const url = parseUrl(uri)
+
+  if (!url) {
+    return true
   }
 
-  if (format === 'json') {
-    return feed.home_page_url
+  if (!isHttpUrl(uri)) {
+    return false
   }
+
+  const extension = url.pathname.match(fileExtensionRegex)?.[1]
+
+  return !isAnyOf(extension, ignoredExtensions)
 }
 
 export const normalizeUriEntry = (
   entry: DiscoverUriEntry,
   resolveUrlFn: DiscoverResolveUrlFn,
   baseUrl: string | undefined,
-): DiscoverUriEntry => {
-  if (typeof entry.uri === 'string') {
-    return { ...entry, uri: resolveUrlFn(entry.uri, baseUrl) ?? entry.uri }
+  onError?: DiscoverOnErrorFn,
+  ignoredExtensions: Array<string> = [],
+): DiscoverUriEntry | undefined => {
+  const { uri } = entry
+
+  if (typeof uri === 'string') {
+    const resolvedUri = attempt(() => resolveUrlFn(uri, baseUrl), uri, 'resolveUrlFn', onError)
+
+    if (!isFetchableUri(resolvedUri, ignoredExtensions)) {
+      return
+    }
+
+    return {
+      ...entry,
+      uri: resolvedUri,
+    }
+  }
+
+  const resolvedUris = uri.map((alternative) => {
+    return attempt(() => resolveUrlFn(alternative, baseUrl), alternative, 'resolveUrlFn', onError)
+  })
+  const fetchableUris = resolvedUris.filter((resolvedUri) => {
+    return isFetchableUri(resolvedUri, ignoredExtensions)
+  })
+
+  if (fetchableUris.length === 0) {
+    return
   }
 
   return {
     ...entry,
-    uri: entry.uri.map((uri) => resolveUrlFn(uri, baseUrl) ?? uri),
+    uri: fetchableUris,
   }
 }
 
@@ -76,8 +184,23 @@ export const normalizeMethodsConfig = (
   siteInput: DiscoverInputObject | undefined,
   methods: DiscoverMethodsConfig,
   defaults: DiscoverMethodsConfigDefaults,
+  hasInputFetchFailed = false,
 ): DiscoverMethodsConfigInternal => {
   const resolvedInput = siteInput ?? sourceInput
+
+  // Missing content or headers is a usage error, so it throws. After a failed input fetch the
+  // caller did nothing wrong and the failure is already reported, so the method is skipped.
+  const isAvailable = <TValue>(value: TValue | undefined, message: string): value is TValue => {
+    if (value !== undefined) {
+      return true
+    }
+
+    if (!hasInputFetchFailed) {
+      throw new Error(message)
+    }
+
+    return false
+  }
 
   // Step 1: Normalize methods (array → object, true → {}).
   const methodsObj = Array.isArray(methods)
@@ -105,11 +228,11 @@ export const normalizeMethodsConfig = (
     }
   }
 
-  if (methodsObj.feed && defaults.feed) {
-    if (sourceInput.content === undefined) {
-      throw new Error(locales.errors.feedMethodRequiresContent)
-    }
-
+  if (
+    methodsObj.feed &&
+    defaults.feed &&
+    isAvailable(sourceInput.content, locales.errors.feedMethodRequiresContent)
+  ) {
     const feedOptions = methodsObj.feed === true ? {} : methodsObj.feed
 
     methodsConfig.feed = {
@@ -121,11 +244,11 @@ export const normalizeMethodsConfig = (
     }
   }
 
-  if (methodsObj.html && defaults.html) {
-    if (resolvedInput.content === undefined) {
-      throw new Error(locales.errors.htmlMethodRequiresContent)
-    }
-
+  if (
+    methodsObj.html &&
+    defaults.html &&
+    isAvailable(resolvedInput.content, locales.errors.htmlMethodRequiresContent)
+  ) {
     const htmlOptions = methodsObj.html === true ? {} : methodsObj.html
 
     methodsConfig.html = {
@@ -138,11 +261,11 @@ export const normalizeMethodsConfig = (
     }
   }
 
-  if (methodsObj.headers && defaults.headers) {
-    if (resolvedInput.headers === undefined) {
-      throw new Error(locales.errors.headersMethodRequiresHeaders)
-    }
-
+  if (
+    methodsObj.headers &&
+    defaults.headers &&
+    isAvailable(resolvedInput.headers, locales.errors.headersMethodRequiresHeaders)
+  ) {
     const headersOptions = methodsObj.headers === true ? {} : methodsObj.headers
 
     methodsConfig.headers = {
@@ -165,6 +288,8 @@ export const normalizeMethodsConfig = (
     methodsConfig.guess = {
       options: {
         ...defaults.guess,
+        // Page HTML for section-link scanning; explicit method options may override it.
+        content: resolvedInput.content,
         ...guessOptions,
         baseUrl: resolvedInput.url,
       },

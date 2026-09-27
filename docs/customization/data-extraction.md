@@ -14,26 +14,37 @@ After discovering potential feed URLs, Feedscout fetches each URL and passes the
 
 Custom extractors can be used for:
 
-- **Adding custom metadata** — Extract additional fields like language, images, or items
-- **Custom validation** — Reject feeds with no items, old feeds, or based on other criteria
-- **Using a different parser** — Replace the default Feedsmith parser with another library
-- **Blogroll extractors** — Custom extractors also work with `discoverBlogrolls`
+- **Adding custom metadata**: Extract additional fields like language, images, or items
+- **Custom validation**: Reject feeds with no items, old feeds, or based on other criteria
+- **Using a different parser**: Replace the default Feedsmith parser with another library
+- **Blogroll extractors**: Custom extractors also work with `discoverBlogrolls`
 
 ## Example
 
 ```typescript
-import type { DiscoverExtractFn, DiscoverResult } from 'feedscout'
+import { discoverFeeds } from 'feedscout'
+import type { DiscoverExtractFn } from 'feedscout'
+import type { FeedResult } from 'feedscout/feeds'
 import { parseFeed } from 'feedsmith'
 
-type CustomFeedResult = {
-  format: string
-  title?: string
+type CustomFeedResult = FeedResult & {
   itemCount: number
 }
 
-const customExtractor: DiscoverExtractFn<CustomFeedResult> = async ({ url, content }) => {
+const customExtractor: DiscoverExtractFn<CustomFeedResult> = ({ url, content }) => {
   try {
     const { format, feed } = parseFeed(content)
+
+    // Atom keeps its title in a text object and its items under `entries`.
+    if (format === 'atom') {
+      return {
+        url,
+        isValid: true,
+        format,
+        title: feed.title?.value,
+        itemCount: feed.entries?.length ?? 0,
+      }
+    }
 
     return {
       url,
@@ -55,9 +66,9 @@ const feeds = await discoverFeeds(url, {
 // [{
 //   url: 'https://example.com/feed.xml',
 //   isValid: true,
-//   method: 'guess',
 //   format: 'rss',
 //   title: 'Example Blog',
 //   itemCount: 10,
+//   method: 'guess',
 // }]
 ```

@@ -38,8 +38,9 @@ discoverHubs({
 | Property | Type | Default | Description |
 |----------|------|---------|-------------|
 | `methods` | `DiscoverHubsMethodsConfig` | all | Methods to use |
-| `fetchFn` | `DiscoverFetchFn` | native fetch | Custom fetch function |
+| `fetchFn` | `FetchFn` | native fetch | Custom fetch function |
 | `resolveUrlFn` | `DiscoverResolveUrlFn` | resolve relative | Custom URL resolution |
+| `onError` | `DiscoverOnErrorFn` | | Called when fetching the input fails or `resolveUrlFn` throws |
 
 #### methods
 
@@ -49,9 +50,9 @@ Array of discovery methods to use:
 type DiscoverHubsMethodsConfig = Array<'headers' | 'html' | 'feed'>
 ```
 
-- `headers` — Parse HTTP `Link` headers for `rel="hub"`.
-- `feed` — Extract hub links from feed content (Atom, RSS, JSON Feed).
-- `html` — Scan for `<link rel="hub">` elements.
+- `headers`: Parse HTTP `Link` headers for `rel="hub"`.
+- `feed`: Extract hub links from feed content (Atom, RSS, JSON Feed).
+- `html`: Scan for `<link rel="hub">` elements.
 
 ## Return Value
 
@@ -68,7 +69,7 @@ Example result:
 
 ```typescript
 {
-  hub: 'https://pubsubhubbub.appspot.com',
+  hub: 'https://pubsubhubbub.appspot.com/',
   topic: 'https://example.com/feed.xml',
 }
 ```
@@ -100,7 +101,7 @@ const content = await response.text()
 const hubs = await discoverHubs(
   {
     url: 'https://example.com/feed.xml',
-    content: await response.text(),
+    content,
     headers: response.headers,
   },
   {
@@ -112,10 +113,17 @@ const hubs = await discoverHubs(
 ### With Custom HTTP Client
 
 ```typescript
-import type { DiscoverFetchFn } from 'feedscout'
+import type { FetchFn } from 'feedscout'
 
-const myCustomFetch: DiscoverFetchFn = async (url, options) => {
-  // Handle the request and return response here.
+const myCustomFetch: FetchFn = async (url, options) => {
+  const response = await fetch(url, options)
+
+  return {
+    headers: response.headers,
+    body: await response.text(),
+    url: response.url,
+    status: response.status,
+  }
 }
 
 const hubs = await discoverHubs('https://example.com/feed.xml', {

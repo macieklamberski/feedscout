@@ -1,5 +1,5 @@
 import { discoverFeeds } from '../src/feeds/index.js'
-import feeds from './feeds.json' with { type: 'json' }
+import feeds from './feeds.jsonc'
 import { checkPlatforms, fetchWithFallback } from './utils.js'
 
 const checkUrl = async (url: string) => {

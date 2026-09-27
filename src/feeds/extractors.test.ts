@@ -162,7 +162,8 @@ describe('defaultExtractFn', () => {
           <link>https://example.com</link>
           <description>Test feed</description>
         </channel>
-      </RSS>`
+      </RSS>
+    `
     const result = await defaultExtractFn({
       content: rss,
       headers: new Headers(),

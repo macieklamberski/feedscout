@@ -1,7 +1,9 @@
 export { discoverBlogrolls } from '../blogrolls/index.js'
-export { defaultResolveSiteUrlFn } from '../common/discover/defaults.js'
+export { defaultFetchFn, defaultResolveSiteUrlFn } from '../common/discover/defaults.js'
 export { getFeedSiteUrl } from '../common/discover/utils.js'
 export type {
+  DiscoverEnrichFn,
+  DiscoverErrorContext,
   DiscoverExtractFn,
   DiscoverFetchFn,
   DiscoverFetchFnOptions,
@@ -10,14 +12,21 @@ export type {
   DiscoverInputObject,
   DiscoverMethod,
   DiscoverMethodsConfig,
+  DiscoverOnErrorFn,
   DiscoverOnProgressFn,
+  DiscoverOnStepFn,
   DiscoverOptions,
   DiscoverProgress,
+  DiscoverRef,
   DiscoverResolveSiteUrlFn,
   DiscoverResolveUrlFn,
   DiscoverResult,
+  DiscoverStep,
   DiscoverUriEntry,
   DiscoverUriHint,
+  FetchFn,
+  FetchFnOptions,
+  FetchFnResponse,
   UriEntry,
 } from '../common/types.js'
 export { discoverFavicons } from '../favicons/index.js'

@@ -1,98 +1,171 @@
-import type { LinkSelector, UriEntry } from '../common/types.js'
+import {
+  archiveExtensions,
+  audioExtensions,
+  codeExtensions,
+  documentExtensions,
+  flashExtensions,
+  fontExtensions,
+  imageExtensions,
+  installerExtensions,
+  subtitleExtensions,
+  videoExtensions,
+} from 'trousse'
+import type { LinkSelector, Pattern, UriEntry } from '../common/types.js'
 import type { GuessMethodOptions } from '../common/uris/guess/types.js'
 import type { HeadersMethodOptions } from '../common/uris/headers/types.js'
 import type { HtmlMethodOptions } from '../common/uris/html/types.js'
 import type { PlatformMethodOptions } from '../common/uris/platform/types.js'
-import { acastHandler } from './platform/handlers/acast.js'
-import { amebloHandler } from './platform/handlers/ameblo.js'
-import { applePodcastsHandler } from './platform/handlers/applePodcasts.js'
-import { arenaHandler } from './platform/handlers/arena.js'
-import { artstationHandler } from './platform/handlers/artstation.js'
-import { audioboomHandler } from './platform/handlers/audioboom.js'
-import { bearblogHandler } from './platform/handlers/bearblog.js'
-import { behanceHandler } from './platform/handlers/behance.js'
-import { blogspotHandler } from './platform/handlers/blogspot.js'
-import { blueskyHandler } from './platform/handlers/bluesky.js'
-import { bookwyrmHandler } from './platform/handlers/bookwyrm.js'
-import { buttondownHandler } from './platform/handlers/buttondown.js'
-import { buzzsproutHandler } from './platform/handlers/buzzsprout.js'
-import { codebergHandler } from './platform/handlers/codeberg.js'
-import { csdnHandler } from './platform/handlers/csdn.js'
-import { dailymotionHandler } from './platform/handlers/dailymotion.js'
-import { deviantartHandler } from './platform/handlers/deviantart.js'
-import { devtoHandler } from './platform/handlers/devto.js'
-import { discourseHandler } from './platform/handlers/discourse.js'
-import { doubanHandler } from './platform/handlers/douban.js'
-import { dreamwidthHandler } from './platform/handlers/dreamwidth.js'
-import { exblogHandler } from './platform/handlers/exblog.js'
-import { firesideHandler } from './platform/handlers/fireside.js'
-import { friendicaHandler } from './platform/handlers/friendica.js'
-import { ghostHandler } from './platform/handlers/ghost.js'
-import { githubHandler } from './platform/handlers/github.js'
-import { githubGistHandler } from './platform/handlers/githubGist.js'
-import { gitlabHandler } from './platform/handlers/gitlab.js'
-import { goodreadsHandler } from './platform/handlers/goodreads.js'
-import { hackernewsHandler } from './platform/handlers/hackernews.js'
-import { hashnodeHandler } from './platform/handlers/hashnode.js'
-import { hatenablogHandler } from './platform/handlers/hatenablog.js'
-import { hearthisHandler } from './platform/handlers/hearthis.js'
-import { heyWorldHandler } from './platform/handlers/heyWorld.js'
-import { insanejournalHandler } from './platform/handlers/insanejournal.js'
-import { itchioHandler } from './platform/handlers/itchio.js'
-import { kickstarterHandler } from './platform/handlers/kickstarter.js'
-import { lemmyHandler } from './platform/handlers/lemmy.js'
-import { letterboxdHandler } from './platform/handlers/letterboxd.js'
-import { libsynHandler } from './platform/handlers/libsyn.js'
-import { listedHandler } from './platform/handlers/listed.js'
-import { livejournalHandler } from './platform/handlers/livejournal.js'
-import { lobstersHandler } from './platform/handlers/lobsters.js'
-import { mastodonHandler } from './platform/handlers/mastodon.js'
-import { mataroaHandler } from './platform/handlers/mataroa.js'
-import { mediumHandler } from './platform/handlers/medium.js'
-import { microblogHandler } from './platform/handlers/microblog.js'
-import { misskeyHandler } from './platform/handlers/misskey.js'
-import { myanimelistHandler } from './platform/handlers/myanimelist.js'
-import { naverBlogHandler } from './platform/handlers/naverBlog.js'
-import { nebulaHandler } from './platform/handlers/nebula.js'
-import { noteHandler } from './platform/handlers/note.js'
-import { observableHandler } from './platform/handlers/observable.js'
-import { odyseeHandler } from './platform/handlers/odysee.js'
-import { pagecordHandler } from './platform/handlers/pagecord.js'
-import { paragraphHandler } from './platform/handlers/paragraph.js'
-import { pikaHandler } from './platform/handlers/pika.js'
-import { pinterestHandler } from './platform/handlers/pinterest.js'
-import { pixelfedHandler } from './platform/handlers/pixelfed.js'
-import { pleromaHandler } from './platform/handlers/pleroma.js'
-import { podbeanHandler } from './platform/handlers/podbean.js'
-import { podigeeHandler } from './platform/handlers/podigee.js'
-import { posthavenHandler } from './platform/handlers/posthaven.js'
-import { producthuntHandler } from './platform/handlers/producthunt.js'
-import { proseHandler } from './platform/handlers/prose.js'
-import { qiitaHandler } from './platform/handlers/qiita.js'
-import { redditHandler } from './platform/handlers/reddit.js'
-import { rssComHandler } from './platform/handlers/rssCom.js'
-import { seesaaHandler } from './platform/handlers/seesaa.js'
-import { soundcloudHandler } from './platform/handlers/soundcloud.js'
-import { sourceforgeHandler } from './platform/handlers/sourceforge.js'
-import { spreakerHandler } from './platform/handlers/spreaker.js'
-import { stackExchangeHandler } from './platform/handlers/stackExchange.js'
-import { steamHandler } from './platform/handlers/steam.js'
-import { substackHandler } from './platform/handlers/substack.js'
-import { tildesHandler } from './platform/handlers/tildes.js'
-import { tistoryHandler } from './platform/handlers/tistory.js'
-import { transistorHandler } from './platform/handlers/transistor.js'
-import { tumblrHandler } from './platform/handlers/tumblr.js'
-import { v2exHandler } from './platform/handlers/v2ex.js'
-import { velogHandler } from './platform/handlers/velog.js'
-import { vimeoHandler } from './platform/handlers/vimeo.js'
-import { weblogLolHandler } from './platform/handlers/weblogLol.js'
-import { weeblyHandler } from './platform/handlers/weebly.js'
-import { wordpressHandler } from './platform/handlers/wordpress.js'
-import { wpengineHandler } from './platform/handlers/wpengine.js'
-import { writeasHandler } from './platform/handlers/writeas.js'
-import { ximalayaHandler } from './platform/handlers/ximalaya.js'
-import { youtubeHandler } from './platform/handlers/youtube.js'
-import { zennHandler } from './platform/handlers/zenn.js'
+import { acastHandler } from './platforms/acast.js'
+import { amebloHandler } from './platforms/ameblo.js'
+import { applePodcastsHandler } from './platforms/applePodcasts.js'
+import { arenaHandler } from './platforms/arena.js'
+import { art19Handler } from './platforms/art19.js'
+import { artstationHandler } from './platforms/artstation.js'
+import { atyponHandler } from './platforms/atypon.js'
+import { audioboomHandler } from './platforms/audioboom.js'
+import { aushaHandler } from './platforms/ausha.js'
+import { bearblogHandler } from './platforms/bearblog.js'
+import { behanceHandler } from './platforms/behance.js'
+import { bitchuteHandler } from './platforms/bitchute.js'
+import { blogspotHandler } from './platforms/blogspot.js'
+import { blueskyHandler } from './platforms/bluesky.js'
+import { bookwyrmHandler } from './platforms/bookwyrm.js'
+import { buttondownHandler } from './platforms/buttondown.js'
+import { buzzsproutHandler } from './platforms/buzzsprout.js'
+import { captivateHandler } from './platforms/captivate.js'
+import { castopodHandler } from './platforms/castopod.js'
+import { cnblogsHandler } from './platforms/cnblogs.js'
+import { confluenceHandler } from './platforms/confluence.js'
+import { cratesIoHandler } from './platforms/cratesIo.js'
+import { csdnHandler } from './platforms/csdn.js'
+import { dailymotionHandler } from './platforms/dailymotion.js'
+import { deviantartHandler } from './platforms/deviantart.js'
+import { devtoHandler } from './platforms/devto.js'
+import { diasporaHandler } from './platforms/diaspora.js'
+import { discourseHandler } from './platforms/discourse.js'
+import { discuzHandler } from './platforms/discuz.js'
+import { dokuwikiHandler } from './platforms/dokuwiki.js'
+import { doubanHandler } from './platforms/douban.js'
+import { dreamwidthHandler } from './platforms/dreamwidth.js'
+import { drupalHandler } from './platforms/drupal.js'
+import { exblogHandler } from './platforms/exblog.js'
+import { fc2Handler } from './platforms/fc2.js'
+import { firesideHandler } from './platforms/fireside.js'
+import { flickrHandler } from './platforms/flickr.js'
+import { fluxbbHandler } from './platforms/fluxbb.js'
+import { friendicaHandler } from './platforms/friendica.js'
+import { funkwhaleHandler } from './platforms/funkwhale.js'
+import { ghostHandler } from './platforms/ghost.js'
+import { giteaHandler } from './platforms/gitea.js'
+import { githubHandler } from './platforms/github.js'
+import { githubGistHandler } from './platforms/githubGist.js'
+import { gitlabHandler } from './platforms/gitlab.js'
+import { goodreadsHandler } from './platforms/goodreads.js'
+import { gravHandler } from './platforms/grav.js'
+import { habrHandler } from './platforms/habr.js'
+import { hackernewsHandler } from './platforms/hackernews.js'
+import { hashnodeHandler } from './platforms/hashnode.js'
+import { hatenaBookmarkHandler } from './platforms/hatenaBookmark.js'
+import { hatenablogHandler } from './platforms/hatenablog.js'
+import { hearthisHandler } from './platforms/hearthis.js'
+import { heyWorldHandler } from './platforms/heyWorld.js'
+import { homelandHandler } from './platforms/homeland.js'
+import { hubspotHandler } from './platforms/hubspot.js'
+import { hubzillaHandler } from './platforms/hubzilla.js'
+import { insanejournalHandler } from './platforms/insanejournal.js'
+import { internetArchiveHandler } from './platforms/internetArchive.js'
+import { itchioHandler } from './platforms/itchio.js'
+import { ivooxHandler } from './platforms/ivoox.js'
+import { jiraHandler } from './platforms/jira.js'
+import { joomlaHandler } from './platforms/joomla.js'
+import { kickstarterHandler } from './platforms/kickstarter.js'
+import { learnkuHandler } from './platforms/learnku.js'
+import { lemmyHandler } from './platforms/lemmy.js'
+import { letterboxdHandler } from './platforms/letterboxd.js'
+import { libsynHandler } from './platforms/libsyn.js'
+import { listedHandler } from './platforms/listed.js'
+import { livejournalHandler } from './platforms/livejournal.js'
+import { lobstersHandler } from './platforms/lobsters.js'
+import { mailchimpHandler } from './platforms/mailchimp.js'
+import { mastodonHandler } from './platforms/mastodon.js'
+import { mataroaHandler } from './platforms/mataroa.js'
+import { mediawikiHandler } from './platforms/mediawiki.js'
+import { mediumHandler } from './platforms/medium.js'
+import { microblogHandler } from './platforms/microblog.js'
+import { misskeyHandler } from './platforms/misskey.js'
+import { mobilizonHandler } from './platforms/mobilizon.js'
+import { myanimelistHandler } from './platforms/myanimelist.js'
+import { mybbHandler } from './platforms/mybb.js'
+import { naverBlogHandler } from './platforms/naverBlog.js'
+import { nebulaHandler } from './platforms/nebula.js'
+import { neocitiesHandler } from './platforms/neocities.js'
+import { nodebbHandler } from './platforms/nodebb.js'
+import { noteHandler } from './platforms/note.js'
+import { observableHandler } from './platforms/observable.js'
+import { odyseeHandler } from './platforms/odysee.js'
+import { omnystudioHandler } from './platforms/omnystudio.js'
+import { openstatusHandler } from './platforms/openstatus.js'
+import { pagecordHandler } from './platforms/pagecord.js'
+import { paragraphHandler } from './platforms/paragraph.js'
+import { peertubeHandler } from './platforms/peertube.js'
+import { phpbbHandler } from './platforms/phpbb.js'
+import { pikaHandler } from './platforms/pika.js'
+import { pinboardHandler } from './platforms/pinboard.js'
+import { pinterestHandler } from './platforms/pinterest.js'
+import { pixelfedHandler } from './platforms/pixelfed.js'
+import { pleromaHandler } from './platforms/pleroma.js'
+import { plurkHandler } from './platforms/plurk.js'
+import { podbeanHandler } from './platforms/podbean.js'
+import { podigeeHandler } from './platforms/podigee.js'
+import { podomaticHandler } from './platforms/podomatic.js'
+import { posthavenHandler } from './platforms/posthaven.js'
+import { postypeHandler } from './platforms/postype.js'
+import { powerpressHandler } from './platforms/powerpress.js'
+import { producthuntHandler } from './platforms/producthunt.js'
+import { proseHandler } from './platforms/prose.js'
+import { publiiHandler } from './platforms/publii.js'
+import { qiitaHandler } from './platforms/qiita.js'
+import { redditHandler } from './platforms/reddit.js'
+import { rssComHandler } from './platforms/rssCom.js'
+import { seesaaHandler } from './platforms/seesaa.js'
+import { shaarliHandler } from './platforms/shaarli.js'
+import { shopifyHandler } from './platforms/shopify.js'
+import { smfHandler } from './platforms/smf.js'
+import { snacHandler } from './platforms/snac.js'
+import { soundcloudHandler } from './platforms/soundcloud.js'
+import { soundonHandler } from './platforms/soundon.js'
+import { sourceforgeHandler } from './platforms/sourceforge.js'
+import { sourcehutHandler } from './platforms/sourcehut.js'
+import { spotifyForCreatorsHandler } from './platforms/spotifyForCreators.js'
+import { spreakerHandler } from './platforms/spreaker.js'
+import { squarespaceHandler } from './platforms/squarespace.js'
+import { stackExchangeHandler } from './platforms/stackExchange.js'
+import { steamHandler } from './platforms/steam.js'
+import { substackHandler } from './platforms/substack.js'
+import { svbtleHandler } from './platforms/svbtle.js'
+import { sverigesRadioHandler } from './platforms/sverigesRadio.js'
+import { syosetuHandler } from './platforms/syosetu.js'
+import { textpatternHandler } from './platforms/textpattern.js'
+import { tildesHandler } from './platforms/tildes.js'
+import { tistoryHandler } from './platforms/tistory.js'
+import { togetterHandler } from './platforms/togetter.js'
+import { transistorHandler } from './platforms/transistor.js'
+import { tumblrHandler } from './platforms/tumblr.js'
+import { v2exHandler } from './platforms/v2ex.js'
+import { velogHandler } from './platforms/velog.js'
+import { vimeoHandler } from './platforms/vimeo.js'
+import { weblogLolHandler } from './platforms/weblogLol.js'
+import { weeblyHandler } from './platforms/weebly.js'
+import { wikidotHandler } from './platforms/wikidot.js'
+import { wixHandler } from './platforms/wix.js'
+import { wordpressHandler } from './platforms/wordpress.js'
+import { wpengineHandler } from './platforms/wpengine.js'
+import { writeasHandler } from './platforms/writeas.js'
+import { writefreelyHandler } from './platforms/writefreely.js'
+import { xenforoHandler } from './platforms/xenforo.js'
+import { ximalayaHandler } from './platforms/ximalaya.js'
+import { youtubeHandler } from './platforms/youtube.js'
+import { zennHandler } from './platforms/zenn.js'
 
 export const mimeTypes = [
   // RSS:
@@ -156,34 +229,57 @@ export const urisComprehensive: Array<UriEntry> = [
   '/feeds/comments/default',
 ]
 
-// URIs to ignore when discovering feeds from anchor elements.
-export const ignoredUris = ['wp-json/oembed/', 'wp-json/wp/']
+// Subscribe/share endpoints (Add to My Yahoo, Netvibes, Google Podcasts, AddThis, affiliate
+// redirectors, …) pass the real feed URL as a query parameter, e.g. ?url=http…, ?feed=aHR0c…
+// (base64 of "http"). They would otherwise match on their "Subscribe"/"RSS" link text and waste
+// a fetch, so ignore any anchor whose href carries an embedded URL.
+const wrappedFeedUrlRegex = /[?&][^=&]*=(https?:|https?%3a|aHR0c)/i
 
-// Text labels used to identify feed links in anchor elements.
-export const anchorLabels = [
-  'rss',
-  'feed',
-  'atom',
-  'subscribe',
-  'syndicate',
-  'syndication',
-  'json feed',
+// URIs to ignore when discovering feeds from anchor elements.
+export const ignoredUris: Array<Pattern> = ['wp-json/oembed/', 'wp-json/wp/', wrappedFeedUrlRegex]
+
+// A podcast host's tracking prefix can put a feed segment in an episode's path, as in
+// `pscrb.fm/rss/p/…/episode.mp3`, so a page link or a platform handler can offer a media file.
+export const ignoredExtensions = [
+  ...archiveExtensions,
+  ...audioExtensions,
+  ...codeExtensions,
+  ...documentExtensions,
+  ...flashExtensions,
+  ...fontExtensions,
+  ...imageExtensions,
+  ...installerExtensions,
+  ...subtitleExtensions,
+  ...videoExtensions,
 ]
+
+// Text labels used to identify feed links in anchor elements. "subscribe" is deliberately
+// excluded: on its own it overwhelmingly marks podcast-app, YouTube, and newsletter buttons
+// rather than feeds, and real feed links are still caught by their href or an rss/feed/atom label.
+export const anchorLabels = ['rss', 'feed', 'atom', 'syndicate', 'syndication', 'json feed']
 
 export const linkSelectors: Array<LinkSelector> = [
   { rel: 'alternate', types: mimeTypes },
   { rel: 'feed' },
 ]
 
-// Path segments that indicate feed URLs when found within anchor hrefs.
+// Path segments that indicate feed URLs when found in an anchor href's pathname.
 export const anchorPathSegments = [/\/rss\//, /\/atom\//, /\/feed\//]
+
+// Descendant attributes scanned for feed labels on icon-only anchors that carry no text or label
+// of their own. Framer names its feed-icon layer with data-framer-name (e.g. "RSS Icon"), which is
+// the common case this covers. "class" is intentionally excluded: anchorLabels match as substrings,
+// so labels collide with ordinary class names ("feed" in "feedback", "atom" in "atomic").
+export const anchorAttributes = ['aria-label', 'title', 'data-framer-name']
 
 // Default options for HTML method.
 export const defaultHtmlOptions: Omit<HtmlMethodOptions, 'baseUrl'> = {
   linkSelectors,
-  anchorUris: [...urisComprehensive.flat(), ...anchorPathSegments],
+  anchorUris: urisComprehensive.flat(),
+  anchorPathSegments,
   anchorIgnoredUris: ignoredUris,
   anchorLabels,
+  anchorAttributes,
   jsonLdTypes: ['DataFeed'],
 }
 
@@ -192,9 +288,24 @@ export const defaultHeadersOptions: Omit<HeadersMethodOptions, 'baseUrl'> = {
   linkSelectors,
 }
 
+// Path segments of same-origin links that mark a content section likely to host its own feed.
+export const sectionNames = [
+  'blog',
+  'news',
+  'posts',
+  'articles',
+  'writing',
+  'notes',
+  'journal',
+  'podcast',
+  'changelog',
+]
+
 // Default options for Guess method (excluding baseUrl which is required).
 export const defaultGuessOptions: Omit<GuessMethodOptions, 'baseUrl'> = {
   uris: urisBalanced,
+  maxAncestorDepth: 2,
+  sectionNames,
 }
 
 // Default options for Platform method.
@@ -204,79 +315,136 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     amebloHandler,
     applePodcastsHandler,
     arenaHandler,
+    art19Handler,
     artstationHandler,
+    atyponHandler,
     audioboomHandler,
+    aushaHandler,
     bearblogHandler,
     behanceHandler,
+    bitchuteHandler,
     blogspotHandler,
     blueskyHandler,
     bookwyrmHandler,
     buttondownHandler,
     buzzsproutHandler,
-    codebergHandler,
+    captivateHandler,
+    castopodHandler,
+    cnblogsHandler,
+    confluenceHandler,
+    cratesIoHandler,
     csdnHandler,
     dailymotionHandler,
     deviantartHandler,
     devtoHandler,
+    diasporaHandler,
     discourseHandler,
+    discuzHandler,
+    dokuwikiHandler,
     doubanHandler,
     dreamwidthHandler,
+    drupalHandler,
     exblogHandler,
+    fc2Handler,
     firesideHandler,
+    flickrHandler,
+    fluxbbHandler,
     friendicaHandler,
+    funkwhaleHandler,
     ghostHandler,
+    giteaHandler,
     githubHandler,
     githubGistHandler,
     gitlabHandler,
     goodreadsHandler,
+    gravHandler,
+    habrHandler,
     hackernewsHandler,
     hashnodeHandler,
+    hatenaBookmarkHandler,
     hatenablogHandler,
     hearthisHandler,
     heyWorldHandler,
+    homelandHandler,
+    hubspotHandler,
+    hubzillaHandler,
     insanejournalHandler,
+    internetArchiveHandler,
     itchioHandler,
+    ivooxHandler,
+    jiraHandler,
+    joomlaHandler,
     kickstarterHandler,
+    learnkuHandler,
     lemmyHandler,
     letterboxdHandler,
     libsynHandler,
     listedHandler,
     livejournalHandler,
     lobstersHandler,
+    mailchimpHandler,
     mastodonHandler,
     mataroaHandler,
+    mediawikiHandler,
     mediumHandler,
     microblogHandler,
     misskeyHandler,
+    mobilizonHandler,
     myanimelistHandler,
+    mybbHandler,
     naverBlogHandler,
     nebulaHandler,
+    neocitiesHandler,
+    nodebbHandler,
     noteHandler,
     observableHandler,
     odyseeHandler,
+    omnystudioHandler,
+    openstatusHandler,
     pagecordHandler,
     paragraphHandler,
+    peertubeHandler,
+    phpbbHandler,
     pikaHandler,
+    pinboardHandler,
     pinterestHandler,
     pixelfedHandler,
     pleromaHandler,
+    plurkHandler,
     podbeanHandler,
     podigeeHandler,
+    podomaticHandler,
     posthavenHandler,
+    postypeHandler,
+    powerpressHandler,
     producthuntHandler,
     proseHandler,
+    publiiHandler,
     qiitaHandler,
     redditHandler,
     rssComHandler,
     seesaaHandler,
+    shaarliHandler,
+    shopifyHandler,
+    smfHandler,
+    snacHandler,
     soundcloudHandler,
+    soundonHandler,
     sourceforgeHandler,
+    sourcehutHandler,
+    spotifyForCreatorsHandler,
     spreakerHandler,
+    squarespaceHandler,
     stackExchangeHandler,
     steamHandler,
     substackHandler,
+    svbtleHandler,
+    sverigesRadioHandler,
+    syosetuHandler,
+    textpatternHandler,
     tildesHandler,
     tistoryHandler,
+    togetterHandler,
     transistorHandler,
     tumblrHandler,
     v2exHandler,
@@ -284,9 +452,13 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     vimeoHandler,
     weblogLolHandler,
     weeblyHandler,
+    wikidotHandler,
+    wixHandler,
     wordpressHandler,
     wpengineHandler,
     writeasHandler,
+    writefreelyHandler,
+    xenforoHandler,
     ximalayaHandler,
     youtubeHandler,
     zennHandler,

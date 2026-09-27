@@ -20,6 +20,24 @@ By default, Feedscout resolves relative URLs against the base URL:
 // Resolved: https://example.com/rss
 ```
 
+It also repairs URLs a page often gets wrong:
+
+```typescript
+// HTML entities are decoded
+// Discovered: /feed?format=rss&amp;lang=en
+// Resolved: https://example.com/feed?format=rss&lang=en
+
+// Feed and podcast schemes become https
+// Discovered: feed://example.com/rss.xml
+// Resolved: https://example.com/rss.xml
+
+// Malformed http protocols are fixed
+// Discovered: htp://example.com/feed.xml
+// Resolved: http://example.com/feed.xml
+```
+
+An entity is decoded only with its trailing semicolon, so a query such as `?id=1&copy=2` stays as it is. A URL the default cannot parse is kept as discovered and reported to `onError`.
+
 ## Custom Resolution
 
 Provide a `resolveUrlFn` to customize URL resolution:
@@ -54,8 +72,12 @@ const hubs = await discoverHubs(url, {
 ## Interface
 
 ```typescript
-type DiscoverResolveUrlFn = (url: string, baseUrl: string | undefined) => string
+type DiscoverResolveUrlFn = (url: string, baseUrl: string | undefined) => string | undefined
 ```
+
+Return `undefined` when the URL cannot be resolved. Feedscout then keeps the URL as discovered. The same happens when the function throws, and the error is reported to `onError`, so a malformed `href` on a page does not stop discovery.
+
+A resolved URL with a scheme other than `http` or `https`, such as a `javascript:` or `mailto:` link, is dropped, since it cannot be fetched. The Guess method finds nothing on a page without an http origin, such as a saved `file:` page, since the URLs it builds start from that origin.
 
 ## Use Cases
 
@@ -124,7 +146,7 @@ const resolveUrl: DiscoverResolveUrlFn = (url, baseUrl) => {
 
 ## Combining with Other Options
 
-URL resolution works with `discoverFeeds`, `discoverBlogrolls`, and `discoverHubs`:
+URL resolution works with `discoverFeeds`, `discoverBlogrolls`, `discoverFavicons`, and `discoverHubs`:
 
 ```typescript
 const feeds = await discoverFeeds(url, {

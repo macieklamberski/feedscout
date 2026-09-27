@@ -1,13 +1,12 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverFetchFn, DiscoverResolveUrlFn } from '../../common/types.js'
+import type { DiscoverErrorContext, DiscoverResolveUrlFn, FetchFn } from '../../common/types.js'
 import { discoverHubs } from './index.js'
-import type { HubResult } from './types.js'
 
-const createMockFetch = (body: string, headers: Record<string, string> = {}): DiscoverFetchFn => {
+const createMockFetch = (body: string, headers: Record<string, string> = {}): FetchFn => {
   return async (url: string) => ({
-    url,
-    body,
     headers: new Headers(headers),
+    body,
+    url,
     status: 200,
     statusText: 'OK',
   })
@@ -21,7 +20,7 @@ describe('discoverHubs', () => {
         link: '<https://header-hub.example.com/>; rel="hub"',
       })
       const value = await discoverHubs('https://example.com/', { fetchFn: mockFetch })
-      const expected: Array<HubResult> = [
+      const expected = [
         {
           hub: 'https://header-hub.example.com/',
           topic: 'https://example.com/',
@@ -41,7 +40,7 @@ describe('discoverHubs', () => {
         link: '<https://example.com/feed.xml>; rel="self"',
       })
       const value = await discoverHubs('https://example.com/', { fetchFn: mockFetch })
-      const expected: Array<HubResult> = [
+      const expected = [
         {
           hub: 'https://html-hub.example.com/',
           topic: 'https://example.com/',
@@ -51,7 +50,7 @@ describe('discoverHubs', () => {
       expect(value).toEqual(expected)
     })
 
-    it('should return hubs from headers, feed, and HTML', async () => {
+    it('should return a hub found by both the feed and HTML methods once', async () => {
       const feed = `
         <?xml version="1.0" encoding="UTF-8"?>
         <feed xmlns="http://www.w3.org/2005/Atom">
@@ -63,13 +62,9 @@ describe('discoverHubs', () => {
         link: '<https://header-hub.example.com/>; rel="hub"',
       })
       const value = await discoverHubs('https://example.com/feed.xml', { fetchFn: mockFetch })
-      const expected: Array<HubResult> = [
+      const expected = [
         {
           hub: 'https://header-hub.example.com/',
-          topic: 'https://example.com/feed.xml',
-        },
-        {
-          hub: 'https://feed-hub.example.com/',
           topic: 'https://example.com/feed.xml',
         },
         {
@@ -92,7 +87,7 @@ describe('discoverHubs', () => {
         fetchFn: mockFetch,
         methods: ['html'],
       })
-      const expected: Array<HubResult> = [
+      const expected = [
         {
           hub: 'https://html-hub.example.com/',
           topic: 'https://example.com/',
@@ -128,6 +123,19 @@ describe('discoverHubs', () => {
       expect(value).toEqual([])
     })
 
+    it('should return empty array for empty methods array', async () => {
+      const html = '<link rel="hub" href="https://html-hub.example.com/">'
+      const headers = new Headers({
+        link: '<https://header-hub.example.com/>; rel="hub"',
+      })
+      const value = await discoverHubs(
+        { url: 'https://example.com/', content: html, headers },
+        { methods: [] },
+      )
+
+      expect(value).toEqual([])
+    })
+
     it('should use only feed method when specified', async () => {
       const feed = `
         <?xml version="1.0" encoding="UTF-8"?>
@@ -143,7 +151,7 @@ describe('discoverHubs', () => {
         fetchFn: mockFetch,
         methods: ['feed'],
       })
-      const expected: Array<HubResult> = [
+      const expected = [
         {
           hub: 'https://feed-hub.example.com/',
           topic: 'https://example.com/feed.xml',
@@ -154,7 +162,71 @@ describe('discoverHubs', () => {
     })
   })
 
+  describe('onError option', () => {
+    it('should report a failed input fetch', async () => {
+      const contexts: Array<DiscoverErrorContext> = []
+      const value = await discoverHubs('https://example.com/feed.xml', {
+        fetchFn: () => Promise.reject(new Error('Input fetch failed')),
+        onError: (_error, context) => {
+          contexts.push(context)
+        },
+      })
+      const expectedContexts: Array<DiscoverErrorContext> = [
+        { phase: 'fetchInput', url: 'https://example.com/feed.xml' },
+      ]
+
+      expect(value).toEqual([])
+      expect(contexts).toEqual(expectedContexts)
+    })
+
+    it('should report a throwing resolveUrlFn', async () => {
+      const contexts: Array<DiscoverErrorContext> = []
+      const html = '<link rel="hub" href="http://[malformed">'
+      const throwingResolveUrlFn: DiscoverResolveUrlFn = (url, baseUrl) => {
+        return new URL(url, baseUrl).href
+      }
+
+      await discoverHubs(
+        { url: 'https://example.com/', content: html },
+        {
+          methods: ['html'],
+          resolveUrlFn: throwingResolveUrlFn,
+          onError: (_error, context) => {
+            contexts.push(context)
+          },
+        },
+      )
+      const expectedContexts: Array<DiscoverErrorContext> = [
+        { phase: 'resolveUrlFn', url: 'http://[malformed' },
+      ]
+
+      expect(contexts).toEqual(expectedContexts)
+    })
+  })
+
   describe('resolveUrlFn option', () => {
+    it('should keep the hub URL as discovered when resolveUrlFn throws', async () => {
+      const html = '<link rel="hub" href="http://[malformed">'
+      const throwingResolveUrlFn: DiscoverResolveUrlFn = (url, baseUrl) => {
+        return new URL(url, baseUrl).href
+      }
+      const value = await discoverHubs(
+        { url: 'https://example.com/', content: html },
+        {
+          methods: ['html'],
+          resolveUrlFn: throwingResolveUrlFn,
+        },
+      )
+      const expected = [
+        {
+          hub: 'http://[malformed',
+          topic: 'https://example.com/',
+        },
+      ]
+
+      expect(value).toEqual(expected)
+    })
+
     it('should use custom resolveUrlFn for HTML hubs', async () => {
       const html = '<link rel="hub" href="/hub">'
       const customResolveUrlFn: DiscoverResolveUrlFn = (url) => {
@@ -167,7 +239,7 @@ describe('discoverHubs', () => {
           resolveUrlFn: customResolveUrlFn,
         },
       )
-      const expected: Array<HubResult> = [
+      const expected = [
         {
           hub: 'https://custom.example.com/hub',
           topic: 'https://example.com/',
@@ -191,7 +263,7 @@ describe('discoverHubs', () => {
           resolveUrlFn: customResolveUrlFn,
         },
       )
-      const expected: Array<HubResult> = [
+      const expected = [
         {
           hub: 'https://custom.example.com/hub',
           topic: 'https://example.com/',
@@ -217,7 +289,7 @@ describe('discoverHubs', () => {
           resolveUrlFn: customResolveUrlFn,
         },
       )
-      const expected: Array<HubResult> = [
+      const expected = [
         {
           hub: 'https://hub.example.com/',
           topic: 'https://normalized.example.com/feed.xml',
@@ -237,7 +309,7 @@ describe('discoverHubs', () => {
         url: 'https://example.com/feed.xml',
         headers,
       })
-      const expected: Array<HubResult> = [
+      const expected = [
         {
           hub: 'https://hub.example.com/',
           topic: 'https://example.com/feed.xml',
@@ -253,7 +325,7 @@ describe('discoverHubs', () => {
         url: 'https://example.com/',
         content: html,
       })
-      const expected: Array<HubResult> = [
+      const expected = [
         {
           hub: 'https://hub.example.com/',
           topic: 'https://example.com/',
@@ -275,7 +347,7 @@ describe('discoverHubs', () => {
         { url: 'https://example.com/feed.xml', content: feed },
         { methods: ['feed'] },
       )
-      const expected: Array<HubResult> = [
+      const expected = [
         {
           hub: 'https://hub.example.com/',
           topic: 'https://example.com/feed.xml',
@@ -292,7 +364,7 @@ describe('discoverHubs', () => {
     })
 
     it('should return empty array when initial URL fetch throws', async () => {
-      const fetchFn: DiscoverFetchFn = () => {
+      const fetchFn: FetchFn = () => {
         throw new Error('Connection refused')
       }
       const value = await discoverHubs('https://example.com/', { fetchFn })

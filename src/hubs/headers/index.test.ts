@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'bun:test'
-import type { HubResult } from '../discover/types.js'
+import { defaultResolveUrlFn } from '../../common/discover/defaults.js'
+import type { DiscoverResolveUrlFn } from '../../common/types.js'
 import { discoverHubsFromHeaders } from './index.js'
 
 describe('discoverHubsFromHeaders', () => {
@@ -7,8 +8,12 @@ describe('discoverHubsFromHeaders', () => {
     const headers = new Headers({
       link: '<https://hub.example.com/>; rel="hub", <https://example.com/feed.xml>; rel="self"',
     })
-    const value = discoverHubsFromHeaders(headers, 'https://example.com/feed.xml')
-    const expected: Array<HubResult> = [
+    const value = discoverHubsFromHeaders(
+      headers,
+      'https://example.com/feed.xml',
+      defaultResolveUrlFn,
+    )
+    const expected = [
       {
         hub: 'https://hub.example.com/',
         topic: 'https://example.com/feed.xml',
@@ -22,8 +27,12 @@ describe('discoverHubsFromHeaders', () => {
     const headers = new Headers({
       link: '<https://hub.example.com/>; rel="hub"',
     })
-    const value = discoverHubsFromHeaders(headers, 'https://example.com/feed.xml')
-    const expected: Array<HubResult> = [
+    const value = discoverHubsFromHeaders(
+      headers,
+      'https://example.com/feed.xml',
+      defaultResolveUrlFn,
+    )
+    const expected = [
       {
         hub: 'https://hub.example.com/',
         topic: 'https://example.com/feed.xml',
@@ -37,8 +46,12 @@ describe('discoverHubsFromHeaders', () => {
     const headers = new Headers({
       link: '<https://example.com/>; rel="alternate", <https://hub.example.com/>; rel="hub", <https://example.com/feed.xml>; rel="self"',
     })
-    const value = discoverHubsFromHeaders(headers, 'https://example.com/feed.xml')
-    const expected: Array<HubResult> = [
+    const value = discoverHubsFromHeaders(
+      headers,
+      'https://example.com/feed.xml',
+      defaultResolveUrlFn,
+    )
+    const expected = [
       {
         hub: 'https://hub.example.com/',
         topic: 'https://example.com/feed.xml',
@@ -52,14 +65,22 @@ describe('discoverHubsFromHeaders', () => {
     const headers = new Headers({
       link: '<https://example.com/feed.xml>; rel="self"',
     })
-    const value = discoverHubsFromHeaders(headers, 'https://example.com/feed.xml')
+    const value = discoverHubsFromHeaders(
+      headers,
+      'https://example.com/feed.xml',
+      defaultResolveUrlFn,
+    )
 
     expect(value).toEqual([])
   })
 
   it('should return empty array when no Link header present', () => {
     const headers = new Headers()
-    const value = discoverHubsFromHeaders(headers, 'https://example.com/feed.xml')
+    const value = discoverHubsFromHeaders(
+      headers,
+      'https://example.com/feed.xml',
+      defaultResolveUrlFn,
+    )
 
     expect(value).toEqual([])
   })
@@ -68,8 +89,12 @@ describe('discoverHubsFromHeaders', () => {
     const headers = new Headers({
       link: '<https://hub.example.com/>; rel="HUB", <https://example.com/feed.xml>; rel="SELF"',
     })
-    const value = discoverHubsFromHeaders(headers, 'https://example.com/feed.xml')
-    const expected: Array<HubResult> = [
+    const value = discoverHubsFromHeaders(
+      headers,
+      'https://example.com/feed.xml',
+      defaultResolveUrlFn,
+    )
+    const expected = [
       {
         hub: 'https://hub.example.com/',
         topic: 'https://example.com/feed.xml',
@@ -83,8 +108,12 @@ describe('discoverHubsFromHeaders', () => {
     const headers = new Headers({
       link: '<https://hub1.example.com/>; rel="hub", <https://hub2.example.com/>; rel="hub"',
     })
-    const value = discoverHubsFromHeaders(headers, 'https://example.com/feed.xml')
-    const expected: Array<HubResult> = [
+    const value = discoverHubsFromHeaders(
+      headers,
+      'https://example.com/feed.xml',
+      defaultResolveUrlFn,
+    )
+    const expected = [
       {
         hub: 'https://hub1.example.com/',
         topic: 'https://example.com/feed.xml',
@@ -102,7 +131,11 @@ describe('discoverHubsFromHeaders', () => {
     const headers = new Headers({
       link: 'invalid-link-header',
     })
-    const value = discoverHubsFromHeaders(headers, 'https://example.com/feed.xml')
+    const value = discoverHubsFromHeaders(
+      headers,
+      'https://example.com/feed.xml',
+      defaultResolveUrlFn,
+    )
 
     expect(value).toEqual([])
   })
@@ -111,8 +144,12 @@ describe('discoverHubsFromHeaders', () => {
     const headers = new Headers({
       link: '<https://hub.example.com/>; rel="hub"',
     })
-    const value = discoverHubsFromHeaders(headers, 'https://example.com/feed.xml')
-    const expected: Array<HubResult> = [
+    const value = discoverHubsFromHeaders(
+      headers,
+      'https://example.com/feed.xml',
+      defaultResolveUrlFn,
+    )
+    const expected = [
       {
         hub: 'https://hub.example.com/',
         topic: 'https://example.com/feed.xml',
@@ -126,8 +163,12 @@ describe('discoverHubsFromHeaders', () => {
     const headers = new Headers({
       link: '<https://hub.example.com/>; rel=hub',
     })
-    const value = discoverHubsFromHeaders(headers, 'https://example.com/feed.xml')
-    const expected: Array<HubResult> = [
+    const value = discoverHubsFromHeaders(
+      headers,
+      'https://example.com/feed.xml',
+      defaultResolveUrlFn,
+    )
+    const expected = [
       {
         hub: 'https://hub.example.com/',
         topic: 'https://example.com/feed.xml',
@@ -149,7 +190,7 @@ describe('discoverHubsFromHeaders', () => {
       'https://example.com/feed.xml',
       customResolveUrlFn,
     )
-    const expected: Array<HubResult> = [
+    const expected = [
       {
         hub: 'https://custom.example.com/hub',
         topic: 'https://custom.example.com/feed.xml',
@@ -163,11 +204,31 @@ describe('discoverHubsFromHeaders', () => {
     const headers = new Headers({
       link: '</hub>; rel="hub"',
     })
-    const value = discoverHubsFromHeaders(headers, 'https://example.com/feed.xml')
-    const expected: Array<HubResult> = [
+    const value = discoverHubsFromHeaders(
+      headers,
+      'https://example.com/feed.xml',
+      defaultResolveUrlFn,
+    )
+    const expected = [
       {
         hub: 'https://example.com/hub',
         topic: 'https://example.com/feed.xml',
+      },
+    ]
+
+    expect(value).toEqual(expected)
+  })
+
+  it('should keep raw hub and topic when resolveUrlFn returns undefined', () => {
+    const headers = new Headers({
+      link: '</hub>; rel="hub", </feed.xml>; rel="self"',
+    })
+    const resolveNothingFn: DiscoverResolveUrlFn = () => undefined
+    const value = discoverHubsFromHeaders(headers, 'https://example.com/', resolveNothingFn)
+    const expected = [
+      {
+        hub: '/hub',
+        topic: '/feed.xml',
       },
     ]
 
@@ -178,8 +239,8 @@ describe('discoverHubsFromHeaders', () => {
     const headers = new Headers({
       link: '<https://hub.example.com/>; rel="hub", <https://example.com/first.xml>; rel="self", <https://example.com/second.xml>; rel="self"',
     })
-    const value = discoverHubsFromHeaders(headers, 'https://example.com/')
-    const expected: Array<HubResult> = [
+    const value = discoverHubsFromHeaders(headers, 'https://example.com/', defaultResolveUrlFn)
+    const expected = [
       {
         hub: 'https://hub.example.com/',
         topic: 'https://example.com/first.xml',

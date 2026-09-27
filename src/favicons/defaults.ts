@@ -1,22 +1,67 @@
+import {
+  archiveExtensions,
+  audioExtensions,
+  codeExtensions,
+  documentExtensions,
+  flashExtensions,
+  fontExtensions,
+  installerExtensions,
+  omitEmpty,
+  subtitleExtensions,
+  videoExtensions,
+} from 'trousse'
 import type { LinkSelector } from '../common/types.js'
 import type { FeedMethodOptions } from '../common/uris/feed/types.js'
 import type { GuessMethodOptions } from '../common/uris/guess/types.js'
 import type { HeadersMethodOptions } from '../common/uris/headers/types.js'
 import type { HtmlMethodOptions } from '../common/uris/html/types.js'
 import type { PlatformMethodOptions } from '../common/uris/platform/types.js'
-import { omitEmpty } from '../common/utils.js'
-import { blueskyHandler } from './platform/handlers/bluesky.js'
-import { codebergHandler } from './platform/handlers/codeberg.js'
-import { deviantartHandler } from './platform/handlers/deviantart.js'
-import { devtoHandler } from './platform/handlers/devto.js'
-import { githubHandler } from './platform/handlers/github.js'
-import { githubGistHandler } from './platform/handlers/githubGist.js'
-import { gitlabHandler } from './platform/handlers/gitlab.js'
-import { lobstersHandler } from './platform/handlers/lobsters.js'
-import { mastodonHandler } from './platform/handlers/mastodon.js'
-import { redditHandler } from './platform/handlers/reddit.js'
-import { sourceforgeHandler } from './platform/handlers/sourceforge.js'
-import { tumblrHandler } from './platform/handlers/tumblr.js'
+import { amebloHandler } from './platforms/ameblo.js'
+import { arenaEnricher, arenaHandler } from './platforms/arena.js'
+import { behanceHandler } from './platforms/behance.js'
+import { bitchuteHandler } from './platforms/bitchute.js'
+import { blueskyEnricher, blueskyHandler } from './platforms/bluesky.js'
+import { bookwyrmEnricher, bookwyrmHandler } from './platforms/bookwyrm.js'
+import { dailymotionEnricher, dailymotionHandler } from './platforms/dailymotion.js'
+import { deviantartHandler } from './platforms/deviantart.js'
+import { devtoEnricher, devtoHandler } from './platforms/devto.js'
+import { exblogEnricher, exblogHandler } from './platforms/exblog.js'
+import { flickrHandler } from './platforms/flickr.js'
+import { giteaHandler } from './platforms/gitea.js'
+import { githubHandler } from './platforms/github.js'
+import { githubGistHandler } from './platforms/githubGist.js'
+import { gitlabEnricher, gitlabHandler } from './platforms/gitlab.js'
+import { goodreadsEnricher, goodreadsHandler } from './platforms/goodreads.js'
+import { habrHandler } from './platforms/habr.js'
+import { hatenaBookmarkEnricher, hatenaBookmarkHandler } from './platforms/hatenaBookmark.js'
+import { lemmyEnricher, lemmyHandler } from './platforms/lemmy.js'
+import { letterboxdEnricher, letterboxdHandler } from './platforms/letterboxd.js'
+import { lobstersHandler } from './platforms/lobsters.js'
+import { mastodonEnricher, mastodonHandler } from './platforms/mastodon.js'
+import { mediumEnricher, mediumHandler } from './platforms/medium.js'
+import { microblogHandler } from './platforms/microblog.js'
+import { myanimelistEnricher, myanimelistHandler } from './platforms/myanimelist.js'
+import { naverBlogEnricher, naverBlogHandler } from './platforms/naverBlog.js'
+import { nebulaEnricher, nebulaHandler } from './platforms/nebula.js'
+import { noteEnricher, noteHandler } from './platforms/note.js'
+import { observableEnricher, observableHandler } from './platforms/observable.js'
+import { odyseeEnricher, odyseeHandler } from './platforms/odysee.js'
+import { peertubeEnricher, peertubeHandler } from './platforms/peertube.js'
+import { pinterestEnricher, pinterestHandler } from './platforms/pinterest.js'
+import { pixelfedEnricher, pixelfedHandler } from './platforms/pixelfed.js'
+import { postypeEnricher, postypeHandler } from './platforms/postype.js'
+import { producthuntHandler } from './platforms/producthunt.js'
+import { redditEnricher, redditHandler } from './platforms/reddit.js'
+import { soundcloudHandler } from './platforms/soundcloud.js'
+import { sourceforgeHandler } from './platforms/sourceforge.js'
+import { sourcehutEnricher, sourcehutHandler } from './platforms/sourcehut.js'
+import { steamEnricher, steamHandler } from './platforms/steam.js'
+import { togetterHandler } from './platforms/togetter.js'
+import { tumblrHandler } from './platforms/tumblr.js'
+import { velogEnricher, velogHandler } from './platforms/velog.js'
+import { youtubeHandler } from './platforms/youtube.js'
+import { zennHandler } from './platforms/zenn.js'
+import type { FaviconEnricher } from './types.js'
 
 export const defaultIconRels = [
   'icon',
@@ -36,10 +81,29 @@ export const defaultGuessPaths = [
 
 export const linkSelectors: Array<LinkSelector> = defaultIconRels.map((rel) => ({ rel }))
 
+export const ignoredExtensions = [
+  ...archiveExtensions,
+  ...audioExtensions,
+  ...codeExtensions,
+  ...documentExtensions,
+  ...flashExtensions,
+  ...fontExtensions,
+  ...installerExtensions,
+  ...subtitleExtensions,
+  ...videoExtensions,
+]
+
+// Podcast artwork in `itunes:image` must be square, which RSS `<image>` is not:
+// that one is a logo up to 144 by 400 pixels.
+// See: https://help.apple.com/itc/podcasts_connect/en.lproj/static.html.
 export const defaultFeedOptions: FeedMethodOptions = {
   extractUrls: ({ format, feed }) => {
     if (format === 'atom') {
-      return omitEmpty([feed.icon])
+      return omitEmpty([feed.icon, feed.itunes?.image])
+    }
+
+    if (format === 'rss') {
+      return omitEmpty([feed.itunes?.image])
     }
 
     if (format === 'json') {
@@ -67,17 +131,80 @@ export const defaultGuessOptions: Omit<GuessMethodOptions, 'baseUrl'> = {
 
 export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
   handlers: [
+    amebloHandler,
+    arenaHandler,
+    behanceHandler,
+    bitchuteHandler,
+    blueskyHandler,
+    bookwyrmHandler,
+    dailymotionHandler,
+    deviantartHandler,
+    devtoHandler,
+    exblogHandler,
+    flickrHandler,
+    giteaHandler,
     githubHandler,
     githubGistHandler,
     gitlabHandler,
-    mastodonHandler,
-    blueskyHandler,
-    redditHandler,
-    tumblrHandler,
-    codebergHandler,
+    goodreadsHandler,
+    habrHandler,
+    hatenaBookmarkHandler,
+    lemmyHandler,
+    letterboxdHandler,
     lobstersHandler,
+    mastodonHandler,
+    mediumHandler,
+    microblogHandler,
+    myanimelistHandler,
+    naverBlogHandler,
+    nebulaHandler,
+    noteHandler,
+    observableHandler,
+    odyseeHandler,
+    peertubeHandler,
+    pinterestHandler,
+    pixelfedHandler,
+    postypeHandler,
+    producthuntHandler,
+    redditHandler,
+    soundcloudHandler,
     sourceforgeHandler,
-    deviantartHandler,
-    devtoHandler,
+    sourcehutHandler,
+    steamHandler,
+    togetterHandler,
+    tumblrHandler,
+    velogHandler,
+    youtubeHandler,
+    zennHandler,
   ],
 }
+
+export const defaultFaviconEnrichers: Array<FaviconEnricher> = [
+  arenaEnricher,
+  blueskyEnricher,
+  bookwyrmEnricher,
+  dailymotionEnricher,
+  devtoEnricher,
+  exblogEnricher,
+  gitlabEnricher,
+  goodreadsEnricher,
+  hatenaBookmarkEnricher,
+  lemmyEnricher,
+  letterboxdEnricher,
+  mastodonEnricher,
+  mediumEnricher,
+  myanimelistEnricher,
+  naverBlogEnricher,
+  nebulaEnricher,
+  noteEnricher,
+  observableEnricher,
+  odyseeEnricher,
+  peertubeEnricher,
+  pinterestEnricher,
+  pixelfedEnricher,
+  postypeEnricher,
+  redditEnricher,
+  sourcehutEnricher,
+  steamEnricher,
+  velogEnricher,
+]
