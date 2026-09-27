@@ -373,6 +373,7 @@
   "pinterest": ["https://www.pinterest.com/pinterest/feed.rss"],
   "pixelfed": ["https://pixelfed.social/users/dansup.atom"],
   "pleroma": ["https://lain.com/users/lain/feed.atom"],
+  "plurk": ["https://www.plurk.com/plurkoffice.xml", "https://www.plurk.com/p/3j6p8yayds.xml"],
   "podbean": ["https://feed.podbean.com/podcast/feed.xml"],
   "podigee": ["https://cui-bono.podigee.io/feed/mp3"],
   "podomatic": ["https://asquaredpodcast10.podomatic.com/rss2.xml"],

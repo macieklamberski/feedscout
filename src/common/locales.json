@@ -381,6 +381,8 @@
     "soundon:podcast": "Podcast",
     "crates-io:releases": "Releases",
     "crates-io:new-crates": "New crates",
-    "crates-io:updates": "Recent updates"
+    "crates-io:updates": "Recent updates",
+    "plurk:plurks": "Plurks",
+    "plurk:responses": "Responses"
   }
 }

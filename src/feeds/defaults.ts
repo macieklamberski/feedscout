@@ -109,6 +109,7 @@ import { pinboardHandler } from './platforms/pinboard.js'
 import { pinterestHandler } from './platforms/pinterest.js'
 import { pixelfedHandler } from './platforms/pixelfed.js'
 import { pleromaHandler } from './platforms/pleroma.js'
+import { plurkHandler } from './platforms/plurk.js'
 import { podbeanHandler } from './platforms/podbean.js'
 import { podigeeHandler } from './platforms/podigee.js'
 import { podomaticHandler } from './platforms/podomatic.js'
@@ -396,6 +397,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     pinterestHandler,
     pixelfedHandler,
     pleromaHandler,
+    plurkHandler,
     podbeanHandler,
     podigeeHandler,
     podomaticHandler,
