@@ -2,6 +2,7 @@ import { describe, expect, it } from 'bun:test'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { defaultPlatformOptions } from '../defaults.js'
 import { bookwyrmHandler } from './bookwyrm.js'
+import { castopodHandler } from './castopod.js'
 import { confluenceHandler } from './confluence.js'
 import { diasporaHandler } from './diaspora.js'
 import { discourseHandler } from './discourse.js'
@@ -11,6 +12,7 @@ import { drupalHandler } from './drupal.js'
 import { fluxbbHandler } from './fluxbb.js'
 import { friendicaHandler } from './friendica.js'
 import { funkwhaleHandler } from './funkwhale.js'
+import { gancioHandler } from './gancio.js'
 import { giteaHandler } from './gitea.js'
 import { gitlabHandler } from './gitlab.js'
 import { gravHandler } from './grav.js'
@@ -21,20 +23,25 @@ import { jiraHandler } from './jira.js'
 import { joomlaHandler } from './joomla.js'
 import { lemmyHandler } from './lemmy.js'
 import { mastodonHandler } from './mastodon.js'
+import { mediawikiHandler } from './mediawiki.js'
 import { misskeyHandler } from './misskey.js'
 import { mobilizonHandler } from './mobilizon.js'
+import { mybbHandler } from './mybb.js'
 import { nodebbHandler } from './nodebb.js'
 import { openstatusHandler } from './openstatus.js'
 import { peertubeHandler } from './peertube.js'
 import { phpbbHandler } from './phpbb.js'
 import { pixelfedHandler } from './pixelfed.js'
 import { pleromaHandler } from './pleroma.js'
+import { podloveHandler } from './podlove.js'
 import { powerpressHandler } from './powerpress.js'
 import { publiiHandler } from './publii.js'
 import { shaarliHandler } from './shaarli.js'
 import { shopifyHandler } from './shopify.js'
+import { smfHandler } from './smf.js'
 import { snacHandler } from './snac.js'
 import { squarespaceHandler } from './squarespace.js'
+import { statuspageHandler } from './statuspage.js'
 import { svbtleHandler } from './svbtle.js'
 import { textpatternHandler } from './textpattern.js'
 import { wikidotHandler } from './wikidot.js'
@@ -101,6 +108,7 @@ type Case = [string, PlatformHandler, string, Headers?]
 
 const cases: Array<Case> = [
   ['bookwyrm', bookwyrmHandler, '<meta name="generator" content="BookWyrm 0.7.5">'],
+  ['castopod', castopodHandler, '<link href="/themes/colors">'],
   [
     'confluence',
     confluenceHandler,
@@ -114,6 +122,7 @@ const cases: Array<Case> = [
   ['fluxbb', fluxbbHandler, '<div id="brdmenu"></div><div id="brdfooter"></div>'],
   ['friendica', friendicaHandler, '<meta name="generator" content="Friendica 2026.05">'],
   ['funkwhale', funkwhaleHandler, '<div id="fake-app"></div>'],
+  ['gancio', gancioHandler, '<link rel="stylesheet" href="/custom_css">'],
   ['gitea', giteaHandler, '', new Headers({ 'set-cookie': 'i_like_gitea=abc; Path=/' })],
   ['gitlab', gitlabHandler, '<meta property="og:site_name" content="GitLab">'],
   ['grav', gravHandler, '', new Headers({ 'set-cookie': 'grav-site-9a6a5fc=abc; path=/' })],
@@ -124,12 +133,14 @@ const cases: Array<Case> = [
   ['joomla', joomlaHandler, '<script class="joomla-script-options new">{}</script>'],
   ['lemmy', lemmyHandler, '<div class="lemmy-site" id="app"></div>'],
   ['mastodon', mastodonHandler, '<div class="app-holder" id="mastodon"></div>'],
+  ['mediawiki', mediawikiHandler, '<link rel="EditURI" href="/w/api.php?action=rsd">'],
   ['misskey', misskeyHandler, '<script type="application/json" id="misskey_meta">{}</script>'],
   [
     'mobilizon',
     mobilizonHandler,
     "<noscript>Mobilizon doesn't work properly without JavaScript</noscript>",
   ],
+  ['mybb', mybbHandler, '', new Headers({ 'set-cookie': 'mybb[lastvisit]=1790000000; path=/' })],
   ['nodebb', nodebbHandler, '', new Headers({ 'x-powered-by': 'NodeBB' })],
   ['openstatus', openstatusHandler, '<link href="/api/status/summary.json">'],
   ['peertube', peertubeHandler, '', new Headers({ 'x-powered-by': 'PeerTube' })],
@@ -140,12 +151,23 @@ const cases: Array<Case> = [
     pleromaHandler,
     '<script id="initial-results" type="application/json">{"/api/pleroma/frontend_configurations":{}}</script>',
   ],
+  [
+    'podlove',
+    podloveHandler,
+    '<link href="/wp-content/plugins/podlove-podcasting-plugin-for-wordpress/css/frontend.css"><link rel="alternate" title="Podcast Feed: Show (MP3)" href="/feed/mp3/">',
+  ],
   ['powerpress', powerpressHandler, '<script>function powerpress_pinw(pinw_url){}</script>'],
   ['publii', publiiHandler, '<img src="https://example.org/media/website/logo.png">'],
   ['shaarli', shaarliHandler, '<div id="shaarli-menu"></div>'],
   ['shopify', shopifyHandler, '', new Headers({ 'powered-by': 'Shopify' })],
+  [
+    'smf',
+    smfHandler,
+    '<script>var smf_scripturl = "https://example.org/index.php";var smf_theme_url = "";</script>',
+  ],
   ['snac', snacHandler, '', new Headers({ 'x-creator': 'snac/2.95' })],
   ['squarespace', squarespaceHandler, '', new Headers({ server: 'Squarespace' })],
+  ['statuspage', statuspageHandler, '', new Headers({ 'x-statuspage-version': '5a16926c' })],
   ['svbtle', svbtleHandler, '<link href="https://lightning.svbtle.com/cargo/blog.css">'],
   ['textpattern', textpatternHandler, '<meta name="generator" content="Textpattern CMS">'],
   ['wikidot', wikidotHandler, '<a onclick="WIKIDOT.page.listeners.editClick()">Edit</a>'],

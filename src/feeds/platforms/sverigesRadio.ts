@@ -41,7 +41,7 @@ export const sverigesRadioHandler: PlatformHandler = {
       return [
         {
           uri: `https://api.sr.se/api/rss/program/${programId}`,
-          hint: composeHint('sverigesRadio:program'),
+          hint: composeHint('sveriges-radio:program'),
         },
       ]
     }
@@ -56,7 +56,7 @@ export const sverigesRadioHandler: PlatformHandler = {
     return [
       {
         uri: `https://public-api.sr.se/rss/${slug.toLowerCase()}`,
-        hint: composeHint('sverigesRadio:program'),
+        hint: composeHint('sveriges-radio:program'),
       },
     ]
   },

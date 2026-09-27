@@ -1,4 +1,4 @@
-import { isHostOf, isSubdomainOf } from 'trousse'
+import { getPathSegments, isHostOf, isSubdomainOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
@@ -14,10 +14,10 @@ export const libsynHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    const { origin, pathname } = new URL(url)
+    const { origin } = new URL(url)
 
     if (isHostOf(url, feedHosts)) {
-      const showId = pathname.split('/').find(Boolean)
+      const [showId] = getPathSegments(url)
 
       if (showId && numericRegex.test(showId)) {
         return [

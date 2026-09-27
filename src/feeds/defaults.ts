@@ -33,6 +33,7 @@ import { bookwyrmHandler } from './platforms/bookwyrm.js'
 import { buttondownHandler } from './platforms/buttondown.js'
 import { buzzsproutHandler } from './platforms/buzzsprout.js'
 import { captivateHandler } from './platforms/captivate.js'
+import { castopodHandler } from './platforms/castopod.js'
 import { cnblogsHandler } from './platforms/cnblogs.js'
 import { confluenceHandler } from './platforms/confluence.js'
 import { cratesIoHandler } from './platforms/cratesIo.js'
@@ -54,6 +55,7 @@ import { flickrHandler } from './platforms/flickr.js'
 import { fluxbbHandler } from './platforms/fluxbb.js'
 import { friendicaHandler } from './platforms/friendica.js'
 import { funkwhaleHandler } from './platforms/funkwhale.js'
+import { gancioHandler } from './platforms/gancio.js'
 import { ghostHandler } from './platforms/ghost.js'
 import { giteaHandler } from './platforms/gitea.js'
 import { githubHandler } from './platforms/github.js'
@@ -88,14 +90,17 @@ import { lobstersHandler } from './platforms/lobsters.js'
 import { mailchimpHandler } from './platforms/mailchimp.js'
 import { mastodonHandler } from './platforms/mastodon.js'
 import { mataroaHandler } from './platforms/mataroa.js'
+import { mediawikiHandler } from './platforms/mediawiki.js'
 import { mediumHandler } from './platforms/medium.js'
 import { microblogHandler } from './platforms/microblog.js'
 import { misskeyHandler } from './platforms/misskey.js'
 import { mobilizonHandler } from './platforms/mobilizon.js'
 import { myanimelistHandler } from './platforms/myanimelist.js'
+import { mybbHandler } from './platforms/mybb.js'
 import { naverBlogHandler } from './platforms/naverBlog.js'
 import { nebulaHandler } from './platforms/nebula.js'
 import { neocitiesHandler } from './platforms/neocities.js'
+import { niconicoHandler } from './platforms/niconico.js'
 import { nodebbHandler } from './platforms/nodebb.js'
 import { noteHandler } from './platforms/note.js'
 import { observableHandler } from './platforms/observable.js'
@@ -114,6 +119,7 @@ import { pleromaHandler } from './platforms/pleroma.js'
 import { plurkHandler } from './platforms/plurk.js'
 import { podbeanHandler } from './platforms/podbean.js'
 import { podigeeHandler } from './platforms/podigee.js'
+import { podloveHandler } from './platforms/podlove.js'
 import { podomaticHandler } from './platforms/podomatic.js'
 import { posthavenHandler } from './platforms/posthaven.js'
 import { postypeHandler } from './platforms/postype.js'
@@ -127,6 +133,7 @@ import { rssComHandler } from './platforms/rssCom.js'
 import { seesaaHandler } from './platforms/seesaa.js'
 import { shaarliHandler } from './platforms/shaarli.js'
 import { shopifyHandler } from './platforms/shopify.js'
+import { smfHandler } from './platforms/smf.js'
 import { snacHandler } from './platforms/snac.js'
 import { soundcloudHandler } from './platforms/soundcloud.js'
 import { soundonHandler } from './platforms/soundon.js'
@@ -136,6 +143,7 @@ import { spotifyForCreatorsHandler } from './platforms/spotifyForCreators.js'
 import { spreakerHandler } from './platforms/spreaker.js'
 import { squarespaceHandler } from './platforms/squarespace.js'
 import { stackExchangeHandler } from './platforms/stackExchange.js'
+import { statuspageHandler } from './platforms/statuspage.js'
 import { steamHandler } from './platforms/steam.js'
 import { substackHandler } from './platforms/substack.js'
 import { svbtleHandler } from './platforms/svbtle.js'
@@ -324,6 +332,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     buttondownHandler,
     buzzsproutHandler,
     captivateHandler,
+    castopodHandler,
     cnblogsHandler,
     confluenceHandler,
     cratesIoHandler,
@@ -345,6 +354,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     fluxbbHandler,
     friendicaHandler,
     funkwhaleHandler,
+    gancioHandler,
     ghostHandler,
     giteaHandler,
     githubHandler,
@@ -379,14 +389,17 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     mailchimpHandler,
     mastodonHandler,
     mataroaHandler,
+    mediawikiHandler,
     mediumHandler,
     microblogHandler,
     misskeyHandler,
     mobilizonHandler,
     myanimelistHandler,
+    mybbHandler,
     naverBlogHandler,
     nebulaHandler,
     neocitiesHandler,
+    niconicoHandler,
     nodebbHandler,
     noteHandler,
     observableHandler,
@@ -405,6 +418,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     plurkHandler,
     podbeanHandler,
     podigeeHandler,
+    podloveHandler,
     podomaticHandler,
     posthavenHandler,
     postypeHandler,
@@ -418,6 +432,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     seesaaHandler,
     shaarliHandler,
     shopifyHandler,
+    smfHandler,
     snacHandler,
     soundcloudHandler,
     soundonHandler,
@@ -427,6 +442,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     spreakerHandler,
     squarespaceHandler,
     stackExchangeHandler,
+    statuspageHandler,
     steamHandler,
     substackHandler,
     svbtleHandler,

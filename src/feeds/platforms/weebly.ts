@@ -1,4 +1,4 @@
-import { isAnyOf, isSubdomainOf } from 'trousse'
+import { getPathSegments, isAnyOf, isSubdomainOf } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
@@ -14,8 +14,8 @@ export const weeblyHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    const { origin, pathname } = new URL(url)
-    const pathSegments = pathname.split('/').filter(Boolean)
+    const { origin } = new URL(url)
+    const pathSegments = getPathSegments(url)
     const uris: Array<DiscoverUriEntry> = []
 
     // Custom blog page slug (e.g., /articles/feed when page is named "articles").

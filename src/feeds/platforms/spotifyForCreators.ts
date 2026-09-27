@@ -7,10 +7,9 @@ import { composeHint } from '../../common/utils.js'
 const hosts = ['creators.spotify.com']
 
 const showRegex = /^\/pod\/(?:show|profile)\/[^/]+(?:\/|$)/i
-// The page's alternate link omits `/s/` and ends on an HTML page. A show without RSS
-// carries a `stationId` but no feed link, and its `/s/` feed answers 404. Generic discovery
-// finds the feed only where the page also shows a visible `/s/` link, on 2 of the 4 shows
-// measured, so the block above holds for those shows alone.
+// The alternate link omits `/s/` and ends on HTML, and a show without RSS answers 404 on `/s/`.
+// Only 2 of the 4 shows measured also show a visible `/s/` link, which generic discovery reads,
+// so the block above holds for those shows alone.
 const feedUrlRegex = /anchor\.fm\/(?:s\/)?([\da-f]+)\/podcast\/rss/
 
 export const spotifyForCreatorsHandler: PlatformHandler = {

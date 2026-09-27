@@ -1,4 +1,4 @@
-import { isAnyOf, parseUrl } from 'trousse'
+import { getPathSegments, isAnyOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, hasElementWithId, hasMetaContent } from '../../common/utils.js'
 
@@ -35,7 +35,7 @@ export const parseMastodonUrl = (url: string): MastodonUrl | undefined => {
   }
 
   // Mastodon serves a page's feed at the page path plus .rss, as in /@user.rss.
-  const segments = parsedUrl.pathname.split('/').filter(Boolean)
+  const segments = getPathSegments(parsedUrl)
   const [first, second, third] = segments.map((segment) => segment.replace(feedExtensionRegex, ''))
 
   if (isAnyOf(first, 'tags') && second) {

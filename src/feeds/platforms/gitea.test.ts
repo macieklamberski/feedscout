@@ -21,8 +21,56 @@ describe('parseGiteaUrl', () => {
     expect(parseGiteaUrl('https://codeberg.org/forgejo/forgejo/issues')).toEqual(expected)
   })
 
-  it('should return the repo for a branch page', () => {
+  it('should return the branch path for a branch page', () => {
     const value = 'https://codeberg.org/forgejo/forgejo/src/branch/main'
+    const expected: GiteaUrl = {
+      kind: 'repo',
+      owner: 'forgejo',
+      repo: 'forgejo',
+      branchPath: 'main',
+    }
+
+    expect(parseGiteaUrl(value)).toEqual(expected)
+  })
+
+  it('should return the branch and file path for a file page', () => {
+    const value = 'https://codeberg.org/forgejo/forgejo/src/branch/forgejo/docs/README.md'
+    const expected: GiteaUrl = {
+      kind: 'repo',
+      owner: 'forgejo',
+      repo: 'forgejo',
+      branchPath: 'forgejo/docs/README.md',
+    }
+
+    expect(parseGiteaUrl(value)).toEqual(expected)
+  })
+
+  it('should keep a branch name with a slash whole', () => {
+    const value = 'https://codeberg.org/forgejo/forgejo/src/branch/v11.0/forgejo'
+    const expected: GiteaUrl = {
+      kind: 'repo',
+      owner: 'forgejo',
+      repo: 'forgejo',
+      branchPath: 'v11.0/forgejo',
+    }
+
+    expect(parseGiteaUrl(value)).toEqual(expected)
+  })
+
+  it('should return the branch path for capitalized route segments', () => {
+    const value = 'https://codeberg.org/forgejo/forgejo/Src/Branch/main'
+    const expected: GiteaUrl = {
+      kind: 'repo',
+      owner: 'forgejo',
+      repo: 'forgejo',
+      branchPath: 'main',
+    }
+
+    expect(parseGiteaUrl(value)).toEqual(expected)
+  })
+
+  it('should return the repo without a branch path for a tag page', () => {
+    const value = 'https://codeberg.org/forgejo/forgejo/src/tag/v11.0.0'
     const expected: GiteaUrl = { kind: 'repo', owner: 'forgejo', repo: 'forgejo' }
 
     expect(parseGiteaUrl(value)).toEqual(expected)
@@ -225,6 +273,78 @@ describe('giteaHandler', () => {
         },
         {
           uri: ['https://gitea.com/gitea/go-sdk.atom', 'https://gitea.com/gitea/go-sdk.rss'],
+          hint: { key: 'gitea:activity', label: 'Activity' },
+        },
+      ]
+
+      expect(giteaHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return the branch commits feed first for a branch page', () => {
+      const value = 'https://codeberg.org/forgejo/forgejo/src/branch/forgejo'
+      const expected = [
+        {
+          uri: [
+            'https://codeberg.org/forgejo/forgejo/atom/branch/forgejo',
+            'https://codeberg.org/forgejo/forgejo/rss/branch/forgejo',
+          ],
+          hint: { key: 'gitea:branch-commits', label: 'Branch commits' },
+        },
+        {
+          uri: [
+            'https://codeberg.org/forgejo/forgejo/releases.atom',
+            'https://codeberg.org/forgejo/forgejo/releases.rss',
+          ],
+          hint: { key: 'gitea:releases', label: 'Releases' },
+        },
+        {
+          uri: [
+            'https://codeberg.org/forgejo/forgejo/tags.atom',
+            'https://codeberg.org/forgejo/forgejo/tags.rss',
+          ],
+          hint: { key: 'gitea:tags', label: 'Tags' },
+        },
+        {
+          uri: [
+            'https://codeberg.org/forgejo/forgejo.atom',
+            'https://codeberg.org/forgejo/forgejo.rss',
+          ],
+          hint: { key: 'gitea:activity', label: 'Activity' },
+        },
+      ]
+
+      expect(giteaHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return the file history feed first for a file page', () => {
+      const value = 'https://codeberg.org/forgejo/forgejo/src/branch/forgejo/README.md'
+      const expected = [
+        {
+          uri: [
+            'https://codeberg.org/forgejo/forgejo/atom/branch/forgejo/README.md',
+            'https://codeberg.org/forgejo/forgejo/rss/branch/forgejo/README.md',
+          ],
+          hint: { key: 'gitea:file-history', label: 'File history' },
+        },
+        {
+          uri: [
+            'https://codeberg.org/forgejo/forgejo/releases.atom',
+            'https://codeberg.org/forgejo/forgejo/releases.rss',
+          ],
+          hint: { key: 'gitea:releases', label: 'Releases' },
+        },
+        {
+          uri: [
+            'https://codeberg.org/forgejo/forgejo/tags.atom',
+            'https://codeberg.org/forgejo/forgejo/tags.rss',
+          ],
+          hint: { key: 'gitea:tags', label: 'Tags' },
+        },
+        {
+          uri: [
+            'https://codeberg.org/forgejo/forgejo.atom',
+            'https://codeberg.org/forgejo/forgejo.rss',
+          ],
           hint: { key: 'gitea:activity', label: 'Activity' },
         },
       ]

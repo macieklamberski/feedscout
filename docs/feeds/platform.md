@@ -202,15 +202,17 @@ Discovers Atom feeds for GitHub Gist users, starred gists, forked gists, and the
 
 ### Gitea
 
-Discovers Atom feeds for Gitea users, repositories, releases and tags, with RSS as the fallback. Codeberg and `gitea.com` are matched by host; any other instance is matched by the session cookie Gitea sets on a repository page.
+Discovers Atom feeds for Gitea users, repositories, releases, tags, branch commits and file history, with RSS as the fallback. Codeberg and `gitea.com` are matched by host; any other instance is matched by the session cookie Gitea sets on a repository page.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | `{instance}/{user}`, `{instance}/{user}.rss`, `.atom` or `.keys` | User activity feed |
 | `{instance}/{user}/{repo}` | Releases, tags, activity |
+| `{instance}/{user}/{repo}/src/branch/{branch}` | Branch commits (+ above) |
+| `{instance}/{user}/{repo}/src/branch/{branch}/{path}` | File history (+ above) |
 
 > [!NOTE]
-> A self-hosted Forgejo instance sets no cookie on an anonymous request and is not matched; Codeberg, which runs Forgejo, is covered by the host list.
+> A self-hosted Forgejo instance sets no cookie on an anonymous request and is not matched; Codeberg, which runs Forgejo, is covered by the host list. `gitea.com` sends anonymous visitors of branch and file pages to its sign-in page, so discovery from those pages finds no feeds there.
 
 ### GitLab
 
@@ -733,6 +735,15 @@ Discovers RSS feeds for Captivate-hosted podcasts.
 |-------------|-----------------|
 | `*.captivate.fm` | Podcast feed (RSS) |
 
+### Castopod
+
+Discovers the RSS feed of a podcast hosted on a Castopod instance. Detected by the theme colors stylesheet that Castopod prints in every page head.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `{instance}/@{handle}` | Podcast feed (RSS) |
+| `{instance}/@{handle}/episodes/{slug}` | Podcast feed (RSS) |
+
 ### Discourse
 
 Discovers RSS feeds for Discourse forums. Detected by the `Discourse` generator meta tag, the `data-discourse-setup` meta tag or the `X-Discourse-Route` response header.
@@ -1114,6 +1125,14 @@ Discovers the RSS feed of a Squarespace collection. Detected by the `Server: Squ
 > [!NOTE]
 > The collection slug is operator-chosen, commonly `blog`, `news` or `journal`, so it is taken from the first path segment. The site root is not matched: it answers `?format=rss` with a 400.
 
+### Statuspage
+
+Discovers the incident history feeds of an Atlassian Statuspage status page. Detected by the `x-statuspage-version` response header or the page's `dka575ofm4ao0.cloudfront.net/packs/` assets, so custom domains are covered as well as `*.statuspage.io` hosts.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| Any status page | Incident history feed (RSS + Atom) |
+
 ### Wikidot
 
 Discovers the site and forum feeds of a Wikidot wiki. Detected by the `WIKIDOT.page.listeners.editClick()` call in the page, so custom domains are covered as well as `*.wikidot.com` hosts.
@@ -1385,6 +1404,32 @@ Discovers the feeds of a FluxBB board. Detected by the `brdheader` and `brdmain`
 | `{board}/viewtopic.php?id={id}` | Topic feed (Atom) + posts feed (RSS + Atom) |
 | Any other page | Posts feed (RSS + Atom) |
 
+### MyBB
+
+Discovers the feeds of a MyBB board. Detected by the `mybb[lastvisit]` cookie, under any cookie prefix, or the `cookiePrefix` and `cookieDomain` script variables core prints in every page head.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `{board}/forumdisplay.php?fid={id}` or `{board}/forum-{id}.html` | Forum feed + latest threads feed (RSS + Atom) |
+| `{board}/showthread.php?tid={id}` or `{board}/thread-{id}.html` | Forum feed from the breadcrumb + latest threads feed (RSS + Atom) |
+| Any other page | Latest threads feed (RSS + Atom) |
+
+> [!NOTE]
+> A board is routinely mounted under a sub-path, so the feed is built from the board URL the page prints as `rootpath`, or from the page's directory on a board older than 1.8.
+
+### SMF
+
+Discovers the feeds of a Simple Machines Forum. Detected by the `smf_scripturl` and `smf_theme_url` script variables core prints in every page head.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `{script}?board={id}` | Board feed + recent posts feed (RSS + Atom) |
+| `{script}?topic={id}` | Board feed from the `rel="index"` link + recent posts feed (RSS + Atom) |
+| Any other page | Recent posts feed (RSS + Atom) |
+
+> [!NOTE]
+> A forum is routinely mounted under a sub-path, so the feed is built from the script URL the page prints as `smf_scripturl`. A forum can disable feeds, and then the feed URLs answer with an HTML page.
+
 ### Mobilizon
 
 Discovers the feeds of a Mobilizon instance or group. Detected by the noscript notice, which is the only text the server renders on every page.
@@ -1481,6 +1526,14 @@ Discovers the podcast feed of a WordPress site running the PowerPress plugin. De
 
 > [!NOTE]
 > Generic discovery finds `{site}/feed/`, which is the blog feed. This adds the podcast feed. A site can redirect it to its podcast host, which resolves normally.
+
+### Podlove Publisher
+
+Discovers the podcast feeds of a WordPress site running the Podlove Publisher plugin. Detected by the plugin's asset path, and the feeds are read from the alternate links the plugin prints on every page, since the owner sets each feed's slug.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| Any page | Podcast feeds (RSS), one per feed the site marks discoverable |
 
 ### Podomatic
 
@@ -1583,6 +1636,40 @@ Discovers the recent changes feeds of a DokuWiki wiki. Detected by the `DokuWiki
 > [!NOTE]
 > The feed format is a wiki setting, so one wiki serves RSS 1.0 and the next Atom from the same `feed.php`.
 
+### MediaWiki
+
+Discovers the page history and recent changes feeds of a MediaWiki wiki. Detected by the `EditURI` link to `api.php?action=rsd` that core prints in every page head, which also gives the script path, so a wiki under `/w/` gets its feeds there. The page title is read from the `wgPageName` config core prints, whatever the URL rewriting.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| Any page with a title | Page history + recent changes |
+| A special page | Recent changes |
+
+### Gancio
+
+Discovers the RSS feeds of a Gancio event calendar. Detected by the `custom_css` stylesheet its layout prints in every page head, which also gives the install root, so a calendar under a sub-path gets its feeds there.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `{instance}/tag/{tag}` | Tag feed (RSS) |
+| `{instance}/place/{id}/{name}` | Place feed (RSS) |
+| `{instance}/collection/{name}` | Collection feed (RSS) |
+| Any other page | Site feed (RSS) |
+
+> [!NOTE]
+> The iCal feeds Gancio serves beside each RSS feed are not emitted, since they are not RSS, Atom or JSON feeds. Gancio 2 answers 404 on the tag and place feed paths its own pages advertise.
+
+### Niconico
+
+Discovers the video, live and blog feeds of a Niconico channel on `ch.nicovideo.jp`.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `ch.nicovideo.jp/{channel}` | Videos + Live + Blog |
+| `ch.nicovideo.jp/{channel}/video` | Videos first, then Live + Blog |
+| `ch.nicovideo.jp/{channel}/live` | Live first, then Videos + Blog |
+| `ch.nicovideo.jp/{channel}/blomaga` or `ch.nicovideo.jp/{channel}/blomaga/ar{id}` | Blog first, then Videos + Live |
+
 ## Basic Usage
 
 ```typescript
@@ -1647,6 +1734,7 @@ import {
   buttondownHandler,
   buzzsproutHandler,
   captivateHandler,
+  castopodHandler,
   cnblogsHandler,
   confluenceHandler,
   cratesIoHandler,
@@ -1665,6 +1753,7 @@ import {
   firesideHandler,
   flickrHandler,
   friendicaHandler,
+  gancioHandler,
   ghostHandler,
   giteaHandler,
   githubHandler,
@@ -1694,6 +1783,7 @@ import {
   mailchimpHandler,
   mastodonHandler,
   mataroaHandler,
+  mediawikiHandler,
   mediumHandler,
   microblogHandler,
   misskeyHandler,
@@ -1701,6 +1791,7 @@ import {
   naverBlogHandler,
   nebulaHandler,
   neocitiesHandler,
+  niconicoHandler,
   nodebbHandler,
   noteHandler,
   observableHandler,
@@ -1718,6 +1809,7 @@ import {
   plurkHandler,
   podbeanHandler,
   podigeeHandler,
+  podloveHandler,
   podomaticHandler,
   posthavenHandler,
   postypeHandler,
@@ -1736,6 +1828,7 @@ import {
   spreakerHandler,
   squarespaceHandler,
   stackExchangeHandler,
+  statuspageHandler,
   steamHandler,
   substackHandler,
   sverigesRadioHandler,

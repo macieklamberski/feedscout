@@ -18,7 +18,7 @@ describe('sverigesRadioHandler', () => {
       const expected = [
         {
           uri: 'https://public-api.sr.se/rss/morgonpodden',
-          hint: { key: 'sverigesRadio:program', label: 'Program' },
+          hint: { key: 'sveriges-radio:program', label: 'Program' },
         },
       ]
 
@@ -30,7 +30,7 @@ describe('sverigesRadioHandler', () => {
       const expected = [
         {
           uri: 'https://public-api.sr.se/rss/morgonpodden',
-          hint: { key: 'sverigesRadio:program', label: 'Program' },
+          hint: { key: 'sveriges-radio:program', label: 'Program' },
         },
       ]
 
@@ -42,7 +42,7 @@ describe('sverigesRadioHandler', () => {
       const expected = [
         {
           uri: 'https://public-api.sr.se/rss/morgonpodden',
-          hint: { key: 'sverigesRadio:program', label: 'Program' },
+          hint: { key: 'sveriges-radio:program', label: 'Program' },
         },
       ]
 
@@ -54,7 +54,7 @@ describe('sverigesRadioHandler', () => {
       const expected = [
         {
           uri: 'https://public-api.sr.se/rss/morgonpodden',
-          hint: { key: 'sverigesRadio:program', label: 'Program' },
+          hint: { key: 'sveriges-radio:program', label: 'Program' },
         },
       ]
 
@@ -66,7 +66,7 @@ describe('sverigesRadioHandler', () => {
       const expected = [
         {
           uri: 'https://api.sr.se/api/rss/program/1234',
-          hint: { key: 'sverigesRadio:program', label: 'Program' },
+          hint: { key: 'sveriges-radio:program', label: 'Program' },
         },
       ]
 
@@ -78,7 +78,7 @@ describe('sverigesRadioHandler', () => {
       const expected = [
         {
           uri: 'https://api.sr.se/api/rss/program/1234',
-          hint: { key: 'sverigesRadio:program', label: 'Program' },
+          hint: { key: 'sveriges-radio:program', label: 'Program' },
         },
       ]
 
@@ -90,7 +90,7 @@ describe('sverigesRadioHandler', () => {
       const expected = [
         {
           uri: 'https://public-api.sr.se/rss/morgonpodden',
-          hint: { key: 'sverigesRadio:program', label: 'Program' },
+          hint: { key: 'sveriges-radio:program', label: 'Program' },
         },
       ]
 

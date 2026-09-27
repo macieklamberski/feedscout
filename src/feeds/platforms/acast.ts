@@ -1,4 +1,4 @@
-import { isAnyOf, isHostOf } from 'trousse'
+import { getPathSegments, isAnyOf, isHostOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
@@ -19,8 +19,7 @@ export const acastHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    const { pathname } = new URL(url)
-    const pathSegments = pathname.split('/').filter(Boolean)
+    const pathSegments = getPathSegments(url)
 
     if (pathSegments.length === 0) {
       return []

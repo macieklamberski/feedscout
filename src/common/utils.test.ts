@@ -1,11 +1,11 @@
 import { describe, expect, it } from 'bun:test'
 import type { DiscoverUriHint, FetchFn } from './types.js'
 import {
-  collapsePathSlashes,
   composeHint,
   type Element,
   findDescendant,
   findElement,
+  findElements,
   getCookieNames,
   getJsonLd,
   getMetaContent,
@@ -568,34 +568,6 @@ describe('getCookieNames', () => {
   })
 })
 
-describe('collapsePathSlashes', () => {
-  it('should collapse repeated slashes in the path', () => {
-    const value = 'https://example.com/r//programming///hot'
-    const expected = 'https://example.com/r/programming/hot'
-
-    expect(collapsePathSlashes(value)).toBe(expected)
-  })
-
-  it('should keep repeated slashes in the query string and fragment', () => {
-    const value = 'https://example.com//page?next=//example.org#a//b'
-    const expected = 'https://example.com/page?next=//example.org#a//b'
-
-    expect(collapsePathSlashes(value)).toBe(expected)
-  })
-
-  it('should return the url unchanged when the path has no repeated slashes', () => {
-    const value = 'https://example.com/page?next=//example.org'
-
-    expect(collapsePathSlashes(value)).toBe(value)
-  })
-
-  it('should return an unparseable url unchanged', () => {
-    const value = 'not a url//path'
-
-    expect(collapsePathSlashes(value)).toBe(value)
-  })
-})
-
 describe('getScriptDirectory', () => {
   it('should return the directory of a script', () => {
     expect(getScriptDirectory('/community/viewtopic.php')).toBe('/community')
@@ -944,6 +916,26 @@ describe('findElement', () => {
 
   it('should return undefined for undefined content', () => {
     expect(findElement(undefined, () => true)).toBeUndefined()
+  })
+})
+
+describe('findElements', () => {
+  it('should return every element passing the test in document order', () => {
+    const value = `
+      <img src="https://example.com/first.png">
+      <a href="https://example.com/">Home</a>
+      <img src="https://example.com/second.png">
+    `
+    const elements = findElements(value, (element) => element.name === 'img')
+
+    expect(elements).toMatchObject([
+      { attribs: { src: 'https://example.com/first.png' } },
+      { attribs: { src: 'https://example.com/second.png' } },
+    ])
+  })
+
+  it('should return an empty array when no element passes the test', () => {
+    expect(findElements('<p>Text</p>', (element) => element.name === 'img')).toEqual([])
   })
 })
 

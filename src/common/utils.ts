@@ -1,5 +1,5 @@
 import { DomUtils, parseDocument } from 'htmlparser2'
-import { anyWordMatchesAnyOf, isAnyOf, parseUrl } from 'trousse'
+import { anyWordMatchesAnyOf, isAnyOf } from 'trousse'
 import locales from './locales.json' with { type: 'json' }
 import type { DiscoverUriHint, FetchFn } from './types.js'
 
@@ -99,6 +99,13 @@ export const findElement = (
   return DomUtils.findOne(test, getParsedPage(content).document.children) ?? undefined
 }
 
+export const findElements = (
+  content: string,
+  test: (element: Element) => boolean,
+): Array<Element> => {
+  return DomUtils.findAll(test, getParsedPage(content).document.children)
+}
+
 export const findDescendant = (
   element: Element,
   test: (descendant: Element) => boolean,
@@ -186,23 +193,6 @@ const trailingSlashRegex = /\/$/
 
 export const getScriptDirectory = (pathname: string): string => {
   return pathname.replace(scriptSegmentRegex, '').replace(trailingSlashRegex, '')
-}
-
-const repeatedSlashRegex = /\/{2,}/g
-
-// A sloppy link can double a slash in the path, which path-splitting and regex handlers read
-// differently. Only the path is collapsed: the query string and fragment stay as they are.
-// TODO: Feedcanon's normalizeUrl does this and more via collapseSlashes. Consider using it here.
-export const collapsePathSlashes = (url: string): string => {
-  const parsedUrl = parseUrl(url)
-
-  if (!parsedUrl?.pathname.includes('//')) {
-    return url
-  }
-
-  parsedUrl.pathname = parsedUrl.pathname.replace(repeatedSlashRegex, '/')
-
-  return parsedUrl.href
 }
 
 export const hasAnyMeta = (content: string, markers: Array<[string, string]>): boolean => {
