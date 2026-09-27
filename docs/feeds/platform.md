@@ -579,6 +579,17 @@ Discovers RSS and JSON feeds for Fireside.fm-hosted podcasts.
 |-------------|-----------------|
 | `*.fireside.fm` | Podcast feed (RSS + JSON) |
 
+### Firstory
+
+Discovers the RSS feed of a Firstory podcast. The feed is keyed by the show's ID, which the handler reads from the page.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `open.firstory.fm/user/{show}` | Podcast feed (RSS) |
+| `open.firstory.fm/story/{episodeId}` | Podcast feed (RSS) |
+| `{show}.firstory.cc` | Podcast feed (RSS) |
+| `{show}.firstory.cc/episodes/{episodeId}` | Podcast feed (RSS) |
+
 ### Hacker News
 
 Discovers RSS feeds for Hacker News.
@@ -1859,6 +1870,7 @@ import {
   exblogHandler,
   fc2Handler,
   firesideHandler,
+  firstoryHandler,
   flickrHandler,
   flipboardHandler,
   friendicaHandler,

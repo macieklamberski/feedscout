@@ -225,6 +225,9 @@
   "fireside": {
     "fireside:podcast": ["https://feeds.fireside.fm/office/rss", "https://office.fireside.fm/json"]
   },
+  "firstory": {
+    "firstory:podcast": "https://feed.firstory.me/rss/user/cklqae6gy388f0892i2qmv851"
+  },
   "flickr": {
     "flickr:faves": "https://www.flickr.com/services/feeds/photos_faves.gne?id=24662369@N07",
     "flickr:forum": "https://www.flickr.com/services/feeds/forums.gne",
