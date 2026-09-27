@@ -1,6 +1,5 @@
-import { resolveFeedProtocol } from 'feedcanon'
 import type { Atom } from 'feedsmith'
-import { isAnyOf, isHttpUrl, isObject, parseUrl } from 'trousse'
+import { isAnyOf, isHttpUrl, isObject, parseUrl, resolveFeedProtocol } from 'trousse'
 import locales from '../locales.json' with { type: 'json' }
 import type {
   DiscoverErrorContext,

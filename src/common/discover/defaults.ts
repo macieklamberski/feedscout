@@ -1,5 +1,5 @@
 import { detectAtomFeed, detectJsonFeed, detectRdfFeed, detectRssFeed, parseFeed } from 'feedsmith'
-import { parseUrl } from 'trousse'
+import { parseUrl, resolveUrl } from 'trousse'
 import type { DiscoverResolveSiteUrlFn, DiscoverResolveUrlFn, FetchFn } from '../types.js'
 import { attempt, getFeedSiteUrl } from './utils.js'
 
@@ -19,7 +19,10 @@ export const defaultFetchFn: FetchFn = async (url, options) => {
 }
 
 export const defaultResolveUrlFn: DiscoverResolveUrlFn = (url, baseUrl) => {
-  return new URL(url, baseUrl).href
+  // resolveUrl answers nothing for a URL of another scheme or one that does not parse. URL resolves
+  // the first, so discovery can drop a `javascript:` link or a relative link on a `file:` page, and
+  // throws on the second, so a malformed URL reaches onError.
+  return resolveUrl(url, baseUrl) ?? new URL(url, baseUrl).href
 }
 
 // TODO: parseFeed is called here and again in discoverUrisFromFeed for the favicons

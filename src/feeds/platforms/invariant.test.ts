@@ -2,6 +2,7 @@ import { describe, expect, it } from 'bun:test'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { defaultPlatformOptions } from '../defaults.js'
 import { bookwyrmHandler } from './bookwyrm.js'
+import { castopodHandler } from './castopod.js'
 import { confluenceHandler } from './confluence.js'
 import { diasporaHandler } from './diaspora.js'
 import { discourseHandler } from './discourse.js'
@@ -21,6 +22,7 @@ import { jiraHandler } from './jira.js'
 import { joomlaHandler } from './joomla.js'
 import { lemmyHandler } from './lemmy.js'
 import { mastodonHandler } from './mastodon.js'
+import { mediawikiHandler } from './mediawiki.js'
 import { misskeyHandler } from './misskey.js'
 import { mobilizonHandler } from './mobilizon.js'
 import { mybbHandler } from './mybb.js'
@@ -103,6 +105,7 @@ type Case = [string, PlatformHandler, string, Headers?]
 
 const cases: Array<Case> = [
   ['bookwyrm', bookwyrmHandler, '<meta name="generator" content="BookWyrm 0.7.5">'],
+  ['castopod', castopodHandler, '<link href="/themes/colors">'],
   [
     'confluence',
     confluenceHandler,
@@ -126,6 +129,7 @@ const cases: Array<Case> = [
   ['joomla', joomlaHandler, '<script class="joomla-script-options new">{}</script>'],
   ['lemmy', lemmyHandler, '<div class="lemmy-site" id="app"></div>'],
   ['mastodon', mastodonHandler, '<div class="app-holder" id="mastodon"></div>'],
+  ['mediawiki', mediawikiHandler, '<link rel="EditURI" href="/w/api.php?action=rsd">'],
   ['misskey', misskeyHandler, '<script type="application/json" id="misskey_meta">{}</script>'],
   [
     'mobilizon',

@@ -733,6 +733,15 @@ Discovers RSS feeds for Captivate-hosted podcasts.
 |-------------|-----------------|
 | `*.captivate.fm` | Podcast feed (RSS) |
 
+### Castopod
+
+Discovers the RSS feed of a podcast hosted on a Castopod instance. Detected by the theme colors stylesheet that Castopod prints in every page head.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `{instance}/@{handle}` | Podcast feed (RSS) |
+| `{instance}/@{handle}/episodes/{slug}` | Podcast feed (RSS) |
+
 ### Discourse
 
 Discovers RSS feeds for Discourse forums. Detected by the `Discourse` generator meta tag, the `data-discourse-setup` meta tag or the `X-Discourse-Route` response header.
@@ -1609,6 +1618,15 @@ Discovers the recent changes feeds of a DokuWiki wiki. Detected by the `DokuWiki
 > [!NOTE]
 > The feed format is a wiki setting, so one wiki serves RSS 1.0 and the next Atom from the same `feed.php`.
 
+### MediaWiki
+
+Discovers the page history and recent changes feeds of a MediaWiki wiki. Detected by the `EditURI` link to `api.php?action=rsd` that core prints in every page head, which also gives the script path, so a wiki under `/w/` gets its feeds there. The page title is read from the `wgPageName` config core prints, whatever the URL rewriting.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| Any page with a title | Page history + recent changes |
+| A special page | Recent changes |
+
 ## Basic Usage
 
 ```typescript
@@ -1673,6 +1691,7 @@ import {
   buttondownHandler,
   buzzsproutHandler,
   captivateHandler,
+  castopodHandler,
   cnblogsHandler,
   confluenceHandler,
   cratesIoHandler,
@@ -1720,6 +1739,7 @@ import {
   mailchimpHandler,
   mastodonHandler,
   mataroaHandler,
+  mediawikiHandler,
   mediumHandler,
   microblogHandler,
   misskeyHandler,

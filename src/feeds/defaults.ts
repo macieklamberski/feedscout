@@ -33,6 +33,7 @@ import { bookwyrmHandler } from './platforms/bookwyrm.js'
 import { buttondownHandler } from './platforms/buttondown.js'
 import { buzzsproutHandler } from './platforms/buzzsprout.js'
 import { captivateHandler } from './platforms/captivate.js'
+import { castopodHandler } from './platforms/castopod.js'
 import { cnblogsHandler } from './platforms/cnblogs.js'
 import { confluenceHandler } from './platforms/confluence.js'
 import { cratesIoHandler } from './platforms/cratesIo.js'
@@ -88,6 +89,7 @@ import { lobstersHandler } from './platforms/lobsters.js'
 import { mailchimpHandler } from './platforms/mailchimp.js'
 import { mastodonHandler } from './platforms/mastodon.js'
 import { mataroaHandler } from './platforms/mataroa.js'
+import { mediawikiHandler } from './platforms/mediawiki.js'
 import { mediumHandler } from './platforms/medium.js'
 import { microblogHandler } from './platforms/microblog.js'
 import { misskeyHandler } from './platforms/misskey.js'
@@ -326,6 +328,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     buttondownHandler,
     buzzsproutHandler,
     captivateHandler,
+    castopodHandler,
     cnblogsHandler,
     confluenceHandler,
     cratesIoHandler,
@@ -381,6 +384,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     mailchimpHandler,
     mastodonHandler,
     mataroaHandler,
+    mediawikiHandler,
     mediumHandler,
     microblogHandler,
     misskeyHandler,

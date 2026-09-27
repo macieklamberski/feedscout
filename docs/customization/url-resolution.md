@@ -20,6 +20,24 @@ By default, Feedscout resolves relative URLs against the base URL:
 // Resolved: https://example.com/rss
 ```
 
+It also repairs URLs a page often gets wrong:
+
+```typescript
+// HTML entities are decoded
+// Discovered: /feed?format=rss&amp;lang=en
+// Resolved: https://example.com/feed?format=rss&lang=en
+
+// Feed and podcast schemes become https
+// Discovered: feed://example.com/rss.xml
+// Resolved: https://example.com/rss.xml
+
+// Malformed http protocols are fixed
+// Discovered: htp://example.com/feed.xml
+// Resolved: http://example.com/feed.xml
+```
+
+An entity is decoded only with its trailing semicolon, so a query such as `?id=1&copy=2` stays as it is. A URL the default cannot parse is kept as discovered and reported to `onError`.
+
 ## Custom Resolution
 
 Provide a `resolveUrlFn` to customize URL resolution:

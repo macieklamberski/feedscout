@@ -110,6 +110,9 @@
   "captivate": {
     "captivate:podcast": "https://feeds.captivate.fm/school-of-podcasting/"
   },
+  "castopod": {
+    "castopod:podcast": "https://castopod.it/@PlinPlon/feed.xml"
+  },
   "cnblogs": {
     "cnblogs:posts": "https://www.cnblogs.com/vamei/rss"
   },
@@ -482,6 +485,10 @@
   "mataroa": {
     "mataroa:blog": "https://hey.mataroa.blog/rss/"
   },
+  "mediawiki": {
+    "mediawiki:history": "https://www.mediawiki.org/w/index.php?title=Manual%3A%24wgFeed&action=history&feed=atom",
+    "mediawiki:recent-changes": "https://wiki.gentoo.org/index.php?title=Special%3ARecentChanges&feed=atom"
+  },
   "medium": {
     "medium:posts": "https://medium.com/feed/@ev",
     "medium:publication": "https://medium.com/feed/towards-data-science",
@@ -800,7 +807,7 @@
     "svbtle:posts": "https://dcurt.is/feed"
   },
   "sverigesRadio": {
-    "sverigesRadio:program": [
+    "sveriges-radio:program": [
       "https://public-api.sr.se/rss/vetenskapsradion",
       "https://api.sr.se/api/rss/program/412"
     ]

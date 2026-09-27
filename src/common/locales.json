@@ -224,6 +224,7 @@
     "bookwyrm:shelf": "Shelf",
     "buzzsprout:podcast": "Podcast",
     "captivate:podcast": "Podcast",
+    "castopod:podcast": "Podcast",
     "discourse:latest": "Latest",
     "discourse:posts": "Latest posts",
     "discourse:top": "Top",
@@ -390,9 +391,11 @@
     "crates-io:updates": "Recent updates",
     "plurk:plurks": "Plurks",
     "plurk:responses": "Responses",
-    "sverigesRadio:program": "Program",
+    "sveriges-radio:program": "Program",
     "dokuwiki:namespace": "Namespace",
     "dokuwiki:namespace-pages": "Namespace pages",
-    "dokuwiki:recent-changes": "Recent changes"
+    "dokuwiki:recent-changes": "Recent changes",
+    "mediawiki:history": "Page history",
+    "mediawiki:recent-changes": "Recent changes"
   }
 }
