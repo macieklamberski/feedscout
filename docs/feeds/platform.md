@@ -693,6 +693,14 @@ Discovers RSS feeds for Buzzsprout-hosted podcasts.
 |-------------|-----------------|
 | `buzzsprout.com/{id}` | Podcast feed |
 
+### Captivate
+
+Discovers RSS feeds for Captivate-hosted podcasts.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `*.captivate.fm` | Podcast feed (RSS) |
+
 ### Discourse
 
 Discovers RSS feeds for Discourse forums. Detected by the `Discourse` generator meta tag, the `data-discourse-setup` meta tag or the `X-Discourse-Route` response header.
@@ -1506,6 +1514,7 @@ import {
   bookwyrmHandler,
   buttondownHandler,
   buzzsproutHandler,
+  captivateHandler,
   cnblogsHandler,
   confluenceHandler,
   csdnHandler,

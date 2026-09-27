@@ -30,6 +30,7 @@ import { blueskyHandler } from './platforms/bluesky.js'
 import { bookwyrmHandler } from './platforms/bookwyrm.js'
 import { buttondownHandler } from './platforms/buttondown.js'
 import { buzzsproutHandler } from './platforms/buzzsprout.js'
+import { captivateHandler } from './platforms/captivate.js'
 import { cnblogsHandler } from './platforms/cnblogs.js'
 import { confluenceHandler } from './platforms/confluence.js'
 import { csdnHandler } from './platforms/csdn.js'
@@ -310,6 +311,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     bookwyrmHandler,
     buttondownHandler,
     buzzsproutHandler,
+    captivateHandler,
     cnblogsHandler,
     confluenceHandler,
     csdnHandler,
