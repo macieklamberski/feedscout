@@ -172,6 +172,26 @@ describe('discoverUrisFromPlatform', () => {
     expect(receivedUrls).toEqual(expected)
   })
 
+  it('should pass handlers the page url in its standard form', async () => {
+    const receivedUrls: Array<string> = []
+    const handler: PlatformHandler = {
+      match: (url) => {
+        receivedUrls.push(url)
+
+        return false
+      },
+      resolve: () => {
+        return []
+      },
+    }
+    const options = { baseUrl: 'https://EXAMPLE.com:443', handlers: [handler] }
+
+    await discoverUrisFromPlatform(undefined, undefined, options)
+    const expected = ['https://example.com/']
+
+    expect(receivedUrls).toEqual(expected)
+  })
+
   it('should pass headers to handler match and resolve methods', async () => {
     const receivedHeaders: Array<Headers | undefined> = []
     const handler: PlatformHandler = {
