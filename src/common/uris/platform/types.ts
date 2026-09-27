@@ -17,6 +17,9 @@ export type PlatformHandler = {
     headers?: Headers,
     fetchFn?: FetchFn,
   ) => MaybePromise<Array<DiscoverUriEntry | DiscoverRef>>
+  // Full URL of any tenant's feed on the handler's host. Guessed URLs matching it are dropped
+  // when the handler matches, as `/feed.xml` there can be the feed of a user named "feed".
+  guessExclusionRegex?: RegExp
 }
 
 export type PlatformMethodOptions = {
