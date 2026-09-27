@@ -1559,6 +1559,18 @@ Discovers the RSS feeds of Internet Archive collections and searches. A collecti
 | `archive.org/details/{collection}` | Collection feed (RSS) |
 | `archive.org/search?query={query}` | Search feed (RSS) |
 
+### Sveriges Radio
+
+Discovers the feed of a Sveriges Radio program.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `sverigesradio.se/{program}` | Program feed (RSS) |
+| `sverigesradio.se/...?programid={id}` | Program feed (Atom) |
+
+> [!NOTE]
+> Program pages answer 403 to many server-side fetches, so the feed is derived from the URL alone. A discontinued program's feed answers 404.
+
 ## Basic Usage
 
 ```typescript
@@ -1713,6 +1725,7 @@ import {
   stackExchangeHandler,
   steamHandler,
   substackHandler,
+  sverigesRadioHandler,
   syosetuHandler,
   tildesHandler,
   tistoryHandler,
