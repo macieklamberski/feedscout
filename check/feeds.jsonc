@@ -605,7 +605,11 @@
     "pagecord:blog": "https://blog.pagecord.com/feed.xml"
   },
   "paragraph": {
-    "paragraph:blog": ["https://paragraph.com/@blog/feed", "https://paragraph.com/@optimism/rss"]
+    "paragraph:blog": [
+      "https://api.paragraph.com/blogs/rss/@blog",
+      "https://paragraph.com/@blog/feed",
+      "https://paragraph.com/@optimism/rss"
+    ]
   },
   "peertube": {
     "peertube:account": "https://framatube.org/feeds/videos.xml?accountName=framasoft",
