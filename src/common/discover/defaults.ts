@@ -19,10 +19,10 @@ export const defaultFetchFn: FetchFn = async (url, options) => {
 }
 
 export const defaultResolveUrlFn: DiscoverResolveUrlFn = (url, baseUrl) => {
-  // resolveUrl answers nothing for a URL of another scheme, and discovery keeps a URL that resolves
-  // to nothing. Resolving it anyway lets discovery drop a `javascript:` link, or a relative link on
-  // a `file:` page.
-  return resolveUrl(url, baseUrl) ?? parseUrl(url, baseUrl)?.href
+  // resolveUrl answers nothing for a URL of another scheme or one that does not parse. URL resolves
+  // the first, so discovery can drop a `javascript:` link or a relative link on a `file:` page, and
+  // throws on the second, so a malformed URL reaches onError.
+  return resolveUrl(url, baseUrl) ?? new URL(url, baseUrl).href
 }
 
 // TODO: parseFeed is called here and again in discoverUrisFromFeed for the favicons

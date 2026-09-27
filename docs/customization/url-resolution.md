@@ -36,7 +36,7 @@ It also repairs URLs a page often gets wrong:
 // Resolved: http://example.com/feed.xml
 ```
 
-An entity is decoded only with its trailing semicolon, so a query such as `?id=1&copy=2` stays as it is. A URL the default cannot parse is kept as discovered, and nothing is reported to `onError`.
+An entity is decoded only with its trailing semicolon, so a query such as `?id=1&copy=2` stays as it is. A URL the default cannot parse is kept as discovered and reported to `onError`.
 
 ## Custom Resolution
 
