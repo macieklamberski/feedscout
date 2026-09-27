@@ -457,6 +457,9 @@
     "letterboxd:diary": ["https://letterboxd.com/dave/rss/", "https://letterboxd.com/lynch/rss/"],
     "letterboxd:journal": "https://letterboxd.com/journal/rss/"
   },
+  "librivox": {
+    "librivox:audiobook": "https://librivox.org/rss/253"
+  },
   "libsyn": {
     "libsyn:podcast": "https://thefeed.libsyn.com/rss"
   },
