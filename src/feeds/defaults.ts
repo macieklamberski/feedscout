@@ -123,6 +123,7 @@ import { pixelfedHandler } from './platforms/pixelfed.js'
 import { pleromaHandler } from './platforms/pleroma.js'
 import { plurkHandler } from './platforms/plurk.js'
 import { podbeanHandler } from './platforms/podbean.js'
+import { podhomeHandler } from './platforms/podhome.js'
 import { podigeeHandler } from './platforms/podigee.js'
 import { podloveHandler } from './platforms/podlove.js'
 import { podomaticHandler } from './platforms/podomatic.js'
@@ -430,6 +431,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     pleromaHandler,
     plurkHandler,
     podbeanHandler,
+    podhomeHandler,
     podigeeHandler,
     podloveHandler,
     podomaticHandler,

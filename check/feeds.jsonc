@@ -704,6 +704,9 @@
   "podbean": {
     "podbean:podcast": "https://feed.podbean.com/podcast/feed.xml"
   },
+  "podhome": {
+    "podhome:podcast": "https://serve.podhome.fm/rss/6d610788-42f7-4cc8-9184-7e651cf101e2"
+  },
   "podigee": {
     "podigee:podcast": "https://cui-bono.podigee.io/feed/mp3"
   },
