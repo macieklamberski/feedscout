@@ -1755,6 +1755,18 @@ Discovers the RSS feed of a RedCircle show. A show under a slug is read from the
 | `redcircle.com/shows/{uuid}` or `redcircle.com/shows/{slug}` | Show feed (RSS) |
 | `redcircle.com/shows/{uuid}/ep/{episode}` or `redcircle.com/shows/{slug}/ep/{episode}` | Show feed (RSS) |
 
+### Royal Road
+
+Discovers the update feed of a Royal Road fiction.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `royalroad.com/fiction/{id}` or `royalroad.com/fiction/{id}/{slug}` | Fiction updates (RSS) |
+| `royalroad.com/fiction/{id}/{slug}/chapter/{chapterId}/{chapterSlug}` | Fiction updates (RSS) |
+
+> [!NOTE]
+> Profile pages and fiction lists serve no feed, so only fiction and chapter pages resolve.
+
 ## Basic Usage
 
 ```typescript
@@ -1910,6 +1922,7 @@ import {
   qiitaHandler,
   redcircleHandler,
   redditHandler,
+  royalroadHandler,
   rssComHandler,
   rubygemsHandler,
   seesaaHandler,

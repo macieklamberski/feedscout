@@ -424,6 +424,7 @@
     "pypi:updates": "Recent updates",
     "rubygems:versions": "Versions",
     "rubygems:latest-gems": "Latest gems",
-    "redcircle:show": "Show"
+    "redcircle:show": "Show",
+    "royalroad:fiction": "Fiction"
   }
 }
