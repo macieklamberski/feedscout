@@ -430,6 +430,7 @@
     "royalroad:fiction": "Fiction",
     "flipboard:profile": "Profile",
     "flipboard:magazine": "Magazine",
-    "flipboard:topic": "Topic"
+    "flipboard:topic": "Topic",
+    "webtoons:series": "Series"
   }
 }
