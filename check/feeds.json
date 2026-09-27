@@ -5,7 +5,12 @@
     "https://ameblo.jp/shibuya/atom.xml",
     "https://rssblog.ameba.jp/shibuya/rss.html"
   ],
-  "arena": ["https://www.are.na/charles-broskoski/feed/rss"],
+  "applePodcasts": ["https://feeds.simplecast.com/Sl5CSM3S"],
+  "arena": [
+    "https://www.are.na/charles-broskoski/feed/rss",
+    "https://www.are.na/meg-miller/good-sign-offs/feed/rss",
+    "https://www.are.na/editorial/feed/rss"
+  ],
   "art19": ["https://rss.art19.com/american-scandal"],
   "artstation": [
     "https://www.artstation.com/rossdraws.rss",
@@ -29,7 +34,14 @@
   ],
   "audioboom": ["https://audioboom.com/channels/5071123.rss"],
   "ausha": ["https://feed.ausha.co/VODwGU7PMQGG"],
-  "bearblog": ["https://herman.bearblog.dev/feed/", "https://herman.bearblog.dev/feed/?type=rss"],
+  "bearblog": [
+    "https://herman.bearblog.dev/feed/",
+    "https://herman.bearblog.dev/feed/?type=rss",
+    "https://herman.bearblog.dev/feed/?q=bearblog",
+    "https://herman.bearblog.dev/feed/?type=rss&q=bearblog",
+    "https://bearblog.dev/discover/feed/",
+    "https://bearblog.dev/discover/feed/?type=rss"
+  ],
   "behance": [
     "https://www.behance.net/feeds/user?username=matejlatin",
     "https://www.behance.net/feeds/projects"
@@ -52,7 +64,8 @@
     "https://bookwyrm.social/user/mouse/rss",
     "https://bookwyrm.social/user/mouse/rss-reviews",
     "https://bookwyrm.social/user/mouse/rss-quotes",
-    "https://bookwyrm.social/user/mouse/rss-comments"
+    "https://bookwyrm.social/user/mouse/rss-comments",
+    "https://bookwyrm.social/user/mouse/books/read/rss"
   ],
   "buttondown": ["https://buttondown.com/jmduke/rss"],
   "buzzsprout": ["https://rss.buzzsprout.com/231452.rss"],
@@ -72,14 +85,16 @@
     "https://www.dailymotion.com/rss/Euronews-en",
     "https://www.dailymotion.com/rss/playlist/x5e4h5",
     "https://www.dailymotion.com/rss/channel/news",
-    "https://www.dailymotion.com/rss/trending"
+    "https://www.dailymotion.com/rss/trending",
+    "https://www.dailymotion.com/rss/search/news"
   ],
   "deviantart": [
     "https://backend.deviantart.com/rss.xml?type=deviation&q=by:yuumei+sort:time+meta:all",
     "https://backend.deviantart.com/rss.xml?type=deviation&q=favby:yuumei",
     "https://backend.deviantart.com/rss.xml?type=deviation&q=tag:landscape",
     "https://backend.deviantart.com/rss.xml?type=deviation&q=gallery:yuumei/87557498",
-    "https://backend.deviantart.com/rss.xml?q=journal:yuumei"
+    "https://backend.deviantart.com/rss.xml?q=journal:yuumei",
+    "https://backend.deviantart.com/rss.xml?q=special:dd"
   ],
   "devto": [
     "https://dev.to/feed/ben",
@@ -87,14 +102,19 @@
     "https://dev.to/feed",
     "https://dev.to/feed/latest"
   ],
-  "diaspora": ["https://despora.de/public/jaeger", "https://pod.geraspora.de/public/denschub"],
+  "diaspora": [
+    "https://despora.de/public/jaeger",
+    "https://pod.geraspora.de/public/denschub",
+    "https://pod.diaspora.software/public/hq.atom"
+  ],
   "discourse": [
     "https://users.rust-lang.org/latest.rss",
     "https://users.rust-lang.org/c/help.rss",
     "https://users.rust-lang.org/u/steveklabnik/activity.rss",
     "https://meta.discourse.org/posts.rss",
     "https://meta.discourse.org/top.rss",
-    "https://meta.discourse.org/top.rss?period=weekly"
+    "https://meta.discourse.org/top.rss?period=weekly",
+    "https://users.rust-lang.org/t/welcome-to-the-rust-users-forum/2.rss"
   ],
   "discuz": [
     "https://bbs.kafan.cn/forum.php?mod=rss",
@@ -112,11 +132,19 @@
   ],
   "dreamwidth": [
     "https://dw-news.dreamwidth.org/data/rss",
-    "https://dw-news.dreamwidth.org/data/atom"
+    "https://dw-news.dreamwidth.org/data/atom",
+    "https://terriko.dreamwidth.org/data/rss?tag=ghc09",
+    "https://terriko.dreamwidth.org/data/atom?tag=ghc09",
+    "https://dw-news.dreamwidth.org/data/userpics"
   ],
   "drupal": ["https://dri.es/rss.xml", "https://www.acquia.com/rss.xml"],
-  "exblog": ["https://petitcc.exblog.jp/index.xml", "https://petitcc.exblog.jp/atom.xml"],
-  "fc2": ["https://tetsujin.blog.fc2.com/?xml"],
+  "exblog": [
+    "https://petitcc.exblog.jp/index.xml",
+    "https://petitcc.exblog.jp/atom.xml",
+    "https://petitcc.exblog.jp/i2/index.xml",
+    "https://petitcc.exblog.jp/i2/atom.xml"
+  ],
+  "fc2": ["https://tetsujin.blog.fc2.com/?xml", "https://tetsujin.blog.fc2.com/?xml&comment"],
   "fireside": ["https://feeds.fireside.fm/office/rss", "https://office.fireside.fm/json"],
   "flickr": [
     "https://www.flickr.com/services/feeds/photos_public.gne?tags=cats",
@@ -124,14 +152,20 @@
     "https://www.flickr.com/services/feeds/photos_faves.gne?id=24662369@N07",
     "https://www.flickr.com/services/feeds/groups_pool.gne?id=42097308@N00",
     "https://www.flickr.com/services/feeds/groups_discuss.gne?id=42097308@N00",
-    "https://www.flickr.com/services/feeds/forums.gne"
+    "https://www.flickr.com/services/feeds/forums.gne",
+    "https://www.flickr.com/services/feeds/geo/?g=42097308@N00"
   ],
   "fluxbb": [
     "https://bbs.archlinux.org/extern.php?action=feed&type=RSS",
     "https://bbs.archlinux.org/extern.php?action=feed&fid=23&type=atom",
     "https://forums.bunsenlabs.org/extern.php?action=feed&tid=7520&type=atom"
   ],
-  "friendica": ["https://libranet.de/feed/admin", "https://friendica.world/feed/surazeus/comments"],
+  "friendica": [
+    "https://libranet.de/feed/admin",
+    "https://friendica.world/feed/surazeus/comments",
+    "https://libranet.de/feed/clacke/activity",
+    "https://libranet.de/feed/clacke/replies"
+  ],
   "funkwhale": ["https://open.audio/api/v1/channels/stralci/rss"],
   "ghost": [
     "https://demo.ghost.io/rss/",
@@ -188,7 +222,8 @@
   "habr": [
     "https://habr.com/ru/rss/articles/",
     "https://habr.com/ru/rss/hub/programming/",
-    "https://habr.com/ru/rss/users/alizar/posts/"
+    "https://habr.com/ru/rss/users/alizar/posts/",
+    "https://habr.com/ru/rss/companies/yandex/articles/"
   ],
   "hackernews": ["https://news.ycombinator.com/rss", "https://news.ycombinator.com/showrss"],
   "hashnode": ["https://townhall.hashnode.com/rss.xml"],
@@ -198,7 +233,8 @@
     "https://b.hatena.ne.jp/entrylist.rss",
     "https://b.hatena.ne.jp/entrylist/game.rss",
     "https://b.hatena.ne.jp/search/tag?q=rss&mode=rss",
-    "https://b.hatena.ne.jp/site/example.com?mode=rss"
+    "https://b.hatena.ne.jp/site/example.com?mode=rss",
+    "https://b.hatena.ne.jp/jkondo/bookmark.rss"
   ],
   "hatenablog": [
     "https://staff.hatenablog.com/rss",
@@ -208,7 +244,10 @@
     "https://blog.hatenablog.com/rss/author/hatenablog-editors",
     "https://blog.hatenablog.com/feed/author/hatenablog-editors"
   ],
-  "hearthis": ["https://hearthis.at/james-monty-montgomery/podcast/"],
+  "hearthis": [
+    "https://hearthis.at/james-monty-montgomery/podcast/",
+    "https://hearthis.at/new_tracks.rss"
+  ],
   "heyWorld": ["https://world.hey.com/dhh/feed.atom"],
   "homeland": ["https://ruby-china.org/topics/feed", "https://ruby-china.org/topics/node41/feed"],
   "hubspot": [
@@ -219,7 +258,10 @@
   "hubzilla": ["https://zotum.net/feed/hub"],
   "insanejournal": [
     "https://random.insanejournal.com/data/rss",
-    "https://random.insanejournal.com/data/atom"
+    "https://random.insanejournal.com/data/atom",
+    "https://squeaky.insanejournal.com/data/rss?tag=insanejournal",
+    "https://squeaky.insanejournal.com/data/atom?tag=insanejournal",
+    "https://ela.insanejournal.com/data/userpics"
   ],
   "internetArchive": [
     "https://archive.org/services/collection-rss.php?collection=oldtimeradio",
@@ -270,12 +312,19 @@
     "https://lemmy.ml/feeds/all.xml",
     "https://lemmy.ml/feeds/local.xml"
   ],
-  "letterboxd": ["https://letterboxd.com/dave/rss/", "https://letterboxd.com/lynch/rss/"],
+  "letterboxd": [
+    "https://letterboxd.com/dave/rss/",
+    "https://letterboxd.com/lynch/rss/",
+    "https://letterboxd.com/journal/rss/"
+  ],
   "libsyn": ["https://thefeed.libsyn.com/rss"],
   "listed": ["https://listed.to/@Listed/feed.rss"],
   "livejournal": [
     "https://news.livejournal.com/data/rss",
-    "https://news.livejournal.com/data/atom"
+    "https://news.livejournal.com/data/atom",
+    "https://vintage-ads.livejournal.com/data/rss?tag=food",
+    "https://vintage-ads.livejournal.com/data/atom?tag=food",
+    "https://news.livejournal.com/data/userpics"
   ],
   "lobsters": [
     "https://lobste.rs/t/programming.rss",
@@ -287,10 +336,13 @@
     "https://lobste.rs/comments.rss",
     "https://lobste.rs/rss"
   ],
+  "mailchimp": ["https://us17.campaign-archive.com/feed?u=1143ef2ae4c2f267d492eb9cc&id=3184b747b9"],
   "mastodon": [
     "https://mastodon.social/@Mastodon.rss",
     "https://mastodon.social/tags/mastodon.rss",
-    "https://mastodon.social/@Gargron/tagged/mastodev.rss"
+    "https://mastodon.social/@Gargron/tagged/mastodev.rss",
+    "https://mastodon.social/@Mastodon/with_replies.rss",
+    "https://mastodon.social/@Mastodon/media.rss"
   ],
   "mataroa": ["https://hey.mataroa.blog/rss/"],
   "medium": [
@@ -305,7 +357,8 @@
     "https://vincent.micro.blog/podcast.xml",
     "https://vincent.micro.blog/archive/index.json",
     "https://vincent.micro.blog/photos/index.json",
-    "https://vincent.micro.blog/replies.xml"
+    "https://vincent.micro.blog/replies.xml",
+    "https://manton.micro.blog/categories/books/feed.xml"
   ],
   "misskey": [
     "https://misskey.io/@ai.atom",
@@ -321,25 +374,40 @@
     "https://myanimelist.net/rss.php?type=rw&u=Xinil",
     "https://myanimelist.net/rss.php?type=rm&u=Xinil",
     "https://myanimelist.net/rss.php?type=rrm&u=Xinil",
-    "https://myanimelist.net/rss/news.xml"
+    "https://myanimelist.net/rss/news.xml",
+    "https://myanimelist.net/rss.php?type=rwe&u=Xinil",
+    "https://myanimelist.net/rss.php?type=blog&u=Xinil",
+    "https://myanimelist.net/rss/featured.xml"
   ],
   "naverBlog": ["https://rss.blog.naver.com/naverofficial.xml"],
   "nebula": [
     "https://rss.nebula.app/video/channels/realengineering.rss",
     "https://rss.nebula.app/video/channels/realengineering.rss?plus=true",
     "https://rss.nebula.app/video.rss",
-    "https://rss.nebula.app/video/categories/technology.rss"
+    "https://rss.nebula.app/video/categories/technology.rss",
+    "https://rss.nebula.app/video/categories/technology.rss?plus=true",
+    "https://rss.nebula.app/video/categories/originals.rss",
+    "https://rss.nebula.app/video/channels.rss",
+    "https://rss.nebula.app/video.rss?plus=true"
   ],
   "neocities": ["https://neocities.org/site/lazer-bunny.rss"],
-  "nodebb": ["https://community.nodebb.org/recent.rss", "https://community.nodebb.org/popular.rss"],
+  "nodebb": [
+    "https://community.nodebb.org/recent.rss",
+    "https://community.nodebb.org/popular.rss",
+    "https://community.nodebb.org/category/2.rss",
+    "https://community.nodebb.org/topic/180.rss"
+  ],
   "note": [
     "https://note.com/info/rss",
     "https://note.com/hashtag/AI/rss",
-    "https://note.com/notemag/m/m7244518f06ae/rss"
+    "https://note.com/notemag/m/m7244518f06ae/rss",
+    "https://note.com/rss"
   ],
   "observable": [
     "https://api.observablehq.com/documents/@mbostock.rss",
-    "https://api.observablehq.com/collection/@observablehq/visualization.rss"
+    "https://api.observablehq.com/collection/@observablehq/visualization.rss",
+    "https://api.observablehq.com/documents/public.rss",
+    "https://api.observablehq.com/documents/trending.rss"
   ],
   "odysee": ["https://odysee.com/$/rss/@Odysee:8"],
   "omnystudio": ["https://omny.fm/shows/stuff-you-should-know/playlists/podcast.rss"],
@@ -351,7 +419,8 @@
   "paragraph": ["https://paragraph.com/@blog/feed", "https://paragraph.com/@optimism/rss"],
   "peertube": [
     "https://framatube.org/feeds/videos.xml?videoChannelName=joinpeertube",
-    "https://framatube.org/feeds/videos.xml"
+    "https://framatube.org/feeds/videos.xml",
+    "https://framatube.org/feeds/videos.xml?accountName=framasoft"
   ],
   "phpbb": [
     "https://forums.gentoo.org/feed.php",
@@ -374,27 +443,38 @@
     "https://feeds.pinboard.in/rss/popular/",
     "https://feeds.pinboard.in/rss/recent/"
   ],
-  "pinterest": ["https://www.pinterest.com/pinterest/feed.rss"],
+  "pinterest": [
+    "https://www.pinterest.com/pinterest/feed.rss",
+    "https://www.pinterest.com/nasa/hubble-space-telescope.rss"
+  ],
   "pixelfed": ["https://pixelfed.social/users/dansup.atom"],
   "pleroma": ["https://lain.com/users/lain/feed.atom"],
   "plurk": ["https://www.plurk.com/plurkoffice.xml", "https://www.plurk.com/p/3j6p8yayds.xml"],
   "podbean": ["https://feed.podbean.com/podcast/feed.xml"],
   "podigee": ["https://cui-bono.podigee.io/feed/mp3"],
   "podomatic": ["https://asquaredpodcast10.podomatic.com/rss2.xml"],
-  "posthaven": ["https://blog.posthaven.com/posts.atom"],
+  "posthaven": [
+    "https://blog.posthaven.com/posts.atom",
+    "https://blog.posthaven.com/tag/Feature%20Releases.atom"
+  ],
   "postype": ["https://www.postype.com/@blog/rss", "https://blog.postype.com/rss"],
   "powerpress": [
     "https://www.rvfta.com/feed/podcast/",
     "https://www.thisweekinphoto.com/feed/podcast/"
   ],
   "producthunt": ["https://www.producthunt.com/feed"],
-  "prose": ["https://hey.prose.sh/rss"],
+  "prose": [
+    "https://hey.prose.sh/rss",
+    "https://hey.prose.sh/rss?tag=feature",
+    "https://prose.sh/rss"
+  ],
   "publii": ["https://getpublii.com/feed.xml", "https://falk.plus/feed.json"],
   "qiita": [
     "https://qiita.com/Qiita/feed.atom",
     "https://qiita.com/tags/javascript/feed.atom",
     "https://qiita.com/organizations/qiita-inc/activities.atom",
-    "https://qiita.com/popular-items/feed.atom"
+    "https://qiita.com/popular-items/feed.atom",
+    "https://qiita.com/official-columns/feed/"
   ],
   "reddit": [
     "https://www.reddit.com/.rss",
@@ -408,11 +488,17 @@
     "https://www.reddit.com/user/spez/submitted/.rss",
     "https://www.reddit.com/user/spez/comments/.rss",
     "https://www.reddit.com/user/kjoneslol/m/sfwpornnetwork/.rss",
-    "https://www.reddit.com/domain/github.com/.rss"
+    "https://www.reddit.com/domain/github.com/.rss",
+    "https://www.reddit.com/search.rss?q=typescript",
+    "https://www.reddit.com/subreddits/.rss"
   ],
   "rssCom": ["https://media.rss.com/podcasting101/feed.xml"],
   "seesaa": ["https://info.seesaa.net/index20.rdf", "https://info.seesaa.net/index.rdf"],
-  "shaarli": ["https://demo.shaarli.org/feed/rss", "https://demo.shaarli.org/feed/atom"],
+  "shaarli": [
+    "https://demo.shaarli.org/feed/rss",
+    "https://demo.shaarli.org/feed/atom",
+    "https://links.hoa.ro/?do=rss"
+  ],
   "shopify": ["https://www.allbirds.com/blogs/news.atom"],
   "snac": ["https://comam.es/snac/grunfink.rss"],
   "soundcloud": ["https://feeds.soundcloud.com/users/soundcloud:users:1613713/sounds.rss"],
@@ -424,7 +510,9 @@
     "https://sourceforge.net/projects/nmap/rss",
     "https://sourceforge.net/p/sevenzip/news/feed.rss",
     "https://sourceforge.net/p/sevenzip/news/feed.atom",
-    "https://sourceforge.net/p/sevenzip/discussion/feed"
+    "https://sourceforge.net/p/sevenzip/discussion/feed",
+    "https://sourceforge.net/p/sevenzip/bugs/feed",
+    "https://sourceforge.net/p/filezilla/feed"
   ],
   "sourcehut": [
     "https://git.sr.ht/~sircmpwn/hare/log/rss.xml",
@@ -465,7 +553,10 @@
     "https://public-api.sr.se/rss/vetenskapsradion",
     "https://api.sr.se/api/rss/program/412"
   ],
-  "syosetu": ["https://api.syosetu.com/writernovel/372556.Atom"],
+  "syosetu": [
+    "https://api.syosetu.com/writernovel/372556.Atom",
+    "https://api.syosetu.com/writer/372556.Atom"
+  ],
   "textpattern": ["https://textpattern.com/rss", "https://textpattern.com/atom"],
   "tildes": [
     "https://tildes.net/topics.rss",
@@ -496,7 +587,7 @@
     "https://adam.weblog.lol/atom.xml",
     "https://adam.weblog.lol/feed.json"
   ],
-  "weebly": ["https://ukiyaseed.weebly.com/1/feed"],
+  "weebly": ["https://ukiyaseed.weebly.com/1/feed", "https://ukiyaseed.weebly.com/blog/feed"],
   "wikidot": [
     "https://scpwiki.com/feed/site-changes.xml",
     "https://scpwiki.com/feed/forum/threads.xml"
@@ -569,7 +660,15 @@
     "https://wordpress.org/news/2024/06/14/feed/atom/",
     "https://wordpress.org/news/2024/06/14/?feed=atom",
     "https://wordpress.org/news/2024/06/14/feed/rdf/",
-    "https://wordpress.org/news/2024/06/14/?feed=rdf"
+    "https://wordpress.org/news/2024/06/14/?feed=rdf",
+    "https://en.blog.wordpress.com/2008/04/04/new-dashboard/feed/",
+    "https://en.blog.wordpress.com/2008/04/04/new-dashboard/?feed=rss",
+    "https://en.blog.wordpress.com/2008/04/04/new-dashboard/feed/rss2/",
+    "https://en.blog.wordpress.com/2008/04/04/new-dashboard/?feed=rss2",
+    "https://en.blog.wordpress.com/2008/04/04/new-dashboard/feed/atom/",
+    "https://en.blog.wordpress.com/2008/04/04/new-dashboard/?feed=atom",
+    "https://en.blog.wordpress.com/2008/04/04/new-dashboard/feed/rdf/",
+    "https://en.blog.wordpress.com/2008/04/04/new-dashboard/?feed=rdf"
   ],
   "wpengine": [
     "https://developer.wpengine.com/feed/",
@@ -635,7 +734,15 @@
     "https://developer.wpengine.com/2023/06/14/feed/atom/",
     "https://developer.wpengine.com/2023/06/14/?feed=atom",
     "https://developer.wpengine.com/2023/06/14/feed/rdf/",
-    "https://developer.wpengine.com/2023/06/14/?feed=rdf"
+    "https://developer.wpengine.com/2023/06/14/?feed=rdf",
+    "https://blogtimedoctor.wpenginepowered.com/upwork-review/feed/",
+    "https://blogtimedoctor.wpenginepowered.com/upwork-review/?feed=rss",
+    "https://blogtimedoctor.wpenginepowered.com/upwork-review/feed/rss2/",
+    "https://blogtimedoctor.wpenginepowered.com/upwork-review/?feed=rss2",
+    "https://blogtimedoctor.wpenginepowered.com/upwork-review/feed/atom/",
+    "https://blogtimedoctor.wpenginepowered.com/upwork-review/?feed=atom",
+    "https://blogtimedoctor.wpenginepowered.com/upwork-review/feed/rdf/",
+    "https://blogtimedoctor.wpenginepowered.com/upwork-review/?feed=rdf"
   ],
   "writeas": ["https://write.as/matt/feed/", "https://write.as/matt/tag:reading/feed/"],
   "writefreely": [
@@ -643,7 +750,7 @@
     "https://people.kernel.org/read/feed/",
     "https://blog.kaisbettaieb.dev/tag:coolify/feed/"
   ],
-  "xenforo": ["https://voz.vn/f/diem-bao.33/index.rss"],
+  "xenforo": ["https://voz.vn/f/diem-bao.33/index.rss", "https://voz.vn/f/-/index.rss"],
   "ximalaya": ["https://www.ximalaya.com/album/203355.xml"],
   "youtube": [
     "https://www.youtube.com/feeds/videos.xml?channel_id=UCXuqSBlHAE6Xw-yeJA0Tunw",
