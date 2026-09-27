@@ -7,6 +7,7 @@ import type {
 } from '../common/types.js'
 import type { PlatformHandler } from '../common/uris/platform/types.js'
 import { defaultPlatformOptions, urisBalanced, urisComprehensive, urisMinimal } from './defaults.js'
+import { createEnrichFeedFn } from './enrich.js'
 import { discoverFeeds } from './index.js'
 import type { FeedResult } from './types.js'
 
@@ -736,6 +737,66 @@ describe('discoverFeeds', () => {
       })
 
       expect(receivedContent).toBe(htmlContent)
+    })
+
+    it('should resolve a Simplecast show through the enrichFn it is given', async () => {
+      const rss = `
+        <rss version="2.0">
+          <channel>
+            <title>Alice Show</title>
+            <link>https://alice.simplecast.com</link>
+            <description>Test feed</description>
+          </channel>
+        </rss>
+      `
+      const mockFetch = createMockFetch({
+        'https://api.simplecast.com/sites/search': '{"podcast":{"id":"abc"}}',
+        'https://api.simplecast.com/podcasts/abc':
+          '{"feed_url":"https://feeds.simplecast.com/Ab1"}',
+        'https://feeds.simplecast.com/Ab1': rss,
+      })
+      const result = await discoverFeeds(
+        { url: 'https://alice.simplecast.com/', content: '<html></html>' },
+        {
+          methods: ['platform'],
+          fetchFn: mockFetch,
+          enrichFn: createEnrichFeedFn({ fetchFn: mockFetch }),
+        },
+      )
+      const expected: Array<DiscoverResult<FeedResult>> = [
+        {
+          url: 'https://feeds.simplecast.com/Ab1',
+          isValid: true,
+          method: 'platform',
+          hint: { key: 'simplecast:podcast', label: 'Podcast' },
+          format: 'rss',
+          title: 'Alice Show',
+          description: 'Test feed',
+          siteUrl: 'https://alice.simplecast.com/',
+        },
+      ]
+
+      expect(result).toEqual(expected)
+    })
+
+    it('should make no enricher request when enrichFn is not passed', async () => {
+      const requestedUrls: Array<string> = []
+      const mockFetch = createMockFetch({})
+      const recordingFetch: FetchFn = (url, options) => {
+        requestedUrls.push(url)
+
+        return mockFetch(url, options)
+      }
+      const result = await discoverFeeds(
+        { url: 'https://alice.simplecast.com/', content: '<html></html>' },
+        {
+          methods: ['platform'],
+          fetchFn: recordingFetch,
+        },
+      )
+
+      expect(result).toEqual([])
+      expect(requestedUrls).toEqual([])
     })
   })
 

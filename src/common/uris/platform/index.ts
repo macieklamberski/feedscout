@@ -64,13 +64,13 @@ export const resolveFromPlatform = async (
     return { entries, guessExclusionRegexes }
   }
 
-  // Each ref is enriched on its own, so one that fails leaves the icons of the others.
+  // Each ref is enriched on its own, so one that fails leaves the URIs of the others.
   for (const ref of refs) {
     try {
       const uris = await enrichFn(ref)
 
       for (const uri of uris ?? []) {
-        entries.push({ uri })
+        entries.push({ uri, hint: ref.hint })
       }
     } catch (error) {
       reportError(onError, error, { phase: 'enrichFn', url: baseUrl })

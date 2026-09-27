@@ -1845,6 +1845,16 @@ Discovers the updated pages and new pages feeds of an @wiki (atwiki.jp) wiki. Li
 |-------------|-----------------|
 | `w.atwiki.jp/{wiki}/…` | Updated pages (RDF + Atom) + new pages (RDF) |
 
+### Simplecast
+
+Discovers the RSS feed of a Simplecast show. The show page names no feed, so the feed URL comes from Simplecast's public API through an [enricher](#enriching-platform-feeds), which runs only when you pass `enrichFn`.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `*.simplecast.com` or `*.simplecast.com/episodes/{slug}` | Podcast feed (RSS)* |
+
+\* *Requires `enrichFn`. Without it, the handler still matches the page and returns no feed.*
+
 ## Basic Usage
 
 ```typescript
@@ -1875,6 +1885,36 @@ const feeds = await discoverFeeds(url, {
     platform: {
       handlers: [youtubeHandler, githubHandler, redditHandler],
     },
+  },
+})
+```
+
+### Enriching Platform Feeds
+
+On some platforms the feed URL is in neither the page URL nor the page content, and only the platform's API knows it. For those pages the handler returns a [`DiscoverRef`](/reference/types#discoverref) naming the platform and the show, and discovery hands each ref to `enrichFn`.
+
+Enrichers call third-party APIs, so feed discovery runs none by default and refs are dropped. To opt in, build the function with `createEnrichFeedFn`, which runs the built-in enrichers in `defaultFeedEnrichers`. It makes its requests through the `fetchFn` you pass it, not discovery's, so pass the same one to both:
+
+```typescript
+import { discoverFeeds } from 'feedscout'
+import { createEnrichFeedFn } from 'feedscout/feeds'
+
+const feeds = await discoverFeeds('https://example.simplecast.com', {
+  fetchFn: myCustomFetch,
+  enrichFn: createEnrichFeedFn({ fetchFn: myCustomFetch }),
+})
+```
+
+| Enricher | Requests per page |
+|----------|-------------------|
+| `simplecastEnricher` | Two to `api.simplecast.com`: the site search, which finds the show from the page URL, then the show itself, which names its feed |
+
+To pick the enrichers, pass the ones you want as `enrichers`, such as `createEnrichFeedFn({ enrichers: [simplecastEnricher], fetchFn })`. The addresses they return are validated like any other platform candidate and carry the handler's hint. You can pass your own function too, for example one that answers from a cache:
+
+```typescript
+const feeds = await discoverFeeds(url, {
+  enrichFn: (ref) => {
+    return cache.get(`${ref.platform}:${ref.id}`)
   },
 })
 ```
@@ -2011,6 +2051,7 @@ import {
   rubygemsHandler,
   seesaaHandler,
   shopifyHandler,
+  simplecastHandler,
   soundcloudHandler,
   soundonHandler,
   sourceforgeHandler,
@@ -2134,7 +2175,7 @@ type PlatformHandler = {
 | Member | Description |
 |--------|-------------|
 | `match(url, content?, headers?)` | Returns `true` if this handler should process the URL |
-| `resolve(url, content?, headers?, fetchFn?)` | Returns an array of [`DiscoverUriEntry`](/reference/types#discoverurientry) objects for the given page URL. A favicon handler can also return a [`DiscoverRef`](/reference/types#discoverref) for an icon that takes an extra request. See [Enriching Platform Icons](/other/favicons#enriching-platform-icons) |
+| `resolve(url, content?, headers?, fetchFn?)` | Returns an array of [`DiscoverUriEntry`](/reference/types#discoverurientry) objects for the given page URL. It can also return a [`DiscoverRef`](/reference/types#discoverref) for a URI that takes an extra request. See [Enriching Platform Feeds](#enriching-platform-feeds) and [Enriching Platform Icons](/other/favicons#enriching-platform-icons) |
 | `guessExclusionRegex` | Matches the full URL of any user's feed on the platform's host. When the handler matches the page, the [Guess method](/feeds/guess) drops URLs matching it, unless the handler generated them. Set it on a platform where a path like `/feed.xml` can be the feed of a user named `feed` |
 
 ### Basic Example

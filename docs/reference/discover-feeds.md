@@ -11,7 +11,7 @@ Discovers and validates feeds from a webpage.
 ```typescript
 function discoverFeeds(
   input: DiscoverInput,
-  options?: DiscoverOptions<FeedResult, 'platform' | 'html' | 'headers' | 'guess'>,
+  options?: DiscoverFeedsOptions<FeedResult>,
 ): Promise<Array<DiscoverResult<FeedResult>>>
 ```
 
@@ -41,6 +41,7 @@ All options are optional. When not provided, sensible defaults are used.
 |----------|------|---------|-------------|
 | `methods` | `DiscoverMethodsConfig` | `['platform', 'html', 'headers', 'guess']` | Which methods to use |
 | `fetchFn` | `FetchFn` | native fetch | Custom fetch function |
+| `enrichFn` | [`DiscoverEnrichFn`](/reference/types#discoverenrichfn) | | Finds feeds that take a third-party API call to reach, such as a Simplecast show's. Off by default. See [Enriching Platform Feeds](/feeds/platform#enriching-platform-feeds) |
 | `extractFn` | `DiscoverExtractFn` | feedsmith | Custom feed extraction function |
 | `resolveUrlFn` | `DiscoverResolveUrlFn` | resolve relative | Custom URL resolution function |
 | `stopOnFirstMethod` | `boolean` | `false` | Stop after the first method that finds a valid result |
