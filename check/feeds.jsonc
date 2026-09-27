@@ -1065,7 +1065,15 @@
       "https://www.youtube.com/feeds/videos.xml?playlist_id=UUXuqSBlHAE6Xw-yeJA0Tunw"
     ],
     "youtube:live": "https://www.youtube.com/feeds/videos.xml?playlist_id=UULVXuqSBlHAE6Xw-yeJA0Tunw",
+    "youtube:member-live": "https://www.youtube.com/feeds/videos.xml?playlist_id=UUMVBJycsmduvYEL83R_U4JriQ",
+    "youtube:member-shorts": {
+      "skip": "404 on every channel tried"
+    },
+    "youtube:member-videos": "https://www.youtube.com/feeds/videos.xml?playlist_id=UUMOXuqSBlHAE6Xw-yeJA0Tunw",
     "youtube:playlist": "https://www.youtube.com/feeds/videos.xml?playlist_id=PLrAXtmErZgOeiKm4sgNOknGvNjby9efdf",
+    "youtube:popular-live": "https://www.youtube.com/feeds/videos.xml?playlist_id=UUPVXuqSBlHAE6Xw-yeJA0Tunw",
+    "youtube:popular-shorts": "https://www.youtube.com/feeds/videos.xml?playlist_id=UUPSXuqSBlHAE6Xw-yeJA0Tunw",
+    "youtube:popular-videos": "https://www.youtube.com/feeds/videos.xml?playlist_id=UULPXuqSBlHAE6Xw-yeJA0Tunw",
     "youtube:shorts": "https://www.youtube.com/feeds/videos.xml?playlist_id=UUSHXuqSBlHAE6Xw-yeJA0Tunw",
     "youtube:videos": "https://www.youtube.com/feeds/videos.xml?playlist_id=UULFXuqSBlHAE6Xw-yeJA0Tunw"
   },
