@@ -1125,6 +1125,14 @@ Discovers the RSS feed of a Squarespace collection. Detected by the `Server: Squ
 > [!NOTE]
 > The collection slug is operator-chosen, commonly `blog`, `news` or `journal`, so it is taken from the first path segment. The site root is not matched: it answers `?format=rss` with a 400.
 
+### Statuspage
+
+Discovers the incident history feeds of an Atlassian Statuspage status page. Detected by the `x-statuspage-version` response header or the page's `dka575ofm4ao0.cloudfront.net/packs/` assets, so custom domains are covered as well as `*.statuspage.io` hosts.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| Any status page | Incident history feed (RSS + Atom) |
+
 ### Wikidot
 
 Discovers the site and forum feeds of a Wikidot wiki. Detected by the `WIKIDOT.page.listeners.editClick()` call in the page, so custom domains are covered as well as `*.wikidot.com` hosts.
@@ -1808,6 +1816,7 @@ import {
   spreakerHandler,
   squarespaceHandler,
   stackExchangeHandler,
+  statuspageHandler,
   steamHandler,
   substackHandler,
   sverigesRadioHandler,

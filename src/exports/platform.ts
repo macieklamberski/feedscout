@@ -128,6 +128,7 @@ export { spotifyForCreatorsHandler } from '../feeds/platforms/spotifyForCreators
 export { spreakerHandler } from '../feeds/platforms/spreaker.js'
 export { squarespaceHandler } from '../feeds/platforms/squarespace.js'
 export { stackExchangeHandler } from '../feeds/platforms/stackExchange.js'
+export { statuspageHandler } from '../feeds/platforms/statuspage.js'
 export { steamHandler } from '../feeds/platforms/steam.js'
 export { substackHandler } from '../feeds/platforms/substack.js'
 export { svbtleHandler } from '../feeds/platforms/svbtle.js'
