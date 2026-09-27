@@ -393,6 +393,8 @@
     "sverigesRadio:program": "Program",
     "dokuwiki:namespace": "Namespace",
     "dokuwiki:namespace-pages": "Namespace pages",
-    "dokuwiki:recent-changes": "Recent changes"
+    "dokuwiki:recent-changes": "Recent changes",
+    "mediawiki:history": "Page history",
+    "mediawiki:recent-changes": "Recent changes"
   }
 }
