@@ -177,9 +177,12 @@ Discovers Atom feeds for users, organizations, and repositories.
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | `github.com/{user}`, `github.com/{user}.atom` or `github.com/{user}.png` | User activity feed |
+| `github.com/orgs/{org}/discussions` | Organization discussions |
+| `github.com/orgs/{org}/discussions/categories/{category}` | Discussion category (+ above) |
 | `github.com/{owner}/{repo}` | Releases, commits, tags |
 | `github.com/{owner}/{repo}/wiki` | Wiki changes (+ above) |
 | `github.com/{owner}/{repo}/discussions` | Discussions (+ above) |
+| `github.com/{owner}/{repo}/discussions/categories/{category}` | Discussion category (+ above) |
 | `github.com/{owner}/{repo}/tree/{branch}` | Branch commits (+ above) |
 | `github.com/{owner}/{repo}/blob/{branch}/{path}` | File commits (+ above) |
 | `github.com/{owner}/{repo}/commits/{branch}/{path}` | File commits (+ above) |
@@ -231,6 +234,20 @@ Discovers the Atom feed for Product Hunt.
 | `producthunt.com` | Products feed (Atom) |
 
 > There is one feed. Topic and category pages have no feed of their own, and the `?topic=` and `?category=` parameters are ignored.
+
+### Pinboard
+
+Discovers RSS feeds for Pinboard users, user tags, and the popular and recent lists.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `pinboard.in` | Popular bookmarks feed |
+| `pinboard.in/popular` | Popular bookmarks feed |
+| `pinboard.in/recent` | Recent bookmarks feed |
+| `pinboard.in/u:{username}` | User bookmarks feed |
+| `pinboard.in/u:{username}/t:{tag}` | User tag feed |
+| `pinboard.in/u:{username}/t:{tag1}/t:{tag2}` | User multi-tag feed |
+| `pinboard.in/t:{tag}` | Site-wide tag feed |
 
 ### Pinterest
 
@@ -437,10 +454,15 @@ Discovers RSS feeds for Itch.io games, creators, devlogs, and browse pages.
 | `itch.io/games` or `/games.xml` | Games feed |
 | `itch.io/games/by-{username}` or `/by-{username}.xml` | Creator's games feed |
 | `itch.io/games/tag-{tag}` or `/tag-{tag}.xml` | Tag feed |
-| `itch.io/games/{sort}` or `/{sort}.xml` | Sorted games feed (newest/top-rated/top-sellers/on-sale) |
+| `itch.io/games/platform-{platform}` or `/platform-{platform}.xml` | Platform feed |
+| `itch.io/games/genre-{genre}` or `/genre-{genre}.xml` | Genre feed |
+| `itch.io/games/made-with-{engine}` or `/made-with-{engine}.xml` | Engine feed |
+| `itch.io/games/{sort}` or `/{sort}.xml` | Sorted games feed (newest/top-rated/top-sellers/on-sale/free/released/in-development) |
 | `itch.io/{section}` or `/{section}.xml` | Section feed (tools/game-assets/soundtracks/physical-games/books/comics/misc) |
 | `itch.io/devlogs` or `/devlogs.xml` | All devlogs feed |
 | `itch.io` | Featured + new + sales + all devlogs feeds + itch.io blog |
+| `itch.io/feed/{feed}.xml` | Curated feed (featured/new/sales) |
+| `itch.io/blog` or `itch.io/blog.rss` | itch.io blog |
 
 ### CSDN
 
@@ -673,6 +695,19 @@ Discovers RSS feeds for Audioboom channels.
 |-------------|-----------------|
 | `audioboom.com/channels/{id}` | Podcast feed (RSS) |
 
+### Ausha
+
+Discovers the RSS feed of an Ausha show by reading its feed id from the page content.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `podcast.ausha.co/{show}` | Podcast feed (RSS)* |
+| `podcast.ausha.co/{show}/{episode}` | Podcast feed (RSS)* |
+| `smartlink.ausha.co/{show}` | Podcast feed (RSS)* |
+| `smartlink.ausha.co/{show}/{episode}` | Podcast feed (RSS)* |
+
+\* *Requires HTML content to extract the feed id.*
+
 ### BookWyrm
 
 Discovers RSS feeds for BookWyrm user activity, reviews, quotes, comments, and per-shelf feeds. Detected by the link to the BookWyrm source code in the page footer, or by the `BookWyrm` generator meta tag.
@@ -689,6 +724,14 @@ Discovers RSS feeds for Buzzsprout-hosted podcasts.
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | `buzzsprout.com/{id}` | Podcast feed |
+
+### Captivate
+
+Discovers RSS feeds for Captivate-hosted podcasts.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `*.captivate.fm` | Podcast feed (RSS) |
 
 ### Discourse
 
@@ -916,6 +959,18 @@ Discovers RSS 2.0 and RDF feeds for Seesaa Blog.
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | `*.seesaa.net` | Posts feed (RSS 2.0 + RDF) |
+
+### Spotify for Creators
+
+Discovers RSS feeds for Spotify for Creators (formerly Anchor) podcasts by extracting the station ID from the page content.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `creators.spotify.com/pod/profile/{name}` | Podcast feed* |
+| `creators.spotify.com/pod/show/{name}` | Podcast feed* |
+| `creators.spotify.com/pod/profile/{name}/episodes/{slug}` | Podcast feed* |
+
+\* *Requires HTML content to extract the station ID.*
 
 ### Spreaker
 
@@ -1145,6 +1200,9 @@ Discovers the feeds of a WriteFreely blog. Detected by the `WriteFreely` generat
 | `{instance}/{blog}` | Blog feed + instance reader feed (RSS) |
 | `{instance}/{blog}/tag:{tag}` | Tag feed + blog feed + instance reader feed (RSS) |
 | `{instance}/{post}` on a single-user instance | Blog feed (RSS) |
+| `{instance}/page/{n}` on a single-user instance | Blog feed (RSS) |
+| `{instance}/lang:{code}` on a single-user instance | Blog feed (RSS) |
+| `{instance}/archive` on a single-user instance | Blog feed (RSS) |
 | `{instance}/tag:{tag}` on a single-user instance | Tag feed + blog feed (RSS) |
 
 > [!NOTE]
@@ -1433,6 +1491,65 @@ Discovers the RSS feed of a Podomatic show.
 | `{show}.podomatic.com` | Show feed (RSS) |
 | `podomatic.com/podcasts/{show}` | Show feed (RSS) |
 
+### iVoox
+
+Discovers the RSS feed of an iVoox podcast.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `ivoox.com/{slug}_sq_f{id}_1.html` | Podcast feed (RSS) |
+| `ivoox.com/{slug}_rf_{episode}_1.html` | Podcast feed (RSS), read from the episode page's series link |
+
+### Atypon
+
+Discovers the table of contents feed of a journal hosted on Atypon Literatum: ACM, ASCE, Health Affairs, INFORMS, Mary Ann Liebert, NEJM, Sage, Science, SIAM, Taylor & Francis, University of Chicago Press and Wiley.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `{host}/toc/{code}/…` | Journal feed (RDF) |
+| `{host}/journal/{code}` | Journal feed (RDF) |
+| `{host}/loi/{code}` | Journal feed (RDF) |
+| `tandfonline.com/journals/{code}` | Journal feed (RDF) |
+| `journals.sagepub.com/home/{code}` | Journal feed (RDF) |
+| `onlinelibrary.wiley.com/journal/{code}` | Journal feed (RSS) + Most cited (RSS) |
+
+> [!NOTE]
+> Journal pages answer a server-side fetch with a Cloudflare challenge, so the feed is derived from the URL alone. Article pages under `/doi/` name no journal and are not matched.
+
+### SoundOn
+
+Discovers the RSS feed of a SoundOn podcast. The player page is a script-only shell with no feed link.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `player.soundon.fm/p/{id}` | Podcast feed (RSS) |
+| `player.soundon.fm/p/{id}/episodes/{episodeId}` | Podcast feed (RSS) |
+| `player.soundon.fm/embed?podcast={id}` | Podcast feed (RSS) |
+
+### crates.io
+
+Discovers the RSS feeds of crates.io, built from the URL, since the page answers 404 to a request without `Accept: text/html`.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `crates.io` | New crates + recent updates feeds (RSS) |
+| `crates.io/crates/{name}` | Crate releases feed (RSS) |
+
+> [!NOTE]
+> The feed path takes the crate name exactly as crates.io spells it, so a page URL with another case or `-` in place of `_` leads to a feed that answers 403.
+
+### Plurk
+
+Discovers Atom feeds for Plurk users and single plurks.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `plurk.com/{username}` | User plurks feed (Atom) |
+| `plurk.com/u/{username}` | User plurks feed (Atom) |
+| `plurk.com/m/{username}` | User plurks feed (Atom) |
+| `plurk.com/p/{id}` | Plurk responses feed (Atom) |
+| `plurk.com/m/p/{id}` | Plurk responses feed (Atom) |
+
 ## Basic Usage
 
 ```typescript
@@ -1485,7 +1602,9 @@ import {
   arenaHandler,
   art19Handler,
   artstationHandler,
+  atyponHandler,
   audioboomHandler,
+  aushaHandler,
   bearblogHandler,
   behanceHandler,
   bitchuteHandler,
@@ -1494,8 +1613,10 @@ import {
   bookwyrmHandler,
   buttondownHandler,
   buzzsproutHandler,
+  captivateHandler,
   cnblogsHandler,
   confluenceHandler,
+  cratesIoHandler,
   csdnHandler,
   dailymotionHandler,
   deviantartHandler,
@@ -1525,6 +1646,7 @@ import {
   heyWorldHandler,
   insanejournalHandler,
   itchioHandler,
+  ivooxHandler,
   jiraHandler,
   kickstarterHandler,
   learnkuHandler,
@@ -1554,9 +1676,11 @@ import {
   paragraphHandler,
   peertubeHandler,
   pikaHandler,
+  pinboardHandler,
   pinterestHandler,
   pixelfedHandler,
   pleromaHandler,
+  plurkHandler,
   podbeanHandler,
   podigeeHandler,
   podomaticHandler,
@@ -1570,8 +1694,10 @@ import {
   seesaaHandler,
   shopifyHandler,
   soundcloudHandler,
+  soundonHandler,
   sourceforgeHandler,
   sourcehutHandler,
+  spotifyForCreatorsHandler,
   spreakerHandler,
   squarespaceHandler,
   stackExchangeHandler,
@@ -1669,7 +1795,7 @@ You can create handlers for platforms not included by default.
 
 ### Handler Interface
 
-A `PlatformHandler` has two methods:
+A `PlatformHandler` has two methods and an optional regex:
 
 ```typescript
 type PlatformHandler = {
@@ -1680,13 +1806,15 @@ type PlatformHandler = {
     headers?: Headers,
     fetchFn?: FetchFn,
   ) => MaybePromise<Array<DiscoverUriEntry | DiscoverRef>>
+  guessExclusionRegex?: RegExp
 }
 ```
 
-| Method | Description |
+| Member | Description |
 |--------|-------------|
 | `match(url, content?, headers?)` | Returns `true` if this handler should process the URL |
 | `resolve(url, content?, headers?, fetchFn?)` | Returns an array of [`DiscoverUriEntry`](/reference/types#discoverurientry) objects for the given page URL. A favicon handler can also return a [`DiscoverRef`](/reference/types#discoverref) for an icon that takes an extra request. See [Enriching Platform Icons](/other/favicons#enriching-platform-icons) |
+| `guessExclusionRegex` | Matches the full URL of any user's feed on the platform's host. When the handler matches the page, the [Guess method](/feeds/guess) drops URLs matching it, unless the handler generated them. Set it on a platform where a path like `/feed.xml` can be the feed of a user named `feed` |
 
 ### Basic Example
 

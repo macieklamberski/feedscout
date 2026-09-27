@@ -4,20 +4,26 @@ import type { DiscoverOnErrorFn, DiscoverRef, DiscoverUriEntry, FetchFn } from '
 import { collapsePathSlashes } from '../../utils.js'
 import type { PlatformMethodOptions } from './types.js'
 
-export const discoverUrisFromPlatform = async (
+export type PlatformResolution = {
+  entries: Array<DiscoverUriEntry>
+  guessExclusionRegexes: Array<RegExp>
+}
+
+export const resolveFromPlatform = async (
   content: string | undefined,
   headers: Headers | undefined,
   options: PlatformMethodOptions,
   fetchFn?: FetchFn,
   onError?: DiscoverOnErrorFn,
-): Promise<Array<DiscoverUriEntry>> => {
+): Promise<PlatformResolution> => {
   const { baseUrl, handlers, enrichFn } = options
   const entries: Array<DiscoverUriEntry> = []
   const refs: Array<DiscoverRef> = []
+  const guessExclusionRegexes: Array<RegExp> = []
 
   // Host checks pass a `foo://` URL on a platform host, whose empty pathname no handler expects.
   if (!isHttpUrl(baseUrl)) {
-    return entries
+    return { entries, guessExclusionRegexes }
   }
 
   const pageUrl = collapsePathSlashes(baseUrl)
@@ -26,6 +32,11 @@ export const discoverUrisFromPlatform = async (
     try {
       if (!handler.match(pageUrl, content, headers)) {
         continue
+      }
+
+      // A match puts the page on the handler's host even when resolve finds nothing there.
+      if (handler.guessExclusionRegex) {
+        guessExclusionRegexes.push(handler.guessExclusionRegex)
       }
 
       const resolved = await handler.resolve(pageUrl, content, headers, fetchFn)
@@ -51,7 +62,7 @@ export const discoverUrisFromPlatform = async (
   }
 
   if (!enrichFn) {
-    return entries
+    return { entries, guessExclusionRegexes }
   }
 
   // Each ref is enriched on its own, so one that fails leaves the icons of the others.
@@ -66,6 +77,18 @@ export const discoverUrisFromPlatform = async (
       reportError(onError, error, { phase: 'enrichFn', url: baseUrl })
     }
   }
+
+  return { entries, guessExclusionRegexes }
+}
+
+export const discoverUrisFromPlatform = async (
+  content: string | undefined,
+  headers: Headers | undefined,
+  options: PlatformMethodOptions,
+  fetchFn?: FetchFn,
+  onError?: DiscoverOnErrorFn,
+): Promise<Array<DiscoverUriEntry>> => {
+  const { entries } = await resolveFromPlatform(content, headers, options, fetchFn, onError)
 
   return entries
 }

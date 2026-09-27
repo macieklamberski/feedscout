@@ -12,7 +12,23 @@
     "https://www.artstation.com/artwork.rss",
     "https://www.artstation.com/artwork.rss?sorting=latest"
   ],
+  "atypon": [
+    "https://ascelibrary.org/action/showFeed?type=etoc&feed=rss&jc=jsendh",
+    "https://dl.acm.org/action/showFeed?type=etoc&feed=rss&jc=tog",
+    "https://epubs.siam.org/action/showFeed?type=etoc&feed=rss&jc=sjope8",
+    "https://journals.sagepub.com/action/showFeed?type=etoc&feed=rss&jc=pss",
+    "https://onlinelibrary.wiley.com/action/showFeed?type=etoc&feed=rss&jc=15406261",
+    "https://onlinelibrary.wiley.com/feed/15406261/most-cited",
+    "https://pubsonline.informs.org/action/showFeed?type=etoc&feed=rss&jc=mnsc",
+    "https://www.healthaffairs.org/action/showFeed?type=etoc&feed=rss&jc=hlthaff",
+    "https://www.journals.uchicago.edu/action/showFeed?type=etoc&feed=rss&jc=jpe",
+    "https://www.liebertpub.com/action/showFeed?type=etoc&feed=rss&jc=thy",
+    "https://www.nejm.org/action/showFeed?type=etoc&feed=rss&jc=nejm",
+    "https://www.science.org/action/showFeed?type=etoc&feed=rss&jc=science",
+    "https://www.tandfonline.com/action/showFeed?type=etoc&feed=rss&jc=tjis20"
+  ],
   "audioboom": ["https://audioboom.com/channels/5071123.rss"],
+  "ausha": ["https://feed.ausha.co/VODwGU7PMQGG"],
   "bearblog": ["https://herman.bearblog.dev/feed/", "https://herman.bearblog.dev/feed/?type=rss"],
   "behance": [
     "https://www.behance.net/feeds/user?username=matejlatin",
@@ -40,10 +56,16 @@
   ],
   "buttondown": ["https://buttondown.com/jmduke/rss"],
   "buzzsprout": ["https://rss.buzzsprout.com/231452.rss"],
+  "captivate": ["https://feeds.captivate.fm/school-of-podcasting/"],
   "cnblogs": ["https://www.cnblogs.com/vamei/rss"],
   "confluence": [
     "https://cwiki.apache.org/confluence/plugins/servlet/streams?key=KAFKA",
     "https://cwiki.apache.org/confluence/plugins/servlet/streams"
+  ],
+  "cratesIo": [
+    "https://static.crates.io/rss/crates/serde.xml",
+    "https://static.crates.io/rss/crates.xml",
+    "https://static.crates.io/rss/updates.xml"
   ],
   "csdn": ["https://rss.csdn.net/csdnnews/rss/map", "https://blog.csdn.net/csdnnews/rss/list"],
   "dailymotion": [
@@ -135,6 +157,9 @@
     "https://github.com/macieklamberski/feedscout/tags.atom",
     "https://github.com/microsoft/vscode/wiki.atom",
     "https://github.com/vercel/next.js/discussions.atom",
+    "https://github.com/vercel/next.js/discussions/categories/help.atom",
+    "https://github.com/orgs/community/discussions.atom",
+    "https://github.com/orgs/community/discussions/categories/announcements.atom",
     "https://github.com/macieklamberski/feedscout/commits/main.atom",
     "https://github.com/macieklamberski/feedscout/commits/main/package.json.atom"
   ],
@@ -221,6 +246,7 @@
     "https://itch.io/feed/sales.xml",
     "https://itch.io/blog.rss"
   ],
+  "ivoox": ["https://feeds.ivoox.com/feed_fg_f1106_filtro_1.xml"],
   "jira": [
     "https://jira.atlassian.com/plugins/servlet/streams?key=JRASERVER",
     "https://ecosystem.atlassian.net/plugins/servlet/streams"
@@ -338,9 +364,16 @@
     "https://discardpile.pika.page/tag/tech/feed",
     "https://discardpile.pika.page/tag/tech/feed.rss"
   ],
+  "pinboard": [
+    "https://feeds.pinboard.in/rss/u:pinboard/",
+    "https://feeds.pinboard.in/rss/u:mshook/t:llm/",
+    "https://feeds.pinboard.in/rss/popular/",
+    "https://feeds.pinboard.in/rss/recent/"
+  ],
   "pinterest": ["https://www.pinterest.com/pinterest/feed.rss"],
   "pixelfed": ["https://pixelfed.social/users/dansup.atom"],
   "pleroma": ["https://lain.com/users/lain/feed.atom"],
+  "plurk": ["https://www.plurk.com/plurkoffice.xml", "https://www.plurk.com/p/3j6p8yayds.xml"],
   "podbean": ["https://feed.podbean.com/podcast/feed.xml"],
   "podigee": ["https://cui-bono.podigee.io/feed/mp3"],
   "podomatic": ["https://asquaredpodcast10.podomatic.com/rss2.xml"],
@@ -379,6 +412,7 @@
   "shopify": ["https://www.allbirds.com/blogs/news.atom"],
   "snac": ["https://comam.es/snac/grunfink.rss"],
   "soundcloud": ["https://feeds.soundcloud.com/users/soundcloud:users:1613713/sounds.rss"],
+  "soundon": ["https://feeds.soundon.fm/podcasts/954689a5-3096-43a4-a80b-7810b219cef3.xml"],
   "sourceforge": [
     "https://sourceforge.net/p/filezilla/activity/feed",
     "https://sourceforge.net/projects/filezilla/rss",
@@ -392,6 +426,7 @@
     "https://git.sr.ht/~sircmpwn/hare/log/rss.xml",
     "https://git.sr.ht/~sircmpwn/hare/refs/rss.xml"
   ],
+  "spotifyForCreators": ["https://anchor.fm/s/133d445c/podcast/rss"],
   "spreaker": ["https://www.spreaker.com/show/1433865/episodes/feed"],
   "squarespace": ["https://www.squarespace.com/blog?format=rss"],
   "stackExchange": [

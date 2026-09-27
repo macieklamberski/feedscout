@@ -7,12 +7,16 @@ export const githubHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    const owner = parseGithubUrl(url)?.owner
+    const parsed = parseGithubUrl(url)
 
-    if (!owner) {
+    if (!parsed) {
       return []
     }
 
-    return [{ uri: `https://github.com/${owner}.png` }]
+    if (parsed.kind === 'discussions') {
+      return [{ uri: `https://github.com/${parsed.org}.png` }]
+    }
+
+    return [{ uri: `https://github.com/${parsed.owner}.png` }]
   },
 }
