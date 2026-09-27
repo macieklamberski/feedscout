@@ -744,6 +744,14 @@ Discovers the RSS feed of a podcast hosted on a Castopod instance. Detected by t
 | `{instance}/@{handle}` | Podcast feed (RSS) |
 | `{instance}/@{handle}/episodes/{slug}` | Podcast feed (RSS) |
 
+### Castos
+
+Discovers RSS feeds for podcasts with a Castos-hosted website.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `*.castos.com` | Podcast feed (RSS) |
+
 ### Discourse
 
 Discovers RSS feeds for Discourse forums. Detected by the `Discourse` generator meta tag, the `data-discourse-setup` meta tag or the `X-Discourse-Route` response header.
@@ -1752,6 +1760,7 @@ import {
   buzzsproutHandler,
   captivateHandler,
   castopodHandler,
+  castosHandler,
   cnblogsHandler,
   confluenceHandler,
   cratesIoHandler,
