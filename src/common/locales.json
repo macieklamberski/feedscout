@@ -45,6 +45,8 @@
     "gitea:activity": "Activity",
     "gitea:releases": "Releases",
     "gitea:tags": "Tags",
+    "gitea:branch-commits": "Branch commits",
+    "gitea:file-history": "File history",
     "wordpress:category": "Category",
     "wordpress:tag": "Tag",
     "wordpress:author": "Author",
