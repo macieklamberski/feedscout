@@ -83,6 +83,7 @@ import { itchioHandler } from './platforms/itchio.js'
 import { ivooxHandler } from './platforms/ivoox.js'
 import { jiraHandler } from './platforms/jira.js'
 import { joomlaHandler } from './platforms/joomla.js'
+import { jugemHandler } from './platforms/jugem.js'
 import { kickstarterHandler } from './platforms/kickstarter.js'
 import { learnkuHandler } from './platforms/learnku.js'
 import { lemmyHandler } from './platforms/lemmy.js'
@@ -394,6 +395,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     ivooxHandler,
     jiraHandler,
     joomlaHandler,
+    jugemHandler,
     kickstarterHandler,
     learnkuHandler,
     lemmyHandler,

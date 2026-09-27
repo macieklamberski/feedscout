@@ -836,6 +836,14 @@ Discovers RSS and Atom feeds for InsaneJournal journals.
 |-------------|-----------------|
 | `*.insanejournal.com` | Posts feed (RSS + Atom) + userpics (Atom) |
 
+### JUGEM
+
+Discovers RSS 1.0 and Atom feeds for JUGEM blogs.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `{blog}.jugem.jp` | Posts feed (RSS 1.0 + Atom) |
+
 ### Lemmy
 
 Discovers RSS feeds for Lemmy instances, communities and users. Detected by the `lemmy-site` app root, the `Lemmy` generator meta tag or the `X-Powered-By` response header. There is no hardcoded instance list.
@@ -1894,6 +1902,7 @@ import {
   itchioHandler,
   ivooxHandler,
   jiraHandler,
+  jugemHandler,
   kickstarterHandler,
   learnkuHandler,
   lemmyHandler,

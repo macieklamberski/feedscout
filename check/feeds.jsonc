@@ -456,6 +456,9 @@
       "https://www.headqr.com/en/blog-en?format=feed&type=atom"
     ]
   },
+  "jugem": {
+    "jugem:posts": ["https://info.jugem.jp/?mode=rss", "https://info.jugem.jp/?mode=atom"]
+  },
   "kickstarter": {
     "kickstarter:projects": "https://www.kickstarter.com/projects/feed.atom",
     "kickstarter:updates": "https://www.kickstarter.com/projects/elanlee/exploding-kittens/posts.atom"
