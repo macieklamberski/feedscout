@@ -690,6 +690,19 @@ Discovers RSS feeds for Audioboom channels.
 |-------------|-----------------|
 | `audioboom.com/channels/{id}` | Podcast feed (RSS) |
 
+### Ausha
+
+Discovers the RSS feed of an Ausha show by reading its feed id from the page content.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `podcast.ausha.co/{show}` | Podcast feed (RSS)* |
+| `podcast.ausha.co/{show}/{episode}` | Podcast feed (RSS)* |
+| `smartlink.ausha.co/{show}` | Podcast feed (RSS)* |
+| `smartlink.ausha.co/{show}/{episode}` | Podcast feed (RSS)* |
+
+\* *Requires HTML content to extract the feed id.*
+
 ### BookWyrm
 
 Discovers RSS feeds for BookWyrm user activity, reviews, quotes, comments, and per-shelf feeds. Detected by the link to the BookWyrm source code in the page footer, or by the `BookWyrm` generator meta tag.
@@ -1549,6 +1562,7 @@ import {
   artstationHandler,
   atyponHandler,
   audioboomHandler,
+  aushaHandler,
   bearblogHandler,
   behanceHandler,
   bitchuteHandler,
