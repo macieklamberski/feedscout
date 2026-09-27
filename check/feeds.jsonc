@@ -505,6 +505,9 @@
     "medium:tag": "https://medium.com/feed/tag/programming",
     "medium:tagged": "https://medium.com/feed/towards-data-science/tagged/python"
   },
+  "megaphone": {
+    "megaphone:podcast": "https://feeds.megaphone.fm/GLT1412515089"
+  },
   "microblog": {
     "microblog:archive": "https://vincent.micro.blog/archive/index.json",
     "microblog:category": [

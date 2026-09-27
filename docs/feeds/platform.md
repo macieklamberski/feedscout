@@ -855,6 +855,15 @@ Discovers RSS feeds for Mataroa blogs.
 |-------------|-----------------|
 | `*.mataroa.blog` | Blog feed |
 
+### Megaphone
+
+Discovers RSS feeds for Megaphone-hosted podcasts from their embed players.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `playlist.megaphone.fm/?p={id}` | Podcast feed |
+| `player.megaphone.fm/{episode}` | Podcast feed (read from the page) |
+
 ### Micro.blog
 
 Discovers RSS, JSON, and podcast feeds for Micro.blog-hosted blogs, including category, archive, photos, and replies feeds.
@@ -1785,6 +1794,7 @@ import {
   mataroaHandler,
   mediawikiHandler,
   mediumHandler,
+  megaphoneHandler,
   microblogHandler,
   misskeyHandler,
   myanimelistHandler,
