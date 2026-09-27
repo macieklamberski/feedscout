@@ -1,5 +1,5 @@
 import { Parser } from 'htmlparser2'
-import { getPathSegments, parseUrl } from 'trousse'
+import { getPathSegments, getRegistrableDomain, parseUrl } from 'trousse'
 import type { UriEntry } from '../../types.js'
 
 const ipAddressRegex = /^\d+\.\d+\.\d+\.\d+$/
@@ -166,8 +166,7 @@ export const getSubdomainVariants = (baseUrl: string, prefixes: Array<string>): 
     return []
   }
 
-  // Extract root domain (last two parts: example.com)
-  const rootDomain = hostnameParts.slice(-2).join('.')
+  const rootDomain = getRegistrableDomain(url) ?? hostname
   const protocol = url.protocol
   const port = url.port ? `:${url.port}` : ''
 
