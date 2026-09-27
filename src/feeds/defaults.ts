@@ -53,6 +53,7 @@ import { exblogHandler } from './platforms/exblog.js'
 import { fc2Handler } from './platforms/fc2.js'
 import { firesideHandler } from './platforms/fireside.js'
 import { flickrHandler } from './platforms/flickr.js'
+import { flipboardHandler } from './platforms/flipboard.js'
 import { fluxbbHandler } from './platforms/fluxbb.js'
 import { friendicaHandler } from './platforms/friendica.js'
 import { funkwhaleHandler } from './platforms/funkwhale.js'
@@ -362,6 +363,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     fc2Handler,
     firesideHandler,
     flickrHandler,
+    flipboardHandler,
     fluxbbHandler,
     friendicaHandler,
     funkwhaleHandler,

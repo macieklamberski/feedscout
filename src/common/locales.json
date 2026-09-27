@@ -425,6 +425,9 @@
     "rubygems:versions": "Versions",
     "rubygems:latest-gems": "Latest gems",
     "redcircle:show": "Show",
-    "royalroad:fiction": "Fiction"
+    "royalroad:fiction": "Fiction",
+    "flipboard:profile": "Profile",
+    "flipboard:magazine": "Magazine",
+    "flipboard:topic": "Topic"
   }
 }
