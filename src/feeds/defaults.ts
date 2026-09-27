@@ -43,6 +43,7 @@ import { devtoHandler } from './platforms/devto.js'
 import { diasporaHandler } from './platforms/diaspora.js'
 import { discourseHandler } from './platforms/discourse.js'
 import { discuzHandler } from './platforms/discuz.js'
+import { dokuwikiHandler } from './platforms/dokuwiki.js'
 import { doubanHandler } from './platforms/douban.js'
 import { dreamwidthHandler } from './platforms/dreamwidth.js'
 import { drupalHandler } from './platforms/drupal.js'
@@ -333,6 +334,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     diasporaHandler,
     discourseHandler,
     discuzHandler,
+    dokuwikiHandler,
     doubanHandler,
     dreamwidthHandler,
     drupalHandler,

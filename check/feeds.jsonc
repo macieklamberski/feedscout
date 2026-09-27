@@ -120,6 +120,11 @@
     "https://bbs.kafan.cn/forum.php?mod=rss",
     "https://bbs.kafan.cn/forum.php?mod=rss&fid=22"
   ],
+  "dokuwiki": [
+    "https://wiki.php.net/feed.php",
+    "https://wiki.php.net/feed.php?ns=rfc",
+    "https://wiki.php.net/feed.php?mode=list&ns=rfc"
+  ],
   "douban": [
     "https://www.douban.com/feed/people/ahbei/interests",
     "https://www.douban.com/feed/people/ahbei/reviews",
