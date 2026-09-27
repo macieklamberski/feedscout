@@ -75,6 +75,7 @@ import { homelandHandler } from './platforms/homeland.js'
 import { hubspotHandler } from './platforms/hubspot.js'
 import { hubzillaHandler } from './platforms/hubzilla.js'
 import { insanejournalHandler } from './platforms/insanejournal.js'
+import { instatusHandler } from './platforms/instatus.js'
 import { internetArchiveHandler } from './platforms/internetArchive.js'
 import { itchioHandler } from './platforms/itchio.js'
 import { ivooxHandler } from './platforms/ivoox.js'
@@ -377,6 +378,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     hubspotHandler,
     hubzillaHandler,
     insanejournalHandler,
+    instatusHandler,
     internetArchiveHandler,
     itchioHandler,
     ivooxHandler,

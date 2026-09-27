@@ -396,6 +396,12 @@
     ],
     "insanejournal:userpics": "https://ela.insanejournal.com/data/userpics"
   },
+  "instatus": {
+    "instatus:history": [
+      "https://status.mastodon.social/history.rss",
+      "https://status.mastodon.social/history.atom"
+    ]
+  },
   "internetArchive": {
     "internet-archive:collection": "https://archive.org/services/collection-rss.php?collection=oldtimeradio",
     "internet-archive:search": "https://archive.org/services/collection-rss.php?query=subject%3Atrance"

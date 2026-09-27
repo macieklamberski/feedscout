@@ -310,6 +310,7 @@
     "confluence:space": "Space",
     "confluence:site": "Site activity",
     "diaspora:posts": "Posts",
+    "instatus:history": "Incident history",
     "jira:project": "Project",
     "jira:site": "Site activity",
     "neocities:updates": "Site updates",

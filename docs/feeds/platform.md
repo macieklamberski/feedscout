@@ -1081,6 +1081,15 @@ Discovers the Atom feed of a diaspora* profile. Detected by the `Diaspora.Page` 
 
 \* *Requires HTML content to read the username from the profile's diaspora ID.*
 
+### Instatus
+
+Discovers the incident history feeds of an Instatus status page. Detected by the status page route Instatus names in the `x-matched-path` response header, or by the custom HTML slots of its page template, so custom domains are covered as well as `*.instatus.com` hosts.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| Any status page | Incident history feed (RSS + Atom) |
+| `{page}/{language}/...` | Translated incident history feed (RSS + Atom) |
+
 ### Jira
 
 Discovers the Atom activity streams of a Jira site. Cloud is detected by the `atlassian.net` host, Data Center by the `ajs-base-url` meta tag together with a Jira path.
@@ -1794,6 +1803,7 @@ import {
   hearthisHandler,
   heyWorldHandler,
   insanejournalHandler,
+  instatusHandler,
   internetArchiveHandler,
   itchioHandler,
   ivooxHandler,
