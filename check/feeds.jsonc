@@ -248,6 +248,12 @@
   "funkwhale": {
     "funkwhale:channel": "https://open.audio/api/v1/channels/stralci/rss"
   },
+  "gancio": {
+    "gancio:collection": "https://calndr.de/feed/rss/collection/Linux",
+    "gancio:place": "https://berlin.askapunk.de/feed/rss/place/27",
+    "gancio:site": "https://gancio.cisti.org/feed/rss",
+    "gancio:tag": "https://balotta.org/feed/rss/tag/antirazzismo"
+  },
   "ghost": {
     "ghost:author": "https://demo.ghost.io/author/ghost/rss/",
     "ghost:blog": "https://demo.ghost.io/rss/",
