@@ -88,6 +88,7 @@ import { lobstersHandler } from './platforms/lobsters.js'
 import { mailchimpHandler } from './platforms/mailchimp.js'
 import { mastodonHandler } from './platforms/mastodon.js'
 import { mataroaHandler } from './platforms/mataroa.js'
+import { mediawikiHandler } from './platforms/mediawiki.js'
 import { mediumHandler } from './platforms/medium.js'
 import { microblogHandler } from './platforms/microblog.js'
 import { misskeyHandler } from './platforms/misskey.js'
@@ -381,6 +382,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     mailchimpHandler,
     mastodonHandler,
     mataroaHandler,
+    mediawikiHandler,
     mediumHandler,
     microblogHandler,
     misskeyHandler,

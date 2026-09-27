@@ -21,6 +21,7 @@ import { jiraHandler } from './jira.js'
 import { joomlaHandler } from './joomla.js'
 import { lemmyHandler } from './lemmy.js'
 import { mastodonHandler } from './mastodon.js'
+import { mediawikiHandler } from './mediawiki.js'
 import { misskeyHandler } from './misskey.js'
 import { mobilizonHandler } from './mobilizon.js'
 import { mybbHandler } from './mybb.js'
@@ -126,6 +127,7 @@ const cases: Array<Case> = [
   ['joomla', joomlaHandler, '<script class="joomla-script-options new">{}</script>'],
   ['lemmy', lemmyHandler, '<div class="lemmy-site" id="app"></div>'],
   ['mastodon', mastodonHandler, '<div class="app-holder" id="mastodon"></div>'],
+  ['mediawiki', mediawikiHandler, '<link rel="EditURI" href="/w/api.php?action=rsd">'],
   ['misskey', misskeyHandler, '<script type="application/json" id="misskey_meta">{}</script>'],
   [
     'mobilizon',

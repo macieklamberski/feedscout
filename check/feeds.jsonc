@@ -350,6 +350,10 @@
     "https://mastodon.social/@Mastodon/media.rss"
   ],
   "mataroa": ["https://hey.mataroa.blog/rss/"],
+  "mediawiki": [
+    "https://www.mediawiki.org/w/index.php?title=Manual%3A%24wgFeed&action=history&feed=atom",
+    "https://wiki.gentoo.org/index.php?title=Special%3ARecentChanges&feed=atom"
+  ],
   "medium": [
     "https://medium.com/feed/@ev",
     "https://medium.com/feed/tag/programming",
