@@ -1,4 +1,4 @@
-import { getAnyOf, isHostOf, isHostOrSubdomainOf, isSubdomainOf } from 'trousse'
+import { getAnyOf, isAnyOf, isHostOf, isHostOrSubdomainOf, isSubdomainOf } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
@@ -20,6 +20,7 @@ const sectionRegex = /^\/([^/.]+)/
 const gameRegex = /^\/([^/]+)/
 const gamesRegex = /^\/games\/?$/i
 const devlogsRegex = /^\/devlogs\/?$/i
+const blogRegex = /^\/blog\/?$/i
 const feedSuffixRegex = /\.xml$/i
 
 const sections = [
@@ -31,7 +32,15 @@ const sections = [
   'comics',
   'misc',
 ]
-const sorts = ['newest', 'top-rated', 'top-sellers', 'on-sale', 'free']
+const sorts = [
+  'newest',
+  'top-rated',
+  'top-sellers',
+  'on-sale',
+  'free',
+  'released',
+  'in-development',
+]
 
 export const itchioHandler: PlatformHandler = {
   match: (url) => {
@@ -149,7 +158,12 @@ export const itchioHandler: PlatformHandler = {
 
     // /devlogs
     if (devlogsRegex.test(listingPath)) {
-      return [{ uri: 'https://itch.io/devlogs.xml', hint: composeHint('itchio:devlog') }]
+      return [{ uri: 'https://itch.io/devlogs.xml', hint: composeHint('itchio:devlogs') }]
+    }
+
+    // /blog
+    if (blogRegex.test(listingPath)) {
+      return [{ uri: 'https://itch.io/blog.rss', hint: composeHint('itchio:blog') }]
     }
 
     // /{section} (tools, game-assets, soundtracks, physical-games, books, comics, misc)
@@ -174,6 +188,13 @@ export const itchioHandler: PlatformHandler = {
     uris.push({ uri: 'https://itch.io/feed/sales.xml', hint: composeHint('itchio:sales') })
     uris.push({ uri: 'https://itch.io/devlogs.xml', hint: composeHint('itchio:devlogs') })
     uris.push({ uri: 'https://itch.io/blog.rss', hint: composeHint('itchio:blog') })
+
+    // A site feed URL, such as /feed/featured.xml, names only itself.
+    const siteFeed = uris.find((entry) => isAnyOf(`https://itch.io${pathname}`, entry.uri))
+
+    if (siteFeed) {
+      return [siteFeed]
+    }
 
     return uris
   },

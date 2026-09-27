@@ -127,6 +127,51 @@ describe('discoverUrisFromPlatform', () => {
     expect(receivedUrls).toEqual(expected)
   })
 
+  it('should collapse repeated slashes in the page path before handlers see it', async () => {
+    const receivedUrls: Array<string> = []
+    const handler: PlatformHandler = {
+      match: (url) => {
+        receivedUrls.push(`match:${url}`)
+
+        return true
+      },
+      resolve: (url) => {
+        receivedUrls.push(`resolve:${url}`)
+
+        return []
+      },
+    }
+    const options = { baseUrl: 'https://example.com/r//programming///hot', handlers: [handler] }
+
+    await discoverUrisFromPlatform(undefined, undefined, options)
+    const expected = [
+      'match:https://example.com/r/programming/hot',
+      'resolve:https://example.com/r/programming/hot',
+    ]
+
+    expect(receivedUrls).toEqual(expected)
+  })
+
+  it('should keep repeated slashes in the query string', async () => {
+    const receivedUrls: Array<string> = []
+    const handler: PlatformHandler = {
+      match: (url) => {
+        receivedUrls.push(url)
+
+        return false
+      },
+      resolve: () => {
+        return []
+      },
+    }
+    const options = { baseUrl: 'https://example.com//page?next=//example.org', handlers: [handler] }
+
+    await discoverUrisFromPlatform(undefined, undefined, options)
+    const expected = ['https://example.com/page?next=//example.org']
+
+    expect(receivedUrls).toEqual(expected)
+  })
+
   it('should pass headers to handler match and resolve methods', async () => {
     const receivedHeaders: Array<Headers | undefined> = []
     const handler: PlatformHandler = {

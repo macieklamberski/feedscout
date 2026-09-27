@@ -21,7 +21,9 @@ import { applePodcastsHandler } from './platforms/applePodcasts.js'
 import { arenaHandler } from './platforms/arena.js'
 import { art19Handler } from './platforms/art19.js'
 import { artstationHandler } from './platforms/artstation.js'
+import { atyponHandler } from './platforms/atypon.js'
 import { audioboomHandler } from './platforms/audioboom.js'
+import { aushaHandler } from './platforms/ausha.js'
 import { bearblogHandler } from './platforms/bearblog.js'
 import { behanceHandler } from './platforms/behance.js'
 import { bitchuteHandler } from './platforms/bitchute.js'
@@ -33,6 +35,7 @@ import { buzzsproutHandler } from './platforms/buzzsprout.js'
 import { captivateHandler } from './platforms/captivate.js'
 import { cnblogsHandler } from './platforms/cnblogs.js'
 import { confluenceHandler } from './platforms/confluence.js'
+import { cratesIoHandler } from './platforms/cratesIo.js'
 import { csdnHandler } from './platforms/csdn.js'
 import { dailymotionHandler } from './platforms/dailymotion.js'
 import { deviantartHandler } from './platforms/deviantart.js'
@@ -68,6 +71,7 @@ import { homelandHandler } from './platforms/homeland.js'
 import { hubspotHandler } from './platforms/hubspot.js'
 import { hubzillaHandler } from './platforms/hubzilla.js'
 import { insanejournalHandler } from './platforms/insanejournal.js'
+import { internetArchiveHandler } from './platforms/internetArchive.js'
 import { itchioHandler } from './platforms/itchio.js'
 import { ivooxHandler } from './platforms/ivoox.js'
 import { jiraHandler } from './platforms/jira.js'
@@ -102,9 +106,11 @@ import { paragraphHandler } from './platforms/paragraph.js'
 import { peertubeHandler } from './platforms/peertube.js'
 import { phpbbHandler } from './platforms/phpbb.js'
 import { pikaHandler } from './platforms/pika.js'
+import { pinboardHandler } from './platforms/pinboard.js'
 import { pinterestHandler } from './platforms/pinterest.js'
 import { pixelfedHandler } from './platforms/pixelfed.js'
 import { pleromaHandler } from './platforms/pleroma.js'
+import { plurkHandler } from './platforms/plurk.js'
 import { podbeanHandler } from './platforms/podbean.js'
 import { podigeeHandler } from './platforms/podigee.js'
 import { podomaticHandler } from './platforms/podomatic.js'
@@ -122,14 +128,17 @@ import { shaarliHandler } from './platforms/shaarli.js'
 import { shopifyHandler } from './platforms/shopify.js'
 import { snacHandler } from './platforms/snac.js'
 import { soundcloudHandler } from './platforms/soundcloud.js'
+import { soundonHandler } from './platforms/soundon.js'
 import { sourceforgeHandler } from './platforms/sourceforge.js'
 import { sourcehutHandler } from './platforms/sourcehut.js'
+import { spotifyForCreatorsHandler } from './platforms/spotifyForCreators.js'
 import { spreakerHandler } from './platforms/spreaker.js'
 import { squarespaceHandler } from './platforms/squarespace.js'
 import { stackExchangeHandler } from './platforms/stackExchange.js'
 import { steamHandler } from './platforms/steam.js'
 import { substackHandler } from './platforms/substack.js'
 import { svbtleHandler } from './platforms/svbtle.js'
+import { sverigesRadioHandler } from './platforms/sverigesRadio.js'
 import { syosetuHandler } from './platforms/syosetu.js'
 import { textpatternHandler } from './platforms/textpattern.js'
 import { tildesHandler } from './platforms/tildes.js'
@@ -302,7 +311,9 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     arenaHandler,
     art19Handler,
     artstationHandler,
+    atyponHandler,
     audioboomHandler,
+    aushaHandler,
     bearblogHandler,
     behanceHandler,
     bitchuteHandler,
@@ -314,6 +325,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     captivateHandler,
     cnblogsHandler,
     confluenceHandler,
+    cratesIoHandler,
     csdnHandler,
     dailymotionHandler,
     deviantartHandler,
@@ -349,6 +361,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     hubspotHandler,
     hubzillaHandler,
     insanejournalHandler,
+    internetArchiveHandler,
     itchioHandler,
     ivooxHandler,
     jiraHandler,
@@ -383,9 +396,11 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     peertubeHandler,
     phpbbHandler,
     pikaHandler,
+    pinboardHandler,
     pinterestHandler,
     pixelfedHandler,
     pleromaHandler,
+    plurkHandler,
     podbeanHandler,
     podigeeHandler,
     podomaticHandler,
@@ -403,14 +418,17 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     shopifyHandler,
     snacHandler,
     soundcloudHandler,
+    soundonHandler,
     sourceforgeHandler,
     sourcehutHandler,
+    spotifyForCreatorsHandler,
     spreakerHandler,
     squarespaceHandler,
     stackExchangeHandler,
     steamHandler,
     substackHandler,
     svbtleHandler,
+    sverigesRadioHandler,
     syosetuHandler,
     textpatternHandler,
     tildesHandler,
