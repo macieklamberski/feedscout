@@ -113,6 +113,9 @@
   "castopod": {
     "castopod:podcast": "https://castopod.it/@PlinPlon/feed.xml"
   },
+  "castos": {
+    "castos:podcast": "https://feeds.castos.com/x42p4"
+  },
   "cnblogs": {
     "cnblogs:posts": "https://www.cnblogs.com/vamei/rss"
   },
