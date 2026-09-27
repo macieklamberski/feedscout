@@ -434,6 +434,8 @@
     "webtoons:series": "Series",
     "lichess:blog": "Blog",
     "lichess:community": "Community blogs",
-    "lichess:updates": "Updates"
+    "lichess:updates": "Updates",
+    "atwiki:updated-pages": "Updated pages",
+    "atwiki:new-pages": "New pages"
   }
 }
