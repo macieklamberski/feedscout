@@ -1526,6 +1526,18 @@ Discovers the RSS feed of a SoundOn podcast. The player page is a script-only sh
 | `player.soundon.fm/p/{id}/episodes/{episodeId}` | Podcast feed (RSS) |
 | `player.soundon.fm/embed?podcast={id}` | Podcast feed (RSS) |
 
+### crates.io
+
+Discovers the RSS feeds of crates.io, built from the URL, since the page answers 404 to a request without `Accept: text/html`.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `crates.io` | New crates + recent updates feeds (RSS) |
+| `crates.io/crates/{name}` | Crate releases feed (RSS) |
+
+> [!NOTE]
+> The feed path takes the crate name exactly as crates.io spells it, so a page URL with another case or `-` in place of `_` leads to a feed that answers 403.
+
 ## Basic Usage
 
 ```typescript
@@ -1592,6 +1604,7 @@ import {
   captivateHandler,
   cnblogsHandler,
   confluenceHandler,
+  cratesIoHandler,
   csdnHandler,
   dailymotionHandler,
   deviantartHandler,
