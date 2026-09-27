@@ -343,6 +343,12 @@
     "https://discardpile.pika.page/tag/tech/feed",
     "https://discardpile.pika.page/tag/tech/feed.rss"
   ],
+  "pinboard": [
+    "https://feeds.pinboard.in/rss/u:pinboard/",
+    "https://feeds.pinboard.in/rss/u:mshook/t:llm/",
+    "https://feeds.pinboard.in/rss/popular/",
+    "https://feeds.pinboard.in/rss/recent/"
+  ],
   "pinterest": ["https://www.pinterest.com/pinterest/feed.rss"],
   "pixelfed": ["https://pixelfed.social/users/dansup.atom"],
   "pleroma": ["https://lain.com/users/lain/feed.atom"],

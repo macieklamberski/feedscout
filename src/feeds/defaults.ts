@@ -102,6 +102,7 @@ import { paragraphHandler } from './platforms/paragraph.js'
 import { peertubeHandler } from './platforms/peertube.js'
 import { phpbbHandler } from './platforms/phpbb.js'
 import { pikaHandler } from './platforms/pika.js'
+import { pinboardHandler } from './platforms/pinboard.js'
 import { pinterestHandler } from './platforms/pinterest.js'
 import { pixelfedHandler } from './platforms/pixelfed.js'
 import { pleromaHandler } from './platforms/pleroma.js'
@@ -383,6 +384,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     peertubeHandler,
     phpbbHandler,
     pikaHandler,
+    pinboardHandler,
     pinterestHandler,
     pixelfedHandler,
     pleromaHandler,
