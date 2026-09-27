@@ -747,6 +747,10 @@
   "rssCom": {
     "rss-com:podcast": "https://media.rss.com/podcasting101/feed.xml"
   },
+  "rubygems": {
+    "rubygems:latest-gems": "https://rubygems.org/gems.atom",
+    "rubygems:versions": "https://rubygems.org/gems/rails/versions.atom"
+  },
   "seesaa": {
     "seesaa:posts": "https://info.seesaa.net/index.rdf",
     "seesaa:posts-rss2": "https://info.seesaa.net/index20.rdf"

@@ -414,6 +414,8 @@
     "librivox:audiobook": "Audiobook",
     "pypi:releases": "Releases",
     "pypi:new-packages": "New packages",
-    "pypi:updates": "Recent updates"
+    "pypi:updates": "Recent updates",
+    "rubygems:versions": "Versions",
+    "rubygems:latest-gems": "Latest gems"
   }
 }
