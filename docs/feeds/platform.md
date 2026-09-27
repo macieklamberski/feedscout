@@ -1444,6 +1444,15 @@ Discovers the RSS feed of a Podomatic show.
 | `{show}.podomatic.com` | Show feed (RSS) |
 | `podomatic.com/podcasts/{show}` | Show feed (RSS) |
 
+### iVoox
+
+Discovers the RSS feed of an iVoox podcast.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `ivoox.com/{slug}_sq_f{id}_1.html` | Podcast feed (RSS) |
+| `ivoox.com/{slug}_rf_{episode}_1.html` | Podcast feed (RSS), read from the episode page's series link |
+
 ## Basic Usage
 
 ```typescript
@@ -1537,6 +1546,7 @@ import {
   heyWorldHandler,
   insanejournalHandler,
   itchioHandler,
+  ivooxHandler,
   jiraHandler,
   kickstarterHandler,
   learnkuHandler,

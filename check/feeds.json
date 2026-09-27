@@ -225,6 +225,7 @@
     "https://itch.io/feed/sales.xml",
     "https://itch.io/blog.rss"
   ],
+  "ivoox": ["https://feeds.ivoox.com/feed_fg_f1106_filtro_1.xml"],
   "jira": [
     "https://jira.atlassian.com/plugins/servlet/streams?key=JRASERVER",
     "https://ecosystem.atlassian.net/plugins/servlet/streams"
