@@ -83,6 +83,7 @@ import { kickstarterHandler } from './platforms/kickstarter.js'
 import { learnkuHandler } from './platforms/learnku.js'
 import { lemmyHandler } from './platforms/lemmy.js'
 import { letterboxdHandler } from './platforms/letterboxd.js'
+import { librivoxHandler } from './platforms/librivox.js'
 import { libsynHandler } from './platforms/libsyn.js'
 import { listedHandler } from './platforms/listed.js'
 import { livejournalHandler } from './platforms/livejournal.js'
@@ -382,6 +383,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     learnkuHandler,
     lemmyHandler,
     letterboxdHandler,
+    librivoxHandler,
     libsynHandler,
     listedHandler,
     livejournalHandler,

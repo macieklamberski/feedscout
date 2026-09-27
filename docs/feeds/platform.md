@@ -1670,6 +1670,14 @@ Discovers the video, live and blog feeds of a Niconico channel on `ch.nicovideo.
 | `ch.nicovideo.jp/{channel}/live` | Live first, then Videos + Blog |
 | `ch.nicovideo.jp/{channel}/blomaga` or `ch.nicovideo.jp/{channel}/blomaga/ar{id}` | Blog first, then Videos + Live |
 
+### LibriVox
+
+Discovers the RSS feed of a LibriVox audiobook, read from the feed link on the audiobook page.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `librivox.org/{slug}` | Audiobook feed (RSS) |
+
 ## Basic Usage
 
 ```typescript
@@ -1776,6 +1784,7 @@ import {
   learnkuHandler,
   lemmyHandler,
   letterboxdHandler,
+  librivoxHandler,
   libsynHandler,
   listedHandler,
   livejournalHandler,

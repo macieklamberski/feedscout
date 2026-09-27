@@ -407,6 +407,7 @@
     "dokuwiki:namespace-pages": "Namespace pages",
     "dokuwiki:recent-changes": "Recent changes",
     "mediawiki:history": "Page history",
-    "mediawiki:recent-changes": "Recent changes"
+    "mediawiki:recent-changes": "Recent changes",
+    "librivox:audiobook": "Audiobook"
   }
 }
