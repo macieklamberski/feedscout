@@ -483,6 +483,17 @@
   "libsyn": {
     "libsyn:podcast": "https://thefeed.libsyn.com/rss"
   },
+  "lichess": {
+    "lichess:blog": [
+      "https://lichess.org/@/Lichess/blog.atom",
+      "https://lichess.org/@/thibault/blog.atom"
+    ],
+    "lichess:community": [
+      "https://lichess.org/blog/community.atom",
+      "https://lichess.org/blog/community.atom?lang=fr"
+    ],
+    "lichess:updates": "https://lichess.org/feed.atom"
+  },
   "listed": {
     "listed:blog": "https://listed.to/@Listed/feed.rss"
   },

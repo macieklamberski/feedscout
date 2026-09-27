@@ -431,6 +431,9 @@
     "flipboard:profile": "Profile",
     "flipboard:magazine": "Magazine",
     "flipboard:topic": "Topic",
-    "webtoons:series": "Series"
+    "webtoons:series": "Series",
+    "lichess:blog": "Blog",
+    "lichess:community": "Community blogs",
+    "lichess:updates": "Updates"
   }
 }
