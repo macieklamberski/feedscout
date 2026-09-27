@@ -17,4 +17,14 @@ const checkUrl = async (url: string) => {
   }
 }
 
-await checkPlatforms(Object.entries(feeds), checkUrl)
+// A kind with no public sample holds `{ "skip": reason }` in place of its URLs.
+const checkList: Record<string, Record<string, unknown>> = feeds
+const platforms = Object.entries(checkList).map(([platform, kinds]): [string, Array<string>] => {
+  const urls = Object.values(kinds).flatMap((entry) => {
+    return typeof entry === 'string' || Array.isArray(entry) ? entry : []
+  })
+
+  return [platform, urls]
+})
+
+await checkPlatforms(platforms, checkUrl)
