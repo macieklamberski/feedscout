@@ -33,6 +33,7 @@ import { bookwyrmHandler } from './platforms/bookwyrm.js'
 import { buttondownHandler } from './platforms/buttondown.js'
 import { buzzsproutHandler } from './platforms/buzzsprout.js'
 import { captivateHandler } from './platforms/captivate.js'
+import { castopodHandler } from './platforms/castopod.js'
 import { cnblogsHandler } from './platforms/cnblogs.js'
 import { confluenceHandler } from './platforms/confluence.js'
 import { cratesIoHandler } from './platforms/cratesIo.js'
@@ -327,6 +328,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     buttondownHandler,
     buzzsproutHandler,
     captivateHandler,
+    castopodHandler,
     cnblogsHandler,
     confluenceHandler,
     cratesIoHandler,
