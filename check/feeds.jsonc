@@ -442,6 +442,9 @@
     "https://feeds.pinboard.in/rss/u:mshook/t:llm/",
     "https://feeds.pinboard.in/rss/popular/",
     "https://feeds.pinboard.in/rss/recent/"
+    // The site-wide tag feed answered 500 on 2026-09-26 while Pinboard's search backend was down.
+    // Uncomment once it answers 200 again.
+    // "https://feeds.pinboard.in/rss/t:llm/"
   ],
   "pinterest": [
     "https://www.pinterest.com/pinterest/feed.rss",
