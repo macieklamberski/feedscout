@@ -1845,6 +1845,15 @@ Discovers the updated pages and new pages feeds of an @wiki (atwiki.jp) wiki. Li
 |-------------|-----------------|
 | `w.atwiki.jp/{wiki}/…` | Updated pages (RDF + Atom) + new pages (RDF) |
 
+### Teletype.in
+
+Discovers RSS and Atom feeds for Teletype.in blogs.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `teletype.in/@{user}` | Posts feed (RSS + Atom) |
+| `teletype.in/@{user}/{post}` | Posts feed (RSS + Atom) |
+
 ## Basic Usage
 
 ```typescript
@@ -2024,6 +2033,7 @@ import {
   substackHandler,
   sverigesRadioHandler,
   syosetuHandler,
+  teletypeHandler,
   tildesHandler,
   tistoryHandler,
   togetterHandler,
