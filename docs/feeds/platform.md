@@ -1571,6 +1571,18 @@ Discovers the feed of a Sveriges Radio program.
 > [!NOTE]
 > Program pages answer 403 to many server-side fetches, so the feed is derived from the URL alone. A discontinued program's feed answers 404.
 
+### DokuWiki
+
+Discovers the recent changes feeds of a DokuWiki wiki. Detected by the `DokuWiki` session cookie. A wiki under a sub-path gets its feeds there, read from the `start` link the page prints or from the cookie path.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| A page inside a namespace | Namespace recent changes + namespace pages + recent changes |
+| Any other page | Recent changes |
+
+> [!NOTE]
+> The feed format is a wiki setting, so one wiki serves RSS 1.0 and the next Atom from the same `feed.php`.
+
 ## Basic Usage
 
 ```typescript
@@ -1644,6 +1656,7 @@ import {
   devtoHandler,
   diasporaHandler,
   discourseHandler,
+  dokuwikiHandler,
   doubanHandler,
   dreamwidthHandler,
   drupalHandler,

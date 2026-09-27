@@ -6,6 +6,7 @@ import { confluenceHandler } from './confluence.js'
 import { diasporaHandler } from './diaspora.js'
 import { discourseHandler } from './discourse.js'
 import { discuzHandler } from './discuz.js'
+import { dokuwikiHandler } from './dokuwiki.js'
 import { drupalHandler } from './drupal.js'
 import { fluxbbHandler } from './fluxbb.js'
 import { friendicaHandler } from './friendica.js'
@@ -108,6 +109,7 @@ const cases: Array<Case> = [
   ['diaspora', diasporaHandler, '<script>Diaspora.Page = "Home";</script>'],
   ['discourse', discourseHandler, '<meta id="data-discourse-setup" data-base-url="/">'],
   ['discuz', discuzHandler, '<meta name="generator" content="Discuz! X3.5">'],
+  ['dokuwiki', dokuwikiHandler, '', new Headers({ 'set-cookie': 'DokuWiki=abc; path=/' })],
   ['drupal', drupalHandler, '<meta name="generator" content="Drupal 10 (https://www.drupal.org)">'],
   ['fluxbb', fluxbbHandler, '<div id="brdmenu"></div><div id="brdfooter"></div>'],
   ['friendica', friendicaHandler, '<meta name="generator" content="Friendica 2026.05">'],
