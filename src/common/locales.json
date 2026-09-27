@@ -436,6 +436,12 @@
     "lichess:community": "Community blogs",
     "lichess:updates": "Updates",
     "atwiki:updated-pages": "Updated pages",
-    "atwiki:new-pages": "New pages"
+    "atwiki:new-pages": "New pages",
+    "launchpad:announcements": "Announcements",
+    "launchpad:bug": "Bug",
+    "launchpad:bugs": "Latest bugs",
+    "launchpad:branch": "Branch",
+    "launchpad:branches": "Branches",
+    "launchpad:revisions": "Revisions"
   }
 }
