@@ -1796,6 +1796,16 @@ Discovers the RSS feeds of Flipboard profiles, magazines, storyboards and topics
 | `flipboard.com/@{username}/{magazine}` | Magazine or storyboard feed |
 | `flipboard.com/topic/{topic}` | Topic feed |
 
+### Webtoons
+
+Discovers the episode feed of a WEBTOON series, Originals and Canvas alike.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `webtoons.com/{language}/{genre}/{name}/list?title_no={id}` | Series feed |
+| `webtoons.com/{language}/{genre}/{name}/{episode}/viewer?title_no={id}` | Series feed |
+| `webtoons.com/{language}/canvas/{name}/list?title_no={id}` | Series feed |
+
 ## Basic Usage
 
 ```typescript
@@ -1981,6 +1991,7 @@ import {
   velogHandler,
   vimeoHandler,
   weblogLolHandler,
+  webtoonsHandler,
   weeblyHandler,
   wikidotHandler,
   wordpressHandler,
