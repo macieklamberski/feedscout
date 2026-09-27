@@ -221,6 +221,10 @@
     "https://random.insanejournal.com/data/rss",
     "https://random.insanejournal.com/data/atom"
   ],
+  "internetArchive": [
+    "https://archive.org/services/collection-rss.php?collection=oldtimeradio",
+    "https://archive.org/services/collection-rss.php?query=subject%3Atrance"
+  ],
   "itchio": [
     "https://qeresi.itch.io/a-tale-of-crowns/devlog.rss",
     "https://itch.io/games/by-leafo.xml",
