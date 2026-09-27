@@ -776,6 +776,9 @@
       "skip": "empty feed on every subreddit tried"
     }
   },
+  "royalroad": {
+    "royalroad:fiction": "https://www.royalroad.com/syndication/21220"
+  },
   "rssCom": {
     "rss-com:podcast": "https://media.rss.com/podcasting101/feed.xml"
   },
