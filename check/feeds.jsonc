@@ -647,6 +647,9 @@
   "podigee": {
     "podigee:podcast": "https://cui-bono.podigee.io/feed/mp3"
   },
+  "podlove": {
+    "podlove:podcast": ["https://freakshow.fm/feed/mp3", "https://cre.fm/feed/opus"]
+  },
   "podomatic": {
     "podomatic:show": "https://asquaredpodcast10.podomatic.com/rss2.xml"
   },
