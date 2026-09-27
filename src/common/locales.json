@@ -352,6 +352,8 @@
     "fluxbb:posts": "Posts",
     "fluxbb:forum": "Forum",
     "fluxbb:topic": "Topic",
+    "smf:posts": "Posts",
+    "smf:board": "Board",
     "hubzilla:channel": "Channel",
     "mobilizon:instance": "Instance",
     "mobilizon:group": "Group",

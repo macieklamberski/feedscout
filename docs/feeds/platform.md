@@ -1398,6 +1398,19 @@ Discovers the feeds of a MyBB board. Detected by the `mybb[lastvisit]` cookie, u
 > [!NOTE]
 > A board is routinely mounted under a sub-path, so the feed is built from the board URL the page prints as `rootpath`, or from the page's directory on a board older than 1.8.
 
+### SMF
+
+Discovers the feeds of a Simple Machines Forum. Detected by the `smf_scripturl` and `smf_theme_url` script variables core prints in every page head.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `{script}?board={id}` | Board feed + recent posts feed (RSS + Atom) |
+| `{script}?topic={id}` | Board feed from the `rel="index"` link + recent posts feed (RSS + Atom) |
+| Any other page | Recent posts feed (RSS + Atom) |
+
+> [!NOTE]
+> A forum is routinely mounted under a sub-path, so the feed is built from the script URL the page prints as `smf_scripturl`. A forum can disable feeds, and then the feed URLs answer with an HTML page.
+
 ### Mobilizon
 
 Discovers the feeds of a Mobilizon instance or group. Detected by the noscript notice, which is the only text the server renders on every page.
