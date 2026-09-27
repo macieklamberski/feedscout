@@ -48,8 +48,8 @@ export const nebulaHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    const { pathname, searchParams } = new URL(url)
-    const pathSegments = pathname.split('/').filter(Boolean)
+    const { searchParams } = new URL(url)
+    const pathSegments = getPathSegments(url)
 
     // Root, /videos, or /explore[/{tab}] — global feed (optionally filtered by category).
     if (pathSegments.length === 0 || isAnyOf(pathSegments[0], globalPaths)) {

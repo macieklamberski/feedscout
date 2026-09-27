@@ -1,4 +1,11 @@
-import { getSubdomain, isAnyOf, isHostOf, isHostOrSubdomainOf, isSubdomainOf } from 'trousse'
+import {
+  getPathSegments,
+  getSubdomain,
+  isAnyOf,
+  isHostOf,
+  isHostOrSubdomainOf,
+  isSubdomainOf,
+} from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
@@ -44,7 +51,7 @@ export const artstationHandler: PlatformHandler = {
       ]
     }
 
-    const pathSegments = parsed.pathname.split('/').filter(Boolean)
+    const pathSegments = getPathSegments(parsed)
 
     // Global artwork page: /artwork
     if (isAnyOf(pathSegments[0], 'artwork') || pathSegments.length === 0) {

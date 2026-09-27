@@ -1,4 +1,4 @@
-import { isAnyOf, isHostOf } from 'trousse'
+import { getPathSegments, isAnyOf, isHostOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
@@ -79,7 +79,7 @@ export const qiitaHandler: PlatformHandler = {
       ]
     }
 
-    const pathSegments = pathname.split('/').filter(Boolean)
+    const pathSegments = getPathSegments(url)
 
     if (pathSegments.length === 0) {
       return []

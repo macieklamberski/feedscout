@@ -34,6 +34,7 @@ import { powerpressHandler } from './powerpress.js'
 import { publiiHandler } from './publii.js'
 import { shaarliHandler } from './shaarli.js'
 import { shopifyHandler } from './shopify.js'
+import { smfHandler } from './smf.js'
 import { snacHandler } from './snac.js'
 import { squarespaceHandler } from './squarespace.js'
 import { svbtleHandler } from './svbtle.js'
@@ -146,6 +147,11 @@ const cases: Array<Case> = [
   ['publii', publiiHandler, '<img src="https://example.org/media/website/logo.png">'],
   ['shaarli', shaarliHandler, '<div id="shaarli-menu"></div>'],
   ['shopify', shopifyHandler, '', new Headers({ 'powered-by': 'Shopify' })],
+  [
+    'smf',
+    smfHandler,
+    '<script>var smf_scripturl = "https://example.org/index.php";var smf_theme_url = "";</script>',
+  ],
   ['snac', snacHandler, '', new Headers({ 'x-creator': 'snac/2.95' })],
   ['squarespace', squarespaceHandler, '', new Headers({ server: 'Squarespace' })],
   ['svbtle', svbtleHandler, '<link href="https://lightning.svbtle.com/cargo/blog.css">'],

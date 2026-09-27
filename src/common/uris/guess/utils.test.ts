@@ -636,6 +636,20 @@ describe('getSubdomainVariants', () => {
     expect(getSubdomainVariants(value, ['blog'])).toEqual(expected)
   })
 
+  it('should keep the registered name under a co.uk suffix', () => {
+    const value = 'https://www.example.co.uk'
+    const expected = ['https://blog.example.co.uk']
+
+    expect(getSubdomainVariants(value, ['blog'])).toEqual(expected)
+  })
+
+  it('should keep the registered name under a com.au suffix', () => {
+    const value = 'https://news.example.com.au'
+    const expected = ['https://example.com.au', 'https://blog.example.com.au']
+
+    expect(getSubdomainVariants(value, ['', 'blog'])).toEqual(expected)
+  })
+
   it('should handle www in prefixes', () => {
     const value = 'https://example.com'
     const expected = ['https://www.example.com']

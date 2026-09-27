@@ -116,7 +116,7 @@ export const redditHandler: PlatformHandler = {
 
   resolve: (url) => {
     const { pathname, searchParams } = new URL(url)
-    const pathSegments = pathname.split('/').filter(Boolean)
+    const pathSegments = getPathSegments(url)
 
     // Homepage: reddit.com/
     if (pathSegments.length === 0) {

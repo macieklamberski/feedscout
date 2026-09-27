@@ -1,4 +1,4 @@
-import { isAnyOf, isHostOf } from 'trousse'
+import { getPathSegments, isAnyOf, isHostOf } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
@@ -10,7 +10,7 @@ const hosts = ['learnku.com', 'www.learnku.com']
 const excludedPaths = ['search', 'login', 'register', 'settings', 'notifications', 'users', 'api']
 
 const getCommunity = (url: string): string | undefined => {
-  const [first] = new URL(url).pathname.split('/').filter(Boolean)
+  const [first] = getPathSegments(url)
 
   if (!first || isAnyOf(first, excludedPaths)) {
     return

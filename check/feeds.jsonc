@@ -709,6 +709,16 @@
   "shopify": {
     "shopify:blog": "https://www.allbirds.com/blogs/news.atom"
   },
+  "smf": {
+    "smf:board": [
+      "https://forum.pellesc.de/index.php?action=.xml;type=rss2;board=18",
+      "https://forum.pellesc.de/index.php?action=.xml;type=atom;board=18"
+    ],
+    "smf:posts": [
+      "https://forum.opnsense.org/index.php?action=.xml;type=rss2",
+      "https://forum.opnsense.org/index.php?action=.xml;type=atom"
+    ]
+  },
   "snac": {
     "snac:posts": "https://comam.es/snac/grunfink.rss"
   },
