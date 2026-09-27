@@ -1704,6 +1704,16 @@ Discovers the RSS feed of a LibriVox audiobook, read from the feed link on the a
 |-------------|-----------------|
 | `librivox.org/{slug}` | Audiobook feed (RSS) |
 
+### PyPI
+
+Discovers the RSS feeds of the Python Package Index, built from the URL.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `pypi.org` | New packages + recent updates feeds (RSS) |
+| `pypi.org/project/{name}` | Project releases feed (RSS) |
+| `pypi.org/project/{name}/{version}` | Project releases feed (RSS) |
+
 ## Basic Usage
 
 ```typescript
@@ -1853,6 +1863,7 @@ import {
   postypeHandler,
   producthuntHandler,
   proseHandler,
+  pypiHandler,
   qiitaHandler,
   redditHandler,
   rssComHandler,

@@ -131,6 +131,7 @@ import { powerpressHandler } from './platforms/powerpress.js'
 import { producthuntHandler } from './platforms/producthunt.js'
 import { proseHandler } from './platforms/prose.js'
 import { publiiHandler } from './platforms/publii.js'
+import { pypiHandler } from './platforms/pypi.js'
 import { qiitaHandler } from './platforms/qiita.js'
 import { redditHandler } from './platforms/reddit.js'
 import { rssComHandler } from './platforms/rssCom.js'
@@ -434,6 +435,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     producthuntHandler,
     proseHandler,
     publiiHandler,
+    pypiHandler,
     qiitaHandler,
     redditHandler,
     rssComHandler,
