@@ -1,7 +1,6 @@
 import { describe, expect, it } from 'bun:test'
 import type { DiscoverUriHint, FetchFn } from './types.js'
 import {
-  collapsePathSlashes,
   composeHint,
   type Element,
   findDescendant,
@@ -565,34 +564,6 @@ describe('getCookieNames', () => {
 
   it('should return an empty array without Set-Cookie', () => {
     expect(getCookieNames(new Headers())).toEqual([])
-  })
-})
-
-describe('collapsePathSlashes', () => {
-  it('should collapse repeated slashes in the path', () => {
-    const value = 'https://example.com/r//programming///hot'
-    const expected = 'https://example.com/r/programming/hot'
-
-    expect(collapsePathSlashes(value)).toBe(expected)
-  })
-
-  it('should keep repeated slashes in the query string and fragment', () => {
-    const value = 'https://example.com//page?next=//example.org#a//b'
-    const expected = 'https://example.com/page?next=//example.org#a//b'
-
-    expect(collapsePathSlashes(value)).toBe(expected)
-  })
-
-  it('should return the url unchanged when the path has no repeated slashes', () => {
-    const value = 'https://example.com/page?next=//example.org'
-
-    expect(collapsePathSlashes(value)).toBe(value)
-  })
-
-  it('should return an unparseable url unchanged', () => {
-    const value = 'not a url//path'
-
-    expect(collapsePathSlashes(value)).toBe(value)
   })
 })
 

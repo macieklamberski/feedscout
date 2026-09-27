@@ -1,7 +1,6 @@
-import { isHttpUrl } from 'trousse'
+import { isHttpUrl, normalizeUrl } from 'trousse'
 import { reportError } from '../../discover/utils.js'
 import type { DiscoverOnErrorFn, DiscoverRef, DiscoverUriEntry, FetchFn } from '../../types.js'
-import { collapsePathSlashes } from '../../utils.js'
 import type { PlatformMethodOptions } from './types.js'
 
 export type PlatformResolution = {
@@ -26,7 +25,7 @@ export const resolveFromPlatform = async (
     return { entries, guessExclusionRegexes }
   }
 
-  const pageUrl = collapsePathSlashes(baseUrl)
+  const pageUrl = normalizeUrl(baseUrl, { collapseSlashes: true })
 
   for (const handler of handlers) {
     try {
