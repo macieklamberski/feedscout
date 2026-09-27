@@ -1,4 +1,4 @@
-import { isAnyOf, isHostOf, parseUrl } from 'trousse'
+import { getPathSegments, isAnyOf, isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
@@ -17,7 +17,7 @@ export const parseSourceforgeUrl = (url: string): SourceforgeUrl | undefined => 
     return
   }
 
-  const [prefix, project] = parsedUrl.pathname.split('/').filter(Boolean)
+  const [prefix, project] = getPathSegments(parsedUrl)
 
   if (!project || !isAnyOf(prefix, projectPrefixes)) {
     return

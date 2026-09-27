@@ -1,4 +1,4 @@
-import { getAnyOf } from 'trousse'
+import { getAnyOf, getPathSegments } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, hasMetaContent } from '../../common/utils.js'
@@ -13,7 +13,7 @@ const listingKinds = ['author', 'tag', 'topic']
 const blogContentTypes = ['BLOG_LISTING_PAGE', 'BLOG_POST', 'BLOG_AUTHOR', 'TAG']
 
 const getBlogPath = (url: string): string | undefined => {
-  const [first] = new URL(url).pathname.split('/').filter(Boolean)
+  const [first] = getPathSegments(url)
 
   return first
 }
