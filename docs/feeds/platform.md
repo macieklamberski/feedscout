@@ -1736,6 +1736,15 @@ Discovers the RSS feeds of the Python Package Index, built from the URL.
 | `pypi.org/project/{name}` | Project releases feed (RSS) |
 | `pypi.org/project/{name}/{version}` | Project releases feed (RSS) |
 
+### RedCircle
+
+Discovers the RSS feed of a RedCircle show. A show under a slug is read from the show uuid its page names in `og:url`.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `redcircle.com/shows/{uuid}` or `redcircle.com/shows/{slug}` | Show feed (RSS) |
+| `redcircle.com/shows/{uuid}/ep/{episode}` or `redcircle.com/shows/{slug}/ep/{episode}` | Show feed (RSS) |
+
 ## Basic Usage
 
 ```typescript
@@ -1888,6 +1897,7 @@ import {
   proseHandler,
   pypiHandler,
   qiitaHandler,
+  redcircleHandler,
   redditHandler,
   rssComHandler,
   rubygemsHandler,
