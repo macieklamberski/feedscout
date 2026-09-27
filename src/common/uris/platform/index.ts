@@ -1,9 +1,8 @@
-import { isHttpUrl, parseUrl } from 'trousse'
+import { isHttpUrl } from 'trousse'
 import { reportError } from '../../discover/utils.js'
 import type { DiscoverOnErrorFn, DiscoverRef, DiscoverUriEntry, FetchFn } from '../../types.js'
+import { collapsePathSlashes } from '../../utils.js'
 import type { PlatformMethodOptions } from './types.js'
-
-const repeatedSlashRegex = /\/{2,}/g
 
 export const discoverUrisFromPlatform = async (
   content: string | undefined,
@@ -21,15 +20,7 @@ export const discoverUrisFromPlatform = async (
     return entries
   }
 
-  // A sloppy link can double a slash in the path, which handlers that split the path and handlers
-  // that match it with a regex read differently, so every handler sees the path collapsed.
-  const parsedUrl = parseUrl(baseUrl)
-  let pageUrl = baseUrl
-
-  if (parsedUrl?.pathname.includes('//')) {
-    parsedUrl.pathname = parsedUrl.pathname.replace(repeatedSlashRegex, '/')
-    pageUrl = parsedUrl.href
-  }
+  const pageUrl = collapsePathSlashes(baseUrl)
 
   for (const handler of handlers) {
     try {
