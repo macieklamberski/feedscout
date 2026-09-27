@@ -369,6 +369,24 @@ Discovers Atom feeds for Kickstarter projects and global new projects.
 | `kickstarter.com/discover` | Global new projects feed |
 | `kickstarter.com/projects/{creator}/{project}` | Project updates feed |
 
+### Launchpad
+
+Discovers the Atom feeds Launchpad serves on `feeds.launchpad.net` for projects, distributions, people, teams, bugs and Bazaar branches. The `bugs.` and `code.` subdomains get the feeds of their own section.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `launchpad.net` | Announcements feed |
+| `bugs.launchpad.net` | Latest bugs feed |
+| `launchpad.net/{project}` | Announcements + latest bugs + branches + revisions feeds |
+| `bugs.launchpad.net/{project}` | Latest bugs feed |
+| `code.launchpad.net/{project}` | Branches + revisions feeds |
+| `launchpad.net/~{user}` | Latest bugs + branches + revisions feeds |
+| `bugs.launchpad.net/~{user}` | Latest bugs feed |
+| `code.launchpad.net/~{user}` | Branches + revisions feeds |
+| `bugs.launchpad.net/{distro}/+source/{package}` | Package latest bugs feed |
+| `bugs.launchpad.net/{project}/+bug/{id}` or `bugs.launchpad.net/bugs/{id}` | Bug feed |
+| `code.launchpad.net/~{user}/{project}/{branch}` | Branch feed |
+
 ### Letterboxd
 
 Discovers RSS feeds for Letterboxd user profiles.
@@ -581,6 +599,17 @@ Discovers RSS and JSON feeds for Fireside.fm-hosted podcasts.
 |-------------|-----------------|
 | `*.fireside.fm` | Podcast feed (RSS + JSON) |
 
+### Firstory
+
+Discovers the RSS feed of a Firstory podcast. The feed is keyed by the show's ID, which the handler reads from the page.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `open.firstory.fm/user/{show}` | Podcast feed (RSS) |
+| `open.firstory.fm/story/{episodeId}` | Podcast feed (RSS) |
+| `{show}.firstory.cc` | Podcast feed (RSS) |
+| `{show}.firstory.cc/episodes/{episodeId}` | Podcast feed (RSS) |
+
 ### Hacker News
 
 Discovers RSS feeds for Hacker News.
@@ -746,6 +775,14 @@ Discovers the RSS feed of a podcast hosted on a Castopod instance. Detected by t
 | `{instance}/@{handle}` | Podcast feed (RSS) |
 | `{instance}/@{handle}/episodes/{slug}` | Podcast feed (RSS) |
 
+### Castos
+
+Discovers RSS feeds for podcasts with a Castos-hosted website.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `*.castos.com` | Podcast feed (RSS) |
+
 ### Discourse
 
 Discovers RSS feeds for Discourse forums. Detected by the `Discourse` generator meta tag, the `data-discourse-setup` meta tag or the `X-Discourse-Route` response header.
@@ -819,6 +856,14 @@ Discovers RSS and Atom feeds for InsaneJournal journals.
 |-------------|-----------------|
 | `*.insanejournal.com` | Posts feed (RSS + Atom) + userpics (Atom) |
 
+### JUGEM
+
+Discovers RSS 1.0 and Atom feeds for JUGEM blogs.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `{blog}.jugem.jp` | Posts feed (RSS 1.0 + Atom) |
+
 ### Lemmy
 
 Discovers RSS feeds for Lemmy instances, communities and users. Detected by the `lemmy-site` app root, the `Lemmy` generator meta tag or the `X-Powered-By` response header. There is no hardcoded instance list.
@@ -856,6 +901,15 @@ Discovers RSS feeds for Mataroa blogs.
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | `*.mataroa.blog` | Blog feed |
+
+### Megaphone
+
+Discovers RSS feeds for Megaphone-hosted podcasts from their embed players.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `playlist.megaphone.fm/?p={id}` | Podcast feed |
+| `player.megaphone.fm/{episode}` | Podcast feed (read from the page) |
 
 ### Micro.blog
 
@@ -930,6 +984,16 @@ Discovers RSS feeds for Podbean-hosted podcasts.
 |-------------|-----------------|
 | `*.podbean.com` | Podcast feed |
 
+### Podhome
+
+Discovers the RSS feed of a Podhome show, on `serve.podhome.fm` or a custom domain. Detected by the show site's assets on `cdn.podhome.fm`, and the feed is read from the page, since its URL carries an ID the page URL does not.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `serve.podhome.fm/{show}` | Podcast feed (RSS) |
+| `serve.podhome.fm/episodepage/{show}/{episode}` | Podcast feed (RSS) |
+| Any page of a show on a custom domain | Podcast feed (RSS) |
+
 ### Podigee
 
 Discovers RSS feeds for Podigee-hosted podcasts.
@@ -964,6 +1028,17 @@ Discovers RSS feeds for RSS.com-hosted podcasts.
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | `rss.com/podcasts/{slug}` | Podcast feed |
+
+### RubyGems
+
+Discovers Atom feeds for RubyGems.org gems and the site-wide latest gems.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `rubygems.org/gems/{name}` | Gem versions feed (Atom) |
+| `rubygems.org` | Latest gems feed (Atom) |
+
+> Every page links the latest gems feed through a FeedBurner address that now serves HTML, so the handler emits the rubygems.org copy.
 
 ### Seesaa Blog
 
@@ -1065,6 +1140,15 @@ Discovers the Atom feed of a diaspora* profile. Detected by the `Diaspora.Page` 
 | `{pod}/people/{guid}` | Posts feed (Atom)* |
 
 \* *Requires HTML content to read the username from the profile's diaspora ID.*
+
+### Instatus
+
+Discovers the incident history feeds of an Instatus status page. Detected by the status page route Instatus names in the `x-matched-path` response header, or by the custom HTML slots of its page template, so custom domains are covered as well as `*.instatus.com` hosts.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| Any status page | Incident history feed (RSS + Atom) |
+| `{page}/{language}/...` | Translated incident history feed (RSS + Atom) |
 
 ### Jira
 
@@ -1593,6 +1677,17 @@ Discovers the RSS feeds of crates.io, built from the URL, since the page answers
 > [!NOTE]
 > The feed path takes the crate name exactly as crates.io spells it, so a page URL with another case or `-` in place of `_` leads to a feed that answers 403.
 
+### Packagist
+
+Discovers the RSS and Atom feeds of Packagist packages, vendors and the site.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `packagist.org/packages/{vendor}/{package}` | Package releases feed (RSS + Atom) |
+| `packagist.org/packages/{vendor}` | Vendor releases feed (RSS + Atom) |
+| `packagist.org/extensions` | New extensions + extension releases feeds (RSS + Atom) |
+| `packagist.org/*` | New packages + new releases feeds (RSS + Atom) |
+
 ### Plurk
 
 Discovers Atom feeds for Plurk users and single plurks.
@@ -1672,6 +1767,84 @@ Discovers the video, live and blog feeds of a Niconico channel on `ch.nicovideo.
 | `ch.nicovideo.jp/{channel}/live` | Live first, then Videos + Blog |
 | `ch.nicovideo.jp/{channel}/blomaga` or `ch.nicovideo.jp/{channel}/blomaga/ar{id}` | Blog first, then Videos + Live |
 
+### LibriVox
+
+Discovers the RSS feed of a LibriVox audiobook, read from the feed link on the audiobook page.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `librivox.org/{slug}` | Audiobook feed (RSS) |
+
+### PyPI
+
+Discovers the RSS feeds of the Python Package Index, built from the URL.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `pypi.org` | New packages + recent updates feeds (RSS) |
+| `pypi.org/project/{name}` | Project releases feed (RSS) |
+| `pypi.org/project/{name}/{version}` | Project releases feed (RSS) |
+
+### RedCircle
+
+Discovers the RSS feed of a RedCircle show. A show under a slug is read from the show uuid its page names in `og:url`.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `redcircle.com/shows/{uuid}` or `redcircle.com/shows/{slug}` | Show feed (RSS) |
+| `redcircle.com/shows/{uuid}/ep/{episode}` or `redcircle.com/shows/{slug}/ep/{episode}` | Show feed (RSS) |
+
+### Royal Road
+
+Discovers the update feed of a Royal Road fiction.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `royalroad.com/fiction/{id}` or `royalroad.com/fiction/{id}/{slug}` | Fiction updates (RSS) |
+| `royalroad.com/fiction/{id}/{slug}/chapter/{chapterId}/{chapterSlug}` | Fiction updates (RSS) |
+
+> [!NOTE]
+> Profile pages and fiction lists serve no feed, so only fiction and chapter pages resolve.
+
+### Flipboard
+
+Discovers the RSS feeds of Flipboard profiles, magazines, storyboards and topics.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `flipboard.com/@{username}` | Profile feed |
+| `flipboard.com/@{username}/{magazine}` | Magazine or storyboard feed |
+| `flipboard.com/topic/{topic}` | Topic feed |
+
+### Webtoons
+
+Discovers the episode feed of a WEBTOON series, Originals and Canvas alike.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `webtoons.com/{language}/{genre}/{name}/list?title_no={id}` | Series feed |
+| `webtoons.com/{language}/{genre}/{name}/{episode}/viewer?title_no={id}` | Series feed |
+| `webtoons.com/{language}/canvas/{name}/list?title_no={id}` | Series feed |
+
+### Lichess
+
+Discovers Atom feeds for Lichess user blogs, the official blog and the community blogs.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `lichess.org/@/{user}/blog` or `lichess.org/@/{user}/blog/{slug}/{id}` | User blog feed |
+| `lichess.org/blog` or `lichess.org/blog/{id}/{slug}` | Official Lichess blog feed |
+| `lichess.org/blog/community` or `lichess.org/{lang}/blog/community` | Community blogs feed, in that language when the URL names one |
+| Any other page | Site-wide updates feed |
+
+### @wiki
+
+Discovers the updated pages and new pages feeds of an @wiki (atwiki.jp) wiki. Links to the legacy `www{N}.atwiki.jp` hosts redirect to `w.atwiki.jp`.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `w.atwiki.jp/{wiki}/…` | Updated pages (RDF + Atom) + new pages (RDF) |
+
 ## Basic Usage
 
 ```typescript
@@ -1724,6 +1897,7 @@ import {
   arenaHandler,
   art19Handler,
   artstationHandler,
+  atwikiHandler,
   atyponHandler,
   audioboomHandler,
   aushaHandler,
@@ -1737,6 +1911,7 @@ import {
   buzzsproutHandler,
   captivateHandler,
   castopodHandler,
+  castosHandler,
   cnblogsHandler,
   confluenceHandler,
   cratesIoHandler,
@@ -1753,7 +1928,9 @@ import {
   exblogHandler,
   fc2Handler,
   firesideHandler,
+  firstoryHandler,
   flickrHandler,
+  flipboardHandler,
   friendicaHandler,
   gancioHandler,
   ghostHandler,
@@ -1770,15 +1947,20 @@ import {
   hearthisHandler,
   heyWorldHandler,
   insanejournalHandler,
+  instatusHandler,
   internetArchiveHandler,
   itchioHandler,
   ivooxHandler,
   jiraHandler,
+  jugemHandler,
   kickstarterHandler,
+  launchpadHandler,
   learnkuHandler,
   lemmyHandler,
   letterboxdHandler,
+  librivoxHandler,
   libsynHandler,
+  lichessHandler,
   listedHandler,
   livejournalHandler,
   lobstersHandler,
@@ -1787,6 +1969,7 @@ import {
   mataroaHandler,
   mediawikiHandler,
   mediumHandler,
+  megaphoneHandler,
   microblogHandler,
   misskeyHandler,
   myanimelistHandler,
@@ -1800,6 +1983,7 @@ import {
   odyseeHandler,
   omnystudioHandler,
   openstatusHandler,
+  packagistHandler,
   pagecordHandler,
   paragraphHandler,
   peertubeHandler,
@@ -1810,6 +1994,7 @@ import {
   pleromaHandler,
   plurkHandler,
   podbeanHandler,
+  podhomeHandler,
   podigeeHandler,
   podloveHandler,
   podomaticHandler,
@@ -1817,9 +2002,13 @@ import {
   postypeHandler,
   producthuntHandler,
   proseHandler,
+  pypiHandler,
   qiitaHandler,
+  redcircleHandler,
   redditHandler,
+  royalroadHandler,
   rssComHandler,
+  rubygemsHandler,
   seesaaHandler,
   shopifyHandler,
   soundcloudHandler,
@@ -1844,6 +2033,7 @@ import {
   velogHandler,
   vimeoHandler,
   weblogLolHandler,
+  webtoonsHandler,
   weeblyHandler,
   wikidotHandler,
   wordpressHandler,

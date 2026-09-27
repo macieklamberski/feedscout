@@ -50,7 +50,6 @@ describe('wordpressHandler', () => {
         {
           uri: [
             'https://example.wordpress.com/comments/feed/',
-            'https://example.wordpress.com/?feed=comments-rss',
             'https://example.wordpress.com/comments/feed/rss2/',
             'https://example.wordpress.com/?feed=comments-rss2',
           ],
@@ -62,13 +61,6 @@ describe('wordpressHandler', () => {
             'https://example.wordpress.com/?feed=comments-atom',
           ],
           hint: { key: 'wordpress:comments', label: 'Comments', format: 'atom' },
-        },
-        {
-          uri: [
-            'https://example.wordpress.com/comments/feed/rdf/',
-            'https://example.wordpress.com/?feed=comments-rdf',
-          ],
-          hint: { key: 'wordpress:comments', label: 'Comments', format: 'rdf' },
         },
       ]
 
@@ -104,7 +96,6 @@ describe('wordpressHandler', () => {
         {
           uri: [
             'https://example.wordpress.com/comments/feed/',
-            'https://example.wordpress.com/?feed=comments-rss',
             'https://example.wordpress.com/comments/feed/rss2/',
             'https://example.wordpress.com/?feed=comments-rss2',
           ],
@@ -116,13 +107,6 @@ describe('wordpressHandler', () => {
             'https://example.wordpress.com/?feed=comments-atom',
           ],
           hint: { key: 'wordpress:comments', label: 'Comments', format: 'atom' },
-        },
-        {
-          uri: [
-            'https://example.wordpress.com/comments/feed/rdf/',
-            'https://example.wordpress.com/?feed=comments-rdf',
-          ],
-          hint: { key: 'wordpress:comments', label: 'Comments', format: 'rdf' },
         },
       ]
 
@@ -150,13 +134,6 @@ describe('wordpressHandler', () => {
         },
         {
           uri: [
-            'https://example.wordpress.com/2024/01/01/some-post/feed/rdf/',
-            'https://example.wordpress.com/2024/01/01/some-post/?feed=rdf',
-          ],
-          hint: { key: 'wordpress:post-comments', label: 'Post comments', format: 'rdf' },
-        },
-        {
-          uri: [
             'https://example.wordpress.com/feed/',
             'https://example.wordpress.com/?feed=rss',
             'https://example.wordpress.com/feed/rss2/',
@@ -181,7 +158,6 @@ describe('wordpressHandler', () => {
         {
           uri: [
             'https://example.wordpress.com/comments/feed/',
-            'https://example.wordpress.com/?feed=comments-rss',
             'https://example.wordpress.com/comments/feed/rss2/',
             'https://example.wordpress.com/?feed=comments-rss2',
           ],
@@ -193,13 +169,6 @@ describe('wordpressHandler', () => {
             'https://example.wordpress.com/?feed=comments-atom',
           ],
           hint: { key: 'wordpress:comments', label: 'Comments', format: 'atom' },
-        },
-        {
-          uri: [
-            'https://example.wordpress.com/comments/feed/rdf/',
-            'https://example.wordpress.com/?feed=comments-rdf',
-          ],
-          hint: { key: 'wordpress:comments', label: 'Comments', format: 'rdf' },
         },
       ]
 
@@ -258,7 +227,6 @@ describe('wordpressHandler', () => {
         {
           uri: [
             'https://example.wordpress.com/comments/feed/',
-            'https://example.wordpress.com/?feed=comments-rss',
             'https://example.wordpress.com/comments/feed/rss2/',
             'https://example.wordpress.com/?feed=comments-rss2',
           ],
@@ -270,13 +238,6 @@ describe('wordpressHandler', () => {
             'https://example.wordpress.com/?feed=comments-atom',
           ],
           hint: { key: 'wordpress:comments', label: 'Comments', format: 'atom' },
-        },
-        {
-          uri: [
-            'https://example.wordpress.com/comments/feed/rdf/',
-            'https://example.wordpress.com/?feed=comments-rdf',
-          ],
-          hint: { key: 'wordpress:comments', label: 'Comments', format: 'rdf' },
         },
       ]
 
@@ -335,7 +296,6 @@ describe('wordpressHandler', () => {
         {
           uri: [
             'https://example.wordpress.com/comments/feed/',
-            'https://example.wordpress.com/?feed=comments-rss',
             'https://example.wordpress.com/comments/feed/rss2/',
             'https://example.wordpress.com/?feed=comments-rss2',
           ],
@@ -347,13 +307,6 @@ describe('wordpressHandler', () => {
             'https://example.wordpress.com/?feed=comments-atom',
           ],
           hint: { key: 'wordpress:comments', label: 'Comments', format: 'atom' },
-        },
-        {
-          uri: [
-            'https://example.wordpress.com/comments/feed/rdf/',
-            'https://example.wordpress.com/?feed=comments-rdf',
-          ],
-          hint: { key: 'wordpress:comments', label: 'Comments', format: 'rdf' },
         },
       ]
 
@@ -412,7 +365,6 @@ describe('wordpressHandler', () => {
         {
           uri: [
             'https://example.wordpress.com/comments/feed/',
-            'https://example.wordpress.com/?feed=comments-rss',
             'https://example.wordpress.com/comments/feed/rss2/',
             'https://example.wordpress.com/?feed=comments-rss2',
           ],
@@ -424,13 +376,6 @@ describe('wordpressHandler', () => {
             'https://example.wordpress.com/?feed=comments-atom',
           ],
           hint: { key: 'wordpress:comments', label: 'Comments', format: 'atom' },
-        },
-        {
-          uri: [
-            'https://example.wordpress.com/comments/feed/rdf/',
-            'https://example.wordpress.com/?feed=comments-rdf',
-          ],
-          hint: { key: 'wordpress:comments', label: 'Comments', format: 'rdf' },
         },
       ]
 
@@ -489,7 +434,6 @@ describe('wordpressHandler', () => {
         {
           uri: [
             'https://example.wordpress.com/comments/feed/',
-            'https://example.wordpress.com/?feed=comments-rss',
             'https://example.wordpress.com/comments/feed/rss2/',
             'https://example.wordpress.com/?feed=comments-rss2',
           ],
@@ -501,13 +445,6 @@ describe('wordpressHandler', () => {
             'https://example.wordpress.com/?feed=comments-atom',
           ],
           hint: { key: 'wordpress:comments', label: 'Comments', format: 'atom' },
-        },
-        {
-          uri: [
-            'https://example.wordpress.com/comments/feed/rdf/',
-            'https://example.wordpress.com/?feed=comments-rdf',
-          ],
-          hint: { key: 'wordpress:comments', label: 'Comments', format: 'rdf' },
         },
       ]
 
@@ -566,7 +503,6 @@ describe('wordpressHandler', () => {
         {
           uri: [
             'https://example.wordpress.com/comments/feed/',
-            'https://example.wordpress.com/?feed=comments-rss',
             'https://example.wordpress.com/comments/feed/rss2/',
             'https://example.wordpress.com/?feed=comments-rss2',
           ],
@@ -578,13 +514,6 @@ describe('wordpressHandler', () => {
             'https://example.wordpress.com/?feed=comments-atom',
           ],
           hint: { key: 'wordpress:comments', label: 'Comments', format: 'atom' },
-        },
-        {
-          uri: [
-            'https://example.wordpress.com/comments/feed/rdf/',
-            'https://example.wordpress.com/?feed=comments-rdf',
-          ],
-          hint: { key: 'wordpress:comments', label: 'Comments', format: 'rdf' },
         },
       ]
 
@@ -643,7 +572,6 @@ describe('wordpressHandler', () => {
         {
           uri: [
             'https://example.wordpress.com/comments/feed/',
-            'https://example.wordpress.com/?feed=comments-rss',
             'https://example.wordpress.com/comments/feed/rss2/',
             'https://example.wordpress.com/?feed=comments-rss2',
           ],
@@ -655,13 +583,6 @@ describe('wordpressHandler', () => {
             'https://example.wordpress.com/?feed=comments-atom',
           ],
           hint: { key: 'wordpress:comments', label: 'Comments', format: 'atom' },
-        },
-        {
-          uri: [
-            'https://example.wordpress.com/comments/feed/rdf/',
-            'https://example.wordpress.com/?feed=comments-rdf',
-          ],
-          hint: { key: 'wordpress:comments', label: 'Comments', format: 'rdf' },
         },
       ]
 
@@ -720,7 +641,6 @@ describe('wordpressHandler', () => {
         {
           uri: [
             'https://example.wordpress.com/comments/feed/',
-            'https://example.wordpress.com/?feed=comments-rss',
             'https://example.wordpress.com/comments/feed/rss2/',
             'https://example.wordpress.com/?feed=comments-rss2',
           ],
@@ -732,13 +652,6 @@ describe('wordpressHandler', () => {
             'https://example.wordpress.com/?feed=comments-atom',
           ],
           hint: { key: 'wordpress:comments', label: 'Comments', format: 'atom' },
-        },
-        {
-          uri: [
-            'https://example.wordpress.com/comments/feed/rdf/',
-            'https://example.wordpress.com/?feed=comments-rdf',
-          ],
-          hint: { key: 'wordpress:comments', label: 'Comments', format: 'rdf' },
         },
       ]
 
@@ -797,7 +710,6 @@ describe('wordpressHandler', () => {
         {
           uri: [
             'https://example.wordpress.com/comments/feed/',
-            'https://example.wordpress.com/?feed=comments-rss',
             'https://example.wordpress.com/comments/feed/rss2/',
             'https://example.wordpress.com/?feed=comments-rss2',
           ],
@@ -809,13 +721,6 @@ describe('wordpressHandler', () => {
             'https://example.wordpress.com/?feed=comments-atom',
           ],
           hint: { key: 'wordpress:comments', label: 'Comments', format: 'atom' },
-        },
-        {
-          uri: [
-            'https://example.wordpress.com/comments/feed/rdf/',
-            'https://example.wordpress.com/?feed=comments-rdf',
-          ],
-          hint: { key: 'wordpress:comments', label: 'Comments', format: 'rdf' },
         },
       ]
 
@@ -874,7 +779,6 @@ describe('wordpressHandler', () => {
         {
           uri: [
             'https://example.wordpress.com/comments/feed/',
-            'https://example.wordpress.com/?feed=comments-rss',
             'https://example.wordpress.com/comments/feed/rss2/',
             'https://example.wordpress.com/?feed=comments-rss2',
           ],
@@ -886,13 +790,6 @@ describe('wordpressHandler', () => {
             'https://example.wordpress.com/?feed=comments-atom',
           ],
           hint: { key: 'wordpress:comments', label: 'Comments', format: 'atom' },
-        },
-        {
-          uri: [
-            'https://example.wordpress.com/comments/feed/rdf/',
-            'https://example.wordpress.com/?feed=comments-rdf',
-          ],
-          hint: { key: 'wordpress:comments', label: 'Comments', format: 'rdf' },
         },
       ]
 
@@ -951,7 +848,6 @@ describe('wordpressHandler', () => {
         {
           uri: [
             'https://example.wordpress.com/comments/feed/',
-            'https://example.wordpress.com/?feed=comments-rss',
             'https://example.wordpress.com/comments/feed/rss2/',
             'https://example.wordpress.com/?feed=comments-rss2',
           ],
@@ -963,13 +859,6 @@ describe('wordpressHandler', () => {
             'https://example.wordpress.com/?feed=comments-atom',
           ],
           hint: { key: 'wordpress:comments', label: 'Comments', format: 'atom' },
-        },
-        {
-          uri: [
-            'https://example.wordpress.com/comments/feed/rdf/',
-            'https://example.wordpress.com/?feed=comments-rdf',
-          ],
-          hint: { key: 'wordpress:comments', label: 'Comments', format: 'rdf' },
         },
       ]
 
@@ -997,13 +886,6 @@ describe('wordpressHandler', () => {
         },
         {
           uri: [
-            'https://example.wordpress.com/2024/06/some-post/feed/rdf/',
-            'https://example.wordpress.com/2024/06/some-post/?feed=rdf',
-          ],
-          hint: { key: 'wordpress:post-comments', label: 'Post comments', format: 'rdf' },
-        },
-        {
-          uri: [
             'https://example.wordpress.com/feed/',
             'https://example.wordpress.com/?feed=rss',
             'https://example.wordpress.com/feed/rss2/',
@@ -1028,7 +910,6 @@ describe('wordpressHandler', () => {
         {
           uri: [
             'https://example.wordpress.com/comments/feed/',
-            'https://example.wordpress.com/?feed=comments-rss',
             'https://example.wordpress.com/comments/feed/rss2/',
             'https://example.wordpress.com/?feed=comments-rss2',
           ],
@@ -1040,13 +921,6 @@ describe('wordpressHandler', () => {
             'https://example.wordpress.com/?feed=comments-atom',
           ],
           hint: { key: 'wordpress:comments', label: 'Comments', format: 'atom' },
-        },
-        {
-          uri: [
-            'https://example.wordpress.com/comments/feed/rdf/',
-            'https://example.wordpress.com/?feed=comments-rdf',
-          ],
-          hint: { key: 'wordpress:comments', label: 'Comments', format: 'rdf' },
         },
       ]
 
@@ -1082,7 +956,6 @@ describe('wordpressHandler', () => {
         {
           uri: [
             'https://example.wordpress.com/comments/feed/',
-            'https://example.wordpress.com/?feed=comments-rss',
             'https://example.wordpress.com/comments/feed/rss2/',
             'https://example.wordpress.com/?feed=comments-rss2',
           ],
@@ -1094,13 +967,6 @@ describe('wordpressHandler', () => {
             'https://example.wordpress.com/?feed=comments-atom',
           ],
           hint: { key: 'wordpress:comments', label: 'Comments', format: 'atom' },
-        },
-        {
-          uri: [
-            'https://example.wordpress.com/comments/feed/rdf/',
-            'https://example.wordpress.com/?feed=comments-rdf',
-          ],
-          hint: { key: 'wordpress:comments', label: 'Comments', format: 'rdf' },
         },
       ]
 

@@ -21,6 +21,7 @@ import { applePodcastsHandler } from './platforms/applePodcasts.js'
 import { arenaHandler } from './platforms/arena.js'
 import { art19Handler } from './platforms/art19.js'
 import { artstationHandler } from './platforms/artstation.js'
+import { atwikiHandler } from './platforms/atwiki.js'
 import { atyponHandler } from './platforms/atypon.js'
 import { audioboomHandler } from './platforms/audioboom.js'
 import { aushaHandler } from './platforms/ausha.js'
@@ -34,6 +35,7 @@ import { buttondownHandler } from './platforms/buttondown.js'
 import { buzzsproutHandler } from './platforms/buzzsprout.js'
 import { captivateHandler } from './platforms/captivate.js'
 import { castopodHandler } from './platforms/castopod.js'
+import { castosHandler } from './platforms/castos.js'
 import { cnblogsHandler } from './platforms/cnblogs.js'
 import { confluenceHandler } from './platforms/confluence.js'
 import { cratesIoHandler } from './platforms/cratesIo.js'
@@ -51,7 +53,9 @@ import { drupalHandler } from './platforms/drupal.js'
 import { exblogHandler } from './platforms/exblog.js'
 import { fc2Handler } from './platforms/fc2.js'
 import { firesideHandler } from './platforms/fireside.js'
+import { firstoryHandler } from './platforms/firstory.js'
 import { flickrHandler } from './platforms/flickr.js'
+import { flipboardHandler } from './platforms/flipboard.js'
 import { fluxbbHandler } from './platforms/fluxbb.js'
 import { friendicaHandler } from './platforms/friendica.js'
 import { funkwhaleHandler } from './platforms/funkwhale.js'
@@ -74,16 +78,21 @@ import { homelandHandler } from './platforms/homeland.js'
 import { hubspotHandler } from './platforms/hubspot.js'
 import { hubzillaHandler } from './platforms/hubzilla.js'
 import { insanejournalHandler } from './platforms/insanejournal.js'
+import { instatusHandler } from './platforms/instatus.js'
 import { internetArchiveHandler } from './platforms/internetArchive.js'
 import { itchioHandler } from './platforms/itchio.js'
 import { ivooxHandler } from './platforms/ivoox.js'
 import { jiraHandler } from './platforms/jira.js'
 import { joomlaHandler } from './platforms/joomla.js'
+import { jugemHandler } from './platforms/jugem.js'
 import { kickstarterHandler } from './platforms/kickstarter.js'
+import { launchpadHandler } from './platforms/launchpad.js'
 import { learnkuHandler } from './platforms/learnku.js'
 import { lemmyHandler } from './platforms/lemmy.js'
 import { letterboxdHandler } from './platforms/letterboxd.js'
+import { librivoxHandler } from './platforms/librivox.js'
 import { libsynHandler } from './platforms/libsyn.js'
+import { lichessHandler } from './platforms/lichess.js'
 import { listedHandler } from './platforms/listed.js'
 import { livejournalHandler } from './platforms/livejournal.js'
 import { lobstersHandler } from './platforms/lobsters.js'
@@ -92,6 +101,7 @@ import { mastodonHandler } from './platforms/mastodon.js'
 import { mataroaHandler } from './platforms/mataroa.js'
 import { mediawikiHandler } from './platforms/mediawiki.js'
 import { mediumHandler } from './platforms/medium.js'
+import { megaphoneHandler } from './platforms/megaphone.js'
 import { microblogHandler } from './platforms/microblog.js'
 import { misskeyHandler } from './platforms/misskey.js'
 import { mobilizonHandler } from './platforms/mobilizon.js'
@@ -107,6 +117,7 @@ import { observableHandler } from './platforms/observable.js'
 import { odyseeHandler } from './platforms/odysee.js'
 import { omnystudioHandler } from './platforms/omnystudio.js'
 import { openstatusHandler } from './platforms/openstatus.js'
+import { packagistHandler } from './platforms/packagist.js'
 import { pagecordHandler } from './platforms/pagecord.js'
 import { paragraphHandler } from './platforms/paragraph.js'
 import { peertubeHandler } from './platforms/peertube.js'
@@ -118,6 +129,7 @@ import { pixelfedHandler } from './platforms/pixelfed.js'
 import { pleromaHandler } from './platforms/pleroma.js'
 import { plurkHandler } from './platforms/plurk.js'
 import { podbeanHandler } from './platforms/podbean.js'
+import { podhomeHandler } from './platforms/podhome.js'
 import { podigeeHandler } from './platforms/podigee.js'
 import { podloveHandler } from './platforms/podlove.js'
 import { podomaticHandler } from './platforms/podomatic.js'
@@ -127,9 +139,13 @@ import { powerpressHandler } from './platforms/powerpress.js'
 import { producthuntHandler } from './platforms/producthunt.js'
 import { proseHandler } from './platforms/prose.js'
 import { publiiHandler } from './platforms/publii.js'
+import { pypiHandler } from './platforms/pypi.js'
 import { qiitaHandler } from './platforms/qiita.js'
+import { redcircleHandler } from './platforms/redcircle.js'
 import { redditHandler } from './platforms/reddit.js'
+import { royalroadHandler } from './platforms/royalroad.js'
 import { rssComHandler } from './platforms/rssCom.js'
+import { rubygemsHandler } from './platforms/rubygems.js'
 import { seesaaHandler } from './platforms/seesaa.js'
 import { shaarliHandler } from './platforms/shaarli.js'
 import { shopifyHandler } from './platforms/shopify.js'
@@ -159,6 +175,7 @@ import { v2exHandler } from './platforms/v2ex.js'
 import { velogHandler } from './platforms/velog.js'
 import { vimeoHandler } from './platforms/vimeo.js'
 import { weblogLolHandler } from './platforms/weblogLol.js'
+import { webtoonsHandler } from './platforms/webtoons.js'
 import { weeblyHandler } from './platforms/weebly.js'
 import { wikidotHandler } from './platforms/wikidot.js'
 import { wixHandler } from './platforms/wix.js'
@@ -320,6 +337,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     arenaHandler,
     art19Handler,
     artstationHandler,
+    atwikiHandler,
     atyponHandler,
     audioboomHandler,
     aushaHandler,
@@ -333,6 +351,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     buzzsproutHandler,
     captivateHandler,
     castopodHandler,
+    castosHandler,
     cnblogsHandler,
     confluenceHandler,
     cratesIoHandler,
@@ -350,7 +369,9 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     exblogHandler,
     fc2Handler,
     firesideHandler,
+    firstoryHandler,
     flickrHandler,
+    flipboardHandler,
     fluxbbHandler,
     friendicaHandler,
     funkwhaleHandler,
@@ -373,16 +394,21 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     hubspotHandler,
     hubzillaHandler,
     insanejournalHandler,
+    instatusHandler,
     internetArchiveHandler,
     itchioHandler,
     ivooxHandler,
     jiraHandler,
     joomlaHandler,
+    jugemHandler,
     kickstarterHandler,
+    launchpadHandler,
     learnkuHandler,
     lemmyHandler,
     letterboxdHandler,
+    librivoxHandler,
     libsynHandler,
+    lichessHandler,
     listedHandler,
     livejournalHandler,
     lobstersHandler,
@@ -391,6 +417,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     mataroaHandler,
     mediawikiHandler,
     mediumHandler,
+    megaphoneHandler,
     microblogHandler,
     misskeyHandler,
     mobilizonHandler,
@@ -406,6 +433,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     odyseeHandler,
     omnystudioHandler,
     openstatusHandler,
+    packagistHandler,
     pagecordHandler,
     paragraphHandler,
     peertubeHandler,
@@ -417,6 +445,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     pleromaHandler,
     plurkHandler,
     podbeanHandler,
+    podhomeHandler,
     podigeeHandler,
     podloveHandler,
     podomaticHandler,
@@ -426,9 +455,13 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     producthuntHandler,
     proseHandler,
     publiiHandler,
+    pypiHandler,
     qiitaHandler,
+    redcircleHandler,
     redditHandler,
+    royalroadHandler,
     rssComHandler,
+    rubygemsHandler,
     seesaaHandler,
     shaarliHandler,
     shopifyHandler,
@@ -458,6 +491,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     velogHandler,
     vimeoHandler,
     weblogLolHandler,
+    webtoonsHandler,
     weeblyHandler,
     wikidotHandler,
     wixHandler,

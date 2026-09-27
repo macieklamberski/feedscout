@@ -19,6 +19,7 @@ import { gravHandler } from './grav.js'
 import { homelandHandler } from './homeland.js'
 import { hubspotHandler } from './hubspot.js'
 import { hubzillaHandler } from './hubzilla.js'
+import { instatusHandler } from './instatus.js'
 import { jiraHandler } from './jira.js'
 import { joomlaHandler } from './joomla.js'
 import { lemmyHandler } from './lemmy.js'
@@ -33,6 +34,7 @@ import { peertubeHandler } from './peertube.js'
 import { phpbbHandler } from './phpbb.js'
 import { pixelfedHandler } from './pixelfed.js'
 import { pleromaHandler } from './pleroma.js'
+import { podhomeHandler } from './podhome.js'
 import { podloveHandler } from './podlove.js'
 import { powerpressHandler } from './powerpress.js'
 import { publiiHandler } from './publii.js'
@@ -129,6 +131,12 @@ const cases: Array<Case> = [
   ['homeland', homelandHandler, '', new Headers({ 'set-cookie': '_homeland_session=abc; path=/' })],
   ['hubspot', hubspotHandler, '', new Headers({ 'x-hs-hub-id': '53' })],
   ['hubzilla', hubzillaHandler, "<script>var zid = '';</script>"],
+  [
+    'instatus',
+    instatusHandler,
+    '',
+    new Headers({ 'x-matched-path': '/[lang]/[url]/[type]/[userId]' }),
+  ],
   ['jira', jiraHandler, '<meta name="ajs-base-url" content="https://example.org">'],
   ['joomla', joomlaHandler, '<script class="joomla-script-options new">{}</script>'],
   ['lemmy', lemmyHandler, '<div class="lemmy-site" id="app"></div>'],
@@ -150,6 +158,11 @@ const cases: Array<Case> = [
     'pleroma',
     pleromaHandler,
     '<script id="initial-results" type="application/json">{"/api/pleroma/frontend_configurations":{}}</script>',
+  ],
+  [
+    'podhome',
+    podhomeHandler,
+    '<link href="https://cdn.podhome.fm/servesite3.min.css"><link rel="alternate" href="https://serve.podhome.fm/rss/6d610788">',
   ],
   [
     'podlove',

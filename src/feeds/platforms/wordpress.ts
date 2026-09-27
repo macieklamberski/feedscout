@@ -37,6 +37,13 @@ const getFeedEntries = (base: string, key: string): Array<DiscoverUriEntry> => {
       uri: [`${base}/feed/atom/`, `${base}/?feed=atom`],
       hint: composeHint(key, 'atom'),
     },
+  ]
+}
+
+// WordPress has no RDF comment template, so the RDF form of a comment feed lists posts.
+const getPostsFeedEntries = (base: string, key: string): Array<DiscoverUriEntry> => {
+  return [
+    ...getFeedEntries(base, key),
     {
       uri: [`${base}/feed/rdf/`, `${base}/?feed=rdf`],
       hint: composeHint(key, 'rdf'),
@@ -65,7 +72,7 @@ export const wordpressHandler: PlatformHandler = {
       const archivePath = route
         ? `/${route}/${archiveMatch[1]}`
         : archiveMatch[0].replace(trailingSlashRegex, '')
-      uris.push(...getFeedEntries(`${origin}${archivePath}`, hintKey))
+      uris.push(...getPostsFeedEntries(`${origin}${archivePath}`, hintKey))
     }
 
     // Post page: any non-root, non-archive, non-feed path.
@@ -75,13 +82,13 @@ export const wordpressHandler: PlatformHandler = {
       uris.push(...getFeedEntries(base, 'wordpress:post-comments'))
     }
 
-    uris.push(...getFeedEntries(origin, 'wordpress:posts'))
+    uris.push(...getPostsFeedEntries(origin, 'wordpress:posts'))
 
     // The site-wide comments feed takes its query form from the site root, not /comments.
+    // Without pretty permalinks, ?feed=comments-rss serves the RSS 0.92 posts template.
     uris.push({
       uri: [
         `${origin}/comments/feed/`,
-        `${origin}/?feed=comments-rss`,
         `${origin}/comments/feed/rss2/`,
         `${origin}/?feed=comments-rss2`,
       ],
@@ -90,10 +97,6 @@ export const wordpressHandler: PlatformHandler = {
     uris.push({
       uri: [`${origin}/comments/feed/atom/`, `${origin}/?feed=comments-atom`],
       hint: composeHint('wordpress:comments', 'atom'),
-    })
-    uris.push({
-      uri: [`${origin}/comments/feed/rdf/`, `${origin}/?feed=comments-rdf`],
-      hint: composeHint('wordpress:comments', 'rdf'),
     })
 
     return uris
