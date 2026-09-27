@@ -1767,6 +1767,16 @@ Discovers the update feed of a Royal Road fiction.
 > [!NOTE]
 > Profile pages and fiction lists serve no feed, so only fiction and chapter pages resolve.
 
+### Flipboard
+
+Discovers the RSS feeds of Flipboard profiles, magazines, storyboards and topics.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `flipboard.com/@{username}` | Profile feed |
+| `flipboard.com/@{username}/{magazine}` | Magazine or storyboard feed |
+| `flipboard.com/topic/{topic}` | Topic feed |
+
 ## Basic Usage
 
 ```typescript
@@ -1850,6 +1860,7 @@ import {
   fc2Handler,
   firesideHandler,
   flickrHandler,
+  flipboardHandler,
   friendicaHandler,
   gancioHandler,
   ghostHandler,

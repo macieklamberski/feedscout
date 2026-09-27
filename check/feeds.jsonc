@@ -234,6 +234,11 @@
     "flickr:photos": "https://www.flickr.com/services/feeds/photos_public.gne?id=24662369@N07",
     "flickr:tag": "https://www.flickr.com/services/feeds/photos_public.gne?tags=cats"
   },
+  "flipboard": {
+    "flipboard:magazine": "https://flipboard.com/@theverge/business-arsskhdiz.rss",
+    "flipboard:profile": "https://flipboard.com/@theverge.rss",
+    "flipboard:topic": "https://flipboard.com/topic/technology.rss"
+  },
   "fluxbb": {
     "fluxbb:forum": "https://bbs.archlinux.org/extern.php?action=feed&fid=23&type=atom",
     "fluxbb:posts": [
