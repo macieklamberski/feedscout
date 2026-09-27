@@ -980,6 +980,17 @@ Discovers RSS feeds for RSS.com-hosted podcasts.
 |-------------|-----------------|
 | `rss.com/podcasts/{slug}` | Podcast feed |
 
+### RubyGems
+
+Discovers Atom feeds for RubyGems.org gems and the site-wide latest gems.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `rubygems.org/gems/{name}` | Gem versions feed (Atom) |
+| `rubygems.org` | Latest gems feed (Atom) |
+
+> Every page links the latest gems feed through a FeedBurner address that now serves HTML, so the handler emits the rubygems.org copy.
+
 ### Seesaa Blog
 
 Discovers RSS 2.0 and RDF feeds for Seesaa Blog.
@@ -1867,6 +1878,7 @@ import {
   qiitaHandler,
   redditHandler,
   rssComHandler,
+  rubygemsHandler,
   seesaaHandler,
   shopifyHandler,
   soundcloudHandler,

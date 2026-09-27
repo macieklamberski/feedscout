@@ -135,6 +135,7 @@ import { pypiHandler } from './platforms/pypi.js'
 import { qiitaHandler } from './platforms/qiita.js'
 import { redditHandler } from './platforms/reddit.js'
 import { rssComHandler } from './platforms/rssCom.js'
+import { rubygemsHandler } from './platforms/rubygems.js'
 import { seesaaHandler } from './platforms/seesaa.js'
 import { shaarliHandler } from './platforms/shaarli.js'
 import { shopifyHandler } from './platforms/shopify.js'
@@ -439,6 +440,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     qiitaHandler,
     redditHandler,
     rssComHandler,
+    rubygemsHandler,
     seesaaHandler,
     shaarliHandler,
     shopifyHandler,
