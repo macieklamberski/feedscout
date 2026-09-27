@@ -798,6 +798,12 @@
     ],
     "stackexchange:user": "https://stackoverflow.com/feeds/user/22656"
   },
+  "statuspage": {
+    "statuspage:history": [
+      "https://www.githubstatus.com/history.rss",
+      "https://www.githubstatus.com/history.atom"
+    ]
+  },
   "steam": {
     "steam:daily-deals": "https://store.steampowered.com/feeds/daily_deals.xml",
     "steam:group": [

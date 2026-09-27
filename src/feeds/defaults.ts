@@ -142,6 +142,7 @@ import { spotifyForCreatorsHandler } from './platforms/spotifyForCreators.js'
 import { spreakerHandler } from './platforms/spreaker.js'
 import { squarespaceHandler } from './platforms/squarespace.js'
 import { stackExchangeHandler } from './platforms/stackExchange.js'
+import { statuspageHandler } from './platforms/statuspage.js'
 import { steamHandler } from './platforms/steam.js'
 import { substackHandler } from './platforms/substack.js'
 import { svbtleHandler } from './platforms/svbtle.js'
@@ -439,6 +440,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     spreakerHandler,
     squarespaceHandler,
     stackExchangeHandler,
+    statuspageHandler,
     steamHandler,
     substackHandler,
     svbtleHandler,
