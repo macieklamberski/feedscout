@@ -945,6 +945,16 @@ Discovers RSS feeds for Podbean-hosted podcasts.
 |-------------|-----------------|
 | `*.podbean.com` | Podcast feed |
 
+### Podhome
+
+Discovers the RSS feed of a Podhome show, on `serve.podhome.fm` or a custom domain. Detected by the show site's assets on `cdn.podhome.fm`, and the feed is read from the page, since its URL carries an ID the page URL does not.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `serve.podhome.fm/{show}` | Podcast feed (RSS) |
+| `serve.podhome.fm/episodepage/{show}/{episode}` | Podcast feed (RSS) |
+| Any page of a show on a custom domain | Podcast feed (RSS) |
+
 ### Podigee
 
 Discovers RSS feeds for Podigee-hosted podcasts.
@@ -1888,6 +1898,7 @@ import {
   pleromaHandler,
   plurkHandler,
   podbeanHandler,
+  podhomeHandler,
   podigeeHandler,
   podloveHandler,
   podomaticHandler,
