@@ -367,6 +367,24 @@ Discovers Atom feeds for Kickstarter projects and global new projects.
 | `kickstarter.com/discover` | Global new projects feed |
 | `kickstarter.com/projects/{creator}/{project}` | Project updates feed |
 
+### Launchpad
+
+Discovers the Atom feeds Launchpad serves on `feeds.launchpad.net` for projects, distributions, people, teams, bugs and Bazaar branches. The `bugs.` and `code.` subdomains get the feeds of their own section.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `launchpad.net` | Announcements feed |
+| `bugs.launchpad.net` | Latest bugs feed |
+| `launchpad.net/{project}` | Announcements + latest bugs + branches + revisions feeds |
+| `bugs.launchpad.net/{project}` | Latest bugs feed |
+| `code.launchpad.net/{project}` | Branches + revisions feeds |
+| `launchpad.net/~{user}` | Latest bugs + branches + revisions feeds |
+| `bugs.launchpad.net/~{user}` | Latest bugs feed |
+| `code.launchpad.net/~{user}` | Branches + revisions feeds |
+| `bugs.launchpad.net/{distro}/+source/{package}` | Package latest bugs feed |
+| `bugs.launchpad.net/{project}/+bug/{id}` or `bugs.launchpad.net/bugs/{id}` | Bug feed |
+| `code.launchpad.net/~{user}/{project}/{branch}` | Branch feed |
+
 ### Letterboxd
 
 Discovers RSS feeds for Letterboxd user profiles.
@@ -1934,6 +1952,7 @@ import {
   jiraHandler,
   jugemHandler,
   kickstarterHandler,
+  launchpadHandler,
   learnkuHandler,
   lemmyHandler,
   letterboxdHandler,
