@@ -226,7 +226,6 @@ export const urisComprehensive: Array<UriEntry> = [
   '/.feed',
   ['/comments/feed', '?feed=comments-rss2'],
   ['/comments/feed/rss2/', '?feed=comments-rss2'],
-  ['/comments/feed/rdf/', '?feed=comments-rdf'],
   ['/comments/feed/atom/', '?feed=comments-atom'],
   '/feeds/posts/default',
   '/feeds/posts/default?alt=rss',
