@@ -254,15 +254,19 @@
     "ghost:tag": "https://demo.ghost.io/tag/getting-started/rss/"
   },
   "gitea": {
-    "_unmapped": [
-      "https://codeberg.org/forgejo/forgejo/rss/branch/forgejo",
-      "https://codeberg.org/forgejo/forgejo/rss/branch/forgejo/README.md"
-    ],
     "gitea:activity": [
       "https://codeberg.org/forgejo.atom",
       "https://codeberg.org/forgejo.rss",
       "https://codeberg.org/forgejo/forgejo.atom",
       "https://codeberg.org/forgejo/forgejo.rss"
+    ],
+    "gitea:branch-commits": [
+      "https://codeberg.org/forgejo/forgejo/rss/branch/forgejo",
+      "https://gitea.com/gitea/go-sdk/atom/branch/main"
+    ],
+    "gitea:file-history": [
+      "https://codeberg.org/forgejo/forgejo/rss/branch/forgejo/README.md",
+      "https://gitea.com/gitea/go-sdk/atom/branch/main/README.md"
     ],
     "gitea:releases": [
       "https://codeberg.org/forgejo/forgejo/releases.atom",
