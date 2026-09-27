@@ -514,6 +514,12 @@
     "https://links.hoa.ro/?do=rss"
   ],
   "shopify": ["https://www.allbirds.com/blogs/news.atom"],
+  "smf": [
+    "https://forum.opnsense.org/index.php?action=.xml;type=rss2",
+    "https://forum.opnsense.org/index.php?action=.xml;type=atom",
+    "https://forum.pellesc.de/index.php?action=.xml;type=rss2;board=18",
+    "https://forum.pellesc.de/index.php?action=.xml;type=atom;board=18"
+  ],
   "snac": ["https://comam.es/snac/grunfink.rss"],
   "soundcloud": ["https://feeds.soundcloud.com/users/soundcloud:users:1613713/sounds.rss"],
   "soundon": ["https://feeds.soundon.fm/podcasts/954689a5-3096-43a4-a80b-7810b219cef3.xml"],
