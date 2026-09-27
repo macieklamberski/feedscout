@@ -566,6 +566,11 @@
   "neocities": {
     "neocities:updates": "https://neocities.org/site/lazer-bunny.rss"
   },
+  "niconico": {
+    "niconico:blog": "https://ch.nicovideo.jp/yoshikiofficial/blomaga/nico/feed",
+    "niconico:live": "https://ch.nicovideo.jp/yoshikiofficial/live?rss=2.0",
+    "niconico:videos": "https://ch.nicovideo.jp/yoshikiofficial/video?rss=2.0"
+  },
   "nodebb": {
     "nodebb:category": "https://community.nodebb.org/category/2.rss",
     "nodebb:popular": "https://community.nodebb.org/popular.rss",

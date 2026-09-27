@@ -1659,6 +1659,17 @@ Discovers the RSS feeds of a Gancio event calendar. Detected by the `custom_css`
 > [!NOTE]
 > The iCal feeds Gancio serves beside each RSS feed are not emitted, since they are not RSS, Atom or JSON feeds. Gancio 2 answers 404 on the tag and place feed paths its own pages advertise.
 
+### Niconico
+
+Discovers the video, live and blog feeds of a Niconico channel on `ch.nicovideo.jp`.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `ch.nicovideo.jp/{channel}` | Videos + Live + Blog |
+| `ch.nicovideo.jp/{channel}/video` | Videos first, then Live + Blog |
+| `ch.nicovideo.jp/{channel}/live` | Live first, then Videos + Blog |
+| `ch.nicovideo.jp/{channel}/blomaga` or `ch.nicovideo.jp/{channel}/blomaga/ar{id}` | Blog first, then Videos + Live |
+
 ## Basic Usage
 
 ```typescript
@@ -1780,6 +1791,7 @@ import {
   naverBlogHandler,
   nebulaHandler,
   neocitiesHandler,
+  niconicoHandler,
   nodebbHandler,
   noteHandler,
   observableHandler,
