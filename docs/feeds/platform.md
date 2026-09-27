@@ -1519,6 +1519,14 @@ Discovers the podcast feed of a WordPress site running the PowerPress plugin. De
 > [!NOTE]
 > Generic discovery finds `{site}/feed/`, which is the blog feed. This adds the podcast feed. A site can redirect it to its podcast host, which resolves normally.
 
+### Podlove Publisher
+
+Discovers the podcast feeds of a WordPress site running the Podlove Publisher plugin. Detected by the plugin's asset path, and the feeds are read from the alternate links the plugin prints on every page, since the owner sets each feed's slug.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| Any page | Podcast feeds (RSS), one per feed the site marks discoverable |
+
 ### Podomatic
 
 Discovers the RSS feed of a Podomatic show.
@@ -1766,6 +1774,7 @@ import {
   plurkHandler,
   podbeanHandler,
   podigeeHandler,
+  podloveHandler,
   podomaticHandler,
   posthavenHandler,
   postypeHandler,

@@ -5,6 +5,7 @@ import {
   type Element,
   findDescendant,
   findElement,
+  findElements,
   getCookieNames,
   getJsonLd,
   getMetaContent,
@@ -915,6 +916,26 @@ describe('findElement', () => {
 
   it('should return undefined for undefined content', () => {
     expect(findElement(undefined, () => true)).toBeUndefined()
+  })
+})
+
+describe('findElements', () => {
+  it('should return every element passing the test in document order', () => {
+    const value = `
+      <img src="https://example.com/first.png">
+      <a href="https://example.com/">Home</a>
+      <img src="https://example.com/second.png">
+    `
+    const elements = findElements(value, (element) => element.name === 'img')
+
+    expect(elements).toMatchObject([
+      { attribs: { src: 'https://example.com/first.png' } },
+      { attribs: { src: 'https://example.com/second.png' } },
+    ])
+  })
+
+  it('should return an empty array when no element passes the test', () => {
+    expect(findElements('<p>Text</p>', (element) => element.name === 'img')).toEqual([])
   })
 })
 

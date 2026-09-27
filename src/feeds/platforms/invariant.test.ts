@@ -32,6 +32,7 @@ import { peertubeHandler } from './peertube.js'
 import { phpbbHandler } from './phpbb.js'
 import { pixelfedHandler } from './pixelfed.js'
 import { pleromaHandler } from './pleroma.js'
+import { podloveHandler } from './podlove.js'
 import { powerpressHandler } from './powerpress.js'
 import { publiiHandler } from './publii.js'
 import { shaarliHandler } from './shaarli.js'
@@ -146,6 +147,11 @@ const cases: Array<Case> = [
     'pleroma',
     pleromaHandler,
     '<script id="initial-results" type="application/json">{"/api/pleroma/frontend_configurations":{}}</script>',
+  ],
+  [
+    'podlove',
+    podloveHandler,
+    '<link href="/wp-content/plugins/podlove-podcasting-plugin-for-wordpress/css/frontend.css"><link rel="alternate" title="Podcast Feed: Show (MP3)" href="/feed/mp3/">',
   ],
   ['powerpress', powerpressHandler, '<script>function powerpress_pinw(pinw_url){}</script>'],
   ['publii', publiiHandler, '<img src="https://example.org/media/website/logo.png">'],
