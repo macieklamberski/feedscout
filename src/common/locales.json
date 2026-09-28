@@ -442,6 +442,7 @@
     "launchpad:bugs": "Latest bugs",
     "launchpad:branch": "Branch",
     "launchpad:branches": "Branches",
-    "launchpad:revisions": "Revisions"
+    "launchpad:revisions": "Revisions",
+    "teletype:posts": "Posts"
   }
 }
