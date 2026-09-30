@@ -10,7 +10,7 @@ const domains = ['castos.com']
 const feedIdRegex = /https:\/\/feeds\.castos\.com\/([a-z0-9]+)/i
 
 // Castos's own services, not shows.
-const reservedSlugs = [
+const excludedSubdomains = [
   'api',
   'app',
   'assets',
@@ -32,7 +32,7 @@ export const castosHandler: PlatformHandler = {
       return false
     }
 
-    return !isAnyOf(slug, reservedSlugs)
+    return !isAnyOf(slug, excludedSubdomains)
   },
 
   resolve: (url, content) => {

@@ -1,5 +1,5 @@
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
+import { composeHint, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -13,15 +13,7 @@ export const isStatuspageHeaders = (headers: Headers): boolean => {
 
 export const statuspageHandler: PlatformHandler = {
   match: (_url, content, headers) => {
-    if (content && isStatuspageHtml(content)) {
-      return true
-    }
-
-    if (headers && isStatuspageHeaders(headers)) {
-      return true
-    }
-
-    return false
+    return hasMarker(content, headers, { html: isStatuspageHtml, headers: isStatuspageHeaders })
   },
 
   // Every page of a status page, an incident included, advertises the page's incident history.

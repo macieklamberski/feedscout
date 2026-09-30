@@ -23,10 +23,6 @@ describe('gancioHandler', () => {
     it('should not match without content', () => {
       expect(gancioHandler.match('https://example.org/')).toBe(false)
     })
-
-    it('should not match invalid URLs', () => {
-      expect(gancioHandler.match('not-a-url', content)).toBe(false)
-    })
   })
 
   describe('resolve', () => {

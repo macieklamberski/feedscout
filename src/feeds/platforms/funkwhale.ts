@@ -1,6 +1,6 @@
 import { decodeSegment } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, hasElementWithId, hasMetaContent } from '../../common/utils.js'
+import { composeHint, hasElementWithId, hasMarker, hasMetaContent } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -15,16 +15,12 @@ const getChannel = (url: string): string | undefined => {
 }
 
 export const funkwhaleHandler: PlatformHandler = {
-  match: (url, content) => {
-    try {
-      if (!content || !isFunkwhaleHtml(content)) {
-        return false
-      }
+  match: (url, content, headers) => {
+    if (!hasMarker(content, headers, { html: isFunkwhaleHtml })) {
+      return false
+    }
 
-      return Boolean(getChannel(url))
-    } catch {}
-
-    return false
+    return Boolean(getChannel(url))
   },
 
   resolve: (url) => {

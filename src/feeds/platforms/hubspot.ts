@@ -1,7 +1,7 @@
 import { getAnyOf, getPathSegments } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, hasMetaContent } from '../../common/utils.js'
+import { composeHint, hasMarker, hasMetaContent } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers blog, post (html), partly covers author, tag.
@@ -39,18 +39,15 @@ const isNonBlogPage = (headers: Headers): boolean => {
 
 export const hubspotHandler: PlatformHandler = {
   match: (url, content, headers) => {
-    try {
-      const isHubspot =
-        (content && isHubspotHtml(content)) || (headers && isHubspotHeaders(headers))
+    if (!hasMarker(content, headers, { html: isHubspotHtml, headers: isHubspotHeaders })) {
+      return false
+    }
 
-      if (!isHubspot || (headers && isNonBlogPage(headers))) {
-        return false
-      }
+    if (headers && isNonBlogPage(headers)) {
+      return false
+    }
 
-      return Boolean(getBlogPath(url))
-    } catch {}
-
-    return false
+    return Boolean(getBlogPath(url))
   },
 
   resolve: (url) => {

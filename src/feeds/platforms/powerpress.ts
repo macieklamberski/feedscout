@@ -1,5 +1,5 @@
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
+import { composeHint, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -10,8 +10,8 @@ export const isPowerpressHtml = (content: string): boolean => {
 }
 
 export const powerpressHandler: PlatformHandler = {
-  match: (url, content) => {
-    return URL.canParse(url) && Boolean(content) && isPowerpressHtml(content ?? '')
+  match: (_url, content, headers) => {
+    return hasMarker(content, headers, { html: isPowerpressHtml })
   },
 
   resolve: (url) => {

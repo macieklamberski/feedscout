@@ -44,10 +44,6 @@ describe('wixHandler', () => {
     it('should not match another platform', () => {
       expect(wixHandler.match('https://example.com/', otherHtml)).toBe(false)
     })
-
-    it('should not match invalid URLs', () => {
-      expect(wixHandler.match('not-a-url', wixHtml)).toBe(false)
-    })
   })
 
   describe('resolve', () => {

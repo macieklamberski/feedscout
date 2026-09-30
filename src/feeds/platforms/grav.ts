@@ -1,5 +1,5 @@
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, getCookieNames, hasMetaContent } from '../../common/utils.js'
+import { composeHint, getCookieNames, hasMarker, hasMetaContent } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -17,20 +17,8 @@ export const isGravHeaders = (headers: Headers): boolean => {
 }
 
 export const gravHandler: PlatformHandler = {
-  match: (url, content, headers) => {
-    if (!URL.canParse(url)) {
-      return false
-    }
-
-    if (content && isGravHtml(content)) {
-      return true
-    }
-
-    if (headers && isGravHeaders(headers)) {
-      return true
-    }
-
-    return false
+  match: (_url, content, headers) => {
+    return hasMarker(content, headers, { html: isGravHtml, headers: isGravHeaders })
   },
 
   resolve: (url) => {

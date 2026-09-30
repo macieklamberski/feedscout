@@ -46,10 +46,6 @@ describe('shaarliHandler', () => {
     it('should not match without content', () => {
       expect(shaarliHandler.match('https://example.org/')).toBe(false)
     })
-
-    it('should not match invalid URLs', () => {
-      expect(shaarliHandler.match('not-a-url', shaarliHtml)).toBe(false)
-    })
   })
 
   describe('resolve', () => {

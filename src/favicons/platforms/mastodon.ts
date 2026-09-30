@@ -1,5 +1,6 @@
 import { isNonEmptyString } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
+import { hasMarker } from '../../common/utils.js'
 import {
   isMastodonHeaders,
   isMastodonHtml,
@@ -18,15 +19,7 @@ export const mastodonHandler: PlatformHandler = {
       return false
     }
 
-    if (content && isMastodonHtml(content)) {
-      return true
-    }
-
-    if (headers && isMastodonHeaders(headers)) {
-      return true
-    }
-
-    return false
+    return hasMarker(content, headers, { html: isMastodonHtml, headers: isMastodonHeaders })
   },
 
   resolve: (url) => {

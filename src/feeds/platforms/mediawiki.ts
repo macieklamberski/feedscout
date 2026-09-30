@@ -1,6 +1,6 @@
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, findElement, getScriptDirectory } from '../../common/utils.js'
+import { composeHint, findElement, getScriptDirectory, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers special (html), partly covers page.
@@ -45,16 +45,8 @@ const getPageName = (content: string | undefined): string | undefined => {
 }
 
 export const mediawikiHandler: PlatformHandler = {
-  match: (url, content) => {
-    if (!URL.canParse(url)) {
-      return false
-    }
-
-    if (content && isMediawikiHtml(content)) {
-      return true
-    }
-
-    return false
+  match: (_url, content, headers) => {
+    return hasMarker(content, headers, { html: isMediawikiHtml })
   },
 
   resolve: (url, content) => {

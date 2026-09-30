@@ -1,6 +1,5 @@
-import { parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, hasMetaContent } from '../../common/utils.js'
+import { composeHint, hasMarker, hasMetaContent } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -15,20 +14,8 @@ export const isDrupalHeaders = (headers: Headers): boolean => {
 }
 
 export const drupalHandler: PlatformHandler = {
-  match: (url, content, headers) => {
-    if (!parseUrl(url)) {
-      return false
-    }
-
-    if (content && isDrupalHtml(content)) {
-      return true
-    }
-
-    if (headers && isDrupalHeaders(headers)) {
-      return true
-    }
-
-    return false
+  match: (_url, content, headers) => {
+    return hasMarker(content, headers, { html: isDrupalHtml, headers: isDrupalHeaders })
   },
 
   resolve: (url) => {

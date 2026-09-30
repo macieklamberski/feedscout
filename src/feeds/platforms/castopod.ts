@@ -32,7 +32,7 @@ const getFeedUrl = (url: string, content: string | undefined): string | undefine
 
 export const castopodHandler: PlatformHandler = {
   match: (url, content) => {
-    return URL.canParse(url) && getFeedUrl(url, content) !== undefined
+    return getFeedUrl(url, content) !== undefined
   },
 
   resolve: (url, content) => {

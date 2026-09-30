@@ -1,6 +1,6 @@
 import { getPathSegments, isSubdomainOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, hasMetaContent } from '../../common/utils.js'
+import { composeHint, hasMarker, hasMetaContent } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -25,20 +25,8 @@ const getSiteUrl = (url: string): string => {
 }
 
 export const wixHandler: PlatformHandler = {
-  match: (url, content, headers) => {
-    if (!URL.canParse(url)) {
-      return false
-    }
-
-    if (content && isWixHtml(content)) {
-      return true
-    }
-
-    if (headers && isWixHeaders(headers)) {
-      return true
-    }
-
-    return false
+  match: (_url, content, headers) => {
+    return hasMarker(content, headers, { html: isWixHtml, headers: isWixHeaders })
   },
 
   resolve: (url) => {

@@ -1,6 +1,6 @@
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, getCookieNames, hasMetaContent } from '../../common/utils.js'
+import { composeHint, getCookieNames, hasMarker, hasMetaContent } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic partly covers board.
@@ -30,20 +30,8 @@ const getBoardId = (url: string): string | undefined => {
 }
 
 export const discuzHandler: PlatformHandler = {
-  match: (url, content, headers) => {
-    if (!URL.canParse(url)) {
-      return false
-    }
-
-    if (content && isDiscuzHtml(content)) {
-      return true
-    }
-
-    if (headers && isDiscuzHeaders(headers)) {
-      return true
-    }
-
-    return false
+  match: (_url, content, headers) => {
+    return hasMarker(content, headers, { html: isDiscuzHtml, headers: isDiscuzHeaders })
   },
 
   resolve: (url) => {

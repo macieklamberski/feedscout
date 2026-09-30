@@ -43,10 +43,6 @@ describe('gravHandler', () => {
     it('should not match without content', () => {
       expect(gravHandler.match('https://example.com/blog')).toBe(false)
     })
-
-    it('should not match invalid URLs', () => {
-      expect(gravHandler.match('not-a-url', gravHtml)).toBe(false)
-    })
   })
 
   describe('resolve', () => {

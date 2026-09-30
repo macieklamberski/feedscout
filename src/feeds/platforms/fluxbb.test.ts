@@ -36,10 +36,6 @@ describe('fluxbbHandler', () => {
     it('should not match without content', () => {
       expect(fluxbbHandler.match('https://example.org/')).toBe(false)
     })
-
-    it('should not match invalid URLs', () => {
-      expect(fluxbbHandler.match('not-a-url', fluxbbHtml)).toBe(false)
-    })
   })
 
   describe('resolve', () => {

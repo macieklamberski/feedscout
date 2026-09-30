@@ -4,12 +4,13 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic partly covers blog, community, tag, tildePath, userPath, usersHost.
+// Generic covers blog, tildePath (html), partly covers community, tag, userPath.
+// Handler needed for: usersHost.
 
 const domains = ['livejournal.com']
 const wwwHosts = ['www.livejournal.com']
 const legacyUserHosts = ['users.livejournal.com', 'community.livejournal.com']
-const reservedHosts = [
+const excludedHosts = [
   'livejournal.com',
   'www.livejournal.com',
   'users.livejournal.com',
@@ -61,7 +62,7 @@ export const livejournalHandler: PlatformHandler = {
     // emit 404 URLs. Allow them only when a user selector is in the path.
     const { pathname } = new URL(url)
 
-    if (isHostOf(url, reservedHosts)) {
+    if (isHostOf(url, excludedHosts)) {
       if (isHostOf(url, wwwHosts)) {
         return wwwUsersPathRegex.test(pathname)
       }

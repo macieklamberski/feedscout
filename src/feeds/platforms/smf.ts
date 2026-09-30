@@ -1,9 +1,9 @@
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, findElement } from '../../common/utils.js'
+import { composeHint, findElement, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic covers forum (html), partly covers board, topic.
+// Generic partly covers board, forum, topic.
 
 const scriptUrlRegex = /var smf_scripturl = "([^"]+)"/
 const boardIdRegex = /[?;&]board=(\d+)/
@@ -29,8 +29,8 @@ const getBoardId = (url: string, content: string): string | undefined => {
 }
 
 export const smfHandler: PlatformHandler = {
-  match: (url, content) => {
-    return URL.canParse(url) && Boolean(content) && isSmfHtml(content ?? '')
+  match: (_url, content, headers) => {
+    return hasMarker(content, headers, { html: isSmfHtml })
   },
 
   resolve: (url, content) => {

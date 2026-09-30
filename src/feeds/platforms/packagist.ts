@@ -4,7 +4,8 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic partly covers extensions, home, package, vendor.
+// Generic partly covers home, package, vendor.
+// Handler needed for: extensions.
 
 const hosts = ['packagist.org']
 
@@ -12,7 +13,7 @@ const packageRegex = /^\/packages\/([^/]+)\/([^/]+)(?:\/|$)/i
 const vendorRegex = /^\/packages\/([^/]+)\/?$/i
 const extensionsRegex = /^\/extensions(?:\/|$)/i
 
-const excludedVendors = ['submit']
+const excludedPaths = ['submit']
 
 const createFeeds = (name: string, key: string): Array<DiscoverUriEntry> => {
   return [
@@ -36,7 +37,7 @@ export const packagistHandler: PlatformHandler = {
 
     const vendor = pathname.match(vendorRegex)?.[1]
 
-    if (vendor && !isAnyOf(vendor, excludedVendors)) {
+    if (vendor && !isAnyOf(vendor, excludedPaths)) {
       return createFeeds(`vendor.${vendor}`, 'packagist:vendor')
     }
 

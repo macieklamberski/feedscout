@@ -4,7 +4,7 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic covers branch, bug, bugsPerson, bugsProject, codeProject, home, person, project, sourcePackage (html).
+// Generic covers branch, bug, bugsPerson, bugsProject, codeProject, home, person, sourcePackage (html), partly covers project.
 // Handler needed for: bugsHome, codePerson.
 
 type LaunchpadUrl =
@@ -25,7 +25,7 @@ const feedsOrigin = 'http://feeds.launchpad.net'
 const bugIdRegex = /^\d+$/
 
 // Top-level routes of the Launchpad root that are not project or distribution names.
-const reservedNames = [
+const excludedPaths = [
   'archives',
   'bazaar',
   'binarypackagenames',
@@ -92,7 +92,7 @@ const parseLaunchpadUrl = (parsedUrl: URL): LaunchpadUrl | undefined => {
     return
   }
 
-  if (first.startsWith('+') || isAnyOf(first, reservedNames)) {
+  if (first.startsWith('+') || isAnyOf(first, excludedPaths)) {
     return
   }
 

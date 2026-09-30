@@ -1,6 +1,5 @@
-import { parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
+import { composeHint, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Not discoverable without handler.
 // Handler needed for: all shapes.
@@ -12,8 +11,8 @@ export const isOpenstatusHtml = (content: string): boolean => {
 }
 
 export const openstatusHandler: PlatformHandler = {
-  match: (url, content) => {
-    return Boolean(parseUrl(url)) && Boolean(content) && isOpenstatusHtml(content ?? '')
+  match: (_url, content, headers) => {
+    return hasMarker(content, headers, { html: isOpenstatusHtml })
   },
 
   resolve: (url) => {

@@ -49,10 +49,6 @@ describe('diasporaHandler', () => {
     it('should not match other paths', () => {
       expect(diasporaHandler.match('https://example.org/stream', diasporaHtml)).toBe(false)
     })
-
-    it('should not match invalid URLs', () => {
-      expect(diasporaHandler.match('not-a-url', diasporaHtml)).toBe(false)
-    })
   })
 
   describe('resolve', () => {

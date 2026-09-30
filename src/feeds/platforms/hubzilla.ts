@@ -1,5 +1,5 @@
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, hasMetaContent } from '../../common/utils.js'
+import { composeHint, hasMarker, hasMetaContent } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -15,16 +15,12 @@ const getChannel = (url: string): string | undefined => {
 }
 
 export const hubzillaHandler: PlatformHandler = {
-  match: (url, content) => {
-    try {
-      if (!content || !isHubzillaHtml(content)) {
-        return false
-      }
+  match: (url, content, headers) => {
+    if (!hasMarker(content, headers, { html: isHubzillaHtml })) {
+      return false
+    }
 
-      return Boolean(getChannel(url))
-    } catch {}
-
-    return false
+    return Boolean(getChannel(url))
   },
 
   resolve: (url) => {

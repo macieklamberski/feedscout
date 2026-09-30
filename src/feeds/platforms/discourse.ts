@@ -1,10 +1,10 @@
-import { getAnyOf, parseUrl } from 'trousse'
+import { getAnyOf } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, hasElementWithId, hasMetaContent } from '../../common/utils.js'
+import { composeHint, hasElementWithId, hasMarker, hasMetaContent } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic covers category, home, top (html).
+// Generic covers category (html).
 // Handler needed for: user.
 
 const userRegex = /^\/u\/([^/]+)/i
@@ -41,20 +41,8 @@ export const isDiscourseHeaders = (headers: Headers): boolean => {
 }
 
 export const discourseHandler: PlatformHandler = {
-  match: (url, content, headers) => {
-    if (!parseUrl(url)) {
-      return false
-    }
-
-    if (content && isDiscourseHtml(content)) {
-      return true
-    }
-
-    if (headers && isDiscourseHeaders(headers)) {
-      return true
-    }
-
-    return false
+  match: (_url, content, headers) => {
+    return hasMarker(content, headers, { html: isDiscourseHtml, headers: isDiscourseHeaders })
   },
 
   resolve: (url) => {

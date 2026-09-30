@@ -39,10 +39,6 @@ describe('mediawikiHandler', () => {
     it('should not match without content', () => {
       expect(mediawikiHandler.match('https://example.org/wiki/Main_Page')).toBe(false)
     })
-
-    it('should not match invalid URLs', () => {
-      expect(mediawikiHandler.match('not-a-url', rsdLink)).toBe(false)
-    })
   })
 
   describe('resolve', () => {

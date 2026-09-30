@@ -76,10 +76,6 @@ describe('mybbHandler', () => {
     it('should not match another page', () => {
       expect(mybbHandler.match('https://example.com/', '<html></html>', new Headers())).toBe(false)
     })
-
-    it('should not match invalid URLs', () => {
-      expect(mybbHandler.match('not-a-url', mybbHtml)).toBe(false)
-    })
   })
 
   describe('resolve', () => {

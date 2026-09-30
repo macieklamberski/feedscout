@@ -1,6 +1,6 @@
 import { isNonEmptyString } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { getMetaContent } from '../../common/utils.js'
+import { getMetaContent, hasMarker } from '../../common/utils.js'
 import { isPixelfedHtml, parsePixelfedUrl } from '../../feeds/platforms/pixelfed.js'
 import type { FaviconEnricher } from '../types.js'
 import { parseResponseJson } from '../utils.js'
@@ -15,8 +15,8 @@ const isAvatar = (value: unknown): value is string => {
 }
 
 export const pixelfedHandler: PlatformHandler = {
-  match: (url, content) => {
-    if (!content || !isPixelfedHtml(content)) {
+  match: (url, content, headers) => {
+    if (!hasMarker(content, headers, { html: isPixelfedHtml })) {
       return false
     }
 

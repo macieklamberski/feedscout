@@ -1,4 +1,4 @@
-import { getPathSegments, getSubdomain, isHostOf, parseUrl } from 'trousse'
+import { getPathSegments, getSubdomain, isAnyOf, isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
@@ -37,7 +37,7 @@ export const parsePostypeUrl = (url: string): PostypeUrl | undefined => {
     return
   }
 
-  if (excludedSubdomains.includes(subdomain)) {
+  if (isAnyOf(subdomain, excludedSubdomains)) {
     return
   }
 

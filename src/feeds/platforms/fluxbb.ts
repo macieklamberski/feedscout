@@ -1,6 +1,6 @@
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, getScriptDirectory, hasElementWithId } from '../../common/utils.js'
+import { composeHint, getScriptDirectory, hasElementWithId, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic partly covers board, forum, topic.
@@ -21,8 +21,8 @@ export const isFluxbbHtml = (content: string): boolean => {
 }
 
 export const fluxbbHandler: PlatformHandler = {
-  match: (url, content) => {
-    return URL.canParse(url) && Boolean(content) && isFluxbbHtml(content ?? '')
+  match: (_url, content, headers) => {
+    return hasMarker(content, headers, { html: isFluxbbHtml })
   },
 
   resolve: (url) => {

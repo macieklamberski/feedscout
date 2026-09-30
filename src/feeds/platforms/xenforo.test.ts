@@ -36,10 +36,6 @@ describe('xenforoHandler', () => {
     it('should not match without content', () => {
       expect(xenforoHandler.match('https://example.com/f/general.17/')).toBe(false)
     })
-
-    it('should not match invalid URLs', () => {
-      expect(xenforoHandler.match('not-a-url', xenforoHtml)).toBe(false)
-    })
   })
 
   describe('resolve', () => {

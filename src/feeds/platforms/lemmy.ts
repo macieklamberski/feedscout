@@ -1,6 +1,12 @@
 import { getPathSegments, isAnyOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, findElement, hasClass, hasMetaContent } from '../../common/utils.js'
+import {
+  composeHint,
+  findElement,
+  hasClass,
+  hasMarker,
+  hasMetaContent,
+} from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers community, user (html), partly covers home.
@@ -90,19 +96,11 @@ export const isLemmyHeaders = (headers: Headers): boolean => {
 
 export const lemmyHandler: PlatformHandler = {
   match: (url, content, headers) => {
-    if (parseUrl(url)?.pathname !== '/' && !parseLemmyUrl(url)) {
+    if (new URL(url).pathname !== '/' && !parseLemmyUrl(url)) {
       return false
     }
 
-    if (content && isLemmyHtml(content)) {
-      return true
-    }
-
-    if (headers && isLemmyHeaders(headers)) {
-      return true
-    }
-
-    return false
+    return hasMarker(content, headers, { html: isLemmyHtml, headers: isLemmyHeaders })
   },
 
   resolve: (url, content) => {

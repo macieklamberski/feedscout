@@ -23,10 +23,6 @@ describe('nodebbHandler', () => {
     it('should not match without the header', () => {
       expect(nodebbHandler.match('https://example.org/')).toBe(false)
     })
-
-    it('should not match invalid URLs', () => {
-      expect(nodebbHandler.match('not-a-url', '', nodebbHeaders)).toBe(false)
-    })
   })
 
   describe('resolve', () => {

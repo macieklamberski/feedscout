@@ -6,6 +6,7 @@ import {
   getCookieNames,
   getScriptDirectory,
   hasElementWithId,
+  hasMarker,
 } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
@@ -33,20 +34,8 @@ export const isPhpbbHeaders = (headers: Headers): boolean => {
 }
 
 export const phpbbHandler: PlatformHandler = {
-  match: (url, content, headers) => {
-    if (!URL.canParse(url)) {
-      return false
-    }
-
-    if (content && isPhpbbHtml(content)) {
-      return true
-    }
-
-    if (headers && isPhpbbHeaders(headers)) {
-      return true
-    }
-
-    return false
+  match: (_url, content, headers) => {
+    return hasMarker(content, headers, { html: isPhpbbHtml, headers: isPhpbbHeaders })
   },
 
   resolve: (url, content) => {

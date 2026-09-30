@@ -50,10 +50,6 @@ describe('wikidotHandler', () => {
     it('should not match other wiki software', () => {
       expect(wikidotHandler.match('https://example.com/page', otherHtml)).toBe(false)
     })
-
-    it('should not match invalid URLs', () => {
-      expect(wikidotHandler.match('not-a-url', wikidotHtml)).toBe(false)
-    })
   })
 
   describe('resolve', () => {

@@ -1,5 +1,5 @@
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, hasMetaContent } from '../../common/utils.js'
+import { composeHint, hasMarker, hasMetaContent } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -26,17 +26,11 @@ const getUserPath = (url: string): string | undefined => {
 
 export const snacHandler: PlatformHandler = {
   match: (url, content, headers) => {
-    try {
-      const isSnac = (content && isSnacHtml(content)) || (headers && isSnacHeaders(headers))
+    if (!hasMarker(content, headers, { html: isSnacHtml, headers: isSnacHeaders })) {
+      return false
+    }
 
-      if (!isSnac) {
-        return false
-      }
-
-      return Boolean(getUserPath(url))
-    } catch {}
-
-    return false
+    return Boolean(getUserPath(url))
   },
 
   resolve: (url) => {

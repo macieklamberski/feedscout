@@ -55,10 +55,6 @@ describe('misskeyHandler', () => {
     it('should return false for non-profile paths', () => {
       expect(misskeyHandler.match('https://example.com/explore', misskeyHtml)).toBe(false)
     })
-
-    it('should return false for invalid URL', () => {
-      expect(misskeyHandler.match('not-a-url', misskeyHtml)).toBe(false)
-    })
   })
 
   describe('resolve', () => {

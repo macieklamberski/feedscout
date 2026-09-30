@@ -7,7 +7,7 @@ import { composeHint } from '../../common/utils.js'
 const domains = ['captivate.fm']
 
 // Captivate's own services, not shows.
-const reservedSlugs = [
+const excludedSubdomains = [
   'api',
   'artwork',
   'assets',
@@ -30,7 +30,7 @@ export const captivateHandler: PlatformHandler = {
       return false
     }
 
-    return !isAnyOf(slug, reservedSlugs)
+    return !isAnyOf(slug, excludedSubdomains)
   },
 
   resolve: (url) => {

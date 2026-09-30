@@ -28,10 +28,6 @@ describe('mobilizonHandler', () => {
     it('should not match without content', () => {
       expect(mobilizonHandler.match('https://example.org/@group')).toBe(false)
     })
-
-    it('should not match invalid URLs', () => {
-      expect(mobilizonHandler.match('not-a-url', mobilizonHtml)).toBe(false)
-    })
   })
 
   describe('resolve', () => {

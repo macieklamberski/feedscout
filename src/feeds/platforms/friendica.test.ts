@@ -67,10 +67,6 @@ describe('friendicaHandler', () => {
     it('should return false for non-profile paths', () => {
       expect(friendicaHandler.match('https://example.com/about', friendicaHtml)).toBe(false)
     })
-
-    it('should return false for invalid URL', () => {
-      expect(friendicaHandler.match('not-a-url', friendicaHtml)).toBe(false)
-    })
   })
 
   describe('resolve', () => {

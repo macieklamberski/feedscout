@@ -1,6 +1,5 @@
-import { parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
+import { composeHint, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -15,18 +14,12 @@ export const isDiasporaHtml = (content: string): boolean => {
 }
 
 export const diasporaHandler: PlatformHandler = {
-  match: (url, content) => {
-    if (!content || !isDiasporaHtml(content)) {
+  match: (url, content, headers) => {
+    if (!hasMarker(content, headers, { html: isDiasporaHtml })) {
       return false
     }
 
-    const parsedUrl = parseUrl(url)
-
-    if (!parsedUrl) {
-      return false
-    }
-
-    return profileRegex.test(parsedUrl.pathname)
+    return profileRegex.test(new URL(url).pathname)
   },
 
   resolve: (url, content) => {

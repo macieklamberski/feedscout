@@ -1,6 +1,6 @@
 import { getPathSegments, isAnyOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
+import { composeHint, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -22,8 +22,8 @@ const getCollection = (url: string): string | undefined => {
 }
 
 export const squarespaceHandler: PlatformHandler = {
-  match: (url, _content, headers) => {
-    if (!headers || !isSquarespaceHeaders(headers)) {
+  match: (url, content, headers) => {
+    if (!hasMarker(content, headers, { headers: isSquarespaceHeaders })) {
       return false
     }
 

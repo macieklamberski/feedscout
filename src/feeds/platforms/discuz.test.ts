@@ -41,10 +41,6 @@ describe('discuzHandler', () => {
     it('should not match without content', () => {
       expect(discuzHandler.match('https://example.com/forum-22-1.html')).toBe(false)
     })
-
-    it('should not match invalid URLs', () => {
-      expect(discuzHandler.match('not-a-url', discuzHtml)).toBe(false)
-    })
   })
 
   describe('resolve', () => {

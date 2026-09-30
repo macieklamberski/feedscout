@@ -9,7 +9,16 @@ const domains = ['podbean.com']
 // Reserved Podbean subdomains that aren't user shows. Without this guard, hitting
 // podbean.com corporate/infra hosts produces feed.podbean.com/{reserved}/feed.xml
 // URLs that resolve to real but unrelated user-owned shows (e.g. "The www's Podcast").
-const reservedSlugs = ['www', 'feed', 'pbcdn1', 'sponsorship', 'podads', 'help', 'blog', 'support']
+const excludedSubdomains = [
+  'www',
+  'feed',
+  'pbcdn1',
+  'sponsorship',
+  'podads',
+  'help',
+  'blog',
+  'support',
+]
 
 export const podbeanHandler: PlatformHandler = {
   match: (url) => {
@@ -19,7 +28,7 @@ export const podbeanHandler: PlatformHandler = {
       return false
     }
 
-    return !isAnyOf(slug, reservedSlugs)
+    return !isAnyOf(slug, excludedSubdomains)
   },
 
   resolve: (url) => {

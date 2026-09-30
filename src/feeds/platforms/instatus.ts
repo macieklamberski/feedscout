@@ -1,6 +1,6 @@
 import { getPathSegments } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
+import { composeHint, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -18,15 +18,7 @@ export const isInstatusHeaders = (headers: Headers): boolean => {
 
 export const instatusHandler: PlatformHandler = {
   match: (_url, content, headers) => {
-    if (content && isInstatusHtml(content)) {
-      return true
-    }
-
-    if (headers && isInstatusHeaders(headers)) {
-      return true
-    }
-
-    return false
+    return hasMarker(content, headers, { html: isInstatusHtml, headers: isInstatusHeaders })
   },
 
   // A page in a translation (`/de`, `/zh-tw`) links the history feeds translated to it.
