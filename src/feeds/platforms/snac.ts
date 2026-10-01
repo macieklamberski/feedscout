@@ -1,7 +1,10 @@
+import { parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, hasMarker, hasMetaContent } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
+
+export type SnacUrl = { kind: 'user'; path: string }
 
 const trailingSlashRegex = /\/$/
 const postOrHistoryRegex = /\/[ph]\/[^/]+$/i
@@ -16,12 +19,16 @@ export const isSnacHeaders = (headers: Headers): boolean => {
 }
 
 // An instance is routinely mounted under a sub-path, so the feed is built from the page path.
-const getUserPath = (url: string): string | undefined => {
-  const { pathname } = new URL(url)
+export const parseSnacUrl = (url: string): SnacUrl | undefined => {
+  const pathname = parseUrl(url)?.pathname ?? ''
   // A post lives at `/{user}/p/{id}` and a month of history at `/{user}/h/{month}.html`.
-  const trimmed = pathname.replace(trailingSlashRegex, '').replace(postOrHistoryRegex, '')
+  const path = pathname.replace(trailingSlashRegex, '').replace(postOrHistoryRegex, '')
 
-  return trimmed.split('/').filter(Boolean).length > 0 ? trimmed : undefined
+  if (path.split('/').filter(Boolean).length === 0) {
+    return
+  }
+
+  return { kind: 'user', path }
 }
 
 export const snacHandler: PlatformHandler = {
@@ -30,17 +37,18 @@ export const snacHandler: PlatformHandler = {
       return false
     }
 
-    return Boolean(getUserPath(url))
+    return parseSnacUrl(url) !== undefined
   },
 
   resolve: (url) => {
-    const { origin } = new URL(url)
-    const userPath = getUserPath(url)
+    const parsed = parseSnacUrl(url)
 
-    if (!userPath) {
+    if (!parsed) {
       return []
     }
 
-    return [{ uri: `${origin}${userPath}.rss`, hint: composeHint('snac:posts') }]
+    const { origin } = new URL(url)
+
+    return [{ uri: `${origin}${parsed.path}.rss`, hint: composeHint('snac:posts') }]
   },
 }

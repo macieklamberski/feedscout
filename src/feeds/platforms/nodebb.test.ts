@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import { isNodebbHeaders, nodebbHandler } from './nodebb.js'
+import { isNodebbHeaders, type NodebbUrl, nodebbHandler, parseNodebbUrl } from './nodebb.js'
 
 const nodebbHeaders = new Headers({ 'x-powered-by': 'NodeBB' })
 
@@ -11,6 +11,36 @@ describe('isNodebbHeaders', () => {
   it('should return false when the header is absent', () => {
     expect(isNodebbHeaders(new Headers())).toBe(false)
     expect(isNodebbHeaders(new Headers({ 'x-powered-by': 'Express' }))).toBe(false)
+  })
+})
+
+describe('parseNodebbUrl', () => {
+  it('should return the topic with its category for a topic page', () => {
+    const expected: NodebbUrl = { kind: 'topic', topicId: '42', categoryId: '3' }
+
+    expect(parseNodebbUrl('https://forum.example/category/3/topic/42')).toEqual(expected)
+  })
+
+  it('should return the topic for a topic page', () => {
+    const expected: NodebbUrl = { kind: 'topic', topicId: '42', categoryId: undefined }
+
+    expect(parseNodebbUrl('https://forum.example/topic/42/some-title')).toEqual(expected)
+  })
+
+  it('should return the category for a category page', () => {
+    const expected: NodebbUrl = { kind: 'category', categoryId: '3' }
+
+    expect(parseNodebbUrl('https://forum.example/category/3/general')).toEqual(expected)
+  })
+
+  it('should return the forum for another page', () => {
+    const expected: NodebbUrl = { kind: 'forum' }
+
+    expect(parseNodebbUrl('https://forum.example/recent')).toEqual(expected)
+  })
+
+  it('should return undefined for an unparsable URL', () => {
+    expect(parseNodebbUrl('not-a-url')).toBeUndefined()
   })
 })
 
@@ -26,6 +56,10 @@ describe('nodebbHandler', () => {
   })
 
   describe('resolve', () => {
+    it('should return empty array for a URL that does not parse', () => {
+      expect(nodebbHandler.resolve('not-a-url')).toEqual([])
+    })
+
     it('should return the category feed for a capitalized category segment', () => {
       const value = 'https://example.org/Category/2/general'
       const expected = [

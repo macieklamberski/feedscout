@@ -1,9 +1,11 @@
-import { getAnyOf } from 'trousse'
+import { getAnyOf, parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, hasElementWithId, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
+
+export type XenforoUrl = { kind: 'forum'; route: string; forumPath: string } | { kind: 'board' }
 
 // XF2 serves a forum at `/f/{slug.id}` or, on the default route, `/forums/{slug.id}`.
 const forumPathRegex = /\/(f|forums)\/([^/]+\.\d+)(?:\/|$)/i
@@ -19,25 +21,54 @@ export const isXenforoHtml = (content: string): boolean => {
   return appRootIds.some((id) => hasElementWithId(content, id))
 }
 
+export const parseXenforoUrl = (url: string): XenforoUrl | undefined => {
+  const parsedUrl = parseUrl(url)
+
+  if (!parsedUrl) {
+    return
+  }
+
+  const [, rawRoute, forumPath] = parsedUrl.pathname.match(forumPathRegex) ?? []
+  const route = getAnyOf(rawRoute, routePrefixes)
+
+  if (route && forumPath) {
+    return { kind: 'forum', route, forumPath }
+  }
+
+  return { kind: 'board' }
+}
+
 export const xenforoHandler: PlatformHandler = {
-  match: (_url, content, headers) => {
-    return hasMarker(content, headers, { html: isXenforoHtml })
+  match: (url, content, headers) => {
+    if (!hasMarker(content, headers, { html: isXenforoHtml })) {
+      return false
+    }
+
+    return parseXenforoUrl(url) !== undefined
   },
 
   resolve: (url) => {
-    const { origin, pathname } = new URL(url)
-    const [, rawRoute, forumPath] = pathname.match(forumPathRegex) ?? []
-    const route = getAnyOf(rawRoute, routePrefixes)
-    const uris: Array<DiscoverUriEntry> = []
+    const parsed = parseXenforoUrl(url)
 
-    if (route && forumPath) {
-      uris.push({
-        uri: `${origin}/${route}/${forumPath}/index.rss`,
-        hint: composeHint('xenforo:forum'),
-      })
+    if (!parsed) {
+      return []
     }
 
-    for (const prefix of route ? [route] : routePrefixes) {
+    const { origin } = new URL(url)
+
+    if (parsed.kind === 'forum') {
+      return [
+        {
+          uri: `${origin}/${parsed.route}/${parsed.forumPath}/index.rss`,
+          hint: composeHint('xenforo:forum'),
+        },
+        { uri: `${origin}/${parsed.route}/-/index.rss`, hint: composeHint('xenforo:site') },
+      ]
+    }
+
+    const uris: Array<DiscoverUriEntry> = []
+
+    for (const prefix of routePrefixes) {
       uris.push({ uri: `${origin}/${prefix}/-/index.rss`, hint: composeHint('xenforo:site') })
     }
 

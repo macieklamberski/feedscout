@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'bun:test'
 import type { DiscoverUriEntry } from '../../common/types.js'
-import { isJoomlaHtml, joomlaHandler } from './joomla.js'
+import { isJoomlaHtml, type JoomlaUrl, joomlaHandler, parseJoomlaUrl } from './joomla.js'
 
 const joomlaHtml = '<meta name="generator" content="Joomla! - Open Source Content Management">'
 const otherHtml = '<meta name="generator" content="Drupal 11">'
@@ -28,6 +28,24 @@ describe('isJoomlaHtml', () => {
   })
 })
 
+describe('parseJoomlaUrl', () => {
+  it('should return the view path for a page', () => {
+    const expected: JoomlaUrl = { kind: 'view', path: '/blog/news' }
+
+    expect(parseJoomlaUrl('https://example.com/blog/news')).toEqual(expected)
+  })
+
+  it('should return the root path for the home page', () => {
+    const expected: JoomlaUrl = { kind: 'view', path: '/' }
+
+    expect(parseJoomlaUrl('https://example.com/')).toEqual(expected)
+  })
+
+  it('should return undefined for an unparsable URL', () => {
+    expect(parseJoomlaUrl('not-a-url')).toBeUndefined()
+  })
+})
+
 describe('joomlaHandler', () => {
   describe('match', () => {
     it('should match a Joomla view', () => {
@@ -44,6 +62,10 @@ describe('joomlaHandler', () => {
   })
 
   describe('resolve', () => {
+    it('should return empty array for a URL that does not parse', () => {
+      expect(joomlaHandler.resolve('not-a-url')).toEqual([])
+    })
+
     it('should return the RSS and Atom forms of the view', () => {
       const value = 'https://example.com/announcements'
       const expected: Array<DiscoverUriEntry> = [

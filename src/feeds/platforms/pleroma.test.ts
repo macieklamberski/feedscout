@@ -1,10 +1,28 @@
 import { describe, expect, it } from 'bun:test'
 import type { DiscoverUriEntry } from '../../common/types.js'
-import { isPleromaHtml, pleromaHandler } from './pleroma.js'
+import { isPleromaHtml, type PleromaUrl, parsePleromaUrl, pleromaHandler } from './pleroma.js'
 
 const pleromaHtml =
   '<html><head><link rel="preload" href="/api/pleroma/frontend_configurations" as="fetch"></head></html>'
 const otherHtml = '<html><head><meta name="generator" content="WordPress"></head></html>'
+
+describe('parsePleromaUrl', () => {
+  it('should return the profile for a user page', () => {
+    const expected: PleromaUrl = { kind: 'profile', username: 'alice' }
+
+    expect(parsePleromaUrl('https://pleroma.example/users/alice')).toEqual(expected)
+  })
+
+  it('should return the profile for a capitalized users segment', () => {
+    const expected: PleromaUrl = { kind: 'profile', username: 'alice' }
+
+    expect(parsePleromaUrl('https://pleroma.example/Users/alice')).toEqual(expected)
+  })
+
+  it('should return undefined for a page outside a profile', () => {
+    expect(parsePleromaUrl('https://pleroma.example/main/all')).toBeUndefined()
+  })
+})
 
 describe('pleromaHandler', () => {
   describe('isPleromaHtml', () => {
@@ -44,6 +62,10 @@ describe('pleromaHandler', () => {
   })
 
   describe('resolve', () => {
+    it('should return empty array for a page outside a profile', () => {
+      expect(pleromaHandler.resolve('https://pleroma.example/main/all')).toEqual([])
+    })
+
     it('should return atom feed for profile', () => {
       const value = 'https://example.com/users/lain'
       const expected: Array<DiscoverUriEntry> = [
