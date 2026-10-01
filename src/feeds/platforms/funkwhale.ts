@@ -4,14 +4,22 @@ import { composeHint, hasElementWithId, hasMarker, hasMetaContent } from '../../
 
 // Discoverability: Discoverable without handler.
 
+export type FunkwhaleUrl = { kind: 'channel'; channel: string }
+
 const channelPathRegex = /^\/channels\/([^/]+)/i
 
 export const isFunkwhaleHtml = (content: string): boolean => {
   return hasMetaContent(content, 'generator', 'Funkwhale') || hasElementWithId(content, 'fake-app')
 }
 
-const getChannel = (url: string): string | undefined => {
-  return new URL(url).pathname.match(channelPathRegex)?.[1]
+export const parseFunkwhaleUrl = (url: string): FunkwhaleUrl | undefined => {
+  const channel = new URL(url).pathname.match(channelPathRegex)?.[1]
+
+  if (!channel) {
+    return
+  }
+
+  return { kind: 'channel', channel }
 }
 
 export const funkwhaleHandler: PlatformHandler = {
@@ -20,16 +28,18 @@ export const funkwhaleHandler: PlatformHandler = {
       return false
     }
 
-    return Boolean(getChannel(url))
+    return parseFunkwhaleUrl(url) !== undefined
   },
 
   resolve: (url) => {
     const { origin } = new URL(url)
-    const channel = getChannel(url)
+    const parsed = parseFunkwhaleUrl(url)
 
-    if (!channel) {
+    if (!parsed) {
       return []
     }
+
+    const { channel } = parsed
 
     // A remote channel, `{name}@{domain}`, has its feed on its own instance only.
     const [name, domain] = (decodeSegment(channel) ?? channel).split('@')

@@ -1,8 +1,22 @@
 import { describe, expect, it } from 'bun:test'
-import { homelandHandler, isHomelandHtml } from './homeland.js'
+import { type HomelandUrl, homelandHandler, isHomelandHtml, parseHomelandUrl } from './homeland.js'
 
 const homelandHtml = '<meta name="generator" content="Homeland 3.11.0" />'
 const otherHtml = '<meta name="generator" content="Discourse 3.2">'
+
+describe('parseHomelandUrl', () => {
+  it('should return the node for a node page', () => {
+    const expected: HomelandUrl = { kind: 'node', node: '12' }
+
+    expect(parseHomelandUrl('https://example.com/topics/node12')).toEqual(expected)
+  })
+
+  it('should return the topics for another page', () => {
+    const expected: HomelandUrl = { kind: 'topics' }
+
+    expect(parseHomelandUrl('https://example.com/topics')).toEqual(expected)
+  })
+})
 
 describe('isHomelandHtml', () => {
   it('should return true for the Homeland generator meta tag', () => {
@@ -37,6 +51,10 @@ describe('homelandHandler', () => {
   })
 
   describe('resolve', () => {
+    it('should return empty array for a URL that does not parse', () => {
+      expect(homelandHandler.resolve('not-a-url')).toEqual([])
+    })
+
     it('should return the node and topics feeds for a node page', () => {
       const value = 'https://example.org/topics/node41'
       const expected = [

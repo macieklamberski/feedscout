@@ -1,10 +1,66 @@
 import { describe, expect, it } from 'bun:test'
-import { discourseHandler, isDiscourseHeaders, isDiscourseHtml } from './discourse.js'
+import {
+  type DiscourseUrl,
+  discourseHandler,
+  isDiscourseHeaders,
+  isDiscourseHtml,
+  parseDiscourseUrl,
+} from './discourse.js'
 
 const discourseHtml =
   '<html><head><meta name="generator" content="Discourse 2026.4.0"></head></html>'
 const otherHtml = '<html><head><meta name="generator" content="WordPress"></head></html>'
 const discourseHeaders = new Headers({ 'x-discourse-route': 'list/latest' })
+
+describe('parseDiscourseUrl', () => {
+  it('should return the topic for a topic page', () => {
+    const expected: DiscourseUrl = { kind: 'topic', slug: 'some-topic', topicId: '123' }
+
+    expect(parseDiscourseUrl('https://forum.example.com/t/some-topic/123')).toEqual(expected)
+  })
+
+  it('should return the user for a user page', () => {
+    const expected: DiscourseUrl = { kind: 'user', username: 'alice' }
+
+    expect(parseDiscourseUrl('https://forum.example.com/u/alice/activity')).toEqual(expected)
+  })
+
+  it('should return the category without its list tail', () => {
+    const expected: DiscourseUrl = { kind: 'category', category: 'dev/5' }
+
+    expect(parseDiscourseUrl('https://forum.example.com/c/dev/5/l/latest')).toEqual(expected)
+  })
+
+  it('should return the top page with a path period', () => {
+    const expected: DiscourseUrl = { kind: 'top', period: 'weekly' }
+
+    expect(parseDiscourseUrl('https://forum.example.com/top/weekly')).toEqual(expected)
+  })
+
+  it('should return the top page with a query period', () => {
+    const expected: DiscourseUrl = { kind: 'top', period: 'monthly' }
+
+    expect(parseDiscourseUrl('https://forum.example.com/top?period=monthly')).toEqual(expected)
+  })
+
+  it('should return the top page without an unknown period', () => {
+    const expected: DiscourseUrl = { kind: 'top', period: undefined }
+
+    expect(parseDiscourseUrl('https://forum.example.com/top/hourly')).toEqual(expected)
+  })
+
+  it('should return the latest page for the root', () => {
+    const expected: DiscourseUrl = { kind: 'latest' }
+
+    expect(parseDiscourseUrl('https://forum.example.com/')).toEqual(expected)
+  })
+
+  it('should return the latest page for a path the parser does not name', () => {
+    const expected: DiscourseUrl = { kind: 'latest' }
+
+    expect(parseDiscourseUrl('https://forum.example.com/about')).toEqual(expected)
+  })
+})
 
 describe('discourseHandler', () => {
   describe('isDiscourseHtml', () => {
@@ -67,6 +123,10 @@ describe('discourseHandler', () => {
   })
 
   describe('resolve', () => {
+    it('should return empty array for a URL that does not parse', () => {
+      expect(discourseHandler.resolve('not-a-url')).toEqual([])
+    })
+
     it('should return the activity feed for a capitalized u segment', () => {
       const value = 'https://forum.example.com/U/steveklabnik'
       const expected = [

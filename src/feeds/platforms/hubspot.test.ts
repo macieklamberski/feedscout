@@ -1,8 +1,38 @@
 import { describe, expect, it } from 'bun:test'
-import { hubspotHandler, isHubspotHtml } from './hubspot.js'
+import { type HubspotUrl, hubspotHandler, isHubspotHtml, parseHubspotUrl } from './hubspot.js'
 
 const hubspotHtml = '<meta name="generator" content="HubSpot">'
 const otherHtml = '<meta name="generator" content="WordPress 6.4">'
+
+describe('parseHubspotUrl', () => {
+  it('should return the author for an author listing', () => {
+    const expected: HubspotUrl = { kind: 'author', blog: 'blog', name: 'jane' }
+
+    expect(parseHubspotUrl('https://example.com/blog/author/jane')).toEqual(expected)
+  })
+
+  it('should return the tag for a tag listing', () => {
+    const expected: HubspotUrl = { kind: 'tag', blog: 'blog', route: 'tag', name: 'news' }
+
+    expect(parseHubspotUrl('https://example.com/blog/tag/news')).toEqual(expected)
+  })
+
+  it('should return the tag for a topic listing with a capitalized route', () => {
+    const expected: HubspotUrl = { kind: 'tag', blog: 'blog', route: 'topic', name: 'news' }
+
+    expect(parseHubspotUrl('https://example.com/blog/Topic/news')).toEqual(expected)
+  })
+
+  it('should return the blog for a post', () => {
+    const expected: HubspotUrl = { kind: 'blog', blog: 'blog' }
+
+    expect(parseHubspotUrl('https://example.com/blog/some-post')).toEqual(expected)
+  })
+
+  it('should return undefined for a page the parser does not name', () => {
+    expect(parseHubspotUrl('https://example.com/')).toBeUndefined()
+  })
+})
 
 describe('isHubspotHtml', () => {
   it('should return true for the HubSpot generator meta tag', () => {
