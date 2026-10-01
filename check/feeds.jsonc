@@ -190,16 +190,14 @@
     "dokuwiki:recent-changes": "https://wiki.php.net/feed.php"
   },
   "douban": {
+    "douban:book-reviews": "https://www.douban.com/feed/review/book",
+    "douban:drama-reviews": "https://www.douban.com/feed/review/drama",
     "douban:interests": "https://www.douban.com/feed/people/ahbei/interests",
+    "douban:movie-reviews": "https://www.douban.com/feed/review/movie",
+    "douban:music-reviews": "https://www.douban.com/feed/review/music",
     "douban:notes": "https://www.douban.com/feed/people/ahbei/notes",
-    "douban:reviews": [
-      "https://www.douban.com/feed/people/ahbei/reviews",
-      "https://www.douban.com/feed/review/book",
-      "https://www.douban.com/feed/review/movie",
-      "https://www.douban.com/feed/review/music",
-      "https://www.douban.com/feed/review/drama"
-    ],
-    "douban:subjectReviews": "https://www.douban.com/feed/subject/1084336/reviews"
+    "douban:reviews": "https://www.douban.com/feed/people/ahbei/reviews",
+    "douban:subject-reviews": "https://www.douban.com/feed/subject/1084336/reviews"
   },
   "dreamwidth": {
     "dreamwidth:posts": [

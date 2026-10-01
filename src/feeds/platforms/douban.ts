@@ -75,7 +75,7 @@ export const doubanHandler: PlatformHandler = {
       return [
         {
           uri: `https://www.douban.com/feed/subject/${parsed.subjectId}/reviews`,
-          hint: composeHint('douban:subjectReviews'),
+          hint: composeHint('douban:subject-reviews'),
         },
       ]
     }
@@ -84,19 +84,19 @@ export const doubanHandler: PlatformHandler = {
     return [
       {
         uri: 'https://www.douban.com/feed/review/book',
-        hint: composeHint('douban:reviews'),
+        hint: composeHint('douban:book-reviews'),
       },
       {
         uri: 'https://www.douban.com/feed/review/movie',
-        hint: composeHint('douban:reviews'),
+        hint: composeHint('douban:movie-reviews'),
       },
       {
         uri: 'https://www.douban.com/feed/review/music',
-        hint: composeHint('douban:reviews'),
+        hint: composeHint('douban:music-reviews'),
       },
       {
         uri: 'https://www.douban.com/feed/review/drama',
-        hint: composeHint('douban:reviews'),
+        hint: composeHint('douban:drama-reviews'),
       },
     ]
   },
