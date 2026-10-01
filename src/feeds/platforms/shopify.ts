@@ -1,8 +1,10 @@
 import { getPathSegments, isAnyOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
+import { composeHint, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
+
+export type ShopifyUrl = { kind: 'blog'; handle: string }
 
 const shopifyRegex = /shopify/i
 
@@ -10,25 +12,34 @@ export const isShopifyHeaders = (headers: Headers): boolean => {
   return shopifyRegex.test(headers.get('powered-by') ?? '')
 }
 
-const getBlogHandle = (url: string): string | undefined => {
-  const segments = getPathSegments(url)
+export const parseShopifyUrl = (url: string): ShopifyUrl | undefined => {
+  const [first, handle] = getPathSegments(url)
 
-  return isAnyOf(segments[0], 'blogs') ? segments[1] : undefined
+  if (!isAnyOf(first, 'blogs') || !handle) {
+    return
+  }
+
+  return { kind: 'blog', handle }
 }
 
 export const shopifyHandler: PlatformHandler = {
-  match: (url, _content, headers) => {
-    return Boolean(headers && isShopifyHeaders(headers)) && Boolean(getBlogHandle(url))
+  match: (url, content, headers) => {
+    if (!hasMarker(content, headers, { headers: isShopifyHeaders })) {
+      return false
+    }
+
+    return parseShopifyUrl(url) !== undefined
   },
 
   resolve: (url) => {
-    const { origin } = new URL(url)
-    const handle = getBlogHandle(url)
+    const parsed = parseShopifyUrl(url)
 
-    if (!handle) {
+    if (!parsed) {
       return []
     }
 
-    return [{ uri: `${origin}/blogs/${handle}.atom`, hint: composeHint('shopify:blog') }]
+    const { origin } = new URL(url)
+
+    return [{ uri: `${origin}/blogs/${parsed.handle}.atom`, hint: composeHint('shopify:blog') }]
   },
 }

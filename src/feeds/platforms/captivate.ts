@@ -4,10 +4,12 @@ import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
+export type CaptivateUrl = { kind: 'show'; slug: string }
+
 const domains = ['captivate.fm']
 
 // Captivate's own services, not shows.
-const reservedSlugs = [
+const excludedSubdomains = [
   'api',
   'artwork',
   'assets',
@@ -22,28 +24,32 @@ const reservedSlugs = [
   'www',
 ]
 
+export const parseCaptivateUrl = (url: string): CaptivateUrl | undefined => {
+  const slug = getSubdomain(url, domains)
+
+  if (!slug || isAnyOf(slug, excludedSubdomains)) {
+    return
+  }
+
+  return { kind: 'show', slug }
+}
+
 export const captivateHandler: PlatformHandler = {
   match: (url) => {
-    const slug = getSubdomain(url, domains)
-
-    if (!slug) {
-      return false
-    }
-
-    return !isAnyOf(slug, reservedSlugs)
+    return parseCaptivateUrl(url) !== undefined
   },
 
   resolve: (url) => {
-    const slug = getSubdomain(url, domains)
+    const parsed = parseCaptivateUrl(url)
 
-    if (!slug) {
+    if (!parsed) {
       return []
     }
 
     // The feed URL without the trailing slash answers 301.
     return [
       {
-        uri: `https://feeds.captivate.fm/${slug}/`,
+        uri: `https://feeds.captivate.fm/${parsed.slug}/`,
         hint: composeHint('captivate:podcast'),
       },
     ]

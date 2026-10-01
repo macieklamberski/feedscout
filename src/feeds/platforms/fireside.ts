@@ -1,40 +1,47 @@
-import { getSubdomain } from 'trousse'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import { getSubdomain, isAnyOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
+
+export type FiresideUrl = { kind: 'podcast'; slug: string }
 
 const domains = ['fireside.fm']
 
 // Fireside's own services, not shows.
 const excludedSubdomains = ['app', 'assets', 'blog', 'feeds', 'help', 'media', 'status', 'www']
 
+export const parseFiresideUrl = (url: string): FiresideUrl | undefined => {
+  const slug = getSubdomain(url, domains)
+
+  if (!slug || isAnyOf(slug, excludedSubdomains)) {
+    return
+  }
+
+  return { kind: 'podcast', slug }
+}
+
 export const firesideHandler: PlatformHandler = {
   match: (url) => {
-    const slug = getSubdomain(url, domains)
-
-    return slug !== undefined && !excludedSubdomains.includes(slug)
+    return parseFiresideUrl(url) !== undefined
   },
 
   resolve: (url) => {
-    const slug = getSubdomain(url, domains)
+    const parsed = parseFiresideUrl(url)
 
-    if (!slug) {
+    if (!parsed) {
       return []
     }
 
-    const uris: Array<DiscoverUriEntry> = []
-
-    uris.push({
-      uri: `https://feeds.fireside.fm/${slug}/rss`,
-      hint: composeHint('fireside:podcast', 'rss'),
-    })
-    uris.push({
-      uri: `https://${slug}.fireside.fm/json`,
-      hint: composeHint('fireside:podcast', 'json'),
-    })
-
-    return uris
+    return [
+      {
+        uri: `https://feeds.fireside.fm/${parsed.slug}/rss`,
+        hint: composeHint('fireside:podcast', 'rss'),
+      },
+      {
+        uri: `https://${parsed.slug}.fireside.fm/json`,
+        hint: composeHint('fireside:podcast', 'json'),
+      },
+    ]
   },
 }

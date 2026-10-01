@@ -1,6 +1,6 @@
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, findElement, getCookieNames } from '../../common/utils.js'
+import { composeHint, findElement, getCookieNames, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers root (html), partly covers namespace.
@@ -11,6 +11,8 @@ const sessionCookiePathRegex = /(?:^|,)\s*DokuWiki=[^,]*?;\s*path=([^;,\s]+)/i
 export const isDokuwikiHeaders = (headers: Headers): boolean => {
   return getCookieNames(headers).includes('DokuWiki')
 }
+
+export type DokuwikiPage = { installPath: string; namespace?: string }
 
 // The core template prints the install root as `<link rel="start">`, and the session cookie is
 // scoped to it unless the `cookiedir` option moves it.
@@ -26,24 +28,23 @@ const getInstallPath = (url: string, content?: string, headers?: Headers): strin
   return headers?.get('set-cookie')?.match(sessionCookiePathRegex)?.[1] ?? '/'
 }
 
+const getDokuwikiPage = (url: string, content?: string, headers?: Headers): DokuwikiPage => {
+  return {
+    installPath: getInstallPath(url, content, headers),
+    // The core template prints the page's namespace as `var NS`, whatever the URL rewriting.
+    namespace: content?.match(namespaceRegex)?.[1],
+  }
+}
+
 export const dokuwikiHandler: PlatformHandler = {
-  match: (url, _content, headers) => {
-    if (!URL.canParse(url)) {
-      return false
-    }
-
-    if (headers && isDokuwikiHeaders(headers)) {
-      return true
-    }
-
-    return false
+  match: (_url, content, headers) => {
+    return hasMarker(content, headers, { headers: isDokuwikiHeaders })
   },
 
   resolve: (url, content, headers) => {
     const { origin } = new URL(url)
-    const feedUrl = `${origin}${getInstallPath(url, content, headers)}feed.php`
-    // The core template prints the page's namespace as `var NS`, whatever the URL rewriting.
-    const namespace = content?.match(namespaceRegex)?.[1]
+    const { installPath, namespace } = getDokuwikiPage(url, content, headers)
+    const feedUrl = `${origin}${installPath}feed.php`
     const uris: Array<DiscoverUriEntry> = []
 
     if (namespace) {

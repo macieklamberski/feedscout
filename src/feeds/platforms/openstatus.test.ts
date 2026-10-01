@@ -67,10 +67,6 @@ describe('openstatusHandler', () => {
     it('should not match a page that only mentions the project', () => {
       expect(openstatusHandler.match('https://example.org/example/repo', mentionHtml)).toBe(false)
     })
-
-    it('should not match invalid URLs', () => {
-      expect(openstatusHandler.match('not-a-url', openstatusHtml)).toBe(false)
-    })
   })
 
   describe('resolve', () => {

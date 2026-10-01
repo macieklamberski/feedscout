@@ -1,5 +1,5 @@
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, hasMetaContent } from '../../common/utils.js'
+import { composeHint, hasMarker, hasMetaContent } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -8,8 +8,8 @@ export const isTextpatternHtml = (content: string): boolean => {
 }
 
 export const textpatternHandler: PlatformHandler = {
-  match: (url, content) => {
-    return URL.canParse(url) && Boolean(content) && isTextpatternHtml(content ?? '')
+  match: (_url, content, headers) => {
+    return hasMarker(content, headers, { html: isTextpatternHtml })
   },
 
   resolve: (url) => {

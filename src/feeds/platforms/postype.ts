@@ -1,4 +1,4 @@
-import { getPathSegments, getSubdomain, isHostOf, parseUrl } from 'trousse'
+import { getPathSegments, getSubdomain, isAnyOf, isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
@@ -37,7 +37,7 @@ export const parsePostypeUrl = (url: string): PostypeUrl | undefined => {
     return
   }
 
-  if (excludedSubdomains.includes(subdomain)) {
+  if (isAnyOf(subdomain, excludedSubdomains)) {
     return
   }
 
@@ -52,7 +52,11 @@ export const postypeHandler: PlatformHandler = {
   resolve: (url) => {
     const parsed = parsePostypeUrl(url)
 
-    if (parsed?.kind === 'channel') {
+    if (!parsed) {
+      return []
+    }
+
+    if (parsed.kind === 'channel') {
       return [
         {
           uri: `https://www.postype.com/@${parsed.channel}/rss`,
@@ -61,10 +65,6 @@ export const postypeHandler: PlatformHandler = {
       ]
     }
 
-    if (parsed?.kind === 'subdomain') {
-      return [{ uri: `${new URL(url).origin}/rss`, hint: composeHint('postype:posts') }]
-    }
-
-    return []
+    return [{ uri: `${new URL(url).origin}/rss`, hint: composeHint('postype:posts') }]
   },
 }

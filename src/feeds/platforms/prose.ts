@@ -1,22 +1,52 @@
-import { isHostOf, isSubdomainOf } from 'trousse'
+import { isHostOf, isSubdomainOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
+export type ProseUrl = { kind: 'home' } | { kind: 'tag'; tag: string } | { kind: 'blog' }
+
 const domains = ['prose.sh']
 const apexHosts = ['prose.sh', 'www.prose.sh']
 
+export const parseProseUrl = (url: string): ProseUrl | undefined => {
+  const parsedUrl = parseUrl(url)
+
+  if (!parsedUrl) {
+    return
+  }
+
+  // Apex prose.sh is the platform-wide discovery firehose, not a per-blog feed.
+  if (isHostOf(parsedUrl, apexHosts)) {
+    return { kind: 'home' }
+  }
+
+  if (!isSubdomainOf(parsedUrl, domains)) {
+    return
+  }
+
+  const tag = parsedUrl.searchParams.get('tag')
+
+  if (tag) {
+    return { kind: 'tag', tag }
+  }
+
+  return { kind: 'blog' }
+}
+
 export const proseHandler: PlatformHandler = {
   match: (url) => {
-    return isSubdomainOf(url, domains) || isHostOf(url, apexHosts)
+    return parseProseUrl(url) !== undefined
   },
 
   resolve: (url) => {
-    const { origin, searchParams } = new URL(url)
+    const parsed = parseProseUrl(url)
 
-    // Apex prose.sh is the platform-wide discovery firehose, not a per-blog feed.
-    if (isHostOf(url, apexHosts)) {
+    if (!parsed) {
+      return []
+    }
+
+    if (parsed.kind === 'home') {
       return [
         {
           uri: 'https://prose.sh/rss',
@@ -25,12 +55,12 @@ export const proseHandler: PlatformHandler = {
       ]
     }
 
-    const tag = searchParams.get('tag')
+    const { origin } = new URL(url)
 
-    if (tag) {
+    if (parsed.kind === 'tag') {
       return [
         {
-          uri: `${origin}/rss?tag=${encodeURIComponent(tag)}`,
+          uri: `${origin}/rss?tag=${encodeURIComponent(parsed.tag)}`,
           hint: composeHint('prose:tag'),
         },
       ]

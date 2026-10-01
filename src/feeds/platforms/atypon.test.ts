@@ -1,5 +1,27 @@
 import { describe, expect, it } from 'bun:test'
-import { atyponHandler } from './atypon.js'
+import { type AtyponUrl, atyponHandler, parseAtyponUrl } from './atypon.js'
+
+describe('parseAtyponUrl', () => {
+  it('should return the journal for a table of contents page', () => {
+    const expected: AtyponUrl = { kind: 'journal', code: 'rjhr20', isWiley: false }
+
+    expect(parseAtyponUrl('https://www.tandfonline.com/toc/rjhr20/current')).toEqual(expected)
+  })
+
+  it('should return the journal on Wiley', () => {
+    const expected: AtyponUrl = { kind: 'journal', code: '15214095', isWiley: true }
+
+    expect(parseAtyponUrl('https://onlinelibrary.wiley.com/journal/15214095')).toEqual(expected)
+  })
+
+  it('should return undefined for a page outside a journal', () => {
+    expect(parseAtyponUrl('https://www.science.org/')).toBeUndefined()
+  })
+
+  it('should return undefined for another host', () => {
+    expect(parseAtyponUrl('https://example.com/toc/rjhr20/current')).toBeUndefined()
+  })
+})
 
 describe('atyponHandler', () => {
   describe('match', () => {
@@ -28,6 +50,10 @@ describe('atyponHandler', () => {
   })
 
   describe('resolve', () => {
+    it('should return empty array for a URL outside the platform', () => {
+      expect(atyponHandler.resolve('https://example.com/')).toEqual([])
+    })
+
     it('should return journal feed for journal page', () => {
       const value = 'https://www.tandfonline.com/toc/tprs20/current'
       const expected = [

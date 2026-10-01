@@ -92,10 +92,6 @@ describe('jiraHandler', () => {
     it('should not match a Data Center path without content', () => {
       expect(jiraHandler.match('https://jira.example.org/browse/ABC-1')).toBe(false)
     })
-
-    it('should not match invalid URLs', () => {
-      expect(jiraHandler.match('not-a-url', jiraHtml)).toBe(false)
-    })
   })
 
   describe('resolve', () => {

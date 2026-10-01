@@ -17,6 +17,31 @@ describe('parseMicroblogUrl', () => {
     expect(parseMicroblogUrl(value)).toEqual(expected)
   })
 
+  it('should return the category for a category page', () => {
+    const value = 'https://example.micro.blog/categories/Tech/'
+    const expected: MicroblogUrl = { kind: 'category', username: 'example', category: 'Tech' }
+
+    expect(parseMicroblogUrl(value)).toEqual(expected)
+  })
+
+  it('should return the archive for an archive page', () => {
+    const expected: MicroblogUrl = { kind: 'archive', username: 'example' }
+
+    expect(parseMicroblogUrl('https://example.micro.blog/archive/')).toEqual(expected)
+  })
+
+  it('should return the photos for a photos page', () => {
+    const expected: MicroblogUrl = { kind: 'photos', username: 'example' }
+
+    expect(parseMicroblogUrl('https://example.micro.blog/photos')).toEqual(expected)
+  })
+
+  it('should return the replies for a replies page', () => {
+    const expected: MicroblogUrl = { kind: 'replies', username: 'example' }
+
+    expect(parseMicroblogUrl('https://example.micro.blog/replies/')).toEqual(expected)
+  })
+
   it('should return undefined for the micro.blog apex', () => {
     expect(parseMicroblogUrl('https://micro.blog/example')).toBeUndefined()
   })
@@ -44,6 +69,10 @@ describe('parseMicroblogUrl', () => {
 
 describe('microblogHandler', () => {
   describe('resolve', () => {
+    it('should return empty array for a URL outside Micro.blog', () => {
+      expect(microblogHandler.resolve('https://example.com/')).toEqual([])
+    })
+
     it('should return the category feed for a capitalized categories segment', () => {
       const value = 'https://example.micro.blog/Categories/test'
       const expected: Array<DiscoverUriEntry> = [

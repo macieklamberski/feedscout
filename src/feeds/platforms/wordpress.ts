@@ -6,6 +6,11 @@ import { composeHint } from '../../common/utils.js'
 // Discoverability: Partially discoverable without handler.
 // Generic partly covers blog.
 
+export type WordpressUrl =
+  | { kind: 'archive'; path: string; hintKey: string }
+  | { kind: 'post'; path: string }
+  | { kind: 'home' }
+
 const domains = ['wordpress.com']
 const categoryRegex = /^\/category\/([^/]+)/i
 const tagRegex = /^\/tag\/([^/]+)/i
@@ -51,54 +56,86 @@ const getPostsFeedEntries = (base: string, key: string): Array<DiscoverUriEntry>
   ]
 }
 
+// The page a WordPress URL shows, read from the path alone, so a WP Engine site reads the same.
+export const parseWordpressPage = (url: string): WordpressUrl => {
+  const { pathname } = new URL(url)
+
+  for (const { regex, hintKey, route } of archives) {
+    const archiveMatch = pathname.match(regex)
+
+    if (!archiveMatch) {
+      continue
+    }
+
+    const path = route
+      ? `/${route}/${archiveMatch[1]}`
+      : archiveMatch[0].replace(trailingSlashRegex, '')
+
+    return { kind: 'archive', path, hintKey }
+  }
+
+  // Post page: any non-root, non-archive, non-feed path.
+  if (pathname !== '/' && !feedSegmentRegex.test(pathname)) {
+    return { kind: 'post', path: pathname.replace(trailingSlashRegex, '') }
+  }
+
+  return { kind: 'home' }
+}
+
+export const parseWordpressUrl = (url: string): WordpressUrl | undefined => {
+  if (!isSubdomainOf(url, domains)) {
+    return
+  }
+
+  return parseWordpressPage(url)
+}
+
+export const composeWordpressFeeds = (
+  origin: string,
+  parsed: WordpressUrl,
+): Array<DiscoverUriEntry> => {
+  const uris: Array<DiscoverUriEntry> = []
+
+  if (parsed.kind === 'archive') {
+    uris.push(...getPostsFeedEntries(`${origin}${parsed.path}`, parsed.hintKey))
+  }
+
+  if (parsed.kind === 'post') {
+    uris.push(...getFeedEntries(`${origin}${parsed.path}`, 'wordpress:post-comments'))
+  }
+
+  uris.push(...getPostsFeedEntries(origin, 'wordpress:posts'))
+
+  // The site-wide comments feed takes its query form from the site root, not /comments.
+  // Without pretty permalinks, ?feed=comments-rss serves the RSS 0.92 posts template.
+  uris.push({
+    uri: [
+      `${origin}/comments/feed/`,
+      `${origin}/comments/feed/rss2/`,
+      `${origin}/?feed=comments-rss2`,
+    ],
+    hint: composeHint('wordpress:comments', 'rss'),
+  })
+  uris.push({
+    uri: [`${origin}/comments/feed/atom/`, `${origin}/?feed=comments-atom`],
+    hint: composeHint('wordpress:comments', 'atom'),
+  })
+
+  return uris
+}
+
 export const wordpressHandler: PlatformHandler = {
   match: (url) => {
-    return isSubdomainOf(url, domains)
+    return parseWordpressUrl(url) !== undefined
   },
 
   resolve: (url) => {
-    const { origin, pathname } = new URL(url)
-    const uris: Array<DiscoverUriEntry> = []
-    let archiveMatched = false
+    const parsed = parseWordpressUrl(url)
 
-    for (const { regex, hintKey, route } of archives) {
-      const archiveMatch = pathname.match(regex)
-
-      if (!archiveMatch) {
-        continue
-      }
-
-      archiveMatched = true
-      const archivePath = route
-        ? `/${route}/${archiveMatch[1]}`
-        : archiveMatch[0].replace(trailingSlashRegex, '')
-      uris.push(...getPostsFeedEntries(`${origin}${archivePath}`, hintKey))
+    if (!parsed) {
+      return []
     }
 
-    // Post page: any non-root, non-archive, non-feed path.
-    if (!archiveMatched && pathname !== '/' && !feedSegmentRegex.test(pathname)) {
-      const base = `${origin}${pathname.replace(trailingSlashRegex, '')}`
-
-      uris.push(...getFeedEntries(base, 'wordpress:post-comments'))
-    }
-
-    uris.push(...getPostsFeedEntries(origin, 'wordpress:posts'))
-
-    // The site-wide comments feed takes its query form from the site root, not /comments.
-    // Without pretty permalinks, ?feed=comments-rss serves the RSS 0.92 posts template.
-    uris.push({
-      uri: [
-        `${origin}/comments/feed/`,
-        `${origin}/comments/feed/rss2/`,
-        `${origin}/?feed=comments-rss2`,
-      ],
-      hint: composeHint('wordpress:comments', 'rss'),
-    })
-    uris.push({
-      uri: [`${origin}/comments/feed/atom/`, `${origin}/?feed=comments-atom`],
-      hint: composeHint('wordpress:comments', 'atom'),
-    })
-
-    return uris
+    return composeWordpressFeeds(new URL(url).origin, parsed)
   },
 }

@@ -7,42 +7,62 @@ import { composeHint } from '../../common/utils.js'
 // Generic covers blog (guess, html).
 // Handler needed for: home.
 
+export type BearblogUrl = { kind: 'discover' } | { kind: 'blog'; tag?: string }
+
 const domains = ['bearblog.dev']
 const apexHosts = ['bearblog.dev', 'www.bearblog.dev']
 
+export const parseBearblogUrl = (url: string): BearblogUrl | undefined => {
+  // Apex bearblog.dev exposes the platform-wide trending discovery feed.
+  if (isHostOf(url, apexHosts)) {
+    return { kind: 'discover' }
+  }
+
+  if (!isSubdomainOf(url, domains)) {
+    return
+  }
+
+  // Tag filter via ?q= query param.
+  const tag = new URL(url).searchParams.get('q') ?? undefined
+
+  return { kind: 'blog', tag }
+}
+
 export const bearblogHandler: PlatformHandler = {
   match: (url) => {
-    return isSubdomainOf(url, domains) || isHostOf(url, apexHosts)
+    return parseBearblogUrl(url) !== undefined
   },
 
   resolve: (url) => {
-    const { origin, searchParams } = new URL(url)
-    const uris: Array<DiscoverUriEntry> = []
+    const parsed = parseBearblogUrl(url)
 
-    // Apex bearblog.dev exposes the platform-wide trending discovery feed.
-    if (isHostOf(url, apexHosts)) {
-      uris.push({
-        uri: 'https://bearblog.dev/discover/feed/',
-        hint: composeHint('bearblog:discover', 'atom'),
-      })
-      uris.push({
-        uri: 'https://bearblog.dev/discover/feed/?type=rss',
-        hint: composeHint('bearblog:discover', 'rss'),
-      })
-
-      return uris
+    if (!parsed) {
+      return []
     }
 
-    // Tag filter via ?q= query param.
-    const tag = searchParams.get('q')
+    if (parsed.kind === 'discover') {
+      return [
+        {
+          uri: 'https://bearblog.dev/discover/feed/',
+          hint: composeHint('bearblog:discover', 'atom'),
+        },
+        {
+          uri: 'https://bearblog.dev/discover/feed/?type=rss',
+          hint: composeHint('bearblog:discover', 'rss'),
+        },
+      ]
+    }
 
-    if (tag) {
+    const { origin } = new URL(url)
+    const uris: Array<DiscoverUriEntry> = []
+
+    if (parsed.tag) {
       uris.push({
-        uri: `${origin}/feed/?q=${encodeURIComponent(tag)}`,
+        uri: `${origin}/feed/?q=${encodeURIComponent(parsed.tag)}`,
         hint: composeHint('bearblog:tag', 'atom'),
       })
       uris.push({
-        uri: `${origin}/feed/?type=rss&q=${encodeURIComponent(tag)}`,
+        uri: `${origin}/feed/?type=rss&q=${encodeURIComponent(parsed.tag)}`,
         hint: composeHint('bearblog:tag', 'rss'),
       })
     }

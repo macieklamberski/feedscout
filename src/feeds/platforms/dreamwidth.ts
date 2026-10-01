@@ -1,46 +1,57 @@
 import { isHostOf, isSubdomainOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { getJournalFeeds } from './livejournal.js'
+import { getJournalFeeds, journalTagRegex } from './livejournal.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic partly covers blog, tag, tildePath, userPath.
+// Generic partly covers blog, tag, userPath.
+// Handler needed for: tildePath.
+
+export type DreamwidthUrl = { kind: 'journal'; username?: string; tag?: string }
 
 const domains = ['dreamwidth.org']
 const wwwHosts = ['www.dreamwidth.org', 'dreamwidth.org']
 const usersPathRegex = /^\/(?:users\/|~)([^/]+)/i
 
+export const parseDreamwidthUrl = (url: string): DreamwidthUrl | undefined => {
+  if (!isSubdomainOf(url, domains)) {
+    return
+  }
+
+  const { pathname } = new URL(url)
+  const tag = pathname.match(journalTagRegex)?.[1]
+
+  // Bare www.dreamwidth.org has no per-user context, so it names a journal only through a
+  // /users/ or /~ selector in the path.
+  if (isHostOf(url, wwwHosts)) {
+    const username = pathname.match(usersPathRegex)?.[1]
+
+    if (!username) {
+      return
+    }
+
+    return { kind: 'journal', username, tag }
+  }
+
+  return { kind: 'journal', tag }
+}
+
 export const dreamwidthHandler: PlatformHandler = {
   match: (url) => {
-    if (!isSubdomainOf(url, domains)) {
-      return false
-    }
-
-    // www.dreamwidth.org only matches when the path carries a /users/ or /~ user
-    // selector — bare apex/www has no per-user context and would emit a 404 URL.
-    if (isHostOf(url, wwwHosts)) {
-      return usersPathRegex.test(new URL(url).pathname)
-    }
-
-    return true
+    return parseDreamwidthUrl(url) !== undefined
   },
 
   resolve: (url) => {
-    const { origin, pathname } = new URL(url)
+    const parsed = parseDreamwidthUrl(url)
 
-    let userOrigin = origin
-
-    // www.dreamwidth.org/users/{user} or /~{user} — canonicalise to subdomain form.
-    if (isHostOf(url, wwwHosts)) {
-      const userMatch = pathname.match(usersPathRegex)
-
-      // A username with `_` is served on a hostname with `-`.
-      if (userMatch?.[1]) {
-        userOrigin = `https://${userMatch[1].replaceAll('_', '-')}.dreamwidth.org`
-      } else {
-        return []
-      }
+    if (!parsed) {
+      return []
     }
 
-    return getJournalFeeds(userOrigin, pathname, 'dreamwidth')
+    // A username with `_` is served on a hostname with `-`.
+    const base = parsed.username
+      ? `https://${parsed.username.replaceAll('_', '-')}.dreamwidth.org`
+      : new URL(url).origin
+
+    return getJournalFeeds(base, parsed.tag, 'dreamwidth')
   },
 }

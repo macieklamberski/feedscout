@@ -4,12 +4,13 @@ import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers starred, user (html).
-// Handler needed for: discover, forks.
+// Handler needed for: forks.
 
 export type GithubGistUrl =
   | { kind: 'user'; username: string }
   | { kind: 'starred'; username: string }
   | { kind: 'forks'; username: string }
+  | { kind: 'discover' }
 
 const hosts = ['gist.github.com']
 
@@ -24,6 +25,11 @@ const forksSections = ['forks', 'forked']
 export const parseGithubGistUrl = (url: string): GithubGistUrl | undefined => {
   if (!isHostOf(url, hosts)) {
     return
+  }
+
+  // Discover page: /discover (global new gists feed).
+  if (discoverRegex.test(new URL(url).pathname)) {
+    return { kind: 'discover' }
   }
 
   const [first, second, ...rest] = getPathSegments(url)
@@ -49,14 +55,17 @@ export const parseGithubGistUrl = (url: string): GithubGistUrl | undefined => {
 
 export const githubGistHandler: PlatformHandler = {
   match: (url) => {
-    return isHostOf(url, hosts)
+    return parseGithubGistUrl(url) !== undefined
   },
 
   resolve: (url) => {
-    const { pathname } = new URL(url)
+    const parsed = parseGithubGistUrl(url)
 
-    // Discover page: /discover (global new gists feed).
-    if (discoverRegex.test(pathname)) {
+    if (!parsed) {
+      return []
+    }
+
+    if (parsed.kind === 'discover') {
       return [
         {
           uri: 'https://gist.github.com/discover.atom',
@@ -65,9 +74,7 @@ export const githubGistHandler: PlatformHandler = {
       ]
     }
 
-    const parsed = parseGithubGistUrl(url)
-
-    if (parsed?.kind === 'starred') {
+    if (parsed.kind === 'starred') {
       return [
         {
           uri: `https://gist.github.com/${parsed.username}/starred.atom`,
@@ -78,7 +85,7 @@ export const githubGistHandler: PlatformHandler = {
 
     // GitHub serves `/{username}/forks.atom` as the user's own gists, and the forked
     // gists only at `/{username}/forked.atom`.
-    if (parsed?.kind === 'forks') {
+    if (parsed.kind === 'forks') {
       return [
         {
           uri: `https://gist.github.com/${parsed.username}/forked.atom`,
@@ -87,15 +94,11 @@ export const githubGistHandler: PlatformHandler = {
       ]
     }
 
-    if (parsed?.kind === 'user') {
-      return [
-        {
-          uri: `https://gist.github.com/${parsed.username}.atom`,
-          hint: composeHint('github-gist:gists'),
-        },
-      ]
-    }
-
-    return []
+    return [
+      {
+        uri: `https://gist.github.com/${parsed.username}.atom`,
+        hint: composeHint('github-gist:gists'),
+      },
+    ]
   },
 }

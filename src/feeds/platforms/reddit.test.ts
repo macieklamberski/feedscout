@@ -62,7 +62,7 @@ describe('parseRedditUrl', () => {
   })
 
   it('should return the search for a subreddit search page', () => {
-    const expected: RedditUrl = { kind: 'search', subreddit: 'programming' }
+    const expected: RedditUrl = { kind: 'search', subreddit: 'programming', query: 'rust' }
 
     expect(parseRedditUrl('https://reddit.com/r/programming/search?q=rust')).toEqual(expected)
   })
@@ -201,7 +201,7 @@ describe('parseRedditUrl', () => {
   })
 
   it('should return the search for a capitalized subreddit search path', () => {
-    const expected: RedditUrl = { kind: 'search', subreddit: 'programming' }
+    const expected: RedditUrl = { kind: 'search', subreddit: 'programming', query: 'rust' }
 
     expect(parseRedditUrl('https://reddit.com/r/programming/Search?q=rust')).toEqual(expected)
   })
@@ -239,12 +239,57 @@ describe('parseRedditUrl', () => {
   it('should return undefined for other Reddit paths', () => {
     expect(parseRedditUrl('https://reddit.com/about')).toBeUndefined()
     expect(parseRedditUrl('https://reddit.com/wiki')).toBeUndefined()
-    expect(parseRedditUrl('https://reddit.com/search?q=typescript')).toBeUndefined()
   })
 
-  it('should return undefined for the homepage', () => {
-    expect(parseRedditUrl('https://reddit.com/')).toBeUndefined()
-    expect(parseRedditUrl('https://reddit.com')).toBeUndefined()
+  it('should return undefined for a sitewide search without a query', () => {
+    expect(parseRedditUrl('https://reddit.com/search')).toBeUndefined()
+  })
+
+  it('should return the sitewide search with its query', () => {
+    const expected: RedditUrl = { kind: 'siteSearch', query: 'typescript' }
+
+    expect(parseRedditUrl('https://reddit.com/search?q=typescript')).toEqual(expected)
+  })
+
+  it('should return the home page for the root', () => {
+    const expected: RedditUrl = { kind: 'home' }
+
+    expect(parseRedditUrl('https://reddit.com/')).toEqual(expected)
+  })
+
+  it('should return the sitewide sort', () => {
+    const expected: RedditUrl = { kind: 'siteSort', sort: 'new' }
+
+    expect(parseRedditUrl('https://www.reddit.com/new')).toEqual(expected)
+  })
+
+  it('should return the sitewide sort with its timeframe', () => {
+    const expected: RedditUrl = { kind: 'siteSort', sort: 'top', timeframe: 'week' }
+
+    expect(parseRedditUrl('https://www.reddit.com/Top?t=week')).toEqual(expected)
+  })
+
+  it('should return the subreddit with its sort and timeframe', () => {
+    const expected: RedditUrl = {
+      kind: 'subreddit',
+      subreddit: 'rust',
+      sort: 'top',
+      timeframe: 'month',
+    }
+
+    expect(parseRedditUrl('https://www.reddit.com/r/rust/top?t=month')).toEqual(expected)
+  })
+
+  it('should return the subreddit list with its sort', () => {
+    const expected: RedditUrl = { kind: 'subreddits', sort: 'popular' }
+
+    expect(parseRedditUrl('https://www.reddit.com/subreddits/popular')).toEqual(expected)
+  })
+
+  it('should return the subreddit list without a sort', () => {
+    const expected: RedditUrl = { kind: 'subreddits' }
+
+    expect(parseRedditUrl('https://www.reddit.com/subreddits')).toEqual(expected)
   })
 
   it('should return undefined for another host', () => {

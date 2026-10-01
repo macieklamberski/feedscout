@@ -37,7 +37,7 @@ const getFeedUrls = (url: string, content: string | undefined): Array<string> =>
 
 export const podloveHandler: PlatformHandler = {
   match: (url, content) => {
-    return URL.canParse(url) && getFeedUrls(url, content).length > 0
+    return getFeedUrls(url, content).length > 0
   },
 
   resolve: (url, content) => {

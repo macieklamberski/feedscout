@@ -10,12 +10,20 @@ const audiobookRegex = /^\/[^/]+\/?$/
 // An audiobook page links its feed by numeric id, which the slug does not carry.
 const feedIdRegex = /href="(?:https?|itpc):\/\/librivox\.org\/rss\/(\d+)"/
 
-const getAudiobookId = (url: string, content: string | undefined): string | undefined => {
+export type LibrivoxPage = { audiobookId: string }
+
+const getLibrivoxPage = (url: string, content: string | undefined): LibrivoxPage | undefined => {
   if (!audiobookRegex.test(new URL(url).pathname)) {
     return
   }
 
-  return content?.match(feedIdRegex)?.[1]
+  const audiobookId = content?.match(feedIdRegex)?.[1]
+
+  if (!audiobookId) {
+    return
+  }
+
+  return { audiobookId }
 }
 
 export const librivoxHandler: PlatformHandler = {
@@ -24,19 +32,19 @@ export const librivoxHandler: PlatformHandler = {
       return false
     }
 
-    return getAudiobookId(url, content) !== undefined
+    return getLibrivoxPage(url, content) !== undefined
   },
 
   resolve: (url, content) => {
-    const audiobookId = getAudiobookId(url, content)
+    const page = getLibrivoxPage(url, content)
 
-    if (!audiobookId) {
+    if (!page) {
       return []
     }
 
     return [
       {
-        uri: `https://librivox.org/rss/${audiobookId}`,
+        uri: `https://librivox.org/rss/${page.audiobookId}`,
         hint: composeHint('librivox:audiobook'),
       },
     ]

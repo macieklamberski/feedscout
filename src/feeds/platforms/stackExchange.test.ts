@@ -1,6 +1,56 @@
 import { describe, expect, it } from 'bun:test'
 import type { DiscoverUriEntry } from '../../common/types.js'
-import { stackExchangeHandler } from './stackExchange.js'
+import {
+  parseStackExchangeUrl,
+  type StackExchangeUrl,
+  stackExchangeHandler,
+} from './stackExchange.js'
+
+describe('parseStackExchangeUrl', () => {
+  it('should return the tag with its sort for a tag page', () => {
+    const expected: StackExchangeUrl = { kind: 'tag', tag: 'javascript', sort: 'newest' }
+
+    expect(
+      parseStackExchangeUrl('https://stackoverflow.com/questions/tagged/javascript?tab=Newest'),
+    ).toEqual(expected)
+  })
+
+  it('should return the question for a question page', () => {
+    const expected: StackExchangeUrl = { kind: 'question', questionId: '12345' }
+
+    expect(parseStackExchangeUrl('https://stackoverflow.com/questions/12345/title')).toEqual(
+      expected,
+    )
+  })
+
+  it('should return the user for a user page', () => {
+    const expected: StackExchangeUrl = { kind: 'user', userId: '42' }
+
+    expect(parseStackExchangeUrl('https://superuser.com/users/42/name')).toEqual(expected)
+  })
+
+  it('should return the collective for a collective page', () => {
+    const expected: StackExchangeUrl = { kind: 'collective', collective: 'google-cloud' }
+
+    expect(parseStackExchangeUrl('https://stackoverflow.com/collectives/google-cloud')).toEqual(
+      expected,
+    )
+  })
+
+  it('should return the home page for the root', () => {
+    const expected: StackExchangeUrl = { kind: 'home' }
+
+    expect(parseStackExchangeUrl('https://unix.stackexchange.com/')).toEqual(expected)
+  })
+
+  it('should return undefined for another page', () => {
+    expect(parseStackExchangeUrl('https://stackoverflow.com/help')).toBeUndefined()
+  })
+
+  it('should return undefined for another host', () => {
+    expect(parseStackExchangeUrl('https://example.com/questions/12345')).toBeUndefined()
+  })
+})
 
 describe('stackExchangeHandler', () => {
   describe('match', () => {
@@ -30,6 +80,10 @@ describe('stackExchangeHandler', () => {
   })
 
   describe('resolve', () => {
+    it('should return empty array for a URL outside Stack Exchange', () => {
+      expect(stackExchangeHandler.resolve('https://example.com/')).toEqual([])
+    })
+
     it('should return tag feed for tag page on Stack Overflow', () => {
       const value = 'https://stackoverflow.com/questions/tagged/javascript'
       const expected = [

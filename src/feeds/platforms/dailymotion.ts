@@ -10,6 +10,7 @@ export type DailymotionUrl =
   | { kind: 'playlist'; playlistId: string }
   | { kind: 'channel'; channel: string }
   | { kind: 'search'; query: string }
+  | { kind: 'trending' }
 
 const hosts = ['dailymotion.com', 'www.dailymotion.com']
 const userRegex = /^\/([a-zA-Z0-9_-]+)\/?$/i
@@ -67,6 +68,12 @@ export const parseDailymotionUrl = (url: string): DailymotionUrl | undefined => 
   }
 
   const { pathname } = parsedUrl
+
+  // Homepage or /trending: global trending feed.
+  if (trendingRegex.test(pathname)) {
+    return { kind: 'trending' }
+  }
+
   const playlistId = pathname.match(playlistRegex)?.[1]
 
   if (playlistId) {
@@ -96,14 +103,17 @@ export const parseDailymotionUrl = (url: string): DailymotionUrl | undefined => 
 
 export const dailymotionHandler: PlatformHandler = {
   match: (url) => {
-    return isHostOf(url, hosts)
+    return parseDailymotionUrl(url) !== undefined
   },
 
   resolve: (url) => {
-    const { pathname } = new URL(url)
+    const parsed = parseDailymotionUrl(url)
 
-    // Homepage or /trending: global trending feed.
-    if (trendingRegex.test(pathname)) {
+    if (!parsed) {
+      return []
+    }
+
+    if (parsed.kind === 'trending') {
       return [
         {
           uri: 'https://www.dailymotion.com/rss/trending',
@@ -112,9 +122,7 @@ export const dailymotionHandler: PlatformHandler = {
       ]
     }
 
-    const parsed = parseDailymotionUrl(url)
-
-    if (parsed?.kind === 'playlist') {
+    if (parsed.kind === 'playlist') {
       return [
         {
           uri: `https://www.dailymotion.com/rss/playlist/${parsed.playlistId}`,
@@ -123,7 +131,7 @@ export const dailymotionHandler: PlatformHandler = {
       ]
     }
 
-    if (parsed?.kind === 'search') {
+    if (parsed.kind === 'search') {
       return [
         {
           uri: `https://www.dailymotion.com/rss/search/${parsed.query}`,
@@ -132,7 +140,7 @@ export const dailymotionHandler: PlatformHandler = {
       ]
     }
 
-    if (parsed?.kind === 'channel') {
+    if (parsed.kind === 'channel') {
       return [
         {
           uri: `https://www.dailymotion.com/rss/channel/${parsed.channel}`,
@@ -141,15 +149,11 @@ export const dailymotionHandler: PlatformHandler = {
       ]
     }
 
-    if (parsed?.kind === 'user') {
-      return [
-        {
-          uri: `https://www.dailymotion.com/rss/${parsed.username}`,
-          hint: composeHint('dailymotion:videos'),
-        },
-      ]
-    }
-
-    return []
+    return [
+      {
+        uri: `https://www.dailymotion.com/rss/${parsed.username}`,
+        hint: composeHint('dailymotion:videos'),
+      },
+    ]
   },
 }

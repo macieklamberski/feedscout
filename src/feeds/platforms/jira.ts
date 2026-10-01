@@ -1,7 +1,7 @@
-import { isSubdomainOf, parseUrl } from 'trousse'
+import { isSubdomainOf } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, getMetaContent } from '../../common/utils.js'
+import { composeHint, getMetaContent, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Not discoverable without handler.
 // Handler needed for: all shapes.
@@ -24,25 +24,31 @@ const isJiraPath = (pathname: string): boolean => {
   return issueRegex.test(pathname) || projectRegex.test(pathname) || jiraPathRegex.test(pathname)
 }
 
-const getProjectKey = (pathname: string, content: string): string | undefined => {
-  const key = pathname.match(issueRegex)?.[1] ?? pathname.match(projectRegex)?.[1]
-
-  return key ?? getMetaContent(content, 'ajs-project-key')
-}
-
 export const isJiraHtml = (content: string): boolean => {
   return Boolean(getMetaContent(content, 'ajs-base-url'))
 }
 
+export type JiraPage = { baseUrl: string; projectKey?: string }
+
+const getJiraPage = (url: string, content: string | undefined): JiraPage | undefined => {
+  const { origin, pathname } = new URL(url)
+
+  if (confluencePathRegex.test(pathname)) {
+    return
+  }
+
+  const contextPath = getMetaContent(content ?? '', 'ajs-context-path') ?? ''
+  const pathKey = pathname.match(issueRegex)?.[1] ?? pathname.match(projectRegex)?.[1]
+
+  return {
+    baseUrl: `${origin}${contextPath}`.replace(trailingSlashRegex, ''),
+    projectKey: pathKey ?? getMetaContent(content ?? '', 'ajs-project-key'),
+  }
+}
+
 export const jiraHandler: PlatformHandler = {
-  match: (url, content) => {
-    const parsedUrl = parseUrl(url)
-
-    if (!parsedUrl) {
-      return false
-    }
-
-    const { pathname } = parsedUrl
+  match: (url, content, headers) => {
+    const { pathname } = new URL(url)
 
     if (confluencePathRegex.test(pathname)) {
       return false
@@ -52,19 +58,21 @@ export const jiraHandler: PlatformHandler = {
       return true
     }
 
-    return Boolean(content) && isJiraHtml(content ?? '') && isJiraPath(pathname)
+    if (!hasMarker(content, headers, { html: isJiraHtml })) {
+      return false
+    }
+
+    return isJiraPath(pathname)
   },
 
   resolve: (url, content) => {
-    const { origin, pathname } = new URL(url)
+    const page = getJiraPage(url, content)
 
-    if (confluencePathRegex.test(pathname)) {
+    if (!page) {
       return []
     }
 
-    const contextPath = getMetaContent(content ?? '', 'ajs-context-path') ?? ''
-    const baseUrl = `${origin}${contextPath}`.replace(trailingSlashRegex, '')
-    const projectKey = getProjectKey(pathname, content ?? '')
+    const { baseUrl, projectKey } = page
     const uris: Array<DiscoverUriEntry> = []
 
     if (projectKey) {

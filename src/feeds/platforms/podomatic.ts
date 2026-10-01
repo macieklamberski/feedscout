@@ -1,51 +1,57 @@
-import { getSubdomain, isHostOf, parseUrl } from 'trousse'
+import { getSubdomain, isAnyOf, isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Unmeasured, podomatic.com no longer resolves in DNS, from any resolver.
+
+export type PodomaticUrl = { kind: 'podcast'; show: string }
 
 const domains = ['podomatic.com']
 const hosts = ['podomatic.com', 'www.podomatic.com']
 const directoryPathRegex = /^\/podcasts\/([^/]+)/i
 const excludedSubdomains = ['www', 'api', 'assets', 'static']
 
-const getShow = (url: string): string | undefined => {
+export const parsePodomaticUrl = (url: string): PodomaticUrl | undefined => {
   const parsedUrl = parseUrl(url)
 
   if (!parsedUrl) {
     return
   }
 
-  const { pathname } = parsedUrl
+  if (isHostOf(parsedUrl, hosts)) {
+    const show = parsedUrl.pathname.match(directoryPathRegex)?.[1]
 
-  if (isHostOf(url, hosts)) {
-    return pathname.match(directoryPathRegex)?.[1]
+    if (!show) {
+      return
+    }
+
+    return { kind: 'podcast', show }
   }
 
-  const subdomain = getSubdomain(url, domains)
+  const show = getSubdomain(parsedUrl, domains)
 
-  if (!subdomain) {
+  if (!show || isAnyOf(show, excludedSubdomains)) {
     return
   }
 
-  return excludedSubdomains.includes(subdomain) ? undefined : subdomain
+  return { kind: 'podcast', show }
 }
 
 export const podomaticHandler: PlatformHandler = {
   match: (url) => {
-    return Boolean(getShow(url))
+    return parsePodomaticUrl(url) !== undefined
   },
 
   resolve: (url) => {
-    const show = getShow(url)
+    const parsed = parsePodomaticUrl(url)
 
-    if (!show) {
+    if (!parsed) {
       return []
     }
 
     return [
       {
-        uri: `https://${show}.podomatic.com/rss2.xml`,
+        uri: `https://${parsed.show}.podomatic.com/rss2.xml`,
         hint: composeHint('podomatic:show'),
       },
     ]

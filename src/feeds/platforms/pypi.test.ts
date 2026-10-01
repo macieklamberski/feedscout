@@ -1,5 +1,27 @@
 import { describe, expect, it } from 'bun:test'
-import { pypiHandler } from './pypi.js'
+import { type PypiUrl, parsePypiUrl, pypiHandler } from './pypi.js'
+
+describe('parsePypiUrl', () => {
+  it('should return the project for a project page', () => {
+    const expected: PypiUrl = { kind: 'project', project: 'example-package' }
+
+    expect(parsePypiUrl('https://pypi.org/project/example-package/')).toEqual(expected)
+  })
+
+  it('should return the home page for the root', () => {
+    const expected: PypiUrl = { kind: 'home' }
+
+    expect(parsePypiUrl('https://pypi.org/')).toEqual(expected)
+  })
+
+  it('should return undefined for another page', () => {
+    expect(parsePypiUrl('https://pypi.org/search/')).toBeUndefined()
+  })
+
+  it('should return undefined for another host', () => {
+    expect(parsePypiUrl('https://example.com/project/example-package/')).toBeUndefined()
+  })
+})
 
 describe('pypiHandler', () => {
   describe('match', () => {

@@ -1,5 +1,27 @@
 import { describe, expect, it } from 'bun:test'
-import { art19Handler } from './art19.js'
+import { type Art19Url, art19Handler, parseArt19Url } from './art19.js'
+
+describe('parseArt19Url', () => {
+  it('should return the show for a show page', () => {
+    const expected: Art19Url = { kind: 'show', slug: 'my-show' }
+
+    expect(parseArt19Url('https://art19.com/shows/my-show')).toEqual(expected)
+  })
+
+  it('should return the show for a show page with a capitalized shows segment', () => {
+    const expected: Art19Url = { kind: 'show', slug: 'my-show' }
+
+    expect(parseArt19Url('https://www.art19.com/Shows/my-show')).toEqual(expected)
+  })
+
+  it('should return undefined for the root', () => {
+    expect(parseArt19Url('https://art19.com/')).toBeUndefined()
+  })
+
+  it('should return undefined for another host', () => {
+    expect(parseArt19Url('https://example.com/shows/my-show')).toBeUndefined()
+  })
+})
 
 describe('art19Handler', () => {
   describe('match', () => {
@@ -27,6 +49,10 @@ describe('art19Handler', () => {
   })
 
   describe('resolve', () => {
+    it('should return empty array for a URL outside the platform', () => {
+      expect(art19Handler.resolve('https://example.com/')).toEqual([])
+    })
+
     it('should return the show feed on the feed host', () => {
       const value = 'https://art19.com/shows/example-show'
       const expected = [

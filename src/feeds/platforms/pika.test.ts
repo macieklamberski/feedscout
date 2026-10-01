@@ -1,6 +1,24 @@
 import { describe, expect, it } from 'bun:test'
 import type { DiscoverUriEntry } from '../../common/types.js'
-import { pikaHandler } from './pika.js'
+import { type PikaUrl, parsePikaUrl, pikaHandler } from './pika.js'
+
+describe('parsePikaUrl', () => {
+  it('should return the tag for a tag page', () => {
+    const expected: PikaUrl = { kind: 'tag', tag: 'books' }
+
+    expect(parsePikaUrl('https://example.pika.page/tag/books')).toEqual(expected)
+  })
+
+  it('should return the blog for any other page', () => {
+    const expected: PikaUrl = { kind: 'blog' }
+
+    expect(parsePikaUrl('https://example.pika.page/posts/hello')).toEqual(expected)
+  })
+
+  it('should return undefined for another host', () => {
+    expect(parsePikaUrl('https://example.com/tag/books')).toBeUndefined()
+  })
+})
 
 describe('pikaHandler', () => {
   describe('match', () => {
@@ -21,6 +39,10 @@ describe('pikaHandler', () => {
   })
 
   describe('resolve', () => {
+    it('should return empty array for a URL outside Pika', () => {
+      expect(pikaHandler.resolve('https://example.com/')).toEqual([])
+    })
+
     it('should return the tag feed for a capitalized tag segment', () => {
       const value = 'https://alice.pika.page/Tag/tech'
       const expected: Array<DiscoverUriEntry> = [

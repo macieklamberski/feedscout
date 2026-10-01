@@ -1,8 +1,31 @@
 import { describe, expect, it } from 'bun:test'
-import { funkwhaleHandler, isFunkwhaleHtml } from './funkwhale.js'
+import {
+  type FunkwhaleUrl,
+  funkwhaleHandler,
+  isFunkwhaleHtml,
+  parseFunkwhaleUrl,
+} from './funkwhale.js'
 
 const funkwhaleHtml = '<meta name="generator" content="Funkwhale" />'
 const otherHtml = '<meta name="generator" content="Castopod 1.0">'
+
+describe('parseFunkwhaleUrl', () => {
+  it('should return the channel for a channel page', () => {
+    const expected: FunkwhaleUrl = { kind: 'channel', channel: 'news' }
+
+    expect(parseFunkwhaleUrl('https://example.org/channels/news')).toEqual(expected)
+  })
+
+  it('should return a remote channel as written', () => {
+    const expected: FunkwhaleUrl = { kind: 'channel', channel: 'news@other.example' }
+
+    expect(parseFunkwhaleUrl('https://example.org/channels/news@other.example')).toEqual(expected)
+  })
+
+  it('should return undefined for a page the parser does not name', () => {
+    expect(parseFunkwhaleUrl('https://example.org/library')).toBeUndefined()
+  })
+})
 
 describe('isFunkwhaleHtml', () => {
   it('should return true for the Funkwhale generator meta tag', () => {
@@ -42,10 +65,6 @@ describe('funkwhaleHandler', () => {
 
     it('should not match without content', () => {
       expect(funkwhaleHandler.match('https://example.org/channels/alice')).toBe(false)
-    })
-
-    it('should not match invalid URLs', () => {
-      expect(funkwhaleHandler.match('not-a-url', funkwhaleHtml)).toBe(false)
     })
   })
 

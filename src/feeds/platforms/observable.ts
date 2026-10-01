@@ -8,6 +8,8 @@ import { composeHint } from '../../common/utils.js'
 export type ObservableUrl =
   | { kind: 'user'; owner: string }
   | { kind: 'collection'; owner: string; collection: string }
+  | { kind: 'recent' }
+  | { kind: 'trending' }
 
 export const hosts = ['observablehq.com', 'www.observablehq.com']
 // The live form carries a `-` segment, `/@{owner}/-/collection/{slug}`.
@@ -24,7 +26,18 @@ export const parseObservableUrl = (url: string): ObservableUrl | undefined => {
     return
   }
 
-  const { pathname } = parsedUrl
+  const { pathname, searchParams } = parsedUrl
+  const isPublic = publicRegex.test(pathname)
+
+  // `/recent` redirects to `/public?sort=publish_time` and `/trending` to `/public`.
+  if (recentRegex.test(pathname) || (isPublic && searchParams.get('sort') === 'publish_time')) {
+    return { kind: 'recent' }
+  }
+
+  if (trendingRegex.test(pathname) || isPublic) {
+    return { kind: 'trending' }
+  }
+
   const collectionMatch = pathname.match(collectionRegex)
 
   if (collectionMatch?.[1] && collectionMatch[2]) {
@@ -42,16 +55,17 @@ export const parseObservableUrl = (url: string): ObservableUrl | undefined => {
 
 export const observableHandler: PlatformHandler = {
   match: (url) => {
-    return isHostOf(url, hosts)
+    return parseObservableUrl(url) !== undefined
   },
 
   resolve: (url) => {
-    const { pathname, searchParams } = new URL(url)
-    const isPublic = publicRegex.test(pathname)
+    const parsed = parseObservableUrl(url)
 
-    // `/recent` redirects to `/public?sort=publish_time` and `/trending` to `/public`.
-    // Site-wide recent feed.
-    if (recentRegex.test(pathname) || (isPublic && searchParams.get('sort') === 'publish_time')) {
+    if (!parsed) {
+      return []
+    }
+
+    if (parsed.kind === 'recent') {
       return [
         {
           uri: 'https://api.observablehq.com/documents/public.rss',
@@ -60,8 +74,7 @@ export const observableHandler: PlatformHandler = {
       ]
     }
 
-    // Site-wide trending feed.
-    if (trendingRegex.test(pathname) || isPublic) {
+    if (parsed.kind === 'trending') {
       return [
         {
           uri: 'https://api.observablehq.com/documents/trending.rss',
@@ -70,9 +83,7 @@ export const observableHandler: PlatformHandler = {
       ]
     }
 
-    const parsed = parseObservableUrl(url)
-
-    if (parsed?.kind === 'collection') {
+    if (parsed.kind === 'collection') {
       return [
         {
           uri: `https://api.observablehq.com/collection/@${parsed.owner}/${parsed.collection}.rss`,
@@ -81,15 +92,11 @@ export const observableHandler: PlatformHandler = {
       ]
     }
 
-    if (parsed?.kind === 'user') {
-      return [
-        {
-          uri: `https://api.observablehq.com/documents/@${parsed.owner}.rss`,
-          hint: composeHint('observable:notebooks'),
-        },
-      ]
-    }
-
-    return []
+    return [
+      {
+        uri: `https://api.observablehq.com/documents/@${parsed.owner}.rss`,
+        hint: composeHint('observable:notebooks'),
+      },
+    ]
   },
 }

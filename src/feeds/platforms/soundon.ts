@@ -1,9 +1,11 @@
-import { isHostOf } from 'trousse'
+import { isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Not discoverable without handler.
 // Handler needed for: all shapes.
+
+export type SoundonUrl = { kind: 'podcast'; podcastId: string }
 
 const hosts = ['player.soundon.fm']
 
@@ -11,34 +13,40 @@ const idRegex = /^[\da-f]{8}-[\da-f]{4}-[\da-f]{4}-[\da-f]{4}-[\da-f]{12}$/i
 const podcastRegex = /^\/p\/([^/]+)(?:\/|$)/i
 const embedRegex = /^\/embed\/?$/i
 
-const getPodcastId = (url: string): string | undefined => {
-  const { pathname, searchParams } = new URL(url)
-  const id = embedRegex.test(pathname)
-    ? searchParams.get('podcast')
-    : pathname.match(podcastRegex)?.[1]
+export const parseSoundonUrl = (url: string): SoundonUrl | undefined => {
+  const parsedUrl = parseUrl(url)
 
-  if (!id || !idRegex.test(id)) {
+  if (!parsedUrl || !isHostOf(parsedUrl, hosts)) {
     return
   }
 
-  return id
+  const { pathname, searchParams } = parsedUrl
+  const podcastId = embedRegex.test(pathname)
+    ? searchParams.get('podcast')
+    : pathname.match(podcastRegex)?.[1]
+
+  if (!podcastId || !idRegex.test(podcastId)) {
+    return
+  }
+
+  return { kind: 'podcast', podcastId }
 }
 
 export const soundonHandler: PlatformHandler = {
   match: (url) => {
-    return isHostOf(url, hosts) && !!getPodcastId(url)
+    return parseSoundonUrl(url) !== undefined
   },
 
   resolve: (url) => {
-    const id = getPodcastId(url)
+    const parsed = parseSoundonUrl(url)
 
-    if (!id) {
+    if (!parsed) {
       return []
     }
 
     return [
       {
-        uri: `https://feeds.soundon.fm/podcasts/${id}.xml`,
+        uri: `https://feeds.soundon.fm/podcasts/${parsed.podcastId}.xml`,
         hint: composeHint('soundon:podcast'),
       },
     ]

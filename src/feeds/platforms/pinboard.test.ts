@@ -1,5 +1,41 @@
 import { describe, expect, it } from 'bun:test'
-import { pinboardHandler } from './pinboard.js'
+import { type PinboardUrl, parsePinboardUrl, pinboardHandler } from './pinboard.js'
+
+describe('parsePinboardUrl', () => {
+  it('should return the user for a user page', () => {
+    const expected: PinboardUrl = { kind: 'user', username: 'example' }
+
+    expect(parsePinboardUrl('https://pinboard.in/u:example/')).toEqual(expected)
+  })
+
+  it('should return the user tags for a user tag page', () => {
+    const expected: PinboardUrl = { kind: 'userTag', username: 'example', tags: ['rss', 'atom'] }
+
+    expect(parsePinboardUrl('https://pinboard.in/u:example/t:rss/t:atom/')).toEqual(expected)
+  })
+
+  it('should return the tags for a site-wide tag page', () => {
+    const expected: PinboardUrl = { kind: 'tag', tags: ['rss'] }
+
+    expect(parsePinboardUrl('https://pinboard.in/t:rss/')).toEqual(expected)
+  })
+
+  it('should return the recent page', () => {
+    const expected: PinboardUrl = { kind: 'recent' }
+
+    expect(parsePinboardUrl('https://pinboard.in/recent/')).toEqual(expected)
+  })
+
+  it('should return the popular page for any other page', () => {
+    const expected: PinboardUrl = { kind: 'popular' }
+
+    expect(parsePinboardUrl('https://pinboard.in/')).toEqual(expected)
+  })
+
+  it('should return undefined for another host', () => {
+    expect(parsePinboardUrl('https://example.com/u:example/')).toBeUndefined()
+  })
+})
 
 describe('pinboardHandler', () => {
   describe('match', () => {
@@ -13,6 +49,10 @@ describe('pinboardHandler', () => {
   })
 
   describe('resolve', () => {
+    it('should return empty array for a URL outside Pinboard', () => {
+      expect(pinboardHandler.resolve('https://example.com/')).toEqual([])
+    })
+
     it('should return the bookmarks feed for a user page', () => {
       const value = 'https://pinboard.in/u:example/'
       const expected = [

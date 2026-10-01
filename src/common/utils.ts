@@ -199,6 +199,28 @@ export const hasAnyMeta = (content: string, markers: Array<[string, string]>): b
   return markers.some(([name, value]) => hasMetaContent(content, name, value))
 }
 
+export type PageMarkers = {
+  html?: (content: string) => boolean
+  headers?: (headers: Headers) => boolean
+}
+
+// Whether the page carries a platform's marker in its markup or its response headers.
+export const hasMarker = (
+  content: string | undefined,
+  headers: Headers | undefined,
+  markers: PageMarkers,
+): boolean => {
+  if (content && markers.html?.(content)) {
+    return true
+  }
+
+  if (headers && markers.headers?.(headers)) {
+    return true
+  }
+
+  return false
+}
+
 // Read the content value of the first meta tag with the given name or property attribute.
 export const getMetaContent = (content: string, name: string): string | undefined => {
   const key = name.toLowerCase()

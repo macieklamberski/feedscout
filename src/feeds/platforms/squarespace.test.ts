@@ -1,5 +1,10 @@
 import { describe, expect, it } from 'bun:test'
-import { isSquarespaceHeaders, squarespaceHandler } from './squarespace.js'
+import {
+  isSquarespaceHeaders,
+  parseSquarespaceUrl,
+  type SquarespaceUrl,
+  squarespaceHandler,
+} from './squarespace.js'
 
 const squarespaceHeaders = new Headers({ server: 'Squarespace' })
 
@@ -15,6 +20,28 @@ describe('isSquarespaceHeaders', () => {
   it('should return false when the header is absent', () => {
     expect(isSquarespaceHeaders(new Headers())).toBe(false)
     expect(isSquarespaceHeaders(new Headers({ server: 'nginx' }))).toBe(false)
+  })
+})
+
+describe('parseSquarespaceUrl', () => {
+  it('should return the collection for a collection page', () => {
+    const expected: SquarespaceUrl = { kind: 'collection', collection: 'blog' }
+
+    expect(parseSquarespaceUrl('https://site.example/blog')).toEqual(expected)
+  })
+
+  it('should return the collection for a post page', () => {
+    const expected: SquarespaceUrl = { kind: 'collection', collection: 'blog' }
+
+    expect(parseSquarespaceUrl('https://site.example/blog/first-post')).toEqual(expected)
+  })
+
+  it('should return undefined for the root', () => {
+    expect(parseSquarespaceUrl('https://site.example/')).toBeUndefined()
+  })
+
+  it('should return undefined for an excluded path', () => {
+    expect(parseSquarespaceUrl('https://site.example/config')).toBeUndefined()
   })
 })
 
@@ -58,6 +85,10 @@ describe('squarespaceHandler', () => {
   })
 
   describe('resolve', () => {
+    it('should return empty array for the root', () => {
+      expect(squarespaceHandler.resolve('https://site.example/')).toEqual([])
+    })
+
     it('should return the collection feed', () => {
       const value = 'https://example.com/blog'
       const expected = [

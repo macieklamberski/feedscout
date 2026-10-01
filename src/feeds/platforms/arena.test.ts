@@ -47,8 +47,19 @@ describe('parseArenaUrl', () => {
     expect(parseArenaUrl('https://www.are.na/meg-miller/Feed/rss')).toEqual(expected)
   })
 
+  it('should return the editorial section', () => {
+    const expected: ArenaUrl = { kind: 'editorial' }
+
+    expect(parseArenaUrl('https://www.are.na/editorial')).toEqual(expected)
+  })
+
+  it('should return the editorial section for an editorial article', () => {
+    const expected: ArenaUrl = { kind: 'editorial' }
+
+    expect(parseArenaUrl('https://www.are.na/Editorial/learning-to-float')).toEqual(expected)
+  })
+
   it('should return undefined for excluded paths', () => {
-    expect(parseArenaUrl('https://www.are.na/editorial')).toBeUndefined()
     expect(parseArenaUrl('https://www.are.na/explore')).toBeUndefined()
     expect(parseArenaUrl('https://www.are.na/settings')).toBeUndefined()
   })
@@ -73,8 +84,8 @@ describe('parseArenaUrl', () => {
 
 describe('arenaHandler', () => {
   describe('match', () => {
-    it('should match any Are.na URL', () => {
-      expect(arenaHandler.match('https://are.na')).toBe(true)
+    it('should match an Are.na profile URL', () => {
+      expect(arenaHandler.match('https://are.na/meg-miller')).toBe(true)
     })
 
     it('should not match other hosts', () => {

@@ -76,13 +76,13 @@ describe('mybbHandler', () => {
     it('should not match another page', () => {
       expect(mybbHandler.match('https://example.com/', '<html></html>', new Headers())).toBe(false)
     })
-
-    it('should not match invalid URLs', () => {
-      expect(mybbHandler.match('not-a-url', mybbHtml)).toBe(false)
-    })
   })
 
   describe('resolve', () => {
+    it('should return empty array for a URL that does not parse', () => {
+      expect(mybbHandler.resolve('not-a-url')).toEqual([])
+    })
+
     it('should build the board feeds from the root path', () => {
       const value = 'https://example.com/community/index.php'
 

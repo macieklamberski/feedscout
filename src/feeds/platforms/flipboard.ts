@@ -51,13 +51,17 @@ export const parseFlipboardUrl = (url: string): FlipboardUrl | undefined => {
 
 export const flipboardHandler: PlatformHandler = {
   match: (url) => {
-    return !!parseFlipboardUrl(url)
+    return parseFlipboardUrl(url) !== undefined
   },
 
   resolve: (url) => {
     const parsed = parseFlipboardUrl(url)
 
-    if (parsed?.kind === 'profile') {
+    if (!parsed) {
+      return []
+    }
+
+    if (parsed.kind === 'profile') {
       return [
         {
           uri: `https://flipboard.com/@${parsed.username}.rss`,
@@ -66,7 +70,7 @@ export const flipboardHandler: PlatformHandler = {
       ]
     }
 
-    if (parsed?.kind === 'magazine') {
+    if (parsed.kind === 'magazine') {
       return [
         {
           uri: `https://flipboard.com/@${parsed.username}/${parsed.magazine}.rss`,
@@ -75,15 +79,11 @@ export const flipboardHandler: PlatformHandler = {
       ]
     }
 
-    if (parsed?.kind === 'topic') {
-      return [
-        {
-          uri: `https://flipboard.com/topic/${parsed.topic}.rss`,
-          hint: composeHint('flipboard:topic'),
-        },
-      ]
-    }
-
-    return []
+    return [
+      {
+        uri: `https://flipboard.com/topic/${parsed.topic}.rss`,
+        hint: composeHint('flipboard:topic'),
+      },
+    ]
   },
 }

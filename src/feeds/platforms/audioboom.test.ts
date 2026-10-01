@@ -1,12 +1,28 @@
 import { describe, expect, it } from 'bun:test'
-import { audioboomHandler } from './audioboom.js'
+import { type AudioboomUrl, audioboomHandler, parseAudioboomUrl } from './audioboom.js'
+
+describe('parseAudioboomUrl', () => {
+  it('should return the channel for a channel page', () => {
+    const expected: AudioboomUrl = { kind: 'channel', channelId: '5071123' }
+
+    expect(parseAudioboomUrl('https://audioboom.com/channels/5071123')).toEqual(expected)
+  })
+
+  it('should return undefined for the root', () => {
+    expect(parseAudioboomUrl('https://audioboom.com/')).toBeUndefined()
+  })
+
+  it('should return undefined for another host', () => {
+    expect(parseAudioboomUrl('https://example.com/channels/5071123')).toBeUndefined()
+  })
+})
 
 describe('audioboomHandler', () => {
   describe('match', () => {
     const values: Array<[boolean, string]> = [
       [true, 'https://audioboom.com/channels/5071123'],
       [true, 'https://www.audioboom.com/channels/5071123'],
-      [true, 'https://audioboom.com'],
+      [false, 'https://audioboom.com'],
       [false, 'https://example.com'],
     ]
 
@@ -20,6 +36,10 @@ describe('audioboomHandler', () => {
   })
 
   describe('resolve', () => {
+    it('should return empty array for a URL outside the platform', () => {
+      expect(audioboomHandler.resolve('https://example.com/')).toEqual([])
+    })
+
     it('should return podcast feed for channel', () => {
       const value = 'https://audioboom.com/channels/5071123'
       const expected = [

@@ -1,6 +1,6 @@
 import { isNonEmptyString, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { getMetaContent } from '../../common/utils.js'
+import { getMetaContent, hasMarker } from '../../common/utils.js'
 import { isPeertubeHeaders, parsePeertubeUrl } from '../../feeds/platforms/peertube.js'
 import type { FaviconEnricher } from '../types.js'
 import { parseResponseJson } from '../utils.js'
@@ -22,7 +22,7 @@ const apiPaths: Record<string, string> = {
 const getProfileId = (url: string): string | undefined => {
   const parsed = parsePeertubeUrl(url)
 
-  if (!parsed) {
+  if (!parsed || parsed.kind === 'instance') {
     return
   }
 
@@ -30,8 +30,8 @@ const getProfileId = (url: string): string | undefined => {
 }
 
 export const peertubeHandler: PlatformHandler = {
-  match: (url, _content, headers) => {
-    if (!headers || !isPeertubeHeaders(headers)) {
+  match: (url, content, headers) => {
+    if (!hasMarker(content, headers, { headers: isPeertubeHeaders })) {
       return false
     }
 

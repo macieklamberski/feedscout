@@ -54,13 +54,13 @@ const getLargeAvatarUri = (src: string): string | undefined => {
 
 export const letterboxdHandler: PlatformHandler = {
   match: (url) => {
-    return parseLetterboxdUrl(url) !== undefined
+    return parseLetterboxdUrl(url)?.kind === 'member'
   },
 
   resolve: (url, content) => {
     const parsed = parseLetterboxdUrl(url)
 
-    if (!parsed) {
+    if (parsed?.kind !== 'member') {
       return []
     }
 

@@ -4,14 +4,31 @@ import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
+export type ProducthuntUrl = { kind: 'home' }
+
 export const hosts = ['producthunt.com', 'www.producthunt.com']
+
+// Every page links the site-wide product feed.
+export const parseProducthuntUrl = (url: string): ProducthuntUrl | undefined => {
+  if (!isHostOf(url, hosts)) {
+    return
+  }
+
+  return { kind: 'home' }
+}
 
 export const producthuntHandler: PlatformHandler = {
   match: (url) => {
-    return isHostOf(url, hosts)
+    return parseProducthuntUrl(url) !== undefined
   },
 
-  resolve: () => {
+  resolve: (url) => {
+    const parsed = parseProducthuntUrl(url)
+
+    if (!parsed) {
+      return []
+    }
+
     return [
       {
         uri: 'https://www.producthunt.com/feed',

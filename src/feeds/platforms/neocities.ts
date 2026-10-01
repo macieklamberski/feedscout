@@ -1,46 +1,46 @@
-import { getPathSegments, getSubdomain, isAnyOf, isHostOf, isSubdomainOf, parseUrl } from 'trousse'
+import { getPathSegments, getSubdomain, isAnyOf, isHostOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Not discoverable without handler.
 // Handler needed for: all shapes.
 
+export type NeocitiesUrl = { kind: 'site'; username: string }
+
 const domains = ['neocities.org']
 const hosts = ['neocities.org', 'www.neocities.org']
 
-const getUsername = (url: string): string | undefined => {
-  const parsedUrl = parseUrl(url)
+export const parseNeocitiesUrl = (url: string): NeocitiesUrl | undefined => {
+  const subdomain = getSubdomain(url, domains)
 
-  if (!parsedUrl) {
+  if (subdomain) {
+    return { kind: 'site', username: subdomain }
+  }
+
+  const [first, username] = getPathSegments(url)
+
+  if (!isHostOf(url, hosts) || !isAnyOf(first, 'site') || !username) {
     return
   }
 
-  const segments = getPathSegments(parsedUrl)
-
-  if (isSubdomainOf(url, domains)) {
-    return getSubdomain(url, domains)
-  }
-
-  if (isHostOf(url, hosts) && isAnyOf(segments[0], 'site')) {
-    return segments[1]
-  }
+  return { kind: 'site', username }
 }
 
 export const neocitiesHandler: PlatformHandler = {
   match: (url) => {
-    return Boolean(getUsername(url))
+    return parseNeocitiesUrl(url) !== undefined
   },
 
   resolve: (url) => {
-    const username = getUsername(url)
+    const parsed = parseNeocitiesUrl(url)
 
-    if (!username) {
+    if (!parsed) {
       return []
     }
 
     return [
       {
-        uri: `https://neocities.org/site/${username}.rss`,
+        uri: `https://neocities.org/site/${parsed.username}.rss`,
         hint: composeHint('neocities:updates'),
       },
     ]

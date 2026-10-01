@@ -1,6 +1,6 @@
 import { isAnyOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, hasAnyMeta } from '../../common/utils.js'
+import { composeHint, hasAnyMeta, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -48,8 +48,8 @@ export const parsePixelfedUrl = (url: string): PixelfedUrl | undefined => {
 }
 
 export const pixelfedHandler: PlatformHandler = {
-  match: (url, content) => {
-    if (!content || !isPixelfedHtml(content)) {
+  match: (url, content, headers) => {
+    if (!hasMarker(content, headers, { html: isPixelfedHtml })) {
       return false
     }
 
@@ -57,16 +57,17 @@ export const pixelfedHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    const { origin } = new URL(url)
-    const username = parsePixelfedUrl(url)?.username
+    const parsed = parsePixelfedUrl(url)
 
-    if (!username) {
+    if (!parsed) {
       return []
     }
 
+    const { origin } = new URL(url)
+
     return [
       {
-        uri: `${origin}/users/${username}.atom`,
+        uri: `${origin}/users/${parsed.username}.atom`,
         hint: composeHint('pixelfed:posts'),
       },
     ]

@@ -27,15 +27,17 @@ export const parseAmebloUrl = (url: string): AmebloUrl | undefined => {
 
 export const amebloHandler: PlatformHandler = {
   match: (url) => {
-    return isHostOf(url, hosts)
+    return parseAmebloUrl(url) !== undefined
   },
 
   resolve: (url) => {
-    const username = parseAmebloUrl(url)?.username
+    const parsed = parseAmebloUrl(url)
 
-    if (!username) {
+    if (!parsed) {
       return []
     }
+
+    const { username } = parsed
 
     const uris: Array<DiscoverUriEntry> = []
 

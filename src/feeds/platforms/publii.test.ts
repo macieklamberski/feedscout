@@ -38,10 +38,6 @@ describe('publiiHandler', () => {
     it('should not match another platform', () => {
       expect(publiiHandler.match('https://example.com/', otherHtml)).toBe(false)
     })
-
-    it('should not match invalid URLs', () => {
-      expect(publiiHandler.match('not-a-url', publiiHtml)).toBe(false)
-    })
   })
 
   describe('resolve', () => {

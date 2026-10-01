@@ -1,12 +1,56 @@
 import { describe, expect, it } from 'bun:test'
-import { qiitaHandler } from './qiita.js'
+import { parseQiitaUrl, type QiitaUrl, qiitaHandler } from './qiita.js'
+
+describe('parseQiitaUrl', () => {
+  it('should return the tag for a tag page', () => {
+    const expected: QiitaUrl = { kind: 'tag', tag: 'python' }
+
+    expect(parseQiitaUrl('https://qiita.com/tags/python')).toEqual(expected)
+  })
+
+  it('should return the organization for an organization page', () => {
+    const expected: QiitaUrl = { kind: 'organization', organization: 'example' }
+
+    expect(parseQiitaUrl('https://qiita.com/organizations/example')).toEqual(expected)
+  })
+
+  it('should return the popular items page', () => {
+    const expected: QiitaUrl = { kind: 'popularItems' }
+
+    expect(parseQiitaUrl('https://qiita.com/popular-items')).toEqual(expected)
+  })
+
+  it('should return the official columns page', () => {
+    const expected: QiitaUrl = { kind: 'officialColumns' }
+
+    expect(parseQiitaUrl('https://qiita.com/official-columns')).toEqual(expected)
+  })
+
+  it('should return the user for a user page', () => {
+    const expected: QiitaUrl = { kind: 'user', username: 'Qiita' }
+
+    expect(parseQiitaUrl('https://qiita.com/Qiita')).toEqual(expected)
+  })
+
+  it('should return undefined for a site route', () => {
+    expect(parseQiitaUrl('https://qiita.com/settings')).toBeUndefined()
+  })
+
+  it('should return undefined for the root', () => {
+    expect(parseQiitaUrl('https://qiita.com/')).toBeUndefined()
+  })
+
+  it('should return undefined for another host', () => {
+    expect(parseQiitaUrl('https://example.com/Qiita')).toBeUndefined()
+  })
+})
 
 describe('qiitaHandler', () => {
   describe('match', () => {
     const values: Array<[boolean, string]> = [
       [true, 'https://qiita.com/Qiita'],
       [true, 'https://www.qiita.com/user'],
-      [true, 'https://qiita.com'],
+      [false, 'https://qiita.com'],
       [false, 'https://example.com'],
     ]
 

@@ -1,17 +1,21 @@
-import { getPathSegments, isAnyOf, isHostOf } from 'trousse'
+import { getPathSegments, isAnyOf, isHostOf, parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
-export type GoodreadsUrl = { kind: 'user'; userId: string } | { kind: 'reviews'; userId: string }
+export type GoodreadsUrl =
+  | { kind: 'user'; userId: string }
+  | { kind: 'reviews'; userId: string; shelf?: string }
 
 const hosts = ['goodreads.com', 'www.goodreads.com']
 
 // A user page is /user/show/{id}-{slug} and their review list /review/list/{id}-{slug}.
 export const parseGoodreadsUrl = (url: string): GoodreadsUrl | undefined => {
-  if (!isHostOf(url, hosts)) {
+  const parsedUrl = parseUrl(url)
+
+  if (!parsedUrl || !isHostOf(parsedUrl, hosts)) {
     return
   }
 
@@ -27,21 +31,26 @@ export const parseGoodreadsUrl = (url: string): GoodreadsUrl | undefined => {
   }
 
   if (isAnyOf(section, 'review') && isAnyOf(action, 'list')) {
-    return { kind: 'reviews', userId: String(userId) }
+    const shelf = parsedUrl.searchParams.get('shelf') ?? undefined
+
+    return { kind: 'reviews', userId: String(userId), shelf }
   }
 }
 
 export const goodreadsHandler: PlatformHandler = {
   match: (url) => {
-    return isHostOf(url, hosts)
+    return parseGoodreadsUrl(url) !== undefined
   },
 
   resolve: (url) => {
-    const { origin, searchParams } = new URL(url)
+    const { origin } = new URL(url)
     const parsed = parseGoodreadsUrl(url)
-    const shelf = searchParams.get('shelf')
 
-    if (parsed?.kind === 'user') {
+    if (!parsed) {
+      return []
+    }
+
+    if (parsed.kind === 'user') {
       return [
         {
           uri: `${origin}/user/updates_rss/${parsed.userId}`,
@@ -54,15 +63,11 @@ export const goodreadsHandler: PlatformHandler = {
       ]
     }
 
-    if (parsed?.kind !== 'reviews') {
-      return []
-    }
-
     const uris: Array<DiscoverUriEntry> = []
 
-    if (shelf) {
+    if (parsed.shelf) {
       uris.push({
-        uri: `${origin}/review/list_rss/${parsed.userId}?shelf=${encodeURIComponent(shelf)}`,
+        uri: `${origin}/review/list_rss/${parsed.userId}?shelf=${encodeURIComponent(parsed.shelf)}`,
         hint: composeHint('goodreads:shelf'),
       })
     }

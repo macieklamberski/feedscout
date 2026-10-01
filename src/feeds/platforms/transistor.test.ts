@@ -1,5 +1,21 @@
 import { describe, expect, it } from 'bun:test'
-import { transistorHandler } from './transistor.js'
+import { parseTransistorUrl, type TransistorUrl, transistorHandler } from './transistor.js'
+
+describe('parseTransistorUrl', () => {
+  it('should return the show for a show subdomain', () => {
+    const expected: TransistorUrl = { kind: 'show', slug: 'example' }
+
+    expect(parseTransistorUrl('https://example.transistor.fm/')).toEqual(expected)
+  })
+
+  it('should return undefined for an excluded subdomain', () => {
+    expect(parseTransistorUrl('https://www.transistor.fm/')).toBeUndefined()
+  })
+
+  it('should return undefined for another host', () => {
+    expect(parseTransistorUrl('https://example.com/')).toBeUndefined()
+  })
+})
 
 describe('transistorHandler', () => {
   describe('match', () => {
@@ -24,6 +40,10 @@ describe('transistorHandler', () => {
   })
 
   describe('resolve', () => {
+    it('should return empty array for a URL outside Transistor', () => {
+      expect(transistorHandler.resolve('https://example.com/')).toEqual([])
+    })
+
     it('should return feed URL for podcast', () => {
       const value = 'https://alice-podcast.transistor.fm'
       const expected = [

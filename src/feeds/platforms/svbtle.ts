@@ -1,6 +1,6 @@
 import { isHostOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, hasMetaContent } from '../../common/utils.js'
+import { composeHint, hasMarker, hasMetaContent } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -15,12 +15,12 @@ export const isSvbtleHtml = (content: string): boolean => {
 }
 
 export const svbtleHandler: PlatformHandler = {
-  match: (url, content) => {
-    if (!URL.canParse(url) || isHostOf(url, excludedHosts)) {
+  match: (url, content, headers) => {
+    if (isHostOf(url, excludedHosts)) {
       return false
     }
 
-    return Boolean(content) && isSvbtleHtml(content ?? '')
+    return hasMarker(content, headers, { html: isSvbtleHtml })
   },
 
   resolve: (url) => {

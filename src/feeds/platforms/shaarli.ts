@@ -1,3 +1,4 @@
+import { parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import {
   composeHint,
@@ -5,6 +6,7 @@ import {
   getCookieNames,
   getScriptDirectory,
   hasElementWithId,
+  hasMarker,
 } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
@@ -27,26 +29,31 @@ const getBasePath = (pathname: string, content?: string): string => {
   return input?.attribs.value ?? getScriptDirectory(pathname)
 }
 
+export type ShaarliPage = { baseUrl: string }
+
+const getShaarliPage = (url: string, content: string | undefined): ShaarliPage | undefined => {
+  const parsedUrl = parseUrl(url)
+
+  if (!parsedUrl) {
+    return
+  }
+
+  return { baseUrl: `${parsedUrl.origin}${getBasePath(parsedUrl.pathname, content)}` }
+}
+
 export const shaarliHandler: PlatformHandler = {
-  match: (url, content, headers) => {
-    if (!URL.canParse(url)) {
-      return false
-    }
-
-    if (content && isShaarliHtml(content)) {
-      return true
-    }
-
-    if (headers && isShaarliHeaders(headers)) {
-      return true
-    }
-
-    return false
+  match: (_url, content, headers) => {
+    return hasMarker(content, headers, { html: isShaarliHtml, headers: isShaarliHeaders })
   },
 
   resolve: (url, content) => {
-    const { origin, pathname } = new URL(url)
-    const baseUrl = `${origin}${getBasePath(pathname, content)}`
+    const page = getShaarliPage(url, content)
+
+    if (!page) {
+      return []
+    }
+
+    const { baseUrl } = page
 
     return [
       { uri: `${baseUrl}/feed/rss`, hint: composeHint('shaarli:posts', 'rss') },

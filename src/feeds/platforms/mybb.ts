@@ -1,6 +1,13 @@
+import { parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, findElement, getCookieNames, hasClass } from '../../common/utils.js'
+import {
+  composeHint,
+  findElement,
+  getCookieNames,
+  hasClass,
+  hasMarker,
+} from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers board, forum (html), partly covers thread.
@@ -74,26 +81,30 @@ const getForumId = (url: string, content?: string): string | undefined => {
   }
 }
 
+export type MybbPage = { boardUrl: string; forumId?: string }
+
+const getMybbPage = (url: string, content: string | undefined): MybbPage | undefined => {
+  if (!parseUrl(url)) {
+    return
+  }
+
+  return { boardUrl: getBoardUrl(url, content), forumId: getForumId(url, content) }
+}
+
 export const mybbHandler: PlatformHandler = {
-  match: (url, content, headers) => {
-    if (!URL.canParse(url)) {
-      return false
-    }
-
-    if (content && isMybbHtml(content)) {
-      return true
-    }
-
-    if (headers && isMybbHeaders(headers)) {
-      return true
-    }
-
-    return false
+  match: (_url, content, headers) => {
+    return hasMarker(content, headers, { html: isMybbHtml, headers: isMybbHeaders })
   },
 
   resolve: (url, content) => {
-    const feedUrl = `${getBoardUrl(url, content)}/syndication.php`
-    const forumId = getForumId(url, content)
+    const page = getMybbPage(url, content)
+
+    if (!page) {
+      return []
+    }
+
+    const feedUrl = `${page.boardUrl}/syndication.php`
+    const { forumId } = page
     const uris: Array<DiscoverUriEntry> = []
 
     if (forumId) {

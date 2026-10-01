@@ -1,10 +1,8 @@
-import { getSubdomain, isAnyOf, isHostOf, isHostOrSubdomainOf, parseUrl } from 'trousse'
+import { getSubdomain, isAnyOf, isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
-// Discoverability: Partially discoverable without handler.
-// Generic covers customDomain, profile, publication, publicationTag (guess, html).
-// Handler needed for: tag.
+// Discoverability: Unmeasured, bot wall.
 
 export type MediumUrl =
   | { kind: 'user'; username: string }
@@ -49,7 +47,7 @@ export const parseMediumUrl = (url: string): MediumUrl | undefined => {
       return
     }
 
-    if (excludedSubdomains.includes(subdomain)) {
+    if (isAnyOf(subdomain, excludedSubdomains)) {
       return
     }
 
@@ -95,13 +93,17 @@ export const parseMediumUrl = (url: string): MediumUrl | undefined => {
 
 export const mediumHandler: PlatformHandler = {
   match: (url) => {
-    return isHostOrSubdomainOf(url, domains)
+    return parseMediumUrl(url) !== undefined
   },
 
   resolve: (url) => {
     const parsed = parseMediumUrl(url)
 
-    if (parsed?.kind === 'user') {
+    if (!parsed) {
+      return []
+    }
+
+    if (parsed.kind === 'user') {
       return [
         {
           uri: `https://medium.com/feed/@${parsed.username}`,
@@ -110,11 +112,11 @@ export const mediumHandler: PlatformHandler = {
       ]
     }
 
-    if (parsed?.kind === 'tag') {
+    if (parsed.kind === 'tag') {
       return [{ uri: `https://medium.com/feed/tag/${parsed.tag}`, hint: composeHint('medium:tag') }]
     }
 
-    if (parsed?.kind === 'publication' && parsed.tag) {
+    if (parsed.kind === 'publication' && parsed.tag) {
       return [
         {
           uri: `https://medium.com/feed/${parsed.publication}/tagged/${parsed.tag}`,
@@ -123,7 +125,7 @@ export const mediumHandler: PlatformHandler = {
       ]
     }
 
-    if (parsed?.kind === 'publication') {
+    if (parsed.kind === 'publication') {
       return [
         {
           uri: `https://medium.com/feed/${parsed.publication}`,
@@ -134,7 +136,7 @@ export const mediumHandler: PlatformHandler = {
 
     // A user subdomain answers 404 at medium.com/feed/{subdomain}, and its own host serves
     // the feed.
-    if (parsed?.kind === 'subdomain' && parsed.tag) {
+    if (parsed.kind === 'subdomain' && parsed.tag) {
       return [
         {
           uri: `https://${parsed.subdomain}.medium.com/feed/tagged/${parsed.tag}`,
@@ -143,15 +145,11 @@ export const mediumHandler: PlatformHandler = {
       ]
     }
 
-    if (parsed?.kind === 'subdomain') {
-      return [
-        {
-          uri: `https://${parsed.subdomain}.medium.com/feed`,
-          hint: composeHint('medium:publication'),
-        },
-      ]
-    }
-
-    return []
+    return [
+      {
+        uri: `https://${parsed.subdomain}.medium.com/feed`,
+        hint: composeHint('medium:publication'),
+      },
+    ]
   },
 }

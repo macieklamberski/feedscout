@@ -1,6 +1,42 @@
 import { describe, expect, it } from 'bun:test'
 import type { DiscoverUriEntry } from '../../common/types.js'
-import { packagistHandler } from './packagist.js'
+import { type PackagistUrl, packagistHandler, parsePackagistUrl } from './packagist.js'
+
+describe('parsePackagistUrl', () => {
+  it('should return the package for a package page', () => {
+    const expected: PackagistUrl = { kind: 'package', vendor: 'acme', name: 'logger' }
+
+    expect(parsePackagistUrl('https://packagist.org/packages/acme/logger')).toEqual(expected)
+  })
+
+  it('should return the vendor for a vendor page', () => {
+    const expected: PackagistUrl = { kind: 'vendor', vendor: 'acme' }
+
+    expect(parsePackagistUrl('https://packagist.org/packages/acme')).toEqual(expected)
+  })
+
+  it('should return the extensions page', () => {
+    const expected: PackagistUrl = { kind: 'extensions' }
+
+    expect(parsePackagistUrl('https://packagist.org/extensions')).toEqual(expected)
+  })
+
+  it('should return the home page for the submit route', () => {
+    const expected: PackagistUrl = { kind: 'home' }
+
+    expect(parsePackagistUrl('https://packagist.org/packages/submit')).toEqual(expected)
+  })
+
+  it('should return the home page for the root', () => {
+    const expected: PackagistUrl = { kind: 'home' }
+
+    expect(parsePackagistUrl('https://packagist.org/')).toEqual(expected)
+  })
+
+  it('should return undefined for another host', () => {
+    expect(parsePackagistUrl('https://example.com/packages/acme/logger')).toBeUndefined()
+  })
+})
 
 describe('packagistHandler', () => {
   describe('match', () => {
@@ -14,6 +50,10 @@ describe('packagistHandler', () => {
   })
 
   describe('resolve', () => {
+    it('should return empty array for a URL outside Packagist', () => {
+      expect(packagistHandler.resolve('https://example.com/')).toEqual([])
+    })
+
     it('should return the releases feeds for a package page', () => {
       const value = 'https://packagist.org/packages/acme/logger'
       const expected: Array<DiscoverUriEntry> = [

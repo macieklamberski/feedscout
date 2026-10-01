@@ -6,24 +6,43 @@ import { composeHint } from '../../common/utils.js'
 // Generic covers discover (guess, html).
 // Handler needed for: home, project.
 
+export type KickstarterUrl =
+  | { kind: 'project'; creator: string; project: string }
+  | { kind: 'home' }
+
 const hosts = ['kickstarter.com', 'www.kickstarter.com']
+
+export const parseKickstarterUrl = (url: string): KickstarterUrl | undefined => {
+  if (!isHostOf(url, hosts)) {
+    return
+  }
+
+  const [first, creator, project] = getPathSegments(url)
+
+  // Project page: kickstarter.com/projects/{creator}/{project}
+  if (isAnyOf(first, 'projects') && creator && project) {
+    return { kind: 'project', creator, project }
+  }
+
+  return { kind: 'home' }
+}
 
 export const kickstarterHandler: PlatformHandler = {
   match: (url) => {
-    return isHostOf(url, hosts)
+    return parseKickstarterUrl(url) !== undefined
   },
 
   resolve: (url) => {
-    const pathSegments = getPathSegments(url)
+    const parsed = parseKickstarterUrl(url)
 
-    // Project page: kickstarter.com/projects/{creator}/{project}
-    if (pathSegments.length >= 3 && isAnyOf(pathSegments[0], 'projects')) {
-      const creator = pathSegments[1]
-      const project = pathSegments[2]
+    if (!parsed) {
+      return []
+    }
 
+    if (parsed.kind === 'project') {
       return [
         {
-          uri: `https://www.kickstarter.com/projects/${creator}/${project}/posts.atom`,
+          uri: `https://www.kickstarter.com/projects/${parsed.creator}/${parsed.project}/posts.atom`,
           hint: composeHint('kickstarter:updates'),
         },
       ]

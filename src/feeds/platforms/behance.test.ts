@@ -43,7 +43,6 @@ describe('parseBehanceUrl', () => {
     expect(parseBehanceUrl('https://www.behance.net/search')).toBeUndefined()
     expect(parseBehanceUrl('https://www.behance.net/blog')).toBeUndefined()
     expect(parseBehanceUrl('https://www.behance.net/about')).toBeUndefined()
-    expect(parseBehanceUrl('https://www.behance.net/galleries')).toBeUndefined()
   })
 
   it('should return undefined for an excluded path in another case', () => {
@@ -58,8 +57,16 @@ describe('parseBehanceUrl', () => {
     expect(parseBehanceUrl('https://www.behance.net/gallery/123456/Brand-Identity')).toBeUndefined()
   })
 
-  it('should return undefined for the homepage', () => {
-    expect(parseBehanceUrl('https://www.behance.net/')).toBeUndefined()
+  it('should return the home page', () => {
+    const expected: BehanceUrl = { kind: 'home' }
+
+    expect(parseBehanceUrl('https://www.behance.net/')).toEqual(expected)
+  })
+
+  it('should return the home page for the galleries page', () => {
+    const expected: BehanceUrl = { kind: 'home' }
+
+    expect(parseBehanceUrl('https://www.behance.net/Galleries/')).toEqual(expected)
   })
 
   it('should return undefined for another host', () => {
@@ -73,8 +80,8 @@ describe('parseBehanceUrl', () => {
 
 describe('behanceHandler', () => {
   describe('match', () => {
-    it('should match any Behance URL', () => {
-      expect(behanceHandler.match('https://www.behance.net/search')).toBe(true)
+    it('should match a Behance profile URL', () => {
+      expect(behanceHandler.match('https://www.behance.net/johndoe')).toBe(true)
     })
 
     it('should not match other hosts', () => {

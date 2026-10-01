@@ -31,7 +31,7 @@ const getPersonImage = (content: string): string | undefined => {
 
 export const behanceHandler: PlatformHandler = {
   match: (url) => {
-    return parseBehanceUrl(url) !== undefined
+    return parseBehanceUrl(url)?.kind === 'profile'
   },
 
   resolve: (_url, content) => {

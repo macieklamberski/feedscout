@@ -1,6 +1,7 @@
 import { isHostOf, isNonEmptyString } from 'trousse'
 import type { FetchFnResponse } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
+import { hasMarker } from '../../common/utils.js'
 import {
   hosts,
   isGitlabHeaders,
@@ -33,15 +34,7 @@ export const gitlabHandler: PlatformHandler = {
       return true
     }
 
-    if (content && isGitlabHtml(content)) {
-      return true
-    }
-
-    if (headers && isGitlabHeaders(headers)) {
-      return true
-    }
-
-    return false
+    return hasMarker(content, headers, { html: isGitlabHtml, headers: isGitlabHeaders })
   },
 
   resolve: (url) => {

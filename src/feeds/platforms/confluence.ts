@@ -1,7 +1,6 @@
-import { parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, getMetaContent } from '../../common/utils.js'
+import { composeHint, getMetaContent, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Not discoverable without handler.
 // Handler needed for: all shapes.
@@ -19,8 +18,8 @@ export const isConfluenceHtml = (content: string): boolean => {
 }
 
 export const confluenceHandler: PlatformHandler = {
-  match: (url, content) => {
-    return Boolean(parseUrl(url)) && Boolean(content) && isConfluenceHtml(content ?? '')
+  match: (_url, content, headers) => {
+    return hasMarker(content, headers, { html: isConfluenceHtml })
   },
 
   resolve: (url, content) => {

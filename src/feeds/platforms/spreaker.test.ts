@@ -1,12 +1,34 @@
 import { describe, expect, it } from 'bun:test'
-import { spreakerHandler } from './spreaker.js'
+import { parseSpreakerUrl, type SpreakerUrl, spreakerHandler } from './spreaker.js'
+
+describe('parseSpreakerUrl', () => {
+  it('should return the show for a podcast page', () => {
+    const expected: SpreakerUrl = { kind: 'show', showId: '12345' }
+
+    expect(parseSpreakerUrl('https://www.spreaker.com/podcast/my-show--12345')).toEqual(expected)
+  })
+
+  it('should return the show for a numeric show page', () => {
+    const expected: SpreakerUrl = { kind: 'show', showId: '12345' }
+
+    expect(parseSpreakerUrl('https://www.spreaker.com/show/12345')).toEqual(expected)
+  })
+
+  it('should return undefined for the home page', () => {
+    expect(parseSpreakerUrl('https://www.spreaker.com/')).toBeUndefined()
+  })
+
+  it('should return undefined for another host', () => {
+    expect(parseSpreakerUrl('https://example.com/show/12345')).toBeUndefined()
+  })
+})
 
 describe('spreakerHandler', () => {
   describe('match', () => {
     const values: Array<[boolean, string]> = [
       [true, 'https://www.spreaker.com/podcast/spreaker-live-show--1433865'],
       [true, 'https://spreaker.com/podcast/my-show--12345'],
-      [true, 'https://spreaker.com'],
+      [false, 'https://spreaker.com'],
       [false, 'https://example.com'],
     ]
 
@@ -20,6 +42,10 @@ describe('spreakerHandler', () => {
   })
 
   describe('resolve', () => {
+    it('should return empty array for a URL outside Spreaker', () => {
+      expect(spreakerHandler.resolve('https://example.com/')).toEqual([])
+    })
+
     it('should return feed URL for podcast', () => {
       const value = 'https://www.spreaker.com/podcast/spreaker-live-show--1433865'
       const expected = [

@@ -1,4 +1,4 @@
-import { getPathSegments, isAnyOf } from 'trousse'
+import { getAnyOf, getPathSegments } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, findElement } from '../../common/utils.js'
 
@@ -7,8 +7,14 @@ import { composeHint, findElement } from '../../common/utils.js'
 const customCssPathRegex = /\/custom_css$/
 const trailingSlashesRegex = /\/+$/
 
+export type GancioPage =
+  | { kind: 'tag' | 'place' | 'collection'; rootUrl: string; value: string }
+  | { kind: 'site'; rootUrl: string }
+
+const sections = ['tag', 'place', 'collection'] as const
+
 // The default layout prints the `custom_css` stylesheet in every page head, at the install's root.
-const getRootUrl = (url: string, content: string | undefined): string | undefined => {
+const getGancioPage = (url: string, content: string | undefined): GancioPage | undefined => {
   const link = findElement(content, (element) => {
     return element.name === 'link' && customCssPathRegex.test(element.attribs.href ?? '')
   })
@@ -21,38 +27,46 @@ const getRootUrl = (url: string, content: string | undefined): string | undefine
     .replace(customCssPathRegex, '')
     .replace(trailingSlashesRegex, '')
 
-  return `${new URL(url).origin}${rootPath}`
+  const rootUrl = `${new URL(url).origin}${rootPath}`
+  const [section, value] = getPathSegments(url).slice(getPathSegments(rootUrl).length)
+  const kind = getAnyOf(section, sections)
+
+  // A place page is `/place/{id}/{name}`, and the feed takes the id.
+  if (value && kind) {
+    return { kind, rootUrl, value }
+  }
+
+  return { kind: 'site', rootUrl }
 }
 
 export const gancioHandler: PlatformHandler = {
   match: (url, content) => {
-    return URL.canParse(url) && getRootUrl(url, content) !== undefined
+    return getGancioPage(url, content) !== undefined
   },
 
   resolve: (url, content) => {
-    const rootUrl = getRootUrl(url, content)
+    const page = getGancioPage(url, content)
 
-    if (!rootUrl) {
+    if (!page) {
       return []
     }
 
-    const [section, value] = getPathSegments(url).slice(getPathSegments(rootUrl).length)
+    const { rootUrl } = page
 
     // Gancio 1 ignores `?tags=` and `?places=` on an instance that sets a home collection,
     // and serves that collection in their place.
-    if (value && isAnyOf(section, 'tag')) {
-      return [{ uri: `${rootUrl}/feed/rss/tag/${value}`, hint: composeHint('gancio:tag') }]
+    if (page.kind === 'tag') {
+      return [{ uri: `${rootUrl}/feed/rss/tag/${page.value}`, hint: composeHint('gancio:tag') }]
     }
 
-    // A place page is `/place/{id}/{name}`, and the feed takes the id.
-    if (value && isAnyOf(section, 'place')) {
-      return [{ uri: `${rootUrl}/feed/rss/place/${value}`, hint: composeHint('gancio:place') }]
+    if (page.kind === 'place') {
+      return [{ uri: `${rootUrl}/feed/rss/place/${page.value}`, hint: composeHint('gancio:place') }]
     }
 
-    if (value && isAnyOf(section, 'collection')) {
+    if (page.kind === 'collection') {
       return [
         {
-          uri: `${rootUrl}/feed/rss/collection/${value}`,
+          uri: `${rootUrl}/feed/rss/collection/${page.value}`,
           hint: composeHint('gancio:collection'),
         },
       ]

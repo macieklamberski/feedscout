@@ -1,5 +1,66 @@
 import { describe, expect, it } from 'bun:test'
-import { launchpadHandler } from './launchpad.js'
+import { type LaunchpadUrl, launchpadHandler, parseLaunchpadUrl } from './launchpad.js'
+
+describe('parseLaunchpadUrl', () => {
+  it('should return the home page of the main site', () => {
+    const expected: LaunchpadUrl = { kind: 'home', application: 'main' }
+
+    expect(parseLaunchpadUrl('https://launchpad.net/')).toEqual(expected)
+  })
+
+  it('should return the home page of Bugs', () => {
+    const expected: LaunchpadUrl = { kind: 'home', application: 'bugs' }
+
+    expect(parseLaunchpadUrl('https://bugs.launchpad.net/')).toEqual(expected)
+  })
+
+  it('should return undefined for the home page of Code', () => {
+    expect(parseLaunchpadUrl('https://code.launchpad.net/')).toBeUndefined()
+  })
+
+  it('should return the bug for a bug page', () => {
+    const expected: LaunchpadUrl = { kind: 'bug', bugId: '1' }
+
+    expect(parseLaunchpadUrl('https://bugs.launchpad.net/ubuntu/+bug/1')).toEqual(expected)
+  })
+
+  it('should return the branch for a branch page', () => {
+    const expected: LaunchpadUrl = { kind: 'branch', path: '~bzr-pqm/bzr/bzr.dev' }
+
+    expect(parseLaunchpadUrl('https://code.launchpad.net/~bzr-pqm/bzr/bzr.dev')).toEqual(expected)
+  })
+
+  it('should return the source package for a source package page', () => {
+    const value = 'https://bugs.launchpad.net/ubuntu/+source/bash'
+    const expected: LaunchpadUrl = {
+      kind: 'sourcePackage',
+      distribution: 'ubuntu',
+      sourcePackage: 'bash',
+    }
+
+    expect(parseLaunchpadUrl(value)).toEqual(expected)
+  })
+
+  it('should return the person with the application of its host', () => {
+    const expected: LaunchpadUrl = { kind: 'person', application: 'code', username: 'cjwatson' }
+
+    expect(parseLaunchpadUrl('https://code.launchpad.net/~cjwatson')).toEqual(expected)
+  })
+
+  it('should return the project with the application of its host', () => {
+    const expected: LaunchpadUrl = { kind: 'project', application: 'main', project: 'launchpad' }
+
+    expect(parseLaunchpadUrl('https://launchpad.net/launchpad')).toEqual(expected)
+  })
+
+  it('should return undefined for a site route', () => {
+    expect(parseLaunchpadUrl('https://launchpad.net/projects')).toBeUndefined()
+  })
+
+  it('should return undefined for another host', () => {
+    expect(parseLaunchpadUrl('https://example.com/launchpad')).toBeUndefined()
+  })
+})
 
 describe('launchpadHandler', () => {
   describe('match', () => {
@@ -113,6 +174,10 @@ describe('launchpadHandler', () => {
   })
 
   describe('resolve', () => {
+    it('should return empty array for a URL outside Launchpad', () => {
+      expect(launchpadHandler.resolve('https://example.com/')).toEqual([])
+    })
+
     it('should return the site announcements for the home page', () => {
       const expected = [
         {

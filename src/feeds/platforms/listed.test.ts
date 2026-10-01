@@ -1,12 +1,28 @@
 import { describe, expect, it } from 'bun:test'
-import { listedHandler } from './listed.js'
+import { type ListedUrl, listedHandler, parseListedUrl } from './listed.js'
+
+describe('parseListedUrl', () => {
+  it('should return the blog for a user page', () => {
+    const expected: ListedUrl = { kind: 'blog', username: 'writer' }
+
+    expect(parseListedUrl('https://listed.to/@writer')).toEqual(expected)
+  })
+
+  it('should return undefined for the root', () => {
+    expect(parseListedUrl('https://listed.to/')).toBeUndefined()
+  })
+
+  it('should return undefined for another host', () => {
+    expect(parseListedUrl('https://example.com/')).toBeUndefined()
+  })
+})
 
 describe('listedHandler', () => {
   describe('match', () => {
     const values: Array<[boolean, string]> = [
       [true, 'https://listed.to/@Listed'],
       [true, 'https://www.listed.to/@user'],
-      [true, 'https://listed.to'],
+      [false, 'https://listed.to'],
       [false, 'https://example.com'],
     ]
 
@@ -20,6 +36,10 @@ describe('listedHandler', () => {
   })
 
   describe('resolve', () => {
+    it('should return empty array for a URL outside Listed', () => {
+      expect(listedHandler.resolve('https://example.com/')).toEqual([])
+    })
+
     it('should return feed URL for blog', () => {
       const value = 'https://listed.to/@Listed'
       const expected = [

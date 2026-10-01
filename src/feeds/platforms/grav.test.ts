@@ -1,9 +1,29 @@
 import { describe, expect, it } from 'bun:test'
 import type { DiscoverUriEntry } from '../../common/types.js'
-import { gravHandler, isGravHtml } from './grav.js'
+import { type GravUrl, gravHandler, isGravHtml, parseGravUrl } from './grav.js'
 
 const gravHtml = '<meta name="generator" content="GravCMS" />'
 const gravityFormsHtml = '<meta name="generator" content="Gravity Forms 2.9">'
+
+describe('parseGravUrl', () => {
+  it('should return the home page for the root', () => {
+    const expected: GravUrl = { kind: 'home' }
+
+    expect(parseGravUrl('https://example.com/')).toEqual(expected)
+  })
+
+  it('should return the page without its trailing slash', () => {
+    const expected: GravUrl = { kind: 'page', path: '/blog' }
+
+    expect(parseGravUrl('https://example.com/blog/')).toEqual(expected)
+  })
+
+  it('should return a nested page', () => {
+    const expected: GravUrl = { kind: 'page', path: '/blog/post' }
+
+    expect(parseGravUrl('https://example.com/blog/post')).toEqual(expected)
+  })
+})
 
 describe('isGravHtml', () => {
   it('should return true for the Grav generator meta tag', () => {
@@ -43,13 +63,13 @@ describe('gravHandler', () => {
     it('should not match without content', () => {
       expect(gravHandler.match('https://example.com/blog')).toBe(false)
     })
-
-    it('should not match invalid URLs', () => {
-      expect(gravHandler.match('not-a-url', gravHtml)).toBe(false)
-    })
   })
 
   describe('resolve', () => {
+    it('should return empty array for a URL that does not parse', () => {
+      expect(gravHandler.resolve('not-a-url')).toEqual([])
+    })
+
     it('should return the page feeds', () => {
       const value = 'https://example.com/blog'
       const expected: Array<DiscoverUriEntry> = [

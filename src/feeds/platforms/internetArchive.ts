@@ -11,18 +11,26 @@ const feedUrl = 'https://archive.org/services/collection-rss.php'
 const detailsRegex = /^\/details\/([^/@][^/]*)\/?$/i
 const searchRegex = /^\/search\/?$/i
 
-// Collections, accounts and search serve one app shell loading `/offshoot_assets/`, while
-// items serve full HTML without it. Accounts are `/details/@{user}`, which the path excludes.
-const getCollection = (url: string, content: string | undefined): string | undefined => {
-  if (!content?.includes('/offshoot_assets/')) {
-    return
+export type InternetArchivePage =
+  | { kind: 'collection'; collection: string }
+  | { kind: 'search'; query: string }
+
+const getInternetArchivePage = (
+  url: string,
+  content: string | undefined,
+): InternetArchivePage | undefined => {
+  const { pathname, searchParams } = new URL(url)
+
+  // Collections, accounts and search serve one app shell loading `/offshoot_assets/`, while
+  // items serve full HTML without it. Accounts are `/details/@{user}`, which the path excludes.
+  if (content?.includes('/offshoot_assets/')) {
+    const collection = pathname.match(detailsRegex)?.[1]
+
+    if (collection) {
+      return { kind: 'collection', collection }
+    }
   }
 
-  return new URL(url).pathname.match(detailsRegex)?.[1]
-}
-
-const getSearchQuery = (url: string): string | undefined => {
-  const { pathname, searchParams } = new URL(url)
   const query = searchParams.get('query')
 
   // A `sin` search runs over full text, captions or captures, which the feed's query does not.
@@ -30,7 +38,7 @@ const getSearchQuery = (url: string): string | undefined => {
     return
   }
 
-  return query
+  return { kind: 'search', query }
 }
 
 export const internetArchiveHandler: PlatformHandler = {
@@ -39,32 +47,30 @@ export const internetArchiveHandler: PlatformHandler = {
       return false
     }
 
-    return Boolean(getCollection(url, content) ?? getSearchQuery(url))
+    return getInternetArchivePage(url, content) !== undefined
   },
 
   resolve: (url, content) => {
-    const collection = getCollection(url, content)
+    const page = getInternetArchivePage(url, content)
 
-    if (collection) {
+    if (!page) {
+      return []
+    }
+
+    if (page.kind === 'collection') {
       return [
         {
-          uri: `${feedUrl}?${new URLSearchParams({ collection })}`,
+          uri: `${feedUrl}?${new URLSearchParams({ collection: page.collection })}`,
           hint: composeHint('internet-archive:collection'),
         },
       ]
     }
 
-    const query = getSearchQuery(url)
-
-    if (query) {
-      return [
-        {
-          uri: `${feedUrl}?${new URLSearchParams({ query })}`,
-          hint: composeHint('internet-archive:search'),
-        },
-      ]
-    }
-
-    return []
+    return [
+      {
+        uri: `${feedUrl}?${new URLSearchParams({ query: page.query })}`,
+        hint: composeHint('internet-archive:search'),
+      },
+    ]
   },
 }

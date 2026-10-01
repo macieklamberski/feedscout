@@ -1,5 +1,27 @@
 import { describe, expect, it } from 'bun:test'
-import { cratesIoHandler } from './cratesIo.js'
+import { type CratesIoUrl, cratesIoHandler, parseCratesIoUrl } from './cratesIo.js'
+
+describe('parseCratesIoUrl', () => {
+  it('should return the crate for a crate page', () => {
+    const expected: CratesIoUrl = { kind: 'crate', crate: 'serde' }
+
+    expect(parseCratesIoUrl('https://crates.io/crates/serde')).toEqual(expected)
+  })
+
+  it('should return the home page for the root', () => {
+    const expected: CratesIoUrl = { kind: 'home' }
+
+    expect(parseCratesIoUrl('https://crates.io/')).toEqual(expected)
+  })
+
+  it('should return undefined for another page', () => {
+    expect(parseCratesIoUrl('https://crates.io/search?q=serde')).toBeUndefined()
+  })
+
+  it('should return undefined for another host', () => {
+    expect(parseCratesIoUrl('https://example.com/crates/serde')).toBeUndefined()
+  })
+})
 
 describe('cratesIoHandler', () => {
   describe('match', () => {
@@ -13,6 +35,10 @@ describe('cratesIoHandler', () => {
   })
 
   describe('resolve', () => {
+    it('should return empty array for a URL outside the platform', () => {
+      expect(cratesIoHandler.resolve('https://example.com/')).toEqual([])
+    })
+
     it('should return the releases feed for a crate page', () => {
       const value = 'https://crates.io/crates/example_crate'
       const expected = [

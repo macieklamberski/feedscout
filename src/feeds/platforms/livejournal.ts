@@ -3,13 +3,14 @@ import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
-// Discoverability: Partially discoverable without handler.
-// Generic partly covers blog, community, tag, tildePath, userPath, usersHost.
+// Discoverability: Unmeasured, bot wall.
+
+export type LivejournalUrl = { kind: 'journal'; username?: string; tag?: string }
 
 const domains = ['livejournal.com']
 const wwwHosts = ['www.livejournal.com']
 const legacyUserHosts = ['users.livejournal.com', 'community.livejournal.com']
-const reservedHosts = [
+const excludedHosts = [
   'livejournal.com',
   'www.livejournal.com',
   'users.livejournal.com',
@@ -19,27 +20,26 @@ const reservedHosts = [
 
 const wwwUsersPathRegex = /^\/(?:users\/|~)([^/]+)/i
 const legacyUserPathRegex = /^\/([^/]+)/
-const tagRegex = /^\/tag\/([^/]+)/i
+export const journalTagRegex = /^\/tag\/([^/]+)/i
 
 // Dreamwidth and InsaneJournal run the LiveJournal engine, so a journal on any of them serves
 // the same feeds, plus a tag's feeds on a tag page.
 export const getJournalFeeds = (
   base: string,
-  pathname: string,
+  tag: string | undefined,
   platform: string,
 ): Array<DiscoverUriEntry> => {
   const uris: Array<DiscoverUriEntry> = []
-  const tagMatch = pathname.match(tagRegex)
 
-  if (tagMatch?.[1]) {
-    const tag = encodeURIComponent(decodeSegment(tagMatch[1]) ?? tagMatch[1])
+  if (tag) {
+    const encodedTag = encodeURIComponent(decodeSegment(tag) ?? tag)
 
     uris.push({
-      uri: `${base}/data/rss?tag=${tag}`,
+      uri: `${base}/data/rss?tag=${encodedTag}`,
       hint: composeHint(`${platform}:posts-tag`, 'rss'),
     })
     uris.push({
-      uri: `${base}/data/atom?tag=${tag}`,
+      uri: `${base}/data/atom?tag=${encodedTag}`,
       hint: composeHint(`${platform}:posts-tag`, 'atom'),
     })
   }
@@ -51,58 +51,61 @@ export const getJournalFeeds = (
   return uris
 }
 
+export const parseLivejournalUrl = (url: string): LivejournalUrl | undefined => {
+  if (!isSubdomainOf(url, domains)) {
+    return
+  }
+
+  const { pathname } = new URL(url)
+  const tag = pathname.match(journalTagRegex)?.[1]
+
+  // Bare www/users/community/syndicated hosts have no per-user context and would
+  // emit 404 URLs. Allow them only when a user selector is in the path.
+  if (isHostOf(url, wwwHosts)) {
+    const username = pathname.match(wwwUsersPathRegex)?.[1]
+
+    if (!username) {
+      return
+    }
+
+    return { kind: 'journal', username, tag }
+  }
+
+  // Legacy users./community. hosts: the first path segment is the user.
+  if (isHostOf(url, legacyUserHosts)) {
+    const username = pathname.match(legacyUserPathRegex)?.[1]
+
+    if (!username) {
+      return
+    }
+
+    return { kind: 'journal', username, tag }
+  }
+
+  if (isHostOf(url, excludedHosts)) {
+    return
+  }
+
+  return { kind: 'journal', tag }
+}
+
 export const livejournalHandler: PlatformHandler = {
   match: (url) => {
-    if (!isSubdomainOf(url, domains)) {
-      return false
-    }
-
-    // Bare www/users/community/syndicated hosts have no per-user context and would
-    // emit 404 URLs. Allow them only when a user selector is in the path.
-    const { pathname } = new URL(url)
-
-    if (isHostOf(url, reservedHosts)) {
-      if (isHostOf(url, wwwHosts)) {
-        return wwwUsersPathRegex.test(pathname)
-      }
-
-      if (isHostOf(url, legacyUserHosts)) {
-        return legacyUserPathRegex.test(pathname)
-      }
-
-      return false
-    }
-
-    return true
+    return parseLivejournalUrl(url) !== undefined
   },
 
   resolve: (url) => {
-    const { origin, pathname } = new URL(url)
+    const parsed = parseLivejournalUrl(url)
 
-    let userOrigin = origin
-
-    // www.livejournal.com/users/{user} or /~{user} — canonicalise to subdomain form.
-    if (isHostOf(url, wwwHosts)) {
-      const userMatch = pathname.match(wwwUsersPathRegex)
-
-      if (userMatch?.[1]) {
-        userOrigin = `https://${userMatch[1]}.livejournal.com`
-      } else {
-        return []
-      }
+    if (!parsed) {
+      return []
     }
 
-    // Legacy users./community. hosts — first path segment is the user.
-    if (isHostOf(url, legacyUserHosts)) {
-      const userMatch = pathname.match(legacyUserPathRegex)
+    // A user named in the path is canonicalised to its subdomain.
+    const base = parsed.username
+      ? `https://${parsed.username}.livejournal.com`
+      : new URL(url).origin
 
-      if (userMatch?.[1]) {
-        userOrigin = `https://${userMatch[1]}.livejournal.com`
-      } else {
-        return []
-      }
-    }
-
-    return getJournalFeeds(userOrigin, pathname, 'livejournal')
+    return getJournalFeeds(base, parsed.tag, 'livejournal')
   },
 }

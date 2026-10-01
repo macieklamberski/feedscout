@@ -1,9 +1,15 @@
+import { parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, getScriptDirectory, hasElementWithId } from '../../common/utils.js'
+import { composeHint, getScriptDirectory, hasElementWithId, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic partly covers board, forum, topic.
+
+export type FluxbbUrl =
+  | { kind: 'forum'; boardPath: string; forumId: string }
+  | { kind: 'topic'; boardPath: string; topicId: string }
+  | { kind: 'board'; boardPath: string }
 
 const forumPathRegex = /\/viewforum\.php$/i
 const topicPathRegex = /\/viewtopic\.php$/i
@@ -20,24 +26,60 @@ export const isFluxbbHtml = (content: string): boolean => {
   )
 }
 
+export const parseFluxbbUrl = (url: string): FluxbbUrl | undefined => {
+  const parsedUrl = parseUrl(url)
+
+  if (!parsedUrl) {
+    return
+  }
+
+  const { pathname, searchParams } = parsedUrl
+  const boardPath = getScriptDirectory(pathname)
+  const id = searchParams.get('id')
+
+  if (id && forumPathRegex.test(pathname)) {
+    return { kind: 'forum', boardPath, forumId: id }
+  }
+
+  if (id && topicPathRegex.test(pathname)) {
+    return { kind: 'topic', boardPath, topicId: id }
+  }
+
+  return { kind: 'board', boardPath }
+}
+
 export const fluxbbHandler: PlatformHandler = {
-  match: (url, content) => {
-    return URL.canParse(url) && Boolean(content) && isFluxbbHtml(content ?? '')
+  match: (url, content, headers) => {
+    if (!hasMarker(content, headers, { html: isFluxbbHtml })) {
+      return false
+    }
+
+    return parseFluxbbUrl(url) !== undefined
   },
 
   resolve: (url) => {
-    const { origin, pathname, searchParams } = new URL(url)
-    const boardPath = getScriptDirectory(pathname)
-    const feedUrl = `${origin}${boardPath}/extern.php?action=feed`
-    const id = searchParams.get('id')
-    const uris: Array<DiscoverUriEntry> = []
+    const parsed = parseFluxbbUrl(url)
 
-    if (id && forumPathRegex.test(pathname)) {
-      uris.push({ uri: `${feedUrl}&fid=${id}&type=atom`, hint: composeHint('fluxbb:forum') })
+    if (!parsed) {
+      return []
     }
 
-    if (id && topicPathRegex.test(pathname)) {
-      uris.push({ uri: `${feedUrl}&tid=${id}&type=atom`, hint: composeHint('fluxbb:topic') })
+    const { origin } = new URL(url)
+    const feedUrl = `${origin}${parsed.boardPath}/extern.php?action=feed`
+    const uris: Array<DiscoverUriEntry> = []
+
+    if (parsed.kind === 'forum') {
+      uris.push({
+        uri: `${feedUrl}&fid=${parsed.forumId}&type=atom`,
+        hint: composeHint('fluxbb:forum'),
+      })
+    }
+
+    if (parsed.kind === 'topic') {
+      uris.push({
+        uri: `${feedUrl}&tid=${parsed.topicId}&type=atom`,
+        hint: composeHint('fluxbb:topic'),
+      })
     }
 
     uris.push(

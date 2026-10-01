@@ -1,8 +1,26 @@
 import { describe, expect, it } from 'bun:test'
-import { hubzillaHandler, isHubzillaHtml } from './hubzilla.js'
+import { type HubzillaUrl, hubzillaHandler, isHubzillaHtml, parseHubzillaUrl } from './hubzilla.js'
 
 const hubzillaHtml = '<meta name="generator" content="hubzilla" />'
 const otherHtml = '<meta name="generator" content="friendica 2026.05">'
+
+describe('parseHubzillaUrl', () => {
+  it('should return the channel for a channel page', () => {
+    const expected: HubzillaUrl = { kind: 'channel', channel: 'alice' }
+
+    expect(parseHubzillaUrl('https://example.org/channel/alice')).toEqual(expected)
+  })
+
+  it('should return the channel for an at-sign address', () => {
+    const expected: HubzillaUrl = { kind: 'channel', channel: 'alice' }
+
+    expect(parseHubzillaUrl('https://example.org/@alice')).toEqual(expected)
+  })
+
+  it('should return undefined for a page the parser does not name', () => {
+    expect(parseHubzillaUrl('https://example.org/')).toBeUndefined()
+  })
+})
 
 describe('isHubzillaHtml', () => {
   it('should return true for the hubzilla generator meta tag', () => {
@@ -46,10 +64,6 @@ describe('hubzillaHandler', () => {
 
     it('should not match without content', () => {
       expect(hubzillaHandler.match('https://example.org/channel/alice')).toBe(false)
-    })
-
-    it('should not match invalid URLs', () => {
-      expect(hubzillaHandler.match('not-a-url', hubzillaHtml)).toBe(false)
     })
   })
 

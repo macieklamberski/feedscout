@@ -5,29 +5,43 @@ import { composeHint } from '../../common/utils.js'
 // Discoverability: Not discoverable without handler.
 // Handler needed for: all shapes.
 
+export type CsdnUrl = { kind: 'blog'; username: string }
+
 const hosts = ['blog.csdn.net']
 
 const userRegex = /^\/([^/]+)/
 
+export const parseCsdnUrl = (url: string): CsdnUrl | undefined => {
+  if (!isHostOf(url, hosts)) {
+    return
+  }
+
+  const username = new URL(url).pathname.match(userRegex)?.[1]
+
+  if (!username) {
+    return
+  }
+
+  return { kind: 'blog', username }
+}
+
 export const csdnHandler: PlatformHandler = {
   match: (url) => {
-    return isHostOf(url, hosts)
+    return parseCsdnUrl(url) !== undefined
   },
 
   resolve: (url) => {
-    const { pathname } = new URL(url)
-    const userMatch = pathname.match(userRegex)
-    const username = userMatch?.[1]
+    const parsed = parseCsdnUrl(url)
 
-    if (!username) {
+    if (!parsed) {
       return []
     }
 
     return [
       {
         uri: [
-          `https://rss.csdn.net/${username}/rss/map`,
-          `https://blog.csdn.net/${username}/rss/list`,
+          `https://rss.csdn.net/${parsed.username}/rss/map`,
+          `https://blog.csdn.net/${parsed.username}/rss/list`,
         ],
         hint: composeHint('csdn:blog'),
       },

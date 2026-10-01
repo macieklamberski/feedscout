@@ -142,10 +142,15 @@ describe('parseFlickrUrl', () => {
     expect(parseFlickrUrl('https://www.flickr.com/groups/mygroup')).toBeUndefined()
   })
 
-  it('should return undefined for site-wide pages', () => {
+  it('should return undefined for other site-wide pages', () => {
     expect(parseFlickrUrl('https://www.flickr.com')).toBeUndefined()
     expect(parseFlickrUrl('https://www.flickr.com/explore')).toBeUndefined()
-    expect(parseFlickrUrl('https://www.flickr.com/help/forum')).toBeUndefined()
+  })
+
+  it('should return the help forum', () => {
+    const expected: FlickrUrl = { kind: 'forum' }
+
+    expect(parseFlickrUrl('https://www.flickr.com/Help/forum/en-us/')).toEqual(expected)
   })
 
   it('should return undefined for a host that only ends in the Flickr host', () => {
@@ -235,6 +240,10 @@ describe('flickrHandler', () => {
 
     it('should return empty array for a photostream named by path alias', () => {
       expect(flickrHandler.resolve('https://www.flickr.com/photos/nasacommons')).toEqual([])
+    })
+
+    it('should return empty array for a URL outside Flickr', () => {
+      expect(flickrHandler.resolve('https://example.com/photos/12345678@N00')).toEqual([])
     })
 
     it('should return pool, discussion and location feeds for a group page', () => {

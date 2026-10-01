@@ -5,14 +5,30 @@ import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
+export type SeesaaUrl = { kind: 'blog' }
+
 const domains = ['seesaa.net']
+
+export const parseSeesaaUrl = (url: string): SeesaaUrl | undefined => {
+  if (!isSubdomainOf(url, domains)) {
+    return
+  }
+
+  return { kind: 'blog' }
+}
 
 export const seesaaHandler: PlatformHandler = {
   match: (url) => {
-    return isSubdomainOf(url, domains)
+    return parseSeesaaUrl(url) !== undefined
   },
 
   resolve: (url) => {
+    const parsed = parseSeesaaUrl(url)
+
+    if (!parsed) {
+      return []
+    }
+
     const { origin } = new URL(url)
     const uris: Array<DiscoverUriEntry> = []
 

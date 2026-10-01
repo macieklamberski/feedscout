@@ -1,5 +1,17 @@
 import { describe, expect, it } from 'bun:test'
-import { hashnodeHandler } from './hashnode.js'
+import { type HashnodeUrl, hashnodeHandler, parseHashnodeUrl } from './hashnode.js'
+
+describe('parseHashnodeUrl', () => {
+  it('should return the blog for a blog subdomain', () => {
+    const expected: HashnodeUrl = { kind: 'blog' }
+
+    expect(parseHashnodeUrl('https://jane.hashnode.dev/')).toEqual(expected)
+  })
+
+  it('should return undefined for another host', () => {
+    expect(parseHashnodeUrl('https://example.com/')).toBeUndefined()
+  })
+})
 
 describe('hashnodeHandler', () => {
   describe('match', () => {
@@ -22,6 +34,10 @@ describe('hashnodeHandler', () => {
   })
 
   describe('resolve', () => {
+    it('should return empty array for a URL outside Hashnode', () => {
+      expect(hashnodeHandler.resolve('https://example.com/')).toEqual([])
+    })
+
     it('should return feed URL for blog', () => {
       const value = 'https://example.hashnode.dev'
       const expected = [

@@ -1,4 +1,4 @@
-import { getAnyOf, isAnyOf, isHostOf, isHostOrSubdomainOf, isSubdomainOf } from 'trousse'
+import { getAnyOf, isAnyOf, isHostOf, isSubdomainOf } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
@@ -6,6 +6,19 @@ import { composeHint } from '../../common/utils.js'
 // Discoverability: Partially discoverable without handler.
 // Generic covers devlog, game (html), partly covers home.
 // Handler needed for: browseByTag, browseByUser, games, user.
+
+export type ItchioUrl =
+  | { kind: 'game'; creator: string; game: string }
+  | { kind: 'creator'; creator: string }
+  | { kind: 'tag'; tag: string }
+  | { kind: 'platform'; platform: string }
+  | { kind: 'genre'; genre: string }
+  | { kind: 'madeWith'; engine: string }
+  | { kind: 'games'; sort?: string }
+  | { kind: 'devlogs' }
+  | { kind: 'blog' }
+  | { kind: 'section'; section: string }
+  | { kind: 'home'; path: string }
 
 const domains = ['itch.io']
 const mainHosts = ['itch.io', 'www.itch.io']
@@ -42,139 +55,176 @@ const sorts = [
   'in-development',
 ]
 
+export const parseItchioUrl = (url: string): ItchioUrl | undefined => {
+  if (!isHostOf(url, mainHosts) && !isSubdomainOf(url, domains)) {
+    return
+  }
+
+  const { hostname, pathname } = new URL(url)
+
+  // Subdomain: creator pages ({creator}.itch.io).
+  if (!isHostOf(url, mainHosts)) {
+    const creator = hostname.replace('.itch.io', '')
+    const game = pathname.match(gameRegex)?.[1]
+
+    if (game) {
+      return { kind: 'game', creator, game }
+    }
+
+    return { kind: 'creator', creator }
+  }
+
+  // A listing's feed URL, such as /games/tag-horror.xml, names its page too.
+  const listingPath = pathname.replace(feedSuffixRegex, '')
+  const creator = listingPath.match(byUserRegex)?.[1]
+
+  if (creator) {
+    return { kind: 'creator', creator }
+  }
+
+  const tag = listingPath.match(tagRegex)?.[1]
+
+  if (tag) {
+    return { kind: 'tag', tag }
+  }
+
+  const platform = listingPath.match(platformRegex)?.[1]
+
+  if (platform) {
+    return { kind: 'platform', platform }
+  }
+
+  const genre = listingPath.match(genreRegex)?.[1]
+
+  if (genre) {
+    return { kind: 'genre', genre }
+  }
+
+  const engine = listingPath.match(madeWithRegex)?.[1]
+
+  if (engine) {
+    return { kind: 'madeWith', engine }
+  }
+
+  const sort = getAnyOf(listingPath.match(sortRegex)?.[1], sorts)
+
+  if (sort) {
+    return { kind: 'games', sort }
+  }
+
+  if (gamesRegex.test(listingPath)) {
+    return { kind: 'games' }
+  }
+
+  if (devlogsRegex.test(listingPath)) {
+    return { kind: 'devlogs' }
+  }
+
+  if (blogRegex.test(listingPath)) {
+    return { kind: 'blog' }
+  }
+
+  // /{section} (tools, game-assets, soundtracks, physical-games, books, comics, misc)
+  const section = getAnyOf(listingPath.match(sectionRegex)?.[1], sections)
+
+  if (section) {
+    return { kind: 'section', section }
+  }
+
+  return { kind: 'home', path: pathname }
+}
+
 export const itchioHandler: PlatformHandler = {
   match: (url) => {
-    return isHostOrSubdomainOf(url, domains)
+    return parseItchioUrl(url) !== undefined
   },
 
   resolve: (url) => {
-    const { hostname, pathname } = new URL(url)
+    const parsed = parseItchioUrl(url)
 
-    // Subdomain: creator pages ({creator}.itch.io).
-    if (!isHostOf(url, mainHosts) && isSubdomainOf(url, domains)) {
-      const creator = hostname.replace('.itch.io', '')
-      const gameMatch = pathname.match(gameRegex)
+    if (!parsed) {
+      return []
+    }
 
-      // Game page: {creator}.itch.io/{game}
-      if (gameMatch?.[1]) {
-        return [
-          {
-            uri: `https://${creator}.itch.io/${gameMatch[1]}/devlog.rss`,
-            hint: composeHint('itchio:devlog'),
-          },
-        ]
-      }
-
-      // Creator root: {creator}.itch.io/
+    if (parsed.kind === 'game') {
       return [
         {
-          uri: `https://itch.io/games/by-${creator}.xml`,
+          uri: `https://${parsed.creator}.itch.io/${parsed.game}/devlog.rss`,
+          hint: composeHint('itchio:devlog'),
+        },
+      ]
+    }
+
+    if (parsed.kind === 'creator') {
+      return [
+        {
+          uri: `https://itch.io/games/by-${parsed.creator}.xml`,
           hint: composeHint('itchio:games'),
         },
       ]
     }
 
-    // A listing's feed URL, such as /games/tag-horror.xml, names its page too.
-    const listingPath = pathname.replace(feedSuffixRegex, '')
-
-    // /games/by-{username}
-    const byUserMatch = listingPath.match(byUserRegex)
-
-    if (byUserMatch?.[1]) {
+    if (parsed.kind === 'tag') {
       return [
         {
-          uri: `https://itch.io/games/by-${byUserMatch[1]}.xml`,
-          hint: composeHint('itchio:games'),
-        },
-      ]
-    }
-
-    // /games/tag-{tag}
-    const tagMatch = listingPath.match(tagRegex)
-
-    if (tagMatch?.[1]) {
-      return [
-        {
-          uri: `https://itch.io/games/tag-${tagMatch[1]}.xml`,
+          uri: `https://itch.io/games/tag-${parsed.tag}.xml`,
           hint: composeHint('itchio:tag'),
         },
       ]
     }
 
-    // /games/platform-{platform}
-    const platformMatch = listingPath.match(platformRegex)
-
-    if (platformMatch?.[1]) {
+    if (parsed.kind === 'platform') {
       return [
         {
-          uri: `https://itch.io/games/platform-${platformMatch[1]}.xml`,
+          uri: `https://itch.io/games/platform-${parsed.platform}.xml`,
           hint: composeHint('itchio:platform'),
         },
       ]
     }
 
-    // /games/genre-{genre}
-    const genreMatch = listingPath.match(genreRegex)
-
-    if (genreMatch?.[1]) {
+    if (parsed.kind === 'genre') {
       return [
         {
-          uri: `https://itch.io/games/genre-${genreMatch[1]}.xml`,
+          uri: `https://itch.io/games/genre-${parsed.genre}.xml`,
           hint: composeHint('itchio:genre'),
         },
       ]
     }
 
-    // /games/made-with-{engine}
-    const madeWithMatch = listingPath.match(madeWithRegex)
-
-    if (madeWithMatch?.[1]) {
+    if (parsed.kind === 'madeWith') {
       return [
         {
-          uri: `https://itch.io/games/made-with-${madeWithMatch[1]}.xml`,
+          uri: `https://itch.io/games/made-with-${parsed.engine}.xml`,
           hint: composeHint('itchio:made-with'),
         },
       ]
     }
 
-    // /games/{sort}
-    const sortMatch = listingPath.match(sortRegex)
-
-    const sort = getAnyOf(sortMatch?.[1], sorts)
-
-    if (sort) {
+    if (parsed.kind === 'games' && parsed.sort) {
       return [
         {
-          uri: `https://itch.io/games/${sort}.xml`,
+          uri: `https://itch.io/games/${parsed.sort}.xml`,
           hint: composeHint('itchio:games'),
         },
       ]
     }
 
-    // /games
-    if (gamesRegex.test(listingPath)) {
+    if (parsed.kind === 'games') {
       return [{ uri: 'https://itch.io/games.xml', hint: composeHint('itchio:games') }]
     }
 
-    // /devlogs
-    if (devlogsRegex.test(listingPath)) {
+    if (parsed.kind === 'devlogs') {
       return [{ uri: 'https://itch.io/devlogs.xml', hint: composeHint('itchio:devlogs') }]
     }
 
-    // /blog
-    if (blogRegex.test(listingPath)) {
+    if (parsed.kind === 'blog') {
       return [{ uri: 'https://itch.io/blog.rss', hint: composeHint('itchio:blog') }]
     }
 
-    // /{section} (tools, game-assets, soundtracks, physical-games, books, comics, misc)
-    const sectionMatch = listingPath.match(sectionRegex)
-
-    const section = getAnyOf(sectionMatch?.[1], sections)
-
-    if (section) {
+    if (parsed.kind === 'section') {
       return [
         {
-          uri: `https://itch.io/${section}.xml`,
+          uri: `https://itch.io/${parsed.section}.xml`,
           hint: composeHint('itchio:section'),
         },
       ]
@@ -190,7 +240,7 @@ export const itchioHandler: PlatformHandler = {
     uris.push({ uri: 'https://itch.io/blog.rss', hint: composeHint('itchio:blog') })
 
     // A site feed URL, such as /feed/featured.xml, names only itself.
-    const siteFeed = uris.find((entry) => isAnyOf(`https://itch.io${pathname}`, entry.uri))
+    const siteFeed = uris.find((entry) => isAnyOf(`https://itch.io${parsed.path}`, entry.uri))
 
     if (siteFeed) {
       return [siteFeed]

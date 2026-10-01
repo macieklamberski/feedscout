@@ -1,6 +1,6 @@
-import { getPathSegments, isAnyOf, isHostOf, parseUrl } from 'trousse'
+import { getPathSegments, isAnyOf, isHostOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, hasMetaContent } from '../../common/utils.js'
+import { composeHint, hasMarker, hasMetaContent } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers group (guess, html), partly covers commits, project, tree.
@@ -104,32 +104,24 @@ export const gitlabHandler: PlatformHandler = {
 
     // `og:site_name` is operator-set text, so a self-hosted match also needs a
     // project path or the `/-/` separator.
-    if (parsed.kind === 'namespace' && !parseUrl(url)?.pathname.includes('/-/')) {
+    if (parsed.kind === 'namespace' && !new URL(url).pathname.includes('/-/')) {
       return false
     }
 
-    if (content && isGitlabHtml(content)) {
-      return true
-    }
-
-    if (headers && isGitlabHeaders(headers)) {
-      return true
-    }
-
-    return false
+    return hasMarker(content, headers, { html: isGitlabHtml, headers: isGitlabHeaders })
   },
 
   resolve: (url) => {
     const { origin } = new URL(url)
     const parsed = parseGitlabUrl(url)
 
-    // User or group page: gitlab.com/{namespace}.
-    if (parsed?.kind === 'namespace') {
-      return [{ uri: `${origin}/${parsed.namespace}.atom`, hint: composeHint('gitlab:activity') }]
+    if (!parsed) {
+      return []
     }
 
-    if (parsed?.kind !== 'project') {
-      return []
+    // User or group page: gitlab.com/{namespace}.
+    if (parsed.kind === 'namespace') {
+      return [{ uri: `${origin}/${parsed.namespace}.atom`, hint: composeHint('gitlab:activity') }]
     }
 
     // Project page: gitlab.com/{group}/{subgroup...}/{project}.

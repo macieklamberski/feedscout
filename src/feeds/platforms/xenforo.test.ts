@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import { isXenforoHtml, xenforoHandler } from './xenforo.js'
+import { isXenforoHtml, parseXenforoUrl, type XenforoUrl, xenforoHandler } from './xenforo.js'
 
 const xenforoHtml = '<html id="XF" lang="en-US" data-xf="2.3" data-app="public">'
 const legacyHtml = '<html id="XenForo" lang="en-US">'
@@ -27,6 +27,30 @@ describe('isXenforoHtml', () => {
   })
 })
 
+describe('parseXenforoUrl', () => {
+  it('should return the forum for a short forum route', () => {
+    const expected: XenforoUrl = { kind: 'forum', route: 'f', forumPath: 'general.2' }
+
+    expect(parseXenforoUrl('https://forum.example/f/general.2/')).toEqual(expected)
+  })
+
+  it('should return the forum with a canonical route for a capitalized one', () => {
+    const expected: XenforoUrl = { kind: 'forum', route: 'forums', forumPath: 'general.2' }
+
+    expect(parseXenforoUrl('https://forum.example/Forums/general.2/')).toEqual(expected)
+  })
+
+  it('should return the board for another page', () => {
+    const expected: XenforoUrl = { kind: 'board' }
+
+    expect(parseXenforoUrl('https://forum.example/threads/hello.5/')).toEqual(expected)
+  })
+
+  it('should return undefined for an unparsable URL', () => {
+    expect(parseXenforoUrl('not-a-url')).toBeUndefined()
+  })
+})
+
 describe('xenforoHandler', () => {
   describe('match', () => {
     it('should match a forum page', () => {
@@ -36,13 +60,13 @@ describe('xenforoHandler', () => {
     it('should not match without content', () => {
       expect(xenforoHandler.match('https://example.com/f/general.17/')).toBe(false)
     })
-
-    it('should not match invalid URLs', () => {
-      expect(xenforoHandler.match('not-a-url', xenforoHtml)).toBe(false)
-    })
   })
 
   describe('resolve', () => {
+    it('should return empty array for a URL that does not parse', () => {
+      expect(xenforoHandler.resolve('not-a-url')).toEqual([])
+    })
+
     it('should return the forum feed for a capitalized f segment', () => {
       const value = 'https://example.com/F/general.17/'
       const expected = [

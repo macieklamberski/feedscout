@@ -23,7 +23,7 @@ const getProfileImage = (content: string): string | undefined => {
 
 export const togetterHandler: PlatformHandler = {
   match: (url) => {
-    return parseTogetterUrl(url) !== undefined
+    return parseTogetterUrl(url)?.kind === 'user'
   },
 
   resolve: (_url, content) => {

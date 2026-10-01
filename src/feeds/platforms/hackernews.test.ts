@@ -1,5 +1,23 @@
 import { describe, expect, it } from 'bun:test'
-import { hackernewsHandler } from './hackernews.js'
+import { type HackernewsUrl, hackernewsHandler, parseHackernewsUrl } from './hackernews.js'
+
+describe('parseHackernewsUrl', () => {
+  it('should return the show page', () => {
+    const expected: HackernewsUrl = { kind: 'show' }
+
+    expect(parseHackernewsUrl('https://news.ycombinator.com/show')).toEqual(expected)
+  })
+
+  it('should return the home page for any other page', () => {
+    const expected: HackernewsUrl = { kind: 'home' }
+
+    expect(parseHackernewsUrl('https://news.ycombinator.com/item?id=1')).toEqual(expected)
+  })
+
+  it('should return undefined for another host', () => {
+    expect(parseHackernewsUrl('https://example.com/')).toBeUndefined()
+  })
+})
 
 describe('hackernewsHandler', () => {
   describe('match', () => {
@@ -21,6 +39,10 @@ describe('hackernewsHandler', () => {
   })
 
   describe('resolve', () => {
+    it('should return empty array for a URL outside Hacker News', () => {
+      expect(hackernewsHandler.resolve('https://example.com/')).toEqual([])
+    })
+
     it('should return front page feed for root', () => {
       const value = 'https://news.ycombinator.com'
       const expected = [

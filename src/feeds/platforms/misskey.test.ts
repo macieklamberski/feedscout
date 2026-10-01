@@ -1,9 +1,33 @@
 import { describe, expect, it } from 'bun:test'
 import type { DiscoverUriEntry } from '../../common/types.js'
-import { isMisskeyHtml, misskeyHandler } from './misskey.js'
+import { isMisskeyHtml, type MisskeyUrl, misskeyHandler, parseMisskeyUrl } from './misskey.js'
 
 const misskeyHtml = '<html><head><meta name="application-name" content="Misskey"></head></html>'
 const otherHtml = '<html><head><meta name="application-name" content="Mastodon"></head></html>'
+
+describe('parseMisskeyUrl', () => {
+  it('should return the profile for a user page', () => {
+    const expected: MisskeyUrl = { kind: 'profile', username: 'alice' }
+
+    expect(parseMisskeyUrl('https://misskey.io/@alice')).toEqual(expected)
+  })
+
+  it('should return the profile for a user subpage', () => {
+    const expected: MisskeyUrl = { kind: 'profile', username: 'alice' }
+
+    expect(parseMisskeyUrl('https://misskey.io/@alice/notes')).toEqual(expected)
+  })
+
+  it('should return undefined for a page outside a profile', () => {
+    expect(parseMisskeyUrl('https://misskey.io/explore')).toBeUndefined()
+  })
+
+  it('should return the profile without its feed suffix', () => {
+    const expected: MisskeyUrl = { kind: 'profile', username: 'alice' }
+
+    expect(parseMisskeyUrl('https://misskey.io/@alice.atom')).toEqual(expected)
+  })
+})
 
 describe('misskeyHandler', () => {
   describe('isMisskeyHtml', () => {
@@ -55,13 +79,13 @@ describe('misskeyHandler', () => {
     it('should return false for non-profile paths', () => {
       expect(misskeyHandler.match('https://example.com/explore', misskeyHtml)).toBe(false)
     })
-
-    it('should return false for invalid URL', () => {
-      expect(misskeyHandler.match('not-a-url', misskeyHtml)).toBe(false)
-    })
   })
 
   describe('resolve', () => {
+    it('should return empty array for a page outside a profile', () => {
+      expect(misskeyHandler.resolve('https://misskey.io/explore')).toEqual([])
+    })
+
     it('should return atom, rss, and json feeds for profile', () => {
       const value = 'https://example.com/@ai'
       const expected: Array<DiscoverUriEntry> = [

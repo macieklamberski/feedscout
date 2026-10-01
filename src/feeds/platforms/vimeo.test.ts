@@ -1,5 +1,49 @@
 import { describe, expect, it } from 'bun:test'
-import { vimeoHandler } from './vimeo.js'
+import { parseVimeoUrl, type VimeoUrl, vimeoHandler } from './vimeo.js'
+
+describe('parseVimeoUrl', () => {
+  it('should return the channel for a channel page', () => {
+    const expected: VimeoUrl = { kind: 'channel', channel: 'staffpicks' }
+
+    expect(parseVimeoUrl('https://vimeo.com/channels/staffpicks')).toEqual(expected)
+  })
+
+  it('should return the group for a group page', () => {
+    const expected: VimeoUrl = { kind: 'group', group: 'motion' }
+
+    expect(parseVimeoUrl('https://vimeo.com/groups/motion')).toEqual(expected)
+  })
+
+  it('should return the album for a showcase page', () => {
+    const expected: VimeoUrl = { kind: 'album', albumId: '12345' }
+
+    expect(parseVimeoUrl('https://vimeo.com/showcase/12345')).toEqual(expected)
+  })
+
+  it('should return the likes for a likes page', () => {
+    const expected: VimeoUrl = { kind: 'likes', username: 'someone' }
+
+    expect(parseVimeoUrl('https://vimeo.com/someone/likes')).toEqual(expected)
+  })
+
+  it('should return the user for a user page', () => {
+    const expected: VimeoUrl = { kind: 'user', username: 'someone' }
+
+    expect(parseVimeoUrl('https://vimeo.com/someone')).toEqual(expected)
+  })
+
+  it('should return undefined for a video page', () => {
+    expect(parseVimeoUrl('https://vimeo.com/123456')).toBeUndefined()
+  })
+
+  it('should return undefined for an excluded path', () => {
+    expect(parseVimeoUrl('https://vimeo.com/pricing')).toBeUndefined()
+  })
+
+  it('should return undefined for another host', () => {
+    expect(parseVimeoUrl('https://example.com/someone')).toBeUndefined()
+  })
+})
 
 describe('vimeoHandler', () => {
   describe('match', () => {
@@ -21,6 +65,10 @@ describe('vimeoHandler', () => {
   })
 
   describe('resolve', () => {
+    it('should return empty array for a URL outside Vimeo', () => {
+      expect(vimeoHandler.resolve('https://example.com/')).toEqual([])
+    })
+
     it('should return videos feed for user page', () => {
       const value = 'https://vimeo.com/casey'
       const expected = [

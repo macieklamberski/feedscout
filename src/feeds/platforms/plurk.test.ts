@@ -1,5 +1,47 @@
 import { describe, expect, it } from 'bun:test'
-import { plurkHandler } from './plurk.js'
+import { type PlurkUrl, parsePlurkUrl, plurkHandler } from './plurk.js'
+
+describe('parsePlurkUrl', () => {
+  it('should return the post for a post page', () => {
+    const expected: PlurkUrl = { kind: 'post', postId: 'abc123' }
+
+    expect(parsePlurkUrl('https://www.plurk.com/p/abc123')).toEqual(expected)
+  })
+
+  it('should return the post for a mobile post page', () => {
+    const expected: PlurkUrl = { kind: 'post', postId: 'abc123' }
+
+    expect(parsePlurkUrl('https://www.plurk.com/m/p/abc123')).toEqual(expected)
+  })
+
+  it('should return the user for a user page', () => {
+    const expected: PlurkUrl = { kind: 'user', username: 'alice' }
+
+    expect(parsePlurkUrl('https://www.plurk.com/alice')).toEqual(expected)
+  })
+
+  it('should return the user for a user path', () => {
+    const expected: PlurkUrl = { kind: 'user', username: 'alice' }
+
+    expect(parsePlurkUrl('https://www.plurk.com/u/alice')).toEqual(expected)
+  })
+
+  it('should return a page for a site route', () => {
+    const expected: PlurkUrl = { kind: 'page' }
+
+    expect(parsePlurkUrl('https://www.plurk.com/top')).toEqual(expected)
+  })
+
+  it('should return a page for the root', () => {
+    const expected: PlurkUrl = { kind: 'page' }
+
+    expect(parsePlurkUrl('https://www.plurk.com/')).toEqual(expected)
+  })
+
+  it('should return undefined for another host', () => {
+    expect(parsePlurkUrl('https://example.com/alice')).toBeUndefined()
+  })
+})
 
 describe('plurkHandler', () => {
   describe('match', () => {
@@ -13,6 +55,10 @@ describe('plurkHandler', () => {
   })
 
   describe('resolve', () => {
+    it('should return empty array for a URL outside Plurk', () => {
+      expect(plurkHandler.resolve('https://example.com/')).toEqual([])
+    })
+
     it('should return the user feed for a user page', () => {
       const value = 'https://www.plurk.com/alice'
       const expected = [

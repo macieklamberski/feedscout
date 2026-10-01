@@ -1,17 +1,12 @@
-import {
-  getPathSegments,
-  getSubdomain,
-  isAnyOf,
-  isHostOf,
-  isHostOrSubdomainOf,
-  isSubdomainOf,
-} from 'trousse'
+import { getPathSegments, getSubdomain, isAnyOf, isHostOf, isHostOrSubdomainOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers profileSubdomain (html).
 // Handler needed for: albums, explore, profile.
+
+export type ArtstationUrl = { kind: 'profile'; username: string } | { kind: 'artwork' }
 
 const domains = ['artstation.com']
 const hosts = ['artstation.com', 'www.artstation.com']
@@ -31,30 +26,45 @@ const excludedPaths = [
   'terms',
 ]
 
+export const parseArtstationUrl = (url: string): ArtstationUrl | undefined => {
+  if (!isHostOrSubdomainOf(url, domains)) {
+    return
+  }
+
+  const subdomain = getSubdomain(url, domains)
+
+  // Subdomain form: {user}.artstation.com
+  if (subdomain && !isHostOf(url, hosts)) {
+    return { kind: 'profile', username: subdomain }
+  }
+
+  const [first] = getPathSegments(url)
+
+  // Global artwork page: /artwork
+  if (!first || isAnyOf(first, 'artwork')) {
+    return { kind: 'artwork' }
+  }
+
+  if (isAnyOf(first, excludedPaths)) {
+    return
+  }
+
+  return { kind: 'profile', username: first }
+}
+
 export const artstationHandler: PlatformHandler = {
   match: (url) => {
-    return isHostOrSubdomainOf(url, domains)
+    return parseArtstationUrl(url) !== undefined
   },
 
   resolve: (url) => {
-    const parsed = new URL(url)
+    const parsed = parseArtstationUrl(url)
 
-    // Subdomain form: {user}.artstation.com
-    if (!isHostOf(url, hosts) && isSubdomainOf(url, domains)) {
-      const username = getSubdomain(parsed, domains)
-
-      return [
-        {
-          uri: `https://www.artstation.com/${username}.rss`,
-          hint: composeHint('artstation:portfolio'),
-        },
-      ]
+    if (!parsed) {
+      return []
     }
 
-    const pathSegments = getPathSegments(parsed)
-
-    // Global artwork page: /artwork
-    if (isAnyOf(pathSegments[0], 'artwork') || pathSegments.length === 0) {
+    if (parsed.kind === 'artwork') {
       return [
         {
           uri: 'https://www.artstation.com/artwork.rss',
@@ -67,15 +77,9 @@ export const artstationHandler: PlatformHandler = {
       ]
     }
 
-    const username = pathSegments[0]
-
-    if (isAnyOf(username, excludedPaths)) {
-      return []
-    }
-
     return [
       {
-        uri: `https://www.artstation.com/${username}.rss`,
+        uri: `https://www.artstation.com/${parsed.username}.rss`,
         hint: composeHint('artstation:portfolio'),
       },
     ]

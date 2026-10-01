@@ -1,21 +1,41 @@
 import { getAnyOf, getPathSegments } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, hasMetaContent } from '../../common/utils.js'
+import { composeHint, hasMarker, hasMetaContent } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers blog, post (html), partly covers author, tag.
 
+export type HubspotUrl =
+  | { kind: 'author'; blog: string; name: string }
+  | { kind: 'tag'; blog: string; route: string; name: string }
+  | { kind: 'blog'; blog: string }
+
 const listingPathRegex = /^\/([^/]+)\/([^/]+)\/([^/]+)/
 
-const listingKinds = ['author', 'tag', 'topic']
+const listingRoutes = ['author', 'tag', 'topic']
 
 const blogContentTypes = ['BLOG_LISTING_PAGE', 'BLOG_POST', 'BLOG_AUTHOR', 'TAG']
 
-const getBlogPath = (url: string): string | undefined => {
-  const [first] = getPathSegments(url)
+export const parseHubspotUrl = (url: string): HubspotUrl | undefined => {
+  const [blog] = getPathSegments(url)
 
-  return first
+  if (!blog) {
+    return
+  }
+
+  const [, , rawRoute, name] = new URL(url).pathname.match(listingPathRegex) ?? []
+  const route = getAnyOf(rawRoute, listingRoutes)
+
+  if (route === 'author') {
+    return { kind: 'author', blog, name }
+  }
+
+  if (route) {
+    return { kind: 'tag', blog, route, name }
+  }
+
+  return { kind: 'blog', blog }
 }
 
 export const isHubspotHtml = (content: string): boolean => {
@@ -39,40 +59,42 @@ const isNonBlogPage = (headers: Headers): boolean => {
 
 export const hubspotHandler: PlatformHandler = {
   match: (url, content, headers) => {
-    try {
-      const isHubspot =
-        (content && isHubspotHtml(content)) || (headers && isHubspotHeaders(headers))
+    if (!hasMarker(content, headers, { html: isHubspotHtml, headers: isHubspotHeaders })) {
+      return false
+    }
 
-      if (!isHubspot || (headers && isNonBlogPage(headers))) {
-        return false
-      }
+    if (headers && isNonBlogPage(headers)) {
+      return false
+    }
 
-      return Boolean(getBlogPath(url))
-    } catch {}
-
-    return false
+    return parseHubspotUrl(url) !== undefined
   },
 
   resolve: (url) => {
-    const { origin, pathname } = new URL(url)
-    const blogPath = getBlogPath(url)
+    const { origin } = new URL(url)
+    const parsed = parseHubspotUrl(url)
 
-    if (!blogPath) {
+    if (!parsed) {
       return []
     }
 
     const uris: Array<DiscoverUriEntry> = []
-    const [, listingBlog, rawKind, listingName] = pathname.match(listingPathRegex) ?? []
-    const kind = getAnyOf(rawKind, listingKinds)
 
-    if (kind) {
+    if (parsed.kind === 'author') {
       uris.push({
-        uri: `${origin}/${listingBlog}/${kind}/${listingName}/rss.xml`,
-        hint: composeHint(kind === 'author' ? 'hubspot:author' : 'hubspot:tag'),
+        uri: `${origin}/${parsed.blog}/author/${parsed.name}/rss.xml`,
+        hint: composeHint('hubspot:author'),
       })
     }
 
-    uris.push({ uri: `${origin}/${blogPath}/rss.xml`, hint: composeHint('hubspot:blog') })
+    if (parsed.kind === 'tag') {
+      uris.push({
+        uri: `${origin}/${parsed.blog}/${parsed.route}/${parsed.name}/rss.xml`,
+        hint: composeHint('hubspot:tag'),
+      })
+    }
+
+    uris.push({ uri: `${origin}/${parsed.blog}/rss.xml`, hint: composeHint('hubspot:blog') })
 
     return uris
   },

@@ -1,8 +1,12 @@
+import { parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
+import { composeHint, hasMarker } from '../../common/utils.js'
 
-// Discoverability: Discoverable without handler.
+// Discoverability: Partially discoverable without handler.
+// Generic covers home (html), partly covers group.
+
+export type MobilizonUrl = { kind: 'group'; group: string } | { kind: 'instance' }
 
 const groupPathRegex = /^\/@([^/]+)/
 
@@ -11,19 +15,44 @@ export const isMobilizonHtml = (content: string): boolean => {
   return content.includes("Mobilizon doesn't work properly without JavaScript")
 }
 
+export const parseMobilizonUrl = (url: string): MobilizonUrl | undefined => {
+  const parsedUrl = parseUrl(url)
+
+  if (!parsedUrl) {
+    return
+  }
+
+  const group = parsedUrl.pathname.match(groupPathRegex)?.[1]
+
+  if (group) {
+    return { kind: 'group', group }
+  }
+
+  return { kind: 'instance' }
+}
+
 export const mobilizonHandler: PlatformHandler = {
-  match: (url, content) => {
-    return URL.canParse(url) && Boolean(content) && isMobilizonHtml(content ?? '')
+  match: (url, content, headers) => {
+    if (!hasMarker(content, headers, { html: isMobilizonHtml })) {
+      return false
+    }
+
+    return parseMobilizonUrl(url) !== undefined
   },
 
   resolve: (url) => {
-    const { origin, pathname } = new URL(url)
-    const group = pathname.match(groupPathRegex)?.[1]
+    const parsed = parseMobilizonUrl(url)
+
+    if (!parsed) {
+      return []
+    }
+
+    const { origin } = new URL(url)
     const uris: Array<DiscoverUriEntry> = []
 
-    if (group) {
+    if (parsed.kind === 'group') {
       uris.push({
-        uri: `${origin}/@${group}/feed/atom`,
+        uri: `${origin}/@${parsed.group}/feed/atom`,
         hint: composeHint('mobilizon:group'),
       })
     }

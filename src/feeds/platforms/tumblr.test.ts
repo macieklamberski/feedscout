@@ -15,8 +15,8 @@ describe('parseTumblrUrl', () => {
     expect(parseTumblrUrl('https://alice.tumblr.com/post/123')).toEqual(expected)
   })
 
-  it('should return the blog for a tagged page', () => {
-    const expected: TumblrUrl = { kind: 'blog', blog: 'example' }
+  it('should return the tag for a tagged page', () => {
+    const expected: TumblrUrl = { kind: 'tag', blog: 'example', tag: 'updates' }
 
     expect(parseTumblrUrl('https://example.tumblr.com/tagged/updates')).toEqual(expected)
   })

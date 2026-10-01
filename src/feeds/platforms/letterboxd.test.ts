@@ -40,8 +40,13 @@ describe('parseLetterboxdUrl', () => {
     expect(parseLetterboxdUrl('https://letterboxd.com/Dave')).toEqual(expected)
   })
 
+  it('should return the journal for a journal page', () => {
+    const expected: LetterboxdUrl = { kind: 'journal' }
+
+    expect(parseLetterboxdUrl('https://letterboxd.com/journal/')).toEqual(expected)
+  })
+
   it('should return undefined for an excluded path', () => {
-    expect(parseLetterboxdUrl('https://letterboxd.com/journal')).toBeUndefined()
     expect(parseLetterboxdUrl('https://letterboxd.com/films')).toBeUndefined()
     expect(parseLetterboxdUrl('https://letterboxd.com/settings/')).toBeUndefined()
     expect(parseLetterboxdUrl('https://letterboxd.com/sign-in/')).toBeUndefined()

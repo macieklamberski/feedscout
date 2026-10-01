@@ -5,7 +5,7 @@ import { composeHint } from '../../common/utils.js'
 // Discoverability: Not discoverable without handler.
 // Handler needed for: all shapes.
 
-export type VelogUrl = { kind: 'user'; username: string }
+export type VelogUrl = { kind: 'user'; username: string } | { kind: 'home' }
 
 export const hosts = ['velog.io', 'www.velog.io']
 const userRegex = /^\/@([^/]+)/
@@ -15,6 +15,10 @@ export const parseVelogUrl = (url: string): VelogUrl | undefined => {
 
   if (!parsedUrl || !isHostOf(parsedUrl, hosts)) {
     return
+  }
+
+  if (parsedUrl.pathname === '/') {
+    return { kind: 'home' }
   }
 
   const match = parsedUrl.pathname.match(userRegex)
@@ -34,32 +38,30 @@ export const parseVelogUrl = (url: string): VelogUrl | undefined => {
 
 export const velogHandler: PlatformHandler = {
   match: (url) => {
-    return isHostOf(url, hosts)
+    return parseVelogUrl(url) !== undefined
   },
 
   resolve: (url) => {
-    const { pathname } = new URL(url)
-    const username = parseVelogUrl(url)?.username
+    const parsed = parseVelogUrl(url)
 
-    if (username) {
+    if (!parsed) {
+      return []
+    }
+
+    if (parsed.kind === 'user') {
       return [
         {
-          uri: `https://v2.velog.io/rss/${encodeURIComponent(username)}`,
+          uri: `https://v2.velog.io/rss/${encodeURIComponent(parsed.username)}`,
           hint: composeHint('velog:posts'),
         },
       ]
     }
 
-    // Homepage: trending posts feed.
-    if (pathname === '/') {
-      return [
-        {
-          uri: 'https://v2.velog.io/rss',
-          hint: composeHint('velog:trending'),
-        },
-      ]
-    }
-
-    return []
+    return [
+      {
+        uri: 'https://v2.velog.io/rss',
+        hint: composeHint('velog:trending'),
+      },
+    ]
   },
 }

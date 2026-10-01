@@ -44,15 +44,17 @@ const getPageAvatar = (content: string | undefined): string | undefined => {
 
 export const nebulaHandler: PlatformHandler = {
   match: (url) => {
-    return parseNebulaUrl(url) !== undefined
+    return parseNebulaUrl(url)?.kind === 'channel'
   },
 
   resolve: (url, content) => {
-    const slug = parseNebulaUrl(url)?.slug
+    const parsed = parseNebulaUrl(url)
 
-    if (!slug) {
+    if (parsed?.kind !== 'channel') {
       return []
     }
+
+    const { slug } = parsed
 
     const avatar = getPageAvatar(content)
 

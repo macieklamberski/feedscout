@@ -5,13 +5,17 @@ export const deviantartHandler: PlatformHandler = {
   match: (url) => {
     const kind = parseDeviantartUrl(url)?.kind
 
-    return kind !== undefined && kind !== 'tag'
+    return kind !== undefined && kind !== 'tag' && kind !== 'dailyDeviations'
   },
 
   resolve: (url) => {
     const parsed = parseDeviantartUrl(url)
 
-    if (!parsed || parsed.kind === 'tag' || parsed.username.length < 2) {
+    if (!parsed || parsed.kind === 'tag' || parsed.kind === 'dailyDeviations') {
+      return []
+    }
+
+    if (parsed.username.length < 2) {
       return []
     }
 

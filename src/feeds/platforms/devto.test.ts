@@ -91,8 +91,16 @@ describe('parseDevtoUrl', () => {
     expect(parseDevtoUrl('https://dev.to/t')).toBeUndefined()
   })
 
-  it('should return undefined for the homepage', () => {
-    expect(parseDevtoUrl('https://dev.to/')).toBeUndefined()
+  it('should return the home page', () => {
+    const expected: DevtoUrl = { kind: 'home' }
+
+    expect(parseDevtoUrl('https://dev.to/')).toEqual(expected)
+  })
+
+  it('should return the latest page', () => {
+    const expected: DevtoUrl = { kind: 'latest' }
+
+    expect(parseDevtoUrl('https://dev.to/Latest/')).toEqual(expected)
   })
 
   it('should return undefined for another host', () => {

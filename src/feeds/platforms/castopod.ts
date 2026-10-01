@@ -7,9 +7,11 @@ import { composeHint, findElement } from '../../common/utils.js'
 const colorsPathRegex = /\/themes\/colors$/
 const handleRegex = /^@(\w+)$/
 
+export type CastopodPage = { rootUrl: string; handle: string }
+
 // Core prints the theme colors stylesheet in every page head, at the install's root. Every page
 // under `/@{handle}` belongs to that podcast, and a remote actor's `@user@domain` has no feed here.
-const getFeedUrl = (url: string, content: string | undefined): string | undefined => {
+const getCastopodPage = (url: string, content: string | undefined): CastopodPage | undefined => {
   const link = findElement(content, (element) => {
     return element.name === 'link' && colorsPathRegex.test(element.attribs.href ?? '')
   })
@@ -27,21 +29,23 @@ const getFeedUrl = (url: string, content: string | undefined): string | undefine
     return
   }
 
-  return `${rootUrl}/@${handle}/feed.xml`
+  return { rootUrl, handle }
 }
 
 export const castopodHandler: PlatformHandler = {
   match: (url, content) => {
-    return URL.canParse(url) && getFeedUrl(url, content) !== undefined
+    return getCastopodPage(url, content) !== undefined
   },
 
   resolve: (url, content) => {
-    const feedUrl = getFeedUrl(url, content)
+    const page = getCastopodPage(url, content)
 
-    if (!feedUrl) {
+    if (!page) {
       return []
     }
 
-    return [{ uri: feedUrl, hint: composeHint('castopod:podcast') }]
+    return [
+      { uri: `${page.rootUrl}/@${page.handle}/feed.xml`, hint: composeHint('castopod:podcast') },
+    ]
   },
 }

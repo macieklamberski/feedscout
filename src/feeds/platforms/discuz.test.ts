@@ -1,8 +1,36 @@
 import { describe, expect, it } from 'bun:test'
-import { discuzHandler, isDiscuzHtml } from './discuz.js'
+import { type DiscuzUrl, discuzHandler, isDiscuzHtml, parseDiscuzUrl } from './discuz.js'
 
 const discuzHtml = '<meta name="generator" content="Discuz! X3.4" />'
 const otherHtml = '<meta name="generator" content="phpBB">'
+
+describe('parseDiscuzUrl', () => {
+  it('should return the board from the fid query', () => {
+    const expected: DiscuzUrl = { kind: 'board', boardId: '22' }
+
+    expect(parseDiscuzUrl('https://bbs.example.com/forum.php?mod=forumdisplay&fid=22')).toEqual(
+      expected,
+    )
+  })
+
+  it('should return the board from a rewritten path', () => {
+    const expected: DiscuzUrl = { kind: 'board', boardId: '22' }
+
+    expect(parseDiscuzUrl('https://bbs.example.com/forum-22-1.html')).toEqual(expected)
+  })
+
+  it('should return the site for a page without a board', () => {
+    const expected: DiscuzUrl = { kind: 'site' }
+
+    expect(parseDiscuzUrl('https://bbs.example.com/')).toEqual(expected)
+  })
+
+  it('should return the site for a non-numeric fid', () => {
+    const expected: DiscuzUrl = { kind: 'site' }
+
+    expect(parseDiscuzUrl('https://bbs.example.com/forum.php?fid=abc')).toEqual(expected)
+  })
+})
 
 describe('isDiscuzHtml', () => {
   it('should return true for the Discuz generator meta tag', () => {
@@ -41,13 +69,13 @@ describe('discuzHandler', () => {
     it('should not match without content', () => {
       expect(discuzHandler.match('https://example.com/forum-22-1.html')).toBe(false)
     })
-
-    it('should not match invalid URLs', () => {
-      expect(discuzHandler.match('not-a-url', discuzHtml)).toBe(false)
-    })
   })
 
   describe('resolve', () => {
+    it('should return empty array for a URL that does not parse', () => {
+      expect(discuzHandler.resolve('not-a-url')).toEqual([])
+    })
+
     it('should return the board and site feeds for a capitalized forum segment', () => {
       const value = 'https://example.com/Forum-22-1.html'
       const expected = [

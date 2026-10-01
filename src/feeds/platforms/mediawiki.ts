@@ -1,6 +1,6 @@
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, findElement, getScriptDirectory } from '../../common/utils.js'
+import { composeHint, findElement, getScriptDirectory, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers special (html), partly covers page.
@@ -44,31 +44,35 @@ const getPageName = (content: string | undefined): string | undefined => {
   return JSON.parse(pageName)
 }
 
+export type MediawikiPage = { scriptUrl: string; pageName?: string }
+
+const getMediawikiPage = (url: string, content: string | undefined): MediawikiPage | undefined => {
+  const rsdHref = getRsdHref(content)
+
+  if (!rsdHref) {
+    return
+  }
+
+  // The RSD link is often protocol-relative and names the wiki's canonical server.
+  const { origin } = new URL(url)
+  const scriptPath = getScriptDirectory(new URL(rsdHref, url).pathname)
+
+  return { scriptUrl: `${origin}${scriptPath}/index.php`, pageName: getPageName(content) }
+}
+
 export const mediawikiHandler: PlatformHandler = {
-  match: (url, content) => {
-    if (!URL.canParse(url)) {
-      return false
-    }
-
-    if (content && isMediawikiHtml(content)) {
-      return true
-    }
-
-    return false
+  match: (_url, content, headers) => {
+    return hasMarker(content, headers, { html: isMediawikiHtml })
   },
 
   resolve: (url, content) => {
-    const rsdHref = getRsdHref(content)
+    const page = getMediawikiPage(url, content)
 
-    if (!rsdHref) {
+    if (!page) {
       return []
     }
 
-    // The RSD link is often protocol-relative and names the wiki's canonical server.
-    const { origin } = new URL(url)
-    const scriptPath = getScriptDirectory(new URL(rsdHref, url).pathname)
-    const scriptUrl = `${origin}${scriptPath}/index.php`
-    const pageName = getPageName(content)
+    const { scriptUrl, pageName } = page
     const uris: Array<DiscoverUriEntry> = []
 
     if (pageName) {

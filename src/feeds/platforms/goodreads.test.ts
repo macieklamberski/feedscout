@@ -63,6 +63,13 @@ describe('parseGoodreadsUrl', () => {
     expect(parseGoodreadsUrl('https://www.goodreads.com/review/list/4082853')).toEqual(expected)
   })
 
+  it('should return the shelf of a review list page', () => {
+    const value = 'https://www.goodreads.com/review/list/1-otis?shelf=read'
+    const expected: GoodreadsUrl = { kind: 'reviews', userId: '1', shelf: 'read' }
+
+    expect(parseGoodreadsUrl(value)).toEqual(expected)
+  })
+
   it('should return undefined for a user page with a non-numeric id', () => {
     expect(parseGoodreadsUrl('https://www.goodreads.com/user/show/abc-otis')).toBeUndefined()
   })

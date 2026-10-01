@@ -1,5 +1,21 @@
 import { describe, expect, it } from 'bun:test'
-import { podbeanHandler } from './podbean.js'
+import { type PodbeanUrl, parsePodbeanUrl, podbeanHandler } from './podbean.js'
+
+describe('parsePodbeanUrl', () => {
+  it('should return the podcast for a show subdomain', () => {
+    const expected: PodbeanUrl = { kind: 'podcast', show: 'example' }
+
+    expect(parsePodbeanUrl('https://example.podbean.com/')).toEqual(expected)
+  })
+
+  it('should return undefined for an infrastructure subdomain', () => {
+    expect(parsePodbeanUrl('https://www.podbean.com/')).toBeUndefined()
+  })
+
+  it('should return undefined for another host', () => {
+    expect(parsePodbeanUrl('https://example.com/')).toBeUndefined()
+  })
+})
 
 describe('podbeanHandler', () => {
   describe('match', () => {

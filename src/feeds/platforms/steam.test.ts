@@ -83,8 +83,20 @@ describe('parseSteamUrl', () => {
     expect(parseSteamUrl('https://store.steampowered.com/app/620x')).toBeUndefined()
   })
 
-  it('should return undefined for the store homepage', () => {
-    expect(parseSteamUrl('https://store.steampowered.com/')).toBeUndefined()
+  it('should return the news for the store homepage', () => {
+    const expected: SteamUrl = { kind: 'news' }
+
+    expect(parseSteamUrl('https://store.steampowered.com/')).toEqual(expected)
+  })
+
+  it('should return the news for the news hub', () => {
+    const expected: SteamUrl = { kind: 'news' }
+
+    expect(parseSteamUrl('https://store.steampowered.com/newshub/')).toEqual(expected)
+  })
+
+  it('should return undefined for the community homepage', () => {
+    expect(parseSteamUrl('https://steamcommunity.com/')).toBeUndefined()
   })
 
   it('should return undefined for another host', () => {

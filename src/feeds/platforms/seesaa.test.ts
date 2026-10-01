@@ -1,6 +1,22 @@
 import { describe, expect, it } from 'bun:test'
 import type { DiscoverUriEntry } from '../../common/types.js'
-import { seesaaHandler } from './seesaa.js'
+import { parseSeesaaUrl, type SeesaaUrl, seesaaHandler } from './seesaa.js'
+
+describe('parseSeesaaUrl', () => {
+  it('should return the blog for a blog subdomain', () => {
+    const expected: SeesaaUrl = { kind: 'blog' }
+
+    expect(parseSeesaaUrl('https://example.seesaa.net/')).toEqual(expected)
+  })
+
+  it('should return undefined for the apex domain', () => {
+    expect(parseSeesaaUrl('https://seesaa.net/')).toBeUndefined()
+  })
+
+  it('should return undefined for another host', () => {
+    expect(parseSeesaaUrl('https://example.com/')).toBeUndefined()
+  })
+})
 
 describe('seesaaHandler', () => {
   describe('match', () => {
@@ -21,6 +37,10 @@ describe('seesaaHandler', () => {
   })
 
   describe('resolve', () => {
+    it('should return empty array for a URL outside Seesaa', () => {
+      expect(seesaaHandler.resolve('https://example.com/')).toEqual([])
+    })
+
     it('should return RSS 2.0 and RDF feeds for blog', () => {
       const value = 'https://alice.seesaa.net'
       const expected: Array<DiscoverUriEntry> = [

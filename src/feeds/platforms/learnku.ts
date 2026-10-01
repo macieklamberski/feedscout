@@ -6,32 +6,43 @@ import { composeHint } from '../../common/utils.js'
 // Discoverability: Partially discoverable without handler.
 // Generic partly covers community.
 
+export type LearnkuUrl = { kind: 'community'; community: string } | { kind: 'home' }
+
 const hosts = ['learnku.com', 'www.learnku.com']
 const excludedPaths = ['search', 'login', 'register', 'settings', 'notifications', 'users', 'api']
 
-const getCommunity = (url: string): string | undefined => {
-  const [first] = getPathSegments(url)
-
-  if (!first || isAnyOf(first, excludedPaths)) {
+export const parseLearnkuUrl = (url: string): LearnkuUrl | undefined => {
+  if (!isHostOf(url, hosts)) {
     return
   }
 
-  return first
+  const [community] = getPathSegments(url)
+
+  if (!community || isAnyOf(community, excludedPaths)) {
+    return { kind: 'home' }
+  }
+
+  return { kind: 'community', community }
 }
 
 export const learnkuHandler: PlatformHandler = {
   match: (url) => {
-    return isHostOf(url, hosts)
+    return parseLearnkuUrl(url) !== undefined
   },
 
   resolve: (url) => {
+    const parsed = parseLearnkuUrl(url)
+
+    if (!parsed) {
+      return []
+    }
+
     const { origin } = new URL(url)
-    const community = getCommunity(url)
     const uris: Array<DiscoverUriEntry> = []
 
-    if (community) {
+    if (parsed.kind === 'community') {
       uris.push({
-        uri: `${origin}/${community}/feed`,
+        uri: `${origin}/${parsed.community}/feed`,
         hint: composeHint('learnku:community'),
       })
     }

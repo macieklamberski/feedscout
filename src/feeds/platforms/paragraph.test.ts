@@ -1,12 +1,28 @@
 import { describe, expect, it } from 'bun:test'
-import { paragraphHandler } from './paragraph.js'
+import { type ParagraphUrl, paragraphHandler, parseParagraphUrl } from './paragraph.js'
+
+describe('parseParagraphUrl', () => {
+  it('should return the blog for a user page', () => {
+    const expected: ParagraphUrl = { kind: 'blog', username: 'example' }
+
+    expect(parseParagraphUrl('https://paragraph.com/@example')).toEqual(expected)
+  })
+
+  it('should return undefined for the root', () => {
+    expect(parseParagraphUrl('https://paragraph.com/')).toBeUndefined()
+  })
+
+  it('should return undefined for another host', () => {
+    expect(parseParagraphUrl('https://example.com/@example')).toBeUndefined()
+  })
+})
 
 describe('paragraphHandler', () => {
   describe('match', () => {
     const values: Array<[boolean, string]> = [
       [true, 'https://paragraph.com/@blog'],
       [true, 'https://www.paragraph.com/@user'],
-      [true, 'https://paragraph.com/'],
+      [false, 'https://paragraph.com/'],
       [false, 'https://example.com'],
     ]
 

@@ -1,6 +1,24 @@
 import { describe, expect, it } from 'bun:test'
 import type { DiscoverUriEntry } from '../../common/types.js'
-import { wpengineHandler } from './wpengine.js'
+import { parseWpengineUrl, type WpengineUrl, wpengineHandler } from './wpengine.js'
+
+describe('parseWpengineUrl', () => {
+  it('should return the archive for a tag page', () => {
+    const expected: WpengineUrl = { kind: 'archive', path: '/tag/news', hintKey: 'wordpress:tag' }
+
+    expect(parseWpengineUrl('https://example.wpenginepowered.com/tag/news/')).toEqual(expected)
+  })
+
+  it('should return the home page for the root', () => {
+    const expected: WpengineUrl = { kind: 'home' }
+
+    expect(parseWpengineUrl('https://example.wpengine.com/')).toEqual(expected)
+  })
+
+  it('should return undefined for another host', () => {
+    expect(parseWpengineUrl('https://example.wordpress.com/')).toBeUndefined()
+  })
+})
 
 describe('wpengineHandler', () => {
   describe('match', () => {
@@ -24,6 +42,10 @@ describe('wpengineHandler', () => {
   })
 
   describe('resolve', () => {
+    it('should return empty array for a URL outside WP Engine', () => {
+      expect(wpengineHandler.resolve('https://example.com/')).toEqual([])
+    })
+
     it('should return feed URLs for blog', () => {
       const value = 'https://example.wpenginepowered.com'
       const expected: Array<DiscoverUriEntry> = [

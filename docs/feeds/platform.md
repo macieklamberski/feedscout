@@ -1855,6 +1855,15 @@ Discovers the RSS feed of a Simplecast show. The show page names no feed, so the
 
 \* *Requires `enrichFn`. Without it, the handler still matches the page and returns no feed.*
 
+### Teletype.in
+
+Discovers RSS and Atom feeds for Teletype.in blogs.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `teletype.in/@{user}` | Posts feed (RSS + Atom) |
+| `teletype.in/@{user}/{post}` | Posts feed (RSS + Atom) |
+
 ## Basic Usage
 
 ```typescript
@@ -2065,6 +2074,7 @@ import {
   substackHandler,
   sverigesRadioHandler,
   syosetuHandler,
+  teletypeHandler,
   tildesHandler,
   tistoryHandler,
   togetterHandler,

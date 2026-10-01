@@ -40,7 +40,7 @@ The [method option types](#method-option-types) and `LinkSelector` are not expor
 
 ### DiscoverInput
 
-Input for discovery functions. Can be a URL string or an object. A URL string with a feed or podcast scheme, such as `feed://`, `feed:https://` or `itpc://`, is fetched as the https URL it names:
+Input for discovery functions. Can be a URL string or an object:
 
 ```typescript
 type DiscoverInput = string | DiscoverInputObject

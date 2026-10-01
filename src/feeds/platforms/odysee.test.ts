@@ -72,8 +72,12 @@ describe('parseOdyseeUrl', () => {
 
 describe('odyseeHandler', () => {
   describe('match', () => {
-    it('should match an odysee.com URL', () => {
-      expect(odyseeHandler.match('https://odysee.com')).toBe(true)
+    it('should match a channel with its claim ID', () => {
+      expect(odyseeHandler.match('https://odysee.com/@veritasium:f')).toBe(true)
+    })
+
+    it('should not match a channel without its claim ID', () => {
+      expect(odyseeHandler.match('https://odysee.com/@veritasium')).toBe(false)
     })
 
     it('should not match another host', () => {

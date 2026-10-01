@@ -1,6 +1,50 @@
 import { describe, expect, it } from 'bun:test'
 import type { DiscoverUriEntry } from '../../common/types.js'
-import { wordpressHandler } from './wordpress.js'
+import { parseWordpressUrl, type WordpressUrl, wordpressHandler } from './wordpress.js'
+
+describe('parseWordpressUrl', () => {
+  it('should return the archive for a category page', () => {
+    const expected: WordpressUrl = {
+      kind: 'archive',
+      path: '/category/news',
+      hintKey: 'wordpress:category',
+    }
+
+    expect(parseWordpressUrl('https://example.wordpress.com/Category/news/')).toEqual(expected)
+  })
+
+  it('should return the archive for a date page', () => {
+    const expected: WordpressUrl = {
+      kind: 'archive',
+      path: '/2024/05',
+      hintKey: 'wordpress:date-archive',
+    }
+
+    expect(parseWordpressUrl('https://example.wordpress.com/2024/05/')).toEqual(expected)
+  })
+
+  it('should return the post for a post page', () => {
+    const expected: WordpressUrl = { kind: 'post', path: '/2024/05/01/hello' }
+
+    expect(parseWordpressUrl('https://example.wordpress.com/2024/05/01/hello/')).toEqual(expected)
+  })
+
+  it('should return the home page for the root', () => {
+    const expected: WordpressUrl = { kind: 'home' }
+
+    expect(parseWordpressUrl('https://example.wordpress.com/')).toEqual(expected)
+  })
+
+  it('should return the home page for a feed path', () => {
+    const expected: WordpressUrl = { kind: 'home' }
+
+    expect(parseWordpressUrl('https://example.wordpress.com/feed/')).toEqual(expected)
+  })
+
+  it('should return undefined for another host', () => {
+    expect(parseWordpressUrl('https://example.com/')).toBeUndefined()
+  })
+})
 
 describe('wordpressHandler', () => {
   describe('match', () => {
@@ -21,6 +65,10 @@ describe('wordpressHandler', () => {
   })
 
   describe('resolve', () => {
+    it('should return empty array for a URL outside WordPress.com', () => {
+      expect(wordpressHandler.resolve('https://example.com/')).toEqual([])
+    })
+
     it('should return the site feeds without the post comments feed for a capitalized feed segment', () => {
       const value = 'https://example.wordpress.com/Feed/'
       const expected: Array<DiscoverUriEntry> = [

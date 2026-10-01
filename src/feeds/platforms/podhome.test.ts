@@ -55,6 +55,10 @@ describe('podhomeHandler', () => {
   })
 
   describe('resolve', () => {
+    it('should return empty array for a page without content', () => {
+      expect(podhomeHandler.resolve('https://serve.podhome.fm/show')).toEqual([])
+    })
+
     it('should return the show feed the page links', () => {
       const value = `${stylesheet}${feedLink}`
       const expected = [

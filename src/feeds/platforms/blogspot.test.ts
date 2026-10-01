@@ -1,6 +1,30 @@
 import { describe, expect, it } from 'bun:test'
 import type { DiscoverUriEntry } from '../../common/types.js'
-import { blogspotHandler } from './blogspot.js'
+import { type BlogspotUrl, blogspotHandler, parseBlogspotUrl } from './blogspot.js'
+
+describe('parseBlogspotUrl', () => {
+  it('should return the label for a label page', () => {
+    const expected: BlogspotUrl = { kind: 'label', label: 'News' }
+
+    expect(parseBlogspotUrl('https://example.blogspot.com/search/label/News')).toEqual(expected)
+  })
+
+  it('should return the post for a post page', () => {
+    const expected: BlogspotUrl = { kind: 'post' }
+
+    expect(parseBlogspotUrl('https://example.blogspot.com/2024/01/hello.html')).toEqual(expected)
+  })
+
+  it('should return the blog for any other page', () => {
+    const expected: BlogspotUrl = { kind: 'blog' }
+
+    expect(parseBlogspotUrl('https://example.blogspot.co.uk/')).toEqual(expected)
+  })
+
+  it('should return undefined for another host', () => {
+    expect(parseBlogspotUrl('https://example.com/search/label/News')).toBeUndefined()
+  })
+})
 
 describe('blogspotHandler', () => {
   describe('match', () => {
@@ -27,6 +51,10 @@ describe('blogspotHandler', () => {
   })
 
   describe('resolve', () => {
+    it('should return empty array for a URL outside the platform', () => {
+      expect(blogspotHandler.resolve('https://example.com/')).toEqual([])
+    })
+
     it('should return the label feed for a capitalized search segment', () => {
       const value = 'https://example.blogspot.com/Search/label/technology'
       const expected: Array<DiscoverUriEntry> = [

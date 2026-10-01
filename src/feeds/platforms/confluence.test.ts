@@ -72,10 +72,6 @@ describe('confluenceHandler', () => {
         false,
       )
     })
-
-    it('should not match invalid URLs', () => {
-      expect(confluenceHandler.match('not-a-url', confluenceHtml)).toBe(false)
-    })
   })
 
   describe('resolve', () => {

@@ -1,8 +1,10 @@
-import { getPathSegments, isSubdomainOf } from 'trousse'
+import { getPathSegments, isSubdomainOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, hasMetaContent } from '../../common/utils.js'
+import { composeHint, hasMarker, hasMetaContent } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
+
+export type WixUrl = { kind: 'freeSite'; site: string } | { kind: 'site' }
 
 const domains = ['wixsite.com']
 
@@ -17,31 +19,44 @@ export const isWixHeaders = (headers: Headers): boolean => {
 }
 
 // A free site lives under a path on `{account}.wixsite.com`, whose root answers 404.
-const getSiteUrl = (url: string): string => {
-  const { origin } = new URL(url)
-  const [site] = getPathSegments(url)
+export const parseWixUrl = (url: string): WixUrl | undefined => {
+  const parsedUrl = parseUrl(url)
 
-  return isSubdomainOf(url, domains) && site ? `${origin}/${site}` : origin
+  if (!parsedUrl) {
+    return
+  }
+
+  const [site] = getPathSegments(parsedUrl)
+
+  if (isSubdomainOf(parsedUrl, domains) && site) {
+    return { kind: 'freeSite', site }
+  }
+
+  return { kind: 'site' }
 }
 
 export const wixHandler: PlatformHandler = {
   match: (url, content, headers) => {
-    if (!URL.canParse(url)) {
+    if (!hasMarker(content, headers, { html: isWixHtml, headers: isWixHeaders })) {
       return false
     }
 
-    if (content && isWixHtml(content)) {
-      return true
-    }
-
-    if (headers && isWixHeaders(headers)) {
-      return true
-    }
-
-    return false
+    return parseWixUrl(url) !== undefined
   },
 
   resolve: (url) => {
-    return [{ uri: `${getSiteUrl(url)}/blog-feed.xml`, hint: composeHint('wix:blog') }]
+    const parsed = parseWixUrl(url)
+
+    if (!parsed) {
+      return []
+    }
+
+    const { origin } = new URL(url)
+
+    if (parsed.kind === 'freeSite') {
+      return [{ uri: `${origin}/${parsed.site}/blog-feed.xml`, hint: composeHint('wix:blog') }]
+    }
+
+    return [{ uri: `${origin}/blog-feed.xml`, hint: composeHint('wix:blog') }]
   },
 }

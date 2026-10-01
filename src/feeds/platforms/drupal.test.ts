@@ -47,10 +47,6 @@ describe('drupalHandler', () => {
     it('should not match another platform', () => {
       expect(drupalHandler.match('https://example.com/', otherHtml)).toBe(false)
     })
-
-    it('should not match invalid URLs', () => {
-      expect(drupalHandler.match('not-a-url', drupalHtml)).toBe(false)
-    })
   })
 
   describe('resolve', () => {

@@ -1,11 +1,11 @@
 import { parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
+import { composeHint, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
-export type PeertubeUrl = { kind: 'channel' | 'account'; name: string }
+export type PeertubeUrl = { kind: 'channel' | 'account'; name: string } | { kind: 'instance' }
 
 const peertubeRegex = /peertube/i
 const channelPathRegex = /^\/c\/([^/]+)/i
@@ -34,37 +34,52 @@ export const parsePeertubeUrl = (url: string): PeertubeUrl | undefined => {
   if (account) {
     return { kind: 'account', name: account }
   }
+
+  return { kind: 'instance' }
 }
 
 export const peertubeHandler: PlatformHandler = {
-  match: (url, _content, headers) => {
-    return Boolean(parseUrl(url)) && Boolean(headers && isPeertubeHeaders(headers))
+  match: (url, content, headers) => {
+    if (!hasMarker(content, headers, { headers: isPeertubeHeaders })) {
+      return false
+    }
+
+    return parsePeertubeUrl(url) !== undefined
   },
 
   resolve: (url) => {
-    const { origin } = new URL(url)
     const parsed = parsePeertubeUrl(url)
-    const uris: Array<DiscoverUriEntry> = []
 
-    if (parsed?.kind === 'channel') {
-      uris.push({
-        uri: `${origin}/feeds/videos.xml?videoChannelName=${parsed.name}`,
-        hint: composeHint('peertube:channel'),
-      })
+    if (!parsed) {
+      return []
     }
 
-    if (parsed?.kind === 'account') {
-      uris.push({
-        uri: `${origin}/feeds/videos.xml?accountName=${parsed.name}`,
-        hint: composeHint('peertube:account'),
-      })
-    }
-
-    uris.push({
+    const { origin } = new URL(url)
+    const instance: DiscoverUriEntry = {
       uri: `${origin}/feeds/videos.xml`,
       hint: composeHint('peertube:instance'),
-    })
+    }
 
-    return uris
+    if (parsed.kind === 'channel') {
+      return [
+        {
+          uri: `${origin}/feeds/videos.xml?videoChannelName=${parsed.name}`,
+          hint: composeHint('peertube:channel'),
+        },
+        instance,
+      ]
+    }
+
+    if (parsed.kind === 'account') {
+      return [
+        {
+          uri: `${origin}/feeds/videos.xml?accountName=${parsed.name}`,
+          hint: composeHint('peertube:account'),
+        },
+        instance,
+      ]
+    }
+
+    return [instance]
   },
 }

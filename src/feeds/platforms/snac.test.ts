@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import { isSnacHtml, snacHandler } from './snac.js'
+import { isSnacHtml, parseSnacUrl, type SnacUrl, snacHandler } from './snac.js'
 
 const snacHtml = '<meta name="generator" content="snac/2.95"/>'
 const otherHtml = '<meta name="generator" content="snacks 1.0">'
@@ -15,6 +15,30 @@ describe('isSnacHtml', () => {
 
   it('should return false for empty content', () => {
     expect(isSnacHtml('')).toBe(false)
+  })
+})
+
+describe('parseSnacUrl', () => {
+  it('should return the user path for a user page', () => {
+    const expected: SnacUrl = { kind: 'user', path: '/alice' }
+
+    expect(parseSnacUrl('https://snac.example/alice')).toEqual(expected)
+  })
+
+  it('should return the user path for a post page', () => {
+    const expected: SnacUrl = { kind: 'user', path: '/alice' }
+
+    expect(parseSnacUrl('https://snac.example/alice/p/1234')).toEqual(expected)
+  })
+
+  it('should return the user path under a sub-path', () => {
+    const expected: SnacUrl = { kind: 'user', path: '/snac/alice' }
+
+    expect(parseSnacUrl('https://example.com/snac/alice/')).toEqual(expected)
+  })
+
+  it('should return undefined for the root', () => {
+    expect(parseSnacUrl('https://snac.example/')).toBeUndefined()
   })
 })
 
@@ -49,13 +73,13 @@ describe('snacHandler', () => {
     it('should not match without content', () => {
       expect(snacHandler.match('https://example.org/alice')).toBe(false)
     })
-
-    it('should not match invalid URLs', () => {
-      expect(snacHandler.match('not-a-url', snacHtml)).toBe(false)
-    })
   })
 
   describe('resolve', () => {
+    it('should return empty array for the root', () => {
+      expect(snacHandler.resolve('https://snac.example/')).toEqual([])
+    })
+
     it('should build the feed from the page path, not the origin', () => {
       const value = 'https://example.org/snac/alice'
       const expected = [

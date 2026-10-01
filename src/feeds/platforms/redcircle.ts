@@ -46,21 +46,33 @@ const findShowUuid = (url: string, content: string | undefined): string | undefi
   return getUuidFromPath(pageUrl.pathname)
 }
 
+export type RedcirclePage = { showUuid: string }
+
+const getRedcirclePage = (url: string, content: string | undefined): RedcirclePage | undefined => {
+  const showUuid = findShowUuid(url, content)
+
+  if (!showUuid) {
+    return
+  }
+
+  return { showUuid }
+}
+
 export const redcircleHandler: PlatformHandler = {
   match: (url, content) => {
-    return findShowUuid(url, content) !== undefined
+    return getRedcirclePage(url, content) !== undefined
   },
 
   resolve: (url, content) => {
-    const showUuid = findShowUuid(url, content)
+    const page = getRedcirclePage(url, content)
 
-    if (!showUuid) {
+    if (!page) {
       return []
     }
 
     return [
       {
-        uri: `https://feeds.redcircle.com/${showUuid}`,
+        uri: `https://feeds.redcircle.com/${page.showUuid}`,
         hint: composeHint('redcircle:show'),
       },
     ]

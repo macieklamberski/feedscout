@@ -32,10 +32,6 @@ describe('textpatternHandler', () => {
     it('should not match another platform', () => {
       expect(textpatternHandler.match('https://example.com/', otherHtml)).toBe(false)
     })
-
-    it('should not match invalid URLs', () => {
-      expect(textpatternHandler.match('not-a-url', textpatternHtml)).toBe(false)
-    })
   })
 
   describe('resolve', () => {

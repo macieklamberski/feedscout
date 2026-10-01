@@ -4,7 +4,7 @@ import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
-export type LetterboxdUrl = { kind: 'member'; username: string }
+export type LetterboxdUrl = { kind: 'member'; username: string } | { kind: 'journal' }
 
 const hosts = ['letterboxd.com', 'www.letterboxd.com']
 const excludedPaths = [
@@ -43,6 +43,11 @@ export const parseLetterboxdUrl = (url: string): LetterboxdUrl | undefined => {
 
   const [username] = getPathSegments(url)
 
+  // The editorial Letterboxd Journal.
+  if (isAnyOf(username, 'journal')) {
+    return { kind: 'journal' }
+  }
+
   if (!username || isAnyOf(username, excludedPaths)) {
     return
   }
@@ -52,26 +57,23 @@ export const parseLetterboxdUrl = (url: string): LetterboxdUrl | undefined => {
 
 export const letterboxdHandler: PlatformHandler = {
   match: (url) => {
-    return isHostOf(url, hosts)
+    return parseLetterboxdUrl(url) !== undefined
   },
 
   resolve: (url) => {
-    const [section] = getPathSegments(url)
+    const parsed = parseLetterboxdUrl(url)
 
-    // Editorial Letterboxd Journal feed.
-    if (isAnyOf(section, 'journal')) {
+    if (!parsed) {
+      return []
+    }
+
+    if (parsed.kind === 'journal') {
       return [
         {
           uri: 'https://letterboxd.com/journal/rss/',
           hint: composeHint('letterboxd:journal'),
         },
       ]
-    }
-
-    const parsed = parseLetterboxdUrl(url)
-
-    if (!parsed) {
-      return []
     }
 
     return [

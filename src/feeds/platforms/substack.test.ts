@@ -1,5 +1,27 @@
 import { describe, expect, it } from 'bun:test'
-import { substackHandler } from './substack.js'
+import { parseSubstackUrl, type SubstackUrl, substackHandler } from './substack.js'
+
+describe('parseSubstackUrl', () => {
+  it('should return the newsletter for a publication subdomain', () => {
+    const expected: SubstackUrl = { kind: 'newsletter' }
+
+    expect(parseSubstackUrl('https://example.substack.com/p/post')).toEqual(expected)
+  })
+
+  it('should return the profile for a profile page', () => {
+    const expected: SubstackUrl = { kind: 'profile', username: 'example' }
+
+    expect(parseSubstackUrl('https://substack.com/@example')).toEqual(expected)
+  })
+
+  it('should return undefined for an apex page without a profile path', () => {
+    expect(parseSubstackUrl('https://substack.com/home')).toBeUndefined()
+  })
+
+  it('should return undefined for another host', () => {
+    expect(parseSubstackUrl('https://example.com/@example')).toBeUndefined()
+  })
+})
 
 describe('substackHandler', () => {
   describe('match', () => {
@@ -100,16 +122,8 @@ describe('substackHandler', () => {
       expect(substackHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should fall back to origin feed for apex URL without profile path', () => {
-      const value = 'https://substack.com/home'
-      const expected = [
-        {
-          uri: 'https://substack.com/feed',
-          hint: { key: 'substack:newsletter', label: 'Newsletter' },
-        },
-      ]
-
-      expect(substackHandler.resolve(value)).toEqual(expected)
+    it('should return empty array for an apex URL without a profile path', () => {
+      expect(substackHandler.resolve('https://substack.com/home')).toEqual([])
     })
   })
 })

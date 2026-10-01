@@ -1,10 +1,34 @@
 import { describe, expect, it } from 'bun:test'
-import { friendicaHandler, isFriendicaHeaders, isFriendicaHtml } from './friendica.js'
+import {
+  type FriendicaUrl,
+  friendicaHandler,
+  isFriendicaHeaders,
+  isFriendicaHtml,
+  parseFriendicaUrl,
+} from './friendica.js'
 
 const friendicaHtml =
   '<html><head><meta name="generator" content="Friendica 2026.01"></head></html>'
 const otherHtml = '<html><head><meta name="generator" content="WordPress"></head></html>'
 const friendicaHeaders = new Headers({ 'x-friendica-version': '2026.05' })
+
+describe('parseFriendicaUrl', () => {
+  it('should return the profile for a profile page', () => {
+    const expected: FriendicaUrl = { kind: 'profile', username: 'alice' }
+
+    expect(parseFriendicaUrl('https://example.com/profile/alice')).toEqual(expected)
+  })
+
+  it('should return the profile for a profile page with a capitalized segment', () => {
+    const expected: FriendicaUrl = { kind: 'profile', username: 'alice' }
+
+    expect(parseFriendicaUrl('https://example.com/Profile/alice')).toEqual(expected)
+  })
+
+  it('should return undefined for a page the parser does not name', () => {
+    expect(parseFriendicaUrl('https://example.com/about')).toBeUndefined()
+  })
+})
 
 describe('friendicaHandler', () => {
   describe('isFriendicaHtml', () => {
@@ -66,10 +90,6 @@ describe('friendicaHandler', () => {
 
     it('should return false for non-profile paths', () => {
       expect(friendicaHandler.match('https://example.com/about', friendicaHtml)).toBe(false)
-    })
-
-    it('should return false for invalid URL', () => {
-      expect(friendicaHandler.match('not-a-url', friendicaHtml)).toBe(false)
     })
   })
 

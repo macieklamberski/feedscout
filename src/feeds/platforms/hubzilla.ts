@@ -1,7 +1,9 @@
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, hasMetaContent } from '../../common/utils.js'
+import { composeHint, hasMarker, hasMetaContent } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
+
+export type HubzillaUrl = { kind: 'channel'; channel: string }
 
 const channelPathRegex = /^\/(?:(?:channel|feed|profile)\/|@)([^/]+)/i
 
@@ -10,31 +12,33 @@ export const isHubzillaHtml = (content: string): boolean => {
   return hasMetaContent(content, 'generator', 'hubzilla') || content.includes('var zid =')
 }
 
-const getChannel = (url: string): string | undefined => {
-  return new URL(url).pathname.match(channelPathRegex)?.[1]
+export const parseHubzillaUrl = (url: string): HubzillaUrl | undefined => {
+  const channel = new URL(url).pathname.match(channelPathRegex)?.[1]
+
+  if (!channel) {
+    return
+  }
+
+  return { kind: 'channel', channel }
 }
 
 export const hubzillaHandler: PlatformHandler = {
-  match: (url, content) => {
-    try {
-      if (!content || !isHubzillaHtml(content)) {
-        return false
-      }
+  match: (url, content, headers) => {
+    if (!hasMarker(content, headers, { html: isHubzillaHtml })) {
+      return false
+    }
 
-      return Boolean(getChannel(url))
-    } catch {}
-
-    return false
+    return parseHubzillaUrl(url) !== undefined
   },
 
   resolve: (url) => {
     const { origin } = new URL(url)
-    const channel = getChannel(url)
+    const parsed = parseHubzillaUrl(url)
 
-    if (!channel) {
+    if (!parsed) {
       return []
     }
 
-    return [{ uri: `${origin}/feed/${channel}`, hint: composeHint('hubzilla:channel') }]
+    return [{ uri: `${origin}/feed/${parsed.channel}`, hint: composeHint('hubzilla:channel') }]
   },
 }
