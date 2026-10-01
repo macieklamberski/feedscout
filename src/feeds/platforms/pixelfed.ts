@@ -57,16 +57,17 @@ export const pixelfedHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    const { origin } = new URL(url)
-    const username = parsePixelfedUrl(url)?.username
+    const parsed = parsePixelfedUrl(url)
 
-    if (!username) {
+    if (!parsed) {
       return []
     }
 
+    const { origin } = new URL(url)
+
     return [
       {
-        uri: `${origin}/users/${username}.atom`,
+        uri: `${origin}/users/${parsed.username}.atom`,
         hint: composeHint('pixelfed:posts'),
       },
     ]

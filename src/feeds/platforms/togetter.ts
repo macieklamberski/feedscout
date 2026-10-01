@@ -6,7 +6,7 @@ import { composeHint } from '../../common/utils.js'
 // Discoverability: Not discoverable without handler.
 // Handler needed for: all shapes.
 
-export type TogetterUrl = { kind: 'user'; username: string }
+export type TogetterUrl = { kind: 'user'; username: string } | { kind: 'home' }
 
 export const hosts = ['togetter.com', 'www.togetter.com']
 const userPathRegex = /^\/id\/([^/]+)/i
@@ -21,7 +21,7 @@ export const parseTogetterUrl = (url: string): TogetterUrl | undefined => {
   const username = parsedUrl.pathname.match(userPathRegex)?.[1]
 
   if (!username) {
-    return
+    return { kind: 'home' }
   }
 
   return { kind: 'user', username }
@@ -29,23 +29,26 @@ export const parseTogetterUrl = (url: string): TogetterUrl | undefined => {
 
 export const togetterHandler: PlatformHandler = {
   match: (url) => {
-    return isHostOf(url, hosts)
+    return parseTogetterUrl(url) !== undefined
   },
 
   resolve: (url) => {
-    const { origin } = new URL(url)
-    const username = parseTogetterUrl(url)?.username
-    const uris: Array<DiscoverUriEntry> = []
+    const parsed = parseTogetterUrl(url)
 
-    if (username) {
-      uris.push({
-        uri: `${origin}/rss/id/${username}`,
-        hint: composeHint('togetter:curator'),
-      })
+    if (!parsed) {
+      return []
     }
 
-    uris.push({ uri: `${origin}/rss/hot`, hint: composeHint('togetter:hot') })
+    const { origin } = new URL(url)
+    const hot: DiscoverUriEntry = { uri: `${origin}/rss/hot`, hint: composeHint('togetter:hot') }
 
-    return uris
+    if (parsed.kind === 'user') {
+      return [
+        { uri: `${origin}/rss/id/${parsed.username}`, hint: composeHint('togetter:curator') },
+        hot,
+      ]
+    }
+
+    return [hot]
   },
 }

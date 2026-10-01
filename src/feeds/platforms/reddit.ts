@@ -8,8 +8,12 @@ import { composeHint } from '../../common/utils.js'
 // Handler needed for: home, search, subreddit, user, userSubmitted.
 
 export type RedditUrl =
-  | { kind: 'subreddit'; subreddit: string; sort?: string }
-  | { kind: 'search'; subreddit: string }
+  | { kind: 'home' }
+  | { kind: 'siteSort'; sort: string; timeframe?: string }
+  | { kind: 'siteSearch'; query: string }
+  | { kind: 'subreddits'; sort?: string }
+  | { kind: 'subreddit'; subreddit: string; sort?: string; timeframe?: string }
+  | { kind: 'search'; subreddit: string; query?: string }
   | { kind: 'wiki'; subreddit: string }
   | { kind: 'post'; subreddit: string; postId: string }
   | { kind: 'user'; username: string }
@@ -31,18 +35,20 @@ const timeOptions = ['hour', 'day', 'week', 'month', 'year', 'all']
 const timeFilteredSorts = ['top', 'controversial']
 const userPrefixes = ['u', 'user']
 
-const getTimeframeSuffix = (sort: string, searchParams: URLSearchParams): string => {
+const getTimeframe = (sort: string, searchParams: URLSearchParams): string | undefined => {
   if (!timeFilteredSorts.includes(sort)) {
-    return ''
+    return
   }
 
   const timeframe = searchParams.get('t')
 
   if (timeframe && timeOptions.includes(timeframe)) {
-    return `?t=${timeframe}`
+    return timeframe
   }
+}
 
-  return ''
+const composeTimeframeQuery = (timeframe: string | undefined): string => {
+  return timeframe ? `?t=${timeframe}` : ''
 }
 
 // Combined subreddits work transparently: /r/{sub1}+{sub2} is captured as one name.
@@ -53,7 +59,34 @@ export const parseRedditUrl = (url: string): RedditUrl | undefined => {
     return
   }
 
-  const [prefix, rawName, rawSection, item] = getPathSegments(parsedUrl)
+  const { pathname, searchParams } = parsedUrl
+  const pathSegments = getPathSegments(parsedUrl)
+
+  if (pathSegments.length === 0) {
+    return { kind: 'home' }
+  }
+
+  // Sitewide sort: /hot, /new, /rising, /controversial, /top, /best.
+  const siteSort = pathSegments.length === 1 ? getAnyOf(pathSegments[0], sortOptions) : undefined
+
+  if (siteSort) {
+    return { kind: 'siteSort', sort: siteSort, timeframe: getTimeframe(siteSort, searchParams) }
+  }
+
+  const query = searchParams.get('q') ?? undefined
+
+  if (isAnyOf(pathSegments[0], 'search') && query) {
+    return { kind: 'siteSearch', query }
+  }
+
+  // Subreddit list: /subreddits[/new|/popular].
+  const subredditsMatch = pathname.match(subredditsRegex)
+
+  if (subredditsMatch) {
+    return { kind: 'subreddits', sort: getAnyOf(subredditsMatch[1], subredditsSorts) }
+  }
+
+  const [prefix, rawName, rawSection, item] = pathSegments
 
   if (isAnyOf(prefix, 'domain') && rawName) {
     return { kind: 'domain', domain: rawName }
@@ -68,7 +101,7 @@ export const parseRedditUrl = (url: string): RedditUrl | undefined => {
 
   if (isAnyOf(prefix, 'r')) {
     if (isAnyOf(section, 'search')) {
-      return { kind: 'search', subreddit: name }
+      return { kind: 'search', subreddit: name, query }
     }
 
     if (isAnyOf(section, 'wiki')) {
@@ -82,7 +115,12 @@ export const parseRedditUrl = (url: string): RedditUrl | undefined => {
     const sort = getAnyOf(section, sortOptions)
 
     if (sort) {
-      return { kind: 'subreddit', subreddit: name, sort }
+      return {
+        kind: 'subreddit',
+        subreddit: name,
+        sort,
+        timeframe: getTimeframe(sort, searchParams),
+      }
     }
 
     return { kind: 'subreddit', subreddit: name }
@@ -111,52 +149,40 @@ export const parseRedditUrl = (url: string): RedditUrl | undefined => {
 
 export const redditHandler: PlatformHandler = {
   match: (url) => {
-    return isHostOf(url, hosts)
+    return parseRedditUrl(url) !== undefined
   },
 
   resolve: (url) => {
-    const { pathname, searchParams } = new URL(url)
-    const pathSegments = getPathSegments(url)
+    const parsed = parseRedditUrl(url)
 
-    // Homepage: reddit.com/
-    if (pathSegments.length === 0) {
+    if (!parsed) {
+      return []
+    }
+
+    if (parsed.kind === 'home') {
       return [{ uri: 'https://www.reddit.com/.rss', hint: composeHint('reddit:posts') }]
     }
 
-    // Sitewide sort: /hot, /new, /rising, /controversial, /top, /best
-    if (pathSegments.length === 1) {
-      const sort = getAnyOf(pathSegments[0], sortOptions)
-
-      if (sort) {
-        return [
-          {
-            uri: `https://www.reddit.com/${sort}/.rss${getTimeframeSuffix(sort, searchParams)}`,
-            hint: composeHint('reddit:posts'),
-          },
-        ]
-      }
+    if (parsed.kind === 'siteSort') {
+      return [
+        {
+          uri: `https://www.reddit.com/${parsed.sort}/.rss${composeTimeframeQuery(parsed.timeframe)}`,
+          hint: composeHint('reddit:posts'),
+        },
+      ]
     }
 
-    // Sitewide search: /search?q=...
-    if (isAnyOf(pathSegments[0], 'search')) {
-      const query = searchParams.get('q')
-
-      if (query) {
-        return [
-          {
-            uri: `https://www.reddit.com/search.rss?q=${encodeURIComponent(query)}`,
-            hint: composeHint('reddit:search'),
-          },
-        ]
-      }
+    if (parsed.kind === 'siteSearch') {
+      return [
+        {
+          uri: `https://www.reddit.com/search.rss?q=${encodeURIComponent(parsed.query)}`,
+          hint: composeHint('reddit:search'),
+        },
+      ]
     }
 
-    // Subreddit list: /subreddits[/new|/popular]
-    const subredditsMatch = pathname.match(subredditsRegex)
-
-    if (subredditsMatch) {
-      const listSort = getAnyOf(subredditsMatch[1], subredditsSorts)
-      const path = listSort ? `subreddits/${listSort}` : 'subreddits'
+    if (parsed.kind === 'subreddits') {
+      const path = parsed.sort ? `subreddits/${parsed.sort}` : 'subreddits'
 
       return [
         {
@@ -166,19 +192,16 @@ export const redditHandler: PlatformHandler = {
       ]
     }
 
-    const parsed = parseRedditUrl(url)
-    const query = searchParams.get('q')
-
-    if (parsed?.kind === 'search' && query) {
+    if (parsed.kind === 'search' && parsed.query) {
       return [
         {
-          uri: `https://www.reddit.com/r/${parsed.subreddit}/search.rss?q=${encodeURIComponent(query)}&restrict_sr=on`,
+          uri: `https://www.reddit.com/r/${parsed.subreddit}/search.rss?q=${encodeURIComponent(parsed.query)}&restrict_sr=on`,
           hint: composeHint('reddit:search'),
         },
       ]
     }
 
-    if (parsed?.kind === 'wiki') {
+    if (parsed.kind === 'wiki') {
       return [
         {
           uri: `https://www.reddit.com/r/${parsed.subreddit}/wiki/index.rss`,
@@ -187,7 +210,7 @@ export const redditHandler: PlatformHandler = {
       ]
     }
 
-    if (parsed?.kind === 'post') {
+    if (parsed.kind === 'post') {
       return [
         {
           uri: `https://www.reddit.com/r/${parsed.subreddit}/comments/${parsed.postId}/.rss`,
@@ -197,14 +220,13 @@ export const redditHandler: PlatformHandler = {
     }
 
     // A subreddit search without a query shows the subreddit.
-    if (parsed?.kind === 'subreddit' || parsed?.kind === 'search') {
+    if (parsed.kind === 'subreddit' || parsed.kind === 'search') {
       const { subreddit } = parsed
-      const sort = parsed.kind === 'subreddit' ? parsed.sort : undefined
       const uris: Array<DiscoverUriEntry> = []
 
-      if (sort) {
+      if (parsed.kind === 'subreddit' && parsed.sort) {
         uris.push({
-          uri: `https://www.reddit.com/r/${subreddit}/${sort}/.rss${getTimeframeSuffix(sort, searchParams)}`,
+          uri: `https://www.reddit.com/r/${subreddit}/${parsed.sort}/.rss${composeTimeframeQuery(parsed.timeframe)}`,
           hint: composeHint('reddit:posts'),
         })
       } else {
@@ -222,7 +244,7 @@ export const redditHandler: PlatformHandler = {
       return uris
     }
 
-    if (parsed?.kind === 'multireddit') {
+    if (parsed.kind === 'multireddit') {
       return [
         {
           uri: `https://www.reddit.com/user/${parsed.username}/m/${parsed.multireddit}/.rss`,
@@ -231,7 +253,7 @@ export const redditHandler: PlatformHandler = {
       ]
     }
 
-    if (parsed?.kind === 'submitted') {
+    if (parsed.kind === 'submitted') {
       return [
         {
           uri: `https://www.reddit.com/user/${parsed.username}/submitted/.rss`,
@@ -244,7 +266,7 @@ export const redditHandler: PlatformHandler = {
       ]
     }
 
-    if (parsed?.kind === 'comments') {
+    if (parsed.kind === 'comments') {
       return [
         {
           uri: `https://www.reddit.com/user/${parsed.username}/comments/.rss`,
@@ -257,7 +279,7 @@ export const redditHandler: PlatformHandler = {
       ]
     }
 
-    if (parsed?.kind === 'user') {
+    if (parsed.kind === 'user') {
       return [
         {
           uri: `https://www.reddit.com/user/${parsed.username}/.rss`,
@@ -266,15 +288,11 @@ export const redditHandler: PlatformHandler = {
       ]
     }
 
-    if (parsed?.kind === 'domain') {
-      return [
-        {
-          uri: `https://www.reddit.com/domain/${parsed.domain}/.rss`,
-          hint: composeHint('reddit:posts'),
-        },
-      ]
-    }
-
-    return []
+    return [
+      {
+        uri: `https://www.reddit.com/domain/${parsed.domain}/.rss`,
+        hint: composeHint('reddit:posts'),
+      },
+    ]
   },
 }

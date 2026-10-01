@@ -2,9 +2,9 @@ import { getPathSegments, getSubdomain, isAnyOf, isHostOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
-// Discoverability: Unmeasured, bot wall.
+// Discoverability: Discoverable without handler.
 
-export type TumblrUrl = { kind: 'blog'; blog: string }
+export type TumblrUrl = { kind: 'blog'; blog: string } | { kind: 'tag'; blog: string; tag: string }
 
 const hosts = ['tumblr.com', 'www.tumblr.com']
 export const domains = ['tumblr.com']
@@ -62,6 +62,13 @@ export const parseTumblrUrl = (url: string): TumblrUrl | undefined => {
     return
   }
 
+  // Tagged posts: /tagged/{tag}.
+  const tag = new URL(url).pathname.match(tagRegex)?.[1]
+
+  if (tag) {
+    return { kind: 'tag', blog, tag }
+  }
+
   return { kind: 'blog', blog }
 }
 
@@ -71,22 +78,17 @@ export const tumblrHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    const blog = parseTumblrUrl(url)?.blog
+    const parsed = parseTumblrUrl(url)
 
-    if (!blog) {
+    if (!parsed) {
       return []
     }
 
-    const { origin, pathname } = new URL(url)
-    const blogOrigin = isHostOf(url, hosts) ? `https://${blog}.tumblr.com` : origin
+    const { origin } = new URL(url)
+    const blogOrigin = isHostOf(url, hosts) ? `https://${parsed.blog}.tumblr.com` : origin
 
-    // Tagged posts: /tagged/{tag}
-    const tagMatch = pathname.match(tagRegex)
-
-    if (tagMatch?.[1]) {
-      const tag = tagMatch[1]
-
-      return [{ uri: `${blogOrigin}/tagged/${tag}/rss`, hint: composeHint('tumblr:tag') }]
+    if (parsed.kind === 'tag') {
+      return [{ uri: `${blogOrigin}/tagged/${parsed.tag}/rss`, hint: composeHint('tumblr:tag') }]
     }
 
     return [{ uri: `${blogOrigin}/rss`, hint: composeHint('tumblr:posts') }]

@@ -29,7 +29,7 @@ export const parseTeletypeUrl = (url: string): TeletypeUrl | undefined => {
 
 export const teletypeHandler: PlatformHandler = {
   match: (url) => {
-    return !!parseTeletypeUrl(url)
+    return parseTeletypeUrl(url) !== undefined
   },
 
   resolve: (url) => {

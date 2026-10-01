@@ -55,13 +55,17 @@ export const parsePinterestUrl = (url: string): PinterestUrl | undefined => {
 
 export const pinterestHandler: PlatformHandler = {
   match: (url) => {
-    return isHostOf(url, hosts)
+    return parsePinterestUrl(url) !== undefined
   },
 
   resolve: (url) => {
     const parsed = parsePinterestUrl(url)
 
-    if (parsed?.kind === 'board') {
+    if (!parsed) {
+      return []
+    }
+
+    if (parsed.kind === 'board') {
       return [
         {
           uri: `https://www.pinterest.com/${parsed.username}/${parsed.board}.rss`,
@@ -70,15 +74,11 @@ export const pinterestHandler: PlatformHandler = {
       ]
     }
 
-    if (parsed?.kind === 'user') {
-      return [
-        {
-          uri: `https://www.pinterest.com/${parsed.username}/feed.rss`,
-          hint: composeHint('pinterest:pins'),
-        },
-      ]
-    }
-
-    return []
+    return [
+      {
+        uri: `https://www.pinterest.com/${parsed.username}/feed.rss`,
+        hint: composeHint('pinterest:pins'),
+      },
+    ]
   },
 }

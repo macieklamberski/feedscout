@@ -21,12 +21,16 @@ describe('parseTogetterUrl', () => {
     expect(parseTogetterUrl('https://www.togetter.com/id/example')).toEqual(expected)
   })
 
-  it('should return undefined for summary pages', () => {
-    expect(parseTogetterUrl('https://togetter.com/li/123456')).toBeUndefined()
+  it('should return the home page for a summary page', () => {
+    const expected: TogetterUrl = { kind: 'home' }
+
+    expect(parseTogetterUrl('https://togetter.com/li/123456')).toEqual(expected)
   })
 
-  it('should return undefined for the home page', () => {
-    expect(parseTogetterUrl('https://togetter.com/')).toBeUndefined()
+  it('should return the home page for the root', () => {
+    const expected: TogetterUrl = { kind: 'home' }
+
+    expect(parseTogetterUrl('https://togetter.com/')).toEqual(expected)
   })
 
   it('should return undefined for another host', () => {
