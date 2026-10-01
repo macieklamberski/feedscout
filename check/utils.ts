@@ -23,13 +23,35 @@ export type FetchOptions = {
   headers?: Record<string, string>
 }
 
-const fetchOnce = (url: string, options?: FetchOptions) =>
-  fetch(url, {
+// Reddit answers 429 past one anonymous request per minute per IP.
+const redditGapMs = 61_000
+let redditNextAt = 0
+
+const waitForReddit = async (url: string) => {
+  const { hostname } = new URL(url)
+
+  if (hostname !== 'reddit.com' && !hostname.endsWith('.reddit.com')) {
+    return
+  }
+
+  const waitMs = redditNextAt - Date.now()
+  redditNextAt = Math.max(redditNextAt, Date.now()) + redditGapMs
+
+  if (waitMs > 0) {
+    await delay(waitMs)
+  }
+}
+
+const fetchOnce = async (url: string, options?: FetchOptions) => {
+  await waitForReddit(url)
+
+  return fetch(url, {
     method: options?.method ?? 'GET',
     headers: { 'User-Agent': userAgent, ...options?.headers },
     signal: AbortSignal.timeout(timeoutMs),
     proxy: constants.fetchProxy,
   })
+}
 
 const fetchWithRetry = async (url: string, options?: FetchOptions): Promise<FetchResult> => {
   let response = await fetchOnce(url, options)
