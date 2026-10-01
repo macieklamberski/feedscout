@@ -1,9 +1,35 @@
 import { describe, expect, it } from 'bun:test'
 import type { DiscoverUriEntry } from '../../common/types.js'
-import { fluxbbHandler, isFluxbbHtml } from './fluxbb.js'
+import { type FluxbbUrl, fluxbbHandler, isFluxbbHtml, parseFluxbbUrl } from './fluxbb.js'
 
 const fluxbbHtml = '<div id="brdheader"></div><div id="brdmain"></div>'
 const partialHtml = '<div id="brdmain"></div>'
+
+describe('parseFluxbbUrl', () => {
+  it('should return the forum with its board path', () => {
+    const expected: FluxbbUrl = { kind: 'forum', boardPath: '/forums', forumId: '3' }
+
+    expect(parseFluxbbUrl('https://example.com/forums/viewforum.php?id=3')).toEqual(expected)
+  })
+
+  it('should return the topic with its board path', () => {
+    const expected: FluxbbUrl = { kind: 'topic', boardPath: '', topicId: '42' }
+
+    expect(parseFluxbbUrl('https://example.com/viewtopic.php?id=42')).toEqual(expected)
+  })
+
+  it('should return the board for a forum page without an id', () => {
+    const expected: FluxbbUrl = { kind: 'board', boardPath: '/forums' }
+
+    expect(parseFluxbbUrl('https://example.com/forums/viewforum.php')).toEqual(expected)
+  })
+
+  it('should return the board for the index', () => {
+    const expected: FluxbbUrl = { kind: 'board', boardPath: '/forums' }
+
+    expect(parseFluxbbUrl('https://example.com/forums/index.php')).toEqual(expected)
+  })
+})
 
 describe('isFluxbbHtml', () => {
   it('should return true when both board wrappers are present', () => {
@@ -39,6 +65,10 @@ describe('fluxbbHandler', () => {
   })
 
   describe('resolve', () => {
+    it('should return empty array for a URL that does not parse', () => {
+      expect(fluxbbHandler.resolve('not-a-url')).toEqual([])
+    })
+
     it('should return the forum feed for a capitalized viewforum.php segment', () => {
       const value = 'https://example.org/Viewforum.php?id=3'
       const expected: Array<DiscoverUriEntry> = [

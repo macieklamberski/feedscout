@@ -1,6 +1,12 @@
 import { describe, expect, it } from 'bun:test'
 import type { DiscoverUriEntry } from '../../common/types.js'
-import { instatusHandler, isInstatusHeaders, isInstatusHtml } from './instatus.js'
+import {
+  type InstatusUrl,
+  instatusHandler,
+  isInstatusHeaders,
+  isInstatusHtml,
+  parseInstatusUrl,
+} from './instatus.js'
 
 const instatusHtml = `
   <div class="custom-html-above-header"></div>
@@ -15,6 +21,26 @@ const otherHtml = `
 const instatusHeaders = new Headers({ 'x-matched-path': '/[lang]/[url]/[type]/[userId]' })
 const incidentHeaders = new Headers({ 'x-matched-path': '/[lang]/[url]/[type]/[userId]/[id]' })
 const otherHeaders = new Headers({ 'x-matched-path': '/[slug]' })
+
+describe('parseInstatusUrl', () => {
+  it('should return the status page with its language', () => {
+    const expected: InstatusUrl = { kind: 'status', language: 'zh-tw' }
+
+    expect(parseInstatusUrl('https://status.example.com/zh-tw')).toEqual(expected)
+  })
+
+  it('should return the status page without a language for the root', () => {
+    const expected: InstatusUrl = { kind: 'status' }
+
+    expect(parseInstatusUrl('https://status.example.com/')).toEqual(expected)
+  })
+
+  it('should return the status page without a language for another path', () => {
+    const expected: InstatusUrl = { kind: 'status' }
+
+    expect(parseInstatusUrl('https://status.example.com/history')).toEqual(expected)
+  })
+})
 
 describe('isInstatusHtml', () => {
   it('should return true for the custom HTML slots of the page template', () => {
@@ -68,6 +94,10 @@ describe('instatusHandler', () => {
   })
 
   describe('resolve', () => {
+    it('should return empty array for a URL that does not parse', () => {
+      expect(instatusHandler.resolve('not-a-url')).toEqual([])
+    })
+
     it('should return the incident history feeds', () => {
       const value = 'https://status.example.com/default/cmsg8106700fq1aoau4cl0ddt'
       const expected: Array<DiscoverUriEntry> = [

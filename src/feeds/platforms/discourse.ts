@@ -1,11 +1,18 @@
-import { getAnyOf } from 'trousse'
+import { getAnyOf, parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, hasElementWithId, hasMarker, hasMetaContent } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic covers category (html).
+// Generic covers category, home, top (html).
 // Handler needed for: user.
+
+export type DiscourseUrl =
+  | { kind: 'topic'; slug: string; topicId: string }
+  | { kind: 'user'; username: string }
+  | { kind: 'category'; category: string }
+  | { kind: 'top'; period?: string }
+  | { kind: 'latest' }
 
 const userRegex = /^\/u\/([^/]+)/i
 // A category page takes a `/none` or `/all` subcategory tail and an `/l/{filter}` list tail, and the
@@ -16,17 +23,52 @@ const topRegex = /^\/top(?:\/([^/]+))?\/?$/i
 
 const validTopPeriods = ['daily', 'weekly', 'monthly', 'quarterly', 'yearly', 'all']
 
-const getTopPeriodSuffix = (
+const getTopPeriod = (
   pathPeriod: string | undefined,
   searchParams: URLSearchParams,
-): string => {
+): string | undefined => {
   const period = getAnyOf(pathPeriod, validTopPeriods) ?? searchParams.get('period')
 
   if (period && validTopPeriods.includes(period)) {
-    return `?period=${period}`
+    return period
+  }
+}
+
+// A path the parser does not name falls back to the latest topics, on the root and elsewhere.
+export const parseDiscourseUrl = (url: string): DiscourseUrl | undefined => {
+  const parsedUrl = parseUrl(url)
+
+  if (!parsedUrl) {
+    return
   }
 
-  return ''
+  const { pathname, searchParams } = parsedUrl
+  const topicMatch = pathname.match(topicRegex)
+
+  if (topicMatch?.[1] && topicMatch?.[2]) {
+    return { kind: 'topic', slug: topicMatch[1], topicId: topicMatch[2] }
+  }
+
+  const username = pathname.match(userRegex)?.[1]
+
+  if (username) {
+    return { kind: 'user', username }
+  }
+
+  const category = pathname.match(categoryRegex)?.[1]
+
+  if (category) {
+    return { kind: 'category', category }
+  }
+
+  // Top topics: /top or /top/{period}
+  const topMatch = pathname.match(topRegex)
+
+  if (topMatch) {
+    return { kind: 'top', period: getTopPeriod(topMatch[1], searchParams) }
+  }
+
+  return { kind: 'latest' }
 }
 
 export const isDiscourseHtml = (content: string): boolean => {
@@ -41,61 +83,61 @@ export const isDiscourseHeaders = (headers: Headers): boolean => {
 }
 
 export const discourseHandler: PlatformHandler = {
-  match: (_url, content, headers) => {
-    return hasMarker(content, headers, { html: isDiscourseHtml, headers: isDiscourseHeaders })
+  match: (url, content, headers) => {
+    if (!hasMarker(content, headers, { html: isDiscourseHtml, headers: isDiscourseHeaders })) {
+      return false
+    }
+
+    return parseDiscourseUrl(url) !== undefined
   },
 
   resolve: (url) => {
-    const { origin, pathname, searchParams } = new URL(url)
+    const parsed = parseDiscourseUrl(url)
 
-    const topicMatch = pathname.match(topicRegex)
+    if (!parsed) {
+      return []
+    }
 
-    if (topicMatch?.[1] && topicMatch?.[2]) {
+    const { origin } = new URL(url)
+
+    if (parsed.kind === 'topic') {
       return [
         {
-          uri: `${origin}/t/${topicMatch[1]}/${topicMatch[2]}.rss`,
+          uri: `${origin}/t/${parsed.slug}/${parsed.topicId}.rss`,
           hint: composeHint('discourse:topic'),
         },
       ]
     }
 
-    const userMatch = pathname.match(userRegex)
-
-    if (userMatch?.[1]) {
+    if (parsed.kind === 'user') {
       return [
         {
-          uri: `${origin}/u/${userMatch[1]}/activity.rss`,
+          uri: `${origin}/u/${parsed.username}/activity.rss`,
           hint: composeHint('discourse:activity'),
         },
       ]
     }
 
-    const categoryMatch = pathname.match(categoryRegex)
-
-    if (categoryMatch?.[1]) {
+    if (parsed.kind === 'category') {
       return [
         {
-          uri: `${origin}/c/${categoryMatch[1]}.rss`,
+          uri: `${origin}/c/${parsed.category}.rss`,
           hint: composeHint('discourse:category'),
         },
       ]
     }
 
-    // Top topics: /top or /top/{period}
-    const topMatch = pathname.match(topRegex)
-
-    if (topMatch) {
-      const periodSuffix = getTopPeriodSuffix(topMatch[1], searchParams)
+    if (parsed.kind === 'top') {
+      const periodQuery = parsed.period ? `?period=${parsed.period}` : ''
 
       return [
         {
-          uri: `${origin}/top.rss${periodSuffix}`,
+          uri: `${origin}/top.rss${periodQuery}`,
           hint: composeHint('discourse:top'),
         },
       ]
     }
 
-    // Site root or unmatched path: latest topics + latest posts.
     const uris: Array<DiscoverUriEntry> = []
 
     uris.push({
