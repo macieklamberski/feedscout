@@ -186,6 +186,10 @@ describe('lemmyHandler', () => {
   })
 
   describe('resolve', () => {
+    it('should return empty array for a page outside the Lemmy routes', () => {
+      expect(lemmyHandler.resolve('https://example.com/about')).toEqual([])
+    })
+
     it('should return community feed URL', () => {
       const value = 'https://example.com/c/programming'
       const expected = [

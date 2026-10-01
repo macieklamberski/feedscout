@@ -136,6 +136,10 @@ describe('lobstersHandler', () => {
   })
 
   describe('resolve', () => {
+    it('should return empty array for a URL outside Lobsters', () => {
+      expect(lobstersHandler.resolve('https://example.com/')).toEqual([])
+    })
+
     it('should return main RSS feed for homepage', () => {
       const value = 'https://lobste.rs/'
       const expected = [

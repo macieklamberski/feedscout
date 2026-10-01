@@ -69,6 +69,10 @@ describe('parseMicroblogUrl', () => {
 
 describe('microblogHandler', () => {
   describe('resolve', () => {
+    it('should return empty array for a URL outside Micro.blog', () => {
+      expect(microblogHandler.resolve('https://example.com/')).toEqual([])
+    })
+
     it('should return the category feed for a capitalized categories segment', () => {
       const value = 'https://example.micro.blog/Categories/test'
       const expected: Array<DiscoverUriEntry> = [

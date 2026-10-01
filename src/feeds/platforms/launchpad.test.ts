@@ -174,6 +174,10 @@ describe('launchpadHandler', () => {
   })
 
   describe('resolve', () => {
+    it('should return empty array for a URL outside Launchpad', () => {
+      expect(launchpadHandler.resolve('https://example.com/')).toEqual([])
+    })
+
     it('should return the site announcements for the home page', () => {
       const expected = [
         {

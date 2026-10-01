@@ -183,6 +183,10 @@ describe('hatenaBookmarkHandler', () => {
   })
 
   describe('resolve', () => {
+    it('should return empty array for a URL outside Hatena Bookmark', () => {
+      expect(hatenaBookmarkHandler.resolve('https://example.com/')).toEqual([])
+    })
+
     const hotEntries: Array<DiscoverUriEntry> = [
       { uri: `${base}/hotentry.rss`, hint: { key: 'hatena-bookmark:hot', label: 'Hot entries' } },
     ]
