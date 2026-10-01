@@ -33,14 +33,14 @@ export const parseOdyseeUrl = (url: string): OdyseeUrl | undefined => {
 }
 
 export const odyseeHandler: PlatformHandler = {
+  // The feed answers "Invalid URL" for a channel without its claim ID.
   match: (url) => {
-    return isHostOf(url, hosts)
+    return parseOdyseeUrl(url)?.claimId !== undefined
   },
 
   resolve: (url) => {
     const parsed = parseOdyseeUrl(url)
 
-    // The feed answers "Invalid URL" for a channel without its claim ID.
     if (!parsed?.claimId) {
       return []
     }

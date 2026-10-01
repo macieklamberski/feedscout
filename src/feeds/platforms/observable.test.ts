@@ -56,8 +56,26 @@ describe('parseObservableUrl', () => {
 
   it('should return undefined for paths without @ prefix', () => {
     expect(parseObservableUrl('https://observablehq.com/about')).toBeUndefined()
-    expect(parseObservableUrl('https://observablehq.com/recent')).toBeUndefined()
-    expect(parseObservableUrl('https://observablehq.com/trending')).toBeUndefined()
+  })
+
+  it('should return recent for the recent page', () => {
+    const expected: ObservableUrl = { kind: 'recent' }
+
+    expect(parseObservableUrl('https://observablehq.com/recent')).toEqual(expected)
+  })
+
+  it('should return recent for the public page sorted by publish time', () => {
+    const expected: ObservableUrl = { kind: 'recent' }
+    const value = 'https://observablehq.com/public?sort=publish_time'
+
+    expect(parseObservableUrl(value)).toEqual(expected)
+  })
+
+  it('should return trending for the trending and public pages', () => {
+    const expected: ObservableUrl = { kind: 'trending' }
+
+    expect(parseObservableUrl('https://observablehq.com/trending')).toEqual(expected)
+    expect(parseObservableUrl('https://observablehq.com/public')).toEqual(expected)
   })
 
   it('should return undefined for the root', () => {
@@ -76,7 +94,7 @@ describe('parseObservableUrl', () => {
 describe('observableHandler', () => {
   describe('match', () => {
     it('should match an observablehq.com URL', () => {
-      expect(observableHandler.match('https://observablehq.com')).toBe(true)
+      expect(observableHandler.match('https://observablehq.com/@mbostock')).toBe(true)
     })
 
     it('should not match another host', () => {

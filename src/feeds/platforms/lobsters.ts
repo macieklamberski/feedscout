@@ -10,6 +10,10 @@ export type LobstersUrl =
   | { kind: 'tag'; tags: string }
   | { kind: 'domain'; domain: string }
   | { kind: 'user'; username: string }
+  | { kind: 'top'; period?: string }
+  | { kind: 'newest' }
+  | { kind: 'comments' }
+  | { kind: 'home' }
 
 const hosts = ['lobste.rs']
 const tagRegex = /^\/t\/([a-zA-Z0-9,_-]+)/i
@@ -47,22 +51,42 @@ export const parseLobstersUrl = (url: string): LobstersUrl | undefined => {
   if (username) {
     return { kind: 'user', username }
   }
+
+  const topMatch = pathname.match(topRegex)
+
+  // Top page, all time or for a period: /top or /top/{period}.
+  if (topMatch) {
+    return { kind: 'top', period: getAnyOf(topMatch[1], topPeriods) }
+  }
+
+  if (newestRegex.test(pathname)) {
+    return { kind: 'newest' }
+  }
+
+  if (commentsRegex.test(pathname)) {
+    return { kind: 'comments' }
+  }
+
+  return { kind: 'home' }
 }
 
 export const lobstersHandler: PlatformHandler = {
   match: (url) => {
-    return isHostOf(url, hosts)
+    return parseLobstersUrl(url) !== undefined
   },
 
   resolve: (url) => {
-    const { pathname } = new URL(url)
     const parsed = parseLobstersUrl(url)
 
-    if (parsed?.kind === 'tag') {
+    if (!parsed) {
+      return []
+    }
+
+    if (parsed.kind === 'tag') {
       return [{ uri: `https://lobste.rs/t/${parsed.tags}.rss`, hint: composeHint('lobsters:tag') }]
     }
 
-    if (parsed?.kind === 'domain') {
+    if (parsed.kind === 'domain') {
       return [
         {
           uri: `https://lobste.rs/domains/${parsed.domain}.rss`,
@@ -71,7 +95,7 @@ export const lobstersHandler: PlatformHandler = {
       ]
     }
 
-    if (parsed?.kind === 'user') {
+    if (parsed.kind === 'user') {
       return [
         {
           uri: `https://lobste.rs/~${parsed.username}/stories.rss`,
@@ -80,31 +104,24 @@ export const lobstersHandler: PlatformHandler = {
       ]
     }
 
-    const topMatch = pathname.match(topRegex)
+    if (parsed.kind === 'top' && parsed.period) {
+      return [
+        {
+          uri: `https://lobste.rs/top/${parsed.period}/rss`,
+          hint: composeHint('lobsters:top'),
+        },
+      ]
+    }
 
-    // Top page, all time or for a period: /top or /top/{period}.
-    if (topMatch) {
-      const period = getAnyOf(topMatch[1], topPeriods)
-
-      if (period) {
-        return [
-          {
-            uri: `https://lobste.rs/top/${period}/rss`,
-            hint: composeHint('lobsters:top'),
-          },
-        ]
-      }
-
+    if (parsed.kind === 'top') {
       return [{ uri: 'https://lobste.rs/top/rss', hint: composeHint('lobsters:top') }]
     }
 
-    // Newest page.
-    if (newestRegex.test(pathname)) {
+    if (parsed.kind === 'newest') {
       return [{ uri: 'https://lobste.rs/newest.rss', hint: composeHint('lobsters:newest') }]
     }
 
-    // Comments page.
-    if (commentsRegex.test(pathname)) {
+    if (parsed.kind === 'comments') {
       return [
         {
           uri: 'https://lobste.rs/comments.rss',
@@ -113,7 +130,6 @@ export const lobstersHandler: PlatformHandler = {
       ]
     }
 
-    // Homepage or other pages - return main feed.
     return [
       { uri: 'https://lobste.rs/rss', hint: composeHint('lobsters:stories') },
       { uri: 'https://lobste.rs/comments.rss', hint: composeHint('lobsters:comments') },

@@ -6,14 +6,22 @@ import { parseResponseJson } from '../utils.js'
 
 const platform = 'observable'
 
+const getOwner = (url: string): string | undefined => {
+  const parsed = parseObservableUrl(url)
+
+  if (parsed?.kind === 'user' || parsed?.kind === 'collection') {
+    return parsed.owner
+  }
+}
+
 // Observable pages answer 429 from a bot checkpoint, so the owner comes from the URL.
 export const observableHandler: PlatformHandler = {
   match: (url) => {
-    return parseObservableUrl(url) !== undefined
+    return getOwner(url) !== undefined
   },
 
   resolve: (url) => {
-    const owner = parseObservableUrl(url)?.owner
+    const owner = getOwner(url)
 
     if (!owner) {
       return []

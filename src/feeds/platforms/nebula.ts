@@ -3,9 +3,10 @@ import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
-// Discoverability: Discoverable without handler.
+// Discoverability: Partially discoverable without handler.
+// Generic covers channel, explore (html), partly covers home, videos.
 
-export type NebulaUrl = { kind: 'channel'; slug: string }
+export type NebulaUrl = { kind: 'channel'; slug: string } | { kind: 'explore'; category?: string }
 
 export const hosts = ['nebula.tv', 'www.nebula.tv']
 const excludedPaths = [
@@ -35,7 +36,12 @@ export const parseNebulaUrl = (url: string): NebulaUrl | undefined => {
 
   const [slug] = getPathSegments(parsedUrl)
 
-  if (!slug || isAnyOf(slug, globalPaths) || isAnyOf(slug, excludedPaths)) {
+  // The root, /videos and /explore[/{tab}], optionally filtered by category.
+  if (!slug || isAnyOf(slug, globalPaths)) {
+    return { kind: 'explore', category: parsedUrl.searchParams.get('category') ?? undefined }
+  }
+
+  if (isAnyOf(slug, excludedPaths)) {
     return
   }
 
@@ -44,17 +50,18 @@ export const parseNebulaUrl = (url: string): NebulaUrl | undefined => {
 
 export const nebulaHandler: PlatformHandler = {
   match: (url) => {
-    return isHostOf(url, hosts)
+    return parseNebulaUrl(url) !== undefined
   },
 
   resolve: (url) => {
-    const { searchParams } = new URL(url)
-    const pathSegments = getPathSegments(url)
+    const parsed = parseNebulaUrl(url)
 
-    // Root, /videos, or /explore[/{tab}] — global feed (optionally filtered by category).
-    if (pathSegments.length === 0 || isAnyOf(pathSegments[0], globalPaths)) {
-      const rawCategory = searchParams.get('category')
-      const category = rawCategory ? rawCategory.toLowerCase() : null
+    if (!parsed) {
+      return []
+    }
+
+    if (parsed.kind === 'explore') {
+      const category = parsed.category?.toLowerCase()
       const uris: Array<DiscoverUriEntry> = []
 
       if (category) {
@@ -88,12 +95,7 @@ export const nebulaHandler: PlatformHandler = {
       return uris
     }
 
-    const slug = parseNebulaUrl(url)?.slug
-
-    if (!slug) {
-      return []
-    }
-
+    const { slug } = parsed
     const uris: Array<DiscoverUriEntry> = []
 
     uris.push({

@@ -3,7 +3,7 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, hasElementWithId, hasMarker, hasMetaContent } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic covers profile, users (guess, html).
+// Generic covers profile, users (html).
 // Handler needed for: tag.
 
 export type MastodonUrl =
@@ -83,10 +83,15 @@ export const mastodonHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    const { origin } = new URL(url)
     const parsed = parseMastodonUrl(url)
 
-    if (parsed?.kind === 'replies') {
+    if (!parsed) {
+      return []
+    }
+
+    const { origin } = new URL(url)
+
+    if (parsed.kind === 'replies') {
       return [
         {
           uri: `${origin}/@${parsed.username}/with_replies.rss`,
@@ -99,7 +104,7 @@ export const mastodonHandler: PlatformHandler = {
       ]
     }
 
-    if (parsed?.kind === 'media') {
+    if (parsed.kind === 'media') {
       return [
         {
           uri: `${origin}/@${parsed.username}/media.rss`,
@@ -112,7 +117,7 @@ export const mastodonHandler: PlatformHandler = {
       ]
     }
 
-    if (parsed?.kind === 'tagged') {
+    if (parsed.kind === 'tagged') {
       return [
         {
           uri: `${origin}/@${parsed.username}/tagged/${parsed.tag}.rss`,
@@ -125,14 +130,10 @@ export const mastodonHandler: PlatformHandler = {
       ]
     }
 
-    if (parsed?.kind === 'profile') {
+    if (parsed.kind === 'profile') {
       return [{ uri: `${origin}/@${parsed.username}.rss`, hint: composeHint('mastodon:posts') }]
     }
 
-    if (parsed?.kind === 'tag') {
-      return [{ uri: `${origin}/tags/${parsed.tag}.rss`, hint: composeHint('mastodon:tag') }]
-    }
-
-    return []
+    return [{ uri: `${origin}/tags/${parsed.tag}.rss`, hint: composeHint('mastodon:tag') }]
   },
 }

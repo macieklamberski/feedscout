@@ -29,15 +29,17 @@ const parseAvatar = (html: string): Array<string> => {
 
 export const myanimelistHandler: PlatformHandler = {
   match: (url) => {
-    return parseMyanimelistUrl(url) !== undefined
+    return parseMyanimelistUrl(url)?.kind === 'user'
   },
 
   resolve: (url, content) => {
-    const username = parseMyanimelistUrl(url)?.username
+    const parsed = parseMyanimelistUrl(url)
 
-    if (!username) {
+    if (parsed?.kind !== 'user') {
       return []
     }
+
+    const { username } = parsed
 
     const [section, ...rest] = getPathSegments(url)
 

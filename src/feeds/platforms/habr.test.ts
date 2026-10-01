@@ -4,72 +4,79 @@ import { habrHandler, parseHabrUrl } from './habr.js'
 
 describe('parseHabrUrl', () => {
   it('should return the hub for a hub page', () => {
-    const expected: HabrUrl = { kind: 'hub', hub: 'javascript' }
+    const expected: HabrUrl = { kind: 'hub', language: 'ru', hub: 'javascript' }
 
     expect(parseHabrUrl('https://habr.com/ru/hubs/javascript/')).toEqual(expected)
   })
 
   it('should return the hub for a hub page with a capitalized hubs segment', () => {
-    const expected: HabrUrl = { kind: 'hub', hub: 'javascript' }
+    const expected: HabrUrl = { kind: 'hub', language: 'ru', hub: 'javascript' }
 
     expect(parseHabrUrl('https://habr.com/ru/Hubs/javascript/')).toEqual(expected)
   })
 
   it('should return the hub for a hub article list', () => {
-    const expected: HabrUrl = { kind: 'hub', hub: 'programming' }
+    const expected: HabrUrl = { kind: 'hub', language: 'ru', hub: 'programming' }
 
     expect(parseHabrUrl('https://habr.com/ru/hubs/programming/articles/')).toEqual(expected)
   })
 
   it('should return the hub for the singular hub path', () => {
-    const expected: HabrUrl = { kind: 'hub', hub: 'python' }
+    const expected: HabrUrl = { kind: 'hub', language: 'ru', hub: 'python' }
 
     expect(parseHabrUrl('https://habr.com/ru/hub/python/')).toEqual(expected)
   })
 
   it('should return the user for a user page', () => {
-    const expected: HabrUrl = { kind: 'user', username: 'alice' }
+    const expected: HabrUrl = { kind: 'user', language: 'ru', username: 'alice' }
 
     expect(parseHabrUrl('https://habr.com/ru/users/alice/')).toEqual(expected)
   })
 
   it('should return the user for a user post list', () => {
-    const expected: HabrUrl = { kind: 'user', username: 'alice' }
+    const expected: HabrUrl = { kind: 'user', language: 'en', username: 'alice' }
 
     expect(parseHabrUrl('https://habr.com/en/users/alice/posts/')).toEqual(expected)
   })
 
   it('should return the company for a company page', () => {
-    const expected: HabrUrl = { kind: 'company', company: 'example' }
+    const expected: HabrUrl = { kind: 'company', language: 'ru', company: 'example' }
 
     expect(parseHabrUrl('https://habr.com/ru/companies/example/articles/')).toEqual(expected)
   })
 
   it('should return the company for a company page with a capitalized companies segment', () => {
-    const expected: HabrUrl = { kind: 'company', company: 'example' }
+    const expected: HabrUrl = { kind: 'company', language: 'ru', company: 'example' }
 
     expect(parseHabrUrl('https://habr.com/ru/Companies/example/articles/')).toEqual(expected)
   })
 
   it('should return the company for a company named like the hub route', () => {
-    const expected: HabrUrl = { kind: 'company', company: 'hub' }
+    const expected: HabrUrl = { kind: 'company', language: 'ru', company: 'hub' }
 
     expect(parseHabrUrl('https://habr.com/ru/companies/hub/articles/')).toEqual(expected)
   })
 
   it('should return the company for a company named like the user route', () => {
-    const expected: HabrUrl = { kind: 'company', company: 'users' }
+    const expected: HabrUrl = { kind: 'company', language: 'ru', company: 'users' }
 
     expect(parseHabrUrl('https://habr.com/ru/companies/users/articles/')).toEqual(expected)
   })
 
-  it('should return undefined for site-wide pages', () => {
-    expect(parseHabrUrl('https://habr.com/ru/articles/')).toBeUndefined()
-    expect(parseHabrUrl('https://habr.com/')).toBeUndefined()
+  it('should return the home page with its language for site-wide pages', () => {
+    const expected: HabrUrl = { kind: 'home', language: 'en' }
+
+    expect(parseHabrUrl('https://habr.com/en/articles/')).toEqual(expected)
+  })
+
+  it('should return the home page in Russian for the root', () => {
+    const expected: HabrUrl = { kind: 'home', language: 'ru' }
+
+    expect(parseHabrUrl('https://habr.com/')).toEqual(expected)
   })
 
   it('should return the user for the www host', () => {
-    const expected: HabrUrl = { kind: 'user', username: 'alice' }
+    const expected: HabrUrl = { kind: 'user', language: 'ru', username: 'alice' }
 
     expect(parseHabrUrl('https://www.habr.com/ru/users/alice/')).toEqual(expected)
   })

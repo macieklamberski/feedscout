@@ -23,23 +23,31 @@ describe('parseNebulaUrl', () => {
     expect(parseNebulaUrl(value)).toEqual(expected)
   })
 
-  it('should return undefined for the home page', () => {
-    expect(parseNebulaUrl('https://nebula.tv/')).toBeUndefined()
+  it('should return explore for the home page', () => {
+    const expected: NebulaUrl = { kind: 'explore' }
+
+    expect(parseNebulaUrl('https://nebula.tv/')).toEqual(expected)
   })
 
-  it('should return undefined for videos pages', () => {
-    expect(parseNebulaUrl('https://nebula.tv/videos')).toBeUndefined()
-    expect(
-      parseNebulaUrl('https://nebula.tv/videos/realengineering-why-ships-float'),
-    ).toBeUndefined()
+  it('should return explore for videos pages', () => {
+    const expected: NebulaUrl = { kind: 'explore' }
+
+    expect(parseNebulaUrl('https://nebula.tv/videos')).toEqual(expected)
+    expect(parseNebulaUrl('https://nebula.tv/videos/realengineering-why-ships-float')).toEqual(
+      expected,
+    )
   })
 
-  it('should return undefined for explore pages', () => {
-    expect(parseNebulaUrl('https://nebula.tv/explore')).toBeUndefined()
+  it('should return explore with the category of an explore page', () => {
+    const expected: NebulaUrl = { kind: 'explore', category: 'Science' }
+
+    expect(parseNebulaUrl('https://nebula.tv/explore?category=Science')).toEqual(expected)
   })
 
-  it('should return undefined for explore pages in any case', () => {
-    expect(parseNebulaUrl('https://nebula.tv/Explore')).toBeUndefined()
+  it('should return explore for explore pages in any case', () => {
+    const expected: NebulaUrl = { kind: 'explore' }
+
+    expect(parseNebulaUrl('https://nebula.tv/Explore')).toEqual(expected)
   })
 
   it('should return undefined for excluded paths', () => {

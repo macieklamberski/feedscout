@@ -29,19 +29,19 @@ export const parseNaverBlogUrl = (url: string): NaverBlogUrl | undefined => {
 
 export const naverBlogHandler: PlatformHandler = {
   match: (url) => {
-    return isHostOf(url, hosts)
+    return parseNaverBlogUrl(url) !== undefined
   },
 
   resolve: (url) => {
-    const blogId = parseNaverBlogUrl(url)?.blogId
+    const parsed = parseNaverBlogUrl(url)
 
-    if (!blogId) {
+    if (!parsed) {
       return []
     }
 
     return [
       {
-        uri: `https://rss.blog.naver.com/${blogId}.xml`,
+        uri: `https://rss.blog.naver.com/${parsed.blogId}.xml`,
         hint: composeHint('naver-blog:blog'),
       },
     ]

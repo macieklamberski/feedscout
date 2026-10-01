@@ -7,7 +7,10 @@ import { composeHint } from '../../common/utils.js'
 // Generic covers featured, news (html), partly covers profile.
 // Handler needed for: animelist, mangalist.
 
-export type MyanimelistUrl = { kind: 'user'; username: string }
+export type MyanimelistUrl =
+  | { kind: 'user'; username: string }
+  | { kind: 'news' }
+  | { kind: 'featured' }
 
 export const hosts = ['myanimelist.net', 'www.myanimelist.net']
 const userRegex = /^\/(?:profile|animelist|mangalist|history)\/([^/]+)/i
@@ -21,7 +24,17 @@ export const parseMyanimelistUrl = (url: string): MyanimelistUrl | undefined => 
     return
   }
 
-  const username = parsedUrl.pathname.match(userRegex)?.[1]
+  const { pathname } = parsedUrl
+
+  if (newsRegex.test(pathname)) {
+    return { kind: 'news' }
+  }
+
+  if (featuredRegex.test(pathname)) {
+    return { kind: 'featured' }
+  }
+
+  const username = pathname.match(userRegex)?.[1]
 
   if (!username) {
     return
@@ -32,14 +45,17 @@ export const parseMyanimelistUrl = (url: string): MyanimelistUrl | undefined => 
 
 export const myanimelistHandler: PlatformHandler = {
   match: (url) => {
-    return isHostOf(url, hosts)
+    return parseMyanimelistUrl(url) !== undefined
   },
 
   resolve: (url) => {
-    const { pathname } = new URL(url)
+    const parsed = parseMyanimelistUrl(url)
 
-    // Site-wide news feed: /news
-    if (newsRegex.test(pathname)) {
+    if (!parsed) {
+      return []
+    }
+
+    if (parsed.kind === 'news') {
       return [
         {
           uri: 'https://myanimelist.net/rss/news.xml',
@@ -48,8 +64,7 @@ export const myanimelistHandler: PlatformHandler = {
       ]
     }
 
-    // Featured articles feed: /featured
-    if (featuredRegex.test(pathname)) {
+    if (parsed.kind === 'featured') {
       return [
         {
           uri: 'https://myanimelist.net/rss/featured.xml',
@@ -58,12 +73,7 @@ export const myanimelistHandler: PlatformHandler = {
       ]
     }
 
-    const username = parseMyanimelistUrl(url)?.username
-
-    if (!username) {
-      return []
-    }
-
+    const { username } = parsed
     const uris: Array<DiscoverUriEntry> = []
 
     uris.push({

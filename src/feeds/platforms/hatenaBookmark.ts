@@ -5,9 +5,12 @@ import { composeHint } from '../../common/utils.js'
 // Discoverability: Discoverable without handler.
 
 export type HatenaBookmarkUrl =
-  | { kind: 'search'; searchType: string }
-  | { kind: 'site'; site: string }
+  | { kind: 'hotentry'; category?: string }
+  | { kind: 'entrylist'; category?: string }
+  | { kind: 'search'; searchType: string; params: string }
+  | { kind: 'site'; site: string; params: string }
   | { kind: 'user'; username: string }
+  | { kind: 'home' }
 
 const hosts = ['b.hatena.ne.jp']
 
@@ -61,23 +64,35 @@ export const parseHatenaBookmarkUrl = (url: string): HatenaBookmarkUrl | undefin
     return
   }
 
-  const { pathname } = parsedUrl
+  const { pathname, searchParams } = parsedUrl
+  const listMatch = pathname.match(listRegex)
+
+  // Hot and new entry listings, site-wide or per category. An unknown category falls back to
+  // the whole list.
+  if (listMatch) {
+    const list = getAnyOf(listMatch[1], bookmarkLists)
+    const category = getAnyOf(listMatch[2], categories)
+
+    return list === 'hotentry' ? { kind: 'hotentry', category } : { kind: 'entrylist', category }
+  }
+
+  const params = searchParams.toString()
   const searchType = getAnyOf(pathname.match(searchRegex)?.[1], searchTypes)
 
   if (searchType) {
-    return { kind: 'search', searchType }
+    return { kind: 'search', searchType, params }
   }
 
   const site = pathname.match(siteRegex)?.[1]
 
   if (site) {
-    return { kind: 'site', site }
+    return { kind: 'site', site, params }
   }
 
   const username = pathname.match(userRegex)?.[1]
 
   if (!username || isAnyOf(username, excludedPaths)) {
-    return
+    return { kind: 'home' }
   }
 
   return { kind: 'user', username }
@@ -85,36 +100,35 @@ export const parseHatenaBookmarkUrl = (url: string): HatenaBookmarkUrl | undefin
 
 export const hatenaBookmarkHandler: PlatformHandler = {
   match: (url) => {
-    return isHostOf(url, hosts)
+    return parseHatenaBookmarkUrl(url) !== undefined
   },
 
   resolve: (url) => {
-    const { origin, pathname, searchParams } = new URL(url)
-    const listMatch = pathname.match(listRegex)
-
-    // Hot and new entry listings, site-wide or per category.
-    if (listMatch?.[1]) {
-      const [, rawList, rawCategory] = listMatch
-      const list = getAnyOf(rawList, bookmarkLists)
-      const category = getAnyOf(rawCategory, categories)
-      const isHot = list === 'hotentry'
-      // An unknown category falls back to the whole list.
-      const suffix = category ? `/${category}` : ''
-
-      return [
-        {
-          uri: `${origin}/${list}${suffix}.rss`,
-          hint: composeHint(isHot ? 'hatena-bookmark:hot' : 'hatena-bookmark:new'),
-        },
-      ]
-    }
-
     const parsed = parseHatenaBookmarkUrl(url)
 
-    // Search and per-site listings answer with RSS when `mode=rss` is set.
-    searchParams.set('mode', 'rss')
+    if (!parsed) {
+      return []
+    }
 
-    if (parsed?.kind === 'search') {
+    const { origin } = new URL(url)
+
+    if (parsed.kind === 'hotentry') {
+      const suffix = parsed.category ? `/${parsed.category}` : ''
+
+      return [{ uri: `${origin}/hotentry${suffix}.rss`, hint: composeHint('hatena-bookmark:hot') }]
+    }
+
+    if (parsed.kind === 'entrylist') {
+      const suffix = parsed.category ? `/${parsed.category}` : ''
+
+      return [{ uri: `${origin}/entrylist${suffix}.rss`, hint: composeHint('hatena-bookmark:new') }]
+    }
+
+    if (parsed.kind === 'search') {
+      // Search and per-site listings answer with RSS when `mode=rss` is set.
+      const searchParams = new URLSearchParams(parsed.params)
+      searchParams.set('mode', 'rss')
+
       return [
         {
           uri: `${origin}/search/${parsed.searchType}?${searchParams}`,
@@ -123,7 +137,10 @@ export const hatenaBookmarkHandler: PlatformHandler = {
       ]
     }
 
-    if (parsed?.kind === 'site') {
+    if (parsed.kind === 'site') {
+      const searchParams = new URLSearchParams(parsed.params)
+      searchParams.set('mode', 'rss')
+
       return [
         {
           uri: `${origin}/site/${parsed.site}?${searchParams}`,
@@ -133,7 +150,7 @@ export const hatenaBookmarkHandler: PlatformHandler = {
     }
 
     // User bookmarks: /{username} or /{username}/bookmark.
-    if (parsed?.kind === 'user') {
+    if (parsed.kind === 'user') {
       return [
         {
           uri: `${origin}/${parsed.username}/bookmark.rss`,

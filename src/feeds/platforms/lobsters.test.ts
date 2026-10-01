@@ -57,22 +57,58 @@ describe('parseLobstersUrl', () => {
     expect(parseLobstersUrl('https://lobste.rs/~PushCX')).toEqual(expected)
   })
 
-  it('should return undefined for the site-wide top page', () => {
-    expect(parseLobstersUrl('https://lobste.rs/top/1d')).toBeUndefined()
+  it('should return the top page with its period', () => {
+    const expected: LobstersUrl = { kind: 'top', period: '1d' }
+
+    expect(parseLobstersUrl('https://lobste.rs/top/1d')).toEqual(expected)
   })
 
-  it('should return undefined for a username with an @ character', () => {
-    expect(parseLobstersUrl('https://lobste.rs/~@invalid')).toBeUndefined()
+  it('should return the top page with a canonical period for a capitalized one', () => {
+    const expected: LobstersUrl = { kind: 'top', period: '1w' }
+
+    expect(parseLobstersUrl('https://lobste.rs/top/1W')).toEqual(expected)
   })
 
-  it('should return undefined for the newest and comments pages', () => {
-    expect(parseLobstersUrl('https://lobste.rs/newest')).toBeUndefined()
-    expect(parseLobstersUrl('https://lobste.rs/comments')).toBeUndefined()
+  it('should return the all-time top page', () => {
+    const expected: LobstersUrl = { kind: 'top', period: undefined }
+
+    expect(parseLobstersUrl('https://lobste.rs/top')).toEqual(expected)
   })
 
-  it('should return undefined for the homepage', () => {
-    expect(parseLobstersUrl('https://lobste.rs')).toBeUndefined()
-    expect(parseLobstersUrl('https://lobste.rs/')).toBeUndefined()
+  it('should return the home page for a top page with an unknown period', () => {
+    const expected: LobstersUrl = { kind: 'home' }
+
+    expect(parseLobstersUrl('https://lobste.rs/top/2y')).toEqual(expected)
+  })
+
+  it('should return the home page for a username with an @ character', () => {
+    const expected: LobstersUrl = { kind: 'home' }
+
+    expect(parseLobstersUrl('https://lobste.rs/~@invalid')).toEqual(expected)
+  })
+
+  it('should return the newest page', () => {
+    const expected: LobstersUrl = { kind: 'newest' }
+
+    expect(parseLobstersUrl('https://lobste.rs/newest')).toEqual(expected)
+  })
+
+  it('should return the comments page', () => {
+    const expected: LobstersUrl = { kind: 'comments' }
+
+    expect(parseLobstersUrl('https://lobste.rs/comments')).toEqual(expected)
+  })
+
+  it('should return the home page for the root', () => {
+    const expected: LobstersUrl = { kind: 'home' }
+
+    expect(parseLobstersUrl('https://lobste.rs/')).toEqual(expected)
+  })
+
+  it('should return the home page for a path the handler does not recognise', () => {
+    const expected: LobstersUrl = { kind: 'home' }
+
+    expect(parseLobstersUrl('https://lobste.rs/s/abc123/some_story')).toEqual(expected)
   })
 
   it('should return undefined for the www host', () => {

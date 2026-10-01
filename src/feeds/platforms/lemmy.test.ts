@@ -67,8 +67,22 @@ describe('parseLemmyUrl', () => {
     expect(parseLemmyUrl('https://example.com/U/alice')).toEqual(expected)
   })
 
-  it('should return undefined for the home page', () => {
-    expect(parseLemmyUrl('https://example.com/')).toBeUndefined()
+  it('should return the home page', () => {
+    const expected: LemmyUrl = { kind: 'home' }
+
+    expect(parseLemmyUrl('https://example.com/')).toEqual(expected)
+  })
+
+  it('should return the sort and limit from the query', () => {
+    const value = 'https://example.com/c/programming?sort=New&limit=10'
+    const expected: LemmyUrl = {
+      kind: 'community',
+      community: 'programming',
+      sort: 'New',
+      limit: '10',
+    }
+
+    expect(parseLemmyUrl(value)).toEqual(expected)
   })
 
   it('should return undefined for other paths', () => {

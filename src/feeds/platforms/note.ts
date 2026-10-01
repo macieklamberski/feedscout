@@ -10,6 +10,7 @@ export type NoteUrl =
   | { kind: 'hashtag'; tag: string }
   | { kind: 'magazine'; username: string; magazine: string }
   | { kind: 'user'; username: string }
+  | { kind: 'home' }
 
 export const hosts = ['note.com', 'www.note.com']
 
@@ -58,7 +59,11 @@ export const parseNoteUrl = (url: string): NoteUrl | undefined => {
 
   const [username] = getPathSegments(parsedUrl)
 
-  if (!username || isAnyOf(username, excludedPaths)) {
+  if (!username) {
+    return { kind: 'home' }
+  }
+
+  if (isAnyOf(username, excludedPaths)) {
     return
   }
 
@@ -67,13 +72,17 @@ export const parseNoteUrl = (url: string): NoteUrl | undefined => {
 
 export const noteHandler: PlatformHandler = {
   match: (url) => {
-    return isHostOf(url, hosts)
+    return parseNoteUrl(url) !== undefined
   },
 
   resolve: (url) => {
     const parsed = parseNoteUrl(url)
 
-    if (parsed?.kind === 'hashtag') {
+    if (!parsed) {
+      return []
+    }
+
+    if (parsed.kind === 'hashtag') {
       return [
         {
           uri: `https://note.com/hashtag/${parsed.tag}/rss`,
@@ -82,7 +91,7 @@ export const noteHandler: PlatformHandler = {
       ]
     }
 
-    if (parsed?.kind === 'magazine') {
+    if (parsed.kind === 'magazine') {
       return [
         {
           uri: `https://note.com/${parsed.username}/m/${parsed.magazine}/rss`,
@@ -91,7 +100,7 @@ export const noteHandler: PlatformHandler = {
       ]
     }
 
-    if (parsed?.kind === 'user') {
+    if (parsed.kind === 'user') {
       return [
         {
           uri: `https://note.com/${parsed.username}/rss`,
@@ -100,15 +109,11 @@ export const noteHandler: PlatformHandler = {
       ]
     }
 
-    if (getPathSegments(url).length === 0) {
-      return [
-        {
-          uri: 'https://note.com/rss',
-          hint: composeHint('note:featured'),
-        },
-      ]
-    }
-
-    return []
+    return [
+      {
+        uri: 'https://note.com/rss',
+        hint: composeHint('note:featured'),
+      },
+    ]
   },
 }
