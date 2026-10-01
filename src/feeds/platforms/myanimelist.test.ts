@@ -49,8 +49,16 @@ describe('parseMyanimelistUrl', () => {
     expect(parseMyanimelistUrl('https://myanimelist.net/Profile/Xinil')).toEqual(expected)
   })
 
-  it('should return undefined for the news page', () => {
-    expect(parseMyanimelistUrl('https://myanimelist.net/news')).toBeUndefined()
+  it('should return the news page', () => {
+    const expected: MyanimelistUrl = { kind: 'news' }
+
+    expect(parseMyanimelistUrl('https://myanimelist.net/news')).toEqual(expected)
+  })
+
+  it('should return the featured page', () => {
+    const expected: MyanimelistUrl = { kind: 'featured' }
+
+    expect(parseMyanimelistUrl('https://myanimelist.net/featured/')).toEqual(expected)
   })
 
   it('should return undefined for an anime page', () => {

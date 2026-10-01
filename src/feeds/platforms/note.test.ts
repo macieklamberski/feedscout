@@ -79,8 +79,10 @@ describe('parseNoteUrl', () => {
     expect(parseNoteUrl('https://note.com/Login')).toBeUndefined()
   })
 
-  it('should return undefined for the root', () => {
-    expect(parseNoteUrl('https://note.com/')).toBeUndefined()
+  it('should return the home page for the root', () => {
+    const expected: NoteUrl = { kind: 'home' }
+
+    expect(parseNoteUrl('https://note.com/')).toEqual(expected)
   })
 
   it('should return undefined for another host', () => {
