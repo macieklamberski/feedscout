@@ -1,5 +1,39 @@
 import { describe, expect, it } from 'bun:test'
-import { v2exHandler } from './v2ex.js'
+import { parseV2exUrl, type V2exUrl, v2exHandler } from './v2ex.js'
+
+describe('parseV2exUrl', () => {
+  it('should return the node for a node page', () => {
+    const expected: V2exUrl = { kind: 'node', node: 'Python' }
+
+    expect(parseV2exUrl('https://www.v2ex.com/go/Python')).toEqual(expected)
+  })
+
+  it('should return the member for a member page', () => {
+    const expected: V2exUrl = { kind: 'member', username: 'Livid' }
+
+    expect(parseV2exUrl('https://www.v2ex.com/member/Livid')).toEqual(expected)
+  })
+
+  it('should return the tab for a tab query', () => {
+    const expected: V2exUrl = { kind: 'tab', tab: 'tech' }
+
+    expect(parseV2exUrl('https://www.v2ex.com/?tab=tech')).toEqual(expected)
+  })
+
+  it('should return the home page for the root', () => {
+    const expected: V2exUrl = { kind: 'home' }
+
+    expect(parseV2exUrl('https://www.v2ex.com/')).toEqual(expected)
+  })
+
+  it('should return undefined for another page', () => {
+    expect(parseV2exUrl('https://www.v2ex.com/recent')).toBeUndefined()
+  })
+
+  it('should return undefined for another host', () => {
+    expect(parseV2exUrl('https://example.com/go/python')).toBeUndefined()
+  })
+})
 
 describe('v2exHandler', () => {
   describe('match', () => {
@@ -19,6 +53,10 @@ describe('v2exHandler', () => {
   })
 
   describe('resolve', () => {
+    it('should return empty array for a URL outside V2EX', () => {
+      expect(v2exHandler.resolve('https://example.com/')).toEqual([])
+    })
+
     it('should return index feed for root page', () => {
       const value = 'https://www.v2ex.com/'
       const expected = [

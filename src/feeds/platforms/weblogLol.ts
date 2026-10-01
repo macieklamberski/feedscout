@@ -5,14 +5,30 @@ import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
+export type WeblogLolUrl = { kind: 'blog' }
+
 const domains = ['weblog.lol']
+
+export const parseWeblogLolUrl = (url: string): WeblogLolUrl | undefined => {
+  if (!isSubdomainOf(url, domains)) {
+    return
+  }
+
+  return { kind: 'blog' }
+}
 
 export const weblogLolHandler: PlatformHandler = {
   match: (url) => {
-    return isSubdomainOf(url, domains)
+    return parseWeblogLolUrl(url) !== undefined
   },
 
   resolve: (url) => {
+    const parsed = parseWeblogLolUrl(url)
+
+    if (!parsed) {
+      return []
+    }
+
     const { origin } = new URL(url)
     const uris: Array<DiscoverUriEntry> = []
 

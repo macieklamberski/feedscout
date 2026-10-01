@@ -1,6 +1,18 @@
 import { describe, expect, it } from 'bun:test'
 import type { DiscoverUriEntry } from '../../common/types.js'
-import { weblogLolHandler } from './weblogLol.js'
+import { parseWeblogLolUrl, type WeblogLolUrl, weblogLolHandler } from './weblogLol.js'
+
+describe('parseWeblogLolUrl', () => {
+  it('should return the blog for a blog subdomain', () => {
+    const expected: WeblogLolUrl = { kind: 'blog' }
+
+    expect(parseWeblogLolUrl('https://example.weblog.lol/')).toEqual(expected)
+  })
+
+  it('should return undefined for another host', () => {
+    expect(parseWeblogLolUrl('https://example.com/')).toBeUndefined()
+  })
+})
 
 describe('weblogLolHandler', () => {
   describe('match', () => {
@@ -21,6 +33,10 @@ describe('weblogLolHandler', () => {
   })
 
   describe('resolve', () => {
+    it('should return empty array for a URL outside weblog.lol', () => {
+      expect(weblogLolHandler.resolve('https://example.com/')).toEqual([])
+    })
+
     it('should return RSS, Atom, and JSON feeds for blog', () => {
       const value = 'https://alice.weblog.lol'
       const expected: Array<DiscoverUriEntry> = [

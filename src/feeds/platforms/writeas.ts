@@ -1,9 +1,13 @@
-import { getPathSegments, isAnyOf, isHostOf } from 'trousse'
+import { getPathSegments, isAnyOf, isHostOf, parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
+
+export type WriteasUrl =
+  | { kind: 'tag'; username: string; tag: string }
+  | { kind: 'blog'; username: string }
 
 const hosts = ['write.as', 'www.write.as']
 
@@ -24,51 +28,55 @@ const excludedPaths = [
   'terms',
 ]
 
+export const parseWriteasUrl = (url: string): WriteasUrl | undefined => {
+  const parsedUrl = parseUrl(url)
+
+  if (!parsedUrl || !isHostOf(parsedUrl, hosts)) {
+    return
+  }
+
+  // Tag page: /{user}/tag:{tag}
+  const tagMatch = parsedUrl.pathname.match(tagRegex)
+
+  if (tagMatch?.[1] && tagMatch[2]) {
+    return { kind: 'tag', username: tagMatch[1], tag: tagMatch[2] }
+  }
+
+  const [username] = getPathSegments(parsedUrl)
+
+  if (!username || isAnyOf(username, excludedPaths)) {
+    return
+  }
+
+  return { kind: 'blog', username }
+}
+
 export const writeasHandler: PlatformHandler = {
   match: (url) => {
-    return isHostOf(url, hosts)
+    return parseWriteasUrl(url) !== undefined
   },
 
   resolve: (url) => {
-    const { pathname } = new URL(url)
+    const parsed = parseWriteasUrl(url)
+
+    if (!parsed) {
+      return []
+    }
+
     const uris: Array<DiscoverUriEntry> = []
 
-    // Tag page: /{user}/tag:{tag}
-    const tagMatch = pathname.match(tagRegex)
-
-    if (tagMatch?.[1] && tagMatch?.[2]) {
-      const username = tagMatch[1]
-      const tag = tagMatch[2]
-
+    if (parsed.kind === 'tag') {
       uris.push({
-        uri: `https://write.as/${username}/tag:${tag}/feed/`,
+        uri: `https://write.as/${parsed.username}/tag:${parsed.tag}/feed/`,
         hint: composeHint('writeas:tag'),
       })
-      uris.push({
-        uri: `https://write.as/${username}/feed/`,
-        hint: composeHint('writeas:blog'),
-      })
-
-      return uris
     }
 
-    const pathSegments = getPathSegments(url)
+    uris.push({
+      uri: `https://write.as/${parsed.username}/feed/`,
+      hint: composeHint('writeas:blog'),
+    })
 
-    if (pathSegments.length === 0) {
-      return []
-    }
-
-    const username = pathSegments[0]
-
-    if (isAnyOf(username, excludedPaths)) {
-      return []
-    }
-
-    return [
-      {
-        uri: `https://write.as/${username}/feed/`,
-        hint: composeHint('writeas:blog'),
-      },
-    ]
+    return uris
   },
 }

@@ -1,5 +1,35 @@
 import { describe, expect, it } from 'bun:test'
-import { spotifyForCreatorsHandler } from './spotifyForCreators.js'
+import {
+  parseSpotifyForCreatorsUrl,
+  type SpotifyForCreatorsUrl,
+  spotifyForCreatorsHandler,
+} from './spotifyForCreators.js'
+
+describe('parseSpotifyForCreatorsUrl', () => {
+  it('should return the show for a show page', () => {
+    const expected: SpotifyForCreatorsUrl = { kind: 'show' }
+
+    expect(parseSpotifyForCreatorsUrl('https://creators.spotify.com/pod/show/example')).toEqual(
+      expected,
+    )
+  })
+
+  it('should return the show for a profile page', () => {
+    const expected: SpotifyForCreatorsUrl = { kind: 'show' }
+
+    expect(parseSpotifyForCreatorsUrl('https://creators.spotify.com/pod/profile/example')).toEqual(
+      expected,
+    )
+  })
+
+  it('should return undefined for another page', () => {
+    expect(parseSpotifyForCreatorsUrl('https://creators.spotify.com/')).toBeUndefined()
+  })
+
+  it('should return undefined for another host', () => {
+    expect(parseSpotifyForCreatorsUrl('https://example.com/pod/show/example')).toBeUndefined()
+  })
+})
 
 describe('spotifyForCreatorsHandler', () => {
   describe('match', () => {
@@ -21,6 +51,10 @@ describe('spotifyForCreatorsHandler', () => {
   })
 
   describe('resolve', () => {
+    it('should return empty array for a URL outside Spotify for Creators', () => {
+      expect(spotifyForCreatorsHandler.resolve('https://example.com/')).toEqual([])
+    })
+
     const value = 'https://creators.spotify.com/pod/profile/example/'
 
     it('should return feed from the alternate link without /s/', () => {

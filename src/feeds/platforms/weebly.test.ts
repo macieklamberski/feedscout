@@ -1,5 +1,29 @@
 import { describe, expect, it } from 'bun:test'
-import { weeblyHandler } from './weebly.js'
+import { parseWeeblyUrl, type WeeblyUrl, weeblyHandler } from './weebly.js'
+
+describe('parseWeeblyUrl', () => {
+  it('should return the blog with its page for a custom blog page', () => {
+    const expected: WeeblyUrl = { kind: 'blog', page: 'articles' }
+
+    expect(parseWeeblyUrl('https://example.weebly.com/articles')).toEqual(expected)
+  })
+
+  it('should return the blog for the blog page', () => {
+    const expected: WeeblyUrl = { kind: 'blog' }
+
+    expect(parseWeeblyUrl('https://example.weebly.com/blog')).toEqual(expected)
+  })
+
+  it('should return the blog for the root', () => {
+    const expected: WeeblyUrl = { kind: 'blog' }
+
+    expect(parseWeeblyUrl('https://example.weebly.com/')).toEqual(expected)
+  })
+
+  it('should return undefined for another host', () => {
+    expect(parseWeeblyUrl('https://example.com/')).toBeUndefined()
+  })
+})
 
 describe('weeblyHandler', () => {
   describe('match', () => {
@@ -20,6 +44,10 @@ describe('weeblyHandler', () => {
   })
 
   describe('resolve', () => {
+    it('should return empty array for a URL outside Weebly', () => {
+      expect(weeblyHandler.resolve('https://example.com/')).toEqual([])
+    })
+
     it('should return default feed for blog root', () => {
       const value = 'https://example.weebly.com'
       const expected = [

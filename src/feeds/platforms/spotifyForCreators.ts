@@ -1,8 +1,10 @@
-import { isHostOf } from 'trousse'
+import { isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
+
+export type SpotifyForCreatorsUrl = { kind: 'show' }
 
 const hosts = ['creators.spotify.com']
 
@@ -12,19 +14,26 @@ const showRegex = /^\/pod\/(?:show|profile)\/[^/]+(?:\/|$)/i
 // so the block above holds for those shows alone.
 const feedUrlRegex = /anchor\.fm\/(?:s\/)?([\da-f]+)\/podcast\/rss/
 
+export const parseSpotifyForCreatorsUrl = (url: string): SpotifyForCreatorsUrl | undefined => {
+  const parsedUrl = parseUrl(url)
+
+  if (!parsedUrl || !isHostOf(parsedUrl, hosts) || !showRegex.test(parsedUrl.pathname)) {
+    return
+  }
+
+  return { kind: 'show' }
+}
+
 export const spotifyForCreatorsHandler: PlatformHandler = {
   match: (url) => {
-    if (!isHostOf(url, hosts)) {
-      return false
-    }
-
-    return showRegex.test(new URL(url).pathname)
+    return parseSpotifyForCreatorsUrl(url) !== undefined
   },
 
-  resolve: (_url, content) => {
+  resolve: (url, content) => {
+    const parsed = parseSpotifyForCreatorsUrl(url)
     const stationId = content?.match(feedUrlRegex)?.[1]
 
-    if (!stationId) {
+    if (!parsed || !stationId) {
       return []
     }
 

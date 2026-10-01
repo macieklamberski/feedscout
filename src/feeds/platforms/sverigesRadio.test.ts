@@ -1,5 +1,39 @@
 import { describe, expect, it } from 'bun:test'
-import { sverigesRadioHandler } from './sverigesRadio.js'
+import {
+  parseSverigesRadioUrl,
+  type SverigesRadioUrl,
+  sverigesRadioHandler,
+} from './sverigesRadio.js'
+
+describe('parseSverigesRadioUrl', () => {
+  it('should return the legacy program for a programid query', () => {
+    const expected: SverigesRadioUrl = { kind: 'legacyProgram', programId: '2519' }
+
+    expect(
+      parseSverigesRadioUrl('https://sverigesradio.se/sida/default.aspx?programid=2519'),
+    ).toEqual(expected)
+  })
+
+  it('should return the program for a program slug', () => {
+    const expected: SverigesRadioUrl = { kind: 'program', slug: 'ekot' }
+
+    expect(parseSverigesRadioUrl('https://sverigesradio.se/ekot')).toEqual(expected)
+  })
+
+  it('should keep the slug case', () => {
+    const expected: SverigesRadioUrl = { kind: 'program', slug: 'Ekot' }
+
+    expect(parseSverigesRadioUrl('https://sverigesradio.se/Ekot')).toEqual(expected)
+  })
+
+  it('should return undefined for an excluded path', () => {
+    expect(parseSverigesRadioUrl('https://sverigesradio.se/nyheter')).toBeUndefined()
+  })
+
+  it('should return undefined for another host', () => {
+    expect(parseSverigesRadioUrl('https://example.com/ekot')).toBeUndefined()
+  })
+})
 
 describe('sverigesRadioHandler', () => {
   describe('match', () => {
@@ -13,6 +47,10 @@ describe('sverigesRadioHandler', () => {
   })
 
   describe('resolve', () => {
+    it('should return empty array for a URL outside Sveriges Radio', () => {
+      expect(sverigesRadioHandler.resolve('https://example.com/')).toEqual([])
+    })
+
     it('should return the program feed for a program page', () => {
       const value = 'https://sverigesradio.se/morgonpodden'
       const expected = [

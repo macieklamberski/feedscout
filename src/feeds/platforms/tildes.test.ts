@@ -1,6 +1,34 @@
 import { describe, expect, it } from 'bun:test'
 import type { DiscoverUriEntry } from '../../common/types.js'
-import { tildesHandler } from './tildes.js'
+import { parseTildesUrl, type TildesUrl, tildesHandler } from './tildes.js'
+
+describe('parseTildesUrl', () => {
+  it('should return the group for a group page', () => {
+    const expected: TildesUrl = { kind: 'group', group: 'comp', tag: undefined }
+
+    expect(parseTildesUrl('https://tildes.net/~comp')).toEqual(expected)
+  })
+
+  it('should return the group with its tag', () => {
+    const expected: TildesUrl = { kind: 'group', group: 'comp', tag: 'python' }
+
+    expect(parseTildesUrl('https://tildes.net/~comp?tag=python')).toEqual(expected)
+  })
+
+  it('should return the home page for the root', () => {
+    const expected: TildesUrl = { kind: 'home', tag: undefined }
+
+    expect(parseTildesUrl('https://tildes.net/')).toEqual(expected)
+  })
+
+  it('should return undefined for another page', () => {
+    expect(parseTildesUrl('https://tildes.net/groups')).toBeUndefined()
+  })
+
+  it('should return undefined for another host', () => {
+    expect(parseTildesUrl('https://example.com/~comp')).toBeUndefined()
+  })
+})
 
 describe('tildesHandler', () => {
   describe('match', () => {
@@ -21,6 +49,10 @@ describe('tildesHandler', () => {
   })
 
   describe('resolve', () => {
+    it('should return empty array for a URL outside Tildes', () => {
+      expect(tildesHandler.resolve('https://example.com/')).toEqual([])
+    })
+
     it('should return RSS and Atom feeds for group', () => {
       const value = 'https://tildes.net/~tech'
       const expected: Array<DiscoverUriEntry> = [

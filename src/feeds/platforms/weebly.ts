@@ -5,25 +5,44 @@ import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
+export type WeeblyUrl = { kind: 'blog'; page?: string }
+
 const domains = ['weebly.com']
 const numericRegex = /^\d+$/
 
+export const parseWeeblyUrl = (url: string): WeeblyUrl | undefined => {
+  if (!isSubdomainOf(url, domains)) {
+    return
+  }
+
+  // Custom blog page slug (e.g., /articles/feed when page is named "articles").
+  const [first] = getPathSegments(url)
+
+  if (first && !isAnyOf(first, 'blog') && !numericRegex.test(first)) {
+    return { kind: 'blog', page: first }
+  }
+
+  return { kind: 'blog' }
+}
+
 export const weeblyHandler: PlatformHandler = {
   match: (url) => {
-    return isSubdomainOf(url, domains)
+    return parseWeeblyUrl(url) !== undefined
   },
 
   resolve: (url) => {
+    const parsed = parseWeeblyUrl(url)
+
+    if (!parsed) {
+      return []
+    }
+
     const { origin } = new URL(url)
-    const pathSegments = getPathSegments(url)
     const uris: Array<DiscoverUriEntry> = []
 
-    // Custom blog page slug (e.g., /articles/feed when page is named "articles").
-    const firstSegment = pathSegments[0]
-
-    if (firstSegment && !isAnyOf(firstSegment, 'blog') && !numericRegex.test(firstSegment)) {
+    if (parsed.page) {
       uris.push({
-        uri: `${origin}/${firstSegment}/feed`,
+        uri: `${origin}/${parsed.page}/feed`,
         hint: composeHint('weebly:blog'),
       })
     }
