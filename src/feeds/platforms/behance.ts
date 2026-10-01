@@ -4,7 +4,7 @@ import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Unmeasured, bot wall.
 
-export type BehanceUrl = { kind: 'profile'; username: string }
+export type BehanceUrl = { kind: 'profile'; username: string } | { kind: 'home' }
 
 const hosts = ['behance.net', 'www.behance.net']
 // User profile: /{username} or /{username}/appreciated.
@@ -37,6 +37,11 @@ export const parseBehanceUrl = (url: string): BehanceUrl | undefined => {
     return
   }
 
+  // Homepage: featured projects. The page's own FeedBurner link serves the same items.
+  if (homeRegex.test(parsedUrl.pathname)) {
+    return { kind: 'home' }
+  }
+
   const username = parsedUrl.pathname.match(userRegex)?.[1]
 
   if (!username || isAnyOf(username, excludedPaths)) {
@@ -48,14 +53,17 @@ export const parseBehanceUrl = (url: string): BehanceUrl | undefined => {
 
 export const behanceHandler: PlatformHandler = {
   match: (url) => {
-    return isHostOf(url, hosts)
+    return parseBehanceUrl(url) !== undefined
   },
 
   resolve: (url) => {
-    const { pathname } = new URL(url)
+    const parsed = parseBehanceUrl(url)
 
-    // Homepage: featured projects. The page's own FeedBurner link serves the same items.
-    if (homeRegex.test(pathname)) {
+    if (!parsed) {
+      return []
+    }
+
+    if (parsed.kind === 'home') {
       return [
         {
           uri: 'https://www.behance.net/feeds/projects',
@@ -64,19 +72,13 @@ export const behanceHandler: PlatformHandler = {
       ]
     }
 
-    const username = parseBehanceUrl(url)?.username
-
     // The appreciated page gets the portfolio feed: Behance ignores
     // `content=appreciated` and serves the user's own projects for it.
-    if (username) {
-      return [
-        {
-          uri: `https://www.behance.net/feeds/user?username=${username}`,
-          hint: composeHint('behance:portfolio'),
-        },
-      ]
-    }
-
-    return []
+    return [
+      {
+        uri: `https://www.behance.net/feeds/user?username=${parsed.username}`,
+        hint: composeHint('behance:portfolio'),
+      },
+    ]
   },
 }

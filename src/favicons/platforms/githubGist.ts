@@ -3,16 +3,18 @@ import { parseGithubGistUrl } from '../../feeds/platforms/githubGist.js'
 
 export const githubGistHandler: PlatformHandler = {
   match: (url) => {
-    return parseGithubGistUrl(url) !== undefined
+    const kind = parseGithubGistUrl(url)?.kind
+
+    return kind !== undefined && kind !== 'discover'
   },
 
   resolve: (url) => {
-    const username = parseGithubGistUrl(url)?.username
+    const parsed = parseGithubGistUrl(url)
 
-    if (!username) {
+    if (!parsed || parsed.kind === 'discover') {
       return []
     }
 
-    return [{ uri: `https://github.com/${username}.png` }]
+    return [{ uri: `https://github.com/${parsed.username}.png` }]
   },
 }

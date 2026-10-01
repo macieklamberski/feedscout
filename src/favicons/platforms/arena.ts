@@ -13,7 +13,9 @@ const mediumAvatarRegex = /^(https:\/\/static\.avatars\.are\.na\/\d+\/)medium_/
 
 export const arenaHandler: PlatformHandler = {
   match: (url) => {
-    return parseArenaUrl(url) !== undefined
+    const kind = parseArenaUrl(url)?.kind
+
+    return kind !== undefined && kind !== 'editorial'
   },
 
   resolve: (url, content) => {

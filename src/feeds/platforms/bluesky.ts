@@ -24,19 +24,19 @@ export const parseBlueskyUrl = (url: string): BlueskyUrl | undefined => {
 
 export const blueskyHandler: PlatformHandler = {
   match: (url) => {
-    return isHostOf(url, hosts)
+    return parseBlueskyUrl(url) !== undefined
   },
 
   resolve: (url) => {
-    const handle = parseBlueskyUrl(url)?.handle
+    const parsed = parseBlueskyUrl(url)
 
-    if (!handle) {
+    if (!parsed) {
       return []
     }
 
     return [
       {
-        uri: `https://bsky.app/profile/${handle}/rss`,
+        uri: `https://bsky.app/profile/${parsed.handle}/rss`,
         hint: composeHint('bluesky:posts'),
       },
     ]

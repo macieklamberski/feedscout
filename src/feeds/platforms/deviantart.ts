@@ -11,6 +11,7 @@ export type DeviantartUrl =
   | { kind: 'folder'; username: string; folderId: string }
   | { kind: 'journal'; username: string }
   | { kind: 'profile'; username: string }
+  | { kind: 'dailyDeviations' }
 
 const hosts = ['deviantart.com', 'www.deviantart.com']
 const feedBaseUrl = 'https://backend.deviantart.com/rss.xml'
@@ -48,6 +49,11 @@ export const parseDeviantartUrl = (url: string): DeviantartUrl | undefined => {
   }
 
   const { pathname } = parsedUrl
+
+  if (dailyDeviationsRegex.test(pathname)) {
+    return { kind: 'dailyDeviations' }
+  }
+
   const tag = pathname.match(tagRegex)?.[1]
 
   if (tag) {
@@ -79,14 +85,18 @@ export const parseDeviantartUrl = (url: string): DeviantartUrl | undefined => {
 
 export const deviantartHandler: PlatformHandler = {
   match: (url) => {
-    return isHostOf(url, hosts)
+    return parseDeviantartUrl(url) !== undefined
   },
 
   resolve: (url) => {
-    const { pathname } = new URL(url)
+    const parsed = parseDeviantartUrl(url)
+
+    if (!parsed) {
+      return []
+    }
 
     // Site-wide curated feeds.
-    if (dailyDeviationsRegex.test(pathname)) {
+    if (parsed.kind === 'dailyDeviations') {
       return [
         {
           uri: `${feedBaseUrl}?q=${encodeURIComponent('special:dd')}`,
@@ -95,9 +105,7 @@ export const deviantartHandler: PlatformHandler = {
       ]
     }
 
-    const parsed = parseDeviantartUrl(url)
-
-    if (parsed?.kind === 'tag') {
+    if (parsed.kind === 'tag') {
       return [
         {
           uri: `${feedBaseUrl}?type=deviation&q=${encodeURIComponent(`tag:${parsed.tag}`)}`,
@@ -106,7 +114,7 @@ export const deviantartHandler: PlatformHandler = {
       ]
     }
 
-    if (parsed?.kind === 'favourites') {
+    if (parsed.kind === 'favourites') {
       return [
         {
           uri: `${feedBaseUrl}?type=deviation&q=${encodeURIComponent(`favby:${parsed.username}`)}`,
@@ -115,7 +123,7 @@ export const deviantartHandler: PlatformHandler = {
       ]
     }
 
-    if (parsed?.kind === 'folder') {
+    if (parsed.kind === 'folder') {
       const query = `gallery:${parsed.username}/${parsed.folderId}`
 
       return [
@@ -126,17 +134,13 @@ export const deviantartHandler: PlatformHandler = {
       ]
     }
 
-    if (parsed?.kind === 'journal') {
+    if (parsed.kind === 'journal') {
       return [
         {
           uri: `${feedBaseUrl}?q=${encodeURIComponent(`journal:${parsed.username}`)}`,
           hint: composeHint('deviantart:journal'),
         },
       ]
-    }
-
-    if (parsed?.kind !== 'profile') {
-      return []
     }
 
     const query = `by:${parsed.username} sort:time meta:all`

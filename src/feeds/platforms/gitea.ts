@@ -4,7 +4,8 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic covers user (guess, html), partly covers branch, file, issues, repo.
+// Generic covers user (guess, html), partly covers branch, file, fileCommits, issues, repo.
+// Handler needed for: commits.
 
 export type GiteaUrl =
   | { kind: 'user'; owner: string }
@@ -74,8 +75,12 @@ export const giteaHandler: PlatformHandler = {
     const { origin } = new URL(url)
     const parsed = parseGiteaUrl(url)
 
+    if (!parsed) {
+      return []
+    }
+
     // User or organization page: codeberg.org/{owner}.
-    if (parsed?.kind === 'user') {
+    if (parsed.kind === 'user') {
       const { owner } = parsed
 
       return [
@@ -84,10 +89,6 @@ export const giteaHandler: PlatformHandler = {
           hint: composeHint('gitea:activity'),
         },
       ]
-    }
-
-    if (parsed?.kind !== 'repo') {
-      return []
     }
 
     // Repo page: codeberg.org/{owner}/{repo}.

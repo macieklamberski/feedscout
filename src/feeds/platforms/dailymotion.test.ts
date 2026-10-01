@@ -10,7 +10,6 @@ describe('parseDailymotionUrl', () => {
     'https://www.dailymotion.com/video',
     'https://www.dailymotion.com/login',
     'https://www.dailymotion.com/live',
-    'https://www.dailymotion.com/trending',
   ]
 
   it('should return the user for a user page', () => {
@@ -92,8 +91,16 @@ describe('parseDailymotionUrl', () => {
     expect(parseDailymotionUrl('https://www.dailymotion.com/video/x8abc12')).toBeUndefined()
   })
 
-  it('should return undefined for the homepage', () => {
-    expect(parseDailymotionUrl('https://www.dailymotion.com/')).toBeUndefined()
+  it('should return the trending page for the homepage', () => {
+    const expected: DailymotionUrl = { kind: 'trending' }
+
+    expect(parseDailymotionUrl('https://www.dailymotion.com/')).toEqual(expected)
+  })
+
+  it('should return the trending page', () => {
+    const expected: DailymotionUrl = { kind: 'trending' }
+
+    expect(parseDailymotionUrl('https://www.dailymotion.com/Trending/')).toEqual(expected)
   })
 
   it('should return undefined for another host', () => {

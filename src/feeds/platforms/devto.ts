@@ -6,7 +6,11 @@ import { composeHint } from '../../common/utils.js'
 // Generic covers home, profile (guess, html), partly covers latest.
 // Handler needed for: article, tag.
 
-export type DevtoUrl = { kind: 'profile'; owner: string } | { kind: 'tag'; tag: string }
+export type DevtoUrl =
+  | { kind: 'profile'; owner: string }
+  | { kind: 'tag'; tag: string }
+  | { kind: 'latest' }
+  | { kind: 'home' }
 
 const hosts = ['dev.to', 'www.dev.to']
 // An article lives under its author's name, a user or an organization: /{name}/{slug}.
@@ -97,6 +101,16 @@ export const parseDevtoUrl = (url: string): DevtoUrl | undefined => {
     return
   }
 
+  // Homepage: global community feed.
+  if (parsedUrl.pathname === '/') {
+    return { kind: 'home' }
+  }
+
+  // Latest sort: /latest.
+  if (latestRegex.test(parsedUrl.pathname)) {
+    return { kind: 'latest' }
+  }
+
   const tag = parsedUrl.pathname.match(tagRegex)?.[1]
 
   if (tag) {
@@ -115,35 +129,31 @@ export const parseDevtoUrl = (url: string): DevtoUrl | undefined => {
 
 export const devtoHandler: PlatformHandler = {
   match: (url) => {
-    return isHostOf(url, hosts)
+    return parseDevtoUrl(url) !== undefined
   },
 
   resolve: (url) => {
-    const { pathname } = new URL(url)
+    const parsed = parseDevtoUrl(url)
 
-    // Homepage: global community feed.
-    if (pathname === '/') {
+    if (!parsed) {
+      return []
+    }
+
+    if (parsed.kind === 'home') {
       return [{ uri: 'https://dev.to/feed', hint: composeHint('devto:community') }]
     }
 
-    // Latest sort: /latest.
-    if (latestRegex.test(pathname)) {
+    if (parsed.kind === 'latest') {
       return [
         { uri: 'https://dev.to/feed/latest', hint: composeHint('devto:latest') },
         { uri: 'https://dev.to/feed', hint: composeHint('devto:community') },
       ]
     }
 
-    const parsed = parseDevtoUrl(url)
-
-    if (parsed?.kind === 'profile') {
-      return [{ uri: `https://dev.to/feed/${parsed.owner}`, hint: composeHint('devto:posts') }]
-    }
-
-    if (parsed?.kind === 'tag') {
+    if (parsed.kind === 'tag') {
       return [{ uri: `https://dev.to/feed/tag/${parsed.tag}`, hint: composeHint('devto:tag') }]
     }
 
-    return []
+    return [{ uri: `https://dev.to/feed/${parsed.owner}`, hint: composeHint('devto:posts') }]
   },
 }

@@ -115,13 +115,13 @@ export const gitlabHandler: PlatformHandler = {
     const { origin } = new URL(url)
     const parsed = parseGitlabUrl(url)
 
-    // User or group page: gitlab.com/{namespace}.
-    if (parsed?.kind === 'namespace') {
-      return [{ uri: `${origin}/${parsed.namespace}.atom`, hint: composeHint('gitlab:activity') }]
+    if (!parsed) {
+      return []
     }
 
-    if (parsed?.kind !== 'project') {
-      return []
+    // User or group page: gitlab.com/{namespace}.
+    if (parsed.kind === 'namespace') {
+      return [{ uri: `${origin}/${parsed.namespace}.atom`, hint: composeHint('gitlab:activity') }]
     }
 
     // Project page: gitlab.com/{group}/{subgroup...}/{project}.

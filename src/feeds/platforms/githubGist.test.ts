@@ -72,7 +72,6 @@ describe('parseGithubGistUrl', () => {
   })
 
   const excludedValues: Array<string> = [
-    'https://gist.github.com/discover',
     'https://gist.github.com/search',
     'https://gist.github.com/login',
     'https://gist.github.com/join',
@@ -84,8 +83,13 @@ describe('parseGithubGistUrl', () => {
   })
 
   it('should return undefined for an excluded path in another case', () => {
-    expect(parseGithubGistUrl('https://gist.github.com/Discover')).toBeUndefined()
     expect(parseGithubGistUrl('https://gist.github.com/SEARCH')).toBeUndefined()
+  })
+
+  it('should return the discover page', () => {
+    const expected: GithubGistUrl = { kind: 'discover' }
+
+    expect(parseGithubGistUrl('https://gist.github.com/Discover/')).toEqual(expected)
   })
 
   it('should return undefined for a gist under an excluded path', () => {

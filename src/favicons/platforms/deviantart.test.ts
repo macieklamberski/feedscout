@@ -36,5 +36,9 @@ describe('deviantartHandler', () => {
     it('should return empty array for single-char username', () => {
       expect(deviantartHandler.resolve('https://www.deviantart.com/x')).toEqual([])
     })
+
+    it('should return empty array for the daily deviations page', () => {
+      expect(deviantartHandler.resolve('https://www.deviantart.com/daily-deviations')).toEqual([])
+    })
   })
 })
