@@ -27,10 +27,6 @@ describe('powerpressHandler', () => {
     it('should not match without content', () => {
       expect(powerpressHandler.match('https://example.com/')).toBe(false)
     })
-
-    it('should not match invalid URLs', () => {
-      expect(powerpressHandler.match('not-a-url', powerpressHtml)).toBe(false)
-    })
   })
 
   describe('resolve', () => {

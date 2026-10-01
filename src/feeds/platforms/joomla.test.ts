@@ -41,10 +41,6 @@ describe('joomlaHandler', () => {
     it('should not match another platform', () => {
       expect(joomlaHandler.match('https://example.com/', otherHtml)).toBe(false)
     })
-
-    it('should not match invalid URLs', () => {
-      expect(joomlaHandler.match('not-a-url', joomlaHtml)).toBe(false)
-    })
   })
 
   describe('resolve', () => {

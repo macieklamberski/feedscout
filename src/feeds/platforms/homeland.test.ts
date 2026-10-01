@@ -34,10 +34,6 @@ describe('homelandHandler', () => {
     it('should not match without content', () => {
       expect(homelandHandler.match('https://example.org/topics')).toBe(false)
     })
-
-    it('should not match invalid URLs', () => {
-      expect(homelandHandler.match('not-a-url', homelandHtml)).toBe(false)
-    })
   })
 
   describe('resolve', () => {

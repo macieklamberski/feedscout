@@ -1,9 +1,9 @@
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, findElement, getCookieNames } from '../../common/utils.js'
+import { composeHint, findElement, getCookieNames, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic covers root (html), partly covers namespace.
+// Generic partly covers namespace.
 
 const namespaceRegex = /var NS='([^']+)'/
 const sessionCookiePathRegex = /(?:^|,)\s*DokuWiki=[^,]*?;\s*path=([^;,\s]+)/i
@@ -27,16 +27,8 @@ const getInstallPath = (url: string, content?: string, headers?: Headers): strin
 }
 
 export const dokuwikiHandler: PlatformHandler = {
-  match: (url, _content, headers) => {
-    if (!URL.canParse(url)) {
-      return false
-    }
-
-    if (headers && isDokuwikiHeaders(headers)) {
-      return true
-    }
-
-    return false
+  match: (_url, content, headers) => {
+    return hasMarker(content, headers, { headers: isDokuwikiHeaders })
   },
 
   resolve: (url, content, headers) => {

@@ -32,10 +32,6 @@ describe('dokuwikiHandler', () => {
     it('should not match without headers', () => {
       expect(dokuwikiHandler.match('https://example.org/wiki:syntax', '<html></html>')).toBe(false)
     })
-
-    it('should not match invalid URLs', () => {
-      expect(dokuwikiHandler.match('not-a-url', '', dokuwikiHeaders)).toBe(false)
-    })
   })
 
   describe('resolve', () => {

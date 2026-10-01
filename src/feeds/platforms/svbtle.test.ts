@@ -38,10 +38,6 @@ describe('svbtleHandler', () => {
     it('should not match without content', () => {
       expect(svbtleHandler.match('https://example.com/')).toBe(false)
     })
-
-    it('should not match invalid URLs', () => {
-      expect(svbtleHandler.match('not-a-url', svbtleHtml)).toBe(false)
-    })
   })
 
   describe('resolve', () => {

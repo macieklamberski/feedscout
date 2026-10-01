@@ -47,10 +47,6 @@ describe('hubzillaHandler', () => {
     it('should not match without content', () => {
       expect(hubzillaHandler.match('https://example.org/channel/alice')).toBe(false)
     })
-
-    it('should not match invalid URLs', () => {
-      expect(hubzillaHandler.match('not-a-url', hubzillaHtml)).toBe(false)
-    })
   })
 
   describe('resolve', () => {

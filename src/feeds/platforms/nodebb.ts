@@ -1,7 +1,6 @@
-import { parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
+import { composeHint, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Not discoverable without handler.
 // Handler needed for: all shapes.
@@ -15,8 +14,8 @@ export const isNodebbHeaders = (headers: Headers): boolean => {
 }
 
 export const nodebbHandler: PlatformHandler = {
-  match: (url, _content, headers) => {
-    return Boolean(parseUrl(url)) && Boolean(headers && isNodebbHeaders(headers))
+  match: (_url, content, headers) => {
+    return hasMarker(content, headers, { headers: isNodebbHeaders })
   },
 
   resolve: (url) => {

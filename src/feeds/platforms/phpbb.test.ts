@@ -49,10 +49,6 @@ describe('phpbbHandler', () => {
     it('should not match without content', () => {
       expect(phpbbHandler.match('https://example.com/community/')).toBe(false)
     })
-
-    it('should not match invalid URLs', () => {
-      expect(phpbbHandler.match('not-a-url', phpbbHtml)).toBe(false)
-    })
   })
 
   describe('resolve', () => {

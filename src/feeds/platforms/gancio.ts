@@ -26,7 +26,7 @@ const getRootUrl = (url: string, content: string | undefined): string | undefine
 
 export const gancioHandler: PlatformHandler = {
   match: (url, content) => {
-    return URL.canParse(url) && getRootUrl(url, content) !== undefined
+    return getRootUrl(url, content) !== undefined
   },
 
   resolve: (url, content) => {

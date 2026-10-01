@@ -34,10 +34,6 @@ describe('castopodHandler', () => {
 
       expect(castopodHandler.match(value, content)).toBe(false)
     })
-
-    it('should not match invalid URLs', () => {
-      expect(castopodHandler.match('not-a-url', content)).toBe(false)
-    })
   })
 
   describe('resolve', () => {

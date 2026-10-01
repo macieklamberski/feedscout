@@ -1,6 +1,5 @@
-import { parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
+import { composeHint, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic partly covers profile.
@@ -13,20 +12,12 @@ export const isPleromaHtml = (content: string): boolean => {
 }
 
 export const pleromaHandler: PlatformHandler = {
-  match: (url, content) => {
-    if (!content || !isPleromaHtml(content)) {
+  match: (url, content, headers) => {
+    if (!hasMarker(content, headers, { html: isPleromaHtml })) {
       return false
     }
 
-    const parsedUrl = parseUrl(url)
-
-    if (!parsedUrl) {
-      return false
-    }
-
-    const { pathname } = parsedUrl
-
-    return profileRegex.test(pathname)
+    return profileRegex.test(new URL(url).pathname)
   },
 
   resolve: (url) => {

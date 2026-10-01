@@ -1,6 +1,12 @@
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, findElement, getCookieNames, hasClass } from '../../common/utils.js'
+import {
+  composeHint,
+  findElement,
+  getCookieNames,
+  hasClass,
+  hasMarker,
+} from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers board, forum (html), partly covers thread.
@@ -75,20 +81,8 @@ const getForumId = (url: string, content?: string): string | undefined => {
 }
 
 export const mybbHandler: PlatformHandler = {
-  match: (url, content, headers) => {
-    if (!URL.canParse(url)) {
-      return false
-    }
-
-    if (content && isMybbHtml(content)) {
-      return true
-    }
-
-    if (headers && isMybbHeaders(headers)) {
-      return true
-    }
-
-    return false
+  match: (_url, content, headers) => {
+    return hasMarker(content, headers, { html: isMybbHtml, headers: isMybbHeaders })
   },
 
   resolve: (url, content) => {

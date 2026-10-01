@@ -49,10 +49,6 @@ describe('snacHandler', () => {
     it('should not match without content', () => {
       expect(snacHandler.match('https://example.org/alice')).toBe(false)
     })
-
-    it('should not match invalid URLs', () => {
-      expect(snacHandler.match('not-a-url', snacHtml)).toBe(false)
-    })
   })
 
   describe('resolve', () => {

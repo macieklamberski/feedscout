@@ -1,4 +1,4 @@
-import { getSubdomain, isHostOf, parseUrl } from 'trousse'
+import { getSubdomain, isAnyOf, isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
@@ -28,7 +28,7 @@ const getShow = (url: string): string | undefined => {
     return
   }
 
-  return excludedSubdomains.includes(subdomain) ? undefined : subdomain
+  return isAnyOf(subdomain, excludedSubdomains) ? undefined : subdomain
 }
 
 export const podomaticHandler: PlatformHandler = {

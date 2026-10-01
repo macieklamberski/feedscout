@@ -58,10 +58,6 @@ describe('writefreelyHandler', () => {
     it('should not match without content', () => {
       expect(writefreelyHandler.match('https://example.org/alice')).toBe(false)
     })
-
-    it('should not match invalid URLs', () => {
-      expect(writefreelyHandler.match('not-a-url', writefreelyHtml)).toBe(false)
-    })
   })
 
   describe('resolve', () => {

@@ -41,10 +41,6 @@ describe('pleromaHandler', () => {
     it('should return false for non-profile paths', () => {
       expect(pleromaHandler.match('https://example.com/about', pleromaHtml)).toBe(false)
     })
-
-    it('should return false for invalid URL', () => {
-      expect(pleromaHandler.match('not-a-url', pleromaHtml)).toBe(false)
-    })
   })
 
   describe('resolve', () => {

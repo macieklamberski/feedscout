@@ -11,7 +11,7 @@ const feedSlugRegex = /https:\/\/feeds\.transistor\.fm\/([\w-]+)/
 
 // Reserved Transistor subdomains that aren't user shows. Without this guard the
 // handler emits feeds.transistor.fm/{www|share|support|...} URLs that 404.
-const reservedSlugs = ['www', 'feeds', 'share', 'support', 'help', 'developers', 'api', 'cdn']
+const excludedSubdomains = ['www', 'feeds', 'share', 'support', 'help', 'developers', 'api', 'cdn']
 
 export const transistorHandler: PlatformHandler = {
   match: (url) => {
@@ -21,7 +21,7 @@ export const transistorHandler: PlatformHandler = {
       return false
     }
 
-    return !isAnyOf(slug, reservedSlugs)
+    return !isAnyOf(slug, excludedSubdomains)
   },
 
   resolve: (url, content) => {

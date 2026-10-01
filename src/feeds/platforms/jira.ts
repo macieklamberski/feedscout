@@ -1,7 +1,7 @@
-import { isSubdomainOf, parseUrl } from 'trousse'
+import { isSubdomainOf } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, getMetaContent } from '../../common/utils.js'
+import { composeHint, getMetaContent, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Not discoverable without handler.
 // Handler needed for: all shapes.
@@ -35,14 +35,8 @@ export const isJiraHtml = (content: string): boolean => {
 }
 
 export const jiraHandler: PlatformHandler = {
-  match: (url, content) => {
-    const parsedUrl = parseUrl(url)
-
-    if (!parsedUrl) {
-      return false
-    }
-
-    const { pathname } = parsedUrl
+  match: (url, content, headers) => {
+    const { pathname } = new URL(url)
 
     if (confluencePathRegex.test(pathname)) {
       return false
@@ -52,7 +46,11 @@ export const jiraHandler: PlatformHandler = {
       return true
     }
 
-    return Boolean(content) && isJiraHtml(content ?? '') && isJiraPath(pathname)
+    if (!hasMarker(content, headers, { html: isJiraHtml })) {
+      return false
+    }
+
+    return isJiraPath(pathname)
   },
 
   resolve: (url, content) => {

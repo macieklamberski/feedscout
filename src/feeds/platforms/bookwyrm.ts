@@ -1,7 +1,7 @@
 import { getAnyOf, getPathSegments, isAnyOf } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, hasMetaContent } from '../../common/utils.js'
+import { composeHint, hasMarker, hasMetaContent } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic partly covers profile, shelf.
@@ -41,8 +41,8 @@ export const parseBookwyrmUrl = (url: string): BookwyrmUrl | undefined => {
 }
 
 export const bookwyrmHandler: PlatformHandler = {
-  match: (url, content) => {
-    if (!content || !isBookwyrmHtml(content)) {
+  match: (url, content, headers) => {
+    if (!hasMarker(content, headers, { html: isBookwyrmHtml })) {
       return false
     }
 

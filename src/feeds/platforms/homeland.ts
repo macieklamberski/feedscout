@@ -1,6 +1,6 @@
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, getCookieNames, hasMetaContent } from '../../common/utils.js'
+import { composeHint, getCookieNames, hasMarker, hasMetaContent } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers topics (html), partly covers node.
@@ -16,20 +16,8 @@ export const isHomelandHeaders = (headers: Headers): boolean => {
 }
 
 export const homelandHandler: PlatformHandler = {
-  match: (url, content, headers) => {
-    if (!URL.canParse(url)) {
-      return false
-    }
-
-    if (content && isHomelandHtml(content)) {
-      return true
-    }
-
-    if (headers && isHomelandHeaders(headers)) {
-      return true
-    }
-
-    return false
+  match: (_url, content, headers) => {
+    return hasMarker(content, headers, { html: isHomelandHtml, headers: isHomelandHeaders })
   },
 
   resolve: (url) => {

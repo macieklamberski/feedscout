@@ -12,7 +12,7 @@ export const domains = ['tumblr.com']
 const tagRegex = /^\/tagged\/([^/]+)/i
 
 // Top-level routes of www.tumblr.com that are not blogs.
-const reservedPaths = [
+const excludedPaths = [
   'about',
   'activity',
   'apps',
@@ -49,7 +49,7 @@ export const parseTumblrUrl = (url: string): TumblrUrl | undefined => {
     const [first, second, third] = getPathSegments(url)
     const blog = isAnyOf(first, 'blog') && isAnyOf(second, 'view') ? third : first
 
-    if (!blog || isAnyOf(blog, reservedPaths)) {
+    if (!blog || isAnyOf(blog, excludedPaths)) {
       return
     }
 

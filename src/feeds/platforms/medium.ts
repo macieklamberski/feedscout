@@ -2,9 +2,7 @@ import { getSubdomain, isAnyOf, isHostOf, isHostOrSubdomainOf, parseUrl } from '
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
-// Discoverability: Partially discoverable without handler.
-// Generic covers customDomain, profile, publication, publicationTag (guess, html).
-// Handler needed for: tag.
+// Discoverability: Unmeasured, bot wall.
 
 export type MediumUrl =
   | { kind: 'user'; username: string }
@@ -49,7 +47,7 @@ export const parseMediumUrl = (url: string): MediumUrl | undefined => {
       return
     }
 
-    if (excludedSubdomains.includes(subdomain)) {
+    if (isAnyOf(subdomain, excludedSubdomains)) {
       return
     }
 

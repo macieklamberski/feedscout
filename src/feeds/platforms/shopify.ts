@@ -1,6 +1,6 @@
 import { getPathSegments, isAnyOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
+import { composeHint, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -17,8 +17,12 @@ const getBlogHandle = (url: string): string | undefined => {
 }
 
 export const shopifyHandler: PlatformHandler = {
-  match: (url, _content, headers) => {
-    return Boolean(headers && isShopifyHeaders(headers)) && Boolean(getBlogHandle(url))
+  match: (url, content, headers) => {
+    if (!hasMarker(content, headers, { headers: isShopifyHeaders })) {
+      return false
+    }
+
+    return Boolean(getBlogHandle(url))
   },
 
   resolve: (url) => {

@@ -50,10 +50,6 @@ describe('smfHandler', () => {
     it('should not match another page', () => {
       expect(smfHandler.match('https://example.com/', '<html></html>')).toBe(false)
     })
-
-    it('should not match invalid URLs', () => {
-      expect(smfHandler.match('not-a-url', smfHtml)).toBe(false)
-    })
   })
 
   describe('resolve', () => {

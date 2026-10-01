@@ -1,6 +1,6 @@
 import { getPathSegments, isAnyOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, hasElementWithId, hasMetaContent } from '../../common/utils.js'
+import { composeHint, hasElementWithId, hasMarker, hasMetaContent } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers profile, users (guess, html).
@@ -79,15 +79,7 @@ export const mastodonHandler: PlatformHandler = {
       return false
     }
 
-    if (content && isMastodonHtml(content)) {
-      return true
-    }
-
-    if (headers && isMastodonHeaders(headers)) {
-      return true
-    }
-
-    return false
+    return hasMarker(content, headers, { html: isMastodonHtml, headers: isMastodonHeaders })
   },
 
   resolve: (url) => {

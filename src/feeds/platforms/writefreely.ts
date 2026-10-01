@@ -6,6 +6,7 @@ import {
   type Element,
   findDescendant,
   findElement,
+  hasMarker,
   hasMetaContent,
 } from '../../common/utils.js'
 
@@ -64,16 +65,12 @@ export const isWritefreelyHtml = (content: string): boolean => {
 }
 
 export const writefreelyHandler: PlatformHandler = {
-  match: (url, content) => {
-    try {
-      if (!content || !isWritefreelyHtml(content)) {
-        return false
-      }
+  match: (url, content, headers) => {
+    if (!hasMarker(content, headers, { html: isWritefreelyHtml })) {
+      return false
+    }
 
-      return Boolean(getUrlBlogPath(url))
-    } catch {}
-
-    return false
+    return Boolean(getUrlBlogPath(url))
   },
 
   resolve: (url, content) => {

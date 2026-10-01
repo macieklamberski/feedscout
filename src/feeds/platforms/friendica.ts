@@ -1,6 +1,5 @@
-import { parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, hasMetaContent } from '../../common/utils.js'
+import { composeHint, hasMarker, hasMetaContent } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -16,27 +15,11 @@ export const isFriendicaHeaders = (headers: Headers): boolean => {
 
 export const friendicaHandler: PlatformHandler = {
   match: (url, content, headers) => {
-    const parsedUrl = parseUrl(url)
-
-    if (!parsedUrl) {
+    if (!profileRegex.test(new URL(url).pathname)) {
       return false
     }
 
-    const { pathname } = parsedUrl
-
-    if (!profileRegex.test(pathname)) {
-      return false
-    }
-
-    if (content && isFriendicaHtml(content)) {
-      return true
-    }
-
-    if (headers && isFriendicaHeaders(headers)) {
-      return true
-    }
-
-    return false
+    return hasMarker(content, headers, { html: isFriendicaHtml, headers: isFriendicaHeaders })
   },
 
   resolve: (url) => {

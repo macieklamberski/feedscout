@@ -64,10 +64,6 @@ describe('discourseHandler', () => {
     it('should return false for non-Discourse content', () => {
       expect(discourseHandler.match('https://forum.example.com/', otherHtml)).toBe(false)
     })
-
-    it('should return false for invalid URL', () => {
-      expect(discourseHandler.match('not-a-url', discourseHtml)).toBe(false)
-    })
   })
 
   describe('resolve', () => {

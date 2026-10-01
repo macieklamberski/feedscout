@@ -5,6 +5,7 @@ import {
   getCookieNames,
   getScriptDirectory,
   hasElementWithId,
+  hasMarker,
 } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
@@ -28,20 +29,8 @@ const getBasePath = (pathname: string, content?: string): string => {
 }
 
 export const shaarliHandler: PlatformHandler = {
-  match: (url, content, headers) => {
-    if (!URL.canParse(url)) {
-      return false
-    }
-
-    if (content && isShaarliHtml(content)) {
-      return true
-    }
-
-    if (headers && isShaarliHeaders(headers)) {
-      return true
-    }
-
-    return false
+  match: (_url, content, headers) => {
+    return hasMarker(content, headers, { html: isShaarliHtml, headers: isShaarliHeaders })
   },
 
   resolve: (url, content) => {

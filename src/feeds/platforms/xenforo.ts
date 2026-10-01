@@ -1,7 +1,7 @@
-import { getAnyOf, parseUrl } from 'trousse'
+import { getAnyOf } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, hasElementWithId } from '../../common/utils.js'
+import { composeHint, hasElementWithId, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -20,8 +20,8 @@ export const isXenforoHtml = (content: string): boolean => {
 }
 
 export const xenforoHandler: PlatformHandler = {
-  match: (url, content) => {
-    return Boolean(parseUrl(url)) && Boolean(content) && isXenforoHtml(content ?? '')
+  match: (_url, content, headers) => {
+    return hasMarker(content, headers, { html: isXenforoHtml })
   },
 
   resolve: (url) => {

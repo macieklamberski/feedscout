@@ -1,4 +1,4 @@
-import { getSubdomain } from 'trousse'
+import { getSubdomain, isAnyOf } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
@@ -14,7 +14,7 @@ export const firesideHandler: PlatformHandler = {
   match: (url) => {
     const slug = getSubdomain(url, domains)
 
-    return slug !== undefined && !excludedSubdomains.includes(slug)
+    return slug !== undefined && !isAnyOf(slug, excludedSubdomains)
   },
 
   resolve: (url) => {

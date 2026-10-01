@@ -43,10 +43,6 @@ describe('funkwhaleHandler', () => {
     it('should not match without content', () => {
       expect(funkwhaleHandler.match('https://example.org/channels/alice')).toBe(false)
     })
-
-    it('should not match invalid URLs', () => {
-      expect(funkwhaleHandler.match('not-a-url', funkwhaleHtml)).toBe(false)
-    })
   })
 
   describe('resolve', () => {

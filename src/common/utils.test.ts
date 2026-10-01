@@ -14,10 +14,12 @@ import {
   hasAnyMeta,
   hasClass,
   hasElementWithId,
+  hasMarker,
   hasMetaContent,
   isOfAllowedMimeType,
   matchesAnyOfLinkSelectors,
   normalizeMimeType,
+  type PageMarkers,
   processConcurrently,
   toPositiveInteger,
   withTextBody,
@@ -618,6 +620,39 @@ describe('hasAnyMeta', () => {
     const value = '<meta name="generator" content="pixelfed">'
 
     expect(hasAnyMeta(value, [])).toBe(false)
+  })
+})
+
+describe('hasMarker', () => {
+  const markers: PageMarkers = {
+    html: (content) => content.includes('marker'),
+    headers: (headers) => headers.has('x-marker'),
+  }
+
+  it('should return true when the markup carries the marker', () => {
+    expect(hasMarker('<div class="marker"></div>', undefined, markers)).toBe(true)
+  })
+
+  it('should return true when the headers carry the marker', () => {
+    const value = new Headers({ 'x-marker': '1' })
+
+    expect(hasMarker(undefined, value, markers)).toBe(true)
+  })
+
+  it('should return false when neither carries the marker', () => {
+    const value = new Headers({ 'x-other': '1' })
+
+    expect(hasMarker('<div></div>', value, markers)).toBe(false)
+  })
+
+  it('should return false without content or headers', () => {
+    expect(hasMarker(undefined, undefined, markers)).toBe(false)
+  })
+
+  it('should skip a check the platform has no marker for', () => {
+    const value = new Headers({ 'x-marker': '1' })
+
+    expect(hasMarker('<div class="marker"></div>', value, {})).toBe(false)
   })
 })
 

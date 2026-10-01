@@ -1,7 +1,7 @@
 import { parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
+import { composeHint, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -37,8 +37,8 @@ export const parsePeertubeUrl = (url: string): PeertubeUrl | undefined => {
 }
 
 export const peertubeHandler: PlatformHandler = {
-  match: (url, _content, headers) => {
-    return Boolean(parseUrl(url)) && Boolean(headers && isPeertubeHeaders(headers))
+  match: (_url, content, headers) => {
+    return hasMarker(content, headers, { headers: isPeertubeHeaders })
   },
 
   resolve: (url) => {
