@@ -7,13 +7,15 @@ import type { FeedEnricher } from '../types.js'
 // Discoverability: Not discoverable without handler.
 // Handler needed for: all shapes.
 
+export type SimplecastUrl = { kind: 'show'; slug: string }
+
 const platform = 'simplecast'
 
 const domains = ['simplecast.com']
 
 // Simplecast's own services, not shows. Some of these names are taken by test shows in the
 // site search, so matching them would emit a stranger's feed.
-const reservedSlugs = [
+const excludedSubdomains = [
   'api',
   'app',
   'assets',
@@ -32,26 +34,31 @@ const reservedSlugs = [
   'www',
 ]
 
+// A show and its episode pages sit on the show's subdomain: {show}.simplecast.com/episodes/{slug}.
+export const parseSimplecastUrl = (url: string): SimplecastUrl | undefined => {
+  const slug = getSubdomain(url, domains)
+
+  if (!slug || isAnyOf(slug, excludedSubdomains)) {
+    return
+  }
+
+  return { kind: 'show', slug }
+}
+
 export const simplecastHandler: PlatformHandler = {
   match: (url) => {
-    const slug = getSubdomain(url, domains)
-
-    if (!slug) {
-      return false
-    }
-
-    return !isAnyOf(slug, reservedSlugs)
+    return parseSimplecastUrl(url) !== undefined
   },
 
   // A show page is a script shell that names no feed, and the feed id is not the podcast id.
   resolve: (url) => {
-    const slug = getSubdomain(url, domains)
+    const parsed = parseSimplecastUrl(url)
 
-    if (!slug) {
+    if (!parsed) {
       return []
     }
 
-    return [{ platform, id: slug, url, hint: composeHint('simplecast:podcast') }]
+    return [{ platform, id: parsed.slug, url, hint: composeHint('simplecast:podcast') }]
   },
 }
 

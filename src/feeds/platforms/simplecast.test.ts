@@ -1,7 +1,12 @@
 import { describe, expect, it } from 'bun:test'
 import type { DiscoverRef, FetchFn, FetchFnOptions } from '../../common/types.js'
 import type { FeedEnricherContext } from '../types.js'
-import { simplecastEnricher, simplecastHandler } from './simplecast.js'
+import {
+  parseSimplecastUrl,
+  type SimplecastUrl,
+  simplecastEnricher,
+  simplecastHandler,
+} from './simplecast.js'
 
 type Request = {
   url: string
@@ -42,21 +47,41 @@ const searchBody = JSON.stringify({
 })
 const podcastBody = JSON.stringify({ feed_url: 'https://feeds.simplecast.com/KqgBcmTA' })
 
+describe('parseSimplecastUrl', () => {
+  it('should return the show for a show page', () => {
+    const expected: SimplecastUrl = { kind: 'show', slug: 'alice' }
+
+    expect(parseSimplecastUrl('https://alice.simplecast.com')).toEqual(expected)
+  })
+
+  it('should return the show for an episode page', () => {
+    const expected: SimplecastUrl = { kind: 'show', slug: 'alice' }
+
+    expect(parseSimplecastUrl('https://alice.simplecast.com/episodes/pilot')).toEqual(expected)
+  })
+
+  const rejectedValues: Array<string> = [
+    'https://simplecast.com',
+    'https://www.simplecast.com',
+    'https://api.simplecast.com',
+    'https://feeds.simplecast.com/KqgBcmTA',
+    'https://player.simplecast.com/abc',
+    'https://example.com',
+  ]
+
+  it.each(rejectedValues)('should return undefined for %s', (url) => {
+    expect(parseSimplecastUrl(url)).toBeUndefined()
+  })
+})
+
 describe('simplecastHandler', () => {
   describe('match', () => {
-    const values: Array<[boolean, string]> = [
-      [true, 'https://alice.simplecast.com'],
-      [true, 'https://alice.simplecast.com/episodes/pilot'],
-      [false, 'https://simplecast.com'],
-      [false, 'https://www.simplecast.com'],
-      [false, 'https://api.simplecast.com'],
-      [false, 'https://feeds.simplecast.com/KqgBcmTA'],
-      [false, 'https://player.simplecast.com/abc'],
-      [false, 'https://example.com'],
-    ]
+    it('should match a show page', () => {
+      expect(simplecastHandler.match('https://alice.simplecast.com')).toBe(true)
+    })
 
-    it.each(values)('should return %s for %s', (expected, url) => {
-      expect(simplecastHandler.match(url)).toBe(expected)
+    it('should not match a Simplecast service host', () => {
+      expect(simplecastHandler.match('https://api.simplecast.com')).toBe(false)
     })
   })
 
