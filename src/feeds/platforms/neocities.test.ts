@@ -1,5 +1,27 @@
 import { describe, expect, it } from 'bun:test'
-import { neocitiesHandler } from './neocities.js'
+import { type NeocitiesUrl, neocitiesHandler, parseNeocitiesUrl } from './neocities.js'
+
+describe('parseNeocitiesUrl', () => {
+  it('should return the site for a subdomain', () => {
+    const expected: NeocitiesUrl = { kind: 'site', username: 'example-site' }
+
+    expect(parseNeocitiesUrl('https://example-site.neocities.org/')).toEqual(expected)
+  })
+
+  it('should return the site for a profile path on the main host', () => {
+    const expected: NeocitiesUrl = { kind: 'site', username: 'example-site' }
+
+    expect(parseNeocitiesUrl('https://neocities.org/site/example-site')).toEqual(expected)
+  })
+
+  it('should return undefined for the main host without a site path', () => {
+    expect(parseNeocitiesUrl('https://neocities.org/browse')).toBeUndefined()
+  })
+
+  it('should return undefined for another host', () => {
+    expect(parseNeocitiesUrl('https://example.com/site/example-site')).toBeUndefined()
+  })
+})
 
 describe('neocitiesHandler', () => {
   describe('match', () => {

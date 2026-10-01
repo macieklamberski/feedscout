@@ -1,5 +1,21 @@
 import { describe, expect, it } from 'bun:test'
-import { pagecordHandler } from './pagecord.js'
+import { type PagecordUrl, pagecordHandler, parsePagecordUrl } from './pagecord.js'
+
+describe('parsePagecordUrl', () => {
+  it('should return the blog for a subdomain', () => {
+    const expected: PagecordUrl = { kind: 'blog' }
+
+    expect(parsePagecordUrl('https://example.pagecord.com/')).toEqual(expected)
+  })
+
+  it('should return undefined for the www host', () => {
+    expect(parsePagecordUrl('https://www.pagecord.com/')).toBeUndefined()
+  })
+
+  it('should return undefined for another host', () => {
+    expect(parsePagecordUrl('https://example.com/')).toBeUndefined()
+  })
+})
 
 describe('pagecordHandler', () => {
   describe('match', () => {
@@ -21,6 +37,10 @@ describe('pagecordHandler', () => {
   })
 
   describe('resolve', () => {
+    it('should return empty array for a URL outside Pagecord', () => {
+      expect(pagecordHandler.resolve('https://example.com/')).toEqual([])
+    })
+
     it('should return feed URL for blog', () => {
       const value = 'https://alice.pagecord.com'
       const expected = [

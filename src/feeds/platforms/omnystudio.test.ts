@@ -1,5 +1,21 @@
 import { describe, expect, it } from 'bun:test'
-import { omnystudioHandler } from './omnystudio.js'
+import { type OmnystudioUrl, omnystudioHandler, parseOmnystudioUrl } from './omnystudio.js'
+
+describe('parseOmnystudioUrl', () => {
+  it('should return the show for a show page', () => {
+    const expected: OmnystudioUrl = { kind: 'show', show: 'example-show' }
+
+    expect(parseOmnystudioUrl('https://omny.fm/shows/example-show')).toEqual(expected)
+  })
+
+  it('should return undefined for the site root', () => {
+    expect(parseOmnystudioUrl('https://omny.fm/')).toBeUndefined()
+  })
+
+  it('should return undefined for another host', () => {
+    expect(parseOmnystudioUrl('https://example.com/shows/example-show')).toBeUndefined()
+  })
+})
 
 describe('omnystudioHandler', () => {
   describe('match', () => {

@@ -1,5 +1,23 @@
 import { describe, expect, it } from 'bun:test'
-import { posthavenHandler } from './posthaven.js'
+import { type PosthavenUrl, parsePosthavenUrl, posthavenHandler } from './posthaven.js'
+
+describe('parsePosthavenUrl', () => {
+  it('should return the tag for a tag page', () => {
+    const expected: PosthavenUrl = { kind: 'tag', tag: 'travel' }
+
+    expect(parsePosthavenUrl('https://example.posthaven.com/tag/travel')).toEqual(expected)
+  })
+
+  it('should return the blog for any other page', () => {
+    const expected: PosthavenUrl = { kind: 'blog' }
+
+    expect(parsePosthavenUrl('https://example.posthaven.com/')).toEqual(expected)
+  })
+
+  it('should return undefined for another host', () => {
+    expect(parsePosthavenUrl('https://example.com/tag/travel')).toBeUndefined()
+  })
+})
 
 describe('posthavenHandler', () => {
   describe('match', () => {
@@ -20,6 +38,10 @@ describe('posthavenHandler', () => {
   })
 
   describe('resolve', () => {
+    it('should return empty array for a URL outside Posthaven', () => {
+      expect(posthavenHandler.resolve('https://example.com/')).toEqual([])
+    })
+
     it('should return posts feed for blog', () => {
       const value = 'https://alice.posthaven.com'
       const expected = [

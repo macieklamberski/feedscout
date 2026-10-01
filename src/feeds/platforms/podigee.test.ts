@@ -1,5 +1,21 @@
 import { describe, expect, it } from 'bun:test'
-import { podigeeHandler } from './podigee.js'
+import { type PodigeeUrl, parsePodigeeUrl, podigeeHandler } from './podigee.js'
+
+describe('parsePodigeeUrl', () => {
+  it('should return the podcast for a show subdomain', () => {
+    const expected: PodigeeUrl = { kind: 'podcast' }
+
+    expect(parsePodigeeUrl('https://example.podigee.io/')).toEqual(expected)
+  })
+
+  it('should return undefined for an infrastructure subdomain', () => {
+    expect(parsePodigeeUrl('https://app.podigee.io/')).toBeUndefined()
+  })
+
+  it('should return undefined for another host', () => {
+    expect(parsePodigeeUrl('https://example.com/')).toBeUndefined()
+  })
+})
 
 describe('podigeeHandler', () => {
   describe('match', () => {
@@ -24,6 +40,10 @@ describe('podigeeHandler', () => {
   })
 
   describe('resolve', () => {
+    it('should return empty array for a URL outside Podigee', () => {
+      expect(podigeeHandler.resolve('https://example.com/')).toEqual([])
+    })
+
     it('should return podcast feed for show', () => {
       const value = 'https://alice.podigee.io'
       const expected = [
