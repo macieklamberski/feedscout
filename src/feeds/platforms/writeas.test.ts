@@ -1,12 +1,38 @@
 import { describe, expect, it } from 'bun:test'
-import { writeasHandler } from './writeas.js'
+import { parseWriteasUrl, type WriteasUrl, writeasHandler } from './writeas.js'
+
+describe('parseWriteasUrl', () => {
+  it('should return the tag for a tag page', () => {
+    const expected: WriteasUrl = { kind: 'tag', username: 'matt', tag: 'writing' }
+
+    expect(parseWriteasUrl('https://write.as/matt/tag:writing')).toEqual(expected)
+  })
+
+  it('should return the blog for a blog page', () => {
+    const expected: WriteasUrl = { kind: 'blog', username: 'matt' }
+
+    expect(parseWriteasUrl('https://write.as/matt')).toEqual(expected)
+  })
+
+  it('should return undefined for an excluded path', () => {
+    expect(parseWriteasUrl('https://write.as/about')).toBeUndefined()
+  })
+
+  it('should return undefined for the root', () => {
+    expect(parseWriteasUrl('https://write.as/')).toBeUndefined()
+  })
+
+  it('should return undefined for another host', () => {
+    expect(parseWriteasUrl('https://example.com/matt')).toBeUndefined()
+  })
+})
 
 describe('writeasHandler', () => {
   describe('match', () => {
     const values: Array<[boolean, string]> = [
       [true, 'https://write.as/matt'],
       [true, 'https://www.write.as/user'],
-      [true, 'https://write.as'],
+      [false, 'https://write.as'],
       [false, 'https://example.com'],
     ]
 
@@ -20,6 +46,10 @@ describe('writeasHandler', () => {
   })
 
   describe('resolve', () => {
+    it('should return empty array for a URL outside Write.as', () => {
+      expect(writeasHandler.resolve('https://example.com/')).toEqual([])
+    })
+
     it('should return feed URL for blog', () => {
       const value = 'https://write.as/matt'
       const expected = [

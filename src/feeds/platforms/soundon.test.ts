@@ -1,5 +1,41 @@
 import { describe, expect, it } from 'bun:test'
-import { soundonHandler } from './soundon.js'
+import { parseSoundonUrl, type SoundonUrl, soundonHandler } from './soundon.js'
+
+describe('parseSoundonUrl', () => {
+  it('should return the podcast for a podcast page', () => {
+    const expected: SoundonUrl = {
+      kind: 'podcast',
+      podcastId: '2b3a8f6c-1234-4abc-9def-0123456789ab',
+    }
+
+    expect(
+      parseSoundonUrl('https://player.soundon.fm/p/2b3a8f6c-1234-4abc-9def-0123456789ab'),
+    ).toEqual(expected)
+  })
+
+  it('should return the podcast for an embed page', () => {
+    const expected: SoundonUrl = {
+      kind: 'podcast',
+      podcastId: '2b3a8f6c-1234-4abc-9def-0123456789ab',
+    }
+
+    expect(
+      parseSoundonUrl(
+        'https://player.soundon.fm/embed/?podcast=2b3a8f6c-1234-4abc-9def-0123456789ab',
+      ),
+    ).toEqual(expected)
+  })
+
+  it('should return undefined for an id that is not a UUID', () => {
+    expect(parseSoundonUrl('https://player.soundon.fm/p/abc')).toBeUndefined()
+  })
+
+  it('should return undefined for another host', () => {
+    expect(
+      parseSoundonUrl('https://example.com/p/2b3a8f6c-1234-4abc-9def-0123456789ab'),
+    ).toBeUndefined()
+  })
+})
 
 describe('soundonHandler', () => {
   describe('match', () => {
@@ -31,6 +67,10 @@ describe('soundonHandler', () => {
   })
 
   describe('resolve', () => {
+    it('should return empty array for a URL outside SoundOn', () => {
+      expect(soundonHandler.resolve('https://example.com/')).toEqual([])
+    })
+
     it('should return feed URL for podcast page', () => {
       const value = 'https://player.soundon.fm/p/0f4d2c1e-8a3b-4c5d-9e6f-7a8b9c0d1e2f'
       const expected = [

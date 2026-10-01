@@ -1,5 +1,21 @@
 import { describe, expect, it } from 'bun:test'
-import { syosetuHandler } from './syosetu.js'
+import { parseSyosetuUrl, type SyosetuUrl, syosetuHandler } from './syosetu.js'
+
+describe('parseSyosetuUrl', () => {
+  it('should return the writer for a writer page', () => {
+    const expected: SyosetuUrl = { kind: 'writer', writerId: '12345' }
+
+    expect(parseSyosetuUrl('https://mypage.syosetu.com/12345/')).toEqual(expected)
+  })
+
+  it('should return undefined for a page without a writer id', () => {
+    expect(parseSyosetuUrl('https://mypage.syosetu.com/')).toBeUndefined()
+  })
+
+  it('should return undefined for another host', () => {
+    expect(parseSyosetuUrl('https://example.com/12345/')).toBeUndefined()
+  })
+})
 
 describe('syosetuHandler', () => {
   describe('match', () => {
@@ -21,6 +37,10 @@ describe('syosetuHandler', () => {
   })
 
   describe('resolve', () => {
+    it('should return empty array for a URL outside Syosetu', () => {
+      expect(syosetuHandler.resolve('https://example.com/')).toEqual([])
+    })
+
     it('should return the author and activity feeds', () => {
       const value = 'https://mypage.syosetu.com/372556/'
       const expected = [

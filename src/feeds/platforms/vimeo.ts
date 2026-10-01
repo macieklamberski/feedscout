@@ -5,6 +5,13 @@ import { composeHint } from '../../common/utils.js'
 // Discoverability: Partially discoverable without handler.
 // Generic covers channel, group, user, userVideos (guess, html), partly covers likes.
 
+export type VimeoUrl =
+  | { kind: 'channel'; channel: string }
+  | { kind: 'group'; group: string }
+  | { kind: 'album'; albumId: string }
+  | { kind: 'likes'; username: string }
+  | { kind: 'user'; username: string }
+
 const hosts = ['vimeo.com', 'www.vimeo.com']
 
 const numericRegex = /^\d+$/
@@ -45,76 +52,95 @@ const excludedPaths = [
 
 const albumSegments = ['album', 'showcase']
 
+export const parseVimeoUrl = (url: string): VimeoUrl | undefined => {
+  if (!isHostOf(url, hosts)) {
+    return
+  }
+
+  const [first, second] = getPathSegments(url)
+
+  // Channel page: vimeo.com/channels/{channel}
+  if (isAnyOf(first, 'channels') && second) {
+    return { kind: 'channel', channel: second }
+  }
+
+  // Group page: vimeo.com/groups/{group}
+  if (isAnyOf(first, 'groups') && second) {
+    return { kind: 'group', group: second }
+  }
+
+  // Album/showcase: vimeo.com/album/{id} or vimeo.com/showcase/{id}. Only /album/{id}/rss
+  // returns RSS; /showcase/{id}/rss returns 404. /album/{id} 301-redirects to
+  // /showcase/{id} in the browser, so users will most often paste the showcase URL.
+  if (isAnyOf(first, albumSegments) && second && numericRegex.test(second)) {
+    return { kind: 'album', albumId: second }
+  }
+
+  // Skip excluded paths and numeric-only segments (video IDs).
+  if (!first || isAnyOf(first, excludedPaths) || numericRegex.test(first)) {
+    return
+  }
+
+  if (isAnyOf(second, 'likes')) {
+    return { kind: 'likes', username: first }
+  }
+
+  return { kind: 'user', username: first }
+}
+
 export const vimeoHandler: PlatformHandler = {
   match: (url) => {
-    return isHostOf(url, hosts)
+    return parseVimeoUrl(url) !== undefined
   },
 
   resolve: (url) => {
+    const parsed = parseVimeoUrl(url)
+
+    if (!parsed) {
+      return []
+    }
+
     const { origin } = new URL(url)
-    const pathSegments = getPathSegments(url)
 
-    // Channel page: vimeo.com/channels/{channel}
-    if (isAnyOf(pathSegments[0], 'channels') && pathSegments[1]) {
-      const channel = pathSegments[1]
-
+    if (parsed.kind === 'channel') {
       return [
         {
-          uri: `${origin}/channels/${channel}/videos/rss`,
+          uri: `${origin}/channels/${parsed.channel}/videos/rss`,
           hint: composeHint('vimeo:channel'),
         },
       ]
     }
 
-    // Group page: vimeo.com/groups/{group}
-    if (isAnyOf(pathSegments[0], 'groups') && pathSegments[1]) {
-      const group = pathSegments[1]
-
+    if (parsed.kind === 'group') {
       return [
         {
-          uri: `${origin}/groups/${group}/videos/rss`,
+          uri: `${origin}/groups/${parsed.group}/videos/rss`,
           hint: composeHint('vimeo:group'),
         },
       ]
     }
 
-    // Album/showcase: vimeo.com/album/{id} or vimeo.com/showcase/{id}. Only /album/{id}/rss
-    // returns RSS; /showcase/{id}/rss returns 404. /album/{id} 301-redirects to
-    // /showcase/{id} in the browser, so users will most often paste the showcase URL.
-    if (
-      isAnyOf(pathSegments[0], albumSegments) &&
-      pathSegments[1] &&
-      numericRegex.test(pathSegments[1])
-    ) {
-      const albumId = pathSegments[1]
-
+    if (parsed.kind === 'album') {
       return [
         {
-          uri: `${origin}/album/${albumId}/rss`,
+          uri: `${origin}/album/${parsed.albumId}/rss`,
           hint: composeHint('vimeo:album'),
         },
       ]
     }
 
-    // User page: vimeo.com/{user}
-    if (pathSegments.length > 0) {
-      const user = pathSegments[0]
-
-      // Skip excluded paths and numeric-only segments (video IDs).
-      if (!isAnyOf(user, excludedPaths) && !numericRegex.test(user)) {
-        const feeds = [{ uri: `${origin}/${user}/videos/rss`, hint: composeHint('vimeo:videos') }]
-
-        if (isAnyOf(pathSegments[1], 'likes')) {
-          feeds.unshift({
-            uri: `${origin}/${user}/likes/rss`,
-            hint: composeHint('vimeo:likes'),
-          })
-        }
-
-        return feeds
-      }
+    const videos = {
+      uri: `${origin}/${parsed.username}/videos/rss`,
+      hint: composeHint('vimeo:videos'),
     }
 
-    return []
+    if (parsed.kind === 'likes') {
+      return [
+        { uri: `${origin}/${parsed.username}/likes/rss`, hint: composeHint('vimeo:likes') },
+        videos,
+      ]
+    }
+
+    return [videos]
   },
 }
