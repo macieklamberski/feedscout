@@ -24,14 +24,26 @@ const isJiraPath = (pathname: string): boolean => {
   return issueRegex.test(pathname) || projectRegex.test(pathname) || jiraPathRegex.test(pathname)
 }
 
-const getProjectKey = (pathname: string, content: string): string | undefined => {
-  const key = pathname.match(issueRegex)?.[1] ?? pathname.match(projectRegex)?.[1]
-
-  return key ?? getMetaContent(content, 'ajs-project-key')
-}
-
 export const isJiraHtml = (content: string): boolean => {
   return Boolean(getMetaContent(content, 'ajs-base-url'))
+}
+
+export type JiraPage = { baseUrl: string; projectKey?: string }
+
+const getJiraPage = (url: string, content: string | undefined): JiraPage | undefined => {
+  const { origin, pathname } = new URL(url)
+
+  if (confluencePathRegex.test(pathname)) {
+    return
+  }
+
+  const contextPath = getMetaContent(content ?? '', 'ajs-context-path') ?? ''
+  const pathKey = pathname.match(issueRegex)?.[1] ?? pathname.match(projectRegex)?.[1]
+
+  return {
+    baseUrl: `${origin}${contextPath}`.replace(trailingSlashRegex, ''),
+    projectKey: pathKey ?? getMetaContent(content ?? '', 'ajs-project-key'),
+  }
 }
 
 export const jiraHandler: PlatformHandler = {
@@ -54,15 +66,13 @@ export const jiraHandler: PlatformHandler = {
   },
 
   resolve: (url, content) => {
-    const { origin, pathname } = new URL(url)
+    const page = getJiraPage(url, content)
 
-    if (confluencePathRegex.test(pathname)) {
+    if (!page) {
       return []
     }
 
-    const contextPath = getMetaContent(content ?? '', 'ajs-context-path') ?? ''
-    const baseUrl = `${origin}${contextPath}`.replace(trailingSlashRegex, '')
-    const projectKey = getProjectKey(pathname, content ?? '')
+    const { baseUrl, projectKey } = page
     const uris: Array<DiscoverUriEntry> = []
 
     if (projectKey) {
