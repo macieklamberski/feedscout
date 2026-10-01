@@ -1,45 +1,65 @@
 import { isSubdomainOf } from 'trousse'
-import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
+export type GhostUrl =
+  | { kind: 'tag'; tag: string }
+  | { kind: 'author'; author: string }
+  | { kind: 'blog' }
+
 const domains = ['ghost.io']
 const tagRegex = /^\/tag\/([^/]+)/i
 const authorRegex = /^\/author\/([^/]+)/i
 
+export const parseGhostUrl = (url: string): GhostUrl | undefined => {
+  if (!isSubdomainOf(url, domains)) {
+    return
+  }
+
+  const { pathname } = new URL(url)
+  const tag = pathname.match(tagRegex)?.[1]
+
+  if (tag) {
+    return { kind: 'tag', tag }
+  }
+
+  const author = pathname.match(authorRegex)?.[1]
+
+  if (author) {
+    return { kind: 'author', author }
+  }
+
+  return { kind: 'blog' }
+}
+
 export const ghostHandler: PlatformHandler = {
   match: (url) => {
-    return isSubdomainOf(url, domains)
+    return parseGhostUrl(url) !== undefined
   },
 
   resolve: (url) => {
-    const { origin, pathname } = new URL(url)
-    const uris: Array<DiscoverUriEntry> = []
+    const parsed = parseGhostUrl(url)
 
-    // Tag page: /tag/{slug}
-    const tagMatch = pathname.match(tagRegex)
-
-    if (tagMatch?.[1]) {
-      uris.push({
-        uri: `${origin}/tag/${tagMatch[1]}/rss/`,
-        hint: composeHint('ghost:tag'),
-      })
+    if (!parsed) {
+      return []
     }
 
-    // Author page: /author/{slug}
-    const authorMatch = pathname.match(authorRegex)
+    const { origin } = new URL(url)
+    const blog = { uri: `${origin}/rss/`, hint: composeHint('ghost:blog') }
 
-    if (authorMatch?.[1]) {
-      uris.push({
-        uri: `${origin}/author/${authorMatch[1]}/rss/`,
-        hint: composeHint('ghost:author'),
-      })
+    if (parsed.kind === 'tag') {
+      return [{ uri: `${origin}/tag/${parsed.tag}/rss/`, hint: composeHint('ghost:tag') }, blog]
     }
 
-    uris.push({ uri: `${origin}/rss/`, hint: composeHint('ghost:blog') })
+    if (parsed.kind === 'author') {
+      return [
+        { uri: `${origin}/author/${parsed.author}/rss/`, hint: composeHint('ghost:author') },
+        blog,
+      ]
+    }
 
-    return uris
+    return [blog]
   },
 }

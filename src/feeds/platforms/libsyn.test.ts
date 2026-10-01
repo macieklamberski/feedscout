@@ -1,5 +1,27 @@
 import { describe, expect, it } from 'bun:test'
-import { libsynHandler } from './libsyn.js'
+import { type LibsynUrl, libsynHandler, parseLibsynUrl } from './libsyn.js'
+
+describe('parseLibsynUrl', () => {
+  it('should return the feed for a feeds host show', () => {
+    const expected: LibsynUrl = { kind: 'feed', showId: '12345' }
+
+    expect(parseLibsynUrl('https://feeds.libsyn.com/12345')).toEqual(expected)
+  })
+
+  it('should return undefined for a feeds host page without a numeric show', () => {
+    expect(parseLibsynUrl('https://feeds.libsyn.com/about')).toBeUndefined()
+  })
+
+  it('should return the podcast for a show subdomain', () => {
+    const expected: LibsynUrl = { kind: 'podcast' }
+
+    expect(parseLibsynUrl('https://myshow.libsyn.com/')).toEqual(expected)
+  })
+
+  it('should return undefined for another host', () => {
+    expect(parseLibsynUrl('https://example.com/')).toBeUndefined()
+  })
+})
 
 describe('libsynHandler', () => {
   describe('match', () => {
@@ -20,6 +42,10 @@ describe('libsynHandler', () => {
   })
 
   describe('resolve', () => {
+    it('should return empty array for a URL outside Libsyn', () => {
+      expect(libsynHandler.resolve('https://example.com/')).toEqual([])
+    })
+
     it('should return feed URL for podcast', () => {
       const value = 'https://alice.libsyn.com'
       const expected = [

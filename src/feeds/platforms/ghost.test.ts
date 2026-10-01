@@ -1,5 +1,29 @@
 import { describe, expect, it } from 'bun:test'
-import { ghostHandler } from './ghost.js'
+import { type GhostUrl, ghostHandler, parseGhostUrl } from './ghost.js'
+
+describe('parseGhostUrl', () => {
+  it('should return the tag for a tag page', () => {
+    const expected: GhostUrl = { kind: 'tag', tag: 'news' }
+
+    expect(parseGhostUrl('https://blog.ghost.io/tag/news/')).toEqual(expected)
+  })
+
+  it('should return the author for an author page', () => {
+    const expected: GhostUrl = { kind: 'author', author: 'jane' }
+
+    expect(parseGhostUrl('https://blog.ghost.io/author/jane/')).toEqual(expected)
+  })
+
+  it('should return the blog for any other page', () => {
+    const expected: GhostUrl = { kind: 'blog' }
+
+    expect(parseGhostUrl('https://blog.ghost.io/some-post/')).toEqual(expected)
+  })
+
+  it('should return undefined for another host', () => {
+    expect(parseGhostUrl('https://example.com/')).toBeUndefined()
+  })
+})
 
 describe('ghostHandler', () => {
   describe('match', () => {
@@ -20,6 +44,10 @@ describe('ghostHandler', () => {
   })
 
   describe('resolve', () => {
+    it('should return empty array for a URL outside Ghost', () => {
+      expect(ghostHandler.resolve('https://example.com/')).toEqual([])
+    })
+
     it('should return feed URL for blog', () => {
       const value = 'https://alice.ghost.io'
       const expected = [

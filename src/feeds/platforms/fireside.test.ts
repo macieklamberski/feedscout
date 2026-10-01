@@ -1,6 +1,22 @@
 import { describe, expect, it } from 'bun:test'
 import type { DiscoverUriEntry } from '../../common/types.js'
-import { firesideHandler } from './fireside.js'
+import { type FiresideUrl, firesideHandler, parseFiresideUrl } from './fireside.js'
+
+describe('parseFiresideUrl', () => {
+  it('should return the podcast for a show subdomain', () => {
+    const expected: FiresideUrl = { kind: 'podcast', slug: 'myshow' }
+
+    expect(parseFiresideUrl('https://myshow.fireside.fm/')).toEqual(expected)
+  })
+
+  it('should return undefined for an excluded subdomain', () => {
+    expect(parseFiresideUrl('https://www.fireside.fm/')).toBeUndefined()
+  })
+
+  it('should return undefined for another host', () => {
+    expect(parseFiresideUrl('https://example.com/')).toBeUndefined()
+  })
+})
 
 describe('firesideHandler', () => {
   describe('match', () => {
@@ -22,6 +38,10 @@ describe('firesideHandler', () => {
   })
 
   describe('resolve', () => {
+    it('should return empty array for a URL outside Fireside', () => {
+      expect(firesideHandler.resolve('https://example.com/')).toEqual([])
+    })
+
     it('should return RSS and JSON feeds for podcast', () => {
       const value = 'https://alice.fireside.fm'
       const expected: Array<DiscoverUriEntry> = [

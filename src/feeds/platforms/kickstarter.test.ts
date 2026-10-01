@@ -1,5 +1,25 @@
 import { describe, expect, it } from 'bun:test'
-import { kickstarterHandler } from './kickstarter.js'
+import { type KickstarterUrl, kickstarterHandler, parseKickstarterUrl } from './kickstarter.js'
+
+describe('parseKickstarterUrl', () => {
+  it('should return the project for a project page', () => {
+    const expected: KickstarterUrl = { kind: 'project', creator: 'creator', project: 'project' }
+
+    expect(parseKickstarterUrl('https://www.kickstarter.com/projects/creator/project')).toEqual(
+      expected,
+    )
+  })
+
+  it('should return the home page for any other page', () => {
+    const expected: KickstarterUrl = { kind: 'home' }
+
+    expect(parseKickstarterUrl('https://www.kickstarter.com/discover')).toEqual(expected)
+  })
+
+  it('should return undefined for another host', () => {
+    expect(parseKickstarterUrl('https://example.com/')).toBeUndefined()
+  })
+})
 
 describe('kickstarterHandler', () => {
   describe('match', () => {
@@ -21,6 +41,10 @@ describe('kickstarterHandler', () => {
   })
 
   describe('resolve', () => {
+    it('should return empty array for a URL outside Kickstarter', () => {
+      expect(kickstarterHandler.resolve('https://example.com/')).toEqual([])
+    })
+
     it('should return atom feed for project page', () => {
       const value = 'https://www.kickstarter.com/projects/reinnesplace/reinnes-place'
       const expected = [

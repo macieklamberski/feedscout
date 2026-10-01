@@ -1,5 +1,27 @@
 import { describe, expect, it } from 'bun:test'
-import { ivooxHandler } from './ivoox.js'
+import { type IvooxUrl, ivooxHandler, parseIvooxUrl } from './ivoox.js'
+
+describe('parseIvooxUrl', () => {
+  it('should return the podcast for a podcast page', () => {
+    const expected: IvooxUrl = { kind: 'podcast', podcastId: '1234' }
+
+    expect(parseIvooxUrl('https://www.ivoox.com/podcast-name_sq_f1234_1.html')).toEqual(expected)
+  })
+
+  it('should return the episode for an episode page', () => {
+    const expected: IvooxUrl = { kind: 'episode' }
+
+    expect(parseIvooxUrl('https://www.ivoox.com/episode-name_rf_123_1.html')).toEqual(expected)
+  })
+
+  it('should return undefined for any other page', () => {
+    expect(parseIvooxUrl('https://www.ivoox.com/')).toBeUndefined()
+  })
+
+  it('should return undefined for another host', () => {
+    expect(parseIvooxUrl('https://example.com/')).toBeUndefined()
+  })
+})
 
 describe('ivooxHandler', () => {
   describe('match', () => {
@@ -15,6 +37,10 @@ describe('ivooxHandler', () => {
   })
 
   describe('resolve', () => {
+    it('should return empty array for a URL outside iVoox', () => {
+      expect(ivooxHandler.resolve('https://example.com/')).toEqual([])
+    })
+
     it('should return feed URL for podcast page', () => {
       const value = 'https://www.ivoox.com/podcast-example-show_sq_f1234_1.html'
       const expected = [

@@ -6,20 +6,37 @@ import { composeHint } from '../../common/utils.js'
 // Generic covers home, news, show (guess, html).
 // Handler needed for: shownew.
 
+export type HackernewsUrl = { kind: 'show' } | { kind: 'home' }
+
 const hosts = ['news.ycombinator.com']
 
 const showRegex = /^\/show(?:new)?\/?$/i
 
+export const parseHackernewsUrl = (url: string): HackernewsUrl | undefined => {
+  if (!isHostOf(url, hosts)) {
+    return
+  }
+
+  if (showRegex.test(new URL(url).pathname)) {
+    return { kind: 'show' }
+  }
+
+  return { kind: 'home' }
+}
+
 export const hackernewsHandler: PlatformHandler = {
   match: (url) => {
-    return isHostOf(url, hosts)
+    return parseHackernewsUrl(url) !== undefined
   },
 
   resolve: (url) => {
-    const { pathname } = new URL(url)
+    const parsed = parseHackernewsUrl(url)
 
-    // Show HN section.
-    if (showRegex.test(pathname)) {
+    if (!parsed) {
+      return []
+    }
+
+    if (parsed.kind === 'show') {
       return [
         {
           uri: 'https://news.ycombinator.com/showrss',
@@ -28,7 +45,6 @@ export const hackernewsHandler: PlatformHandler = {
       ]
     }
 
-    // Default: front page feed.
     return [
       {
         uri: 'https://news.ycombinator.com/rss',

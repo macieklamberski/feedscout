@@ -1,6 +1,34 @@
 import { describe, expect, it } from 'bun:test'
 import type { DiscoverUriEntry } from '../../common/types.js'
-import { dreamwidthHandler } from './dreamwidth.js'
+import { type DreamwidthUrl, dreamwidthHandler, parseDreamwidthUrl } from './dreamwidth.js'
+
+describe('parseDreamwidthUrl', () => {
+  it('should return the journal for a journal subdomain', () => {
+    const expected: DreamwidthUrl = { kind: 'journal' }
+
+    expect(parseDreamwidthUrl('https://example.dreamwidth.org/')).toEqual(expected)
+  })
+
+  it('should return the tag for a tag page', () => {
+    const expected: DreamwidthUrl = { kind: 'journal', tag: 'books' }
+
+    expect(parseDreamwidthUrl('https://example.dreamwidth.org/tag/books')).toEqual(expected)
+  })
+
+  it('should return the user for a www users path', () => {
+    const expected: DreamwidthUrl = { kind: 'journal', username: 'some_user' }
+
+    expect(parseDreamwidthUrl('https://www.dreamwidth.org/users/some_user')).toEqual(expected)
+  })
+
+  it('should return undefined for the bare www host', () => {
+    expect(parseDreamwidthUrl('https://www.dreamwidth.org/')).toBeUndefined()
+  })
+
+  it('should return undefined for another host', () => {
+    expect(parseDreamwidthUrl('https://example.com/')).toBeUndefined()
+  })
+})
 
 describe('dreamwidthHandler', () => {
   describe('match', () => {
@@ -24,6 +52,10 @@ describe('dreamwidthHandler', () => {
   })
 
   describe('resolve', () => {
+    it('should return empty array for a URL outside Dreamwidth', () => {
+      expect(dreamwidthHandler.resolve('https://example.com/')).toEqual([])
+    })
+
     it('should return RSS, Atom, and userpics feeds for blog', () => {
       const value = 'https://alice.dreamwidth.org'
       const expected: Array<DiscoverUriEntry> = [

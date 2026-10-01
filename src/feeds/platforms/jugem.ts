@@ -4,21 +4,33 @@ import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
+export type JugemUrl = { kind: 'blog'; blog: string }
+
 const domains = ['jugem.jp']
+
+export const parseJugemUrl = (url: string): JugemUrl | undefined => {
+  const blog = getSubdomain(url, domains)
+
+  // Only {blog}.jugem.jp names a blog, www.jugem.jp is the portal.
+  if (!blog || blog.includes('.') || blog === 'www') {
+    return
+  }
+
+  return { kind: 'blog', blog }
+}
 
 export const jugemHandler: PlatformHandler = {
   match: (url) => {
-    const blog = getSubdomain(url, domains)
-
-    if (!blog || blog.includes('.')) {
-      return false
-    }
-
-    // Only {blog}.jugem.jp names a blog, www.jugem.jp is the portal.
-    return blog !== 'www'
+    return parseJugemUrl(url) !== undefined
   },
 
   resolve: (url) => {
+    const parsed = parseJugemUrl(url)
+
+    if (!parsed) {
+      return []
+    }
+
     const { origin } = new URL(url)
 
     return [

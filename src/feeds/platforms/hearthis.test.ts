@@ -1,12 +1,32 @@
 import { describe, expect, it } from 'bun:test'
-import { hearthisHandler } from './hearthis.js'
+import { type HearthisUrl, hearthisHandler, parseHearthisUrl } from './hearthis.js'
+
+describe('parseHearthisUrl', () => {
+  it('should return the profile for a user page', () => {
+    const expected: HearthisUrl = { kind: 'profile', username: 'djname' }
+
+    expect(parseHearthisUrl('https://hearthis.at/djname/')).toEqual(expected)
+  })
+
+  it('should return undefined for an excluded path', () => {
+    expect(parseHearthisUrl('https://hearthis.at/search')).toBeUndefined()
+  })
+
+  it('should return undefined for the root', () => {
+    expect(parseHearthisUrl('https://hearthis.at/')).toBeUndefined()
+  })
+
+  it('should return undefined for another host', () => {
+    expect(parseHearthisUrl('https://example.com/')).toBeUndefined()
+  })
+})
 
 describe('hearthisHandler', () => {
   describe('match', () => {
     const values: Array<[boolean, string]> = [
       [true, 'https://hearthis.at/james-monty-montgomery'],
       [true, 'https://www.hearthis.at/user'],
-      [true, 'https://hearthis.at'],
+      [false, 'https://hearthis.at'],
       [false, 'https://example.com'],
     ]
 
@@ -20,6 +40,10 @@ describe('hearthisHandler', () => {
   })
 
   describe('resolve', () => {
+    it('should return empty array for a URL outside hearthis.at', () => {
+      expect(hearthisHandler.resolve('https://example.com/')).toEqual([])
+    })
+
     it('should return feed URL for user', () => {
       const value = 'https://hearthis.at/james-monty-montgomery'
       const expected = [
