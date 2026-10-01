@@ -54,8 +54,8 @@ describe('parseAmebloUrl', () => {
 
 describe('amebloHandler', () => {
   describe('match', () => {
-    it('should match any Ameblo URL', () => {
-      expect(amebloHandler.match('https://ameblo.jp')).toBe(true)
+    it('should match a blog URL', () => {
+      expect(amebloHandler.match('https://ameblo.jp/shibuya')).toBe(true)
     })
 
     it('should not match other hosts', () => {

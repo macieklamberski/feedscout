@@ -14,6 +14,7 @@ export type FlickrUrl =
   | { kind: 'galleries'; userId: string }
   | { kind: 'subpage'; userId: string }
   | { kind: 'group'; group: string; section?: string }
+  | { kind: 'forum' }
 
 const hosts = ['flickr.com', 'www.flickr.com']
 const feedsBase = 'https://www.flickr.com/services/feeds'
@@ -33,6 +34,12 @@ export const parseFlickrUrl = (url: string): FlickrUrl | undefined => {
   }
 
   const { pathname } = parsedUrl
+
+  // Help forum: /help/forum/{locale}.
+  if (forumRegex.test(pathname)) {
+    return { kind: 'forum' }
+  }
+
   const tag = pathname.match(tagRegex)?.[1]
 
   if (tag) {
@@ -71,38 +78,33 @@ export const parseFlickrUrl = (url: string): FlickrUrl | undefined => {
 
 export const flickrHandler: PlatformHandler = {
   match: (url) => {
-    const parsedUrl = parseUrl(url)
-
-    if (!parsedUrl || !isHostOf(parsedUrl, hosts)) {
-      return false
-    }
-
-    if (forumRegex.test(parsedUrl.pathname)) {
-      return true
-    }
-
     const parsed = parseFlickrUrl(url)
 
     if (!parsed) {
       return false
     }
 
-    if (parsed.kind === 'tag') {
-      return true
+    // The feeds take only the NSID and answer 404 for a path alias.
+    if ('userId' in parsed) {
+      return nsidRegex.test(parsed.userId)
     }
 
-    if (parsed.kind === 'group') {
-      return true
-    }
-
-    return nsidRegex.test(parsed.userId)
+    return true
   },
 
   resolve: (url) => {
     const parsed = parseFlickrUrl(url)
 
+    if (!parsed) {
+      return []
+    }
+
+    if (parsed.kind === 'forum') {
+      return [{ uri: `${feedsBase}/forums.gne`, hint: composeHint('flickr:forum') }]
+    }
+
     // Tag page: /photos/tags/{tag}
-    if (parsed?.kind === 'tag') {
+    if (parsed.kind === 'tag') {
       return [
         {
           uri: `${feedsBase}/photos_public.gne?tags=${parsed.tag}`,
@@ -112,7 +114,7 @@ export const flickrHandler: PlatformHandler = {
     }
 
     // Group pool or discussion: /groups/{nsid}, /groups/{nsid}/pool, /groups/{nsid}/discuss
-    if (parsed?.kind === 'group') {
+    if (parsed.kind === 'group') {
       const { group: nsid, section } = parsed
       const pool = {
         uri: `${feedsBase}/groups_pool.gne?id=${nsid}`,
@@ -139,12 +141,6 @@ export const flickrHandler: PlatformHandler = {
       return [pool, discuss, geo]
     }
 
-    // Help forum, /help/forum/{locale}, and any other page.
-    if (!parsed) {
-      return [{ uri: `${feedsBase}/forums.gne`, hint: composeHint('flickr:forum') }]
-    }
-
-    // The feeds take only the NSID and answer 404 for a path alias.
     if (!nsidRegex.test(parsed.userId)) {
       return []
     }

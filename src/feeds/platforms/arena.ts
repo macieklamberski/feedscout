@@ -7,12 +7,12 @@ import { composeHint } from '../../common/utils.js'
 export type ArenaUrl =
   | { kind: 'profile'; username: string }
   | { kind: 'channel'; username: string; channel: string }
+  | { kind: 'editorial' }
 
 const hosts = ['are.na', 'www.are.na']
 const excludedPaths = [
   'about',
   'api',
-  'editorial',
   'explore',
   'login',
   'premium',
@@ -30,6 +30,11 @@ export const parseArenaUrl = (url: string): ArenaUrl | undefined => {
   }
 
   const [username, channel] = getPathSegments(url)
+
+  // Article pages under /editorial have no feed of their own.
+  if (isAnyOf(username, 'editorial')) {
+    return { kind: 'editorial' }
+  }
 
   if (!username) {
     return
@@ -49,14 +54,17 @@ export const parseArenaUrl = (url: string): ArenaUrl | undefined => {
 
 export const arenaHandler: PlatformHandler = {
   match: (url) => {
-    return isHostOf(url, hosts)
+    return parseArenaUrl(url) !== undefined
   },
 
   resolve: (url) => {
-    const [section] = getPathSegments(url)
+    const parsed = parseArenaUrl(url)
 
-    // Article pages under /editorial have no feed of their own.
-    if (isAnyOf(section, 'editorial')) {
+    if (!parsed) {
+      return []
+    }
+
+    if (parsed.kind === 'editorial') {
       return [
         {
           uri: 'https://www.are.na/editorial/feed/rss',
@@ -65,9 +73,7 @@ export const arenaHandler: PlatformHandler = {
       ]
     }
 
-    const parsed = parseArenaUrl(url)
-
-    if (parsed?.kind === 'channel') {
+    if (parsed.kind === 'channel') {
       return [
         {
           uri: `https://www.are.na/${parsed.username}/${parsed.channel}/feed/rss`,
@@ -76,15 +82,11 @@ export const arenaHandler: PlatformHandler = {
       ]
     }
 
-    if (parsed?.kind === 'profile') {
-      return [
-        {
-          uri: `https://www.are.na/${parsed.username}/feed/rss`,
-          hint: composeHint('arena:profile'),
-        },
-      ]
-    }
-
-    return []
+    return [
+      {
+        uri: `https://www.are.na/${parsed.username}/feed/rss`,
+        hint: composeHint('arena:profile'),
+      },
+    ]
   },
 }

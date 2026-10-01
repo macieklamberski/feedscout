@@ -142,10 +142,15 @@ describe('parseFlickrUrl', () => {
     expect(parseFlickrUrl('https://www.flickr.com/groups/mygroup')).toBeUndefined()
   })
 
-  it('should return undefined for site-wide pages', () => {
+  it('should return undefined for other site-wide pages', () => {
     expect(parseFlickrUrl('https://www.flickr.com')).toBeUndefined()
     expect(parseFlickrUrl('https://www.flickr.com/explore')).toBeUndefined()
-    expect(parseFlickrUrl('https://www.flickr.com/help/forum')).toBeUndefined()
+  })
+
+  it('should return the help forum', () => {
+    const expected: FlickrUrl = { kind: 'forum' }
+
+    expect(parseFlickrUrl('https://www.flickr.com/Help/forum/en-us/')).toEqual(expected)
   })
 
   it('should return undefined for a host that only ends in the Flickr host', () => {

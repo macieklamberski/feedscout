@@ -130,6 +130,12 @@ describe('parseDeviantartUrl', () => {
     expect(parseDeviantartUrl(value)).toBeUndefined()
   })
 
+  it('should return the daily deviations page', () => {
+    const expected: DeviantartUrl = { kind: 'dailyDeviations' }
+
+    expect(parseDeviantartUrl('https://www.deviantart.com/Daily-Deviations/')).toEqual(expected)
+  })
+
   it('should return undefined for the tag prefix without a tag', () => {
     expect(parseDeviantartUrl('https://www.deviantart.com/tag')).toBeUndefined()
   })

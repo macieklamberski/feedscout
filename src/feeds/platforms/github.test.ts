@@ -63,9 +63,50 @@ describe('parseGithubUrl', () => {
     expect(parseGithubUrl('https://github.com/orgs/acme/discussions')).toEqual(expected)
   })
 
-  it('should return the org for an organization discussions subpage', () => {
+  it('should return the org and category for an organization discussion category', () => {
     const value = 'https://github.com/orgs/acme/discussions/categories/announcements'
-    const expected: GithubUrl = { kind: 'discussions', org: 'acme' }
+    const expected: GithubUrl = {
+      kind: 'discussions',
+      org: 'acme',
+      discussionCategory: 'announcements',
+    }
+
+    expect(parseGithubUrl(value)).toEqual(expected)
+  })
+
+  it('should return the wiki section of a repository', () => {
+    const expected: GithubUrl = { kind: 'repo', owner: 'acme', repo: 'app', section: 'wiki' }
+
+    expect(parseGithubUrl('https://github.com/acme/app/Wiki/Home')).toEqual(expected)
+  })
+
+  it('should return the discussion category of a repository', () => {
+    const value = 'https://github.com/acme/app/discussions/categories/q-a'
+    const expected: GithubUrl = {
+      kind: 'repo',
+      owner: 'acme',
+      repo: 'app',
+      section: 'discussions',
+      discussionCategory: 'q-a',
+    }
+
+    expect(parseGithubUrl(value)).toEqual(expected)
+  })
+
+  it('should return the branch of a repository tree page', () => {
+    const expected: GithubUrl = { kind: 'repo', owner: 'acme', repo: 'app', branch: 'dev' }
+
+    expect(parseGithubUrl('https://github.com/acme/app/tree/dev')).toEqual(expected)
+  })
+
+  it('should return the file of a repository blob page', () => {
+    const value = 'https://github.com/acme/app/blob/main/src/index.ts'
+    const expected: GithubUrl = {
+      kind: 'repo',
+      owner: 'acme',
+      repo: 'app',
+      file: { branch: 'main', path: 'src/index.ts' },
+    }
 
     expect(parseGithubUrl(value)).toEqual(expected)
   })

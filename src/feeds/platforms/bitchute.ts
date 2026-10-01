@@ -29,15 +29,15 @@ export const bitchuteHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    const channel = parseBitchuteUrl(url)?.channel
+    const parsed = parseBitchuteUrl(url)
 
-    if (!channel) {
+    if (!parsed) {
       return []
     }
 
     return [
       {
-        uri: `https://www.bitchute.com/feeds/rss/channel/${channel}/`,
+        uri: `https://www.bitchute.com/feeds/rss/channel/${parsed.channel}/`,
         hint: composeHint('bitchute:channel'),
       },
     ]
