@@ -1,5 +1,10 @@
 import { describe, expect, it } from 'bun:test'
-import { isMobilizonHtml, mobilizonHandler } from './mobilizon.js'
+import {
+  isMobilizonHtml,
+  type MobilizonUrl,
+  mobilizonHandler,
+  parseMobilizonUrl,
+} from './mobilizon.js'
 
 const mobilizonHtml =
   "<noscript>Mobilizon doesn't work properly without JavaScript enabled.</noscript>"
@@ -19,6 +24,24 @@ describe('isMobilizonHtml', () => {
   })
 })
 
+describe('parseMobilizonUrl', () => {
+  it('should return the group for a group page', () => {
+    const expected: MobilizonUrl = { kind: 'group', group: 'framasoft' }
+
+    expect(parseMobilizonUrl('https://mobilizon.fr/@framasoft')).toEqual(expected)
+  })
+
+  it('should return the instance for another page', () => {
+    const expected: MobilizonUrl = { kind: 'instance' }
+
+    expect(parseMobilizonUrl('https://mobilizon.fr/search')).toEqual(expected)
+  })
+
+  it('should return undefined for an unparsable URL', () => {
+    expect(parseMobilizonUrl('not-a-url')).toBeUndefined()
+  })
+})
+
 describe('mobilizonHandler', () => {
   describe('match', () => {
     it('should match a Mobilizon page', () => {
@@ -31,6 +54,10 @@ describe('mobilizonHandler', () => {
   })
 
   describe('resolve', () => {
+    it('should return empty array for a URL that does not parse', () => {
+      expect(mobilizonHandler.resolve('not-a-url')).toEqual([])
+    })
+
     it('should return the group and instance feeds for a group page', () => {
       const value = 'https://example.org/@group'
       const expected = [

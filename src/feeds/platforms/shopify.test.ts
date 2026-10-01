@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import { isShopifyHeaders, shopifyHandler } from './shopify.js'
+import { isShopifyHeaders, parseShopifyUrl, type ShopifyUrl, shopifyHandler } from './shopify.js'
 
 const shopifyHeaders = new Headers({ 'powered-by': 'Shopify' })
 
@@ -11,6 +11,28 @@ describe('isShopifyHeaders', () => {
   it('should return false when the header is absent', () => {
     expect(isShopifyHeaders(new Headers())).toBe(false)
     expect(isShopifyHeaders(new Headers({ 'x-powered-by': 'Express' }))).toBe(false)
+  })
+})
+
+describe('parseShopifyUrl', () => {
+  it('should return the blog for a blog page', () => {
+    const expected: ShopifyUrl = { kind: 'blog', handle: 'news' }
+
+    expect(parseShopifyUrl('https://shop.example/blogs/news')).toEqual(expected)
+  })
+
+  it('should return the blog for an article page', () => {
+    const expected: ShopifyUrl = { kind: 'blog', handle: 'news' }
+
+    expect(parseShopifyUrl('https://shop.example/blogs/news/first-post')).toEqual(expected)
+  })
+
+  it('should return undefined for a page outside a blog', () => {
+    expect(parseShopifyUrl('https://shop.example/products/shirt')).toBeUndefined()
+  })
+
+  it('should return undefined for the blogs index', () => {
+    expect(parseShopifyUrl('https://shop.example/blogs')).toBeUndefined()
   })
 })
 
@@ -50,6 +72,10 @@ describe('shopifyHandler', () => {
   })
 
   describe('resolve', () => {
+    it('should return empty array for a page outside a blog', () => {
+      expect(shopifyHandler.resolve('https://shop.example/products/shirt')).toEqual([])
+    })
+
     it('should return the blog feed', () => {
       const value = 'https://example.com/blogs/news'
       const expected = [
