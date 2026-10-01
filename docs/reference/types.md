@@ -108,6 +108,19 @@ type DiscoverMethodsConfig<TMethods extends DiscoverMethod = DiscoverMethod> =
 
 The `baseUrl` is omitted because it's set for you: the input URL, or the site URL when the input is a feed.
 
+### DiscoverFeedsOptions
+
+Options for `discoverFeeds`. `enrichFn` is unset by default, so no enricher runs until you pass one. See [Enriching Platform Feeds](/feeds/platform#enriching-platform-feeds):
+
+```typescript
+type DiscoverFeedsOptions<TValid> = DiscoverOptions<
+  TValid,
+  'platform' | 'html' | 'headers' | 'guess'
+> & {
+  enrichFn?: DiscoverEnrichFn
+}
+```
+
 ### DiscoverHubsOptions
 
 Options for `discoverHubs`:
@@ -181,19 +194,20 @@ type FaviconResult = {}
 
 ### DiscoverRef
 
-A page whose icon takes an extra request to reach, returned by a platform handler:
+A page whose feed or icon takes an extra request to reach, returned by a platform handler. A `hint` is carried onto every URI the enrich function returns for the ref:
 
 ```typescript
 type DiscoverRef = {
   platform: string
   id: string
   url: string
+  hint?: DiscoverUriHint
 }
 ```
 
 ### DiscoverEnrichFn
 
-Receives one ref from the platform method and returns the icon addresses found for it, or `undefined`. Discovery calls it once per ref, so a ref that throws does not cost the others their icons:
+Receives one ref from the platform method and returns the feed or icon addresses found for it, or `undefined`. Discovery calls it once per ref, so a ref that throws does not cost the others their addresses:
 
 ```typescript
 type DiscoverEnrichFn = (ref: DiscoverRef) => MaybePromise<Array<string> | undefined>
@@ -210,6 +224,21 @@ type FaviconEnricher = (
 ) => MaybePromise<Array<string> | undefined>
 
 type FaviconEnricherContext = {
+  fetchFn: FetchFn
+}
+```
+
+### FeedEnricher
+
+Finds the feed for the refs of one platform and returns `undefined` for any other ref. It fails the same way as `FaviconEnricher`. `createEnrichFeedFn` answers each ref with the first enricher that returns URIs for it:
+
+```typescript
+type FeedEnricher = (
+  ref: DiscoverRef,
+  context: FeedEnricherContext,
+) => MaybePromise<Array<string> | undefined>
+
+type FeedEnricherContext = {
   fetchFn: FetchFn
 }
 ```
@@ -338,7 +367,7 @@ type DiscoverErrorContext = {
 - `resolveSiteUrlFn`: The site URL resolution function threw. Discovery continues with the original input.
 - `extractFn`: The extractor threw on the input content. The input is not returned as a result, and the methods run.
 - `platformHandler`: A platform handler threw from its `match` or `resolve`. That handler is skipped and the next one is tried. The URL is the page's.
-- `enrichFn`: The enrich function threw for a ref, or an enricher inside it did. That ref is dropped, while the platform handler's own URLs and the other refs' icons are kept. The URL is the page's.
+- `enrichFn`: The enrich function threw for a ref, or an enricher inside it did. That ref is dropped, while the platform handler's own URLs and the other refs' addresses are kept. The URL is the page's.
 - `onProgress`: The progress callback threw, or returned a promise that rejected. The result it was called for is kept.
 - `onStep`: The step callback threw, or returned a promise that rejected. Discovery continues.
 

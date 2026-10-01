@@ -1,3 +1,5 @@
 export * from '../feeds/defaults.js'
+export * from '../feeds/enrich.js'
 export * from '../feeds/extractors.js'
+export { simplecastEnricher } from '../feeds/platforms/simplecast.js'
 export * from '../feeds/types.js'

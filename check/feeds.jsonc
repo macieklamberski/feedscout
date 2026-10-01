@@ -839,6 +839,9 @@
   "shopify": {
     "shopify:blog": "https://www.allbirds.com/blogs/news.atom"
   },
+  "simplecast": {
+    "simplecast:podcast": "https://feeds.simplecast.com/KqgBcmTA"
+  },
   "smf": {
     "smf:board": [
       "https://forum.pellesc.de/index.php?action=.xml;type=rss2;board=18",
