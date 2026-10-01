@@ -54,6 +54,10 @@ describe('togetterHandler', () => {
   })
 
   describe('resolve', () => {
+    it('should return empty array for a URL outside Togetter', () => {
+      expect(togetterHandler.resolve('https://example.com/')).toEqual([])
+    })
+
     it('should return the curator and popular feeds for a curator page', () => {
       const value = 'https://togetter.com/id/example'
       const expected = [

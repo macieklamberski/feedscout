@@ -168,6 +168,10 @@ describe('youtubeHandler', () => {
   })
 
   describe('resolve', () => {
+    it('should return empty array for a URL outside YouTube', () => {
+      expect(youtubeHandler.resolve('https://example.com/')).toEqual([])
+    })
+
     const expectedChannelFeeds = [
       {
         uri: [

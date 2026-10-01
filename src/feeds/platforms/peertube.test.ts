@@ -87,6 +87,10 @@ describe('peertubeHandler', () => {
   })
 
   describe('resolve', () => {
+    it('should return empty array for a URL that does not parse', () => {
+      expect(peertubeHandler.resolve('not-a-url')).toEqual([])
+    })
+
     it('should return the channel and instance feeds', () => {
       const value = 'https://example.org/c/channel/videos'
       const expected = [
