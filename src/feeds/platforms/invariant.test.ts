@@ -34,6 +34,7 @@ import { peertubeHandler } from './peertube.js'
 import { phpbbHandler } from './phpbb.js'
 import { pixelfedHandler } from './pixelfed.js'
 import { pleromaHandler } from './pleroma.js'
+import { pmwikiHandler } from './pmwiki.js'
 import { podhomeHandler } from './podhome.js'
 import { podloveHandler } from './podlove.js'
 import { powerpressHandler } from './powerpress.js'
@@ -159,6 +160,7 @@ const cases: Array<Case> = [
     pleromaHandler,
     '<script id="initial-results" type="application/json">{"/api/pleroma/frontend_configurations":{}}</script>',
   ],
+  ['pmwiki', pmwikiHandler, '<!--HTMLHeader-->'],
   [
     'podhome',
     podhomeHandler,

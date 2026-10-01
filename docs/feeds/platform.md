@@ -1854,6 +1854,19 @@ Discovers RSS and Atom feeds for Teletype.in blogs.
 | `teletype.in/@{user}` | Posts feed (RSS + Atom) |
 | `teletype.in/@{user}/{post}` | Posts feed (RSS + Atom) |
 
+### PmWiki
+
+Discovers the recent changes feeds of a PmWiki wiki. Detected by the `<!--HTMLHeader-->` comment every skin prints, so any domain is covered. A wiki under a sub-path gets its feeds there.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `{wiki}/{Group}/{Page}` | Group recent changes + site recent changes (RSS + Atom) |
+| `{wiki}?n={Group}.{Page}` | Group recent changes + site recent changes (RSS + Atom) |
+| Any other page | Site recent changes (RSS + Atom) |
+
+> [!NOTE]
+> Feeds are off in a default PmWiki install and a wiki owner turns them on, so many wikis answer these URLs with the page itself.
+
 ## Basic Usage
 
 ```typescript
@@ -2002,6 +2015,7 @@ import {
   pixelfedHandler,
   pleromaHandler,
   plurkHandler,
+  pmwikiHandler,
   podbeanHandler,
   podhomeHandler,
   podigeeHandler,
