@@ -128,6 +128,7 @@ import { pinterestHandler } from './platforms/pinterest.js'
 import { pixelfedHandler } from './platforms/pixelfed.js'
 import { pleromaHandler } from './platforms/pleroma.js'
 import { plurkHandler } from './platforms/plurk.js'
+import { pmwikiHandler } from './platforms/pmwiki.js'
 import { podbeanHandler } from './platforms/podbean.js'
 import { podhomeHandler } from './platforms/podhome.js'
 import { podigeeHandler } from './platforms/podigee.js'
@@ -444,6 +445,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     pixelfedHandler,
     pleromaHandler,
     plurkHandler,
+    pmwikiHandler,
     podbeanHandler,
     podhomeHandler,
     podigeeHandler,

@@ -447,6 +447,8 @@
     "launchpad:branch": "Branch",
     "launchpad:branches": "Branches",
     "launchpad:revisions": "Revisions",
-    "teletype:posts": "Posts"
+    "teletype:posts": "Posts",
+    "pmwiki:group-changes": "Group changes",
+    "pmwiki:site-changes": "Site changes"
   }
 }

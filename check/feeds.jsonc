@@ -743,6 +743,16 @@
     "plurk:plurks": "https://www.plurk.com/plurkoffice.xml",
     "plurk:responses": "https://www.plurk.com/p/3j6p8yayds.xml"
   },
+  "pmwiki": {
+    "pmwiki:group-changes": [
+      "https://www.pmwiki.org/wiki?n=PmWiki.RecentChanges&action=rss",
+      "https://www.pmwiki.org/wiki?n=PmWiki.RecentChanges&action=atom"
+    ],
+    "pmwiki:site-changes": [
+      "https://www.pmwiki.org/wiki?n=Site.AllRecentChanges&action=rss",
+      "https://www.pmwiki.org/wiki?n=Site.AllRecentChanges&action=atom"
+    ]
+  },
   "podbean": {
     "podbean:podcast": "https://feed.podbean.com/podcast/feed.xml"
   },
