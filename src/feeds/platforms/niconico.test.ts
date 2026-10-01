@@ -1,5 +1,33 @@
 import { describe, expect, it } from 'bun:test'
-import { niconicoHandler } from './niconico.js'
+import { type NiconicoUrl, niconicoHandler, parseNiconicoUrl } from './niconico.js'
+
+describe('parseNiconicoUrl', () => {
+  it('should return the channel for a channel page', () => {
+    const expected: NiconicoUrl = { kind: 'channel', channel: 'examplechannel' }
+
+    expect(parseNiconicoUrl('https://ch.nicovideo.jp/examplechannel')).toEqual(expected)
+  })
+
+  it('should return the live page of a channel', () => {
+    const expected: NiconicoUrl = { kind: 'live', channel: 'examplechannel' }
+
+    expect(parseNiconicoUrl('https://ch.nicovideo.jp/examplechannel/live')).toEqual(expected)
+  })
+
+  it('should return the blomaga page of a channel', () => {
+    const expected: NiconicoUrl = { kind: 'blomaga', channel: 'examplechannel' }
+
+    expect(parseNiconicoUrl('https://ch.nicovideo.jp/examplechannel/Blomaga')).toEqual(expected)
+  })
+
+  it('should return undefined for a site route', () => {
+    expect(parseNiconicoUrl('https://ch.nicovideo.jp/portal')).toBeUndefined()
+  })
+
+  it('should return undefined for another host', () => {
+    expect(parseNiconicoUrl('https://example.com/examplechannel')).toBeUndefined()
+  })
+})
 
 describe('niconicoHandler', () => {
   describe('match', () => {
@@ -45,6 +73,10 @@ describe('niconicoHandler', () => {
   })
 
   describe('resolve', () => {
+    it('should return empty array for a URL outside niconico', () => {
+      expect(niconicoHandler.resolve('https://example.com/')).toEqual([])
+    })
+
     it('should return the video, live and blog feeds for a channel page', () => {
       const value = 'https://ch.nicovideo.jp/examplechannel'
       const expected = [

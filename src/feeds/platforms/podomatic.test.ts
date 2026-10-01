@@ -1,5 +1,31 @@
 import { describe, expect, it } from 'bun:test'
-import { podomaticHandler } from './podomatic.js'
+import { type PodomaticUrl, parsePodomaticUrl, podomaticHandler } from './podomatic.js'
+
+describe('parsePodomaticUrl', () => {
+  it('should return the podcast for a show subdomain', () => {
+    const expected: PodomaticUrl = { kind: 'podcast', show: 'example-show' }
+
+    expect(parsePodomaticUrl('https://example-show.podomatic.com/')).toEqual(expected)
+  })
+
+  it('should return the podcast for a directory path', () => {
+    const expected: PodomaticUrl = { kind: 'podcast', show: 'example-show' }
+
+    expect(parsePodomaticUrl('https://www.podomatic.com/podcasts/example-show')).toEqual(expected)
+  })
+
+  it('should return undefined for the directory index', () => {
+    expect(parsePodomaticUrl('https://www.podomatic.com/podcasts')).toBeUndefined()
+  })
+
+  it('should return undefined for an infrastructure subdomain', () => {
+    expect(parsePodomaticUrl('https://api.podomatic.com/')).toBeUndefined()
+  })
+
+  it('should return undefined for another host', () => {
+    expect(parsePodomaticUrl('https://example.com/podcasts/example-show')).toBeUndefined()
+  })
+})
 
 describe('podomaticHandler', () => {
   describe('match', () => {

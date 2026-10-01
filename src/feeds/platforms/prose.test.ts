@@ -1,5 +1,29 @@
 import { describe, expect, it } from 'bun:test'
-import { proseHandler } from './prose.js'
+import { type ProseUrl, parseProseUrl, proseHandler } from './prose.js'
+
+describe('parseProseUrl', () => {
+  it('should return the home page for the apex host', () => {
+    const expected: ProseUrl = { kind: 'home' }
+
+    expect(parseProseUrl('https://prose.sh/')).toEqual(expected)
+  })
+
+  it('should return the tag for a tag query', () => {
+    const expected: ProseUrl = { kind: 'tag', tag: 'go' }
+
+    expect(parseProseUrl('https://example.prose.sh/?tag=go')).toEqual(expected)
+  })
+
+  it('should return the blog for a subdomain', () => {
+    const expected: ProseUrl = { kind: 'blog' }
+
+    expect(parseProseUrl('https://example.prose.sh/')).toEqual(expected)
+  })
+
+  it('should return undefined for another host', () => {
+    expect(parseProseUrl('https://example.com/')).toBeUndefined()
+  })
+})
 
 describe('proseHandler', () => {
   describe('match', () => {
@@ -21,6 +45,10 @@ describe('proseHandler', () => {
   })
 
   describe('resolve', () => {
+    it('should return empty array for a URL outside prose.sh', () => {
+      expect(proseHandler.resolve('https://example.com/')).toEqual([])
+    })
+
     it('should return feed URL for blog', () => {
       const value = 'https://alice.prose.sh'
       const expected = [

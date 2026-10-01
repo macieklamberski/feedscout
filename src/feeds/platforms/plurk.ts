@@ -6,6 +6,11 @@ import { composeHint } from '../../common/utils.js'
 // Generic covers post, user, userPath (guess, html).
 // Handler needed for: mobile, mobilePost.
 
+export type PlurkUrl =
+  | { kind: 'post'; postId: string }
+  | { kind: 'user'; username: string }
+  | { kind: 'page' }
+
 const hosts = ['plurk.com', 'www.plurk.com']
 
 // A root `.xml` path is a user's feed, so a guessed /feed.xml is the feed of a user named feed.
@@ -64,41 +69,65 @@ const mobilePaths = [
   'wallet',
 ]
 
+// A page that names no post or user still parses, so `match` stays true on every Plurk page and
+// the guess exclusion applies there.
+export const parsePlurkUrl = (url: string): PlurkUrl | undefined => {
+  if (!isHostOf(url, hosts)) {
+    return
+  }
+
+  const segments = getPathSegments(url)
+  const isMobile = isAnyOf(segments[0], 'm')
+  const [route, value] = isMobile ? segments.slice(1) : segments
+
+  if (isAnyOf(route, 'p')) {
+    if (!value) {
+      return { kind: 'page' }
+    }
+
+    return { kind: 'post', postId: value }
+  }
+
+  const username = isAnyOf(route, 'u') ? value : route
+
+  if (!username || isAnyOf(username, isMobile ? mobilePaths : excludedPaths)) {
+    return { kind: 'page' }
+  }
+
+  return { kind: 'user', username }
+}
+
 export const plurkHandler: PlatformHandler = {
   match: (url) => {
-    return isHostOf(url, hosts)
+    return parsePlurkUrl(url) !== undefined
   },
 
   resolve: (url) => {
-    const segments = getPathSegments(url)
-    const isMobile = isAnyOf(segments[0], 'm')
-    const [route, value] = isMobile ? segments.slice(1) : segments
+    const parsed = parsePlurkUrl(url)
 
-    if (isAnyOf(route, 'p')) {
-      if (!value) {
-        return []
-      }
+    if (!parsed) {
+      return []
+    }
 
+    if (parsed.kind === 'post') {
       return [
         {
-          uri: `https://www.plurk.com/p/${value}.xml`,
+          uri: `https://www.plurk.com/p/${parsed.postId}.xml`,
           hint: composeHint('plurk:responses'),
         },
       ]
     }
 
-    const username = isAnyOf(route, 'u') ? value : route
-
-    if (!username || isAnyOf(username, isMobile ? mobilePaths : excludedPaths)) {
-      return []
+    if (parsed.kind === 'user') {
+      return [
+        {
+          uri: `https://www.plurk.com/${parsed.username}.xml`,
+          hint: composeHint('plurk:plurks'),
+        },
+      ]
     }
 
-    return [
-      {
-        uri: `https://www.plurk.com/${username}.xml`,
-        hint: composeHint('plurk:plurks'),
-      },
-    ]
+    return []
   },
 
   guessExclusionRegex: userFeedRegex,

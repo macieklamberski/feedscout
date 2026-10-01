@@ -1,12 +1,34 @@
 import { describe, expect, it } from 'bun:test'
-import { rssComHandler } from './rssCom.js'
+import { parseRssComUrl, type RssComUrl, rssComHandler } from './rssCom.js'
+
+describe('parseRssComUrl', () => {
+  it('should return the podcast for a podcast page', () => {
+    const expected: RssComUrl = { kind: 'podcast', show: 'podcasting101' }
+
+    expect(parseRssComUrl('https://rss.com/podcasts/podcasting101')).toEqual(expected)
+  })
+
+  it('should return the podcast for a localized podcast page', () => {
+    const expected: RssComUrl = { kind: 'podcast', show: 'podcasting101' }
+
+    expect(parseRssComUrl('https://rss.com/es/podcasts/podcasting101')).toEqual(expected)
+  })
+
+  it('should return undefined for the root', () => {
+    expect(parseRssComUrl('https://rss.com/')).toBeUndefined()
+  })
+
+  it('should return undefined for another host', () => {
+    expect(parseRssComUrl('https://example.com/podcasts/podcasting101')).toBeUndefined()
+  })
+})
 
 describe('rssComHandler', () => {
   describe('match', () => {
     const values: Array<[boolean, string]> = [
       [true, 'https://rss.com/podcasts/podcasting101'],
       [true, 'https://www.rss.com/podcasts/some-show'],
-      [true, 'https://rss.com'],
+      [false, 'https://rss.com'],
       [false, 'https://example.com'],
     ]
 

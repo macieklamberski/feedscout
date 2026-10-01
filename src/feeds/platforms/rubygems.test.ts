@@ -1,5 +1,23 @@
 import { describe, expect, it } from 'bun:test'
-import { rubygemsHandler } from './rubygems.js'
+import { parseRubygemsUrl, type RubygemsUrl, rubygemsHandler } from './rubygems.js'
+
+describe('parseRubygemsUrl', () => {
+  it('should return the gem for a gem page', () => {
+    const expected: RubygemsUrl = { kind: 'gem', gem: 'RedCloth' }
+
+    expect(parseRubygemsUrl('https://rubygems.org/gems/RedCloth')).toEqual(expected)
+  })
+
+  it('should return the home page for any other page', () => {
+    const expected: RubygemsUrl = { kind: 'home' }
+
+    expect(parseRubygemsUrl('https://rubygems.org/')).toEqual(expected)
+  })
+
+  it('should return undefined for another host', () => {
+    expect(parseRubygemsUrl('https://example.com/gems/example')).toBeUndefined()
+  })
+})
 
 describe('rubygemsHandler', () => {
   describe('match', () => {
@@ -13,6 +31,10 @@ describe('rubygemsHandler', () => {
   })
 
   describe('resolve', () => {
+    it('should return empty array for a URL outside RubyGems', () => {
+      expect(rubygemsHandler.resolve('https://example.com/')).toEqual([])
+    })
+
     it('should return the versions feed for a gem page', () => {
       const value = 'https://rubygems.org/gems/example-gem'
       const expected = [

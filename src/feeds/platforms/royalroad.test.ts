@@ -1,5 +1,25 @@
 import { describe, expect, it } from 'bun:test'
-import { royalroadHandler } from './royalroad.js'
+import { parseRoyalroadUrl, type RoyalroadUrl, royalroadHandler } from './royalroad.js'
+
+describe('parseRoyalroadUrl', () => {
+  it('should return the fiction for a chapter page', () => {
+    const expected: RoyalroadUrl = { kind: 'fiction', fictionId: '21220' }
+
+    expect(
+      parseRoyalroadUrl(
+        'https://www.royalroad.com/fiction/21220/mother-of-learning/chapter/301778/1-good-morning-brother',
+      ),
+    ).toEqual(expected)
+  })
+
+  it('should return undefined for a profile page', () => {
+    expect(parseRoyalroadUrl('https://www.royalroad.com/profile/100374')).toBeUndefined()
+  })
+
+  it('should return undefined for another host', () => {
+    expect(parseRoyalroadUrl('https://example.com/fiction/21220')).toBeUndefined()
+  })
+})
 
 describe('royalroadHandler', () => {
   describe('match', () => {

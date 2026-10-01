@@ -1,5 +1,17 @@
 import { describe, expect, it } from 'bun:test'
-import { producthuntHandler } from './producthunt.js'
+import { type ProducthuntUrl, parseProducthuntUrl, producthuntHandler } from './producthunt.js'
+
+describe('parseProducthuntUrl', () => {
+  it('should return the home page for any page', () => {
+    const expected: ProducthuntUrl = { kind: 'home' }
+
+    expect(parseProducthuntUrl('https://www.producthunt.com/products/example')).toEqual(expected)
+  })
+
+  it('should return undefined for another host', () => {
+    expect(parseProducthuntUrl('https://example.com/')).toBeUndefined()
+  })
+})
 
 describe('producthuntHandler', () => {
   describe('match', () => {
@@ -21,6 +33,10 @@ describe('producthuntHandler', () => {
   })
 
   describe('resolve', () => {
+    it('should return empty array for a URL outside Product Hunt', () => {
+      expect(producthuntHandler.resolve('https://example.com/')).toEqual([])
+    })
+
     const expected = [
       {
         uri: 'https://www.producthunt.com/feed',
