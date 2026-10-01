@@ -702,9 +702,9 @@
   "phpbb": {
     "phpbb:active-topics": "https://forum.openoffice.org/en/forum/feed.php?mode=topics_active",
     "phpbb:forum": "https://forum.openmw.org/feed.php?f=2",
-    "phpbb:forums": "https://forum.openoffice.org/en/forum/feed.php?mode=forums",
+    "phpbb:forums": "https://forums.wesnoth.org/feed.php?mode=forums",
     "phpbb:new-topics": "https://forums.gentoo.org/feed.php?mode=topics",
-    "phpbb:news": "https://forum.openoffice.org/en/forum/feed.php?mode=news",
+    "phpbb:news": "https://forums.wesnoth.org/feed.php?mode=news",
     "phpbb:site": "https://forums.gentoo.org/feed.php",
     "phpbb:topic": "https://forums.gentoo.org/feed.php?t=410444"
   },
