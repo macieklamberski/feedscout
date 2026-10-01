@@ -45,8 +45,14 @@ describe('parseVelogUrl', () => {
     expect(parseVelogUrl('https://velog.io/tags/react')).toBeUndefined()
   })
 
-  it('should return undefined for the home page', () => {
-    expect(parseVelogUrl('https://velog.io/')).toBeUndefined()
+  it('should return the home page for the root', () => {
+    const expected: VelogUrl = { kind: 'home' }
+
+    expect(parseVelogUrl('https://velog.io/')).toEqual(expected)
+  })
+
+  it('should return undefined for another page', () => {
+    expect(parseVelogUrl('https://velog.io/trending')).toBeUndefined()
   })
 
   it('should return undefined for another host', () => {

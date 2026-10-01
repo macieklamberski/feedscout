@@ -42,15 +42,17 @@ const findProfileImageSrc = (content: string | undefined): string | undefined =>
 
 export const velogHandler: PlatformHandler = {
   match: (url) => {
-    return parseVelogUrl(url) !== undefined
+    return parseVelogUrl(url)?.kind === 'user'
   },
 
   resolve: (url, content) => {
-    const username = parseVelogUrl(url)?.username
+    const parsed = parseVelogUrl(url)
 
-    if (!username) {
+    if (parsed?.kind !== 'user') {
       return []
     }
+
+    const { username } = parsed
 
     const avatar = getSquareAvatar(findProfileImageSrc(content))
 

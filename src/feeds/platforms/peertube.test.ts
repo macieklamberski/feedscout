@@ -58,12 +58,16 @@ describe('parsePeertubeUrl', () => {
     expect(parsePeertubeUrl('https://example.org/C/news')).toEqual(expected)
   })
 
-  it('should return undefined for a video page', () => {
-    expect(parsePeertubeUrl('https://example.org/w/abc123')).toBeUndefined()
+  it('should return the instance for a video page', () => {
+    const expected: PeertubeUrl = { kind: 'instance' }
+
+    expect(parsePeertubeUrl('https://example.org/w/abc123')).toEqual(expected)
   })
 
-  it('should return undefined for the instance home', () => {
-    expect(parsePeertubeUrl('https://example.org/')).toBeUndefined()
+  it('should return the instance for the instance home', () => {
+    const expected: PeertubeUrl = { kind: 'instance' }
+
+    expect(parsePeertubeUrl('https://example.org/')).toEqual(expected)
   })
 
   it('should return undefined for an invalid URL', () => {
@@ -83,6 +87,10 @@ describe('peertubeHandler', () => {
   })
 
   describe('resolve', () => {
+    it('should return empty array for a URL that does not parse', () => {
+      expect(peertubeHandler.resolve('not-a-url')).toEqual([])
+    })
+
     it('should return the channel and instance feeds', () => {
       const value = 'https://example.org/c/channel/videos'
       const expected = [

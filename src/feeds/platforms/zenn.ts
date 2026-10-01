@@ -8,6 +8,7 @@ export type ZennUrl =
   | { kind: 'user'; username: string }
   | { kind: 'topic'; topic: string }
   | { kind: 'publication'; publication: string }
+  | { kind: 'home' }
 
 export const hosts = ['zenn.dev', 'www.zenn.dev']
 
@@ -54,7 +55,11 @@ export const parseZennUrl = (url: string): ZennUrl | undefined => {
 
   const [username] = getPathSegments(parsedUrl)
 
-  if (!username || isAnyOf(username, excludedPaths)) {
+  if (!username) {
+    return { kind: 'home' }
+  }
+
+  if (isAnyOf(username, excludedPaths)) {
     return
   }
 
@@ -63,13 +68,17 @@ export const parseZennUrl = (url: string): ZennUrl | undefined => {
 
 export const zennHandler: PlatformHandler = {
   match: (url) => {
-    return isHostOf(url, hosts)
+    return parseZennUrl(url) !== undefined
   },
 
   resolve: (url) => {
     const parsed = parseZennUrl(url)
 
-    if (parsed?.kind === 'topic') {
+    if (!parsed) {
+      return []
+    }
+
+    if (parsed.kind === 'topic') {
       return [
         {
           uri: `https://zenn.dev/topics/${parsed.topic}/feed`,
@@ -78,7 +87,7 @@ export const zennHandler: PlatformHandler = {
       ]
     }
 
-    if (parsed?.kind === 'publication') {
+    if (parsed.kind === 'publication') {
       return [
         {
           uri: `https://zenn.dev/p/${parsed.publication}/feed`,
@@ -87,7 +96,7 @@ export const zennHandler: PlatformHandler = {
       ]
     }
 
-    if (parsed?.kind === 'user') {
+    if (parsed.kind === 'user') {
       return [
         {
           uri: `https://zenn.dev/${parsed.username}/feed`,
@@ -96,16 +105,11 @@ export const zennHandler: PlatformHandler = {
       ]
     }
 
-    // Homepage: trending feed.
-    if (getPathSegments(url).length === 0) {
-      return [
-        {
-          uri: 'https://zenn.dev/feed',
-          hint: composeHint('zenn:trending'),
-        },
-      ]
-    }
-
-    return []
+    return [
+      {
+        uri: 'https://zenn.dev/feed',
+        hint: composeHint('zenn:trending'),
+      },
+    ]
   },
 }

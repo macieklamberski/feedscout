@@ -79,8 +79,10 @@ describe('parseZennUrl', () => {
     expect(parseZennUrl('https://zenn.dev/Topics')).toBeUndefined()
   })
 
-  it('should return undefined for the root', () => {
-    expect(parseZennUrl('https://zenn.dev/')).toBeUndefined()
+  it('should return the home page for the root', () => {
+    const expected: ZennUrl = { kind: 'home' }
+
+    expect(parseZennUrl('https://zenn.dev/')).toEqual(expected)
   })
 
   it('should return undefined for another host', () => {

@@ -30,16 +30,18 @@ export const parseSourceforgeUrl = (url: string): SourceforgeUrl | undefined => 
 
 export const sourceforgeHandler: PlatformHandler = {
   match: (url) => {
-    return isHostOf(url, hosts)
+    return parseSourceforgeUrl(url) !== undefined
   },
 
   resolve: (url) => {
-    const { origin } = new URL(url)
-    const project = parseSourceforgeUrl(url)?.project
+    const parsed = parseSourceforgeUrl(url)
 
-    if (!project) {
+    if (!parsed) {
       return []
     }
+
+    const { origin } = new URL(url)
+    const { project } = parsed
 
     return [
       {

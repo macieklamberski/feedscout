@@ -21,7 +21,10 @@ const findAppIcon = (content: string | undefined): string | undefined => {
 
 export const steamHandler: PlatformHandler = {
   match: (url) => {
-    return parseSteamUrl(url) !== undefined
+    const parsed = parseSteamUrl(url)
+
+    // The store front has no app or group whose icon it could show.
+    return parsed !== undefined && parsed.kind !== 'news'
   },
 
   // Age-gated store pages and store app news pages carry no app icon in their markup.

@@ -154,18 +154,23 @@ export const parseYoutubeUrl = (url: string): YoutubeUrl | undefined => {
 
 export const youtubeHandler: PlatformHandler = {
   match: (url) => {
-    return isHostOf(url, hosts)
+    return parseYoutubeUrl(url) !== undefined
   },
 
   resolve: (url, content) => {
     const parsed = parseYoutubeUrl(url)
+
+    if (!parsed) {
+      return []
+    }
+
     const uris: Array<DiscoverUriEntry> = []
 
-    if (parsed?.kind === 'channel' && parsed.channelId) {
+    if (parsed.kind === 'channel' && parsed.channelId) {
       pushChannelUris(uris, parsed.channelId)
     }
 
-    if (parsed?.playlistId) {
+    if (parsed.playlistId) {
       uris.push({
         uri: feedUrl('playlist_id', parsed.playlistId),
         hint: composeHint('youtube:playlist'),
@@ -173,7 +178,7 @@ export const youtubeHandler: PlatformHandler = {
     }
 
     // Handle, legacy user, custom URL and video pages carry the channel ID only in their content.
-    if (uris.length === 0 && content && parsed && parsed.kind !== 'playlist') {
+    if (uris.length === 0 && content && parsed.kind !== 'playlist') {
       const channelId = extractChannelIdFromContent(content)
 
       if (channelId) {

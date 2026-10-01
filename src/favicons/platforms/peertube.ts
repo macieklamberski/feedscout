@@ -22,7 +22,7 @@ const apiPaths: Record<string, string> = {
 const getProfileId = (url: string): string | undefined => {
   const parsed = parsePeertubeUrl(url)
 
-  if (!parsed) {
+  if (!parsed || parsed.kind === 'instance') {
     return
   }
 

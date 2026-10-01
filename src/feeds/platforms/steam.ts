@@ -5,7 +5,10 @@ import { composeHint } from '../../common/utils.js'
 // Discoverability: Not discoverable without handler.
 // Handler needed for: all shapes.
 
-export type SteamUrl = { kind: 'app'; appId: string } | { kind: 'group'; group: string }
+export type SteamUrl =
+  | { kind: 'app'; appId: string }
+  | { kind: 'group'; group: string }
+  | { kind: 'news' }
 
 const storeHosts = ['store.steampowered.com']
 const communityHosts = ['steamcommunity.com']
@@ -35,18 +38,28 @@ export const parseSteamUrl = (url: string): SteamUrl | undefined => {
   if (group && isHostOf(parsedUrl, communityHosts)) {
     return { kind: 'group', group }
   }
+
+  const { pathname } = parsedUrl
+
+  // The store front and its news hub link the global news feed.
+  if (isHostOf(parsedUrl, storeHosts) && (pathname === '/' || newsRegex.test(pathname))) {
+    return { kind: 'news' }
+  }
 }
 
 export const steamHandler: PlatformHandler = {
   match: (url) => {
-    return isHostOf(url, hosts)
+    return parseSteamUrl(url) !== undefined
   },
 
   resolve: (url) => {
-    const { pathname } = new URL(url)
     const parsed = parseSteamUrl(url)
 
-    if (parsed?.kind === 'app') {
+    if (!parsed) {
+      return []
+    }
+
+    if (parsed.kind === 'app') {
       return [
         {
           uri: `https://store.steampowered.com/feeds/news/app/${parsed.appId}/`,
@@ -55,7 +68,7 @@ export const steamHandler: PlatformHandler = {
       ]
     }
 
-    if (parsed?.kind === 'group') {
+    if (parsed.kind === 'group') {
       return [
         {
           uri: `https://steamcommunity.com/groups/${parsed.group}/rss`,
@@ -64,20 +77,15 @@ export const steamHandler: PlatformHandler = {
       ]
     }
 
-    // Global news feed on store root or /news/
-    if (isHostOf(url, storeHosts) && (pathname === '/' || newsRegex.test(pathname))) {
-      return [
-        {
-          uri: 'https://store.steampowered.com/feeds/news.xml',
-          hint: composeHint('steam:news-global'),
-        },
-        {
-          uri: 'https://store.steampowered.com/feeds/daily_deals.xml',
-          hint: composeHint('steam:daily-deals'),
-        },
-      ]
-    }
-
-    return []
+    return [
+      {
+        uri: 'https://store.steampowered.com/feeds/news.xml',
+        hint: composeHint('steam:news-global'),
+      },
+      {
+        uri: 'https://store.steampowered.com/feeds/daily_deals.xml',
+        hint: composeHint('steam:daily-deals'),
+      },
+    ]
   },
 }

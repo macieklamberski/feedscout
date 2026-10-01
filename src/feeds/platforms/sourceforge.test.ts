@@ -84,8 +84,8 @@ describe('sourceforgeHandler', () => {
       expect(sourceforgeHandler.match('https://sourceforge.net/projects/filezilla')).toBe(true)
     })
 
-    it('should return true for the homepage', () => {
-      expect(sourceforgeHandler.match('https://sourceforge.net')).toBe(true)
+    it('should return false for the homepage', () => {
+      expect(sourceforgeHandler.match('https://sourceforge.net')).toBe(false)
     })
 
     it('should return false for another host', () => {
