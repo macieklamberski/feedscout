@@ -1,3 +1,4 @@
+import { parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import {
   composeHint,
@@ -28,14 +29,31 @@ const getBasePath = (pathname: string, content?: string): string => {
   return input?.attribs.value ?? getScriptDirectory(pathname)
 }
 
+export type ShaarliPage = { baseUrl: string }
+
+const getShaarliPage = (url: string, content: string | undefined): ShaarliPage | undefined => {
+  const parsedUrl = parseUrl(url)
+
+  if (!parsedUrl) {
+    return
+  }
+
+  return { baseUrl: `${parsedUrl.origin}${getBasePath(parsedUrl.pathname, content)}` }
+}
+
 export const shaarliHandler: PlatformHandler = {
   match: (_url, content, headers) => {
     return hasMarker(content, headers, { html: isShaarliHtml, headers: isShaarliHeaders })
   },
 
   resolve: (url, content) => {
-    const { origin, pathname } = new URL(url)
-    const baseUrl = `${origin}${getBasePath(pathname, content)}`
+    const page = getShaarliPage(url, content)
+
+    if (!page) {
+      return []
+    }
+
+    const { baseUrl } = page
 
     return [
       { uri: `${baseUrl}/feed/rss`, hint: composeHint('shaarli:posts', 'rss') },

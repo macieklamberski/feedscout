@@ -1,3 +1,4 @@
+import { parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import {
@@ -33,23 +34,43 @@ export const isPhpbbHeaders = (headers: Headers): boolean => {
   })
 }
 
+export type PhpbbPage = { boardUrl: string; forumId?: string; topicId?: string }
+
+const getPhpbbPage = (url: string, content: string | undefined): PhpbbPage | undefined => {
+  const parsedUrl = parseUrl(url)
+
+  if (!parsedUrl) {
+    return
+  }
+
+  const { origin, pathname, search } = parsedUrl
+  // A post link, `viewtopic.php?p={id}`, names no topic, and the page's canonical link does.
+  const canonicalLink = findElement(content, (element) => {
+    return element.name === 'link' && element.attribs.rel === 'canonical'
+  })
+
+  return {
+    // A board is routinely mounted under a sub-path such as `/community`.
+    boardUrl: `${origin}${getScriptDirectory(pathname)}`,
+    forumId: search.match(forumIdRegex)?.[1],
+    topicId:
+      search.match(topicIdRegex)?.[1] ?? canonicalLink?.attribs.href?.match(topicIdRegex)?.[1],
+  }
+}
+
 export const phpbbHandler: PlatformHandler = {
   match: (_url, content, headers) => {
     return hasMarker(content, headers, { html: isPhpbbHtml, headers: isPhpbbHeaders })
   },
 
   resolve: (url, content) => {
-    const { origin, pathname, search } = new URL(url)
-    // A board is routinely mounted under a sub-path such as `/community`.
-    const boardPath = getScriptDirectory(pathname)
-    const boardUrl = `${origin}${boardPath}`
-    const forumId = search.match(forumIdRegex)?.[1]
-    // A post link, `viewtopic.php?p={id}`, names no topic, and the page's canonical link does.
-    const canonicalLink = findElement(content, (element) => {
-      return element.name === 'link' && element.attribs.rel === 'canonical'
-    })
-    const topicId =
-      search.match(topicIdRegex)?.[1] ?? canonicalLink?.attribs.href?.match(topicIdRegex)?.[1]
+    const page = getPhpbbPage(url, content)
+
+    if (!page) {
+      return []
+    }
+
+    const { boardUrl, forumId, topicId } = page
     const uris: Array<DiscoverUriEntry> = []
 
     if (topicId) {

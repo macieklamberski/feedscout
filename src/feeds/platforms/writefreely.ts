@@ -64,6 +64,24 @@ export const isWritefreelyHtml = (content: string): boolean => {
   )
 }
 
+export type WritefreelyPage = { blogPath: string; tag?: string }
+
+const getWritefreelyPage = (
+  url: string,
+  content: string | undefined,
+): WritefreelyPage | undefined => {
+  const urlBlogPath = getUrlBlogPath(url)
+
+  if (!urlBlogPath) {
+    return
+  }
+
+  return {
+    blogPath: getBlogPath(content) ?? urlBlogPath,
+    tag: new URL(url).pathname.match(tagPathRegex)?.[1],
+  }
+}
+
 export const writefreelyHandler: PlatformHandler = {
   match: (url, content, headers) => {
     if (!hasMarker(content, headers, { html: isWritefreelyHtml })) {
@@ -74,15 +92,14 @@ export const writefreelyHandler: PlatformHandler = {
   },
 
   resolve: (url, content) => {
-    const { origin, pathname } = new URL(url)
-    const urlBlogPath = getUrlBlogPath(url)
+    const page = getWritefreelyPage(url, content)
 
-    if (!urlBlogPath) {
+    if (!page) {
       return []
     }
 
-    const blogPath = getBlogPath(content) ?? urlBlogPath
-    const tag = pathname.match(tagPathRegex)?.[1]
+    const { origin } = new URL(url)
+    const { blogPath, tag } = page
     const uris: Array<DiscoverUriEntry> = []
 
     if (tag) {

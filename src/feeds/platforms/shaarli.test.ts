@@ -49,6 +49,10 @@ describe('shaarliHandler', () => {
   })
 
   describe('resolve', () => {
+    it('should return empty array for a URL that does not parse', () => {
+      expect(shaarliHandler.resolve('not-a-url')).toEqual([])
+    })
+
     it('should return the current and legacy feed shapes', () => {
       const value = 'https://example.org/'
       const expected: Array<DiscoverUriEntry> = [

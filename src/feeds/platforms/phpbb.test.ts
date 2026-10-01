@@ -52,6 +52,10 @@ describe('phpbbHandler', () => {
   })
 
   describe('resolve', () => {
+    it('should return empty array for a URL that does not parse', () => {
+      expect(phpbbHandler.resolve('not-a-url')).toEqual([])
+    })
+
     const getBoardFeeds = (boardUrl: string): Array<DiscoverUriEntry> => {
       return [
         { uri: `${boardUrl}/feed.php`, hint: { key: 'phpbb:site', label: 'Site' } },

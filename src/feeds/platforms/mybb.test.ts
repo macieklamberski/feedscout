@@ -79,6 +79,10 @@ describe('mybbHandler', () => {
   })
 
   describe('resolve', () => {
+    it('should return empty array for a URL that does not parse', () => {
+      expect(mybbHandler.resolve('not-a-url')).toEqual([])
+    })
+
     it('should build the board feeds from the root path', () => {
       const value = 'https://example.com/community/index.php'
 

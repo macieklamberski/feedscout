@@ -11,9 +11,11 @@ const feedPathRegex = /^\/rss\/[^/]+$/
 
 // Every show site, on serve.podhome.fm or a custom domain, loads the servesite assets and links
 // the show feed at serve.podhome.fm/rss/{id}, an id the page URL does not carry.
-const getFeedUrls = (url: string, content: string | undefined): Array<string> => {
+export type PodhomePage = { feedUrls: Array<string> }
+
+const getPodhomePage = (url: string, content: string | undefined): PodhomePage | undefined => {
   if (!content?.includes(assetPath)) {
-    return []
+    return
   }
 
   const links = findElements(content, (element) => {
@@ -33,16 +35,26 @@ const getFeedUrls = (url: string, content: string | undefined): Array<string> =>
     }
   }
 
-  return feedUrls
+  if (feedUrls.length === 0) {
+    return
+  }
+
+  return { feedUrls }
 }
 
 export const podhomeHandler: PlatformHandler = {
   match: (url, content) => {
-    return getFeedUrls(url, content).length > 0
+    return getPodhomePage(url, content) !== undefined
   },
 
   resolve: (url, content) => {
-    return getFeedUrls(url, content).map((uri) => {
+    const page = getPodhomePage(url, content)
+
+    if (!page) {
+      return []
+    }
+
+    return page.feedUrls.map((uri) => {
       return { uri, hint: composeHint('podhome:podcast') }
     })
   },

@@ -44,23 +44,35 @@ const getPageName = (content: string | undefined): string | undefined => {
   return JSON.parse(pageName)
 }
 
+export type MediawikiPage = { scriptUrl: string; pageName?: string }
+
+const getMediawikiPage = (url: string, content: string | undefined): MediawikiPage | undefined => {
+  const rsdHref = getRsdHref(content)
+
+  if (!rsdHref) {
+    return
+  }
+
+  // The RSD link is often protocol-relative and names the wiki's canonical server.
+  const { origin } = new URL(url)
+  const scriptPath = getScriptDirectory(new URL(rsdHref, url).pathname)
+
+  return { scriptUrl: `${origin}${scriptPath}/index.php`, pageName: getPageName(content) }
+}
+
 export const mediawikiHandler: PlatformHandler = {
   match: (_url, content, headers) => {
     return hasMarker(content, headers, { html: isMediawikiHtml })
   },
 
   resolve: (url, content) => {
-    const rsdHref = getRsdHref(content)
+    const page = getMediawikiPage(url, content)
 
-    if (!rsdHref) {
+    if (!page) {
       return []
     }
 
-    // The RSD link is often protocol-relative and names the wiki's canonical server.
-    const { origin } = new URL(url)
-    const scriptPath = getScriptDirectory(new URL(rsdHref, url).pathname)
-    const scriptUrl = `${origin}${scriptPath}/index.php`
-    const pageName = getPageName(content)
+    const { scriptUrl, pageName } = page
     const uris: Array<DiscoverUriEntry> = []
 
     if (pageName) {

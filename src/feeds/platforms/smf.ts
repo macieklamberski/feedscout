@@ -3,7 +3,7 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, findElement, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic partly covers board, forum, topic.
+// Generic covers forum (html), partly covers board, topic.
 
 const scriptUrlRegex = /var smf_scripturl = "([^"]+)"/
 const boardIdRegex = /[?;&]board=(\d+)/
@@ -28,22 +28,34 @@ const getBoardId = (url: string, content: string): string | undefined => {
   return indexLink?.attribs.href?.match(boardIdRegex)?.[1]
 }
 
+export type SmfPage = { feedUrl: string; boardId?: string }
+
+const getSmfPage = (url: string, content: string | undefined): SmfPage | undefined => {
+  const scriptUrl = content?.match(scriptUrlRegex)?.[1]
+
+  if (!content || !scriptUrl) {
+    return
+  }
+
+  // A guest without cookies gets the script URL with a `PHPSESSID` query appended.
+  const { origin, pathname } = new URL(scriptUrl, url)
+
+  return { feedUrl: `${origin}${pathname}?action=.xml`, boardId: getBoardId(url, content) }
+}
+
 export const smfHandler: PlatformHandler = {
   match: (_url, content, headers) => {
     return hasMarker(content, headers, { html: isSmfHtml })
   },
 
   resolve: (url, content) => {
-    const scriptUrl = content?.match(scriptUrlRegex)?.[1]
+    const page = getSmfPage(url, content)
 
-    if (!content || !scriptUrl) {
+    if (!page) {
       return []
     }
 
-    // A guest without cookies gets the script URL with a `PHPSESSID` query appended.
-    const { origin, pathname } = new URL(scriptUrl, url)
-    const feedUrl = `${origin}${pathname}?action=.xml`
-    const boardId = getBoardId(url, content)
+    const { feedUrl, boardId } = page
     const uris: Array<DiscoverUriEntry> = []
 
     if (boardId) {

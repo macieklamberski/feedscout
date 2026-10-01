@@ -1,3 +1,4 @@
+import { parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import {
@@ -80,14 +81,30 @@ const getForumId = (url: string, content?: string): string | undefined => {
   }
 }
 
+export type MybbPage = { boardUrl: string; forumId?: string }
+
+const getMybbPage = (url: string, content: string | undefined): MybbPage | undefined => {
+  if (!parseUrl(url)) {
+    return
+  }
+
+  return { boardUrl: getBoardUrl(url, content), forumId: getForumId(url, content) }
+}
+
 export const mybbHandler: PlatformHandler = {
   match: (_url, content, headers) => {
     return hasMarker(content, headers, { html: isMybbHtml, headers: isMybbHeaders })
   },
 
   resolve: (url, content) => {
-    const feedUrl = `${getBoardUrl(url, content)}/syndication.php`
-    const forumId = getForumId(url, content)
+    const page = getMybbPage(url, content)
+
+    if (!page) {
+      return []
+    }
+
+    const feedUrl = `${page.boardUrl}/syndication.php`
+    const { forumId } = page
     const uris: Array<DiscoverUriEntry> = []
 
     if (forumId) {
