@@ -99,7 +99,7 @@ describe('doubanHandler', () => {
       const expected = [
         {
           uri: 'https://www.douban.com/feed/subject/1084336/reviews',
-          hint: { key: 'douban:subjectReviews', label: 'Subject reviews' },
+          hint: { key: 'douban:subject-reviews', label: 'Subject reviews' },
         },
       ]
 
@@ -111,7 +111,7 @@ describe('doubanHandler', () => {
       const expected = [
         {
           uri: 'https://www.douban.com/feed/subject/1084336/reviews',
-          hint: { key: 'douban:subjectReviews', label: 'Subject reviews' },
+          hint: { key: 'douban:subject-reviews', label: 'Subject reviews' },
         },
       ]
 
@@ -123,19 +123,19 @@ describe('doubanHandler', () => {
       const expected = [
         {
           uri: 'https://www.douban.com/feed/review/book',
-          hint: { key: 'douban:reviews', label: 'Reviews' },
+          hint: { key: 'douban:book-reviews', label: 'Book reviews' },
         },
         {
           uri: 'https://www.douban.com/feed/review/movie',
-          hint: { key: 'douban:reviews', label: 'Reviews' },
+          hint: { key: 'douban:movie-reviews', label: 'Movie reviews' },
         },
         {
           uri: 'https://www.douban.com/feed/review/music',
-          hint: { key: 'douban:reviews', label: 'Reviews' },
+          hint: { key: 'douban:music-reviews', label: 'Music reviews' },
         },
         {
           uri: 'https://www.douban.com/feed/review/drama',
-          hint: { key: 'douban:reviews', label: 'Reviews' },
+          hint: { key: 'douban:drama-reviews', label: 'Drama reviews' },
         },
       ]
 
@@ -173,7 +173,7 @@ describe('doubanHandler', () => {
       const expected = [
         {
           uri: 'https://www.douban.com/feed/subject/36873464/reviews',
-          hint: { key: 'douban:subjectReviews', label: 'Subject reviews' },
+          hint: { key: 'douban:subject-reviews', label: 'Subject reviews' },
         },
       ]
 
