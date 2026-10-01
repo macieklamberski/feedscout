@@ -1,5 +1,89 @@
 import { describe, expect, it } from 'bun:test'
-import { itchioHandler } from './itchio.js'
+import { type ItchioUrl, itchioHandler, parseItchioUrl } from './itchio.js'
+
+describe('parseItchioUrl', () => {
+  it('should return the game for a game page', () => {
+    const expected: ItchioUrl = { kind: 'game', creator: 'creator', game: 'mygame' }
+
+    expect(parseItchioUrl('https://creator.itch.io/mygame')).toEqual(expected)
+  })
+
+  it('should return the creator for a creator subdomain', () => {
+    const expected: ItchioUrl = { kind: 'creator', creator: 'creator' }
+
+    expect(parseItchioUrl('https://creator.itch.io/')).toEqual(expected)
+  })
+
+  it('should return the creator for a games by page', () => {
+    const expected: ItchioUrl = { kind: 'creator', creator: 'creator' }
+
+    expect(parseItchioUrl('https://itch.io/games/by-creator')).toEqual(expected)
+  })
+
+  it('should return the tag for a tag page', () => {
+    const expected: ItchioUrl = { kind: 'tag', tag: 'horror' }
+
+    expect(parseItchioUrl('https://itch.io/games/tag-horror')).toEqual(expected)
+  })
+
+  it('should return the platform for a platform page', () => {
+    const expected: ItchioUrl = { kind: 'platform', platform: 'linux' }
+
+    expect(parseItchioUrl('https://itch.io/games/platform-linux')).toEqual(expected)
+  })
+
+  it('should return the genre for a genre page', () => {
+    const expected: ItchioUrl = { kind: 'genre', genre: 'action' }
+
+    expect(parseItchioUrl('https://itch.io/games/genre-action')).toEqual(expected)
+  })
+
+  it('should return the engine for a made-with page', () => {
+    const expected: ItchioUrl = { kind: 'madeWith', engine: 'godot' }
+
+    expect(parseItchioUrl('https://itch.io/games/made-with-godot')).toEqual(expected)
+  })
+
+  it('should return the sort for a sorted games page', () => {
+    const expected: ItchioUrl = { kind: 'games', sort: 'newest' }
+
+    expect(parseItchioUrl('https://itch.io/games/newest')).toEqual(expected)
+  })
+
+  it('should return the games page', () => {
+    const expected: ItchioUrl = { kind: 'games' }
+
+    expect(parseItchioUrl('https://itch.io/games')).toEqual(expected)
+  })
+
+  it('should return the devlogs page', () => {
+    const expected: ItchioUrl = { kind: 'devlogs' }
+
+    expect(parseItchioUrl('https://itch.io/devlogs')).toEqual(expected)
+  })
+
+  it('should return the blog page', () => {
+    const expected: ItchioUrl = { kind: 'blog' }
+
+    expect(parseItchioUrl('https://itch.io/blog')).toEqual(expected)
+  })
+
+  it('should return the section for a section page', () => {
+    const expected: ItchioUrl = { kind: 'section', section: 'tools' }
+
+    expect(parseItchioUrl('https://itch.io/tools')).toEqual(expected)
+  })
+
+  it('should return the home page with its path for any other page', () => {
+    const expected: ItchioUrl = { kind: 'home', path: '/' }
+
+    expect(parseItchioUrl('https://itch.io/')).toEqual(expected)
+  })
+
+  it('should return undefined for another host', () => {
+    expect(parseItchioUrl('https://example.com/')).toBeUndefined()
+  })
+})
 
 describe('itchioHandler', () => {
   describe('match', () => {
@@ -22,6 +106,10 @@ describe('itchioHandler', () => {
   })
 
   describe('resolve', () => {
+    it('should return empty array for a URL outside itch.io', () => {
+      expect(itchioHandler.resolve('https://example.com/')).toEqual([])
+    })
+
     it('should return devlog feed for game page on subdomain', () => {
       const value = 'https://bob.itch.io/a-tavern-for-tea'
       const expected = [

@@ -4,25 +4,40 @@ import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
+export type ListedUrl = { kind: 'blog'; username: string }
+
 const hosts = ['listed.to', 'www.listed.to']
 const userRegex = /^\/@([^/]+)/
 
+export const parseListedUrl = (url: string): ListedUrl | undefined => {
+  if (!isHostOf(url, hosts)) {
+    return
+  }
+
+  const username = new URL(url).pathname.match(userRegex)?.[1]
+
+  if (!username) {
+    return
+  }
+
+  return { kind: 'blog', username }
+}
+
 export const listedHandler: PlatformHandler = {
   match: (url) => {
-    return isHostOf(url, hosts)
+    return parseListedUrl(url) !== undefined
   },
 
   resolve: (url) => {
-    const { pathname } = new URL(url)
-    const userMatch = pathname.match(userRegex)
+    const parsed = parseListedUrl(url)
 
-    if (!userMatch?.[1]) {
+    if (!parsed) {
       return []
     }
 
     return [
       {
-        uri: `https://listed.to/@${userMatch[1]}/feed.rss`,
+        uri: `https://listed.to/@${parsed.username}/feed.rss`,
         hint: composeHint('listed:blog'),
       },
     ]

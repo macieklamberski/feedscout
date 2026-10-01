@@ -1,6 +1,40 @@
 import { describe, expect, it } from 'bun:test'
 import type { DiscoverUriEntry } from '../../common/types.js'
-import { livejournalHandler } from './livejournal.js'
+import { type LivejournalUrl, livejournalHandler, parseLivejournalUrl } from './livejournal.js'
+
+describe('parseLivejournalUrl', () => {
+  it('should return the journal for a journal subdomain', () => {
+    const expected: LivejournalUrl = { kind: 'journal' }
+
+    expect(parseLivejournalUrl('https://example.livejournal.com/')).toEqual(expected)
+  })
+
+  it('should return the tag for a tag page', () => {
+    const expected: LivejournalUrl = { kind: 'journal', tag: 'books' }
+
+    expect(parseLivejournalUrl('https://example.livejournal.com/tag/books')).toEqual(expected)
+  })
+
+  it('should return the user for a www users path', () => {
+    const expected: LivejournalUrl = { kind: 'journal', username: 'news' }
+
+    expect(parseLivejournalUrl('https://www.livejournal.com/users/news')).toEqual(expected)
+  })
+
+  it('should return the user for a legacy users host page', () => {
+    const expected: LivejournalUrl = { kind: 'journal', username: 'news' }
+
+    expect(parseLivejournalUrl('https://users.livejournal.com/news')).toEqual(expected)
+  })
+
+  it('should return undefined for the syndicated host', () => {
+    expect(parseLivejournalUrl('https://syndicated.livejournal.com/feed')).toBeUndefined()
+  })
+
+  it('should return undefined for another host', () => {
+    expect(parseLivejournalUrl('https://example.com/')).toBeUndefined()
+  })
+})
 
 describe('livejournalHandler', () => {
   describe('match', () => {
@@ -29,6 +63,10 @@ describe('livejournalHandler', () => {
   })
 
   describe('resolve', () => {
+    it('should return empty array for a URL outside LiveJournal', () => {
+      expect(livejournalHandler.resolve('https://example.com/')).toEqual([])
+    })
+
     it('should return the tag feed for a capitalized tag segment', () => {
       const value = 'https://alice.livejournal.com/Tag/television'
       const expected: Array<DiscoverUriEntry> = [

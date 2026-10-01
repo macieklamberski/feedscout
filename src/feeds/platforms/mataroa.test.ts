@@ -1,5 +1,17 @@
 import { describe, expect, it } from 'bun:test'
-import { mataroaHandler } from './mataroa.js'
+import { type MataroaUrl, mataroaHandler, parseMataroaUrl } from './mataroa.js'
+
+describe('parseMataroaUrl', () => {
+  it('should return the blog for a blog subdomain', () => {
+    const expected: MataroaUrl = { kind: 'blog' }
+
+    expect(parseMataroaUrl('https://jane.mataroa.blog/')).toEqual(expected)
+  })
+
+  it('should return undefined for another host', () => {
+    expect(parseMataroaUrl('https://example.com/')).toBeUndefined()
+  })
+})
 
 describe('mataroaHandler', () => {
   describe('match', () => {
@@ -20,6 +32,10 @@ describe('mataroaHandler', () => {
   })
 
   describe('resolve', () => {
+    it('should return empty array for a URL outside Mataroa', () => {
+      expect(mataroaHandler.resolve('https://example.com/')).toEqual([])
+    })
+
     it('should return feed URL for blog', () => {
       const value = 'https://alice.mataroa.blog'
       const expected = [

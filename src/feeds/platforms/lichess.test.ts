@@ -1,5 +1,41 @@
 import { describe, expect, it } from 'bun:test'
-import { lichessHandler } from './lichess.js'
+import { type LichessUrl, lichessHandler, parseLichessUrl } from './lichess.js'
+
+describe('parseLichessUrl', () => {
+  it('should return the blog for a user blog page', () => {
+    const expected: LichessUrl = { kind: 'blog', username: 'thibault' }
+
+    expect(parseLichessUrl('https://lichess.org/@/thibault/blog')).toEqual(expected)
+  })
+
+  it('should return the language for a community blog page', () => {
+    const expected: LichessUrl = { kind: 'community', language: 'fr' }
+
+    expect(parseLichessUrl('https://lichess.org/fr/blog/community')).toEqual(expected)
+  })
+
+  it('should return the community blog page without a language', () => {
+    const expected: LichessUrl = { kind: 'community' }
+
+    expect(parseLichessUrl('https://lichess.org/blog/community')).toEqual(expected)
+  })
+
+  it('should return the official blog for the blog page', () => {
+    const expected: LichessUrl = { kind: 'officialBlog' }
+
+    expect(parseLichessUrl('https://lichess.org/blog')).toEqual(expected)
+  })
+
+  it('should return the home page for any other page', () => {
+    const expected: LichessUrl = { kind: 'home' }
+
+    expect(parseLichessUrl('https://lichess.org/@/thibault')).toEqual(expected)
+  })
+
+  it('should return undefined for another host', () => {
+    expect(parseLichessUrl('https://example.com/')).toBeUndefined()
+  })
+})
 
 describe('lichessHandler', () => {
   describe('match', () => {
@@ -13,6 +49,10 @@ describe('lichessHandler', () => {
   })
 
   describe('resolve', () => {
+    it('should return empty array for a URL outside Lichess', () => {
+      expect(lichessHandler.resolve('https://example.com/')).toEqual([])
+    })
+
     it('should return the blog feed for a user blog', () => {
       const value = 'https://lichess.org/@/thibault/blog'
       const expected = [

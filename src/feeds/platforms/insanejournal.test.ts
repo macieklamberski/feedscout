@@ -1,6 +1,50 @@
 import { describe, expect, it } from 'bun:test'
 import type { DiscoverUriEntry } from '../../common/types.js'
-import { insanejournalHandler } from './insanejournal.js'
+import {
+  type InsanejournalUrl,
+  insanejournalHandler,
+  parseInsanejournalUrl,
+} from './insanejournal.js'
+
+describe('parseInsanejournalUrl', () => {
+  it('should return the journal for a journal subdomain', () => {
+    const expected: InsanejournalUrl = { kind: 'journal' }
+
+    expect(parseInsanejournalUrl('https://example.insanejournal.com/')).toEqual(expected)
+  })
+
+  it('should return the user for a www users path', () => {
+    const expected: InsanejournalUrl = { kind: 'journal', username: 'jane' }
+
+    expect(parseInsanejournalUrl('https://www.insanejournal.com/users/jane')).toEqual(expected)
+  })
+
+  it('should return the asylum for a www asylum path', () => {
+    const expected: InsanejournalUrl = { kind: 'asylum', asylum: 'club' }
+
+    expect(parseInsanejournalUrl('https://www.insanejournal.com/asylum/club')).toEqual(expected)
+  })
+
+  it('should return the asylum for an asylums host page', () => {
+    const expected: InsanejournalUrl = { kind: 'asylum', asylum: 'club' }
+
+    expect(parseInsanejournalUrl('https://asylums.insanejournal.com/club')).toEqual(expected)
+  })
+
+  it('should return the syndicated feed for a feeds host page', () => {
+    const expected: InsanejournalUrl = { kind: 'syndicated', feed: 'news' }
+
+    expect(parseInsanejournalUrl('https://feeds.insanejournal.com/news')).toEqual(expected)
+  })
+
+  it('should return undefined for the bare www host', () => {
+    expect(parseInsanejournalUrl('https://www.insanejournal.com/')).toBeUndefined()
+  })
+
+  it('should return undefined for another host', () => {
+    expect(parseInsanejournalUrl('https://example.com/')).toBeUndefined()
+  })
+})
 
 describe('insanejournalHandler', () => {
   describe('match', () => {
@@ -30,6 +74,10 @@ describe('insanejournalHandler', () => {
   })
 
   describe('resolve', () => {
+    it('should return empty array for a URL outside InsaneJournal', () => {
+      expect(insanejournalHandler.resolve('https://example.com/')).toEqual([])
+    })
+
     it('should return RSS, Atom, and userpics feeds for journal subdomain', () => {
       const value = 'https://alice.insanejournal.com'
       const expected: Array<DiscoverUriEntry> = [

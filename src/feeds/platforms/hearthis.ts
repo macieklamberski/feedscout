@@ -4,6 +4,8 @@ import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
+export type HearthisUrl = { kind: 'profile'; username: string }
+
 const hosts = ['hearthis.at', 'www.hearthis.at']
 const excludedPaths = [
   'about',
@@ -17,27 +19,35 @@ const excludedPaths = [
   'terms',
 ]
 
+export const parseHearthisUrl = (url: string): HearthisUrl | undefined => {
+  if (!isHostOf(url, hosts)) {
+    return
+  }
+
+  const [username] = getPathSegments(url)
+
+  if (!username || isAnyOf(username, excludedPaths)) {
+    return
+  }
+
+  return { kind: 'profile', username }
+}
+
 export const hearthisHandler: PlatformHandler = {
   match: (url) => {
-    return isHostOf(url, hosts)
+    return parseHearthisUrl(url) !== undefined
   },
 
   resolve: (url) => {
-    const pathSegments = getPathSegments(url)
+    const parsed = parseHearthisUrl(url)
 
-    if (pathSegments.length === 0) {
-      return []
-    }
-
-    const username = pathSegments[0]
-
-    if (isAnyOf(username, excludedPaths)) {
+    if (!parsed) {
       return []
     }
 
     return [
       {
-        uri: `https://hearthis.at/${username}/podcast/`,
+        uri: `https://hearthis.at/${parsed.username}/podcast/`,
         hint: composeHint('hearthis:tracks'),
       },
       { uri: 'https://hearthis.at/new_tracks.rss', hint: composeHint('hearthis:new-tracks') },
