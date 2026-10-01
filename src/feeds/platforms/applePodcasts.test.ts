@@ -1,5 +1,37 @@
 import { describe, expect, it } from 'bun:test'
-import { applePodcastsHandler } from './applePodcasts.js'
+import {
+  type ApplePodcastsUrl,
+  applePodcastsHandler,
+  parseApplePodcastsUrl,
+} from './applePodcasts.js'
+
+describe('parseApplePodcastsUrl', () => {
+  it('should return the podcast for a podcast page', () => {
+    const expected: ApplePodcastsUrl = { kind: 'podcast' }
+
+    expect(
+      parseApplePodcastsUrl('https://podcasts.apple.com/us/podcast/the-daily/id1200361736'),
+    ).toEqual(expected)
+  })
+
+  it('should return the podcast for a page without locale and name', () => {
+    const expected: ApplePodcastsUrl = { kind: 'podcast' }
+
+    expect(parseApplePodcastsUrl('https://podcasts.apple.com/podcast/id1200361736')).toEqual(
+      expected,
+    )
+  })
+
+  it('should return undefined for a browse page', () => {
+    expect(parseApplePodcastsUrl('https://podcasts.apple.com/us/browse')).toBeUndefined()
+  })
+
+  it('should return undefined for another host', () => {
+    expect(
+      parseApplePodcastsUrl('https://example.com/us/podcast/the-daily/id1200361736'),
+    ).toBeUndefined()
+  })
+})
 
 describe('applePodcastsHandler', () => {
   describe('match', () => {
@@ -29,6 +61,10 @@ describe('applePodcastsHandler', () => {
   })
 
   describe('resolve', () => {
+    it('should return empty array for a URL outside the platform', () => {
+      expect(applePodcastsHandler.resolve('https://example.com/')).toEqual([])
+    })
+
     const contentWithFeedUrl = `
 			{"feedUrl":"https://feeds.example.com/the-daily","name":"The Daily"}
 		`

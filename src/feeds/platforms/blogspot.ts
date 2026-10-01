@@ -6,53 +6,71 @@ import { composeHint, findElement } from '../../common/utils.js'
 // Discoverability: Partially discoverable without handler.
 // Generic partly covers blog, label.
 
+export type BlogspotUrl = { kind: 'label'; label: string } | { kind: 'post' } | { kind: 'blog' }
+
 // Matches *.blogspot.com and country TLDs like *.blogspot.co.uk, *.blogspot.de, etc.
 const blogspotDomainRegex = /^.+\.blogspot\.(?:com|co\.[a-z]{2}|com\.[a-z]{2}|[a-z]{2,3})$/
 const labelRegex = /^\/search\/label\/([^/]+)/i
 const postRegex = /^\/\d{4}\/\d{2}\/[^/]+\.html$/i
 const postCommentsFeedRegex = /\/feeds\/(\d+)\/comments\/default/i
 
+export const parseBlogspotUrl = (url: string): BlogspotUrl | undefined => {
+  const parsedUrl = parseUrl(url)
+
+  if (!parsedUrl || !blogspotDomainRegex.test(parsedUrl.hostname)) {
+    return
+  }
+
+  const { pathname } = parsedUrl
+  // Label page: /search/label/{label}
+  const label = pathname.match(labelRegex)?.[1]
+
+  if (label) {
+    return { kind: 'label', label }
+  }
+
+  // Post page: /{year}/{month}/{slug}.html
+  if (postRegex.test(pathname)) {
+    return { kind: 'post' }
+  }
+
+  return { kind: 'blog' }
+}
+
 export const blogspotHandler: PlatformHandler = {
   match: (url) => {
-    const parsedUrl = parseUrl(url)
-
-    if (!parsedUrl) {
-      return false
-    }
-
-    return blogspotDomainRegex.test(parsedUrl.hostname)
+    return parseBlogspotUrl(url) !== undefined
   },
 
   resolve: (url, content) => {
-    const { origin, pathname } = new URL(url)
+    const parsed = parseBlogspotUrl(url)
+
+    if (!parsed) {
+      return []
+    }
+
+    const { origin } = new URL(url)
     const uris: Array<DiscoverUriEntry> = []
 
-    // Label page: /search/label/{label}
-    const labelMatch = pathname.match(labelRegex)
-
-    if (labelMatch?.[1]) {
-      const label = labelMatch[1]
-
+    if (parsed.kind === 'label') {
       uris.push({
-        uri: `${origin}/feeds/posts/default/-/${label}`,
+        uri: `${origin}/feeds/posts/default/-/${parsed.label}`,
         hint: composeHint('blogspot:label', 'atom'),
       })
       uris.push({
-        uri: `${origin}/feeds/posts/default/-/${label}?alt=rss`,
+        uri: `${origin}/feeds/posts/default/-/${parsed.label}?alt=rss`,
         hint: composeHint('blogspot:label', 'rss'),
       })
     }
 
-    // Post page: /{year}/{month}/{slug}.html — extract postId from content.
-    if (content && postRegex.test(pathname)) {
+    // The post id is not in the URL, so it is read from the comments feed link in the page.
+    if (parsed.kind === 'post' && content) {
       const commentsFeedLink = findElement(content, (element) => {
         return postCommentsFeedRegex.test(element.attribs.href ?? '')
       })
-      const postIdMatch = commentsFeedLink?.attribs.href?.match(postCommentsFeedRegex)
+      const postId = commentsFeedLink?.attribs.href?.match(postCommentsFeedRegex)?.[1]
 
-      if (postIdMatch?.[1]) {
-        const postId = postIdMatch[1]
-
+      if (postId) {
         uris.push({
           uri: `${origin}/feeds/${postId}/comments/default`,
           hint: composeHint('blogspot:post-comments', 'atom'),

@@ -4,20 +4,30 @@ import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
+export type Fc2Url = { kind: 'blog' }
+
 const blogHostRegex = /\.blog\d*\.fc2\.com$/i
+
+export const parseFc2Url = (url: string): Fc2Url | undefined => {
+  const parsedUrl = parseUrl(url)
+
+  if (!parsedUrl || !blogHostRegex.test(parsedUrl.hostname)) {
+    return
+  }
+
+  return { kind: 'blog' }
+}
 
 export const fc2Handler: PlatformHandler = {
   match: (url) => {
-    const parsedUrl = parseUrl(url)
-
-    if (!parsedUrl) {
-      return false
-    }
-
-    return blogHostRegex.test(parsedUrl.hostname)
+    return parseFc2Url(url) !== undefined
   },
 
   resolve: (url) => {
+    if (!parseFc2Url(url)) {
+      return []
+    }
+
     const { origin } = new URL(url)
 
     return [

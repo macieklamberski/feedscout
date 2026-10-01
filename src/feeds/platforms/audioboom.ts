@@ -1,34 +1,45 @@
 import { isHostOf } from 'trousse'
-import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
+export type AudioboomUrl = { kind: 'channel'; channelId: string }
+
 const hosts = ['audioboom.com', 'www.audioboom.com']
 const channelRegex = /^\/channels\/(\d+)/i
 
+export const parseAudioboomUrl = (url: string): AudioboomUrl | undefined => {
+  if (!isHostOf(url, hosts)) {
+    return
+  }
+
+  const channelId = new URL(url).pathname.match(channelRegex)?.[1]
+
+  if (!channelId) {
+    return
+  }
+
+  return { kind: 'channel', channelId }
+}
+
 export const audioboomHandler: PlatformHandler = {
   match: (url) => {
-    return isHostOf(url, hosts)
+    return parseAudioboomUrl(url) !== undefined
   },
 
   resolve: (url) => {
-    const { pathname } = new URL(url)
-    const match = pathname.match(channelRegex)
+    const parsed = parseAudioboomUrl(url)
 
-    if (!match?.[1]) {
+    if (!parsed) {
       return []
     }
 
-    const channelId = match[1]
-    const uris: Array<DiscoverUriEntry> = []
-
-    uris.push({
-      uri: `https://audioboom.com/channels/${channelId}.rss`,
-      hint: composeHint('audioboom:podcast'),
-    })
-
-    return uris
+    return [
+      {
+        uri: `https://audioboom.com/channels/${parsed.channelId}.rss`,
+        hint: composeHint('audioboom:podcast'),
+      },
+    ]
   },
 }

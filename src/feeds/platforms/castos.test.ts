@@ -1,5 +1,21 @@
 import { describe, expect, it } from 'bun:test'
-import { castosHandler } from './castos.js'
+import { type CastosUrl, castosHandler, parseCastosUrl } from './castos.js'
+
+describe('parseCastosUrl', () => {
+  it('should return the show for a show subdomain', () => {
+    const expected: CastosUrl = { kind: 'show', slug: 'myshow' }
+
+    expect(parseCastosUrl('https://myshow.castos.com/')).toEqual(expected)
+  })
+
+  it('should return undefined for an excluded subdomain', () => {
+    expect(parseCastosUrl('https://app.castos.com/')).toBeUndefined()
+  })
+
+  it('should return undefined for another host', () => {
+    expect(parseCastosUrl('https://example.com/')).toBeUndefined()
+  })
+})
 
 describe('castosHandler', () => {
   describe('match', () => {
@@ -20,6 +36,10 @@ describe('castosHandler', () => {
   })
 
   describe('resolve', () => {
+    it('should return empty array for a URL outside the platform', () => {
+      expect(castosHandler.resolve('https://example.com/')).toEqual([])
+    })
+
     it('should return feed URL linked from the page', () => {
       const value = 'https://alice-podcast.castos.com/episodes/first-episode'
       const content =

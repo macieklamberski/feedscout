@@ -1,5 +1,33 @@
 import { describe, expect, it } from 'bun:test'
-import { doubanHandler } from './douban.js'
+import { type DoubanUrl, doubanHandler, parseDoubanUrl } from './douban.js'
+
+describe('parseDoubanUrl', () => {
+  it('should return the user for a user page', () => {
+    const expected: DoubanUrl = { kind: 'user', username: 'ahbei' }
+
+    expect(parseDoubanUrl('https://www.douban.com/people/ahbei/')).toEqual(expected)
+  })
+
+  it('should return the subject for a subject page on a subdomain', () => {
+    const expected: DoubanUrl = { kind: 'subject', subjectId: '1292052' }
+
+    expect(parseDoubanUrl('https://movie.douban.com/subject/1292052/')).toEqual(expected)
+  })
+
+  it('should return the home page for the root', () => {
+    const expected: DoubanUrl = { kind: 'home' }
+
+    expect(parseDoubanUrl('https://www.douban.com/')).toEqual(expected)
+  })
+
+  it('should return undefined for another page', () => {
+    expect(parseDoubanUrl('https://www.douban.com/group/')).toBeUndefined()
+  })
+
+  it('should return undefined for another host', () => {
+    expect(parseDoubanUrl('https://example.com/people/ahbei/')).toBeUndefined()
+  })
+})
 
 describe('doubanHandler', () => {
   describe('match', () => {
@@ -22,6 +50,10 @@ describe('doubanHandler', () => {
   })
 
   describe('resolve', () => {
+    it('should return empty array for a URL outside the platform', () => {
+      expect(doubanHandler.resolve('https://example.com/')).toEqual([])
+    })
+
     it('should return interests, reviews, and notes feeds for user page', () => {
       const value = 'https://www.douban.com/people/ahbei/'
       const expected = [

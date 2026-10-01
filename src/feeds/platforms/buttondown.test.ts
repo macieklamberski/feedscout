@@ -1,12 +1,32 @@
 import { describe, expect, it } from 'bun:test'
-import { buttondownHandler } from './buttondown.js'
+import { type ButtondownUrl, buttondownHandler, parseButtondownUrl } from './buttondown.js'
+
+describe('parseButtondownUrl', () => {
+  it('should return the newsletter for a newsletter page', () => {
+    const expected: ButtondownUrl = { kind: 'newsletter', username: 'cassidoo' }
+
+    expect(parseButtondownUrl('https://buttondown.com/cassidoo')).toEqual(expected)
+  })
+
+  it('should return undefined for an excluded path', () => {
+    expect(parseButtondownUrl('https://buttondown.com/pricing')).toBeUndefined()
+  })
+
+  it('should return undefined for the root', () => {
+    expect(parseButtondownUrl('https://buttondown.com/')).toBeUndefined()
+  })
+
+  it('should return undefined for another host', () => {
+    expect(parseButtondownUrl('https://example.com/cassidoo')).toBeUndefined()
+  })
+})
 
 describe('buttondownHandler', () => {
   describe('match', () => {
     const values: Array<[boolean, string]> = [
       [true, 'https://buttondown.com/cassidoo'],
       [true, 'https://www.buttondown.com/user'],
-      [true, 'https://buttondown.com'],
+      [false, 'https://buttondown.com'],
       [true, 'https://buttondown.email/cassidoo'],
       [true, 'https://www.buttondown.email/cassidoo'],
       [false, 'https://example.com'],
@@ -22,6 +42,10 @@ describe('buttondownHandler', () => {
   })
 
   describe('resolve', () => {
+    it('should return empty array for a URL outside the platform', () => {
+      expect(buttondownHandler.resolve('https://example.com/')).toEqual([])
+    })
+
     it('should return feed URL for newsletter', () => {
       const value = 'https://buttondown.com/cassidoo'
       const expected = [

@@ -1,6 +1,30 @@
 import { describe, expect, it } from 'bun:test'
 import type { DiscoverUriEntry } from '../../common/types.js'
-import { bearblogHandler } from './bearblog.js'
+import { type BearblogUrl, bearblogHandler, parseBearblogUrl } from './bearblog.js'
+
+describe('parseBearblogUrl', () => {
+  it('should return the discover page for the apex host', () => {
+    const expected: BearblogUrl = { kind: 'discover' }
+
+    expect(parseBearblogUrl('https://bearblog.dev/')).toEqual(expected)
+  })
+
+  it('should return the blog for a subdomain', () => {
+    const expected: BearblogUrl = { kind: 'blog', tag: undefined }
+
+    expect(parseBearblogUrl('https://herman.bearblog.dev/')).toEqual(expected)
+  })
+
+  it('should return the blog with its tag for a tag filter', () => {
+    const expected: BearblogUrl = { kind: 'blog', tag: 'python' }
+
+    expect(parseBearblogUrl('https://herman.bearblog.dev/blog/?q=python')).toEqual(expected)
+  })
+
+  it('should return undefined for another host', () => {
+    expect(parseBearblogUrl('https://example.com/')).toBeUndefined()
+  })
+})
 
 describe('bearblogHandler', () => {
   describe('match', () => {
@@ -22,6 +46,10 @@ describe('bearblogHandler', () => {
   })
 
   describe('resolve', () => {
+    it('should return empty array for a URL outside the platform', () => {
+      expect(bearblogHandler.resolve('https://example.com/')).toEqual([])
+    })
+
     it('should return Atom and RSS feeds for blog', () => {
       const value = 'https://alice.bearblog.dev'
       const expected: Array<DiscoverUriEntry> = [

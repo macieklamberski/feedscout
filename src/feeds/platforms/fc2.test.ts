@@ -1,5 +1,23 @@
 import { describe, expect, it } from 'bun:test'
-import { fc2Handler } from './fc2.js'
+import { type Fc2Url, fc2Handler, parseFc2Url } from './fc2.js'
+
+describe('parseFc2Url', () => {
+  it('should return the blog for a blog host', () => {
+    const expected: Fc2Url = { kind: 'blog' }
+
+    expect(parseFc2Url('https://someone.blog.fc2.com/')).toEqual(expected)
+  })
+
+  it('should return the blog for a numbered blog host', () => {
+    const expected: Fc2Url = { kind: 'blog' }
+
+    expect(parseFc2Url('https://someone.blog123.fc2.com/')).toEqual(expected)
+  })
+
+  it('should return undefined for another host', () => {
+    expect(parseFc2Url('https://fc2.com/')).toBeUndefined()
+  })
+})
 
 describe('fc2Handler', () => {
   describe('match', () => {
@@ -25,6 +43,10 @@ describe('fc2Handler', () => {
   })
 
   describe('resolve', () => {
+    it('should return empty array for a URL outside the platform', () => {
+      expect(fc2Handler.resolve('https://example.com/')).toEqual([])
+    })
+
     it('should return the posts feed on the host in hand', () => {
       const value = 'https://example.blog.fc2.com/blog-entry-1.html'
       const expected = [

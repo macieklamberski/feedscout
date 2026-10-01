@@ -4,6 +4,8 @@ import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
+export type CastosUrl = { kind: 'show'; slug: string }
+
 const domains = ['castos.com']
 
 // The feed id is opaque, so it is read from the feed link every show page carries.
@@ -24,18 +26,28 @@ const excludedSubdomains = [
   'www',
 ]
 
+export const parseCastosUrl = (url: string): CastosUrl | undefined => {
+  const slug = getSubdomain(url, domains)
+
+  if (!slug || isAnyOf(slug, excludedSubdomains)) {
+    return
+  }
+
+  return { kind: 'show', slug }
+}
+
 export const castosHandler: PlatformHandler = {
   match: (url) => {
-    const slug = getSubdomain(url, domains)
-
-    if (!slug) {
-      return false
-    }
-
-    return !isAnyOf(slug, excludedSubdomains)
+    return parseCastosUrl(url) !== undefined
   },
 
   resolve: (url, content) => {
+    const parsed = parseCastosUrl(url)
+
+    if (!parsed) {
+      return []
+    }
+
     const feedId = content?.match(feedIdRegex)?.[1]
 
     if (feedId) {
@@ -47,16 +59,10 @@ export const castosHandler: PlatformHandler = {
       ]
     }
 
-    const slug = getSubdomain(url, domains)
-
-    if (!slug) {
-      return []
-    }
-
     // The show site redirects /feed to its feeds.castos.com URL.
     return [
       {
-        uri: `https://${slug}.castos.com/feed`,
+        uri: `https://${parsed.slug}.castos.com/feed`,
         hint: composeHint('castos:podcast'),
       },
     ]
