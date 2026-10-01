@@ -4,6 +4,8 @@ import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Unmeasured, bot wall.
 
+export type AtyponUrl = { kind: 'journal'; code: string; isWiley: boolean }
+
 const hosts = [
   'ascelibrary.org',
   'dl.acm.org',
@@ -22,29 +24,44 @@ const wileyHost = 'onlinelibrary.wiley.com'
 
 const journalRegex = /^\/(?:toc|journals?|loi|home)\/(\w+)(?:\/|$)/i
 
+export const parseAtyponUrl = (url: string): AtyponUrl | undefined => {
+  if (!isHostOf(url, hosts)) {
+    return
+  }
+
+  const { host, pathname } = new URL(url)
+  const code = pathname.match(journalRegex)?.[1]
+
+  if (!code) {
+    return
+  }
+
+  return { kind: 'journal', code, isWiley: host === wileyHost }
+}
+
 export const atyponHandler: PlatformHandler = {
   match: (url) => {
-    return isHostOf(url, hosts) && journalRegex.test(new URL(url).pathname)
+    return parseAtyponUrl(url) !== undefined
   },
 
   resolve: (url) => {
-    const { origin, host, pathname } = new URL(url)
-    const code = pathname.match(journalRegex)?.[1]
+    const parsed = parseAtyponUrl(url)
 
-    if (!code) {
+    if (!parsed) {
       return []
     }
 
+    const { origin } = new URL(url)
     const uris = [
       {
-        uri: `${origin}/action/showFeed?type=etoc&feed=rss&jc=${code}`,
+        uri: `${origin}/action/showFeed?type=etoc&feed=rss&jc=${parsed.code}`,
         hint: composeHint('atypon:journal'),
       },
     ]
 
-    if (host === wileyHost) {
+    if (parsed.isWiley) {
       uris.push({
-        uri: `${origin}/feed/${code}/most-cited`,
+        uri: `${origin}/feed/${parsed.code}/most-cited`,
         hint: composeHint('atypon:most-cited'),
       })
     }

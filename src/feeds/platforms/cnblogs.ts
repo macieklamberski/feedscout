@@ -4,32 +4,39 @@ import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
+export type CnblogsUrl = { kind: 'blog'; username: string }
+
 const hosts = ['cnblogs.com', 'www.cnblogs.com']
 const excludedPaths = ['news', 'aggsite', 'question', 'ing', 'search', 'kb', 'sitehome', 'util']
 
-const getUsername = (url: string): string | undefined => {
-  const [first] = getPathSegments(url)
-
-  if (!first || isAnyOf(first, excludedPaths)) {
+export const parseCnblogsUrl = (url: string): CnblogsUrl | undefined => {
+  if (!isHostOf(url, hosts)) {
     return
   }
 
-  return first
+  const [username] = getPathSegments(url)
+
+  if (!username || isAnyOf(username, excludedPaths)) {
+    return
+  }
+
+  return { kind: 'blog', username }
 }
 
 export const cnblogsHandler: PlatformHandler = {
   match: (url) => {
-    return isHostOf(url, hosts) && Boolean(getUsername(url))
+    return parseCnblogsUrl(url) !== undefined
   },
 
   resolve: (url) => {
-    const { origin } = new URL(url)
-    const username = getUsername(url)
+    const parsed = parseCnblogsUrl(url)
 
-    if (!username) {
+    if (!parsed) {
       return []
     }
 
-    return [{ uri: `${origin}/${username}/rss`, hint: composeHint('cnblogs:posts') }]
+    const { origin } = new URL(url)
+
+    return [{ uri: `${origin}/${parsed.username}/rss`, hint: composeHint('cnblogs:posts') }]
   },
 }

@@ -4,12 +4,14 @@ import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
+export type AtwikiUrl = { kind: 'wiki'; wiki: string }
+
 // Legacy wwwNN.atwiki.jp hosts redirect every wiki path to w.atwiki.jp.
 const hosts = ['w.atwiki.jp']
 
 const excludedPaths = ['common']
 
-const getWiki = (url: string): string | undefined => {
+export const parseAtwikiUrl = (url: string): AtwikiUrl | undefined => {
   if (!isHostOf(url, hosts)) {
     return
   }
@@ -20,20 +22,22 @@ const getWiki = (url: string): string | undefined => {
     return
   }
 
-  return wiki
+  return { kind: 'wiki', wiki }
 }
 
 export const atwikiHandler: PlatformHandler = {
   match: (url) => {
-    return getWiki(url) !== undefined
+    return parseAtwikiUrl(url) !== undefined
   },
 
   resolve: (url) => {
-    const wiki = getWiki(url)
+    const parsed = parseAtwikiUrl(url)
 
-    if (!wiki) {
+    if (!parsed) {
       return []
     }
+
+    const { wiki } = parsed
 
     return [
       {

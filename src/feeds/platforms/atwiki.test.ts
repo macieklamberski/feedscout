@@ -1,6 +1,26 @@
 import { describe, expect, it } from 'bun:test'
 import type { DiscoverUriEntry } from '../../common/types.js'
-import { atwikiHandler } from './atwiki.js'
+import { type AtwikiUrl, atwikiHandler, parseAtwikiUrl } from './atwiki.js'
+
+describe('parseAtwikiUrl', () => {
+  it('should return the wiki for a wiki page', () => {
+    const expected: AtwikiUrl = { kind: 'wiki', wiki: 'mywiki' }
+
+    expect(parseAtwikiUrl('https://w.atwiki.jp/mywiki/pages/1.html')).toEqual(expected)
+  })
+
+  it('should return undefined for an excluded path', () => {
+    expect(parseAtwikiUrl('https://w.atwiki.jp/common/')).toBeUndefined()
+  })
+
+  it('should return undefined for the root', () => {
+    expect(parseAtwikiUrl('https://w.atwiki.jp/')).toBeUndefined()
+  })
+
+  it('should return undefined for another host', () => {
+    expect(parseAtwikiUrl('https://example.com/mywiki')).toBeUndefined()
+  })
+})
 
 describe('atwikiHandler', () => {
   describe('match', () => {
@@ -20,6 +40,10 @@ describe('atwikiHandler', () => {
   })
 
   describe('resolve', () => {
+    it('should return empty array for a URL outside the platform', () => {
+      expect(atwikiHandler.resolve('https://example.com/')).toEqual([])
+    })
+
     it('should return wiki feeds for any page of the wiki', () => {
       const value = 'https://w.atwiki.jp/example/pages/1.html'
       const expected: Array<DiscoverUriEntry> = [

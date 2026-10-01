@@ -1,5 +1,39 @@
 import { describe, expect, it } from 'bun:test'
-import { artstationHandler } from './artstation.js'
+import { type ArtstationUrl, artstationHandler, parseArtstationUrl } from './artstation.js'
+
+describe('parseArtstationUrl', () => {
+  it('should return the profile for a subdomain', () => {
+    const expected: ArtstationUrl = { kind: 'profile', username: 'artist' }
+
+    expect(parseArtstationUrl('https://artist.artstation.com/')).toEqual(expected)
+  })
+
+  it('should return the profile for a profile path', () => {
+    const expected: ArtstationUrl = { kind: 'profile', username: 'artist' }
+
+    expect(parseArtstationUrl('https://www.artstation.com/artist')).toEqual(expected)
+  })
+
+  it('should return the artwork page for the root', () => {
+    const expected: ArtstationUrl = { kind: 'artwork' }
+
+    expect(parseArtstationUrl('https://www.artstation.com/')).toEqual(expected)
+  })
+
+  it('should return the artwork page for the artwork path', () => {
+    const expected: ArtstationUrl = { kind: 'artwork' }
+
+    expect(parseArtstationUrl('https://www.artstation.com/artwork')).toEqual(expected)
+  })
+
+  it('should return undefined for an excluded path', () => {
+    expect(parseArtstationUrl('https://www.artstation.com/jobs')).toBeUndefined()
+  })
+
+  it('should return undefined for another host', () => {
+    expect(parseArtstationUrl('https://example.com/artist')).toBeUndefined()
+  })
+})
 
 describe('artstationHandler', () => {
   describe('match', () => {
@@ -21,6 +55,10 @@ describe('artstationHandler', () => {
   })
 
   describe('resolve', () => {
+    it('should return empty array for a URL outside the platform', () => {
+      expect(artstationHandler.resolve('https://example.com/')).toEqual([])
+    })
+
     it('should return feed URL for portfolio', () => {
       const value = 'https://www.artstation.com/alice'
       const expected = [

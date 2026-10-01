@@ -1,5 +1,31 @@
 import { describe, expect, it } from 'bun:test'
-import { megaphoneHandler } from './megaphone.js'
+import { type MegaphoneUrl, megaphoneHandler, parseMegaphoneUrl } from './megaphone.js'
+
+describe('parseMegaphoneUrl', () => {
+  it('should return the playlist for a playlist embed', () => {
+    const expected: MegaphoneUrl = { kind: 'playlist', showId: 'ADL1234567890' }
+
+    expect(parseMegaphoneUrl('https://playlist.megaphone.fm/?p=ADL1234567890')).toEqual(expected)
+  })
+
+  it('should return the episode for an episode player', () => {
+    const expected: MegaphoneUrl = { kind: 'episode' }
+
+    expect(parseMegaphoneUrl('https://player.megaphone.fm/ADL1234567890')).toEqual(expected)
+  })
+
+  it('should return undefined for a playlist embed without a show', () => {
+    expect(parseMegaphoneUrl('https://playlist.megaphone.fm/')).toBeUndefined()
+  })
+
+  it('should return undefined for a player page that is not an episode', () => {
+    expect(parseMegaphoneUrl('https://player.megaphone.fm/about')).toBeUndefined()
+  })
+
+  it('should return undefined for another host', () => {
+    expect(parseMegaphoneUrl('https://example.com/?p=ADL1234567890')).toBeUndefined()
+  })
+})
 
 describe('megaphoneHandler', () => {
   describe('match', () => {
@@ -24,6 +50,10 @@ describe('megaphoneHandler', () => {
   })
 
   describe('resolve', () => {
+    it('should return empty array for a URL outside the platform', () => {
+      expect(megaphoneHandler.resolve('https://example.com/')).toEqual([])
+    })
+
     const episodeContent =
       '<a target="_blank" title="Subscribe via RSS" href="http://feeds.megaphone.fm/ABC1234567890">'
 

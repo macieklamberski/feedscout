@@ -1,5 +1,25 @@
 import { describe, expect, it } from 'bun:test'
-import { aushaHandler } from './ausha.js'
+import { type AushaUrl, aushaHandler, parseAushaUrl } from './ausha.js'
+
+describe('parseAushaUrl', () => {
+  it('should return the show for a show page', () => {
+    const expected: AushaUrl = { kind: 'show' }
+
+    expect(parseAushaUrl('https://podcast.ausha.co/my-show')).toEqual(expected)
+  })
+
+  it('should return undefined for a channel page', () => {
+    expect(parseAushaUrl('https://podcast.ausha.co/c/my-channel')).toBeUndefined()
+  })
+
+  it('should return undefined for the root', () => {
+    expect(parseAushaUrl('https://podcast.ausha.co/')).toBeUndefined()
+  })
+
+  it('should return undefined for another host', () => {
+    expect(parseAushaUrl('https://example.com/my-show')).toBeUndefined()
+  })
+})
 
 describe('aushaHandler', () => {
   describe('match', () => {
@@ -20,6 +40,10 @@ describe('aushaHandler', () => {
   })
 
   describe('resolve', () => {
+    it('should return empty array for a URL outside the platform', () => {
+      expect(aushaHandler.resolve('https://example.com/')).toEqual([])
+    })
+
     it('should return the feed read from the page content', () => {
       const value = 'https://podcast.ausha.co/example-show'
       const content = '{"key":"rss","url":"https://feed.ausha.co/VODwGU7PMQGG","position":0}'

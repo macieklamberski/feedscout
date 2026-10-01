@@ -1,5 +1,25 @@
 import { describe, expect, it } from 'bun:test'
-import { cnblogsHandler } from './cnblogs.js'
+import { type CnblogsUrl, cnblogsHandler, parseCnblogsUrl } from './cnblogs.js'
+
+describe('parseCnblogsUrl', () => {
+  it('should return the blog for a post page', () => {
+    const expected: CnblogsUrl = { kind: 'blog', username: 'someuser' }
+
+    expect(parseCnblogsUrl('https://www.cnblogs.com/someuser/p/123.html')).toEqual(expected)
+  })
+
+  it('should return undefined for an excluded path', () => {
+    expect(parseCnblogsUrl('https://www.cnblogs.com/news')).toBeUndefined()
+  })
+
+  it('should return undefined for the root', () => {
+    expect(parseCnblogsUrl('https://www.cnblogs.com/')).toBeUndefined()
+  })
+
+  it('should return undefined for another host', () => {
+    expect(parseCnblogsUrl('https://example.com/someuser')).toBeUndefined()
+  })
+})
 
 describe('cnblogsHandler', () => {
   describe('match', () => {
@@ -30,6 +50,10 @@ describe('cnblogsHandler', () => {
   })
 
   describe('resolve', () => {
+    it('should return empty array for a URL outside the platform', () => {
+      expect(cnblogsHandler.resolve('https://example.com/')).toEqual([])
+    })
+
     it('should return the posts feed', () => {
       const value = 'https://www.cnblogs.com/example/'
       const expected = [

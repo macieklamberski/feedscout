@@ -6,6 +6,8 @@ import { composeHint } from '../../common/utils.js'
 // Generic covers smartlink, smartlinkEpisode (html).
 // Handler needed for: episode, show.
 
+export type AushaUrl = { kind: 'show' }
+
 const hosts = ['podcast.ausha.co', 'smartlink.ausha.co']
 
 // The feed id is opaque: show and episode pages carry it only in the markup.
@@ -15,18 +17,30 @@ const excludedPaths = [
   'c', // Channel pages, which list several shows
 ]
 
+export const parseAushaUrl = (url: string): AushaUrl | undefined => {
+  if (!isHostOf(url, hosts)) {
+    return
+  }
+
+  const [slug] = getPathSegments(url)
+
+  if (!slug || isAnyOf(slug, excludedPaths)) {
+    return
+  }
+
+  return { kind: 'show' }
+}
+
 export const aushaHandler: PlatformHandler = {
   match: (url) => {
-    if (!isHostOf(url, hosts)) {
-      return false
-    }
-
-    const [slug] = getPathSegments(url)
-
-    return !!slug && !isAnyOf(slug, excludedPaths)
+    return parseAushaUrl(url) !== undefined
   },
 
-  resolve: (_url, content) => {
+  resolve: (url, content) => {
+    if (!parseAushaUrl(url)) {
+      return []
+    }
+
     const id = content?.match(feedIdRegex)?.[1]
 
     if (!id) {

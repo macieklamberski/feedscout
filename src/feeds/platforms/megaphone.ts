@@ -6,6 +6,8 @@ import { composeHint } from '../../common/utils.js'
 // Generic covers episode (html).
 // Handler needed for: playlist.
 
+export type MegaphoneUrl = { kind: 'playlist'; showId: string } | { kind: 'episode' }
+
 const playlistHosts = ['playlist.megaphone.fm']
 const playerHosts = ['player.megaphone.fm']
 
@@ -14,41 +16,46 @@ const episodeIdRegex = /^[A-Z]+\d+$/
 const episodePathRegex = /^\/([^/]+)\/?$/
 const feedUrlRegex = /feeds\.megaphone\.fm\/([\w-]+)/
 
-// The playlist embed names its show by the feed id in the p parameter.
-const getPlaylistShowId = (url: string): string | undefined => {
-  if (!isHostOf(url, playlistHosts)) {
-    return
-  }
-
-  const showId = new URL(url).searchParams.get('p')
-
-  if (!showId || !showIdRegex.test(showId)) {
-    return
-  }
-
-  return showId
-}
-
-// The episode player names its episode in the path or the e parameter.
-const isEpisodePlayer = (url: string): boolean => {
-  if (!isHostOf(url, playerHosts)) {
-    return false
-  }
-
+export const parseMegaphoneUrl = (url: string): MegaphoneUrl | undefined => {
   const { pathname, searchParams } = new URL(url)
-  const episodeId = searchParams.get('e') ?? pathname.match(episodePathRegex)?.[1] ?? ''
 
-  return episodeIdRegex.test(episodeId)
+  // The playlist embed names its show by the feed id in the p parameter.
+  if (isHostOf(url, playlistHosts)) {
+    const showId = searchParams.get('p')
+
+    if (!showId || !showIdRegex.test(showId)) {
+      return
+    }
+
+    return { kind: 'playlist', showId }
+  }
+
+  // The episode player names its episode in the path or the e parameter.
+  if (isHostOf(url, playerHosts)) {
+    const episodeId = searchParams.get('e') ?? pathname.match(episodePathRegex)?.[1] ?? ''
+
+    if (!episodeIdRegex.test(episodeId)) {
+      return
+    }
+
+    return { kind: 'episode' }
+  }
 }
 
 export const megaphoneHandler: PlatformHandler = {
   match: (url) => {
-    return Boolean(getPlaylistShowId(url)) || isEpisodePlayer(url)
+    return parseMegaphoneUrl(url) !== undefined
   },
 
   resolve: (url, content) => {
+    const parsed = parseMegaphoneUrl(url)
+
+    if (!parsed) {
+      return []
+    }
+
     // An episode id is not its show's id, so the show comes from the player's RSS link.
-    const showId = getPlaylistShowId(url) ?? content?.match(feedUrlRegex)?.[1]
+    const showId = parsed.kind === 'playlist' ? parsed.showId : content?.match(feedUrlRegex)?.[1]
 
     if (!showId) {
       return []
