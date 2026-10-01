@@ -400,8 +400,8 @@
   },
   "insanejournal": {
     "insanejournal:posts": [
-      "https://random.insanejournal.com/data/rss",
-      "https://random.insanejournal.com/data/atom"
+      "https://squeaky.insanejournal.com/data/rss",
+      "https://squeaky.insanejournal.com/data/atom"
     ],
     "insanejournal:posts-tag": [
       "https://squeaky.insanejournal.com/data/rss?tag=insanejournal",
@@ -700,11 +700,11 @@
     "peertube:instance": "https://framatube.org/feeds/videos.xml"
   },
   "phpbb": {
-    "phpbb:active-topics": "https://forum.openoffice.org/en/forum/feed.php?mode=topics_active",
+    "phpbb:active-topics": "https://forum.mxlinux.org/feed.php?mode=topics_active",
     "phpbb:forum": "https://forum.openmw.org/feed.php?f=2",
-    "phpbb:forums": "https://forums.wesnoth.org/feed.php?mode=forums",
+    "phpbb:forums": "https://forum.mxlinux.org/feed.php?mode=forums",
     "phpbb:new-topics": "https://forums.gentoo.org/feed.php?mode=topics",
-    "phpbb:news": "https://forums.wesnoth.org/feed.php?mode=news",
+    "phpbb:news": "https://forum.mxlinux.org/feed.php?mode=news",
     "phpbb:site": "https://forums.gentoo.org/feed.php",
     "phpbb:topic": "https://forums.gentoo.org/feed.php?t=410444"
   },
