@@ -242,6 +242,10 @@ describe('flickrHandler', () => {
       expect(flickrHandler.resolve('https://www.flickr.com/photos/nasacommons')).toEqual([])
     })
 
+    it('should return empty array for a URL outside Flickr', () => {
+      expect(flickrHandler.resolve('https://example.com/photos/12345678@N00')).toEqual([])
+    })
+
     it('should return pool, discussion and location feeds for a group page', () => {
       const value = 'https://www.flickr.com/groups/42097308@N00/'
       const expected = [
