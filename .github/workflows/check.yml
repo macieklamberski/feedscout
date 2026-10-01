@@ -32,4 +32,5 @@ jobs:
         run: bun check/feeds.ts
 
       - name: Check favicons
+        if: ${{ !cancelled() }}
         run: bun check/favicons.ts
