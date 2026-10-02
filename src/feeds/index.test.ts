@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'bun:test'
+import { defaultResolveUrlFn } from '../common/discover/defaults.js'
 import type {
   DiscoverExtractFn,
   DiscoverResolveUrlFn,
@@ -6,9 +7,15 @@ import type {
   FetchFn,
 } from '../common/types.js'
 import type { PlatformHandler } from '../common/uris/platform/types.js'
+import type { HubResult } from '../hubs/discover/types.js'
+import { discoverHubsFromFeed } from '../hubs/feed/index.js'
+import { discoverHubsFromHeaders } from '../hubs/headers/index.js'
 import { defaultPlatformOptions, urisBalanced, urisComprehensive, urisMinimal } from './defaults.js'
+import { defaultExtractFn } from './extractors.js'
 import { discoverFeeds } from './index.js'
 import type { FeedResult } from './types.js'
+
+type FeedResultWithHubs = FeedResult & { hubs: Array<HubResult> }
 
 const createMockFetch = (responses: Record<string, string>): FetchFn => {
   return async (url: string) => ({
@@ -473,6 +480,62 @@ describe('discoverFeeds', () => {
     ]
 
     expect(result).toEqual(expected)
+  })
+
+  it('should return hubs from the feed headers and body through a wrapped extractFn', async () => {
+    const atom = `
+      <feed xmlns="http://www.w3.org/2005/Atom">
+        <title>Hub Feed</title>
+        <link rel="hub" href="https://hub.example.com/" />
+        <link rel="self" href="https://example.com/feed" />
+      </feed>
+    `
+    const fetchedUrls: Array<string> = []
+    const fetchFn: FetchFn = (url) => {
+      fetchedUrls.push(url)
+
+      return Promise.resolve({
+        headers: new Headers({
+          link: '<https://push.example.com/>; rel="hub", <https://example.com/feed>; rel="self"',
+        }),
+        body: atom,
+        url,
+        status: 200,
+        statusText: 'OK',
+      })
+    }
+    const extractFn: DiscoverExtractFn<FeedResultWithHubs> = async (input) => {
+      const result = await defaultExtractFn(input)
+
+      if (!result.isValid) {
+        return result
+      }
+
+      const hubs = [
+        ...(input.headers
+          ? discoverHubsFromHeaders(input.headers, input.url, defaultResolveUrlFn)
+          : []),
+        ...discoverHubsFromFeed(input.content, input.url, defaultResolveUrlFn),
+      ]
+
+      return { ...result, hubs }
+    }
+    const result = await discoverFeeds('https://example.com/feed', { fetchFn, extractFn })
+    const expected: Array<DiscoverResult<FeedResultWithHubs>> = [
+      {
+        url: 'https://example.com/feed',
+        isValid: true,
+        format: 'atom',
+        title: 'Hub Feed',
+        hubs: [
+          { hub: 'https://push.example.com/', topic: 'https://example.com/feed' },
+          { hub: 'https://hub.example.com/', topic: 'https://example.com/feed' },
+        ],
+      },
+    ]
+
+    expect(result).toEqual(expected)
+    expect(fetchedUrls).toEqual(['https://example.com/feed'])
   })
 
   it('should use custom resolveUrlFn when provided', async () => {
