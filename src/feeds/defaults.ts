@@ -111,6 +111,7 @@ import { naverBlogHandler } from './platforms/naverBlog.js'
 import { nebulaHandler } from './platforms/nebula.js'
 import { neocitiesHandler } from './platforms/neocities.js'
 import { niconicoHandler } from './platforms/niconico.js'
+import { ningHandler } from './platforms/ning.js'
 import { nodebbHandler } from './platforms/nodebb.js'
 import { noteHandler } from './platforms/note.js'
 import { observableHandler } from './platforms/observable.js'
@@ -428,6 +429,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     nebulaHandler,
     neocitiesHandler,
     niconicoHandler,
+    ningHandler,
     nodebbHandler,
     noteHandler,
     observableHandler,

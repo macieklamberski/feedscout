@@ -628,6 +628,12 @@
     "niconico:live": "https://ch.nicovideo.jp/yoshikiofficial/live?rss=2.0",
     "niconico:videos": "https://ch.nicovideo.jp/yoshikiofficial/video?rss=2.0"
   },
+  "ning": {
+    "ning:activity": "https://korsika.ning.com/activity/log/list?fmt=rss",
+    "ning:blog": "https://korsika.ning.com/profiles/blog/feed?xn_auth=no",
+    "ning:forum": "https://korsika.ning.com/forum/topic/list?feed=yes&xn_auth=no",
+    "ning:topic": "https://korsika.ning.com/forum/topics/tour-and-travel-vibrantindiatours?feed=yes&xn_auth=no"
+  },
   "nodebb": {
     "nodebb:category": "https://community.nodebb.org/category/2.rss",
     "nodebb:popular": "https://community.nodebb.org/popular.rss",
