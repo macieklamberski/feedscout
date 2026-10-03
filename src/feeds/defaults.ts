@@ -142,6 +142,7 @@ import { postypeHandler } from './platforms/postype.js'
 import { powerpressHandler } from './platforms/powerpress.js'
 import { producthuntHandler } from './platforms/producthunt.js'
 import { proseHandler } from './platforms/prose.js'
+import { publicInboxHandler } from './platforms/publicInbox.js'
 import { publiiHandler } from './platforms/publii.js'
 import { pypiHandler } from './platforms/pypi.js'
 import { qiitaHandler } from './platforms/qiita.js'
@@ -463,6 +464,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     powerpressHandler,
     producthuntHandler,
     proseHandler,
+    publicInboxHandler,
     publiiHandler,
     pypiHandler,
     qiitaHandler,
