@@ -1867,6 +1867,16 @@ Discovers the recent changes feeds of a PmWiki wiki. Detected by the `<!--HTMLHe
 > [!NOTE]
 > Feeds are off in a default PmWiki install and a wiki owner turns them on, so many wikis answer these URLs with the page itself.
 
+### public-inbox
+
+Discovers the Atom feeds of a public-inbox mailing list archive. Detected by the help and color links every page prints, so any domain is covered, and `lore.kernel.org` by its host, since its pages answer a plain fetch with a bot challenge. An inbox under a sub-path or at the root of its host gets its feeds there.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `{inbox}/` | Messages feed (Atom) |
+| `{inbox}/{message-id}/` | Thread feed + messages feed (Atom) |
+| `{inbox}/{message-id}/T/` | Thread feed + messages feed (Atom) |
+
 ## Basic Usage
 
 ```typescript
@@ -2025,6 +2035,7 @@ import {
   postypeHandler,
   producthuntHandler,
   proseHandler,
+  publicInboxHandler,
   pypiHandler,
   qiitaHandler,
   redcircleHandler,

@@ -789,6 +789,16 @@
     "prose:discovery": "https://prose.sh/rss",
     "prose:tag": "https://hey.prose.sh/rss?tag=feature"
   },
+  "publicInbox": {
+    "public-inbox:messages": [
+      "https://lore.kernel.org/linux-pci/new.atom",
+      "https://lore.altlinux.org/sisyphus-incominger/new.atom"
+    ],
+    "public-inbox:thread": [
+      "https://lore.kernel.org/all/20200511194017.313c2881@xps13/t.atom",
+      "https://list.orgmode.org/87k561tkba.fsf@kassiopeya.MSHEIMNETZ/t.atom"
+    ]
+  },
   "publii": {
     "publii:posts": ["https://getpublii.com/feed.xml", "https://falk.plus/feed.json"]
   },
