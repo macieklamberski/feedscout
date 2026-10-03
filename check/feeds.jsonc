@@ -123,6 +123,18 @@
   "castos": {
     "castos:podcast": "https://feeds.castos.com/x42p4"
   },
+  "civicplus": {
+    "civicplus:agenda-center": "https://channahon.org/RSSFeed.aspx?ModID=65&CID=All-0",
+    "civicplus:alert-center": "https://jacksoncountyks.com/RSSFeed.aspx?ModID=63&CID=All-0",
+    "civicplus:blog": "https://fountainvalley.gov/RSSFeed.aspx?ModID=51&CID=All-blog.xml",
+    "civicplus:calendar": "https://kennebunkmaine.us/RSSFeed.aspx?ModID=58&CID=All-calendar.xml",
+    "civicplus:jobs": "https://jacksonwy.gov/RSSFeed.aspx?ModID=66&CID=All-0&CommunityJobs=False",
+    "civicplus:media-center": "https://www.northamptonma.gov/RSSFeed.aspx?ModID=92&CID=All-civicmedia.xml",
+    "civicplus:news-flash": "https://tosv.com/RSSFeed.aspx?ModID=1&CID=All-newsflash.xml",
+    "civicplus:pages": "https://co.lucas.oh.us/RSSFeed.aspx?ModID=76&CID=All-0",
+    "civicplus:photo-gallery": "https://town.medfield.net/RSSFeed.aspx?ModID=53&CID=All-0",
+    "civicplus:real-estate": "https://apachejunctionaz.gov/RSSFeed.aspx?ModID=64&CID=All-0"
+  },
   "cnblogs": {
     "cnblogs:posts": "https://www.cnblogs.com/vamei/rss"
   },
