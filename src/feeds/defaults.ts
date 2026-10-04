@@ -183,6 +183,7 @@ import { redditHandler } from './platforms/reddit.js'
 import { royalroadHandler } from './platforms/royalroad.js'
 import { rssComHandler } from './platforms/rssCom.js'
 import { rubygemsHandler } from './platforms/rubygems.js'
+import { sakuraBlogHandler } from './platforms/sakuraBlog.js'
 import { seesaaHandler } from './platforms/seesaa.js'
 import { sermonNetHandler } from './platforms/sermonNet.js'
 import { shaarliHandler } from './platforms/shaarli.js'
@@ -545,6 +546,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     royalroadHandler,
     rssComHandler,
     rubygemsHandler,
+    sakuraBlogHandler,
     seesaaHandler,
     sermonNetHandler,
     shaarliHandler,

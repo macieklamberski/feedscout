@@ -1062,6 +1062,14 @@ Discovers Atom feeds for RubyGems.org gems and the site-wide latest gems.
 
 > Every page links the latest gems feed through a FeedBurner address that now serves HTML, so the handler emits the rubygems.org copy.
 
+### Sakura blog
+
+Discovers RSS 2.0 and RDF feeds for Sakura blog.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `*.sblo.jp` | Posts feed (RSS 2.0 + RDF) |
+
 ### Seesaa Blog
 
 Discovers RSS 2.0 and RDF feeds for Seesaa Blog.
@@ -2558,6 +2566,7 @@ import {
   royalroadHandler,
   rssComHandler,
   rubygemsHandler,
+  sakuraBlogHandler,
   seesaaHandler,
   sermonNetHandler,
   shinobiHandler,
