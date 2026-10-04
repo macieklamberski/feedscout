@@ -2306,6 +2306,15 @@ Discovers the RSS feed of a dasauge member profile on any of the dasauge country
 | `dasauge.de/-{member}` | Profile feed |
 | `dasauge.de/-{member}/{page}` | Profile feed |
 
+### Estranky
+
+Discovers the site feeds of an Estranky site. A site serves the article feeds, the Web Slice feeds or both, depending on its template, and validation drops a set it lacks.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `{site}.estranky.cz/…` | Posts + photos + comments + home page slice + photo album slice |
+| `{site}.estranky.sk/…` | Posts + photos + comments + home page slice + photo album slice |
+
 ## Basic Usage
 
 ```typescript
@@ -2398,6 +2407,7 @@ import {
   drupalHandler,
   dspaceHandler,
   eklablogHandler,
+  estrankyHandler,
   exblogHandler,
   fc2Handler,
   firesideHandler,
