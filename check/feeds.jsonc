@@ -649,6 +649,16 @@
   "odysee": {
     "odysee:videos": "https://odysee.com/$/rss/@Odysee:8"
   },
+  "omeka": {
+    "omeka:filtered-items": [
+      "https://digitalsc.lib.vt.edu/items/browse?collection=10&output=rss2",
+      "https://digitalsc.lib.vt.edu/items/browse?collection=10&output=atom"
+    ],
+    "omeka:items": [
+      "https://digitalsc.lib.vt.edu/items/browse?output=rss2",
+      "https://digitalsc.lib.vt.edu/items/browse?output=atom"
+    ]
+  },
   "omnystudio": {
     "omnystudio:show": "https://omny.fm/shows/stuff-you-should-know/playlists/podcast.rss"
   },

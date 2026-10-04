@@ -1867,6 +1867,15 @@ Discovers the recent changes feeds of a PmWiki wiki. Detected by the `<!--HTMLHe
 > [!NOTE]
 > Feeds are off in a default PmWiki install and a wiki owner turns them on, so many wikis answer these URLs with the page itself.
 
+### Omeka
+
+Discovers the item feeds of an Omeka Classic site, self-hosted or on `omeka.net`. Detected by the plugin and core script asset paths every page loads, so any domain is covered. A site under a sub-path gets its feeds there.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `{site}/items/browse?{filters}` | Filtered items feed for the same tags, collection or search (RSS + Atom) |
+| Any other page | Items feed (RSS + Atom) |
+
 ## Basic Usage
 
 ```typescript
@@ -2003,6 +2012,7 @@ import {
   noteHandler,
   observableHandler,
   odyseeHandler,
+  omekaHandler,
   omnystudioHandler,
   openstatusHandler,
   packagistHandler,
