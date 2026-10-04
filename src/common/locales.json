@@ -521,6 +521,8 @@
     "sme-blog:site": "Site",
     "acomics:issues": "Issues",
     "acomics:subscriptions": "Subscriptions",
-    "opencart-journal:blog": "Blog"
+    "opencart-journal:blog": "Blog",
+    "eklablog:posts": "Posts",
+    "eklablog:comments": "Comments"
   }
 }
