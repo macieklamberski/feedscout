@@ -597,6 +597,11 @@
     "cppblog:favorites": "Favorites",
     "reformal:feedback": "Feedback",
     "bloggo:posts": "Posts",
-    "bloggo:post-comments": "Post comments"
+    "bloggo:post-comments": "Post comments",
+    "promodj:podcast": "Podcast",
+    "promodj:content": "Content",
+    "promodj:blog": "Blog",
+    "promodj:favorites": "Favorites",
+    "promodj:events": "Events"
   }
 }

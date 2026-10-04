@@ -2526,6 +2526,18 @@ Discovers the RSS feed of a show hosted on podCloud.
 |-------------|-----------------|
 | `{show}.lepodcast.fr` | Podcast feed (RSS) |
 
+### PromoDJ
+
+Discovers the feeds of a PromoDJ artist profile.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `promodj.com/{user}` | Podcast + content + blog + favorites + events feeds |
+| `promodj.com/{user}/…` | Podcast + content + blog + favorites + events feeds |
+
+> [!NOTE]
+> A feed the artist has never posted to answers with a redirect to the profile, which validation drops.
+
 ## Basic Usage
 
 ```typescript
@@ -2726,6 +2738,7 @@ import {
   prlogHandler,
   proboardsHandler,
   producthuntHandler,
+  promodjHandler,
   proseHandler,
   publicInboxHandler,
   pypiHandler,

@@ -1148,6 +1148,13 @@
   "producthunt": {
     "producthunt:products": "https://www.producthunt.com/feed"
   },
+  "promodj": {
+    "promodj:blog": "https://promodj.com/maxigroove/blog.xml",
+    "promodj:content": "https://promodj.com/maxigroove/rss.xml",
+    "promodj:events": "https://promodj.com/maxigroove/avisha.xml",
+    "promodj:favorites": "https://promodj.com/maxigroove/bookmarks.xml",
+    "promodj:podcast": "https://promodj.com/maxigroove/podcast.xml"
+  },
   "prose": {
     "prose:blog": "https://hey.prose.sh/rss",
     "prose:discovery": "https://prose.sh/rss",
