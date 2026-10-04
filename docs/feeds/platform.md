@@ -2053,6 +2053,20 @@ Discovers the feeds of blog.hu blogs, and the activity feed of a blog.hu user.
 | `*.blog.hu` | Posts feed (RSS + Atom) + comments feed (RSS + Atom) |
 | `blog.hu/user/{id}` | User activity feed (RSS) |
 
+### ChamberMaster
+
+Discovers the RSS feeds of a ChamberMaster (GrowthZone) chamber of commerce directory. Detected by the `x-source: cmdotnet…` response header, so any domain is covered. The pages link none of these feeds.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `{site}/events/…` | Upcoming events + new events + featured events |
+| `{site}/list/…` | New members + featured members |
+| `{site}/jobs/…` | New jobs |
+| `{site}/hotdeals/…` | New coupons |
+| `{site}/marketspace/…`, `{site}/marketplace/…` | New marketplace items |
+| `{site}/news/…` | News releases |
+| `{site}/MemberToMember/…` | New member to member deals |
+
 ## Basic Usage
 
 ```typescript
@@ -2123,6 +2137,7 @@ import {
   captivateHandler,
   castopodHandler,
   castosHandler,
+  chambermasterHandler,
   civicplusHandler,
   cnblogsHandler,
   cocologHandler,

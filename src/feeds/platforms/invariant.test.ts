@@ -5,6 +5,7 @@ import { bigcommerceHandler } from './bigcommerce.js'
 import { blogspotHandler } from './blogspot.js'
 import { bookwyrmHandler } from './bookwyrm.js'
 import { castopodHandler } from './castopod.js'
+import { chambermasterHandler } from './chambermaster.js'
 import { civicplusHandler } from './civicplus.js'
 import { confluenceHandler } from './confluence.js'
 import { diasporaHandler } from './diaspora.js'
@@ -110,6 +111,7 @@ const paths = [
   '/jira/projects/KEY',
   '/blog',
   '/blog/news-1/a-post-2',
+  '/events',
   '/blogs/news',
   '/blogs/news/a-post',
   '/category/1/general',
@@ -134,6 +136,7 @@ const cases: Array<Case> = [
   ],
   ['bookwyrm', bookwyrmHandler, '<meta name="generator" content="BookWyrm 0.7.5">'],
   ['castopod', castopodHandler, '<link href="/themes/colors">'],
+  ['chambermaster', chambermasterHandler, '', new Headers({ 'x-source': 'cmdotnetJYPM06' })],
   [
     'civicplus',
     civicplusHandler,
