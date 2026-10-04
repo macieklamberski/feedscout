@@ -516,6 +516,8 @@
     "gnuboard:board": "Board",
     "proboards:posts": "Posts",
     "mail-archive:list": "Mailing list",
-    "bloggang:posts": "Posts"
+    "bloggang:posts": "Posts",
+    "sme-blog:posts": "Posts",
+    "sme-blog:site": "Site"
   }
 }

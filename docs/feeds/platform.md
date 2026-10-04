@@ -2132,6 +2132,17 @@ Discovers RSS feeds for Bloggang blogs. A blog lives on its own subdomain, which
 | `www.bloggang.com/viewblog.php?id={user}` | Posts feed |
 | `www.bloggang.com/viewdiary.php?id={user}` | Posts feed |
 
+### SME Blog
+
+Discovers the RSS feeds of blogs on SME Blog, the blog platform of the Slovak daily SME.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `blog.sme.sk/{user}` | Posts feed |
+| `blog.sme.sk/{user}/{category}/{slug}` | Posts feed |
+| `blog.sme.sk` | Site feed |
+| `blog.sme.sk/t/{topic}` | Site feed |
+
 ## Basic Usage
 
 ```typescript
@@ -2315,6 +2326,7 @@ import {
   rubygemsHandler,
   seesaaHandler,
   shopifyHandler,
+  smeBlogHandler,
   soundcloudHandler,
   soundonHandler,
   sourceforgeHandler,

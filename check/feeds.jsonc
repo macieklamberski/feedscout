@@ -1009,6 +1009,10 @@
   "shopify": {
     "shopify:blog": "https://www.allbirds.com/blogs/news.atom"
   },
+  "smeBlog": {
+    "sme-blog:posts": "https://blog.sme.sk/tomasvanco/rss",
+    "sme-blog:site": "https://blog.sme.sk/rss"
+  },
   "smf": {
     "smf:board": [
       "https://forum.pellesc.de/index.php?action=.xml;type=rss2;board=18",
