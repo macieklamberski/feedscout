@@ -40,6 +40,7 @@ import { mobilizonHandler } from './mobilizon.js'
 import { mybbHandler } from './mybb.js'
 import { ningHandler } from './ning.js'
 import { nodebbHandler } from './nodebb.js'
+import { noticeableHandler } from './noticeable.js'
 import { odooHandler } from './odoo.js'
 import { omekaHandler } from './omeka.js'
 import { opencartJournalHandler } from './opencartJournal.js'
@@ -213,6 +214,11 @@ const cases: Array<Case> = [
     '<link href="https://static.ning.com/socialnetworkmain/widgets/index/css/common.min.css">',
   ],
   ['nodebb', nodebbHandler, '', new Headers({ 'x-powered-by': 'NodeBB' })],
+  [
+    'noticeable',
+    noticeableHandler,
+    '<link href="https://assets.noticeable.news/templates/noticeone/css/main.min.css">',
+  ],
   [
     'odoo',
     odooHandler,
