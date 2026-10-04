@@ -2067,6 +2067,15 @@ Discovers the RSS feeds of a ChamberMaster (GrowthZone) chamber of commerce dire
 | `{site}/news/…` | News releases |
 | `{site}/MemberToMember/…` | New member to member deals |
 
+### PChome Online 個人新聞台
+
+Discovers RSS feeds for papers on PChome's blog host, including category feeds. Pages on the mobile host `mypaper.m.pchome.com.tw` get the same feeds.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `mypaper.pchome.com.tw/{user}` | Posts feed |
+| `mypaper.pchome.com.tw/{user}/category/{id}` | Category feed + posts |
+
 ## Basic Usage
 
 ```typescript
@@ -2219,6 +2228,7 @@ import {
   packagistHandler,
   pagecordHandler,
   paragraphHandler,
+  pchomeHandler,
   peertubeHandler,
   pikaHandler,
   pinboardHandler,

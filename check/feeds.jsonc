@@ -812,6 +812,10 @@
       "https://paragraph.com/@optimism/rss"
     ]
   },
+  "pchome": {
+    "pchome:category": "https://mypaper.pchome.com.tw/bugsbunny/rss?cid=14",
+    "pchome:posts": "https://mypaper.pchome.com.tw/risbkr08/rss"
+  },
   "peertube": {
     "peertube:account": "https://framatube.org/feeds/videos.xml?accountName=framasoft",
     "peertube:channel": "https://framatube.org/feeds/videos.xml?videoChannelName=joinpeertube",

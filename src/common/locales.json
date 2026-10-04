@@ -509,6 +509,8 @@
     "chambermaster:new-coupons": "New coupons",
     "chambermaster:new-market-items": "New marketplace items",
     "chambermaster:news-releases": "News releases",
-    "chambermaster:new-m2m-deals": "New member to member deals"
+    "chambermaster:new-m2m-deals": "New member to member deals",
+    "pchome:posts": "Posts",
+    "pchome:category": "Category"
   }
 }
