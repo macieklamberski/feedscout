@@ -167,6 +167,7 @@ import { podomaticHandler } from './platforms/podomatic.js'
 import { posthavenHandler } from './platforms/posthaven.js'
 import { postypeHandler } from './platforms/postype.js'
 import { powerpressHandler } from './platforms/powerpress.js'
+import { prlogHandler } from './platforms/prlog.js'
 import { proboardsHandler } from './platforms/proboards.js'
 import { producthuntHandler } from './platforms/producthunt.js'
 import { proseHandler } from './platforms/prose.js'
@@ -526,6 +527,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     posthavenHandler,
     postypeHandler,
     powerpressHandler,
+    prlogHandler,
     proboardsHandler,
     producthuntHandler,
     proseHandler,
