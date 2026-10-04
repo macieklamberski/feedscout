@@ -127,6 +127,9 @@
   "bloggang": {
     "bloggang:posts": "https://gonga.bloggang.com/rss"
   },
+  "bloggerDe": {
+    "blogger-de:posts": "https://kid37.blogger.de/rss"
+  },
   "bloggo": {
     "bloggo:post-comments": "https://larswesterberg.bloggo.nu/Mer-om-Lindqvist/feed/",
     "bloggo:posts": "https://larswesterberg.bloggo.nu/feed/"

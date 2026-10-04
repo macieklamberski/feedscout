@@ -2621,6 +2621,14 @@ Discovers Atom feeds for Travellerspoint travel blogs.
 |-------------|-----------------|
 | `*.travellerspoint.com` | Posts feed |
 
+### Blogger.de
+
+Discovers RSS 1.0 feeds for blogs on `*.blogger.de`. Every blog serves its posts at `/rss`.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `{blog}.blogger.de` | Posts |
+
 ## Basic Usage
 
 ```typescript
@@ -2684,6 +2692,7 @@ import {
   bitchuteHandler,
   blogaliaHandler,
   bloggangHandler,
+  bloggerDeHandler,
   bloggoHandler,
   blogHuHandler,
   blogiaHandler,
