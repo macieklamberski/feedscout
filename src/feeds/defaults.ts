@@ -221,6 +221,7 @@ import { tistoryHandler } from './platforms/tistory.js'
 import { togetterHandler } from './platforms/togetter.js'
 import { transistorHandler } from './platforms/transistor.js'
 import { tumblrHandler } from './platforms/tumblr.js'
+import { twodayHandler } from './platforms/twoday.js'
 import { ucozHandler } from './platforms/ucoz.js'
 import { v2exHandler } from './platforms/v2ex.js'
 import { vbulletinHandler } from './platforms/vbulletin.js'
@@ -592,6 +593,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     togetterHandler,
     transistorHandler,
     tumblrHandler,
+    twodayHandler,
     ucozHandler,
     v2exHandler,
     vbulletinHandler,

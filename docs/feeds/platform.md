@@ -2459,6 +2459,15 @@ Discovers RSS feeds for is-Programmer blogs, including the comment feed of a pos
 > [!NOTE]
 > is-Programmer serves its blogs over http only, so the feeds are http URLs whatever the page URL's scheme.
 
+### twoday
+
+Discovers RSS 1.0 feeds for blogs on `*.twoday.net`. A blog's skin links its posts feed as `/index.rdf` or `/rss`, and both serve the same feed.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `{blog}.twoday.net` | Posts feed |
+| `{blog}.twoday.net/topics/{topic}` | Topic feed + posts |
+
 ## Basic Usage
 
 ```typescript
@@ -2689,6 +2698,7 @@ import {
   togetterHandler,
   transistorHandler,
   tumblrHandler,
+  twodayHandler,
   ucozHandler,
   v2exHandler,
   vbulletinHandler,

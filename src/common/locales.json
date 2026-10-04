@@ -584,6 +584,8 @@
     "is-programmer:posts": "Posts",
     "is-programmer:comments": "Comments",
     "is-programmer:messages": "Messages",
-    "is-programmer:post-comments": "Post comments"
+    "is-programmer:post-comments": "Post comments",
+    "twoday:posts": "Posts",
+    "twoday:topic": "Topic"
   }
 }
