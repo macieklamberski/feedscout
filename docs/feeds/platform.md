@@ -2588,6 +2588,14 @@ Discovers the RSS 1.0 feed of new products in an Ochanoko Net shop on `ocnk.net`
 |-------------|-----------------|
 | `{shop}.ocnk.net` | Products feed (RSS 1.0) |
 
+### Blogia
+
+Discovers the RSS feed for blogs hosted on Blogia.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `*.blogia.com` | Posts feed (RSS) |
+
 ## Basic Usage
 
 ```typescript
@@ -2652,6 +2660,7 @@ import {
   bloggangHandler,
   bloggoHandler,
   blogHuHandler,
+  blogiaHandler,
   blogspotHandler,
   blueskyHandler,
   bookwyrmHandler,

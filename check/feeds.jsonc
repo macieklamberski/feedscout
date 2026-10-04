@@ -125,6 +125,9 @@
     "bloggo:post-comments": "https://larswesterberg.bloggo.nu/Mer-om-Lindqvist/feed/",
     "bloggo:posts": "https://larswesterberg.bloggo.nu/feed/"
   },
+  "blogia": {
+    "blogia:posts": "https://39x28.blogia.com/feed.xml"
+  },
   "blogspot": {
     "blogspot:comments": [
       "https://security.googleblog.com/feeds/comments/default",
