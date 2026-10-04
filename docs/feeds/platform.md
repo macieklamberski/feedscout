@@ -2247,6 +2247,18 @@ Discovers the history feed of a Legistar legislation record or meeting, on any `
 | `{client}.legistar.com/LegislationDetail.aspx?ID={id}&GUID={guid}` | Legislation feed (RSS) |
 | `{client}.legistar.com/MeetingDetail.aspx?ID={id}&GUID={guid}` | Meeting feed (RSS) |
 
+### Nethouse
+
+Discovers the news and articles feeds of a Nethouse site. Custom domains are detected by the `x-generator: nethouse` response header.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `*.nethouse.ru`, `*.nethouse.me` | News + articles (RSS) |
+| Any other Nethouse page | News + articles (RSS) |
+
+> [!NOTE]
+> A site with the news or articles section turned off answers that feed with 404.
+
 ## Basic Usage
 
 ```typescript
@@ -2395,6 +2407,7 @@ import {
   naverBlogHandler,
   nebulaHandler,
   neocitiesHandler,
+  nethouseHandler,
   niconicoHandler,
   ningHandler,
   nodebbHandler,

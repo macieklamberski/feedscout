@@ -775,6 +775,16 @@
   "neocities": {
     "neocities:updates": "https://neocities.org/site/lazer-bunny.rss"
   },
+  "nethouse": {
+    "nethouse:articles": [
+      "https://jivoirodnik.nethouse.ru/articles/rss",
+      "https://myminecraftguide.nethouse.me/articles/rss"
+    ],
+    "nethouse:news": [
+      "https://jivoirodnik.nethouse.ru/posts/rss",
+      "https://errorfreeled.nethouse.me/posts/rss"
+    ]
+  },
   "niconico": {
     "niconico:blog": "https://ch.nicovideo.jp/yoshikiofficial/blomaga/nico/feed",
     "niconico:live": "https://ch.nicovideo.jp/yoshikiofficial/live?rss=2.0",

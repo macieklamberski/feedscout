@@ -333,6 +333,8 @@
     "jira:project": "Project",
     "jira:site": "Site activity",
     "neocities:updates": "Site updates",
+    "nethouse:news": "News",
+    "nethouse:articles": "Articles",
     "openstatus:updates": "Updates",
     "postype:posts": "Posts",
     "sourcehut:commits": "Commits",
