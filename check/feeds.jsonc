@@ -720,6 +720,9 @@
     "kickstarter:projects": "https://www.kickstarter.com/projects/feed.atom",
     "kickstarter:updates": "https://www.kickstarter.com/projects/elanlee/exploding-kittens/posts.atom"
   },
+  "kktix": {
+    "kktix:events": "https://kafka.kktix.cc/events.atom?locale=zh-TW"
+  },
   "koha": {
     "koha:comments": "https://opac.northsouth.edu/cgi-bin/koha/opac-showreviews.pl?format=rss",
     "koha:list": "https://library-search.nics.gov.uk/cgi-bin/koha/opac-shelves.pl?rss=1&op=view&shelfnumber=309",

@@ -603,6 +603,7 @@
     "promodj:blog": "Blog",
     "promodj:favorites": "Favorites",
     "promodj:events": "Events",
-    "shopserve:news": "News"
+    "shopserve:news": "News",
+    "kktix:events": "Events"
   }
 }
