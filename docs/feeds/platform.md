@@ -2269,6 +2269,19 @@ Discovers RSS and Atom feeds for blogs on `*.hautetfort.com`, `*.blogspirit.com`
 | `{blog}.{domain}/{category}` | Category feed (RSS) + posts |
 | `{blog}.{domain}/archives/category/{category}` | Category feed (RSS) + posts |
 
+### uCoz
+
+Discovers the module and forum feeds of a uCoz site. Covers sites on the uCoz domains, such as `*.ucoz.ru`, `*.at.ua` and `*.narod.ru`, and custom domains through the `{n}{site}uCoz` cookie every uCoz page sets.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `{site}/{module}/…` | Module feed (RSS) for `news`, `publ`, `load`, `photo`, `blog`, `dir`, `board`, `stuff` and `forum` |
+| `{site}/forum/{section}…` | Forum section feed + forum feed (RSS) |
+| Any other page | News feed (RSS) |
+
+> [!NOTE]
+> A module the site has not turned on answers 404.
+
 ## Basic Usage
 
 ```typescript
@@ -2484,6 +2497,7 @@ import {
   togetterHandler,
   transistorHandler,
   tumblrHandler,
+  ucozHandler,
   v2exHandler,
   vbulletinHandler,
   velogHandler,

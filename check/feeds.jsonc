@@ -1238,6 +1238,45 @@
     "tumblr:posts": "https://staff.tumblr.com/rss",
     "tumblr:tag": "https://staff.tumblr.com/tagged/updates/rss"
   },
+  // ucoz.co.uk, ucoz.com.br, ucoz.es, ucoz.hu and ucoz.lv serve an expired or mismatched certificate
+  // on https, and ucoz.pl redirects https to http, checked 2026-10-04.
+  "ucoz": {
+    "ucoz:blog": "https://inve.ucoz.ru/blog/rss",
+    "ucoz:board": "https://hog-life.ucoz.ru/board/rss",
+    "ucoz:dir": "https://ajgeswet.ucoz.ru/dir/rss",
+    "ucoz:forum": "https://tolkienist.ucoz.ru/forum/rss",
+    "ucoz:forum-section": "https://icvi.at.ua/forum/108-0-0-37",
+    "ucoz:load": "https://pedagog.ucoz.ru/load/rss",
+    "ucoz:news": [
+      "https://volgogradzoo.3dn.ru/news/rss",
+      "https://alora.at.ua/news/rss",
+      "https://katalika.clan.su/news/rss",
+      "https://schkola5.do.am/news/rss",
+      "https://suhinichi.moy.su/news/rss",
+      "https://sk-rus.my1.ru/news/rss",
+      "https://soch7mart.narod.ru/news/rss",
+      "https://nara.ucoz.ae/news/rss",
+      "https://discounts.ucoz.club/news/rss",
+      "http://fisher.ucoz.co.uk/news/rss",
+      "https://moyakopilo4ka.ucoz.com/news/rss",
+      "http://samremvera.ucoz.com.br/news/rss",
+      "https://my-mercedes.ucoz.de/news/rss",
+      "http://poetizame.ucoz.es/news/rss",
+      "http://ungvarmod.ucoz.hu/news/rss",
+      "https://karnag.ucoz.kz/news/rss",
+      "http://yastroykaongaza.ucoz.lv/news/rss",
+      "https://last-hope.ucoz.net/news/rss",
+      "https://videomix.ucoz.org/news/rss",
+      "http://kibicerugby.ucoz.pl/news/rss",
+      "https://mamylya.ucoz.ru/news/rss",
+      "https://infomat.ucoz.site/news/rss",
+      "https://rmklokachi.ucoz.ua/news/rss",
+      "https://dmsch59.usite.pro/news/rss"
+    ],
+    "ucoz:photo": "https://arxuv.ucoz.ru/photo/rss",
+    "ucoz:publ": "https://arxuv.ucoz.ru/publ/rss",
+    "ucoz:stuff": "https://lugaveles.ucoz.ru/stuff/rss"
+  },
   "v2ex": {
     "v2ex:index": "https://www.v2ex.com/index.xml",
     "v2ex:member": "https://www.v2ex.com/feed/member/livid.xml",

@@ -66,6 +66,7 @@ import { squarespaceHandler } from './squarespace.js'
 import { statuspageHandler } from './statuspage.js'
 import { svbtleHandler } from './svbtle.js'
 import { textpatternHandler } from './textpattern.js'
+import { ucozHandler } from './ucoz.js'
 import { vbulletinHandler } from './vbulletin.js'
 import { webnodeHandler } from './webnode.js'
 import { wikidotHandler } from './wikidot.js'
@@ -273,6 +274,7 @@ const cases: Array<Case> = [
   ['statuspage', statuspageHandler, '', new Headers({ 'x-statuspage-version': '5a16926c' })],
   ['svbtle', svbtleHandler, '<link href="https://lightning.svbtle.com/cargo/blog.css">'],
   ['textpattern', textpatternHandler, '<meta name="generator" content="Textpattern CMS">'],
+  ['ucoz', ucozHandler, '', new Headers({ 'set-cookie': '0exampleuCoz=; path=/' })],
   ['vbulletin', vbulletinHandler, '<script src="/clientscript/vbulletin-core.js"></script>'],
   [
     'webnode',

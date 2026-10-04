@@ -542,6 +542,16 @@
     "legistar:legislation": "Legislation",
     "legistar:meeting": "Meeting",
     "hautetfort:posts": "Posts",
-    "hautetfort:category": "Category"
+    "hautetfort:category": "Category",
+    "ucoz:blog": "Blog",
+    "ucoz:board": "Classifieds",
+    "ucoz:dir": "Site catalog",
+    "ucoz:forum": "Forum",
+    "ucoz:forum-section": "Forum section",
+    "ucoz:load": "Files",
+    "ucoz:news": "News",
+    "ucoz:photo": "Photos",
+    "ucoz:publ": "Articles",
+    "ucoz:stuff": "Online games"
   }
 }
