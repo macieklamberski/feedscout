@@ -121,6 +121,10 @@
   "bloggang": {
     "bloggang:posts": "https://gonga.bloggang.com/rss"
   },
+  "bloggo": {
+    "bloggo:post-comments": "https://larswesterberg.bloggo.nu/Mer-om-Lindqvist/feed/",
+    "bloggo:posts": "https://larswesterberg.bloggo.nu/feed/"
+  },
   "blogspot": {
     "blogspot:comments": [
       "https://security.googleblog.com/feeds/comments/default",

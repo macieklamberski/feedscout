@@ -592,6 +592,8 @@
     "cppblog:comments": "Comments",
     "cppblog:category": "Category",
     "cppblog:favorites": "Favorites",
-    "reformal:feedback": "Feedback"
+    "reformal:feedback": "Feedback",
+    "bloggo:posts": "Posts",
+    "bloggo:post-comments": "Post comments"
   }
 }
