@@ -37,6 +37,7 @@ import { captivateHandler } from './platforms/captivate.js'
 import { castopodHandler } from './platforms/castopod.js'
 import { castosHandler } from './platforms/castos.js'
 import { cnblogsHandler } from './platforms/cnblogs.js'
+import { cocologHandler } from './platforms/cocolog.js'
 import { confluenceHandler } from './platforms/confluence.js'
 import { cratesIoHandler } from './platforms/cratesIo.js'
 import { csdnHandler } from './platforms/csdn.js'
@@ -354,6 +355,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     castopodHandler,
     castosHandler,
     cnblogsHandler,
+    cocologHandler,
     confluenceHandler,
     cratesIoHandler,
     csdnHandler,
