@@ -31,6 +31,7 @@ import { mobilizonHandler } from './mobilizon.js'
 import { mybbHandler } from './mybb.js'
 import { ningHandler } from './ning.js'
 import { nodebbHandler } from './nodebb.js'
+import { omekaHandler } from './omeka.js'
 import { openstatusHandler } from './openstatus.js'
 import { peertubeHandler } from './peertube.js'
 import { phpbbHandler } from './phpbb.js'
@@ -164,6 +165,7 @@ const cases: Array<Case> = [
     '<link href="https://static.ning.com/socialnetworkmain/widgets/index/css/common.min.css">',
   ],
   ['nodebb', nodebbHandler, '', new Headers({ 'x-powered-by': 'NodeBB' })],
+  ['omeka', omekaHandler, '<link href="/plugins/ExhibitBuilder/views/public/css/exhibits.css">'],
   ['openstatus', openstatusHandler, '<link href="/api/status/summary.json">'],
   ['peertube', peertubeHandler, '', new Headers({ 'x-powered-by': 'PeerTube' })],
   ['phpbb', phpbbHandler, '<body id="phpbb">'],
