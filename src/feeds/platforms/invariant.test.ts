@@ -22,6 +22,7 @@ import { hubzillaHandler } from './hubzilla.js'
 import { instatusHandler } from './instatus.js'
 import { jiraHandler } from './jira.js'
 import { joomlaHandler } from './joomla.js'
+import { kohaHandler } from './koha.js'
 import { lemmyHandler } from './lemmy.js'
 import { mastodonHandler } from './mastodon.js'
 import { mediawikiHandler } from './mediawiki.js'
@@ -105,6 +106,8 @@ const paths = [
   '/node/1',
   '/taxonomy/term/1',
   '/status',
+  '/cgi-bin/koha/opac-search.pl?q=news',
+  '/cgi-bin/koha/opac-shelves.pl?op=view&shelfnumber=1',
 ]
 
 type Case = [string, PlatformHandler, string, Headers?]
@@ -140,6 +143,7 @@ const cases: Array<Case> = [
   ],
   ['jira', jiraHandler, '<meta name="ajs-base-url" content="https://example.org">'],
   ['joomla', joomlaHandler, '<script class="joomla-script-options new">{}</script>'],
+  ['koha', kohaHandler, '<link rel="stylesheet" href="/opac-tmpl/bootstrap/css/opac.css">'],
   ['lemmy', lemmyHandler, '<div class="lemmy-site" id="app"></div>'],
   ['mastodon', mastodonHandler, '<div class="app-holder" id="mastodon"></div>'],
   ['mediawiki', mediawikiHandler, '<link rel="EditURI" href="/w/api.php?action=rsd">'],
