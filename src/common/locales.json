@@ -518,6 +518,8 @@
     "mail-archive:list": "Mailing list",
     "bloggang:posts": "Posts",
     "sme-blog:posts": "Posts",
-    "sme-blog:site": "Site"
+    "sme-blog:site": "Site",
+    "acomics:issues": "Issues",
+    "acomics:subscriptions": "Subscriptions"
   }
 }

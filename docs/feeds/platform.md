@@ -2143,6 +2143,15 @@ Discovers the RSS feeds of blogs on SME Blog, the blog platform of the Slovak da
 | `blog.sme.sk` | Site feed |
 | `blog.sme.sk/t/{topic}` | Site feed |
 
+### Acomics
+
+Discovers RSS feeds for Acomics comics and users. A user's feed carries the new issues of the comics the user subscribes to.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `acomics.ru/~{comic}` | Comic issues feed |
+| `acomics.ru/-{user}` | User subscriptions feed |
+
 ## Basic Usage
 
 ```typescript
@@ -2190,6 +2199,7 @@ Or import individual handlers:
 ```typescript
 import {
   acastHandler,
+  acomicsHandler,
   amebloHandler,
   applePodcastsHandler,
   arenaHandler,

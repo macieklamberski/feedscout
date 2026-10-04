@@ -2,6 +2,10 @@
   "acast": {
     "acast:podcast": "https://feeds.acast.com/public/shows/my-dad-wrote-a-porno"
   },
+  "acomics": {
+    "acomics:issues": "https://acomics.ru/~Oglaf/rss",
+    "acomics:subscriptions": "https://acomics.ru/-Lilim/rss"
+  },
   "ameblo": {
     "ameblo:posts": [
       "https://ameblo.jp/shibuya/rss20.xml",
