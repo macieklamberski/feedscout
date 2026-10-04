@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'bun:test'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { defaultPlatformOptions } from '../defaults.js'
+import { bigCartelHandler } from './bigCartel.js'
 import { bigcommerceHandler } from './bigcommerce.js'
 import { blogspotHandler } from './blogspot.js'
 import { bookwyrmHandler } from './bookwyrm.js'
@@ -145,6 +146,12 @@ const paths = [
 type Case = [string, PlatformHandler, string, Headers?]
 
 const cases: Array<Case> = [
+  [
+    'bigCartel',
+    bigCartelHandler,
+    '',
+    new Headers({ 'x-frame-options': 'ALLOW-FROM https://my.bigcartel.com' }),
+  ],
   ['bigcommerce', bigcommerceHandler, '', new Headers({ 'set-cookie': 'SHOP_SESSION_TOKEN=abc' })],
   [
     'blogspot',

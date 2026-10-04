@@ -77,6 +77,12 @@
     "behance:portfolio": "https://www.behance.net/feeds/user?username=matejlatin",
     "behance:projects": "https://www.behance.net/feeds/projects"
   },
+  "bigCartel": {
+    "big-cartel:products": [
+      "https://jeffstrand.bigcartel.com/products.rss",
+      "https://www.alienpassengers.com/products.rss"
+    ]
+  },
   "bigcommerce": {
     "bigcommerce:blog": [
       "https://www.biggsports.com/rss.php?action=newblogs&type=rss",
