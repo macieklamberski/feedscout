@@ -536,6 +536,8 @@
     "forumotion:latest-topics": "Latest topics",
     "forumotion:forum": "Forum",
     "noticeable:label": "Label",
-    "noticeable:posts": "Posts"
+    "noticeable:posts": "Posts",
+    "legistar:legislation": "Legislation",
+    "legistar:meeting": "Meeting"
   }
 }

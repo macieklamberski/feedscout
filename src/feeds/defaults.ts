@@ -104,6 +104,7 @@ import { kickstarterHandler } from './platforms/kickstarter.js'
 import { kohaHandler } from './platforms/koha.js'
 import { launchpadHandler } from './platforms/launchpad.js'
 import { learnkuHandler } from './platforms/learnku.js'
+import { legistarHandler } from './platforms/legistar.js'
 import { lemmyHandler } from './platforms/lemmy.js'
 import { letterboxdHandler } from './platforms/letterboxd.js'
 import { librivoxHandler } from './platforms/librivox.js'
@@ -454,6 +455,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     kohaHandler,
     launchpadHandler,
     learnkuHandler,
+    legistarHandler,
     lemmyHandler,
     letterboxdHandler,
     librivoxHandler,
