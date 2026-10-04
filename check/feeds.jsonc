@@ -213,6 +213,20 @@
   "drupal": {
     "drupal:site": ["https://dri.es/rss.xml", "https://www.acquia.com/rss.xml"]
   },
+  "dspace": {
+    "dspace:collection": [
+      "https://ecommons.cornell.edu/server/opensearch/search?format=atom&scope=d8d8414c-b9e1-443b-a7d6-03ff5a729517&query=*",
+      "https://ecommons.cornell.edu/server/opensearch/search?format=rss&scope=d8d8414c-b9e1-443b-a7d6-03ff5a729517&query=*"
+    ],
+    "dspace:community": [
+      "https://ecommons.cornell.edu/server/opensearch/search?format=atom&scope=01ee67c0-5eb6-4138-955a-a8c2322d4f9b&query=*",
+      "https://ecommons.cornell.edu/server/opensearch/search?format=rss&scope=01ee67c0-5eb6-4138-955a-a8c2322d4f9b&query=*"
+    ],
+    "dspace:site": [
+      "https://ecommons.cornell.edu/server/opensearch/search?format=atom&query=*",
+      "https://ecommons.cornell.edu/server/opensearch/search?format=rss&query=*"
+    ]
+  },
   "exblog": {
     "exblog:category": [
       "https://petitcc.exblog.jp/i2/index.xml",
