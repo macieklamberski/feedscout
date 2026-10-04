@@ -612,6 +612,7 @@
     "sportsregions:news": "News",
     "sportsregions:events": "Events",
     "ocnk:products": "Products",
-    "blogia:posts": "Posts"
+    "blogia:posts": "Posts",
+    "parsiblog:posts": "Posts"
   }
 }

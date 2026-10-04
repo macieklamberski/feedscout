@@ -2596,6 +2596,15 @@ Discovers the RSS feed for blogs hosted on Blogia.
 |-------------|-----------------|
 | `*.blogia.com` | Posts feed (RSS) |
 
+### Parsiblog
+
+Discovers RSS and Atom feeds for Parsiblog blogs. Parsiblog serves no HTTPS, so the feeds are always `http://`.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `*.parsiblog.com` | Posts feed (RSS + Atom) |
+| `*.parsiblog.ir` | Posts feed (RSS + Atom), on the .com host |
+
 ## Basic Usage
 
 ```typescript
@@ -2779,6 +2788,7 @@ import {
   packagistHandler,
   pagecordHandler,
   paragraphHandler,
+  parsiblogHandler,
   pchomeHandler,
   peertubeHandler,
   pikaHandler,

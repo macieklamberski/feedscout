@@ -1050,6 +1050,12 @@
       "https://paragraph.com/@optimism/rss"
     ]
   },
+  "parsiblog": {
+    "parsiblog:posts": [
+      "http://kamranoveisi.parsiblog.com/rss/",
+      "http://kamranoveisi.parsiblog.com/atom/"
+    ]
+  },
   "pchome": {
     "pchome:category": "https://mypaper.pchome.com.tw/bugsbunny/rss?cid=14",
     "pchome:posts": "https://mypaper.pchome.com.tw/risbkr08/rss"
