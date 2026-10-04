@@ -105,6 +105,7 @@ import { lichessHandler } from './platforms/lichess.js'
 import { listedHandler } from './platforms/listed.js'
 import { livejournalHandler } from './platforms/livejournal.js'
 import { lobstersHandler } from './platforms/lobsters.js'
+import { mailArchiveHandler } from './platforms/mailArchive.js'
 import { mailchimpHandler } from './platforms/mailchimp.js'
 import { mastodonHandler } from './platforms/mastodon.js'
 import { mataroaHandler } from './platforms/mataroa.js'
@@ -442,6 +443,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     listedHandler,
     livejournalHandler,
     lobstersHandler,
+    mailArchiveHandler,
     mailchimpHandler,
     mastodonHandler,
     mataroaHandler,

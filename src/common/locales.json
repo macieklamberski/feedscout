@@ -514,6 +514,7 @@
     "pchome:category": "Category",
     "pukiwiki:recent-changes": "Recent changes",
     "gnuboard:board": "Board",
-    "proboards:posts": "Posts"
+    "proboards:posts": "Posts",
+    "mail-archive:list": "Mailing list"
   }
 }
