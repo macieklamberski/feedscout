@@ -102,6 +102,7 @@ import { hubzillaHandler } from './platforms/hubzilla.js'
 import { insanejournalHandler } from './platforms/insanejournal.js'
 import { instatusHandler } from './platforms/instatus.js'
 import { internetArchiveHandler } from './platforms/internetArchive.js'
+import { isProgrammerHandler } from './platforms/isProgrammer.js'
 import { itchioHandler } from './platforms/itchio.js'
 import { ivooxHandler } from './platforms/ivoox.js'
 import { jellypodHandler } from './platforms/jellypod.js'
@@ -471,6 +472,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     insanejournalHandler,
     instatusHandler,
     internetArchiveHandler,
+    isProgrammerHandler,
     itchioHandler,
     ivooxHandler,
     jellypodHandler,
