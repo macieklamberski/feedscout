@@ -559,6 +559,9 @@
     "medium:tag": "https://medium.com/feed/tag/programming",
     "medium:tagged": "https://medium.com/feed/towards-data-science/tagged/python"
   },
+  "meeNu": {
+    "mee-nu:posts": "https://ai.mee.nu/feed/atom"
+  },
   "megaphone": {
     "megaphone:podcast": "https://feeds.megaphone.fm/GLT1412515089"
   },

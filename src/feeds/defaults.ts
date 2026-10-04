@@ -101,6 +101,7 @@ import { mastodonHandler } from './platforms/mastodon.js'
 import { mataroaHandler } from './platforms/mataroa.js'
 import { mediawikiHandler } from './platforms/mediawiki.js'
 import { mediumHandler } from './platforms/medium.js'
+import { meeNuHandler } from './platforms/meeNu.js'
 import { megaphoneHandler } from './platforms/megaphone.js'
 import { microblogHandler } from './platforms/microblog.js'
 import { misskeyHandler } from './platforms/misskey.js'
@@ -418,6 +419,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     mataroaHandler,
     mediawikiHandler,
     mediumHandler,
+    meeNuHandler,
     megaphoneHandler,
     microblogHandler,
     misskeyHandler,

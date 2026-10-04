@@ -1867,6 +1867,14 @@ Discovers the recent changes feeds of a PmWiki wiki. Detected by the `<!--HTMLHe
 > [!NOTE]
 > Feeds are off in a default PmWiki install and a wiki owner turns them on, so many wikis answer these URLs with the page itself.
 
+### mee.nu
+
+Discovers the posts feed of a mee.nu blog.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `*.mee.nu` | Posts feed (RSS + Atom) |
+
 ## Basic Usage
 
 ```typescript
@@ -1991,6 +1999,7 @@ import {
   mataroaHandler,
   mediawikiHandler,
   mediumHandler,
+  meeNuHandler,
   megaphoneHandler,
   microblogHandler,
   misskeyHandler,
