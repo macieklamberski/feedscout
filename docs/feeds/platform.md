@@ -1867,6 +1867,18 @@ Discovers the recent changes feeds of a PmWiki wiki. Detected by the `<!--HTMLHe
 > [!NOTE]
 > Feeds are off in a default PmWiki install and a wiki owner turns them on, so many wikis answer these URLs with the page itself.
 
+### Zenfolio
+
+Discovers the gallery and blog feeds of a Zenfolio photography site. A custom domain is detected by `cdn.zenfolio.com/zf/` stylesheets or the `zf_5y_visitor` cookie.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `{user}.zenfolio.com/…` | Recent galleries + featured galleries + blog (RSS + Atom) |
+| Any other page | Recent galleries + featured galleries + blog (RSS + Atom) |
+
+> [!NOTE]
+> The featured and blog feeds answer with no items on a site that has no featured galleries or blog posts.
+
 ## Basic Usage
 
 ```typescript

@@ -449,6 +449,9 @@
     "launchpad:revisions": "Revisions",
     "teletype:posts": "Posts",
     "pmwiki:group-changes": "Group changes",
-    "pmwiki:site-changes": "Site changes"
+    "pmwiki:site-changes": "Site changes",
+    "zenfolio:recent": "Recent galleries",
+    "zenfolio:featured": "Featured galleries",
+    "zenfolio:blog": "Blog"
   }
 }

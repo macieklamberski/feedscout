@@ -1225,6 +1225,20 @@
     "youtube:shorts": "https://www.youtube.com/feeds/videos.xml?playlist_id=UUSHXuqSBlHAE6Xw-yeJA0Tunw",
     "youtube:videos": "https://www.youtube.com/feeds/videos.xml?playlist_id=UULFXuqSBlHAE6Xw-yeJA0Tunw"
   },
+  "zenfolio": {
+    "zenfolio:blog": [
+      "https://ctcphotography.zenfolio.com/blog.rss",
+      "https://www.gswar.com/blog.atom"
+    ],
+    "zenfolio:featured": [
+      "https://www.gswar.com/featured.atom",
+      "https://www.davidkellyphoto.com/featured.rss"
+    ],
+    "zenfolio:recent": [
+      "https://ctcphotography.zenfolio.com/recent.atom",
+      "https://www.jennypodesta.com/recent.rss"
+    ]
+  },
   "zenn": {
     "zenn:posts": "https://zenn.dev/zenn/feed",
     "zenn:publication": "https://zenn.dev/p/team_zenn/feed",
