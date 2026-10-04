@@ -2572,6 +2572,14 @@ Discovers the news and events feeds of a Sportsregions club site. A club on its 
 | `{club}.sportsregions.fr/*` | News + events |
 | `{custom-domain}/*` | News + events |
 
+### Ochanoko Net
+
+Discovers the RSS 1.0 feed of new products in an Ochanoko Net shop on `ocnk.net`.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `{shop}.ocnk.net` | Products feed (RSS 1.0) |
+
 ## Basic Usage
 
 ```typescript
@@ -2743,6 +2751,7 @@ import {
   noteHandler,
   noticeableHandler,
   observableHandler,
+  ocnkHandler,
   odooHandler,
   odyseeHandler,
   omekaHandler,

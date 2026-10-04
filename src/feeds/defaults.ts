@@ -152,6 +152,7 @@ import { nodebbHandler } from './platforms/nodebb.js'
 import { noteHandler } from './platforms/note.js'
 import { noticeableHandler } from './platforms/noticeable.js'
 import { observableHandler } from './platforms/observable.js'
+import { ocnkHandler } from './platforms/ocnk.js'
 import { odooHandler } from './platforms/odoo.js'
 import { odyseeHandler } from './platforms/odysee.js'
 import { omekaHandler } from './platforms/omeka.js'
@@ -535,6 +536,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     noteHandler,
     noticeableHandler,
     observableHandler,
+    ocnkHandler,
     odooHandler,
     odyseeHandler,
     omekaHandler,

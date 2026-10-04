@@ -607,6 +607,7 @@
     "shopserve:news": "News",
     "kktix:events": "Events",
     "sportsregions:news": "News",
-    "sportsregions:events": "Events"
+    "sportsregions:events": "Events",
+    "ocnk:products": "Products"
   }
 }
