@@ -29,6 +29,7 @@ import { misskeyHandler } from './misskey.js'
 import { mobilizonHandler } from './mobilizon.js'
 import { mybbHandler } from './mybb.js'
 import { nodebbHandler } from './nodebb.js'
+import { odooHandler } from './odoo.js'
 import { openstatusHandler } from './openstatus.js'
 import { peertubeHandler } from './peertube.js'
 import { phpbbHandler } from './phpbb.js'
@@ -96,6 +97,7 @@ const paths = [
   '/browse/KEY-1',
   '/jira/projects/KEY',
   '/blog',
+  '/blog/news-1/a-post-2',
   '/blogs/news',
   '/blogs/news/a-post',
   '/category/1/general',
@@ -151,6 +153,15 @@ const cases: Array<Case> = [
   ],
   ['mybb', mybbHandler, '', new Headers({ 'set-cookie': 'mybb[lastvisit]=1790000000; path=/' })],
   ['nodebb', nodebbHandler, '', new Headers({ 'x-powered-by': 'NodeBB' })],
+  [
+    'odoo',
+    odooHandler,
+    '',
+    new Headers([
+      ['set-cookie', 'frontend_lang=en_US; Path=/'],
+      ['set-cookie', 'session_id=abc; Path=/'],
+    ]),
+  ],
   ['openstatus', openstatusHandler, '<link href="/api/status/summary.json">'],
   ['peertube', peertubeHandler, '', new Headers({ 'x-powered-by': 'PeerTube' })],
   ['phpbb', phpbbHandler, '<body id="phpbb">'],
