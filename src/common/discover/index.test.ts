@@ -1359,6 +1359,123 @@ describe('discoverFeeds', () => {
       expect(value).toEqual(expected)
     })
 
+    it('should keep the earlier candidate when a later one redirecting to the same feed finishes first', async () => {
+      const platformHandler: PlatformHandler = {
+        match: () => true,
+        resolve: () => [
+          { uri: '/feed/', hint: { key: 'posts', label: 'Posts' } },
+          { uri: '/feed/comments/', hint: { key: 'comments', label: 'Comments' } },
+        ],
+      }
+      const redirectingFetch: FetchFn = async (url) => {
+        if (url === 'https://example.com/feed/') {
+          await new Promise((resolve) => setTimeout(resolve, 10))
+        }
+
+        return {
+          headers: new Headers(),
+          body: rss,
+          url: 'https://example.com/feed/',
+          status: 200,
+          statusText: 'OK',
+        }
+      }
+      const value = await discoverFeeds(
+        { url: 'https://example.com', content: '<html></html>' },
+        {
+          methods: { platform: { handlers: [platformHandler] } },
+          fetchFn: redirectingFetch,
+          concurrency: 2,
+        },
+      )
+      const expected: Array<DiscoverResult<FeedResult>> = [
+        {
+          url: 'https://example.com/feed/',
+          isValid: true,
+          method: 'platform',
+          hint: { key: 'posts', label: 'Posts' },
+          format: 'rss',
+          title: 'Test RSS',
+          description: 'Test feed',
+          siteUrl: 'https://example.com/',
+        },
+      ]
+
+      expect(value).toEqual(expected)
+    })
+
+    it('should keep an earlier method group result over a later group candidate redirecting to the same feed', async () => {
+      const platformHandler: PlatformHandler = {
+        match: () => true,
+        resolve: () => [
+          { uri: '/other/', hint: { key: 'other', label: 'Other' } },
+          { uri: '/feed/', hint: { key: 'posts', label: 'Posts' } },
+        ],
+      }
+      const redirectingFetch: FetchFn = async (url) => ({
+        headers: new Headers(),
+        body: rss,
+        url: url === 'https://example.com/other/' ? url : 'https://example.com/feed/',
+        status: 200,
+        statusText: 'OK',
+      })
+      const value = await discoverFeeds(
+        { url: 'https://example.com', content: '<html></html>' },
+        {
+          methods: { platform: { handlers: [platformHandler] }, guess: { uris: ['/rss'] } },
+          fetchFn: redirectingFetch,
+          concurrency: 2,
+        },
+      )
+      const expected = { method: 'platform', hint: { key: 'posts', label: 'Posts' } }
+
+      expect(value.find((result) => result.url === 'https://example.com/feed/')).toMatchObject(
+        expected,
+      )
+    })
+
+    it('should keep the earlier candidate invalid result when a later one redirecting to the same page finishes first', async () => {
+      const platformHandler: PlatformHandler = {
+        match: () => true,
+        resolve: () => [
+          { uri: '/feed/', hint: { key: 'posts', label: 'Posts' } },
+          { uri: '/feed/comments/', hint: { key: 'comments', label: 'Comments' } },
+        ],
+      }
+      const redirectingFetch: FetchFn = async (url) => {
+        if (url === 'https://example.com/feed/') {
+          await new Promise((resolve) => setTimeout(resolve, 10))
+        }
+
+        return {
+          headers: new Headers(),
+          body: '<html></html>',
+          url: 'https://example.com/feed/',
+          status: 200,
+          statusText: 'OK',
+        }
+      }
+      const value = await discoverFeeds(
+        { url: 'https://example.com', content: '<html></html>' },
+        {
+          methods: { platform: { handlers: [platformHandler] } },
+          fetchFn: redirectingFetch,
+          concurrency: 2,
+          includeInvalid: true,
+        },
+      )
+      const expected: Array<DiscoverResult<FeedResult>> = [
+        {
+          url: 'https://example.com/feed/',
+          isValid: false,
+          method: 'platform',
+          hint: { key: 'posts', label: 'Posts' },
+        },
+      ]
+
+      expect(value).toEqual(expected)
+    })
+
     it('should keep a valid result for a URL that failed earlier', async () => {
       const mockFetch: FetchFn = (url) => {
         if (url === 'https://example.com/feed') {

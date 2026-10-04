@@ -185,27 +185,32 @@ export const discover = async <TValid>(
 
   // Step 5: Validate discovered URIs.
   const total = methodGroups.reduce((sum, group) => sum + group.entries.length, 0)
-  const results: Array<DiscoverResult<TValid>> = []
-  const validUrls = new Set<string>()
-  const invalidUrls = new Set<string>()
+  const recorded: Array<{ entryIndex: number; result: DiscoverResult<TValid> }> = []
 
   let tested = 0
   let found = 0
 
   // Candidates that redirect to one URL, like /feed and /rss on WordPress, all come back under
-  // the final URL. Only the first result for each URL is kept.
-  const recordResult = (result: DiscoverResult<TValid>): void => {
-    const seenUrls = result.isValid ? validUrls : invalidUrls
+  // the final URL. Only the earliest candidate's result for each URL is kept, whichever finishes
+  // first, so its method and hint do not depend on fetch timing.
+  const recordResult = (result: DiscoverResult<TValid>, entryIndex: number): void => {
+    const existing = recorded.find((record) => {
+      return record.result.url === result.url && record.result.isValid === result.isValid
+    })
 
-    if (seenUrls.has(result.url)) {
+    if (!existing) {
+      recorded.push({ entryIndex, result })
+
+      if (result.isValid) {
+        found += 1
+      }
+
       return
     }
 
-    seenUrls.add(result.url)
-    results.push(result)
-
-    if (result.isValid) {
-      found += 1
+    if (entryIndex < existing.entryIndex) {
+      existing.entryIndex = entryIndex
+      existing.result = result
     }
   }
 
@@ -224,7 +229,11 @@ export const discover = async <TValid>(
     }
   }
 
-  const processUri = async (entry: DiscoverUriEntry, method: DiscoverMethod): Promise<void> => {
+  const processUri = async (
+    entry: DiscoverUriEntry,
+    method: DiscoverMethod,
+    entryIndex: number,
+  ): Promise<void> => {
     const alternatives = typeof entry.uri === 'string' ? [entry.uri] : entry.uri
 
     for (const url of alternatives) {
@@ -233,7 +242,7 @@ export const discover = async <TValid>(
         ? { ...extracted, method, hint: entry.hint }
         : { ...extracted, method }
 
-      recordResult(result)
+      recordResult(result, entryIndex)
       tested += 1
 
       attempt(
@@ -251,6 +260,8 @@ export const discover = async <TValid>(
     }
   }
 
+  let entryOffset = 0
+
   for (const { method, entries } of methodGroups) {
     if (stopOnFirstResult && found > 0) {
       break
@@ -260,7 +271,11 @@ export const discover = async <TValid>(
 
     reportStep({ step: 'validate', status: 'start', method, total: entries.length })
 
-    await processConcurrently(entries, (entry) => processUri(entry, method), {
+    const validateEntry = (entry: DiscoverUriEntry, index: number): Promise<void> => {
+      return processUri(entry, method, entryOffset + index)
+    }
+
+    await processConcurrently(entries, validateEntry, {
       concurrency: safeConcurrency,
       shouldStop: () => {
         return stopOnFirstResult && found > 0
@@ -275,10 +290,14 @@ export const discover = async <TValid>(
       found: found - foundBefore,
     })
 
+    entryOffset += entries.length
+
     if (stopOnFirstMethod && found > foundBefore) {
       break
     }
   }
+
+  const results = recorded.map((record) => record.result)
 
   return includeInvalid ? results : results.filter((result) => result.isValid)
 }
