@@ -2649,6 +2649,14 @@ Discovers the tour packages feed of a TourTravelWorld travel site, built by Webl
 |-------------|-----------------|
 | Any page | Tour packages feed (RSS) |
 
+### RealEstateIndia
+
+Discovers the property listings feed of a RealEstateIndia agency site, built by Weblink.In on the agency's own domain. Detected by the template stylesheet on `catalog.wlimg.com` together with the page's link to `/property.rss`, so any domain is covered.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| Any page | Properties feed (RSS) |
+
 ## Basic Usage
 
 ```typescript
@@ -2863,6 +2871,7 @@ import {
   pypiHandler,
   qiitaHandler,
   rakutenBlogHandler,
+  realEstateIndiaHandler,
   redcircleHandler,
   redditHandler,
   reformalHandler,

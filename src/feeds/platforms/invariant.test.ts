@@ -62,6 +62,7 @@ import { powerpressHandler } from './powerpress.js'
 import { publicInboxHandler } from './publicInbox.js'
 import { publiiHandler } from './publii.js'
 import { pukiwikiHandler } from './pukiwiki.js'
+import { realEstateIndiaHandler } from './realEstateIndia.js'
 import { shaarliHandler } from './shaarli.js'
 import { shopifyHandler } from './shopify.js'
 import { shopserveHandler } from './shopserve.js'
@@ -289,6 +290,11 @@ const cases: Array<Case> = [
   ],
   ['publii', publiiHandler, '<img src="https://example.org/media/website/logo.png">'],
   ['pukiwiki', pukiwikiHandler, '<link rel="stylesheet" href="skin/pukiwiki.css">'],
+  [
+    'realEstateIndia',
+    realEstateIndiaHandler,
+    '<link rel="stylesheet" href="https://catalog.wlimg.com/templates-images/12585/12592/catalog.css"><a href="/property.rss">RSS</a>',
+  ],
   ['shaarli', shaarliHandler, '<div id="shaarli-menu"></div>'],
   ['shopify', shopifyHandler, '', new Headers({ 'powered-by': 'Shopify' })],
   ['shopserve', shopserveHandler, '<a href="/hpgen/HPB/rss.xml">'],
