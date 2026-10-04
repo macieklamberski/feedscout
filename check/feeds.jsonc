@@ -567,6 +567,10 @@
   "hashnode": {
     "hashnode:blog": "https://townhall.hashnode.com/rss.xml"
   },
+  "hatenaAntenna": {
+    "hatena-antenna:antenna": "http://a.hatena.ne.jp/ronarona/rss",
+    "hatena-antenna:group": "http://a.hatena.ne.jp/mahounofuefuki/rss?gid=390986"
+  },
   "hatenaBookmark": {
     "hatena-bookmark:bookmarks": "https://b.hatena.ne.jp/jkondo/bookmark.rss",
     "hatena-bookmark:hot": [
