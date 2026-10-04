@@ -171,6 +171,7 @@ import { pleromaHandler } from './platforms/pleroma.js'
 import { plurkHandler } from './platforms/plurk.js'
 import { pmwikiHandler } from './platforms/pmwiki.js'
 import { podbeanHandler } from './platforms/podbean.js'
+import { podcloudHandler } from './platforms/podcloud.js'
 import { podhomeHandler } from './platforms/podhome.js'
 import { podigeeHandler } from './platforms/podigee.js'
 import { podloveHandler } from './platforms/podlove.js'
@@ -547,6 +548,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     plurkHandler,
     pmwikiHandler,
     podbeanHandler,
+    podcloudHandler,
     podhomeHandler,
     podigeeHandler,
     podloveHandler,
