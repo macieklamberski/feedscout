@@ -2121,6 +2121,17 @@ Discovers the RSS feed of a mailing list archived on The Mail Archive (mail-arch
 | `mail-archive.com/{list}/` | Mailing list feed |
 | `mail-archive.com/{list}/msg{n}.html` | Mailing list feed |
 
+### Bloggang
+
+Discovers RSS feeds for Bloggang blogs. A blog lives on its own subdomain, which redirects to its pages on `www.bloggang.com`.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `{user}.bloggang.com` | Posts feed |
+| `www.bloggang.com/mainblog.php?id={user}` | Posts feed |
+| `www.bloggang.com/viewblog.php?id={user}` | Posts feed |
+| `www.bloggang.com/viewdiary.php?id={user}` | Posts feed |
+
 ## Basic Usage
 
 ```typescript
@@ -2181,6 +2192,7 @@ import {
   behanceHandler,
   bigcommerceHandler,
   bitchuteHandler,
+  bloggangHandler,
   blogHuHandler,
   blogspotHandler,
   blueskyHandler,
