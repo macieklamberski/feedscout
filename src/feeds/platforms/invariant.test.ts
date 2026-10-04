@@ -11,6 +11,7 @@ import { discourseHandler } from './discourse.js'
 import { discuzHandler } from './discuz.js'
 import { dokuwikiHandler } from './dokuwiki.js'
 import { drupalHandler } from './drupal.js'
+import { dspaceHandler } from './dspace.js'
 import { fluxbbHandler } from './fluxbb.js'
 import { friendicaHandler } from './friendica.js'
 import { funkwhaleHandler } from './funkwhale.js'
@@ -141,6 +142,7 @@ const cases: Array<Case> = [
   ['discuz', discuzHandler, '<meta name="generator" content="Discuz! X3.5">'],
   ['dokuwiki', dokuwikiHandler, '', new Headers({ 'set-cookie': 'DokuWiki=abc; path=/' })],
   ['drupal', drupalHandler, '<meta name="generator" content="Drupal 10 (https://www.drupal.org)">'],
+  ['dspace', dspaceHandler, '<ds-app></ds-app>'],
   ['fluxbb', fluxbbHandler, '<div id="brdmenu"></div><div id="brdfooter"></div>'],
   ['friendica', friendicaHandler, '<meta name="generator" content="Friendica 2026.05">'],
   ['funkwhale', funkwhaleHandler, '<div id="fake-app"></div>'],

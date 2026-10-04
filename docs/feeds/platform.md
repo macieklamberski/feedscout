@@ -1941,6 +1941,19 @@ Discovers the module feeds of a CivicPlus government website. Detected by the `C
 > [!NOTE]
 > Each feed covers every category of its module. The home page, content pages and modules with no feed of their own get the Pages feed.
 
+### DSpace
+
+Discovers the OpenSearch feeds of a DSpace 7 or later repository. Detected by the `ds-app` element of its Angular app, so any domain is covered. The feeds are built on the REST API the page's config names, which can sit on another host.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `{repository}/collections/{uuid}` | Collection feed + site feed (RSS + Atom) |
+| `{repository}/communities/{uuid}` | Community feed + site feed (RSS + Atom) |
+| Any other page | Site feed (RSS + Atom) |
+
+> [!NOTE]
+> The search endpoint ignores a scope it does not know and answers with the site feed, so only an id the page URL names is used.
+
 ## Basic Usage
 
 ```typescript
@@ -2022,6 +2035,7 @@ import {
   doubanHandler,
   dreamwidthHandler,
   drupalHandler,
+  dspaceHandler,
   exblogHandler,
   fc2Handler,
   firesideHandler,
