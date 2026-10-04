@@ -38,6 +38,7 @@ import { bookwyrmHandler } from './platforms/bookwyrm.js'
 import { bubblelifeHandler } from './platforms/bubblelife.js'
 import { buttondownHandler } from './platforms/buttondown.js'
 import { buzzsproutHandler } from './platforms/buzzsprout.js'
+import { canalblogHandler } from './platforms/canalblog.js'
 import { canpanHandler } from './platforms/canpan.js'
 import { captivateHandler } from './platforms/captivate.js'
 import { castopodHandler } from './platforms/castopod.js'
@@ -410,6 +411,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     bubblelifeHandler,
     buttondownHandler,
     buzzsproutHandler,
+    canalblogHandler,
     canpanHandler,
     captivateHandler,
     castopodHandler,

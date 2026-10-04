@@ -163,6 +163,9 @@
   "buzzsprout": {
     "buzzsprout:podcast": "https://rss.buzzsprout.com/231452.rss"
   },
+  "canalblog": {
+    "canalblog:posts": "https://ateliercorvette.canalblog.com/rss"
+  },
   "canpan": {
     "canpan:posts": [
       "https://blog.canpan.info/rera/index2_0.xml",
