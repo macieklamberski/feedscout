@@ -482,6 +482,7 @@
     "spip:articles": "Articles",
     "spip:author": "Author",
     "spip:keyword": "Keyword",
-    "spip:section": "Section"
+    "spip:section": "Section",
+    "odoo:blog": "Blog"
   }
 }

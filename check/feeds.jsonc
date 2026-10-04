@@ -683,6 +683,9 @@
     "observable:recent": "https://api.observablehq.com/documents/public.rss",
     "observable:trending": "https://api.observablehq.com/documents/trending.rss"
   },
+  "odoo": {
+    "odoo:blog": "https://www.odoo.com/blog/odoo-news-5/feed"
+  },
   "odysee": {
     "odysee:videos": "https://odysee.com/$/rss/@Odysee:8"
   },

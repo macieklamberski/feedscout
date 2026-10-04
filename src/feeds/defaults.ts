@@ -118,6 +118,7 @@ import { ningHandler } from './platforms/ning.js'
 import { nodebbHandler } from './platforms/nodebb.js'
 import { noteHandler } from './platforms/note.js'
 import { observableHandler } from './platforms/observable.js'
+import { odooHandler } from './platforms/odoo.js'
 import { odyseeHandler } from './platforms/odysee.js'
 import { omekaHandler } from './platforms/omeka.js'
 import { omnystudioHandler } from './platforms/omnystudio.js'
@@ -444,6 +445,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     nodebbHandler,
     noteHandler,
     observableHandler,
+    odooHandler,
     odyseeHandler,
     omekaHandler,
     omnystudioHandler,
