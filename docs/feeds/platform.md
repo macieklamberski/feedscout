@@ -2388,6 +2388,14 @@ Discovers the blog and events feeds of a Wild Apricot site. Detected by the `x-l
 > [!NOTE]
 > A post page links `/page-{id}/RSS` as its feed, which answers 404. An event page links no events page, so it gets no feed.
 
+### Jellypod
+
+Discovers RSS feeds for Jellypod-hosted podcasts.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `*.jellypod.com` | Podcast feed (RSS) |
+
 ## Basic Usage
 
 ```typescript
@@ -2514,6 +2522,7 @@ import {
   internetArchiveHandler,
   itchioHandler,
   ivooxHandler,
+  jellypodHandler,
   jimdoHandler,
   jiraHandler,
   jugemHandler,
