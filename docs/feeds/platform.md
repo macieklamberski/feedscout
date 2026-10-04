@@ -2489,6 +2489,15 @@ Discovers RSS feeds for cppblog blogs on `www.cppblog.com` and `cppblog.com`.
 > [!NOTE]
 > The site's https certificate has expired, so the feeds are `http://www.cppblog.com` URLs whatever the page URL's scheme and host.
 
+### Reformal
+
+Discovers the feedback feed of a Reformal project, on reformal.ru and its English farm idea.informer.com.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `{project}.reformal.ru` | Feedback feed (RSS) |
+| `{project}.idea.informer.com` | Feedback feed (RSS) |
+
 ## Basic Usage
 
 ```typescript
@@ -2693,6 +2702,7 @@ import {
   rakutenBlogHandler,
   redcircleHandler,
   redditHandler,
+  reformalHandler,
   royalroadHandler,
   rssComHandler,
   rubygemsHandler,

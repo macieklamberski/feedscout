@@ -1200,6 +1200,12 @@
       "skip": "empty feed on every subreddit tried"
     }
   },
+  "reformal": {
+    "reformal:feedback": [
+      "https://sitereport.reformal.ru/proj/rss",
+      "https://watchmaker-bugs.idea.informer.com/proj/rss"
+    ]
+  },
   "royalroad": {
     "royalroad:fiction": "https://www.royalroad.com/syndication/21220"
   },
