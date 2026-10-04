@@ -513,6 +513,7 @@
     "pchome:posts": "Posts",
     "pchome:category": "Category",
     "pukiwiki:recent-changes": "Recent changes",
-    "gnuboard:board": "Board"
+    "gnuboard:board": "Board",
+    "proboards:posts": "Posts"
   }
 }

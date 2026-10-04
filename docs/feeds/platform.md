@@ -2099,6 +2099,19 @@ Discovers the RSS feed of a Gnuboard 4 or 5 board. Detected by the visit cookie 
 > [!NOTE]
 > A board owner can turn its feed off, and Gnuboard then answers the feed URL with an HTML page, so discovery finds nothing there.
 
+### ProBoards
+
+Discovers the posts feed of a ProBoards forum.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `*.proboards.com` | Posts feed (RSS) |
+| `*.freeforums.net` | Posts feed (RSS) |
+| `*.boards.net` | Posts feed (RSS) |
+
+> [!NOTE]
+> A request with a browser user agent gets a proof-of-work challenge instead of the page, so the feed is built from the forum host alone. The feed answers 406 to a bare `Mozilla/5.0` or an empty user agent.
+
 ## Basic Usage
 
 ```typescript
@@ -2268,6 +2281,7 @@ import {
   podomaticHandler,
   posthavenHandler,
   postypeHandler,
+  proboardsHandler,
   producthuntHandler,
   proseHandler,
   publicInboxHandler,
