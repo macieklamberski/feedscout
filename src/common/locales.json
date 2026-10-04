@@ -496,6 +496,9 @@
     "bigcommerce:category-new-products": "New products in category",
     "bigcommerce:category-popular-products": "Popular products in category",
     "bigcommerce:search": "Search",
-    "cocolog:posts": "Posts"
+    "cocolog:posts": "Posts",
+    "blog-hu:posts": "Posts",
+    "blog-hu:comments": "Comments",
+    "blog-hu:user": "User activity"
   }
 }

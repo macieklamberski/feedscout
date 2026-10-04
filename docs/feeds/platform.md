@@ -2044,6 +2044,15 @@ Discovers the posts feeds of a Cocolog blog on `cocolog-nifty.com` and its sibli
 | `{user}.cocolog-nifty.com/{blog}/…` | Posts feed (Atom + RDF + RSS) |
 | `{user}.cocolog-nifty.com` | Posts feed of the blog the page links (Atom + RDF + RSS) |
 
+### blog.hu
+
+Discovers the feeds of blog.hu blogs, and the activity feed of a blog.hu user.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `*.blog.hu` | Posts feed (RSS + Atom) + comments feed (RSS + Atom) |
+| `blog.hu/user/{id}` | User activity feed (RSS) |
+
 ## Basic Usage
 
 ```typescript
@@ -2104,6 +2113,7 @@ import {
   behanceHandler,
   bigcommerceHandler,
   bitchuteHandler,
+  blogHuHandler,
   blogspotHandler,
   blueskyHandler,
   bookwyrmHandler,

@@ -106,6 +106,14 @@
   "bitchute": {
     "bitchute:channel": "https://www.bitchute.com/feeds/rss/channel/bcsupport/"
   },
+  "blogHu": {
+    "blog-hu:comments": [
+      "https://kertbuvolo.blog.hu/comments/rss2",
+      "https://kertbuvolo.blog.hu/comments/atom"
+    ],
+    "blog-hu:posts": ["https://kertbuvolo.blog.hu/rss2", "https://kertbuvolo.blog.hu/atom"],
+    "blog-hu:user": "https://blog.hu/user/821883/rss"
+  },
   "blogspot": {
     "blogspot:comments": [
       "https://security.googleblog.com/feeds/comments/default",
