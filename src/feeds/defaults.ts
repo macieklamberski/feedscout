@@ -225,6 +225,7 @@ import { webnodeHandler } from './platforms/webnode.js'
 import { webtoonsHandler } from './platforms/webtoons.js'
 import { weeblyHandler } from './platforms/weebly.js'
 import { wikidotHandler } from './platforms/wikidot.js'
+import { wildApricotHandler } from './platforms/wildApricot.js'
 import { wixHandler } from './platforms/wix.js'
 import { wordpressHandler } from './platforms/wordpress.js'
 import { wpengineHandler } from './platforms/wpengine.js'
@@ -589,6 +590,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     webtoonsHandler,
     weeblyHandler,
     wikidotHandler,
+    wildApricotHandler,
     wixHandler,
     wordpressHandler,
     wpengineHandler,

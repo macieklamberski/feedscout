@@ -73,6 +73,7 @@ import { ucozHandler } from './ucoz.js'
 import { vbulletinHandler } from './vbulletin.js'
 import { webnodeHandler } from './webnode.js'
 import { wikidotHandler } from './wikidot.js'
+import { wildApricotHandler } from './wildApricot.js'
 import { wixHandler } from './wix.js'
 import { writefreelyHandler } from './writefreely.js'
 import { xenforoHandler } from './xenforo.js'
@@ -297,6 +298,12 @@ const cases: Array<Case> = [
     '<script src="https://d11bh4d8fhuq47.cloudfront.net/_system/client/js/frontend.js"></script>',
   ],
   ['wikidot', wikidotHandler, '<a onclick="WIKIDOT.page.listeners.editClick()">Edit</a>'],
+  [
+    'wildApricot',
+    wildApricotHandler,
+    '<a id="FunctionalBlock1_ctl00_blogPostList_rssLink" href="/news/RSS">RSS</a>',
+    new Headers({ 'x-lb-server': 'ip-10-11-40-107.wa.local' }),
+  ],
   ['wix', wixHandler, '', new Headers({ 'x-wix-request-id': '1790000000.1' })],
   ['writefreely', writefreelyHandler, '<link rel="stylesheet" href="/css/write.css">'],
   ['xenforo', xenforoHandler, '<html id="XF">'],
