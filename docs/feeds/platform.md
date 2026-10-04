@@ -1072,11 +1072,17 @@ Discovers RSS 2.0 and RDF feeds for Sakura blog.
 
 ### Seesaa Blog
 
-Discovers RSS 2.0 and RDF feeds for Seesaa Blog.
+Discovers RSS 2.0 and RDF feeds for Seesaa Blog on `*.seesaa.net` and its other blog domains.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | `*.seesaa.net` | Posts feed (RSS 2.0 + RDF) |
+| `*.iiblog.jp` | Posts feed (RSS 2.0 + RDF) |
+| `*.seesaa.blog` | Posts feed (RSS 2.0 + RDF) |
+| `*.seesaa.space` | Posts feed (RSS 2.0 + RDF) |
+| `*.sokuho.org` | Posts feed (RSS 2.0 + RDF) |
+| `*.stablo.jp` | Posts feed (RSS 2.0 + RDF) |
+| `*.xblog.jp` | Posts feed (RSS 2.0 + RDF) |
 
 ### Sermon.net
 

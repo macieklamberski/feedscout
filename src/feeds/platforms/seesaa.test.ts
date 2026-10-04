@@ -9,8 +9,31 @@ describe('parseSeesaaUrl', () => {
     expect(parseSeesaaUrl('https://example.seesaa.net/')).toEqual(expected)
   })
 
+  const otherDomainBlogs = [
+    'https://example.iiblog.jp/',
+    'https://example.seesaa.blog/',
+    'https://example.seesaa.space/',
+    'https://example.sokuho.org/',
+    'http://example.stablo.jp/',
+    'https://example.xblog.jp/',
+  ]
+
+  it.each(otherDomainBlogs)('should return the blog for %s', (value) => {
+    const expected: SeesaaUrl = { kind: 'blog' }
+
+    expect(parseSeesaaUrl(value)).toEqual(expected)
+  })
+
   it('should return undefined for the apex domain', () => {
     expect(parseSeesaaUrl('https://seesaa.net/')).toBeUndefined()
+  })
+
+  it('should return undefined for the apex of another domain', () => {
+    expect(parseSeesaaUrl('https://seesaa.space/')).toBeUndefined()
+  })
+
+  it('should return undefined for a domain ending in xblog.jp', () => {
+    expect(parseSeesaaUrl('https://example.exblog.jp/')).toBeUndefined()
   })
 
   it('should return undefined for another host', () => {
