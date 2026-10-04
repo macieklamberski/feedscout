@@ -72,6 +72,7 @@ import { giteaHandler } from './platforms/gitea.js'
 import { githubHandler } from './platforms/github.js'
 import { githubGistHandler } from './platforms/githubGist.js'
 import { gitlabHandler } from './platforms/gitlab.js'
+import { gnuboardHandler } from './platforms/gnuboard.js'
 import { goodreadsHandler } from './platforms/goodreads.js'
 import { gravHandler } from './platforms/grav.js'
 import { habrHandler } from './platforms/habr.js'
@@ -407,6 +408,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     githubHandler,
     githubGistHandler,
     gitlabHandler,
+    gnuboardHandler,
     goodreadsHandler,
     gravHandler,
     habrHandler,

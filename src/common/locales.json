@@ -512,6 +512,7 @@
     "chambermaster:new-m2m-deals": "New member to member deals",
     "pchome:posts": "Posts",
     "pchome:category": "Category",
-    "pukiwiki:recent-changes": "Recent changes"
+    "pukiwiki:recent-changes": "Recent changes",
+    "gnuboard:board": "Board"
   }
 }

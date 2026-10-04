@@ -20,6 +20,7 @@ import { funkwhaleHandler } from './funkwhale.js'
 import { gancioHandler } from './gancio.js'
 import { giteaHandler } from './gitea.js'
 import { gitlabHandler } from './gitlab.js'
+import { gnuboardHandler } from './gnuboard.js'
 import { gravHandler } from './grav.js'
 import { homelandHandler } from './homeland.js'
 import { hubspotHandler } from './hubspot.js'
@@ -160,6 +161,12 @@ const cases: Array<Case> = [
   ['gancio', gancioHandler, '<link rel="stylesheet" href="/custom_css">'],
   ['gitea', giteaHandler, '', new Headers({ 'set-cookie': 'i_like_gitea=abc; Path=/' })],
   ['gitlab', gitlabHandler, '<meta property="og:site_name" content="GitLab">'],
+  [
+    'gnuboard',
+    gnuboardHandler,
+    '<script>var g5_url = "https://example.org"; var g5_bo_table = "free";</script>',
+    new Headers({ 'set-cookie': '2a0d2363701f23f8a75028924a3af643=abc; path=/' }),
+  ],
   ['grav', gravHandler, '', new Headers({ 'set-cookie': 'grav-site-9a6a5fc=abc; path=/' })],
   ['homeland', homelandHandler, '', new Headers({ 'set-cookie': '_homeland_session=abc; path=/' })],
   ['hubspot', hubspotHandler, '', new Headers({ 'x-hs-hub-id': '53' })],

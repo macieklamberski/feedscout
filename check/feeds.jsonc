@@ -428,6 +428,12 @@
     "gitlab:releases": "https://gitlab.com/gitlab-org/security-products/analyzers/semgrep/-/releases.atom",
     "gitlab:tags": "https://gitlab.com/gitlab-org/gitlab/-/tags?format=atom"
   },
+  "gnuboard": {
+    "gnuboard:board": [
+      "https://dete035.kr/bbs/rss.php?bo_table=business",
+      "http://dokdonetwork.or.kr/gnuboard4/bbs/rss.php?bo_table=dokdo_data"
+    ]
+  },
   "goodreads": {
     "goodreads:reviews": "https://www.goodreads.com/review/list_rss/1",
     "goodreads:shelf": "https://www.goodreads.com/review/list_rss/1?shelf=read",
