@@ -54,6 +54,7 @@ import { openstatusHandler } from './openstatus.js'
 import { peertubeHandler } from './peertube.js'
 import { phpbbHandler } from './phpbb.js'
 import { pixelfedHandler } from './pixelfed.js'
+import { placementIndiaHandler } from './placementIndia.js'
 import { pleromaHandler } from './pleroma.js'
 import { pmwikiHandler } from './pmwiki.js'
 import { podhomeHandler } from './podhome.js'
@@ -266,6 +267,11 @@ const cases: Array<Case> = [
   ['peertube', peertubeHandler, '', new Headers({ 'x-powered-by': 'PeerTube' })],
   ['phpbb', phpbbHandler, '<body id="phpbb">'],
   ['pixelfed', pixelfedHandler, '<meta name="generator" content="pixelfed">'],
+  [
+    'placementIndia',
+    placementIndiaHandler,
+    '<link rel="stylesheet" href="https://catalog.wlimg.com/templates-images/12569/12574/catalog.css"><a href="/vacancy.rss">RSS</a>',
+  ],
   [
     'pleroma',
     pleromaHandler,

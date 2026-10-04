@@ -2657,6 +2657,15 @@ Discovers the property listings feed of a RealEstateIndia agency site, built by 
 |-------------|-----------------|
 | Any page | Properties feed (RSS) |
 
+### PlacementIndia
+
+Discovers the vacancies feed of a PlacementIndia jobs site, built by Weblink.In on the consultancy's own domain, and on a job page the feed of that one opening. Detected by the template stylesheet on `catalog.wlimg.com` together with the page's link to `/vacancy.rss`, so any domain is covered.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| Any page | Vacancies feed (RSS) |
+| Job page | Job opening feed (RSS) |
+
 ## Basic Usage
 
 ```typescript
@@ -2850,6 +2859,7 @@ import {
   pinboardHandler,
   pinterestHandler,
   pixelfedHandler,
+  placementIndiaHandler,
   pleromaHandler,
   plurkHandler,
   pmwikiHandler,
