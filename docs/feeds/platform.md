@@ -2605,6 +2605,14 @@ Discovers RSS and Atom feeds for Parsiblog blogs. Parsiblog serves no HTTPS, so 
 | `*.parsiblog.com` | Posts feed (RSS + Atom) |
 | `*.parsiblog.ir` | Posts feed (RSS + Atom), on the .com host |
 
+### Blogalia
+
+Discovers RDF and RSS 2.0 feeds for Blogalia blogs.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `*.blogalia.com` | Posts feed (RDF + RSS 2.0) |
+
 ## Basic Usage
 
 ```typescript
@@ -2666,6 +2674,7 @@ import {
   behanceHandler,
   bigcommerceHandler,
   bitchuteHandler,
+  blogaliaHandler,
   bloggangHandler,
   bloggoHandler,
   blogHuHandler,
