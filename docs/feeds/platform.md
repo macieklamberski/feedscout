@@ -2563,6 +2563,15 @@ Discovers the Atom feed of a KKTIX organizer's public events.
 | `{organizer}.kktix.cc` | Events feed |
 | `{organizer}.kktix.cc/events/{event}` | Events feed |
 
+### Sportsregions
+
+Discovers the news and events feeds of a Sportsregions club site. A club on its own domain is detected by the link to the platform's content report form in the footer of every club page.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `{club}.sportsregions.fr/*` | News + events |
+| `{custom-domain}/*` | News + events |
+
 ## Basic Usage
 
 ```typescript
@@ -2788,6 +2797,7 @@ import {
   soundonHandler,
   sourceforgeHandler,
   sourcehutHandler,
+  sportsregionsHandler,
   spotifyForCreatorsHandler,
   spreakerHandler,
   squarespaceHandler,

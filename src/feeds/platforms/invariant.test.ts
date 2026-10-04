@@ -67,6 +67,7 @@ import { shopserveHandler } from './shopserve.js'
 import { smfHandler } from './smf.js'
 import { snacHandler } from './snac.js'
 import { spipHandler } from './spip.js'
+import { sportsregionsHandler } from './sportsregions.js'
 import { squarespaceHandler } from './squarespace.js'
 import { statuspageHandler } from './statuspage.js'
 import { svbtleHandler } from './svbtle.js'
@@ -290,6 +291,11 @@ const cases: Array<Case> = [
   ],
   ['snac', snacHandler, '', new Headers({ 'x-creator': 'snac/2.95' })],
   ['spip', spipHandler, '', new Headers({ 'composed-by': 'SPIP 4.4.25 @ www.spip.net' })],
+  [
+    'sportsregions',
+    sportsregionsHandler,
+    '<a href="https://www.sportsregions.fr/signaler-un-contenu-inapproprie">Signaler</a>',
+  ],
   ['squarespace', squarespaceHandler, '', new Headers({ server: 'Squarespace' })],
   ['statuspage', statuspageHandler, '', new Headers({ 'x-statuspage-version': '5a16926c' })],
   ['svbtle', svbtleHandler, '<link href="https://lightning.svbtle.com/cargo/blog.css">'],
