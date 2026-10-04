@@ -114,6 +114,7 @@ import { niconicoHandler } from './platforms/niconico.js'
 import { nodebbHandler } from './platforms/nodebb.js'
 import { noteHandler } from './platforms/note.js'
 import { observableHandler } from './platforms/observable.js'
+import { odooHandler } from './platforms/odoo.js'
 import { odyseeHandler } from './platforms/odysee.js'
 import { omnystudioHandler } from './platforms/omnystudio.js'
 import { openstatusHandler } from './platforms/openstatus.js'
@@ -431,6 +432,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     nodebbHandler,
     noteHandler,
     observableHandler,
+    odooHandler,
     odyseeHandler,
     omnystudioHandler,
     openstatusHandler,

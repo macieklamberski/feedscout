@@ -1867,6 +1867,17 @@ Discovers the recent changes feeds of a PmWiki wiki. Detected by the `<!--HTMLHe
 > [!NOTE]
 > Feeds are off in a default PmWiki install and a wiki owner turns them on, so many wikis answer these URLs with the page itself.
 
+### Odoo
+
+Discovers the Atom feed of a blog on an Odoo website. Detected by the `frontend_lang` and `session_id` cookies Odoo sets on every website page, so any domain is covered. A page under a language prefix gets the feed in that language.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `{site}/blog/{blog}-{id}` | Blog feed (Atom) |
+| `{site}/blog/{blog}-{id}/{post}-{id}` | Blog feed (Atom) |
+| `{site}/blog/{blog}-{id}/post/{post}-{id}` | Blog feed (Atom) |
+| `{site}/blog/{blog}-{id}/tag/{tag}-{id}` | Blog feed (Atom) |
+
 ## Basic Usage
 
 ```typescript
@@ -2002,6 +2013,7 @@ import {
   nodebbHandler,
   noteHandler,
   observableHandler,
+  odooHandler,
   odyseeHandler,
   omnystudioHandler,
   openstatusHandler,
