@@ -2343,6 +2343,14 @@ Discovers the press releases feed of a PRLog pressroom.
 |-------------|-----------------|
 | `pressroom.prlog.org/{id}` | Press releases feed |
 
+### Rakuten Blog
+
+Discovers the RSS feed of a Rakuten Blog (plaza.rakuten.co.jp) blog, which Rakuten serves from `api.plaza.rakuten.ne.jp`.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `plaza.rakuten.co.jp/{user}/…` | Posts feed |
+
 ## Basic Usage
 
 ```typescript
@@ -2535,6 +2543,7 @@ import {
   publicInboxHandler,
   pypiHandler,
   qiitaHandler,
+  rakutenBlogHandler,
   redcircleHandler,
   redditHandler,
   royalroadHandler,

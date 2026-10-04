@@ -176,6 +176,7 @@ import { publiiHandler } from './platforms/publii.js'
 import { pukiwikiHandler } from './platforms/pukiwiki.js'
 import { pypiHandler } from './platforms/pypi.js'
 import { qiitaHandler } from './platforms/qiita.js'
+import { rakutenBlogHandler } from './platforms/rakutenBlog.js'
 import { redcircleHandler } from './platforms/redcircle.js'
 import { redditHandler } from './platforms/reddit.js'
 import { royalroadHandler } from './platforms/royalroad.js'
@@ -536,6 +537,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     pukiwikiHandler,
     pypiHandler,
     qiitaHandler,
+    rakutenBlogHandler,
     redcircleHandler,
     redditHandler,
     royalroadHandler,
