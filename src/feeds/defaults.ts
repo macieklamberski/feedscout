@@ -83,6 +83,7 @@ import { githubGistHandler } from './platforms/githubGist.js'
 import { gitlabHandler } from './platforms/gitlab.js'
 import { gnuboardHandler } from './platforms/gnuboard.js'
 import { goodreadsHandler } from './platforms/goodreads.js'
+import { goopeHandler } from './platforms/goope.js'
 import { gravHandler } from './platforms/grav.js'
 import { habrHandler } from './platforms/habr.js'
 import { hackernewsHandler } from './platforms/hackernews.js'
@@ -449,6 +450,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     gitlabHandler,
     gnuboardHandler,
     goodreadsHandler,
+    goopeHandler,
     gravHandler,
     habrHandler,
     hackernewsHandler,

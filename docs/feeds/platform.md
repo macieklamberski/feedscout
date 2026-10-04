@@ -2396,6 +2396,20 @@ Discovers RSS feeds for Jellypod-hosted podcasts.
 |-------------|-----------------|
 | `*.jellypod.com` | Podcast feed (RSS) |
 
+### Goope
+
+Discovers the news feed of a Goope site, and the member news feed of a chamber of commerce site. Sites on a custom domain are detected by the QR code image served from `r.goope.jp` or a favicon on `cdn.goope.jp`.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `r.goope.jp/{site}/…` | News feed (RDF) |
+| `r.goope.jp/{site}/shokokai/member/…` | Member news + news feed (RDF) |
+| `{domain}/shokokai/member/…` | Member news + news feed (RDF) |
+| `{domain}/…` | News feed (RDF) |
+
+> [!NOTE]
+> A page under a `t_{id}` template segment gets its feeds under that segment, as the page links them.
+
 ## Basic Usage
 
 ```typescript
@@ -2507,6 +2521,7 @@ import {
   gitlabHandler,
   gnuboardHandler,
   goodreadsHandler,
+  goopeHandler,
   habrHandler,
   hackernewsHandler,
   haleyJobsHandler,

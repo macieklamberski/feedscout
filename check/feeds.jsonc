@@ -516,6 +516,13 @@
     "goodreads:shelf": "https://www.goodreads.com/review/list_rss/1?shelf=read",
     "goodreads:updates": "https://www.goodreads.com/user/updates_rss/1"
   },
+  "goope": {
+    "goope:member-news": [
+      "https://r.goope.jp/maibarasci/shokokai/member/feed.rss",
+      "https://yazu.tori-skr.jp/shokokai/member/feed.rss"
+    ],
+    "goope:news": ["https://r.goope.jp/mizukami/feed.rss", "https://mameya.coffee/feed.rss"]
+  },
   "grav": {
     "grav:page": ["https://getgrav.org/blog.rss", "https://getgrav.org/blog.atom"]
   },
