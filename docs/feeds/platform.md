@@ -1876,6 +1876,21 @@ Discovers the site feeds of a Ning network and the feed of a forum topic. Detect
 | `{network}/forum/topics/{topic}` | Topic + latest activity + blog posts + forum |
 | Any other page | Latest activity + blog posts + forum |
 
+### vBulletin
+
+Discovers the feeds of a vBulletin 3 to 6 forum. Detected by the `clientscript/vbulletin-core.js` script of vBulletin 4, the `js/header-rollup` script of vBulletin 5 and 6, or the `{prefix}lastvisit` and `{prefix}lastactivity` cookies.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `{forum}/forumdisplay.php?f={id}` | Forum feed + site feed (RSS) |
+| `{forum}/forumdisplay.php?{id}-{title}` | Forum feed + site feed (RSS) |
+| Any other page | Site feed (RSS) |
+| Any vBulletin 5 or 6 channel page | Channel feed + site feed (RSS) |
+| Any vBulletin 5 or 6 page | Site feed at `{forum}/external?type=rss2` (RSS) |
+
+> [!NOTE]
+> The forum root is read from the core script's URL, or the page's `<base>` on vBulletin 5 and 6, so a forum under a sub-path or behind rewritten page URLs gets its feeds there. A vBulletin 3 or 4 forum with feeds turned off answers these URLs with an empty page.
+
 ## Basic Usage
 
 ```typescript
@@ -2064,6 +2079,7 @@ import {
   transistorHandler,
   tumblrHandler,
   v2exHandler,
+  vbulletinHandler,
   velogHandler,
   vimeoHandler,
   weblogLolHandler,
