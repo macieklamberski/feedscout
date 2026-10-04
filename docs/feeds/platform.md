@@ -1053,6 +1053,15 @@ Discovers RSS 2.0 and RDF feeds for Seesaa Blog.
 |-------------|-----------------|
 | `*.seesaa.net` | Posts feed (RSS 2.0 + RDF) |
 
+### Sermon.net
+
+Discovers the audio podcast feed of every channel a church page lists, or of the one channel a channel page names.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `*.sermon.net` | Channel podcast feeds (RSS), or the church feed when no channel is listed |
+| `*.sermon.net/{mediaCentre}/{channel}` | That channel's podcast feed (RSS) |
+
 ### Spotify for Creators
 
 Discovers RSS feeds for Spotify for Creators (formerly Anchor) podcasts by extracting the station ID from the page content.
@@ -2395,6 +2404,7 @@ import {
   rssComHandler,
   rubygemsHandler,
   seesaaHandler,
+  sermonNetHandler,
   shopifyHandler,
   smeBlogHandler,
   soundcloudHandler,

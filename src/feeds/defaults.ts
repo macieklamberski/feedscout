@@ -172,6 +172,7 @@ import { royalroadHandler } from './platforms/royalroad.js'
 import { rssComHandler } from './platforms/rssCom.js'
 import { rubygemsHandler } from './platforms/rubygems.js'
 import { seesaaHandler } from './platforms/seesaa.js'
+import { sermonNetHandler } from './platforms/sermonNet.js'
 import { shaarliHandler } from './platforms/shaarli.js'
 import { shopifyHandler } from './platforms/shopify.js'
 import { smeBlogHandler } from './platforms/smeBlog.js'
@@ -519,6 +520,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     rssComHandler,
     rubygemsHandler,
     seesaaHandler,
+    sermonNetHandler,
     shaarliHandler,
     shopifyHandler,
     smeBlogHandler,
