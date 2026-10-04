@@ -512,6 +512,14 @@
     "hatena-bookmark:search": "https://b.hatena.ne.jp/search/tag?q=rss&mode=rss",
     "hatena-bookmark:site": "https://b.hatena.ne.jp/site/example.com?mode=rss"
   },
+  "hatenaFotolife": {
+    "hatena-fotolife:folder": "https://f.hatena.ne.jp/silver_dragon/anime/rss",
+    "hatena-fotolife:model": "https://f.hatena.ne.jp/silver_dragon/rss?model=FinePixViewer%20Lite%20Ver%2E4%2E2",
+    "hatena-fotolife:photos": "https://f.hatena.ne.jp/silver_dragon/rss",
+    "hatena-fotolife:star-friends": "https://f.hatena.ne.jp/pikao/starfriends?mode=rss",
+    "hatena-fotolife:stars": "https://f.hatena.ne.jp/mei-teer/favorite?mode=rss",
+    "hatena-fotolife:tag": "https://f.hatena.ne.jp/silver_dragon/t/%E3%82%A4%E3%83%A9%E3%82%B9%E3%83%88?mode=rss"
+  },
   "hatenablog": {
     "hatenablog:author": [
       "https://blog.hatenablog.com/rss/author/hatenablog-editors",
