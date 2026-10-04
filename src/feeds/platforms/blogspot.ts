@@ -1,10 +1,10 @@
 import { parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, findElement } from '../../common/utils.js'
+import { composeHint, findElement, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic partly covers blog, label.
+// Generic partly covers blog, customDomainBlog, customDomainLabel, label.
 
 export type BlogspotUrl = { kind: 'label'; label: string } | { kind: 'post' } | { kind: 'blog' }
 
@@ -13,11 +13,22 @@ const blogspotDomainRegex = /^.+\.blogspot\.(?:com|co\.[a-z]{2}|com\.[a-z]{2}|[a
 const labelRegex = /^\/search\/label\/([^/]+)/i
 const postRegex = /^\/\d{4}\/\d{2}\/[^/]+\.html$/i
 const postCommentsFeedRegex = /\/feeds\/(\d+)\/comments\/default/i
+const widgetsScriptRegex = /^(?:https?:)?\/\/www\.blogger\.com\/static\/v1\/widgets\//
+
+// Blogger loads its widget script from this path on blogspot.com and custom domains alike,
+// whatever the theme. A tag, not the text: READMEs and archived copies quote the url too.
+export const isBlogspotHtml = (content: string): boolean => {
+  const script = findElement(content, (element) => {
+    return element.name === 'script' && widgetsScriptRegex.test(element.attribs.src ?? '')
+  })
+
+  return script !== undefined
+}
 
 export const parseBlogspotUrl = (url: string): BlogspotUrl | undefined => {
   const parsedUrl = parseUrl(url)
 
-  if (!parsedUrl || !blogspotDomainRegex.test(parsedUrl.hostname)) {
+  if (!parsedUrl) {
     return
   }
 
@@ -38,8 +49,18 @@ export const parseBlogspotUrl = (url: string): BlogspotUrl | undefined => {
 }
 
 export const blogspotHandler: PlatformHandler = {
-  match: (url) => {
-    return parseBlogspotUrl(url) !== undefined
+  match: (url, content, headers) => {
+    const parsedUrl = parseUrl(url)
+
+    if (!parsedUrl) {
+      return false
+    }
+
+    if (blogspotDomainRegex.test(parsedUrl.hostname)) {
+      return true
+    }
+
+    return hasMarker(content, headers, { html: isBlogspotHtml })
   },
 
   resolve: (url, content) => {
