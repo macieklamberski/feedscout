@@ -4,7 +4,7 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic partly covers blog.
+// Generic partly covers blog, category.
 
 export type WordpressUrl =
   | { kind: 'archive'; path: string; hintKey: string }
@@ -12,7 +12,8 @@ export type WordpressUrl =
   | { kind: 'home' }
 
 const domains = ['wordpress.com']
-const categoryRegex = /^\/category\/([^/]+)/i
+// A nested category's path holds every parent slug and ends at WordPress's endpoint words.
+const categoryRegex = /^\/category\/(.+?)(?:\/(?:feed|rdf|rss|rss2|atom|embed|page)(?:\/|$)|\/?$)/i
 const tagRegex = /^\/tag\/([^/]+)/i
 const authorRegex = /^\/author\/([^/]+)/i
 const yearRegex = /^\/(\d{4})\/?$/
