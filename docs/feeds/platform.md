@@ -2282,6 +2282,15 @@ Discovers the module and forum feeds of a uCoz site. Covers sites on the uCoz do
 > [!NOTE]
 > A module the site has not turned on answers 404.
 
+### dasauge
+
+Discovers the RSS feed of a dasauge member profile on any of the dasauge country domains.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `dasauge.de/-{member}` | Profile feed |
+| `dasauge.de/-{member}/{page}` | Profile feed |
+
 ## Basic Usage
 
 ```typescript
@@ -2363,6 +2372,7 @@ import {
   cratesIoHandler,
   csdnHandler,
   dailymotionHandler,
+  dasaugeHandler,
   deviantartHandler,
   devtoHandler,
   diasporaHandler,
