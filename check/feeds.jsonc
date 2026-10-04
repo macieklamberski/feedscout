@@ -468,6 +468,11 @@
     "kickstarter:projects": "https://www.kickstarter.com/projects/feed.atom",
     "kickstarter:updates": "https://www.kickstarter.com/projects/elanlee/exploding-kittens/posts.atom"
   },
+  "koha": {
+    "koha:comments": "https://opac.northsouth.edu/cgi-bin/koha/opac-showreviews.pl?format=rss",
+    "koha:list": "https://library-search.nics.gov.uk/cgi-bin/koha/opac-shelves.pl?rss=1&op=view&shelfnumber=309",
+    "koha:search": "https://biblioteca.unach.edu.ec/cgi-bin/koha/opac-search.pl?q=agua&count=50&sort_by=acqdate_dsc&format=rss"
+  },
   "launchpad": {
     "launchpad:announcements": [
       "http://feeds.launchpad.net/announcements.atom",

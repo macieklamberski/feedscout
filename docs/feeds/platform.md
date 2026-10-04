@@ -1901,6 +1901,16 @@ Discovers the item feeds of an Omeka Classic site, self-hosted or on `omeka.net`
 | `{site}/items/browse?{filters}` | Filtered items feed for the same tags, collection or search (RSS + Atom) |
 | Any other page | Items feed (RSS + Atom) |
 
+### Koha
+
+Discovers the feeds of a Koha library catalogue. Detected by the `/opac-tmpl/` asset path every OPAC theme loads, so any domain is covered.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `{catalogue}/cgi-bin/koha/opac-search.pl?q={query}` | Search results, newest acquisitions first (RSS) |
+| `{catalogue}/cgi-bin/koha/opac-shelves.pl?op=view&shelfnumber={id}` | List (RSS) |
+| `{catalogue}/cgi-bin/koha/opac-showreviews.pl` | Recent comments (RSS) |
+
 ## Basic Usage
 
 ```typescript
@@ -2010,6 +2020,7 @@ import {
   jiraHandler,
   jugemHandler,
   kickstarterHandler,
+  kohaHandler,
   launchpadHandler,
   learnkuHandler,
   lemmyHandler,

@@ -457,6 +457,9 @@
     "vbulletin:site": "Site",
     "vbulletin:forum": "Forum",
     "omeka:items": "Items",
-    "omeka:filtered-items": "Filtered items"
+    "omeka:filtered-items": "Filtered items",
+    "koha:search": "Search",
+    "koha:list": "List",
+    "koha:comments": "Recent comments"
   }
 }

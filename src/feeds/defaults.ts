@@ -86,6 +86,7 @@ import { jiraHandler } from './platforms/jira.js'
 import { joomlaHandler } from './platforms/joomla.js'
 import { jugemHandler } from './platforms/jugem.js'
 import { kickstarterHandler } from './platforms/kickstarter.js'
+import { kohaHandler } from './platforms/koha.js'
 import { launchpadHandler } from './platforms/launchpad.js'
 import { learnkuHandler } from './platforms/learnku.js'
 import { lemmyHandler } from './platforms/lemmy.js'
@@ -406,6 +407,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     joomlaHandler,
     jugemHandler,
     kickstarterHandler,
+    kohaHandler,
     launchpadHandler,
     learnkuHandler,
     lemmyHandler,
