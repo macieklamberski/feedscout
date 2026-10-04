@@ -163,6 +163,12 @@
   "buzzsprout": {
     "buzzsprout:podcast": "https://rss.buzzsprout.com/231452.rss"
   },
+  "canpan": {
+    "canpan:posts": [
+      "https://blog.canpan.info/rera/index2_0.xml",
+      "https://blog.canpan.info/rera/index1_0.rdf"
+    ]
+  },
   "captivate": {
     "captivate:podcast": "https://feeds.captivate.fm/school-of-podcasting/"
   },
