@@ -449,6 +449,13 @@
     "launchpad:revisions": "Revisions",
     "teletype:posts": "Posts",
     "pmwiki:group-changes": "Group changes",
-    "pmwiki:site-changes": "Site changes"
+    "pmwiki:site-changes": "Site changes",
+    "bigcommerce:new-products": "New products",
+    "bigcommerce:popular-products": "Popular products",
+    "bigcommerce:featured-products": "Featured products",
+    "bigcommerce:blog": "Blog",
+    "bigcommerce:category-new-products": "New products in category",
+    "bigcommerce:category-popular-products": "Popular products in category",
+    "bigcommerce:search": "Search"
   }
 }
