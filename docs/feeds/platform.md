@@ -2187,6 +2187,17 @@ Discovers the jobs feed of a job board Haley Marketing hosts for a staffing firm
 |-------------|-----------------|
 | Any board page | Jobs feed |
 
+### Jimdo
+
+Discovers the blog feed of a Jimdo site. Detected by the `x-jimdo-wid` response header, so `*.jimdofree.com` sites and custom domains are both covered.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| Any page | Blog feed (RSS) |
+
+> [!NOTE]
+> Only sites with a blog have the feed.
+
 ## Basic Usage
 
 ```typescript
@@ -2306,6 +2317,7 @@ import {
   internetArchiveHandler,
   itchioHandler,
   ivooxHandler,
+  jimdoHandler,
   jiraHandler,
   jugemHandler,
   kickstarterHandler,

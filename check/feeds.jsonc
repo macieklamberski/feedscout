@@ -575,6 +575,9 @@
   "ivoox": {
     "ivoox:podcast": "https://feeds.ivoox.com/feed_fg_f1106_filtro_1.xml"
   },
+  "jimdo": {
+    "jimdo:blog": ["https://www.quon-for.com/rss/blog", "https://neubritz.jimdofree.com/rss/blog"]
+  },
   "jira": {
     "jira:project": "https://jira.atlassian.com/plugins/servlet/streams?key=JRASERVER",
     "jira:site": "https://ecosystem.atlassian.net/plugins/servlet/streams"
