@@ -244,6 +244,7 @@ import { transistorHandler } from './platforms/transistor.js'
 import { travellerspointHandler } from './platforms/travellerspoint.js'
 import { tumblrHandler } from './platforms/tumblr.js'
 import { twodayHandler } from './platforms/twoday.js'
+import { typechoHandler } from './platforms/typecho.js'
 import { ucozHandler } from './platforms/ucoz.js'
 import { v2exHandler } from './platforms/v2ex.js'
 import { vbulletinHandler } from './platforms/vbulletin.js'
@@ -639,6 +640,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     travellerspointHandler,
     tumblrHandler,
     twodayHandler,
+    typechoHandler,
     ucozHandler,
     v2exHandler,
     vbulletinHandler,

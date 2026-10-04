@@ -2675,6 +2675,18 @@ Discovers the news release, SEC filing and event feeds of a company investor rel
 | `*.gcs-web.com` | News releases + SEC filings + events |
 | Any page on a company's own domain | News releases + SEC filings + events |
 
+### Typecho
+
+Discovers the feeds of a Typecho blog. Detected by a theme or plugin asset under `/usr/themes/` or `/usr/plugins/`, which also names the site root, so a blog under a sub-path gets its own feeds.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `{site}/` | Posts feed + comments feed (RSS + RSS 1.0 + Atom) |
+| `{site}/{path}` | Page feed at `/feed/{path}` + posts feed + comments feed (RSS + RSS 1.0 + Atom) |
+
+> [!NOTE]
+> A site without URL rewriting serves its feeds under `/index.php/feed/`, so each feed is tried in that form after `/feed/`. The page feed holds the posts of a category, tag, author, date or search page, or the comments of a post or page.
+
 ## Basic Usage
 
 ```typescript

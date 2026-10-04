@@ -1492,6 +1492,23 @@
     "twoday:posts": "https://changes.twoday.net/index.rdf",
     "twoday:topic": "https://schmollfisch.twoday.net/topics/Wo+der+Hase+hinlief/index.rdf"
   },
+  "typecho": {
+    "typecho:comments": [
+      "https://lightless.me/feed/comments/",
+      "https://lightless.me/feed/rss/comments/",
+      "https://lightless.me/feed/atom/comments/"
+    ],
+    "typecho:page": [
+      "https://lightless.me/feed/category/SecurityResearch/",
+      "https://lightless.me/feed/rss/category/SecurityResearch/",
+      "https://lightless.me/feed/atom/category/SecurityResearch/"
+    ],
+    "typecho:posts": [
+      "https://lightless.me/feed/",
+      "https://lightless.me/feed/rss/",
+      "https://lightless.me/feed/atom/"
+    ]
+  },
   // ucoz.co.uk, ucoz.com.br, ucoz.es, ucoz.hu and ucoz.lv serve an expired or mismatched certificate
   // on https, and ucoz.pl redirects https to http, checked 2026-10-04.
   "ucoz": {
