@@ -342,6 +342,12 @@
       "https://ecommons.cornell.edu/server/opensearch/search?format=rss&query=*"
     ]
   },
+  "duckWebcomics": {
+    "duck-webcomics:comic": [
+      "https://theduckwebcomics.com/Mangaijin/rss/",
+      "https://www.theduckwebcomics.com/Girl_Love/rss/"
+    ]
+  },
   "eklablog": {
     "eklablog:comments": "https://enaelyork.eklablog.com/rss/comments",
     "eklablog:posts": "https://enaelyork.eklablog.com/rss"
