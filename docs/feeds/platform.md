@@ -2538,6 +2538,14 @@ Discovers the feeds of a PromoDJ artist profile.
 > [!NOTE]
 > A feed the artist has never posted to answers with a redirect to the profile, which validation drops.
 
+### Shopserve
+
+Discovers the news feed of a Shopserve shop. Detected by the root-relative `/hpgen/HPB/` links and theme images every generated desktop page carries, so a shop on its own domain is covered.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| Any desktop page | News feed (RSS) |
+
 ## Basic Usage
 
 ```typescript
@@ -2755,6 +2763,7 @@ import {
   sermonNetHandler,
   shinobiHandler,
   shopifyHandler,
+  shopserveHandler,
   smeBlogHandler,
   soundcloudHandler,
   soundonHandler,

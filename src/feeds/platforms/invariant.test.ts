@@ -63,6 +63,7 @@ import { publiiHandler } from './publii.js'
 import { pukiwikiHandler } from './pukiwiki.js'
 import { shaarliHandler } from './shaarli.js'
 import { shopifyHandler } from './shopify.js'
+import { shopserveHandler } from './shopserve.js'
 import { smfHandler } from './smf.js'
 import { snacHandler } from './snac.js'
 import { spipHandler } from './spip.js'
@@ -281,6 +282,7 @@ const cases: Array<Case> = [
   ['pukiwiki', pukiwikiHandler, '<link rel="stylesheet" href="skin/pukiwiki.css">'],
   ['shaarli', shaarliHandler, '<div id="shaarli-menu"></div>'],
   ['shopify', shopifyHandler, '', new Headers({ 'powered-by': 'Shopify' })],
+  ['shopserve', shopserveHandler, '<a href="/hpgen/HPB/rss.xml">'],
   [
     'smf',
     smfHandler,
