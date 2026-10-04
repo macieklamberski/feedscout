@@ -238,6 +238,7 @@ import { ucozHandler } from './platforms/ucoz.js'
 import { v2exHandler } from './platforms/v2ex.js'
 import { vbulletinHandler } from './platforms/vbulletin.js'
 import { velogHandler } from './platforms/velog.js'
+import { viablogaHandler } from './platforms/viabloga.js'
 import { vimeoHandler } from './platforms/vimeo.js'
 import { weblogLolHandler } from './platforms/weblogLol.js'
 import { webnodeHandler } from './platforms/webnode.js'
@@ -622,6 +623,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     v2exHandler,
     vbulletinHandler,
     velogHandler,
+    viablogaHandler,
     vimeoHandler,
     weblogLolHandler,
     webnodeHandler,

@@ -1181,6 +1181,14 @@ Discovers RSS and Atom feeds for Tildes homepage and groups.
 | `tildes.net` | Topics feed (RSS + Atom) |
 | `tildes.net/~{group}` | Group feed (RSS + Atom) |
 
+### Viabloga
+
+Discovers RSS, Atom and RDF feeds for Viabloga.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `*.viabloga.com` | Posts feed (RSS + Atom + RDF), comments feed, wiki feed |
+
 ### weblog.lol
 
 Discovers RSS, Atom, and JSON feeds for weblog.lol blogs.
@@ -2827,6 +2835,7 @@ import {
   v2exHandler,
   vbulletinHandler,
   velogHandler,
+  viablogaHandler,
   vimeoHandler,
   weblogLolHandler,
   webnodeHandler,

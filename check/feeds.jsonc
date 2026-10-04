@@ -1500,6 +1500,11 @@
     "velog:posts": "https://v2.velog.io/rss/velopert",
     "velog:trending": "https://v2.velog.io/rss"
   },
+  "viabloga": {
+    "viabloga:comments": "http://bab.viabloga.com/comments.xml",
+    "viabloga:posts": "http://bab.viabloga.com/index.xml",
+    "viabloga:wiki": "http://bab.viabloga.com/wiki.rdf"
+  },
   "vimeo": {
     "vimeo:album": "https://vimeo.com/album/12345/rss",
     "vimeo:channel": "https://vimeo.com/channels/staffpicks/videos/rss",
