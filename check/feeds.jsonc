@@ -658,7 +658,12 @@
     ]
   },
   "jugem": {
-    "jugem:posts": ["https://info.jugem.jp/?mode=rss", "https://info.jugem.jp/?mode=atom"]
+    "jugem:posts": [
+      "https://info.jugem.jp/?mode=rss",
+      "https://info.jugem.jp/?mode=atom",
+      "https://dos.jugem.cc/?mode=atom",
+      "http://blog.marbely.com/?mode=atom"
+    ]
   },
   "kickstarter": {
     "kickstarter:projects": "https://www.kickstarter.com/projects/feed.atom",

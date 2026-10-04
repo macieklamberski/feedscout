@@ -878,11 +878,13 @@ Discovers RSS and Atom feeds for InsaneJournal journals.
 
 ### JUGEM
 
-Discovers RSS 1.0 and Atom feeds for JUGEM blogs.
+Discovers RSS 1.0 and Atom feeds for JUGEM blogs. A blog on a custom domain is detected by `imaging.jugem.jp` assets or the `./template/js/cookie.js` script.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | `{blog}.jugem.jp` | Posts feed (RSS 1.0 + Atom) |
+| `{blog}.jugem.cc` | Posts feed (RSS 1.0 + Atom) |
+| Any page on a custom domain | Posts feed (RSS 1.0 + Atom) |
 
 ### Lemmy
 
