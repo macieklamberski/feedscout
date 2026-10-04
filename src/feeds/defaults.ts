@@ -122,6 +122,7 @@ import { pagecordHandler } from './platforms/pagecord.js'
 import { paragraphHandler } from './platforms/paragraph.js'
 import { peertubeHandler } from './platforms/peertube.js'
 import { phpbbHandler } from './platforms/phpbb.js'
+import { picturepushHandler } from './platforms/picturepush.js'
 import { pikaHandler } from './platforms/pika.js'
 import { pinboardHandler } from './platforms/pinboard.js'
 import { pinterestHandler } from './platforms/pinterest.js'
@@ -439,6 +440,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     paragraphHandler,
     peertubeHandler,
     phpbbHandler,
+    picturepushHandler,
     pikaHandler,
     pinboardHandler,
     pinterestHandler,

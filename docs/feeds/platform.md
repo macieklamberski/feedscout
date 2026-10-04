@@ -951,6 +951,14 @@ Discovers RSS feeds for Observable user notebooks and collections.
 | `observablehq.com/recent` or `/public?sort=publish_time` | Recent feed |
 | `observablehq.com/trending` or `/public` | Trending feed |
 
+### PicturePush
+
+Discovers the RSS feed of a PicturePush user's pictures.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `*.picturepush.com` | Pictures feed |
+
 ### Pika
 
 Discovers Atom and RSS feeds for Pika blogs, including tag feeds.
@@ -2009,6 +2017,7 @@ import {
   pagecordHandler,
   paragraphHandler,
   peertubeHandler,
+  picturepushHandler,
   pikaHandler,
   pinboardHandler,
   pinterestHandler,

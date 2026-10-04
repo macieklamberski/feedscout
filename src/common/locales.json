@@ -284,6 +284,7 @@
     "observable:collection": "Collection",
     "observable:recent": "Recent",
     "observable:trending": "Trending",
+    "picturepush:pictures": "Pictures",
     "pika:posts": "Posts",
     "pika:tag": "Tag",
     "pixelfed:posts": "Posts",
