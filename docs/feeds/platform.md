@@ -103,7 +103,7 @@ Discovers RSS feeds for Substack newsletters.
 
 ### WordPress.com
 
-Discovers RSS and Atom feeds for WordPress.com blogs, with category, tag, and author support.
+Discovers RSS and Atom feeds for WordPress.com and Unblog blogs, with category, tag, and author support.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
@@ -111,6 +111,7 @@ Discovers RSS and Atom feeds for WordPress.com blogs, with category, tag, and au
 | `*.wordpress.com/category/{category}` | Category feed (+ above) |
 | `*.wordpress.com/tag/{tag}` | Tag feed (+ above) |
 | `*.wordpress.com/author/{author}` | Author feed (+ above) |
+| `*.unblog.fr` | Same as `*.wordpress.com` (Unblog) |
 
 ### WP Engine
 
