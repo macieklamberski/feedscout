@@ -29,6 +29,12 @@ describe('parseWordpressUrl', () => {
     expect(parseWordpressUrl('https://example.wordpress.com/2024/05/01/hello/')).toEqual(expected)
   })
 
+  it('should return the post for a hypotheses.org post id that looks like a year', () => {
+    const expected: WordpressUrl = { kind: 'post', path: '/1009' }
+
+    expect(parseWordpressUrl('https://raffl.hypotheses.org/1009')).toEqual(expected)
+  })
+
   it('should return the home page for the root', () => {
     const expected: WordpressUrl = { kind: 'home' }
 
@@ -51,7 +57,9 @@ describe('wordpressHandler', () => {
     const values: Array<[boolean, string]> = [
       [true, 'https://example.wordpress.com'],
       [true, 'https://blog.example.wordpress.com'],
+      [true, 'https://eurel.hypotheses.org'],
       [false, 'https://wordpress.com'],
+      [false, 'https://hypotheses.org'],
       [false, 'https://example.com'],
     ]
 

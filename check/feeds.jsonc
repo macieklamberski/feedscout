@@ -1034,7 +1034,8 @@
       "https://terrytao.wordpress.com/author/teorth/feed/atom/",
       "https://terrytao.wordpress.com/author/teorth/?feed=atom",
       "https://terrytao.wordpress.com/author/teorth/feed/rdf/",
-      "https://terrytao.wordpress.com/author/teorth/?feed=rdf"
+      "https://terrytao.wordpress.com/author/teorth/?feed=rdf",
+      "https://eurel.hypotheses.org/author/communautarismes/feed/"
     ],
     "wordpress:category": [
       "https://terrytao.wordpress.com/category/expository/feed/",
@@ -1044,14 +1045,16 @@
       "https://terrytao.wordpress.com/category/expository/feed/atom/",
       "https://terrytao.wordpress.com/category/expository/?feed=atom",
       "https://terrytao.wordpress.com/category/expository/feed/rdf/",
-      "https://terrytao.wordpress.com/category/expository/?feed=rdf"
+      "https://terrytao.wordpress.com/category/expository/?feed=rdf",
+      "https://raffl.hypotheses.org/category/actualites/feed/"
     ],
     "wordpress:comments": [
       "https://terrytao.wordpress.com/comments/feed/",
       "https://terrytao.wordpress.com/comments/feed/rss2/",
       "https://terrytao.wordpress.com/?feed=comments-rss2",
       "https://terrytao.wordpress.com/comments/feed/atom/",
-      "https://terrytao.wordpress.com/?feed=comments-atom"
+      "https://terrytao.wordpress.com/?feed=comments-atom",
+      "https://eurel.hypotheses.org/comments/feed/"
     ],
     "wordpress:date-archive": [
       "https://terrytao.wordpress.com/2007/feed/",
@@ -1077,7 +1080,8 @@
       "https://terrytao.wordpress.com/2007/03/18/feed/atom/",
       "https://terrytao.wordpress.com/2007/03/18/?feed=atom",
       "https://terrytao.wordpress.com/2007/03/18/feed/rdf/",
-      "https://terrytao.wordpress.com/2007/03/18/?feed=rdf"
+      "https://terrytao.wordpress.com/2007/03/18/?feed=rdf",
+      "https://raffl.hypotheses.org/date/2024/feed/"
     ],
     "wordpress:post-comments": [
       "https://terrytao.wordpress.com/2007/03/18/why-global-regularity-for-navier-stokes-is-hard/feed/",
@@ -1085,7 +1089,8 @@
       "https://terrytao.wordpress.com/2007/03/18/why-global-regularity-for-navier-stokes-is-hard/feed/rss2/",
       "https://terrytao.wordpress.com/2007/03/18/why-global-regularity-for-navier-stokes-is-hard/?feed=rss2",
       "https://terrytao.wordpress.com/2007/03/18/why-global-regularity-for-navier-stokes-is-hard/feed/atom/",
-      "https://terrytao.wordpress.com/2007/03/18/why-global-regularity-for-navier-stokes-is-hard/?feed=atom"
+      "https://terrytao.wordpress.com/2007/03/18/why-global-regularity-for-navier-stokes-is-hard/?feed=atom",
+      "https://eurel.hypotheses.org/1/feed/"
     ],
     "wordpress:posts": [
       "https://terrytao.wordpress.com/feed/",
@@ -1095,7 +1100,8 @@
       "https://terrytao.wordpress.com/feed/atom/",
       "https://terrytao.wordpress.com/?feed=atom",
       "https://terrytao.wordpress.com/feed/rdf/",
-      "https://terrytao.wordpress.com/?feed=rdf"
+      "https://terrytao.wordpress.com/?feed=rdf",
+      "https://raffl.hypotheses.org/feed/"
     ],
     "wordpress:tag": [
       "https://terrytao.wordpress.com/tag/additive-combinatorics/feed/",
@@ -1105,7 +1111,8 @@
       "https://terrytao.wordpress.com/tag/additive-combinatorics/feed/atom/",
       "https://terrytao.wordpress.com/tag/additive-combinatorics/?feed=atom",
       "https://terrytao.wordpress.com/tag/additive-combinatorics/feed/rdf/",
-      "https://terrytao.wordpress.com/tag/additive-combinatorics/?feed=rdf"
+      "https://terrytao.wordpress.com/tag/additive-combinatorics/?feed=rdf",
+      "https://eurel.hypotheses.org/tag/correspondants/feed/"
     ]
   },
   "wpengine": {

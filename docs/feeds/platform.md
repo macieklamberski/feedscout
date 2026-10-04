@@ -111,6 +111,8 @@ Discovers RSS and Atom feeds for WordPress.com blogs, with category, tag, and au
 | `*.wordpress.com/category/{category}` | Category feed (+ above) |
 | `*.wordpress.com/tag/{tag}` | Tag feed (+ above) |
 | `*.wordpress.com/author/{author}` | Author feed (+ above) |
+| `*.hypotheses.org` | Same as `*.wordpress.com` |
+| `*.hypotheses.org/{post_id}` | Post comments feed (+ above) |
 
 ### WP Engine
 
