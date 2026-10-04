@@ -31,6 +31,7 @@ import { bitchuteHandler } from './platforms/bitchute.js'
 import { blogspotHandler } from './platforms/blogspot.js'
 import { blueskyHandler } from './platforms/bluesky.js'
 import { bookwyrmHandler } from './platforms/bookwyrm.js'
+import { bubblelifeHandler } from './platforms/bubblelife.js'
 import { buttondownHandler } from './platforms/buttondown.js'
 import { buzzsproutHandler } from './platforms/buzzsprout.js'
 import { captivateHandler } from './platforms/captivate.js'
@@ -348,6 +349,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     blogspotHandler,
     blueskyHandler,
     bookwyrmHandler,
+    bubblelifeHandler,
     buttondownHandler,
     buzzsproutHandler,
     captivateHandler,
