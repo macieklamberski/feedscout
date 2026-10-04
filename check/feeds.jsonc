@@ -473,6 +473,9 @@
     "hackernews:front": "https://news.ycombinator.com/rss",
     "hackernews:show": "https://news.ycombinator.com/showrss"
   },
+  "haleyJobs": {
+    "haley-jobs:jobs": "https://jobs.akraya.com/rss/rss.smpl?ff=1"
+  },
   "hashnode": {
     "hashnode:blog": "https://townhall.hashnode.com/rss.xml"
   },
