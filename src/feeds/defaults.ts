@@ -177,6 +177,7 @@ import { v2exHandler } from './platforms/v2ex.js'
 import { velogHandler } from './platforms/velog.js'
 import { vimeoHandler } from './platforms/vimeo.js'
 import { weblogLolHandler } from './platforms/weblogLol.js'
+import { webnodeHandler } from './platforms/webnode.js'
 import { webtoonsHandler } from './platforms/webtoons.js'
 import { weeblyHandler } from './platforms/weebly.js'
 import { wikidotHandler } from './platforms/wikidot.js'
@@ -494,6 +495,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     velogHandler,
     vimeoHandler,
     weblogLolHandler,
+    webnodeHandler,
     webtoonsHandler,
     weeblyHandler,
     wikidotHandler,

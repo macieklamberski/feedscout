@@ -1285,6 +1285,19 @@ Discovers the blog feed of a Wix site. Detected by the `Wix.com` generator meta 
 > [!NOTE]
 > The feed sits at the site root wherever the blog appears in navigation, and only sites with the Wix Blog app installed have it.
 
+### Webnode
+
+Discovers the article feeds of a Webnode site. Detected by the classic editor's client script, so custom domains are covered. Sites built in Webnode 2 serve no feeds and are not matched.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `{site}/{page}/` | Section articles + all articles (RSS) |
+| `{site}/news/{article}/` | All articles (RSS) |
+| Any other page | All articles (RSS) |
+
+> [!NOTE]
+> A section feed is named after the page that holds its articles, so a page without an articles block has none.
+
 ### Joomla
 
 Discovers the feed forms of a Joomla list view. Detected by the `Joomla!` generator meta tag or the `joomla-script-options` script every Joomla 3, 4 and 5 page ships.
@@ -2057,6 +2070,7 @@ import {
   velogHandler,
   vimeoHandler,
   weblogLolHandler,
+  webnodeHandler,
   webtoonsHandler,
   weeblyHandler,
   wikidotHandler,
