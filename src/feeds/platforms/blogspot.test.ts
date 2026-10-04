@@ -21,8 +21,14 @@ describe('parseBlogspotUrl', () => {
     expect(parseBlogspotUrl('https://example.blogspot.co.uk/')).toEqual(expected)
   })
 
-  it('should return undefined for another host', () => {
-    expect(parseBlogspotUrl('https://example.com/search/label/News')).toBeUndefined()
+  it('should return the label for a label page on a custom domain', () => {
+    const expected: BlogspotUrl = { kind: 'label', label: 'News' }
+
+    expect(parseBlogspotUrl('https://example.com/search/label/News')).toEqual(expected)
+  })
+
+  it('should return undefined for an invalid URL', () => {
+    expect(parseBlogspotUrl('not-a-url')).toBeUndefined()
   })
 })
 
@@ -48,11 +54,77 @@ describe('blogspotHandler', () => {
     it('should return false for invalid URL', () => {
       expect(blogspotHandler.match('not-a-url')).toBe(false)
     })
+
+    it('should return true for a custom domain loading the Blogger widgets', () => {
+      const value =
+        '<script type="text/javascript" src="https://www.blogger.com/static/v1/widgets/851759228-widgets.js"></script>'
+
+      expect(blogspotHandler.match('https://example.com/', value)).toBe(true)
+    })
+
+    it('should return false for a custom domain without the Blogger widgets', () => {
+      const value =
+        '<script src="https://example.com/static/v1/widgets/851759228-widgets.js"></script>'
+
+      expect(blogspotHandler.match('https://example.com/', value)).toBe(false)
+    })
+
+    it('should return false for a page quoting the Blogger widgets url', () => {
+      const value =
+        '<pre><code>&lt;script src="https://www.blogger.com/static/v1/widgets/851759228-widgets.js"&gt;</code></pre>'
+
+      expect(blogspotHandler.match('https://github.com/user/repo', value)).toBe(false)
+    })
+
+    it('should return false for an archived copy of a Blogger page', () => {
+      const value =
+        '<script src="https://web.archive.org/web/2023js_/https://www.blogger.com/static/v1/widgets/851759228-widgets.js"></script>'
+
+      expect(
+        blogspotHandler.match('https://web.archive.org/web/2023/https://example.com/', value),
+      ).toBe(false)
+    })
   })
 
   describe('resolve', () => {
-    it('should return empty array for a URL outside the platform', () => {
-      expect(blogspotHandler.resolve('https://example.com/')).toEqual([])
+    it('should return the label feed for a label page on a custom domain', () => {
+      const value = 'https://example.com/search/label/Chris%20Rossini'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://example.com/feeds/posts/default/-/Chris%20Rossini',
+          hint: { key: 'blogspot:label', label: 'Label', format: 'atom' },
+        },
+        {
+          uri: 'https://example.com/feeds/posts/default/-/Chris%20Rossini?alt=rss',
+          hint: { key: 'blogspot:label', label: 'Label', format: 'rss' },
+        },
+        {
+          uri: 'https://example.com/feeds/posts/default',
+          hint: { key: 'blogspot:posts', label: 'Posts', format: 'atom' },
+        },
+        {
+          uri: 'https://example.com/feeds/posts/default?alt=rss',
+          hint: { key: 'blogspot:posts', label: 'Posts', format: 'rss' },
+        },
+        {
+          uri: 'https://example.com/feeds/posts/summary',
+          hint: { key: 'blogspot:posts-summary', label: 'Posts summary', format: 'atom' },
+        },
+        {
+          uri: 'https://example.com/feeds/posts/summary?alt=rss',
+          hint: { key: 'blogspot:posts-summary', label: 'Posts summary', format: 'rss' },
+        },
+        {
+          uri: 'https://example.com/feeds/comments/default',
+          hint: { key: 'blogspot:comments', label: 'Comments', format: 'atom' },
+        },
+        {
+          uri: 'https://example.com/feeds/comments/default?alt=rss',
+          hint: { key: 'blogspot:comments', label: 'Comments', format: 'rss' },
+        },
+      ]
+
+      expect(blogspotHandler.resolve(value)).toEqual(expected)
     })
 
     it('should return the label feed for a capitalized search segment', () => {
