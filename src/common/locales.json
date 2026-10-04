@@ -486,6 +486,8 @@
     "odoo:blog": "Blog",
     "zenfolio:recent": "Recent galleries",
     "zenfolio:featured": "Featured galleries",
-    "zenfolio:blog": "Blog"
+    "zenfolio:blog": "Blog",
+    "bubblelife:posts": "Posts",
+    "bubblelife:library": "Library"
   }
 }

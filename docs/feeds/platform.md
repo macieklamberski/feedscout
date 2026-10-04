@@ -2008,6 +2008,19 @@ Discovers the gallery and blog feeds of a Zenfolio photography site. A custom do
 > [!NOTE]
 > The featured and blog feeds answer with no items on a site that has no featured galleries or blog posts.
 
+### BubbleLife
+
+Discovers the RSS feed of a BubbleLife community. The page's alternate link has no `href`, so the feed id is read from the community's library links.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `{city}.bubblelife.com/community/{name}` | Posts feed (RSS) |
+| `{city}.bubblelife.com/community/{name}/library/{id}` | Library feed (RSS) |
+| `{city}.bubblelife.com/community/{name}/type/rssinfo` | Posts feed (RSS) |
+
+> [!NOTE]
+> A city news community links no library of its own, so its page yields no feed. Its rssinfo page names the feed.
+
 ## Basic Usage
 
 ```typescript
@@ -2070,6 +2083,7 @@ import {
   blogspotHandler,
   blueskyHandler,
   bookwyrmHandler,
+  bubblelifeHandler,
   buttondownHandler,
   buzzsproutHandler,
   captivateHandler,
