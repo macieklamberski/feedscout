@@ -513,6 +513,17 @@
     ],
     "hatenablog:posts": ["https://staff.hatenablog.com/rss", "https://staff.hatenablog.com/feed"]
   },
+  "hautetfort": {
+    "hautetfort:category": "http://vouloir.hautetfort.com/histoire/index.rss",
+    "hautetfort:posts": [
+      "http://litteraturedepartout.hautetfort.com/atom.xml",
+      "http://litteraturedepartout.hautetfort.com/index.rss",
+      "http://cfabtpduloiret.blogspirit.com/atom.xml",
+      "http://cfabtpduloiret.blogspirit.com/index.rss",
+      "http://institutmauricegarcon.blog.blogspirit-business.com/atom.xml",
+      "http://institutmauricegarcon.blog.blogspirit-business.com/index.rss"
+    ]
+  },
   "hearthis": {
     "hearthis:new-tracks": "https://hearthis.at/new_tracks.rss",
     "hearthis:tracks": "https://hearthis.at/james-monty-montgomery/podcast/"

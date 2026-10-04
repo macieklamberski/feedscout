@@ -540,6 +540,8 @@
     "noticeable:label": "Label",
     "noticeable:posts": "Posts",
     "legistar:legislation": "Legislation",
-    "legistar:meeting": "Meeting"
+    "legistar:meeting": "Meeting",
+    "hautetfort:posts": "Posts",
+    "hautetfort:category": "Category"
   }
 }
