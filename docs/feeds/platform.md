@@ -1867,6 +1867,15 @@ Discovers the recent changes feeds of a PmWiki wiki. Detected by the `<!--HTMLHe
 > [!NOTE]
 > Feeds are off in a default PmWiki install and a wiki owner turns them on, so many wikis answer these URLs with the page itself.
 
+### Cocolog
+
+Discovers the posts feeds of a Cocolog blog on `cocolog-nifty.com` and its sibling domains. One account can host several blogs, each under its own path. The home page names its blog only in its feed links, so a home page URL needs the page content.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `{user}.cocolog-nifty.com/{blog}/…` | Posts feed (Atom + RDF + RSS) |
+| `{user}.cocolog-nifty.com` | Posts feed of the blog the page links (Atom + RDF + RSS) |
+
 ## Basic Usage
 
 ```typescript
@@ -1935,6 +1944,7 @@ import {
   castopodHandler,
   castosHandler,
   cnblogsHandler,
+  cocologHandler,
   confluenceHandler,
   cratesIoHandler,
   csdnHandler,

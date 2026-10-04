@@ -126,6 +126,20 @@
   "cnblogs": {
     "cnblogs:posts": "https://www.cnblogs.com/vamei/rss"
   },
+  "cocolog": {
+    "cocolog:posts": [
+      "http://dolphin-kaji.cocolog-nifty.com/blog/atom.xml",
+      "http://dolphin-kaji.cocolog-nifty.com/blog/index.rdf",
+      "http://dolphin-kaji.cocolog-nifty.com/blog/rss.xml",
+      "http://eikosora.air-nifty.com/blog/index.rdf",
+      "http://jf2sqb.cocolog-tnc.com/jf2sqbs_weblog/index.rdf",
+      "http://ideshika.cocolog-wbs.com/coach/index.rdf",
+      "http://kabu-rambling-life.moe-nifty.com/rambling_life/index.rdf",
+      "http://da-taka.tea-nifty.com/dataka/index.rdf",
+      "http://kibikibi.txt-nifty.com/diary/index.rdf",
+      "http://toyohara.way-nifty.com/toyohara/index.rdf"
+    ]
+  },
   "confluence": {
     "confluence:site": "https://cwiki.apache.org/confluence/plugins/servlet/streams",
     "confluence:space": "https://cwiki.apache.org/confluence/plugins/servlet/streams?key=KAFKA"
