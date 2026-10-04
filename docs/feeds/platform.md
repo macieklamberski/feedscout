@@ -1967,6 +1967,21 @@ Discovers the OpenSearch feeds of a DSpace 7 or later repository. Detected by th
 > [!NOTE]
 > The search endpoint ignores a scope it does not know and answers with the site feed, so only an id the page URL names is used.
 
+### SPIP
+
+Discovers the feeds of a SPIP site. Detected by the `Composed-By` or `X-Spip-Cache` header SPIP sends with every page, so any domain is covered. A site under a sub-path gets its feeds there.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `{site}/spip.php?article{id}`, `article{id}.html` | Article comments + latest articles |
+| `{site}/spip.php?rubrique{id}`, `rubrique{id}.html` | Section + latest articles |
+| `{site}/spip.php?mot{id}`, `mot{id}.html` | Keyword + latest articles |
+| `{site}/spip.php?auteur{id}`, `auteur{id}.html` | Author + latest articles |
+| Any other page | Latest articles |
+
+> [!NOTE]
+> Comment feeds come from the comments plugin, so a site without it answers them with an error. Each page is also recognised in its `spip.php?page=article&id_article={id}` form. Rewritten URLs such as `/Some-Title` name no id, and those pages get the latest articles feed alone.
+
 ## Basic Usage
 
 ```typescript

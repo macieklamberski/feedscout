@@ -477,6 +477,11 @@
     "dspace:collection": "Collection",
     "dspace:community": "Community",
     "webnode:articles": "All articles",
-    "webnode:section": "Section articles"
+    "webnode:section": "Section articles",
+    "spip:article-comments": "Article comments",
+    "spip:articles": "Articles",
+    "spip:author": "Author",
+    "spip:keyword": "Keyword",
+    "spip:section": "Section"
   }
 }
