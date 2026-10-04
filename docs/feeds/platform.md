@@ -2324,6 +2324,15 @@ Discovers the site feeds of an Estranky site. A site serves the article feeds, t
 | `{site}.estranky.cz/…` | Posts + photos + comments + home page slice + photo album slice |
 | `{site}.estranky.sk/…` | Posts + photos + comments + home page slice + photo album slice |
 
+### Color Me Shop
+
+Discovers the RSS 1.0 and Atom feeds of new products in a Color Me Shop store. Shops on `shop-pro.jp` are matched by host, and a shop on its own domain by the `colorme_PHPSESSID` cookie every shop page sets.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `{shop}.shop-pro.jp` | Products feed (RSS 1.0 + Atom) |
+| `{domain}`, a shop on its own domain | Products feed (RSS 1.0 + Atom) |
+
 ## Basic Usage
 
 ```typescript
@@ -2400,6 +2409,7 @@ import {
   civicplusHandler,
   cnblogsHandler,
   cocologHandler,
+  colorMeShopHandler,
   comicfuryHandler,
   confluenceHandler,
   cratesIoHandler,

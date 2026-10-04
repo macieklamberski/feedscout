@@ -213,6 +213,14 @@
       "http://toyohara.way-nifty.com/toyohara/index.rdf"
     ]
   },
+  "colorMeShop": {
+    "color-me-shop:products": [
+      "https://windandsea.shop-pro.jp/?mode=rss",
+      "https://windandsea.shop-pro.jp/?mode=atom",
+      "https://www.le-ponta.com/?mode=rss",
+      "https://www.le-ponta.com/?mode=atom"
+    ]
+  },
   "comicfury": {
     "comicfury:comic": [
       "https://cardiac.thecomicstrip.org/rss",
