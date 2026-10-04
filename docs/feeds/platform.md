@@ -1066,6 +1066,14 @@ Discovers RSS feeds for Podigee-hosted podcasts.
 |-------------|-----------------|
 | `*.podigee.io` | Podcast feed (RSS) |
 
+### Postach.io
+
+Discovers Atom feeds for Postach.io sites.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `*.postach.io` | Posts feed (Atom) |
+
 ### Posthaven
 
 Discovers Atom feeds for Posthaven blogs.
@@ -2751,6 +2759,7 @@ import {
   podigeeHandler,
   podloveHandler,
   podomaticHandler,
+  postachioHandler,
   posthavenHandler,
   postypeHandler,
   prlogHandler,
