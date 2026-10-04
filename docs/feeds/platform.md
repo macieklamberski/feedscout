@@ -2076,6 +2076,16 @@ Discovers RSS feeds for papers on PChome's blog host, including category feeds. 
 | `mypaper.pchome.com.tw/{user}` | Posts feed |
 | `mypaper.pchome.com.tw/{user}/category/{id}` | Category feed + posts |
 
+### PukiWiki
+
+Discovers the recent changes feed of a PukiWiki wiki or a Quick Homepage Maker site. Detected by the default `pukiwiki.css` stylesheet, or by Quick Homepage Maker's `QHMSSID` session cookie, so any domain is covered. A wiki under a sub-path or on rewritten page URLs gets its feed at its own root.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `{wiki}/index.php?{Page}` | Recent changes (RSS) |
+| `{wiki}/?{Page}` | Recent changes (RSS) |
+| `{wiki}/{Page}` | Recent changes (RSS) |
+
 ## Basic Usage
 
 ```typescript

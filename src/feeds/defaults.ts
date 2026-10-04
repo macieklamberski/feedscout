@@ -153,6 +153,7 @@ import { producthuntHandler } from './platforms/producthunt.js'
 import { proseHandler } from './platforms/prose.js'
 import { publicInboxHandler } from './platforms/publicInbox.js'
 import { publiiHandler } from './platforms/publii.js'
+import { pukiwikiHandler } from './platforms/pukiwiki.js'
 import { pypiHandler } from './platforms/pypi.js'
 import { qiitaHandler } from './platforms/qiita.js'
 import { redcircleHandler } from './platforms/redcircle.js'
@@ -487,6 +488,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     proseHandler,
     publicInboxHandler,
     publiiHandler,
+    pukiwikiHandler,
     pypiHandler,
     qiitaHandler,
     redcircleHandler,
