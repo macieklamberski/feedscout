@@ -1994,6 +1994,18 @@ Discovers the Atom feed of a blog on an Odoo website. Detected by the `frontend_
 | `{site}/blog/{blog}-{id}/post/{post}-{id}` | Blog feed (Atom) |
 | `{site}/blog/{blog}-{id}/tag/{tag}-{id}` | Blog feed (Atom) |
 
+### Zenfolio
+
+Discovers the gallery and blog feeds of a Zenfolio photography site. A custom domain is detected by `cdn.zenfolio.com/zf/` stylesheets or the `zf_5y_visitor` cookie.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `{user}.zenfolio.com/…` | Recent galleries + featured galleries + blog (RSS + Atom) |
+| Any other page | Recent galleries + featured galleries + blog (RSS + Atom) |
+
+> [!NOTE]
+> The featured and blog feeds answer with no items on a site that has no featured galleries or blog posts.
+
 ## Basic Usage
 
 ```typescript
