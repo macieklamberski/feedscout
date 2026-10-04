@@ -13,6 +13,30 @@ describe('parseWordpressUrl', () => {
     expect(parseWordpressUrl('https://example.wordpress.com/Category/news/')).toEqual(expected)
   })
 
+  it('should return the archive for a nested category page', () => {
+    const expected: WordpressUrl = {
+      kind: 'archive',
+      path: '/category/news/north-brentwood',
+      hintKey: 'wordpress:category',
+    }
+
+    expect(
+      parseWordpressUrl('https://example.wordpress.com/category/news/north-brentwood/'),
+    ).toEqual(expected)
+  })
+
+  it('should return the archive for a paginated nested category page', () => {
+    const expected: WordpressUrl = {
+      kind: 'archive',
+      path: '/category/news/north-brentwood',
+      hintKey: 'wordpress:category',
+    }
+
+    expect(
+      parseWordpressUrl('https://example.wordpress.com/category/news/north-brentwood/page/2/'),
+    ).toEqual(expected)
+  })
+
   it('should return the archive for a date page', () => {
     const expected: WordpressUrl = {
       kind: 'archive',

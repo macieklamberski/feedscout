@@ -109,6 +109,7 @@ Discovers RSS and Atom feeds for WordPress.com blogs, with category, tag, and au
 |-------------|-----------------|
 | `*.wordpress.com` | Posts feed (RSS + Atom + RDF) + comments |
 | `*.wordpress.com/category/{category}` | Category feed (+ above) |
+| `*.wordpress.com/category/{parent}/{category}` | Nested category feed (+ above) |
 | `*.wordpress.com/tag/{tag}` | Tag feed (+ above) |
 | `*.wordpress.com/author/{author}` | Author feed (+ above) |
 
