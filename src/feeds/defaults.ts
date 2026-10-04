@@ -27,6 +27,7 @@ import { audioboomHandler } from './platforms/audioboom.js'
 import { aushaHandler } from './platforms/ausha.js'
 import { bearblogHandler } from './platforms/bearblog.js'
 import { behanceHandler } from './platforms/behance.js'
+import { bigcommerceHandler } from './platforms/bigcommerce.js'
 import { bitchuteHandler } from './platforms/bitchute.js'
 import { blogspotHandler } from './platforms/blogspot.js'
 import { blueskyHandler } from './platforms/bluesky.js'
@@ -356,6 +357,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     aushaHandler,
     bearblogHandler,
     behanceHandler,
+    bigcommerceHandler,
     bitchuteHandler,
     blogspotHandler,
     blueskyHandler,
