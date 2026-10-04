@@ -4,14 +4,14 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic partly covers blog.
+// Generic partly covers blog, category, post, tag.
 
 export type WordpressUrl =
   | { kind: 'archive'; path: string; hintKey: string }
   | { kind: 'post'; path: string }
   | { kind: 'home' }
 
-const domains = ['wordpress.com']
+const domains = ['unblog.fr', 'wordpress.com']
 const categoryRegex = /^\/category\/([^/]+)/i
 const tagRegex = /^\/tag\/([^/]+)/i
 const authorRegex = /^\/author\/([^/]+)/i
