@@ -244,6 +244,12 @@
     "confluence:site": "https://cwiki.apache.org/confluence/plugins/servlet/streams",
     "confluence:space": "https://cwiki.apache.org/confluence/plugins/servlet/streams?key=KAFKA"
   },
+  "cppblog": {
+    "cppblog:category": "http://www.cppblog.com/erran/category/5356.html/rss",
+    "cppblog:comments": "http://www.cppblog.com/erran/CommentsRSS.aspx",
+    "cppblog:favorites": "http://www.cppblog.com/erran/favorite/1914.html/rss",
+    "cppblog:posts": "http://www.cppblog.com/erran/rss.aspx"
+  },
   "cratesIo": {
     "crates-io:new-crates": "https://static.crates.io/rss/crates.xml",
     "crates-io:releases": "https://static.crates.io/rss/crates/serde.xml",
