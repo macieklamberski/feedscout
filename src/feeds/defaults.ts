@@ -188,6 +188,7 @@ import { writefreelyHandler } from './platforms/writefreely.js'
 import { xenforoHandler } from './platforms/xenforo.js'
 import { ximalayaHandler } from './platforms/ximalaya.js'
 import { youtubeHandler } from './platforms/youtube.js'
+import { zenfolioHandler } from './platforms/zenfolio.js'
 import { zennHandler } from './platforms/zenn.js'
 
 export const mimeTypes = [
@@ -505,6 +506,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     xenforoHandler,
     ximalayaHandler,
     youtubeHandler,
+    zenfolioHandler,
     zennHandler,
   ],
 }
