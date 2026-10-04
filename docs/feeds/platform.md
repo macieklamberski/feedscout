@@ -2152,6 +2152,15 @@ Discovers RSS feeds for Acomics comics and users. A user's feed carries the new 
 | `acomics.ru/~{comic}` | Comic issues feed |
 | `acomics.ru/-{user}` | User subscriptions feed |
 
+### OpenCart Journal
+
+Discovers the blog feed of an OpenCart store running the Journal theme. Detected by the `data-jv` or `data-j2v` version attribute Journal prints on the `<html>` element, so any domain is covered. A store under a sub-path gets its feed there, read from the page's `<base href>`.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| Any page of a Journal 3 store | Blog feed (RSS), `route=journal3/blog/feed`, or `journal3/blog.feed` on OpenCart 4 |
+| Any page of a Journal 2 store | Blog feed (RSS), `route=journal2/blog/feed` |
+
 ## Basic Usage
 
 ```typescript
@@ -2303,6 +2312,7 @@ import {
   odyseeHandler,
   omekaHandler,
   omnystudioHandler,
+  opencartJournalHandler,
   openstatusHandler,
   packagistHandler,
   pagecordHandler,

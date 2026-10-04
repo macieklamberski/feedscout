@@ -131,6 +131,7 @@ import { odooHandler } from './platforms/odoo.js'
 import { odyseeHandler } from './platforms/odysee.js'
 import { omekaHandler } from './platforms/omeka.js'
 import { omnystudioHandler } from './platforms/omnystudio.js'
+import { opencartJournalHandler } from './platforms/opencartJournal.js'
 import { openstatusHandler } from './platforms/openstatus.js'
 import { packagistHandler } from './platforms/packagist.js'
 import { pagecordHandler } from './platforms/pagecord.js'
@@ -472,6 +473,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     odyseeHandler,
     omekaHandler,
     omnystudioHandler,
+    opencartJournalHandler,
     openstatusHandler,
     packagistHandler,
     pagecordHandler,

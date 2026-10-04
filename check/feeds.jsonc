@@ -789,6 +789,13 @@
   "omnystudio": {
     "omnystudio:show": "https://omny.fm/shows/stuff-you-should-know/playlists/podcast.rss"
   },
+  "opencartJournal": {
+    "opencart-journal:blog": [
+      "https://www.photorig.eu/index.php?route=journal2/blog/feed",
+      "https://espressimo.bg/index.php?route=journal3/blog/feed",
+      "https://lovelylionshop.com/index.php?route=journal3/blog.feed"
+    ]
+  },
   "openstatus": {
     "openstatus:updates": [
       "https://status.openstatus.dev/feed/rss",

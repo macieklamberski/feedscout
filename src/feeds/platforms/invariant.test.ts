@@ -39,6 +39,7 @@ import { ningHandler } from './ning.js'
 import { nodebbHandler } from './nodebb.js'
 import { odooHandler } from './odoo.js'
 import { omekaHandler } from './omeka.js'
+import { opencartJournalHandler } from './opencartJournal.js'
 import { openstatusHandler } from './openstatus.js'
 import { peertubeHandler } from './peertube.js'
 import { phpbbHandler } from './phpbb.js'
@@ -206,6 +207,7 @@ const cases: Array<Case> = [
     ]),
   ],
   ['omeka', omekaHandler, '<link href="/plugins/ExhibitBuilder/views/public/css/exhibits.css">'],
+  ['opencartJournal', opencartJournalHandler, '<html data-jv="3.0.44">'],
   ['openstatus', openstatusHandler, '<link href="/api/status/summary.json">'],
   ['peertube', peertubeHandler, '', new Headers({ 'x-powered-by': 'PeerTube' })],
   ['phpbb', phpbbHandler, '<body id="phpbb">'],
