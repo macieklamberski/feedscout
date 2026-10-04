@@ -892,6 +892,13 @@
     "sourcehut:commits": "https://git.sr.ht/~sircmpwn/hare/log/rss.xml",
     "sourcehut:refs": "https://git.sr.ht/~sircmpwn/hare/refs/rss.xml"
   },
+  "spip": {
+    "spip:article-comments": "https://www.comitecerezo.org/spip.php?page=comments-rss&id_article=25",
+    "spip:articles": "https://www.comitecerezo.org/spip.php?page=backend",
+    "spip:author": "https://trektic.org/spip.php?page=backend&id_auteur=75",
+    "spip:keyword": "https://stuut.info/spip.php?page=backend&id_mot=169",
+    "spip:section": "https://www.comitecerezo.org/spip.php?page=backend&id_rubrique=17"
+  },
   "spotifyForCreators": {
     "spotify-for-creators:podcast": "https://anchor.fm/s/133d445c/podcast/rss"
   },

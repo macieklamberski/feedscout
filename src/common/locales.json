@@ -449,6 +449,11 @@
     "launchpad:revisions": "Revisions",
     "teletype:posts": "Posts",
     "pmwiki:group-changes": "Group changes",
-    "pmwiki:site-changes": "Site changes"
+    "pmwiki:site-changes": "Site changes",
+    "spip:article-comments": "Article comments",
+    "spip:articles": "Articles",
+    "spip:author": "Author",
+    "spip:keyword": "Keyword",
+    "spip:section": "Section"
   }
 }

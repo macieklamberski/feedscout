@@ -156,6 +156,7 @@ import { soundcloudHandler } from './platforms/soundcloud.js'
 import { soundonHandler } from './platforms/soundon.js'
 import { sourceforgeHandler } from './platforms/sourceforge.js'
 import { sourcehutHandler } from './platforms/sourcehut.js'
+import { spipHandler } from './platforms/spip.js'
 import { spotifyForCreatorsHandler } from './platforms/spotifyForCreators.js'
 import { spreakerHandler } from './platforms/spreaker.js'
 import { squarespaceHandler } from './platforms/squarespace.js'
@@ -473,6 +474,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     soundonHandler,
     sourceforgeHandler,
     sourcehutHandler,
+    spipHandler,
     spotifyForCreatorsHandler,
     spreakerHandler,
     squarespaceHandler,
