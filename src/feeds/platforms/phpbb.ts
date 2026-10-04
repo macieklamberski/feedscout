@@ -9,14 +9,16 @@ import {
   hasElementWithId,
   hasMarker,
 } from '../../common/utils.js'
+import { isForumotionHtml } from './forumotion.js'
 
 // Discoverability: Discoverable without handler.
 
 const forumIdRegex = /[?&]f=(\d+)/
 const topicIdRegex = /[?&]t=(\d+)/
 
+// Forumotion's phpBB3 template prints the same body id and serves none of phpBB's feeds.
 export const isPhpbbHtml = (content: string): boolean => {
-  return hasElementWithId(content, 'phpbb')
+  return hasElementWithId(content, 'phpbb') && !isForumotionHtml(content)
 }
 
 // phpBB sets `{name}_u`, `{name}_k` and `{name}_sid`, where the board picks the name.

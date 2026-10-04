@@ -532,6 +532,8 @@
     "haley-jobs:jobs": "Jobs",
     "yeswiki:entries": "All entries",
     "yeswiki:form-entries": "Form entries",
-    "yeswiki:recent-changes": "Recent changes"
+    "yeswiki:recent-changes": "Recent changes",
+    "forumotion:latest-topics": "Latest topics",
+    "forumotion:forum": "Forum"
   }
 }

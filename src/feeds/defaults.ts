@@ -68,6 +68,7 @@ import { firstoryHandler } from './platforms/firstory.js'
 import { flickrHandler } from './platforms/flickr.js'
 import { flipboardHandler } from './platforms/flipboard.js'
 import { fluxbbHandler } from './platforms/fluxbb.js'
+import { forumotionHandler } from './platforms/forumotion.js'
 import { friendicaHandler } from './platforms/friendica.js'
 import { funkwhaleHandler } from './platforms/funkwhale.js'
 import { gancioHandler } from './platforms/gancio.js'
@@ -416,6 +417,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     flickrHandler,
     flipboardHandler,
     fluxbbHandler,
+    forumotionHandler,
     friendicaHandler,
     funkwhaleHandler,
     gancioHandler,

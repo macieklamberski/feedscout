@@ -15,6 +15,7 @@ import { dokuwikiHandler } from './dokuwiki.js'
 import { drupalHandler } from './drupal.js'
 import { dspaceHandler } from './dspace.js'
 import { fluxbbHandler } from './fluxbb.js'
+import { forumotionHandler } from './forumotion.js'
 import { friendicaHandler } from './friendica.js'
 import { funkwhaleHandler } from './funkwhale.js'
 import { gancioHandler } from './gancio.js'
@@ -160,6 +161,11 @@ const cases: Array<Case> = [
   ['drupal', drupalHandler, '<meta name="generator" content="Drupal 10 (https://www.drupal.org)">'],
   ['dspace', dspaceHandler, '<ds-app></ds-app>'],
   ['fluxbb', fluxbbHandler, '<div id="brdmenu"></div><div id="brdfooter"></div>'],
+  [
+    'forumotion',
+    forumotionHandler,
+    '<div id="phpbb"></div><script>_userdata["session_logged_in"] = 0;</script>',
+  ],
   ['friendica', friendicaHandler, '<meta name="generator" content="Friendica 2026.05">'],
   ['funkwhale', funkwhaleHandler, '<div id="fake-app"></div>'],
   ['gancio', gancioHandler, '<link rel="stylesheet" href="/custom_css">'],

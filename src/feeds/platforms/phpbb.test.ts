@@ -10,6 +10,12 @@ describe('isPhpbbHtml', () => {
     expect(isPhpbbHtml(phpbbHtml)).toBe(true)
   })
 
+  it('should return false for a Forumotion page on its phpBB3 template', () => {
+    const value = '<div id="phpbb"></div><script>_userdata["session_logged_in"] = 0;</script>'
+
+    expect(isPhpbbHtml(value)).toBe(false)
+  })
+
   it('should return true for an unquoted phpBB body id', () => {
     expect(isPhpbbHtml('<body id=phpbb>')).toBe(true)
   })
