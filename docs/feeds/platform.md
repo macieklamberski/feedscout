@@ -2351,6 +2351,14 @@ Discovers the RSS feed of a Rakuten Blog (plaza.rakuten.co.jp) blog, which Rakut
 |-------------|-----------------|
 | `plaza.rakuten.co.jp/{user}/…` | Posts feed |
 
+### Overblog
+
+Discovers the posts feed of an Overblog blog.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `*.over-blog.com`, `*.over-blog.de`, `*.over-blog.es`, `*.over-blog.fr`, `*.over-blog.it`, `*.over-blog.net`, `*.over-blog.org`, `*.over.blog`, `*.overblog.com`, `*.overblog.fr` | Posts feed |
+
 ## Basic Usage
 
 ```typescript
@@ -2517,6 +2525,7 @@ import {
   omnystudioHandler,
   opencartJournalHandler,
   openstatusHandler,
+  overblogHandler,
   packagistHandler,
   pagecordHandler,
   paragraphHandler,

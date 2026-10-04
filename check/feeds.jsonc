@@ -922,6 +922,20 @@
       "https://status.openstatus.dev/feed/atom"
     ]
   },
+  "overblog": {
+    "overblog:posts": [
+      "https://cmoikife.over-blog.com/rss",
+      "https://hundh.over-blog.de/rss",
+      "https://armak.over-blog.es/rss",
+      "https://lecourrierdelactu.over-blog.fr/rss",
+      "https://lapappabona.over-blog.it/rss",
+      "https://krys.over-blog.net/rss",
+      "https://semioblog.over-blog.org/rss",
+      "https://manuelnhuf801.over.blog/rss",
+      "https://e-e-jane.overblog.com/rss",
+      "https://etoileinfos.overblog.fr/rss"
+    ]
+  },
   "packagist": {
     "packagist:extension-releases": [
       "https://packagist.org/feeds/extension-releases.rss",
