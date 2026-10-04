@@ -2169,6 +2169,16 @@ Discovers the posts and comments feeds of an Eklablog blog.
 |-------------|-----------------|
 | `*.blogg.org`, `*.blogueuse.fr`, `*.cd.st`, `*.doremiblog.com`, `*.ek.la`, `*.eklablog.com`, `*.eklablog.fr`, `*.eklablog.net`, `*.id.st`, `*.jeblog.fr`, `*.kazeo.com`, `*.kif.fr`, `*.lo.gs`, `*.revolublog.com`, `*.zic.fr` | Posts feed + comments feed |
 
+### ComicFury
+
+Discovers the feeds of a ComicFury webcomic.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `{comic}.thecomicseries.com`, `.thecomicstrip.org`, `.the-comic.org`, `.webcomic.ws` or `.cfw.me` | Comic feed |
+| `comicfury.com/comicprofile.php?url={comic}` | Comic feed |
+| `comicfury.com/read/{comic}` | Comic feed in the ComicFury reader |
+
 ## Basic Usage
 
 ```typescript
@@ -2245,6 +2255,7 @@ import {
   civicplusHandler,
   cnblogsHandler,
   cocologHandler,
+  comicfuryHandler,
   confluenceHandler,
   cratesIoHandler,
   csdnHandler,
