@@ -2367,6 +2367,14 @@ Discovers the posts feed of an Overblog blog.
 |-------------|-----------------|
 | `*.over-blog.com`, `*.over-blog.de`, `*.over-blog.es`, `*.over-blog.fr`, `*.over-blog.it`, `*.over-blog.net`, `*.over-blog.org`, `*.over.blog`, `*.overblog.com`, `*.overblog.fr` | Posts feed |
 
+### ExportersIndia
+
+Discovers the products feed of an ExportersIndia business site, built by Weblink.In on the business's own domain. Detected by the template stylesheet on `catalog.wlimg.com` together with the page's link to `/products.rss`, so any domain is covered.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| Any page | Products feed (RSS) |
+
 ## Basic Usage
 
 ```typescript
@@ -2462,6 +2470,7 @@ import {
   eklablogHandler,
   estrankyHandler,
   exblogHandler,
+  exportersIndiaHandler,
   fc2Handler,
   firesideHandler,
   firstoryHandler,
