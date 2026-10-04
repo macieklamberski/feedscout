@@ -3,6 +3,7 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { defaultPlatformOptions } from '../defaults.js'
 import { bookwyrmHandler } from './bookwyrm.js'
 import { castopodHandler } from './castopod.js'
+import { civicplusHandler } from './civicplus.js'
 import { confluenceHandler } from './confluence.js'
 import { diasporaHandler } from './diaspora.js'
 import { discourseHandler } from './discourse.js'
@@ -112,6 +113,11 @@ type Case = [string, PlatformHandler, string, Headers?]
 const cases: Array<Case> = [
   ['bookwyrm', bookwyrmHandler, '<meta name="generator" content="BookWyrm 0.7.5">'],
   ['castopod', castopodHandler, '<link href="/themes/colors">'],
+  [
+    'civicplus',
+    civicplusHandler,
+    '<script src="/Areas/Layout/Assets/Scripts/Search.js"></script><input id="pageModuleID" value="1">',
+  ],
   [
     'confluence',
     confluenceHandler,
