@@ -115,6 +115,7 @@ import { nodebbHandler } from './platforms/nodebb.js'
 import { noteHandler } from './platforms/note.js'
 import { observableHandler } from './platforms/observable.js'
 import { odyseeHandler } from './platforms/odysee.js'
+import { omekaHandler } from './platforms/omeka.js'
 import { omnystudioHandler } from './platforms/omnystudio.js'
 import { openstatusHandler } from './platforms/openstatus.js'
 import { packagistHandler } from './platforms/packagist.js'
@@ -432,6 +433,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     noteHandler,
     observableHandler,
     odyseeHandler,
+    omekaHandler,
     omnystudioHandler,
     openstatusHandler,
     packagistHandler,

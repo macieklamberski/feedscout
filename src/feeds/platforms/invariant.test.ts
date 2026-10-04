@@ -29,6 +29,7 @@ import { misskeyHandler } from './misskey.js'
 import { mobilizonHandler } from './mobilizon.js'
 import { mybbHandler } from './mybb.js'
 import { nodebbHandler } from './nodebb.js'
+import { omekaHandler } from './omeka.js'
 import { openstatusHandler } from './openstatus.js'
 import { peertubeHandler } from './peertube.js'
 import { phpbbHandler } from './phpbb.js'
@@ -151,6 +152,7 @@ const cases: Array<Case> = [
   ],
   ['mybb', mybbHandler, '', new Headers({ 'set-cookie': 'mybb[lastvisit]=1790000000; path=/' })],
   ['nodebb', nodebbHandler, '', new Headers({ 'x-powered-by': 'NodeBB' })],
+  ['omeka', omekaHandler, '<link href="/plugins/ExhibitBuilder/views/public/css/exhibits.css">'],
   ['openstatus', openstatusHandler, '<link href="/api/status/summary.json">'],
   ['peertube', peertubeHandler, '', new Headers({ 'x-powered-by': 'PeerTube' })],
   ['phpbb', phpbbHandler, '<body id="phpbb">'],
