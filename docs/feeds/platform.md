@@ -1867,6 +1867,18 @@ Discovers the recent changes feeds of a PmWiki wiki. Detected by the `<!--HTMLHe
 > [!NOTE]
 > Feeds are off in a default PmWiki install and a wiki owner turns them on, so many wikis answer these URLs with the page itself.
 
+### BubbleLife
+
+Discovers the RSS feed of a BubbleLife community. The page's alternate link has no `href`, so the feed id is read from the community's library links.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `{city}.bubblelife.com/community/{name}` | Posts feed (RSS) |
+| `{city}.bubblelife.com/community/{name}/library/{id}` | Library feed (RSS) |
+
+> [!NOTE]
+> A city news community links no library of its own, so its page yields no feed.
+
 ## Basic Usage
 
 ```typescript
@@ -1929,6 +1941,7 @@ import {
   blogspotHandler,
   blueskyHandler,
   bookwyrmHandler,
+  bubblelifeHandler,
   buttondownHandler,
   buzzsproutHandler,
   captivateHandler,
