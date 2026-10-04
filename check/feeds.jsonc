@@ -743,6 +743,24 @@
   "listed": {
     "listed:blog": "https://listed.to/@Listed/feed.rss"
   },
+  "livedoorBlog": {
+    "livedoor-blog:category": [
+      "https://anicobin.ldblog.jp/archives/cat_1080833.xml",
+      "https://kabuka-yosou.blog.jp/archives/cat_115857.xml",
+      "https://pachwalker.doorblog.jp/archives/cat_841987.xml",
+      "https://strong99.livedoor.biz/archives/cat_10027036.xml"
+    ],
+    "livedoor-blog:posts": [
+      "https://2chopmt.blog.jp/index.rdf",
+      "https://2chopmt.blog.jp/atom.xml",
+      "https://chikakb.ldblog.jp/index.rdf",
+      "https://chikakb.ldblog.jp/atom.xml",
+      "https://news4vip.livedoor.biz/index.rdf",
+      "https://news4vip.livedoor.biz/atom.xml",
+      "https://pachwalker.doorblog.jp/index.rdf",
+      "https://pachwalker.doorblog.jp/atom.xml"
+    ]
+  },
   "livejournal": {
     "livejournal:posts": [
       "https://news.livejournal.com/data/rss",
