@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'bun:test'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { defaultPlatformOptions } from '../defaults.js'
+import { bigcommerceHandler } from './bigcommerce.js'
 import { bookwyrmHandler } from './bookwyrm.js'
 import { castopodHandler } from './castopod.js'
 import { confluenceHandler } from './confluence.js'
@@ -110,6 +111,7 @@ const paths = [
 type Case = [string, PlatformHandler, string, Headers?]
 
 const cases: Array<Case> = [
+  ['bigcommerce', bigcommerceHandler, '', new Headers({ 'set-cookie': 'SHOP_SESSION_TOKEN=abc' })],
   ['bookwyrm', bookwyrmHandler, '<meta name="generator" content="BookWyrm 0.7.5">'],
   ['castopod', castopodHandler, '<link href="/themes/colors">'],
   [

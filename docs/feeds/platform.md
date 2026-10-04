@@ -1867,6 +1867,19 @@ Discovers the recent changes feeds of a PmWiki wiki. Detected by the `<!--HTMLHe
 > [!NOTE]
 > Feeds are off in a default PmWiki install and a wiki owner turns them on, so many wikis answer these URLs with the page itself.
 
+### BigCommerce
+
+Discovers the product and blog feeds of a BigCommerce store. Detected by the `SHOP_SESSION_TOKEN` cookie, so any domain is covered.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| Category page | Category new products + category popular products + store feeds (RSS + Atom) |
+| `{store}/search.php?search_query={query}` | Product search + store feeds (RSS + Atom) |
+| Any other page | New products + popular products + featured products + blog (RSS + Atom) |
+
+> [!NOTE]
+> A category URL carries only its slug, so the category id is read from the feed link the category page prints.
+
 ## Basic Usage
 
 ```typescript
@@ -1925,6 +1938,7 @@ import {
   aushaHandler,
   bearblogHandler,
   behanceHandler,
+  bigcommerceHandler,
   bitchuteHandler,
   blogspotHandler,
   blueskyHandler,
