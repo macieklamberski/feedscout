@@ -520,6 +520,7 @@
     "sme-blog:posts": "Posts",
     "sme-blog:site": "Site",
     "acomics:issues": "Issues",
-    "acomics:subscriptions": "Subscriptions"
+    "acomics:subscriptions": "Subscriptions",
+    "opencart-journal:blog": "Blog"
   }
 }
