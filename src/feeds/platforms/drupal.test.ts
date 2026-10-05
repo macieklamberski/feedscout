@@ -47,6 +47,12 @@ describe('drupalHandler', () => {
     it('should not match another platform', () => {
       expect(drupalHandler.match('https://example.com/', otherHtml)).toBe(false)
     })
+
+    it('should not match a GCS-web page carrying the generator meta tag', () => {
+      const value = `${drupalHtml}<link rel="stylesheet" href="/sites/g/files/knoqqb12345/files/css/css_abc.css">`
+
+      expect(drupalHandler.match('https://investors.example.com/', value)).toBe(false)
+    })
   })
 
   describe('resolve', () => {

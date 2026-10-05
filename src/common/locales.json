@@ -621,6 +621,9 @@
     "tour-travel-world:tour-packages": "Tour packages",
     "real-estate-india:properties": "Properties",
     "placement-india:job-opening": "Job opening",
-    "placement-india:vacancy": "Vacancies"
+    "placement-india:vacancy": "Vacancies",
+    "gcs-web:events": "Events",
+    "gcs-web:news-releases": "News releases",
+    "gcs-web:sec-filings": "SEC filings"
   }
 }
