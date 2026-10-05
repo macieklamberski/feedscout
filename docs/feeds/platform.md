@@ -1983,6 +1983,17 @@ Discovers the feeds of a SPIP site. Detected by the `Composed-By` or `X-Spip-Cac
 > [!NOTE]
 > Comment feeds come from the comments plugin, so a site without it answers them with an error. Each page is also recognised in its `spip.php?page=article&id_article={id}` form. Rewritten URLs such as `/Some-Title` name no id, and those pages get the latest articles feed alone.
 
+### Odoo
+
+Discovers the Atom feed of a blog on an Odoo website. Detected by the `frontend_lang` and `session_id` cookies Odoo sets on every website page, so any domain is covered. A page under a language prefix gets the feed in that language.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `{site}/blog/{blog}-{id}` | Blog feed (Atom) |
+| `{site}/blog/{blog}-{id}/{post}-{id}` | Blog feed (Atom) |
+| `{site}/blog/{blog}-{id}/post/{post}-{id}` | Blog feed (Atom) |
+| `{site}/blog/{blog}-{id}/tag/{tag}-{id}` | Blog feed (Atom) |
+
 ## Basic Usage
 
 ```typescript
@@ -2122,6 +2133,7 @@ import {
   nodebbHandler,
   noteHandler,
   observableHandler,
+  odooHandler,
   odyseeHandler,
   omekaHandler,
   omnystudioHandler,
