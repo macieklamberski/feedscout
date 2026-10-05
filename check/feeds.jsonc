@@ -1169,8 +1169,24 @@
     "sakura-blog:posts": ["http://cwtokyo.sblo.jp/index20.rdf", "http://cwtokyo.sblo.jp/index.rdf"]
   },
   "seesaa": {
-    "seesaa:posts": "https://info.seesaa.net/index.rdf",
-    "seesaa:posts-rss2": "https://info.seesaa.net/index20.rdf"
+    "seesaa:posts": [
+      "https://info.seesaa.net/index.rdf",
+      "https://kawaiibacon.iiblog.jp/index.rdf",
+      "https://itxz673t.seesaa.blog/index.rdf",
+      "https://izu16.seesaa.space/index.rdf",
+      "https://ameyoke.sokuho.org/index.rdf",
+      "http://daisy.stablo.jp/index.rdf",
+      "https://bag.xblog.jp/index.rdf"
+    ],
+    "seesaa:posts-rss2": [
+      "https://info.seesaa.net/index20.rdf",
+      "https://kawaiibacon.iiblog.jp/index20.rdf",
+      "https://itxz673t.seesaa.blog/index20.rdf",
+      "https://izu16.seesaa.space/index20.rdf",
+      "https://ameyoke.sokuho.org/index20.rdf",
+      "http://daisy.stablo.jp/index20.rdf",
+      "https://bag.xblog.jp/index20.rdf"
+    ]
   },
   "sermonNet": {
     "sermon-net:channel": [

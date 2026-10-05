@@ -3,11 +3,20 @@ import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
-// Discoverability: Discoverable without handler.
+// Discoverability: Partially discoverable without handler.
+// Generic covers blog, iiblog, seesaaBlog, seesaaSpace, sokuho, xblog (html), partly covers stablo.
 
 export type SeesaaUrl = { kind: 'blog' }
 
-const domains = ['seesaa.net']
+const domains = [
+  'seesaa.net',
+  'iiblog.jp',
+  'seesaa.blog',
+  'seesaa.space',
+  'sokuho.org',
+  'stablo.jp',
+  'xblog.jp',
+]
 
 export const parseSeesaaUrl = (url: string): SeesaaUrl | undefined => {
   if (!isSubdomainOf(url, domains)) {
