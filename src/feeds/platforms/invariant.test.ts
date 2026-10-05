@@ -61,6 +61,7 @@ import { pmwikiHandler } from './pmwiki.js'
 import { podhomeHandler } from './podhome.js'
 import { podloveHandler } from './podlove.js'
 import { powerpressHandler } from './powerpress.js'
+import { proboardsHandler } from './proboards.js'
 import { publicInboxHandler } from './publicInbox.js'
 import { publiiHandler } from './publii.js'
 import { pukiwikiHandler } from './pukiwiki.js'
@@ -292,6 +293,11 @@ const cases: Array<Case> = [
     '<link href="/wp-content/plugins/podlove-podcasting-plugin-for-wordpress/css/frontend.css"><link rel="alternate" title="Podcast Feed: Show (MP3)" href="/feed/mp3/">',
   ],
   ['powerpress', powerpressHandler, '<script>function powerpress_pinw(pinw_url){}</script>'],
+  [
+    'proboards',
+    proboardsHandler,
+    '<script src="//storage.proboards.com/forum/js/proboards.combined_1144.js"></script>',
+  ],
   [
     'publicInbox',
     publicInboxHandler,
