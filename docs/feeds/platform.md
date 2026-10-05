@@ -2375,6 +2375,19 @@ Discovers the products feed of an ExportersIndia business site, built by Weblink
 |-------------|-----------------|
 | Any page | Products feed (RSS) |
 
+### Wild Apricot
+
+Discovers the blog and events feeds of a Wild Apricot site. Detected by the `x-lb-server` response header, so `*.wildapricot.org` sites and custom domains are both covered.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `{site}/{blog-page}` | Blog feed (RSS) |
+| `{site}/{blog-page}/{post-id}` | Blog feed (RSS), from the post's back link |
+| `{site}/{events-page}` | Events feed (RSS), in the list and calendar views |
+
+> [!NOTE]
+> A post page links `/page-{id}/RSS` as its feed, which answers 404. An event page links no events page, so it gets no feed.
+
 ## Basic Usage
 
 ```typescript
@@ -2610,6 +2623,7 @@ import {
   webtoonsHandler,
   weeblyHandler,
   wikidotHandler,
+  wildApricotHandler,
   wordpressHandler,
   wpengineHandler,
   writeasHandler,

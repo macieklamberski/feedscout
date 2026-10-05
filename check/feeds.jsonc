@@ -1413,6 +1413,10 @@
     "wikidot:forum-threads": "https://scpwiki.com/feed/forum/threads.xml",
     "wikidot:site-changes": "https://scpwiki.com/feed/site-changes.xml"
   },
+  "wildApricot": {
+    "wild-apricot:blog": "https://swcweb.org/news/RSS",
+    "wild-apricot:events": "https://hafimh.wildapricot.org/events/RSS"
+  },
   "wix": {
     "wix:blog": [
       "https://www.allthefood.ie/blog-feed.xml",
