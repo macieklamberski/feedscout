@@ -62,6 +62,7 @@ import { dreamwidthHandler } from './platforms/dreamwidth.js'
 import { drupalHandler } from './platforms/drupal.js'
 import { dspaceHandler } from './platforms/dspace.js'
 import { eklablogHandler } from './platforms/eklablog.js'
+import { estrankyHandler } from './platforms/estranky.js'
 import { exblogHandler } from './platforms/exblog.js'
 import { fc2Handler } from './platforms/fc2.js'
 import { firesideHandler } from './platforms/fireside.js'
@@ -418,6 +419,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     drupalHandler,
     dspaceHandler,
     eklablogHandler,
+    estrankyHandler,
     exblogHandler,
     fc2Handler,
     firesideHandler,
