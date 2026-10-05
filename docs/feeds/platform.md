@@ -2613,6 +2613,14 @@ Discovers RDF and RSS 2.0 feeds for Blogalia blogs.
 |-------------|-----------------|
 | `*.blogalia.com` | Posts feed (RDF + RSS 2.0) |
 
+### Travellerspoint
+
+Discovers Atom feeds for Travellerspoint travel blogs.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `*.travellerspoint.com` | Posts feed |
+
 ## Basic Usage
 
 ```typescript
@@ -2857,6 +2865,7 @@ import {
   tistoryHandler,
   togetterHandler,
   transistorHandler,
+  travellerspointHandler,
   tumblrHandler,
   twodayHandler,
   ucozHandler,

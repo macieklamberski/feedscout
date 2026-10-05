@@ -1448,6 +1448,9 @@
   "transistor": {
     "transistor:podcast": "https://feeds.transistor.fm/build-your-saas"
   },
+  "travellerspoint": {
+    "travellerspoint:posts": "https://debtravels.travellerspoint.com/atom.xml"
+  },
   "tumblr": {
     "tumblr:posts": "https://staff.tumblr.com/rss",
     "tumblr:tag": "https://staff.tumblr.com/tagged/updates/rss"

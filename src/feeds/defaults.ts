@@ -235,6 +235,7 @@ import { tildesHandler } from './platforms/tildes.js'
 import { tistoryHandler } from './platforms/tistory.js'
 import { togetterHandler } from './platforms/togetter.js'
 import { transistorHandler } from './platforms/transistor.js'
+import { travellerspointHandler } from './platforms/travellerspoint.js'
 import { tumblrHandler } from './platforms/tumblr.js'
 import { twodayHandler } from './platforms/twoday.js'
 import { ucozHandler } from './platforms/ucoz.js'
@@ -623,6 +624,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     tistoryHandler,
     togetterHandler,
     transistorHandler,
+    travellerspointHandler,
     tumblrHandler,
     twodayHandler,
     ucozHandler,
