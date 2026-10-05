@@ -39,6 +39,7 @@ import { buzzsproutHandler } from './platforms/buzzsprout.js'
 import { captivateHandler } from './platforms/captivate.js'
 import { castopodHandler } from './platforms/castopod.js'
 import { castosHandler } from './platforms/castos.js'
+import { chambermasterHandler } from './platforms/chambermaster.js'
 import { civicplusHandler } from './platforms/civicplus.js'
 import { cnblogsHandler } from './platforms/cnblogs.js'
 import { cocologHandler } from './platforms/cocolog.js'
@@ -371,6 +372,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     captivateHandler,
     castopodHandler,
     castosHandler,
+    chambermasterHandler,
     civicplusHandler,
     cnblogsHandler,
     cocologHandler,

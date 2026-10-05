@@ -499,6 +499,16 @@
     "cocolog:posts": "Posts",
     "blog-hu:posts": "Posts",
     "blog-hu:comments": "Comments",
-    "blog-hu:user": "User activity"
+    "blog-hu:user": "User activity",
+    "chambermaster:upcoming-events": "Upcoming events",
+    "chambermaster:new-events": "New events",
+    "chambermaster:featured-events": "Featured events",
+    "chambermaster:new-members": "New members",
+    "chambermaster:featured-members": "Featured members",
+    "chambermaster:new-jobs": "New jobs",
+    "chambermaster:new-coupons": "New coupons",
+    "chambermaster:new-market-items": "New marketplace items",
+    "chambermaster:news-releases": "News releases",
+    "chambermaster:new-m2m-deals": "New member to member deals"
   }
 }
