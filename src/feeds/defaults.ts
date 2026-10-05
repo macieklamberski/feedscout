@@ -95,6 +95,7 @@ import { instatusHandler } from './platforms/instatus.js'
 import { internetArchiveHandler } from './platforms/internetArchive.js'
 import { itchioHandler } from './platforms/itchio.js'
 import { ivooxHandler } from './platforms/ivoox.js'
+import { jimdoHandler } from './platforms/jimdo.js'
 import { jiraHandler } from './platforms/jira.js'
 import { joomlaHandler } from './platforms/joomla.js'
 import { jugemHandler } from './platforms/jugem.js'
@@ -440,6 +441,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     internetArchiveHandler,
     itchioHandler,
     ivooxHandler,
+    jimdoHandler,
     jiraHandler,
     joomlaHandler,
     jugemHandler,

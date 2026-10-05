@@ -27,6 +27,7 @@ import { homelandHandler } from './homeland.js'
 import { hubspotHandler } from './hubspot.js'
 import { hubzillaHandler } from './hubzilla.js'
 import { instatusHandler } from './instatus.js'
+import { jimdoHandler } from './jimdo.js'
 import { jiraHandler } from './jira.js'
 import { joomlaHandler } from './joomla.js'
 import { kohaHandler } from './koha.js'
@@ -185,6 +186,7 @@ const cases: Array<Case> = [
     '',
     new Headers({ 'x-matched-path': '/[lang]/[url]/[type]/[userId]' }),
   ],
+  ['jimdo', jimdoHandler, '', new Headers({ 'x-jimdo-wid': 's1c8254714bfd7968' })],
   ['jira', jiraHandler, '<meta name="ajs-base-url" content="https://example.org">'],
   ['joomla', joomlaHandler, '<script class="joomla-script-options new">{}</script>'],
   ['koha', kohaHandler, '<link rel="stylesheet" href="/opac-tmpl/bootstrap/css/opac.css">'],
