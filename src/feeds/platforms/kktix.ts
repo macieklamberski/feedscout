@@ -2,7 +2,9 @@ import { getSubdomain, isAnyOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
-// Discoverability: Discoverable without handler.
+// Discoverability: Partially discoverable without handler.
+// Generic covers organizer (html).
+// Handler needed for: event.
 
 export type KktixUrl = { kind: 'organizer'; organizer: string }
 
