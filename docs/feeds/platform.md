@@ -2546,6 +2546,15 @@ Discovers the news feed of a Shopserve shop. Detected by the root-relative `/hpg
 |-------------|-----------------|
 | Any desktop page | News feed (RSS) |
 
+### KKTIX
+
+Discovers the Atom feed of a KKTIX organizer's public events.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `{organizer}.kktix.cc` | Events feed |
+| `{organizer}.kktix.cc/events/{event}` | Events feed |
+
 ## Basic Usage
 
 ```typescript
@@ -2684,6 +2693,7 @@ import {
   jiraHandler,
   jugemHandler,
   kickstarterHandler,
+  kktixHandler,
   kohaHandler,
   launchpadHandler,
   learnkuHandler,
