@@ -118,6 +118,12 @@
     "blog-hu:posts": ["https://kertbuvolo.blog.hu/rss2", "https://kertbuvolo.blog.hu/atom"],
     "blog-hu:user": "https://blog.hu/user/821883/rss"
   },
+  "blogalia": {
+    "blogalia:posts": [
+      "https://caboclo.blogalia.com/rdf.xml",
+      "https://caboclo.blogalia.com/rss20.xml"
+    ]
+  },
   "bloggang": {
     "bloggang:posts": "https://gonga.bloggang.com/rss"
   },
