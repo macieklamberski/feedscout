@@ -2498,6 +2498,15 @@ Discovers the feedback feed of a Reformal project, on reformal.ru and its Englis
 | `{project}.reformal.ru` | Feedback feed (RSS) |
 | `{project}.idea.informer.com` | Feedback feed (RSS) |
 
+### Bloggo
+
+Discovers RSS feeds for Bloggo blogs.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `*.bloggo.nu` | Posts feed |
+| `*.bloggo.nu/{slug}` | Post comments feed + posts |
+
 ## Basic Usage
 
 ```typescript
@@ -2560,6 +2569,7 @@ import {
   bigcommerceHandler,
   bitchuteHandler,
   bloggangHandler,
+  bloggoHandler,
   blogHuHandler,
   blogspotHandler,
   blueskyHandler,
