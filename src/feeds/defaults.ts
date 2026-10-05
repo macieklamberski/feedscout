@@ -16,6 +16,7 @@ import type { HeadersMethodOptions } from '../common/uris/headers/types.js'
 import type { HtmlMethodOptions } from '../common/uris/html/types.js'
 import type { PlatformMethodOptions } from '../common/uris/platform/types.js'
 import { acastHandler } from './platforms/acast.js'
+import { acomicsHandler } from './platforms/acomics.js'
 import { amebloHandler } from './platforms/ameblo.js'
 import { applePodcastsHandler } from './platforms/applePodcasts.js'
 import { arenaHandler } from './platforms/arena.js'
@@ -356,6 +357,7 @@ export const defaultGuessOptions: Omit<GuessMethodOptions, 'baseUrl'> = {
 export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
   handlers: [
     acastHandler,
+    acomicsHandler,
     amebloHandler,
     applePodcastsHandler,
     arenaHandler,
