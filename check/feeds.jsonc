@@ -370,6 +370,16 @@
     ],
     "fluxbb:topic": "https://forums.bunsenlabs.org/extern.php?action=feed&tid=7520&type=atom"
   },
+  "forumotion": {
+    "forumotion:forum": [
+      "https://shingamix.forumotion.com/feed/?f=104",
+      "https://shingamix.forumotion.com/feed/?f=104&type=atom"
+    ],
+    "forumotion:latest-topics": [
+      "https://shingamix.forumotion.com/feed/",
+      "https://shingamix.forumotion.com/feed/?type=atom"
+    ]
+  },
   "friendica": {
     "friendica:activity": "https://libranet.de/feed/clacke/activity",
     "friendica:comments": "https://friendica.world/feed/surazeus/comments",
