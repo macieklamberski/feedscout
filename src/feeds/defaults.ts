@@ -94,6 +94,7 @@ import { habrHandler } from './platforms/habr.js'
 import { hackernewsHandler } from './platforms/hackernews.js'
 import { haleyJobsHandler } from './platforms/haleyJobs.js'
 import { hashnodeHandler } from './platforms/hashnode.js'
+import { hatenaAntennaHandler } from './platforms/hatenaAntenna.js'
 import { hatenaBookmarkHandler } from './platforms/hatenaBookmark.js'
 import { hatenablogHandler } from './platforms/hatenablog.js'
 import { hatenaFotolifeHandler } from './platforms/hatenaFotolife.js'
@@ -471,6 +472,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     hackernewsHandler,
     haleyJobsHandler,
     hashnodeHandler,
+    hatenaAntennaHandler,
     hatenaBookmarkHandler,
     hatenaFotolifeHandler,
     hatenablogHandler,

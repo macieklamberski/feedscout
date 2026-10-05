@@ -443,6 +443,17 @@ Discovers RSS feeds for Paragraph blogs (successor to Mirror.xyz).
 |-------------|-----------------|
 | `paragraph.com/@{username}` | Blog feed |
 
+### Hatena Antenna
+
+Discovers RSS feeds for Hatena Antenna users and their groups.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `a.hatena.ne.jp/{user}` | Antenna feed |
+| `a.hatena.ne.jp/{user}/?gid={group}` | Group feed |
+
+> A group id the user does not have falls back to the antenna feed, since Hatena serves an empty feed under any made-up group id. A real group with no updated page keeps its own feed.
+
 ### Hatena Bookmark
 
 Discovers RSS feeds for Hatena Bookmark listings, searches, sites and user bookmarks.
@@ -2635,6 +2646,7 @@ import {
   hackernewsHandler,
   haleyJobsHandler,
   hashnodeHandler,
+  hatenaAntennaHandler,
   hatenaBookmarkHandler,
   hatenaFotolifeHandler,
   hatenablogHandler,
