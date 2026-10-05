@@ -43,8 +43,8 @@ export const parseEstrankyUrl = (url: string): EstrankyUrl | undefined => {
 }
 
 // A slice template on a custom domain links the home page slice on the Estranky subdomain.
-// An eOldal page links an `eoldal.hu` subdomain, which no longer resolves, so its slices stay on
-// the page's origin.
+// An eOldal slice template links its `eoldal.hu` subdomain, which no longer resolves, so its
+// slices stay on the page's origin.
 const getEstrankyPage = (url: string, content: string | undefined): EstrankyPage => {
   const { origin } = new URL(url)
   const anchor = findElement(content, (element) => {
