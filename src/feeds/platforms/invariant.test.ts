@@ -7,6 +7,7 @@ import { bookwyrmHandler } from './bookwyrm.js'
 import { castopodHandler } from './castopod.js'
 import { chambermasterHandler } from './chambermaster.js'
 import { civicplusHandler } from './civicplus.js'
+import { colorMeShopHandler } from './colorMeShop.js'
 import { confluenceHandler } from './confluence.js'
 import { diasporaHandler } from './diaspora.js'
 import { discourseHandler } from './discourse.js'
@@ -151,6 +152,12 @@ const cases: Array<Case> = [
     'civicplus',
     civicplusHandler,
     '<script src="/Areas/Layout/Assets/Scripts/Search.js"></script><input id="pageModuleID" value="1">',
+  ],
+  [
+    'colorMeShop',
+    colorMeShopHandler,
+    '',
+    new Headers({ 'set-cookie': 'colorme_PHPSESSID=abc; Path=/' }),
   ],
   [
     'confluence',
