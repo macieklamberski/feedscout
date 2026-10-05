@@ -55,6 +55,7 @@ import { statuspageHandler } from './statuspage.js'
 import { svbtleHandler } from './svbtle.js'
 import { textpatternHandler } from './textpattern.js'
 import { vbulletinHandler } from './vbulletin.js'
+import { webnodeHandler } from './webnode.js'
 import { wikidotHandler } from './wikidot.js'
 import { wixHandler } from './wix.js'
 import { writefreelyHandler } from './writefreely.js'
@@ -219,6 +220,11 @@ const cases: Array<Case> = [
   ['svbtle', svbtleHandler, '<link href="https://lightning.svbtle.com/cargo/blog.css">'],
   ['textpattern', textpatternHandler, '<meta name="generator" content="Textpattern CMS">'],
   ['vbulletin', vbulletinHandler, '<script src="/clientscript/vbulletin-core.js"></script>'],
+  [
+    'webnode',
+    webnodeHandler,
+    '<script src="https://d11bh4d8fhuq47.cloudfront.net/_system/client/js/frontend.js"></script>',
+  ],
   ['wikidot', wikidotHandler, '<a onclick="WIKIDOT.page.listeners.editClick()">Edit</a>'],
   ['wix', wixHandler, '', new Headers({ 'x-wix-request-id': '1790000000.1' })],
   ['writefreely', writefreelyHandler, '<link rel="stylesheet" href="/css/write.css">'],

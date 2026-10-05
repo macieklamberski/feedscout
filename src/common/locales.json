@@ -475,6 +475,8 @@
     "public-inbox:thread": "Thread",
     "dspace:site": "Site",
     "dspace:collection": "Collection",
-    "dspace:community": "Community"
+    "dspace:community": "Community",
+    "webnode:articles": "All articles",
+    "webnode:section": "Section articles"
   }
 }

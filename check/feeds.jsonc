@@ -1073,6 +1073,10 @@
       "https://adam.weblog.lol/feed.json"
     ]
   },
+  "webnode": {
+    "webnode:articles": "https://crcesteslu.webnode.es/rss/all.xml",
+    "webnode:section": "https://paravakkottai.webnode.page/rss/blog.xml"
+  },
   "webtoons": {
     "webtoons:series": [
       "https://www.webtoons.com/en/fantasy/tower-of-god/rss?title_no=95",
