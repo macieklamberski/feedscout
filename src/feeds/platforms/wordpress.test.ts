@@ -35,6 +35,18 @@ describe('parseWordpressUrl', () => {
     expect(parseWordpressUrl('https://example.wordpress.com/')).toEqual(expected)
   })
 
+  it('should return the archive for an Unblog tag page', () => {
+    const expected: WordpressUrl = {
+      kind: 'archive',
+      path: '/tag/pays-des-trois-frontieres',
+      hintKey: 'wordpress:tag',
+    }
+
+    expect(
+      parseWordpressUrl('http://blogerslorrainsengages.unblog.fr/tag/pays-des-trois-frontieres/'),
+    ).toEqual(expected)
+  })
+
   it('should return the home page for a feed path', () => {
     const expected: WordpressUrl = { kind: 'home' }
 
@@ -51,7 +63,9 @@ describe('wordpressHandler', () => {
     const values: Array<[boolean, string]> = [
       [true, 'https://example.wordpress.com'],
       [true, 'https://blog.example.wordpress.com'],
+      [true, 'http://gbessay.unblog.fr'],
       [false, 'https://wordpress.com'],
+      [false, 'http://unblog.fr'],
       [false, 'https://example.com'],
     ]
 
@@ -215,6 +229,62 @@ describe('wordpressHandler', () => {
           uri: [
             'https://example.wordpress.com/comments/feed/atom/',
             'https://example.wordpress.com/?feed=comments-atom',
+          ],
+          hint: { key: 'wordpress:comments', label: 'Comments', format: 'atom' },
+        },
+      ]
+
+      expect(wordpressHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should keep the http scheme of an Unblog post page in its feed URLs', () => {
+      const value = 'http://dodiblog.unblog.fr/2010/11/14/divorce-ecologiste/'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: [
+            'http://dodiblog.unblog.fr/2010/11/14/divorce-ecologiste/feed/',
+            'http://dodiblog.unblog.fr/2010/11/14/divorce-ecologiste/?feed=rss',
+            'http://dodiblog.unblog.fr/2010/11/14/divorce-ecologiste/feed/rss2/',
+            'http://dodiblog.unblog.fr/2010/11/14/divorce-ecologiste/?feed=rss2',
+          ],
+          hint: { key: 'wordpress:post-comments', label: 'Post comments', format: 'rss' },
+        },
+        {
+          uri: [
+            'http://dodiblog.unblog.fr/2010/11/14/divorce-ecologiste/feed/atom/',
+            'http://dodiblog.unblog.fr/2010/11/14/divorce-ecologiste/?feed=atom',
+          ],
+          hint: { key: 'wordpress:post-comments', label: 'Post comments', format: 'atom' },
+        },
+        {
+          uri: [
+            'http://dodiblog.unblog.fr/feed/',
+            'http://dodiblog.unblog.fr/?feed=rss',
+            'http://dodiblog.unblog.fr/feed/rss2/',
+            'http://dodiblog.unblog.fr/?feed=rss2',
+          ],
+          hint: { key: 'wordpress:posts', label: 'Posts', format: 'rss' },
+        },
+        {
+          uri: ['http://dodiblog.unblog.fr/feed/atom/', 'http://dodiblog.unblog.fr/?feed=atom'],
+          hint: { key: 'wordpress:posts', label: 'Posts', format: 'atom' },
+        },
+        {
+          uri: ['http://dodiblog.unblog.fr/feed/rdf/', 'http://dodiblog.unblog.fr/?feed=rdf'],
+          hint: { key: 'wordpress:posts', label: 'Posts', format: 'rdf' },
+        },
+        {
+          uri: [
+            'http://dodiblog.unblog.fr/comments/feed/',
+            'http://dodiblog.unblog.fr/comments/feed/rss2/',
+            'http://dodiblog.unblog.fr/?feed=comments-rss2',
+          ],
+          hint: { key: 'wordpress:comments', label: 'Comments', format: 'rss' },
+        },
+        {
+          uri: [
+            'http://dodiblog.unblog.fr/comments/feed/atom/',
+            'http://dodiblog.unblog.fr/?feed=comments-atom',
           ],
           hint: { key: 'wordpress:comments', label: 'Comments', format: 'atom' },
         },
