@@ -2395,12 +2395,13 @@ Discovers the RSS feed of a dasauge member profile on any of the dasauge country
 
 ### Estranky
 
-Discovers the site feeds of an Estranky site. A site serves the article feeds, the Web Slice feeds or both, depending on its template, and validation drops a set it lacks.
+Discovers the site feeds of an Estranky site. A site serves the article feeds, the Web Slice feeds or both, depending on its template, and validation drops a set it lacks. A custom domain is detected by stylesheets or scripts loaded from the `s3*.estranky.cz` and `s3*.estranky.sk` asset hosts. On a custom domain, the slice feeds take the Estranky subdomain of the page's `rel="feedurl"` link.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | `{site}.estranky.cz/…` | Posts + photos + comments + home page slice + photo album slice |
 | `{site}.estranky.sk/…` | Posts + photos + comments + home page slice + photo album slice |
+| Any other page | Posts + photos + comments + home page slice + photo album slice |
 
 ### Color Me Shop
 

@@ -395,23 +395,28 @@
   "estranky": {
     "estranky:comments": [
       "https://fkdrnovice.estranky.cz/rss/comments/data.xml",
-      "https://moeschke.estranky.sk/rss/comments/data.xml"
+      "https://moeschke.estranky.sk/rss/comments/data.xml",
+      "https://www.bawerk.eu/rss/comments/data.xml"
     ],
     "estranky:homepage-slice": [
       "https://zvedavec.estranky.cz/rss/slices/l/homepage/data.xml",
-      "https://veca.estranky.sk/rss/slices/l/homepage/data.xml"
+      "https://veca.estranky.sk/rss/slices/l/homepage/data.xml",
+      "https://www.veca.sk/rss/slices/l/homepage/data.xml"
     ],
     "estranky:photos": [
       "https://fkdrnovice.estranky.cz/rss/photos/data.xml",
-      "https://moeschke.estranky.sk/rss/photos/data.xml"
+      "https://moeschke.estranky.sk/rss/photos/data.xml",
+      "https://www.bawerk.eu/rss/photos/data.xml"
     ],
     "estranky:photos-slice": [
       "https://zvedavec.estranky.cz/rss/slices/l/photos/data.xml",
-      "https://veca.estranky.sk/rss/slices/l/photos/data.xml"
+      "https://veca.estranky.sk/rss/slices/l/photos/data.xml",
+      "https://www.veca.sk/rss/slices/l/photos/data.xml"
     ],
     "estranky:posts": [
       "https://fkdrnovice.estranky.cz/rss/articles/data.xml",
-      "https://moeschke.estranky.sk/rss/articles/data.xml"
+      "https://moeschke.estranky.sk/rss/articles/data.xml",
+      "https://www.akbd.cz/rss/articles/data.xml"
     ]
   },
   "exblog": {

@@ -17,6 +17,7 @@ import { dokuwikiHandler } from './dokuwiki.js'
 import { drupalHandler } from './drupal.js'
 import { dspaceHandler } from './dspace.js'
 import { eklablogHandler } from './eklablog.js'
+import { estrankyHandler } from './estranky.js'
 import { exportersIndiaHandler } from './exportersIndia.js'
 import { fluxbbHandler } from './fluxbb.js'
 import { forumotionHandler } from './forumotion.js'
@@ -200,6 +201,7 @@ const cases: Array<Case> = [
     eklablogHandler,
     '<script src="//connect.eklablog.com/ping/123456/isConnected" async></script>',
   ],
+  ['estranky', estrankyHandler, '<script src="https://s3c.estranky.cz/js/ui.js"></script>'],
   [
     'exportersIndia',
     exportersIndiaHandler,
