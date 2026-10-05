@@ -484,6 +484,20 @@
     "gancio:site": "https://gancio.cisti.org/feed/rss",
     "gancio:tag": "https://balotta.org/feed/rss/tag/antirazzismo"
   },
+  "gcsWeb": {
+    "gcs-web:events": [
+      "https://upwork.gcs-web.com/rss/events.xml",
+      "https://ir.labcorp.com/rss/events.xml"
+    ],
+    "gcs-web:news-releases": [
+      "https://upwork.gcs-web.com/rss/news-releases.xml",
+      "https://ir.labcorp.com/rss/news-releases.xml"
+    ],
+    "gcs-web:sec-filings": [
+      "https://upwork.gcs-web.com/rss/sec-filings.xml",
+      "https://ir.labcorp.com/rss/sec-filings.xml"
+    ]
+  },
   "ghost": {
     "ghost:author": "https://demo.ghost.io/author/ghost/rss/",
     "ghost:blog": "https://demo.ghost.io/rss/",

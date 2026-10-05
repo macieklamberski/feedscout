@@ -2666,6 +2666,15 @@ Discovers the vacancies feed of a PlacementIndia jobs site, built by Weblink.In 
 | Any page | Vacancies feed (RSS) |
 | Job page | Job opening feed (RSS) |
 
+### GCS-web
+
+Discovers the news release, SEC filing and event feeds of a company investor relations site on GCS-web. A site on the company's own domain is detected by the `/sites/g/files/knoqqb{id}/` path of its assets.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `*.gcs-web.com` | News releases + SEC filings + events |
+| Any page on a company's own domain | News releases + SEC filings + events |
+
 ## Basic Usage
 
 ```typescript
@@ -2778,6 +2787,7 @@ import {
   forumotionHandler,
   friendicaHandler,
   gancioHandler,
+  gcsWebHandler,
   ghostHandler,
   giteaHandler,
   githubHandler,

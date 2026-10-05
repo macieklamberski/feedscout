@@ -22,6 +22,7 @@ import { forumotionHandler } from './forumotion.js'
 import { friendicaHandler } from './friendica.js'
 import { funkwhaleHandler } from './funkwhale.js'
 import { gancioHandler } from './gancio.js'
+import { gcsWebHandler } from './gcsWeb.js'
 import { giteaHandler } from './gitea.js'
 import { gitlabHandler } from './gitlab.js'
 import { gnuboardHandler } from './gnuboard.js'
@@ -200,6 +201,7 @@ const cases: Array<Case> = [
   ['friendica', friendicaHandler, '<meta name="generator" content="Friendica 2026.05">'],
   ['funkwhale', funkwhaleHandler, '<div id="fake-app"></div>'],
   ['gancio', gancioHandler, '<link rel="stylesheet" href="/custom_css">'],
+  ['gcsWeb', gcsWebHandler, '<link href="/sites/g/files/knoqqb12345/files/css/css_abc.css">'],
   ['gitea', giteaHandler, '', new Headers({ 'set-cookie': 'i_like_gitea=abc; Path=/' })],
   ['gitlab', gitlabHandler, '<meta property="og:site_name" content="GitLab">'],
   [
