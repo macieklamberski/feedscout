@@ -22,6 +22,7 @@ import { giteaHandler } from './gitea.js'
 import { gitlabHandler } from './gitlab.js'
 import { gnuboardHandler } from './gnuboard.js'
 import { gravHandler } from './grav.js'
+import { haleyJobsHandler } from './haleyJobs.js'
 import { homelandHandler } from './homeland.js'
 import { hubspotHandler } from './hubspot.js'
 import { hubzillaHandler } from './hubzilla.js'
@@ -169,6 +170,12 @@ const cases: Array<Case> = [
     new Headers({ 'set-cookie': '2a0d2363701f23f8a75028924a3af643=abc; path=/' }),
   ],
   ['grav', gravHandler, '', new Headers({ 'set-cookie': 'grav-site-9a6a5fc=abc; path=/' })],
+  [
+    'haleyJobs',
+    haleyJobsHandler,
+    '<a href="/index.smpl?arg=jb_search">Search Jobs</a>',
+    new Headers({ 'x-sasnode': 'v166-alma.haleymarketing.com' }),
+  ],
   ['homeland', homelandHandler, '', new Headers({ 'set-cookie': '_homeland_session=abc; path=/' })],
   ['hubspot', hubspotHandler, '', new Headers({ 'x-hs-hub-id': '53' })],
   ['hubzilla', hubzillaHandler, "<script>var zid = '';</script>"],

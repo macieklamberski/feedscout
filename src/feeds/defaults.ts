@@ -81,6 +81,7 @@ import { goodreadsHandler } from './platforms/goodreads.js'
 import { gravHandler } from './platforms/grav.js'
 import { habrHandler } from './platforms/habr.js'
 import { hackernewsHandler } from './platforms/hackernews.js'
+import { haleyJobsHandler } from './platforms/haleyJobs.js'
 import { hashnodeHandler } from './platforms/hashnode.js'
 import { hatenaBookmarkHandler } from './platforms/hatenaBookmark.js'
 import { hatenablogHandler } from './platforms/hatenablog.js'
@@ -425,6 +426,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     gravHandler,
     habrHandler,
     hackernewsHandler,
+    haleyJobsHandler,
     hashnodeHandler,
     hatenaBookmarkHandler,
     hatenablogHandler,

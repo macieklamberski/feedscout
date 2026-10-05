@@ -2179,6 +2179,14 @@ Discovers the feeds of a ComicFury webcomic.
 | `comicfury.com/comicprofile.php?url={comic}` | Comic feed |
 | `comicfury.com/read/{comic}` | Comic feed in the ComicFury reader |
 
+### Haley Marketing job boards
+
+Discovers the jobs feed of a job board Haley Marketing hosts for a staffing firm. Detected by the `x-sasnode` response header naming a `haleymarketing.com` node together with a link to the board's `/index.smpl?arg=jb_` routes, so any domain is covered.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| Any board page | Jobs feed |
+
 ## Basic Usage
 
 ```typescript
@@ -2287,6 +2295,7 @@ import {
   goodreadsHandler,
   habrHandler,
   hackernewsHandler,
+  haleyJobsHandler,
   hashnodeHandler,
   hatenaBookmarkHandler,
   hatenablogHandler,
