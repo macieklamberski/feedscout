@@ -472,6 +472,9 @@
     "koha:list": "List",
     "koha:comments": "Recent comments",
     "public-inbox:messages": "Messages",
-    "public-inbox:thread": "Thread"
+    "public-inbox:thread": "Thread",
+    "dspace:site": "Site",
+    "dspace:collection": "Collection",
+    "dspace:community": "Community"
   }
 }

@@ -51,6 +51,7 @@ import { dokuwikiHandler } from './platforms/dokuwiki.js'
 import { doubanHandler } from './platforms/douban.js'
 import { dreamwidthHandler } from './platforms/dreamwidth.js'
 import { drupalHandler } from './platforms/drupal.js'
+import { dspaceHandler } from './platforms/dspace.js'
 import { exblogHandler } from './platforms/exblog.js'
 import { fc2Handler } from './platforms/fc2.js'
 import { firesideHandler } from './platforms/fireside.js'
@@ -374,6 +375,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     doubanHandler,
     dreamwidthHandler,
     drupalHandler,
+    dspaceHandler,
     exblogHandler,
     fc2Handler,
     firesideHandler,
