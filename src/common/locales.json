@@ -611,6 +611,7 @@
     "kktix:events": "Events",
     "sportsregions:news": "News",
     "sportsregions:events": "Events",
-    "ocnk:products": "Products"
+    "ocnk:products": "Products",
+    "blogia:posts": "Posts"
   }
 }

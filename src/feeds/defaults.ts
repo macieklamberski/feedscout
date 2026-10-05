@@ -33,6 +33,7 @@ import { bitchuteHandler } from './platforms/bitchute.js'
 import { bloggangHandler } from './platforms/bloggang.js'
 import { bloggoHandler } from './platforms/bloggo.js'
 import { blogHuHandler } from './platforms/blogHu.js'
+import { blogiaHandler } from './platforms/blogia.js'
 import { blogspotHandler } from './platforms/blogspot.js'
 import { blueskyHandler } from './platforms/bluesky.js'
 import { bookwyrmHandler } from './platforms/bookwyrm.js'
@@ -418,6 +419,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     blogHuHandler,
     bloggangHandler,
     bloggoHandler,
+    blogiaHandler,
     blogspotHandler,
     blueskyHandler,
     bookwyrmHandler,
