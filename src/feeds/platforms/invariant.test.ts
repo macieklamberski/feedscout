@@ -24,6 +24,7 @@ import { gancioHandler } from './gancio.js'
 import { giteaHandler } from './gitea.js'
 import { gitlabHandler } from './gitlab.js'
 import { gnuboardHandler } from './gnuboard.js'
+import { goopeHandler } from './goope.js'
 import { gravHandler } from './grav.js'
 import { haleyJobsHandler } from './haleyJobs.js'
 import { homelandHandler } from './homeland.js'
@@ -195,6 +196,7 @@ const cases: Array<Case> = [
     '<script>var g5_url = "https://example.org"; var g5_bo_table = "free";</script>',
     new Headers({ 'set-cookie': '2a0d2363701f23f8a75028924a3af643=abc; path=/' }),
   ],
+  ['goope', goopeHandler, '<img src="//r.goope.jp/qr/example">'],
   ['grav', gravHandler, '', new Headers({ 'set-cookie': 'grav-site-9a6a5fc=abc; path=/' })],
   [
     'haleyJobs',
