@@ -2067,13 +2067,15 @@ Discovers the module feeds of a CivicPlus government website. Detected by the `C
 
 ### DSpace
 
-Discovers the OpenSearch feeds of a DSpace 7 or later repository. Detected by the `ds-app` element of its Angular app, so any domain is covered. The feeds are built on the REST API the page's config names, which can sit on another host.
+Discovers the feeds of a DSpace repository, on any domain. DSpace 7 and later is detected by the `ds-app` element of its Angular app, and its OpenSearch feeds are built on the REST API the page's config names, which can sit on another host. DSpace 6 and older is detected by the `dspace-theme.css` stylesheet of the JSPUI, the `X-Cocoon-Version` header of the XMLUI or the `DSpace` generator meta of older JSPUI releases, each beside a feed link in the DSpace shape, and its feeds are the ones the page links.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | `{repository}/collections/{uuid}` | Collection feed + site feed (RSS + Atom) |
 | `{repository}/communities/{uuid}` | Community feed + site feed (RSS + Atom) |
-| Any other page | Site feed (RSS + Atom) |
+| Any other page, DSpace 7 and later | Site feed (RSS + Atom) |
+| `{repository}/handle/{prefix}/{id}`, DSpace 6 and older | Collection or community feed (RSS 1.0, RSS 2.0 + Atom, as linked) |
+| `{repository}/`, DSpace 6 and older | Site feed (RSS 1.0, RSS 2.0 + Atom, as linked) |
 
 > [!NOTE]
 > The search endpoint ignores a scope it does not know and answers with the site feed, so only an id the page URL names is used.

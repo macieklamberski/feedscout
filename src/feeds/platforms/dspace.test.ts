@@ -1,6 +1,13 @@
 import { describe, expect, it } from 'bun:test'
 import type { DiscoverUriEntry } from '../../common/types.js'
-import { type DspacePage, dspaceHandler, getDspacePage, isDspaceHtml } from './dspace.js'
+import {
+  type DspacePage,
+  dspaceHandler,
+  getDspacePage,
+  isDspaceHtml,
+  isLegacyDspaceHeaders,
+  isLegacyDspaceHtml,
+} from './dspace.js'
 
 const escapedStateHtml = `
   <ds-app
@@ -30,6 +37,123 @@ const xmluiHtml = `
     >
   </head>
 `
+const jspuiCommunityHtml = `
+  <link
+    rel="stylesheet"
+    href="/jspui/static/css/bootstrap/dspace-theme.css"
+    type="text/css"
+  />
+  <link
+    rel="alternate"
+    type="application/rdf+xml"
+    title="Items in Community"
+    href="/jspui/feed/rss_1.0/123456789/1"
+  />
+  <link
+    rel="alternate"
+    type="application/rss+xml"
+    title="Items in Community"
+    href="/jspui/feed/atom_1.0/123456789/1"
+  />
+  <link
+    rel="alternate"
+    type="application/rss+xml"
+    title="Items in Community"
+    href="/jspui/feed/rss_2.0/123456789/1"
+  />
+`
+const jspuiCollectionHtml = `
+  <link
+    rel="stylesheet"
+    href="/static/css/bootstrap/dspace-theme.css"
+    type="text/css"
+  />
+  <link
+    rel="alternate"
+    type="application/rss+xml"
+    title="Items in Collection"
+    href="/feed/rss_2.0/123456789/42"
+  />
+`
+const jspuiHomeHtml = `
+  <link
+    rel="stylesheet"
+    href="/static/css/bootstrap/dspace-theme.css"
+    type="text/css"
+  />
+  <link
+    rel="alternate"
+    type="application/rss+xml"
+    title="Items in Example Repository"
+    href="/feed/rss_2.0/site"
+  />
+`
+const jspuiItemHtml = `
+  <link
+    rel="stylesheet"
+    href="/static/css/bootstrap/dspace-theme.css"
+    type="text/css"
+  />
+`
+const xmluiCommunityHtml = `
+  <link
+    type="application/atom+xml"
+    rel="alternate"
+    href="/feed/atom_1.0/10183/1"
+  >
+  <link
+    type="application/rss+xml"
+    rel="alternate"
+    href="/feed/rss_2.0/10183/1"
+  >
+  <div
+    id="aspect_artifactbrowser_CommunityViewer_div_community-home"
+    class="ds-static-div primary repository community"
+  ></div>
+`
+const xmluiCollectionHtml = `
+  <link
+    type="application/atom+xml"
+    rel="alternate"
+    href="/feed/atom_1.0/10183/42"
+  >
+  <div
+    id="aspect_artifactbrowser_CollectionViewer_div_collection-home"
+    class="ds-static-div primary repository collection"
+  ></div>
+`
+const xmluiUnknownHtml = `
+  <link
+    type="application/atom+xml"
+    rel="alternate"
+    href="/feed/atom_1.0/10183/42"
+  >
+`
+const jspuiLegacyCollectionHtml = `
+  <meta
+    name="Generator"
+    content="DSpace 1.6.2"
+  />
+  <link
+    rel="alternate"
+    type="application/rdf+xml"
+    title="Items in Collection"
+    href="/rdpc/feed/rss_1.0/123456789/100"
+  />
+  <link
+    rel="alternate"
+    type="application/rss+xml"
+    title="Items in Collection"
+    href="/rdpc/feed/rss_2.0/123456789/100"
+  />
+  <link
+    rel="alternate"
+    type="application/rss+xml"
+    title="Items in Collection"
+    href="/rdpc/feed/atom_1.0/123456789/100"
+  />
+`
+const cocoonHeaders = new Headers({ 'x-cocoon-version': '2.2.0' })
 
 describe('isDspaceHtml', () => {
   it('should return true for the app root element', () => {
@@ -46,6 +170,44 @@ describe('isDspaceHtml', () => {
 
   it('should return false for empty content', () => {
     expect(isDspaceHtml('')).toBe(false)
+  })
+})
+
+describe('isLegacyDspaceHtml', () => {
+  it('should return true for the JSPUI stylesheet', () => {
+    expect(isLegacyDspaceHtml(jspuiItemHtml)).toBe(true)
+  })
+
+  it('should return true for the DSpace generator', () => {
+    expect(isLegacyDspaceHtml(jspuiLegacyCollectionHtml)).toBe(true)
+  })
+
+  it('should return false for a generator of another name', () => {
+    expect(isLegacyDspaceHtml('<meta name="generator" content="DSpaceX 1.0">')).toBe(false)
+  })
+
+  it('should return false for a generator that names DSpace after another word', () => {
+    expect(isLegacyDspaceHtml('<meta name="generator" content="Foo DSpace 1.0">')).toBe(false)
+  })
+
+  it('should return false for a stylesheet of another name', () => {
+    const value = '<link rel="stylesheet" href="/static/css/bootstrap/dspace-theme.css.map">'
+
+    expect(isLegacyDspaceHtml(value)).toBe(false)
+  })
+
+  it('should return false for an XMLUI page', () => {
+    expect(isLegacyDspaceHtml(xmluiCommunityHtml)).toBe(false)
+  })
+})
+
+describe('isLegacyDspaceHeaders', () => {
+  it('should return true for the Cocoon header', () => {
+    expect(isLegacyDspaceHeaders(cocoonHeaders)).toBe(true)
+  })
+
+  it('should return false without the Cocoon header', () => {
+    expect(isLegacyDspaceHeaders(new Headers({ server: 'nginx' }))).toBe(false)
   })
 })
 
@@ -191,6 +353,102 @@ describe('getDspacePage', () => {
   it('should return undefined for an unparsable URL', () => {
     expect(getDspacePage('not-a-url', statelessHtml)).toBeUndefined()
   })
+
+  it('should return the community feeds of a JSPUI page under a sub-path', () => {
+    const value = 'https://example.com/jspui/handle/123456789/1'
+    const expected: DspacePage = {
+      kind: 'legacyCommunity',
+      feeds: [
+        { uri: 'https://example.com/jspui/feed/rss_1.0/123456789/1', format: 'rdf' },
+        { uri: 'https://example.com/jspui/feed/atom_1.0/123456789/1', format: 'atom' },
+        { uri: 'https://example.com/jspui/feed/rss_2.0/123456789/1', format: 'rss' },
+      ],
+    }
+
+    expect(getDspacePage(value, jspuiCommunityHtml)).toEqual(expected)
+  })
+
+  it('should return the collection feed of a JSPUI page', () => {
+    const value = 'https://example.com/handle/123456789/42'
+    const expected: DspacePage = {
+      kind: 'legacyCollection',
+      feeds: [{ uri: 'https://example.com/feed/rss_2.0/123456789/42', format: 'rss' }],
+    }
+
+    expect(getDspacePage(value, jspuiCollectionHtml)).toEqual(expected)
+  })
+
+  it('should return the site feed of a DSpace 6 home page', () => {
+    const value = 'https://example.com/'
+    const expected: DspacePage = {
+      kind: 'legacyHome',
+      feeds: [{ uri: 'https://example.com/feed/rss_2.0/site', format: 'rss' }],
+    }
+
+    expect(getDspacePage(value, jspuiHomeHtml)).toEqual(expected)
+  })
+
+  it('should return the community feeds of an XMLUI page', () => {
+    const value = 'https://example.com/handle/10183/1'
+    const expected: DspacePage = {
+      kind: 'legacyCommunity',
+      feeds: [
+        { uri: 'https://example.com/feed/atom_1.0/10183/1', format: 'atom' },
+        { uri: 'https://example.com/feed/rss_2.0/10183/1', format: 'rss' },
+      ],
+    }
+
+    expect(getDspacePage(value, xmluiCommunityHtml)).toEqual(expected)
+  })
+
+  it('should return the collection feed of an XMLUI page', () => {
+    const value = 'https://example.com/handle/10183/42'
+    const expected: DspacePage = {
+      kind: 'legacyCollection',
+      feeds: [{ uri: 'https://example.com/feed/atom_1.0/10183/42', format: 'atom' }],
+    }
+
+    expect(getDspacePage(value, xmluiCollectionHtml)).toEqual(expected)
+  })
+
+  it('should keep the case of a feed link with an uppercase route word', () => {
+    const value = 'https://example.com/'
+    const content = '<link rel="alternate" href="/Feed/RSS_2.0/Site">'
+    const expected: DspacePage = {
+      kind: 'legacyHome',
+      feeds: [{ uri: 'https://example.com/Feed/RSS_2.0/Site', format: 'rss' }],
+    }
+
+    expect(getDspacePage(value, content)).toEqual(expected)
+  })
+
+  it('should return the collection feeds of a DSpace 1.6 JSPUI page', () => {
+    const value = 'https://example.com/rdpc/handle/123456789/100'
+    const expected: DspacePage = {
+      kind: 'legacyCollection',
+      feeds: [
+        { uri: 'https://example.com/rdpc/feed/rss_1.0/123456789/100', format: 'rdf' },
+        { uri: 'https://example.com/rdpc/feed/rss_2.0/123456789/100', format: 'rss' },
+        { uri: 'https://example.com/rdpc/feed/atom_1.0/123456789/100', format: 'atom' },
+      ],
+    }
+
+    expect(getDspacePage(value, jspuiLegacyCollectionHtml)).toEqual(expected)
+  })
+
+  it('should ignore a DSpace 6 feed link on a DSpace 7 page', () => {
+    const value = 'https://example.com/'
+    const content = '<ds-app></ds-app><link rel="alternate" href="/feed/rss_2.0/site">'
+    const expected: DspacePage = { kind: 'home', restUrl: 'https://example.com/server' }
+
+    expect(getDspacePage(value, content)).toEqual(expected)
+  })
+
+  it('should return undefined for a scoped feed on a page that names no kind', () => {
+    const value = 'https://example.com/handle/10183/42'
+
+    expect(getDspacePage(value, xmluiUnknownHtml)).toBeUndefined()
+  })
 })
 
 describe('dspaceHandler', () => {
@@ -199,8 +457,63 @@ describe('dspaceHandler', () => {
       expect(dspaceHandler.match('https://example.com/', statelessHtml)).toBe(true)
     })
 
-    it('should not match a DSpace 6 page', () => {
-      expect(dspaceHandler.match('https://example.com/xmlui/', xmluiHtml)).toBe(false)
+    it('should match a DSpace 6 page by its generator and feed link', () => {
+      expect(dspaceHandler.match('https://example.com/xmlui/', xmluiHtml)).toBe(true)
+    })
+
+    it('should match a DSpace 1.6 JSPUI page', () => {
+      const value = 'https://example.com/rdpc/handle/123456789/100'
+
+      expect(dspaceHandler.match(value, jspuiLegacyCollectionHtml)).toBe(true)
+    })
+
+    it('should not match a page with the DSpace generator and no feed link', () => {
+      const value = 'https://example.com/'
+      const content = '<meta name="generator" content="DSpace 1.6.2">'
+
+      expect(dspaceHandler.match(value, content)).toBe(false)
+    })
+
+    it('should match a JSPUI page that links a feed', () => {
+      expect(dspaceHandler.match('https://example.com/', jspuiHomeHtml)).toBe(true)
+    })
+
+    it('should match an XMLUI page that links a feed', () => {
+      const value = 'https://example.com/handle/10183/1'
+
+      expect(dspaceHandler.match(value, xmluiCommunityHtml, cocoonHeaders)).toBe(true)
+    })
+
+    it('should not match a JSPUI page that links no feed', () => {
+      expect(dspaceHandler.match('https://example.com/', jspuiItemHtml)).toBe(false)
+    })
+
+    it('should not match a Cocoon page without content', () => {
+      expect(dspaceHandler.match('https://example.com/', undefined, cocoonHeaders)).toBe(false)
+    })
+
+    it('should not match a Cocoon page with a feed link of another shape', () => {
+      const value = 'https://example.com/'
+      const content = `
+        <link
+          rel="alternate"
+          href="/feed/rss_2.0/site/extra"
+        >
+        <link
+          rel="alternate"
+          href="/feed/json/site"
+        >
+        <link rel="alternate">
+      `
+
+      expect(dspaceHandler.match(value, content, cocoonHeaders)).toBe(false)
+    })
+
+    it('should not match a Cocoon page with a feed link that is not an alternate', () => {
+      const value = 'https://example.com/'
+      const content = '<link rel="stylesheet" href="/feed/rss_2.0/site">'
+
+      expect(dspaceHandler.match(value, content, cocoonHeaders)).toBe(false)
     })
   })
 
@@ -255,6 +568,46 @@ describe('dspaceHandler', () => {
       ]
 
       expect(dspaceHandler.resolve(value, plainStateHtml)).toEqual(expected)
+    })
+
+    it('should return the linked feeds for a DSpace 6 page', () => {
+      const value = 'https://example.com/handle/123456789/42'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://example.com/feed/rss_2.0/123456789/42',
+          hint: { key: 'dspace:collection', label: 'Collection', format: 'rss' },
+        },
+      ]
+
+      expect(dspaceHandler.resolve(value, jspuiCollectionHtml)).toEqual(expected)
+    })
+
+    it('should return the linked feeds for a DSpace 6 community page', () => {
+      const value = 'https://example.com/handle/10183/1'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://example.com/feed/atom_1.0/10183/1',
+          hint: { key: 'dspace:community', label: 'Community', format: 'atom' },
+        },
+        {
+          uri: 'https://example.com/feed/rss_2.0/10183/1',
+          hint: { key: 'dspace:community', label: 'Community', format: 'rss' },
+        },
+      ]
+
+      expect(dspaceHandler.resolve(value, xmluiCommunityHtml)).toEqual(expected)
+    })
+
+    it('should return the linked feeds for a DSpace 6 home page', () => {
+      const value = 'https://example.com/'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://example.com/feed/rss_2.0/site',
+          hint: { key: 'dspace:site', label: 'Site', format: 'rss' },
+        },
+      ]
+
+      expect(dspaceHandler.resolve(value, jspuiHomeHtml)).toEqual(expected)
     })
 
     it('should return the site feeds for the home page', () => {
