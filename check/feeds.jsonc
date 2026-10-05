@@ -1103,6 +1103,9 @@
   "podbean": {
     "podbean:podcast": "https://feed.podbean.com/podcast/feed.xml"
   },
+  "podcloud": {
+    "podcloud:podcast": "https://nintendo-chronicles.lepodcast.fr/rss"
+  },
   "podhome": {
     "podhome:podcast": "https://serve.podhome.fm/rss/6d610788-42f7-4cc8-9184-7e651cf101e2"
   },

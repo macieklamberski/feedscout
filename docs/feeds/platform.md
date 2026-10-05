@@ -2507,6 +2507,14 @@ Discovers RSS feeds for Bloggo blogs.
 | `*.bloggo.nu` | Posts feed |
 | `*.bloggo.nu/{slug}` | Post comments feed + posts |
 
+### podCloud
+
+Discovers the RSS feed of a show hosted on podCloud.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `{show}.lepodcast.fr` | Podcast feed (RSS) |
+
 ## Basic Usage
 
 ```typescript
@@ -2696,6 +2704,7 @@ import {
   plurkHandler,
   pmwikiHandler,
   podbeanHandler,
+  podcloudHandler,
   podhomeHandler,
   podigeeHandler,
   podloveHandler,
