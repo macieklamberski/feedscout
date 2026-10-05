@@ -1,4 +1,4 @@
-import { isSubdomainOf } from 'trousse'
+import { isHostOrSubdomainOf, isSubdomainOf } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
@@ -18,8 +18,22 @@ const domains = [
   'xblog.jp',
 ]
 
+// Service hosts off the blog farm, with every host under them: the image host each blog page
+// links, the ad network, mail and staging behind basic auth. www.seesaa.net is on the farm but
+// redirects every path to the blog.seesaa.jp portal.
+const excludedDomains = [
+  'ad.seesaa.net',
+  'mx.seesaa.net',
+  's.seesaa.blog',
+  's.seesaa.net',
+  's.seesaa.space',
+  't.seesaa.blog',
+  'up.seesaa.net',
+  'www.seesaa.net',
+]
+
 export const parseSeesaaUrl = (url: string): SeesaaUrl | undefined => {
-  if (!isSubdomainOf(url, domains)) {
+  if (!isSubdomainOf(url, domains) || isHostOrSubdomainOf(url, excludedDomains)) {
     return
   }
 

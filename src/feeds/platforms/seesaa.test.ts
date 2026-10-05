@@ -32,6 +32,32 @@ describe('parseSeesaaUrl', () => {
     expect(parseSeesaaUrl('https://seesaa.space/')).toBeUndefined()
   })
 
+  it('should return undefined for a blog image host', () => {
+    expect(parseSeesaaUrl('https://example.up.seesaa.net/image/photo.jpg')).toBeUndefined()
+  })
+
+  const serviceHosts = [
+    'https://up.seesaa.net/',
+    'https://ad.seesaa.net/',
+    'http://mx.seesaa.net/',
+    'https://www.seesaa.net/',
+    'https://s.seesaa.net/',
+    'https://example.s.seesaa.net/',
+    'https://s.seesaa.blog/',
+    'https://t.seesaa.blog/',
+    'https://s.seesaa.space/',
+  ]
+
+  it.each(serviceHosts)('should return undefined for service host %s', (value) => {
+    expect(parseSeesaaUrl(value)).toBeUndefined()
+  })
+
+  it('should return the blog for a service name on a domain without that service', () => {
+    const expected: SeesaaUrl = { kind: 'blog' }
+
+    expect(parseSeesaaUrl('https://up.seesaa.blog/')).toEqual(expected)
+  })
+
   it('should return undefined for a domain ending in xblog.jp', () => {
     expect(parseSeesaaUrl('https://example.exblog.jp/')).toBeUndefined()
   })
