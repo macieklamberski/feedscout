@@ -119,6 +119,7 @@ import { librivoxHandler } from './platforms/librivox.js'
 import { libsynHandler } from './platforms/libsyn.js'
 import { lichessHandler } from './platforms/lichess.js'
 import { listedHandler } from './platforms/listed.js'
+import { livedoorBlogHandler } from './platforms/livedoorBlog.js'
 import { livejournalHandler } from './platforms/livejournal.js'
 import { lobstersHandler } from './platforms/lobsters.js'
 import { mailArchiveHandler } from './platforms/mailArchive.js'
@@ -486,6 +487,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     libsynHandler,
     lichessHandler,
     listedHandler,
+    livedoorBlogHandler,
     livejournalHandler,
     lobstersHandler,
     mailArchiveHandler,

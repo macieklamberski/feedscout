@@ -908,6 +908,21 @@ Discovers RSS feeds for Libsyn-hosted podcasts.
 | `{slug}.libsyn.com` | Podcast feed |
 | `feeds.libsyn.com/{showId}` | Podcast feed |
 
+### Livedoor Blog
+
+Discovers RDF and Atom feeds for Livedoor Blog on `*.blog.jp`, `*.doorblog.jp`, `*.ldblog.jp`, and `*.livedoor.biz`, including category feeds.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `{blog}.blog.jp` | Posts feed (RDF + Atom) |
+| `{blog}.blog.jp/archives/cat_{N}.html` | Category feed (RDF) + posts |
+| `{blog}.doorblog.jp` | Posts feed (RDF + Atom) |
+| `{blog}.doorblog.jp/archives/cat_{N}.html` | Category feed (RDF) + posts |
+| `{blog}.ldblog.jp` | Posts feed (RDF + Atom) |
+| `{blog}.ldblog.jp/archives/cat_{N}.html` | Category feed (RDF) + posts |
+| `{blog}.livedoor.biz` | Posts feed (RDF + Atom) |
+| `{blog}.livedoor.biz/archives/cat_{N}.html` | Category feed (RDF) + posts |
+
 ### LiveJournal
 
 Discovers RSS and Atom feeds for LiveJournal blogs.
@@ -2558,6 +2573,7 @@ import {
   libsynHandler,
   lichessHandler,
   listedHandler,
+  livedoorBlogHandler,
   livejournalHandler,
   lobstersHandler,
   mailchimpHandler,

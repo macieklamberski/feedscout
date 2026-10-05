@@ -288,6 +288,8 @@
     "internet-archive:collection": "Collection",
     "internet-archive:search": "Search",
     "libsyn:podcast": "Podcast",
+    "livedoor-blog:posts": "Posts",
+    "livedoor-blog:category": "Category",
     "livejournal:posts": "Posts",
     "livejournal:posts-tag": "Tag",
     "livejournal:userpics": "Userpics",
