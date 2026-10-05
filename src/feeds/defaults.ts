@@ -183,6 +183,7 @@ import { powerpressHandler } from './platforms/powerpress.js'
 import { prlogHandler } from './platforms/prlog.js'
 import { proboardsHandler } from './platforms/proboards.js'
 import { producthuntHandler } from './platforms/producthunt.js'
+import { promodjHandler } from './platforms/promodj.js'
 import { proseHandler } from './platforms/prose.js'
 import { publicInboxHandler } from './platforms/publicInbox.js'
 import { publiiHandler } from './platforms/publii.js'
@@ -561,6 +562,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     prlogHandler,
     proboardsHandler,
     producthuntHandler,
+    promodjHandler,
     proseHandler,
     publicInboxHandler,
     publiiHandler,
