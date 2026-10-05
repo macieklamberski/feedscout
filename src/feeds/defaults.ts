@@ -87,6 +87,7 @@ import { haleyJobsHandler } from './platforms/haleyJobs.js'
 import { hashnodeHandler } from './platforms/hashnode.js'
 import { hatenaBookmarkHandler } from './platforms/hatenaBookmark.js'
 import { hatenablogHandler } from './platforms/hatenablog.js'
+import { hatenaFotolifeHandler } from './platforms/hatenaFotolife.js'
 import { hautetfortHandler } from './platforms/hautetfort.js'
 import { hearthisHandler } from './platforms/hearthis.js'
 import { heyWorldHandler } from './platforms/heyWorld.js'
@@ -441,6 +442,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     haleyJobsHandler,
     hashnodeHandler,
     hatenaBookmarkHandler,
+    hatenaFotolifeHandler,
     hatenablogHandler,
     hautetfortHandler,
     hearthisHandler,

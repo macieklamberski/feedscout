@@ -458,6 +458,21 @@ Discovers RSS feeds for Hatena Bookmark listings, searches, sites and user bookm
 
 > Categories are `it`, `general`, `social`, `economics`, `life`, `knowledge`, `fun`, `entertainment` and `game`. Search and site feeds keep any filters already on the URL and add `mode=rss`.
 
+### Hatena Fotolife
+
+Discovers RSS feeds for Hatena Fotolife users, folders, tags, camera models and stars.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `f.hatena.ne.jp/{user}` | Photos feed |
+| `f.hatena.ne.jp/{user}?model={model}` | Camera model feed |
+| `f.hatena.ne.jp/{user}/{folder}/` | Folder feed |
+| `f.hatena.ne.jp/{user}/t/{tag}` | Tag feed |
+| `f.hatena.ne.jp/{user}/favorite` | Stars feed |
+| `f.hatena.ne.jp/{user}/starfriends` | Star Friends feed |
+
+> A folder, tag or camera model page that lists no photo falls back to the user's photos feed, since Hatena serves an empty feed under any made-up name.
+
 ### Hatena Blog
 
 Discovers RSS and Atom feeds for Hatena Blog on `*.hatenablog.com`, `*.hatenablog.jp`, and `*.hateblo.jp`.
@@ -2404,6 +2419,7 @@ import {
   haleyJobsHandler,
   hashnodeHandler,
   hatenaBookmarkHandler,
+  hatenaFotolifeHandler,
   hatenablogHandler,
   hautetfortHandler,
   hearthisHandler,
