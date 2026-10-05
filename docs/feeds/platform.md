@@ -2259,6 +2259,16 @@ Discovers the news and articles feeds of a Nethouse site. Custom domains are det
 > [!NOTE]
 > A site with the news or articles section turned off answers that feed with 404.
 
+### Hautetfort
+
+Discovers RSS and Atom feeds for blogs on `*.hautetfort.com`, `*.blogspirit.com` and `*.blogspirit-business.com`. Blog feeds are built on `http`, since blog subdomains serve no certificate for their own name.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `{blog}.{domain}` | Posts feed (RSS + Atom) |
+| `{blog}.{domain}/{category}` | Category feed (RSS) + posts |
+| `{blog}.{domain}/archives/category/{category}` | Category feed (RSS) + posts |
+
 ## Basic Usage
 
 ```typescript
@@ -2372,6 +2382,7 @@ import {
   hashnodeHandler,
   hatenaBookmarkHandler,
   hatenablogHandler,
+  hautetfortHandler,
   hearthisHandler,
   heyWorldHandler,
   insanejournalHandler,
