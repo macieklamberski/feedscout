@@ -189,6 +189,7 @@ import { qiitaHandler } from './platforms/qiita.js'
 import { rakutenBlogHandler } from './platforms/rakutenBlog.js'
 import { redcircleHandler } from './platforms/redcircle.js'
 import { redditHandler } from './platforms/reddit.js'
+import { reformalHandler } from './platforms/reformal.js'
 import { royalroadHandler } from './platforms/royalroad.js'
 import { rssComHandler } from './platforms/rssCom.js'
 import { rubygemsHandler } from './platforms/rubygems.js'
@@ -563,6 +564,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     rakutenBlogHandler,
     redcircleHandler,
     redditHandler,
+    reformalHandler,
     royalroadHandler,
     rssComHandler,
     rubygemsHandler,
