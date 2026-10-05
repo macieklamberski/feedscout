@@ -515,6 +515,7 @@
     "pukiwiki:recent-changes": "Recent changes",
     "gnuboard:board": "Board",
     "proboards:posts": "Posts",
-    "mail-archive:list": "Mailing list"
+    "mail-archive:list": "Mailing list",
+    "bloggang:posts": "Posts"
   }
 }
