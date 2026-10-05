@@ -2641,6 +2641,14 @@ Discovers the product feeds of a Big Cartel store. A store on its own domain is 
 > [!NOTE]
 > Most store themes link only `/products.xml`, a Google Merchant feed whose items carry no title or link, so it parses with no items. The handler emits `/products.rss`, which carries both.
 
+### TourTravelWorld
+
+Discovers the tour packages feed of a TourTravelWorld travel site, built by Weblink.In on the agency's own domain. Detected by the template stylesheet on `catalog.wlimg.com` together with the page's link to `/tour-packages.rss`, so any domain is covered.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| Any page | Tour packages feed (RSS) |
+
 ## Basic Usage
 
 ```typescript
@@ -2886,6 +2894,7 @@ import {
   tildesHandler,
   tistoryHandler,
   togetterHandler,
+  tourTravelWorldHandler,
   transistorHandler,
   travellerspointHandler,
   tumblrHandler,

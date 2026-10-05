@@ -1454,6 +1454,9 @@
     "togetter:curator": "https://togetter.com/rss/id/tarareba722",
     "togetter:hot": "https://togetter.com/rss/hot"
   },
+  "tourTravelWorld": {
+    "tour-travel-world:tour-packages": "https://www.kirtytours.com/tour-packages.rss"
+  },
   "transistor": {
     "transistor:podcast": "https://feeds.transistor.fm/build-your-saas"
   },

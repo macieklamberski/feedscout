@@ -236,6 +236,7 @@ import { textpatternHandler } from './platforms/textpattern.js'
 import { tildesHandler } from './platforms/tildes.js'
 import { tistoryHandler } from './platforms/tistory.js'
 import { togetterHandler } from './platforms/togetter.js'
+import { tourTravelWorldHandler } from './platforms/tourTravelWorld.js'
 import { transistorHandler } from './platforms/transistor.js'
 import { travellerspointHandler } from './platforms/travellerspoint.js'
 import { tumblrHandler } from './platforms/tumblr.js'
@@ -627,6 +628,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     tildesHandler,
     tistoryHandler,
     togetterHandler,
+    tourTravelWorldHandler,
     transistorHandler,
     travellerspointHandler,
     tumblrHandler,
