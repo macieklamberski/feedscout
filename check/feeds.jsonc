@@ -650,6 +650,9 @@
   "ivoox": {
     "ivoox:podcast": "https://feeds.ivoox.com/feed_fg_f1106_filtro_1.xml"
   },
+  "jellypod": {
+    "jellypod:podcast": "https://der-dms-podcast.jellypod.com/rss"
+  },
   "jimdo": {
     "jimdo:blog": ["https://www.quon-for.com/rss/blog", "https://neubritz.jimdofree.com/rss/blog"]
   },
