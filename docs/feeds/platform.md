@@ -778,6 +778,14 @@ Discovers RSS feeds for Buzzsprout-hosted podcasts.
 |-------------|-----------------|
 | `buzzsprout.com/{id}` | Podcast feed |
 
+### CANPAN Blog
+
+Discovers RSS 2.0 and RDF feeds for CANPAN Blog.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `blog.canpan.info/{blog}` | Posts feed (RSS 2.0 + RDF) |
+
 ### Captivate
 
 Discovers RSS feeds for Captivate-hosted podcasts.
@@ -2520,6 +2528,7 @@ import {
   bubblelifeHandler,
   buttondownHandler,
   buzzsproutHandler,
+  canpanHandler,
   captivateHandler,
   castopodHandler,
   castosHandler,
