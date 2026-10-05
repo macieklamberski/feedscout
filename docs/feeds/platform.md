@@ -2112,6 +2112,15 @@ Discovers the posts feed of a ProBoards forum.
 > [!NOTE]
 > A request with a browser user agent gets a proof-of-work challenge instead of the page, so the feed is built from the forum host alone. The feed answers 406 to a bare `Mozilla/5.0` or an empty user agent.
 
+### The Mail Archive
+
+Discovers the RSS feed of a mailing list archived on The Mail Archive (mail-archive.com). The list is named by its posting address in the first path segment.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `mail-archive.com/{list}/` | Mailing list feed |
+| `mail-archive.com/{list}/msg{n}.html` | Mailing list feed |
+
 ## Basic Usage
 
 ```typescript

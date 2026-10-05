@@ -641,6 +641,12 @@
     "lobsters:tag": "https://lobste.rs/t/programming.rss",
     "lobsters:top": ["https://lobste.rs/top/rss", "https://lobste.rs/top/1w/rss"]
   },
+  "mailArchive": {
+    "mail-archive:list": [
+      "https://www.mail-archive.com/gnupg-users@gnupg.org/maillist.xml",
+      "https://mail-archive.com/dnsop@ietf.org/maillist.xml"
+    ]
+  },
   "mailchimp": {
     "mailchimp:archive": "https://us17.campaign-archive.com/feed?u=1143ef2ae4c2f267d492eb9cc&id=3184b747b9"
   },
