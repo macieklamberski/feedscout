@@ -131,6 +131,7 @@ import { openstatusHandler } from './platforms/openstatus.js'
 import { packagistHandler } from './platforms/packagist.js'
 import { pagecordHandler } from './platforms/pagecord.js'
 import { paragraphHandler } from './platforms/paragraph.js'
+import { pchomeHandler } from './platforms/pchome.js'
 import { peertubeHandler } from './platforms/peertube.js'
 import { phpbbHandler } from './platforms/phpbb.js'
 import { pikaHandler } from './platforms/pika.js'
@@ -464,6 +465,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     packagistHandler,
     pagecordHandler,
     paragraphHandler,
+    pchomeHandler,
     peertubeHandler,
     phpbbHandler,
     pikaHandler,
