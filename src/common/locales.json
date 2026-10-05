@@ -587,6 +587,10 @@
     "is-programmer:messages": "Messages",
     "is-programmer:post-comments": "Post comments",
     "twoday:posts": "Posts",
-    "twoday:topic": "Topic"
+    "twoday:topic": "Topic",
+    "cppblog:posts": "Posts",
+    "cppblog:comments": "Comments",
+    "cppblog:category": "Category",
+    "cppblog:favorites": "Favorites"
   }
 }

@@ -2476,6 +2476,19 @@ Discovers RSS 1.0 feeds for blogs on `*.twoday.net`. A blog's skin links its pos
 | `{blog}.twoday.net` | Posts feed |
 | `{blog}.twoday.net/topics/{topic}` | Topic feed + posts |
 
+### cppblog
+
+Discovers RSS feeds for cppblog blogs on `www.cppblog.com` and `cppblog.com`.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `cppblog.com/{user}` | Posts + comments |
+| `cppblog.com/{user}/category/{id}.html` | Category + posts + comments |
+| `cppblog.com/{user}/favorite/{id}.html` | Favorites + posts + comments |
+
+> [!NOTE]
+> The site's https certificate has expired, so the feeds are `http://www.cppblog.com` URLs whatever the page URL's scheme and host.
+
 ## Basic Usage
 
 ```typescript
@@ -2557,6 +2570,7 @@ import {
   colorMeShopHandler,
   comicfuryHandler,
   confluenceHandler,
+  cppblogHandler,
   cratesIoHandler,
   csdnHandler,
   dailymotionHandler,
