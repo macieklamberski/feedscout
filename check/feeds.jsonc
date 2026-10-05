@@ -314,6 +314,10 @@
       "https://ecommons.cornell.edu/server/opensearch/search?format=rss&query=*"
     ]
   },
+  "eklablog": {
+    "eklablog:comments": "https://enaelyork.eklablog.com/rss/comments",
+    "eklablog:posts": "https://enaelyork.eklablog.com/rss"
+  },
   "exblog": {
     "exblog:category": [
       "https://petitcc.exblog.jp/i2/index.xml",

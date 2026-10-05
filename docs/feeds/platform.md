@@ -2161,6 +2161,14 @@ Discovers the blog feed of an OpenCart store running the Journal theme. Detected
 | Any page of a Journal 3 store | Blog feed (RSS), `route=journal3/blog/feed`, or `journal3/blog.feed` on OpenCart 4 |
 | Any page of a Journal 2 store | Blog feed (RSS), `route=journal2/blog/feed` |
 
+### Eklablog
+
+Discovers the posts and comments feeds of an Eklablog blog.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `*.blogg.org`, `*.blogueuse.fr`, `*.cd.st`, `*.doremiblog.com`, `*.ek.la`, `*.eklablog.com`, `*.eklablog.fr`, `*.eklablog.net`, `*.id.st`, `*.jeblog.fr`, `*.kazeo.com`, `*.kif.fr`, `*.lo.gs`, `*.revolublog.com`, `*.zic.fr` | Posts feed + comments feed |
+
 ## Basic Usage
 
 ```typescript
@@ -2250,6 +2258,7 @@ import {
   dreamwidthHandler,
   drupalHandler,
   dspaceHandler,
+  eklablogHandler,
   exblogHandler,
   fc2Handler,
   firesideHandler,
