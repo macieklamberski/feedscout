@@ -2335,6 +2335,14 @@ Discovers the RSS 1.0 and Atom feeds of new products in a Color Me Shop store. S
 | `{shop}.shop-pro.jp` | Products feed (RSS 1.0 + Atom) |
 | `{domain}`, a shop on its own domain | Products feed (RSS 1.0 + Atom) |
 
+### PRLog
+
+Discovers the press releases feed of a PRLog pressroom.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `pressroom.prlog.org/{id}` | Press releases feed |
+
 ## Basic Usage
 
 ```typescript
@@ -2520,6 +2528,7 @@ import {
   podomaticHandler,
   posthavenHandler,
   postypeHandler,
+  prlogHandler,
   proboardsHandler,
   producthuntHandler,
   proseHandler,

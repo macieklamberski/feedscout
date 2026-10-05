@@ -1049,6 +1049,9 @@
       "https://www.thisweekinphoto.com/feed/podcast/"
     ]
   },
+  "prlog": {
+    "prlog:press-releases": "https://pressroom.prlog.org/AvantiPress/latest.xml"
+  },
   "proboards": {
     "proboards:posts": [
       "https://necom.proboards.com/rss/public",
