@@ -42,6 +42,7 @@ import { pmwikiHandler } from './pmwiki.js'
 import { podhomeHandler } from './podhome.js'
 import { podloveHandler } from './podlove.js'
 import { powerpressHandler } from './powerpress.js'
+import { publicInboxHandler } from './publicInbox.js'
 import { publiiHandler } from './publii.js'
 import { shaarliHandler } from './shaarli.js'
 import { shopifyHandler } from './shopify.js'
@@ -191,6 +192,11 @@ const cases: Array<Case> = [
     '<link href="/wp-content/plugins/podlove-podcasting-plugin-for-wordpress/css/frontend.css"><link rel="alternate" title="Podcast Feed: Show (MP3)" href="/feed/mp3/">',
   ],
   ['powerpress', powerpressHandler, '<script>function powerpress_pinw(pinw_url){}</script>'],
+  [
+    'publicInbox',
+    publicInboxHandler,
+    '<a href="_/text/help/">help</a><a href="_/text/color/">color</a>',
+  ],
   ['publii', publiiHandler, '<img src="https://example.org/media/website/logo.png">'],
   ['shaarli', shaarliHandler, '<div id="shaarli-menu"></div>'],
   ['shopify', shopifyHandler, '', new Headers({ 'powered-by': 'Shopify' })],

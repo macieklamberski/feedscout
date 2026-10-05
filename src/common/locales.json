@@ -460,6 +460,8 @@
     "omeka:filtered-items": "Filtered items",
     "koha:search": "Search",
     "koha:list": "List",
-    "koha:comments": "Recent comments"
+    "koha:comments": "Recent comments",
+    "public-inbox:messages": "Messages",
+    "public-inbox:thread": "Thread"
   }
 }
