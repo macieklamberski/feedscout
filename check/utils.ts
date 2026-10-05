@@ -3,7 +3,8 @@ import * as constants from './constants.js'
 
 export const timeoutMs = 30_000
 export const delayMs = 1_000
-export const userAgent = 'Feedscout (https://feedscout.dev)'
+export const userAgent =
+  'Feedscout (https://feedscout.dev; https://github.com/macieklamberski/feedscout)'
 
 const retryDelaysMs = [1_000, 3_000, 7_000]
 const fallbackStatuses = new Set([403, 408, 413, 429, 500, 502, 503, 504])
