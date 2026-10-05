@@ -453,6 +453,8 @@
     "ning:activity": "Latest activity",
     "ning:blog": "Blog posts",
     "ning:forum": "Forum",
-    "ning:topic": "Topic"
+    "ning:topic": "Topic",
+    "vbulletin:site": "Site",
+    "vbulletin:forum": "Forum"
   }
 }

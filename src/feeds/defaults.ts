@@ -175,6 +175,7 @@ import { togetterHandler } from './platforms/togetter.js'
 import { transistorHandler } from './platforms/transistor.js'
 import { tumblrHandler } from './platforms/tumblr.js'
 import { v2exHandler } from './platforms/v2ex.js'
+import { vbulletinHandler } from './platforms/vbulletin.js'
 import { velogHandler } from './platforms/velog.js'
 import { vimeoHandler } from './platforms/vimeo.js'
 import { weblogLolHandler } from './platforms/weblogLol.js'
@@ -493,6 +494,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     transistorHandler,
     tumblrHandler,
     v2exHandler,
+    vbulletinHandler,
     velogHandler,
     vimeoHandler,
     weblogLolHandler,

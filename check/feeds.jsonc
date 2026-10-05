@@ -994,6 +994,16 @@
     "v2ex:node": "https://www.v2ex.com/feed/programmer.xml",
     "v2ex:tab": "https://www.v2ex.com/feed/tab/tech.xml"
   },
+  "vbulletin": {
+    "vbulletin:forum": [
+      "https://rangeroverclub.com/external.php?type=RSS2&forumids=28",
+      "https://megomuseum.com/community/external?type=rss2&nodeid=19"
+    ],
+    "vbulletin:site": [
+      "https://www.vbforums.com/external.php?type=RSS2",
+      "https://apolyton.net/external?type=rss2"
+    ]
+  },
   "velog": {
     "velog:posts": "https://v2.velog.io/rss/velopert",
     "velog:trending": "https://v2.velog.io/rss"
