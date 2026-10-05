@@ -13,7 +13,8 @@ export type WordpressUrl =
 
 const domains = ['hypotheses.org', 'unblog.fr', 'wordpress.com']
 const postIdDomains = ['hypotheses.org']
-const categoryRegex = /^\/category\/([^/]+)/i
+// A nested category's path holds every parent slug and ends at WordPress's endpoint words.
+const categoryRegex = /^\/category\/(.+?)(?:\/(?:feed|rdf|rss|rss2|atom|embed|page)(?:\/|$)|\/?$)/i
 const tagRegex = /^\/tag\/([^/]+)/i
 const authorRegex = /^\/author\/([^/]+)/i
 const yearRegex = /^\/(\d{4})\/?$/

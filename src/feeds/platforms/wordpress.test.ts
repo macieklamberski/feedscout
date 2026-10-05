@@ -13,6 +13,43 @@ describe('parseWordpressUrl', () => {
     expect(parseWordpressUrl('https://example.wordpress.com/Category/news/')).toEqual(expected)
   })
 
+  it('should return the archive for a nested category page', () => {
+    const expected: WordpressUrl = {
+      kind: 'archive',
+      path: '/category/news/north-brentwood',
+      hintKey: 'wordpress:category',
+    }
+
+    expect(
+      parseWordpressUrl('https://example.wordpress.com/category/news/north-brentwood/'),
+    ).toEqual(expected)
+  })
+
+  it('should return the archive for a paginated nested category page', () => {
+    const expected: WordpressUrl = {
+      kind: 'archive',
+      path: '/category/news/north-brentwood',
+      hintKey: 'wordpress:category',
+    }
+
+    expect(
+      parseWordpressUrl('https://example.wordpress.com/category/news/north-brentwood/page/2/'),
+    ).toEqual(expected)
+  })
+
+  const endpoints: Array<string> = ['feed', 'feed/atom', 'rdf', 'rss', 'rss2', 'atom', 'embed']
+
+  it.each(endpoints)('should stop a nested category path at the %s endpoint', (endpoint) => {
+    const value = `https://example.wordpress.com/category/news/north-brentwood/${endpoint}/`
+    const expected: WordpressUrl = {
+      kind: 'archive',
+      path: '/category/news/north-brentwood',
+      hintKey: 'wordpress:category',
+    }
+
+    expect(parseWordpressUrl(value)).toEqual(expected)
+  })
+
   it('should return the archive for a date page', () => {
     const expected: WordpressUrl = {
       kind: 'archive',
