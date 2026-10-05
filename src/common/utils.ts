@@ -248,7 +248,7 @@ export const matchesAnyOfLinkSelectors = (
 
 export const processConcurrently = async <T>(
   items: Array<T>,
-  processFn: (item: T) => Promise<void>,
+  processFn: (item: T, index: number) => Promise<void>,
   options: {
     concurrency: number
     shouldStop?: () => boolean
@@ -258,11 +258,11 @@ export const processConcurrently = async <T>(
 
   const runWorker = async (): Promise<void> => {
     while (index < items.length && !options.shouldStop?.()) {
-      const item = items[index++]
+      const itemIndex = index++
 
       // processFn reports its own errors, so one failure does not stop the others.
       try {
-        await processFn(item)
+        await processFn(items[itemIndex], itemIndex)
       } catch {}
     }
   }
