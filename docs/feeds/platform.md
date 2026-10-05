@@ -2629,6 +2629,18 @@ Discovers RSS 1.0 feeds for blogs on `*.blogger.de`. Every blog serves its posts
 |-------------|-----------------|
 | `{blog}.blogger.de` | Posts |
 
+### Big Cartel
+
+Discovers the product feeds of a Big Cartel store. A store on its own domain is detected by the `X-Frame-Options` header naming `my.bigcartel.com`, or by its `/theme_stylesheets/` stylesheet.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `*.bigcartel.com` | Products feed |
+| Any page on a store's own domain | Products feed |
+
+> [!NOTE]
+> Most store themes link only `/products.xml`, a Google Merchant feed whose items carry no title or link, so it parses with no items. The handler emits `/products.rss`, which carries both.
+
 ## Basic Usage
 
 ```typescript
@@ -2688,6 +2700,7 @@ import {
   aushaHandler,
   bearblogHandler,
   behanceHandler,
+  bigCartelHandler,
   bigcommerceHandler,
   bitchuteHandler,
   blogaliaHandler,
