@@ -124,6 +124,7 @@ export type DiscoverRef = {
   platform: string
   id: string
   url: string
+  hint?: DiscoverUriHint // Carried onto every URI the enrich function returns
 }
 
 // Positional: one entry per ref, undefined where nothing was found.

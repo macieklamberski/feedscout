@@ -332,6 +332,7 @@
     "drupal:site": "Site",
     "mailchimp:archive": "Archive",
     "shopify:blog": "Blog",
+    "simplecast:podcast": "Podcast",
     "cnblogs:posts": "Posts",
     "grav:page": "Page",
     "hubspot:blog": "Blog",

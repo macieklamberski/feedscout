@@ -150,6 +150,7 @@ import { rubygemsHandler } from './platforms/rubygems.js'
 import { seesaaHandler } from './platforms/seesaa.js'
 import { shaarliHandler } from './platforms/shaarli.js'
 import { shopifyHandler } from './platforms/shopify.js'
+import { simplecastEnricher, simplecastHandler } from './platforms/simplecast.js'
 import { smfHandler } from './platforms/smf.js'
 import { snacHandler } from './platforms/snac.js'
 import { soundcloudHandler } from './platforms/soundcloud.js'
@@ -189,6 +190,7 @@ import { xenforoHandler } from './platforms/xenforo.js'
 import { ximalayaHandler } from './platforms/ximalaya.js'
 import { youtubeHandler } from './platforms/youtube.js'
 import { zennHandler } from './platforms/zenn.js'
+import type { FeedEnricher } from './types.js'
 
 export const mimeTypes = [
   // RSS:
@@ -467,6 +469,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     seesaaHandler,
     shaarliHandler,
     shopifyHandler,
+    simplecastHandler,
     smfHandler,
     snacHandler,
     soundcloudHandler,
@@ -508,3 +511,5 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     zennHandler,
   ],
 }
+
+export const defaultFeedEnrichers: Array<FeedEnricher> = [simplecastEnricher]

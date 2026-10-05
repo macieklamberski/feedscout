@@ -364,6 +364,19 @@ describe('discoverUrisFromPlatform', () => {
     expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
   })
 
+  it('should carry the ref hint onto the URIs from enrichFn', async () => {
+    const hint = { key: 'example:podcast', label: 'Podcast' }
+    const handler: PlatformHandler = {
+      match: () => true,
+      resolve: () => [{ platform: 'example', id: 'alice', url: 'https://example.com/', hint }],
+    }
+    const enrichFn: DiscoverEnrichFn = () => ['https://feeds.example.com/alice']
+    const options = { baseUrl: 'https://example.com', handlers: [handler], enrichFn }
+    const expected = [{ uri: 'https://feeds.example.com/alice', hint }]
+
+    expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
+  })
+
   it('should call enrichFn once per ref', async () => {
     const receivedRefs: Array<DiscoverRef> = []
     const handler: PlatformHandler = {
