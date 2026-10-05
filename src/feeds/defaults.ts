@@ -175,6 +175,7 @@ import { pikaHandler } from './platforms/pika.js'
 import { pinboardHandler } from './platforms/pinboard.js'
 import { pinterestHandler } from './platforms/pinterest.js'
 import { pixelfedHandler } from './platforms/pixelfed.js'
+import { placementIndiaHandler } from './platforms/placementIndia.js'
 import { pleromaHandler } from './platforms/pleroma.js'
 import { plurkHandler } from './platforms/plurk.js'
 import { pmwikiHandler } from './platforms/pmwiki.js'
@@ -568,6 +569,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     pinboardHandler,
     pinterestHandler,
     pixelfedHandler,
+    placementIndiaHandler,
     pleromaHandler,
     plurkHandler,
     pmwikiHandler,

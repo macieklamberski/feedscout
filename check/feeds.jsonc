@@ -1114,6 +1114,10 @@
   "pixelfed": {
     "pixelfed:posts": "https://pixelfed.social/users/dansup.atom"
   },
+  "placementIndia": {
+    "placement-india:job-opening": "https://www.careerentry.in/vacancy_1458548.rss",
+    "placement-india:vacancy": "https://www.dishaconsultant.com/vacancy.rss"
+  },
   "pleroma": {
     "pleroma:posts": [
       "https://lain.com/users/lain/feed.atom",
