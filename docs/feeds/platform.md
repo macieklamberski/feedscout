@@ -1077,6 +1077,15 @@ Discovers the audio podcast feed of every channel a church page lists, or of the
 | `*.sermon.net` | Channel podcast feeds (RSS), or the church feed when no channel is listed |
 | `*.sermon.net/{mediaCentre}/{channel}` | That channel's podcast feed (RSS) |
 
+### Shinobi Blog
+
+Discovers RSS and Atom feeds for Shinobi Blog, on `blog.shinobi.jp` and on 100 other Ninja Blog domains such as `ni-3.net`.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `{blog}.blog.shinobi.jp` | Posts feed (RSS + Atom) |
+| `{blog}.{domain}` | Posts feed (RSS + Atom) |
+
 ### Spotify for Creators
 
 Discovers RSS feeds for Spotify for Creators (formerly Anchor) podcasts by extracting the station ID from the page content.
@@ -2512,6 +2521,7 @@ import {
   rubygemsHandler,
   seesaaHandler,
   sermonNetHandler,
+  shinobiHandler,
   shopifyHandler,
   smeBlogHandler,
   soundcloudHandler,

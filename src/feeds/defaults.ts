@@ -182,6 +182,7 @@ import { rubygemsHandler } from './platforms/rubygems.js'
 import { seesaaHandler } from './platforms/seesaa.js'
 import { sermonNetHandler } from './platforms/sermonNet.js'
 import { shaarliHandler } from './platforms/shaarli.js'
+import { shinobiHandler } from './platforms/shinobi.js'
 import { shopifyHandler } from './platforms/shopify.js'
 import { smeBlogHandler } from './platforms/smeBlog.js'
 import { smfHandler } from './platforms/smf.js'
@@ -539,6 +540,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     seesaaHandler,
     sermonNetHandler,
     shaarliHandler,
+    shinobiHandler,
     shopifyHandler,
     smeBlogHandler,
     smfHandler,

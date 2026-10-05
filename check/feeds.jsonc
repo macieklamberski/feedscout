@@ -1131,6 +1131,9 @@
     "shaarli:posts": ["https://demo.shaarli.org/feed/rss", "https://demo.shaarli.org/feed/atom"],
     "shaarli:posts-legacy": "https://links.hoa.ro/?do=rss"
   },
+  "shinobi": {
+    "shinobi:posts": ["https://chabun.blog.shinobi.jp/RSS/", "https://chabun.blog.shinobi.jp/ATOM/"]
+  },
   "shopify": {
     "shopify:blog": "https://www.allbirds.com/blogs/news.atom"
   },
