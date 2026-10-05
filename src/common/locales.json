@@ -578,6 +578,7 @@
     "exporters-india:products": "Products",
     "jellypod:podcast": "Podcast",
     "goope:news": "News",
-    "goope:member-news": "Member news"
+    "goope:member-news": "Member news",
+    "duck-webcomics:comic": "Comic"
   }
 }

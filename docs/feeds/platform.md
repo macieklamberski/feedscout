@@ -2431,6 +2431,14 @@ Discovers the news feed of a Goope site, and the member news feed of a chamber o
 > [!NOTE]
 > A page under a `t_{id}` template segment gets its feeds under that segment, as the page links them.
 
+### Duck Webcomics
+
+Discovers the feed of a webcomic on The Duck Webcomics.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `theduckwebcomics.com/{comic}/…` | Comic feed |
+
 ## Basic Usage
 
 ```typescript
