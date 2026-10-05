@@ -425,6 +425,10 @@
     "exporters-india:products": [
       "https://www.targetchem.in/products.rss",
       "https://www.umasonssteelfab.net/products.rss"
+    ],
+    "exporters-india:services": [
+      "https://www.lawyersdelhi.in/services.rss",
+      "https://www.gaganprinters.com/services.rss"
     ]
   },
   "fc2": {

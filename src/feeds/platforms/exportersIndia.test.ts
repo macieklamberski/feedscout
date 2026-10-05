@@ -19,7 +19,20 @@ const productsAnchor = `
     >
   </a>
 `
+const servicesAnchor = `
+  <a
+    href="https://www.example.com/services.rss"
+    target="_blank"
+    title="RSS"
+  >
+    <img
+      src="https://catalog.wlimg.com/templates-images/12577/common/rss_icon.png"
+      alt="RSS"
+    >
+  </a>
+`
 const exportersIndiaHtml = `${stylesheet}${productsAnchor}`
+const servicesHtml = `${stylesheet}${servicesAnchor}`
 
 describe('isExportersIndiaHtml', () => {
   it('should return true for the template stylesheet on the asset host', () => {
@@ -55,6 +68,14 @@ describe('exportersIndiaHandler', () => {
       const value = 'https://www.example.com/cobalt-octoate.htm'
 
       expect(exportersIndiaHandler.match(value, exportersIndiaHtml)).toBe(true)
+    })
+
+    it('should match a business site linking its services feed', () => {
+      expect(exportersIndiaHandler.match('https://www.example.com/', servicesHtml)).toBe(true)
+    })
+
+    it('should not match a link to the services feed of another host', () => {
+      expect(exportersIndiaHandler.match('https://www.example.org/', servicesHtml)).toBe(false)
     })
 
     it('should not match a real estate site on the same template', () => {
@@ -96,6 +117,35 @@ describe('exportersIndiaHandler', () => {
       expect(exportersIndiaHandler.resolve('https://www.example.com/', exportersIndiaHtml)).toEqual(
         expected,
       )
+    })
+
+    it('should return the services feed the page links', () => {
+      const expected = [
+        {
+          uri: 'https://www.example.com/services.rss',
+          hint: { key: 'exporters-india:services', label: 'Services' },
+        },
+      ]
+
+      expect(exportersIndiaHandler.resolve('https://www.example.com/', servicesHtml)).toEqual(
+        expected,
+      )
+    })
+
+    it('should return both feeds when the page links both', () => {
+      const value = `${stylesheet}${productsAnchor}${servicesAnchor}`
+      const expected = [
+        {
+          uri: 'https://www.example.com/products.rss',
+          hint: { key: 'exporters-india:products', label: 'Products' },
+        },
+        {
+          uri: 'https://www.example.com/services.rss',
+          hint: { key: 'exporters-india:services', label: 'Services' },
+        },
+      ]
+
+      expect(exportersIndiaHandler.resolve('https://www.example.com/', value)).toEqual(expected)
     })
 
     it('should keep the scheme the link spells', () => {
