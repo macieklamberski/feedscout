@@ -1125,6 +1125,9 @@
   "podomatic": {
     "podomatic:show": "https://asquaredpodcast10.podomatic.com/rss2.xml"
   },
+  "postachio": {
+    "postachio:posts": "https://help.postach.io/feed.xml"
+  },
   "posthaven": {
     "posthaven:posts": "https://blog.posthaven.com/posts.atom",
     "posthaven:tag": "https://blog.posthaven.com/tag/Feature%20Releases.atom"

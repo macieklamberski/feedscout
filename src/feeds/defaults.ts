@@ -178,6 +178,7 @@ import { podhomeHandler } from './platforms/podhome.js'
 import { podigeeHandler } from './platforms/podigee.js'
 import { podloveHandler } from './platforms/podlove.js'
 import { podomaticHandler } from './platforms/podomatic.js'
+import { postachioHandler } from './platforms/postachio.js'
 import { posthavenHandler } from './platforms/posthaven.js'
 import { postypeHandler } from './platforms/postype.js'
 import { powerpressHandler } from './platforms/powerpress.js'
@@ -559,6 +560,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     podigeeHandler,
     podloveHandler,
     podomaticHandler,
+    postachioHandler,
     posthavenHandler,
     postypeHandler,
     powerpressHandler,
