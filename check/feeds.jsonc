@@ -631,6 +631,12 @@
     "internet-archive:collection": "https://archive.org/services/collection-rss.php?collection=oldtimeradio",
     "internet-archive:search": "https://archive.org/services/collection-rss.php?query=subject%3Atrance"
   },
+  "isProgrammer": {
+    "is-programmer:comments": "http://bachue.is-programmer.com/comments.rss",
+    "is-programmer:messages": "http://bachue.is-programmer.com/messages.rss",
+    "is-programmer:post-comments": "http://bachue.is-programmer.com/posts/39024.rss",
+    "is-programmer:posts": "http://bachue.is-programmer.com/posts.rss"
+  },
   "itchio": {
     "itchio:blog": "https://itch.io/blog.rss",
     "itchio:devlog": "https://qeresi.itch.io/a-tale-of-crowns/devlog.rss",

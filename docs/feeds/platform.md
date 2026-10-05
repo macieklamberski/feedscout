@@ -2439,6 +2439,18 @@ Discovers the feed of a webcomic on The Duck Webcomics.
 |-------------|-----------------|
 | `theduckwebcomics.com/{comic}/…` | Comic feed |
 
+### is-Programmer
+
+Discovers RSS feeds for is-Programmer blogs, including the comment feed of a post.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `{blog}.is-programmer.com` | Posts + comments + messages |
+| `{blog}.is-programmer.com/posts/{id}` | Post comments + posts + comments + messages |
+
+> [!NOTE]
+> is-Programmer serves its blogs over http only, so the feeds are http URLs whatever the page URL's scheme.
+
 ## Basic Usage
 
 ```typescript
@@ -2564,6 +2576,7 @@ import {
   insanejournalHandler,
   instatusHandler,
   internetArchiveHandler,
+  isProgrammerHandler,
   itchioHandler,
   ivooxHandler,
   jellypodHandler,
