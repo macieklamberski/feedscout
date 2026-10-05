@@ -455,6 +455,8 @@
     "ning:forum": "Forum",
     "ning:topic": "Topic",
     "vbulletin:site": "Site",
-    "vbulletin:forum": "Forum"
+    "vbulletin:forum": "Forum",
+    "omeka:items": "Items",
+    "omeka:filtered-items": "Filtered items"
   }
 }

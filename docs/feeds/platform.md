@@ -1892,6 +1892,15 @@ Discovers the feeds of a vBulletin 3 to 6 forum. Detected by the `clientscript/v
 > [!NOTE]
 > The forum root is read from the core script's URL, or the page's `<base>` on vBulletin 5 and 6, so a forum under a sub-path or behind rewritten page URLs gets its feeds there. A vBulletin 3 or 4 forum with feeds turned off answers these URLs with an empty page.
 
+### Omeka
+
+Discovers the item feeds of an Omeka Classic site, self-hosted or on `omeka.net`. Detected by the plugin and core script asset paths every page loads, so any domain is covered. A site under a sub-path gets its feeds there.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `{site}/items/browse?{filters}` | Filtered items feed for the same tags, collection or search (RSS + Atom) |
+| Any other page | Items feed (RSS + Atom) |
+
 ## Basic Usage
 
 ```typescript
@@ -2029,6 +2038,7 @@ import {
   noteHandler,
   observableHandler,
   odyseeHandler,
+  omekaHandler,
   omnystudioHandler,
   openstatusHandler,
   packagistHandler,
