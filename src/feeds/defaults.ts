@@ -45,6 +45,7 @@ import { chambermasterHandler } from './platforms/chambermaster.js'
 import { civicplusHandler } from './platforms/civicplus.js'
 import { cnblogsHandler } from './platforms/cnblogs.js'
 import { cocologHandler } from './platforms/cocolog.js'
+import { comicfuryHandler } from './platforms/comicfury.js'
 import { confluenceHandler } from './platforms/confluence.js'
 import { cratesIoHandler } from './platforms/cratesIo.js'
 import { csdnHandler } from './platforms/csdn.js'
@@ -388,6 +389,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     civicplusHandler,
     cnblogsHandler,
     cocologHandler,
+    comicfuryHandler,
     confluenceHandler,
     cratesIoHandler,
     csdnHandler,

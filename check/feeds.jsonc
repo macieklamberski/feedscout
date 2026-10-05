@@ -213,6 +213,16 @@
       "http://toyohara.way-nifty.com/toyohara/index.rdf"
     ]
   },
+  "comicfury": {
+    "comicfury:comic": [
+      "https://cardiac.thecomicstrip.org/rss",
+      "https://lurkinthedark.the-comic.org/rss",
+      "https://lurkinthedark.webcomic.ws/rss",
+      "https://shiroiakuma.cfw.me/rss",
+      "https://spacecaptainpriya.thecomicseries.com/rss"
+    ],
+    "comicfury:reader": "https://comicfury.com/read/cardiac/rss"
+  },
   "confluence": {
     "confluence:site": "https://cwiki.apache.org/confluence/plugins/servlet/streams",
     "confluence:space": "https://cwiki.apache.org/confluence/plugins/servlet/streams?key=KAFKA"
