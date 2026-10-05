@@ -1033,6 +1033,13 @@
     "seesaa:posts": "https://info.seesaa.net/index.rdf",
     "seesaa:posts-rss2": "https://info.seesaa.net/index20.rdf"
   },
+  "sermonNet": {
+    "sermon-net:channel": [
+      "https://faithchapelchurch.sermon.net/rss/faithchapel/audio",
+      "https://bcf.sermon.net/rss/main/audio"
+    ],
+    "sermon-net:church": "https://bcf.sermon.net/rss"
+  },
   "shaarli": {
     "shaarli:posts": ["https://demo.shaarli.org/feed/rss", "https://demo.shaarli.org/feed/atom"],
     "shaarli:posts-legacy": "https://links.hoa.ro/?do=rss"
