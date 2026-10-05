@@ -2086,6 +2086,19 @@ Discovers the recent changes feed of a PukiWiki wiki or a Quick Homepage Maker s
 | `{wiki}/?{Page}` | Recent changes (RSS) |
 | `{wiki}/{Page}` | Recent changes (RSS) |
 
+### Gnuboard
+
+Discovers the RSS feed of a Gnuboard 4 or 5 board. Detected by the visit cookie Gnuboard sets under the md5 of `ck_visit_ip`, so any domain is covered. A board under a sub-path gets its feed there.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `{site}/bbs/board.php?bo_table={board}` | Board feed |
+| `{site}/bbs/board.php?bo_table={board}&wr_id={post}` | Board feed |
+| `{site}/{board}` or `{site}/{board}/{post}` on Gnuboard 5 | Board feed, read from the page's `g5_bo_table` variable |
+
+> [!NOTE]
+> A board owner can turn its feed off, and Gnuboard then answers the feed URL with an HTML page, so discovery finds nothing there.
+
 ## Basic Usage
 
 ```typescript
@@ -2186,6 +2199,7 @@ import {
   githubHandler,
   githubGistHandler,
   gitlabHandler,
+  gnuboardHandler,
   goodreadsHandler,
   habrHandler,
   hackernewsHandler,
