@@ -50,6 +50,7 @@ import { nethouseHandler } from './nethouse.js'
 import { ningHandler } from './ning.js'
 import { nodebbHandler } from './nodebb.js'
 import { noticeableHandler } from './noticeable.js'
+import { ocnkHandler } from './ocnk.js'
 import { odooHandler } from './odoo.js'
 import { omekaHandler } from './omeka.js'
 import { opencartJournalHandler } from './opencartJournal.js'
@@ -269,6 +270,7 @@ const cases: Array<Case> = [
     noticeableHandler,
     '<link href="https://assets.noticeable.news/templates/noticeone/css/main.min.css">',
   ],
+  ['ocnk', ocnkHandler, '<script src="/res/touch003/js/pack/ocnk-min.js"></script>'],
   [
     'odoo',
     odooHandler,

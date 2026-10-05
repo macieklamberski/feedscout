@@ -2588,11 +2588,12 @@ Discovers the news and events feeds of a Sportsregions club site. A club on its 
 
 ### Ochanoko Net
 
-Discovers the RSS 1.0 feed of new products in an Ochanoko Net shop on `ocnk.net`.
+Discovers the RSS 1.0 feed of new products in an Ochanoko Net shop. A shop on a custom domain is detected by the cart script, `/res/{template}/js/ocnk.js` or `/res/{template}/js/pack/ocnk-min.js`.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | `{shop}.ocnk.net` | Products feed (RSS 1.0) |
+| Any page on a custom domain | Products feed (RSS 1.0) |
 
 ### Blogia
 
