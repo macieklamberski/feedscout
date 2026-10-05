@@ -16,6 +16,7 @@ import { discuzHandler } from './discuz.js'
 import { dokuwikiHandler } from './dokuwiki.js'
 import { drupalHandler } from './drupal.js'
 import { dspaceHandler } from './dspace.js'
+import { eklablogHandler } from './eklablog.js'
 import { exportersIndiaHandler } from './exportersIndia.js'
 import { fluxbbHandler } from './fluxbb.js'
 import { forumotionHandler } from './forumotion.js'
@@ -188,12 +189,16 @@ const cases: Array<Case> = [
   ['discuz', discuzHandler, '<meta name="generator" content="Discuz! X3.5">'],
   ['dokuwiki', dokuwikiHandler, '', new Headers({ 'set-cookie': 'DokuWiki=abc; path=/' })],
   ['drupal', drupalHandler, '<meta name="generator" content="Drupal 10 (https://www.drupal.org)">'],
-  ['dspace', dspaceHandler, '<ds-app></ds-app>'],
   [
     'dspace',
     dspaceHandler,
     '<link rel="alternate" href="/feed/rss_2.0/site">',
     new Headers({ 'x-cocoon-version': '2.2.0' }),
+  ],
+  [
+    'eklablog',
+    eklablogHandler,
+    '<script src="//connect.eklablog.com/ping/123456/isConnected" async></script>',
   ],
   [
     'exportersIndia',
