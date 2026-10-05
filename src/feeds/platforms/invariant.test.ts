@@ -77,6 +77,7 @@ import { statuspageHandler } from './statuspage.js'
 import { svbtleHandler } from './svbtle.js'
 import { textpatternHandler } from './textpattern.js'
 import { tourTravelWorldHandler } from './tourTravelWorld.js'
+import { typechoHandler } from './typecho.js'
 import { ucozHandler } from './ucoz.js'
 import { vbulletinHandler } from './vbulletin.js'
 import { webnodeHandler } from './webnode.js'
@@ -327,6 +328,7 @@ const cases: Array<Case> = [
     tourTravelWorldHandler,
     '<link rel="stylesheet" href="https://catalog.wlimg.com/templates-images/12569/12570/catalog.css"><a href="/tour-packages.rss">RSS</a>',
   ],
+  ['typecho', typechoHandler, '<link rel="stylesheet" href="/usr/themes/default/style.css">'],
   ['ucoz', ucozHandler, '', new Headers({ 'set-cookie': '0exampleuCoz=; path=/' })],
   ['vbulletin', vbulletinHandler, '<script src="/clientscript/vbulletin-core.js"></script>'],
   [

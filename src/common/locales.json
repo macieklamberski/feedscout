@@ -624,6 +624,9 @@
     "placement-india:vacancy": "Vacancies",
     "gcs-web:events": "Events",
     "gcs-web:news-releases": "News releases",
-    "gcs-web:sec-filings": "SEC filings"
+    "gcs-web:sec-filings": "SEC filings",
+    "typecho:comments": "Comments",
+    "typecho:page": "Page",
+    "typecho:posts": "Posts"
   }
 }
