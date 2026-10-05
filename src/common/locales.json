@@ -488,6 +488,13 @@
     "zenfolio:featured": "Featured galleries",
     "zenfolio:blog": "Blog",
     "bubblelife:posts": "Posts",
-    "bubblelife:library": "Library"
+    "bubblelife:library": "Library",
+    "bigcommerce:new-products": "New products",
+    "bigcommerce:popular-products": "Popular products",
+    "bigcommerce:featured-products": "Featured products",
+    "bigcommerce:blog": "Blog",
+    "bigcommerce:category-new-products": "New products in category",
+    "bigcommerce:category-popular-products": "Popular products in category",
+    "bigcommerce:search": "Search"
   }
 }
