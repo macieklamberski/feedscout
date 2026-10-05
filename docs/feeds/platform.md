@@ -2198,6 +2198,15 @@ Discovers the blog feed of a Jimdo site. Detected by the `x-jimdo-wid` response 
 > [!NOTE]
 > Only sites with a blog have the feed.
 
+### YesWiki
+
+Discovers the Bazar entry feeds and the recent changes feed of a YesWiki wiki. Detected by the `YesWiki-` session cookie. A wiki under a sub-path gets its feeds there, read from the cookie path. Form ids come only from the entries and lists the page shows.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| A page showing Bazar entries or lists | Entries of each form shown + all entries + recent changes |
+| Any other page | All entries + recent changes |
+
 ## Basic Usage
 
 ```typescript
@@ -2421,6 +2430,7 @@ import {
   writeasHandler,
   xenforoHandler,
   ximalayaHandler,
+  yeswikiHandler,
   youtubeHandler,
   zennHandler,
 } from 'feedscout/platform'

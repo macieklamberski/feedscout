@@ -1437,6 +1437,11 @@
   "ximalaya": {
     "ximalaya:album": "https://www.ximalaya.com/album/203355.xml"
   },
+  "yeswiki": {
+    "yeswiki:entries": "https://yeswiki.net/?BazaR/rss",
+    "yeswiki:form-entries": "https://yeswiki.net/?BazaR/rss&id=3",
+    "yeswiki:recent-changes": "https://yeswiki.net/?DerniersChangementsRSS/xml"
+  },
   "youtube": {
     "youtube:all": [
       "https://www.youtube.com/feeds/videos.xml?channel_id=UCXuqSBlHAE6Xw-yeJA0Tunw",

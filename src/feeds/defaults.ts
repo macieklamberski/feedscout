@@ -215,6 +215,7 @@ import { writeasHandler } from './platforms/writeas.js'
 import { writefreelyHandler } from './platforms/writefreely.js'
 import { xenforoHandler } from './platforms/xenforo.js'
 import { ximalayaHandler } from './platforms/ximalaya.js'
+import { yeswikiHandler } from './platforms/yeswiki.js'
 import { youtubeHandler } from './platforms/youtube.js'
 import { zenfolioHandler } from './platforms/zenfolio.js'
 import { zennHandler } from './platforms/zenn.js'
@@ -561,6 +562,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     writefreelyHandler,
     xenforoHandler,
     ximalayaHandler,
+    yeswikiHandler,
     youtubeHandler,
     zenfolioHandler,
     zennHandler,

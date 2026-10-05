@@ -69,6 +69,7 @@ import { wikidotHandler } from './wikidot.js'
 import { wixHandler } from './wix.js'
 import { writefreelyHandler } from './writefreely.js'
 import { xenforoHandler } from './xenforo.js'
+import { yeswikiHandler } from './yeswiki.js'
 import { zenfolioHandler } from './zenfolio.js'
 
 // Every path shape is tried against every content-matched handler, because a
@@ -268,6 +269,12 @@ const cases: Array<Case> = [
   ['wix', wixHandler, '', new Headers({ 'x-wix-request-id': '1790000000.1' })],
   ['writefreely', writefreelyHandler, '<link rel="stylesheet" href="/css/write.css">'],
   ['xenforo', xenforoHandler, '<html id="XF">'],
+  [
+    'yeswiki',
+    yeswikiHandler,
+    '',
+    new Headers({ 'set-cookie': 'YesWiki-main=0dc6fc2d07d67f79dbe824fa9153cfc3; path=/' }),
+  ],
   ['zenfolio', zenfolioHandler, '<link href="https://cdn.zenfolio.com/zf/css/layout.css">'],
 ]
 
