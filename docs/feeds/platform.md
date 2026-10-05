@@ -1921,6 +1921,26 @@ Discovers the Atom feeds of a public-inbox mailing list archive. Detected by the
 | `{inbox}/{message-id}/` | Thread feed + messages feed (Atom) |
 | `{inbox}/{message-id}/T/` | Thread feed + messages feed (Atom) |
 
+### CivicPlus
+
+Discovers the module feeds of a CivicPlus government website. Detected by the `CP_IsMobile` cookie or the `/Areas/Layout/Assets/` scripts, so any domain is covered. The module is read from the page's `pageModuleID` field, and a page with no module feed gets the site-wide Pages feed.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `{site}/CivicAlerts.aspx`, `{site}/m/newsflash` | News Flash feed (RSS) |
+| `{site}/Blog.aspx` | Blog feed (RSS) |
+| `{site}/Gallery.aspx` | Photo Gallery feed (RSS) |
+| `{site}/Calendar.aspx`, `{site}/m/calendar` | Calendar feed (RSS) |
+| `{site}/AlertCenter.aspx` | Alert Center feed (RSS) |
+| `{site}/RealEstate.aspx` | Real Estate Locator feed (RSS) |
+| `{site}/AgendaCenter` | Agenda Center feed (RSS) |
+| `{site}/Jobs.aspx` | Jobs feed (RSS) |
+| `{site}/CivicMedia.aspx` | Media Center feed (RSS) |
+| `{site}/`, any other page | Pages feed (RSS) |
+
+> [!NOTE]
+> Each feed covers every category of its module. The home page, content pages and modules with no feed of their own get the Pages feed.
+
 ## Basic Usage
 
 ```typescript
@@ -1988,6 +2008,7 @@ import {
   captivateHandler,
   castopodHandler,
   castosHandler,
+  civicplusHandler,
   cnblogsHandler,
   confluenceHandler,
   cratesIoHandler,
