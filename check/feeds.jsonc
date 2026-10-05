@@ -1149,6 +1149,9 @@
     "rubygems:latest-gems": "https://rubygems.org/gems.atom",
     "rubygems:versions": "https://rubygems.org/gems/rails/versions.atom"
   },
+  "sakuraBlog": {
+    "sakura-blog:posts": ["http://cwtokyo.sblo.jp/index20.rdf", "http://cwtokyo.sblo.jp/index.rdf"]
+  },
   "seesaa": {
     "seesaa:posts": "https://info.seesaa.net/index.rdf",
     "seesaa:posts-rss2": "https://info.seesaa.net/index20.rdf"
