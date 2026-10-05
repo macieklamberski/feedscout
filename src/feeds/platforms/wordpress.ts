@@ -11,13 +11,15 @@ export type WordpressUrl =
   | { kind: 'post'; path: string }
   | { kind: 'home' }
 
-const domains = ['unblog.fr', 'wordpress.com']
+const domains = ['hypotheses.org', 'unblog.fr', 'wordpress.com']
+const postIdDomains = ['hypotheses.org']
 const categoryRegex = /^\/category\/([^/]+)/i
 const tagRegex = /^\/tag\/([^/]+)/i
 const authorRegex = /^\/author\/([^/]+)/i
 const yearRegex = /^\/(\d{4})\/?$/
 const yearMonthRegex = /^\/(\d{4})\/(\d{2})\/?$/
 const dayRegex = /^\/(\d{4})\/(\d{2})\/(\d{2})\/?$/
+const postIdRegex = /^\/\d+\/?$/
 const trailingSlashRegex = /\/$/
 const feedSegmentRegex = /\/feed(?:\/|$)/i
 
@@ -56,9 +58,15 @@ const getPostsFeedEntries = (base: string, key: string): Array<DiscoverUriEntry>
   ]
 }
 
-// The page a WordPress URL shows, read from the path alone, so a WP Engine site reads the same.
+// The page a WordPress URL shows, read from the path, so a WP Engine site reads the same. Only
+// hypotheses.org's post-id paths need the host.
 export const parseWordpressPage = (url: string): WordpressUrl => {
   const { pathname } = new URL(url)
+
+  // hypotheses.org posts are /{post_id}, so a four-digit id is a post, never a year archive.
+  if (isSubdomainOf(url, postIdDomains) && postIdRegex.test(pathname)) {
+    return { kind: 'post', path: pathname.replace(trailingSlashRegex, '') }
+  }
 
   for (const { regex, hintKey, route } of archives) {
     const archiveMatch = pathname.match(regex)
