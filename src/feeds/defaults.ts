@@ -50,6 +50,7 @@ import { confluenceHandler } from './platforms/confluence.js'
 import { cratesIoHandler } from './platforms/cratesIo.js'
 import { csdnHandler } from './platforms/csdn.js'
 import { dailymotionHandler } from './platforms/dailymotion.js'
+import { dasaugeHandler } from './platforms/dasauge.js'
 import { deviantartHandler } from './platforms/deviantart.js'
 import { devtoHandler } from './platforms/devto.js'
 import { diasporaHandler } from './platforms/diaspora.js'
@@ -404,6 +405,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     cratesIoHandler,
     csdnHandler,
     dailymotionHandler,
+    dasaugeHandler,
     deviantartHandler,
     devtoHandler,
     diasporaHandler,

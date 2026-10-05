@@ -245,6 +245,16 @@
     "dailymotion:trending": "https://www.dailymotion.com/rss/trending",
     "dailymotion:videos": "https://www.dailymotion.com/rss/Euronews-en"
   },
+  "dasauge": {
+    "dasauge:profile": [
+      "https://dasauge.at/-abstrusa/?rss",
+      "https://dasauge.ch/-abstrusa/?rss",
+      "https://dasauge.co.uk/-abstrusa/?rss",
+      "https://dasauge.com/-abstrusa/?rss",
+      "https://dasauge.de/-abstrusa/?rss",
+      "https://dasauge.es/-abstrusa/?rss"
+    ]
+  },
   "deviantart": {
     "deviantart:daily-deviations": "https://backend.deviantart.com/rss.xml?q=special:dd",
     "deviantart:deviations": "https://backend.deviantart.com/rss.xml?type=deviation&q=by:yuumei+sort:time+meta:all",
