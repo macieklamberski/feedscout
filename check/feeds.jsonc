@@ -1098,6 +1098,9 @@
     "qiita:tag": "https://qiita.com/tags/javascript/feed.atom",
     "qiita:zine": "https://qiita.com/official-columns/feed/"
   },
+  "rakutenBlog": {
+    "rakuten-blog:posts": "https://api.plaza.rakuten.ne.jp/buntankingdam/rss/"
+  },
   "redcircle": {
     "redcircle:show": "https://feeds.redcircle.com/e8ab057c-683d-4375-a197-2dcc42d4f851"
   },
