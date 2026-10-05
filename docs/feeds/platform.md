@@ -1867,6 +1867,15 @@ Discovers the recent changes feeds of a PmWiki wiki. Detected by the `<!--HTMLHe
 > [!NOTE]
 > Feeds are off in a default PmWiki install and a wiki owner turns them on, so many wikis answer these URLs with the page itself.
 
+### Ning
+
+Discovers the site feeds of a Ning network and the feed of a forum topic. Detected by the `static.ning.com/socialnetworkmain/` asset path, so `ning.com` subdomains and custom domains are both covered. Ning 3 networks load their assets from another path and serve none of these feeds, so they are left to generic discovery.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `{network}/forum/topics/{topic}` | Topic + latest activity + blog posts + forum |
+| Any other page | Latest activity + blog posts + forum |
+
 ## Basic Usage
 
 ```typescript
@@ -1999,6 +2008,7 @@ import {
   nebulaHandler,
   neocitiesHandler,
   niconicoHandler,
+  ningHandler,
   nodebbHandler,
   noteHandler,
   observableHandler,

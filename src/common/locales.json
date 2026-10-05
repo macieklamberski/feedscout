@@ -449,6 +449,10 @@
     "launchpad:revisions": "Revisions",
     "teletype:posts": "Posts",
     "pmwiki:group-changes": "Group changes",
-    "pmwiki:site-changes": "Site changes"
+    "pmwiki:site-changes": "Site changes",
+    "ning:activity": "Latest activity",
+    "ning:blog": "Blog posts",
+    "ning:forum": "Forum",
+    "ning:topic": "Topic"
   }
 }
