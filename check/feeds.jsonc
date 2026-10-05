@@ -375,6 +375,12 @@
     ],
     "exblog:posts": ["https://petitcc.exblog.jp/index.xml", "https://petitcc.exblog.jp/atom.xml"]
   },
+  "exportersIndia": {
+    "exporters-india:products": [
+      "https://www.targetchem.in/products.rss",
+      "https://www.umasonssteelfab.net/products.rss"
+    ]
+  },
   "fc2": {
     "fc2:comments": "https://tetsujin.blog.fc2.com/?xml&comment",
     "fc2:posts": "https://tetsujin.blog.fc2.com/?xml",

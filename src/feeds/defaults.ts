@@ -65,6 +65,7 @@ import { dspaceHandler } from './platforms/dspace.js'
 import { eklablogHandler } from './platforms/eklablog.js'
 import { estrankyHandler } from './platforms/estranky.js'
 import { exblogHandler } from './platforms/exblog.js'
+import { exportersIndiaHandler } from './platforms/exportersIndia.js'
 import { fc2Handler } from './platforms/fc2.js'
 import { firesideHandler } from './platforms/fireside.js'
 import { firstoryHandler } from './platforms/firstory.js'
@@ -428,6 +429,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     eklablogHandler,
     estrankyHandler,
     exblogHandler,
+    exportersIndiaHandler,
     fc2Handler,
     firesideHandler,
     firstoryHandler,
