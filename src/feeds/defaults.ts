@@ -168,6 +168,7 @@ import { rubygemsHandler } from './platforms/rubygems.js'
 import { seesaaHandler } from './platforms/seesaa.js'
 import { shaarliHandler } from './platforms/shaarli.js'
 import { shopifyHandler } from './platforms/shopify.js'
+import { smeBlogHandler } from './platforms/smeBlog.js'
 import { smfHandler } from './platforms/smf.js'
 import { snacHandler } from './platforms/snac.js'
 import { soundcloudHandler } from './platforms/soundcloud.js'
@@ -507,6 +508,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     seesaaHandler,
     shaarliHandler,
     shopifyHandler,
+    smeBlogHandler,
     smfHandler,
     snacHandler,
     soundcloudHandler,
