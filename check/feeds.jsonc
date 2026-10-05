@@ -1385,6 +1385,10 @@
     "tumblr:posts": "https://staff.tumblr.com/rss",
     "tumblr:tag": "https://staff.tumblr.com/tagged/updates/rss"
   },
+  "twoday": {
+    "twoday:posts": "https://changes.twoday.net/index.rdf",
+    "twoday:topic": "https://schmollfisch.twoday.net/topics/Wo+der+Hase+hinlief/index.rdf"
+  },
   // ucoz.co.uk, ucoz.com.br, ucoz.es, ucoz.hu and ucoz.lv serve an expired or mismatched certificate
   // on https, and ucoz.pl redirects https to http, checked 2026-10-04.
   "ucoz": {
