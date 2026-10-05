@@ -2238,6 +2238,15 @@ Discovers the feeds of a Noticeable newspage. Newspages on `noticeable.news` are
 > [!NOTE]
 > A label page links only the newspage feed, never its own label feed.
 
+### Legistar
+
+Discovers the history feed of a Legistar legislation record or meeting, on any `*.legistar.com` client site.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `{client}.legistar.com/LegislationDetail.aspx?ID={id}&GUID={guid}` | Legislation feed (RSS) |
+| `{client}.legistar.com/MeetingDetail.aspx?ID={id}&GUID={guid}` | Meeting feed (RSS) |
+
 ## Basic Usage
 
 ```typescript
@@ -2365,6 +2374,7 @@ import {
   kohaHandler,
   launchpadHandler,
   learnkuHandler,
+  legistarHandler,
   lemmyHandler,
   letterboxdHandler,
   librivoxHandler,

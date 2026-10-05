@@ -629,6 +629,10 @@
     "learnku:community": "https://learnku.com/laravel/feed",
     "learnku:site": "https://learnku.com/feed"
   },
+  "legistar": {
+    "legistar:legislation": "https://madison.legistar.com/Feed.ashx?M=LD&ID=1065902&GUID=EFE087C2-C62A-40F9-B1F9-6E2975E86217",
+    "legistar:meeting": "https://a2gov.legistar.com/Feed.ashx?M=CalendarDetail&ID=1373416&GUID=351F7891-35DC-4AE5-BCED-DA4B7A00E804"
+  },
   "lemmy": {
     "lemmy:all": "https://lemmy.ml/feeds/all.xml",
     "lemmy:community": "https://lemmy.ml/feeds/c/lemmy.xml",
