@@ -108,6 +108,10 @@
     "bookwyrm:reviews": "https://bookwyrm.social/user/mouse/rss-reviews",
     "bookwyrm:shelf": "https://bookwyrm.social/user/mouse/books/read/rss"
   },
+  "bubblelife": {
+    "bubblelife:library": "https://denver.bubblelife.com/rss?c=35828711",
+    "bubblelife:posts": "https://coppell.bubblelife.com/rss?c=3562544"
+  },
   "buttondown": {
     "buttondown:newsletter": "https://buttondown.com/jmduke/rss"
   },
