@@ -2035,6 +2035,15 @@ Discovers the product and blog feeds of a BigCommerce store. Detected by the `SH
 > [!NOTE]
 > A category URL carries only its slug, so the category id is read from the feed link the category page prints.
 
+### Cocolog
+
+Discovers the posts feeds of a Cocolog blog on `cocolog-nifty.com` and its sibling domains. One account can host several blogs, each under its own path. The home page names its blog only in its feed links, so a home page URL needs the page content.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `{user}.cocolog-nifty.com/{blog}/…` | Posts feed (Atom + RDF + RSS) |
+| `{user}.cocolog-nifty.com` | Posts feed of the blog the page links (Atom + RDF + RSS) |
+
 ## Basic Usage
 
 ```typescript
@@ -2106,6 +2115,7 @@ import {
   castosHandler,
   civicplusHandler,
   cnblogsHandler,
+  cocologHandler,
   confluenceHandler,
   cratesIoHandler,
   csdnHandler,
