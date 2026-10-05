@@ -2226,6 +2226,18 @@ Discovers the feeds of a Forumotion forum, also branded Forumactif, Foroactivo, 
 | `{forum}/t{id}-{slug}` | Feed of the topic's forum + latest topics feed (RSS + Atom) |
 | Any other page | Latest topics feed (RSS + Atom) |
 
+### Noticeable
+
+Discovers the feeds of a Noticeable newspage. Newspages on `noticeable.news` are matched by host, and a newspage on a custom domain by the `assets.noticeable.news/templates/` stylesheets every template loads.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `{newspage}/labels/{label}` | Label feed + newspage feed (RSS + Atom + JSON Feed) |
+| Any other page | Newspage feed (RSS + Atom + JSON Feed) |
+
+> [!NOTE]
+> A label page links only the newspage feed, never its own label feed.
+
 ## Basic Usage
 
 ```typescript
@@ -2377,6 +2389,7 @@ import {
   ningHandler,
   nodebbHandler,
   noteHandler,
+  noticeableHandler,
   observableHandler,
   odooHandler,
   odyseeHandler,

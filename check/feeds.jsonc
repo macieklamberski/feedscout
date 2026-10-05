@@ -794,6 +794,18 @@
     "note:hashtag": "https://note.com/hashtag/AI/rss",
     "note:magazine": "https://note.com/notemag/m/m7244518f06ae/rss"
   },
+  "noticeable": {
+    "noticeable:label": [
+      "https://cs50.noticeable.news/check-50.rss",
+      "https://cs50.noticeable.news/check-50.atom",
+      "https://cs50.noticeable.news/check-50.json"
+    ],
+    "noticeable:posts": [
+      "https://cs50.noticeable.news/feed.rss",
+      "https://cs50.noticeable.news/feed.atom",
+      "https://cs50.noticeable.news/feed.json"
+    ]
+  },
   "observable": {
     "observable:collection": "https://api.observablehq.com/collection/@observablehq/visualization.rss",
     "observable:notebooks": "https://api.observablehq.com/documents/@mbostock.rss",
