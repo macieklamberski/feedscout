@@ -1,16 +1,27 @@
 import { isAnyOf, isHttpUrl, parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, findElement, getScriptText, hasMarker } from '../../common/utils.js'
+import {
+  composeHint,
+  findElement,
+  findElements,
+  getMetaContent,
+  getScriptText,
+  hasElementWithId,
+  hasMarker,
+} from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic covers community (html), partly covers collection.
+// Generic covers community, legacyCollection, legacyCommunity, legacyHome (html), partly covers collection.
 // Handler needed for: home.
 
 const scopePathRegex =
   /\/(collections|communities)\/([\da-f]{8}-[\da-f]{4}-[\da-f]{4}-[\da-f]{4}-[\da-f]{12})(?:\/|$)/i
 const transferStateEntityRegex = /&([aglqs]);/g
 const trailingSlashesRegex = /\/+$/
+const legacyFeedPathRegex = /\/feed\/(rss_1\.0|rss_2\.0|atom_1\.0)\/(site|[^/]+\/[^/]+)$/i
+const legacyStylesheetRegex = /\/static\/css\/bootstrap\/dspace-theme\.css$/
+const generatorRegex = /^DSpace\b/
 
 // Angular before 16 escapes the transfer state with these entities, and later versions print JSON.
 const transferStateEntities: Record<string, string> = {
@@ -21,18 +32,103 @@ const transferStateEntities: Record<string, string> = {
   s: "'",
 }
 
+const legacyFormats: Record<string, 'atom' | 'rdf' | 'rss'> = {
+  'atom_1.0': 'atom',
+  'rss_1.0': 'rdf',
+  'rss_2.0': 'rss',
+}
+
 type TransferState = {
   APP_CONFIG_STATE?: { rest?: { baseUrl?: unknown } }
 }
+
+type LegacyFeed = { uri: string; format: 'atom' | 'rdf' | 'rss' }
+
+type LegacyLink = LegacyFeed & { scope: string; title?: string }
 
 export type DspacePage =
   | { kind: 'collection'; restUrl: string; uuid: string }
   | { kind: 'community'; restUrl: string; uuid: string }
   | { kind: 'home'; restUrl: string }
+  | { kind: 'legacyCollection'; feeds: Array<LegacyFeed> }
+  | { kind: 'legacyCommunity'; feeds: Array<LegacyFeed> }
+  | { kind: 'legacyHome'; feeds: Array<LegacyFeed> }
 
 // The Angular UI of DSpace 7 and later renders every page inside this root element.
 export const isDspaceHtml = (content: string): boolean => {
   return findElement(content, (element) => element.name === 'ds-app') !== undefined
+}
+
+// The JSPUI of DSpace 4 to 6 links this stylesheet from its page header template. Older JSPUI
+// releases carry only the generator meta, which is opt-in, so the DSpace feed links the page must
+// carry are the second marker.
+export const isLegacyDspaceHtml = (content: string): boolean => {
+  const stylesheet = findElement(content, (element) => {
+    return element.name === 'link' && legacyStylesheetRegex.test(element.attribs.href ?? '')
+  })
+
+  if (stylesheet) {
+    return true
+  }
+
+  return generatorRegex.test(getMetaContent(content, 'generator') ?? '')
+}
+
+// The XMLUI of DSpace 6 and older runs on Apache Cocoon. Other Cocoon apps send the header too,
+// so the DSpace feed links the page must carry are the second marker.
+export const isLegacyDspaceHeaders = (headers: Headers): boolean => {
+  return headers.has('x-cocoon-version')
+}
+
+// DSpace 6 and older links its feeds on the home, community and collection pages.
+const getLegacyLinks = (url: string, content: string): Array<LegacyLink> => {
+  const links = findElements(content, (element) => {
+    return element.name === 'link' && element.attribs.rel === 'alternate'
+  })
+  const legacyLinks: Array<LegacyLink> = []
+
+  for (const link of links) {
+    const feedUrl = parseUrl(link.attribs.href ?? '', url)
+    const [, format, scope] = feedUrl?.pathname.match(legacyFeedPathRegex) ?? []
+
+    if (!feedUrl || !format || !scope) {
+      continue
+    }
+
+    legacyLinks.push({
+      uri: feedUrl.href,
+      format: legacyFormats[format.toLowerCase()],
+      scope,
+      title: link.attribs.title,
+    })
+  }
+
+  return legacyLinks
+}
+
+// The JSPUI titles a scoped link with the kind in fixed English, and the XMLUI names the page's
+// viewer. A page links the feeds of one scope only, so the first link decides the kind.
+const getLegacyPage = (content: string, links: Array<LegacyLink>): DspacePage | undefined => {
+  const [link] = links
+  const feeds = links.map(({ uri, format }) => ({ uri, format }))
+
+  if (isAnyOf(link.scope, 'site')) {
+    return { kind: 'legacyHome', feeds }
+  }
+
+  if (
+    link.title === 'Items in Collection' ||
+    hasElementWithId(content, 'aspect_artifactbrowser_CollectionViewer_div_collection-home')
+  ) {
+    return { kind: 'legacyCollection', feeds }
+  }
+
+  if (
+    link.title === 'Items in Community' ||
+    hasElementWithId(content, 'aspect_artifactbrowser_CommunityViewer_div_community-home')
+  ) {
+    return { kind: 'legacyCommunity', feeds }
+  }
 }
 
 // A made-up collection or community id still renders the app shell, with this element in place
@@ -70,6 +166,12 @@ export const getDspacePage = (url: string, content: string | undefined): DspaceP
     return
   }
 
+  const legacyLinks = content && !isDspaceHtml(content) ? getLegacyLinks(url, content) : []
+
+  if (content && legacyLinks.length > 0) {
+    return getLegacyPage(content, legacyLinks)
+  }
+
   const restUrl = getRestUrl(parsedUrl.origin, content)
   const [, route, uuid] = parsedUrl.pathname.match(scopePathRegex) ?? []
 
@@ -97,8 +199,20 @@ const getSearchUrl = (restUrl: string, format: 'atom' | 'rss', scope?: string): 
 }
 
 export const dspaceHandler: PlatformHandler = {
-  match: (_url, content, headers) => {
-    return hasMarker(content, headers, { html: isDspaceHtml })
+  match: (url, content, headers) => {
+    if (hasMarker(content, headers, { html: isDspaceHtml })) {
+      return true
+    }
+
+    const legacyMarkers = { html: isLegacyDspaceHtml, headers: isLegacyDspaceHeaders }
+
+    if (!content || !hasMarker(content, headers, legacyMarkers)) {
+      return false
+    }
+
+    const page = getDspacePage(url, content)
+
+    return page !== undefined && 'feeds' in page
   },
 
   resolve: (url, content) => {
@@ -106,6 +220,24 @@ export const dspaceHandler: PlatformHandler = {
 
     if (!page) {
       return []
+    }
+
+    if (page.kind === 'legacyCollection') {
+      return page.feeds.map(({ uri, format }) => {
+        return { uri, hint: composeHint('dspace:collection', format) }
+      })
+    }
+
+    if (page.kind === 'legacyCommunity') {
+      return page.feeds.map(({ uri, format }) => {
+        return { uri, hint: composeHint('dspace:community', format) }
+      })
+    }
+
+    if (page.kind === 'legacyHome') {
+      return page.feeds.map(({ uri, format }) => {
+        return { uri, hint: composeHint('dspace:site', format) }
+      })
     }
 
     const uris: Array<DiscoverUriEntry> = []

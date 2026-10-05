@@ -190,6 +190,12 @@ const cases: Array<Case> = [
   ['drupal', drupalHandler, '<meta name="generator" content="Drupal 10 (https://www.drupal.org)">'],
   ['dspace', dspaceHandler, '<ds-app></ds-app>'],
   [
+    'dspace',
+    dspaceHandler,
+    '<link rel="alternate" href="/feed/rss_2.0/site">',
+    new Headers({ 'x-cocoon-version': '2.2.0' }),
+  ],
+  [
     'exportersIndia',
     exportersIndiaHandler,
     '<link rel="stylesheet" href="https://catalog.wlimg.com/templates-images/12569/12570/catalog.css"><a href="/products.rss">RSS</a>',
