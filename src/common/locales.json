@@ -483,6 +483,9 @@
     "spip:author": "Author",
     "spip:keyword": "Keyword",
     "spip:section": "Section",
-    "odoo:blog": "Blog"
+    "odoo:blog": "Blog",
+    "zenfolio:recent": "Recent galleries",
+    "zenfolio:featured": "Featured galleries",
+    "zenfolio:blog": "Blog"
   }
 }

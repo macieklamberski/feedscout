@@ -62,6 +62,7 @@ import { wikidotHandler } from './wikidot.js'
 import { wixHandler } from './wix.js'
 import { writefreelyHandler } from './writefreely.js'
 import { xenforoHandler } from './xenforo.js'
+import { zenfolioHandler } from './zenfolio.js'
 
 // Every path shape is tried against every content-matched handler, because a
 // handler that matches a path it cannot resolve has a `match` that drifted from
@@ -242,6 +243,7 @@ const cases: Array<Case> = [
   ['wix', wixHandler, '', new Headers({ 'x-wix-request-id': '1790000000.1' })],
   ['writefreely', writefreelyHandler, '<link rel="stylesheet" href="/css/write.css">'],
   ['xenforo', xenforoHandler, '<html id="XF">'],
+  ['zenfolio', zenfolioHandler, '<link href="https://cdn.zenfolio.com/zf/css/layout.css">'],
 ]
 
 // Under it.each, a row without headers gets the done callback in their place.
