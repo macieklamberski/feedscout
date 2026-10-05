@@ -924,6 +924,12 @@
   "publii": {
     "publii:posts": ["https://getpublii.com/feed.xml", "https://falk.plus/feed.json"]
   },
+  "pukiwiki": {
+    "pukiwiki:recent-changes": [
+      "https://pukiwiki.sourceforge.io/?cmd=rss",
+      "http://office-kitatani.jp/index.php?cmd=rss"
+    ]
+  },
   "pypi": {
     "pypi:new-packages": "https://pypi.org/rss/packages.xml",
     "pypi:releases": "https://pypi.org/rss/project/requests/releases.xml",

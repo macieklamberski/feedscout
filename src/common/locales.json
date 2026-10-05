@@ -511,6 +511,7 @@
     "chambermaster:news-releases": "News releases",
     "chambermaster:new-m2m-deals": "New member to member deals",
     "pchome:posts": "Posts",
-    "pchome:category": "Category"
+    "pchome:category": "Category",
+    "pukiwiki:recent-changes": "Recent changes"
   }
 }
