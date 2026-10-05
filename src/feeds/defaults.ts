@@ -203,6 +203,7 @@ import { sermonNetHandler } from './platforms/sermonNet.js'
 import { shaarliHandler } from './platforms/shaarli.js'
 import { shinobiHandler } from './platforms/shinobi.js'
 import { shopifyHandler } from './platforms/shopify.js'
+import { shopserveHandler } from './platforms/shopserve.js'
 import { smeBlogHandler } from './platforms/smeBlog.js'
 import { smfHandler } from './platforms/smf.js'
 import { snacHandler } from './platforms/snac.js'
@@ -582,6 +583,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     shaarliHandler,
     shinobiHandler,
     shopifyHandler,
+    shopserveHandler,
     smeBlogHandler,
     smfHandler,
     snacHandler,

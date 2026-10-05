@@ -602,6 +602,7 @@
     "promodj:content": "Content",
     "promodj:blog": "Blog",
     "promodj:favorites": "Favorites",
-    "promodj:events": "Events"
+    "promodj:events": "Events",
+    "shopserve:news": "News"
   }
 }
