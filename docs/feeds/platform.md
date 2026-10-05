@@ -786,6 +786,14 @@ Discovers RSS 2.0 and RDF feeds for CANPAN Blog.
 |-------------|-----------------|
 | `blog.canpan.info/{blog}` | Posts feed (RSS 2.0 + RDF) |
 
+### Canalblog
+
+Discovers RSS feeds for Canalblog.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `*.canalblog.com` | Posts feed |
+
 ### Captivate
 
 Discovers RSS feeds for Captivate-hosted podcasts.
@@ -2537,6 +2545,7 @@ import {
   bubblelifeHandler,
   buttondownHandler,
   buzzsproutHandler,
+  canalblogHandler,
   canpanHandler,
   captivateHandler,
   castopodHandler,
