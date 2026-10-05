@@ -1193,7 +1193,8 @@
     "proboards:posts": [
       "https://necom.proboards.com/rss/public",
       "https://gmsboatclub.freeforums.net/rss/public",
-      "https://a380.boards.net/rss/public"
+      "https://a380.boards.net/rss/public",
+      "https://forum.obdeleven.com/rss/public"
     ]
   },
   "producthunt": {
