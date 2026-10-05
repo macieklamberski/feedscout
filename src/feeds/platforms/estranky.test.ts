@@ -26,6 +26,39 @@ describe('isEstrankyHtml', () => {
     expect(isEstrankyHtml(value)).toBe(true)
   })
 
+  it('should return true for a page loading the eoldal.hu assets', () => {
+    const value = `
+      <link
+        rel="stylesheet"
+        href="https://s3a.eoldal.hu/css/d1000000021.css?nc=421749158"
+        type="text/css"
+      />
+      <script
+        type="text/javascript"
+        src="https://s3c.eoldal.hu/js/ui.js?nc=1"
+        id="index_script"
+      ></script>
+    `
+
+    expect(isEstrankyHtml(value)).toBe(true)
+  })
+
+  it('should return false for a saved copy loading the eoldal.hu assets by a relative path', () => {
+    const value = `
+      <link
+        rel="stylesheet"
+        href="s3a.eoldal.hu/css/d1000000024e444.css?nc=1551285673"
+        type="text/css"
+      />
+      <script
+        type="text/javascript"
+        src="s3c.eoldal.hu/js/uia1a0.js?nc=1"
+      ></script>
+    `
+
+    expect(isEstrankyHtml(value)).toBe(false)
+  })
+
   it('should return false for a page linking the Estranky home page', () => {
     const value = '<a href="https://www.estranky.cz/">Estránky.cz</a>'
 
@@ -206,6 +239,40 @@ describe('estrankyHandler', () => {
         <a
           rel="feedurl"
           href="https://www.example.org/rss/slices/l/homepage/data.xml"
+        >
+      `
+      const expected = [
+        {
+          uri: 'https://www.example.com/rss/articles/data.xml',
+          hint: { key: 'estranky:posts', label: 'Posts' },
+        },
+        {
+          uri: 'https://www.example.com/rss/photos/data.xml',
+          hint: { key: 'estranky:photos', label: 'Photos' },
+        },
+        {
+          uri: 'https://www.example.com/rss/comments/data.xml',
+          hint: { key: 'estranky:comments', label: 'Comments' },
+        },
+        {
+          uri: 'https://www.example.com/rss/slices/l/homepage/data.xml',
+          hint: { key: 'estranky:homepage-slice', label: 'Home page (Web Slice)' },
+        },
+        {
+          uri: 'https://www.example.com/rss/slices/l/photos/data.xml',
+          hint: { key: 'estranky:photos-slice', label: 'Photo album (Web Slice)' },
+        },
+      ]
+
+      expect(estrankyHandler.resolve(value, content)).toEqual(expected)
+    })
+
+    it('should keep the slice feeds on the origin of an eOldal page', () => {
+      const value = 'https://www.example.com/'
+      const content = `
+        <a
+          rel="feedurl"
+          href="https://example.eoldal.hu/rss/slices/l/homepage/data.xml"
         >
       `
       const expected = [

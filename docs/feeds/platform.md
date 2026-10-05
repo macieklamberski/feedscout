@@ -2395,7 +2395,7 @@ Discovers the RSS feed of a dasauge member profile on any of the dasauge country
 
 ### Estranky
 
-Discovers the site feeds of an Estranky site. A site serves the article feeds, the Web Slice feeds or both, depending on its template, and validation drops a set it lacks. A custom domain is detected by stylesheets or scripts loaded from the `s3*.estranky.cz` and `s3*.estranky.sk` asset hosts. On a custom domain, the slice feeds take the Estranky subdomain of the page's `rel="feedurl"` link.
+Discovers the site feeds of an Estranky site. A site serves the article feeds, the Web Slice feeds or both, depending on its template, and validation drops a set it lacks. A custom domain is detected by stylesheets or scripts loaded from the `s3*.estranky.cz` and `s3*.estranky.sk` asset hosts, or from the `s3*.eoldal.hu` hosts of the Hungarian eOldal brand. On a custom domain, the slice feeds take the Estranky subdomain of the page's `rel="feedurl"` link. An eOldal site keeps its slice feeds on its own domain, since its `eoldal.hu` subdomain no longer resolves.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|

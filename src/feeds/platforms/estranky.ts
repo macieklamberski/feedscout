@@ -11,7 +11,7 @@ export type EstrankyPage = { origin: string; sliceOrigin: string }
 
 const domains = ['estranky.cz', 'estranky.sk']
 
-const estrankyAssetRegex = /^(?:https?:)?\/\/s3[a-z]\.estranky\.(?:cz|sk)\//
+const estrankyAssetRegex = /^(?:https?:)?\/\/s3[a-z]\.(?:estranky\.(?:cz|sk)|eoldal\.hu)\//
 
 const assetTags = ['link', 'script']
 const excludedSubdomains = ['katalog', 'napoveda', 'nova-napoveda', 'www']
@@ -43,6 +43,8 @@ export const parseEstrankyUrl = (url: string): EstrankyUrl | undefined => {
 }
 
 // A slice template on a custom domain links the home page slice on the Estranky subdomain.
+// An eOldal slice template links its `eoldal.hu` subdomain, which no longer resolves, so its
+// slices stay on the page's origin.
 const getEstrankyPage = (url: string, content: string | undefined): EstrankyPage => {
   const { origin } = new URL(url)
   const anchor = findElement(content, (element) => {
