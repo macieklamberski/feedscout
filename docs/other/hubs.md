@@ -154,6 +154,37 @@ const hubs = await discoverHubs(
 )
 ```
 
+## Hubs Alongside Feed Discovery
+
+`discoverFeeds` already downloads every feed it validates. To read the hubs from that same response instead of fetching each feed again with `discoverHubs`, wrap the extract function and run the headers and feed methods on what it receives:
+
+```typescript
+import { defaultResolveUrlFn, discoverFeeds } from 'feedscout'
+import { defaultExtractFn } from 'feedscout/feeds'
+import { discoverHubsFromFeed, discoverHubsFromHeaders } from 'feedscout/hubs'
+
+const feeds = await discoverFeeds('https://example.com', {
+  extractFn: async (input) => {
+    const result = await defaultExtractFn(input)
+
+    if (!result.isValid) {
+      return result
+    }
+
+    const hubs = [
+      ...(input.headers
+        ? discoverHubsFromHeaders(input.headers, input.url, defaultResolveUrlFn)
+        : []),
+      ...discoverHubsFromFeed(input.content, input.url, defaultResolveUrlFn),
+    ]
+
+    return { ...result, hubs }
+  },
+})
+```
+
+Each valid result carries a typed `hubs` array next to its feed fields. Unlike `discoverHubs`, the two methods don't remove duplicates, so a hub named in both the headers and the feed appears twice.
+
 ## Custom Fetch Function
 
 Use a custom HTTP client. See [Customize Data Fetching](/customization/data-fetching) for examples with Axios, Got, Ky, and more.
