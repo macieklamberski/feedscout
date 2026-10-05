@@ -909,6 +909,13 @@
       "https://www.thisweekinphoto.com/feed/podcast/"
     ]
   },
+  "proboards": {
+    "proboards:posts": [
+      "https://necom.proboards.com/rss/public",
+      "https://gmsboatclub.freeforums.net/rss/public",
+      "https://a380.boards.net/rss/public"
+    ]
+  },
   "producthunt": {
     "producthunt:products": "https://www.producthunt.com/feed"
   },
