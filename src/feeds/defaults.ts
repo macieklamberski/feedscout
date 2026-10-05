@@ -199,6 +199,7 @@ import { pukiwikiHandler } from './platforms/pukiwiki.js'
 import { pypiHandler } from './platforms/pypi.js'
 import { qiitaHandler } from './platforms/qiita.js'
 import { rakutenBlogHandler } from './platforms/rakutenBlog.js'
+import { realEstateIndiaHandler } from './platforms/realEstateIndia.js'
 import { redcircleHandler } from './platforms/redcircle.js'
 import { redditHandler } from './platforms/reddit.js'
 import { reformalHandler } from './platforms/reformal.js'
@@ -591,6 +592,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     pypiHandler,
     qiitaHandler,
     rakutenBlogHandler,
+    realEstateIndiaHandler,
     redcircleHandler,
     redditHandler,
     reformalHandler,
