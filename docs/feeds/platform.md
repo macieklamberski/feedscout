@@ -2437,11 +2437,12 @@ Discovers the posts feed of an Overblog blog.
 
 ### ExportersIndia
 
-Discovers the products feed of an ExportersIndia business site, built by Weblink.In on the business's own domain. Detected by the template stylesheet on `catalog.wlimg.com` together with the page's link to `/products.rss`, so any domain is covered.
+Discovers the products or services feed of an ExportersIndia business site, built by Weblink.In on the business's own domain. Detected by the template stylesheet on `catalog.wlimg.com` together with the page's link to `/products.rss` or `/services.rss`, so any domain is covered.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| Any page | Products feed (RSS) |
+| Any page of a products site | Products feed (RSS) |
+| Any page of a services site | Services feed (RSS) |
 
 ### Wild Apricot
 
