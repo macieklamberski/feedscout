@@ -652,6 +652,10 @@
     "redmine:revisions": "Revisions",
     "b2evolution:comments": "Comments",
     "b2evolution:post-comments": "Post comments",
-    "b2evolution:posts": "Posts"
+    "b2evolution:posts": "Posts",
+    "purot:page-activity": "Page changes, discussions and likes",
+    "purot:page-changes": "Page changes",
+    "purot:page-discussions": "Page discussions",
+    "purot:recent-changes": "Recent changes"
   }
 }

@@ -2790,6 +2790,15 @@ Discovers the feeds of a b2evolution blog, kowsarblog.ir among them. Detected by
 | `{blog}/{post}` | Post comments feed the page links at `?tempskin=_rss2&disp=comments&p={id}` + the blog feeds below |
 | Any page that links its blog's feeds | Posts at `{blog}?tempskin=_rss2` and `_atom` + comments at `{blog}?tempskin=_rss2&disp=comments` and `_atom` |
 
+### Purot.net
+
+Discovers the change feeds of a wiki on Purot.net. The page's own feeds come from the feed link the page carries, since a page that does not exist answers with the whole wiki's changes.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `{wiki}.purot.net/{page}`, `{wiki}.purot.net/` | Page changes, page discussions, and page changes, discussions and likes (RSS) + recent changes |
+| `{wiki}.purot.net/profile/{user}`, any other page | Recent changes (RSS) |
+
 ## Basic Usage
 
 ```typescript
@@ -3007,6 +3016,7 @@ import {
   promodjHandler,
   proseHandler,
   publicInboxHandler,
+  purotHandler,
   pypiHandler,
   qiitaHandler,
   rakutenBlogHandler,

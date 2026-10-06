@@ -202,6 +202,7 @@ import { proseHandler } from './platforms/prose.js'
 import { publicInboxHandler } from './platforms/publicInbox.js'
 import { publiiHandler } from './platforms/publii.js'
 import { pukiwikiHandler } from './platforms/pukiwiki.js'
+import { purotHandler } from './platforms/purot.js'
 import { pypiHandler } from './platforms/pypi.js'
 import { qiitaHandler } from './platforms/qiita.js'
 import { rakutenBlogHandler } from './platforms/rakutenBlog.js'
@@ -606,6 +607,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     publicInboxHandler,
     publiiHandler,
     pukiwikiHandler,
+    purotHandler,
     pypiHandler,
     qiitaHandler,
     rakutenBlogHandler,
