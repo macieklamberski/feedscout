@@ -670,6 +670,9 @@
     "sportadmin:news": "Club news",
     "sportadmin:team": "Team news",
     "laget:news": "News",
-    "geoblog:trip": "Trip"
+    "geoblog:trip": "Trip",
+    "openedition:documents": "Documents",
+    "openedition:issues": "Issues",
+    "openedition:reviews": "Reviews"
   }
 }

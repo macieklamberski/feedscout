@@ -1120,6 +1120,20 @@
       "https://lovelylionshop.com/index.php?route=journal3/blog.feed"
     ]
   },
+  "openedition": {
+    "openedition:documents": [
+      "https://journals.openedition.org/suds/backend?format=rssdocuments",
+      "https://journals.openedition.org/palimpsestes/backend?format=rssdocuments"
+    ],
+    "openedition:issues": [
+      "https://journals.openedition.org/suds/backend?format=rssnumeros",
+      "https://journals.openedition.org/palimpsestes/backend?format=rssnumeros"
+    ],
+    "openedition:reviews": [
+      "https://journals.openedition.org/cal/backend?format=rssdocuments&type=review",
+      "https://journals.openedition.org/palimpsestes/backend?format=rssdocuments&type=review"
+    ]
+  },
   "openstatus": {
     "openstatus:updates": [
       "https://status.openstatus.dev/feed/rss",

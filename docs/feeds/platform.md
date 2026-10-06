@@ -2873,6 +2873,14 @@ Discovers the trip feed of a travel blog on Geoblog.pl. The trip is read from th
 | `{user}.geoblog.pl/podroz/{id}/{slug}` | Trip feed at `/podroz/rss/{id}.xml` (RSS) |
 | `{user}.geoblog.pl/wpis/{id}/{slug}` | Trip feed of the entry's trip (RSS) |
 
+### OpenEdition Journals
+
+Discovers the feeds of an academic journal on OpenEdition Journals at `journals.openedition.org/{journal}`. The feeds are built from the url, since the journal pages answer a browser with a bot challenge while the feeds do not.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `journals.openedition.org/{journal}/…` | Documents at `{journal}/backend?format=rssdocuments`, issues at `?format=rssnumeros` and reviews at `?format=rssdocuments&type=review` (RSS 1.0) |
+
 ## Basic Usage
 
 ```typescript
@@ -3061,6 +3069,7 @@ import {
   omekaHandler,
   omnystudioHandler,
   opencartJournalHandler,
+  openeditionHandler,
   openstatusHandler,
   opusHandler,
   overblogHandler,
