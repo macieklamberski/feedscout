@@ -2698,6 +2698,16 @@ Discovers the feeds of a Typecho blog. Detected by a theme or plugin asset under
 > [!NOTE]
 > A site without URL rewriting serves its feeds under `/index.php/feed/`, so each feed is tried in that form after `/feed/`. The page feed holds the posts of a category, tag, author, date or search page, or the comments of a post or page.
 
+### YM Careers
+
+Discovers the job feeds of a YM Careers board that an association runs on its own domain. Detected by the `x-nas-sid` response header every board sends, its bot check page included.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `{board}/jobs?{search}` | Search feed at `/jobs?display=rss&{search}` |
+| `{board}/jobs/{filter}/{value}/…` | Filtered jobs feed at `/jobs/{filter}/{value}/…?display=rss` |
+| Any other page | All jobs feed at `/jobs?display=rss` |
+
 ## Basic Usage
 
 ```typescript

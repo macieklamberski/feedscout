@@ -628,6 +628,8 @@
     "gcs-web:sec-filings": "SEC filings",
     "typecho:comments": "Comments",
     "typecho:page": "Page",
-    "typecho:posts": "Posts"
+    "typecho:posts": "Posts",
+    "ym-careers:browse": "Filtered jobs",
+    "ym-careers:search": "Job search"
   }
 }

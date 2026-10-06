@@ -91,6 +91,7 @@ import { wixHandler } from './wix.js'
 import { writefreelyHandler } from './writefreely.js'
 import { xenforoHandler } from './xenforo.js'
 import { yeswikiHandler } from './yeswiki.js'
+import { ymCareersHandler } from './ymCareers.js'
 import { zenfolioHandler } from './zenfolio.js'
 
 // Every path shape is tried against every content-matched handler, because a
@@ -373,6 +374,7 @@ const cases: Array<Case> = [
     '',
     new Headers({ 'set-cookie': 'YesWiki-main=0dc6fc2d07d67f79dbe824fa9153cfc3; path=/' }),
   ],
+  ['ymCareers', ymCareersHandler, '', new Headers({ 'x-nas-sid': '410b6c5a' })],
   ['zenfolio', zenfolioHandler, '<link href="https://cdn.zenfolio.com/zf/css/layout.css">'],
 ]
 
