@@ -78,6 +78,7 @@ import { redmineHandler } from './redmine.js'
 import { shaarliHandler } from './shaarli.js'
 import { shopifyHandler } from './shopify.js'
 import { shopserveHandler } from './shopserve.js'
+import { skycmsHandler } from './skycms.js'
 import { smfHandler } from './smf.js'
 import { snacHandler } from './snac.js'
 import { spipHandler } from './spip.js'
@@ -138,6 +139,7 @@ const paths = [
   '/alice/project',
   '/alice/project/issues',
   '/p/12345',
+  '/2503/a-page.html',
   '/display/SPACE',
   '/wiki/display/SPACE',
   '/wiki/spaces/SPACE/overview',
@@ -362,6 +364,11 @@ const cases: Array<Case> = [
   ['shaarli', shaarliHandler, '<div id="shaarli-menu"></div>'],
   ['shopify', shopifyHandler, '', new Headers({ 'powered-by': 'Shopify' })],
   ['shopserve', shopserveHandler, '<a href="/hpgen/HPB/rss.xml">'],
+  [
+    'skycms',
+    skycmsHandler,
+    '<link href="/cms/public/image/default/bip_v4/favicon/a.png"><a href="/3467/lista-kanalow-rss.html">',
+  ],
   [
     'smf',
     smfHandler,

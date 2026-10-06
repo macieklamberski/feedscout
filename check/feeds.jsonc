@@ -1488,6 +1488,12 @@
       "https://nishioka-soy.com/hpgen/HPB/rss.xml"
     ]
   },
+  "skycms": {
+    "skycms:page": [
+      "https://bip.krapkowice.pl/rss/2503/miasto-i-gmina-krapkowice.html",
+      "https://bip.olesno.pl/rss/10/mapa-biuletynu.html"
+    ]
+  },
   "smeBlog": {
     "sme-blog:posts": "https://blog.sme.sk/tomasvanco/rss",
     "sme-blog:site": "https://blog.sme.sk/rss"
