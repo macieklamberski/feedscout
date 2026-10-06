@@ -179,6 +179,7 @@ import { pinterestHandler } from './platforms/pinterest.js'
 import { pixelfedHandler } from './platforms/pixelfed.js'
 import { placementIndiaHandler } from './platforms/placementIndia.js'
 import { pleromaHandler } from './platforms/pleroma.js'
+import { ploneHandler } from './platforms/plone.js'
 import { plurkHandler } from './platforms/plurk.js'
 import { pmwikiHandler } from './platforms/pmwiki.js'
 import { podbeanHandler } from './platforms/podbean.js'
@@ -579,6 +580,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     pixelfedHandler,
     placementIndiaHandler,
     pleromaHandler,
+    ploneHandler,
     plurkHandler,
     pmwikiHandler,
     podbeanHandler,

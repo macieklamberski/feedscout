@@ -62,6 +62,7 @@ import { phpbbHandler } from './phpbb.js'
 import { pixelfedHandler } from './pixelfed.js'
 import { placementIndiaHandler } from './placementIndia.js'
 import { pleromaHandler } from './pleroma.js'
+import { ploneHandler } from './plone.js'
 import { pmwikiHandler } from './pmwiki.js'
 import { podhomeHandler } from './podhome.js'
 import { podloveHandler } from './podlove.js'
@@ -309,6 +310,11 @@ const cases: Array<Case> = [
     'pleroma',
     pleromaHandler,
     '<script id="initial-results" type="application/json">{"/api/pleroma/frontend_configurations":{}}</script>',
+  ],
+  [
+    'plone',
+    ploneHandler,
+    '<body class="portaltype-folder" data-base-url="https://example.org/news">',
   ],
   ['pmwiki', pmwikiHandler, '<!--HTMLHeader-->'],
   [

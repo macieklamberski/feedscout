@@ -1191,6 +1191,19 @@
       "https://lain.com/users/lain/feed.rss"
     ]
   },
+  "plone": {
+    "plone:folder": [
+      "https://www.codot.gov/news/region1news/RSS",
+      "https://www.codot.gov/news/region1news/rss.xml",
+      "https://www.codot.gov/news/region1news/atom.xml"
+    ],
+    "plone:search": "https://www.zeelandia.ua/search_rss?SearchableText=bread",
+    "plone:site": [
+      "https://aria.pasteur.fr/RSS",
+      "https://aria.pasteur.fr/rss.xml",
+      "https://aria.pasteur.fr/atom.xml"
+    ]
+  },
   "plurk": {
     "plurk:plurks": "https://www.plurk.com/plurkoffice.xml",
     "plurk:responses": "https://www.plurk.com/p/3j6p8yayds.xml"
