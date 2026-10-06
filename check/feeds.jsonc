@@ -449,11 +449,21 @@
     ]
   },
   "fc2": {
-    "fc2:comments": "https://tetsujin.blog.fc2.com/?xml&comment",
-    "fc2:posts": "https://tetsujin.blog.fc2.com/?xml",
-    "fc2:trackbacks": {
-      "skip": "empty on every blog tried"
-    }
+    "fc2:comments": [
+      "https://tetsujin.blog.fc2.com/?xml&comment",
+      "https://kagiana.fc2.net/?xml&comment",
+      "http://tyodai.blog.2nt.com/?xml&comment"
+    ],
+    "fc2:posts": [
+      "https://tetsujin.blog.fc2.com/?xml",
+      "https://kagiana.fc2.net/?xml",
+      "http://tyodai.blog.2nt.com/?xml"
+    ],
+    "fc2:trackbacks": [
+      "https://marsee101.blog.fc2.com/?xml&trackback",
+      "http://alohakozo.fc2.net/?xml&trackback",
+      "http://tyodai.blog.2nt.com/?xml&trackback"
+    ]
   },
   "fireside": {
     "fireside:podcast": ["https://feeds.fireside.fm/office/rss", "https://office.fireside.fm/json"]

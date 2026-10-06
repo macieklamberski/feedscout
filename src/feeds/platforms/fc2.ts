@@ -1,21 +1,37 @@
-import { parseUrl } from 'trousse'
+import { getSubdomain, isHostOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
-// Discoverability: Discoverable without handler.
+// Discoverability: Partially discoverable without handler.
+// Generic covers blog, fc2Net (html), partly covers 2nt.
 
 export type Fc2Url = { kind: 'blog' }
 
-const blogHostRegex = /\.blog\d*\.fc2\.com$/i
+// A blog is one label under these domains.
+const domains = ['blog.2nt.com', 'fc2.net']
+
+const numberedSubdomainRegex = /^[^.]+\.blog\d*$/i
+
+// Service hosts on the fc2.net blog farm: the portal redirect, the FC2 ID login and a test host.
+const excludedHosts = ['blog.fc2.net', 'id.fc2.net', 'test.fc2.net']
 
 export const parseFc2Url = (url: string): Fc2Url | undefined => {
-  const parsedUrl = parseUrl(url)
-
-  if (!parsedUrl || !blogHostRegex.test(parsedUrl.hostname)) {
+  if (isHostOf(url, excludedHosts)) {
     return
   }
 
-  return { kind: 'blog' }
+  const blog = getSubdomain(url, domains)
+
+  if (blog && !blog.includes('.')) {
+    return { kind: 'blog' }
+  }
+
+  // A blog on fc2.com is one label above a blog or blog{n} label.
+  const numberedSubdomain = getSubdomain(url, 'fc2.com')
+
+  if (numberedSubdomain && numberedSubdomainRegex.test(numberedSubdomain)) {
+    return { kind: 'blog' }
+  }
 }
 
 export const fc2Handler: PlatformHandler = {
