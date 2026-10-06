@@ -673,6 +673,10 @@
     "geoblog:trip": "Trip",
     "openedition:documents": "Documents",
     "openedition:issues": "Issues",
-    "openedition:reviews": "Reviews"
+    "openedition:reviews": "Reviews",
+    "jinbo:posts": "Posts",
+    "jinbo:responses": "Comments and trackbacks",
+    "jinbo:category": "Category",
+    "jinbo:tag": "Tag"
   }
 }

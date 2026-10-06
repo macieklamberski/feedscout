@@ -2881,6 +2881,16 @@ Discovers the feeds of an academic journal on OpenEdition Journals at `journals.
 |-------------|-----------------|
 | `journals.openedition.org/{journal}/…` | Documents at `{journal}/backend?format=rssdocuments`, issues at `?format=rssnumeros` and reviews at `?format=rssdocuments&type=review` (RSS 1.0) |
 
+### Jinbo blog
+
+Discovers the feeds of a blog on Jinbonet's blog host, `blog.jinbo.net/{user}`. The blog name keeps the case its own pages link the feeds in, and a tag or category page that found no posts gets only the blog's feeds.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `blog.jinbo.net/{user}` | Posts feed + comments and trackbacks feed (RSS and Atom) |
+| `blog.jinbo.net/{user}/category/{id}` | Category feed (Atom) + blog feeds |
+| `blog.jinbo.net/{user}/tag/{tag}` | Tag feed (Atom) + blog feeds |
+
 ## Basic Usage
 
 ```typescript
@@ -3025,6 +3035,7 @@ import {
   ivooxHandler,
   jellypodHandler,
   jimdoHandler,
+  jinboHandler,
   jiraHandler,
   jugemHandler,
   kickstarterHandler,
