@@ -737,6 +737,10 @@
   "hubzilla": {
     "hubzilla:channel": "https://zotum.net/feed/hub"
   },
+  "huffduffer": {
+    "huffduffer:huffduffs": "https://huffduffer.com/wjt/rss",
+    "huffduffer:related": "https://huffduffer.com/robby/56876/related/rss"
+  },
   "insanejournal": {
     "insanejournal:posts": [
       "https://squeaky.insanejournal.com/data/rss",
