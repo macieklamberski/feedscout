@@ -1514,6 +1514,8 @@ Discovers the RSS feeds of an FC2 blog.
 |-------------|-----------------|
 | `{user}.blog.fc2.com` | Posts + comments + trackbacks feeds (RSS) |
 | `{user}.blog{n}.fc2.com` | Posts + comments + trackbacks feeds (RSS) |
+| `{user}.fc2.net` | Posts + comments + trackbacks feeds (RSS) |
+| `{user}.blog.2nt.com` | Posts + comments + trackbacks feeds (RSS) |
 
 > [!NOTE]
 > The canonical host redirects to a numbered host from the old sharding scheme, so both shapes are matched and the feed is built from whichever host answers.
