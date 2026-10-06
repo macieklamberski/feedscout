@@ -2740,6 +2740,19 @@ Discovers the job offer feeds of a Talentsoft career site, hosted on `talent-sof
 | `{site}/offre-de-emploi/liste-offres.aspx?{search}`, `{site}/job/list-of-jobs.aspx?{search}` | Search feed the page links at `/handlers/offerRss.ashx?{criteria}` + all offers feed (RSS) |
 | `{site}/`, any other page | All offers feed at `/handlers/offerRss.ashx?LCID={lcid}`, in the language the page url or its all offers link names (RSS) |
 
+### Plone
+
+Discovers the search and syndication feeds of a classic Plone site. Detected by the `portaltype-` class every classic template prints on the body, so any domain is covered. A site under a sub-path gets its feeds there. Volto front ends print no such class and are left to generic discovery.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `{site}/@@search?{query}`, `{site}/search?{query}` | Search results for the same query at `{site}/search_rss?{query}` (RSS 1.0) |
+| `{site}/` | Site feed (RSS 1.0 + RSS 2.0 + Atom) |
+| `{site}/{folder}`, any folder or collection page | Folder feed at `{folder}/RSS` (RSS 1.0 + RSS 2.0 + Atom) |
+
+> [!NOTE]
+> A site owner turns syndication on per folder, so a folder without it answers these URLs with 404. Document, news item, event, file, image and link pages serve no feed.
+
 ## Basic Usage
 
 ```typescript
@@ -2937,6 +2950,7 @@ import {
   pixelfedHandler,
   placementIndiaHandler,
   pleromaHandler,
+  ploneHandler,
   plurkHandler,
   pmwikiHandler,
   podbeanHandler,

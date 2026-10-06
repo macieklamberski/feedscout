@@ -638,6 +638,9 @@
     "edlio:assignments": "Assignments",
     "edlio:news": "News",
     "talentsoft:offers": "Job offers",
-    "talentsoft:search": "Search results"
+    "talentsoft:search": "Search results",
+    "plone:folder": "Folder",
+    "plone:search": "Search",
+    "plone:site": "Site"
   }
 }
