@@ -2891,6 +2891,16 @@ Discovers the feeds of a blog on Jinbonet's blog host, `blog.jinbo.net/{user}`. 
 | `blog.jinbo.net/{user}/category/{id}` | Category feed (Atom) + blog feeds |
 | `blog.jinbo.net/{user}/tag/{tag}` | Tag feed (Atom) + blog feeds |
 
+### TischtennisLive
+
+Discovers the feeds of a table tennis association on `{association}.tischtennislive.de`. A league or group page gets the results feeds whose id its own feed link names, since a results feed answers any id.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `{association}.tischtennislive.de/?L2P={league}`, a league overview linking its results feeds | League results of the last 10 days + fixtures of the next 10 days at `/Export/Tischtennis/RSS.aspx?Typ=Wett&ID={league}&Next={0\|1}` (RSS) |
+| `{association}.tischtennislive.de/?L3=SpielUebersicht&Gruppe={group}`, a match overview linking its results feeds | Group results of the last 10 days + fixtures of the next 10 days at `/Export/Tischtennis/RSS.aspx?Typ=Gruppe&ID={group}&Next={0\|1}` (RSS) |
+| `{association}.tischtennislive.de`, any other page | News, dates, documents and tournaments feeds (RSS) |
+
 ## Basic Usage
 
 ```typescript
@@ -3153,6 +3163,7 @@ import {
   teletypeHandler,
   tenderHandler,
   tildesHandler,
+  tischtennisliveHandler,
   tistoryHandler,
   togetterHandler,
   tourTravelWorldHandler,

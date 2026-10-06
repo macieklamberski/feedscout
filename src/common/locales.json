@@ -677,6 +677,14 @@
     "jinbo:posts": "Posts",
     "jinbo:responses": "Comments and trackbacks",
     "jinbo:category": "Category",
-    "jinbo:tag": "Tag"
+    "jinbo:tag": "Tag",
+    "tischtennislive:dates": "Dates",
+    "tischtennislive:documents": "Documents",
+    "tischtennislive:group-fixtures": "Group fixtures",
+    "tischtennislive:group-results": "Group results",
+    "tischtennislive:league-fixtures": "League fixtures",
+    "tischtennislive:league-results": "League results",
+    "tischtennislive:news": "News",
+    "tischtennislive:tournaments": "Tournaments"
   }
 }
