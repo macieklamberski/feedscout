@@ -122,6 +122,7 @@ import { itchioHandler } from './platforms/itchio.js'
 import { ivooxHandler } from './platforms/ivoox.js'
 import { jellypodHandler } from './platforms/jellypod.js'
 import { jimdoHandler } from './platforms/jimdo.js'
+import { jinboHandler } from './platforms/jinbo.js'
 import { jiraHandler } from './platforms/jira.js'
 import { joomlaHandler } from './platforms/joomla.js'
 import { jugemHandler } from './platforms/jugem.js'
@@ -536,6 +537,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     ivooxHandler,
     jellypodHandler,
     jimdoHandler,
+    jinboHandler,
     jiraHandler,
     joomlaHandler,
     jugemHandler,

@@ -806,6 +806,12 @@
   "jimdo": {
     "jimdo:blog": ["https://www.quon-for.com/rss/blog", "https://neubritz.jimdofree.com/rss/blog"]
   },
+  "jinbo": {
+    "jinbo:category": "https://blog.jinbo.net/homocultura/atom/category/9",
+    "jinbo:posts": ["https://blog.jinbo.net/isogai/rss", "https://blog.jinbo.net/onscar/atom"],
+    "jinbo:responses": "https://blog.jinbo.net/isogai/rss/response",
+    "jinbo:tag": "https://blog.jinbo.net/ysj40/atom/tag/56918"
+  },
   "jira": {
     "jira:project": "https://jira.atlassian.com/plugins/servlet/streams?key=JRASERVER",
     "jira:site": "https://ecosystem.atlassian.net/plugins/servlet/streams"
