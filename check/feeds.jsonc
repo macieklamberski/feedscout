@@ -1557,6 +1557,16 @@
     "spip:keyword": "https://stuut.info/spip.php?page=backend&id_mot=169",
     "spip:section": "https://www.comitecerezo.org/spip.php?page=backend&id_rubrique=17"
   },
+  "sportadmin": {
+    "sportadmin:news": [
+      "https://skarahk.web.sportadmin.se/rss/",
+      "https://ikstanstad.web.sportadmin.se/rss/"
+    ],
+    "sportadmin:team": [
+      "https://lugihandboll.web.sportadmin.se/rss/?SID=33781",
+      "https://skarahk.web.sportadmin.se/rss/?SID=32770"
+    ]
+  },
   "sportsregions": {
     "sportsregions:events": "https://echiquierpontivy.sportsregions.fr/rss/evenement",
     "sportsregions:news": "https://rugby-club-bournazel.sportsregions.fr/rss/news"

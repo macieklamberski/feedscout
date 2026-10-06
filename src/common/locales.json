@@ -664,6 +664,8 @@
     "tender:discussions": "Discussions",
     "alloforum:category": "Category",
     "alloforum:latest-topics": "Latest topics",
-    "alloforum:subcategory": "Subcategory"
+    "alloforum:subcategory": "Subcategory",
+    "sportadmin:news": "Club news",
+    "sportadmin:team": "Team news"
   }
 }
