@@ -685,6 +685,11 @@
     "tischtennislive:league-fixtures": "League fixtures",
     "tischtennislive:league-results": "League results",
     "tischtennislive:news": "News",
-    "tischtennislive:tournaments": "Tournaments"
+    "tischtennislive:tournaments": "Tournaments",
+    "newswire:beat": "Beat",
+    "newswire:news": "News",
+    "newswire:newsroom": "Newsroom",
+    "newswire:press-releases": "Press releases",
+    "newswire:social": "Social wire"
   }
 }

@@ -2901,6 +2901,16 @@ Discovers the feeds of a table tennis association on `{association}.tischtennisl
 | `{association}.tischtennislive.de/?L3=SpielUebersicht&Gruppe={group}`, a match overview linking its results feeds | Group results of the last 10 days + fixtures of the next 10 days at `/Export/Tischtennis/RSS.aspx?Typ=Gruppe&ID={group}&Next={0\|1}` (RSS) |
 | `{association}.tischtennislive.de`, any other page | News, dates, documents and tournaments feeds (RSS) |
 
+### Newswire
+
+Discovers the feeds of a company newsroom on `{newsroom}.newswire.com`. The newsroom links its own feed, and its beat and content type pages link none.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `{newsroom}.newswire.com/browse/beat/{beat}` | Beat feed at `/browse/rss/beat/{beat}` (RSS) |
+| `{newsroom}.newswire.com/browse/pr`, `/browse/news`, `/browse/social` | Press releases, news or social wire feed at `/browse/rss/{type}` (RSS) |
+| `{newsroom}.newswire.com`, any other page | Newsroom feed at `/browse/rss` (RSS) |
+
 ## Basic Usage
 
 ```typescript
@@ -3078,6 +3088,7 @@ import {
   neocitiesHandler,
   netcrewHandler,
   nethouseHandler,
+  newswireHandler,
   niconicoHandler,
   ningHandler,
   nodebbHandler,

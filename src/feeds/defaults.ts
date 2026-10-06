@@ -159,6 +159,7 @@ import { nebulaHandler } from './platforms/nebula.js'
 import { neocitiesHandler } from './platforms/neocities.js'
 import { netcrewHandler } from './platforms/netcrew.js'
 import { nethouseHandler } from './platforms/nethouse.js'
+import { newswireHandler } from './platforms/newswire.js'
 import { niconicoHandler } from './platforms/niconico.js'
 import { ningHandler } from './platforms/ning.js'
 import { nodebbHandler } from './platforms/nodebb.js'
@@ -575,6 +576,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     neocitiesHandler,
     netcrewHandler,
     nethouseHandler,
+    newswireHandler,
     niconicoHandler,
     ningHandler,
     nodebbHandler,

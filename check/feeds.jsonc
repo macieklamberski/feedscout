@@ -1053,6 +1053,17 @@
       "https://errorfreeled.nethouse.me/posts/rss"
     ]
   },
+  "newswire": {
+    "newswire:beat": "https://hubstor.newswire.com/browse/rss/beat/information-technology",
+    "newswire:news": {
+      "skip": "the host rate-limits feed requests, so three newswire urls stay"
+    },
+    "newswire:newsroom": {
+      "skip": "generic discovery finds it, and the host rate-limits feed requests"
+    },
+    "newswire:press-releases": "https://orthoatlanta.newswire.com/browse/rss/pr",
+    "newswire:social": "https://aespire.newswire.com/browse/rss/social"
+  },
   "niconico": {
     "niconico:blog": "https://ch.nicovideo.jp/yoshikiofficial/blomaga/nico/feed",
     "niconico:live": "https://ch.nicovideo.jp/yoshikiofficial/live?rss=2.0",
