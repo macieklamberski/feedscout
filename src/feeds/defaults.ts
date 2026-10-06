@@ -245,6 +245,7 @@ import { sverigesRadioHandler } from './platforms/sverigesRadio.js'
 import { syosetuHandler } from './platforms/syosetu.js'
 import { talentsoftHandler } from './platforms/talentsoft.js'
 import { teletypeHandler } from './platforms/teletype.js'
+import { tenderHandler } from './platforms/tender.js'
 import { textpatternHandler } from './platforms/textpattern.js'
 import { tildesHandler } from './platforms/tildes.js'
 import { tistoryHandler } from './platforms/tistory.js'
@@ -652,6 +653,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     syosetuHandler,
     talentsoftHandler,
     teletypeHandler,
+    tenderHandler,
     textpatternHandler,
     tildesHandler,
     tistoryHandler,

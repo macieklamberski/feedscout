@@ -2817,6 +2817,15 @@ Discovers the collection and search feeds of an OPUS 4 publication repository. D
 | `{repository}/solrsearch/index/search/searchtype/collection/id/{id}` | Collection feed the page links, else `{repository}/rss/index/index/searchtype/collection/id/{id}` (RSS) |
 | `{repository}/solrsearch/index/search/searchtype/simple/query/{query}/…` | Search results feed the page links, else the same query and facets under `{repository}/rss/index/index/` (RSS) |
 
+### Tender
+
+Discovers the discussion feeds of a Tender Support site, hosted on `tenderapp.com` or on the company's own domain. A custom domain is detected by the `_tender19_session` cookie or the `Tender` settings script every page prints. A site under `/help/` gets its feeds there, and a missing page gets none.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `{site}/discussions/{category}/{discussion}` | Discussion comments feed (Atom) |
+| `{site}/`, any other page | All discussions feed (Atom) |
+
 ## Basic Usage
 
 ```typescript
@@ -3072,6 +3081,7 @@ import {
   syosetuHandler,
   talentsoftHandler,
   teletypeHandler,
+  tenderHandler,
   tildesHandler,
   tistoryHandler,
   togetterHandler,
