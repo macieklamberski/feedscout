@@ -690,6 +690,8 @@
     "newswire:news": "News",
     "newswire:newsroom": "Newsroom",
     "newswire:press-releases": "Press releases",
-    "newswire:social": "Social wire"
+    "newswire:social": "Social wire",
+    "ojs:announcements": "Announcements",
+    "ojs:articles": "Articles"
   }
 }

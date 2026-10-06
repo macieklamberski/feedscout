@@ -1117,6 +1117,18 @@
   "odysee": {
     "odysee:videos": "https://odysee.com/$/rss/@Odysee:8"
   },
+  "ojs": {
+    "ojs:announcements": [
+      "https://revistas.uned.es/index.php/rif/gateway/plugin/AnnouncementFeedGatewayPlugin/atom",
+      "https://revistas.uned.es/index.php/rif/gateway/plugin/AnnouncementFeedGatewayPlugin/rss",
+      "https://revistas.uned.es/index.php/rif/gateway/plugin/AnnouncementFeedGatewayPlugin/rss2"
+    ],
+    "ojs:articles": [
+      "https://revistas.uned.es/index.php/rif/gateway/plugin/WebFeedGatewayPlugin/atom",
+      "https://revistas.uned.es/index.php/rif/gateway/plugin/WebFeedGatewayPlugin/rss",
+      "https://revistas.uned.es/index.php/rif/gateway/plugin/WebFeedGatewayPlugin/rss2"
+    ]
+  },
   "omeka": {
     "omeka:filtered-items": [
       "https://digitalsc.lib.vt.edu/items/browse?collection=10&output=rss2",
