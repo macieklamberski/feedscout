@@ -634,6 +634,8 @@
     "sapo-blogs:comments": "Comments",
     "sapo-blogs:post-comments": "Post comments",
     "sapo-blogs:posts": "Posts",
-    "sapo-blogs:tag": "Tag"
+    "sapo-blogs:tag": "Tag",
+    "edlio:assignments": "Assignments",
+    "edlio:news": "News"
   }
 }

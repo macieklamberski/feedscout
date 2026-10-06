@@ -400,6 +400,16 @@
       "https://www.theduckwebcomics.com/Girl_Love/rss/"
     ]
   },
+  "edlio": {
+    "edlio:assignments": [
+      "https://dbhs.wvusd.org/apps/classes/assignment_rss.jsp?classREC_ID=690635",
+      "https://www.edhs.org/apps/classes/assignment_rss.jsp?classREC_ID=1054871"
+    ],
+    "edlio:news": [
+      "https://ochre.mvsd.ca/apps/news/rss",
+      "https://west.vallivue.org/apps/news/rss?categoryid=10874"
+    ]
+  },
   "eklablog": {
     "eklablog:comments": "https://enaelyork.eklablog.com/rss/comments",
     "eklablog:posts": "https://enaelyork.eklablog.com/rss"

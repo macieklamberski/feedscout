@@ -2721,6 +2721,16 @@ Discovers the job feeds of a YM Careers board that an association runs on its ow
 | `{board}/jobs/{filter}/{value}/…` | Filtered jobs feed at `/jobs/{filter}/{value}/…?display=rss` |
 | Any other page | All jobs feed at `/jobs?display=rss` |
 
+### Edlio
+
+Discovers the news and class assignment feeds of an Edlio school website. Detected by the `/apps/js/common/list-pack.js` script every page loads, so any domain is covered.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `{site}/apps/news/`, `{site}/apps/news/category/{id}` | News feed of the category the page links (RSS) |
+| `{site}/apps/classes/{id}/assignments/` | Assignments feed of the class the page links (RSS) |
+| `{site}/`, any other page | News feed (RSS) |
+
 ## Basic Usage
 
 ```typescript
@@ -2821,6 +2831,7 @@ import {
   dreamwidthHandler,
   drupalHandler,
   dspaceHandler,
+  edlioHandler,
   eklablogHandler,
   estrankyHandler,
   exblogHandler,
