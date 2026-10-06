@@ -1500,6 +1500,7 @@ Discovers the feeds of a Discuz! board. Detected by the `Discuz!` generator meta
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | `{board}/forum-{fid}-1.html` | Board feed + site feed (RSS) |
+| `{board}/forumdisplay.php?fid={fid}` on Discuz! 7 and older | Board feed + site feed (RSS) from `rss.php` |
 | Any other page | Site feed (RSS) |
 
 > [!NOTE]

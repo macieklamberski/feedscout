@@ -345,8 +345,14 @@
     "discourse:topic": "https://users.rust-lang.org/t/welcome-to-the-rust-users-forum/2.rss"
   },
   "discuz": {
-    "discuz:board": "https://bbs.kafan.cn/forum.php?mod=rss&fid=22",
-    "discuz:site": "https://bbs.kafan.cn/forum.php?mod=rss"
+    "discuz:board": [
+      "https://bbs.kafan.cn/forum.php?mod=rss&fid=22",
+      "http://myq.joinbbs.net/rss.php?fid=113&auth=0"
+    ],
+    "discuz:site": [
+      "https://bbs.kafan.cn/forum.php?mod=rss",
+      "http://myq.joinbbs.net/rss.php?auth=0"
+    ]
   },
   "dokuwiki": {
     "dokuwiki:namespace": "https://wiki.php.net/feed.php?ns=rfc",
