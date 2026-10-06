@@ -2164,7 +2164,7 @@ Discovers the feeds of blog.hu blogs, and the activity feed of a blog.hu user.
 
 ### ChamberMaster
 
-Discovers the RSS feeds of a ChamberMaster (GrowthZone) chamber of commerce directory. Detected by the `x-source: cmdotnet…` response header, so any domain is covered. The pages link none of these feeds.
+Discovers the RSS feeds of a ChamberMaster (GrowthZone) chamber of commerce directory. Detected by the `x-source: cmdotnet…` response header, so any domain is covered. The pages link none of these feeds. On a `chambermaster.com` or `memberzone.com` subdomain the feeds are spelled with `http`, since over `https` they redirect to the sign-in page.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|

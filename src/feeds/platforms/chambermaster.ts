@@ -1,4 +1,4 @@
-import { getPathSegments, isAnyOf } from 'trousse'
+import { getPathSegments, isAnyOf, isSubdomainOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, hasMarker } from '../../common/utils.js'
 
@@ -8,6 +8,10 @@ import { composeHint, hasMarker } from '../../common/utils.js'
 export type ChambermasterUrl = {
   kind: 'events' | 'directory' | 'jobs' | 'hotDeals' | 'marketSpace' | 'news' | 'memberToMember'
 }
+
+// A chamber on its platform subdomain serves the feeds only over http. Over https every feed
+// redirects to the sign-in page.
+const domains = ['chambermaster.com', 'memberzone.com']
 
 // The value names the server, as in `cmdotnetJYPM06`, so only the prefix is fixed.
 export const isChambermasterHeaders = (headers: Headers): boolean => {
@@ -63,8 +67,9 @@ export const chambermasterHandler: PlatformHandler = {
       return []
     }
 
-    const { origin } = new URL(url)
-    const feedUrl = (name: string) => `${origin}/Feed/rss/${name}.rss`
+    const { host, origin } = new URL(url)
+    const feedsOrigin = isSubdomainOf(url, domains) ? `http://${host}` : origin
+    const feedUrl = (name: string) => `${feedsOrigin}/Feed/rss/${name}.rss`
 
     if (parsed.kind === 'events') {
       return [
