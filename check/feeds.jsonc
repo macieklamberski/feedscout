@@ -1867,6 +1867,10 @@
     "yeswiki:form-entries": "https://yeswiki.net/?BazaR/rss&id=3",
     "yeswiki:recent-changes": "https://yeswiki.net/?DerniersChangementsRSS/xml"
   },
+  "ymCareers": {
+    "ym-careers:browse": "https://ncaamarket.ncaa.org/jobs/category/coaching-basketball?display=rss",
+    "ym-careers:search": "https://careers.tappi.org/jobs?display=rss&keywords=engineer"
+  },
   "youtube": {
     "youtube:all": [
       "https://www.youtube.com/feeds/videos.xml?channel_id=UCXuqSBlHAE6Xw-yeJA0Tunw",
