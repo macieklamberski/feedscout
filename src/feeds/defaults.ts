@@ -170,6 +170,7 @@ import { odyseeHandler } from './platforms/odysee.js'
 import { omekaHandler } from './platforms/omeka.js'
 import { omnystudioHandler } from './platforms/omnystudio.js'
 import { opencartJournalHandler } from './platforms/opencartJournal.js'
+import { openeditionHandler } from './platforms/openedition.js'
 import { openstatusHandler } from './platforms/openstatus.js'
 import { opusHandler } from './platforms/opus.js'
 import { overblogHandler } from './platforms/overblog.js'
@@ -583,6 +584,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     omekaHandler,
     omnystudioHandler,
     opencartJournalHandler,
+    openeditionHandler,
     openstatusHandler,
     opusHandler,
     overblogHandler,
