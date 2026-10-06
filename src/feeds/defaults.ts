@@ -167,6 +167,7 @@ import { omekaHandler } from './platforms/omeka.js'
 import { omnystudioHandler } from './platforms/omnystudio.js'
 import { opencartJournalHandler } from './platforms/opencartJournal.js'
 import { openstatusHandler } from './platforms/openstatus.js'
+import { opusHandler } from './platforms/opus.js'
 import { overblogHandler } from './platforms/overblog.js'
 import { packagistHandler } from './platforms/packagist.js'
 import { pagecordHandler } from './platforms/pagecord.js'
@@ -573,6 +574,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     omnystudioHandler,
     opencartJournalHandler,
     openstatusHandler,
+    opusHandler,
     overblogHandler,
     packagistHandler,
     pagecordHandler,

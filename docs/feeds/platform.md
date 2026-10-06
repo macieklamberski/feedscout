@@ -2807,6 +2807,15 @@ Discovers the feed of a page in a Polish public information bulletin built on Sk
 |-------------|-----------------|
 | `{site}/{id}/{slug}.html` | Page feed at `/rss/{id}/{slug}.html` (RSS) |
 
+### OPUS
+
+Discovers the collection and search feeds of an OPUS 4 publication repository. Detected by the `frontdoorutil.js` script every layout loads, so any domain is covered. A repository under a sub-path gets its feeds there.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `{repository}/solrsearch/index/search/searchtype/collection/id/{id}` | Collection feed the page links, else `{repository}/rss/index/index/searchtype/collection/id/{id}` (RSS) |
+| `{repository}/solrsearch/index/search/searchtype/simple/query/{query}/…` | Search results feed the page links, else the same query and facets under `{repository}/rss/index/index/` (RSS) |
+
 ## Basic Usage
 
 ```typescript
@@ -2993,6 +3002,7 @@ import {
   omnystudioHandler,
   opencartJournalHandler,
   openstatusHandler,
+  opusHandler,
   overblogHandler,
   packagistHandler,
   pagecordHandler,

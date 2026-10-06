@@ -59,6 +59,7 @@ import { odooHandler } from './odoo.js'
 import { omekaHandler } from './omeka.js'
 import { opencartJournalHandler } from './opencartJournal.js'
 import { openstatusHandler } from './openstatus.js'
+import { opusHandler } from './opus.js'
 import { peertubeHandler } from './peertube.js'
 import { phpbbHandler } from './phpbb.js'
 import { pixelfedHandler } from './pixelfed.js'
@@ -161,6 +162,7 @@ const paths = [
   '/cgi-bin/koha/opac-search.pl?q=news',
   '/cgi-bin/koha/opac-shelves.pl?op=view&shelfnumber=1',
   '/LegislationDetail.aspx?ID=1&GUID=00000000-0000-0000-0000-000000000000',
+  '/solrsearch/index/search/searchtype/collection/id/1',
 ]
 
 type Case = [string, PlatformHandler, string, Headers?]
@@ -313,6 +315,7 @@ const cases: Array<Case> = [
   ['omeka', omekaHandler, '<link href="/plugins/ExhibitBuilder/views/public/css/exhibits.css">'],
   ['opencartJournal', opencartJournalHandler, '<html data-jv="3.0.44">'],
   ['openstatus', openstatusHandler, '<link href="/api/status/summary.json">'],
+  ['opus', opusHandler, '<script src="/layouts/opus4/js/frontdoorutil.js"></script>'],
   ['peertube', peertubeHandler, '', new Headers({ 'x-powered-by': 'PeerTube' })],
   ['phpbb', phpbbHandler, '<body id="phpbb">'],
   ['pixelfed', pixelfedHandler, '<meta name="generator" content="pixelfed">'],
