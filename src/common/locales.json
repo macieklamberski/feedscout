@@ -630,6 +630,10 @@
     "typecho:page": "Page",
     "typecho:posts": "Posts",
     "ym-careers:browse": "Filtered jobs",
-    "ym-careers:search": "Job search"
+    "ym-careers:search": "Job search",
+    "sapo-blogs:comments": "Comments",
+    "sapo-blogs:post-comments": "Post comments",
+    "sapo-blogs:posts": "Posts",
+    "sapo-blogs:tag": "Tag"
   }
 }
