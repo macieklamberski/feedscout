@@ -2781,6 +2781,15 @@ Discovers the Atom feeds of a Redmine install, Planio's hosted ones on `plan.io`
 | `{site}/projects` | Projects |
 | `{site}/`, any other page | News + activity |
 
+### b2evolution
+
+Discovers the feeds of a b2evolution blog, kowsarblog.ir among them. Detected by the generator meta, the core scripts and styles every page loads from the install's `rsc/` directory, or the `session_b2evo` cookie, so any domain is covered. The blog comes from the feed links on the page, since b2evolution answers an unknown blog path with the default blog's feeds, and a 404 page gets none.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `{blog}/{post}` | Post comments feed the page links at `?tempskin=_rss2&disp=comments&p={id}` + the blog feeds below |
+| Any page that links its blog's feeds | Posts at `{blog}?tempskin=_rss2` and `_atom` + comments at `{blog}?tempskin=_rss2&disp=comments` and `_atom` |
+
 ## Basic Usage
 
 ```typescript
@@ -2838,6 +2847,7 @@ import {
   atyponHandler,
   audioboomHandler,
   aushaHandler,
+  b2evolutionHandler,
   bearblogHandler,
   behanceHandler,
   bigCartelHandler,

@@ -59,6 +59,20 @@
   "ausha": {
     "ausha:podcast": "https://feed.ausha.co/VODwGU7PMQGG"
   },
+  "b2evolution": {
+    "b2evolution:comments": [
+      "https://hedayat95.kowsarblog.ir/?tempskin=_rss2&disp=comments",
+      "http://agal-gz.org/blogues/index.php/gomes/?tempskin=_atom&disp=comments"
+    ],
+    "b2evolution:post-comments": [
+      "http://blogs.kleineisel.de/b2evolution/index.php/brotundrosen/?tempskin=_rss2&disp=comments&p=2060",
+      "https://loobynet.co.uk/?tempskin=_rss2&disp=comments&p=44"
+    ],
+    "b2evolution:posts": [
+      "https://gold.kowsarblog.ir/?tempskin=_rss2",
+      "http://blogs.kleineisel.de/b2evolution/index.php/brotundrosen/?tempskin=_atom"
+    ]
+  },
   "bearblog": {
     "bearblog:discover": [
       "https://bearblog.dev/discover/feed/",
