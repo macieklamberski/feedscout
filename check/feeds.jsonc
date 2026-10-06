@@ -567,6 +567,9 @@
       "https://ir.labcorp.com/rss/sec-filings.xml"
     ]
   },
+  "geoblog": {
+    "geoblog:trip": "http://zielonagora.geoblog.pl/podroz/rss/27449.xml"
+  },
   "ghost": {
     "ghost:author": "https://demo.ghost.io/author/ghost/rss/",
     "ghost:blog": "https://demo.ghost.io/rss/",

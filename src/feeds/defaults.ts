@@ -89,6 +89,7 @@ import { friendicaHandler } from './platforms/friendica.js'
 import { funkwhaleHandler } from './platforms/funkwhale.js'
 import { gancioHandler } from './platforms/gancio.js'
 import { gcsWebHandler } from './platforms/gcsWeb.js'
+import { geoblogHandler } from './platforms/geoblog.js'
 import { ghostHandler } from './platforms/ghost.js'
 import { giteaHandler } from './platforms/gitea.js'
 import { githubHandler } from './platforms/github.js'
@@ -500,6 +501,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     funkwhaleHandler,
     gancioHandler,
     gcsWebHandler,
+    geoblogHandler,
     ghostHandler,
     giteaHandler,
     githubHandler,
