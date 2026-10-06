@@ -236,6 +236,7 @@ import { substackHandler } from './platforms/substack.js'
 import { svbtleHandler } from './platforms/svbtle.js'
 import { sverigesRadioHandler } from './platforms/sverigesRadio.js'
 import { syosetuHandler } from './platforms/syosetu.js'
+import { talentsoftHandler } from './platforms/talentsoft.js'
 import { teletypeHandler } from './platforms/teletype.js'
 import { textpatternHandler } from './platforms/textpattern.js'
 import { tildesHandler } from './platforms/tildes.js'
@@ -635,6 +636,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     svbtleHandler,
     sverigesRadioHandler,
     syosetuHandler,
+    talentsoftHandler,
     teletypeHandler,
     textpatternHandler,
     tildesHandler,

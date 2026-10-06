@@ -81,6 +81,7 @@ import { sportsregionsHandler } from './sportsregions.js'
 import { squarespaceHandler } from './squarespace.js'
 import { statuspageHandler } from './statuspage.js'
 import { svbtleHandler } from './svbtle.js'
+import { talentsoftHandler } from './talentsoft.js'
 import { textpatternHandler } from './textpattern.js'
 import { tourTravelWorldHandler } from './tourTravelWorld.js'
 import { typechoHandler } from './typecho.js'
@@ -356,6 +357,11 @@ const cases: Array<Case> = [
   ['squarespace', squarespaceHandler, '', new Headers({ server: 'Squarespace' })],
   ['statuspage', statuspageHandler, '', new Headers({ 'x-statuspage-version': '5a16926c' })],
   ['svbtle', svbtleHandler, '<link href="https://lightning.svbtle.com/cargo/blog.css">'],
+  [
+    'talentsoft',
+    talentsoftHandler,
+    '<script src="/client/dist/talentsoft-cookies.iife.js"></script>',
+  ],
   ['textpattern', textpatternHandler, '<meta name="generator" content="Textpattern CMS">'],
   [
     'tourTravelWorld',
