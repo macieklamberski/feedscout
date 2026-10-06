@@ -1663,7 +1663,9 @@
       "https://terrytao.wordpress.com/author/teorth/feed/rdf/",
       "https://terrytao.wordpress.com/author/teorth/?feed=rdf",
       "http://blogerslorrainsengages.unblog.fr/author/blogerslorrainsengages/feed/",
-      "https://eurel.hypotheses.org/author/communautarismes/feed/"
+      "https://eurel.hypotheses.org/author/communautarismes/feed/",
+      "https://s2t2.home.blog/author/jimrandell/feed/",
+      "https://tugster.wpcomstaging.com/author/tugster/feed/"
     ],
     "wordpress:category": [
       "https://terrytao.wordpress.com/category/expository/feed/",
@@ -1675,7 +1677,9 @@
       "https://terrytao.wordpress.com/category/expository/feed/rdf/",
       "https://terrytao.wordpress.com/category/expository/?feed=rdf",
       "http://blogerslorrainsengages.unblog.fr/category/transfrontalier-2/feed/",
-      "https://raffl.hypotheses.org/category/actualites/feed/"
+      "https://raffl.hypotheses.org/category/actualites/feed/",
+      "https://s2t2.home.blog/category/teaser/feed/",
+      "https://tugster.wpcomstaging.com/category/great-lakes/feed/"
     ],
     "wordpress:comments": [
       "https://terrytao.wordpress.com/comments/feed/",
@@ -1684,7 +1688,9 @@
       "https://terrytao.wordpress.com/comments/feed/atom/",
       "https://terrytao.wordpress.com/?feed=comments-atom",
       "http://blogerslorrainsengages.unblog.fr/comments/feed/",
-      "https://eurel.hypotheses.org/comments/feed/"
+      "https://eurel.hypotheses.org/comments/feed/",
+      "https://s2t2.home.blog/comments/feed/",
+      "https://tugster.wpcomstaging.com/comments/feed/"
     ],
     "wordpress:date-archive": [
       "https://terrytao.wordpress.com/2007/feed/",
@@ -1712,7 +1718,9 @@
       "https://terrytao.wordpress.com/2007/03/18/feed/rdf/",
       "https://terrytao.wordpress.com/2007/03/18/?feed=rdf",
       "http://blogerslorrainsengages.unblog.fr/2011/feed/",
-      "https://raffl.hypotheses.org/date/2024/feed/"
+      "https://raffl.hypotheses.org/date/2024/feed/",
+      "https://s2t2.home.blog/2026/feed/",
+      "https://tugster.wpcomstaging.com/2026/feed/"
     ],
     "wordpress:post-comments": [
       "https://terrytao.wordpress.com/2007/03/18/why-global-regularity-for-navier-stokes-is-hard/feed/",
@@ -1722,7 +1730,9 @@
       "https://terrytao.wordpress.com/2007/03/18/why-global-regularity-for-navier-stokes-is-hard/feed/atom/",
       "https://terrytao.wordpress.com/2007/03/18/why-global-regularity-for-navier-stokes-is-hard/?feed=atom",
       "http://blogerslorrainsengages.unblog.fr/2011/10/23/le-temps-de-la-vannerie-en-lorraine/feed/",
-      "https://eurel.hypotheses.org/1/feed/"
+      "https://eurel.hypotheses.org/1/feed/",
+      "https://s2t2.home.blog/2026/10/04/teaser-3341-sum-of-squares/feed/",
+      "https://tugster.wpcomstaging.com/2026/10/04/alpena-3/feed/"
     ],
     "wordpress:posts": [
       "https://terrytao.wordpress.com/feed/",
@@ -1734,7 +1744,9 @@
       "https://terrytao.wordpress.com/feed/rdf/",
       "https://terrytao.wordpress.com/?feed=rdf",
       "http://blogerslorrainsengages.unblog.fr/feed/",
-      "https://raffl.hypotheses.org/feed/"
+      "https://raffl.hypotheses.org/feed/",
+      "https://s2t2.home.blog/feed/",
+      "https://tugster.wpcomstaging.com/feed/"
     ],
     "wordpress:tag": [
       "https://terrytao.wordpress.com/tag/additive-combinatorics/feed/",
@@ -1746,7 +1758,9 @@
       "https://terrytao.wordpress.com/tag/additive-combinatorics/feed/rdf/",
       "https://terrytao.wordpress.com/tag/additive-combinatorics/?feed=rdf",
       "http://blogerslorrainsengages.unblog.fr/tag/pays-des-trois-frontieres/feed/",
-      "https://eurel.hypotheses.org/tag/correspondants/feed/"
+      "https://eurel.hypotheses.org/tag/correspondants/feed/",
+      "https://s2t2.home.blog/tag/by-colin-vout/feed/",
+      "https://tugster.wpcomstaging.com/tag/alpena/feed/"
     ]
   },
   "wpengine": {
