@@ -1323,6 +1323,24 @@
       "http://office-kitatani.jp/index.php?cmd=rss"
     ]
   },
+  "purot": {
+    "purot:page-activity": [
+      "https://aidinkieli.purot.net/changes/juhannustanssit?mode=rss",
+      "https://troy.purot.net/changes/etusivu?mode=rss"
+    ],
+    "purot:page-changes": [
+      "https://aidinkieli.purot.net/changes/juhannustanssit?mode=rss&messages=0",
+      "https://troy.purot.net/changes/etusivu?mode=rss&messages=0"
+    ],
+    "purot:page-discussions": [
+      "https://aidinkieli.purot.net/changes/juhannustanssit?mode=rss&pages=0",
+      "https://troy.purot.net/changes/etusivu?mode=rss&pages=0"
+    ],
+    "purot:recent-changes": [
+      "https://troy.purot.net/changes/all?mode=rss",
+      "https://vesilahdenluontolatu.purot.net/changes/all?mode=rss"
+    ]
+  },
   "pypi": {
     "pypi:new-packages": "https://pypi.org/rss/packages.xml",
     "pypi:releases": "https://pypi.org/rss/project/requests/releases.xml",
