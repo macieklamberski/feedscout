@@ -16,6 +16,7 @@ import { discuzHandler } from './discuz.js'
 import { dokuwikiHandler } from './dokuwiki.js'
 import { drupalHandler } from './drupal.js'
 import { dspaceHandler } from './dspace.js'
+import { edlioHandler } from './edlio.js'
 import { eklablogHandler } from './eklablog.js'
 import { estrankyHandler } from './estranky.js'
 import { exportersIndiaHandler } from './exportersIndia.js'
@@ -200,6 +201,7 @@ const cases: Array<Case> = [
     '<link rel="alternate" href="/feed/rss_2.0/site">',
     new Headers({ 'x-cocoon-version': '2.2.0' }),
   ],
+  ['edlio', edlioHandler, '<script src="/apps/js/common/list-pack.js"></script>'],
   [
     'eklablog',
     eklablogHandler,

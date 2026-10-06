@@ -71,6 +71,7 @@ import { dreamwidthHandler } from './platforms/dreamwidth.js'
 import { drupalHandler } from './platforms/drupal.js'
 import { dspaceHandler } from './platforms/dspace.js'
 import { duckWebcomicsHandler } from './platforms/duckWebcomics.js'
+import { edlioHandler } from './platforms/edlio.js'
 import { eklablogHandler } from './platforms/eklablog.js'
 import { estrankyHandler } from './platforms/estranky.js'
 import { exblogHandler } from './platforms/exblog.js'
@@ -469,6 +470,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     drupalHandler,
     dspaceHandler,
     duckWebcomicsHandler,
+    edlioHandler,
     eklablogHandler,
     estrankyHandler,
     exblogHandler,
