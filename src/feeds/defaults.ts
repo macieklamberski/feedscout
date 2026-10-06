@@ -151,6 +151,7 @@ import { mybbHandler } from './platforms/mybb.js'
 import { naverBlogHandler } from './platforms/naverBlog.js'
 import { nebulaHandler } from './platforms/nebula.js'
 import { neocitiesHandler } from './platforms/neocities.js'
+import { netcrewHandler } from './platforms/netcrew.js'
 import { nethouseHandler } from './platforms/nethouse.js'
 import { niconicoHandler } from './platforms/niconico.js'
 import { ningHandler } from './platforms/ning.js'
@@ -552,6 +553,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     naverBlogHandler,
     nebulaHandler,
     neocitiesHandler,
+    netcrewHandler,
     nethouseHandler,
     niconicoHandler,
     ningHandler,

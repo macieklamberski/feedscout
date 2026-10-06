@@ -48,6 +48,7 @@ import { mediawikiHandler } from './mediawiki.js'
 import { misskeyHandler } from './misskey.js'
 import { mobilizonHandler } from './mobilizon.js'
 import { mybbHandler } from './mybb.js'
+import { netcrewHandler } from './netcrew.js'
 import { nethouseHandler } from './nethouse.js'
 import { ningHandler } from './ning.js'
 import { nodebbHandler } from './nodebb.js'
@@ -273,6 +274,11 @@ const cases: Array<Case> = [
     "<noscript>Mobilizon doesn't work properly without JavaScript</noscript>",
   ],
   ['mybb', mybbHandler, '', new Headers({ 'set-cookie': 'mybb[lastvisit]=1790000000; path=/' })],
+  [
+    'netcrew',
+    netcrewHandler,
+    '<script src="/ssi/js/common.js"></script><link href="/ssi/css/top.css">',
+  ],
   ['nethouse', nethouseHandler, '', new Headers({ 'x-generator': 'nethouse' })],
   [
     'ning',
