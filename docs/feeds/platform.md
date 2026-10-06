@@ -2762,6 +2762,25 @@ Discovers the site updates feed of a Japanese prefecture, city or town website b
 |-------------|-----------------|
 | `{site}/`, `{site}/index.html` | Site updates feed (RDF or RSS) |
 
+### Redmine
+
+Discovers the Atom feeds of a Redmine install, Planio's hosted ones on `plan.io` included. Detected by the "Powered by Redmine" footer link, the `Redmine` description meta or the `_redmine_session` cookie, so any domain is covered. An install under a sub-path gets its feeds there. A private project redirects to the sign-in page, and an error page prints Redmine's error block, so neither gets a feed.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `{site}/projects/{project}`, any other project page | Project activity, plus issues and news when the project menu lists them |
+| `{site}/projects/{project}/issues` | Project issues |
+| `{site}/projects/{project}/news` | Project news |
+| `{site}/projects/{project}/activity` | Project activity |
+| `{site}/projects/{project}/boards/{id}` | Forum messages |
+| `{site}/projects/{project}/repository/…` | Repository revisions |
+| `{site}/issues/{id}` | Issue updates |
+| `{site}/issues` | Issues |
+| `{site}/news` | News |
+| `{site}/activity` | Activity |
+| `{site}/projects` | Projects |
+| `{site}/`, any other page | News + activity |
+
 ## Basic Usage
 
 ```typescript
@@ -2984,6 +3003,7 @@ import {
   realEstateIndiaHandler,
   redcircleHandler,
   redditHandler,
+  redmineHandler,
   reformalHandler,
   royalroadHandler,
   rssComHandler,
