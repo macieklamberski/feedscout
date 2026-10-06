@@ -667,6 +667,7 @@
     "alloforum:subcategory": "Subcategory",
     "sportadmin:news": "Club news",
     "sportadmin:team": "Team news",
-    "laget:news": "News"
+    "laget:news": "News",
+    "geoblog:trip": "Trip"
   }
 }

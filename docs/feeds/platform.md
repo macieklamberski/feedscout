@@ -2854,6 +2854,15 @@ Discovers the news feed of a sports club or team site on laget.se. The team page
 |-------------|-----------------|
 | `www.laget.se/{team}`, `www.laget.se/{team}/…` | News at `www.laget.se/{team}/Home/NewsRss` (RSS) |
 
+### Geoblog.pl
+
+Discovers the trip feed of a travel blog on Geoblog.pl. The trip is read from the page's breadcrumb, since an entry URL does not name it, and a trip feed answers with an empty channel for any made-up id. A user's home page and trip list link every trip feed themselves and get nothing from the handler.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `{user}.geoblog.pl/podroz/{id}/{slug}` | Trip feed at `/podroz/rss/{id}.xml` (RSS) |
+| `{user}.geoblog.pl/wpis/{id}/{slug}` | Trip feed of the entry's trip (RSS) |
+
 ## Basic Usage
 
 ```typescript
@@ -2970,6 +2979,7 @@ import {
   friendicaHandler,
   gancioHandler,
   gcsWebHandler,
+  geoblogHandler,
   ghostHandler,
   giteaHandler,
   githubHandler,
