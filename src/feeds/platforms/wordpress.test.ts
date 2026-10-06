@@ -96,7 +96,11 @@ describe('parseWordpressUrl', () => {
     expect(parseWordpressUrl('https://example.wordpress.com/feed/')).toEqual(expected)
   })
 
-  const blogs = ['https://example.home.blog/', 'https://example.wpcomstaging.com/']
+  const blogs = [
+    'https://example.edublogs.org/',
+    'https://example.home.blog/',
+    'https://example.wpcomstaging.com/',
+  ]
 
   it.each(blogs)('should return the home page for %s', (value) => {
     const expected: WordpressUrl = { kind: 'home' }
@@ -112,12 +116,16 @@ describe('parseWordpressUrl', () => {
     expect(parseWordpressUrl('https://home.blog/')).toBeUndefined()
   })
 
-  it('should return undefined for the www subdomain', () => {
-    expect(parseWordpressUrl('https://www.wordpress.com/')).toBeUndefined()
+  const wwwHosts = ['https://www.edublogs.org/', 'https://www.wordpress.com/']
+
+  it.each(wwwHosts)('should return undefined for the www subdomain %s', (value) => {
+    expect(parseWordpressUrl(value)).toBeUndefined()
   })
 
-  it('should return undefined for a dotted subdomain', () => {
-    expect(parseWordpressUrl('https://www.example.wordpress.com/')).toBeUndefined()
+  const dottedHosts = ['https://www.example.edublogs.org/', 'https://www.example.wordpress.com/']
+
+  it.each(dottedHosts)('should return undefined for the dotted subdomain %s', (value) => {
+    expect(parseWordpressUrl(value)).toBeUndefined()
   })
 
   it('should return undefined for a staging copy', () => {
@@ -132,6 +140,7 @@ describe('wordpressHandler', () => {
       [true, 'http://gbessay.unblog.fr'],
       [true, 'https://eurel.hypotheses.org'],
       [false, 'https://wordpress.com'],
+      [false, 'https://edublogs.org'],
       [false, 'http://unblog.fr'],
       [false, 'https://hypotheses.org'],
       [false, 'https://example.com'],
