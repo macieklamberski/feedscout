@@ -59,6 +59,10 @@ describe('parseLegistarUrl', () => {
     ).toBeUndefined()
   })
 
+  it('should return undefined for an invalid URL', () => {
+    expect(parseLegistarUrl('not a url')).toBeUndefined()
+  })
+
   it('should return undefined for another page', () => {
     expect(parseLegistarUrl('https://madison.legistar.com/Calendar.aspx')).toBeUndefined()
   })
@@ -71,12 +75,16 @@ describe('parseLegistarUrl', () => {
     ).toBeUndefined()
   })
 
-  it('should return undefined for another host', () => {
-    expect(
-      parseLegistarUrl(
-        'https://example.com/LegislationDetail.aspx?ID=1065902&GUID=EFE087C2-C62A-40F9-B1F9-6E2975E86217',
-      ),
-    ).toBeUndefined()
+  it('should return the legislation for a detail page on a custom domain', () => {
+    const value =
+      'https://example.com/LegislationDetail.aspx?ID=1065902&GUID=EFE087C2-C62A-40F9-B1F9-6E2975E86217'
+    const expected: LegistarUrl = {
+      kind: 'legislation',
+      id: '1065902',
+      guid: 'EFE087C2-C62A-40F9-B1F9-6E2975E86217',
+    }
+
+    expect(parseLegistarUrl(value)).toEqual(expected)
   })
 })
 
@@ -89,8 +97,65 @@ describe('legistarHandler', () => {
       expect(legistarHandler.match(value)).toBe(true)
     })
 
+    it('should match a detail page on a custom domain by the load balancer cookie', () => {
+      const value =
+        'https://example.com/MeetingDetail.aspx?ID=1373416&GUID=351F7891-35DC-4AE5-BCED-DA4B7A00E804'
+      const headers = new Headers()
+      headers.append('set-cookie', 'ASP.NET_SessionId=abc; path=/; secure; HttpOnly')
+      headers.append(
+        'set-cookie',
+        'BIGipServerinsite.legistar.com_443=908198666.47873.0000; path=/; Httponly; Secure',
+      )
+
+      expect(legistarHandler.match(value, '', headers)).toBe(true)
+    })
+
+    it('should match a detail page on a custom domain by the share widget', () => {
+      const value =
+        'https://example.com/LegislationDetail.aspx?ID=1065902&GUID=EFE087C2-C62A-40F9-B1F9-6E2975E86217'
+      const content =
+        '<script type="text/javascript" src="https://s7.addthis.com/js/300/addthis_widget.js#username=legistarinsite"></script>'
+
+      expect(legistarHandler.match(value, content)).toBe(true)
+    })
+
+    it('should not match a detail page on a custom domain with another AddThis account', () => {
+      const value =
+        'https://example.com/LegislationDetail.aspx?ID=1065902&GUID=EFE087C2-C62A-40F9-B1F9-6E2975E86217'
+      const content =
+        '<script type="text/javascript" src="https://s7.addthis.com/js/300/addthis_widget.js#username=ra-4f0c7ab43a6b6e1f"></script>'
+
+      expect(legistarHandler.match(value, content)).toBe(false)
+    })
+
+    it('should not match a detail page on a custom domain without a marker', () => {
+      const value =
+        'https://example.com/MeetingDetail.aspx?ID=1373416&GUID=351F7891-35DC-4AE5-BCED-DA4B7A00E804'
+      const headers = new Headers({ 'set-cookie': 'ASP.NET_SessionId=abc; path=/' })
+
+      expect(legistarHandler.match(value, '', headers)).toBe(false)
+    })
+
+    it('should not match a detail page on a custom domain with another load balancer cookie', () => {
+      const value =
+        'https://example.com/MeetingDetail.aspx?ID=1373416&GUID=351F7891-35DC-4AE5-BCED-DA4B7A00E804'
+      const headers = new Headers({
+        'set-cookie': 'BIGipServerlegistar_api_443=908198666.47873.0000; path=/',
+      })
+
+      expect(legistarHandler.match(value, '', headers)).toBe(false)
+    })
+
     it('should not match another page', () => {
       expect(legistarHandler.match('https://madison.legistar.com/Calendar.aspx')).toBe(false)
+    })
+
+    it('should not match another page on a custom domain', () => {
+      const headers = new Headers({
+        'set-cookie': 'BIGipServerinsite.legistar.com_443=908198666.47873.0000; path=/',
+      })
+
+      expect(legistarHandler.match('https://example.com/Calendar.aspx', '', headers)).toBe(false)
     })
   })
 
@@ -121,7 +186,20 @@ describe('legistarHandler', () => {
       expect(legistarHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return empty array for a URL outside Legistar', () => {
+    it('should return the legislation feed on a custom domain', () => {
+      const value =
+        'https://example.com/LegislationDetail.aspx?ID=1065902&GUID=EFE087C2-C62A-40F9-B1F9-6E2975E86217'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://example.com/Feed.ashx?M=LD&ID=1065902&GUID=EFE087C2-C62A-40F9-B1F9-6E2975E86217',
+          hint: { key: 'legistar:legislation', label: 'Legislation' },
+        },
+      ]
+
+      expect(legistarHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return empty array for another page', () => {
       expect(legistarHandler.resolve('https://example.com/')).toEqual([])
     })
   })

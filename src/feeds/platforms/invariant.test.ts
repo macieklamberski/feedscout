@@ -40,6 +40,7 @@ import { jiraHandler } from './jira.js'
 import { joomlaHandler } from './joomla.js'
 import { jugemHandler } from './jugem.js'
 import { kohaHandler } from './koha.js'
+import { legistarHandler } from './legistar.js'
 import { lemmyHandler } from './lemmy.js'
 import { mastodonHandler } from './mastodon.js'
 import { mediawikiHandler } from './mediawiki.js'
@@ -151,6 +152,7 @@ const paths = [
   '/status',
   '/cgi-bin/koha/opac-search.pl?q=news',
   '/cgi-bin/koha/opac-shelves.pl?op=view&shelfnumber=1',
+  '/LegislationDetail.aspx?ID=1&GUID=00000000-0000-0000-0000-000000000000',
 ]
 
 type Case = [string, PlatformHandler, string, Headers?]
@@ -250,6 +252,14 @@ const cases: Array<Case> = [
   ['jugem', jugemHandler, '<script src="./template/js/cookie.js"></script>'],
   ['koha', kohaHandler, '<link rel="stylesheet" href="/opac-tmpl/bootstrap/css/opac.css">'],
   ['lemmy', lemmyHandler, '<div class="lemmy-site" id="app"></div>'],
+  [
+    'legistar',
+    legistarHandler,
+    '',
+    new Headers({
+      'set-cookie': 'BIGipServerinsite.legistar.com_443=908198666.47873.0000; path=/',
+    }),
+  ],
   ['mastodon', mastodonHandler, '<div class="app-holder" id="mastodon"></div>'],
   ['mediawiki', mediawikiHandler, '<link rel="EditURI" href="/w/api.php?action=rsd">'],
   ['misskey', misskeyHandler, '<script type="application/json" id="misskey_meta">{}</script>'],
