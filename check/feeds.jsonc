@@ -6,6 +6,11 @@
     "acomics:issues": "https://acomics.ru/~Oglaf/rss",
     "acomics:subscriptions": "https://acomics.ru/-Lilim/rss"
   },
+  "alloforum": {
+    "alloforum:category": "https://mondeavicole.alloforum.com/derniers-sujets-pigeons-c460.xml",
+    "alloforum:latest-topics": "https://humaniterouge.alloforum.com/derniers-sujets.xml",
+    "alloforum:subcategory": "https://mondeavicole.alloforum.com/derniers-sujets-reptiles-autres-nacs-c512-tortues-s173.xml"
+  },
   "ameblo": {
     "ameblo:posts": [
       "https://ameblo.jp/shibuya/rss20.xml",
