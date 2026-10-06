@@ -657,6 +657,8 @@
     "purot:page-changes": "Page changes",
     "purot:page-discussions": "Page discussions",
     "purot:recent-changes": "Recent changes",
-    "skycms:page": "Page"
+    "skycms:page": "Page",
+    "opus:collection": "Collection",
+    "opus:search": "Search results"
   }
 }

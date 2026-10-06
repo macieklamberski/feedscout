@@ -1108,6 +1108,10 @@
       "https://status.openstatus.dev/feed/atom"
     ]
   },
+  "opus": {
+    "opus:collection": "https://zeitgeschichte-digital.de/doks/rss/index/index/searchtype/collection/id/444",
+    "opus:search": "https://opus-htw-aalen.bsz-bw.de/rss/index/index/searchtype/simple/query/%2A%3A%2A/yearfq/2011"
+  },
   "overblog": {
     "overblog:posts": [
       "https://cmoikife.over-blog.com/rss",
