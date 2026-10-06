@@ -96,8 +96,32 @@ describe('parseWordpressUrl', () => {
     expect(parseWordpressUrl('https://example.wordpress.com/feed/')).toEqual(expected)
   })
 
+  const blogs = ['https://example.home.blog/', 'https://example.wpcomstaging.com/']
+
+  it.each(blogs)('should return the home page for %s', (value) => {
+    const expected: WordpressUrl = { kind: 'home' }
+
+    expect(parseWordpressUrl(value)).toEqual(expected)
+  })
+
   it('should return undefined for another host', () => {
     expect(parseWordpressUrl('https://example.com/')).toBeUndefined()
+  })
+
+  it('should return undefined for the platform home page', () => {
+    expect(parseWordpressUrl('https://home.blog/')).toBeUndefined()
+  })
+
+  it('should return undefined for the www subdomain', () => {
+    expect(parseWordpressUrl('https://www.wordpress.com/')).toBeUndefined()
+  })
+
+  it('should return undefined for a dotted subdomain', () => {
+    expect(parseWordpressUrl('https://www.example.wordpress.com/')).toBeUndefined()
+  })
+
+  it('should return undefined for a staging copy', () => {
+    expect(parseWordpressUrl('https://staging-1234-example.wpcomstaging.com/')).toBeUndefined()
   })
 })
 
@@ -105,7 +129,6 @@ describe('wordpressHandler', () => {
   describe('match', () => {
     const values: Array<[boolean, string]> = [
       [true, 'https://example.wordpress.com'],
-      [true, 'https://blog.example.wordpress.com'],
       [true, 'http://gbessay.unblog.fr'],
       [true, 'https://eurel.hypotheses.org'],
       [false, 'https://wordpress.com'],
@@ -120,6 +143,25 @@ describe('wordpressHandler', () => {
 
     it('should return false for invalid URL', () => {
       expect(wordpressHandler.match('not-a-url')).toBe(false)
+    })
+
+    it('should return true for a blog page', () => {
+      const value = `
+        <link rel="alternate" type="application/rss+xml" title="Example &raquo; Feed" href="https://example.home.blog/feed/" />
+        <link rel="alternate" type="application/rss+xml" title="Example &raquo; Comments Feed" href="https://example.home.blog/comments/feed/" />
+      `
+
+      expect(wordpressHandler.match('https://example.home.blog/', value)).toBe(true)
+    })
+
+    it('should return false for the Home.blog site an unregistered blog redirects to', () => {
+      const value = `
+        <link rel="alternate" type="application/rss+xml" title="Home.blog &raquo; Feed" href="https://home.blog/feed/" />
+        <link rel="alternate" type="application/rss+xml" title="Home.blog &raquo; Comments Feed" href="https://home.blog/comments/feed/" />
+        <link rel="canonical" href="https://home.blog/" />
+      `
+
+      expect(wordpressHandler.match('https://example.home.blog/', value)).toBe(false)
     })
   })
 

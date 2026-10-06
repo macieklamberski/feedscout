@@ -115,6 +115,8 @@ Discovers RSS and Atom feeds for WordPress.com and Unblog blogs, with category, 
 | `*.unblog.fr` | Same as `*.wordpress.com` (Unblog) |
 | `*.hypotheses.org` | Same as `*.wordpress.com` |
 | `*.hypotheses.org/{post_id}` | Post comments feed (+ above) |
+| `*.home.blog` | Same as `*.wordpress.com` |
+| `*.wpcomstaging.com` | Same as `*.wordpress.com` |
 
 ### WP Engine
 

@@ -1,7 +1,7 @@
-import { isSubdomainOf } from 'trousse'
+import { getSubdomain, isAnyOf, isSubdomainOf } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
+import { composeHint, findElement } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic partly covers blog, category, post, tag.
@@ -11,7 +11,7 @@ export type WordpressUrl =
   | { kind: 'post'; path: string }
   | { kind: 'home' }
 
-const domains = ['hypotheses.org', 'unblog.fr', 'wordpress.com']
+const domains = ['home.blog', 'hypotheses.org', 'unblog.fr', 'wordpress.com', 'wpcomstaging.com']
 const postIdDomains = ['hypotheses.org']
 // A nested category's path holds every parent slug and ends at WordPress's endpoint words.
 const categoryRegex = /^\/category\/(.+?)(?:\/(?:feed|rdf|rss|rss2|atom|embed|page)(?:\/|$)|\/?$)/i
@@ -23,6 +23,12 @@ const dayRegex = /^\/(\d{4})\/(\d{2})\/(\d{2})\/?$/
 const postIdRegex = /^\/\d+\/?$/
 const trailingSlashRegex = /\/$/
 const feedSegmentRegex = /\/feed(?:\/|$)/i
+
+// The www subdomain is the platform's own site, never a blog.
+const excludedSubdomains = ['www']
+
+// An unregistered {name}.home.blog redirects to home.blog, whose every page links this feed.
+const platformFeedUrl = 'https://home.blog/feed/'
 
 // The route word is emitted as listed, so a capitalized path still yields the canonical feed.
 const archives: Array<{ regex: RegExp; hintKey: string; route?: string }> = [
@@ -92,7 +98,16 @@ export const parseWordpressPage = (url: string): WordpressUrl => {
 }
 
 export const parseWordpressUrl = (url: string): WordpressUrl | undefined => {
-  if (!isSubdomainOf(url, domains)) {
+  const subdomain = getSubdomain(url, domains)
+
+  // A dotted subdomain is an alias of a blog, and the platform's certificate does not cover it.
+  // A staging- subdomain is a WordPress.com staging copy of another site.
+  if (
+    !subdomain ||
+    subdomain.includes('.') ||
+    subdomain.startsWith('staging-') ||
+    isAnyOf(subdomain, excludedSubdomains)
+  ) {
     return
   }
 
@@ -134,8 +149,20 @@ export const composeWordpressFeeds = (
 }
 
 export const wordpressHandler: PlatformHandler = {
-  match: (url) => {
-    return parseWordpressUrl(url) !== undefined
+  match: (url, content) => {
+    if (!parseWordpressUrl(url)) {
+      return false
+    }
+
+    const platformFeedLink = findElement(content, (element) => {
+      return (
+        element.name === 'link' &&
+        element.attribs.rel === 'alternate' &&
+        element.attribs.href === platformFeedUrl
+      )
+    })
+
+    return platformFeedLink === undefined
   },
 
   resolve: (url) => {
