@@ -207,6 +207,7 @@ import { rakutenBlogHandler } from './platforms/rakutenBlog.js'
 import { realEstateIndiaHandler } from './platforms/realEstateIndia.js'
 import { redcircleHandler } from './platforms/redcircle.js'
 import { redditHandler } from './platforms/reddit.js'
+import { redmineHandler } from './platforms/redmine.js'
 import { reformalHandler } from './platforms/reformal.js'
 import { royalroadHandler } from './platforms/royalroad.js'
 import { rssComHandler } from './platforms/rssCom.js'
@@ -609,6 +610,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     realEstateIndiaHandler,
     redcircleHandler,
     redditHandler,
+    redmineHandler,
     reformalHandler,
     royalroadHandler,
     rssComHandler,

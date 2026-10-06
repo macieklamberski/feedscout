@@ -642,6 +642,13 @@
     "talentsoft:search": "Search results",
     "plone:folder": "Folder",
     "plone:search": "Search",
-    "plone:site": "Site"
+    "plone:site": "Site",
+    "redmine:activity": "Activity",
+    "redmine:board": "Forum",
+    "redmine:issue": "Issue updates",
+    "redmine:issues": "Issues",
+    "redmine:news": "News",
+    "redmine:projects": "Projects",
+    "redmine:revisions": "Revisions"
   }
 }

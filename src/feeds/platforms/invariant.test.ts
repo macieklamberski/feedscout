@@ -73,6 +73,7 @@ import { publicInboxHandler } from './publicInbox.js'
 import { publiiHandler } from './publii.js'
 import { pukiwikiHandler } from './pukiwiki.js'
 import { realEstateIndiaHandler } from './realEstateIndia.js'
+import { redmineHandler } from './redmine.js'
 import { shaarliHandler } from './shaarli.js'
 import { shopifyHandler } from './shopify.js'
 import { shopserveHandler } from './shopserve.js'
@@ -351,6 +352,7 @@ const cases: Array<Case> = [
     realEstateIndiaHandler,
     '<link rel="stylesheet" href="https://catalog.wlimg.com/templates-images/12585/12592/catalog.css"><a href="/property.rss">RSS</a>',
   ],
+  ['redmine', redmineHandler, 'Powered by <a href="https://www.redmine.org/">Redmine</a>'],
   ['shaarli', shaarliHandler, '<div id="shaarli-menu"></div>'],
   ['shopify', shopifyHandler, '', new Headers({ 'powered-by': 'Shopify' })],
   ['shopserve', shopserveHandler, '<a href="/hpgen/HPB/rss.xml">'],
