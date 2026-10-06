@@ -2754,6 +2754,14 @@ Discovers the search and syndication feeds of a classic Plone site. Detected by 
 > [!NOTE]
 > A site owner turns syndication on per folder, so a folder without it answers these URLs with 404. Document, news item, event, file, image and link pages serve no feed.
 
+### NetCrew CMS
+
+Discovers the site updates feed of a Japanese prefecture, city or town website built on NetCrew CMS. Detected by the root `/ssi/js/` and `/ssi/css/` asset paths every template loads, so any domain is covered. Section pages link their own feeds, whose names are internal ids, so only the home page needs the handler.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `{site}/`, `{site}/index.html` | Site updates feed (RDF or RSS) |
+
 ## Basic Usage
 
 ```typescript
@@ -2924,6 +2932,7 @@ import {
   naverBlogHandler,
   nebulaHandler,
   neocitiesHandler,
+  netcrewHandler,
   nethouseHandler,
   niconicoHandler,
   ningHandler,

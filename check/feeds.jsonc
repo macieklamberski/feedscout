@@ -999,6 +999,12 @@
   "neocities": {
     "neocities:updates": "https://neocities.org/site/lazer-bunny.rss"
   },
+  "netcrew": {
+    "netcrew:updates": [
+      "https://www.pref.hiroshima.lg.jp/rss/10/list1.xml",
+      "https://www.pref.ehime.jp/rss/20/list1.xml"
+    ]
+  },
   "nethouse": {
     "nethouse:articles": [
       "https://jivoirodnik.nethouse.ru/articles/rss",
