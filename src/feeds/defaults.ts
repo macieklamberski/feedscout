@@ -126,6 +126,7 @@ import { jugemHandler } from './platforms/jugem.js'
 import { kickstarterHandler } from './platforms/kickstarter.js'
 import { kktixHandler } from './platforms/kktix.js'
 import { kohaHandler } from './platforms/koha.js'
+import { lagetHandler } from './platforms/laget.js'
 import { launchpadHandler } from './platforms/launchpad.js'
 import { learnkuHandler } from './platforms/learnku.js'
 import { legistarHandler } from './platforms/legistar.js'
@@ -536,6 +537,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     kickstarterHandler,
     kktixHandler,
     kohaHandler,
+    lagetHandler,
     launchpadHandler,
     learnkuHandler,
     legistarHandler,

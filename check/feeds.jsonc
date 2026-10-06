@@ -829,6 +829,12 @@
     "koha:list": "https://library-search.nics.gov.uk/cgi-bin/koha/opac-shelves.pl?rss=1&op=view&shelfnumber=309",
     "koha:search": "https://biblioteca.unach.edu.ec/cgi-bin/koha/opac-search.pl?q=agua&count=50&sort_by=acqdate_dsc&format=rss"
   },
+  "laget": {
+    "laget:news": [
+      "https://www.laget.se/89ers/Home/NewsRss",
+      "https://www.laget.se/MossensBKF10/Home/NewsRss"
+    ]
+  },
   "launchpad": {
     "launchpad:announcements": [
       "http://feeds.launchpad.net/announcements.atom",

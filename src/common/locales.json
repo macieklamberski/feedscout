@@ -666,6 +666,7 @@
     "alloforum:latest-topics": "Latest topics",
     "alloforum:subcategory": "Subcategory",
     "sportadmin:news": "Club news",
-    "sportadmin:team": "Team news"
+    "sportadmin:team": "Team news",
+    "laget:news": "News"
   }
 }
