@@ -113,6 +113,7 @@ import { heyWorldHandler } from './platforms/heyWorld.js'
 import { homelandHandler } from './platforms/homeland.js'
 import { hubspotHandler } from './platforms/hubspot.js'
 import { hubzillaHandler } from './platforms/hubzilla.js'
+import { huffdufferHandler } from './platforms/huffduffer.js'
 import { insanejournalHandler } from './platforms/insanejournal.js'
 import { instatusHandler } from './platforms/instatus.js'
 import { internetArchiveHandler } from './platforms/internetArchive.js'
@@ -525,6 +526,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     homelandHandler,
     hubspotHandler,
     hubzillaHandler,
+    huffdufferHandler,
     insanejournalHandler,
     instatusHandler,
     internetArchiveHandler,

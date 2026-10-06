@@ -898,6 +898,16 @@ Discovers Atom feeds for HEY World blogs.
 |-------------|-----------------|
 | `world.hey.com/{user}` | Blog feed |
 
+### Huffduffer
+
+Discovers RSS feeds for Huffduffer users and their huffduffed episodes.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `huffduffer.com/{user}` | Huffduffs feed |
+| `huffduffer.com/{user}/{id}` | Possibly related feed + huffduffs feed |
+| `huffduffer.com/{user}/{id}/related` | Possibly related feed |
+
 ### InsaneJournal
 
 Discovers RSS and Atom feeds for InsaneJournal journals.
