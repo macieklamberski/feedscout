@@ -169,6 +169,7 @@ import { observableHandler } from './platforms/observable.js'
 import { ocnkHandler } from './platforms/ocnk.js'
 import { odooHandler } from './platforms/odoo.js'
 import { odyseeHandler } from './platforms/odysee.js'
+import { ojsHandler } from './platforms/ojs.js'
 import { omekaHandler } from './platforms/omeka.js'
 import { omnystudioHandler } from './platforms/omnystudio.js'
 import { opencartJournalHandler } from './platforms/opencartJournal.js'
@@ -586,6 +587,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     ocnkHandler,
     odooHandler,
     odyseeHandler,
+    ojsHandler,
     omekaHandler,
     omnystudioHandler,
     opencartJournalHandler,

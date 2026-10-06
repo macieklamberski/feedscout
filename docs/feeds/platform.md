@@ -2911,6 +2911,17 @@ Discovers the feeds of a company newsroom on `{newsroom}.newswire.com`. The news
 | `{newsroom}.newswire.com/browse/pr`, `/browse/news`, `/browse/social` | Press releases, news or social wire feed at `/browse/rss/{type}` (RSS) |
 | `{newsroom}.newswire.com`, any other page | Newsroom feed at `/browse/rss` (RSS) |
 
+### Open Journal Systems
+
+Discovers the feeds of a journal on Open Journal Systems, on any domain. Detected by the `Open Journal Systems` generator meta or the `OJSSID` session cookie. The journal's root is read from the theme stylesheet the page loads through `/$$$call$$$/`, so each journal of a multi-journal install gets its own feeds.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `{journal}/`, `{journal}/article/view/{id}`, `{journal}/issue/view/{id}`, any other journal page | Articles feed + announcements feed (Atom + RSS 1.0 + RSS 2.0) |
+
+> [!NOTE]
+> The site-wide pages of a multi-journal install, under `/index`, belong to no journal and get no feeds. OJS 3.5 serves a non-default locale's feeds only to a client that keeps cookies, so the feeds are the journal root's, which redirect to the default locale.
+
 ## Basic Usage
 
 ```typescript
@@ -3098,6 +3109,7 @@ import {
   ocnkHandler,
   odooHandler,
   odyseeHandler,
+  ojsHandler,
   omekaHandler,
   omnystudioHandler,
   opencartJournalHandler,

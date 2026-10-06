@@ -56,6 +56,7 @@ import { nodebbHandler } from './nodebb.js'
 import { noticeableHandler } from './noticeable.js'
 import { ocnkHandler } from './ocnk.js'
 import { odooHandler } from './odoo.js'
+import { ojsHandler } from './ojs.js'
 import { omekaHandler } from './omeka.js'
 import { opencartJournalHandler } from './opencartJournal.js'
 import { openstatusHandler } from './openstatus.js'
@@ -312,6 +313,11 @@ const cases: Array<Case> = [
       ['set-cookie', 'frontend_lang=en_US; Path=/'],
       ['set-cookie', 'session_id=abc; Path=/'],
     ]),
+  ],
+  [
+    'ojs',
+    ojsHandler,
+    '<meta name="generator" content="Open Journal Systems 3.3.0.20"><link rel="stylesheet" href="https://example.org/index.php/journal/$$$call$$$/page/page/css?name=stylesheet">',
   ],
   ['omeka', omekaHandler, '<link href="/plugins/ExhibitBuilder/views/public/css/exhibits.css">'],
   ['opencartJournal', opencartJournalHandler, '<html data-jv="3.0.44">'],
