@@ -1,6 +1,6 @@
-import { isSubdomainOf, parseUrl } from 'trousse'
+import { isSubdomainOf, parseUrl, resolveUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, getCookieNames, hasMarker } from '../../common/utils.js'
+import { composeHint, findElements, getCookieNames, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -53,6 +53,30 @@ export const parseLegistarUrl = (url: string): LegistarUrl | undefined => {
   return { kind: 'meeting', id, guid }
 }
 
+// A meeting page's alternate link appends a `Title` the page URL does not carry, so the feed is
+// spelled as the page links it when the page names the same feed, and from the page URL otherwise.
+const getFeedUrl = (url: string, content: string | undefined, feedUrl: string): string => {
+  if (!content) {
+    return feedUrl
+  }
+
+  const feedKey = feedUrl.toLowerCase()
+  const links = findElements(content, (element) => {
+    return element.name === 'link' && element.attribs.rel === 'alternate'
+  })
+
+  for (const link of links) {
+    const href = resolveUrl(link.attribs.href ?? '', url)
+    const hrefKey = href?.toLowerCase()
+
+    if (href && (hrefKey === feedKey || hrefKey?.startsWith(`${feedKey}&`))) {
+      return href
+    }
+  }
+
+  return feedUrl
+}
+
 export const legistarHandler: PlatformHandler = {
   match: (url, content, headers) => {
     if (
@@ -65,7 +89,7 @@ export const legistarHandler: PlatformHandler = {
     return parseLegistarUrl(url) !== undefined
   },
 
-  resolve: (url) => {
+  resolve: (url, content) => {
     const parsed = parseLegistarUrl(url)
 
     if (!parsed) {
@@ -78,7 +102,7 @@ export const legistarHandler: PlatformHandler = {
     if (parsed.kind === 'legislation') {
       return [
         {
-          uri: `${origin}/Feed.ashx?M=LD&${query}`,
+          uri: getFeedUrl(url, content, `${origin}/Feed.ashx?M=LD&${query}`),
           hint: composeHint('legistar:legislation'),
         },
       ]
@@ -86,7 +110,7 @@ export const legistarHandler: PlatformHandler = {
 
     return [
       {
-        uri: `${origin}/Feed.ashx?M=CalendarDetail&${query}`,
+        uri: getFeedUrl(url, content, `${origin}/Feed.ashx?M=CalendarDetail&${query}`),
         hint: composeHint('legistar:meeting'),
       },
     ]
