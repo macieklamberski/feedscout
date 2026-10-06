@@ -1529,6 +1529,13 @@
     "syosetu:activity": "https://api.syosetu.com/writer/372556.Atom",
     "syosetu:author": "https://api.syosetu.com/writernovel/372556.Atom"
   },
+  "talentsoft": {
+    "talentsoft:offers": [
+      "https://sciencespo-career.talent-soft.com/handlers/offerRss.ashx?LCID=1036",
+      "https://jobs.amundi.com/handlers/offerRss.ashx?LCID=1036"
+    ],
+    "talentsoft:search": "https://www.emploi.cea.fr/handlers/offerRss.ashx?lcid=1036&Rss_ApplicantCriteria_CustomCodeTableValue3=1852"
+  },
   "teletype": {
     "teletype:posts": ["https://teletype.in/rss/durov", "https://teletype.in/atom/durov"]
   },

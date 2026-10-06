@@ -2731,6 +2731,15 @@ Discovers the news and class assignment feeds of an Edlio school website. Detect
 | `{site}/apps/classes/{id}/assignments/` | Assignments feed of the class the page links (RSS) |
 | `{site}/`, any other page | News feed (RSS) |
 
+### Talentsoft
+
+Discovers the job offer feeds of a Talentsoft career site, hosted on `talent-soft.com` or `profils.org` or on the employer's own domain. Detected by the `/client/dist/talentsoft-cookies.iife.js` script every page loads, so any domain is covered.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `{site}/offre-de-emploi/liste-offres.aspx?{search}`, `{site}/job/list-of-jobs.aspx?{search}` | Search feed the page links at `/handlers/offerRss.ashx?{criteria}` + all offers feed (RSS) |
+| `{site}/`, any other page | All offers feed at `/handlers/offerRss.ashx?LCID={lcid}`, in the language the page url or its all offers link names (RSS) |
+
 ## Basic Usage
 
 ```typescript
@@ -2977,6 +2986,7 @@ import {
   substackHandler,
   sverigesRadioHandler,
   syosetuHandler,
+  talentsoftHandler,
   teletypeHandler,
   tildesHandler,
   tistoryHandler,

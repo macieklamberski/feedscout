@@ -636,6 +636,8 @@
     "sapo-blogs:posts": "Posts",
     "sapo-blogs:tag": "Tag",
     "edlio:assignments": "Assignments",
-    "edlio:news": "News"
+    "edlio:news": "News",
+    "talentsoft:offers": "Job offers",
+    "talentsoft:search": "Search results"
   }
 }
