@@ -659,6 +659,8 @@
     "purot:recent-changes": "Recent changes",
     "skycms:page": "Page",
     "opus:collection": "Collection",
-    "opus:search": "Search results"
+    "opus:search": "Search results",
+    "tender:discussion": "Discussion comments",
+    "tender:discussions": "Discussions"
   }
 }

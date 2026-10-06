@@ -1629,6 +1629,17 @@
   "teletype": {
     "teletype:posts": ["https://teletype.in/rss/durov", "https://teletype.in/atom/durov"]
   },
+  "tender": {
+    "tender:discussion": [
+      "https://robotlegs.tenderapp.com/discussions/robotlegs-2/4196-slow-performance-when-dispatching-a-large-number-of-events.atom?discussion_id=4196-slow-performance-when-dispatching-a-large-number-of-events",
+      "https://help.appveyor.com/discussions/problems/960-postsharp-build-stopped-working.atom?discussion_id=960-postsharp-build-stopped-working"
+    ],
+    "tender:discussions": [
+      "https://robotlegs.tenderapp.com/discussions.atom",
+      "https://scrivener.tenderapp.com/help/discussions.atom",
+      "https://help.appveyor.com/discussions.atom"
+    ]
+  },
   "textpattern": {
     "textpattern:posts": ["https://textpattern.com/rss", "https://textpattern.com/atom"]
   },
