@@ -1122,6 +1122,17 @@ Discovers RSS 2.0 and RDF feeds for Sakura blog.
 |-------------|-----------------|
 | `*.sblo.jp` | Posts feed (RSS 2.0 + RDF) |
 
+### SAPO Blogs
+
+Discovers the posts, comments and tag feeds of a blog on `*.blogs.sapo.pt`. Comment feeds are served from `blogs.sapo.pt`.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `{blog}.blogs.sapo.pt` | Posts feed (RSS + Atom) + comments feed |
+| `{blog}.blogs.sapo.pt/{slug}-{id}` | Post comments feed + blog feeds |
+| `{blog}.blogs.sapo.pt/{id}.html` | Post comments feed + blog feeds |
+| `{blog}.blogs.sapo.pt/tag/{tag}` | Tag feed + blog feeds |
+
 ### Seesaa Blog
 
 Discovers RSS 2.0 and RDF feeds for Seesaa Blog on `*.seesaa.net` and its other blog domains.
@@ -2934,6 +2945,7 @@ import {
   rssComHandler,
   rubygemsHandler,
   sakuraBlogHandler,
+  sapoBlogsHandler,
   seesaaHandler,
   sermonNetHandler,
   shinobiHandler,

@@ -1335,6 +1335,26 @@
   "sakuraBlog": {
     "sakura-blog:posts": ["http://cwtokyo.sblo.jp/index20.rdf", "http://cwtokyo.sblo.jp/index.rdf"]
   },
+  "sapoBlogs": {
+    "sapo-blogs:comments": [
+      "https://blogs.sapo.pt/commentsrss.bml?blog=estadosentido",
+      "https://blogs.sapo.pt/commentsrss.bml?blog=zac-and-vanessa"
+    ],
+    "sapo-blogs:post-comments": [
+      "https://blogs.sapo.pt/commentsrss.bml?blog=21ng&ditemid=62534",
+      "https://blogs.sapo.pt/commentsrss.bml?blog=zac-and-vanessa&ditemid=26117"
+    ],
+    "sapo-blogs:posts": [
+      "https://estadosentido.blogs.sapo.pt/data/rss",
+      "https://estadosentido.blogs.sapo.pt/data/atom",
+      "https://camaroteleonino.blogs.sapo.pt/data/rss",
+      "https://camaroteleonino.blogs.sapo.pt/data/atom"
+    ],
+    "sapo-blogs:tag": [
+      "https://estadosentido.blogs.sapo.pt/data/rss?tag=ant%C3%B3nio%20costa",
+      "https://streetart.blogs.sapo.pt/data/rss?tag=gotos"
+    ]
+  },
   "seesaa": {
     "seesaa:posts": [
       "https://info.seesaa.net/index.rdf",
