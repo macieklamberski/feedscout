@@ -233,6 +233,7 @@ import { soundonHandler } from './platforms/soundon.js'
 import { sourceforgeHandler } from './platforms/sourceforge.js'
 import { sourcehutHandler } from './platforms/sourcehut.js'
 import { spipHandler } from './platforms/spip.js'
+import { sportadminHandler } from './platforms/sportadmin.js'
 import { sportsregionsHandler } from './platforms/sportsregions.js'
 import { spotifyForCreatorsHandler } from './platforms/spotifyForCreators.js'
 import { spreakerHandler } from './platforms/spreaker.js'
@@ -642,6 +643,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     sourceforgeHandler,
     sourcehutHandler,
     spipHandler,
+    sportadminHandler,
     sportsregionsHandler,
     spotifyForCreatorsHandler,
     spreakerHandler,

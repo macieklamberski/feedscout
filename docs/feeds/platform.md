@@ -2836,6 +2836,16 @@ Discovers the latest topics feeds of a forum on `*.alloforum.com`. Forum, catego
 | `{forum}.alloforum.com/{slug}-c{id}-{page}.html` | Category feed + latest topics feed |
 | `{forum}.alloforum.com/{slug}-c{id}-{subslug}-s{subid}-{page}.html` | Subcategory feed + latest topics feed |
 
+### SportAdmin
+
+Discovers the news feeds of a Swedish sports club website on SportAdmin. On the classic template a team page redirects to a url that no longer names the team, so the team is read from the page's link to its other layout. The new template keeps the team in the url.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `{club}.web.sportadmin.se/?SID={id}`, a classic team page linking its other layout | Team news at `/rss/?SID={id}` + club news |
+| `{club}.web.sportadmin.se/?SID={id}` on the new template | Team news at `/rss/?SID={id}` + club news |
+| `{club}.web.sportadmin.se/`, any other page | Club news at `/rss/` |
+
 ## Basic Usage
 
 ```typescript
