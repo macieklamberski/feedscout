@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'bun:test'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { defaultPlatformOptions } from '../defaults.js'
+import { b2evolutionHandler } from './b2evolution.js'
 import { bigCartelHandler } from './bigCartel.js'
 import { bigcommerceHandler } from './bigcommerce.js'
 import { blogspotHandler } from './blogspot.js'
@@ -163,6 +164,11 @@ const paths = [
 type Case = [string, PlatformHandler, string, Headers?]
 
 const cases: Array<Case> = [
+  [
+    'b2evolution',
+    b2evolutionHandler,
+    '<link rel="alternate" href="/?tempskin=_rss2"><script src="/rsc/js/ajax.js"></script>',
+  ],
   [
     'bigCartel',
     bigCartelHandler,

@@ -26,6 +26,7 @@ import { atwikiHandler } from './platforms/atwiki.js'
 import { atyponHandler } from './platforms/atypon.js'
 import { audioboomHandler } from './platforms/audioboom.js'
 import { aushaHandler } from './platforms/ausha.js'
+import { b2evolutionHandler } from './platforms/b2evolution.js'
 import { bearblogHandler } from './platforms/bearblog.js'
 import { behanceHandler } from './platforms/behance.js'
 import { bigCartelHandler } from './platforms/bigCartel.js'
@@ -429,6 +430,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     atyponHandler,
     audioboomHandler,
     aushaHandler,
+    b2evolutionHandler,
     bearblogHandler,
     behanceHandler,
     bigCartelHandler,

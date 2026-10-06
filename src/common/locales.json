@@ -649,6 +649,9 @@
     "redmine:issues": "Issues",
     "redmine:news": "News",
     "redmine:projects": "Projects",
-    "redmine:revisions": "Revisions"
+    "redmine:revisions": "Revisions",
+    "b2evolution:comments": "Comments",
+    "b2evolution:post-comments": "Post comments",
+    "b2evolution:posts": "Posts"
   }
 }
