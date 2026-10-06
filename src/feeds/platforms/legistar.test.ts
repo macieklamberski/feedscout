@@ -199,6 +199,125 @@ describe('legistarHandler', () => {
       expect(legistarHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should spell the meeting feed as the page alternate link spells it', () => {
+      const value =
+        'https://springfield.legistar.com/MeetingDetail.aspx?ID=1234567&GUID=0A1B2C3D-4E5F-4A6B-8C7D-9E0F1A2B3C4D'
+      const content =
+        '<link href="Feed.ashx?M=CalendarDetail&amp;ID=1234567&amp;GUID=0A1B2C3D-4E5F-4A6B-8C7D-9E0F1A2B3C4D&amp;Title=City+of+Springfield+-+Meeting+of+Park+Advisory+Commission+on+9%2f15%2f2026+at+4%3a00+PM" rel="alternate" type="application/rss+xml" title="City of Springfield - Meeting of Park Advisory Commission on 9/15/2026 at 4:00 PM" />'
+      const expected = [
+        {
+          uri: 'https://springfield.legistar.com/Feed.ashx?M=CalendarDetail&ID=1234567&GUID=0A1B2C3D-4E5F-4A6B-8C7D-9E0F1A2B3C4D&Title=City+of+Springfield+-+Meeting+of+Park+Advisory+Commission+on+9%2f15%2f2026+at+4%3a00+PM',
+          hint: { key: 'legistar:meeting', label: 'Meeting' },
+        },
+      ]
+
+      expect(legistarHandler.resolve(value, content)).toEqual(expected)
+    })
+
+    it('should spell the meeting feed as the page alternate link spells it on a custom domain', () => {
+      const value =
+        'https://example.com/MeetingDetail.aspx?ID=1234567&GUID=0A1B2C3D-4E5F-4A6B-8C7D-9E0F1A2B3C4D'
+      const content =
+        '<link href="Feed.ashx?M=CalendarDetail&amp;ID=1234567&amp;GUID=0A1B2C3D-4E5F-4A6B-8C7D-9E0F1A2B3C4D&amp;Title=Example+County+-+Meeting+of+Mayor%27s+Commission+on+7%2f9%2f2024+at+4%3a00+PM" rel="alternate" type="application/rss+xml" title="Example County - Meeting of Mayor&#39;s Commission on 7/9/2024 at 4:00 PM" />'
+      const expected = [
+        {
+          uri: 'https://example.com/Feed.ashx?M=CalendarDetail&ID=1234567&GUID=0A1B2C3D-4E5F-4A6B-8C7D-9E0F1A2B3C4D&Title=Example+County+-+Meeting+of+Mayor%27s+Commission+on+7%2f9%2f2024+at+4%3a00+PM',
+          hint: { key: 'legistar:meeting', label: 'Meeting' },
+        },
+      ]
+
+      expect(legistarHandler.resolve(value, content)).toEqual(expected)
+    })
+
+    it('should spell the meeting feed as the page alternate link spells it when the page GUID differs in case', () => {
+      const value =
+        'https://example.com/MeetingDetail.aspx?ID=1234567&GUID=0a1b2c3d-4e5f-4a6b-8c7d-9e0f1a2b3c4d'
+      const content =
+        '<link href="Feed.ashx?M=CalendarDetail&amp;ID=1234567&amp;GUID=0A1B2C3D-4E5F-4A6B-8C7D-9E0F1A2B3C4D&amp;Title=Example+County+-+Meeting+of+Mayor%27s+Commission+on+7%2f9%2f2024+at+4%3a00+PM" rel="alternate" type="application/rss+xml" title="Example County - Meeting of Mayor&#39;s Commission on 7/9/2024 at 4:00 PM" />'
+      const expected = [
+        {
+          uri: 'https://example.com/Feed.ashx?M=CalendarDetail&ID=1234567&GUID=0A1B2C3D-4E5F-4A6B-8C7D-9E0F1A2B3C4D&Title=Example+County+-+Meeting+of+Mayor%27s+Commission+on+7%2f9%2f2024+at+4%3a00+PM',
+          hint: { key: 'legistar:meeting', label: 'Meeting' },
+        },
+      ]
+
+      expect(legistarHandler.resolve(value, content)).toEqual(expected)
+    })
+
+    it('should spell the legislation feed as the page alternate link spells it', () => {
+      const value =
+        'https://example.com/LegislationDetail.aspx?ID=1234567&GUID=0A1B2C3D-4E5F-4A6B-8C7D-9E0F1A2B3C4D'
+      const content =
+        '<link href="Feed.ashx?M=LD&amp;ID=1234567&amp;GUID=0A1B2C3D-4E5F-4A6B-8C7D-9E0F1A2B3C4D&amp;Extra=1" rel="alternate" type="application/rss+xml" />'
+      const expected = [
+        {
+          uri: 'https://example.com/Feed.ashx?M=LD&ID=1234567&GUID=0A1B2C3D-4E5F-4A6B-8C7D-9E0F1A2B3C4D&Extra=1',
+          hint: { key: 'legistar:legislation', label: 'Legislation' },
+        },
+      ]
+
+      expect(legistarHandler.resolve(value, content)).toEqual(expected)
+    })
+
+    it('should ignore an alternate link with another GUID', () => {
+      const value =
+        'https://example.com/MeetingDetail.aspx?ID=1234567&GUID=0A1B2C3D-4E5F-4A6B-8C7D-9E0F1A2B3C4D'
+      const content =
+        '<link href="Feed.ashx?M=CalendarDetail&amp;ID=1234567&amp;GUID=0A1B2C3D-4E5F-4A6B-8C7D-9E0F1A2B3C4E&amp;Title=Example+County+-+Meeting+of+Planning+Commission+on+7%2f9%2f2024+at+4%3a00+PM" rel="alternate" type="application/rss+xml" />'
+      const expected = [
+        {
+          uri: 'https://example.com/Feed.ashx?M=CalendarDetail&ID=1234567&GUID=0A1B2C3D-4E5F-4A6B-8C7D-9E0F1A2B3C4D',
+          hint: { key: 'legistar:meeting', label: 'Meeting' },
+        },
+      ]
+
+      expect(legistarHandler.resolve(value, content)).toEqual(expected)
+    })
+
+    it('should ignore an alternate link whose GUID extends the page GUID', () => {
+      const value =
+        'https://example.com/MeetingDetail.aspx?ID=1234567&GUID=0A1B2C3D-4E5F-4A6B-8C7D-9E0F1A2B3C4D'
+      const content =
+        '<link href="Feed.ashx?M=CalendarDetail&amp;ID=1234567&amp;GUID=0A1B2C3D-4E5F-4A6B-8C7D-9E0F1A2B3C4DFF&amp;Title=Example+County+-+Meeting+of+Planning+Commission+on+7%2f9%2f2024+at+4%3a00+PM" rel="alternate" type="application/rss+xml" />'
+      const expected = [
+        {
+          uri: 'https://example.com/Feed.ashx?M=CalendarDetail&ID=1234567&GUID=0A1B2C3D-4E5F-4A6B-8C7D-9E0F1A2B3C4D',
+          hint: { key: 'legistar:meeting', label: 'Meeting' },
+        },
+      ]
+
+      expect(legistarHandler.resolve(value, content)).toEqual(expected)
+    })
+
+    it('should ignore an alternate link to another meeting', () => {
+      const value =
+        'https://example.com/MeetingDetail.aspx?ID=1234567&GUID=0A1B2C3D-4E5F-4A6B-8C7D-9E0F1A2B3C4D'
+      const content =
+        '<link href="Feed.ashx?M=CalendarDetail&amp;ID=12345678&amp;GUID=0A1B2C3D-4E5F-4A6B-8C7D-9E0F1A2B3C4D&amp;Title=Example+County+-+Meeting+of+Planning+Commission+on+7%2f9%2f2024+at+4%3a00+PM" rel="alternate" type="application/rss+xml" />'
+      const expected = [
+        {
+          uri: 'https://example.com/Feed.ashx?M=CalendarDetail&ID=1234567&GUID=0A1B2C3D-4E5F-4A6B-8C7D-9E0F1A2B3C4D',
+          hint: { key: 'legistar:meeting', label: 'Meeting' },
+        },
+      ]
+
+      expect(legistarHandler.resolve(value, content)).toEqual(expected)
+    })
+
+    it('should spell the meeting feed from the page URL for a page without an alternate link', () => {
+      const value =
+        'https://example.com/MeetingDetail.aspx?ID=1234567&GUID=0A1B2C3D-4E5F-4A6B-8C7D-9E0F1A2B3C4D'
+      const content = '<html><head><title>Meeting</title></head><body></body></html>'
+      const expected = [
+        {
+          uri: 'https://example.com/Feed.ashx?M=CalendarDetail&ID=1234567&GUID=0A1B2C3D-4E5F-4A6B-8C7D-9E0F1A2B3C4D',
+          hint: { key: 'legistar:meeting', label: 'Meeting' },
+        },
+      ]
+
+      expect(legistarHandler.resolve(value, content)).toEqual(expected)
+    })
+
     it('should return empty array for another page', () => {
       expect(legistarHandler.resolve('https://example.com/')).toEqual([])
     })
