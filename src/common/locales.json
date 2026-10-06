@@ -656,6 +656,7 @@
     "purot:page-activity": "Page changes, discussions and likes",
     "purot:page-changes": "Page changes",
     "purot:page-discussions": "Page discussions",
-    "purot:recent-changes": "Recent changes"
+    "purot:recent-changes": "Recent changes",
+    "skycms:page": "Page"
   }
 }

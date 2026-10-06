@@ -2799,6 +2799,14 @@ Discovers the change feeds of a wiki on Purot.net. The page's own feeds come fro
 | `{wiki}.purot.net/{page}`, `{wiki}.purot.net/` | Page changes, page discussions, and page changes, discussions and likes (RSS) + recent changes |
 | `{wiki}.purot.net/profile/{user}`, any other page | Recent changes (RSS) |
 
+### SkyCMS
+
+Discovers the feed of a page in a Polish public information bulletin built on SkyCMS. Detected by the bulletin template's `/cms/public/image/default/bip_v{n}/` icon path, `/clients/cms_{client}/image/default/bip/` on a branded bulletin, or the `skycms_PageCounter` cookie, beside the link to the bulletin's RSS channel list, so any domain is covered. SkyCMS sites outside the bulletin template serve no page feeds and are left alone.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `{site}/{id}/{slug}.html` | Page feed at `/rss/{id}/{slug}.html` (RSS) |
+
 ## Basic Usage
 
 ```typescript
@@ -3035,6 +3043,7 @@ import {
   shinobiHandler,
   shopifyHandler,
   shopserveHandler,
+  skycmsHandler,
   smeBlogHandler,
   soundcloudHandler,
   soundonHandler,
