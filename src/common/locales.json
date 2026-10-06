@@ -661,6 +661,9 @@
     "opus:collection": "Collection",
     "opus:search": "Search results",
     "tender:discussion": "Discussion comments",
-    "tender:discussions": "Discussions"
+    "tender:discussions": "Discussions",
+    "alloforum:category": "Category",
+    "alloforum:latest-topics": "Latest topics",
+    "alloforum:subcategory": "Subcategory"
   }
 }

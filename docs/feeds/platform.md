@@ -2826,6 +2826,16 @@ Discovers the discussion feeds of a Tender Support site, hosted on `tenderapp.co
 | `{site}/discussions/{category}/{discussion}` | Discussion comments feed (Atom) |
 | `{site}/`, any other page | All discussions feed (Atom) |
 
+### AlloForum
+
+Discovers the latest topics feeds of a forum on `*.alloforum.com`. Forum, category and subcategory pages link their feeds only as plain anchors, so the handler covers them.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `{forum}.alloforum.com` | Latest topics feed |
+| `{forum}.alloforum.com/{slug}-c{id}-{page}.html` | Category feed + latest topics feed |
+| `{forum}.alloforum.com/{slug}-c{id}-{subslug}-s{subid}-{page}.html` | Subcategory feed + latest topics feed |
+
 ## Basic Usage
 
 ```typescript
@@ -2874,6 +2884,7 @@ Or import individual handlers:
 import {
   acastHandler,
   acomicsHandler,
+  alloforumHandler,
   amebloHandler,
   applePodcastsHandler,
   arenaHandler,

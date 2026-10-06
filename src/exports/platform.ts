@@ -3,6 +3,7 @@ export type { PlatformHandler, PlatformMethodOptions } from '../common/uris/plat
 export { defaultPlatformOptions } from '../feeds/defaults.js'
 export { acastHandler } from '../feeds/platforms/acast.js'
 export { acomicsHandler } from '../feeds/platforms/acomics.js'
+export { alloforumHandler } from '../feeds/platforms/alloforum.js'
 export { amebloHandler } from '../feeds/platforms/ameblo.js'
 export { applePodcastsHandler } from '../feeds/platforms/applePodcasts.js'
 export { arenaHandler } from '../feeds/platforms/arena.js'
