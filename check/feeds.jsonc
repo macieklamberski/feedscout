@@ -1698,6 +1698,26 @@
     ],
     "tildes:topics": ["https://tildes.net/topics.rss", "https://tildes.net/topics.atom"]
   },
+  "tischtennislive": {
+    "tischtennislive:dates": "https://bettv.tischtennislive.de/Export/RSS_Termine.aspx",
+    "tischtennislive:documents": "https://bettv.tischtennislive.de/Export/RSS_Dokumente.aspx",
+    "tischtennislive:group-fixtures": {
+      "skip": "generic discovery finds it, and the host rate-limits feed requests"
+    },
+    "tischtennislive:group-results": {
+      "skip": "generic discovery finds it, and the host rate-limits feed requests"
+    },
+    "tischtennislive:league-fixtures": {
+      "skip": "generic discovery finds it, and the host rate-limits feed requests"
+    },
+    "tischtennislive:league-results": {
+      "skip": "generic discovery finds it, and the host rate-limits feed requests"
+    },
+    "tischtennislive:news": {
+      "skip": "generic discovery finds it, and the host rate-limits feed requests"
+    },
+    "tischtennislive:tournaments": "https://kiel.tischtennislive.de/Export/Tischtennis/RSS_Turniere.aspx"
+  },
   "tistory": {
     "tistory:blog": "https://notice.tistory.com/rss"
   },

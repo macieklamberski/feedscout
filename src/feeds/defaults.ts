@@ -255,6 +255,7 @@ import { teletypeHandler } from './platforms/teletype.js'
 import { tenderHandler } from './platforms/tender.js'
 import { textpatternHandler } from './platforms/textpattern.js'
 import { tildesHandler } from './platforms/tildes.js'
+import { tischtennisliveHandler } from './platforms/tischtennislive.js'
 import { tistoryHandler } from './platforms/tistory.js'
 import { togetterHandler } from './platforms/togetter.js'
 import { tourTravelWorldHandler } from './platforms/tourTravelWorld.js'
@@ -670,6 +671,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     tenderHandler,
     textpatternHandler,
     tildesHandler,
+    tischtennisliveHandler,
     tistoryHandler,
     togetterHandler,
     tourTravelWorldHandler,
