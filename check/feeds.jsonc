@@ -204,16 +204,28 @@
     "castos:podcast": "https://feeds.castos.com/x42p4"
   },
   "chambermaster": {
-    "chambermaster:featured-events": "https://members.agcmass.org/Feed/rss/FeaturedEvents.rss",
+    "chambermaster:featured-events": [
+      "https://members.agcmass.org/Feed/rss/FeaturedEvents.rss",
+      "http://aiada.memberzone.com/Feed/rss/FeaturedEvents.rss",
+      "http://amherstarea.chambermaster.com/Feed/rss/FeaturedEvents.rss"
+    ],
     "chambermaster:featured-members": "https://business.rainbowchamber.com/Feed/rss/FeaturedMembers.rss",
     "chambermaster:new-coupons": "https://www.westlakechamber.com/Feed/rss/NewCoupons.rss",
     "chambermaster:new-events": "https://business.rainbowchamber.com/Feed/rss/NewEvents.rss",
     "chambermaster:new-jobs": "https://business.portagewi.com/Feed/rss/NewJobs.rss",
     "chambermaster:new-m2m-deals": "https://www.westlakechamber.com/Feed/rss/NewM2MDeals.rss",
     "chambermaster:new-market-items": "https://business.irishhills.com/Feed/rss/NewMarketItems.rss",
-    "chambermaster:new-members": "https://members.agcmass.org/Feed/rss/NewMembers.rss",
+    "chambermaster:new-members": [
+      "https://members.agcmass.org/Feed/rss/NewMembers.rss",
+      "http://scwbawi.memberzone.com/Feed/rss/NewMembers.rss",
+      "http://lowell-ma.chambermaster.com/Feed/rss/NewMembers.rss"
+    ],
     "chambermaster:news-releases": "https://members.agcmass.org/Feed/rss/NewsReleases.rss",
-    "chambermaster:upcoming-events": "https://members.agcmass.org/Feed/rss/UpcomingEvents.rss"
+    "chambermaster:upcoming-events": [
+      "https://members.agcmass.org/Feed/rss/UpcomingEvents.rss",
+      "http://npconnect.memberzone.com/Feed/rss/UpcomingEvents.rss",
+      "http://columbusarea.chambermaster.com/Feed/rss/UpcomingEvents.rss"
+    ]
   },
   "civicplus": {
     "civicplus:agenda-center": "https://channahon.org/RSSFeed.aspx?ModID=65&CID=All-0",
