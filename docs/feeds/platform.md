@@ -2346,12 +2346,14 @@ Discovers the feeds of a Noticeable newspage. Newspages on `noticeable.news` are
 
 ### Legistar
 
-Discovers the history feed of a Legistar legislation record or meeting, on any `*.legistar.com` client site.
+Discovers the history feed of a Legistar legislation record or meeting, on any `*.legistar.com` client site. A client site on a custom domain is detected by the `BIGipServerinsite.legistar.com_443` cookie Legistar's load balancer sets, or by the `addthis_widget.js#username=legistarinsite` script every page loads.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | `{client}.legistar.com/LegislationDetail.aspx?ID={id}&GUID={guid}` | Legislation feed (RSS) |
 | `{client}.legistar.com/MeetingDetail.aspx?ID={id}&GUID={guid}` | Meeting feed (RSS) |
+| `/LegislationDetail.aspx?ID={id}&GUID={guid}` on a custom domain | Legislation feed (RSS) |
+| `/MeetingDetail.aspx?ID={id}&GUID={guid}` on a custom domain | Meeting feed (RSS) |
 
 ### Nethouse
 

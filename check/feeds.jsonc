@@ -814,8 +814,14 @@
     "learnku:site": "https://learnku.com/feed"
   },
   "legistar": {
-    "legistar:legislation": "https://madison.legistar.com/Feed.ashx?M=LD&ID=1065902&GUID=EFE087C2-C62A-40F9-B1F9-6E2975E86217",
-    "legistar:meeting": "https://a2gov.legistar.com/Feed.ashx?M=CalendarDetail&ID=1373416&GUID=351F7891-35DC-4AE5-BCED-DA4B7A00E804"
+    "legistar:legislation": [
+      "https://madison.legistar.com/Feed.ashx?M=LD&ID=1065902&GUID=EFE087C2-C62A-40F9-B1F9-6E2975E86217",
+      "https://legistar.council.nyc.gov/Feed.ashx?M=LD&ID=548175&GUID=91F5A388-3FA2-4881-92F8-3A8295CF56D9"
+    ],
+    "legistar:meeting": [
+      "https://a2gov.legistar.com/Feed.ashx?M=CalendarDetail&ID=1373416&GUID=351F7891-35DC-4AE5-BCED-DA4B7A00E804",
+      "https://mkcclegisearch.kingcounty.gov/Feed.ashx?M=CalendarDetail&ID=997186&GUID=4F8E7931-0C0A-4196-8E24-0A531B361848"
+    ]
   },
   "lemmy": {
     "lemmy:all": "https://lemmy.ml/feeds/all.xml",
