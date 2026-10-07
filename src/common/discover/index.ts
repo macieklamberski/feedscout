@@ -8,9 +8,11 @@ import {
   type DiscoverStep,
   type DiscoverUriEntry,
   discoverMethodOrder,
+  type FetchFnOptions,
 } from '../types.js'
 import { discoverUris } from '../uris/index.js'
 import { processConcurrently, toPositiveInteger, withTextBody } from '../utils.js'
+import { defaultFetchFn, pageAccept } from './defaults.js'
 import {
   attempt,
   normalizeInput,
@@ -34,12 +36,25 @@ export const discover = async <TValid>(
     stopOnFirstResult = false,
     concurrency = 3,
     maxUris = 50,
+    validateAccept,
     includeInvalid = false,
     onProgress,
     onStep,
     onError,
   } = options
   const fetchFn = withTextBody(options.fetchFn)
+
+  // Only the default fetch gets an Accept header. A caller's own fetch gets each request as it did.
+  const getFetchOptions = (accept: string | undefined): FetchFnOptions | undefined => {
+    if (!accept || options.fetchFn !== defaultFetchFn) {
+      return
+    }
+
+    return { headers: { accept } }
+  }
+
+  const pageFetchOptions = getFetchOptions(pageAccept)
+  const validateFetchOptions = getFetchOptions(validateAccept)
 
   const reportStep = (step: DiscoverStep): void => {
     const url = 'url' in step ? step.url : undefined
@@ -60,7 +75,11 @@ export const discover = async <TValid>(
     reportStep({ step: 'fetchInput', status: 'start', url: inputUrl })
   }
 
-  const sourceInput = await normalizeInput(input, fetchFn, (error, context) => {
+  const fetchPage = (url: string) => {
+    return fetchFn(url, pageFetchOptions)
+  }
+
+  const sourceInput = await normalizeInput(input, fetchPage, (error, context) => {
     hasInputFetchFailed = true
     reportError(onError, error, context)
   })
@@ -103,7 +122,7 @@ export const discover = async <TValid>(
       reportStep({ step: 'resolveSiteUrl', status: 'start', url: siteUrl })
 
       try {
-        const response = await fetchFn(siteUrl)
+        const response = await fetchPage(siteUrl)
 
         siteInput = {
           url: response.url,
@@ -216,7 +235,7 @@ export const discover = async <TValid>(
 
   const fetchAndExtract = async (url: string): Promise<DiscoverResult<TValid>> => {
     try {
-      const fetchResult = await fetchFn(url)
+      const fetchResult = await fetchFn(url, validateFetchOptions)
 
       return await extractFn({
         url: fetchResult.url,

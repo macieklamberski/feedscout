@@ -18,6 +18,13 @@ export const defaultFetchFn: FetchFn = async (url, options) => {
   }
 }
 
+// Sent by the default fetch only. A site that negotiates the format, such as a Rails app, answers
+// a page url with its feed for `*/*`, which is what fetch sends by default, so discovery would take
+// the page for a feed. A feed url gets the feed types first for the same reason the other way.
+export const pageAccept = 'text/html,application/xhtml+xml;q=0.9,*/*;q=0.8'
+export const feedAccept =
+  'application/rss+xml,application/atom+xml,application/feed+json,application/xml;q=0.9,*/*;q=0.8'
+
 export const defaultResolveUrlFn: DiscoverResolveUrlFn = (url, baseUrl) => {
   // resolveUrl answers nothing for a URL of another scheme or one that does not parse. URL resolves
   // the first, so discovery can drop a `javascript:` link or a relative link on a `file:` page, and

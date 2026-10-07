@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'bun:test'
+import { afterEach, describe, expect, it, spyOn } from 'bun:test'
 import { discoverFeeds } from '../../feeds/index.js'
 import type { FeedResult } from '../../feeds/types.js'
 import locales from '../locales.json' with { type: 'json' }
@@ -10,6 +10,7 @@ import type {
   DiscoverResult,
   DiscoverStep,
   FetchFn,
+  FetchFnOptions,
 } from '../types.js'
 import type { PlatformHandler } from '../uris/platform/types.js'
 
@@ -2059,5 +2060,64 @@ describe('discoverFeeds with non-http URLs', () => {
     await discoverFeeds({ url: 'https://example.com/', content }, { methods: ['html'], fetchFn })
 
     expect(fetchedUrls).toEqual([])
+  })
+})
+
+describe('default fetch Accept header', () => {
+  const fetchSpy = spyOn(globalThis, 'fetch')
+
+  afterEach(() => {
+    fetchSpy.mockReset()
+  })
+
+  const recordAccepts = (accepts: Record<string, string | undefined>) => {
+    fetchSpy.mockImplementation(((input: URL | RequestInfo, init?: RequestInit) => {
+      const url = input.toString()
+      const headers = init?.headers as Record<string, string> | undefined
+      const body = url === 'https://example.com/feed' ? rss : '<html></html>'
+      const response = new Response(body)
+      accepts[url] = headers?.accept
+
+      // A constructed Response has an empty url, which discovery reads as the final url.
+      Object.defineProperty(response, 'url', { value: url })
+
+      return Promise.resolve(response)
+    }) as typeof fetch)
+  }
+
+  it('should ask for HTML on the input page and for a feed on a candidate', async () => {
+    const accepts: Record<string, string | undefined> = {}
+    recordAccepts(accepts)
+    const expected = {
+      'https://example.com/': 'text/html,application/xhtml+xml;q=0.9,*/*;q=0.8',
+      'https://example.com/feed':
+        'application/rss+xml,application/atom+xml,application/feed+json,application/xml;q=0.9,*/*;q=0.8',
+    }
+
+    await discoverFeeds('https://example.com/', {
+      methods: { guess: { uris: ['/feed'] } },
+    })
+
+    expect(accepts).toEqual(expected)
+  })
+
+  it('should leave the request of a caller fetch unchanged', async () => {
+    const calls: Record<string, FetchFnOptions | undefined> = {}
+    const fetchFn: FetchFn = (url, options) => {
+      calls[url] = options
+
+      return { headers: new Headers(), body: '<html></html>', url, status: 200 }
+    }
+    const expected = {
+      'https://example.com/': undefined,
+      'https://example.com/feed': undefined,
+    }
+
+    await discoverFeeds('https://example.com/', {
+      methods: { guess: { uris: ['/feed'] } },
+      fetchFn,
+    })
+
+    expect(calls).toStrictEqual(expected)
   })
 })

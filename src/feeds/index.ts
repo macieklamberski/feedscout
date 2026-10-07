@@ -1,4 +1,4 @@
-import { defaultFetchFn, defaultResolveUrlFn } from '../common/discover/defaults.js'
+import { defaultFetchFn, defaultResolveUrlFn, feedAccept } from '../common/discover/defaults.js'
 import { discover } from '../common/discover/index.js'
 import type { DiscoverInput, DiscoverOptions, DiscoverResult } from '../common/types.js'
 import {
@@ -24,6 +24,7 @@ export const discoverFeeds = <TValid extends FeedResult = FeedResult>(
       extractFn: options.extractFn ?? defaultExtractFn,
       resolveUrlFn: options.resolveUrlFn ?? defaultResolveUrlFn,
       ignoredExtensions,
+      validateAccept: feedAccept,
       // No resolveSiteUrlFn — feeds discoverer early-returns in extractFn before site resolution.
     },
     {
