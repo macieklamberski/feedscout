@@ -2923,6 +2923,17 @@ Discovers the feeds of a journal on Open Journal Systems, on any domain. Detecte
 > [!NOTE]
 > The site-wide pages of a multi-journal install, under `/index`, belong to no journal and get no feeds. OJS 3.5 serves a non-default locale's feeds only to a client that keeps cookies, so the feeds are the journal root's, which redirect to the default locale.
 
+### Aladin blog
+
+Discovers the feeds of a user blog on Aladin, `blog.aladin.co.kr/{user}`. A category page links only the blog feed, and its own feed is listed only on the blog's subscribe page.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `blog.aladin.co.kr/{user}`, any other blog page | Blog feed |
+| `blog.aladin.co.kr/{user}/category/{id}` | Category feed† + blog feed |
+
+† *Found only by the Platform method.*
+
 ## Basic Usage
 
 ```typescript
@@ -2971,6 +2982,7 @@ Or import individual handlers:
 import {
   acastHandler,
   acomicsHandler,
+  aladinHandler,
   alloforumHandler,
   amebloHandler,
   applePodcastsHandler,

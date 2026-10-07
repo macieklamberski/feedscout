@@ -6,6 +6,10 @@
     "acomics:issues": "https://acomics.ru/~Oglaf/rss",
     "acomics:subscriptions": "https://acomics.ru/-Lilim/rss"
   },
+  "aladin": {
+    "aladin:category": { "skip": "Aladin's CDN answers 403 to datacenter addresses" },
+    "aladin:posts": { "skip": "Aladin's CDN answers 403 to datacenter addresses" }
+  },
   "alloforum": {
     "alloforum:category": "https://mondeavicole.alloforum.com/derniers-sujets-pigeons-c460.xml",
     "alloforum:latest-topics": "https://humaniterouge.alloforum.com/derniers-sujets.xml",
