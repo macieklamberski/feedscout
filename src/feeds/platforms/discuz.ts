@@ -14,10 +14,11 @@ import {
 
 export type DiscuzUrl = { kind: 'board'; boardId: string } | { kind: 'site' }
 
+const archiverBoardRegex = /\/archiver\/\??fid-(\d+)\.html/i
 const archiverPathRegex = /\/archiver\/.*$/i
 const boardPathRegex = /\/forum-(\d+)-/i
 const numericRegex = /^\d+$/
-const legacyGeneratorRegex = /^Discuz! \d/i
+const legacyGeneratorRegex = /^Discuz! (?:Archiver )?\d/i
 
 export const isDiscuzHtml = (content: string): boolean => {
   return hasMetaContent(content, 'generator', 'Discuz!')
@@ -29,8 +30,8 @@ export const isDiscuzHeaders = (headers: Headers): boolean => {
 }
 
 // Discuz! 7 and older print a version without the X, as in `Discuz! 7.2` or `Discuz! 5.5.0 with
-// Templates 5.5.0`, and serve their feeds from `rss.php` in the install directory. On them
-// `forum.php?mod=rss` answers 404.
+// Templates 5.5.0`, or `Discuz! Archiver 7.2` on the archiver, and serve their feeds from `rss.php`
+// in the install directory. On them `forum.php?mod=rss` answers 404.
 const isLegacyDiscuz = (content: string | undefined): boolean => {
   if (!content) {
     return false
@@ -46,14 +47,17 @@ export const parseDiscuzUrl = (url: string): DiscuzUrl | undefined => {
     return
   }
 
-  const { pathname, searchParams } = parsedUrl
+  const { pathname, search, searchParams } = parsedUrl
   const queryId = searchParams.get('fid')
 
   if (queryId && numericRegex.test(queryId)) {
     return { kind: 'board', boardId: queryId }
   }
 
-  const boardId = pathname.match(boardPathRegex)?.[1]
+  // The archiver carries the board in the query key, as in `archiver/?fid-22.html`, or in the path
+  // with rewrites on, as in `archiver/fid-22.html`.
+  const boardId =
+    pathname.match(boardPathRegex)?.[1] ?? `${pathname}${search}`.match(archiverBoardRegex)?.[1]
 
   if (boardId) {
     return { kind: 'board', boardId }
@@ -78,31 +82,28 @@ export const discuzHandler: PlatformHandler = {
       return []
     }
 
-    if (isLegacyDiscuz(content)) {
-      const uris: Array<DiscoverUriEntry> = []
+    const uris: Array<DiscoverUriEntry> = []
+    const installUrl = new URL(url)
 
-      // Every page of Discuz! 7 and older sits in the install directory, beside its `rss.php`.
+    // Discuz! pages sit in the install directory, such as `/forum/`, beside `forum.php` or
+    // `rss.php`, except the archiver, served from `archiver/` inside it.
+    installUrl.pathname = installUrl.pathname.replace(archiverPathRegex, '/')
+
+    if (isLegacyDiscuz(content)) {
       if (parsed.kind === 'board') {
         uris.push({
-          uri: new URL(`rss.php?fid=${parsed.boardId}&auth=0`, url).href,
+          uri: new URL(`rss.php?fid=${parsed.boardId}&auth=0`, installUrl).href,
           hint: composeHint('discuz:board'),
         })
       }
 
       uris.push({
-        uri: new URL('rss.php?auth=0', url).href,
+        uri: new URL('rss.php?auth=0', installUrl).href,
         hint: composeHint('discuz:site'),
       })
 
       return uris
     }
-
-    const uris: Array<DiscoverUriEntry> = []
-    const installUrl = new URL(url)
-
-    // Discuz! X pages sit in the install directory, such as `/forum/`, beside `forum.php`, except
-    // the archiver, served from `archiver/` inside it.
-    installUrl.pathname = installUrl.pathname.replace(archiverPathRegex, '/')
 
     if (parsed.kind === 'board') {
       uris.push({

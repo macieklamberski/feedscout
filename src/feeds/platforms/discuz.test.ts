@@ -4,6 +4,7 @@ import { type DiscuzUrl, discuzHandler, isDiscuzHtml, parseDiscuzUrl } from './d
 const discuzHtml = '<meta name="generator" content="Discuz! X3.4" />'
 const otherHtml = '<meta name="generator" content="phpBB">'
 const discuz7Html = '<meta name="generator" content="Discuz! 7.2" />'
+const discuz7ArchiverHtml = '<meta name="generator" content="Discuz! Archiver 7.2" />'
 const discuz6Html = '<meta name="generator" content="Discuz! 6.1.0" />'
 const discuz5Html = '<meta name="generator" content="Discuz! 5.5.0 with Templates 5.5.0" />'
 
@@ -20,6 +21,32 @@ describe('parseDiscuzUrl', () => {
     const expected: DiscuzUrl = { kind: 'board', boardId: '22' }
 
     expect(parseDiscuzUrl('https://bbs.example.com/forum-22-1.html')).toEqual(expected)
+  })
+
+  it('should return the board from an archiver query key', () => {
+    const expected: DiscuzUrl = { kind: 'board', boardId: '22' }
+
+    expect(parseDiscuzUrl('https://bbs.example.com/archiver/?fid-22.html')).toEqual(expected)
+  })
+
+  it('should return the board from a rewritten archiver path', () => {
+    const expected: DiscuzUrl = { kind: 'board', boardId: '22' }
+
+    expect(parseDiscuzUrl('https://example.com/forum/archiver/fid-22.html?page=2')).toEqual(
+      expected,
+    )
+  })
+
+  it('should return the site for an archiver thread', () => {
+    const expected: DiscuzUrl = { kind: 'site' }
+
+    expect(parseDiscuzUrl('https://bbs.example.com/archiver/?tid-123.html')).toEqual(expected)
+  })
+
+  it('should return the site for a fid- page outside the archiver', () => {
+    const expected: DiscuzUrl = { kind: 'site' }
+
+    expect(parseDiscuzUrl('https://bbs.example.com/fid-22.html')).toEqual(expected)
   })
 
   it('should return the site for a page without a board', () => {
@@ -181,6 +208,50 @@ describe('discuzHandler', () => {
       ]
 
       expect(discuzHandler.resolve(value, discuzHtml)).toEqual(expected)
+    })
+
+    it('should return the forum.php feeds from a Discuz! X archiver board page', () => {
+      const value = 'https://example.com/forum/archiver/?fid-32.html'
+      const expected = [
+        {
+          uri: 'https://example.com/forum/forum.php?mod=rss&fid=32&auth=0',
+          hint: { key: 'discuz:board', label: 'Board' },
+        },
+        {
+          uri: 'https://example.com/forum/forum.php?mod=rss',
+          hint: { key: 'discuz:site', label: 'Site' },
+        },
+      ]
+
+      expect(discuzHandler.resolve(value, discuzHtml)).toEqual(expected)
+    })
+
+    it('should return the rss.php site feed from a Discuz! 7 archiver page', () => {
+      const value = 'http://example.com/archiver/'
+      const expected = [
+        {
+          uri: 'http://example.com/rss.php?auth=0',
+          hint: { key: 'discuz:site', label: 'Site' },
+        },
+      ]
+
+      expect(discuzHandler.resolve(value, discuz7ArchiverHtml)).toEqual(expected)
+    })
+
+    it('should return the rss.php feeds from a Discuz! 7 archiver board page', () => {
+      const value = 'http://example.com/bbs/archiver/?fid-113.html'
+      const expected = [
+        {
+          uri: 'http://example.com/bbs/rss.php?fid=113&auth=0',
+          hint: { key: 'discuz:board', label: 'Board' },
+        },
+        {
+          uri: 'http://example.com/bbs/rss.php?auth=0',
+          hint: { key: 'discuz:site', label: 'Site' },
+        },
+      ]
+
+      expect(discuzHandler.resolve(value, discuz7ArchiverHtml)).toEqual(expected)
     })
 
     it('should return the rss.php feeds for a Discuz! 7 board page', () => {
