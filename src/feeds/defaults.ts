@@ -17,6 +17,7 @@ import type { HtmlMethodOptions } from '../common/uris/html/types.js'
 import type { PlatformMethodOptions } from '../common/uris/platform/types.js'
 import { acastHandler } from './platforms/acast.js'
 import { acomicsHandler } from './platforms/acomics.js'
+import { aladinHandler } from './platforms/aladin.js'
 import { alloforumHandler } from './platforms/alloforum.js'
 import { amebloHandler } from './platforms/ameblo.js'
 import { applePodcastsHandler } from './platforms/applePodcasts.js'
@@ -435,6 +436,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
   handlers: [
     acastHandler,
     acomicsHandler,
+    aladinHandler,
     alloforumHandler,
     amebloHandler,
     applePodcastsHandler,

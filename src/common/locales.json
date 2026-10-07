@@ -692,6 +692,8 @@
     "newswire:press-releases": "Press releases",
     "newswire:social": "Social wire",
     "ojs:announcements": "Announcements",
-    "ojs:articles": "Articles"
+    "ojs:articles": "Articles",
+    "aladin:posts": "Posts",
+    "aladin:category": "Category"
   }
 }
