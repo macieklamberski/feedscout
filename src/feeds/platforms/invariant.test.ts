@@ -42,6 +42,7 @@ import { jiraHandler } from './jira.js'
 import { joomlaHandler } from './joomla.js'
 import { jugemHandler } from './jugem.js'
 import { kohaHandler } from './koha.js'
+import { lagetHandler } from './laget.js'
 import { legistarHandler } from './legistar.js'
 import { lemmyHandler } from './lemmy.js'
 import { mastodonHandler } from './mastodon.js'
@@ -269,6 +270,11 @@ const cases: Array<Case> = [
   ['joomla', joomlaHandler, '<script class="joomla-script-options new">{}</script>'],
   ['jugem', jugemHandler, '<script src="./template/js/cookie.js"></script>'],
   ['koha', kohaHandler, '<link rel="stylesheet" href="/opac-tmpl/bootstrap/css/opac.css">'],
+  [
+    'laget',
+    lagetHandler,
+    '<link rel="stylesheet" href="https://g-content.laget.se/Public/Css/site-277b6ed876.css">',
+  ],
   ['lemmy', lemmyHandler, '<div class="lemmy-site" id="app"></div>'],
   [
     'legistar',

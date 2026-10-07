@@ -2858,11 +2858,12 @@ Discovers the news feeds of a Swedish sports club website on SportAdmin. On the 
 
 ### laget.se
 
-Discovers the news feed of a sports club or team site on laget.se. The team page links the feed only through an icon with no text, and a team page without a news box links nothing, yet its feed still answers.
+Discovers the news feed of a sports club or team site on laget.se. The team page links the feed only through an icon with no text, and a team page without a news box links nothing, yet its feed still answers. A club on its own domain is detected by stylesheets or scripts loaded from the `g-content.laget.se` asset host, and serves its feed at the domain root.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | `www.laget.se/{team}`, `www.laget.se/{team}/…` | News at `www.laget.se/{team}/Home/NewsRss` (RSS) |
+| Any other page | News at `/Home/NewsRss` (RSS) |
 
 ### Geoblog.pl
 

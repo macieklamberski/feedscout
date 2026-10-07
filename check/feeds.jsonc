@@ -845,7 +845,9 @@
   "laget": {
     "laget:news": [
       "https://www.laget.se/89ers/Home/NewsRss",
-      "https://www.laget.se/MossensBKF10/Home/NewsRss"
+      "https://www.laget.se/MossensBKF10/Home/NewsRss",
+      "https://hogsbyik.com/Home/NewsRss",
+      "https://brunfloik.se/Home/NewsRss"
     ]
   },
   "launchpad": {
