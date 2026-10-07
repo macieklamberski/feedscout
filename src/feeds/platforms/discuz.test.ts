@@ -83,7 +83,7 @@ describe('discuzHandler', () => {
       const value = 'https://example.com/Forum-22-1.html'
       const expected = [
         {
-          uri: 'https://example.com/forum.php?mod=rss&fid=22',
+          uri: 'https://example.com/forum.php?mod=rss&fid=22&auth=0',
           hint: { key: 'discuz:board', label: 'Board' },
         },
         {
@@ -99,7 +99,7 @@ describe('discuzHandler', () => {
       const value = 'https://example.com/forum-22-1.html'
       const expected = [
         {
-          uri: 'https://example.com/forum.php?mod=rss&fid=22',
+          uri: 'https://example.com/forum.php?mod=rss&fid=22&auth=0',
           hint: { key: 'discuz:board', label: 'Board' },
         },
         {
@@ -115,7 +115,7 @@ describe('discuzHandler', () => {
       const value = 'https://example.com/forum.php?mod=forumdisplay&fid=45'
       const expected = [
         {
-          uri: 'https://example.com/forum.php?mod=rss&fid=45',
+          uri: 'https://example.com/forum.php?mod=rss&fid=45&auth=0',
           hint: { key: 'discuz:board', label: 'Board' },
         },
         {
@@ -131,11 +131,51 @@ describe('discuzHandler', () => {
       const value = 'https://example.com/forum.php?mod=forumdisplay&fid=45'
       const expected = [
         {
-          uri: 'https://example.com/forum.php?mod=rss&fid=45',
+          uri: 'https://example.com/forum.php?mod=rss&fid=45&auth=0',
           hint: { key: 'discuz:board', label: 'Board' },
         },
         {
           uri: 'https://example.com/forum.php?mod=rss',
+          hint: { key: 'discuz:site', label: 'Site' },
+        },
+      ]
+
+      expect(discuzHandler.resolve(value, discuzHtml)).toEqual(expected)
+    })
+
+    it('should return the forum.php feeds from a Discuz! X install directory', () => {
+      const value = 'https://example.com/forum/forum-32-1.html'
+      const expected = [
+        {
+          uri: 'https://example.com/forum/forum.php?mod=rss&fid=32&auth=0',
+          hint: { key: 'discuz:board', label: 'Board' },
+        },
+        {
+          uri: 'https://example.com/forum/forum.php?mod=rss',
+          hint: { key: 'discuz:site', label: 'Site' },
+        },
+      ]
+
+      expect(discuzHandler.resolve(value, discuzHtml)).toEqual(expected)
+    })
+
+    it('should return the forum.php site feed for a Discuz! X install root', () => {
+      const value = 'https://example.com/forum/'
+      const expected = [
+        {
+          uri: 'https://example.com/forum/forum.php?mod=rss',
+          hint: { key: 'discuz:site', label: 'Site' },
+        },
+      ]
+
+      expect(discuzHandler.resolve(value, discuzHtml)).toEqual(expected)
+    })
+
+    it('should return the forum.php site feed from a Discuz! X archiver page', () => {
+      const value = 'https://example.com/forum/archiver/?tid-123.html'
+      const expected = [
+        {
+          uri: 'https://example.com/forum/forum.php?mod=rss',
           hint: { key: 'discuz:site', label: 'Site' },
         },
       ]

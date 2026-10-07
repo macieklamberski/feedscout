@@ -14,6 +14,7 @@ import {
 
 export type DiscuzUrl = { kind: 'board'; boardId: string } | { kind: 'site' }
 
+const archiverPathRegex = /\/archiver\/.*$/i
 const boardPathRegex = /\/forum-(\d+)-/i
 const numericRegex = /^\d+$/
 const legacyGeneratorRegex = /^Discuz! \d/i
@@ -96,18 +97,22 @@ export const discuzHandler: PlatformHandler = {
       return uris
     }
 
-    const { origin } = new URL(url)
     const uris: Array<DiscoverUriEntry> = []
+    const installUrl = new URL(url)
+
+    // Discuz! X pages sit in the install directory, such as `/forum/`, beside `forum.php`, except
+    // the archiver, served from `archiver/` inside it.
+    installUrl.pathname = installUrl.pathname.replace(archiverPathRegex, '/')
 
     if (parsed.kind === 'board') {
       uris.push({
-        uri: `${origin}/forum.php?mod=rss&fid=${parsed.boardId}`,
+        uri: new URL(`forum.php?mod=rss&fid=${parsed.boardId}&auth=0`, installUrl).href,
         hint: composeHint('discuz:board'),
       })
     }
 
     uris.push({
-      uri: `${origin}/forum.php?mod=rss`,
+      uri: new URL('forum.php?mod=rss', installUrl).href,
       hint: composeHint('discuz:site'),
     })
 
