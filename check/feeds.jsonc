@@ -365,12 +365,14 @@
   },
   "discuz": {
     "discuz:board": [
-      "https://bbs.kafan.cn/forum.php?mod=rss&fid=22",
-      "http://myq.joinbbs.net/rss.php?fid=113&auth=0"
+      "https://bbs.kafan.cn/forum.php?mod=rss&fid=22&auth=0",
+      "http://myq.joinbbs.net/rss.php?fid=113&auth=0",
+      "https://www.pdawiki.com/forum/forum.php?mod=rss&fid=32&auth=0"
     ],
     "discuz:site": [
       "https://bbs.kafan.cn/forum.php?mod=rss",
-      "http://myq.joinbbs.net/rss.php?auth=0"
+      "http://myq.joinbbs.net/rss.php?auth=0",
+      "https://www.pdawiki.com/forum/forum.php?mod=rss"
     ]
   },
   "dokuwiki": {
