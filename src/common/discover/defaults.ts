@@ -4,9 +4,16 @@ import type { DiscoverResolveSiteUrlFn, DiscoverResolveUrlFn, FetchFn } from '..
 import { attempt, getFeedSiteUrl } from './utils.js'
 
 export const defaultFetchFn: FetchFn = async (url, options) => {
+  // An empty Accept stops fetch from sending `*/*`, which some sites answer with a feed on a page.
+  const headers = new Headers(options?.headers)
+
+  if (!headers.has('accept')) {
+    headers.set('accept', '')
+  }
+
   const response = await fetch(url, {
     method: options?.method ?? 'GET',
-    headers: options?.headers,
+    headers,
     body: options?.body,
   })
 

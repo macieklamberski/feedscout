@@ -110,7 +110,37 @@ describe('defaultFetchFn', () => {
       headers: { 'X-Custom': 'value' },
     })
 
-    expect(capturedOptions?.headers).toEqual({ 'X-Custom': 'value' })
+    expect(new Headers(capturedOptions?.headers).get('x-custom')).toBe('value')
+  })
+
+  it('should send an empty accept header by default', async () => {
+    let capturedOptions: RequestInit | undefined
+    fetchSpy.mockImplementation(
+      createFetchMock((_url: string, options?: RequestInit) => {
+        capturedOptions = options
+        return createMockResponse({})
+      }),
+    )
+
+    await defaultFetchFn('https://example.com/discussions/1')
+
+    expect(new Headers(capturedOptions?.headers).get('accept')).toBe('')
+  })
+
+  it('should send the accept header of the caller', async () => {
+    let capturedOptions: RequestInit | undefined
+    fetchSpy.mockImplementation(
+      createFetchMock((_url: string, options?: RequestInit) => {
+        capturedOptions = options
+        return createMockResponse({})
+      }),
+    )
+
+    await defaultFetchFn('https://example.com/discussions/1', {
+      headers: { Accept: 'text/html' },
+    })
+
+    expect(new Headers(capturedOptions?.headers).get('accept')).toBe('text/html')
   })
 
   it('should pass POST method and body to fetch', async () => {
