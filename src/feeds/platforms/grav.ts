@@ -2,7 +2,9 @@ import { parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, getCookieNames, hasMarker, hasMetaContent } from '../../common/utils.js'
 
-// Discoverability: Discoverable without handler.
+// Discoverability: Partially discoverable without handler.
+// Generic covers listing (guess, html).
+// Handler needed for: home.
 
 export type GravUrl = { kind: 'home' } | { kind: 'page'; path: string }
 

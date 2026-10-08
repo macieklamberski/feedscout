@@ -4,8 +4,8 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic covers devlog, game (html), partly covers home.
-// Handler needed for: browseByTag, browseByUser, games, user.
+// Generic covers blog, devlog, devlogs, game (html), partly covers home.
+// Handler needed for: browseByEngine, browseByGenre, browseByPlatform, browseBySort, browseByTag, browseByUser, games, section, user.
 
 export type ItchioUrl =
   | { kind: 'game'; creator: string; game: string }

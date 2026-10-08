@@ -4,7 +4,7 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic partly covers community.
+// Generic covers other (guess, html), partly covers community.
 
 export type LearnkuUrl = { kind: 'community'; community: string } | { kind: 'home' }
 

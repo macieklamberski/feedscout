@@ -3,7 +3,8 @@ import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
-// Discoverability: Discoverable without handler.
+// Discoverability: Partially discoverable without handler.
+// Generic covers channel, explore, home, videos (html), partly covers videosCategory.
 
 export type NebulaUrl = { kind: 'channel'; slug: string } | { kind: 'explore'; category?: string }
 

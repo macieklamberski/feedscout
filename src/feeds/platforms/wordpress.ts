@@ -4,7 +4,7 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, findElement } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic partly covers blog, category, post, tag.
+// Generic partly covers author, blog, category, edublogsBlog, hypothesesBlog, nestedCategory, post, tag, unblogBlog.
 
 export type WordpressUrl =
   | { kind: 'archive'; path: string; hintKey: string }

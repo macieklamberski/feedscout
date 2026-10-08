@@ -5,7 +5,7 @@ import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers domain, subreddits (guess, html), partly covers multiSubreddit.
-// Handler needed for: home, search, subreddit, user, userSubmitted.
+// Handler needed for: home, multireddit, post, search, subreddit, subredditSort, user, userSubmitted.
 
 export type RedditUrl =
   | { kind: 'home' }

@@ -3,8 +3,9 @@ import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, hasMarker } from '../../common/utils.js'
 
-// Discoverability: Not discoverable without handler.
-// Handler needed for: all shapes.
+// Discoverability: Partially discoverable without handler.
+// Generic partly covers category, topic.
+// Handler needed for: popular, recent.
 
 export type NodebbUrl =
   | { kind: 'topic'; topicId: string; categoryId?: string }

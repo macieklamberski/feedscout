@@ -3,7 +3,7 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, hasElementWithId, hasMarker, hasMetaContent } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic covers profile, users (guess, html).
+// Generic covers profile, users (guess, html), partly covers profileMedia, profileTagged, profileWithReplies.
 // Handler needed for: tag.
 
 export type MastodonUrl =
