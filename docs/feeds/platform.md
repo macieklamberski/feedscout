@@ -1257,10 +1257,12 @@ Discovers the posts, comments and tag feeds of a blog on `*.blogs.sapo.pt`. Comm
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{blog}.blogs.sapo.pt` | Posts (RSS + Atom) · comments |
-| `{blog}.blogs.sapo.pt/{slug}-{id}` | Post comments, plus the blog feeds |
-| `{blog}.blogs.sapo.pt/{id}.html` | Post comments, plus the blog feeds |
-| `{blog}.blogs.sapo.pt/tag/{tag}` | Tag, plus the blog feeds |
+| `{blog}.blogs.sapo.pt` | Posts (RSS + Atom) · comments<sup>†</sup> |
+| `{blog}.blogs.sapo.pt/{slug}-{id}` | Post comments<sup>†</sup>, plus the blog feeds |
+| `{blog}.blogs.sapo.pt/{id}.html` | Post comments<sup>†</sup>, plus the blog feeds |
+| `{blog}.blogs.sapo.pt/tag/{tag}` | Tag<sup>†</sup>, plus the blog feeds |
+
+<sup>†</sup> *Found only by the Platform method.*
 
 ### Seesaa Blog
 
