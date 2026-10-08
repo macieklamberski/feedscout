@@ -3,7 +3,7 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic partly covers log.
+// Generic covers log (html).
 // Handler needed for: repo.
 
 export type SourcehutUrl =

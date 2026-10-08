@@ -4,8 +4,7 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic covers user (guess, html), partly covers branch, file, fileCommits, issues, repo.
-// Handler needed for: commits.
+// Generic covers user (guess, html), partly covers branch, commits, file, fileCommits, issues, repo.
 
 export type GiteaUrl =
   | { kind: 'user'; owner: string }

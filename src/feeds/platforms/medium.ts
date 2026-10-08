@@ -2,7 +2,9 @@ import { getSubdomain, isAnyOf, isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
-// Discoverability: Unmeasured, bot wall.
+// Discoverability: Partially discoverable without handler.
+// Generic covers customDomain, profile, publication, publicationTag (guess, html).
+// Handler needed for: tag.
 
 export type MediumUrl =
   | { kind: 'user'; username: string }

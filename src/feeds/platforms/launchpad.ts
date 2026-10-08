@@ -4,8 +4,8 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic covers branch, bug, bugsPerson, bugsProject, codeProject, home, person, project, sourcePackage (html).
-// Handler needed for: codePerson.
+// Generic covers branch, bug, bugsPerson, bugsProject, codeProject, person, project, sourcePackage (html).
+// Handler needed for: bugsHome, codePerson, home.
 
 // Launchpad serves its main site, Bugs and Code on separate hosts, and each answers with its
 // own feeds for the same person or project.

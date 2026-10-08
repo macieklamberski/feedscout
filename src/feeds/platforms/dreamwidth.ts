@@ -3,8 +3,7 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getJournalFeeds, journalTagRegex } from './livejournal.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic partly covers blog, tag, userPath.
-// Handler needed for: tildePath.
+// Generic covers tildePath (html), partly covers blog, tag, userPath.
 
 export type DreamwidthUrl = { kind: 'journal'; username?: string; tag?: string }
 

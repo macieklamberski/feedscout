@@ -3,8 +3,7 @@ import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
-// Discoverability: Partially discoverable without handler.
-// Generic covers profile, related (guess, html), partly covers huffduff.
+// Discoverability: Discoverable without handler.
 
 export type HuffdufferUrl =
   | { kind: 'profile'; username: string }
