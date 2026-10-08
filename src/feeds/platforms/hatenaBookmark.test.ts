@@ -8,44 +8,86 @@ const base = 'https://b.hatena.ne.jp'
 describe('parseHatenaBookmarkUrl', () => {
   const home: HatenaBookmarkUrl = { kind: 'home' }
 
-  it('should return a search for a tag search', () => {
+  it('should return a search for a query page', () => {
+    const expected: HatenaBookmarkUrl = { kind: 'search', query: 'rss', params: '' }
+
+    expect(parseHatenaBookmarkUrl('https://b.hatena.ne.jp/q/rss')).toEqual(expected)
+  })
+
+  it('should return a search for a query page with a capitalized q segment', () => {
+    const expected: HatenaBookmarkUrl = { kind: 'search', query: 'rss', params: '' }
+
+    expect(parseHatenaBookmarkUrl('https://b.hatena.ne.jp/Q/rss')).toEqual(expected)
+  })
+
+  it('should return the decoded query for an encoded query page', () => {
+    const expected: HatenaBookmarkUrl = { kind: 'search', query: 'c++ web', params: '' }
+
+    expect(parseHatenaBookmarkUrl('https://b.hatena.ne.jp/q/c%2B%2B%20web')).toEqual(expected)
+  })
+
+  it('should keep a slash in the query', () => {
+    const expected: HatenaBookmarkUrl = { kind: 'search', query: 'rss/atom', params: '' }
+
+    expect(parseHatenaBookmarkUrl('https://b.hatena.ne.jp/q/rss/atom')).toEqual(expected)
+  })
+
+  it('should keep the search filters of a query page', () => {
     const expected: HatenaBookmarkUrl = {
       kind: 'search',
-      searchType: 'tag',
-      params: 'q=rss',
+      query: 'rss',
+      params: 'target=title&sort=recent&users=10&date_range=1w&safe=on',
     }
+    const url =
+      'https://b.hatena.ne.jp/q/rss?target=title&sort=recent&users=10&date_range=1w&safe=on'
+
+    expect(parseHatenaBookmarkUrl(url)).toEqual(expected)
+  })
+
+  it('should drop the page and unknown parameters of a query page', () => {
+    const expected: HatenaBookmarkUrl = { kind: 'search', query: 'rss', params: 'target=text' }
+
+    expect(
+      parseHatenaBookmarkUrl('https://b.hatena.ne.jp/q/rss?target=text&page=2&ref=top'),
+    ).toEqual(expected)
+  })
+
+  it('should return the home page for a query page without a query', () => {
+    expect(parseHatenaBookmarkUrl('https://b.hatena.ne.jp/q/')).toEqual(home)
+  })
+
+  it('should return a search without a target for an old tag search', () => {
+    const expected: HatenaBookmarkUrl = { kind: 'search', query: 'rss', params: '' }
 
     expect(parseHatenaBookmarkUrl('https://b.hatena.ne.jp/search/tag?q=rss')).toEqual(expected)
   })
 
-  it('should return a search for a tag search with a capitalized search segment', () => {
-    const expected: HatenaBookmarkUrl = {
-      kind: 'search',
-      searchType: 'tag',
-      params: 'q=rss',
-    }
-
-    expect(parseHatenaBookmarkUrl('https://b.hatena.ne.jp/Search/tag?q=rss')).toEqual(expected)
-  })
-
-  it('should return the lowercase search type for a capitalized search type', () => {
-    const expected: HatenaBookmarkUrl = {
-      kind: 'search',
-      searchType: 'tag',
-      params: 'q=rss',
-    }
-
-    expect(parseHatenaBookmarkUrl('https://b.hatena.ne.jp/search/Tag?q=rss')).toEqual(expected)
-  })
-
-  it('should return a search for a text search', () => {
-    const expected: HatenaBookmarkUrl = {
-      kind: 'search',
-      searchType: 'text',
-      params: 'q=feed',
-    }
+  it('should return a search with a target for an old text search', () => {
+    const expected: HatenaBookmarkUrl = { kind: 'search', query: 'feed', params: 'target=text' }
 
     expect(parseHatenaBookmarkUrl('https://b.hatena.ne.jp/search/text?q=feed')).toEqual(expected)
+  })
+
+  it('should return the lowercase target for a capitalized old search type', () => {
+    const expected: HatenaBookmarkUrl = { kind: 'search', query: 'rss', params: 'target=title' }
+
+    expect(parseHatenaBookmarkUrl('https://b.hatena.ne.jp/Search/Title?q=rss')).toEqual(expected)
+  })
+
+  it('should keep the search filters of an old search', () => {
+    const expected: HatenaBookmarkUrl = {
+      kind: 'search',
+      query: 'feed',
+      params: 'target=text&users=3',
+    }
+
+    expect(parseHatenaBookmarkUrl('https://b.hatena.ne.jp/search/text?q=feed&users=3')).toEqual(
+      expected,
+    )
+  })
+
+  it('should return the home page for an old search without a query', () => {
+    expect(parseHatenaBookmarkUrl('https://b.hatena.ne.jp/search/tag')).toEqual(home)
   })
 
   it('should return a site for a domain page', () => {
@@ -143,7 +185,6 @@ describe('parseHatenaBookmarkUrl', () => {
   })
 
   it('should return the home page for a path shorter than a Hatena ID', () => {
-    expect(parseHatenaBookmarkUrl('https://b.hatena.ne.jp/q/rss')).toEqual(home)
     expect(parseHatenaBookmarkUrl('https://b.hatena.ne.jp/ab')).toEqual(home)
   })
 
@@ -247,37 +288,17 @@ describe('hatenaBookmarkHandler', () => {
       expect(hatenaBookmarkHandler.resolve(`${base}/entrylist/game`)).toEqual(expected)
     })
 
-    it('should return a search feed for a tag search', () => {
+    it('should return a search feed for a query page', () => {
       const expected = [
         {
-          uri: `${base}/search/tag?q=rss&mode=rss`,
+          uri: `${base}/q/c%2B%2B%20web?target=title&mode=rss`,
           hint: { key: 'hatena-bookmark:search', label: 'Search' },
         },
       ]
 
-      expect(hatenaBookmarkHandler.resolve(`${base}/search/tag?q=rss`)).toEqual(expected)
-    })
-
-    it('should return the canonical search feed for a capitalized search path', () => {
-      const expected = [
-        {
-          uri: `${base}/search/tag?q=rss&mode=rss`,
-          hint: { key: 'hatena-bookmark:search', label: 'Search' },
-        },
-      ]
-
-      expect(hatenaBookmarkHandler.resolve(`${base}/Search/Tag?q=rss`)).toEqual(expected)
-    })
-
-    it('should keep existing search filters', () => {
-      const expected = [
-        {
-          uri: `${base}/search/text?q=feed&users=3&mode=rss`,
-          hint: { key: 'hatena-bookmark:search', label: 'Search' },
-        },
-      ]
-
-      expect(hatenaBookmarkHandler.resolve(`${base}/search/text?q=feed&users=3`)).toEqual(expected)
+      expect(hatenaBookmarkHandler.resolve(`${base}/q/c%2B%2B%20web?target=title`)).toEqual(
+        expected,
+      )
     })
 
     it('should return a site feed for a domain page', () => {

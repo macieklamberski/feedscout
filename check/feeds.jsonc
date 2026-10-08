@@ -691,7 +691,7 @@
       "https://b.hatena.ne.jp/entrylist.rss",
       "https://b.hatena.ne.jp/entrylist/game.rss"
     ],
-    "hatena-bookmark:search": "https://b.hatena.ne.jp/search/tag?q=rss&mode=rss",
+    "hatena-bookmark:search": "https://b.hatena.ne.jp/q/rss?mode=rss",
     "hatena-bookmark:site": "https://b.hatena.ne.jp/site/example.com?mode=rss"
   },
   "hatenaFotolife": {

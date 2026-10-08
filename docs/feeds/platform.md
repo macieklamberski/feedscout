@@ -539,13 +539,14 @@ Discovers RSS feeds for Hatena Bookmark listings, searches, sites and user bookm
 | `b.hatena.ne.jp` | Hot entries |
 | `b.hatena.ne.jp/hotentry/{category}` | Hot entries by category |
 | `b.hatena.ne.jp/entrylist/{category}` | New entries by category |
+| `b.hatena.ne.jp/q/{query}` | Search<sup>†</sup> |
 | `b.hatena.ne.jp/search/{tag\|text\|title}?q={query}` | Search |
 | `b.hatena.ne.jp/site/{domain}` | Site bookmarks<sup>†</sup> |
 | `b.hatena.ne.jp/{user}` | User bookmarks |
 
 <sup>†</sup> *Found only by the Platform method.*
 
-> Categories are `it`, `general`, `social`, `economics`, `life`, `knowledge`, `fun`, `entertainment` and `game`. Search and site feeds keep any filters already on the URL and add `mode=rss`.
+> Categories are `it`, `general`, `social`, `economics`, `life`, `knowledge`, `fun`, `entertainment` and `game`. Search feeds keep the `target`, `sort`, `users`, `date_range` and `safe` filters already on the URL, site feeds keep any filters, and both add `mode=rss`. The old `/search/` URLs redirect to `/q/{query}`, so their feeds use that path too.
 
 ### Hatena Fotolife
 
