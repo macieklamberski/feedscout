@@ -4,7 +4,7 @@ import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers starred, user (html).
-// Handler needed for: forks.
+// Handler needed for: discover, forks.
 
 export type GithubGistUrl =
   | { kind: 'user'; username: string }

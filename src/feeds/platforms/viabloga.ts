@@ -2,8 +2,7 @@ import { getSubdomain, isAnyOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
-// Discoverability: Partially discoverable without handler.
-// Generic partly covers blog.
+// Discoverability: Discoverable without handler.
 
 export type ViablogaUrl = { kind: 'blog' }
 

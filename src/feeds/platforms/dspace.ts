@@ -12,8 +12,8 @@ import {
 } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic covers community, legacyCollection, legacyCommunity, legacyHome (html), partly covers collection.
-// Handler needed for: home.
+// Generic covers legacyCollection, legacyCommunity, legacyHome (html), partly covers community.
+// Handler needed for: collection, home.
 
 const scopePathRegex =
   /\/(collections|communities)\/([\da-f]{8}-[\da-f]{4}-[\da-f]{4}-[\da-f]{4}-[\da-f]{12})(?:\/|$)/i

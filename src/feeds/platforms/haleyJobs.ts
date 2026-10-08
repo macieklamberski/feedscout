@@ -2,8 +2,8 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, findElement } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic covers search (html).
-// Handler needed for: board, job.
+// Generic covers board, search (html).
+// Handler needed for: job.
 
 const boardRoutePrefix = '/index.smpl?arg=jb_'
 

@@ -2,8 +2,8 @@ import { getPathSegments, isAnyOf, isHostOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
-// Discoverability: Partially discoverable without handler.
-// Generic partly covers journal.
+// Discoverability: Not discoverable without handler.
+// Handler needed for: all shapes.
 
 export type OpeneditionUrl = { kind: 'journal'; journal: string }
 

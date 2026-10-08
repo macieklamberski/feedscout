@@ -3,7 +3,8 @@ import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
-// Discoverability: Unmeasured, bot wall.
+// Discoverability: Partially discoverable without handler.
+// Generic partly covers blog, community, tag, tildePath, userPath, usersHost.
 
 export type LivejournalUrl = { kind: 'journal'; username?: string; tag?: string }
 
