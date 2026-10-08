@@ -648,6 +648,7 @@ Discovers RSS feeds for Write.as blogs, including tag feeds.
 |-------------|-----------------|
 | `write.as/{user}` | Blog |
 | `write.as/{user}/tag:{tag}` | Tag · blog |
+
 ### Prose.sh
 
 Discovers Atom feeds for Prose.sh blogs.
@@ -656,6 +657,7 @@ Discovers Atom feeds for Prose.sh blogs.
 |-------------|-----------------|
 | `prose.sh` | Discovery |
 | `*.prose.sh` | Blog |
+
 ### Pagecord
 
 Discovers RSS feeds for Pagecord blogs.
@@ -663,6 +665,7 @@ Discovers RSS feeds for Pagecord blogs.
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | `*.pagecord.com` | Blog |
+
 ### ArtStation
 
 Discovers RSS feeds for ArtStation portfolios and the global artwork feed.
