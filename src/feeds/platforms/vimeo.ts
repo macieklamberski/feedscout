@@ -4,6 +4,7 @@ import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers channel, group, user, userVideos (guess, html), partly covers likes.
+// Handler needed for: album.
 
 export type VimeoUrl =
   | { kind: 'channel'; channel: string }

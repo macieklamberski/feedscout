@@ -3,7 +3,7 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, findElement, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic partly covers customDomainSite, site.
+// Generic partly covers customDomainSite, site, skSite.
 
 export type EstrankyUrl = { kind: 'site' }
 

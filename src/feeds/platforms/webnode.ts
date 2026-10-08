@@ -4,7 +4,7 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, findElement, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic covers site (html), partly covers section.
+// Generic covers article, site (html), partly covers section.
 
 export type WebnodeUrl = { kind: 'section'; section: string } | { kind: 'site' }
 

@@ -3,7 +3,7 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeWordpressFeeds, parseWordpressPage, type WordpressUrl } from './wordpress.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic partly covers blog.
+// Generic partly covers blog, legacyBlog.
 
 export type WpengineUrl = WordpressUrl
 

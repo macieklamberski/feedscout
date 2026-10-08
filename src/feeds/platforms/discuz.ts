@@ -11,6 +11,7 @@ import {
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers home (html), partly covers board.
+// Handler needed for: archiverBoard.
 
 export type DiscuzUrl = { kind: 'board'; boardId: string } | { kind: 'site' }
 

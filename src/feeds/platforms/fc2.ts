@@ -3,7 +3,7 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic covers blog, fc2Net (html), partly covers 2nt.
+// Generic covers blog, fc2Net, numberedBlog (html), partly covers 2nt.
 
 export type Fc2Url = { kind: 'blog' }
 

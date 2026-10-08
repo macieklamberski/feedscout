@@ -4,7 +4,7 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, findElement } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic covers club (guess), partly covers team.
+// Generic covers club (guess), partly covers team, teamNewTemplate.
 
 export type SportadminPage = { kind: 'club' } | { kind: 'team'; sectionId: string }
 

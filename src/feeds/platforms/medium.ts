@@ -3,7 +3,7 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic covers customDomain, profile, publication, publicationTag (guess, html).
+// Generic covers customDomain, profile, publication, publicationTag, subdomainTag (guess, html).
 // Handler needed for: tag.
 
 export type MediumUrl =

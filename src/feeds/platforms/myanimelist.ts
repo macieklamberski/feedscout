@@ -5,7 +5,7 @@ import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers featured, news (html), partly covers profile.
-// Handler needed for: animelist, mangalist.
+// Handler needed for: animelist, history, mangalist.
 
 export type MyanimelistUrl =
   | { kind: 'user'; username: string }

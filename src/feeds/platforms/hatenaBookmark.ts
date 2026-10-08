@@ -2,7 +2,9 @@ import { getAnyOf, isAnyOf, isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
-// Discoverability: Discoverable without handler.
+// Discoverability: Partially discoverable without handler.
+// Generic covers category, home, newEntriesCategory, user (html).
+// Handler needed for: site.
 
 export type HatenaBookmarkUrl =
   | { kind: 'hotentry'; category?: string }
