@@ -55,15 +55,16 @@ Discovers Atom feeds for channels and playlists. Generates ten feed variants for
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `youtube.com/channel/{id}` | All uploads · videos<sup>†</sup> · shorts<sup>†</sup> · live streams<sup>†</sup> · popular videos<sup>†</sup> · popular shorts<sup>†</sup> · popular live streams<sup>†</sup> · member videos<sup>†</sup> · member shorts<sup>?</sup> · member live streams<sup>?</sup> |
-| `youtube.com/@{handle}` | All uploads · videos<sup>†</sup> · shorts<sup>†</sup> · live streams<sup>†</sup> · popular videos<sup>†</sup> · popular shorts<sup>†</sup> · popular live streams<sup>†</sup> · member videos<sup>?</sup> · member shorts<sup>?</sup> · member live streams<sup>?</sup>* |
-| `youtube.com/user/{name}` | All uploads · videos<sup>†</sup> · shorts<sup>?</sup> · live streams<sup>†</sup> · popular videos<sup>†</sup> · popular shorts<sup>?</sup> · popular live streams<sup>†</sup> · member videos<sup>†</sup> · member shorts<sup>?</sup> · member live streams<sup>†</sup>* |
-| `youtube.com/c/{custom}` | All uploads · videos<sup>†</sup> · shorts<sup>†</sup> · live streams<sup>†</sup> · popular videos<sup>†</sup> · popular shorts<sup>†</sup> · popular live streams<sup>†</sup> · member videos<sup>†</sup> · member shorts<sup>?</sup> · member live streams<sup>†</sup>* |
-| `youtube.com/watch?v={id}` | All uploads<sup>†</sup> · videos<sup>†</sup> · shorts<sup>†</sup> · live streams<sup>†</sup> · popular videos<sup>†</sup> · popular shorts<sup>†</sup> · popular live streams<sup>†</sup> · member videos<sup>?</sup> · member shorts<sup>?</sup> · member live streams<sup>?</sup>* |
-| `youtu.be/{id}` | All uploads<sup>†</sup> · videos<sup>†</sup> · shorts<sup>†</sup> · live streams<sup>†</sup> · popular videos<sup>†</sup> · popular shorts<sup>†</sup> · popular live streams<sup>†</sup> · member videos<sup>?</sup> · member shorts<sup>?</sup> · member live streams<sup>?</sup>* |
-| `youtube.com/shorts/{id}` | All uploads · videos · shorts · live streams · popular videos · popular shorts · popular live streams · member videos · member shorts · member live streams* |
-| `youtube.com/live/{id}` | All uploads · videos · shorts · live streams · popular videos · popular shorts · popular live streams · member videos · member shorts · member live streams* |
-| `youtube.com/playlist?list={id}` | Playlist |
+| `youtube.com/channel/{id}` | All uploads · videos<sup>?</sup> · shorts<sup>?</sup> · live streams<sup>†</sup> · popular videos<sup>?</sup> · popular shorts<sup>†</sup> · popular live streams<sup>†</sup> · member videos<sup>?</sup> · member shorts<sup>?</sup> · member live streams<sup>?</sup> |
+| `music.youtube.com/channel/{id}` | All uploads<sup>†</sup> · videos<sup>?</sup> · shorts<sup>?</sup> · live streams<sup>†</sup> · popular videos<sup>?</sup> · popular shorts<sup>†</sup> · popular live streams<sup>?</sup> · member videos<sup>?</sup> · member shorts<sup>?</sup> · member live streams<sup>?</sup> |
+| `youtube.com/@{handle}` | All uploads · videos<sup>?</sup> · shorts<sup>?</sup> · live streams<sup>†</sup> · popular videos<sup>?</sup> · popular shorts<sup>?</sup> · popular live streams<sup>?</sup> · member videos<sup>?</sup> · member shorts<sup>?</sup> · member live streams<sup>?</sup>* |
+| `youtube.com/user/{name}` | All uploads · videos<sup>?</sup> · shorts<sup>?</sup> · live streams<sup>?</sup> · popular videos<sup>†</sup> · popular shorts<sup>?</sup> · popular live streams<sup>?</sup> · member videos<sup>?</sup> · member shorts<sup>?</sup> · member live streams<sup>?</sup>* |
+| `youtube.com/c/{custom}` | All uploads · videos<sup>?</sup> · shorts<sup>?</sup> · live streams<sup>†</sup> · popular videos<sup>?</sup> · popular shorts<sup>†</sup> · popular live streams<sup>†</sup> · member videos<sup>?</sup> · member shorts<sup>?</sup> · member live streams<sup>?</sup>* |
+| `youtube.com/watch?v={id}` | All uploads<sup>†</sup> · videos<sup>?</sup> · shorts<sup>?</sup> · live streams<sup>†</sup> · popular videos<sup>?</sup> · popular shorts<sup>†</sup> · popular live streams<sup>?</sup> · member videos<sup>?</sup> · member shorts<sup>?</sup> · member live streams<sup>?</sup>* |
+| `youtu.be/{id}` | All uploads<sup>†</sup> · videos<sup>?</sup> · shorts<sup>?</sup> · live streams<sup>†</sup> · popular videos<sup>?</sup> · popular shorts<sup>†</sup> · popular live streams<sup>?</sup> · member videos<sup>?</sup> · member shorts<sup>?</sup> · member live streams<sup>?</sup>* |
+| `youtube.com/shorts/{id}` | All uploads<sup>†</sup> · videos<sup>?</sup> · shorts<sup>?</sup> · live streams<sup>†</sup> · popular videos<sup>?</sup> · popular shorts<sup>†</sup> · popular live streams<sup>†</sup> · member videos<sup>?</sup> · member shorts<sup>?</sup> · member live streams<sup>?</sup>* |
+| `youtube.com/live/{id}` | All uploads<sup>?</sup> · videos<sup>?</sup> · shorts<sup>?</sup> · live streams<sup>†</sup> · popular videos<sup>†</sup> · popular shorts<sup>?</sup> · popular live streams<sup>†</sup> · member videos<sup>?</sup> · member shorts<sup>?</sup> · member live streams<sup>?</sup>* |
+| `youtube.com/playlist?list={id}` | Playlist<sup>†</sup> |
 
 \* *Requires HTML content to extract channel ID.*
 
@@ -77,12 +78,15 @@ Discovers Atom feeds for subreddits, users, multireddits, and domains.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `reddit.com` | Homepage |
+| `reddit.com` | Homepage<sup>†</sup> |
+| `reddit.com/search?q={query}` | Search results<sup>†</sup> |
+| `reddit.com/subreddits` | Subreddits |
 | `reddit.com/r/{subreddit}` | Subreddit posts · comments<sup>†</sup> |
-| `reddit.com/r/{subreddit}/{sort}` | Sorted posts (hot/new/rising/top) · comments |
-| `reddit.com/r/{subreddit}/comments/{id}` | Post comments |
+| `reddit.com/r/{subreddit}/{sort}` | Sorted posts<sup>†</sup> (hot/new/rising/top) · comments<sup>†</sup> |
+| `reddit.com/r/{subreddit}/comments/{id}` | Post comments<sup>†</sup> |
 | `reddit.com/u/{username}` | User activity<sup>†</sup> |
-| `reddit.com/user/{username}/m/{multireddit}` | Multireddit |
+| `reddit.com/user/{username}/submitted` | Submitted posts<sup>†</sup>, plus the feeds above |
+| `reddit.com/user/{username}/m/{multireddit}` | Multireddit<sup>†</sup> |
 | `reddit.com/domain/{domain}` | Domain submissions |
 
 <sup>†</sup> *Found only by the Platform method.*
@@ -123,9 +127,9 @@ Discovers RSS and Atom feeds for WordPress.com and Unblog blogs, with category, 
 |-------------|-----------------|
 | `*.wordpress.com` | Posts (RSS + Atom + RDF<sup>†</sup>) · comments (RSS + Atom<sup>†</sup>) |
 | `*.wordpress.com/category/{category}` | Category (RSS + Atom<sup>†</sup> + RDF<sup>†</sup>), plus the feeds above |
-| `*.wordpress.com/category/{parent}/{category}` | Nested category, plus the feeds above |
+| `*.wordpress.com/category/{parent}/{category}` | Nested category (RSS + Atom<sup>†</sup> + RDF<sup>†</sup>), plus the feeds above |
 | `*.wordpress.com/tag/{tag}` | Tag (RSS + Atom<sup>†</sup> + RDF<sup>†</sup>), plus the feeds above |
-| `*.wordpress.com/author/{author}` | Author, plus the feeds above |
+| `*.wordpress.com/author/{author}` | Author (RSS + Atom + RDF<sup>†</sup>), plus the feeds above |
 | `*.unblog.fr` | Same as `*.wordpress.com` (Unblog) |
 | `*.hypotheses.org` | Same as `*.wordpress.com` |
 | `*.hypotheses.org/{post_id}` | Post comments (RSS + Atom<sup>†</sup>), plus the feeds above |
@@ -154,7 +158,7 @@ Discovers RSS and Atom feeds for Blogspot blogs, including label, comments, summ
 |-------------|-----------------|
 | `*.blogspot.com` | Posts (Atom + RSS) · summary (Atom + RSS) · comments (Atom + RSS<sup>†</sup>) |
 | `*.blogspot.com/search/label/{label}` | Label<sup>†</sup> (Atom + RSS), plus the feeds above |
-| `*.blogspot.com/{year}/{month}/{slug}.html` | Post comments (Atom + RSS)*, plus the feeds above |
+| `*.blogspot.com/{year}/{month}/{slug}.html` | Post comments (Atom + RSS<sup>†</sup>)*, plus the feeds above |
 | Custom domain, any of the paths above | Same as on `*.blogspot.com` |
 
 \* *Requires HTML content to extract the post ID.*
@@ -214,10 +218,10 @@ Discovers Atom feeds for users, organizations, and repositories.
 | `github.com/{owner}/{repo}` | Releases<sup>†</sup> · commits<sup>†</sup> · tags<sup>†</sup> |
 | `github.com/{owner}/{repo}/wiki` | Wiki changes<sup>†</sup>, plus the feeds above |
 | `github.com/{owner}/{repo}/discussions` | Discussions<sup>†</sup>, plus the feeds above |
-| `github.com/{owner}/{repo}/discussions/categories/{category}` | Discussion category, plus the feeds above |
+| `github.com/{owner}/{repo}/discussions/categories/{category}` | Discussion category<sup>†</sup>, plus the feeds above |
 | `github.com/{owner}/{repo}/tree/{branch}` | Branch commits<sup>†</sup>, plus the feeds above |
-| `github.com/{owner}/{repo}/blob/{branch}/{path}` | File commits, plus the feeds above |
-| `github.com/{owner}/{repo}/commits/{branch}/{path}` | File commits, plus the feeds above |
+| `github.com/{owner}/{repo}/blob/{branch}/{path}` | File commits<sup>†</sup>, plus the feeds above |
+| `github.com/{owner}/{repo}/commits/{branch}/{path}` | File commits<sup>†</sup>, plus the feeds above |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -290,7 +294,7 @@ Discovers RSS feeds for Pinboard users, user tags, and the popular and recent li
 | `pinboard.in/recent` | Recent bookmarks<sup>†</sup> |
 | `pinboard.in/u:{username}` | User bookmarks<sup>†</sup> |
 | `pinboard.in/u:{username}/t:{tag}` | User tag<sup>†</sup> |
-| `pinboard.in/u:{username}/t:{tag1}/t:{tag2}` | User multi-tag |
+| `pinboard.in/u:{username}/t:{tag1}/t:{tag2}` | User multi-tag<sup>†</sup> |
 | `pinboard.in/t:{tag}` | Site-wide tag<sup>?</sup> |
 
 <sup>†</sup> *Found only by the Platform method.*
@@ -328,9 +332,11 @@ Discovers RSS feeds for DeviantArt user portfolios, gallery folders, favourites,
 |-------------|-----------------|
 | `deviantart.com/{username}` | User deviations<sup>†</sup> |
 | `deviantart.com/{username}/gallery` | User gallery<sup>†</sup> |
-| `deviantart.com/{username}/gallery/{id}` | Gallery folder |
+| `deviantart.com/{username}/gallery/{id}` | Gallery folder<sup>†</sup> |
 | `deviantart.com/{username}/favourites` | User favourites<sup>†</sup> |
+| `deviantart.com/{username}/journal` | Journal |
 | `deviantart.com/tag/{tag}` | Tag<sup>†</sup> |
+| `deviantart.com/daily-deviations` | Daily deviations<sup>†</sup> |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -341,9 +347,9 @@ Discovers RSS feeds for Mastodon user profiles and hashtag pages. Detects Mastod
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | `{instance}/@{username}` or `{instance}/users/{username}` | User posts |
-| `{instance}/@{username}/tagged/{tag}` | User posts tagged · posts |
-| `{instance}/@{username}/with_replies` | User posts with replies · posts |
-| `{instance}/@{username}/media` | User media-only · posts |
+| `{instance}/@{username}/tagged/{tag}` | User posts tagged · posts<sup>†</sup> |
+| `{instance}/@{username}/with_replies` | User posts with replies<sup>†</sup> · posts |
+| `{instance}/@{username}/media` | User media-only<sup>†</sup> · posts |
 | `{instance}/tags/{tag}` | Hashtag<sup>†</sup> |
 
 <sup>†</sup> *Found only by the Platform method.*
@@ -366,8 +372,10 @@ Discovers RSS feeds for Tumblr blogs and tagged posts.
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | `*.tumblr.com` | Blog posts |
-| `*.tumblr.com/tagged/{tag}` | Tagged posts |
+| `*.tumblr.com/tagged/{tag}` | Tagged posts<sup>†</sup> |
 | `www.tumblr.com/{blog}` | Blog posts |
+
+<sup>†</sup> *Found only by the Platform method.*
 
 ### Behance
 
@@ -405,7 +413,7 @@ Discovers RSS feeds for Vimeo user profiles, channels, groups, and albums (showc
 | `vimeo.com/{user}/likes` | User likes · user videos<sup>†</sup> |
 | `vimeo.com/channels/{channel}` | Channel |
 | `vimeo.com/groups/{group}` | Group |
-| `vimeo.com/album/{id}` | Album/showcase |
+| `vimeo.com/album/{id}` | Album/showcase<sup>†</sup> |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -458,6 +466,7 @@ Discovers RSS feeds for Letterboxd user profiles.
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | `letterboxd.com/{username}` | User diary |
+| `letterboxd.com/journal` | Journal |
 
 ### Steam
 
@@ -465,6 +474,8 @@ Discovers RSS feeds for Steam game news and community groups.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
+| `store.steampowered.com` | Global news<sup>†</sup> · daily deals<sup>†</sup> |
+| `store.steampowered.com/news` | Global news<sup>†</sup> · daily deals<sup>†</sup> |
 | `store.steampowered.com/app/{id}` | Game news<sup>†</sup> |
 | `store.steampowered.com/news/app/{id}` | Game news<sup>†</sup> |
 | `store.steampowered.com/newshub/app/{id}` | Game news |
@@ -529,8 +540,10 @@ Discovers RSS feeds for Hatena Bookmark listings, searches, sites and user bookm
 | `b.hatena.ne.jp/hotentry/{category}` | Hot entries by category |
 | `b.hatena.ne.jp/entrylist/{category}` | New entries by category |
 | `b.hatena.ne.jp/search/{tag\|text\|title}?q={query}` | Search |
-| `b.hatena.ne.jp/site/{domain}` | Site bookmarks |
+| `b.hatena.ne.jp/site/{domain}` | Site bookmarks<sup>†</sup> |
 | `b.hatena.ne.jp/{user}` | User bookmarks |
+
+<sup>†</sup> *Found only by the Platform method.*
 
 > Categories are `it`, `general`, `social`, `economics`, `life`, `knowledge`, `fun`, `entertainment` and `game`. Search and site feeds keep any filters already on the URL and add `mode=rss`.
 
@@ -572,13 +585,13 @@ Discovers RSS feeds for Itch.io games, creators, devlogs, and browse pages.
 | `itch.io/games` or `/games.xml` | Games<sup>†</sup> |
 | `itch.io/games/by-{username}` or `/by-{username}.xml` | Creator's games<sup>†</sup> |
 | `itch.io/games/tag-{tag}` or `/tag-{tag}.xml` | Tag<sup>†</sup> |
-| `itch.io/games/platform-{platform}` or `/platform-{platform}.xml` | Platform |
-| `itch.io/games/genre-{genre}` or `/genre-{genre}.xml` | Genre |
-| `itch.io/games/made-with-{engine}` or `/made-with-{engine}.xml` | Engine |
-| `itch.io/games/{sort}` or `/{sort}.xml` | Sorted games (newest/top-rated/top-sellers/on-sale/free/released/in-development) |
-| `itch.io/{section}` or `/{section}.xml` | Section (tools/game-assets/soundtracks/physical-games/books/comics/misc) |
+| `itch.io/games/platform-{platform}` or `/platform-{platform}.xml` | Platform<sup>†</sup> |
+| `itch.io/games/genre-{genre}` or `/genre-{genre}.xml` | Genre<sup>†</sup> |
+| `itch.io/games/made-with-{engine}` or `/made-with-{engine}.xml` | Engine<sup>†</sup> |
+| `itch.io/games/{sort}` or `/{sort}.xml` | Sorted games<sup>†</sup> (newest/top-rated/top-sellers/on-sale/free/released/in-development) |
+| `itch.io/{section}` or `/{section}.xml` | Section<sup>†</sup> (tools/game-assets/soundtracks/physical-games/books/comics/misc) |
 | `itch.io/devlogs` or `/devlogs.xml` | All devlogs |
-| `itch.io` | Featured · new<sup>†</sup> · sales<sup>†</sup> · all devlogs · itch.io blog |
+| `itch.io` | Featured · new<sup>†</sup> · sales<sup>†</sup> · all devlogs<sup>†</sup> · itch.io blog |
 | `itch.io/feed/{feed}.xml` | Curated (featured/new/sales) |
 | `itch.io/blog` or `itch.io/blog.rss` | itch.io blog |
 
@@ -635,13 +648,16 @@ Discovers RSS feeds for Write.as blogs, including tag feeds.
 |-------------|-----------------|
 | `write.as/{user}` | Blog |
 | `write.as/{user}/tag:{tag}` | Tag · blog |
+
 ### Prose.sh
 
 Discovers Atom feeds for Prose.sh blogs.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
+| `prose.sh` | Discovery |
 | `*.prose.sh` | Blog |
+
 ### Pagecord
 
 Discovers RSS feeds for Pagecord blogs.
@@ -649,6 +665,7 @@ Discovers RSS feeds for Pagecord blogs.
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | `*.pagecord.com` | Blog |
+
 ### ArtStation
 
 Discovers RSS feeds for ArtStation portfolios and the global artwork feed.
@@ -669,8 +686,11 @@ Discovers Atom and RSS feeds for Bear Blog, including tag-filtered feeds.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
+| `bearblog.dev` | Trending<sup>†</sup> (Atom + RSS) |
 | `*.bearblog.dev` | Posts (Atom + RSS) |
 | `*.bearblog.dev/?q={tag}` | Tag (Atom + RSS) · posts |
+
+<sup>†</sup> *Found only by the Platform method.*
 
 ### Buttondown
 
@@ -746,6 +766,7 @@ Discovers RSS feeds for MyAnimeList user lists and site-wide news.
 | `myanimelist.net/mangalist/{user}` | Anime list<sup>†</sup> · Manga list<sup>†</sup> · Recently watched<sup>†</sup> · Recently read<sup>†</sup> · Blog<sup>†</sup> (RSS) |
 | `myanimelist.net/history/{user}` | (same as above) |
 | `myanimelist.net/news` | Site-wide news |
+| `myanimelist.net/featured` | Featured articles |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -766,6 +787,7 @@ Discovers RSS feeds for note.com, including hashtag and magazine feeds.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
+| `note.com` | Featured |
 | `note.com/{user}` | Blog |
 | `note.com/hashtag/{tag}` or `note.com/tag/{tag}` | Hashtag<sup>†</sup> |
 | `note.com/{user}/m/{magazineId}` | Magazine<sup>†</sup> |
@@ -820,6 +842,10 @@ Discovers RSS feeds for Acast-hosted podcasts.
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | `shows.acast.com/{slug}` | Podcast (RSS) |
+| `play.acast.com/s/{slug}` | Podcast (RSS) |
+| `embed.acast.com/{slug}` | Podcast<sup>†</sup> (RSS) |
+
+<sup>†</sup> *Found only by the Platform method.*
 
 ### Ameba Blog
 
@@ -839,6 +865,7 @@ Discovers RSS feeds for Are.na user profiles and channels.
 |-------------|-----------------|
 | `are.na/{user}` | User profile |
 | `are.na/{user}/{channel}` | Channel |
+| `are.na/editorial` | Editorial |
 
 ### Audioboom
 
@@ -952,9 +979,9 @@ Discovers Atom feeds for Flickr photostreams, favorites, tags, groups and the he
 | `flickr.com/photos/{nsid}` | Photostream |
 | `flickr.com/photos/{nsid}/favorites` | Favorites |
 | `flickr.com/groups/{nsid}` | Group pool<sup>†</sup> · discussions · pool with location |
-| `flickr.com/groups/{nsid}/pool` | Group pool · pool with location |
+| `flickr.com/groups/{nsid}/pool` | Group pool<sup>†</sup> · pool with location |
 | `flickr.com/groups/{nsid}/discuss` | Group discussions |
-| `flickr.com/help/forum` | Forum |
+| `flickr.com/help/forum` | Forum<sup>†</sup> |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -1221,6 +1248,7 @@ Discovers Atom feeds for Qiita users, tags, organizations, and popular items.
 | `qiita.com/tags/{tag}` | Tag |
 | `qiita.com/organizations/{org}` | Organization |
 | `qiita.com/popular-items` | Popular items |
+| `qiita.com/official-columns` | Qiita Zine |
 
 ### RSS.com
 
@@ -1319,6 +1347,7 @@ Discovers RSS feeds for Spreaker-hosted podcasts.
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | `spreaker.com/podcast/{slug}--{id}` | Podcast |
+| `spreaker.com/show/{id}` | Podcast |
 
 ### Tildes
 
@@ -1388,7 +1417,7 @@ Discovers the Atom activity streams of a Confluence Data Center site. Detected b
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | Any page on a space | Space stream<sup>†</sup> · site stream<sup>†</sup> (Atom) |
-| Any other page | Site stream (Atom) |
+| Any other page | Site stream<sup>†</sup> (Atom) |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -1422,9 +1451,9 @@ Discovers the Atom activity streams of a Jira site. Cloud is detected by the `at
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{base}/browse/{KEY}-{n}` | Project stream · site stream (Atom) |
+| `{base}/browse/{KEY}-{n}` | Project stream<sup>†</sup> · site stream<sup>†</sup> (Atom) |
 | `{base}/projects/{KEY}` | Project stream<sup>†</sup> · site stream<sup>†</sup> (Atom) |
-| Any other Jira page | Site stream (Atom) |
+| Any other Jira page | Site stream<sup>†</sup> (Atom) |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -1596,7 +1625,7 @@ Discovers the feeds of a WriteFreely blog. Detected by the `WriteFreely` generat
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | `{instance}/{blog}` | Blog · instance reader<sup>†</sup> (RSS) |
-| `{instance}/{blog}/tag:{tag}` | Tag · blog · instance reader (RSS) |
+| `{instance}/{blog}/tag:{tag}` | Tag · blog · instance reader<sup>†</sup> (RSS) |
 | `{instance}/{post}` on a single-user instance | Blog (RSS) |
 | `{instance}/page/{n}` on a single-user instance | Blog (RSS) |
 | `{instance}/lang:{code}` on a single-user instance | Blog (RSS) |
@@ -1633,8 +1662,10 @@ Discovers the feed forms of a Grav listing page. Detected by the `GravCMS` gener
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{site}/` | Site root (RSS + Atom) at `/.rss` and `/.atom` |
+| `{site}/` | Site root<sup>†</sup> (RSS + Atom) at `/.rss` and `/.atom` |
 | Any listing page | Page (RSS + Atom) |
+
+<sup>†</sup> *Found only by the Platform method.*
 
 > [!NOTE]
 > The generator value is matched in full, because the meta content is compared as a prefix and `Grav` alone also matches Gravity Forms.
@@ -1658,7 +1689,7 @@ Discovers the feeds of a Discuz! board. Detected by the `Discuz!` generator meta
 |-------------|-----------------|
 | `{board}/forum-{fid}-1.html` | Board · site<sup>†</sup> (RSS) |
 | `{board}/forumdisplay.php?fid={fid}` on Discuz! 7 and older | Board · site<sup>†</sup> (RSS) from `rss.php` |
-| `{board}/archiver/?fid-{fid}.html` or `{board}/archiver/fid-{fid}.html` | Board · site (RSS), from `rss.php` on Discuz! 7 and older |
+| `{board}/archiver/?fid-{fid}.html` or `{board}/archiver/fid-{fid}.html` | Board<sup>†</sup> · site<sup>†</sup> (RSS), from `rss.php` on Discuz! 7 and older |
 | Any other page | Site (RSS) |
 
 <sup>†</sup> *Found only by the Platform method.*
@@ -1887,8 +1918,10 @@ Discovers the feeds of a PeerTube instance, channel or account. Detected by the 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | `{instance}/c/{channel}` | Channel · instance |
-| `{instance}/a/{account}` | Account · instance |
+| `{instance}/a/{account}` | Account<sup>†</sup> · instance |
 | Any other page | Instance |
+
+<sup>†</sup> *Found only by the Platform method.*
 
 > [!NOTE]
 > A channel federated from another instance is addressed as `handle@remote.host`, and the bare handle answers 404.
@@ -2665,9 +2698,9 @@ Discovers the site feeds of an Estranky site. A site serves the article feeds, t
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{site}.estranky.cz/…` | Posts<sup>?</sup> · photos<sup>†</sup> · comments<sup>†</sup> · home page slice · photo album slice<sup>†</sup> |
-| `{site}.estranky.sk/…` | Posts · photos · comments · home page slice · photo album slice |
-| Any other page | Posts<sup>?</sup> · photos<sup>?</sup> · comments<sup>?</sup> · home page slice · photo album slice<sup>†</sup> |
+| `{site}.estranky.cz/…` | Posts · photos<sup>†</sup> · comments<sup>†</sup> · home page slice · photo album slice<sup>†</sup> |
+| `{site}.estranky.sk/…` | Posts · photos<sup>†</sup> · comments<sup>†</sup> · home page slice<sup>?</sup> · photo album slice<sup>?</sup> |
+| Any other page | Posts · photos<sup>†</sup> · comments<sup>†</sup> · home page slice · photo album slice<sup>†</sup> |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -3124,7 +3157,7 @@ Discovers the news feeds of a Swedish sports club website on SportAdmin. On the 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | `{club}.web.sportadmin.se/?SID={id}`, a classic team page linking its other layout | Team news<sup>†</sup> at `/rss/?SID={id}` · club news |
-| `{club}.web.sportadmin.se/?SID={id}` on the new template | Team news at `/rss/?SID={id}` · club news |
+| `{club}.web.sportadmin.se/?SID={id}` on the new template | Team news<sup>†</sup> at `/rss/?SID={id}` · club news |
 | `{club}.web.sportadmin.se/`, any other page | Club news at `/rss/` |
 
 <sup>†</sup> *Found only by the Platform method.*
