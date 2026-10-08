@@ -362,6 +362,11 @@ const wrappedFeedUrlRegex = /[?&][^=&]*=(https?:|https?%3a|aHR0c)/i
 // URIs to ignore when discovering feeds from anchor elements.
 export const ignoredUris: Array<Pattern> = ['wp-json/oembed/', 'wp-json/wp/', wrappedFeedUrlRegex]
 
+// Rails reads any Accept that lists */* as a browser and answers an extensionless feed URL with
+// HTML, so the list ends at text/plain.
+export const acceptHeader =
+  'application/atom+xml, application/rss+xml, application/feed+json, application/rdf+xml;q=0.9, application/x-rss+xml;q=0.9, text/rss+xml;q=0.9, application/json;q=0.8, application/xml;q=0.8, text/xml;q=0.8, text/plain;q=0.1'
+
 // A podcast host's tracking prefix can put a feed segment in an episode's path, as in
 // `pscrb.fm/rss/p/…/episode.mp3`, so a page link or a platform handler can offer a media file.
 export const ignoredExtensions = [

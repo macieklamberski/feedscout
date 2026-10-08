@@ -16,6 +16,7 @@ import {
   normalizeInput,
   normalizeMethodsConfig,
   normalizeUriEntry,
+  pageAcceptHeader,
   reportError,
 } from './utils.js'
 
@@ -30,6 +31,7 @@ export const discover = async <TValid>(
     resolveUrlFn,
     resolveSiteUrlFn,
     ignoredExtensions,
+    acceptHeader,
     stopOnFirstMethod = false,
     stopOnFirstResult = false,
     concurrency = 3,
@@ -103,7 +105,7 @@ export const discover = async <TValid>(
       reportStep({ step: 'resolveSiteUrl', status: 'start', url: siteUrl })
 
       try {
-        const response = await fetchFn(siteUrl)
+        const response = await fetchFn(siteUrl, { headers: { Accept: pageAcceptHeader } })
 
         siteInput = {
           url: response.url,
@@ -216,7 +218,7 @@ export const discover = async <TValid>(
 
   const fetchAndExtract = async (url: string): Promise<DiscoverResult<TValid>> => {
     try {
-      const fetchResult = await fetchFn(url)
+      const fetchResult = await fetchFn(url, { headers: { Accept: acceptHeader } })
 
       return await extractFn({
         url: fetchResult.url,

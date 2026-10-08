@@ -4,6 +4,7 @@ import type {
   DiscoverResolveUrlFn,
   DiscoverResult,
   FetchFn,
+  FetchFnOptions,
 } from '../common/types.js'
 import type { PlatformHandler } from '../common/uris/platform/types.js'
 import { defaultPlatformOptions, urisBalanced, urisComprehensive, urisMinimal } from './defaults.js'
@@ -48,6 +49,26 @@ describe('discoverFeeds', () => {
     ]
 
     expect(result).toEqual(expected)
+  })
+
+  it('should fetch candidates with a feed-first accept header', async () => {
+    const receivedHeaders: Record<string, FetchFnOptions['headers']> = {}
+    const recordingFetchFn: FetchFn = (url, options) => {
+      receivedHeaders[url] = options?.headers
+
+      return createMockFetch({})(url)
+    }
+    const expected = {
+      Accept:
+        'application/atom+xml, application/rss+xml, application/feed+json, application/rdf+xml;q=0.9, application/x-rss+xml;q=0.9, text/rss+xml;q=0.9, application/json;q=0.8, application/xml;q=0.8, text/xml;q=0.8, text/plain;q=0.1',
+    }
+
+    await discoverFeeds('https://example.com', {
+      methods: { guess: { uris: ['/feed'] } },
+      fetchFn: recordingFetchFn,
+    })
+
+    expect(receivedHeaders['https://example.com/feed']).toEqual(expected)
   })
 
   it('should find feeds at ancestor paths when the page has no feed hints', async () => {

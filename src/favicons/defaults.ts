@@ -81,6 +81,9 @@ export const defaultGuessPaths = [
 
 export const linkSelectors: Array<LinkSelector> = defaultIconRels.map((rel) => ({ rel }))
 
+export const acceptHeader =
+  'image/avif, image/webp, image/png, image/svg+xml, image/x-icon, image/*;q=0.8, */*;q=0.1'
+
 export const ignoredExtensions = [
   ...archiveExtensions,
   ...audioExtensions,

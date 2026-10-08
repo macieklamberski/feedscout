@@ -33,6 +33,9 @@ export const urisComprehensive = [
 
 export const anchorLabels = ['blogroll', 'opml', 'subscriptions', 'reading list']
 
+export const acceptHeader =
+  'text/x-opml, text/x-opml+xml, application/xml;q=0.9, text/xml;q=0.9, */*;q=0.1'
+
 export const ignoredExtensions = [
   ...archiveExtensions,
   ...audioExtensions,

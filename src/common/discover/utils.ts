@@ -15,6 +15,9 @@ import type {
 } from '../types.js'
 import type { FeedMethodData } from '../uris/feed/types.js'
 
+// See: https://www.rfc-editor.org/rfc/rfc9110#section-12.5.1.
+export const pageAcceptHeader = 'text/html, application/xhtml+xml, application/xml;q=0.9, */*;q=0.8'
+
 export const normalizeInput = async (
   input: DiscoverInput,
   fetchFn: FetchFn,
@@ -29,7 +32,7 @@ export const normalizeInput = async (
   const url = typeof input === 'string' ? resolveFeedProtocol(input) : input
 
   try {
-    const response = await fetchFn(url)
+    const response = await fetchFn(url, { headers: { Accept: pageAcceptHeader } })
 
     return {
       url: response.url,
