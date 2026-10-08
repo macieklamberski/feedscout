@@ -43,7 +43,7 @@ Discovers RSS feeds for Apple Podcasts shows by extracting the feed URL from the
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `podcasts.apple.com/{locale}/podcast/{name}/id{id}` | Podcast feed<sup>†</sup>* |
+| `podcasts.apple.com/{locale}/podcast/{name}/id{id}` | Podcast<sup>†</sup>* |
 
 \* *Requires HTML content to extract feed URL.*
 
@@ -63,7 +63,7 @@ Discovers Atom feeds for channels and playlists. Generates ten feed variants for
 | `youtu.be/{id}` | All uploads<sup>†</sup> · videos<sup>†</sup> · shorts<sup>†</sup> · live streams<sup>†</sup> · popular videos<sup>†</sup> · popular shorts<sup>†</sup> · popular live streams<sup>†</sup> · member videos<sup>?</sup> · member shorts<sup>?</sup> · member live streams<sup>?</sup>* |
 | `youtube.com/shorts/{id}` | All uploads · videos · shorts · live streams · popular videos · popular shorts · popular live streams · member videos · member shorts · member live streams* |
 | `youtube.com/live/{id}` | All uploads · videos · shorts · live streams · popular videos · popular shorts · popular live streams · member videos · member shorts · member live streams* |
-| `youtube.com/playlist?list={id}` | Playlist feed |
+| `youtube.com/playlist?list={id}` | Playlist |
 
 \* *Requires HTML content to extract channel ID.*
 
@@ -77,12 +77,12 @@ Discovers Atom feeds for subreddits, users, multireddits, and domains.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `reddit.com` | Homepage feed |
+| `reddit.com` | Homepage |
 | `reddit.com/r/{subreddit}` | Subreddit posts · comments<sup>†</sup> |
 | `reddit.com/r/{subreddit}/{sort}` | Sorted posts (hot/new/rising/top) · comments |
 | `reddit.com/r/{subreddit}/comments/{id}` | Post comments |
 | `reddit.com/u/{username}` | User activity<sup>†</sup> |
-| `reddit.com/user/{username}/m/{multireddit}` | Multireddit feed |
+| `reddit.com/user/{username}/m/{multireddit}` | Multireddit |
 | `reddit.com/domain/{domain}` | Domain submissions |
 
 <sup>†</sup> *Found only by the Platform method.*
@@ -93,12 +93,12 @@ Discovers RSS feeds for Medium user profiles, publications, tags, and subdomains
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `medium.com/@{username}` | User posts feed |
-| `medium.com/{publication}` | Publication feed |
-| `medium.com/tag/{tag}` | Tag feed<sup>†</sup> |
-| `medium.com/{publication}/tagged/{tag}` | Tagged publication feed |
-| `*.medium.com` | Subdomain publication feed |
-| `*.medium.com/tagged/{tag}` | Subdomain tagged feed |
+| `medium.com/@{username}` | User posts |
+| `medium.com/{publication}` | Publication |
+| `medium.com/tag/{tag}` | Tag<sup>†</sup> |
+| `medium.com/{publication}/tagged/{tag}` | Tagged publication |
+| `*.medium.com` | Subdomain publication |
+| `*.medium.com/tagged/{tag}` | Subdomain tagged |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -108,8 +108,8 @@ Discovers RSS feeds for Substack newsletters.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `*.substack.com` | Newsletter feed |
-| `substack.com/@{user}` | Newsletter feed<sup>†</sup>* |
+| `*.substack.com` | Newsletter |
+| `substack.com/@{user}` | Newsletter<sup>†</sup>* |
 
 \* *The publication can differ from the handle and can sit on a custom domain. It is read from the page content when available, with the handle as the fallback.*
 
@@ -121,14 +121,14 @@ Discovers RSS and Atom feeds for WordPress.com and Unblog blogs, with category, 
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `*.wordpress.com` | Posts feed (RSS + Atom + RDF<sup>†</sup>) · comments (RSS + Atom<sup>†</sup>) |
-| `*.wordpress.com/category/{category}` | Category feed (RSS + Atom<sup>†</sup> + RDF<sup>†</sup>), plus the feeds above |
-| `*.wordpress.com/category/{parent}/{category}` | Nested category feed, plus the feeds above |
-| `*.wordpress.com/tag/{tag}` | Tag feed (RSS + Atom<sup>†</sup> + RDF<sup>†</sup>), plus the feeds above |
-| `*.wordpress.com/author/{author}` | Author feed, plus the feeds above |
+| `*.wordpress.com` | Posts (RSS + Atom + RDF<sup>†</sup>) · comments (RSS + Atom<sup>†</sup>) |
+| `*.wordpress.com/category/{category}` | Category (RSS + Atom<sup>†</sup> + RDF<sup>†</sup>), plus the feeds above |
+| `*.wordpress.com/category/{parent}/{category}` | Nested category, plus the feeds above |
+| `*.wordpress.com/tag/{tag}` | Tag (RSS + Atom<sup>†</sup> + RDF<sup>†</sup>), plus the feeds above |
+| `*.wordpress.com/author/{author}` | Author, plus the feeds above |
 | `*.unblog.fr` | Same as `*.wordpress.com` (Unblog) |
 | `*.hypotheses.org` | Same as `*.wordpress.com` |
-| `*.hypotheses.org/{post_id}` | Post comments feed (RSS + Atom<sup>†</sup>), plus the feeds above |
+| `*.hypotheses.org/{post_id}` | Post comments (RSS + Atom<sup>†</sup>), plus the feeds above |
 | `*.home.blog` | Same as `*.wordpress.com` |
 | `*.wpcomstaging.com` | Same as `*.wordpress.com` |
 | `*.edublogs.org` | Same as `*.wordpress.com` |
@@ -141,7 +141,7 @@ Discovers feeds for WP Engine-hosted WordPress sites. Uses the same feed structu
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `*.wpenginepowered.com` | Posts feed (RSS + Atom<sup>†</sup> + RDF<sup>†</sup>) · comments (RSS + Atom<sup>†</sup>) |
+| `*.wpenginepowered.com` | Posts (RSS + Atom<sup>†</sup> + RDF<sup>†</sup>) · comments (RSS + Atom<sup>†</sup>) |
 | `*.wpengine.com` | Same as WordPress.com (legacy domain) |
 
 <sup>†</sup> *Found only by the Platform method.*
@@ -152,9 +152,9 @@ Discovers RSS and Atom feeds for Blogspot blogs, including label, comments, summ
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `*.blogspot.com` | Posts feed (Atom + RSS) · summary (Atom + RSS) · comments (Atom + RSS<sup>†</sup>) |
-| `*.blogspot.com/search/label/{label}` | Label feed<sup>†</sup> (Atom + RSS), plus the feeds above |
-| `*.blogspot.com/{year}/{month}/{slug}.html` | Post comments feed (Atom + RSS)*, plus the feeds above |
+| `*.blogspot.com` | Posts (Atom + RSS) · summary (Atom + RSS) · comments (Atom + RSS<sup>†</sup>) |
+| `*.blogspot.com/search/label/{label}` | Label<sup>†</sup> (Atom + RSS), plus the feeds above |
+| `*.blogspot.com/{year}/{month}/{slug}.html` | Post comments (Atom + RSS)*, plus the feeds above |
 | Custom domain, any of the paths above | Same as on `*.blogspot.com` |
 
 \* *Requires HTML content to extract the post ID.*
@@ -167,11 +167,11 @@ Discovers RSS feeds for DEV.to user profiles, tags, the global community, and th
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `dev.to` | Community feed |
-| `dev.to/latest` | Latest sort feed<sup>†</sup> · community feed |
-| `dev.to/{username}` | User or organization posts feed |
-| `dev.to/{username}/{article}` | Author's posts feed<sup>†</sup> |
-| `dev.to/t/{tag}` | Tag posts feed<sup>†</sup> |
+| `dev.to` | Community |
+| `dev.to/latest` | Latest sort<sup>†</sup> · community |
+| `dev.to/{username}` | User or organization posts |
+| `dev.to/{username}/{article}` | Author's posts<sup>†</sup> |
+| `dev.to/t/{tag}` | Tag posts<sup>†</sup> |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -181,15 +181,15 @@ Discovers RSS feeds for Lobsters homepage, users, tags, and domains.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `lobste.rs` | Homepage feed · site-wide comments feed |
-| `lobste.rs/newest` | Newest posts feed |
-| `lobste.rs/top` | Top stories feed |
+| `lobste.rs` | Homepage · site-wide comments |
+| `lobste.rs/newest` | Newest posts |
+| `lobste.rs/top` | Top stories |
 | `lobste.rs/top/{period}` | Top stories by period (1d/3d/1w/1m/1y) |
-| `lobste.rs/comments` | Site-wide comments feed |
-| `lobste.rs/~{username}` | User stories feed<sup>†</sup> |
-| `lobste.rs/t/{tag}` | Tag feed |
-| `lobste.rs/t/{tag1},{tag2}` | Multi-tag feed |
-| `lobste.rs/domains/{domain}` | Domain feed |
+| `lobste.rs/comments` | Site-wide comments |
+| `lobste.rs/~{username}` | User stories<sup>†</sup> |
+| `lobste.rs/t/{tag}` | Tag |
+| `lobste.rs/t/{tag1},{tag2}` | Multi-tag |
+| `lobste.rs/domains/{domain}` | Domain |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -208,7 +208,7 @@ Discovers Atom feeds for users, organizations, and repositories.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `github.com/{user}`, `github.com/{user}.atom` or `github.com/{user}.png` | User activity feed<sup>†</sup> |
+| `github.com/{user}`, `github.com/{user}.atom` or `github.com/{user}.png` | User activity<sup>†</sup> |
 | `github.com/orgs/{org}/discussions` | Organization discussions<sup>†</sup> |
 | `github.com/orgs/{org}/discussions/categories/{category}` | Discussion category<sup>†</sup>, plus the feeds above |
 | `github.com/{owner}/{repo}` | Releases<sup>†</sup> · commits<sup>†</sup> · tags<sup>†</sup> |
@@ -227,12 +227,12 @@ Discovers Atom feeds for GitHub Gist users, starred gists, forked gists, and the
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `gist.github.com/{username}` | User gists feed |
-| `gist.github.com/{username}/{gist-id}` | User gists feed |
-| `gist.github.com/{username}/public` or `/secret` | User gists feed |
-| `gist.github.com/{username}/starred` or `/starred.atom` | User starred gists feed |
-| `gist.github.com/{username}/forks` or `/forked` | User forked gists feed<sup>†</sup> |
-| `gist.github.com/discover` | Discover gists feed<sup>†</sup> |
+| `gist.github.com/{username}` | User gists |
+| `gist.github.com/{username}/{gist-id}` | User gists |
+| `gist.github.com/{username}/public` or `/secret` | User gists |
+| `gist.github.com/{username}/starred` or `/starred.atom` | User starred gists |
+| `gist.github.com/{username}/forks` or `/forked` | User forked gists<sup>†</sup> |
+| `gist.github.com/discover` | Discover gists<sup>†</sup> |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -242,7 +242,7 @@ Discovers Atom feeds for Gitea users, repositories, releases, tags, branch commi
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{instance}/{user}`, `{instance}/{user}.rss`, `.atom` or `.keys` | User activity feed |
+| `{instance}/{user}`, `{instance}/{user}.rss`, `.atom` or `.keys` | User activity |
 | `{instance}/{user}/{repo}` | Releases<sup>†</sup> · tags<sup>†</sup> · activity |
 | `{instance}/{user}/{repo}/src/branch/{branch}` | Branch commits<sup>†</sup>, plus the feeds above |
 | `{instance}/{user}/{repo}/src/branch/{branch}/{path}` | File history<sup>†</sup>, plus the feeds above |
@@ -260,10 +260,10 @@ Discovers Atom feeds for GitLab users and repositories. Self-hosted instances ar
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `gitlab.com/{user}` or `gitlab.com/{user}.atom` | User activity feed |
+| `gitlab.com/{user}` or `gitlab.com/{user}.atom` | User activity |
 | `gitlab.com/{project}` | Releases<sup>†</sup> · tags<sup>†</sup> · issues<sup>†</sup> · merge requests<sup>†</sup> · activity |
-| `gitlab.com/{project}/-/commits/{branch}` | Branch commits feed, plus the feeds above |
-| `gitlab.com/{project}/-/tree/{branch}` | Branch commits feed, plus the feeds above |
+| `gitlab.com/{project}/-/commits/{branch}` | Branch commits, plus the feeds above |
+| `gitlab.com/{project}/-/tree/{branch}` | Branch commits, plus the feeds above |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -275,7 +275,7 @@ Discovers the Atom feed for Product Hunt.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `producthunt.com` | Products feed (Atom) |
+| `producthunt.com` | Products (Atom) |
 
 > There is one feed. Topic and category pages have no feed of their own, and the `?topic=` and `?category=` parameters are ignored.
 
@@ -285,13 +285,13 @@ Discovers RSS feeds for Pinboard users, user tags, and the popular and recent li
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `pinboard.in` | Popular bookmarks feed<sup>†</sup> |
-| `pinboard.in/popular` | Popular bookmarks feed<sup>†</sup> |
-| `pinboard.in/recent` | Recent bookmarks feed<sup>†</sup> |
-| `pinboard.in/u:{username}` | User bookmarks feed<sup>†</sup> |
-| `pinboard.in/u:{username}/t:{tag}` | User tag feed<sup>†</sup> |
-| `pinboard.in/u:{username}/t:{tag1}/t:{tag2}` | User multi-tag feed |
-| `pinboard.in/t:{tag}` | Site-wide tag feed<sup>?</sup> |
+| `pinboard.in` | Popular bookmarks<sup>†</sup> |
+| `pinboard.in/popular` | Popular bookmarks<sup>†</sup> |
+| `pinboard.in/recent` | Recent bookmarks<sup>†</sup> |
+| `pinboard.in/u:{username}` | User bookmarks<sup>†</sup> |
+| `pinboard.in/u:{username}/t:{tag}` | User tag<sup>†</sup> |
+| `pinboard.in/u:{username}/t:{tag1}/t:{tag2}` | User multi-tag |
+| `pinboard.in/t:{tag}` | Site-wide tag<sup>?</sup> |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -303,7 +303,7 @@ Discovers RSS feeds for Pinterest user profiles.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `pinterest.com/{username}` | User pins feed<sup>†</sup> |
+| `pinterest.com/{username}` | User pins<sup>†</sup> |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -313,10 +313,10 @@ Discovers RSS feeds for Dailymotion users, playlists, channels, and the global t
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `dailymotion.com/{username}` | User videos feed<sup>†</sup> |
-| `dailymotion.com/playlist/{id}` | Playlist feed<sup>†</sup> |
-| `dailymotion.com/channel/{name}` | Channel feed<sup>†</sup> |
-| `dailymotion.com` or `dailymotion.com/trending` | Trending feed<sup>†</sup> |
+| `dailymotion.com/{username}` | User videos<sup>†</sup> |
+| `dailymotion.com/playlist/{id}` | Playlist<sup>†</sup> |
+| `dailymotion.com/channel/{name}` | Channel<sup>†</sup> |
+| `dailymotion.com` or `dailymotion.com/trending` | Trending<sup>†</sup> |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -326,11 +326,11 @@ Discovers RSS feeds for DeviantArt user portfolios, gallery folders, favourites,
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `deviantart.com/{username}` | User deviations feed<sup>†</sup> |
-| `deviantart.com/{username}/gallery` | User gallery feed<sup>†</sup> |
-| `deviantart.com/{username}/gallery/{id}` | Gallery folder feed |
-| `deviantart.com/{username}/favourites` | User favourites feed<sup>†</sup> |
-| `deviantart.com/tag/{tag}` | Tag feed<sup>†</sup> |
+| `deviantart.com/{username}` | User deviations<sup>†</sup> |
+| `deviantart.com/{username}/gallery` | User gallery<sup>†</sup> |
+| `deviantart.com/{username}/gallery/{id}` | Gallery folder |
+| `deviantart.com/{username}/favourites` | User favourites<sup>†</sup> |
+| `deviantart.com/tag/{tag}` | Tag<sup>†</sup> |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -340,11 +340,11 @@ Discovers RSS feeds for Mastodon user profiles and hashtag pages. Detects Mastod
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{instance}/@{username}` or `{instance}/users/{username}` | User posts feed |
-| `{instance}/@{username}/tagged/{tag}` | User posts tagged feed · posts |
-| `{instance}/@{username}/with_replies` | User posts with replies feed · posts |
-| `{instance}/@{username}/media` | User media-only feed · posts |
-| `{instance}/tags/{tag}` | Hashtag feed<sup>†</sup> |
+| `{instance}/@{username}` or `{instance}/users/{username}` | User posts |
+| `{instance}/@{username}/tagged/{tag}` | User posts tagged · posts |
+| `{instance}/@{username}/with_replies` | User posts with replies · posts |
+| `{instance}/@{username}/media` | User media-only · posts |
+| `{instance}/tags/{tag}` | Hashtag<sup>†</sup> |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -357,7 +357,7 @@ Discovers RSS feeds for Bluesky profiles.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `bsky.app/profile/{handle}` | Profile posts feed |
+| `bsky.app/profile/{handle}` | Profile posts |
 
 ### Tumblr
 
@@ -365,9 +365,9 @@ Discovers RSS feeds for Tumblr blogs and tagged posts.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `*.tumblr.com` | Blog posts feed |
-| `*.tumblr.com/tagged/{tag}` | Tagged posts feed |
-| `www.tumblr.com/{blog}` | Blog posts feed |
+| `*.tumblr.com` | Blog posts |
+| `*.tumblr.com/tagged/{tag}` | Tagged posts |
+| `www.tumblr.com/{blog}` | Blog posts |
 
 ### Behance
 
@@ -376,8 +376,8 @@ Discovers RSS feeds for Behance user portfolios, plus the homepage Featured-proj
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | `behance.net` or `behance.net/galleries` | Featured projects |
-| `behance.net/{username}` | User portfolio feed<sup>†</sup> |
-| `behance.net/{username}/appreciated` | User portfolio feed* |
+| `behance.net/{username}` | User portfolio<sup>†</sup> |
+| `behance.net/{username}/appreciated` | User portfolio* |
 
 \* *Behance ignores `content=appreciated` and serves the user's own projects, so the appreciated page gets the portfolio feed.*
 
@@ -389,7 +389,7 @@ Discovers RSS feeds for SoundCloud user profiles.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `soundcloud.com/{user}` | User sounds feed<sup>†</sup>* |
+| `soundcloud.com/{user}` | User sounds<sup>†</sup>* |
 
 \* *Requires HTML content to extract user ID.*
 
@@ -401,11 +401,11 @@ Discovers RSS feeds for Vimeo user profiles, channels, groups, and albums (showc
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `vimeo.com/{user}` | User videos feed |
-| `vimeo.com/{user}/likes` | User likes feed · videos<sup>†</sup> |
-| `vimeo.com/channels/{channel}` | Channel feed |
-| `vimeo.com/groups/{group}` | Group feed |
-| `vimeo.com/album/{id}` | Album/showcase feed |
+| `vimeo.com/{user}` | User videos |
+| `vimeo.com/{user}/likes` | User likes · user videos<sup>†</sup> |
+| `vimeo.com/channels/{channel}` | Channel |
+| `vimeo.com/groups/{group}` | Group |
+| `vimeo.com/album/{id}` | Album/showcase |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -425,9 +425,9 @@ Discovers Atom feeds for Kickstarter projects and global new projects.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `kickstarter.com` | Global new projects feed<sup>†</sup> |
-| `kickstarter.com/discover` | Global new projects feed |
-| `kickstarter.com/projects/{creator}/{project}` | Project updates feed<sup>†</sup> |
+| `kickstarter.com` | Global new projects<sup>†</sup> |
+| `kickstarter.com/discover` | Global new projects |
+| `kickstarter.com/projects/{creator}/{project}` | Project updates<sup>†</sup> |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -437,17 +437,17 @@ Discovers the Atom feeds Launchpad serves on `feeds.launchpad.net` for projects,
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `launchpad.net` | Announcements feed<sup>†</sup> |
-| `bugs.launchpad.net` | Latest bugs feed<sup>†</sup> |
-| `launchpad.net/{project}` | Announcements · latest bugs · branches · revisions feeds |
-| `bugs.launchpad.net/{project}` | Latest bugs feed |
-| `code.launchpad.net/{project}` | Branches · revisions feeds |
-| `launchpad.net/~{user}` | Latest bugs · branches · revisions feeds |
-| `bugs.launchpad.net/~{user}` | Latest bugs feed |
-| `code.launchpad.net/~{user}` | Branches<sup>†</sup> · revisions<sup>†</sup> feeds |
-| `bugs.launchpad.net/{distro}/+source/{package}` | Package latest bugs feed |
-| `bugs.launchpad.net/{project}/+bug/{id}` or `bugs.launchpad.net/bugs/{id}` | Bug feed |
-| `code.launchpad.net/~{user}/{project}/{branch}` | Branch feed |
+| `launchpad.net` | Announcements<sup>†</sup> |
+| `bugs.launchpad.net` | Latest bugs<sup>†</sup> |
+| `launchpad.net/{project}` | Announcements · latest bugs · branches · revisions |
+| `bugs.launchpad.net/{project}` | Latest bugs |
+| `code.launchpad.net/{project}` | Branches · revisions |
+| `launchpad.net/~{user}` | Latest bugs · branches · revisions |
+| `bugs.launchpad.net/~{user}` | Latest bugs |
+| `code.launchpad.net/~{user}` | Branches<sup>†</sup> · revisions<sup>†</sup> |
+| `bugs.launchpad.net/{distro}/+source/{package}` | Package latest bugs |
+| `bugs.launchpad.net/{project}/+bug/{id}` or `bugs.launchpad.net/bugs/{id}` | Bug |
+| `code.launchpad.net/~{user}/{project}/{branch}` | Branch |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -457,7 +457,7 @@ Discovers RSS feeds for Letterboxd user profiles.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `letterboxd.com/{username}` | User diary feed |
+| `letterboxd.com/{username}` | User diary |
 
 ### Steam
 
@@ -465,11 +465,11 @@ Discovers RSS feeds for Steam game news and community groups.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `store.steampowered.com/app/{id}` | Game news feed<sup>†</sup> |
-| `store.steampowered.com/news/app/{id}` | Game news feed<sup>†</sup> |
-| `store.steampowered.com/newshub/app/{id}` | Game news feed |
-| `steamcommunity.com/app/{id}` | Game news feed<sup>†</sup> |
-| `steamcommunity.com/groups/{name}` | Group RSS feed<sup>†</sup> |
+| `store.steampowered.com/app/{id}` | Game news<sup>†</sup> |
+| `store.steampowered.com/news/app/{id}` | Game news<sup>†</sup> |
+| `store.steampowered.com/newshub/app/{id}` | Game news |
+| `steamcommunity.com/app/{id}` | Game news<sup>†</sup> |
+| `steamcommunity.com/groups/{name}` | Group<sup>†</sup> (RSS) |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -479,11 +479,11 @@ Discovers Atom feeds for Stack Overflow, Server Fault, Super User, Ask Ubuntu, M
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{site}` | Site-wide newest questions feed |
-| `{site}/questions/tagged/{tag}` | Tag feed<sup>†</sup> |
-| `{site}/questions/{id}` | Question feed |
-| `{site}/users/{id}` | User feed<sup>†</sup> |
-| `{site}/collectives/{name}` | Collective feed<sup>†</sup> |
+| `{site}` | Site-wide newest questions |
+| `{site}/questions/tagged/{tag}` | Tag<sup>†</sup> |
+| `{site}/questions/{id}` | Question |
+| `{site}/users/{id}` | User<sup>†</sup> |
+| `{site}/collectives/{name}` | Collective<sup>†</sup> |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -496,7 +496,7 @@ Discovers RSS feeds for Hashnode blogs on `*.hashnode.dev`.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `*.hashnode.dev` | Blog feed |
+| `*.hashnode.dev` | Blog |
 
 ### Paragraph
 
@@ -504,7 +504,7 @@ Discovers RSS feeds for Paragraph blogs (successor to Mirror.xyz).
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `paragraph.com/@{username}` | Blog feed |
+| `paragraph.com/@{username}` | Blog |
 
 ### Hatena Antenna
 
@@ -512,8 +512,8 @@ Discovers RSS feeds for Hatena Antenna users and their groups.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `a.hatena.ne.jp/{user}` | Antenna feed |
-| `a.hatena.ne.jp/{user}/?gid={group}` | Group feed<sup>?</sup> |
+| `a.hatena.ne.jp/{user}` | Antenna |
+| `a.hatena.ne.jp/{user}/?gid={group}` | Group<sup>?</sup> |
 
 <sup>?</sup> *Not measured, the feed failed to load during the run.*
 
@@ -525,12 +525,12 @@ Discovers RSS feeds for Hatena Bookmark listings, searches, sites and user bookm
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `b.hatena.ne.jp` | Hot entries feed |
+| `b.hatena.ne.jp` | Hot entries |
 | `b.hatena.ne.jp/hotentry/{category}` | Hot entries by category |
 | `b.hatena.ne.jp/entrylist/{category}` | New entries by category |
-| `b.hatena.ne.jp/search/{tag\|text\|title}?q={query}` | Search feed |
-| `b.hatena.ne.jp/site/{domain}` | Site bookmarks feed |
-| `b.hatena.ne.jp/{user}` | User bookmarks feed |
+| `b.hatena.ne.jp/search/{tag\|text\|title}?q={query}` | Search |
+| `b.hatena.ne.jp/site/{domain}` | Site bookmarks |
+| `b.hatena.ne.jp/{user}` | User bookmarks |
 
 > Categories are `it`, `general`, `social`, `economics`, `life`, `knowledge`, `fun`, `entertainment` and `game`. Search and site feeds keep any filters already on the URL and add `mode=rss`.
 
@@ -540,12 +540,12 @@ Discovers RSS feeds for Hatena Fotolife users, folders, tags, camera models and 
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `f.hatena.ne.jp/{user}` | Photos feed |
-| `f.hatena.ne.jp/{user}?model={model}` | Camera model feed |
-| `f.hatena.ne.jp/{user}/{folder}/` | Folder feed |
-| `f.hatena.ne.jp/{user}/t/{tag}` | Tag feed |
-| `f.hatena.ne.jp/{user}/favorite` | Stars feed |
-| `f.hatena.ne.jp/{user}/starfriends` | Star Friends feed |
+| `f.hatena.ne.jp/{user}` | Photos |
+| `f.hatena.ne.jp/{user}?model={model}` | Camera model |
+| `f.hatena.ne.jp/{user}/{folder}/` | Folder |
+| `f.hatena.ne.jp/{user}/t/{tag}` | Tag |
+| `f.hatena.ne.jp/{user}/favorite` | Stars |
+| `f.hatena.ne.jp/{user}/starfriends` | Star Friends |
 
 > A folder, tag or camera model page that lists no photo falls back to the user's photos feed, since Hatena serves an empty feed under any made-up name.
 
@@ -555,11 +555,11 @@ Discovers RSS and Atom feeds for Hatena Blog on `*.hatenablog.com`, `*.hatenablo
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `*.hatenablog.com` | Posts feed (RSS + Atom) |
-| `*.hatenablog.jp` | Posts feed (RSS + Atom) |
-| `*.hateblo.jp` | Posts feed (RSS + Atom) |
-| `*/archive/category/{category}` | Category feed (RSS + Atom) · posts |
-| `*/archive/author/{author}` | Author feed (RSS + Atom) · posts |
+| `*.hatenablog.com` | Posts (RSS + Atom) |
+| `*.hatenablog.jp` | Posts (RSS + Atom) |
+| `*.hateblo.jp` | Posts (RSS + Atom) |
+| `*/archive/category/{category}` | Category (RSS + Atom) · posts |
+| `*/archive/author/{author}` | Author (RSS + Atom) · posts |
 
 ### Itch.io
 
@@ -567,19 +567,19 @@ Discovers RSS feeds for Itch.io games, creators, devlogs, and browse pages.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{creator}.itch.io/{game}` | Game devlog feed |
-| `{creator}.itch.io` | Creator's games feed<sup>†</sup> |
-| `itch.io/games` or `/games.xml` | Games feed<sup>†</sup> |
-| `itch.io/games/by-{username}` or `/by-{username}.xml` | Creator's games feed<sup>†</sup> |
-| `itch.io/games/tag-{tag}` or `/tag-{tag}.xml` | Tag feed<sup>†</sup> |
-| `itch.io/games/platform-{platform}` or `/platform-{platform}.xml` | Platform feed |
-| `itch.io/games/genre-{genre}` or `/genre-{genre}.xml` | Genre feed |
-| `itch.io/games/made-with-{engine}` or `/made-with-{engine}.xml` | Engine feed |
-| `itch.io/games/{sort}` or `/{sort}.xml` | Sorted games feed (newest/top-rated/top-sellers/on-sale/free/released/in-development) |
-| `itch.io/{section}` or `/{section}.xml` | Section feed (tools/game-assets/soundtracks/physical-games/books/comics/misc) |
-| `itch.io/devlogs` or `/devlogs.xml` | All devlogs feed |
-| `itch.io` | Featured · new<sup>†</sup> · sales<sup>†</sup> · all devlogs feeds · itch.io blog |
-| `itch.io/feed/{feed}.xml` | Curated feed (featured/new/sales) |
+| `{creator}.itch.io/{game}` | Game devlog |
+| `{creator}.itch.io` | Creator's games<sup>†</sup> |
+| `itch.io/games` or `/games.xml` | Games<sup>†</sup> |
+| `itch.io/games/by-{username}` or `/by-{username}.xml` | Creator's games<sup>†</sup> |
+| `itch.io/games/tag-{tag}` or `/tag-{tag}.xml` | Tag<sup>†</sup> |
+| `itch.io/games/platform-{platform}` or `/platform-{platform}.xml` | Platform |
+| `itch.io/games/genre-{genre}` or `/genre-{genre}.xml` | Genre |
+| `itch.io/games/made-with-{engine}` or `/made-with-{engine}.xml` | Engine |
+| `itch.io/games/{sort}` or `/{sort}.xml` | Sorted games (newest/top-rated/top-sellers/on-sale/free/released/in-development) |
+| `itch.io/{section}` or `/{section}.xml` | Section (tools/game-assets/soundtracks/physical-games/books/comics/misc) |
+| `itch.io/devlogs` or `/devlogs.xml` | All devlogs |
+| `itch.io` | Featured · new<sup>†</sup> · sales<sup>†</sup> · all devlogs · itch.io blog |
+| `itch.io/feed/{feed}.xml` | Curated (featured/new/sales) |
 | `itch.io/blog` or `itch.io/blog.rss` | itch.io blog |
 
 <sup>†</sup> *Found only by the Platform method.*
@@ -590,7 +590,7 @@ Discovers RSS feeds for CSDN user blogs.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `blog.csdn.net/{username}` | Blog feed<sup>†</sup> |
+| `blog.csdn.net/{username}` | Blog<sup>†</sup> |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -612,10 +612,10 @@ Discovers Atom feeds for V2EX index, nodes, members, and tabs.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `v2ex.com` | Index feed |
-| `v2ex.com/go/{node}` | Node feed |
-| `v2ex.com/member/{username}` | Member feed |
-| `v2ex.com/?tab={tab}` | Tab feed · index feed |
+| `v2ex.com` | Index |
+| `v2ex.com/go/{node}` | Node |
+| `v2ex.com/member/{username}` | Member |
+| `v2ex.com/?tab={tab}` | Tab · index |
 
 ### Ximalaya
 
@@ -623,7 +623,7 @@ Discovers RSS feeds for Ximalaya podcast albums.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `www.ximalaya.com/album/{id}` | Album feed<sup>†</sup> |
+| `www.ximalaya.com/album/{id}` | Album<sup>†</sup> |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -633,30 +633,30 @@ Discovers RSS feeds for Write.as blogs, including tag feeds.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `write.as/{user}` | Blog feed |
-| `write.as/{user}/tag:{tag}` | Tag feed · blog |
+| `write.as/{user}` | Blog |
+| `write.as/{user}/tag:{tag}` | Tag · blog |
 ### Prose.sh
 
 Discovers Atom feeds for Prose.sh blogs.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `*.prose.sh` | Blog feed |
+| `*.prose.sh` | Blog |
 ### Pagecord
 
 Discovers RSS feeds for Pagecord blogs.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `*.pagecord.com` | Blog feed |
+| `*.pagecord.com` | Blog |
 ### ArtStation
 
 Discovers RSS feeds for ArtStation portfolios and the global artwork feed.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `artstation.com/{user}` | Portfolio feed<sup>†</sup> |
-| `{user}.artstation.com` | Portfolio feed |
+| `artstation.com/{user}` | Portfolio<sup>†</sup> |
+| `{user}.artstation.com` | Portfolio |
 | `artstation.com/artwork` | Artwork<sup>†</sup> · Artwork (Latest)<sup>†</sup> |
 
 <sup>†</sup> *Found only by the Platform method.*
@@ -669,8 +669,8 @@ Discovers Atom and RSS feeds for Bear Blog, including tag-filtered feeds.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `*.bearblog.dev` | Posts feed (Atom + RSS) |
-| `*.bearblog.dev/?q={tag}` | Tag feed (Atom + RSS) · posts |
+| `*.bearblog.dev` | Posts (Atom + RSS) |
+| `*.bearblog.dev/?q={tag}` | Tag (Atom + RSS) · posts |
 
 ### Buttondown
 
@@ -678,7 +678,7 @@ Discovers RSS feeds for Buttondown newsletters.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `buttondown.com/{user}` | Newsletter feed |
+| `buttondown.com/{user}` | Newsletter |
 
 ### Dreamwidth
 
@@ -686,7 +686,7 @@ Discovers RSS and Atom feeds for Dreamwidth blogs.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `*.dreamwidth.org` | Posts feed (RSS + Atom) · userpics<sup>†</sup> (Atom) |
+| `*.dreamwidth.org` | Posts (RSS + Atom) · userpics<sup>†</sup> (Atom) |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -696,8 +696,8 @@ Discovers RSS and Atom feeds for Excite Blog, including category feeds.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{blog}.exblog.jp` | Posts feed (RSS + Atom) |
-| `{blog}.exblog.jp/i{N}` | Category feed (RSS + Atom) · posts |
+| `{blog}.exblog.jp` | Posts (RSS + Atom) |
+| `{blog}.exblog.jp/i{N}` | Category (RSS + Atom) · posts |
 
 ### Fireside.fm
 
@@ -705,7 +705,7 @@ Discovers RSS and JSON feeds for Fireside.fm-hosted podcasts.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `*.fireside.fm` | Podcast feed (RSS + JSON) |
+| `*.fireside.fm` | Podcast (RSS + JSON) |
 
 ### Firstory
 
@@ -713,10 +713,10 @@ Discovers the RSS feed of a Firstory podcast. The feed is keyed by the show's ID
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `open.firstory.fm/user/{show}` | Podcast feed (RSS) |
-| `open.firstory.fm/story/{episodeId}` | Podcast feed (RSS) |
-| `{show}.firstory.cc` | Podcast feed (RSS) |
-| `{show}.firstory.cc/episodes/{episodeId}` | Podcast feed (RSS) |
+| `open.firstory.fm/user/{show}` | Podcast (RSS) |
+| `open.firstory.fm/story/{episodeId}` | Podcast (RSS) |
+| `{show}.firstory.cc` | Podcast (RSS) |
+| `{show}.firstory.cc/episodes/{episodeId}` | Podcast (RSS) |
 
 ### Hacker News
 
@@ -724,8 +724,8 @@ Discovers RSS feeds for Hacker News.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `news.ycombinator.com` | Front page feed (RSS) |
-| `news.ycombinator.com/show` | Show HN feed (RSS) |
+| `news.ycombinator.com` | Front page (RSS) |
+| `news.ycombinator.com/show` | Show HN (RSS) |
 
 ### Listed
 
@@ -733,7 +733,7 @@ Discovers RSS feeds for Listed (Standard Notes) blogs.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `listed.to/@{user}` | Blog feed |
+| `listed.to/@{user}` | Blog |
 
 ### MyAnimeList
 
@@ -745,7 +745,7 @@ Discovers RSS feeds for MyAnimeList user lists and site-wide news.
 | `myanimelist.net/animelist/{user}` | Anime list<sup>†</sup> · Manga list<sup>†</sup> · Recently watched<sup>†</sup> · Recently read<sup>†</sup> · Blog<sup>†</sup> (RSS) |
 | `myanimelist.net/mangalist/{user}` | Anime list<sup>†</sup> · Manga list<sup>†</sup> · Recently watched<sup>†</sup> · Recently read<sup>†</sup> · Blog<sup>†</sup> (RSS) |
 | `myanimelist.net/history/{user}` | (same as above) |
-| `myanimelist.net/news` | Site-wide news feed |
+| `myanimelist.net/news` | Site-wide news |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -766,9 +766,9 @@ Discovers RSS feeds for note.com, including hashtag and magazine feeds.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `note.com/{user}` | Blog feed |
-| `note.com/hashtag/{tag}` or `note.com/tag/{tag}` | Hashtag feed<sup>†</sup> |
-| `note.com/{user}/m/{magazineId}` | Magazine feed<sup>†</sup> |
+| `note.com/{user}` | Blog |
+| `note.com/hashtag/{tag}` or `note.com/tag/{tag}` | Hashtag<sup>†</sup> |
+| `note.com/{user}/m/{magazineId}` | Magazine<sup>†</sup> |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -778,7 +778,7 @@ Discovers RSS feeds for Odysee channels.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `odysee.com/@{channel}:{id}` | Videos feed<sup>†</sup> |
+| `odysee.com/@{channel}:{id}` | Videos<sup>†</sup> |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -788,7 +788,7 @@ Discovers RSS feeds for Tistory blogs.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `*.tistory.com` | Blog feed<sup>†</sup> |
+| `*.tistory.com` | Blog<sup>†</sup> |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -798,7 +798,7 @@ Discovers RSS feeds for Transistor-hosted podcasts.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `*.transistor.fm` | Podcast feed* |
+| `*.transistor.fm` | Podcast* |
 
 \* *The feed slug can differ from the subdomain. It is read from the page content when available, with the subdomain as the fallback.*
 
@@ -808,8 +808,8 @@ Discovers RSS feeds for Velog users and the platform-wide trending feed.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `velog.io/@{user}` | Posts feed<sup>†</sup> |
-| `velog.io` | Trending posts feed<sup>†</sup> |
+| `velog.io/@{user}` | Posts<sup>†</sup> |
+| `velog.io` | Trending posts<sup>†</sup> |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -819,7 +819,7 @@ Discovers RSS feeds for Acast-hosted podcasts.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `shows.acast.com/{slug}` | Podcast feed (RSS) |
+| `shows.acast.com/{slug}` | Podcast (RSS) |
 
 ### Ameba Blog
 
@@ -827,7 +827,7 @@ Discovers RSS, Atom, and RDF feeds for Ameba Blog.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `ameblo.jp/{user}` | Posts feed (RSS + Atom + RDF<sup>†</sup>) |
+| `ameblo.jp/{user}` | Posts (RSS + Atom + RDF<sup>†</sup>) |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -837,8 +837,8 @@ Discovers RSS feeds for Are.na user profiles and channels.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `are.na/{user}` | User profile feed |
-| `are.na/{user}/{channel}` | Channel feed |
+| `are.na/{user}` | User profile |
+| `are.na/{user}/{channel}` | Channel |
 
 ### Audioboom
 
@@ -846,7 +846,7 @@ Discovers RSS feeds for Audioboom channels.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `audioboom.com/channels/{id}` | Podcast feed (RSS) |
+| `audioboom.com/channels/{id}` | Podcast (RSS) |
 
 ### Ausha
 
@@ -854,10 +854,10 @@ Discovers the RSS feed of an Ausha show by reading its feed id from the page con
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `podcast.ausha.co/{show}` | Podcast feed<sup>†</sup> (RSS)* |
-| `podcast.ausha.co/{show}/{episode}` | Podcast feed<sup>†</sup> (RSS)* |
-| `smartlink.ausha.co/{show}` | Podcast feed (RSS)* |
-| `smartlink.ausha.co/{show}/{episode}` | Podcast feed (RSS)* |
+| `podcast.ausha.co/{show}` | Podcast<sup>†</sup> (RSS)* |
+| `podcast.ausha.co/{show}/{episode}` | Podcast<sup>†</sup> (RSS)* |
+| `smartlink.ausha.co/{show}` | Podcast (RSS)* |
+| `smartlink.ausha.co/{show}/{episode}` | Podcast (RSS)* |
 
 \* *Requires HTML content to extract the feed id.*
 
@@ -870,7 +870,7 @@ Discovers RSS feeds for BookWyrm user activity, reviews, quotes, comments, and p
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | `{instance}/user/{user}` | Activity · reviews<sup>†</sup> · quotes<sup>†</sup> · comments<sup>†</sup> (RSS) |
-| `{instance}/user/{user}/(shelf\|books)/{shelf-id}` | Shelf feed (RSS) · activity/reviews<sup>†</sup>/quotes<sup>†</sup>/comments<sup>†</sup> |
+| `{instance}/user/{user}/(shelf\|books)/{shelf-id}` | Shelf (RSS) · activity/reviews<sup>†</sup>/quotes<sup>†</sup>/comments<sup>†</sup> |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -880,7 +880,7 @@ Discovers RSS feeds for Buzzsprout-hosted podcasts.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `buzzsprout.com/{id}` | Podcast feed |
+| `buzzsprout.com/{id}` | Podcast |
 
 ### CANPAN Blog
 
@@ -888,7 +888,7 @@ Discovers RSS 2.0 and RDF feeds for CANPAN Blog.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `blog.canpan.info/{blog}` | Posts feed (RSS 2.0<sup>†</sup> + RDF) |
+| `blog.canpan.info/{blog}` | Posts (RSS 2.0<sup>†</sup> + RDF) |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -898,7 +898,7 @@ Discovers RSS feeds for Canalblog.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `*.canalblog.com` | Posts feed |
+| `*.canalblog.com` | Posts |
 
 ### Captivate
 
@@ -906,7 +906,7 @@ Discovers RSS feeds for Captivate-hosted podcasts.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `*.captivate.fm` | Podcast feed (RSS) |
+| `*.captivate.fm` | Podcast (RSS) |
 
 ### Castopod
 
@@ -914,8 +914,8 @@ Discovers the RSS feed of a podcast hosted on a Castopod instance. Detected by t
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{instance}/@{handle}` | Podcast feed (RSS) |
-| `{instance}/@{handle}/episodes/{slug}` | Podcast feed (RSS) |
+| `{instance}/@{handle}` | Podcast (RSS) |
+| `{instance}/@{handle}/episodes/{slug}` | Podcast (RSS) |
 
 ### Castos
 
@@ -923,7 +923,7 @@ Discovers RSS feeds for podcasts with a Castos-hosted website.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `*.castos.com` | Podcast feed (RSS) |
+| `*.castos.com` | Podcast (RSS) |
 
 ### Discourse
 
@@ -931,11 +931,11 @@ Discovers RSS feeds for Discourse forums. Detected by the `Discourse` generator 
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{instance}/u/{user}` | User activity feed<sup>†</sup> (RSS) |
-| `{instance}/c/{slug}` | Category feed (RSS) |
-| `{instance}/t/{slug}/{id}` | Topic feed (RSS) |
-| `{instance}/top` or `/top/{period}` | Top topics feed (RSS) |
-| `{instance}/` (or any other path) | Latest topics feed · latest posts feed (RSS) |
+| `{instance}/u/{user}` | User activity<sup>†</sup> (RSS) |
+| `{instance}/c/{slug}` | Category (RSS) |
+| `{instance}/t/{slug}/{id}` | Topic (RSS) |
+| `{instance}/top` or `/top/{period}` | Top topics (RSS) |
+| `{instance}/` (or any other path) | Latest topics · latest posts (RSS) |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -948,13 +948,13 @@ Discovers Atom feeds for Flickr photostreams, favorites, tags, groups and the he
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `flickr.com/photos/tags/{tag}` | Tag feed<sup>†</sup> |
-| `flickr.com/photos/{nsid}` | Photostream feed |
-| `flickr.com/photos/{nsid}/favorites` | Favorites feed |
-| `flickr.com/groups/{nsid}` | Group pool<sup>†</sup> · discussions · pool with location feeds |
-| `flickr.com/groups/{nsid}/pool` | Group pool · pool with location feeds |
-| `flickr.com/groups/{nsid}/discuss` | Group discussions feed |
-| `flickr.com/help/forum` | Forum feed |
+| `flickr.com/photos/tags/{tag}` | Tag<sup>†</sup> |
+| `flickr.com/photos/{nsid}` | Photostream |
+| `flickr.com/photos/{nsid}/favorites` | Favorites |
+| `flickr.com/groups/{nsid}` | Group pool<sup>†</sup> · discussions · pool with location |
+| `flickr.com/groups/{nsid}/pool` | Group pool · pool with location |
+| `flickr.com/groups/{nsid}/discuss` | Group discussions |
+| `flickr.com/help/forum` | Forum |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -966,7 +966,7 @@ Discovers Atom feeds for Friendica user profiles. Detected by the `Friendica` ge
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{instance}/profile/{user}` | Posts · comments · replies · activity feeds (Atom) |
+| `{instance}/profile/{user}` | Posts · comments · replies · activity (Atom) |
 
 ### Ghost
 
@@ -974,9 +974,9 @@ Discovers RSS feeds for Ghost-hosted blogs, including tag and author feeds.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `*.ghost.io` | Blog feed |
-| `*.ghost.io/tag/{slug}` | Tag feed · blog |
-| `*.ghost.io/author/{slug}` | Author feed · blog |
+| `*.ghost.io` | Blog |
+| `*.ghost.io/tag/{slug}` | Tag · blog |
+| `*.ghost.io/author/{slug}` | Author · blog |
 
 ### Hearthis.at
 
@@ -984,7 +984,7 @@ Discovers RSS feeds for Hearthis.at user profiles, plus the site-wide new tracks
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `hearthis.at/{user}` | Tracks feed · new tracks feed |
+| `hearthis.at/{user}` | Tracks · new tracks |
 
 ### HEY World
 
@@ -992,7 +992,7 @@ Discovers Atom feeds for HEY World blogs.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `world.hey.com/{user}` | Blog feed |
+| `world.hey.com/{user}` | Blog |
 
 ### Huffduffer
 
@@ -1000,9 +1000,9 @@ Discovers RSS feeds for Huffduffer users and their huffduffed episodes.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `huffduffer.com/{user}` | Huffduffs feed |
-| `huffduffer.com/{user}/{id}` | Possibly related feed<sup>†</sup> · huffduffs feed |
-| `huffduffer.com/{user}/{id}/related` | Possibly related feed |
+| `huffduffer.com/{user}` | Huffduffs |
+| `huffduffer.com/{user}/{id}` | Possibly related<sup>†</sup> · huffduffs |
+| `huffduffer.com/{user}/{id}/related` | Possibly related |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -1012,7 +1012,7 @@ Discovers RSS and Atom feeds for InsaneJournal journals.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `*.insanejournal.com` | Posts feed (RSS + Atom) · userpics<sup>†</sup> (Atom) |
+| `*.insanejournal.com` | Posts (RSS + Atom) · userpics<sup>†</sup> (Atom) |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -1022,9 +1022,9 @@ Discovers RSS 1.0 and Atom feeds for JUGEM blogs. A blog on a custom domain is d
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{blog}.jugem.jp` | Posts feed (RSS 1.0 + Atom) |
-| `{blog}.jugem.cc` | Posts feed (RSS 1.0 + Atom) |
-| Any page on a custom domain | Posts feed (RSS 1.0 + Atom) |
+| `{blog}.jugem.jp` | Posts (RSS 1.0 + Atom) |
+| `{blog}.jugem.cc` | Posts (RSS 1.0 + Atom) |
+| Any page on a custom domain | Posts (RSS 1.0 + Atom) |
 
 ### Lemmy
 
@@ -1032,9 +1032,9 @@ Discovers RSS feeds for Lemmy instances, communities and users. Detected by the 
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{instance}/` | All posts feed · local posts feed |
-| `{instance}/c/{community}` | Community feed |
-| `{instance}/u/{user}` | User feed |
+| `{instance}/` | All posts · local posts |
+| `{instance}/c/{community}` | Community |
+| `{instance}/u/{user}` | User |
 
 > [!NOTE]
 > Requires page content or response headers to detect Lemmy instances. The `?sort=` and `?limit=` query params are passed through to the generated feed URL. Unknown sort values are silently dropped. When the page URL has no valid sort, the feed takes the sort the page advertises.
@@ -1045,8 +1045,8 @@ Discovers RSS feeds for Libsyn-hosted podcasts.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{slug}.libsyn.com` | Podcast feed |
-| `feeds.libsyn.com/{showId}` | Podcast feed |
+| `{slug}.libsyn.com` | Podcast |
+| `feeds.libsyn.com/{showId}` | Podcast |
 
 ### Livedoor Blog
 
@@ -1054,14 +1054,14 @@ Discovers RDF and Atom feeds for Livedoor Blog on `*.blog.jp`, `*.doorblog.jp`, 
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{blog}.blog.jp` | Posts feed (RDF + Atom) |
-| `{blog}.blog.jp/archives/cat_{N}.html` | Category feed (RDF) · posts |
-| `{blog}.doorblog.jp` | Posts feed (RDF + Atom) |
-| `{blog}.doorblog.jp/archives/cat_{N}.html` | Category feed (RDF) · posts |
-| `{blog}.ldblog.jp` | Posts feed (RDF + Atom) |
-| `{blog}.ldblog.jp/archives/cat_{N}.html` | Category feed (RDF) · posts |
-| `{blog}.livedoor.biz` | Posts feed (RDF + Atom) |
-| `{blog}.livedoor.biz/archives/cat_{N}.html` | Category feed (RDF) · posts |
+| `{blog}.blog.jp` | Posts (RDF + Atom) |
+| `{blog}.blog.jp/archives/cat_{N}.html` | Category (RDF) · posts |
+| `{blog}.doorblog.jp` | Posts (RDF + Atom) |
+| `{blog}.doorblog.jp/archives/cat_{N}.html` | Category (RDF) · posts |
+| `{blog}.ldblog.jp` | Posts (RDF + Atom) |
+| `{blog}.ldblog.jp/archives/cat_{N}.html` | Category (RDF) · posts |
+| `{blog}.livedoor.biz` | Posts (RDF + Atom) |
+| `{blog}.livedoor.biz/archives/cat_{N}.html` | Category (RDF) · posts |
 
 ### LiveJournal
 
@@ -1069,7 +1069,7 @@ Discovers RSS and Atom feeds for LiveJournal blogs.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `*.livejournal.com` | Posts feed (RSS + Atom) · userpics<sup>†</sup> (Atom) |
+| `*.livejournal.com` | Posts (RSS + Atom) · userpics<sup>†</sup> (Atom) |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -1079,7 +1079,7 @@ Discovers RSS feeds for Mataroa blogs.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `*.mataroa.blog` | Blog feed |
+| `*.mataroa.blog` | Blog |
 
 ### Megaphone
 
@@ -1087,8 +1087,8 @@ Discovers RSS feeds for Megaphone-hosted podcasts from their embed players.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `playlist.megaphone.fm/?p={id}` | Podcast feed<sup>†</sup> |
-| `player.megaphone.fm/{episode}` | Podcast feed (read from the page) |
+| `playlist.megaphone.fm/?p={id}` | Podcast<sup>†</sup> |
+| `player.megaphone.fm/{episode}` | Podcast (read from the page) |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -1100,9 +1100,9 @@ Discovers RSS, JSON, and podcast feeds for Micro.blog-hosted blogs, including ca
 |-------------|-----------------|
 | `*.micro.blog` | Posts (RSS + JSON) · podcast (RSS + JSON<sup>†</sup>) |
 | `*.micro.blog/categories/{slug}` | Category (RSS + JSON), plus the feeds above |
-| `*.micro.blog/archive` | Archive feed<sup>†</sup>, plus the feeds above |
-| `*.micro.blog/photos` | Photos feed<sup>†</sup>, plus the feeds above |
-| `*.micro.blog/replies` | Replies feed, plus the feeds above |
+| `*.micro.blog/archive` | Archive<sup>†</sup>, plus the feeds above |
+| `*.micro.blog/photos` | Photos<sup>†</sup>, plus the feeds above |
+| `*.micro.blog/replies` | Replies, plus the feeds above |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -1112,7 +1112,7 @@ Discovers Atom, RSS, and JSON feeds for Misskey and Sharkey user profiles. Detec
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{instance}/@{user}` | Posts feed<sup>†</sup> (Atom + RSS + JSON) |
+| `{instance}/@{user}` | Posts<sup>†</sup> (Atom + RSS + JSON) |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -1122,8 +1122,8 @@ Discovers RSS feeds for Naver Blog.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `blog.naver.com/{id}` | Blog feed |
-| `m.blog.naver.com/{id}` | Blog feed<sup>†</sup> |
+| `blog.naver.com/{id}` | Blog |
+| `m.blog.naver.com/{id}` | Blog<sup>†</sup> |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -1133,10 +1133,10 @@ Discovers RSS feeds for Observable user notebooks and collections.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `observablehq.com/@{user}` | Notebooks feed<sup>†</sup> |
-| `observablehq.com/@{user}/collection/{slug}` or `/@{user}/-/collection/{slug}` | Collection feed<sup>†</sup> |
-| `observablehq.com/recent` or `/public?sort=publish_time` | Recent feed<sup>†</sup> |
-| `observablehq.com/trending` or `/public` | Trending feed<sup>†</sup> |
+| `observablehq.com/@{user}` | Notebooks<sup>†</sup> |
+| `observablehq.com/@{user}/collection/{slug}` or `/@{user}/-/collection/{slug}` | Collection<sup>†</sup> |
+| `observablehq.com/recent` or `/public?sort=publish_time` | Recent<sup>†</sup> |
+| `observablehq.com/trending` or `/public` | Trending<sup>†</sup> |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -1146,8 +1146,8 @@ Discovers Atom and RSS feeds for Pika blogs, including tag feeds.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `*.pika.page` | Posts feed (Atom + RSS<sup>†</sup>) |
-| `*.pika.page/tag/{tag}` | Tag feed (Atom + RSS<sup>†</sup>) · posts (Atom + RSS<sup>†</sup>) |
+| `*.pika.page` | Posts (Atom + RSS<sup>†</sup>) |
+| `*.pika.page/tag/{tag}` | Tag (Atom + RSS<sup>†</sup>) · posts (Atom + RSS<sup>†</sup>) |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -1157,7 +1157,7 @@ Discovers Atom feeds for Pixelfed user profiles. Detected by the `pixelfed` gene
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{instance}/{user}` or `{instance}/users/{user}` | Posts feed (Atom) |
+| `{instance}/{user}` or `{instance}/users/{user}` | Posts (Atom) |
 
 ### Pleroma
 
@@ -1165,7 +1165,7 @@ Discovers Atom and RSS feeds for Pleroma (and Akkoma) user profiles. Detected by
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{instance}/users/{user}` | Posts feed (Atom + RSS<sup>†</sup>) |
+| `{instance}/users/{user}` | Posts (Atom + RSS<sup>†</sup>) |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -1175,7 +1175,7 @@ Discovers RSS feeds for Podbean-hosted podcasts.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `*.podbean.com` | Podcast feed |
+| `*.podbean.com` | Podcast |
 
 ### Podhome
 
@@ -1183,9 +1183,9 @@ Discovers the RSS feed of a Podhome show, on `serve.podhome.fm` or a custom doma
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `serve.podhome.fm/{show}` | Podcast feed (RSS) |
-| `serve.podhome.fm/episodepage/{show}/{episode}` | Podcast feed (RSS) |
-| Any page of a show on a custom domain | Podcast feed (RSS) |
+| `serve.podhome.fm/{show}` | Podcast (RSS) |
+| `serve.podhome.fm/episodepage/{show}/{episode}` | Podcast (RSS) |
+| Any page of a show on a custom domain | Podcast (RSS) |
 
 ### Podigee
 
@@ -1193,7 +1193,7 @@ Discovers RSS feeds for Podigee-hosted podcasts.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `*.podigee.io` | Podcast feed (RSS) |
+| `*.podigee.io` | Podcast (RSS) |
 
 ### Postach.io
 
@@ -1201,7 +1201,7 @@ Discovers Atom feeds for Postach.io sites.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `*.postach.io` | Posts feed (Atom) |
+| `*.postach.io` | Posts (Atom) |
 
 ### Posthaven
 
@@ -1209,7 +1209,7 @@ Discovers Atom feeds for Posthaven blogs.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `*.posthaven.com` | Posts feed (Atom) |
+| `*.posthaven.com` | Posts (Atom) |
 
 ### Qiita
 
@@ -1217,10 +1217,10 @@ Discovers Atom feeds for Qiita users, tags, organizations, and popular items.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `qiita.com/{user}` | User posts feed |
-| `qiita.com/tags/{tag}` | Tag feed |
-| `qiita.com/organizations/{org}` | Organization feed |
-| `qiita.com/popular-items` | Popular items feed |
+| `qiita.com/{user}` | User posts |
+| `qiita.com/tags/{tag}` | Tag |
+| `qiita.com/organizations/{org}` | Organization |
+| `qiita.com/popular-items` | Popular items |
 
 ### RSS.com
 
@@ -1228,7 +1228,7 @@ Discovers RSS feeds for RSS.com-hosted podcasts.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `rss.com/podcasts/{slug}` | Podcast feed |
+| `rss.com/podcasts/{slug}` | Podcast |
 
 ### RubyGems
 
@@ -1236,8 +1236,8 @@ Discovers Atom feeds for RubyGems.org gems and the site-wide latest gems.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `rubygems.org/gems/{name}` | Gem versions feed (Atom) |
-| `rubygems.org` | Latest gems feed<sup>†</sup> (Atom) |
+| `rubygems.org/gems/{name}` | Gem versions (Atom) |
+| `rubygems.org` | Latest gems<sup>†</sup> (Atom) |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -1249,7 +1249,7 @@ Discovers RSS 2.0 and RDF feeds for Sakura blog.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `*.sblo.jp` | Posts feed (RSS 2.0 + RDF) |
+| `*.sblo.jp` | Posts (RSS 2.0 + RDF) |
 
 ### SAPO Blogs
 
@@ -1257,10 +1257,10 @@ Discovers the posts, comments and tag feeds of a blog on `*.blogs.sapo.pt`. Comm
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{blog}.blogs.sapo.pt` | Posts feed (RSS + Atom) · comments feed |
-| `{blog}.blogs.sapo.pt/{slug}-{id}` | Post comments feed, plus the blog feeds |
-| `{blog}.blogs.sapo.pt/{id}.html` | Post comments feed, plus the blog feeds |
-| `{blog}.blogs.sapo.pt/tag/{tag}` | Tag feed, plus the blog feeds |
+| `{blog}.blogs.sapo.pt` | Posts (RSS + Atom) · comments |
+| `{blog}.blogs.sapo.pt/{slug}-{id}` | Post comments, plus the blog feeds |
+| `{blog}.blogs.sapo.pt/{id}.html` | Post comments, plus the blog feeds |
+| `{blog}.blogs.sapo.pt/tag/{tag}` | Tag, plus the blog feeds |
 
 ### Seesaa Blog
 
@@ -1268,13 +1268,13 @@ Discovers RSS 2.0 and RDF feeds for Seesaa Blog on `*.seesaa.net` and its other 
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `*.seesaa.net` | Posts feed (RSS 2.0 + RDF) |
-| `*.iiblog.jp` | Posts feed (RSS 2.0 + RDF) |
-| `*.seesaa.blog` | Posts feed<sup>†</sup> (RSS 2.0 + RDF) |
-| `*.seesaa.space` | Posts feed (RSS 2.0 + RDF) |
-| `*.sokuho.org` | Posts feed (RSS 2.0 + RDF) |
-| `*.stablo.jp` | Posts feed (RSS 2.0 + RDF) |
-| `*.xblog.jp` | Posts feed (RSS 2.0 + RDF) |
+| `*.seesaa.net` | Posts (RSS 2.0 + RDF) |
+| `*.iiblog.jp` | Posts (RSS 2.0 + RDF) |
+| `*.seesaa.blog` | Posts<sup>†</sup> (RSS 2.0 + RDF) |
+| `*.seesaa.space` | Posts (RSS 2.0 + RDF) |
+| `*.sokuho.org` | Posts (RSS 2.0 + RDF) |
+| `*.stablo.jp` | Posts (RSS 2.0 + RDF) |
+| `*.xblog.jp` | Posts (RSS 2.0 + RDF) |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -1284,8 +1284,8 @@ Discovers the audio podcast feed of every channel a church page lists, or of the
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `*.sermon.net` | Channel podcast feeds (RSS), or the church feed when no channel is listed |
-| `*.sermon.net/{mediaCentre}/{channel}` | That channel's podcast feed<sup>†</sup> (RSS) |
+| `*.sermon.net` | Channel podcasts (RSS), or the church feed when no channel is listed |
+| `*.sermon.net/{mediaCentre}/{channel}` | That channel's podcast<sup>†</sup> (RSS) |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -1295,8 +1295,8 @@ Discovers RSS and Atom feeds for Shinobi Blog, on `blog.shinobi.jp` and on 100 o
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{blog}.blog.shinobi.jp` | Posts feed (RSS + Atom) |
-| `{blog}.{domain}` | Posts feed (RSS + Atom) |
+| `{blog}.blog.shinobi.jp` | Posts (RSS + Atom) |
+| `{blog}.{domain}` | Posts (RSS + Atom) |
 
 ### Spotify for Creators
 
@@ -1304,9 +1304,9 @@ Discovers RSS feeds for Spotify for Creators (formerly Anchor) podcasts by extra
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `creators.spotify.com/pod/profile/{name}` | Podcast feed* |
-| `creators.spotify.com/pod/show/{name}` | Podcast feed* |
-| `creators.spotify.com/pod/profile/{name}/episodes/{slug}` | Podcast feed* |
+| `creators.spotify.com/pod/profile/{name}` | Podcast* |
+| `creators.spotify.com/pod/show/{name}` | Podcast* |
+| `creators.spotify.com/pod/profile/{name}/episodes/{slug}` | Podcast* |
 
 \* *Requires HTML content to extract the station ID.*
 
@@ -1316,7 +1316,7 @@ Discovers RSS feeds for Spreaker-hosted podcasts.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `spreaker.com/podcast/{slug}--{id}` | Podcast feed |
+| `spreaker.com/podcast/{slug}--{id}` | Podcast |
 
 ### Tildes
 
@@ -1324,8 +1324,8 @@ Discovers RSS and Atom feeds for Tildes homepage and groups.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `tildes.net` | Topics feed (RSS + Atom) |
-| `tildes.net/~{group}` | Group feed (RSS + Atom) |
+| `tildes.net` | Topics (RSS + Atom) |
+| `tildes.net/~{group}` | Group (RSS + Atom) |
 
 ### Viabloga
 
@@ -1333,7 +1333,7 @@ Discovers RSS, Atom and RDF feeds for Viabloga.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `*.viabloga.com` | Posts feed (RSS + Atom + RDF) · comments feed<sup>†</sup> · wiki feed<sup>†</sup> |
+| `*.viabloga.com` | Posts (RSS + Atom + RDF) · comments<sup>†</sup> · wiki<sup>†</sup> |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -1343,7 +1343,7 @@ Discovers RSS, Atom, and JSON feeds for weblog.lol blogs.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `*.weblog.lol` | Posts feed (RSS + Atom + JSON) |
+| `*.weblog.lol` | Posts (RSS + Atom + JSON) |
 
 ### Weebly
 
@@ -1351,8 +1351,8 @@ Discovers RSS feeds for Weebly-hosted blogs.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `*.weebly.com` | Blog feed |
-| `*.weebly.com/{slug}` | Blog feed (custom page slug) · default blog feed |
+| `*.weebly.com` | Blog |
+| `*.weebly.com/{slug}` | Blog (custom page slug) · default blog |
 
 ### Zenn
 
@@ -1360,11 +1360,11 @@ Discovers RSS feeds for Zenn users, topics, publications, and the platform-wide 
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `zenn.dev/{user}` | User posts feed |
-| `zenn.dev/topics/{topic}` | Topic feed |
-| `zenn.dev/p/{pub}` | Publication feed |
-| `zenn.dev/publications/{pub}` | Publication feed |
-| `zenn.dev` | Trending posts feed |
+| `zenn.dev/{user}` | User posts |
+| `zenn.dev/topics/{topic}` | Topic |
+| `zenn.dev/p/{pub}` | Publication |
+| `zenn.dev/publications/{pub}` | Publication |
+| `zenn.dev` | Trending posts |
 
 ### BitChute
 
@@ -1372,7 +1372,7 @@ Discovers RSS feeds for BitChute channels. Channel pages carry only an oEmbed li
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `bitchute.com/channel/{slug}` | Channel feed<sup>†</sup> (RSS) |
+| `bitchute.com/channel/{slug}` | Channel<sup>†</sup> (RSS) |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -1399,9 +1399,9 @@ Discovers the Atom feed of a diaspora* profile. Detected by the `Diaspora.Page` 
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{pod}/u/{user}` | Posts feed (Atom) |
-| `{pod}/public/{user}` | Posts feed (Atom) |
-| `{pod}/people/{guid}` | Posts feed (Atom)* |
+| `{pod}/u/{user}` | Posts (Atom) |
+| `{pod}/public/{user}` | Posts (Atom) |
+| `{pod}/people/{guid}` | Posts (Atom)* |
 
 \* *Requires HTML content to read the username from the profile's diaspora ID.*
 
@@ -1411,8 +1411,8 @@ Discovers the incident history feeds of an Instatus status page. Detected by the
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| Any status page | Incident history feed (RSS + Atom) |
-| `{page}/{language}/...` | Translated incident history feed (RSS + Atom) |
+| Any status page | Incident history (RSS + Atom) |
+| `{page}/{language}/...` | Translated incident history (RSS + Atom) |
 
 ### Jira
 
@@ -1435,8 +1435,8 @@ Discovers the RSS feed of a Neocities site. The feed is served from `neocities.o
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{user}.neocities.org` | Site updates feed<sup>†</sup> (RSS) |
-| `neocities.org/site/{user}` | Site updates feed<sup>†</sup> (RSS) |
+| `{user}.neocities.org` | Site updates<sup>†</sup> (RSS) |
+| `neocities.org/site/{user}` | Site updates<sup>†</sup> (RSS) |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -1449,7 +1449,7 @@ Discovers the incident feeds of an OpenStatus status page. Detected by the `/api
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| Any status page | Updates feed<sup>†</sup> (RSS + Atom) |
+| Any status page | Updates<sup>†</sup> (RSS + Atom) |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -1459,8 +1459,8 @@ Discovers RSS feeds for Postype channels. Channel pages carry no feed link.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `postype.com/@{id}` | Posts feed (RSS) |
-| `{id}.postype.com` | Posts feed (RSS) |
+| `postype.com/@{id}` | Posts (RSS) |
+| `{id}.postype.com` | Posts (RSS) |
 
 ### Sourcehut
 
@@ -1468,7 +1468,7 @@ Discovers the commit and ref feeds of a Sourcehut repository. Repository pages c
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `git.sr.ht/~{user}/{repo}` | Commits feed · refs feed<sup>†</sup> (RSS) |
+| `git.sr.ht/~{user}/{repo}` | Commits · refs<sup>†</sup> (RSS) |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -1478,7 +1478,7 @@ Discovers the RSS feed of a Squarespace collection. Detected by the `Server: Squ
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{site}/{collection}` | Collection feed (RSS) |
+| `{site}/{collection}` | Collection (RSS) |
 
 > [!NOTE]
 > The collection slug is operator-chosen, commonly `blog`, `news` or `journal`, so it is taken from the first path segment. The site root is not matched: it answers `?format=rss` with a 400.
@@ -1489,7 +1489,7 @@ Discovers the incident history feeds of an Atlassian Statuspage status page. Det
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| Any status page | Incident history feed (RSS + Atom) |
+| Any status page | Incident history (RSS + Atom) |
 
 ### Wikidot
 
@@ -1497,7 +1497,7 @@ Discovers the site and forum feeds of a Wikidot wiki. Detected by the `WIKIDOT.p
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| Any wiki page | Site changes feed<sup>†</sup> · forum threads feed<sup>†</sup> (RSS) |
+| Any wiki page | Site changes<sup>†</sup> · forum threads<sup>†</sup> (RSS) |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -1507,7 +1507,7 @@ Discovers the site feed of a Drupal site. Detected by the `Generator` meta tag o
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| Any page | Site feed (RSS) |
+| Any page | Site (RSS) |
 
 > [!NOTE]
 > Both signals are Drupal 8 and later, and a site builder can disable the `/rss.xml` view, so treat the feed as a probe.
@@ -1518,7 +1518,7 @@ Discovers the Atom feed of a Shopify store's blog. Detected by the `Powered-By` 
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{store}/blogs/{handle}` | Blog feed (Atom) |
+| `{store}/blogs/{handle}` | Blog (Atom) |
 
 > [!NOTE]
 > There is no store-wide feed, so the blog handle is required. A missing blog answers 404 with an Atom content type and an empty body.
@@ -1529,9 +1529,9 @@ Discovers the RSS feeds of a HubSpot blog. Detected by the `HubSpot` generator m
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{site}/{blog-path}` | Blog feed (RSS) |
-| `{site}/{blog-path}/author/{slug}` | Author feed<sup>†</sup> · blog feed (RSS) |
-| `{site}/{blog-path}/topic/{slug}` | Tag feed<sup>†</sup> · blog feed (RSS) |
+| `{site}/{blog-path}` | Blog (RSS) |
+| `{site}/{blog-path}/author/{slug}` | Author<sup>†</sup> · blog (RSS) |
+| `{site}/{blog-path}/topic/{slug}` | Tag<sup>†</sup> · blog (RSS) |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -1544,7 +1544,7 @@ Discovers the feeds of a Publii-built site. Detected by the `Publii` generator m
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| Any page | Posts feed (Atom) · JSON Feed |
+| Any page | Posts (Atom) · JSON Feed |
 
 > [!NOTE]
 > `/feed.xml` is Atom despite the name, and the theme decides whether either file is linked.
@@ -1555,8 +1555,8 @@ Discovers the blog feed of a Wix site. Detected by the `Wix.com` generator meta 
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{account}.wixsite.com/{site}/…` | Blog feed (RSS), under the site path |
-| Any other page | Blog feed (RSS) |
+| `{account}.wixsite.com/{site}/…` | Blog (RSS), under the site path |
+| Any other page | Blog (RSS) |
 
 > [!NOTE]
 > The feed sits at the site root wherever the blog appears in navigation, and only sites with the Wix Blog app installed have it.
@@ -1582,7 +1582,7 @@ Discovers the feed forms of a Joomla list view. Detected by the `Joomla!` genera
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| Any list view | View feed (RSS + Atom) |
+| Any list view | View (RSS + Atom) |
 
 > [!NOTE]
 > Only list views produce a feed. A non-list view answers 404 as `application/xml` with an `<error>` root. The `?format=feed` form is used because it works with and without search-engine friendly URLs, while the `.feed` suffix answers 404 on a site without the `.html` suffix.
@@ -1593,13 +1593,13 @@ Discovers the feeds of a WriteFreely blog. Detected by the `WriteFreely` generat
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{instance}/{blog}` | Blog feed · instance reader feed<sup>†</sup> (RSS) |
-| `{instance}/{blog}/tag:{tag}` | Tag feed · blog feed · instance reader feed (RSS) |
-| `{instance}/{post}` on a single-user instance | Blog feed (RSS) |
-| `{instance}/page/{n}` on a single-user instance | Blog feed (RSS) |
-| `{instance}/lang:{code}` on a single-user instance | Blog feed (RSS) |
-| `{instance}/archive` on a single-user instance | Blog feed (RSS) |
-| `{instance}/tag:{tag}` on a single-user instance | Tag feed · blog feed (RSS) |
+| `{instance}/{blog}` | Blog · instance reader<sup>†</sup> (RSS) |
+| `{instance}/{blog}/tag:{tag}` | Tag · blog · instance reader (RSS) |
+| `{instance}/{post}` on a single-user instance | Blog (RSS) |
+| `{instance}/page/{n}` on a single-user instance | Blog (RSS) |
+| `{instance}/lang:{code}` on a single-user instance | Blog (RSS) |
+| `{instance}/archive` on a single-user instance | Blog (RSS) |
+| `{instance}/tag:{tag}` on a single-user instance | Tag · blog (RSS) |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -1612,7 +1612,7 @@ Discovers the Atom feed of a Svbtle blog. Detected by the `Svbtle.com` generator
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| Any page on a blog host | Posts feed (Atom) |
+| Any page on a blog host | Posts (Atom) |
 
 > [!NOTE]
 > `svbtle.com` itself is excluded: its `/feed` answers 200 with an HTML discovery page, and the `svbtle.com/{user}/feed` form does not exist.
@@ -1623,7 +1623,7 @@ Discovers the feeds of a Textpattern site. Detected by the `Textpattern` generat
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| Any page | Posts feed (RSS + Atom) |
+| Any page | Posts (RSS + Atom) |
 
 ### Grav
 
@@ -1631,8 +1631,8 @@ Discovers the feed forms of a Grav listing page. Detected by the `GravCMS` gener
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{site}/` | Site root feed (RSS + Atom) at `/.rss` and `/.atom` |
-| Any listing page | Page feed (RSS + Atom) |
+| `{site}/` | Site root (RSS + Atom) at `/.rss` and `/.atom` |
+| Any listing page | Page (RSS + Atom) |
 
 > [!NOTE]
 > The generator value is matched in full, because the meta content is compared as a prefix and `Grav` alone also matches Gravity Forms.
@@ -1643,7 +1643,7 @@ Discovers the RSS feed of a Mailchimp campaign archive.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{dc}.campaign-archive.com/?u={u}&id={id}` | Archive feed (RSS) |
+| `{dc}.campaign-archive.com/?u={u}&id={id}` | Archive (RSS) |
 
 > [!NOTE]
 > The datacentre prefix and both ids come from the input URL; none of them can be derived.
@@ -1654,10 +1654,10 @@ Discovers the feeds of a Discuz! board. Detected by the `Discuz!` generator meta
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{board}/forum-{fid}-1.html` | Board feed · site feed<sup>†</sup> (RSS) |
-| `{board}/forumdisplay.php?fid={fid}` on Discuz! 7 and older | Board feed · site feed<sup>†</sup> (RSS) from `rss.php` |
-| `{board}/archiver/?fid-{fid}.html` or `{board}/archiver/fid-{fid}.html` | Board feed · site feed (RSS), from `rss.php` on Discuz! 7 and older |
-| Any other page | Site feed (RSS) |
+| `{board}/forum-{fid}-1.html` | Board · site<sup>†</sup> (RSS) |
+| `{board}/forumdisplay.php?fid={fid}` on Discuz! 7 and older | Board · site<sup>†</sup> (RSS) from `rss.php` |
+| `{board}/archiver/?fid-{fid}.html` or `{board}/archiver/fid-{fid}.html` | Board · site (RSS), from `rss.php` on Discuz! 7 and older |
+| Any other page | Site (RSS) |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -1670,8 +1670,8 @@ Discovers the feeds of a XenForo board. Detected by the `XF` or `XenForo` id on 
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{board}/f/{slug}.{id}` or `{board}/forums/{slug}.{id}` | Forum feed · board feed (RSS) |
-| Any other page | Board feed (RSS)* |
+| `{board}/f/{slug}.{id}` or `{board}/forums/{slug}.{id}` | Forum · board (RSS) |
+| Any other page | Board (RSS)* |
 
 \* *The board feed sits under the forum route prefix, `/forums/-/index.rss` by default and `/f/-/index.rss` where the board renames it. A page outside a forum carries no prefix, so both are emitted.*
 
@@ -1684,10 +1684,10 @@ Discovers the RSS feeds of an FC2 blog.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{user}.blog.fc2.com` | Posts · comments · trackbacks feeds (RSS) |
-| `{user}.blog{n}.fc2.com` | Posts · comments · trackbacks feeds (RSS) |
-| `{user}.fc2.net` | Posts · comments · trackbacks feeds (RSS) |
-| `{user}.blog.2nt.com` | Posts · comments<sup>†</sup> · trackbacks<sup>†</sup> feeds (RSS) |
+| `{user}.blog.fc2.com` | Posts · comments · trackbacks (RSS) |
+| `{user}.blog{n}.fc2.com` | Posts · comments · trackbacks (RSS) |
+| `{user}.fc2.net` | Posts · comments · trackbacks (RSS) |
+| `{user}.blog.2nt.com` | Posts · comments<sup>†</sup> · trackbacks<sup>†</sup> (RSS) |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -1700,8 +1700,8 @@ Discovers the feeds of a Togetter curator or the site-wide popular feed.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `togetter.com/id/{user}` | Curator feed<sup>†</sup> · popular feed<sup>†</sup> (RSS) |
-| Any other page | Popular feed (RSS) |
+| `togetter.com/id/{user}` | Curator<sup>†</sup> · popular<sup>†</sup> (RSS) |
+| Any other page | Popular (RSS) |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -1711,7 +1711,7 @@ Discovers the Atom feeds of a Syosetu author.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `mypage.syosetu.com/{writerId}` | Author novels<sup>†</sup> · activity feeds (Atom) |
+| `mypage.syosetu.com/{writerId}` | Author novels<sup>†</sup> · activity (Atom) |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -1724,7 +1724,7 @@ Discovers the feed of a Cnblogs blog.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `cnblogs.com/{user}` | Posts feed |
+| `cnblogs.com/{user}` | Posts |
 
 > [!NOTE]
 > The response says RSS while the document is Atom, and the body opens with a byte order mark before the XML declaration.
@@ -1735,8 +1735,8 @@ Discovers the feeds of a Homeland forum. Detected by the `Homeland` generator me
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{site}/topics/node{id}` | Node feed<sup>†</sup> · topics feed (RSS) |
-| Any other page | Topics feed (RSS) |
+| `{site}/topics/node{id}` | Node<sup>†</sup> · topics (RSS) |
+| Any other page | Topics (RSS) |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -1746,8 +1746,8 @@ Discovers the feeds of a LearnKu community.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `learnku.com/{community}` | Community feed<sup>†</sup> · site feed (RSS) |
-| Any other page | Site feed (RSS) |
+| `learnku.com/{community}` | Community<sup>†</sup> · site (RSS) |
+| Any other page | Site (RSS) |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -1757,10 +1757,10 @@ Discovers the feeds of a Habr hub, user or company, plus the site articles feed.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `habr.com/{lang}/hubs/{hub}` | Hub feed · articles feed (RSS) |
-| `habr.com/{lang}/users/{user}` | User feed · articles feed (RSS) |
-| `habr.com/{lang}/companies/{company}` | Company feed · articles feed (RSS) |
-| Any other page | Articles feed (RSS) |
+| `habr.com/{lang}/hubs/{hub}` | Hub · articles (RSS) |
+| `habr.com/{lang}/users/{user}` | User · articles (RSS) |
+| `habr.com/{lang}/companies/{company}` | Company · articles (RSS) |
+| Any other page | Articles (RSS) |
 
 > [!NOTE]
 > The language segment is taken from the page URL and every one of these paths needs its trailing slash.
@@ -1771,10 +1771,10 @@ Discovers the feeds of a phpBB board. Detected by the `phpbb` body id or the `{n
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{board}/viewtopic.php?t={id}` | Topic feed · forum feed<sup>?</sup>, plus the board feeds (Atom) |
-| `{board}/viewtopic.php?p={id}` | Topic feed from the page's canonical link, plus the board feeds (Atom) |
-| `{board}/viewforum.php?f={id}` | Forum feed<sup>?</sup>, plus the board feeds (Atom) |
-| Any other page | Board feeds: all posts · news<sup>†</sup> · new topics · active topics<sup>?</sup> · forums (Atom) |
+| `{board}/viewtopic.php?t={id}` | Topic · forum<sup>?</sup>, plus the board feeds (Atom) |
+| `{board}/viewtopic.php?p={id}` | Topic from the page's canonical link, plus the board feeds (Atom) |
+| `{board}/viewforum.php?f={id}` | Forum<sup>?</sup>, plus the board feeds (Atom) |
+| Any other page | Board: all posts · news<sup>†</sup> · new topics · active topics<sup>?</sup> · forums (Atom) |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -1789,9 +1789,9 @@ Discovers the feeds of a NodeBB forum. Detected by the `X-Powered-By` response h
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{forum}/category/{cid}` | Category feed, plus the site feeds (RSS) |
-| `{forum}/topic/{tid}` | Topic feed, plus the site feeds (RSS) |
-| Any other page | Recent feed<sup>†</sup> · popular feed<sup>†</sup> (RSS) |
+| `{forum}/category/{cid}` | Category, plus the site feeds (RSS) |
+| `{forum}/topic/{tid}` | Topic, plus the site feeds (RSS) |
+| Any other page | Recent<sup>†</sup> · popular<sup>†</sup> (RSS) |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -1801,9 +1801,9 @@ Discovers the feeds of a FluxBB board. Detected by the `brdheader` and `brdmain`
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{board}/viewforum.php?id={id}` | Forum feed (Atom) · posts feed<sup>†</sup> (RSS + Atom) |
-| `{board}/viewtopic.php?id={id}` | Topic feed (Atom) · posts feed<sup>†</sup> (RSS + Atom) |
-| Any other page | Posts feed (RSS<sup>†</sup> + Atom) |
+| `{board}/viewforum.php?id={id}` | Forum (Atom) · posts<sup>†</sup> (RSS + Atom) |
+| `{board}/viewtopic.php?id={id}` | Topic (Atom) · posts<sup>†</sup> (RSS + Atom) |
+| Any other page | Posts (RSS<sup>†</sup> + Atom) |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -1813,9 +1813,9 @@ Discovers the feeds of a MyBB board. Detected by the `mybb[lastvisit]` cookie, u
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{board}/forumdisplay.php?fid={id}` or `{board}/forum-{id}.html` | Forum feed · latest threads feed (RSS + Atom) |
-| `{board}/showthread.php?tid={id}` or `{board}/thread-{id}.html` | Forum feed<sup>†</sup> from the breadcrumb · latest threads feed (RSS + Atom) |
-| Any other page | Latest threads feed (RSS + Atom) |
+| `{board}/forumdisplay.php?fid={id}` or `{board}/forum-{id}.html` | Forum · latest threads (RSS + Atom) |
+| `{board}/showthread.php?tid={id}` or `{board}/thread-{id}.html` | Forum<sup>†</sup> from the breadcrumb · latest threads (RSS + Atom) |
+| Any other page | Latest threads (RSS + Atom) |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -1828,9 +1828,9 @@ Discovers the feeds of a Simple Machines Forum. Detected by the `smf_scripturl` 
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{script}?board={id}` | Board feed · recent posts feed (RSS + Atom<sup>†</sup>) |
-| `{script}?topic={id}` | Board feed from the `rel="index"` link · recent posts feed (RSS + Atom<sup>†</sup>) |
-| Any other page | Recent posts feed (RSS + Atom) |
+| `{script}?board={id}` | Board · recent posts (RSS + Atom<sup>†</sup>) |
+| `{script}?topic={id}` | Board from the `rel="index"` link · recent posts (RSS + Atom<sup>†</sup>) |
+| Any other page | Recent posts (RSS + Atom) |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -1843,8 +1843,8 @@ Discovers the feeds of a Mobilizon instance or group. Detected by the noscript n
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{instance}/@{group}` | Group feed · instance feed<sup>†</sup> (Atom) |
-| Any other page | Instance feed (Atom) |
+| `{instance}/@{group}` | Group · instance<sup>†</sup> (Atom) |
+| Any other page | Instance (Atom) |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -1854,7 +1854,7 @@ Discovers the Atom feed of a Hubzilla channel. Detected by the `hubzilla` genera
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{hub}/channel/{name}`, `{hub}/profile/{name}` or `{hub}/@{name}` | Channel feed (Atom) |
+| `{hub}/channel/{name}`, `{hub}/profile/{name}` or `{hub}/@{name}` | Channel (Atom) |
 
 > [!NOTE]
 > There is no site-wide feed, so a page outside a channel is not matched.
@@ -1865,7 +1865,7 @@ Discovers the RSS feed of a snac user. Detected by the `snac/` generator meta ta
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{instance}/{user}`, `{instance}/{user}/p/{id}` or `{instance}/{user}/h/{month}.html` | Posts feed (RSS) |
+| `{instance}/{user}`, `{instance}/{user}/p/{id}` or `{instance}/{user}/h/{month}.html` | Posts (RSS) |
 
 > [!NOTE]
 > An instance is routinely mounted under a sub-path, so the feed is built from the page path and never from the origin.
@@ -1876,7 +1876,7 @@ Discovers the feeds of a Shaarli instance. Detected by the `shaarli-menu` id or 
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| Any page | Posts feed (RSS + Atom), plus the pre-0.12 shape |
+| Any page | Posts (RSS + Atom), plus the pre-0.12 shape |
 
 ### PeerTube
 
@@ -1884,9 +1884,9 @@ Discovers the feeds of a PeerTube instance, channel or account. Detected by the 
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{instance}/c/{channel}` | Channel feed · instance feed |
-| `{instance}/a/{account}` | Account feed · instance feed |
-| Any other page | Instance feed |
+| `{instance}/c/{channel}` | Channel · instance |
+| `{instance}/a/{account}` | Account · instance |
+| Any other page | Instance |
 
 > [!NOTE]
 > A channel federated from another instance is addressed as `handle@remote.host`, and the bare handle answers 404.
@@ -1897,8 +1897,8 @@ Discovers the RSS feed of a Funkwhale channel. Detected by the `Funkwhale` gener
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{instance}/channels/{handle}` | Channel feed (RSS) |
-| `{instance}/channels/{handle}@{domain}` | Channel feed (RSS) on the channel's own instance |
+| `{instance}/channels/{handle}` | Channel (RSS) |
+| `{instance}/channels/{handle}@{domain}` | Channel (RSS) on the channel's own instance |
 
 > [!NOTE]
 > The v1 API path is emitted rather than v2, which one instance advertises in its own link tag while another answers 404 for it. An unknown channel answers 404 carrying an RSS content type and an `<rss>` root.
@@ -1909,7 +1909,7 @@ Discovers the RSS feed of an Art19 show.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `art19.com/shows/{slug}` | Show feed (RSS) |
+| `art19.com/shows/{slug}` | Show (RSS) |
 
 > [!NOTE]
 > The feed is derived from the URL in hand, never from where it redirects: a show can redirect to a site that mentions no feed while the derived feed still resolves.
@@ -1920,7 +1920,7 @@ Discovers the RSS feed of an Omny Studio show.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `omny.fm/shows/{slug}` | Show feed (RSS) |
+| `omny.fm/shows/{slug}` | Show (RSS) |
 
 > [!NOTE]
 > A show whose page answers 404 can still resolve through this shortcut, which redirects to an identifier path on the content host.
@@ -1931,7 +1931,7 @@ Discovers the podcast feed of a WordPress site running the PowerPress plugin. De
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| Any page | Podcast feed (RSS) |
+| Any page | Podcast (RSS) |
 
 > [!NOTE]
 > Generic discovery finds `{site}/feed/`, which is the blog feed. This adds the podcast feed. A site can redirect it to its podcast host, which resolves normally.
@@ -1942,7 +1942,7 @@ Discovers the podcast feeds of a WordPress site running the Podlove Publisher pl
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| Any page | Podcast feeds (RSS), one per feed the site marks discoverable |
+| Any page | Podcasts (RSS), one per feed the site marks discoverable |
 
 ### Podomatic
 
@@ -1950,8 +1950,8 @@ Discovers the RSS feed of a Podomatic show.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{show}.podomatic.com` | Show feed (RSS) |
-| `podomatic.com/podcasts/{show}` | Show feed (RSS) |
+| `{show}.podomatic.com` | Show (RSS) |
+| `podomatic.com/podcasts/{show}` | Show (RSS) |
 
 ### iVoox
 
@@ -1959,8 +1959,8 @@ Discovers the RSS feed of an iVoox podcast.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `ivoox.com/{slug}_sq_f{id}_1.html` | Podcast feed<sup>†</sup> (RSS) |
-| `ivoox.com/{slug}_rf_{episode}_1.html` | Podcast feed<sup>†</sup> (RSS), read from the episode page's series link |
+| `ivoox.com/{slug}_sq_f{id}_1.html` | Podcast<sup>†</sup> (RSS) |
+| `ivoox.com/{slug}_rf_{episode}_1.html` | Podcast<sup>†</sup> (RSS), read from the episode page's series link |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -1970,12 +1970,12 @@ Discovers the table of contents feed of a journal hosted on Atypon Literatum: AC
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{host}/toc/{code}/…` | Journal feed (RDF) |
-| `{host}/journal/{code}` | Journal feed (RDF) |
-| `{host}/loi/{code}` | Journal feed (RDF) |
-| `tandfonline.com/journals/{code}` | Journal feed (RDF) |
-| `journals.sagepub.com/home/{code}` | Journal feed (RDF) |
-| `onlinelibrary.wiley.com/journal/{code}` | Journal feed (RSS) · Most cited (RSS) |
+| `{host}/toc/{code}/…` | Journal (RDF) |
+| `{host}/journal/{code}` | Journal (RDF) |
+| `{host}/loi/{code}` | Journal (RDF) |
+| `tandfonline.com/journals/{code}` | Journal (RDF) |
+| `journals.sagepub.com/home/{code}` | Journal (RDF) |
+| `onlinelibrary.wiley.com/journal/{code}` | Journal (RSS) · Most cited (RSS) |
 
 > [!NOTE]
 > Journal pages answer a server-side fetch with a Cloudflare challenge, so the feed is derived from the URL alone. Article pages under `/doi/` name no journal and are not matched.
@@ -1986,9 +1986,9 @@ Discovers the RSS feed of a SoundOn podcast. The player page is a script-only sh
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `player.soundon.fm/p/{id}` | Podcast feed<sup>†</sup> (RSS) |
-| `player.soundon.fm/p/{id}/episodes/{episodeId}` | Podcast feed<sup>†</sup> (RSS) |
-| `player.soundon.fm/embed?podcast={id}` | Podcast feed<sup>†</sup> (RSS) |
+| `player.soundon.fm/p/{id}` | Podcast<sup>†</sup> (RSS) |
+| `player.soundon.fm/p/{id}/episodes/{episodeId}` | Podcast<sup>†</sup> (RSS) |
+| `player.soundon.fm/embed?podcast={id}` | Podcast<sup>†</sup> (RSS) |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -1998,8 +1998,8 @@ Discovers the RSS feeds of crates.io, built from the URL, since the page answers
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `crates.io` | New crates<sup>†</sup> · recent updates<sup>†</sup> feeds (RSS) |
-| `crates.io/crates/{name}` | Crate releases feed<sup>†</sup> (RSS) |
+| `crates.io` | New crates<sup>†</sup> · recent updates<sup>†</sup> (RSS) |
+| `crates.io/crates/{name}` | Crate releases<sup>†</sup> (RSS) |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -2012,10 +2012,10 @@ Discovers the RSS and Atom feeds of Packagist packages, vendors and the site.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `packagist.org/packages/{vendor}/{package}` | Package releases feed (RSS + Atom<sup>†</sup>) |
-| `packagist.org/packages/{vendor}` | Vendor releases feed (RSS + Atom<sup>†</sup>) |
-| `packagist.org/extensions` | New extensions (RSS + Atom<sup>†</sup>) · extension releases feeds (RSS + Atom<sup>†</sup>) |
-| `packagist.org/*` | New packages (RSS + Atom<sup>†</sup>) · new releases feeds (RSS + Atom<sup>†</sup>) |
+| `packagist.org/packages/{vendor}/{package}` | Package releases (RSS + Atom<sup>†</sup>) |
+| `packagist.org/packages/{vendor}` | Vendor releases (RSS + Atom<sup>†</sup>) |
+| `packagist.org/extensions` | New extensions (RSS + Atom<sup>†</sup>) · extension releases (RSS + Atom<sup>†</sup>) |
+| `packagist.org/*` | New packages (RSS + Atom<sup>†</sup>) · new releases (RSS + Atom<sup>†</sup>) |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -2025,11 +2025,11 @@ Discovers Atom feeds for Plurk users and single plurks.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `plurk.com/{username}` | User plurks feed (Atom) |
-| `plurk.com/u/{username}` | User plurks feed (Atom) |
-| `plurk.com/m/{username}` | User plurks feed<sup>†</sup> (Atom) |
-| `plurk.com/p/{id}` | Plurk responses feed (Atom) |
-| `plurk.com/m/p/{id}` | Plurk responses feed<sup>†</sup> (Atom) |
+| `plurk.com/{username}` | User plurks (Atom) |
+| `plurk.com/u/{username}` | User plurks (Atom) |
+| `plurk.com/m/{username}` | User plurks<sup>†</sup> (Atom) |
+| `plurk.com/p/{id}` | Plurk responses (Atom) |
+| `plurk.com/m/p/{id}` | Plurk responses<sup>†</sup> (Atom) |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -2039,8 +2039,8 @@ Discovers the RSS feeds of Internet Archive collections and searches. A collecti
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `archive.org/details/{collection}` | Collection feed<sup>†</sup> (RSS) |
-| `archive.org/search?query={query}` | Search feed<sup>†</sup> (RSS) |
+| `archive.org/details/{collection}` | Collection<sup>†</sup> (RSS) |
+| `archive.org/search?query={query}` | Search<sup>†</sup> (RSS) |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -2050,8 +2050,8 @@ Discovers the feed of a Sveriges Radio program.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `sverigesradio.se/{program}` | Program feed (RSS) |
-| `sverigesradio.se/...?programid={id}` | Program feed<sup>†</sup> (Atom) |
+| `sverigesradio.se/{program}` | Program (RSS) |
+| `sverigesradio.se/...?programid={id}` | Program<sup>†</sup> (Atom) |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -2089,10 +2089,10 @@ Discovers the RSS feeds of a Gancio event calendar. Detected by the `custom_css`
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{instance}/tag/{tag}` | Tag feed (RSS) |
-| `{instance}/place/{id}/{name}` | Place feed (RSS) |
-| `{instance}/collection/{name}` | Collection feed (RSS) |
-| Any other page | Site feed (RSS) |
+| `{instance}/tag/{tag}` | Tag (RSS) |
+| `{instance}/place/{id}/{name}` | Place (RSS) |
+| `{instance}/collection/{name}` | Collection (RSS) |
+| Any other page | Site (RSS) |
 
 > [!NOTE]
 > The iCal feeds Gancio serves beside each RSS feed are not emitted, since they are not RSS, Atom or JSON feeds. Gancio 2 answers 404 on the tag and place feed paths its own pages advertise.
@@ -2116,7 +2116,7 @@ Discovers the RSS feed of a LibriVox audiobook, read from the feed link on the a
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `librivox.org/{slug}` | Audiobook feed (RSS) |
+| `librivox.org/{slug}` | Audiobook (RSS) |
 
 ### PyPI
 
@@ -2124,9 +2124,9 @@ Discovers the RSS feeds of the Python Package Index, built from the URL.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `pypi.org` | New packages · recent updates feeds (RSS) |
-| `pypi.org/project/{name}` | Project releases feed (RSS) |
-| `pypi.org/project/{name}/{version}` | Project releases feed (RSS) |
+| `pypi.org` | New packages · recent updates (RSS) |
+| `pypi.org/project/{name}` | Project releases (RSS) |
+| `pypi.org/project/{name}/{version}` | Project releases (RSS) |
 
 ### RedCircle
 
@@ -2134,8 +2134,8 @@ Discovers the RSS feed of a RedCircle show. A show under a slug is read from the
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `redcircle.com/shows/{uuid}` or `redcircle.com/shows/{slug}` | Show feed (RSS) |
-| `redcircle.com/shows/{uuid}/ep/{episode}` or `redcircle.com/shows/{slug}/ep/{episode}` | Show feed (RSS) |
+| `redcircle.com/shows/{uuid}` or `redcircle.com/shows/{slug}` | Show (RSS) |
+| `redcircle.com/shows/{uuid}/ep/{episode}` or `redcircle.com/shows/{slug}/ep/{episode}` | Show (RSS) |
 
 ### Royal Road
 
@@ -2155,9 +2155,9 @@ Discovers the RSS feeds of Flipboard profiles, magazines, storyboards and topics
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `flipboard.com/@{username}` | Profile feed |
-| `flipboard.com/@{username}/{magazine}` | Magazine or storyboard feed |
-| `flipboard.com/topic/{topic}` | Topic feed |
+| `flipboard.com/@{username}` | Profile |
+| `flipboard.com/@{username}/{magazine}` | Magazine or storyboard |
+| `flipboard.com/topic/{topic}` | Topic |
 
 ### Webtoons
 
@@ -2165,9 +2165,9 @@ Discovers the episode feed of a WEBTOON series, Originals and Canvas alike.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `webtoons.com/{language}/{genre}/{name}/list?title_no={id}` | Series feed |
-| `webtoons.com/{language}/{genre}/{name}/{episode}/viewer?title_no={id}` | Series feed<sup>†</sup> |
-| `webtoons.com/{language}/canvas/{name}/list?title_no={id}` | Series feed |
+| `webtoons.com/{language}/{genre}/{name}/list?title_no={id}` | Series |
+| `webtoons.com/{language}/{genre}/{name}/{episode}/viewer?title_no={id}` | Series<sup>†</sup> |
+| `webtoons.com/{language}/canvas/{name}/list?title_no={id}` | Series |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -2177,10 +2177,10 @@ Discovers Atom feeds for Lichess user blogs, the official blog and the community
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `lichess.org/@/{user}/blog` or `lichess.org/@/{user}/blog/{slug}/{id}` | User blog feed |
-| `lichess.org/blog` or `lichess.org/blog/{id}/{slug}` | Official Lichess blog feed |
-| `lichess.org/blog/community` or `lichess.org/{lang}/blog/community` | Community blogs feed, in that language when the URL names one |
-| Any other page | Site-wide updates feed |
+| `lichess.org/@/{user}/blog` or `lichess.org/@/{user}/blog/{slug}/{id}` | User blog |
+| `lichess.org/blog` or `lichess.org/blog/{id}/{slug}` | Official Lichess blog |
+| `lichess.org/blog/community` or `lichess.org/{lang}/blog/community` | Community blogs, in that language when the URL names one |
+| Any other page | Site-wide updates |
 
 ### @wiki
 
@@ -2196,8 +2196,8 @@ Discovers RSS and Atom feeds for Teletype.in blogs.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `teletype.in/@{user}` | Posts feed (RSS + Atom) |
-| `teletype.in/@{user}/{post}` | Posts feed (RSS + Atom) |
+| `teletype.in/@{user}` | Posts (RSS + Atom) |
+| `teletype.in/@{user}/{post}` | Posts (RSS + Atom) |
 
 ### PmWiki
 
@@ -2231,11 +2231,11 @@ Discovers the feeds of a vBulletin 3 to 6 forum. Detected by the `clientscript/v
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{forum}/forumdisplay.php?f={id}` | Forum feed · site feed (RSS) |
-| `{forum}/forumdisplay.php?{id}-{title}` | Forum feed · site feed (RSS) |
-| Any other page | Site feed (RSS) |
-| Any vBulletin 5 or 6 channel page | Channel feed · site feed (RSS) |
-| Any vBulletin 5 or 6 page | Site feed at `{forum}/external?type=rss2` (RSS) |
+| `{forum}/forumdisplay.php?f={id}` | Forum · site (RSS) |
+| `{forum}/forumdisplay.php?{id}-{title}` | Forum · site (RSS) |
+| Any other page | Site (RSS) |
+| Any vBulletin 5 or 6 channel page | Channel · site (RSS) |
+| Any vBulletin 5 or 6 page | Site at `{forum}/external?type=rss2` (RSS) |
 
 > [!NOTE]
 > The forum root is read from the core script's URL, or the page's `<base>` on vBulletin 5 and 6, so a forum under a sub-path or behind rewritten page URLs gets its feeds there. A vBulletin 3 or 4 forum with feeds turned off answers these URLs with an empty page.
@@ -2246,8 +2246,8 @@ Discovers the item feeds of an Omeka Classic site, self-hosted or on `omeka.net`
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{site}/items/browse?{filters}` | Filtered items feed for the same tags, collection or search (RSS + Atom) |
-| Any other page | Items feed (RSS + Atom) |
+| `{site}/items/browse?{filters}` | Filtered items for the same tags, collection or search (RSS + Atom) |
+| Any other page | Items (RSS + Atom) |
 
 ### Koha
 
@@ -2267,9 +2267,9 @@ Discovers the Atom feeds of a public-inbox mailing list archive. Detected by the
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{inbox}/` | Messages feed (Atom) |
-| `{inbox}/{message-id}/` | Thread feed · messages feed (Atom) |
-| `{inbox}/{message-id}/T/` | Thread feed · messages feed (Atom) |
+| `{inbox}/` | Messages (Atom) |
+| `{inbox}/{message-id}/` | Thread · messages (Atom) |
+| `{inbox}/{message-id}/T/` | Thread · messages (Atom) |
 
 ### CivicPlus
 
@@ -2277,16 +2277,16 @@ Discovers the module feeds of a CivicPlus government website. Detected by the `C
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{site}/CivicAlerts.aspx`, `{site}/m/newsflash` | News Flash feed<sup>†</sup> (RSS) |
-| `{site}/Blog.aspx` | Blog feed<sup>†</sup> (RSS) |
-| `{site}/Gallery.aspx` | Photo Gallery feed<sup>†</sup> (RSS) |
-| `{site}/Calendar.aspx`, `{site}/m/calendar` | Calendar feed<sup>†</sup> (RSS) |
-| `{site}/AlertCenter.aspx` | Alert Center feed<sup>†</sup> (RSS) |
-| `{site}/RealEstate.aspx` | Real Estate Locator feed<sup>†</sup> (RSS) |
-| `{site}/AgendaCenter` | Agenda Center feed<sup>†</sup> (RSS) |
-| `{site}/Jobs.aspx` | Jobs feed<sup>†</sup> (RSS) |
-| `{site}/CivicMedia.aspx` | Media Center feed<sup>†</sup> (RSS) |
-| `{site}/`, any other page | Pages feed<sup>†</sup> (RSS) |
+| `{site}/CivicAlerts.aspx`, `{site}/m/newsflash` | News Flash<sup>†</sup> (RSS) |
+| `{site}/Blog.aspx` | Blog<sup>†</sup> (RSS) |
+| `{site}/Gallery.aspx` | Photo Gallery<sup>†</sup> (RSS) |
+| `{site}/Calendar.aspx`, `{site}/m/calendar` | Calendar<sup>†</sup> (RSS) |
+| `{site}/AlertCenter.aspx` | Alert Center<sup>†</sup> (RSS) |
+| `{site}/RealEstate.aspx` | Real Estate Locator<sup>†</sup> (RSS) |
+| `{site}/AgendaCenter` | Agenda Center<sup>†</sup> (RSS) |
+| `{site}/Jobs.aspx` | Jobs<sup>†</sup> (RSS) |
+| `{site}/CivicMedia.aspx` | Media Center<sup>†</sup> (RSS) |
+| `{site}/`, any other page | Pages<sup>†</sup> (RSS) |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -2299,11 +2299,11 @@ Discovers the feeds of a DSpace repository, on any domain. DSpace 7 and later is
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{repository}/collections/{uuid}` | Collection feed<sup>†</sup> · site feed<sup>†</sup> (RSS + Atom) |
-| `{repository}/communities/{uuid}` | Community feed · site feed<sup>†</sup> (RSS + Atom) |
-| Any other page, DSpace 7 and later | Site feed<sup>†</sup> (RSS + Atom) |
-| `{repository}/handle/{prefix}/{id}`, DSpace 6 and older | Collection or community feed (RSS 1.0, RSS 2.0 + Atom, as linked) |
-| `{repository}/`, DSpace 6 and older | Site feed (RSS 1.0, RSS 2.0 + Atom, as linked) |
+| `{repository}/collections/{uuid}` | Collection<sup>†</sup> · site<sup>†</sup> (RSS + Atom) |
+| `{repository}/communities/{uuid}` | Community · site<sup>†</sup> (RSS + Atom) |
+| Any other page, DSpace 7 and later | Site<sup>†</sup> (RSS + Atom) |
+| `{repository}/handle/{prefix}/{id}`, DSpace 6 and older | Collection or community (RSS 1.0, RSS 2.0 + Atom, as linked) |
+| `{repository}/`, DSpace 6 and older | Site (RSS 1.0, RSS 2.0 + Atom, as linked) |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -2333,10 +2333,10 @@ Discovers the Atom feed of a blog on an Odoo website. Detected by the `frontend_
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{site}/blog/{blog}-{id}` | Blog feed (Atom) |
-| `{site}/blog/{blog}-{id}/{post}-{id}` | Blog feed (Atom) |
-| `{site}/blog/{blog}-{id}/post/{post}-{id}` | Blog feed (Atom) |
-| `{site}/blog/{blog}-{id}/tag/{tag}-{id}` | Blog feed (Atom) |
+| `{site}/blog/{blog}-{id}` | Blog (Atom) |
+| `{site}/blog/{blog}-{id}/{post}-{id}` | Blog (Atom) |
+| `{site}/blog/{blog}-{id}/post/{post}-{id}` | Blog (Atom) |
+| `{site}/blog/{blog}-{id}/tag/{tag}-{id}` | Blog (Atom) |
 
 ### Zenfolio
 
@@ -2356,9 +2356,9 @@ Discovers the RSS feed of a BubbleLife community. The page's alternate link has 
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{city}.bubblelife.com/community/{name}` | Posts feed<sup>†</sup> (RSS) |
-| `{city}.bubblelife.com/community/{name}/library/{id}` | Library feed<sup>†</sup> (RSS) |
-| `{city}.bubblelife.com/community/{name}/type/rssinfo` | Posts feed<sup>†</sup> (RSS) |
+| `{city}.bubblelife.com/community/{name}` | Posts<sup>†</sup> (RSS) |
+| `{city}.bubblelife.com/community/{name}/library/{id}` | Library<sup>†</sup> (RSS) |
+| `{city}.bubblelife.com/community/{name}/type/rssinfo` | Posts<sup>†</sup> (RSS) |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -2386,8 +2386,8 @@ Discovers the posts feeds of a Cocolog blog on `cocolog-nifty.com` and its sibli
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{user}.cocolog-nifty.com/{blog}/…` | Posts feed (Atom + RDF + RSS) |
-| `{user}.cocolog-nifty.com` | Posts feed of the blog the page links (Atom + RDF + RSS) |
+| `{user}.cocolog-nifty.com/{blog}/…` | Posts (Atom + RDF + RSS) |
+| `{user}.cocolog-nifty.com` | Posts of the blog the page links (Atom + RDF + RSS) |
 
 ### blog.hu
 
@@ -2395,8 +2395,8 @@ Discovers the feeds of blog.hu blogs, and the activity feed of a blog.hu user.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `*.blog.hu` | Posts feed (RSS + Atom) · comments feed (RSS + Atom) |
-| `blog.hu/user/{id}` | User activity feed<sup>†</sup> (RSS) |
+| `*.blog.hu` | Posts (RSS + Atom) · comments (RSS + Atom) |
+| `blog.hu/user/{id}` | User activity<sup>†</sup> (RSS) |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -2422,8 +2422,8 @@ Discovers RSS feeds for papers on PChome's blog host, including category feeds. 
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `mypaper.pchome.com.tw/{user}` | Posts feed |
-| `mypaper.pchome.com.tw/{user}/category/{id}` | Category feed<sup>†</sup> · posts |
+| `mypaper.pchome.com.tw/{user}` | Posts |
+| `mypaper.pchome.com.tw/{user}/category/{id}` | Category<sup>†</sup> · posts |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -2443,9 +2443,9 @@ Discovers the RSS feed of a Gnuboard 4 or 5 board. Detected by the visit cookie 
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{site}/bbs/board.php?bo_table={board}` | Board feed<sup>†</sup> |
-| `{site}/bbs/board.php?bo_table={board}&wr_id={post}` | Board feed |
-| `{site}/{board}` or `{site}/{board}/{post}` on Gnuboard 5 | Board feed, read from the page's `g5_bo_table` variable |
+| `{site}/bbs/board.php?bo_table={board}` | Board<sup>†</sup> |
+| `{site}/bbs/board.php?bo_table={board}&wr_id={post}` | Board |
+| `{site}/{board}` or `{site}/{board}/{post}` on Gnuboard 5 | Board, read from the page's `g5_bo_table` variable |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -2458,10 +2458,10 @@ Discovers the posts feed of a ProBoards forum. A forum on a custom domain is det
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `*.proboards.com` | Posts feed (RSS) |
-| `*.freeforums.net` | Posts feed (RSS) |
-| `*.boards.net` | Posts feed (RSS) |
-| Any page on a custom domain | Posts feed (RSS) |
+| `*.proboards.com` | Posts (RSS) |
+| `*.freeforums.net` | Posts (RSS) |
+| `*.boards.net` | Posts (RSS) |
+| Any page on a custom domain | Posts (RSS) |
 
 > [!NOTE]
 > On a ProBoards domain, a request with a browser user agent gets a proof-of-work challenge instead of the page, so the feed is built from the forum host alone. The feed answers 406 to a bare `Mozilla/5.0` or an empty user agent.
@@ -2472,8 +2472,8 @@ Discovers the RSS feed of a mailing list archived on The Mail Archive (mail-arch
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `mail-archive.com/{list}/` | Mailing list feed |
-| `mail-archive.com/{list}/msg{n}.html` | Mailing list feed<sup>†</sup> |
+| `mail-archive.com/{list}/` | Mailing list |
+| `mail-archive.com/{list}/msg{n}.html` | Mailing list<sup>†</sup> |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -2483,10 +2483,10 @@ Discovers RSS feeds for Bloggang blogs. A blog lives on its own subdomain, which
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{user}.bloggang.com` | Posts feed |
-| `www.bloggang.com/mainblog.php?id={user}` | Posts feed |
-| `www.bloggang.com/viewblog.php?id={user}` | Posts feed |
-| `www.bloggang.com/viewdiary.php?id={user}` | Posts feed |
+| `{user}.bloggang.com` | Posts |
+| `www.bloggang.com/mainblog.php?id={user}` | Posts |
+| `www.bloggang.com/viewblog.php?id={user}` | Posts |
+| `www.bloggang.com/viewdiary.php?id={user}` | Posts |
 
 ### SME Blog
 
@@ -2494,10 +2494,10 @@ Discovers the RSS feeds of blogs on SME Blog, the blog platform of the Slovak da
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `blog.sme.sk/{user}` | Posts feed |
-| `blog.sme.sk/{user}/{category}/{slug}` | Posts feed |
-| `blog.sme.sk` | Site feed |
-| `blog.sme.sk/t/{topic}` | Site feed |
+| `blog.sme.sk/{user}` | Posts |
+| `blog.sme.sk/{user}/{category}/{slug}` | Posts |
+| `blog.sme.sk` | Site |
+| `blog.sme.sk/t/{topic}` | Site |
 
 ### Acomics
 
@@ -2505,8 +2505,8 @@ Discovers RSS feeds for Acomics comics and users. A user's feed carries the new 
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `acomics.ru/~{comic}` | Comic issues feed |
-| `acomics.ru/-{user}` | User subscriptions feed<sup>†</sup> |
+| `acomics.ru/~{comic}` | Comic issues |
+| `acomics.ru/-{user}` | User subscriptions<sup>†</sup> |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -2516,8 +2516,8 @@ Discovers the blog feed of an OpenCart store running the Journal theme. Detected
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| Any page of a Journal 3 store | Blog feed<sup>†</sup> (RSS), `route=journal3/blog/feed`, or `journal3/blog.feed` on OpenCart 4 |
-| Any page of a Journal 2 store | Blog feed (RSS), `route=journal2/blog/feed` |
+| Any page of a Journal 3 store | Blog<sup>†</sup> (RSS), `route=journal3/blog/feed`, or `journal3/blog.feed` on OpenCart 4 |
+| Any page of a Journal 2 store | Blog (RSS), `route=journal2/blog/feed` |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -2527,8 +2527,8 @@ Discovers the posts and comments feeds of an Eklablog blog. A blog on a custom d
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `*.blogg.org`, `*.blogueuse.fr`, `*.cd.st`, `*.doremiblog.com`, `*.ek.la`, `*.eklablog.com`, `*.eklablog.fr`, `*.eklablog.net`, `*.id.st`, `*.jeblog.fr`, `*.kazeo.com`, `*.kif.fr`, `*.lo.gs`, `*.revolublog.com`, `*.zic.fr` | Posts feed · comments feed<sup>†</sup> |
-| Any page on a custom domain | Posts feed · comments feed<sup>†</sup> |
+| `*.blogg.org`, `*.blogueuse.fr`, `*.cd.st`, `*.doremiblog.com`, `*.ek.la`, `*.eklablog.com`, `*.eklablog.fr`, `*.eklablog.net`, `*.id.st`, `*.jeblog.fr`, `*.kazeo.com`, `*.kif.fr`, `*.lo.gs`, `*.revolublog.com`, `*.zic.fr` | Posts · comments<sup>†</sup> |
+| Any page on a custom domain | Posts · comments<sup>†</sup> |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -2538,8 +2538,8 @@ Discovers the feeds of a ComicFury webcomic.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{comic}.thecomicseries.com`, `.thecomicstrip.org`, `.the-comic.org`, `.webcomic.ws` or `.cfw.me` | Comic feed |
-| `comicfury.com/comicprofile.php?url={comic}` | Comic feed<sup>†</sup> |
+| `{comic}.thecomicseries.com`, `.thecomicstrip.org`, `.the-comic.org`, `.webcomic.ws` or `.cfw.me` | Comic |
+| `comicfury.com/comicprofile.php?url={comic}` | Comic<sup>†</sup> |
 | `comicfury.com/read/{comic}` | Comic feed in the ComicFury reader |
 
 <sup>†</sup> *Found only by the Platform method.*
@@ -2550,7 +2550,7 @@ Discovers the jobs feed of a job board Haley Marketing hosts for a staffing firm
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| Any board page | Jobs feed |
+| Any board page | Jobs |
 
 ### Jimdo
 
@@ -2558,7 +2558,7 @@ Discovers the blog feed of a Jimdo site. Detected by the `x-jimdo-wid` response 
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| Any page | Blog feed (RSS) |
+| Any page | Blog (RSS) |
 
 > [!NOTE]
 > Only sites with a blog have the feed.
@@ -2578,9 +2578,9 @@ Discovers the feeds of a Forumotion forum, also branded Forumactif, Foroactivo, 
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{forum}/f{id}-{slug}` | Forum feed<sup>†</sup> · latest topics feed (RSS + Atom<sup>†</sup>) |
-| `{forum}/t{id}-{slug}` | Feed of the topic's forum<sup>†</sup> · latest topics feed (RSS + Atom<sup>†</sup>) |
-| Any other page | Latest topics feed (RSS + Atom) |
+| `{forum}/f{id}-{slug}` | Forum<sup>†</sup> · latest topics (RSS + Atom<sup>†</sup>) |
+| `{forum}/t{id}-{slug}` | The topic's forum<sup>†</sup> · latest topics (RSS + Atom<sup>†</sup>) |
+| Any other page | Latest topics (RSS + Atom) |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -2590,8 +2590,8 @@ Discovers the feeds of a Noticeable newspage. Newspages on `noticeable.news` are
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{newspage}/labels/{label}` | Label feed<sup>†</sup> · newspage feed (RSS + Atom<sup>†</sup> + JSON Feed) |
-| Any other page | Newspage feed (RSS + Atom<sup>†</sup> + JSON Feed) |
+| `{newspage}/labels/{label}` | Label<sup>†</sup> · newspage (RSS + Atom<sup>†</sup> + JSON Feed) |
+| Any other page | Newspage (RSS + Atom<sup>†</sup> + JSON Feed) |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -2604,10 +2604,10 @@ Discovers the history feed of a Legistar legislation record or meeting, on any `
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{client}.legistar.com/LegislationDetail.aspx?ID={id}&GUID={guid}` | Legislation feed (RSS) |
-| `{client}.legistar.com/MeetingDetail.aspx?ID={id}&GUID={guid}` | Meeting feed (RSS) |
-| `/LegislationDetail.aspx?ID={id}&GUID={guid}` on a custom domain | Legislation feed (RSS) |
-| `/MeetingDetail.aspx?ID={id}&GUID={guid}` on a custom domain | Meeting feed (RSS) |
+| `{client}.legistar.com/LegislationDetail.aspx?ID={id}&GUID={guid}` | Legislation (RSS) |
+| `{client}.legistar.com/MeetingDetail.aspx?ID={id}&GUID={guid}` | Meeting (RSS) |
+| `/LegislationDetail.aspx?ID={id}&GUID={guid}` on a custom domain | Legislation (RSS) |
+| `/MeetingDetail.aspx?ID={id}&GUID={guid}` on a custom domain | Meeting (RSS) |
 
 ### Nethouse
 
@@ -2627,9 +2627,9 @@ Discovers RSS and Atom feeds for blogs on `*.hautetfort.com`, `*.blogspirit.com`
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{blog}.{domain}` | Posts feed (RSS + Atom) |
-| `{blog}.{domain}/{category}` | Category feed (RSS) · posts |
-| `{blog}.{domain}/archives/category/{category}` | Category feed<sup>†</sup> (RSS) · posts<sup>?</sup> |
+| `{blog}.{domain}` | Posts (RSS + Atom) |
+| `{blog}.{domain}/{category}` | Category (RSS) · posts |
+| `{blog}.{domain}/archives/category/{category}` | Category<sup>†</sup> (RSS) · posts<sup>?</sup> |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -2641,9 +2641,9 @@ Discovers the module and forum feeds of a uCoz site. Covers sites on the uCoz do
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{site}/{module}/…` | Module feed (RSS) for `news`, `publ`, `load`, `photo`, `blog`, `dir`, `board`, `stuff` and `forum` |
-| `{site}/forum/{section}…` | Forum section feed · forum feed (RSS) |
-| Any other page | News feed (RSS) |
+| `{site}/{module}/…` | Module (RSS) for `news`, `publ`, `load`, `photo`, `blog`, `dir`, `board`, `stuff` and `forum` |
+| `{site}/forum/{section}…` | Forum section · forum (RSS) |
+| Any other page | News (RSS) |
 
 > [!NOTE]
 > A module the site has not turned on answers 404.
@@ -2654,8 +2654,8 @@ Discovers the RSS feed of a dasauge member profile on any of the dasauge country
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `dasauge.de/-{member}` | Profile feed |
-| `dasauge.de/-{member}/{page}` | Profile feed |
+| `dasauge.de/-{member}` | Profile |
+| `dasauge.de/-{member}/{page}` | Profile |
 
 ### Estranky
 
@@ -2677,8 +2677,8 @@ Discovers the RSS 1.0 and Atom feeds of new products in a Color Me Shop store. S
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{shop}.shop-pro.jp` | Products feed (RSS 1.0 + Atom) |
-| `{domain}`, a shop on its own domain | Products feed (RSS 1.0 + Atom) |
+| `{shop}.shop-pro.jp` | Products (RSS 1.0 + Atom) |
+| `{domain}`, a shop on its own domain | Products (RSS 1.0 + Atom) |
 
 ### PRLog
 
@@ -2686,7 +2686,7 @@ Discovers the press releases feed of a PRLog pressroom.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `pressroom.prlog.org/{id}` | Press releases feed |
+| `pressroom.prlog.org/{id}` | Press releases |
 
 ### Rakuten Blog
 
@@ -2694,7 +2694,7 @@ Discovers the RSS feed of a Rakuten Blog (plaza.rakuten.co.jp) blog, which Rakut
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `plaza.rakuten.co.jp/{user}/…` | Posts feed |
+| `plaza.rakuten.co.jp/{user}/…` | Posts |
 
 ### Overblog
 
@@ -2702,7 +2702,7 @@ Discovers the posts feed of an Overblog blog.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `*.over-blog.com`, `*.over-blog.de`, `*.over-blog.es`, `*.over-blog.fr`, `*.over-blog.it`, `*.over-blog.net`, `*.over-blog.org`, `*.over.blog`, `*.overblog.com`, `*.overblog.fr` | Posts feed |
+| `*.over-blog.com`, `*.over-blog.de`, `*.over-blog.es`, `*.over-blog.fr`, `*.over-blog.it`, `*.over-blog.net`, `*.over-blog.org`, `*.over.blog`, `*.overblog.com`, `*.overblog.fr` | Posts |
 
 ### ExportersIndia
 
@@ -2710,8 +2710,8 @@ Discovers the products or services feed of an ExportersIndia business site, buil
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| Any page of a products site | Products feed (RSS) |
-| Any page of a services site | Services feed (RSS) |
+| Any page of a products site | Products (RSS) |
+| Any page of a services site | Services (RSS) |
 
 ### Wild Apricot
 
@@ -2719,9 +2719,9 @@ Discovers the blog and events feeds of a Wild Apricot site. Detected by the `x-l
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{site}/{blog-page}` | Blog feed (RSS) |
-| `{site}/{blog-page}/{post-id}` | Blog feed<sup>?</sup> (RSS), from the post's back link |
-| `{site}/{events-page}` | Events feed (RSS), in the list and calendar views |
+| `{site}/{blog-page}` | Blog (RSS) |
+| `{site}/{blog-page}/{post-id}` | Blog<sup>?</sup> (RSS), from the post's back link |
+| `{site}/{events-page}` | Events (RSS), in the list and calendar views |
 
 <sup>?</sup> *Not measured, the feed failed to load during the run.*
 
@@ -2734,7 +2734,7 @@ Discovers RSS feeds for Jellypod-hosted podcasts.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `*.jellypod.com` | Podcast feed (RSS) |
+| `*.jellypod.com` | Podcast (RSS) |
 
 ### Goope
 
@@ -2742,10 +2742,10 @@ Discovers the news feed of a Goope site, and the member news feed of a chamber o
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `r.goope.jp/{site}/…` | News feed (RDF) |
-| `r.goope.jp/{site}/shokokai/member/…` | Member news · news feed (RDF) |
-| `{domain}/shokokai/member/…` | Member news · news feed (RDF) |
-| `{domain}/…` | News feed (RDF) |
+| `r.goope.jp/{site}/…` | News (RDF) |
+| `r.goope.jp/{site}/shokokai/member/…` | Member news · news (RDF) |
+| `{domain}/shokokai/member/…` | Member news · news (RDF) |
+| `{domain}/…` | News (RDF) |
 
 > [!NOTE]
 > A page under a `t_{id}` template segment gets its feeds under that segment, as the page links them.
@@ -2756,7 +2756,7 @@ Discovers the feed of a webcomic on The Duck Webcomics.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `theduckwebcomics.com/{comic}/…` | Comic feed |
+| `theduckwebcomics.com/{comic}/…` | Comic |
 
 ### is-Programmer
 
@@ -2778,8 +2778,8 @@ Discovers RSS 1.0 feeds for blogs on `*.twoday.net`. A blog's skin links its pos
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{blog}.twoday.net` | Posts feed |
-| `{blog}.twoday.net/topics/{topic}` | Topic feed · posts |
+| `{blog}.twoday.net` | Posts |
+| `{blog}.twoday.net/topics/{topic}` | Topic · posts |
 
 ### cppblog
 
@@ -2802,8 +2802,8 @@ Discovers the feedback feed of a Reformal project, on reformal.ru and its Englis
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{project}.reformal.ru` | Feedback feed (RSS) |
-| `{project}.idea.informer.com` | Feedback feed (RSS) |
+| `{project}.reformal.ru` | Feedback (RSS) |
+| `{project}.idea.informer.com` | Feedback (RSS) |
 
 ### Bloggo
 
@@ -2811,8 +2811,8 @@ Discovers RSS feeds for Bloggo blogs.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `*.bloggo.nu` | Posts feed |
-| `*.bloggo.nu/{slug}` | Post comments feed · posts |
+| `*.bloggo.nu` | Posts |
+| `*.bloggo.nu/{slug}` | Post comments · posts |
 
 ### podCloud
 
@@ -2820,7 +2820,7 @@ Discovers the RSS feed of a show hosted on podCloud.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{show}.lepodcast.fr` | Podcast feed (RSS) |
+| `{show}.lepodcast.fr` | Podcast (RSS) |
 
 ### PromoDJ
 
@@ -2828,8 +2828,8 @@ Discovers the feeds of a PromoDJ artist profile.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `promodj.com/{user}` | Podcast · content · blog · favorites · events feeds |
-| `promodj.com/{user}/…` | Podcast · content · blog · favorites · events feeds |
+| `promodj.com/{user}` | Podcast · content · blog · favorites · events |
+| `promodj.com/{user}/…` | Podcast · content · blog · favorites · events |
 
 > [!NOTE]
 > A feed the artist has never posted to answers with a redirect to the profile, which validation drops.
@@ -2840,7 +2840,7 @@ Discovers the news feed of a Shopserve shop. Detected by the root-relative `/hpg
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| Any desktop page | News feed (RSS) |
+| Any desktop page | News (RSS) |
 
 ### KKTIX
 
@@ -2848,8 +2848,8 @@ Discovers the Atom feed of a KKTIX organizer's public events.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{organizer}.kktix.cc` | Events feed |
-| `{organizer}.kktix.cc/events/{event}` | Events feed<sup>†</sup> |
+| `{organizer}.kktix.cc` | Events |
+| `{organizer}.kktix.cc/events/{event}` | Events<sup>†</sup> |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -2868,8 +2868,8 @@ Discovers the RSS 1.0 feed of new products in an Ochanoko Net shop. A shop on a 
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{shop}.ocnk.net` | Products feed (RSS 1.0) |
-| Any page on a custom domain | Products feed (RSS 1.0) |
+| `{shop}.ocnk.net` | Products (RSS 1.0) |
+| Any page on a custom domain | Products (RSS 1.0) |
 
 ### Blogia
 
@@ -2877,7 +2877,7 @@ Discovers the RSS feed for blogs hosted on Blogia.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `*.blogia.com` | Posts feed (RSS) |
+| `*.blogia.com` | Posts (RSS) |
 
 ### Parsiblog
 
@@ -2885,8 +2885,8 @@ Discovers RSS and Atom feeds for Parsiblog blogs. Parsiblog serves no HTTPS, so 
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `*.parsiblog.com` | Posts feed (RSS + Atom) |
-| `*.parsiblog.ir` | Posts feed (RSS + Atom), on the .com host |
+| `*.parsiblog.com` | Posts (RSS + Atom) |
+| `*.parsiblog.ir` | Posts (RSS + Atom), on the .com host |
 
 ### Blogalia
 
@@ -2894,7 +2894,7 @@ Discovers RDF and RSS 2.0 feeds for Blogalia blogs.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `*.blogalia.com` | Posts feed (RDF + RSS 2.0<sup>†</sup>) |
+| `*.blogalia.com` | Posts (RDF + RSS 2.0<sup>†</sup>) |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -2904,7 +2904,7 @@ Discovers Atom feeds for Travellerspoint travel blogs.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `*.travellerspoint.com` | Posts feed |
+| `*.travellerspoint.com` | Posts |
 
 ### Blogger.de
 
@@ -2920,8 +2920,8 @@ Discovers the product feeds of a Big Cartel store. A store on its own domain is 
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `*.bigcartel.com` | Products feed |
-| Any page on a store's own domain | Products feed<sup>†</sup> |
+| `*.bigcartel.com` | Products |
+| Any page on a store's own domain | Products<sup>†</sup> |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -2934,7 +2934,7 @@ Discovers the tour packages feed of a TourTravelWorld travel site, built by Webl
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| Any page | Tour packages feed (RSS) |
+| Any page | Tour packages (RSS) |
 
 ### RealEstateIndia
 
@@ -2942,7 +2942,7 @@ Discovers the property listings feed of a RealEstateIndia agency site, built by 
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| Any page | Properties feed (RSS) |
+| Any page | Properties (RSS) |
 
 ### PlacementIndia
 
@@ -2950,8 +2950,8 @@ Discovers the vacancies feed of a PlacementIndia jobs site, built by Weblink.In 
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| Any page | Vacancies feed (RSS) |
-| Job page | Job opening feed (RSS) |
+| Any page | Vacancies (RSS) |
+| Job page | Job opening (RSS) |
 
 ### GCS-web
 
@@ -2970,8 +2970,8 @@ Discovers the feeds of a Typecho blog. Detected by a theme or plugin asset under
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{site}/` | Posts feed · comments feed<sup>†</sup> (RSS + RSS 1.0 + Atom) |
-| `{site}/{path}` | Page feed at `/feed/{path}` · posts feed (RSS + RSS 1.0<sup>†</sup> + Atom<sup>†</sup>) · comments feed<sup>†</sup> (RSS + RSS 1.0 + Atom) |
+| `{site}/` | Posts · comments<sup>†</sup> (RSS + RSS 1.0 + Atom) |
+| `{site}/{path}` | Page at `/feed/{path}` · posts (RSS + RSS 1.0<sup>†</sup> + Atom<sup>†</sup>) · comments<sup>†</sup> (RSS + RSS 1.0 + Atom) |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -2984,9 +2984,9 @@ Discovers the job feeds of a YM Careers board that an association runs on its ow
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{board}/jobs?{search}` | Search feed at `/jobs?display=rss&{search}` |
-| `{board}/jobs/{filter}/{value}/…` | Filtered jobs feed at `/jobs/{filter}/{value}/…?display=rss` |
-| Any other page | All jobs feed at `/jobs?display=rss` |
+| `{board}/jobs?{search}` | Search at `/jobs?display=rss&{search}` |
+| `{board}/jobs/{filter}/{value}/…` | Filtered jobs at `/jobs/{filter}/{value}/…?display=rss` |
+| Any other page | All jobs at `/jobs?display=rss` |
 
 ### Edlio
 
@@ -2994,9 +2994,9 @@ Discovers the news and class assignment feeds of an Edlio school website. Detect
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{site}/apps/news/`, `{site}/apps/news/category/{id}` | News feed of the category the page links (RSS) |
-| `{site}/apps/classes/{id}/assignments/` | Assignments feed of the class the page links (RSS) |
-| `{site}/`, any other page | News feed (RSS) |
+| `{site}/apps/news/`, `{site}/apps/news/category/{id}` | News of the category the page links (RSS) |
+| `{site}/apps/classes/{id}/assignments/` | Assignments of the class the page links (RSS) |
+| `{site}/`, any other page | News (RSS) |
 
 ### Talentsoft
 
@@ -3004,8 +3004,8 @@ Discovers the job offer feeds of a Talentsoft career site, hosted on `talent-sof
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{site}/offre-de-emploi/liste-offres.aspx?{search}`, `{site}/job/list-of-jobs.aspx?{search}` | Search feed the page links at `/handlers/offerRss.ashx?{criteria}` · all offers feed<sup>†</sup> (RSS) |
-| `{site}/`, any other page | All offers feed<sup>†</sup> at `/handlers/offerRss.ashx?LCID={lcid}`, in the language the page url or its all offers link names (RSS) |
+| `{site}/offre-de-emploi/liste-offres.aspx?{search}`, `{site}/job/list-of-jobs.aspx?{search}` | Search feed the page links at `/handlers/offerRss.ashx?{criteria}` · all offers<sup>†</sup> (RSS) |
+| `{site}/`, any other page | All offers<sup>†</sup> at `/handlers/offerRss.ashx?LCID={lcid}`, in the language the page url or its all offers link names (RSS) |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -3016,8 +3016,8 @@ Discovers the search and syndication feeds of a classic Plone site. Detected by 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | `{site}/@@search?{query}`, `{site}/search?{query}` | Search results for the same query at `{site}/search_rss?{query}` (RSS 1.0) |
-| `{site}/` | Site feed (RSS 1.0 + RSS 2.0 + Atom) |
-| `{site}/{folder}`, any folder or collection page | Folder feed at `{folder}/RSS` (RSS 1.0 + RSS 2.0 + Atom) |
+| `{site}/` | Site (RSS 1.0 + RSS 2.0 + Atom) |
+| `{site}/{folder}`, any folder or collection page | Folder at `{folder}/RSS` (RSS 1.0 + RSS 2.0 + Atom) |
 
 > [!NOTE]
 > A site owner turns syndication on per folder, so a folder without it answers these URLs with 404. Document, news item, event, file, image and link pages serve no feed.
@@ -3028,7 +3028,7 @@ Discovers the site updates feed of a Japanese prefecture, city or town website b
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{site}/`, `{site}/index.html` | Site updates feed<sup>†</sup> (RDF or RSS) |
+| `{site}/`, `{site}/index.html` | Site updates<sup>†</sup> (RDF or RSS) |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -3081,7 +3081,7 @@ Discovers the feed of a page in a Polish public information bulletin built on Sk
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{site}/{id}/{slug}.html` | Page feed<sup>†</sup> at `/rss/{id}/{slug}.html` (RSS) |
+| `{site}/{id}/{slug}.html` | Page<sup>†</sup> at `/rss/{id}/{slug}.html` (RSS) |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -3091,8 +3091,8 @@ Discovers the collection and search feeds of an OPUS 4 publication repository. D
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{repository}/solrsearch/index/search/searchtype/collection/id/{id}` | Collection feed the page links, else `{repository}/rss/index/index/searchtype/collection/id/{id}` (RSS) |
-| `{repository}/solrsearch/index/search/searchtype/simple/query/{query}/…` | Search results feed the page links, else the same query and facets under `{repository}/rss/index/index/` (RSS) |
+| `{repository}/solrsearch/index/search/searchtype/collection/id/{id}` | Collection the page links, else `{repository}/rss/index/index/searchtype/collection/id/{id}` (RSS) |
+| `{repository}/solrsearch/index/search/searchtype/simple/query/{query}/…` | Search results the page links, else the same query and facets under `{repository}/rss/index/index/` (RSS) |
 
 ### Tender
 
@@ -3100,8 +3100,8 @@ Discovers the discussion feeds of a Tender Support site, hosted on `tenderapp.co
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{site}/discussions/{category}/{discussion}` | Discussion comments feed (Atom) |
-| `{site}/`, any other page | All discussions feed (Atom) |
+| `{site}/discussions/{category}/{discussion}` | Discussion comments (Atom) |
+| `{site}/`, any other page | All discussions (Atom) |
 
 ### AlloForum
 
@@ -3109,9 +3109,9 @@ Discovers the latest topics feeds of a forum on `*.alloforum.com`. Forum, catego
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{forum}.alloforum.com` | Latest topics feed<sup>†</sup> |
-| `{forum}.alloforum.com/{slug}-c{id}-{page}.html` | Category feed<sup>†</sup> · latest topics feed<sup>†</sup> |
-| `{forum}.alloforum.com/{slug}-c{id}-{subslug}-s{subid}-{page}.html` | Subcategory feed<sup>†</sup> · latest topics feed<sup>†</sup> |
+| `{forum}.alloforum.com` | Latest topics<sup>†</sup> |
+| `{forum}.alloforum.com/{slug}-c{id}-{page}.html` | Category<sup>†</sup> · latest topics<sup>†</sup> |
+| `{forum}.alloforum.com/{slug}-c{id}-{subslug}-s{subid}-{page}.html` | Subcategory<sup>†</sup> · latest topics<sup>†</sup> |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -3144,8 +3144,8 @@ Discovers the trip feed of a travel blog on Geoblog.pl. The trip is read from th
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{user}.geoblog.pl/podroz/{id}/{slug}` | Trip feed at `/podroz/rss/{id}.xml` (RSS) |
-| `{user}.geoblog.pl/wpis/{id}/{slug}` | Trip feed<sup>†</sup> of the entry's trip (RSS) |
+| `{user}.geoblog.pl/podroz/{id}/{slug}` | Trip at `/podroz/rss/{id}.xml` (RSS) |
+| `{user}.geoblog.pl/wpis/{id}/{slug}` | Trip<sup>†</sup> of the entry's trip (RSS) |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -3165,9 +3165,9 @@ Discovers the feeds of a blog on Jinbonet's blog host, `blog.jinbo.net/{user}`. 
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `blog.jinbo.net/{user}` | Posts feed · comments and trackbacks feed (RSS and Atom) |
-| `blog.jinbo.net/{user}/category/{id}` | Category feed (Atom), plus the blog feeds |
-| `blog.jinbo.net/{user}/tag/{tag}` | Tag feed (Atom), plus the blog feeds |
+| `blog.jinbo.net/{user}` | Posts · comments and trackbacks (RSS and Atom) |
+| `blog.jinbo.net/{user}/category/{id}` | Category (Atom), plus the blog feeds |
+| `blog.jinbo.net/{user}/tag/{tag}` | Tag (Atom), plus the blog feeds |
 
 ### TischtennisLive
 
@@ -3177,7 +3177,7 @@ Discovers the feeds of a table tennis association on `{association}.tischtennisl
 |-------------|-----------------|
 | `{association}.tischtennislive.de/?L2P={league}`, a league overview linking its results feeds | League results of the last 10 days · fixtures of the next 10 days at `/Export/Tischtennis/RSS.aspx?Typ=Wett&ID={league}&Next={0\|1}` (RSS) |
 | `{association}.tischtennislive.de/?L3=SpielUebersicht&Gruppe={group}`, a match overview linking its results feeds | Group results of the last 10 days · fixtures of the next 10 days at `/Export/Tischtennis/RSS.aspx?Typ=Gruppe&ID={group}&Next={0\|1}` (RSS) |
-| `{association}.tischtennislive.de`, any other page | News · dates<sup>†</sup> · documents<sup>†</sup> · tournaments<sup>†</sup> feeds (RSS) |
+| `{association}.tischtennislive.de`, any other page | News · dates<sup>†</sup> · documents<sup>†</sup> · tournaments<sup>†</sup> (RSS) |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -3187,9 +3187,9 @@ Discovers the feeds of a company newsroom on `{newsroom}.newswire.com`. The news
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{newsroom}.newswire.com/browse/beat/{beat}` | Beat feed<sup>†</sup> at `/browse/rss/beat/{beat}` (RSS) |
-| `{newsroom}.newswire.com/browse/pr`, `/browse/news`, `/browse/social` | Press releases, news<sup>†</sup> or social<sup>†</sup> wire feed at `/browse/rss/{type}` (RSS) |
-| `{newsroom}.newswire.com`, any other page | Newsroom feed at `/browse/rss` (RSS) |
+| `{newsroom}.newswire.com/browse/beat/{beat}` | Beat<sup>†</sup> at `/browse/rss/beat/{beat}` (RSS) |
+| `{newsroom}.newswire.com/browse/pr`, `/browse/news`, `/browse/social` | Press releases, news<sup>†</sup> or social<sup>†</sup> wire at `/browse/rss/{type}` (RSS) |
+| `{newsroom}.newswire.com`, any other page | Newsroom at `/browse/rss` (RSS) |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -3199,7 +3199,7 @@ Discovers the feeds of a journal on Open Journal Systems, on any domain. Detecte
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{journal}/`, `{journal}/article/view/{id}`, `{journal}/issue/view/{id}`, any other journal page | Articles feed · announcements feed (Atom + RSS 1.0<sup>†</sup> + RSS 2.0) |
+| `{journal}/`, `{journal}/article/view/{id}`, `{journal}/issue/view/{id}`, any other journal page | Articles · announcements (Atom + RSS 1.0<sup>†</sup> + RSS 2.0) |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -3212,8 +3212,8 @@ Discovers the feeds of a user blog on Aladin, `blog.aladin.co.kr/{user}`. A cate
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `blog.aladin.co.kr/{user}`, any other blog page | Blog feed |
-| `blog.aladin.co.kr/{user}/category/{id}` | Category feed<sup>†</sup> · blog feed |
+| `blog.aladin.co.kr/{user}`, any other blog page | Blog |
+| `blog.aladin.co.kr/{user}/category/{id}` | Category<sup>†</sup> · blog |
 
 <sup>†</sup> *Found only by the Platform method.*
 
