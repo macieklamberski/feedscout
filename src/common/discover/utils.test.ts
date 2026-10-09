@@ -7,6 +7,7 @@ import type {
   DiscoverMethodsConfigDefaults,
   DiscoverResolveUrlFn,
   FetchFn,
+  FetchFnOptions,
 } from '../types.js'
 import { defaultFetchFn, defaultResolveSiteUrlFn, defaultResolveUrlFn } from './defaults.js'
 import {
@@ -113,7 +114,7 @@ describe('defaultFetchFn', () => {
     expect(new Headers(capturedOptions?.headers).get('x-custom')).toBe('value')
   })
 
-  it('should send an empty accept header by default', async () => {
+  it('should send an HTML accept header when the caller sets none', async () => {
     let capturedOptions: RequestInit | undefined
     fetchSpy.mockImplementation(
       createFetchMock((_url: string, options?: RequestInit) => {
@@ -124,7 +125,7 @@ describe('defaultFetchFn', () => {
 
     await defaultFetchFn('https://example.com/discussions/1')
 
-    expect(new Headers(capturedOptions?.headers).get('accept')).toBe('')
+    expect(new Headers(capturedOptions?.headers).get('accept')).toStartWith('text/html')
   })
 
   it('should send the accept header of the caller', async () => {
@@ -141,6 +142,22 @@ describe('defaultFetchFn', () => {
     })
 
     expect(new Headers(capturedOptions?.headers).get('accept')).toBe('text/html')
+  })
+
+  it('should send the lowercase accept header of the caller', async () => {
+    let capturedOptions: RequestInit | undefined
+    fetchSpy.mockImplementation(
+      createFetchMock((_url: string, options?: RequestInit) => {
+        capturedOptions = options
+        return createMockResponse({})
+      }),
+    )
+
+    await defaultFetchFn('https://example.com/discussions/1', {
+      headers: { accept: 'application/json' },
+    })
+
+    expect(new Headers(capturedOptions?.headers).get('accept')).toBe('application/json')
   })
 
   it('should pass POST method and body to fetch', async () => {
@@ -283,6 +300,19 @@ describe('normalizeInput', () => {
     }
 
     expect(await normalizeInput('https://example.com', redirectFetchFn)).toEqual(expected)
+  })
+
+  it('should fetch the page with an HTML accept header', async () => {
+    let receivedOptions: FetchFnOptions | undefined
+    const recordingFetchFn: FetchFn = (url, options) => {
+      receivedOptions = options
+
+      return fetchFn(url)
+    }
+
+    await normalizeInput('https://example.com', recordingFetchFn)
+
+    expect(new Headers(receivedOptions?.headers).get('accept')).toStartWith('text/html')
   })
 
   it('should fetch a feed:// URL over https', async () => {

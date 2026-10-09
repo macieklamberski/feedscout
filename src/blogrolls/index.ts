@@ -6,6 +6,7 @@ import {
 import { discover } from '../common/discover/index.js'
 import type { DiscoverInput, DiscoverOptions, DiscoverResult } from '../common/types.js'
 import {
+  acceptHeader,
   defaultGuessOptions,
   defaultHeadersOptions,
   defaultHtmlOptions,
@@ -28,6 +29,7 @@ export const discoverBlogrolls = <TValid extends BlogrollResult = BlogrollResult
       resolveUrlFn: options.resolveUrlFn ?? defaultResolveUrlFn,
       resolveSiteUrlFn: options.resolveSiteUrlFn ?? defaultResolveSiteUrlFn,
       ignoredExtensions,
+      acceptHeader,
     },
     {
       html: defaultHtmlOptions,

@@ -4,6 +4,7 @@ import type {
   DiscoverResolveUrlFn,
   DiscoverResult,
   FetchFn,
+  FetchFnOptions,
 } from '../common/types.js'
 import type { PlatformHandler } from '../common/uris/platform/types.js'
 import { defaultPlatformOptions, urisBalanced, urisComprehensive, urisMinimal } from './defaults.js'
@@ -48,6 +49,42 @@ describe('discoverFeeds', () => {
     ]
 
     expect(result).toEqual(expected)
+  })
+
+  it('should fetch candidates with a feed accept header', async () => {
+    const receivedHeaders: Record<string, FetchFnOptions['headers']> = {}
+    const recordingFetchFn: FetchFn = (url, options) => {
+      receivedHeaders[url] = options?.headers
+
+      return createMockFetch({})(url)
+    }
+
+    await discoverFeeds('https://example.com', {
+      methods: { guess: { uris: ['/feed'] } },
+      fetchFn: recordingFetchFn,
+    })
+
+    const accept = new Headers(receivedHeaders['https://example.com/feed']).get('accept')
+
+    expect(accept).toStartWith('application/atom+xml')
+  })
+
+  it('should fetch candidates without a wildcard in the accept header', async () => {
+    const receivedHeaders: Record<string, FetchFnOptions['headers']> = {}
+    const recordingFetchFn: FetchFn = (url, options) => {
+      receivedHeaders[url] = options?.headers
+
+      return createMockFetch({})(url)
+    }
+
+    await discoverFeeds('https://example.com', {
+      methods: { guess: { uris: ['/feed'] } },
+      fetchFn: recordingFetchFn,
+    })
+
+    const accept = new Headers(receivedHeaders['https://example.com/feed']).get('accept')
+
+    expect(accept).not.toContain('*/*')
   })
 
   it('should find feeds at ancestor paths when the page has no feed hints', async () => {
@@ -775,6 +812,46 @@ describe('discoverFeeds', () => {
           title: 'Test RSS',
           description: 'Test feed',
           siteUrl: 'https://example.com/',
+        },
+      ]
+
+      expect(result).toEqual(expected)
+    })
+
+    it('should discover feeds from link elements typed application/x-atom+xml', async () => {
+      const html = `
+        <html>
+          <head>
+            <link
+              rel="alternate"
+              type="application/x-atom+xml"
+              href="/atom.xml"
+            />
+          </head>
+          <body>Example blog</body>
+        </html>
+      `
+      const atom = `
+        <feed xmlns="http://www.w3.org/2005/Atom">
+          <title>Test Atom</title>
+          <id>https://example.com/</id>
+        </feed>
+      `
+      const mockFetch = createMockFetch({
+        'https://example.com': html,
+        'https://example.com/atom.xml': atom,
+      })
+      const result = await discoverFeeds('https://example.com', {
+        methods: ['html'],
+        fetchFn: mockFetch,
+      })
+      const expected: Array<DiscoverResult<FeedResult>> = [
+        {
+          url: 'https://example.com/atom.xml',
+          isValid: true,
+          method: 'html',
+          format: 'atom',
+          title: 'Test Atom',
         },
       ]
 

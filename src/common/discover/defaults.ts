@@ -1,14 +1,14 @@
 import { detectAtomFeed, detectJsonFeed, detectRdfFeed, detectRssFeed, parseFeed } from 'feedsmith'
 import { parseUrl, resolveUrl } from 'trousse'
 import type { DiscoverResolveSiteUrlFn, DiscoverResolveUrlFn, FetchFn } from '../types.js'
-import { attempt, getFeedSiteUrl } from './utils.js'
+import { attempt, getFeedSiteUrl, htmlAcceptHeader } from './utils.js'
 
 export const defaultFetchFn: FetchFn = async (url, options) => {
-  // An empty Accept stops fetch from sending `*/*`, which some sites answer with a feed on a page.
   const headers = new Headers(options?.headers)
 
+  // Some servers answer a page with its feed for `*/*` alone and answer an empty Accept with 403.
   if (!headers.has('accept')) {
-    headers.set('accept', '')
+    headers.set('accept', htmlAcceptHeader)
   }
 
   const response = await fetch(url, {

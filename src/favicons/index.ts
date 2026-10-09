@@ -6,6 +6,7 @@ import {
 import { discover } from '../common/discover/index.js'
 import type { DiscoverEnrichFn, DiscoverInput, DiscoverResult } from '../common/types.js'
 import {
+  acceptHeader,
   defaultFeedOptions,
   defaultGuessOptions,
   defaultHeadersOptions,
@@ -43,6 +44,7 @@ export const discoverFavicons = <TValid extends FaviconResult = FaviconResult>(
       resolveUrlFn: options.resolveUrlFn ?? defaultResolveUrlFn,
       resolveSiteUrlFn: options.resolveSiteUrlFn ?? defaultResolveSiteUrlFn,
       ignoredExtensions,
+      acceptHeader,
     },
     {
       platform: { ...defaultPlatformOptions, enrichFn: getEnrichFn() },

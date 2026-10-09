@@ -218,6 +218,7 @@ export type DiscoverOptionsInternal<TValid> = {
   resolveUrlFn: DiscoverResolveUrlFn
   resolveSiteUrlFn?: DiscoverResolveSiteUrlFn
   ignoredExtensions?: Array<string>
+  acceptHeader: string
   stopOnFirstMethod?: boolean
   stopOnFirstResult?: boolean
   concurrency?: number
