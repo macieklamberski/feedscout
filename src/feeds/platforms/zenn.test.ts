@@ -51,10 +51,8 @@ describe('parseZennUrl', () => {
     expect(parseZennUrl('https://zenn.dev/P/team_zenn')).toEqual(expected)
   })
 
-  it('should return the publication for a long publication page', () => {
-    const expected: ZennUrl = { kind: 'publication', publication: 'team_zenn' }
-
-    expect(parseZennUrl('https://zenn.dev/publications/team_zenn')).toEqual(expected)
+  it('should return undefined for a publication under /publications/', () => {
+    expect(parseZennUrl('https://zenn.dev/publications/team_zenn')).toBeUndefined()
   })
 
   it('should return undefined for excluded paths', () => {

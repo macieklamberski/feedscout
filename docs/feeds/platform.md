@@ -1394,7 +1394,6 @@ Discovers RSS feeds for Zenn users, topics, publications, and the platform-wide 
 | `zenn.dev/{user}` | User posts |
 | `zenn.dev/topics/{topic}` | Topic |
 | `zenn.dev/p/{pub}` | Publication |
-| `zenn.dev/publications/{pub}` | Publication |
 | `zenn.dev` | Trending posts |
 
 ### BitChute

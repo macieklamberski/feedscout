@@ -13,7 +13,7 @@ export type ZennUrl =
 export const hosts = ['zenn.dev', 'www.zenn.dev']
 
 const topicRegex = /^\/topics\/([^/]+)/i
-const publicationRegex = /^\/(?:p|publications)\/([^/]+)/i
+const publicationRegex = /^\/p\/([^/]+)/i
 
 const excludedPaths = [
   'about',
