@@ -13,10 +13,10 @@ import { discoverUris } from '../uris/index.js'
 import { processConcurrently, toPositiveInteger, withTextBody } from '../utils.js'
 import {
   attempt,
+  htmlAcceptHeader,
   normalizeInput,
   normalizeMethodsConfig,
   normalizeUriEntry,
-  pageAcceptHeader,
   reportError,
 } from './utils.js'
 
@@ -105,7 +105,7 @@ export const discover = async <TValid>(
       reportStep({ step: 'resolveSiteUrl', status: 'start', url: siteUrl })
 
       try {
-        const response = await fetchFn(siteUrl, { headers: { Accept: pageAcceptHeader } })
+        const response = await fetchFn(siteUrl, { headers: { Accept: htmlAcceptHeader } })
 
         siteInput = {
           url: response.url,

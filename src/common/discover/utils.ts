@@ -24,7 +24,7 @@ import type {
 } from '../types.js'
 import type { FeedMethodData } from '../uris/feed/types.js'
 
-export const pageAcceptHeader = createAcceptHeader([...htmlMimeTypes, ...genericHtmlMimeTypes])
+export const htmlAcceptHeader = createAcceptHeader([...htmlMimeTypes, ...genericHtmlMimeTypes])
 
 export const normalizeInput = async (
   input: DiscoverInput,
@@ -40,7 +40,7 @@ export const normalizeInput = async (
   const url = typeof input === 'string' ? resolveFeedProtocol(input) : input
 
   try {
-    const response = await fetchFn(url, { headers: { Accept: pageAcceptHeader } })
+    const response = await fetchFn(url, { headers: { Accept: htmlAcceptHeader } })
 
     return {
       url: response.url,
