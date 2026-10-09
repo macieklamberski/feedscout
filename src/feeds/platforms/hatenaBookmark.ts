@@ -1,15 +1,15 @@
-import { getAnyOf, isAnyOf, isHostOf, parseUrl } from 'trousse'
+import { decodeSegment, getAnyOf, isAnyOf, isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers category, home, newEntriesCategory, user (html).
-// Handler needed for: site.
+// Handler needed for: search, site.
 
 export type HatenaBookmarkUrl =
   | { kind: 'hotentry'; category?: string }
   | { kind: 'entrylist'; category?: string }
-  | { kind: 'search'; searchType: string; params: string }
+  | { kind: 'search'; query: string; params: string }
   | { kind: 'site'; site: string; params: string }
   | { kind: 'user'; username: string }
   | { kind: 'home' }
@@ -17,6 +17,7 @@ export type HatenaBookmarkUrl =
 const hosts = ['b.hatena.ne.jp']
 
 const listRegex = /^\/(hotentry|entrylist)(?:\/([a-z]+))?\/?$/i
+const queryRegex = /^\/q\/(.+)$/i
 const searchRegex = /^\/search\/(tag|text|title)\/?$/i
 const siteRegex = /^\/site\/([^/].*)/i
 
@@ -41,6 +42,9 @@ const categories = [
 
 const searchTypes = ['tag', 'text', 'title']
 
+// The filters the search page carries into its own feed link. It drops `page` and anything else.
+const searchFilters = ['target', 'sort', 'users', 'date_range', 'safe']
+
 // Reserved first segments that are site sections, not usernames.
 const excludedPaths = [
   'articles',
@@ -53,11 +57,22 @@ const excludedPaths = [
   'images',
   'login',
   'my',
-  'q',
   'register',
   'search',
   'site',
 ]
+
+const copySearchFilters = (from: URLSearchParams, to: URLSearchParams): string => {
+  for (const filter of searchFilters) {
+    const value = from.get(filter)
+
+    if (value) {
+      to.set(filter, value)
+    }
+  }
+
+  return to.toString()
+}
 
 export const parseHatenaBookmarkUrl = (url: string): HatenaBookmarkUrl | undefined => {
   const parsedUrl = parseUrl(url)
@@ -78,12 +93,29 @@ export const parseHatenaBookmarkUrl = (url: string): HatenaBookmarkUrl | undefin
     return list === 'hotentry' ? { kind: 'hotentry', category } : { kind: 'entrylist', category }
   }
 
-  const params = searchParams.toString()
+  const query = decodeSegment(pathname.match(queryRegex)?.[1])
+
+  if (query) {
+    return { kind: 'search', query, params: copySearchFilters(searchParams, new URLSearchParams()) }
+  }
+
   const searchType = getAnyOf(pathname.match(searchRegex)?.[1], searchTypes)
 
+  // The old search path answers 301 to /q/{query}, with `target` set for a text or title search.
+  // Without a query it lands on the home page.
   if (searchType) {
-    return { kind: 'search', searchType, params }
+    const legacyQuery = searchParams.get('q')
+
+    if (!legacyQuery) {
+      return { kind: 'home' }
+    }
+
+    const target = new URLSearchParams(searchType === 'tag' ? {} : { target: searchType })
+
+    return { kind: 'search', query: legacyQuery, params: copySearchFilters(searchParams, target) }
   }
+
+  const params = searchParams.toString()
 
   const site = pathname.match(siteRegex)?.[1]
 
@@ -133,7 +165,7 @@ export const hatenaBookmarkHandler: PlatformHandler = {
 
       return [
         {
-          uri: `${origin}/search/${parsed.searchType}?${searchParams}`,
+          uri: `${origin}/q/${encodeURIComponent(parsed.query)}?${searchParams}`,
           hint: composeHint('hatena-bookmark:search'),
         },
       ]
