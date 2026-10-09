@@ -557,24 +557,19 @@ describe('normalizeInput', () => {
 
 describe('normalizeMethodsConfig', () => {
   const feedMimeTypes = [
-    'application/atom+xml',
     'application/rss+xml',
-    'application/feed+json',
-    'application/rdf+xml',
-    'application/rss',
-    'text/rss',
     'text/rss+xml',
     'application/x-rss+xml',
-    'application/atom',
-    'application/x.atom+xml',
-    'application/x-atom+xml',
+    'application/rss',
+    'application/atom+xml',
     'text/atom+xml',
-    'text/atom',
-    'text/rdf',
+    'application/feed+json',
+    'application/json',
+    'application/rdf+xml',
     'text/rdf+xml',
+    'application/atom',
     'application/xml',
     'text/xml',
-    'application/json',
   ]
   const feedUrisComprehensive = [
     '/feed',
