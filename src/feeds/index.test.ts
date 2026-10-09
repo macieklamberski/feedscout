@@ -59,8 +59,27 @@ describe('discoverFeeds', () => {
       return createMockFetch({})(url)
     }
     const expected = {
-      Accept:
-        'application/atom+xml, application/rss+xml, application/feed+json, application/rdf+xml;q=0.9, application/x-rss+xml;q=0.9, text/rss+xml;q=0.9, application/json;q=0.8, application/xml;q=0.8, text/xml;q=0.8, text/plain;q=0.1',
+      Accept: [
+        'application/atom+xml',
+        'application/rss+xml',
+        'application/feed+json',
+        'application/rdf+xml',
+        'application/rss;q=0.9',
+        'text/rss;q=0.9',
+        'text/rss+xml;q=0.9',
+        'application/x-rss+xml;q=0.9',
+        'application/atom;q=0.9',
+        'application/x.atom+xml;q=0.9',
+        'application/x-atom+xml;q=0.9',
+        'text/atom+xml;q=0.9',
+        'text/atom;q=0.9',
+        'text/rdf;q=0.9',
+        'text/rdf+xml;q=0.9',
+        'application/xml;q=0.8',
+        'text/xml;q=0.8',
+        'application/json;q=0.8',
+        'text/plain;q=0.1',
+      ].join(', '),
     }
 
     await discoverFeeds('https://example.com', {
@@ -796,6 +815,46 @@ describe('discoverFeeds', () => {
           title: 'Test RSS',
           description: 'Test feed',
           siteUrl: 'https://example.com/',
+        },
+      ]
+
+      expect(result).toEqual(expected)
+    })
+
+    it('should discover feeds from link elements typed application/x-atom+xml', async () => {
+      const html = `
+        <html>
+          <head>
+            <link
+              rel="alternate"
+              type="application/x-atom+xml"
+              href="/atom.xml"
+            />
+          </head>
+          <body>Example blog</body>
+        </html>
+      `
+      const atom = `
+        <feed xmlns="http://www.w3.org/2005/Atom">
+          <title>Test Atom</title>
+          <id>https://example.com/</id>
+        </feed>
+      `
+      const mockFetch = createMockFetch({
+        'https://example.com': html,
+        'https://example.com/atom.xml': atom,
+      })
+      const result = await discoverFeeds('https://example.com', {
+        methods: ['html'],
+        fetchFn: mockFetch,
+      })
+      const expected: Array<DiscoverResult<FeedResult>> = [
+        {
+          url: 'https://example.com/atom.xml',
+          isValid: true,
+          method: 'html',
+          format: 'atom',
+          title: 'Test Atom',
         },
       ]
 

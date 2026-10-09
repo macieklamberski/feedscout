@@ -1,5 +1,14 @@
 import type { Atom } from 'feedsmith'
-import { isAnyOf, isHttpUrl, isObject, parseUrl, resolveFeedProtocol } from 'trousse'
+import {
+  createAcceptHeader,
+  genericHtmlMimeTypes,
+  htmlMimeTypes,
+  isAnyOf,
+  isHttpUrl,
+  isObject,
+  parseUrl,
+  resolveFeedProtocol,
+} from 'trousse'
 import locales from '../locales.json' with { type: 'json' }
 import type {
   DiscoverErrorContext,
@@ -15,8 +24,7 @@ import type {
 } from '../types.js'
 import type { FeedMethodData } from '../uris/feed/types.js'
 
-// See: https://www.rfc-editor.org/rfc/rfc9110#section-12.5.1.
-export const pageAcceptHeader = 'text/html, application/xhtml+xml, application/xml;q=0.9, */*;q=0.8'
+export const pageAcceptHeader = createAcceptHeader([...htmlMimeTypes, ...genericHtmlMimeTypes])
 
 export const normalizeInput = async (
   input: DiscoverInput,

@@ -2,9 +2,12 @@ import {
   archiveExtensions,
   audioExtensions,
   codeExtensions,
+  createAcceptHeader,
   documentExtensions,
+  feedMimeTypes,
   flashExtensions,
   fontExtensions,
+  genericFeedMimeTypes,
   imageExtensions,
   installerExtensions,
   subtitleExtensions,
@@ -292,26 +295,10 @@ import { youtubeHandler } from './platforms/youtube.js'
 import { zenfolioHandler } from './platforms/zenfolio.js'
 import { zennHandler } from './platforms/zenn.js'
 
-export const mimeTypes = [
-  // RSS:
-  'application/rss+xml',
-  'text/rss+xml',
-  'application/x-rss+xml',
-  'application/rss',
-  // Atom:
-  'application/atom+xml',
-  'text/atom+xml',
-  // JSON Feed:
-  'application/feed+json',
-  'application/json',
-  // RDF:
-  'application/rdf+xml',
-  'text/rdf+xml',
-  'application/atom',
-  // Generic:
-  'application/xml',
-  'text/xml',
-]
+// text/plain names no feed format, so a link of that type is no feed hint.
+export const mimeTypes = [...feedMimeTypes, ...genericFeedMimeTypes]
+  .map((type) => type.mime)
+  .filter((mime) => mime !== 'text/plain')
 
 // Covers modern static generators and simple WordPress setups.
 export const urisMinimal = ['/feed', '/rss', '/atom.xml', '/feed.xml', '/rss.xml', '/index.xml']
@@ -362,10 +349,7 @@ const wrappedFeedUrlRegex = /[?&][^=&]*=(https?:|https?%3a|aHR0c)/i
 // URIs to ignore when discovering feeds from anchor elements.
 export const ignoredUris: Array<Pattern> = ['wp-json/oembed/', 'wp-json/wp/', wrappedFeedUrlRegex]
 
-// Rails reads any Accept that lists */* as a browser and answers an extensionless feed URL with
-// HTML, so the list ends at text/plain.
-export const acceptHeader =
-  'application/atom+xml, application/rss+xml, application/feed+json, application/rdf+xml;q=0.9, application/x-rss+xml;q=0.9, text/rss+xml;q=0.9, application/json;q=0.8, application/xml;q=0.8, text/xml;q=0.8, text/plain;q=0.1'
+export const acceptHeader = createAcceptHeader([...feedMimeTypes, ...genericFeedMimeTypes])
 
 // A podcast host's tracking prefix can put a feed segment in an episode's path, as in
 // `pscrb.fm/rss/p/…/episode.mp3`, so a page link or a platform handler can offer a media file.
