@@ -4,6 +4,7 @@ import type {
   DiscoverResolveUrlFn,
   DiscoverResult,
   FetchFn,
+  FetchFnOptions,
 } from '../common/types.js'
 import type { PlatformHandler } from '../common/uris/platform/types.js'
 import { defaultPlatformOptions, urisBalanced, urisComprehensive, urisMinimal } from './defaults.js'
@@ -48,6 +49,42 @@ describe('discoverFeeds', () => {
     ]
 
     expect(result).toEqual(expected)
+  })
+
+  it('should fetch candidates with a feed accept header', async () => {
+    const receivedHeaders: Record<string, FetchFnOptions['headers']> = {}
+    const recordingFetchFn: FetchFn = (url, options) => {
+      receivedHeaders[url] = options?.headers
+
+      return createMockFetch({})(url)
+    }
+
+    await discoverFeeds('https://example.com', {
+      methods: { guess: { uris: ['/feed'] } },
+      fetchFn: recordingFetchFn,
+    })
+
+    const accept = new Headers(receivedHeaders['https://example.com/feed']).get('accept')
+
+    expect(accept).toStartWith('application/atom+xml')
+  })
+
+  it('should fetch candidates without a wildcard in the accept header', async () => {
+    const receivedHeaders: Record<string, FetchFnOptions['headers']> = {}
+    const recordingFetchFn: FetchFn = (url, options) => {
+      receivedHeaders[url] = options?.headers
+
+      return createMockFetch({})(url)
+    }
+
+    await discoverFeeds('https://example.com', {
+      methods: { guess: { uris: ['/feed'] } },
+      fetchFn: recordingFetchFn,
+    })
+
+    const accept = new Headers(receivedHeaders['https://example.com/feed']).get('accept')
+
+    expect(accept).not.toContain('*/*')
   })
 
   it('should find feeds at ancestor paths when the page has no feed hints', async () => {

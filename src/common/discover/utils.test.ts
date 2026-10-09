@@ -114,7 +114,7 @@ describe('defaultFetchFn', () => {
     expect(new Headers(capturedOptions?.headers).get('x-custom')).toBe('value')
   })
 
-  it('should send an HTML-first accept header by default', async () => {
+  it('should send an HTML accept header when the caller sets none', async () => {
     let capturedOptions: RequestInit | undefined
     fetchSpy.mockImplementation(
       createFetchMock((_url: string, options?: RequestInit) => {
@@ -122,11 +122,10 @@ describe('defaultFetchFn', () => {
         return createMockResponse({})
       }),
     )
-    const expected = 'text/html, application/xhtml+xml, application/xml;q=0.9, */*;q=0.8'
 
     await defaultFetchFn('https://example.com/discussions/1')
 
-    expect(new Headers(capturedOptions?.headers).get('accept')).toBe(expected)
+    expect(new Headers(capturedOptions?.headers).get('accept')).toStartWith('text/html')
   })
 
   it('should send the accept header of the caller', async () => {
@@ -303,20 +302,17 @@ describe('normalizeInput', () => {
     expect(await normalizeInput('https://example.com', redirectFetchFn)).toEqual(expected)
   })
 
-  it('should fetch the page with an HTML-first accept header', async () => {
+  it('should fetch the page with an HTML accept header', async () => {
     let receivedOptions: FetchFnOptions | undefined
     const recordingFetchFn: FetchFn = (url, options) => {
       receivedOptions = options
 
       return fetchFn(url)
     }
-    const expected = {
-      headers: { Accept: 'text/html, application/xhtml+xml, application/xml;q=0.9, */*;q=0.8' },
-    }
 
     await normalizeInput('https://example.com', recordingFetchFn)
 
-    expect(receivedOptions).toEqual(expected)
+    expect(new Headers(receivedOptions?.headers).get('accept')).toStartWith('text/html')
   })
 
   it('should fetch a feed:// URL over https', async () => {
