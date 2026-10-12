@@ -6,7 +6,6 @@ import {
 import { discover } from '../common/discover/index.js'
 import type { DiscoverInput, DiscoverOptions, DiscoverResult } from '../common/types.js'
 import {
-  acceptHeader,
   defaultGuessOptions,
   defaultHeadersOptions,
   defaultHtmlOptions,
@@ -14,6 +13,9 @@ import {
 } from './defaults.js'
 import { defaultExtractFn } from './extractors.js'
 import type { BlogrollResult } from './types.js'
+
+const acceptHeader =
+  'text/x-opml, text/x-opml+xml, application/xml;q=0.9, text/xml;q=0.9, */*;q=0.1'
 
 export const discoverBlogrolls = <TValid extends BlogrollResult = BlogrollResult>(
   input: DiscoverInput,

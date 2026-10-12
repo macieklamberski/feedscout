@@ -1,8 +1,8 @@
+import { createAcceptHeader, feedMimeTypes, genericFeedMimeTypes } from 'trousse'
 import { defaultFetchFn, defaultResolveUrlFn } from '../common/discover/defaults.js'
 import { discover } from '../common/discover/index.js'
 import type { DiscoverInput, DiscoverOptions, DiscoverResult } from '../common/types.js'
 import {
-  acceptHeader,
   defaultGuessOptions,
   defaultHeadersOptions,
   defaultHtmlOptions,
@@ -11,6 +11,8 @@ import {
 } from './defaults.js'
 import { defaultExtractFn } from './extractors.js'
 import type { FeedResult } from './types.js'
+
+const acceptHeader = createAcceptHeader([...feedMimeTypes, ...genericFeedMimeTypes])
 
 export const discoverFeeds = <TValid extends FeedResult = FeedResult>(
   input: DiscoverInput,

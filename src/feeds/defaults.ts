@@ -2,7 +2,6 @@ import {
   archiveExtensions,
   audioExtensions,
   codeExtensions,
-  createAcceptHeader,
   documentExtensions,
   feedMimeTypes,
   flashExtensions,
@@ -348,8 +347,6 @@ const wrappedFeedUrlRegex = /[?&][^=&]*=(https?:|https?%3a|aHR0c)/i
 
 // URIs to ignore when discovering feeds from anchor elements.
 export const ignoredUris: Array<Pattern> = ['wp-json/oembed/', 'wp-json/wp/', wrappedFeedUrlRegex]
-
-export const acceptHeader = createAcceptHeader([...feedMimeTypes, ...genericFeedMimeTypes])
 
 // A podcast host's tracking prefix can put a feed segment in an episode's path, as in
 // `pscrb.fm/rss/p/…/episode.mp3`, so a page link or a platform handler can offer a media file.

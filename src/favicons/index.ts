@@ -6,7 +6,6 @@ import {
 import { discover } from '../common/discover/index.js'
 import type { DiscoverEnrichFn, DiscoverInput, DiscoverResult } from '../common/types.js'
 import {
-  acceptHeader,
   defaultFeedOptions,
   defaultGuessOptions,
   defaultHeadersOptions,
@@ -17,6 +16,9 @@ import {
 import { createEnrichFaviconFn } from './enrich.js'
 import { defaultExtractFn } from './extractors.js'
 import type { DiscoverFaviconsOptions, FaviconResult } from './types.js'
+
+const acceptHeader =
+  'image/avif, image/webp, image/png, image/svg+xml, image/x-icon, image/*;q=0.8, */*;q=0.1'
 
 export const discoverFavicons = <TValid extends FaviconResult = FaviconResult>(
   input: DiscoverInput,
