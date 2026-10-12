@@ -1,4 +1,15 @@
 import {
+  archiveExtensions,
+  audioExtensions,
+  codeExtensions,
+  documentExtensions,
+  flashExtensions,
+  fontExtensions,
+  installerExtensions,
+  subtitleExtensions,
+  videoExtensions,
+} from 'trousse'
+import {
   defaultFetchFn,
   defaultResolveSiteUrlFn,
   defaultResolveUrlFn,
@@ -11,7 +22,6 @@ import {
   defaultHeadersOptions,
   defaultHtmlOptions,
   defaultPlatformOptions,
-  ignoredExtensions,
 } from './defaults.js'
 import { createEnrichFaviconFn } from './enrich.js'
 import { defaultExtractFn } from './extractors.js'
@@ -19,6 +29,18 @@ import type { DiscoverFaviconsOptions, FaviconResult } from './types.js'
 
 const acceptHeader =
   'image/avif, image/webp, image/png, image/svg+xml, image/x-icon, image/*;q=0.8, */*;q=0.1'
+
+const ignoredExtensions = [
+  ...archiveExtensions,
+  ...audioExtensions,
+  ...codeExtensions,
+  ...documentExtensions,
+  ...flashExtensions,
+  ...fontExtensions,
+  ...installerExtensions,
+  ...subtitleExtensions,
+  ...videoExtensions,
+]
 
 export const discoverFavicons = <TValid extends FaviconResult = FaviconResult>(
   input: DiscoverInput,
