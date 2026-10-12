@@ -212,7 +212,7 @@ Discovers Atom feeds for users, organizations, and repositories.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `github.com/{user}`, `github.com/{user}.atom` or `github.com/{user}.png` | User activity<sup>†</sup> |
+| `github.com/{user}` or `github.com/{user}.png` | User activity<sup>†</sup> |
 | `github.com/orgs/{org}/discussions` | Organization discussions<sup>†</sup> |
 | `github.com/orgs/{org}/discussions/categories/{category}` | Discussion category<sup>†</sup>, plus the feeds above |
 | `github.com/{owner}/{repo}` | Releases<sup>†</sup> · commits<sup>†</sup> · tags<sup>†</sup> |
@@ -234,7 +234,7 @@ Discovers Atom feeds for GitHub Gist users, starred gists, forked gists, and the
 | `gist.github.com/{username}` | User gists |
 | `gist.github.com/{username}/{gist-id}` | User gists |
 | `gist.github.com/{username}/public` or `/secret` | User gists |
-| `gist.github.com/{username}/starred` or `/starred.atom` | User starred gists |
+| `gist.github.com/{username}/starred` | User starred gists |
 | `gist.github.com/{username}/forks` or `/forked` | User forked gists<sup>†</sup> |
 | `gist.github.com/discover` | Discover gists<sup>†</sup> |
 
@@ -246,7 +246,7 @@ Discovers Atom feeds for Gitea users, repositories, releases, tags, branch commi
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{instance}/{user}`, `{instance}/{user}.rss`, `.atom` or `.keys` | User activity |
+| `{instance}/{user}` or `{instance}/{user}.keys` | User activity |
 | `{instance}/{user}/{repo}` | Releases<sup>†</sup> · tags<sup>†</sup> · activity |
 | `{instance}/{user}/{repo}/src/branch/{branch}` | Branch commits<sup>†</sup>, plus the feeds above |
 | `{instance}/{user}/{repo}/src/branch/{branch}/{path}` | File history<sup>†</sup>, plus the feeds above |
@@ -264,7 +264,7 @@ Discovers Atom feeds for GitLab users and repositories. Self-hosted instances ar
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `gitlab.com/{user}` or `gitlab.com/{user}.atom` | User activity |
+| `gitlab.com/{user}` | User activity |
 | `gitlab.com/{project}` | Releases<sup>†</sup> · tags<sup>†</sup> · issues<sup>†</sup> · merge requests<sup>†</sup> · activity |
 | `gitlab.com/{project}/-/commits/{branch}` | Branch commits, plus the feeds above |
 | `gitlab.com/{project}/-/tree/{branch}` | Branch commits, plus the feeds above |
@@ -583,18 +583,17 @@ Discovers RSS feeds for Itch.io games, creators, devlogs, and browse pages.
 |-------------|-----------------|
 | `{creator}.itch.io/{game}` | Game devlog |
 | `{creator}.itch.io` | Creator's games<sup>†</sup> |
-| `itch.io/games` or `/games.xml` | Games<sup>†</sup> |
-| `itch.io/games/by-{username}` or `/by-{username}.xml` | Creator's games<sup>†</sup> |
-| `itch.io/games/tag-{tag}` or `/tag-{tag}.xml` | Tag<sup>†</sup> |
-| `itch.io/games/platform-{platform}` or `/platform-{platform}.xml` | Platform<sup>†</sup> |
-| `itch.io/games/genre-{genre}` or `/genre-{genre}.xml` | Genre<sup>†</sup> |
-| `itch.io/games/made-with-{engine}` or `/made-with-{engine}.xml` | Engine<sup>†</sup> |
-| `itch.io/games/{sort}` or `/{sort}.xml` | Sorted games<sup>†</sup> (newest/top-rated/top-sellers/on-sale/free/released/in-development) |
-| `itch.io/{section}` or `/{section}.xml` | Section<sup>†</sup> (tools/game-assets/soundtracks/physical-games/books/comics/misc) |
-| `itch.io/devlogs` or `/devlogs.xml` | All devlogs |
+| `itch.io/games` | Games<sup>†</sup> |
+| `itch.io/games/by-{username}` | Creator's games<sup>†</sup> |
+| `itch.io/games/tag-{tag}` | Tag<sup>†</sup> |
+| `itch.io/games/platform-{platform}` | Platform<sup>†</sup> |
+| `itch.io/games/genre-{genre}` | Genre<sup>†</sup> |
+| `itch.io/games/made-with-{engine}` | Engine<sup>†</sup> |
+| `itch.io/games/{sort}` | Sorted games<sup>†</sup> (newest/top-rated/top-sellers/on-sale/free/released/in-development) |
+| `itch.io/{section}` | Section<sup>†</sup> (tools/game-assets/soundtracks/physical-games/books/comics/misc) |
+| `itch.io/devlogs` | All devlogs |
 | `itch.io` | Featured · new<sup>†</sup> · sales<sup>†</sup> · all devlogs<sup>†</sup> · itch.io blog |
-| `itch.io/feed/{feed}.xml` | Curated (featured/new/sales) |
-| `itch.io/blog` or `itch.io/blog.rss` | itch.io blog |
+| `itch.io/blog` | itch.io blog |
 
 <sup>†</sup> *Found only by the Platform method.*
 
