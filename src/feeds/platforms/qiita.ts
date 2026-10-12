@@ -7,7 +7,6 @@ import { composeHint } from '../../common/utils.js'
 export type QiitaUrl =
   | { kind: 'tag'; tag: string }
   | { kind: 'organization'; organization: string }
-  | { kind: 'popularItems' }
   | { kind: 'officialColumns' }
   | { kind: 'user'; username: string }
 
@@ -15,7 +14,6 @@ const hosts = ['qiita.com', 'www.qiita.com']
 
 const tagRegex = /^\/tags\/([^/]+)/i
 const organizationRegex = /^\/organizations\/([^/]+)/i
-const popularItemsRegex = /^\/popular-items(\/|$)/i
 const officialColumnsRegex = /^\/official-columns(\/|$)/i
 
 const excludedPaths = [
@@ -52,10 +50,6 @@ export const parseQiitaUrl = (url: string): QiitaUrl | undefined => {
 
   if (organization) {
     return { kind: 'organization', organization }
-  }
-
-  if (popularItemsRegex.test(pathname)) {
-    return { kind: 'popularItems' }
   }
 
   // Qiita Zine.
@@ -98,15 +92,6 @@ export const qiitaHandler: PlatformHandler = {
         {
           uri: `https://qiita.com/organizations/${parsed.organization}/activities.atom`,
           hint: composeHint('qiita:organization'),
-        },
-      ]
-    }
-
-    if (parsed.kind === 'popularItems') {
-      return [
-        {
-          uri: 'https://qiita.com/popular-items/feed.atom',
-          hint: composeHint('qiita:popular'),
         },
       ]
     }

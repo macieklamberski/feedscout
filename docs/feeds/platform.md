@@ -1241,14 +1241,13 @@ Discovers Atom feeds for Posthaven blogs.
 
 ### Qiita
 
-Discovers Atom feeds for Qiita users, tags, organizations, and popular items.
+Discovers Atom feeds for Qiita users, tags and organizations.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | `qiita.com/{user}` | User posts |
 | `qiita.com/tags/{tag}` | Tag |
 | `qiita.com/organizations/{org}` | Organization |
-| `qiita.com/popular-items` | Popular items |
 | `qiita.com/official-columns` | Qiita Zine |
 
 ### RSS.com

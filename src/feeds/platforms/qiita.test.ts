@@ -14,10 +14,8 @@ describe('parseQiitaUrl', () => {
     expect(parseQiitaUrl('https://qiita.com/organizations/example')).toEqual(expected)
   })
 
-  it('should return the popular items page', () => {
-    const expected: QiitaUrl = { kind: 'popularItems' }
-
-    expect(parseQiitaUrl('https://qiita.com/popular-items')).toEqual(expected)
+  it('should return undefined for the popular items page', () => {
+    expect(parseQiitaUrl('https://qiita.com/popular-items')).toBeUndefined()
   })
 
   it('should return the official columns page', () => {
@@ -130,30 +128,6 @@ describe('qiitaHandler', () => {
         {
           uri: 'https://qiita.com/organizations/qiita-inc/activities.atom',
           hint: { key: 'qiita:organization', label: 'Organization' },
-        },
-      ]
-
-      expect(qiitaHandler.resolve(value)).toEqual(expected)
-    })
-
-    it('should return feed URL for popular items page', () => {
-      const value = 'https://qiita.com/popular-items'
-      const expected = [
-        {
-          uri: 'https://qiita.com/popular-items/feed.atom',
-          hint: { key: 'qiita:popular', label: 'Popular items' },
-        },
-      ]
-
-      expect(qiitaHandler.resolve(value)).toEqual(expected)
-    })
-
-    it('should return feed URL for popular items page with a capitalized popular-items segment', () => {
-      const value = 'https://qiita.com/Popular-Items'
-      const expected = [
-        {
-          uri: 'https://qiita.com/popular-items/feed.atom',
-          hint: { key: 'qiita:popular', label: 'Popular items' },
         },
       ]
 
