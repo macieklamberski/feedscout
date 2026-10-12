@@ -4,7 +4,7 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, findElement, hasClass, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic covers search (html).
+// Generic partly covers search.
 // Handler needed for: home.
 
 const cookiesScriptPath = '/client/dist/talentsoft-cookies.iife.js'

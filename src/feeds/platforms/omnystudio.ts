@@ -2,7 +2,7 @@ import { isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
-// Discoverability: Unmeasured, no public page.
+// Discoverability: Discoverable without handler.
 
 export type OmnystudioUrl = { kind: 'show'; show: string }
 

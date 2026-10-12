@@ -3,8 +3,7 @@ import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, hasMarker } from '../../common/utils.js'
 
-// Discoverability: Partially discoverable without handler.
-// Generic covers home (html), partly covers group.
+// Discoverability: Discoverable without handler.
 
 export type MobilizonUrl = { kind: 'group'; group: string } | { kind: 'instance' }
 

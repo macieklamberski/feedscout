@@ -55,15 +55,15 @@ Discovers Atom feeds for channels and playlists. Generates ten feed variants for
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `youtube.com/channel/{id}` | All uploads · videos<sup>?</sup> · shorts<sup>?</sup> · live streams<sup>†</sup> · popular videos<sup>?</sup> · popular shorts<sup>†</sup> · popular live streams<sup>†</sup> · member videos<sup>?</sup> · member shorts<sup>?</sup> · member live streams<sup>?</sup> |
-| `music.youtube.com/channel/{id}` | All uploads<sup>†</sup> · videos<sup>?</sup> · shorts<sup>?</sup> · live streams<sup>†</sup> · popular videos<sup>?</sup> · popular shorts<sup>†</sup> · popular live streams<sup>?</sup> · member videos<sup>?</sup> · member shorts<sup>?</sup> · member live streams<sup>?</sup> |
-| `youtube.com/@{handle}` | All uploads · videos<sup>?</sup> · shorts<sup>?</sup> · live streams<sup>†</sup> · popular videos<sup>?</sup> · popular shorts<sup>?</sup> · popular live streams<sup>?</sup> · member videos<sup>?</sup> · member shorts<sup>?</sup> · member live streams<sup>?</sup>* |
-| `youtube.com/user/{name}` | All uploads · videos<sup>?</sup> · shorts<sup>?</sup> · live streams<sup>?</sup> · popular videos<sup>†</sup> · popular shorts<sup>?</sup> · popular live streams<sup>?</sup> · member videos<sup>?</sup> · member shorts<sup>?</sup> · member live streams<sup>?</sup>* |
-| `youtube.com/c/{custom}` | All uploads · videos<sup>?</sup> · shorts<sup>?</sup> · live streams<sup>†</sup> · popular videos<sup>?</sup> · popular shorts<sup>†</sup> · popular live streams<sup>†</sup> · member videos<sup>?</sup> · member shorts<sup>?</sup> · member live streams<sup>?</sup>* |
-| `youtube.com/watch?v={id}` | All uploads<sup>†</sup> · videos<sup>?</sup> · shorts<sup>?</sup> · live streams<sup>†</sup> · popular videos<sup>?</sup> · popular shorts<sup>†</sup> · popular live streams<sup>?</sup> · member videos<sup>?</sup> · member shorts<sup>?</sup> · member live streams<sup>?</sup>* |
-| `youtu.be/{id}` | All uploads<sup>†</sup> · videos<sup>?</sup> · shorts<sup>?</sup> · live streams<sup>†</sup> · popular videos<sup>?</sup> · popular shorts<sup>†</sup> · popular live streams<sup>?</sup> · member videos<sup>?</sup> · member shorts<sup>?</sup> · member live streams<sup>?</sup>* |
-| `youtube.com/shorts/{id}` | All uploads<sup>†</sup> · videos<sup>?</sup> · shorts<sup>?</sup> · live streams<sup>†</sup> · popular videos<sup>?</sup> · popular shorts<sup>†</sup> · popular live streams<sup>†</sup> · member videos<sup>?</sup> · member shorts<sup>?</sup> · member live streams<sup>?</sup>* |
-| `youtube.com/live/{id}` | All uploads<sup>?</sup> · videos<sup>?</sup> · shorts<sup>?</sup> · live streams<sup>†</sup> · popular videos<sup>†</sup> · popular shorts<sup>?</sup> · popular live streams<sup>†</sup> · member videos<sup>?</sup> · member shorts<sup>?</sup> · member live streams<sup>?</sup>* |
+| `youtube.com/channel/{id}` | All uploads · videos<sup>†</sup> · shorts<sup>†</sup> · live streams<sup>†</sup> · popular videos<sup>†</sup> · popular shorts<sup>†</sup> · popular live streams<sup>†</sup> · member videos<sup>†</sup> · member shorts<sup>?</sup> · member live streams<sup>?</sup> |
+| `music.youtube.com/channel/{id}` | All uploads<sup>†</sup> · videos<sup>†</sup> · shorts<sup>†</sup> · live streams<sup>†</sup> · popular videos<sup>†</sup> · popular shorts<sup>†</sup> · popular live streams<sup>†</sup> · member videos<sup>†</sup> · member shorts<sup>?</sup> · member live streams<sup>?</sup> |
+| `youtube.com/@{handle}` | All uploads · videos<sup>†</sup> · shorts<sup>†</sup> · live streams<sup>†</sup> · popular videos<sup>†</sup> · popular shorts<sup>†</sup> · popular live streams<sup>†</sup> · member videos<sup>?</sup> · member shorts<sup>?</sup> · member live streams<sup>?</sup>* |
+| `youtube.com/user/{name}` | All uploads · videos<sup>†</sup> · shorts<sup>?</sup> · live streams<sup>†</sup> · popular videos<sup>†</sup> · popular shorts<sup>?</sup> · popular live streams<sup>†</sup> · member videos<sup>†</sup> · member shorts<sup>?</sup> · member live streams<sup>†</sup>* |
+| `youtube.com/c/{custom}` | All uploads · videos<sup>†</sup> · shorts<sup>†</sup> · live streams<sup>†</sup> · popular videos<sup>†</sup> · popular shorts<sup>†</sup> · popular live streams<sup>†</sup> · member videos<sup>†</sup> · member shorts<sup>?</sup> · member live streams<sup>†</sup>* |
+| `youtube.com/watch?v={id}` | All uploads<sup>†</sup> · videos<sup>†</sup> · shorts<sup>†</sup> · live streams<sup>†</sup> · popular videos<sup>†</sup> · popular shorts<sup>†</sup> · popular live streams<sup>†</sup> · member videos<sup>?</sup> · member shorts<sup>?</sup> · member live streams<sup>?</sup>* |
+| `youtu.be/{id}` | All uploads<sup>†</sup> · videos<sup>†</sup> · shorts<sup>†</sup> · live streams<sup>†</sup> · popular videos<sup>†</sup> · popular shorts<sup>†</sup> · popular live streams<sup>†</sup> · member videos<sup>?</sup> · member shorts<sup>?</sup> · member live streams<sup>?</sup>* |
+| `youtube.com/shorts/{id}` | All uploads<sup>†</sup> · videos<sup>†</sup> · shorts<sup>†</sup> · live streams<sup>†</sup> · popular videos<sup>†</sup> · popular shorts<sup>†</sup> · popular live streams<sup>†</sup> · member videos<sup>?</sup> · member shorts<sup>?</sup> · member live streams<sup>?</sup>* |
+| `youtube.com/live/{id}` | All uploads<sup>†</sup> · videos<sup>†</sup> · shorts<sup>†</sup> · live streams<sup>†</sup> · popular videos<sup>†</sup> · popular shorts<sup>†</sup> · popular live streams<sup>†</sup> · member videos<sup>?</sup> · member shorts<sup>?</sup> · member live streams<sup>?</sup>* |
 | `youtube.com/playlist?list={id}` | Playlist<sup>†</sup> |
 
 \* *Requires HTML content to extract channel ID.*
@@ -423,7 +423,7 @@ Discovers RSS feeds for SourceForge project activity, file releases, news, and d
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `sourceforge.net/projects/{project}` or `sourceforge.net/p/{project}` | Activity · project · files · news<sup>†</sup> (RSS + Atom) · discussion<sup>†</sup> (RSS + Atom) · bugs<sup>†</sup> |
+| `sourceforge.net/projects/{project}` or `sourceforge.net/p/{project}` | Activity · project · files · news<sup>†</sup> (RSS + Atom) · discussion<sup>†</sup> (RSS + Atom) · bugs |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -445,7 +445,7 @@ Discovers the Atom feeds Launchpad serves on `feeds.launchpad.net` for projects,
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `launchpad.net` | Announcements<sup>†</sup> |
+| `launchpad.net` | Announcements |
 | `bugs.launchpad.net` | Latest bugs<sup>†</sup> |
 | `launchpad.net/{project}` | Announcements · latest bugs · branches · revisions |
 | `bugs.launchpad.net/{project}` | Latest bugs |
@@ -524,9 +524,7 @@ Discovers RSS feeds for Hatena Antenna users and their groups.
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | `a.hatena.ne.jp/{user}` | Antenna |
-| `a.hatena.ne.jp/{user}/?gid={group}` | Group<sup>?</sup> |
-
-<sup>?</sup> *Not measured, the feed failed to load during the run.*
+| `a.hatena.ne.jp/{user}/?gid={group}` | Group |
 
 > A group id the user does not have falls back to the antenna feed, since Hatena serves an empty feed under any made-up group id. A real group with no updated page keeps its own feed.
 
@@ -592,7 +590,7 @@ Discovers RSS feeds for Itch.io games, creators, devlogs, and browse pages.
 | `itch.io/games/{sort}` | Sorted games<sup>†</sup> (newest/top-rated/top-sellers/on-sale/free/released/in-development) |
 | `itch.io/{section}` | Section<sup>†</sup> (tools/game-assets/soundtracks/physical-games/books/comics/misc) |
 | `itch.io/devlogs` | All devlogs |
-| `itch.io` | Featured · new<sup>†</sup> · sales<sup>†</sup> · all devlogs<sup>†</sup> · itch.io blog |
+| `itch.io` | Featured · new<sup>†</sup> · sales<sup>†</sup> · all devlogs · itch.io blog |
 | `itch.io/blog` | itch.io blog |
 
 <sup>†</sup> *Found only by the Platform method.*
@@ -810,9 +808,7 @@ Discovers RSS feeds for Tistory blogs.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `*.tistory.com` | Blog<sup>†</sup> |
-
-<sup>†</sup> *Found only by the Platform method.*
+| `*.tistory.com` | Blog |
 
 ### Transistor
 
@@ -978,8 +974,8 @@ Discovers Atom feeds for Flickr photostreams, favorites, tags, groups and the he
 | `flickr.com/photos/tags/{tag}` | Tag<sup>†</sup> |
 | `flickr.com/photos/{nsid}` | Photostream |
 | `flickr.com/photos/{nsid}/favorites` | Favorites |
-| `flickr.com/groups/{nsid}` | Group pool<sup>†</sup> · discussions · pool with location |
-| `flickr.com/groups/{nsid}/pool` | Group pool<sup>†</sup> · pool with location |
+| `flickr.com/groups/{nsid}` | Group pool<sup>†</sup> · discussions · pool with location<sup>†</sup> |
+| `flickr.com/groups/{nsid}/pool` | Group pool<sup>†</sup> · pool with location<sup>†</sup> |
 | `flickr.com/groups/{nsid}/discuss` | Group discussions |
 | `flickr.com/help/forum` | Forum<sup>†</sup> |
 
@@ -1300,13 +1296,11 @@ Discovers RSS 2.0 and RDF feeds for Seesaa Blog on `*.seesaa.net` and its other 
 |-------------|-----------------|
 | `*.seesaa.net` | Posts (RSS 2.0 + RDF) |
 | `*.iiblog.jp` | Posts (RSS 2.0 + RDF) |
-| `*.seesaa.blog` | Posts<sup>†</sup> (RSS 2.0 + RDF) |
+| `*.seesaa.blog` | Posts (RSS 2.0 + RDF) |
 | `*.seesaa.space` | Posts (RSS 2.0 + RDF) |
 | `*.sokuho.org` | Posts (RSS 2.0 + RDF) |
 | `*.stablo.jp` | Posts (RSS 2.0 + RDF) |
 | `*.xblog.jp` | Posts (RSS 2.0 + RDF) |
-
-<sup>†</sup> *Found only by the Platform method.*
 
 ### Sermon.net
 
@@ -1803,14 +1797,12 @@ Discovers the feeds of a phpBB board. Detected by the `phpbb` body id or the `{n
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{board}/viewtopic.php?t={id}` | Topic · forum<sup>?</sup>, plus the board feeds (Atom) |
+| `{board}/viewtopic.php?t={id}` | Topic · forum, plus the board feeds (Atom) |
 | `{board}/viewtopic.php?p={id}` | Topic from the page's canonical link, plus the board feeds (Atom) |
-| `{board}/viewforum.php?f={id}` | Forum<sup>?</sup>, plus the board feeds (Atom) |
-| Any other page | Board: all posts · news<sup>†</sup> · new topics · active topics<sup>?</sup> · forums (Atom) |
+| `{board}/viewforum.php?f={id}` | Forum, plus the board feeds (Atom) |
+| Any other page | Board: all posts · news<sup>†</sup> · new topics · active topics · forums (Atom) |
 
 <sup>†</sup> *Found only by the Platform method.*
-
-<sup>?</sup> *Not measured, the feed failed to load during the run.*
 
 > [!NOTE]
 > A board is routinely mounted under a sub-path, so the feed is built from the directory holding the script. Each feed is an administrator toggle, so a board serves any subset of them.
@@ -2231,7 +2223,9 @@ Discovers RSS and Atom feeds for Teletype.in blogs.
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | `teletype.in/@{user}` | Posts (RSS + Atom) |
-| `teletype.in/@{user}/{post}` | Posts (RSS + Atom) |
+| `teletype.in/@{user}/{post}` | Posts<sup>†</sup> (RSS + Atom) |
+
+<sup>†</sup> *Found only by the Platform method.*
 
 ### PmWiki
 
@@ -2333,7 +2327,7 @@ Discovers the feeds of a DSpace repository, on any domain. DSpace 7 and later is
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{repository}/collections/{uuid}` | Collection<sup>†</sup> · site<sup>†</sup> (RSS + Atom) |
+| `{repository}/collections/{uuid}` | Collection · site<sup>†</sup> (RSS + Atom) |
 | `{repository}/communities/{uuid}` | Community · site<sup>†</sup> (RSS + Atom) |
 | Any other page, DSpace 7 and later | Site<sup>†</sup> (RSS + Atom) |
 | `{repository}/handle/{prefix}/{id}`, DSpace 6 and older | Collection or community (RSS 1.0, RSS 2.0 + Atom, as linked) |
@@ -2550,10 +2544,8 @@ Discovers the blog feed of an OpenCart store running the Journal theme. Detected
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| Any page of a Journal 3 store | Blog<sup>†</sup> (RSS), `route=journal3/blog/feed`, or `journal3/blog.feed` on OpenCart 4 |
+| Any page of a Journal 3 store | Blog (RSS), `route=journal3/blog/feed`, or `journal3/blog.feed` on OpenCart 4 |
 | Any page of a Journal 2 store | Blog (RSS), `route=journal2/blog/feed` |
-
-<sup>†</sup> *Found only by the Platform method.*
 
 ### Eklablog
 
@@ -2663,11 +2655,9 @@ Discovers RSS and Atom feeds for blogs on `*.hautetfort.com`, `*.blogspirit.com`
 |-------------|-----------------|
 | `{blog}.{domain}` | Posts (RSS + Atom) |
 | `{blog}.{domain}/{category}` | Category (RSS) · posts |
-| `{blog}.{domain}/archives/category/{category}` | Category<sup>†</sup> (RSS) · posts<sup>?</sup> |
+| `{blog}.{domain}/archives/category/{category}` | Category<sup>†</sup> (RSS) · posts |
 
 <sup>†</sup> *Found only by the Platform method.*
-
-<sup>?</sup> *Not measured, the feed failed to load during the run.*
 
 ### uCoz
 
@@ -2754,10 +2744,8 @@ Discovers the blog and events feeds of a Wild Apricot site. Detected by the `x-l
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | `{site}/{blog-page}` | Blog (RSS) |
-| `{site}/{blog-page}/{post-id}` | Blog<sup>?</sup> (RSS), from the post's back link |
+| `{site}/{blog-page}/{post-id}` | Blog (RSS), from the post's back link |
 | `{site}/{events-page}` | Events (RSS), in the list and calendar views |
-
-<sup>?</sup> *Not measured, the feed failed to load during the run.*
 
 > [!NOTE]
 > A post page links `/page-{id}/RSS` as its feed, which answers 404. An event page links no events page, so it gets no feed.
@@ -3072,7 +3060,7 @@ Discovers the Atom feeds of a Redmine install, Planio's hosted ones on `plan.io`
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{site}/projects/{project}`, any other project page | Project activity, plus issues<sup>†</sup> and news<sup>?</sup> when the project menu lists them |
+| `{site}/projects/{project}`, any other project page | Project activity, plus issues<sup>†</sup> and news<sup>†</sup> when the project menu lists them |
 | `{site}/projects/{project}/issues` | Project issues |
 | `{site}/projects/{project}/news` | Project news |
 | `{site}/projects/{project}/activity` | Project activity |
@@ -3086,8 +3074,6 @@ Discovers the Atom feeds of a Redmine install, Planio's hosted ones on `plan.io`
 | `{site}/`, any other page | News · activity |
 
 <sup>†</sup> *Found only by the Platform method.*
-
-<sup>?</sup> *Not measured, the feed failed to load during the run.*
 
 ### b2evolution
 
@@ -3189,7 +3175,7 @@ Discovers the feeds of an academic journal on OpenEdition Journals at `journals.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `journals.openedition.org/{journal}/…` | Documents<sup>†</sup> at `{journal}/backend?format=rssdocuments` · issues<sup>†</sup> at `?format=rssnumeros` · reviews<sup>†</sup> at `?format=rssdocuments&type=review` (RSS 1.0) |
+| `journals.openedition.org/{journal}/…` | Documents at `{journal}/backend?format=rssdocuments` · issues at `?format=rssnumeros` · reviews<sup>†</sup> at `?format=rssdocuments&type=review` (RSS 1.0) |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -3233,7 +3219,7 @@ Discovers the feeds of a journal on Open Journal Systems, on any domain. Detecte
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{journal}/`, `{journal}/article/view/{id}`, `{journal}/issue/view/{id}`, any other journal page | Articles · announcements (Atom + RSS 1.0<sup>†</sup> + RSS 2.0) |
+| `{journal}/`, `{journal}/article/view/{id}`, `{journal}/issue/view/{id}`, any other journal page | Articles · announcements (Atom<sup>†</sup> + RSS 1.0<sup>†</sup> + RSS 2.0<sup>†</sup>) |
 
 <sup>†</sup> *Found only by the Platform method.*
 
