@@ -579,6 +579,14 @@ describe('getScriptDirectory', () => {
     expect(getScriptDirectory('/forums/index.PHP')).toBe('/forums')
   })
 
+  it('should return the directory of a script that carries path info', () => {
+    expect(getScriptDirectory('/forum/app.php/help/faq')).toBe('/forum')
+  })
+
+  it('should return the directory of a rewritten HTML page', () => {
+    expect(getScriptDirectory('/forum/some-topic-t123.html')).toBe('/forum')
+  })
+
   it('should return a directory without its trailing slash', () => {
     expect(getScriptDirectory('/links/')).toBe('/links')
   })

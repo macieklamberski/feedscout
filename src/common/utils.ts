@@ -188,7 +188,8 @@ export const getCookieNames = (headers: Headers): Array<string> => {
   return Array.from(cookies.matchAll(cookieNameRegex), (match) => match[1])
 }
 
-const scriptSegmentRegex = /\/[^/]*\.php$/i
+// A script takes path info, as in `/app.php/help/faq`, and a rewritten page is an HTML file.
+const scriptSegmentRegex = /\/[^/]*\.(?:php(?:\/.*)?|html?)$/i
 const trailingSlashRegex = /\/$/
 
 export const getScriptDirectory = (pathname: string): string => {
