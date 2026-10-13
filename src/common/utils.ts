@@ -88,6 +88,12 @@ const getParsedPage = (content: string): ParsedPage => {
   return lastParsedPage
 }
 
+// The single-slot cache would otherwise hold the last page's DOM until another page is parsed.
+export const releaseParsedPage = (): void => {
+  lastParsedContent = undefined
+  lastParsedPage = undefined
+}
+
 export const findElement = (
   content: string | undefined,
   test: (element: Element) => boolean,

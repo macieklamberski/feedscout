@@ -21,6 +21,7 @@ import {
   normalizeMimeType,
   type PageMarkers,
   processConcurrently,
+  releaseParsedPage,
   toPositiveInteger,
   withTextBody,
 } from './utils.js'
@@ -898,6 +899,19 @@ describe('findDescendant', () => {
     const card = findElement(value, (element) => element.attribs.id === 'card') as Element
 
     expect(findDescendant(card, (element) => element.name === 'a')).toBeUndefined()
+  })
+})
+
+describe('releaseParsedPage', () => {
+  it('should drop the parsed page so the same content is parsed again', () => {
+    const value = '<p id="card"></p>'
+    const cached = findElement(value, (element) => element.attribs.id === 'card')
+
+    expect(findElement(value, (element) => element.attribs.id === 'card')).toBe(cached)
+
+    releaseParsedPage()
+
+    expect(findElement(value, (element) => element.attribs.id === 'card')).not.toBe(cached)
   })
 })
 
