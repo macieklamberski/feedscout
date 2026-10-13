@@ -2,7 +2,7 @@ import { isAnyOf, isSubdomainOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, hasMarker } from '../../common/utils.js'
 
-// Discoverability: Unmeasured, bot wall.
+// Discoverability: Discoverable without handler.
 
 const domains = ['nethouse.ru', 'nethouse.me']
 

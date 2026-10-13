@@ -2,7 +2,7 @@ import { isSubdomainOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
-// Discoverability: Unmeasured, no public page.
+// Discoverability: Discoverable without handler.
 
 export type MailchimpUrl = { kind: 'archive'; userId: string; listId: string }
 
