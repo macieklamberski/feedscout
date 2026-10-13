@@ -1,3 +1,4 @@
+import { resolveFeedProtocol } from 'trousse'
 import {
   type DiscoverInput,
   type DiscoverInputObject,
@@ -57,8 +58,10 @@ export const discover = async <TValid>(
   // Normalize input: string → fetch URL, object → use provided content.
   let hasInputFetchFailed = false
   const inputUrl = typeof input === 'string' ? input : undefined
+  let requestedUrl: string | undefined
 
   if (inputUrl) {
+    requestedUrl = resolveFeedProtocol(inputUrl)
     reportStep({ step: 'fetchInput', status: 'start', url: inputUrl })
   }
 
@@ -112,6 +115,8 @@ export const discover = async <TValid>(
           content: typeof response.body === 'string' ? response.body : '',
           headers: response.headers,
         }
+
+        requestedUrl = siteUrl
       } catch (error) {
         reportError(onError, error, { phase: 'resolveSiteUrl', url: siteUrl })
       }
@@ -127,6 +132,7 @@ export const discover = async <TValid>(
     methods,
     defaults,
     hasInputFetchFailed,
+    requestedUrl,
   )
 
   // Step 3: Discover URIs using selected methods.

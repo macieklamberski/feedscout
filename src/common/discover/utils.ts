@@ -196,6 +196,7 @@ export const normalizeMethodsConfig = (
   methods: DiscoverMethodsConfig,
   defaults: DiscoverMethodsConfigDefaults,
   hasInputFetchFailed = false,
+  requestedUrl?: string,
 ): DiscoverMethodsConfigInternal => {
   const resolvedInput = siteInput ?? sourceInput
 
@@ -235,6 +236,7 @@ export const normalizeMethodsConfig = (
         ...defaults.platform,
         ...platformOptions,
         baseUrl: resolvedInput.url,
+        requestedUrl: requestedUrl ?? platformOptions.requestedUrl,
       },
     }
   }

@@ -380,4 +380,18 @@ describe('giteaHandler', () => {
       expect(giteaHandler.resolve('https://codeberg.org/explore')).toEqual([])
     })
   })
+
+  describe('guessExclusionRegex', () => {
+    it('should match a guessed root feed, which is a user feed on Gitea', () => {
+      expect(giteaHandler.guessExclusionRegex?.test('https://gitea.com/feed')).toBe(true)
+    })
+
+    it('should match a guessed root feed with a trailing slash', () => {
+      expect(giteaHandler.guessExclusionRegex?.test('https://gitea.com/feed/')).toBe(true)
+    })
+
+    it('should not match a repo feed', () => {
+      expect(giteaHandler.guessExclusionRegex?.test('https://gitea.com/gitea/tea.atom')).toBe(false)
+    })
+  })
 })

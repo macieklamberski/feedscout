@@ -24,6 +24,7 @@ export type PlatformHandler = {
 
 export type PlatformMethodOptions = {
   baseUrl: string
+  requestedUrl?: string
   handlers: Array<PlatformHandler>
   enrichFn?: DiscoverEnrichFn
 }

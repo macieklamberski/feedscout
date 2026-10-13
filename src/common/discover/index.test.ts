@@ -812,6 +812,101 @@ describe('discoverFeeds', () => {
     })
   })
 
+  describe('requested URL', () => {
+    it('should return the feed a handler builds from the requested URL when the fetch ends on another URL', async () => {
+      const platformHandler: PlatformHandler = {
+        match: (url) => url === 'https://example.com/popular',
+        resolve: () => [{ uri: 'https://example.com/popular/feed.xml' }],
+      }
+      const redirectingFetch: FetchFn = (url) => {
+        if (url === 'https://example.com/popular') {
+          return Promise.resolve({
+            headers: new Headers(),
+            body: '<html></html>',
+            url: 'https://example.com/login',
+            status: 200,
+            statusText: 'OK',
+          })
+        }
+
+        return createMockFetch({ 'https://example.com/popular/feed.xml': rss })(url)
+      }
+      const value = await discoverFeeds('https://example.com/popular', {
+        methods: { platform: { handlers: [platformHandler] } },
+        fetchFn: redirectingFetch,
+      })
+      const expected: Array<DiscoverResult<FeedResult>> = [
+        {
+          url: 'https://example.com/popular/feed.xml',
+          isValid: true,
+          method: 'platform',
+          format: 'rss',
+          title: 'Test RSS',
+          description: 'Test feed',
+          siteUrl: 'https://example.com/',
+        },
+      ]
+
+      expect(value).toEqual(expected)
+    })
+
+    it('should return the feed a handler builds from a feed:// URL when the fetch ends on another URL', async () => {
+      const platformHandler: PlatformHandler = {
+        match: (url) => url === 'https://example.com/popular',
+        resolve: () => [{ uri: 'https://example.com/popular/feed.xml' }],
+      }
+      const redirectingFetch: FetchFn = (url) => {
+        if (url === 'https://example.com/popular') {
+          return Promise.resolve({
+            headers: new Headers(),
+            body: '<html></html>',
+            url: 'https://example.com/login',
+            status: 200,
+            statusText: 'OK',
+          })
+        }
+
+        return createMockFetch({ 'https://example.com/popular/feed.xml': rss })(url)
+      }
+      const value = await discoverFeeds('feed://example.com/popular', {
+        methods: { platform: { handlers: [platformHandler] } },
+        fetchFn: redirectingFetch,
+      })
+
+      expect(value.map((result) => result.url)).toEqual(['https://example.com/popular/feed.xml'])
+    })
+
+    it('should return the feed a handler builds from the site URL when its fetch ends on another URL', async () => {
+      const platformHandler: PlatformHandler = {
+        match: (url) => url === 'https://example.com/popular',
+        resolve: () => [{ uri: 'https://example.com/popular/feed.xml' }],
+      }
+      const redirectingFetch: FetchFn = (url) => {
+        if (url === 'https://example.com/popular') {
+          return Promise.resolve({
+            headers: new Headers(),
+            body: '<html></html>',
+            url: 'https://example.com/login',
+            status: 200,
+            statusText: 'OK',
+          })
+        }
+
+        return createMockFetch({
+          'https://example.com/page': '<html></html>',
+          'https://example.com/popular/feed.xml': rss,
+        })(url)
+      }
+      const value = await discoverFeeds('https://example.com/page', {
+        methods: { platform: { handlers: [platformHandler] } },
+        fetchFn: redirectingFetch,
+        resolveSiteUrlFn: () => 'https://example.com/popular',
+      })
+
+      expect(value.map((result) => result.url)).toEqual(['https://example.com/popular/feed.xml'])
+    })
+  })
+
   describe('onError', () => {
     it('should call onError when the input fetch fails', async () => {
       const errors: Array<{ error: unknown; phase: string; url?: string }> = []

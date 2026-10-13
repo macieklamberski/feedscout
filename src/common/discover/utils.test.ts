@@ -908,6 +908,58 @@ describe('normalizeMethodsConfig', () => {
     expect(normalizeMethodsConfig(value, undefined, methods, defaults)).toEqual(expected)
   })
 
+  it('should keep the requestedUrl of the platform options when none is given', () => {
+    const value = {
+      url: 'https://example.com/login',
+    }
+    const methods: DiscoverMethodsConfig = {
+      platform: {
+        requestedUrl: 'https://example.com/popular',
+      },
+    }
+    const expected = {
+      platform: {
+        options: {
+          baseUrl: 'https://example.com/login',
+          requestedUrl: 'https://example.com/popular',
+          handlers: [],
+        },
+      },
+    }
+
+    expect(normalizeMethodsConfig(value, undefined, methods, defaults)).toEqual(expected)
+  })
+
+  it('should replace the requestedUrl of the platform options with the given one', () => {
+    const value = {
+      url: 'https://example.com/login',
+    }
+    const methods: DiscoverMethodsConfig = {
+      platform: {
+        requestedUrl: 'https://example.com/other',
+      },
+    }
+    const expected = {
+      platform: {
+        options: {
+          baseUrl: 'https://example.com/login',
+          requestedUrl: 'https://example.com/popular',
+          handlers: [],
+        },
+      },
+    }
+    const result = normalizeMethodsConfig(
+      value,
+      undefined,
+      methods,
+      defaults,
+      false,
+      'https://example.com/popular',
+    )
+
+    expect(result).toEqual(expected)
+  })
+
   it('should throw error when platform method requested without url', () => {
     const value = {
       url: '',

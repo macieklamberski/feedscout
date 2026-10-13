@@ -15,6 +15,9 @@ const giteaCookieRegex = /(?:^|[;,\s])[\w-]*gitea=/
 // Gitea reserves these suffixes for routes of a user, such as /{user}.rss, so no username ends
 // with one.
 const userRouteSuffixRegex = /\.(?:atom|gpg|keys|png|rss)$/i
+// A one-segment path is a user, so /feed answers a feed request with the activity of a user
+// named feed.
+const userFeedRegex = /^https?:\/\/(?:www\.)?(?:codeberg\.org|gitea\.com)\/[^/?#]+\/?$/i
 const excludedPaths = [
   'explore',
   'admin',
@@ -126,4 +129,6 @@ export const giteaHandler: PlatformHandler = {
 
     return feeds
   },
+
+  guessExclusionRegex: userFeedRegex,
 }

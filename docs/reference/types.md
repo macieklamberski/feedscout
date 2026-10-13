@@ -106,7 +106,7 @@ type DiscoverMethodsConfig<TMethods extends DiscoverMethod = DiscoverMethod> =
     >
 ```
 
-The `baseUrl` is omitted because it's set for you: the input URL, or the site URL when the input is a feed.
+The `baseUrl` is omitted because it's set for you: the input URL, or the site URL when the input is a feed. The `requestedUrl` of the Platform method is set for you too when the input is a URL string: the URL you asked for, which the fetch may have left through a redirect.
 
 ### DiscoverHubsOptions
 
