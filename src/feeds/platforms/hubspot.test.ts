@@ -75,6 +75,22 @@ describe('hubspotHandler', () => {
       expect(hubspotHandler.match(value, hubspotHtml, headers)).toBe(false)
     })
 
+    it('should match a blog listing the worker marks as a blog', () => {
+      const value = 'https://example.com/marketing'
+      const headers = new Headers({
+        'x-hs-hub-id': '53',
+        'x-hs-cfworker-meta': '{"contentType":"BLOG"}',
+      })
+
+      expect(hubspotHandler.match(value, hubspotHtml, headers)).toBe(true)
+    })
+
+    it('should match a blog at the host root by its feed link', () => {
+      const content = `${hubspotHtml}<link rel="alternate" href="https://example.com/rss.xml">`
+
+      expect(hubspotHandler.match('https://example.com/', content)).toBe(true)
+    })
+
     it('should match a blog page whose worker header is not valid JSON', () => {
       const value = 'https://example.com/blog/some-post'
       const headers = new Headers({ 'x-hs-cfworker-meta': '{"contentType":' })
@@ -163,6 +179,36 @@ describe('hubspotHandler', () => {
 
     it('should return an empty array for the host root', () => {
       expect(hubspotHandler.resolve('https://example.com/')).toEqual([])
+    })
+
+    it('should build the feeds from the blog root the feed link names', () => {
+      const value = 'https://example.com/en/blog/author/jane'
+      const content = '<link rel="alternate" href="https://example.com/en/blog/rss.xml">'
+      const expected = [
+        {
+          uri: 'https://example.com/en/blog/author/jane/rss.xml',
+          hint: { key: 'hubspot:author', label: 'Author' },
+        },
+        {
+          uri: 'https://example.com/en/blog/rss.xml',
+          hint: { key: 'hubspot:blog', label: 'Blog' },
+        },
+      ]
+
+      expect(hubspotHandler.resolve(value, content)).toEqual(expected)
+    })
+
+    it('should return the feed of a blog at the host root for one of its posts', () => {
+      const value = 'https://blog.example.com/my-post-slug'
+      const content = '<link rel="alternate" href="https://blog.example.com/rss.xml">'
+      const expected = [
+        {
+          uri: 'https://blog.example.com/rss.xml',
+          hint: { key: 'hubspot:blog', label: 'Blog' },
+        },
+      ]
+
+      expect(hubspotHandler.resolve(value, content)).toEqual(expected)
     })
   })
 })

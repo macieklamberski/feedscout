@@ -1554,7 +1554,7 @@ Discovers the Atom feed of a Shopify store's blog. Detected by the `Powered-By` 
 
 ### HubSpot
 
-Discovers the RSS feeds of a HubSpot blog. Detected by the `HubSpot` generator meta tag or the `x-hs-hub-id` response header. A page the `x-hs-cfworker-meta` header marks as something other than a blog page is not matched.
+Discovers the RSS feeds of a HubSpot blog. Detected by the `HubSpot` generator meta tag or the `x-hs-hub-id` response header. A page the `x-hs-cfworker-meta` header marks as something other than a blog page is not matched. The blog's root is read from the feed link the page prints, so a blog at the host root or several segments deep gets its own feeds.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
