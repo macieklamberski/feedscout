@@ -2,7 +2,9 @@ import { getPathSegments, isAnyOf, isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
-// Discoverability: Discoverable without handler.
+// Discoverability: Partially discoverable without handler.
+// Generic covers officialColumns, organization, profile, tag (guess, html).
+// Handler needed for: popular.
 
 export type QiitaUrl =
   | { kind: 'tag'; tag: string }

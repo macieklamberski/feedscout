@@ -205,7 +205,9 @@ Discovers RSS feeds for Goodreads user activity and bookshelves.
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | `goodreads.com/user/show/{id}` | User updates · reviews |
-| `goodreads.com/review/list/{id}` | Reviews · user updates |
+| `goodreads.com/review/list/{id}` | Reviews<sup>†</sup> · user updates<sup>†</sup> |
+
+<sup>†</sup> *Found only by the Platform method.*
 
 ### GitHub
 
@@ -1244,8 +1246,10 @@ Discovers Atom feeds for Qiita users, tags, organizations, and popular items.
 | `qiita.com/{user}` | User posts |
 | `qiita.com/tags/{tag}` | Tag |
 | `qiita.com/organizations/{org}` | Organization |
-| `qiita.com/popular-items` | Popular items |
+| `qiita.com/popular-items` | Popular items<sup>†</sup> |
 | `qiita.com/official-columns` | Qiita Zine |
+
+<sup>†</sup> *Found only by the Platform method.*
 
 ### RSS.com
 
