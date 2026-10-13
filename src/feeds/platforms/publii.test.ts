@@ -35,6 +35,31 @@ describe('publiiHandler', () => {
       expect(publiiHandler.match('https://example.com/')).toBe(false)
     })
 
+    it('should match a page under the site root its media links name', () => {
+      const content = '<img src="https://example.com/blog/media/website/logo.png">'
+
+      expect(publiiHandler.match('https://example.com/blog/a-post/', content)).toBe(true)
+    })
+
+    it('should not match media linked from another host', () => {
+      const content = '<img src="https://assets.example.com/media/website/logo.png">'
+
+      expect(publiiHandler.match('https://example.com/', content)).toBe(false)
+    })
+
+    it('should not match a page outside the root the media links name', () => {
+      const content = '<img src="https://example.com/blog/media/website/logo.png">'
+
+      expect(publiiHandler.match('https://example.com/shop/', content)).toBe(false)
+    })
+
+    it('should not match post media outside a numbered folder', () => {
+      const content =
+        '<meta property="og:image" content="https://example.com/media/posts/cover.jpg">'
+
+      expect(publiiHandler.match('https://example.com/2024/hello/', content)).toBe(false)
+    })
+
     it('should not match another platform', () => {
       expect(publiiHandler.match('https://example.com/', otherHtml)).toBe(false)
     })

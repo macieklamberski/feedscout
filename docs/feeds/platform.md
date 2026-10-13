@@ -1569,7 +1569,7 @@ Discovers the RSS feeds of a HubSpot blog. Detected by the `HubSpot` generator m
 
 ### Publii
 
-Discovers the feeds of a Publii-built site. Detected by the `Publii` generator meta tag or by media linked under `/media/website/` or `/media/posts/`. The media links also name the site root, so a site under a sub-path gets its own feeds.
+Discovers the feeds of a Publii-built site. Detected by the `Publii` generator meta tag or by media linked under `/media/website/` or `/media/posts/{id}/` on a site root that holds the page. The media links also name the site root, so a site under a sub-path gets its own feeds.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
