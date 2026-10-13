@@ -724,6 +724,104 @@ describe('discoverUrisFromPlatform', () => {
     expect(receivedUrls).toEqual(['https://example.com/page?a=1&b=2'])
   })
 
+  it('should skip the requested URL when the fetch ends on another host', async () => {
+    const receivedUrls: Array<string> = []
+    const handler: PlatformHandler = {
+      match: (url) => {
+        receivedUrls.push(url)
+
+        return false
+      },
+      resolve: () => [],
+    }
+    const options = {
+      baseUrl: 'https://example.org/',
+      requestedUrl: 'https://example.com/popular',
+      handlers: [handler],
+    }
+
+    await discoverUrisFromPlatform(undefined, undefined, options)
+
+    expect(receivedUrls).toEqual(['https://example.org/'])
+  })
+
+  it('should try the requested URL when the fetch ends on the www host', async () => {
+    const handler: PlatformHandler = {
+      match: (url) => url === 'https://example.com/popular',
+      resolve: () => [{ uri: 'https://example.com/popular/feed.xml' }],
+    }
+    const options = {
+      baseUrl: 'https://www.example.com/login',
+      requestedUrl: 'https://example.com/popular',
+      handlers: [handler],
+    }
+    const expected = [{ uri: 'https://example.com/popular/feed.xml' }]
+
+    expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
+  })
+
+  it('should skip a handler for the requested URL when it declined the page from its content', async () => {
+    const handler: PlatformHandler = {
+      match: (_url, content) => !content?.includes('Create your blog'),
+      resolve: (url) => {
+        if (url !== 'https://example.com/admin') {
+          return []
+        }
+
+        return [{ uri: 'https://example.com/posts.rss' }]
+      },
+    }
+    const html = '<html><body>Create your blog</body></html>'
+    const options = {
+      baseUrl: 'https://example.com/login',
+      requestedUrl: 'https://example.com/admin',
+      handlers: [handler],
+    }
+
+    expect(await discoverUrisFromPlatform(html, undefined, options)).toEqual([])
+  })
+
+  it('should skip a handler for the requested URL when it declined the page from its headers', async () => {
+    const handler: PlatformHandler = {
+      match: (_url, _content, headers) => headers?.get('x-robots-tag') !== 'noindex',
+      resolve: (url) => {
+        if (url !== 'https://example.com/admin') {
+          return []
+        }
+
+        return [{ uri: 'https://example.com/posts.rss' }]
+      },
+    }
+    const headers = new Headers({ 'x-robots-tag': 'noindex' })
+    const options = {
+      baseUrl: 'https://example.com/login',
+      requestedUrl: 'https://example.com/admin',
+      handlers: [handler],
+    }
+
+    expect(await discoverUrisFromPlatform(undefined, headers, options)).toEqual([])
+  })
+
+  it('should keep the other handlers for the requested URL when one declined the page', async () => {
+    const decliningHandler: PlatformHandler = {
+      match: (_url, content) => !content?.includes('Create your blog'),
+      resolve: () => [{ uri: 'https://example.com/posts.rss' }],
+    }
+    const handler: PlatformHandler = {
+      match: (url) => url === 'https://example.com/admin',
+      resolve: () => [{ uri: 'https://example.com/admin/feed.xml' }],
+    }
+    const html = '<html><body>Create your blog</body></html>'
+    const options = {
+      baseUrl: 'https://example.com/login',
+      requestedUrl: 'https://example.com/admin',
+      handlers: [decliningHandler, handler],
+    }
+    const expected = [{ uri: 'https://example.com/admin/feed.xml' }]
+
+    expect(await discoverUrisFromPlatform(html, undefined, options)).toEqual(expected)
+  })
+
   it('should skip the requested URL when it is not an http URL', async () => {
     const receivedUrls: Array<string> = []
     const handler: PlatformHandler = {

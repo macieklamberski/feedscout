@@ -13,7 +13,7 @@ The Platform method uses handlers for each supported platform:
 1. **Pattern Matching**: Each handler checks if the URL matches its platform (e.g., `github.com`, `youtube.com`).
 2. **URL Generation**: The matching handler generates feed URLs based on the URL structure.
 3. **First Match**: The first matching handler that generates feeds wins. Subsequent handlers are skipped. A handler that matches but generates nothing passes the page to the next one.
-4. **Requested URL**: When no handler generates feeds for the fetched page, the handlers run once more on the URL you asked for. A page that redirects, to a sign-in page for example, still yields the feeds its original URL names.
+4. **Requested URL**: When no handler generates feeds for the fetched page, the handlers run once more on the URL you asked for. A page that redirects, to a sign-in page for example, still yields the feeds its original URL names. This runs only when the redirect stays on the same host, and a handler that read the fetched page and declined it stays out.
 
 > [!TIP]
 > Even when feeds are discoverable via HTML `<link>` tags, the Platform method is useful because it generates feed variants the page does not advertise, like a channel's Shorts feed or a repository's releases feed. Handlers that work from the URL alone need no page content, which helps when you [use the method directly](#using-directly) and only have a URL.
@@ -3596,7 +3596,7 @@ const uris = await discoverUrisFromPlatform(htmlContent, undefined, {
 
 The arguments are the page content, the response headers, the options, an optional `fetchFn` that is passed on to handlers, and an optional `onError` that receives a throw from a handler or from `enrichFn`. Pass `undefined` for content or headers you do not have.
 
-The options also take an optional `requestedUrl`: the URL you asked for, when the fetch ended on another one. When no handler generates feeds for `baseUrl`, the handlers run on `requestedUrl` without the content and headers, which belong to the other page.
+The options also take an optional `requestedUrl`: the URL you asked for, when the fetch ended on another one. When no handler generates feeds for `baseUrl`, the handlers run on `requestedUrl` without the content and headers, which belong to the other page. Two cases are left out. A `requestedUrl` on another host than `baseUrl` is not tried, since a site that moved can still serve its old feeds with nothing new in them. A handler that matches `baseUrl` alone and stops matching with the content and headers has declined that page, and is skipped.
 
 > [!NOTE]
 > The YouTube handler requires HTML content for `@handle`, `/user/`, `/c/`, and video URLs to extract the channel ID. For `/channel/UC...` URLs, no content is needed.
