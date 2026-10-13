@@ -1,6 +1,6 @@
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, hasMarker } from '../../common/utils.js'
+import { composeHint, type Element, findElement, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic partly covers category, home, post.
@@ -11,21 +11,38 @@ export type TypechoPage =
 
 // Typecho serves theme and plugin assets under the site root, as in
 // `https://example.com/blog/usr/themes/default/style.css`, so the asset names the root.
-const assetRegex =
-  /<(?:link|script)\b[^>]*?\s(?:href|src)=["']?(?:https?:)?(?:\/\/[^/"'\s>]+)?([^"'\s>]*?)\/usr\/(?:themes|plugins)\//i
+const assetUrlRegex = /^(?:https?:)?(?:\/\/[^/]+)?(?<rootPath>.*?)\/usr\/(?:themes|plugins)\//i
 const indexScriptRegex = /^\/index\.php(?=\/|$)/i
 // The home page and its pagination, `/page/2/`, whose own feed redirects to the posts feed.
 const homePathRegex = /^(?:\/|\/page\/\d+\/?)?$/i
 
+const assetTags = ['link', 'script']
+
+const getAssetUrl = (element: Element): string => {
+  return element.attribs.href ?? element.attribs.src ?? ''
+}
+
+const getRootPath = (content: string | undefined): string | undefined => {
+  const asset = findElement(content, (element) => {
+    return assetTags.includes(element.name) && assetUrlRegex.test(getAssetUrl(element))
+  })
+
+  if (!asset) {
+    return
+  }
+
+  return getAssetUrl(asset).match(assetUrlRegex)?.groups?.rootPath
+}
+
 export const isTypechoHtml = (content: string): boolean => {
-  return assetRegex.test(content)
+  return getRootPath(content) !== undefined
 }
 
 export const getTypechoPage = (
   url: string,
   content: string | undefined,
 ): TypechoPage | undefined => {
-  const rootPath = content?.match(assetRegex)?.[1]
+  const rootPath = getRootPath(content)
 
   if (rootPath === undefined) {
     return

@@ -6,7 +6,7 @@ import { composeHint, findElement, getCookieNames, hasMarker } from '../../commo
 // Generic partly covers category, home, search.
 
 const searchPathRegex = /^\/search\.php$/i
-const categoryFeedRegex = /\/rss\.php\?(?:[^#]*&)?categoryid=([1-9]\d*)/i
+const categoryFeedRegex = /^[^?#]*\/rss\.php\?(?:[^#]*&)?categoryid=(?<categoryId>[1-9]\d*)/i
 
 export type BigcommercePage =
   | { kind: 'category'; categoryId: string }
@@ -24,7 +24,7 @@ const getCategoryId = (content: string | undefined): string | undefined => {
     return element.name === 'link' && categoryFeedRegex.test(element.attribs.href ?? '')
   })
 
-  return link?.attribs.href?.match(categoryFeedRegex)?.[1]
+  return link?.attribs.href?.match(categoryFeedRegex)?.groups?.categoryId
 }
 
 const getBigcommercePage = (url: string, content: string | undefined): BigcommercePage => {

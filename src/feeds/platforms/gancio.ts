@@ -5,7 +5,7 @@ import { composeHint, findElement } from '../../common/utils.js'
 // Discoverability: Discoverable without handler.
 
 const customCssPathRegex = /\/custom_css$/
-const trailingSlashesRegex = /\/+$/
+const trailingSlashesRegex = /(?<!\/)\/+$/
 
 export type GancioPage =
   | { kind: 'tag' | 'place' | 'collection'; rootUrl: string; value: string }
