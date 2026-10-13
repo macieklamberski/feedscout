@@ -686,7 +686,7 @@ Discovers Atom and RSS feeds for Bear Blog, including tag-filtered feeds.
 |-------------|-----------------|
 | `bearblog.dev` | Trending<sup>†</sup> (Atom + RSS) |
 | `*.bearblog.dev` | Posts (Atom + RSS) |
-| `*.bearblog.dev/?q={tag}` | Tag (Atom + RSS) · posts |
+| `*.bearblog.dev/blog/?q={tag}` | Tag (Atom + RSS) · posts |
 
 <sup>†</sup> *Found only by the Platform method.*
 
