@@ -95,6 +95,17 @@ const getBasePath = (content: string | undefined): string => {
   return setup?.attribs['data-base-uri'] ?? ''
 }
 
+// The parser reads paths from the install's root, so the sub-path is cut from the front.
+const stripBasePath = (url: string, basePath: string): string => {
+  const parsedUrl = parseUrl(url)
+
+  if (!parsedUrl?.pathname.startsWith(`${basePath}/`)) {
+    return url
+  }
+
+  return `${parsedUrl.origin}${parsedUrl.pathname.slice(basePath.length)}${parsedUrl.search}`
+}
+
 export const discourseHandler: PlatformHandler = {
   match: (url, content, headers) => {
     if (!hasMarker(content, headers, { html: isDiscourseHtml, headers: isDiscourseHeaders })) {
@@ -105,26 +116,14 @@ export const discourseHandler: PlatformHandler = {
   },
 
   resolve: (url, content) => {
-    const parsedUrl = parseUrl(url)
-
-    if (!parsedUrl) {
-      return []
-    }
-
-    const { origin, pathname, search } = parsedUrl
     const basePath = getBasePath(content)
-    const siteUrl = `${origin}${basePath}`
-    let sitePath = pathname
-
-    if (pathname.startsWith(`${basePath}/`)) {
-      sitePath = pathname.slice(basePath.length)
-    }
-
-    const parsed = parseDiscourseUrl(`${origin}${sitePath}${search}`)
+    const parsed = parseDiscourseUrl(stripBasePath(url, basePath))
 
     if (!parsed) {
       return []
     }
+
+    const siteUrl = `${new URL(url).origin}${basePath}`
 
     if (parsed.kind === 'topic') {
       return [

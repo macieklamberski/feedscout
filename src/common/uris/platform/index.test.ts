@@ -346,6 +346,23 @@ describe('discoverUrisFromPlatform', () => {
     expect(await discoverUrisFromPlatform('<html></html>', undefined, options)).toEqual(expected)
   })
 
+  it('should keep a handler whose match throws on the URL alone among the marker ones', async () => {
+    const handler: PlatformHandler = {
+      match: (_url, content) => {
+        if (content === undefined) {
+          throw new Error('No content')
+        }
+
+        return true
+      },
+      resolve: () => [{ uri: 'https://example.com/feed.xml' }],
+    }
+    const options = { baseUrl: 'https://example.com', handlers: [handler] }
+    const expected = [{ uri: 'https://example.com/feed.xml' }]
+
+    expect(await discoverUrisFromPlatform('<html></html>', undefined, options)).toEqual(expected)
+  })
+
   it('should keep the provided order among handlers that need a marker', async () => {
     const firstHandler: PlatformHandler = {
       match: (_url, content) => content !== undefined,
