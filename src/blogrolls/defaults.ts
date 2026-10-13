@@ -1,15 +1,3 @@
-import {
-  archiveExtensions,
-  audioExtensions,
-  codeExtensions,
-  documentExtensions,
-  flashExtensions,
-  fontExtensions,
-  imageExtensions,
-  installerExtensions,
-  subtitleExtensions,
-  videoExtensions,
-} from 'trousse'
 import type { LinkSelector } from '../common/types.js'
 import type { GuessMethodOptions } from '../common/uris/guess/types.js'
 import type { HeadersMethodOptions } from '../common/uris/headers/types.js'
@@ -32,22 +20,6 @@ export const urisComprehensive = [
 ]
 
 export const anchorLabels = ['blogroll', 'opml', 'subscriptions', 'reading list']
-
-export const acceptHeader =
-  'text/x-opml, text/x-opml+xml, application/xml;q=0.9, text/xml;q=0.9, */*;q=0.1'
-
-export const ignoredExtensions = [
-  ...archiveExtensions,
-  ...audioExtensions,
-  ...codeExtensions,
-  ...documentExtensions,
-  ...flashExtensions,
-  ...fontExtensions,
-  ...imageExtensions,
-  ...installerExtensions,
-  ...subtitleExtensions,
-  ...videoExtensions,
-]
 
 export const linkSelectors: Array<LinkSelector> = [
   { rel: 'blogroll' },
