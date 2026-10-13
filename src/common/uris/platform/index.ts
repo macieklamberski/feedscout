@@ -1,4 +1,4 @@
-import { isHttpUrl, type NormalizeOptions, normalizeUrl } from 'trousse'
+import { isHttpUrl, type NormalizeOptions, normalizeUrl, stripWww } from 'trousse'
 import { reportError } from '../../discover/utils.js'
 import type {
   DiscoverInputObject,
@@ -44,18 +44,22 @@ export const resolveFromPlatform = async (
   }
 
   const pageUrl = normalizeUrl(baseUrl, { collapseSlashes: true })
-  const pages: Array<PlatformPage> = [{ url: pageUrl, content, headers }]
+  const fetchedPage: PlatformPage = { url: pageUrl, content, headers }
+  const pages = [fetchedPage]
   let refsUrl = pageUrl
 
   // A page that redirects, to a sign-in page for example, is fetched under another URL. The
   // content and headers belong to that URL, so the requested one is tried without them.
   if (requestedUrl && isHttpUrl(requestedUrl)) {
     const requestedPageUrl = normalizeUrl(requestedUrl, { collapseSlashes: true })
+    const normalizedRequested = normalizeUrl(requestedPageUrl, samePageOptions)
+    const normalizedFetched = normalizeUrl(pageUrl, samePageOptions)
+    const requestedHost = stripWww(new URL(requestedPageUrl).hostname)
+    const fetchedHost = stripWww(new URL(pageUrl).hostname)
 
-    const requestedPage = normalizeUrl(requestedPageUrl, samePageOptions)
-    const fetchedPage = normalizeUrl(pageUrl, samePageOptions)
-
-    if (requestedPage !== fetchedPage) {
+    // A site that moved to another host still answers its old feed URLs with entries that
+    // stopped the day it moved.
+    if (normalizedRequested !== normalizedFetched && requestedHost === fetchedHost) {
       pages.push({ url: requestedPageUrl })
     }
   }
@@ -65,6 +69,16 @@ export const resolveFromPlatform = async (
       try {
         if (!handler.match(page.url, page.content, page.headers)) {
           continue
+        }
+
+        // A handler that takes the fetched URL alone and refuses it with its content has read the
+        // page and declined it, the sign-up page of an unregistered blog for example.
+        if (page !== fetchedPage) {
+          const hasDeclined = handler.match(pageUrl) && !handler.match(pageUrl, content, headers)
+
+          if (hasDeclined) {
+            continue
+          }
         }
 
         // A match puts the page on the handler's host even when resolve finds nothing there.
