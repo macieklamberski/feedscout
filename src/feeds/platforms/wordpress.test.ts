@@ -131,6 +131,35 @@ describe('parseWordpressUrl', () => {
   it('should return undefined for a staging copy', () => {
     expect(parseWordpressUrl('https://staging-1234-example.wpcomstaging.com/')).toBeUndefined()
   })
+
+  const homePaths = [
+    '/page/2/',
+    '/wp-login.php',
+    '/wp-admin/',
+    '/wp-content/uploads/2024/01/a.jpg',
+    '/search/news/',
+    '/category/',
+  ]
+
+  it.each(homePaths)('should return the home page for %s', (path) => {
+    const expected: WordpressUrl = { kind: 'home' }
+
+    expect(parseWordpressUrl(`https://example.wordpress.com${path}`)).toEqual(expected)
+  })
+
+  it('should return the date archive for its paginated page', () => {
+    const expected: WordpressUrl = {
+      kind: 'archive',
+      path: '/2024/05',
+      hintKey: 'wordpress:date-archive',
+    }
+
+    expect(parseWordpressUrl('https://example.wordpress.com/2024/05/page/2/')).toEqual(expected)
+  })
+
+  it('should return undefined for a service host', () => {
+    expect(parseWordpressUrl('https://public-api.wordpress.com/rest/v1.1/sites/1')).toBeUndefined()
+  })
 })
 
 describe('wordpressHandler', () => {
