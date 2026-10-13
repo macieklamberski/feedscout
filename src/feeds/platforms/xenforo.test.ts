@@ -29,15 +29,31 @@ describe('isXenforoHtml', () => {
 
 describe('parseXenforoUrl', () => {
   it('should return the forum for a short forum route', () => {
-    const expected: XenforoUrl = { kind: 'forum', route: 'f', forumPath: 'general.2' }
+    const expected: XenforoUrl = { kind: 'forum', basePath: '', route: 'f', forumPath: 'general.2' }
 
     expect(parseXenforoUrl('https://forum.example/f/general.2/')).toEqual(expected)
   })
 
   it('should return the forum with a canonical route for a capitalized one', () => {
-    const expected: XenforoUrl = { kind: 'forum', route: 'forums', forumPath: 'general.2' }
+    const expected: XenforoUrl = {
+      kind: 'forum',
+      basePath: '',
+      route: 'forums',
+      forumPath: 'general.2',
+    }
 
     expect(parseXenforoUrl('https://forum.example/Forums/general.2/')).toEqual(expected)
+  })
+
+  it('should return the forum with the sub-path the board is mounted under', () => {
+    const expected: XenforoUrl = {
+      kind: 'forum',
+      basePath: '/community',
+      route: 'forums',
+      forumPath: 'general.2',
+    }
+
+    expect(parseXenforoUrl('https://forum.example/community/forums/general.2/')).toEqual(expected)
   })
 
   it('should return the board for another page', () => {
@@ -65,6 +81,22 @@ describe('xenforoHandler', () => {
   describe('resolve', () => {
     it('should return empty array for a URL that does not parse', () => {
       expect(xenforoHandler.resolve('not-a-url')).toEqual([])
+    })
+
+    it('should return the feeds under the sub-path the board is mounted under', () => {
+      const value = 'https://forum.example/community/forums/general.2/'
+      const expected = [
+        {
+          uri: 'https://forum.example/community/forums/general.2/index.rss',
+          hint: { key: 'xenforo:forum', label: 'Forum' },
+        },
+        {
+          uri: 'https://forum.example/community/forums/-/index.rss',
+          hint: { key: 'xenforo:site', label: 'Site' },
+        },
+      ]
+
+      expect(xenforoHandler.resolve(value)).toEqual(expected)
     })
 
     it('should return the forum feed for a capitalized f segment', () => {

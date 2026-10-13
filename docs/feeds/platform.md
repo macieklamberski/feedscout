@@ -1698,7 +1698,7 @@ Discovers the feeds of a Discuz! board. Detected by the `Discuz!` generator meta
 
 ### XenForo
 
-Discovers the feeds of a XenForo board. Detected by the `XF` or `XenForo` id on the html element.
+Discovers the feeds of a XenForo board. Detected by the `XF` or `XenForo` id on the html element. A forum page of a board under a sub-path gets its feeds there.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|

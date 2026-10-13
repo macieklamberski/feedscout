@@ -5,10 +5,12 @@ import { composeHint, hasElementWithId, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
-export type XenforoUrl = { kind: 'forum'; route: string; forumPath: string } | { kind: 'board' }
+export type XenforoUrl =
+  | { kind: 'forum'; basePath: string; route: string; forumPath: string }
+  | { kind: 'board' }
 
 // XF2 serves a forum at `/f/{slug.id}` or, on the default route, `/forums/{slug.id}`.
-const forumPathRegex = /\/(f|forums)\/([^/]+\.\d+)(?:\/|$)/i
+const forumPathRegex = /\/(?<route>f|forums)\/(?<forumPath>[^/]+\.\d+)(?:\/|$)/i
 // The board feed sits under the same route prefix as the forums. A page outside a
 // forum does not carry the prefix, so both spellings are emitted and the one the
 // board does not serve fails validation.
@@ -28,11 +30,15 @@ export const parseXenforoUrl = (url: string): XenforoUrl | undefined => {
     return
   }
 
-  const [, rawRoute, forumPath] = parsedUrl.pathname.match(forumPathRegex) ?? []
-  const route = getAnyOf(rawRoute, routePrefixes)
+  const forumMatch = parsedUrl.pathname.match(forumPathRegex)
+  const route = getAnyOf(forumMatch?.groups?.route, routePrefixes)
+  const forumPath = forumMatch?.groups?.forumPath
 
-  if (route && forumPath) {
-    return { kind: 'forum', route, forumPath }
+  // A board is routinely mounted under a sub-path such as `/community`, in front of the route.
+  if (forumMatch && route && forumPath) {
+    const basePath = parsedUrl.pathname.slice(0, forumMatch.index)
+
+    return { kind: 'forum', basePath, route, forumPath }
   }
 
   return { kind: 'board' }
@@ -57,12 +63,11 @@ export const xenforoHandler: PlatformHandler = {
     const { origin } = new URL(url)
 
     if (parsed.kind === 'forum') {
+      const routeUrl = `${origin}${parsed.basePath}/${parsed.route}`
+
       return [
-        {
-          uri: `${origin}/${parsed.route}/${parsed.forumPath}/index.rss`,
-          hint: composeHint('xenforo:forum'),
-        },
-        { uri: `${origin}/${parsed.route}/-/index.rss`, hint: composeHint('xenforo:site') },
+        { uri: `${routeUrl}/${parsed.forumPath}/index.rss`, hint: composeHint('xenforo:forum') },
+        { uri: `${routeUrl}/-/index.rss`, hint: composeHint('xenforo:site') },
       ]
     }
 
