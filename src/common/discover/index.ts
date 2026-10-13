@@ -1,4 +1,4 @@
-import { resolveFeedProtocol } from 'trousse'
+import { isHttpUrl, resolveFeedProtocol } from 'trousse'
 import {
   type DiscoverInput,
   type DiscoverInputObject,
@@ -104,7 +104,8 @@ export const discover = async <TValid>(
       sourceInput.url,
     )
 
-    if (siteUrl) {
+    // A feed can name a `file:` or `data:` URL as its site, which a fetch function may well read.
+    if (siteUrl && isHttpUrl(siteUrl)) {
       reportStep({ step: 'resolveSiteUrl', status: 'start', url: siteUrl })
 
       try {

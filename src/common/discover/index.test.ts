@@ -585,6 +585,26 @@ describe('discoverFeeds', () => {
       expect(steps.slice(0, 2)).toEqual(expected)
     })
 
+    it('should not fetch a site URL of a scheme other than http', async () => {
+      const requestedUrls: Array<string> = []
+      const mockFetch = createMockFetch({})
+
+      await discoverFeeds(
+        { url: 'https://example.com', content: '<html></html>' },
+        {
+          methods: { guess: { uris: ['/feed'] } },
+          fetchFn: (url, options) => {
+            requestedUrls.push(url)
+
+            return mockFetch(url, options)
+          },
+          resolveSiteUrlFn: () => 'file:///etc/passwd',
+        },
+      )
+
+      expect(requestedUrls).toEqual(['https://example.com/feed'])
+    })
+
     it('should not report methods skipped by stopOnFirstMethod', async () => {
       const steps: Array<DiscoverStep> = []
       const platformHandler: PlatformHandler = {
