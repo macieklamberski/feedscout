@@ -953,7 +953,7 @@ Discovers RSS feeds for podcasts with a Castos-hosted website.
 
 ### Discourse
 
-Discovers RSS feeds for Discourse forums. Detected by the `Discourse` generator meta tag, the `data-discourse-setup` meta tag or the `X-Discourse-Route` response header.
+Discovers RSS feeds for Discourse forums. Detected by the `Discourse` generator meta tag, the `data-discourse-setup` meta tag or the `X-Discourse-Route` response header. An install under a sub-path gets its feeds there, read from the setup meta tag.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
@@ -1815,7 +1815,7 @@ Discovers the feeds of a phpBB board. Detected by the `phpbb` body id or the `{n
 
 ### NodeBB
 
-Discovers the feeds of a NodeBB forum. Detected by the `X-Powered-By` response header.
+Discovers the feeds of a NodeBB forum. Detected by the `X-Powered-By` response header. An install under a sub-path gets its feeds there, read from the page config.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
