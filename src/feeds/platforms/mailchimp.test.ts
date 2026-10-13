@@ -10,6 +10,12 @@ describe('parseMailchimpUrl', () => {
     )
   })
 
+  it('should return the campaign for a single campaign page', () => {
+    const expected: MailchimpUrl = { kind: 'campaign', userId: 'abc' }
+
+    expect(parseMailchimpUrl('https://us1.campaign-archive.com/?u=abc&id=def')).toEqual(expected)
+  })
+
   it('should return undefined without the list id', () => {
     expect(parseMailchimpUrl('https://us1.campaign-archive.com/home/?u=abc')).toBeUndefined()
   })
@@ -62,6 +68,55 @@ describe('mailchimpHandler', () => {
       ]
 
       expect(mailchimpHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return the feed of the list a campaign page links', () => {
+      const value = 'https://us17.campaign-archive.com/?u=abc123&id=def456'
+      const content = `
+        <a
+          class="rss"
+          href="https://us17.campaign-archive.com/feed?u=abc123&amp;id=fed789"
+        >RSS</a>
+      `
+      const expected = [
+        {
+          uri: 'https://us17.campaign-archive.com/feed?u=abc123&id=fed789',
+          hint: { key: 'mailchimp:archive', label: 'Archive' },
+        },
+      ]
+
+      expect(mailchimpHandler.resolve(value, content)).toEqual(expected)
+    })
+
+    it('should return the feed of the archive a campaign page links', () => {
+      const value = 'https://us17.campaign-archive.com/?u=abc123&id=def456'
+      const content = `
+        <a
+          href="https://us17.campaign-archive.com/home/?u=abc123&amp;id=fed789"
+          title="View Past Issues"
+        >Past Issues</a>
+      `
+      const expected = [
+        {
+          uri: 'https://us17.campaign-archive.com/feed?u=abc123&id=fed789',
+          hint: { key: 'mailchimp:archive', label: 'Archive' },
+        },
+      ]
+
+      expect(mailchimpHandler.resolve(value, content)).toEqual(expected)
+    })
+
+    it('should return an empty array for a campaign page that links no list', () => {
+      const value = 'https://us17.campaign-archive.com/?u=abc123&id=def456'
+      const content = '<p>Monthly update</p>'
+
+      expect(mailchimpHandler.resolve(value, content)).toEqual([])
+    })
+
+    it('should return an empty array for a campaign page without content', () => {
+      const value = 'https://us17.campaign-archive.com/?u=abc123&id=def456'
+
+      expect(mailchimpHandler.resolve(value)).toEqual([])
     })
 
     it('should return an empty array without both ids', () => {

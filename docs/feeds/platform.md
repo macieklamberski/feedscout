@@ -1669,10 +1669,11 @@ Discovers the RSS feed of a Mailchimp campaign archive.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{dc}.campaign-archive.com/?u={u}&id={id}` | Archive (RSS) |
+| `{dc}.campaign-archive.com/home/?u={u}&id={list}` | Archive (RSS) |
+| `{dc}.campaign-archive.com/?u={u}&id={campaign}` | Archive (RSS) |
 
 > [!NOTE]
-> The datacentre prefix and both ids come from the input URL; none of them can be derived.
+> The datacentre prefix and the account id come from the input URL. On a campaign page the `id` names the campaign, so the list id is read from the archive link in the page.
 
 ### Discuz!
 
