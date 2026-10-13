@@ -129,5 +129,22 @@ describe('joomlaHandler', () => {
 
       expect(joomlaHandler.resolve(value)).toEqual(expected)
     })
+
+    it('should keep the query that names the view and drop the rest', () => {
+      const value = 'https://example.com/index.php?option=com_content&view=category&id=8&start=20'
+      const viewUrl = 'https://example.com/index.php?option=com_content&view=category&id=8'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: `${viewUrl}&format=feed&type=rss`,
+          hint: { key: 'joomla:view', label: 'View', format: 'rss' },
+        },
+        {
+          uri: `${viewUrl}&format=feed&type=atom`,
+          hint: { key: 'joomla:view', label: 'View', format: 'atom' },
+        },
+      ]
+
+      expect(joomlaHandler.resolve(value)).toEqual(expected)
+    })
   })
 })
