@@ -1,11 +1,29 @@
-import { isHttpUrl, normalizeUrl } from 'trousse'
+import { isHttpUrl, type NormalizeOptions, normalizeUrl } from 'trousse'
 import { reportError } from '../../discover/utils.js'
-import type { DiscoverOnErrorFn, DiscoverRef, DiscoverUriEntry, FetchFn } from '../../types.js'
+import type {
+  DiscoverInputObject,
+  DiscoverOnErrorFn,
+  DiscoverRef,
+  DiscoverUriEntry,
+  FetchFn,
+} from '../../types.js'
 import type { PlatformMethodOptions } from './types.js'
+
+type PlatformPage = Omit<DiscoverInputObject, 'status'>
 
 export type PlatformResolution = {
   entries: Array<DiscoverUriEntry>
   guessExclusionRegexes: Array<RegExp>
+}
+
+// The same page answers under https, with www, with a trailing slash, without the fragment and
+// with the query reordered.
+const samePageOptions: NormalizeOptions = {
+  stripScheme: true,
+  stripWww: true,
+  stripTrailingSlash: true,
+  stripHash: true,
+  sortQueryParams: true,
 }
 
 export const resolveFromPlatform = async (
@@ -15,7 +33,7 @@ export const resolveFromPlatform = async (
   fetchFn?: FetchFn,
   onError?: DiscoverOnErrorFn,
 ): Promise<PlatformResolution> => {
-  const { baseUrl, handlers, enrichFn } = options
+  const { baseUrl, requestedUrl, handlers, enrichFn } = options
   const entries: Array<DiscoverUriEntry> = []
   const refs: Array<DiscoverRef> = []
   const guessExclusionRegexes: Array<RegExp> = []
@@ -26,37 +44,59 @@ export const resolveFromPlatform = async (
   }
 
   const pageUrl = normalizeUrl(baseUrl, { collapseSlashes: true })
+  const pages: Array<PlatformPage> = [{ url: pageUrl, content, headers }]
+  let refsUrl = pageUrl
 
-  for (const handler of handlers) {
-    try {
-      if (!handler.match(pageUrl, content, headers)) {
-        continue
-      }
+  // A page that redirects, to a sign-in page for example, is fetched under another URL. The
+  // content and headers belong to that URL, so the requested one is tried without them.
+  if (requestedUrl && isHttpUrl(requestedUrl)) {
+    const requestedPageUrl = normalizeUrl(requestedUrl, { collapseSlashes: true })
 
-      // A match puts the page on the handler's host even when resolve finds nothing there.
-      if (handler.guessExclusionRegex) {
-        guessExclusionRegexes.push(handler.guessExclusionRegex)
-      }
+    const requestedPage = normalizeUrl(requestedPageUrl, samePageOptions)
+    const fetchedPage = normalizeUrl(pageUrl, samePageOptions)
 
-      const resolved = await handler.resolve(pageUrl, content, headers, fetchFn)
+    if (requestedPage !== fetchedPage) {
+      pages.push({ url: requestedPageUrl })
+    }
+  }
 
-      // A handler that matched but found nothing leaves the page to the handlers after it.
-      if (resolved.length === 0) {
-        continue
-      }
-
-      for (const item of resolved) {
-        if ('uri' in item) {
-          entries.push(item)
+  for (const page of pages) {
+    for (const handler of handlers) {
+      try {
+        if (!handler.match(page.url, page.content, page.headers)) {
           continue
         }
 
-        refs.push(item)
-      }
+        // A match puts the page on the handler's host even when resolve finds nothing there.
+        if (handler.guessExclusionRegex) {
+          guessExclusionRegexes.push(handler.guessExclusionRegex)
+        }
 
+        const resolved = await handler.resolve(page.url, page.content, page.headers, fetchFn)
+
+        // A handler that matched but found nothing leaves the page to the handlers after it.
+        if (resolved.length === 0) {
+          continue
+        }
+
+        for (const item of resolved) {
+          if ('uri' in item) {
+            entries.push(item)
+            continue
+          }
+
+          refs.push(item)
+        }
+
+        break
+      } catch (error) {
+        reportError(onError, error, { phase: 'platformHandler', url: page.url })
+      }
+    }
+
+    if (entries.length > 0 || refs.length > 0) {
+      refsUrl = page.url
       break
-    } catch (error) {
-      reportError(onError, error, { phase: 'platformHandler', url: pageUrl })
     }
   }
 
@@ -73,7 +113,7 @@ export const resolveFromPlatform = async (
         entries.push({ uri })
       }
     } catch (error) {
-      reportError(onError, error, { phase: 'enrichFn', url: baseUrl })
+      reportError(onError, error, { phase: 'enrichFn', url: refsUrl })
     }
   }
 

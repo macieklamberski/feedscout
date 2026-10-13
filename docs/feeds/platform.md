@@ -13,6 +13,7 @@ The Platform method uses handlers for each supported platform:
 1. **Pattern Matching**: Each handler checks if the URL matches its platform (e.g., `github.com`, `youtube.com`).
 2. **URL Generation**: The matching handler generates feed URLs based on the URL structure.
 3. **First Match**: The first matching handler that generates feeds wins. Subsequent handlers are skipped. A handler that matches but generates nothing passes the page to the next one.
+4. **Requested URL**: When no handler generates feeds for the fetched page, the handlers run once more on the URL you asked for. A page that redirects, to a sign-in page for example, still yields the feeds its original URL names.
 
 > [!TIP]
 > Even when feeds are discoverable via HTML `<link>` tags, the Platform method is useful because it generates feed variants the page does not advertise, like a channel's Shorts feed or a repository's releases feed. Handlers that work from the URL alone need no page content, which helps when you [use the method directly](#using-directly) and only have a URL.
@@ -256,7 +257,7 @@ Discovers Atom feeds for Gitea users, repositories, releases, tags, branch commi
 <sup>†</sup> *Found only by the Platform method.*
 
 > [!NOTE]
-> A self-hosted Forgejo instance sets no cookie on an anonymous request and is not matched; Codeberg, which runs Forgejo, is covered by the host list. `gitea.com` sends anonymous visitors of branch, file and commit history pages to its sign-in page, so discovery from those pages finds no feeds there.
+> A self-hosted Forgejo instance sets no cookie on an anonymous request and is not matched; Codeberg, which runs Forgejo, is covered by the host list.
 
 ### GitLab
 
@@ -3595,6 +3596,8 @@ const uris = await discoverUrisFromPlatform(htmlContent, undefined, {
 
 The arguments are the page content, the response headers, the options, an optional `fetchFn` that is passed on to handlers, and an optional `onError` that receives a throw from a handler or from `enrichFn`. Pass `undefined` for content or headers you do not have.
 
+The options also take an optional `requestedUrl`: the URL you asked for, when the fetch ended on another one. When no handler generates feeds for `baseUrl`, the handlers run on `requestedUrl` without the content and headers, which belong to the other page.
+
 > [!NOTE]
 > The YouTube handler requires HTML content for `@handle`, `/user/`, `/c/`, and video URLs to extract the channel ID. For `/channel/UC...` URLs, no content is needed.
 
@@ -3623,7 +3626,7 @@ type PlatformHandler = {
 |--------|-------------|
 | `match(url, content?, headers?)` | Returns `true` if this handler should process the URL |
 | `resolve(url, content?, headers?, fetchFn?)` | Returns an array of [`DiscoverUriEntry`](/reference/types#discoverurientry) objects for the given page URL. A favicon handler can also return a [`DiscoverRef`](/reference/types#discoverref) for an icon that takes an extra request. See [Enriching Platform Icons](/other/favicons#enriching-platform-icons) |
-| `guessExclusionRegex` | Matches the full URL of any user's feed on the platform's host. When the handler matches the page, the [Guess method](/feeds/guess) drops URLs matching it, unless the handler generated them. Set it on a platform where a path like `/feed.xml` can be the feed of a user named `feed` |
+| `guessExclusionRegex` | Matches the full URL of any user's feed on the platform's host. When the handler matches the page or the requested URL, the [Guess method](/feeds/guess) drops URLs matching it, unless the handler generated them. Set it on a platform where a path like `/feed.xml` can be the feed of a user named `feed` |
 
 ### Basic Example
 
