@@ -76,11 +76,11 @@
     "feedsmith": "^3.0.1"
   },
   "devDependencies": {
-    "@types/bun": "^1.4.2",
+    "@types/bun": "^1.4.3",
     "@types/http-link-header": "^1.0.7",
     "feedsmith": "^3.0.1",
     "kvalita": "^1.24.3",
-    "ogier": "^1.5.0",
+    "ogier": "^1.5.2",
     "trousse": "^2.10.0",
     "tsdown": "^0.23.1",
     "vitepress": "^2.0.0-alpha.20"
