@@ -7,7 +7,7 @@ import type {
   DiscoverUriEntry,
   FetchFn,
 } from '../../types.js'
-import type { PlatformMethodOptions } from './types.js'
+import type { PlatformHandler, PlatformMethodOptions } from './types.js'
 
 type PlatformPage = Omit<DiscoverInputObject, 'status'>
 
@@ -24,6 +24,23 @@ const samePageOptions: NormalizeOptions = {
   stripTrailingSlash: true,
   stripHash: true,
   sortQueryParams: true,
+}
+
+const matchesUrlAlone = (handler: PlatformHandler, url: string): boolean => {
+  try {
+    return handler.match(url)
+  } catch {}
+
+  return false
+}
+
+// A handler that takes the URL alone owns its host, so it goes ahead of the ones that need a
+// marker. A page that links or quotes another platform's marker stays with its own handler.
+const orderHandlers = (handlers: Array<PlatformHandler>, url: string): Array<PlatformHandler> => {
+  const urlHandlers = handlers.filter((handler) => matchesUrlAlone(handler, url))
+  const markerHandlers = handlers.filter((handler) => !urlHandlers.includes(handler))
+
+  return [...urlHandlers, ...markerHandlers]
 }
 
 export const resolveFromPlatform = async (
@@ -65,7 +82,11 @@ export const resolveFromPlatform = async (
   }
 
   for (const page of candidatePages) {
-    for (const handler of handlers) {
+    // Without content and headers every match is on the URL alone, and the order already holds.
+    const hasMarkers = page.content !== undefined || page.headers !== undefined
+    const pageHandlers = hasMarkers ? orderHandlers(handlers, page.url) : handlers
+
+    for (const handler of pageHandlers) {
       try {
         if (!handler.match(page.url, page.content, page.headers)) {
           continue

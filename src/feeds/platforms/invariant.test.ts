@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'bun:test'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { defaultPlatformOptions } from '../defaults.js'
 import { b2evolutionHandler } from './b2evolution.js'
@@ -491,4 +492,29 @@ describe('platform handler invariant', () => {
       expect(violations).toEqual([])
     })
   }
+
+  // The Platform method tries a handler that takes the URL alone ahead of the marker ones, which
+  // only holds while no handler takes a host it does not own.
+  it('should match no page of an unknown host without content and headers', () => {
+    const violations: Array<string> = []
+
+    for (const path of paths) {
+      const url = `https://example.org${path}`
+
+      if (defaultPlatformOptions.handlers.some((handler) => handler.match(url))) {
+        violations.push(url)
+      }
+    }
+
+    expect(violations).toEqual([])
+  })
+
+  it('should leave a page on a known host to its handler when it links a marker', async () => {
+    const value = '<a href="https://github.com/bookwyrm-social/bookwyrm">BookWyrm</a>'
+    const options = { ...defaultPlatformOptions, baseUrl: 'https://www.reddit.com/user/alice' }
+    const entries = await discoverUrisFromPlatform(value, undefined, options)
+    const keys = entries.map((entry) => entry.hint?.key)
+
+    expect(keys).toEqual(['reddit:posts'])
+  })
 })
