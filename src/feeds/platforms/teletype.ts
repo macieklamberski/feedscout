@@ -2,7 +2,9 @@ import { decodeSegment, isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
-// Discoverability: Unmeasured, teletype.in answered Cloudflare 522 from two networks on 2026-09-27.
+// Discoverability: Partially discoverable without handler.
+// Generic covers blog (html).
+// Handler needed for: post.
 
 export type TeletypeUrl = { kind: 'blog'; username: string }
 

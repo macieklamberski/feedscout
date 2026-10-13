@@ -4,8 +4,7 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic covers blog, iiblog, seesaaSpace, sokuho, xblog (html), partly covers stablo.
-// Handler needed for: seesaaBlog.
+// Generic covers blog, iiblog, seesaaBlog, seesaaSpace, sokuho, xblog (html), partly covers stablo.
 
 export type SeesaaUrl = { kind: 'blog' }
 

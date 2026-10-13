@@ -2,7 +2,7 @@ import { getSubdomain, isAnyOf, isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
-// Discoverability: Unmeasured, podomatic.com no longer resolves in DNS, from any resolver.
+// Discoverability: Discoverable without handler.
 
 export type PodomaticUrl = { kind: 'podcast'; show: string }
 

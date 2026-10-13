@@ -3,8 +3,8 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic covers favorites, groupDiscuss, photostream (html), partly covers group, groupPool.
-// Handler needed for: helpForum, tag.
+// Generic covers favorites, groupDiscuss, photostream (html), partly covers group.
+// Handler needed for: groupPool, helpForum, tag.
 
 export type FlickrUrl =
   | { kind: 'tag'; tag: string }
