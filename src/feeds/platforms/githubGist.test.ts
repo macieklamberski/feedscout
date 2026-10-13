@@ -82,6 +82,19 @@ describe('parseGithubGistUrl', () => {
     expect(parseGithubGistUrl(value)).toBeUndefined()
   })
 
+  const siteRouteValues: Array<string> = [
+    'https://gist.github.com/starred',
+    'https://gist.github.com/forked',
+    'https://gist.github.com/mine',
+    'https://gist.github.com/new',
+    'https://gist.github.com/gists',
+    'https://gist.github.com/robots.txt',
+  ]
+
+  it.each(siteRouteValues)('should return undefined for the site route %s', (value) => {
+    expect(parseGithubGistUrl(value)).toBeUndefined()
+  })
+
   it('should return undefined for an excluded path in another case', () => {
     expect(parseGithubGistUrl('https://gist.github.com/SEARCH')).toBeUndefined()
   })

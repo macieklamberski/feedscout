@@ -21,7 +21,17 @@ const publicationTagRegex = /^\/([^/@][^/]+)\/tagged\/([^/]+)/i
 const publicationRegex = /^\/([^/@][^/]+)/
 const subdomainTagRegex = /^\/tagged\/([^/]+)/i
 
-const excludedPaths = ['search', 'me', 'new-story', 'plans', 'membership', 'feed']
+const excludedPaths = [
+  'search',
+  'me',
+  'new-story',
+  'plans',
+  'membership',
+  'feed',
+  'about',
+  'explore-topics',
+  'tag',
+]
 // Their /feed answers 404 or redirects away from a feed.
 const excludedSubdomains = [
   'cdn-images-1', // Image CDN

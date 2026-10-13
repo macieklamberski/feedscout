@@ -166,6 +166,30 @@ describe('parseGiteaUrl', () => {
     expect(parseGiteaUrl(value)).toBeUndefined()
   })
 
+  const reservedValues: Array<string> = [
+    'https://gitea.com/issues',
+    'https://gitea.com/pulls',
+    'https://gitea.com/milestones',
+    'https://gitea.com/notifications',
+    'https://gitea.com/login',
+    'https://codeberg.org/org/create',
+    'https://codeberg.org/repo/create',
+    'https://gitea.com/metrics',
+    'https://gitea.com/v2',
+    'https://gitea.com/attachments/1234',
+    'https://gitea.com/avatar/abcdef',
+    'https://gitea.com/avatars/abcdef',
+    'https://gitea.com/repo-avatars/abcdef',
+    'https://gitea.com/captcha/abcdef.png',
+    'https://gitea.com/favicon.ico',
+    'https://gitea.com/ghost',
+    'https://gitea.com/.well-known/openid-configuration',
+  ]
+
+  it.each(reservedValues)('should return undefined for the reserved name in %s', (value) => {
+    expect(parseGiteaUrl(value)).toBeUndefined()
+  })
+
   it('should return undefined for an excluded path with a route suffix', () => {
     expect(parseGiteaUrl('https://codeberg.org/explore.rss')).toBeUndefined()
   })

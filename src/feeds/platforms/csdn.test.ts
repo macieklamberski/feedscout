@@ -2,6 +2,16 @@ import { describe, expect, it } from 'bun:test'
 import { type CsdnUrl, csdnHandler, parseCsdnUrl } from './csdn.js'
 
 describe('parseCsdnUrl', () => {
+  const routeValues: Array<string> = [
+    'https://blog.csdn.net/nav/python',
+    'https://blog.csdn.net/paylist',
+    'https://blog.csdn.net/Rank/list',
+  ]
+
+  it.each(routeValues)('should return undefined for the site route %s', (value) => {
+    expect(parseCsdnUrl(value)).toBeUndefined()
+  })
+
   it('should return the blog for an article page', () => {
     const expected: CsdnUrl = { kind: 'blog', username: 'someuser' }
 

@@ -14,17 +14,32 @@ const hosts = ['write.as', 'www.write.as']
 const tagRegex = /^\/([^/]+)\/tag:([^/]+)/i
 
 const excludedPaths = [
+  '5years',
   'about',
   'api',
+  'apps',
   'blog',
+  'contact',
   'docs',
+  'extend',
+  'guidelines',
+  'help',
+  'jobs',
   'legal',
+  'letters',
   'login',
+  'logout',
   'me',
+  'new',
   'pricing',
+  'principles',
   'privacy',
+  'pro',
+  'read',
   'settings',
   'signup',
+  'start',
+  'subscribe',
   'terms',
 ]
 

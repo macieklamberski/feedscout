@@ -3,6 +3,33 @@ import type { ArenaUrl } from './arena.js'
 import { arenaHandler, parseArenaUrl } from './arena.js'
 
 describe('parseArenaUrl', () => {
+  const routeValues: Array<string> = [
+    'https://www.are.na/block/12345',
+    'https://www.are.na/sign_up',
+    'https://www.are.na/developers',
+    'https://www.are.na/community-guidelines',
+    'https://www.are.na/notifications',
+    'https://www.are.na/Home',
+  ]
+
+  it.each(routeValues)('should return undefined for the site route %s', (value) => {
+    expect(parseArenaUrl(value)).toBeUndefined()
+  })
+
+  const profileViewValues: Array<string> = [
+    'https://www.are.na/meg-miller/followers',
+    'https://www.are.na/meg-miller/Following',
+    'https://www.are.na/meg-miller/channels',
+    'https://www.are.na/meg-miller/blocks',
+    'https://www.are.na/meg-miller/table',
+  ]
+
+  it.each(profileViewValues)('should return the profile for the profile view %s', (value) => {
+    const expected: ArenaUrl = { kind: 'profile', username: 'meg-miller' }
+
+    expect(parseArenaUrl(value)).toEqual(expected)
+  })
+
   it('should return the profile for a profile page', () => {
     const expected: ArenaUrl = { kind: 'profile', username: 'charles-broskoski' }
 

@@ -75,6 +75,20 @@ describe('parseNoteUrl', () => {
     expect(parseNoteUrl('https://note.com/terms')).toBeUndefined()
   })
 
+  const siteRouteValues: Array<string> = [
+    'https://note.com/topic/novel',
+    'https://note.com/trend',
+    'https://note.com/contests',
+    'https://note.com/categories',
+    'https://note.com/notes',
+    'https://note.com/recommend',
+    'https://note.com/sitesettings/stats',
+  ]
+
+  it.each(siteRouteValues)('should return undefined for the site route %s', (value) => {
+    expect(parseNoteUrl(value)).toBeUndefined()
+  })
+
   it('should return undefined for a capitalized excluded path', () => {
     expect(parseNoteUrl('https://note.com/Login')).toBeUndefined()
   })

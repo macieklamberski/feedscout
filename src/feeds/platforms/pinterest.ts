@@ -10,24 +10,41 @@ export type PinterestUrl =
   | { kind: 'board'; username: string; board: string }
 
 export const hosts = ['pinterest.com', 'www.pinterest.com']
+
 const excludedPaths = [
   '_',
   'about',
+  'ads',
   'business',
+  'careers',
+  'categories',
   'convert',
+  'developers',
   'explore',
+  'help',
+  'homefeed',
+  'idea-pin-builder',
   'ideas',
   'login',
+  'logout',
+  'me',
+  'messages',
   'news_hub',
+  'oauth',
   'password',
   'pin',
+  'pin-builder',
+  'pin-creation-tool',
   'privacy',
   'resource',
   'search',
   'settings',
+  'shopping',
+  'signup',
   'terms',
   'today',
   'topics',
+  'videos',
 ]
 
 // Reserved sub-routes of a user are not boards.

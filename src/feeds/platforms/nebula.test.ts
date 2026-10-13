@@ -64,6 +64,22 @@ describe('parseNebulaUrl', () => {
     expect(parseNebulaUrl('https://nebula.tv/terms')).toBeUndefined()
   })
 
+  const siteRouteValues: Array<string> = [
+    'https://nebula.tv/join',
+    'https://nebula.tv/account',
+    'https://nebula.tv/beta',
+    'https://nebula.tv/faq',
+    'https://nebula.tv/featured',
+    'https://nebula.tv/gift',
+    'https://nebula.tv/myshows',
+    'https://nebula.tv/podcasts',
+    'https://nebula.tv/redeem',
+  ]
+
+  it.each(siteRouteValues)('should return undefined for the site route %s', (value) => {
+    expect(parseNebulaUrl(value)).toBeUndefined()
+  })
+
   it('should return undefined for a capitalized excluded path', () => {
     expect(parseNebulaUrl('https://nebula.tv/Login')).toBeUndefined()
   })

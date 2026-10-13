@@ -9,7 +9,24 @@ import { composeHint } from '../../common/utils.js'
 export type LearnkuUrl = { kind: 'community'; community: string } | { kind: 'home' }
 
 const hosts = ['learnku.com', 'www.learnku.com']
-const excludedPaths = ['search', 'login', 'register', 'settings', 'notifications', 'users', 'api']
+
+const excludedPaths = [
+  'search',
+  'login',
+  'register',
+  'settings',
+  'notifications',
+  'users',
+  'api',
+  'articles',
+  'docs',
+  'auth',
+  'contact',
+  'topics',
+  'hub',
+  'activities',
+  'quizzes',
+]
 
 export const parseLearnkuUrl = (url: string): LearnkuUrl | undefined => {
   if (!isHostOf(url, hosts)) {

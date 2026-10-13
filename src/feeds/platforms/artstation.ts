@@ -13,19 +13,29 @@ const hosts = ['artstation.com', 'www.artstation.com']
 // The magazine and the image hosts.
 const excludedSubdomains = ['magazine', 'cdna', 'cdnb']
 const excludedPaths = [
+  'about',
+  'api',
   'blogs',
+  'challenges',
   'channels',
   'contests',
+  'embed',
   'features',
   'jobs',
   'learning',
   'login',
   'marketplace',
+  'messages',
+  'notifications',
   'prints',
+  'privacy',
+  'projects',
   'search',
   'signup',
   'studios',
   'terms',
+  'tos',
+  'users',
 ]
 
 export const parseArtstationUrl = (url: string): ArtstationUrl | undefined => {

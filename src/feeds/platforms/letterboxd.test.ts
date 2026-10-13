@@ -52,6 +52,20 @@ describe('parseLetterboxdUrl', () => {
     expect(parseLetterboxdUrl('https://letterboxd.com/sign-in/')).toBeUndefined()
   })
 
+  const siteRouteValues: Array<string> = [
+    'https://letterboxd.com/tag/horror/films/',
+    'https://letterboxd.com/country/usa/',
+    'https://letterboxd.com/cinematography/roger-deakins/',
+    'https://letterboxd.com/composer/hans-zimmer/',
+    'https://letterboxd.com/editor/thelma-schoonmaker/',
+    'https://letterboxd.com/reviews/popular/',
+    'https://letterboxd.com/podcast/',
+  ]
+
+  it.each(siteRouteValues)('should return undefined for the site route %s', (value) => {
+    expect(parseLetterboxdUrl(value)).toBeUndefined()
+  })
+
   it('should return undefined for an excluded path in another case', () => {
     expect(parseLetterboxdUrl('https://letterboxd.com/Films')).toBeUndefined()
   })

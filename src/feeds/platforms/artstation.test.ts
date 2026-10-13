@@ -2,6 +2,19 @@ import { describe, expect, it } from 'bun:test'
 import { type ArtstationUrl, artstationHandler, parseArtstationUrl } from './artstation.js'
 
 describe('parseArtstationUrl', () => {
+  const routeValues: Array<string> = [
+    'https://www.artstation.com/about',
+    'https://www.artstation.com/tos',
+    'https://www.artstation.com/privacy',
+    'https://www.artstation.com/users/sign_in',
+    'https://www.artstation.com/projects/abc123',
+    'https://www.artstation.com/Messages',
+  ]
+
+  it.each(routeValues)('should return undefined for the site route %s', (value) => {
+    expect(parseArtstationUrl(value)).toBeUndefined()
+  })
+
   it('should return the profile for a subdomain', () => {
     const expected: ArtstationUrl = { kind: 'profile', username: 'artist' }
 

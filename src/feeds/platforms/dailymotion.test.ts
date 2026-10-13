@@ -3,6 +3,21 @@ import type { DailymotionUrl } from './dailymotion.js'
 import { dailymotionHandler, parseDailymotionUrl } from './dailymotion.js'
 
 describe('parseDailymotionUrl', () => {
+  const routeValues: Array<string> = [
+    'https://www.dailymotion.com/us',
+    'https://www.dailymotion.com/FR',
+    'https://www.dailymotion.com/us/',
+    'https://www.dailymotion.com/category',
+    'https://www.dailymotion.com/hashtag',
+    'https://www.dailymotion.com/corner',
+    'https://www.dailymotion.com/user',
+    'https://www.dailymotion.com/news',
+  ]
+
+  it.each(routeValues)('should return undefined for the site route %s', (value) => {
+    expect(parseDailymotionUrl(value)).toBeUndefined()
+  })
+
   const excludedValues: Array<string> = [
     'https://www.dailymotion.com/signin',
     'https://www.dailymotion.com/upload',

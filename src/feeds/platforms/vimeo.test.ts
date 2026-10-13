@@ -40,6 +40,31 @@ describe('parseVimeoUrl', () => {
     expect(parseVimeoUrl('https://vimeo.com/pricing')).toBeUndefined()
   })
 
+  const siteRoutes: Array<string> = [
+    'analytics',
+    'api',
+    'cookie_policy',
+    'couchmode',
+    'customers',
+    'dmca',
+    'event',
+    'forgot_password',
+    'home',
+    'integrations',
+    'jobs',
+    'library',
+    'log_out',
+    'partners',
+    'privacy',
+    'stats',
+    'terms',
+    'videoschool',
+  ]
+
+  it.each(siteRoutes)('should return undefined for the %s site route', (route) => {
+    expect(parseVimeoUrl(`https://vimeo.com/${route}`)).toBeUndefined()
+  })
+
   it('should return undefined for another host', () => {
     expect(parseVimeoUrl('https://example.com/someone')).toBeUndefined()
   })

@@ -151,6 +151,27 @@ describe('parseGithubUrl', () => {
     expect(parseGithubUrl(value)).toBeUndefined()
   })
 
+  const reservedValues: Array<string> = [
+    'https://github.com/robots.txt',
+    'https://github.com/advisories/GHSA-xxxx-xxxx-xxxx',
+    'https://github.com/users/octocat/projects/1',
+    'https://github.com/solutions/ci-cd',
+    'https://github.com/discussions',
+    'https://github.com/git-guides/git-pull',
+    'https://github.com/open-source/sponsors',
+    'https://github.com/mobile',
+    'https://github.com/newsletter',
+    'https://github.com/partners',
+    'https://github.com/sitemap',
+    'https://github.com/trust-center',
+    'https://github.com/why-github',
+    'https://github.com/octo.cat/hello-world',
+  ]
+
+  it.each(reservedValues)('should return undefined for the site route %s', (value) => {
+    expect(parseGithubUrl(value)).toBeUndefined()
+  })
+
   it('should return undefined for an excluded path in another case', () => {
     expect(parseGithubUrl('https://github.com/Features')).toBeUndefined()
     expect(parseGithubUrl('https://github.com/EXPLORE')).toBeUndefined()

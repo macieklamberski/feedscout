@@ -3,6 +3,19 @@ import type { DeviantartUrl } from './deviantart.js'
 import { deviantartHandler, parseDeviantartUrl } from './deviantart.js'
 
 describe('parseDeviantartUrl', () => {
+  const routeValues: Array<string> = [
+    'https://www.deviantart.com/users/login',
+    'https://www.deviantart.com/morelikethis/123456',
+    'https://www.deviantart.com/forum',
+    'https://www.deviantart.com/messages',
+    'https://www.deviantart.com/studio',
+    'https://www.deviantart.com/Community',
+  ]
+
+  it.each(routeValues)('should return undefined for the site route %s', (value) => {
+    expect(parseDeviantartUrl(value)).toBeUndefined()
+  })
+
   const excludedValues: Array<string> = [
     'https://deviantart.com/about',
     'https://deviantart.com/join',

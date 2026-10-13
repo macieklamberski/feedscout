@@ -21,20 +21,27 @@ const magazineRegex = /^\/([^/]+)\/m\/([^/]+)/i
 export const excludedPaths = [
   'about',
   'api',
+  'categories',
+  'contests',
   'explore',
   'hashtag',
   'help',
   'login',
   'm',
   'n',
+  'notes',
   'premium',
   'privacy',
   'ranking',
+  'recommend',
   'search',
   'tag',
   'settings',
   'signup',
+  'sitesettings',
   'terms',
+  'topic',
+  'trend',
 ]
 
 export const parseNoteUrl = (url: string): NoteUrl | undefined => {

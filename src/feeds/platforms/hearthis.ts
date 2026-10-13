@@ -7,16 +7,36 @@ import { composeHint } from '../../common/utils.js'
 export type HearthisUrl = { kind: 'profile'; username: string }
 
 const hosts = ['hearthis.at', 'www.hearthis.at']
+
 const excludedPaths = [
   'about',
+  'accessibility',
   'api',
+  'categories',
+  'datenschutz',
+  'faq',
+  'featured',
   'feed',
+  'groups',
+  'impressum',
+  'live',
+  'livestreams',
   'login',
+  'maps',
+  'merchandise',
+  'new',
+  'news',
+  'nutzungsbedingungen',
+  'popular',
   'privacy',
+  'reseller',
   'search',
   'set',
+  'sets',
   'signup',
+  'tag',
   'terms',
+  'upload',
 ]
 
 export const parseHearthisUrl = (url: string): HearthisUrl | undefined => {
