@@ -1,6 +1,6 @@
-import { getPathSegments, getSubdomain, isAnyOf, isHostOf } from 'trousse'
+import { getPathSegments, isAnyOf, isHostOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
+import { composeHint, getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Not discoverable without handler.
 // Handler needed for: all shapes.
@@ -11,7 +11,7 @@ const domains = ['neocities.org']
 const hosts = ['neocities.org', 'www.neocities.org']
 
 export const parseNeocitiesUrl = (url: string): NeocitiesUrl | undefined => {
-  const subdomain = getSubdomain(url, domains)
+  const subdomain = getTenantSubdomain(url, domains)
 
   if (subdomain) {
     return { kind: 'site', username: subdomain }

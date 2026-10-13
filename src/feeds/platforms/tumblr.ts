@@ -1,6 +1,6 @@
-import { getPathSegments, getSubdomain, isAnyOf, isHostOf } from 'trousse'
+import { getPathSegments, isAnyOf, isHostOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
+import { composeHint, getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers blog, wwwBlog (html).
@@ -58,9 +58,9 @@ export const parseTumblrUrl = (url: string): TumblrUrl | undefined => {
     return { kind: 'blog', blog }
   }
 
-  const blog = getSubdomain(url, domains)
+  const blog = getTenantSubdomain(url, domains)
 
-  if (!blog || blog.includes('.')) {
+  if (!blog) {
     return
   }
 

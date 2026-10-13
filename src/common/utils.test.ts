@@ -11,6 +11,7 @@ import {
   getMetaContent,
   getScriptDirectory,
   getScriptText,
+  getTenantSubdomain,
   hasAnyMeta,
   hasClass,
   hasElementWithId,
@@ -568,6 +569,35 @@ describe('getCookieNames', () => {
 
   it('should return an empty array without Set-Cookie', () => {
     expect(getCookieNames(new Headers())).toEqual([])
+  })
+})
+
+describe('getTenantSubdomain', () => {
+  const domains = ['example.com']
+
+  it('should return the subdomain of a tenant', () => {
+    expect(getTenantSubdomain('https://alice.example.com/', domains)).toBe('alice')
+  })
+
+  it('should return undefined for the bare domain', () => {
+    expect(getTenantSubdomain('https://example.com/', domains)).toBeUndefined()
+  })
+
+  it('should return undefined for a nested subdomain', () => {
+    expect(getTenantSubdomain('https://blog.alice.example.com/', domains)).toBeUndefined()
+  })
+
+  it('should return undefined for a service host in any case', () => {
+    expect(getTenantSubdomain('https://WWW.example.com/', domains)).toBeUndefined()
+    expect(getTenantSubdomain('https://cdn.example.com/', domains)).toBeUndefined()
+  })
+
+  it('should return undefined for a subdomain the platform excludes', () => {
+    expect(getTenantSubdomain('https://my.example.com/', domains, ['my'])).toBeUndefined()
+  })
+
+  it('should return undefined for another domain', () => {
+    expect(getTenantSubdomain('https://alice.example.org/', domains)).toBeUndefined()
   })
 })
 

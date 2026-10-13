@@ -24,7 +24,7 @@ describe('pikaHandler', () => {
   describe('match', () => {
     const values: Array<[boolean, string]> = [
       [true, 'https://bob.pika.page'],
-      [true, 'https://blog.example.pika.page'],
+      [false, 'https://blog.example.pika.page'],
       [false, 'https://pika.page'],
       [false, 'https://example.com'],
     ]

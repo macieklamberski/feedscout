@@ -1,6 +1,6 @@
-import { getPathSegments, getSubdomain, isAnyOf, isHostOf, isHostOrSubdomainOf } from 'trousse'
+import { getPathSegments, isAnyOf, isHostOf, isHostOrSubdomainOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
+import { composeHint, getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers profileSubdomain (html).
@@ -10,6 +10,8 @@ export type ArtstationUrl = { kind: 'profile'; username: string } | { kind: 'art
 
 const domains = ['artstation.com']
 const hosts = ['artstation.com', 'www.artstation.com']
+// The magazine and the image hosts.
+const excludedSubdomains = ['magazine', 'cdna', 'cdnb']
 const excludedPaths = [
   'blogs',
   'channels',
@@ -31,10 +33,14 @@ export const parseArtstationUrl = (url: string): ArtstationUrl | undefined => {
     return
   }
 
-  const subdomain = getSubdomain(url, domains)
+  const subdomain = getTenantSubdomain(url, domains, excludedSubdomains)
 
   // Subdomain form: {user}.artstation.com
-  if (subdomain && !isHostOf(url, hosts)) {
+  if (!isHostOf(url, hosts)) {
+    if (!subdomain) {
+      return
+    }
+
     return { kind: 'profile', username: subdomain }
   }
 

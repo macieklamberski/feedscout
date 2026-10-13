@@ -1,6 +1,5 @@
-import { isSubdomainOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
+import { composeHint, getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -9,7 +8,7 @@ export type TistoryUrl = { kind: 'blog' }
 const domains = ['tistory.com']
 
 export const parseTistoryUrl = (url: string): TistoryUrl | undefined => {
-  if (!isSubdomainOf(url, domains)) {
+  if (!getTenantSubdomain(url, domains)) {
     return
   }
 

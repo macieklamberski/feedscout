@@ -1,6 +1,5 @@
-import { isSubdomainOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
+import { composeHint, getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -9,7 +8,7 @@ export type HashnodeUrl = { kind: 'blog' }
 const domains = ['hashnode.dev', 'hashnode.com']
 
 export const parseHashnodeUrl = (url: string): HashnodeUrl | undefined => {
-  if (!isSubdomainOf(url, domains)) {
+  if (!getTenantSubdomain(url, domains)) {
     return
   }
 

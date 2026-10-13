@@ -1,5 +1,5 @@
 import { DomUtils, parseDocument } from 'htmlparser2'
-import { anyWordMatchesAnyOf, isAnyOf } from 'trousse'
+import { anyWordMatchesAnyOf, getSubdomain, isAnyOf } from 'trousse'
 import locales from './locales.json' with { type: 'json' }
 import type { DiscoverUriHint, FetchFn } from './types.js'
 
@@ -197,6 +197,28 @@ export const getCookieNames = (headers: Headers): Array<string> => {
 // A script takes path info, as in `/app.php/help/faq`, and a rewritten page is an HTML file.
 const scriptSegmentRegex = /\/[^/]*\.(?:php(?:\/.*)?|html?)$/i
 const trailingSlashRegex = /\/$/
+
+// The labels a platform that gives out subdomains keeps for itself.
+const serviceSubdomains = ['www', 'api', 'cdn', 'static', 'assets']
+
+// The subdomain a platform gives one of its users: a single label that is not a service host.
+export const getTenantSubdomain = (
+  url: string | URL,
+  domains: Array<string>,
+  excludedSubdomains: Array<string> = [],
+): string | undefined => {
+  const subdomain = getSubdomain(url, domains)
+
+  if (!subdomain || subdomain.includes('.')) {
+    return
+  }
+
+  if (isAnyOf(subdomain, serviceSubdomains) || isAnyOf(subdomain, excludedSubdomains)) {
+    return
+  }
+
+  return subdomain
+}
 
 export const getScriptDirectory = (pathname: string): string => {
   return pathname.replace(scriptSegmentRegex, '').replace(trailingSlashRegex, '')

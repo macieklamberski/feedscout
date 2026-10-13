@@ -1,7 +1,7 @@
-import { getPathSegments, getSubdomain, isAnyOf } from 'trousse'
+import { getPathSegments, isAnyOf } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
+import { composeHint, getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -17,9 +17,9 @@ const excludedPaths = ['about', 'feed']
 const postBodyRegex = /<body[^>]*\bpost-id-\d+/
 
 export const parseBloggoUrl = (url: string): BloggoUrl | undefined => {
-  const subdomain = getSubdomain(url, domains)
+  const subdomain = getTenantSubdomain(url, domains, excludedSubdomains)
 
-  if (!subdomain || isAnyOf(subdomain, excludedSubdomains)) {
+  if (!subdomain) {
     return
   }
 

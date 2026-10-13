@@ -21,7 +21,7 @@ describe('tistoryHandler', () => {
   describe('match', () => {
     const values: Array<[boolean, string]> = [
       [true, 'https://alice.tistory.com'],
-      [true, 'https://blog.example.tistory.com'],
+      [false, 'https://blog.example.tistory.com'],
       [false, 'https://tistory.com'],
       [false, 'https://example.com'],
     ]

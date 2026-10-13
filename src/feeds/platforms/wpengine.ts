@@ -1,5 +1,5 @@
-import { isSubdomainOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
+import { getTenantSubdomain } from '../../common/utils.js'
 import { composeWordpressFeeds, parseWordpressPage, type WordpressUrl } from './wordpress.js'
 
 // Discoverability: Partially discoverable without handler.
@@ -8,9 +8,11 @@ import { composeWordpressFeeds, parseWordpressPage, type WordpressUrl } from './
 export type WpengineUrl = WordpressUrl
 
 const domains = ['wpenginepowered.com', 'wpengine.com']
+// The customer portal.
+const excludedSubdomains = ['my']
 
 export const parseWpengineUrl = (url: string): WpengineUrl | undefined => {
-  if (!isSubdomainOf(url, domains)) {
+  if (!getTenantSubdomain(url, domains, excludedSubdomains)) {
     return
   }
 

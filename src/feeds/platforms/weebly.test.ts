@@ -29,7 +29,7 @@ describe('weeblyHandler', () => {
   describe('match', () => {
     const values: Array<[boolean, string]> = [
       [true, 'https://example.weebly.com'],
-      [true, 'https://blog.example.weebly.com'],
+      [false, 'https://blog.example.weebly.com'],
       [false, 'https://weebly.com'],
       [false, 'https://example.com'],
     ]

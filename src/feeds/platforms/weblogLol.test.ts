@@ -18,7 +18,7 @@ describe('weblogLolHandler', () => {
   describe('match', () => {
     const values: Array<[boolean, string]> = [
       [true, 'https://alice.weblog.lol'],
-      [true, 'https://blog.example.weblog.lol'],
+      [false, 'https://blog.example.weblog.lol'],
       [false, 'https://weblog.lol'],
       [false, 'https://example.com'],
     ]

@@ -1,7 +1,6 @@
-import { isSubdomainOf } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
+import { composeHint, getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -10,7 +9,7 @@ export type WeblogLolUrl = { kind: 'blog' }
 const domains = ['weblog.lol']
 
 export const parseWeblogLolUrl = (url: string): WeblogLolUrl | undefined => {
-  if (!isSubdomainOf(url, domains)) {
+  if (!getTenantSubdomain(url, domains)) {
     return
   }
 

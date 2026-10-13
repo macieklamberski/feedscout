@@ -1,6 +1,6 @@
 import { getSubdomain, isHostOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
+import { composeHint, getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers blog, fc2Net, numberedBlog (html), partly covers 2nt.
@@ -20,9 +20,9 @@ export const parseFc2Url = (url: string): Fc2Url | undefined => {
     return
   }
 
-  const blog = getSubdomain(url, domains)
+  const blog = getTenantSubdomain(url, domains)
 
-  if (blog && !blog.includes('.')) {
+  if (blog) {
     return { kind: 'blog' }
   }
 

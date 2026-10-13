@@ -30,6 +30,11 @@ describe('parseArtstationUrl', () => {
     expect(parseArtstationUrl('https://www.artstation.com/jobs')).toBeUndefined()
   })
 
+  it('should return undefined for the magazine and an image host', () => {
+    expect(parseArtstationUrl('https://magazine.artstation.com/2024/01/post/')).toBeUndefined()
+    expect(parseArtstationUrl('https://cdna.artstation.com/p/assets/x.jpg')).toBeUndefined()
+  })
+
   it('should return undefined for another host', () => {
     expect(parseArtstationUrl('https://example.com/artist')).toBeUndefined()
   })

@@ -17,7 +17,7 @@ describe('hashnodeHandler', () => {
   describe('match', () => {
     const values: Array<[boolean, string]> = [
       [true, 'https://example.hashnode.dev'],
-      [true, 'https://blog.example.hashnode.dev'],
+      [false, 'https://blog.example.hashnode.dev'],
       [true, 'https://example.hashnode.com'],
       [false, 'https://hashnode.dev'],
       [false, 'https://hashnode.com'],

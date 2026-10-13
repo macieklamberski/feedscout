@@ -1,7 +1,7 @@
 import { getAnyOf, isAnyOf, isHostOf, isSubdomainOf } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
+import { composeHint, getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers blog, devlog, devlogs, game (html), partly covers home.
@@ -60,11 +60,17 @@ export const parseItchioUrl = (url: string): ItchioUrl | undefined => {
     return
   }
 
-  const { hostname, pathname } = new URL(url)
+  const { pathname } = new URL(url)
 
   // Subdomain: creator pages ({creator}.itch.io).
   if (!isHostOf(url, mainHosts)) {
-    const creator = hostname.replace('.itch.io', '')
+    // The image host.
+    const creator = getTenantSubdomain(url, domains, ['img'])
+
+    if (!creator) {
+      return
+    }
+
     const game = pathname.match(gameRegex)?.[1]
 
     if (game) {

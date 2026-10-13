@@ -1,6 +1,5 @@
-import { getSubdomain, isAnyOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
+import { composeHint, getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -27,9 +26,9 @@ const excludedSubdomains = [
 ]
 
 export const parseCastosUrl = (url: string): CastosUrl | undefined => {
-  const slug = getSubdomain(url, domains)
+  const slug = getTenantSubdomain(url, domains, excludedSubdomains)
 
-  if (!slug || isAnyOf(slug, excludedSubdomains)) {
+  if (!slug) {
     return
   }
 
