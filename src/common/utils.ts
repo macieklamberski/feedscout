@@ -3,6 +3,18 @@ import { anyWordMatchesAnyOf, getSubdomain, isAnyOf } from 'trousse'
 import locales from './locales.json' with { type: 'json' }
 import type { DiscoverUriHint, FetchFn } from './types.js'
 
+export type Element = NonNullable<ReturnType<typeof DomUtils.findOne>>
+
+type ParsedPage = {
+  document: ReturnType<typeof parseDocument>
+  metas: Array<Element>
+}
+
+export type PageMarkers = {
+  html?: (content: string) => boolean
+  headers?: (headers: Headers) => boolean
+}
+
 export const composeHint = (key: string, format?: DiscoverUriHint['format']): DiscoverUriHint => {
   const label = locales.hints[key as keyof typeof locales.hints]
 
@@ -58,13 +70,6 @@ export const isOfAllowedMimeType = (
   }
 
   return isAnyOf(type, allowedTypes, normalizeMimeType)
-}
-
-export type Element = NonNullable<ReturnType<typeof DomUtils.findOne>>
-
-type ParsedPage = {
-  document: ReturnType<typeof parseDocument>
-  metas: Array<Element>
 }
 
 let lastParsedContent: string | undefined
@@ -224,11 +229,6 @@ export const getScriptDirectory = (pathname: string): string => {
 
 export const hasAnyMeta = (content: string, markers: Array<[string, string]>): boolean => {
   return markers.some(([name, value]) => hasMetaContent(content, name, value))
-}
-
-export type PageMarkers = {
-  html?: (content: string) => boolean
-  headers?: (headers: Headers) => boolean
 }
 
 // Whether the page carries a platform's marker in its markup or its response headers.

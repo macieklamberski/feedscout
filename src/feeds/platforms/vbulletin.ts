@@ -11,6 +11,8 @@ import {
 
 // Discoverability: Discoverable without handler.
 
+export type VbulletinPage = { siteFeedUrl: string; forumFeedUrl?: string }
+
 const coreScriptRegex = /\/clientscript\/vbulletin-core\.js/
 const clientscriptPathRegex = /\/clientscript\/.*$/
 const rollupScriptRegex = /(?:^|\/)js\/header-rollup(?:-\d+)?\.js/
@@ -63,8 +65,6 @@ const getForumId = (pathname: string, search: string): string | undefined => {
 
   return search.match(forumIdRegex)?.[1] ?? search.match(friendlyForumIdRegex)?.[1]
 }
-
-export type VbulletinPage = { siteFeedUrl: string; forumFeedUrl?: string }
 
 // vBulletin 5 and 6 serve `external?type=rss2` and have no `external.php`.
 const getVbulletin5Page = (url: string, content: string | undefined): VbulletinPage | undefined => {

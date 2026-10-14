@@ -13,6 +13,8 @@ import {
 // Discoverability: Partially discoverable without handler.
 // Generic covers blog, post, singleUserArchive, singleUserLanguage, singleUserPage, singleUserPost, tag (guess, html), partly covers blogTag.
 
+export type WritefreelyPage = { blogPath: string; tag?: string }
+
 const tagPathRegex = /\/tag:([^/]+)/i
 const rootRouteRegex = /^\/(?:(?:tag|lang):|page\/\d+(?:\/|$)|archive\/?$)/i
 const blogPathRegex = /^\/(?:[^/]+\/)?$/
@@ -63,8 +65,6 @@ export const isWritefreelyHtml = (content: string): boolean => {
     hasMetaContent(content, 'generator', 'Write.as')
   )
 }
-
-export type WritefreelyPage = { blogPath: string; tag?: string }
 
 const getWritefreelyPage = (
   url: string,

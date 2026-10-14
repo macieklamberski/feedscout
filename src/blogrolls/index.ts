@@ -1,17 +1,6 @@
 import {
-  archiveExtensions,
-  audioExtensions,
-  codeExtensions,
-  documentExtensions,
-  flashExtensions,
-  fontExtensions,
-  imageExtensions,
-  installerExtensions,
-  subtitleExtensions,
-  videoExtensions,
-} from 'trousse'
-import {
   defaultFetchFn,
+  defaultIgnoredExtensions,
   defaultResolveSiteUrlFn,
   defaultResolveUrlFn,
 } from '../common/discover/defaults.js'
@@ -23,19 +12,6 @@ import type { BlogrollResult } from './types.js'
 
 const acceptHeader =
   'text/x-opml, text/x-opml+xml, application/xml;q=0.9, text/xml;q=0.9, */*;q=0.1'
-
-const ignoredExtensions = [
-  ...archiveExtensions,
-  ...audioExtensions,
-  ...codeExtensions,
-  ...documentExtensions,
-  ...flashExtensions,
-  ...fontExtensions,
-  ...imageExtensions,
-  ...installerExtensions,
-  ...subtitleExtensions,
-  ...videoExtensions,
-]
 
 export const discoverBlogrolls = <TValid extends BlogrollResult = BlogrollResult>(
   input: DiscoverInput,
@@ -50,7 +26,7 @@ export const discoverBlogrolls = <TValid extends BlogrollResult = BlogrollResult
       extractFn: options.extractFn ?? defaultExtractFn,
       resolveUrlFn: options.resolveUrlFn ?? defaultResolveUrlFn,
       resolveSiteUrlFn: options.resolveSiteUrlFn ?? defaultResolveSiteUrlFn,
-      ignoredExtensions,
+      ignoredExtensions: defaultIgnoredExtensions,
       acceptHeader,
     },
     {

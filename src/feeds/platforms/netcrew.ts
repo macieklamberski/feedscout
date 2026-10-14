@@ -6,10 +6,10 @@ import { composeHint, findElement, hasMarker } from '../../common/utils.js'
 // Discoverability: Not discoverable without handler.
 // Handler needed for: all shapes.
 
+export type NetcrewUrl = { kind: 'home' }
+
 const homePathRegex = /^\/(?:index\.html)?$/i
 const styleImportRegex = /@import\s+url\(["']?\/ssi\/css\//
-
-export type NetcrewUrl = { kind: 'home' }
 
 // Every NetCrew CMS template loads its search script from `/ssi/js/search-trend.js` and its styles
 // from `/ssi/css/` at the site root.

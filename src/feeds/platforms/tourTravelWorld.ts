@@ -4,10 +4,10 @@ import { composeHint, findElement, findElements, hasMarker } from '../../common/
 
 // Discoverability: Discoverable without handler.
 
+export type TourTravelWorldPage = { feedUrl: string }
+
 const templateStylesheetRegex = /^(?:https?:)?\/\/catalog\.wlimg\.com\/templates-images\//
 const packagesFeedPathRegex = /^\/tour-packages\.rss$/
-
-export type TourTravelWorldPage = { feedUrl: string }
 
 // Every Weblink.In catalog site loads its template stylesheet from the shared asset host.
 export const isTourTravelWorldHtml = (content: string): boolean => {

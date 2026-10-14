@@ -15,13 +15,6 @@ import {
 // Discoverability: Partially discoverable without handler.
 // Generic covers activity, board, home, issue, issues, news, projectActivity, projectIssues, projectNews, projects, repository (html), partly covers project.
 
-const poweredByRegex = /Powered by <a\s[^<>]*href="https?:\/\/www\.redmine\.org\/"/
-const numericIdRegex = /^\d+$/
-const projectClassRegex = /(?:^|\s)project-(\S+)/
-const repositoryRevisionsRegex = /\/repository\/([^/"?#]+)\/revisions\b/
-const schemeRegex = /^https?:/
-const trailingSlashRegex = /\/$/
-
 export type RedminePage =
   | { kind: 'home'; root: string }
   | { kind: 'projects'; root: string }
@@ -32,6 +25,13 @@ export type RedminePage =
   | { kind: 'project'; root: string; project: string; hasIssues: boolean; hasNews: boolean }
   | { kind: 'board'; root: string; project: string; boardId: string }
   | { kind: 'repository'; root: string; project: string; repository: string }
+
+const poweredByRegex = /Powered by <a\s[^<>]*href="https?:\/\/www\.redmine\.org\/"/
+const numericIdRegex = /^\d+$/
+const projectClassRegex = /(?:^|\s)project-(\S+)/
+const repositoryRevisionsRegex = /\/repository\/([^/"?#]+)\/revisions\b/
+const schemeRegex = /^https?:/
+const trailingSlashRegex = /\/$/
 
 // The core layout prints the footer link, and Bitnami stacks swap it for their own, which
 // still keep the description meta.
@@ -139,14 +139,6 @@ export const getRedminePage = (
 
     if (isAnyOf(third, 'repository') && repository) {
       return { kind: 'repository', root, project, repository }
-    }
-
-    return {
-      kind: 'project',
-      root,
-      project,
-      hasIssues: hasMenuItem(content, 'issues'),
-      hasNews: hasMenuItem(content, 'news'),
     }
   }
 

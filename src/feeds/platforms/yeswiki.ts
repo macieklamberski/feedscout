@@ -12,6 +12,10 @@ import {
 // Discoverability: Partially discoverable without handler.
 // Generic covers home, list (html), partly covers entry.
 
+export type YeswikiPage = { installPath: string; formIds: Array<string> }
+
+type BazarListParams = { idtypeannonce?: string | Array<string>; externalModeActivated?: boolean }
+
 const sessionCookieRegex = /^YesWiki-/
 const sessionCookiePathRegex = /(?:^|,)\s*YesWiki-[^=]+=[^,]*?;\s*path=([^;,\s]+)/i
 const formClassRegex = /^id(\d+)$/
@@ -24,10 +28,6 @@ const formElementClasses = ['BAZ_cadre_fiche', 'bazar-entry', 'bazar-list-dynami
 export const isYeswikiHeaders = (headers: Headers): boolean => {
   return getCookieNames(headers).some((name) => sessionCookieRegex.test(name))
 }
-
-export type YeswikiPage = { installPath: string; formIds: Array<string> }
-
-type BazarListParams = { idtypeannonce?: string | Array<string>; externalModeActivated?: boolean }
 
 const parseListParams = (value: string | undefined): BazarListParams | undefined => {
   try {
@@ -81,7 +81,7 @@ const getFormIds = (content: string | undefined): Array<string> => {
 }
 
 // The session cookie is scoped to the install root.
-const getYeswikiPage = (content?: string, headers?: Headers): YeswikiPage => {
+const getYeswikiPage = (content: string | undefined, headers: Headers | undefined): YeswikiPage => {
   return {
     installPath: headers?.get('set-cookie')?.match(sessionCookiePathRegex)?.[1] ?? '/',
     formIds: getFormIds(content),

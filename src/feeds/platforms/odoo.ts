@@ -4,10 +4,10 @@ import { composeHint, getCookieNames, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
+export type OdooUrl = { kind: 'blog'; languagePath: string; blog: string }
+
 // The blog segment is `{slug}-{id}`, after an optional language prefix such as `/fr` or `/en_GB`.
 const blogRegex = /^((?:\/[a-z]{2,3}(?:_[a-z\d]+)?)?)\/blog\/([^/]+-\d+)(?:\/|$)/i
-
-export type OdooUrl = { kind: 'blog'; languagePath: string; blog: string }
 
 // Odoo 11 and later set both cookies on a first visit to any website page.
 export const isOdooHeaders = (headers: Headers): boolean => {

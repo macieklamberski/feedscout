@@ -3,14 +3,14 @@ import { composeHint, findElement, getCookieNames, hasMarker } from '../../commo
 
 // Discoverability: Discoverable without handler.
 
+export type PukiwikiPage = { kind: 'wiki'; scriptUrl: string }
+
 // PukiWiki 1.4 serves the default stylesheet as `pukiwiki.css.php`, 1.5 as `pukiwiki.css`.
 const stylesheetRegex = /(?:^|\/)pukiwiki\.css(?:\.php)?(?:[?#]|$)/i
 // Quick Homepage Maker, a PukiWiki fork, numbers its session cookie per install.
 const sessionCookieRegex = /^QHMSSID\d*$/
 const skinRootRegex = /^(.*?\/)skin\//
 const scriptPathRegex = /\.php$/i
-
-export type PukiwikiPage = { kind: 'wiki'; scriptUrl: string }
 
 export const isPukiwikiHtml = (content: string): boolean => {
   const stylesheet = findElement(content, (element) => {
