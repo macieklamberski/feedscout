@@ -2,6 +2,12 @@ import { describe, expect, it } from 'bun:test'
 import { parseWeeblyUrl, type WeeblyUrl, weeblyHandler } from './weebly.js'
 
 describe('parseWeeblyUrl', () => {
+  it('should return the page without its html suffix', () => {
+    const expected: WeeblyUrl = { kind: 'blog', page: 'about' }
+
+    expect(parseWeeblyUrl('https://mysite.weebly.com/about.html')).toEqual(expected)
+  })
+
   it('should return the blog with its page for a custom blog page', () => {
     const expected: WeeblyUrl = { kind: 'blog', page: 'articles' }
 

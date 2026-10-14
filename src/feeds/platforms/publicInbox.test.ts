@@ -54,6 +54,10 @@ describe('isPublicInboxHtml', () => {
 })
 
 describe('getPublicInboxPage', () => {
+  it('should return undefined for a file at the root', () => {
+    expect(getPublicInboxPage('https://lore.kernel.org/lists.html')).toBeUndefined()
+  })
+
   it('should return the inbox of a list page', () => {
     const value = 'https://lore.barebox.org/barebox/'
     const expected: PublicInboxPage = {

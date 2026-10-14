@@ -19,6 +19,8 @@ const samePageUrls = [
   'https://example.com/page?b=2&a=1',
   'https://EXAMPLE.com/page?a=1&b=2',
   'https://example.com:443/page?a=1&b=2',
+  'https://user:pw@example.com/page?a=1&b=2',
+  'https://example.com/p%61ge?a=1&b=2',
 ]
 
 describe('discoverUrisFromPlatform', () => {
@@ -770,6 +772,27 @@ describe('discoverUrisFromPlatform', () => {
     await discoverUrisFromPlatform(undefined, undefined, options)
 
     expect(receivedUrls).toEqual(['https://example.com/page?a=1&b=2'])
+  })
+
+  it('should skip a requested URL that differs by an empty query', async () => {
+    const receivedUrls: Array<string> = []
+    const handler: PlatformHandler = {
+      match: (url) => {
+        receivedUrls.push(url)
+
+        return false
+      },
+      resolve: () => [],
+    }
+    const options = {
+      baseUrl: 'https://example.com/page',
+      requestedUrl: 'https://example.com/page?',
+      handlers: [handler],
+    }
+
+    await discoverUrisFromPlatform(undefined, undefined, options)
+
+    expect(receivedUrls).toEqual(['https://example.com/page'])
   })
 
   it('should skip the requested URL when the fetch ends on another host', async () => {

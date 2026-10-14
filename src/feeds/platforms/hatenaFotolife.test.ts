@@ -4,6 +4,12 @@ import type { HatenaFotolifeUrl } from './hatenaFotolife.js'
 import { hatenaFotolifeHandler, parseHatenaFotolifeUrl } from './hatenaFotolife.js'
 
 describe('parseHatenaFotolifeUrl', () => {
+  it('should return the user for a photo page with a trailing slash', () => {
+    const expected: HatenaFotolifeUrl = { kind: 'user', username: 'user' }
+
+    expect(parseHatenaFotolifeUrl('https://f.hatena.ne.jp/user/20240101123456/')).toEqual(expected)
+  })
+
   it('should return the user for a user page', () => {
     const expected: HatenaFotolifeUrl = { kind: 'user', username: 'alice' }
 

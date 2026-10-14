@@ -3,6 +3,11 @@ import type { DiscoverUriEntry } from '../../common/types.js'
 import { type PackagistUrl, packagistHandler, parsePackagistUrl } from './packagist.js'
 
 describe('parsePackagistUrl', () => {
+  it('should return undefined for the JSON API', () => {
+    expect(parsePackagistUrl('https://packagist.org/packages/list.json')).toBeUndefined()
+    expect(parsePackagistUrl('https://packagist.org/packages/monolog/monolog.json')).toBeUndefined()
+  })
+
   it('should return the package for a package page', () => {
     const expected: PackagistUrl = { kind: 'package', vendor: 'acme', name: 'logger' }
 

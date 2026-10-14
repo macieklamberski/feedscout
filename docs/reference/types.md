@@ -34,7 +34,7 @@ import type { HubResult, DiscoverHubsOptions } from 'feedscout/hubs'
 import type { PlatformHandler, PlatformMethodOptions } from 'feedscout/platform'
 ```
 
-The [method option types](#method-option-types) and `LinkSelector` are not exported by name. They are listed here to describe the shapes that `methods` accepts.
+Apart from `PlatformMethodOptions`, the [method option types](#method-option-types) and `LinkSelector` are not exported by name. They are listed here to describe the shapes that `methods` accepts.
 
 ## Input Types
 
@@ -411,6 +411,21 @@ type DiscoverResolveSiteUrlFn = (
 ```
 
 ## Method Option Types
+
+### PlatformMethodOptions
+
+Options for Platform discovery method, exported from `feedscout/platform`:
+
+```typescript
+type PlatformMethodOptions = {
+  baseUrl: string
+  requestedUrl?: string
+  handlers: Array<PlatformHandler>
+  enrichFn?: DiscoverEnrichFn
+}
+```
+
+`requestedUrl` is the URL you asked for, when the fetch ended on another one. The handlers run on it without the content and headers when none of them generates feeds for `baseUrl`. `enrichFn` resolves the [refs](#discoverref) a handler returns, see [DiscoverEnrichFn](#discoverenrichfn).
 
 ### FeedMethodOptions
 

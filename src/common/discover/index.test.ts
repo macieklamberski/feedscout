@@ -1171,6 +1171,31 @@ describe('discoverFeeds', () => {
     })
   })
 
+  describe('maxUris', () => {
+    it('should fetch every candidate when maxUris is Infinity', async () => {
+      const fetchedUrls: Array<string> = []
+      const uris = Array.from({ length: 60 }, (_, index) => `/feed-${index}`)
+      const mockFetch: FetchFn = (url) => {
+        fetchedUrls.push(url)
+
+        return Promise.resolve({
+          headers: new Headers(),
+          body: '',
+          url,
+          status: 404,
+          statusText: 'Not Found',
+        })
+      }
+
+      await discoverFeeds(
+        { url: 'https://example.com', content: '<html></html>' },
+        { methods: { guess: { uris } }, fetchFn: mockFetch, maxUris: Number.POSITIVE_INFINITY },
+      )
+
+      expect(fetchedUrls).toHaveLength(60)
+    })
+  })
+
   describe('concurrency', () => {
     it('should respect concurrency limit', async () => {
       let maxConcurrent = 0

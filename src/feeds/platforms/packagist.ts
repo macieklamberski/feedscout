@@ -19,6 +19,8 @@ const vendorRegex = /^\/packages\/([^/]+)\/?$/i
 const extensionsRegex = /^\/extensions(?:\/|$)/i
 
 const excludedPaths = ['submit']
+// The JSON API sits under the same paths, such as /packages/list.json.
+const jsonSuffixRegex = /\.json$/i
 
 const createFeeds = (name: string, key: string): Array<DiscoverUriEntry> => {
   return [
@@ -35,6 +37,11 @@ export const parsePackagistUrl = (url: string): PackagistUrl | undefined => {
   }
 
   const { pathname } = parsedUrl
+
+  if (jsonSuffixRegex.test(pathname)) {
+    return
+  }
+
   const packageMatch = pathname.match(packageRegex)
 
   if (packageMatch) {

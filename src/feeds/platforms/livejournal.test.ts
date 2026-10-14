@@ -63,6 +63,28 @@ describe('livejournalHandler', () => {
   })
 
   describe('resolve', () => {
+    it('should write an underscore in a path username as a hyphen in the host', async () => {
+      const value = 'https://www.livejournal.com/users/foo_bar/'
+
+      const [first] = await livejournalHandler.resolve(value)
+
+      expect(first).toEqual({
+        uri: 'https://foo-bar.livejournal.com/data/rss',
+        hint: { key: 'livejournal:posts', label: 'Posts', format: 'rss' },
+      })
+    })
+
+    it('should keep a username with an edge underscore on the users host', async () => {
+      const value = 'https://users.livejournal.com/_foo_/'
+
+      const [first] = await livejournalHandler.resolve(value)
+
+      expect(first).toEqual({
+        uri: 'https://users.livejournal.com/-foo-/data/rss',
+        hint: { key: 'livejournal:posts', label: 'Posts', format: 'rss' },
+      })
+    })
+
     it('should return empty array for a URL outside LiveJournal', () => {
       expect(livejournalHandler.resolve('https://example.com/')).toEqual([])
     })

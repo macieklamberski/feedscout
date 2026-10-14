@@ -91,6 +91,18 @@ export const parseLivejournalUrl = (url: string): LivejournalUrl | undefined => 
   return { kind: 'journal', tag }
 }
 
+// A user named in the path is canonicalised to its subdomain, with `_` written as `-`. A name that
+// starts or ends with `_` makes no valid host label, so it stays on users.livejournal.com.
+const getJournalOrigin = (username: string): string => {
+  const label = username.replaceAll('_', '-')
+
+  if (label.startsWith('-') || label.endsWith('-')) {
+    return `https://users.livejournal.com/${label}`
+  }
+
+  return `https://${label}.livejournal.com`
+}
+
 export const livejournalHandler: PlatformHandler = {
   match: (url) => {
     return parseLivejournalUrl(url) !== undefined
@@ -103,10 +115,7 @@ export const livejournalHandler: PlatformHandler = {
       return []
     }
 
-    // A user named in the path is canonicalised to its subdomain.
-    const base = parsed.username
-      ? `https://${parsed.username}.livejournal.com`
-      : new URL(url).origin
+    const base = parsed.username ? getJournalOrigin(parsed.username) : new URL(url).origin
 
     return getJournalFeeds(base, parsed.tag, 'livejournal')
   },
