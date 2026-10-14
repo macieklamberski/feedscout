@@ -8,8 +8,8 @@ import { composeWordpressFeeds, parseWordpressPage, type WordpressUrl } from './
 export type WpengineUrl = WordpressUrl
 
 const domains = ['wpenginepowered.com', 'wpengine.com']
-// The customer portal.
-const excludedSubdomains = ['my']
+// The API, a redirect to the home page and the customer portal.
+const excludedSubdomains = ['api', 'cdn', 'my']
 
 export const parseWpengineUrl = (url: string): WpengineUrl | undefined => {
   if (!getTenantSubdomain(url, domains, excludedSubdomains)) {

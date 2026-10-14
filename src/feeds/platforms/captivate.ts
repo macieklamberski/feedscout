@@ -12,6 +12,7 @@ const excludedSubdomains = [
   'api',
   'artwork',
   'assets',
+  'cdn',
   'docs',
   'feeds',
   'help',

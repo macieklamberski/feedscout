@@ -6,9 +6,11 @@ import { composeHint, getTenantSubdomain } from '../../common/utils.js'
 export type TistoryUrl = { kind: 'blog' }
 
 const domains = ['tistory.com']
+// The API.
+const excludedSubdomains = ['api']
 
 export const parseTistoryUrl = (url: string): TistoryUrl | undefined => {
-  if (!getTenantSubdomain(url, domains)) {
+  if (!getTenantSubdomain(url, domains, excludedSubdomains)) {
     return
   }
 

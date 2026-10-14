@@ -9,10 +9,12 @@ import { composeHint, getTenantSubdomain } from '../../common/utils.js'
 export type WeeblyUrl = { kind: 'blog'; page?: string }
 
 const domains = ['weebly.com']
+// The API, the asset host and the builder's marketing site.
+const excludedSubdomains = ['api', 'assets', 'static']
 const numericRegex = /^\d+$/
 
 export const parseWeeblyUrl = (url: string): WeeblyUrl | undefined => {
-  if (!getTenantSubdomain(url, domains)) {
+  if (!getTenantSubdomain(url, domains, excludedSubdomains)) {
     return
   }
 

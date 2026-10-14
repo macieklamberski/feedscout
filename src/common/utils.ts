@@ -198,10 +198,8 @@ export const getCookieNames = (headers: Headers): Array<string> => {
 const scriptSegmentRegex = /\/[^/]*\.(?:php(?:\/.*)?|html?)$/i
 const trailingSlashRegex = /\/$/
 
-// The labels a platform that gives out subdomains keeps for itself.
-const serviceSubdomains = ['www', 'api', 'cdn', 'static', 'assets']
-
-// The subdomain a platform gives one of its users: a single label that is not a service host.
+// The subdomain a platform gives one of its users: a single label other than `www`, which is the
+// platform's own site everywhere. Each platform names its other service hosts itself.
 export const getTenantSubdomain = (
   url: string | URL,
   domains: Array<string>,
@@ -213,7 +211,7 @@ export const getTenantSubdomain = (
     return
   }
 
-  if (isAnyOf(subdomain, serviceSubdomains) || isAnyOf(subdomain, excludedSubdomains)) {
+  if (isAnyOf(subdomain, 'www') || isAnyOf(subdomain, excludedSubdomains)) {
     return
   }
 

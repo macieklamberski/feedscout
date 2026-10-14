@@ -9,12 +9,14 @@ import { composeHint, getTenantSubdomain } from '../../common/utils.js'
 export type PosthavenUrl = { kind: 'tag'; tag: string } | { kind: 'blog' }
 
 const domains = ['posthaven.com']
+// The API.
+const excludedSubdomains = ['api']
 const tagRegex = /^\/tag\/([^/]+)/i
 
 export const parsePosthavenUrl = (url: string): PosthavenUrl | undefined => {
   const parsedUrl = parseUrl(url)
 
-  if (!parsedUrl || !getTenantSubdomain(parsedUrl, domains)) {
+  if (!parsedUrl || !getTenantSubdomain(parsedUrl, domains, excludedSubdomains)) {
     return
   }
 

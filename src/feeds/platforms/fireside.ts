@@ -8,7 +8,18 @@ export type FiresideUrl = { kind: 'podcast'; slug: string }
 const domains = ['fireside.fm']
 
 // Fireside's own services, not shows.
-const excludedSubdomains = ['app', 'assets', 'blog', 'feeds', 'help', 'media', 'status', 'www']
+const excludedSubdomains = [
+  'app',
+  'assets',
+  'blog',
+  'cdn',
+  'feeds',
+  'help',
+  'media',
+  'static',
+  'status',
+  'www',
+]
 
 export const parseFiresideUrl = (url: string): FiresideUrl | undefined => {
   const slug = getTenantSubdomain(url, domains, excludedSubdomains)

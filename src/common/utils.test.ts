@@ -587,9 +587,12 @@ describe('getTenantSubdomain', () => {
     expect(getTenantSubdomain('https://blog.alice.example.com/', domains)).toBeUndefined()
   })
 
-  it('should return undefined for a service host in any case', () => {
+  it('should return undefined for www in any case', () => {
     expect(getTenantSubdomain('https://WWW.example.com/', domains)).toBeUndefined()
-    expect(getTenantSubdomain('https://cdn.example.com/', domains)).toBeUndefined()
+  })
+
+  it('should return the subdomain for a label the platform does not exclude', () => {
+    expect(getTenantSubdomain('https://api.example.com/', domains)).toBe('api')
   })
 
   it('should return undefined for a subdomain the platform excludes', () => {
