@@ -69,6 +69,18 @@ describe('mailArchiveHandler', () => {
       expect(mailArchiveHandler.resolve('https://example.com/')).toEqual([])
     })
 
+    it('should encode a space in the list name', () => {
+      const value = 'https://www.mail-archive.com/a%20b@example.org/msg1.html'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://www.mail-archive.com/a%20b@example.org/maillist.xml',
+          hint: { key: 'mail-archive:list', label: 'Mailing list' },
+        },
+      ]
+
+      expect(mailArchiveHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return the list feed for a message page', () => {
       const value = 'https://www.mail-archive.com/gnupg-users@gnupg.org/msg43000.html'
       const expected: Array<DiscoverUriEntry> = [

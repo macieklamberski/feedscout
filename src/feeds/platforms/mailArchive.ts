@@ -41,7 +41,7 @@ export const mailArchiveHandler: PlatformHandler = {
 
     return [
       {
-        uri: `${origin}/${parsed.list}/maillist.xml`,
+        uri: `${origin}/${encodeURI(parsed.list)}/maillist.xml`,
         hint: composeHint('mail-archive:list'),
       },
     ]
