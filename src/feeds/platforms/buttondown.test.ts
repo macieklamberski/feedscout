@@ -2,7 +2,7 @@ import { describe, expect, it } from 'bun:test'
 import { type ButtondownUrl, buttondownHandler, parseButtondownUrl } from './buttondown.js'
 
 describe('parseButtondownUrl', () => {
-  const routeValues: Array<string> = [
+  const excludedPathValues: Array<string> = [
     'https://buttondown.com/emails',
     'https://buttondown.com/subscribers',
     'https://buttondown.com/search',
@@ -11,7 +11,7 @@ describe('parseButtondownUrl', () => {
     'https://buttondown.com/Stack',
   ]
 
-  it.each(routeValues)('should return undefined for the site route %s', (value) => {
+  it.each(excludedPathValues)('should return undefined for the site route %s', (value) => {
     expect(parseButtondownUrl(value)).toBeUndefined()
   })
 

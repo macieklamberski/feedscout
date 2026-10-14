@@ -52,7 +52,7 @@ describe('parseLetterboxdUrl', () => {
     expect(parseLetterboxdUrl('https://letterboxd.com/sign-in/')).toBeUndefined()
   })
 
-  const siteRouteValues: Array<string> = [
+  const excludedPathValues: Array<string> = [
     'https://letterboxd.com/tag/horror/films/',
     'https://letterboxd.com/country/usa/',
     'https://letterboxd.com/cinematography/roger-deakins/',
@@ -62,7 +62,7 @@ describe('parseLetterboxdUrl', () => {
     'https://letterboxd.com/reviewers/popular/',
   ]
 
-  it.each(siteRouteValues)('should return undefined for the site route %s', (value) => {
+  it.each(excludedPathValues)('should return undefined for the site route %s', (value) => {
     expect(parseLetterboxdUrl(value)).toBeUndefined()
   })
 

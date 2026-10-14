@@ -14,7 +14,7 @@ describe('parseLearnkuUrl', () => {
     expect(parseLearnkuUrl('https://learnku.com/search')).toEqual(expected)
   })
 
-  const siteRouteValues: Array<string> = [
+  const excludedPathValues: Array<string> = [
     'https://learnku.com/articles/12345/slug',
     'https://learnku.com/docs/laravel/11.x',
     'https://learnku.com/auth/login',
@@ -25,7 +25,7 @@ describe('parseLearnkuUrl', () => {
     'https://learnku.com/quizzes',
   ]
 
-  it.each(siteRouteValues)('should return the home page for the site route %s', (value) => {
+  it.each(excludedPathValues)('should return the home page for the site route %s', (value) => {
     const expected: LearnkuUrl = { kind: 'home' }
 
     expect(parseLearnkuUrl(value)).toEqual(expected)

@@ -30,7 +30,7 @@ describe('parseSverigesRadioUrl', () => {
     expect(parseSverigesRadioUrl('https://sverigesradio.se/nyheter')).toBeUndefined()
   })
 
-  const siteRoutes: Array<string> = [
+  const excludedPathValues: Array<string> = [
     'hantering-av-personuppgifter',
     'p1',
     'p3',
@@ -40,7 +40,7 @@ describe('parseSverigesRadioUrl', () => {
     'tillganglighet-guide-navigera-webbplatsen',
   ]
 
-  it.each(siteRoutes)('should return undefined for the %s site route', (route) => {
+  it.each(excludedPathValues)('should return undefined for the %s site route', (route) => {
     expect(parseSverigesRadioUrl(`https://sverigesradio.se/${route}`)).toBeUndefined()
   })
 

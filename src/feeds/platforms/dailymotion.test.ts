@@ -3,7 +3,7 @@ import type { DailymotionUrl } from './dailymotion.js'
 import { dailymotionHandler, parseDailymotionUrl } from './dailymotion.js'
 
 describe('parseDailymotionUrl', () => {
-  const routeValues: Array<string> = [
+  const excludedPathValues: Array<string> = [
     'https://www.dailymotion.com/us',
     'https://www.dailymotion.com/FR',
     'https://www.dailymotion.com/us/',
@@ -12,13 +12,6 @@ describe('parseDailymotionUrl', () => {
     'https://www.dailymotion.com/corner',
     'https://www.dailymotion.com/user',
     'https://www.dailymotion.com/news',
-  ]
-
-  it.each(routeValues)('should return undefined for the site route %s', (value) => {
-    expect(parseDailymotionUrl(value)).toBeUndefined()
-  })
-
-  const excludedValues: Array<string> = [
     'https://www.dailymotion.com/signin',
     'https://www.dailymotion.com/upload',
     'https://www.dailymotion.com/settings',
@@ -26,6 +19,10 @@ describe('parseDailymotionUrl', () => {
     'https://www.dailymotion.com/login',
     'https://www.dailymotion.com/live',
   ]
+
+  it.each(excludedPathValues)('should return undefined for the site route %s', (value) => {
+    expect(parseDailymotionUrl(value)).toBeUndefined()
+  })
 
   it('should return the user for a page under the user segment', () => {
     const expected: DailymotionUrl = { kind: 'user', username: 'france24' }
@@ -100,10 +97,6 @@ describe('parseDailymotionUrl', () => {
 
   it('should return undefined for a capitalized excluded path', () => {
     expect(parseDailymotionUrl('https://www.dailymotion.com/Signin')).toBeUndefined()
-  })
-
-  it.each(excludedValues)('should return undefined for %s', (value) => {
-    expect(parseDailymotionUrl(value)).toBeUndefined()
   })
 
   it('should return the user for a user page with a trailing slash', () => {

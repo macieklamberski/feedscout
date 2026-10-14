@@ -36,7 +36,7 @@ describe('parseQiitaUrl', () => {
     expect(parseQiitaUrl('https://qiita.com/settings')).toBeUndefined()
   })
 
-  const siteRoutes: Array<string> = [
+  const excludedPathValues: Array<string> = [
     'advent-calendar',
     'asct',
     'badges',
@@ -58,7 +58,7 @@ describe('parseQiitaUrl', () => {
     'white_papers',
   ]
 
-  it.each(siteRoutes)('should return undefined for the %s site route', (route) => {
+  it.each(excludedPathValues)('should return undefined for the %s site route', (route) => {
     expect(parseQiitaUrl(`https://qiita.com/${route}`)).toBeUndefined()
   })
 

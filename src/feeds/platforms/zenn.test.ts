@@ -73,7 +73,7 @@ describe('parseZennUrl', () => {
     expect(parseZennUrl('https://zenn.dev/terms')).toBeUndefined()
   })
 
-  const siteRoutes: Array<string> = [
+  const excludedPathValues: Array<string> = [
     'biz-lp',
     'challenges',
     'contests',
@@ -91,7 +91,7 @@ describe('parseZennUrl', () => {
     'tech-or-idea',
   ]
 
-  it.each(siteRoutes)('should return undefined for the %s site route', (route) => {
+  it.each(excludedPathValues)('should return undefined for the %s site route', (route) => {
     expect(parseZennUrl(`https://zenn.dev/${route}`)).toBeUndefined()
   })
 

@@ -61,7 +61,7 @@ describe('parseTumblrUrl', () => {
     expect(parseTumblrUrl('https://www.tumblr.com/explore')).toBeUndefined()
   })
 
-  const siteRoutes: Array<string> = [
+  const excludedPathValues: Array<string> = [
     'abuse',
     'business',
     'buttons',
@@ -87,7 +87,7 @@ describe('parseTumblrUrl', () => {
     'tv',
   ]
 
-  it.each(siteRoutes)('should return undefined for the %s site route', (route) => {
+  it.each(excludedPathValues)('should return undefined for the %s site route', (route) => {
     expect(parseTumblrUrl(`https://www.tumblr.com/${route}`)).toBeUndefined()
   })
 

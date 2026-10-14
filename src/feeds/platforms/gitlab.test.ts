@@ -195,7 +195,7 @@ describe('parseGitlabUrl', () => {
     expect(parseGitlabUrl('https://gitlab.com/group/tree')).toEqual(expected)
   })
 
-  const excludedValues: Array<string> = [
+  const excludedPathValues: Array<string> = [
     'https://gitlab.com/explore',
     'https://gitlab.com/dashboard',
     'https://gitlab.com/users',
@@ -203,7 +203,7 @@ describe('parseGitlabUrl', () => {
     'https://gitlab.com/help',
   ]
 
-  it.each(excludedValues)('should return undefined for %s', (value) => {
+  it.each(excludedPathValues)('should return undefined for the site route %s', (value) => {
     expect(parseGitlabUrl(value)).toBeUndefined()
   })
 

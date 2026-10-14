@@ -18,7 +18,7 @@ describe('parseWriteasUrl', () => {
     expect(parseWriteasUrl('https://write.as/about')).toBeUndefined()
   })
 
-  const siteRoutes: Array<string> = [
+  const excludedPathValues: Array<string> = [
     '5years',
     'apps',
     'contact',
@@ -36,7 +36,7 @@ describe('parseWriteasUrl', () => {
     'subscribe',
   ]
 
-  it.each(siteRoutes)('should return undefined for the %s site route', (route) => {
+  it.each(excludedPathValues)('should return undefined for the %s site route', (route) => {
     expect(parseWriteasUrl(`https://write.as/${route}`)).toBeUndefined()
   })
 

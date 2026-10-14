@@ -64,7 +64,7 @@ describe('parseNebulaUrl', () => {
     expect(parseNebulaUrl('https://nebula.tv/terms')).toBeUndefined()
   })
 
-  const siteRouteValues: Array<string> = [
+  const excludedPathValues: Array<string> = [
     'https://nebula.tv/join',
     'https://nebula.tv/account',
     'https://nebula.tv/beta',
@@ -76,7 +76,7 @@ describe('parseNebulaUrl', () => {
     'https://nebula.tv/redeem',
   ]
 
-  it.each(siteRouteValues)('should return undefined for the site route %s', (value) => {
+  it.each(excludedPathValues)('should return undefined for the site route %s', (value) => {
     expect(parseNebulaUrl(value)).toBeUndefined()
   })
 

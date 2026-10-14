@@ -3,20 +3,13 @@ import type { DeviantartUrl } from './deviantart.js'
 import { deviantartHandler, parseDeviantartUrl } from './deviantart.js'
 
 describe('parseDeviantartUrl', () => {
-  const routeValues: Array<string> = [
+  const excludedPathValues: Array<string> = [
     'https://www.deviantart.com/users/login',
     'https://www.deviantart.com/morelikethis/123456',
     'https://www.deviantart.com/forum',
     'https://www.deviantart.com/messages',
     'https://www.deviantart.com/studio',
     'https://www.deviantart.com/Community',
-  ]
-
-  it.each(routeValues)('should return undefined for the site route %s', (value) => {
-    expect(parseDeviantartUrl(value)).toBeUndefined()
-  })
-
-  const excludedValues: Array<string> = [
     'https://deviantart.com/about',
     'https://deviantart.com/join',
     'https://deviantart.com/search',
@@ -25,6 +18,10 @@ describe('parseDeviantartUrl', () => {
     'https://deviantart.com/about/favourites',
     'https://deviantart.com/about/journal',
   ]
+
+  it.each(excludedPathValues)('should return undefined for the site route %s', (value) => {
+    expect(parseDeviantartUrl(value)).toBeUndefined()
+  })
 
   it('should return the profile for a profile page', () => {
     const expected: DeviantartUrl = { kind: 'profile', username: 'yuumei' }
@@ -137,10 +134,6 @@ describe('parseDeviantartUrl', () => {
     const expected: DeviantartUrl = { kind: 'tag', tag: 'café' }
 
     expect(parseDeviantartUrl('https://deviantart.com/tag/caf%C3%A9')).toEqual(expected)
-  })
-
-  it.each(excludedValues)('should return undefined for %s', (value) => {
-    expect(parseDeviantartUrl(value)).toBeUndefined()
   })
 
   it('should return the daily deviations page', () => {

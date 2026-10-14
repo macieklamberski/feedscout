@@ -2,7 +2,7 @@ import { describe, expect, it } from 'bun:test'
 import { type ArtstationUrl, artstationHandler, parseArtstationUrl } from './artstation.js'
 
 describe('parseArtstationUrl', () => {
-  const routeValues: Array<string> = [
+  const excludedPathValues: Array<string> = [
     'https://www.artstation.com/about',
     'https://www.artstation.com/tos',
     'https://www.artstation.com/privacy',
@@ -11,7 +11,7 @@ describe('parseArtstationUrl', () => {
     'https://www.artstation.com/Messages',
   ]
 
-  it.each(routeValues)('should return undefined for the site route %s', (value) => {
+  it.each(excludedPathValues)('should return undefined for the site route %s', (value) => {
     expect(parseArtstationUrl(value)).toBeUndefined()
   })
 

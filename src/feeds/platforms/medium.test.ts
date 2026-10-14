@@ -114,7 +114,7 @@ describe('parseMediumUrl', () => {
     expect(parseMediumUrl('https://medium.com/membership')).toBeUndefined()
   })
 
-  const siteRouteValues: Array<string> = [
+  const excludedPathValues: Array<string> = [
     'https://medium.com/about',
     'https://medium.com/explore-topics',
     'https://medium.com/tag',
@@ -123,7 +123,7 @@ describe('parseMediumUrl', () => {
     'https://medium.com/sitemap/sitemap.xml',
   ]
 
-  it.each(siteRouteValues)('should return undefined for the site route %s', (value) => {
+  it.each(excludedPathValues)('should return undefined for the site route %s', (value) => {
     expect(parseMediumUrl(value)).toBeUndefined()
   })
 

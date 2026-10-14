@@ -12,7 +12,7 @@ describe('parseHearthisUrl', () => {
     expect(parseHearthisUrl('https://hearthis.at/search')).toBeUndefined()
   })
 
-  const siteRouteValues: Array<string> = [
+  const excludedPathValues: Array<string> = [
     'https://hearthis.at/categories/house/',
     'https://hearthis.at/tag/techno/',
     'https://hearthis.at/popular/',
@@ -34,7 +34,7 @@ describe('parseHearthisUrl', () => {
     'https://hearthis.at/accessibility/',
   ]
 
-  it.each(siteRouteValues)('should return undefined for the site route %s', (value) => {
+  it.each(excludedPathValues)('should return undefined for the site route %s', (value) => {
     expect(parseHearthisUrl(value)).toBeUndefined()
   })
 

@@ -40,7 +40,7 @@ describe('parseVimeoUrl', () => {
     expect(parseVimeoUrl('https://vimeo.com/pricing')).toBeUndefined()
   })
 
-  const siteRoutes: Array<string> = [
+  const excludedPathValues: Array<string> = [
     'analytics',
     'api',
     'cookie_policy',
@@ -61,7 +61,7 @@ describe('parseVimeoUrl', () => {
     'videoschool',
   ]
 
-  it.each(siteRoutes)('should return undefined for the %s site route', (route) => {
+  it.each(excludedPathValues)('should return undefined for the %s site route', (route) => {
     expect(parseVimeoUrl(`https://vimeo.com/${route}`)).toBeUndefined()
   })
 

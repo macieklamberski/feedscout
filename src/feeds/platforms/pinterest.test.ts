@@ -77,7 +77,7 @@ describe('parsePinterestUrl', () => {
     expect(parsePinterestUrl('https://www.pinterest.com/topics')).toBeUndefined()
   })
 
-  const siteRoutes: Array<string> = [
+  const excludedPathValues: Array<string> = [
     'ads',
     'careers',
     'categories',
@@ -96,7 +96,7 @@ describe('parsePinterestUrl', () => {
     'videos',
   ]
 
-  it.each(siteRoutes)('should return undefined for the %s site route', (route) => {
+  it.each(excludedPathValues)('should return undefined for the %s site route', (route) => {
     expect(parsePinterestUrl(`https://www.pinterest.com/${route}`)).toBeUndefined()
   })
 

@@ -3,7 +3,7 @@ import type { BehanceUrl } from './behance.js'
 import { behanceHandler, parseBehanceUrl } from './behance.js'
 
 describe('parseBehanceUrl', () => {
-  const routeValues: Array<string> = [
+  const excludedPathValues: Array<string> = [
     'https://www.behance.net/gallery',
     'https://www.behance.net/jobs',
     'https://www.behance.net/collections',
@@ -11,7 +11,7 @@ describe('parseBehanceUrl', () => {
     'https://www.behance.net/Signup',
   ]
 
-  it.each(routeValues)('should return undefined for the site route %s', (value) => {
+  it.each(excludedPathValues)('should return undefined for the site route %s', (value) => {
     expect(parseBehanceUrl(value)).toBeUndefined()
   })
 

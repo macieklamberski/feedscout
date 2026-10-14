@@ -2,7 +2,7 @@ import { describe, expect, it } from 'bun:test'
 import { type CnblogsUrl, cnblogsHandler, parseCnblogsUrl } from './cnblogs.js'
 
 describe('parseCnblogsUrl', () => {
-  const routeValues: Array<string> = [
+  const excludedPathValues: Array<string> = [
     'https://www.cnblogs.com/pick/',
     'https://www.cnblogs.com/cate/108698/',
     'https://www.cnblogs.com/candidate/',
@@ -11,7 +11,7 @@ describe('parseCnblogsUrl', () => {
     'https://www.cnblogs.com/Subscription',
   ]
 
-  it.each(routeValues)('should return undefined for the site route %s', (value) => {
+  it.each(excludedPathValues)('should return undefined for the site route %s', (value) => {
     expect(parseCnblogsUrl(value)).toBeUndefined()
   })
 

@@ -85,9 +85,9 @@ describe('parsePromodjUrl', () => {
     expect(parsePromodjUrl(`https://promodj.com/${section}`)).toBeUndefined()
   })
 
-  const siteRoutes: Array<string> = ['about', 'api', 'news']
+  const excludedPathValues: Array<string> = ['about', 'api', 'news']
 
-  it.each(siteRoutes)('should return undefined for the %s site route', (route) => {
+  it.each(excludedPathValues)('should return undefined for the %s site route', (route) => {
     expect(parsePromodjUrl(`https://promodj.com/${route}`)).toBeUndefined()
   })
 

@@ -3,7 +3,7 @@ import type { ArenaUrl } from './arena.js'
 import { arenaHandler, parseArenaUrl } from './arena.js'
 
 describe('parseArenaUrl', () => {
-  const routeValues: Array<string> = [
+  const excludedPathValues: Array<string> = [
     'https://www.are.na/block/12345',
     'https://www.are.na/sign_up',
     'https://www.are.na/developers',
@@ -12,7 +12,7 @@ describe('parseArenaUrl', () => {
     'https://www.are.na/Home',
   ]
 
-  it.each(routeValues)('should return undefined for the site route %s', (value) => {
+  it.each(excludedPathValues)('should return undefined for the site route %s', (value) => {
     expect(parseArenaUrl(value)).toBeUndefined()
   })
 

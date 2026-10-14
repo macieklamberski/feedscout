@@ -138,35 +138,13 @@ describe('parseGiteaUrl', () => {
     expect(parseGiteaUrl('https://codeberg.org/a.bianco/notes')).toEqual(expected)
   })
 
-  const excludedValues: Array<string> = [
+  const excludedPathValues: Array<string> = [
     'https://codeberg.org/explore',
     'https://codeberg.org/admin',
     'https://codeberg.org/user',
     'https://codeberg.org/assets',
     'https://codeberg.org/api',
     'https://codeberg.org/-',
-  ]
-
-  it.each(excludedValues)('should return undefined for %s', (value) => {
-    expect(parseGiteaUrl(value)).toBeUndefined()
-  })
-
-  it('should return undefined for an excluded path in another case', () => {
-    expect(parseGiteaUrl('https://codeberg.org/Explore')).toBeUndefined()
-    expect(parseGiteaUrl('https://codeberg.org/ADMIN')).toBeUndefined()
-  })
-
-  const excludedRepoValues: Array<string> = [
-    'https://codeberg.org/explore/repos',
-    'https://codeberg.org/admin/users',
-    'https://codeberg.org/user/login',
-  ]
-
-  it.each(excludedRepoValues)('should return undefined for %s', (value) => {
-    expect(parseGiteaUrl(value)).toBeUndefined()
-  })
-
-  const reservedValues: Array<string> = [
     'https://gitea.com/issues',
     'https://gitea.com/pulls',
     'https://gitea.com/milestones',
@@ -186,7 +164,22 @@ describe('parseGiteaUrl', () => {
     'https://gitea.com/.well-known/openid-configuration',
   ]
 
-  it.each(reservedValues)('should return undefined for the reserved name in %s', (value) => {
+  it.each(excludedPathValues)('should return undefined for the site route %s', (value) => {
+    expect(parseGiteaUrl(value)).toBeUndefined()
+  })
+
+  it('should return undefined for an excluded path in another case', () => {
+    expect(parseGiteaUrl('https://codeberg.org/Explore')).toBeUndefined()
+    expect(parseGiteaUrl('https://codeberg.org/ADMIN')).toBeUndefined()
+  })
+
+  const excludedRepoValues: Array<string> = [
+    'https://codeberg.org/explore/repos',
+    'https://codeberg.org/admin/users',
+    'https://codeberg.org/user/login',
+  ]
+
+  it.each(excludedRepoValues)('should return undefined for %s', (value) => {
     expect(parseGiteaUrl(value)).toBeUndefined()
   })
 
