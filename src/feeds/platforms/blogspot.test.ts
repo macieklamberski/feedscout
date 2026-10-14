@@ -88,6 +88,10 @@ describe('blogspotHandler', () => {
   })
 
   describe('resolve', () => {
+    it('should return empty array for an unparsable URL', () => {
+      expect(blogspotHandler.resolve('not-a-url')).toEqual([])
+    })
+
     it('should return the label feed for a label page on a custom domain', () => {
       const value = 'https://example.com/search/label/Chris%20Rossini'
       const expected: Array<DiscoverUriEntry> = [

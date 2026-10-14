@@ -516,6 +516,25 @@ describe('discoverFavicons', () => {
     expect(result).toEqual([])
   })
 
+  it('should return empty array from feed method for RDF content', async () => {
+    const rdfContent = `
+      <?xml version="1.0"?>
+      <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/">
+        <channel rdf:about="https://example.com/">
+          <title>Example</title>
+          <link>https://example.com</link>
+        </channel>
+      </rdf:RDF>
+    `
+    const mockFetch = createMockFetch({})
+    const result = await discoverFavicons(
+      { url: 'https://example.com/feed.rdf', content: rdfContent },
+      { methods: ['feed'], fetchFn: mockFetch },
+    )
+
+    expect(result).toEqual([])
+  })
+
   it('should return empty array for invalid URLs', async () => {
     const mockFetch = createMockFetch({})
     const result = await discoverFavicons('not-a-valid-url', {
