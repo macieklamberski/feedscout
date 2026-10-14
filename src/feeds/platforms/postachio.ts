@@ -8,7 +8,6 @@ export type PostachioUrl = { kind: 'site'; subdomain: string }
 
 const domains = ['postach.io']
 
-// Postach.io's own services, served off the blog farm's address.
 const excludedSubdomains = ['api', 'blog', 'cdn-images', 'cdn-static', 'www']
 
 export const parsePostachioUrl = (url: string): PostachioUrl | undefined => {

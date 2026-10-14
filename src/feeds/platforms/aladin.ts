@@ -14,7 +14,6 @@ const hosts = ['blog.aladin.co.kr']
 
 const categoryIdRegex = /^\d+$/
 
-// Site-wide pages and asset roots that share the first segment with blog names.
 const excludedPaths = [
   'bookple',
   'bp',

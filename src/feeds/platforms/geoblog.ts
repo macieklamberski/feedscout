@@ -15,8 +15,6 @@ const domains = ['geoblog.pl']
 const idRegex = /^\d+$/
 const tripPathRegex = /^\/podroz\/(\d+)(?:\/|$)/i
 
-// Wildcard DNS sends every label to the user farm. www is the portal, admin answers 401 and cdn is
-// the image host.
 const excludedSubdomains = ['admin', 'cdn', 'www']
 
 export const parseGeoblogUrl = (url: string): GeoblogUrl | undefined => {

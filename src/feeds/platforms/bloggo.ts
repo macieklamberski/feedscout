@@ -9,7 +9,6 @@ export type BloggoUrl = { kind: 'blog' } | { kind: 'post'; slug: string }
 
 const domains = ['bloggo.nu']
 
-// Bloggo's own services, not blogs.
 const excludedSubdomains = ['admin', 'img', 'reg', 'static', 'www']
 const excludedPaths = ['about', 'feed']
 // A made-up post answers its comments feed with a 200 placeholder channel, and only a real

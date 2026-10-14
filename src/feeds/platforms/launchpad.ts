@@ -28,7 +28,6 @@ const feedsOrigin = 'http://feeds.launchpad.net'
 
 const bugIdRegex = /^\d+$/
 
-// Top-level routes of the Launchpad root that are not project or distribution names.
 const excludedPaths = [
   'archives',
   'bazaar',

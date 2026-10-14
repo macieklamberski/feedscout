@@ -9,7 +9,6 @@ export type CanpanUrl = { kind: 'blog'; blog: string }
 
 const hosts = ['blog.canpan.info']
 
-// Asset and service paths on the blog host, none of them a blog.
 const excludedPaths = [
   '_common',
   '_contents',

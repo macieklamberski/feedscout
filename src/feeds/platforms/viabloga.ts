@@ -9,7 +9,6 @@ export type ViablogaUrl = { kind: 'blog' }
 
 const domains = ['viabloga.com']
 
-// The portal, and names that answer 403 or time out with no blog behind them.
 const excludedSubdomains = ['images', 'news', 'support', 'test', 'viabloga2', 'www']
 
 export const parseViablogaUrl = (url: string): ViablogaUrl | undefined => {

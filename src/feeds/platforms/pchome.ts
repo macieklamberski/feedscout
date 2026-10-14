@@ -16,7 +16,6 @@ const baseUrl = 'https://mypaper.pchome.com.tw'
 const usernameRegex = /^\w+$/
 const categoryRegex = /^\d+$/
 
-// Site-wide pages and asset roots that share the first segment with paper names.
 const excludedPaths = [
   'css',
   'fancybox',

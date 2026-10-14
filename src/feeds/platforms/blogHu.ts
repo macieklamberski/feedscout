@@ -13,7 +13,6 @@ const hosts = ['blog.hu', 'www.blog.hu']
 
 const userRegex = /^\/user\/(\d+)(?:\/|$)/i
 
-// The m subdomain redirects its home page to blog.hu and answers 404 elsewhere.
 const excludedSubdomains = ['m']
 
 export const parseBlogHuUrl = (url: string): BlogHuUrl | undefined => {

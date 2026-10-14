@@ -7,7 +7,6 @@ export type FiresideUrl = { kind: 'podcast'; slug: string }
 
 const domains = ['fireside.fm']
 
-// Fireside's own services, not shows.
 const excludedSubdomains = [
   'app',
   'assets',

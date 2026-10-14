@@ -16,7 +16,6 @@ const feedOrigin = 'http://a.hatena.ne.jp'
 // A Hatena ID: 3 to 32 characters, starting with a letter.
 const usernameRegex = /^[a-zA-Z][\w-]{2,31}$/
 
-// Site sections, not antennas.
 const excludedPaths = [
   'category',
   'check',

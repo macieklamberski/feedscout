@@ -23,8 +23,6 @@ const domains = ['alloforum.com']
 const categoryRegex = /^\/([^/]+)-c(\d+)-\d+\.html$/
 const subcategoryRegex = /^\/([^/]+)-c(\d+)-([^/]+)-s(\d+)-\d+\.html$/
 
-// The admin zone, the image host, the upload host, the www redirect to the portal and the mail
-// hosts off the forum server. Every other label resolves to the forum server.
 const excludedSubdomains = ['admin', 'images', 'mail', 'smtp', 'upload', 'webmail', 'www']
 
 export const parseAlloforumUrl = (url: string): AlloforumUrl | undefined => {

@@ -8,9 +8,6 @@ export type PodigeeUrl = { kind: 'podcast' }
 
 const domains = ['podigee.io']
 
-// Reserved Podigee subdomains that aren't user shows. Without this guard the handler
-// emits 404-bound URLs (e.g. https://www.podigee.io/feed/mp3 redirects to a 404 on
-// podigee.com).
 const excludedSubdomains = ['www', 'app', 'help', 'hilfe', 'blog', 'status', 'player', 'cdn']
 
 export const parsePodigeeUrl = (url: string): PodigeeUrl | undefined => {

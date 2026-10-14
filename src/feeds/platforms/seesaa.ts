@@ -18,9 +18,7 @@ const domains = [
   'xblog.jp',
 ]
 
-// Service hosts off the blog farm, with every host under them: the image host each blog page
-// links, the ad network, mail and staging behind basic auth. www.seesaa.net is on the farm but
-// redirects every path to the blog.seesaa.jp portal.
+// Each domain excludes every host under it too.
 const excludedDomains = [
   'ad.seesaa.net',
   'mx.seesaa.net',

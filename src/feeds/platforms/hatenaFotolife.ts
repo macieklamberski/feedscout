@@ -17,7 +17,6 @@ const hosts = ['f.hatena.ne.jp']
 // A Hatena ID: 3 to 32 characters, starting with a letter. Old IDs such as `kumapu-` end in a hyphen.
 const usernameRegex = /^[a-zA-Z][\w-]{2,31}$/
 
-// Site-wide listings, not users.
 const excludedPaths = ['focallength', 'fotocolor', 'help', 'hotfoto', 'model', 'userlist']
 
 // The page links its feeds with every byte outside [A-Za-z0-9_] percent-encoded, `-` and `.`

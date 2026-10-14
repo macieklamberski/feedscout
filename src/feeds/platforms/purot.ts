@@ -17,7 +17,6 @@ const domains = ['purot.net']
 // feeds even when it answers "User not found", and a real profile redirects to the home page.
 const pageChangesRegex = /^\/changes\/([^/?]+)\?mode=rss&messages=0$/
 
-// The service's sign-in host and the redirect to its home page, not wikis.
 const excludedSubdomains = ['my', 'www']
 
 export const parsePurotUrl = (url: string): PurotUrl | undefined => {

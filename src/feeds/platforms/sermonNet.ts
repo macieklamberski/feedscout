@@ -15,7 +15,6 @@ const domains = ['sermon.net']
 // one the church owns serves a feed.
 const channelRegex = /"is_series":(?:false|true),"url":"([^"]+)"/g
 
-// Sermon.net's own services, not churches.
 const excludedSubdomains = ['api', 'www']
 
 export const parseSermonNetUrl = (url: string): SermonNetUrl | undefined => {

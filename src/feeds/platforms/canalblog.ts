@@ -8,7 +8,6 @@ export type CanalblogUrl = { kind: 'blog' }
 
 const domains = ['canalblog.com']
 
-// Service hosts resolve off the blog farm.
 const excludedHosts = [
   'admin.canalblog.com',
   'api.canalblog.com',

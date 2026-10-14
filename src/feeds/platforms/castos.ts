@@ -10,7 +10,6 @@ const domains = ['castos.com']
 // The feed id is opaque, so it is read from the feed link every show page carries.
 const feedIdRegex = /https:\/\/feeds\.castos\.com\/([a-z0-9]+)/i
 
-// Castos's own services, not shows.
 const excludedSubdomains = [
   'api',
   'app',

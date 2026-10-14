@@ -45,7 +45,6 @@ const searchTypes = ['tag', 'text', 'title']
 // The filters the search page carries into its own feed link. It drops `page` and anything else.
 const searchFilters = ['target', 'sort', 'users', 'date_range', 'safe']
 
-// Reserved first segments that are site sections, not usernames.
 const excludedPaths = [
   'articles',
   'config',

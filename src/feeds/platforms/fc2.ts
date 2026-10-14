@@ -12,7 +12,6 @@ const domains = ['blog.2nt.com', 'fc2.net']
 
 const numberedSubdomainRegex = /^[^.]+\.blog\d*$/i
 
-// Service hosts on the fc2.net blog farm: the portal redirect, the FC2 ID login and a test host.
 const excludedHosts = ['blog.fc2.net', 'id.fc2.net', 'test.fc2.net']
 
 export const parseFc2Url = (url: string): Fc2Url | undefined => {

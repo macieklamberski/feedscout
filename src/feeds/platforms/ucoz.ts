@@ -38,7 +38,6 @@ const cookieNameRegex = /^[\da-z][\w-]*uCoz$/
 // A forum page is `/forum/{section}-{topic}-{page}`, and section 0 is the forum index.
 const forumSectionRegex = /^([1-9]\d*)(?:-|$)/
 
-// The company site answers on `www`, and user sites never do.
 const excludedSubdomains = ['www']
 const modules = ['blog', 'board', 'dir', 'forum', 'load', 'news', 'photo', 'publ', 'stuff'] as const
 

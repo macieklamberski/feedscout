@@ -19,7 +19,6 @@ const domains = [
 const blogRegex = /^\/([^/.]+)(?:\/|$)/
 const feedPathRegex = /^\/([^/.]+)\/(?:atom\.xml|index\.rdf|rss\.xml)$/i
 
-// The portal, which app.cocolog-nifty.com redirects to.
 const excludedSubdomains = ['app', 'www']
 
 export type CocologPage = { blog: string }

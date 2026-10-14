@@ -8,7 +8,6 @@ export type SportsregionsUrl = { kind: 'club' }
 
 const domains = ['sportsregions.fr']
 
-// Every subdomain resolves to the club farm, and these answer as platform services, not clubs.
 const excludedSubdomains = [
   'admin',
   'aide',

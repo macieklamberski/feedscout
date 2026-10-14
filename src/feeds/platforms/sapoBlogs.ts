@@ -18,7 +18,6 @@ const postRegex = /^\/(?:[^/]+-(\d+)|(\d+)\.html)\/?$/i
 const tagRegex = /^\/tag\/(.+?)\/?$/i
 const reservedCharRegex = /[!'()*]/g
 
-// The m host is the mobile front on its own server and www serves no blog.
 const excludedSubdomains = ['m', 'www']
 
 export const parseSapoBlogsUrl = (url: string): SapoBlogsUrl | undefined => {

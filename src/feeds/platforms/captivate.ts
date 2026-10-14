@@ -7,7 +7,6 @@ export type CaptivateUrl = { kind: 'show'; slug: string }
 
 const domains = ['captivate.fm']
 
-// Captivate's own services, not shows.
 const excludedSubdomains = [
   'api',
   'artwork',

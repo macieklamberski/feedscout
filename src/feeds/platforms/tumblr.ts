@@ -13,7 +13,6 @@ export const domains = ['tumblr.com']
 
 const tagRegex = /^\/tagged\/([^/]+)/i
 
-// Top-level routes of www.tumblr.com that are not blogs.
 const excludedPaths = [
   'about',
   'abuse',

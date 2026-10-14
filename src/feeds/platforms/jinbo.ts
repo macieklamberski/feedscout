@@ -20,7 +20,6 @@ const feedLinkRegex = /^https:\/\/blog\.jinbo\.net\/([^/]+)\/rss$/
 // in the wording of the blog's skin.
 const noPostsRegex = />0<\/\w+>개의 게시물을 찾았습니다|에 (?:관한|해당되는) 글 0(?:개|건)/
 
-// Site-wide pages and asset roots that share the first segment with blog names.
 const excludedPaths = [
   'archive',
   'atom',

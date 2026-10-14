@@ -35,15 +35,14 @@ const excludedPaths = [
   'p',
   'sitemap',
 ]
-// Their /feed answers 404 or redirects away from a feed.
 const excludedSubdomains = [
-  'cdn-images-1', // Image CDN
-  'cdn-images-2', // Image CDN
-  'cdn-static-1', // Static asset CDN
-  'glyph', // Redirects to medium.com
-  'help', // Help center
-  'link', // Redirects to medium.com
-  'miro', // Image CDN
+  'cdn-images-1',
+  'cdn-images-2',
+  'cdn-static-1',
+  'glyph',
+  'help',
+  'link',
+  'miro',
 ]
 
 export const parseMediumUrl = (url: string): MediumUrl | undefined => {

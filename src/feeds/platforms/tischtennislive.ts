@@ -18,7 +18,6 @@ const domains = ['tischtennislive.de']
 const resultsFeedPathRegex = /^\/Export\/Tischtennis\/RSS\.aspx$/i
 const resultsIdRegex = /^\d+$/
 
-// The product page of the software, which every unknown subdomain also serves.
 const excludedSubdomains = ['www']
 
 export const parseTischtennisliveUrl = (url: string): TischtennisliveUrl | undefined => {

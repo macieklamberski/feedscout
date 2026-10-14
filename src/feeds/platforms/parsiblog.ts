@@ -8,7 +8,6 @@ export type ParsiblogUrl = { kind: 'blog'; blog: string }
 
 const domains = ['parsiblog.com', 'parsiblog.ir']
 
-// The portal, not a blog. Every other name on the wildcard is a blog or a missing one.
 const excludedSubdomains = ['www']
 
 export const parseParsiblogUrl = (url: string): ParsiblogUrl | undefined => {

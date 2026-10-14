@@ -20,8 +20,6 @@ const trailingSlashRegex = /\/$/
 // made-up category would otherwise get the site's feed.
 const errorPageRegex = /<!-- This file lives in public\/404\.html -->/
 
-// The marketing site, the API, the custom domain SSL endpoint, and hosts that redirect every path
-// to help.tenderapp.com/home.
 const excludedSubdomains = ['api', 'blog', 'setup', 'ssl', 'status', 'support', 'www']
 
 const getSettingsRoot = (content: string | undefined): string | undefined => {
