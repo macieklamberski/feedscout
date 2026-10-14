@@ -11,6 +11,7 @@ export type GiteaUrl =
   | { kind: 'repo'; owner: string; repo: string; branchPath?: string }
 
 const hosts = ['codeberg.org', 'www.codeberg.org', 'gitea.com', 'www.gitea.com']
+
 const giteaCookieRegex = /(?:^|[;,\s])[\w-]*gitea=/
 // Gitea reserves these suffixes for routes of a user, such as /{user}.rss, so no username ends
 // with one.
@@ -18,6 +19,7 @@ const userRouteSuffixRegex = /\.(?:atom|gpg|keys|png|rss)$/i
 // A one-segment path is a user, so /feed answers a feed request with the activity of a user
 // named feed.
 const userFeedRegex = /^https?:\/\/(?:www\.)?(?:codeberg\.org|gitea\.com)\/[^/?#]+\/?$/i
+
 const excludedPaths = [
   'explore',
   'admin',
@@ -28,6 +30,23 @@ const excludedPaths = [
   'robots.txt',
   'sitemap.xml',
   '-',
+  'issues',
+  'pulls',
+  'milestones',
+  'notifications',
+  'login',
+  'org',
+  'repo',
+  'metrics',
+  'v2',
+  'attachments',
+  'avatar',
+  'avatars',
+  'repo-avatars',
+  'captcha',
+  'favicon.ico',
+  'ghost',
+  '.well-known',
 ]
 const branchViews = ['src', 'commits']
 

@@ -26,10 +26,13 @@ const discussionsRegex = /^\/[^/]+\/[^/]+\/discussions(?:\/|$)/i
 const discussionCategoryRegex = /^\/[^/]+\/[^/]+\/discussions\/categories\/([^/]+)/i
 const branchRegex = /^\/[^/]+\/[^/]+\/tree\/([^/]+)\/?$/i
 const fileRegex = /^\/[^/]+\/[^/]+\/(?:blob|commits)\/([^/]+)\/(.+)/i
+const userRouteSuffixRegex = /\.(?:atom|gpg|keys|png)$/i
 
 const excludedPaths = [
   'about',
+  'accelerator',
   'account',
+  'advisories',
   'apps',
   'blog',
   'careers',
@@ -39,40 +42,63 @@ const excludedPaths = [
   'copilot',
   'customer-stories',
   'dashboard',
+  'discussions',
+  'edu',
   'education',
   'enterprise',
   'events',
   'explore',
   'features',
   'feed',
+  'gist',
+  'git-guides',
+  'github-copilot',
   'home',
   'issues',
   'join',
   'login',
+  'logout',
   'marketplace',
+  'mcp',
+  'mobile',
   'new',
+  'newsletter',
+  'newsroom',
   'nonprofit',
   'notifications',
+  'open-source',
   'organizations',
   'orgs',
+  'partners',
   'password_reset',
+  'personal',
   'premium-support',
+  'press',
   'pricing',
   'pulls',
   'readme',
   'resources',
   'search',
   'security',
+  'services',
+  'session',
   'sessions',
   'settings',
   'signup',
   'site',
+  'sitemap',
+  'solutions',
+  'spark',
   'sponsors',
   'stars',
+  'support',
   'team',
   'topics',
   'trending',
+  'trust-center',
+  'users',
   'watching',
+  'why-github',
 ]
 
 // Repository and organization discussions sit at the same path depth:
@@ -118,10 +144,10 @@ export const parseGithubUrl = (url: string): GithubUrl | undefined => {
     return { kind: 'discussions', org: second, discussionCategory }
   }
 
-  // GitHub names carry no dots, so a dot starts a route suffix such as .atom or .png.
-  const owner = first?.split('.')[0]
+  const owner = second ? first : first?.replace(userRouteSuffixRegex, '')
 
-  if (!owner || isAnyOf(owner, excludedPaths)) {
+  // GitHub names carry no dots, so a dotted segment such as robots.txt is a file of the site.
+  if (!owner || owner.includes('.') || isAnyOf(owner, excludedPaths)) {
     return
   }
 

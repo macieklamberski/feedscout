@@ -8,7 +8,6 @@ export type TravellerspointUrl = { kind: 'blog'; blog: string }
 
 const domains = ['travellerspoint.com']
 
-// Hosts of the site itself. Every other label is a member blog or answers 404.
 const excludedSubdomains = ['assets', 'blog', 'guide', 'img', 'm', 'photos', 'secure', 'www']
 
 export const parseTravellerspointUrl = (url: string): TravellerspointUrl | undefined => {

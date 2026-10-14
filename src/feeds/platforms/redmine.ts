@@ -15,7 +15,7 @@ import {
 // Discoverability: Partially discoverable without handler.
 // Generic covers activity, board, home, issue, issues, news, projectActivity, projectIssues, projectNews, projects, repository (html), partly covers project.
 
-const poweredByRegex = /Powered by <a\s[^>]*href="https?:\/\/www\.redmine\.org\/"/
+const poweredByRegex = /Powered by <a\s[^<>]*href="https?:\/\/www\.redmine\.org\/"/
 const numericIdRegex = /^\d+$/
 const projectClassRegex = /(?:^|\s)project-(\S+)/
 const repositoryRevisionsRegex = /\/repository\/([^/"?#]+)\/revisions\b/

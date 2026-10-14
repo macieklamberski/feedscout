@@ -12,6 +12,32 @@ describe('parseHearthisUrl', () => {
     expect(parseHearthisUrl('https://hearthis.at/search')).toBeUndefined()
   })
 
+  const excludedPathValues: Array<string> = [
+    'https://hearthis.at/categories/house/',
+    'https://hearthis.at/tag/techno/',
+    'https://hearthis.at/popular/',
+    'https://hearthis.at/new/',
+    'https://hearthis.at/featured/',
+    'https://hearthis.at/livestreams/',
+    'https://hearthis.at/live/',
+    'https://hearthis.at/groups/',
+    'https://hearthis.at/sets/',
+    'https://hearthis.at/maps/',
+    'https://hearthis.at/news/',
+    'https://hearthis.at/upload/',
+    'https://hearthis.at/reseller/',
+    'https://hearthis.at/merchandise/',
+    'https://hearthis.at/faq/',
+    'https://hearthis.at/impressum/',
+    'https://hearthis.at/nutzungsbedingungen/',
+    'https://hearthis.at/datenschutz/',
+    'https://hearthis.at/accessibility/',
+  ]
+
+  it.each(excludedPathValues)('should return undefined for the site route %s', (value) => {
+    expect(parseHearthisUrl(value)).toBeUndefined()
+  })
+
   it('should return undefined for the root', () => {
     expect(parseHearthisUrl('https://hearthis.at/')).toBeUndefined()
   })

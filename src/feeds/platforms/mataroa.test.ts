@@ -17,7 +17,7 @@ describe('mataroaHandler', () => {
   describe('match', () => {
     const values: Array<[boolean, string]> = [
       [true, 'https://alice.mataroa.blog'],
-      [true, 'https://blog.example.mataroa.blog'],
+      [false, 'https://blog.example.mataroa.blog'],
       [false, 'https://mataroa.blog'],
       [false, 'https://example.com'],
     ]

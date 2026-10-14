@@ -1,7 +1,7 @@
-import { getPathSegments, getSubdomain, isAnyOf } from 'trousse'
+import { getPathSegments, isAnyOf } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
+import { composeHint, getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -9,7 +9,6 @@ export type BloggoUrl = { kind: 'blog' } | { kind: 'post'; slug: string }
 
 const domains = ['bloggo.nu']
 
-// Bloggo's own services, not blogs.
 const excludedSubdomains = ['admin', 'img', 'reg', 'static', 'www']
 const excludedPaths = ['about', 'feed']
 // A made-up post answers its comments feed with a 200 placeholder channel, and only a real
@@ -17,9 +16,9 @@ const excludedPaths = ['about', 'feed']
 const postBodyRegex = /<body[^>]*\bpost-id-\d+/
 
 export const parseBloggoUrl = (url: string): BloggoUrl | undefined => {
-  const subdomain = getSubdomain(url, domains)
+  const subdomain = getTenantSubdomain(url, domains, excludedSubdomains)
 
-  if (!subdomain || isAnyOf(subdomain, excludedSubdomains)) {
+  if (!subdomain) {
     return
   }
 

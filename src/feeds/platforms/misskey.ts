@@ -7,7 +7,8 @@ import { composeHint, hasAnyMeta, hasElementWithId, hasMarker } from '../../comm
 
 export type MisskeyUrl = { kind: 'profile'; username: string }
 
-const profileRegex = /^\/@([^/.]+)/
+// A remote account is `@{user}@{host}`, and the host carries dots the local part cannot.
+const profileRegex = /^\/@(?<username>[^/@.]+(?:@[^/]+)?)/
 const metaMarkers: Array<[string, string]> = [
   ['application-name', 'Misskey'],
   ['application-name', 'Sharkey'], // Fork, same feed routes
@@ -18,7 +19,7 @@ export const isMisskeyHtml = (content: string): boolean => {
 }
 
 export const parseMisskeyUrl = (url: string): MisskeyUrl | undefined => {
-  const username = parseUrl(url)?.pathname.match(profileRegex)?.[1]
+  const username = parseUrl(url)?.pathname.match(profileRegex)?.groups?.username
 
   if (!username) {
     return

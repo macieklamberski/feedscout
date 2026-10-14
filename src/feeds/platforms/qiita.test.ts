@@ -36,6 +36,32 @@ describe('parseQiitaUrl', () => {
     expect(parseQiitaUrl('https://qiita.com/settings')).toBeUndefined()
   })
 
+  const excludedPathValues: Array<string> = [
+    'advent-calendar',
+    'asct',
+    'badges',
+    'conference',
+    'drafts',
+    'items',
+    'notifications',
+    'official-campaigns',
+    'official-events',
+    'patches',
+    'public',
+    'qiita-award',
+    'question-feed',
+    'stock',
+    'stock-feed',
+    'stocks',
+    'tech-festa',
+    'timeline',
+    'white_papers',
+  ]
+
+  it.each(excludedPathValues)('should return undefined for the %s site route', (route) => {
+    expect(parseQiitaUrl(`https://qiita.com/${route}`)).toBeUndefined()
+  })
+
   it('should return undefined for the root', () => {
     expect(parseQiitaUrl('https://qiita.com/')).toBeUndefined()
   })

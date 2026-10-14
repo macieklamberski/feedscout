@@ -24,9 +24,9 @@ describe('wpengineHandler', () => {
   describe('match', () => {
     const values: Array<[boolean, string]> = [
       [true, 'https://example.wpenginepowered.com'],
-      [true, 'https://blog.example.wpenginepowered.com'],
+      [false, 'https://blog.example.wpenginepowered.com'],
       [true, 'https://example.wpengine.com'],
-      [true, 'https://blog.example.wpengine.com'],
+      [false, 'https://blog.example.wpengine.com'],
       [false, 'https://wpenginepowered.com'],
       [false, 'https://wpengine.com'],
       [false, 'https://example.com'],

@@ -1,7 +1,13 @@
 import { getAnyOf, parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, hasElementWithId, hasMarker, hasMetaContent } from '../../common/utils.js'
+import {
+  composeHint,
+  findElement,
+  hasElementWithId,
+  hasMarker,
+  hasMetaContent,
+} from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers category, home, top, topic (html).
@@ -82,6 +88,24 @@ export const isDiscourseHeaders = (headers: Headers): boolean => {
   return headers.has('x-discourse-route')
 }
 
+// An install under a sub-path such as `/forum` names it in the setup meta's `data-base-uri`.
+const getBasePath = (content: string | undefined): string => {
+  const setup = findElement(content, (element) => element.attribs.id === 'data-discourse-setup')
+
+  return setup?.attribs['data-base-uri'] ?? ''
+}
+
+// The parser reads paths from the install's root, so the sub-path is cut from the front.
+const stripBasePath = (url: string, basePath: string): string => {
+  const parsedUrl = parseUrl(url)
+
+  if (!parsedUrl?.pathname.startsWith(`${basePath}/`)) {
+    return url
+  }
+
+  return `${parsedUrl.origin}${parsedUrl.pathname.slice(basePath.length)}${parsedUrl.search}`
+}
+
 export const discourseHandler: PlatformHandler = {
   match: (url, content, headers) => {
     if (!hasMarker(content, headers, { html: isDiscourseHtml, headers: isDiscourseHeaders })) {
@@ -91,19 +115,20 @@ export const discourseHandler: PlatformHandler = {
     return parseDiscourseUrl(url) !== undefined
   },
 
-  resolve: (url) => {
-    const parsed = parseDiscourseUrl(url)
+  resolve: (url, content) => {
+    const basePath = getBasePath(content)
+    const parsed = parseDiscourseUrl(stripBasePath(url, basePath))
 
     if (!parsed) {
       return []
     }
 
-    const { origin } = new URL(url)
+    const siteUrl = `${new URL(url).origin}${basePath}`
 
     if (parsed.kind === 'topic') {
       return [
         {
-          uri: `${origin}/t/${parsed.slug}/${parsed.topicId}.rss`,
+          uri: `${siteUrl}/t/${parsed.slug}/${parsed.topicId}.rss`,
           hint: composeHint('discourse:topic'),
         },
       ]
@@ -112,7 +137,7 @@ export const discourseHandler: PlatformHandler = {
     if (parsed.kind === 'user') {
       return [
         {
-          uri: `${origin}/u/${parsed.username}/activity.rss`,
+          uri: `${siteUrl}/u/${parsed.username}/activity.rss`,
           hint: composeHint('discourse:activity'),
         },
       ]
@@ -121,7 +146,7 @@ export const discourseHandler: PlatformHandler = {
     if (parsed.kind === 'category') {
       return [
         {
-          uri: `${origin}/c/${parsed.category}.rss`,
+          uri: `${siteUrl}/c/${parsed.category}.rss`,
           hint: composeHint('discourse:category'),
         },
       ]
@@ -132,7 +157,7 @@ export const discourseHandler: PlatformHandler = {
 
       return [
         {
-          uri: `${origin}/top.rss${periodQuery}`,
+          uri: `${siteUrl}/top.rss${periodQuery}`,
           hint: composeHint('discourse:top'),
         },
       ]
@@ -141,11 +166,11 @@ export const discourseHandler: PlatformHandler = {
     const uris: Array<DiscoverUriEntry> = []
 
     uris.push({
-      uri: `${origin}/latest.rss`,
+      uri: `${siteUrl}/latest.rss`,
       hint: composeHint('discourse:latest'),
     })
     uris.push({
-      uri: `${origin}/posts.rss`,
+      uri: `${siteUrl}/posts.rss`,
       hint: composeHint('discourse:posts'),
     })
 

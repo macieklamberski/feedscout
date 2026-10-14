@@ -28,6 +28,14 @@ const excludedPaths = [
   'notifications',
   'messages',
   'adobe',
+  'account',
+  'careers',
+  'collections',
+  'featured',
+  'gallery',
+  'inbox',
+  'jobs',
+  'signup',
 ]
 
 export const parseBehanceUrl = (url: string): BehanceUrl | undefined => {

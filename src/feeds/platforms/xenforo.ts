@@ -5,20 +5,35 @@ import { composeHint, hasElementWithId, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
-export type XenforoUrl = { kind: 'forum'; route: string; forumPath: string } | { kind: 'board' }
+export type XenforoUrl =
+  | { kind: 'forum'; basePath: string; route: string; forumPath: string }
+  | { kind: 'board' }
 
 // XF2 serves a forum at `/f/{slug.id}` or, on the default route, `/forums/{slug.id}`.
-const forumPathRegex = /\/(f|forums)\/([^/]+\.\d+)(?:\/|$)/i
+const forumPathRegex = /\/(?<route>f|forums)\/(?<forumPath>[^/]+\.\d+)(?:\/|$)/i
 // The board feed sits under the same route prefix as the forums. A page outside a
 // forum does not carry the prefix, so both spellings are emitted and the one the
 // board does not serve fails validation.
 const routePrefixes = ['forums', 'f']
+// XF2 prints the path the board is mounted under in its script config.
+const basePathRegex = /\bbasePath:\s*'(?<basePath>(?:\/[^'/]+)*)\/?'/
 
 // XF2 puts `id="XF"` on the html element and XF1 put `id="XenForo"` there.
 const appRootIds = ['XF', 'XenForo']
 
 export const isXenforoHtml = (content: string): boolean => {
   return appRootIds.some((id) => hasElementWithId(content, id))
+}
+
+const getXenforoBasePath = (url: string, content?: string): string => {
+  const basePath = content?.match(basePathRegex)?.groups?.basePath
+
+  // The path counts only when it holds the page.
+  if (!basePath || !`${new URL(url).pathname}/`.startsWith(`${basePath}/`)) {
+    return ''
+  }
+
+  return basePath
 }
 
 export const parseXenforoUrl = (url: string): XenforoUrl | undefined => {
@@ -28,11 +43,15 @@ export const parseXenforoUrl = (url: string): XenforoUrl | undefined => {
     return
   }
 
-  const [, rawRoute, forumPath] = parsedUrl.pathname.match(forumPathRegex) ?? []
-  const route = getAnyOf(rawRoute, routePrefixes)
+  const forumMatch = parsedUrl.pathname.match(forumPathRegex)
+  const route = getAnyOf(forumMatch?.groups?.route, routePrefixes)
+  const forumPath = forumMatch?.groups?.forumPath
 
-  if (route && forumPath) {
-    return { kind: 'forum', route, forumPath }
+  // A board is routinely mounted under a sub-path such as `/community`, in front of the route.
+  if (forumMatch && route && forumPath) {
+    const basePath = parsedUrl.pathname.slice(0, forumMatch.index)
+
+    return { kind: 'forum', basePath, route, forumPath }
   }
 
   return { kind: 'board' }
@@ -47,7 +66,7 @@ export const xenforoHandler: PlatformHandler = {
     return parseXenforoUrl(url) !== undefined
   },
 
-  resolve: (url) => {
+  resolve: (url, content) => {
     const parsed = parseXenforoUrl(url)
 
     if (!parsed) {
@@ -57,19 +76,19 @@ export const xenforoHandler: PlatformHandler = {
     const { origin } = new URL(url)
 
     if (parsed.kind === 'forum') {
+      const routeUrl = `${origin}${parsed.basePath}/${parsed.route}`
+
       return [
-        {
-          uri: `${origin}/${parsed.route}/${parsed.forumPath}/index.rss`,
-          hint: composeHint('xenforo:forum'),
-        },
-        { uri: `${origin}/${parsed.route}/-/index.rss`, hint: composeHint('xenforo:site') },
+        { uri: `${routeUrl}/${parsed.forumPath}/index.rss`, hint: composeHint('xenforo:forum') },
+        { uri: `${routeUrl}/-/index.rss`, hint: composeHint('xenforo:site') },
       ]
     }
 
     const uris: Array<DiscoverUriEntry> = []
+    const boardUrl = `${origin}${getXenforoBasePath(url, content)}`
 
     for (const prefix of routePrefixes) {
-      uris.push({ uri: `${origin}/${prefix}/-/index.rss`, hint: composeHint('xenforo:site') })
+      uris.push({ uri: `${boardUrl}/${prefix}/-/index.rss`, hint: composeHint('xenforo:site') })
     }
 
     return uris

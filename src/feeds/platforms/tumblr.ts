@@ -1,6 +1,6 @@
-import { getPathSegments, getSubdomain, isAnyOf, isHostOf } from 'trousse'
+import { getPathSegments, isAnyOf, isHostOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
+import { composeHint, getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers blog, wwwBlog (html).
@@ -13,36 +13,58 @@ export const domains = ['tumblr.com']
 
 const tagRegex = /^\/tagged\/([^/]+)/i
 
-// Top-level routes of www.tumblr.com that are not blogs.
 const excludedPaths = [
   'about',
+  'abuse',
   'activity',
   'apps',
   'blog',
+  'business',
+  'buttons',
   'communities',
+  'customize',
   'dashboard',
   'developers',
   'docs',
+  'domains',
+  'drafts',
   'explore',
   'following',
   'help',
   'inbox',
   'jobs',
+  'legal',
   'likes',
+  'live',
   'login',
   'logout',
+  'mega-editor',
   'messages',
   'new',
   'oauth',
+  'onboarding',
+  'patio',
   'policy',
+  'pop',
+  'premium',
+  'press',
   'privacy',
+  'queue',
   'reblog',
   'register',
   'search',
+  'security',
   'settings',
+  'shop',
+  'signup',
   'support',
   'tagged',
+  'terms-of-service',
+  'terms_of_service',
+  'themes',
+  'tips',
   'tumblelog',
+  'tv',
 ]
 
 export const parseTumblrUrl = (url: string): TumblrUrl | undefined => {
@@ -58,9 +80,9 @@ export const parseTumblrUrl = (url: string): TumblrUrl | undefined => {
     return { kind: 'blog', blog }
   }
 
-  const blog = getSubdomain(url, domains)
+  const blog = getTenantSubdomain(url, domains)
 
-  if (!blog || blog.includes('.')) {
+  if (!blog) {
     return
   }
 

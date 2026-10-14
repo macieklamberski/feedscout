@@ -10,18 +10,48 @@ export type ArenaUrl =
   | { kind: 'editorial' }
 
 const hosts = ['are.na', 'www.are.na']
+
 const excludedPaths = [
   'about',
   'api',
+  'block',
+  'blog',
+  'community-guidelines',
+  'developers',
+  'education',
   'explore',
+  'extension',
+  'feed',
+  'forgot',
+  'home',
+  'import',
+  'index',
+  'install',
+  'invite',
+  'log_in',
   'login',
+  'notifications',
   'premium',
   'privacy',
+  'roadmap',
   'search',
   'settings',
+  'sign_up',
   'signup',
   'support',
   'terms',
+]
+// Views of a profile. The profile feed sits at /{username}/feed/rss, so `feed` names no channel.
+const profilePaths = [
+  'all',
+  'blocks',
+  'channels',
+  'feed',
+  'followers',
+  'following',
+  'groups',
+  'index',
+  'table',
 ]
 
 export const parseArenaUrl = (url: string): ArenaUrl | undefined => {
@@ -44,8 +74,7 @@ export const parseArenaUrl = (url: string): ArenaUrl | undefined => {
     return
   }
 
-  // The profile feed itself sits at /{username}/feed/rss, so `feed` names no channel.
-  if (channel && !isAnyOf(channel, 'feed')) {
+  if (channel && !isAnyOf(channel, profilePaths)) {
     return { kind: 'channel', username, channel }
   }
 

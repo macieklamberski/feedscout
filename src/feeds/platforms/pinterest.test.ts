@@ -77,6 +77,29 @@ describe('parsePinterestUrl', () => {
     expect(parsePinterestUrl('https://www.pinterest.com/topics')).toBeUndefined()
   })
 
+  const excludedPathValues: Array<string> = [
+    'ads',
+    'careers',
+    'categories',
+    'developers',
+    'help',
+    'homefeed',
+    'idea-pin-builder',
+    'logout',
+    'me',
+    'messages',
+    'oauth',
+    'pin-builder',
+    'pin-creation-tool',
+    'shopping',
+    'signup',
+    'videos',
+  ]
+
+  it.each(excludedPathValues)('should return undefined for the %s site route', (route) => {
+    expect(parsePinterestUrl(`https://www.pinterest.com/${route}`)).toBeUndefined()
+  })
+
   it('should return undefined for a capitalized excluded path', () => {
     expect(parsePinterestUrl('https://www.pinterest.com/Explore')).toBeUndefined()
   })

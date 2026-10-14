@@ -1,4 +1,4 @@
-import { isHostOrSubdomainOf } from 'trousse'
+import { isHostOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
@@ -11,12 +11,21 @@ export type DoubanUrl =
   | { kind: 'subject'; subjectId: string }
   | { kind: 'home' }
 
-const domains = ['douban.com']
+// The sections that serve profile and subject pages. Other subdomains are service hosts, such
+// as accounts and api.
+const hosts = [
+  'douban.com',
+  'www.douban.com',
+  'book.douban.com',
+  'm.douban.com',
+  'movie.douban.com',
+  'music.douban.com',
+]
 const userRegex = /^\/people\/([^/]+)/i
 const subjectRegex = /^\/subject\/(\d+)/i
 
 export const parseDoubanUrl = (url: string): DoubanUrl | undefined => {
-  if (!isHostOrSubdomainOf(url, domains)) {
+  if (!isHostOf(url, hosts)) {
     return
   }
 

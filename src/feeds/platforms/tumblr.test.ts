@@ -61,6 +61,36 @@ describe('parseTumblrUrl', () => {
     expect(parseTumblrUrl('https://www.tumblr.com/explore')).toBeUndefined()
   })
 
+  const excludedPathValues: Array<string> = [
+    'abuse',
+    'business',
+    'buttons',
+    'customize',
+    'domains',
+    'drafts',
+    'legal',
+    'live',
+    'mega-editor',
+    'onboarding',
+    'patio',
+    'pop',
+    'premium',
+    'press',
+    'queue',
+    'security',
+    'shop',
+    'signup',
+    'terms-of-service',
+    'terms_of_service',
+    'themes',
+    'tips',
+    'tv',
+  ]
+
+  it.each(excludedPathValues)('should return undefined for the %s site route', (route) => {
+    expect(parseTumblrUrl(`https://www.tumblr.com/${route}`)).toBeUndefined()
+  })
+
   it('should return undefined for a capitalized www.tumblr.com site route', () => {
     expect(parseTumblrUrl('https://www.tumblr.com/Explore')).toBeUndefined()
   })

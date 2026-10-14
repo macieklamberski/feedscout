@@ -40,7 +40,7 @@ describe('livejournalHandler', () => {
   describe('match', () => {
     const values: Array<[boolean, string]> = [
       [true, 'https://alice.livejournal.com'],
-      [true, 'https://blog.example.livejournal.com'],
+      [false, 'https://blog.example.livejournal.com'],
       [true, 'https://www.livejournal.com/users/bob'],
       [true, 'https://www.livejournal.com/~bob'],
       [true, 'https://users.livejournal.com/bob'],

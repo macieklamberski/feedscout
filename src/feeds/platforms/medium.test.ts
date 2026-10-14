@@ -114,6 +114,19 @@ describe('parseMediumUrl', () => {
     expect(parseMediumUrl('https://medium.com/membership')).toBeUndefined()
   })
 
+  const excludedPathValues: Array<string> = [
+    'https://medium.com/about',
+    'https://medium.com/explore-topics',
+    'https://medium.com/tag',
+    'https://medium.com/m/signin',
+    'https://medium.com/p/3f6a1b2c4d5e',
+    'https://medium.com/sitemap/sitemap.xml',
+  ]
+
+  it.each(excludedPathValues)('should return undefined for the site route %s', (value) => {
+    expect(parseMediumUrl(value)).toBeUndefined()
+  })
+
   it('should return undefined for excluded paths in tagged URLs', () => {
     expect(parseMediumUrl('https://medium.com/search/tagged/javascript')).toBeUndefined()
     expect(parseMediumUrl('https://medium.com/me/tagged/react')).toBeUndefined()

@@ -18,6 +18,12 @@ describe('parseMisskeyUrl', () => {
     expect(parseMisskeyUrl('https://misskey.io/@alice/notes')).toEqual(expected)
   })
 
+  it('should return the profile of a remote account with its host', () => {
+    const expected: MisskeyUrl = { kind: 'profile', username: 'alice@mastodon.social' }
+
+    expect(parseMisskeyUrl('https://misskey.io/@alice@mastodon.social')).toEqual(expected)
+  })
+
   it('should return undefined for a page outside a profile', () => {
     expect(parseMisskeyUrl('https://misskey.io/explore')).toBeUndefined()
   })

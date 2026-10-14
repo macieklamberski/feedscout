@@ -11,6 +11,7 @@ import {
   getMetaContent,
   getScriptDirectory,
   getScriptText,
+  getTenantSubdomain,
   hasAnyMeta,
   hasClass,
   hasElementWithId,
@@ -21,6 +22,7 @@ import {
   normalizeMimeType,
   type PageMarkers,
   processConcurrently,
+  releaseParsedPage,
   toPositiveInteger,
   withTextBody,
 } from './utils.js'
@@ -570,6 +572,38 @@ describe('getCookieNames', () => {
   })
 })
 
+describe('getTenantSubdomain', () => {
+  const domains = ['example.com']
+
+  it('should return the subdomain of a tenant', () => {
+    expect(getTenantSubdomain('https://alice.example.com/', domains)).toBe('alice')
+  })
+
+  it('should return undefined for the bare domain', () => {
+    expect(getTenantSubdomain('https://example.com/', domains)).toBeUndefined()
+  })
+
+  it('should return undefined for a nested subdomain', () => {
+    expect(getTenantSubdomain('https://blog.alice.example.com/', domains)).toBeUndefined()
+  })
+
+  it('should return undefined for www in any case', () => {
+    expect(getTenantSubdomain('https://WWW.example.com/', domains)).toBeUndefined()
+  })
+
+  it('should return the subdomain for a label the platform does not exclude', () => {
+    expect(getTenantSubdomain('https://api.example.com/', domains)).toBe('api')
+  })
+
+  it('should return undefined for a subdomain the platform excludes', () => {
+    expect(getTenantSubdomain('https://my.example.com/', domains, ['my'])).toBeUndefined()
+  })
+
+  it('should return undefined for another domain', () => {
+    expect(getTenantSubdomain('https://alice.example.org/', domains)).toBeUndefined()
+  })
+})
+
 describe('getScriptDirectory', () => {
   it('should return the directory of a script', () => {
     expect(getScriptDirectory('/community/viewtopic.php')).toBe('/community')
@@ -577,6 +611,14 @@ describe('getScriptDirectory', () => {
 
   it('should return the directory of a script with a capitalized extension', () => {
     expect(getScriptDirectory('/forums/index.PHP')).toBe('/forums')
+  })
+
+  it('should return the directory of a script that carries path info', () => {
+    expect(getScriptDirectory('/forum/app.php/help/faq')).toBe('/forum')
+  })
+
+  it('should return the directory of a rewritten HTML page', () => {
+    expect(getScriptDirectory('/forum/some-topic-t123.html')).toBe('/forum')
   })
 
   it('should return a directory without its trailing slash', () => {
@@ -890,6 +932,19 @@ describe('findDescendant', () => {
     const card = findElement(value, (element) => element.attribs.id === 'card') as Element
 
     expect(findDescendant(card, (element) => element.name === 'a')).toBeUndefined()
+  })
+})
+
+describe('releaseParsedPage', () => {
+  it('should drop the parsed page so the same content is parsed again', () => {
+    const value = '<p id="card"></p>'
+    const cached = findElement(value, (element) => element.attribs.id === 'card')
+
+    expect(findElement(value, (element) => element.attribs.id === 'card')).toBe(cached)
+
+    releaseParsedPage()
+
+    expect(findElement(value, (element) => element.attribs.id === 'card')).not.toBe(cached)
   })
 })
 

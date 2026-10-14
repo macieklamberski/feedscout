@@ -59,7 +59,7 @@ describe('parseSportsregionsUrl', () => {
     expect(parseSportsregionsUrl('https://aide.sportsregions.fr/')).toBeUndefined()
   })
 
-  const serviceSubdomains: Array<string> = [
+  const excludedSubdomainValues: Array<string> = [
     'admin',
     'aide',
     'beta',
@@ -74,9 +74,12 @@ describe('parseSportsregionsUrl', () => {
     'www',
   ]
 
-  it.each(serviceSubdomains)('should return undefined for the %s service host', (subdomain) => {
-    expect(parseSportsregionsUrl(`https://${subdomain}.sportsregions.fr/`)).toBeUndefined()
-  })
+  it.each(excludedSubdomainValues)(
+    'should return undefined for the %s service host',
+    (subdomain) => {
+      expect(parseSportsregionsUrl(`https://${subdomain}.sportsregions.fr/`)).toBeUndefined()
+    },
+  )
 
   it('should return undefined for the apex domain', () => {
     expect(parseSportsregionsUrl('https://sportsregions.fr/')).toBeUndefined()

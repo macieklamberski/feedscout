@@ -13,7 +13,9 @@ export type DailymotionUrl =
   | { kind: 'trending' }
 
 const hosts = ['dailymotion.com', 'www.dailymotion.com']
-const userRegex = /^\/([a-zA-Z0-9_-]+)\/?$/i
+// A channel name takes three characters or more, and a two-letter path is a country home page.
+// The older /user/{name} address still serves the same page.
+const userRegex = /^\/(?:user\/)?([a-zA-Z0-9_-]{3,})\/?$/i
 const playlistRegex = /^\/playlist\/([a-zA-Z0-9_-]+)/i
 const channelRegex = /^\/channel\/([a-zA-Z0-9_-]+)/i
 const searchRegex = /^\/search\/([^/]+)/i
@@ -58,6 +60,26 @@ const excludedPaths = [
   'dmca',
   'copyright',
   'community',
+  'advertise',
+  'api',
+  'authorize',
+  'category',
+  'cookie',
+  'copyright-infringement',
+  'corner',
+  'feed',
+  'hashtag',
+  'library',
+  'music',
+  'news',
+  'notfound',
+  'oauth2callback',
+  'pair',
+  'password',
+  'press',
+  'sport',
+  'tv',
+  'user',
 ]
 
 export const parseDailymotionUrl = (url: string): DailymotionUrl | undefined => {

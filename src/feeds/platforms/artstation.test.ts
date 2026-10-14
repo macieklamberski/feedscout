@@ -2,6 +2,19 @@ import { describe, expect, it } from 'bun:test'
 import { type ArtstationUrl, artstationHandler, parseArtstationUrl } from './artstation.js'
 
 describe('parseArtstationUrl', () => {
+  const excludedPathValues: Array<string> = [
+    'https://www.artstation.com/about',
+    'https://www.artstation.com/tos',
+    'https://www.artstation.com/privacy',
+    'https://www.artstation.com/users/sign_in',
+    'https://www.artstation.com/projects/abc123',
+    'https://www.artstation.com/Messages',
+  ]
+
+  it.each(excludedPathValues)('should return undefined for the site route %s', (value) => {
+    expect(parseArtstationUrl(value)).toBeUndefined()
+  })
+
   it('should return the profile for a subdomain', () => {
     const expected: ArtstationUrl = { kind: 'profile', username: 'artist' }
 
@@ -28,6 +41,11 @@ describe('parseArtstationUrl', () => {
 
   it('should return undefined for an excluded path', () => {
     expect(parseArtstationUrl('https://www.artstation.com/jobs')).toBeUndefined()
+  })
+
+  it('should return undefined for the magazine and an image host', () => {
+    expect(parseArtstationUrl('https://magazine.artstation.com/2024/01/post/')).toBeUndefined()
+    expect(parseArtstationUrl('https://cdna.artstation.com/p/assets/x.jpg')).toBeUndefined()
   })
 
   it('should return undefined for another host', () => {

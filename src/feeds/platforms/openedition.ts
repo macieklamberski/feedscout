@@ -9,7 +9,6 @@ export type OpeneditionUrl = { kind: 'journal'; journal: string }
 
 const hosts = ['journals.openedition.org']
 
-// Top-level routes of the journals host that are not journals.
 const excludedPaths = [
   'docannexe',
   'feed.php',

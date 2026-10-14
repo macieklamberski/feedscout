@@ -1,5 +1,5 @@
 import { DomUtils, parseDocument } from 'htmlparser2'
-import { anyWordMatchesAnyOf, isAnyOf } from 'trousse'
+import { anyWordMatchesAnyOf, getSubdomain, isAnyOf } from 'trousse'
 import locales from './locales.json' with { type: 'json' }
 import type { DiscoverUriHint, FetchFn } from './types.js'
 
@@ -86,6 +86,12 @@ const getParsedPage = (content: string): ParsedPage => {
   }
 
   return lastParsedPage
+}
+
+// The single-slot cache would otherwise hold the last page's DOM until another page is parsed.
+export const releaseParsedPage = (): void => {
+  lastParsedContent = undefined
+  lastParsedPage = undefined
 }
 
 export const findElement = (
@@ -188,8 +194,29 @@ export const getCookieNames = (headers: Headers): Array<string> => {
   return Array.from(cookies.matchAll(cookieNameRegex), (match) => match[1])
 }
 
-const scriptSegmentRegex = /\/[^/]*\.php$/i
+// A script takes path info, as in `/app.php/help/faq`, and a rewritten page is an HTML file.
+const scriptSegmentRegex = /\/[^/]*\.(?:php(?:\/.*)?|html?)$/i
 const trailingSlashRegex = /\/$/
+
+// The subdomain a platform gives one of its users: a single label other than `www`, which is the
+// platform's own site everywhere. Each platform names its other service hosts itself.
+export const getTenantSubdomain = (
+  url: string | URL,
+  domains: Array<string>,
+  excludedSubdomains: Array<string> = [],
+): string | undefined => {
+  const subdomain = getSubdomain(url, domains)
+
+  if (!subdomain || subdomain.includes('.')) {
+    return
+  }
+
+  if (isAnyOf(subdomain, 'www') || isAnyOf(subdomain, excludedSubdomains)) {
+    return
+  }
+
+  return subdomain
+}
 
 export const getScriptDirectory = (pathname: string): string => {
   return pathname.replace(scriptSegmentRegex, '').replace(trailingSlashRegex, '')

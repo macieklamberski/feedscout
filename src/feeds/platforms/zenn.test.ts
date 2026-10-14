@@ -73,6 +73,28 @@ describe('parseZennUrl', () => {
     expect(parseZennUrl('https://zenn.dev/terms')).toBeUndefined()
   })
 
+  const excludedPathValues: Array<string> = [
+    'biz-lp',
+    'challenges',
+    'contests',
+    'dashboard',
+    'enter',
+    'faq',
+    'feed',
+    'following',
+    'guideline',
+    'hackathon-lp',
+    'hackathons',
+    'inquiry',
+    'manual',
+    'mediakit',
+    'tech-or-idea',
+  ]
+
+  it.each(excludedPathValues)('should return undefined for the %s site route', (route) => {
+    expect(parseZennUrl(`https://zenn.dev/${route}`)).toBeUndefined()
+  })
+
   it('should return undefined for a capitalized excluded path', () => {
     expect(parseZennUrl('https://zenn.dev/Topics')).toBeUndefined()
   })

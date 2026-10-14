@@ -22,7 +22,7 @@ describe('firesideHandler', () => {
   describe('match', () => {
     const values: Array<[boolean, string]> = [
       [true, 'https://alice.fireside.fm'],
-      [true, 'https://blog.example.fireside.fm'],
+      [false, 'https://blog.example.fireside.fm'],
       [false, 'https://www.fireside.fm'],
       [false, 'https://fireside.fm'],
       [false, 'https://example.com'],

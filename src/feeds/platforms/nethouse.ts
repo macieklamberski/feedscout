@@ -6,7 +6,6 @@ import { composeHint, hasMarker } from '../../common/utils.js'
 
 const domains = ['nethouse.ru', 'nethouse.me']
 
-// Nethouse's own site, whose feed paths redirect to a 404.
 const excludedHosts = ['www.nethouse.ru']
 
 export const isNethouseHeaders = (headers: Headers): boolean => {

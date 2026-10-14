@@ -18,7 +18,6 @@ const feedsOrigin = 'http://www.cppblog.com'
 const listPageRegex = /^(\d+)\.html$/i
 const feedLinkRegex = /^https?:\/\/(?:www\.)?cppblog\.com\/([^/]+)\/rss\.aspx$/i
 
-// Site-wide directories the pages link, beside site files such as `login.aspx`.
 const excludedPaths = ['admin', 'aggsite', 'css', 'images', 'script', 'skins']
 
 export const parseCppblogUrl = (url: string): CppblogUrl | undefined => {

@@ -27,7 +27,7 @@ describe('libsynHandler', () => {
   describe('match', () => {
     const values: Array<[boolean, string]> = [
       [true, 'https://alice.libsyn.com'],
-      [true, 'https://blog.example.libsyn.com'],
+      [false, 'https://blog.example.libsyn.com'],
       [false, 'https://libsyn.com'],
       [false, 'https://example.com'],
     ]

@@ -14,6 +14,27 @@ export const isJoomlaHtml = (content: string): boolean => {
   )
 }
 
+// A site without search-engine friendly URLs names the view in the query, as in
+// `index.php?option=com_content&view=category&id=8`.
+const routingParams = ['option', 'view', 'layout', 'id', 'catid', 'Itemid', 'lang']
+
+const getFeedQuery = (searchParams: URLSearchParams, type: string): string => {
+  const query = new URLSearchParams()
+
+  for (const name of routingParams) {
+    const value = searchParams.get(name)
+
+    if (searchParams.has('option') && value) {
+      query.set(name, value)
+    }
+  }
+
+  query.set('format', 'feed')
+  query.set('type', type)
+
+  return query.toString()
+}
+
 export const parseJoomlaUrl = (url: string): JoomlaUrl | undefined => {
   const parsedUrl = parseUrl(url)
 
@@ -40,16 +61,16 @@ export const joomlaHandler: PlatformHandler = {
       return []
     }
 
-    const { origin } = new URL(url)
+    const { origin, searchParams } = new URL(url)
     const viewUrl = `${origin}${parsed.path}`
 
     return [
       {
-        uri: `${viewUrl}?format=feed&type=rss`,
+        uri: `${viewUrl}?${getFeedQuery(searchParams, 'rss')}`,
         hint: composeHint('joomla:view', 'rss'),
       },
       {
-        uri: `${viewUrl}?format=feed&type=atom`,
+        uri: `${viewUrl}?${getFeedQuery(searchParams, 'atom')}`,
         hint: composeHint('joomla:view', 'atom'),
       },
     ]

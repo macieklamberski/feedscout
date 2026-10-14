@@ -1,4 +1,4 @@
-import { resolveFeedProtocol } from 'trousse'
+import { isHttpUrl, resolveFeedProtocol } from 'trousse'
 import {
   type DiscoverInput,
   type DiscoverInputObject,
@@ -11,7 +11,12 @@ import {
   discoverMethodOrder,
 } from '../types.js'
 import { discoverUris } from '../uris/index.js'
-import { processConcurrently, toPositiveInteger, withTextBody } from '../utils.js'
+import {
+  processConcurrently,
+  releaseParsedPage,
+  toPositiveInteger,
+  withTextBody,
+} from '../utils.js'
 import {
   attempt,
   htmlAcceptHeader,
@@ -21,7 +26,7 @@ import {
   reportError,
 } from './utils.js'
 
-export const discover = async <TValid>(
+const runDiscover = async <TValid>(
   input: DiscoverInput,
   options: DiscoverOptionsInternal<TValid>,
   defaults: DiscoverMethodsConfigDefaults,
@@ -104,7 +109,8 @@ export const discover = async <TValid>(
       sourceInput.url,
     )
 
-    if (siteUrl) {
+    // A feed can name a `file:` or `data:` URL as its site, which a fetch function may well read.
+    if (siteUrl && isHttpUrl(siteUrl)) {
       reportStep({ step: 'resolveSiteUrl', status: 'start', url: siteUrl })
 
       try {
@@ -308,4 +314,16 @@ export const discover = async <TValid>(
   const results = recorded.map((record) => record.result)
 
   return includeInvalid ? results : results.filter((result) => result.isValid)
+}
+
+export const discover = async <TValid>(
+  input: DiscoverInput,
+  options: DiscoverOptionsInternal<TValid>,
+  defaults: DiscoverMethodsConfigDefaults,
+): Promise<Array<DiscoverResult<TValid>>> => {
+  try {
+    return await runDiscover(input, options, defaults)
+  } finally {
+    releaseParsedPage()
+  }
 }

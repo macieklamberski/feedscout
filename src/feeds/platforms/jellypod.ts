@@ -8,7 +8,6 @@ export type JellypodUrl = { kind: 'show' }
 
 const domains = ['jellypod.com']
 
-// Jellypod's own services, not shows.
 const excludedSubdomains = [
   'admin',
   'api',

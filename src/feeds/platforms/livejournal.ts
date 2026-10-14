@@ -1,7 +1,7 @@
 import { decodeSegment, isHostOf, isSubdomainOf } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
+import { composeHint, getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic partly covers blog, community, tag, tildePath, userPath, usersHost.
@@ -83,7 +83,8 @@ export const parseLivejournalUrl = (url: string): LivejournalUrl | undefined => 
     return { kind: 'journal', username, tag }
   }
 
-  if (isHostOf(url, excludedHosts)) {
+  // The mobile site and image hosts such as `ic.pics.livejournal.com` are no journal.
+  if (isHostOf(url, excludedHosts) || !getTenantSubdomain(url, domains, ['api', 'm'])) {
     return
   }
 

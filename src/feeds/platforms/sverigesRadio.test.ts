@@ -30,6 +30,20 @@ describe('parseSverigesRadioUrl', () => {
     expect(parseSverigesRadioUrl('https://sverigesradio.se/nyheter')).toBeUndefined()
   })
 
+  const excludedPathValues: Array<string> = [
+    'hantering-av-personuppgifter',
+    'p1',
+    'p3',
+    'play',
+    'press',
+    'sa-hanterar-vi-cookies',
+    'tillganglighet-guide-navigera-webbplatsen',
+  ]
+
+  it.each(excludedPathValues)('should return undefined for the %s site route', (route) => {
+    expect(parseSverigesRadioUrl(`https://sverigesradio.se/${route}`)).toBeUndefined()
+  })
+
   it('should return undefined for another host', () => {
     expect(parseSverigesRadioUrl('https://example.com/ekot')).toBeUndefined()
   })

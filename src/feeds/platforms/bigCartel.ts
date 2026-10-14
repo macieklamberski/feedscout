@@ -13,7 +13,6 @@ const domains = ['bigcartel.com']
 const frameOptionsRegex = /https:\/\/my\.bigcartel\.com/i
 const themeStylesheetRegex = /^\/theme_stylesheets\/\d+\/\d+\/theme\.css$/
 
-// The domain has wildcard DNS, so these Big Cartel services sit beside the stores.
 const excludedSubdomains = [
   'api',
   'app',

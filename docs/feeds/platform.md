@@ -12,7 +12,7 @@ The Platform method uses handlers for each supported platform:
 
 1. **Pattern Matching**: Each handler checks if the URL matches its platform (e.g., `github.com`, `youtube.com`).
 2. **URL Generation**: The matching handler generates feed URLs based on the URL structure.
-3. **First Match**: The first matching handler that generates feeds wins. Subsequent handlers are skipped. A handler that matches but generates nothing passes the page to the next one.
+3. **First Match**: The first matching handler that generates feeds wins. Subsequent handlers are skipped. A handler that matches but generates nothing passes the page to the next one. Handlers that match by the URL alone are tried before the ones that need the page content or headers, so a page that links another platform's marker stays with its own handler.
 4. **Requested URL**: When no handler generates feeds for the fetched page, the handlers run once more on the URL you asked for. A page that redirects, to a sign-in page for example, still yields the feeds its original URL names. This runs only when the redirect stays on the same host, and a handler that read the fetched page and declined it stays out.
 
 > [!TIP]
@@ -320,7 +320,7 @@ Discovers RSS feeds for Dailymotion users, playlists, channels, and the global t
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `dailymotion.com/{username}` | User videos<sup>†</sup> |
+| `dailymotion.com/{username}` or `dailymotion.com/user/{username}` | User videos<sup>†</sup> |
 | `dailymotion.com/playlist/{id}` | Playlist<sup>†</sup> |
 | `dailymotion.com/channel/{name}` | Channel<sup>†</sup> |
 | `dailymotion.com` or `dailymotion.com/trending` | Trending<sup>†</sup> |
@@ -615,7 +615,7 @@ Discovers RSS feeds for Douban user interests, reviews, notes, and subject revie
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | `www.douban.com/people/{user}` | Interests · reviews<sup>†</sup> · notes<sup>†</sup> |
-| `{subdomain}.douban.com/subject/{id}` | Subject reviews |
+| `{book,movie,music}.douban.com/subject/{id}` | Subject reviews |
 | `www.douban.com` | Book<sup>†</sup> · movie<sup>†</sup> · music<sup>†</sup> · drama<sup>†</sup> reviews |
 
 <sup>†</sup> *Found only by the Platform method.*
@@ -953,7 +953,7 @@ Discovers RSS feeds for podcasts with a Castos-hosted website.
 
 ### Discourse
 
-Discovers RSS feeds for Discourse forums. Detected by the `Discourse` generator meta tag, the `data-discourse-setup` meta tag or the `X-Discourse-Route` response header.
+Discovers RSS feeds for Discourse forums. Detected by the `Discourse` generator meta tag, the `data-discourse-setup` meta tag or the `X-Discourse-Route` response header. An install under a sub-path gets its feeds there, read from the setup meta tag.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
@@ -1554,7 +1554,7 @@ Discovers the Atom feed of a Shopify store's blog. Detected by the `Powered-By` 
 
 ### HubSpot
 
-Discovers the RSS feeds of a HubSpot blog. Detected by the `HubSpot` generator meta tag or the `x-hs-hub-id` response header. A page the `x-hs-cfworker-meta` header marks as something other than a blog page is not matched.
+Discovers the RSS feeds of a HubSpot blog. Detected by the `HubSpot` generator meta tag or the `x-hs-hub-id` response header. A page the `x-hs-cfworker-meta` header marks as something other than a blog page is not matched. The blog's root is read from the feed link the page prints, so a blog at the host root or several segments deep gets its own feeds.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
@@ -1569,7 +1569,7 @@ Discovers the RSS feeds of a HubSpot blog. Detected by the `HubSpot` generator m
 
 ### Publii
 
-Discovers the feeds of a Publii-built site. Detected by the `Publii` generator meta tag or by media linked under `/media/website/` or `/media/posts/`. The media links also name the site root, so a site under a sub-path gets its own feeds.
+Discovers the feeds of a Publii-built site. Detected by the `Publii` generator meta tag or by media linked under `/media/website/` or `/media/posts/{id}/` on a site root that holds the page. The media links also name the site root, so a site under a sub-path gets its own feeds.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
@@ -1698,7 +1698,7 @@ Discovers the feeds of a Discuz! board. Detected by the `Discuz!` generator meta
 
 ### XenForo
 
-Discovers the feeds of a XenForo board. Detected by the `XF` or `XenForo` id on the html element.
+Discovers the feeds of a XenForo board. Detected by the `XF` or `XenForo` id on the html element. A forum page of a board under a sub-path gets its feeds there.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
@@ -1815,7 +1815,7 @@ Discovers the feeds of a phpBB board. Detected by the `phpbb` body id or the `{n
 
 ### NodeBB
 
-Discovers the feeds of a NodeBB forum. Detected by the `X-Powered-By` response header.
+Discovers the feeds of a NodeBB forum. Detected by the `X-Powered-By` response header. An install under a sub-path gets its feeds there, read from the page config.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
@@ -3263,7 +3263,7 @@ const feeds = await discoverFeeds('https://github.com/macieklamberski/feedsmith'
 
 ### Handler Order
 
-Handlers are checked in order. The first matching handler that generates feeds wins:
+Handlers are checked in order, the ones that match by the URL alone first. The first matching handler that generates feeds wins:
 
 ```typescript
 import { githubHandler, redditHandler, youtubeHandler } from 'feedscout/platform'
@@ -3308,11 +3308,11 @@ import {
   bigCartelHandler,
   bigcommerceHandler,
   bitchuteHandler,
+  blogHuHandler,
   blogaliaHandler,
   bloggangHandler,
   bloggerDeHandler,
   bloggoHandler,
-  blogHuHandler,
   blogiaHandler,
   blogspotHandler,
   blueskyHandler,
@@ -3341,11 +3341,13 @@ import {
   devtoHandler,
   diasporaHandler,
   discourseHandler,
+  discuzHandler,
   dokuwikiHandler,
   doubanHandler,
   dreamwidthHandler,
   drupalHandler,
   dspaceHandler,
+  duckWebcomicsHandler,
   edlioHandler,
   eklablogHandler,
   estrankyHandler,
@@ -3356,8 +3358,10 @@ import {
   firstoryHandler,
   flickrHandler,
   flipboardHandler,
+  fluxbbHandler,
   forumotionHandler,
   friendicaHandler,
+  funkwhaleHandler,
   gancioHandler,
   gcsWebHandler,
   geoblogHandler,
@@ -3369,6 +3373,7 @@ import {
   gnuboardHandler,
   goodreadsHandler,
   goopeHandler,
+  gravHandler,
   habrHandler,
   hackernewsHandler,
   haleyJobsHandler,
@@ -3380,6 +3385,10 @@ import {
   hautetfortHandler,
   hearthisHandler,
   heyWorldHandler,
+  homelandHandler,
+  hubspotHandler,
+  hubzillaHandler,
+  huffdufferHandler,
   insanejournalHandler,
   instatusHandler,
   internetArchiveHandler,
@@ -3390,6 +3399,7 @@ import {
   jimdoHandler,
   jinboHandler,
   jiraHandler,
+  joomlaHandler,
   jugemHandler,
   kickstarterHandler,
   kktixHandler,
@@ -3407,6 +3417,7 @@ import {
   livedoorBlogHandler,
   livejournalHandler,
   lobstersHandler,
+  mailArchiveHandler,
   mailchimpHandler,
   mastodonHandler,
   mataroaHandler,
@@ -3415,7 +3426,9 @@ import {
   megaphoneHandler,
   microblogHandler,
   misskeyHandler,
+  mobilizonHandler,
   myanimelistHandler,
+  mybbHandler,
   naverBlogHandler,
   nebulaHandler,
   neocitiesHandler,
@@ -3445,6 +3458,7 @@ import {
   parsiblogHandler,
   pchomeHandler,
   peertubeHandler,
+  phpbbHandler,
   pikaHandler,
   pinboardHandler,
   pinterestHandler,
@@ -3463,12 +3477,15 @@ import {
   postachioHandler,
   posthavenHandler,
   postypeHandler,
+  powerpressHandler,
   prlogHandler,
   proboardsHandler,
   producthuntHandler,
   promodjHandler,
   proseHandler,
   publicInboxHandler,
+  publiiHandler,
+  pukiwikiHandler,
   purotHandler,
   pypiHandler,
   qiitaHandler,
@@ -3485,15 +3502,20 @@ import {
   sapoBlogsHandler,
   seesaaHandler,
   sermonNetHandler,
+  shaarliHandler,
   shinobiHandler,
   shopifyHandler,
   shopserveHandler,
   skycmsHandler,
   smeBlogHandler,
+  smfHandler,
+  snacHandler,
   soundcloudHandler,
   soundonHandler,
   sourceforgeHandler,
   sourcehutHandler,
+  spipHandler,
+  sportadminHandler,
   sportsregionsHandler,
   spotifyForCreatorsHandler,
   spreakerHandler,
@@ -3502,11 +3524,13 @@ import {
   statuspageHandler,
   steamHandler,
   substackHandler,
+  svbtleHandler,
   sverigesRadioHandler,
   syosetuHandler,
   talentsoftHandler,
   teletypeHandler,
   tenderHandler,
+  textpatternHandler,
   tildesHandler,
   tischtennisliveHandler,
   tistoryHandler,
@@ -3516,6 +3540,7 @@ import {
   travellerspointHandler,
   tumblrHandler,
   twodayHandler,
+  typechoHandler,
   ucozHandler,
   v2exHandler,
   vbulletinHandler,
@@ -3528,13 +3553,17 @@ import {
   weeblyHandler,
   wikidotHandler,
   wildApricotHandler,
+  wixHandler,
   wordpressHandler,
   wpengineHandler,
   writeasHandler,
+  writefreelyHandler,
   xenforoHandler,
   ximalayaHandler,
   yeswikiHandler,
+  ymCareersHandler,
   youtubeHandler,
+  zenfolioHandler,
   zennHandler,
 } from 'feedscout/platform'
 ```

@@ -1,4 +1,4 @@
-import { isHostOf } from 'trousse'
+import { isAnyOf, isHostOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
@@ -11,6 +11,8 @@ const hosts = ['blog.csdn.net']
 
 const userRegex = /^\/([^/]+)/
 
+const excludedPaths = ['nav', 'paylist', 'rank']
+
 export const parseCsdnUrl = (url: string): CsdnUrl | undefined => {
   if (!isHostOf(url, hosts)) {
     return
@@ -18,7 +20,7 @@ export const parseCsdnUrl = (url: string): CsdnUrl | undefined => {
 
   const username = new URL(url).pathname.match(userRegex)?.[1]
 
-  if (!username) {
+  if (!username || isAnyOf(username, excludedPaths)) {
     return
   }
 

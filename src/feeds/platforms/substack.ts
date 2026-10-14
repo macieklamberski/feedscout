@@ -1,14 +1,15 @@
-import { isHostOf, isSubdomainOf, parseUrl } from 'trousse'
+import { isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
+import { composeHint, getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic covers blog (guess, html).
+// Generic covers blog (html).
 // Handler needed for: profile.
 
 export type SubstackUrl = { kind: 'newsletter' } | { kind: 'profile'; username: string }
 
 const domains = ['substack.com']
+const excludedSubdomains = ['api', 'cdn', 'open', 'support']
 const profileRegex = /^\/@([\w-]+)/
 // A profile page embeds its primary publication as escaped JSON. The publication
 // subdomain is not always the handle, and a custom domain replaces it.
@@ -32,7 +33,7 @@ export const parseSubstackUrl = (url: string): SubstackUrl | undefined => {
     return
   }
 
-  if (isSubdomainOf(parsedUrl, domains)) {
+  if (getTenantSubdomain(parsedUrl, domains, excludedSubdomains)) {
     return { kind: 'newsletter' }
   }
 

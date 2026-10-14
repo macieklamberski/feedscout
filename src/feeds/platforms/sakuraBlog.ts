@@ -1,7 +1,6 @@
-import { isSubdomainOf } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
+import { composeHint, getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -10,7 +9,7 @@ export type SakuraBlogUrl = { kind: 'blog'; hostname: string }
 const domains = ['sblo.jp']
 
 export const parseSakuraBlogUrl = (url: string): SakuraBlogUrl | undefined => {
-  if (!isSubdomainOf(url, domains)) {
+  if (!getTenantSubdomain(url, domains)) {
     return
   }
 

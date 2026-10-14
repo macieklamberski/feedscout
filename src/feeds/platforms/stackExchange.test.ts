@@ -15,6 +15,14 @@ describe('parseStackExchangeUrl', () => {
     ).toEqual(expected)
   })
 
+  it('should return a percent-encoded tag whole', () => {
+    const expected: StackExchangeUrl = { kind: 'tag', tag: 'c%23', sort: undefined }
+
+    expect(parseStackExchangeUrl('https://stackoverflow.com/questions/tagged/c%23')).toEqual(
+      expected,
+    )
+  })
+
   it('should return the question for a question page', () => {
     const expected: StackExchangeUrl = { kind: 'question', questionId: '12345' }
 

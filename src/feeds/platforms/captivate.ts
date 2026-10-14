@@ -1,6 +1,5 @@
-import { getSubdomain, isAnyOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
+import { composeHint, getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -8,11 +7,11 @@ export type CaptivateUrl = { kind: 'show'; slug: string }
 
 const domains = ['captivate.fm']
 
-// Captivate's own services, not shows.
 const excludedSubdomains = [
   'api',
   'artwork',
   'assets',
+  'cdn',
   'docs',
   'feeds',
   'help',
@@ -25,9 +24,9 @@ const excludedSubdomains = [
 ]
 
 export const parseCaptivateUrl = (url: string): CaptivateUrl | undefined => {
-  const slug = getSubdomain(url, domains)
+  const slug = getTenantSubdomain(url, domains, excludedSubdomains)
 
-  if (!slug || isAnyOf(slug, excludedSubdomains)) {
+  if (!slug) {
     return
   }
 

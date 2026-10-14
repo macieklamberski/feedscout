@@ -127,6 +127,19 @@ describe('discourseHandler', () => {
       expect(discourseHandler.resolve('not-a-url')).toEqual([])
     })
 
+    it('should return the topic feed under the sub-path the setup meta names', () => {
+      const value = 'https://example.com/forum/t/hello-world/123'
+      const content = '<meta id="data-discourse-setup" data-base-uri="/forum">'
+      const expected = [
+        {
+          uri: 'https://example.com/forum/t/hello-world/123.rss',
+          hint: { key: 'discourse:topic', label: 'Topic' },
+        },
+      ]
+
+      expect(discourseHandler.resolve(value, content)).toEqual(expected)
+    })
+
     it('should return the activity feed for a capitalized u segment', () => {
       const value = 'https://forum.example.com/U/steveklabnik'
       const expected = [

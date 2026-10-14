@@ -9,14 +9,24 @@ import { composeHint } from '../../common/utils.js'
 export type NebulaUrl = { kind: 'channel'; slug: string } | { kind: 'explore'; category?: string }
 
 export const hosts = ['nebula.tv', 'www.nebula.tv']
+
 const excludedPaths = [
   'about',
+  'account',
+  'beta',
   'classes',
+  'faq',
+  'featured',
+  'gift',
+  'join',
   'library',
   'login',
+  'myshows',
   'originals',
+  'podcasts',
   'pricing',
   'privacy',
+  'redeem',
   'search',
   'settings',
   'signup',

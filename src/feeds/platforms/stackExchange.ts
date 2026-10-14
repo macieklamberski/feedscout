@@ -24,7 +24,7 @@ const domains = [
   'stackexchange.com',
 ]
 
-const tagRegex = /^\/questions\/tagged\/([\w.+-]+)/i
+const tagRegex = /^\/questions\/tagged\/(?<tag>[^/]+)/i
 const questionRegex = /^\/questions\/(\d+)/i
 const userRegex = /^\/users\/(\d+)/i
 const collectiveRegex = /^\/collectives\/([^/]+)/i
@@ -48,7 +48,7 @@ export const parseStackExchangeUrl = (url: string): StackExchangeUrl | undefined
   }
 
   const { pathname, searchParams } = parsedUrl
-  const tag = pathname.match(tagRegex)?.[1]
+  const tag = pathname.match(tagRegex)?.groups?.tag
 
   if (tag) {
     return { kind: 'tag', tag, sort: getSort(searchParams) }

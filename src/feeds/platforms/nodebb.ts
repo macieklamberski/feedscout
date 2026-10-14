@@ -4,7 +4,7 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic partly covers category, topic.
+// Generic covers category (html), partly covers topic.
 // Handler needed for: popular, recent.
 
 export type NodebbUrl =
@@ -15,6 +15,8 @@ export type NodebbUrl =
 const nodebbRegex = /nodebb/i
 const categoryRegex = /\/category\/(\d+)/i
 const topicRegex = /\/topic\/(\d+)/i
+// The page config prints the install's sub-path, such as `/forum`, and an empty one at the root.
+const relativePathRegex = /"relative_path":"(?<relativePath>\/[^"]*)"/
 
 export const isNodebbHeaders = (headers: Headers): boolean => {
   return nodebbRegex.test(headers.get('x-powered-by') ?? '')
@@ -51,32 +53,33 @@ export const nodebbHandler: PlatformHandler = {
     return parseNodebbUrl(url) !== undefined
   },
 
-  resolve: (url) => {
+  resolve: (url, content) => {
     const parsed = parseNodebbUrl(url)
 
     if (!parsed) {
       return []
     }
 
-    const { origin } = new URL(url)
+    const relativePath = content?.match(relativePathRegex)?.groups?.relativePath ?? ''
+    const siteUrl = `${new URL(url).origin}${relativePath}`
     const uris: Array<DiscoverUriEntry> = []
 
     if (parsed.kind === 'topic') {
       uris.push({
-        uri: `${origin}/topic/${parsed.topicId}.rss`,
+        uri: `${siteUrl}/topic/${parsed.topicId}.rss`,
         hint: composeHint('nodebb:topic'),
       })
     }
 
     if (parsed.kind !== 'forum' && parsed.categoryId) {
       uris.push({
-        uri: `${origin}/category/${parsed.categoryId}.rss`,
+        uri: `${siteUrl}/category/${parsed.categoryId}.rss`,
         hint: composeHint('nodebb:category'),
       })
     }
 
-    uris.push({ uri: `${origin}/recent.rss`, hint: composeHint('nodebb:recent') })
-    uris.push({ uri: `${origin}/popular.rss`, hint: composeHint('nodebb:popular') })
+    uris.push({ uri: `${siteUrl}/recent.rss`, hint: composeHint('nodebb:recent') })
+    uris.push({ uri: `${siteUrl}/popular.rss`, hint: composeHint('nodebb:popular') })
 
     return uris
   },

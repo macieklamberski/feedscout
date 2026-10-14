@@ -9,7 +9,9 @@ export type PromodjUrl = { kind: 'profile'; username: string }
 const hosts = ['promodj.com', 'www.promodj.com']
 
 const excludedPaths = [
+  'about',
   'acapellas',
+  'api',
   'assets',
   'avisha',
   'booking',
@@ -34,6 +36,7 @@ const excludedPaths = [
   'mixes',
   'music',
   'musicians',
+  'news',
   'onair',
   'online',
   'people',

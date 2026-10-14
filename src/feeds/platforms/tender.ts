@@ -10,7 +10,8 @@ export type TenderPage =
 
 const domains = ['tenderapp.com']
 
-const settingsRootRegex = /\bTender = \{[^\n]*?"root":"(\/[^"]*)"/
+const settingsLineRegex = /\bTender = \{[^\n]*/
+const settingsRootRegex = /"root":"(?<root>\/[^"]*)"/
 const sessionCookieRegex = /^_tender\d*_session$/
 const helpRootRegex = /^\/help(?:\/|$)/i
 const discussionPathRegex = /^\/discussions\/([^/]+)\/(\d+[^/]*)\/?$/i
@@ -19,13 +20,17 @@ const trailingSlashRegex = /\/$/
 // made-up category would otherwise get the site's feed.
 const errorPageRegex = /<!-- This file lives in public\/404\.html -->/
 
-// The marketing site, the API, the custom domain SSL endpoint, and hosts that redirect every path
-// to help.tenderapp.com/home.
 const excludedSubdomains = ['api', 'blog', 'setup', 'ssl', 'status', 'support', 'www']
+
+const getSettingsRoot = (content: string | undefined): string | undefined => {
+  const settingsLine = content?.match(settingsLineRegex)?.[0]
+
+  return settingsLine?.match(settingsRootRegex)?.groups?.root
+}
 
 // Every page head prints the `Tender` settings script, custom domains too.
 export const isTenderHtml = (content: string): boolean => {
-  return settingsRootRegex.test(content)
+  return getSettingsRoot(content) !== undefined
 }
 
 export const isTenderHeaders = (headers: Headers): boolean => {
@@ -34,7 +39,7 @@ export const isTenderHeaders = (headers: Headers): boolean => {
 
 // A site can live under `/help/`, which the settings script names as its root.
 const getRoot = (pathname: string, content: string | undefined): string => {
-  const root = content?.match(settingsRootRegex)?.[1]
+  const root = getSettingsRoot(content)
 
   if (root) {
     return root.replace(trailingSlashRegex, '')

@@ -45,11 +45,14 @@ describe('parseBloggoUrl', () => {
     expect(parseBloggoUrl('https://alice.bloggo.nu/about/')).toEqual(expected)
   })
 
-  const serviceSubdomains: Array<string> = ['admin', 'img', 'reg', 'static', 'www']
+  const excludedSubdomainValues: Array<string> = ['admin', 'img', 'reg', 'static', 'www']
 
-  it.each(serviceSubdomains)('should return undefined for the %s service host', (subdomain) => {
-    expect(parseBloggoUrl(`https://${subdomain}.bloggo.nu/`)).toBeUndefined()
-  })
+  it.each(excludedSubdomainValues)(
+    'should return undefined for the %s service host',
+    (subdomain) => {
+      expect(parseBloggoUrl(`https://${subdomain}.bloggo.nu/`)).toBeUndefined()
+    },
+  )
 
   it('should return undefined for the apex domain', () => {
     expect(parseBloggoUrl('https://bloggo.nu/')).toBeUndefined()

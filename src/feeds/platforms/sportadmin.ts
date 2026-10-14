@@ -16,7 +16,6 @@ const layoutLinkRegex = /^\.\.\/\?SID=(\d+)&platform=(?:app|web)$/i
 const nextGameRegex = /wNextGame\.asp\?SID=(\d+)/i
 const sectionIdRegex = /^\d+$/
 
-// Every label resolves to the club farm, and www redirects to the marketing site.
 const excludedSubdomains = ['www']
 
 const findLayoutSectionId = (content: string | undefined): string | undefined => {

@@ -3,6 +3,18 @@ import type { BehanceUrl } from './behance.js'
 import { behanceHandler, parseBehanceUrl } from './behance.js'
 
 describe('parseBehanceUrl', () => {
+  const excludedPathValues: Array<string> = [
+    'https://www.behance.net/gallery',
+    'https://www.behance.net/jobs',
+    'https://www.behance.net/collections',
+    'https://www.behance.net/inbox',
+    'https://www.behance.net/Signup',
+  ]
+
+  it.each(excludedPathValues)('should return undefined for the site route %s', (value) => {
+    expect(parseBehanceUrl(value)).toBeUndefined()
+  })
+
   it('should return the username for a profile page', () => {
     const expected: BehanceUrl = { kind: 'profile', username: 'johndoe' }
 

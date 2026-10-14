@@ -128,26 +128,33 @@ describe('parseGithubUrl', () => {
     expect(parseGithubUrl('https://github.com/orgs/Acme/discussions')).toEqual(expected)
   })
 
-  const excludedValues: Array<string> = [
+  const excludedPathValues: Array<string> = [
     'https://github.com/explore',
     'https://github.com/copilot',
     'https://github.com/dashboard',
     'https://github.com/features',
     'https://github.com/login',
     'https://github.com/marketplace',
-  ]
-
-  it.each(excludedValues)('should return undefined for %s', (value) => {
-    expect(parseGithubUrl(value)).toBeUndefined()
-  })
-
-  const nestedExcludedValues: Array<string> = [
     'https://github.com/settings/profile',
     'https://github.com/features/actions',
     'https://github.com/orgs/github/teams',
+    'https://github.com/robots.txt',
+    'https://github.com/advisories/GHSA-xxxx-xxxx-xxxx',
+    'https://github.com/users/octocat/projects/1',
+    'https://github.com/solutions/ci-cd',
+    'https://github.com/discussions',
+    'https://github.com/git-guides/git-pull',
+    'https://github.com/open-source/sponsors',
+    'https://github.com/mobile',
+    'https://github.com/newsletter',
+    'https://github.com/partners',
+    'https://github.com/sitemap',
+    'https://github.com/trust-center',
+    'https://github.com/why-github',
+    'https://github.com/octo.cat/hello-world',
   ]
 
-  it.each(nestedExcludedValues)('should return undefined for %s', (value) => {
+  it.each(excludedPathValues)('should return undefined for the site route %s', (value) => {
     expect(parseGithubUrl(value)).toBeUndefined()
   })
 

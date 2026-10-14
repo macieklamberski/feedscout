@@ -14,7 +14,6 @@ const domains = ['laget.se']
 const lagetAssetRegex = /^(?:https?:)?\/\/g-content\.laget\.se\//
 
 const assetTags = ['link', 'script']
-// Site-wide routes on the team host, beside site files such as `Price.html`.
 const excludedPaths = ['common', 'content', 'cupguide', 'cupguiden', 'handlers', 'login']
 
 // Both club templates load their stylesheets and scripts from the asset host, on an own domain too.

@@ -39,7 +39,7 @@ describe('hatenablogHandler', () => {
       [true, 'https://example.hatenadiary.com'],
       [true, 'https://example.hatenadiary.jp'],
       [true, 'https://example.hatenadiary.org'],
-      [true, 'https://blog.example.hatenablog.com'],
+      [false, 'https://blog.example.hatenablog.com'],
       [false, 'https://hatenablog.com'],
       [false, 'https://hatenablog.jp'],
       [false, 'https://hateblo.jp'],

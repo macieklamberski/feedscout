@@ -31,7 +31,7 @@ describe('parseNiconicoUrl', () => {
 
 describe('niconicoHandler', () => {
   describe('match', () => {
-    const reservedValues: Array<string> = [
+    const excludedPathValues: Array<string> = [
       'https://ch.nicovideo.jp/portal/anime',
       'https://ch.nicovideo.jp/search/music',
       'https://ch.nicovideo.jp/article/ar1234567',
@@ -51,7 +51,7 @@ describe('niconicoHandler', () => {
       expect(niconicoHandler.match('https://ch.nicovideo.jp/live')).toBe(true)
     })
 
-    it.each(reservedValues)('should not match %s', (value) => {
+    it.each(excludedPathValues)('should not match %s', (value) => {
       expect(niconicoHandler.match(value)).toBe(false)
     })
 

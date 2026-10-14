@@ -8,7 +8,6 @@ export type BlogiaUrl = { kind: 'blog'; blog: string }
 
 const domains = ['blogia.com']
 
-// Blogia's own services, not blogs.
 const excludedSubdomains = ['cms', 'mail', 'www']
 
 export const parseBlogiaUrl = (url: string): BlogiaUrl | undefined => {

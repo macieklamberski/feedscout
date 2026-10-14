@@ -1,6 +1,6 @@
-import { getPathSegments, isHostOf, isSubdomainOf } from 'trousse'
+import { getPathSegments, isHostOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
+import { composeHint, getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -8,10 +8,20 @@ export type LibsynUrl = { kind: 'feed'; showId: string } | { kind: 'podcast' }
 
 const domains = ['libsyn.com']
 const feedHosts = ['feeds.libsyn.com']
+const excludedSubdomains = [
+  'api',
+  'assets',
+  'static',
+  'html5-player',
+  'play',
+  'traffic',
+  'four',
+  'five',
+]
 const numericRegex = /^\d+$/
 
 export const parseLibsynUrl = (url: string): LibsynUrl | undefined => {
-  if (!isSubdomainOf(url, domains)) {
+  if (!getTenantSubdomain(url, domains, excludedSubdomains)) {
     return
   }
 

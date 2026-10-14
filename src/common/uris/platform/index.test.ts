@@ -223,7 +223,8 @@ describe('discoverUrisFromPlatform', () => {
 
     await discoverUrisFromPlatform(undefined, headers, options)
 
-    expect(receivedHeaders).toEqual([headers, headers])
+    // The first call asks whether the handler takes the URL alone.
+    expect(receivedHeaders).toEqual([undefined, headers, headers])
   })
 
   it('should pass fetchFn to handler resolve method', async () => {
@@ -328,6 +329,53 @@ describe('discoverUrisFromPlatform', () => {
     const expected = [{ uri: 'https://example.com/feed.xml' }]
 
     expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
+  })
+
+  it('should try a handler that takes the URL alone before one that needs a marker', async () => {
+    const markerHandler: PlatformHandler = {
+      match: (_url, content) => content !== undefined,
+      resolve: () => [{ uri: 'https://example.com/marker.xml' }],
+    }
+    const urlHandler: PlatformHandler = {
+      match: () => true,
+      resolve: () => [{ uri: 'https://example.com/url.xml' }],
+    }
+    const options = { baseUrl: 'https://example.com', handlers: [markerHandler, urlHandler] }
+    const expected = [{ uri: 'https://example.com/url.xml' }]
+
+    expect(await discoverUrisFromPlatform('<html></html>', undefined, options)).toEqual(expected)
+  })
+
+  it('should keep a handler whose match throws on the URL alone among the marker ones', async () => {
+    const handler: PlatformHandler = {
+      match: (_url, content) => {
+        if (content === undefined) {
+          throw new Error('No content')
+        }
+
+        return true
+      },
+      resolve: () => [{ uri: 'https://example.com/feed.xml' }],
+    }
+    const options = { baseUrl: 'https://example.com', handlers: [handler] }
+    const expected = [{ uri: 'https://example.com/feed.xml' }]
+
+    expect(await discoverUrisFromPlatform('<html></html>', undefined, options)).toEqual(expected)
+  })
+
+  it('should keep the provided order among handlers that need a marker', async () => {
+    const firstHandler: PlatformHandler = {
+      match: (_url, content) => content !== undefined,
+      resolve: () => [{ uri: 'https://example.com/first.xml' }],
+    }
+    const secondHandler: PlatformHandler = {
+      match: (_url, content) => content !== undefined,
+      resolve: () => [{ uri: 'https://example.com/second.xml' }],
+    }
+    const options = { baseUrl: 'https://example.com', handlers: [firstHandler, secondHandler] }
+    const expected = [{ uri: 'https://example.com/first.xml' }]
+
+    expect(await discoverUrisFromPlatform('<html></html>', undefined, options)).toEqual(expected)
   })
 
   it('should check handlers in provided order', async () => {

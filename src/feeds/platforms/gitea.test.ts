@@ -138,16 +138,33 @@ describe('parseGiteaUrl', () => {
     expect(parseGiteaUrl('https://codeberg.org/a.bianco/notes')).toEqual(expected)
   })
 
-  const excludedValues: Array<string> = [
+  const excludedPathValues: Array<string> = [
     'https://codeberg.org/explore',
     'https://codeberg.org/admin',
     'https://codeberg.org/user',
     'https://codeberg.org/assets',
     'https://codeberg.org/api',
     'https://codeberg.org/-',
+    'https://gitea.com/issues',
+    'https://gitea.com/pulls',
+    'https://gitea.com/milestones',
+    'https://gitea.com/notifications',
+    'https://gitea.com/login',
+    'https://codeberg.org/org/create',
+    'https://codeberg.org/repo/create',
+    'https://gitea.com/metrics',
+    'https://gitea.com/v2',
+    'https://gitea.com/attachments/1234',
+    'https://gitea.com/avatar/abcdef',
+    'https://gitea.com/avatars/abcdef',
+    'https://gitea.com/repo-avatars/abcdef',
+    'https://gitea.com/captcha/abcdef.png',
+    'https://gitea.com/favicon.ico',
+    'https://gitea.com/ghost',
+    'https://gitea.com/.well-known/openid-configuration',
   ]
 
-  it.each(excludedValues)('should return undefined for %s', (value) => {
+  it.each(excludedPathValues)('should return undefined for the site route %s', (value) => {
     expect(parseGiteaUrl(value)).toBeUndefined()
   })
 

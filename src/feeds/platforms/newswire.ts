@@ -20,8 +20,6 @@ const contentTypePathRegex = /^\/browse\/([^/]+)\/?$/i
 
 const contentTypes = ['news', 'pr', 'social'] as const
 
-// Wildcard DNS sends every label to the newsroom farm. www is the service's own site, cdn serves
-// its assets and support is the help desk.
 const excludedSubdomains = ['cdn', 'support', 'www']
 
 export const parseNewswireUrl = (url: string): NewswireUrl | undefined => {

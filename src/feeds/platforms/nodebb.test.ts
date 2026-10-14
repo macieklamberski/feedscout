@@ -60,6 +60,28 @@ describe('nodebbHandler', () => {
       expect(nodebbHandler.resolve('not-a-url')).toEqual([])
     })
 
+    it('should return the feeds under the sub-path the page config names', () => {
+      const value = 'https://example.org/forum/topic/12/hello'
+      const content =
+        '<script>var config = {"relative_path":"/forum","upload_url":"/assets"}</script>'
+      const expected = [
+        {
+          uri: 'https://example.org/forum/topic/12.rss',
+          hint: { key: 'nodebb:topic', label: 'Topic' },
+        },
+        {
+          uri: 'https://example.org/forum/recent.rss',
+          hint: { key: 'nodebb:recent', label: 'Recent' },
+        },
+        {
+          uri: 'https://example.org/forum/popular.rss',
+          hint: { key: 'nodebb:popular', label: 'Popular' },
+        },
+      ]
+
+      expect(nodebbHandler.resolve(value, content)).toEqual(expected)
+    })
+
     it('should return the category feed for a capitalized category segment', () => {
       const value = 'https://example.org/Category/2/general'
       const expected = [

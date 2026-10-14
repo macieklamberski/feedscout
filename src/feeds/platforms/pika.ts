@@ -1,7 +1,7 @@
-import { isSubdomainOf, parseUrl } from 'trousse'
+import { parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
+import { composeHint, getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic partly covers blog, tag.
@@ -14,7 +14,7 @@ const tagRegex = /^\/tag\/([^/]+)/i
 export const parsePikaUrl = (url: string): PikaUrl | undefined => {
   const parsedUrl = parseUrl(url)
 
-  if (!parsedUrl || !isSubdomainOf(parsedUrl, domains)) {
+  if (!parsedUrl || !getTenantSubdomain(parsedUrl, domains)) {
     return
   }
 

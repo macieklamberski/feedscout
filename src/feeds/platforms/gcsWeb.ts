@@ -11,7 +11,6 @@ const domains = ['gcs-web.com']
 
 const filesPathRegex = /\/sites\/g\/files\/knoqqb\d+\//
 
-// Service hosts of the platform, on addresses outside the company sites' edge.
 const excludedSubdomains = ['mail', 'origin', 'www']
 
 export const isGcsWebHtml = (content: string): boolean => {

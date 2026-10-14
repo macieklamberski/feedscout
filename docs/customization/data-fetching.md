@@ -163,3 +163,9 @@ Use a custom `fetchFn` when you need:
 - **Custom configuration**: Timeouts, proxies, retry logic.
 - **Request interceptors**: Logging, authentication, caching.
 - **Environment compatibility**: Some runtimes may not support native fetch.
+
+## Requests to Unsafe Addresses
+
+Feedscout fetches the URLs a page names, and it does not check where they lead. A link, a `Link` header or a redirect can point at `localhost`, a private network address or a cloud metadata endpoint, and each one reaches `fetchFn` unchanged.
+
+On a server that discovers feeds for URLs its users submit, check the address in `fetchFn`. Resolve the host, refuse loopback, private and link-local addresses, and run the same check on every redirect. Feedscout also sets no limit on response size, request time or the number of redirects, so those belong in `fetchFn` too.

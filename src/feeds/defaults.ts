@@ -305,7 +305,6 @@ export const urisComprehensive: Array<UriEntry> = [
   ['/feed/atom/', '?feed=atom'],
   ['/feed/rss/', '?feed=rss'],
   ['/feed/rss2/', '?feed=rss2'],
-  ['/feed/rdf', '?feed=rdf'],
   ['/feed/rdf/', '?feed=rdf'],
   '/index.rss.xml',
   '/index.atom.xml',
@@ -330,7 +329,7 @@ export const urisComprehensive: Array<UriEntry> = [
 // redirectors, …) pass the real feed URL as a query parameter, e.g. ?url=http…, ?feed=aHR0c…
 // (base64 of "http"). They would otherwise match on their "Subscribe"/"RSS" link text and waste
 // a fetch, so ignore any anchor whose href carries an embedded URL.
-const wrappedFeedUrlRegex = /[?&][^=&]*=(https?:|https?%3a|aHR0c)/i
+const wrappedFeedUrlRegex = /[?&][^=&?]*=(https?:|https?%3a|aHR0c)/i
 
 // URIs to ignore when discovering feeds from anchor elements.
 export const ignoredUris: Array<Pattern> = ['wp-json/oembed/', 'wp-json/wp/', wrappedFeedUrlRegex]

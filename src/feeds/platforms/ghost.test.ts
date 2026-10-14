@@ -29,7 +29,7 @@ describe('ghostHandler', () => {
   describe('match', () => {
     const values: Array<[boolean, string]> = [
       [true, 'https://alice.ghost.io'],
-      [true, 'https://blog.example.ghost.io'],
+      [false, 'https://blog.example.ghost.io'],
       [false, 'https://ghost.io'],
       [false, 'https://example.com'],
     ]

@@ -27,6 +27,16 @@ describe('parseDoubanUrl', () => {
   it('should return undefined for another host', () => {
     expect(parseDoubanUrl('https://example.com/people/ahbei/')).toBeUndefined()
   })
+
+  const serviceHostValues: Array<string> = [
+    'https://accounts.douban.com/',
+    'https://api.douban.com/people/ahbei/',
+    'https://a.movie.douban.com/subject/1292052/',
+  ]
+
+  it.each(serviceHostValues)('should return undefined for the service host %s', (value) => {
+    expect(parseDoubanUrl(value)).toBeUndefined()
+  })
 })
 
 describe('doubanHandler', () => {

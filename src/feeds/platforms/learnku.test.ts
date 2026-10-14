@@ -14,6 +14,23 @@ describe('parseLearnkuUrl', () => {
     expect(parseLearnkuUrl('https://learnku.com/search')).toEqual(expected)
   })
 
+  const excludedPathValues: Array<string> = [
+    'https://learnku.com/articles/12345/slug',
+    'https://learnku.com/docs/laravel/11.x',
+    'https://learnku.com/auth/login',
+    'https://learnku.com/contact',
+    'https://learnku.com/topics',
+    'https://learnku.com/hub',
+    'https://learnku.com/activities',
+    'https://learnku.com/quizzes',
+  ]
+
+  it.each(excludedPathValues)('should return the home page for the site route %s', (value) => {
+    const expected: LearnkuUrl = { kind: 'home' }
+
+    expect(parseLearnkuUrl(value)).toEqual(expected)
+  })
+
   it('should return the home page for the root', () => {
     const expected: LearnkuUrl = { kind: 'home' }
 

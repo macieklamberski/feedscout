@@ -7,15 +7,20 @@ import { composeHint } from '../../common/utils.js'
 export type LetterboxdUrl = { kind: 'member'; username: string } | { kind: 'journal' }
 
 const hosts = ['letterboxd.com', 'www.letterboxd.com']
+
 const excludedPaths = [
   'about',
   'activity',
   'actor',
   'api-beta',
   'apps',
+  'cinematography',
+  'composer',
   'contact',
+  'country',
   'create-account',
   'director',
+  'editor',
   'film',
   'films',
   'genre',
@@ -26,11 +31,15 @@ const excludedPaths = [
   'news',
   'pro',
   'producer',
+  'reviewers',
+  'reviews',
   'search',
   'settings',
   'showdown',
   'sign-in',
   'studio',
+  'tag',
+  'user',
   'welcome',
   'writer',
   'year-in-review',

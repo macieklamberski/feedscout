@@ -7,7 +7,30 @@ import { composeHint } from '../../common/utils.js'
 export type CnblogsUrl = { kind: 'blog'; username: string }
 
 const hosts = ['cnblogs.com', 'www.cnblogs.com']
-const excludedPaths = ['news', 'aggsite', 'question', 'ing', 'search', 'kb', 'sitehome', 'util']
+const excludedPaths = [
+  'news',
+  'aggsite',
+  'question',
+  'ing',
+  'search',
+  'kb',
+  'sitehome',
+  'util',
+  'about',
+  'candidate',
+  'cate',
+  'comment',
+  'corp',
+  'following',
+  'job',
+  'legacy',
+  'my',
+  'pick',
+  'q',
+  'rss',
+  'skins.aspx',
+  'subscription',
+]
 
 export const parseCnblogsUrl = (url: string): CnblogsUrl | undefined => {
   if (!isHostOf(url, hosts)) {

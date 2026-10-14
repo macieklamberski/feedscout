@@ -1,6 +1,6 @@
 import { getSubdomain, isHostOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
+import { composeHint, getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers blog, fc2Net, numberedBlog (html), partly covers 2nt.
@@ -12,7 +12,6 @@ const domains = ['blog.2nt.com', 'fc2.net']
 
 const numberedSubdomainRegex = /^[^.]+\.blog\d*$/i
 
-// Service hosts on the fc2.net blog farm: the portal redirect, the FC2 ID login and a test host.
 const excludedHosts = ['blog.fc2.net', 'id.fc2.net', 'test.fc2.net']
 
 export const parseFc2Url = (url: string): Fc2Url | undefined => {
@@ -20,9 +19,9 @@ export const parseFc2Url = (url: string): Fc2Url | undefined => {
     return
   }
 
-  const blog = getSubdomain(url, domains)
+  const blog = getTenantSubdomain(url, domains)
 
-  if (blog && !blog.includes('.')) {
+  if (blog) {
     return { kind: 'blog' }
   }
 

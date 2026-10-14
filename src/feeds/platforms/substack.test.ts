@@ -27,7 +27,10 @@ describe('substackHandler', () => {
   describe('match', () => {
     const values: Array<[boolean, string]> = [
       [true, 'https://example.substack.com'],
-      [true, 'https://blog.example.substack.com'],
+      [false, 'https://blog.example.substack.com'],
+      [true, 'https://assets.substack.com'],
+      [false, 'https://api.substack.com'],
+      [false, 'https://cdn.substack.com'],
       [true, 'https://substack.com/@alice'],
       [true, 'https://substack.com/@bob'],
       [true, 'https://substack.com/@user-name'],

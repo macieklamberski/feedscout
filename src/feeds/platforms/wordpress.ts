@@ -30,9 +30,11 @@ const dayRegex = /^\/(\d{4})\/(\d{2})\/(\d{2})\/?$/
 const postIdRegex = /^\/\d+\/?$/
 const trailingSlashRegex = /\/$/
 const feedSegmentRegex = /\/feed(?:\/|$)/i
+const paginationRegex = /\/page\/\d+\/?$/i
+// WordPress's own scripts and folders, the search results, and an archive route without its slug.
+const reservedPathRegex = /^\/(?:wp-[^/]*|[^/]*\.php|search|category|tag|author)(?:\/|$)/i
 
-// The www subdomain is the platform's own site, never a blog.
-const excludedSubdomains = ['www']
+const excludedSubdomains = ['www', 'public-api', 'r-login', 'subscribe', 'dashboard']
 
 // An unregistered {name}.home.blog redirects to home.blog, whose every page links this feed.
 const platformFeedUrl = 'https://home.blog/feed/'
@@ -75,7 +77,8 @@ const getPostsFeedEntries = (base: string, key: string): Array<DiscoverUriEntry>
 // The page a WordPress URL shows, read from the path, so a WP Engine site reads the same. Only
 // hypotheses.org's post-id paths need the host.
 export const parseWordpressPage = (url: string): WordpressUrl => {
-  const { pathname } = new URL(url)
+  // A paginated listing, `/page/2/` or `/2024/05/page/2/`, is the listing itself.
+  const pathname = new URL(url).pathname.replace(paginationRegex, '')
 
   // hypotheses.org posts are /{post_id}, so a four-digit id is a post, never a year archive.
   if (isSubdomainOf(url, postIdDomains) && postIdRegex.test(pathname)) {
@@ -96,8 +99,12 @@ export const parseWordpressPage = (url: string): WordpressUrl => {
     return { kind: 'archive', path, hintKey }
   }
 
+  if (reservedPathRegex.test(pathname)) {
+    return { kind: 'home' }
+  }
+
   // Post page: any non-root, non-archive, non-feed path.
-  if (pathname !== '/' && !feedSegmentRegex.test(pathname)) {
+  if (pathname && pathname !== '/' && !feedSegmentRegex.test(pathname)) {
     return { kind: 'post', path: pathname.replace(trailingSlashRegex, '') }
   }
 

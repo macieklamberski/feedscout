@@ -29,15 +29,31 @@ describe('isXenforoHtml', () => {
 
 describe('parseXenforoUrl', () => {
   it('should return the forum for a short forum route', () => {
-    const expected: XenforoUrl = { kind: 'forum', route: 'f', forumPath: 'general.2' }
+    const expected: XenforoUrl = { kind: 'forum', basePath: '', route: 'f', forumPath: 'general.2' }
 
     expect(parseXenforoUrl('https://forum.example/f/general.2/')).toEqual(expected)
   })
 
   it('should return the forum with a canonical route for a capitalized one', () => {
-    const expected: XenforoUrl = { kind: 'forum', route: 'forums', forumPath: 'general.2' }
+    const expected: XenforoUrl = {
+      kind: 'forum',
+      basePath: '',
+      route: 'forums',
+      forumPath: 'general.2',
+    }
 
     expect(parseXenforoUrl('https://forum.example/Forums/general.2/')).toEqual(expected)
+  })
+
+  it('should return the forum with the sub-path the board is mounted under', () => {
+    const expected: XenforoUrl = {
+      kind: 'forum',
+      basePath: '/community',
+      route: 'forums',
+      forumPath: 'general.2',
+    }
+
+    expect(parseXenforoUrl('https://forum.example/community/forums/general.2/')).toEqual(expected)
   })
 
   it('should return the board for another page', () => {
@@ -65,6 +81,22 @@ describe('xenforoHandler', () => {
   describe('resolve', () => {
     it('should return empty array for a URL that does not parse', () => {
       expect(xenforoHandler.resolve('not-a-url')).toEqual([])
+    })
+
+    it('should return the feeds under the sub-path the board is mounted under', () => {
+      const value = 'https://forum.example/community/forums/general.2/'
+      const expected = [
+        {
+          uri: 'https://forum.example/community/forums/general.2/index.rss',
+          hint: { key: 'xenforo:forum', label: 'Forum' },
+        },
+        {
+          uri: 'https://forum.example/community/forums/-/index.rss',
+          hint: { key: 'xenforo:site', label: 'Site' },
+        },
+      ]
+
+      expect(xenforoHandler.resolve(value)).toEqual(expected)
     })
 
     it('should return the forum feed for a capitalized f segment', () => {
@@ -136,6 +168,63 @@ describe('xenforoHandler', () => {
       ]
 
       expect(xenforoHandler.resolve(value)).toEqual(expected)
+    })
+
+    const subPathHtml = `${xenforoHtml}<script>XF.config = { url: { basePath: '/community/' } }</script>`
+    const subPathExpected = [
+      {
+        uri: 'https://forum.example/community/forums/-/index.rss',
+        hint: { key: 'xenforo:site', label: 'Site' },
+      },
+      {
+        uri: 'https://forum.example/community/f/-/index.rss',
+        hint: { key: 'xenforo:site', label: 'Site' },
+      },
+    ]
+    const subPathValues: Array<string> = [
+      'https://forum.example/community/',
+      'https://forum.example/community',
+      'https://forum.example/community/threads/a-thread.123/',
+    ]
+
+    it.each(subPathValues)(
+      'should return the site feeds under the path the page names for %s',
+      (value) => {
+        expect(xenforoHandler.resolve(value, subPathHtml)).toEqual(subPathExpected)
+      },
+    )
+
+    it('should return the site feeds on the origin when the named path does not hold the page', () => {
+      const value = 'https://forum.example/threads/a-thread.123/'
+      const expected = [
+        {
+          uri: 'https://forum.example/forums/-/index.rss',
+          hint: { key: 'xenforo:site', label: 'Site' },
+        },
+        {
+          uri: 'https://forum.example/f/-/index.rss',
+          hint: { key: 'xenforo:site', label: 'Site' },
+        },
+      ]
+
+      expect(xenforoHandler.resolve(value, subPathHtml)).toEqual(expected)
+    })
+
+    it('should return the site feeds on the origin for a board at the root', () => {
+      const value = 'https://forum.example/'
+      const content = `${xenforoHtml}<script>XF.config = { url: { basePath: '/' } }</script>`
+      const expected = [
+        {
+          uri: 'https://forum.example/forums/-/index.rss',
+          hint: { key: 'xenforo:site', label: 'Site' },
+        },
+        {
+          uri: 'https://forum.example/f/-/index.rss',
+          hint: { key: 'xenforo:site', label: 'Site' },
+        },
+      ]
+
+      expect(xenforoHandler.resolve(value, content)).toEqual(expected)
     })
   })
 })

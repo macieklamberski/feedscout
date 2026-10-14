@@ -1,7 +1,7 @@
-import { getPathSegments, isAnyOf, isSubdomainOf } from 'trousse'
+import { getPathSegments, isAnyOf } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
+import { composeHint, getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers blog, blogPath (html), partly covers blogCustomSlug.
@@ -9,10 +9,11 @@ import { composeHint } from '../../common/utils.js'
 export type WeeblyUrl = { kind: 'blog'; page?: string }
 
 const domains = ['weebly.com']
+const excludedSubdomains = ['api', 'assets', 'static']
 const numericRegex = /^\d+$/
 
 export const parseWeeblyUrl = (url: string): WeeblyUrl | undefined => {
-  if (!isSubdomainOf(url, domains)) {
+  if (!getTenantSubdomain(url, domains, excludedSubdomains)) {
     return
   }
 
