@@ -24,6 +24,9 @@ const samePageOptions: NormalizeOptions = {
   stripTrailingSlash: true,
   stripHash: true,
   sortQueryParams: true,
+  stripEmptyQuery: true,
+  stripAuthentication: true,
+  normalizeEncoding: true,
 }
 
 const matchesUrlAlone = (handler: PlatformHandler, url: string): boolean => {
