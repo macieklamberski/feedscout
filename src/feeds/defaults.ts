@@ -305,7 +305,6 @@ export const urisComprehensive: Array<UriEntry> = [
   ['/feed/atom/', '?feed=atom'],
   ['/feed/rss/', '?feed=rss'],
   ['/feed/rss2/', '?feed=rss2'],
-  ['/feed/rdf', '?feed=rdf'],
   ['/feed/rdf/', '?feed=rdf'],
   '/index.rss.xml',
   '/index.atom.xml',
