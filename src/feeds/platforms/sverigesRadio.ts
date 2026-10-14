@@ -2,8 +2,9 @@ import { getPathSegments, isAnyOf, isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
-// Discoverability: Not discoverable without handler.
-// Handler needed for: all shapes.
+// Discoverability: Partially discoverable without handler.
+// Generic covers program (html).
+// Handler needed for: programId.
 
 export type SverigesRadioUrl =
   | { kind: 'legacyProgram'; programId: string }
