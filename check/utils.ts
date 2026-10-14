@@ -5,6 +5,10 @@ export const timeoutMs = 30_000
 export const delayMs = 1_000
 export const userAgent =
   'Feedscout (https://feedscout.dev; https://github.com/macieklamberski/feedscout)'
+// Akamai on GCS-web answers 403 to the headless shell and to a user agent that names HeadlessChrome.
+// The full Chromium build in headless mode with a desktop Chrome user agent passes.
+const browserUserAgent =
+  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36'
 
 const retryDelaysMs = [1_000, 3_000, 7_000]
 const fallbackStatuses = new Set([403, 408, 413, 429, 500, 502, 503, 504])
@@ -79,6 +83,7 @@ const fetchWithRetry = async (url: string, options?: FetchOptions): Promise<Fetc
 
 const fetchWithBrowser = async (url: string, options?: FetchOptions): Promise<FetchResult> => {
   const context = await (await getBrowser()).newContext({
+    userAgent: browserUserAgent,
     extraHTTPHeaders: options?.headers,
   })
   try {
@@ -140,6 +145,7 @@ const parseProxy = (url: string | undefined) => {
 export const getBrowser = async () => {
   if (!browser) {
     browser = await chromium.launch({
+      channel: 'chromium',
       proxy: parseProxy(constants.fetchProxy),
     })
   }

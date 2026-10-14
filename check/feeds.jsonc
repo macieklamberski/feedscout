@@ -560,15 +560,18 @@
     "gancio:tag": "https://balotta.org/feed/rss/tag/antirazzismo"
   },
   "gcsWeb": {
-    "gcs-web:events": {
-      "skip": "GCS-web's Akamai answers 403 to every client but a full browser, headless Chromium included"
-    },
-    "gcs-web:news-releases": {
-      "skip": "GCS-web's Akamai answers 403 to every client but a full browser, headless Chromium included"
-    },
-    "gcs-web:sec-filings": {
-      "skip": "GCS-web's Akamai answers 403 to every client but a full browser, headless Chromium included"
-    }
+    "gcs-web:events": [
+      "https://upwork.gcs-web.com/rss/events.xml",
+      "https://ir.labcorp.com/rss/events.xml"
+    ],
+    "gcs-web:news-releases": [
+      "https://upwork.gcs-web.com/rss/news-releases.xml",
+      "https://ir.labcorp.com/rss/news-releases.xml"
+    ],
+    "gcs-web:sec-filings": [
+      "https://upwork.gcs-web.com/rss/sec-filings.xml",
+      "https://ir.labcorp.com/rss/sec-filings.xml"
+    ]
   },
   "geoblog": {
     "geoblog:trip": "http://zielonagora.geoblog.pl/podroz/rss/27449.xml"
