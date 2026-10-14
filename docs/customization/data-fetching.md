@@ -8,6 +8,10 @@ By default, Feedscout uses native `fetch` to perform HTTP requests. You can use 
 
 Below are copy-paste examples for popular HTTP clients. See the [`FetchFn`](/reference/types#fetchfn) type for the full interface.
 
+## Request Headers
+
+Discovery passes an `Accept` header in `options.headers` when it fetches the input page, the site of a feed and each candidate URL: an HTML-first one for a page and one that prefers the format being discovered for a candidate. A platform handler or a favicon enricher can fetch without one, and the default `fetchFn` then sends the HTML-first `Accept`, since some servers answer a page with its feed for `*/*` and answer a request with no `Accept` with 403. A custom `fetchFn` should forward `options.headers`, as every example below does. One that drops them sends its client's default `Accept`, and a server can then answer with a different page or refuse the request.
+
 ## Axios
 
 [Axios](https://axios-http.com) throws errors for non-2xx responses by default. Use `validateStatus: () => true` to prevent this, since Feedscout handles HTTP errors internally. Set `responseType: 'text'` as well, so Axios does not parse JSON Feed responses into objects.

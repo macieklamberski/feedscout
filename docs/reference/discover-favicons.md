@@ -33,6 +33,8 @@ discoverFavicons({
 }, options)
 ```
 
+A URL string with a feed or podcast scheme, such as `feed://`, `feed:https://` or `itpc://`, is fetched as the https URL it names.
+
 ### options
 
 All options are optional. When not provided, sensible defaults are used.
