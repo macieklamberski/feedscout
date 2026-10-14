@@ -1,7 +1,7 @@
 import { getAnyOf, parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, hasElementWithId, hasMarker } from '../../common/utils.js'
+import { composeHint, findElement, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -22,7 +22,11 @@ const basePathRegex = /\bbasePath:\s*'(?<basePath>(?:\/[^'/]+)*)\/?'/
 const appRootIds = ['XF', 'XenForo']
 
 export const isXenforoHtml = (content: string): boolean => {
-  return appRootIds.some((id) => hasElementWithId(content, id))
+  const root = findElement(content, (element) => {
+    return element.name === 'html' && appRootIds.includes(element.attribs.id ?? '')
+  })
+
+  return root !== undefined
 }
 
 const getXenforoBasePath = (url: string, content?: string): string => {

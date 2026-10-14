@@ -1,4 +1,4 @@
-import { getAnyOf, getPathSegments } from 'trousse'
+import { getAnyOf, getPathSegments, isAnyOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, findElement } from '../../common/utils.js'
 
@@ -6,6 +6,7 @@ import { composeHint, findElement } from '../../common/utils.js'
 
 const customCssPathRegex = /\/custom_css$/
 const trailingSlashesRegex = /(?<!\/)\/+$/
+const eventsScriptRegex = /\/gancio-events\.es\.js$/
 
 export type GancioPage =
   | { kind: 'tag' | 'place' | 'collection'; rootUrl: string; value: string }
@@ -16,18 +17,39 @@ const sections = ['tag', 'place', 'collection'] as const
 // The default layout prints the `custom_css` stylesheet in every page head, at the install's root.
 const getGancioPage = (url: string, content: string | undefined): GancioPage | undefined => {
   const link = findElement(content, (element) => {
-    return element.name === 'link' && customCssPathRegex.test(element.attribs.href ?? '')
+    return (
+      element.name === 'link' &&
+      isAnyOf(element.attribs.rel, 'stylesheet') &&
+      customCssPathRegex.test(element.attribs.href ?? '')
+    )
   })
 
-  if (!link?.attribs.href) {
+  // The layout also loads the events web component, which a theme cannot drop.
+  const script = findElement(content, (element) => {
+    return element.name === 'script' && eventsScriptRegex.test(element.attribs.src ?? '')
+  })
+
+  if (!link?.attribs.href || !script) {
     return
   }
 
-  const rootPath = new URL(link.attribs.href, url).pathname
+  const stylesheetUrl = parseUrl(link.attribs.href, url)
+  const { origin, pathname } = new URL(url)
+
+  if (!stylesheetUrl || stylesheetUrl.origin !== origin) {
+    return
+  }
+
+  const rootPath = stylesheetUrl.pathname
     .replace(customCssPathRegex, '')
     .replace(trailingSlashesRegex, '')
 
-  const rootUrl = `${new URL(url).origin}${rootPath}`
+  // The stylesheet counts only when its root holds the page.
+  if (!`${pathname}/`.startsWith(`${rootPath}/`)) {
+    return
+  }
+
+  const rootUrl = `${origin}${rootPath}`
   const [section, value] = getPathSegments(url).slice(getPathSegments(rootUrl).length)
   const kind = getAnyOf(section, sections)
 

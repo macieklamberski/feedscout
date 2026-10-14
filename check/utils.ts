@@ -5,9 +5,16 @@ export const timeoutMs = 30_000
 export const delayMs = 1_000
 export const userAgent =
   'Feedscout (https://feedscout.dev; https://github.com/macieklamberski/feedscout)'
+// Akamai on GCS-web answers 403 to the headless shell and to a user agent that names HeadlessChrome.
+// The full Chromium build in headless mode with a desktop Chrome user agent passes.
+const browserUserAgent =
+  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36'
 
 const retryDelaysMs = [1_000, 3_000, 7_000]
 const fallbackStatuses = new Set([403, 408, 413, 429, 500, 502, 503, 504])
+// Some hosts answer a client that does not look like a browser with 404, such as Haley job boards.
+// A retry does not change that, so a 404 goes to the browser without one.
+const browserFallbackStatuses = new Set([...fallbackStatuses, 404])
 
 export const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
@@ -76,6 +83,7 @@ const fetchWithRetry = async (url: string, options?: FetchOptions): Promise<Fetc
 
 const fetchWithBrowser = async (url: string, options?: FetchOptions): Promise<FetchResult> => {
   const context = await (await getBrowser()).newContext({
+    userAgent: browserUserAgent,
     extraHTTPHeaders: options?.headers,
   })
   try {
@@ -107,7 +115,7 @@ export const fetchWithFallback = async (
 ): Promise<FetchResult> => {
   try {
     const result = await fetchWithRetry(url, options)
-    if (!fallbackStatuses.has(result.status)) {
+    if (!browserFallbackStatuses.has(result.status)) {
       return result
     }
     try {
@@ -137,6 +145,7 @@ const parseProxy = (url: string | undefined) => {
 export const getBrowser = async () => {
   if (!browser) {
     browser = await chromium.launch({
+      channel: 'chromium',
       proxy: parseProxy(constants.fetchProxy),
     })
   }

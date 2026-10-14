@@ -91,7 +91,8 @@ export const getAncestorPathBases = (baseUrl: string, maxDepth: number): Array<s
 }
 
 // Scans page HTML for same-origin anchors whose path is a single section segment (e.g. /blog)
-// and returns them as path bases for probing, preserving the segment's original casing.
+// and returns them as path bases for probing, preserving the segment's original casing. Links
+// that differ only in case count once, under the first spelling.
 export const extractSectionBaseUrls = (
   content: string,
   baseUrl: string,
@@ -103,7 +104,7 @@ export const extractSectionBaseUrls = (
     return []
   }
 
-  const bases = new Set<string>()
+  const bases = new Map<string, string>()
   const parser = new Parser(
     {
       onopentag: (name, attributes) => {
@@ -120,8 +121,10 @@ export const extractSectionBaseUrls = (
         const segments = getPathSegments(url)
         const segment = segments.length === 1 ? segments[0] : undefined
 
-        if (segment && sectionNames.includes(segment.toLowerCase())) {
-          bases.add(`${url.origin}/${segment}/`)
+        const key = segment?.toLowerCase()
+
+        if (segment && key && sectionNames.includes(key) && !bases.has(key)) {
+          bases.set(key, `${url.origin}/${segment}/`)
         }
       },
     },
@@ -131,7 +134,7 @@ export const extractSectionBaseUrls = (
   parser.write(content)
   parser.end()
 
-  return [...bases]
+  return [...bases.values()]
 }
 
 export const getWwwCounterpart = (baseUrl: string): string => {

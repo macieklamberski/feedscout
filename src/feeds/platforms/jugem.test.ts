@@ -98,6 +98,10 @@ describe('jugemHandler', () => {
   })
 
   describe('resolve', () => {
+    it('should return empty array for the portal host', () => {
+      expect(jugemHandler.resolve('https://www.jugem.jp/')).toEqual([])
+    })
+
     it('should return RSS 1.0 and Atom feeds for blog', () => {
       const value = 'https://alice.jugem.jp/?cid=3'
       const expected: Array<DiscoverUriEntry> = [

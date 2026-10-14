@@ -10,6 +10,10 @@ const jiraHtml = `
     name="ajs-context-path"
     content=""
   >
+  <meta
+    name="application-name"
+    content="JIRA"
+  >
 `
 const contextPathHtml = `
   <meta
@@ -20,6 +24,10 @@ const contextPathHtml = `
     name="ajs-context-path"
     content="/jira"
   >
+  <meta
+    name="application-name"
+    content="JIRA"
+  >
 `
 const otherHtml = `
   <meta
@@ -29,8 +37,14 @@ const otherHtml = `
 `
 
 describe('isJiraHtml', () => {
-  it('should return true for the base URL meta tag', () => {
+  it('should return true for the base URL and application name metas', () => {
     expect(isJiraHtml(jiraHtml)).toBe(true)
+  })
+
+  it('should return false for the base URL meta of another Atlassian product', () => {
+    const value = '<meta name="ajs-base-url" content="https://wiki.example.org">'
+
+    expect(isJiraHtml(value)).toBe(false)
   })
 
   it('should return false for a Confluence page', () => {

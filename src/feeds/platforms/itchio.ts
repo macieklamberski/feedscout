@@ -5,7 +5,7 @@ import { composeHint, getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers blog, devlog, devlogs, game (html), partly covers home.
-// Handler needed for: browseByEngine, browseByGenre, browseByPlatform, browseBySort, browseByTag, browseByUser, games, section, user.
+// Handler needed for: browseByEngine, browseByGenre, browseByPlatform, browseBySort, browseByTag, browseByUser, browseCombined, games, section, user.
 
 export type ItchioUrl =
   | { kind: 'game'; creator: string; game: string }
@@ -15,6 +15,7 @@ export type ItchioUrl =
   | { kind: 'genre'; genre: string }
   | { kind: 'madeWith'; engine: string }
   | { kind: 'games'; sort?: string }
+  | { kind: 'listing'; path: string }
   | { kind: 'devlogs' }
   | { kind: 'blog' }
   | { kind: 'section'; section: string }
@@ -29,6 +30,8 @@ const platformRegex = /^\/games\/platform-([^/.]+)/i
 const genreRegex = /^\/games\/genre-([^/.]+)/i
 const madeWithRegex = /^\/games\/made-with-([^/.]+)/i
 const sortRegex = /^\/games\/([^/.]+)/i
+// A listing with two or more filters, such as /games/newest/tag-horror, has its feed at its path.
+const combinedListingRegex = /^\/games(?:\/[^/.]+){2,}/i
 const sectionRegex = /^\/([^/.]+)/
 const gameRegex = /^\/([^/]+)/
 const gamesRegex = /^\/games\/?$/i
@@ -81,6 +84,12 @@ export const parseItchioUrl = (url: string): ItchioUrl | undefined => {
 
   // A listing's feed URL, such as /games/tag-horror.xml, names its page too.
   const listingPath = pathname.replace(feedSuffixRegex, '')
+  const combinedListing = listingPath.match(combinedListingRegex)?.[0]
+
+  if (combinedListing) {
+    return { kind: 'listing', path: combinedListing }
+  }
+
   const creator = listingPath.match(byUserRegex)?.[1]
 
   if (creator) {
@@ -203,6 +212,10 @@ export const itchioHandler: PlatformHandler = {
           hint: composeHint('itchio:made-with'),
         },
       ]
+    }
+
+    if (parsed.kind === 'listing') {
+      return [{ uri: `https://itch.io${parsed.path}.xml`, hint: composeHint('itchio:games') }]
     }
 
     if (parsed.kind === 'games' && parsed.sort) {

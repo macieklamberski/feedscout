@@ -7,7 +7,17 @@ import { composeHint, hasMarker } from '../../common/utils.js'
 export type SquarespaceUrl = { kind: 'collection'; collection: string }
 
 const squarespaceRegex = /squarespace/i
-const excludedPaths = ['config', 'api', 'static', 'universal', 'account', 'commerce', 'checkout']
+const excludedPaths = [
+  'account',
+  'api',
+  'cart',
+  'checkout',
+  'commerce',
+  'config',
+  'search',
+  'static',
+  'universal',
+]
 
 export const isSquarespaceHeaders = (headers: Headers): boolean => {
   return squarespaceRegex.test(headers.get('server') ?? '')

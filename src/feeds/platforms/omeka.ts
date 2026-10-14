@@ -1,13 +1,15 @@
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, hasMarker } from '../../common/utils.js'
+import { composeHint, type Element, findElement, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
 // Omeka Classic serves plugin views and core scripts from under the install root, as in
 // `/biblioteca/plugins/ExhibitBuilder/views/public/css/exhibits.css`. WordPress plugins can ship
-// the same `views/public/` path under `/wp-content/plugins/`, so that prefix never counts.
+// the same `views/public/` path under `/wp-content/plugins/`, so that prefix never counts. The
+// core `application/views/scripts/` path is any Zend Framework 1 layout, so only Omeka's own files
+// under it count.
 const assetRootRegex =
-  /["']((?:(?!\/wp-content\/)[^"'\s])*?)\/(?:plugins\/[^/"'\s]+\/views\/(?:public|shared)|application\/views\/scripts)\//
+  /^((?:(?!\/wp-content\/)[^\s])*?)\/(?:plugins\/[^/\s]+\/views\/(?:public|shared)\/|application\/views\/scripts\/(?:css\/(?:public|iconfonts)\.css|javascripts\/globals\.js))/
 const itemsBrowseRegex = /^\/items(?:\/browse)?\/?$/i
 const trailingSlashRegex = /\/$/
 
@@ -18,12 +20,34 @@ export type OmekaPage =
   | { kind: 'browse'; rootUrl: string; query: string }
   | { kind: 'page'; rootUrl: string }
 
+const getAssetPath = (element: Element): string => {
+  if (element.name === 'link') {
+    return element.attribs.href ?? ''
+  }
+
+  if (element.name === 'script') {
+    return element.attribs.src ?? ''
+  }
+
+  return ''
+}
+
+const getAssetRoot = (content: string | undefined): string | undefined => {
+  const asset = findElement(content, (element) => assetRootRegex.test(getAssetPath(element)))
+
+  if (!asset) {
+    return
+  }
+
+  return getAssetPath(asset).match(assetRootRegex)?.[1]
+}
+
 export const isOmekaHtml = (content: string): boolean => {
-  return assetRootRegex.test(content)
+  return getAssetRoot(content) !== undefined
 }
 
 export const getOmekaPage = (url: string, content?: string): OmekaPage => {
-  const assetRoot = content?.match(assetRootRegex)?.[1] ?? ''
+  const assetRoot = getAssetRoot(content) ?? ''
   const { origin, pathname, searchParams } = new URL(url)
   const rootPath = new URL(`${assetRoot}/`, url).pathname.replace(trailingSlashRegex, '')
   const rootUrl = `${origin}${rootPath}`

@@ -1,17 +1,24 @@
-import { getPathSegments, isSubdomainOf, parseUrl } from 'trousse'
+import { getPathSegments, isHostOf, isSubdomainOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, hasMarker, hasMetaContent } from '../../common/utils.js'
+import { composeHint, findElement, hasMarker, hasMetaContent } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
 export type WixUrl = { kind: 'freeSite'; site: string } | { kind: 'site' }
 
 const domains = ['wixsite.com']
+const assetHosts = ['static.parastorage.com']
 
 export const isWixHtml = (content: string): boolean => {
-  return (
-    hasMetaContent(content, 'generator', 'Wix.com') || content.includes('static.parastorage.com')
-  )
+  if (hasMetaContent(content, 'generator', 'Wix.com')) {
+    return true
+  }
+
+  const script = findElement(content, (element) => {
+    return element.name === 'script' && isHostOf(element.attribs.src ?? '', assetHosts)
+  })
+
+  return script !== undefined
 }
 
 export const isWixHeaders = (headers: Headers): boolean => {

@@ -239,7 +239,11 @@ const cases: Array<Case> = [
   ],
   ['friendica', friendicaHandler, '<meta name="generator" content="Friendica 2026.05">'],
   ['funkwhale', funkwhaleHandler, '<div id="fake-app"></div>'],
-  ['gancio', gancioHandler, '<link rel="stylesheet" href="/custom_css">'],
+  [
+    'gancio',
+    gancioHandler,
+    '<link rel="stylesheet" href="/custom_css"><script src="/gancio-events.es.js"></script>',
+  ],
   ['gcsWeb', gcsWebHandler, '<link href="/sites/g/files/knoqqb12345/files/css/css_abc.css">'],
   ['gitea', giteaHandler, '', new Headers({ 'set-cookie': 'i_like_gitea=abc; Path=/' })],
   ['gitlab', gitlabHandler, '<meta property="og:site_name" content="GitLab">'],
@@ -267,7 +271,11 @@ const cases: Array<Case> = [
     new Headers({ 'x-matched-path': '/[lang]/[url]/[type]/[userId]' }),
   ],
   ['jimdo', jimdoHandler, '', new Headers({ 'x-jimdo-wid': 's1c8254714bfd7968' })],
-  ['jira', jiraHandler, '<meta name="ajs-base-url" content="https://example.org">'],
+  [
+    'jira',
+    jiraHandler,
+    '<meta name="ajs-base-url" content="https://example.org"><meta name="application-name" content="JIRA">',
+  ],
   ['joomla', joomlaHandler, '<script class="joomla-script-options new">{}</script>'],
   ['jugem', jugemHandler, '<script src="./template/js/cookie.js"></script>'],
   ['koha', kohaHandler, '<link rel="stylesheet" href="/opac-tmpl/bootstrap/css/opac.css">'],
@@ -297,7 +305,7 @@ const cases: Array<Case> = [
   [
     'netcrew',
     netcrewHandler,
-    '<script src="/ssi/js/common.js"></script><link href="/ssi/css/top.css">',
+    '<script src="/ssi/js/search-trend.js"></script><link href="/ssi/css/top.css">',
   ],
   ['nethouse', nethouseHandler, '', new Headers({ 'x-generator': 'nethouse' })],
   [

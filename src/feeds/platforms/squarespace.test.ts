@@ -42,6 +42,8 @@ describe('parseSquarespaceUrl', () => {
 
   it('should return undefined for an excluded path', () => {
     expect(parseSquarespaceUrl('https://site.example/config')).toBeUndefined()
+    expect(parseSquarespaceUrl('https://site.example/cart')).toBeUndefined()
+    expect(parseSquarespaceUrl('https://site.example/search')).toBeUndefined()
   })
 })
 

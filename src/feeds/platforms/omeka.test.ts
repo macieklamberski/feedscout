@@ -67,6 +67,26 @@ describe('isOmekaHtml', () => {
     expect(isOmekaHtml(omekaCoreHtml)).toBe(true)
   })
 
+  it('should return true for the core globals script', () => {
+    const value = `
+      <script src="/application/views/scripts/javascripts/globals.js?v=3.1.2"></script>
+    `
+
+    expect(isOmekaHtml(value)).toBe(true)
+  })
+
+  it('should return false for another file under the core views path', () => {
+    const value = '<link href="/application/views/scripts/css/layout.css" rel="stylesheet">'
+
+    expect(isOmekaHtml(value)).toBe(false)
+  })
+
+  it('should return false for a plugin view path outside an asset element', () => {
+    const value = '<p>Copy it to "/plugins/MyPlugin/views/public/css/style.css".</p>'
+
+    expect(isOmekaHtml(value)).toBe(false)
+  })
+
   it('should return false for a WordPress plugin view asset', () => {
     expect(isOmekaHtml(wordpressPluginHtml)).toBe(false)
   })

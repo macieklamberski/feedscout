@@ -1,7 +1,7 @@
 import { isSubdomainOf } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, getMetaContent, hasMarker } from '../../common/utils.js'
+import { composeHint, getMetaContent, hasMarker, hasMetaContent } from '../../common/utils.js'
 
 // Discoverability: Not discoverable without handler.
 // Handler needed for: all shapes.
@@ -24,8 +24,12 @@ const isJiraPath = (pathname: string): boolean => {
   return issueRegex.test(pathname) || projectRegex.test(pathname) || jiraPathRegex.test(pathname)
 }
 
+// Atlassian's other products print the same `ajs-*` metas, so the application name decides.
 export const isJiraHtml = (content: string): boolean => {
-  return Boolean(getMetaContent(content, 'ajs-base-url'))
+  return (
+    Boolean(getMetaContent(content, 'ajs-base-url')) &&
+    hasMetaContent(content, 'application-name', 'JIRA')
+  )
 }
 
 export type JiraPage = { baseUrl: string; projectKey?: string }

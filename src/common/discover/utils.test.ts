@@ -16,6 +16,7 @@ import {
   normalizeInput,
   normalizeMethodsConfig,
   normalizeUriEntry,
+  omitReadPages,
   reportError,
 } from './utils.js'
 
@@ -2195,5 +2196,35 @@ describe('normalizeUriEntry', () => {
     const expected = { uri: ['/feed/', '?feed=rss'] }
 
     expect(normalizeUriEntry(value, resolveNothingFn, undefined)).toEqual(expected)
+  })
+})
+
+describe('omitReadPages', () => {
+  const readPageUrls = new Set(['https://example.com/'])
+
+  it('should return the entry when no alternative points at a read page', () => {
+    const value = { uri: ['https://example.com/feed', 'https://example.com/rss'] }
+
+    expect(omitReadPages(value, readPageUrls)).toBe(value)
+  })
+
+  it('should return undefined when the entry points at a read page with a hash', () => {
+    expect(omitReadPages({ uri: 'https://example.com/#feeds' }, readPageUrls)).toBeUndefined()
+  })
+
+  it('should drop only the alternatives that point at a read page', () => {
+    const value = { uri: ['https://example.com/#', 'https://example.com/feed'], hint: undefined }
+    const expected = { uri: 'https://example.com/feed', hint: undefined }
+
+    expect(omitReadPages(value, readPageUrls)).toEqual(expected)
+  })
+
+  it('should keep several alternatives as an array', () => {
+    const value = {
+      uri: ['https://example.com/', 'https://example.com/feed', 'https://example.com/rss'],
+    }
+    const expected = { uri: ['https://example.com/feed', 'https://example.com/rss'] }
+
+    expect(omitReadPages(value, readPageUrls)).toEqual(expected)
   })
 })

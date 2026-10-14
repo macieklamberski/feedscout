@@ -2,6 +2,12 @@ import { describe, expect, it } from 'bun:test'
 import { type ItchioUrl, itchioHandler, parseItchioUrl } from './itchio.js'
 
 describe('parseItchioUrl', () => {
+  it('should return the whole listing for a listing with two filters', () => {
+    const expected: ItchioUrl = { kind: 'listing', path: '/games/newest/tag-horror' }
+
+    expect(parseItchioUrl('https://itch.io/games/newest/tag-horror')).toEqual(expected)
+  })
+
   it('should return the game for a game page', () => {
     const expected: ItchioUrl = { kind: 'game', creator: 'creator', game: 'mygame' }
 
@@ -111,6 +117,18 @@ describe('itchioHandler', () => {
   })
 
   describe('resolve', () => {
+    it('should return the feed of a listing with two filters', () => {
+      const value = 'https://itch.io/games/tag-horror/tag-pixel-art'
+      const expected = [
+        {
+          uri: 'https://itch.io/games/tag-horror/tag-pixel-art.xml',
+          hint: { key: 'itchio:games', label: 'Games' },
+        },
+      ]
+
+      expect(itchioHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return empty array for a URL outside itch.io', () => {
       expect(itchioHandler.resolve('https://example.com/')).toEqual([])
     })

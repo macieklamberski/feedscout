@@ -1,11 +1,13 @@
 import { describe, expect, it } from 'bun:test'
 import { gancioHandler } from './gancio.js'
 
+const eventsScript = '<script src="/gancio-events.es.js"></script>'
 const content = `
   <link
     rel="stylesheet"
     href="https://example.org/custom_css"
   >
+  ${eventsScript}
 `
 
 describe('gancioHandler', () => {
@@ -14,8 +16,32 @@ describe('gancioHandler', () => {
       expect(gancioHandler.match('https://example.org/', content)).toBe(true)
     })
 
+    it('should not match the stylesheet without the events script', () => {
+      const value = '<link rel="stylesheet" href="/custom_css">'
+
+      expect(gancioHandler.match('https://example.org/', value)).toBe(false)
+    })
+
     it('should not match a page without the stylesheet', () => {
       const value = '<link rel="stylesheet" href="/_nuxt/css/238c047.css">'
+
+      expect(gancioHandler.match('https://example.org/', value)).toBe(false)
+    })
+
+    it('should not match a custom_css link that is not a stylesheet', () => {
+      const value = '<link rel="preload" href="/custom_css">'
+
+      expect(gancioHandler.match('https://example.org/', value)).toBe(false)
+    })
+
+    it('should not match a stylesheet whose root does not hold the page', () => {
+      const value = `<link rel="stylesheet" href="/assets/custom_css">${eventsScript}`
+
+      expect(gancioHandler.match('https://example.org/', value)).toBe(false)
+    })
+
+    it('should not match a stylesheet on another host', () => {
+      const value = `<link rel="stylesheet" href="https://example.com/custom_css">${eventsScript}`
 
       expect(gancioHandler.match('https://example.org/', value)).toBe(false)
     })
@@ -87,7 +113,7 @@ describe('gancioHandler', () => {
 
     it('should build the feeds from the install root the stylesheet names', () => {
       const value = 'https://example.org/events/tag/music'
-      const subPathContent = '<link rel="stylesheet" href="https://example.org/events/custom_css">'
+      const subPathContent = `<link rel="stylesheet" href="https://example.org/events/custom_css">${eventsScript}`
       const expected = [
         {
           uri: 'https://example.org/events/feed/rss/tag/music',
@@ -99,19 +125,7 @@ describe('gancioHandler', () => {
     })
 
     it('should drop the extra slash of a base URL ending in one', () => {
-      const value = '<link rel="stylesheet" href="https://example.org//custom_css">'
-      const expected = [
-        {
-          uri: 'https://example.org/feed/rss',
-          hint: { key: 'gancio:site', label: 'Site' },
-        },
-      ]
-
-      expect(gancioHandler.resolve('https://example.org/', value)).toEqual(expected)
-    })
-
-    it('should build the feeds from the page origin when the base URL names another host', () => {
-      const value = '<link rel="stylesheet" href="https://example.com/custom_css">'
+      const value = `<link rel="stylesheet" href="https://example.org//custom_css">${eventsScript}`
       const expected = [
         {
           uri: 'https://example.org/feed/rss',

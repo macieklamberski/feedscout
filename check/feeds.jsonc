@@ -845,7 +845,7 @@
   },
   "koha": {
     "koha:comments": "https://opac.northsouth.edu/cgi-bin/koha/opac-showreviews.pl?format=rss",
-    "koha:list": "https://library-search.nics.gov.uk/cgi-bin/koha/opac-shelves.pl?rss=1&op=view&shelfnumber=309",
+    "koha:list": "https://koha.ffzg.hr/cgi-bin/koha/opac-shelves.pl?rss=1&op=view&shelfnumber=6649",
     "koha:search": "https://biblioteca.unach.edu.ec/cgi-bin/koha/opac-search.pl?q=agua&count=50&sort_by=acqdate_dsc&format=rss"
   },
   "laget": {
@@ -1460,7 +1460,7 @@
     "redmine:activity": [
       "https://www.redmine.org/activity.atom",
       "https://www.redmine.org/projects/redmine/activity.atom",
-      "https://pulp.plan.io/projects/pulp/activity.atom"
+      "https://redmine.lighttpd.net/projects/lighttpd/activity.atom"
     ],
     "redmine:board": "https://www.redmine.org/projects/redmine/boards/1.atom",
     "redmine:issue": [

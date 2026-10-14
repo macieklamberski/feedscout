@@ -26,12 +26,21 @@ describe('parsePleromaUrl', () => {
 
 describe('pleromaHandler', () => {
   describe('isPleromaHtml', () => {
-    it('should return true for content referencing /api/pleroma/', () => {
+    it('should return true for the preloaded frontend config', () => {
       expect(isPleromaHtml(pleromaHtml)).toBe(true)
     })
 
-    it('should be case-insensitive', () => {
-      expect(isPleromaHtml('<a href="/API/Pleroma/admin">x</a>')).toBe(true)
+    it('should return true for the inlined frontend config', () => {
+      const value =
+        '<script id="initial-results" type="application/json">{"/api/pleroma/frontend_configurations":"e30="}</script>'
+
+      expect(isPleromaHtml(value)).toBe(true)
+    })
+
+    it('should return false for the API path in prose', () => {
+      const value = '<p>The admin endpoints sit under /api/pleroma/admin.</p>'
+
+      expect(isPleromaHtml(value)).toBe(false)
     })
 
     it('should return false for non-Pleroma content', () => {

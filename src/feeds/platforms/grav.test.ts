@@ -23,6 +23,12 @@ describe('parseGravUrl', () => {
 
     expect(parseGravUrl('https://example.com/blog/post')).toEqual(expected)
   })
+
+  it('should return the page without its html extension', () => {
+    const expected: GravUrl = { kind: 'page', path: '/docs/page' }
+
+    expect(parseGravUrl('https://example.com/docs/page.html?x=1')).toEqual(expected)
+  })
 })
 
 describe('isGravHtml', () => {
@@ -32,6 +38,18 @@ describe('isGravHtml', () => {
 
   it('should return true for a theme asset path', () => {
     expect(isGravHtml('<link href="/user/themes/quark/css/theme.css">')).toBe(true)
+  })
+
+  it('should return true for a plugin script under a sub-path', () => {
+    const value = '<script src="/site/user/plugins/search/js/search.js"></script>'
+
+    expect(isGravHtml(value)).toBe(true)
+  })
+
+  it('should return false for the theme path in prose', () => {
+    const value = '<p>Drop the folder into /user/themes/ and enable it.</p>'
+
+    expect(isGravHtml(value)).toBe(false)
   })
 
   it('should return false for Gravity Forms', () => {
