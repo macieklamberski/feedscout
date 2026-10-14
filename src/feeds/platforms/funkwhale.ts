@@ -7,6 +7,8 @@ import { composeHint, hasElementWithId, hasMarker, hasMetaContent } from '../../
 export type FunkwhaleUrl = { kind: 'channel'; channel: string }
 
 const channelPathRegex = /^\/channels\/([^/]+)/i
+// A remote channel can be written in the fediverse form, `@{name}@{domain}`.
+const leadingAtRegex = /^@/
 
 export const isFunkwhaleHtml = (content: string): boolean => {
   return hasMetaContent(content, 'generator', 'Funkwhale') || hasElementWithId(content, 'fake-app')
@@ -42,7 +44,9 @@ export const funkwhaleHandler: PlatformHandler = {
     const { channel } = parsed
 
     // A remote channel, `{name}@{domain}`, has its feed on its own instance only.
-    const [name, domain] = (decodeSegment(channel) ?? channel).split('@')
+    const [name, domain] = (decodeSegment(channel) ?? channel)
+      .replace(leadingAtRegex, '')
+      .split('@')
     const channelUrl = domain
       ? `https://${domain}/api/v1/channels/${name}`
       : `${origin}/api/v1/channels/${channel}`

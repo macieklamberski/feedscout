@@ -69,6 +69,18 @@ describe('funkwhaleHandler', () => {
   })
 
   describe('resolve', () => {
+    it('should return the feed of a remote channel written with a leading @', () => {
+      const value = 'https://example.org/channels/@alice@remote.example'
+      const expected = [
+        {
+          uri: 'https://remote.example/api/v1/channels/alice/rss',
+          hint: { key: 'funkwhale:channel', label: 'Channel' },
+        },
+      ]
+
+      expect(funkwhaleHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return the channel feed on the v1 path', () => {
       const value = 'https://example.org/channels/alice'
       const expected = [
