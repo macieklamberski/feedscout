@@ -355,6 +355,7 @@
     "bitchute:channel": "Channel",
     "confluence:space": "Space",
     "confluence:site": "Site activity",
+    "confluence:dashboard": "Dashboard",
     "diaspora:posts": "Posts",
     "instatus:history": "Incident history",
     "jira:project": "Project",

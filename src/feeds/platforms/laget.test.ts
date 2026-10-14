@@ -44,6 +44,17 @@ describe('isLagetHtml', () => {
     expect(isLagetHtml(scriptShellPage)).toBe(true)
   })
 
+  it('should return true for a club page loading assets from another content host', () => {
+    const value = `
+      <link
+        rel="stylesheet"
+        href="https://b-content.laget.se/Public/Css/site-blessed-blessed1-d6846901aa.css"
+      >
+    `
+
+    expect(isLagetHtml(value)).toBe(true)
+  })
+
   it('should return false for a page with an ad linking a domain ending in laget.se', () => {
     const value = `
       <a

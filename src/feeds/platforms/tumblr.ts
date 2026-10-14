@@ -13,6 +13,7 @@ export const domains = ['tumblr.com']
 
 const tagRegex = /^\/tagged\/([^/]+)/i
 
+const excludedSubdomains = ['api', 'static']
 const excludedPaths = [
   'about',
   'abuse',
@@ -80,7 +81,7 @@ export const parseTumblrUrl = (url: string): TumblrUrl | undefined => {
     return { kind: 'blog', blog }
   }
 
-  const blog = getTenantSubdomain(url, domains)
+  const blog = getTenantSubdomain(url, domains, excludedSubdomains)
 
   if (!blog) {
     return

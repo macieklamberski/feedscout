@@ -11,7 +11,7 @@ const hosts = ['laget.se', 'www.laget.se']
 const domains = ['laget.se']
 
 // A bare `laget.se` also matches other domains, such as `snickeribolaget.se`.
-const lagetAssetRegex = /^(?:https?:)?\/\/g-content\.laget\.se\//
+const lagetAssetRegex = /^(?:https?:)?\/\/[a-z]-content\.laget\.se\//
 
 const assetTags = ['link', 'script']
 const excludedPaths = ['common', 'content', 'cupguide', 'cupguiden', 'handlers', 'login']

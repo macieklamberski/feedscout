@@ -58,6 +58,10 @@ describe('parseSeesaaUrl', () => {
     expect(parseSeesaaUrl('https://up.seesaa.blog/')).toEqual(expected)
   })
 
+  it('should return undefined for a nested subdomain', () => {
+    expect(parseSeesaaUrl('https://blog.example.seesaa.net/')).toBeUndefined()
+  })
+
   it('should return undefined for a domain ending in xblog.jp', () => {
     expect(parseSeesaaUrl('https://example.exblog.jp/')).toBeUndefined()
   })
@@ -71,7 +75,7 @@ describe('seesaaHandler', () => {
   describe('match', () => {
     const values: Array<[boolean, string]> = [
       [true, 'https://alice.seesaa.net'],
-      [true, 'https://blog.example.seesaa.net'],
+      [false, 'https://blog.example.seesaa.net'],
       [false, 'https://seesaa.net'],
       [false, 'https://example.com'],
     ]

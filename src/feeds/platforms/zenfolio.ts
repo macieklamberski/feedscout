@@ -1,6 +1,12 @@
-import { getSubdomain, isAnyOf, isHostOf, isSubdomainOf, parseUrl } from 'trousse'
+import { isHostOrSubdomainOf, isSubdomainOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, findElement, getCookieNames, hasMarker } from '../../common/utils.js'
+import {
+  composeHint,
+  findElement,
+  getCookieNames,
+  getTenantSubdomain,
+  hasMarker,
+} from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic partly covers blog, site.
@@ -11,7 +17,7 @@ const domains = ['zenfolio.com']
 
 const zenfolioAssetRegex = /^(?:https?:)?\/\/cdn\.zenfolio\.com\/zf\//
 
-const excludedSubdomains = ['app', 'support', 'www']
+const excludedSubdomains = ['app', 'support']
 
 export const isZenfolioHtml = (content: string): boolean => {
   const stylesheet = findElement(content, (element) => {
@@ -30,11 +36,14 @@ export const isZenfolioHeaders = (headers: Headers): boolean => {
 export const parseZenfolioUrl = (url: string): ZenfolioUrl | undefined => {
   const parsedUrl = parseUrl(url)
 
-  if (!parsedUrl || isHostOf(parsedUrl, domains)) {
+  if (!parsedUrl) {
     return
   }
 
-  if (isAnyOf(getSubdomain(parsedUrl, domains), excludedSubdomains)) {
+  if (
+    isHostOrSubdomainOf(parsedUrl, domains) &&
+    !getTenantSubdomain(parsedUrl, domains, excludedSubdomains)
+  ) {
     return
   }
 

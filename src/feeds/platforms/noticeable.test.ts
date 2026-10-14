@@ -79,6 +79,10 @@ describe('parseNoticeableUrl', () => {
     expect(parseNoticeableUrl('https://example.noticeable.news/labels/')).toEqual(expected)
   })
 
+  it('should return undefined for a nested subdomain', () => {
+    expect(parseNoticeableUrl('https://news.example.noticeable.news/')).toBeUndefined()
+  })
+
   it('should return undefined for an invalid URL', () => {
     expect(parseNoticeableUrl('not-a-url')).toBeUndefined()
   })

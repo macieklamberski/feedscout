@@ -1,5 +1,10 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverErrorContext, DiscoverResolveUrlFn, FetchFn } from '../../common/types.js'
+import type {
+  DiscoverErrorContext,
+  DiscoverResolveUrlFn,
+  FetchFn,
+  FetchFnOptions,
+} from '../../common/types.js'
 import { discoverHubs } from './index.js'
 
 const createMockFetch = (body: string, headers: Record<string, string> = {}): FetchFn => {
@@ -361,6 +366,23 @@ describe('discoverHubs', () => {
       const value = await discoverHubs({ url: 'https://example.com/' })
 
       expect(value).toEqual([])
+    })
+
+    it('should fetch the input with a feed-first accept header', async () => {
+      const receivedHeaders: Record<string, FetchFnOptions['headers']> = {}
+      const fetchFn: FetchFn = (url, options) => {
+        receivedHeaders[url] = options?.headers
+
+        return createMockFetch('')(url)
+      }
+
+      await discoverHubs('https://example.com/feed.xml', { fetchFn })
+
+      const accept = new Headers(receivedHeaders['https://example.com/feed.xml']).get('accept')
+
+      expect(accept).toBe(
+        'application/atom+xml, application/rss+xml, application/feed+json, application/rdf+xml, application/rss;q=0.9, text/rss;q=0.9, text/rss+xml;q=0.9, application/x-rss+xml;q=0.9, application/atom;q=0.9, application/x.atom+xml;q=0.9, application/x-atom+xml;q=0.9, text/atom+xml;q=0.9, text/atom;q=0.9, text/rdf;q=0.9, text/rdf+xml;q=0.9, application/xml;q=0.8, text/xml;q=0.8, application/json;q=0.8, text/plain;q=0.1, text/html;q=0.7, application/xhtml+xml;q=0.7',
+      )
     })
 
     it('should return empty array when initial URL fetch throws', async () => {

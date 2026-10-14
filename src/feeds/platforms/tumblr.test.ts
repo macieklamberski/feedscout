@@ -107,6 +107,12 @@ describe('parseTumblrUrl', () => {
     expect(parseTumblrUrl('https://www.tumblr.com/')).toBeUndefined()
   })
 
+  const excludedSubdomainValues = ['api', 'static']
+
+  it.each(excludedSubdomainValues)('should return undefined for the service host %s', (value) => {
+    expect(parseTumblrUrl(`https://${value}.tumblr.com/`)).toBeUndefined()
+  })
+
   it('should return undefined for a nested subdomain', () => {
     expect(parseTumblrUrl('https://blog.example.tumblr.com')).toBeUndefined()
   })

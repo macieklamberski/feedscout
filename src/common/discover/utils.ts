@@ -31,6 +31,7 @@ export const normalizeInput = async (
   input: DiscoverInput,
   fetchFn: FetchFn,
   onError?: DiscoverOnErrorFn,
+  acceptHeader = htmlAcceptHeader,
 ): Promise<DiscoverInputObject> => {
   if (isObject(input)) {
     return input
@@ -41,7 +42,7 @@ export const normalizeInput = async (
   const url = typeof input === 'string' ? resolveFeedProtocol(input) : input
 
   try {
-    const response = await fetchFn(url, { headers: { Accept: htmlAcceptHeader } })
+    const response = await fetchFn(url, { headers: { Accept: acceptHeader } })
 
     return {
       url: response.url,

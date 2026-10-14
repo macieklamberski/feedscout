@@ -1,7 +1,7 @@
-import { isSubdomainOf, parseUrl } from 'trousse'
+import { isHostOrSubdomainOf, isSubdomainOf, parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, hasMarker } from '../../common/utils.js'
+import { composeHint, getTenantSubdomain, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic partly covers label, newspage, publication.
@@ -22,6 +22,10 @@ export const parseNoticeableUrl = (url: string): NoticeableUrl | undefined => {
   const parsedUrl = parseUrl(url)
 
   if (!parsedUrl) {
+    return
+  }
+
+  if (isHostOrSubdomainOf(parsedUrl, domains) && !getTenantSubdomain(parsedUrl, domains)) {
     return
   }
 

@@ -89,6 +89,10 @@ describe('parseZenfolioUrl', () => {
     expect(parseZenfolioUrl(`https://${value}.zenfolio.com/`)).toBeUndefined()
   })
 
+  it('should return undefined for a nested subdomain', () => {
+    expect(parseZenfolioUrl('https://photos.example.zenfolio.com/')).toBeUndefined()
+  })
+
   it('should return undefined for an unparsable URL', () => {
     expect(parseZenfolioUrl('not-a-url')).toBeUndefined()
   })

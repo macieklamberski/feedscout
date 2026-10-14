@@ -74,12 +74,21 @@ export const packagistHandler: PlatformHandler = {
       return []
     }
 
+    // Package and vendor pages link the site-wide feeds too, the extension pages do not.
+    const siteFeeds = [
+      ...createFeeds('packages', 'packagist:new-packages'),
+      ...createFeeds('releases', 'packagist:new-releases'),
+    ]
+
     if (parsed.kind === 'package') {
-      return createFeeds(`package.${parsed.vendor}/${parsed.name}`, 'packagist:releases')
+      return [
+        ...createFeeds(`package.${parsed.vendor}/${parsed.name}`, 'packagist:releases'),
+        ...siteFeeds,
+      ]
     }
 
     if (parsed.kind === 'vendor') {
-      return createFeeds(`vendor.${parsed.vendor}`, 'packagist:vendor')
+      return [...createFeeds(`vendor.${parsed.vendor}`, 'packagist:vendor'), ...siteFeeds]
     }
 
     if (parsed.kind === 'extensions') {
@@ -89,9 +98,6 @@ export const packagistHandler: PlatformHandler = {
       ]
     }
 
-    return [
-      ...createFeeds('packages', 'packagist:new-packages'),
-      ...createFeeds('releases', 'packagist:new-releases'),
-    ]
+    return siteFeeds
   },
 }
