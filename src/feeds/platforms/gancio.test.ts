@@ -35,13 +35,13 @@ describe('gancioHandler', () => {
     })
 
     it('should not match a stylesheet whose root does not hold the page', () => {
-      const value = '<link rel="stylesheet" href="/assets/custom_css">'
+      const value = `<link rel="stylesheet" href="/assets/custom_css">${eventsScript}`
 
       expect(gancioHandler.match('https://example.org/', value)).toBe(false)
     })
 
     it('should not match a stylesheet on another host', () => {
-      const value = '<link rel="stylesheet" href="https://example.com/custom_css">'
+      const value = `<link rel="stylesheet" href="https://example.com/custom_css">${eventsScript}`
 
       expect(gancioHandler.match('https://example.org/', value)).toBe(false)
     })
