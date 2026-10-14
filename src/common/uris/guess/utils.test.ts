@@ -465,6 +465,14 @@ describe('extractSectionBaseUrls', () => {
     expect(value).toEqual(expected)
   })
 
+  it('should count section links that differ only in case once, under the first spelling', () => {
+    const html = '<a href="/Blog">Blog</a><a href="/blog">Blog</a><a href="/BLOG">Blog</a>'
+    const value = extractSectionBaseUrls(html, 'https://example.com/', sectionNames)
+    const expected = ['https://example.com/Blog/']
+
+    expect(value).toEqual(expected)
+  })
+
   it('should ignore unparsable hrefs', () => {
     const html = '<a href="http://">Broken</a><a href="/blog">Blog</a>'
     const value = extractSectionBaseUrls(html, 'https://example.com/', sectionNames)
