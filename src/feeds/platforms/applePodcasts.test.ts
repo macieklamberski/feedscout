@@ -65,6 +65,19 @@ describe('applePodcastsHandler', () => {
       expect(applePodcastsHandler.resolve('https://example.com/')).toEqual([])
     })
 
+    it('should decode the JSON escapes in the feed URL', () => {
+      const value = 'https://podcasts.apple.com/us/podcast/the-daily/id1200361736'
+      const content = '{"feedUrl":"https:\\/\\/feeds.example.com\\/x?a=1\\u0026b=2"}'
+      const expected = [
+        {
+          uri: 'https://feeds.example.com/x?a=1&b=2',
+          hint: { key: 'apple-podcasts:podcast', label: 'Podcast' },
+        },
+      ]
+
+      expect(applePodcastsHandler.resolve(value, content)).toEqual(expected)
+    })
+
     const contentWithFeedUrl = `
 			{"feedUrl":"https://feeds.example.com/the-daily","name":"The Daily"}
 		`
