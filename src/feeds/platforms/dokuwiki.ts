@@ -1,9 +1,12 @@
+import { parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, findElement, getCookieNames, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers root (html), partly covers namespace.
+
+export type DokuwikiPage = { installPath: string; namespace?: string }
 
 const namespaceRegex = /var NS='([^']+)'/
 const sessionCookiePathRegex = /(?:^|,)\s*DokuWiki=[^,]*?;\s*path=([^;,\s]+)/i
@@ -12,8 +15,6 @@ export const isDokuwikiHeaders = (headers: Headers): boolean => {
   return getCookieNames(headers).includes('DokuWiki')
 }
 
-export type DokuwikiPage = { installPath: string; namespace?: string }
-
 // The core template prints the install root as `<link rel="start">`, and the session cookie is
 // scoped to it unless the `cookiedir` option moves it.
 const getInstallPath = (url: string, content?: string, headers?: Headers): string => {
@@ -21,8 +22,10 @@ const getInstallPath = (url: string, content?: string, headers?: Headers): strin
     return element.name === 'link' && element.attribs.rel === 'start'
   })
 
-  if (startLink?.attribs.href) {
-    return new URL(startLink.attribs.href, url).pathname
+  const startUrl = startLink?.attribs.href ? parseUrl(startLink.attribs.href, url) : undefined
+
+  if (startUrl) {
+    return startUrl.pathname
   }
 
   return headers?.get('set-cookie')?.match(sessionCookiePathRegex)?.[1] ?? '/'

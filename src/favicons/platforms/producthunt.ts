@@ -8,6 +8,29 @@ const topicImageHosts = ['ph-files.imgix.net']
 
 const productRegex = /^\/products\/([\w-]+)(?:\/|$)/i
 const topicRegex = /^\/topics\/[\w-]+\/?$/i
+const braceRegex = /[{}]/
+const logoUuidRegex = /"logoUuid":"(?<logoUuid>[^"]+)"/
+
+// Related products on the page carry a `logoUuid` too, so only the JSON object holding this
+// product's slug is read, cut at its braces.
+const findLogoUuid = (content: string, slug: string): string | undefined => {
+  const slugField = `"slug":"${slug}","name":"`
+
+  for (const fields of content.split(braceRegex)) {
+    const slugIndex = fields.indexOf(slugField)
+
+    if (slugIndex === -1) {
+      continue
+    }
+
+    const nameEnd = fields.indexOf('"', slugIndex + slugField.length)
+    const logoUuid = fields.slice(nameEnd + 1).match(logoUuidRegex)?.groups?.logoUuid
+
+    if (nameEnd !== -1 && logoUuid) {
+      return logoUuid
+    }
+  }
+}
 
 export const producthuntHandler: PlatformHandler = {
   match: (url) => {
@@ -44,10 +67,7 @@ export const producthuntHandler: PlatformHandler = {
       return []
     }
 
-    // Related products on the page carry a `logoUuid` too, so only the JSON object
-    // holding this product's slug is read.
-    const logoRegex = new RegExp(`"slug":"${slug}","name":"[^"]*"[^{}]*?"logoUuid":"([^"]+)"`)
-    const logoUuid = content.match(logoRegex)?.[1]
+    const logoUuid = findLogoUuid(content, slug)
 
     if (!logoUuid) {
       return []

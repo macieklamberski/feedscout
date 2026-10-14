@@ -315,6 +315,20 @@ describe('getDspacePage', () => {
     expect(getDspacePage(value, content)).toEqual(expected)
   })
 
+  it('should read a REST URL with a long run of slashes in linear time', () => {
+    const value = 'https://example.com/'
+    const baseUrl = `https://example.com/${'/'.repeat(100_000)}server`
+    const content = `<script id="dspace-angular-state">{"APP_CONFIG_STATE":{"rest":{"baseUrl":"${baseUrl}"}}}</script>`
+    const expected: DspacePage = { kind: 'home', restUrl: baseUrl }
+
+    const start = performance.now()
+    const page = getDspacePage(value, content)
+    const elapsed = performance.now() - start
+
+    expect(elapsed).toBeLessThan(1000)
+    expect(page).toEqual(expected)
+  })
+
   it('should fall back to the default REST path for a REST URL that is not http', () => {
     const value = 'https://example.com/'
     const content =

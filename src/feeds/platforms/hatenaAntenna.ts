@@ -1,6 +1,6 @@
 import { getPathSegments, isAnyOf, isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
+import { composeHint, findDescendant, findElement } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -33,7 +33,17 @@ const excludedPaths = [
 ]
 
 // The group nav with one group in bold, the one the page shows.
-const selectedGroupRegex = /<p id="pager_group"[^>]*>(?:(?!<\/p>)[\s\S])*<b>/
+const hasSelectedGroup = (content: string): boolean => {
+  const pager = findElement(content, (element) => {
+    return element.name === 'p' && element.attribs.id === 'pager_group'
+  })
+
+  if (!pager) {
+    return false
+  }
+
+  return findDescendant(pager, (element) => element.name === 'b') !== undefined
+}
 
 export const parseHatenaAntennaUrl = (url: string): HatenaAntennaUrl | undefined => {
   const parsedUrl = parseUrl(url)
@@ -72,7 +82,7 @@ export const hatenaAntennaHandler: PlatformHandler = {
 
     // Hatena bolds the group the page shows in its group nav. A made-up group id leaves every group
     // a link and serves an empty feed, so the page falls back to the whole antenna.
-    if (parsed.kind === 'group' && content !== undefined && !selectedGroupRegex.test(content)) {
+    if (parsed.kind === 'group' && content !== undefined && !hasSelectedGroup(content)) {
       parsed = { kind: 'antenna', username: parsed.username }
     }
 

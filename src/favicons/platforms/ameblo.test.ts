@@ -56,11 +56,20 @@ describe('amebloHandler', () => {
       expect(result).toEqual([])
     })
 
-    it('should throw when INIT_DATA is invalid JSON', () => {
-      const value = createPage('{"bloggerState":')
-      const throwing = () => amebloHandler.resolve('https://ameblo.jp/alice/', value)
+    it('should return empty array when image_filepath is not a URL', async () => {
+      const value = createPage(
+        '{"bloggerState":{"bloggerMap":{"alice":{"profile":{"image_filepath":"profile_images/a.jpg"}}}}}',
+      )
+      const result = await amebloHandler.resolve('https://ameblo.jp/alice/', value)
 
-      expect(throwing).toThrow()
+      expect(result).toEqual([])
+    })
+
+    it('should return empty array when INIT_DATA is invalid JSON', async () => {
+      const value = createPage('{"bloggerState":')
+      const result = await amebloHandler.resolve('https://ameblo.jp/alice/', value)
+
+      expect(result).toEqual([])
     })
 
     it('should return empty array when page has no INIT_DATA', async () => {

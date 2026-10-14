@@ -29,6 +29,12 @@ describe('castopodHandler', () => {
       expect(castopodHandler.match('https://example.org/', content)).toBe(false)
     })
 
+    it('should not match a page with a malformed stylesheet link', () => {
+      const value = '<link rel="stylesheet" href="http://[podcast/themes/colors">'
+
+      expect(castopodHandler.match('https://example.org/@podcast', value)).toBe(false)
+    })
+
     it('should not match a remote actor', () => {
       const value = 'https://example.org/@alice@example.com'
 

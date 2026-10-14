@@ -96,5 +96,17 @@ describe('ivooxHandler', () => {
 
       expect(ivooxHandler.resolve(value, content)).toEqual([])
     })
+
+    it('should read an episode page with a long run of partOfSeries in linear time', () => {
+      const value = 'https://www.ivoox.com/example-episode-audios-mp3_rf_5678_1.html'
+      const content = '"partOfSeries":{'.repeat(25_000)
+
+      const start = performance.now()
+      const result = ivooxHandler.resolve(value, content)
+      const elapsed = performance.now() - start
+
+      expect(elapsed).toBeLessThan(1000)
+      expect(result).toEqual([])
+    })
   })
 })

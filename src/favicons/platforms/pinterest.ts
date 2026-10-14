@@ -17,7 +17,13 @@ const findProfileImage = (content: string, username: string): string | undefined
     return
   }
 
-  const users = JSON.parse(json)?.initialReduxState?.users ?? {}
+  let users = {}
+
+  try {
+    users = JSON.parse(json)?.initialReduxState?.users ?? {}
+  } catch {
+    return
+  }
 
   for (const user of Object.values<{ username?: string; image_xlarge_url?: string }>(users)) {
     if (user?.username?.toLowerCase() !== username.toLowerCase()) {

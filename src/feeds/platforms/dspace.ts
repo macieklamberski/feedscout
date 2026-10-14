@@ -15,10 +15,27 @@ import {
 // Generic covers legacyCollection, legacyCommunity, legacyHome (html), partly covers collection, community.
 // Handler needed for: home.
 
+type LegacyFormat = 'atom' | 'rdf' | 'rss'
+
+type LegacyKind = 'legacyCollection' | 'legacyCommunity' | 'legacyHome'
+
+type TransferState = {
+  APP_CONFIG_STATE?: { rest?: { baseUrl?: unknown } }
+}
+
+type LegacyFeed = { uri: string; format: LegacyFormat }
+
+type LegacyLink = LegacyFeed & { scope: string; title?: string }
+
+export type DspacePage =
+  | { kind: 'collection'; restUrl: string; uuid: string }
+  | { kind: 'community'; restUrl: string; uuid: string }
+  | { kind: 'home'; restUrl: string }
+  | { kind: LegacyKind; feeds: Array<LegacyFeed> }
+
 const scopePathRegex =
   /\/(collections|communities)\/([\da-f]{8}-[\da-f]{4}-[\da-f]{4}-[\da-f]{4}-[\da-f]{12})(?:\/|$)/i
 const transferStateEntityRegex = /&([aglqs]);/g
-const trailingSlashesRegex = /\/+$/
 const legacyFeedPathRegex = /\/feed\/(rss_1\.0|rss_2\.0|atom_1\.0)\/(site|[^/]+\/[^/]+)$/i
 const legacyStylesheetRegex = /\/static\/css\/bootstrap\/dspace-theme\.css$/
 const generatorRegex = /^DSpace\b/
@@ -32,27 +49,35 @@ const transferStateEntities: Record<string, string> = {
   s: "'",
 }
 
-const legacyFormats: Record<string, 'atom' | 'rdf' | 'rss'> = {
+const legacyFormats: Record<string, LegacyFormat> = {
   'atom_1.0': 'atom',
   'rss_1.0': 'rdf',
   'rss_2.0': 'rss',
 }
 
-type TransferState = {
-  APP_CONFIG_STATE?: { rest?: { baseUrl?: unknown } }
+// The JSPUI titles a scoped link with the kind in fixed English, and the XMLUI names the page's
+// viewer.
+const legacyScopes: Array<{ kind: LegacyKind; title: string; viewerId: string }> = [
+  {
+    kind: 'legacyCollection',
+    title: 'Items in Collection',
+    viewerId: 'aspect_artifactbrowser_CollectionViewer_div_collection-home',
+  },
+  {
+    kind: 'legacyCommunity',
+    title: 'Items in Community',
+    viewerId: 'aspect_artifactbrowser_CommunityViewer_div_community-home',
+  },
+]
+
+const hintKeys: Record<DspacePage['kind'], string> = {
+  collection: 'dspace:collection',
+  community: 'dspace:community',
+  home: 'dspace:site',
+  legacyCollection: 'dspace:collection',
+  legacyCommunity: 'dspace:community',
+  legacyHome: 'dspace:site',
 }
-
-type LegacyFeed = { uri: string; format: 'atom' | 'rdf' | 'rss' }
-
-type LegacyLink = LegacyFeed & { scope: string; title?: string }
-
-export type DspacePage =
-  | { kind: 'collection'; restUrl: string; uuid: string }
-  | { kind: 'community'; restUrl: string; uuid: string }
-  | { kind: 'home'; restUrl: string }
-  | { kind: 'legacyCollection'; feeds: Array<LegacyFeed> }
-  | { kind: 'legacyCommunity'; feeds: Array<LegacyFeed> }
-  | { kind: 'legacyHome'; feeds: Array<LegacyFeed> }
 
 // The Angular UI of DSpace 7 and later renders every page inside this root element.
 export const isDspaceHtml = (content: string): boolean => {
@@ -106,8 +131,7 @@ const getLegacyLinks = (url: string, content: string): Array<LegacyLink> => {
   return legacyLinks
 }
 
-// The JSPUI titles a scoped link with the kind in fixed English, and the XMLUI names the page's
-// viewer. A page links the feeds of one scope only, so the first link decides the kind.
+// A page links the feeds of one scope only, so the first link decides the kind.
 const getLegacyPage = (content: string, links: Array<LegacyLink>): DspacePage | undefined => {
   const [link] = links
   const feeds = links.map(({ uri, format }) => ({ uri, format }))
@@ -116,18 +140,10 @@ const getLegacyPage = (content: string, links: Array<LegacyLink>): DspacePage | 
     return { kind: 'legacyHome', feeds }
   }
 
-  if (
-    link.title === 'Items in Collection' ||
-    hasElementWithId(content, 'aspect_artifactbrowser_CollectionViewer_div_collection-home')
-  ) {
-    return { kind: 'legacyCollection', feeds }
-  }
-
-  if (
-    link.title === 'Items in Community' ||
-    hasElementWithId(content, 'aspect_artifactbrowser_CommunityViewer_div_community-home')
-  ) {
-    return { kind: 'legacyCommunity', feeds }
+  for (const scope of legacyScopes) {
+    if (link.title === scope.title || hasElementWithId(content, scope.viewerId)) {
+      return { kind: scope.kind, feeds }
+    }
   }
 }
 
@@ -151,7 +167,14 @@ const getRestUrl = (origin: string, content: string | undefined): string => {
       const baseUrl = state.APP_CONFIG_STATE?.rest?.baseUrl
 
       if (typeof baseUrl === 'string' && isHttpUrl(baseUrl)) {
-        return baseUrl.replace(trailingSlashesRegex, '')
+        let end = baseUrl.length
+
+        // A regex for the trailing slashes rescans every slash run in a page-supplied value.
+        while (baseUrl.endsWith('/', end)) {
+          end--
+        }
+
+        return baseUrl.slice(0, end)
       }
     } catch {}
   }
@@ -222,49 +245,20 @@ export const dspaceHandler: PlatformHandler = {
       return []
     }
 
-    if (page.kind === 'legacyCollection') {
-      return page.feeds.map(({ uri, format }) => {
-        return { uri, hint: composeHint('dspace:collection', format) }
-      })
-    }
+    const hintKey = hintKeys[page.kind]
 
-    if (page.kind === 'legacyCommunity') {
+    if ('feeds' in page) {
       return page.feeds.map(({ uri, format }) => {
-        return { uri, hint: composeHint('dspace:community', format) }
-      })
-    }
-
-    if (page.kind === 'legacyHome') {
-      return page.feeds.map(({ uri, format }) => {
-        return { uri, hint: composeHint('dspace:site', format) }
+        return { uri, hint: composeHint(hintKey, format) }
       })
     }
 
     const uris: Array<DiscoverUriEntry> = []
 
-    if (page.kind === 'collection') {
+    if ('uuid' in page) {
       uris.push(
-        {
-          uri: getSearchUrl(page.restUrl, 'atom', page.uuid),
-          hint: composeHint('dspace:collection', 'atom'),
-        },
-        {
-          uri: getSearchUrl(page.restUrl, 'rss', page.uuid),
-          hint: composeHint('dspace:collection', 'rss'),
-        },
-      )
-    }
-
-    if (page.kind === 'community') {
-      uris.push(
-        {
-          uri: getSearchUrl(page.restUrl, 'atom', page.uuid),
-          hint: composeHint('dspace:community', 'atom'),
-        },
-        {
-          uri: getSearchUrl(page.restUrl, 'rss', page.uuid),
-          hint: composeHint('dspace:community', 'rss'),
-        },
+        { uri: getSearchUrl(page.restUrl, 'atom', page.uuid), hint: composeHint(hintKey, 'atom') },
+        { uri: getSearchUrl(page.restUrl, 'rss', page.uuid), hint: composeHint(hintKey, 'rss') },
       )
     }
 

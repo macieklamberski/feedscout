@@ -99,6 +99,15 @@ describe('nebulaHandler', () => {
         expect(nebulaHandler.resolve('https://nebula.tv/realengineering', value)).toEqual([ref])
       })
 
+      it('should stay linear on a page that repeats the query data assignment', () => {
+        const value = 'window.__QUERY_DATA__={'.repeat(18_000)
+        const start = performance.now()
+        const result = nebulaHandler.resolve('https://nebula.tv/realengineering', value)
+
+        expect(performance.now() - start).toBeLessThan(500)
+        expect(result).toEqual([ref])
+      })
+
       it('should return a ref when no content query is present', () => {
         const queryData = JSON.stringify({
           queries: [{ queryKey: ['featured_pages'], state: { data: [] } }],
