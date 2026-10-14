@@ -325,7 +325,10 @@ const runDiscover = async <TValid>(
     }
   }
 
-  const results = recorded.map((record) => record.result)
+  // Candidates finish in any order, so the results follow the order the candidates were listed in.
+  const results = recorded
+    .sort((first, second) => first.entryIndex - second.entryIndex)
+    .map((record) => record.result)
 
   return includeInvalid ? results : results.filter((result) => result.isValid)
 }

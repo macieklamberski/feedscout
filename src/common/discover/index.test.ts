@@ -1171,6 +1171,27 @@ describe('discoverFeeds', () => {
     })
   })
 
+  describe('result order', () => {
+    it('should return results in the order the candidates were listed, whatever finishes first', async () => {
+      const delays: Record<string, number> = { 'https://example.com/feed': 30 }
+      const mockFetch: FetchFn = async (url) => {
+        await new Promise((resolve) => setTimeout(resolve, delays[url] ?? 0))
+
+        return { headers: new Headers(), body: rss, url, status: 200, statusText: 'OK' }
+      }
+
+      const results = await discoverFeeds(
+        { url: 'https://example.com', content: '<html></html>' },
+        { methods: { guess: { uris: ['/feed', '/rss'] } }, fetchFn: mockFetch },
+      )
+
+      expect(results.map((result) => result.url)).toEqual([
+        'https://example.com/feed',
+        'https://example.com/rss',
+      ])
+    })
+  })
+
   describe('pages already read', () => {
     it('should not fetch a link that points back at the input page', async () => {
       const fetchedUrls: Array<string> = []
