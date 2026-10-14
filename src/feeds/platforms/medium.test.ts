@@ -118,6 +118,9 @@ describe('parseMediumUrl', () => {
     'https://medium.com/about',
     'https://medium.com/explore-topics',
     'https://medium.com/tag',
+    'https://medium.com/m/signin',
+    'https://medium.com/p/3f6a1b2c4d5e',
+    'https://medium.com/sitemap/sitemap.xml',
   ]
 
   it.each(siteRouteValues)('should return undefined for the site route %s', (value) => {

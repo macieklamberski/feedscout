@@ -31,6 +31,9 @@ const excludedPaths = [
   'about',
   'explore-topics',
   'tag',
+  'm',
+  'p',
+  'sitemap',
 ]
 // Their /feed answers 404 or redirects away from a feed.
 const excludedSubdomains = [

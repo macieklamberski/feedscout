@@ -59,7 +59,7 @@ describe('parseLetterboxdUrl', () => {
     'https://letterboxd.com/composer/hans-zimmer/',
     'https://letterboxd.com/editor/thelma-schoonmaker/',
     'https://letterboxd.com/reviews/popular/',
-    'https://letterboxd.com/podcast/',
+    'https://letterboxd.com/reviewers/popular/',
   ]
 
   it.each(siteRouteValues)('should return undefined for the site route %s', (value) => {
