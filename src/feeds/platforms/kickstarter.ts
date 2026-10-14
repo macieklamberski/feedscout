@@ -3,8 +3,8 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic covers discover (guess, html).
-// Handler needed for: home, project.
+// Generic covers discover, project (guess, html).
+// Handler needed for: home.
 
 export type KickstarterUrl =
   | { kind: 'project'; creator: string; project: string }

@@ -59,7 +59,7 @@ Discovers Atom feeds for channels and playlists. Generates ten feed variants for
 | `youtube.com/channel/{id}` | All uploads · videos<sup>†</sup> · shorts<sup>†</sup> · live streams<sup>†</sup> · popular videos<sup>†</sup> · popular shorts<sup>†</sup> · popular live streams<sup>†</sup> · member videos<sup>†</sup> · member shorts<sup>?</sup> · member live streams<sup>?</sup> |
 | `music.youtube.com/channel/{id}` | All uploads<sup>†</sup> · videos<sup>†</sup> · shorts<sup>†</sup> · live streams<sup>†</sup> · popular videos<sup>†</sup> · popular shorts<sup>†</sup> · popular live streams<sup>†</sup> · member videos<sup>†</sup> · member shorts<sup>?</sup> · member live streams<sup>?</sup> |
 | `youtube.com/@{handle}` | All uploads · videos<sup>†</sup> · shorts<sup>†</sup> · live streams<sup>†</sup> · popular videos<sup>†</sup> · popular shorts<sup>†</sup> · popular live streams<sup>†</sup> · member videos<sup>?</sup> · member shorts<sup>?</sup> · member live streams<sup>?</sup>* |
-| `youtube.com/user/{name}` | All uploads · videos<sup>†</sup> · shorts<sup>?</sup> · live streams<sup>†</sup> · popular videos<sup>†</sup> · popular shorts<sup>?</sup> · popular live streams<sup>†</sup> · member videos<sup>†</sup> · member shorts<sup>?</sup> · member live streams<sup>†</sup>* |
+| `youtube.com/user/{name}` | All uploads · videos · shorts<sup>?</sup> · live streams<sup>†</sup> · popular videos<sup>†</sup> · popular shorts<sup>?</sup> · popular live streams<sup>†</sup> · member videos<sup>†</sup> · member shorts<sup>?</sup> · member live streams<sup>†</sup>* |
 | `youtube.com/c/{custom}` | All uploads · videos<sup>†</sup> · shorts<sup>†</sup> · live streams<sup>†</sup> · popular videos<sup>†</sup> · popular shorts<sup>†</sup> · popular live streams<sup>†</sup> · member videos<sup>†</sup> · member shorts<sup>?</sup> · member live streams<sup>†</sup>* |
 | `youtube.com/watch?v={id}` | All uploads<sup>†</sup> · videos<sup>†</sup> · shorts<sup>†</sup> · live streams<sup>†</sup> · popular videos<sup>†</sup> · popular shorts<sup>†</sup> · popular live streams<sup>†</sup> · member videos<sup>?</sup> · member shorts<sup>?</sup> · member live streams<sup>?</sup>* |
 | `youtu.be/{id}` | All uploads<sup>†</sup> · videos<sup>†</sup> · shorts<sup>†</sup> · live streams<sup>†</sup> · popular videos<sup>†</sup> · popular shorts<sup>†</sup> · popular live streams<sup>†</sup> · member videos<sup>?</sup> · member shorts<sup>?</sup> · member live streams<sup>?</sup>* |
@@ -438,7 +438,7 @@ Discovers Atom feeds for Kickstarter projects and global new projects.
 |-------------|-----------------|
 | `kickstarter.com` | Global new projects<sup>†</sup> |
 | `kickstarter.com/discover` | Global new projects |
-| `kickstarter.com/projects/{creator}/{project}` | Project updates<sup>†</sup> |
+| `kickstarter.com/projects/{creator}/{project}` | Project updates |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -980,8 +980,8 @@ Discovers Atom feeds for Flickr photostreams, favorites, tags, groups and the he
 | `flickr.com/photos/tags/{tag}` | Tag<sup>†</sup> |
 | `flickr.com/photos/{nsid}` | Photostream |
 | `flickr.com/photos/{nsid}/favorites` | Favorites |
-| `flickr.com/groups/{nsid}` | Group pool<sup>†</sup> · discussions · pool with location<sup>†</sup> |
-| `flickr.com/groups/{nsid}/pool` | Group pool<sup>†</sup> · pool with location<sup>†</sup> |
+| `flickr.com/groups/{nsid}` | Group pool<sup>†</sup> · discussions · pool with location |
+| `flickr.com/groups/{nsid}/pool` | Group pool<sup>†</sup> · pool with location |
 | `flickr.com/groups/{nsid}/discuss` | Group discussions |
 | `flickr.com/help/forum` | Forum<sup>†</sup> |
 
@@ -1313,8 +1313,10 @@ Discovers RSS 2.0 and RDF feeds for Seesaa Blog on `*.seesaa.net` and its other 
 | `*.seesaa.blog` | Posts (RSS 2.0 + RDF) |
 | `*.seesaa.space` | Posts (RSS 2.0 + RDF) |
 | `*.sokuho.org` | Posts (RSS 2.0 + RDF) |
-| `*.stablo.jp` | Posts (RSS 2.0 + RDF) |
+| `*.stablo.jp` | Posts (RSS 2.0<sup>†</sup> + RDF) |
 | `*.xblog.jp` | Posts (RSS 2.0 + RDF) |
+
+<sup>†</sup> *Found only by the Platform method.*
 
 ### Sermon.net
 
@@ -1549,6 +1551,8 @@ Discovers the site feed of a Drupal site. Detected by the `Generator` meta tag o
 |-------------|-----------------|
 | Any page | Site (RSS) |
 
+The feed is built under the install's base path from the page's Drupal settings, so a site installed under a sub-path gets its own feed.
+
 > [!NOTE]
 > Both signals are Drupal 8 and later, and a site builder can disable the `/rss.xml` view, so treat the feed as a probe.
 
@@ -1559,8 +1563,7 @@ Discovers the Atom feed of a Shopify store's blog. Detected by the `Powered-By` 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | `{store}/blogs/{handle}` | Blog (Atom) |
-The feed is built under the install's base path from the page's Drupal settings, so a site installed under a sub-path gets its own feed.
-
+| `{store}/{locale}/blogs/{handle}` | Blog in that market's locale (Atom) |
 
 > [!NOTE]
 > There is no store-wide feed, so the blog handle is required. A missing blog answers 404 with an Atom content type and an empty body.
@@ -1571,7 +1574,6 @@ Discovers the RSS feeds of a HubSpot blog. Detected by the `HubSpot` generator m
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{store}/{locale}/blogs/{handle}` | Blog in that market's locale (Atom) |
 | `{site}/{blog-path}` | Blog (RSS) |
 | `{site}/{blog-path}/author/{slug}` | Author<sup>†</sup> · blog (RSS) |
 | `{site}/{blog-path}/topic/{slug}` | Tag<sup>†</sup> · blog (RSS) |
@@ -2092,11 +2094,11 @@ Discovers the RSS feeds of Internet Archive collections and searches. A collecti
 | `archive.org/details/{collection}` | Collection<sup>†</sup> (RSS)* |
 | `archive.org/search?query={query}` | Search<sup>†</sup> (RSS) |
 
+\* *Requires HTML content to tell a collection from an item.*
+
 <sup>†</sup> *Found only by the Platform method.*
 
 ### Sveriges Radio
-\* *Requires HTML content to tell a collection from an item.*
-
 
 Discovers the feed of a Sveriges Radio program.
 
@@ -2357,7 +2359,7 @@ Discovers the feeds of a DSpace repository, on any domain. DSpace 7 and later is
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{repository}/collections/{uuid}` | Collection · site<sup>†</sup> (RSS + Atom) |
+| `{repository}/collections/{uuid}` | Collection<sup>†</sup> · site<sup>†</sup> (RSS + Atom) |
 | `{repository}/communities/{uuid}` | Community · site<sup>†</sup> (RSS + Atom) |
 | Any other page, DSpace 7 and later | Site<sup>†</sup> (RSS + Atom) |
 | `{repository}/handle/{prefix}/{id}`, DSpace 6 and older | Collection or community (RSS 1.0, RSS 2.0 + Atom, as linked) |
@@ -2506,7 +2508,7 @@ Discovers the RSS feed of a Gnuboard 4 or 5 board. Detected by the visit cookie 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | `{site}/bbs/board.php?bo_table={board}` | Board<sup>†</sup> |
-| `{site}/bbs/board.php?bo_table={board}&wr_id={post}` | Board |
+| `{site}/bbs/board.php?bo_table={board}&wr_id={post}` | Board<sup>†</sup> |
 | `{site}/{board}` or `{site}/{board}/{post}` on Gnuboard 5 | Board, read from the page's `g5_bo_table` variable |
 
 <sup>†</sup> *Found only by the Platform method.*
@@ -3027,7 +3029,7 @@ Discovers the feeds of a Typecho blog. Detected by a theme or plugin asset under
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | `{site}/` | Posts · comments<sup>†</sup> (RSS + RSS 1.0 + Atom) |
-| `{site}/{path}` | Page at `/feed/{path}` · posts (RSS + RSS 1.0<sup>†</sup> + Atom<sup>†</sup>) · comments<sup>†</sup> (RSS + RSS 1.0 + Atom) |
+| `{site}/{path}` | Page at `/feed/{path}` · posts (RSS + RSS 1.0<sup>†</sup> + Atom<sup>†</sup>) · comments (RSS + RSS 1.0<sup>†</sup> + Atom<sup>†</sup>) |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -3129,11 +3131,11 @@ Discovers the change feeds of a wiki on Purot.net. The page's own feeds come fro
 | `{wiki}.purot.net/{page}`, `{wiki}.purot.net/` | Page changes* · page discussions* · page changes, discussions and likes (RSS)* · recent changes |
 | `{wiki}.purot.net/profile/{user}`, any other page | Recent changes (RSS) |
 
+\* *Requires HTML content to read the page ID.*
+
 ### SkyCMS
 
 Discovers the feed of a page in a Polish public information bulletin built on SkyCMS. Detected by the bulletin template's `/cms/public/image/default/bip_v{n}/` icon path, `/clients/cms_{client}/image/default/bip/` on a branded bulletin, or the `skycms_PageCounter` cookie, beside the link to the bulletin's RSS channel list, so any domain is covered. SkyCMS sites outside the bulletin template serve no page feeds and are left alone.
-\* *Requires HTML content to read the page ID.*
-
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
@@ -3181,11 +3183,11 @@ Discovers the news feeds of a Swedish sports club website on SportAdmin. On the 
 | `{club}.web.sportadmin.se/?SID={id}` on the new template | Team news<sup>†</sup>* at `/rss/?SID={id}` · club news |
 | `{club}.web.sportadmin.se/`, any other page | Club news at `/rss/` |
 
+\* *Requires HTML content to read the team ID.*
+
 <sup>†</sup> *Found only by the Platform method.*
 
 ### laget.se
-\* *Requires HTML content to read the team ID.*
-
 
 Discovers the news feed of a sports club or team site on laget.se. The team page links the feed only through an icon with no text, and a team page without a news box links nothing, yet its feed still answers. A club on its own domain is detected by stylesheets or scripts loaded from the `g-content.laget.se` asset host, and serves its feed at the domain root.
 
@@ -3239,11 +3241,11 @@ Discovers the feeds of a table tennis association on `{association}.tischtennisl
 | `{association}.tischtennislive.de/?L3=SpielUebersicht&Gruppe={group}`, a match overview linking its results feeds | Group results of the last 10 days · fixtures of the next 10 days at `/Export/Tischtennis/RSS.aspx?Typ=Gruppe&ID={group}&Next={0\|1}` (RSS)* |
 | `{association}.tischtennislive.de`, any other page | News · dates<sup>†</sup> · documents<sup>†</sup> · tournaments<sup>†</sup> (RSS) |
 
+\* *Requires HTML content to read the ID from the page's results feed link.*
+
 <sup>†</sup> *Found only by the Platform method.*
 
 ### Newswire
-\* *Requires HTML content to read the ID from the page's results feed link.*
-
 
 Discovers the feeds of a company newsroom on `{newsroom}.newswire.com`. The newsroom links its own feed, and its beat and content type pages link none.
 
@@ -3261,9 +3263,7 @@ Discovers the feeds of a journal on Open Journal Systems, on any domain. Detecte
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{journal}/`, `{journal}/article/view/{id}`, `{journal}/issue/view/{id}`, any other journal page | Articles · announcements (Atom<sup>†</sup> + RSS 1.0<sup>†</sup> + RSS 2.0<sup>†</sup>) |
-
-<sup>†</sup> *Found only by the Platform method.*
+| `{journal}/`, `{journal}/article/view/{id}`, `{journal}/issue/view/{id}`, any other journal page | Articles · announcements (Atom + RSS 1.0 + RSS 2.0) |
 
 > [!NOTE]
 > The site-wide pages of a multi-journal install, under `/index`, belong to no journal and get no feeds. OJS 3.5 serves a non-default locale's feeds only to a client that keeps cookies, so the feeds are the journal root's, which redirect to the default locale.
