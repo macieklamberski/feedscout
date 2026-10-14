@@ -8,6 +8,9 @@ export const userAgent =
 
 const retryDelaysMs = [1_000, 3_000, 7_000]
 const fallbackStatuses = new Set([403, 408, 413, 429, 500, 502, 503, 504])
+// Some hosts answer a client that does not look like a browser with 404, such as Haley job boards.
+// A retry does not change that, so a 404 goes to the browser without one.
+const browserFallbackStatuses = new Set([...fallbackStatuses, 404])
 
 export const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
@@ -107,7 +110,7 @@ export const fetchWithFallback = async (
 ): Promise<FetchResult> => {
   try {
     const result = await fetchWithRetry(url, options)
-    if (!fallbackStatuses.has(result.status)) {
+    if (!browserFallbackStatuses.has(result.status)) {
       return result
     }
     try {

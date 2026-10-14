@@ -560,9 +560,15 @@
     "gancio:tag": "https://balotta.org/feed/rss/tag/antirazzismo"
   },
   "gcsWeb": {
-    "gcs-web:events": { "skip": "GCS-web's Akamai answers 403 to non-browser clients" },
-    "gcs-web:news-releases": { "skip": "GCS-web's Akamai answers 403 to non-browser clients" },
-    "gcs-web:sec-filings": { "skip": "GCS-web's Akamai answers 403 to non-browser clients" }
+    "gcs-web:events": {
+      "skip": "GCS-web's Akamai answers 403 to every client but a full browser, headless Chromium included"
+    },
+    "gcs-web:news-releases": {
+      "skip": "GCS-web's Akamai answers 403 to every client but a full browser, headless Chromium included"
+    },
+    "gcs-web:sec-filings": {
+      "skip": "GCS-web's Akamai answers 403 to every client but a full browser, headless Chromium included"
+    }
   },
   "geoblog": {
     "geoblog:trip": "http://zielonagora.geoblog.pl/podroz/rss/27449.xml"
@@ -663,7 +669,7 @@
     "hackernews:show": "https://news.ycombinator.com/showrss"
   },
   "haleyJobs": {
-    "haley-jobs:jobs": { "skip": "Haley job boards answer 404 to non-browser user agents" }
+    "haley-jobs:jobs": "https://jobs.akraya.com/rss/rss.smpl?ff=1"
   },
   "hashnode": {
     "hashnode:blog": "https://townhall.hashnode.com/rss.xml"
