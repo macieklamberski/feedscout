@@ -33,6 +33,8 @@ discoverHubs({
 })
 ```
 
+A URL string with a feed or podcast scheme, such as `feed://`, `feed:https://` or `itpc://`, is fetched as the https URL it names.
+
 ### options
 
 | Property | Type | Default | Description |

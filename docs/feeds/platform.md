@@ -735,10 +735,12 @@ Discovers the RSS feed of a Firstory podcast. The feed is keyed by the show's ID
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `open.firstory.fm/user/{show}` | Podcast (RSS) |
-| `open.firstory.fm/story/{episodeId}` | Podcast (RSS) |
-| `{show}.firstory.cc` | Podcast (RSS) |
-| `{show}.firstory.cc/episodes/{episodeId}` | Podcast (RSS) |
+| `open.firstory.fm/user/{show}` | Podcast (RSS)* |
+| `open.firstory.fm/story/{episodeId}` | Podcast (RSS)* |
+| `{show}.firstory.cc` | Podcast (RSS)* |
+| `{show}.firstory.cc/episodes/{episodeId}` | Podcast (RSS)* |
+
+\* *Requires HTML content to read the show ID.*
 
 ### Hacker News
 
@@ -1115,7 +1117,9 @@ Discovers RSS feeds for Megaphone-hosted podcasts from their embed players.
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | `playlist.megaphone.fm/?p={id}` | Podcast<sup>†</sup> |
-| `player.megaphone.fm/{episode}` | Podcast (read from the page) |
+| `player.megaphone.fm/{episode}` | Podcast* |
+
+\* *Requires HTML content to read the show ID.*
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -1210,9 +1214,11 @@ Discovers the RSS feed of a Podhome show, on `serve.podhome.fm` or a custom doma
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `serve.podhome.fm/{show}` | Podcast (RSS) |
-| `serve.podhome.fm/episodepage/{show}/{episode}` | Podcast (RSS) |
-| Any page of a show on a custom domain | Podcast (RSS) |
+| `serve.podhome.fm/{show}` | Podcast (RSS)* |
+| `serve.podhome.fm/episodepage/{show}/{episode}` | Podcast (RSS)* |
+| Any page of a show on a custom domain | Podcast (RSS)* |
+
+\* *Requires HTML content to read the feed URL.*
 
 ### Podigee
 
@@ -1288,9 +1294,11 @@ Discovers the posts, comments and tag feeds of a blog on `*.blogs.sapo.pt`. Comm
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | `{blog}.blogs.sapo.pt` | Posts (RSS + Atom) · comments<sup>†</sup> |
-| `{blog}.blogs.sapo.pt/{slug}-{id}` | Post comments<sup>†</sup>, plus the blog feeds |
-| `{blog}.blogs.sapo.pt/{id}.html` | Post comments<sup>†</sup>, plus the blog feeds |
+| `{blog}.blogs.sapo.pt/{slug}-{id}` | Post comments<sup>†</sup>*, plus the blog feeds |
+| `{blog}.blogs.sapo.pt/{id}.html` | Post comments<sup>†</sup>*, plus the blog feeds |
 | `{blog}.blogs.sapo.pt/tag/{tag}` | Tag<sup>†</sup>, plus the blog feeds |
+
+\* *Requires HTML content to confirm the page links the post.*
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -1314,8 +1322,10 @@ Discovers the audio podcast feed of every channel a church page lists, or of the
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `*.sermon.net` | Channel podcasts (RSS), or the church feed when no channel is listed |
-| `*.sermon.net/{mediaCentre}/{channel}` | That channel's podcast<sup>†</sup> (RSS) |
+| `*.sermon.net` | Channel podcasts (RSS)*, or the church feed when no channel is listed |
+| `*.sermon.net/{mediaCentre}/{channel}` | That channel's podcast<sup>†</sup> (RSS)* |
+
+\* *Requires HTML content to read the channels the page lists.*
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -1676,7 +1686,9 @@ Discovers the RSS feed of a Mailchimp campaign archive.
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | `{dc}.campaign-archive.com/home/?u={u}&id={list}` | Archive (RSS) |
-| `{dc}.campaign-archive.com/?u={u}&id={campaign}` | Archive (RSS) |
+| `{dc}.campaign-archive.com/?u={u}&id={campaign}` | Archive (RSS)* |
+
+\* *Requires HTML content to read the list ID.*
 
 > [!NOTE]
 > The datacentre prefix and the account id come from the input URL. On a campaign page the `id` names the campaign, so the list id is read from the archive link in the page.
@@ -1993,7 +2005,9 @@ Discovers the RSS feed of an iVoox podcast.
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | `ivoox.com/{slug}_sq_f{id}_1.html` | Podcast<sup>†</sup> (RSS) |
-| `ivoox.com/{slug}_rf_{episode}_1.html` | Podcast<sup>†</sup> (RSS), read from the episode page's series link |
+| `ivoox.com/{slug}_rf_{episode}_1.html` | Podcast<sup>†</sup> (RSS)* |
+
+\* *Requires HTML content to read the series ID from the episode page.*
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -2072,12 +2086,14 @@ Discovers the RSS feeds of Internet Archive collections and searches. A collecti
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `archive.org/details/{collection}` | Collection<sup>†</sup> (RSS) |
+| `archive.org/details/{collection}` | Collection<sup>†</sup> (RSS)* |
 | `archive.org/search?query={query}` | Search<sup>†</sup> (RSS) |
 
 <sup>†</sup> *Found only by the Platform method.*
 
 ### Sveriges Radio
+\* *Requires HTML content to tell a collection from an item.*
+
 
 Discovers the feed of a Sveriges Radio program.
 
@@ -2149,7 +2165,9 @@ Discovers the RSS feed of a LibriVox audiobook, read from the feed link on the a
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `librivox.org/{slug}` | Audiobook (RSS) |
+| `librivox.org/{slug}` | Audiobook (RSS)* |
+
+\* *Requires HTML content to read the audiobook ID.*
 
 ### PyPI
 
@@ -2167,8 +2185,10 @@ Discovers the RSS feed of a RedCircle show. A show under a slug is read from the
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `redcircle.com/shows/{uuid}` or `redcircle.com/shows/{slug}` | Show (RSS) |
-| `redcircle.com/shows/{uuid}/ep/{episode}` or `redcircle.com/shows/{slug}/ep/{episode}` | Show (RSS) |
+| `redcircle.com/shows/{uuid}` or `redcircle.com/shows/{slug}` | Show (RSS)* |
+| `redcircle.com/shows/{uuid}/ep/{episode}` or `redcircle.com/shows/{slug}/ep/{episode}` | Show (RSS)* |
+
+\* *Under a slug, requires HTML content to read the show uuid.*
 
 ### Royal Road
 
@@ -2391,9 +2411,11 @@ Discovers the RSS feed of a BubbleLife community. The page's alternate link has 
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{city}.bubblelife.com/community/{name}` | Posts<sup>†</sup> (RSS) |
-| `{city}.bubblelife.com/community/{name}/library/{id}` | Library<sup>†</sup> (RSS) |
-| `{city}.bubblelife.com/community/{name}/type/rssinfo` | Posts<sup>†</sup> (RSS) |
+| `{city}.bubblelife.com/community/{name}` | Posts<sup>†</sup> (RSS)* |
+| `{city}.bubblelife.com/community/{name}/library/{id}` | Library<sup>†</sup> (RSS)* |
+| `{city}.bubblelife.com/community/{name}/type/rssinfo` | Posts<sup>†</sup> (RSS)* |
+
+\* *Requires HTML content to read the feed ID.*
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -2422,7 +2444,9 @@ Discovers the posts feeds of a Cocolog blog on `cocolog-nifty.com` and its sibli
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | `{user}.cocolog-nifty.com/{blog}/…` | Posts (Atom + RDF + RSS) |
-| `{user}.cocolog-nifty.com` | Posts of the blog the page links (Atom + RDF + RSS) |
+| `{user}.cocolog-nifty.com` | Posts of the blog the page links (Atom + RDF + RSS)* |
+
+\* *Requires HTML content to read the blog from the feed links.*
 
 ### blog.hu
 
@@ -3099,12 +3123,14 @@ Discovers the change feeds of a wiki on Purot.net. The page's own feeds come fro
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{wiki}.purot.net/{page}`, `{wiki}.purot.net/` | Page changes · page discussions · page changes, discussions and likes (RSS) · recent changes |
+| `{wiki}.purot.net/{page}`, `{wiki}.purot.net/` | Page changes* · page discussions* · page changes, discussions and likes (RSS)* · recent changes |
 | `{wiki}.purot.net/profile/{user}`, any other page | Recent changes (RSS) |
 
 ### SkyCMS
 
 Discovers the feed of a page in a Polish public information bulletin built on SkyCMS. Detected by the bulletin template's `/cms/public/image/default/bip_v{n}/` icon path, `/clients/cms_{client}/image/default/bip/` on a branded bulletin, or the `skycms_PageCounter` cookie, beside the link to the bulletin's RSS channel list, so any domain is covered. SkyCMS sites outside the bulletin template serve no page feeds and are left alone.
+\* *Requires HTML content to read the page ID.*
+
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
@@ -3148,13 +3174,15 @@ Discovers the news feeds of a Swedish sports club website on SportAdmin. On the 
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{club}.web.sportadmin.se/?SID={id}`, a classic team page linking its other layout | Team news<sup>†</sup> at `/rss/?SID={id}` · club news |
-| `{club}.web.sportadmin.se/?SID={id}` on the new template | Team news<sup>†</sup> at `/rss/?SID={id}` · club news |
+| `{club}.web.sportadmin.se/?SID={id}`, a classic team page linking its other layout | Team news<sup>†</sup>* at `/rss/?SID={id}` · club news |
+| `{club}.web.sportadmin.se/?SID={id}` on the new template | Team news<sup>†</sup>* at `/rss/?SID={id}` · club news |
 | `{club}.web.sportadmin.se/`, any other page | Club news at `/rss/` |
 
 <sup>†</sup> *Found only by the Platform method.*
 
 ### laget.se
+\* *Requires HTML content to read the team ID.*
+
 
 Discovers the news feed of a sports club or team site on laget.se. The team page links the feed only through an icon with no text, and a team page without a news box links nothing, yet its feed still answers. A club on its own domain is detected by stylesheets or scripts loaded from the `g-content.laget.se` asset host, and serves its feed at the domain root.
 
@@ -3171,8 +3199,10 @@ Discovers the trip feed of a travel blog on Geoblog.pl. The trip is read from th
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{user}.geoblog.pl/podroz/{id}/{slug}` | Trip at `/podroz/rss/{id}.xml` (RSS) |
-| `{user}.geoblog.pl/wpis/{id}/{slug}` | Trip<sup>†</sup> of the entry's trip (RSS) |
+| `{user}.geoblog.pl/podroz/{id}/{slug}` | Trip at `/podroz/rss/{id}.xml` (RSS)* |
+| `{user}.geoblog.pl/wpis/{id}/{slug}` | Trip<sup>†</sup> of the entry's trip (RSS)* |
+
+\* *Requires HTML content to read the trip ID.*
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -3202,20 +3232,22 @@ Discovers the feeds of a table tennis association on `{association}.tischtennisl
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{association}.tischtennislive.de/?L2P={league}`, a league overview linking its results feeds | League results of the last 10 days · fixtures of the next 10 days at `/Export/Tischtennis/RSS.aspx?Typ=Wett&ID={league}&Next={0\|1}` (RSS) |
-| `{association}.tischtennislive.de/?L3=SpielUebersicht&Gruppe={group}`, a match overview linking its results feeds | Group results of the last 10 days · fixtures of the next 10 days at `/Export/Tischtennis/RSS.aspx?Typ=Gruppe&ID={group}&Next={0\|1}` (RSS) |
+| `{association}.tischtennislive.de/?L2P={league}`, a league overview linking its results feeds | League results of the last 10 days · fixtures of the next 10 days at `/Export/Tischtennis/RSS.aspx?Typ=Wett&ID={league}&Next={0\|1}` (RSS)* |
+| `{association}.tischtennislive.de/?L3=SpielUebersicht&Gruppe={group}`, a match overview linking its results feeds | Group results of the last 10 days · fixtures of the next 10 days at `/Export/Tischtennis/RSS.aspx?Typ=Gruppe&ID={group}&Next={0\|1}` (RSS)* |
 | `{association}.tischtennislive.de`, any other page | News · dates<sup>†</sup> · documents<sup>†</sup> · tournaments<sup>†</sup> (RSS) |
 
 <sup>†</sup> *Found only by the Platform method.*
 
 ### Newswire
+\* *Requires HTML content to read the ID from the page's results feed link.*
+
 
 Discovers the feeds of a company newsroom on `{newsroom}.newswire.com`. The newsroom links its own feed, and its beat and content type pages link none.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{newsroom}.newswire.com/browse/beat/{beat}` | Beat<sup>†</sup> at `/browse/rss/beat/{beat}` (RSS) |
-| `{newsroom}.newswire.com/browse/pr`, `/browse/news`, `/browse/social` | Press releases, news<sup>†</sup> or social<sup>†</sup> wire at `/browse/rss/{type}` (RSS) |
+| `{newsroom}.newswire.com/browse/beat/{beat}` | Beat<sup>†</sup> at `/browse/rss/beat/{beat}` · newsroom at `/browse/rss` (RSS) |
+| `{newsroom}.newswire.com/browse/pr`, `/browse/news`, `/browse/social` | Press releases, news<sup>†</sup> or social<sup>†</sup> wire at `/browse/rss/{type}` · newsroom at `/browse/rss` (RSS) |
 | `{newsroom}.newswire.com`, any other page | Newsroom at `/browse/rss` (RSS) |
 
 <sup>†</sup> *Found only by the Platform method.*
