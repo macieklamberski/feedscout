@@ -320,7 +320,7 @@ Discovers RSS feeds for Dailymotion users, playlists, channels, and the global t
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `dailymotion.com/{username}` | User videos<sup>†</sup> |
+| `dailymotion.com/{username}` or `dailymotion.com/user/{username}` | User videos<sup>†</sup> |
 | `dailymotion.com/playlist/{id}` | Playlist<sup>†</sup> |
 | `dailymotion.com/channel/{name}` | Channel<sup>†</sup> |
 | `dailymotion.com` or `dailymotion.com/trending` | Trending<sup>†</sup> |
@@ -615,7 +615,7 @@ Discovers RSS feeds for Douban user interests, reviews, notes, and subject revie
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | `www.douban.com/people/{user}` | Interests · reviews<sup>†</sup> · notes<sup>†</sup> |
-| `{subdomain}.douban.com/subject/{id}` | Subject reviews |
+| `{book,movie,music}.douban.com/subject/{id}` | Subject reviews |
 | `www.douban.com` | Book<sup>†</sup> · movie<sup>†</sup> · music<sup>†</sup> · drama<sup>†</sup> reviews |
 
 <sup>†</sup> *Found only by the Platform method.*

@@ -10,7 +10,6 @@ const hosts = ['buttondown.com', 'www.buttondown.com', 'buttondown.email', 'www.
 const excludedPaths = [
   'about',
   'alternatives',
-  'api',
   'blog',
   'book',
   'brand',

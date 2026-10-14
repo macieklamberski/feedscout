@@ -21,6 +21,12 @@ describe('parseButtondownUrl', () => {
     expect(parseButtondownUrl('https://buttondown.com/cassidoo')).toEqual(expected)
   })
 
+  it('should return the newsletter named api', () => {
+    const expected: ButtondownUrl = { kind: 'newsletter', username: 'api' }
+
+    expect(parseButtondownUrl('https://buttondown.com/api')).toEqual(expected)
+  })
+
   it('should return undefined for an excluded path', () => {
     expect(parseButtondownUrl('https://buttondown.com/pricing')).toBeUndefined()
   })

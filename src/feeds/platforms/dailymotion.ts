@@ -14,7 +14,8 @@ export type DailymotionUrl =
 
 const hosts = ['dailymotion.com', 'www.dailymotion.com']
 // A channel name takes three characters or more, and a two-letter path is a country home page.
-const userRegex = /^\/([a-zA-Z0-9_-]{3,})\/?$/i
+// The older /user/{name} address still serves the same page.
+const userRegex = /^\/(?:user\/)?([a-zA-Z0-9_-]{3,})\/?$/i
 const playlistRegex = /^\/playlist\/([a-zA-Z0-9_-]+)/i
 const channelRegex = /^\/channel\/([a-zA-Z0-9_-]+)/i
 const searchRegex = /^\/search\/([^/]+)/i

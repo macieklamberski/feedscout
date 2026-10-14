@@ -27,6 +27,16 @@ describe('parseDailymotionUrl', () => {
     'https://www.dailymotion.com/live',
   ]
 
+  it('should return the user for a page under the user segment', () => {
+    const expected: DailymotionUrl = { kind: 'user', username: 'france24' }
+
+    expect(parseDailymotionUrl('https://www.dailymotion.com/user/france24')).toEqual(expected)
+  })
+
+  it('should return undefined for a site route under the user segment', () => {
+    expect(parseDailymotionUrl('https://www.dailymotion.com/user/settings')).toBeUndefined()
+  })
+
   it('should return the user for a user page', () => {
     const expected: DailymotionUrl = { kind: 'user', username: 'bfmtv' }
 

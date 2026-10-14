@@ -15,12 +15,25 @@ const forumPathRegex = /\/(?<route>f|forums)\/(?<forumPath>[^/]+\.\d+)(?:\/|$)/i
 // forum does not carry the prefix, so both spellings are emitted and the one the
 // board does not serve fails validation.
 const routePrefixes = ['forums', 'f']
+// XF2 prints the path the board is mounted under in its script config.
+const basePathRegex = /\bbasePath:\s*'(?<basePath>(?:\/[^'/]+)*)\/?'/
 
 // XF2 puts `id="XF"` on the html element and XF1 put `id="XenForo"` there.
 const appRootIds = ['XF', 'XenForo']
 
 export const isXenforoHtml = (content: string): boolean => {
   return appRootIds.some((id) => hasElementWithId(content, id))
+}
+
+const getXenforoBasePath = (url: string, content?: string): string => {
+  const basePath = content?.match(basePathRegex)?.groups?.basePath
+
+  // The path counts only when it holds the page.
+  if (!basePath || !`${new URL(url).pathname}/`.startsWith(`${basePath}/`)) {
+    return ''
+  }
+
+  return basePath
 }
 
 export const parseXenforoUrl = (url: string): XenforoUrl | undefined => {
@@ -53,7 +66,7 @@ export const xenforoHandler: PlatformHandler = {
     return parseXenforoUrl(url) !== undefined
   },
 
-  resolve: (url) => {
+  resolve: (url, content) => {
     const parsed = parseXenforoUrl(url)
 
     if (!parsed) {
@@ -72,9 +85,10 @@ export const xenforoHandler: PlatformHandler = {
     }
 
     const uris: Array<DiscoverUriEntry> = []
+    const boardUrl = `${origin}${getXenforoBasePath(url, content)}`
 
     for (const prefix of routePrefixes) {
-      uris.push({ uri: `${origin}/${prefix}/-/index.rss`, hint: composeHint('xenforo:site') })
+      uris.push({ uri: `${boardUrl}/${prefix}/-/index.rss`, hint: composeHint('xenforo:site') })
     }
 
     return uris

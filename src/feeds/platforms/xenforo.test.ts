@@ -169,5 +169,62 @@ describe('xenforoHandler', () => {
 
       expect(xenforoHandler.resolve(value)).toEqual(expected)
     })
+
+    const subPathHtml = `${xenforoHtml}<script>XF.config = { url: { basePath: '/community/' } }</script>`
+    const subPathExpected = [
+      {
+        uri: 'https://forum.example/community/forums/-/index.rss',
+        hint: { key: 'xenforo:site', label: 'Site' },
+      },
+      {
+        uri: 'https://forum.example/community/f/-/index.rss',
+        hint: { key: 'xenforo:site', label: 'Site' },
+      },
+    ]
+    const subPathValues: Array<string> = [
+      'https://forum.example/community/',
+      'https://forum.example/community',
+      'https://forum.example/community/threads/a-thread.123/',
+    ]
+
+    it.each(subPathValues)(
+      'should return the site feeds under the path the page names for %s',
+      (value) => {
+        expect(xenforoHandler.resolve(value, subPathHtml)).toEqual(subPathExpected)
+      },
+    )
+
+    it('should return the site feeds on the origin when the named path does not hold the page', () => {
+      const value = 'https://forum.example/threads/a-thread.123/'
+      const expected = [
+        {
+          uri: 'https://forum.example/forums/-/index.rss',
+          hint: { key: 'xenforo:site', label: 'Site' },
+        },
+        {
+          uri: 'https://forum.example/f/-/index.rss',
+          hint: { key: 'xenforo:site', label: 'Site' },
+        },
+      ]
+
+      expect(xenforoHandler.resolve(value, subPathHtml)).toEqual(expected)
+    })
+
+    it('should return the site feeds on the origin for a board at the root', () => {
+      const value = 'https://forum.example/'
+      const content = `${xenforoHtml}<script>XF.config = { url: { basePath: '/' } }</script>`
+      const expected = [
+        {
+          uri: 'https://forum.example/forums/-/index.rss',
+          hint: { key: 'xenforo:site', label: 'Site' },
+        },
+        {
+          uri: 'https://forum.example/f/-/index.rss',
+          hint: { key: 'xenforo:site', label: 'Site' },
+        },
+      ]
+
+      expect(xenforoHandler.resolve(value, content)).toEqual(expected)
+    })
   })
 })
