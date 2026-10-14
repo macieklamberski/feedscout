@@ -8,6 +8,8 @@ import { composeHint, hasMarker } from '../../common/utils.js'
 // lore.kernel.org answers a page request from a browser user agent with an Anubis challenge, and
 // from curl with 403, while its feeds still answer.
 const hosts = ['lore.kernel.org']
+// A file at the root, such as the list of inboxes, is no inbox.
+const fileRegex = /\.(?:html?|txt|json|xml|ico)$/i
 
 // The core navigation links help relative to the page, one `../` per level below the inbox root.
 const helpLinkRegex = /href="((?:\.\.\/)*)_\/text\/help\/?"/
@@ -39,7 +41,7 @@ export const getPublicInboxPage = (url: string, content?: string): PublicInboxPa
     return
   }
 
-  if (rootLength < 0) {
+  if (rootLength < 0 || fileRegex.test(segments[rootLength - 1] ?? '')) {
     return
   }
 

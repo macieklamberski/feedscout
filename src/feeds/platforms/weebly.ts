@@ -11,6 +11,8 @@ export type WeeblyUrl = { kind: 'blog'; page?: string }
 const domains = ['weebly.com']
 const excludedSubdomains = ['api', 'assets', 'static']
 const numericRegex = /^\d+$/
+// A page address ends in `.html`, which redirects to the bare slug the blog feed sits under.
+const htmlSuffixRegex = /\.html$/i
 
 export const parseWeeblyUrl = (url: string): WeeblyUrl | undefined => {
   if (!getTenantSubdomain(url, domains, excludedSubdomains)) {
@@ -18,7 +20,7 @@ export const parseWeeblyUrl = (url: string): WeeblyUrl | undefined => {
   }
 
   // Custom blog page slug (e.g., /articles/feed when page is named "articles").
-  const [first] = getPathSegments(url)
+  const first = getPathSegments(url)[0]?.replace(htmlSuffixRegex, '')
 
   if (first && !isAnyOf(first, 'blog') && !numericRegex.test(first)) {
     return { kind: 'blog', page: first }
