@@ -3,7 +3,7 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic covers blog (html).
+// Generic covers blog (guess, html).
 // Handler needed for: profile.
 
 export type SubstackUrl = { kind: 'newsletter' } | { kind: 'profile'; username: string }
