@@ -40,6 +40,9 @@ const watchRegex = /^\/watch\/?$/i
 const channelPrefixRegex = /^UC/
 // Channel IDs are case-sensitive, so the ID is checked apart from the case-insensitive route.
 const channelIdFormatRegex = /^UC[a-zA-Z0-9_-]+/
+// Watch Later, Liked videos and the Music likes are private, and a mix is generated per viewer, so
+// none of them has a feed. RDCLAK lists are curated YouTube Music playlists, not mixes.
+const feedlessListRegex = /^(?:WL|LL|LM)$|^RD(?!CLAK)/
 
 const extractChannelIdFromContent = (content: string): string | undefined => {
   for (const regex of channelIdRegexes) {
@@ -62,7 +65,7 @@ const playlistPrefix = (prefix: string, channelId: string): string => {
 // Atom content as ?channel_id=. YouTube's own autodiscovery always uses
 // channel_id, so we treat it as the canonical format.
 const feedUrl = (param: string, value: string): string => {
-  return `https://www.youtube.com/feeds/videos.xml?${param}=${value}`
+  return `https://www.youtube.com/feeds/videos.xml?${param}=${encodeURIComponent(value)}`
 }
 
 const pushChannelUris = (uris: Array<DiscoverUriEntry>, channelId: string): void => {
@@ -119,7 +122,8 @@ export const parseYoutubeUrl = (url: string): YoutubeUrl | undefined => {
   }
 
   const { pathname, searchParams } = parsedUrl
-  const playlistId = searchParams.get('list') ?? undefined
+  const listId = searchParams.get('list') ?? undefined
+  const playlistId = listId && !feedlessListRegex.test(listId) ? listId : undefined
   const rawChannelId = pathname.match(channelRegex)?.[1]
   const channelId = rawChannelId?.match(channelIdFormatRegex)?.[0]
 

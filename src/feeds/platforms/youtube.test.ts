@@ -3,6 +3,41 @@ import type { YoutubeUrl } from './youtube.js'
 import { parseYoutubeUrl, youtubeHandler } from './youtube.js'
 
 describe('parseYoutubeUrl', () => {
+  const handleValues: Array<string> = [
+    'https://www.youtube.com/@ęęę.dasdsa',
+    'https://www.youtube.com/@%C4%99%C4%99%C4%99.dasdsa',
+    'https://www.youtube.com/@müller.x',
+  ]
+
+  it.each(handleValues)(
+    'should return the channel for the handle with accents and a dot %s',
+    (value) => {
+      const expected: YoutubeUrl = { kind: 'channel', playlistId: undefined }
+
+      expect(parseYoutubeUrl(value)).toEqual(expected)
+    },
+  )
+
+  const feedlessListValues: Array<string> = [
+    'https://www.youtube.com/watch?v=abc&list=RDabc',
+    'https://www.youtube.com/watch?v=abc&list=WL',
+    'https://www.youtube.com/watch?v=abc&list=LL',
+  ]
+
+  it.each(feedlessListValues)('should drop a list without a feed from %s', (value) => {
+    const expected: YoutubeUrl = { kind: 'watch', playlistId: undefined }
+
+    expect(parseYoutubeUrl(value)).toEqual(expected)
+  })
+
+  it('should keep a curated YouTube Music list', () => {
+    const expected: YoutubeUrl = { kind: 'watch', playlistId: 'RDCLAK5uy_abc' }
+
+    expect(parseYoutubeUrl('https://www.youtube.com/watch?v=abc&list=RDCLAK5uy_abc')).toEqual(
+      expected,
+    )
+  })
+
   it('should return the channel ID for a channel ID page', () => {
     const expected: YoutubeUrl = { kind: 'channel', channelId: 'UC1234567890' }
 
@@ -168,6 +203,18 @@ describe('youtubeHandler', () => {
   })
 
   describe('resolve', () => {
+    it('should encode the playlist id in the feed URL', () => {
+      const value = 'https://www.youtube.com/playlist?list=PL1%26x%3D2'
+      const expected = [
+        {
+          uri: 'https://www.youtube.com/feeds/videos.xml?playlist_id=PL1%26x%3D2',
+          hint: { key: 'youtube:playlist', label: 'Playlist' },
+        },
+      ]
+
+      expect(youtubeHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return empty array for a URL outside YouTube', () => {
       expect(youtubeHandler.resolve('https://example.com/')).toEqual([])
     })
