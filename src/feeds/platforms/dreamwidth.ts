@@ -1,5 +1,6 @@
-import { isHostOf, isSubdomainOf } from 'trousse'
+import { isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
+import { getTenantSubdomain } from '../../common/utils.js'
 import { getJournalFeeds, journalTagRegex } from './livejournal.js'
 
 // Discoverability: Partially discoverable without handler.
@@ -12,11 +13,12 @@ const wwwHosts = ['www.dreamwidth.org', 'dreamwidth.org']
 const usersPathRegex = /^\/(?:users\/|~)([^/]+)/i
 
 export const parseDreamwidthUrl = (url: string): DreamwidthUrl | undefined => {
-  if (!isSubdomainOf(url, domains)) {
+  const pathname = parseUrl(url)?.pathname
+
+  if (!pathname) {
     return
   }
 
-  const { pathname } = new URL(url)
   const tag = pathname.match(journalTagRegex)?.[1]
 
   // Bare www.dreamwidth.org has no per-user context, so it names a journal only through a
@@ -29,6 +31,10 @@ export const parseDreamwidthUrl = (url: string): DreamwidthUrl | undefined => {
     }
 
     return { kind: 'journal', username, tag }
+  }
+
+  if (!getTenantSubdomain(url, domains)) {
+    return
   }
 
   return { kind: 'journal', tag }

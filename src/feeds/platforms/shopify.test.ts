@@ -27,6 +27,12 @@ describe('parseShopifyUrl', () => {
     expect(parseShopifyUrl('https://shop.example/blogs/news/first-post')).toEqual(expected)
   })
 
+  it('should return the blog with its locale for a market page', () => {
+    const expected: ShopifyUrl = { kind: 'blog', handle: 'news', locale: 'en-us' }
+
+    expect(parseShopifyUrl('https://shop.example/en-us/blogs/news/first-post')).toEqual(expected)
+  })
+
   it('should return undefined for a page outside a blog', () => {
     expect(parseShopifyUrl('https://shop.example/products/shirt')).toBeUndefined()
   })
@@ -81,6 +87,18 @@ describe('shopifyHandler', () => {
       const expected = [
         {
           uri: 'https://example.com/blogs/news.atom',
+          hint: { key: 'shopify:blog', label: 'Blog' },
+        },
+      ]
+
+      expect(shopifyHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should keep the locale folder of a market page', () => {
+      const value = 'https://example.com/en-us/blogs/news/a-post'
+      const expected = [
+        {
+          uri: 'https://example.com/en-us/blogs/news.atom',
           hint: { key: 'shopify:blog', label: 'Blog' },
         },
       ]

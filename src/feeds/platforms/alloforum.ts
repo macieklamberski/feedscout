@@ -1,7 +1,7 @@
-import { getSubdomain, isAnyOf, parseUrl } from 'trousse'
+import { parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
+import { composeHint, getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Not discoverable without handler.
 // Handler needed for: all shapes.
@@ -23,14 +23,14 @@ const domains = ['alloforum.com']
 const categoryRegex = /^\/([^/]+)-c(\d+)-\d+\.html$/
 const subcategoryRegex = /^\/([^/]+)-c(\d+)-([^/]+)-s(\d+)-\d+\.html$/
 
-const excludedSubdomains = ['admin', 'images', 'mail', 'smtp', 'upload', 'webmail', 'www']
+const excludedSubdomains = ['admin', 'images', 'mail', 'smtp', 'upload', 'webmail']
 
 export const parseAlloforumUrl = (url: string): AlloforumUrl | undefined => {
   const pathname = parseUrl(url)?.pathname
-  const forum = getSubdomain(url, domains)
-
   // The certificate covers one label, so a dotted subdomain such as www.{forum} names no forum.
-  if (!pathname || !forum || forum.includes('.') || isAnyOf(forum, excludedSubdomains)) {
+  const forum = getTenantSubdomain(url, domains, excludedSubdomains)
+
+  if (!pathname || !forum) {
     return
   }
 

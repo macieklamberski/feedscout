@@ -1,8 +1,10 @@
-import { getSubdomain, isAnyOf, parseUrl } from 'trousse'
+import { parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, findElement } from '../../common/utils.js'
+import { composeHint, findElement, getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
+
+export type CocologPage = { blog: string }
 
 const domains = [
   'air-nifty.com',
@@ -19,15 +21,11 @@ const domains = [
 const blogRegex = /^\/([^/.]+)(?:\/|$)/
 const feedPathRegex = /^\/([^/.]+)\/(?:atom\.xml|index\.rdf|rss\.xml)$/i
 
-const excludedSubdomains = ['app', 'www']
-
-export type CocologPage = { blog: string }
+const excludedSubdomains = ['app']
 
 const getCocologPage = (url: string, content: string | undefined): CocologPage | undefined => {
-  const subdomain = getSubdomain(url, domains)
-
   // A nested label such as app.f.cocolog-nifty.com is a service host, never a blog.
-  if (!subdomain || subdomain.includes('.') || isAnyOf(subdomain, excludedSubdomains)) {
+  if (!getTenantSubdomain(url, domains, excludedSubdomains)) {
     return
   }
 

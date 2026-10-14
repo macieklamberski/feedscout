@@ -23,6 +23,10 @@ describe('parsePodcloudUrl', () => {
     expect(parsePodcloudUrl('https://studio.lepodcast.fr/dashboard')).toBeUndefined()
   })
 
+  it('should return undefined for a nested subdomain', () => {
+    expect(parsePodcloudUrl('https://www.example.lepodcast.fr/')).toBeUndefined()
+  })
+
   it('should return undefined for another host', () => {
     expect(parsePodcloudUrl('https://example.com/')).toBeUndefined()
   })

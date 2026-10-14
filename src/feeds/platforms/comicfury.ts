@@ -1,6 +1,6 @@
-import { getSubdomain, isAnyOf, isHostOf, parseUrl } from 'trousse'
+import { isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
+import { composeHint, getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers comic, reader (guess, html).
@@ -21,8 +21,6 @@ const comicRegex = /^[a-z0-9-]+$/i
 const profilePathRegex = /^\/comicprofile\.php$/i
 const readerPathRegex = /^\/read\/([^/]+)/i
 
-const excludedSubdomains = ['www']
-
 export const parseComicfuryUrl = (url: string): ComicfuryUrl | undefined => {
   const parsedUrl = parseUrl(url)
 
@@ -31,9 +29,9 @@ export const parseComicfuryUrl = (url: string): ComicfuryUrl | undefined => {
   }
 
   if (!isHostOf(parsedUrl, hosts)) {
-    const comic = getSubdomain(parsedUrl, domains)
+    const comic = getTenantSubdomain(parsedUrl, domains)
 
-    if (!comic || !comicRegex.test(comic) || isAnyOf(comic, excludedSubdomains)) {
+    if (!comic || !comicRegex.test(comic)) {
       return
     }
 

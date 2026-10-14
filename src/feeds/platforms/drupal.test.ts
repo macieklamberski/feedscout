@@ -64,5 +64,35 @@ describe('drupalHandler', () => {
 
       expect(drupalHandler.resolve(value)).toEqual(expected)
     })
+
+    it('should build the site feed from the base path of an install under a sub-path', () => {
+      const value = 'https://example.com/site/node/1'
+      const content = `
+        <script
+          type="application/json"
+          data-drupal-selector="drupal-settings-json"
+        >{"path":{"baseUrl":"\\/site\\/","pathPrefix":"","currentPath":"node\\/1"}}</script>
+      `
+      const expected = [
+        { uri: 'https://example.com/site/rss.xml', hint: { key: 'drupal:site', label: 'Site' } },
+      ]
+
+      expect(drupalHandler.resolve(value, content)).toEqual(expected)
+    })
+
+    it('should fall back to the origin for malformed settings', () => {
+      const value = 'https://example.com/site/node/1'
+      const content = `
+        <script
+          type="application/json"
+          data-drupal-selector="drupal-settings-json"
+        >{"path":</script>
+      `
+      const expected = [
+        { uri: 'https://example.com/rss.xml', hint: { key: 'drupal:site', label: 'Site' } },
+      ]
+
+      expect(drupalHandler.resolve(value, content)).toEqual(expected)
+    })
   })
 })

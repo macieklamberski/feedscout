@@ -18,6 +18,10 @@ describe('isGitlabHtml', () => {
     expect(isGitlabHtml(selfHostedHtml)).toBe(true)
   })
 
+  it('should return false for a site name that starts with GitLab', () => {
+    expect(isGitlabHtml('<meta property="og:site_name" content="GitLab Tips">')).toBe(false)
+  })
+
   it('should return false for non-GitLab og:site_name values', () => {
     expect(isGitlabHtml('<meta property="og:site_name" content="GitHub">')).toBe(false)
   })
@@ -242,6 +246,20 @@ describe('gitlabHandler', () => {
 
     it('should not match a gitlab.com path that resolves to no feed', () => {
       expect(gitlabHandler.match('https://gitlab.com/explore')).toBe(false)
+    })
+
+    it('should not match a guide page on a site named after GitLab', () => {
+      const value = 'https://gitlabtips.example.org/guides/ci-cache'
+      const content = '<meta property="og:site_name" content="GitLab Tips">'
+
+      expect(gitlabHandler.match(value, content)).toBe(false)
+    })
+
+    it('should not match a blog post on a GitLab-owned subdomain', () => {
+      const value = 'https://about.gitlab.com/blog/2024/05/01/some-post/'
+      const content = '<meta property="og:site_name" content="GitLab">'
+
+      expect(gitlabHandler.match(value, content)).toBe(false)
     })
 
     it('should match self-hosted project path with GitLab HTML', () => {

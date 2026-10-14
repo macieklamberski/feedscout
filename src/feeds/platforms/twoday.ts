@@ -1,7 +1,7 @@
-import { getSubdomain, isAnyOf, parseUrl } from 'trousse'
+import { parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
+import { composeHint, getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -13,7 +13,7 @@ const domains = ['twoday.net']
 
 const topicRegex = /^\/topics\/([^/]+)(?:\/|$)/i
 
-const excludedSubdomains = ['static', 'www']
+const excludedSubdomains = ['static']
 
 export const parseTwodayUrl = (url: string): TwodayUrl | undefined => {
   const pathname = parseUrl(url)?.pathname
@@ -22,10 +22,9 @@ export const parseTwodayUrl = (url: string): TwodayUrl | undefined => {
     return
   }
 
-  const blog = getSubdomain(url, domains)
+  const blog = getTenantSubdomain(url, domains, excludedSubdomains)
 
-  // A nested subdomain like a.b.twoday.net fails TLS, since the certificate covers one label.
-  if (!blog || blog.includes('.') || isAnyOf(blog, excludedSubdomains)) {
+  if (!blog) {
     return
   }
 

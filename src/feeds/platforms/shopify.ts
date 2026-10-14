@@ -4,22 +4,26 @@ import { composeHint, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
-export type ShopifyUrl = { kind: 'blog'; handle: string }
+export type ShopifyUrl = { kind: 'blog'; handle: string; locale?: string }
 
 const shopifyRegex = /shopify/i
+// A market's locale folder, as in `/en-us/blogs/news`.
+const localeRegex = /^[a-z]{2}(?:-[a-z]{2})?$/i
 
 export const isShopifyHeaders = (headers: Headers): boolean => {
   return shopifyRegex.test(headers.get('powered-by') ?? '')
 }
 
 export const parseShopifyUrl = (url: string): ShopifyUrl | undefined => {
-  const [first, handle] = getPathSegments(url)
+  const segments = getPathSegments(url)
+  const locale = localeRegex.test(segments[0] ?? '') ? segments[0] : undefined
+  const [first, handle] = locale ? segments.slice(1) : segments
 
   if (!isAnyOf(first, 'blogs') || !handle) {
     return
   }
 
-  return { kind: 'blog', handle }
+  return { kind: 'blog', handle, locale }
 }
 
 export const shopifyHandler: PlatformHandler = {
@@ -39,7 +43,8 @@ export const shopifyHandler: PlatformHandler = {
     }
 
     const { origin } = new URL(url)
+    const storeUrl = parsed.locale ? `${origin}/${parsed.locale}` : origin
 
-    return [{ uri: `${origin}/blogs/${parsed.handle}.atom`, hint: composeHint('shopify:blog') }]
+    return [{ uri: `${storeUrl}/blogs/${parsed.handle}.atom`, hint: composeHint('shopify:blog') }]
   },
 }

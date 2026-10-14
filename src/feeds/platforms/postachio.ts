@@ -1,6 +1,5 @@
-import { getSubdomain, isAnyOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
+import { composeHint, getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -8,12 +7,12 @@ export type PostachioUrl = { kind: 'site'; subdomain: string }
 
 const domains = ['postach.io']
 
-const excludedSubdomains = ['api', 'blog', 'cdn-images', 'cdn-static', 'www']
+const excludedSubdomains = ['api', 'blog', 'cdn-images', 'cdn-static']
 
 export const parsePostachioUrl = (url: string): PostachioUrl | undefined => {
-  const subdomain = getSubdomain(url, domains)
+  const subdomain = getTenantSubdomain(url, domains, excludedSubdomains)
 
-  if (!subdomain || isAnyOf(subdomain, excludedSubdomains)) {
+  if (!subdomain) {
     return
   }
 

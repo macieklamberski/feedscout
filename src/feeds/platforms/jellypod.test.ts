@@ -24,6 +24,14 @@ describe('parseJellypodUrl', () => {
     expect(parseJellypodUrl('https://jellypod.com/')).toBeUndefined()
   })
 
+  it('should return undefined for the www host', () => {
+    expect(parseJellypodUrl('https://www.jellypod.com/')).toBeUndefined()
+  })
+
+  it('should return undefined for a nested subdomain', () => {
+    expect(parseJellypodUrl('https://www.alice-podcast.jellypod.com/')).toBeUndefined()
+  })
+
   it('should return undefined for another host', () => {
     expect(parseJellypodUrl('https://example.com/')).toBeUndefined()
   })

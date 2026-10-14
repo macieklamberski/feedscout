@@ -55,10 +55,19 @@ export const parseArtstationUrl = (url: string): ArtstationUrl | undefined => {
     return { kind: 'profile', username: subdomain }
   }
 
-  const [first] = getPathSegments(url)
+  const [first, second] = getPathSegments(url)
 
-  // Global artwork page: /artwork
-  if (!first || isAnyOf(first, 'artwork')) {
+  if (!first) {
+    return { kind: 'artwork' }
+  }
+
+  // Global artwork page: /artwork. A single artwork at /artwork/{id} names its artist only in the
+  // page.
+  if (isAnyOf(first, 'artwork')) {
+    if (second) {
+      return
+    }
+
     return { kind: 'artwork' }
   }
 

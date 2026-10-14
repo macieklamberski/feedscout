@@ -85,6 +85,10 @@ describe('parseSportsregionsUrl', () => {
     expect(parseSportsregionsUrl('https://sportsregions.fr/')).toBeUndefined()
   })
 
+  it('should return undefined for a nested subdomain', () => {
+    expect(parseSportsregionsUrl('https://www.example.sportsregions.fr/')).toBeUndefined()
+  })
+
   it('should return undefined for another host', () => {
     expect(parseSportsregionsUrl('https://example.com/')).toBeUndefined()
   })

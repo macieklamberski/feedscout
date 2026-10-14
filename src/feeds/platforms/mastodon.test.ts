@@ -4,6 +4,11 @@ import { isMastodonHeaders, isMastodonHtml, mastodonHandler, parseMastodonUrl } 
 
 const mastodonHtml = '<html><head><meta name="generator" content="Mastodon v4.2.0"></head></html>'
 const mastodonHeaders = new Headers({ server: 'Mastodon' })
+const socialLinkHtml = `
+  <ul>
+    <li id="mastodon"><a href="https://example.social/@alice">Mastodon</a></li>
+  </ul>
+`
 
 describe('parseMastodonUrl', () => {
   it('should return the profile for /@user', () => {
@@ -206,7 +211,11 @@ describe('isMastodonHtml', () => {
   })
 
   it('should return true for a single-quoted mastodon app root', () => {
-    expect(isMastodonHtml("<body><div id='mastodon'></div></body>")).toBe(true)
+    expect(isMastodonHtml("<body><div class='app-holder' id='mastodon'></div></body>")).toBe(true)
+  })
+
+  it('should return false for a social link with the mastodon id', () => {
+    expect(isMastodonHtml(socialLinkHtml)).toBe(false)
   })
 
   it('should return false for non-Mastodon generator', () => {
@@ -273,6 +282,11 @@ describe('mastodonHandler', () => {
 
     it('should not match without content and headers', () => {
       expect(mastodonHandler.match('https://example.com/@user')).toBe(false)
+    })
+
+    it('should not match a blog tag page with a mastodon social link', () => {
+      const value = 'https://example.com/tags/hugo/'
+      expect(mastodonHandler.match(value, socialLinkHtml)).toBe(false)
     })
 
     it('should not match non-profile and non-tag paths', () => {

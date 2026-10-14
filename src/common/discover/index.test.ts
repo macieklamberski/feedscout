@@ -428,6 +428,49 @@ describe('discoverFeeds', () => {
       expect(progressUpdates[progressUpdates.length - 1]).toMatchObject(expected)
     })
 
+    it('should count a candidate with several alternatives as tested once', async () => {
+      const progressUpdates: Array<DiscoverProgress> = []
+
+      await discoverFeeds(
+        { url: 'https://example.com' },
+        {
+          methods: { guess: { uris: [['/a', '/b', '/c']] } },
+          fetchFn: createMockFetch({}),
+          onProgress: (progress) => {
+            progressUpdates.push(progress)
+          },
+        },
+      )
+      const expected = [
+        { tested: 0, total: 1, current: 'https://example.com/a' },
+        { tested: 0, total: 1, current: 'https://example.com/b' },
+        { tested: 1, total: 1, current: 'https://example.com/c' },
+      ]
+
+      expect(progressUpdates).toMatchObject(expected)
+    })
+
+    it('should count a candidate as tested when an alternative is valid', async () => {
+      const progressUpdates: Array<DiscoverProgress> = []
+
+      await discoverFeeds(
+        { url: 'https://example.com' },
+        {
+          methods: { guess: { uris: [['/a', '/b', '/c']] } },
+          fetchFn: createMockFetch({ 'https://example.com/b': rss }),
+          onProgress: (progress) => {
+            progressUpdates.push(progress)
+          },
+        },
+      )
+      const expected = [
+        { tested: 0, total: 1, current: 'https://example.com/a' },
+        { tested: 1, total: 1, current: 'https://example.com/b' },
+      ]
+
+      expect(progressUpdates).toMatchObject(expected)
+    })
+
     it('should pass the method and result of the tested URL', async () => {
       const progressUpdates: Array<DiscoverProgress> = []
       const platformHandler: PlatformHandler = {

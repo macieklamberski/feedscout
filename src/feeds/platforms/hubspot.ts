@@ -38,15 +38,27 @@ const getBlogPath = (url: string, content: string | undefined): string | undefin
   return feedUrl.pathname.replace(feedPathRegex, '')
 }
 
+// HubSpot names the page type in `x-hs-cfworker-meta`, and only blog pages have a feed.
+const getContentType = (headers: Headers | undefined): string | undefined => {
+  try {
+    const { contentType } = JSON.parse(headers?.get('x-hs-cfworker-meta') ?? '{}')
+
+    return typeof contentType === 'string' ? contentType : undefined
+  } catch {}
+}
+
 export const getHubspotPage = (
   url: string,
   content: string | undefined,
+  headers?: Headers,
 ): HubspotUrl | undefined => {
   const [firstSegment] = getPathSegments(url)
   let blogPath = getBlogPath(url, content)
+  const isBlogPage = blogContentTypes.includes(getContentType(headers) ?? '')
 
-  // Without the page, the first path segment is the best reading of the blog's root.
-  if (blogPath === undefined && firstSegment) {
+  // Without the page, the first path segment is the best reading of the blog's root. A page with
+  // no feed link is a site page, unless its page type names a blog.
+  if (blogPath === undefined && firstSegment && (!content || isBlogPage)) {
     blogPath = `/${firstSegment}`
   }
 
@@ -84,15 +96,14 @@ export const isHubspotHeaders = (headers: Headers): boolean => {
   return headers.has('x-hs-hub-id')
 }
 
-// HubSpot names the page type in `x-hs-cfworker-meta`, and only blog pages have a feed.
 const isNonBlogPage = (headers: Headers): boolean => {
-  try {
-    const { contentType } = JSON.parse(headers.get('x-hs-cfworker-meta') ?? '{}')
+  const contentType = getContentType(headers)
 
-    return Boolean(contentType) && !blogContentTypes.includes(contentType)
-  } catch {}
+  if (!contentType) {
+    return false
+  }
 
-  return false
+  return !blogContentTypes.includes(contentType)
 }
 
 export const hubspotHandler: PlatformHandler = {
@@ -105,12 +116,12 @@ export const hubspotHandler: PlatformHandler = {
       return false
     }
 
-    return getHubspotPage(url, content) !== undefined
+    return getHubspotPage(url, content, headers) !== undefined
   },
 
-  resolve: (url, content) => {
+  resolve: (url, content, headers) => {
     const { origin } = new URL(url)
-    const parsed = getHubspotPage(url, content)
+    const parsed = getHubspotPage(url, content, headers)
 
     if (!parsed) {
       return []

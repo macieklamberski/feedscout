@@ -15,6 +15,10 @@ describe('parseShinobiUrl', () => {
     expect(parseShinobiUrl('https://example.ni-3.net/')).toEqual(expected)
   })
 
+  it('should return undefined for the www subdomain', () => {
+    expect(parseShinobiUrl('https://www.blog.shinobi.jp/')).toBeUndefined()
+  })
+
   it('should return undefined for a nested subdomain', () => {
     expect(parseShinobiUrl('https://www.example.blog.shinobi.jp/')).toBeUndefined()
   })

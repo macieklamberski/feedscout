@@ -1,7 +1,7 @@
-import { getSubdomain, isAnyOf, parseUrl } from 'trousse'
+import { parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, findElement } from '../../common/utils.js'
+import { composeHint, findElement, getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers club (guess), partly covers team, teamNewTemplate.
@@ -15,8 +15,6 @@ const layoutLinkRegex = /^\.\.\/\?SID=(\d+)&platform=(?:app|web)$/i
 // The next game widget, which the classic template prints on the club home page alone.
 const nextGameRegex = /wNextGame\.asp\?SID=(\d+)/i
 const sectionIdRegex = /^\d+$/
-
-const excludedSubdomains = ['www']
 
 const findLayoutSectionId = (content: string | undefined): string | undefined => {
   const link = findElement(content, (element) => {
@@ -49,10 +47,7 @@ export const getSportadminPage = (
   url: string,
   content: string | undefined,
 ): SportadminPage | undefined => {
-  const club = getSubdomain(url, domains)
-
-  // The certificate covers one label, so a dotted subdomain such as www.{club} names no club.
-  if (!club || club.includes('.') || isAnyOf(club, excludedSubdomains)) {
+  if (!getTenantSubdomain(url, domains)) {
     return
   }
 

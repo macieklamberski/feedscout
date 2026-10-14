@@ -1,7 +1,7 @@
-import { decodeSegment, getSubdomain, isAnyOf, parseUrl } from 'trousse'
+import { decodeSegment, parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
+import { composeHint, getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic partly covers blog, post, tag.
@@ -18,14 +18,13 @@ const postRegex = /^\/(?:[^/]+-(\d+)|(\d+)\.html)\/?$/i
 const tagRegex = /^\/tag\/(.+?)\/?$/i
 const reservedCharRegex = /[!'()*]/g
 
-const excludedSubdomains = ['m', 'www']
+const excludedSubdomains = ['m']
 
 export const parseSapoBlogsUrl = (url: string): SapoBlogsUrl | undefined => {
   const pathname = parseUrl(url)?.pathname
-  const blog = getSubdomain(url, domains)
+  const blog = getTenantSubdomain(url, domains, excludedSubdomains)
 
-  // The certificate covers one label, so a dotted subdomain such as www.{blog} names no blog.
-  if (!pathname || !blog || blog.includes('.') || isAnyOf(blog, excludedSubdomains)) {
+  if (!pathname || !blog) {
     return
   }
 

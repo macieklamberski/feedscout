@@ -1,7 +1,6 @@
-import { getSubdomain, isAnyOf } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, findElement } from '../../common/utils.js'
+import { composeHint, findElement, getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -17,12 +16,12 @@ const domains = ['purot.net']
 // feeds even when it answers "User not found", and a real profile redirects to the home page.
 const pageChangesRegex = /^\/changes\/([^/?]+)\?mode=rss&messages=0$/
 
-const excludedSubdomains = ['my', 'www']
+const excludedSubdomains = ['my']
 
 export const parsePurotUrl = (url: string): PurotUrl | undefined => {
-  const wiki = getSubdomain(url, domains)
+  const wiki = getTenantSubdomain(url, domains, excludedSubdomains)
 
-  if (!wiki || wiki.includes('.') || isAnyOf(wiki, excludedSubdomains)) {
+  if (!wiki) {
     return
   }
 

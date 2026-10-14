@@ -12,6 +12,10 @@ describe('parsePodbeanUrl', () => {
     expect(parsePodbeanUrl('https://www.podbean.com/')).toBeUndefined()
   })
 
+  it('should return undefined for a nested subdomain', () => {
+    expect(parsePodbeanUrl('https://www.example.podbean.com/')).toBeUndefined()
+  })
+
   it('should return undefined for another host', () => {
     expect(parsePodbeanUrl('https://example.com/')).toBeUndefined()
   })
@@ -21,7 +25,7 @@ describe('podbeanHandler', () => {
   describe('match', () => {
     const values: Array<[boolean, string]> = [
       [true, 'https://alice.podbean.com'],
-      [true, 'https://blog.example.podbean.com'],
+      [false, 'https://blog.example.podbean.com'],
       [false, 'https://podbean.com'],
       [false, 'https://example.com'],
       [false, 'https://www.podbean.com'],

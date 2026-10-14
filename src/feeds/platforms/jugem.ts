@@ -1,6 +1,6 @@
-import { getSubdomain, isHostOf, isHostOrSubdomainOf } from 'trousse'
+import { isHostOf, isHostOrSubdomainOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, findElement, hasMarker } from '../../common/utils.js'
+import { composeHint, findElement, getTenantSubdomain, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -41,10 +41,9 @@ export const parseJugemUrl = (url: string): JugemUrl | undefined => {
     return { kind: 'customDomain' }
   }
 
-  const blog = getSubdomain(url, domains)
+  const blog = getTenantSubdomain(url, domains)
 
-  // Only {blog}.jugem.jp and {blog}.jugem.cc name a blog, www and the apex are the portal.
-  if (!blog || blog.includes('.') || blog === 'www') {
+  if (!blog) {
     return
   }
 

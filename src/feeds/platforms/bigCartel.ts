@@ -1,6 +1,6 @@
-import { getSubdomain, isAnyOf, isHostOrSubdomainOf } from 'trousse'
+import { isHostOrSubdomainOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, findElement, hasMarker } from '../../common/utils.js'
+import { composeHint, findElement, getTenantSubdomain, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers store (html).
@@ -28,7 +28,6 @@ const excludedSubdomains = [
   'my',
   'stats',
   'status',
-  'www',
 ]
 
 export const isBigCartelHtml = (content: string): boolean => {
@@ -48,9 +47,7 @@ export const isBigCartelHeaders = (headers: Headers): boolean => {
 }
 
 export const parseBigCartelUrl = (url: string): BigCartelUrl | undefined => {
-  const store = getSubdomain(url, domains)
-
-  if (!store || store.includes('.') || isAnyOf(store, excludedSubdomains)) {
+  if (!getTenantSubdomain(url, domains, excludedSubdomains)) {
     return
   }
 

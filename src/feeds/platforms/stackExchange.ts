@@ -1,4 +1,4 @@
-import { isHostOrSubdomainOf, parseUrl } from 'trousse'
+import { getSubdomain, isAnyOf, isHostOf, isHostOrSubdomainOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
@@ -23,6 +23,8 @@ const domains = [
   'mathoverflow.net',
   'stackexchange.com',
 ]
+// The network host serves only the network-wide feed, and its user ids are network profile ids.
+const networkHosts = ['stackexchange.com', 'www.stackexchange.com']
 
 const tagRegex = /^\/questions\/tagged\/(?<tag>[^/]+)/i
 const questionRegex = /^\/questions\/(\d+)/i
@@ -31,6 +33,8 @@ const collectiveRegex = /^\/collectives\/([^/]+)/i
 
 // Sort values accepted by feeds.tag. Documented at api.stackexchange.com.
 const validSorts = ['newest', 'active', 'votes', 'creation', 'hot', 'week', 'month']
+// A chat room id or an API path names no question, user or tag of a site.
+const excludedSubdomains = ['api', 'chat']
 
 const getSort = (searchParams: URLSearchParams): string | undefined => {
   const sort = searchParams.get('sort') ?? searchParams.get('tab')?.toLowerCase()
@@ -47,7 +51,21 @@ export const parseStackExchangeUrl = (url: string): StackExchangeUrl | undefined
     return
   }
 
+  const subdomainLabel = getSubdomain(parsedUrl, domains)?.split('.')[0]
+
+  if (isAnyOf(subdomainLabel, excludedSubdomains)) {
+    return
+  }
+
   const { pathname, searchParams } = parsedUrl
+
+  if (isHostOf(parsedUrl, networkHosts)) {
+    if (pathname === '/') {
+      return { kind: 'home' }
+    }
+
+    return
+  }
   const tag = pathname.match(tagRegex)?.groups?.tag
 
   if (tag) {

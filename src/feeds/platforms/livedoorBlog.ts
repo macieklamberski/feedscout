@@ -1,7 +1,7 @@
-import { getSubdomain, parseUrl } from 'trousse'
+import { parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
+import { composeHint, getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -14,10 +14,10 @@ const domains = ['blog.jp', 'doorblog.jp', 'ldblog.jp', 'livedoor.biz']
 const categoryRegex = /^\/archives\/cat_(\d+)\.html$/i
 
 export const parseLivedoorBlogUrl = (url: string): LivedoorBlogUrl | undefined => {
-  const blog = getSubdomain(url, domains)
-
   // A nested subdomain answers with a self-signed certificate and is no blog.
-  if (!blog || blog.includes('.')) {
+  const blog = getTenantSubdomain(url, domains)
+
+  if (!blog) {
     return
   }
 

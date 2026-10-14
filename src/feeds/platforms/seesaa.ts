@@ -53,7 +53,7 @@ export const seesaaHandler: PlatformHandler = {
     const { origin } = new URL(url)
     const uris: Array<DiscoverUriEntry> = []
 
-    uris.push({ uri: `${origin}/index20.rdf`, hint: composeHint('seesaa:posts-rss2') })
+    uris.push({ uri: `${origin}/index20.rdf`, hint: composeHint('seesaa:posts', 'rss') })
     uris.push({ uri: `${origin}/index.rdf`, hint: composeHint('seesaa:posts', 'rdf') })
 
     return uris

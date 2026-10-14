@@ -1,6 +1,6 @@
-import { getSubdomain, isAnyOf, isHostOf, parseUrl } from 'trousse'
+import { isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
+import { composeHint, getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -9,7 +9,7 @@ export type PodomaticUrl = { kind: 'podcast'; show: string }
 const domains = ['podomatic.com']
 const hosts = ['podomatic.com', 'www.podomatic.com']
 const directoryPathRegex = /^\/podcasts\/([^/]+)/i
-const excludedSubdomains = ['www', 'api', 'assets', 'static']
+const excludedSubdomains = ['api', 'assets', 'static']
 
 export const parsePodomaticUrl = (url: string): PodomaticUrl | undefined => {
   const parsedUrl = parseUrl(url)
@@ -28,9 +28,9 @@ export const parsePodomaticUrl = (url: string): PodomaticUrl | undefined => {
     return { kind: 'podcast', show }
   }
 
-  const show = getSubdomain(parsedUrl, domains)
+  const show = getTenantSubdomain(parsedUrl, domains, excludedSubdomains)
 
-  if (!show || isAnyOf(show, excludedSubdomains)) {
+  if (!show) {
     return
   }
 

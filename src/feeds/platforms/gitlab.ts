@@ -1,6 +1,6 @@
-import { getPathSegments, isAnyOf, isHostOf } from 'trousse'
+import { getPathSegments, isAnyOf, isHostOf, isSubdomainOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, hasMarker, hasMetaContent } from '../../common/utils.js'
+import { composeHint, getMetaContent, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers group (guess, html), partly covers commits, project, tree.
@@ -36,8 +36,9 @@ const excludedPaths = [
   '-',
 ]
 
+// GitLab prints its own name as the site name, and a site about GitLab can carry a longer one.
 export const isGitlabHtml = (content: string): boolean => {
-  return hasMetaContent(content, 'og:site_name', 'GitLab')
+  return isAnyOf(getMetaContent(content, 'og:site_name'), 'GitLab')
 }
 
 export const isGitlabHeaders = (headers: Headers): boolean => {
@@ -100,6 +101,11 @@ export const gitlabHandler: PlatformHandler = {
 
     if (isHostOf(url, hosts)) {
       return true
+    }
+
+    // GitLab's own subdomains, such as about.gitlab.com, are its marketing and docs sites.
+    if (isSubdomainOf(url, hosts)) {
+      return false
     }
 
     // `og:site_name` is operator-set text, so a self-hosted match also needs a

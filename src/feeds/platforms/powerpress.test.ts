@@ -41,5 +41,58 @@ describe('powerpressHandler', () => {
 
       expect(powerpressHandler.resolve(value)).toEqual(expected)
     })
+
+    it('should return the podcast feed of a site under a sub-path', () => {
+      const value = 'https://example.com/blog/an-episode/'
+      const content = `
+        <a
+          href="https://example.com/blog/?powerpress_pinw=123-podcast"
+          onclick="return powerpress_pinw('https://example.com/blog/?powerpress_pinw=123-podcast');"
+        >Play in new window</a>
+      `
+      const expected = [
+        {
+          uri: 'https://example.com/blog/feed/podcast/',
+          hint: { key: 'powerpress:podcast', label: 'Podcast' },
+        },
+      ]
+
+      expect(powerpressHandler.resolve(value, content)).toEqual(expected)
+    })
+
+    it('should ignore a player link on another host', () => {
+      const value = 'https://example.com/an-episode/'
+      const content = "powerpress_pinw('https://example.org/blog/?powerpress_pinw=123-podcast')"
+      const expected = [
+        {
+          uri: 'https://example.com/feed/podcast/',
+          hint: { key: 'powerpress:podcast', label: 'Podcast' },
+        },
+      ]
+
+      expect(powerpressHandler.resolve(value, content)).toEqual(expected)
+    })
+
+    it('should ignore a player link of a site the page is not under', () => {
+      const value = 'https://example.com/an-episode/'
+      const content = "powerpress_pinw('https://example.com/blog/?powerpress_pinw=123-podcast')"
+      const expected = [
+        {
+          uri: 'https://example.com/feed/podcast/',
+          hint: { key: 'powerpress:podcast', label: 'Podcast' },
+        },
+      ]
+
+      expect(powerpressHandler.resolve(value, content)).toEqual(expected)
+    })
+
+    it('should stay linear on a page that repeats the player call', async () => {
+      const content = "powerpress_pinw('".repeat(12_000)
+      const start = performance.now()
+
+      await powerpressHandler.resolve('https://example.com/', content)
+
+      expect(performance.now() - start).toBeLessThan(1000)
+    })
   })
 })

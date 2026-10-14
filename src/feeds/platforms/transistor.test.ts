@@ -12,6 +12,10 @@ describe('parseTransistorUrl', () => {
     expect(parseTransistorUrl('https://www.transistor.fm/')).toBeUndefined()
   })
 
+  it('should return undefined for a nested subdomain', () => {
+    expect(parseTransistorUrl('https://www.example.transistor.fm/')).toBeUndefined()
+  })
+
   it('should return undefined for another host', () => {
     expect(parseTransistorUrl('https://example.com/')).toBeUndefined()
   })
@@ -21,7 +25,7 @@ describe('transistorHandler', () => {
   describe('match', () => {
     const values: Array<[boolean, string]> = [
       [true, 'https://alice-podcast.transistor.fm'],
-      [true, 'https://blog.example.transistor.fm'],
+      [false, 'https://blog.example.transistor.fm'],
       [false, 'https://transistor.fm'],
       [false, 'https://example.com'],
       [false, 'https://www.transistor.fm'],

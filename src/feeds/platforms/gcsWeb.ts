@@ -1,6 +1,6 @@
-import { getSubdomain, isAnyOf, isHostOrSubdomainOf } from 'trousse'
+import { isHostOrSubdomainOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, hasMarker } from '../../common/utils.js'
+import { composeHint, getTenantSubdomain, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Not discoverable without handler.
 // Handler needed for: all shapes.
@@ -11,16 +11,14 @@ const domains = ['gcs-web.com']
 
 const filesPathRegex = /\/sites\/g\/files\/knoqqb\d+\//
 
-const excludedSubdomains = ['mail', 'origin', 'www']
+const excludedSubdomains = ['mail', 'origin']
 
 export const isGcsWebHtml = (content: string): boolean => {
   return filesPathRegex.test(content)
 }
 
 export const parseGcsWebUrl = (url: string): GcsWebUrl | undefined => {
-  const company = getSubdomain(url, domains)
-
-  if (!company || company.includes('.') || isAnyOf(company, excludedSubdomains)) {
+  if (!getTenantSubdomain(url, domains, excludedSubdomains)) {
     return
   }
 

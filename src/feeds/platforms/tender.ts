@@ -1,6 +1,6 @@
-import { getSubdomain, isAnyOf, isHostOrSubdomainOf, parseUrl } from 'trousse'
+import { isHostOrSubdomainOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, getCookieNames, hasMarker } from '../../common/utils.js'
+import { composeHint, getCookieNames, getTenantSubdomain, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -20,7 +20,7 @@ const trailingSlashRegex = /\/$/
 // made-up category would otherwise get the site's feed.
 const errorPageRegex = /<!-- This file lives in public\/404\.html -->/
 
-const excludedSubdomains = ['api', 'blog', 'setup', 'ssl', 'status', 'support', 'www']
+const excludedSubdomains = ['api', 'blog', 'setup', 'ssl', 'status', 'support']
 
 const getSettingsRoot = (content: string | undefined): string | undefined => {
   const settingsLine = content?.match(settingsLineRegex)?.[0]
@@ -66,9 +66,7 @@ export const getTenderPage = (url: string, content: string | undefined): TenderP
   }
 
   if (isHostOrSubdomainOf(url, domains)) {
-    const site = getSubdomain(url, domains)
-
-    if (!site || site.includes('.') || isAnyOf(site, excludedSubdomains)) {
+    if (!getTenantSubdomain(url, domains, excludedSubdomains)) {
       return
     }
   }

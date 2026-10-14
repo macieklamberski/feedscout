@@ -66,6 +66,33 @@ describe('parseWordpressUrl', () => {
     expect(parseWordpressUrl('https://example.wordpress.com/2024/05/01/hello/')).toEqual(expected)
   })
 
+  const postEndpointPaths = [
+    '/2024/05/01/hello/comment-page-2/',
+    '/2024/05/01/hello/amp/',
+    '/2024/05/01/hello/embed/',
+    '/2024/05/01/hello/trackback/',
+  ]
+
+  it.each(postEndpointPaths)('should return the post for its endpoint %s', (path) => {
+    const expected: WordpressUrl = { kind: 'post', path: '/2024/05/01/hello' }
+
+    expect(parseWordpressUrl(`https://example.wordpress.com${path}`)).toEqual(expected)
+  })
+
+  it('should keep a trailing number in the post path', () => {
+    const expected: WordpressUrl = { kind: 'post', path: '/blog/123' }
+
+    expect(parseWordpressUrl('https://example.wordpress.com/blog/123/')).toEqual(expected)
+  })
+
+  it('should return the post for a slug starting with wp-', () => {
+    const expected: WordpressUrl = { kind: 'post', path: '/wp-tips-for-beginners' }
+
+    expect(parseWordpressUrl('https://example.wordpress.com/wp-tips-for-beginners/')).toEqual(
+      expected,
+    )
+  })
+
   it('should return the post for a hypotheses.org post id that looks like a year', () => {
     const expected: WordpressUrl = { kind: 'post', path: '/1009' }
 
@@ -137,6 +164,8 @@ describe('parseWordpressUrl', () => {
     '/wp-login.php',
     '/wp-admin/',
     '/wp-content/uploads/2024/01/a.jpg',
+    '/wp-json/wp/v2/posts',
+    '/wp-sitemap.xml',
     '/search/news/',
     '/category/',
   ]

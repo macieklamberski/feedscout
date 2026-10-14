@@ -39,6 +39,10 @@ describe('parsePostachioUrl', () => {
     expect(parsePostachioUrl('https://postach.io/blog/')).toBeUndefined()
   })
 
+  it('should return undefined for a nested subdomain', () => {
+    expect(parsePostachioUrl('https://www.example.postach.io/')).toBeUndefined()
+  })
+
   it('should return undefined for another host', () => {
     expect(parsePostachioUrl('https://example.com/')).toBeUndefined()
   })

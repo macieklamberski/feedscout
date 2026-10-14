@@ -1,7 +1,7 @@
-import { getSubdomain, isAnyOf, isSubdomainOf } from 'trousse'
+import { isSubdomainOf } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, findElement } from '../../common/utils.js'
+import { composeHint, findElement, getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic partly covers author, blog, category, edublogsBlog, hypothesesBlog, nestedCategory, post, tag, unblogBlog.
@@ -31,10 +31,13 @@ const postIdRegex = /^\/\d+\/?$/
 const trailingSlashRegex = /\/$/
 const feedSegmentRegex = /\/feed(?:\/|$)/i
 const paginationRegex = /\/page\/\d+\/?$/i
+// WordPress's rewrite endpoints under a post: its AMP and embed views, trackback and comment pages.
+const postEndpointRegex = /(?<=[^/])\/(?:amp|embed|trackback|comment-page-\d+)\/?$/i
 // WordPress's own scripts and folders, the search results, and an archive route without its slug.
-const reservedPathRegex = /^\/(?:wp-[^/]*|[^/]*\.php|search|category|tag|author)(?:\/|$)/i
+const reservedPathRegex =
+  /^\/(?:wp-(?:admin|content|includes|json)|[^/]*\.(?:php|xml)|search|category|tag|author)(?:\/|$)/i
 
-const excludedSubdomains = ['www', 'public-api', 'r-login', 'subscribe', 'dashboard']
+const excludedSubdomains = ['public-api', 'r-login', 'subscribe', 'dashboard']
 
 // An unregistered {name}.home.blog redirects to home.blog, whose every page links this feed.
 const platformFeedUrl = 'https://home.blog/feed/'
@@ -78,7 +81,7 @@ const getPostsFeedEntries = (base: string, key: string): Array<DiscoverUriEntry>
 // hypotheses.org's post-id paths need the host.
 export const parseWordpressPage = (url: string): WordpressUrl => {
   // A paginated listing, `/page/2/` or `/2024/05/page/2/`, is the listing itself.
-  const pathname = new URL(url).pathname.replace(paginationRegex, '')
+  const pathname = new URL(url).pathname.replace(paginationRegex, '').replace(postEndpointRegex, '')
 
   // hypotheses.org posts are /{post_id}, so a four-digit id is a post, never a year archive.
   if (isSubdomainOf(url, postIdDomains) && postIdRegex.test(pathname)) {
@@ -112,16 +115,10 @@ export const parseWordpressPage = (url: string): WordpressUrl => {
 }
 
 export const parseWordpressUrl = (url: string): WordpressUrl | undefined => {
-  const subdomain = getSubdomain(url, domains)
+  const subdomain = getTenantSubdomain(url, domains, excludedSubdomains)
 
-  // A dotted subdomain is an alias of a blog, and the platform's certificate does not cover it.
   // A staging- subdomain is a WordPress.com staging copy of another site.
-  if (
-    !subdomain ||
-    subdomain.includes('.') ||
-    subdomain.startsWith('staging-') ||
-    isAnyOf(subdomain, excludedSubdomains)
-  ) {
+  if (!subdomain || subdomain.startsWith('staging-')) {
     return
   }
 

@@ -95,7 +95,7 @@ describe('seesaaHandler', () => {
       const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://alice.seesaa.net/index20.rdf',
-          hint: { key: 'seesaa:posts-rss2', label: 'Posts (RSS 2.0)' },
+          hint: { key: 'seesaa:posts', label: 'Posts', format: 'rss' },
         },
         {
           uri: 'https://alice.seesaa.net/index.rdf',
@@ -111,7 +111,7 @@ describe('seesaaHandler', () => {
       const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://alice.seesaa.net/index20.rdf',
-          hint: { key: 'seesaa:posts-rss2', label: 'Posts (RSS 2.0)' },
+          hint: { key: 'seesaa:posts', label: 'Posts', format: 'rss' },
         },
         {
           uri: 'https://alice.seesaa.net/index.rdf',

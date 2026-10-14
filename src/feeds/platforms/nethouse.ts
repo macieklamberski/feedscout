@@ -1,12 +1,10 @@
-import { isAnyOf, isSubdomainOf } from 'trousse'
+import { isSubdomainOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, hasMarker } from '../../common/utils.js'
+import { composeHint, getTenantSubdomain, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
 const domains = ['nethouse.ru', 'nethouse.me']
-
-const excludedHosts = ['www.nethouse.ru']
 
 export const isNethouseHeaders = (headers: Headers): boolean => {
   return headers.get('x-generator') === 'nethouse'
@@ -14,12 +12,8 @@ export const isNethouseHeaders = (headers: Headers): boolean => {
 
 export const nethouseHandler: PlatformHandler = {
   match: (url, content, headers) => {
-    if (isAnyOf(new URL(url).hostname.toLowerCase(), excludedHosts)) {
-      return false
-    }
-
     if (isSubdomainOf(url, domains)) {
-      return true
+      return getTenantSubdomain(url, domains) !== undefined
     }
 
     return hasMarker(content, headers, { headers: isNethouseHeaders })

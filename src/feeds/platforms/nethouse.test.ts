@@ -31,6 +31,8 @@ describe('nethouseHandler', () => {
     const values: Array<[boolean, string]> = [
       [true, 'https://geography.nethouse.ru/'],
       [false, 'https://www.nethouse.ru/'],
+      [false, 'https://www.nethouse.me/'],
+      [false, 'https://www.geography.nethouse.ru/'],
       [true, 'https://jivoirodnik.nethouse.ru/articles'],
       [true, 'https://errorfreeled.nethouse.me/'],
       [false, 'https://nethouse.ru/'],

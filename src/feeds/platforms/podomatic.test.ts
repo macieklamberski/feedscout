@@ -22,6 +22,10 @@ describe('parsePodomaticUrl', () => {
     expect(parsePodomaticUrl('https://api.podomatic.com/')).toBeUndefined()
   })
 
+  it('should return undefined for a nested subdomain', () => {
+    expect(parsePodomaticUrl('https://www.example.podomatic.com/')).toBeUndefined()
+  })
+
   it('should return undefined for another host', () => {
     expect(parsePodomaticUrl('https://example.com/podcasts/example-show')).toBeUndefined()
   })

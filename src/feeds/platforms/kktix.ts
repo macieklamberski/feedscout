@@ -1,6 +1,5 @@
-import { getSubdomain, isAnyOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
+import { composeHint, getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers organizer (html).
@@ -10,21 +9,15 @@ export type KktixUrl = { kind: 'organizer'; organizer: string }
 
 const domains = ['kktix.cc']
 
-const excludedSubdomains = ['www']
-
 export const parseKktixUrl = (url: string): KktixUrl | undefined => {
-  const subdomain = getSubdomain(url, domains)
-
   // A nested subdomain like a.b.kktix.cc fails TLS, since the certificate covers one label.
-  if (!subdomain || subdomain.includes('.')) {
+  const organizer = getTenantSubdomain(url, domains)
+
+  if (!organizer) {
     return
   }
 
-  if (isAnyOf(subdomain, excludedSubdomains)) {
-    return
-  }
-
-  return { kind: 'organizer', organizer: subdomain }
+  return { kind: 'organizer', organizer }
 }
 
 export const kktixHandler: PlatformHandler = {

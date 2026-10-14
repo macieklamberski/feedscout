@@ -1,6 +1,5 @@
-import { getSubdomain, isAnyOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, getCookieNames, hasMarker } from '../../common/utils.js'
+import { composeHint, getCookieNames, getTenantSubdomain, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -21,7 +20,6 @@ const excludedSubdomains = [
   'page',
   'secure',
   'static-www-front',
-  'www',
 ]
 
 // Numbered image and access-log hosts, such as img15 and acclog001.
@@ -34,15 +32,10 @@ export const isColorMeShopHeaders = (headers: Headers): boolean => {
 }
 
 export const parseColorMeShopUrl = (url: string): ColorMeShopUrl | undefined => {
-  const shop = getSubdomain(url, domains)
-
   // A nested subdomain like blog.{shop}.shop-pro.jp is a JUGEM blog, not a shop.
-  if (
-    !shop ||
-    shop.includes('.') ||
-    isAnyOf(shop, excludedSubdomains) ||
-    excludedSubdomainRegex.test(shop)
-  ) {
+  const shop = getTenantSubdomain(url, domains, excludedSubdomains)
+
+  if (!shop || excludedSubdomainRegex.test(shop)) {
     return
   }
 

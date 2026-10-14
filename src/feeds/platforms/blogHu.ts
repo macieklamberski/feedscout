@@ -1,6 +1,6 @@
-import { getSubdomain, isAnyOf, isHostOf, parseUrl } from 'trousse'
+import { isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
+import { composeHint, getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers blog (html).
@@ -32,9 +32,7 @@ export const parseBlogHuUrl = (url: string): BlogHuUrl | undefined => {
     return
   }
 
-  const subdomain = getSubdomain(parsedUrl, domains)
-
-  if (!subdomain || subdomain.includes('.') || isAnyOf(subdomain, excludedSubdomains)) {
+  if (!getTenantSubdomain(parsedUrl, domains, excludedSubdomains)) {
     return
   }
 

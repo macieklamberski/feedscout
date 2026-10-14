@@ -1,6 +1,6 @@
-import { getSubdomain, isAnyOf, isHostOrSubdomainOf } from 'trousse'
+import { isHostOrSubdomainOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, hasMarker } from '../../common/utils.js'
+import { composeHint, getTenantSubdomain, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -20,7 +20,6 @@ const excludedSubdomains = [
   'video',
   'videos',
   'webmail',
-  'www',
 ]
 
 // The footer of every club site links the platform's abuse report form, on custom domains too.
@@ -29,9 +28,7 @@ export const isSportsregionsHtml = (content: string): boolean => {
 }
 
 export const parseSportsregionsUrl = (url: string): SportsregionsUrl | undefined => {
-  const club = getSubdomain(url, domains)
-
-  if (!club || isAnyOf(club, excludedSubdomains)) {
+  if (!getTenantSubdomain(url, domains, excludedSubdomains)) {
     return
   }
 

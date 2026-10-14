@@ -1,6 +1,5 @@
-import { getSubdomain, isAnyOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
+import { composeHint, getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -26,13 +25,10 @@ const excludedSubdomains = [
   'support',
   'team',
   'try',
-  'www',
 ]
 
 export const parseJellypodUrl = (url: string): JellypodUrl | undefined => {
-  const slug = getSubdomain(url, domains)
-
-  if (!slug || isAnyOf(slug, excludedSubdomains)) {
+  if (!getTenantSubdomain(url, domains, excludedSubdomains)) {
     return
   }
 

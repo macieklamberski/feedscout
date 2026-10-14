@@ -1,7 +1,7 @@
-import { getSubdomain, isAnyOf, parseUrl } from 'trousse'
+import { parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
+import { composeHint, getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers blog (guess, html), partly covers post.
@@ -17,8 +17,6 @@ const postRegex = /^\/posts\/(\d+)(?:\.html)?(?:\/|$)/i
 // An unregistered name answers the sign-up page, served from the platform's own index account.
 const signUpPageRegex = /\/user_files\/index\/config\/favicon\.ico"/
 
-const excludedSubdomains = ['www']
-
 export const parseIsProgrammerUrl = (url: string): IsProgrammerUrl | undefined => {
   const parsedUrl = parseUrl(url)
 
@@ -26,10 +24,10 @@ export const parseIsProgrammerUrl = (url: string): IsProgrammerUrl | undefined =
     return
   }
 
-  const blog = getSubdomain(parsedUrl, domains)
-
   // A deeper host such as www.{blog}.is-programmer.com answers the sign-up page.
-  if (!blog || blog.includes('.') || isAnyOf(blog, excludedSubdomains)) {
+  const blog = getTenantSubdomain(parsedUrl, domains)
+
+  if (!blog) {
     return
   }
 

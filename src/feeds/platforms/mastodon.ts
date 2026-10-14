@@ -1,6 +1,12 @@
 import { getPathSegments, isAnyOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, hasElementWithId, hasMarker, hasMetaContent } from '../../common/utils.js'
+import {
+  composeHint,
+  findElement,
+  hasClass,
+  hasMarker,
+  hasMetaContent,
+} from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers profile, users (html), partly covers profileMedia, profileTagged, profileWithReplies.
@@ -17,10 +23,18 @@ const mastodonRegex = /mastodon/i
 // A profile URL can end in .rss, a legacy .atom or the ActivityPub .json. Names carry no dots.
 const feedExtensionRegex = /\.(rss|atom|json)$/i
 
-// Current Mastodon serves no generator meta, so the `<div id="mastodon">` app
-// root is matched too.
+// Current Mastodon serves no generator meta, so the `<div class="app-holder" id="mastodon">` app
+// root is matched too. A bare `mastodon` id is a common social-link id on blogs.
 export const isMastodonHtml = (content: string): boolean => {
-  return hasMetaContent(content, 'generator', 'Mastodon') || hasElementWithId(content, 'mastodon')
+  if (hasMetaContent(content, 'generator', 'Mastodon')) {
+    return true
+  }
+
+  const appRoot = findElement(content, (element) => {
+    return element.name === 'div' && element.attribs.id === 'mastodon'
+  })
+
+  return hasClass(appRoot, 'app-holder')
 }
 
 export const isMastodonHeaders = (headers: Headers): boolean => {

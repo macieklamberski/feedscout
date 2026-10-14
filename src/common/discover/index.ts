@@ -264,14 +264,19 @@ const runDiscover = async <TValid>(
   ): Promise<void> => {
     const alternatives = coerceArray(entry.uri)
 
-    for (const url of alternatives) {
+    for (const [index, url] of alternatives.entries()) {
       const extracted = await fetchAndExtract(url)
       const result = entry.hint
         ? { ...extracted, method, hint: entry.hint }
         : { ...extracted, method }
 
       recordResult(result, entryIndex)
-      tested += 1
+
+      // The total counts candidates, so a candidate counts as tested once no alternative is left
+      // to try.
+      if (result.isValid || index === alternatives.length - 1) {
+        tested += 1
+      }
 
       attempt(
         () => onProgress?.({ tested, total, found, current: url, method, result }),

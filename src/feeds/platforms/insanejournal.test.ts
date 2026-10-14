@@ -51,7 +51,9 @@ describe('insanejournalHandler', () => {
     const values: Array<[boolean, string]> = [
       [true, 'https://alice.insanejournal.com'],
       [true, 'https://anything.insanejournal.com/post'],
+      [false, 'https://www.alice.insanejournal.com'],
       [true, 'https://www.insanejournal.com/users/bob'],
+      [true, 'https://insanejournal.com/users/bob'],
       [true, 'https://www.insanejournal.com/~bob'],
       [true, 'https://www.insanejournal.com/asylum/squeaky'],
       [true, 'https://www.insanejournal.com/community/squeaky'],
