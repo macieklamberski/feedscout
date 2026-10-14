@@ -1,7 +1,7 @@
-import { getAnyOf, getSubdomain, isAnyOf, parseUrl } from 'trousse'
+import { getAnyOf, parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
+import { composeHint, getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers newsroom (guess, html), partly covers beat, contentType.
@@ -20,14 +20,13 @@ const contentTypePathRegex = /^\/browse\/([^/]+)\/?$/i
 
 const contentTypes = ['news', 'pr', 'social'] as const
 
-const excludedSubdomains = ['cdn', 'support', 'www']
+const excludedSubdomains = ['cdn', 'support']
 
 export const parseNewswireUrl = (url: string): NewswireUrl | undefined => {
   const pathname = parseUrl(url)?.pathname
-  const newsroom = getSubdomain(url, domains)
+  const newsroom = getTenantSubdomain(url, domains, excludedSubdomains)
 
-  // A dotted subdomain such as www.{newsroom} names no newsroom.
-  if (!pathname || !newsroom || newsroom.includes('.') || isAnyOf(newsroom, excludedSubdomains)) {
+  if (!pathname || !newsroom) {
     return
   }
 

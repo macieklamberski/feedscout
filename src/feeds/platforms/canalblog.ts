@@ -1,6 +1,6 @@
-import { getSubdomain, isHostOf } from 'trousse'
+import { isHostOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
+import { composeHint, getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -23,18 +23,11 @@ const excludedHosts = [
   'static.canalblog.com',
   'storage.canalblog.com',
   'upload.canalblog.com',
-  'www.canalblog.com',
 ]
 
 export const parseCanalblogUrl = (url: string): CanalblogUrl | undefined => {
-  const subdomain = getSubdomain(url, domains)
-
   // A nested subdomain like a.b.canalblog.com fails TLS, since the certificate covers one label.
-  if (!subdomain || subdomain.includes('.')) {
-    return
-  }
-
-  if (isHostOf(url, excludedHosts)) {
+  if (!getTenantSubdomain(url, domains) || isHostOf(url, excludedHosts)) {
     return
   }
 

@@ -1,7 +1,7 @@
-import { getSubdomain, isAnyOf, parseUrl } from 'trousse'
+import { parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, findElement } from '../../common/utils.js'
+import { composeHint, findElement, getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers group, league (html), partly covers association.
@@ -18,12 +18,8 @@ const domains = ['tischtennislive.de']
 const resultsFeedPathRegex = /^\/Export\/Tischtennis\/RSS\.aspx$/i
 const resultsIdRegex = /^\d+$/
 
-const excludedSubdomains = ['www']
-
 export const parseTischtennisliveUrl = (url: string): TischtennisliveUrl | undefined => {
-  const association = getSubdomain(url, domains)
-
-  if (!association || association.includes('.') || isAnyOf(association, excludedSubdomains)) {
+  if (!getTenantSubdomain(url, domains)) {
     return
   }
 

@@ -1,6 +1,5 @@
-import { getSubdomain, isAnyOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
+import { composeHint, getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -8,12 +7,10 @@ export type ParsiblogUrl = { kind: 'blog'; blog: string }
 
 const domains = ['parsiblog.com', 'parsiblog.ir']
 
-const excludedSubdomains = ['www']
-
 export const parseParsiblogUrl = (url: string): ParsiblogUrl | undefined => {
-  const blog = getSubdomain(url, domains)
+  const blog = getTenantSubdomain(url, domains)
 
-  if (!blog || blog.includes('.') || isAnyOf(blog, excludedSubdomains)) {
+  if (!blog) {
     return
   }
 

@@ -1,7 +1,7 @@
-import { getSubdomain, isAnyOf, parseUrl } from 'trousse'
+import { isAnyOf, parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
+import { composeHint, getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -9,12 +9,19 @@ export type HautetfortUrl =
   | { kind: 'blog'; blog: string }
   | { kind: 'category'; blog: string; category: string }
 
-const domains = ['hautetfort.com', 'blogspirit.com', 'blogspirit-business.com']
+// Business blogs sit under blog.blogspirit-business.com, which comes before its parent so their
+// name reads as one label.
+const domains = [
+  'hautetfort.com',
+  'blogspirit.com',
+  'blog.blogspirit-business.com',
+  'blogspirit-business.com',
+]
 
 const categoryRegex = /^\/([^/.]+)\/?$/
 const archivesCategoryRegex = /^\/archives\/category\/([^/]+)(?:\/|$)/
 
-const excludedSubdomains = ['starter', 'static', 'www']
+const excludedSubdomains = ['starter', 'static']
 const excludedPaths = [
   'admin',
   'album',
@@ -34,9 +41,9 @@ export const parseHautetfortUrl = (url: string): HautetfortUrl | undefined => {
     return
   }
 
-  const blog = getSubdomain(url, domains)
+  const blog = getTenantSubdomain(url, domains, excludedSubdomains)
 
-  if (!blog || isAnyOf(blog, excludedSubdomains)) {
+  if (!blog) {
     return
   }
 

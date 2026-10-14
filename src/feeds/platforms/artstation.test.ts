@@ -39,6 +39,10 @@ describe('parseArtstationUrl', () => {
     expect(parseArtstationUrl('https://www.artstation.com/artwork')).toEqual(expected)
   })
 
+  it('should return undefined for a single artwork', () => {
+    expect(parseArtstationUrl('https://www.artstation.com/artwork/XnYlQm')).toBeUndefined()
+  })
+
   it('should return undefined for an excluded path', () => {
     expect(parseArtstationUrl('https://www.artstation.com/jobs')).toBeUndefined()
   })

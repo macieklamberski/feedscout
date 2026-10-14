@@ -1,6 +1,5 @@
-import { getSubdomain, isAnyOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
+import { composeHint, getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -8,12 +7,10 @@ export type PodcloudUrl = { kind: 'show' }
 
 const domains = ['lepodcast.fr']
 
-const excludedSubdomains = ['dev', 'feed', 'feeds', 'multifeed', 'studio', 'www', 'www2']
+const excludedSubdomains = ['dev', 'feed', 'feeds', 'multifeed', 'studio', 'www2']
 
 export const parsePodcloudUrl = (url: string): PodcloudUrl | undefined => {
-  const slug = getSubdomain(url, domains)
-
-  if (!slug || isAnyOf(slug, excludedSubdomains)) {
+  if (!getTenantSubdomain(url, domains, excludedSubdomains)) {
     return
   }
 

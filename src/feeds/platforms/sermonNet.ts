@@ -1,7 +1,6 @@
-import { getSubdomain, isAnyOf } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
+import { composeHint, getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic partly covers church.
@@ -15,12 +14,10 @@ const domains = ['sermon.net']
 // one the church owns serves a feed.
 const channelRegex = /"is_series":(?:false|true),"url":"([^"]+)"/g
 
-const excludedSubdomains = ['api', 'www']
+const excludedSubdomains = ['api']
 
 export const parseSermonNetUrl = (url: string): SermonNetUrl | undefined => {
-  const church = getSubdomain(url, domains)
-
-  if (!church || isAnyOf(church, excludedSubdomains)) {
+  if (!getTenantSubdomain(url, domains, excludedSubdomains)) {
     return
   }
 

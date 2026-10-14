@@ -21,6 +21,12 @@ describe('parseDreamwidthUrl', () => {
     expect(parseDreamwidthUrl('https://www.dreamwidth.org/users/some_user')).toEqual(expected)
   })
 
+  it('should return the user for an apex users path', () => {
+    const expected: DreamwidthUrl = { kind: 'journal', username: 'some_user' }
+
+    expect(parseDreamwidthUrl('https://dreamwidth.org/users/some_user')).toEqual(expected)
+  })
+
   it('should return undefined for the bare www host', () => {
     expect(parseDreamwidthUrl('https://www.dreamwidth.org/')).toBeUndefined()
   })
@@ -34,9 +40,11 @@ describe('dreamwidthHandler', () => {
   describe('match', () => {
     const values: Array<[boolean, string]> = [
       [true, 'https://alice.dreamwidth.org'],
-      [true, 'https://blog.example.dreamwidth.org'],
+      [false, 'https://blog.example.dreamwidth.org'],
+      [false, 'https://www.alice.dreamwidth.org'],
       [true, 'https://www.dreamwidth.org/users/carol_jones'],
       [true, 'https://www.dreamwidth.org/~carol-jones'],
+      [true, 'https://dreamwidth.org/users/carol_jones'],
       [false, 'https://www.dreamwidth.org'],
       [false, 'https://dreamwidth.org'],
       [false, 'https://example.com'],

@@ -1526,9 +1526,7 @@
       "https://izu16.seesaa.space/index.rdf",
       "https://ameyoke.sokuho.org/index.rdf",
       "http://daisy.stablo.jp/index.rdf",
-      "https://bag.xblog.jp/index.rdf"
-    ],
-    "seesaa:posts-rss2": [
+      "https://bag.xblog.jp/index.rdf",
       "https://info.seesaa.net/index20.rdf",
       "https://kawaiibacon.iiblog.jp/index20.rdf",
       "https://itxz673t.seesaa.blog/index20.rdf",

@@ -1,10 +1,45 @@
+import { parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, hasMarker, hasMetaContent } from '../../common/utils.js'
+import { composeHint, findElement, hasMarker, hasMetaContent } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
+const feedPathRegex = /\/(?:atom|rss)\/?$/i
+
 export const isTextpatternHtml = (content: string): boolean => {
   return hasMetaContent(content, 'generator', 'Textpattern')
+}
+
+// Textpattern serves its feeds at `{site}/rss` and `{site}/atom`, so the feed link a theme prints
+// names the site root. It counts only on the page's own host, under a root that holds the page.
+const getSiteUrl = (url: string, content: string | undefined): string | undefined => {
+  const parsedUrl = new URL(url)
+
+  const feedLink = findElement(content, (element) => {
+    if (element.name !== 'link' || element.attribs.rel !== 'alternate') {
+      return false
+    }
+
+    return feedPathRegex.test(parseUrl(element.attribs.href ?? '', url)?.pathname ?? '')
+  })
+
+  if (!feedLink) {
+    return
+  }
+
+  const feedUrl = parseUrl(feedLink.attribs.href ?? '', url)
+
+  if (!feedUrl || feedUrl.origin !== parsedUrl.origin) {
+    return
+  }
+
+  const sitePath = feedUrl.pathname.replace(feedPathRegex, '')
+
+  if (!`${parsedUrl.pathname}/`.startsWith(`${sitePath}/`)) {
+    return
+  }
+
+  return `${parsedUrl.origin}${sitePath}`
 }
 
 export const textpatternHandler: PlatformHandler = {
@@ -12,12 +47,12 @@ export const textpatternHandler: PlatformHandler = {
     return hasMarker(content, headers, { html: isTextpatternHtml })
   },
 
-  resolve: (url) => {
-    const { origin } = new URL(url)
+  resolve: (url, content) => {
+    const siteUrl = getSiteUrl(url, content) ?? new URL(url).origin
 
     return [
-      { uri: `${origin}/rss`, hint: composeHint('textpattern:posts', 'rss') },
-      { uri: `${origin}/atom`, hint: composeHint('textpattern:posts', 'atom') },
+      { uri: `${siteUrl}/rss`, hint: composeHint('textpattern:posts', 'rss') },
+      { uri: `${siteUrl}/atom`, hint: composeHint('textpattern:posts', 'atom') },
     ]
   },
 }

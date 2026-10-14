@@ -12,6 +12,10 @@ describe('parsePodigeeUrl', () => {
     expect(parsePodigeeUrl('https://app.podigee.io/')).toBeUndefined()
   })
 
+  it('should return undefined for a nested subdomain', () => {
+    expect(parsePodigeeUrl('https://www.example.podigee.io/')).toBeUndefined()
+  })
+
   it('should return undefined for another host', () => {
     expect(parsePodigeeUrl('https://example.com/')).toBeUndefined()
   })

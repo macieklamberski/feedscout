@@ -3,6 +3,8 @@ import { type HubspotUrl, hubspotHandler, isHubspotHtml, parseHubspotUrl } from 
 
 const hubspotHtml = '<meta name="generator" content="HubSpot">'
 const otherHtml = '<meta name="generator" content="WordPress 6.4">'
+const blogFeedLink = '<link rel="alternate" href="https://example.com/blog/rss.xml">'
+const blogHtml = `${hubspotHtml}${blogFeedLink}`
 
 describe('parseHubspotUrl', () => {
   it('should return the author for an author listing', () => {
@@ -51,7 +53,7 @@ describe('isHubspotHtml', () => {
 describe('hubspotHandler', () => {
   describe('match', () => {
     it('should match a blog page', () => {
-      expect(hubspotHandler.match('https://example.com/blog', hubspotHtml)).toBe(true)
+      expect(hubspotHandler.match('https://example.com/blog', blogHtml)).toBe(true)
     })
 
     it('should not match the host root', () => {
@@ -62,7 +64,7 @@ describe('hubspotHandler', () => {
       const value = 'https://example.com/blog/some-post'
       const headers = new Headers({ 'x-hs-hub-id': '65360' })
 
-      expect(hubspotHandler.match(value, '<html></html>', headers)).toBe(true)
+      expect(hubspotHandler.match(value, blogFeedLink, headers)).toBe(true)
     })
 
     it('should not match a site page the worker marks as not a blog', () => {
@@ -95,7 +97,11 @@ describe('hubspotHandler', () => {
       const value = 'https://example.com/blog/some-post'
       const headers = new Headers({ 'x-hs-cfworker-meta': '{"contentType":' })
 
-      expect(hubspotHandler.match(value, hubspotHtml, headers)).toBe(true)
+      expect(hubspotHandler.match(value, blogHtml, headers)).toBe(true)
+    })
+
+    it('should not match a site page that links no blog feed', () => {
+      expect(hubspotHandler.match('https://www.example.com/pricing', hubspotHtml)).toBe(false)
     })
 
     it('should not match without content', () => {

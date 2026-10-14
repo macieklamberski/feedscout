@@ -1,7 +1,7 @@
-import { getSubdomain, isHostOf } from 'trousse'
+import { isHostOf } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
+import { composeHint, getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -60,11 +60,7 @@ const excludedHosts = [
 ]
 
 export const parseOverblogUrl = (url: string): OverblogUrl | undefined => {
-  const subdomain = getSubdomain(url, domains)
-
-  // A nested subdomain like a.b.over-blog.com fails TLS, since the certificate covers one label.
-  // No blog serves the www host: it redirects to the portal or answers 404.
-  if (!subdomain || subdomain.includes('.') || subdomain === 'www') {
+  if (!getTenantSubdomain(url, domains)) {
     return
   }
 

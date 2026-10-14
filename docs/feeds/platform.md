@@ -489,7 +489,7 @@ Discovers RSS feeds for Steam game news and community groups.
 
 ### Stack Exchange
 
-Discovers Atom feeds for Stack Overflow, Server Fault, Super User, Ask Ubuntu, MathOverflow, Stack Apps, and all `*.stackexchange.com` sites.
+Discovers Atom feeds for Stack Overflow, Server Fault, Super User, Ask Ubuntu, MathOverflow, Stack Apps, and all `*.stackexchange.com` sites. Chat and API hosts are not matched, and the `stackexchange.com` network host gives only its newest questions feed.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
@@ -1559,6 +1559,8 @@ Discovers the Atom feed of a Shopify store's blog. Detected by the `Powered-By` 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | `{store}/blogs/{handle}` | Blog (Atom) |
+The feed is built under the install's base path from the page's Drupal settings, so a site installed under a sub-path gets its own feed.
+
 
 > [!NOTE]
 > There is no store-wide feed, so the blog handle is required. A missing blog answers 404 with an Atom content type and an empty body.
@@ -1569,6 +1571,7 @@ Discovers the RSS feeds of a HubSpot blog. Detected by the `HubSpot` generator m
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
+| `{store}/{locale}/blogs/{handle}` | Blog in that market's locale (Atom) |
 | `{site}/{blog-path}` | Blog (RSS) |
 | `{site}/{blog-path}/author/{slug}` | Author<sup>†</sup> · blog (RSS) |
 | `{site}/{blog-path}/topic/{slug}` | Tag<sup>†</sup> · blog (RSS) |

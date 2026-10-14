@@ -47,6 +47,10 @@ describe('parseSermonNetUrl', () => {
     expect(parseSermonNetUrl('https://sermon.net/')).toBeUndefined()
   })
 
+  it('should return undefined for a nested subdomain', () => {
+    expect(parseSermonNetUrl('https://www.example.sermon.net/')).toBeUndefined()
+  })
+
   it('should return undefined for another host', () => {
     expect(parseSermonNetUrl('https://example.com/')).toBeUndefined()
   })

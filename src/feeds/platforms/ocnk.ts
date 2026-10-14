@@ -1,6 +1,6 @@
-import { getSubdomain, isAnyOf, isHostOrSubdomainOf } from 'trousse'
+import { isHostOrSubdomainOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, findElement, hasMarker } from '../../common/utils.js'
+import { composeHint, findElement, getTenantSubdomain, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -11,7 +11,7 @@ const domains = ['ocnk.net']
 const cartScriptRegex =
   /^(?:https?:\/\/[^/]+)?\/res\/[^/]+\/js\/(?:ocnk|pack\/ocnk-min)\.js(?:\?|$)/
 
-const excludedSubdomains = ['admin', 'api', 'app', 'auth', 'blog', 'www']
+const excludedSubdomains = ['admin', 'api', 'app', 'auth', 'blog']
 
 // Every shop template loads the cart script from its `/res/{template}/js/` folder, on a custom
 // domain too: `ocnk.js` in the PC templates, `pack/ocnk-min.js` in the responsive ones.
@@ -28,9 +28,9 @@ export const parseOcnkUrl = (url: string): OcnkUrl | undefined => {
     return { kind: 'customDomain' }
   }
 
-  const shop = getSubdomain(url, domains)
+  const shop = getTenantSubdomain(url, domains, excludedSubdomains)
 
-  if (!shop || shop.includes('.') || isAnyOf(shop, excludedSubdomains)) {
+  if (!shop) {
     return
   }
 

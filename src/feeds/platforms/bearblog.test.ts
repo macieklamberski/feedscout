@@ -30,7 +30,8 @@ describe('bearblogHandler', () => {
   describe('match', () => {
     const values: Array<[boolean, string]> = [
       [true, 'https://alice.bearblog.dev'],
-      [true, 'https://blog.example.bearblog.dev'],
+      [false, 'https://blog.example.bearblog.dev'],
+      [false, 'https://www.alice.bearblog.dev'],
       [true, 'https://bearblog.dev'],
       [true, 'https://www.bearblog.dev'],
       [false, 'https://example.com'],

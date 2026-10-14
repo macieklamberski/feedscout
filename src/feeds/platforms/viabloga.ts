@@ -1,6 +1,5 @@
-import { getSubdomain, isAnyOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
+import { composeHint, getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic partly covers blog.
@@ -9,17 +8,10 @@ export type ViablogaUrl = { kind: 'blog' }
 
 const domains = ['viabloga.com']
 
-const excludedSubdomains = ['images', 'news', 'support', 'test', 'viabloga2', 'www']
+const excludedSubdomains = ['images', 'news', 'support', 'test', 'viabloga2']
 
 export const parseViablogaUrl = (url: string): ViablogaUrl | undefined => {
-  const subdomain = getSubdomain(url, domains)
-
-  // A nested subdomain like www.{blog}.viabloga.com redirects to {blog}.viabloga.com.
-  if (!subdomain || subdomain.includes('.')) {
-    return
-  }
-
-  if (isAnyOf(subdomain, excludedSubdomains)) {
+  if (!getTenantSubdomain(url, domains, excludedSubdomains)) {
     return
   }
 

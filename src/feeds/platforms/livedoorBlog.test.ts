@@ -51,6 +51,10 @@ describe('parseLivedoorBlogUrl', () => {
     expect(parseLivedoorBlogUrl('https://blog.jp/')).toBeUndefined()
   })
 
+  it('should return undefined for the www host', () => {
+    expect(parseLivedoorBlogUrl('https://www.blog.jp/')).toBeUndefined()
+  })
+
   it('should return undefined for a nested subdomain', () => {
     expect(parseLivedoorBlogUrl('https://www.example.blog.jp/')).toBeUndefined()
   })

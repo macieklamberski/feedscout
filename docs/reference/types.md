@@ -264,14 +264,16 @@ Progress information passed to the `onProgress` callback after each candidate UR
 
 ```typescript
 type DiscoverProgress<TValid = object> = {
-  tested: number                  // Number of URLs tested
-  total: number                   // Total URLs to test
+  tested: number                  // Number of candidates tested
+  total: number                   // Total candidates to test
   found: number                   // Valid results found
   current: string                 // URL that was just tested
   method: DiscoverMethod          // Method the URL came from
   result: DiscoverResult<TValid>  // Result of testing the URL, with its hint
 }
 ```
+
+A candidate with several alternative URLs reports each URL it tries, and raises `tested` once: with its first valid URL, or with its last one when none is valid.
 
 Every tested URL is reported, including one that led to a URL an earlier result already returned. Such a repeat comes with a valid `result` but does not raise `found`, and it is left out of the returned results. To build a list of feeds as they are found, add one when `found` goes up.
 

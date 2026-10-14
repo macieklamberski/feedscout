@@ -1,5 +1,6 @@
-import { isHostOf, isSubdomainOf } from 'trousse'
+import { isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
+import { getTenantSubdomain } from '../../common/utils.js'
 import { getJournalFeeds, journalTagRegex } from './livejournal.js'
 
 // Discoverability: Partially discoverable without handler.
@@ -21,11 +22,12 @@ const wwwAsylumPathRegex = /^\/(?:asylum|community)\/([^/]+)/i
 const firstSegmentRegex = /^\/([^/]+)/
 
 export const parseInsanejournalUrl = (url: string): InsanejournalUrl | undefined => {
-  if (!isSubdomainOf(url, domains)) {
+  const pathname = parseUrl(url)?.pathname
+
+  if (!pathname) {
     return
   }
 
-  const { pathname } = new URL(url)
   const tag = pathname.match(journalTagRegex)?.[1]
 
   if (isHostOf(url, wwwHosts)) {
@@ -62,6 +64,10 @@ export const parseInsanejournalUrl = (url: string): InsanejournalUrl | undefined
     }
 
     return { kind: 'syndicated', feed, tag }
+  }
+
+  if (!getTenantSubdomain(url, domains)) {
+    return
   }
 
   return { kind: 'journal', tag }

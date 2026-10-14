@@ -1,6 +1,5 @@
-import { getSubdomain, isAnyOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
+import { composeHint, getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -8,12 +7,12 @@ export type TravellerspointUrl = { kind: 'blog'; blog: string }
 
 const domains = ['travellerspoint.com']
 
-const excludedSubdomains = ['assets', 'blog', 'guide', 'img', 'm', 'photos', 'secure', 'www']
+const excludedSubdomains = ['assets', 'blog', 'guide', 'img', 'm', 'photos', 'secure']
 
 export const parseTravellerspointUrl = (url: string): TravellerspointUrl | undefined => {
-  const blog = getSubdomain(url, domains)
+  const blog = getTenantSubdomain(url, domains, excludedSubdomains)
 
-  if (!blog || blog.includes('.') || isAnyOf(blog, excludedSubdomains)) {
+  if (!blog) {
     return
   }
 

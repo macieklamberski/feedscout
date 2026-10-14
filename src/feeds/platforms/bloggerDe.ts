@@ -1,6 +1,5 @@
-import { getSubdomain, isAnyOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
+import { composeHint, getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -8,13 +7,13 @@ export type BloggerDeUrl = { kind: 'blog'; blog: string }
 
 const domains = ['blogger.de']
 
-const excludedSubdomains = ['cdn', 'www']
+const excludedSubdomains = ['cdn']
 
 export const parseBloggerDeUrl = (url: string): BloggerDeUrl | undefined => {
-  const blog = getSubdomain(url, domains)
-
   // A nested subdomain like a.b.blogger.de fails TLS, since the certificate covers one label.
-  if (!blog || blog.includes('.') || isAnyOf(blog, excludedSubdomains)) {
+  const blog = getTenantSubdomain(url, domains, excludedSubdomains)
+
+  if (!blog) {
     return
   }
 

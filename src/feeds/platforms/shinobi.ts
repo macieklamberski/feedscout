@@ -1,6 +1,5 @@
-import { getSubdomain } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
+import { composeHint, getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -112,9 +111,9 @@ const domains = [
 ]
 
 export const parseShinobiUrl = (url: string): ShinobiUrl | undefined => {
-  const blog = getSubdomain(url, domains)
+  const blog = getTenantSubdomain(url, domains)
 
-  if (!blog || blog.includes('.')) {
+  if (!blog) {
     return
   }
 

@@ -8,7 +8,7 @@ describe('parseHautetfortUrl', () => {
     ['http://cfabtpduloiret.blogspirit.com/', { kind: 'blog', blog: 'cfabtpduloiret' }],
     [
       'http://institutmauricegarcon.blog.blogspirit-business.com/',
-      { kind: 'blog', blog: 'institutmauricegarcon.blog' },
+      { kind: 'blog', blog: 'institutmauricegarcon' },
     ],
     [
       'http://vouloir.hautetfort.com/archive/2016/06/15/roger-viroux-5815631.html',
@@ -49,6 +49,8 @@ describe('parseHautetfortUrl', () => {
     'https://www.blogspirit.com/en/index.php',
     'https://static.hautetfort.com/backend/graphics/favicon.ico',
     'https://hautetfort.com/',
+    'https://www.vouloir.hautetfort.com/',
+    'https://www.vouloir.blogspirit.com/',
     'https://example.com/histoire/',
     'not-a-url',
   ]

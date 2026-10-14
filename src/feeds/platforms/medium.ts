@@ -1,6 +1,6 @@
-import { getSubdomain, isAnyOf, isHostOf, parseUrl } from 'trousse'
+import { isAnyOf, isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
+import { composeHint, getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers customDomain, profile, publication, publicationTag, subdomainTag (guess, html).
@@ -53,15 +53,11 @@ export const parseMediumUrl = (url: string): MediumUrl | undefined => {
   }
 
   const { pathname } = parsedUrl
-  const subdomain = getSubdomain(parsedUrl, domains)
 
-  if (subdomain && !isHostOf(parsedUrl, hosts)) {
-    // A nested subdomain like a.b.medium.com fails TLS, since the certificate covers one label.
-    if (subdomain.includes('.')) {
-      return
-    }
+  if (!isHostOf(parsedUrl, hosts)) {
+    const subdomain = getTenantSubdomain(parsedUrl, domains, excludedSubdomains)
 
-    if (isAnyOf(subdomain, excludedSubdomains)) {
+    if (!subdomain) {
       return
     }
 
@@ -72,10 +68,6 @@ export const parseMediumUrl = (url: string): MediumUrl | undefined => {
     }
 
     return { kind: 'subdomain', subdomain }
-  }
-
-  if (!isHostOf(parsedUrl, hosts)) {
-    return
   }
 
   const username = pathname.match(userRegex)?.[1]

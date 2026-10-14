@@ -1,6 +1,6 @@
-import { getPathSegments, getSubdomain, isAnyOf, isHostOf, parseUrl } from 'trousse'
+import { getPathSegments, isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
+import { composeHint, getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -11,7 +11,7 @@ export type PostypeUrl =
 
 const domains = ['postype.com']
 export const hosts = ['postype.com', 'www.postype.com']
-const excludedSubdomains = ['www', 'api', 'cdn', 'i', 'blog-cdn']
+const excludedSubdomains = ['api', 'cdn', 'i', 'blog-cdn']
 
 export const parsePostypeUrl = (url: string): PostypeUrl | undefined => {
   const parsedUrl = parseUrl(url)
@@ -30,14 +30,9 @@ export const parsePostypeUrl = (url: string): PostypeUrl | undefined => {
     return { kind: 'channel', channel: first.slice(1) }
   }
 
-  const subdomain = getSubdomain(parsedUrl, domains)
+  const subdomain = getTenantSubdomain(parsedUrl, domains, excludedSubdomains)
 
-  // A nested subdomain like a.b.postype.com fails TLS, since the certificate covers one label.
-  if (!subdomain || subdomain.includes('.')) {
-    return
-  }
-
-  if (isAnyOf(subdomain, excludedSubdomains)) {
+  if (!subdomain) {
     return
   }
 

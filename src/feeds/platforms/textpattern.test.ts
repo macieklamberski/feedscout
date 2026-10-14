@@ -50,5 +50,75 @@ describe('textpatternHandler', () => {
 
       expect(textpatternHandler.resolve(value)).toEqual(expected)
     })
+
+    it('should return the feeds of a site under a sub-path', () => {
+      const value = 'https://example.com/blog/articles/1/hello'
+      const content = `
+        <link
+          rel="alternate"
+          type="application/rss+xml"
+          href="https://example.com/blog/rss/"
+        >
+      `
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://example.com/blog/rss',
+          hint: { key: 'textpattern:posts', label: 'Posts', format: 'rss' },
+        },
+        {
+          uri: 'https://example.com/blog/atom',
+          hint: { key: 'textpattern:posts', label: 'Posts', format: 'atom' },
+        },
+      ]
+
+      expect(textpatternHandler.resolve(value, content)).toEqual(expected)
+    })
+
+    it('should ignore a feed link of a site the page is not under', () => {
+      const value = 'https://example.com/articles/1/hello'
+      const content = `
+        <link rel="stylesheet" href="https://example.com/css/default.css">
+        <link
+          rel="alternate"
+          type="application/rss+xml"
+          href="https://example.com/blog/rss"
+        >
+      `
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://example.com/rss',
+          hint: { key: 'textpattern:posts', label: 'Posts', format: 'rss' },
+        },
+        {
+          uri: 'https://example.com/atom',
+          hint: { key: 'textpattern:posts', label: 'Posts', format: 'atom' },
+        },
+      ]
+
+      expect(textpatternHandler.resolve(value, content)).toEqual(expected)
+    })
+
+    it('should ignore a feed link on another host', () => {
+      const value = 'https://example.com/articles/1/hello'
+      const content = `
+        <link
+          rel="alternate"
+          type="application/rss+xml"
+          href="https://example.org/blog/rss"
+        >
+      `
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://example.com/rss',
+          hint: { key: 'textpattern:posts', label: 'Posts', format: 'rss' },
+        },
+        {
+          uri: 'https://example.com/atom',
+          hint: { key: 'textpattern:posts', label: 'Posts', format: 'atom' },
+        },
+      ]
+
+      expect(textpatternHandler.resolve(value, content)).toEqual(expected)
+    })
   })
 })
