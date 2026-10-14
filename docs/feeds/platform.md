@@ -2005,7 +2005,7 @@ Discovers the table of contents feed of a journal hosted on Atypon Literatum: AC
 | `{host}/toc/{code}/…` | Journal (RDF) |
 | `{host}/journal/{code}` | Journal (RDF) |
 | `{host}/loi/{code}` | Journal (RDF) |
-| `tandfonline.com/journals/{code}` | Journal (RDF) |
+| `www.tandfonline.com/journals/{code}` | Journal (RDF) |
 | `journals.sagepub.com/home/{code}` | Journal (RDF) |
 | `onlinelibrary.wiley.com/journal/{code}` | Journal (RSS) · Most cited (RSS) |
 
