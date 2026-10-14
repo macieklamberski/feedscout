@@ -1,8 +1,14 @@
-import { isNonEmptyString } from 'trousse'
+import { isNonEmptyString, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { parseAmebloUrl } from '../../feeds/platforms/ameblo.js'
 
 const initDataPrefix = 'window.INIT_DATA='
+
+const getProfileImage = (initData: string, username: string): unknown => {
+  try {
+    return JSON.parse(initData)?.bloggerState?.bloggerMap?.[username]?.profile?.image_filepath
+  } catch {}
+}
 
 export const amebloHandler: PlatformHandler = {
   match: (url) => {
@@ -23,8 +29,7 @@ export const amebloHandler: PlatformHandler = {
       return []
     }
 
-    const initData = JSON.parse(content.slice(start + initDataPrefix.length, end))
-    const image = initData?.bloggerState?.bloggerMap?.[username]?.profile?.image_filepath
+    const image = getProfileImage(content.slice(start + initDataPrefix.length, end), username)
 
     if (!isNonEmptyString(image)) {
       return []
@@ -32,7 +37,12 @@ export const amebloHandler: PlatformHandler = {
 
     // The uploaded profile image keeps its original aspect ratio. The `cpd` parameter makes
     // the image server return a square crop of the given size.
-    const icon = new URL(image)
+    const icon = parseUrl(image)
+
+    if (!icon) {
+      return []
+    }
+
     icon.searchParams.set('cpd', '200')
 
     return [{ uri: icon.href }]

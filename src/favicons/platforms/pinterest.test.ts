@@ -123,11 +123,11 @@ describe('pinterestHandler', () => {
         expect(result).toEqual([])
       })
 
-      it('should throw when the initial props are not valid JSON', () => {
+      it('should return empty array when the initial props are not valid JSON', () => {
         const html = '<script id="__PWS_INITIAL_PROPS__" type="application/json">{not-json</script>'
-        const throwing = () => pinterestHandler.resolve('https://www.pinterest.com/alice/', html)
+        const result = pinterestHandler.resolve('https://www.pinterest.com/alice/', html)
 
-        expect(throwing).toThrow()
+        expect(result).toEqual([])
       })
 
       it('should return empty array when the page has no initial props', () => {
@@ -198,12 +198,11 @@ describe('pinterestEnricher', () => {
     expect(await pinterestEnricher(ref, context)).toEqual([])
   })
 
-  it('should reject when the initial props are not valid JSON', async () => {
+  it('should return empty array when the initial props are not valid JSON', async () => {
     const html = '<script id="__PWS_INITIAL_PROPS__" type="application/json">{not-json</script>'
     const context = createContext({ 'https://www.pinterest.com/alice/': html })
-    const throwing = () => pinterestEnricher(ref, context)
 
-    await expect(throwing()).rejects.toThrow("JSON Parse error: Expected '}'")
+    expect(await pinterestEnricher(ref, context)).toEqual([])
   })
 
   it('should reject when fetch throws', async () => {

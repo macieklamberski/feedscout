@@ -6,7 +6,9 @@ import { parseResponseJson } from '../utils.js'
 
 const platform = 'nebula'
 
-const queryDataRegex = /window\.__QUERY_DATA__\s*=\s*(\{.*?\});?\s*<\/script>/s
+const queryDataMarker = 'window.__QUERY_DATA__'
+const assignmentRegex = /^\s*=/
+const trailingSemicolonRegex = /;$/
 
 // biome-ignore lint/suspicious/noExplicitAny: Channel JSON from the page or the content API.
 const getAvatar = (channel: any): string | undefined => {
@@ -18,15 +20,26 @@ const getAvatar = (channel: any): string | undefined => {
 }
 
 const getPageAvatar = (content: string | undefined): string | undefined => {
-  const match = content?.match(queryDataRegex)
-
-  if (!match?.[1]) {
+  if (!content) {
     return
   }
 
+  const start = content.indexOf(queryDataMarker)
+  const end = content.indexOf('</script>', start)
+
+  if (start === -1 || end === -1) {
+    return
+  }
+
+  const json = content
+    .slice(start + queryDataMarker.length, end)
+    .replace(assignmentRegex, '')
+    .trim()
+    .replace(trailingSemicolonRegex, '')
+
   // A broken page payload must not hide the content API, which the ref falls back to.
   try {
-    const queryData = JSON.parse(match[1])
+    const queryData = JSON.parse(json)
 
     for (const query of queryData?.queries ?? []) {
       if (query?.queryKey?.[0] !== 'content') {

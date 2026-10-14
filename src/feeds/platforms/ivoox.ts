@@ -12,7 +12,7 @@ const hosts = ['ivoox.com', 'www.ivoox.com']
 const podcastRegex = /_sq_f(\d+)_\d+\.html$/i
 const episodeRegex = /_rf_\d+_\d+\.html$/i
 // An episode page names its show in the JSON-LD `partOfSeries`, among links to other shows.
-const partOfSeriesRegex = /"partOfSeries":\{[^}]*_sq_f(\d+)_/
+const partOfSeriesRegex = /"partOfSeries":\{[^{}]*_sq_f(\d+)_/
 
 export const parseIvooxUrl = (url: string): IvooxUrl | undefined => {
   if (!isHostOf(url, hosts)) {

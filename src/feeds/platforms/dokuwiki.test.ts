@@ -151,5 +151,18 @@ describe('dokuwikiHandler', () => {
 
       expect(dokuwikiHandler.resolve(value)).toEqual(expected)
     })
+
+    it('should fall back to the origin root for a malformed start link', () => {
+      const value = 'https://example.org/start'
+      const content = '<link rel="start" href="http://[wiki/">'
+      const expected = [
+        {
+          uri: 'https://example.org/feed.php',
+          hint: { key: 'dokuwiki:recent-changes', label: 'Recent changes' },
+        },
+      ]
+
+      expect(dokuwikiHandler.resolve(value, content)).toEqual(expected)
+    })
   })
 })

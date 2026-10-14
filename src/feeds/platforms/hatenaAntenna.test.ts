@@ -171,5 +171,17 @@ describe('hatenaAntennaHandler', () => {
 
       expect(hatenaAntennaHandler.resolve(value, '<h1>aliceのアンテナ</h1>')).toEqual(antennaFeed)
     })
+
+    it('should read a page with a long run of group navs in linear time', () => {
+      const value = 'https://a.hatena.ne.jp/alice/?gid=99999999'
+      const content = '<p id="pager_group">'.repeat(10_000)
+
+      const start = performance.now()
+      const result = hatenaAntennaHandler.resolve(value, content)
+      const elapsed = performance.now() - start
+
+      expect(elapsed).toBeLessThan(500)
+      expect(result).toEqual(antennaFeed)
+    })
   })
 })

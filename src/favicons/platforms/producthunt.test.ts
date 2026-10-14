@@ -141,6 +141,18 @@ describe('producthuntHandler', () => {
       ).toEqual([])
     })
 
+    it('should stay linear on a page that repeats the product slug', () => {
+      const value = '"slug":"notion","name":"Notion"'.repeat(14_000)
+      const start = performance.now()
+      const result = producthuntHandler.resolve(
+        'https://www.producthunt.com/products/notion',
+        value,
+      )
+
+      expect(performance.now() - start).toBeLessThan(500)
+      expect(result).toEqual([])
+    })
+
     it('should return empty array without content', () => {
       expect(producthuntHandler.resolve('https://www.producthunt.com/products/notion')).toEqual([])
     })
