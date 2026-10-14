@@ -58,7 +58,9 @@ const runDiscover = async <TValid>(
   // Sanitize numeric options: reject NaN, < 1, and non-integer values, which
   // would otherwise hang the worker loop or fetch nothing.
   const safeConcurrency = toPositiveInteger(concurrency, 3)
-  const safeMaxUris = toPositiveInteger(maxUris, 50)
+  // No limit is a valid choice, which toPositiveInteger would read as invalid.
+  const safeMaxUris =
+    maxUris === Number.POSITIVE_INFINITY ? maxUris : toPositiveInteger(maxUris, 50)
 
   // Normalize input: string → fetch URL, object → use provided content.
   let hasInputFetchFailed = false
