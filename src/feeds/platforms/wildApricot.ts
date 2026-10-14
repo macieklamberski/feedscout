@@ -3,14 +3,14 @@ import { composeHint, findElement, hasClass, hasMarker } from '../../common/util
 
 // Discoverability: Discoverable without handler.
 
-const trailingSlashRegex = /\/$/
-
-const eventsModeLinkClasses = ['calendarModeLink', 'listModeLink']
-
 export type WildApricotPage =
   | { kind: 'blog'; feedUrl: string }
   | { kind: 'post'; blogUrl: string }
   | { kind: 'events'; eventsUrl: string }
+
+const trailingSlashRegex = /\/$/
+
+const eventsModeLinkClasses = ['calendarModeLink', 'listModeLink']
 
 // Wild Apricot answers every page through its load balancer, on its own hosts and on custom
 // domains alike.

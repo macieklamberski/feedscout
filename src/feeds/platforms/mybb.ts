@@ -12,6 +12,8 @@ import {
 // Discoverability: Partially discoverable without handler.
 // Generic covers board, forum (html), partly covers thread.
 
+export type MybbPage = { boardUrl: string; forumId?: string }
+
 const forumScriptRegex = /\/forumdisplay\.php$/i
 const forumPathRegex = /\/forum-(\d+)(?:-page-\d+)?\.html$/i
 const threadPathRegex = /\/(?:showthread\.php|thread-\d+(?:-[a-z]+-\d+)?\.html)$/i
@@ -32,7 +34,7 @@ export const isMybbHtml = (content: string): boolean => {
 
 // MyBB 1.8 prints the board URL as `rootpath`. Every MyBB script sits in the install
 // root, so on an older board the page's directory is the root.
-const getBoardUrl = (url: string, content?: string): string => {
+const getBoardUrl = (url: string, content: string | undefined): string => {
   const rootPath = content?.match(rootPathRegex)?.[1]
 
   if (rootPath) {
@@ -45,7 +47,7 @@ const getBoardUrl = (url: string, content?: string): string => {
 }
 
 // The core breadcrumb ends with the thread's forum, and its page list sits in a nested div.
-const getBreadcrumbForumId = (content?: string): string | undefined => {
+const getBreadcrumbForumId = (content: string | undefined): string | undefined => {
   const navigation = findElement(content, (element) => {
     return element.name === 'div' && hasClass(element, 'navigation')
   })
@@ -62,7 +64,7 @@ const getBreadcrumbForumId = (content?: string): string | undefined => {
   return forumId
 }
 
-const getForumId = (url: string, content?: string): string | undefined => {
+const getForumId = (url: string, content: string | undefined): string | undefined => {
   const { pathname, searchParams } = new URL(url)
   const queryId = searchParams.get('fid')
 
@@ -80,8 +82,6 @@ const getForumId = (url: string, content?: string): string | undefined => {
     return getBreadcrumbForumId(content)
   }
 }
-
-export type MybbPage = { boardUrl: string; forumId?: string }
 
 const getMybbPage = (url: string, content: string | undefined): MybbPage | undefined => {
   if (!parseUrl(url)) {

@@ -7,13 +7,13 @@ import { composeHint, hasMarker } from '../../common/utils.js'
 // Generic partly covers page, pageQuery.
 // Handler needed for: home.
 
-// PmWiki names a group with a leading capital, so the first such segment ends the script path.
-const groupRegex = /^\p{Lu}[\p{L}\d_]*(?:-[\p{L}\d_]+)*$/u
-const pageNameSeparatorRegex = /[./]/
-
 export type PmwikiUrl =
   | { kind: 'page'; scriptPath: string; group: string }
   | { kind: 'home'; scriptPath: string }
+
+// PmWiki names a group with a leading capital, so the first such segment ends the script path.
+const groupRegex = /^\p{Lu}[\p{L}\d_]*(?:-[\p{L}\d_]+)*$/u
+const pageNameSeparatorRegex = /[./]/
 
 // Every skin template carries the directive comment, and PmWiki prints it into the page.
 export const isPmwikiHtml = (content: string): boolean => {

@@ -1,3 +1,4 @@
+import { coerceArray } from 'trousse'
 import type {
   DiscoverMethodsConfigInternal,
   DiscoverOnErrorFn,
@@ -21,25 +22,20 @@ const excludeGuesses = (
   const isKept = (uri: string) => {
     return platformUris.includes(uri) || !regexes.some((regex) => regex.test(uri))
   }
-  const kept: Array<UriEntry> = []
 
-  for (const guess of guesses) {
+  return guesses.flatMap((guess): Array<UriEntry> => {
+    const alternatives = coerceArray(guess).filter(isKept)
+
+    if (alternatives.length === 0) {
+      return []
+    }
+
     if (typeof guess === 'string') {
-      if (isKept(guess)) {
-        kept.push(guess)
-      }
-
-      continue
+      return alternatives
     }
 
-    const alternatives = guess.filter(isKept)
-
-    if (alternatives.length > 0) {
-      kept.push(alternatives)
-    }
-  }
-
-  return kept
+    return [alternatives]
+  })
 }
 
 export const discoverUris = async (
@@ -91,12 +87,9 @@ export const discoverUris = async (
   }
 
   if (config.guess) {
-    let uris = discoverUrisFromGuess(config.guess.options)
-
-    if (guessExclusionRegexes.length > 0) {
-      const platformUris = result.platform?.flatMap((entry) => entry.uri) ?? []
-      uris = excludeGuesses(uris, guessExclusionRegexes, platformUris)
-    }
+    const platformUris = result.platform?.flatMap((entry) => entry.uri) ?? []
+    const guesses = discoverUrisFromGuess(config.guess.options)
+    const uris = excludeGuesses(guesses, guessExclusionRegexes, platformUris)
 
     if (uris.length > 0) {
       result.guess = uris.map((uri) => ({ uri }))

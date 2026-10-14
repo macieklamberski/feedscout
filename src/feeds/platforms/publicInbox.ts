@@ -5,6 +5,10 @@ import { composeHint, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
+export type PublicInboxPage =
+  | { kind: 'inbox'; inboxUrl: string }
+  | { kind: 'message'; inboxUrl: string; messageId: string }
+
 // lore.kernel.org answers a page request from a browser user agent with an Anubis challenge, and
 // from curl with 403, while its feeds still answer.
 const hosts = ['lore.kernel.org']
@@ -13,10 +17,6 @@ const fileRegex = /\.(?:html?|txt|json|xml|ico)$/i
 
 // The core navigation links help relative to the page, one `../` per level below the inbox root.
 const helpLinkRegex = /href="((?:\.\.\/)*)_\/text\/help\/?"/
-
-export type PublicInboxPage =
-  | { kind: 'inbox'; inboxUrl: string }
-  | { kind: 'message'; inboxUrl: string; messageId: string }
 
 export const isPublicInboxHtml = (content: string): boolean => {
   return helpLinkRegex.test(content) && content.includes('_/text/color')

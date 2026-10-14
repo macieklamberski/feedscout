@@ -4,6 +4,11 @@ import { composeHint, type Element, findElement, hasMarker } from '../../common/
 
 // Discoverability: Discoverable without handler.
 
+export type PlonePage =
+  | { kind: 'search'; portalUrl: string; query: string }
+  | { kind: 'site'; portalUrl: string }
+  | { kind: 'folder'; folderUrl: string }
+
 const searchPathRegex = /^(.*)\/(?:@@)?search\/?$/i
 const portalTypeRegex = /^portaltype-/
 const errorTemplateRegex = /^template-(?:default_)?error_message/
@@ -19,11 +24,6 @@ const itemPortalTypes = [
   'portaltype-link',
   'portaltype-news-item',
 ]
-
-export type PlonePage =
-  | { kind: 'search'; portalUrl: string; query: string }
-  | { kind: 'site'; portalUrl: string }
-  | { kind: 'folder'; folderUrl: string }
 
 const findBody = (content: string | undefined) => {
   return findElement(content, (element) => {

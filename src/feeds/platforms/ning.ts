@@ -7,9 +7,9 @@ import { composeHint, hasMarker } from '../../common/utils.js'
 // Generic partly covers topic.
 // Handler needed for: home.
 
-const topicRegex = /^\/forum\/topics\/([^/]+)\/?$/i
-
 export type NingUrl = { kind: 'topic'; topic: string } | { kind: 'home' }
+
+const topicRegex = /^\/forum\/topics\/([^/]+)\/?$/i
 
 // Ning 3 networks send the same `ning_session` cookie and `x-xn-trace-token` header but serve
 // none of these feeds, and only the classic networks load assets from this path.

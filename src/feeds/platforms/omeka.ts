@@ -3,6 +3,10 @@ import { composeHint, type Element, findElement, hasMarker } from '../../common/
 
 // Discoverability: Discoverable without handler.
 
+export type OmekaPage =
+  | { kind: 'browse'; rootUrl: string; query: string }
+  | { kind: 'page'; rootUrl: string }
+
 // Omeka Classic serves plugin views and core scripts from under the install root, as in
 // `/biblioteca/plugins/ExhibitBuilder/views/public/css/exhibits.css`. WordPress plugins can ship
 // the same `views/public/` path under `/wp-content/plugins/`, so that prefix never counts. The
@@ -15,10 +19,6 @@ const trailingSlashRegex = /\/$/
 
 // Omeka drops these from the browse query when it prints the page's feed links.
 const excludedQueryParams = ['page', 'submit_search', 'output']
-
-export type OmekaPage =
-  | { kind: 'browse'; rootUrl: string; query: string }
-  | { kind: 'page'; rootUrl: string }
 
 const getAssetPath = (element: Element): string => {
   if (element.name === 'link') {
@@ -46,7 +46,7 @@ export const isOmekaHtml = (content: string): boolean => {
   return getAssetRoot(content) !== undefined
 }
 
-export const getOmekaPage = (url: string, content?: string): OmekaPage => {
+export const getOmekaPage = (url: string, content: string | undefined): OmekaPage => {
   const assetRoot = getAssetRoot(content) ?? ''
   const { origin, pathname, searchParams } = new URL(url)
   const rootPath = new URL(`${assetRoot}/`, url).pathname.replace(trailingSlashRegex, '')

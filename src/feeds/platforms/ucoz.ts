@@ -5,6 +5,13 @@ import { composeHint, getCookieNames, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
+type UcozModule = (typeof modules)[number]
+
+export type UcozUrl =
+  | { kind: 'home' }
+  | { kind: 'module'; module: UcozModule }
+  | { kind: 'forumSection'; sectionId: string }
+
 const domains = [
   '3dn.ru',
   'at.ua',
@@ -41,8 +48,6 @@ const forumSectionRegex = /^([1-9]\d*)(?:-|$)/
 const excludedSubdomains = ['www']
 const modules = ['blog', 'board', 'dir', 'forum', 'load', 'news', 'photo', 'publ', 'stuff'] as const
 
-type UcozModule = (typeof modules)[number]
-
 const moduleHints: Record<UcozModule, string> = {
   blog: 'ucoz:blog',
   board: 'ucoz:board',
@@ -54,11 +59,6 @@ const moduleHints: Record<UcozModule, string> = {
   publ: 'ucoz:publ',
   stuff: 'ucoz:stuff',
 }
-
-export type UcozUrl =
-  | { kind: 'home' }
-  | { kind: 'module'; module: UcozModule }
-  | { kind: 'forumSection'; sectionId: string }
 
 export const isUcozHeaders = (headers: Headers): boolean => {
   return getCookieNames(headers).some((name) => cookieNameRegex.test(name))

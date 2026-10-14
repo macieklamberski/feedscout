@@ -4,6 +4,8 @@ import { composeHint, findElements, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
+export type OpusPage = { kind: 'collection' | 'search'; feedUrl: string }
+
 // Every OPUS 4 layout ships the core `frontdoorutil.js` under the install root, as in
 // `/opus4/layouts/opus4-zwi2/js/frontdoorutil.js`, whatever the layout is named.
 const assetRootRegex = /["']([^"'\s]*?)\/layouts\/[^/"'\s]+\/js\/frontdoorutil\.js/
@@ -15,8 +17,6 @@ const encodedSpaceRegex = /%20/g
 
 // OPUS drops these from the search parameters when it prints the page's feed link.
 const excludedParams = ['rows', 'start', 'sortfield', 'sortorder', 'browsing']
-
-export type OpusPage = { kind: 'collection' | 'search'; feedUrl: string }
 
 // OPUS spells its link parameters with PHP's `urlencode`, so `*:*` becomes `%2A%3A%2A`.
 const encodeParam = (value: string): string => {
@@ -59,7 +59,7 @@ export const isOpusHtml = (content: string): boolean => {
   return assetRootRegex.test(content)
 }
 
-export const getOpusPage = (url: string, content?: string): OpusPage | undefined => {
+export const getOpusPage = (url: string, content: string | undefined): OpusPage | undefined => {
   const assetRoot = content?.match(assetRootRegex)?.[1] ?? ''
   const { origin, pathname } = new URL(url)
   const rootPath = new URL(`${assetRoot}/`, url).pathname.replace(trailingSlashRegex, '')

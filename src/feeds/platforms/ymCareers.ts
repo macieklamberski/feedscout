@@ -4,15 +4,15 @@ import { composeHint, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Unmeasured, rate limit: the board refuses an IP after about 15 requests, and one measurement sends about 200.
 
+export type YmCareersUrl =
+  | { kind: 'search'; path: string; query: string }
+  | { kind: 'browse'; facets: string; query: string }
+
 const searchPathRegex = /^\/jobs\/?$/i
 // A browse page names one or more filters as key and value pairs, then an optional page number.
 const browsePathRegex = /^\/jobs((?:\/[a-z_]+\/[^/]+)+?)(?:\/page\d+)?\/?$/i
 
 const excludedParams = ['display', 'page']
-
-export type YmCareersUrl =
-  | { kind: 'search'; path: string; query: string }
-  | { kind: 'browse'; facets: string; query: string }
 
 // Every board answers with the header, its bot check page included.
 export const isYmCareersHeaders = (headers: Headers): boolean => {

@@ -4,14 +4,14 @@ import { composeHint, findElements } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
+// Every show site, on serve.podhome.fm or a custom domain, loads the servesite assets and links
+// the show feed at serve.podhome.fm/rss/{id}, an id the page URL does not carry.
+export type PodhomePage = { feedUrls: Array<string> }
+
 const hosts = ['serve.podhome.fm']
 const assetPath = 'cdn.podhome.fm/servesite'
 
 const feedPathRegex = /^\/rss\/[^/]+$/
-
-// Every show site, on serve.podhome.fm or a custom domain, loads the servesite assets and links
-// the show feed at serve.podhome.fm/rss/{id}, an id the page URL does not carry.
-export type PodhomePage = { feedUrls: Array<string> }
 
 const getPodhomePage = (url: string, content: string | undefined): PodhomePage | undefined => {
   if (!content?.includes(assetPath)) {

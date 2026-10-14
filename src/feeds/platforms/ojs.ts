@@ -11,10 +11,10 @@ import {
 // Discoverability: Partially discoverable without handler.
 // Generic covers home, issue (html), partly covers article.
 
+export type OjsPage = { kind: 'journal'; journalUrl: string }
+
 // OJS loads its theme stylesheets through the component router under the journal's root.
 const componentRouterRegex = /^(https?:\/\/.+?)\/\$\$\$call\$\$\$\//i
-
-export type OjsPage = { kind: 'journal'; journalUrl: string }
 
 export const isOjsHtml = (content: string): boolean => {
   return hasMetaContent(content, 'generator', 'Open Journal Systems')

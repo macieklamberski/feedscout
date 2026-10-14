@@ -7,15 +7,15 @@ import { composeHint, findElement, hasClass, hasMarker } from '../../common/util
 // Generic partly covers search.
 // Handler needed for: home.
 
+export type TalentsoftPage =
+  | { kind: 'search'; origin: string; lcid?: string; searchFeedUrl: string }
+  | { kind: 'site'; origin: string; lcid?: string }
+
 const cookiesScriptPath = '/client/dist/talentsoft-cookies.iife.js'
 const offerFeedPath = '/handlers/offerRss.ashx'
 
 const offerFeedPathRegex = /^\/handlers\/offerRss\.ashx$/i
 const lcidRegex = /^\d+$/
-
-export type TalentsoftPage =
-  | { kind: 'search'; origin: string; lcid?: string; searchFeedUrl: string }
-  | { kind: 'site'; origin: string; lcid?: string }
 
 // Every career site loads the cookie banner script from this path, on every page and theme.
 export const isTalentsoftHtml = (content: string): boolean => {

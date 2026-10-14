@@ -13,6 +13,8 @@ import { isForumotionHtml } from './forumotion.js'
 
 // Discoverability: Discoverable without handler.
 
+export type PhpbbPage = { boardUrl: string; forumId?: string; topicId?: string }
+
 const forumIdRegex = /[?&]f=(\d+)/
 const topicIdRegex = /[?&]t=(\d+)/
 
@@ -35,8 +37,6 @@ export const isPhpbbHeaders = (headers: Headers): boolean => {
     return names.includes(`${prefix}_u`) && names.includes(`${prefix}_k`)
   })
 }
-
-export type PhpbbPage = { boardUrl: string; forumId?: string; topicId?: string }
 
 const getPhpbbPage = (url: string, content: string | undefined): PhpbbPage | undefined => {
   const parsedUrl = parseUrl(url)

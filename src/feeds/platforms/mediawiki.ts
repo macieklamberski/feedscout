@@ -5,6 +5,8 @@ import { composeHint, findElement, getScriptDirectory, hasMarker } from '../../c
 // Discoverability: Partially discoverable without handler.
 // Generic covers special (html), partly covers page.
 
+export type MediawikiPage = { scriptUrl: string; pageName?: string }
+
 const rsdHrefRegex = /\/api\.php\?action=rsd$/
 const pageNameRegex = /"wgPageName":("(?:[^"\\]|\\.)*")/
 const namespaceNumberRegex = /"wgNamespaceNumber":(-?\d+)/
@@ -43,8 +45,6 @@ const getPageName = (content: string | undefined): string | undefined => {
 
   return JSON.parse(pageName)
 }
-
-export type MediawikiPage = { scriptUrl: string; pageName?: string }
 
 const getMediawikiPage = (url: string, content: string | undefined): MediawikiPage | undefined => {
   const rsdHref = getRsdHref(content)

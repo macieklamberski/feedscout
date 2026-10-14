@@ -1,7 +1,35 @@
 import { detectAtomFeed, detectJsonFeed, detectRdfFeed, detectRssFeed, parseFeed } from 'feedsmith'
-import { parseUrl, resolveUrl } from 'trousse'
+import {
+  archiveExtensions,
+  audioExtensions,
+  codeExtensions,
+  documentExtensions,
+  flashExtensions,
+  fontExtensions,
+  imageExtensions,
+  installerExtensions,
+  parseUrl,
+  resolveUrl,
+  subtitleExtensions,
+  videoExtensions,
+} from 'trousse'
 import type { DiscoverResolveSiteUrlFn, DiscoverResolveUrlFn, FetchFn } from '../types.js'
 import { attempt, getFeedSiteUrl, htmlAcceptHeader } from './utils.js'
+
+// A podcast host's tracking prefix can put a feed segment in an episode's path, as in
+// `pscrb.fm/rss/p/…/episode.mp3`, so a page link or a platform handler can offer a media file.
+export const defaultIgnoredExtensions = [
+  ...archiveExtensions,
+  ...audioExtensions,
+  ...codeExtensions,
+  ...documentExtensions,
+  ...flashExtensions,
+  ...fontExtensions,
+  ...imageExtensions,
+  ...installerExtensions,
+  ...subtitleExtensions,
+  ...videoExtensions,
+]
 
 export const defaultFetchFn: FetchFn = async (url, options) => {
   const headers = new Headers(options?.headers)

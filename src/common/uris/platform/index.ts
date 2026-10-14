@@ -11,7 +11,7 @@ import type { PlatformHandler, PlatformMethodOptions } from './types.js'
 
 type PlatformPage = Omit<DiscoverInputObject, 'status'>
 
-export type PlatformResolution = {
+type PlatformResolution = {
   entries: Array<DiscoverUriEntry>
   guessExclusionRegexes: Array<RegExp>
 }

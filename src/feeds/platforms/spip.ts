@@ -6,13 +6,6 @@ import { composeHint, findElement, hasMarker } from '../../common/utils.js'
 // Discoverability: Partially discoverable without handler.
 // Generic covers auteur, home, mot, rubrique (html), partly covers article.
 
-const objectWordRegex = /^([a-z]+)(\d+)$/i
-const objectFileRegex = /^([a-z]+)(\d+)\.html$/i
-const idRegex = /^\d+$/
-const notFoundClassRegex = /\bpage_404\b/
-
-const objects = ['article', 'rubrique', 'mot', 'auteur'] as const
-
 type SpipObject = (typeof objects)[number]
 
 type SpipObjectId = { object: SpipObject; id: string }
@@ -20,6 +13,13 @@ type SpipObjectId = { object: SpipObject; id: string }
 export type SpipPage =
   | { kind: SpipObject; scriptUrl: string; id: string }
   | { kind: 'home'; scriptUrl: string }
+
+const objectWordRegex = /^([a-z]+)(\d+)$/i
+const objectFileRegex = /^([a-z]+)(\d+)\.html$/i
+const idRegex = /^\d+$/
+const notFoundClassRegex = /\bpage_404\b/
+
+const objects = ['article', 'rubrique', 'mot', 'auteur'] as const
 
 // SPIP sends `Composed-By` on every page it composes, and `X-Spip-Cache` when its page cache is
 // on. An install can silence `Composed-By` and still send the cache header.

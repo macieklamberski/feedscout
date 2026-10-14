@@ -4,6 +4,8 @@ import { composeHint, getMetaContent } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
+export type RedcirclePage = { showUuid: string }
+
 const hosts = ['redcircle.com', 'www.redcircle.com']
 
 const showRegex = /^\/shows\/([^/]+)(?:\/|$)/i
@@ -45,8 +47,6 @@ const findShowUuid = (url: string, content: string | undefined): string | undefi
 
   return getUuidFromPath(pageUrl.pathname)
 }
-
-export type RedcirclePage = { showUuid: string }
 
 const getRedcirclePage = (url: string, content: string | undefined): RedcirclePage | undefined => {
   const showUuid = findShowUuid(url, content)

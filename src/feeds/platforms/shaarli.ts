@@ -11,6 +11,8 @@ import {
 
 // Discoverability: Discoverable without handler.
 
+export type ShaarliPage = { baseUrl: string }
+
 export const isShaarliHtml = (content: string): boolean => {
   return hasElementWithId(content, 'shaarli-menu')
 }
@@ -21,15 +23,13 @@ export const isShaarliHeaders = (headers: Headers): boolean => {
 
 // Shaarli 0.12 and later print the mount path in `js_base_path`. Older installs
 // route every page through one `index.php`, so its directory is the mount path.
-const getBasePath = (pathname: string, content?: string): string => {
+const getBasePath = (pathname: string, content: string | undefined): string => {
   const input = findElement(content, (element) => {
     return element.name === 'input' && element.attribs.name === 'js_base_path'
   })
 
   return input?.attribs.value ?? getScriptDirectory(pathname)
 }
-
-export type ShaarliPage = { baseUrl: string }
 
 const getShaarliPage = (url: string, content: string | undefined): ShaarliPage | undefined => {
   const parsedUrl = parseUrl(url)
