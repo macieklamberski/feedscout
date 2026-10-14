@@ -1,5 +1,6 @@
 import type { Atom } from 'feedsmith'
 import {
+  coerceArray,
   createAcceptHeader,
   genericHtmlMimeTypes,
   htmlMimeTypes,
@@ -199,7 +200,7 @@ export const omitReadPages = (
   entry: DiscoverUriEntry,
   readPageUrls: Set<string>,
 ): DiscoverUriEntry | undefined => {
-  const uris = typeof entry.uri === 'string' ? [entry.uri] : entry.uri
+  const uris = coerceArray(entry.uri)
   const unread = uris.filter((uri) => !readPageUrls.has(stripHash(uri)))
 
   if (unread.length === 0) {

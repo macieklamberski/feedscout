@@ -1,4 +1,4 @@
-import { isHttpUrl, resolveFeedProtocol } from 'trousse'
+import { coerceArray, isHttpUrl, resolveFeedProtocol } from 'trousse'
 import {
   type DiscoverInput,
   type DiscoverInputObject,
@@ -193,7 +193,7 @@ const runDiscover = async <TValid>(
     // Each alternative counts on its own, so a page link to a URL that a platform entry already
     // offers as one of its alternatives is not fetched a second time.
     const unique = normalized.filter((entry) => {
-      const uris = typeof entry.uri === 'string' ? [entry.uri] : entry.uri
+      const uris = coerceArray(entry.uri)
 
       if (uris.some((uri) => seen.has(uri))) {
         return false
@@ -262,7 +262,7 @@ const runDiscover = async <TValid>(
     method: DiscoverMethod,
     entryIndex: number,
   ): Promise<void> => {
-    const alternatives = typeof entry.uri === 'string' ? [entry.uri] : entry.uri
+    const alternatives = coerceArray(entry.uri)
 
     for (const url of alternatives) {
       const extracted = await fetchAndExtract(url)
