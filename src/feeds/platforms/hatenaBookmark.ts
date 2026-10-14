@@ -114,11 +114,13 @@ export const parseHatenaBookmarkUrl = (url: string): HatenaBookmarkUrl | undefin
     return { kind: 'search', query: legacyQuery, params: copySearchFilters(searchParams, target) }
   }
 
-  const params = searchParams.toString()
-
   const site = pathname.match(siteRegex)?.[1]
 
+  // The site page keeps only its sort order in its own feed link.
   if (site) {
+    const sort = searchParams.get('sort')
+    const params = new URLSearchParams(sort ? { sort } : {}).toString()
+
     return { kind: 'site', site, params }
   }
 

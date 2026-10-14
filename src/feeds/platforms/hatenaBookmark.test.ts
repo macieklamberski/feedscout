@@ -100,6 +100,18 @@ describe('parseHatenaBookmarkUrl', () => {
     expect(parseHatenaBookmarkUrl('https://b.hatena.ne.jp/site/example.com/')).toEqual(expected)
   })
 
+  it('should keep only the sort order of a site page', () => {
+    const expected: HatenaBookmarkUrl = {
+      kind: 'site',
+      site: 'example.com/',
+      params: 'sort=eid',
+    }
+
+    expect(
+      parseHatenaBookmarkUrl('https://b.hatena.ne.jp/site/example.com/?page=2&sort=eid'),
+    ).toEqual(expected)
+  })
+
   it('should return a site for a domain page with a capitalized site segment', () => {
     const expected: HatenaBookmarkUrl = {
       kind: 'site',
