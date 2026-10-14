@@ -9,7 +9,7 @@ const netcrewHtml = `
     </style>
     <link rel=stylesheet media=print href="/ssi/css/print.css">
     <script src="/ssi/js/escapeurl.js"></script>
-    <script src="/ssi/js/common.js"></script>
+    <script src="/ssi/js/search-trend.js"></script>
   </head>
 `
 const scriptsOnlyHtml = '<script src="/ssi/js/menu.js"></script>'
@@ -37,6 +37,12 @@ describe('isNetcrewHtml', () => {
     expect(isNetcrewHtml(netcrewHtml)).toBe(true)
   })
 
+  it('should return false for another script under the template path', () => {
+    expect(
+      isNetcrewHtml('<script src="/ssi/js/common.js"></script><link href="/ssi/css/top.css">'),
+    ).toBe(false)
+  })
+
   it('should return false for the script path alone', () => {
     expect(isNetcrewHtml(scriptsOnlyHtml)).toBe(false)
   })
@@ -47,6 +53,21 @@ describe('isNetcrewHtml', () => {
 
   it('should return false for a style path nested under another directory', () => {
     expect(isNetcrewHtml(nestedStyleHtml)).toBe(false)
+  })
+
+  it('should return true for a template that imports its styles', () => {
+    const value = `
+      <style>@import url("/ssi/css/top.css");</style>
+      <script src="/ssi/js/search-trend.js"></script>
+    `
+
+    expect(isNetcrewHtml(value)).toBe(true)
+  })
+
+  it('should return false for the template paths outside asset elements', () => {
+    const value = '<p>Scripts go in "/ssi/js/" and styles in "/ssi/css/".</p>'
+
+    expect(isNetcrewHtml(value)).toBe(false)
   })
 
   it('should return false for another CMS', () => {

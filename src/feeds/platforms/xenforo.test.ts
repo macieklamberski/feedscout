@@ -18,6 +18,12 @@ describe('isXenforoHtml', () => {
     expect(isXenforoHtml("<html id='XF'>")).toBe(true)
   })
 
+  it('should return false for the app root id on an element other than html', () => {
+    const value = '<html lang="en"><body><div id="XF"></div></body></html>'
+
+    expect(isXenforoHtml(value)).toBe(false)
+  })
+
   it('should return false for another forum platform', () => {
     expect(isXenforoHtml(otherHtml)).toBe(false)
   })

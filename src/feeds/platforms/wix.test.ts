@@ -15,6 +15,12 @@ describe('isWixHtml', () => {
     ).toBe(true)
   })
 
+  it('should return false for a link to the Wix asset host', () => {
+    const value = '<a href="https://static.parastorage.com/services/app.js">app</a>'
+
+    expect(isWixHtml(value)).toBe(false)
+  })
+
   it('should return false for another generator', () => {
     expect(isWixHtml(otherHtml)).toBe(false)
   })

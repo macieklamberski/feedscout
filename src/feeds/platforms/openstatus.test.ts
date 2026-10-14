@@ -37,6 +37,12 @@ describe('isOpenstatusHtml', () => {
     expect(isOpenstatusHtml(previewImageHtml)).toBe(true)
   })
 
+  it('should return false for the summary endpoint in prose', () => {
+    const value = '<p>Poll <code>/api/status/summary.json</code> for the current state.</p>'
+
+    expect(isOpenstatusHtml(value)).toBe(false)
+  })
+
   it('should return false for a page that only mentions the project', () => {
     expect(isOpenstatusHtml(mentionHtml)).toBe(false)
   })

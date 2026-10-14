@@ -1,6 +1,12 @@
 import { parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, getCookieNames, hasMarker, hasMetaContent } from '../../common/utils.js'
+import {
+  composeHint,
+  findElement,
+  getCookieNames,
+  hasMarker,
+  hasMetaContent,
+} from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers listing (guess, html).
@@ -9,12 +15,29 @@ import { composeHint, getCookieNames, hasMarker, hasMetaContent } from '../../co
 export type GravUrl = { kind: 'home' } | { kind: 'page'; path: string }
 
 const trailingSlashRegex = /\/$/
+const htmlSuffixRegex = /\.html$/i
 const gravAssetRegex = /\/user\/(?:themes|plugins)\//
 const gravCookieRegex = /^grav-site-[0-9a-f]+$/
 
 // `GravCMS` in full, since the value is compared as a prefix and `Grav` matches `Gravity Forms`.
 export const isGravHtml = (content: string): boolean => {
-  return hasMetaContent(content, 'generator', 'GravCMS') || gravAssetRegex.test(content)
+  if (hasMetaContent(content, 'generator', 'GravCMS')) {
+    return true
+  }
+
+  const asset = findElement(content, (element) => {
+    if (element.name === 'link') {
+      return gravAssetRegex.test(element.attribs.href ?? '')
+    }
+
+    if (element.name === 'script') {
+      return gravAssetRegex.test(element.attribs.src ?? '')
+    }
+
+    return false
+  })
+
+  return asset !== undefined
 }
 
 export const isGravHeaders = (headers: Headers): boolean => {
@@ -34,7 +57,11 @@ export const parseGravUrl = (url: string): GravUrl | undefined => {
     return { kind: 'home' }
   }
 
-  return { kind: 'page', path: pathname.replace(trailingSlashRegex, '') }
+  // Grav serves `/blog.html` as the `/blog` page, whose feed is `/blog.rss`.
+  return {
+    kind: 'page',
+    path: pathname.replace(trailingSlashRegex, '').replace(htmlSuffixRegex, ''),
+  }
 }
 
 export const gravHandler: PlatformHandler = {

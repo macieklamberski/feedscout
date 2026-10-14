@@ -1,13 +1,24 @@
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, hasMarker } from '../../common/utils.js'
+import { composeHint, findElement, hasMarker, hasMetaContent } from '../../common/utils.js'
 
 // Discoverability: Not discoverable without handler.
 // Handler needed for: all shapes.
 
-const pageMarkers = ['/api/status/summary.json', 'www.openstatus.dev/api/og/page']
+const previewImageUrl = 'https://www.openstatus.dev/api/og/page'
 
+const summaryHrefRegex = /^(?:https?:\/\/[^/]+)?\/api\/status\/summary\.json$/
+
+// A status page links its summary endpoint and takes its preview image from the hosted service.
 export const isOpenstatusHtml = (content: string): boolean => {
-  return pageMarkers.some((marker) => content.includes(marker))
+  if (hasMetaContent(content, 'og:image', previewImageUrl)) {
+    return true
+  }
+
+  const summaryLink = findElement(content, (element) => {
+    return element.name === 'link' && summaryHrefRegex.test(element.attribs.href ?? '')
+  })
+
+  return summaryLink !== undefined
 }
 
 export const openstatusHandler: PlatformHandler = {
