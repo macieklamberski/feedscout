@@ -560,18 +560,9 @@
     "gancio:tag": "https://balotta.org/feed/rss/tag/antirazzismo"
   },
   "gcsWeb": {
-    "gcs-web:events": [
-      "https://upwork.gcs-web.com/rss/events.xml",
-      "https://ir.labcorp.com/rss/events.xml"
-    ],
-    "gcs-web:news-releases": [
-      "https://upwork.gcs-web.com/rss/news-releases.xml",
-      "https://ir.labcorp.com/rss/news-releases.xml"
-    ],
-    "gcs-web:sec-filings": [
-      "https://upwork.gcs-web.com/rss/sec-filings.xml",
-      "https://ir.labcorp.com/rss/sec-filings.xml"
-    ]
+    "gcs-web:events": { "skip": "GCS-web's Akamai answers 403 to non-browser clients" },
+    "gcs-web:news-releases": { "skip": "GCS-web's Akamai answers 403 to non-browser clients" },
+    "gcs-web:sec-filings": { "skip": "GCS-web's Akamai answers 403 to non-browser clients" }
   },
   "geoblog": {
     "geoblog:trip": "http://zielonagora.geoblog.pl/podroz/rss/27449.xml"
@@ -672,7 +663,7 @@
     "hackernews:show": "https://news.ycombinator.com/showrss"
   },
   "haleyJobs": {
-    "haley-jobs:jobs": "https://jobs.akraya.com/rss/rss.smpl?ff=1"
+    "haley-jobs:jobs": { "skip": "Haley job boards answer 404 to non-browser user agents" }
   },
   "hashnode": {
     "hashnode:blog": "https://townhall.hashnode.com/rss.xml"
@@ -845,7 +836,7 @@
   },
   "koha": {
     "koha:comments": "https://opac.northsouth.edu/cgi-bin/koha/opac-showreviews.pl?format=rss",
-    "koha:list": "https://library-search.nics.gov.uk/cgi-bin/koha/opac-shelves.pl?rss=1&op=view&shelfnumber=309",
+    "koha:list": "https://koha.ffzg.hr/cgi-bin/koha/opac-shelves.pl?rss=1&op=view&shelfnumber=6649",
     "koha:search": "https://biblioteca.unach.edu.ec/cgi-bin/koha/opac-search.pl?q=agua&count=50&sort_by=acqdate_dsc&format=rss"
   },
   "laget": {
@@ -1460,7 +1451,7 @@
     "redmine:activity": [
       "https://www.redmine.org/activity.atom",
       "https://www.redmine.org/projects/redmine/activity.atom",
-      "https://pulp.plan.io/projects/pulp/activity.atom"
+      "https://redmine.lighttpd.net/projects/lighttpd/activity.atom"
     ],
     "redmine:board": "https://www.redmine.org/projects/redmine/boards/1.atom",
     "redmine:issue": [
