@@ -9,7 +9,6 @@ import { composeHint, getTenantSubdomain } from '../../common/utils.js'
 export type PosthavenUrl = { kind: 'tag'; tag: string } | { kind: 'blog' }
 
 const domains = ['posthaven.com']
-// The API.
 const excludedSubdomains = ['api']
 const tagRegex = /^\/tag\/([^/]+)/i
 

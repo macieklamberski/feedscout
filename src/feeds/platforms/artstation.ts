@@ -10,7 +10,6 @@ export type ArtstationUrl = { kind: 'profile'; username: string } | { kind: 'art
 
 const domains = ['artstation.com']
 const hosts = ['artstation.com', 'www.artstation.com']
-// The magazine and the image hosts.
 const excludedSubdomains = ['magazine', 'cdna', 'cdnb']
 const excludedPaths = [
   'about',

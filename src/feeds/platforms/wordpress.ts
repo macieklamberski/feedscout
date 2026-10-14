@@ -34,7 +34,6 @@ const paginationRegex = /\/page\/\d+\/?$/i
 // WordPress's own scripts and folders, the search results, and an archive route without its slug.
 const reservedPathRegex = /^\/(?:wp-[^/]*|[^/]*\.php|search|category|tag|author)(?:\/|$)/i
 
-// The platform's own site and its service hosts, never a blog.
 const excludedSubdomains = ['www', 'public-api', 'r-login', 'subscribe', 'dashboard']
 
 // An unregistered {name}.home.blog redirects to home.blog, whose every page links this feed.

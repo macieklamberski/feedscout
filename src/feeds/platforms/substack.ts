@@ -9,7 +9,6 @@ import { composeHint, getTenantSubdomain } from '../../common/utils.js'
 export type SubstackUrl = { kind: 'newsletter' } | { kind: 'profile'; username: string }
 
 const domains = ['substack.com']
-// The API, the CDN, the link shortener for shared posts and the help center.
 const excludedSubdomains = ['api', 'cdn', 'open', 'support']
 const profileRegex = /^\/@([\w-]+)/
 // A profile page embeds its primary publication as escaped JSON. The publication

@@ -64,7 +64,6 @@ export const parseItchioUrl = (url: string): ItchioUrl | undefined => {
 
   // Subdomain: creator pages ({creator}.itch.io).
   if (!isHostOf(url, mainHosts)) {
-    // The API, the image host and the static file host.
     const creator = getTenantSubdomain(url, domains, ['api', 'img', 'static'])
 
     if (!creator) {

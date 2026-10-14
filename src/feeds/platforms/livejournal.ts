@@ -83,7 +83,7 @@ export const parseLivejournalUrl = (url: string): LivejournalUrl | undefined => 
     return { kind: 'journal', username, tag }
   }
 
-  // The mobile site, the API and image hosts such as `ic.pics.livejournal.com` are no journal.
+  // The mobile site and image hosts such as `ic.pics.livejournal.com` are no journal.
   if (isHostOf(url, excludedHosts) || !getTenantSubdomain(url, domains, ['api', 'm'])) {
     return
   }

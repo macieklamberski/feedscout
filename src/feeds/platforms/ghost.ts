@@ -9,7 +9,6 @@ export type GhostUrl =
   | { kind: 'blog' }
 
 const domains = ['ghost.io']
-// The asset host.
 const excludedSubdomains = ['assets']
 const tagRegex = /^\/tag\/([^/]+)/i
 const authorRegex = /^\/author\/([^/]+)/i

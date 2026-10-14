@@ -6,7 +6,6 @@ import { composeHint, getTenantSubdomain } from '../../common/utils.js'
 export type MataroaUrl = { kind: 'blog' }
 
 const domains = ['mataroa.blog']
-// Reserved names that redirect to the home page.
 const excludedSubdomains = ['api', 'cdn', 'static']
 
 export const parseMataroaUrl = (url: string): MataroaUrl | undefined => {
