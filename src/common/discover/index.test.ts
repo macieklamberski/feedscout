@@ -1171,6 +1171,31 @@ describe('discoverFeeds', () => {
     })
   })
 
+  describe('pages already read', () => {
+    it('should not fetch a link that points back at the input page', async () => {
+      const fetchedUrls: Array<string> = []
+      const mockFetch: FetchFn = (url) => {
+        fetchedUrls.push(url)
+
+        return Promise.resolve({
+          headers: new Headers(),
+          body: '',
+          url,
+          status: 404,
+          statusText: 'Not Found',
+        })
+      }
+      const content = '<html><body><a href="#">RSS</a><a href="#feeds">Feeds</a></body></html>'
+
+      await discoverFeeds(
+        { url: 'https://example.com/', content },
+        { methods: ['html'], fetchFn: mockFetch },
+      )
+
+      expect(fetchedUrls).toEqual([])
+    })
+  })
+
   describe('maxUris', () => {
     it('should fetch every candidate when maxUris is Infinity', async () => {
       const fetchedUrls: Array<string> = []

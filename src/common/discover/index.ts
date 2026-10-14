@@ -23,7 +23,9 @@ import {
   normalizeInput,
   normalizeMethodsConfig,
   normalizeUriEntry,
+  omitReadPages,
   reportError,
+  stripHash,
 } from './utils.js'
 
 const runDiscover = async <TValid>(
@@ -152,6 +154,15 @@ const runDiscover = async <TValid>(
 
   // Step 4: Normalize and deduplicate URIs per method group, deduping across groups.
   const seen = new Set<string>()
+  // A link to a page already read, such as `#` or `#feeds`, is that page again and no feed.
+  const readPageUrls = new Set(
+    [
+      sourceInput.content ? sourceInput.url : undefined,
+      siteInput?.content ? siteInput.url : undefined,
+    ]
+      .filter((url) => url !== undefined)
+      .map(stripHash),
+  )
   const methodGroups: Array<{ method: DiscoverMethod; entries: Array<DiscoverUriEntry> }> = []
   let remaining = safeMaxUris
 
@@ -176,6 +187,7 @@ const runDiscover = async <TValid>(
       .map((entry) => {
         return normalizeUriEntry(entry, resolveUrlFn, baseUrl, onError, ignoredExtensions)
       })
+      .map((entry) => (entry ? omitReadPages(entry, readPageUrls) : undefined))
       .filter((entry) => entry !== undefined)
 
     // Each alternative counts on its own, so a page link to a URL that a platform entry already

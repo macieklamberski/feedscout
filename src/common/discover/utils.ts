@@ -190,6 +190,29 @@ export const normalizeUriEntry = (
   }
 }
 
+export const stripHash = (url: string): string => {
+  return url.split('#')[0]
+}
+
+// Drops the alternatives that point at a page already read. An entry left with none is dropped.
+export const omitReadPages = (
+  entry: DiscoverUriEntry,
+  readPageUrls: Set<string>,
+): DiscoverUriEntry | undefined => {
+  const uris = typeof entry.uri === 'string' ? [entry.uri] : entry.uri
+  const unread = uris.filter((uri) => !readPageUrls.has(stripHash(uri)))
+
+  if (unread.length === 0) {
+    return
+  }
+
+  if (unread.length === uris.length) {
+    return entry
+  }
+
+  return { ...entry, uri: unread.length === 1 ? unread[0] : unread }
+}
+
 export const normalizeMethodsConfig = (
   sourceInput: DiscoverInputObject,
   siteInput: DiscoverInputObject | undefined,
