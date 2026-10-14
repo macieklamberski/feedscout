@@ -591,6 +591,7 @@ Discovers RSS feeds for Itch.io games, creators, devlogs, and browse pages.
 | `itch.io/games/genre-{genre}` | Genre<sup>†</sup> |
 | `itch.io/games/made-with-{engine}` | Engine<sup>†</sup> |
 | `itch.io/games/{sort}` | Sorted games<sup>†</sup> (newest/top-rated/top-sellers/on-sale/free/released/in-development) |
+| `itch.io/games/{filter}/{filter}` | Games<sup>†</sup>, for a listing with two or more filters |
 | `itch.io/{section}` | Section<sup>†</sup> (tools/game-assets/soundtracks/physical-games/books/comics/misc) |
 | `itch.io/devlogs` | All devlogs |
 | `itch.io` | Featured · new<sup>†</sup> · sales<sup>†</sup> · all devlogs · itch.io blog |
