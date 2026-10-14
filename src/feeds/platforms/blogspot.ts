@@ -8,8 +8,10 @@ import { composeHint, findElement, hasMarker } from '../../common/utils.js'
 
 export type BlogspotUrl = { kind: 'label'; label: string } | { kind: 'post' } | { kind: 'blog' }
 
-// Matches *.blogspot.com and country TLDs like *.blogspot.co.uk, *.blogspot.de, etc.
-const blogspotDomainRegex = /^.+\.blogspot\.(?:com|co\.[a-z]{2}|com\.[a-z]{2}|[a-z]{2,3})$/
+// Matches {blog}.blogspot.com and country domains like .co.uk, .com.br and .de. The certificate
+// covers one label, and www is Blogger's own host.
+const blogspotDomainRegex =
+  /^(?!www\.)[^.]+\.blogspot\.(?:com|co\.[a-z]{2}|com\.[a-z]{2}|[a-z]{2})$/
 const labelRegex = /^\/search\/label\/([^/]+)/i
 const postRegex = /^\/\d{4}\/\d{2}\/[^/]+\.html$/i
 const postCommentsFeedRegex = /\/feeds\/(\d+)\/comments\/default/i

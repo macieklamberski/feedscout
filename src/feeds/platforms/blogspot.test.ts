@@ -36,7 +36,8 @@ describe('blogspotHandler', () => {
   describe('match', () => {
     const values: Array<[boolean, string]> = [
       [true, 'https://example.blogspot.com'],
-      [true, 'https://blog.example.blogspot.com'],
+      [false, 'https://blog.example.blogspot.com'],
+      [false, 'https://www.blogspot.com'],
       [true, 'https://example.blogspot.co.uk'],
       [true, 'https://example.blogspot.de'],
       [true, 'https://example.blogspot.fr'],
