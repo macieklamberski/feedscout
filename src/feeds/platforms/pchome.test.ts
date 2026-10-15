@@ -61,50 +61,6 @@ describe('parsePchomeUrl', () => {
     expect(parsePchomeUrl('https://mypaper.pchome.com.tw/')).toBeUndefined()
   })
 
-  it('should return undefined for a site-wide listing', () => {
-    expect(parsePchomeUrl('https://mypaper.pchome.com.tw/index/newest-paper')).toBeUndefined()
-  })
-
-  it('should return undefined for the posting panel', () => {
-    expect(parsePchomeUrl('https://mypaper.m.pchome.com.tw/panel/content_add')).toBeUndefined()
-  })
-
-  it('should return undefined for the mobile listing', () => {
-    expect(parsePchomeUrl('https://mypaper.m.pchome.com.tw/s/1')).toBeUndefined()
-  })
-
-  it('should return undefined for the search page', () => {
-    expect(parsePchomeUrl('https://mypaper.m.pchome.com.tw/search_mypaper/')).toBeUndefined()
-  })
-
-  it('should return undefined for an image view', () => {
-    const value = 'https://mypaper.pchome.com.tw/show/article/alice/A1312381664'
-
-    expect(parsePchomeUrl(value)).toBeUndefined()
-  })
-
-  it('should return undefined for a stylesheet', () => {
-    expect(parsePchomeUrl('https://mypaper.pchome.com.tw/css/topstyle.css')).toBeUndefined()
-  })
-
-  it('should return undefined for an uploaded file', () => {
-    expect(parsePchomeUrl('https://mypaper.pchome.com.tw/public_file/alice/1.jpg')).toBeUndefined()
-  })
-
-  it('should return undefined for a script', () => {
-    expect(parsePchomeUrl('https://mypaper.pchome.com.tw/js/common.js')).toBeUndefined()
-  })
-
-  it('should return undefined for an image asset', () => {
-    expect(parsePchomeUrl('https://mypaper.pchome.com.tw/img/logo.png')).toBeUndefined()
-  })
-
-  it('should return undefined for the lightbox assets', () => {
-    expect(
-      parsePchomeUrl('https://mypaper.pchome.com.tw/fancybox/jquery.fancybox.css'),
-    ).toBeUndefined()
-  })
-
   it('should return undefined for a file at the root', () => {
     expect(parsePchomeUrl('https://mypaper.pchome.com.tw/oops.htm')).toBeUndefined()
   })

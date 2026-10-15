@@ -18,14 +18,8 @@ describe('parseBlogiaUrl', () => {
     expect(parseBlogiaUrl('https://blogia.com/')).toBeUndefined()
   })
 
-  const excludedUrls = [
-    'https://www.blogia.com/',
-    'https://cms.blogia.com/templates/template1/css/styles.css',
-    'https://mail.blogia.com/',
-  ]
-
-  it.each(excludedUrls)('should return undefined for the service host %s', (url) => {
-    expect(parseBlogiaUrl(url)).toBeUndefined()
+  it('should return undefined for the www host', () => {
+    expect(parseBlogiaUrl('https://www.blogia.com/')).toBeUndefined()
   })
 
   it('should return undefined for another host', () => {
@@ -62,7 +56,7 @@ describe('blogiaHandler', () => {
       expect(blogiaHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return empty array for an excluded subdomain', () => {
+    it('should return empty array for the www host', () => {
       expect(blogiaHandler.resolve('https://www.blogia.com/')).toEqual([])
     })
   })

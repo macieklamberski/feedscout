@@ -27,14 +27,6 @@ describe('noteHandler', () => {
     it('should not match hashtag pages', () => {
       expect(noteHandler.match('https://note.com/hashtag/design')).toBe(false)
     })
-
-    it('should not match a magazine under a reserved path', () => {
-      expect(noteHandler.match('https://note.com/search/m/m1861fae39074')).toBe(false)
-    })
-
-    it('should not match a magazine under a capitalized reserved path', () => {
-      expect(noteHandler.match('https://note.com/Search/m/m1861fae39074')).toBe(false)
-    })
   })
 
   describe('resolve', () => {

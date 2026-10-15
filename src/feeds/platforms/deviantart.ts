@@ -1,4 +1,4 @@
-import { decodeSegment, isAnyOf, isHostOf, parseUrl } from 'trousse'
+import { decodeSegment, isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
@@ -23,44 +23,6 @@ const folderRegex = /^\/[^/]+\/gallery\/(\d+)(?:\/|$)/i
 const journalRegex = /^\/[^/]+\/journal(?:\/|$)/i
 const dailyDeviationsRegex = /^\/daily-deviations\/?$/i
 
-const excludedPaths = [
-  'about',
-  'account',
-  'api',
-  'art',
-  'browse',
-  'checkout',
-  'community',
-  'core-membership',
-  'daily-deviations',
-  'dailychallenges',
-  'developers',
-  'deviations',
-  'dreamup',
-  'forum',
-  'groups',
-  'help',
-  'join',
-  'messages',
-  'morelikethis',
-  'muro',
-  'notifications',
-  'popular',
-  'posts',
-  'print',
-  'search',
-  'settings',
-  'shop',
-  'status-updates',
-  'studio',
-  'submit',
-  'tag',
-  'team',
-  'topic',
-  'users',
-  'watch',
-]
-
 export const parseDeviantartUrl = (url: string): DeviantartUrl | undefined => {
   const parsedUrl = parseUrl(url)
 
@@ -82,7 +44,7 @@ export const parseDeviantartUrl = (url: string): DeviantartUrl | undefined => {
 
   const username = pathname.match(userRegex)?.[1]
 
-  if (!username || isAnyOf(username, excludedPaths)) {
+  if (!username) {
     return
   }
 

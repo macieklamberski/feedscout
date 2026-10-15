@@ -21,11 +21,9 @@ const domains = [
 const blogRegex = /^\/([^/.]+)(?:\/|$)/
 const feedPathRegex = /^\/([^/.]+)\/(?:atom\.xml|index\.rdf|rss\.xml)$/i
 
-const excludedSubdomains = ['app']
-
 const getCocologPage = (url: string, content: string | undefined): CocologPage | undefined => {
   // A nested label such as app.f.cocolog-nifty.com is a service host, never a blog.
-  if (!getTenantSubdomain(url, domains, excludedSubdomains)) {
+  if (!getTenantSubdomain(url, domains)) {
     return
   }
 

@@ -1,4 +1,3 @@
-import { isHostOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, getTenantSubdomain } from '../../common/utils.js'
 
@@ -7,11 +6,9 @@ import { composeHint, getTenantSubdomain } from '../../common/utils.js'
 export type HashnodeUrl = { kind: 'blog' }
 
 const domains = ['hashnode.dev', 'hashnode.com']
-// On hashnode.dev the same labels are blogs.
-const excludedHosts = ['api.hashnode.com', 'cdn.hashnode.com']
 
 export const parseHashnodeUrl = (url: string): HashnodeUrl | undefined => {
-  if (isHostOf(url, excludedHosts) || !getTenantSubdomain(url, domains)) {
+  if (!getTenantSubdomain(url, domains)) {
     return
   }
 

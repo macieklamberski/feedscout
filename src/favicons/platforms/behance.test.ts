@@ -25,10 +25,6 @@ describe('behanceHandler', () => {
     it('should match profile URLs', () => {
       expect(behanceHandler.match('https://www.behance.net/alice')).toBe(true)
     })
-
-    it('should not match URLs that name no profile', () => {
-      expect(behanceHandler.match('https://www.behance.net/search')).toBe(false)
-    })
   })
 
   describe('resolve', () => {

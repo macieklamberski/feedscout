@@ -17,58 +17,6 @@ const hosts = ['vimeo.com', 'www.vimeo.com']
 
 const numericRegex = /^\d+$/
 
-const excludedPaths = [
-  'about',
-  'album',
-  'analytics',
-  'api',
-  'blog',
-  'business',
-  'careers',
-  'categories',
-  'channels',
-  'cookie_policy',
-  'couchmode',
-  'create',
-  'customers',
-  'dmca',
-  'enterprise',
-  'event',
-  'explore',
-  'features',
-  'for-hire',
-  'forgot_password',
-  'groups',
-  'help',
-  'home',
-  'integrations',
-  'jobs',
-  'join',
-  'library',
-  'log_in',
-  'log_out',
-  'manage',
-  'ondemand',
-  'ott',
-  'partners',
-  'plus',
-  'pricing',
-  'privacy',
-  'pro',
-  'search',
-  'settings',
-  'showcase',
-  'site_map',
-  'solutions',
-  'stats',
-  'stock',
-  'terms',
-  'upload',
-  'upgrade',
-  'videoschool',
-  'watch',
-]
-
 const albumSegments = ['album', 'showcase']
 
 export const parseVimeoUrl = (url: string): VimeoUrl | undefined => {
@@ -91,12 +39,16 @@ export const parseVimeoUrl = (url: string): VimeoUrl | undefined => {
   // Album/showcase: vimeo.com/album/{id} or vimeo.com/showcase/{id}. Only /album/{id}/rss
   // returns RSS; /showcase/{id}/rss returns 404. /album/{id} 301-redirects to
   // /showcase/{id} in the browser, so users will most often paste the showcase URL.
-  if (isAnyOf(first, albumSegments) && second && numericRegex.test(second)) {
+  if (isAnyOf(first, albumSegments) && second) {
+    if (!numericRegex.test(second)) {
+      return
+    }
+
     return { kind: 'album', albumId: second }
   }
 
-  // Skip excluded paths and numeric-only segments (video IDs).
-  if (!first || isAnyOf(first, excludedPaths) || numericRegex.test(first)) {
+  // A numeric first segment is a video id.
+  if (!first || numericRegex.test(first)) {
     return
   }
 

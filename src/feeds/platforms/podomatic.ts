@@ -9,7 +9,6 @@ export type PodomaticUrl = { kind: 'podcast'; show: string }
 const domains = ['podomatic.com']
 const hosts = ['podomatic.com', 'www.podomatic.com']
 const directoryPathRegex = /^\/podcasts\/([^/]+)/i
-const excludedSubdomains = ['api', 'assets', 'static']
 
 export const parsePodomaticUrl = (url: string): PodomaticUrl | undefined => {
   const parsedUrl = parseUrl(url)
@@ -28,7 +27,7 @@ export const parsePodomaticUrl = (url: string): PodomaticUrl | undefined => {
     return { kind: 'podcast', show }
   }
 
-  const show = getTenantSubdomain(parsedUrl, domains, excludedSubdomains)
+  const show = getTenantSubdomain(parsedUrl, domains)
 
   if (!show) {
     return

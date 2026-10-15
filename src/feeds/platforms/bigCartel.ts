@@ -13,23 +13,6 @@ const domains = ['bigcartel.com']
 const frameOptionsRegex = /https:\/\/my\.bigcartel\.com/i
 const themeStylesheetRegex = /^\/theme_stylesheets\/\d+\/\d+\/theme\.css$/
 
-const excludedSubdomains = [
-  'api',
-  'app',
-  'assets',
-  'blog',
-  'developers',
-  'email',
-  'files',
-  'help',
-  'images',
-  'jobs',
-  'mail',
-  'my',
-  'stats',
-  'status',
-]
-
 export const isBigCartelHtml = (content: string): boolean => {
   const stylesheet = findElement(content, (element) => {
     return (
@@ -47,7 +30,7 @@ export const isBigCartelHeaders = (headers: Headers): boolean => {
 }
 
 export const parseBigCartelUrl = (url: string): BigCartelUrl | undefined => {
-  if (!getTenantSubdomain(url, domains, excludedSubdomains)) {
+  if (!getTenantSubdomain(url, domains)) {
     return
   }
 

@@ -1,6 +1,6 @@
-import { getSubdomain, isAnyOf, isHostOf, parseUrl } from 'trousse'
+import { isAnyOf, isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
+import { composeHint, getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -11,21 +11,17 @@ export type BloggangUrl =
 
 const domains = ['bloggang.com']
 const hosts = ['bloggang.com', 'www.bloggang.com']
+// The mobile site names a blog in the query, in a form no feed URL is built from.
+const mobileHosts = ['m.bloggang.com']
 
 const usernameRegex = /^[\w-]+$/
 const scriptRegex = /^\/(\w+)\.php$/i
 
-const excludedSubdomains = ['m', 'www']
-
 export const parseBloggangUrl = (url: string): BloggangUrl | undefined => {
-  const subdomain = getSubdomain(url, domains)
+  const subdomain = getTenantSubdomain(url, domains)
 
   // {user}.bloggang.com answers every path with a redirect to the blog on www.
-  if (subdomain && !isAnyOf(subdomain, excludedSubdomains)) {
-    if (!usernameRegex.test(subdomain)) {
-      return
-    }
-
+  if (subdomain && !isHostOf(url, mobileHosts)) {
     return { kind: 'blog', username: subdomain }
   }
 

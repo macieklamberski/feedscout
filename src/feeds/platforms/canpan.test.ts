@@ -27,16 +27,6 @@ describe('parseCanpanUrl', () => {
     expect(parseCanpanUrl('http://blog.canpan.info/alice/')).toEqual(expected)
   })
 
-  it('should return undefined for an excluded path', () => {
-    expect(parseCanpanUrl('https://blog.canpan.info/_common/css/common-header.css')).toBeUndefined()
-    expect(parseCanpanUrl('https://blog.canpan.info/_contents/')).toBeUndefined()
-    expect(parseCanpanUrl('https://blog.canpan.info/_pages/js/user')).toBeUndefined()
-  })
-
-  it('should return undefined for an excluded path in another case', () => {
-    expect(parseCanpanUrl('https://blog.canpan.info/IMG/ogp_logo.png')).toBeUndefined()
-  })
-
   it('should return undefined for the host root', () => {
     expect(parseCanpanUrl('https://blog.canpan.info/')).toBeUndefined()
   })

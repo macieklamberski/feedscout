@@ -7,10 +7,8 @@ export type TravellerspointUrl = { kind: 'blog'; blog: string }
 
 const domains = ['travellerspoint.com']
 
-const excludedSubdomains = ['assets', 'blog', 'guide', 'img', 'm', 'photos', 'secure']
-
 export const parseTravellerspointUrl = (url: string): TravellerspointUrl | undefined => {
-  const blog = getTenantSubdomain(url, domains, excludedSubdomains)
+  const blog = getTenantSubdomain(url, domains)
 
   if (!blog) {
     return

@@ -8,10 +8,6 @@ describe('parsePodigeeUrl', () => {
     expect(parsePodigeeUrl('https://example.podigee.io/')).toEqual(expected)
   })
 
-  it('should return undefined for an infrastructure subdomain', () => {
-    expect(parsePodigeeUrl('https://app.podigee.io/')).toBeUndefined()
-  })
-
   it('should return undefined for a nested subdomain', () => {
     expect(parsePodigeeUrl('https://www.example.podigee.io/')).toBeUndefined()
   })
@@ -29,9 +25,6 @@ describe('podigeeHandler', () => {
       [false, 'https://podigee.io'],
       [false, 'https://example.com'],
       [false, 'https://www.podigee.io'],
-      [false, 'https://app.podigee.io'],
-      [false, 'https://help.podigee.io'],
-      [false, 'https://blog.podigee.io'],
     ]
 
     it.each(values)('should return %s for %s', (expected, url) => {

@@ -8,10 +8,8 @@ export type ViablogaUrl = { kind: 'blog' }
 
 const domains = ['viabloga.com']
 
-const excludedSubdomains = ['images', 'news', 'support', 'test', 'viabloga2']
-
 export const parseViablogaUrl = (url: string): ViablogaUrl | undefined => {
-  if (!getTenantSubdomain(url, domains, excludedSubdomains)) {
+  if (!getTenantSubdomain(url, domains)) {
     return
   }
 

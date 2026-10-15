@@ -17,8 +17,6 @@ const domains = ['zenfolio.com']
 
 const zenfolioAssetRegex = /^(?:https?:)?\/\/cdn\.zenfolio\.com\/zf\//
 
-const excludedSubdomains = ['app', 'support']
-
 export const isZenfolioHtml = (content: string): boolean => {
   const stylesheet = findElement(content, (element) => {
     return element.name === 'link' && zenfolioAssetRegex.test(element.attribs.href ?? '')
@@ -40,10 +38,7 @@ export const parseZenfolioUrl = (url: string): ZenfolioUrl | undefined => {
     return
   }
 
-  if (
-    isHostOrSubdomainOf(parsedUrl, domains) &&
-    !getTenantSubdomain(parsedUrl, domains, excludedSubdomains)
-  ) {
+  if (isHostOrSubdomainOf(parsedUrl, domains) && !getTenantSubdomain(parsedUrl, domains)) {
     return
   }
 

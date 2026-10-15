@@ -101,50 +101,17 @@ describe('parseMediumUrl', () => {
     expect(parseMediumUrl('https://a.b.medium.com')).toBeUndefined()
   })
 
-  it('should return undefined for system subdomains', () => {
-    expect(parseMediumUrl('https://help.medium.com/hc/en-us')).toBeUndefined()
-    expect(parseMediumUrl('https://miro.medium.com/v2/resize:fit:200/1*abc.png')).toBeUndefined()
-  })
-
-  it('should return undefined for the API host', () => {
-    expect(parseMediumUrl('https://api.medium.com/')).toBeUndefined()
-  })
-
-  it('should return undefined for excluded paths', () => {
-    expect(parseMediumUrl('https://medium.com/search')).toBeUndefined()
-    expect(parseMediumUrl('https://medium.com/me')).toBeUndefined()
-    expect(parseMediumUrl('https://medium.com/new-story')).toBeUndefined()
-    expect(parseMediumUrl('https://medium.com/plans')).toBeUndefined()
-    expect(parseMediumUrl('https://medium.com/membership')).toBeUndefined()
-  })
-
-  const excludedPathValues: Array<string> = [
-    'https://medium.com/about',
-    'https://medium.com/explore-topics',
-    'https://medium.com/tag',
+  const singleLetterSegmentValues: Array<string> = [
     'https://medium.com/m/signin',
     'https://medium.com/p/3f6a1b2c4d5e',
-    'https://medium.com/sitemap/sitemap.xml',
   ]
 
-  it.each(excludedPathValues)('should return undefined for the site route %s', (value) => {
-    expect(parseMediumUrl(value)).toBeUndefined()
-  })
-
-  it('should return undefined for excluded paths in tagged URLs', () => {
-    expect(parseMediumUrl('https://medium.com/search/tagged/javascript')).toBeUndefined()
-    expect(parseMediumUrl('https://medium.com/me/tagged/react')).toBeUndefined()
-    expect(parseMediumUrl('https://medium.com/plans/tagged/python')).toBeUndefined()
-    expect(parseMediumUrl('https://medium.com/membership/tagged/writing')).toBeUndefined()
-  })
-
-  it('should return undefined for an excluded path in any case', () => {
-    expect(parseMediumUrl('https://medium.com/Search')).toBeUndefined()
-  })
-
-  it('should return undefined for feed URLs', () => {
-    expect(parseMediumUrl('https://medium.com/feed/the-startup')).toBeUndefined()
-  })
+  it.each(singleLetterSegmentValues)(
+    'should return undefined for a single-letter first segment %s',
+    (value) => {
+      expect(parseMediumUrl(value)).toBeUndefined()
+    },
+  )
 
   it('should return undefined for the root', () => {
     expect(parseMediumUrl('https://medium.com')).toBeUndefined()

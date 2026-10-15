@@ -23,12 +23,10 @@ const domains = ['alloforum.com']
 const categoryRegex = /^\/([^/]+)-c(\d+)-\d+\.html$/
 const subcategoryRegex = /^\/([^/]+)-c(\d+)-([^/]+)-s(\d+)-\d+\.html$/
 
-const excludedSubdomains = ['admin', 'images', 'mail', 'smtp', 'upload', 'webmail']
-
 export const parseAlloforumUrl = (url: string): AlloforumUrl | undefined => {
   const pathname = parseUrl(url)?.pathname
   // The certificate covers one label, so a dotted subdomain such as www.{forum} names no forum.
-  const forum = getTenantSubdomain(url, domains, excludedSubdomains)
+  const forum = getTenantSubdomain(url, domains)
 
   if (!pathname || !forum) {
     return

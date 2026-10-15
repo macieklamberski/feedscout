@@ -8,20 +8,10 @@ export type LibsynUrl = { kind: 'feed'; showId: string } | { kind: 'podcast' }
 
 const domains = ['libsyn.com']
 const feedHosts = ['feeds.libsyn.com']
-const excludedSubdomains = [
-  'api',
-  'assets',
-  'static',
-  'html5-player',
-  'play',
-  'traffic',
-  'four',
-  'five',
-]
 const numericRegex = /^\d+$/
 
 export const parseLibsynUrl = (url: string): LibsynUrl | undefined => {
-  if (!getTenantSubdomain(url, domains, excludedSubdomains)) {
+  if (!getTenantSubdomain(url, domains)) {
     return
   }
 

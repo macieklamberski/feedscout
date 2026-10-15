@@ -11,14 +11,12 @@ const domains = ['gcs-web.com']
 
 const filesPathRegex = /\/sites\/g\/files\/knoqqb\d+\//
 
-const excludedSubdomains = ['mail', 'origin']
-
 export const isGcsWebHtml = (content: string): boolean => {
   return filesPathRegex.test(content)
 }
 
 export const parseGcsWebUrl = (url: string): GcsWebUrl | undefined => {
-  if (!getTenantSubdomain(url, domains, excludedSubdomains)) {
+  if (!getTenantSubdomain(url, domains)) {
     return
   }
 

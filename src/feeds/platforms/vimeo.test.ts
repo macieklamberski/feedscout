@@ -36,35 +36,6 @@ describe('parseVimeoUrl', () => {
     expect(parseVimeoUrl('https://vimeo.com/123456')).toBeUndefined()
   })
 
-  it('should return undefined for an excluded path', () => {
-    expect(parseVimeoUrl('https://vimeo.com/pricing')).toBeUndefined()
-  })
-
-  const excludedPathValues: Array<string> = [
-    'analytics',
-    'api',
-    'cookie_policy',
-    'couchmode',
-    'customers',
-    'dmca',
-    'event',
-    'forgot_password',
-    'home',
-    'integrations',
-    'jobs',
-    'library',
-    'log_out',
-    'partners',
-    'privacy',
-    'stats',
-    'terms',
-    'videoschool',
-  ]
-
-  it.each(excludedPathValues)('should return undefined for the %s site route', (route) => {
-    expect(parseVimeoUrl(`https://vimeo.com/${route}`)).toBeUndefined()
-  })
-
   it('should return undefined for another host', () => {
     expect(parseVimeoUrl('https://example.com/someone')).toBeUndefined()
   })
@@ -284,62 +255,6 @@ describe('vimeoHandler', () => {
 
     it('should return empty array for video pages', () => {
       const values = ['https://vimeo.com/12345', 'https://vimeo.com/999999999']
-
-      for (const value of values) {
-        expect(vimeoHandler.resolve(value)).toEqual([])
-      }
-    })
-
-    it('should return empty array for excluded paths', () => {
-      const values = [
-        'https://vimeo.com/search',
-        'https://vimeo.com/watch',
-        'https://vimeo.com/upload',
-        'https://vimeo.com/settings',
-        'https://vimeo.com/explore',
-        'https://vimeo.com/about',
-        'https://vimeo.com/album',
-        'https://vimeo.com/blog',
-        'https://vimeo.com/business',
-        'https://vimeo.com/careers',
-        'https://vimeo.com/categories',
-        'https://vimeo.com/channels',
-        'https://vimeo.com/create',
-        'https://vimeo.com/enterprise',
-        'https://vimeo.com/features',
-        'https://vimeo.com/for-hire',
-        'https://vimeo.com/groups',
-        'https://vimeo.com/help',
-        'https://vimeo.com/join',
-        'https://vimeo.com/log_in',
-        'https://vimeo.com/manage',
-        'https://vimeo.com/ondemand',
-        'https://vimeo.com/ott',
-        'https://vimeo.com/plus',
-        'https://vimeo.com/pricing',
-        'https://vimeo.com/pro',
-        'https://vimeo.com/showcase',
-        'https://vimeo.com/site_map',
-        'https://vimeo.com/solutions',
-        'https://vimeo.com/stock',
-        'https://vimeo.com/upgrade',
-      ]
-
-      for (const value of values) {
-        expect(vimeoHandler.resolve(value)).toEqual([])
-      }
-    })
-
-    it('should return empty array for a capitalized excluded path', () => {
-      expect(vimeoHandler.resolve('https://vimeo.com/Search')).toEqual([])
-    })
-
-    it('should return empty array for excluded paths with subpage', () => {
-      const values = [
-        'https://vimeo.com/categories/animation',
-        'https://vimeo.com/features/video-player',
-        'https://vimeo.com/help/faq',
-      ]
 
       for (const value of values) {
         expect(vimeoHandler.resolve(value)).toEqual([])

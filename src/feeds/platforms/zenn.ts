@@ -1,4 +1,4 @@
-import { getPathSegments, isAnyOf, isHostOf, parseUrl } from 'trousse'
+import { getPathSegments, isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
@@ -14,39 +14,6 @@ export const hosts = ['zenn.dev', 'www.zenn.dev']
 
 const topicRegex = /^\/topics\/([^/]+)/i
 const publicationRegex = /^\/p\/([^/]+)/i
-
-const excludedPaths = [
-  'about',
-  'api',
-  'articles',
-  'biz-lp',
-  'books',
-  'challenges',
-  'contests',
-  'dashboard',
-  'enter',
-  'faq',
-  'feed',
-  'following',
-  'guideline',
-  'hackathon-lp',
-  'hackathons',
-  'inquiry',
-  'login',
-  'manual',
-  'mediakit',
-  'notifications',
-  'p',
-  'privacy',
-  'publications',
-  'scraps',
-  'search',
-  'settings',
-  'signup',
-  'tech-or-idea',
-  'terms',
-  'topics',
-]
 
 export const parseZennUrl = (url: string): ZennUrl | undefined => {
   const parsedUrl = parseUrl(url)
@@ -72,10 +39,6 @@ export const parseZennUrl = (url: string): ZennUrl | undefined => {
 
   if (!username) {
     return { kind: 'home' }
-  }
-
-  if (isAnyOf(username, excludedPaths)) {
-    return
   }
 
   return { kind: 'user', username }

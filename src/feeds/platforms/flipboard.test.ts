@@ -85,7 +85,7 @@ describe('parseFlipboardUrl', () => {
     expect(parseFlipboardUrl(value)).toBeUndefined()
   })
 
-  it('should return undefined for site routes', () => {
+  it('should return undefined for a path without an @ handle', () => {
     expect(parseFlipboardUrl('https://flipboard.com/explore')).toBeUndefined()
     expect(parseFlipboardUrl('https://flipboard.com/section/technology')).toBeUndefined()
     expect(parseFlipboardUrl('https://flipboard.com/signup')).toBeUndefined()

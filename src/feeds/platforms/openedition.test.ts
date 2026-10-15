@@ -51,13 +51,8 @@ describe('parseOpeneditionUrl', () => {
     expect(parseOpeneditionUrl(value)).toBeUndefined()
   })
 
-  it('should return undefined for excluded paths', () => {
+  it('should return undefined for a dotted first segment', () => {
     expect(parseOpeneditionUrl('https://journals.openedition.org/feed.php')).toBeUndefined()
-    expect(parseOpeneditionUrl('https://journals.openedition.org/wwwlodelorg/')).toBeUndefined()
-  })
-
-  it('should return undefined for an excluded path in another case', () => {
-    expect(parseOpeneditionUrl('https://journals.openedition.org/WwwLodelOrg/')).toBeUndefined()
   })
 
   it('should return undefined for a dotted subdomain', () => {

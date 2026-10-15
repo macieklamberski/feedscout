@@ -27,8 +27,10 @@ describe('githubHandler', () => {
       expect(githubHandler.resolve('https://github.com/orgs/acme/discussions')).toEqual(expected)
     })
 
-    it('should return empty array for excluded paths', () => {
-      expect(githubHandler.resolve('https://github.com/features')).toEqual([])
+    it('should resolve organization avatar from organization URL', () => {
+      const expected = [{ uri: 'https://github.com/acme.png' }]
+
+      expect(githubHandler.resolve('https://github.com/orgs/acme')).toEqual(expected)
     })
   })
 })

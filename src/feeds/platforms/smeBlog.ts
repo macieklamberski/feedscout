@@ -1,4 +1,4 @@
-import { getPathSegments, isAnyOf, isHostOf } from 'trousse'
+import { getPathSegments, isHostOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
@@ -8,18 +8,6 @@ export type SmeBlogUrl = { kind: 'blog'; username: string } | { kind: 'home' }
 
 const hosts = ['blog.sme.sk']
 
-const excludedPaths = [
-  'blogeri',
-  'diskusie',
-  'kodex-blogera',
-  'najnovsie',
-  'popularni',
-  'premiove-blogy',
-  'rebricky-clankov',
-  'rss',
-  't',
-]
-
 export const parseSmeBlogUrl = (url: string): SmeBlogUrl | undefined => {
   if (!isHostOf(url, hosts)) {
     return
@@ -27,7 +15,7 @@ export const parseSmeBlogUrl = (url: string): SmeBlogUrl | undefined => {
 
   const [username] = getPathSegments(url)
 
-  if (!username || isAnyOf(username, excludedPaths)) {
+  if (!username) {
     return { kind: 'home' }
   }
 

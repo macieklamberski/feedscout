@@ -29,24 +29,6 @@ describe('parseSmeBlogUrl', () => {
     expect(parseSmeBlogUrl('https://blog.sme.sk/')).toEqual(expected)
   })
 
-  it('should return home for a topic page', () => {
-    const expected: SmeBlogUrl = { kind: 'home' }
-
-    expect(parseSmeBlogUrl('https://blog.sme.sk/t/politika')).toEqual(expected)
-  })
-
-  it('should return home for a site path in any case', () => {
-    const expected: SmeBlogUrl = { kind: 'home' }
-
-    expect(parseSmeBlogUrl('https://blog.sme.sk/Diskusie/5526497')).toEqual(expected)
-  })
-
-  it('should return home for the site feed path', () => {
-    const expected: SmeBlogUrl = { kind: 'home' }
-
-    expect(parseSmeBlogUrl('https://blog.sme.sk/rss')).toEqual(expected)
-  })
-
   it('should return undefined for the newspaper host', () => {
     expect(parseSmeBlogUrl('https://www.sme.sk/')).toBeUndefined()
   })

@@ -8,43 +8,6 @@ export type LetterboxdUrl = { kind: 'member'; username: string } | { kind: 'jour
 
 const hosts = ['letterboxd.com', 'www.letterboxd.com']
 
-const excludedPaths = [
-  'about',
-  'activity',
-  'actor',
-  'api-beta',
-  'apps',
-  'cinematography',
-  'composer',
-  'contact',
-  'country',
-  'create-account',
-  'director',
-  'editor',
-  'film',
-  'films',
-  'genre',
-  'journal',
-  'legal',
-  'lists',
-  'members',
-  'news',
-  'pro',
-  'producer',
-  'reviewers',
-  'reviews',
-  'search',
-  'settings',
-  'showdown',
-  'sign-in',
-  'studio',
-  'tag',
-  'user',
-  'welcome',
-  'writer',
-  'year-in-review',
-]
-
 export const parseLetterboxdUrl = (url: string): LetterboxdUrl | undefined => {
   if (!isHostOf(url, hosts)) {
     return
@@ -57,7 +20,7 @@ export const parseLetterboxdUrl = (url: string): LetterboxdUrl | undefined => {
     return { kind: 'journal' }
   }
 
-  if (!username || isAnyOf(username, excludedPaths)) {
+  if (!username) {
     return
   }
 

@@ -59,8 +59,10 @@ describe('gitlabHandler', () => {
       expect(await gitlabHandler.resolve(url)).toEqual([createRef(url, 'gitlab-org')])
     })
 
-    it('should return empty array for excluded paths', async () => {
-      expect(await gitlabHandler.resolve('https://gitlab.com/explore')).toEqual([])
+    it('should extract group name from groups URL path', async () => {
+      const url = 'https://gitlab.com/groups/gitlab-org'
+
+      expect(await gitlabHandler.resolve(url)).toEqual([createRef(url, 'gitlab-org')])
     })
   })
 })

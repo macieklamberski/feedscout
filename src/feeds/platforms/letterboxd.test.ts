@@ -46,38 +46,6 @@ describe('parseLetterboxdUrl', () => {
     expect(parseLetterboxdUrl('https://letterboxd.com/journal/')).toEqual(expected)
   })
 
-  it('should return undefined for an excluded path', () => {
-    expect(parseLetterboxdUrl('https://letterboxd.com/films')).toBeUndefined()
-    expect(parseLetterboxdUrl('https://letterboxd.com/settings/')).toBeUndefined()
-    expect(parseLetterboxdUrl('https://letterboxd.com/sign-in/')).toBeUndefined()
-  })
-
-  const excludedPathValues: Array<string> = [
-    'https://letterboxd.com/tag/horror/films/',
-    'https://letterboxd.com/country/usa/',
-    'https://letterboxd.com/cinematography/roger-deakins/',
-    'https://letterboxd.com/composer/hans-zimmer/',
-    'https://letterboxd.com/editor/thelma-schoonmaker/',
-    'https://letterboxd.com/reviews/popular/',
-    'https://letterboxd.com/reviewers/popular/',
-  ]
-
-  it.each(excludedPathValues)('should return undefined for the site route %s', (value) => {
-    expect(parseLetterboxdUrl(value)).toBeUndefined()
-  })
-
-  it('should return undefined for an excluded path in another case', () => {
-    expect(parseLetterboxdUrl('https://letterboxd.com/Films')).toBeUndefined()
-  })
-
-  it('should return undefined for a film page', () => {
-    expect(parseLetterboxdUrl('https://letterboxd.com/film/barbie/')).toBeUndefined()
-  })
-
-  it('should return undefined for a filmography page', () => {
-    expect(parseLetterboxdUrl('https://letterboxd.com/director/greta-gerwig/')).toBeUndefined()
-  })
-
   it('should return undefined for the homepage', () => {
     expect(parseLetterboxdUrl('https://letterboxd.com')).toBeUndefined()
   })
@@ -150,10 +118,6 @@ describe('letterboxdHandler', () => {
       ]
 
       expect(letterboxdHandler.resolve(value)).toEqual(expected)
-    })
-
-    it('should return empty array for a page without a feed', () => {
-      expect(letterboxdHandler.resolve('https://letterboxd.com/films/')).toEqual([])
     })
   })
 })

@@ -25,28 +25,13 @@ describe('parseColorMeShopUrl', () => {
     expect(parseColorMeShopUrl('http://blog.example.shop-pro.jp/')).toBeUndefined()
   })
 
-  it('should return undefined for the not-found host', () => {
-    expect(parseColorMeShopUrl('https://err.shop-pro.jp/404.htm')).toBeUndefined()
+  it('should return undefined for the www host', () => {
+    expect(parseColorMeShopUrl('https://www.shop-pro.jp/')).toBeUndefined()
   })
 
-  const serviceHosts: Array<string> = [
-    'acclog001',
-    'admin',
-    'api',
-    'app',
-    'developer',
-    'developer-docs',
-    'help',
-    'imageproxy',
-    'img',
-    'img15',
-    'page',
-    'secure',
-    'static-www-front',
-    'www',
-  ]
+  const numberedHostValues: Array<string> = ['acclog001', 'img15']
 
-  it.each(serviceHosts)('should return undefined for the %s service host', (host) => {
+  it.each(numberedHostValues)('should return undefined for the numbered %s host', (host) => {
     expect(parseColorMeShopUrl(`https://${host}.shop-pro.jp/`)).toBeUndefined()
   })
 

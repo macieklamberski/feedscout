@@ -1,4 +1,4 @@
-import { isAnyOf, isHostOf, parseUrl } from 'trousse'
+import { isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
@@ -20,67 +20,6 @@ const playlistRegex = /^\/playlist\/([a-zA-Z0-9_-]+)/i
 const channelRegex = /^\/channel\/([a-zA-Z0-9_-]+)/i
 const searchRegex = /^\/search\/([^/]+)/i
 const trendingRegex = /^\/(?:trending\/?)?$/i
-const excludedPaths = [
-  'signin',
-  'signout',
-  'signup',
-  'login',
-  'logout',
-  'register',
-  'search',
-  'legal',
-  'about',
-  'careers',
-  'terms',
-  'privacy',
-  'feedback',
-  'help',
-  'settings',
-  'upload',
-  'partner',
-  'monetize',
-  'studio',
-  'video',
-  'live',
-  'channels',
-  'playlist',
-  'topics',
-  'trending',
-  'dm',
-  'creator',
-  'premium',
-  'explore',
-  'following',
-  'subscriptions',
-  'notifications',
-  'history',
-  'watch',
-  'contact',
-  'ads',
-  'dmca',
-  'copyright',
-  'community',
-  'advertise',
-  'api',
-  'authorize',
-  'category',
-  'cookie',
-  'copyright-infringement',
-  'corner',
-  'feed',
-  'hashtag',
-  'library',
-  'music',
-  'news',
-  'notfound',
-  'oauth2callback',
-  'pair',
-  'password',
-  'press',
-  'sport',
-  'tv',
-  'user',
-]
 
 export const parseDailymotionUrl = (url: string): DailymotionUrl | undefined => {
   const parsedUrl = parseUrl(url)
@@ -116,7 +55,7 @@ export const parseDailymotionUrl = (url: string): DailymotionUrl | undefined => 
 
   const username = pathname.match(userRegex)?.[1]
 
-  if (!username || isAnyOf(username, excludedPaths)) {
+  if (!username) {
     return
   }
 

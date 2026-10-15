@@ -1,4 +1,3 @@
-import { isHostOf } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, getTenantSubdomain } from '../../common/utils.js'
@@ -18,18 +17,8 @@ const domains = [
   'xblog.jp',
 ]
 
-const excludedHosts = [
-  'ad.seesaa.net',
-  'mx.seesaa.net',
-  's.seesaa.blog',
-  's.seesaa.net',
-  's.seesaa.space',
-  't.seesaa.blog',
-  'up.seesaa.net',
-]
-
 export const parseSeesaaUrl = (url: string): SeesaaUrl | undefined => {
-  if (!getTenantSubdomain(url, domains) || isHostOf(url, excludedHosts)) {
+  if (!getTenantSubdomain(url, domains)) {
     return
   }
 

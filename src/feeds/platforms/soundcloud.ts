@@ -1,4 +1,4 @@
-import { getPathSegments, isAnyOf, isHostOf, parseUrl } from 'trousse'
+import { getPathSegments, isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
@@ -10,8 +10,6 @@ export type SoundcloudUrl = { kind: 'user'; username: string }
 export const hosts = ['soundcloud.com', 'www.soundcloud.com', 'm.soundcloud.com']
 
 const userIdRegex = /soundcloud:\/\/users:(\d+)/
-
-const excludedPaths = ['discover', 'stream', 'search', 'upload', 'you', 'settings', 'messages']
 
 const extractUserIdFromContent = (content: string): string | undefined => {
   const match = content.match(userIdRegex)
@@ -28,7 +26,7 @@ export const parseSoundcloudUrl = (url: string): SoundcloudUrl | undefined => {
 
   const [username] = getPathSegments(parsedUrl)
 
-  if (!username || isAnyOf(username, excludedPaths)) {
+  if (!username) {
     return
   }
 

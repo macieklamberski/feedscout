@@ -14,32 +14,6 @@ describe('parseWriteasUrl', () => {
     expect(parseWriteasUrl('https://write.as/matt')).toEqual(expected)
   })
 
-  it('should return undefined for an excluded path', () => {
-    expect(parseWriteasUrl('https://write.as/about')).toBeUndefined()
-  })
-
-  const excludedPathValues: Array<string> = [
-    '5years',
-    'apps',
-    'contact',
-    'extend',
-    'guidelines',
-    'help',
-    'jobs',
-    'letters',
-    'logout',
-    'new',
-    'principles',
-    'pro',
-    'read',
-    'start',
-    'subscribe',
-  ]
-
-  it.each(excludedPathValues)('should return undefined for the %s site route', (route) => {
-    expect(parseWriteasUrl(`https://write.as/${route}`)).toBeUndefined()
-  })
-
   it('should return undefined for the root', () => {
     expect(parseWriteasUrl('https://write.as/')).toBeUndefined()
   })
@@ -130,18 +104,6 @@ describe('writeasHandler', () => {
 
     it('should return empty array for root path', () => {
       const value = 'https://write.as/'
-
-      expect(writeasHandler.resolve(value)).toEqual([])
-    })
-
-    it('should return empty array for excluded paths', () => {
-      const value = 'https://write.as/login'
-
-      expect(writeasHandler.resolve(value)).toEqual([])
-    })
-
-    it('should return empty array for a capitalized excluded path', () => {
-      const value = 'https://write.as/Login'
 
       expect(writeasHandler.resolve(value)).toEqual([])
     })

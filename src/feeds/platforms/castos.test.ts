@@ -8,8 +8,8 @@ describe('parseCastosUrl', () => {
     expect(parseCastosUrl('https://myshow.castos.com/')).toEqual(expected)
   })
 
-  it('should return undefined for an excluded subdomain', () => {
-    expect(parseCastosUrl('https://app.castos.com/')).toBeUndefined()
+  it('should return undefined for the feed host', () => {
+    expect(parseCastosUrl('https://feeds.castos.com/abc123')).toBeUndefined()
   })
 
   it('should return undefined for another host', () => {
@@ -24,9 +24,6 @@ describe('castosHandler', () => {
       [true, 'https://alice-podcast.castos.com/episodes/first-episode'],
       [false, 'https://castos.com'],
       [false, 'https://www.castos.com'],
-      [false, 'https://app.castos.com/login'],
-      [false, 'https://feeds.castos.com/abc12'],
-      [false, 'https://support.castos.com'],
       [false, 'https://example.com'],
     ]
 

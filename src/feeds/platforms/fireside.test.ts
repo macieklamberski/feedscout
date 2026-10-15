@@ -9,8 +9,12 @@ describe('parseFiresideUrl', () => {
     expect(parseFiresideUrl('https://myshow.fireside.fm/')).toEqual(expected)
   })
 
-  it('should return undefined for an excluded subdomain', () => {
+  it('should return undefined for the www host', () => {
     expect(parseFiresideUrl('https://www.fireside.fm/')).toBeUndefined()
+  })
+
+  it('should return undefined for the feed host', () => {
+    expect(parseFiresideUrl('https://feeds.fireside.fm/myshow/rss')).toBeUndefined()
   })
 
   it('should return undefined for another host', () => {

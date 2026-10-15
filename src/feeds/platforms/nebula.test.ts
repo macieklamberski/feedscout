@@ -50,40 +50,6 @@ describe('parseNebulaUrl', () => {
     expect(parseNebulaUrl('https://nebula.tv/Explore')).toEqual(expected)
   })
 
-  it('should return undefined for excluded paths', () => {
-    expect(parseNebulaUrl('https://nebula.tv/login')).toBeUndefined()
-    expect(parseNebulaUrl('https://nebula.tv/about')).toBeUndefined()
-    expect(parseNebulaUrl('https://nebula.tv/classes')).toBeUndefined()
-    expect(parseNebulaUrl('https://nebula.tv/library')).toBeUndefined()
-    expect(parseNebulaUrl('https://nebula.tv/originals')).toBeUndefined()
-    expect(parseNebulaUrl('https://nebula.tv/pricing')).toBeUndefined()
-    expect(parseNebulaUrl('https://nebula.tv/privacy')).toBeUndefined()
-    expect(parseNebulaUrl('https://nebula.tv/search')).toBeUndefined()
-    expect(parseNebulaUrl('https://nebula.tv/settings')).toBeUndefined()
-    expect(parseNebulaUrl('https://nebula.tv/signup')).toBeUndefined()
-    expect(parseNebulaUrl('https://nebula.tv/terms')).toBeUndefined()
-  })
-
-  const excludedPathValues: Array<string> = [
-    'https://nebula.tv/join',
-    'https://nebula.tv/account',
-    'https://nebula.tv/beta',
-    'https://nebula.tv/faq',
-    'https://nebula.tv/featured',
-    'https://nebula.tv/gift',
-    'https://nebula.tv/myshows',
-    'https://nebula.tv/podcasts',
-    'https://nebula.tv/redeem',
-  ]
-
-  it.each(excludedPathValues)('should return undefined for the site route %s', (value) => {
-    expect(parseNebulaUrl(value)).toBeUndefined()
-  })
-
-  it('should return undefined for a capitalized excluded path', () => {
-    expect(parseNebulaUrl('https://nebula.tv/Login')).toBeUndefined()
-  })
-
   it('should return undefined for another host', () => {
     expect(parseNebulaUrl('https://example.com/realengineering')).toBeUndefined()
   })
@@ -303,10 +269,6 @@ describe('nebulaHandler', () => {
       ]
 
       expect(nebulaHandler.resolve(value)).toEqual(expected)
-    })
-
-    it('should return empty array for excluded paths', () => {
-      expect(nebulaHandler.resolve('https://nebula.tv/login')).toEqual([])
     })
   })
 })

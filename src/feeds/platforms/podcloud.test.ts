@@ -19,10 +19,6 @@ describe('parsePodcloudUrl', () => {
     expect(parsePodcloudUrl('https://lepodcast.fr/')).toBeUndefined()
   })
 
-  it('should return undefined for an excluded subdomain', () => {
-    expect(parsePodcloudUrl('https://studio.lepodcast.fr/dashboard')).toBeUndefined()
-  })
-
   it('should return undefined for a nested subdomain', () => {
     expect(parsePodcloudUrl('https://www.example.lepodcast.fr/')).toBeUndefined()
   })

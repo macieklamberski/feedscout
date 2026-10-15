@@ -16,22 +16,6 @@ const origin = 'https://huffduffer.com'
 
 const idRegex = /^\d+$/
 
-// Site pages, not users. `new`, `popular` and `search` serve site-wide feeds at `/{path}/rss`.
-const excludedPaths = [
-  'about',
-  'add',
-  'api',
-  'login',
-  'logout',
-  'new',
-  'people',
-  'popular',
-  'search',
-  'signup',
-  'tags',
-  'users',
-]
-
 export const parseHuffdufferUrl = (url: string): HuffdufferUrl | undefined => {
   if (!isHostOf(url, hosts)) {
     return
@@ -39,7 +23,7 @@ export const parseHuffdufferUrl = (url: string): HuffdufferUrl | undefined => {
 
   const [username, section, subsection] = getPathSegments(url)
 
-  if (!username || isAnyOf(username, excludedPaths)) {
+  if (!username) {
     return
   }
 

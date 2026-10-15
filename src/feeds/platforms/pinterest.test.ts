@@ -58,56 +58,6 @@ describe('parsePinterestUrl', () => {
     expect(parsePinterestUrl(value)).toEqual(expected)
   })
 
-  it('should return undefined for excluded paths', () => {
-    expect(parsePinterestUrl('https://www.pinterest.com/search/pins')).toBeUndefined()
-    expect(parsePinterestUrl('https://www.pinterest.com/ideas')).toBeUndefined()
-    expect(parsePinterestUrl('https://www.pinterest.com/today')).toBeUndefined()
-    expect(parsePinterestUrl('https://www.pinterest.com/explore')).toBeUndefined()
-    expect(parsePinterestUrl('https://www.pinterest.com/_')).toBeUndefined()
-    expect(parsePinterestUrl('https://www.pinterest.com/about')).toBeUndefined()
-    expect(parsePinterestUrl('https://www.pinterest.com/business')).toBeUndefined()
-    expect(parsePinterestUrl('https://www.pinterest.com/convert')).toBeUndefined()
-    expect(parsePinterestUrl('https://www.pinterest.com/login')).toBeUndefined()
-    expect(parsePinterestUrl('https://www.pinterest.com/news_hub')).toBeUndefined()
-    expect(parsePinterestUrl('https://www.pinterest.com/password')).toBeUndefined()
-    expect(parsePinterestUrl('https://www.pinterest.com/privacy')).toBeUndefined()
-    expect(parsePinterestUrl('https://www.pinterest.com/resource')).toBeUndefined()
-    expect(parsePinterestUrl('https://www.pinterest.com/settings')).toBeUndefined()
-    expect(parsePinterestUrl('https://www.pinterest.com/terms')).toBeUndefined()
-    expect(parsePinterestUrl('https://www.pinterest.com/topics')).toBeUndefined()
-  })
-
-  const excludedPathValues: Array<string> = [
-    'ads',
-    'careers',
-    'categories',
-    'developers',
-    'help',
-    'homefeed',
-    'idea-pin-builder',
-    'logout',
-    'me',
-    'messages',
-    'oauth',
-    'pin-builder',
-    'pin-creation-tool',
-    'shopping',
-    'signup',
-    'videos',
-  ]
-
-  it.each(excludedPathValues)('should return undefined for the %s site route', (route) => {
-    expect(parsePinterestUrl(`https://www.pinterest.com/${route}`)).toBeUndefined()
-  })
-
-  it('should return undefined for a capitalized excluded path', () => {
-    expect(parsePinterestUrl('https://www.pinterest.com/Explore')).toBeUndefined()
-  })
-
-  it('should return undefined for a pin page', () => {
-    expect(parsePinterestUrl('https://www.pinterest.com/pin/123456789')).toBeUndefined()
-  })
-
   it('should return undefined for the homepage', () => {
     expect(parsePinterestUrl('https://www.pinterest.com/')).toBeUndefined()
   })
@@ -171,10 +121,6 @@ describe('pinterestHandler', () => {
       ]
 
       expect(pinterestHandler.resolve(value)).toEqual(expected)
-    })
-
-    it('should return empty array for excluded paths', () => {
-      expect(pinterestHandler.resolve('https://www.pinterest.com/ideas')).toEqual([])
     })
 
     it('should return empty array for homepage', () => {

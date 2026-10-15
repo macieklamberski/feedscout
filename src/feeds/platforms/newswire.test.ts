@@ -87,14 +87,8 @@ describe('parseNewswireUrl', () => {
     expect(parseNewswireUrl('https://www.acme.newswire.com/')).toBeUndefined()
   })
 
-  const serviceHosts = [
-    'https://cdn.newswire.com/',
-    'https://support.newswire.com/',
-    'https://www.newswire.com/',
-  ]
-
-  it.each(serviceHosts)('should return undefined for service host %s', (value) => {
-    expect(parseNewswireUrl(value)).toBeUndefined()
+  it('should return undefined for the www host', () => {
+    expect(parseNewswireUrl('https://www.newswire.com/')).toBeUndefined()
   })
 
   it('should return the newsroom for the service newsroom on mediaroom', () => {

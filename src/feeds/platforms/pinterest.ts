@@ -11,43 +11,7 @@ export type PinterestUrl =
 
 export const hosts = ['pinterest.com', 'www.pinterest.com']
 
-const excludedPaths = [
-  '_',
-  'about',
-  'ads',
-  'business',
-  'careers',
-  'categories',
-  'convert',
-  'developers',
-  'explore',
-  'help',
-  'homefeed',
-  'idea-pin-builder',
-  'ideas',
-  'login',
-  'logout',
-  'me',
-  'messages',
-  'news_hub',
-  'oauth',
-  'password',
-  'pin',
-  'pin-builder',
-  'pin-creation-tool',
-  'privacy',
-  'resource',
-  'search',
-  'settings',
-  'shopping',
-  'signup',
-  'terms',
-  'today',
-  'topics',
-  'videos',
-]
-
-// Reserved sub-routes of a user are not boards.
+// Profile tabs of a user, which map back to the user, not to a board.
 const userSubpaths = ['pins', 'boards', '_saved', '_created', 'followers', 'following']
 
 export const parsePinterestUrl = (url: string): PinterestUrl | undefined => {
@@ -59,7 +23,7 @@ export const parsePinterestUrl = (url: string): PinterestUrl | undefined => {
 
   const [username, board] = getPathSegments(parsedUrl)
 
-  if (!username || isAnyOf(username, excludedPaths)) {
+  if (!username) {
     return
   }
 

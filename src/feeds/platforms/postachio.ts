@@ -7,10 +7,8 @@ export type PostachioUrl = { kind: 'site'; subdomain: string }
 
 const domains = ['postach.io']
 
-const excludedSubdomains = ['api', 'blog', 'cdn-images', 'cdn-static']
-
 export const parsePostachioUrl = (url: string): PostachioUrl | undefined => {
-  const subdomain = getTenantSubdomain(url, domains, excludedSubdomains)
+  const subdomain = getTenantSubdomain(url, domains)
 
   if (!subdomain) {
     return

@@ -1,4 +1,4 @@
-import { getPathSegments, isAnyOf, isHostOf, parseUrl } from 'trousse'
+import { getPathSegments, isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
@@ -17,32 +17,6 @@ export const hosts = ['note.com', 'www.note.com']
 // A hashtag page redirects to `/tag/{tag}`, and the feed stays under `/hashtag`.
 const hashtagRegex = /^\/(?:hashtag|tag)\/([^/]+)/i
 const magazineRegex = /^\/([^/]+)\/m\/([^/]+)/i
-
-export const excludedPaths = [
-  'about',
-  'api',
-  'categories',
-  'contests',
-  'explore',
-  'hashtag',
-  'help',
-  'login',
-  'm',
-  'n',
-  'notes',
-  'premium',
-  'privacy',
-  'ranking',
-  'recommend',
-  'search',
-  'tag',
-  'settings',
-  'signup',
-  'sitesettings',
-  'terms',
-  'topic',
-  'trend',
-]
 
 export const parseNoteUrl = (url: string): NoteUrl | undefined => {
   const parsedUrl = parseUrl(url)
@@ -68,10 +42,6 @@ export const parseNoteUrl = (url: string): NoteUrl | undefined => {
 
   if (!username) {
     return { kind: 'home' }
-  }
-
-  if (isAnyOf(username, excludedPaths)) {
-    return
   }
 
   return { kind: 'user', username }

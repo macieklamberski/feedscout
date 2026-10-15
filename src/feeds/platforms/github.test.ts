@@ -128,39 +128,19 @@ describe('parseGithubUrl', () => {
     expect(parseGithubUrl('https://github.com/orgs/Acme/discussions')).toEqual(expected)
   })
 
-  const excludedPathValues: Array<string> = [
-    'https://github.com/explore',
-    'https://github.com/copilot',
-    'https://github.com/dashboard',
-    'https://github.com/features',
-    'https://github.com/login',
-    'https://github.com/marketplace',
-    'https://github.com/settings/profile',
-    'https://github.com/features/actions',
-    'https://github.com/orgs/github/teams',
+  it('should return the owner for an organization page', () => {
+    const expected: GithubUrl = { kind: 'user', owner: 'someorg' }
+
+    expect(parseGithubUrl('https://github.com/orgs/someorg')).toEqual(expected)
+  })
+
+  const dottedSegmentValues: Array<string> = [
     'https://github.com/robots.txt',
-    'https://github.com/advisories/GHSA-xxxx-xxxx-xxxx',
-    'https://github.com/users/octocat/projects/1',
-    'https://github.com/solutions/ci-cd',
-    'https://github.com/discussions',
-    'https://github.com/git-guides/git-pull',
-    'https://github.com/open-source/sponsors',
-    'https://github.com/mobile',
-    'https://github.com/newsletter',
-    'https://github.com/partners',
-    'https://github.com/sitemap',
-    'https://github.com/trust-center',
-    'https://github.com/why-github',
     'https://github.com/octo.cat/hello-world',
   ]
 
-  it.each(excludedPathValues)('should return undefined for the site route %s', (value) => {
+  it.each(dottedSegmentValues)('should return undefined for a dotted first segment %s', (value) => {
     expect(parseGithubUrl(value)).toBeUndefined()
-  })
-
-  it('should return undefined for an excluded path in another case', () => {
-    expect(parseGithubUrl('https://github.com/Features')).toBeUndefined()
-    expect(parseGithubUrl('https://github.com/EXPLORE')).toBeUndefined()
   })
 
   it('should return undefined for the homepage', () => {
@@ -524,6 +504,18 @@ describe('githubHandler', () => {
       expect(githubHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return the owner activity feed for an organization page', () => {
+      const value = 'https://github.com/orgs/someorg'
+      const expected = [
+        {
+          uri: 'https://github.com/someorg.atom',
+          hint: { key: 'github:activity', label: 'Activity' },
+        },
+      ]
+
+      expect(githubHandler.resolve(value)).toEqual(expected)
+    })
+
     const routeSuffixValues: Array<string> = [
       'https://github.com/torvalds.atom',
       'https://github.com/torvalds.png',
@@ -538,10 +530,6 @@ describe('githubHandler', () => {
       ]
 
       expect(githubHandler.resolve(value)).toEqual(expected)
-    })
-
-    it('should return empty array for excluded paths', () => {
-      expect(githubHandler.resolve('https://github.com/explore')).toEqual([])
     })
 
     it('should not include wiki feed for repos with wiki in name', () => {

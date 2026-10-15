@@ -8,8 +8,12 @@ describe('parseTransistorUrl', () => {
     expect(parseTransistorUrl('https://example.transistor.fm/')).toEqual(expected)
   })
 
-  it('should return undefined for an excluded subdomain', () => {
+  it('should return undefined for the www host', () => {
     expect(parseTransistorUrl('https://www.transistor.fm/')).toBeUndefined()
+  })
+
+  it('should return undefined for the feed host', () => {
+    expect(parseTransistorUrl('https://feeds.transistor.fm/myshow')).toBeUndefined()
   })
 
   it('should return undefined for a nested subdomain', () => {
@@ -29,9 +33,6 @@ describe('transistorHandler', () => {
       [false, 'https://transistor.fm'],
       [false, 'https://example.com'],
       [false, 'https://www.transistor.fm'],
-      [false, 'https://feeds.transistor.fm'],
-      [false, 'https://share.transistor.fm'],
-      [false, 'https://support.transistor.fm'],
     ]
 
     it.each(values)('should return %s for %s', (expected, url) => {

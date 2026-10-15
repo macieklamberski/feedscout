@@ -199,10 +199,6 @@ describe('letterboxdHandler', () => {
     it('should return a ref when content is absent', () => {
       expect(letterboxdHandler.resolve('https://letterboxd.com/alice/')).toEqual([aliceRef])
     })
-
-    it('should return empty array for a page without a member', () => {
-      expect(letterboxdHandler.resolve('https://letterboxd.com/films/')).toEqual([])
-    })
   })
 })
 

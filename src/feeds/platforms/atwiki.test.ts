@@ -9,10 +9,6 @@ describe('parseAtwikiUrl', () => {
     expect(parseAtwikiUrl('https://w.atwiki.jp/mywiki/pages/1.html')).toEqual(expected)
   })
 
-  it('should return undefined for an excluded path', () => {
-    expect(parseAtwikiUrl('https://w.atwiki.jp/common/')).toBeUndefined()
-  })
-
   it('should return undefined for the root', () => {
     expect(parseAtwikiUrl('https://w.atwiki.jp/')).toBeUndefined()
   })
@@ -29,7 +25,6 @@ describe('atwikiHandler', () => {
       [true, 'https://w.atwiki.jp/example/pages/1.html'],
       [true, 'https://w.atwiki.jp/example/?page=Menu'],
       [false, 'https://w.atwiki.jp/'],
-      [false, 'https://w.atwiki.jp/common/_img/logo.png'],
       [false, 'https://atwiki.jp/news/29'],
       [false, 'https://example.com/example/'],
     ]

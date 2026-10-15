@@ -1,4 +1,4 @@
-import { getPathSegments, isAnyOf, isHostOf } from 'trousse'
+import { getPathSegments, isHostOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
@@ -9,8 +9,6 @@ export type AtwikiUrl = { kind: 'wiki'; wiki: string }
 // Legacy wwwNN.atwiki.jp hosts redirect every wiki path to w.atwiki.jp.
 const hosts = ['w.atwiki.jp']
 
-const excludedPaths = ['common']
-
 export const parseAtwikiUrl = (url: string): AtwikiUrl | undefined => {
   if (!isHostOf(url, hosts)) {
     return
@@ -18,7 +16,7 @@ export const parseAtwikiUrl = (url: string): AtwikiUrl | undefined => {
 
   const [wiki] = getPathSegments(url)
 
-  if (!wiki || isAnyOf(wiki, excludedPaths)) {
+  if (!wiki) {
     return
   }
 

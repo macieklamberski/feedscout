@@ -1,4 +1,4 @@
-import { isAnyOf, isHostOf, parseUrl } from 'trousse'
+import { isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
@@ -10,33 +10,6 @@ const hosts = ['behance.net', 'www.behance.net']
 // User profile: /{username} or /{username}/appreciated.
 const userRegex = /^\/([a-zA-Z0-9_-]+)(?:\/(appreciated))?\/?$/i
 const homeRegex = /^\/(?:galleries\/?)?$/i
-const excludedPaths = [
-  'search',
-  'galleries',
-  'curated',
-  'features',
-  'live',
-  'joblist',
-  'hire',
-  'blog',
-  'about',
-  'privacy',
-  'tos',
-  'help',
-  'onboarding',
-  'settings',
-  'notifications',
-  'messages',
-  'adobe',
-  'account',
-  'careers',
-  'collections',
-  'featured',
-  'gallery',
-  'inbox',
-  'jobs',
-  'signup',
-]
 
 export const parseBehanceUrl = (url: string): BehanceUrl | undefined => {
   const parsedUrl = parseUrl(url)
@@ -52,7 +25,7 @@ export const parseBehanceUrl = (url: string): BehanceUrl | undefined => {
 
   const username = parsedUrl.pathname.match(userRegex)?.[1]
 
-  if (!username || isAnyOf(username, excludedPaths)) {
+  if (!username) {
     return
   }
 

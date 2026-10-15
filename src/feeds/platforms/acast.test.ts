@@ -20,10 +20,6 @@ describe('parseAcastUrl', () => {
     expect(parseAcastUrl('https://embed.acast.com/my-show')).toEqual(expected)
   })
 
-  it('should return undefined for an excluded path', () => {
-    expect(parseAcastUrl('https://shows.acast.com/discover')).toBeUndefined()
-  })
-
   it('should return undefined for the root', () => {
     expect(parseAcastUrl('https://shows.acast.com/')).toBeUndefined()
   })
@@ -88,18 +84,6 @@ describe('acastHandler', () => {
       expect(acastHandler.resolve(value)).toEqual([])
     })
 
-    it('should return empty array for excluded paths', () => {
-      const value = 'https://shows.acast.com/discover'
-
-      expect(acastHandler.resolve(value)).toEqual([])
-    })
-
-    it('should return empty array for a capitalized excluded path', () => {
-      const value = 'https://shows.acast.com/Discover'
-
-      expect(acastHandler.resolve(value)).toEqual([])
-    })
-
     it('should return podcast feed for play.acast.com/s/{slug}', () => {
       const value = 'https://play.acast.com/s/my-dad-wrote-a-porno'
       const expected = [
@@ -126,12 +110,6 @@ describe('acastHandler', () => {
 
     it('should return empty array for play.acast.com/s without slug', () => {
       const value = 'https://play.acast.com/s'
-
-      expect(acastHandler.resolve(value)).toEqual([])
-    })
-
-    it('should return empty array for excluded path on embed.acast.com', () => {
-      const value = 'https://embed.acast.com/discover'
 
       expect(acastHandler.resolve(value)).toEqual([])
     })

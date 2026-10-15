@@ -9,14 +9,15 @@ export type BloggoUrl = { kind: 'blog' } | { kind: 'post'; slug: string }
 
 const domains = ['bloggo.nu']
 
-const excludedSubdomains = ['admin', 'img', 'reg', 'static', 'www']
-const excludedPaths = ['about', 'feed']
 // A made-up post answers its comments feed with a 200 placeholder channel, and only a real
 // post page carries a post-id body class.
 const postBodyRegex = /<body[^>]*\bpost-id-\d+/
 
+// The about page and the feed belong to the blog, not to a post.
+const blogPaths = ['about', 'feed']
+
 export const parseBloggoUrl = (url: string): BloggoUrl | undefined => {
-  const subdomain = getTenantSubdomain(url, domains, excludedSubdomains)
+  const subdomain = getTenantSubdomain(url, domains)
 
   if (!subdomain) {
     return
@@ -25,7 +26,7 @@ export const parseBloggoUrl = (url: string): BloggoUrl | undefined => {
   const segments = getPathSegments(url)
   const [slug] = segments
 
-  if (segments.length === 1 && slug && !isAnyOf(slug, excludedPaths)) {
+  if (segments.length === 1 && slug && !isAnyOf(slug, blogPaths)) {
     return { kind: 'post', slug }
   }
 

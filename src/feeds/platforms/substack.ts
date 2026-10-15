@@ -9,7 +9,8 @@ import { composeHint, getTenantSubdomain } from '../../common/utils.js'
 export type SubstackUrl = { kind: 'newsletter' } | { kind: 'profile'; username: string }
 
 const domains = ['substack.com']
-const excludedSubdomains = ['api', 'cdn', 'open', 'support']
+// The app host names a publication in the path, so it is no publication itself.
+const appHosts = ['open.substack.com']
 const profileRegex = /^\/@([\w-]+)/
 // A profile page embeds its primary publication as escaped JSON. The publication
 // subdomain is not always the handle, and a custom domain replaces it.
@@ -33,7 +34,7 @@ export const parseSubstackUrl = (url: string): SubstackUrl | undefined => {
     return
   }
 
-  if (getTenantSubdomain(parsedUrl, domains, excludedSubdomains)) {
+  if (getTenantSubdomain(parsedUrl, domains) && !isHostOf(parsedUrl, appHosts)) {
     return { kind: 'newsletter' }
   }
 

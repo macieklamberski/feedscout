@@ -57,60 +57,12 @@ describe('parseTumblrUrl', () => {
     expect(parseTumblrUrl('https://tumblr.com/example')).toEqual(expected)
   })
 
-  it('should return undefined for a www.tumblr.com site route', () => {
-    expect(parseTumblrUrl('https://www.tumblr.com/explore')).toBeUndefined()
-  })
-
-  const excludedPathValues: Array<string> = [
-    'abuse',
-    'business',
-    'buttons',
-    'customize',
-    'domains',
-    'drafts',
-    'legal',
-    'live',
-    'mega-editor',
-    'onboarding',
-    'patio',
-    'pop',
-    'premium',
-    'press',
-    'queue',
-    'security',
-    'shop',
-    'signup',
-    'terms-of-service',
-    'terms_of_service',
-    'themes',
-    'tips',
-    'tv',
-  ]
-
-  it.each(excludedPathValues)('should return undefined for the %s site route', (route) => {
-    expect(parseTumblrUrl(`https://www.tumblr.com/${route}`)).toBeUndefined()
-  })
-
-  it('should return undefined for a capitalized www.tumblr.com site route', () => {
-    expect(parseTumblrUrl('https://www.tumblr.com/Explore')).toBeUndefined()
-  })
-
-  it('should return undefined for a www.tumblr.com tag route', () => {
-    expect(parseTumblrUrl('https://www.tumblr.com/tagged/photography')).toBeUndefined()
-  })
-
   it('should return undefined for a www.tumblr.com/blog path without a blog', () => {
     expect(parseTumblrUrl('https://www.tumblr.com/blog/view')).toBeUndefined()
   })
 
   it('should return undefined for www.tumblr.com', () => {
     expect(parseTumblrUrl('https://www.tumblr.com/')).toBeUndefined()
-  })
-
-  const excludedSubdomainValues = ['api', 'static']
-
-  it.each(excludedSubdomainValues)('should return undefined for the service host %s', (value) => {
-    expect(parseTumblrUrl(`https://${value}.tumblr.com/`)).toBeUndefined()
   })
 
   it('should return undefined for a nested subdomain', () => {
@@ -172,10 +124,6 @@ describe('tumblrHandler', () => {
       ]
 
       expect(tumblrHandler.resolve(value)).toEqual(expected)
-    })
-
-    it('should return empty array for a URL that names no blog', () => {
-      expect(tumblrHandler.resolve('https://www.tumblr.com/explore')).toEqual([])
     })
   })
 })

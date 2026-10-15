@@ -8,29 +8,6 @@ describe('parseLearnkuUrl', () => {
     expect(parseLearnkuUrl('https://learnku.com/laravel')).toEqual(expected)
   })
 
-  it('should return the home page for an excluded path', () => {
-    const expected: LearnkuUrl = { kind: 'home' }
-
-    expect(parseLearnkuUrl('https://learnku.com/search')).toEqual(expected)
-  })
-
-  const excludedPathValues: Array<string> = [
-    'https://learnku.com/articles/12345/slug',
-    'https://learnku.com/docs/laravel/11.x',
-    'https://learnku.com/auth/login',
-    'https://learnku.com/contact',
-    'https://learnku.com/topics',
-    'https://learnku.com/hub',
-    'https://learnku.com/activities',
-    'https://learnku.com/quizzes',
-  ]
-
-  it.each(excludedPathValues)('should return the home page for the site route %s', (value) => {
-    const expected: LearnkuUrl = { kind: 'home' }
-
-    expect(parseLearnkuUrl(value)).toEqual(expected)
-  })
-
   it('should return the home page for the root', () => {
     const expected: LearnkuUrl = { kind: 'home' }
 
@@ -70,24 +47,6 @@ describe('learnkuHandler', () => {
           uri: 'https://learnku.com/laravel/feed',
           hint: { key: 'learnku:community', label: 'Community' },
         },
-        { uri: 'https://learnku.com/feed', hint: { key: 'learnku:site', label: 'Site' } },
-      ]
-
-      expect(learnkuHandler.resolve(value)).toEqual(expected)
-    })
-
-    it('should return only the site feed on a reserved path', () => {
-      const value = 'https://learnku.com/search'
-      const expected = [
-        { uri: 'https://learnku.com/feed', hint: { key: 'learnku:site', label: 'Site' } },
-      ]
-
-      expect(learnkuHandler.resolve(value)).toEqual(expected)
-    })
-
-    it('should return only the site feed on a capitalized reserved path', () => {
-      const value = 'https://learnku.com/Search'
-      const expected = [
         { uri: 'https://learnku.com/feed', hint: { key: 'learnku:site', label: 'Site' } },
       ]
 

@@ -103,16 +103,6 @@ describe('parseHatenaFotolifeUrl', () => {
     expect(parseHatenaFotolifeUrl('https://f.hatena.ne.jp/')).toBeUndefined()
   })
 
-  it('should return undefined for a site-wide camera model listing', () => {
-    expect(parseHatenaFotolifeUrl('https://f.hatena.ne.jp/model/305SH')).toBeUndefined()
-  })
-
-  const siteWidePaths: Array<string> = ['focallength', 'fotocolor', 'help', 'hotfoto', 'userlist']
-
-  it.each(siteWidePaths)('should return undefined for the site-wide %s listing', (path) => {
-    expect(parseHatenaFotolifeUrl(`https://f.hatena.ne.jp/${path}/`)).toBeUndefined()
-  })
-
   it('should return undefined for a path that is not a Hatena ID', () => {
     expect(parseHatenaFotolifeUrl('https://f.hatena.ne.jp/favicon.ico')).toBeUndefined()
   })

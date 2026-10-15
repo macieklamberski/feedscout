@@ -39,15 +39,7 @@ describe('parseHuffdufferUrl', () => {
     expect(parseHuffdufferUrl('https://huffduffer.com/alice/12345abc')).toEqual(expected)
   })
 
-  const sitePaths = [
-    'https://huffduffer.com/',
-    'https://huffduffer.com/new',
-    'https://huffduffer.com/popular/rss',
-    'https://huffduffer.com/search/rss?q=example',
-    'https://huffduffer.com/Users',
-    'https://huffduffer.com/about',
-    'https://huffduffer.com/tags/science',
-  ]
+  const sitePaths = ['https://huffduffer.com/']
 
   it.each(sitePaths)('should return undefined for site page %s', (value) => {
     expect(parseHuffdufferUrl(value)).toBeUndefined()

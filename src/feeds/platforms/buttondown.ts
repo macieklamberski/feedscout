@@ -1,4 +1,4 @@
-import { getPathSegments, isAnyOf, isHostOf } from 'trousse'
+import { getPathSegments, isHostOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
@@ -7,36 +7,6 @@ import { composeHint } from '../../common/utils.js'
 export type ButtondownUrl = { kind: 'newsletter'; username: string }
 
 const hosts = ['buttondown.com', 'www.buttondown.com', 'buttondown.email', 'www.buttondown.email']
-const excludedPaths = [
-  'about',
-  'alternatives',
-  'blog',
-  'book',
-  'brand',
-  'changelog',
-  'climate',
-  'comparison-guides',
-  'docs',
-  'emails',
-  'features',
-  'help',
-  'kudos',
-  'legal',
-  'login',
-  'open-source',
-  'pricing',
-  'privacy',
-  'refer',
-  'register',
-  'search',
-  'settings',
-  'stack',
-  'subscribers',
-  'support',
-  'terms',
-  'testimonials',
-  'use-cases',
-]
 
 export const parseButtondownUrl = (url: string): ButtondownUrl | undefined => {
   if (!isHostOf(url, hosts)) {
@@ -45,7 +15,7 @@ export const parseButtondownUrl = (url: string): ButtondownUrl | undefined => {
 
   const [username] = getPathSegments(url)
 
-  if (!username || isAnyOf(username, excludedPaths)) {
+  if (!username) {
     return
   }
 

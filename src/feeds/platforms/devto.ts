@@ -1,4 +1,4 @@
-import { isAnyOf, isHostOf, parseUrl } from 'trousse'
+import { isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
@@ -17,82 +17,6 @@ const hosts = ['dev.to', 'www.dev.to']
 const ownerRegex = /^\/([a-zA-Z0-9_-]+)(?:\/|$)/i
 const tagRegex = /^\/t\/([^/]+)/i
 const latestRegex = /^\/latest\/?$/i
-// See: https://github.com/forem/forem/blob/main/config/routes.rb.
-const excludedPaths = [
-  'tag',
-  'tags',
-  'search',
-  'top',
-  'latest',
-  'about',
-  'contact',
-  'privacy',
-  'terms',
-  'code-of-conduct',
-  'faq',
-  'enter',
-  'settings',
-  'signout_confirm',
-  'notifications',
-  'reading-list',
-  'dashboard',
-  // Top-level routes that answer 404 from both the users and the organizations API.
-  't',
-  'api',
-  'new',
-  'videos',
-  'podcasts',
-  'pod',
-  'listings',
-  'challenges',
-  'series',
-  'readinglist',
-  'connect',
-  'community-moderation',
-  'badges',
-  'events',
-  'stories',
-  'users',
-  'organizations',
-  // Top-level routes Forem matches before a user or organization name.
-  'a',
-  'admin',
-  'bb',
-  'billboards',
-  'calendar',
-  'challenge',
-  'checkin',
-  'community',
-  'confirm-email',
-  'credits',
-  'curated',
-  'curation',
-  'discover',
-  'embed',
-  'feed',
-  'following',
-  'internal',
-  'latest_less_filtered',
-  'leaderboard',
-  'leadership',
-  'locale',
-  'magic_links',
-  'manage',
-  'menu',
-  'mod',
-  'onboarding',
-  'p',
-  'page',
-  'r',
-  'report-abuse',
-  'rss',
-  'security',
-  'survey',
-  'tag-moderation',
-  'trending',
-  'trends',
-  'welcome',
-]
 
 export const parseDevtoUrl = (url: string): DevtoUrl | undefined => {
   const parsedUrl = parseUrl(url)
@@ -119,7 +43,7 @@ export const parseDevtoUrl = (url: string): DevtoUrl | undefined => {
 
   const owner = parsedUrl.pathname.match(ownerRegex)?.[1]
 
-  if (!owner || isAnyOf(owner, excludedPaths)) {
+  if (!owner) {
     return
   }
 

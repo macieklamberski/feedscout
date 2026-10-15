@@ -33,12 +33,6 @@ describe('parseNoteUrl', () => {
     expect(parseNoteUrl('https://note.com/notemag/M/m7244518f06ae')).toEqual(expected)
   })
 
-  it('should return the magazine for a magazine under a reserved path', () => {
-    const expected: NoteUrl = { kind: 'magazine', username: 'search', magazine: 'm7244518f06ae' }
-
-    expect(parseNoteUrl('https://note.com/search/m/m7244518f06ae')).toEqual(expected)
-  })
-
   it('should return the tag for a hashtag page', () => {
     const expected: NoteUrl = { kind: 'hashtag', tag: 'AI' }
 
@@ -55,42 +49,6 @@ describe('parseNoteUrl', () => {
     const expected: NoteUrl = { kind: 'hashtag', tag: 'AI' }
 
     expect(parseNoteUrl('https://note.com/tag/AI')).toEqual(expected)
-  })
-
-  it('should return undefined for excluded paths', () => {
-    expect(parseNoteUrl('https://note.com/login')).toBeUndefined()
-    expect(parseNoteUrl('https://note.com/about')).toBeUndefined()
-    expect(parseNoteUrl('https://note.com/api')).toBeUndefined()
-    expect(parseNoteUrl('https://note.com/explore')).toBeUndefined()
-    expect(parseNoteUrl('https://note.com/hashtag')).toBeUndefined()
-    expect(parseNoteUrl('https://note.com/help')).toBeUndefined()
-    expect(parseNoteUrl('https://note.com/m')).toBeUndefined()
-    expect(parseNoteUrl('https://note.com/n')).toBeUndefined()
-    expect(parseNoteUrl('https://note.com/premium')).toBeUndefined()
-    expect(parseNoteUrl('https://note.com/privacy')).toBeUndefined()
-    expect(parseNoteUrl('https://note.com/ranking')).toBeUndefined()
-    expect(parseNoteUrl('https://note.com/search')).toBeUndefined()
-    expect(parseNoteUrl('https://note.com/settings')).toBeUndefined()
-    expect(parseNoteUrl('https://note.com/signup')).toBeUndefined()
-    expect(parseNoteUrl('https://note.com/terms')).toBeUndefined()
-  })
-
-  const excludedPathValues: Array<string> = [
-    'https://note.com/topic/novel',
-    'https://note.com/trend',
-    'https://note.com/contests',
-    'https://note.com/categories',
-    'https://note.com/notes',
-    'https://note.com/recommend',
-    'https://note.com/sitesettings/stats',
-  ]
-
-  it.each(excludedPathValues)('should return undefined for the site route %s', (value) => {
-    expect(parseNoteUrl(value)).toBeUndefined()
-  })
-
-  it('should return undefined for a capitalized excluded path', () => {
-    expect(parseNoteUrl('https://note.com/Login')).toBeUndefined()
   })
 
   it('should return the home page for the root', () => {
@@ -166,10 +124,6 @@ describe('noteHandler', () => {
       ]
 
       expect(noteHandler.resolve(value)).toEqual(expected)
-    })
-
-    it('should return empty array for excluded paths', () => {
-      expect(noteHandler.resolve('https://note.com/login')).toEqual([])
     })
   })
 })

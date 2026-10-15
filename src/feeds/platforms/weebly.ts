@@ -9,13 +9,12 @@ import { composeHint, getTenantSubdomain } from '../../common/utils.js'
 export type WeeblyUrl = { kind: 'blog'; page?: string }
 
 const domains = ['weebly.com']
-const excludedSubdomains = ['api', 'assets', 'static']
 const numericRegex = /^\d+$/
 // A page address ends in `.html`, which redirects to the bare slug the blog feed sits under.
 const htmlSuffixRegex = /\.html$/i
 
 export const parseWeeblyUrl = (url: string): WeeblyUrl | undefined => {
-  if (!getTenantSubdomain(url, domains, excludedSubdomains)) {
+  if (!getTenantSubdomain(url, domains)) {
     return
   }
 

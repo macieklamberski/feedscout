@@ -10,41 +10,13 @@ export type ArtstationUrl = { kind: 'profile'; username: string } | { kind: 'art
 
 const domains = ['artstation.com']
 const hosts = ['artstation.com', 'www.artstation.com']
-const excludedSubdomains = ['magazine', 'cdna', 'cdnb']
-const excludedPaths = [
-  'about',
-  'api',
-  'blogs',
-  'challenges',
-  'channels',
-  'contests',
-  'embed',
-  'hire',
-  'jobs',
-  'learning',
-  'login',
-  'marketplace',
-  'messages',
-  'notifications',
-  'prints',
-  'privacy',
-  'projects',
-  'registration',
-  'schools',
-  'search',
-  'signup',
-  'studios',
-  'terms',
-  'tos',
-  'users',
-]
 
 export const parseArtstationUrl = (url: string): ArtstationUrl | undefined => {
   if (!isHostOrSubdomainOf(url, domains)) {
     return
   }
 
-  const subdomain = getTenantSubdomain(url, domains, excludedSubdomains)
+  const subdomain = getTenantSubdomain(url, domains)
 
   // Subdomain form: {user}.artstation.com
   if (!isHostOf(url, hosts)) {
@@ -69,10 +41,6 @@ export const parseArtstationUrl = (url: string): ArtstationUrl | undefined => {
     }
 
     return { kind: 'artwork' }
-  }
-
-  if (isAnyOf(first, excludedPaths)) {
-    return
   }
 
   return { kind: 'profile', username: first }

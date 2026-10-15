@@ -55,17 +55,6 @@ describe('parseStackExchangeUrl', () => {
     expect(parseStackExchangeUrl('https://stackoverflow.com/help')).toBeUndefined()
   })
 
-  const excludedSubdomainValues = [
-    'https://chat.stackoverflow.com/users/22656/example',
-    'https://chat.stackexchange.com/',
-    'https://chat.meta.stackexchange.com/',
-    'https://api.stackexchange.com/',
-  ]
-
-  it.each(excludedSubdomainValues)('should return undefined for the site route %s', (value) => {
-    expect(parseStackExchangeUrl(value)).toBeUndefined()
-  })
-
   it('should return the home page for the network host', () => {
     const expected: StackExchangeUrl = { kind: 'home' }
 

@@ -36,21 +36,6 @@ describe('parseSoundcloudUrl', () => {
     expect(parseSoundcloudUrl('https://soundcloud.com/diplo/sets/summer')).toEqual(expected)
   })
 
-  it('should return undefined for excluded paths', () => {
-    expect(parseSoundcloudUrl('https://soundcloud.com/discover')).toBeUndefined()
-    expect(parseSoundcloudUrl('https://soundcloud.com/stream')).toBeUndefined()
-    expect(parseSoundcloudUrl('https://soundcloud.com/search')).toBeUndefined()
-    expect(parseSoundcloudUrl('https://soundcloud.com/upload')).toBeUndefined()
-    expect(parseSoundcloudUrl('https://soundcloud.com/you')).toBeUndefined()
-    expect(parseSoundcloudUrl('https://soundcloud.com/settings')).toBeUndefined()
-    expect(parseSoundcloudUrl('https://soundcloud.com/messages')).toBeUndefined()
-  })
-
-  it('should return undefined for excluded paths in any case', () => {
-    expect(parseSoundcloudUrl('https://soundcloud.com/Discover')).toBeUndefined()
-    expect(parseSoundcloudUrl('https://soundcloud.com/STREAM')).toBeUndefined()
-  })
-
   it('should return undefined for the root', () => {
     expect(parseSoundcloudUrl('https://soundcloud.com')).toBeUndefined()
   })
@@ -68,10 +53,6 @@ describe('soundcloudHandler', () => {
   describe('match', () => {
     it('should match a profile page', () => {
       expect(soundcloudHandler.match('https://soundcloud.com/diplo')).toBe(true)
-    })
-
-    it('should not match an excluded path', () => {
-      expect(soundcloudHandler.match('https://soundcloud.com/discover')).toBe(false)
     })
   })
 

@@ -78,17 +78,16 @@ describe('parseBigCartelUrl', () => {
     expect(parseBigCartelUrl('https://alice.bigcartel.com/product/a-print')).toEqual(expected)
   })
 
-  const excludedUrls = [
-    'https://bigcartel.com/',
-    'https://www.bigcartel.com/',
-    'https://my.bigcartel.com/dashboard',
-    'https://developers.bigcartel.com/',
-    'https://assets.bigcartel.com/theme_files/1/theme.css',
-    'https://foo.alice.bigcartel.com/',
-  ]
+  it('should return undefined for the apex', () => {
+    expect(parseBigCartelUrl('https://bigcartel.com/')).toBeUndefined()
+  })
 
-  it.each(excludedUrls)('should return undefined for %s', (url) => {
-    expect(parseBigCartelUrl(url)).toBeUndefined()
+  it('should return undefined for the www host', () => {
+    expect(parseBigCartelUrl('https://www.bigcartel.com/')).toBeUndefined()
+  })
+
+  it('should return undefined for a nested subdomain', () => {
+    expect(parseBigCartelUrl('https://foo.alice.bigcartel.com/')).toBeUndefined()
   })
 
   it('should return undefined for another host', () => {
@@ -110,7 +109,7 @@ describe('bigCartelHandler', () => {
       expect(bigCartelHandler.match('https://example.com/', '', storeHeaders)).toBe(true)
     })
 
-    it('should not match a Big Cartel service host carrying the markers', () => {
+    it('should not match the www host carrying the markers', () => {
       expect(bigCartelHandler.match('https://www.bigcartel.com/', storeHtml, storeHeaders)).toBe(
         false,
       )

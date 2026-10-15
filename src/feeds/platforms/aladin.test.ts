@@ -53,22 +53,12 @@ describe('parseAladinUrl', () => {
     expect(parseAladinUrl('https://blog.aladin.co.kr/alice/category/abc')).toEqual(expected)
   })
 
-  const siteWidePaths = [
-    'https://blog.aladin.co.kr/',
-    'https://blog.aladin.co.kr/bookple/js/book.js',
-    'https://blog.aladin.co.kr/bp/alice',
-    'https://blog.aladin.co.kr/js/common.js',
-    'https://blog.aladin.co.kr/MyBlog/manage/main',
-    'https://blog.aladin.co.kr/myblog/newPaper/MyPaper',
-    'https://blog.aladin.co.kr/ScriptResource.axd?d=abc',
-    'https://blog.aladin.co.kr/town/contents/review',
-    'https://blog.aladin.co.kr/trackback/alice/12345678',
-    'https://blog.aladin.co.kr/ucl_editor/css/paperview.css',
-    'https://blog.aladin.co.kr/WebResource.axd?d=abc',
-  ]
+  it('should return undefined for the root', () => {
+    expect(parseAladinUrl('https://blog.aladin.co.kr/')).toBeUndefined()
+  })
 
-  it.each(siteWidePaths)('should return undefined for site-wide path %s', (value) => {
-    expect(parseAladinUrl(value)).toBeUndefined()
+  it('should return undefined for a dotted first segment', () => {
+    expect(parseAladinUrl('https://blog.aladin.co.kr/ScriptResource.axd')).toBeUndefined()
   })
 
   it('should return undefined for a dotted subdomain', () => {

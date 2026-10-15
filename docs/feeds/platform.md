@@ -489,7 +489,7 @@ Discovers RSS feeds for Steam game news and community groups.
 
 ### Stack Exchange
 
-Discovers Atom feeds for Stack Overflow, Server Fault, Super User, Ask Ubuntu, MathOverflow, Stack Apps, and all `*.stackexchange.com` sites. Chat and API hosts are not matched, and the `stackexchange.com` network host gives only its newest questions feed.
+Discovers Atom feeds for Stack Overflow, Server Fault, Super User, Ask Ubuntu, MathOverflow, Stack Apps, and all `*.stackexchange.com` sites. The `stackexchange.com` network host gives only its newest questions feed.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|

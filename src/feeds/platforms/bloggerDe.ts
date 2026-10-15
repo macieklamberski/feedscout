@@ -7,11 +7,9 @@ export type BloggerDeUrl = { kind: 'blog'; blog: string }
 
 const domains = ['blogger.de']
 
-const excludedSubdomains = ['cdn']
-
 export const parseBloggerDeUrl = (url: string): BloggerDeUrl | undefined => {
   // A nested subdomain like a.b.blogger.de fails TLS, since the certificate covers one label.
-  const blog = getTenantSubdomain(url, domains, excludedSubdomains)
+  const blog = getTenantSubdomain(url, domains)
 
   if (!blog) {
     return

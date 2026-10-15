@@ -28,16 +28,6 @@ describe('parseAmebloUrl', () => {
     expect(parseAmebloUrl('https://ameblo.jp/Shibuya')).toEqual(expected)
   })
 
-  it('should return undefined for excluded paths', () => {
-    expect(parseAmebloUrl('https://ameblo.jp/genre/')).toBeUndefined()
-    expect(parseAmebloUrl('https://ameblo.jp/hashtag/')).toBeUndefined()
-    expect(parseAmebloUrl('https://ameblo.jp/search')).toBeUndefined()
-  })
-
-  it('should return undefined for an excluded path in another case', () => {
-    expect(parseAmebloUrl('https://ameblo.jp/Search')).toBeUndefined()
-  })
-
   it('should return undefined for the homepage', () => {
     expect(parseAmebloUrl('https://ameblo.jp')).toBeUndefined()
     expect(parseAmebloUrl('https://ameblo.jp/')).toBeUndefined()

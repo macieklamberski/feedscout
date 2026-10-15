@@ -3,18 +3,6 @@ import type { BehanceUrl } from './behance.js'
 import { behanceHandler, parseBehanceUrl } from './behance.js'
 
 describe('parseBehanceUrl', () => {
-  const excludedPathValues: Array<string> = [
-    'https://www.behance.net/gallery',
-    'https://www.behance.net/jobs',
-    'https://www.behance.net/collections',
-    'https://www.behance.net/inbox',
-    'https://www.behance.net/Signup',
-  ]
-
-  it.each(excludedPathValues)('should return undefined for the site route %s', (value) => {
-    expect(parseBehanceUrl(value)).toBeUndefined()
-  })
-
   it('should return the username for a profile page', () => {
     const expected: BehanceUrl = { kind: 'profile', username: 'johndoe' }
 
@@ -49,16 +37,6 @@ describe('parseBehanceUrl', () => {
     const expected: BehanceUrl = { kind: 'profile', username: 'JohnDoe' }
 
     expect(parseBehanceUrl('https://www.behance.net/JohnDoe')).toEqual(expected)
-  })
-
-  it('should return undefined for excluded paths', () => {
-    expect(parseBehanceUrl('https://www.behance.net/search')).toBeUndefined()
-    expect(parseBehanceUrl('https://www.behance.net/blog')).toBeUndefined()
-    expect(parseBehanceUrl('https://www.behance.net/about')).toBeUndefined()
-  })
-
-  it('should return undefined for an excluded path in another case', () => {
-    expect(parseBehanceUrl('https://www.behance.net/Search')).toBeUndefined()
   })
 
   it('should return undefined for other nested profile paths', () => {
@@ -160,10 +138,6 @@ describe('behanceHandler', () => {
       ]
 
       expect(behanceHandler.resolve(value)).toEqual(expected)
-    })
-
-    it('should return empty array when the URL names no profile', () => {
-      expect(behanceHandler.resolve('https://www.behance.net/search')).toEqual([])
     })
   })
 })

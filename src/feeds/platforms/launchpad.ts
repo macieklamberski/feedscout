@@ -28,38 +28,6 @@ const feedsOrigin = 'http://feeds.launchpad.net'
 
 const bugIdRegex = /^\d+$/
 
-const excludedPaths = [
-  'archives',
-  'bazaar',
-  'binarypackagenames',
-  'branches',
-  'bugs',
-  'builders',
-  'codeofconduct',
-  'distros',
-  'faq',
-  'feedback',
-  'karmaaction',
-  'legal',
-  'livefses',
-  'package-sets',
-  'people',
-  'pillars',
-  'products',
-  'projectgroups',
-  'projects',
-  'questions',
-  'sourcepackagenames',
-  'specs',
-  'sprints',
-  'support',
-  'temporary-blobs',
-  'testopenid',
-  'token',
-  'translations',
-  'vulnerabilities',
-]
-
 const getApplication = (parsedUrl: URL): LaunchpadApplication => {
   if (isHostOf(parsedUrl, bugsHosts)) {
     return 'bugs'
@@ -119,7 +87,7 @@ export const parseLaunchpadUrl = (url: string): LaunchpadUrl | undefined => {
     return
   }
 
-  if (first.startsWith('+') || isAnyOf(first, excludedPaths)) {
+  if (first.startsWith('+')) {
     return
   }
 

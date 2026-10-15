@@ -59,10 +59,8 @@ describe('parseSapoBlogsUrl', () => {
     expect(parseSapoBlogsUrl('https://www.alice.blogs.sapo.pt/')).toBeUndefined()
   })
 
-  const serviceHosts = ['https://m.blogs.sapo.pt/', 'https://www.blogs.sapo.pt/']
-
-  it.each(serviceHosts)('should return undefined for service host %s', (value) => {
-    expect(parseSapoBlogsUrl(value)).toBeUndefined()
+  it('should return undefined for the www host', () => {
+    expect(parseSapoBlogsUrl('https://www.blogs.sapo.pt/')).toBeUndefined()
   })
 
   it('should return undefined for the apex domain', () => {

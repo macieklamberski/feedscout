@@ -20,26 +20,6 @@ const feedLinkRegex = /^https:\/\/blog\.jinbo\.net\/([^/]+)\/rss$/
 // in the wording of the blog's skin.
 const noPostsRegex = />0<\/\w+>개의 게시물을 찾았습니다|에 (?:관한|해당되는) 글 0(?:개|건)/
 
-const excludedPaths = [
-  'archive',
-  'atom',
-  'attach',
-  'global',
-  'jinboblog',
-  'jplugins',
-  'lines',
-  'manual',
-  'outpost',
-  'plugins',
-  'post',
-  'register',
-  'resources',
-  'rss',
-  'search',
-  'sitemap',
-  'skin',
-]
-
 export const parseJinboUrl = (url: string): JinboUrl | undefined => {
   if (!isHostOf(url, hosts)) {
     return
@@ -48,7 +28,7 @@ export const parseJinboUrl = (url: string): JinboUrl | undefined => {
   const [username, section, value] = getPathSegments(url)
 
   // A segment like favicon.ico is a file at the root, not a blog.
-  if (!username || username.includes('.') || isAnyOf(username, excludedPaths)) {
+  if (!username || username.includes('.')) {
     return
   }
 

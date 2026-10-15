@@ -14,7 +14,6 @@ const domains = ['estranky.cz', 'estranky.sk']
 const estrankyAssetRegex = /^(?:https?:)?\/\/s3[a-z]\.(?:estranky\.(?:cz|sk)|eoldal\.hu)\//
 
 const assetTags = ['link', 'script']
-const excludedSubdomains = ['katalog', 'napoveda', 'nova-napoveda', 'www']
 
 // Every template loads its stylesheet and `ui.js` from the asset hosts, on a custom domain too.
 export const isEstrankyHtml = (content: string): boolean => {
@@ -27,7 +26,7 @@ export const isEstrankyHtml = (content: string): boolean => {
   return asset !== undefined
 }
 
-// The apex and the service subdomains run Estranky itself. Every other host is one site.
+// The apex and www run Estranky itself. Every other host is one site.
 export const parseEstrankyUrl = (url: string): EstrankyUrl | undefined => {
   const parsedUrl = parseUrl(url)
 
@@ -35,7 +34,7 @@ export const parseEstrankyUrl = (url: string): EstrankyUrl | undefined => {
     return
   }
 
-  if (isAnyOf(getSubdomain(parsedUrl, domains), excludedSubdomains)) {
+  if (isAnyOf(getSubdomain(parsedUrl, domains), 'www')) {
     return
   }
 

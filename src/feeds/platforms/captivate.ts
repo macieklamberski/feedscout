@@ -1,3 +1,4 @@
+import { isHostOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, getTenantSubdomain } from '../../common/utils.js'
 
@@ -6,27 +7,13 @@ import { composeHint, getTenantSubdomain } from '../../common/utils.js'
 export type CaptivateUrl = { kind: 'show'; slug: string }
 
 const domains = ['captivate.fm']
-
-const excludedSubdomains = [
-  'api',
-  'artwork',
-  'assets',
-  'cdn',
-  'docs',
-  'feeds',
-  'help',
-  'media',
-  'my',
-  'player',
-  'podcasts',
-  'status',
-  'www',
-]
+// The feed host serves every show by path, so it names no show.
+const feedHosts = ['feeds.captivate.fm']
 
 export const parseCaptivateUrl = (url: string): CaptivateUrl | undefined => {
-  const slug = getTenantSubdomain(url, domains, excludedSubdomains)
+  const slug = getTenantSubdomain(url, domains)
 
-  if (!slug) {
+  if (!slug || isHostOf(url, feedHosts)) {
     return
   }
 

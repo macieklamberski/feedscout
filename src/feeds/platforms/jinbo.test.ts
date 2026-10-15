@@ -67,22 +67,12 @@ describe('parseJinboUrl', () => {
     expect(parseJinboUrl('https://blog.jinbo.net/alice/tag')).toEqual(expected)
   })
 
-  const siteWidePaths = [
-    'https://blog.jinbo.net/',
-    'https://blog.jinbo.net/archive/FOSS',
-    'https://blog.jinbo.net/atom',
-    'https://blog.jinbo.net/global/frame/script.js',
-    'https://blog.jinbo.net/jplugins/Menubar/menubar.css',
-    'https://blog.jinbo.net/lines',
-    'https://blog.jinbo.net/post/?page=2',
-    'https://blog.jinbo.net/rss/zine',
-    'https://blog.jinbo.net/search/abc',
-    'https://blog.jinbo.net/skin/blog/jbnew/style.css',
-    'https://blog.jinbo.net/favicon.ico',
-  ]
+  it('should return undefined for the root', () => {
+    expect(parseJinboUrl('https://blog.jinbo.net/')).toBeUndefined()
+  })
 
-  it.each(siteWidePaths)('should return undefined for site-wide path %s', (value) => {
-    expect(parseJinboUrl(value)).toBeUndefined()
+  it('should return undefined for a dotted first segment', () => {
+    expect(parseJinboUrl('https://blog.jinbo.net/favicon.ico')).toBeUndefined()
   })
 
   it('should return undefined for a dotted subdomain', () => {

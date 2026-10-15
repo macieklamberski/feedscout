@@ -1,4 +1,4 @@
-import { getPathSegments, isAnyOf, isHostOf } from 'trousse'
+import { getPathSegments, isHostOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
@@ -13,7 +13,6 @@ export type AcastUrl = { kind: 'show'; slug: string }
 // is the embed-player host (slug at path index 0).
 const hosts = ['shows.acast.com', 'play.acast.com', 'embed.acast.com']
 const legacyHosts = ['play.acast.com']
-const excludedPaths = ['discover']
 
 export const parseAcastUrl = (url: string): AcastUrl | undefined => {
   if (!isHostOf(url, hosts)) {
@@ -24,7 +23,7 @@ export const parseAcastUrl = (url: string): AcastUrl | undefined => {
   const slugIndex = isHostOf(url, legacyHosts) ? 1 : 0
   const slug = getPathSegments(url)[slugIndex]
 
-  if (!slug || isAnyOf(slug, excludedPaths)) {
+  if (!slug) {
     return
   }
 

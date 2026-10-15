@@ -37,8 +37,6 @@ const postEndpointRegex = /(?<=[^/])\/(?:amp|embed|trackback|comment-page-\d+)\/
 const reservedPathRegex =
   /^\/(?:wp-(?:admin|content|includes|json)|[^/]*\.(?:php|xml)|search|category|tag|author)(?:\/|$)/i
 
-const excludedSubdomains = ['public-api', 'r-login', 'subscribe', 'dashboard']
-
 // An unregistered {name}.home.blog redirects to home.blog, whose every page links this feed.
 const platformFeedUrl = 'https://home.blog/feed/'
 
@@ -115,7 +113,7 @@ export const parseWordpressPage = (url: string): WordpressUrl => {
 }
 
 export const parseWordpressUrl = (url: string): WordpressUrl | undefined => {
-  const subdomain = getTenantSubdomain(url, domains, excludedSubdomains)
+  const subdomain = getTenantSubdomain(url, domains)
 
   // A staging- subdomain is a WordPress.com staging copy of another site.
   if (!subdomain || subdomain.startsWith('staging-')) {

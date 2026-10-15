@@ -2,33 +2,10 @@ import { describe, expect, it } from 'bun:test'
 import { type ButtondownUrl, buttondownHandler, parseButtondownUrl } from './buttondown.js'
 
 describe('parseButtondownUrl', () => {
-  const excludedPathValues: Array<string> = [
-    'https://buttondown.com/emails',
-    'https://buttondown.com/subscribers',
-    'https://buttondown.com/search',
-    'https://buttondown.com/support',
-    'https://buttondown.com/use-cases',
-    'https://buttondown.com/Stack',
-  ]
-
-  it.each(excludedPathValues)('should return undefined for the site route %s', (value) => {
-    expect(parseButtondownUrl(value)).toBeUndefined()
-  })
-
   it('should return the newsletter for a newsletter page', () => {
     const expected: ButtondownUrl = { kind: 'newsletter', username: 'cassidoo' }
 
     expect(parseButtondownUrl('https://buttondown.com/cassidoo')).toEqual(expected)
-  })
-
-  it('should return the newsletter named api', () => {
-    const expected: ButtondownUrl = { kind: 'newsletter', username: 'api' }
-
-    expect(parseButtondownUrl('https://buttondown.com/api')).toEqual(expected)
-  })
-
-  it('should return undefined for an excluded path', () => {
-    expect(parseButtondownUrl('https://buttondown.com/pricing')).toBeUndefined()
   })
 
   it('should return undefined for the root', () => {
@@ -91,18 +68,6 @@ describe('buttondownHandler', () => {
 
     it('should return empty array for root path', () => {
       const value = 'https://buttondown.com/'
-
-      expect(buttondownHandler.resolve(value)).toEqual([])
-    })
-
-    it('should return empty array for excluded paths', () => {
-      const value = 'https://buttondown.com/login'
-
-      expect(buttondownHandler.resolve(value)).toEqual([])
-    })
-
-    it('should return empty array for a capitalized excluded path', () => {
-      const value = 'https://buttondown.com/Login'
 
       expect(buttondownHandler.resolve(value)).toEqual([])
     })

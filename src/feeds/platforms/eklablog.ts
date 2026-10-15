@@ -1,7 +1,7 @@
-import { getSubdomain, isHostOf, isHostOrSubdomainOf, resolveUrl } from 'trousse'
+import { isHostOf, isHostOrSubdomainOf, resolveUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, findElement, hasMarker } from '../../common/utils.js'
+import { composeHint, findElement, getTenantSubdomain, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic partly covers blog, customDomain.
@@ -27,15 +27,6 @@ const domains = [
 ]
 const connectHosts = ['connect.eklablog.com']
 
-// Only eklablog.com runs service hosts. On the other domains these names are blog hosts.
-const excludedHosts = [
-  'admin.eklablog.com',
-  'assets.eklablog.com',
-  'connect.eklablog.com',
-  'image.eklablog.com',
-  'www.eklablog.com',
-]
-
 const isConnectScript = (src: string | undefined): boolean => {
   return isHostOf(resolveUrl(src ?? '') ?? '', connectHosts)
 }
@@ -54,14 +45,9 @@ export const parseEklablogUrl = (url: string): EklablogUrl | undefined => {
     return { kind: 'customDomain' }
   }
 
-  const subdomain = getSubdomain(url, domains)
+  const subdomain = getTenantSubdomain(url, domains)
 
-  // A nested subdomain like a.b.eklablog.com fails TLS, since the certificate covers one label.
-  if (!subdomain || subdomain.includes('.')) {
-    return
-  }
-
-  if (isHostOf(url, excludedHosts)) {
+  if (!subdomain) {
     return
   }
 

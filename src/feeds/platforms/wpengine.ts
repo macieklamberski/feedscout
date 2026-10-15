@@ -8,10 +8,9 @@ import { composeWordpressFeeds, parseWordpressPage, type WordpressUrl } from './
 export type WpengineUrl = WordpressUrl
 
 const domains = ['wpenginepowered.com', 'wpengine.com']
-const excludedSubdomains = ['api', 'cdn', 'my']
 
 export const parseWpengineUrl = (url: string): WpengineUrl | undefined => {
-  if (!getTenantSubdomain(url, domains, excludedSubdomains)) {
+  if (!getTenantSubdomain(url, domains)) {
     return
   }
 

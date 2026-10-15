@@ -20,34 +20,6 @@ const userRouteSuffixRegex = /\.(?:atom|gpg|keys|png|rss)$/i
 // named feed.
 const userFeedRegex = /^https?:\/\/(?:www\.)?(?:codeberg\.org|gitea\.com)\/[^/?#]+\/?$/i
 
-const excludedPaths = [
-  'explore',
-  'admin',
-  'user',
-  'assets',
-  'api',
-  'swagger.json',
-  'robots.txt',
-  'sitemap.xml',
-  '-',
-  'issues',
-  'pulls',
-  'milestones',
-  'notifications',
-  'login',
-  'org',
-  'repo',
-  'metrics',
-  'v2',
-  'attachments',
-  'avatar',
-  'avatars',
-  'repo-avatars',
-  'captcha',
-  'favicon.ico',
-  'ghost',
-  '.well-known',
-]
 const branchViews = ['src', 'commits']
 
 export const isGiteaHeaders = (headers: Headers): boolean => {
@@ -58,7 +30,7 @@ export const parseGiteaUrl = (url: string): GiteaUrl | undefined => {
   const [first, repo, section, refType, ...refPath] = getPathSegments(url)
   const owner = repo ? first : first?.replace(userRouteSuffixRegex, '')
 
-  if (!owner || isAnyOf(owner, excludedPaths)) {
+  if (!owner) {
     return
   }
 

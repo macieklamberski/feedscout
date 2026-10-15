@@ -20,8 +20,6 @@ const trailingSlashRegex = /\/$/
 // made-up category would otherwise get the site's feed.
 const errorPageRegex = /<!-- This file lives in public\/404\.html -->/
 
-const excludedSubdomains = ['api', 'blog', 'setup', 'ssl', 'status', 'support']
-
 const getSettingsRoot = (content: string | undefined): string | undefined => {
   const settingsLine = content?.match(settingsLineRegex)?.[0]
 
@@ -66,7 +64,7 @@ export const getTenderPage = (url: string, content: string | undefined): TenderP
   }
 
   if (isHostOrSubdomainOf(url, domains)) {
-    if (!getTenantSubdomain(url, domains, excludedSubdomains)) {
+    if (!getTenantSubdomain(url, domains)) {
       return
     }
   }

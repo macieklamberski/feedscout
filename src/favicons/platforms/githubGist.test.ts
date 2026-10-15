@@ -20,9 +20,5 @@ describe('githubGistHandler', () => {
 
       expect(githubGistHandler.resolve('https://gist.github.com/octocat/starred')).toEqual(expected)
     })
-
-    it('should return empty array for excluded paths', () => {
-      expect(githubGistHandler.resolve('https://gist.github.com/search')).toEqual([])
-    })
   })
 })

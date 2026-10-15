@@ -7,10 +7,8 @@ export type PodcloudUrl = { kind: 'show' }
 
 const domains = ['lepodcast.fr']
 
-const excludedSubdomains = ['dev', 'feed', 'feeds', 'multifeed', 'studio', 'www2']
-
 export const parsePodcloudUrl = (url: string): PodcloudUrl | undefined => {
-  if (!getTenantSubdomain(url, domains, excludedSubdomains)) {
+  if (!getTenantSubdomain(url, domains)) {
     return
   }
 

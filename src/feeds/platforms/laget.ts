@@ -1,4 +1,4 @@
-import { getPathSegments, isAnyOf, isHostOf, isHostOrSubdomainOf } from 'trousse'
+import { getPathSegments, isHostOf, isHostOrSubdomainOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, findElement, hasMarker } from '../../common/utils.js'
 
@@ -14,7 +14,6 @@ const domains = ['laget.se']
 const lagetAssetRegex = /^(?:https?:)?\/\/[a-z]-content\.laget\.se\//
 
 const assetTags = ['link', 'script']
-const excludedPaths = ['common', 'content', 'cupguide', 'cupguiden', 'handlers', 'login']
 
 // Both club templates load their stylesheets and scripts from the asset host, on an own domain too.
 export const isLagetHtml = (content: string): boolean => {
@@ -34,7 +33,7 @@ export const parseLagetUrl = (url: string): LagetUrl | undefined => {
 
   const [team] = getPathSegments(url)
 
-  if (!team || team.includes('.') || isAnyOf(team, excludedPaths)) {
+  if (!team || team.includes('.')) {
     return
   }
 

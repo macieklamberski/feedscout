@@ -18,11 +18,9 @@ const postRegex = /^\/(?:[^/]+-(\d+)|(\d+)\.html)\/?$/i
 const tagRegex = /^\/tag\/(.+?)\/?$/i
 const reservedCharRegex = /[!'()*]/g
 
-const excludedSubdomains = ['m']
-
 export const parseSapoBlogsUrl = (url: string): SapoBlogsUrl | undefined => {
   const pathname = parseUrl(url)?.pathname
-  const blog = getTenantSubdomain(url, domains, excludedSubdomains)
+  const blog = getTenantSubdomain(url, domains)
 
   if (!pathname || !blog) {
     return

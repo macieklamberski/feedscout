@@ -1,4 +1,4 @@
-import { getSubdomain, isAnyOf, isHostOf, isHostOrSubdomainOf, parseUrl } from 'trousse'
+import { isHostOf, isHostOrSubdomainOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
@@ -33,8 +33,6 @@ const collectiveRegex = /^\/collectives\/([^/]+)/i
 
 // Sort values accepted by feeds.tag. Documented at api.stackexchange.com.
 const validSorts = ['newest', 'active', 'votes', 'creation', 'hot', 'week', 'month']
-// A chat room id or an API path names no question, user or tag of a site.
-const excludedSubdomains = ['api', 'chat']
 
 const getSort = (searchParams: URLSearchParams): string | undefined => {
   const sort = searchParams.get('sort') ?? searchParams.get('tab')?.toLowerCase()
@@ -48,12 +46,6 @@ export const parseStackExchangeUrl = (url: string): StackExchangeUrl | undefined
   const parsedUrl = parseUrl(url)
 
   if (!parsedUrl || !isHostOrSubdomainOf(parsedUrl, domains)) {
-    return
-  }
-
-  const subdomainLabel = getSubdomain(parsedUrl, domains)?.split('.')[0]
-
-  if (isAnyOf(subdomainLabel, excludedSubdomains)) {
     return
   }
 

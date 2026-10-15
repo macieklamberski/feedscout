@@ -108,16 +108,7 @@ describe('parseLagetUrl', () => {
     expect(parseLagetUrl('https://www.laget.se/EXEMPELIF_F12/')).toEqual(expected)
   })
 
-  const sitePaths = [
-    'https://www.laget.se/Login',
-    'https://www.laget.se/cupguiden',
-    'https://www.laget.se/cupguide',
-    'https://www.laget.se/Content/',
-    'https://www.laget.se/Common/Images/logo.png',
-    'https://www.laget.se/Handlers/Image.ashx',
-    'https://www.laget.se/Price.html',
-    'https://www.laget.se/Search.html',
-  ]
+  const sitePaths = ['https://www.laget.se/Price.html', 'https://www.laget.se/Search.html']
 
   it.each(sitePaths)('should return undefined for site path %s', (value) => {
     expect(parseLagetUrl(value)).toBeUndefined()
@@ -152,10 +143,6 @@ describe('lagetHandler', () => {
       expect(lagetHandler.match('https://example.com/', classicPage)).toBe(true)
     })
 
-    it('should not match a laget.se site path carrying the marker', () => {
-      expect(lagetHandler.match('https://www.laget.se/Login', classicPage)).toBe(false)
-    })
-
     it('should not match a laget.se subdomain carrying the marker', () => {
       expect(lagetHandler.match('https://api.laget.se/', classicPage)).toBe(false)
     })
@@ -184,10 +171,6 @@ describe('lagetHandler', () => {
       ]
 
       expect(lagetHandler.resolve(value, scriptShellPage)).toEqual(expected)
-    })
-
-    it('should return empty array for a laget.se site path', () => {
-      expect(lagetHandler.resolve('https://www.laget.se/Login')).toEqual([])
     })
 
     it('should return empty array for a laget.se subdomain', () => {

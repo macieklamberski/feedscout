@@ -1,4 +1,4 @@
-import { isAnyOf, parseUrl } from 'trousse'
+import { parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, getTenantSubdomain } from '../../common/utils.js'
@@ -21,19 +21,6 @@ const domains = [
 const categoryRegex = /^\/([^/.]+)\/?$/
 const archivesCategoryRegex = /^\/archives\/category\/([^/]+)(?:\/|$)/
 
-const excludedSubdomains = ['starter', 'static']
-const excludedPaths = [
-  'admin',
-  'album',
-  'apps',
-  'archive',
-  'archives',
-  'backend',
-  'files',
-  'media',
-  'tag',
-]
-
 export const parseHautetfortUrl = (url: string): HautetfortUrl | undefined => {
   const pathname = parseUrl(url)?.pathname
 
@@ -41,7 +28,7 @@ export const parseHautetfortUrl = (url: string): HautetfortUrl | undefined => {
     return
   }
 
-  const blog = getTenantSubdomain(url, domains, excludedSubdomains)
+  const blog = getTenantSubdomain(url, domains)
 
   if (!blog) {
     return
@@ -55,7 +42,7 @@ export const parseHautetfortUrl = (url: string): HautetfortUrl | undefined => {
 
   const category = pathname.match(categoryRegex)?.[1]
 
-  if (category && !isAnyOf(category, excludedPaths)) {
+  if (category) {
     return { kind: 'category', blog, category }
   }
 
