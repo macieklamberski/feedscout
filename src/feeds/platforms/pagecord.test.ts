@@ -12,6 +12,10 @@ describe('parsePagecordUrl', () => {
     expect(parsePagecordUrl('https://www.pagecord.com/')).toBeUndefined()
   })
 
+  it('should return undefined for a nested subdomain', () => {
+    expect(parsePagecordUrl('https://blog.example.pagecord.com/')).toBeUndefined()
+  })
+
   it('should return undefined for another host', () => {
     expect(parsePagecordUrl('https://example.com/')).toBeUndefined()
   })
@@ -21,7 +25,7 @@ describe('pagecordHandler', () => {
   describe('match', () => {
     const values: Array<[boolean, string]> = [
       [true, 'https://alice.pagecord.com'],
-      [true, 'https://blog.example.pagecord.com'],
+      [false, 'https://blog.example.pagecord.com'],
       [false, 'https://pagecord.com'],
       [false, 'https://www.pagecord.com'],
       [false, 'https://example.com'],

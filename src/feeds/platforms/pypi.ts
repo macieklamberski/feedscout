@@ -10,6 +10,18 @@ const hosts = ['pypi.org', 'www.pypi.org']
 
 const projectRegex = /^\/project\/([\w.-]+)(?:\/|$)/i
 
+// Every page links the two site-wide feeds.
+const siteFeeds = [
+  {
+    uri: 'https://pypi.org/rss/packages.xml',
+    hint: composeHint('pypi:new-packages'),
+  },
+  {
+    uri: 'https://pypi.org/rss/updates.xml',
+    hint: composeHint('pypi:updates'),
+  },
+]
+
 export const parsePypiUrl = (url: string): PypiUrl | undefined => {
   const parsedUrl = parseUrl(url)
 
@@ -48,18 +60,10 @@ export const pypiHandler: PlatformHandler = {
           uri: `https://pypi.org/rss/project/${parsed.project}/releases.xml`,
           hint: composeHint('pypi:releases'),
         },
+        ...siteFeeds,
       ]
     }
 
-    return [
-      {
-        uri: 'https://pypi.org/rss/packages.xml',
-        hint: composeHint('pypi:new-packages'),
-      },
-      {
-        uri: 'https://pypi.org/rss/updates.xml',
-        hint: composeHint('pypi:updates'),
-      },
-    ]
+    return siteFeeds
   },
 }

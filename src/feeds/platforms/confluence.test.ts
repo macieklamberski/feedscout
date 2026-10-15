@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'bun:test'
+import type { DiscoverUriEntry } from '../../common/types.js'
 import { confluenceHandler, isConfluenceHtml } from './confluence.js'
 
 const confluenceHtml = `
@@ -75,9 +76,9 @@ describe('confluenceHandler', () => {
   })
 
   describe('resolve', () => {
-    it('should return the space and site streams', () => {
+    it('should return the space and site feeds', () => {
       const value = 'https://wiki.example.org/confluence/display/DOCS'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://wiki.example.org/confluence/plugins/servlet/streams?key=DOCS',
           hint: { key: 'confluence:space', label: 'Space' },
@@ -86,6 +87,14 @@ describe('confluenceHandler', () => {
           uri: 'https://wiki.example.org/confluence/plugins/servlet/streams',
           hint: { key: 'confluence:site', label: 'Site activity' },
         },
+        {
+          uri: 'https://wiki.example.org/confluence/spaces/createrssfeed.action?types=page&types=blogpost&types=comment&spaces=conf_all&sort=modified&title=Dashboard+RSS+Feed&maxResults=15&publicFeed=true&rssType=rss2',
+          hint: { key: 'confluence:dashboard', label: 'Dashboard', format: 'rss' },
+        },
+        {
+          uri: 'https://wiki.example.org/confluence/spaces/createrssfeed.action?types=page&types=blogpost&types=comment&spaces=conf_all&sort=modified&title=Dashboard+RSS+Feed&maxResults=15&publicFeed=true&rssType=atom',
+          hint: { key: 'confluence:dashboard', label: 'Dashboard', format: 'atom' },
+        },
       ]
 
       expect(confluenceHandler.resolve(value, confluenceHtml)).toEqual(expected)
@@ -93,7 +102,7 @@ describe('confluenceHandler', () => {
 
     it('should build from the fetched origin, not the base URL meta tag', () => {
       const value = 'https://internal.example.com/confluence/display/DOCS'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://internal.example.com/confluence/plugins/servlet/streams?key=DOCS',
           hint: { key: 'confluence:space', label: 'Space' },
@@ -102,6 +111,14 @@ describe('confluenceHandler', () => {
           uri: 'https://internal.example.com/confluence/plugins/servlet/streams',
           hint: { key: 'confluence:site', label: 'Site activity' },
         },
+        {
+          uri: 'https://internal.example.com/confluence/spaces/createrssfeed.action?types=page&types=blogpost&types=comment&spaces=conf_all&sort=modified&title=Dashboard+RSS+Feed&maxResults=15&publicFeed=true&rssType=rss2',
+          hint: { key: 'confluence:dashboard', label: 'Dashboard', format: 'rss' },
+        },
+        {
+          uri: 'https://internal.example.com/confluence/spaces/createrssfeed.action?types=page&types=blogpost&types=comment&spaces=conf_all&sort=modified&title=Dashboard+RSS+Feed&maxResults=15&publicFeed=true&rssType=atom',
+          hint: { key: 'confluence:dashboard', label: 'Dashboard', format: 'atom' },
+        },
       ]
 
       expect(confluenceHandler.resolve(value, confluenceHtml)).toEqual(expected)
@@ -109,7 +126,7 @@ describe('confluenceHandler', () => {
 
     it('should handle an empty context path', () => {
       const value = 'https://wiki.example.org/display/DOCS'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://wiki.example.org/plugins/servlet/streams?key=DOCS',
           hint: { key: 'confluence:space', label: 'Space' },
@@ -118,18 +135,34 @@ describe('confluenceHandler', () => {
           uri: 'https://wiki.example.org/plugins/servlet/streams',
           hint: { key: 'confluence:site', label: 'Site activity' },
         },
+        {
+          uri: 'https://wiki.example.org/spaces/createrssfeed.action?types=page&types=blogpost&types=comment&spaces=conf_all&sort=modified&title=Dashboard+RSS+Feed&maxResults=15&publicFeed=true&rssType=rss2',
+          hint: { key: 'confluence:dashboard', label: 'Dashboard', format: 'rss' },
+        },
+        {
+          uri: 'https://wiki.example.org/spaces/createrssfeed.action?types=page&types=blogpost&types=comment&spaces=conf_all&sort=modified&title=Dashboard+RSS+Feed&maxResults=15&publicFeed=true&rssType=atom',
+          hint: { key: 'confluence:dashboard', label: 'Dashboard', format: 'atom' },
+        },
       ]
 
       expect(confluenceHandler.resolve(value, rootContextHtml)).toEqual(expected)
     })
 
-    it('should return only the site stream without a space key', () => {
+    it('should return only the site feeds without a space key', () => {
       const value = 'https://wiki.example.org/confluence/dashboard.action'
       const content = '<meta name="confluence-base-url" content="https://wiki.example.org">'
-      const expected = [
+      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://wiki.example.org/plugins/servlet/streams',
           hint: { key: 'confluence:site', label: 'Site activity' },
+        },
+        {
+          uri: 'https://wiki.example.org/spaces/createrssfeed.action?types=page&types=blogpost&types=comment&spaces=conf_all&sort=modified&title=Dashboard+RSS+Feed&maxResults=15&publicFeed=true&rssType=rss2',
+          hint: { key: 'confluence:dashboard', label: 'Dashboard', format: 'rss' },
+        },
+        {
+          uri: 'https://wiki.example.org/spaces/createrssfeed.action?types=page&types=blogpost&types=comment&spaces=conf_all&sort=modified&title=Dashboard+RSS+Feed&maxResults=15&publicFeed=true&rssType=atom',
+          hint: { key: 'confluence:dashboard', label: 'Dashboard', format: 'atom' },
         },
       ]
 

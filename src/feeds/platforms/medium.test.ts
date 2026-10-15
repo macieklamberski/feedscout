@@ -106,6 +106,10 @@ describe('parseMediumUrl', () => {
     expect(parseMediumUrl('https://miro.medium.com/v2/resize:fit:200/1*abc.png')).toBeUndefined()
   })
 
+  it('should return undefined for the API host', () => {
+    expect(parseMediumUrl('https://api.medium.com/')).toBeUndefined()
+  })
+
   it('should return undefined for excluded paths', () => {
     expect(parseMediumUrl('https://medium.com/search')).toBeUndefined()
     expect(parseMediumUrl('https://medium.com/me')).toBeUndefined()

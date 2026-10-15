@@ -44,6 +44,10 @@ describe('parseReformalUrl', () => {
     expect(parseReformalUrl('https://www.idea.informer.com/')).toBeUndefined()
   })
 
+  it('should return undefined for a nested subdomain', () => {
+    expect(parseReformalUrl('https://ideas.example.reformal.ru/')).toBeUndefined()
+  })
+
   it('should return undefined for another informer.com host', () => {
     expect(parseReformalUrl('https://example.informer.com/')).toBeUndefined()
   })

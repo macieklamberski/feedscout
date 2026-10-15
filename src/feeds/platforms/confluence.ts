@@ -7,6 +7,11 @@ import { composeHint, getMetaContent, hasMarker } from '../../common/utils.js'
 
 const trailingSlashRegex = /\/$/
 
+// The dashboard links this feed with an empty `spaces`, which answers no items. `conf_all` names
+// every space.
+const dashboardFeedQuery =
+  'types=page&types=blogpost&types=comment&spaces=conf_all&sort=modified&title=Dashboard+RSS+Feed&maxResults=15&publicFeed=true'
+
 const getBaseUrl = (origin: string, content: string): string => {
   const contextPath = getMetaContent(content, 'confluence-context-path') ?? ''
 
@@ -38,6 +43,14 @@ export const confluenceHandler: PlatformHandler = {
     uris.push({
       uri: `${baseUrl}/plugins/servlet/streams`,
       hint: composeHint('confluence:site'),
+    })
+    uris.push({
+      uri: `${baseUrl}/spaces/createrssfeed.action?${dashboardFeedQuery}&rssType=rss2`,
+      hint: composeHint('confluence:dashboard', 'rss'),
+    })
+    uris.push({
+      uri: `${baseUrl}/spaces/createrssfeed.action?${dashboardFeedQuery}&rssType=atom`,
+      hint: composeHint('confluence:dashboard', 'atom'),
     })
 
     return uris

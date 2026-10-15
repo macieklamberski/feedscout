@@ -1,6 +1,6 @@
-import { isHostOf, isSubdomainOf, parseUrl } from 'trousse'
+import { isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
+import { composeHint, getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -21,7 +21,7 @@ export const parseProseUrl = (url: string): ProseUrl | undefined => {
     return { kind: 'home' }
   }
 
-  if (!isSubdomainOf(parsedUrl, domains)) {
+  if (!getTenantSubdomain(parsedUrl, domains)) {
     return
   }
 

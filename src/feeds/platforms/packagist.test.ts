@@ -59,7 +59,7 @@ describe('packagistHandler', () => {
       expect(packagistHandler.resolve('https://example.com/')).toEqual([])
     })
 
-    it('should return the releases feeds for a package page', () => {
+    it('should return the releases and site-wide feeds for a package page', () => {
       const value = 'https://packagist.org/packages/acme/logger'
       const expected: Array<DiscoverUriEntry> = [
         {
@@ -70,12 +70,28 @@ describe('packagistHandler', () => {
           uri: 'https://packagist.org/feeds/package.acme/logger.atom',
           hint: { key: 'packagist:releases', label: 'Releases', format: 'atom' },
         },
+        {
+          uri: 'https://packagist.org/feeds/packages.rss',
+          hint: { key: 'packagist:new-packages', label: 'New packages', format: 'rss' },
+        },
+        {
+          uri: 'https://packagist.org/feeds/packages.atom',
+          hint: { key: 'packagist:new-packages', label: 'New packages', format: 'atom' },
+        },
+        {
+          uri: 'https://packagist.org/feeds/releases.rss',
+          hint: { key: 'packagist:new-releases', label: 'New releases', format: 'rss' },
+        },
+        {
+          uri: 'https://packagist.org/feeds/releases.atom',
+          hint: { key: 'packagist:new-releases', label: 'New releases', format: 'atom' },
+        },
       ]
 
       expect(packagistHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return the releases feeds for a package subpage', () => {
+    it('should return the releases and site-wide feeds for a package subpage', () => {
       const value = 'https://packagist.org/packages/acme/logger/stats'
       const expected: Array<DiscoverUriEntry> = [
         {
@@ -86,12 +102,28 @@ describe('packagistHandler', () => {
           uri: 'https://packagist.org/feeds/package.acme/logger.atom',
           hint: { key: 'packagist:releases', label: 'Releases', format: 'atom' },
         },
+        {
+          uri: 'https://packagist.org/feeds/packages.rss',
+          hint: { key: 'packagist:new-packages', label: 'New packages', format: 'rss' },
+        },
+        {
+          uri: 'https://packagist.org/feeds/packages.atom',
+          hint: { key: 'packagist:new-packages', label: 'New packages', format: 'atom' },
+        },
+        {
+          uri: 'https://packagist.org/feeds/releases.rss',
+          hint: { key: 'packagist:new-releases', label: 'New releases', format: 'rss' },
+        },
+        {
+          uri: 'https://packagist.org/feeds/releases.atom',
+          hint: { key: 'packagist:new-releases', label: 'New releases', format: 'atom' },
+        },
       ]
 
       expect(packagistHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return the vendor feeds for a vendor page', () => {
+    it('should return the vendor and site-wide feeds for a vendor page', () => {
       const value = 'https://packagist.org/packages/acme/'
       const expected: Array<DiscoverUriEntry> = [
         {
@@ -102,12 +134,28 @@ describe('packagistHandler', () => {
           uri: 'https://packagist.org/feeds/vendor.acme.atom',
           hint: { key: 'packagist:vendor', label: 'Vendor releases', format: 'atom' },
         },
+        {
+          uri: 'https://packagist.org/feeds/packages.rss',
+          hint: { key: 'packagist:new-packages', label: 'New packages', format: 'rss' },
+        },
+        {
+          uri: 'https://packagist.org/feeds/packages.atom',
+          hint: { key: 'packagist:new-packages', label: 'New packages', format: 'atom' },
+        },
+        {
+          uri: 'https://packagist.org/feeds/releases.rss',
+          hint: { key: 'packagist:new-releases', label: 'New releases', format: 'rss' },
+        },
+        {
+          uri: 'https://packagist.org/feeds/releases.atom',
+          hint: { key: 'packagist:new-releases', label: 'New releases', format: 'atom' },
+        },
       ]
 
       expect(packagistHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return the extension feeds for the extensions page', () => {
+    it('should return the extension and site-wide feeds for the extensions page', () => {
       const value = 'https://packagist.org/extensions'
       const expected: Array<DiscoverUriEntry> = [
         {
@@ -133,6 +181,22 @@ describe('packagistHandler', () => {
             label: 'Extension releases',
             format: 'atom',
           },
+        },
+        {
+          uri: 'https://packagist.org/feeds/packages.rss',
+          hint: { key: 'packagist:new-packages', label: 'New packages', format: 'rss' },
+        },
+        {
+          uri: 'https://packagist.org/feeds/packages.atom',
+          hint: { key: 'packagist:new-packages', label: 'New packages', format: 'atom' },
+        },
+        {
+          uri: 'https://packagist.org/feeds/releases.rss',
+          hint: { key: 'packagist:new-releases', label: 'New releases', format: 'rss' },
+        },
+        {
+          uri: 'https://packagist.org/feeds/releases.atom',
+          hint: { key: 'packagist:new-releases', label: 'New releases', format: 'atom' },
         },
       ]
 

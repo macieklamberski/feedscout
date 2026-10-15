@@ -10,7 +10,7 @@ Below are copy-paste examples for popular HTTP clients. See the [`FetchFn`](/ref
 
 ## Request Headers
 
-Discovery passes an `Accept` header in `options.headers` when it fetches the input page, the site of a feed and each candidate URL: an HTML-first one for a page and one that prefers the format being discovered for a candidate. A platform handler or a favicon enricher can fetch without one, and the default `fetchFn` then sends the HTML-first `Accept`, since some servers answer a page with its feed for `*/*` and answer a request with no `Accept` with 403. A custom `fetchFn` should forward `options.headers`, as every example below does. One that drops them sends its client's default `Accept`, and a server can then answer with a different page or refuse the request.
+Discovery passes an `Accept` header in `options.headers` when it fetches the input page, the site of a feed and each candidate URL: an HTML-first one for a page and one that prefers the format being discovered for a candidate. Hub discovery fetches its input with a feed-first `Accept` that takes HTML after the feed types, since its input is usually a feed. A platform handler or a favicon enricher can fetch without one, and the default `fetchFn` then sends the HTML-first `Accept`, since some servers answer a page with its feed for `*/*` and answer a request with no `Accept` with 403. A custom `fetchFn` should forward `options.headers`, as every example below does. One that drops them sends its client's default `Accept`, and a server can then answer with a different page or refuse the request.
 
 ## Axios
 

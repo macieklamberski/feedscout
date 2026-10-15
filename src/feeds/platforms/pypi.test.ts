@@ -35,24 +35,40 @@ describe('pypiHandler', () => {
   })
 
   describe('resolve', () => {
-    it('should return the releases feed for a project page', () => {
+    it('should return the releases and site-wide feeds for a project page', () => {
       const value = 'https://pypi.org/project/example-package/'
       const expected = [
         {
           uri: 'https://pypi.org/rss/project/example-package/releases.xml',
           hint: { key: 'pypi:releases', label: 'Releases' },
         },
+        {
+          uri: 'https://pypi.org/rss/packages.xml',
+          hint: { key: 'pypi:new-packages', label: 'New packages' },
+        },
+        {
+          uri: 'https://pypi.org/rss/updates.xml',
+          hint: { key: 'pypi:updates', label: 'Recent updates' },
+        },
       ]
 
       expect(pypiHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return the releases feed for a project version page', () => {
+    it('should return the releases and site-wide feeds for a project version page', () => {
       const value = 'https://pypi.org/project/example-package/1.0.0/'
       const expected = [
         {
           uri: 'https://pypi.org/rss/project/example-package/releases.xml',
           hint: { key: 'pypi:releases', label: 'Releases' },
+        },
+        {
+          uri: 'https://pypi.org/rss/packages.xml',
+          hint: { key: 'pypi:new-packages', label: 'New packages' },
+        },
+        {
+          uri: 'https://pypi.org/rss/updates.xml',
+          hint: { key: 'pypi:updates', label: 'Recent updates' },
         },
       ]
 
@@ -65,6 +81,14 @@ describe('pypiHandler', () => {
         {
           uri: 'https://pypi.org/rss/project/Example_Package.Core/releases.xml',
           hint: { key: 'pypi:releases', label: 'Releases' },
+        },
+        {
+          uri: 'https://pypi.org/rss/packages.xml',
+          hint: { key: 'pypi:new-packages', label: 'New packages' },
+        },
+        {
+          uri: 'https://pypi.org/rss/updates.xml',
+          hint: { key: 'pypi:updates', label: 'Recent updates' },
         },
       ]
 

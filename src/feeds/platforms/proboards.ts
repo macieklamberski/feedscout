@@ -1,6 +1,6 @@
-import { getSubdomain, isAnyOf, isHostOrSubdomainOf } from 'trousse'
+import { isHostOf, isHostOrSubdomainOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, hasMarker } from '../../common/utils.js'
+import { composeHint, getTenantSubdomain, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -8,15 +8,8 @@ export type ProboardsUrl = { kind: 'forum' } | { kind: 'customDomain' }
 
 const domains = ['proboards.com', 'freeforums.net', 'boards.net']
 
-// ProBoards' own site, sign-in and asset hosts, not forums. On freeforums.net and boards.net the
-// same names are ordinary forums.
-const excludedHosts = [
-  'www.proboards.com',
-  'www.freeforums.net',
-  'www.boards.net',
-  'login.proboards.com',
-  'storage.proboards.com',
-]
+// On freeforums.net and boards.net the same names are ordinary forums.
+const excludedHosts = ['login.proboards.com', 'storage.proboards.com']
 
 // Every forum page loads the core script from storage.proboards.com or storage.forums.net, on a
 // custom domain too.
@@ -29,9 +22,7 @@ export const parseProboardsUrl = (url: string): ProboardsUrl | undefined => {
     return { kind: 'customDomain' }
   }
 
-  const subdomain = getSubdomain(url, domains)
-
-  if (!subdomain || isAnyOf(new URL(url).hostname.toLowerCase(), excludedHosts)) {
+  if (!getTenantSubdomain(url, domains) || isHostOf(url, excludedHosts)) {
     return
   }
 

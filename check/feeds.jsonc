@@ -298,6 +298,10 @@
     "comicfury:reader": "https://comicfury.com/read/cardiac/rss"
   },
   "confluence": {
+    "confluence:dashboard": [
+      "https://cwiki.apache.org/confluence/spaces/createrssfeed.action?types=page&types=blogpost&types=comment&spaces=conf_all&sort=modified&title=Dashboard+RSS+Feed&maxResults=15&publicFeed=true&rssType=rss2",
+      "https://cwiki.apache.org/confluence/spaces/createrssfeed.action?types=page&types=blogpost&types=comment&spaces=conf_all&sort=modified&title=Dashboard+RSS+Feed&maxResults=15&publicFeed=true&rssType=atom"
+    ],
     "confluence:site": "https://cwiki.apache.org/confluence/plugins/servlet/streams",
     "confluence:space": "https://cwiki.apache.org/confluence/plugins/servlet/streams?key=KAFKA"
   },

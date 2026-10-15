@@ -20,6 +20,10 @@ describe('parseProseUrl', () => {
     expect(parseProseUrl('https://example.prose.sh/')).toEqual(expected)
   })
 
+  it('should return undefined for a nested subdomain', () => {
+    expect(parseProseUrl('https://blog.example.prose.sh/')).toBeUndefined()
+  })
+
   it('should return undefined for another host', () => {
     expect(parseProseUrl('https://example.com/')).toBeUndefined()
   })
@@ -29,7 +33,7 @@ describe('proseHandler', () => {
   describe('match', () => {
     const values: Array<[boolean, string]> = [
       [true, 'https://alice.prose.sh'],
-      [true, 'https://blog.example.prose.sh'],
+      [false, 'https://blog.example.prose.sh'],
       [true, 'https://prose.sh'],
       [true, 'https://www.prose.sh'],
       [false, 'https://example.com'],

@@ -97,6 +97,10 @@ describe('parseUcozUrl', () => {
     expect(parseUcozUrl('https://example.at.ua/gb/')).toEqual(expected)
   })
 
+  it('should return undefined for a nested subdomain', () => {
+    expect(parseUcozUrl('https://forum.example.ucoz.ru/')).toBeUndefined()
+  })
+
   it('should return undefined for invalid URL', () => {
     expect(parseUcozUrl('not-a-url')).toBeUndefined()
   })

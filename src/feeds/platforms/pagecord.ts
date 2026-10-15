@@ -1,16 +1,14 @@
-import { isHostOf, isSubdomainOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
+import { composeHint, getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
 export type PagecordUrl = { kind: 'blog' }
 
 const domains = ['pagecord.com']
-const excludedHosts = ['www.pagecord.com']
 
 export const parsePagecordUrl = (url: string): PagecordUrl | undefined => {
-  if (!isSubdomainOf(url, domains) || isHostOf(url, excludedHosts)) {
+  if (!getTenantSubdomain(url, domains)) {
     return
   }
 

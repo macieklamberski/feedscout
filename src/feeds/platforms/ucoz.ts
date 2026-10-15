@@ -1,7 +1,7 @@
-import { getAnyOf, getPathSegments, getSubdomain, isAnyOf, parseUrl } from 'trousse'
+import { getAnyOf, getPathSegments, isHostOrSubdomainOf, parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, getCookieNames, hasMarker } from '../../common/utils.js'
+import { composeHint, getCookieNames, getTenantSubdomain, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -45,7 +45,6 @@ const cookieNameRegex = /^[\da-z][\w-]*uCoz$/
 // A forum page is `/forum/{section}-{topic}-{page}`, and section 0 is the forum index.
 const forumSectionRegex = /^([1-9]\d*)(?:-|$)/
 
-const excludedSubdomains = ['www']
 const modules = ['blog', 'board', 'dir', 'forum', 'load', 'news', 'photo', 'publ', 'stuff'] as const
 
 const moduleHints: Record<UcozModule, string> = {
@@ -71,6 +70,10 @@ export const parseUcozUrl = (url: string): UcozUrl | undefined => {
     return
   }
 
+  if (isHostOrSubdomainOf(parsedUrl, domains) && !getTenantSubdomain(parsedUrl, domains)) {
+    return
+  }
+
   const [segment, subsegment] = getPathSegments(parsedUrl)
   const module = getAnyOf(segment, modules)
 
@@ -91,10 +94,10 @@ export const parseUcozUrl = (url: string): UcozUrl | undefined => {
 
 export const ucozHandler: PlatformHandler = {
   match: (url, content, headers) => {
-    const subdomain = getSubdomain(url, domains)
-    const isUcozHost = subdomain !== undefined && !isAnyOf(subdomain, excludedSubdomains)
-
-    if (!isUcozHost && !hasMarker(content, headers, { headers: isUcozHeaders })) {
+    if (
+      !getTenantSubdomain(url, domains) &&
+      !hasMarker(content, headers, { headers: isUcozHeaders })
+    ) {
       return false
     }
 

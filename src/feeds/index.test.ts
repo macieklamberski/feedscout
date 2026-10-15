@@ -51,6 +51,24 @@ describe('discoverFeeds', () => {
     expect(result).toEqual(expected)
   })
 
+  it('should fetch the input with an HTML accept header', async () => {
+    const receivedHeaders: Record<string, FetchFnOptions['headers']> = {}
+    const recordingFetchFn: FetchFn = (url, options) => {
+      receivedHeaders[url] = options?.headers
+
+      return createMockFetch({})(url)
+    }
+
+    await discoverFeeds('https://example.com', {
+      methods: { guess: { uris: ['/feed'] } },
+      fetchFn: recordingFetchFn,
+    })
+
+    const accept = new Headers(receivedHeaders['https://example.com']).get('accept')
+
+    expect(accept).toStartWith('text/html')
+  })
+
   it('should fetch candidates with a feed accept header', async () => {
     const receivedHeaders: Record<string, FetchFnOptions['headers']> = {}
     const recordingFetchFn: FetchFn = (url, options) => {

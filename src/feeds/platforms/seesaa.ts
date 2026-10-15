@@ -1,7 +1,7 @@
-import { isHostOrSubdomainOf, isSubdomainOf } from 'trousse'
+import { isHostOf } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
+import { composeHint, getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers blog, iiblog, seesaaBlog, seesaaSpace, sokuho, xblog (html), partly covers stablo.
@@ -18,8 +18,7 @@ const domains = [
   'xblog.jp',
 ]
 
-// Each domain excludes every host under it too.
-const excludedDomains = [
+const excludedHosts = [
   'ad.seesaa.net',
   'mx.seesaa.net',
   's.seesaa.blog',
@@ -27,11 +26,10 @@ const excludedDomains = [
   's.seesaa.space',
   't.seesaa.blog',
   'up.seesaa.net',
-  'www.seesaa.net',
 ]
 
 export const parseSeesaaUrl = (url: string): SeesaaUrl | undefined => {
-  if (!isSubdomainOf(url, domains) || isHostOrSubdomainOf(url, excludedDomains)) {
+  if (!getTenantSubdomain(url, domains) || isHostOf(url, excludedHosts)) {
     return
   }
 

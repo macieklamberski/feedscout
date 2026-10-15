@@ -1423,12 +1423,12 @@ Discovers RSS feeds for BitChute channels. Channel pages carry only an oEmbed li
 
 ### Confluence
 
-Discovers the Atom activity streams of a Confluence Data Center site. Detected by the `confluence-base-url` meta tag, with the context path and space key read from the page.
+Discovers the Atom activity streams and the dashboard feed of a Confluence Data Center site. Detected by the `confluence-base-url` meta tag, with the context path and space key read from the page.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| Any page on a space | Space stream<sup>†</sup> · site stream<sup>†</sup> (Atom) |
-| Any other page | Site stream<sup>†</sup> (Atom) |
+| Any page on a space | Space stream<sup>†</sup> · site stream<sup>†</sup> (Atom) · dashboard (RSS + Atom) |
+| Any other page | Site stream<sup>†</sup> (Atom) · dashboard (RSS + Atom) |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -2064,9 +2064,9 @@ Discovers the RSS and Atom feeds of Packagist packages, vendors and the site.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `packagist.org/packages/{vendor}/{package}` | Package releases (RSS + Atom<sup>†</sup>) |
-| `packagist.org/packages/{vendor}` | Vendor releases (RSS + Atom<sup>†</sup>) |
-| `packagist.org/extensions` | New extensions (RSS + Atom<sup>†</sup>) · extension releases (RSS + Atom<sup>†</sup>) |
+| `packagist.org/packages/{vendor}/{package}` | Package releases (RSS + Atom<sup>†</sup>) · new packages (RSS + Atom) · new releases (RSS + Atom) |
+| `packagist.org/packages/{vendor}` | Vendor releases (RSS + Atom<sup>†</sup>) · new packages (RSS + Atom) · new releases (RSS + Atom) |
+| `packagist.org/extensions` | New extensions (RSS + Atom<sup>†</sup>) · extension releases (RSS + Atom<sup>†</sup>) · new packages (RSS + Atom) · new releases (RSS + Atom) |
 | `packagist.org/*` | New packages (RSS + Atom<sup>†</sup>) · new releases (RSS + Atom<sup>†</sup>) |
 
 <sup>†</sup> *Found only by the Platform method.*
@@ -2181,8 +2181,8 @@ Discovers the RSS feeds of the Python Package Index, built from the URL.
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | `pypi.org` | New packages · recent updates (RSS) |
-| `pypi.org/project/{name}` | Project releases (RSS) |
-| `pypi.org/project/{name}/{version}` | Project releases (RSS) |
+| `pypi.org/project/{name}` | Project releases · new packages · recent updates (RSS) |
+| `pypi.org/project/{name}/{version}` | Project releases · new packages · recent updates (RSS) |
 
 ### RedCircle
 
@@ -3189,7 +3189,7 @@ Discovers the news feeds of a Swedish sports club website on SportAdmin. On the 
 
 ### laget.se
 
-Discovers the news feed of a sports club or team site on laget.se. The team page links the feed only through an icon with no text, and a team page without a news box links nothing, yet its feed still answers. A club on its own domain is detected by stylesheets or scripts loaded from the `g-content.laget.se` asset host, and serves its feed at the domain root.
+Discovers the news feed of a sports club or team site on laget.se. The team page links the feed only through an icon with no text, and a team page without a news box links nothing, yet its feed still answers. A club on its own domain is detected by stylesheets or scripts loaded from a laget.se content host such as `b-content.laget.se`, and serves its feed at the domain root.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|

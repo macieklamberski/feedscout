@@ -36,6 +36,7 @@ const excludedPaths = [
   'sitemap',
 ]
 const excludedSubdomains = [
+  'api',
   'cdn-images-1',
   'cdn-images-2',
   'cdn-static-1',

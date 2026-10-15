@@ -37,6 +37,15 @@ describe('isNetcrewHtml', () => {
     expect(isNetcrewHtml(netcrewHtml)).toBe(true)
   })
 
+  it('should return true for a search script with a version query', () => {
+    const value = `
+      <link rel="stylesheet" href="/ssi/css/top.css">
+      <script src="/ssi/js/search-trend.js?20240307am0900"></script>
+    `
+
+    expect(isNetcrewHtml(value)).toBe(true)
+  })
+
   it('should return false for another script under the template path', () => {
     expect(
       isNetcrewHtml('<script src="/ssi/js/common.js"></script><link href="/ssi/css/top.css">'),

@@ -50,6 +50,12 @@ describe('parseMicroblogUrl', () => {
     expect(parseMicroblogUrl('https://www.micro.blog')).toBeUndefined()
   })
 
+  const excludedSubdomainValues = ['cdn', 'help']
+
+  it.each(excludedSubdomainValues)('should return undefined for the service host %s', (value) => {
+    expect(parseMicroblogUrl(`https://${value}.micro.blog/`)).toBeUndefined()
+  })
+
   it('should return undefined for a nested subdomain', () => {
     expect(parseMicroblogUrl('https://blog.example.micro.blog')).toBeUndefined()
   })

@@ -68,6 +68,10 @@ describe('parseProboardsUrl', () => {
     expect(parseProboardsUrl('https://login.freeforums.net/')).toEqual(expected)
   })
 
+  it('should return undefined for a nested subdomain', () => {
+    expect(parseProboardsUrl('https://forum.example.proboards.com/')).toBeUndefined()
+  })
+
   it('should return undefined for the apex domain', () => {
     expect(parseProboardsUrl('https://proboards.com/')).toBeUndefined()
   })

@@ -9,13 +9,14 @@ import { composeHint, findElement, hasMarker } from '../../common/utils.js'
 export type NetcrewUrl = { kind: 'home' }
 
 const homePathRegex = /^\/(?:index\.html)?$/i
+const searchScriptRegex = /^\/ssi\/js\/search-trend\.js(?:\?|$)/
 const styleImportRegex = /@import\s+url\(["']?\/ssi\/css\//
 
 // Every NetCrew CMS template loads its search script from `/ssi/js/search-trend.js` and its styles
 // from `/ssi/css/` at the site root.
 export const isNetcrewHtml = (content: string): boolean => {
   const script = findElement(content, (element) => {
-    return element.name === 'script' && element.attribs.src === '/ssi/js/search-trend.js'
+    return element.name === 'script' && searchScriptRegex.test(element.attribs.src ?? '')
   })
   const stylesheet = findElement(content, (element) => {
     if (element.name === 'link') {

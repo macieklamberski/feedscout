@@ -1,3 +1,4 @@
+import { createAcceptHeader, feedMimeTypes, genericFeedMimeTypes, htmlMimeTypes } from 'trousse'
 import { defaultFetchFn, defaultResolveUrlFn } from '../../common/discover/defaults.js'
 import { normalizeInput } from '../../common/discover/utils.js'
 import type { DiscoverInput } from '../../common/types.js'
@@ -6,6 +7,13 @@ import { discoverHubsFromFeed } from '../feed/index.js'
 import { discoverHubsFromHeaders } from '../headers/index.js'
 import { discoverHubsFromHtml } from '../html/index.js'
 import type { DiscoverHubsOptions, HubResult } from './types.js'
+
+// The input is usually a feed URL but can be a page, so HTML is accepted below the feed types.
+const acceptHeader = createAcceptHeader([
+  ...feedMimeTypes,
+  ...genericFeedMimeTypes,
+  ...htmlMimeTypes.map((type) => ({ ...type, quality: 0.7 })),
+])
 
 export const discoverHubs = async (
   input: DiscoverInput,
@@ -18,7 +26,7 @@ export const discoverHubs = async (
     onError,
   } = options
 
-  const normalizedInput = await normalizeInput(input, withTextBody(fetchFn), onError)
+  const normalizedInput = await normalizeInput(input, withTextBody(fetchFn), onError, acceptHeader)
   const results: Array<HubResult> = []
 
   if (methods.includes('headers') && normalizedInput.headers) {
