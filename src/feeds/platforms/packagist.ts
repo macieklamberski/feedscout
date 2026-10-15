@@ -74,7 +74,8 @@ export const packagistHandler: PlatformHandler = {
       return []
     }
 
-    // Package and vendor pages link the site-wide feeds too, the extension pages do not.
+    // Every page gets the site-wide feeds after its own, the extension pages included, which do
+    // not link them.
     const siteFeeds = [
       ...createFeeds('packages', 'packagist:new-packages'),
       ...createFeeds('releases', 'packagist:new-releases'),
@@ -95,6 +96,7 @@ export const packagistHandler: PlatformHandler = {
       return [
         ...createFeeds('extensions', 'packagist:new-extensions'),
         ...createFeeds('extension-releases', 'packagist:extension-releases'),
+        ...siteFeeds,
       ]
     }
 
