@@ -1427,8 +1427,8 @@ Discovers the Atom activity streams and the dashboard feed of a Confluence Data 
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| Any page on a space | Space stream<sup>†</sup> · site stream<sup>†</sup> (Atom) · dashboard (RSS + Atom) |
-| Any other page | Site stream<sup>†</sup> (Atom) · dashboard (RSS + Atom) |
+| Any page on a space | Space stream<sup>†</sup> · site stream<sup>†</sup> (Atom) · dashboard (RSS<sup>†</sup> + Atom<sup>†</sup>) |
+| Any other page | Site stream<sup>†</sup> (Atom) · dashboard (RSS<sup>†</sup> + Atom<sup>†</sup>) |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -2064,9 +2064,9 @@ Discovers the RSS and Atom feeds of Packagist packages, vendors and the site.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `packagist.org/packages/{vendor}/{package}` | Package releases (RSS + Atom<sup>†</sup>) · new packages (RSS + Atom) · new releases (RSS + Atom) |
-| `packagist.org/packages/{vendor}` | Vendor releases (RSS + Atom<sup>†</sup>) · new packages (RSS + Atom) · new releases (RSS + Atom) |
-| `packagist.org/extensions` | New extensions (RSS + Atom<sup>†</sup>) · extension releases (RSS + Atom<sup>†</sup>) · new packages (RSS + Atom) · new releases (RSS + Atom) |
+| `packagist.org/packages/{vendor}/{package}` | Package releases (RSS + Atom<sup>†</sup>) · new packages (RSS + Atom<sup>†</sup>) · new releases (RSS + Atom<sup>†</sup>) |
+| `packagist.org/packages/{vendor}` | Vendor releases (RSS + Atom<sup>†</sup>) · new packages (RSS + Atom<sup>†</sup>) · new releases (RSS + Atom<sup>†</sup>) |
+| `packagist.org/extensions` | New extensions (RSS + Atom<sup>†</sup>) · extension releases (RSS + Atom<sup>†</sup>) · new packages (RSS<sup>†</sup> + Atom<sup>†</sup>) · new releases (RSS<sup>†</sup> + Atom<sup>†</sup>) |
 | `packagist.org/*` | New packages (RSS + Atom<sup>†</sup>) · new releases (RSS + Atom<sup>†</sup>) |
 
 <sup>†</sup> *Found only by the Platform method.*
@@ -2182,7 +2182,9 @@ Discovers the RSS feeds of the Python Package Index, built from the URL.
 |-------------|-----------------|
 | `pypi.org` | New packages · recent updates (RSS) |
 | `pypi.org/project/{name}` | Project releases · new packages · recent updates (RSS) |
-| `pypi.org/project/{name}/{version}` | Project releases · new packages · recent updates (RSS) |
+| `pypi.org/project/{name}/{version}` | Project releases<sup>†</sup> · new packages<sup>†</sup> · recent updates<sup>†</sup> (RSS) |
+
+<sup>†</sup> *Found only by the Platform method.*
 
 ### RedCircle
 
