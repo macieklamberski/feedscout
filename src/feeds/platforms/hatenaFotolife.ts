@@ -19,7 +19,6 @@ const usernameRegex = /^[a-zA-Z][\w-]{2,31}$/
 
 // A photo id is the 14-digit time it was uploaded.
 const photoIdRegex = /^\d{14}$/
-const excludedPaths = ['focallength', 'fotocolor', 'help', 'hotfoto', 'model', 'userlist']
 
 // The page links its feeds with every byte outside [A-Za-z0-9_] percent-encoded, `-` and `.`
 // included, so the same spelling dedupes against the page's own link.
@@ -38,7 +37,7 @@ export const parseHatenaFotolifeUrl = (url: string): HatenaFotolifeUrl | undefin
 
   const [username, section, value] = getPathSegments(parsedUrl)
 
-  if (!username || !usernameRegex.test(username) || isAnyOf(username, excludedPaths)) {
+  if (!username || !usernameRegex.test(username)) {
     return
   }
 

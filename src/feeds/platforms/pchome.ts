@@ -16,19 +16,6 @@ const baseUrl = 'https://mypaper.pchome.com.tw'
 const usernameRegex = /^\w+$/
 const categoryRegex = /^\d+$/
 
-const excludedPaths = [
-  'css',
-  'fancybox',
-  'img',
-  'index',
-  'js',
-  'panel',
-  'public_file',
-  's',
-  'search_mypaper',
-  'show',
-]
-
 export const parsePchomeUrl = (url: string): PchomeUrl | undefined => {
   if (!isHostOf(url, hosts)) {
     return
@@ -37,7 +24,7 @@ export const parsePchomeUrl = (url: string): PchomeUrl | undefined => {
   const [username, section, category] = getPathSegments(url)
 
   // A segment like oops.htm or favicon.ico is a file at the root, not a paper.
-  if (!username || !usernameRegex.test(username) || isAnyOf(username, excludedPaths)) {
+  if (!username || !usernameRegex.test(username)) {
     return
   }
 

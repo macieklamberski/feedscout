@@ -20,10 +20,6 @@ describe('parseNiconicoUrl', () => {
     expect(parseNiconicoUrl('https://ch.nicovideo.jp/examplechannel/Blomaga')).toEqual(expected)
   })
 
-  it('should return undefined for a site route', () => {
-    expect(parseNiconicoUrl('https://ch.nicovideo.jp/portal')).toBeUndefined()
-  })
-
   it('should return undefined for another host', () => {
     expect(parseNiconicoUrl('https://example.com/examplechannel')).toBeUndefined()
   })
@@ -31,14 +27,6 @@ describe('parseNiconicoUrl', () => {
 
 describe('niconicoHandler', () => {
   describe('match', () => {
-    const excludedPathValues: Array<string> = [
-      'https://ch.nicovideo.jp/portal/anime',
-      'https://ch.nicovideo.jp/search/music',
-      'https://ch.nicovideo.jp/article/ar1234567',
-      'https://ch.nicovideo.jp/my/following',
-      'https://ch.nicovideo.jp/static/rule.html',
-    ]
-
     it('should match a channel page', () => {
       expect(niconicoHandler.match('https://ch.nicovideo.jp/examplechannel')).toBe(true)
     })
@@ -49,14 +37,6 @@ describe('niconicoHandler', () => {
 
     it('should match a channel whose slug is a section word', () => {
       expect(niconicoHandler.match('https://ch.nicovideo.jp/live')).toBe(true)
-    })
-
-    it.each(excludedPathValues)('should not match %s', (value) => {
-      expect(niconicoHandler.match(value)).toBe(false)
-    })
-
-    it('should not match a capitalized reserved path', () => {
-      expect(niconicoHandler.match('https://ch.nicovideo.jp/Portal')).toBe(false)
     })
 
     it('should not match a file at the root', () => {

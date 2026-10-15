@@ -5,7 +5,7 @@ import { composeHint, hasMarker, hasMetaContent } from '../../common/utils.js'
 // Discoverability: Discoverable without handler.
 
 // `www.svbtle.com/feed` answers 200 with an HTML page, and `svbtle.com/{user}/feed` does not exist.
-const excludedHosts = ['svbtle.com', 'www.svbtle.com']
+const platformHosts = ['svbtle.com', 'www.svbtle.com']
 
 export const isSvbtleHtml = (content: string): boolean => {
   return (
@@ -16,7 +16,7 @@ export const isSvbtleHtml = (content: string): boolean => {
 
 export const svbtleHandler: PlatformHandler = {
   match: (url, content, headers) => {
-    if (isHostOf(url, excludedHosts)) {
+    if (isHostOf(url, platformHosts)) {
       return false
     }
 
@@ -26,7 +26,7 @@ export const svbtleHandler: PlatformHandler = {
   resolve: (url) => {
     const { origin } = new URL(url)
 
-    if (isHostOf(url, excludedHosts)) {
+    if (isHostOf(url, platformHosts)) {
       return []
     }
 

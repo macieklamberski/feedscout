@@ -83,10 +83,8 @@ describe('parseZenfolioUrl', () => {
     expect(parseZenfolioUrl('https://zenfolio.com/blog/')).toBeUndefined()
   })
 
-  const serviceSubdomains: Array<string> = ['app', 'support', 'www']
-
-  it.each(serviceSubdomains)('should return undefined for the %s subdomain', (value) => {
-    expect(parseZenfolioUrl(`https://${value}.zenfolio.com/`)).toBeUndefined()
+  it('should return undefined for the www host', () => {
+    expect(parseZenfolioUrl('https://www.zenfolio.com/')).toBeUndefined()
   })
 
   it('should return undefined for a nested subdomain', () => {
@@ -116,10 +114,6 @@ describe('zenfolioHandler', () => {
 
     it('should not match a custom domain without a marker', () => {
       expect(zenfolioHandler.match('https://www.jennypodesta.com/', '<html></html>')).toBe(false)
-    })
-
-    it('should not match a Zenfolio service subdomain', () => {
-      expect(zenfolioHandler.match('https://app.zenfolio.com/')).toBe(false)
     })
   })
 

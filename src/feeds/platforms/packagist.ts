@@ -1,4 +1,4 @@
-import { isAnyOf, isHostOf, parseUrl } from 'trousse'
+import { isHostOf, parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
@@ -18,7 +18,6 @@ const packageRegex = /^\/packages\/([^/]+)\/([^/]+)(?:\/|$)/i
 const vendorRegex = /^\/packages\/([^/]+)\/?$/i
 const extensionsRegex = /^\/extensions(?:\/|$)/i
 
-const excludedPaths = ['submit']
 // The JSON API sits under the same paths, such as /packages/list.json.
 const jsonSuffixRegex = /\.json$/i
 
@@ -50,7 +49,7 @@ export const parsePackagistUrl = (url: string): PackagistUrl | undefined => {
 
   const vendor = pathname.match(vendorRegex)?.[1]
 
-  if (vendor && !isAnyOf(vendor, excludedPaths)) {
+  if (vendor) {
     return { kind: 'vendor', vendor }
   }
 

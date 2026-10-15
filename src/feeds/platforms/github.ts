@@ -28,79 +28,6 @@ const branchRegex = /^\/[^/]+\/[^/]+\/tree\/([^/]+)\/?$/i
 const fileRegex = /^\/[^/]+\/[^/]+\/(?:blob|commits)\/([^/]+)\/(.+)/i
 const userRouteSuffixRegex = /\.(?:atom|gpg|keys|png)$/i
 
-const excludedPaths = [
-  'about',
-  'accelerator',
-  'account',
-  'advisories',
-  'apps',
-  'blog',
-  'careers',
-  'codespaces',
-  'collections',
-  'contact',
-  'copilot',
-  'customer-stories',
-  'dashboard',
-  'discussions',
-  'edu',
-  'education',
-  'enterprise',
-  'events',
-  'explore',
-  'features',
-  'feed',
-  'gist',
-  'git-guides',
-  'github-copilot',
-  'home',
-  'issues',
-  'join',
-  'login',
-  'logout',
-  'marketplace',
-  'mcp',
-  'mobile',
-  'new',
-  'newsletter',
-  'newsroom',
-  'nonprofit',
-  'notifications',
-  'open-source',
-  'organizations',
-  'orgs',
-  'partners',
-  'password_reset',
-  'personal',
-  'premium-support',
-  'press',
-  'pricing',
-  'pulls',
-  'readme',
-  'resources',
-  'search',
-  'security',
-  'services',
-  'session',
-  'sessions',
-  'settings',
-  'signup',
-  'site',
-  'sitemap',
-  'solutions',
-  'spark',
-  'sponsors',
-  'stars',
-  'support',
-  'team',
-  'topics',
-  'trending',
-  'trust-center',
-  'users',
-  'watching',
-  'why-github',
-]
-
 // Repository and organization discussions sit at the same path depth:
 // /{owner}/{repo}/discussions and /orgs/{org}/discussions.
 const getDiscussionFeeds = (base: string, category?: string): Array<DiscoverUriEntry> => {
@@ -144,10 +71,15 @@ export const parseGithubUrl = (url: string): GithubUrl | undefined => {
     return { kind: 'discussions', org: second, discussionCategory }
   }
 
+  // An organization page sits under /orgs/, and its feed is the owner feed.
+  if (isAnyOf(first, 'orgs') && second) {
+    return { kind: 'user', owner: second }
+  }
+
   const owner = second ? first : first?.replace(userRouteSuffixRegex, '')
 
   // GitHub names carry no dots, so a dotted segment such as robots.txt is a file of the site.
-  if (!owner || owner.includes('.') || isAnyOf(owner, excludedPaths)) {
+  if (!owner || owner.includes('.')) {
     return
   }
 

@@ -15,10 +15,8 @@ const domains = ['geoblog.pl']
 const idRegex = /^\d+$/
 const tripPathRegex = /^\/podroz\/(\d+)(?:\/|$)/i
 
-const excludedSubdomains = ['admin', 'cdn']
-
 export const parseGeoblogUrl = (url: string): GeoblogUrl | undefined => {
-  if (!getTenantSubdomain(url, domains, excludedSubdomains)) {
+  if (!getTenantSubdomain(url, domains)) {
     return
   }
 

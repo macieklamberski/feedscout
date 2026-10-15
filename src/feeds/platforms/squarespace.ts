@@ -1,4 +1,4 @@
-import { getPathSegments, isAnyOf } from 'trousse'
+import { getPathSegments } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, hasMarker } from '../../common/utils.js'
 
@@ -7,17 +7,6 @@ import { composeHint, hasMarker } from '../../common/utils.js'
 export type SquarespaceUrl = { kind: 'collection'; collection: string }
 
 const squarespaceRegex = /squarespace/i
-const excludedPaths = [
-  'account',
-  'api',
-  'cart',
-  'checkout',
-  'commerce',
-  'config',
-  'search',
-  'static',
-  'universal',
-]
 
 export const isSquarespaceHeaders = (headers: Headers): boolean => {
   return squarespaceRegex.test(headers.get('server') ?? '')
@@ -26,7 +15,7 @@ export const isSquarespaceHeaders = (headers: Headers): boolean => {
 export const parseSquarespaceUrl = (url: string): SquarespaceUrl | undefined => {
   const [collection] = getPathSegments(url)
 
-  if (!collection || isAnyOf(collection, excludedPaths)) {
+  if (!collection) {
     return
   }
 

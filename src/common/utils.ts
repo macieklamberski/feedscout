@@ -204,11 +204,10 @@ const scriptSegmentRegex = /\/[^/]*\.(?:php(?:\/.*)?|html?)$/i
 const trailingSlashRegex = /\/$/
 
 // The subdomain a platform gives one of its users: a single label other than `www`, which is the
-// platform's own site everywhere. Each platform names its other service hosts itself.
+// platform's own site everywhere.
 export const getTenantSubdomain = (
   url: string | URL,
   domains: Array<string>,
-  excludedSubdomains: Array<string> = [],
 ): string | undefined => {
   const subdomain = getSubdomain(url, domains)
 
@@ -216,7 +215,7 @@ export const getTenantSubdomain = (
     return
   }
 
-  if (isAnyOf(subdomain, 'www') || isAnyOf(subdomain, excludedSubdomains)) {
+  if (isAnyOf(subdomain, 'www')) {
     return
   }
 

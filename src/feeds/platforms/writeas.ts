@@ -1,4 +1,4 @@
-import { getPathSegments, isAnyOf, isHostOf, parseUrl } from 'trousse'
+import { getPathSegments, isHostOf, parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
@@ -12,36 +12,6 @@ export type WriteasUrl =
 const hosts = ['write.as', 'www.write.as']
 
 const tagRegex = /^\/([^/]+)\/tag:([^/]+)/i
-
-const excludedPaths = [
-  '5years',
-  'about',
-  'api',
-  'apps',
-  'blog',
-  'contact',
-  'docs',
-  'extend',
-  'guidelines',
-  'help',
-  'jobs',
-  'legal',
-  'letters',
-  'login',
-  'logout',
-  'me',
-  'new',
-  'pricing',
-  'principles',
-  'privacy',
-  'pro',
-  'read',
-  'settings',
-  'signup',
-  'start',
-  'subscribe',
-  'terms',
-]
 
 export const parseWriteasUrl = (url: string): WriteasUrl | undefined => {
   const parsedUrl = parseUrl(url)
@@ -59,7 +29,7 @@ export const parseWriteasUrl = (url: string): WriteasUrl | undefined => {
 
   const [username] = getPathSegments(parsedUrl)
 
-  if (!username || isAnyOf(username, excludedPaths)) {
+  if (!username) {
     return
   }
 

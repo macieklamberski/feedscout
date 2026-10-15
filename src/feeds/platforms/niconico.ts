@@ -14,21 +14,6 @@ export const hosts = ['ch.nicovideo.jp']
 
 const channelRegex = /^[\w-]+$/
 
-// Site routes on ch.nicovideo.jp. A channel can take a word such as `live` or `voice` as its slug.
-const excludedPaths = [
-  'api',
-  'article',
-  'channel',
-  'info',
-  'letter',
-  'my',
-  'portal',
-  'search',
-  'start',
-  'static',
-  'video',
-]
-
 export const parseNiconicoUrl = (url: string): NiconicoUrl | undefined => {
   if (!isHostOf(url, hosts)) {
     return
@@ -36,7 +21,7 @@ export const parseNiconicoUrl = (url: string): NiconicoUrl | undefined => {
 
   const [channel, section] = getPathSegments(url)
 
-  if (!channel || !channelRegex.test(channel) || isAnyOf(channel, excludedPaths)) {
+  if (!channel || !channelRegex.test(channel)) {
     return
   }
 

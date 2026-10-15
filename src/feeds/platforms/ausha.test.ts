@@ -8,10 +8,6 @@ describe('parseAushaUrl', () => {
     expect(parseAushaUrl('https://podcast.ausha.co/my-show')).toEqual(expected)
   })
 
-  it('should return undefined for a channel page', () => {
-    expect(parseAushaUrl('https://podcast.ausha.co/c/my-channel')).toBeUndefined()
-  })
-
   it('should return undefined for the root', () => {
     expect(parseAushaUrl('https://podcast.ausha.co/')).toBeUndefined()
   })
@@ -28,7 +24,6 @@ describe('aushaHandler', () => {
       [true, 'https://podcast.ausha.co/example-show/example-episode'],
       [true, 'https://smartlink.ausha.co/example-show'],
       [true, 'https://smartlink.ausha.co/example-show/example-episode'],
-      [false, 'https://podcast.ausha.co/c/example-channel'],
       [false, 'https://podcast.ausha.co/'],
       [false, 'https://www.ausha.co/example-show'],
       [false, 'https://example.com/example-show'],

@@ -3,26 +3,6 @@ import type { DeviantartUrl } from './deviantart.js'
 import { deviantartHandler, parseDeviantartUrl } from './deviantart.js'
 
 describe('parseDeviantartUrl', () => {
-  const excludedPathValues: Array<string> = [
-    'https://www.deviantart.com/users/login',
-    'https://www.deviantart.com/morelikethis/123456',
-    'https://www.deviantart.com/forum',
-    'https://www.deviantart.com/messages',
-    'https://www.deviantart.com/studio',
-    'https://www.deviantart.com/Community',
-    'https://deviantart.com/about',
-    'https://deviantart.com/join',
-    'https://deviantart.com/search',
-    'https://deviantart.com/shop',
-    'https://deviantart.com/about/gallery/123456/folder-name',
-    'https://deviantart.com/about/favourites',
-    'https://deviantart.com/about/journal',
-  ]
-
-  it.each(excludedPathValues)('should return undefined for the site route %s', (value) => {
-    expect(parseDeviantartUrl(value)).toBeUndefined()
-  })
-
   it('should return the profile for a profile page', () => {
     const expected: DeviantartUrl = { kind: 'profile', username: 'yuumei' }
 
@@ -140,14 +120,6 @@ describe('parseDeviantartUrl', () => {
     const expected: DeviantartUrl = { kind: 'dailyDeviations' }
 
     expect(parseDeviantartUrl('https://www.deviantart.com/Daily-Deviations/')).toEqual(expected)
-  })
-
-  it('should return undefined for the tag prefix without a tag', () => {
-    expect(parseDeviantartUrl('https://www.deviantart.com/tag')).toBeUndefined()
-  })
-
-  it('should return undefined for a capitalized excluded path', () => {
-    expect(parseDeviantartUrl('https://deviantart.com/About')).toBeUndefined()
   })
 
   it('should return undefined for a first segment with a dot', () => {
@@ -276,10 +248,6 @@ describe('deviantartHandler', () => {
       expect(deviantartHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return empty array for the retired popular page', () => {
-      expect(deviantartHandler.resolve('https://deviantart.com/popular')).toEqual([])
-    })
-
     it('should return curated daily-deviations feed for trailing slash', () => {
       const value = 'https://deviantart.com/daily-deviations/'
       const expected = [
@@ -290,10 +258,6 @@ describe('deviantartHandler', () => {
       ]
 
       expect(deviantartHandler.resolve(value)).toEqual(expected)
-    })
-
-    it('should return empty array for a page without a feed', () => {
-      expect(deviantartHandler.resolve('https://deviantart.com/about')).toEqual([])
     })
   })
 })

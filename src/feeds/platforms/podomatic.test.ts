@@ -18,10 +18,6 @@ describe('parsePodomaticUrl', () => {
     expect(parsePodomaticUrl('https://www.podomatic.com/podcasts')).toBeUndefined()
   })
 
-  it('should return undefined for an infrastructure subdomain', () => {
-    expect(parsePodomaticUrl('https://api.podomatic.com/')).toBeUndefined()
-  })
-
   it('should return undefined for a nested subdomain', () => {
     expect(parsePodomaticUrl('https://www.example.podomatic.com/')).toBeUndefined()
   })
@@ -47,10 +43,6 @@ describe('podomaticHandler', () => {
 
     it('should not match the directory index', () => {
       expect(podomaticHandler.match('https://www.podomatic.com/podcasts')).toBe(false)
-    })
-
-    it('should not match infrastructure subdomains', () => {
-      expect(podomaticHandler.match('https://api.podomatic.com/')).toBe(false)
     })
 
     it('should not match other hosts', () => {

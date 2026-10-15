@@ -12,29 +12,6 @@ export type GitlabUrl =
 export const hosts = ['gitlab.com', 'www.gitlab.com']
 // GitLab names may contain dots, so only the feed suffix is cut off.
 const feedSuffixRegex = /\.atom$/i
-const excludedPaths = [
-  'explore',
-  'dashboard',
-  'projects',
-  'groups',
-  'search',
-  'admin',
-  'help',
-  'assets',
-  'users',
-  'api',
-  'jwt',
-  'oauth',
-  'profile',
-  'snippets',
-  'abuse_reports',
-  'invites',
-  'import',
-  'uploads',
-  'robots.txt',
-  'sitemap',
-  '-',
-]
 
 // GitLab prints its own name as the site name, and a site about GitLab can carry a longer one.
 export const isGitlabHtml = (content: string): boolean => {
@@ -49,6 +26,8 @@ export const isGitlabHeaders = (headers: Headers): boolean => {
 // `-` separator. A project can itself be named `tree`, so never cut at the
 // second segment.
 const legacyFeaturePaths = ['tree', 'commits']
+
+const accountPrefixes = ['groups', 'users']
 
 const splitProjectPath = (pathSegments: Array<string>): [Array<string>, Array<string>] => {
   const dashIndex = pathSegments.indexOf('-')
@@ -69,11 +48,18 @@ const splitProjectPath = (pathSegments: Array<string>): [Array<string>, Array<st
 }
 
 export const parseGitlabUrl = (url: string): GitlabUrl | undefined => {
-  const [projectSegments, featureSegments] = splitProjectPath(getPathSegments(url))
+  const segments = getPathSegments(url)
+
+  // A group or user page and its tabs sit under /groups/ or /users/, before the account name.
+  if (isAnyOf(segments[0], accountPrefixes) && segments[1]) {
+    return { kind: 'namespace', namespace: segments[1] }
+  }
+
+  const [projectSegments, featureSegments] = splitProjectPath(segments)
   const [first, ...rest] = projectSegments
   const namespace = first?.replace(feedSuffixRegex, '')
 
-  if (!namespace || isAnyOf(namespace, excludedPaths)) {
+  if (!namespace) {
     return
   }
 

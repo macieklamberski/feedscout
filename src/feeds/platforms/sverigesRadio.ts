@@ -1,4 +1,4 @@
-import { getPathSegments, isAnyOf, isHostOf, parseUrl } from 'trousse'
+import { getPathSegments, isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
@@ -14,32 +14,6 @@ const hosts = ['sverigesradio.se', 'www.sverigesradio.se']
 
 const programIdRegex = /^\d+$/
 const slugRegex = /^[a-z0-9-]+$/i
-
-const excludedPaths = [
-  'artikel',
-  'avsnitt',
-  'dist',
-  'grupp',
-  'hantering-av-personuppgifter',
-  'kanaler',
-  'kanalprogramlista',
-  'kategori',
-  'nyheter',
-  'nyhetssok',
-  'p1',
-  'p3',
-  'play',
-  'poddar',
-  'poddar-program',
-  'press',
-  'sa-hanterar-vi-cookies',
-  'sida',
-  'sok',
-  'tema',
-  'tillganglighet-guide-navigera-webbplatsen',
-  'topsy',
-  'trafiken',
-]
 
 export const parseSverigesRadioUrl = (url: string): SverigesRadioUrl | undefined => {
   const parsedUrl = parseUrl(url)
@@ -57,7 +31,7 @@ export const parseSverigesRadioUrl = (url: string): SverigesRadioUrl | undefined
 
   const [slug] = getPathSegments(parsedUrl)
 
-  if (!slug || !slugRegex.test(slug) || isAnyOf(slug, excludedPaths)) {
+  if (!slug || !slugRegex.test(slug)) {
     return
   }
 

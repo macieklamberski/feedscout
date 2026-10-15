@@ -1,4 +1,4 @@
-import { getPathSegments, isAnyOf } from 'trousse'
+import { getPathSegments } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import {
@@ -18,13 +18,12 @@ export type WritefreelyPage = { blogPath: string; tag?: string }
 const tagPathRegex = /\/tag:([^/]+)/i
 const rootRouteRegex = /^\/(?:(?:tag|lang):|page\/\d+(?:\/|$)|archive\/?$)/i
 const blogPathRegex = /^\/(?:[^/]+\/)?$/
-const excludedPaths = ['read', 'about', 'login', 'signup', 'me', 'api', 'pad', 'privacy']
 
 const getUrlBlogPath = (url: string): string | undefined => {
   const { pathname } = new URL(url)
   const [first] = getPathSegments(url)
 
-  if (!first || isAnyOf(first, excludedPaths)) {
+  if (!first) {
     return
   }
 

@@ -20,11 +20,9 @@ const archiveRegex = /^\/archive(?:\/|$)/i
 const photosRegex = /^\/photos(?:\/|$)/i
 const repliesRegex = /^\/replies(?:\/|$)/i
 
-const excludedSubdomains = ['cdn', 'help']
-
 export const parseMicroblogUrl = (url: string): MicroblogUrl | undefined => {
   const parsedUrl = parseUrl(url)
-  const username = getTenantSubdomain(url, domains, excludedSubdomains)
+  const username = getTenantSubdomain(url, domains)
 
   if (!parsedUrl || !username) {
     return

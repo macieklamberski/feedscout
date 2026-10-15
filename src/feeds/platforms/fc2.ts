@@ -1,4 +1,4 @@
-import { getSubdomain, isHostOf } from 'trousse'
+import { getSubdomain } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, getTenantSubdomain } from '../../common/utils.js'
 
@@ -12,13 +12,7 @@ const domains = ['blog.2nt.com', 'fc2.net']
 
 const numberedSubdomainRegex = /^[^.]+\.blog\d*$/i
 
-const excludedHosts = ['blog.fc2.net', 'id.fc2.net', 'test.fc2.net']
-
 export const parseFc2Url = (url: string): Fc2Url | undefined => {
-  if (isHostOf(url, excludedHosts)) {
-    return
-  }
-
   const blog = getTenantSubdomain(url, domains)
 
   if (blog) {

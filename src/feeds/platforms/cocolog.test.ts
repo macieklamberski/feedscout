@@ -38,7 +38,6 @@ describe('cocologHandler', () => {
       [false, 'https://example.cocolog-nifty.com/.shared/js/ax.js'],
       [false, 'https://example.cocolog-nifty.com/about.html'],
       [false, 'https://www.cocolog-nifty.com/blog/'],
-      [false, 'https://app.cocolog-nifty.com/t/app/'],
       [false, 'https://app.f.cocolog-nifty.com/t/rsd/335263'],
       [false, 'https://cocolog-nifty.com/blog/'],
       [false, 'https://example.com/blog/'],

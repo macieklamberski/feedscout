@@ -1,3 +1,4 @@
+import { isHostOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, getTenantSubdomain } from '../../common/utils.js'
 
@@ -6,28 +7,16 @@ import { composeHint, getTenantSubdomain } from '../../common/utils.js'
 export type CastosUrl = { kind: 'show'; slug: string }
 
 const domains = ['castos.com']
+// The feed host serves every show by path, so it names no show.
+const feedHosts = ['feeds.castos.com']
 
 // The feed id is opaque, so it is read from the feed link every show page carries.
 const feedIdRegex = /https:\/\/feeds\.castos\.com\/([a-z0-9]+)/i
 
-const excludedSubdomains = [
-  'api',
-  'app',
-  'assets',
-  'cdn',
-  'feeds',
-  'help',
-  'images-cdn',
-  'player',
-  'status',
-  'support',
-  'www',
-]
-
 export const parseCastosUrl = (url: string): CastosUrl | undefined => {
-  const slug = getTenantSubdomain(url, domains, excludedSubdomains)
+  const slug = getTenantSubdomain(url, domains)
 
-  if (!slug) {
+  if (!slug || isHostOf(url, feedHosts)) {
     return
   }
 

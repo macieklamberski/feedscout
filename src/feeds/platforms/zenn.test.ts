@@ -51,54 +51,6 @@ describe('parseZennUrl', () => {
     expect(parseZennUrl('https://zenn.dev/P/team_zenn')).toEqual(expected)
   })
 
-  it('should return undefined for a publication under /publications/', () => {
-    expect(parseZennUrl('https://zenn.dev/publications/team_zenn')).toBeUndefined()
-  })
-
-  it('should return undefined for excluded paths', () => {
-    expect(parseZennUrl('https://zenn.dev/topics')).toBeUndefined()
-    expect(parseZennUrl('https://zenn.dev/about')).toBeUndefined()
-    expect(parseZennUrl('https://zenn.dev/api')).toBeUndefined()
-    expect(parseZennUrl('https://zenn.dev/articles')).toBeUndefined()
-    expect(parseZennUrl('https://zenn.dev/books')).toBeUndefined()
-    expect(parseZennUrl('https://zenn.dev/login')).toBeUndefined()
-    expect(parseZennUrl('https://zenn.dev/notifications')).toBeUndefined()
-    expect(parseZennUrl('https://zenn.dev/p')).toBeUndefined()
-    expect(parseZennUrl('https://zenn.dev/privacy')).toBeUndefined()
-    expect(parseZennUrl('https://zenn.dev/publications')).toBeUndefined()
-    expect(parseZennUrl('https://zenn.dev/scraps')).toBeUndefined()
-    expect(parseZennUrl('https://zenn.dev/search')).toBeUndefined()
-    expect(parseZennUrl('https://zenn.dev/settings')).toBeUndefined()
-    expect(parseZennUrl('https://zenn.dev/signup')).toBeUndefined()
-    expect(parseZennUrl('https://zenn.dev/terms')).toBeUndefined()
-  })
-
-  const excludedPathValues: Array<string> = [
-    'biz-lp',
-    'challenges',
-    'contests',
-    'dashboard',
-    'enter',
-    'faq',
-    'feed',
-    'following',
-    'guideline',
-    'hackathon-lp',
-    'hackathons',
-    'inquiry',
-    'manual',
-    'mediakit',
-    'tech-or-idea',
-  ]
-
-  it.each(excludedPathValues)('should return undefined for the %s site route', (route) => {
-    expect(parseZennUrl(`https://zenn.dev/${route}`)).toBeUndefined()
-  })
-
-  it('should return undefined for a capitalized excluded path', () => {
-    expect(parseZennUrl('https://zenn.dev/Topics')).toBeUndefined()
-  })
-
   it('should return the home page for the root', () => {
     const expected: ZennUrl = { kind: 'home' }
 
@@ -172,10 +124,6 @@ describe('zennHandler', () => {
       ]
 
       expect(zennHandler.resolve(value)).toEqual(expected)
-    })
-
-    it('should return empty array for excluded paths', () => {
-      expect(zennHandler.resolve('https://zenn.dev/search')).toEqual([])
     })
   })
 })

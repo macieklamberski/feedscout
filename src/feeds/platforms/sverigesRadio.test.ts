@@ -26,24 +26,6 @@ describe('parseSverigesRadioUrl', () => {
     expect(parseSverigesRadioUrl('https://sverigesradio.se/Ekot')).toEqual(expected)
   })
 
-  it('should return undefined for an excluded path', () => {
-    expect(parseSverigesRadioUrl('https://sverigesradio.se/nyheter')).toBeUndefined()
-  })
-
-  const excludedPathValues: Array<string> = [
-    'hantering-av-personuppgifter',
-    'p1',
-    'p3',
-    'play',
-    'press',
-    'sa-hanterar-vi-cookies',
-    'tillganglighet-guide-navigera-webbplatsen',
-  ]
-
-  it.each(excludedPathValues)('should return undefined for the %s site route', (route) => {
-    expect(parseSverigesRadioUrl(`https://sverigesradio.se/${route}`)).toBeUndefined()
-  })
-
   it('should return undefined for another host', () => {
     expect(parseSverigesRadioUrl('https://example.com/ekot')).toBeUndefined()
   })
@@ -147,20 +129,6 @@ describe('sverigesRadioHandler', () => {
       ]
 
       expect(sverigesRadioHandler.resolve(value)).toEqual(expected)
-    })
-
-    it('should return empty array for a section page', () => {
-      expect(sverigesRadioHandler.resolve('https://sverigesradio.se/nyheter/p4-orebro')).toEqual([])
-    })
-
-    it('should return empty array for an episode page', () => {
-      const value = 'https://sverigesradio.se/avsnitt/ett-avsnitt'
-
-      expect(sverigesRadioHandler.resolve(value)).toEqual([])
-    })
-
-    it('should return empty array for a capitalized section page', () => {
-      expect(sverigesRadioHandler.resolve('https://sverigesradio.se/Nyheter')).toEqual([])
     })
 
     it('should return empty array for a legacy page without a program id', () => {

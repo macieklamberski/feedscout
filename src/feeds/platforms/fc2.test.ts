@@ -1,8 +1,6 @@
 import { describe, expect, it } from 'bun:test'
 import { type Fc2Url, fc2Handler, parseFc2Url } from './fc2.js'
 
-const serviceHosts = ['https://blog.fc2.net/', 'https://id.fc2.net/', 'https://test.fc2.net/']
-
 describe('parseFc2Url', () => {
   it('should return the blog for a blog host', () => {
     const expected: Fc2Url = { kind: 'blog' }
@@ -46,10 +44,6 @@ describe('parseFc2Url', () => {
 
   it('should return undefined for an fc2blog.us host', () => {
     expect(parseFc2Url('http://someone.blog126.fc2blog.us/')).toBeUndefined()
-  })
-
-  it.each(serviceHosts)('should return undefined for the %s service host', (value) => {
-    expect(parseFc2Url(value)).toBeUndefined()
   })
 
   it('should return undefined for another host', () => {

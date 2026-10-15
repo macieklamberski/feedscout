@@ -11,7 +11,6 @@ export type PostypeUrl =
 
 const domains = ['postype.com']
 export const hosts = ['postype.com', 'www.postype.com']
-const excludedSubdomains = ['api', 'cdn', 'i', 'blog-cdn']
 
 export const parsePostypeUrl = (url: string): PostypeUrl | undefined => {
   const parsedUrl = parseUrl(url)
@@ -30,7 +29,7 @@ export const parsePostypeUrl = (url: string): PostypeUrl | undefined => {
     return { kind: 'channel', channel: first.slice(1) }
   }
 
-  const subdomain = getTenantSubdomain(parsedUrl, domains, excludedSubdomains)
+  const subdomain = getTenantSubdomain(parsedUrl, domains)
 
   if (!subdomain) {
     return

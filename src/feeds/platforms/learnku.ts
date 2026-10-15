@@ -1,4 +1,4 @@
-import { getPathSegments, isAnyOf, isHostOf } from 'trousse'
+import { getPathSegments, isHostOf } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
@@ -10,24 +10,6 @@ export type LearnkuUrl = { kind: 'community'; community: string } | { kind: 'hom
 
 const hosts = ['learnku.com', 'www.learnku.com']
 
-const excludedPaths = [
-  'search',
-  'login',
-  'register',
-  'settings',
-  'notifications',
-  'users',
-  'api',
-  'articles',
-  'docs',
-  'auth',
-  'contact',
-  'topics',
-  'hub',
-  'activities',
-  'quizzes',
-]
-
 export const parseLearnkuUrl = (url: string): LearnkuUrl | undefined => {
   if (!isHostOf(url, hosts)) {
     return
@@ -35,7 +17,7 @@ export const parseLearnkuUrl = (url: string): LearnkuUrl | undefined => {
 
   const [community] = getPathSegments(url)
 
-  if (!community || isAnyOf(community, excludedPaths)) {
+  if (!community) {
     return { kind: 'home' }
   }
 

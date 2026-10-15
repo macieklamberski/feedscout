@@ -1,4 +1,4 @@
-import { decodeSegment, getAnyOf, isAnyOf, isHostOf, parseUrl } from 'trousse'
+import { decodeSegment, getAnyOf, isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
@@ -44,22 +44,6 @@ const searchTypes = ['tag', 'text', 'title']
 
 // The filters the search page carries into its own feed link. It drops `page` and anything else.
 const searchFilters = ['target', 'sort', 'users', 'date_range', 'safe']
-
-const excludedPaths = [
-  'articles',
-  'config',
-  'entry',
-  'entrylist',
-  'guide',
-  'help',
-  'hotentry',
-  'images',
-  'login',
-  'my',
-  'register',
-  'search',
-  'site',
-]
 
 const copySearchFilters = (from: URLSearchParams, to: URLSearchParams): string => {
   for (const filter of searchFilters) {
@@ -126,7 +110,7 @@ export const parseHatenaBookmarkUrl = (url: string): HatenaBookmarkUrl | undefin
 
   const username = pathname.match(userRegex)?.[1]
 
-  if (!username || isAnyOf(username, excludedPaths)) {
+  if (!username) {
     return { kind: 'home' }
   }
 

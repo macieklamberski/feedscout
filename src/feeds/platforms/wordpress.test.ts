@@ -185,10 +185,6 @@ describe('parseWordpressUrl', () => {
 
     expect(parseWordpressUrl('https://example.wordpress.com/2024/05/page/2/')).toEqual(expected)
   })
-
-  it('should return undefined for a service host', () => {
-    expect(parseWordpressUrl('https://public-api.wordpress.com/rest/v1.1/sites/1')).toBeUndefined()
-  })
 })
 
 describe('wordpressHandler', () => {

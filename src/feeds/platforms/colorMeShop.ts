@@ -7,23 +7,8 @@ export type ColorMeShopUrl = { kind: 'shop' }
 
 const domains = ['shop-pro.jp']
 
-const excludedSubdomains = [
-  'admin',
-  'api',
-  'app',
-  'developer',
-  'developer-docs',
-  'err',
-  'help',
-  'imageproxy',
-  'img',
-  'page',
-  'secure',
-  'static-www-front',
-]
-
 // Numbered image and access-log hosts, such as img15 and acclog001.
-const excludedSubdomainRegex = /^(acclog|img)\d+$/
+const numberedHostRegex = /^(acclog|img)\d+$/
 
 // Every shop page sets the session cookie, on shop-pro.jp and on a shop's own domain alike, and
 // the service hosts of shop-pro.jp set none.
@@ -33,9 +18,9 @@ export const isColorMeShopHeaders = (headers: Headers): boolean => {
 
 export const parseColorMeShopUrl = (url: string): ColorMeShopUrl | undefined => {
   // A nested subdomain like blog.{shop}.shop-pro.jp is a JUGEM blog, not a shop.
-  const shop = getTenantSubdomain(url, domains, excludedSubdomains)
+  const shop = getTenantSubdomain(url, domains)
 
-  if (!shop || excludedSubdomainRegex.test(shop)) {
+  if (!shop || numberedHostRegex.test(shop)) {
     return
   }
 

@@ -26,12 +26,6 @@ describe('parsePackagistUrl', () => {
     expect(parsePackagistUrl('https://packagist.org/extensions')).toEqual(expected)
   })
 
-  it('should return the home page for the submit route', () => {
-    const expected: PackagistUrl = { kind: 'home' }
-
-    expect(parsePackagistUrl('https://packagist.org/packages/submit')).toEqual(expected)
-  })
-
   it('should return the home page for the root', () => {
     const expected: PackagistUrl = { kind: 'home' }
 
@@ -205,30 +199,6 @@ describe('packagistHandler', () => {
 
     it('should return the site-wide feeds for the home page', () => {
       const value = 'https://packagist.org/'
-      const expected: Array<DiscoverUriEntry> = [
-        {
-          uri: 'https://packagist.org/feeds/packages.rss',
-          hint: { key: 'packagist:new-packages', label: 'New packages', format: 'rss' },
-        },
-        {
-          uri: 'https://packagist.org/feeds/packages.atom',
-          hint: { key: 'packagist:new-packages', label: 'New packages', format: 'atom' },
-        },
-        {
-          uri: 'https://packagist.org/feeds/releases.rss',
-          hint: { key: 'packagist:new-releases', label: 'New releases', format: 'rss' },
-        },
-        {
-          uri: 'https://packagist.org/feeds/releases.atom',
-          hint: { key: 'packagist:new-releases', label: 'New releases', format: 'atom' },
-        },
-      ]
-
-      expect(packagistHandler.resolve(value)).toEqual(expected)
-    })
-
-    it('should return the site-wide feeds for the submit page', () => {
-      const value = 'https://packagist.org/packages/submit'
       const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://packagist.org/feeds/packages.rss',

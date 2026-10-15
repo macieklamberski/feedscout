@@ -39,20 +39,6 @@ describe('parseDevtoUrl', () => {
     expect(parseDevtoUrl('https://dev.to/T/javascript')).toEqual(expected)
   })
 
-  it('should return undefined for an excluded path', () => {
-    expect(parseDevtoUrl('https://dev.to/settings')).toBeUndefined()
-  })
-
-  it('should return undefined for an excluded path in another case', () => {
-    expect(parseDevtoUrl('https://dev.to/Settings')).toBeUndefined()
-  })
-
-  it('should return the profile for a name that starts with an excluded path', () => {
-    const expected: DevtoUrl = { kind: 'profile', owner: 'about_me' }
-
-    expect(parseDevtoUrl('https://dev.to/about_me')).toEqual(expected)
-  })
-
   it('should return the author profile for an article page', () => {
     const expected: DevtoUrl = { kind: 'profile', owner: 'alice' }
 
@@ -69,26 +55,6 @@ describe('parseDevtoUrl', () => {
     const expected: DevtoUrl = { kind: 'profile', owner: 'maame-codes' }
 
     expect(parseDevtoUrl('https://dev.to/maame-codes')).toEqual(expected)
-  })
-
-  it('should return undefined for an API path', () => {
-    expect(parseDevtoUrl('https://dev.to/api/articles')).toBeUndefined()
-  })
-
-  it('should return undefined for the listings path', () => {
-    expect(parseDevtoUrl('https://dev.to/listings')).toBeUndefined()
-  })
-
-  it('should return undefined for a user feed', () => {
-    expect(parseDevtoUrl('https://dev.to/feed/alice')).toBeUndefined()
-  })
-
-  it('should return undefined for a guide page', () => {
-    expect(parseDevtoUrl('https://dev.to/p/editor_guide')).toBeUndefined()
-  })
-
-  it('should return undefined for the bare tag path', () => {
-    expect(parseDevtoUrl('https://dev.to/t')).toBeUndefined()
   })
 
   it('should return the home page', () => {
@@ -185,10 +151,6 @@ describe('devtoHandler', () => {
       ]
 
       expect(devtoHandler.resolve(value)).toEqual(expected)
-    })
-
-    it('should return empty array for an excluded path', () => {
-      expect(devtoHandler.resolve('https://dev.to/settings')).toEqual([])
     })
   })
 })

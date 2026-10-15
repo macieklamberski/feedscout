@@ -1,4 +1,4 @@
-import { getPathSegments, isAnyOf, isHostOf } from 'trousse'
+import { getPathSegments, isHostOf } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
@@ -9,8 +9,6 @@ export type RakutenBlogUrl = { kind: 'blog'; username: string }
 
 const hosts = ['plaza.rakuten.co.jp']
 
-const excludedPaths = ['_css', 'acc', 'dac', 'evt', 'img', 'inc', 'rnd', 'thm']
-
 export const parseRakutenBlogUrl = (url: string): RakutenBlogUrl | undefined => {
   if (!isHostOf(url, hosts)) {
     return
@@ -18,7 +16,7 @@ export const parseRakutenBlogUrl = (url: string): RakutenBlogUrl | undefined => 
 
   const [username] = getPathSegments(url)
 
-  if (!username || isAnyOf(username, excludedPaths)) {
+  if (!username) {
     return
   }
 

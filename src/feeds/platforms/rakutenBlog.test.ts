@@ -22,17 +22,6 @@ describe('parseRakutenBlogUrl', () => {
     expect(parseRakutenBlogUrl('https://plaza.rakuten.co.jp/Example/')).toEqual(expected)
   })
 
-  it('should return undefined for excluded paths', () => {
-    expect(parseRakutenBlogUrl('https://plaza.rakuten.co.jp/_css/example.css')).toBeUndefined()
-    expect(parseRakutenBlogUrl('https://plaza.rakuten.co.jp/acc/g100/')).toBeUndefined()
-    expect(parseRakutenBlogUrl('https://plaza.rakuten.co.jp/dac/g1200')).toBeUndefined()
-    expect(parseRakutenBlogUrl('https://plaza.rakuten.co.jp/evt/selection/')).toBeUndefined()
-    expect(parseRakutenBlogUrl('https://plaza.rakuten.co.jp/img/logo/example.gif')).toBeUndefined()
-    expect(parseRakutenBlogUrl('https://plaza.rakuten.co.jp/inc/')).toBeUndefined()
-    expect(parseRakutenBlogUrl('https://plaza.rakuten.co.jp/rnd/example/')).toBeUndefined()
-    expect(parseRakutenBlogUrl('https://plaza.rakuten.co.jp/thm/155802/')).toBeUndefined()
-  })
-
   it('should return undefined for the home page', () => {
     expect(parseRakutenBlogUrl('https://plaza.rakuten.co.jp/')).toBeUndefined()
   })

@@ -1,4 +1,4 @@
-import { getPathSegments, isAnyOf, isHostOf, parseUrl } from 'trousse'
+import { getPathSegments, isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, findDescendant, findElement } from '../../common/utils.js'
 
@@ -15,22 +15,6 @@ const feedOrigin = 'http://a.hatena.ne.jp'
 
 // A Hatena ID: 3 to 32 characters, starting with a letter.
 const usernameRegex = /^[a-zA-Z][\w-]{2,31}$/
-
-const excludedPaths = [
-  'category',
-  'check',
-  'config',
-  'css',
-  'edit',
-  'help',
-  'images',
-  'include',
-  'map',
-  'relate',
-  'rss',
-  'search',
-  'theme',
-]
 
 // The group nav with one group in bold, the one the page shows.
 const hasSelectedGroup = (content: string): boolean => {
@@ -54,7 +38,7 @@ export const parseHatenaAntennaUrl = (url: string): HatenaAntennaUrl | undefined
 
   const [username] = getPathSegments(parsedUrl)
 
-  if (!username || !usernameRegex.test(username) || isAnyOf(username, excludedPaths)) {
+  if (!username || !usernameRegex.test(username)) {
     return
   }
 

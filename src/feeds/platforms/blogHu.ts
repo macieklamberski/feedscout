@@ -13,8 +13,6 @@ const hosts = ['blog.hu', 'www.blog.hu']
 
 const userRegex = /^\/user\/(\d+)(?:\/|$)/i
 
-const excludedSubdomains = ['m']
-
 export const parseBlogHuUrl = (url: string): BlogHuUrl | undefined => {
   const parsedUrl = parseUrl(url)
 
@@ -32,7 +30,7 @@ export const parseBlogHuUrl = (url: string): BlogHuUrl | undefined => {
     return
   }
 
-  if (!getTenantSubdomain(parsedUrl, domains, excludedSubdomains)) {
+  if (!getTenantSubdomain(parsedUrl, domains)) {
     return
   }
 

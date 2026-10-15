@@ -8,8 +8,12 @@ describe('parseCaptivateUrl', () => {
     expect(parseCaptivateUrl('https://myshow.captivate.fm/')).toEqual(expected)
   })
 
-  it('should return undefined for an excluded subdomain', () => {
+  it('should return undefined for the www host', () => {
     expect(parseCaptivateUrl('https://www.captivate.fm/')).toBeUndefined()
+  })
+
+  it('should return undefined for the feed host', () => {
+    expect(parseCaptivateUrl('https://feeds.captivate.fm/myshow/')).toBeUndefined()
   })
 
   it('should return undefined for another host', () => {
@@ -24,9 +28,6 @@ describe('captivateHandler', () => {
       [true, 'https://alice-podcast.captivate.fm/listen'],
       [false, 'https://captivate.fm'],
       [false, 'https://www.captivate.fm'],
-      [false, 'https://feeds.captivate.fm/alice-podcast/'],
-      [false, 'https://player.captivate.fm'],
-      [false, 'https://help.captivate.fm'],
       [false, 'https://example.com'],
     ]
 

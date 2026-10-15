@@ -86,8 +86,7 @@ describe('parseItchioUrl', () => {
     expect(parseItchioUrl('https://itch.io/')).toEqual(expected)
   })
 
-  it('should return undefined for the image host and a nested subdomain', () => {
-    expect(parseItchioUrl('https://img.itch.io/x')).toBeUndefined()
+  it('should return undefined for a nested subdomain', () => {
     expect(parseItchioUrl('https://a.b.itch.io/')).toBeUndefined()
   })
 

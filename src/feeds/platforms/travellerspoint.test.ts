@@ -29,16 +29,7 @@ describe('parseTravellerspointUrl', () => {
     )
   })
 
-  const siteHostUrls: Array<string> = [
-    'https://www.travellerspoint.com/blog.cfm',
-    'https://photos.travellerspoint.com/',
-    'https://guide.travellerspoint.com/Famous_Landmarks/',
-    'https://blog.travellerspoint.com/',
-    'https://img.travellerspoint.com/',
-    'https://secure.travellerspoint.com/',
-    'https://m.travellerspoint.com/',
-    'https://assets.travellerspoint.com/',
-  ]
+  const siteHostUrls: Array<string> = ['https://www.travellerspoint.com/blog.cfm']
 
   it.each(siteHostUrls)('should return undefined for the site host %s', (url) => {
     expect(parseTravellerspointUrl(url)).toBeUndefined()

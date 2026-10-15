@@ -8,7 +8,7 @@ describe('parseNeocitiesUrl', () => {
     expect(parseNeocitiesUrl('https://example-site.neocities.org/')).toEqual(expected)
   })
 
-  it('should return the site for a subdomain named like a service host', () => {
+  it('should return the site for a subdomain named static', () => {
     const expected: NeocitiesUrl = { kind: 'site', username: 'static' }
 
     expect(parseNeocitiesUrl('https://static.neocities.org/')).toEqual(expected)

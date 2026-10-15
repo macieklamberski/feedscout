@@ -17,7 +17,6 @@ describe('parseBloggerDeUrl', () => {
   const unmatched: Array<string> = [
     'https://blogger.de/',
     'https://www.blogger.de/members/login',
-    'https://cdn.blogger.de/static/antville/info/files/bannerbig.js',
     'https://www.alice.blogger.de/',
     'https://example.com/rss',
     'not-a-url',

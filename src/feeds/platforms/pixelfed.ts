@@ -1,4 +1,4 @@
-import { isAnyOf, parseUrl } from 'trousse'
+import { parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, hasAnyMeta, hasMarker } from '../../common/utils.js'
 
@@ -10,21 +10,6 @@ const profileRegex = /^\/(?:users\/)?([a-zA-Z0-9_]+)\/?$/i
 const metaMarkers: Array<[string, string]> = [
   ['generator', 'pixelfed'],
   ['application-name', 'Pixelfed'],
-]
-const excludedPaths = [
-  'admin',
-  'api',
-  'discover',
-  'i',
-  'login',
-  'notifications',
-  'p',
-  'register',
-  'settings',
-  'site',
-  'storage',
-  'timeline',
-  'users',
 ]
 
 export const isPixelfedHtml = (content: string): boolean => {
@@ -40,7 +25,7 @@ export const parsePixelfedUrl = (url: string): PixelfedUrl | undefined => {
 
   const username = parsedUrl.pathname.match(profileRegex)?.[1]
 
-  if (!username || isAnyOf(username, excludedPaths)) {
+  if (!username) {
     return
   }
 

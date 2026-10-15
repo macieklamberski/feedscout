@@ -1,4 +1,4 @@
-import { getPathSegments, isAnyOf, isHostOf } from 'trousse'
+import { getPathSegments, isHostOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
@@ -7,30 +7,6 @@ import { composeHint } from '../../common/utils.js'
 export type CnblogsUrl = { kind: 'blog'; username: string }
 
 const hosts = ['cnblogs.com', 'www.cnblogs.com']
-const excludedPaths = [
-  'news',
-  'aggsite',
-  'question',
-  'ing',
-  'search',
-  'kb',
-  'sitehome',
-  'util',
-  'about',
-  'candidate',
-  'cate',
-  'comment',
-  'corp',
-  'following',
-  'job',
-  'legacy',
-  'my',
-  'pick',
-  'q',
-  'rss',
-  'skins.aspx',
-  'subscription',
-]
 
 export const parseCnblogsUrl = (url: string): CnblogsUrl | undefined => {
   if (!isHostOf(url, hosts)) {
@@ -39,7 +15,8 @@ export const parseCnblogsUrl = (url: string): CnblogsUrl | undefined => {
 
   const [username] = getPathSegments(url)
 
-  if (!username || isAnyOf(username, excludedPaths)) {
+  // A dotted segment such as skins.aspx is a file of the site.
+  if (!username || username.includes('.')) {
     return
   }
 

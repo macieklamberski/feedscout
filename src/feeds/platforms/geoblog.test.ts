@@ -65,14 +65,8 @@ describe('parseGeoblogUrl', () => {
     expect(parseGeoblogUrl(value)).toBeUndefined()
   })
 
-  const serviceHosts = [
-    'http://www.geoblog.pl/podroz/12345/majorka-2024',
-    'http://admin.geoblog.pl/podroz/12345/majorka-2024',
-    'http://cdn.geoblog.pl/podroz/12345/majorka-2024',
-  ]
-
-  it.each(serviceHosts)('should return undefined for service host %s', (value) => {
-    expect(parseGeoblogUrl(value)).toBeUndefined()
+  it('should return undefined for the www host', () => {
+    expect(parseGeoblogUrl('http://www.geoblog.pl/podroz/12345/majorka-2024')).toBeUndefined()
   })
 
   it('should return undefined for a dotted subdomain', () => {

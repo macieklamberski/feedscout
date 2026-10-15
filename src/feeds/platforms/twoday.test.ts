@@ -32,7 +32,6 @@ describe('parseTwodayUrl', () => {
   const unmatched: Array<string> = [
     'https://twoday.net/',
     'https://www.twoday.net/',
-    'https://static.twoday.net/alice/images/icon.jpg',
     'https://www.alice.twoday.net/',
     'https://example.com/topics/Wo+der+Hase+hinlief/',
     'not-a-url',

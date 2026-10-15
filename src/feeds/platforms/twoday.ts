@@ -13,8 +13,6 @@ const domains = ['twoday.net']
 
 const topicRegex = /^\/topics\/([^/]+)(?:\/|$)/i
 
-const excludedSubdomains = ['static']
-
 export const parseTwodayUrl = (url: string): TwodayUrl | undefined => {
   const pathname = parseUrl(url)?.pathname
 
@@ -22,7 +20,7 @@ export const parseTwodayUrl = (url: string): TwodayUrl | undefined => {
     return
   }
 
-  const blog = getTenantSubdomain(url, domains, excludedSubdomains)
+  const blog = getTenantSubdomain(url, domains)
 
   if (!blog) {
     return

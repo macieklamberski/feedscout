@@ -29,83 +29,6 @@ describe('parsePromodjUrl', () => {
     expect(parsePromodjUrl('https://www.promodj.com/someartist')).toEqual(expected)
   })
 
-  const sections: Array<string> = [
-    'acapellas',
-    'assets',
-    'avisha',
-    'booking',
-    'charts',
-    'clubbers',
-    'communities',
-    'contests',
-    'cool',
-    'cp',
-    'cue',
-    'djs',
-    'download',
-    'extra',
-    'featured',
-    'forum',
-    'info',
-    'interview',
-    'lives',
-    'login',
-    'logout',
-    'magazine',
-    'mixes',
-    'music',
-    'musicians',
-    'onair',
-    'online',
-    'people',
-    'podcasts',
-    'prelisten',
-    'preview',
-    'promos',
-    'radio',
-    'radioshows',
-    'register',
-    'releases',
-    'remixes',
-    'samples',
-    'search',
-    'shop',
-    'source',
-    'support',
-    'tools',
-    'top100',
-    'tracks',
-    'trendy',
-    'tv',
-    'videos',
-    'waveform',
-  ]
-
-  it.each(sections)('should return undefined for the %s site section', (section) => {
-    expect(parsePromodjUrl(`https://promodj.com/${section}`)).toBeUndefined()
-  })
-
-  const excludedPathValues: Array<string> = ['about', 'api', 'news']
-
-  it.each(excludedPathValues)('should return undefined for the %s site route', (route) => {
-    expect(parsePromodjUrl(`https://promodj.com/${route}`)).toBeUndefined()
-  })
-
-  const profilesNamedLikeSections: Array<string> = ['clubs', 'events', 'groups', 'labels']
-
-  it.each(profilesNamedLikeSections)(
-    'should return the profile for %s, an artist named like a section',
-    (username) => {
-      const expected: PromodjUrl = { kind: 'profile', username }
-
-      expect(parsePromodjUrl(`https://promodj.com/${username}`)).toEqual(expected)
-    },
-  )
-
-  it('should return undefined for a capitalized site section', () => {
-    expect(parsePromodjUrl('https://promodj.com/Mixes')).toBeUndefined()
-  })
-
   it('should return undefined for the home page', () => {
     expect(parsePromodjUrl('https://promodj.com/')).toBeUndefined()
   })
@@ -119,10 +42,6 @@ describe('promodjHandler', () => {
   describe('match', () => {
     it('should match a profile page', () => {
       expect(promodjHandler.match('https://promodj.com/someartist')).toBe(true)
-    })
-
-    it('should not match a site section', () => {
-      expect(promodjHandler.match('https://promodj.com/tracks')).toBe(false)
     })
   })
 

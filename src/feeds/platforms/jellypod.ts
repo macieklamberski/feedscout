@@ -7,28 +7,8 @@ export type JellypodUrl = { kind: 'show' }
 
 const domains = ['jellypod.com']
 
-const excludedSubdomains = [
-  'admin',
-  'api',
-  'app',
-  'blog',
-  'dashboard',
-  'docs',
-  'go',
-  'help',
-  'login',
-  'mcp',
-  'oauth',
-  'preview',
-  'share',
-  'studio',
-  'support',
-  'team',
-  'try',
-]
-
 export const parseJellypodUrl = (url: string): JellypodUrl | undefined => {
-  if (!getTenantSubdomain(url, domains, excludedSubdomains)) {
+  if (!getTenantSubdomain(url, domains)) {
     return
   }
 

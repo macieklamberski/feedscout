@@ -20,9 +20,5 @@ describe('giteaHandler', () => {
 
       expect(giteaHandler.resolve('https://gitea.com/gitea')).toEqual(expected)
     })
-
-    it('should return empty array for excluded paths', () => {
-      expect(giteaHandler.resolve('https://codeberg.org/explore')).toEqual([])
-    })
   })
 })

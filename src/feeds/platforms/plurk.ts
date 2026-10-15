@@ -16,59 +16,6 @@ const hosts = ['plurk.com', 'www.plurk.com']
 // A root `.xml` path is a user's feed, so a guessed /feed.xml is the feed of a user named feed.
 const userFeedRegex = /^https?:\/\/(?:www\.)?plurk\.com\/[^/]+\.xml$/i
 
-// Plurk routes a single segment to a user, and users named after these routes exist, like
-// top.xml and news.xml, so the route answers with its own page.
-const excludedPaths = [
-  'aboutUs',
-  'Admin',
-  'Affiliate',
-  'anonymous',
-  'anonymous-rule',
-  'API',
-  'app',
-  'BookmarkTags',
-  'bookmarks',
-  'brandInfo',
-  'contact',
-  'content-policy',
-  'embed',
-  'follows',
-  'Friends',
-  'help',
-  'hotlinks',
-  'IM',
-  'limitation-info',
-  'login',
-  'news',
-  'Notifications',
-  'portal',
-  'Premium',
-  'privacy',
-  'redeemByURL',
-  'redeemInvite',
-  'search',
-  'settings',
-  'signup',
-  'support',
-  'terms',
-  'time-machine',
-  'top',
-  'upvote',
-  'user',
-  'Verify',
-]
-// Routes of the mobile app under /m/ that are not a user.
-const mobilePaths = [
-  'e',
-  'follows',
-  'notify',
-  'profile',
-  'purchase',
-  'search',
-  'settings',
-  'wallet',
-]
-
 // A page that names no post or user still parses, so `match` stays true on every Plurk page and
 // the guess exclusion applies there.
 export const parsePlurkUrl = (url: string): PlurkUrl | undefined => {
@@ -90,7 +37,7 @@ export const parsePlurkUrl = (url: string): PlurkUrl | undefined => {
 
   const username = isAnyOf(route, 'u') ? value : route
 
-  if (!username || isAnyOf(username, isMobile ? mobilePaths : excludedPaths)) {
+  if (!username) {
     return { kind: 'page' }
   }
 

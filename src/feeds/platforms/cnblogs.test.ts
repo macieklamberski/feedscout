@@ -2,31 +2,18 @@ import { describe, expect, it } from 'bun:test'
 import { type CnblogsUrl, cnblogsHandler, parseCnblogsUrl } from './cnblogs.js'
 
 describe('parseCnblogsUrl', () => {
-  const excludedPathValues: Array<string> = [
-    'https://www.cnblogs.com/pick/',
-    'https://www.cnblogs.com/cate/108698/',
-    'https://www.cnblogs.com/candidate/',
-    'https://www.cnblogs.com/legacy',
-    'https://www.cnblogs.com/following',
-    'https://www.cnblogs.com/Subscription',
-  ]
-
-  it.each(excludedPathValues)('should return undefined for the site route %s', (value) => {
-    expect(parseCnblogsUrl(value)).toBeUndefined()
-  })
-
   it('should return the blog for a post page', () => {
     const expected: CnblogsUrl = { kind: 'blog', username: 'someuser' }
 
     expect(parseCnblogsUrl('https://www.cnblogs.com/someuser/p/123.html')).toEqual(expected)
   })
 
-  it('should return undefined for an excluded path', () => {
-    expect(parseCnblogsUrl('https://www.cnblogs.com/news')).toBeUndefined()
-  })
-
   it('should return undefined for the root', () => {
     expect(parseCnblogsUrl('https://www.cnblogs.com/')).toBeUndefined()
+  })
+
+  it('should return undefined for a dotted first segment', () => {
+    expect(parseCnblogsUrl('https://www.cnblogs.com/skins.aspx')).toBeUndefined()
   })
 
   it('should return undefined for another host', () => {
@@ -43,14 +30,6 @@ describe('cnblogsHandler', () => {
 
     it('should not match the site root', () => {
       expect(cnblogsHandler.match('https://www.cnblogs.com/')).toBe(false)
-    })
-
-    it('should not match reserved paths', () => {
-      expect(cnblogsHandler.match('https://www.cnblogs.com/news/')).toBe(false)
-    })
-
-    it('should not match a capitalized reserved path', () => {
-      expect(cnblogsHandler.match('https://www.cnblogs.com/News/')).toBe(false)
     })
 
     it('should not match other hosts', () => {

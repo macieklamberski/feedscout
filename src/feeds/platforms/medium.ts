@@ -1,4 +1,4 @@
-import { isAnyOf, isHostOf, parseUrl } from 'trousse'
+import { isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, getTenantSubdomain } from '../../common/utils.js'
 
@@ -21,31 +21,6 @@ const publicationTagRegex = /^\/([^/@][^/]+)\/tagged\/([^/]+)/i
 const publicationRegex = /^\/([^/@][^/]+)/
 const subdomainTagRegex = /^\/tagged\/([^/]+)/i
 
-const excludedPaths = [
-  'search',
-  'me',
-  'new-story',
-  'plans',
-  'membership',
-  'feed',
-  'about',
-  'explore-topics',
-  'tag',
-  'm',
-  'p',
-  'sitemap',
-]
-const excludedSubdomains = [
-  'api',
-  'cdn-images-1',
-  'cdn-images-2',
-  'cdn-static-1',
-  'glyph',
-  'help',
-  'link',
-  'miro',
-]
-
 export const parseMediumUrl = (url: string): MediumUrl | undefined => {
   const parsedUrl = parseUrl(url)
 
@@ -56,7 +31,7 @@ export const parseMediumUrl = (url: string): MediumUrl | undefined => {
   const { pathname } = parsedUrl
 
   if (!isHostOf(parsedUrl, hosts)) {
-    const subdomain = getTenantSubdomain(parsedUrl, domains, excludedSubdomains)
+    const subdomain = getTenantSubdomain(parsedUrl, domains)
 
     if (!subdomain) {
       return
@@ -85,7 +60,7 @@ export const parseMediumUrl = (url: string): MediumUrl | undefined => {
 
   const publication = pathname.match(publicationRegex)?.[1]
 
-  if (!publication || isAnyOf(publication, excludedPaths)) {
+  if (!publication) {
     return
   }
 

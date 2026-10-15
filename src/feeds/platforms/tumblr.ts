@@ -13,75 +13,20 @@ export const domains = ['tumblr.com']
 
 const tagRegex = /^\/tagged\/([^/]+)/i
 
-const excludedSubdomains = ['api', 'static']
-const excludedPaths = [
-  'about',
-  'abuse',
-  'activity',
-  'apps',
-  'blog',
-  'business',
-  'buttons',
-  'communities',
-  'customize',
-  'dashboard',
-  'developers',
-  'docs',
-  'domains',
-  'drafts',
-  'explore',
-  'following',
-  'help',
-  'inbox',
-  'jobs',
-  'legal',
-  'likes',
-  'live',
-  'login',
-  'logout',
-  'mega-editor',
-  'messages',
-  'new',
-  'oauth',
-  'onboarding',
-  'patio',
-  'policy',
-  'pop',
-  'premium',
-  'press',
-  'privacy',
-  'queue',
-  'reblog',
-  'register',
-  'search',
-  'security',
-  'settings',
-  'shop',
-  'signup',
-  'support',
-  'tagged',
-  'terms-of-service',
-  'terms_of_service',
-  'themes',
-  'tips',
-  'tumblelog',
-  'tv',
-]
-
 export const parseTumblrUrl = (url: string): TumblrUrl | undefined => {
   // www.tumblr.com/{blog} and the legacy www.tumblr.com/blog/view/{blog} show a blog.
   if (isHostOf(url, hosts)) {
     const [first, second, third] = getPathSegments(url)
     const blog = isAnyOf(first, 'blog') && isAnyOf(second, 'view') ? third : first
 
-    if (!blog || isAnyOf(blog, excludedPaths)) {
+    if (!blog) {
       return
     }
 
     return { kind: 'blog', blog }
   }
 
-  const blog = getTenantSubdomain(url, domains, excludedSubdomains)
+  const blog = getTenantSubdomain(url, domains)
 
   if (!blog) {
     return

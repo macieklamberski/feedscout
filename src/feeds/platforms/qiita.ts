@@ -1,4 +1,4 @@
-import { getPathSegments, isAnyOf, isHostOf, parseUrl } from 'trousse'
+import { getPathSegments, isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
@@ -19,41 +19,6 @@ const tagRegex = /^\/tags\/([^/]+)/i
 const organizationRegex = /^\/organizations\/([^/]+)/i
 const popularItemsRegex = /^\/popular-items(\/|$)/i
 const officialColumnsRegex = /^\/official-columns(\/|$)/i
-
-const excludedPaths = [
-  'about',
-  'advent-calendar',
-  'api',
-  'asct',
-  'badges',
-  'conference',
-  'drafts',
-  'items',
-  'login',
-  'notifications',
-  'official-campaigns',
-  'official-columns',
-  'official-events',
-  'organizations',
-  'patches',
-  'popular-items',
-  'privacy',
-  'public',
-  'qiita-award',
-  'question-feed',
-  'search',
-  'settings',
-  'signup',
-  'stock',
-  'stock-feed',
-  'stocks',
-  'tags',
-  'tech-festa',
-  'terms',
-  'timeline',
-  'trend',
-  'white_papers',
-]
 
 export const parseQiitaUrl = (url: string): QiitaUrl | undefined => {
   const parsedUrl = parseUrl(url)
@@ -86,7 +51,7 @@ export const parseQiitaUrl = (url: string): QiitaUrl | undefined => {
 
   const [username] = getPathSegments(parsedUrl)
 
-  if (!username || isAnyOf(username, excludedPaths)) {
+  if (!username) {
     return
   }
 

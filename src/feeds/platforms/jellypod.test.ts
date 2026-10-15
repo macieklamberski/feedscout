@@ -16,10 +16,6 @@ describe('parseJellypodUrl', () => {
     expect(parseJellypodUrl(value)).toEqual(expected)
   })
 
-  it('should return undefined for an excluded subdomain', () => {
-    expect(parseJellypodUrl('https://studio.jellypod.com/')).toBeUndefined()
-  })
-
   it('should return undefined for the apex domain', () => {
     expect(parseJellypodUrl('https://jellypod.com/')).toBeUndefined()
   })

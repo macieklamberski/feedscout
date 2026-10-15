@@ -53,10 +53,6 @@ describe('parseLaunchpadUrl', () => {
     expect(parseLaunchpadUrl('https://launchpad.net/launchpad')).toEqual(expected)
   })
 
-  it('should return undefined for a site route', () => {
-    expect(parseLaunchpadUrl('https://launchpad.net/projects')).toBeUndefined()
-  })
-
   it('should return undefined for another host', () => {
     expect(parseLaunchpadUrl('https://example.com/launchpad')).toBeUndefined()
   })
@@ -132,10 +128,6 @@ describe('launchpadHandler', () => {
 
     it('should not match a bare tilde', () => {
       expect(launchpadHandler.match('https://launchpad.net/~')).toBe(false)
-    })
-
-    it('should not match a reserved top-level route', () => {
-      expect(launchpadHandler.match('https://launchpad.net/people')).toBe(false)
     })
 
     it('should not match a plus-prefixed top-level route', () => {

@@ -6,10 +6,9 @@ import { composeHint, getTenantSubdomain } from '../../common/utils.js'
 export type MataroaUrl = { kind: 'blog' }
 
 const domains = ['mataroa.blog']
-const excludedSubdomains = ['api', 'cdn', 'static']
 
 export const parseMataroaUrl = (url: string): MataroaUrl | undefined => {
-  if (!getTenantSubdomain(url, domains, excludedSubdomains)) {
+  if (!getTenantSubdomain(url, domains)) {
     return
   }
 

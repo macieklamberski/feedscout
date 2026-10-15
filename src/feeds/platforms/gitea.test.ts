@@ -138,55 +138,6 @@ describe('parseGiteaUrl', () => {
     expect(parseGiteaUrl('https://codeberg.org/a.bianco/notes')).toEqual(expected)
   })
 
-  const excludedPathValues: Array<string> = [
-    'https://codeberg.org/explore',
-    'https://codeberg.org/admin',
-    'https://codeberg.org/user',
-    'https://codeberg.org/assets',
-    'https://codeberg.org/api',
-    'https://codeberg.org/-',
-    'https://gitea.com/issues',
-    'https://gitea.com/pulls',
-    'https://gitea.com/milestones',
-    'https://gitea.com/notifications',
-    'https://gitea.com/login',
-    'https://codeberg.org/org/create',
-    'https://codeberg.org/repo/create',
-    'https://gitea.com/metrics',
-    'https://gitea.com/v2',
-    'https://gitea.com/attachments/1234',
-    'https://gitea.com/avatar/abcdef',
-    'https://gitea.com/avatars/abcdef',
-    'https://gitea.com/repo-avatars/abcdef',
-    'https://gitea.com/captcha/abcdef.png',
-    'https://gitea.com/favicon.ico',
-    'https://gitea.com/ghost',
-    'https://gitea.com/.well-known/openid-configuration',
-  ]
-
-  it.each(excludedPathValues)('should return undefined for the site route %s', (value) => {
-    expect(parseGiteaUrl(value)).toBeUndefined()
-  })
-
-  it('should return undefined for an excluded path in another case', () => {
-    expect(parseGiteaUrl('https://codeberg.org/Explore')).toBeUndefined()
-    expect(parseGiteaUrl('https://codeberg.org/ADMIN')).toBeUndefined()
-  })
-
-  const excludedRepoValues: Array<string> = [
-    'https://codeberg.org/explore/repos',
-    'https://codeberg.org/admin/users',
-    'https://codeberg.org/user/login',
-  ]
-
-  it.each(excludedRepoValues)('should return undefined for %s', (value) => {
-    expect(parseGiteaUrl(value)).toBeUndefined()
-  })
-
-  it('should return undefined for an excluded path with a route suffix', () => {
-    expect(parseGiteaUrl('https://codeberg.org/explore.rss')).toBeUndefined()
-  })
-
   it('should return undefined for a route suffix without a user', () => {
     expect(parseGiteaUrl('https://codeberg.org/.rss')).toBeUndefined()
   })
@@ -207,7 +158,6 @@ describe('giteaHandler', () => {
       [true, 'https://www.codeberg.org/forgejo'],
       [true, 'https://gitea.com/gitea'],
       [true, 'https://www.gitea.com/gitea'],
-      [false, 'https://codeberg.org/user'],
       [false, 'https://example.org/user/repo'],
       [false, 'https://example.com/owner'],
     ]
@@ -391,10 +341,6 @@ describe('giteaHandler', () => {
       ]
 
       expect(giteaHandler.resolve(value)).toEqual(expected)
-    })
-
-    it('should return empty array for an excluded path', () => {
-      expect(giteaHandler.resolve('https://codeberg.org/explore')).toEqual([])
     })
   })
 

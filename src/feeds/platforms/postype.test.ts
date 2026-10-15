@@ -39,11 +39,6 @@ describe('parsePostypeUrl', () => {
     expect(parsePostypeUrl('https://www.postype.com/')).toBeUndefined()
   })
 
-  it('should return undefined for infrastructure subdomains', () => {
-    expect(parsePostypeUrl('https://api.postype.com/')).toBeUndefined()
-    expect(parsePostypeUrl('https://cdn.postype.com/')).toBeUndefined()
-  })
-
   it('should return undefined for a nested subdomain', () => {
     expect(parsePostypeUrl('https://a.b.postype.com')).toBeUndefined()
   })

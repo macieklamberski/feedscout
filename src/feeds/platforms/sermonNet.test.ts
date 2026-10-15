@@ -39,10 +39,6 @@ describe('parseSermonNetUrl', () => {
     expect(parseSermonNetUrl('https://www.sermon.net/')).toBeUndefined()
   })
 
-  it('should return undefined for the api subdomain', () => {
-    expect(parseSermonNetUrl('https://api.sermon.net/')).toBeUndefined()
-  })
-
   it('should return undefined for the apex domain', () => {
     expect(parseSermonNetUrl('https://sermon.net/')).toBeUndefined()
   })

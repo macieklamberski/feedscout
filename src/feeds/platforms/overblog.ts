@@ -1,4 +1,3 @@
-import { isHostOf } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, getTenantSubdomain } from '../../common/utils.js'
@@ -20,51 +19,8 @@ const domains = [
   'overblog.fr',
 ]
 
-// Service hosts resolve off the blog farm. The same names on the other domains are blog hosts.
-const excludedHosts = [
-  'admin.over-blog.com',
-  'admin.overblog.com',
-  'api.over-blog.com',
-  'api2.over-blog.com',
-  'app.over-blog.com',
-  'assets.over-blog.com',
-  'beta.over-blog.com',
-  'beta.overblog.com',
-  'connect.over-blog.com',
-  'de.over-blog.com',
-  'de.overblog.com',
-  'en.over-blog.com',
-  'en.overblog.com',
-  'es.over-blog.com',
-  'es.overblog.com',
-  'fdata.over-blog.com',
-  'fdata.over-blog.net',
-  'fonts.over-blog.com',
-  'forum.over-blog.de',
-  'forums.over-blog.de',
-  'fr.over-blog.com',
-  'fr.overblog.com',
-  'idata.over-blog.com',
-  'image.over-blog.com',
-  'img.over-blog.com',
-  'img2.over-blog.com',
-  'it.over-blog.com',
-  'it.overblog.com',
-  'media.over-blog.com',
-  'my.over-blog.com',
-  'my.overblog.com',
-  'newsletter.over-blog.com',
-  'pay.over-blog.com',
-  'premium.over-blog.com',
-  'shop.over-blog.com',
-]
-
 export const parseOverblogUrl = (url: string): OverblogUrl | undefined => {
   if (!getTenantSubdomain(url, domains)) {
-    return
-  }
-
-  if (isHostOf(url, excludedHosts)) {
     return
   }
 

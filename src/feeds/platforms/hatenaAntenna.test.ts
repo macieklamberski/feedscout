@@ -69,26 +69,6 @@ describe('parseHatenaAntennaUrl', () => {
     expect(parseHatenaAntennaUrl('https://a.hatena.ne.jp/')).toBeUndefined()
   })
 
-  const sitePaths: Array<string> = [
-    'category?c=a',
-    'check',
-    'config',
-    'css/global.css',
-    'edit',
-    'help/',
-    'images/rss_lb.gif',
-    'include?uid=alice&gid=1',
-    'map?http://example.com/',
-    'relate?uid=alice&gid=1',
-    'rss',
-    'search',
-    'theme/',
-  ]
-
-  it.each(sitePaths)('should return undefined for the site section %s', (path) => {
-    expect(parseHatenaAntennaUrl(`https://a.hatena.ne.jp/${path}`)).toBeUndefined()
-  })
-
   it('should return undefined for a path that is not a Hatena ID', () => {
     expect(parseHatenaAntennaUrl('https://a.hatena.ne.jp/js/MochiKit/Base.js')).toBeUndefined()
   })

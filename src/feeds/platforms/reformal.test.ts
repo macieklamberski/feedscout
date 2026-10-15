@@ -28,18 +28,6 @@ describe('parseReformalUrl', () => {
     expect(parseReformalUrl('https://idea.informer.com/')).toBeUndefined()
   })
 
-  it('should return undefined for a service host', () => {
-    expect(parseReformalUrl('https://media.reformal.ru/')).toBeUndefined()
-  })
-
-  it('should return undefined for the mail host', () => {
-    expect(parseReformalUrl('https://mail.reformal.ru/')).toBeUndefined()
-  })
-
-  it('should return undefined for the sites host', () => {
-    expect(parseReformalUrl('https://sites.reformal.ru/')).toBeUndefined()
-  })
-
   it('should return undefined for the www host of idea.informer.com', () => {
     expect(parseReformalUrl('https://www.idea.informer.com/')).toBeUndefined()
   })

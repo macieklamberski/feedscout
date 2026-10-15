@@ -11,13 +11,9 @@ export type LivejournalUrl = { kind: 'journal'; username?: string; tag?: string 
 const domains = ['livejournal.com']
 const wwwHosts = ['www.livejournal.com']
 const legacyUserHosts = ['users.livejournal.com', 'community.livejournal.com']
-const excludedHosts = [
-  'livejournal.com',
-  'www.livejournal.com',
-  'users.livejournal.com',
-  'community.livejournal.com',
-  'syndicated.livejournal.com',
-]
+// The mobile site and the syndication host name a journal in the path, in a form no feed URL
+// is built from.
+const pathHosts = ['m.livejournal.com', 'syndicated.livejournal.com']
 
 const wwwUsersPathRegex = /^\/(?:users\/|~)([^/]+)/i
 const legacyUserPathRegex = /^\/([^/]+)/
@@ -83,8 +79,8 @@ export const parseLivejournalUrl = (url: string): LivejournalUrl | undefined => 
     return { kind: 'journal', username, tag }
   }
 
-  // The mobile site and image hosts such as `ic.pics.livejournal.com` are no journal.
-  if (isHostOf(url, excludedHosts) || !getTenantSubdomain(url, domains, ['api', 'm'])) {
+  // An image host such as `ic.pics.livejournal.com` is nested, so no journal.
+  if (!getTenantSubdomain(url, domains) || isHostOf(url, pathHosts)) {
     return
   }
 

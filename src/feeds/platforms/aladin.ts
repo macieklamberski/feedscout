@@ -14,18 +14,6 @@ const hosts = ['blog.aladin.co.kr']
 
 const categoryIdRegex = /^\d+$/
 
-const excludedPaths = [
-  'bookple',
-  'bp',
-  'js',
-  'myblog',
-  'ScriptResource.axd',
-  'town',
-  'trackback',
-  'ucl_editor',
-  'WebResource.axd',
-]
-
 export const parseAladinUrl = (url: string): AladinUrl | undefined => {
   if (!isHostOf(url, hosts)) {
     return
@@ -33,7 +21,8 @@ export const parseAladinUrl = (url: string): AladinUrl | undefined => {
 
   const [username, section, value] = getPathSegments(url)
 
-  if (!username || isAnyOf(username, excludedPaths)) {
+  // A dotted segment such as ScriptResource.axd is a file of the site.
+  if (!username || username.includes('.')) {
     return
   }
 

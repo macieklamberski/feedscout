@@ -40,10 +40,6 @@ describe('parseBlogHuUrl', () => {
     expect(parseBlogHuUrl('https://www.blog.hu/')).toBeUndefined()
   })
 
-  it('should return undefined for an excluded subdomain', () => {
-    expect(parseBlogHuUrl('https://m.blog.hu/')).toBeUndefined()
-  })
-
   it('should return undefined for a nested subdomain', () => {
     expect(parseBlogHuUrl('https://a.kertbuvolo.blog.hu/')).toBeUndefined()
   })

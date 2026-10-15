@@ -27,14 +27,6 @@ describe('parsePostachioUrl', () => {
     expect(parsePostachioUrl('https://Alice.postach.io/')).toEqual(expected)
   })
 
-  it('should return undefined for an excluded subdomain', () => {
-    expect(parsePostachioUrl('https://www.postach.io/')).toBeUndefined()
-    expect(parsePostachioUrl('https://api.postach.io/')).toBeUndefined()
-    expect(parsePostachioUrl('https://blog.postach.io/')).toBeUndefined()
-    expect(parsePostachioUrl('https://cdn-static.postach.io/')).toBeUndefined()
-    expect(parsePostachioUrl('https://cdn-images.postach.io/')).toBeUndefined()
-  })
-
   it('should return undefined for the apex domain', () => {
     expect(parsePostachioUrl('https://postach.io/blog/')).toBeUndefined()
   })

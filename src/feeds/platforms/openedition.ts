@@ -1,4 +1,4 @@
-import { getPathSegments, isAnyOf, isHostOf } from 'trousse'
+import { getPathSegments, isHostOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
@@ -9,19 +9,6 @@ export type OpeneditionUrl = { kind: 'journal'; journal: string }
 
 const hosts = ['journals.openedition.org']
 
-const excludedPaths = [
-  'docannexe',
-  'feed.php',
-  'lodel',
-  'oai',
-  'oaipartenaires',
-  'searchopeneditionorg',
-  'wwwlodelorg', // The Lodel software site, which serves its own feeds
-  'wwwmaisondesrevuesorg',
-  'wwwopeneditionorg',
-  'wwwrevuesorg',
-]
-
 export const parseOpeneditionUrl = (url: string): OpeneditionUrl | undefined => {
   if (!isHostOf(url, hosts)) {
     return
@@ -29,11 +16,8 @@ export const parseOpeneditionUrl = (url: string): OpeneditionUrl | undefined => 
 
   const [journal] = getPathSegments(url)
 
-  if (!journal) {
-    return
-  }
-
-  if (isAnyOf(journal, excludedPaths)) {
+  // A dotted segment such as feed.php is a file of the site.
+  if (!journal || journal.includes('.')) {
     return
   }
 

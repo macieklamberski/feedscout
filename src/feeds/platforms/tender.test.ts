@@ -139,18 +139,8 @@ describe('getTenderPage', () => {
     expect(getTenderPage('https://www.alice.tenderapp.com/', undefined)).toBeUndefined()
   })
 
-  const serviceHosts = [
-    'https://api.tenderapp.com/',
-    'https://blog.tenderapp.com/',
-    'https://setup.tenderapp.com/',
-    'https://ssl.tenderapp.com/',
-    'https://status.tenderapp.com/',
-    'https://support.tenderapp.com/',
-    'https://www.tenderapp.com/',
-  ]
-
-  it.each(serviceHosts)('should return undefined for service host %s', (value) => {
-    expect(getTenderPage(value, undefined)).toBeUndefined()
+  it('should return undefined for the www host', () => {
+    expect(getTenderPage('https://www.tenderapp.com/', undefined)).toBeUndefined()
   })
 
   it('should return undefined for an error page', () => {
@@ -198,7 +188,7 @@ describe('tenderHandler', () => {
       expect(tenderHandler.match('https://example.com/', '<html></html>')).toBe(false)
     })
 
-    it('should return false for a service host', () => {
+    it('should return false for the www host', () => {
       expect(tenderHandler.match('https://www.tenderapp.com/', settingsHtml)).toBe(false)
     })
   })
@@ -240,7 +230,7 @@ describe('tenderHandler', () => {
       )
     })
 
-    it('should return empty array for a service host', () => {
+    it('should return empty array for the www host', () => {
       expect(tenderHandler.resolve('https://www.tenderapp.com/')).toEqual([])
     })
   })

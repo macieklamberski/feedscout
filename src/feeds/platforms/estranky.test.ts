@@ -99,17 +99,8 @@ describe('parseEstrankyUrl', () => {
     )
   })
 
-  it('should return undefined for the platform host', () => {
+  it('should return undefined for the www host', () => {
     expect(parseEstrankyUrl('https://www.estranky.cz/')).toBeUndefined()
-  })
-
-  it('should return undefined for the site directory', () => {
-    expect(parseEstrankyUrl('https://katalog.estranky.cz/')).toBeUndefined()
-  })
-
-  it('should return undefined for the help hosts', () => {
-    expect(parseEstrankyUrl('https://napoveda.estranky.cz/')).toBeUndefined()
-    expect(parseEstrankyUrl('https://nova-napoveda.estranky.cz/')).toBeUndefined()
   })
 
   it('should return undefined for the apex domain', () => {
@@ -135,10 +126,6 @@ describe('estrankyHandler', () => {
 
     it('should return false for a custom domain without the Estranky assets', () => {
       expect(estrankyHandler.match('https://www.example.com/', '<html></html>')).toBe(false)
-    })
-
-    it('should return false for the site directory loading the Estranky assets', () => {
-      expect(estrankyHandler.match('https://katalog.estranky.cz/', customDomainPage)).toBe(false)
     })
   })
 

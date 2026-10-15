@@ -33,16 +33,6 @@ describe('parseDuckWebcomicsUrl', () => {
     expect(parseDuckWebcomicsUrl('https://www.theduckwebcomics.com/QuAcK/')).toEqual(expected)
   })
 
-  it('should return undefined for excluded paths', () => {
-    expect(parseDuckWebcomicsUrl('https://www.theduckwebcomics.com/user/alice/')).toBeUndefined()
-    expect(parseDuckWebcomicsUrl('https://www.theduckwebcomics.com/news/')).toBeUndefined()
-    expect(parseDuckWebcomicsUrl('https://www.theduckwebcomics.com/forum/')).toBeUndefined()
-  })
-
-  it('should return undefined for an excluded path in another case', () => {
-    expect(parseDuckWebcomicsUrl('https://www.theduckwebcomics.com/Search/')).toBeUndefined()
-  })
-
   it('should return undefined for a segment that is not a comic name', () => {
     expect(parseDuckWebcomicsUrl('https://www.theduckwebcomics.com/favicon.ico')).toBeUndefined()
   })

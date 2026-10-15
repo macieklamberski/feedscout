@@ -11,36 +11,6 @@ export type ArenaUrl =
 
 const hosts = ['are.na', 'www.are.na']
 
-const excludedPaths = [
-  'about',
-  'api',
-  'block',
-  'blog',
-  'community-guidelines',
-  'developers',
-  'education',
-  'explore',
-  'extension',
-  'feed',
-  'forgot',
-  'home',
-  'import',
-  'index',
-  'install',
-  'invite',
-  'log_in',
-  'login',
-  'notifications',
-  'premium',
-  'privacy',
-  'roadmap',
-  'search',
-  'settings',
-  'sign_up',
-  'signup',
-  'support',
-  'terms',
-]
 // Views of a profile. The profile feed sits at /{username}/feed/rss, so `feed` names no channel.
 const profilePaths = [
   'all',
@@ -67,10 +37,6 @@ export const parseArenaUrl = (url: string): ArenaUrl | undefined => {
   }
 
   if (!username) {
-    return
-  }
-
-  if (isAnyOf(username, excludedPaths)) {
     return
   }
 

@@ -17,18 +17,6 @@ const hosts = ['gist.github.com']
 const discoverRegex = /^\/discover\/?$/i
 const feedSuffixRegex = /\.atom$/i
 
-const excludedPaths = [
-  'discover',
-  'search',
-  'login',
-  'join',
-  'settings',
-  'starred',
-  'forked',
-  'mine',
-  'new',
-  'gists',
-]
 const forksSections = ['forks', 'forked']
 
 // A gist page, /{username}/{gist-id}, and the /public and /secret listings belong to the
@@ -49,7 +37,7 @@ export const parseGithubGistUrl = (url: string): GithubGistUrl | undefined => {
   const section = second?.replace(feedSuffixRegex, '')
 
   // GitHub names carry no dots, so a dotted segment such as robots.txt is a file of the site.
-  if (!username || username.includes('.') || isAnyOf(username, excludedPaths)) {
+  if (!username || username.includes('.')) {
     return
   }
 

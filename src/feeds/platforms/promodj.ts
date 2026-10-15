@@ -1,4 +1,4 @@
-import { getPathSegments, isAnyOf, isHostOf } from 'trousse'
+import { getPathSegments, isHostOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
@@ -8,61 +8,6 @@ export type PromodjUrl = { kind: 'profile'; username: string }
 
 const hosts = ['promodj.com', 'www.promodj.com']
 
-const excludedPaths = [
-  'about',
-  'acapellas',
-  'api',
-  'assets',
-  'avisha',
-  'booking',
-  'charts',
-  'clubbers',
-  'communities',
-  'contests',
-  'cool',
-  'cp',
-  'cue',
-  'djs',
-  'download',
-  'extra',
-  'featured',
-  'forum',
-  'info',
-  'interview',
-  'lives',
-  'login',
-  'logout',
-  'magazine',
-  'mixes',
-  'music',
-  'musicians',
-  'news',
-  'onair',
-  'online',
-  'people',
-  'podcasts',
-  'prelisten',
-  'preview',
-  'promos',
-  'radio',
-  'radioshows',
-  'register',
-  'releases',
-  'remixes',
-  'samples',
-  'search',
-  'shop',
-  'source',
-  'support',
-  'tools',
-  'top100',
-  'tracks',
-  'trendy',
-  'tv',
-  'videos',
-  'waveform',
-]
-
 export const parsePromodjUrl = (url: string): PromodjUrl | undefined => {
   if (!isHostOf(url, hosts)) {
     return
@@ -70,7 +15,7 @@ export const parsePromodjUrl = (url: string): PromodjUrl | undefined => {
 
   const [username] = getPathSegments(url)
 
-  if (!username || isAnyOf(username, excludedPaths)) {
+  if (!username) {
     return
   }
 

@@ -53,10 +53,8 @@ describe('parseOcnkUrl', () => {
     expect(parseOcnkUrl('https://example.ocnk.net/product/24')).toEqual(expected)
   })
 
-  const serviceHosts: Array<string> = ['admin', 'api', 'app', 'auth', 'blog', 'www']
-
-  it.each(serviceHosts)('should return undefined for the %s service host', (host) => {
-    expect(parseOcnkUrl(`https://${host}.ocnk.net/`)).toBeUndefined()
+  it('should return undefined for the www host', () => {
+    expect(parseOcnkUrl('https://www.ocnk.net/')).toBeUndefined()
   })
 
   it('should return undefined for a nested subdomain', () => {
@@ -88,13 +86,13 @@ describe('ocnkHandler', () => {
       expect(ocnkHandler.match('https://www.example.com/', responsiveScriptHtml)).toBe(true)
     })
 
-    it('should not match the www service host carrying the cart script', () => {
+    it('should not match the www host carrying the cart script', () => {
       expect(ocnkHandler.match('https://www.ocnk.net/', responsiveScriptHtml)).toBe(false)
     })
   })
 
   describe('resolve', () => {
-    it('should return empty array for a service host', () => {
+    it('should return empty array for the www host', () => {
       expect(ocnkHandler.resolve('https://www.ocnk.net/')).toEqual([])
     })
 

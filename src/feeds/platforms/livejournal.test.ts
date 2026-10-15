@@ -27,14 +27,18 @@ describe('parseLivejournalUrl', () => {
     expect(parseLivejournalUrl('https://users.livejournal.com/news')).toEqual(expected)
   })
 
-  it('should return undefined for the syndicated host', () => {
-    expect(parseLivejournalUrl('https://syndicated.livejournal.com/feed')).toBeUndefined()
-  })
-
   it('should return the journal of a user named static', () => {
     const expected: LivejournalUrl = { kind: 'journal' }
 
     expect(parseLivejournalUrl('https://static.livejournal.com/')).toEqual(expected)
+  })
+
+  it('should return undefined for the mobile host', () => {
+    expect(parseLivejournalUrl('https://m.livejournal.com/read/user/someuser/')).toBeUndefined()
+  })
+
+  it('should return undefined for the syndication host', () => {
+    expect(parseLivejournalUrl('https://syndicated.livejournal.com/somefeed/')).toBeUndefined()
   })
 
   it('should return undefined for another host', () => {
@@ -54,7 +58,6 @@ describe('livejournalHandler', () => {
       [false, 'https://www.livejournal.com'],
       [false, 'https://users.livejournal.com'],
       [false, 'https://community.livejournal.com'],
-      [false, 'https://syndicated.livejournal.com'],
       [false, 'https://livejournal.com'],
       [false, 'https://example.com'],
     ]

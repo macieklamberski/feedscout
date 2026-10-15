@@ -10,8 +10,9 @@ export type WebnodeUrl = { kind: 'section'; section: string } | { kind: 'site' }
 
 const clientScriptPrefix = 'https://d11bh4d8fhuq47.cloudfront.net/_system/client/'
 
-// Articles, e-shop products and article archives, whose slugs can repeat a section's slug.
-const excludedPaths = ['archive', 'news', 'products']
+// Articles, e-shop products and article archives belong to the site, and their slugs can repeat a
+// section's slug.
+const itemPaths = ['archive', 'news', 'products']
 
 // The classic editor loads its client script from this host on every page. Webnode 2 pages load
 // none of it and serve no feeds.
@@ -33,7 +34,7 @@ export const parseWebnodeUrl = (url: string): WebnodeUrl => {
   // built-in `/sitemap/` page is the XML sitemap.
   const isFeedless = section?.includes('%') || (segments.length === 1 && section === 'sitemap')
 
-  if (!section || isFeedless || isAnyOf(segments[0], excludedPaths)) {
+  if (!section || isFeedless || isAnyOf(segments[0], itemPaths)) {
     return { kind: 'site' }
   }
 

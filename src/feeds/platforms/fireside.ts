@@ -1,3 +1,4 @@
+import { isHostOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, getTenantSubdomain } from '../../common/utils.js'
 
@@ -6,24 +7,13 @@ import { composeHint, getTenantSubdomain } from '../../common/utils.js'
 export type FiresideUrl = { kind: 'podcast'; slug: string }
 
 const domains = ['fireside.fm']
-
-const excludedSubdomains = [
-  'app',
-  'assets',
-  'blog',
-  'cdn',
-  'feeds',
-  'help',
-  'media',
-  'static',
-  'status',
-  'www',
-]
+// The feed host serves every show by path, so it names no show.
+const feedHosts = ['feeds.fireside.fm']
 
 export const parseFiresideUrl = (url: string): FiresideUrl | undefined => {
-  const slug = getTenantSubdomain(url, domains, excludedSubdomains)
+  const slug = getTenantSubdomain(url, domains)
 
-  if (!slug) {
+  if (!slug || isHostOf(url, feedHosts)) {
     return
   }
 

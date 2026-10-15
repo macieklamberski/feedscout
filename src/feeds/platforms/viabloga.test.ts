@@ -17,11 +17,6 @@ describe('parseViablogaUrl', () => {
 
   const otherUrls = [
     'http://www.viabloga.com/',
-    'http://viabloga2.viabloga.com/',
-    'http://images.viabloga.com/',
-    'http://news.viabloga.com/',
-    'http://support.viabloga.com/',
-    'http://test.viabloga.com/',
     'http://www.alice.viabloga.com/',
     'http://viabloga.com/',
     'http://example.com/',

@@ -47,12 +47,12 @@ describe('parseBloggangUrl', () => {
     expect(parseBloggangUrl('https://www.bloggang.com/')).toBeUndefined()
   })
 
-  it('should return undefined for the mobile portal', () => {
-    expect(parseBloggangUrl('https://m.bloggang.com/')).toBeUndefined()
-  })
-
   it('should return undefined for a nested subdomain', () => {
     expect(parseBloggangUrl('https://a.gonga.bloggang.com/')).toBeUndefined()
+  })
+
+  it('should return undefined for the mobile host', () => {
+    expect(parseBloggangUrl('https://m.bloggang.com/mainblog.php?id=someone')).toBeUndefined()
   })
 
   it('should return undefined for another script with an id', () => {

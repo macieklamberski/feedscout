@@ -8,27 +8,13 @@ export type SportsregionsUrl = { kind: 'club' }
 
 const domains = ['sportsregions.fr']
 
-const excludedSubdomains = [
-  'admin',
-  'aide',
-  'beta',
-  'imap',
-  'mail',
-  'pop',
-  'portail',
-  'smtp',
-  'video',
-  'videos',
-  'webmail',
-]
-
 // The footer of every club site links the platform's abuse report form, on custom domains too.
 export const isSportsregionsHtml = (content: string): boolean => {
   return content.includes('www.sportsregions.fr/signaler-un-contenu-inapproprie')
 }
 
 export const parseSportsregionsUrl = (url: string): SportsregionsUrl | undefined => {
-  if (!getTenantSubdomain(url, domains, excludedSubdomains)) {
+  if (!getTenantSubdomain(url, domains)) {
     return
   }
 

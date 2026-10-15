@@ -26,12 +26,6 @@ describe('parsePlurkUrl', () => {
     expect(parsePlurkUrl('https://www.plurk.com/u/alice')).toEqual(expected)
   })
 
-  it('should return a page for a site route', () => {
-    const expected: PlurkUrl = { kind: 'page' }
-
-    expect(parsePlurkUrl('https://www.plurk.com/top')).toEqual(expected)
-  })
-
   it('should return a page for the root', () => {
     const expected: PlurkUrl = { kind: 'page' }
 
@@ -107,18 +101,6 @@ describe('plurkHandler', () => {
       expect(plurkHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return the user feed for a desktop user named after a mobile route', () => {
-      const value = 'https://www.plurk.com/wallet'
-      const expected = [
-        {
-          uri: 'https://www.plurk.com/wallet.xml',
-          hint: { key: 'plurk:plurks', label: 'Plurks' },
-        },
-      ]
-
-      expect(plurkHandler.resolve(value)).toEqual(expected)
-    })
-
     it('should return the responses feed for a post page', () => {
       const value = 'https://www.plurk.com/p/3j6p8yayds'
       const expected = [
@@ -141,18 +123,6 @@ describe('plurkHandler', () => {
       ]
 
       expect(plurkHandler.resolve(value)).toEqual(expected)
-    })
-
-    it('should return nothing for a reserved path', () => {
-      expect(plurkHandler.resolve('https://www.plurk.com/top')).toEqual([])
-    })
-
-    it('should return nothing for a reserved path in another case', () => {
-      expect(plurkHandler.resolve('https://www.plurk.com/Settings')).toEqual([])
-    })
-
-    it('should return nothing for a reserved mobile path', () => {
-      expect(plurkHandler.resolve('https://www.plurk.com/m/notify')).toEqual([])
     })
 
     it('should return nothing for a post path without an id', () => {

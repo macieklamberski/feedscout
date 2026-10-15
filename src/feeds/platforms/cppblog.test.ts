@@ -53,10 +53,6 @@ describe('parseCppblogUrl', () => {
     expect(parseCppblogUrl('http://www.cppblog.com/alice/archive/2013/06.html')).toEqual(expected)
   })
 
-  it('should return undefined for a site directory', () => {
-    expect(parseCppblogUrl('http://www.cppblog.com/AggSite/')).toBeUndefined()
-  })
-
   it('should return undefined for a site file', () => {
     expect(parseCppblogUrl('http://www.cppblog.com/login.aspx?ReturnURL=')).toBeUndefined()
   })

@@ -17,12 +17,8 @@ describe('parseCanalblogUrl', () => {
     ).toEqual(expected)
   })
 
-  it('should return undefined for a service host', () => {
+  it('should return undefined for the www host', () => {
     expect(parseCanalblogUrl('https://www.canalblog.com/')).toBeUndefined()
-    expect(parseCanalblogUrl('https://admin.canalblog.com/')).toBeUndefined()
-    expect(
-      parseCanalblogUrl('https://storage.canalblog.com/12/34/567890/12345678.jpg'),
-    ).toBeUndefined()
   })
 
   it('should return undefined for a nested subdomain', () => {

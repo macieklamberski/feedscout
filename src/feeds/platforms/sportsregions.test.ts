@@ -51,35 +51,9 @@ describe('parseSportsregionsUrl', () => {
     expect(parseSportsregionsUrl(value)).toEqual(expected)
   })
 
-  it('should return undefined for the portal', () => {
+  it('should return undefined for the www host', () => {
     expect(parseSportsregionsUrl('https://www.sportsregions.fr/')).toBeUndefined()
   })
-
-  it('should return undefined for the help center', () => {
-    expect(parseSportsregionsUrl('https://aide.sportsregions.fr/')).toBeUndefined()
-  })
-
-  const excludedSubdomainValues: Array<string> = [
-    'admin',
-    'aide',
-    'beta',
-    'imap',
-    'mail',
-    'pop',
-    'portail',
-    'smtp',
-    'video',
-    'videos',
-    'webmail',
-    'www',
-  ]
-
-  it.each(excludedSubdomainValues)(
-    'should return undefined for the %s service host',
-    (subdomain) => {
-      expect(parseSportsregionsUrl(`https://${subdomain}.sportsregions.fr/`)).toBeUndefined()
-    },
-  )
 
   it('should return undefined for the apex domain', () => {
     expect(parseSportsregionsUrl('https://sportsregions.fr/')).toBeUndefined()
@@ -106,10 +80,6 @@ describe('sportsregionsHandler', () => {
 
     it('should return false for a custom domain without the footer link', () => {
       expect(sportsregionsHandler.match('https://example.com/', '<p>Club</p>')).toBe(false)
-    })
-
-    it('should return false for the portal with the footer link', () => {
-      expect(sportsregionsHandler.match('https://portail.sportsregions.fr/', clubHtml)).toBe(false)
     })
   })
 

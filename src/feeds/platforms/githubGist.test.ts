@@ -71,37 +71,14 @@ describe('parseGithubGistUrl', () => {
     expect(parseGithubGistUrl(value)).toEqual(expected)
   })
 
-  const excludedPathValues: Array<string> = [
-    'https://gist.github.com/starred',
-    'https://gist.github.com/forked',
-    'https://gist.github.com/mine',
-    'https://gist.github.com/new',
-    'https://gist.github.com/gists',
-    'https://gist.github.com/robots.txt',
-    'https://gist.github.com/search',
-    'https://gist.github.com/login',
-    'https://gist.github.com/join',
-    'https://gist.github.com/settings',
-  ]
-
-  it.each(excludedPathValues)('should return undefined for the site route %s', (value) => {
-    expect(parseGithubGistUrl(value)).toBeUndefined()
-  })
-
-  it('should return undefined for an excluded path in another case', () => {
-    expect(parseGithubGistUrl('https://gist.github.com/SEARCH')).toBeUndefined()
+  it('should return undefined for a dotted first segment', () => {
+    expect(parseGithubGistUrl('https://gist.github.com/robots.txt')).toBeUndefined()
   })
 
   it('should return the discover page', () => {
     const expected: GithubGistUrl = { kind: 'discover' }
 
     expect(parseGithubGistUrl('https://gist.github.com/Discover/')).toEqual(expected)
-  })
-
-  it('should return undefined for a gist under an excluded path', () => {
-    const value = 'https://gist.github.com/discover/1234567890abcdef'
-
-    expect(parseGithubGistUrl(value)).toBeUndefined()
   })
 
   it('should return undefined for the homepage', () => {
@@ -221,10 +198,6 @@ describe('githubGistHandler', () => {
       ]
 
       expect(githubGistHandler.resolve(value)).toEqual(expected)
-    })
-
-    it('should return empty array for excluded paths', () => {
-      expect(githubGistHandler.resolve('https://gist.github.com/search')).toEqual([])
     })
   })
 })

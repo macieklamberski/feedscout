@@ -10,29 +10,6 @@ export type NebulaUrl = { kind: 'channel'; slug: string } | { kind: 'explore'; c
 
 export const hosts = ['nebula.tv', 'www.nebula.tv']
 
-const excludedPaths = [
-  'about',
-  'account',
-  'beta',
-  'classes',
-  'faq',
-  'featured',
-  'gift',
-  'join',
-  'library',
-  'login',
-  'myshows',
-  'originals',
-  'podcasts',
-  'pricing',
-  'privacy',
-  'redeem',
-  'search',
-  'settings',
-  'signup',
-  'terms',
-]
-
 // /explore is the canonical landing page (Nebula 301s root and /videos to it).
 // Treated as the global feed surface, not a creator slug.
 const globalPaths = ['videos', 'explore']
@@ -49,10 +26,6 @@ export const parseNebulaUrl = (url: string): NebulaUrl | undefined => {
   // The root, /videos and /explore[/{tab}], optionally filtered by category.
   if (!slug || isAnyOf(slug, globalPaths)) {
     return { kind: 'explore', category: parsedUrl.searchParams.get('category') ?? undefined }
-  }
-
-  if (isAnyOf(slug, excludedPaths)) {
-    return
   }
 
   return { kind: 'channel', slug }

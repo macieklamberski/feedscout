@@ -1,4 +1,4 @@
-import { getPathSegments, isAnyOf, isHostOf } from 'trousse'
+import { getPathSegments, isHostOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
@@ -13,10 +13,6 @@ const hosts = ['podcast.ausha.co', 'smartlink.ausha.co']
 // The feed id is opaque: show and episode pages carry it only in the markup.
 const feedIdRegex = /feed\.ausha\.co\/(\w+)/
 
-const excludedPaths = [
-  'c', // Channel pages, which list several shows
-]
-
 export const parseAushaUrl = (url: string): AushaUrl | undefined => {
   if (!isHostOf(url, hosts)) {
     return
@@ -24,7 +20,7 @@ export const parseAushaUrl = (url: string): AushaUrl | undefined => {
 
   const [slug] = getPathSegments(url)
 
-  if (!slug || isAnyOf(slug, excludedPaths)) {
+  if (!slug) {
     return
   }
 

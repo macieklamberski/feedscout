@@ -84,10 +84,8 @@ describe('parsePurotUrl', () => {
     expect(parsePurotUrl('https://purot.net/')).toBeUndefined()
   })
 
-  const serviceHosts = ['https://www.purot.net/', 'https://my.purot.net/login.php']
-
-  it.each(serviceHosts)('should return undefined for service host %s', (value) => {
-    expect(parsePurotUrl(value)).toBeUndefined()
+  it('should return undefined for the www host', () => {
+    expect(parsePurotUrl('https://www.purot.net/')).toBeUndefined()
   })
 
   it('should return undefined for a dotted subdomain', () => {

@@ -18,8 +18,6 @@ const feedsOrigin = 'http://www.cppblog.com'
 const listPageRegex = /^(\d+)\.html$/i
 const feedLinkRegex = /^https?:\/\/(?:www\.)?cppblog\.com\/([^/]+)\/rss\.aspx$/i
 
-const excludedPaths = ['admin', 'aggsite', 'css', 'images', 'script', 'skins']
-
 export const parseCppblogUrl = (url: string): CppblogUrl | undefined => {
   if (!isHostOf(url, hosts)) {
     return
@@ -27,7 +25,7 @@ export const parseCppblogUrl = (url: string): CppblogUrl | undefined => {
 
   const [username, section, page] = getPathSegments(url)
 
-  if (!username || username.includes('.') || isAnyOf(username, excludedPaths)) {
+  if (!username || username.includes('.')) {
     return
   }
 

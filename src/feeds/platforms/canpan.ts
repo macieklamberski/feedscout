@@ -1,4 +1,4 @@
-import { getPathSegments, isAnyOf, isHostOf } from 'trousse'
+import { getPathSegments, isHostOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
@@ -9,18 +9,6 @@ export type CanpanUrl = { kind: 'blog'; blog: string }
 
 const hosts = ['blog.canpan.info']
 
-const excludedPaths = [
-  '_common',
-  '_contents',
-  '_images_e',
-  '_pages',
-  'css',
-  'img',
-  'js',
-  'tb',
-  'template',
-]
-
 export const parseCanpanUrl = (url: string): CanpanUrl | undefined => {
   if (!isHostOf(url, hosts)) {
     return
@@ -28,7 +16,7 @@ export const parseCanpanUrl = (url: string): CanpanUrl | undefined => {
 
   const [blog] = getPathSegments(url)
 
-  if (!blog || isAnyOf(blog, excludedPaths)) {
+  if (!blog) {
     return
   }
 

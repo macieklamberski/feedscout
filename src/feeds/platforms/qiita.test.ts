@@ -32,36 +32,6 @@ describe('parseQiitaUrl', () => {
     expect(parseQiitaUrl('https://qiita.com/Qiita')).toEqual(expected)
   })
 
-  it('should return undefined for a site route', () => {
-    expect(parseQiitaUrl('https://qiita.com/settings')).toBeUndefined()
-  })
-
-  const excludedPathValues: Array<string> = [
-    'advent-calendar',
-    'asct',
-    'badges',
-    'conference',
-    'drafts',
-    'items',
-    'notifications',
-    'official-campaigns',
-    'official-events',
-    'patches',
-    'public',
-    'qiita-award',
-    'question-feed',
-    'stock',
-    'stock-feed',
-    'stocks',
-    'tech-festa',
-    'timeline',
-    'white_papers',
-  ]
-
-  it.each(excludedPathValues)('should return undefined for the %s site route', (route) => {
-    expect(parseQiitaUrl(`https://qiita.com/${route}`)).toBeUndefined()
-  })
-
   it('should return undefined for the root', () => {
     expect(parseQiitaUrl('https://qiita.com/')).toBeUndefined()
   })
@@ -190,35 +160,6 @@ describe('qiitaHandler', () => {
       const value = 'https://qiita.com/'
 
       expect(qiitaHandler.resolve(value)).toEqual([])
-    })
-
-    it('should return empty array for bare tags path', () => {
-      const value = 'https://qiita.com/tags'
-
-      expect(qiitaHandler.resolve(value)).toEqual([])
-    })
-
-    it('should return empty array for excluded paths', () => {
-      const values = [
-        'https://qiita.com/about',
-        'https://qiita.com/api',
-        'https://qiita.com/login',
-        'https://qiita.com/organizations',
-        'https://qiita.com/privacy',
-        'https://qiita.com/search',
-        'https://qiita.com/settings',
-        'https://qiita.com/signup',
-        'https://qiita.com/terms',
-        'https://qiita.com/trend',
-      ]
-
-      for (const value of values) {
-        expect(qiitaHandler.resolve(value)).toEqual([])
-      }
-    })
-
-    it('should return empty array for a capitalized excluded path', () => {
-      expect(qiitaHandler.resolve('https://qiita.com/About')).toEqual([])
     })
 
     it('should return Qiita Zine feed for /official-columns', () => {

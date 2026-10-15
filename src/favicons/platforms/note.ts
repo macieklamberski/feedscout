@@ -1,6 +1,6 @@
-import { getPathSegments, isAnyOf, isNonEmptyString } from 'trousse'
+import { getPathSegments, isNonEmptyString } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { excludedPaths, parseNoteUrl } from '../../feeds/platforms/note.js'
+import { parseNoteUrl } from '../../feeds/platforms/note.js'
 import type { FaviconEnricher } from '../types.js'
 import { parseResponseJson } from '../utils.js'
 
@@ -12,12 +12,7 @@ const profileImageUrlRegex = /profileImageUrl\\?":\\?"((?:[^"\\]|\\u[\da-f]{4})+
 const getOwner = (url: string): string | undefined => {
   const parsed = parseNoteUrl(url)
 
-  if (parsed?.kind === 'user') {
-    return parsed.username
-  }
-
-  // A magazine page under a reserved path names no owner.
-  if (parsed?.kind === 'magazine' && !isAnyOf(parsed.username, excludedPaths)) {
+  if (parsed?.kind === 'user' || parsed?.kind === 'magazine') {
     return parsed.username
   }
 }

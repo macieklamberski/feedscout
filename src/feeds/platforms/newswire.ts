@@ -20,11 +20,9 @@ const contentTypePathRegex = /^\/browse\/([^/]+)\/?$/i
 
 const contentTypes = ['news', 'pr', 'social'] as const
 
-const excludedSubdomains = ['cdn', 'support']
-
 export const parseNewswireUrl = (url: string): NewswireUrl | undefined => {
   const pathname = parseUrl(url)?.pathname
-  const newsroom = getTenantSubdomain(url, domains, excludedSubdomains)
+  const newsroom = getTenantSubdomain(url, domains)
 
   if (!pathname || !newsroom) {
     return

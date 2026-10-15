@@ -11,8 +11,6 @@ const domains = ['ocnk.net']
 const cartScriptRegex =
   /^(?:https?:\/\/[^/]+)?\/res\/[^/]+\/js\/(?:ocnk|pack\/ocnk-min)\.js(?:\?|$)/
 
-const excludedSubdomains = ['admin', 'api', 'app', 'auth', 'blog']
-
 // Every shop template loads the cart script from its `/res/{template}/js/` folder, on a custom
 // domain too: `ocnk.js` in the PC templates, `pack/ocnk-min.js` in the responsive ones.
 export const isOcnkHtml = (content: string): boolean => {
@@ -28,7 +26,7 @@ export const parseOcnkUrl = (url: string): OcnkUrl | undefined => {
     return { kind: 'customDomain' }
   }
 
-  const shop = getTenantSubdomain(url, domains, excludedSubdomains)
+  const shop = getTenantSubdomain(url, domains)
 
   if (!shop) {
     return

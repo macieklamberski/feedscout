@@ -55,6 +55,18 @@ describe('parseGitlabUrl', () => {
     expect(parseGitlabUrl('https://gitlab.example.com/team')).toEqual(expected)
   })
 
+  it('should return the namespace for a group page under /groups/', () => {
+    const expected: GitlabUrl = { kind: 'namespace', namespace: 'somegroup' }
+
+    expect(parseGitlabUrl('https://gitlab.com/groups/somegroup')).toEqual(expected)
+  })
+
+  it('should return the namespace for a user page under /users/', () => {
+    const expected: GitlabUrl = { kind: 'namespace', namespace: 'someone' }
+
+    expect(parseGitlabUrl('https://gitlab.com/users/someone')).toEqual(expected)
+  })
+
   it('should keep dots in a namespace', () => {
     const expected: GitlabUrl = { kind: 'namespace', namespace: 'john.doe' }
 
@@ -199,32 +211,6 @@ describe('parseGitlabUrl', () => {
     expect(parseGitlabUrl('https://gitlab.com/group/tree')).toEqual(expected)
   })
 
-  const excludedPathValues: Array<string> = [
-    'https://gitlab.com/explore',
-    'https://gitlab.com/dashboard',
-    'https://gitlab.com/users',
-    'https://gitlab.com/search',
-    'https://gitlab.com/help',
-  ]
-
-  it.each(excludedPathValues)('should return undefined for the site route %s', (value) => {
-    expect(parseGitlabUrl(value)).toBeUndefined()
-  })
-
-  const excludedProjectValues: Array<string> = [
-    'https://gitlab.com/explore/projects',
-    'https://gitlab.com/dashboard/issues',
-    'https://gitlab.com/help/docs',
-  ]
-
-  it.each(excludedProjectValues)('should return undefined for %s', (value) => {
-    expect(parseGitlabUrl(value)).toBeUndefined()
-  })
-
-  it('should return undefined for an excluded path in another case', () => {
-    expect(parseGitlabUrl('https://gitlab.com/Explore')).toBeUndefined()
-  })
-
   it('should return undefined for a path that starts with the dash separator', () => {
     expect(parseGitlabUrl('https://gitlab.com/-/profile')).toBeUndefined()
   })
@@ -242,10 +228,6 @@ describe('gitlabHandler', () => {
   describe('match', () => {
     it('should match a gitlab.com URL without content', () => {
       expect(gitlabHandler.match('https://gitlab.com/gitlab-org')).toBe(true)
-    })
-
-    it('should not match a gitlab.com path that resolves to no feed', () => {
-      expect(gitlabHandler.match('https://gitlab.com/explore')).toBe(false)
     })
 
     it('should not match a guide page on a site named after GitLab', () => {
@@ -368,10 +350,6 @@ describe('gitlabHandler', () => {
       ]
 
       expect(gitlabHandler.resolve(value)).toEqual(expected)
-    })
-
-    it('should return empty array for excluded paths', () => {
-      expect(gitlabHandler.resolve('https://gitlab.com/explore')).toEqual([])
     })
 
     it('should keep self-hosted origin in resolved feeds', () => {

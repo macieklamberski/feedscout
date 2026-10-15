@@ -60,18 +60,8 @@ describe('parseAlloforumUrl', () => {
     expect(parseAlloforumUrl('https://www.example.alloforum.com/')).toBeUndefined()
   })
 
-  const serviceHosts = [
-    'https://admin.alloforum.com/',
-    'https://images.alloforum.com/rss.gif',
-    'https://mail.alloforum.com/',
-    'https://smtp.alloforum.com/',
-    'https://upload.alloforum.com/',
-    'https://webmail.alloforum.com/',
-    'https://www.alloforum.com/',
-  ]
-
-  it.each(serviceHosts)('should return undefined for service host %s', (value) => {
-    expect(parseAlloforumUrl(value)).toBeUndefined()
+  it('should return undefined for the www host', () => {
+    expect(parseAlloforumUrl('https://www.alloforum.com/')).toBeUndefined()
   })
 
   it('should return undefined for a domain ending in alloforum.com', () => {

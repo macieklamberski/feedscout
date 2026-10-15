@@ -1,4 +1,4 @@
-import { getPathSegments, isAnyOf, isHostOf } from 'trousse'
+import { getPathSegments, isHostOf } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, findElement } from '../../common/utils.js'
@@ -13,30 +13,6 @@ const comicRegex = /^\w+$/
 const feedPathRegex = /^\/(\w+)\/rss\/$/
 const feedRegex = /^https?:\/\/(?:www\.)?theduckwebcomics\.com\/\w+\/rss\/?$/i
 
-const excludedPaths = [
-  'about',
-  'admin',
-  'ajax',
-  'api',
-  'comics',
-  'community',
-  'duckad',
-  'forum',
-  'help',
-  'login',
-  'logout',
-  'media',
-  'news',
-  'privacy',
-  'quackcast',
-  'search',
-  'static',
-  'terms',
-  'tutorial',
-  'user',
-  'video',
-]
-
 export const parseDuckWebcomicsUrl = (url: string): DuckWebcomicsUrl | undefined => {
   if (!isHostOf(url, hosts)) {
     return
@@ -44,7 +20,7 @@ export const parseDuckWebcomicsUrl = (url: string): DuckWebcomicsUrl | undefined
 
   const [comic] = getPathSegments(url)
 
-  if (!comic || !comicRegex.test(comic) || isAnyOf(comic, excludedPaths)) {
+  if (!comic || !comicRegex.test(comic)) {
     return
   }
 

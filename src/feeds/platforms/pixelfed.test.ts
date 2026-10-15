@@ -30,16 +30,6 @@ describe('parsePixelfedUrl', () => {
     expect(parsePixelfedUrl('https://example.com/Users/dansup')).toEqual(expected)
   })
 
-  it('should return undefined for excluded paths', () => {
-    expect(parsePixelfedUrl('https://example.com/discover')).toBeUndefined()
-    expect(parsePixelfedUrl('https://example.com/api')).toBeUndefined()
-    expect(parsePixelfedUrl('https://example.com/settings')).toBeUndefined()
-  })
-
-  it('should return undefined for excluded paths in any case', () => {
-    expect(parsePixelfedUrl('https://example.com/Discover')).toBeUndefined()
-  })
-
   it('should return undefined for non-profile paths', () => {
     expect(parsePixelfedUrl('https://example.com/p/12345')).toBeUndefined()
     expect(parsePixelfedUrl('https://example.com/p/dansup/123')).toBeUndefined()

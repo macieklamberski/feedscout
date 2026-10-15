@@ -91,7 +91,7 @@ describe('parseGoopeUrl', () => {
     expect(parseGoopeUrl('https://r.goope.jp/')).toBeUndefined()
   })
 
-  it('should return undefined for a Goope service host', () => {
+  it('should return undefined for another goope.jp host', () => {
     expect(parseGoopeUrl('https://admin.goope.jp/')).toBeUndefined()
   })
 
@@ -114,7 +114,7 @@ describe('goopeHandler', () => {
       expect(goopeHandler.match('https://example.com/', '<html></html>')).toBe(false)
     })
 
-    it('should not match a Goope service host with the marker', () => {
+    it('should not match the apex with the marker', () => {
       expect(goopeHandler.match('https://goope.jp/', qrCodeHtml)).toBe(false)
     })
   })

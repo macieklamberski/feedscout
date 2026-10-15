@@ -62,10 +62,6 @@ describe('parseEklablogUrl', () => {
 
   const otherUrls: Array<string> = [
     'https://eklablog.com/',
-    'https://admin.eklablog.com/',
-    'https://assets.eklablog.com/',
-    'https://connect.eklablog.com/',
-    'https://image.eklablog.com/',
     'https://www.eklablog.com/',
     'https://www.enaelyork.eklablog.com/',
   ]
@@ -95,13 +91,13 @@ describe('eklablogHandler', () => {
       expect(eklablogHandler.match('https://www.example.com/', pingHtml)).toBe(true)
     })
 
-    it('should return false for a service host carrying the marker', () => {
+    it('should return false for the www host carrying the marker', () => {
       expect(eklablogHandler.match('https://www.eklablog.com/', pingHtml)).toBe(false)
     })
   })
 
   describe('resolve', () => {
-    it('should return empty array for a service host', () => {
+    it('should return empty array for the www host', () => {
       expect(eklablogHandler.resolve('https://www.eklablog.com/')).toEqual([])
     })
 

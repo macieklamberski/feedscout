@@ -7,10 +7,8 @@ export type PodigeeUrl = { kind: 'podcast' }
 
 const domains = ['podigee.io']
 
-const excludedSubdomains = ['app', 'help', 'hilfe', 'blog', 'status', 'player', 'cdn']
-
 export const parsePodigeeUrl = (url: string): PodigeeUrl | undefined => {
-  if (!getTenantSubdomain(url, domains, excludedSubdomains)) {
+  if (!getTenantSubdomain(url, domains)) {
     return
   }
 

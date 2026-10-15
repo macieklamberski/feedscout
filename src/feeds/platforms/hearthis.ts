@@ -1,4 +1,4 @@
-import { getPathSegments, isAnyOf, isHostOf } from 'trousse'
+import { getPathSegments, isHostOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
@@ -8,37 +8,6 @@ export type HearthisUrl = { kind: 'profile'; username: string }
 
 const hosts = ['hearthis.at', 'www.hearthis.at']
 
-const excludedPaths = [
-  'about',
-  'accessibility',
-  'api',
-  'categories',
-  'datenschutz',
-  'faq',
-  'featured',
-  'feed',
-  'groups',
-  'impressum',
-  'live',
-  'livestreams',
-  'login',
-  'maps',
-  'merchandise',
-  'new',
-  'news',
-  'nutzungsbedingungen',
-  'popular',
-  'privacy',
-  'reseller',
-  'search',
-  'set',
-  'sets',
-  'signup',
-  'tag',
-  'terms',
-  'upload',
-]
-
 export const parseHearthisUrl = (url: string): HearthisUrl | undefined => {
   if (!isHostOf(url, hosts)) {
     return
@@ -46,7 +15,7 @@ export const parseHearthisUrl = (url: string): HearthisUrl | undefined => {
 
   const [username] = getPathSegments(url)
 
-  if (!username || isAnyOf(username, excludedPaths)) {
+  if (!username) {
     return
   }
 

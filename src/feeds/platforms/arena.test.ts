@@ -3,19 +3,6 @@ import type { ArenaUrl } from './arena.js'
 import { arenaHandler, parseArenaUrl } from './arena.js'
 
 describe('parseArenaUrl', () => {
-  const excludedPathValues: Array<string> = [
-    'https://www.are.na/block/12345',
-    'https://www.are.na/sign_up',
-    'https://www.are.na/developers',
-    'https://www.are.na/community-guidelines',
-    'https://www.are.na/notifications',
-    'https://www.are.na/Home',
-  ]
-
-  it.each(excludedPathValues)('should return undefined for the site route %s', (value) => {
-    expect(parseArenaUrl(value)).toBeUndefined()
-  })
-
   const profileViewValues: Array<string> = [
     'https://www.are.na/meg-miller/followers',
     'https://www.are.na/meg-miller/Following',
@@ -84,15 +71,6 @@ describe('parseArenaUrl', () => {
     const expected: ArenaUrl = { kind: 'editorial' }
 
     expect(parseArenaUrl('https://www.are.na/Editorial/learning-to-float')).toEqual(expected)
-  })
-
-  it('should return undefined for excluded paths', () => {
-    expect(parseArenaUrl('https://www.are.na/explore')).toBeUndefined()
-    expect(parseArenaUrl('https://www.are.na/settings')).toBeUndefined()
-  })
-
-  it('should return undefined for an excluded path in another case', () => {
-    expect(parseArenaUrl('https://www.are.na/Explore')).toBeUndefined()
   })
 
   it('should return undefined for the homepage', () => {
@@ -179,10 +157,6 @@ describe('arenaHandler', () => {
       ]
 
       expect(arenaHandler.resolve(value)).toEqual(expected)
-    })
-
-    it('should return empty array when the URL names no profile or channel', () => {
-      expect(arenaHandler.resolve('https://www.are.na/explore')).toEqual([])
     })
   })
 })

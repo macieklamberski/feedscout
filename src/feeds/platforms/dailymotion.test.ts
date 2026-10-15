@@ -3,35 +3,23 @@ import type { DailymotionUrl } from './dailymotion.js'
 import { dailymotionHandler, parseDailymotionUrl } from './dailymotion.js'
 
 describe('parseDailymotionUrl', () => {
-  const excludedPathValues: Array<string> = [
+  const shortSegmentValues: Array<string> = [
     'https://www.dailymotion.com/us',
     'https://www.dailymotion.com/FR',
     'https://www.dailymotion.com/us/',
-    'https://www.dailymotion.com/category',
-    'https://www.dailymotion.com/hashtag',
-    'https://www.dailymotion.com/corner',
-    'https://www.dailymotion.com/user',
-    'https://www.dailymotion.com/news',
-    'https://www.dailymotion.com/signin',
-    'https://www.dailymotion.com/upload',
-    'https://www.dailymotion.com/settings',
-    'https://www.dailymotion.com/video',
-    'https://www.dailymotion.com/login',
-    'https://www.dailymotion.com/live',
   ]
 
-  it.each(excludedPathValues)('should return undefined for the site route %s', (value) => {
-    expect(parseDailymotionUrl(value)).toBeUndefined()
-  })
+  it.each(shortSegmentValues)(
+    'should return undefined for a segment shorter than a username %s',
+    (value) => {
+      expect(parseDailymotionUrl(value)).toBeUndefined()
+    },
+  )
 
   it('should return the user for a page under the user segment', () => {
     const expected: DailymotionUrl = { kind: 'user', username: 'france24' }
 
     expect(parseDailymotionUrl('https://www.dailymotion.com/user/france24')).toEqual(expected)
-  })
-
-  it('should return undefined for a site route under the user segment', () => {
-    expect(parseDailymotionUrl('https://www.dailymotion.com/user/settings')).toBeUndefined()
   })
 
   it('should return the user for a user page', () => {
@@ -93,10 +81,6 @@ describe('parseDailymotionUrl', () => {
     const expected: DailymotionUrl = { kind: 'search', query: 'cats' }
 
     expect(parseDailymotionUrl('https://www.dailymotion.com/Search/cats')).toEqual(expected)
-  })
-
-  it('should return undefined for a capitalized excluded path', () => {
-    expect(parseDailymotionUrl('https://www.dailymotion.com/Signin')).toBeUndefined()
   })
 
   it('should return the user for a user page with a trailing slash', () => {
@@ -236,10 +220,6 @@ describe('dailymotionHandler', () => {
       ]
 
       expect(dailymotionHandler.resolve(value)).toEqual(expected)
-    })
-
-    it('should return empty array for a page without a feed', () => {
-      expect(dailymotionHandler.resolve('https://www.dailymotion.com/signin')).toEqual([])
     })
   })
 })

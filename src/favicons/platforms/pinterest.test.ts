@@ -135,12 +135,6 @@ describe('pinterestHandler', () => {
 
         expect(result).toEqual([])
       })
-
-      it('should return empty array for a pin page', () => {
-        expect(
-          pinterestHandler.resolve('https://www.pinterest.com/pin/123456789', profileHtml),
-        ).toEqual([])
-      })
     })
 
     describe('edge cases', () => {

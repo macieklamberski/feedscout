@@ -7,10 +7,8 @@ export type BlogiaUrl = { kind: 'blog'; blog: string }
 
 const domains = ['blogia.com']
 
-const excludedSubdomains = ['cms', 'mail']
-
 export const parseBlogiaUrl = (url: string): BlogiaUrl | undefined => {
-  const blog = getTenantSubdomain(url, domains, excludedSubdomains)
+  const blog = getTenantSubdomain(url, domains)
 
   if (!blog) {
     return

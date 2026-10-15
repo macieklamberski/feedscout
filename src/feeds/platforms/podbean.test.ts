@@ -8,8 +8,12 @@ describe('parsePodbeanUrl', () => {
     expect(parsePodbeanUrl('https://example.podbean.com/')).toEqual(expected)
   })
 
-  it('should return undefined for an infrastructure subdomain', () => {
+  it('should return undefined for the www host', () => {
     expect(parsePodbeanUrl('https://www.podbean.com/')).toBeUndefined()
+  })
+
+  it('should return undefined for the feed host', () => {
+    expect(parsePodbeanUrl('https://feed.podbean.com/myshow/feed.xml')).toBeUndefined()
   })
 
   it('should return undefined for a nested subdomain', () => {
@@ -29,10 +33,6 @@ describe('podbeanHandler', () => {
       [false, 'https://podbean.com'],
       [false, 'https://example.com'],
       [false, 'https://www.podbean.com'],
-      [false, 'https://support.podbean.com'],
-      [false, 'https://feed.podbean.com'],
-      [false, 'https://pbcdn1.podbean.com'],
-      [false, 'https://sponsorship.podbean.com'],
     ]
 
     it.each(values)('should return %s for %s', (expected, url) => {

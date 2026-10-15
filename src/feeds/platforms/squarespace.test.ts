@@ -39,12 +39,6 @@ describe('parseSquarespaceUrl', () => {
   it('should return undefined for the root', () => {
     expect(parseSquarespaceUrl('https://site.example/')).toBeUndefined()
   })
-
-  it('should return undefined for an excluded path', () => {
-    expect(parseSquarespaceUrl('https://site.example/config')).toBeUndefined()
-    expect(parseSquarespaceUrl('https://site.example/cart')).toBeUndefined()
-    expect(parseSquarespaceUrl('https://site.example/search')).toBeUndefined()
-  })
 })
 
 describe('squarespaceHandler', () => {
@@ -63,18 +57,6 @@ describe('squarespaceHandler', () => {
 
     it('should not match the site root', () => {
       expect(squarespaceHandler.match('https://example.com/', '', squarespaceHeaders)).toBe(false)
-    })
-
-    it('should not match reserved paths', () => {
-      expect(squarespaceHandler.match('https://example.com/config', '', squarespaceHeaders)).toBe(
-        false,
-      )
-    })
-
-    it('should not match a capitalized reserved path', () => {
-      expect(squarespaceHandler.match('https://example.com/Config', '', squarespaceHeaders)).toBe(
-        false,
-      )
     })
 
     it('should not match without the header', () => {

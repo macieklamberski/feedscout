@@ -182,18 +182,8 @@ describe('parseHatenaBookmarkUrl', () => {
     expect(parseHatenaBookmarkUrl('https://b.hatena.ne.jp/entrylist')).toEqual(expected)
   })
 
-  it('should return the home page for a site section', () => {
-    expect(parseHatenaBookmarkUrl('https://b.hatena.ne.jp/guide/')).toEqual(home)
-    expect(parseHatenaBookmarkUrl('https://b.hatena.ne.jp/entry/12345')).toEqual(home)
-  })
-
-  it('should return the home page for a capitalized site section', () => {
-    expect(parseHatenaBookmarkUrl('https://b.hatena.ne.jp/Guide/')).toEqual(home)
-  })
-
   it('should return the home page for files at the root', () => {
     expect(parseHatenaBookmarkUrl('https://b.hatena.ne.jp/favicon.ico')).toEqual(home)
-    expect(parseHatenaBookmarkUrl('https://b.hatena.ne.jp/hotentry.rss')).toEqual(home)
   })
 
   it('should return the home page for a path shorter than a Hatena ID', () => {

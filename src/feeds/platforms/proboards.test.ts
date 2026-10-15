@@ -50,22 +50,14 @@ describe('parseProboardsUrl', () => {
     expect(parseProboardsUrl(value)).toEqual(expected)
   })
 
-  const serviceUrls: Array<string> = [
+  const wwwHostValues: Array<string> = [
     'https://www.proboards.com/',
     'https://www.freeforums.net/',
     'https://www.boards.net/',
-    'https://login.proboards.com/login/1342496/1',
-    'https://storage.proboards.com/forum/images/favicon.ico',
   ]
 
-  it.each(serviceUrls)('should return undefined for the service host %s', (value) => {
+  it.each(wwwHostValues)('should return undefined for the www host %s', (value) => {
     expect(parseProboardsUrl(value)).toBeUndefined()
-  })
-
-  it('should return the forum for a forum named like a service host', () => {
-    const expected: ProboardsUrl = { kind: 'forum' }
-
-    expect(parseProboardsUrl('https://login.freeforums.net/')).toEqual(expected)
   })
 
   it('should return undefined for a nested subdomain', () => {
@@ -103,7 +95,7 @@ describe('proboardsHandler', () => {
   })
 
   describe('resolve', () => {
-    it('should return empty array for a ProBoards service host', () => {
+    it('should return empty array for the www host', () => {
       expect(proboardsHandler.resolve('https://www.proboards.com/')).toEqual([])
     })
 

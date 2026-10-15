@@ -39,16 +39,16 @@ describe('parseGcsWebUrl', () => {
     expect(parseGcsWebUrl('https://example.gcs-web.com/news-releases')).toEqual(expected)
   })
 
-  const excludedUrls = [
-    'https://gcs-web.com/',
-    'https://www.gcs-web.com/',
-    'https://mail.gcs-web.com/',
-    'https://origin.gcs-web.com/',
-    'https://www.example.gcs-web.com/',
-  ]
+  it('should return undefined for the apex', () => {
+    expect(parseGcsWebUrl('https://gcs-web.com/')).toBeUndefined()
+  })
 
-  it.each(excludedUrls)('should return undefined for %s', (url) => {
-    expect(parseGcsWebUrl(url)).toBeUndefined()
+  it('should return undefined for the www host', () => {
+    expect(parseGcsWebUrl('https://www.gcs-web.com/')).toBeUndefined()
+  })
+
+  it('should return undefined for a nested subdomain', () => {
+    expect(parseGcsWebUrl('https://www.example.gcs-web.com/')).toBeUndefined()
   })
 
   it('should return undefined for another host', () => {
@@ -66,7 +66,7 @@ describe('gcsWebHandler', () => {
       expect(gcsWebHandler.match('https://investors.example.com/', siteHtml)).toBe(true)
     })
 
-    it('should not match a GCS-web service host carrying the marker', () => {
+    it('should not match the www host carrying the marker', () => {
       expect(gcsWebHandler.match('https://www.gcs-web.com/', siteHtml)).toBe(false)
     })
 
