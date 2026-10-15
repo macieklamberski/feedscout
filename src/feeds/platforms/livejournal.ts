@@ -84,7 +84,7 @@ export const parseLivejournalUrl = (url: string): LivejournalUrl | undefined => 
   }
 
   // The mobile site and image hosts such as `ic.pics.livejournal.com` are no journal.
-  if (isHostOf(url, excludedHosts) || !getTenantSubdomain(url, domains, ['api', 'm', 'static'])) {
+  if (isHostOf(url, excludedHosts) || !getTenantSubdomain(url, domains, ['api', 'm'])) {
     return
   }
 

@@ -31,8 +31,10 @@ describe('parseLivejournalUrl', () => {
     expect(parseLivejournalUrl('https://syndicated.livejournal.com/feed')).toBeUndefined()
   })
 
-  it('should return undefined for the static host', () => {
-    expect(parseLivejournalUrl('https://static.livejournal.com/')).toBeUndefined()
+  it('should return the journal of a user named static', () => {
+    const expected: LivejournalUrl = { kind: 'journal' }
+
+    expect(parseLivejournalUrl('https://static.livejournal.com/')).toEqual(expected)
   })
 
   it('should return undefined for another host', () => {
