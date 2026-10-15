@@ -1824,7 +1824,7 @@ Discovers the feeds of a phpBB board. Detected by the `phpbb` body id or the `{n
 | `{board}/viewtopic.php?t={id}` | Topic · forum, plus the board feeds (Atom) |
 | `{board}/viewtopic.php?p={id}` | Topic from the page's canonical link, plus the board feeds (Atom) |
 | `{board}/viewforum.php?f={id}` | Forum, plus the board feeds (Atom) |
-| Any other page | Board: all posts · news<sup>†</sup> · new topics · active topics · forums (Atom) |
+| Any other page | Board: all posts · news<sup>†</sup> · new topics<sup>†</sup> · active topics<sup>†</sup> · forums (Atom) |
 
 <sup>†</sup> *Found only by the Platform method.*
 
