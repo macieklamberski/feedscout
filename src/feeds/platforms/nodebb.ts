@@ -4,7 +4,7 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic covers category (html), partly covers topic.
+// Generic partly covers category, topic.
 // Handler needed for: popular, recent.
 
 export type NodebbUrl =

@@ -11,7 +11,7 @@ import {
 } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic covers blog, post, singleUserArchive, singleUserLanguage, singleUserPage, singleUserPost, tag (guess, html), partly covers blogTag.
+// Generic covers singleUserArchive, singleUserLanguage, singleUserPage, singleUserPost, tag (guess, html), partly covers blog, blogTag, post.
 
 export type WritefreelyPage = { blogPath: string; tag?: string }
 

@@ -12,8 +12,8 @@ import {
 } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic covers legacyCollection, legacyCommunity, legacyHome (html), partly covers collection, community.
-// Handler needed for: home.
+// Generic covers legacyCollection, legacyCommunity, legacyHome (html), partly covers community.
+// Handler needed for: collection, home.
 
 type LegacyFormat = 'atom' | 'rdf' | 'rss'
 

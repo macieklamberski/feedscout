@@ -4,7 +4,7 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, findElement, hasMarker, hasMetaContent } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic covers blog, post (guess, html), partly covers author, tag.
+// Generic covers blog, post (html), partly covers author, tag.
 
 export type HubspotUrl =
   | { kind: 'author'; blog: string; name: string }
