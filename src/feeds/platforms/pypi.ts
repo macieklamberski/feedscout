@@ -2,7 +2,9 @@ import { isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
-// Discoverability: Discoverable without handler.
+// Discoverability: Partially discoverable without handler.
+// Generic covers home, project (html).
+// Handler needed for: version.
 
 export type PypiUrl = { kind: 'project'; project: string } | { kind: 'home' }
 
