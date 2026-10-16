@@ -27,6 +27,13 @@ These functions extract URIs without validation. Import from `feedscout/methods`
 | `discoverUrisFromHeaders` | Extract feed URIs from HTTP headers |
 | `discoverUrisFromGuess` | Generate feed URIs from common paths |
 
+These extract hubs from content already fetched. Import from `feedscout/hubs`:
+
+| Function | Description |
+|----------|-------------|
+| `discoverHubsFromHeaders` | Extract hubs from HTTP `Link` headers |
+| `discoverHubsFromFeed` | Extract hubs from Atom, RSS or JSON Feed content |
+
 ## Utility Functions
 
 Import from `feedscout/methods`:
@@ -44,6 +51,7 @@ Import from `feedscout`:
 |----------|-------------|
 | `getFeedSiteUrl` | Get the site URL from a feed parsed with Feedsmith |
 | `defaultResolveSiteUrlFn` | Default site URL resolution used by `discoverBlogrolls` and `discoverFavicons` |
+| `defaultResolveUrlFn` | Default resolution of a relative URL against its base, used by every discoverer |
 
 ## Export Paths
 
@@ -63,7 +71,8 @@ import { urisComprehensive } from 'feedscout/blogrolls'
 // Favicon-specific defaults and types
 import { defaultGuessPaths, defaultIconRels } from 'feedscout/favicons'
 
-// Hub-specific types
+// Hub-specific methods and types
+import { discoverHubsFromFeed, discoverHubsFromHeaders } from 'feedscout/hubs'
 import type { HubResult, DiscoverHubsOptions } from 'feedscout/hubs'
 
 // Platform-specific handlers and types
