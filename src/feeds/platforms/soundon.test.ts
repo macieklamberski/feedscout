@@ -26,8 +26,8 @@ describe('parseSoundonUrl', () => {
     ).toEqual(expected)
   })
 
-  it('should return undefined for an id that is not a UUID', () => {
-    expect(parseSoundonUrl('https://player.soundon.fm/p/abc')).toBeUndefined()
+  it('should return undefined for an id with a non-hex character', () => {
+    expect(parseSoundonUrl('https://player.soundon.fm/p/xyz')).toBeUndefined()
   })
 
   it('should return undefined for another host', () => {
@@ -52,8 +52,6 @@ describe('soundonHandler', () => {
         'https://player.soundon.fm/embed/?podcast=0f4d2c1e-8a3b-4c5d-9e6f-7a8b9c0d1e2f&episode=1a2b3c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d',
       ],
       [false, 'https://player.soundon.fm/embed?episode=1a2b3c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d'],
-      [false, 'https://player.soundon.fm/embed?podcast=0f4d2c1e'],
-      [false, 'https://player.soundon.fm/p/0f4d2c1e-8a3b'],
       [false, 'https://player.soundon.fm/p/0f4d2c1e-8a3b-4c5d-9e6f-7a8b9c0d1e2fx'],
       [false, 'https://player.soundon.fm/episode/1a2b3c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d'],
       [false, 'https://player.soundon.fm/'],

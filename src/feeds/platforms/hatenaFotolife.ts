@@ -14,8 +14,8 @@ export type HatenaFotolifeUrl =
 
 const hosts = ['f.hatena.ne.jp']
 
-// A Hatena ID: 3 to 32 characters, starting with a letter. Old IDs such as `kumapu-` end in a hyphen.
-const usernameRegex = /^[a-zA-Z][\w-]{2,31}$/
+// A Hatena ID starts with a letter. Old IDs such as `kumapu-` end in a hyphen.
+const usernameRegex = /^[a-zA-Z][\w-]*$/
 
 // A photo id is the 14-digit time it was uploaded.
 const photoIdRegex = /^\d{14}$/

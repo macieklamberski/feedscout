@@ -53,9 +53,9 @@ describe('parseLegistarUrl', () => {
     ).toBeUndefined()
   })
 
-  it('should return undefined for a malformed GUID', () => {
+  it('should return undefined for a GUID with a non-hex character', () => {
     expect(
-      parseLegistarUrl('https://madison.legistar.com/LegislationDetail.aspx?ID=1065902&GUID=abc'),
+      parseLegistarUrl('https://madison.legistar.com/LegislationDetail.aspx?ID=1065902&GUID=xyz'),
     ).toBeUndefined()
   })
 

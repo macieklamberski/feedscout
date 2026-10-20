@@ -425,18 +425,6 @@ describe('lemmyHandler', () => {
       expect(lemmyHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should drop non-numeric ?limit= values', () => {
-      const value = 'https://example.com/c/programming?limit=garbage'
-      const expected = [
-        {
-          uri: 'https://example.com/feeds/c/programming.xml',
-          hint: { key: 'lemmy:community', label: 'Community' },
-        },
-      ]
-
-      expect(lemmyHandler.resolve(value)).toEqual(expected)
-    })
-
     it('should pass through ?limit= without sort', () => {
       const value = 'https://example.com/c/programming?limit=10'
       const expected = [

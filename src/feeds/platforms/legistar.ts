@@ -13,7 +13,7 @@ const domains = ['legistar.com']
 const legislationPathRegex = /^\/LegislationDetail\.aspx$/i
 const meetingPathRegex = /^\/MeetingDetail\.aspx$/i
 const idRegex = /^\d+$/
-const guidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+const guidRegex = /^[\da-f-]+$/i
 
 // Legistar's load balancer sets this cookie on every page, on a client's custom domain too.
 const cookieName = 'BIGipServerinsite.legistar.com_443'

@@ -19,7 +19,6 @@ export type LemmyUrl =
   | ({ kind: 'home' } & LemmyQuery)
 
 const lemmyPoweredByRegex = /lemmy/i
-const numericRegex = /^\d+$/
 
 const validSorts = [
   'Active',
@@ -58,7 +57,7 @@ const getQuerySuffix = (query: LemmyQuery, content: string | undefined): string 
     params.set('sort', sort)
   }
 
-  if (query.limit && numericRegex.test(query.limit)) {
+  if (query.limit) {
     params.set('limit', query.limit)
   }
 

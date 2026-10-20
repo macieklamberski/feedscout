@@ -9,7 +9,7 @@ export type SoundonUrl = { kind: 'podcast'; podcastId: string }
 
 const hosts = ['player.soundon.fm']
 
-const idRegex = /^[\da-f]{8}-[\da-f]{4}-[\da-f]{4}-[\da-f]{4}-[\da-f]{12}$/i
+const idRegex = /^[\da-f-]+$/i
 const podcastRegex = /^\/p\/([^/]+)(?:\/|$)/i
 const embedRegex = /^\/embed\/?$/i
 

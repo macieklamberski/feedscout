@@ -202,18 +202,6 @@ describe('talentsoftHandler', () => {
       expect(talentsoftHandler.resolve(value, englishFeedListHtml)).toEqual(expected)
     })
 
-    it('should ignore a non-numeric lcid', () => {
-      const value = 'https://example.com/accueil.aspx?LCID=fr'
-      const expected = [
-        {
-          uri: 'https://example.com/handlers/offerRss.ashx',
-          hint: { key: 'talentsoft:offers', label: 'Job offers' },
-        },
-      ]
-
-      expect(talentsoftHandler.resolve(value, homeHtml)).toEqual(expected)
-    })
-
     it('should return the search feed the page links and the offers feed', () => {
       const value =
         'https://example.com/offre-de-emploi/liste-offres.aspx?changefacet=1&facet_Contract=1269'

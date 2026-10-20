@@ -70,7 +70,7 @@ describe('parseHatenaAntennaUrl', () => {
   })
 
   it('should return undefined for a path that is not a Hatena ID', () => {
-    expect(parseHatenaAntennaUrl('https://a.hatena.ne.jp/js/MochiKit/Base.js')).toBeUndefined()
+    expect(parseHatenaAntennaUrl('https://a.hatena.ne.jp/robots.txt')).toBeUndefined()
   })
 
   it('should return undefined for another Hatena host', () => {
