@@ -3,6 +3,7 @@ import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import {
   composeHint,
+  digitsRegex,
   getCookieNames,
   getMetaContent,
   hasMarker,
@@ -18,7 +19,6 @@ export type DiscuzUrl = { kind: 'board'; boardId: string } | { kind: 'site' }
 const archiverBoardRegex = /\/archiver\/\??fid-(\d+)\.html/i
 const archiverPathRegex = /\/archiver\/.*$/i
 const boardPathRegex = /\/forum-(\d+)-/i
-const numericRegex = /^\d+$/
 const legacyGeneratorRegex = /^Discuz! (?:Archiver )?\d/i
 
 export const isDiscuzHtml = (content: string): boolean => {
@@ -51,7 +51,7 @@ export const parseDiscuzUrl = (url: string): DiscuzUrl | undefined => {
   const { pathname, search, searchParams } = parsedUrl
   const queryId = searchParams.get('fid')
 
-  if (queryId && numericRegex.test(queryId)) {
+  if (queryId && digitsRegex.test(queryId)) {
     return { kind: 'board', boardId: queryId }
   }
 

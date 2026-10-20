@@ -1,6 +1,6 @@
 import { getPathSegments, isAnyOf, isHostOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
+import { composeHint, digitsRegex } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers channel, group, user, userVideos (guess, html), partly covers likes.
@@ -14,8 +14,6 @@ export type VimeoUrl =
   | { kind: 'user'; username: string }
 
 const hosts = ['vimeo.com', 'www.vimeo.com']
-
-const numericRegex = /^\d+$/
 
 const albumSegments = ['album', 'showcase']
 
@@ -40,7 +38,7 @@ export const parseVimeoUrl = (url: string): VimeoUrl | undefined => {
   // returns RSS; /showcase/{id}/rss returns 404. /album/{id} 301-redirects to
   // /showcase/{id} in the browser, so users will most often paste the showcase URL.
   if (isAnyOf(first, albumSegments) && second) {
-    if (!numericRegex.test(second)) {
+    if (!digitsRegex.test(second)) {
       return
     }
 
@@ -48,7 +46,7 @@ export const parseVimeoUrl = (url: string): VimeoUrl | undefined => {
   }
 
   // A numeric first segment is a video id.
-  if (!first || numericRegex.test(first)) {
+  if (!first || digitsRegex.test(first)) {
     return
   }
 

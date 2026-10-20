@@ -1,13 +1,12 @@
 import { getPathSegments, isHostOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
+import { composeHint, digitsRegex } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
 export type BuzzsproutUrl = { kind: 'podcast'; podcastId: string }
 
 const hosts = ['buzzsprout.com', 'www.buzzsprout.com']
-const numericRegex = /^\d+$/
 
 export const parseBuzzsproutUrl = (url: string): BuzzsproutUrl | undefined => {
   if (!isHostOf(url, hosts)) {
@@ -16,7 +15,7 @@ export const parseBuzzsproutUrl = (url: string): BuzzsproutUrl | undefined => {
 
   const [podcastId] = getPathSegments(url)
 
-  if (!podcastId || !numericRegex.test(podcastId)) {
+  if (!podcastId || !digitsRegex.test(podcastId)) {
     return
   }
 

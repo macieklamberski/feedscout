@@ -1,6 +1,12 @@
 import { isSubdomainOf, parseUrl, resolveUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, findElements, getCookieNames, hasMarker } from '../../common/utils.js'
+import {
+  composeHint,
+  digitsRegex,
+  findElements,
+  getCookieNames,
+  hasMarker,
+} from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -12,7 +18,6 @@ const domains = ['legistar.com']
 
 const legislationPathRegex = /^\/LegislationDetail\.aspx$/i
 const meetingPathRegex = /^\/MeetingDetail\.aspx$/i
-const idRegex = /^\d+$/
 const guidRegex = /^[\da-f-]+$/i
 
 // Legistar's load balancer sets this cookie on every page, on a client's custom domain too.
@@ -38,7 +43,7 @@ export const parseLegistarUrl = (url: string): LegistarUrl | undefined => {
   const guid = parsedUrl.searchParams.get('GUID')
 
   // Feed.ashx answers 410 to an id without its own GUID, so both must come from the page URL.
-  if (!id || !guid || !idRegex.test(id) || !guidRegex.test(guid)) {
+  if (!id || !guid || !digitsRegex.test(id) || !guidRegex.test(guid)) {
     return
   }
 

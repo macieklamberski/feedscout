@@ -1,7 +1,7 @@
 import { getPathSegments, isAnyOf, isHostOf, parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
+import { composeHint, digitsRegex } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers branch, bug, bugsPerson, bugsProject, codeProject, home, person, project, sourcePackage (html).
@@ -25,8 +25,6 @@ const codeHosts = ['code.launchpad.net']
 const hosts = [...mainHosts, ...bugsHosts, ...codeHosts]
 // Launchpad advertises its feeds over http, and the https URLs redirect there.
 const feedsOrigin = 'http://feeds.launchpad.net'
-
-const bugIdRegex = /^\d+$/
 
 const getApplication = (parsedUrl: URL): LaunchpadApplication => {
   if (isHostOf(parsedUrl, bugsHosts)) {
@@ -67,7 +65,7 @@ export const parseLaunchpadUrl = (url: string): LaunchpadUrl | undefined => {
     })
     const bugId = segments[bugIndex + 1]
 
-    if (bugIndex !== -1 && bugId && bugIdRegex.test(bugId)) {
+    if (bugIndex !== -1 && bugId && digitsRegex.test(bugId)) {
       return { kind: 'bug', bugId }
     }
   }
