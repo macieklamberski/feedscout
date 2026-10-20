@@ -1,7 +1,7 @@
 import { parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, hasMarker } from '../../common/utils.js'
+import { composeHint, getNumericId, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic partly covers category, topic.
@@ -13,8 +13,8 @@ export type NodebbUrl =
   | { kind: 'forum' }
 
 const nodebbRegex = /nodebb/i
-const categoryRegex = /\/category\/(\d+)/i
-const topicRegex = /\/topic\/(\d+)/i
+const categoryRegex = /\/category\/(?<id>[^/]+)/i
+const topicRegex = /\/topic\/(?<id>[^/]+)/i
 // The page config prints the install's sub-path, such as `/forum`, and an empty one at the root.
 const relativePathRegex = /"relative_path":"(?<relativePath>\/[^"]*)"/
 
@@ -30,8 +30,8 @@ export const parseNodebbUrl = (url: string): NodebbUrl | undefined => {
   }
 
   const { pathname } = parsedUrl
-  const categoryId = pathname.match(categoryRegex)?.[1]
-  const topicId = pathname.match(topicRegex)?.[1]
+  const categoryId = getNumericId(pathname, categoryRegex)
+  const topicId = getNumericId(pathname, topicRegex)
 
   if (topicId) {
     return { kind: 'topic', topicId, categoryId }

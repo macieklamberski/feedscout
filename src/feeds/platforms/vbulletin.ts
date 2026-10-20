@@ -3,6 +3,7 @@ import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import {
   composeHint,
+  digitsRegex,
   findElement,
   getCookieNames,
   getScriptDirectory,
@@ -21,7 +22,7 @@ const rollupPathRegex = /\/js\/[^/]*$/
 // 6.1 and later `data-channelid='{id}'`.
 const channelIdRegex = /(?:"channelid":\s*"|data-channelid=['"])(\d+)/
 const forumDisplayRegex = /\/forumdisplay\.php$/i
-const forumIdRegex = /[?&]f=(\d+)/
+const forumIdRegex = /[?&]f=(?<forumId>[^&]+)/
 const friendlyForumIdRegex = /^\?(\d+)(?:-|&|$)/
 
 // vBulletin 4 prints `clientscript/vbulletin-core.js` as an absolute URL under the forum root.
@@ -63,7 +64,12 @@ const getForumId = (pathname: string, search: string): string | undefined => {
     return
   }
 
-  return search.match(forumIdRegex)?.[1] ?? search.match(friendlyForumIdRegex)?.[1]
+  const forumId =
+    search.match(forumIdRegex)?.groups?.forumId ?? search.match(friendlyForumIdRegex)?.[1]
+
+  if (forumId && digitsRegex.test(forumId)) {
+    return forumId
+  }
 }
 
 // vBulletin 5 and 6 serve `external?type=rss2` and have no `external.php`.

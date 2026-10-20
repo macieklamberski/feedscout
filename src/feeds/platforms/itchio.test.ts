@@ -86,6 +86,48 @@ describe('parseItchioUrl', () => {
     expect(parseItchioUrl('https://itch.io/')).toEqual(expected)
   })
 
+  it('should return the whole listing for a listing whose filter has a dot', () => {
+    const expected: ItchioUrl = { kind: 'listing', path: '/games/newest/tag-foo.bar' }
+
+    expect(parseItchioUrl('https://itch.io/games/newest/tag-foo.bar')).toEqual(expected)
+  })
+
+  it('should return the whole platform for a platform with a dot', () => {
+    const expected: ItchioUrl = { kind: 'platform', platform: 'foo.bar' }
+
+    expect(parseItchioUrl('https://itch.io/games/platform-foo.bar')).toEqual(expected)
+  })
+
+  it('should return the whole genre for a genre with a dot', () => {
+    const expected: ItchioUrl = { kind: 'genre', genre: 'foo.bar' }
+
+    expect(parseItchioUrl('https://itch.io/games/genre-foo.bar')).toEqual(expected)
+  })
+
+  it('should return the whole engine for an engine with a dot', () => {
+    const expected: ItchioUrl = { kind: 'madeWith', engine: 'foo.bar' }
+
+    expect(parseItchioUrl('https://itch.io/games/made-with-foo.bar')).toEqual(expected)
+  })
+
+  it('should return the home page for a sort word with another suffix', () => {
+    const expected: ItchioUrl = { kind: 'home', path: '/games/newest.html' }
+
+    expect(parseItchioUrl('https://itch.io/games/newest.html')).toEqual(expected)
+  })
+
+  it('should return the home page for a section word with another suffix', () => {
+    const expected: ItchioUrl = { kind: 'home', path: '/tools.html' }
+
+    expect(parseItchioUrl('https://itch.io/tools.html')).toEqual(expected)
+  })
+
+  it('should return the whole game for a game with a dot', () => {
+    const expected: ItchioUrl = { kind: 'game', creator: 'creator', game: 'my.game' }
+
+    expect(parseItchioUrl('https://creator.itch.io/my.game')).toEqual(expected)
+  })
+
   it('should return undefined for a nested subdomain', () => {
     expect(parseItchioUrl('https://a.b.itch.io/')).toBeUndefined()
   })

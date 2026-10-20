@@ -1,6 +1,6 @@
 import { isHostOf, isHostOrSubdomainOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
+import { composeHint, digitsRegex } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers home, meta, question (html).
@@ -27,8 +27,8 @@ const domains = [
 const networkHosts = ['stackexchange.com', 'www.stackexchange.com']
 
 const tagRegex = /^\/questions\/tagged\/(?<tag>[^/]+)/i
-const questionRegex = /^\/questions\/(\d+)/i
-const userRegex = /^\/users\/(\d+)/i
+const questionRegex = /^\/questions\/(?<questionId>[^/]+)/i
+const userRegex = /^\/users\/(?<userId>[^/]+)/i
 const collectiveRegex = /^\/collectives\/([^/]+)/i
 
 // Sort values accepted by feeds.tag. Documented at api.stackexchange.com.
@@ -64,15 +64,15 @@ export const parseStackExchangeUrl = (url: string): StackExchangeUrl | undefined
     return { kind: 'tag', tag, sort: getSort(searchParams) }
   }
 
-  const questionId = pathname.match(questionRegex)?.[1]
+  const questionId = pathname.match(questionRegex)?.groups?.questionId
 
-  if (questionId) {
+  if (questionId && digitsRegex.test(questionId)) {
     return { kind: 'question', questionId }
   }
 
-  const userId = pathname.match(userRegex)?.[1]
+  const userId = pathname.match(userRegex)?.groups?.userId
 
-  if (userId) {
+  if (userId && digitsRegex.test(userId)) {
     return { kind: 'user', userId }
   }
 

@@ -33,6 +33,34 @@ describe('parseNodebbUrl', () => {
     expect(parseNodebbUrl('https://forum.example/category/3/general')).toEqual(expected)
   })
 
+  it('should return a one-digit topic id whole', () => {
+    const expected: NodebbUrl = { kind: 'topic', topicId: '1' }
+
+    expect(parseNodebbUrl('https://forum.example/topic/1')).toEqual(expected)
+  })
+
+  it('should return the forum for a topic id with a letter', () => {
+    const expected: NodebbUrl = { kind: 'forum' }
+
+    expect(parseNodebbUrl('https://forum.example/topic/180abc/who-is-using-nodebb')).toEqual(
+      expected,
+    )
+  })
+
+  it('should return a one-digit category id whole', () => {
+    const expected: NodebbUrl = { kind: 'category', categoryId: '1' }
+
+    expect(parseNodebbUrl('https://forum.example/category/1')).toEqual(expected)
+  })
+
+  it('should return the forum for a category id with a letter', () => {
+    const expected: NodebbUrl = { kind: 'forum' }
+
+    expect(parseNodebbUrl('https://forum.example/category/2abc/general-discussion')).toEqual(
+      expected,
+    )
+  })
+
   it('should return the forum for another page', () => {
     const expected: NodebbUrl = { kind: 'forum' }
 

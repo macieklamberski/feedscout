@@ -7,8 +7,8 @@ import { composeHint, hasAnyMeta, hasElementWithId, hasMarker } from '../../comm
 
 export type MisskeyUrl = { kind: 'profile'; username: string }
 
-// A remote account is `@{user}@{host}`, and the host carries dots the local part cannot.
-const profileRegex = /^\/@(?<username>[^/@.]+(?:@[^/]+)?)/
+const profileRegex = /^\/@(?<segment>[^/]+)/
+const feedSuffixRegex = /\.(?:atom|rss|json)$/i
 const metaMarkers: Array<[string, string]> = [
   ['application-name', 'Misskey'],
   ['application-name', 'Sharkey'], // Fork, same feed routes
@@ -19,7 +19,9 @@ export const isMisskeyHtml = (content: string): boolean => {
 }
 
 export const parseMisskeyUrl = (url: string): MisskeyUrl | undefined => {
-  const username = parseUrl(url)?.pathname.match(profileRegex)?.groups?.username
+  const segment = parseUrl(url)?.pathname.match(profileRegex)?.groups?.segment
+  // A feed URL, such as /@alice.atom, names its profile too.
+  const username = segment?.replace(feedSuffixRegex, '')
 
   if (!username) {
     return

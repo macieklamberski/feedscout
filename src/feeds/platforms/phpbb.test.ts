@@ -165,6 +165,31 @@ describe('phpbbHandler', () => {
       expect(phpbbHandler.resolve(value, content)).toEqual(expected)
     })
 
+    it('should give the board feeds for a forum id with a letter', () => {
+      const value = 'https://example.com/community/viewforum.php?f=12abc'
+
+      expect(phpbbHandler.resolve(value)).toEqual(getBoardFeeds('https://example.com/community'))
+    })
+
+    it('should read the canonical link when the topic id in the url has a letter', () => {
+      const value = 'https://example.com/community/viewtopic.php?t=345abc'
+      const content = `
+        <link
+          rel="canonical"
+          href="https://example.com/community/viewtopic.php?t=999"
+        >
+      `
+      const expected = [
+        {
+          uri: 'https://example.com/community/feed.php?t=999',
+          hint: { key: 'phpbb:topic', label: 'Topic' },
+        },
+        ...getBoardFeeds('https://example.com/community'),
+      ]
+
+      expect(phpbbHandler.resolve(value, content)).toEqual(expected)
+    })
+
     it('should give the board feeds for a post link without a canonical link', () => {
       const value = 'https://example.com/community/viewtopic.php?p=678'
 

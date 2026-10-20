@@ -190,6 +190,17 @@ describe('vbulletinHandler', () => {
       ])
     })
 
+    it('should return only the site feed for a forum id with a letter', () => {
+      const value = 'https://rangeroverclub.com/forumdisplay.php?f=28abc'
+
+      expect(vbulletinHandler.resolve(value, '<html></html>')).toEqual([
+        {
+          uri: 'https://rangeroverclub.com/external.php?type=RSS2',
+          hint: { key: 'vbulletin:site', label: 'Site' },
+        },
+      ])
+    })
+
     it('should return the forum feed for a friendly forum URL', () => {
       const value = 'https://www.vbforums.com/forumdisplay.php?1-Visual-Basic-6-and-Earlier'
 

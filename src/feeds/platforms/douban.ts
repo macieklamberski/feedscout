@@ -1,6 +1,6 @@
 import { isHostOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
+import { composeHint, digitsRegex } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers subject (html), partly covers people.
@@ -22,7 +22,7 @@ const hosts = [
   'music.douban.com',
 ]
 const userRegex = /^\/people\/([^/]+)/i
-const subjectRegex = /^\/subject\/(\d+)/i
+const subjectRegex = /^\/subject\/(?<subjectId>[^/]+)/i
 
 export const parseDoubanUrl = (url: string): DoubanUrl | undefined => {
   if (!isHostOf(url, hosts)) {
@@ -38,9 +38,9 @@ export const parseDoubanUrl = (url: string): DoubanUrl | undefined => {
   }
 
   // Subject page: /subject/{id}/
-  const subjectId = pathname.match(subjectRegex)?.[1]
+  const subjectId = pathname.match(subjectRegex)?.groups?.subjectId
 
-  if (subjectId) {
+  if (subjectId && digitsRegex.test(subjectId)) {
     return { kind: 'subject', subjectId }
   }
 

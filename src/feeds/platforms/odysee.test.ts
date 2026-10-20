@@ -46,10 +46,20 @@ describe('parseOdyseeUrl', () => {
     expect(parseOdyseeUrl('https://odysee.com/@%E0%A4%A')).toBeUndefined()
   })
 
-  it('should return the hex prefix of a claim ID with non-hex characters', () => {
-    const expected: OdyseeUrl = { kind: 'channel', name: 'lbry', claimId: '3' }
+  it('should return a full-length claim ID whole', () => {
+    const expected: OdyseeUrl = {
+      kind: 'channel',
+      name: 'lbry',
+      claimId: '3fda836a92faaceedfe398225fb9b2ee2ed1f01a',
+    }
 
-    expect(parseOdyseeUrl('https://odysee.com/@lbry:3g')).toEqual(expected)
+    expect(
+      parseOdyseeUrl('https://odysee.com/@lbry:3fda836a92faaceedfe398225fb9b2ee2ed1f01a'),
+    ).toEqual(expected)
+  })
+
+  it('should return undefined for a claim ID with a non-hex character', () => {
+    expect(parseOdyseeUrl('https://odysee.com/@lbry:3g')).toBeUndefined()
   })
 
   it('should return undefined for non-channel pages', () => {

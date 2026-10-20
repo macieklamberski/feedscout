@@ -37,6 +37,26 @@ describe('parseStackExchangeUrl', () => {
     expect(parseStackExchangeUrl('https://superuser.com/users/42/name')).toEqual(expected)
   })
 
+  it('should return a one-digit question id whole', () => {
+    const expected: StackExchangeUrl = { kind: 'question', questionId: '1' }
+
+    expect(parseStackExchangeUrl('https://stackoverflow.com/questions/1')).toEqual(expected)
+  })
+
+  it('should return undefined for a question id with a letter', () => {
+    expect(parseStackExchangeUrl('https://stackoverflow.com/questions/12345abc')).toBeUndefined()
+  })
+
+  it('should return a one-digit user id whole', () => {
+    const expected: StackExchangeUrl = { kind: 'user', userId: '1' }
+
+    expect(parseStackExchangeUrl('https://superuser.com/users/1')).toEqual(expected)
+  })
+
+  it('should return undefined for a user id with a letter', () => {
+    expect(parseStackExchangeUrl('https://superuser.com/users/42abc')).toBeUndefined()
+  })
+
   it('should return the collective for a collective page', () => {
     const expected: StackExchangeUrl = { kind: 'collective', collective: 'google-cloud' }
 
