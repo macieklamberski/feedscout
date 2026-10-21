@@ -29,16 +29,26 @@ describe('gitlabHandler', () => {
       expect(gitlabHandler.match('https://gitlab.com/gitlab-org')).toBe(true)
     })
 
-    it('should match self-hosted instance with GitLab HTML', () => {
-      expect(gitlabHandler.match('https://gitlab.example.com/user', gitlabHtml)).toBe(true)
+    it('should match a self-hosted project page with GitLab HTML', () => {
+      expect(gitlabHandler.match('https://gitlab.example.com/user/project', gitlabHtml)).toBe(true)
     })
 
-    it('should match self-hosted instance with GitLab header', () => {
-      expect(gitlabHandler.match('https://gitlab.example.com/user', '', gitlabHeaders)).toBe(true)
+    it('should match a self-hosted project page with GitLab header', () => {
+      const value = 'https://gitlab.example.com/user/project'
+
+      expect(gitlabHandler.match(value, '', gitlabHeaders)).toBe(true)
+    })
+
+    it('should not match a self-hosted namespace page without the /-/ separator', () => {
+      expect(gitlabHandler.match('https://gitlab.example.com/user', gitlabHtml)).toBe(false)
+    })
+
+    it('should not match a GitLab subdomain carrying the GitLab site name', () => {
+      expect(gitlabHandler.match('https://about.gitlab.com/blog', gitlabHtml)).toBe(false)
     })
 
     it('should not match self-hosted without content or headers', () => {
-      expect(gitlabHandler.match('https://gitlab.example.com/user')).toBe(false)
+      expect(gitlabHandler.match('https://gitlab.example.com/user/project')).toBe(false)
     })
   })
 
