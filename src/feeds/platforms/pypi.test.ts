@@ -14,8 +14,10 @@ describe('parsePypiUrl', () => {
     expect(parsePypiUrl('https://pypi.org/')).toEqual(expected)
   })
 
-  it('should return undefined for another page', () => {
-    expect(parsePypiUrl('https://pypi.org/search/')).toBeUndefined()
+  it('should read another page as the home page', () => {
+    const expected: PypiUrl = { kind: 'home' }
+
+    expect(parsePypiUrl('https://pypi.org/help/')).toEqual(expected)
   })
 
   it('should return undefined for another host', () => {
@@ -109,10 +111,6 @@ describe('pypiHandler', () => {
       ]
 
       expect(pypiHandler.resolve(value)).toEqual(expected)
-    })
-
-    it('should return an empty array for the search page', () => {
-      expect(pypiHandler.resolve('https://pypi.org/search/?q=example')).toEqual([])
     })
   })
 })

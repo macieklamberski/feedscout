@@ -38,9 +38,7 @@ export const parsePypiUrl = (url: string): PypiUrl | undefined => {
     return { kind: 'project', project }
   }
 
-  if (pathname === '/') {
-    return { kind: 'home' }
-  }
+  return { kind: 'home' }
 }
 
 export const pypiHandler: PlatformHandler = {

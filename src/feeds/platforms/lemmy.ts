@@ -78,21 +78,15 @@ export const parseLemmyUrl = (url: string): LemmyUrl | undefined => {
   const sort = searchParams.get('sort') ?? undefined
   const limit = searchParams.get('limit') ?? undefined
 
-  if (!section) {
-    return { kind: 'home', sort, limit }
-  }
-
-  if (!name) {
-    return
-  }
-
-  if (isAnyOf(section, 'c')) {
+  if (name && isAnyOf(section, 'c')) {
     return { kind: 'community', community: name, sort, limit }
   }
 
-  if (isAnyOf(section, 'u')) {
+  if (name && isAnyOf(section, 'u')) {
     return { kind: 'user', username: name, sort, limit }
   }
+
+  return { kind: 'home', sort, limit }
 }
 
 // Current Lemmy serves no generator meta.

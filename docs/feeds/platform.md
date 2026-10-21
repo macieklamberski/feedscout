@@ -389,6 +389,7 @@ Discovers RSS feeds for Behance user portfolios, plus the homepage Featured-proj
 | `behance.net` or `behance.net/galleries` | Featured projects |
 | `behance.net/{username}` | User portfolio<sup>†</sup> |
 | `behance.net/{username}/appreciated` | User portfolio* |
+| Any other page | Featured projects |
 
 \* *Behance ignores `content=appreciated` and serves the user's own projects, so the appreciated page gets the portfolio feed.*
 
@@ -631,6 +632,7 @@ Discovers Atom feeds for V2EX index, nodes, members, and tabs.
 | `v2ex.com/go/{node}` | Node |
 | `v2ex.com/member/{username}` | Member |
 | `v2ex.com/?tab={tab}` | Tab · index |
+| Any other page | Index |
 
 ### Ximalaya
 
@@ -771,6 +773,7 @@ Discovers RSS feeds for MyAnimeList user lists and site-wide news.
 | `myanimelist.net/history/{user}` | (same as above) |
 | `myanimelist.net/news` | Site-wide news |
 | `myanimelist.net/featured` | Featured articles |
+| Any other page | Site-wide news |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -834,6 +837,7 @@ Discovers RSS feeds for Velog users and the platform-wide trending feed.
 |-------------|-----------------|
 | `velog.io/@{user}` | Posts<sup>†</sup> |
 | `velog.io` | Trending posts<sup>†</sup> |
+| Any other page | Trending posts |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -1064,6 +1068,7 @@ Discovers RSS feeds for Lemmy instances, communities and users. Detected by the 
 | `{instance}/` | All posts · local posts |
 | `{instance}/c/{community}` | Community |
 | `{instance}/u/{user}` | User |
+| Any other page | All posts · local posts |
 
 > [!NOTE]
 > Requires page content or response headers to detect Lemmy instances. The `?sort=` and `?limit=` query params are passed through to the generated feed URL. Unknown sort values are silently dropped. When the page URL has no valid sort, the feed takes the sort the page advertises.
@@ -1369,6 +1374,7 @@ Discovers RSS and Atom feeds for Tildes homepage and groups.
 |-------------|-----------------|
 | `tildes.net` | Topics (RSS + Atom) |
 | `tildes.net/~{group}` | Group (RSS + Atom) |
+| Any other page | Topics (RSS + Atom) |
 
 ### Viabloga
 
@@ -2184,6 +2190,7 @@ Discovers the RSS feeds of the Python Package Index, built from the URL.
 | `pypi.org` | New packages · recent updates (RSS) |
 | `pypi.org/project/{name}` | Project releases · new packages · recent updates (RSS) |
 | `pypi.org/project/{name}/{version}` | Project releases<sup>†</sup> · new packages<sup>†</sup> · recent updates<sup>†</sup> (RSS) |
+| Any other page | New packages · recent updates (RSS) |
 
 <sup>†</sup> *Found only by the Platform method.*
 

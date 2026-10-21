@@ -37,7 +37,7 @@ export const parseMyanimelistUrl = (url: string): MyanimelistUrl | undefined => 
   const username = pathname.match(userRegex)?.[1]
 
   if (!username) {
-    return
+    return { kind: 'news' }
   }
 
   return { kind: 'user', username }

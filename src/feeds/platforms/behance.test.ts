@@ -39,12 +39,18 @@ describe('parseBehanceUrl', () => {
     expect(parseBehanceUrl('https://www.behance.net/JohnDoe')).toEqual(expected)
   })
 
-  it('should return undefined for other nested profile paths', () => {
-    expect(parseBehanceUrl('https://www.behance.net/johndoe/projects')).toBeUndefined()
+  it('should read other nested profile paths as the home page', () => {
+    const expected: BehanceUrl = { kind: 'home' }
+
+    expect(parseBehanceUrl('https://www.behance.net/johndoe/projects')).toEqual(expected)
   })
 
-  it('should return undefined for a gallery page', () => {
-    expect(parseBehanceUrl('https://www.behance.net/gallery/123456/Brand-Identity')).toBeUndefined()
+  it('should read a gallery page as the home page', () => {
+    const expected: BehanceUrl = { kind: 'home' }
+
+    expect(parseBehanceUrl('https://www.behance.net/gallery/123456/Brand-Identity')).toEqual(
+      expected,
+    )
   })
 
   it('should return the home page', () => {

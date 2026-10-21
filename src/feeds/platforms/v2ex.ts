@@ -41,9 +41,7 @@ export const parseV2exUrl = (url: string): V2exUrl | undefined => {
     return { kind: 'tab', tab }
   }
 
-  if (pathname === '/') {
-    return { kind: 'home' }
-  }
+  return { kind: 'home' }
 }
 
 export const v2exHandler: PlatformHandler = {

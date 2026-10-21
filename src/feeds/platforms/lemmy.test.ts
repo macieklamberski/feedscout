@@ -48,11 +48,10 @@ describe('parseLemmyUrl', () => {
     expect(parseLemmyUrl('https://example.org/c/worldnews')).toEqual(expected)
   })
 
-  it('should return undefined for a prefix without a name', () => {
-    expect(parseLemmyUrl('https://example.com/c')).toBeUndefined()
-    expect(parseLemmyUrl('https://example.com/c/')).toBeUndefined()
-    expect(parseLemmyUrl('https://example.com/u')).toBeUndefined()
-    expect(parseLemmyUrl('https://example.com/u/')).toBeUndefined()
+  it('should read a prefix without a name as the instance home', () => {
+    const expected: LemmyUrl = { kind: 'home' }
+
+    expect(parseLemmyUrl('https://example.com/c/')).toEqual(expected)
   })
 
   it('should return the community for a capitalized prefix', () => {
@@ -85,9 +84,16 @@ describe('parseLemmyUrl', () => {
     expect(parseLemmyUrl(value)).toEqual(expected)
   })
 
-  it('should return undefined for other paths', () => {
-    expect(parseLemmyUrl('https://example.com/about')).toBeUndefined()
-    expect(parseLemmyUrl('https://example.com/post/123')).toBeUndefined()
+  it('should read a post page as the instance home', () => {
+    const expected: LemmyUrl = { kind: 'home' }
+
+    expect(parseLemmyUrl('https://example.com/post/123')).toEqual(expected)
+  })
+
+  it('should read a page with no name as the instance home', () => {
+    const expected: LemmyUrl = { kind: 'home' }
+
+    expect(parseLemmyUrl('https://example.com/communities')).toEqual(expected)
   })
 
   it('should return undefined for an invalid URL', () => {
@@ -162,20 +168,12 @@ describe('lemmyHandler', () => {
       expect(lemmyHandler.match('https://example.com/', lemmyHtml)).toBe(true)
     })
 
-    it('should not match the retired /home path', () => {
-      expect(lemmyHandler.match('https://example.com/home', lemmyHtml)).toBe(false)
-    })
-
     it('should match community path with Lemmy server header', () => {
       expect(lemmyHandler.match('https://example.com/c/programming', '', lemmyHeaders)).toBe(true)
     })
 
     it('should not match without content or headers', () => {
       expect(lemmyHandler.match('https://example.com/c/programming')).toBe(false)
-    })
-
-    it('should not match non-community, non-user, non-home paths even with Lemmy HTML', () => {
-      expect(lemmyHandler.match('https://example.com/about', lemmyHtml)).toBe(false)
     })
 
     it('should not match without Lemmy signals', () => {
@@ -186,10 +184,6 @@ describe('lemmyHandler', () => {
   })
 
   describe('resolve', () => {
-    it('should return empty array for a page outside the Lemmy routes', () => {
-      expect(lemmyHandler.resolve('https://example.com/about')).toEqual([])
-    })
-
     it('should return community feed URL', () => {
       const value = 'https://example.com/c/programming'
       const expected = [

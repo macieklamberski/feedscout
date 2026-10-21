@@ -26,7 +26,7 @@ export const parseBehanceUrl = (url: string): BehanceUrl | undefined => {
   const username = parsedUrl.pathname.match(userRegex)?.[1]
 
   if (!username) {
-    return
+    return { kind: 'home' }
   }
 
   return { kind: 'profile', username }

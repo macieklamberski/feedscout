@@ -27,9 +27,7 @@ export const parseTildesUrl = (url: string): TildesUrl | undefined => {
     return { kind: 'group', group, tag }
   }
 
-  if (pathname === '/') {
-    return { kind: 'home', tag }
-  }
+  return { kind: 'home', tag }
 }
 
 export const tildesHandler: PlatformHandler = {
