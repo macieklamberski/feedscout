@@ -1,6 +1,6 @@
 import { isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, getMetaContent } from '../../common/utils.js'
+import { composeHint, getMetaContent, uuidRegex } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -9,7 +9,6 @@ export type RedcirclePage = { showUuid: string }
 const hosts = ['redcircle.com', 'www.redcircle.com']
 
 const showRegex = /^\/shows\/([^/]+)(?:\/|$)/i
-const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 
 const getUuidFromPath = (pathname: string): string | undefined => {
   const segment = pathname.match(showRegex)?.[1]

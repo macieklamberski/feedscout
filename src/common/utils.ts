@@ -22,6 +22,7 @@ export const hexOrHyphenRegex = /^[0-9a-f-]+$/i
 export const wordRegex = /^\w+$/
 export const wordOrHyphenRegex = /^[\w-]+$/
 export const letterThenWordOrHyphenRegex = /^[a-zA-Z][\w-]*$/
+export const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 // length: keeps path words such as `blogs` out
 export const localeRegex = /^[a-z]{2}(?:-[a-z]{2})?$/i
 
