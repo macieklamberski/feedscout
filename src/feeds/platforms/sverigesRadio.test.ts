@@ -20,6 +20,14 @@ describe('parseSverigesRadioUrl', () => {
     expect(parseSverigesRadioUrl('https://sverigesradio.se/ekot')).toEqual(expected)
   })
 
+  it('should return the program for a podcast page', () => {
+    const expected: SverigesRadioUrl = { kind: 'program', slug: 'p3-dokumentar' }
+
+    expect(parseSverigesRadioUrl('https://www.sverigesradio.se/poddar/p3-dokumentar')).toEqual(
+      expected,
+    )
+  })
+
   it('should keep the slug case', () => {
     const expected: SverigesRadioUrl = { kind: 'program', slug: 'Ekot' }
 
@@ -64,6 +72,18 @@ describe('sverigesRadioHandler', () => {
       const expected = [
         {
           uri: 'https://public-api.sr.se/rss/morgonpodden',
+          hint: { key: 'sveriges-radio:program', label: 'Program' },
+        },
+      ]
+
+      expect(sverigesRadioHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return the program feed for a podcast page', () => {
+      const value = 'https://www.sverigesradio.se/poddar/vetenskapsradion'
+      const expected = [
+        {
+          uri: 'https://public-api.sr.se/rss/vetenskapsradion',
           hint: { key: 'sveriges-radio:program', label: 'Program' },
         },
       ]

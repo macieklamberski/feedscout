@@ -1,9 +1,9 @@
-import { getPathSegments, isHostOf, parseUrl } from 'trousse'
+import { getPathSegments, isAnyOf, isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, digitsRegex } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic covers program (html).
+// Generic covers podcast, program (html).
 // Handler needed for: programId.
 
 export type SverigesRadioUrl =
@@ -28,7 +28,9 @@ export const parseSverigesRadioUrl = (url: string): SverigesRadioUrl | undefined
     return { kind: 'legacyProgram', programId }
   }
 
-  const [slug] = getPathSegments(parsedUrl)
+  const [first, second] = getPathSegments(parsedUrl)
+  // Program pages redirect to /poddar/{program}.
+  const slug = isAnyOf(first, 'poddar') && second ? second : first
 
   if (!slug || !slugRegex.test(slug)) {
     return
