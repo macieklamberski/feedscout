@@ -1,17 +1,91 @@
 import { parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, findElement, hasMarker } from '../../common/utils.js'
+import { composeHint, findElement, getTenantSubdomain, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic partly covers blog, blogPost, customDomainBlog, customDomainLabel, label.
 
 export type BlogspotUrl = { kind: 'label'; label: string } | { kind: 'post' } | { kind: 'blog' }
 
-// Matches {blog}.blogspot.com and country domains like .co.uk, .com.br and .de. The certificate
-// covers one label, and www is Blogger's own host.
-const blogspotDomainRegex =
-  /^(?!www\.)[^.]+\.blogspot\.(?:com|co\.[a-z]{2}|com\.[a-z]{2}|[a-z]{2})$/
+// Blogger's country domains still serve every blog.
+const domains = [
+  'blogspot.ae',
+  'blogspot.al',
+  'blogspot.am',
+  'blogspot.ba',
+  'blogspot.be',
+  'blogspot.bg',
+  'blogspot.bj',
+  'blogspot.ca',
+  'blogspot.cf',
+  'blogspot.ch',
+  'blogspot.cl',
+  'blogspot.co.at',
+  'blogspot.co.id',
+  'blogspot.co.il',
+  'blogspot.co.ke',
+  'blogspot.co.nz',
+  'blogspot.co.uk',
+  'blogspot.co.za',
+  'blogspot.com',
+  'blogspot.com.ar',
+  'blogspot.com.au',
+  'blogspot.com.br',
+  'blogspot.com.by',
+  'blogspot.com.co',
+  'blogspot.com.cy',
+  'blogspot.com.ee',
+  'blogspot.com.eg',
+  'blogspot.com.es',
+  'blogspot.com.mt',
+  'blogspot.com.ng',
+  'blogspot.com.tr',
+  'blogspot.com.uy',
+  'blogspot.cv',
+  'blogspot.cz',
+  'blogspot.de',
+  'blogspot.dk',
+  'blogspot.fi',
+  'blogspot.fr',
+  'blogspot.gr',
+  'blogspot.hk',
+  'blogspot.hr',
+  'blogspot.hu',
+  'blogspot.ie',
+  'blogspot.in',
+  'blogspot.is',
+  'blogspot.it',
+  'blogspot.jp',
+  'blogspot.kr',
+  'blogspot.li',
+  'blogspot.lt',
+  'blogspot.lu',
+  'blogspot.md',
+  'blogspot.mk',
+  'blogspot.mr',
+  'blogspot.mx',
+  'blogspot.my',
+  'blogspot.nl',
+  'blogspot.no',
+  'blogspot.pe',
+  'blogspot.pt',
+  'blogspot.qa',
+  'blogspot.re',
+  'blogspot.ro',
+  'blogspot.rs',
+  'blogspot.ru',
+  'blogspot.se',
+  'blogspot.sg',
+  'blogspot.si',
+  'blogspot.sk',
+  'blogspot.sn',
+  'blogspot.td',
+  'blogspot.tw',
+  'blogspot.ug',
+  'blogspot.vn',
+]
+
 const labelRegex = /^\/search\/label\/([^/]+)/i
 const postRegex = /^\/\d{4}\/\d{2}\/[^/]+\.html$/i
 const postCommentsFeedRegex = /\/feeds\/(\d+)\/comments\/default/i
@@ -58,7 +132,7 @@ export const blogspotHandler: PlatformHandler = {
       return false
     }
 
-    if (blogspotDomainRegex.test(parsedUrl.hostname)) {
+    if (getTenantSubdomain(parsedUrl, domains)) {
       return true
     }
 
