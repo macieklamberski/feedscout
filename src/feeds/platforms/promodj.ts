@@ -34,8 +34,7 @@ export const promodjHandler: PlatformHandler = {
       return []
     }
 
-    // PromoDJ answers /TAGA too, and its page links the feeds of /taga.
-    const profileUrl = `https://promodj.com/${parsed.username.toLowerCase()}`
+    const profileUrl = `https://promodj.com/${parsed.username}`
 
     return [
       { uri: `${profileUrl}/podcast.xml`, hint: composeHint('promodj:podcast') },
