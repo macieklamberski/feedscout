@@ -6,7 +6,7 @@ import { composeHint } from '../../common/utils.js'
 // Generic covers blog (html).
 // Handler needed for: mobile.
 
-export type NaverBlogUrl = { kind: 'blog'; blogId: string }
+export type NaverBlogUrl = { kind: 'blog'; blogId: string } | { kind: 'post'; blogId: string }
 
 export const hosts = ['blog.naver.com', 'm.blog.naver.com']
 
@@ -17,11 +17,15 @@ export const parseNaverBlogUrl = (url: string): NaverBlogUrl | undefined => {
     return
   }
 
-  const [blogId] = getPathSegments(parsedUrl)
+  const [blogId, logNo] = getPathSegments(parsedUrl)
 
   // Excludes dots to skip pages like /BlogList.naver.
   if (!blogId || blogId.includes('.')) {
     return
+  }
+
+  if (logNo) {
+    return { kind: 'post', blogId }
   }
 
   return { kind: 'blog', blogId }

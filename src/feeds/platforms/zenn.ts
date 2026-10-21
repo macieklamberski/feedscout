@@ -6,6 +6,7 @@ import { composeHint } from '../../common/utils.js'
 
 export type ZennUrl =
   | { kind: 'user'; username: string }
+  | { kind: 'post'; username: string }
   | { kind: 'topic'; topic: string }
   | { kind: 'publication'; publication: string }
   | { kind: 'home' }
@@ -35,10 +36,14 @@ export const parseZennUrl = (url: string): ZennUrl | undefined => {
     return { kind: 'publication', publication }
   }
 
-  const [username] = getPathSegments(parsedUrl)
+  const [username, section] = getPathSegments(parsedUrl)
 
   if (!username) {
     return { kind: 'home' }
+  }
+
+  if (section) {
+    return { kind: 'post', username }
   }
 
   return { kind: 'user', username }
@@ -74,7 +79,7 @@ export const zennHandler: PlatformHandler = {
       ]
     }
 
-    if (parsed.kind === 'user') {
+    if (parsed.kind === 'user' || parsed.kind === 'post') {
       return [
         {
           uri: `https://zenn.dev/${parsed.username}/feed`,

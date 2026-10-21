@@ -1,4 +1,4 @@
-import { getPathSegments, parseUrl } from 'trousse'
+import { parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getMetaContent } from '../../common/utils.js'
 import {
@@ -44,7 +44,7 @@ export const postypeHandler: PlatformHandler = {
     }
 
     // A post page carries the post cover as its og:image.
-    if (content && parsed.kind === 'channel' && getPathSegments(url).length === 1) {
+    if (content && parsed.kind === 'channel') {
       const avatar = parseAvatar(content)
 
       if (avatar) {

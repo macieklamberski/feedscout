@@ -15,8 +15,8 @@ describe('parsePostypeUrl', () => {
     expect(parsePostypeUrl('https://postype.com/@example')).toEqual(expected)
   })
 
-  it('should return the channel for a post page', () => {
-    const expected: PostypeUrl = { kind: 'channel', channel: 'example' }
+  it('should return the post for a post page', () => {
+    const expected: PostypeUrl = { kind: 'post', channel: 'example' }
 
     expect(parsePostypeUrl('https://www.postype.com/@example/post/23216701')).toEqual(expected)
   })
@@ -66,6 +66,18 @@ describe('postypeHandler', () => {
   describe('resolve', () => {
     it('should return the channel feed for a path form', () => {
       const value = 'https://www.postype.com/@example'
+      const expected = [
+        {
+          uri: 'https://www.postype.com/@example/rss',
+          hint: { key: 'postype:posts', label: 'Posts' },
+        },
+      ]
+
+      expect(postypeHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return the channel feed for a post page', () => {
+      const value = 'https://www.postype.com/@example/post/23216701'
       const expected = [
         {
           uri: 'https://www.postype.com/@example/rss',

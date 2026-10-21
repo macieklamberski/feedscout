@@ -15,9 +15,9 @@ describe('parseNaverBlogUrl', () => {
     expect(parseNaverBlogUrl('https://m.blog.naver.com/prologue')).toEqual(expected)
   })
 
-  it('should return the blog for a post URL', () => {
+  it('should return the post for a post URL', () => {
     const value = 'https://m.blog.naver.com/prologue/223000000000'
-    const expected: NaverBlogUrl = { kind: 'blog', blogId: 'prologue' }
+    const expected: NaverBlogUrl = { kind: 'post', blogId: 'prologue' }
 
     expect(parseNaverBlogUrl(value)).toEqual(expected)
   })
@@ -55,6 +55,18 @@ describe('naverBlogHandler', () => {
   describe('resolve', () => {
     it('should return feed URL for blog', () => {
       const value = 'https://blog.naver.com/prologue'
+      const expected = [
+        {
+          uri: 'https://rss.blog.naver.com/prologue.xml',
+          hint: { key: 'naver-blog:blog', label: 'Blog' },
+        },
+      ]
+
+      expect(naverBlogHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return the blog feed URL for a post', () => {
+      const value = 'https://blog.naver.com/prologue/223000000000'
       const expected = [
         {
           uri: 'https://rss.blog.naver.com/prologue.xml',

@@ -21,8 +21,8 @@ describe('parsePinterestUrl', () => {
     expect(parsePinterestUrl('https://pinterest.com/nasa')).toEqual(expected)
   })
 
-  it('should return the user for user subpages', () => {
-    const expected: PinterestUrl = { kind: 'user', username: 'nasa' }
+  it('should return the tab for user subpages', () => {
+    const expected: PinterestUrl = { kind: 'tab', username: 'nasa' }
 
     expect(parsePinterestUrl('https://www.pinterest.com/nasa/pins')).toEqual(expected)
     expect(parsePinterestUrl('https://www.pinterest.com/nasa/boards')).toEqual(expected)
@@ -32,8 +32,8 @@ describe('parsePinterestUrl', () => {
     expect(parsePinterestUrl('https://www.pinterest.com/nasa/following')).toEqual(expected)
   })
 
-  it('should return the user for a user subpage in any case', () => {
-    const expected: PinterestUrl = { kind: 'user', username: 'nasa' }
+  it('should return the tab for a user subpage in any case', () => {
+    const expected: PinterestUrl = { kind: 'tab', username: 'nasa' }
 
     expect(parsePinterestUrl('https://www.pinterest.com/nasa/Pins')).toEqual(expected)
   })
