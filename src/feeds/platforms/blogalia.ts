@@ -1,7 +1,6 @@
-import { getSubdomain } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
+import { composeHint, getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic partly covers blog.
@@ -11,9 +10,7 @@ export type BlogaliaUrl = { kind: 'blog' }
 const domains = ['blogalia.com']
 
 export const parseBlogaliaUrl = (url: string): BlogaliaUrl | undefined => {
-  const blog = getSubdomain(url, domains)
-
-  if (!blog || blog.includes('.')) {
+  if (!getTenantSubdomain(url, domains)) {
     return
   }
 
