@@ -15,9 +15,6 @@ const baseUrl = 'https://blog.jinbo.net'
 
 // A category named by text answers an empty feed under another category's title.
 const feedLinkRegex = /^https:\/\/blog\.jinbo\.net\/([^/]+)\/rss$/
-// A tag or category the blog lacks still answers an empty feed, and its page says it found none,
-// in the wording of the blog's skin.
-const noPostsRegex = />0<\/\w+>개의 게시물을 찾았습니다|에 (?:관한|해당되는) 글 0(?:개|건)/
 
 export const parseJinboUrl = (url: string): JinboUrl | undefined => {
   if (!isHostOf(url, hosts)) {
@@ -70,10 +67,6 @@ const getJinboPage = (url: string, content: string | undefined): JinboUrl | unde
   }
 
   const username = getFeedUsername(content) ?? parsed.username
-
-  if (parsed.kind !== 'blog' && content && noPostsRegex.test(content)) {
-    return { kind: 'blog', username }
-  }
 
   return { ...parsed, username }
 }
