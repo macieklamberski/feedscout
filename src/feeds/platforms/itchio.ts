@@ -31,6 +31,7 @@ const genreRegex = /^\/games\/genre-([^/]+)/i
 const madeWithRegex = /^\/games\/made-with-([^/]+)/i
 const sortRegex = /^\/games\/([^/]+)/i
 // A listing with two or more filters, such as /games/newest/tag-horror, has its feed at its path.
+// length: keeps a single-filter listing out
 const combinedListingRegex = /^\/games(?:\/[^/]+){2,}/i
 const firstSegmentRegex = /^\/([^/]+)/
 const gamesRegex = /^\/games\/?$/i

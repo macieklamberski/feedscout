@@ -15,6 +15,7 @@ export type HatenaFotolifeUrl =
 const hosts = ['f.hatena.ne.jp']
 
 // A photo id is the 14-digit time it was uploaded.
+// length: keeps a photo id out of the folder slot
 const photoIdRegex = /^\d{14}$/
 
 // The page links its feeds with every byte outside [A-Za-z0-9_] percent-encoded, `-` and `.`

@@ -22,6 +22,7 @@ export const parseSourcehutUrl = (url: string): SourcehutUrl | undefined => {
 
   const [first, repo] = getPathSegments(parsedUrl)
 
+  // length: keeps a bare ~ with no owner after it out
   if (!first?.startsWith('~') || first.length < 2) {
     return
   }

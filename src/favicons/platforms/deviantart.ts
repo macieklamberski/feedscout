@@ -15,6 +15,7 @@ export const deviantartHandler: PlatformHandler = {
       return []
     }
 
+    // length: extracts the first two characters the avatar path is filed under
     if (parsed.username.length < 2) {
       return []
     }

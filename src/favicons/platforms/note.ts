@@ -7,6 +7,7 @@ import { parseResponseJson } from '../utils.js'
 const platform = 'note'
 
 // The page payload is a JSON string inside `self.__next_f.push`, so its quotes arrive escaped.
+// length: extracts a \u escape of four hex digits
 const profileImageUrlRegex = /profileImageUrl\\?":\\?"((?:[^"\\]|\\u[\da-f]{4})+)/i
 
 const getOwner = (url: string): string | undefined => {

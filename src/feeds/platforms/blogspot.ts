@@ -10,6 +10,7 @@ export type BlogspotUrl = { kind: 'label'; label: string } | { kind: 'post' } | 
 
 // Matches blogspot.com and Blogger's country domains like .co.uk, .com.br and .de, which still
 // serve feeds. getTenantSubdomain then refuses www and nested subdomains.
+// length: keeps any suffix but a two-letter country code out
 const blogspotDomainRegex = /\.(blogspot\.(?:com|co\.[a-z]{2}|com\.[a-z]{2}|[a-z]{2}))$/
 const labelRegex = /^\/search\/label\/([^/]+)/i
 const postRegex = /^\/\d{4}\/\d{2}\/[^/]+\.html$/i
