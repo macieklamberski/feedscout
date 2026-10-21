@@ -1548,8 +1548,7 @@
     "sermon-net:church": "https://bcf.sermon.net/rss"
   },
   "shaarli": {
-    "shaarli:posts": ["https://demo.shaarli.org/feed/rss", "https://demo.shaarli.org/feed/atom"],
-    "shaarli:posts-legacy": "https://links.hoa.ro/?do=rss"
+    "shaarli:posts": ["https://demo.shaarli.org/feed/rss", "https://demo.shaarli.org/feed/atom"]
   },
   "shinobi": {
     "shinobi:posts": ["https://chabun.blog.shinobi.jp/RSS/", "https://chabun.blog.shinobi.jp/ATOM/"]

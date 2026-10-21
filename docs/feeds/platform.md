@@ -1924,7 +1924,9 @@ Discovers the feeds of a Shaarli instance. Detected by the `shaarli-menu` id or 
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| Any page | Posts (RSS + Atom), plus the pre-0.12 shape |
+| Any page | Posts (RSS + Atom)* |
+
+\* *Installs older than 0.12 serve the RSS feed at `/?do=rss`, which is tried after `/feed/rss`.*
 
 ### PeerTube
 
