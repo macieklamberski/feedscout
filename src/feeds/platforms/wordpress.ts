@@ -34,6 +34,7 @@ const paginationRegex = /\/page\/\d+\/?$/i
 // WordPress's rewrite endpoints under a post: its AMP and embed views, trackback and comment pages.
 const postEndpointRegex = /(?<=[^/])\/(?:amp|embed|trackback|comment-page-\d+)\/?$/i
 // WordPress's own scripts and folders, the search results, and an archive route without its slug.
+// suffixes: WordPress's own root scripts and sitemaps
 const reservedPathRegex =
   /^\/(?:wp-(?:admin|content|includes|json)|[^/]*\.(?:php|xml)|search|category|tag|author)(?:\/|$)/i
 

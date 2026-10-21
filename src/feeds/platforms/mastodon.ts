@@ -21,6 +21,7 @@ export type MastodonUrl =
 
 const mastodonRegex = /mastodon/i
 // A profile URL can end in .rss, a legacy .atom or the ActivityPub .json. Names carry no dots.
+// suffixes: Mastodon's own feed routes, on a remote handle that holds a dot
 const feedExtensionRegex = /\.(rss|atom|json)$/i
 
 // Current Mastodon serves no generator meta, so the `<div class="app-holder" id="mastodon">` app

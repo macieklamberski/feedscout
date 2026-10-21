@@ -8,6 +8,7 @@ import { composeHint, hasAnyMeta, hasElementWithId, hasMarker } from '../../comm
 export type MisskeyUrl = { kind: 'profile'; username: string }
 
 const profileRegex = /^\/@(?<segment>[^/]+)/
+// suffixes: Misskey's own feed routes, on a remote handle that holds a dot
 const feedSuffixRegex = /\.(?:atom|rss|json)$/i
 const metaMarkers: Array<[string, string]> = [
   ['application-name', 'Misskey'],

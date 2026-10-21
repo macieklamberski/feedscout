@@ -15,6 +15,7 @@ const hosts = ['codeberg.org', 'www.codeberg.org', 'gitea.com', 'www.gitea.com']
 const giteaCookieRegex = /(?:^|[;,\s])[\w-]*gitea=/
 // Gitea reserves these suffixes for routes of a user, such as /{user}.rss, so no username ends
 // with one.
+// suffixes: Gitea's own user routes, on a name that can hold a dot
 const userRouteSuffixRegex = /\.(?:atom|gpg|keys|png|rss)$/i
 // A one-segment path is a user, so /feed answers a feed request with the activity of a user
 // named feed.

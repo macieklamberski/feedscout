@@ -26,6 +26,7 @@ const discussionsRegex = /^\/[^/]+\/[^/]+\/discussions(?:\/|$)/i
 const discussionCategoryRegex = /^\/[^/]+\/[^/]+\/discussions\/categories\/([^/]+)/i
 const branchRegex = /^\/[^/]+\/[^/]+\/tree\/([^/]+)\/?$/i
 const fileRegex = /^\/[^/]+\/[^/]+\/(?:blob|commits)\/([^/]+)\/(.+)/i
+// suffixes: GitHub's own user routes, so a root file such as robots.txt is no user
 const userRouteSuffixRegex = /\.(?:atom|gpg|keys|png)$/i
 
 // Repository and organization discussions sit at the same path depth:

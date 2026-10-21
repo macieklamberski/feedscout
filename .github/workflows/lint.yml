@@ -10,4 +10,6 @@ jobs:
     uses: macieklamberski/kvalita/.github/workflows/shared-lint.yml@main
     secrets: inherit
     with:
-      prepare: cd check && bun install --frozen-lockfile --ignore-scripts
+      prepare: |
+        bun run lint:handlers
+        cd check && bun install --frozen-lockfile --ignore-scripts
