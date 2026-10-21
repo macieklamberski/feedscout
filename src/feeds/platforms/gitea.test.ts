@@ -203,6 +203,10 @@ describe('getGiteaPage', () => {
   it('should return undefined for a path outside the sub-path', () => {
     expect(getGiteaPage('https://example.org/gitea2/owner', giteaSubPathHtml)).toBeUndefined()
   })
+
+  it('should return undefined for an invalid URL', () => {
+    expect(getGiteaPage('not-a-url', giteaSubPathHtml)).toBeUndefined()
+  })
 })
 
 describe('giteaHandler', () => {
