@@ -1,6 +1,6 @@
 import { isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
+import { composeHint, wordOrHyphenRegex } from '../../common/utils.js'
 
 // Discoverability: Not discoverable without handler.
 // Handler needed for: all shapes.
@@ -20,7 +20,6 @@ const playlistRegex = /^\/playlist\/(?<playlistId>[^/]+)/i
 const channelRegex = /^\/channel\/(?<channel>[^/]+)/i
 const searchRegex = /^\/search\/([^/]+)/i
 const trendingRegex = /^\/(?:trending\/?)?$/i
-const idRegex = /^[\w-]+$/
 
 export const parseDailymotionUrl = (url: string): DailymotionUrl | undefined => {
   const parsedUrl = parseUrl(url)
@@ -38,7 +37,7 @@ export const parseDailymotionUrl = (url: string): DailymotionUrl | undefined => 
 
   const playlistId = pathname.match(playlistRegex)?.groups?.playlistId
 
-  if (playlistId && idRegex.test(playlistId)) {
+  if (playlistId && wordOrHyphenRegex.test(playlistId)) {
     return { kind: 'playlist', playlistId }
   }
 
@@ -50,7 +49,7 @@ export const parseDailymotionUrl = (url: string): DailymotionUrl | undefined => 
 
   const channel = pathname.match(channelRegex)?.groups?.channel
 
-  if (channel && idRegex.test(channel)) {
+  if (channel && wordOrHyphenRegex.test(channel)) {
     return { kind: 'channel', channel }
   }
 
