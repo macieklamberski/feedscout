@@ -1,3 +1,4 @@
+import { getPathSegments } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, getTenantSubdomain } from '../../common/utils.js'
@@ -20,7 +21,7 @@ export const parseSermonNetUrl = (url: string): SermonNetUrl | undefined => {
   }
 
   // A channel page and its postings sit at `/{mediaCentre}/{channel}`.
-  const channel = new URL(url).pathname.split('/').filter(Boolean)[1]
+  const [, channel] = getPathSegments(url)
 
   if (channel) {
     return { kind: 'channel', channel }
