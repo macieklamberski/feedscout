@@ -66,15 +66,11 @@ describe('weeblyHandler', () => {
       expect(weeblyHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return custom slug and default feeds for named blog page', () => {
+    it('should return only the custom slug feed for named blog page', () => {
       const value = 'https://example.weebly.com/articles'
       const expected = [
         {
           uri: 'https://example.weebly.com/articles/feed',
-          hint: { key: 'weebly:blog', label: 'Blog' },
-        },
-        {
-          uri: 'https://example.weebly.com/blog/feed',
           hint: { key: 'weebly:blog', label: 'Blog' },
         },
       ]
@@ -82,11 +78,11 @@ describe('weeblyHandler', () => {
       expect(weeblyHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should skip custom slug for numeric segments', () => {
+    it('should return the blog id feed for a numeric segment', () => {
       const value = 'https://example.weebly.com/1/feed'
       const expected = [
         {
-          uri: 'https://example.weebly.com/blog/feed',
+          uri: 'https://example.weebly.com/1/feed',
           hint: { key: 'weebly:blog', label: 'Blog' },
         },
       ]
