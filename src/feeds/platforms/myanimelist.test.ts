@@ -3,10 +3,16 @@ import type { MyanimelistUrl } from './myanimelist.js'
 import { myanimelistHandler, parseMyanimelistUrl } from './myanimelist.js'
 
 describe('parseMyanimelistUrl', () => {
-  it('should return the user for a profile page', () => {
-    const expected: MyanimelistUrl = { kind: 'user', username: 'Xinil' }
+  it('should return the profile for a profile page', () => {
+    const expected: MyanimelistUrl = { kind: 'profile', username: 'Xinil' }
 
     expect(parseMyanimelistUrl('https://myanimelist.net/profile/Xinil')).toEqual(expected)
+  })
+
+  it('should return the profile for a profile page with a trailing slash', () => {
+    const expected: MyanimelistUrl = { kind: 'profile', username: 'Xinil' }
+
+    expect(parseMyanimelistUrl('https://myanimelist.net/profile/Xinil/')).toEqual(expected)
   })
 
   it('should return the user for an anime list page', () => {
@@ -43,8 +49,8 @@ describe('parseMyanimelistUrl', () => {
     expect(parseMyanimelistUrl(value)).toEqual(expected)
   })
 
-  it('should return the user for a capitalized section', () => {
-    const expected: MyanimelistUrl = { kind: 'user', username: 'Xinil' }
+  it('should return the profile for a capitalized section', () => {
+    const expected: MyanimelistUrl = { kind: 'profile', username: 'Xinil' }
 
     expect(parseMyanimelistUrl('https://myanimelist.net/Profile/Xinil')).toEqual(expected)
   })
