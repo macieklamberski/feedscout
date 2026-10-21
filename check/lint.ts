@@ -1,7 +1,5 @@
-// Line checks for the handler rules a single line can show: kept lengths, format extensions and
-// shared regexes. Run from the repo root with `bun run lint:handlers`.
-import * as utils from '../src/common/utils.js'
-
+// Line checks for the handler rules a single line can show, read by `lintHandlers.ts`: kept
+// lengths, format extensions and shared regexes.
 export type LintFinding = {
   check: string
   file: string
@@ -57,7 +55,7 @@ const isLengthTest = (line: string): boolean => {
 
 // An allowed length names what it keeps out in a `// length: keeps {what} out` comment in the
 // block above it. Every other length, a regex quantifier included, is a guard the rules drop. A
-// list of the platform's own suffixes, on a value that can hold a dot, names them in `// suffixes:`.
+// list of the platform's own suffixes names them in `// suffixes:`.
 export const lintSource = (
   file: string,
   source: string,
@@ -147,39 +145,4 @@ export const lintDuplicates = (
   })
 
   return repeated.flat()
-}
-
-if (import.meta.main) {
-  const root = `${import.meta.dir}/..`
-  const shared: Array<SharedRegex> = []
-  const sources: Record<string, string> = {}
-
-  for (const [name, value] of Object.entries(utils)) {
-    if (value instanceof RegExp) {
-      shared.push({ name, source: value.source })
-    }
-  }
-
-  for (const directory of ['src/feeds/platforms', 'src/favicons/platforms']) {
-    for await (const path of new Bun.Glob('*.ts').scan(`${root}/${directory}`)) {
-      if (path.endsWith('.test.ts') || path === 'invariant.ts') {
-        continue
-      }
-
-      sources[`${directory}/${path}`] = await Bun.file(`${root}/${directory}/${path}`).text()
-    }
-  }
-
-  const findings = [
-    ...Object.entries(sources).flatMap(([file, source]) => lintSource(file, source, shared)),
-    ...lintDuplicates(sources, shared),
-  ]
-
-  for (const finding of findings) {
-    console.error(`${finding.check}\t${finding.file}:${finding.line}\t${finding.text}`)
-  }
-
-  if (findings.length > 0) {
-    process.exit(1)
-  }
 }
