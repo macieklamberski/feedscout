@@ -155,8 +155,10 @@ describe('parseWordpressUrl', () => {
     expect(parseWordpressUrl(value)).toBeUndefined()
   })
 
-  it('should return undefined for a staging copy', () => {
-    expect(parseWordpressUrl('https://staging-1234-example.wpcomstaging.com/')).toBeUndefined()
+  it('should return the home page for a staging copy', () => {
+    const expected: WordpressUrl = { kind: 'home' }
+
+    expect(parseWordpressUrl('https://staging-1234-example.wpcomstaging.com/')).toEqual(expected)
   })
 
   const homePaths = [

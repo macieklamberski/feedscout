@@ -113,10 +113,7 @@ export const parseWordpressPage = (url: string): WordpressUrl => {
 }
 
 export const parseWordpressUrl = (url: string): WordpressUrl | undefined => {
-  const subdomain = getTenantSubdomain(url, domains)
-
-  // A staging- subdomain is a WordPress.com staging copy of another site.
-  if (!subdomain || subdomain.startsWith('staging-')) {
+  if (!getTenantSubdomain(url, domains)) {
     return
   }
 

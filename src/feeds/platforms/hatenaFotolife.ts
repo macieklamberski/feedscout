@@ -83,20 +83,11 @@ export const hatenaFotolifeHandler: PlatformHandler = {
     return parseHatenaFotolifeUrl(url) !== undefined
   },
 
-  resolve: (url, content) => {
-    let parsed = parseHatenaFotolifeUrl(url)
+  resolve: (url) => {
+    const parsed = parseHatenaFotolifeUrl(url)
 
     if (!parsed) {
       return []
-    }
-
-    // A tag or camera model exists only through its photos, and Hatena serves an empty feed under
-    // any made-up folder, tag or model name. Its page then lists no photo, and the page still
-    // belongs to the user.
-    const isListing = parsed.kind === 'folder' || parsed.kind === 'tag' || parsed.kind === 'model'
-
-    if (isListing && content !== undefined && !content.includes('class="foto_thumb"')) {
-      parsed = { kind: 'user', username: parsed.username }
     }
 
     const { origin } = new URL(url)

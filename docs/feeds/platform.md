@@ -562,8 +562,6 @@ Discovers RSS feeds for Hatena Fotolife users, folders, tags, camera models and 
 | `f.hatena.ne.jp/{user}/favorite` | Stars |
 | `f.hatena.ne.jp/{user}/starfriends` | Star Friends |
 
-> A folder, tag or camera model page that lists no photo falls back to the user's photos feed, since Hatena serves an empty feed under any made-up name.
-
 ### Hatena Blog
 
 Discovers RSS and Atom feeds for Hatena Blog on `*.hatenablog.com`, `*.hatenablog.jp`, and `*.hateblo.jp`.
@@ -3226,7 +3224,7 @@ Discovers the feeds of an academic journal on OpenEdition Journals at `journals.
 
 ### Jinbo blog
 
-Discovers the feeds of a blog on Jinbonet's blog host, `blog.jinbo.net/{user}`. The blog name keeps the case its own pages link the feeds in, and a tag or category page that found no posts gets only the blog's feeds.
+Discovers the feeds of a blog on Jinbonet's blog host, `blog.jinbo.net/{user}`. The blog name keeps the case its own pages link the feeds in.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
