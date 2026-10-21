@@ -38,6 +38,10 @@ describe('parseFc2Url', () => {
     expect(parseFc2Url('http://www.someone.blog.2nt.com/')).toBeUndefined()
   })
 
+  it('should return undefined for the www host of a blog host', () => {
+    expect(parseFc2Url('https://www.blog.fc2.com/')).toBeUndefined()
+  })
+
   it('should return undefined for the blog farm host itself', () => {
     expect(parseFc2Url('https://blog.fc2.com/')).toBeUndefined()
   })

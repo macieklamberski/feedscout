@@ -1,7 +1,13 @@
-import { composeQuery, isSubdomainOf } from 'trousse'
+import { composeQuery } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, getMetaContent, hasMarker, hasMetaContent } from '../../common/utils.js'
+import {
+  composeHint,
+  getMetaContent,
+  getTenantSubdomain,
+  hasMarker,
+  hasMetaContent,
+} from '../../common/utils.js'
 
 // Discoverability: Not discoverable without handler.
 // Handler needed for: all shapes.
@@ -17,7 +23,7 @@ const trailingSlashRegex = /\/$/
 const confluencePathRegex = /^\/wiki(?:\/|$)/i
 
 const isCloudHost = (url: string): boolean => {
-  return isSubdomainOf(url, domains)
+  return getTenantSubdomain(url, domains) !== undefined
 }
 
 const isJiraPath = (pathname: string): boolean => {
