@@ -2105,6 +2105,7 @@ Discovers the feed of a Sveriges Radio program.
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | `sverigesradio.se/{program}` | Program (RSS) |
+| `sverigesradio.se/poddar/{program}` | Program (RSS) |
 | `sverigesradio.se/...?programid={id}` | Program<sup>†</sup> (Atom) |
 
 <sup>†</sup> *Found only by the Platform method.*
