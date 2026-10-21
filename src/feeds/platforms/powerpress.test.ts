@@ -1,5 +1,10 @@
 import { describe, expect, it } from 'bun:test'
-import { isPowerpressHtml, powerpressHandler } from './powerpress.js'
+import {
+  getPowerpressPage,
+  isPowerpressHtml,
+  type PowerpressPage,
+  powerpressHandler,
+} from './powerpress.js'
 
 const powerpressHtml = '<script>function powerpress_pinw(url){window.open(url)}</script>'
 const otherHtml = '<script>function playerInit(url){}</script>'
@@ -15,6 +20,46 @@ describe('isPowerpressHtml', () => {
 
   it('should return false for empty content', () => {
     expect(isPowerpressHtml('')).toBe(false)
+  })
+})
+
+describe('getPowerpressPage', () => {
+  const blogPinwHtml = `<a onclick="return powerpress_pinw('https://example.com/blog/?powerpress_pinw=123-podcast');">Play in new window</a>`
+
+  it('should return the home url the play-in-new-window link names', () => {
+    const value = 'https://example.com/blog/2024/01/episode-1/'
+    const expected: PowerpressPage = { kind: 'site', homeUrl: 'https://example.com/blog' }
+
+    expect(getPowerpressPage(value, blogPinwHtml)).toEqual(expected)
+  })
+
+  it('should return the origin without content', () => {
+    const value = 'https://example.com/blog/2024/01/episode-1/'
+    const expected: PowerpressPage = { kind: 'site', homeUrl: 'https://example.com' }
+
+    expect(getPowerpressPage(value, undefined)).toEqual(expected)
+  })
+
+  it('should return the origin for a link on another host', () => {
+    const value = 'https://example.org/blog/2024/01/episode-1/'
+    const expected: PowerpressPage = { kind: 'site', homeUrl: 'https://example.org' }
+
+    expect(getPowerpressPage(value, blogPinwHtml)).toEqual(expected)
+  })
+
+  it('should return the origin for a link whose root does not hold the page', () => {
+    const value = 'https://example.com/blogger/2024/01/episode-1/'
+    const expected: PowerpressPage = { kind: 'site', homeUrl: 'https://example.com' }
+
+    expect(getPowerpressPage(value, blogPinwHtml)).toEqual(expected)
+  })
+
+  it('should drop the trailing slash of a home url at the root', () => {
+    const value = 'https://example.com/2024/01/episode-1/'
+    const content = `<a onclick="return powerpress_pinw('https://example.com/?powerpress_pinw=123-podcast');">Play in new window</a>`
+    const expected: PowerpressPage = { kind: 'site', homeUrl: 'https://example.com' }
+
+    expect(getPowerpressPage(value, content)).toEqual(expected)
   })
 })
 

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'bun:test'
 import type { DiscoverUriEntry } from '../../common/types.js'
-import { isPubliiHtml, publiiHandler } from './publii.js'
+import { getPubliiPage, isPubliiHtml, type PubliiPage, publiiHandler } from './publii.js'
 
 const publiiHtml = '<meta name="generator" content="Publii Open-Source CMS for Static Site">'
 const otherHtml = '<meta name="generator" content="Hugo 0.120">'
@@ -22,6 +22,52 @@ describe('isPubliiHtml', () => {
 
   it('should return false for empty content', () => {
     expect(isPubliiHtml('')).toBe(false)
+  })
+})
+
+describe('getPubliiPage', () => {
+  const mediaHtml = '<img src="https://example.com/blog/media/posts/12/cover.jpg">'
+  const cdnMediaHtml = '<img src="https://cdn.example.org/media/posts/12/cover.jpg">'
+
+  it('should return the site root a media link names', () => {
+    const value = 'https://example.com/blog/first-post.html'
+    const expected: PubliiPage = { kind: 'site', siteUrl: 'https://example.com/blog' }
+
+    expect(getPubliiPage(value, mediaHtml)).toEqual(expected)
+  })
+
+  it('should return the origin for a page with the generator meta alone', () => {
+    const value = 'https://example.com/blog/first-post.html'
+    const expected: PubliiPage = { kind: 'site', siteUrl: 'https://example.com' }
+
+    expect(getPubliiPage(value, publiiHtml)).toEqual(expected)
+  })
+
+  it('should return undefined without content', () => {
+    expect(getPubliiPage('https://example.com/blog/first-post.html', undefined)).toBeUndefined()
+  })
+
+  it('should return undefined for a media link on another host without the generator meta', () => {
+    expect(getPubliiPage('https://example.com/first-post.html', cdnMediaHtml)).toBeUndefined()
+  })
+
+  it('should return the origin for a media link on another host with the generator meta', () => {
+    const value = 'https://example.com/first-post.html'
+    const expected: PubliiPage = { kind: 'site', siteUrl: 'https://example.com' }
+
+    expect(getPubliiPage(value, `${publiiHtml}${cdnMediaHtml}`)).toEqual(expected)
+  })
+
+  it('should return the site root a media link names on the www host', () => {
+    const value = 'https://example.com/blog/first-post.html'
+    const content = '<img src="https://www.example.com/blog/media/website/logo.png">'
+    const expected: PubliiPage = { kind: 'site', siteUrl: 'https://www.example.com/blog' }
+
+    expect(getPubliiPage(value, content)).toEqual(expected)
+  })
+
+  it('should return undefined for a media link whose root does not hold the page', () => {
+    expect(getPubliiPage('https://example.com/other/first-post.html', mediaHtml)).toBeUndefined()
   })
 })
 

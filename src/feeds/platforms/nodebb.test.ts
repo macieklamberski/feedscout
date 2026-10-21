@@ -1,5 +1,12 @@
 import { describe, expect, it } from 'bun:test'
-import { isNodebbHeaders, type NodebbUrl, nodebbHandler, parseNodebbUrl } from './nodebb.js'
+import {
+  getNodebbPage,
+  isNodebbHeaders,
+  type NodebbPage,
+  type NodebbUrl,
+  nodebbHandler,
+  parseNodebbUrl,
+} from './nodebb.js'
 
 const nodebbHeaders = new Headers({ 'x-powered-by': 'NodeBB' })
 
@@ -69,6 +76,41 @@ describe('parseNodebbUrl', () => {
 
   it('should return undefined for an unparsable URL', () => {
     expect(parseNodebbUrl('not-a-url')).toBeUndefined()
+  })
+})
+
+describe('getNodebbPage', () => {
+  it('should return the site url under the relative path the config prints', () => {
+    const value = 'https://example.com/forum/category/5/general'
+    const content =
+      '<script>var config = {"relative_path":"/forum","upload_url":"/assets/uploads"}</script>'
+    const expected: NodebbPage = {
+      kind: 'category',
+      categoryId: '5',
+      siteUrl: 'https://example.com/forum',
+    }
+
+    expect(getNodebbPage(value, content)).toEqual(expected)
+  })
+
+  it('should return the site url at the origin without content', () => {
+    const value = 'https://example.com/topic/42/hello-world'
+    const expected: NodebbPage = { kind: 'topic', topicId: '42', siteUrl: 'https://example.com' }
+
+    expect(getNodebbPage(value, undefined)).toEqual(expected)
+  })
+
+  it('should return undefined for an unparsable URL', () => {
+    expect(getNodebbPage('not-a-url', undefined)).toBeUndefined()
+  })
+
+  it('should return the site url at the origin for an empty relative path', () => {
+    const value = 'https://example.com/'
+    const content =
+      '<script>var config = {"relative_path":"","upload_url":"/assets/uploads"}</script>'
+    const expected: NodebbPage = { kind: 'forum', siteUrl: 'https://example.com' }
+
+    expect(getNodebbPage(value, content)).toEqual(expected)
   })
 })
 

@@ -1,5 +1,12 @@
 import { describe, expect, it } from 'bun:test'
-import { isXenforoHtml, parseXenforoUrl, type XenforoUrl, xenforoHandler } from './xenforo.js'
+import {
+  getXenforoPage,
+  isXenforoHtml,
+  parseXenforoUrl,
+  type XenforoPage,
+  type XenforoUrl,
+  xenforoHandler,
+} from './xenforo.js'
 
 const xenforoHtml = '<html id="XF" lang="en-US" data-xf="2.3" data-app="public">'
 const legacyHtml = '<html id="XenForo" lang="en-US">'
@@ -70,6 +77,45 @@ describe('parseXenforoUrl', () => {
 
   it('should return undefined for an unparsable URL', () => {
     expect(parseXenforoUrl('not-a-url')).toBeUndefined()
+  })
+})
+
+describe('getXenforoPage', () => {
+  const configHtml = `<script>XF.config = { basePath: '/community/', url: { fullBase: '' } }</script>`
+
+  it('should return the forum from the url', () => {
+    const value = 'https://example.com/community/forums/news.12/'
+    const expected: XenforoPage = {
+      kind: 'forum',
+      basePath: '/community',
+      route: 'forums',
+      forumPath: 'news.12',
+    }
+
+    expect(getXenforoPage(value, configHtml)).toEqual(expected)
+  })
+
+  it('should return the base path the config prints for a board page', () => {
+    const value = 'https://example.com/community/whats-new/'
+    const expected: XenforoPage = { kind: 'board', basePath: '/community' }
+
+    expect(getXenforoPage(value, configHtml)).toEqual(expected)
+  })
+
+  it('should return an empty base path for a board page without content', () => {
+    const expected: XenforoPage = { kind: 'board', basePath: '' }
+
+    expect(getXenforoPage('https://example.com/community/', undefined)).toEqual(expected)
+  })
+
+  it('should return undefined for an unparsable URL', () => {
+    expect(getXenforoPage('not-a-url', configHtml)).toBeUndefined()
+  })
+
+  it('should return an empty base path when the config path does not hold the page', () => {
+    const expected: XenforoPage = { kind: 'board', basePath: '' }
+
+    expect(getXenforoPage('https://example.com/whats-new/', configHtml)).toEqual(expected)
   })
 })
 

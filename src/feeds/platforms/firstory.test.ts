@@ -1,5 +1,35 @@
 import { describe, expect, it } from 'bun:test'
-import { firstoryHandler } from './firstory.js'
+import { type FirstoryPage, firstoryHandler, getFirstoryPage } from './firstory.js'
+
+describe('getFirstoryPage', () => {
+  const content = '<a href="https://feed.firstory.me/rss/user/ckabcdefgh0123456789klmno">RSS</a>'
+
+  it('should return the cuid of a show page', () => {
+    const value = 'https://open.firstory.me/user/example'
+    const expected: FirstoryPage = { kind: 'show', cuid: 'ckabcdefgh0123456789klmno' }
+
+    expect(getFirstoryPage(value, content)).toEqual(expected)
+  })
+
+  it('should return the cuid of a firstory.cc page', () => {
+    const value = 'https://example.firstory.cc/'
+    const expected: FirstoryPage = { kind: 'show', cuid: 'ckabcdefgh0123456789klmno' }
+
+    expect(getFirstoryPage(value, content)).toEqual(expected)
+  })
+
+  it('should return undefined without content', () => {
+    expect(getFirstoryPage('https://open.firstory.me/user/example', undefined)).toBeUndefined()
+  })
+
+  it('should return undefined for another host', () => {
+    expect(getFirstoryPage('https://example.com/user/example', content)).toBeUndefined()
+  })
+
+  it('should return undefined for the bare firstory.cc host', () => {
+    expect(getFirstoryPage('https://firstory.cc/', content)).toBeUndefined()
+  })
+})
 
 describe('firstoryHandler', () => {
   const content =
