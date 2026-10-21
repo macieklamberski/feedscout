@@ -62,6 +62,20 @@ describe('parseGitlabUrl', () => {
     expect(parseGitlabUrl('https://gitlab.com/groups/somegroup')).toEqual(expected)
   })
 
+  it('should return the subgroup for a subgroup page under /groups/', () => {
+    const expected: GitlabUrl = { kind: 'namespace', namespace: 'somegroup/subgroup' }
+
+    expect(parseGitlabUrl('https://gitlab.com/groups/somegroup/subgroup')).toEqual(expected)
+  })
+
+  it('should return the subgroup for a subgroup tab under /groups/', () => {
+    const expected: GitlabUrl = { kind: 'namespace', namespace: 'somegroup/subgroup' }
+
+    expect(parseGitlabUrl('https://gitlab.com/groups/somegroup/subgroup/-/issues')).toEqual(
+      expected,
+    )
+  })
+
   it('should return the namespace for a user page under /users/', () => {
     const expected: GitlabUrl = { kind: 'namespace', namespace: 'someone' }
 
