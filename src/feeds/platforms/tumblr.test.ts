@@ -73,6 +73,10 @@ describe('parseTumblrUrl', () => {
     expect(parseTumblrUrl('https://tumblr.com')).toBeUndefined()
   })
 
+  it('should return undefined for a dotted first segment', () => {
+    expect(parseTumblrUrl('https://www.tumblr.com/robots.txt')).toBeUndefined()
+  })
+
   it('should return undefined for another host', () => {
     expect(parseTumblrUrl('https://example.com')).toBeUndefined()
   })

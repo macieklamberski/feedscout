@@ -20,7 +20,8 @@ export const parseLetterboxdUrl = (url: string): LetterboxdUrl | undefined => {
     return { kind: 'journal' }
   }
 
-  if (!username) {
+  // Letterboxd names carry no dots, so a dotted segment such as robots.txt is a file of the site.
+  if (!username || username.includes('.')) {
     return
   }
 

@@ -16,7 +16,8 @@ export const parseRakutenBlogUrl = (url: string): RakutenBlogUrl | undefined => 
 
   const [username] = getPathSegments(url)
 
-  if (!username) {
+  // Rakuten blog names carry no dots, so a dotted segment such as robots.txt is a file of the site.
+  if (!username || username.includes('.')) {
     return
   }
 

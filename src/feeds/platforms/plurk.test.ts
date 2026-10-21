@@ -32,6 +32,18 @@ describe('parsePlurkUrl', () => {
     expect(parsePlurkUrl('https://www.plurk.com/')).toEqual(expected)
   })
 
+  it('should return a page for a dotted first segment', () => {
+    const expected: PlurkUrl = { kind: 'page' }
+
+    expect(parsePlurkUrl('https://www.plurk.com/robots.txt')).toEqual(expected)
+  })
+
+  it('should return a page for a user feed path', () => {
+    const expected: PlurkUrl = { kind: 'page' }
+
+    expect(parsePlurkUrl('https://www.plurk.com/alice.xml')).toEqual(expected)
+  })
+
   it('should return undefined for another host', () => {
     expect(parsePlurkUrl('https://example.com/alice')).toBeUndefined()
   })

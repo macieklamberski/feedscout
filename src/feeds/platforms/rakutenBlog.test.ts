@@ -30,6 +30,10 @@ describe('parseRakutenBlogUrl', () => {
     expect(parseRakutenBlogUrl('https://api.plaza.rakuten.ne.jp/example/rss/')).toBeUndefined()
   })
 
+  it('should return undefined for a dotted first segment', () => {
+    expect(parseRakutenBlogUrl('https://plaza.rakuten.co.jp/robots.txt')).toBeUndefined()
+  })
+
   it('should return undefined for another host', () => {
     expect(parseRakutenBlogUrl('https://example.com/example/')).toBeUndefined()
   })

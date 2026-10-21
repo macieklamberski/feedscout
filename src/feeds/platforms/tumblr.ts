@@ -19,7 +19,8 @@ export const parseTumblrUrl = (url: string): TumblrUrl | undefined => {
     const [first, second, third] = getPathSegments(url)
     const blog = isAnyOf(first, 'blog') && isAnyOf(second, 'view') ? third : first
 
-    if (!blog) {
+    // Tumblr names carry no dots, so a dotted segment such as robots.txt is a file of the site.
+    if (!blog || blog.includes('.')) {
       return
     }
 

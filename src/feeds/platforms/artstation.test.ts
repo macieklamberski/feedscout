@@ -30,6 +30,10 @@ describe('parseArtstationUrl', () => {
     expect(parseArtstationUrl('https://www.artstation.com/artwork/XnYlQm')).toBeUndefined()
   })
 
+  it('should return undefined for a dotted first segment', () => {
+    expect(parseArtstationUrl('https://www.artstation.com/robots.txt')).toBeUndefined()
+  })
+
   it('should return undefined for another host', () => {
     expect(parseArtstationUrl('https://example.com/artist')).toBeUndefined()
   })
@@ -42,6 +46,7 @@ describe('artstationHandler', () => {
       [true, 'https://artstation.com/user'],
       [true, 'https://artstation.com'],
       [true, 'https://alice.artstation.com'],
+      [false, 'https://a.b.artstation.com'],
       [false, 'https://example.com'],
     ]
 

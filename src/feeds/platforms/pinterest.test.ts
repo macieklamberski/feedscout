@@ -66,6 +66,10 @@ describe('parsePinterestUrl', () => {
     expect(parsePinterestUrl('https://pin.it/abc123')).toBeUndefined()
   })
 
+  it('should return undefined for a dotted first segment', () => {
+    expect(parsePinterestUrl('https://www.pinterest.com/robots.txt')).toBeUndefined()
+  })
+
   it('should return undefined for another host', () => {
     expect(parsePinterestUrl('https://example.com/pinterest')).toBeUndefined()
   })

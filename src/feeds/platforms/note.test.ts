@@ -57,6 +57,10 @@ describe('parseNoteUrl', () => {
     expect(parseNoteUrl('https://note.com/')).toEqual(expected)
   })
 
+  it('should return undefined for a dotted first segment', () => {
+    expect(parseNoteUrl('https://note.com/robots.txt')).toBeUndefined()
+  })
+
   it('should return undefined for another host', () => {
     expect(parseNoteUrl('https://example.com/alice')).toBeUndefined()
   })

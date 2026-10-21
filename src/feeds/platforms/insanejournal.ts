@@ -1,7 +1,7 @@
 import { isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getTenantSubdomain } from '../../common/utils.js'
-import { getJournalFeeds, journalTagRegex } from './livejournal.js'
+import { getJournalFeeds, getJournalName, journalTagRegex } from './livejournal.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic partly covers asylum, blog, tildePath, userPath.
@@ -31,13 +31,13 @@ export const parseInsanejournalUrl = (url: string): InsanejournalUrl | undefined
   const tag = pathname.match(journalTagRegex)?.[1]
 
   if (isHostOf(url, wwwHosts)) {
-    const username = pathname.match(wwwUsersPathRegex)?.[1]
+    const username = getJournalName(pathname, wwwUsersPathRegex)
 
     if (username) {
       return { kind: 'journal', username, tag }
     }
 
-    const asylum = pathname.match(wwwAsylumPathRegex)?.[1]
+    const asylum = getJournalName(pathname, wwwAsylumPathRegex)
 
     if (asylum) {
       return { kind: 'asylum', asylum, tag }
@@ -47,7 +47,7 @@ export const parseInsanejournalUrl = (url: string): InsanejournalUrl | undefined
   }
 
   if (isHostOf(url, asylumHosts)) {
-    const asylum = pathname.match(firstSegmentRegex)?.[1]
+    const asylum = getJournalName(pathname, firstSegmentRegex)
 
     if (!asylum) {
       return
@@ -57,7 +57,7 @@ export const parseInsanejournalUrl = (url: string): InsanejournalUrl | undefined
   }
 
   if (isHostOf(url, feedHosts)) {
-    const feed = pathname.match(firstSegmentRegex)?.[1]
+    const feed = getJournalName(pathname, firstSegmentRegex)
 
     if (!feed) {
       return

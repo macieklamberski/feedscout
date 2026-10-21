@@ -29,7 +29,8 @@ export const parseWriteasUrl = (url: string): WriteasUrl | undefined => {
 
   const [username] = getPathSegments(parsedUrl)
 
-  if (!username) {
+  // WriteFreely names carry no dots, so a dotted segment such as robots.txt is a file of the site.
+  if (!username || username.includes('.')) {
     return
   }
 
