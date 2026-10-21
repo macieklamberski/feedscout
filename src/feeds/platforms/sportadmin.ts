@@ -1,7 +1,7 @@
 import { parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, findElement, getTenantSubdomain } from '../../common/utils.js'
+import { composeHint, digitsRegex, findElement, getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers club (guess), partly covers team, teamNewTemplate.
@@ -14,7 +14,6 @@ const domains = ['web.sportadmin.se']
 const layoutLinkRegex = /^\.\.\/\?SID=(\d+)&platform=(?:app|web)$/i
 // The next game widget, which the classic template prints on the club home page alone.
 const nextGameRegex = /wNextGame\.asp\?SID=(\d+)/i
-const sectionIdRegex = /^\d+$/
 
 const findLayoutSectionId = (content: string | undefined): string | undefined => {
   const link = findElement(content, (element) => {
@@ -32,7 +31,7 @@ const getUrlSectionId = (url: string, content: string | undefined): string | und
     return element.name === 'link' && element.attribs.rel === 'canonical'
   })?.attribs.href
 
-  if (!sectionId || !sectionIdRegex.test(sectionId) || !canonical) {
+  if (!sectionId || !digitsRegex.test(sectionId) || !canonical) {
     return
   }
 

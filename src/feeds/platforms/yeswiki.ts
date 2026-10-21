@@ -2,6 +2,7 @@ import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import {
   composeHint,
+  digitsRegex,
   type Element,
   findElements,
   getCookieNames,
@@ -19,7 +20,6 @@ type BazarListParams = { idtypeannonce?: string | Array<string>; externalModeAct
 const sessionCookieRegex = /^YesWiki-/
 const sessionCookiePathRegex = /(?:^|,)\s*YesWiki-[^=]+=[^,]*?;\s*path=([^;,\s]+)/i
 const formClassRegex = /^id(\d+)$/
-const formIdRegex = /^\d+$/
 const whitespaceRegex = /\s+/
 
 const formElementClasses = ['BAZ_cadre_fiche', 'bazar-entry', 'bazar-list-dynamic-container']
@@ -71,7 +71,7 @@ const getFormIds = (content: string | undefined): Array<string> => {
 
   for (const element of elements) {
     for (const formId of readFormIds(element)) {
-      if (formIdRegex.test(formId) && !formIds.includes(formId)) {
+      if (digitsRegex.test(formId) && !formIds.includes(formId)) {
         formIds.push(formId)
       }
     }

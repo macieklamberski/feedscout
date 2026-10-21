@@ -3,6 +3,7 @@ import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import {
   composeHint,
+  digitsRegex,
   findElement,
   getCookieNames,
   hasClass,
@@ -19,7 +20,6 @@ const forumPathRegex = /\/forum-(\d+)(?:-page-\d+)?\.html$/i
 const threadPathRegex = /\/(?:showthread\.php|thread-\d+(?:-[a-z]+-\d+)?\.html)$/i
 const forumLinkRegex = /(?:^|\/)(?:forumdisplay\.php\?fid=|forum-)(\d+)(?:\.html)?$/i
 const rootPathRegex = /var rootpath = "([^"]+)"/
-const numericRegex = /^\d+$/
 
 // MyBB prepends the board's cookie prefix setting to the name.
 export const isMybbHeaders = (headers: Headers): boolean => {
@@ -68,7 +68,7 @@ const getForumId = (url: string, content: string | undefined): string | undefine
   const { pathname, searchParams } = new URL(url)
   const queryId = searchParams.get('fid')
 
-  if (forumScriptRegex.test(pathname) && queryId && numericRegex.test(queryId)) {
+  if (forumScriptRegex.test(pathname) && queryId && digitsRegex.test(queryId)) {
     return queryId
   }
 

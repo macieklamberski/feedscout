@@ -1,7 +1,7 @@
 import { escapeRegex, getPathSegments, isAnyOf, isHostOf } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
+import { composeHint, digitsRegex } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers profile, related (guess, html), partly covers huffduff.
@@ -14,8 +14,6 @@ export type HuffdufferUrl =
 const hosts = ['huffduffer.com', 'www.huffduffer.com']
 const origin = 'https://huffduffer.com'
 
-const idRegex = /^\d+$/
-
 export const parseHuffdufferUrl = (url: string): HuffdufferUrl | undefined => {
   if (!isHostOf(url, hosts)) {
     return
@@ -27,11 +25,11 @@ export const parseHuffdufferUrl = (url: string): HuffdufferUrl | undefined => {
     return
   }
 
-  if (section && idRegex.test(section) && isAnyOf(subsection, 'related')) {
+  if (section && digitsRegex.test(section) && isAnyOf(subsection, 'related')) {
     return { kind: 'related', username, id: section }
   }
 
-  if (section && idRegex.test(section)) {
+  if (section && digitsRegex.test(section)) {
     return { kind: 'huffduff', username, id: section }
   }
 

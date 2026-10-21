@@ -15,6 +15,8 @@ export type PageMarkers = {
   headers?: (headers: Headers) => boolean
 }
 
+export const digitsRegex = /^\d+$/
+
 export const composeHint = (key: string, format?: DiscoverUriHint['format']): DiscoverUriHint => {
   const label = locales.hints[key as keyof typeof locales.hints]
 

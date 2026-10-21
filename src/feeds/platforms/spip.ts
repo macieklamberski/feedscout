@@ -1,7 +1,7 @@
 import { getAnyOf, parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, findElement, hasMarker } from '../../common/utils.js'
+import { composeHint, digitsRegex, findElement, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers auteur, home, mot, rubrique (html), partly covers article.
@@ -16,7 +16,6 @@ export type SpipPage =
 
 const objectWordRegex = /^([a-z]+)(\d+)$/i
 const objectFileRegex = /^([a-z]+)(\d+)\.html$/i
-const idRegex = /^\d+$/
 const notFoundClassRegex = /\bpage_404\b/
 
 const objects = ['article', 'rubrique', 'mot', 'auteur'] as const
@@ -73,7 +72,7 @@ const getUrlObjectId = (parsedUrl: URL): SpipObjectId | undefined => {
 
   const id = parsedUrl.searchParams.get(`id_${object}`)
 
-  if (!id || !idRegex.test(id)) {
+  if (!id || !digitsRegex.test(id)) {
     return
   }
 
