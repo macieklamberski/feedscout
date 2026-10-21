@@ -8,7 +8,7 @@ import { composeHint } from '../../common/utils.js'
 export type ApplePodcastsUrl = { kind: 'podcast' }
 
 const hosts = ['podcasts.apple.com']
-const podcastRegex = /^(?:\/[a-z]{2})?\/podcast\/(?:[^/]+\/)?id\d+(?:\/|$)/i
+const podcastRegex = /^(?:\/[^/]+)?\/podcast\/(?:[^/]+\/)?id\d+(?:\/|$)/i
 const feedUrlRegex = /"feedUrl"\s*:\s*"([^"]+)"/
 
 // The value is a JSON string, which may write `/` as `\/` and `&` as `\u0026`.

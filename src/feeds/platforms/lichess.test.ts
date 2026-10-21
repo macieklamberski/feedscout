@@ -14,6 +14,12 @@ describe('parseLichessUrl', () => {
     expect(parseLichessUrl('https://lichess.org/fr/blog/community')).toEqual(expected)
   })
 
+  it('should return a language longer than three letters', () => {
+    const expected: LichessUrl = { kind: 'community', language: 'abcd' }
+
+    expect(parseLichessUrl('https://lichess.org/abcd/blog/community')).toEqual(expected)
+  })
+
   it('should return the community blog page without a language', () => {
     const expected: LichessUrl = { kind: 'community' }
 

@@ -14,6 +14,12 @@ describe('parseRssComUrl', () => {
     expect(parseRssComUrl('https://rss.com/es/podcasts/podcasting101')).toEqual(expected)
   })
 
+  it('should return the podcast for a three-letter locale', () => {
+    const expected: RssComUrl = { kind: 'podcast', show: 'podcasting101' }
+
+    expect(parseRssComUrl('https://rss.com/fil/podcasts/podcasting101')).toEqual(expected)
+  })
+
   it('should return undefined for the root', () => {
     expect(parseRssComUrl('https://rss.com/')).toBeUndefined()
   })

@@ -15,7 +15,7 @@ export type LichessUrl =
 const hosts = ['lichess.org']
 
 const userBlogRegex = /^\/@\/([\w-]+)\/blog(?:\/|$)/i
-const communityRegex = /^(?:\/(\w{2,3}))?\/blog\/community\/?$/i
+const communityRegex = /^(?:\/(\w+))?\/blog\/community\/?$/i
 
 export const parseLichessUrl = (url: string): LichessUrl | undefined => {
   if (!isHostOf(url, hosts)) {

@@ -7,8 +7,8 @@ import { composeHint } from '../../common/utils.js'
 export type RssComUrl = { kind: 'podcast'; show: string }
 
 const hosts = ['rss.com', 'www.rss.com']
-// Optional 2-letter locale prefix, e.g. /es/podcasts/, /it/podcasts/.
-const podcastRegex = /^\/(?:[a-z]{2}\/)?podcasts\/([^/]+)/i
+// An optional locale prefix, e.g. /es/podcasts/, /it/podcasts/.
+const podcastRegex = /^\/(?:[a-z]+\/)?podcasts\/([^/]+)/i
 
 export const parseRssComUrl = (url: string): RssComUrl | undefined => {
   const parsedUrl = parseUrl(url)
