@@ -67,6 +67,19 @@ describe('parseObservableUrl', () => {
     expect(parseObservableUrl(value)).toEqual(expected)
   })
 
+  it('should keep the collection as written after a percent-encoded handle', () => {
+    const value = 'https://observablehq.com/%40d3/-/collection/caf%C3%A9'
+    const expected: ObservableUrl = { kind: 'collection', owner: 'd3', collection: 'caf%C3%A9' }
+
+    expect(parseObservableUrl(value)).toEqual(expected)
+  })
+
+  it('should return the user for a handle followed by a malformed escape', () => {
+    const expected: ObservableUrl = { kind: 'user', owner: 'd3' }
+
+    expect(parseObservableUrl('https://observablehq.com/@d3/100%-stacked-bar')).toEqual(expected)
+  })
+
   it('should return undefined for paths without @ prefix', () => {
     expect(parseObservableUrl('https://observablehq.com/about')).toBeUndefined()
   })

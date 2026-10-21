@@ -28,11 +28,8 @@ export const parseObservableUrl = (url: string): ObservableUrl | undefined => {
 
   const { searchParams } = parsedUrl
   // A handle can arrive percent-encoded, `/%40{owner}`.
-  const pathname = decodeSegment(parsedUrl.pathname)
-
-  if (!pathname) {
-    return
-  }
+  const [, first = '', ...rest] = parsedUrl.pathname.split('/')
+  const pathname = ['', decodeSegment(first) ?? first, ...rest].join('/')
 
   const isPublic = publicRegex.test(pathname)
 
