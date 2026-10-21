@@ -15,6 +15,7 @@ export type InsanejournalUrl =
 const domains = ['insanejournal.com']
 const wwwHosts = ['www.insanejournal.com', 'insanejournal.com']
 const asylumHosts = ['asylums.insanejournal.com']
+const asylumOrigin = 'https://asylums.insanejournal.com'
 const feedHosts = ['feeds.insanejournal.com']
 
 const wwwUsersPathRegex = /^\/(?:users\/|~)([^/]+)/i
@@ -87,10 +88,8 @@ export const insanejournalHandler: PlatformHandler = {
 
     const { origin } = new URL(url)
 
+    // An asylum named on www lives on the asylums host.
     if (parsed.kind === 'asylum') {
-      // An asylum named on www lives on the asylums host.
-      const asylumOrigin = isHostOf(url, asylumHosts) ? origin : 'https://asylums.insanejournal.com'
-
       return getJournalFeeds(`${asylumOrigin}/${parsed.asylum}`, parsed.tag, 'insanejournal')
     }
 
