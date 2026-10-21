@@ -6,6 +6,7 @@ import { composeHint, hasMarker } from '../../common/utils.js'
 
 export type InstatusUrl = { kind: 'status'; language?: string }
 
+// length: keeps the /history route out of the language slot
 const languageRegex = /^[a-z]{2}(?:-[a-z]{2})?$/i
 
 const pageMarkers = ['custom-html-above-header', 'custom-html-below-footer']

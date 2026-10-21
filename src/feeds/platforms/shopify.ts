@@ -8,6 +8,7 @@ export type ShopifyUrl = { kind: 'blog'; handle: string; locale?: string }
 
 const shopifyRegex = /shopify/i
 // A market's locale folder, as in `/en-us/blogs/news`.
+// length: keeps the blogs route word out
 const localeRegex = /^[a-z]{2}(?:-[a-z]{2})?$/i
 
 export const isShopifyHeaders = (headers: Headers): boolean => {

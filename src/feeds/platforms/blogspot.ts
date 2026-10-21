@@ -10,8 +10,8 @@ export type BlogspotUrl = { kind: 'label'; label: string } | { kind: 'post' } | 
 
 // Matches {blog}.blogspot.com and country domains like .co.uk, .com.br and .de. The certificate
 // covers one label, and www is Blogger's own host.
-const blogspotDomainRegex =
-  /^(?!www\.)[^.]+\.blogspot\.(?:com|co\.[a-z]{2}|com\.[a-z]{2}|[a-z]{2})$/
+// length: keeps any suffix but a two-letter country code out
+const blogspotDomainRegex = /^(?!www\.)[^.]+\.blogspot\.(?:com|(?:com?\.)?[a-z]{2})$/
 const labelRegex = /^\/search\/label\/([^/]+)/i
 const postRegex = /^\/\d{4}\/\d{2}\/[^/]+\.html$/i
 const postCommentsFeedRegex = /\/feeds\/(\d+)\/comments\/default/i

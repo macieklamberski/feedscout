@@ -9,6 +9,7 @@ export type RedcirclePage = { showUuid: string }
 const hosts = ['redcircle.com', 'www.redcircle.com']
 
 const showRegex = /^\/shows\/([^/]+)(?:\/|$)/i
+// length: keeps a show slug out, since only the uuid builds feeds.redcircle.com/{uuid}
 const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 
 const getUuidFromPath = (pathname: string): string | undefined => {

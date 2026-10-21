@@ -19,6 +19,7 @@ export const parseAcomicsUrl = (url: string): AcomicsUrl | undefined => {
 
   const [first] = getPathSegments(url)
 
+  // length: keeps a bare ~ or - with no name after it out
   if (!first || first.length < 2) {
     return
   }
