@@ -1,6 +1,6 @@
 import { isHostOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
+import { composeHint, uuidRegex } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -8,8 +8,6 @@ export type Art19Url = { kind: 'show'; slug: string }
 
 const hosts = ['art19.com', 'www.art19.com']
 const showPathRegex = /^\/shows\/([^/]+)/i
-// length: keeps a show uuid out
-const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 
 export const parseArt19Url = (url: string): Art19Url | undefined => {
   if (!isHostOf(url, hosts)) {
