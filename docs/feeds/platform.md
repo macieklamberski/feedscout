@@ -75,18 +75,23 @@ Discovers Atom feeds for channels and playlists. Generates ten feed variants for
 
 ### Reddit
 
-Discovers Atom feeds for subreddits, users, multireddits, and domains.
+Discovers Atom feeds for subreddits, users, multireddits, wikis, searches, and domains.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | `reddit.com` | Homepage<sup>†</sup> |
+| `reddit.com/{sort}` | Sorted posts (hot/new/rising/controversial/top/best) |
 | `reddit.com/search?q={query}` | Search results<sup>†</sup> |
 | `reddit.com/subreddits` | Subreddits |
+| `reddit.com/subreddits/{new\|popular}` | Sorted subreddits |
 | `reddit.com/r/{subreddit}` | Subreddit posts · comments<sup>†</sup> |
-| `reddit.com/r/{subreddit}/{sort}` | Sorted posts<sup>†</sup> (hot/new/rising/top) · comments<sup>†</sup> |
+| `reddit.com/r/{subreddit}/{sort}` | Sorted posts<sup>†</sup> (hot/new/rising/controversial/top/best) · comments<sup>†</sup> |
+| `reddit.com/r/{subreddit}/search?q={query}` | Subreddit search results |
+| `reddit.com/r/{subreddit}/wiki` | Wiki |
 | `reddit.com/r/{subreddit}/comments/{id}` | Post comments<sup>†</sup> |
 | `reddit.com/u/{username}` | User activity<sup>†</sup> |
 | `reddit.com/user/{username}/submitted` | Submitted posts<sup>†</sup>, plus the feeds above |
+| `reddit.com/user/{username}/comments` | User comments |
 | `reddit.com/user/{username}/m/{multireddit}` | Multireddit<sup>†</sup> |
 | `reddit.com/domain/{domain}` | Domain submissions |
 
@@ -147,7 +152,7 @@ Discovers feeds for WP Engine-hosted WordPress sites. Uses the same feed structu
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | `*.wpenginepowered.com` | Posts (RSS + Atom<sup>†</sup> + RDF<sup>†</sup>) · comments (RSS + Atom<sup>†</sup>) |
-| `*.wpengine.com` | Same as WordPress.com (legacy domain) |
+| `*.wpengine.com` | Posts (RSS + Atom + RDF<sup>†</sup>) · comments (RSS<sup>†</sup> + Atom<sup>†</sup>) |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -206,6 +211,7 @@ Discovers RSS feeds for Goodreads user activity and bookshelves.
 |-------------|-----------------|
 | `goodreads.com/user/show/{id}` | User updates · reviews |
 | `goodreads.com/review/list/{id}` | Reviews<sup>†</sup> · user updates<sup>†</sup> |
+| `goodreads.com/review/list/{id}?shelf={shelf}` | Shelf<sup>†</sup> · reviews<sup>†</sup> · user updates<sup>†</sup> |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -216,6 +222,7 @@ Discovers Atom feeds for users, organizations, and repositories.
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | `github.com/{user}` or `github.com/{user}.png` | User activity<sup>†</sup> |
+| `github.com/orgs/{org}` | Organization activity |
 | `github.com/orgs/{org}/discussions` | Organization discussions<sup>†</sup> |
 | `github.com/orgs/{org}/discussions/categories/{category}` | Discussion category<sup>†</sup>, plus the feeds above |
 | `github.com/{owner}/{repo}` | Releases<sup>†</sup> · commits<sup>†</sup> · tags<sup>†</sup> |
@@ -306,23 +313,25 @@ Discovers RSS feeds for Pinboard users, user tags, and the popular and recent li
 
 ### Pinterest
 
-Discovers RSS feeds for Pinterest user profiles.
+Discovers RSS feeds for Pinterest user profiles and boards.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | `pinterest.com/{username}` | User pins<sup>†</sup> |
+| `pinterest.com/{username}/{board}` | Board pins |
 
 <sup>†</sup> *Found only by the Platform method.*
 
 ### Dailymotion
 
-Discovers RSS feeds for Dailymotion users, playlists, channels, and the global trending feed.
+Discovers RSS feeds for Dailymotion users, playlists, channels, searches, and the global trending feed.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | `dailymotion.com/{username}` or `dailymotion.com/user/{username}` | User videos<sup>†</sup> |
 | `dailymotion.com/playlist/{id}` | Playlist<sup>†</sup> |
 | `dailymotion.com/channel/{name}` | Channel<sup>†</sup> |
+| `dailymotion.com/search/{query}` | Search |
 | `dailymotion.com` or `dailymotion.com/trending` | Trending<sup>†</sup> |
 
 <sup>†</sup> *Found only by the Platform method.*
@@ -377,6 +386,7 @@ Discovers RSS feeds for Tumblr blogs and tagged posts.
 | `*.tumblr.com` | Blog posts |
 | `*.tumblr.com/tagged/{tag}` | Tagged posts<sup>†</sup> |
 | `www.tumblr.com/{blog}` | Blog posts |
+| `www.tumblr.com/blog/view/{blog}` | Blog posts |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -506,11 +516,12 @@ Discovers Atom feeds for Stack Overflow, Server Fault, Super User, Ask Ubuntu, M
 
 ### Hashnode
 
-Discovers RSS feeds for Hashnode blogs on `*.hashnode.dev`.
+Discovers RSS feeds for Hashnode blogs on `*.hashnode.dev` and `*.hashnode.com`.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | `*.hashnode.dev` | Blog |
+| `*.hashnode.com` | Blog |
 
 ### Paragraph
 
@@ -547,7 +558,7 @@ Discovers RSS feeds for Hatena Bookmark listings, searches, sites and user bookm
 
 <sup>†</sup> *Found only by the Platform method.*
 
-> Categories are `it`, `general`, `social`, `economics`, `life`, `knowledge`, `fun`, `entertainment` and `game`. Search feeds keep the `target`, `sort`, `users`, `date_range` and `safe` filters already on the URL, site feeds keep any filters, and both add `mode=rss`. The old `/search/` URLs redirect to `/q/{query}`, so their feeds use that path too.
+> Categories are `all`, `it`, `general`, `social`, `economics`, `life`, `knowledge`, `fun`, `entertainment` and `game`. Search feeds keep the `target`, `sort`, `users`, `date_range` and `safe` filters already on the URL, site feeds keep only `sort`, and both add `mode=rss`. The old `/search/` URLs redirect to `/q/{query}`, so their feeds use that path too.
 
 ### Hatena Fotolife
 
@@ -566,13 +577,16 @@ Discovers RSS feeds for Hatena Fotolife users, folders, tags, camera models and 
 
 ### Hatena Blog
 
-Discovers RSS and Atom feeds for Hatena Blog on `*.hatenablog.com`, `*.hatenablog.jp`, and `*.hateblo.jp`.
+Discovers RSS and Atom feeds for Hatena Blog on `*.hatenablog.com`, `*.hatenablog.jp`, `*.hateblo.jp`, `*.hatenadiary.com`, `*.hatenadiary.jp`, and `*.hatenadiary.org`.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | `*.hatenablog.com` | Posts (RSS + Atom) |
 | `*.hatenablog.jp` | Posts (RSS + Atom) |
 | `*.hateblo.jp` | Posts (RSS + Atom) |
+| `*.hatenadiary.com` | Posts (RSS + Atom) |
+| `*.hatenadiary.jp` | Posts (RSS + Atom) |
+| `*.hatenadiary.org` | Posts (RSS + Atom) |
 | `*/archive/category/{category}` | Category (RSS + Atom) · posts |
 | `*/archive/author/{author}` | Author (RSS + Atom) · posts |
 
@@ -659,6 +673,7 @@ Discovers Atom feeds for Prose.sh blogs.
 |-------------|-----------------|
 | `prose.sh` | Discovery |
 | `*.prose.sh` | Blog |
+| `*.prose.sh/?tag={tag}` | Tag |
 
 ### Pagecord
 
@@ -782,8 +797,8 @@ Discovers RSS feeds for Nebula channels, the global video feed, and category fee
 |-------------|-----------------|
 | `nebula.tv/{channel}` | Videos · Videos (Plus) |
 | `nebula.tv` | All videos · All videos (Plus) · Nebula Originals · recently added channels |
-| `nebula.tv/videos` | All videos · All videos (Plus) · Nebula Originals · recently added channels |
-| `nebula.tv/videos?category={slug}` | Category · Category (Plus), plus the feeds above |
+| `nebula.tv/videos` or `nebula.tv/explore` | All videos · All videos (Plus) · Nebula Originals · recently added channels |
+| `nebula.tv/videos?category={slug}` or `nebula.tv/explore/videos?category={slug}` | Category · Category (Plus), plus the feeds above |
 
 ### note.com
 
@@ -846,8 +861,6 @@ Discovers RSS feeds for Acast-hosted podcasts.
 | `shows.acast.com/{slug}` | Podcast (RSS) |
 | `play.acast.com/s/{slug}` | Podcast (RSS) |
 | `embed.acast.com/{slug}` | Podcast<sup>†</sup> (RSS) |
-
-<sup>†</sup> *Found only by the Platform method.*
 
 ### Ameba Blog
 
@@ -1042,8 +1055,14 @@ Discovers RSS and Atom feeds for InsaneJournal journals.
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | `*.insanejournal.com` | Posts (RSS + Atom) · userpics<sup>†</sup> (Atom) |
+| `insanejournal.com/users/{user}` or `insanejournal.com/~{user}` | Posts (RSS + Atom) · userpics<sup>†</sup> (Atom) |
+| `asylums.insanejournal.com/{asylum}`, `insanejournal.com/asylum/{asylum}` or `insanejournal.com/community/{asylum}` | Posts (RSS + Atom) · userpics<sup>†</sup> (Atom) |
+| `feeds.insanejournal.com/{feed}` | Posts<sup>†</sup> (RSS + Atom) · userpics<sup>?</sup> (Atom) |
+| `*.insanejournal.com/tag/{tag}` | Tag (RSS + Atom) · posts (RSS + Atom) · userpics (Atom) |
 
 <sup>†</sup> *Found only by the Platform method.*
+
+<sup>?</sup> *Not measured, the feed failed to load during the run.*
 
 ### JUGEM
 
@@ -1099,6 +1118,8 @@ Discovers RSS and Atom feeds for LiveJournal blogs.
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | `*.livejournal.com` | Posts (RSS + Atom) · userpics<sup>†</sup> (Atom) |
+| `www.livejournal.com/users/{user}`, `www.livejournal.com/~{user}`, `users.livejournal.com/{user}` or `community.livejournal.com/{user}` | Posts (RSS + Atom) · userpics<sup>†</sup> (Atom) |
+| `*.livejournal.com/tag/{tag}` | Tag (RSS + Atom<sup>†</sup>) · posts (RSS + Atom) · userpics<sup>†</sup> (Atom) |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -1243,6 +1264,9 @@ Discovers Atom feeds for Posthaven blogs.
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | `*.posthaven.com` | Posts (Atom) |
+| `*.posthaven.com/tag/{tag}` | Tag<sup>†</sup> (Atom) · posts (Atom) |
+
+<sup>†</sup> *Found only by the Platform method.*
 
 ### Qiita
 
@@ -1363,12 +1387,14 @@ Discovers RSS feeds for Spreaker-hosted podcasts.
 
 ### Tildes
 
-Discovers RSS and Atom feeds for Tildes homepage and groups.
+Discovers RSS and Atom feeds for Tildes homepage and groups, filtered by tag when the page names one.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | `tildes.net` | Topics (RSS + Atom) |
 | `tildes.net/~{group}` | Group (RSS + Atom) |
+| `tildes.net/?tag={tag}` | Tagged topics (RSS + Atom) |
+| `tildes.net/~{group}?tag={tag}` | Tagged group topics (RSS + Atom) |
 
 ### Viabloga
 
@@ -1576,6 +1602,7 @@ Discovers the RSS feeds of a HubSpot blog. Detected by the `HubSpot` generator m
 |-------------|-----------------|
 | `{site}/{blog-path}` | Blog (RSS) |
 | `{site}/{blog-path}/author/{slug}` | Author<sup>†</sup> · blog (RSS) |
+| `{site}/{blog-path}/tag/{slug}` | Tag · blog (RSS) |
 | `{site}/{blog-path}/topic/{slug}` | Tag<sup>†</sup> · blog (RSS) |
 
 <sup>†</sup> *Found only by the Platform method.*
@@ -1634,7 +1661,7 @@ Discovers the feed forms of a Joomla list view. Detected by the `Joomla!` genera
 
 ### WriteFreely
 
-Discovers the feeds of a WriteFreely blog. Detected by the `WriteFreely` generator meta tag or the `/css/write.css` stylesheet.
+Discovers the feeds of a WriteFreely blog. Detected by the `WriteFreely` or `Write.as` generator meta tag or the `/css/write.css` stylesheet.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
@@ -1705,6 +1732,7 @@ Discovers the feeds of a Discuz! board. Detected by the `Discuz!` generator meta
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | `{board}/forum-{fid}-1.html` | Board · site<sup>†</sup> (RSS) |
+| `{board}/forum.php?mod=forumdisplay&fid={fid}` | Board · site (RSS) |
 | `{board}/forumdisplay.php?fid={fid}` on Discuz! 7 and older | Board · site<sup>†</sup> (RSS) from `rss.php` |
 | `{board}/archiver/?fid-{fid}.html` or `{board}/archiver/fid-{fid}.html` | Board<sup>†</sup> · site<sup>†</sup> (RSS), from `rss.php` on Discuz! 7 and older |
 | Any other page | Site (RSS) |
