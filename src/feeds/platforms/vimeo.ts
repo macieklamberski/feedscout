@@ -3,7 +3,7 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic covers channel, group, user, userVideos (guess, html), partly covers likes.
+// Generic covers channel, group, likes, user, userVideos (guess, html).
 // Handler needed for: album.
 
 export type VimeoUrl =
