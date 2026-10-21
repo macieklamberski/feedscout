@@ -91,7 +91,7 @@ Discovers Atom feeds for subreddits, users, multireddits, wikis, searches, and d
 | `reddit.com/r/{subreddit}/comments/{id}` | Post comments<sup>†</sup> |
 | `reddit.com/u/{username}` | User activity<sup>†</sup> |
 | `reddit.com/user/{username}/submitted` | Submitted posts<sup>†</sup>, plus the feeds above |
-| `reddit.com/user/{username}/comments` | User comments |
+| `reddit.com/user/{username}/comments` | User comments · user activity |
 | `reddit.com/user/{username}/m/{multireddit}` | Multireddit<sup>†</sup> |
 | `reddit.com/domain/{domain}` | Domain submissions |
 
@@ -863,6 +863,8 @@ Discovers RSS feeds for Acast-hosted podcasts.
 | `shows.acast.com/{slug}` | Podcast (RSS) |
 | `play.acast.com/s/{slug}` | Podcast (RSS) |
 | `embed.acast.com/{slug}` | Podcast<sup>†</sup> (RSS) |
+
+<sup>†</sup> *Found only by the Platform method.*
 
 ### Ameba Blog
 
