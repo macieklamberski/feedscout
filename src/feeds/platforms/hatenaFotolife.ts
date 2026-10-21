@@ -1,6 +1,6 @@
 import { decodeSegment, getPathSegments, isAnyOf, isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
+import { composeHint, letterThenWordOrHyphenRegex } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -13,9 +13,6 @@ export type HatenaFotolifeUrl =
   | { kind: 'starfriends'; username: string }
 
 const hosts = ['f.hatena.ne.jp']
-
-// A Hatena ID starts with a letter. Old IDs such as `kumapu-` end in a hyphen.
-const usernameRegex = /^[a-zA-Z][\w-]*$/
 
 // A photo id is the 14-digit time it was uploaded.
 const photoIdRegex = /^\d{14}$/
@@ -37,7 +34,8 @@ export const parseHatenaFotolifeUrl = (url: string): HatenaFotolifeUrl | undefin
 
   const [username, section, value] = getPathSegments(parsedUrl)
 
-  if (!username || !usernameRegex.test(username)) {
+  // A Hatena ID starts with a letter. Old IDs such as `kumapu-` end in a hyphen.
+  if (!username || !letterThenWordOrHyphenRegex.test(username)) {
     return
   }
 

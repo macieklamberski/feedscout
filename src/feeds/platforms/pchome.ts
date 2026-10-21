@@ -1,7 +1,7 @@
 import { getPathSegments, isAnyOf, isHostOf } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, digitsRegex } from '../../common/utils.js'
+import { composeHint, digitsRegex, wordRegex } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers paper (html), partly covers category.
@@ -13,8 +13,6 @@ export type PchomeUrl =
 const hosts = ['mypaper.pchome.com.tw', 'mypaper.m.pchome.com.tw']
 const baseUrl = 'https://mypaper.pchome.com.tw'
 
-const usernameRegex = /^\w+$/
-
 export const parsePchomeUrl = (url: string): PchomeUrl | undefined => {
   if (!isHostOf(url, hosts)) {
     return
@@ -23,7 +21,7 @@ export const parsePchomeUrl = (url: string): PchomeUrl | undefined => {
   const [username, section, category] = getPathSegments(url)
 
   // A segment like oops.htm or favicon.ico is a file at the root, not a paper.
-  if (!username || !usernameRegex.test(username)) {
+  if (!username || !wordRegex.test(username)) {
     return
   }
 

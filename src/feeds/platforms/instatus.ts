@@ -1,12 +1,10 @@
 import { getPathSegments, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, hasMarker } from '../../common/utils.js'
+import { composeHint, hasMarker, localeRegex } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
 export type InstatusUrl = { kind: 'status'; language?: string }
-
-const languageRegex = /^[a-z]{2}(?:-[a-z]{2})?$/i
 
 const pageMarkers = ['custom-html-above-header', 'custom-html-below-footer']
 
@@ -28,7 +26,7 @@ export const parseInstatusUrl = (url: string): InstatusUrl | undefined => {
 
   const [language] = getPathSegments(parsedUrl)
 
-  if (language && languageRegex.test(language)) {
+  if (language && localeRegex.test(language)) {
     return { kind: 'status', language }
   }
 
