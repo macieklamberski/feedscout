@@ -19,10 +19,19 @@ describe('parseDiscourseUrl', () => {
     expect(parseDiscourseUrl('https://forum.example.com/t/some-topic/123')).toEqual(expected)
   })
 
-  it('should return the topic for a topic feed URL', () => {
+  it('should return the topic for each format the topic answers in', () => {
     const expected: DiscourseUrl = { kind: 'topic', slug: 'some-topic', topicId: '123' }
 
+    expect(parseDiscourseUrl('https://forum.example.com/t/some-topic/123.html')).toEqual(expected)
+    expect(parseDiscourseUrl('https://forum.example.com/t/some-topic/123.json')).toEqual(expected)
+    expect(parseDiscourseUrl('https://forum.example.com/t/some-topic/123.md')).toEqual(expected)
     expect(parseDiscourseUrl('https://forum.example.com/t/some-topic/123.rss')).toEqual(expected)
+  })
+
+  it('should return the latest page for a topic id with an unknown suffix', () => {
+    const expected: DiscourseUrl = { kind: 'latest' }
+
+    expect(parseDiscourseUrl('https://forum.example.com/t/some-topic/123.xml')).toEqual(expected)
   })
 
   it('should return the latest page for a topic id with a letter', () => {

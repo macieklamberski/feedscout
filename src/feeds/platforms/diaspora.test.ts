@@ -88,11 +88,23 @@ describe('diasporaHandler', () => {
       expect(diasporaHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should keep a suffix that is not the feed format', () => {
-      const value = 'https://example.org/u/alice.html'
+    it('should return the public feed for a feed path with a profile format', () => {
+      const value = 'https://example.org/public/alice.json'
       const expected = [
         {
-          uri: 'https://example.org/public/alice.html.atom',
+          uri: 'https://example.org/public/alice.atom',
+          hint: { key: 'diaspora:posts', label: 'Posts' },
+        },
+      ]
+
+      expect(diasporaHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should read a profile path segment whole', () => {
+      const value = 'https://example.org/u/alice.atom'
+      const expected = [
+        {
+          uri: 'https://example.org/public/alice.atom.atom',
           hint: { key: 'diaspora:posts', label: 'Posts' },
         },
       ]
