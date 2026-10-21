@@ -26,7 +26,8 @@ export const parseSoundcloudUrl = (url: string): SoundcloudUrl | undefined => {
 
   const [username] = getPathSegments(parsedUrl)
 
-  if (!username) {
+  // A permalink carries no dot, so a dotted first segment is a file such as robots.txt.
+  if (!username || username.includes('.')) {
     return
   }
 

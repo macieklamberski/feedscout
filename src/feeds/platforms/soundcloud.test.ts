@@ -40,6 +40,10 @@ describe('parseSoundcloudUrl', () => {
     expect(parseSoundcloudUrl('https://soundcloud.com')).toBeUndefined()
   })
 
+  it('should return undefined for a dotted first segment', () => {
+    expect(parseSoundcloudUrl('https://soundcloud.com/robots.txt')).toBeUndefined()
+  })
+
   it('should return undefined for another host', () => {
     expect(parseSoundcloudUrl('https://example.com/diplo')).toBeUndefined()
   })
