@@ -74,6 +74,19 @@ describe('transistorHandler', () => {
       expect(transistorHandler.resolve(value, content)).toEqual(expected)
     })
 
+    it('should return a linked feed slug with a dot in it', () => {
+      const value = 'https://alice.transistor.fm'
+      const content = '<link rel="alternate" href="https://feeds.transistor.fm/alice.show">'
+      const expected = [
+        {
+          uri: 'https://feeds.transistor.fm/alice.show',
+          hint: { key: 'transistor:podcast', label: 'Podcast' },
+        },
+      ]
+
+      expect(transistorHandler.resolve(value, content)).toEqual(expected)
+    })
+
     it('should fall back to the subdomain when the page links no feed', () => {
       const value = 'https://alice.transistor.fm'
       const expected = [

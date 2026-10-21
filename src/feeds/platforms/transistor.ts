@@ -11,7 +11,7 @@ const domains = ['transistor.fm']
 const feedHosts = ['feeds.transistor.fm']
 
 // The show page links its feed, and the feed slug is not always the subdomain.
-const feedSlugRegex = /https:\/\/feeds\.transistor\.fm\/([\w-]+)/
+const feedSlugRegex = /https:\/\/feeds\.transistor\.fm\/([^/"'?#\s<>&\\]+)/
 
 export const parseTransistorUrl = (url: string): TransistorUrl | undefined => {
   const slug = getTenantSubdomain(url, domains)

@@ -194,7 +194,7 @@ Discovers RSS feeds for Lobsters homepage, users, tags, and domains.
 | `lobste.rs` | Homepage · site-wide comments |
 | `lobste.rs/newest` | Newest posts |
 | `lobste.rs/top` | Top stories |
-| `lobste.rs/top/{period}` | Top stories by period (1d/3d/1w/1m/1y) |
+| `lobste.rs/top/{period}` | Top stories by period, such as 1d, 2w or 1y |
 | `lobste.rs/comments` | Site-wide comments |
 | `lobste.rs/~{username}` | User stories<sup>†</sup> |
 | `lobste.rs/t/{tag}` | Tag |
