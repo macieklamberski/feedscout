@@ -749,6 +749,11 @@
   },
   "huffduffer": {
     "huffduffer:huffduffs": "https://huffduffer.com/wjt/rss",
+    "huffduffer:new": [
+      "https://huffduffer.com/new/rss",
+      "https://huffduffer.com/new/atom",
+      "https://huffduffer.com/new/json"
+    ],
     "huffduffer:related": "https://huffduffer.com/robby/56876/related/rss"
   },
   "insanejournal": {
@@ -776,7 +781,8 @@
     "is-programmer:comments": "http://bachue.is-programmer.com/comments.rss",
     "is-programmer:messages": "http://bachue.is-programmer.com/messages.rss",
     "is-programmer:post-comments": "http://bachue.is-programmer.com/posts/39024.rss",
-    "is-programmer:posts": "http://bachue.is-programmer.com/posts.rss"
+    "is-programmer:posts": "http://bachue.is-programmer.com/posts.rss",
+    "is-programmer:site": "http://bachue.is-programmer.com/site.rss"
   },
   "itchio": {
     "itchio:blog": "https://itch.io/blog.rss",
@@ -1710,6 +1716,11 @@
     "teletype:posts": ["https://teletype.in/rss/durov", "https://teletype.in/atom/durov"]
   },
   "tender": {
+    "tender:comments": [
+      "https://robotlegs.tenderapp.com/comments/recent.atom",
+      "https://scrivener.tenderapp.com/help/comments/recent.atom",
+      "https://help.appveyor.com/comments/recent.atom"
+    ],
     "tender:discussion": [
       "https://robotlegs.tenderapp.com/discussions/robotlegs-2/4196-slow-performance-when-dispatching-a-large-number-of-events.atom?discussion_id=4196-slow-performance-when-dispatching-a-large-number-of-events",
       "https://help.appveyor.com/discussions/problems/960-postsharp-build-stopped-working.atom?discussion_id=960-postsharp-build-stopped-working"
@@ -1755,7 +1766,8 @@
   },
   "togetter": {
     "togetter:curator": "https://togetter.com/rss/id/tarareba722",
-    "togetter:hot": "https://togetter.com/rss/hot"
+    "togetter:hot": "https://togetter.com/rss/hot",
+    "togetter:news": "https://togetter.com/rss/news"
   },
   "tourTravelWorld": {
     "tour-travel-world:tour-packages": "https://www.kirtytours.com/tour-packages.rss"
@@ -1883,6 +1895,7 @@
     "weebly:blog": ["https://ukiyaseed.weebly.com/1/feed", "https://ukiyaseed.weebly.com/blog/feed"]
   },
   "wikidot": {
+    "wikidot:forum-posts": "https://scpwiki.com/feed/forum/posts.xml",
     "wikidot:forum-threads": "https://scpwiki.com/feed/forum/threads.xml",
     "wikidot:site-changes": "https://scpwiki.com/feed/site-changes.xml"
   },

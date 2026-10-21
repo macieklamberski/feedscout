@@ -218,11 +218,15 @@ describe('tenderHandler', () => {
       expect(tenderHandler.resolve(value, settingsHtml)).toEqual(expected)
     })
 
-    it('should return the discussions feed for the home page', () => {
+    it('should return the discussions and comments feeds for the home page', () => {
       const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://alice.tenderapp.com/discussions.atom',
           hint: { key: 'tender:discussions', label: 'Discussions' },
+        },
+        {
+          uri: 'https://alice.tenderapp.com/comments/recent.atom',
+          hint: { key: 'tender:comments', label: 'Recent comments' },
         },
       ]
 
@@ -241,11 +245,15 @@ describe('tenderHandler', () => {
       expect(tenderHandler.resolve(value, settingsHtml)).toEqual(expected)
     })
 
-    it('should return the discussions feed under the root the settings script names', () => {
+    it('should return the site feeds under the root the settings script names', () => {
       const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://alice.tenderapp.com/help/discussions.atom',
           hint: { key: 'tender:discussions', label: 'Discussions' },
+        },
+        {
+          uri: 'https://alice.tenderapp.com/help/comments/recent.atom',
+          hint: { key: 'tender:comments', label: 'Recent comments' },
         },
       ]
 

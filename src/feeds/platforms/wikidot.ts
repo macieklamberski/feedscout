@@ -25,6 +25,10 @@ export const wikidotHandler: PlatformHandler = {
         uri: `${origin}/feed/forum/threads.xml`,
         hint: composeHint('wikidot:forum-threads'),
       },
+      {
+        uri: `${origin}/feed/forum/posts.xml`,
+        hint: composeHint('wikidot:forum-posts'),
+      },
     ]
   },
 }

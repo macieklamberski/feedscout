@@ -1040,10 +1040,11 @@ Discovers Atom feeds for HEY World blogs.
 
 ### Huffduffer
 
-Discovers RSS feeds for Huffduffer users and their huffduffed episodes.
+Discovers RSS feeds for Huffduffer users and their huffduffed episodes, and the site-wide new huffduffs.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
+| `huffduffer.com` | New huffduffs (RSS · Atom · JSON) |
 | `huffduffer.com/{user}` | Huffduffs |
 | `huffduffer.com/{user}/{id}` | Possibly related<sup>†</sup> · huffduffs |
 | `huffduffer.com/{user}/{id}/related` | Possibly related |
@@ -1569,7 +1570,7 @@ Discovers the site and forum feeds of a Wikidot wiki. Detected by the `WIKIDOT.p
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| Any wiki page | Site changes<sup>†</sup> · forum threads<sup>†</sup> (RSS) |
+| Any wiki page | Site changes<sup>†</sup> · forum threads<sup>†</sup> · forum posts (RSS) |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -1779,12 +1780,12 @@ Discovers the RSS feeds of an FC2 blog.
 
 ### Togetter
 
-Discovers the feeds of a Togetter curator or the site-wide popular feed.
+Discovers the feeds of a Togetter curator or the site-wide news and popular feeds.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | `togetter.com/id/{user}` | Curator<sup>†</sup> · popular<sup>†</sup> (RSS) |
-| Any other page | Popular (RSS) |
+| Any other page | News · popular (RSS) |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -2860,8 +2861,8 @@ Discovers RSS feeds for is-Programmer blogs, including the comment feed of a pos
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{blog}.is-programmer.com` | Posts · comments · messages |
-| `{blog}.is-programmer.com/posts/{id}` | Post comments<sup>†</sup> · posts · comments · messages |
+| `{blog}.is-programmer.com` | Posts · comments · messages · site |
+| `{blog}.is-programmer.com/posts/{id}` | Post comments<sup>†</sup> · posts · comments · messages · site |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -3197,7 +3198,7 @@ Discovers the discussion feeds of a Tender Support site, hosted on `tenderapp.co
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | `{site}/discussions/{category}/{discussion}` | Discussion comments (Atom) |
-| `{site}/`, any other page | All discussions (Atom) |
+| `{site}/`, any other page | All discussions · recent comments (Atom) |
 
 ### AlloForum
 

@@ -70,6 +70,7 @@ export const isProgrammerHandler: PlatformHandler = {
     uris.push({ uri: `${origin}/posts.rss`, hint: composeHint('is-programmer:posts') })
     uris.push({ uri: `${origin}/comments.rss`, hint: composeHint('is-programmer:comments') })
     uris.push({ uri: `${origin}/messages.rss`, hint: composeHint('is-programmer:messages') })
+    uris.push({ uri: `${origin}/site.rss`, hint: composeHint('is-programmer:site') })
 
     return uris
   },
