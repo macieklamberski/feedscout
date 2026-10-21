@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'bun:test'
-import type { LemmyUrl } from './lemmy.js'
-import { isLemmyHeaders, isLemmyHtml, lemmyHandler, parseLemmyUrl } from './lemmy.js'
+import type { LemmyPage, LemmyUrl } from './lemmy.js'
+import { getLemmyPage, isLemmyHeaders, isLemmyHtml, lemmyHandler, parseLemmyUrl } from './lemmy.js'
 
 const lemmyHtml = '<html><head><meta name="generator" content="Lemmy v0.19.5"></head></html>'
 const lemmyHeaders = new Headers({ 'x-powered-by': 'Lemmy' })
@@ -98,6 +98,61 @@ describe('parseLemmyUrl', () => {
 
   it('should return undefined for an invalid URL', () => {
     expect(parseLemmyUrl('not-a-url')).toBeUndefined()
+  })
+})
+
+describe('getLemmyPage', () => {
+  const content = `
+    <link
+      rel="alternate"
+      type="application/atom+xml"
+      href="/feeds/local.xml?sort=Active"
+    >
+  `
+
+  it('should return the sort the page advertises', () => {
+    const value = 'https://example.com/'
+    const expected: LemmyPage = { kind: 'home', sort: 'Active' }
+
+    expect(getLemmyPage(value, content)).toEqual(expected)
+  })
+
+  it('should return the sort of the page URL over the advertised sort', () => {
+    const value = 'https://example.com/?sort=New'
+    const expected: LemmyPage = { kind: 'home', sort: 'New' }
+
+    expect(getLemmyPage(value, content)).toEqual(expected)
+  })
+
+  it('should return the advertised sort when the page URL sort is unknown', () => {
+    const value = 'https://example.com/?sort=hot'
+    const expected: LemmyPage = { kind: 'home', sort: 'Active' }
+
+    expect(getLemmyPage(value, content)).toEqual(expected)
+  })
+
+  it('should return no sort for an unknown advertised sort', () => {
+    const value = 'https://example.com/c/programming'
+    const unknownSortContent = `
+      <link
+        rel="alternate"
+        href="/feeds/c/programming.xml?sort=bogus"
+      >
+    `
+    const expected: LemmyPage = { kind: 'community', community: 'programming' }
+
+    expect(getLemmyPage(value, unknownSortContent)).toEqual(expected)
+  })
+
+  it('should return no sort without content', () => {
+    const value = 'https://example.com/u/alice'
+    const expected: LemmyPage = { kind: 'user', username: 'alice' }
+
+    expect(getLemmyPage(value, undefined)).toEqual(expected)
+  })
+
+  it('should return undefined for a URL that does not parse', () => {
+    expect(getLemmyPage('not-a-url', content)).toBeUndefined()
   })
 })
 

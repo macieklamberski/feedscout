@@ -16,6 +16,8 @@ import {
 
 export type DiscuzUrl = { kind: 'board'; boardId: string } | { kind: 'site' }
 
+export type DiscuzPage = DiscuzUrl & { isLegacy: boolean }
+
 const archiverBoardRegex = /\/archiver\/\??fid-(\d+)\.html/i
 const archiverPathRegex = /\/archiver\/.*$/i
 const boardPathRegex = /\/forum-(\d+)-/i
@@ -67,6 +69,16 @@ export const parseDiscuzUrl = (url: string): DiscuzUrl | undefined => {
   return { kind: 'site' }
 }
 
+export const getDiscuzPage = (url: string, content: string | undefined): DiscuzPage | undefined => {
+  const parsed = parseDiscuzUrl(url)
+
+  if (!parsed) {
+    return
+  }
+
+  return { ...parsed, isLegacy: isLegacyDiscuz(content) }
+}
+
 export const discuzHandler: PlatformHandler = {
   match: (url, content, headers) => {
     if (!hasMarker(content, headers, { html: isDiscuzHtml, headers: isDiscuzHeaders })) {
@@ -77,9 +89,9 @@ export const discuzHandler: PlatformHandler = {
   },
 
   resolve: (url, content) => {
-    const parsed = parseDiscuzUrl(url)
+    const page = getDiscuzPage(url, content)
 
-    if (!parsed) {
+    if (!page) {
       return []
     }
 
@@ -90,10 +102,10 @@ export const discuzHandler: PlatformHandler = {
     // `rss.php`, except the archiver, served from `archiver/` inside it.
     installUrl.pathname = installUrl.pathname.replace(archiverPathRegex, '/')
 
-    if (isLegacyDiscuz(content)) {
-      if (parsed.kind === 'board') {
+    if (page.isLegacy) {
+      if (page.kind === 'board') {
         uris.push({
-          uri: new URL(`rss.php?fid=${parsed.boardId}&auth=0`, installUrl).href,
+          uri: new URL(`rss.php?fid=${page.boardId}&auth=0`, installUrl).href,
           hint: composeHint('discuz:board'),
         })
       }
@@ -106,9 +118,9 @@ export const discuzHandler: PlatformHandler = {
       return uris
     }
 
-    if (parsed.kind === 'board') {
+    if (page.kind === 'board') {
       uris.push({
-        uri: new URL(`forum.php?mod=rss&fid=${parsed.boardId}&auth=0`, installUrl).href,
+        uri: new URL(`forum.php?mod=rss&fid=${page.boardId}&auth=0`, installUrl).href,
         hint: composeHint('discuz:board'),
       })
     }

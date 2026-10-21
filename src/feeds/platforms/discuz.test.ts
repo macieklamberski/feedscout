@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'bun:test'
-import { type DiscuzUrl, discuzHandler, isDiscuzHtml, parseDiscuzUrl } from './discuz.js'
+import type { DiscuzPage, DiscuzUrl } from './discuz.js'
+import { discuzHandler, getDiscuzPage, isDiscuzHtml, parseDiscuzUrl } from './discuz.js'
 
 const discuzHtml = '<meta name="generator" content="Discuz! X3.4" />'
 const otherHtml = '<meta name="generator" content="phpBB">'
@@ -59,6 +60,40 @@ describe('parseDiscuzUrl', () => {
     const expected: DiscuzUrl = { kind: 'site' }
 
     expect(parseDiscuzUrl('https://bbs.example.com/forum.php?fid=abc')).toEqual(expected)
+  })
+})
+
+describe('getDiscuzPage', () => {
+  it('should return the current page for the X generator', () => {
+    const value = 'https://bbs.example.com/forum-2-1.html'
+    const expected: DiscuzPage = { kind: 'board', boardId: '2', isLegacy: false }
+
+    expect(getDiscuzPage(value, discuzHtml)).toEqual(expected)
+  })
+
+  it('should return the legacy page for a generator without the X', () => {
+    const value = 'https://bbs.example.com/forum-2-1.html'
+    const expected: DiscuzPage = { kind: 'board', boardId: '2', isLegacy: true }
+
+    expect(getDiscuzPage(value, discuz7Html)).toEqual(expected)
+  })
+
+  it('should return the legacy page for the archiver generator', () => {
+    const value = 'https://bbs.example.com/archiver/fid-2.html'
+    const expected: DiscuzPage = { kind: 'board', boardId: '2', isLegacy: true }
+
+    expect(getDiscuzPage(value, discuz7ArchiverHtml)).toEqual(expected)
+  })
+
+  it('should return the current page without content', () => {
+    const value = 'https://bbs.example.com/'
+    const expected: DiscuzPage = { kind: 'site', isLegacy: false }
+
+    expect(getDiscuzPage(value, undefined)).toEqual(expected)
+  })
+
+  it('should return undefined for a URL that does not parse', () => {
+    expect(getDiscuzPage('not-a-url', discuzHtml)).toBeUndefined()
   })
 })
 
