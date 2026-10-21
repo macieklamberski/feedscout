@@ -9,6 +9,7 @@ import {
   getScriptText,
   hasElementWithId,
   hasMarker,
+  hexOrHyphenRegex,
 } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
@@ -33,8 +34,7 @@ export type DspacePage =
   | { kind: 'home'; restUrl: string }
   | { kind: LegacyKind; feeds: Array<LegacyFeed> }
 
-const scopePathRegex =
-  /\/(collections|communities)\/([\da-f]{8}-[\da-f]{4}-[\da-f]{4}-[\da-f]{4}-[\da-f]{12})(?:\/|$)/i
+const scopePathRegex = /\/(collections|communities)\/([^/]+)(?:\/|$)/i
 const transferStateEntityRegex = /&([aglqs]);/g
 const legacyFeedPathRegex = /\/feed\/(rss_1\.0|rss_2\.0|atom_1\.0)\/(site|[^/]+\/[^/]+)$/i
 const legacyStylesheetRegex = /\/static\/css\/bootstrap\/dspace-theme\.css$/
@@ -198,7 +198,7 @@ export const getDspacePage = (url: string, content: string | undefined): DspaceP
   const restUrl = getRestUrl(parsedUrl.origin, content)
   const [, route, uuid] = parsedUrl.pathname.match(scopePathRegex) ?? []
 
-  if (!route || !uuid || isNotFoundHtml(content)) {
+  if (!route || !uuid || !hexOrHyphenRegex.test(uuid) || isNotFoundHtml(content)) {
     return { kind: 'home', restUrl }
   }
 

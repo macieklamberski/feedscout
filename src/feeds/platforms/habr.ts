@@ -13,11 +13,12 @@ export type HabrUrl =
 
 const hosts = ['habr.com', 'www.habr.com']
 
-const hubRegex = /^(?:\/[a-z]{2})?\/hubs?\/([^/]+)/i
-const userRegex = /^(?:\/[a-z]{2})?\/users\/([^/]+)/i
-const companyRegex = /^(?:\/[a-z]{2})?\/compan(?:y|ies)\/([^/]+)/i
-
 const languages = ['ru', 'en']
+const languagePrefix = `(?:/(?:${languages.join('|')}))?`
+
+const hubRegex = new RegExp(`^${languagePrefix}/hubs?/([^/]+)`, 'i')
+const userRegex = new RegExp(`^${languagePrefix}/users/([^/]+)`, 'i')
+const companyRegex = new RegExp(`^${languagePrefix}/compan(?:y|ies)/([^/]+)`, 'i')
 
 export const parseHabrUrl = (url: string): HabrUrl | undefined => {
   const parsedUrl = parseUrl(url)

@@ -75,6 +75,12 @@ describe('parseHabrUrl', () => {
     expect(parseHabrUrl('https://habr.com/')).toEqual(expected)
   })
 
+  it('should return the home page for a prefix that is not a Habr language', () => {
+    const expected: HabrUrl = { kind: 'home', language: 'ru' }
+
+    expect(parseHabrUrl('https://habr.com/de/hubs/javascript/')).toEqual(expected)
+  })
+
   it('should return the user for the www host', () => {
     const expected: HabrUrl = { kind: 'user', language: 'ru', username: 'alice' }
 

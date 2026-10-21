@@ -17,13 +17,12 @@ export type HatenaBookmarkUrl =
 const hosts = ['b.hatena.ne.jp']
 
 const listRegex = /^\/(hotentry|entrylist)(?:\/([a-z]+))?\/?$/i
-const queryRegex = /^\/q\/(.+)$/i
+const queryRegex = /^\/q(?:\/(.*))?$/i
 const searchRegex = /^\/search\/(tag|text|title)\/?$/i
 const siteRegex = /^\/site\/([^/].*)/i
 
-// A Hatena ID: 3 to 32 characters, starting with a letter and ending with a letter or digit.
-// The user feed at /{id}.rss carries the ID too.
-const userRegex = /^\/([a-zA-Z][a-zA-Z0-9_-]{1,30}[a-zA-Z0-9])(?:\.rss)?(?:\/|$)/i
+// A Hatena ID starts with a letter. The user feed at /{id}.rss carries the ID too.
+const userRegex = /^\/([a-z][\w-]*?)(?:\.rss)?(?:\/|$)/i
 
 const bookmarkLists = ['hotentry', 'entrylist']
 
@@ -76,9 +75,16 @@ export const parseHatenaBookmarkUrl = (url: string): HatenaBookmarkUrl | undefin
     return list === 'hotentry' ? { kind: 'hotentry', category } : { kind: 'entrylist', category }
   }
 
-  const query = decodeSegment(pathname.match(queryRegex)?.[1])
+  const queryMatch = pathname.match(queryRegex)
 
-  if (query) {
+  // The search route without a query lands on the home page.
+  if (queryMatch) {
+    const query = decodeSegment(queryMatch[1])
+
+    if (!query) {
+      return { kind: 'home' }
+    }
+
     return { kind: 'search', query, params: copySearchFilters(searchParams, new URLSearchParams()) }
   }
 

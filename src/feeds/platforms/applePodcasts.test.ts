@@ -22,6 +22,14 @@ describe('parseApplePodcastsUrl', () => {
     )
   })
 
+  it('should return the podcast for a storefront longer than two letters', () => {
+    const expected: ApplePodcastsUrl = { kind: 'podcast' }
+
+    expect(
+      parseApplePodcastsUrl('https://podcasts.apple.com/xyz/podcast/the-daily/id1200361736'),
+    ).toEqual(expected)
+  })
+
   it('should return undefined for a browse page', () => {
     expect(parseApplePodcastsUrl('https://podcasts.apple.com/us/browse')).toBeUndefined()
   })

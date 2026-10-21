@@ -186,8 +186,21 @@ describe('parseHatenaBookmarkUrl', () => {
     expect(parseHatenaBookmarkUrl('https://b.hatena.ne.jp/favicon.ico')).toEqual(home)
   })
 
-  it('should return the home page for a path shorter than a Hatena ID', () => {
-    expect(parseHatenaBookmarkUrl('https://b.hatena.ne.jp/ab')).toEqual(home)
+  it('should return the user for a two-letter path', () => {
+    const expected: HatenaBookmarkUrl = { kind: 'user', username: 'ab' }
+
+    expect(parseHatenaBookmarkUrl('https://b.hatena.ne.jp/ab')).toEqual(expected)
+  })
+
+  it('should return the user for a path longer than 32 characters', () => {
+    const expected: HatenaBookmarkUrl = {
+      kind: 'user',
+      username: 'abcdefghijklmnopqrstuvwxyzabcdefghijklmn',
+    }
+
+    expect(
+      parseHatenaBookmarkUrl('https://b.hatena.ne.jp/abcdefghijklmnopqrstuvwxyzabcdefghijklmn/'),
+    ).toEqual(expected)
   })
 
   it('should return the home page for a path starting with a non-letter', () => {
@@ -195,8 +208,10 @@ describe('parseHatenaBookmarkUrl', () => {
     expect(parseHatenaBookmarkUrl('https://b.hatena.ne.jp/1abc')).toEqual(home)
   })
 
-  it('should return the home page for a path ending with a hyphen', () => {
-    expect(parseHatenaBookmarkUrl('https://b.hatena.ne.jp/abc-')).toEqual(home)
+  it('should return the user for a path ending with a hyphen', () => {
+    const expected: HatenaBookmarkUrl = { kind: 'user', username: 'abc-' }
+
+    expect(parseHatenaBookmarkUrl('https://b.hatena.ne.jp/abc-')).toEqual(expected)
   })
 
   it('should return the home page for the homepage', () => {

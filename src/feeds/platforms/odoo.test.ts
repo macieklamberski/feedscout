@@ -66,6 +66,12 @@ describe('parseOdooUrl', () => {
     expect(parseOdooUrl('https://example.com/fr_FR/blog/actualites-5')).toEqual(expected)
   })
 
+  it('should return a language prefix longer than three letters', () => {
+    const expected: OdooUrl = { kind: 'blog', languagePath: '/abcd', blog: 'news-1' }
+
+    expect(parseOdooUrl('https://example.com/abcd/blog/news-1')).toEqual(expected)
+  })
+
   it('should return undefined for the list of all blogs', () => {
     expect(parseOdooUrl('https://example.com/blog')).toBeUndefined()
   })
