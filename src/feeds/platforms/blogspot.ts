@@ -7,6 +7,10 @@ import { composeHint, findElement, hasMarker } from '../../common/utils.js'
 // Generic partly covers blog, blogPost, customDomainBlog, customDomainLabel, label.
 
 export type BlogspotUrl = { kind: 'label'; label: string } | { kind: 'post' } | { kind: 'blog' }
+export type BlogspotPage =
+  | { kind: 'label'; label: string }
+  | { kind: 'post'; postId?: string }
+  | { kind: 'blog' }
 
 // Matches {blog}.blogspot.com and country domains like .co.uk, .com.br and .de. The certificate
 // covers one label, and www is Blogger's own host.
@@ -50,6 +54,25 @@ export const parseBlogspotUrl = (url: string): BlogspotUrl | undefined => {
   return { kind: 'blog' }
 }
 
+export const getBlogspotPage = (
+  url: string,
+  content: string | undefined,
+): BlogspotPage | undefined => {
+  const parsed = parseBlogspotUrl(url)
+
+  if (parsed?.kind !== 'post') {
+    return parsed
+  }
+
+  // The post id is not in the URL, so it is read from the comments feed link in the page.
+  const commentsFeedLink = findElement(content, (element) => {
+    return postCommentsFeedRegex.test(element.attribs.href ?? '')
+  })
+  const postId = commentsFeedLink?.attribs.href?.match(postCommentsFeedRegex)?.[1]
+
+  return { kind: 'post', postId }
+}
+
 export const blogspotHandler: PlatformHandler = {
   match: (url, content, headers) => {
     const parsedUrl = parseUrl(url)
@@ -66,43 +89,35 @@ export const blogspotHandler: PlatformHandler = {
   },
 
   resolve: (url, content) => {
-    const parsed = parseBlogspotUrl(url)
+    const page = getBlogspotPage(url, content)
 
-    if (!parsed) {
+    if (!page) {
       return []
     }
 
     const { origin } = new URL(url)
     const uris: Array<DiscoverUriEntry> = []
 
-    if (parsed.kind === 'label') {
+    if (page.kind === 'label') {
       uris.push({
-        uri: `${origin}/feeds/posts/default/-/${parsed.label}`,
+        uri: `${origin}/feeds/posts/default/-/${page.label}`,
         hint: composeHint('blogspot:label', 'atom'),
       })
       uris.push({
-        uri: `${origin}/feeds/posts/default/-/${parsed.label}?alt=rss`,
+        uri: `${origin}/feeds/posts/default/-/${page.label}?alt=rss`,
         hint: composeHint('blogspot:label', 'rss'),
       })
     }
 
-    // The post id is not in the URL, so it is read from the comments feed link in the page.
-    if (parsed.kind === 'post' && content) {
-      const commentsFeedLink = findElement(content, (element) => {
-        return postCommentsFeedRegex.test(element.attribs.href ?? '')
+    if (page.kind === 'post' && page.postId) {
+      uris.push({
+        uri: `${origin}/feeds/${page.postId}/comments/default`,
+        hint: composeHint('blogspot:post-comments', 'atom'),
       })
-      const postId = commentsFeedLink?.attribs.href?.match(postCommentsFeedRegex)?.[1]
-
-      if (postId) {
-        uris.push({
-          uri: `${origin}/feeds/${postId}/comments/default`,
-          hint: composeHint('blogspot:post-comments', 'atom'),
-        })
-        uris.push({
-          uri: `${origin}/feeds/${postId}/comments/default?alt=rss`,
-          hint: composeHint('blogspot:post-comments', 'rss'),
-        })
-      }
+      uris.push({
+        uri: `${origin}/feeds/${page.postId}/comments/default?alt=rss`,
+        hint: composeHint('blogspot:post-comments', 'rss'),
+      })
     }
 
     // Always include main blog feeds.

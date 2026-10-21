@@ -6,11 +6,10 @@ import { composeHint, getTenantSubdomain } from '../../common/utils.js'
 // Discoverability: Discoverable without handler.
 
 export type BloggoUrl = { kind: 'blog' } | { kind: 'post'; slug: string }
+export type BloggoPage = BloggoUrl
 
 const domains = ['bloggo.nu']
 
-// A made-up post answers its comments feed with a 200 placeholder channel, and only a real
-// post page carries a post-id body class.
 const postBodyRegex = /<body[^>]*\bpost-id-\d+/
 
 // The about page and the feed belong to the blog, not to a post.
@@ -33,15 +32,31 @@ export const parseBloggoUrl = (url: string): BloggoUrl | undefined => {
   return { kind: 'blog' }
 }
 
+export const getBloggoPage = (url: string, content: string | undefined): BloggoPage | undefined => {
+  const parsed = parseBloggoUrl(url)
+
+  if (!parsed) {
+    return
+  }
+
+  // A made-up post answers its comments feed with a 200 placeholder channel, and only a real
+  // post page carries a post-id body class.
+  if (parsed.kind === 'post' && content && !postBodyRegex.test(content)) {
+    return { kind: 'blog' }
+  }
+
+  return parsed
+}
+
 export const bloggoHandler: PlatformHandler = {
   match: (url) => {
     return parseBloggoUrl(url) !== undefined
   },
 
   resolve: (url, content) => {
-    const parsed = parseBloggoUrl(url)
+    const page = getBloggoPage(url, content)
 
-    if (!parsed) {
+    if (!page) {
       return []
     }
 
@@ -49,9 +64,9 @@ export const bloggoHandler: PlatformHandler = {
     const origin = `https://${new URL(url).hostname}`
     const uris: Array<DiscoverUriEntry> = []
 
-    if (parsed.kind === 'post' && (!content || postBodyRegex.test(content))) {
+    if (page.kind === 'post') {
       uris.push({
-        uri: `${origin}/${parsed.slug}/feed/`,
+        uri: `${origin}/${page.slug}/feed/`,
         hint: composeHint('bloggo:post-comments'),
       })
     }

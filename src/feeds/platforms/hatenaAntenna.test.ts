@@ -1,7 +1,11 @@
 import { describe, expect, it } from 'bun:test'
 import type { DiscoverUriEntry } from '../../common/types.js'
-import type { HatenaAntennaUrl } from './hatenaAntenna.js'
-import { hatenaAntennaHandler, parseHatenaAntennaUrl } from './hatenaAntenna.js'
+import type { HatenaAntennaPage, HatenaAntennaUrl } from './hatenaAntenna.js'
+import {
+  getHatenaAntennaPage,
+  hatenaAntennaHandler,
+  parseHatenaAntennaUrl,
+} from './hatenaAntenna.js'
 
 describe('parseHatenaAntennaUrl', () => {
   it('should return the antenna for an antenna page', () => {
@@ -75,6 +79,30 @@ describe('parseHatenaAntennaUrl', () => {
 
   it('should return undefined for another Hatena host', () => {
     expect(parseHatenaAntennaUrl('https://b.hatena.ne.jp/alice/')).toBeUndefined()
+  })
+})
+
+describe('getHatenaAntennaPage', () => {
+  const value = 'https://a.hatena.ne.jp/alice/?gid=441421'
+
+  it('should return the group the group nav shows in bold', () => {
+    const content = '<p id="pager_group"><a href="./">すべて</a> | <b>IT系</b></p>'
+    const expected: HatenaAntennaPage = { kind: 'group', username: 'alice', groupId: '441421' }
+
+    expect(getHatenaAntennaPage(value, content)).toEqual(expected)
+  })
+
+  it('should fall back to the antenna when the group nav shows no group in bold', () => {
+    const content = '<p id="pager_group"><a href="./">すべて</a> | <a href="./?gid=1">IT系</a></p>'
+    const expected: HatenaAntennaPage = { kind: 'antenna', username: 'alice' }
+
+    expect(getHatenaAntennaPage(value, content)).toEqual(expected)
+  })
+
+  it('should keep the group without content', () => {
+    const expected: HatenaAntennaPage = { kind: 'group', username: 'alice', groupId: '441421' }
+
+    expect(getHatenaAntennaPage(value, undefined)).toEqual(expected)
   })
 })
 

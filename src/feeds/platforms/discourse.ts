@@ -20,6 +20,7 @@ export type DiscourseUrl =
   | { kind: 'category'; category: string }
   | { kind: 'top'; period?: string }
   | { kind: 'latest' }
+export type DiscoursePage = DiscourseUrl & { siteUrl: string }
 
 const userRegex = /^\/u\/([^/]+)/i
 // A category page takes a `/none` or `/all` subcategory tail and an `/l/{filter}` list tail, and the
@@ -111,6 +112,20 @@ const stripBasePath = (url: string, basePath: string): string => {
   return `${parsedUrl.origin}${parsedUrl.pathname.slice(basePath.length)}${parsedUrl.search}`
 }
 
+export const getDiscoursePage = (
+  url: string,
+  content: string | undefined,
+): DiscoursePage | undefined => {
+  const basePath = getBasePath(content)
+  const parsed = parseDiscourseUrl(stripBasePath(url, basePath))
+
+  if (!parsed) {
+    return
+  }
+
+  return { ...parsed, siteUrl: `${new URL(url).origin}${basePath}` }
+}
+
 export const discourseHandler: PlatformHandler = {
   match: (url, content, headers) => {
     if (!hasMarker(content, headers, { html: isDiscourseHtml, headers: isDiscourseHeaders })) {
@@ -121,48 +136,45 @@ export const discourseHandler: PlatformHandler = {
   },
 
   resolve: (url, content) => {
-    const basePath = getBasePath(content)
-    const parsed = parseDiscourseUrl(stripBasePath(url, basePath))
+    const page = getDiscoursePage(url, content)
 
-    if (!parsed) {
+    if (!page) {
       return []
     }
 
-    const siteUrl = `${new URL(url).origin}${basePath}`
-
-    if (parsed.kind === 'topic') {
+    if (page.kind === 'topic') {
       return [
         {
-          uri: `${siteUrl}/t/${parsed.slug}/${parsed.topicId}.rss`,
+          uri: `${page.siteUrl}/t/${page.slug}/${page.topicId}.rss`,
           hint: composeHint('discourse:topic'),
         },
       ]
     }
 
-    if (parsed.kind === 'user') {
+    if (page.kind === 'user') {
       return [
         {
-          uri: `${siteUrl}/u/${parsed.username}/activity.rss`,
+          uri: `${page.siteUrl}/u/${page.username}/activity.rss`,
           hint: composeHint('discourse:activity'),
         },
       ]
     }
 
-    if (parsed.kind === 'category') {
+    if (page.kind === 'category') {
       return [
         {
-          uri: `${siteUrl}/c/${parsed.category}.rss`,
+          uri: `${page.siteUrl}/c/${page.category}.rss`,
           hint: composeHint('discourse:category'),
         },
       ]
     }
 
-    if (parsed.kind === 'top') {
-      const periodQuery = parsed.period ? `?period=${parsed.period}` : ''
+    if (page.kind === 'top') {
+      const periodQuery = page.period ? `?period=${page.period}` : ''
 
       return [
         {
-          uri: `${siteUrl}/top.rss${periodQuery}`,
+          uri: `${page.siteUrl}/top.rss${periodQuery}`,
           hint: composeHint('discourse:top'),
         },
       ]
@@ -171,11 +183,11 @@ export const discourseHandler: PlatformHandler = {
     const uris: Array<DiscoverUriEntry> = []
 
     uris.push({
-      uri: `${siteUrl}/latest.rss`,
+      uri: `${page.siteUrl}/latest.rss`,
       hint: composeHint('discourse:latest'),
     })
     uris.push({
-      uri: `${siteUrl}/posts.rss`,
+      uri: `${page.siteUrl}/posts.rss`,
       hint: composeHint('discourse:posts'),
     })
 

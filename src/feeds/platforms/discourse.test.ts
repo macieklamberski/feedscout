@@ -1,7 +1,9 @@
 import { describe, expect, it } from 'bun:test'
 import {
+  type DiscoursePage,
   type DiscourseUrl,
   discourseHandler,
+  getDiscoursePage,
   isDiscourseHeaders,
   isDiscourseHtml,
   parseDiscourseUrl,
@@ -80,6 +82,45 @@ describe('parseDiscourseUrl', () => {
     const expected: DiscourseUrl = { kind: 'latest' }
 
     expect(parseDiscourseUrl('https://forum.example.com/about')).toEqual(expected)
+  })
+})
+
+describe('getDiscoursePage', () => {
+  const setupHtml = '<meta id="data-discourse-setup" data-base-uri="/forum">'
+
+  it('should return the page under the sub-path the setup meta names', () => {
+    const value = 'https://example.com/forum/t/hello-world/123'
+    const expected: DiscoursePage = {
+      kind: 'topic',
+      slug: 'hello-world',
+      topicId: '123',
+      siteUrl: 'https://example.com/forum',
+    }
+
+    expect(getDiscoursePage(value, setupHtml)).toEqual(expected)
+  })
+
+  it('should return the page at the origin without content', () => {
+    const value = 'https://forum.example.com/t/hello-world/123'
+    const expected: DiscoursePage = {
+      kind: 'topic',
+      slug: 'hello-world',
+      topicId: '123',
+      siteUrl: 'https://forum.example.com',
+    }
+
+    expect(getDiscoursePage(value, undefined)).toEqual(expected)
+  })
+
+  it('should return the latest page for the sub-path root', () => {
+    const value = 'https://example.com/forum/'
+    const expected: DiscoursePage = { kind: 'latest', siteUrl: 'https://example.com/forum' }
+
+    expect(getDiscoursePage(value, setupHtml)).toEqual(expected)
+  })
+
+  it('should return undefined for a URL that does not parse', () => {
+    expect(getDiscoursePage('not-a-url', setupHtml)).toBeUndefined()
   })
 })
 

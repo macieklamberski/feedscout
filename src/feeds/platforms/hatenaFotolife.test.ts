@@ -1,7 +1,11 @@
 import { describe, expect, it } from 'bun:test'
 import type { DiscoverUriEntry } from '../../common/types.js'
-import type { HatenaFotolifeUrl } from './hatenaFotolife.js'
-import { hatenaFotolifeHandler, parseHatenaFotolifeUrl } from './hatenaFotolife.js'
+import type { HatenaFotolifePage, HatenaFotolifeUrl } from './hatenaFotolife.js'
+import {
+  getHatenaFotolifePage,
+  hatenaFotolifeHandler,
+  parseHatenaFotolifeUrl,
+} from './hatenaFotolife.js'
 
 describe('parseHatenaFotolifeUrl', () => {
   it('should return the user for a photo page with a trailing slash', () => {
@@ -109,6 +113,36 @@ describe('parseHatenaFotolifeUrl', () => {
 
   it('should return undefined for another host', () => {
     expect(parseHatenaFotolifeUrl('https://example.com/alice/')).toBeUndefined()
+  })
+})
+
+describe('getHatenaFotolifePage', () => {
+  const value = 'https://f.hatena.ne.jp/alice/t/sunset'
+
+  it('should return the tag when its page lists a photo', () => {
+    const content = '<img class="foto_thumb" src="https://example.com/photo.jpg" />'
+    const expected: HatenaFotolifePage = { kind: 'tag', username: 'alice', tag: 'sunset' }
+
+    expect(getHatenaFotolifePage(value, content)).toEqual(expected)
+  })
+
+  it('should fall back to the user when the tag page lists no photo', () => {
+    const expected: HatenaFotolifePage = { kind: 'user', username: 'alice' }
+
+    expect(getHatenaFotolifePage(value, '<div class="fotolist"></div>')).toEqual(expected)
+  })
+
+  it('should keep the tag without content', () => {
+    const expected: HatenaFotolifePage = { kind: 'tag', username: 'alice', tag: 'sunset' }
+
+    expect(getHatenaFotolifePage(value, undefined)).toEqual(expected)
+  })
+
+  it('should keep a favorites page that lists no photo', () => {
+    const value = 'https://f.hatena.ne.jp/alice/favorite'
+    const expected: HatenaFotolifePage = { kind: 'favorite', username: 'alice' }
+
+    expect(getHatenaFotolifePage(value, '<div class="fotolist"></div>')).toEqual(expected)
   })
 })
 

@@ -1,6 +1,11 @@
 import { describe, expect, it } from 'bun:test'
-import type { SoundcloudUrl } from './soundcloud.js'
-import { parseSoundcloudUrl, soundcloudHandler } from './soundcloud.js'
+import type { SoundcloudPage, SoundcloudUrl } from './soundcloud.js'
+import { getSoundcloudPage, parseSoundcloudUrl, soundcloudHandler } from './soundcloud.js'
+
+const userIdHtml = `
+  <meta property="twitter:app:url:googleplay" content="soundcloud://users:16730">
+  <meta property="al:ios:url" content="soundcloud://users:16730">
+`
 
 describe('parseSoundcloudUrl', () => {
   it('should return the user for a profile page', () => {
@@ -49,6 +54,30 @@ describe('parseSoundcloudUrl', () => {
   })
 })
 
+describe('getSoundcloudPage', () => {
+  const value = 'https://soundcloud.com/diplo'
+
+  it('should return the user id the page carries', () => {
+    const expected: SoundcloudPage = { kind: 'user', userId: '16730' }
+
+    expect(getSoundcloudPage(value, userIdHtml)).toEqual(expected)
+  })
+
+  it('should return undefined without content', () => {
+    expect(getSoundcloudPage(value, undefined)).toBeUndefined()
+  })
+
+  it('should return undefined when the content carries no user id', () => {
+    const content = '<html><body>No user ID here</body></html>'
+
+    expect(getSoundcloudPage(value, content)).toBeUndefined()
+  })
+
+  it('should return undefined for another host', () => {
+    expect(getSoundcloudPage('https://example.com/diplo', userIdHtml)).toBeUndefined()
+  })
+})
+
 describe('soundcloudHandler', () => {
   describe('match', () => {
     it('should match a profile page', () => {
@@ -57,11 +86,6 @@ describe('soundcloudHandler', () => {
   })
 
   describe('resolve', () => {
-    const contentWithUserId = `
-      <meta property="twitter:app:url:googleplay" content="soundcloud://users:16730">
-      <meta property="al:ios:url" content="soundcloud://users:16730">
-    `
-
     it('should return RSS feed when user ID found in content', () => {
       const value = 'https://soundcloud.com/diplo'
       const expected = [
@@ -71,20 +95,7 @@ describe('soundcloudHandler', () => {
         },
       ]
 
-      expect(soundcloudHandler.resolve(value, contentWithUserId)).toEqual(expected)
-    })
-
-    it('should return empty array when no content provided', () => {
-      const value = 'https://soundcloud.com/diplo'
-
-      expect(soundcloudHandler.resolve(value)).toEqual([])
-    })
-
-    it('should return empty array when user ID not found in content', () => {
-      const value = 'https://soundcloud.com/diplo'
-      const content = '<html><body>No user ID here</body></html>'
-
-      expect(soundcloudHandler.resolve(value, content)).toEqual([])
+      expect(soundcloudHandler.resolve(value, userIdHtml)).toEqual(expected)
     })
   })
 })

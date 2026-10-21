@@ -10,6 +10,7 @@ export type SapoBlogsUrl =
   | { kind: 'blog'; blog: string }
   | { kind: 'post'; blog: string; postId: string }
   | { kind: 'tag'; blog: string; tag: string }
+export type SapoBlogsPage = SapoBlogsUrl
 
 const domains = ['blogs.sapo.pt']
 const commentsUrl = 'https://blogs.sapo.pt/commentsrss.bml'
@@ -43,36 +44,51 @@ export const parseSapoBlogsUrl = (url: string): SapoBlogsUrl | undefined => {
   return { kind: 'blog', blog }
 }
 
+export const getSapoBlogsPage = (
+  url: string,
+  content: string | undefined,
+): SapoBlogsPage | undefined => {
+  const parsed = parseSapoBlogsUrl(url)
+
+  if (parsed?.kind !== 'post') {
+    return parsed
+  }
+
+  const postLinkRegex = new RegExp(`ditemid=${parsed.postId}(?!\\d)`)
+
+  // The endpoint answers an empty channel for a made-up post id, so only a linked post counts.
+  if (!postLinkRegex.test(content ?? '')) {
+    return { kind: 'blog', blog: parsed.blog }
+  }
+
+  return parsed
+}
+
 export const sapoBlogsHandler: PlatformHandler = {
   match: (url) => {
     return parseSapoBlogsUrl(url) !== undefined
   },
 
   resolve: (url, content) => {
-    const parsed = parseSapoBlogsUrl(url)
+    const page = getSapoBlogsPage(url, content)
 
-    if (!parsed) {
+    if (!page) {
       return []
     }
 
     const { origin } = new URL(url)
     const uris: Array<DiscoverUriEntry> = []
 
-    if (parsed.kind === 'post') {
-      const postLinkRegex = new RegExp(`ditemid=${parsed.postId}(?!\\d)`)
-
-      // The endpoint answers an empty channel for a made-up post id, so only a linked post counts.
-      if (postLinkRegex.test(content ?? '')) {
-        uris.push({
-          uri: `${commentsUrl}?blog=${parsed.blog}&ditemid=${parsed.postId}`,
-          hint: composeHint('sapo-blogs:post-comments'),
-        })
-      }
+    if (page.kind === 'post') {
+      uris.push({
+        uri: `${commentsUrl}?blog=${page.blog}&ditemid=${page.postId}`,
+        hint: composeHint('sapo-blogs:post-comments'),
+      })
     }
 
-    if (parsed.kind === 'tag') {
+    if (page.kind === 'tag') {
       // The page escapes !'()* in the tag, which encodeURIComponent leaves as they are.
-      const tag = encodeURIComponent(parsed.tag).replace(reservedCharRegex, (char) => {
+      const tag = encodeURIComponent(page.tag).replace(reservedCharRegex, (char) => {
         return `%${char.charCodeAt(0).toString(16).toUpperCase()}`
       })
 
@@ -85,7 +101,7 @@ export const sapoBlogsHandler: PlatformHandler = {
     uris.push({ uri: `${origin}/data/rss`, hint: composeHint('sapo-blogs:posts', 'rss') })
     uris.push({ uri: `${origin}/data/atom`, hint: composeHint('sapo-blogs:posts', 'atom') })
     uris.push({
-      uri: `${commentsUrl}?blog=${parsed.blog}`,
+      uri: `${commentsUrl}?blog=${page.blog}`,
       hint: composeHint('sapo-blogs:comments'),
     })
 

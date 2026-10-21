@@ -1,6 +1,12 @@
 import { describe, expect, it } from 'bun:test'
 import type { DiscoverUriEntry } from '../../common/types.js'
-import { type BlogspotUrl, blogspotHandler, parseBlogspotUrl } from './blogspot.js'
+import {
+  type BlogspotPage,
+  type BlogspotUrl,
+  blogspotHandler,
+  getBlogspotPage,
+  parseBlogspotUrl,
+} from './blogspot.js'
 
 describe('parseBlogspotUrl', () => {
   it('should return the label for a label page', () => {
@@ -29,6 +35,37 @@ describe('parseBlogspotUrl', () => {
 
   it('should return undefined for an invalid URL', () => {
     expect(parseBlogspotUrl('not-a-url')).toBeUndefined()
+  })
+})
+
+describe('getBlogspotPage', () => {
+  const value = 'https://example.blogspot.com/2024/01/some-post.html'
+
+  it('should return the post id the comments feed link carries', () => {
+    const content = '<link href="https://example.blogspot.com/feeds/1234567890/comments/default">'
+    const expected: BlogspotPage = { kind: 'post', postId: '1234567890' }
+
+    expect(getBlogspotPage(value, content)).toEqual(expected)
+  })
+
+  it('should return the post without an id when the page links no comments feed', () => {
+    const expected: BlogspotPage = { kind: 'post' }
+
+    expect(getBlogspotPage(value, '<html></html>')).toEqual(expected)
+  })
+
+  it('should return the post without an id without content', () => {
+    const expected: BlogspotPage = { kind: 'post' }
+
+    expect(getBlogspotPage(value, undefined)).toEqual(expected)
+  })
+
+  it('should leave the comments feed link out of a label page', () => {
+    const value = 'https://example.blogspot.com/search/label/News'
+    const content = '<link href="https://example.blogspot.com/feeds/1234567890/comments/default">'
+    const expected: BlogspotPage = { kind: 'label', label: 'News' }
+
+    expect(getBlogspotPage(value, content)).toEqual(expected)
   })
 })
 

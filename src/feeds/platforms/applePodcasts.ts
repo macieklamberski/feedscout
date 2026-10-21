@@ -6,6 +6,7 @@ import { composeHint } from '../../common/utils.js'
 // Handler needed for: all shapes.
 
 export type ApplePodcastsUrl = { kind: 'podcast' }
+export type ApplePodcastsPage = { kind: 'podcast'; feedUrl: string }
 
 const hosts = ['podcasts.apple.com']
 const podcastRegex = /^(?:\/[a-z]{2})?\/podcast\/(?:[^/]+\/)?id\d+(?:\/|$)/i
@@ -35,22 +36,35 @@ export const parseApplePodcastsUrl = (url: string): ApplePodcastsUrl | undefined
   return { kind: 'podcast' }
 }
 
+export const getApplePodcastsPage = (
+  url: string,
+  content: string | undefined,
+): ApplePodcastsPage | undefined => {
+  if (!parseApplePodcastsUrl(url) || !content) {
+    return
+  }
+
+  const feedUrl = extractFeedUrlFromContent(content)
+
+  if (!feedUrl) {
+    return
+  }
+
+  return { kind: 'podcast', feedUrl }
+}
+
 export const applePodcastsHandler: PlatformHandler = {
   match: (url) => {
     return parseApplePodcastsUrl(url) !== undefined
   },
 
   resolve: (url, content) => {
-    if (!parseApplePodcastsUrl(url) || !content) {
+    const page = getApplePodcastsPage(url, content)
+
+    if (!page) {
       return []
     }
 
-    const feedUrl = extractFeedUrlFromContent(content)
-
-    if (!feedUrl) {
-      return []
-    }
-
-    return [{ uri: feedUrl, hint: composeHint('apple-podcasts:podcast') }]
+    return [{ uri: page.feedUrl, hint: composeHint('apple-podcasts:podcast') }]
   },
 }

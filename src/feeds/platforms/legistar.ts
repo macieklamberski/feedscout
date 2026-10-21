@@ -14,6 +14,7 @@ import {
 export type LegistarUrl =
   | { kind: 'legislation'; id: string; guid: string }
   | { kind: 'meeting'; id: string; guid: string }
+export type LegistarPage = { kind: 'legislation' | 'meeting'; feedUrl: string }
 
 const domains = ['legistar.com']
 
@@ -82,6 +83,32 @@ const getFeedUrl = (url: string, content: string | undefined, feedUrl: string): 
   return feedUrl
 }
 
+export const getLegistarPage = (
+  url: string,
+  content: string | undefined,
+): LegistarPage | undefined => {
+  const parsed = parseLegistarUrl(url)
+
+  if (!parsed) {
+    return
+  }
+
+  const { origin } = new URL(url)
+  const query = `ID=${parsed.id}&GUID=${parsed.guid}`
+
+  if (parsed.kind === 'legislation') {
+    return {
+      kind: 'legislation',
+      feedUrl: getFeedUrl(url, content, `${origin}/Feed.ashx?M=LD&${query}`),
+    }
+  }
+
+  return {
+    kind: 'meeting',
+    feedUrl: getFeedUrl(url, content, `${origin}/Feed.ashx?M=CalendarDetail&${query}`),
+  }
+}
+
 export const legistarHandler: PlatformHandler = {
   match: (url, content, headers) => {
     if (
@@ -95,29 +122,16 @@ export const legistarHandler: PlatformHandler = {
   },
 
   resolve: (url, content) => {
-    const parsed = parseLegistarUrl(url)
+    const page = getLegistarPage(url, content)
 
-    if (!parsed) {
+    if (!page) {
       return []
     }
 
-    const { origin } = new URL(url)
-    const query = `ID=${parsed.id}&GUID=${parsed.guid}`
-
-    if (parsed.kind === 'legislation') {
-      return [
-        {
-          uri: getFeedUrl(url, content, `${origin}/Feed.ashx?M=LD&${query}`),
-          hint: composeHint('legistar:legislation'),
-        },
-      ]
+    if (page.kind === 'legislation') {
+      return [{ uri: page.feedUrl, hint: composeHint('legistar:legislation') }]
     }
 
-    return [
-      {
-        uri: getFeedUrl(url, content, `${origin}/Feed.ashx?M=CalendarDetail&${query}`),
-        hint: composeHint('legistar:meeting'),
-      },
-    ]
+    return [{ uri: page.feedUrl, hint: composeHint('legistar:meeting') }]
   },
 }

@@ -11,6 +11,7 @@ export type HatenaFotolifeUrl =
   | { kind: 'tag'; username: string; tag: string }
   | { kind: 'favorite'; username: string }
   | { kind: 'starfriends'; username: string }
+export type HatenaFotolifePage = HatenaFotolifeUrl
 
 const hosts = ['f.hatena.ne.jp']
 
@@ -77,61 +78,74 @@ export const parseHatenaFotolifeUrl = (url: string): HatenaFotolifeUrl | undefin
   return { kind: 'user', username }
 }
 
+export const getHatenaFotolifePage = (
+  url: string,
+  content: string | undefined,
+): HatenaFotolifePage | undefined => {
+  const parsed = parseHatenaFotolifeUrl(url)
+
+  if (!parsed) {
+    return
+  }
+
+  // A tag or camera model exists only through its photos, and Hatena serves an empty feed under
+  // any made-up folder, tag or model name. Its page then lists no photo, and the page still
+  // belongs to the user.
+  const isListing = parsed.kind === 'folder' || parsed.kind === 'tag' || parsed.kind === 'model'
+
+  if (isListing && content !== undefined && !content.includes('class="foto_thumb"')) {
+    return { kind: 'user', username: parsed.username }
+  }
+
+  return parsed
+}
+
 export const hatenaFotolifeHandler: PlatformHandler = {
   match: (url) => {
     return parseHatenaFotolifeUrl(url) !== undefined
   },
 
   resolve: (url, content) => {
-    let parsed = parseHatenaFotolifeUrl(url)
+    const page = getHatenaFotolifePage(url, content)
 
-    if (!parsed) {
+    if (!page) {
       return []
     }
 
-    // A tag or camera model exists only through its photos, and Hatena serves an empty feed under
-    // any made-up folder, tag or model name. Its page then lists no photo, and the page still
-    // belongs to the user.
-    const isListing = parsed.kind === 'folder' || parsed.kind === 'tag' || parsed.kind === 'model'
-
-    if (isListing && content !== undefined && !content.includes('class="foto_thumb"')) {
-      parsed = { kind: 'user', username: parsed.username }
-    }
-
     const { origin } = new URL(url)
-    const userUrl = `${origin}/${escapeSegment(parsed.username)}`
+    const userUrl = `${origin}/${escapeSegment(page.username)}`
 
-    if (parsed.kind === 'model') {
-      const model = escapeSegment(parsed.model)
+    if (page.kind === 'model') {
+      const model = escapeSegment(page.model)
 
       return [{ uri: `${userUrl}/rss?model=${model}`, hint: composeHint('hatena-fotolife:model') }]
     }
 
-    if (parsed.kind === 'folder') {
-      const folder = escapeSegment(parsed.folder)
+    if (page.kind === 'folder') {
+      const folder = escapeSegment(page.folder)
 
       return [{ uri: `${userUrl}/${folder}/rss`, hint: composeHint('hatena-fotolife:folder') }]
     }
 
-    if (parsed.kind === 'tag') {
-      const tag = escapeSegment(parsed.tag)
+    if (page.kind === 'tag') {
+      const tag = escapeSegment(page.tag)
 
       return [{ uri: `${userUrl}/t/${tag}?mode=rss`, hint: composeHint('hatena-fotolife:tag') }]
     }
 
-    if (parsed.kind === 'favorite') {
+    if (page.kind === 'favorite') {
       return [
         {
-          uri: `${origin}/${parsed.username}/favorite?mode=rss`,
+          uri: `${origin}/${page.username}/favorite?mode=rss`,
           hint: composeHint('hatena-fotolife:stars'),
         },
       ]
     }
 
-    if (parsed.kind === 'starfriends') {
+    if (page.kind === 'starfriends') {
       return [
         {
-          uri: `${origin}/${parsed.username}/starfriends?mode=rss`,
+          uri: `${origin}/${page.username}/starfriends?mode=rss`,
           hint: composeHint('hatena-fotolife:star-friends'),
         },
       ]

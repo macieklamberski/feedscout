@@ -1,6 +1,12 @@
 import { describe, expect, it } from 'bun:test'
 import type { DiscoverUriEntry } from '../../common/types.js'
-import { parseSapoBlogsUrl, type SapoBlogsUrl, sapoBlogsHandler } from './sapoBlogs.js'
+import {
+  getSapoBlogsPage,
+  parseSapoBlogsUrl,
+  type SapoBlogsPage,
+  type SapoBlogsUrl,
+  sapoBlogsHandler,
+} from './sapoBlogs.js'
 
 describe('parseSapoBlogsUrl', () => {
   it('should return the blog for the home page', () => {
@@ -73,6 +79,33 @@ describe('parseSapoBlogsUrl', () => {
 
   it('should return undefined for another host', () => {
     expect(parseSapoBlogsUrl('https://example.com/')).toBeUndefined()
+  })
+})
+
+describe('getSapoBlogsPage', () => {
+  const value = 'https://alice.blogs.sapo.pt/a-new-address-1234567'
+
+  it('should return the post when the page links its comments feed', () => {
+    const content =
+      '<a href="https://blogs.sapo.pt/commentsrss.bml?blog=alice&amp;ditemid=1234567">'
+    const expected: SapoBlogsPage = { kind: 'post', blog: 'alice', postId: '1234567' }
+
+    expect(getSapoBlogsPage(value, content)).toEqual(expected)
+  })
+
+  it('should fall back to the blog when the page links only a longer id', () => {
+    const value = 'https://alice.blogs.sapo.pt/a-new-address-123'
+    const content =
+      '<a href="https://blogs.sapo.pt/commentsrss.bml?blog=alice&amp;ditemid=1234567">'
+    const expected: SapoBlogsPage = { kind: 'blog', blog: 'alice' }
+
+    expect(getSapoBlogsPage(value, content)).toEqual(expected)
+  })
+
+  it('should fall back to the blog without content', () => {
+    const expected: SapoBlogsPage = { kind: 'blog', blog: 'alice' }
+
+    expect(getSapoBlogsPage(value, undefined)).toEqual(expected)
   })
 })
 
