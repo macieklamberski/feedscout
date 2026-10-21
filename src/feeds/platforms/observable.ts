@@ -1,4 +1,4 @@
-import { isHostOf, parseUrl } from 'trousse'
+import { decodeSegment, isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
@@ -26,7 +26,14 @@ export const parseObservableUrl = (url: string): ObservableUrl | undefined => {
     return
   }
 
-  const { pathname, searchParams } = parsedUrl
+  const { searchParams } = parsedUrl
+  // A handle can arrive percent-encoded, `/%40{owner}`.
+  const pathname = decodeSegment(parsedUrl.pathname)
+
+  if (!pathname) {
+    return
+  }
+
   const isPublic = publicRegex.test(pathname)
 
   // `/recent` redirects to `/public?sort=publish_time` and `/trending` to `/public`.

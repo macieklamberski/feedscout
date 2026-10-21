@@ -42,6 +42,12 @@ describe('parseOdyseeUrl', () => {
     expect(parseOdyseeUrl('https://odysee.com/@%C3%A9lise')).toEqual(expected)
   })
 
+  it('should return the channel for a percent-encoded path', () => {
+    const expected: OdyseeUrl = { kind: 'channel', name: 'corbettreport', claimId: '0' }
+
+    expect(parseOdyseeUrl('https://odysee.com/%40corbettreport%3A0')).toEqual(expected)
+  })
+
   it('should return undefined for a malformed encoded name', () => {
     expect(parseOdyseeUrl('https://odysee.com/@%E0%A4%A')).toBeUndefined()
   })

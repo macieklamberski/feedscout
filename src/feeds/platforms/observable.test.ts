@@ -54,6 +54,19 @@ describe('parseObservableUrl', () => {
     expect(parseObservableUrl(value)).toEqual(expected)
   })
 
+  it('should return the user for a percent-encoded handle', () => {
+    const expected: ObservableUrl = { kind: 'user', owner: 'd3' }
+
+    expect(parseObservableUrl('https://observablehq.com/%40d3')).toEqual(expected)
+  })
+
+  it('should return the collection for a percent-encoded handle', () => {
+    const value = 'https://observablehq.com/%40d3/-/collection/gallery'
+    const expected: ObservableUrl = { kind: 'collection', owner: 'd3', collection: 'gallery' }
+
+    expect(parseObservableUrl(value)).toEqual(expected)
+  })
+
   it('should return undefined for paths without @ prefix', () => {
     expect(parseObservableUrl('https://observablehq.com/about')).toBeUndefined()
   })
