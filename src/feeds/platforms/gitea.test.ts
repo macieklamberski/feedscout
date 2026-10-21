@@ -1,6 +1,19 @@
 import { describe, expect, it } from 'bun:test'
-import type { GiteaUrl } from './gitea.js'
-import { giteaHandler, parseGiteaUrl } from './gitea.js'
+import type { GiteaPage, GiteaUrl } from './gitea.js'
+import { getGiteaPage, giteaHandler, parseGiteaUrl } from './gitea.js'
+
+const giteaSubPathHtml = `
+  <script type="application/json" id="global-window-config">{"appSubUrl":"/gitea","appUrl":"https://example.org/gitea/"}</script>
+`
+
+const forgejoSubPathHtml = `
+  <script>
+    window.config = {
+      appUrl: 'https:\\/\\/example.org\\/gitea\\/',
+      appSubUrl: '\\/gitea',
+    };
+  </script>
+`
 
 describe('parseGiteaUrl', () => {
   it('should return the user for a user page', () => {
@@ -151,6 +164,47 @@ describe('parseGiteaUrl', () => {
   })
 })
 
+describe('getGiteaPage', () => {
+  it('should return the repo from the origin root without content', () => {
+    const value = 'https://codeberg.org/forgejo/forgejo'
+    const expected: GiteaPage = {
+      kind: 'repo',
+      owner: 'forgejo',
+      repo: 'forgejo',
+      root: 'https://codeberg.org',
+    }
+
+    expect(getGiteaPage(value, undefined)).toEqual(expected)
+  })
+
+  it('should read the sub-path from the Gitea window config', () => {
+    const value = 'https://example.org/gitea/owner/project'
+    const expected: GiteaPage = {
+      kind: 'repo',
+      owner: 'owner',
+      repo: 'project',
+      root: 'https://example.org/gitea',
+    }
+
+    expect(getGiteaPage(value, giteaSubPathHtml)).toEqual(expected)
+  })
+
+  it('should read the escaped sub-path from the Forgejo window config', () => {
+    const value = 'https://example.org/gitea/owner'
+    const expected: GiteaPage = { kind: 'user', owner: 'owner', root: 'https://example.org/gitea' }
+
+    expect(getGiteaPage(value, forgejoSubPathHtml)).toEqual(expected)
+  })
+
+  it('should return undefined for the root of an install under a sub-path', () => {
+    expect(getGiteaPage('https://example.org/gitea/', giteaSubPathHtml)).toBeUndefined()
+  })
+
+  it('should return undefined for a path outside the sub-path', () => {
+    expect(getGiteaPage('https://example.org/gitea2/owner', giteaSubPathHtml)).toBeUndefined()
+  })
+})
+
 describe('giteaHandler', () => {
   describe('match', () => {
     const values: Array<[boolean, string]> = [
@@ -193,6 +247,13 @@ describe('giteaHandler', () => {
       const headers = new Headers({ 'set-cookie': 'gitea_theme=dark; Path=/' })
 
       expect(giteaHandler.match(value, '', headers)).toBe(false)
+    })
+
+    it('should not match the root of an install under a sub-path', () => {
+      const value = 'https://example.org/gitea/'
+      const headers = new Headers({ 'set-cookie': 'i_like_gitea=abc123; Path=/gitea' })
+
+      expect(giteaHandler.match(value, giteaSubPathHtml, headers)).toBe(false)
     })
 
     it('should not match the marker inside a cookie value', () => {
@@ -341,6 +402,37 @@ describe('giteaHandler', () => {
       ]
 
       expect(giteaHandler.resolve(value)).toEqual(expected)
+    })
+  })
+
+  describe('resolve under a sub-path', () => {
+    it('should build the feeds from the install root', () => {
+      const value = 'https://example.org/gitea/owner/project'
+      const expected = [
+        {
+          uri: [
+            'https://example.org/gitea/owner/project/releases.atom',
+            'https://example.org/gitea/owner/project/releases.rss',
+          ],
+          hint: { key: 'gitea:releases', label: 'Releases' },
+        },
+        {
+          uri: [
+            'https://example.org/gitea/owner/project/tags.atom',
+            'https://example.org/gitea/owner/project/tags.rss',
+          ],
+          hint: { key: 'gitea:tags', label: 'Tags' },
+        },
+        {
+          uri: [
+            'https://example.org/gitea/owner/project.atom',
+            'https://example.org/gitea/owner/project.rss',
+          ],
+          hint: { key: 'gitea:activity', label: 'Activity' },
+        },
+      ]
+
+      expect(giteaHandler.resolve(value, giteaSubPathHtml)).toEqual(expected)
     })
   })
 

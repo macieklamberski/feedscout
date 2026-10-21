@@ -1,17 +1,16 @@
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { giteaHandler as giteaFeedHandler, parseGiteaUrl } from '../../feeds/platforms/gitea.js'
+import { getGiteaPage, giteaHandler as giteaFeedHandler } from '../../feeds/platforms/gitea.js'
 
 export const giteaHandler: PlatformHandler = {
   match: giteaFeedHandler.match,
 
-  resolve: (url) => {
-    const { origin } = new URL(url)
-    const owner = parseGiteaUrl(url)?.owner
+  resolve: (url, content) => {
+    const page = getGiteaPage(url, content)
 
-    if (!owner) {
+    if (!page) {
       return []
     }
 
-    return [{ uri: `${origin}/user/avatar/${owner}/512` }]
+    return [{ uri: `${page.root}/user/avatar/${page.owner}/512` }]
   },
 }

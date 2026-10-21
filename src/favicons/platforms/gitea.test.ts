@@ -20,5 +20,13 @@ describe('giteaHandler', () => {
 
       expect(giteaHandler.resolve('https://gitea.com/gitea')).toEqual(expected)
     })
+
+    it('should resolve the owner avatar under the install sub-path', () => {
+      const value = 'https://example.org/gitea/owner/project'
+      const content = '<script type="application/json">{"appSubUrl":"/gitea"}</script>'
+      const expected = [{ uri: 'https://example.org/gitea/user/avatar/owner/512' }]
+
+      expect(giteaHandler.resolve(value, content)).toEqual(expected)
+    })
   })
 })
