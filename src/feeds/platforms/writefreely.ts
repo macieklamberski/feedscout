@@ -70,13 +70,20 @@ const getWritefreelyPage = (
   content: string | undefined,
 ): WritefreelyPage | undefined => {
   const urlBlogPath = getUrlBlogPath(url)
+  const blogPath = getBlogPath(content)
 
+  // The root of a single-user instance is its blog, and a multi-user root redirects to /signup or
+  // /read, so only a blog title linking the root names a blog there.
   if (!urlBlogPath) {
-    return
+    if (blogPath !== '/') {
+      return
+    }
+
+    return { blogPath }
   }
 
   return {
-    blogPath: getBlogPath(content) ?? urlBlogPath,
+    blogPath: blogPath ?? urlBlogPath,
     tag: new URL(url).pathname.match(tagPathRegex)?.[1],
   }
 }
@@ -87,7 +94,7 @@ export const writefreelyHandler: PlatformHandler = {
       return false
     }
 
-    return Boolean(getUrlBlogPath(url))
+    return getWritefreelyPage(url, content) !== undefined
   },
 
   resolve: (url, content) => {

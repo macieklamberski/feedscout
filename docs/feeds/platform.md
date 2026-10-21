@@ -229,7 +229,7 @@ Discovers Atom feeds for users, organizations, and repositories.
 | `github.com/{owner}/{repo}/wiki` | Wiki changes<sup>†</sup>, plus the feeds above |
 | `github.com/{owner}/{repo}/discussions` | Discussions<sup>†</sup>, plus the feeds above |
 | `github.com/{owner}/{repo}/discussions/categories/{category}` | Discussion category<sup>†</sup>, plus the feeds above |
-| `github.com/{owner}/{repo}/tree/{branch}` | Branch commits<sup>†</sup>, plus the feeds above |
+| `github.com/{owner}/{repo}/tree/{branch}` or `github.com/{owner}/{repo}/commits/{branch}` | Branch commits<sup>†</sup>, plus the feeds above |
 | `github.com/{owner}/{repo}/blob/{branch}/{path}` | File commits<sup>†</sup>, plus the feeds above |
 | `github.com/{owner}/{repo}/commits/{branch}/{path}` | File commits<sup>†</sup>, plus the feeds above |
 
@@ -313,7 +313,7 @@ Discovers RSS feeds for Pinboard users, user tags, and the popular and recent li
 
 ### Pinterest
 
-Discovers RSS feeds for Pinterest user profiles and boards.
+Discovers RSS feeds for Pinterest user profiles and boards, on `pinterest.com` and on country sites such as `uk.pinterest.com` and `pinterest.co.uk`.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
@@ -387,6 +387,7 @@ Discovers RSS feeds for Tumblr blogs and tagged posts.
 | `*.tumblr.com/tagged/{tag}` | Tagged posts<sup>†</sup> |
 | `www.tumblr.com/{blog}` | Blog posts |
 | `www.tumblr.com/blog/view/{blog}` | Blog posts |
+| `www.tumblr.com/{blog}/tagged/{tag}` | Tagged posts |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -1009,7 +1010,7 @@ Discovers Atom feeds for Friendica user profiles. Detected by the `Friendica` ge
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{instance}/profile/{user}` | Posts · comments · replies · activity (Atom) |
+| `{instance}/profile/{user}`, `{instance}/u/{user}` or `{instance}/~{user}` | Posts · comments · replies · activity (Atom) |
 
 ### Ghost
 
@@ -1177,6 +1178,7 @@ Discovers RSS feeds for Naver Blog.
 |-------------|-----------------|
 | `blog.naver.com/{id}` | Blog |
 | `m.blog.naver.com/{id}` | Blog<sup>†</sup> |
+| `blog.naver.com/PostView.naver?blogId={id}` or `m.blog.naver.com/PostView.naver?blogId={id}` | Blog |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -1218,7 +1220,7 @@ Discovers Atom and RSS feeds for Pleroma (and Akkoma) user profiles. Detected by
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{instance}/users/{user}` | Posts (Atom + RSS<sup>†</sup>) |
+| `{instance}/users/{user}`, `{instance}/@{user}` or `{instance}/{user}` | Posts (Atom + RSS<sup>†</sup>) |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -1322,6 +1324,7 @@ Discovers the posts, comments and tag feeds of a blog on `*.blogs.sapo.pt`. Comm
 | `{blog}.blogs.sapo.pt/{slug}-{id}` | Post comments<sup>†</sup>*, plus the blog feeds |
 | `{blog}.blogs.sapo.pt/{id}.html` | Post comments<sup>†</sup>*, plus the blog feeds |
 | `{blog}.blogs.sapo.pt/tag/{tag}` | Tag<sup>†</sup>, plus the blog feeds |
+| `{blog}.blogs.sapo.pt/?tag={tag}` | Tag, plus the blog feeds |
 
 \* *Requires HTML content to confirm the page links the post.*
 
@@ -1668,6 +1671,7 @@ Discovers the feeds of a WriteFreely blog. Detected by the `WriteFreely` or `Wri
 |-------------|-----------------|
 | `{instance}/{blog}` | Blog · instance reader<sup>†</sup> (RSS) |
 | `{instance}/{blog}/tag:{tag}` | Tag · blog · instance reader<sup>†</sup> (RSS) |
+| `{instance}` on a single-user instance | Blog (RSS) |
 | `{instance}/{post}` on a single-user instance | Blog (RSS) |
 | `{instance}/page/{n}` on a single-user instance | Blog (RSS) |
 | `{instance}/lang:{code}` on a single-user instance | Blog (RSS) |

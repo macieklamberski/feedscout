@@ -21,6 +21,24 @@ describe('parseTumblrUrl', () => {
     expect(parseTumblrUrl('https://example.tumblr.com/tagged/updates')).toEqual(expected)
   })
 
+  it('should return the tag for a www.tumblr.com tagged path', () => {
+    const expected: TumblrUrl = { kind: 'tag', blog: 'example', tag: 'updates' }
+
+    expect(parseTumblrUrl('https://www.tumblr.com/example/tagged/updates')).toEqual(expected)
+  })
+
+  it('should return the tag for a www.tumblr.com tagged path with a capitalized segment', () => {
+    const expected: TumblrUrl = { kind: 'tag', blog: 'example', tag: 'updates' }
+
+    expect(parseTumblrUrl('https://www.tumblr.com/example/Tagged/updates')).toEqual(expected)
+  })
+
+  it('should return the blog for a www.tumblr.com tagged path without a tag', () => {
+    const expected: TumblrUrl = { kind: 'blog', blog: 'example' }
+
+    expect(parseTumblrUrl('https://www.tumblr.com/example/tagged')).toEqual(expected)
+  })
+
   it('should return the blog for a www.tumblr.com blog path', () => {
     const expected: TumblrUrl = { kind: 'blog', blog: 'example' }
 

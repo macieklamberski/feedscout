@@ -25,6 +25,18 @@ describe('parseFriendicaUrl', () => {
     expect(parseFriendicaUrl('https://example.com/Profile/alice')).toEqual(expected)
   })
 
+  it('should return the profile for the /u/ spelling', () => {
+    const expected: FriendicaUrl = { kind: 'profile', username: 'alice' }
+
+    expect(parseFriendicaUrl('https://example.com/u/alice')).toEqual(expected)
+  })
+
+  it('should return the profile for the /~ spelling', () => {
+    const expected: FriendicaUrl = { kind: 'profile', username: 'alice' }
+
+    expect(parseFriendicaUrl('https://example.com/~alice')).toEqual(expected)
+  })
+
   it('should return undefined for a page the parser does not name', () => {
     expect(parseFriendicaUrl('https://example.com/about')).toBeUndefined()
   })

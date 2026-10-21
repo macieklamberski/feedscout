@@ -99,6 +99,12 @@ describe('parseGithubUrl', () => {
     expect(parseGithubUrl('https://github.com/acme/app/tree/dev')).toEqual(expected)
   })
 
+  it('should return the branch of a branch commit history page', () => {
+    const expected: GithubUrl = { kind: 'repo', owner: 'acme', repo: 'app', branch: 'dev' }
+
+    expect(parseGithubUrl('https://github.com/acme/app/commits/dev')).toEqual(expected)
+  })
+
   it('should return the file of a repository blob page', () => {
     const value = 'https://github.com/acme/app/blob/main/src/index.ts'
     const expected: GithubUrl = {

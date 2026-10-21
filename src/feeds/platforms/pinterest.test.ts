@@ -21,6 +21,28 @@ describe('parsePinterestUrl', () => {
     expect(parsePinterestUrl('https://pinterest.com/nasa')).toEqual(expected)
   })
 
+  it('should return the user for a country label host', () => {
+    const expected: PinterestUrl = { kind: 'user', username: 'nasa' }
+
+    expect(parsePinterestUrl('https://uk.pinterest.com/nasa/')).toEqual(expected)
+  })
+
+  it('should return the user for a country domain', () => {
+    const expected: PinterestUrl = { kind: 'user', username: 'nasa' }
+
+    expect(parsePinterestUrl('https://www.pinterest.co.uk/nasa/')).toEqual(expected)
+  })
+
+  it('should return the user for a country domain without www', () => {
+    const expected: PinterestUrl = { kind: 'user', username: 'nasa' }
+
+    expect(parsePinterestUrl('https://pinterest.de/nasa/')).toEqual(expected)
+  })
+
+  it('should return undefined for a subdomain longer than a country label', () => {
+    expect(parsePinterestUrl('https://help.pinterest.com/nasa/')).toBeUndefined()
+  })
+
   it('should return the tab for user subpages', () => {
     const expected: PinterestUrl = { kind: 'tab', username: 'nasa' }
 
@@ -113,6 +135,18 @@ describe('pinterestHandler', () => {
 
     it('should return user feed for pins page', () => {
       const value = 'https://www.pinterest.com/nasa/pins'
+      const expected = [
+        {
+          uri: 'https://www.pinterest.com/nasa/feed.rss',
+          hint: { key: 'pinterest:pins', label: 'Pins' },
+        },
+      ]
+
+      expect(pinterestHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return the user feed on www for a country label host', () => {
+      const value = 'https://uk.pinterest.com/nasa/'
       const expected = [
         {
           uri: 'https://www.pinterest.com/nasa/feed.rss',

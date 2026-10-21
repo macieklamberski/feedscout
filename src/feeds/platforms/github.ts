@@ -24,7 +24,7 @@ const hosts = ['github.com', 'www.github.com']
 const wikiRegex = /^\/[^/]+\/[^/]+\/wiki(?:\/|$)/i
 const discussionsRegex = /^\/[^/]+\/[^/]+\/discussions(?:\/|$)/i
 const discussionCategoryRegex = /^\/[^/]+\/[^/]+\/discussions\/categories\/([^/]+)/i
-const branchRegex = /^\/[^/]+\/[^/]+\/tree\/([^/]+)\/?$/i
+const branchRegex = /^\/[^/]+\/[^/]+\/(?:tree|commits)\/([^/]+)\/?$/i
 const fileRegex = /^\/[^/]+\/[^/]+\/(?:blob|commits)\/([^/]+)\/(.+)/i
 const userRouteSuffixRegex = /\.(?:atom|gpg|keys|png)$/i
 

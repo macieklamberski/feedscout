@@ -47,6 +47,12 @@ describe('writefreelyHandler', () => {
       expect(writefreelyHandler.match('https://example.org/', writefreelyHtml)).toBe(false)
     })
 
+    it('should match the root of a single-user instance', () => {
+      const content = `${writefreelyHtml}<h1 id="blog-title"><a href="/">Blog</a></h1>`
+
+      expect(writefreelyHandler.match('https://example.org/', content)).toBe(true)
+    })
+
     it('should not match without content', () => {
       expect(writefreelyHandler.match('https://example.org/alice')).toBe(false)
     })
@@ -316,6 +322,25 @@ describe('writefreelyHandler', () => {
       ]
 
       expect(writefreelyHandler.resolve(value, content)).toEqual(expected)
+    })
+
+    it('should build the blog feed of a single-user instance from its root', () => {
+      const value = 'https://example.org/'
+      const content = '<h1 id="blog-title"><a href="/">Blog</a></h1>'
+      const expected = [
+        {
+          uri: 'https://example.org/feed/',
+          hint: { key: 'writefreely:blog', label: 'Blog' },
+        },
+      ]
+
+      expect(writefreelyHandler.resolve(value, content)).toEqual(expected)
+    })
+
+    it('should return an empty array for the root when the blog title links a blog path', () => {
+      const content = '<h1 id="blog-title"><a href="/alice/">Blog</a></h1>'
+
+      expect(writefreelyHandler.resolve('https://example.org/', content)).toEqual([])
     })
 
     it('should return an empty array for the instance root', () => {

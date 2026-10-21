@@ -19,12 +19,14 @@ const tagRegex = /^\/tag\/(.+?)\/?$/i
 const reservedCharRegex = /[!'()*]/g
 
 export const parseSapoBlogsUrl = (url: string): SapoBlogsUrl | undefined => {
-  const pathname = parseUrl(url)?.pathname
+  const parsedUrl = parseUrl(url)
   const blog = getTenantSubdomain(url, domains)
 
-  if (!pathname || !blog) {
+  if (!parsedUrl || !blog) {
     return
   }
+
+  const { pathname } = parsedUrl
 
   const postMatch = pathname.match(postRegex)
   const postId = postMatch?.[1] ?? postMatch?.[2]
@@ -38,6 +40,13 @@ export const parseSapoBlogsUrl = (url: string): SapoBlogsUrl | undefined => {
 
   if (tag) {
     return { kind: 'tag', blog, tag }
+  }
+
+  // The next pages of a tag listing name the tag in the query: /?skip=20&tag={tag}.
+  const queryTag = pathname === '/' ? parsedUrl.searchParams.get('tag') : undefined
+
+  if (queryTag) {
+    return { kind: 'tag', blog, tag: queryTag }
   }
 
   return { kind: 'blog', blog }
