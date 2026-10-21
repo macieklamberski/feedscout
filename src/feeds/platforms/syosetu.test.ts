@@ -8,6 +8,16 @@ describe('parseSyosetuUrl', () => {
     expect(parseSyosetuUrl('https://mypage.syosetu.com/12345/')).toEqual(expected)
   })
 
+  it('should return a one-digit writer id whole', () => {
+    const expected: SyosetuUrl = { kind: 'writer', writerId: '1' }
+
+    expect(parseSyosetuUrl('https://mypage.syosetu.com/1/')).toEqual(expected)
+  })
+
+  it('should return undefined for a writer id with a letter', () => {
+    expect(parseSyosetuUrl('https://mypage.syosetu.com/372556abc/')).toBeUndefined()
+  })
+
   it('should return undefined for a page without a writer id', () => {
     expect(parseSyosetuUrl('https://mypage.syosetu.com/')).toBeUndefined()
   })

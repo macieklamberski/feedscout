@@ -19,6 +19,18 @@ describe('parseDiscourseUrl', () => {
     expect(parseDiscourseUrl('https://forum.example.com/t/some-topic/123')).toEqual(expected)
   })
 
+  it('should return the topic for a topic feed URL', () => {
+    const expected: DiscourseUrl = { kind: 'topic', slug: 'some-topic', topicId: '123' }
+
+    expect(parseDiscourseUrl('https://forum.example.com/t/some-topic/123.rss')).toEqual(expected)
+  })
+
+  it('should return the latest page for a topic id with a letter', () => {
+    const expected: DiscourseUrl = { kind: 'latest' }
+
+    expect(parseDiscourseUrl('https://forum.example.com/t/some-topic/123abc')).toEqual(expected)
+  })
+
   it('should return the user for a user page', () => {
     const expected: DiscourseUrl = { kind: 'user', username: 'alice' }
 

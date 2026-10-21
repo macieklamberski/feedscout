@@ -14,6 +14,16 @@ describe('parseDoubanUrl', () => {
     expect(parseDoubanUrl('https://movie.douban.com/subject/1292052/')).toEqual(expected)
   })
 
+  it('should return a one-digit subject id whole', () => {
+    const expected: DoubanUrl = { kind: 'subject', subjectId: '1' }
+
+    expect(parseDoubanUrl('https://book.douban.com/subject/1/')).toEqual(expected)
+  })
+
+  it('should return undefined for a subject id with a letter', () => {
+    expect(parseDoubanUrl('https://book.douban.com/subject/1084336abc/')).toBeUndefined()
+  })
+
   it('should return the home page for the root', () => {
     const expected: DoubanUrl = { kind: 'home' }
 

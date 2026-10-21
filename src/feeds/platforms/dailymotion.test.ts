@@ -59,6 +59,16 @@ describe('parseDailymotionUrl', () => {
     expect(parseDailymotionUrl(value)).toEqual(expected)
   })
 
+  it('should return a one-character playlist id whole', () => {
+    const expected: DailymotionUrl = { kind: 'playlist', playlistId: 'x' }
+
+    expect(parseDailymotionUrl('https://www.dailymotion.com/playlist/x')).toEqual(expected)
+  })
+
+  it('should return undefined for a playlist id with a dot', () => {
+    expect(parseDailymotionUrl('https://www.dailymotion.com/playlist/xdf7sa.old')).toBeUndefined()
+  })
+
   it('should return the channel for a channel page', () => {
     const expected: DailymotionUrl = { kind: 'channel', channel: 'news' }
 
@@ -69,6 +79,16 @@ describe('parseDailymotionUrl', () => {
     const expected: DailymotionUrl = { kind: 'channel', channel: 'news' }
 
     expect(parseDailymotionUrl('https://www.dailymotion.com/Channel/news')).toEqual(expected)
+  })
+
+  it('should return a one-character channel whole', () => {
+    const expected: DailymotionUrl = { kind: 'channel', channel: 'a' }
+
+    expect(parseDailymotionUrl('https://www.dailymotion.com/channel/a')).toEqual(expected)
+  })
+
+  it('should return undefined for a channel with a dot', () => {
+    expect(parseDailymotionUrl('https://www.dailymotion.com/channel/news.tv')).toBeUndefined()
   })
 
   it('should return the query for a search page', () => {

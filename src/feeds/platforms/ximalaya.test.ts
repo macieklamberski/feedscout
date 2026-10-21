@@ -14,6 +14,16 @@ describe('parseXimalayaUrl', () => {
     expect(parseXimalayaUrl('https://www.ximalaya.com/123/album/12345')).toEqual(expected)
   })
 
+  it('should return a one-digit album id whole', () => {
+    const expected: XimalayaUrl = { kind: 'album', albumId: '1' }
+
+    expect(parseXimalayaUrl('https://www.ximalaya.com/album/1')).toEqual(expected)
+  })
+
+  it('should return undefined for an album id with a letter', () => {
+    expect(parseXimalayaUrl('https://www.ximalaya.com/album/203355abc')).toBeUndefined()
+  })
+
   it('should return undefined for another page', () => {
     expect(parseXimalayaUrl('https://www.ximalaya.com/')).toBeUndefined()
   })

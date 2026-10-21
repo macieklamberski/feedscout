@@ -1,6 +1,6 @@
 import { getPathSegments, isAnyOf, isHostOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
+import { composeHint, wordOrHyphenRegex } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic partly covers article, blomaga, channel, live, video.
@@ -12,8 +12,6 @@ export type NiconicoUrl =
 
 export const hosts = ['ch.nicovideo.jp']
 
-const channelRegex = /^[\w-]+$/
-
 export const parseNiconicoUrl = (url: string): NiconicoUrl | undefined => {
   if (!isHostOf(url, hosts)) {
     return
@@ -21,7 +19,7 @@ export const parseNiconicoUrl = (url: string): NiconicoUrl | undefined => {
 
   const [channel, section] = getPathSegments(url)
 
-  if (!channel || !channelRegex.test(channel)) {
+  if (!channel || !wordOrHyphenRegex.test(channel)) {
     return
   }
 

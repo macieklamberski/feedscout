@@ -6,6 +6,7 @@ import {
   findElements,
   getCookieNames,
   hasMarker,
+  hexOrHyphenRegex,
 } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
@@ -18,7 +19,6 @@ const domains = ['legistar.com']
 
 const legislationPathRegex = /^\/LegislationDetail\.aspx$/i
 const meetingPathRegex = /^\/MeetingDetail\.aspx$/i
-const guidRegex = /^[\da-f-]+$/i
 
 // Legistar's load balancer sets this cookie on every page, on a client's custom domain too.
 const cookieName = 'BIGipServerinsite.legistar.com_443'
@@ -43,7 +43,7 @@ export const parseLegistarUrl = (url: string): LegistarUrl | undefined => {
   const guid = parsedUrl.searchParams.get('GUID')
 
   // Feed.ashx answers 410 to an id without its own GUID, so both must come from the page URL.
-  if (!id || !guid || !digitsRegex.test(id) || !guidRegex.test(guid)) {
+  if (!id || !guid || !digitsRegex.test(id) || !hexOrHyphenRegex.test(guid)) {
     return
   }
 

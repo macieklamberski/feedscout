@@ -16,6 +16,19 @@ export type PageMarkers = {
 }
 
 export const digitsRegex = /^\d+$/
+export const alphanumericOrHyphenRegex = /^[A-Za-z0-9-]+$/
+export const hexRegex = /^[0-9a-f]+$/i
+export const hexOrHyphenRegex = /^[0-9a-f-]+$/i
+export const wordOrHyphenRegex = /^[\w-]+$/
+
+// The `id` group the regex reads from the value, when it is all digits.
+export const getNumericId = (value: string | undefined, regex: RegExp): string | undefined => {
+  const id = value?.match(regex)?.groups?.id
+
+  if (id && digitsRegex.test(id)) {
+    return id
+  }
+}
 
 export const composeHint = (key: string, format?: DiscoverUriHint['format']): DiscoverUriHint => {
   const label = locales.hints[key as keyof typeof locales.hints]

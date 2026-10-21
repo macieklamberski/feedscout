@@ -14,6 +14,16 @@ describe('parseSubstackUrl', () => {
     expect(parseSubstackUrl('https://substack.com/@example')).toEqual(expected)
   })
 
+  it('should return a one-letter username whole', () => {
+    const expected: SubstackUrl = { kind: 'profile', username: 'a' }
+
+    expect(parseSubstackUrl('https://substack.com/@a')).toEqual(expected)
+  })
+
+  it('should return undefined for a username with a dot', () => {
+    expect(parseSubstackUrl('https://substack.com/@platformer.old')).toBeUndefined()
+  })
+
   it('should return undefined for an apex page without a profile path', () => {
     expect(parseSubstackUrl('https://substack.com/home')).toBeUndefined()
   })

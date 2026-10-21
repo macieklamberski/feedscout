@@ -3,6 +3,7 @@ import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import {
   composeHint,
+  digitsRegex,
   findElement,
   hasElementWithId,
   hasMarker,
@@ -24,7 +25,8 @@ const userRegex = /^\/u\/([^/]+)/i
 // A category page takes a `/none` or `/all` subcategory tail and an `/l/{filter}` list tail, and the
 // category feed answers only without them.
 const categoryRegex = /^\/c\/(.+?)(?:\/(?:none|all))?(?:\/l\/.+)?\/?$/i
-const topicRegex = /^\/t\/([^/]+)\/(\d+)/i
+const topicRegex = /^\/t\/(?<slug>[^/]+)\/(?<topicId>[^/]+)/i
+const feedSuffixRegex = /\.rss$/i
 const topRegex = /^\/top(?:\/([^/]+))?\/?$/i
 
 const validTopPeriods = ['daily', 'weekly', 'monthly', 'quarterly', 'yearly', 'all']
@@ -49,10 +51,12 @@ export const parseDiscourseUrl = (url: string): DiscourseUrl | undefined => {
   }
 
   const { pathname, searchParams } = parsedUrl
-  const topicMatch = pathname.match(topicRegex)
+  const topicMatch = pathname.match(topicRegex)?.groups
+  // A topic feed URL, such as /t/{slug}/{id}.rss, names its topic too.
+  const topicId = topicMatch?.topicId?.replace(feedSuffixRegex, '')
 
-  if (topicMatch?.[1] && topicMatch?.[2]) {
-    return { kind: 'topic', slug: topicMatch[1], topicId: topicMatch[2] }
+  if (topicMatch?.slug && topicId && digitsRegex.test(topicId)) {
+    return { kind: 'topic', slug: topicMatch.slug, topicId }
   }
 
   const username = pathname.match(userRegex)?.[1]

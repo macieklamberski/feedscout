@@ -87,6 +87,30 @@ describe('parseLobstersUrl', () => {
     expect(parseLobstersUrl('https://lobste.rs/~@invalid')).toEqual(expected)
   })
 
+  it('should return a one-letter tag whole', () => {
+    const expected: LobstersUrl = { kind: 'tag', tags: 'a' }
+
+    expect(parseLobstersUrl('https://lobste.rs/t/a')).toEqual(expected)
+  })
+
+  it('should return the home page for a tag with a dot', () => {
+    const expected: LobstersUrl = { kind: 'home' }
+
+    expect(parseLobstersUrl('https://lobste.rs/t/rust.lang')).toEqual(expected)
+  })
+
+  it('should return a one-letter username whole', () => {
+    const expected: LobstersUrl = { kind: 'user', username: 'a' }
+
+    expect(parseLobstersUrl('https://lobste.rs/~a')).toEqual(expected)
+  })
+
+  it('should return the home page for a username with a dot', () => {
+    const expected: LobstersUrl = { kind: 'home' }
+
+    expect(parseLobstersUrl('https://lobste.rs/~jcs.old')).toEqual(expected)
+  })
+
   it('should return the newest page', () => {
     const expected: LobstersUrl = { kind: 'newest' }
 

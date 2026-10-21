@@ -24,6 +24,25 @@ describe('parseMisskeyUrl', () => {
     expect(parseMisskeyUrl('https://misskey.io/@alice@mastodon.social')).toEqual(expected)
   })
 
+  it('should return the whole remote account for a local part with a dot', () => {
+    const expected: MisskeyUrl = { kind: 'profile', username: 'first.last@mastodon.social' }
+
+    expect(parseMisskeyUrl('https://misskey.io/@first.last@mastodon.social')).toEqual(expected)
+  })
+
+  it('should return the profile without its rss or json feed suffix', () => {
+    const expected: MisskeyUrl = { kind: 'profile', username: 'alice' }
+
+    expect(parseMisskeyUrl('https://misskey.io/@alice.rss')).toEqual(expected)
+    expect(parseMisskeyUrl('https://misskey.io/@alice.json')).toEqual(expected)
+  })
+
+  it('should keep a suffix that is not a feed format', () => {
+    const expected: MisskeyUrl = { kind: 'profile', username: 'alice.html' }
+
+    expect(parseMisskeyUrl('https://misskey.io/@alice.html')).toEqual(expected)
+  })
+
   it('should return undefined for a page outside a profile', () => {
     expect(parseMisskeyUrl('https://misskey.io/explore')).toBeUndefined()
   })

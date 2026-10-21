@@ -1,6 +1,6 @@
 import { getAnyOf, isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
+import { composeHint, wordOrHyphenRegex } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers comments, domain, home, multiTag, newest, tag, top (guess, html).
@@ -16,12 +16,13 @@ export type LobstersUrl =
   | { kind: 'home' }
 
 const hosts = ['lobste.rs']
-const tagRegex = /^\/t\/([a-zA-Z0-9,_-]+)/i
+const tagRegex = /^\/t\/(?<tags>[^/]+)/i
 const domainRegex = /^\/domains\/([^/]+)/i
-const userRegex = /^\/~([a-zA-Z0-9_-]+)/i
+const userRegex = /^\/~(?<username>[^/]+)/
 const topRegex = /^\/top(?:\/(1d|3d|1w|1m|1y))?\/?$/i
 const newestRegex = /^\/newest\/?$/i
 const commentsRegex = /^\/comments\/?$/i
+const tagsValueRegex = /^[\w,-]+$/
 
 const topPeriods = ['1d', '3d', '1w', '1m', '1y']
 
@@ -34,9 +35,9 @@ export const parseLobstersUrl = (url: string): LobstersUrl | undefined => {
 
   const { pathname } = parsedUrl
   // A comma joins several tags: /t/{tag1},{tag2}.
-  const tags = pathname.match(tagRegex)?.[1]
+  const tags = pathname.match(tagRegex)?.groups?.tags
 
-  if (tags) {
+  if (tags && tagsValueRegex.test(tags)) {
     return { kind: 'tag', tags }
   }
 
@@ -46,9 +47,9 @@ export const parseLobstersUrl = (url: string): LobstersUrl | undefined => {
     return { kind: 'domain', domain }
   }
 
-  const username = pathname.match(userRegex)?.[1]
+  const username = pathname.match(userRegex)?.groups?.username
 
-  if (username) {
+  if (username && wordOrHyphenRegex.test(username)) {
     return { kind: 'user', username }
   }
 

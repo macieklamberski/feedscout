@@ -1,6 +1,6 @@
 import { isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, getTenantSubdomain } from '../../common/utils.js'
+import { composeHint, getTenantSubdomain, wordOrHyphenRegex } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers blog (guess, html).
@@ -11,7 +11,7 @@ export type SubstackUrl = { kind: 'newsletter' } | { kind: 'profile'; username: 
 const domains = ['substack.com']
 // The app host names a publication in the path, so it is no publication itself.
 const appHosts = ['open.substack.com']
-const profileRegex = /^\/@([\w-]+)/
+const profileRegex = /^\/@(?<username>[^/]+)/
 // A profile page embeds its primary publication as escaped JSON. The publication
 // subdomain is not always the handle, and a custom domain replaces it.
 const publicationRegex =
@@ -42,9 +42,9 @@ export const parseSubstackUrl = (url: string): SubstackUrl | undefined => {
     return
   }
 
-  const username = parsedUrl.pathname.match(profileRegex)?.[1]
+  const username = parsedUrl.pathname.match(profileRegex)?.groups?.username
 
-  if (!username) {
+  if (!username || !wordOrHyphenRegex.test(username)) {
     return
   }
 

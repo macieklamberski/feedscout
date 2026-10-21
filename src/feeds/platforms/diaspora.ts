@@ -3,7 +3,8 @@ import { composeHint, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
-const profileRegex = /^\/(?:u|public|people)\/([^/.]+)/i
+const profileRegex = /^\/(?:u|public|people)\/(?<segment>[^/]+)/i
+const feedSuffixRegex = /\.atom$/i
 // A `/people/{guid}` page is keyed by guid, and the feed by username. The page
 // carries the username in its diaspora ID.
 const peoplePathRegex = /^\/people\//i
@@ -17,7 +18,9 @@ export type DiasporaPage = { username: string }
 
 const getDiasporaPage = (url: string, content: string | undefined): DiasporaPage | undefined => {
   const { pathname } = new URL(url)
-  const pathUsername = pathname.match(profileRegex)?.[1]
+  const segment = pathname.match(profileRegex)?.groups?.segment
+  // A feed URL, such as /public/alice.atom, names its profile too.
+  const pathUsername = segment?.replace(feedSuffixRegex, '')
 
   if (!pathUsername) {
     return

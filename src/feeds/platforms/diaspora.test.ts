@@ -76,6 +76,30 @@ describe('diasporaHandler', () => {
       expect(diasporaHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return the public feed for a feed URL', () => {
+      const value = 'https://example.org/public/alice.atom'
+      const expected = [
+        {
+          uri: 'https://example.org/public/alice.atom',
+          hint: { key: 'diaspora:posts', label: 'Posts' },
+        },
+      ]
+
+      expect(diasporaHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should keep a suffix that is not the feed format', () => {
+      const value = 'https://example.org/u/alice.html'
+      const expected = [
+        {
+          uri: 'https://example.org/public/alice.html.atom',
+          hint: { key: 'diaspora:posts', label: 'Posts' },
+        },
+      ]
+
+      expect(diasporaHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return the public feed by username for a people path', () => {
       const value = 'https://example.org/people/a6d160218ed02ee7'
       const content = `${diasporaHtml}<script>{"diaspora_id":"alice@example.org"}</script>`

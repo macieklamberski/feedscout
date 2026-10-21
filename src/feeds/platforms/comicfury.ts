@@ -1,6 +1,6 @@
 import { isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, getTenantSubdomain } from '../../common/utils.js'
+import { alphanumericOrHyphenRegex, composeHint, getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers comic, reader (guess, html).
@@ -17,7 +17,6 @@ const domains = [
 ]
 const hosts = ['comicfury.com', 'www.comicfury.com']
 
-const comicRegex = /^[a-z0-9-]+$/i
 const profilePathRegex = /^\/comicprofile\.php$/i
 const readerPathRegex = /^\/read\/([^/]+)/i
 
@@ -31,7 +30,7 @@ export const parseComicfuryUrl = (url: string): ComicfuryUrl | undefined => {
   if (!isHostOf(parsedUrl, hosts)) {
     const comic = getTenantSubdomain(parsedUrl, domains)
 
-    if (!comic || !comicRegex.test(comic)) {
+    if (!comic || !alphanumericOrHyphenRegex.test(comic)) {
       return
     }
 
@@ -41,7 +40,7 @@ export const parseComicfuryUrl = (url: string): ComicfuryUrl | undefined => {
   if (profilePathRegex.test(parsedUrl.pathname)) {
     const comic = parsedUrl.searchParams.get('url')
 
-    if (!comic || !comicRegex.test(comic)) {
+    if (!comic || !alphanumericOrHyphenRegex.test(comic)) {
       return
     }
 
@@ -50,7 +49,7 @@ export const parseComicfuryUrl = (url: string): ComicfuryUrl | undefined => {
 
   const comic = parsedUrl.pathname.match(readerPathRegex)?.[1]
 
-  if (!comic || !comicRegex.test(comic)) {
+  if (!comic || !alphanumericOrHyphenRegex.test(comic)) {
     return
   }
 

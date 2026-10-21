@@ -1,6 +1,6 @@
 import { decodeSegment, isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
+import { composeHint, hexRegex } from '../../common/utils.js'
 
 // Discoverability: Not discoverable without handler.
 // Handler needed for: all shapes.
@@ -8,7 +8,7 @@ import { composeHint } from '../../common/utils.js'
 export type OdyseeUrl = { kind: 'channel'; name: string; claimId?: string }
 
 export const hosts = ['odysee.com', 'www.odysee.com']
-const channelRegex = /^\/@([^/:]+)(?::([a-f0-9]+))?/i
+const channelRegex = /^\/@(?<name>[^/:]+)(?::(?<claimId>[^/]+))?/
 
 export const parseOdyseeUrl = (url: string): OdyseeUrl | undefined => {
   const parsedUrl = parseUrl(url)
@@ -17,19 +17,25 @@ export const parseOdyseeUrl = (url: string): OdyseeUrl | undefined => {
     return
   }
 
-  const match = parsedUrl.pathname.match(channelRegex)
+  const groups = parsedUrl.pathname.match(channelRegex)?.groups
 
-  if (!match?.[1]) {
+  if (!groups?.name) {
     return
   }
 
-  const name = decodeSegment(match[1])
+  const name = decodeSegment(groups.name)
 
   if (!name) {
     return
   }
 
-  return { kind: 'channel', name, claimId: match[2] }
+  const { claimId } = groups
+
+  if (claimId !== undefined && !hexRegex.test(claimId)) {
+    return
+  }
+
+  return { kind: 'channel', name, claimId }
 }
 
 export const odyseeHandler: PlatformHandler = {

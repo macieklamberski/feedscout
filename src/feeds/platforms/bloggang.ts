@@ -1,6 +1,6 @@
 import { isAnyOf, isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, getTenantSubdomain } from '../../common/utils.js'
+import { composeHint, getTenantSubdomain, wordOrHyphenRegex } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -14,7 +14,6 @@ const hosts = ['bloggang.com', 'www.bloggang.com']
 // The mobile site names a blog in the query, in a form no feed URL is built from.
 const mobileHosts = ['m.bloggang.com']
 
-const usernameRegex = /^[\w-]+$/
 const scriptRegex = /^\/(\w+)\.php$/i
 
 export const parseBloggangUrl = (url: string): BloggangUrl | undefined => {
@@ -33,7 +32,7 @@ export const parseBloggangUrl = (url: string): BloggangUrl | undefined => {
   const script = parsed?.pathname.match(scriptRegex)?.[1]
   const username = parsed?.searchParams.get('id')
 
-  if (!username || !usernameRegex.test(username)) {
+  if (!username || !wordOrHyphenRegex.test(username)) {
     return
   }
 

@@ -9,6 +9,7 @@ import {
   getCookieNames,
   getJsonLd,
   getMetaContent,
+  getNumericId,
   getScriptDirectory,
   getScriptText,
   getTenantSubdomain,
@@ -26,6 +27,26 @@ import {
   toPositiveInteger,
   withTextBody,
 } from './utils.js'
+
+const idRegex = /\/topic\/(?<id>[^/]+)/
+
+describe('getNumericId', () => {
+  it('should return an id of digits', () => {
+    expect(getNumericId('/topic/123', idRegex)).toBe('123')
+  })
+
+  it('should return undefined for an id with a letter', () => {
+    expect(getNumericId('/topic/123abc', idRegex)).toBeUndefined()
+  })
+
+  it('should return undefined when the regex does not match', () => {
+    expect(getNumericId('/category/123', idRegex)).toBeUndefined()
+  })
+
+  it('should return undefined for an undefined value', () => {
+    expect(getNumericId(undefined, idRegex)).toBeUndefined()
+  })
+})
 
 describe('composeHint', () => {
   it('should return hint with key and label for valid key', () => {

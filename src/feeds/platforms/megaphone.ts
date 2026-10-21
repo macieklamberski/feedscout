@@ -1,6 +1,6 @@
 import { isHostOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
+import { composeHint, wordOrHyphenRegex } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers episode (html).
@@ -11,7 +11,6 @@ export type MegaphoneUrl = { kind: 'playlist'; showId: string } | { kind: 'episo
 const playlistHosts = ['playlist.megaphone.fm']
 const playerHosts = ['player.megaphone.fm']
 
-const showIdRegex = /^[\w-]+$/
 const episodeIdRegex = /^[A-Z]+\d+$/
 const episodePathRegex = /^\/([^/]+)\/?$/
 const feedUrlRegex = /feeds\.megaphone\.fm\/([\w-]+)/
@@ -23,7 +22,7 @@ export const parseMegaphoneUrl = (url: string): MegaphoneUrl | undefined => {
   if (isHostOf(url, playlistHosts)) {
     const showId = searchParams.get('p')
 
-    if (!showId || !showIdRegex.test(showId)) {
+    if (!showId || !wordOrHyphenRegex.test(showId)) {
       return
     }
 

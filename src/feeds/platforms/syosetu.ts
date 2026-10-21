@@ -1,6 +1,6 @@
 import { isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
+import { composeHint, digitsRegex } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic partly covers author.
@@ -8,7 +8,7 @@ import { composeHint } from '../../common/utils.js'
 export type SyosetuUrl = { kind: 'writer'; writerId: string }
 
 const hosts = ['mypage.syosetu.com']
-const writerIdRegex = /^\/(\d+)/
+const writerRegex = /^\/(?<writerId>[^/]+)/
 
 export const parseSyosetuUrl = (url: string): SyosetuUrl | undefined => {
   const parsedUrl = parseUrl(url)
@@ -17,9 +17,9 @@ export const parseSyosetuUrl = (url: string): SyosetuUrl | undefined => {
     return
   }
 
-  const writerId = parsedUrl.pathname.match(writerIdRegex)?.[1]
+  const writerId = parsedUrl.pathname.match(writerRegex)?.groups?.writerId
 
-  if (!writerId) {
+  if (!writerId || !digitsRegex.test(writerId)) {
     return
   }
 

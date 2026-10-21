@@ -1,6 +1,6 @@
 import { isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
+import { composeHint, digitsRegex } from '../../common/utils.js'
 
 // Discoverability: Not discoverable without handler.
 // Handler needed for: all shapes.
@@ -10,7 +10,7 @@ export type XimalayaUrl = { kind: 'album'; albumId: string }
 const hosts = ['www.ximalaya.com', 'ximalaya.com']
 
 // Match /album/{id} (canonical) or /{userid}/album/{id} (legacy form).
-const albumRegex = /(?:^|\/)album\/(\d+)/i
+const albumRegex = /(?:^|\/)album\/(?<albumId>[^/]+)/i
 
 export const parseXimalayaUrl = (url: string): XimalayaUrl | undefined => {
   const parsedUrl = parseUrl(url)
@@ -19,9 +19,9 @@ export const parseXimalayaUrl = (url: string): XimalayaUrl | undefined => {
     return
   }
 
-  const albumId = parsedUrl.pathname.match(albumRegex)?.[1]
+  const albumId = parsedUrl.pathname.match(albumRegex)?.groups?.albumId
 
-  if (!albumId) {
+  if (!albumId || !digitsRegex.test(albumId)) {
     return
   }
 

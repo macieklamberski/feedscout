@@ -8,6 +8,24 @@ describe('parseAudioboomUrl', () => {
     expect(parseAudioboomUrl('https://audioboom.com/channels/5071123')).toEqual(expected)
   })
 
+  it('should return the channel for a channel page with its slug', () => {
+    const expected: AudioboomUrl = { kind: 'channel', channelId: '5071123' }
+
+    expect(parseAudioboomUrl('https://audioboom.com/channels/5071123-front-page-tech')).toEqual(
+      expected,
+    )
+  })
+
+  it('should return a one-digit channel id whole', () => {
+    const expected: AudioboomUrl = { kind: 'channel', channelId: '1' }
+
+    expect(parseAudioboomUrl('https://audioboom.com/channels/1')).toEqual(expected)
+  })
+
+  it('should return undefined for a channel id with a letter', () => {
+    expect(parseAudioboomUrl('https://audioboom.com/channels/5071123abc')).toBeUndefined()
+  })
+
   it('should return undefined for the root', () => {
     expect(parseAudioboomUrl('https://audioboom.com/')).toBeUndefined()
   })

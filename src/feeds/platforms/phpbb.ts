@@ -5,6 +5,7 @@ import {
   composeHint,
   findElement,
   getCookieNames,
+  getNumericId,
   getScriptDirectory,
   hasElementWithId,
   hasMarker,
@@ -16,8 +17,8 @@ import { isForumotionHtml } from './forumotion.js'
 
 export type PhpbbPage = { boardUrl: string; forumId?: string; topicId?: string }
 
-const forumIdRegex = /[?&]f=(\d+)/
-const topicIdRegex = /[?&]t=(\d+)/
+const forumIdRegex = /[?&]f=(?<id>[^&#]+)/
+const topicIdRegex = /[?&]t=(?<id>[^&#]+)/
 
 // Forumotion's phpBB3 template prints the same body id and serves none of phpBB's feeds.
 export const isPhpbbHtml = (content: string): boolean => {
@@ -55,9 +56,9 @@ const getPhpbbPage = (url: string, content: string | undefined): PhpbbPage | und
   return {
     // A board is routinely mounted under a sub-path such as `/community`.
     boardUrl: `${origin}${getScriptDirectory(pathname)}`,
-    forumId: search.match(forumIdRegex)?.[1],
+    forumId: getNumericId(search, forumIdRegex),
     topicId:
-      search.match(topicIdRegex)?.[1] ?? canonicalLink?.attribs.href?.match(topicIdRegex)?.[1],
+      getNumericId(search, topicIdRegex) ?? getNumericId(canonicalLink?.attribs.href, topicIdRegex),
   }
 }
 

@@ -1,6 +1,6 @@
 import { isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
+import { composeHint, wordOrHyphenRegex } from '../../common/utils.js'
 
 // Discoverability: Not discoverable without handler.
 // Handler needed for: all shapes.
@@ -16,8 +16,8 @@ const hosts = ['dailymotion.com', 'www.dailymotion.com']
 // A channel name takes three characters or more, and a two-letter path is a country home page.
 // The older /user/{name} address still serves the same page.
 const userRegex = /^\/(?:user\/)?([a-zA-Z0-9_-]{3,})\/?$/i
-const playlistRegex = /^\/playlist\/([a-zA-Z0-9_-]+)/i
-const channelRegex = /^\/channel\/([a-zA-Z0-9_-]+)/i
+const playlistRegex = /^\/playlist\/(?<playlistId>[^/]+)/i
+const channelRegex = /^\/channel\/(?<channel>[^/]+)/i
 const searchRegex = /^\/search\/([^/]+)/i
 const trendingRegex = /^\/(?:trending\/?)?$/i
 
@@ -35,9 +35,9 @@ export const parseDailymotionUrl = (url: string): DailymotionUrl | undefined => 
     return { kind: 'trending' }
   }
 
-  const playlistId = pathname.match(playlistRegex)?.[1]
+  const playlistId = pathname.match(playlistRegex)?.groups?.playlistId
 
-  if (playlistId) {
+  if (playlistId && wordOrHyphenRegex.test(playlistId)) {
     return { kind: 'playlist', playlistId }
   }
 
@@ -47,9 +47,9 @@ export const parseDailymotionUrl = (url: string): DailymotionUrl | undefined => 
     return { kind: 'search', query }
   }
 
-  const channel = pathname.match(channelRegex)?.[1]
+  const channel = pathname.match(channelRegex)?.groups?.channel
 
-  if (channel) {
+  if (channel && wordOrHyphenRegex.test(channel)) {
     return { kind: 'channel', channel }
   }
 

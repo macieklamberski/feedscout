@@ -26,14 +26,13 @@ const mainHosts = ['itch.io', 'www.itch.io']
 
 const byUserRegex = /^\/games\/by-([^/]+)/i
 const tagRegex = /^\/games\/tag-([^/]+)/i
-const platformRegex = /^\/games\/platform-([^/.]+)/i
-const genreRegex = /^\/games\/genre-([^/.]+)/i
-const madeWithRegex = /^\/games\/made-with-([^/.]+)/i
-const sortRegex = /^\/games\/([^/.]+)/i
+const platformRegex = /^\/games\/platform-([^/]+)/i
+const genreRegex = /^\/games\/genre-([^/]+)/i
+const madeWithRegex = /^\/games\/made-with-([^/]+)/i
+const sortRegex = /^\/games\/([^/]+)/i
 // A listing with two or more filters, such as /games/newest/tag-horror, has its feed at its path.
-const combinedListingRegex = /^\/games(?:\/[^/.]+){2,}/i
-const sectionRegex = /^\/([^/.]+)/
-const gameRegex = /^\/([^/]+)/
+const combinedListingRegex = /^\/games(?:\/[^/]+){2,}/i
+const firstSegmentRegex = /^\/([^/]+)/
 const gamesRegex = /^\/games\/?$/i
 const devlogsRegex = /^\/devlogs\/?$/i
 const blogRegex = /^\/blog\/?$/i
@@ -73,7 +72,7 @@ export const parseItchioUrl = (url: string): ItchioUrl | undefined => {
       return
     }
 
-    const game = pathname.match(gameRegex)?.[1]
+    const game = pathname.match(firstSegmentRegex)?.[1]
 
     if (game) {
       return { kind: 'game', creator, game }
@@ -139,7 +138,7 @@ export const parseItchioUrl = (url: string): ItchioUrl | undefined => {
   }
 
   // /{section} (tools, game-assets, soundtracks, physical-games, books, comics, misc)
-  const section = getAnyOf(listingPath.match(sectionRegex)?.[1], sections)
+  const section = getAnyOf(listingPath.match(firstSegmentRegex)?.[1], sections)
 
   if (section) {
     return { kind: 'section', section }
