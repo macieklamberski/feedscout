@@ -68,8 +68,7 @@ export const parseLivejournalUrl = (url: string): LivejournalUrl | undefined => 
   const { pathname } = new URL(url)
   const tag = pathname.match(journalTagRegex)?.[1]
 
-  // Bare www/users/community/syndicated hosts have no per-user context and would
-  // emit 404 URLs. Allow them only when a user selector is in the path.
+  // The www, users and community hosts name a journal only by a user in the path.
   if (isHostOf(url, wwwHosts)) {
     const username = getJournalName(pathname, wwwUsersPathRegex)
 
