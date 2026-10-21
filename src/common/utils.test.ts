@@ -19,6 +19,7 @@ import {
   hasMarker,
   hasMetaContent,
   isOfAllowedMimeType,
+  isRootOfPage,
   matchesAnyOfLinkSelectors,
   normalizeMimeType,
   type PageMarkers,
@@ -618,6 +619,40 @@ describe('getTenantSubdomain', () => {
 
   it('should return undefined for another domain', () => {
     expect(getTenantSubdomain('https://alice.example.org/', domains)).toBeUndefined()
+  })
+})
+
+describe('isRootOfPage', () => {
+  it('should return true for a root at the origin', () => {
+    expect(isRootOfPage('https://example.com', 'https://example.com/a-post/')).toBe(true)
+  })
+
+  it('should return true for a root with a trailing slash', () => {
+    expect(isRootOfPage('https://example.com/blog/', 'https://example.com/blog/a-post')).toBe(true)
+  })
+
+  it('should return true for the root itself', () => {
+    expect(isRootOfPage('https://example.com/blog', 'https://example.com/blog')).toBe(true)
+  })
+
+  it('should return true across the www prefix', () => {
+    expect(isRootOfPage('https://www.example.com/blog', 'https://example.com/blog/')).toBe(true)
+  })
+
+  it('should return false for a root on another host', () => {
+    expect(isRootOfPage('https://cdn.example.net', 'https://example.com/a-post')).toBe(false)
+  })
+
+  it('should return false for a page outside the root', () => {
+    expect(isRootOfPage('https://example.com/blog', 'https://example.com/shop/')).toBe(false)
+  })
+
+  it('should return false for a page sharing only a prefix of the root segment', () => {
+    expect(isRootOfPage('https://example.com/blog', 'https://example.com/blogs/a-post')).toBe(false)
+  })
+
+  it('should return false for an invalid url', () => {
+    expect(isRootOfPage('http://[example', 'https://example.com/')).toBe(false)
   })
 })
 
