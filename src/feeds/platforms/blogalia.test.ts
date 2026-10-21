@@ -15,8 +15,10 @@ describe('parseBlogaliaUrl', () => {
     expect(parseBlogaliaUrl('https://example.blogalia.com/historias/12345')).toEqual(expected)
   })
 
-  it('should return undefined for the www news blog', () => {
-    expect(parseBlogaliaUrl('https://www.blogalia.com/')).toBeUndefined()
+  it('should return the blog for the www news blog', () => {
+    const expected: BlogaliaUrl = { kind: 'blog' }
+
+    expect(parseBlogaliaUrl('https://www.blogalia.com/')).toEqual(expected)
   })
 
   it('should return undefined for a nested subdomain', () => {
@@ -41,7 +43,6 @@ describe('blogaliaHandler', () => {
     const values: Array<[boolean, string]> = [
       [true, 'https://example.blogalia.com/'],
       [false, 'https://www.example.blogalia.com/'],
-      [false, 'https://www.blogalia.com/'],
       [false, 'https://example.com/'],
     ]
 
