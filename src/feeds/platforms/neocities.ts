@@ -1,6 +1,6 @@
 import { getPathSegments, isAnyOf, isHostOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, getTenantSubdomain } from '../../common/utils.js'
+import { composeHint, formatSuffixRegex, getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Not discoverable without handler.
 // Handler needed for: all shapes.
@@ -17,7 +17,8 @@ export const parseNeocitiesUrl = (url: string): NeocitiesUrl | undefined => {
     return { kind: 'site', username: subdomain }
   }
 
-  const [first, username] = getPathSegments(url)
+  const [first, segment] = getPathSegments(url)
+  const username = segment?.replace(formatSuffixRegex, '')
 
   if (!isHostOf(url, hosts) || !isAnyOf(first, 'site') || !username) {
     return
