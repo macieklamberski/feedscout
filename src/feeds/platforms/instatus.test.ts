@@ -29,6 +29,18 @@ describe('parseInstatusUrl', () => {
     expect(parseInstatusUrl('https://status.example.com/zh-tw')).toEqual(expected)
   })
 
+  it('should lowercase an uppercase language', () => {
+    const expected: InstatusUrl = { kind: 'status', language: 'pt-br' }
+
+    expect(parseInstatusUrl('https://status.example.com/pt-BR')).toEqual(expected)
+  })
+
+  it('should return the status page without a language for a script code', () => {
+    const expected: InstatusUrl = { kind: 'status' }
+
+    expect(parseInstatusUrl('https://status.example.com/zh-hant')).toEqual(expected)
+  })
+
   it('should return the status page without a language for the root', () => {
     const expected: InstatusUrl = { kind: 'status' }
 

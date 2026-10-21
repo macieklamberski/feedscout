@@ -1,6 +1,6 @@
 import { getPathSegments, isAnyOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, hasMarker, localeRegex } from '../../common/utils.js'
+import { composeHint, hasMarker, letterGroupsRegex } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -14,15 +14,16 @@ export const isShopifyHeaders = (headers: Headers): boolean => {
 
 export const parseShopifyUrl = (url: string): ShopifyUrl | undefined => {
   const segments = getPathSegments(url)
-  // A market's locale folder, as in `/en-us/blogs/news`.
-  const locale = localeRegex.test(segments[0] ?? '') ? segments[0] : undefined
+  // A market's locale folder, as in `/en-us/blogs/news` or `/zh-hant-hk/blogs/news`.
+  const locale = letterGroupsRegex.test(segments[0] ?? '') ? segments[0] : undefined
   const [first, handle] = locale ? segments.slice(1) : segments
 
   if (!isAnyOf(first, 'blogs') || !handle) {
     return
   }
 
-  return { kind: 'blog', handle, locale }
+  // Shopify answers 404 to an uppercase locale folder such as `/ZH-HANT-HK/`.
+  return { kind: 'blog', handle, locale: locale?.toLowerCase() }
 }
 
 export const shopifyHandler: PlatformHandler = {
