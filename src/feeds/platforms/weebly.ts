@@ -2,8 +2,7 @@ import { encodePathSegment, getPathSegments, isAnyOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, formatSuffixRegex, getTenantSubdomain } from '../../common/utils.js'
 
-// Discoverability: Partially discoverable without handler.
-// Generic covers blog, blogPath (html), partly covers blogCustomSlug.
+// Discoverability: Discoverable without handler.
 
 export type WeeblyUrl = { kind: 'blog'; page?: string }
 
