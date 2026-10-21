@@ -44,6 +44,10 @@ describe('parseSoundcloudUrl', () => {
     expect(parseSoundcloudUrl('https://soundcloud.com/robots.txt')).toBeUndefined()
   })
 
+  it('should return undefined for a first segment outside the permalink alphabet', () => {
+    expect(parseSoundcloudUrl('https://soundcloud.com/%40diplo')).toBeUndefined()
+  })
+
   it('should return undefined for another host', () => {
     expect(parseSoundcloudUrl('https://example.com/diplo')).toBeUndefined()
   })

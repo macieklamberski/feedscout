@@ -1,6 +1,6 @@
 import { getPathSegments, isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
+import { composeHint, wordOrHyphenRegex } from '../../common/utils.js'
 
 // Discoverability: Not discoverable without handler.
 // Handler needed for: all shapes.
@@ -26,8 +26,8 @@ export const parseSoundcloudUrl = (url: string): SoundcloudUrl | undefined => {
 
   const [username] = getPathSegments(parsedUrl)
 
-  // A permalink carries no dot, so a dotted first segment is a file such as robots.txt.
-  if (!username || username.includes('.')) {
+  // A permalink holds only letters, digits, _ and -, so robots.txt is a file, not a user.
+  if (!username || !wordOrHyphenRegex.test(username)) {
     return
   }
 
