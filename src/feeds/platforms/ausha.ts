@@ -7,6 +7,7 @@ import { composeHint } from '../../common/utils.js'
 // Handler needed for: episode, show.
 
 export type AushaUrl = { kind: 'show' }
+export type AushaPage = { kind: 'show'; feedId: string }
 
 const hosts = ['podcast.ausha.co', 'smartlink.ausha.co']
 
@@ -27,22 +28,29 @@ export const parseAushaUrl = (url: string): AushaUrl | undefined => {
   return { kind: 'show' }
 }
 
+export const getAushaPage = (url: string, content: string | undefined): AushaPage | undefined => {
+  const parsed = parseAushaUrl(url)
+  const feedId = content?.match(feedIdRegex)?.[1]
+
+  if (!parsed || !feedId) {
+    return
+  }
+
+  return { kind: 'show', feedId }
+}
+
 export const aushaHandler: PlatformHandler = {
   match: (url) => {
     return parseAushaUrl(url) !== undefined
   },
 
   resolve: (url, content) => {
-    if (!parseAushaUrl(url)) {
+    const page = getAushaPage(url, content)
+
+    if (!page) {
       return []
     }
 
-    const id = content?.match(feedIdRegex)?.[1]
-
-    if (!id) {
-      return []
-    }
-
-    return [{ uri: `https://feed.ausha.co/${id}`, hint: composeHint('ausha:podcast') }]
+    return [{ uri: `https://feed.ausha.co/${page.feedId}`, hint: composeHint('ausha:podcast') }]
   },
 }

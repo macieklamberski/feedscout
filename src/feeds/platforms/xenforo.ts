@@ -8,6 +8,9 @@ import { composeHint, findElement, hasMarker } from '../../common/utils.js'
 export type XenforoUrl =
   | { kind: 'forum'; basePath: string; route: string; forumPath: string }
   | { kind: 'board' }
+export type XenforoPage =
+  | { kind: 'forum'; basePath: string; route: string; forumPath: string }
+  | { kind: 'board'; basePath: string }
 
 // XF2 serves a forum at `/f/{slug.id}` or, on the default route, `/forums/{slug.id}`.
 const forumPathRegex = /\/(?<route>f|forums)\/(?<forumPath>[^/]+\.\d+)(?:\/|$)/i
@@ -29,7 +32,7 @@ export const isXenforoHtml = (content: string): boolean => {
   return root !== undefined
 }
 
-const getXenforoBasePath = (url: string, content?: string): string => {
+const getConfigBasePath = (url: string, content: string | undefined): string => {
   const basePath = content?.match(basePathRegex)?.groups?.basePath
 
   // The path counts only when it holds the page.
@@ -61,6 +64,23 @@ export const parseXenforoUrl = (url: string): XenforoUrl | undefined => {
   return { kind: 'board' }
 }
 
+export const getXenforoPage = (
+  url: string,
+  content: string | undefined,
+): XenforoPage | undefined => {
+  const parsed = parseXenforoUrl(url)
+
+  if (!parsed) {
+    return
+  }
+
+  if (parsed.kind === 'forum') {
+    return parsed
+  }
+
+  return { kind: 'board', basePath: getConfigBasePath(url, content) }
+}
+
 export const xenforoHandler: PlatformHandler = {
   match: (url, content, headers) => {
     if (!hasMarker(content, headers, { html: isXenforoHtml })) {
@@ -71,25 +91,25 @@ export const xenforoHandler: PlatformHandler = {
   },
 
   resolve: (url, content) => {
-    const parsed = parseXenforoUrl(url)
+    const page = getXenforoPage(url, content)
 
-    if (!parsed) {
+    if (!page) {
       return []
     }
 
     const { origin } = new URL(url)
 
-    if (parsed.kind === 'forum') {
-      const routeUrl = `${origin}${parsed.basePath}/${parsed.route}`
+    if (page.kind === 'forum') {
+      const routeUrl = `${origin}${page.basePath}/${page.route}`
 
       return [
-        { uri: `${routeUrl}/${parsed.forumPath}/index.rss`, hint: composeHint('xenforo:forum') },
+        { uri: `${routeUrl}/${page.forumPath}/index.rss`, hint: composeHint('xenforo:forum') },
         { uri: `${routeUrl}/-/index.rss`, hint: composeHint('xenforo:site') },
       ]
     }
 
     const uris: Array<DiscoverUriEntry> = []
-    const boardUrl = `${origin}${getXenforoBasePath(url, content)}`
+    const boardUrl = `${origin}${page.basePath}`
 
     for (const prefix of routePrefixes) {
       uris.push({ uri: `${boardUrl}/${prefix}/-/index.rss`, hint: composeHint('xenforo:site') })

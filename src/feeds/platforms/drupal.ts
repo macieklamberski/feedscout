@@ -17,8 +17,10 @@ export const isDrupalHeaders = (headers: Headers): boolean => {
   return drupalRegex.test(headers.get('x-generator') ?? '')
 }
 
+export type DrupalPage = { kind: 'site'; baseUrl: string }
+
 // Drupal 8 and later print the install's base path in the settings JSON of every page.
-const getBaseUrl = (url: string, content: string | undefined): string => {
+export const getDrupalPage = (url: string, content: string | undefined): DrupalPage => {
   const { origin } = new URL(url)
   const script = findElement(content, (element) => {
     return (
@@ -33,12 +35,12 @@ const getBaseUrl = (url: string, content: string | undefined): string => {
       const basePath = settings.path?.baseUrl
 
       if (typeof basePath === 'string' && basePath.startsWith('/') && basePath.endsWith('/')) {
-        return `${origin}${basePath}`
+        return { kind: 'site', baseUrl: `${origin}${basePath}` }
       }
     } catch {}
   }
 
-  return `${origin}/`
+  return { kind: 'site', baseUrl: `${origin}/` }
 }
 
 export const drupalHandler: PlatformHandler = {
@@ -52,6 +54,8 @@ export const drupalHandler: PlatformHandler = {
   },
 
   resolve: (url, content) => {
-    return [{ uri: `${getBaseUrl(url, content)}rss.xml`, hint: composeHint('drupal:site') }]
+    const page = getDrupalPage(url, content)
+
+    return [{ uri: `${page.baseUrl}rss.xml`, hint: composeHint('drupal:site') }]
   },
 }

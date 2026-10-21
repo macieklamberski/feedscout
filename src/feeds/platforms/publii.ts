@@ -16,9 +16,11 @@ export const isPubliiHtml = (content: string): boolean => {
   return hasGenerator(content) || mediaUrlRegex.test(content)
 }
 
+export type PubliiPage = { kind: 'site'; siteUrl: string }
+
 // A media link names the site root only when the page sits under it. One on another host is a CDN
 // or an image of another site.
-const getSiteUrl = (url: string, content: string | undefined): string | undefined => {
+const getMediaSiteUrl = (url: string, content: string | undefined): string | undefined => {
   const siteUrl = content?.match(mediaUrlRegex)?.groups?.siteUrl
   const parsedSiteUrl = parseUrl(siteUrl ?? '')
   const parsedUrl = parseUrl(url)
@@ -38,21 +40,40 @@ const getSiteUrl = (url: string, content: string | undefined): string | undefine
   return siteUrl
 }
 
+// Without a media link that holds the page, the generator meta alone puts the site at the origin.
+export const getPubliiPage = (url: string, content: string | undefined): PubliiPage | undefined => {
+  const siteUrl = getMediaSiteUrl(url, content)
+
+  if (siteUrl) {
+    return { kind: 'site', siteUrl }
+  }
+
+  if (!content || !hasGenerator(content)) {
+    return
+  }
+
+  return { kind: 'site', siteUrl: new URL(url).origin }
+}
+
 export const publiiHandler: PlatformHandler = {
   match: (url, content, headers) => {
     if (!content || !hasMarker(content, headers, { html: isPubliiHtml })) {
       return false
     }
 
-    return hasGenerator(content) || getSiteUrl(url, content) !== undefined
+    return getPubliiPage(url, content) !== undefined
   },
 
   resolve: (url, content) => {
-    const siteUrl = getSiteUrl(url, content) ?? new URL(url).origin
+    const page = getPubliiPage(url, content)
+
+    if (!page) {
+      return []
+    }
 
     return [
-      { uri: `${siteUrl}/feed.xml`, hint: composeHint('publii:posts', 'atom') },
-      { uri: `${siteUrl}/feed.json`, hint: composeHint('publii:posts', 'json') },
+      { uri: `${page.siteUrl}/feed.xml`, hint: composeHint('publii:posts', 'atom') },
+      { uri: `${page.siteUrl}/feed.json`, hint: composeHint('publii:posts', 'json') },
     ]
   },
 }

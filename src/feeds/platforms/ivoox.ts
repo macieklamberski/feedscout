@@ -6,6 +6,7 @@ import { composeHint } from '../../common/utils.js'
 // Handler needed for: all shapes.
 
 export type IvooxUrl = { kind: 'podcast'; podcastId: string } | { kind: 'episode' }
+export type IvooxPage = { kind: 'podcast' | 'episode'; podcastId: string }
 
 const hosts = ['ivoox.com', 'www.ivoox.com']
 
@@ -31,28 +32,41 @@ export const parseIvooxUrl = (url: string): IvooxUrl | undefined => {
   }
 }
 
+export const getIvooxPage = (url: string, content: string | undefined): IvooxPage | undefined => {
+  const parsed = parseIvooxUrl(url)
+
+  if (!parsed) {
+    return
+  }
+
+  if (parsed.kind === 'podcast') {
+    return parsed
+  }
+
+  const podcastId = content?.match(partOfSeriesRegex)?.[1]
+
+  if (!podcastId) {
+    return
+  }
+
+  return { kind: 'episode', podcastId }
+}
+
 export const ivooxHandler: PlatformHandler = {
   match: (url) => {
     return parseIvooxUrl(url) !== undefined
   },
 
   resolve: (url, content) => {
-    const parsed = parseIvooxUrl(url)
+    const page = getIvooxPage(url, content)
 
-    if (!parsed) {
-      return []
-    }
-
-    const podcastId =
-      parsed.kind === 'podcast' ? parsed.podcastId : content?.match(partOfSeriesRegex)?.[1]
-
-    if (!podcastId) {
+    if (!page) {
       return []
     }
 
     return [
       {
-        uri: `https://feeds.ivoox.com/feed_fg_f${podcastId}_filtro_1.xml`,
+        uri: `https://feeds.ivoox.com/feed_fg_f${page.podcastId}_filtro_1.xml`,
         hint: composeHint('ivoox:podcast'),
       },
     ]

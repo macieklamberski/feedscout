@@ -31,37 +31,50 @@ export const parseAladinUrl = (url: string): AladinUrl | undefined => {
   return { kind: 'blog', username }
 }
 
+export type AladinPage = AladinUrl
+
+export const getAladinPage = (url: string, content: string | undefined): AladinPage | undefined => {
+  const parsed = parseAladinUrl(url)
+
+  if (!parsed) {
+    return
+  }
+
+  // Usernames match in any case, and the page's alternate link spells the blog's own:
+  // `/CHANGBI/category/49178853` links `/changbi/rss`.
+  const usernameRegex = new RegExp(
+    `blog\\.aladin\\.co\\.kr/(${escapeRegex(parsed.username)})/rss`,
+    'i',
+  )
+  const username = content?.match(usernameRegex)?.[1] ?? parsed.username
+
+  return { ...parsed, username }
+}
+
 export const aladinHandler: PlatformHandler = {
   match: (url) => {
     return parseAladinUrl(url) !== undefined
   },
 
   resolve: (url, content) => {
-    const parsed = parseAladinUrl(url)
+    const page = getAladinPage(url, content)
 
-    if (!parsed) {
+    if (!page) {
       return []
     }
 
-    // Usernames match in any case, and the page's alternate link spells the blog's own:
-    // `/CHANGBI/category/49178853` links `/changbi/rss`.
-    const usernameRegex = new RegExp(
-      `blog\\.aladin\\.co\\.kr/(${escapeRegex(parsed.username)})/rss`,
-      'i',
-    )
-    const username = content?.match(usernameRegex)?.[1] ?? parsed.username
     const uris: Array<DiscoverUriEntry> = []
 
-    if (parsed.kind === 'category') {
+    if (page.kind === 'category') {
       // Only the blog's subscribe page links a category feed, as an http url that redirects here.
       uris.push({
-        uri: `https://blog.aladin.co.kr/${username}/category/${parsed.categoryId}/rss`,
+        uri: `https://blog.aladin.co.kr/${page.username}/category/${page.categoryId}/rss`,
         hint: composeHint('aladin:category'),
       })
     }
 
     uris.push({
-      uri: `https://blog.aladin.co.kr/${username}/rss`,
+      uri: `https://blog.aladin.co.kr/${page.username}/rss`,
       hint: composeHint('aladin:posts'),
     })
 

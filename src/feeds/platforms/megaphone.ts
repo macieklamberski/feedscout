@@ -7,6 +7,7 @@ import { composeHint, wordOrHyphenRegex } from '../../common/utils.js'
 // Handler needed for: playlist.
 
 export type MegaphoneUrl = { kind: 'playlist'; showId: string } | { kind: 'episode' }
+export type MegaphonePage = { kind: 'playlist' | 'episode'; showId: string }
 
 const playlistHosts = ['playlist.megaphone.fm']
 const playerHosts = ['player.megaphone.fm']
@@ -41,28 +42,45 @@ export const parseMegaphoneUrl = (url: string): MegaphoneUrl | undefined => {
   }
 }
 
+export const getMegaphonePage = (
+  url: string,
+  content: string | undefined,
+): MegaphonePage | undefined => {
+  const parsed = parseMegaphoneUrl(url)
+
+  if (!parsed) {
+    return
+  }
+
+  if (parsed.kind === 'playlist') {
+    return parsed
+  }
+
+  // An episode id is not its show's id, so the show comes from the player's RSS link.
+  const showId = content?.match(feedUrlRegex)?.[1]
+
+  if (!showId) {
+    return
+  }
+
+  return { kind: 'episode', showId }
+}
+
 export const megaphoneHandler: PlatformHandler = {
   match: (url) => {
     return parseMegaphoneUrl(url) !== undefined
   },
 
   resolve: (url, content) => {
-    const parsed = parseMegaphoneUrl(url)
+    const page = getMegaphonePage(url, content)
 
-    if (!parsed) {
-      return []
-    }
-
-    // An episode id is not its show's id, so the show comes from the player's RSS link.
-    const showId = parsed.kind === 'playlist' ? parsed.showId : content?.match(feedUrlRegex)?.[1]
-
-    if (!showId) {
+    if (!page) {
       return []
     }
 
     return [
       {
-        uri: `https://feeds.megaphone.fm/${showId}`,
+        uri: `https://feeds.megaphone.fm/${page.showId}`,
         hint: composeHint('megaphone:podcast'),
       },
     ]

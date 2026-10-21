@@ -7,6 +7,7 @@ import { composeHint, getTenantSubdomain, wordOrHyphenRegex } from '../../common
 // Handler needed for: profile.
 
 export type SubstackUrl = { kind: 'newsletter' } | { kind: 'profile'; username: string }
+export type SubstackPage = { kind: 'newsletter' | 'profile'; origin: string }
 
 const domains = ['substack.com']
 // The app host names a publication in the path, so it is no publication itself.
@@ -51,26 +52,37 @@ export const parseSubstackUrl = (url: string): SubstackUrl | undefined => {
   return { kind: 'profile', username }
 }
 
+export const getSubstackPage = (
+  url: string,
+  content: string | undefined,
+): SubstackPage | undefined => {
+  const parsed = parseSubstackUrl(url)
+
+  if (!parsed) {
+    return
+  }
+
+  if (parsed.kind === 'newsletter') {
+    return { kind: 'newsletter', origin: new URL(url).origin }
+  }
+
+  const origin = getPublicationOrigin(content) ?? `https://${parsed.username}.substack.com`
+
+  return { kind: 'profile', origin }
+}
+
 export const substackHandler: PlatformHandler = {
   match: (url) => {
     return parseSubstackUrl(url) !== undefined
   },
 
   resolve: (url, content) => {
-    const parsed = parseSubstackUrl(url)
+    const page = getSubstackPage(url, content)
 
-    if (!parsed) {
+    if (!page) {
       return []
     }
 
-    if (parsed.kind === 'profile') {
-      const origin = getPublicationOrigin(content) ?? `https://${parsed.username}.substack.com`
-
-      return [{ uri: `${origin}/feed`, hint: composeHint('substack:newsletter') }]
-    }
-
-    const { origin } = new URL(url)
-
-    return [{ uri: `${origin}/feed`, hint: composeHint('substack:newsletter') }]
+    return [{ uri: `${page.origin}/feed`, hint: composeHint('substack:newsletter') }]
   },
 }

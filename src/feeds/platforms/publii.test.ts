@@ -79,7 +79,7 @@ describe('publiiHandler', () => {
         },
       ]
 
-      expect(publiiHandler.resolve(value)).toEqual(expected)
+      expect(publiiHandler.resolve(value, publiiHtml)).toEqual(expected)
     })
 
     it('should build the feeds from the site root the media links name', () => {
