@@ -34,6 +34,18 @@ describe('parsePeertubeUrl', () => {
     expect(parsePeertubeUrl('https://example.org/c/news@example.com')).toEqual(expected)
   })
 
+  it('should return the channel for the legacy /video-channels/ route', () => {
+    const expected: PeertubeUrl = { kind: 'channel', name: 'news' }
+
+    expect(parsePeertubeUrl('https://example.org/video-channels/news')).toEqual(expected)
+  })
+
+  it('should return the account for the legacy /accounts/ route', () => {
+    const expected: PeertubeUrl = { kind: 'account', name: 'alice' }
+
+    expect(parsePeertubeUrl('https://example.org/accounts/alice')).toEqual(expected)
+  })
+
   it('should return the account for an account page', () => {
     const expected: PeertubeUrl = { kind: 'account', name: 'alice' }
 
@@ -153,6 +165,56 @@ describe('peertubeHandler', () => {
       ]
 
       expect(peertubeHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return the podcast feed the channel page links', () => {
+      const value = 'https://example.org/c/channel'
+      const content = `
+        <link
+          rel="alternate"
+          type="application/rss+xml"
+          href="https://example.org/feeds/podcast/videos.xml?videoChannelId=42"
+        />
+      `
+      const expected = [
+        {
+          uri: 'https://example.org/feeds/videos.xml?videoChannelName=channel',
+          hint: { key: 'peertube:channel', label: 'Channel' },
+        },
+        {
+          uri: 'https://example.org/feeds/podcast/videos.xml?videoChannelId=42',
+          hint: { key: 'peertube:channel-podcast', label: 'Podcast' },
+        },
+        {
+          uri: 'https://example.org/feeds/videos.xml',
+          hint: { key: 'peertube:instance', label: 'Instance' },
+        },
+      ]
+
+      expect(peertubeHandler.resolve(value, content)).toEqual(expected)
+    })
+
+    it('should skip a podcast feed linked on another host', () => {
+      const value = 'https://example.org/c/channel'
+      const content = `
+        <link
+          rel="alternate"
+          type="application/rss+xml"
+          href="https://example.com/feeds/podcast/videos.xml?videoChannelId=42"
+        />
+      `
+      const expected = [
+        {
+          uri: 'https://example.org/feeds/videos.xml?videoChannelName=channel',
+          hint: { key: 'peertube:channel', label: 'Channel' },
+        },
+        {
+          uri: 'https://example.org/feeds/videos.xml',
+          hint: { key: 'peertube:instance', label: 'Instance' },
+        },
+      ]
+
+      expect(peertubeHandler.resolve(value, content)).toEqual(expected)
     })
 
     it('should return the account feed on an account page', () => {

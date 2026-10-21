@@ -447,6 +447,7 @@
     "niconico:blog": "Blog",
     "omnystudio:show": "Show",
     "peertube:channel": "Channel",
+    "peertube:channel-podcast": "Podcast",
     "peertube:account": "Account",
     "peertube:instance": "Instance",
     "podomatic:show": "Show",

@@ -1254,6 +1254,7 @@
   "peertube": {
     "peertube:account": "https://framatube.org/feeds/videos.xml?accountName=framasoft",
     "peertube:channel": "https://framatube.org/feeds/videos.xml?videoChannelName=joinpeertube",
+    "peertube:channel-podcast": "https://framatube.org/feeds/podcast/videos.xml?videoChannelId=2215",
     "peertube:instance": "https://framatube.org/feeds/videos.xml"
   },
   "phpbb": {

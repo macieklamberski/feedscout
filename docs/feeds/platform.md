@@ -1968,8 +1968,8 @@ Discovers the feeds of a PeerTube instance, channel or account. Detected by the 
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{instance}/c/{channel}` | Channel · instance |
-| `{instance}/a/{account}` | Account<sup>†</sup> · instance |
+| `{instance}/c/{channel}` or `{instance}/video-channels/{channel}` | Channel · podcast · instance |
+| `{instance}/a/{account}` or `{instance}/accounts/{account}` | Account<sup>†</sup> · instance |
 | Any other page | Instance |
 
 <sup>†</sup> *Found only by the Platform method.*
