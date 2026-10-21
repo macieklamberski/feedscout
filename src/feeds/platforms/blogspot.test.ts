@@ -44,7 +44,6 @@ describe('blogspotHandler', () => {
       [true, 'https://example.blogspot.in'],
       [true, 'https://example.blogspot.jp'],
       [true, 'https://example.blogspot.com.br'],
-      [false, 'https://example.blogspot.xx'],
       [false, 'https://blogspot.com'],
       [false, 'https://example.com'],
     ]

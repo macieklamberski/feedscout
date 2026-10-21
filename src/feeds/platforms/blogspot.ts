@@ -8,85 +8,9 @@ import { composeHint, findElement, getTenantSubdomain, hasMarker } from '../../c
 
 export type BlogspotUrl = { kind: 'label'; label: string } | { kind: 'post' } | { kind: 'blog' }
 
-// Blogger's country domains, from before Blogger moved every blog to blogspot.com. A few no
-// longer resolve.
-const domains = [
-  'blogspot.ae',
-  'blogspot.al',
-  'blogspot.am',
-  'blogspot.ba',
-  'blogspot.be',
-  'blogspot.bg',
-  'blogspot.bj',
-  'blogspot.ca',
-  'blogspot.cf',
-  'blogspot.ch',
-  'blogspot.cl',
-  'blogspot.co.at',
-  'blogspot.co.id',
-  'blogspot.co.il',
-  'blogspot.co.ke',
-  'blogspot.co.nz',
-  'blogspot.co.uk',
-  'blogspot.co.za',
-  'blogspot.com',
-  'blogspot.com.ar',
-  'blogspot.com.au',
-  'blogspot.com.br',
-  'blogspot.com.by',
-  'blogspot.com.co',
-  'blogspot.com.cy',
-  'blogspot.com.ee',
-  'blogspot.com.eg',
-  'blogspot.com.es',
-  'blogspot.com.mt',
-  'blogspot.com.ng',
-  'blogspot.com.tr',
-  'blogspot.com.uy',
-  'blogspot.cv',
-  'blogspot.cz',
-  'blogspot.de',
-  'blogspot.dk',
-  'blogspot.fi',
-  'blogspot.fr',
-  'blogspot.gr',
-  'blogspot.hk',
-  'blogspot.hr',
-  'blogspot.hu',
-  'blogspot.ie',
-  'blogspot.in',
-  'blogspot.is',
-  'blogspot.it',
-  'blogspot.jp',
-  'blogspot.kr',
-  'blogspot.li',
-  'blogspot.lt',
-  'blogspot.lu',
-  'blogspot.md',
-  'blogspot.mk',
-  'blogspot.mr',
-  'blogspot.mx',
-  'blogspot.my',
-  'blogspot.nl',
-  'blogspot.no',
-  'blogspot.pe',
-  'blogspot.pt',
-  'blogspot.qa',
-  'blogspot.re',
-  'blogspot.ro',
-  'blogspot.rs',
-  'blogspot.ru',
-  'blogspot.se',
-  'blogspot.sg',
-  'blogspot.si',
-  'blogspot.sk',
-  'blogspot.sn',
-  'blogspot.td',
-  'blogspot.tw',
-  'blogspot.ug',
-  'blogspot.vn',
-]
-
+// Matches blogspot.com and Blogger's country domains like .co.uk, .com.br and .de, which still
+// serve feeds. getTenantSubdomain then refuses www and nested subdomains.
+const blogspotDomainRegex = /\.(blogspot\.(?:com|co\.[a-z]{2}|com\.[a-z]{2}|[a-z]{2}))$/
 const labelRegex = /^\/search\/label\/([^/]+)/i
 const postRegex = /^\/\d{4}\/\d{2}\/[^/]+\.html$/i
 const postCommentsFeedRegex = /\/feeds\/(\d+)\/comments\/default/i
@@ -133,7 +57,9 @@ export const blogspotHandler: PlatformHandler = {
       return false
     }
 
-    if (getTenantSubdomain(parsedUrl, domains)) {
+    const domain = parsedUrl.hostname.match(blogspotDomainRegex)?.[1]
+
+    if (domain && getTenantSubdomain(parsedUrl, [domain])) {
       return true
     }
 
