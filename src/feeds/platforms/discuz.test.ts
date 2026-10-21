@@ -210,6 +210,18 @@ describe('discuzHandler', () => {
       expect(discuzHandler.resolve(value, discuzHtml)).toEqual(expected)
     })
 
+    it('should return the forum.php site feed for an install directory without a trailing slash', () => {
+      const value = 'https://example.com/forum'
+      const expected = [
+        {
+          uri: 'https://example.com/forum/forum.php?mod=rss',
+          hint: { key: 'discuz:site', label: 'Site' },
+        },
+      ]
+
+      expect(discuzHandler.resolve(value, discuzHtml)).toEqual(expected)
+    })
+
     it('should return the forum.php site feed from a Discuz! X archiver page', () => {
       const value = 'https://example.com/forum/archiver/?tid-123.html'
       const expected = [
