@@ -35,8 +35,16 @@ describe('parsePixelfedUrl', () => {
     expect(parsePixelfedUrl('https://example.com/p/dansup/123')).toBeUndefined()
   })
 
-  it('should return undefined for a name with characters outside the username set', () => {
-    expect(parsePixelfedUrl('https://example.com/dan-sup')).toBeUndefined()
+  it('should return the username with a dash', () => {
+    const expected: PixelfedUrl = { kind: 'user', username: 'dan-sup' }
+
+    expect(parsePixelfedUrl('https://example.com/dan-sup')).toEqual(expected)
+  })
+
+  it('should return the username with a dot', () => {
+    const expected: PixelfedUrl = { kind: 'user', username: 'maienne.photo' }
+
+    expect(parsePixelfedUrl('https://example.com/maienne.photo')).toEqual(expected)
   })
 
   it('should return undefined for the root', () => {

@@ -75,8 +75,8 @@ describe('parseLobstersUrl', () => {
     expect(parseLobstersUrl('https://lobste.rs/top')).toEqual(expected)
   })
 
-  it('should return the home page for a top page with an unknown period', () => {
-    const expected: LobstersUrl = { kind: 'home' }
+  it('should return the top page with a period outside the linked ones', () => {
+    const expected: LobstersUrl = { kind: 'top', period: '2y' }
 
     expect(parseLobstersUrl('https://lobste.rs/top/2y')).toEqual(expected)
   })

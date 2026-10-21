@@ -64,6 +64,12 @@ describe('parseYoutubeUrl', () => {
     )
   })
 
+  it('should return undefined for a channel ID followed by other characters', () => {
+    const value = 'https://youtube.com/channel/UCBR8-60-B28hp2BmDPdntcQ&feature=x'
+
+    expect(parseYoutubeUrl(value)).toBeUndefined()
+  })
+
   it('should return a channel for handle, legacy user and custom URL pages', () => {
     const expected: YoutubeUrl = { kind: 'channel' }
 
