@@ -35,6 +35,18 @@ describe('castopodHandler', () => {
       expect(castopodHandler.match('https://example.org/@podcast', value)).toBe(false)
     })
 
+    it('should not match a stylesheet on another host', () => {
+      const value = '<link rel="stylesheet" href="https://cdn.example.net/themes/colors">'
+
+      expect(castopodHandler.match('https://example.org/@podcast', value)).toBe(false)
+    })
+
+    it('should not match a page outside the install root the stylesheet names', () => {
+      const value = '<link rel="stylesheet" href="/podcasts/themes/colors">'
+
+      expect(castopodHandler.match('https://example.org/other/@podcast', value)).toBe(false)
+    })
+
     it('should not match a remote actor', () => {
       const value = 'https://example.org/@alice@example.com'
 

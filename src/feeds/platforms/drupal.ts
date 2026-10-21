@@ -1,7 +1,7 @@
 import { DomUtils } from 'htmlparser2'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, findElement, hasMarker, hasMetaContent } from '../../common/utils.js'
-import { isGcsWebHtml } from './gcsWeb.js'
+import { isGcsWebPage } from './gcsWeb.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -42,9 +42,9 @@ const getBaseUrl = (url: string, content: string | undefined): string => {
 }
 
 export const drupalHandler: PlatformHandler = {
-  match: (_url, content, headers) => {
+  match: (url, content, headers) => {
     // GCS-web sites run on Drupal, and the GCS-web handler emits their feeds.
-    if (content && isGcsWebHtml(content)) {
+    if (isGcsWebPage(url, content)) {
       return false
     }
 

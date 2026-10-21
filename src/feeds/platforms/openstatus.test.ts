@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'bun:test'
 import type { DiscoverUriEntry } from '../../common/types.js'
-import { isOpenstatusHtml, openstatusHandler } from './openstatus.js'
+import { isOpenstatusPage, openstatusHandler } from './openstatus.js'
 
 const openstatusHtml = `
   <link
@@ -28,31 +28,45 @@ const otherHtml = `
   >Powered by something else</a>
 `
 
-describe('isOpenstatusHtml', () => {
+describe('isOpenstatusPage', () => {
+  const url = 'https://status.example.com/'
+
   it('should return true for the summary endpoint link', () => {
-    expect(isOpenstatusHtml(openstatusHtml)).toBe(true)
+    expect(isOpenstatusPage(url, openstatusHtml)).toBe(true)
+  })
+
+  it('should return true for a relative summary endpoint link', () => {
+    const value = '<link rel="alternate" href="/api/status/summary.json">'
+
+    expect(isOpenstatusPage(url, value)).toBe(true)
+  })
+
+  it('should return false for the summary endpoint link of another host', () => {
+    const value = '<link rel="alternate" href="https://status.example.net/api/status/summary.json">'
+
+    expect(isOpenstatusPage(url, value)).toBe(false)
   })
 
   it('should return true for the generated preview image', () => {
-    expect(isOpenstatusHtml(previewImageHtml)).toBe(true)
+    expect(isOpenstatusPage(url, previewImageHtml)).toBe(true)
   })
 
   it('should return false for the summary endpoint in prose', () => {
     const value = '<p>Poll <code>/api/status/summary.json</code> for the current state.</p>'
 
-    expect(isOpenstatusHtml(value)).toBe(false)
+    expect(isOpenstatusPage(url, value)).toBe(false)
   })
 
   it('should return false for a page that only mentions the project', () => {
-    expect(isOpenstatusHtml(mentionHtml)).toBe(false)
+    expect(isOpenstatusPage(url, mentionHtml)).toBe(false)
   })
 
   it('should return false for another status page', () => {
-    expect(isOpenstatusHtml(otherHtml)).toBe(false)
+    expect(isOpenstatusPage(url, otherHtml)).toBe(false)
   })
 
   it('should return false for empty content', () => {
-    expect(isOpenstatusHtml('')).toBe(false)
+    expect(isOpenstatusPage(url, '')).toBe(false)
   })
 })
 
@@ -68,6 +82,12 @@ describe('openstatusHandler', () => {
 
     it('should not match another status page', () => {
       expect(openstatusHandler.match('https://status.example.com/', otherHtml)).toBe(false)
+    })
+
+    it('should not match a page linking the summary endpoint of another host', () => {
+      const value = 'https://blog.example.com/post'
+
+      expect(openstatusHandler.match(value, openstatusHtml)).toBe(false)
     })
 
     it('should not match a page that only mentions the project', () => {

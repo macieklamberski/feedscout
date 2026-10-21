@@ -1,6 +1,13 @@
+import { parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, type Element, findElement, hasMarker } from '../../common/utils.js'
+import {
+  composeHint,
+  type Element,
+  findElement,
+  hasMarker,
+  isRootOfPage,
+} from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic partly covers category, home, post.
@@ -22,37 +29,29 @@ const getAssetUrl = (element: Element): string => {
   return element.attribs.href ?? element.attribs.src ?? ''
 }
 
-const getRootPath = (content: string | undefined): string | undefined => {
-  const asset = findElement(content, (element) => {
+const findAsset = (content: string | undefined): Element | undefined => {
+  return findElement(content, (element) => {
     return assetTags.includes(element.name) && assetUrlRegex.test(getAssetUrl(element))
   })
-
-  if (!asset) {
-    return
-  }
-
-  return getAssetUrl(asset).match(assetUrlRegex)?.groups?.rootPath
 }
 
 export const isTypechoHtml = (content: string): boolean => {
-  return getRootPath(content) !== undefined
+  return findAsset(content) !== undefined
 }
 
 export const getTypechoPage = (
   url: string,
   content: string | undefined,
 ): TypechoPage | undefined => {
-  const rootPath = getRootPath(content)
+  const asset = findAsset(content)
+  const assetUrl = asset ? parseUrl(getAssetUrl(asset), url) : undefined
+  const rootPath = assetUrl?.pathname.match(assetUrlRegex)?.groups?.rootPath
 
-  if (rootPath === undefined) {
+  if (!assetUrl || rootPath === undefined || !isRootOfPage(`${assetUrl.origin}${rootPath}`, url)) {
     return
   }
 
   const { origin, pathname } = new URL(url)
-
-  if (pathname !== rootPath && !pathname.startsWith(`${rootPath}/`)) {
-    return
-  }
 
   const siteUrl = `${origin}${rootPath}`
   // A site without URL rewriting routes every page through `/index.php`.

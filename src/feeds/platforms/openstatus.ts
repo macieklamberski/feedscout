@@ -1,5 +1,6 @@
+import { parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, findElement, hasMarker, hasMetaContent } from '../../common/utils.js'
+import { composeHint, findElement, hasMetaContent, isRootOfPage } from '../../common/utils.js'
 
 // Discoverability: Not discoverable without handler.
 // Handler needed for: all shapes.
@@ -9,7 +10,11 @@ const previewImageUrl = 'https://www.openstatus.dev/api/og/page'
 const summaryHrefRegex = /^(?:https?:\/\/[^/]+)?\/api\/status\/summary\.json$/
 
 // A status page links its summary endpoint and takes its preview image from the hosted service.
-export const isOpenstatusHtml = (content: string): boolean => {
+export const isOpenstatusPage = (url: string, content: string | undefined): boolean => {
+  if (!content) {
+    return false
+  }
+
   if (hasMetaContent(content, 'og:image', previewImageUrl)) {
     return true
   }
@@ -17,13 +22,18 @@ export const isOpenstatusHtml = (content: string): boolean => {
   const summaryLink = findElement(content, (element) => {
     return element.name === 'link' && summaryHrefRegex.test(element.attribs.href ?? '')
   })
+  const summaryUrl = summaryLink?.attribs.href ? parseUrl(summaryLink.attribs.href, url) : undefined
 
-  return summaryLink !== undefined
+  if (!summaryUrl) {
+    return false
+  }
+
+  return isRootOfPage(summaryUrl.origin, url)
 }
 
 export const openstatusHandler: PlatformHandler = {
-  match: (_url, content, headers) => {
-    return hasMarker(content, headers, { html: isOpenstatusHtml })
+  match: (url, content) => {
+    return isOpenstatusPage(url, content)
   },
 
   resolve: (url) => {

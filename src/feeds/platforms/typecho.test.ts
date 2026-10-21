@@ -132,6 +132,13 @@ describe('typechoHandler', () => {
       expect(typechoHandler.match('https://example.com/', textHtml)).toBe(false)
     })
 
+    it('should not match a page linking a theme asset on another host', () => {
+      const value =
+        '<link rel="stylesheet" href="https://cdn.example.net/usr/themes/handsome/style.css">'
+
+      expect(typechoHandler.match('https://example.com/post/1', value)).toBe(false)
+    })
+
     it('should not match without content', () => {
       expect(typechoHandler.match('https://example.com/')).toBe(false)
     })

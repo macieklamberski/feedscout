@@ -119,6 +119,20 @@ describe('getOmekaPage', () => {
     expect(getOmekaPage('https://example.com/exhibits', omekaAbsoluteHtml)).toEqual(expected)
   })
 
+  it('should return undefined for an asset on another host', () => {
+    const value = '<link href="https://cdn.example.net/omeka/plugins/X/views/public/a.css">'
+
+    expect(getOmekaPage('https://example.com/omeka/items', value)).toBeUndefined()
+  })
+
+  it('should return undefined for a page outside the root the asset names', () => {
+    expect(getOmekaPage('https://example.com/blog/post', omekaSubPathHtml)).toBeUndefined()
+  })
+
+  it('should return undefined without an asset', () => {
+    expect(getOmekaPage('https://example.com/', otherHtml)).toBeUndefined()
+  })
+
   it('should return the root named by a core script asset', () => {
     const expected: OmekaPage = { kind: 'page', rootUrl: 'https://example.com' }
 
@@ -210,6 +224,16 @@ describe('omekaHandler', () => {
 
     it('should not match without content', () => {
       expect(omekaHandler.match('https://example.com/')).toBe(false)
+    })
+
+    it('should not match a plugin asset on another host', () => {
+      const value = '<link href="https://cdn.example.net/plugins/X/views/public/a.css">'
+
+      expect(omekaHandler.match('https://example.com/', value)).toBe(false)
+    })
+
+    it('should not match a page outside the root the asset names', () => {
+      expect(omekaHandler.match('https://example.com/blog/post', omekaSubPathHtml)).toBe(false)
     })
 
     it('should not match a WordPress plugin view asset', () => {
