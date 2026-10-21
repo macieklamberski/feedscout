@@ -186,6 +186,18 @@ describe('discuzHandler', () => {
       expect(discuzHandler.resolve(value, discuzHtml)).toEqual(expected)
     })
 
+    it('should return the forum.php site feed for a script path with path info', () => {
+      const value = 'https://example.com/forum/forum.php/archive/2'
+      const expected = [
+        {
+          uri: 'https://example.com/forum/forum.php?mod=rss',
+          hint: { key: 'discuz:site', label: 'Site' },
+        },
+      ]
+
+      expect(discuzHandler.resolve(value, discuzHtml)).toEqual(expected)
+    })
+
     it('should return the forum.php site feed for a Discuz! X install root', () => {
       const value = 'https://example.com/forum/'
       const expected = [
