@@ -15,7 +15,7 @@ const profileRegex = /^\/@(?<username>[^/]+)/
 // A profile page embeds its primary publication as escaped JSON. The publication
 // subdomain is not always the handle, and a custom domain replaces it.
 const publicationRegex =
-  /primaryPublication\\?":\{[^}]*?\\?"subdomain\\?":\\?"([\w-]+)\\?",\\?"custom_domain\\?":(?:\\?"([^"\\]+)\\?"|null)/
+  /primaryPublication\\?":\{[^{}]*?\\?"subdomain\\?":\\?"([\w-]+)\\?",\\?"custom_domain\\?":(?:\\?"([^"\\]+)\\?"|null)/
 
 const getPublicationOrigin = (content: string | undefined): string | undefined => {
   const match = content?.match(publicationRegex)

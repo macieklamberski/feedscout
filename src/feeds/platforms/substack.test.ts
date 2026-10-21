@@ -125,6 +125,24 @@ describe('substackHandler', () => {
       expect(substackHandler.resolve(value, content)).toEqual(expected)
     })
 
+    it('should read a profile page with a long run of primaryPublication in linear time', () => {
+      const value = 'https://substack.com/@alice'
+      const content = '"primaryPublication":{'.repeat(25_000)
+      const expected = [
+        {
+          uri: 'https://alice.substack.com/feed',
+          hint: { key: 'substack:newsletter', label: 'Newsletter' },
+        },
+      ]
+
+      const start = performance.now()
+      const result = substackHandler.resolve(value, content)
+      const elapsed = performance.now() - start
+
+      expect(elapsed).toBeLessThan(1000)
+      expect(result).toEqual(expected)
+    })
+
     it('should return feed URL for profile page with subpath', () => {
       const value = 'https://substack.com/@bob/recommendations'
       const expected = [
