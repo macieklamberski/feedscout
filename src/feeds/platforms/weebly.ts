@@ -1,7 +1,12 @@
 import { getPathSegments, isAnyOf } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, digitsRegex, getTenantSubdomain } from '../../common/utils.js'
+import {
+  composeHint,
+  digitsRegex,
+  formatSuffixRegex,
+  getTenantSubdomain,
+} from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers blog, blogPath (html), partly covers blogCustomSlug.
@@ -9,8 +14,6 @@ import { composeHint, digitsRegex, getTenantSubdomain } from '../../common/utils
 export type WeeblyUrl = { kind: 'blog'; page?: string }
 
 const domains = ['weebly.com']
-// A page address ends in `.html`, which redirects to the bare slug the blog feed sits under.
-const htmlSuffixRegex = /\.html$/i
 
 export const parseWeeblyUrl = (url: string): WeeblyUrl | undefined => {
   if (!getTenantSubdomain(url, domains)) {
@@ -18,7 +21,8 @@ export const parseWeeblyUrl = (url: string): WeeblyUrl | undefined => {
   }
 
   // Custom blog page slug (e.g., /articles/feed when page is named "articles").
-  const first = getPathSegments(url)[0]?.replace(htmlSuffixRegex, '')
+  // A page address ends in `.html`, which redirects to the bare slug the blog feed sits under.
+  const first = getPathSegments(url)[0]?.replace(formatSuffixRegex, '')
 
   if (first && !isAnyOf(first, 'blog') && !digitsRegex.test(first)) {
     return { kind: 'blog', page: first }

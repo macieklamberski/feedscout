@@ -20,6 +20,12 @@ describe('parseNeocitiesUrl', () => {
     expect(parseNeocitiesUrl('https://neocities.org/site/example-site')).toEqual(expected)
   })
 
+  it('should drop a format extension from a profile path', () => {
+    const expected: NeocitiesUrl = { kind: 'site', username: 'avenue' }
+
+    expect(parseNeocitiesUrl('https://neocities.org/site/avenue.rss')).toEqual(expected)
+  })
+
   it('should return undefined for the main host without a site path', () => {
     expect(parseNeocitiesUrl('https://neocities.org/browse')).toBeUndefined()
   })

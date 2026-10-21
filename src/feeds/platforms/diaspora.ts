@@ -1,13 +1,10 @@
 import { isAnyOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, hasMarker } from '../../common/utils.js'
+import { composeHint, formatSuffixRegex, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
 const profileRegex = /^\/(?<route>u|public|people)\/(?<segment>[^/]+)/i
-// `/public/` and `/people/` split a format extension off at the last dot, as `/public/alice.atom` is
-// the feed, while `/u/` reads the whole segment as the username, which may hold a dot.
-const formatSuffixRegex = /\.[a-z]+$/i
 // A `/people/{guid}` page is keyed by guid, and the feed by username. The page
 // carries the username in its diaspora ID.
 const peoplePathRegex = /^\/people\//i
@@ -27,6 +24,7 @@ const getDiasporaPage = (url: string, content: string | undefined): DiasporaPage
     return
   }
 
+  // `/public/alice.atom` is the feed, while `/u/` reads the whole segment, which may hold a dot.
   const pathUsername = isAnyOf(route, 'u') ? segment : segment.replace(formatSuffixRegex, '')
 
   if (!pathUsername) {

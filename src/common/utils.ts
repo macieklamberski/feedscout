@@ -20,6 +20,8 @@ export const alphanumericOrHyphenRegex = /^[A-Za-z0-9-]+$/
 export const hexRegex = /^[0-9a-f]+$/i
 export const hexOrHyphenRegex = /^[0-9a-f-]+$/i
 export const wordOrHyphenRegex = /^[\w-]+$/
+// A format extension after a value that cannot hold a dot, as `.rss` or `.html`.
+export const formatSuffixRegex = /\.[a-z]+$/i
 
 // The `id` group the regex reads from the value, when it is all digits.
 export const getNumericId = (value: string | undefined, regex: RegExp): string | undefined => {
