@@ -32,7 +32,7 @@ const findProfileImageSrc = (content: string | undefined): string | undefined =>
   const image = findElement(content, (element) => {
     return (
       element.name === 'img' &&
-      isAnyOf(element.attribs.alt ?? '', ['profile']) &&
+      isAnyOf(element.attribs.alt, 'profile') &&
       Boolean(element.attribs.src)
     )
   })

@@ -178,7 +178,7 @@ export const getScriptText = (content: string, id: string): string | undefined =
 
 export const getJsonLd = (content: string): Array<unknown> => {
   const scripts = DomUtils.findAll((element) => {
-    return element.name === 'script' && isAnyOf(element.attribs.type ?? '', ['application/ld+json'])
+    return element.name === 'script' && isAnyOf(element.attribs.type, 'application/ld+json')
   }, getParsedPage(content).document.children)
   const blocks: Array<unknown> = []
 
