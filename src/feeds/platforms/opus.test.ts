@@ -74,6 +74,11 @@ const opusOtherHostHtml = `
     ></script>
   </head>
 `
+const opusOtherHostScriptHtml = `
+  <head>
+    <script src="https://opus.other.test/layouts/opus4/js/frontdoorutil.js"></script>
+  </head>
+`
 const otherHtml = `
   <head>
     <link
@@ -277,6 +282,12 @@ describe('getOpusPage', () => {
 
     expect(getOpusPage(value, opusSubPathHtml)).toBeUndefined()
   })
+
+  it('should return undefined for a layout script on another host', () => {
+    const value = 'https://blog.example.org/solrsearch/index/search/searchtype/collection/id/58'
+
+    expect(getOpusPage(value, opusOtherHostScriptHtml)).toBeUndefined()
+  })
 })
 
 describe('opusHandler', () => {
@@ -285,6 +296,19 @@ describe('opusHandler', () => {
       const value = 'https://example.com/solrsearch/index/search/searchtype/collection/id/112'
 
       expect(opusHandler.match(value, opusHtml)).toBe(true)
+    })
+
+    it('should match an OPUS page whose layout script is absolute on the same host', () => {
+      const value = 'https://x.test/opus4/solrsearch/index/search/searchtype/collection/id/58'
+      const content = '<script src="https://x.test/opus4/layouts/x/js/frontdoorutil.js"></script>'
+
+      expect(opusHandler.match(value, content)).toBe(true)
+    })
+
+    it('should not match a layout script on another host', () => {
+      const value = 'https://blog.example.org/solrsearch/index/search/searchtype/collection/id/58'
+
+      expect(opusHandler.match(value, opusOtherHostScriptHtml)).toBe(false)
     })
 
     it('should not match an OPUS page outside the search', () => {
