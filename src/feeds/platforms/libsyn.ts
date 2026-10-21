@@ -1,6 +1,6 @@
 import { getPathSegments, isHostOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, getTenantSubdomain } from '../../common/utils.js'
+import { composeHint, digitsRegex, getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -8,7 +8,6 @@ export type LibsynUrl = { kind: 'feed'; showId: string } | { kind: 'podcast' }
 
 const domains = ['libsyn.com']
 const feedHosts = ['feeds.libsyn.com']
-const numericRegex = /^\d+$/
 
 export const parseLibsynUrl = (url: string): LibsynUrl | undefined => {
   if (!getTenantSubdomain(url, domains)) {
@@ -20,7 +19,7 @@ export const parseLibsynUrl = (url: string): LibsynUrl | undefined => {
 
     // feeds.libsyn.com without a numeric show ID has no useful feed
     // (apex /rss returns 404).
-    if (!showId || !numericRegex.test(showId)) {
+    if (!showId || !digitsRegex.test(showId)) {
       return
     }
 

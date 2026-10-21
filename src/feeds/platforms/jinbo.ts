@@ -1,7 +1,7 @@
 import { getPathSegments, isAnyOf, isHostOf } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, findElement } from '../../common/utils.js'
+import { composeHint, digitsRegex, findElement } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -14,7 +14,6 @@ const hosts = ['blog.jinbo.net']
 const baseUrl = 'https://blog.jinbo.net'
 
 // A category named by text answers an empty feed under another category's title.
-const categoryIdRegex = /^\d+$/
 const feedLinkRegex = /^https:\/\/blog\.jinbo\.net\/([^/]+)\/rss$/
 // A tag or category the blog lacks still answers an empty feed, and its page says it found none,
 // in the wording of the blog's skin.
@@ -32,7 +31,7 @@ export const parseJinboUrl = (url: string): JinboUrl | undefined => {
     return
   }
 
-  if (isAnyOf(section, 'category') && value && categoryIdRegex.test(value)) {
+  if (isAnyOf(section, 'category') && value && digitsRegex.test(value)) {
     return { kind: 'category', username, categoryId: value }
   }
 

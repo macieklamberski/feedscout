@@ -1,7 +1,7 @@
 import { escapeRegex, getPathSegments, isAnyOf, isHostOf } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
+import { composeHint, digitsRegex } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers blog (html), partly covers category.
@@ -11,8 +11,6 @@ export type AladinUrl =
   | { kind: 'category'; username: string; categoryId: string }
 
 const hosts = ['blog.aladin.co.kr']
-
-const categoryIdRegex = /^\d+$/
 
 export const parseAladinUrl = (url: string): AladinUrl | undefined => {
   if (!isHostOf(url, hosts)) {
@@ -26,7 +24,7 @@ export const parseAladinUrl = (url: string): AladinUrl | undefined => {
     return
   }
 
-  if (isAnyOf(section, 'category') && value && categoryIdRegex.test(value)) {
+  if (isAnyOf(section, 'category') && value && digitsRegex.test(value)) {
     return { kind: 'category', username, categoryId: value }
   }
 

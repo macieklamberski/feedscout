@@ -1,6 +1,6 @@
 import { getPathSegments, isAnyOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, findElement, getTenantSubdomain } from '../../common/utils.js'
+import { composeHint, digitsRegex, findElement, getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers trip (html).
@@ -12,7 +12,6 @@ export type GeoblogPage = GeoblogUrl & { tripId: string }
 
 const domains = ['geoblog.pl']
 
-const idRegex = /^\d+$/
 const tripPathRegex = /^\/podroz\/(\d+)(?:\/|$)/i
 
 export const parseGeoblogUrl = (url: string): GeoblogUrl | undefined => {
@@ -22,7 +21,7 @@ export const parseGeoblogUrl = (url: string): GeoblogUrl | undefined => {
 
   const [section, id] = getPathSegments(url)
 
-  if (!id || !idRegex.test(id)) {
+  if (!id || !digitsRegex.test(id)) {
     return
   }
 

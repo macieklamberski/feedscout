@@ -3,6 +3,7 @@ import type { DiscoverUriHint } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import {
   composeHint,
+  digitsRegex,
   findDescendant,
   findElement,
   findElements,
@@ -27,7 +28,6 @@ export type RedminePage =
   | { kind: 'repository'; root: string; project: string; repository: string }
 
 const poweredByRegex = /Powered by <a\s[^<>]*href="https?:\/\/www\.redmine\.org\/"/
-const numericIdRegex = /^\d+$/
 const projectClassRegex = /(?:^|\s)project-(\S+)/
 const repositoryRevisionsRegex = /\/repository\/([^/"?#]+)\/revisions\b/
 const schemeRegex = /^https?:/
@@ -130,7 +130,7 @@ export const getRedminePage = (
       return { kind: 'activity', root, project }
     }
 
-    if (isAnyOf(third, 'boards') && fourth && numericIdRegex.test(fourth)) {
+    if (isAnyOf(third, 'boards') && fourth && digitsRegex.test(fourth)) {
       return { kind: 'board', root, project, boardId: fourth }
     }
 
@@ -142,7 +142,7 @@ export const getRedminePage = (
     }
   }
 
-  if (isAnyOf(first, 'issues') && second && numericIdRegex.test(second)) {
+  if (isAnyOf(first, 'issues') && second && digitsRegex.test(second)) {
     if (!project) {
       return
     }

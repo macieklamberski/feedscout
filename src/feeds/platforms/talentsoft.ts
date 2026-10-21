@@ -15,7 +15,6 @@ const cookiesScriptPath = '/client/dist/talentsoft-cookies.iife.js'
 const offerFeedPath = '/handlers/offerRss.ashx'
 
 const offerFeedPathRegex = /^\/handlers\/offerRss\.ashx$/i
-const lcidRegex = /^\d+$/
 
 // Every career site loads the cookie banner script from this path, on every page and theme.
 export const isTalentsoftHtml = (content: string): boolean => {
@@ -33,7 +32,7 @@ const getTalentsoftPage = (url: string, content: string | undefined): Talentsoft
   let lcid: string | undefined
 
   for (const [key, value] of searchParams) {
-    if (isAnyOf(key, 'lcid') && lcidRegex.test(value)) {
+    if (isAnyOf(key, 'lcid') && value) {
       lcid = value
       break
     }

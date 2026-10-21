@@ -1,6 +1,6 @@
 import { decodeSegment, resolveUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, findElements, hasMarker } from '../../common/utils.js'
+import { composeHint, digitsRegex, findElements, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -10,7 +10,6 @@ export type OpusPage = { kind: 'collection' | 'search'; feedUrl: string }
 // `/opus4/layouts/opus4-zwi2/js/frontdoorutil.js`, whatever the layout is named.
 const assetRootRegex = /["']([^"'\s]*?)\/layouts\/[^/"'\s]+\/js\/frontdoorutil\.js/
 const searchPathRegex = /^\/solrsearch\/index\/search\/(.+)$/i
-const collectionIdRegex = /^\d+$/
 const trailingSlashRegex = /\/$/
 const urlencodeExtrasRegex = /[!'()*~]/g
 const encodedSpaceRegex = /%20/g
@@ -95,7 +94,7 @@ export const getOpusPage = (url: string, content: string | undefined): OpusPage 
   const feedUrl =
     getLinkedFeedUrl(url, content, rootUrl) ?? `${rootUrl}/rss/index/index/${params.join('/')}`
 
-  if (values.searchtype === 'collection' && collectionIdRegex.test(values.id ?? '')) {
+  if (values.searchtype === 'collection' && digitsRegex.test(values.id ?? '')) {
     return { kind: 'collection', feedUrl }
   }
 

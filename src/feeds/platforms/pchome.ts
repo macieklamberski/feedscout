@@ -1,7 +1,7 @@
 import { getPathSegments, isAnyOf, isHostOf } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
+import { composeHint, digitsRegex } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers paper (html), partly covers category.
@@ -14,7 +14,6 @@ const hosts = ['mypaper.pchome.com.tw', 'mypaper.m.pchome.com.tw']
 const baseUrl = 'https://mypaper.pchome.com.tw'
 
 const usernameRegex = /^\w+$/
-const categoryRegex = /^\d+$/
 
 export const parsePchomeUrl = (url: string): PchomeUrl | undefined => {
   if (!isHostOf(url, hosts)) {
@@ -28,7 +27,7 @@ export const parsePchomeUrl = (url: string): PchomeUrl | undefined => {
     return
   }
 
-  if (isAnyOf(section, 'category') && category && categoryRegex.test(category)) {
+  if (isAnyOf(section, 'category') && category && digitsRegex.test(category)) {
     return { kind: 'category', username, category }
   }
 

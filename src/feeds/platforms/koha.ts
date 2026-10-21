@@ -1,13 +1,12 @@
 import { parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, hasMarker } from '../../common/utils.js'
+import { composeHint, digitsRegex, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers comments, search (html).
 // Handler needed for: list.
 
 const scriptRegex = /^(.*)\/cgi-bin\/koha\/(opac-search|opac-shelves|opac-showreviews)\.pl$/i
-const shelfNumberRegex = /^\d+$/
 
 // The feed link Koha prints drops the page's paging and sort for the newest acquisitions.
 const searchPageParams = ['count', 'format', 'offset', 'sort_by']
@@ -52,7 +51,7 @@ export const parseKohaUrl = (url: string): KohaUrl | undefined => {
   if (page === 'opac-shelves') {
     const shelfNumber = params.get('shelfnumber')
 
-    if (!shelfNumber || !shelfNumberRegex.test(shelfNumber)) {
+    if (!shelfNumber || !digitsRegex.test(shelfNumber)) {
       return
     }
 

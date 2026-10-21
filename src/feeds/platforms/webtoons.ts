@@ -1,6 +1,6 @@
 import { getAnyOf, isAnyOf, isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
+import { composeHint, digitsRegex } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers canvas, series (html).
@@ -17,7 +17,6 @@ export type WebtoonsUrl = {
 const hosts = ['webtoons.com', 'www.webtoons.com', 'm.webtoons.com']
 
 const seriesRegex = /^\/([^/]+)\/([^/]+)\/([^/]+)\/(?:list|[^/]+\/viewer)\/?$/i
-const titleNoRegex = /^\d+$/
 
 const languages = ['de', 'en', 'es', 'fr', 'id', 'th', 'zh-hant']
 const canvasGenres = ['canvas', 'challenge']
@@ -33,7 +32,7 @@ export const parseWebtoonsUrl = (url: string): WebtoonsUrl | undefined => {
   const language = getAnyOf(languageSegment, languages)
   const titleNo = parsedUrl.searchParams.get('title_no')
 
-  if (!language || !genre || !name || !titleNo || !titleNoRegex.test(titleNo)) {
+  if (!language || !genre || !name || !titleNo || !digitsRegex.test(titleNo)) {
     return
   }
 

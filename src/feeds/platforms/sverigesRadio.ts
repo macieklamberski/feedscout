@@ -1,6 +1,6 @@
 import { getPathSegments, isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
+import { composeHint, digitsRegex } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers program (html).
@@ -12,7 +12,6 @@ export type SverigesRadioUrl =
 
 const hosts = ['sverigesradio.se', 'www.sverigesradio.se']
 
-const programIdRegex = /^\d+$/
 const slugRegex = /^[a-z0-9-]+$/i
 
 export const parseSverigesRadioUrl = (url: string): SverigesRadioUrl | undefined => {
@@ -25,7 +24,7 @@ export const parseSverigesRadioUrl = (url: string): SverigesRadioUrl | undefined
   const programId = parsedUrl.searchParams.get('programid')
 
   // Legacy pages such as /sida/default.aspx?programid={id} name the program by its id alone.
-  if (programId && programIdRegex.test(programId)) {
+  if (programId && digitsRegex.test(programId)) {
     return { kind: 'legacyProgram', programId }
   }
 
