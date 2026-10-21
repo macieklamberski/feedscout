@@ -331,7 +331,7 @@ Discovers RSS feeds for Dailymotion users, playlists, channels, searches, and th
 | `dailymotion.com/{username}` or `dailymotion.com/user/{username}` | User videos<sup>†</sup> |
 | `dailymotion.com/playlist/{id}` | Playlist<sup>†</sup> |
 | `dailymotion.com/channel/{name}` | Channel<sup>†</sup> |
-| `dailymotion.com/search/{query}` | Search |
+| `dailymotion.com/search/{query}` | Search<sup>†</sup> |
 | `dailymotion.com` or `dailymotion.com/trending` | Trending<sup>†</sup> |
 
 <sup>†</sup> *Found only by the Platform method.*
@@ -629,13 +629,11 @@ Discovers RSS feeds for Douban user interests, reviews, notes, and subject revie
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `www.douban.com/people/{user}` | Interests · reviews<sup>†</sup> · notes<sup>?</sup> |
+| `www.douban.com/people/{user}` | Interests · reviews<sup>†</sup> · notes<sup>†</sup> |
 | `{book,movie,music}.douban.com/subject/{id}` | Subject reviews |
 | `www.douban.com` | Book<sup>†</sup> · movie<sup>†</sup> · music<sup>†</sup> · drama<sup>†</sup> reviews |
 
 <sup>†</sup> *Found only by the Platform method.*
-
-<sup>?</sup> *Not measured, the feed failed to load during the run.*
 
 ### V2EX
 
