@@ -19,7 +19,7 @@ const domains = [
 ]
 
 const categoryRegex = /^\/([^/.]+)\/?$/
-const archivesCategoryRegex = /^\/archives\/category\/([^/]+)(?:\/|$)/
+const archivesCategoryRegex = /^\/archives\/category\/([^/]+)(?:\/|$)/i
 
 export const parseHautetfortUrl = (url: string): HautetfortUrl | undefined => {
   const pathname = parseUrl(url)?.pathname

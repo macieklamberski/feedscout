@@ -116,6 +116,18 @@ describe('edlioHandler', () => {
       expect(edlioHandler.resolve(value, classHtml)).toEqual(expected)
     })
 
+    it('should return the linked assignments feed for a capitalized class page', () => {
+      const value = 'https://example.com/APPS/CLASSES/67890/assignments/'
+      const expected = [
+        {
+          uri: 'https://example.com/apps/classes/assignment_rss.jsp?classREC_ID=67890',
+          hint: { key: 'edlio:assignments', label: 'Assignments' },
+        },
+      ]
+
+      expect(edlioHandler.resolve(value, classHtml)).toEqual(expected)
+    })
+
     it('should return the news feed for a class page without the assignments link', () => {
       const value = 'https://example.com/apps/classes/67890/assignments/'
       const expected = [
