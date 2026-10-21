@@ -389,6 +389,7 @@ Discovers RSS feeds for Behance user portfolios, plus the homepage Featured-proj
 | `behance.net` or `behance.net/galleries` | Featured projects |
 | `behance.net/{username}` | User portfolio<sup>†</sup> |
 | `behance.net/{username}/appreciated` | User portfolio* |
+| `behance.net/{username}/{tab}` | User portfolio |
 | Any other page | Featured projects |
 
 \* *Behance ignores `content=appreciated` and serves the user's own projects, so the appreciated page gets the portfolio feed.*
