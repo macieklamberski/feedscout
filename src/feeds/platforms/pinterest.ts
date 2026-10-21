@@ -15,14 +15,14 @@ const domains = ['pinterest.com']
 
 // A country site such as pinterest.co.uk redirects to its label on pinterest.com, uk.pinterest.com,
 // which serves the same profiles and boards.
+// length: keeps service hosts such as help out
 const countryLabelRegex = /^[a-z]{2}$/
-const countryHostRegex = /^(?:www\.)?pinterest\.(?:co\.[a-z]{2}|com\.[a-z]{2}|[a-z]{2})$/
 
 // Profile tabs of a user, which name the user, not a board.
 const userSubpaths = ['pins', 'boards', '_saved', '_created', 'followers', 'following']
 
 const isPinterestHost = (parsedUrl: URL): boolean => {
-  if (isHostOf(parsedUrl, hosts) || countryHostRegex.test(parsedUrl.hostname)) {
+  if (isHostOf(parsedUrl, hosts)) {
     return true
   }
 

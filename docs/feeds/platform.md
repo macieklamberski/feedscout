@@ -313,7 +313,7 @@ Discovers RSS feeds for Pinboard users, user tags, and the popular and recent li
 
 ### Pinterest
 
-Discovers RSS feeds for Pinterest user profiles and boards, on `pinterest.com` and on country sites such as `uk.pinterest.com` and `pinterest.co.uk`.
+Discovers RSS feeds for Pinterest user profiles and boards, on `pinterest.com` and on country sites such as `uk.pinterest.com`.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|

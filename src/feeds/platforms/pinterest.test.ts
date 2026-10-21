@@ -27,16 +27,13 @@ describe('parsePinterestUrl', () => {
     expect(parsePinterestUrl('https://uk.pinterest.com/nasa/')).toEqual(expected)
   })
 
-  it('should return the user for a country domain', () => {
-    const expected: PinterestUrl = { kind: 'user', username: 'nasa' }
-
-    expect(parsePinterestUrl('https://www.pinterest.co.uk/nasa/')).toEqual(expected)
+  it('should return undefined for a country domain, which redirects to its label host', () => {
+    expect(parsePinterestUrl('https://www.pinterest.co.uk/nasa/')).toBeUndefined()
+    expect(parsePinterestUrl('https://pinterest.de/nasa/')).toBeUndefined()
   })
 
-  it('should return the user for a country domain without www', () => {
-    const expected: PinterestUrl = { kind: 'user', username: 'nasa' }
-
-    expect(parsePinterestUrl('https://pinterest.de/nasa/')).toEqual(expected)
+  it('should return undefined for a third-party site on another TLD', () => {
+    expect(parsePinterestUrl('https://pinterest.ai/nasa')).toBeUndefined()
   })
 
   it('should return undefined for a subdomain longer than a country label', () => {

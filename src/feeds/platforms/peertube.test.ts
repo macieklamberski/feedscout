@@ -217,6 +217,23 @@ describe('peertubeHandler', () => {
       expect(peertubeHandler.resolve(value, content)).toEqual(expected)
     })
 
+    it('should skip a podcast feed the channel page names only in an anchor', () => {
+      const value = 'https://example.org/c/channel'
+      const content = '<a href="/feeds/podcast/videos.xml?videoChannelId=1">Podcast</a>'
+      const expected = [
+        {
+          uri: 'https://example.org/feeds/videos.xml?videoChannelName=channel',
+          hint: { key: 'peertube:channel', label: 'Channel' },
+        },
+        {
+          uri: 'https://example.org/feeds/videos.xml',
+          hint: { key: 'peertube:instance', label: 'Instance' },
+        },
+      ]
+
+      expect(peertubeHandler.resolve(value, content)).toEqual(expected)
+    })
+
     it('should return the account feed on an account page', () => {
       const value = 'https://example.org/a/alice'
       const expected = [
