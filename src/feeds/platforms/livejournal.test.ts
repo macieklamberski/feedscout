@@ -41,6 +41,14 @@ describe('parseLivejournalUrl', () => {
     expect(parseLivejournalUrl('https://syndicated.livejournal.com/somefeed/')).toBeUndefined()
   })
 
+  it('should return undefined for a dotted www users path', () => {
+    expect(parseLivejournalUrl('https://www.livejournal.com/users/robots.txt')).toBeUndefined()
+  })
+
+  it('should return undefined for a dotted legacy users host path', () => {
+    expect(parseLivejournalUrl('https://users.livejournal.com/robots.txt')).toBeUndefined()
+  })
+
   it('should return undefined for another host', () => {
     expect(parseLivejournalUrl('https://example.com/')).toBeUndefined()
   })

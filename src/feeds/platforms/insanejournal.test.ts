@@ -41,6 +41,22 @@ describe('parseInsanejournalUrl', () => {
     expect(parseInsanejournalUrl('https://www.insanejournal.com/')).toBeUndefined()
   })
 
+  it('should return undefined for a dotted www users path', () => {
+    expect(parseInsanejournalUrl('https://www.insanejournal.com/users/robots.txt')).toBeUndefined()
+  })
+
+  it('should return undefined for a dotted www asylum path', () => {
+    expect(parseInsanejournalUrl('https://www.insanejournal.com/asylum/robots.txt')).toBeUndefined()
+  })
+
+  it('should return undefined for a dotted asylums host path', () => {
+    expect(parseInsanejournalUrl('https://asylums.insanejournal.com/robots.txt')).toBeUndefined()
+  })
+
+  it('should return undefined for a dotted feeds host path', () => {
+    expect(parseInsanejournalUrl('https://feeds.insanejournal.com/robots.txt')).toBeUndefined()
+  })
+
   it('should return undefined for another host', () => {
     expect(parseInsanejournalUrl('https://example.com/')).toBeUndefined()
   })

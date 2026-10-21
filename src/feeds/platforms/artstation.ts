@@ -43,6 +43,11 @@ export const parseArtstationUrl = (url: string): ArtstationUrl | undefined => {
     return { kind: 'artwork' }
   }
 
+  // ArtStation names carry no dots, so a dotted segment such as robots.txt is a file of the site.
+  if (first.includes('.')) {
+    return
+  }
+
   return { kind: 'profile', username: first }
 }
 

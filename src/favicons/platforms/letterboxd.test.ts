@@ -115,16 +115,15 @@ describe('letterboxdHandler', () => {
       })
     })
 
-    describe('username with a regex metacharacter', () => {
-      it('should not match an avatar link the metacharacter would match', () => {
+    describe('dotted first segment', () => {
+      it('should return nothing for a dotted first segment', () => {
         const url = 'https://letterboxd.com/a.b/films/'
         const content = uploadedAvatarHtml.replace(
           'class="avatar -a24" href="/alice/"',
           'class="avatar -a24" href="/axb/"',
         )
-        const expected = [{ platform: 'letterboxd', id: 'a.b', url }]
 
-        expect(letterboxdHandler.resolve(url, content)).toEqual(expected)
+        expect(letterboxdHandler.resolve(url, content)).toEqual([])
       })
     })
 

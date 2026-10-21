@@ -31,6 +31,10 @@ describe('parseDreamwidthUrl', () => {
     expect(parseDreamwidthUrl('https://www.dreamwidth.org/')).toBeUndefined()
   })
 
+  it('should return undefined for a dotted www users path', () => {
+    expect(parseDreamwidthUrl('https://www.dreamwidth.org/users/robots.txt')).toBeUndefined()
+  })
+
   it('should return undefined for another host', () => {
     expect(parseDreamwidthUrl('https://example.com/')).toBeUndefined()
   })

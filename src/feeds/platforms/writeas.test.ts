@@ -18,6 +18,10 @@ describe('parseWriteasUrl', () => {
     expect(parseWriteasUrl('https://write.as/')).toBeUndefined()
   })
 
+  it('should return undefined for a dotted first segment', () => {
+    expect(parseWriteasUrl('https://write.as/robots.txt')).toBeUndefined()
+  })
+
   it('should return undefined for another host', () => {
     expect(parseWriteasUrl('https://example.com/matt')).toBeUndefined()
   })

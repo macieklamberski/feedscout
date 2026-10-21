@@ -38,7 +38,8 @@ export const parsePinterestUrl = (url: string): PinterestUrl | undefined => {
 
   const [username, board] = getPathSegments(parsedUrl)
 
-  if (!username) {
+  // Pinterest names carry no dots, so a dotted segment such as robots.txt is a file of the site.
+  if (!username || username.includes('.')) {
     return
   }
 
