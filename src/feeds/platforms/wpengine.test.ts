@@ -28,7 +28,9 @@ describe('wpengineHandler', () => {
       [true, 'https://example.wpengine.com'],
       [false, 'https://blog.example.wpengine.com'],
       [false, 'https://wpenginepowered.com'],
+      [false, 'https://www.wpenginepowered.com'],
       [false, 'https://wpengine.com'],
+      [false, 'https://www.wpengine.com'],
       [false, 'https://example.com'],
     ]
 

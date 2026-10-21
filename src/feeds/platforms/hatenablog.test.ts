@@ -41,6 +41,7 @@ describe('hatenablogHandler', () => {
       [true, 'https://example.hatenadiary.org'],
       [false, 'https://blog.example.hatenablog.com'],
       [false, 'https://hatenablog.com'],
+      [false, 'https://www.hatenablog.com'],
       [false, 'https://hatenablog.jp'],
       [false, 'https://hateblo.jp'],
       [false, 'https://hatenadiary.com'],

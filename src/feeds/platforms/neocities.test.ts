@@ -30,6 +30,14 @@ describe('parseNeocitiesUrl', () => {
     expect(parseNeocitiesUrl('https://neocities.org/browse')).toBeUndefined()
   })
 
+  it('should return undefined for the www host without a site path', () => {
+    expect(parseNeocitiesUrl('https://www.neocities.org/')).toBeUndefined()
+  })
+
+  it('should return undefined for a nested subdomain', () => {
+    expect(parseNeocitiesUrl('https://blog.example-site.neocities.org/')).toBeUndefined()
+  })
+
   it('should return undefined for another host', () => {
     expect(parseNeocitiesUrl('https://example.com/site/example-site')).toBeUndefined()
   })

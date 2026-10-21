@@ -20,6 +20,7 @@ describe('weblogLolHandler', () => {
       [true, 'https://alice.weblog.lol'],
       [false, 'https://blog.example.weblog.lol'],
       [false, 'https://weblog.lol'],
+      [false, 'https://www.weblog.lol'],
       [false, 'https://example.com'],
     ]
 

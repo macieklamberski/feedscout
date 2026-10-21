@@ -23,6 +23,7 @@ describe('tistoryHandler', () => {
       [true, 'https://alice.tistory.com'],
       [false, 'https://blog.example.tistory.com'],
       [false, 'https://tistory.com'],
+      [false, 'https://www.tistory.com'],
       [false, 'https://example.com'],
     ]
 

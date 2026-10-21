@@ -55,6 +55,10 @@ describe('parseBloggoUrl', () => {
     expect(parseBloggoUrl('https://www.bloggo.nu/')).toBeUndefined()
   })
 
+  it('should return undefined for a nested subdomain', () => {
+    expect(parseBloggoUrl('https://blog.alice.bloggo.nu/')).toBeUndefined()
+  })
+
   it('should return undefined for the apex domain', () => {
     expect(parseBloggoUrl('https://bloggo.nu/')).toBeUndefined()
   })

@@ -26,6 +26,7 @@ describe('pikaHandler', () => {
       [true, 'https://bob.pika.page'],
       [false, 'https://blog.example.pika.page'],
       [false, 'https://pika.page'],
+      [false, 'https://www.pika.page'],
       [false, 'https://example.com'],
     ]
 

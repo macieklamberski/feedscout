@@ -31,6 +31,7 @@ describe('ghostHandler', () => {
       [true, 'https://alice.ghost.io'],
       [false, 'https://blog.example.ghost.io'],
       [false, 'https://ghost.io'],
+      [false, 'https://www.ghost.io'],
       [false, 'https://example.com'],
     ]
 

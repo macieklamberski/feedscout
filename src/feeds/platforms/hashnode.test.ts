@@ -20,7 +20,9 @@ describe('hashnodeHandler', () => {
       [false, 'https://blog.example.hashnode.dev'],
       [true, 'https://example.hashnode.com'],
       [false, 'https://hashnode.dev'],
+      [false, 'https://www.hashnode.dev'],
       [false, 'https://hashnode.com'],
+      [false, 'https://www.hashnode.com'],
       [true, 'https://api.hashnode.dev'],
       [false, 'https://example.com'],
     ]
