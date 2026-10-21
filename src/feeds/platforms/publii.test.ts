@@ -144,5 +144,12 @@ describe('publiiHandler', () => {
 
       expect(publiiHandler.resolve(value, content)).toEqual(expected)
     })
+
+    it('should return no feeds for a page outside the root the media links name', () => {
+      const value = 'https://example.com/shop/'
+      const content = '<img src="https://example.com/blog/media/website/logo.png">'
+
+      expect(publiiHandler.resolve(value, content)).toEqual([])
+    })
   })
 })
