@@ -796,6 +796,7 @@ Discovers RSS feeds for note.com, including hashtag and magazine feeds.
 |-------------|-----------------|
 | `note.com` | Featured |
 | `note.com/{user}` | Blog |
+| `note.com/{user}/n/{noteId}` | Blog |
 | `note.com/hashtag/{tag}` or `note.com/tag/{tag}` | Hashtag<sup>†</sup> |
 | `note.com/{user}/m/{magazineId}` | Magazine<sup>†</sup> |
 

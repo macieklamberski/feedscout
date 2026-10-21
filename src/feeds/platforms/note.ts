@@ -9,6 +9,7 @@ import { composeHint } from '../../common/utils.js'
 export type NoteUrl =
   | { kind: 'hashtag'; tag: string }
   | { kind: 'magazine'; username: string; magazine: string }
+  | { kind: 'note'; username: string }
   | { kind: 'user'; username: string }
   | { kind: 'home' }
 
@@ -17,6 +18,7 @@ export const hosts = ['note.com', 'www.note.com']
 // A hashtag page redirects to `/tag/{tag}`, and the feed stays under `/hashtag`.
 const hashtagRegex = /^\/(?:hashtag|tag)\/([^/]+)/i
 const magazineRegex = /^\/([^/]+)\/m\/([^/]+)/i
+const noteRegex = /^\/([^/]+)\/n\/[^/]+/i
 
 export const parseNoteUrl = (url: string): NoteUrl | undefined => {
   const parsedUrl = parseUrl(url)
@@ -36,6 +38,12 @@ export const parseNoteUrl = (url: string): NoteUrl | undefined => {
 
   if (magazineMatch?.[1] && magazineMatch[2]) {
     return { kind: 'magazine', username: magazineMatch[1], magazine: magazineMatch[2] }
+  }
+
+  const noteUsername = pathname.match(noteRegex)?.[1]
+
+  if (noteUsername) {
+    return { kind: 'note', username: noteUsername }
   }
 
   const [username] = getPathSegments(parsedUrl)
@@ -77,7 +85,8 @@ export const noteHandler: PlatformHandler = {
       ]
     }
 
-    if (parsed.kind === 'user') {
+    // A note page leads to its author's blog feed.
+    if (parsed.kind === 'note' || parsed.kind === 'user') {
       return [
         {
           uri: `https://note.com/${parsed.username}/rss`,
