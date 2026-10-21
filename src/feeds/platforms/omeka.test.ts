@@ -277,5 +277,11 @@ describe('omekaHandler', () => {
 
       expect(omekaHandler.resolve(value, omekaSubPathHtml)).toEqual(expected)
     })
+
+    it('should return no feeds for a page outside the root the asset names', () => {
+      const value = 'https://example.com/blog/post'
+
+      expect(omekaHandler.resolve(value, omekaSubPathHtml)).toEqual([])
+    })
   })
 })
