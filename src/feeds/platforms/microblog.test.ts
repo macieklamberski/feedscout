@@ -36,8 +36,8 @@ describe('parseMicroblogUrl', () => {
     expect(parseMicroblogUrl('https://example.micro.blog/photos')).toEqual(expected)
   })
 
-  it('should return the replies for a replies page', () => {
-    const expected: MicroblogUrl = { kind: 'replies', username: 'example' }
+  it('should return the blog for a replies page', () => {
+    const expected: MicroblogUrl = { kind: 'blog', username: 'example' }
 
     expect(parseMicroblogUrl('https://example.micro.blog/replies/')).toEqual(expected)
   })
@@ -273,13 +273,9 @@ describe('microblogHandler', () => {
       expect(microblogHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return replies feed for replies page', () => {
+    it('should return only the blog feeds for a replies page', () => {
       const value = 'https://example.micro.blog/replies'
       const expected: Array<DiscoverUriEntry> = [
-        {
-          uri: 'https://example.micro.blog/replies.xml',
-          hint: { key: 'microblog:replies', label: 'Replies' },
-        },
         {
           uri: 'https://example.micro.blog/feed.xml',
           hint: { key: 'microblog:posts', label: 'Posts', format: 'rss' },
@@ -314,13 +310,6 @@ describe('microblogHandler', () => {
         {
           uri: 'https://example.micro.blog/photos/index.json',
           hint: { key: 'microblog:photos', label: 'Photos' },
-        },
-      ],
-      [
-        'https://example.micro.blog/Replies',
-        {
-          uri: 'https://example.micro.blog/replies.xml',
-          hint: { key: 'microblog:replies', label: 'Replies' },
         },
       ],
     ]

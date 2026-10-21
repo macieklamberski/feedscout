@@ -1005,8 +1005,7 @@
     "microblog:posts": [
       "https://vincent.micro.blog/feed.xml",
       "https://vincent.micro.blog/feed.json"
-    ],
-    "microblog:replies": "https://vincent.micro.blog/replies.xml"
+    ]
   },
   "misskey": {
     "misskey:posts": [

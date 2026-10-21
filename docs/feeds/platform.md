@@ -1150,7 +1150,7 @@ Discovers RSS feeds for Megaphone-hosted podcasts from their embed players.
 
 ### Micro.blog
 
-Discovers RSS, JSON, and podcast feeds for Micro.blog-hosted blogs, including category, archive, photos, and replies feeds.
+Discovers RSS, JSON, and podcast feeds for Micro.blog-hosted blogs, including category, archive, and photos feeds.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
@@ -1158,7 +1158,6 @@ Discovers RSS, JSON, and podcast feeds for Micro.blog-hosted blogs, including ca
 | `*.micro.blog/categories/{slug}` | Category (RSS + JSON), plus the feeds above |
 | `*.micro.blog/archive` | Archive<sup>†</sup>, plus the feeds above |
 | `*.micro.blog/photos` | Photos<sup>†</sup>, plus the feeds above |
-| `*.micro.blog/replies` | Replies, plus the feeds above |
 
 <sup>†</sup> *Found only by the Platform method.*
 
