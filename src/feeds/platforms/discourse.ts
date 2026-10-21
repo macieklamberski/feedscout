@@ -26,8 +26,9 @@ const userRegex = /^\/u\/([^/]+)/i
 // category feed answers only without them.
 const categoryRegex = /^\/c\/(.+?)(?:\/(?:none|all))?(?:\/l\/.+)?\/?$/i
 const topicRegex = /^\/t\/(?<slug>[^/]+)\/(?<topicId>[^/]+)/i
-// A topic answers as `.html`, `.json`, `.md` and `.rss` too.
-const formatSuffixRegex = /\.(?:html|json|md|rss)$/i
+// A topic also answers with a format extension, as `.json` and `.rss`, so any extension is dropped
+// before the id is read.
+const formatSuffixRegex = /\.[a-z]+$/i
 const topRegex = /^\/top(?:\/([^/]+))?\/?$/i
 
 const validTopPeriods = ['daily', 'weekly', 'monthly', 'quarterly', 'yearly', 'all']

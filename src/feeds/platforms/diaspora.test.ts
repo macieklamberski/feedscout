@@ -100,6 +100,18 @@ describe('diasporaHandler', () => {
       expect(diasporaHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return the public feed for a feed path with any format extension', () => {
+      const value = 'https://example.org/public/alice.xml'
+      const expected = [
+        {
+          uri: 'https://example.org/public/alice.atom',
+          hint: { key: 'diaspora:posts', label: 'Posts' },
+        },
+      ]
+
+      expect(diasporaHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should read a profile path segment whole', () => {
       const value = 'https://example.org/u/alice.atom'
       const expected = [

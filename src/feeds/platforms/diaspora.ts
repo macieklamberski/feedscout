@@ -5,9 +5,9 @@ import { composeHint, hasMarker } from '../../common/utils.js'
 // Discoverability: Discoverable without handler.
 
 const profileRegex = /^\/(?<route>u|public|people)\/(?<segment>[^/]+)/i
-// `/public/` and `/people/` take a format suffix, as `/public/alice.atom` is the feed, while `/u/`
-// reads the whole segment as the username, which may hold a dot.
-const formatSuffixRegex = /\.(?:atom|html|json|mobile)$/i
+// `/public/` and `/people/` split a format extension off at the last dot, as `/public/alice.atom` is
+// the feed, while `/u/` reads the whole segment as the username, which may hold a dot.
+const formatSuffixRegex = /\.[a-z]+$/i
 // A `/people/{guid}` page is keyed by guid, and the feed by username. The page
 // carries the username in its diaspora ID.
 const peoplePathRegex = /^\/people\//i

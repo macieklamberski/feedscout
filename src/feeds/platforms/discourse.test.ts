@@ -28,8 +28,8 @@ describe('parseDiscourseUrl', () => {
     expect(parseDiscourseUrl('https://forum.example.com/t/some-topic/123.rss')).toEqual(expected)
   })
 
-  it('should return the latest page for a topic id with an unknown suffix', () => {
-    const expected: DiscourseUrl = { kind: 'latest' }
+  it('should return the topic for a topic id with any format extension', () => {
+    const expected: DiscourseUrl = { kind: 'topic', slug: 'some-topic', topicId: '123' }
 
     expect(parseDiscourseUrl('https://forum.example.com/t/some-topic/123.xml')).toEqual(expected)
   })
