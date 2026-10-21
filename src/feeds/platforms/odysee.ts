@@ -1,6 +1,6 @@
 import { decodeSegment, isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
+import { composeHint, hexRegex } from '../../common/utils.js'
 
 // Discoverability: Not discoverable without handler.
 // Handler needed for: all shapes.
@@ -9,7 +9,6 @@ export type OdyseeUrl = { kind: 'channel'; name: string; claimId?: string }
 
 export const hosts = ['odysee.com', 'www.odysee.com']
 const channelRegex = /^\/@(?<name>[^/:]+)(?::(?<claimId>[^/]+))?/
-const claimIdRegex = /^[a-f0-9]+$/i
 
 export const parseOdyseeUrl = (url: string): OdyseeUrl | undefined => {
   const parsedUrl = parseUrl(url)
@@ -32,7 +31,7 @@ export const parseOdyseeUrl = (url: string): OdyseeUrl | undefined => {
 
   const { claimId } = groups
 
-  if (claimId !== undefined && !claimIdRegex.test(claimId)) {
+  if (claimId !== undefined && !hexRegex.test(claimId)) {
     return
   }
 

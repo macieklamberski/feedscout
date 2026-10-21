@@ -1,6 +1,6 @@
 import { getPathSegments, isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, digitsRegex } from '../../common/utils.js'
+import { alphanumericOrHyphenRegex, composeHint, digitsRegex } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers program (html).
@@ -11,8 +11,6 @@ export type SverigesRadioUrl =
   | { kind: 'program'; slug: string }
 
 const hosts = ['sverigesradio.se', 'www.sverigesradio.se']
-
-const slugRegex = /^[a-z0-9-]+$/i
 
 export const parseSverigesRadioUrl = (url: string): SverigesRadioUrl | undefined => {
   const parsedUrl = parseUrl(url)
@@ -30,7 +28,7 @@ export const parseSverigesRadioUrl = (url: string): SverigesRadioUrl | undefined
 
   const [slug] = getPathSegments(parsedUrl)
 
-  if (!slug || !slugRegex.test(slug)) {
+  if (!slug || !alphanumericOrHyphenRegex.test(slug)) {
     return
   }
 

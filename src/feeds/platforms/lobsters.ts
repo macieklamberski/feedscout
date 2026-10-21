@@ -1,6 +1,6 @@
 import { getAnyOf, isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
+import { composeHint, wordOrHyphenRegex } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers comments, domain, home, multiTag, newest, tag, top (guess, html).
@@ -23,7 +23,6 @@ const topRegex = /^\/top(?:\/(1d|3d|1w|1m|1y))?\/?$/i
 const newestRegex = /^\/newest\/?$/i
 const commentsRegex = /^\/comments\/?$/i
 const tagsValueRegex = /^[\w,-]+$/
-const usernameRegex = /^[\w-]+$/
 
 const topPeriods = ['1d', '3d', '1w', '1m', '1y']
 
@@ -50,7 +49,7 @@ export const parseLobstersUrl = (url: string): LobstersUrl | undefined => {
 
   const username = pathname.match(userRegex)?.groups?.username
 
-  if (username && usernameRegex.test(username)) {
+  if (username && wordOrHyphenRegex.test(username)) {
     return { kind: 'user', username }
   }
 

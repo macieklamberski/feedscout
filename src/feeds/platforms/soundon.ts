@@ -1,6 +1,6 @@
 import { isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
+import { composeHint, hexOrHyphenRegex } from '../../common/utils.js'
 
 // Discoverability: Not discoverable without handler.
 // Handler needed for: all shapes.
@@ -9,7 +9,6 @@ export type SoundonUrl = { kind: 'podcast'; podcastId: string }
 
 const hosts = ['player.soundon.fm']
 
-const idRegex = /^[\da-f-]+$/i
 const podcastRegex = /^\/p\/([^/]+)(?:\/|$)/i
 const embedRegex = /^\/embed\/?$/i
 
@@ -25,7 +24,7 @@ export const parseSoundonUrl = (url: string): SoundonUrl | undefined => {
     ? searchParams.get('podcast')
     : pathname.match(podcastRegex)?.[1]
 
-  if (!podcastId || !idRegex.test(podcastId)) {
+  if (!podcastId || !hexOrHyphenRegex.test(podcastId)) {
     return
   }
 
