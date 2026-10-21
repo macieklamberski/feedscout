@@ -29,6 +29,18 @@ describe('parseGravUrl', () => {
 
     expect(parseGravUrl('https://example.com/docs/page.html?x=1')).toEqual(expected)
   })
+
+  it('should return the listing for a paginated listing', () => {
+    const expected: GravUrl = { kind: 'page', path: '/blog' }
+
+    expect(parseGravUrl('https://example.com/blog/page:2')).toEqual(expected)
+  })
+
+  it('should return the home page for a paginated home page', () => {
+    const expected: GravUrl = { kind: 'home' }
+
+    expect(parseGravUrl('https://example.com/page:2')).toEqual(expected)
+  })
 })
 
 describe('isGravHtml', () => {
