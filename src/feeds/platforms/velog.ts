@@ -1,6 +1,6 @@
-import { decodeSegment, isHostOf, parseUrl } from 'trousse'
+import { decodeSegment, isHostOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
+import { composeHint, parseHandleUrl } from '../../common/utils.js'
 
 // Discoverability: Not discoverable without handler.
 // Handler needed for: all shapes.
@@ -11,7 +11,7 @@ export const hosts = ['velog.io', 'www.velog.io']
 const userRegex = /^\/@([^/]+)/
 
 export const parseVelogUrl = (url: string): VelogUrl | undefined => {
-  const parsedUrl = parseUrl(url)
+  const parsedUrl = parseHandleUrl(url)
 
   if (!parsedUrl || !isHostOf(parsedUrl, hosts)) {
     return

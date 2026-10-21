@@ -13,6 +13,7 @@ describe('internetArchiveHandler', () => {
       [true, 'https://www.archive.org/details/oldtimeradio'],
       [true, 'https://archive.org/Details/oldtimeradio'],
       [false, 'https://archive.org/details/@alice'],
+      [false, 'https://archive.org/details/%40alice'],
       [false, 'https://archive.org/details/oldtimeradio/some-file'],
       [false, 'https://archive.org/details/'],
       [false, 'https://archive.org/'],

@@ -1,5 +1,5 @@
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, hasMarker, hasMetaContent } from '../../common/utils.js'
+import { composeHint, hasMarker, hasMetaContent, parseHandleUrl } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -13,7 +13,7 @@ export const isHubzillaHtml = (content: string): boolean => {
 }
 
 export const parseHubzillaUrl = (url: string): HubzillaUrl | undefined => {
-  const channel = new URL(url).pathname.match(channelPathRegex)?.[1]
+  const channel = parseHandleUrl(url)?.pathname.match(channelPathRegex)?.[1]
 
   if (!channel) {
     return

@@ -8,6 +8,12 @@ describe('parseParagraphUrl', () => {
     expect(parseParagraphUrl('https://paragraph.com/@example')).toEqual(expected)
   })
 
+  it('should return the blog for a percent-encoded handle', () => {
+    const expected: ParagraphUrl = { kind: 'blog', username: 'example' }
+
+    expect(parseParagraphUrl('https://paragraph.com/%40example')).toEqual(expected)
+  })
+
   it('should return undefined for the root', () => {
     expect(parseParagraphUrl('https://paragraph.com/')).toBeUndefined()
   })

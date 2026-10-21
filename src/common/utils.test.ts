@@ -22,6 +22,7 @@ import {
   matchesAnyOfLinkSelectors,
   normalizeMimeType,
   type PageMarkers,
+  parseHandleUrl,
   processConcurrently,
   releaseParsedPage,
   toPositiveInteger,
@@ -618,6 +619,22 @@ describe('getTenantSubdomain', () => {
 
   it('should return undefined for another domain', () => {
     expect(getTenantSubdomain('https://alice.example.org/', domains)).toBeUndefined()
+  })
+})
+
+describe('parseHandleUrl', () => {
+  it('should read a percent-encoded handle as an at sign', () => {
+    expect(parseHandleUrl('https://example.com/%40alice/posts')?.pathname).toBe('/@alice/posts')
+  })
+
+  it('should keep a percent-encoded at sign after the first character', () => {
+    expect(parseHandleUrl('https://example.com/@alice%40example.org')?.pathname).toBe(
+      '/@alice%40example.org',
+    )
+  })
+
+  it('should return undefined for an invalid URL', () => {
+    expect(parseHandleUrl('not a url')).toBeUndefined()
   })
 })
 

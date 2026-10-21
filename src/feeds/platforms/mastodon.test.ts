@@ -17,6 +17,12 @@ describe('parseMastodonUrl', () => {
     expect(parseMastodonUrl('https://example.com/@Gargron')).toEqual(expected)
   })
 
+  it('should return the profile for a percent-encoded handle', () => {
+    const expected: MastodonUrl = { kind: 'profile', username: 'Gargron' }
+
+    expect(parseMastodonUrl('https://example.com/%40Gargron')).toEqual(expected)
+  })
+
   it('should return the profile for /users/{user}', () => {
     const expected: MastodonUrl = { kind: 'profile', username: 'Gargron' }
 

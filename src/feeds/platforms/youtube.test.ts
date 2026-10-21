@@ -72,6 +72,12 @@ describe('parseYoutubeUrl', () => {
     expect(parseYoutubeUrl('https://youtube.com/c/mkbhd')).toEqual(expected)
   })
 
+  it('should return a channel for a percent-encoded handle', () => {
+    const expected: YoutubeUrl = { kind: 'channel' }
+
+    expect(parseYoutubeUrl('https://youtube.com/%40veritasium')).toEqual(expected)
+  })
+
   it('should return a channel for a capitalized channel path', () => {
     const expected: YoutubeUrl = { kind: 'channel' }
 

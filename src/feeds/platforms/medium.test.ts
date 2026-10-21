@@ -9,6 +9,12 @@ describe('parseMediumUrl', () => {
     expect(parseMediumUrl('https://medium.com/@ev')).toEqual(expected)
   })
 
+  it('should return the user for a percent-encoded handle', () => {
+    const expected: MediumUrl = { kind: 'user', username: 'ev' }
+
+    expect(parseMediumUrl('https://medium.com/%40ev')).toEqual(expected)
+  })
+
   it('should return the user for a profile article', () => {
     const expected: MediumUrl = { kind: 'user', username: 'ev' }
 

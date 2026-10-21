@@ -1,5 +1,5 @@
 import { DomUtils, parseDocument } from 'htmlparser2'
-import { anyWordMatchesAnyOf, getSubdomain, isAnyOf } from 'trousse'
+import { anyWordMatchesAnyOf, getSubdomain, isAnyOf, parseUrl } from 'trousse'
 import locales from './locales.json' with { type: 'json' }
 import type { DiscoverUriHint, FetchFn } from './types.js'
 
@@ -239,6 +239,21 @@ export const getTenantSubdomain = (
 
 export const getScriptDirectory = (pathname: string): string => {
   return pathname.replace(scriptSegmentRegex, '').replace(trailingSlashRegex, '')
+}
+
+const encodedHandleRegex = /^\/%40/
+
+// A url whose path opens on an `@` handle, read with a percent-encoded `/%40{name}` as `/@{name}`.
+export const parseHandleUrl = (url: string): URL | undefined => {
+  const parsedUrl = parseUrl(url)
+
+  if (!parsedUrl) {
+    return
+  }
+
+  parsedUrl.pathname = parsedUrl.pathname.replace(encodedHandleRegex, '/@')
+
+  return parsedUrl
 }
 
 export const hasAnyMeta = (content: string, markers: Array<[string, string]>): boolean => {

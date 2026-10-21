@@ -1,4 +1,4 @@
-import { isHostOf } from 'trousse'
+import { decodeSegment, isHostOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
@@ -8,7 +8,7 @@ import { composeHint } from '../../common/utils.js'
 const hosts = ['archive.org', 'www.archive.org']
 const feedUrl = 'https://archive.org/services/collection-rss.php'
 
-const detailsRegex = /^\/details\/([^/@][^/]*)\/?$/i
+const detailsRegex = /^\/details\/([^/]+)\/?$/i
 const searchRegex = /^\/search\/?$/i
 
 export type InternetArchivePage =
@@ -22,11 +22,11 @@ const getInternetArchivePage = (
   const { pathname, searchParams } = new URL(url)
 
   // Collections, accounts and search serve one app shell loading `/offshoot_assets/`, while
-  // items serve full HTML without it. Accounts are `/details/@{user}`, which the path excludes.
+  // items serve full HTML without it. Accounts are `/details/@{user}`, also encoded as `%40`.
   if (content?.includes('/offshoot_assets/')) {
-    const collection = pathname.match(detailsRegex)?.[1]
+    const collection = decodeSegment(pathname.match(detailsRegex)?.[1])
 
-    if (collection) {
+    if (collection && !collection.startsWith('@')) {
       return { kind: 'collection', collection }
     }
   }

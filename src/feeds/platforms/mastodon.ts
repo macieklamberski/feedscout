@@ -1,4 +1,4 @@
-import { getPathSegments, isAnyOf, parseUrl } from 'trousse'
+import { getPathSegments, isAnyOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import {
   composeHint,
@@ -6,6 +6,7 @@ import {
   hasClass,
   hasMarker,
   hasMetaContent,
+  parseHandleUrl,
 } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
@@ -42,7 +43,7 @@ export const isMastodonHeaders = (headers: Headers): boolean => {
 }
 
 export const parseMastodonUrl = (url: string): MastodonUrl | undefined => {
-  const parsedUrl = parseUrl(url)
+  const parsedUrl = parseHandleUrl(url)
 
   if (!parsedUrl) {
     return

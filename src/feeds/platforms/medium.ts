@@ -1,6 +1,6 @@
-import { isHostOf, parseUrl } from 'trousse'
+import { isHostOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, getTenantSubdomain } from '../../common/utils.js'
+import { composeHint, getTenantSubdomain, parseHandleUrl } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers customDomain, profile, publication, publicationTag, subdomainTag (guess, html).
@@ -22,7 +22,7 @@ const publicationRegex = /^\/([^/@][^/]+)/
 const subdomainTagRegex = /^\/tagged\/([^/]+)/i
 
 export const parseMediumUrl = (url: string): MediumUrl | undefined => {
-  const parsedUrl = parseUrl(url)
+  const parsedUrl = parseHandleUrl(url)
 
   if (!parsedUrl) {
     return

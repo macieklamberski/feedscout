@@ -1,6 +1,6 @@
 import { getPathSegments, isAnyOf, isHostOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
+import { composeHint, parseHandleUrl } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -15,11 +15,13 @@ export const hosts = ['flipboard.com', 'www.flipboard.com']
 const profileSubpaths = ['followers', 'following', 'magazines']
 
 export const parseFlipboardUrl = (url: string): FlipboardUrl | undefined => {
-  if (!isHostOf(url, hosts)) {
+  const parsedUrl = parseHandleUrl(url)
+
+  if (!parsedUrl || !isHostOf(parsedUrl, hosts)) {
     return
   }
 
-  const [first, second, third] = getPathSegments(url)
+  const [first, second, third] = getPathSegments(parsedUrl)
 
   // A third segment is an article flipped into a magazine, which has no feed.
   if (!first || third) {

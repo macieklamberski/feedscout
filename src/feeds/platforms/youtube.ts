@@ -1,7 +1,7 @@
-import { isHostOf, parseUrl } from 'trousse'
+import { isHostOf } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
+import { composeHint, parseHandleUrl } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic partly covers channelById, custom, handle, user.
@@ -115,7 +115,7 @@ const pushChannelUris = (uris: Array<DiscoverUriEntry>, channelId: string): void
 }
 
 export const parseYoutubeUrl = (url: string): YoutubeUrl | undefined => {
-  const parsedUrl = parseUrl(url)
+  const parsedUrl = parseHandleUrl(url)
 
   if (!parsedUrl || !isHostOf(parsedUrl, hosts)) {
     return

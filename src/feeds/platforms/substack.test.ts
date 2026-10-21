@@ -14,6 +14,12 @@ describe('parseSubstackUrl', () => {
     expect(parseSubstackUrl('https://substack.com/@example')).toEqual(expected)
   })
 
+  it('should return the profile for a percent-encoded handle', () => {
+    const expected: SubstackUrl = { kind: 'profile', username: 'example' }
+
+    expect(parseSubstackUrl('https://substack.com/%40example')).toEqual(expected)
+  })
+
   it('should return a one-letter username whole', () => {
     const expected: SubstackUrl = { kind: 'profile', username: 'a' }
 

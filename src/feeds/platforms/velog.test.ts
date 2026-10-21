@@ -9,6 +9,12 @@ describe('parseVelogUrl', () => {
     expect(parseVelogUrl('https://velog.io/@velopert')).toEqual(expected)
   })
 
+  it('should return the username for a percent-encoded handle', () => {
+    const expected: VelogUrl = { kind: 'user', username: 'velopert' }
+
+    expect(parseVelogUrl('https://velog.io/%40velopert/posts')).toEqual(expected)
+  })
+
   it('should return the username for profile subpages', () => {
     const expected: VelogUrl = { kind: 'user', username: 'velopert' }
 

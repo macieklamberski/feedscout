@@ -9,6 +9,12 @@ describe('parseFlipboardUrl', () => {
     expect(parseFlipboardUrl('https://flipboard.com/@example')).toEqual(expected)
   })
 
+  it('should return the profile for a percent-encoded handle', () => {
+    const expected: FlipboardUrl = { kind: 'profile', username: 'example' }
+
+    expect(parseFlipboardUrl('https://flipboard.com/%40example')).toEqual(expected)
+  })
+
   it('should return the profile for a trailing slash', () => {
     const expected: FlipboardUrl = { kind: 'profile', username: 'example' }
 

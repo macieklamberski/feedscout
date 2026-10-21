@@ -17,6 +17,12 @@ describe('parseHubzillaUrl', () => {
     expect(parseHubzillaUrl('https://example.org/@alice')).toEqual(expected)
   })
 
+  it('should return the channel for a percent-encoded at-sign address', () => {
+    const expected: HubzillaUrl = { kind: 'channel', channel: 'alice' }
+
+    expect(parseHubzillaUrl('https://example.org/%40alice')).toEqual(expected)
+  })
+
   it('should return undefined for a page the parser does not name', () => {
     expect(parseHubzillaUrl('https://example.org/')).toBeUndefined()
   })
