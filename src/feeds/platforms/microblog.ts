@@ -10,7 +10,6 @@ export type MicroblogUrl =
   | { kind: 'category'; username: string; category: string }
   | { kind: 'archive'; username: string }
   | { kind: 'photos'; username: string }
-  | { kind: 'replies'; username: string }
   | { kind: 'blog'; username: string }
 
 export const domains = ['micro.blog']
@@ -18,7 +17,6 @@ export const domains = ['micro.blog']
 const categoryRegex = /^\/categories\/([^/]+)/i
 const archiveRegex = /^\/archive(?:\/|$)/i
 const photosRegex = /^\/photos(?:\/|$)/i
-const repliesRegex = /^\/replies(?:\/|$)/i
 
 export const parseMicroblogUrl = (url: string): MicroblogUrl | undefined => {
   const parsedUrl = parseUrl(url)
@@ -41,10 +39,6 @@ export const parseMicroblogUrl = (url: string): MicroblogUrl | undefined => {
 
   if (photosRegex.test(pathname)) {
     return { kind: 'photos', username }
-  }
-
-  if (repliesRegex.test(pathname)) {
-    return { kind: 'replies', username }
   }
 
   return { kind: 'blog', username }
@@ -86,10 +80,6 @@ export const microblogHandler: PlatformHandler = {
 
     if (parsed.kind === 'photos') {
       uris.push({ uri: `${origin}/photos/index.json`, hint: composeHint('microblog:photos') })
-    }
-
-    if (parsed.kind === 'replies') {
-      uris.push({ uri: `${origin}/replies.xml`, hint: composeHint('microblog:replies') })
     }
 
     uris.push({ uri: `${origin}/feed.xml`, hint: composeHint('microblog:posts', 'rss') })
