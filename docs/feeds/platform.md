@@ -845,7 +845,8 @@ Discovers RSS feeds for Acast-hosted podcasts.
 |-------------|-----------------|
 | `shows.acast.com/{slug}` | Podcast (RSS) |
 | `play.acast.com/s/{slug}` | Podcast (RSS) |
-| `embed.acast.com/{slug}` | Podcast<sup>†</sup> (RSS) |
+| `embed.acast.com/{slug}` or `/$/{slug}/{episode}` | Podcast<sup>†</sup> (RSS) |
+| `player.acast.com/{slug}/episodes/{episode}` | Podcast<sup>†</sup> (RSS) |
 
 <sup>†</sup> *Found only by the Platform method.*
 

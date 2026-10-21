@@ -20,6 +20,25 @@ describe('parseAcastUrl', () => {
     expect(parseAcastUrl('https://embed.acast.com/my-show')).toEqual(expected)
   })
 
+  it('should skip the $ segment of the current embed code', () => {
+    const value =
+      'https://embed.acast.com/$/e6282aaf-1856-5081-9647-61ca6e74ad82/reimagining-urban-planning'
+    const expected: AcastUrl = { kind: 'show', slug: 'e6282aaf-1856-5081-9647-61ca6e74ad82' }
+
+    expect(parseAcastUrl(value)).toEqual(expected)
+  })
+
+  it('should return the show for a legacy player page', () => {
+    const value = 'https://player.acast.com/5cd07163ad694b18367aeb03/episodes/homebrew-6'
+    const expected: AcastUrl = { kind: 'show', slug: '5cd07163ad694b18367aeb03' }
+
+    expect(parseAcastUrl(value)).toEqual(expected)
+  })
+
+  it('should return undefined for the $ segment alone', () => {
+    expect(parseAcastUrl('https://embed.acast.com/$')).toBeUndefined()
+  })
+
   it('should return undefined for the root', () => {
     expect(parseAcastUrl('https://shows.acast.com/')).toBeUndefined()
   })
@@ -36,6 +55,7 @@ describe('acastHandler', () => {
       [false, 'https://shows.acast.com'],
       [true, 'https://play.acast.com/s/my-dad-wrote-a-porno'],
       [true, 'https://embed.acast.com/my-dad-wrote-a-porno'],
+      [true, 'https://player.acast.com/5cd07163ad694b18367aeb03/episodes/homebrew-6'],
       [false, 'https://acast.com/show'],
       [false, 'https://example.com'],
     ]
