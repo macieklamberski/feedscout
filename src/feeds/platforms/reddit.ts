@@ -19,6 +19,7 @@ export type RedditUrl =
   | { kind: 'user'; username: string }
   | { kind: 'submitted'; username: string }
   | { kind: 'comments'; username: string }
+  | { kind: 'userPost'; username: string; postId: string }
   | { kind: 'multireddit'; username: string; multireddit: string }
   | { kind: 'domain'; domain: string }
 
@@ -138,6 +139,10 @@ export const parseRedditUrl = (url: string): RedditUrl | undefined => {
 
   if (isAnyOf(section, 'submitted')) {
     return { kind: 'submitted', username: name }
+  }
+
+  if (isAnyOf(section, 'comments') && item) {
+    return { kind: 'userPost', username: name, postId: item }
   }
 
   if (isAnyOf(section, 'comments')) {
@@ -262,6 +267,15 @@ export const redditHandler: PlatformHandler = {
         {
           uri: `https://www.reddit.com/user/${parsed.username}/.rss`,
           hint: composeHint('reddit:posts'),
+        },
+      ]
+    }
+
+    if (parsed.kind === 'userPost') {
+      return [
+        {
+          uri: `https://www.reddit.com/user/${parsed.username}/comments/${parsed.postId}/.rss`,
+          hint: composeHint('reddit:post-comments'),
         },
       ]
     }
