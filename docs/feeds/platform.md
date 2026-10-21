@@ -92,6 +92,7 @@ Discovers Atom feeds for subreddits, users, multireddits, wikis, searches, and d
 | `reddit.com/u/{username}` | User activity<sup>†</sup> |
 | `reddit.com/user/{username}/submitted` | Submitted posts<sup>†</sup>, plus the feeds above |
 | `reddit.com/user/{username}/comments` | User comments · user activity |
+| `reddit.com/user/{username}/comments/{id}` | Post comments |
 | `reddit.com/user/{username}/m/{multireddit}` | Multireddit<sup>†</sup> |
 | `reddit.com/domain/{domain}` | Domain submissions |
 
@@ -1426,7 +1427,7 @@ Discovers RSS feeds for Weebly-hosted blogs.
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | `*.weebly.com` | Blog |
-| `*.weebly.com/{slug}` | Blog (custom page slug) · default blog |
+| `*.weebly.com/{slug}` | Blog (custom page slug or blog id) |
 
 ### Zenn
 
