@@ -123,6 +123,13 @@ describe('parseRedditUrl', () => {
     expect(parseRedditUrl('https://reddit.com/user/spez/comments')).toEqual(expected)
   })
 
+  it('should return the post of a user for a profile post page', () => {
+    const value = 'https://reddit.com/user/spez/comments/abc123/whats_your_favorite'
+    const expected: RedditUrl = { kind: 'userPost', username: 'spez', postId: 'abc123' }
+
+    expect(parseRedditUrl(value)).toEqual(expected)
+  })
+
   it('should return the user for an unknown user section', () => {
     const expected: RedditUrl = { kind: 'user', username: 'spez' }
 
@@ -759,6 +766,18 @@ describe('redditHandler', () => {
         {
           uri: 'https://www.reddit.com/user/spez/.rss',
           hint: { key: 'reddit:posts', label: 'Posts' },
+        },
+      ]
+
+      expect(redditHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return the post comments feed for a profile post', () => {
+      const value = 'https://reddit.com/user/spez/comments/abc123/whats_your_favorite'
+      const expected = [
+        {
+          uri: 'https://www.reddit.com/user/spez/comments/abc123/.rss',
+          hint: { key: 'reddit:post-comments', label: 'Post comments' },
         },
       ]
 
