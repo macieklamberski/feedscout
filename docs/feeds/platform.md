@@ -1723,7 +1723,7 @@ Discovers the feeds of a XenForo board. Detected by the `XF` or `XenForo` id on 
 | `{board}/f/{slug}.{id}` or `{board}/forums/{slug}.{id}` | Forum · board (RSS) |
 | Any other page | Board (RSS)* |
 
-\* *The board feed sits under the forum route prefix, `/forums/-/index.rss` by default and `/f/-/index.rss` where the board renames it. A page outside a forum carries no prefix, so both are emitted.*
+\* *The board feed sits under the forum route prefix, `/forums/-/index.rss` by default and `/f/-/index.rss` where the board renames it. A page outside a forum carries no prefix, so both are tried in that order and the first that answers is kept.*
 
 > [!NOTE]
 > A missing forum answers with an XML error document rather than HTML, so a check for well-formed XML passes on a 404.

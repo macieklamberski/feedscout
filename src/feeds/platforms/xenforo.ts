@@ -1,5 +1,4 @@
 import { getAnyOf, parseUrl } from 'trousse'
-import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, findElement, hasMarker } from '../../common/utils.js'
 
@@ -12,8 +11,7 @@ export type XenforoUrl =
 // XF2 serves a forum at `/f/{slug.id}` or, on the default route, `/forums/{slug.id}`.
 const forumPathRegex = /\/(?<route>f|forums)\/(?<forumPath>[^/]+\.\d+)(?:\/|$)/i
 // The board feed sits under the same route prefix as the forums. A page outside a
-// forum does not carry the prefix, so both spellings are emitted and the one the
-// board does not serve fails validation.
+// forum does not carry the prefix, and a board that renamed its route can answer on both.
 const routePrefixes = ['forums', 'f']
 // XF2 prints the path the board is mounted under in its script config.
 const basePathRegex = /\bbasePath:\s*'(?<basePath>(?:\/[^'/]+)*)\/?'/
@@ -88,13 +86,9 @@ export const xenforoHandler: PlatformHandler = {
       ]
     }
 
-    const uris: Array<DiscoverUriEntry> = []
     const boardUrl = `${origin}${getXenforoBasePath(url, content)}`
+    const boardUris = routePrefixes.map((prefix) => `${boardUrl}/${prefix}/-/index.rss`)
 
-    for (const prefix of routePrefixes) {
-      uris.push({ uri: `${boardUrl}/${prefix}/-/index.rss`, hint: composeHint('xenforo:site') })
-    }
-
-    return uris
+    return [{ uri: boardUris, hint: composeHint('xenforo:site') }]
   },
 }
