@@ -1,12 +1,6 @@
 import { encodePathSegment, getPathSegments, isAnyOf } from 'trousse'
-import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import {
-  composeHint,
-  digitsRegex,
-  formatSuffixRegex,
-  getTenantSubdomain,
-} from '../../common/utils.js'
+import { composeHint, formatSuffixRegex, getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers blog, blogPath (html), partly covers blogCustomSlug.
@@ -20,11 +14,12 @@ export const parseWeeblyUrl = (url: string): WeeblyUrl | undefined => {
     return
   }
 
-  // Custom blog page slug (e.g., /articles/feed when page is named "articles").
-  // A page address ends in `.html`, which redirects to the bare slug the blog feed sits under.
+  // A blog sits under its page slug, such as /articles/feed, or under a numeric blog id, such as
+  // /1/feed. A page address ends in `.html`, which redirects to the bare slug the blog feed sits
+  // under.
   const first = getPathSegments(url)[0]?.replace(formatSuffixRegex, '')
 
-  if (first && !isAnyOf(first, 'blog') && !digitsRegex.test(first)) {
+  if (first && !isAnyOf(first, 'blog')) {
     return { kind: 'blog', page: first }
   }
 
@@ -44,17 +39,8 @@ export const weeblyHandler: PlatformHandler = {
     }
 
     const { origin } = new URL(url)
-    const uris: Array<DiscoverUriEntry> = []
+    const page = parsed.page ?? 'blog'
 
-    if (parsed.page) {
-      uris.push({
-        uri: `${origin}/${encodePathSegment(parsed.page)}/feed`,
-        hint: composeHint('weebly:blog'),
-      })
-    }
-
-    uris.push({ uri: `${origin}/blog/feed`, hint: composeHint('weebly:blog') })
-
-    return uris
+    return [{ uri: `${origin}/${encodePathSegment(page)}/feed`, hint: composeHint('weebly:blog') }]
   },
 }
