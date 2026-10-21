@@ -65,6 +65,14 @@ describe('jiraHandler', () => {
       )
     })
 
+    it('should not match the www host without content', () => {
+      expect(jiraHandler.match('https://www.atlassian.net/browse/ABC-1')).toBe(false)
+    })
+
+    it('should not match a nested subdomain without content', () => {
+      expect(jiraHandler.match('https://a.b.atlassian.net/browse/ABC-1')).toBe(false)
+    })
+
     it('should not match Confluence on a Cloud site', () => {
       expect(jiraHandler.match('https://example.atlassian.net/wiki/spaces/DOCS')).toBe(false)
     })

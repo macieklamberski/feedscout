@@ -1,4 +1,4 @@
-import { getSubdomain } from 'trousse'
+import { getSubdomain, isAnyOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, getTenantSubdomain } from '../../common/utils.js'
 
@@ -10,7 +10,7 @@ export type Fc2Url = { kind: 'blog' }
 // A blog is one label under these domains.
 const domains = ['blog.2nt.com', 'fc2.net']
 
-const numberedSubdomainRegex = /^[^.]+\.blog\d*$/i
+const numberedSubdomainRegex = /^(?<blog>[^.]+)\.blog\d*$/i
 
 export const parseFc2Url = (url: string): Fc2Url | undefined => {
   const blog = getTenantSubdomain(url, domains)
@@ -21,8 +21,9 @@ export const parseFc2Url = (url: string): Fc2Url | undefined => {
 
   // A blog on fc2.com is one label above a blog or blog{n} label.
   const numberedSubdomain = getSubdomain(url, 'fc2.com')
+  const numberedBlog = numberedSubdomain?.match(numberedSubdomainRegex)?.groups?.blog
 
-  if (numberedSubdomain && numberedSubdomainRegex.test(numberedSubdomain)) {
+  if (numberedBlog && !isAnyOf(numberedBlog, 'www')) {
     return { kind: 'blog' }
   }
 }
