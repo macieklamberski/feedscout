@@ -8,7 +8,8 @@ import { composeHint, findElement, getTenantSubdomain, hasMarker } from '../../c
 
 export type BlogspotUrl = { kind: 'label'; label: string } | { kind: 'post' } | { kind: 'blog' }
 
-// Blogger's country domains still serve every blog.
+// Blogger's country domains, from before Blogger moved every blog to blogspot.com. A few no
+// longer resolve.
 const domains = [
   'blogspot.ae',
   'blogspot.al',
