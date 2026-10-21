@@ -44,6 +44,7 @@ export const nebulaHandler: PlatformHandler = {
     }
 
     if (parsed.kind === 'explore') {
+      // rss.nebula.app answers 404 to a mixed-case category.
       const category = parsed.category?.toLowerCase()
       const uris: Array<DiscoverUriEntry> = []
 
@@ -78,7 +79,8 @@ export const nebulaHandler: PlatformHandler = {
       return uris
     }
 
-    const { slug } = parsed
+    // rss.nebula.app answers 404 to a mixed-case slug, and nebula.tv redirects one to lowercase.
+    const slug = parsed.slug.toLowerCase()
     const uris: Array<DiscoverUriEntry> = []
 
     uris.push({

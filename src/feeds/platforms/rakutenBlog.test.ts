@@ -16,8 +16,8 @@ describe('parseRakutenBlogUrl', () => {
     expect(parseRakutenBlogUrl(value)).toEqual(expected)
   })
 
-  it('should lowercase the username', () => {
-    const expected: RakutenBlogUrl = { kind: 'blog', username: 'example' }
+  it('should keep the case of the username', () => {
+    const expected: RakutenBlogUrl = { kind: 'blog', username: 'Example' }
 
     expect(parseRakutenBlogUrl('https://plaza.rakuten.co.jp/Example/')).toEqual(expected)
   })

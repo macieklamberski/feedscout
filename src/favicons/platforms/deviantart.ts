@@ -20,6 +20,7 @@ export const deviantartHandler: PlatformHandler = {
       return []
     }
 
+    // The avatar host answers 404 to a capital, as /avatars-big/Y/u/Yuumei.jpg.
     const username = parsed.username.toLowerCase()
 
     const uri: Array<string> = [
