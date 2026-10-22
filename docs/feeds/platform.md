@@ -1394,7 +1394,7 @@ Discovers RSS feeds for Weebly-hosted blogs.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `*.weebly.com` | Blog |
+| `*.weebly.com` | Blog (the default blog and every page the home page links) |
 | `*.weebly.com/{slug}` | Blog (custom page slug or blog id) |
 
 ### Zenn

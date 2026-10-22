@@ -20,8 +20,8 @@ describe('parseWeeblyUrl', () => {
     expect(parseWeeblyUrl('https://example.weebly.com/blog')).toEqual(expected)
   })
 
-  it('should return the blog for the root', () => {
-    const expected: WeeblyUrl = { kind: 'blog' }
+  it('should return the home page for the root', () => {
+    const expected: WeeblyUrl = { kind: 'home' }
 
     expect(parseWeeblyUrl('https://example.weebly.com/')).toEqual(expected)
   })
@@ -64,6 +64,74 @@ describe('weeblyHandler', () => {
       ]
 
       expect(weeblyHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return the feed of every page the root links beside the default feed', () => {
+      const value = 'https://example.weebly.com/'
+      const content = `
+        <ul>
+          <li><a href="/">Home</a></li>
+          <li><a href="/newsletter.html">Newsletter</a></li>
+          <li><a href="/blog.html">Blog</a></li>
+          <li><a href="https://example.weebly.com/sermons">Sermons</a></li>
+          <li><a href="/newsletter.html">Newsletter</a></li>
+        </ul>
+      `
+      const expected = [
+        {
+          uri: 'https://example.weebly.com/blog/feed',
+          hint: { key: 'weebly:blog', label: 'Blog' },
+        },
+        {
+          uri: 'https://example.weebly.com/newsletter/feed',
+          hint: { key: 'weebly:blog', label: 'Blog' },
+        },
+        {
+          uri: 'https://example.weebly.com/sermons/feed',
+          hint: { key: 'weebly:blog', label: 'Blog' },
+        },
+      ]
+
+      expect(weeblyHandler.resolve(value, content)).toEqual(expected)
+    })
+
+    it('should skip a link to another host on the root', () => {
+      const value = 'https://example.weebly.com/'
+      const content = '<a href="https://example.com/newsletter.html">Newsletter</a>'
+      const expected = [
+        {
+          uri: 'https://example.weebly.com/blog/feed',
+          hint: { key: 'weebly:blog', label: 'Blog' },
+        },
+      ]
+
+      expect(weeblyHandler.resolve(value, content)).toEqual(expected)
+    })
+
+    it('should skip a link to a file on the root', () => {
+      const value = 'https://example.weebly.com/'
+      const content = '<a href="/favicon.ico">Icon</a>'
+      const expected = [
+        {
+          uri: 'https://example.weebly.com/blog/feed',
+          hint: { key: 'weebly:blog', label: 'Blog' },
+        },
+      ]
+
+      expect(weeblyHandler.resolve(value, content)).toEqual(expected)
+    })
+
+    it('should skip a link to a nested path on the root', () => {
+      const value = 'https://example.weebly.com/'
+      const content = '<a href="/blog/archives/10-2025">October 2025</a>'
+      const expected = [
+        {
+          uri: 'https://example.weebly.com/blog/feed',
+          hint: { key: 'weebly:blog', label: 'Blog' },
+        },
+      ]
+
+      expect(weeblyHandler.resolve(value, content)).toEqual(expected)
     })
 
     it('should return only the custom slug feed for named blog page', () => {
