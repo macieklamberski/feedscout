@@ -1,6 +1,11 @@
 import { isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, getTenantSubdomain, wordOrHyphenRegex } from '../../common/utils.js'
+import {
+  composeHint,
+  getHostOrigin,
+  getTenantSubdomain,
+  wordOrHyphenRegex,
+} from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers blog (guess, html).
@@ -24,7 +29,9 @@ const getPublicationOrigin = (content: string | undefined): string | undefined =
     return
   }
 
-  return match[2] ? `https://${match[2]}` : `https://${match[1]}.substack.com`
+  const customOrigin = match[2] ? getHostOrigin(match[2]) : undefined
+
+  return customOrigin ?? `https://${match[1]}.substack.com`
 }
 
 export const parseSubstackUrl = (url: string): SubstackUrl | undefined => {

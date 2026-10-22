@@ -76,6 +76,12 @@ describe('insanejournalHandler', () => {
   })
 
   describe('resolve', () => {
+    it('should return an empty array for a path username that is no host label', () => {
+      const value = 'https://www.insanejournal.com/~..'
+
+      expect(insanejournalHandler.resolve(value)).toEqual([])
+    })
+
     it('should return empty array for a URL outside InsaneJournal', () => {
       expect(insanejournalHandler.resolve('https://example.com/')).toEqual([])
     })

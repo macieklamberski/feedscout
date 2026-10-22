@@ -1,6 +1,6 @@
 import { isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { getTenantSubdomain } from '../../common/utils.js'
+import { getHostOrigin, getTenantSubdomain } from '../../common/utils.js'
 import { getJournalFeeds, journalTagRegex } from './livejournal.js'
 
 // Discoverability: Partially discoverable without handler.
@@ -98,7 +98,11 @@ export const insanejournalHandler: PlatformHandler = {
       return getJournalFeeds(`${origin}/${parsed.feed}`, parsed.tag, 'insanejournal')
     }
 
-    const base = parsed.username ? `https://${parsed.username}.insanejournal.com` : origin
+    const base = parsed.username ? getHostOrigin(`${parsed.username}.insanejournal.com`) : origin
+
+    if (!base) {
+      return []
+    }
 
     return getJournalFeeds(base, parsed.tag, 'insanejournal')
   },

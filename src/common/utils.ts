@@ -263,6 +263,22 @@ export const isRootOfPage = (rootUrl: string, url: string): boolean => {
   return `${parsedUrl.pathname}/`.startsWith(`${rootPath}/`)
 }
 
+// A value written into a host passes only when the parsed URL keeps it as the whole host, so
+// `a@b.example` or `open/x` cuts no other host out of it, and an empty label as in `..` is refused.
+export const getHostOrigin = (host: string, scheme = 'https'): string | undefined => {
+  const parsedUrl = parseUrl(`${scheme}://${host}`)
+
+  if (!parsedUrl || parsedUrl.hostname !== host.toLowerCase()) {
+    return
+  }
+
+  if (parsedUrl.hostname.split('.').includes('')) {
+    return
+  }
+
+  return parsedUrl.origin
+}
+
 export const getScriptDirectory = (pathname: string): string => {
   return pathname.replace(scriptSegmentRegex, '').replace(trailingSlashRegex, '')
 }

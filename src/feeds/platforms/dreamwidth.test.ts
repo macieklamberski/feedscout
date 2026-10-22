@@ -60,6 +60,12 @@ describe('dreamwidthHandler', () => {
   })
 
   describe('resolve', () => {
+    it('should return an empty array for a path username that is no host label', () => {
+      const value = 'https://www.dreamwidth.org/~..'
+
+      expect(dreamwidthHandler.resolve(value)).toEqual([])
+    })
+
     it('should return empty array for a URL outside Dreamwidth', () => {
       expect(dreamwidthHandler.resolve('https://example.com/')).toEqual([])
     })

@@ -111,6 +111,20 @@ describe('substackHandler', () => {
       expect(substackHandler.resolve(value, content)).toEqual(expected)
     })
 
+    it('should return the publication subdomain feed when the custom domain is not one host', () => {
+      const value = 'https://substack.com/@alice'
+      const content =
+        '{"primaryPublication":{"id":4330724,"subdomain":"alicewrites","custom_domain":"newsletter.example.com/x"}}'
+      const expected = [
+        {
+          uri: 'https://alicewrites.substack.com/feed',
+          hint: { key: 'substack:newsletter', label: 'Newsletter' },
+        },
+      ]
+
+      expect(substackHandler.resolve(value, content)).toEqual(expected)
+    })
+
     it('should return the publication subdomain feed when it differs from the handle', () => {
       const value = 'https://substack.com/@alice'
       const content =

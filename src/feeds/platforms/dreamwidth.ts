@@ -1,6 +1,6 @@
 import { isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { getTenantSubdomain } from '../../common/utils.js'
+import { getHostOrigin, getTenantSubdomain } from '../../common/utils.js'
 import { getJournalFeeds, journalTagRegex } from './livejournal.js'
 
 // Discoverability: Partially discoverable without handler.
@@ -54,8 +54,12 @@ export const dreamwidthHandler: PlatformHandler = {
 
     // A username with `_` is served on a hostname with `-`.
     const base = parsed.username
-      ? `https://${parsed.username.replaceAll('_', '-')}.dreamwidth.org`
+      ? getHostOrigin(`${parsed.username.replaceAll('_', '-')}.dreamwidth.org`)
       : new URL(url).origin
+
+    if (!base) {
+      return []
+    }
 
     return getJournalFeeds(base, parsed.tag, 'dreamwidth')
   },

@@ -84,6 +84,12 @@ describe('parseTumblrUrl', () => {
 
 describe('tumblrHandler', () => {
   describe('resolve', () => {
+    it('should return an empty array for a path blog that is not one host label', () => {
+      const value = 'https://www.tumblr.com/alice@example.org'
+
+      expect(tumblrHandler.resolve(value)).toEqual([])
+    })
+
     it('should return the tag feed for a capitalized tagged segment', () => {
       const value = 'https://example.tumblr.com/Tagged/updates'
       const expected = [

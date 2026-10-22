@@ -55,6 +55,12 @@ describe('podomaticHandler', () => {
   })
 
   describe('resolve', () => {
+    it('should return an empty array for a directory show that is not one host label', () => {
+      const value = 'https://www.podomatic.com/podcasts/alice@example.org'
+
+      expect(podomaticHandler.resolve(value)).toEqual([])
+    })
+
     it('should return the show feed from a subdomain', () => {
       const value = 'https://example-show.podomatic.com/'
       const expected = [
