@@ -62,6 +62,10 @@ describe('encodePathSegment', () => {
     expect(encodePathSegment(value)).toBe(expected)
   })
 
+  it('should escape a backslash', () => {
+    expect(encodePathSegment('..\\..')).toBe('..%5C..')
+  })
+
   it('should leave the characters a path segment may hold as written', () => {
     const value = 'alice@example.org:urn=a&b'
 

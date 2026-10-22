@@ -28,7 +28,7 @@ export const letterPairsRegex = /^[a-z]{2}(?:-[a-z]{2})?$/i
 // length: keeps path words such as `blogs` out
 export const letterGroupsRegex = /^[a-z]{2,3}(?:-[a-z]{4})?(?:-[a-z]{2})?$/i
 
-const pathSegmentEscapeRegex = /[%/?#\s]/g
+const pathSegmentEscapeRegex = /[%/?#\\\s]/g
 
 const dotSegments = ['.', '..']
 
@@ -38,8 +38,8 @@ export const isDotSegment = (value: string): boolean => {
 }
 
 // A decoded value written into a feed URL path stays one segment. Only the characters that would
-// open a new segment, a query or a fragment, a literal `%` and whitespace are escaped, so an `@`,
-// `=` or `:` the value holds reads as written. A dot segment is refused.
+// open a new segment, a query or a fragment, a backslash the parser reads as `/`, a literal `%` and
+// whitespace are escaped, so an `@`, `=` or `:` reads as written. A dot segment is refused.
 export const encodePathSegment = (value: string): string | undefined => {
   if (isDotSegment(value)) {
     return
