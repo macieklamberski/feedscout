@@ -662,10 +662,6 @@ describe('getHostOrigin', () => {
     expect(getHostOrigin('alice.example.com')).toBe('https://alice.example.com')
   })
 
-  it('should return the origin on the given scheme', () => {
-    expect(getHostOrigin('alice.example.com', 'http')).toBe('http://alice.example.com')
-  })
-
   it('should return the origin of a host in any case', () => {
     expect(getHostOrigin('Alice.example.com')).toBe('https://alice.example.com')
   })

@@ -265,8 +265,8 @@ export const isRootOfPage = (rootUrl: string, url: string): boolean => {
 
 // A value written into a host passes only when the parsed URL keeps it as the whole host, so
 // `a@b.example` or `open/x` cuts no other host out of it, and an empty label as in `..` is refused.
-export const getHostOrigin = (host: string, scheme = 'https'): string | undefined => {
-  const parsedUrl = parseUrl(`${scheme}://${host}`)
+export const getHostOrigin = (host: string): string | undefined => {
+  const parsedUrl = parseUrl(`https://${host}`)
 
   if (!parsedUrl || parsedUrl.hostname !== host.toLowerCase()) {
     return
