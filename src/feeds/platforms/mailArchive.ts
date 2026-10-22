@@ -37,13 +37,9 @@ export const mailArchiveHandler: PlatformHandler = {
       return []
     }
 
-    const list = encodePathSegment(parsed.list)
-
-    if (!list) {
-      return []
-    }
-
     const { origin } = new URL(url)
+    // The address always holds an `@`, so it is never a dot segment the encoder refuses.
+    const list = encodePathSegment(parsed.list)
 
     return [
       {
