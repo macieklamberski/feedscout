@@ -120,6 +120,34 @@ describe('myanimelistHandler', () => {
       expect(myanimelistHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should keep an escaped username escaped once in the u query value', () => {
+      const value = 'https://myanimelist.net/profile/a%2Bb'
+      const expected = [
+        {
+          uri: 'https://myanimelist.net/rss.php?type=rw&u=a%2Bb',
+          hint: { key: 'myanimelist:anime', label: 'Anime list' },
+        },
+        {
+          uri: 'https://myanimelist.net/rss.php?type=rm&u=a%2Bb',
+          hint: { key: 'myanimelist:manga', label: 'Manga list' },
+        },
+        {
+          uri: 'https://myanimelist.net/rss.php?type=rwe&u=a%2Bb',
+          hint: { key: 'myanimelist:recently-watched', label: 'Recently watched' },
+        },
+        {
+          uri: 'https://myanimelist.net/rss.php?type=rrm&u=a%2Bb',
+          hint: { key: 'myanimelist:recently-read', label: 'Recently read' },
+        },
+        {
+          uri: 'https://myanimelist.net/rss.php?type=blog&u=a%2Bb',
+          hint: { key: 'myanimelist:blog', label: 'Blog' },
+        },
+      ]
+
+      expect(myanimelistHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return all five feeds for /profile/{user}', () => {
       const value = 'https://myanimelist.net/profile/Xinil'
       const expected = [

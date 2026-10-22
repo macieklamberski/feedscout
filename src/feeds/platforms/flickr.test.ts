@@ -214,6 +214,18 @@ describe('flickrHandler', () => {
       expect(flickrHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should keep an escaped tag escaped once in the tags query value', () => {
+      const value = 'https://www.flickr.com/photos/tags/c%2B%2B'
+      const expected = [
+        {
+          uri: 'https://www.flickr.com/services/feeds/photos_public.gne?tags=c%2B%2B',
+          hint: { key: 'flickr:tag', label: 'Tag' },
+        },
+      ]
+
+      expect(flickrHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return tag feed for a tag page', () => {
       const value = 'https://www.flickr.com/photos/tags/cats'
       const expected = [
