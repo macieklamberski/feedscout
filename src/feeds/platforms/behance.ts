@@ -57,7 +57,7 @@ export const behanceHandler: PlatformHandler = {
     // `content=appreciated` and serves the user's own projects for it.
     return [
       {
-        uri: `https://www.behance.net/feeds/user?username=${parsed.username}`,
+        uri: `https://www.behance.net/feeds/user?${new URLSearchParams({ username: parsed.username })}`,
         hint: composeHint('behance:portfolio'),
       },
     ]

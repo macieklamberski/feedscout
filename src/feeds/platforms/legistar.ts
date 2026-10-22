@@ -102,7 +102,7 @@ export const legistarHandler: PlatformHandler = {
     }
 
     const { origin } = new URL(url)
-    const query = `ID=${parsed.id}&GUID=${parsed.guid}`
+    const query = new URLSearchParams({ ID: parsed.id, GUID: parsed.guid })
 
     if (parsed.kind === 'legislation') {
       return [

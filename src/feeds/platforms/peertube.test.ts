@@ -87,6 +87,22 @@ describe('peertubeHandler', () => {
   })
 
   describe('resolve', () => {
+    it('should keep a channel name with & inside the query value', () => {
+      const value = 'https://example.com/c/news&accountName=alice'
+      const expected = [
+        {
+          uri: 'https://example.com/feeds/videos.xml?videoChannelName=news%26accountName%3Dalice',
+          hint: { key: 'peertube:channel', label: 'Channel' },
+        },
+        {
+          uri: 'https://example.com/feeds/videos.xml',
+          hint: { key: 'peertube:instance', label: 'Instance' },
+        },
+      ]
+
+      expect(peertubeHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return empty array for a URL that does not parse', () => {
       expect(peertubeHandler.resolve('not-a-url')).toEqual([])
     })

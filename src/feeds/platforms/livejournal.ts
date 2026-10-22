@@ -29,14 +29,14 @@ export const getJournalFeeds = (
   const uris: Array<DiscoverUriEntry> = []
 
   if (tag) {
-    const encodedTag = encodeURIComponent(decodeSegment(tag) ?? tag)
+    const query = new URLSearchParams({ tag: decodeSegment(tag) ?? tag })
 
     uris.push({
-      uri: `${base}/data/rss?tag=${encodedTag}`,
+      uri: `${base}/data/rss?${query}`,
       hint: composeHint(`${platform}:posts-tag`, 'rss'),
     })
     uris.push({
-      uri: `${base}/data/atom?tag=${encodedTag}`,
+      uri: `${base}/data/atom?${query}`,
       hint: composeHint(`${platform}:posts-tag`, 'atom'),
     })
   }

@@ -60,7 +60,7 @@ export const proseHandler: PlatformHandler = {
     if (parsed.kind === 'tag') {
       return [
         {
-          uri: `${origin}/rss?tag=${encodeURIComponent(parsed.tag)}`,
+          uri: `${origin}/rss?${new URLSearchParams({ tag: parsed.tag })}`,
           hint: composeHint('prose:tag'),
         },
       ]

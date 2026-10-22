@@ -47,7 +47,7 @@ export const tildesHandler: PlatformHandler = {
     const uris: Array<DiscoverUriEntry> = []
 
     // Tildes' feed views honour the ?tag= query (forces order=NEW server-side).
-    const tagSuffix = parsed.tag ? `?tag=${encodeURIComponent(parsed.tag)}` : ''
+    const tagSuffix = parsed.tag ? `?${new URLSearchParams({ tag: parsed.tag })}` : ''
 
     if (parsed.kind === 'group') {
       uris.push({

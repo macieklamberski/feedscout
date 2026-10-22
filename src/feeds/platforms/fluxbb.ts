@@ -65,26 +65,26 @@ export const fluxbbHandler: PlatformHandler = {
     }
 
     const { origin } = new URL(url)
-    const feedUrl = `${origin}${parsed.boardPath}/extern.php?action=feed`
+    const feedUrl = `${origin}${parsed.boardPath}/extern.php`
     const uris: Array<DiscoverUriEntry> = []
 
     if (parsed.kind === 'forum') {
       uris.push({
-        uri: `${feedUrl}&fid=${parsed.forumId}&type=atom`,
+        uri: `${feedUrl}?${new URLSearchParams({ action: 'feed', fid: parsed.forumId, type: 'atom' })}`,
         hint: composeHint('fluxbb:forum'),
       })
     }
 
     if (parsed.kind === 'topic') {
       uris.push({
-        uri: `${feedUrl}&tid=${parsed.topicId}&type=atom`,
+        uri: `${feedUrl}?${new URLSearchParams({ action: 'feed', tid: parsed.topicId, type: 'atom' })}`,
         hint: composeHint('fluxbb:topic'),
       })
     }
 
     uris.push(
-      { uri: `${feedUrl}&type=RSS`, hint: composeHint('fluxbb:posts', 'rss') },
-      { uri: `${feedUrl}&type=atom`, hint: composeHint('fluxbb:posts', 'atom') },
+      { uri: `${feedUrl}?action=feed&type=RSS`, hint: composeHint('fluxbb:posts', 'rss') },
+      { uri: `${feedUrl}?action=feed&type=atom`, hint: composeHint('fluxbb:posts', 'atom') },
     )
 
     return uris

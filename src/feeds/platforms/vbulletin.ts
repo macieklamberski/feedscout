@@ -87,11 +87,15 @@ const getVbulletin5Page = (url: string, content: string | undefined): VbulletinP
   const rollupScriptUrl = new URL(rollupScriptSrc, baseUrl)
   const rootPath = rollupScriptUrl.pathname.replace(rollupPathRegex, '')
   const channelId = content?.match(channelIdRegex)?.[1]
-  const siteFeedUrl = `${rollupScriptUrl.origin}${rootPath}/external?type=rss2`
+  const feedUrl = `${rollupScriptUrl.origin}${rootPath}/external`
+  const siteFeedUrl = `${feedUrl}?type=rss2`
 
   // The root channel, id 1, serves the same items as the site feed.
   if (channelId && channelId !== '1') {
-    return { siteFeedUrl, forumFeedUrl: `${siteFeedUrl}&nodeid=${channelId}` }
+    return {
+      siteFeedUrl,
+      forumFeedUrl: `${feedUrl}?${new URLSearchParams({ type: 'rss2', nodeid: channelId })}`,
+    }
   }
 
   return { siteFeedUrl }
@@ -127,7 +131,7 @@ const getVbulletinPage = (url: string, content: string | undefined): VbulletinPa
   const page: VbulletinPage = { siteFeedUrl: `${rootUrl}/external.php?type=RSS2` }
 
   if (forumId) {
-    page.forumFeedUrl = `${rootUrl}/external.php?type=RSS2&forumids=${forumId}`
+    page.forumFeedUrl = `${rootUrl}/external.php?${new URLSearchParams({ type: 'RSS2', forumids: forumId })}`
   }
 
   return page

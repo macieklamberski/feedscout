@@ -73,11 +73,9 @@ export const hatenaAntennaHandler: PlatformHandler = {
     const antennaUrl = `${feedOrigin}/${parsed.username}`
 
     if (parsed.kind === 'group') {
-      const groupId = encodeURIComponent(parsed.groupId)
+      const query = new URLSearchParams({ gid: parsed.groupId })
 
-      return [
-        { uri: `${antennaUrl}/rss?gid=${groupId}`, hint: composeHint('hatena-antenna:group') },
-      ]
+      return [{ uri: `${antennaUrl}/rss?${query}`, hint: composeHint('hatena-antenna:group') }]
     }
 
     return [{ uri: `${antennaUrl}/rss`, hint: composeHint('hatena-antenna:antenna') }]

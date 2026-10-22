@@ -57,7 +57,7 @@ export const bubblelifeHandler: PlatformHandler = {
     if (feedId) {
       return [
         {
-          uri: `${origin}/rss?c=${feedId}`,
+          uri: `${origin}/rss?${new URLSearchParams({ c: feedId })}`,
           hint: composeHint(parsed.kind === 'library' ? 'bubblelife:library' : 'bubblelife:posts'),
         },
       ]
@@ -73,7 +73,7 @@ export const bubblelifeHandler: PlatformHandler = {
     ) {
       return [
         {
-          uri: `${origin}/rss?c=${parsed.libraryId}`,
+          uri: `${origin}/rss?${new URLSearchParams({ c: parsed.libraryId })}`,
           hint: composeHint('bubblelife:library'),
         },
       ]
@@ -90,7 +90,7 @@ export const bubblelifeHandler: PlatformHandler = {
 
     return [
       {
-        uri: `${origin}/rss?c=${libraryId}`,
+        uri: `${origin}/rss?${new URLSearchParams({ c: libraryId })}`,
         hint: composeHint('bubblelife:posts'),
       },
     ]

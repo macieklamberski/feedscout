@@ -101,7 +101,7 @@ export const yeswikiHandler: PlatformHandler = {
 
     for (const formId of formIds) {
       uris.push({
-        uri: `${wikiUrl}?BazaR/rss&id=${formId}`,
+        uri: `${wikiUrl}?BazaR/rss&${new URLSearchParams({ id: formId })}`,
         hint: composeHint('yeswiki:form-entries'),
       })
     }

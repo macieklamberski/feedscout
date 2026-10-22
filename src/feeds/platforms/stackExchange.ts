@@ -102,7 +102,7 @@ export const stackExchangeHandler: PlatformHandler = {
     const { origin } = new URL(url)
 
     if (parsed.kind === 'tag') {
-      const sortQuery = parsed.sort ? `?sort=${parsed.sort}` : ''
+      const sortQuery = parsed.sort ? `?${new URLSearchParams({ sort: parsed.sort })}` : ''
 
       return [
         {

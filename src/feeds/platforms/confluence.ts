@@ -35,7 +35,7 @@ export const confluenceHandler: PlatformHandler = {
 
     if (spaceKey) {
       uris.push({
-        uri: `${baseUrl}/plugins/servlet/streams?key=${spaceKey}`,
+        uri: `${baseUrl}/plugins/servlet/streams?${new URLSearchParams({ key: spaceKey })}`,
         hint: composeHint('confluence:space'),
       })
     }

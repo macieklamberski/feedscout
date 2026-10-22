@@ -76,6 +76,31 @@ describe('confluenceHandler', () => {
   })
 
   describe('resolve', () => {
+    it('should keep a space key with & inside the key query value', () => {
+      const value = 'https://wiki.example.org/display/X'
+      const content = '<meta name="confluence-space-key" content="A&amp;B">'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://wiki.example.org/plugins/servlet/streams?key=A%26B',
+          hint: { key: 'confluence:space', label: 'Space' },
+        },
+        {
+          uri: 'https://wiki.example.org/plugins/servlet/streams',
+          hint: { key: 'confluence:site', label: 'Site activity' },
+        },
+        {
+          uri: 'https://wiki.example.org/spaces/createrssfeed.action?types=page&types=blogpost&types=comment&spaces=conf_all&sort=modified&title=Dashboard+RSS+Feed&maxResults=15&publicFeed=true&rssType=rss2',
+          hint: { key: 'confluence:dashboard', label: 'Dashboard', format: 'rss' },
+        },
+        {
+          uri: 'https://wiki.example.org/spaces/createrssfeed.action?types=page&types=blogpost&types=comment&spaces=conf_all&sort=modified&title=Dashboard+RSS+Feed&maxResults=15&publicFeed=true&rssType=atom',
+          hint: { key: 'confluence:dashboard', label: 'Dashboard', format: 'atom' },
+        },
+      ]
+
+      expect(confluenceHandler.resolve(value, content)).toEqual(expected)
+    })
+
     it('should return the space and site feeds', () => {
       const value = 'https://wiki.example.org/confluence/display/DOCS'
       const expected: Array<DiscoverUriEntry> = [

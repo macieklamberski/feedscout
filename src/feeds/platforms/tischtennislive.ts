@@ -86,11 +86,11 @@ export const tischtennisliveHandler: PlatformHandler = {
     // Next=0 lists the matches of the last 10 days and Next=1 those of the next 10 days.
     if (page.kind === 'group') {
       uris.push({
-        uri: `${resultsUrl}?Typ=Gruppe&ID=${page.group}&Next=0`,
+        uri: `${resultsUrl}?${new URLSearchParams({ Typ: 'Gruppe', ID: page.group, Next: '0' })}`,
         hint: composeHint('tischtennislive:group-results'),
       })
       uris.push({
-        uri: `${resultsUrl}?Typ=Gruppe&ID=${page.group}&Next=1`,
+        uri: `${resultsUrl}?${new URLSearchParams({ Typ: 'Gruppe', ID: page.group, Next: '1' })}`,
         hint: composeHint('tischtennislive:group-fixtures'),
       })
 
@@ -99,11 +99,11 @@ export const tischtennisliveHandler: PlatformHandler = {
 
     if (page.kind === 'league') {
       uris.push({
-        uri: `${resultsUrl}?Typ=Wett&ID=${page.league}&Next=0`,
+        uri: `${resultsUrl}?${new URLSearchParams({ Typ: 'Wett', ID: page.league, Next: '0' })}`,
         hint: composeHint('tischtennislive:league-results'),
       })
       uris.push({
-        uri: `${resultsUrl}?Typ=Wett&ID=${page.league}&Next=1`,
+        uri: `${resultsUrl}?${new URLSearchParams({ Typ: 'Wett', ID: page.league, Next: '1' })}`,
         hint: composeHint('tischtennislive:league-fixtures'),
       })
 

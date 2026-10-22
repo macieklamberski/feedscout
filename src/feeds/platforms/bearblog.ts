@@ -58,11 +58,11 @@ export const bearblogHandler: PlatformHandler = {
 
     if (parsed.tag) {
       uris.push({
-        uri: `${origin}/feed/?q=${encodeURIComponent(parsed.tag)}`,
+        uri: `${origin}/feed/?${new URLSearchParams({ q: parsed.tag })}`,
         hint: composeHint('bearblog:tag', 'atom'),
       })
       uris.push({
-        uri: `${origin}/feed/?type=rss&q=${encodeURIComponent(parsed.tag)}`,
+        uri: `${origin}/feed/?${new URLSearchParams({ type: 'rss', q: parsed.tag })}`,
         hint: composeHint('bearblog:tag', 'rss'),
       })
     }

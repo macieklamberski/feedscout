@@ -58,7 +58,7 @@ export const mailchimpHandler: PlatformHandler = {
 
     return [
       {
-        uri: `${origin}/feed?u=${parsed.userId}&id=${listId}`,
+        uri: `${origin}/feed?${new URLSearchParams({ u: parsed.userId, id: listId })}`,
         hint: composeHint('mailchimp:archive'),
       },
     ]

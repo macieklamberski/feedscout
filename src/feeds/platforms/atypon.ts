@@ -54,7 +54,7 @@ export const atyponHandler: PlatformHandler = {
     const { origin } = new URL(url)
     const uris = [
       {
-        uri: `${origin}/action/showFeed?type=etoc&feed=rss&jc=${parsed.code}`,
+        uri: `${origin}/action/showFeed?${new URLSearchParams({ type: 'etoc', feed: 'rss', jc: parsed.code })}`,
         hint: composeHint('atypon:journal'),
       },
     ]

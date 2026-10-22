@@ -64,7 +64,7 @@ export const sapoBlogsHandler: PlatformHandler = {
       // The endpoint answers an empty channel for a made-up post id, so only a linked post counts.
       if (postLinkRegex.test(content ?? '')) {
         uris.push({
-          uri: `${commentsUrl}?blog=${parsed.blog}&ditemid=${parsed.postId}`,
+          uri: `${commentsUrl}?${new URLSearchParams({ blog: parsed.blog, ditemid: parsed.postId })}`,
           hint: composeHint('sapo-blogs:post-comments'),
         })
       }
@@ -85,7 +85,7 @@ export const sapoBlogsHandler: PlatformHandler = {
     uris.push({ uri: `${origin}/data/rss`, hint: composeHint('sapo-blogs:posts', 'rss') })
     uris.push({ uri: `${origin}/data/atom`, hint: composeHint('sapo-blogs:posts', 'atom') })
     uris.push({
-      uri: `${commentsUrl}?blog=${parsed.blog}`,
+      uri: `${commentsUrl}?${new URLSearchParams({ blog: parsed.blog })}`,
       hint: composeHint('sapo-blogs:comments'),
     })
 

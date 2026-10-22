@@ -158,7 +158,7 @@ export const discourseHandler: PlatformHandler = {
     }
 
     if (parsed.kind === 'top') {
-      const periodQuery = parsed.period ? `?period=${parsed.period}` : ''
+      const periodQuery = parsed.period ? `?${new URLSearchParams({ period: parsed.period })}` : ''
 
       return [
         {

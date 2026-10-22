@@ -92,6 +92,34 @@ describe('myanimelistHandler', () => {
   })
 
   describe('resolve', () => {
+    it('should keep a username with & inside the u query value', () => {
+      const value = 'https://myanimelist.net/profile/alice&type=rm'
+      const expected = [
+        {
+          uri: 'https://myanimelist.net/rss.php?type=rw&u=alice%26type%3Drm',
+          hint: { key: 'myanimelist:anime', label: 'Anime list' },
+        },
+        {
+          uri: 'https://myanimelist.net/rss.php?type=rm&u=alice%26type%3Drm',
+          hint: { key: 'myanimelist:manga', label: 'Manga list' },
+        },
+        {
+          uri: 'https://myanimelist.net/rss.php?type=rwe&u=alice%26type%3Drm',
+          hint: { key: 'myanimelist:recently-watched', label: 'Recently watched' },
+        },
+        {
+          uri: 'https://myanimelist.net/rss.php?type=rrm&u=alice%26type%3Drm',
+          hint: { key: 'myanimelist:recently-read', label: 'Recently read' },
+        },
+        {
+          uri: 'https://myanimelist.net/rss.php?type=blog&u=alice%26type%3Drm',
+          hint: { key: 'myanimelist:blog', label: 'Blog' },
+        },
+      ]
+
+      expect(myanimelistHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return all five feeds for /profile/{user}', () => {
       const value = 'https://myanimelist.net/profile/Xinil'
       const expected = [

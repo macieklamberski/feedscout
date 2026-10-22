@@ -93,7 +93,10 @@ export const discuzHandler: PlatformHandler = {
     if (isLegacyDiscuz(content)) {
       if (parsed.kind === 'board') {
         uris.push({
-          uri: new URL(`rss.php?fid=${parsed.boardId}&auth=0`, installUrl).href,
+          uri: new URL(
+            `rss.php?${new URLSearchParams({ fid: parsed.boardId, auth: '0' })}`,
+            installUrl,
+          ).href,
           hint: composeHint('discuz:board'),
         })
       }
@@ -108,7 +111,10 @@ export const discuzHandler: PlatformHandler = {
 
     if (parsed.kind === 'board') {
       uris.push({
-        uri: new URL(`forum.php?mod=rss&fid=${parsed.boardId}&auth=0`, installUrl).href,
+        uri: new URL(
+          `forum.php?${new URLSearchParams({ mod: 'rss', fid: parsed.boardId, auth: '0' })}`,
+          installUrl,
+        ).href,
         hint: composeHint('discuz:board'),
       })
     }

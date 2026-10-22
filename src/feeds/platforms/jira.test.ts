@@ -109,6 +109,23 @@ describe('jiraHandler', () => {
   })
 
   describe('resolve', () => {
+    it('should keep a project key with & inside the key query value', () => {
+      const value = 'https://jira.example.org/secure/Dashboard.jspa'
+      const content = '<meta name="ajs-project-key" content="A&amp;B">'
+      const expected = [
+        {
+          uri: 'https://jira.example.org/plugins/servlet/streams?key=A%26B',
+          hint: { key: 'jira:project', label: 'Project' },
+        },
+        {
+          uri: 'https://jira.example.org/plugins/servlet/streams',
+          hint: { key: 'jira:site', label: 'Site activity' },
+        },
+      ]
+
+      expect(jiraHandler.resolve(value, content)).toEqual(expected)
+    })
+
     it('should return the project and site feeds for a capitalized browse segment', () => {
       const value = 'https://example.atlassian.net/Browse/ABC-1'
       const expected = [

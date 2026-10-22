@@ -57,7 +57,7 @@ export const webtoonsHandler: PlatformHandler = {
 
     return [
       {
-        uri: `https://www.webtoons.com/${parsed.language}/${genre}/${parsed.name}/rss?title_no=${parsed.titleNo}`,
+        uri: `https://www.webtoons.com/${parsed.language}/${genre}/${parsed.name}/rss?${new URLSearchParams({ title_no: parsed.titleNo })}`,
         hint: composeHint('webtoons:series'),
       },
     ]

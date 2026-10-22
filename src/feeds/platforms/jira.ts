@@ -81,7 +81,7 @@ export const jiraHandler: PlatformHandler = {
 
     if (projectKey) {
       uris.push({
-        uri: `${baseUrl}/plugins/servlet/streams?key=${projectKey}`,
+        uri: `${baseUrl}/plugins/servlet/streams?${new URLSearchParams({ key: projectKey })}`,
         hint: composeHint('jira:project'),
       })
     }

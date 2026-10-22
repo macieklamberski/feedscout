@@ -81,7 +81,7 @@ export const deviantartHandler: PlatformHandler = {
     if (parsed.kind === 'dailyDeviations') {
       return [
         {
-          uri: `${feedBaseUrl}?q=${encodeURIComponent('special:dd')}`,
+          uri: `${feedBaseUrl}?${new URLSearchParams({ q: 'special:dd' })}`,
           hint: composeHint('deviantart:daily-deviations'),
         },
       ]
@@ -90,7 +90,7 @@ export const deviantartHandler: PlatformHandler = {
     if (parsed.kind === 'tag') {
       return [
         {
-          uri: `${feedBaseUrl}?type=deviation&q=${encodeURIComponent(`tag:${parsed.tag}`)}`,
+          uri: `${feedBaseUrl}?${new URLSearchParams({ type: 'deviation', q: `tag:${parsed.tag}` })}`,
           hint: composeHint('deviantart:tag'),
         },
       ]
@@ -99,7 +99,7 @@ export const deviantartHandler: PlatformHandler = {
     if (parsed.kind === 'favourites') {
       return [
         {
-          uri: `${feedBaseUrl}?type=deviation&q=${encodeURIComponent(`favby:${parsed.username}`)}`,
+          uri: `${feedBaseUrl}?${new URLSearchParams({ type: 'deviation', q: `favby:${parsed.username}` })}`,
           hint: composeHint('deviantart:favorites'),
         },
       ]
@@ -110,7 +110,7 @@ export const deviantartHandler: PlatformHandler = {
 
       return [
         {
-          uri: `${feedBaseUrl}?type=deviation&q=${encodeURIComponent(query)}`,
+          uri: `${feedBaseUrl}?${new URLSearchParams({ type: 'deviation', q: query })}`,
           hint: composeHint('deviantart:gallery'),
         },
       ]
@@ -119,7 +119,7 @@ export const deviantartHandler: PlatformHandler = {
     if (parsed.kind === 'journal') {
       return [
         {
-          uri: `${feedBaseUrl}?q=${encodeURIComponent(`journal:${parsed.username}`)}`,
+          uri: `${feedBaseUrl}?${new URLSearchParams({ q: `journal:${parsed.username}` })}`,
           hint: composeHint('deviantart:journal'),
         },
       ]
@@ -129,7 +129,7 @@ export const deviantartHandler: PlatformHandler = {
 
     return [
       {
-        uri: `${feedBaseUrl}?type=deviation&q=${encodeURIComponent(query)}`,
+        uri: `${feedBaseUrl}?${new URLSearchParams({ type: 'deviation', q: query })}`,
         hint: composeHint('deviantart:deviations'),
       },
     ]

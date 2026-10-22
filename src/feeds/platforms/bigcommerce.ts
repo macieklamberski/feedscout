@@ -59,19 +59,19 @@ export const bigcommerceHandler: PlatformHandler = {
 
       uris.push(
         {
-          uri: `${feedUrl}?categoryid=${categoryId}&type=rss`,
+          uri: `${feedUrl}?${new URLSearchParams({ categoryid: categoryId, type: 'rss' })}`,
           hint: composeHint('bigcommerce:category-new-products', 'rss'),
         },
         {
-          uri: `${feedUrl}?categoryid=${categoryId}&type=atom`,
+          uri: `${feedUrl}?${new URLSearchParams({ categoryid: categoryId, type: 'atom' })}`,
           hint: composeHint('bigcommerce:category-new-products', 'atom'),
         },
         {
-          uri: `${feedUrl}?action=popularproducts&categoryid=${categoryId}&type=rss`,
+          uri: `${feedUrl}?${new URLSearchParams({ action: 'popularproducts', categoryid: categoryId, type: 'rss' })}`,
           hint: composeHint('bigcommerce:category-popular-products', 'rss'),
         },
         {
-          uri: `${feedUrl}?action=popularproducts&categoryid=${categoryId}&type=atom`,
+          uri: `${feedUrl}?${new URLSearchParams({ action: 'popularproducts', categoryid: categoryId, type: 'atom' })}`,
           hint: composeHint('bigcommerce:category-popular-products', 'atom'),
         },
       )

@@ -69,7 +69,7 @@ export const goodreadsHandler: PlatformHandler = {
 
     if (parsed.shelf) {
       uris.push({
-        uri: `${origin}/review/list_rss/${parsed.userId}?shelf=${encodeURIComponent(parsed.shelf)}`,
+        uri: `${origin}/review/list_rss/${parsed.userId}?${new URLSearchParams({ shelf: parsed.shelf })}`,
         hint: composeHint('goodreads:shelf'),
       })
     }

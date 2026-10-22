@@ -80,7 +80,7 @@ export const sportadminHandler: PlatformHandler = {
 
     if (page.kind === 'team') {
       uris.push({
-        uri: `${origin}/rss/?SID=${page.sectionId}`,
+        uri: `${origin}/rss/?${new URLSearchParams({ SID: page.sectionId })}`,
         hint: composeHint('sportadmin:team'),
       })
     }

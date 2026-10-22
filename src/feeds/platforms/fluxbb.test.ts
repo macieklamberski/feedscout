@@ -65,6 +65,26 @@ describe('fluxbbHandler', () => {
   })
 
   describe('resolve', () => {
+    it('should keep a forum id with & and = inside the fid query value', () => {
+      const value = 'https://example.com/viewforum.php?id=1%26type%3DRSS'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://example.com/extern.php?action=feed&fid=1%26type%3DRSS&type=atom',
+          hint: { key: 'fluxbb:forum', label: 'Forum' },
+        },
+        {
+          uri: 'https://example.com/extern.php?action=feed&type=RSS',
+          hint: { key: 'fluxbb:posts', label: 'Posts', format: 'rss' },
+        },
+        {
+          uri: 'https://example.com/extern.php?action=feed&type=atom',
+          hint: { key: 'fluxbb:posts', label: 'Posts', format: 'atom' },
+        },
+      ]
+
+      expect(fluxbbHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return empty array for a URL that does not parse', () => {
       expect(fluxbbHandler.resolve('not-a-url')).toEqual([])
     })

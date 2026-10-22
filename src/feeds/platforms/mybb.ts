@@ -109,9 +109,12 @@ export const mybbHandler: PlatformHandler = {
 
     if (forumId) {
       uris.push(
-        { uri: `${feedUrl}?fid=${forumId}`, hint: composeHint('mybb:forum', 'rss') },
         {
-          uri: `${feedUrl}?type=atom1.0&fid=${forumId}`,
+          uri: `${feedUrl}?${new URLSearchParams({ fid: forumId })}`,
+          hint: composeHint('mybb:forum', 'rss'),
+        },
+        {
+          uri: `${feedUrl}?${new URLSearchParams({ type: 'atom1.0', fid: forumId })}`,
           hint: composeHint('mybb:forum', 'atom'),
         },
       )

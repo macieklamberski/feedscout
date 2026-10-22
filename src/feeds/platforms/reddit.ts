@@ -48,7 +48,7 @@ const getTimeframe = (sort: string, searchParams: URLSearchParams): string | und
 }
 
 const composeTimeframeQuery = (timeframe: string | undefined): string => {
-  return timeframe ? `?t=${timeframe}` : ''
+  return timeframe ? `?${new URLSearchParams({ t: timeframe })}` : ''
 }
 
 // Combined subreddits work transparently: /r/{sub1}+{sub2} is captured as one name.
@@ -175,7 +175,7 @@ export const redditHandler: PlatformHandler = {
     if (parsed.kind === 'siteSearch') {
       return [
         {
-          uri: `https://www.reddit.com/search.rss?q=${encodeURIComponent(parsed.query)}`,
+          uri: `https://www.reddit.com/search.rss?${new URLSearchParams({ q: parsed.query })}`,
           hint: composeHint('reddit:search'),
         },
       ]
@@ -195,7 +195,7 @@ export const redditHandler: PlatformHandler = {
     if (parsed.kind === 'search' && parsed.query) {
       return [
         {
-          uri: `https://www.reddit.com/r/${parsed.subreddit}/search.rss?q=${encodeURIComponent(parsed.query)}&restrict_sr=on`,
+          uri: `https://www.reddit.com/r/${parsed.subreddit}/search.rss?${new URLSearchParams({ q: parsed.query, restrict_sr: 'on' })}`,
           hint: composeHint('reddit:search'),
         },
       ]

@@ -50,7 +50,7 @@ export const pchomeHandler: PlatformHandler = {
 
     if (parsed.kind === 'category') {
       uris.push({
-        uri: `${baseUrl}/${parsed.username}/rss?cid=${parsed.category}`,
+        uri: `${baseUrl}/${parsed.username}/rss?${new URLSearchParams({ cid: parsed.category })}`,
         hint: composeHint('pchome:category'),
       })
     }

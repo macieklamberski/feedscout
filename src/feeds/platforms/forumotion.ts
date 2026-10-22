@@ -81,11 +81,11 @@ export const forumotionHandler: PlatformHandler = {
     if (page.kind === 'forum' || page.kind === 'topic') {
       uris.push(
         {
-          uri: `${origin}/feed/?f=${page.forumId}`,
+          uri: `${origin}/feed/?${new URLSearchParams({ f: page.forumId })}`,
           hint: composeHint('forumotion:forum', 'rss'),
         },
         {
-          uri: `${origin}/feed/?f=${page.forumId}&type=atom`,
+          uri: `${origin}/feed/?${new URLSearchParams({ f: page.forumId, type: 'atom' })}`,
           hint: composeHint('forumotion:forum', 'atom'),
         },
       )
