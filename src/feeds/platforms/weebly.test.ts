@@ -108,6 +108,19 @@ describe('weeblyHandler', () => {
       expect(weeblyHandler.resolve(value, content)).toEqual(expected)
     })
 
+    it('should fold a capitalised blog link onto the default feed', () => {
+      const value = 'https://example.weebly.com/'
+      const content = '<a href="/Blog.html">Blog</a>'
+      const expected = [
+        {
+          uri: 'https://example.weebly.com/blog/feed',
+          hint: { key: 'weebly:blog', label: 'Blog' },
+        },
+      ]
+
+      expect(weeblyHandler.resolve(value, content)).toEqual(expected)
+    })
+
     it('should skip a link to a file on the root', () => {
       const value = 'https://example.weebly.com/'
       const content = '<a href="/favicon.ico">Icon</a>'

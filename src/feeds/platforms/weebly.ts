@@ -11,8 +11,8 @@ const domains = ['weebly.com']
 
 // A page address ends in `.html`, which redirects to the bare slug the blog feed sits under.
 const htmlSuffixRegex = /\.html$/i
-// A page link is one segment without a dot, as `/newsletter.html` or `/newsletter`. A dotted
-// segment is a file, such as `/favicon.ico`.
+// A page link is one segment with an optional .html, as `/newsletter.html` or `/newsletter`. Any
+// other dot marks a file, such as `/favicon.ico`.
 const pageLinkRegex = /^\/([^/.]+)(?:\.html)?$/i
 
 export const parseWeeblyUrl = (url: string): WeeblyUrl | undefined => {
