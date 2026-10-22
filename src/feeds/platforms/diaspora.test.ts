@@ -165,5 +165,31 @@ describe('diasporaHandler', () => {
     it('should return an empty array for the pod root', () => {
       expect(diasporaHandler.resolve('https://example.org/')).toEqual([])
     })
+
+    it('should escape a slash in the username of a people path', () => {
+      const value = 'https://example.org/people/a6d160218ed02ee7'
+      const content = `${diasporaHtml}<script>{"diaspora_id":"../alice@example.org"}</script>`
+      const expected = [
+        {
+          uri: 'https://example.org/public/..%2Falice.atom',
+          hint: { key: 'diaspora:posts', label: 'Posts' },
+        },
+      ]
+
+      expect(diasporaHandler.resolve(value, content)).toEqual(expected)
+    })
+
+    it('should keep the people id when the username is two dots', () => {
+      const value = 'https://example.org/people/a6d160218ed02ee7'
+      const content = `${diasporaHtml}<script>{"diaspora_id":"..@example.org"}</script>`
+      const expected = [
+        {
+          uri: 'https://example.org/public/a6d160218ed02ee7.atom',
+          hint: { key: 'diaspora:posts', label: 'Posts' },
+        },
+      ]
+
+      expect(diasporaHandler.resolve(value, content)).toEqual(expected)
+    })
   })
 })

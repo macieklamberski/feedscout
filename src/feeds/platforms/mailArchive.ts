@@ -1,6 +1,6 @@
 import { decodeSegment, getPathSegments, isHostOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
+import { composeHint, encodePathSegment } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers list (html).
@@ -37,11 +37,17 @@ export const mailArchiveHandler: PlatformHandler = {
       return []
     }
 
+    const list = encodePathSegment(parsed.list)
+
+    if (!list) {
+      return []
+    }
+
     const { origin } = new URL(url)
 
     return [
       {
-        uri: `${origin}/${encodeURI(parsed.list)}/maillist.xml`,
+        uri: `${origin}/${list}/maillist.xml`,
         hint: composeHint('mail-archive:list'),
       },
     ]

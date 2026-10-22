@@ -117,5 +117,17 @@ describe('weeblyHandler', () => {
 
       expect(weeblyHandler.resolve(value)).toEqual(expected)
     })
+
+    it('should return only the blog feed for a page named two dots', () => {
+      const value = 'https://example.weebly.com/...html'
+      const expected = [
+        {
+          uri: 'https://example.weebly.com/blog/feed',
+          hint: { key: 'weebly:blog', label: 'Blog' },
+        },
+      ]
+
+      expect(weeblyHandler.resolve(value)).toEqual(expected)
+    })
   })
 })

@@ -1,6 +1,6 @@
 import { decodeSegment, getAnyOf, isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
+import { composeHint, isDotSegment } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers category, home, newEntriesCategory, user (html).
@@ -144,6 +144,13 @@ export const hatenaBookmarkHandler: PlatformHandler = {
     }
 
     if (parsed.kind === 'search') {
+      // The legacy `?q=` comes out of the query decoded, and a whole `..` there lands on the site
+      // root. encodePathSegment would leave a `+` bare, which a search path can read as a space, so
+      // the query keeps the full escape and takes only the dot refusal.
+      if (isDotSegment(parsed.query)) {
+        return []
+      }
+
       // Search and per-site listings answer with RSS when `mode=rss` is set.
       const searchParams = new URLSearchParams(parsed.params)
       searchParams.set('mode', 'rss')

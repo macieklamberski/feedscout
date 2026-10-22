@@ -28,6 +28,26 @@ export const letterPairsRegex = /^[a-z]{2}(?:-[a-z]{2})?$/i
 // length: keeps path words such as `blogs` out
 export const letterGroupsRegex = /^[a-z]{2,3}(?:-[a-z]{4})?(?:-[a-z]{2})?$/i
 
+const pathSegmentEscapeRegex = /[%/?#\s]/g
+
+const dotSegments = ['.', '..']
+
+// A whole `.` or `..` is a dot segment the URL parser resolves to the current or the parent path.
+export const isDotSegment = (value: string): boolean => {
+  return dotSegments.includes(value)
+}
+
+// A decoded value written into a feed URL path stays one segment. Only the characters that would
+// open a new segment, a query or a fragment, a literal `%` and whitespace are escaped, so an `@`,
+// `=` or `:` the value holds reads as written. A dot segment is refused.
+export const encodePathSegment = (value: string): string | undefined => {
+  if (isDotSegment(value)) {
+    return
+  }
+
+  return value.replace(pathSegmentEscapeRegex, (character) => encodeURIComponent(character))
+}
+
 // The `id` group the regex reads from the value, when it is all digits.
 export const getNumericId = (value: string | undefined, regex: RegExp): string | undefined => {
   const id = value?.match(regex)?.groups?.id

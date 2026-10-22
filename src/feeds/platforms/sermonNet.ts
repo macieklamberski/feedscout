@@ -1,7 +1,7 @@
 import { getPathSegments } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, getTenantSubdomain } from '../../common/utils.js'
+import { composeHint, encodePathSegment, getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic partly covers church.
@@ -58,7 +58,14 @@ export const sermonNetHandler: PlatformHandler = {
     const uris: Array<DiscoverUriEntry> = []
 
     for (const channel of channels) {
-      const uri = `${origin}/rss/${channel}/audio`
+      // The channel is page text, which can hold a `/` or be a whole `..`.
+      const segment = encodePathSegment(channel)
+
+      if (!segment) {
+        continue
+      }
+
+      const uri = `${origin}/rss/${segment}/audio`
 
       if (uris.some((entry) => entry.uri === uri)) {
         continue

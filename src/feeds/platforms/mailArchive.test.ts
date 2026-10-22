@@ -104,5 +104,17 @@ describe('mailArchiveHandler', () => {
 
       expect(mailArchiveHandler.resolve(value)).toEqual(expected)
     })
+
+    it('should escape a slash in the list address', () => {
+      const value = 'https://www.mail-archive.com/dev%2Fnull@example.org/'
+      const expected = [
+        {
+          uri: 'https://www.mail-archive.com/dev%2Fnull@example.org/maillist.xml',
+          hint: { key: 'mail-archive:list', label: 'Mailing list' },
+        },
+      ]
+
+      expect(mailArchiveHandler.resolve(value)).toEqual(expected)
+    })
   })
 })

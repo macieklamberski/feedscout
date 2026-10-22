@@ -292,5 +292,31 @@ describe('jinboHandler', () => {
 
       expect(jinboHandler.resolve(value, content)).toEqual(expected)
     })
+
+    it('should keep the user from the URL when the feed link names two dots', () => {
+      const value = 'https://blog.jinbo.net/alice'
+      const content =
+        '<link rel="alternate" type="application/rss+xml" href="https://blog.jinbo.net/../rss" />'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://blog.jinbo.net/alice/rss',
+          hint: { key: 'jinbo:posts', label: 'Posts', format: 'rss' },
+        },
+        {
+          uri: 'https://blog.jinbo.net/alice/atom',
+          hint: { key: 'jinbo:posts', label: 'Posts', format: 'atom' },
+        },
+        {
+          uri: 'https://blog.jinbo.net/alice/rss/response',
+          hint: { key: 'jinbo:responses', label: 'Comments and trackbacks', format: 'rss' },
+        },
+        {
+          uri: 'https://blog.jinbo.net/alice/atom/response',
+          hint: { key: 'jinbo:responses', label: 'Comments and trackbacks', format: 'atom' },
+        },
+      ]
+
+      expect(jinboHandler.resolve(value, content)).toEqual(expected)
+    })
   })
 })

@@ -3,6 +3,7 @@ import type { DiscoverUriHint, FetchFn } from './types.js'
 import {
   composeHint,
   type Element,
+  encodePathSegment,
   findDescendant,
   findElement,
   findElements,
@@ -18,6 +19,7 @@ import {
   hasElementWithId,
   hasMarker,
   hasMetaContent,
+  isDotSegment,
   isOfAllowedMimeType,
   isRootOfPage,
   matchesAnyOfLinkSelectors,
@@ -30,6 +32,62 @@ import {
 } from './utils.js'
 
 const idRegex = /\/topic\/(?<id>[^/]+)/
+
+describe('isDotSegment', () => {
+  it('should return true for a whole value of two dots', () => {
+    expect(isDotSegment('..')).toBe(true)
+  })
+
+  it('should return true for a whole value of one dot', () => {
+    expect(isDotSegment('.')).toBe(true)
+  })
+
+  it('should return false for dots that are not the whole value', () => {
+    expect(isDotSegment('..rss')).toBe(false)
+  })
+})
+
+describe('encodePathSegment', () => {
+  it('should escape the characters that would open a segment, a query or a fragment', () => {
+    const value = 'news/../x?page=2#top'
+    const expected = 'news%2F..%2Fx%3Fpage=2%23top'
+
+    expect(encodePathSegment(value)).toBe(expected)
+  })
+
+  it('should escape a literal percent sign and whitespace', () => {
+    const value = '50% off\tnow'
+    const expected = '50%25%20off%09now'
+
+    expect(encodePathSegment(value)).toBe(expected)
+  })
+
+  it('should leave the characters a path segment may hold as written', () => {
+    const value = 'alice@example.org:urn=a&b'
+
+    expect(encodePathSegment(value)).toBe(value)
+  })
+
+  it('should leave a non-ASCII value as written', () => {
+    const value = 'ニュース'
+
+    expect(encodePathSegment(value)).toBe(value)
+  })
+
+  it('should return undefined for a whole value of two dots', () => {
+    expect(encodePathSegment('..')).toBeUndefined()
+  })
+
+  it('should return undefined for a whole value of one dot', () => {
+    expect(encodePathSegment('.')).toBeUndefined()
+  })
+
+  it('should keep dots that are not the whole value', () => {
+    const value = '...'
+
+    expect(encodePathSegment(value)).toBe(value)
+  })
+})
 
 describe('getNumericId', () => {
   it('should return an id of digits', () => {

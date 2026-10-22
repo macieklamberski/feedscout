@@ -1,7 +1,12 @@
-import { getPathSegments, isAnyOf } from 'trousse'
+import { decodeSegment, getPathSegments, isAnyOf } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, digitsRegex, getTenantSubdomain } from '../../common/utils.js'
+import {
+  composeHint,
+  digitsRegex,
+  encodePathSegment,
+  getTenantSubdomain,
+} from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers blog, blogPath (html), partly covers blogCustomSlug.
@@ -42,9 +47,12 @@ export const weeblyHandler: PlatformHandler = {
     const { origin } = new URL(url)
     const uris: Array<DiscoverUriEntry> = []
 
-    if (parsed.page) {
+    // A page of `..html` leaves a dot segment once the suffix is gone.
+    const page = parsed.page ? encodePathSegment(decodeSegment(parsed.page) ?? '') : undefined
+
+    if (page) {
       uris.push({
-        uri: `${origin}/${parsed.page}/feed`,
+        uri: `${origin}/${page}/feed`,
         hint: composeHint('weebly:blog'),
       })
     }

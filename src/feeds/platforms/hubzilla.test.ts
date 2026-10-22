@@ -83,5 +83,13 @@ describe('hubzillaHandler', () => {
     it('should return an empty array outside a channel', () => {
       expect(hubzillaHandler.resolve('https://example.org/')).toEqual([])
     })
+
+    it('should return empty array for a channel named two dots', () => {
+      expect(hubzillaHandler.resolve('https://example.org/@..')).toEqual([])
+    })
+
+    it('should return empty array for a channel named two encoded dots', () => {
+      expect(hubzillaHandler.resolve('https://example.org/@%2E%2E')).toEqual([])
+    })
   })
 })

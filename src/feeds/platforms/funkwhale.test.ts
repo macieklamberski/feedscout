@@ -120,5 +120,21 @@ describe('funkwhaleHandler', () => {
     it('should return an empty array outside a channel', () => {
       expect(funkwhaleHandler.resolve('https://example.org/library')).toEqual([])
     })
+
+    it('should escape a slash in the name of a remote channel', () => {
+      const value = 'https://example.org/channels/news%2Fdaily@example.com'
+      const expected = [
+        {
+          uri: 'https://example.com/api/v1/channels/news%2Fdaily/rss',
+          hint: { key: 'funkwhale:channel', label: 'Channel' },
+        },
+      ]
+
+      expect(funkwhaleHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return empty array for a remote channel named two dots', () => {
+      expect(funkwhaleHandler.resolve('https://example.org/channels/..@example.com')).toEqual([])
+    })
   })
 })

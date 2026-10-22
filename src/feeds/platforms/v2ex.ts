@@ -1,6 +1,7 @@
 import { isHostOf, parseUrl } from 'trousse'
+import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
+import { composeHint, encodePathSegment } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -78,14 +79,21 @@ export const v2exHandler: PlatformHandler = {
     }
 
     if (parsed.kind === 'tab') {
-      return [
-        {
-          // V2EX serves tab feeds in lowercase only: /feed/tab/TECH.xml answers 404.
-          uri: `https://www.v2ex.com/feed/tab/${parsed.tab.toLowerCase()}.xml`,
+      const uris: Array<DiscoverUriEntry> = []
+      // V2EX serves tab feeds in lowercase only: /feed/tab/TECH.xml answers 404. The tab comes out
+      // of the query decoded, and it goes into a path.
+      const tab = encodePathSegment(parsed.tab.toLowerCase())
+
+      if (tab) {
+        uris.push({
+          uri: `https://www.v2ex.com/feed/tab/${tab}.xml`,
           hint: composeHint('v2ex:tab'),
-        },
-        { uri: 'https://www.v2ex.com/index.xml', hint: composeHint('v2ex:index') },
-      ]
+        })
+      }
+
+      uris.push({ uri: 'https://www.v2ex.com/index.xml', hint: composeHint('v2ex:index') })
+
+      return uris
     }
 
     return [

@@ -1,6 +1,12 @@
+import { decodeSegment } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, findElement, getTenantSubdomain } from '../../common/utils.js'
+import {
+  composeHint,
+  encodePathSegment,
+  findElement,
+  getTenantSubdomain,
+} from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -38,7 +44,14 @@ export const getPurotPage = (url: string, content: string | undefined): PurotPag
   const link = findElement(content, (element) => {
     return element.name === 'link' && pageChangesRegex.test(element.attribs.href ?? '')
   })
-  const page = link?.attribs.href?.match(pageChangesRegex)?.[1]
+  const linkedPage = decodeSegment(link?.attribs.href?.match(pageChangesRegex)?.[1])
+
+  if (!linkedPage) {
+    return parsed
+  }
+
+  // The link is page markup, which can name a whole `..` the URL parser would resolve away.
+  const page = encodePathSegment(linkedPage)
 
   if (!page) {
     return parsed

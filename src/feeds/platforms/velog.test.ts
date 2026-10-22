@@ -115,5 +115,9 @@ describe('velogHandler', () => {
     it('should return empty array for paths without @ prefix', () => {
       expect(velogHandler.resolve('https://velog.io/trending')).toEqual([])
     })
+
+    it('should return empty array for a username of two dots', () => {
+      expect(velogHandler.resolve('https://velog.io/@..')).toEqual([])
+    })
   })
 })

@@ -1,9 +1,10 @@
-import { isAnyOf, isPresent, parseUrl, resolveUrl } from 'trousse'
+import { decodeSegment, isAnyOf, isPresent, parseUrl, resolveUrl } from 'trousse'
 import type { DiscoverUriHint } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import {
   composeHint,
   digitsRegex,
+  encodePathSegment,
   findDescendant,
   findElement,
   findElements,
@@ -105,7 +106,9 @@ export const getRedminePage = (
 
   // Redmine prints the project identifier as a body class only when the reader may see the
   // project, so a missing or private project leaves it out.
-  const project = body?.attribs.class?.match(projectClassRegex)?.[1]
+  const classProject = body?.attribs.class?.match(projectClassRegex)?.[1]
+  // The class is page markup, which can hold a `/` or be a whole `..`.
+  const project = classProject ? encodePathSegment(classProject) : undefined
   const rootPath = getRootPath(url, content)
   const root = `${parsedUrl.origin}${rootPath}`
   const isUnderRoot =
@@ -134,8 +137,10 @@ export const getRedminePage = (
       return { kind: 'board', root, project, boardId: fourth }
     }
 
-    // The bare repository page names its default repository only in its own feed links.
-    const repository = content?.match(repositoryRevisionsRegex)?.[1]
+    // The bare repository page names its default repository only in its own feed links, which
+    // can name a whole `..` the URL parser would resolve away.
+    const linkedRepository = decodeSegment(content?.match(repositoryRevisionsRegex)?.[1])
+    const repository = linkedRepository ? encodePathSegment(linkedRepository) : undefined
 
     if (isAnyOf(third, 'repository') && repository) {
       return { kind: 'repository', root, project, repository }

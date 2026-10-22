@@ -1,6 +1,6 @@
 import { decodeSegment, isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
+import { composeHint, isDotSegment } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers blog (html).
@@ -38,6 +38,11 @@ export const teletypeHandler: PlatformHandler = {
     const teletypeUrl = parseTeletypeUrl(url)
 
     if (!teletypeUrl) {
+      return []
+    }
+
+    // The username sits inside the `@{username}` segment, so it can be a whole `..`.
+    if (isDotSegment(teletypeUrl.username)) {
       return []
     }
 
