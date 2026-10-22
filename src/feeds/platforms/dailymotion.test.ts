@@ -89,10 +89,8 @@ describe('parseDailymotionUrl', () => {
     expect(parseDailymotionUrl('https://www.dailymotion.com/channel/a')).toEqual(expected)
   })
 
-  it('should return a channel with a dot whole', () => {
-    const expected: DailymotionUrl = { kind: 'channel', channel: 'news.tv' }
-
-    expect(parseDailymotionUrl('https://www.dailymotion.com/channel/news.tv')).toEqual(expected)
+  it('should return undefined for a channel with a dot', () => {
+    expect(parseDailymotionUrl('https://www.dailymotion.com/channel/news.tv')).toBeUndefined()
   })
 
   it('should return the query for a search page', () => {

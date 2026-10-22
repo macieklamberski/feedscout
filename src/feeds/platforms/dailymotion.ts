@@ -1,6 +1,6 @@
 import { isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
+import { composeHint, wordOrHyphenRegex } from '../../common/utils.js'
 
 // Discoverability: Not discoverable without handler.
 // Handler needed for: all shapes.
@@ -49,7 +49,8 @@ export const parseDailymotionUrl = (url: string): DailymotionUrl | undefined => 
 
   const channel = pathname.match(channelRegex)?.groups?.channel
 
-  if (channel) {
+  // Dailymotion's channel ids are all letters, and /rss/channel/news.tv answers 404.
+  if (channel && wordOrHyphenRegex.test(channel)) {
     return { kind: 'channel', channel }
   }
 
