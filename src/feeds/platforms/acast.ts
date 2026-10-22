@@ -4,7 +4,7 @@ import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers player, show (html).
-// Handler needed for: embed.
+// Handler needed for: embed, legacy-player.
 
 export type AcastUrl = { kind: 'show'; slug: string }
 
