@@ -29,9 +29,20 @@ describe('parseOdyseeUrl', () => {
     expect(parseOdyseeUrl('https://www.odysee.com/@lbry:3f')).toEqual(expected)
   })
 
-  it('should preserve uppercase characters in channel and claim ID', () => {
-    const value = 'https://odysee.com/@Veritasium:F'
-    const expected: OdyseeUrl = { kind: 'channel', name: 'Veritasium', claimId: 'F' }
+  it('should preserve uppercase characters in the channel name', () => {
+    const value = 'https://odysee.com/@Veritasium:f'
+    const expected: OdyseeUrl = { kind: 'channel', name: 'Veritasium', claimId: 'f' }
+
+    expect(parseOdyseeUrl(value)).toEqual(expected)
+  })
+
+  it('should lowercase an uppercase claim ID', () => {
+    const value = 'https://odysee.com/@veritasium:FB364EF587872515F545A5B4B3182B58073F230F'
+    const expected: OdyseeUrl = {
+      kind: 'channel',
+      name: 'veritasium',
+      claimId: 'fb364ef587872515f545a5b4b3182b58073f230f',
+    }
 
     expect(parseOdyseeUrl(value)).toEqual(expected)
   })

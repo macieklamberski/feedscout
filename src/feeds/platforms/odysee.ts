@@ -35,7 +35,8 @@ export const parseOdyseeUrl = (url: string): OdyseeUrl | undefined => {
     return
   }
 
-  return { kind: 'channel', name, claimId }
+  // The feed answers "The RSS URL is invalid" for a claim ID in uppercase.
+  return { kind: 'channel', name, claimId: claimId?.toLowerCase() }
 }
 
 export const odyseeHandler: PlatformHandler = {
