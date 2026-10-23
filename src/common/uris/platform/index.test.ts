@@ -186,6 +186,42 @@ describe('discoverUrisFromPlatform', () => {
     expect(receivedUrls).toEqual(expected)
   })
 
+  it('should trim whitespace around a path segment before handlers see it', async () => {
+    const receivedUrls: Array<string> = []
+    const handler: PlatformHandler = {
+      match: (url) => {
+        receivedUrls.push(url)
+
+        return false
+      },
+      resolve: () => [],
+    }
+    const options = { baseUrl: 'https://example.com/photos/name%20/', handlers: [handler] }
+
+    await discoverUrisFromPlatform(undefined, undefined, options)
+    const expected = ['https://example.com/photos/name/']
+
+    expect(receivedUrls).toEqual(expected)
+  })
+
+  it('should trim whitespace around a query value before handlers see it', async () => {
+    const receivedUrls: Array<string> = []
+    const handler: PlatformHandler = {
+      match: (url) => {
+        receivedUrls.push(url)
+
+        return false
+      },
+      resolve: () => [],
+    }
+    const options = { baseUrl: 'https://example.com/playlist?list=PL123%20', handlers: [handler] }
+
+    await discoverUrisFromPlatform(undefined, undefined, options)
+    const expected = ['https://example.com/playlist?list=PL123']
+
+    expect(receivedUrls).toEqual(expected)
+  })
+
   it('should pass handlers the page url in its standard form', async () => {
     const receivedUrls: Array<string> = []
     const handler: PlatformHandler = {
@@ -747,6 +783,28 @@ describe('discoverUrisFromPlatform', () => {
       handlers: [handler],
     }
     const expected = ['https://example.com/login', 'https://example.com/popular']
+
+    await discoverUrisFromPlatform(undefined, undefined, options)
+
+    expect(receivedUrls).toEqual(expected)
+  })
+
+  it('should trim whitespace around a value in the requested URL before handlers see it', async () => {
+    const receivedUrls: Array<string> = []
+    const handler: PlatformHandler = {
+      match: (url) => {
+        receivedUrls.push(url)
+
+        return false
+      },
+      resolve: () => [],
+    }
+    const options = {
+      baseUrl: 'https://example.com/login',
+      requestedUrl: 'https://example.com/photos/name%20/',
+      handlers: [handler],
+    }
+    const expected = ['https://example.com/login', 'https://example.com/photos/name/']
 
     await discoverUrisFromPlatform(undefined, undefined, options)
 
