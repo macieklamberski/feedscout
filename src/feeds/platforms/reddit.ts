@@ -175,7 +175,7 @@ export const redditHandler: PlatformHandler = {
     if (parsed.kind === 'siteSearch') {
       return [
         {
-          uri: `https://www.reddit.com/search.rss?${composeQuery({ q: encodeURIComponent(parsed.query) })}`,
+          uri: `https://www.reddit.com/search.rss?q=${encodeURIComponent(parsed.query)}`,
           hint: composeHint('reddit:search'),
         },
       ]
@@ -195,7 +195,7 @@ export const redditHandler: PlatformHandler = {
     if (parsed.kind === 'search' && parsed.query) {
       return [
         {
-          uri: `https://www.reddit.com/r/${parsed.subreddit}/search.rss?${composeQuery({ q: encodeURIComponent(parsed.query), restrict_sr: 'on' })}`,
+          uri: `https://www.reddit.com/r/${parsed.subreddit}/search.rss?q=${encodeURIComponent(parsed.query)}&restrict_sr=on`,
           hint: composeHint('reddit:search'),
         },
       ]

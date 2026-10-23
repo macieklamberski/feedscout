@@ -241,12 +241,11 @@ export const getScriptDirectory = (pathname: string): string => {
   return pathname.replace(scriptSegmentRegex, '').replace(trailingSlashRegex, '')
 }
 
-const queryValueEscapeRegex = /[&#\s]/g
+const queryValueEscapeRegex = /[&#%+\s]/g
 
-// The query of a feed URL, its pairs in the order given. Only the characters that would end a value
-// or start a fragment, `&` and `#`, and whitespace are escaped in a value. A `%`, `@` and every other
-// character stay as written, so an encoded value is never encoded twice and a stored feed keeps its
-// spelling.
+// The query of a feed URL, its pairs in the order given. Query readers hand back a decoded value,
+// so a `%` or `+` it holds is escaped again, along with `&`, `#` and whitespace. An `@` and every
+// other character stay as written, so a stored feed keeps its spelling.
 export const composeQuery = (params: Record<string, string>): string => {
   const pairs = Object.entries(params).map(([name, value]) => {
     return `${name}=${value.replace(queryValueEscapeRegex, encodeURIComponent)}`

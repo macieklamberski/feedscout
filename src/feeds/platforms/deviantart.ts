@@ -1,6 +1,6 @@
 import { decodeSegment, isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, composeQuery } from '../../common/utils.js'
+import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Not discoverable without handler.
 // Handler needed for: all shapes.
@@ -81,7 +81,7 @@ export const deviantartHandler: PlatformHandler = {
     if (parsed.kind === 'dailyDeviations') {
       return [
         {
-          uri: `${feedBaseUrl}?${composeQuery({ q: 'special%3Add' })}`,
+          uri: `${feedBaseUrl}?q=${encodeURIComponent('special:dd')}`,
           hint: composeHint('deviantart:daily-deviations'),
         },
       ]
@@ -90,7 +90,7 @@ export const deviantartHandler: PlatformHandler = {
     if (parsed.kind === 'tag') {
       return [
         {
-          uri: `${feedBaseUrl}?${composeQuery({ type: 'deviation', q: encodeURIComponent(`tag:${parsed.tag}`) })}`,
+          uri: `${feedBaseUrl}?type=deviation&q=${encodeURIComponent(`tag:${parsed.tag}`)}`,
           hint: composeHint('deviantart:tag'),
         },
       ]
@@ -99,7 +99,7 @@ export const deviantartHandler: PlatformHandler = {
     if (parsed.kind === 'favourites') {
       return [
         {
-          uri: `${feedBaseUrl}?${composeQuery({ type: 'deviation', q: encodeURIComponent(`favby:${parsed.username}`) })}`,
+          uri: `${feedBaseUrl}?type=deviation&q=${encodeURIComponent(`favby:${parsed.username}`)}`,
           hint: composeHint('deviantart:favorites'),
         },
       ]
@@ -110,7 +110,7 @@ export const deviantartHandler: PlatformHandler = {
 
       return [
         {
-          uri: `${feedBaseUrl}?${composeQuery({ type: 'deviation', q: encodeURIComponent(query) })}`,
+          uri: `${feedBaseUrl}?type=deviation&q=${encodeURIComponent(query)}`,
           hint: composeHint('deviantart:gallery'),
         },
       ]
@@ -119,7 +119,7 @@ export const deviantartHandler: PlatformHandler = {
     if (parsed.kind === 'journal') {
       return [
         {
-          uri: `${feedBaseUrl}?${composeQuery({ q: encodeURIComponent(`journal:${parsed.username}`) })}`,
+          uri: `${feedBaseUrl}?q=${encodeURIComponent(`journal:${parsed.username}`)}`,
           hint: composeHint('deviantart:journal'),
         },
       ]
@@ -129,7 +129,7 @@ export const deviantartHandler: PlatformHandler = {
 
     return [
       {
-        uri: `${feedBaseUrl}?${composeQuery({ type: 'deviation', q: encodeURIComponent(query) })}`,
+        uri: `${feedBaseUrl}?type=deviation&q=${encodeURIComponent(query)}`,
         hint: composeHint('deviantart:deviations'),
       },
     ]

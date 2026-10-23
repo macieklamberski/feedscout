@@ -1,6 +1,6 @@
 import { isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, composeQuery, getTenantSubdomain } from '../../common/utils.js'
+import { composeHint, getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -60,7 +60,7 @@ export const proseHandler: PlatformHandler = {
     if (parsed.kind === 'tag') {
       return [
         {
-          uri: `${origin}/rss?${composeQuery({ tag: encodeURIComponent(parsed.tag) })}`,
+          uri: `${origin}/rss?tag=${encodeURIComponent(parsed.tag)}`,
           hint: composeHint('prose:tag'),
         },
       ]

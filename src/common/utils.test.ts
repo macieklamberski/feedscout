@@ -671,16 +671,22 @@ describe('composeQuery', () => {
     expect(composeQuery(value)).toBe('tag=tiny%20cooking')
   })
 
-  it('should leave a percent sign as written', () => {
-    const value = { tags: 'c%2B%2B' }
+  it('should escape a percent sign in a value', () => {
+    const value = { q: '50%2C' }
+
+    expect(composeQuery(value)).toBe('q=50%252C')
+  })
+
+  it('should escape a plus sign in a value', () => {
+    const value = { tags: 'c++' }
 
     expect(composeQuery(value)).toBe('tags=c%2B%2B')
   })
 
   it('should leave an at sign and the other characters a query may hold as written', () => {
-    const value = { id: '24662369@N07', q: 'by:alice/x+y' }
+    const value = { id: '24662369@N07', q: 'by:alice/x' }
 
-    expect(composeQuery(value)).toBe('id=24662369@N07&q=by:alice/x+y')
+    expect(composeQuery(value)).toBe('id=24662369@N07&q=by:alice/x')
   })
 })
 

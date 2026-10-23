@@ -1,4 +1,4 @@
-import { isHostOf, parseUrl } from 'trousse'
+import { decodeSegment, isHostOf, parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, composeQuery } from '../../common/utils.js'
@@ -73,7 +73,7 @@ export const myanimelistHandler: PlatformHandler = {
       ]
     }
 
-    const { username } = parsed
+    const username = decodeSegment(parsed.username) ?? parsed.username
     const uris: Array<DiscoverUriEntry> = []
 
     uris.push({

@@ -1,7 +1,7 @@
 import { isHostOf, parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, composeQuery } from '../../common/utils.js'
+import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic partly covers channelById, custom, handle, user.
@@ -65,7 +65,7 @@ const playlistPrefix = (prefix: string, channelId: string): string => {
 // Atom content as ?channel_id=. YouTube's own autodiscovery always uses
 // channel_id, so we treat it as the canonical format.
 const feedUrl = (param: string, value: string): string => {
-  return `https://www.youtube.com/feeds/videos.xml?${composeQuery({ [param]: encodeURIComponent(value) })}`
+  return `https://www.youtube.com/feeds/videos.xml?${param}=${encodeURIComponent(value)}`
 }
 
 const pushChannelUris = (uris: Array<DiscoverUriEntry>, channelId: string): void => {

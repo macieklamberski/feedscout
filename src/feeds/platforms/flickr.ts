@@ -1,4 +1,4 @@
-import { getAnyOf, getPathSegments, isAnyOf, isHostOf, parseUrl } from 'trousse'
+import { decodeSegment, getAnyOf, getPathSegments, isAnyOf, isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, composeQuery } from '../../common/utils.js'
 
@@ -105,7 +105,7 @@ export const flickrHandler: PlatformHandler = {
 
     // Tag page: /photos/tags/{tag}
     if (parsed.kind === 'tag') {
-      const query = composeQuery({ tags: parsed.tag })
+      const query = composeQuery({ tags: decodeSegment(parsed.tag) ?? parsed.tag })
 
       return [
         {
