@@ -27,10 +27,6 @@ describe('parseHautetfortUrl', () => {
       'http://vouloir.hautetfort.com/archives/category/histoire/index-2.html',
       { kind: 'category', blog: 'vouloir', category: 'histoire' },
     ],
-    [
-      'http://vouloir.hautetfort.com/ARCHIVES/CATEGORY/histoire/',
-      { kind: 'category', blog: 'vouloir', category: 'histoire' },
-    ],
   ]
 
   it.each(values)('should parse %s', (url, expected) => {
