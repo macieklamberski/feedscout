@@ -26,9 +26,8 @@ export const parseInstatusUrl = (url: string): InstatusUrl | undefined => {
 
   const [language] = getPathSegments(parsedUrl)
 
-  // Instatus redirects an uppercase translation such as `/pt-BR` to the default one.
   if (language && letterPairsRegex.test(language)) {
-    return { kind: 'status', language: language.toLowerCase() }
+    return { kind: 'status', language }
   }
 
   return { kind: 'status' }

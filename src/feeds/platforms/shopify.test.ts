@@ -45,12 +45,6 @@ describe('parseShopifyUrl', () => {
     expect(parseShopifyUrl('https://shop.example/zh-hant-hk/blogs/videos')).toEqual(expected)
   })
 
-  it('should lowercase an uppercase locale', () => {
-    const expected: ShopifyUrl = { kind: 'blog', handle: 'videos', locale: 'zh-hant-hk' }
-
-    expect(parseShopifyUrl('https://shop.example/ZH-HANT-HK/blogs/videos')).toEqual(expected)
-  })
-
   it('should return undefined for a page outside a blog', () => {
     expect(parseShopifyUrl('https://shop.example/products/shirt')).toBeUndefined()
   })

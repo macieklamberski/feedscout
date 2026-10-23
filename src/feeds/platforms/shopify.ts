@@ -22,8 +22,7 @@ export const parseShopifyUrl = (url: string): ShopifyUrl | undefined => {
     return
   }
 
-  // Shopify answers 404 to an uppercase locale folder such as `/ZH-HANT-HK/`.
-  return { kind: 'blog', handle, locale: locale?.toLowerCase() }
+  return { kind: 'blog', handle, locale }
 }
 
 export const shopifyHandler: PlatformHandler = {
