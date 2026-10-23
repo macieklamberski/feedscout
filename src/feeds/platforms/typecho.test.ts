@@ -26,6 +26,16 @@ const subPathThemeHtml = `
     href="https://example.com/blog/usr/themes/default/style.css"
   >
 `
+const generatorOtherHostThemeHtml = `
+  <meta
+    name="generator"
+    content="Typecho 1.2.1"
+  />
+  <link
+    rel="stylesheet"
+    href="https://example.net/blog/usr/themes/default/style.css"
+  >
+`
 const textHtml = '<p>The theme files live in /usr/themes/default/ on the server.</p>'
 const gravHtml = '<link href="/user/themes/quark/css/theme.css">'
 
@@ -117,6 +127,23 @@ describe('getTypechoPage', () => {
     expect(getTypechoPage('https://example.com/about', subPathThemeHtml)).toBeUndefined()
   })
 
+  it('should return the site root on the page host for a theme on another host with the generator', () => {
+    const value = 'https://example.com/blog/archives/13/'
+    const expected: TypechoPage = {
+      kind: 'page',
+      siteUrl: 'https://example.com/blog',
+      path: '/archives/13/',
+    }
+
+    expect(getTypechoPage(value, generatorOtherHostThemeHtml)).toEqual(expected)
+  })
+
+  it('should return undefined for a page outside the site root of a theme on another host', () => {
+    const value = 'https://example.com/about'
+
+    expect(getTypechoPage(value, generatorOtherHostThemeHtml)).toBeUndefined()
+  })
+
   it('should return undefined without a theme or plugin asset', () => {
     expect(getTypechoPage('https://example.com/', textHtml)).toBeUndefined()
   })
@@ -137,6 +164,12 @@ describe('typechoHandler', () => {
         '<link rel="stylesheet" href="https://cdn.example.net/usr/themes/handsome/style.css">'
 
       expect(typechoHandler.match('https://example.com/post/1', value)).toBe(false)
+    })
+
+    it('should match a page with the generator linking a theme asset on another host', () => {
+      const value = 'https://example.com/blog/archives/13/'
+
+      expect(typechoHandler.match(value, generatorOtherHostThemeHtml)).toBe(true)
     })
 
     it('should not match without content', () => {

@@ -6,6 +6,7 @@ import {
   type Element,
   findElement,
   hasMarker,
+  hasMetaContent,
   isRootOfPage,
 } from '../../common/utils.js'
 
@@ -47,11 +48,18 @@ export const getTypechoPage = (
   const assetUrl = asset ? parseUrl(getAssetUrl(asset), url) : undefined
   const rootPath = assetUrl?.pathname.match(assetUrlRegex)?.groups?.rootPath
 
-  if (!assetUrl || rootPath === undefined || !isRootOfPage(`${assetUrl.origin}${rootPath}`, url)) {
+  if (!content || !assetUrl || rootPath === undefined) {
     return
   }
 
   const { origin, pathname } = new URL(url)
+  // A site can load its theme from a second domain of its own, and the generator tag still names
+  // the page as Typecho.
+  const rootOrigin = hasMetaContent(content, 'generator', 'Typecho') ? origin : assetUrl.origin
+
+  if (!isRootOfPage(`${rootOrigin}${rootPath}`, url)) {
+    return
+  }
 
   const siteUrl = `${origin}${rootPath}`
   // A site without URL rewriting routes every page through `/index.php`.
