@@ -117,7 +117,7 @@ describe('mailArchiveHandler', () => {
       expect(mailArchiveHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should escape a slash in the list address', () => {
+    it('should keep a percent-encoded slash in the list address as written', () => {
       const value = 'https://www.mail-archive.com/dev%2Fnull@example.org/'
       const expected = [
         {
