@@ -1,12 +1,6 @@
-import { decodeSegment } from 'trousse'
+import { decodeSegment, encodePathSegment } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import {
-  composeHint,
-  encodePathSegment,
-  hasElementWithId,
-  hasMarker,
-  hasMetaContent,
-} from '../../common/utils.js'
+import { composeHint, hasElementWithId, hasMarker, hasMetaContent } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 

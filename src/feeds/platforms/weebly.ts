@@ -1,12 +1,7 @@
-import { getPathSegments, isAnyOf } from 'trousse'
+import { encodePathSegment, getPathSegments, isAnyOf } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import {
-  composeHint,
-  digitsRegex,
-  encodePathSegment,
-  getTenantSubdomain,
-} from '../../common/utils.js'
+import { composeHint, digitsRegex, getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers blog, blogPath (html), partly covers blogCustomSlug.

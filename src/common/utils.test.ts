@@ -3,7 +3,6 @@ import type { DiscoverUriHint, FetchFn } from './types.js'
 import {
   composeHint,
   type Element,
-  encodePathSegment,
   findDescendant,
   findElement,
   findElements,
@@ -31,45 +30,6 @@ import {
 } from './utils.js'
 
 const idRegex = /\/topic\/(?<id>[^/]+)/
-
-describe('encodePathSegment', () => {
-  it('should escape the characters that would open a segment, a query or a fragment', () => {
-    const value = 'news/../x?page=2#top'
-    const expected = 'news%2F..%2Fx%3Fpage=2%23top'
-
-    expect(encodePathSegment(value)).toBe(expected)
-  })
-
-  it('should escape whitespace', () => {
-    expect(encodePathSegment('off\tnow')).toBe('off%09now')
-  })
-
-  it('should escape a backslash', () => {
-    expect(encodePathSegment('..\\..')).toBe('..%5C..')
-  })
-
-  it('should leave a percent sign as written', () => {
-    const value = 'c%23'
-
-    expect(encodePathSegment(value)).toBe(value)
-  })
-
-  it('should leave the characters a path segment may hold as written', () => {
-    const value = 'alice@example.org:urn=a&b'
-
-    expect(encodePathSegment(value)).toBe(value)
-  })
-
-  it('should leave a non-ASCII value as written', () => {
-    const value = 'ニュース'
-
-    expect(encodePathSegment(value)).toBe(value)
-  })
-
-  it('should leave a whole value of two dots as written', () => {
-    expect(encodePathSegment('..')).toBe('..')
-  })
-})
 
 describe('getNumericId', () => {
   it('should return an id of digits', () => {

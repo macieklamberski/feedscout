@@ -1,6 +1,6 @@
-import { decodeSegment, getPathSegments, isHostOf } from 'trousse'
+import { decodeSegment, encodePathSegment, getPathSegments, isHostOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, encodePathSegment } from '../../common/utils.js'
+import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers list (html).

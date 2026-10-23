@@ -1,6 +1,6 @@
-import { isAnyOf } from 'trousse'
+import { encodePathSegment, isAnyOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, encodePathSegment, hasMarker } from '../../common/utils.js'
+import { composeHint, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 

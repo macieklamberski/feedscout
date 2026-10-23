@@ -1,10 +1,9 @@
-import { isAnyOf, isPresent, parseUrl, resolveUrl } from 'trousse'
+import { encodePathSegment, isAnyOf, isPresent, parseUrl, resolveUrl } from 'trousse'
 import type { DiscoverUriHint } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import {
   composeHint,
   digitsRegex,
-  encodePathSegment,
   findDescendant,
   findElement,
   findElements,

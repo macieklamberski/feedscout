@@ -1,7 +1,7 @@
-import { getPathSegments, isAnyOf, isHostOf } from 'trousse'
+import { encodePathSegment, getPathSegments, isAnyOf, isHostOf } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, digitsRegex, encodePathSegment, findElement } from '../../common/utils.js'
+import { composeHint, digitsRegex, findElement } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 

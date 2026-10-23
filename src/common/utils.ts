@@ -28,15 +28,6 @@ export const letterPairsRegex = /^[a-z]{2}(?:-[a-z]{2})?$/i
 // length: keeps path words such as `blogs` out
 export const letterGroupsRegex = /^[a-z]{2,3}(?:-[a-z]{4})?(?:-[a-z]{2})?$/i
 
-const pathSegmentEscapeRegex = /[/?#\\\s]/g
-
-// A value written into a feed URL path stays one segment. Only the characters that would open a new
-// segment, a query or a fragment, a backslash the parser reads as `/` and whitespace are escaped.
-// A `%`, `@` and every other character stay as written, so an encoded value is never encoded twice.
-export const encodePathSegment = (value: string): string => {
-  return value.replace(pathSegmentEscapeRegex, (character) => encodeURIComponent(character))
-}
-
 // The `id` group the regex reads from the value, when it is all digits.
 export const getNumericId = (value: string | undefined, regex: RegExp): string | undefined => {
   const id = value?.match(regex)?.groups?.id
