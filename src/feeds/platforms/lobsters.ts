@@ -55,8 +55,7 @@ export const parseLobstersUrl = (url: string): LobstersUrl | undefined => {
 
   // Top page, all time or for a period: /top or /top/{period}.
   if (topMatch) {
-    // Lobsters redirects an uppercase period, as /top/2W.rss, to the 1w feed.
-    return { kind: 'top', period: topMatch.groups?.period?.toLowerCase() }
+    return { kind: 'top', period: topMatch.groups?.period }
   }
 
   if (newestRegex.test(pathname)) {

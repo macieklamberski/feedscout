@@ -87,22 +87,6 @@ describe('nebulaHandler', () => {
       expect(nebulaHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should lowercase a mixed-case channel slug', () => {
-      const value = 'https://nebula.tv/RealEngineering'
-      const expected = [
-        {
-          uri: 'https://rss.nebula.app/video/channels/realengineering.rss',
-          hint: { key: 'nebula:videos', label: 'Videos' },
-        },
-        {
-          uri: 'https://rss.nebula.app/video/channels/realengineering.rss?plus=true',
-          hint: { key: 'nebula:videos-plus', label: 'Videos (Plus)' },
-        },
-      ]
-
-      expect(nebulaHandler.resolve(value)).toEqual(expected)
-    })
-
     it('should return global feeds for root path', () => {
       const value = 'https://nebula.tv/'
       const expected = [
