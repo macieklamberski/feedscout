@@ -1,6 +1,6 @@
 import { decodeSegment, isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, isDotSegment } from '../../common/utils.js'
+import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Not discoverable without handler.
 // Handler needed for: all shapes.
@@ -49,15 +49,12 @@ export const velogHandler: PlatformHandler = {
     }
 
     if (parsed.kind === 'user') {
-      // The username sits inside the `@{username}` segment, so it can be a whole `..`. The full
-      // escape keeps an encoded username encoded.
-      if (isDotSegment(parsed.username)) {
-        return []
-      }
-
-      const username = encodeURIComponent(parsed.username)
-
-      return [{ uri: `https://v2.velog.io/rss/${username}`, hint: composeHint('velog:posts') }]
+      return [
+        {
+          uri: `https://v2.velog.io/rss/${encodeURIComponent(parsed.username)}`,
+          hint: composeHint('velog:posts'),
+        },
+      ]
     }
 
     return [

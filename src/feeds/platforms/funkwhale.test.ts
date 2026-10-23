@@ -132,9 +132,5 @@ describe('funkwhaleHandler', () => {
 
       expect(funkwhaleHandler.resolve(value)).toEqual(expected)
     })
-
-    it('should return empty array for a remote channel named two dots', () => {
-      expect(funkwhaleHandler.resolve('https://example.org/channels/..@example.com')).toEqual([])
-    })
   })
 })

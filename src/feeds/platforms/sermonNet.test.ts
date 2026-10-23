@@ -131,18 +131,5 @@ describe('sermonNetHandler', () => {
 
       expect(sermonNetHandler.resolve(value, content)).toEqual(expected)
     })
-
-    it('should skip a channel the page lists as two dots', () => {
-      const value = 'https://faithchapelchurch.sermon.net/'
-      const content = 'var StudioAppData = {"allPlaylists":[{"is_series":true,"url":".."}]};'
-      const expected: Array<DiscoverUriEntry> = [
-        {
-          uri: 'https://faithchapelchurch.sermon.net/rss',
-          hint: { key: 'sermon-net:church', label: 'Church' },
-        },
-      ]
-
-      expect(sermonNetHandler.resolve(value, content)).toEqual(expected)
-    })
   })
 })

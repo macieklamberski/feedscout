@@ -239,15 +239,14 @@ describe('getRedminePage', () => {
     expect(getRedminePage(value, repositoryHtml)).toEqual(expected)
   })
 
-  it('should return the project of a repository page whose revisions link names two dots', () => {
+  it('should escape a backslash in the repository the page links', () => {
     const value = 'https://example.com/projects/acme-tools/repository'
-    const content = repositoryHtml.replaceAll('/repository/core/', '/repository/../')
+    const content = repositoryHtml.replaceAll('/repository/core/', '/repository/..\\core/')
     const expected: RedminePage = {
-      kind: 'project',
+      kind: 'repository',
       root: 'https://example.com',
       project: 'acme-tools',
-      hasIssues: true,
-      hasNews: true,
+      repository: '..%5Ccore',
     }
 
     expect(getRedminePage(value, content)).toEqual(expected)
@@ -655,13 +654,6 @@ describe('redmineHandler', () => {
       ]
 
       expect(redmineHandler.resolve(value, content)).toEqual(expected)
-    })
-
-    it('should return empty array for a project identifier of two dots', () => {
-      const value = 'https://example.com/projects/acme/issues'
-      const content = projectHtml.replace('project-acme-tools', 'project-..')
-
-      expect(redmineHandler.resolve(value, content)).toEqual([])
     })
   })
 })

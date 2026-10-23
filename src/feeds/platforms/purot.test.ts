@@ -130,6 +130,14 @@ describe('getPurotPage', () => {
     expect(getPurotPage(value, anchorOnlyHtml)).toEqual(expected)
   })
 
+  it('should escape a space in the page its feed link names', () => {
+    const value = 'https://example.purot.net/kevatjuhla'
+    const content = '<link rel="alternate" href="/changes/kevat juhla?mode=rss&messages=0" />'
+    const expected: PurotPage = { kind: 'page', wiki: 'example', page: 'kevat%20juhla' }
+
+    expect(getPurotPage(value, content)).toEqual(expected)
+  })
+
   const foreignLinks = [
     '<link rel="alternate" href="https://other.purot.net/changes/kevatjuhla?mode=rss&messages=0" />',
     '<link rel="alternate" href="/changes/kevatjuhla?mode=rss&messages=0&pages=0" />',
@@ -205,19 +213,6 @@ describe('purotHandler', () => {
 
     it('should return empty array for a URL outside purot.net', () => {
       expect(purotHandler.resolve('https://example.com/', pageHtml)).toEqual([])
-    })
-
-    it('should return only the wiki feed when the page link names two dots', () => {
-      const value = 'https://example.purot.net/kevatjuhla'
-      const content = '<link rel="alternate" href="/changes/..?mode=rss&messages=0" />'
-      const expected: Array<DiscoverUriEntry> = [
-        {
-          uri: 'https://example.purot.net/changes/all?mode=rss',
-          hint: { key: 'purot:recent-changes', label: 'Recent changes' },
-        },
-      ]
-
-      expect(purotHandler.resolve(value, content)).toEqual(expected)
     })
   })
 })

@@ -82,9 +82,5 @@ describe('teletypeHandler', () => {
     it('should return empty array for paths without @ prefix', () => {
       expect(teletypeHandler.resolve('https://teletype.in/about')).toEqual([])
     })
-
-    it('should return empty array for a username of two dots', () => {
-      expect(teletypeHandler.resolve('https://teletype.in/@..')).toEqual([])
-    })
   })
 })

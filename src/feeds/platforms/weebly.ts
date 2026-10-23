@@ -1,4 +1,4 @@
-import { decodeSegment, getPathSegments, isAnyOf } from 'trousse'
+import { getPathSegments, isAnyOf } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import {
@@ -47,12 +47,9 @@ export const weeblyHandler: PlatformHandler = {
     const { origin } = new URL(url)
     const uris: Array<DiscoverUriEntry> = []
 
-    // A page of `..html` leaves a dot segment once the suffix is gone.
-    const page = parsed.page ? encodePathSegment(decodeSegment(parsed.page) ?? '') : undefined
-
-    if (page) {
+    if (parsed.page) {
       uris.push({
-        uri: `${origin}/${page}/feed`,
+        uri: `${origin}/${encodePathSegment(parsed.page)}/feed`,
         hint: composeHint('weebly:blog'),
       })
     }

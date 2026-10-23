@@ -19,7 +19,6 @@ import {
   hasElementWithId,
   hasMarker,
   hasMetaContent,
-  isDotSegment,
   isOfAllowedMimeType,
   isRootOfPage,
   matchesAnyOfLinkSelectors,
@@ -33,20 +32,6 @@ import {
 
 const idRegex = /\/topic\/(?<id>[^/]+)/
 
-describe('isDotSegment', () => {
-  it('should return true for a whole value of two dots', () => {
-    expect(isDotSegment('..')).toBe(true)
-  })
-
-  it('should return true for a whole value of one dot', () => {
-    expect(isDotSegment('.')).toBe(true)
-  })
-
-  it('should return false for dots that are not the whole value', () => {
-    expect(isDotSegment('..rss')).toBe(false)
-  })
-})
-
 describe('encodePathSegment', () => {
   it('should escape the characters that would open a segment, a query or a fragment', () => {
     const value = 'news/../x?page=2#top'
@@ -55,15 +40,18 @@ describe('encodePathSegment', () => {
     expect(encodePathSegment(value)).toBe(expected)
   })
 
-  it('should escape a literal percent sign and whitespace', () => {
-    const value = '50% off\tnow'
-    const expected = '50%25%20off%09now'
-
-    expect(encodePathSegment(value)).toBe(expected)
+  it('should escape whitespace', () => {
+    expect(encodePathSegment('off\tnow')).toBe('off%09now')
   })
 
   it('should escape a backslash', () => {
     expect(encodePathSegment('..\\..')).toBe('..%5C..')
+  })
+
+  it('should leave a percent sign as written', () => {
+    const value = 'c%23'
+
+    expect(encodePathSegment(value)).toBe(value)
   })
 
   it('should leave the characters a path segment may hold as written', () => {
@@ -78,18 +66,8 @@ describe('encodePathSegment', () => {
     expect(encodePathSegment(value)).toBe(value)
   })
 
-  it('should return undefined for a whole value of two dots', () => {
-    expect(encodePathSegment('..')).toBeUndefined()
-  })
-
-  it('should return undefined for a whole value of one dot', () => {
-    expect(encodePathSegment('.')).toBeUndefined()
-  })
-
-  it('should keep dots that are not the whole value', () => {
-    const value = '...'
-
-    expect(encodePathSegment(value)).toBe(value)
+  it('should leave a whole value of two dots as written', () => {
+    expect(encodePathSegment('..')).toBe('..')
   })
 })
 

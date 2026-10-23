@@ -1,4 +1,3 @@
-import { decodeSegment } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import {
@@ -44,20 +43,13 @@ export const getPurotPage = (url: string, content: string | undefined): PurotPag
   const link = findElement(content, (element) => {
     return element.name === 'link' && pageChangesRegex.test(element.attribs.href ?? '')
   })
-  const linkedPage = decodeSegment(link?.attribs.href?.match(pageChangesRegex)?.[1])
-
-  if (!linkedPage) {
-    return parsed
-  }
-
-  // The link is page markup, which can name a whole `..` the URL parser would resolve away.
-  const page = encodePathSegment(linkedPage)
+  const page = link?.attribs.href?.match(pageChangesRegex)?.[1]
 
   if (!page) {
     return parsed
   }
 
-  return { kind: 'page', wiki: parsed.wiki, page }
+  return { kind: 'page', wiki: parsed.wiki, page: encodePathSegment(page) }
 }
 
 export const purotHandler: PlatformHandler = {

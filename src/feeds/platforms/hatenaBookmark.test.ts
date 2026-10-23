@@ -324,9 +324,5 @@ describe('hatenaBookmarkHandler', () => {
     it('should return bookmarks for a user page', () => {
       expect(hatenaBookmarkHandler.resolve(`${base}/mizdra/`)).toEqual(userBookmarks)
     })
-
-    it('should return empty array for a legacy search query of two dots', () => {
-      expect(hatenaBookmarkHandler.resolve('https://b.hatena.ne.jp/search/text?q=..')).toEqual([])
-    })
   })
 })

@@ -54,18 +54,14 @@ export const funkwhaleHandler: PlatformHandler = {
       .replace(leadingAtRegex, '')
       .split('@')
     // The name comes out of the path decoded, and it goes back into one.
-    const segment = domain ? encodePathSegment(name) : channel
-
-    if (!segment) {
-      return []
-    }
-
-    const channelOrigin = domain ? `https://${domain}` : origin
+    const channelUrl = domain
+      ? `https://${domain}/api/v1/channels/${encodePathSegment(name)}`
+      : `${origin}/api/v1/channels/${channel}`
 
     return [
       {
         // v2 answers 404 on some instances that still serve v1.
-        uri: `${channelOrigin}/api/v1/channels/${segment}/rss`,
+        uri: `${channelUrl}/rss`,
         hint: composeHint('funkwhale:channel'),
       },
     ]

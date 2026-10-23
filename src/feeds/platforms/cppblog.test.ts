@@ -198,17 +198,17 @@ describe('cppblogHandler', () => {
       expect(cppblogHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should keep the user from the URL when the feed link names two dots', () => {
+    it('should escape a number sign in the user the feed link names', () => {
       const value = 'http://www.cppblog.com/alice'
       const content =
-        '<link id="RSSLink" rel="alternate" href="http://www.cppblog.com/../rss.aspx" />'
+        '<link id="RSSLink" rel="alternate" href="http://www.cppblog.com/alice#b/rss.aspx" />'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'http://www.cppblog.com/alice/rss.aspx',
+          uri: 'http://www.cppblog.com/alice%23b/rss.aspx',
           hint: { key: 'cppblog:posts', label: 'Posts' },
         },
         {
-          uri: 'http://www.cppblog.com/alice/CommentsRSS.aspx',
+          uri: 'http://www.cppblog.com/alice%23b/CommentsRSS.aspx',
           hint: { key: 'cppblog:comments', label: 'Comments' },
         },
       ]

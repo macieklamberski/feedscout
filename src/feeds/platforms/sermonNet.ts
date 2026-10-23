@@ -58,14 +58,8 @@ export const sermonNetHandler: PlatformHandler = {
     const uris: Array<DiscoverUriEntry> = []
 
     for (const channel of channels) {
-      // The channel is page text, which can hold a `/` or be a whole `..`.
-      const segment = encodePathSegment(channel)
-
-      if (!segment) {
-        continue
-      }
-
-      const uri = `${origin}/rss/${segment}/audio`
+      // The channel is page text, which can hold a `/`.
+      const uri = `${origin}/rss/${encodePathSegment(channel)}/audio`
 
       if (uris.some((entry) => entry.uri === uri)) {
         continue

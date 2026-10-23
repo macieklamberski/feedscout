@@ -1,4 +1,4 @@
-import { decodeSegment, getPathSegments, isAnyOf, isHostOf } from 'trousse'
+import { getPathSegments, isAnyOf, isHostOf } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, encodePathSegment, findElement } from '../../common/utils.js'
@@ -48,13 +48,12 @@ const getFeedUsername = (content: string | undefined): string | undefined => {
     return element.name === 'link' && element.attribs.id === 'RSSLink'
   })
 
-  const username = decodeSegment(link?.attribs.href?.match(feedLinkRegex)?.[1])
+  const username = link?.attribs.href?.match(feedLinkRegex)?.[1]
 
   if (!username) {
     return
   }
 
-  // The link is page markup, which can name a whole `..` the URL parser would resolve away.
   return encodePathSegment(username)
 }
 

@@ -43,8 +43,8 @@ const getDiasporaPage = (url: string, content: string | undefined): DiasporaPage
     return { username: pathUsername }
   }
 
-  // The id is page text, which can hold a `/` or be a whole `..`.
-  return { username: encodePathSegment(linkedUsername) ?? pathUsername }
+  // The id is page text, which can hold a `/`.
+  return { username: encodePathSegment(linkedUsername) }
 }
 
 export const diasporaHandler: PlatformHandler = {
