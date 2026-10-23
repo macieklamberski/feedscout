@@ -1,7 +1,7 @@
 import { getAnyOf, getPathSegments, isAnyOf, isHostOf, parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
+import { composeHint, composeQuery } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers domain, subreddits (guess, html), partly covers multiSubreddit.
@@ -48,7 +48,7 @@ const getTimeframe = (sort: string, searchParams: URLSearchParams): string | und
 }
 
 const composeTimeframeQuery = (timeframe: string | undefined): string => {
-  return timeframe ? `?${new URLSearchParams({ t: timeframe })}` : ''
+  return timeframe ? `?${composeQuery({ t: timeframe })}` : ''
 }
 
 // Combined subreddits work transparently: /r/{sub1}+{sub2} is captured as one name.
@@ -175,7 +175,7 @@ export const redditHandler: PlatformHandler = {
     if (parsed.kind === 'siteSearch') {
       return [
         {
-          uri: `https://www.reddit.com/search.rss?${new URLSearchParams({ q: parsed.query })}`,
+          uri: `https://www.reddit.com/search.rss?${composeQuery({ q: encodeURIComponent(parsed.query) })}`,
           hint: composeHint('reddit:search'),
         },
       ]
@@ -195,7 +195,7 @@ export const redditHandler: PlatformHandler = {
     if (parsed.kind === 'search' && parsed.query) {
       return [
         {
-          uri: `https://www.reddit.com/r/${parsed.subreddit}/search.rss?${new URLSearchParams({ q: parsed.query, restrict_sr: 'on' })}`,
+          uri: `https://www.reddit.com/r/${parsed.subreddit}/search.rss?${composeQuery({ q: encodeURIComponent(parsed.query), restrict_sr: 'on' })}`,
           hint: composeHint('reddit:search'),
         },
       ]

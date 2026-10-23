@@ -1,7 +1,7 @@
 import { isHostOf } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, getTenantSubdomain } from '../../common/utils.js'
+import { composeHint, composeQuery, getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers blog (guess, html).
@@ -58,11 +58,11 @@ export const bearblogHandler: PlatformHandler = {
 
     if (parsed.tag) {
       uris.push({
-        uri: `${origin}/feed/?${new URLSearchParams({ q: parsed.tag })}`,
+        uri: `${origin}/feed/?${composeQuery({ q: encodeURIComponent(parsed.tag) })}`,
         hint: composeHint('bearblog:tag', 'atom'),
       })
       uris.push({
-        uri: `${origin}/feed/?${new URLSearchParams({ type: 'rss', q: parsed.tag })}`,
+        uri: `${origin}/feed/?${composeQuery({ type: 'rss', q: encodeURIComponent(parsed.tag) })}`,
         hint: composeHint('bearblog:tag', 'rss'),
       })
     }

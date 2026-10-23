@@ -242,7 +242,7 @@ describe('flickrHandler', () => {
       const value = 'https://www.flickr.com/photos/24662369@N07/'
       const expected = [
         {
-          uri: `${feedsBase}/photos_public.gne?id=24662369%40N07`,
+          uri: `${feedsBase}/photos_public.gne?id=24662369@N07`,
           hint: { key: 'flickr:photos', label: 'Photostream' },
         },
       ]
@@ -254,7 +254,7 @@ describe('flickrHandler', () => {
       const value = 'https://www.flickr.com/photos/24662369@N07/favorites'
       const expected = [
         {
-          uri: `${feedsBase}/photos_faves.gne?id=24662369%40N07`,
+          uri: `${feedsBase}/photos_faves.gne?id=24662369@N07`,
           hint: { key: 'flickr:faves', label: 'Favorites' },
         },
       ]
@@ -274,15 +274,15 @@ describe('flickrHandler', () => {
       const value = 'https://www.flickr.com/groups/42097308@N00/'
       const expected = [
         {
-          uri: `${feedsBase}/groups_pool.gne?id=42097308%40N00`,
+          uri: `${feedsBase}/groups_pool.gne?id=42097308@N00`,
           hint: { key: 'flickr:group-pool', label: 'Group pool' },
         },
         {
-          uri: `${feedsBase}/groups_discuss.gne?id=42097308%40N00`,
+          uri: `${feedsBase}/groups_discuss.gne?id=42097308@N00`,
           hint: { key: 'flickr:group-discuss', label: 'Group discussions' },
         },
         {
-          uri: `${feedsBase}/geo/?g=42097308%40N00`,
+          uri: `${feedsBase}/geo/?g=42097308@N00`,
           hint: { key: 'flickr:group-geo', label: 'Group pool with location' },
         },
       ]
@@ -294,11 +294,11 @@ describe('flickrHandler', () => {
       const value = 'https://www.flickr.com/groups/42097308@N00/pool/'
       const expected = [
         {
-          uri: `${feedsBase}/groups_pool.gne?id=42097308%40N00`,
+          uri: `${feedsBase}/groups_pool.gne?id=42097308@N00`,
           hint: { key: 'flickr:group-pool', label: 'Group pool' },
         },
         {
-          uri: `${feedsBase}/geo/?g=42097308%40N00`,
+          uri: `${feedsBase}/geo/?g=42097308@N00`,
           hint: { key: 'flickr:group-geo', label: 'Group pool with location' },
         },
       ]
@@ -310,7 +310,7 @@ describe('flickrHandler', () => {
       const value = 'https://www.flickr.com/groups/42097308@N00/discuss/'
       const expected = [
         {
-          uri: `${feedsBase}/groups_discuss.gne?id=42097308%40N00`,
+          uri: `${feedsBase}/groups_discuss.gne?id=42097308@N00`,
           hint: { key: 'flickr:group-discuss', label: 'Group discussions' },
         },
       ]

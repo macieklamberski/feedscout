@@ -65,11 +65,11 @@ describe('fluxbbHandler', () => {
   })
 
   describe('resolve', () => {
-    it('should keep a forum id with & and = inside the fid query value', () => {
+    it('should keep a forum id with & inside the fid query value', () => {
       const value = 'https://example.com/viewforum.php?id=1%26type%3DRSS'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://example.com/extern.php?action=feed&fid=1%26type%3DRSS&type=atom',
+          uri: 'https://example.com/extern.php?action=feed&fid=1%26type=RSS&type=atom',
           hint: { key: 'fluxbb:forum', label: 'Forum' },
         },
         {

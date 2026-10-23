@@ -241,6 +241,20 @@ export const getScriptDirectory = (pathname: string): string => {
   return pathname.replace(scriptSegmentRegex, '').replace(trailingSlashRegex, '')
 }
 
+const queryValueEscapeRegex = /[&#\s]/g
+
+// The query of a feed URL, its pairs in the order given. Only the characters that would end a value
+// or start a fragment, `&` and `#`, and whitespace are escaped in a value. A `%`, `@` and every other
+// character stay as written, so an encoded value is never encoded twice and a stored feed keeps its
+// spelling.
+export const composeQuery = (params: Record<string, string>): string => {
+  const pairs = Object.entries(params).map(([name, value]) => {
+    return `${name}=${value.replace(queryValueEscapeRegex, encodeURIComponent)}`
+  })
+
+  return pairs.join('&')
+}
+
 export const hasAnyMeta = (content: string, markers: Array<[string, string]>): boolean => {
   return markers.some(([name, value]) => hasMetaContent(content, name, value))
 }

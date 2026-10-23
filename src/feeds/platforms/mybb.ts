@@ -3,6 +3,7 @@ import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import {
   composeHint,
+  composeQuery,
   digitsRegex,
   findElement,
   getCookieNames,
@@ -110,11 +111,11 @@ export const mybbHandler: PlatformHandler = {
     if (forumId) {
       uris.push(
         {
-          uri: `${feedUrl}?${new URLSearchParams({ fid: forumId })}`,
+          uri: `${feedUrl}?${composeQuery({ fid: forumId })}`,
           hint: composeHint('mybb:forum', 'rss'),
         },
         {
-          uri: `${feedUrl}?${new URLSearchParams({ type: 'atom1.0', fid: forumId })}`,
+          uri: `${feedUrl}?${composeQuery({ type: 'atom1.0', fid: forumId })}`,
           hint: composeHint('mybb:forum', 'atom'),
         },
       )

@@ -1,7 +1,7 @@
 import { isPlainObject, parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, getJsonLd, hasMarker } from '../../common/utils.js'
+import { composeHint, composeQuery, getJsonLd, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers home (guess, html), partly covers forum, topic.
@@ -81,11 +81,11 @@ export const forumotionHandler: PlatformHandler = {
     if (page.kind === 'forum' || page.kind === 'topic') {
       uris.push(
         {
-          uri: `${origin}/feed/?${new URLSearchParams({ f: page.forumId })}`,
+          uri: `${origin}/feed/?${composeQuery({ f: page.forumId })}`,
           hint: composeHint('forumotion:forum', 'rss'),
         },
         {
-          uri: `${origin}/feed/?${new URLSearchParams({ f: page.forumId, type: 'atom' })}`,
+          uri: `${origin}/feed/?${composeQuery({ f: page.forumId, type: 'atom' })}`,
           hint: composeHint('forumotion:forum', 'atom'),
         },
       )

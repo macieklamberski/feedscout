@@ -1,6 +1,12 @@
-import { decodeSegment, isHostOrSubdomainOf, parseUrl } from 'trousse'
+import { isHostOrSubdomainOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, getCookieNames, getTenantSubdomain, hasMarker } from '../../common/utils.js'
+import {
+  composeHint,
+  composeQuery,
+  getCookieNames,
+  getTenantSubdomain,
+  hasMarker,
+} from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -106,7 +112,7 @@ export const tenderHandler: PlatformHandler = {
       const { siteUrl, category, discussion } = page
 
       // The page links its comments feed with the discussion repeated as `discussion_id`.
-      const query = new URLSearchParams({ discussion_id: decodeSegment(discussion) ?? discussion })
+      const query = composeQuery({ discussion_id: discussion })
 
       return [
         {

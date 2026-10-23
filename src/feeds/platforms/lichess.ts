@@ -1,6 +1,6 @@
 import { getPathSegments, isAnyOf, isHostOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
+import { composeHint, composeQuery } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers community, home, languageCommunity, officialBlog, userBlog (html).
@@ -73,7 +73,7 @@ export const lichessHandler: PlatformHandler = {
     if (parsed.kind === 'community') {
       // An uppercase language code falls back to the feed of every language.
       const language = parsed.language?.toLowerCase()
-      const query = language ? `?${new URLSearchParams({ lang: language })}` : ''
+      const query = language ? `?${composeQuery({ lang: language })}` : ''
 
       return [
         {

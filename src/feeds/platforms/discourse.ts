@@ -3,6 +3,7 @@ import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import {
   composeHint,
+  composeQuery,
   digitsRegex,
   findElement,
   hasElementWithId,
@@ -158,7 +159,7 @@ export const discourseHandler: PlatformHandler = {
     }
 
     if (parsed.kind === 'top') {
-      const periodQuery = parsed.period ? `?${new URLSearchParams({ period: parsed.period })}` : ''
+      const periodQuery = parsed.period ? `?${composeQuery({ period: parsed.period })}` : ''
 
       return [
         {

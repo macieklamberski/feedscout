@@ -156,7 +156,7 @@ describe('deviantartHandler', () => {
       const value = 'https://deviantart.com/yuumei'
       const expected = [
         {
-          uri: 'https://backend.deviantart.com/rss.xml?type=deviation&q=by%3Ayuumei+sort%3Atime+meta%3Aall',
+          uri: 'https://backend.deviantart.com/rss.xml?type=deviation&q=by%3Ayuumei%20sort%3Atime%20meta%3Aall',
           hint: { key: 'deviantart:deviations', label: 'Deviations' },
         },
       ]

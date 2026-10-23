@@ -2,6 +2,7 @@ import { isSubdomainOf, parseUrl, resolveUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import {
   composeHint,
+  composeQuery,
   digitsRegex,
   findElements,
   getCookieNames,
@@ -102,7 +103,7 @@ export const legistarHandler: PlatformHandler = {
     }
 
     const { origin } = new URL(url)
-    const query = new URLSearchParams({ ID: parsed.id, GUID: parsed.guid })
+    const query = composeQuery({ ID: parsed.id, GUID: parsed.guid })
 
     if (parsed.kind === 'legislation') {
       return [

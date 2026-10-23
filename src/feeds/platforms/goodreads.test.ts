@@ -171,7 +171,7 @@ describe('goodreadsHandler', () => {
       const value = 'https://www.goodreads.com/review/list/1?shelf=currently%20reading'
       const expected = [
         {
-          uri: 'https://www.goodreads.com/review/list_rss/1?shelf=currently+reading',
+          uri: 'https://www.goodreads.com/review/list_rss/1?shelf=currently%20reading',
           hint: { key: 'goodreads:shelf', label: 'Shelf' },
         },
         {

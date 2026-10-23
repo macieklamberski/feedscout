@@ -2,6 +2,7 @@ import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import {
   composeHint,
+  composeQuery,
   digitsRegex,
   type Element,
   findElements,
@@ -101,7 +102,7 @@ export const yeswikiHandler: PlatformHandler = {
 
     for (const formId of formIds) {
       uris.push({
-        uri: `${wikiUrl}?BazaR/rss&${new URLSearchParams({ id: formId })}`,
+        uri: `${wikiUrl}?BazaR/rss&${composeQuery({ id: formId })}`,
         hint: composeHint('yeswiki:form-entries'),
       })
     }

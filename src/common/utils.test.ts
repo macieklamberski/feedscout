@@ -2,6 +2,7 @@ import { describe, expect, it } from 'bun:test'
 import type { DiscoverUriHint, FetchFn } from './types.js'
 import {
   composeHint,
+  composeQuery,
   type Element,
   findDescendant,
   findElement,
@@ -648,6 +649,38 @@ describe('getScriptDirectory', () => {
 
   it('should return an empty string for the root', () => {
     expect(getScriptDirectory('/')).toBe('')
+  })
+})
+
+describe('composeQuery', () => {
+  it('should join the pairs in the order given', () => {
+    const value = { type: 'rss', id: '42' }
+
+    expect(composeQuery(value)).toBe('type=rss&id=42')
+  })
+
+  it('should escape an ampersand and a number sign in a value', () => {
+    const value = { id: 'a&b=c#d' }
+
+    expect(composeQuery(value)).toBe('id=a%26b=c%23d')
+  })
+
+  it('should escape whitespace in a value', () => {
+    const value = { tag: 'tiny cooking' }
+
+    expect(composeQuery(value)).toBe('tag=tiny%20cooking')
+  })
+
+  it('should leave a percent sign as written', () => {
+    const value = { tags: 'c%2B%2B' }
+
+    expect(composeQuery(value)).toBe('tags=c%2B%2B')
+  })
+
+  it('should leave an at sign and the other characters a query may hold as written', () => {
+    const value = { id: '24662369@N07', q: 'by:alice/x+y' }
+
+    expect(composeQuery(value)).toBe('id=24662369@N07&q=by:alice/x+y')
   })
 })
 

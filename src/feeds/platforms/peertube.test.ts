@@ -91,7 +91,7 @@ describe('peertubeHandler', () => {
       const value = 'https://example.com/c/news&accountName=alice'
       const expected = [
         {
-          uri: 'https://example.com/feeds/videos.xml?videoChannelName=news%26accountName%3Dalice',
+          uri: 'https://example.com/feeds/videos.xml?videoChannelName=news%26accountName=alice',
           hint: { key: 'peertube:channel', label: 'Channel' },
         },
         {
@@ -123,7 +123,7 @@ describe('peertubeHandler', () => {
       const value = 'https://example.com/a/bob&x=1'
       const expected = [
         {
-          uri: 'https://example.com/feeds/videos.xml?accountName=bob%26x%3D1',
+          uri: 'https://example.com/feeds/videos.xml?accountName=bob%26x=1',
           hint: { key: 'peertube:account', label: 'Account' },
         },
         {

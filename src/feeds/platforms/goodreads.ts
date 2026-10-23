@@ -1,7 +1,7 @@
 import { getPathSegments, isAnyOf, isHostOf, parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
+import { composeHint, composeQuery } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers userShow (html).
@@ -69,7 +69,7 @@ export const goodreadsHandler: PlatformHandler = {
 
     if (parsed.shelf) {
       uris.push({
-        uri: `${origin}/review/list_rss/${parsed.userId}?${new URLSearchParams({ shelf: parsed.shelf })}`,
+        uri: `${origin}/review/list_rss/${parsed.userId}?${composeQuery({ shelf: encodeURIComponent(parsed.shelf) })}`,
         hint: composeHint('goodreads:shelf'),
       })
     }

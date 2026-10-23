@@ -1,6 +1,6 @@
 import { isHostOf, isHostOrSubdomainOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, digitsRegex } from '../../common/utils.js'
+import { composeHint, composeQuery, digitsRegex } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers home, meta, question (html).
@@ -102,7 +102,7 @@ export const stackExchangeHandler: PlatformHandler = {
     const { origin } = new URL(url)
 
     if (parsed.kind === 'tag') {
-      const sortQuery = parsed.sort ? `?${new URLSearchParams({ sort: parsed.sort })}` : ''
+      const sortQuery = parsed.sort ? `?${composeQuery({ sort: parsed.sort })}` : ''
 
       return [
         {
