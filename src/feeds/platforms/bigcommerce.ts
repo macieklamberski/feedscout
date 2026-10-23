@@ -1,12 +1,7 @@
+import { composeQuery } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import {
-  composeHint,
-  composeQuery,
-  findElement,
-  getCookieNames,
-  hasMarker,
-} from '../../common/utils.js'
+import { composeHint, findElement, getCookieNames, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic partly covers category, home, search.
@@ -65,19 +60,19 @@ export const bigcommerceHandler: PlatformHandler = {
 
       uris.push(
         {
-          uri: `${feedUrl}?${composeQuery({ categoryid: categoryId, type: 'rss' })}`,
+          uri: `${feedUrl}${composeQuery({ categoryid: categoryId, type: 'rss' })}`,
           hint: composeHint('bigcommerce:category-new-products', 'rss'),
         },
         {
-          uri: `${feedUrl}?${composeQuery({ categoryid: categoryId, type: 'atom' })}`,
+          uri: `${feedUrl}${composeQuery({ categoryid: categoryId, type: 'atom' })}`,
           hint: composeHint('bigcommerce:category-new-products', 'atom'),
         },
         {
-          uri: `${feedUrl}?${composeQuery({ action: 'popularproducts', categoryid: categoryId, type: 'rss' })}`,
+          uri: `${feedUrl}${composeQuery({ action: 'popularproducts', categoryid: categoryId, type: 'rss' })}`,
           hint: composeHint('bigcommerce:category-popular-products', 'rss'),
         },
         {
-          uri: `${feedUrl}?${composeQuery({ action: 'popularproducts', categoryid: categoryId, type: 'atom' })}`,
+          uri: `${feedUrl}${composeQuery({ action: 'popularproducts', categoryid: categoryId, type: 'atom' })}`,
           hint: composeHint('bigcommerce:category-popular-products', 'atom'),
         },
       )

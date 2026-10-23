@@ -1,7 +1,7 @@
-import { getAnyOf, getPathSegments, isAnyOf, isHostOf, parseUrl } from 'trousse'
+import { composeQuery, getAnyOf, getPathSegments, isAnyOf, isHostOf, parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, composeQuery } from '../../common/utils.js'
+import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers domain, subreddits (guess, html), partly covers multiSubreddit.
@@ -48,7 +48,7 @@ const getTimeframe = (sort: string, searchParams: URLSearchParams): string | und
 }
 
 const composeTimeframeQuery = (timeframe: string | undefined): string => {
-  return timeframe ? `?${composeQuery({ t: timeframe })}` : ''
+  return timeframe ? composeQuery({ t: timeframe }) : ''
 }
 
 // Combined subreddits work transparently: /r/{sub1}+{sub2} is captured as one name.

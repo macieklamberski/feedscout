@@ -1,7 +1,7 @@
-import { getPathSegments, isAnyOf, isHostOf } from 'trousse'
+import { composeQuery, getPathSegments, isAnyOf, isHostOf } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, composeQuery, digitsRegex } from '../../common/utils.js'
+import { composeHint, digitsRegex } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers paper (html), partly covers category.
@@ -50,7 +50,7 @@ export const pchomeHandler: PlatformHandler = {
 
     if (parsed.kind === 'category') {
       uris.push({
-        uri: `${baseUrl}/${parsed.username}/rss?${composeQuery({ cid: parsed.category })}`,
+        uri: `${baseUrl}/${parsed.username}/rss${composeQuery({ cid: parsed.category })}`,
         hint: composeHint('pchome:category'),
       })
     }

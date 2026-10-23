@@ -1,6 +1,6 @@
-import { isSubdomainOf } from 'trousse'
+import { composeQuery, isSubdomainOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, composeQuery } from '../../common/utils.js'
+import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -58,7 +58,7 @@ export const mailchimpHandler: PlatformHandler = {
 
     return [
       {
-        uri: `${origin}/feed?${composeQuery({ u: parsed.userId, id: listId })}`,
+        uri: `${origin}/feed${composeQuery({ u: parsed.userId, id: listId })}`,
         hint: composeHint('mailchimp:archive'),
       },
     ]

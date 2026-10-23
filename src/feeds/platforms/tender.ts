@@ -1,12 +1,6 @@
-import { decodeSegment, isHostOrSubdomainOf, parseUrl } from 'trousse'
+import { composeQuery, decodeSegment, isHostOrSubdomainOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import {
-  composeHint,
-  composeQuery,
-  getCookieNames,
-  getTenantSubdomain,
-  hasMarker,
-} from '../../common/utils.js'
+import { composeHint, getCookieNames, getTenantSubdomain, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -116,7 +110,7 @@ export const tenderHandler: PlatformHandler = {
 
       return [
         {
-          uri: `${siteUrl}/discussions/${category}/${discussion}.atom?${query}`,
+          uri: `${siteUrl}/discussions/${category}/${discussion}.atom${query}`,
           hint: composeHint('tender:discussion'),
         },
       ]

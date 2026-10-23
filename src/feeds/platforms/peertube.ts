@@ -1,7 +1,7 @@
-import { decodeSegment, parseUrl } from 'trousse'
+import { composeQuery, decodeSegment, parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, composeQuery, hasMarker } from '../../common/utils.js'
+import { composeHint, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers channel, instance (html), partly covers account.
@@ -66,7 +66,7 @@ export const peertubeHandler: PlatformHandler = {
 
       return [
         {
-          uri: `${origin}/feeds/videos.xml?${query}`,
+          uri: `${origin}/feeds/videos.xml${query}`,
           hint: composeHint('peertube:channel'),
         },
         instance,
@@ -78,7 +78,7 @@ export const peertubeHandler: PlatformHandler = {
 
       return [
         {
-          uri: `${origin}/feeds/videos.xml?${query}`,
+          uri: `${origin}/feeds/videos.xml${query}`,
           hint: composeHint('peertube:account'),
         },
         instance,

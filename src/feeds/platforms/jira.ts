@@ -1,13 +1,7 @@
-import { isSubdomainOf } from 'trousse'
+import { composeQuery, isSubdomainOf } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import {
-  composeHint,
-  composeQuery,
-  getMetaContent,
-  hasMarker,
-  hasMetaContent,
-} from '../../common/utils.js'
+import { composeHint, getMetaContent, hasMarker, hasMetaContent } from '../../common/utils.js'
 
 // Discoverability: Not discoverable without handler.
 // Handler needed for: all shapes.
@@ -87,7 +81,7 @@ export const jiraHandler: PlatformHandler = {
 
     if (projectKey) {
       uris.push({
-        uri: `${baseUrl}/plugins/servlet/streams?${composeQuery({ key: projectKey })}`,
+        uri: `${baseUrl}/plugins/servlet/streams${composeQuery({ key: projectKey })}`,
         hint: composeHint('jira:project'),
       })
     }

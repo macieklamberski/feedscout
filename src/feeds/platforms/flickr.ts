@@ -1,6 +1,14 @@
-import { decodeSegment, getAnyOf, getPathSegments, isAnyOf, isHostOf, parseUrl } from 'trousse'
+import {
+  composeQuery,
+  decodeSegment,
+  getAnyOf,
+  getPathSegments,
+  isAnyOf,
+  isHostOf,
+  parseUrl,
+} from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, composeQuery } from '../../common/utils.js'
+import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers favorites, groupDiscuss, photostream (html), partly covers group, groupPool.
@@ -109,7 +117,7 @@ export const flickrHandler: PlatformHandler = {
 
       return [
         {
-          uri: `${feedsBase}/photos_public.gne?${query}`,
+          uri: `${feedsBase}/photos_public.gne${query}`,
           hint: composeHint('flickr:tag'),
         },
       ]
@@ -119,16 +127,16 @@ export const flickrHandler: PlatformHandler = {
     if (parsed.kind === 'group') {
       const { group: nsid, section } = parsed
       const pool = {
-        uri: `${feedsBase}/groups_pool.gne?${composeQuery({ id: nsid })}`,
+        uri: `${feedsBase}/groups_pool.gne${composeQuery({ id: nsid })}`,
         hint: composeHint('flickr:group-pool'),
       }
       const discuss = {
-        uri: `${feedsBase}/groups_discuss.gne?${composeQuery({ id: nsid })}`,
+        uri: `${feedsBase}/groups_discuss.gne${composeQuery({ id: nsid })}`,
         hint: composeHint('flickr:group-discuss'),
       }
       // The pool photos that carry a location.
       const geo = {
-        uri: `${feedsBase}/geo/?${composeQuery({ g: nsid })}`,
+        uri: `${feedsBase}/geo/${composeQuery({ g: nsid })}`,
         hint: composeHint('flickr:group-geo'),
       }
 
@@ -150,7 +158,7 @@ export const flickrHandler: PlatformHandler = {
     if (parsed.kind === 'favorites') {
       return [
         {
-          uri: `${feedsBase}/photos_faves.gne?${composeQuery({ id: parsed.userId })}`,
+          uri: `${feedsBase}/photos_faves.gne${composeQuery({ id: parsed.userId })}`,
           hint: composeHint('flickr:faves'),
         },
       ]
@@ -158,7 +166,7 @@ export const flickrHandler: PlatformHandler = {
 
     return [
       {
-        uri: `${feedsBase}/photos_public.gne?${composeQuery({ id: parsed.userId })}`,
+        uri: `${feedsBase}/photos_public.gne${composeQuery({ id: parsed.userId })}`,
         hint: composeHint('flickr:photos'),
       },
     ]

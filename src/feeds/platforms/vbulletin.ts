@@ -1,9 +1,8 @@
-import { parseUrl } from 'trousse'
+import { composeQuery, parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import {
   composeHint,
-  composeQuery,
   digitsRegex,
   findElement,
   getCookieNames,
@@ -95,7 +94,7 @@ const getVbulletin5Page = (url: string, content: string | undefined): VbulletinP
   if (channelId && channelId !== '1') {
     return {
       siteFeedUrl,
-      forumFeedUrl: `${feedUrl}?${composeQuery({ type: 'rss2', nodeid: channelId })}`,
+      forumFeedUrl: `${feedUrl}${composeQuery({ type: 'rss2', nodeid: channelId })}`,
     }
   }
 
@@ -132,7 +131,7 @@ const getVbulletinPage = (url: string, content: string | undefined): VbulletinPa
   const page: VbulletinPage = { siteFeedUrl: `${rootUrl}/external.php?type=RSS2` }
 
   if (forumId) {
-    page.forumFeedUrl = `${rootUrl}/external.php?${composeQuery({ type: 'RSS2', forumids: forumId })}`
+    page.forumFeedUrl = `${rootUrl}/external.php${composeQuery({ type: 'RSS2', forumids: forumId })}`
   }
 
   return page

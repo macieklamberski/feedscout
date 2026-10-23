@@ -1,7 +1,7 @@
-import { decodeSegment, parseUrl } from 'trousse'
+import { composeQuery, decodeSegment, parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, composeQuery, getTenantSubdomain } from '../../common/utils.js'
+import { composeHint, getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic partly covers blog, post, tag.
@@ -64,7 +64,7 @@ export const sapoBlogsHandler: PlatformHandler = {
       // The endpoint answers an empty channel for a made-up post id, so only a linked post counts.
       if (postLinkRegex.test(content ?? '')) {
         uris.push({
-          uri: `${commentsUrl}?${composeQuery({ blog: parsed.blog, ditemid: parsed.postId })}`,
+          uri: `${commentsUrl}${composeQuery({ blog: parsed.blog, ditemid: parsed.postId })}`,
           hint: composeHint('sapo-blogs:post-comments'),
         })
       }
@@ -85,7 +85,7 @@ export const sapoBlogsHandler: PlatformHandler = {
     uris.push({ uri: `${origin}/data/rss`, hint: composeHint('sapo-blogs:posts', 'rss') })
     uris.push({ uri: `${origin}/data/atom`, hint: composeHint('sapo-blogs:posts', 'atom') })
     uris.push({
-      uri: `${commentsUrl}?${composeQuery({ blog: parsed.blog })}`,
+      uri: `${commentsUrl}${composeQuery({ blog: parsed.blog })}`,
       hint: composeHint('sapo-blogs:comments'),
     })
 

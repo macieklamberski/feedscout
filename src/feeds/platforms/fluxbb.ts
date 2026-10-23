@@ -1,13 +1,7 @@
-import { parseUrl } from 'trousse'
+import { composeQuery, parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import {
-  composeHint,
-  composeQuery,
-  getScriptDirectory,
-  hasElementWithId,
-  hasMarker,
-} from '../../common/utils.js'
+import { composeHint, getScriptDirectory, hasElementWithId, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic partly covers board, forum, topic.
@@ -76,14 +70,14 @@ export const fluxbbHandler: PlatformHandler = {
 
     if (parsed.kind === 'forum') {
       uris.push({
-        uri: `${feedUrl}?${composeQuery({ action: 'feed', fid: parsed.forumId, type: 'atom' })}`,
+        uri: `${feedUrl}${composeQuery({ action: 'feed', fid: parsed.forumId, type: 'atom' })}`,
         hint: composeHint('fluxbb:forum'),
       })
     }
 
     if (parsed.kind === 'topic') {
       uris.push({
-        uri: `${feedUrl}?${composeQuery({ action: 'feed', tid: parsed.topicId, type: 'atom' })}`,
+        uri: `${feedUrl}${composeQuery({ action: 'feed', tid: parsed.topicId, type: 'atom' })}`,
         hint: composeHint('fluxbb:topic'),
       })
     }

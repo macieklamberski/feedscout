@@ -1,7 +1,7 @@
-import { decodeSegment, isHostOf, parseUrl } from 'trousse'
+import { composeQuery, decodeSegment, isHostOf, parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, composeQuery } from '../../common/utils.js'
+import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers featured, news (html), partly covers profile.
@@ -77,23 +77,23 @@ export const myanimelistHandler: PlatformHandler = {
     const uris: Array<DiscoverUriEntry> = []
 
     uris.push({
-      uri: `https://myanimelist.net/rss.php?${composeQuery({ type: 'rw', u: username })}`,
+      uri: `https://myanimelist.net/rss.php${composeQuery({ type: 'rw', u: username })}`,
       hint: composeHint('myanimelist:anime'),
     })
     uris.push({
-      uri: `https://myanimelist.net/rss.php?${composeQuery({ type: 'rm', u: username })}`,
+      uri: `https://myanimelist.net/rss.php${composeQuery({ type: 'rm', u: username })}`,
       hint: composeHint('myanimelist:manga'),
     })
     uris.push({
-      uri: `https://myanimelist.net/rss.php?${composeQuery({ type: 'rwe', u: username })}`,
+      uri: `https://myanimelist.net/rss.php${composeQuery({ type: 'rwe', u: username })}`,
       hint: composeHint('myanimelist:recently-watched'),
     })
     uris.push({
-      uri: `https://myanimelist.net/rss.php?${composeQuery({ type: 'rrm', u: username })}`,
+      uri: `https://myanimelist.net/rss.php${composeQuery({ type: 'rrm', u: username })}`,
       hint: composeHint('myanimelist:recently-read'),
     })
     uris.push({
-      uri: `https://myanimelist.net/rss.php?${composeQuery({ type: 'blog', u: username })}`,
+      uri: `https://myanimelist.net/rss.php${composeQuery({ type: 'blog', u: username })}`,
       hint: composeHint('myanimelist:blog'),
     })
 
