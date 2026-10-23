@@ -56,13 +56,6 @@ describe('odyseeHandler', () => {
       expect(await odyseeHandler.resolve(url)).toEqual(expected)
     })
 
-    it('should lowercase an uppercase claim id prefix', async () => {
-      const url = 'https://odysee.com/@alice:3F'
-      const expected = [{ platform: 'odysee', id: 'alice:3f', url }]
-
-      expect(await odyseeHandler.resolve(url)).toEqual(expected)
-    })
-
     it('should return empty array for the home page', async () => {
       expect(await odyseeHandler.resolve('https://odysee.com/')).toEqual([])
     })

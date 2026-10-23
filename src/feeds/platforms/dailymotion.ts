@@ -52,8 +52,7 @@ export const parseDailymotionUrl = (url: string): DailymotionUrl | undefined => 
   const channel = pathname.match(channelRegex)?.groups?.channel
 
   if (channel && wordOrHyphenRegex.test(channel)) {
-    // The feed answers 404 for a channel in uppercase.
-    return { kind: 'channel', channel: channel.toLowerCase() }
+    return { kind: 'channel', channel }
   }
 
   const username = pathname.match(userRegex)?.[1]
