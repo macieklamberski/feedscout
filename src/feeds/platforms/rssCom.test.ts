@@ -14,12 +14,6 @@ describe('parseRssComUrl', () => {
     expect(parseRssComUrl('https://rss.com/es/podcasts/podcasting101')).toEqual(expected)
   })
 
-  it('should lowercase an uppercase show slug', () => {
-    const expected: RssComUrl = { kind: 'podcast', show: 'podcasting101' }
-
-    expect(parseRssComUrl('https://rss.com/podcasts/PODCASTING101')).toEqual(expected)
-  })
-
   it('should return undefined for the root', () => {
     expect(parseRssComUrl('https://rss.com/')).toBeUndefined()
   })

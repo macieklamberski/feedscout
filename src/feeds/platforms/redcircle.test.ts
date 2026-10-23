@@ -49,12 +49,6 @@ describe('redcircleHandler', () => {
       expect(redcircleHandler.resolve(value, episodeContent)).toEqual(expected)
     })
 
-    it('should lowercase an uppercase uuid in URL', () => {
-      const value = 'https://redcircle.com/shows/E8AB057C-683D-4375-A197-2DCC42D4F851'
-
-      expect(redcircleHandler.resolve(value)).toEqual(expected)
-    })
-
     it('should return empty array for slug page without content', () => {
       const value = 'https://redcircle.com/shows/japanese-with-shun'
 

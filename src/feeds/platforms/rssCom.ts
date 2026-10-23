@@ -23,8 +23,7 @@ export const parseRssComUrl = (url: string): RssComUrl | undefined => {
     return
   }
 
-  // media.rss.com answers 404 for a show slug in uppercase.
-  return { kind: 'podcast', show: show.toLowerCase() }
+  return { kind: 'podcast', show }
 }
 
 export const rssComHandler: PlatformHandler = {

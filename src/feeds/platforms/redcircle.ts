@@ -18,8 +18,7 @@ const getUuidFromPath = (pathname: string): string | undefined => {
     return
   }
 
-  // feeds.redcircle.com answers 404 for a show uuid in uppercase.
-  return segment.toLowerCase()
+  return segment
 }
 
 const findShowUuid = (url: string, content: string | undefined): string | undefined => {
