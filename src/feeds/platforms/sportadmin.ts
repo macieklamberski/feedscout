@@ -1,4 +1,4 @@
-import { parseUrl } from 'trousse'
+import { composeQuery, parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, digitsRegex, findElement, getTenantSubdomain } from '../../common/utils.js'
@@ -80,7 +80,7 @@ export const sportadminHandler: PlatformHandler = {
 
     if (page.kind === 'team') {
       uris.push({
-        uri: `${origin}/rss/?SID=${page.sectionId}`,
+        uri: `${origin}/rss/${composeQuery({ SID: page.sectionId })}`,
         hint: composeHint('sportadmin:team'),
       })
     }

@@ -207,7 +207,7 @@ describe('youtubeHandler', () => {
       const value = 'https://www.youtube.com/playlist?list=PL1%26x%3D2'
       const expected = [
         {
-          uri: 'https://www.youtube.com/feeds/videos.xml?playlist_id=PL1%26x%3D2',
+          uri: 'https://www.youtube.com/feeds/videos.xml?playlist_id=PL1%26x=2',
           hint: { key: 'youtube:playlist', label: 'Playlist' },
         },
       ]

@@ -1,4 +1,4 @@
-import { isHostOrSubdomainOf, parseUrl } from 'trousse'
+import { composeQuery, decodeSegment, isHostOrSubdomainOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, getCookieNames, getTenantSubdomain, hasMarker } from '../../common/utils.js'
 
@@ -106,9 +106,11 @@ export const tenderHandler: PlatformHandler = {
       const { siteUrl, category, discussion } = page
 
       // The page links its comments feed with the discussion repeated as `discussion_id`.
+      const query = composeQuery({ discussion_id: decodeSegment(discussion) ?? discussion })
+
       return [
         {
-          uri: `${siteUrl}/discussions/${category}/${discussion}.atom?discussion_id=${discussion}`,
+          uri: `${siteUrl}/discussions/${category}/${discussion}.atom${query}`,
           hint: composeHint('tender:discussion'),
         },
       ]

@@ -1,4 +1,4 @@
-import { parseUrl } from 'trousse'
+import { composeQuery, parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import {
@@ -92,8 +92,10 @@ export const discuzHandler: PlatformHandler = {
 
     if (isLegacyDiscuz(content)) {
       if (parsed.kind === 'board') {
+        const boardQuery = composeQuery({ fid: parsed.boardId, auth: '0' })
+
         uris.push({
-          uri: new URL(`rss.php?fid=${parsed.boardId}&auth=0`, installUrl).href,
+          uri: new URL(`rss.php${boardQuery}`, installUrl).href,
           hint: composeHint('discuz:board'),
         })
       }
@@ -107,8 +109,10 @@ export const discuzHandler: PlatformHandler = {
     }
 
     if (parsed.kind === 'board') {
+      const boardQuery = composeQuery({ mod: 'rss', fid: parsed.boardId, auth: '0' })
+
       uris.push({
-        uri: new URL(`forum.php?mod=rss&fid=${parsed.boardId}&auth=0`, installUrl).href,
+        uri: new URL(`forum.php${boardQuery}`, installUrl).href,
         hint: composeHint('discuz:board'),
       })
     }

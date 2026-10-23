@@ -1,4 +1,4 @@
-import { getAnyOf, isAnyOf, isHostOf, parseUrl } from 'trousse'
+import { composeQuery, getAnyOf, isAnyOf, isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, digitsRegex } from '../../common/utils.js'
 
@@ -57,7 +57,7 @@ export const webtoonsHandler: PlatformHandler = {
 
     return [
       {
-        uri: `https://www.webtoons.com/${parsed.language}/${genre}/${parsed.name}/rss?title_no=${parsed.titleNo}`,
+        uri: `https://www.webtoons.com/${parsed.language}/${genre}/${parsed.name}/rss${composeQuery({ title_no: parsed.titleNo })}`,
         hint: composeHint('webtoons:series'),
       },
     ]

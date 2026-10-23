@@ -1,4 +1,12 @@
-import { getAnyOf, getPathSegments, isAnyOf, isHostOf, parseUrl } from 'trousse'
+import {
+  composeQuery,
+  decodeSegment,
+  getAnyOf,
+  getPathSegments,
+  isAnyOf,
+  isHostOf,
+  parseUrl,
+} from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
@@ -105,9 +113,11 @@ export const flickrHandler: PlatformHandler = {
 
     // Tag page: /photos/tags/{tag}
     if (parsed.kind === 'tag') {
+      const query = composeQuery({ tags: decodeSegment(parsed.tag) ?? parsed.tag })
+
       return [
         {
-          uri: `${feedsBase}/photos_public.gne?tags=${parsed.tag}`,
+          uri: `${feedsBase}/photos_public.gne${query}`,
           hint: composeHint('flickr:tag'),
         },
       ]
@@ -117,16 +127,16 @@ export const flickrHandler: PlatformHandler = {
     if (parsed.kind === 'group') {
       const { group: nsid, section } = parsed
       const pool = {
-        uri: `${feedsBase}/groups_pool.gne?id=${nsid}`,
+        uri: `${feedsBase}/groups_pool.gne${composeQuery({ id: nsid })}`,
         hint: composeHint('flickr:group-pool'),
       }
       const discuss = {
-        uri: `${feedsBase}/groups_discuss.gne?id=${nsid}`,
+        uri: `${feedsBase}/groups_discuss.gne${composeQuery({ id: nsid })}`,
         hint: composeHint('flickr:group-discuss'),
       }
       // The pool photos that carry a location.
       const geo = {
-        uri: `${feedsBase}/geo/?g=${nsid}`,
+        uri: `${feedsBase}/geo/${composeQuery({ g: nsid })}`,
         hint: composeHint('flickr:group-geo'),
       }
 
@@ -148,7 +158,7 @@ export const flickrHandler: PlatformHandler = {
     if (parsed.kind === 'favorites') {
       return [
         {
-          uri: `${feedsBase}/photos_faves.gne?id=${parsed.userId}`,
+          uri: `${feedsBase}/photos_faves.gne${composeQuery({ id: parsed.userId })}`,
           hint: composeHint('flickr:faves'),
         },
       ]
@@ -156,7 +166,7 @@ export const flickrHandler: PlatformHandler = {
 
     return [
       {
-        uri: `${feedsBase}/photos_public.gne?id=${parsed.userId}`,
+        uri: `${feedsBase}/photos_public.gne${composeQuery({ id: parsed.userId })}`,
         hint: composeHint('flickr:photos'),
       },
     ]

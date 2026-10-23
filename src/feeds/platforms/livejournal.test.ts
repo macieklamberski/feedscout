@@ -198,11 +198,11 @@ describe('livejournalHandler', () => {
       const value = 'https://alice.livejournal.com/tag/caf%C3%A9'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://alice.livejournal.com/data/rss?tag=caf%C3%A9',
+          uri: 'https://alice.livejournal.com/data/rss?tag=café',
           hint: { key: 'livejournal:posts-tag', label: 'Tag', format: 'rss' },
         },
         {
-          uri: 'https://alice.livejournal.com/data/atom?tag=caf%C3%A9',
+          uri: 'https://alice.livejournal.com/data/atom?tag=café',
           hint: { key: 'livejournal:posts-tag', label: 'Tag', format: 'atom' },
         },
         {

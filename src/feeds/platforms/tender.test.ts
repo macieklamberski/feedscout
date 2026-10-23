@@ -194,6 +194,30 @@ describe('tenderHandler', () => {
   })
 
   describe('resolve', () => {
+    it('should keep a discussion with & inside the discussion_id query value', () => {
+      const value = 'https://alice.tenderapp.com/discussions/questions/1234-a&b'
+      const expected = [
+        {
+          uri: 'https://alice.tenderapp.com/discussions/questions/1234-a&b.atom?discussion_id=1234-a%26b',
+          hint: { key: 'tender:discussion', label: 'Discussion comments' },
+        },
+      ]
+
+      expect(tenderHandler.resolve(value, settingsHtml)).toEqual(expected)
+    })
+
+    it('should keep an escaped discussion escaped once in the discussion_id query value', () => {
+      const value = 'https://alice.tenderapp.com/discussions/questions/1234-a%2Bb'
+      const expected = [
+        {
+          uri: 'https://alice.tenderapp.com/discussions/questions/1234-a%2Bb.atom?discussion_id=1234-a%2Bb',
+          hint: { key: 'tender:discussion', label: 'Discussion comments' },
+        },
+      ]
+
+      expect(tenderHandler.resolve(value, settingsHtml)).toEqual(expected)
+    })
+
     it('should return the discussions feed for the home page', () => {
       const expected: Array<DiscoverUriEntry> = [
         {

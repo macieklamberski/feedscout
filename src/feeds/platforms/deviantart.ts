@@ -1,4 +1,4 @@
-import { decodeSegment, isHostOf, parseUrl } from 'trousse'
+import { composeQuery, decodeSegment, isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
@@ -81,7 +81,7 @@ export const deviantartHandler: PlatformHandler = {
     if (parsed.kind === 'dailyDeviations') {
       return [
         {
-          uri: `${feedBaseUrl}?q=${encodeURIComponent('special:dd')}`,
+          uri: `${feedBaseUrl}${composeQuery({ q: 'special:dd' })}`,
           hint: composeHint('deviantart:daily-deviations'),
         },
       ]
@@ -90,7 +90,7 @@ export const deviantartHandler: PlatformHandler = {
     if (parsed.kind === 'tag') {
       return [
         {
-          uri: `${feedBaseUrl}?type=deviation&q=${encodeURIComponent(`tag:${parsed.tag}`)}`,
+          uri: `${feedBaseUrl}${composeQuery({ type: 'deviation', q: `tag:${parsed.tag}` })}`,
           hint: composeHint('deviantart:tag'),
         },
       ]
@@ -99,13 +99,14 @@ export const deviantartHandler: PlatformHandler = {
     if (parsed.kind === 'favourites') {
       return [
         {
-          uri: `${feedBaseUrl}?type=deviation&q=${encodeURIComponent(`favby:${parsed.username}`)}`,
+          uri: `${feedBaseUrl}${composeQuery({ type: 'deviation', q: `favby:${parsed.username}` })}`,
           hint: composeHint('deviantart:favorites'),
         },
       ]
     }
 
     if (parsed.kind === 'folder') {
+      // A stored gallery feed spells `/` as `%2F`, which feedcanon does not read as the same url.
       const query = `gallery:${parsed.username}/${parsed.folderId}`
 
       return [
@@ -119,17 +120,17 @@ export const deviantartHandler: PlatformHandler = {
     if (parsed.kind === 'journal') {
       return [
         {
-          uri: `${feedBaseUrl}?q=${encodeURIComponent(`journal:${parsed.username}`)}`,
+          uri: `${feedBaseUrl}${composeQuery({ q: `journal:${parsed.username}` })}`,
           hint: composeHint('deviantart:journal'),
         },
       ]
     }
 
-    const query = `by:${parsed.username} sort:time meta:all`
+    const query = composeQuery({ type: 'deviation', q: `by:${parsed.username} sort:time meta:all` })
 
     return [
       {
-        uri: `${feedBaseUrl}?type=deviation&q=${encodeURIComponent(query)}`,
+        uri: `${feedBaseUrl}${query}`,
         hint: composeHint('deviantart:deviations'),
       },
     ]

@@ -1,4 +1,4 @@
-import { isHostOf, parseUrl } from 'trousse'
+import { composeQuery, isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
@@ -57,7 +57,7 @@ export const behanceHandler: PlatformHandler = {
     // `content=appreciated` and serves the user's own projects for it.
     return [
       {
-        uri: `https://www.behance.net/feeds/user?username=${parsed.username}`,
+        uri: `https://www.behance.net/feeds/user${composeQuery({ username: parsed.username })}`,
         hint: composeHint('behance:portfolio'),
       },
     ]

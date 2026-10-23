@@ -54,6 +54,18 @@ describe('mailchimpHandler', () => {
   })
 
   describe('resolve', () => {
+    it('should keep a list id with # inside the id query value', () => {
+      const value = 'https://us1.campaign-archive.com/home/?u=abc&id=def%23x'
+      const expected = [
+        {
+          uri: 'https://us1.campaign-archive.com/feed?u=abc&id=def%23x',
+          hint: { key: 'mailchimp:archive', label: 'Archive' },
+        },
+      ]
+
+      expect(mailchimpHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return empty array for a URL outside Mailchimp', () => {
       expect(mailchimpHandler.resolve('https://example.com/')).toEqual([])
     })

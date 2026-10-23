@@ -87,6 +87,54 @@ describe('peertubeHandler', () => {
   })
 
   describe('resolve', () => {
+    it('should keep a channel name with & inside the query value', () => {
+      const value = 'https://example.com/c/news&accountName=alice'
+      const expected = [
+        {
+          uri: 'https://example.com/feeds/videos.xml?videoChannelName=news%26accountName=alice',
+          hint: { key: 'peertube:channel', label: 'Channel' },
+        },
+        {
+          uri: 'https://example.com/feeds/videos.xml',
+          hint: { key: 'peertube:instance', label: 'Instance' },
+        },
+      ]
+
+      expect(peertubeHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should keep an escaped channel name escaped once in the query value', () => {
+      const value = 'https://example.com/c/a%2Bb'
+      const expected = [
+        {
+          uri: 'https://example.com/feeds/videos.xml?videoChannelName=a%2Bb',
+          hint: { key: 'peertube:channel', label: 'Channel' },
+        },
+        {
+          uri: 'https://example.com/feeds/videos.xml',
+          hint: { key: 'peertube:instance', label: 'Instance' },
+        },
+      ]
+
+      expect(peertubeHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should keep an account name with & inside the query value', () => {
+      const value = 'https://example.com/a/bob&x=1'
+      const expected = [
+        {
+          uri: 'https://example.com/feeds/videos.xml?accountName=bob%26x=1',
+          hint: { key: 'peertube:account', label: 'Account' },
+        },
+        {
+          uri: 'https://example.com/feeds/videos.xml',
+          hint: { key: 'peertube:instance', label: 'Instance' },
+        },
+      ]
+
+      expect(peertubeHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return empty array for a URL that does not parse', () => {
       expect(peertubeHandler.resolve('not-a-url')).toEqual([])
     })

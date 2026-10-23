@@ -1,3 +1,4 @@
+import { composeQuery } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, getMetaContent, hasMarker } from '../../common/utils.js'
@@ -35,7 +36,7 @@ export const confluenceHandler: PlatformHandler = {
 
     if (spaceKey) {
       uris.push({
-        uri: `${baseUrl}/plugins/servlet/streams?key=${spaceKey}`,
+        uri: `${baseUrl}/plugins/servlet/streams${composeQuery({ key: spaceKey })}`,
         hint: composeHint('confluence:space'),
       })
     }

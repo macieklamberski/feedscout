@@ -1,4 +1,4 @@
-import { parseUrl } from 'trousse'
+import { composeQuery, decodeSegment, parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, hasMarker } from '../../common/utils.js'
@@ -62,9 +62,11 @@ export const peertubeHandler: PlatformHandler = {
     }
 
     if (parsed.kind === 'channel') {
+      const query = composeQuery({ videoChannelName: decodeSegment(parsed.name) ?? parsed.name })
+
       return [
         {
-          uri: `${origin}/feeds/videos.xml?videoChannelName=${parsed.name}`,
+          uri: `${origin}/feeds/videos.xml${query}`,
           hint: composeHint('peertube:channel'),
         },
         instance,
@@ -72,9 +74,11 @@ export const peertubeHandler: PlatformHandler = {
     }
 
     if (parsed.kind === 'account') {
+      const query = composeQuery({ accountName: decodeSegment(parsed.name) ?? parsed.name })
+
       return [
         {
-          uri: `${origin}/feeds/videos.xml?accountName=${parsed.name}`,
+          uri: `${origin}/feeds/videos.xml${query}`,
           hint: composeHint('peertube:account'),
         },
         instance,

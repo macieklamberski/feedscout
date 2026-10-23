@@ -1,4 +1,4 @@
-import { isSubdomainOf } from 'trousse'
+import { composeQuery, isSubdomainOf } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, getMetaContent, hasMarker, hasMetaContent } from '../../common/utils.js'
@@ -81,7 +81,7 @@ export const jiraHandler: PlatformHandler = {
 
     if (projectKey) {
       uris.push({
-        uri: `${baseUrl}/plugins/servlet/streams?key=${projectKey}`,
+        uri: `${baseUrl}/plugins/servlet/streams${composeQuery({ key: projectKey })}`,
         hint: composeHint('jira:project'),
       })
     }

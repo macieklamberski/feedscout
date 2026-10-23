@@ -1,4 +1,4 @@
-import { parseUrl } from 'trousse'
+import { composeQuery, parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import {
@@ -109,9 +109,12 @@ export const mybbHandler: PlatformHandler = {
 
     if (forumId) {
       uris.push(
-        { uri: `${feedUrl}?fid=${forumId}`, hint: composeHint('mybb:forum', 'rss') },
         {
-          uri: `${feedUrl}?type=atom1.0&fid=${forumId}`,
+          uri: `${feedUrl}${composeQuery({ fid: forumId })}`,
+          hint: composeHint('mybb:forum', 'rss'),
+        },
+        {
+          uri: `${feedUrl}${composeQuery({ type: 'atom1.0', fid: forumId })}`,
           hint: composeHint('mybb:forum', 'atom'),
         },
       )

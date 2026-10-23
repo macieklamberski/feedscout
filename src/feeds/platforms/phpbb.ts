@@ -1,4 +1,4 @@
-import { parseUrl } from 'trousse'
+import { composeQuery, parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import {
@@ -79,14 +79,14 @@ export const phpbbHandler: PlatformHandler = {
 
     if (topicId) {
       uris.push({
-        uri: `${boardUrl}/feed.php?t=${topicId}`,
+        uri: `${boardUrl}/feed.php${composeQuery({ t: topicId })}`,
         hint: composeHint('phpbb:topic'),
       })
     }
 
     if (forumId) {
       uris.push({
-        uri: `${boardUrl}/feed.php?f=${forumId}`,
+        uri: `${boardUrl}/feed.php${composeQuery({ f: forumId })}`,
         hint: composeHint('phpbb:forum'),
       })
     }

@@ -1,4 +1,4 @@
-import { isHostOf } from 'trousse'
+import { composeQuery, isHostOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
@@ -54,7 +54,7 @@ export const atyponHandler: PlatformHandler = {
     const { origin } = new URL(url)
     const uris = [
       {
-        uri: `${origin}/action/showFeed?type=etoc&feed=rss&jc=${parsed.code}`,
+        uri: `${origin}/action/showFeed${composeQuery({ type: 'etoc', feed: 'rss', jc: parsed.code })}`,
         hint: composeHint('atypon:journal'),
       },
     ]

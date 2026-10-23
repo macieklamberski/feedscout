@@ -1,4 +1,4 @@
-import { isSubdomainOf, parseUrl, resolveUrl } from 'trousse'
+import { composeQuery, isSubdomainOf, parseUrl, resolveUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import {
   composeHint,
@@ -102,20 +102,23 @@ export const legistarHandler: PlatformHandler = {
     }
 
     const { origin } = new URL(url)
-    const query = `ID=${parsed.id}&GUID=${parsed.guid}`
 
     if (parsed.kind === 'legislation') {
+      const query = composeQuery({ M: 'LD', ID: parsed.id, GUID: parsed.guid })
+
       return [
         {
-          uri: getFeedUrl(url, content, `${origin}/Feed.ashx?M=LD&${query}`),
+          uri: getFeedUrl(url, content, `${origin}/Feed.ashx${query}`),
           hint: composeHint('legistar:legislation'),
         },
       ]
     }
 
+    const query = composeQuery({ M: 'CalendarDetail', ID: parsed.id, GUID: parsed.guid })
+
     return [
       {
-        uri: getFeedUrl(url, content, `${origin}/Feed.ashx?M=CalendarDetail&${query}`),
+        uri: getFeedUrl(url, content, `${origin}/Feed.ashx${query}`),
         hint: composeHint('legistar:meeting'),
       },
     ]

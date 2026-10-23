@@ -1,4 +1,4 @@
-import { decodeSegment, isHostOf, isSubdomainOf } from 'trousse'
+import { composeQuery, decodeSegment, isHostOf, isSubdomainOf } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, getTenantSubdomain } from '../../common/utils.js'
@@ -29,14 +29,14 @@ export const getJournalFeeds = (
   const uris: Array<DiscoverUriEntry> = []
 
   if (tag) {
-    const encodedTag = encodeURIComponent(decodeSegment(tag) ?? tag)
+    const tagQuery = composeQuery({ tag: decodeSegment(tag) ?? tag })
 
     uris.push({
-      uri: `${base}/data/rss?tag=${encodedTag}`,
+      uri: `${base}/data/rss${tagQuery}`,
       hint: composeHint(`${platform}:posts-tag`, 'rss'),
     })
     uris.push({
-      uri: `${base}/data/atom?tag=${encodedTag}`,
+      uri: `${base}/data/atom${tagQuery}`,
       hint: composeHint(`${platform}:posts-tag`, 'atom'),
     })
   }
