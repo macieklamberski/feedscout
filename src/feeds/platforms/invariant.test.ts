@@ -246,7 +246,11 @@ const cases: Array<Case> = [
   ],
   ['gcsWeb', gcsWebHandler, '<link href="/sites/g/files/knoqqb12345/files/css/css_abc.css">'],
   ['gitea', giteaHandler, '', new Headers({ 'set-cookie': 'i_like_gitea=abc; Path=/' })],
-  ['gitlab', gitlabHandler, '<meta property="og:site_name" content="GitLab">'],
+  [
+    'gitlab',
+    gitlabHandler,
+    '<script>window.gon={};</script><script src="/assets/webpack/main.chunk.js"></script>',
+  ],
   [
     'gnuboard',
     gnuboardHandler,

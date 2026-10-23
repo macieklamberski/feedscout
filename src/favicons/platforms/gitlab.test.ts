@@ -3,7 +3,14 @@ import type { DiscoverRef, FetchFn } from '../../common/types.js'
 import type { FaviconEnricherContext } from '../types.js'
 import { gitlabEnricher, gitlabHandler } from './gitlab.js'
 
-const gitlabHtml = '<html><head><meta property="og:site_name" content="GitLab"></head></html>'
+const gitlabHtml = `
+  <html>
+    <head>
+      <script>window.gon={};gon.features={};</script>
+      <script src="/assets/webpack/runtime.ea79027a.bundle.js" defer></script>
+    </head>
+  </html>
+`
 const gitlabHeaders = new Headers({ 'x-gitlab-meta': '{"version":"1"}' })
 
 const createContext = (responses: Record<string, string>): FaviconEnricherContext => {
@@ -39,8 +46,14 @@ describe('gitlabHandler', () => {
       expect(gitlabHandler.match(value, '', gitlabHeaders)).toBe(true)
     })
 
-    it('should not match a self-hosted namespace page without the /-/ separator', () => {
-      expect(gitlabHandler.match('https://gitlab.example.com/user', gitlabHtml)).toBe(false)
+    it('should match a self-hosted group page with GitLab HTML', () => {
+      expect(gitlabHandler.match('https://gitlab.example.com/group', gitlabHtml)).toBe(true)
+    })
+
+    it('should not match a page with only og:site_name GitLab', () => {
+      const content = '<meta property="og:site_name" content="GitLab">'
+
+      expect(gitlabHandler.match('https://example.com/group', content)).toBe(false)
     })
 
     it('should not match a GitLab subdomain carrying the GitLab site name', () => {
