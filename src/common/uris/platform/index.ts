@@ -1,4 +1,11 @@
-import { isHttpUrl, type NormalizeOptions, normalizeUrl, stripWww, trimUrlValues } from 'trousse'
+import {
+  isHttpUrl,
+  type NormalizeOptions,
+  normalizeUrl,
+  parseUrl,
+  stripWww,
+  trimUrlValues,
+} from 'trousse'
 import { reportError } from '../../discover/utils.js'
 import type {
   DiscoverInputObject,
@@ -29,8 +36,29 @@ const samePageOptions: NormalizeOptions = {
   normalizeEncoding: true,
 }
 
+const pathEscapeRegex = /%(?<hex>[0-9A-Fa-f]{2})/g
+// A path segment reads the same with these decoded. `/`, `?`, `#` and `%` stay escaped, since
+// decoding them moves where a segment, the path or an escape ends.
+const samePathCharRegex = /^[\w.~@:-]$/
+
+const decodePathEscapes = (url: string): string => {
+  const parsed = parseUrl(url)
+
+  if (!parsed?.pathname.includes('%')) {
+    return url
+  }
+
+  parsed.pathname = parsed.pathname.replace(pathEscapeRegex, (sequence, hex) => {
+    const char = String.fromCharCode(Number.parseInt(hex, 16))
+
+    return samePathCharRegex.test(char) ? char : sequence
+  })
+
+  return parsed.href
+}
+
 const readPageUrl = (url: string): string => {
-  return trimUrlValues(normalizeUrl(url, { collapseSlashes: true }))
+  return decodePathEscapes(trimUrlValues(normalizeUrl(url, { collapseSlashes: true })))
 }
 
 const matchesUrlAlone = (handler: PlatformHandler, url: string): boolean => {

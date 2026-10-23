@@ -222,6 +222,60 @@ describe('discoverUrisFromPlatform', () => {
     expect(receivedUrls).toEqual(expected)
   })
 
+  it('should decode an escaped character a path segment reads the same as', async () => {
+    const receivedUrls: Array<string> = []
+    const handler: PlatformHandler = {
+      match: (url) => {
+        receivedUrls.push(url)
+
+        return false
+      },
+      resolve: () => [],
+    }
+    const options = { baseUrl: 'https://example.com/photos/12345678%40N00/', handlers: [handler] }
+
+    await discoverUrisFromPlatform(undefined, undefined, options)
+    const expected = ['https://example.com/photos/12345678@N00/']
+
+    expect(receivedUrls).toEqual(expected)
+  })
+
+  it('should keep an escaped slash, question mark, hash or percent in a path segment', async () => {
+    const receivedUrls: Array<string> = []
+    const handler: PlatformHandler = {
+      match: (url) => {
+        receivedUrls.push(url)
+
+        return false
+      },
+      resolve: () => [],
+    }
+    const options = { baseUrl: 'https://example.com/tags/a%2Fb%3Fc%23d%25e/', handlers: [handler] }
+
+    await discoverUrisFromPlatform(undefined, undefined, options)
+    const expected = ['https://example.com/tags/a%2Fb%3Fc%23d%25e/']
+
+    expect(receivedUrls).toEqual(expected)
+  })
+
+  it('should keep an escaped character in a query value', async () => {
+    const receivedUrls: Array<string> = []
+    const handler: PlatformHandler = {
+      match: (url) => {
+        receivedUrls.push(url)
+
+        return false
+      },
+      resolve: () => [],
+    }
+    const options = { baseUrl: 'https://example.com/feeds?id=12345678%40N00', handlers: [handler] }
+
+    await discoverUrisFromPlatform(undefined, undefined, options)
+    const expected = ['https://example.com/feeds?id=12345678%40N00']
+
+    expect(receivedUrls).toEqual(expected)
+  })
+
   it('should pass handlers the page url in its standard form', async () => {
     const receivedUrls: Array<string> = []
     const handler: PlatformHandler = {
