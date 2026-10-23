@@ -1,4 +1,4 @@
-import { getPathSegments, isAnyOf, isHostOf, parseUrl } from 'trousse'
+import { composeQuery, getPathSegments, isAnyOf, isHostOf, parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
@@ -69,7 +69,7 @@ export const goodreadsHandler: PlatformHandler = {
 
     if (parsed.shelf) {
       uris.push({
-        uri: `${origin}/review/list_rss/${parsed.userId}?shelf=${encodeURIComponent(parsed.shelf)}`,
+        uri: `${origin}/review/list_rss/${parsed.userId}${composeQuery({ shelf: parsed.shelf })}`,
         hint: composeHint('goodreads:shelf'),
       })
     }

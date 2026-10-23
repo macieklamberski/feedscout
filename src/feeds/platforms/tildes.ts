@@ -1,4 +1,4 @@
-import { isHostOf, parseUrl } from 'trousse'
+import { composeQuery, isHostOf, parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
@@ -47,7 +47,7 @@ export const tildesHandler: PlatformHandler = {
     const uris: Array<DiscoverUriEntry> = []
 
     // Tildes' feed views honour the ?tag= query (forces order=NEW server-side).
-    const tagSuffix = parsed.tag ? `?tag=${encodeURIComponent(parsed.tag)}` : ''
+    const tagSuffix = parsed.tag ? composeQuery({ tag: parsed.tag }) : ''
 
     if (parsed.kind === 'group') {
       uris.push({

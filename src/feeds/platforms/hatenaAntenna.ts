@@ -1,4 +1,4 @@
-import { getPathSegments, isHostOf, parseUrl } from 'trousse'
+import { composeQuery, getPathSegments, isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, findDescendant, findElement } from '../../common/utils.js'
 
@@ -73,11 +73,9 @@ export const hatenaAntennaHandler: PlatformHandler = {
     const antennaUrl = `${feedOrigin}/${parsed.username}`
 
     if (parsed.kind === 'group') {
-      const groupId = encodeURIComponent(parsed.groupId)
+      const query = composeQuery({ gid: parsed.groupId })
 
-      return [
-        { uri: `${antennaUrl}/rss?gid=${groupId}`, hint: composeHint('hatena-antenna:group') },
-      ]
+      return [{ uri: `${antennaUrl}/rss${query}`, hint: composeHint('hatena-antenna:group') }]
     }
 
     return [{ uri: `${antennaUrl}/rss`, hint: composeHint('hatena-antenna:antenna') }]

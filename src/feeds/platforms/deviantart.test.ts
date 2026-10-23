@@ -156,7 +156,7 @@ describe('deviantartHandler', () => {
       const value = 'https://deviantart.com/yuumei'
       const expected = [
         {
-          uri: 'https://backend.deviantart.com/rss.xml?type=deviation&q=by%3Ayuumei%20sort%3Atime%20meta%3Aall',
+          uri: 'https://backend.deviantart.com/rss.xml?type=deviation&q=by:yuumei%20sort:time%20meta:all',
           hint: { key: 'deviantart:deviations', label: 'Deviations' },
         },
       ]
@@ -180,7 +180,7 @@ describe('deviantartHandler', () => {
       const value = 'https://deviantart.com/yuumei/favourites'
       const expected = [
         {
-          uri: 'https://backend.deviantart.com/rss.xml?type=deviation&q=favby%3Ayuumei',
+          uri: 'https://backend.deviantart.com/rss.xml?type=deviation&q=favby:yuumei',
           hint: { key: 'deviantart:favorites', label: 'Favorites' },
         },
       ]
@@ -192,7 +192,7 @@ describe('deviantartHandler', () => {
       const value = 'https://deviantart.com/tag/photography'
       const expected = [
         {
-          uri: 'https://backend.deviantart.com/rss.xml?type=deviation&q=tag%3Aphotography',
+          uri: 'https://backend.deviantart.com/rss.xml?type=deviation&q=tag:photography',
           hint: { key: 'deviantart:tag', label: 'Tag' },
         },
       ]
@@ -204,7 +204,7 @@ describe('deviantartHandler', () => {
       const value = 'https://deviantart.com/tag/caf%C3%A9'
       const expected = [
         {
-          uri: 'https://backend.deviantart.com/rss.xml?type=deviation&q=tag%3Acaf%C3%A9',
+          uri: 'https://backend.deviantart.com/rss.xml?type=deviation&q=tag:café',
           hint: { key: 'deviantart:tag', label: 'Tag' },
         },
       ]
@@ -216,7 +216,7 @@ describe('deviantartHandler', () => {
       const value = 'https://deviantart.com/yuumei/journal'
       const expected = [
         {
-          uri: 'https://backend.deviantart.com/rss.xml?q=journal%3Ayuumei',
+          uri: 'https://backend.deviantart.com/rss.xml?q=journal:yuumei',
           hint: { key: 'deviantart:journal', label: 'Journal' },
         },
       ]
@@ -228,7 +228,7 @@ describe('deviantartHandler', () => {
       const value = 'https://deviantart.com/daily-deviations'
       const expected = [
         {
-          uri: 'https://backend.deviantart.com/rss.xml?q=special%3Add',
+          uri: 'https://backend.deviantart.com/rss.xml?q=special:dd',
           hint: { key: 'deviantart:daily-deviations', label: 'Daily Deviations' },
         },
       ]
@@ -240,7 +240,7 @@ describe('deviantartHandler', () => {
       const value = 'https://deviantart.com/Daily-Deviations'
       const expected = [
         {
-          uri: 'https://backend.deviantart.com/rss.xml?q=special%3Add',
+          uri: 'https://backend.deviantart.com/rss.xml?q=special:dd',
           hint: { key: 'deviantart:daily-deviations', label: 'Daily Deviations' },
         },
       ]
@@ -252,7 +252,7 @@ describe('deviantartHandler', () => {
       const value = 'https://deviantart.com/daily-deviations/'
       const expected = [
         {
-          uri: 'https://backend.deviantart.com/rss.xml?q=special%3Add',
+          uri: 'https://backend.deviantart.com/rss.xml?q=special:dd',
           hint: { key: 'deviantart:daily-deviations', label: 'Daily Deviations' },
         },
       ]

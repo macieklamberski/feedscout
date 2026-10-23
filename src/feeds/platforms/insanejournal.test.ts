@@ -152,11 +152,11 @@ describe('insanejournalHandler', () => {
       const value = 'https://alice.insanejournal.com/tag/caf%C3%A9'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://alice.insanejournal.com/data/rss?tag=caf%C3%A9',
+          uri: 'https://alice.insanejournal.com/data/rss?tag=café',
           hint: { key: 'insanejournal:posts-tag', label: 'Tag', format: 'rss' },
         },
         {
-          uri: 'https://alice.insanejournal.com/data/atom?tag=caf%C3%A9',
+          uri: 'https://alice.insanejournal.com/data/atom?tag=café',
           hint: { key: 'insanejournal:posts-tag', label: 'Tag', format: 'atom' },
         },
         {

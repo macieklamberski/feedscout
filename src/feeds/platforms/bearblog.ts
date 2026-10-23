@@ -1,4 +1,4 @@
-import { isHostOf } from 'trousse'
+import { composeQuery, isHostOf } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, getTenantSubdomain } from '../../common/utils.js'
@@ -58,11 +58,11 @@ export const bearblogHandler: PlatformHandler = {
 
     if (parsed.tag) {
       uris.push({
-        uri: `${origin}/feed/?q=${encodeURIComponent(parsed.tag)}`,
+        uri: `${origin}/feed/${composeQuery({ q: parsed.tag })}`,
         hint: composeHint('bearblog:tag', 'atom'),
       })
       uris.push({
-        uri: `${origin}/feed/?type=rss&q=${encodeURIComponent(parsed.tag)}`,
+        uri: `${origin}/feed/${composeQuery({ type: 'rss', q: parsed.tag })}`,
         hint: composeHint('bearblog:tag', 'rss'),
       })
     }
