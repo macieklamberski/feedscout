@@ -81,6 +81,12 @@ describe('parseDailymotionUrl', () => {
     expect(parseDailymotionUrl('https://www.dailymotion.com/Channel/news')).toEqual(expected)
   })
 
+  it('should lowercase an uppercase channel', () => {
+    const expected: DailymotionUrl = { kind: 'channel', channel: 'news' }
+
+    expect(parseDailymotionUrl('https://www.dailymotion.com/channel/NEWS')).toEqual(expected)
+  })
+
   it('should return a one-character channel whole', () => {
     const expected: DailymotionUrl = { kind: 'channel', channel: 'a' }
 

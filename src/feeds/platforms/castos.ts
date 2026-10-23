@@ -35,7 +35,8 @@ export const castosHandler: PlatformHandler = {
       return []
     }
 
-    const feedId = content?.match(feedIdRegex)?.[1]
+    // feeds.castos.com answers 404 for a feed id in uppercase.
+    const feedId = content?.match(feedIdRegex)?.[1]?.toLowerCase()
 
     if (feedId) {
       return [

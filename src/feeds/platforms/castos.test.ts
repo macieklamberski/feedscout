@@ -51,6 +51,20 @@ describe('castosHandler', () => {
       expect(castosHandler.resolve(value, content)).toEqual(expected)
     })
 
+    it('should lowercase an uppercase feed id linked from the page', () => {
+      const value = 'https://alice-podcast.castos.com/episodes/first-episode'
+      const content =
+        '<link type="application/rss+xml" rel="alternate" href="https://feeds.castos.com/ABC12" />'
+      const expected = [
+        {
+          uri: 'https://feeds.castos.com/abc12',
+          hint: { key: 'castos:podcast', label: 'Podcast' },
+        },
+      ]
+
+      expect(castosHandler.resolve(value, content)).toEqual(expected)
+    })
+
     it('should return show site feed URL without page content', () => {
       const value = 'https://alice-podcast.castos.com'
       const expected = [
