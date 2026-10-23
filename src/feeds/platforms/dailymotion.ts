@@ -39,8 +39,7 @@ export const parseDailymotionUrl = (url: string): DailymotionUrl | undefined => 
   const playlistId = pathname.match(playlistRegex)?.groups?.playlistId?.split('_')[0]
 
   if (playlistId && wordOrHyphenRegex.test(playlistId)) {
-    // The feed answers 404 for a playlist id in uppercase.
-    return { kind: 'playlist', playlistId: playlistId.toLowerCase() }
+    return { kind: 'playlist', playlistId }
   }
 
   const query = pathname.match(searchRegex)?.[1]
