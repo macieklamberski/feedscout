@@ -698,6 +698,9 @@
     "ojs:announcements": "Announcements",
     "ojs:articles": "Articles",
     "aladin:posts": "Posts",
-    "aladin:category": "Category"
+    "aladin:category": "Category",
+    "bangumi:collections": "Collections",
+    "bangumi:timeline": "Timeline",
+    "bangumi:blog": "Blog"
   }
 }

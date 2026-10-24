@@ -3327,6 +3327,17 @@ Discovers the feeds of a user blog on Aladin, `blog.aladin.co.kr/{user}`. A cate
 
 <sup>†</sup> *Found only by the Platform method.*
 
+### Bangumi
+
+Discovers the collections and timeline feeds of a Bangumi user on `bgm.tv` or `bangumi.tv`, plus the site blog feed.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `bgm.tv/user/{user}` | Collections · timeline<sup>†</sup> (RSS) |
+| Any other page | Blog (RSS) |
+
+<sup>†</sup> *Found only by the Platform method.*
+
 ## Basic Usage
 
 ```typescript
@@ -3387,6 +3398,7 @@ import {
   audioboomHandler,
   aushaHandler,
   b2evolutionHandler,
+  bangumiHandler,
   bearblogHandler,
   behanceHandler,
   bigCartelHandler,
