@@ -1,6 +1,12 @@
 import { describe, expect, it } from 'bun:test'
 import type { DiscoverUriEntry } from '../../common/types.js'
-import { type HuffdufferUrl, huffdufferHandler, parseHuffdufferUrl } from './huffduffer.js'
+import {
+  getHuffdufferPage,
+  type HuffdufferPage,
+  type HuffdufferUrl,
+  huffdufferHandler,
+  parseHuffdufferUrl,
+} from './huffduffer.js'
 
 describe('parseHuffdufferUrl', () => {
   it('should return the profile for a user page', () => {
@@ -51,6 +57,42 @@ describe('parseHuffdufferUrl', () => {
 
   it('should return undefined for another host', () => {
     expect(parseHuffdufferUrl('https://example.com/alice')).toBeUndefined()
+  })
+})
+
+describe('getHuffdufferPage', () => {
+  it('should return the username as the feed link spells it', () => {
+    const value = 'https://huffduffer.com/alice/123456'
+    const content = '<a href="https://huffduffer.com/Alice/rss">RSS</a>'
+    const expected: HuffdufferPage = { kind: 'huffduff', username: 'Alice', id: '123456' }
+
+    expect(getHuffdufferPage(value, content)).toEqual(expected)
+  })
+
+  it('should return the username from the url without content', () => {
+    const expected: HuffdufferPage = { kind: 'profile', username: 'alice' }
+
+    expect(getHuffdufferPage('https://huffduffer.com/alice', undefined)).toEqual(expected)
+  })
+
+  it('should return undefined for another host', () => {
+    expect(getHuffdufferPage('https://example.com/alice', undefined)).toBeUndefined()
+  })
+
+  it('should ignore the feed link of another account', () => {
+    const value = 'https://huffduffer.com/alice'
+    const content = '<a href="https://huffduffer.com/Bob/rss">Bob</a>'
+    const expected: HuffdufferPage = { kind: 'profile', username: 'alice' }
+
+    expect(getHuffdufferPage(value, content)).toEqual(expected)
+  })
+
+  it('should ignore the feed link of an account whose username starts with the page username', () => {
+    const value = 'https://huffduffer.com/alice'
+    const content = '<a href="https://huffduffer.com/AliceBooks/rss">Alice Books</a>'
+    const expected: HuffdufferPage = { kind: 'profile', username: 'alice' }
+
+    expect(getHuffdufferPage(value, content)).toEqual(expected)
   })
 })
 

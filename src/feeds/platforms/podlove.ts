@@ -4,14 +4,19 @@ import { composeHint, findElements } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
+export type PodlovePage = { kind: 'podcast'; feedUrls: Array<string> }
+
 const pluginPath = '/podlove-podcasting-plugin-for-wordpress/'
 const feedTitlePrefix = 'Podcast Feed: '
 
 // The plugin enqueues its frontend stylesheet on every page and prints an alternate link titled
 // "Podcast Feed: {podcast} ({feed})" for each discoverable feed. The owner sets every feed's slug.
-const getFeedUrls = (url: string, content: string | undefined): Array<string> => {
+export const getPodlovePage = (
+  url: string,
+  content: string | undefined,
+): PodlovePage | undefined => {
   if (!content?.includes(pluginPath)) {
-    return []
+    return
   }
 
   const links = findElements(content, (element) => {
@@ -32,16 +37,26 @@ const getFeedUrls = (url: string, content: string | undefined): Array<string> =>
     }
   }
 
-  return feedUrls
+  if (feedUrls.length === 0) {
+    return
+  }
+
+  return { kind: 'podcast', feedUrls }
 }
 
 export const podloveHandler: PlatformHandler = {
   match: (url, content) => {
-    return getFeedUrls(url, content).length > 0
+    return getPodlovePage(url, content) !== undefined
   },
 
   resolve: (url, content) => {
-    return getFeedUrls(url, content).map((uri) => {
+    const page = getPodlovePage(url, content)
+
+    if (!page) {
+      return []
+    }
+
+    return page.feedUrls.map((uri) => {
       return { uri, hint: composeHint('podlove:podcast') }
     })
   },

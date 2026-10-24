@@ -13,6 +13,9 @@ export type YoutubeUrl =
   | { kind: 'short'; playlistId?: string }
   | { kind: 'player'; playlistId?: string }
   | { kind: 'playlist'; playlistId: string }
+export type YoutubePage =
+  | { kind: 'channel' | 'watch' | 'short' | 'player'; channelId?: string; playlistId?: string }
+  | { kind: 'playlist'; playlistId: string }
 
 export const hosts = [
   'youtube.com',
@@ -157,38 +160,53 @@ export const parseYoutubeUrl = (url: string): YoutubeUrl | undefined => {
   }
 }
 
+export const getYoutubePage = (
+  url: string,
+  content: string | undefined,
+): YoutubePage | undefined => {
+  const parsed = parseYoutubeUrl(url)
+
+  if (!parsed) {
+    return
+  }
+
+  if (parsed.kind === 'playlist' || parsed.playlistId) {
+    return parsed
+  }
+
+  if (parsed.kind === 'channel' && parsed.channelId) {
+    return parsed
+  }
+
+  // Handle, legacy user, custom URL and video pages carry the channel ID only in their content.
+  const channelId = content ? extractChannelIdFromContent(content) : undefined
+
+  return { ...parsed, channelId }
+}
+
 export const youtubeHandler: PlatformHandler = {
   match: (url) => {
     return parseYoutubeUrl(url) !== undefined
   },
 
   resolve: (url, content) => {
-    const parsed = parseYoutubeUrl(url)
+    const page = getYoutubePage(url, content)
 
-    if (!parsed) {
+    if (!page) {
       return []
     }
 
     const uris: Array<DiscoverUriEntry> = []
 
-    if (parsed.kind === 'channel' && parsed.channelId) {
-      pushChannelUris(uris, parsed.channelId)
+    if (page.kind !== 'playlist' && page.channelId) {
+      pushChannelUris(uris, page.channelId)
     }
 
-    if (parsed.playlistId) {
+    if (page.playlistId) {
       uris.push({
-        uri: feedUrl('playlist_id', parsed.playlistId),
+        uri: feedUrl('playlist_id', page.playlistId),
         hint: composeHint('youtube:playlist'),
       })
-    }
-
-    // Handle, legacy user, custom URL and video pages carry the channel ID only in their content.
-    if (uris.length === 0 && content && parsed.kind !== 'playlist') {
-      const channelId = extractChannelIdFromContent(content)
-
-      if (channelId) {
-        pushChannelUris(uris, channelId)
-      }
     }
 
     return uris

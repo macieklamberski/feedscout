@@ -1,6 +1,12 @@
 import { describe, expect, it } from 'bun:test'
 import type { DiscoverUriEntry } from '../../common/types.js'
-import { type BloggoUrl, bloggoHandler, parseBloggoUrl } from './bloggo.js'
+import {
+  type BloggoPage,
+  type BloggoUrl,
+  bloggoHandler,
+  getBloggoPage,
+  parseBloggoUrl,
+} from './bloggo.js'
 
 describe('parseBloggoUrl', () => {
   it('should return the blog for the blog home', () => {
@@ -55,6 +61,29 @@ describe('parseBloggoUrl', () => {
 
   it('should return undefined for another host', () => {
     expect(parseBloggoUrl('https://example.com/Min-forsta-resa/')).toBeUndefined()
+  })
+})
+
+describe('getBloggoPage', () => {
+  const value = 'https://alice.bloggo.nu/Min-forsta-resa'
+
+  it('should return the post when the page carries a post-id body class', () => {
+    const content = '<body class="blog post-id-367853">'
+    const expected: BloggoPage = { kind: 'post', slug: 'Min-forsta-resa' }
+
+    expect(getBloggoPage(value, content)).toEqual(expected)
+  })
+
+  it('should fall back to the blog when the page carries no post-id body class', () => {
+    const expected: BloggoPage = { kind: 'blog' }
+
+    expect(getBloggoPage(value, '<body class="blog">')).toEqual(expected)
+  })
+
+  it('should keep the post without content', () => {
+    const expected: BloggoPage = { kind: 'post', slug: 'Min-forsta-resa' }
+
+    expect(getBloggoPage(value, undefined)).toEqual(expected)
   })
 })
 

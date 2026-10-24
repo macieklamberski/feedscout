@@ -16,7 +16,7 @@ import {
 // Discoverability: Partially discoverable without handler.
 // Generic covers activity, board, home, issue, issues, news, projectActivity, projectIssues, projectNews, projects, repository (html), partly covers project.
 
-export type RedminePage =
+export type RedminePage = (
   | { kind: 'home'; root: string }
   | { kind: 'projects'; root: string }
   | { kind: 'issues'; root: string; project?: string }
@@ -26,6 +26,7 @@ export type RedminePage =
   | { kind: 'project'; root: string; project: string; hasIssues: boolean; hasNews: boolean }
   | { kind: 'board'; root: string; project: string; boardId: string }
   | { kind: 'repository'; root: string; project: string; repository: string }
+) & { alternateHrefs: Array<string> }
 
 const poweredByRegex = /Powered by <a\s[^<>]*href="https?:\/\/www\.redmine\.org\/"/
 const projectClassRegex = /(?:^|\s)project-(\S+)/
@@ -65,16 +66,20 @@ const hasMenuItem = (content: string | undefined, name: string): boolean => {
   return findDescendant(mainMenu, (element) => hasClass(element, name)) !== undefined
 }
 
-// Redmine spells an alternate link from the request it sees, so an install behind a TLS proxy
-// links http feeds from an https page.
-const getAlternateSpelling = (uri: string, url: string, content: string | undefined): string => {
+const getAlternateHrefs = (url: string, content: string | undefined): Array<string> => {
   const links = findElements(content ?? '', (element) => {
     return element.name === 'link' && element.attribs.rel === 'alternate'
   })
-  const hrefs = links.map((link) => resolveUrl(link.attribs.href ?? '', url)).filter(isPresent)
+
+  return links.map((link) => resolveUrl(link.attribs.href ?? '', url)).filter(isPresent)
+}
+
+// Redmine spells an alternate link from the request it sees, so an install behind a TLS proxy
+// links http feeds from an https page.
+const getAlternateSpelling = (uri: string, alternateHrefs: Array<string>): string => {
   const address = uri.replace(schemeRegex, '')
 
-  return hrefs.find((href) => href.replace(schemeRegex, '') === address) ?? uri
+  return alternateHrefs.find((href) => href.replace(schemeRegex, '') === address) ?? uri
 }
 
 export const getRedminePage = (
@@ -110,6 +115,7 @@ export const getRedminePage = (
   const project = classProject ? encodePathSegment(classProject) : undefined
   const rootPath = getRootPath(url, content)
   const root = `${parsedUrl.origin}${rootPath}`
+  const alternateHrefs = getAlternateHrefs(url, content)
   const isUnderRoot =
     parsedUrl.pathname === rootPath || parsedUrl.pathname.startsWith(`${rootPath}/`)
   const pathname = isUnderRoot ? parsedUrl.pathname.slice(rootPath.length) : parsedUrl.pathname
@@ -121,19 +127,19 @@ export const getRedminePage = (
     }
 
     if (isAnyOf(third, 'issues') && !fourth) {
-      return { kind: 'issues', root, project }
+      return { kind: 'issues', root, alternateHrefs, project }
     }
 
     if (isAnyOf(third, 'news') && !fourth) {
-      return { kind: 'news', root, project }
+      return { kind: 'news', root, alternateHrefs, project }
     }
 
     if (isAnyOf(third, 'activity') && !fourth) {
-      return { kind: 'activity', root, project }
+      return { kind: 'activity', root, alternateHrefs, project }
     }
 
     if (isAnyOf(third, 'boards') && fourth && digitsRegex.test(fourth)) {
-      return { kind: 'board', root, project, boardId: fourth }
+      return { kind: 'board', root, alternateHrefs, project, boardId: fourth }
     }
 
     // The bare repository page names its default repository only in its own feed links.
@@ -141,7 +147,7 @@ export const getRedminePage = (
     const repository = linkedRepository ? encodePathSegment(linkedRepository) : undefined
 
     if (isAnyOf(third, 'repository') && repository) {
-      return { kind: 'repository', root, project, repository }
+      return { kind: 'repository', root, alternateHrefs, project, repository }
     }
   }
 
@@ -150,36 +156,37 @@ export const getRedminePage = (
       return
     }
 
-    return { kind: 'issue', root, issueId: second }
+    return { kind: 'issue', root, alternateHrefs, issueId: second }
   }
 
   if (!second && isAnyOf(first, 'projects')) {
-    return { kind: 'projects', root }
+    return { kind: 'projects', root, alternateHrefs }
   }
 
   if (!second && isAnyOf(first, 'issues')) {
-    return { kind: 'issues', root }
+    return { kind: 'issues', root, alternateHrefs }
   }
 
   if (!second && isAnyOf(first, 'news')) {
-    return { kind: 'news', root }
+    return { kind: 'news', root, alternateHrefs }
   }
 
   if (!second && isAnyOf(first, 'activity')) {
-    return { kind: 'activity', root }
+    return { kind: 'activity', root, alternateHrefs }
   }
 
   if (project) {
     return {
       kind: 'project',
       root,
+      alternateHrefs,
       project,
       hasIssues: hasMenuItem(content, 'issues'),
       hasNews: hasMenuItem(content, 'news'),
     }
   }
 
-  return { kind: 'home', root }
+  return { kind: 'home', root, alternateHrefs }
 }
 
 export const redmineHandler: PlatformHandler = {
@@ -256,7 +263,7 @@ export const redmineHandler: PlatformHandler = {
     }
 
     for (const entry of uris) {
-      entry.uri = getAlternateSpelling(entry.uri, url, content)
+      entry.uri = getAlternateSpelling(entry.uri, page.alternateHrefs)
     }
 
     return uris

@@ -1,6 +1,12 @@
 import { describe, expect, it } from 'bun:test'
 import type { DiscoverUriEntry } from '../../common/types.js'
-import { type BubblelifeUrl, bubblelifeHandler, parseBubblelifeUrl } from './bubblelife.js'
+import {
+  type BubblelifePage,
+  type BubblelifeUrl,
+  bubblelifeHandler,
+  getBubblelifePage,
+  parseBubblelifeUrl,
+} from './bubblelife.js'
 
 describe('parseBubblelifeUrl', () => {
   it('should return the community for a community page', () => {
@@ -69,6 +75,52 @@ describe('parseBubblelifeUrl', () => {
 
   it('should return undefined for another host', () => {
     expect(parseBubblelifeUrl('https://example.com/community/idealplotter')).toBeUndefined()
+  })
+})
+
+describe('getBubblelifePage', () => {
+  const libraryLinkHtml =
+    '<a href="/community/idealplotter/library/3569381092" title="News" class="blMobileItem">'
+
+  it('should return the community feed from its first library link', () => {
+    const value = 'https://sandysprings.bubblelife.com/community/idealplotter'
+    const expected: BubblelifePage = { kind: 'community', feedId: '3569381092' }
+
+    expect(getBubblelifePage(value, libraryLinkHtml)).toEqual(expected)
+  })
+
+  it('should return the library the footer RSS link names', () => {
+    const value = 'https://denver.bubblelife.com/community/denver_ireporter/library/35828711'
+    const content = `
+      <a
+        id="ctl00_CtrlPageFooter1_hlRSS"
+        href="/community/denver_ireporter/library/35828711/type/rssinfo"
+      >
+    `
+    const expected: BubblelifePage = { kind: 'library', feedId: '35828711' }
+
+    expect(getBubblelifePage(value, content)).toEqual(expected)
+  })
+
+  it('should return the feed an rssinfo page links', () => {
+    const value = 'https://plano.bubblelife.com/community/plano_news/type/rssinfo'
+    const content = '<a href="/rss?c=35671970">All Posts</a>'
+    const expected: BubblelifePage = { kind: 'community', feedId: '35671970' }
+
+    expect(getBubblelifePage(value, content)).toEqual(expected)
+  })
+
+  it('should fall back to the community for a library id the footer does not name', () => {
+    const value = 'https://sandysprings.bubblelife.com/community/idealplotter/library/1'
+    const expected: BubblelifePage = { kind: 'community', feedId: '3569381092' }
+
+    expect(getBubblelifePage(value, libraryLinkHtml)).toEqual(expected)
+  })
+
+  it('should return undefined without content', () => {
+    const value = 'https://sandysprings.bubblelife.com/community/idealplotter'
+
+    expect(getBubblelifePage(value, undefined)).toBeUndefined()
   })
 })
 

@@ -8,6 +8,7 @@ import { composeHint, findElement } from '../../common/utils.js'
 export type BubblelifeUrl =
   | { kind: 'community'; community: string }
   | { kind: 'library'; community: string; libraryId: string }
+export type BubblelifePage = { kind: 'community' | 'library'; feedId: string }
 
 const domains = ['bubblelife.com']
 
@@ -32,67 +33,68 @@ export const parseBubblelifeUrl = (url: string): BubblelifeUrl | undefined => {
   return { kind: 'community', community: match[1] }
 }
 
+export const getBubblelifePage = (
+  url: string,
+  content: string | undefined,
+): BubblelifePage | undefined => {
+  const parsed = parseBubblelifeUrl(url)
+
+  if (!parsed || !content) {
+    return
+  }
+
+  const communityPath = `/community/${parsed.community}/library/`
+
+  // The rssinfo page links the feeds themselves, its "All Posts" feed first. Topic feeds carry
+  // a `&t=` suffix and are left out.
+  const feedLink = findElement(content, (element) => {
+    return element.name === 'a' && feedHrefRegex.test(element.attribs.href ?? '')
+  })
+  const feedId = feedLink?.attribs.href?.match(feedHrefRegex)?.[1]
+
+  if (feedId) {
+    return { kind: parsed.kind, feedId }
+  }
+
+  // A made-up library id answers 200 with the community's About page, whose footer RSS link
+  // then names the community instead, so the id counts only when the footer names it.
+  if (
+    parsed.kind === 'library' &&
+    content.toLowerCase().includes(`${communityPath}${parsed.libraryId}/type/rssinfo`.toLowerCase())
+  ) {
+    return { kind: 'library', feedId: parsed.libraryId }
+  }
+
+  // The page's alternate link has no href, so the id is read from the community's first library
+  // link, which is its "All Posts" feed. A city news community links no library of its own.
+  const libraryIdRegex = new RegExp(`href="${communityPath}(\\d+)["/]`, 'i')
+  const libraryId = content.match(libraryIdRegex)?.[1]
+
+  if (!libraryId) {
+    return
+  }
+
+  return { kind: 'community', feedId: libraryId }
+}
+
 export const bubblelifeHandler: PlatformHandler = {
   match: (url) => {
     return parseBubblelifeUrl(url) !== undefined
   },
 
   resolve: (url, content) => {
-    const parsed = parseBubblelifeUrl(url)
+    const page = getBubblelifePage(url, content)
 
-    if (!parsed || !content) {
+    if (!page) {
       return []
     }
 
-    const { origin } = new URL(url)
-    const communityPath = `/community/${parsed.community}/library/`
+    const uri = `${new URL(url).origin}/rss${composeQuery({ c: page.feedId })}`
 
-    // The rssinfo page links the feeds themselves, its "All Posts" feed first. Topic feeds carry
-    // a `&t=` suffix and are left out.
-    const feedLink = findElement(content, (element) => {
-      return element.name === 'a' && feedHrefRegex.test(element.attribs.href ?? '')
-    })
-    const feedId = feedLink?.attribs.href?.match(feedHrefRegex)?.[1]
-
-    if (feedId) {
-      return [
-        {
-          uri: `${origin}/rss${composeQuery({ c: feedId })}`,
-          hint: composeHint(parsed.kind === 'library' ? 'bubblelife:library' : 'bubblelife:posts'),
-        },
-      ]
+    if (page.kind === 'library') {
+      return [{ uri, hint: composeHint('bubblelife:library') }]
     }
 
-    // A made-up library id answers 200 with the community's About page, whose footer RSS link
-    // then names the community instead, so the id counts only when the footer names it.
-    if (
-      parsed.kind === 'library' &&
-      content
-        .toLowerCase()
-        .includes(`${communityPath}${parsed.libraryId}/type/rssinfo`.toLowerCase())
-    ) {
-      return [
-        {
-          uri: `${origin}/rss${composeQuery({ c: parsed.libraryId })}`,
-          hint: composeHint('bubblelife:library'),
-        },
-      ]
-    }
-
-    // The page's alternate link has no href, so the id is read from the community's first library
-    // link, which is its "All Posts" feed. A city news community links no library of its own.
-    const libraryIdRegex = new RegExp(`href="${communityPath}(\\d+)["/]`, 'i')
-    const libraryId = content.match(libraryIdRegex)?.[1]
-
-    if (!libraryId) {
-      return []
-    }
-
-    return [
-      {
-        uri: `${origin}/rss${composeQuery({ c: libraryId })}`,
-        hint: composeHint('bubblelife:posts'),
-      },
-    ]
+    return [{ uri, hint: composeHint('bubblelife:posts') }]
   },
 }

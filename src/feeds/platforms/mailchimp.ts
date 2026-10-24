@@ -7,6 +7,7 @@ import { composeHint } from '../../common/utils.js'
 export type MailchimpUrl =
   | { kind: 'archive'; userId: string; listId: string }
   | { kind: 'campaign'; userId: string }
+export type MailchimpPage = { kind: 'archive' | 'campaign'; userId: string; listId: string }
 
 const domains = ['campaign-archive.com']
 
@@ -35,22 +36,38 @@ export const parseMailchimpUrl = (url: string): MailchimpUrl | undefined => {
   return { kind: 'campaign', userId }
 }
 
+export const getMailchimpPage = (
+  url: string,
+  content: string | undefined,
+): MailchimpPage | undefined => {
+  const parsed = parseMailchimpUrl(url)
+
+  if (!parsed) {
+    return
+  }
+
+  if (parsed.kind === 'archive') {
+    return parsed
+  }
+
+  const listId = content?.match(listLinkRegex)?.groups?.listId
+
+  if (!listId) {
+    return
+  }
+
+  return { kind: 'campaign', userId: parsed.userId, listId }
+}
+
 export const mailchimpHandler: PlatformHandler = {
   match: (url) => {
     return parseMailchimpUrl(url) !== undefined
   },
 
   resolve: (url, content) => {
-    const parsed = parseMailchimpUrl(url)
+    const page = getMailchimpPage(url, content)
 
-    if (!parsed) {
-      return []
-    }
-
-    const listId =
-      parsed.kind === 'archive' ? parsed.listId : content?.match(listLinkRegex)?.groups?.listId
-
-    if (!listId) {
+    if (!page) {
       return []
     }
 
@@ -58,7 +75,7 @@ export const mailchimpHandler: PlatformHandler = {
 
     return [
       {
-        uri: `${origin}/feed${composeQuery({ u: parsed.userId, id: listId })}`,
+        uri: `${origin}/feed${composeQuery({ u: page.userId, id: page.listId })}`,
         hint: composeHint('mailchimp:archive'),
       },
     ]

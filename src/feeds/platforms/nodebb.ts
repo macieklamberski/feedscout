@@ -11,6 +11,7 @@ export type NodebbUrl =
   | { kind: 'topic'; topicId: string; categoryId?: string }
   | { kind: 'category'; categoryId: string }
   | { kind: 'forum' }
+export type NodebbPage = NodebbUrl & { siteUrl: string }
 
 const nodebbRegex = /nodebb/i
 const categoryRegex = /\/category\/(?<id>[^/]+)/i
@@ -44,6 +45,18 @@ export const parseNodebbUrl = (url: string): NodebbUrl | undefined => {
   return { kind: 'forum' }
 }
 
+export const getNodebbPage = (url: string, content: string | undefined): NodebbPage | undefined => {
+  const parsed = parseNodebbUrl(url)
+
+  if (!parsed) {
+    return
+  }
+
+  const relativePath = content?.match(relativePathRegex)?.groups?.relativePath ?? ''
+
+  return { ...parsed, siteUrl: `${new URL(url).origin}${relativePath}` }
+}
+
 export const nodebbHandler: PlatformHandler = {
   match: (url, content, headers) => {
     if (!hasMarker(content, headers, { headers: isNodebbHeaders })) {
@@ -54,26 +67,25 @@ export const nodebbHandler: PlatformHandler = {
   },
 
   resolve: (url, content) => {
-    const parsed = parseNodebbUrl(url)
+    const page = getNodebbPage(url, content)
 
-    if (!parsed) {
+    if (!page) {
       return []
     }
 
-    const relativePath = content?.match(relativePathRegex)?.groups?.relativePath ?? ''
-    const siteUrl = `${new URL(url).origin}${relativePath}`
+    const { siteUrl } = page
     const uris: Array<DiscoverUriEntry> = []
 
-    if (parsed.kind === 'topic') {
+    if (page.kind === 'topic') {
       uris.push({
-        uri: `${siteUrl}/topic/${parsed.topicId}.rss`,
+        uri: `${siteUrl}/topic/${page.topicId}.rss`,
         hint: composeHint('nodebb:topic'),
       })
     }
 
-    if (parsed.kind !== 'forum' && parsed.categoryId) {
+    if (page.kind !== 'forum' && page.categoryId) {
       uris.push({
-        uri: `${siteUrl}/category/${parsed.categoryId}.rss`,
+        uri: `${siteUrl}/category/${page.categoryId}.rss`,
         hint: composeHint('nodebb:category'),
       })
     }

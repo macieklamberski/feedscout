@@ -1,6 +1,11 @@
 import { describe, expect, it } from 'bun:test'
 import type { DiscoverUriEntry } from '../../common/types.js'
-import { confluenceHandler, isConfluenceHtml } from './confluence.js'
+import {
+  type ConfluencePage,
+  confluenceHandler,
+  getConfluencePage,
+  isConfluenceHtml,
+} from './confluence.js'
 
 const confluenceHtml = `
   <meta
@@ -51,6 +56,66 @@ describe('isConfluenceHtml', () => {
 
   it('should return false for empty content', () => {
     expect(isConfluenceHtml('')).toBe(false)
+  })
+})
+
+describe('getConfluencePage', () => {
+  it('should return the space of a space page under the context path', () => {
+    const value = 'https://wiki.example.org/confluence/display/DOCS/Home'
+    const expected: ConfluencePage = {
+      kind: 'space',
+      baseUrl: 'https://wiki.example.org/confluence',
+      spaceKey: 'DOCS',
+    }
+
+    expect(getConfluencePage(value, confluenceHtml)).toEqual(expected)
+  })
+
+  it('should return the space of a space page at the root context', () => {
+    const value = 'https://wiki.example.org/display/DOCS/Home'
+    const expected: ConfluencePage = {
+      kind: 'space',
+      baseUrl: 'https://wiki.example.org',
+      spaceKey: 'DOCS',
+    }
+
+    expect(getConfluencePage(value, rootContextHtml)).toEqual(expected)
+  })
+
+  it('should return the site for a page without a space key', () => {
+    const value = 'https://wiki.example.org/confluence/dashboard.action'
+    const content = `
+      <meta
+        name="confluence-context-path"
+        content="/confluence"
+      >
+    `
+    const expected: ConfluencePage = {
+      kind: 'site',
+      baseUrl: 'https://wiki.example.org/confluence',
+    }
+
+    expect(getConfluencePage(value, content)).toEqual(expected)
+  })
+
+  it('should return the site at the origin without content', () => {
+    const value = 'https://wiki.example.org/confluence/dashboard.action'
+    const expected: ConfluencePage = { kind: 'site', baseUrl: 'https://wiki.example.org' }
+
+    expect(getConfluencePage(value, undefined)).toEqual(expected)
+  })
+
+  it('should drop the trailing slash of the context path', () => {
+    const value = 'https://wiki.example.org/wiki/dashboard.action'
+    const content = `
+      <meta
+        name="confluence-context-path"
+        content="/wiki/"
+      >
+    `
+    const expected: ConfluencePage = { kind: 'site', baseUrl: 'https://wiki.example.org/wiki' }
+
+    expect(getConfluencePage(value, content)).toEqual(expected)
   })
 })
 

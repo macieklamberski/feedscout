@@ -1,5 +1,11 @@
 import { describe, expect, it } from 'bun:test'
-import { type MegaphoneUrl, megaphoneHandler, parseMegaphoneUrl } from './megaphone.js'
+import {
+  getMegaphonePage,
+  type MegaphonePage,
+  type MegaphoneUrl,
+  megaphoneHandler,
+  parseMegaphoneUrl,
+} from './megaphone.js'
 
 describe('parseMegaphoneUrl', () => {
   it('should return the playlist for a playlist embed', () => {
@@ -24,6 +30,39 @@ describe('parseMegaphoneUrl', () => {
 
   it('should return undefined for another host', () => {
     expect(parseMegaphoneUrl('https://example.com/?p=ADL1234567890')).toBeUndefined()
+  })
+})
+
+describe('getMegaphonePage', () => {
+  const episodeUrl = 'https://player.megaphone.fm/ADL1234567890'
+  const content = '<a href="https://feeds.megaphone.fm/ADL9876543210">RSS</a>'
+
+  it('should return the show of a playlist embed from the url', () => {
+    const value = 'https://playlist.megaphone.fm/?p=ADL1234567890'
+    const expected: MegaphonePage = { kind: 'playlist', showId: 'ADL1234567890' }
+
+    expect(getMegaphonePage(value, undefined)).toEqual(expected)
+  })
+
+  it('should return the show an episode player links as its feed', () => {
+    const expected: MegaphonePage = { kind: 'episode', showId: 'ADL9876543210' }
+
+    expect(getMegaphonePage(episodeUrl, content)).toEqual(expected)
+  })
+
+  it('should return undefined for an episode player without content', () => {
+    expect(getMegaphonePage(episodeUrl, undefined)).toBeUndefined()
+  })
+
+  it('should return undefined for another host', () => {
+    expect(getMegaphonePage('https://example.com/?p=ADL1234567890', content)).toBeUndefined()
+  })
+
+  it('should keep the show of a playlist embed whose page links another feed', () => {
+    const value = 'https://playlist.megaphone.fm/?p=ADL1234567890'
+    const expected: MegaphonePage = { kind: 'playlist', showId: 'ADL1234567890' }
+
+    expect(getMegaphonePage(value, content)).toEqual(expected)
   })
 })
 

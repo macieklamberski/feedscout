@@ -37,6 +37,13 @@ describe('noteHandler', () => {
         expect(noteHandler.resolve('https://note.com/alice', profileContent)).toEqual(expected)
       })
 
+      it('should return avatar from the payload of a profile tab', () => {
+        const value = 'https://note.com/alice/followings'
+        const expected = [{ uri: avatarUrl }]
+
+        expect(noteHandler.resolve(value, profileContent)).toEqual(expected)
+      })
+
       it('should return a ref when content is absent', () => {
         const url = 'https://note.com/alice'
         const expected = [{ platform: 'note', id: 'alice', url }]

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'bun:test'
-import type { YoutubeUrl } from './youtube.js'
-import { parseYoutubeUrl, youtubeHandler } from './youtube.js'
+import type { YoutubePage, YoutubeUrl } from './youtube.js'
+import { getYoutubePage, parseYoutubeUrl, youtubeHandler } from './youtube.js'
 
 describe('parseYoutubeUrl', () => {
   const handleValues: Array<string> = [
@@ -194,6 +194,49 @@ describe('parseYoutubeUrl', () => {
 
   it('should return undefined for an invalid URL', () => {
     expect(parseYoutubeUrl('not-a-url')).toBeUndefined()
+  })
+})
+
+describe('getYoutubePage', () => {
+  const channelIdHtml = '{"channelId":"UC1234567890"}'
+
+  it('should return the channel ID a handle page carries', () => {
+    const value = 'https://www.youtube.com/@example'
+    const expected: YoutubePage = { kind: 'channel', channelId: 'UC1234567890' }
+
+    expect(getYoutubePage(value, channelIdHtml)).toEqual(expected)
+  })
+
+  it('should return the uploader a video page carries', () => {
+    const value = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ'
+    const expected: YoutubePage = { kind: 'watch', channelId: 'UC1234567890' }
+
+    expect(getYoutubePage(value, channelIdHtml)).toEqual(expected)
+  })
+
+  it('should keep the channel ID of a channel URL over the content', () => {
+    const value = 'https://www.youtube.com/channel/UCabcdefghij'
+    const expected: YoutubePage = { kind: 'channel', channelId: 'UCabcdefghij' }
+
+    expect(getYoutubePage(value, channelIdHtml)).toEqual(expected)
+  })
+
+  it('should leave out the content channel ID for a video in a playlist', () => {
+    const value = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ&list=PL1234567890'
+    const expected: YoutubePage = { kind: 'watch', playlistId: 'PL1234567890' }
+
+    expect(getYoutubePage(value, channelIdHtml)).toEqual(expected)
+  })
+
+  it('should return the page without a channel ID when the content carries none', () => {
+    const value = 'https://www.youtube.com/@example'
+    const expected: YoutubePage = { kind: 'channel' }
+
+    expect(getYoutubePage(value, '<html></html>')).toEqual(expected)
+  })
+
+  it('should return undefined for another host', () => {
+    expect(getYoutubePage('https://example.com/@example', channelIdHtml)).toBeUndefined()
   })
 })
 

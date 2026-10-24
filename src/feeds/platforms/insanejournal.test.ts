@@ -298,6 +298,26 @@ describe('insanejournalHandler', () => {
       expect(insanejournalHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should build asylum feeds over https for an http page', () => {
+      const value = 'http://asylums.insanejournal.com/squeaky'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://asylums.insanejournal.com/squeaky/data/rss',
+          hint: { key: 'insanejournal:posts', label: 'Posts', format: 'rss' },
+        },
+        {
+          uri: 'https://asylums.insanejournal.com/squeaky/data/atom',
+          hint: { key: 'insanejournal:posts', label: 'Posts', format: 'atom' },
+        },
+        {
+          uri: 'https://asylums.insanejournal.com/squeaky/data/userpics',
+          hint: { key: 'insanejournal:userpics', label: 'Userpics', format: 'atom' },
+        },
+      ]
+
+      expect(insanejournalHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return empty array for www host without user/asylum selector', () => {
       expect(insanejournalHandler.resolve('https://www.insanejournal.com/random')).toEqual([])
     })

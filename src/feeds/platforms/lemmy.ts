@@ -18,6 +18,8 @@ export type LemmyUrl =
   | ({ kind: 'user'; username: string } & LemmyQuery)
   | ({ kind: 'home' } & LemmyQuery)
 
+export type LemmyPage = LemmyUrl
+
 const lemmyPoweredByRegex = /lemmy/i
 
 const validSorts = [
@@ -42,24 +44,15 @@ const validSorts = [
   'NewComments',
 ]
 
-const getQuerySuffix = (query: LemmyQuery, content: string | undefined): string => {
+const getQuerySuffix = (page: LemmyPage): string => {
   const params = new URLSearchParams()
-  // The page advertises its feeds with the instance's default sort, which a feed URL without a sort
-  // does not follow.
-  const link = findElement(content, (element) => {
-    return element.name === 'link' && element.attribs.rel === 'alternate'
-  })
-  const feedUrl = parseUrl(link?.attribs.href ?? '', 'https://example.com')
-  const sort =
-    getAnyOf(query.sort, validSorts) ??
-    getAnyOf(getQueryParam(feedUrl?.searchParams, 'sort'), validSorts)
 
-  if (sort) {
-    params.set('sort', sort)
+  if (page.sort) {
+    params.set('sort', page.sort)
   }
 
-  if (query.limit) {
-    params.set('limit', query.limit)
+  if (page.limit) {
+    params.set('limit', page.limit)
   }
 
   const suffix = params.toString()
@@ -79,21 +72,35 @@ export const parseLemmyUrl = (url: string): LemmyUrl | undefined => {
   const sort = getQueryParam(searchParams, 'sort')
   const limit = getQueryParam(searchParams, 'limit')
 
-  if (!section) {
-    return { kind: 'home', sort, limit }
-  }
-
-  if (!name) {
-    return
-  }
-
-  if (isAnyOf(section, 'c')) {
+  if (name && isAnyOf(section, 'c')) {
     return { kind: 'community', community: name, sort, limit }
   }
 
-  if (isAnyOf(section, 'u')) {
+  if (name && isAnyOf(section, 'u')) {
     return { kind: 'user', username: name, sort, limit }
   }
+
+  return { kind: 'home', sort, limit }
+}
+
+export const getLemmyPage = (url: string, content: string | undefined): LemmyPage | undefined => {
+  const parsed = parseLemmyUrl(url)
+
+  if (!parsed) {
+    return
+  }
+
+  // The page advertises its feeds with the instance's default sort, which a feed URL without a sort
+  // does not follow.
+  const link = findElement(content, (element) => {
+    return element.name === 'link' && element.attribs.rel === 'alternate'
+  })
+  const feedUrl = parseUrl(link?.attribs.href ?? '', 'https://example.com')
+  const sort =
+    getAnyOf(parsed.sort, validSorts) ??
+    getAnyOf(getQueryParam(feedUrl?.searchParams, 'sort'), validSorts)
+
+  return { ...parsed, sort }
 }
 
 // Current Lemmy serves no generator meta.
@@ -120,28 +127,28 @@ export const lemmyHandler: PlatformHandler = {
   },
 
   resolve: (url, content) => {
-    const parsed = parseLemmyUrl(url)
+    const page = getLemmyPage(url, content)
 
-    if (!parsed) {
+    if (!page) {
       return []
     }
 
     const { origin } = new URL(url)
-    const sortSuffix = getQuerySuffix(parsed, content)
+    const sortSuffix = getQuerySuffix(page)
 
-    if (parsed.kind === 'community') {
+    if (page.kind === 'community') {
       return [
         {
-          uri: `${origin}/feeds/c/${parsed.community}.xml${sortSuffix}`,
+          uri: `${origin}/feeds/c/${page.community}.xml${sortSuffix}`,
           hint: composeHint('lemmy:community'),
         },
       ]
     }
 
-    if (parsed.kind === 'user') {
+    if (page.kind === 'user') {
       return [
         {
-          uri: `${origin}/feeds/u/${parsed.username}.xml${sortSuffix}`,
+          uri: `${origin}/feeds/u/${page.username}.xml${sortSuffix}`,
           hint: composeHint('lemmy:user'),
         },
       ]

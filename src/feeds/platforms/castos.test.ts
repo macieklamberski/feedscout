@@ -1,5 +1,11 @@
 import { describe, expect, it } from 'bun:test'
-import { type CastosUrl, castosHandler, parseCastosUrl } from './castos.js'
+import {
+  type CastosPage,
+  type CastosUrl,
+  castosHandler,
+  getCastosPage,
+  parseCastosUrl,
+} from './castos.js'
 
 describe('parseCastosUrl', () => {
   it('should return the show for a show subdomain', () => {
@@ -14,6 +20,36 @@ describe('parseCastosUrl', () => {
 
   it('should return undefined for another host', () => {
     expect(parseCastosUrl('https://example.com/')).toBeUndefined()
+  })
+})
+
+describe('getCastosPage', () => {
+  it('should return the feed id the page links', () => {
+    const value = 'https://my-show.castos.com/'
+    const content = '<a href="https://feeds.castos.com/x8k2p">RSS</a>'
+    const expected: CastosPage = { kind: 'show', slug: 'my-show', feedId: 'x8k2p' }
+
+    expect(getCastosPage(value, content)).toEqual(expected)
+  })
+
+  it('should return the slug alone without content', () => {
+    const expected: CastosPage = { kind: 'show', slug: 'my-show' }
+
+    expect(getCastosPage('https://my-show.castos.com/', undefined)).toEqual(expected)
+  })
+
+  it('should return the slug alone for a page without a feed link', () => {
+    const expected: CastosPage = { kind: 'show', slug: 'my-show' }
+
+    expect(getCastosPage('https://my-show.castos.com/', '<p>My Show</p>')).toEqual(expected)
+  })
+
+  it('should return undefined for the feed host', () => {
+    expect(getCastosPage('https://feeds.castos.com/x8k2p', undefined)).toBeUndefined()
+  })
+
+  it('should return undefined for another host', () => {
+    expect(getCastosPage('https://example.com/', undefined)).toBeUndefined()
   })
 })
 

@@ -37,19 +37,39 @@ export const parseHuffdufferUrl = (url: string): HuffdufferUrl | undefined => {
   return { kind: 'profile', username }
 }
 
+export type HuffdufferPage = HuffdufferUrl
+
+export const getHuffdufferPage = (
+  url: string,
+  content: string | undefined,
+): HuffdufferPage | undefined => {
+  const parsed = parseHuffdufferUrl(url)
+
+  if (!parsed || parsed.kind === 'home') {
+    return parsed
+  }
+
+  // Usernames match in any case, and the page links its feeds with the account's own spelling:
+  // `/bluetyson` links `/BlueTyson/rss`.
+  const usernameRegex = new RegExp(`huffduffer\\.com/(${escapeRegex(parsed.username)})/`, 'i')
+  const username = content?.match(usernameRegex)?.[1] ?? parsed.username
+
+  return { ...parsed, username }
+}
+
 export const huffdufferHandler: PlatformHandler = {
   match: (url) => {
     return parseHuffdufferUrl(url) !== undefined
   },
 
   resolve: (url, content) => {
-    const parsed = parseHuffdufferUrl(url)
+    const page = getHuffdufferPage(url, content)
 
-    if (!parsed) {
+    if (!page) {
       return []
     }
 
-    if (parsed.kind === 'home') {
+    if (page.kind === 'home') {
       return [
         { uri: `${origin}/new/rss`, hint: composeHint('huffduffer:new', 'rss') },
         { uri: `${origin}/new/atom`, hint: composeHint('huffduffer:new', 'atom') },
@@ -57,25 +77,21 @@ export const huffdufferHandler: PlatformHandler = {
       ]
     }
 
-    // Usernames match in any case, and the page links its feeds with the account's own spelling:
-    // `/bluetyson` links `/BlueTyson/rss`.
-    const usernameRegex = new RegExp(`huffduffer\\.com/(${escapeRegex(parsed.username)})/`, 'i')
-    const username = content?.match(usernameRegex)?.[1] ?? parsed.username
     const huffduffsFeed: DiscoverUriEntry = {
-      uri: `${origin}/${username}/rss`,
+      uri: `${origin}/${page.username}/rss`,
       hint: composeHint('huffduffer:huffduffs'),
     }
 
-    if (parsed.kind === 'profile') {
+    if (page.kind === 'profile') {
       return [huffduffsFeed]
     }
 
     const relatedFeed: DiscoverUriEntry = {
-      uri: `${origin}/${username}/${parsed.id}/related/rss`,
+      uri: `${origin}/${page.username}/${page.id}/related/rss`,
       hint: composeHint('huffduffer:related'),
     }
 
-    if (parsed.kind === 'related') {
+    if (page.kind === 'related') {
       return [relatedFeed]
     }
 

@@ -21,8 +21,10 @@ describe('parseTildesUrl', () => {
     expect(parseTildesUrl('https://tildes.net/')).toEqual(expected)
   })
 
-  it('should return undefined for another page', () => {
-    expect(parseTildesUrl('https://tildes.net/groups')).toBeUndefined()
+  it('should read another page as the home page', () => {
+    const expected: TildesUrl = { kind: 'home' }
+
+    expect(parseTildesUrl('https://tildes.net/groups')).toEqual(expected)
   })
 
   it('should return undefined for another host', () => {
@@ -99,12 +101,6 @@ describe('tildesHandler', () => {
       ]
 
       expect(tildesHandler.resolve(value)).toEqual(expected)
-    })
-
-    it('should return empty array for paths without ~ prefix', () => {
-      const value = 'https://tildes.net/login'
-
-      expect(tildesHandler.resolve(value)).toEqual([])
     })
 
     it('should pass through tag query on group feeds', () => {

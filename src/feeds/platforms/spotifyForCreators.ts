@@ -5,6 +5,7 @@ import { composeHint } from '../../common/utils.js'
 // Discoverability: Discoverable without handler.
 
 export type SpotifyForCreatorsUrl = { kind: 'show' }
+export type SpotifyForCreatorsPage = { kind: 'show'; stationId: string }
 
 const hosts = ['creators.spotify.com']
 
@@ -24,22 +25,35 @@ export const parseSpotifyForCreatorsUrl = (url: string): SpotifyForCreatorsUrl |
   return { kind: 'show' }
 }
 
+export const getSpotifyForCreatorsPage = (
+  url: string,
+  content: string | undefined,
+): SpotifyForCreatorsPage | undefined => {
+  const parsed = parseSpotifyForCreatorsUrl(url)
+  const stationId = content?.match(feedUrlRegex)?.[1]
+
+  if (!parsed || !stationId) {
+    return
+  }
+
+  return { kind: 'show', stationId }
+}
+
 export const spotifyForCreatorsHandler: PlatformHandler = {
   match: (url) => {
     return parseSpotifyForCreatorsUrl(url) !== undefined
   },
 
   resolve: (url, content) => {
-    const parsed = parseSpotifyForCreatorsUrl(url)
-    const stationId = content?.match(feedUrlRegex)?.[1]
+    const page = getSpotifyForCreatorsPage(url, content)
 
-    if (!parsed || !stationId) {
+    if (!page) {
       return []
     }
 
     return [
       {
-        uri: `https://anchor.fm/s/${stationId}/podcast/rss`,
+        uri: `https://anchor.fm/s/${page.stationId}/podcast/rss`,
         hint: composeHint('spotify-for-creators:podcast'),
       },
     ]

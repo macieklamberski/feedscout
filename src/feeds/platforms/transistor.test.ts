@@ -1,5 +1,11 @@
 import { describe, expect, it } from 'bun:test'
-import { parseTransistorUrl, type TransistorUrl, transistorHandler } from './transistor.js'
+import {
+  getTransistorPage,
+  parseTransistorUrl,
+  type TransistorPage,
+  type TransistorUrl,
+  transistorHandler,
+} from './transistor.js'
 
 describe('parseTransistorUrl', () => {
   it('should return the show for a show subdomain', () => {
@@ -22,6 +28,30 @@ describe('parseTransistorUrl', () => {
 
   it('should return undefined for another host', () => {
     expect(parseTransistorUrl('https://example.com/')).toBeUndefined()
+  })
+})
+
+describe('getTransistorPage', () => {
+  it('should return the feed slug the show page links', () => {
+    const value = 'https://my-show.transistor.fm/'
+    const content = '<a href="https://feeds.transistor.fm/my-show-podcast">RSS</a>'
+    const expected: TransistorPage = { kind: 'show', slug: 'my-show-podcast' }
+
+    expect(getTransistorPage(value, content)).toEqual(expected)
+  })
+
+  it('should return the subdomain without content', () => {
+    const expected: TransistorPage = { kind: 'show', slug: 'my-show' }
+
+    expect(getTransistorPage('https://my-show.transistor.fm/', undefined)).toEqual(expected)
+  })
+
+  it('should return undefined for the feed host', () => {
+    expect(getTransistorPage('https://feeds.transistor.fm/my-show', undefined)).toBeUndefined()
+  })
+
+  it('should return undefined for another host', () => {
+    expect(getTransistorPage('https://example.com/', undefined)).toBeUndefined()
   })
 })
 

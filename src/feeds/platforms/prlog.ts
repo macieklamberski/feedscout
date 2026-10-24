@@ -6,6 +6,7 @@ import { composeHint, findElement } from '../../common/utils.js'
 // Discoverability: Discoverable without handler.
 
 export type PrlogUrl = { kind: 'pressroom'; pressroomId: string }
+export type PrlogPage = PrlogUrl
 
 const hosts = ['pressroom.prlog.org']
 
@@ -27,7 +28,7 @@ export const parsePrlogUrl = (url: string): PrlogUrl | undefined => {
 
 // The pressroom id answers in any case, and the page's feed alternate spells it as registered,
 // so `/door_renew/` links `/Door_Renew/latest.xml`.
-const getPressroomId = (url: string, content: string | undefined): string | undefined => {
+export const getPrlogPage = (url: string, content: string | undefined): PrlogPage | undefined => {
   const parsed = parsePrlogUrl(url)
 
   if (!parsed) {
@@ -44,10 +45,10 @@ const getPressroomId = (url: string, content: string | undefined): string | unde
   const linked = parsePrlogUrl(link?.attribs.href ?? '')
 
   if (linked && linked.pressroomId.toLowerCase() === parsed.pressroomId.toLowerCase()) {
-    return linked.pressroomId
+    return linked
   }
 
-  return parsed.pressroomId
+  return parsed
 }
 
 export const prlogHandler: PlatformHandler = {
@@ -56,9 +57,9 @@ export const prlogHandler: PlatformHandler = {
   },
 
   resolve: (url, content) => {
-    const pressroomId = getPressroomId(url, content)
+    const page = getPrlogPage(url, content)
 
-    if (!pressroomId) {
+    if (!page) {
       return []
     }
 
@@ -66,7 +67,7 @@ export const prlogHandler: PlatformHandler = {
     const uris: Array<DiscoverUriEntry> = []
 
     uris.push({
-      uri: `${origin}/${pressroomId}/latest.xml`,
+      uri: `${origin}/${page.pressroomId}/latest.xml`,
       hint: composeHint('prlog:press-releases'),
     })
 

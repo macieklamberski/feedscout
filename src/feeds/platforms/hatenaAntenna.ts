@@ -12,6 +12,7 @@ import {
 export type HatenaAntennaUrl =
   | { kind: 'antenna'; username: string }
   | { kind: 'group'; username: string; groupId: string }
+export type HatenaAntennaPage = HatenaAntennaUrl
 
 const hosts = ['a.hatena.ne.jp']
 
@@ -55,28 +56,41 @@ export const parseHatenaAntennaUrl = (url: string): HatenaAntennaUrl | undefined
   return { kind: 'antenna', username }
 }
 
+export const getHatenaAntennaPage = (
+  url: string,
+  content: string | undefined,
+): HatenaAntennaPage | undefined => {
+  const parsed = parseHatenaAntennaUrl(url)
+
+  if (!parsed) {
+    return
+  }
+
+  // Hatena bolds the group the page shows in its group nav. A made-up group id leaves every group
+  // a link and serves an empty feed, so the page falls back to the whole antenna.
+  if (parsed.kind === 'group' && content !== undefined && !hasSelectedGroup(content)) {
+    return { kind: 'antenna', username: parsed.username }
+  }
+
+  return parsed
+}
+
 export const hatenaAntennaHandler: PlatformHandler = {
   match: (url) => {
     return parseHatenaAntennaUrl(url) !== undefined
   },
 
   resolve: (url, content) => {
-    let parsed = parseHatenaAntennaUrl(url)
+    const page = getHatenaAntennaPage(url, content)
 
-    if (!parsed) {
+    if (!page) {
       return []
     }
 
-    // Hatena bolds the group the page shows in its group nav. A made-up group id leaves every group
-    // a link and serves an empty feed, so the page falls back to the whole antenna.
-    if (parsed.kind === 'group' && content !== undefined && !hasSelectedGroup(content)) {
-      parsed = { kind: 'antenna', username: parsed.username }
-    }
+    const antennaUrl = `${feedOrigin}/${page.username}`
 
-    const antennaUrl = `${feedOrigin}/${parsed.username}`
-
-    if (parsed.kind === 'group') {
-      const query = composeQuery({ gid: parsed.groupId })
+    if (page.kind === 'group') {
+      const query = composeQuery({ gid: page.groupId })
 
       return [{ uri: `${antennaUrl}/rss${query}`, hint: composeHint('hatena-antenna:group') }]
     }

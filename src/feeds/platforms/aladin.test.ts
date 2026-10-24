@@ -1,6 +1,12 @@
 import { describe, expect, it } from 'bun:test'
 import type { DiscoverUriEntry } from '../../common/types.js'
-import { type AladinUrl, aladinHandler, parseAladinUrl } from './aladin.js'
+import {
+  type AladinPage,
+  type AladinUrl,
+  aladinHandler,
+  getAladinPage,
+  parseAladinUrl,
+} from './aladin.js'
 
 describe('parseAladinUrl', () => {
   it('should return the blog for a blog home', () => {
@@ -71,6 +77,49 @@ describe('parseAladinUrl', () => {
 
   it('should return undefined for another host', () => {
     expect(parseAladinUrl('https://example.com/alice')).toBeUndefined()
+  })
+})
+
+describe('getAladinPage', () => {
+  it('should return the username as the feed link spells it', () => {
+    const value = 'https://blog.aladin.co.kr/ALICE/category/49178853'
+    const content = `
+      <link
+        rel="alternate"
+        type="application/rss+xml"
+        href="https://blog.aladin.co.kr/alice/rss"
+      >
+    `
+    const expected: AladinPage = { kind: 'category', username: 'alice', categoryId: '49178853' }
+
+    expect(getAladinPage(value, content)).toEqual(expected)
+  })
+
+  it('should return the username from the url without content', () => {
+    const value = 'https://blog.aladin.co.kr/ALICE'
+    const expected: AladinPage = { kind: 'blog', username: 'ALICE' }
+
+    expect(getAladinPage(value, undefined)).toEqual(expected)
+  })
+
+  it('should return undefined for another host', () => {
+    expect(getAladinPage('https://example.com/alice', undefined)).toBeUndefined()
+  })
+
+  it('should ignore the feed link of another blog', () => {
+    const value = 'https://blog.aladin.co.kr/ALICE'
+    const content = '<a href="https://blog.aladin.co.kr/bob/rss">Bob</a>'
+    const expected: AladinPage = { kind: 'blog', username: 'ALICE' }
+
+    expect(getAladinPage(value, content)).toEqual(expected)
+  })
+
+  it('should ignore the feed link of a blog whose username starts with the page username', () => {
+    const value = 'https://blog.aladin.co.kr/ALICE'
+    const content = '<a href="https://blog.aladin.co.kr/alicebooks/rss">Alice Books</a>'
+    const expected: AladinPage = { kind: 'blog', username: 'ALICE' }
+
+    expect(getAladinPage(value, content)).toEqual(expected)
   })
 })
 

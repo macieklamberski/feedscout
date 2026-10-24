@@ -149,6 +149,7 @@ describe('getRedminePage', () => {
     const expected: RedminePage = {
       kind: 'project',
       root: 'https://example.com',
+      alternateHrefs: [],
       project: 'acme-tools',
       hasIssues: true,
       hasNews: true,
@@ -162,6 +163,7 @@ describe('getRedminePage', () => {
     const expected: RedminePage = {
       kind: 'project',
       root: 'https://example.com',
+      alternateHrefs: [],
       project: 'acme-tools',
       hasIssues: true,
       hasNews: true,
@@ -174,6 +176,7 @@ describe('getRedminePage', () => {
     const expected: RedminePage = {
       kind: 'project',
       root: 'https://example.com',
+      alternateHrefs: [],
       project: 'acme-tools',
       hasIssues: true,
       hasNews: true,
@@ -187,6 +190,7 @@ describe('getRedminePage', () => {
     const expected: RedminePage = {
       kind: 'issues',
       root: 'https://example.com',
+      alternateHrefs: [],
       project: 'acme-tools',
     }
 
@@ -198,6 +202,7 @@ describe('getRedminePage', () => {
     const expected: RedminePage = {
       kind: 'news',
       root: 'https://example.com',
+      alternateHrefs: [],
       project: 'acme-tools',
     }
 
@@ -209,6 +214,7 @@ describe('getRedminePage', () => {
     const expected: RedminePage = {
       kind: 'activity',
       root: 'https://example.com',
+      alternateHrefs: [],
       project: 'acme-tools',
     }
 
@@ -220,6 +226,7 @@ describe('getRedminePage', () => {
     const expected: RedminePage = {
       kind: 'board',
       root: 'https://example.com',
+      alternateHrefs: [],
       project: 'acme-tools',
       boardId: '3',
     }
@@ -232,6 +239,7 @@ describe('getRedminePage', () => {
     const expected: RedminePage = {
       kind: 'repository',
       root: 'https://example.com',
+      alternateHrefs: ['https://example.com/projects/acme-tools/repository/core/revisions'],
       project: 'acme-tools',
       repository: 'core',
     }
@@ -245,6 +253,7 @@ describe('getRedminePage', () => {
     const expected: RedminePage = {
       kind: 'repository',
       root: 'https://example.com',
+      alternateHrefs: ['https://example.com/projects/acme-tools/core/revisions'],
       project: 'acme-tools',
       repository: '..%5Ccore',
     }
@@ -257,6 +266,7 @@ describe('getRedminePage', () => {
     const expected: RedminePage = {
       kind: 'project',
       root: 'https://example.com',
+      alternateHrefs: [],
       project: 'acme-tools',
       hasIssues: true,
       hasNews: true,
@@ -266,37 +276,54 @@ describe('getRedminePage', () => {
   })
 
   it('should return the issue of an issue page', () => {
-    const expected: RedminePage = { kind: 'issue', root: 'https://example.com', issueId: '4521' }
+    const expected: RedminePage = {
+      kind: 'issue',
+      root: 'https://example.com',
+      alternateHrefs: [],
+      issueId: '4521',
+    }
 
     expect(getRedminePage('https://example.com/issues/4521', projectHtml)).toEqual(expected)
   })
 
   it('should return the site issues', () => {
-    const expected: RedminePage = { kind: 'issues', root: 'https://example.com' }
+    const expected: RedminePage = {
+      kind: 'issues',
+      root: 'https://example.com',
+      alternateHrefs: [],
+    }
 
     expect(getRedminePage('https://example.com/issues', siteHtml)).toEqual(expected)
   })
 
   it('should return the site news', () => {
-    const expected: RedminePage = { kind: 'news', root: 'https://example.com' }
+    const expected: RedminePage = { kind: 'news', root: 'https://example.com', alternateHrefs: [] }
 
     expect(getRedminePage('https://example.com/news', siteHtml)).toEqual(expected)
   })
 
   it('should return the site activity', () => {
-    const expected: RedminePage = { kind: 'activity', root: 'https://example.com' }
+    const expected: RedminePage = {
+      kind: 'activity',
+      root: 'https://example.com',
+      alternateHrefs: [],
+    }
 
     expect(getRedminePage('https://example.com/activity', siteHtml)).toEqual(expected)
   })
 
   it('should return the project list', () => {
-    const expected: RedminePage = { kind: 'projects', root: 'https://example.com' }
+    const expected: RedminePage = {
+      kind: 'projects',
+      root: 'https://example.com',
+      alternateHrefs: [],
+    }
 
     expect(getRedminePage('https://example.com/projects', siteHtml)).toEqual(expected)
   })
 
   it('should return the home page for the root', () => {
-    const expected: RedminePage = { kind: 'home', root: 'https://example.com' }
+    const expected: RedminePage = { kind: 'home', root: 'https://example.com', alternateHrefs: [] }
 
     expect(getRedminePage('https://example.com/', siteHtml)).toEqual(expected)
   })
@@ -305,6 +332,7 @@ describe('getRedminePage', () => {
     const expected: RedminePage = {
       kind: 'project',
       root: 'https://example.com',
+      alternateHrefs: [],
       project: 'acme-tools',
       hasIssues: true,
       hasNews: true,
@@ -314,7 +342,7 @@ describe('getRedminePage', () => {
   })
 
   it('should return the home page for a page outside any project', () => {
-    const expected: RedminePage = { kind: 'home', root: 'https://example.com' }
+    const expected: RedminePage = { kind: 'home', root: 'https://example.com', alternateHrefs: [] }
 
     expect(getRedminePage('https://example.com/users/7', siteHtml)).toEqual(expected)
   })
@@ -324,6 +352,7 @@ describe('getRedminePage', () => {
     const expected: RedminePage = {
       kind: 'issues',
       root: 'https://example.com/redmine',
+      alternateHrefs: [],
       project: 'acme-tools',
     }
 
@@ -334,6 +363,7 @@ describe('getRedminePage', () => {
     const expected: RedminePage = {
       kind: 'project',
       root: 'https://example.com',
+      alternateHrefs: [],
       project: 'acme-tools',
       hasIssues: true,
       hasNews: false,
@@ -348,6 +378,7 @@ describe('getRedminePage', () => {
     const expected: RedminePage = {
       kind: 'project',
       root: 'https://example.com',
+      alternateHrefs: [],
       project: 'acme-tools',
       hasIssues: false,
       hasNews: true,
@@ -362,6 +393,7 @@ describe('getRedminePage', () => {
     const expected: RedminePage = {
       kind: 'project',
       root: 'https://example.com',
+      alternateHrefs: [],
       project: 'acme-tools',
       hasIssues: true,
       hasNews: false,
@@ -374,6 +406,7 @@ describe('getRedminePage', () => {
     const expected: RedminePage = {
       kind: 'project',
       root: 'https://example.com',
+      alternateHrefs: [],
       project: 'acme-tools',
       hasIssues: true,
       hasNews: true,
@@ -382,6 +415,29 @@ describe('getRedminePage', () => {
     expect(getRedminePage('https://example.com/projects/acme-tools', formErrorProjectHtml)).toEqual(
       expected,
     )
+  })
+
+  it('should return the alternate links the page spells over http', () => {
+    const value = 'https://example.com/projects/acme-tools/boards/3'
+    const content = `
+      <head>
+        <link
+          rel="alternate"
+          type="application/atom+xml"
+          href="http://example.com/projects/acme-tools/boards/3.atom"
+        />
+      </head>
+      ${projectHtml}
+    `
+    const expected: RedminePage = {
+      kind: 'board',
+      root: 'https://example.com',
+      alternateHrefs: ['http://example.com/projects/acme-tools/boards/3.atom'],
+      project: 'acme-tools',
+      boardId: '3',
+    }
+
+    expect(getRedminePage(value, content)).toEqual(expected)
   })
 
   it('should return undefined for an error page', () => {

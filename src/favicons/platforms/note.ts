@@ -1,4 +1,4 @@
-import { getPathSegments, isNonEmptyString } from 'trousse'
+import { isNonEmptyString } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { parseNoteUrl } from '../../feeds/platforms/note.js'
 import type { FaviconEnricher } from '../types.js'
@@ -13,7 +13,7 @@ const profileImageUrlRegex = /profileImageUrl\\?":\\?"((?:[^"\\]|\\u[\da-f]{4})+
 const getOwner = (url: string): string | undefined => {
   const parsed = parseNoteUrl(url)
 
-  if (parsed?.kind === 'user' || parsed?.kind === 'magazine') {
+  if (parsed?.kind === 'note' || parsed?.kind === 'user' || parsed?.kind === 'magazine') {
     return parsed.username
   }
 }
@@ -44,9 +44,7 @@ export const noteHandler: PlatformHandler = {
     }
 
     // A magazine or article page payload describes the magazine or article, not its owner.
-    const isProfile = getPathSegments(url).length === 1
-
-    if (isProfile && content) {
+    if (parseNoteUrl(url)?.kind === 'user' && content) {
       const profileImageUrl = parseProfileImageUrl(content)
 
       if (isNonEmptyString(profileImageUrl)) {
