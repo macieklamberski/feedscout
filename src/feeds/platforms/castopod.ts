@@ -1,6 +1,6 @@
 import { decodeSegment, getPathSegments, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, findElement } from '../../common/utils.js'
+import { composeHint, findElement, isRootOfPage } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -23,6 +23,11 @@ const getCastopodPage = (url: string, content: string | undefined): CastopodPage
   }
 
   const rootPath = linkUrl.pathname.replace(colorsPathRegex, '')
+
+  if (!isRootOfPage(`${linkUrl.origin}${rootPath}`, url)) {
+    return
+  }
+
   const rootUrl = `${new URL(url).origin}${rootPath}`
   const handleSegment = getPathSegments(url)[getPathSegments(rootUrl).length]
   const handle = decodeSegment(handleSegment)?.match(handleRegex)?.[1]

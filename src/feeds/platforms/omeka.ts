@@ -1,5 +1,12 @@
+import { parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, type Element, findElement, hasMarker } from '../../common/utils.js'
+import {
+  composeHint,
+  type Element,
+  findElement,
+  hasMarker,
+  isRootOfPage,
+} from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -46,14 +53,20 @@ export const isOmekaHtml = (content: string): boolean => {
   return getAssetRoot(content) !== undefined
 }
 
-export const getOmekaPage = (url: string, content: string | undefined): OmekaPage => {
-  const assetRoot = getAssetRoot(content) ?? ''
+export const getOmekaPage = (url: string, content: string | undefined): OmekaPage | undefined => {
+  const assetRoot = getAssetRoot(content)
+  const assetRootUrl = assetRoot === undefined ? undefined : parseUrl(`${assetRoot}/`, url)
+
+  if (!assetRootUrl || !isRootOfPage(assetRootUrl.href, url)) {
+    return
+  }
+
   const { origin, pathname, searchParams } = new URL(url)
-  const rootPath = new URL(`${assetRoot}/`, url).pathname.replace(trailingSlashRegex, '')
+  const rootPath = assetRootUrl.pathname.replace(trailingSlashRegex, '')
   const rootUrl = `${origin}${rootPath}`
   const routePath = pathname.slice(rootPath.length)
 
-  if (!pathname.startsWith(rootPath) || !itemsBrowseRegex.test(routePath)) {
+  if (!itemsBrowseRegex.test(routePath)) {
     return { kind: 'page', rootUrl }
   }
 
@@ -71,12 +84,21 @@ export const getOmekaPage = (url: string, content: string | undefined): OmekaPag
 }
 
 export const omekaHandler: PlatformHandler = {
-  match: (_url, content, headers) => {
-    return hasMarker(content, headers, { html: isOmekaHtml })
+  match: (url, content, headers) => {
+    if (!hasMarker(content, headers, { html: isOmekaHtml })) {
+      return false
+    }
+
+    return getOmekaPage(url, content) !== undefined
   },
 
   resolve: (url, content) => {
     const page = getOmekaPage(url, content)
+
+    if (!page) {
+      return []
+    }
+
     const browseUrl = `${page.rootUrl}/items/browse`
 
     if (page.kind === 'browse') {

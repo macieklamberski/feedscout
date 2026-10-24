@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import { type GcsWebUrl, gcsWebHandler, isGcsWebHtml, parseGcsWebUrl } from './gcsWeb.js'
+import { type GcsWebUrl, gcsWebHandler, isGcsWebPage, parseGcsWebUrl } from './gcsWeb.js'
 
 const siteHtml = `
   <link
@@ -9,26 +9,47 @@ const siteHtml = `
   >
 `
 
-describe('isGcsWebHtml', () => {
+describe('isGcsWebPage', () => {
+  const url = 'https://investors.example.com/news'
+
   it('should return true for the site files path', () => {
-    expect(isGcsWebHtml(siteHtml)).toBe(true)
+    expect(isGcsWebPage(url, siteHtml)).toBe(true)
   })
 
   it('should return true for the site theme path', () => {
     const value =
       '<img src="/sites/g/files/knoqqb12345/themes/site/nir_pid1234/dist/images/logo.svg" alt="logo"/>'
 
-    expect(isGcsWebHtml(value)).toBe(true)
+    expect(isGcsWebPage(url, value)).toBe(true)
+  })
+
+  it('should return true for the site files path on the page host', () => {
+    const value =
+      '<link rel="stylesheet" href="https://investors.example.com/sites/g/files/knoqqb12345/files/css/css_abc.css">'
+
+    expect(isGcsWebPage(url, value)).toBe(true)
+  })
+
+  it('should return false for the site files path on another host', () => {
+    const value = '<img src="https://ir.example.net/sites/g/files/knoqqb12345/files/logo.png">'
+
+    expect(isGcsWebPage(url, value)).toBe(false)
+  })
+
+  it('should return false for the site files path outside an asset attribute', () => {
+    const value = '<p>/sites/g/files/knoqqb12345/files/logo.png</p>'
+
+    expect(isGcsWebPage(url, value)).toBe(false)
   })
 
   it('should return false for another site factory files path', () => {
     const value = '<link rel="stylesheet" href="/sites/g/files/abcdef123/files/css/css_abc.css">'
 
-    expect(isGcsWebHtml(value)).toBe(false)
+    expect(isGcsWebPage(url, value)).toBe(false)
   })
 
   it('should return false for empty content', () => {
-    expect(isGcsWebHtml('')).toBe(false)
+    expect(isGcsWebPage(url, '')).toBe(false)
   })
 })
 
@@ -64,6 +85,12 @@ describe('gcsWebHandler', () => {
 
     it('should match a site on a company domain by the files path', () => {
       expect(gcsWebHandler.match('https://investors.example.com/', siteHtml)).toBe(true)
+    })
+
+    it('should not match a page linking the files path on another host', () => {
+      const value = '<img src="https://ir.example.net/sites/g/files/knoqqb12345/files/logo.png">'
+
+      expect(gcsWebHandler.match('https://blog.example.org/2024/post', value)).toBe(false)
     })
 
     it('should not match the www host carrying the marker', () => {

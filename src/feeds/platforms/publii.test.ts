@@ -41,6 +41,12 @@ describe('publiiHandler', () => {
       expect(publiiHandler.match('https://example.com/blog/a-post/', content)).toBe(true)
     })
 
+    it('should match a page under a site at the host root', () => {
+      const content = '<img src="https://example.com/media/posts/12/cover.jpg">'
+
+      expect(publiiHandler.match('https://example.com/a-post/', content)).toBe(true)
+    })
+
     it('should not match media linked from another host', () => {
       const content = '<img src="https://assets.example.com/media/website/logo.png">'
 

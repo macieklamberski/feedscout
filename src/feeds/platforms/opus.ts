@@ -1,6 +1,12 @@
-import { decodeSegment, resolveUrl } from 'trousse'
+import { decodeSegment, parseUrl, resolveUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, digitsRegex, findElements, hasMarker } from '../../common/utils.js'
+import {
+  composeHint,
+  digitsRegex,
+  findElements,
+  hasMarker,
+  isRootOfPage,
+} from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -59,12 +65,18 @@ export const isOpusHtml = (content: string): boolean => {
 }
 
 export const getOpusPage = (url: string, content: string | undefined): OpusPage | undefined => {
-  const assetRoot = content?.match(assetRootRegex)?.[1] ?? ''
+  const assetRoot = content?.match(assetRootRegex)?.[1]
+  const assetRootUrl = assetRoot === undefined ? undefined : parseUrl(`${assetRoot}/`, url)
+
+  if (!assetRootUrl || !isRootOfPage(assetRootUrl.href, url)) {
+    return
+  }
+
   const { origin, pathname } = new URL(url)
-  const rootPath = new URL(`${assetRoot}/`, url).pathname.replace(trailingSlashRegex, '')
+  const rootPath = assetRootUrl.pathname.replace(trailingSlashRegex, '')
   const searchPath = pathname.slice(rootPath.length).match(searchPathRegex)?.[1]
 
-  if (!pathname.startsWith(rootPath) || !searchPath) {
+  if (!searchPath) {
     return
   }
 

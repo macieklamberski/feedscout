@@ -1,6 +1,5 @@
-import { parseUrl, stripWww } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, hasMarker, hasMetaContent } from '../../common/utils.js'
+import { composeHint, hasMarker, hasMetaContent, isRootOfPage } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -16,22 +15,10 @@ export const isPubliiHtml = (content: string): boolean => {
   return hasGenerator(content) || mediaUrlRegex.test(content)
 }
 
-// A media link names the site root only when the page sits under it. One on another host is a CDN
-// or an image of another site.
 const getSiteUrl = (url: string, content: string | undefined): string | undefined => {
   const siteUrl = content?.match(mediaUrlRegex)?.groups?.siteUrl
-  const parsedSiteUrl = parseUrl(siteUrl ?? '')
-  const parsedUrl = parseUrl(url)
 
-  if (!siteUrl || !parsedSiteUrl || !parsedUrl) {
-    return
-  }
-
-  if (stripWww(parsedSiteUrl.hostname) !== stripWww(parsedUrl.hostname)) {
-    return
-  }
-
-  if (!`${parsedUrl.pathname}/`.startsWith(`${parsedSiteUrl.pathname}/`)) {
+  if (!siteUrl || !isRootOfPage(siteUrl, url)) {
     return
   }
 

@@ -1,5 +1,5 @@
 import { DomUtils, parseDocument } from 'htmlparser2'
-import { anyWordMatchesAnyOf, getSubdomain, isAnyOf } from 'trousse'
+import { anyWordMatchesAnyOf, getSubdomain, isAnyOf, parseUrl, stripWww } from 'trousse'
 import locales from './locales.json' with { type: 'json' }
 import type { DiscoverUriHint, FetchFn } from './types.js'
 
@@ -242,6 +242,25 @@ export const getTenantSubdomain = (
   }
 
   return subdomain
+}
+
+// A URL used as a marker names the site only on the page's own host and under a root that holds
+// the page.
+export const isRootOfPage = (rootUrl: string, url: string): boolean => {
+  const parsedRootUrl = parseUrl(rootUrl)
+  const parsedUrl = parseUrl(url)
+
+  if (!parsedRootUrl || !parsedUrl) {
+    return false
+  }
+
+  if (stripWww(parsedRootUrl.hostname) !== stripWww(parsedUrl.hostname)) {
+    return false
+  }
+
+  const rootPath = parsedRootUrl.pathname.replace(trailingSlashRegex, '')
+
+  return `${parsedUrl.pathname}/`.startsWith(`${rootPath}/`)
 }
 
 export const getScriptDirectory = (pathname: string): string => {

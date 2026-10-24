@@ -1,6 +1,12 @@
-import { isHostOrSubdomainOf } from 'trousse'
+import { isHostOrSubdomainOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, getTenantSubdomain, hasMarker } from '../../common/utils.js'
+import {
+  composeHint,
+  type Element,
+  findElement,
+  getTenantSubdomain,
+  isRootOfPage,
+} from '../../common/utils.js'
 
 // Discoverability: Not discoverable without handler.
 // Handler needed for: all shapes.
@@ -11,8 +17,19 @@ const domains = ['gcs-web.com']
 
 const filesPathRegex = /\/sites\/g\/files\/knoqqb\d+\//
 
-export const isGcsWebHtml = (content: string): boolean => {
-  return filesPathRegex.test(content)
+const getAssetUrl = (element: Element): string => {
+  return element.attribs.href ?? element.attribs.src ?? ''
+}
+
+export const isGcsWebPage = (url: string, content: string | undefined): boolean => {
+  const asset = findElement(content, (element) => filesPathRegex.test(getAssetUrl(element)))
+  const assetUrl = asset ? parseUrl(getAssetUrl(asset), url) : undefined
+
+  if (!assetUrl) {
+    return false
+  }
+
+  return isRootOfPage(assetUrl.origin, url)
 }
 
 export const parseGcsWebUrl = (url: string): GcsWebUrl | undefined => {
@@ -24,12 +41,12 @@ export const parseGcsWebUrl = (url: string): GcsWebUrl | undefined => {
 }
 
 export const gcsWebHandler: PlatformHandler = {
-  match: (url, content, headers) => {
+  match: (url, content) => {
     if (isHostOrSubdomainOf(url, domains)) {
       return parseGcsWebUrl(url) !== undefined
     }
 
-    return hasMarker(content, headers, { html: isGcsWebHtml })
+    return isGcsWebPage(url, content)
   },
 
   resolve: (url) => {
