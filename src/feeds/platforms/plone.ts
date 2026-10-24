@@ -12,7 +12,7 @@ export type PlonePage =
 const searchPathRegex = /^(.*)\/(?:@@)?search\/?$/i
 const portalTypeRegex = /^portaltype-/
 const errorTemplateRegex = /^template-(?:default_)?error_message/
-const searchLinkRegex = /\/@@search$/
+const searchLinkRegex = /\/@@search$/i
 const trailingSlashRegex = /\/$/
 
 // Content types that hold no items, so Plone serves no syndication feed for them.

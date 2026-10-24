@@ -7,7 +7,7 @@ import { composeHint, findElement, findElements, hasMarker } from '../../common/
 export type RealEstateIndiaPage = { feedUrl: string }
 
 const templateStylesheetRegex = /^(?:https?:)?\/\/catalog\.wlimg\.com\/templates-images\//
-const propertyFeedPathRegex = /^\/property\.rss$/
+const propertyFeedPathRegex = /^\/property\.rss$/i
 
 // Every Weblink.In catalog site loads its template stylesheet from the shared asset host.
 export const isRealEstateIndiaHtml = (content: string): boolean => {

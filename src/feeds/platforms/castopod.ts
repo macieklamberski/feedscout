@@ -6,7 +6,7 @@ import { composeHint, findElement, isRootOfPage } from '../../common/utils.js'
 
 export type CastopodPage = { rootUrl: string; handle: string }
 
-const colorsPathRegex = /\/themes\/colors$/
+const colorsPathRegex = /\/themes\/colors$/i
 const handleRegex = /^@(\w+)$/
 
 // Core prints the theme colors stylesheet in every page head, at the install's root. Every page

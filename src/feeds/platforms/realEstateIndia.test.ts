@@ -74,6 +74,12 @@ describe('realEstateIndiaHandler', () => {
       expect(realEstateIndiaHandler.match('https://www.example.com/', propertyAnchor)).toBe(false)
     })
 
+    it('should match a link to the property feed spelled in uppercase', () => {
+      const value = `${stylesheet}<a href="https://www.example.com/Property.RSS">RSS</a>`
+
+      expect(realEstateIndiaHandler.match('https://www.example.com/', value)).toBe(true)
+    })
+
     it('should not match a link to the property feed of another host', () => {
       expect(realEstateIndiaHandler.match('https://www.example.org/', realEstateIndiaHtml)).toBe(
         false,

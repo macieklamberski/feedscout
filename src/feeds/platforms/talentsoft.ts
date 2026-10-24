@@ -1,4 +1,4 @@
-import { isAnyOf, parseUrl } from 'trousse'
+import { getQueryParam, isAnyOf, parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, findElement, hasClass, hasMarker } from '../../common/utils.js'
@@ -50,12 +50,12 @@ const getTalentsoftPage = (url: string, content: string | undefined): Talentsoft
       return (
         feedUrl?.origin === origin &&
         offerFeedPathRegex.test(feedUrl.pathname) &&
-        [...feedUrl.searchParams.keys()].join() === 'LCID'
+        isAnyOf([...feedUrl.searchParams.keys()].join(), 'lcid')
       )
     })
 
     if (offersLink) {
-      lcid = parseUrl(offersLink.attribs.href ?? '', url)?.searchParams.get('LCID') ?? undefined
+      lcid = getQueryParam(parseUrl(offersLink.attribs.href ?? '', url)?.searchParams, 'lcid')
     }
   }
 

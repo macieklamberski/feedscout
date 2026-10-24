@@ -7,7 +7,7 @@ import { composeHint, findElement, findElements, hasMarker } from '../../common/
 export type TourTravelWorldPage = { feedUrl: string }
 
 const templateStylesheetRegex = /^(?:https?:)?\/\/catalog\.wlimg\.com\/templates-images\//
-const packagesFeedPathRegex = /^\/tour-packages\.rss$/
+const packagesFeedPathRegex = /^\/tour-packages\.rss$/i
 
 // Every Weblink.In catalog site loads its template stylesheet from the shared asset host.
 export const isTourTravelWorldHtml = (content: string): boolean => {

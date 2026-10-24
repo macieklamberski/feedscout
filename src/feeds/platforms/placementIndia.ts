@@ -8,8 +8,8 @@ import { composeHint, findElement, findElements, hasMarker } from '../../common/
 export type PlacementIndiaPage = { feedUrl: string; jobOpeningFeedUrl?: string }
 
 const templateStylesheetRegex = /^(?:https?:)?\/\/catalog\.wlimg\.com\/templates-images\//
-const vacanciesFeedPathRegex = /^\/vacancy\.rss$/
-const jobOpeningFeedPathRegex = /^\/vacancy_\d+\.rss$/
+const vacanciesFeedPathRegex = /^\/vacancy\.rss$/i
+const jobOpeningFeedPathRegex = /^\/vacancy_\d+\.rss$/i
 
 // Every Weblink.In catalog site loads its template stylesheet from the shared asset host.
 export const isPlacementIndiaHtml = (content: string): boolean => {

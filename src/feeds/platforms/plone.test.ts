@@ -160,6 +160,24 @@ describe('getPlonePage', () => {
     expect(getPlonePage(value, html)).toEqual(expected)
   })
 
+  it('should return the portal of a Plone 4 search page from a search link in uppercase', () => {
+    const value = 'https://example.org/varietytrials/barley/search?SearchableText=barley'
+    const html = `
+      <head>
+        <base href="https://example.org/varietytrials/barley/" />
+        <link rel="search" href="https://example.org/varietytrials/@@Search" title="Search this site" />
+      </head>
+      <body class="template-search portaltype-topic site-variety-trials userrole-anonymous">
+    `
+    const expected: PlonePage = {
+      kind: 'search',
+      portalUrl: 'https://example.org/varietytrials',
+      query: 'SearchableText=barley',
+    }
+
+    expect(getPlonePage(value, html)).toEqual(expected)
+  })
+
   it('should prefer the body portal url over the search link', () => {
     const value = 'https://example.org/agency/ca/search?SearchableText=water'
     const html = `

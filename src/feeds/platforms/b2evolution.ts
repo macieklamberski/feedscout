@@ -13,9 +13,9 @@ import {
 
 const assetRegex = /\/rsc\/(?:build|css|js)\//
 const sessionCookieRegex = /^session_b2evo(?:__.+)?$/
-const blogFeedHrefRegex = /^(.*[?&])tempskin=_(?:rss2|atom)$/
-const blogCommentsHrefRegex = /^(.*[?&])tempskin=_(?:rss2|atom)&disp=comments$/
-const postCommentsHrefRegex = /[?&]tempskin=_rss2&disp=comments&p=\d+$/
+const blogFeedHrefRegex = /^(.*[?&])tempskin=_(?:rss2|atom)$/i
+const blogCommentsHrefRegex = /^(.*[?&])tempskin=_(?:rss2|atom)&disp=comments$/i
+const postCommentsHrefRegex = /[?&]tempskin=_rss2&disp=comments&p=\d+$/i
 const notFoundClassRegex = /\b(?:disp_404|error_404)\b/
 
 export type B2evolutionPage =

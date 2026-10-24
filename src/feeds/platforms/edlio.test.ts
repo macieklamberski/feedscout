@@ -116,6 +116,32 @@ describe('edlioHandler', () => {
       expect(edlioHandler.resolve(value, classHtml)).toEqual(expected)
     })
 
+    it('should return the linked category feed spelled in another case', () => {
+      const value = 'https://example.com/apps/news/'
+      const content = '<link rel="alternate" href="/apps/news/rss?CategoryID=12345" />'
+      const expected = [
+        {
+          uri: 'https://example.com/apps/news/rss?categoryid=12345',
+          hint: { key: 'edlio:news', label: 'News' },
+        },
+      ]
+
+      expect(edlioHandler.resolve(value, content)).toEqual(expected)
+    })
+
+    it('should return the linked assignments feed spelled in another case', () => {
+      const value = 'https://example.com/apps/classes/67890/assignments/'
+      const content = '<a href="/apps/classes/assignment_rss.jsp?classrec_id=67890">RSS</a>'
+      const expected = [
+        {
+          uri: 'https://example.com/apps/classes/assignment_rss.jsp?classREC_ID=67890',
+          hint: { key: 'edlio:assignments', label: 'Assignments' },
+        },
+      ]
+
+      expect(edlioHandler.resolve(value, content)).toEqual(expected)
+    })
+
     it('should return the news feed for a class page without the assignments link', () => {
       const value = 'https://example.com/apps/classes/67890/assignments/'
       const expected = [

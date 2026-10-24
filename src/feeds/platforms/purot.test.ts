@@ -104,6 +104,13 @@ describe('getPurotPage', () => {
     expect(getPurotPage('https://example.purot.net/kevatjuhla', pageHtml)).toEqual(expected)
   })
 
+  it('should return the page a feed link in uppercase names', () => {
+    const content = '<link rel="alternate" href="/changes/kevatjuhla?MODE=RSS&MESSAGES=0" />'
+    const expected: PurotPage = { kind: 'page', wiki: 'example', page: 'kevatjuhla' }
+
+    expect(getPurotPage('https://example.purot.net/kevatjuhla', content)).toEqual(expected)
+  })
+
   it('should return the front page for the home page', () => {
     const expected: PurotPage = { kind: 'page', wiki: 'example', page: 'etusivu' }
 

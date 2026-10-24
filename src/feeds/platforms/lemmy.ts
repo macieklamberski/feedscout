@@ -50,7 +50,7 @@ const getQuerySuffix = (query: LemmyQuery, content: string | undefined): string 
     return element.name === 'link' && element.attribs.rel === 'alternate'
   })
   const feedUrl = parseUrl(link?.attribs.href ?? '', 'https://example.com')
-  const sorts = [query.sort, feedUrl?.searchParams.get('sort')]
+  const sorts = [query.sort, getQueryParam(feedUrl?.searchParams, 'sort')]
   const sort = sorts.find((value) => value && validSorts.includes(value))
 
   if (sort) {

@@ -94,6 +94,12 @@ describe('exportersIndiaHandler', () => {
       expect(exportersIndiaHandler.match('https://www.example.com/', productsAnchor)).toBe(false)
     })
 
+    it('should match a link to the products feed spelled in uppercase', () => {
+      const value = `${stylesheet}<a href="https://www.example.com/Products.RSS">RSS</a>`
+
+      expect(exportersIndiaHandler.match('https://www.example.com/', value)).toBe(true)
+    })
+
     it('should not match a link to the products feed of another host', () => {
       expect(exportersIndiaHandler.match('https://www.example.org/', exportersIndiaHtml)).toBe(
         false,

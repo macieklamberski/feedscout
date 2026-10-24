@@ -209,6 +209,19 @@ describe('bubblelifeHandler', () => {
       expect(bubblelifeHandler.resolve(value, content)).toEqual(expected)
     })
 
+    it('should return the posts feed from an uppercase link on the rssinfo page', () => {
+      const value = 'https://plano.bubblelife.com/community/plano_news/type/rssinfo'
+      const content = '<a href="/RSS?C=35660940">All Posts</a>'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://plano.bubblelife.com/rss?c=35660940',
+          hint: { key: 'bubblelife:posts', label: 'Posts' },
+        },
+      ]
+
+      expect(bubblelifeHandler.resolve(value, content)).toEqual(expected)
+    })
+
     it('should skip topic links on the rssinfo page', () => {
       const value = 'https://plano.bubblelife.com/community/plano_news/type/rssinfo'
       const content = '<a href="/rss?c=35671970&amp;t=353002">News</a>'

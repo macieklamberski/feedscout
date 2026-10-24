@@ -33,6 +33,12 @@ describe('podhomeHandler', () => {
       expect(podhomeHandler.match('https://www.example.com/', stylesheet)).toBe(false)
     })
 
+    it('should match a feed link with an uppercase route word', () => {
+      const value = `${stylesheet}<link rel="alternate" href="https://serve.podhome.fm/RSS/abc">`
+
+      expect(podhomeHandler.match('https://serve.podhome.fm/example-show', value)).toBe(true)
+    })
+
     it('should not match an alternate link to another host', () => {
       const value = `${stylesheet}<link rel="alternate" href="https://example.com/rss/abc">`
 

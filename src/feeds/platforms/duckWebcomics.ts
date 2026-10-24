@@ -9,7 +9,7 @@ export type DuckWebcomicsUrl = { kind: 'comic'; comic: string }
 
 const hosts = ['theduckwebcomics.com', 'www.theduckwebcomics.com']
 
-const feedPathRegex = /^\/(\w+)\/rss\/$/
+const feedPathRegex = /^\/(\w+)\/rss\/$/i
 const feedRegex = /^https?:\/\/(?:www\.)?theduckwebcomics\.com\/\w+\/rss\/?$/i
 
 export const parseDuckWebcomicsUrl = (url: string): DuckWebcomicsUrl | undefined => {

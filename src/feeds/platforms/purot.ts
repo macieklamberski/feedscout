@@ -15,7 +15,7 @@ const domains = ['purot.net']
 
 // A profile id holds a slash, so a profile page never matches. A profile page links its user's
 // feeds even when it answers "User not found", and a real profile redirects to the home page.
-const pageChangesRegex = /^\/changes\/([^/?]+)\?mode=rss&messages=0$/
+const pageChangesRegex = /^\/changes\/([^/?]+)\?mode=rss&messages=0$/i
 
 export const parsePurotUrl = (url: string): PurotUrl | undefined => {
   const wiki = getTenantSubdomain(url, domains)
