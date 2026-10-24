@@ -1,4 +1,4 @@
-import { getPathSegments, isHostOf, parseUrl } from 'trousse'
+import { getPathSegments, getQueryParam, isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
@@ -25,7 +25,7 @@ export const parseNaverBlogUrl = (url: string): NaverBlogUrl | undefined => {
 
   // A dotted segment is a script such as /PostView.naver, which names the blog in its `blogId`
   // query, and /BlogList.naver names none.
-  const blogId = first.includes('.') ? parsedUrl.searchParams.get('blogId') : first
+  const blogId = first.includes('.') ? getQueryParam(parsedUrl.searchParams, 'blogId') : first
 
   if (!blogId) {
     return
