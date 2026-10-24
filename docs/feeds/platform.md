@@ -3329,7 +3329,7 @@ Discovers the feeds of a user blog on Aladin, `blog.aladin.co.kr/{user}`. A cate
 
 ### Bing
 
-Discovers the feed of a Bing web or news search. The news search page links no feed.
+Discovers the feed of a Bing web or news search. The news search page links no feed. `cn.bing.com` is matched too, unverified, since it redirects to `www.bing.com` outside China.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|

@@ -105,5 +105,17 @@ describe('bingHandler', () => {
 
       expect(bingHandler.resolve(value)).toEqual(expected)
     })
+
+    it('should keep the cn.bing.com host', () => {
+      const value = 'https://cn.bing.com/news/search?q=rss'
+      const expected = [
+        {
+          uri: 'https://cn.bing.com/news/search?q=rss&format=rss',
+          hint: { key: 'bing:news', label: 'News search' },
+        },
+      ]
+
+      expect(bingHandler.resolve(value)).toEqual(expected)
+    })
   })
 })

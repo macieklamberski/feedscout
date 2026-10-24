@@ -8,7 +8,8 @@ import { composeHint } from '../../common/utils.js'
 
 export type BingUrl = { kind: 'search'; query: string } | { kind: 'news'; query: string }
 
-const hosts = ['bing.com', 'www.bing.com']
+// Unverified: cn.bing.com redirects to www.bing.com outside China, so its feed was never read.
+const hosts = ['bing.com', 'cn.bing.com', 'www.bing.com']
 
 const searchRegex = /^\/search\/?$/i
 const newsRegex = /^\/news\/search\/?$/i
