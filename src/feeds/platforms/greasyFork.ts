@@ -9,7 +9,8 @@ import {
   letterGroupsRegex,
 } from '../../common/utils.js'
 
-// Discoverability: Unmeasured.
+// Discoverability: Not discoverable without handler.
+// Handler needed for: all shapes.
 
 export type GreasyForkUrl =
   | { kind: 'user'; locale: string; userId: string }

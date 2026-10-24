@@ -32,6 +32,14 @@ describe('parseGreasyForkUrl', () => {
     )
   })
 
+  it('should keep a locale with a numeric region', () => {
+    const expected: GreasyForkUrl = { kind: 'user', locale: 'es-419', userId: '1' }
+
+    expect(parseGreasyForkUrl('https://greasyfork.org/es-419/users/1-jasonbarnabe')).toEqual(
+      expected,
+    )
+  })
+
   it('should return the user in English for a user page without a locale', () => {
     const expected: GreasyForkUrl = { kind: 'user', locale: 'en', userId: '1' }
 
