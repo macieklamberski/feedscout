@@ -1,15 +1,16 @@
 import { isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getMetaContent } from '../../common/utils.js'
-import { hosts } from '../../feeds/platforms/producthunt.js'
+import { type ProducthuntUrl, parseProducthuntUrl } from '../../feeds/platforms/producthunt.js'
 
 // The topics index and a missing topic carry the generic ph-static.imgix.net share image.
 const topicImageHosts = ['ph-files.imgix.net']
 
-const productRegex = /^\/products\/([\w-]+)(?:\/|$)/i
-const topicRegex = /^\/topics\/[\w-]+\/?$/i
 const braceRegex = /[{}]/
 const logoUuidRegex = /"logoUuid":"(?<logoUuid>[^"]+)"/
+
+// The kinds that name a product or a topic, while the rest of the site has no image of its own.
+const handledKinds: Array<ProducthuntUrl['kind']> = ['product', 'topic']
 
 // Related products on the page carry a `logoUuid` too, so only the JSON object holding this
 // product's slug is read, cut at its braces.
@@ -34,19 +35,19 @@ const findLogoUuid = (content: string, slug: string): string | undefined => {
 
 export const producthuntHandler: PlatformHandler = {
   match: (url) => {
-    const parsedUrl = parseUrl(url)
+    const parsed = parseProducthuntUrl(url)
 
-    if (!parsedUrl || !isHostOf(url, hosts)) {
+    if (!parsed) {
       return false
     }
 
-    return productRegex.test(parsedUrl.pathname) || topicRegex.test(parsedUrl.pathname)
+    return handledKinds.includes(parsed.kind)
   },
 
   resolve: (url, content) => {
-    const { pathname } = new URL(url)
+    const parsed = parseProducthuntUrl(url)
 
-    if (topicRegex.test(pathname)) {
+    if (parsed?.kind === 'topic') {
       const image = parseUrl(getMetaContent(content ?? '', 'og:image') ?? '')
 
       if (!image || !isHostOf(image.href, topicImageHosts)) {
@@ -57,17 +58,11 @@ export const producthuntHandler: PlatformHandler = {
       return [{ uri: `https://ph-files.imgix.net${image.pathname}?fit=crop&w=256&h=256` }]
     }
 
-    if (!content) {
+    if (parsed?.kind !== 'product' || !content) {
       return []
     }
 
-    const slug = pathname.match(productRegex)?.[1]
-
-    if (!slug) {
-      return []
-    }
-
-    const logoUuid = findLogoUuid(content, slug)
+    const logoUuid = findLogoUuid(content, parsed.slug)
 
     if (!logoUuid) {
       return []

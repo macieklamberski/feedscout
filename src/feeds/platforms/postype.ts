@@ -7,6 +7,7 @@ import { composeHint, getTenantSubdomain } from '../../common/utils.js'
 // A channel subdomain redirects to www.postype.com/@{channel}.
 export type PostypeUrl =
   | { kind: 'channel'; channel: string }
+  | { kind: 'post'; channel: string }
   | { kind: 'subdomain'; channel: string }
 
 const domains = ['postype.com']
@@ -20,10 +21,14 @@ export const parsePostypeUrl = (url: string): PostypeUrl | undefined => {
   }
 
   if (isHostOf(parsedUrl, hosts)) {
-    const [first] = getPathSegments(parsedUrl)
+    const [first, second] = getPathSegments(parsedUrl)
 
     if (!first?.startsWith('@') || first.length < 2) {
       return
+    }
+
+    if (second) {
+      return { kind: 'post', channel: first.slice(1) }
     }
 
     return { kind: 'channel', channel: first.slice(1) }
@@ -50,7 +55,7 @@ export const postypeHandler: PlatformHandler = {
       return []
     }
 
-    if (parsed.kind === 'channel') {
+    if (parsed.kind === 'channel' || parsed.kind === 'post') {
       return [
         {
           uri: `https://www.postype.com/@${parsed.channel}/rss`,

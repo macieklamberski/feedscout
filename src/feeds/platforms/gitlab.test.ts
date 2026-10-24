@@ -2,28 +2,29 @@ import { describe, expect, it } from 'bun:test'
 import type { GitlabUrl } from './gitlab.js'
 import { gitlabHandler, isGitlabHeaders, isGitlabHtml, parseGitlabUrl } from './gitlab.js'
 
-const selfHostedHtml = '<html><head><meta property="og:site_name" content="GitLab"></head></html>'
+const selfHostedHtml = `
+  <html>
+    <head>
+      <meta content="GitLab" property="og:site_name">
+      <script>window.gon={};gon.features={};</script>
+      <script src="/assets/webpack/runtime.ea79027a.bundle.js" defer></script>
+    </head>
+  </html>
+`
+const siteNameHtml = '<html><head><meta property="og:site_name" content="GitLab"></head></html>'
 const selfHostedHeaders = new Headers({ 'x-gitlab-meta': '{"version":"1"}' })
 
 describe('isGitlabHtml', () => {
-  it('should return true for og:site_name GitLab meta tag', () => {
-    expect(isGitlabHtml('<meta property="og:site_name" content="GitLab">')).toBe(true)
-  })
-
-  it('should return true regardless of attribute order', () => {
-    expect(isGitlabHtml('<meta content="GitLab" property="og:site_name">')).toBe(true)
-  })
-
-  it('should return true when embedded in full HTML', () => {
+  it('should return true for the gon config and the webpack bundles', () => {
     expect(isGitlabHtml(selfHostedHtml)).toBe(true)
   })
 
-  it('should return false for a site name that starts with GitLab', () => {
-    expect(isGitlabHtml('<meta property="og:site_name" content="GitLab Tips">')).toBe(false)
+  it('should return false for og:site_name GitLab alone', () => {
+    expect(isGitlabHtml(siteNameHtml)).toBe(false)
   })
 
-  it('should return false for non-GitLab og:site_name values', () => {
-    expect(isGitlabHtml('<meta property="og:site_name" content="GitHub">')).toBe(false)
+  it('should return false for the gon config without the webpack bundles', () => {
+    expect(isGitlabHtml('<script>window.gon={};gon.appConfig={};</script>')).toBe(false)
   })
 
   it('should return false for empty content', () => {
@@ -267,11 +268,19 @@ describe('gitlabHandler', () => {
       expect(gitlabHandler.match(value, content, selfHostedHeaders)).toBe(true)
     })
 
-    it('should not match self-hosted single-segment path even with GitLab signals', () => {
-      expect(gitlabHandler.match('https://gitlab.example.com/user', selfHostedHtml)).toBe(false)
-      expect(gitlabHandler.match('https://gitlab.example.com/user', '', selfHostedHeaders)).toBe(
-        false,
-      )
+    it('should match a self-hosted group page with GitLab HTML', () => {
+      expect(gitlabHandler.match('https://gitlab.example.com/group', selfHostedHtml)).toBe(true)
+    })
+
+    it('should match a self-hosted group page with GitLab header', () => {
+      const value = 'https://gitlab.example.com/group'
+
+      expect(gitlabHandler.match(value, '', selfHostedHeaders)).toBe(true)
+    })
+
+    it('should not match a self-hosted page with only og:site_name GitLab', () => {
+      expect(gitlabHandler.match('https://example.com/group', siteNameHtml)).toBe(false)
+      expect(gitlabHandler.match('https://example.com/group/project', siteNameHtml)).toBe(false)
     })
 
     it('should not match self-hosted without content or headers', () => {

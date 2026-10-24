@@ -8,11 +8,13 @@ import { composeHint } from '../../common/utils.js'
 // Handler needed for: animelist, history, mangalist.
 
 export type MyanimelistUrl =
+  | { kind: 'profile'; username: string }
   | { kind: 'user'; username: string }
   | { kind: 'news' }
   | { kind: 'featured' }
 
 export const hosts = ['myanimelist.net', 'www.myanimelist.net']
+const profileRegex = /^\/profile\/([^/]+)\/?$/i
 const userRegex = /^\/(?:profile|animelist|mangalist|history)\/([^/]+)/i
 const newsRegex = /^\/news(?:\/|$)/i
 const featuredRegex = /^\/featured(?:\/|$)/i
@@ -32,6 +34,13 @@ export const parseMyanimelistUrl = (url: string): MyanimelistUrl | undefined => 
 
   if (featuredRegex.test(pathname)) {
     return { kind: 'featured' }
+  }
+
+  // The profile page itself, while its tabs, lists and history are the user's other pages.
+  const profileUsername = pathname.match(profileRegex)?.[1]
+
+  if (profileUsername) {
+    return { kind: 'profile', username: profileUsername }
   }
 
   const username = pathname.match(userRegex)?.[1]

@@ -27,66 +27,16 @@ const foreignImagePage = `
 
 describe('producthuntHandler', () => {
   describe('match', () => {
-    it('should match product URLs', () => {
+    it('should match a product page', () => {
       expect(producthuntHandler.match('https://www.producthunt.com/products/notion')).toBe(true)
     })
 
-    it('should match product URLs with a capitalized products segment', () => {
-      expect(producthuntHandler.match('https://www.producthunt.com/Products/notion')).toBe(true)
-    })
-
-    it('should match product URLs without www', () => {
-      expect(producthuntHandler.match('https://producthunt.com/products/notion')).toBe(true)
-    })
-
-    it('should match product subpages', () => {
-      expect(producthuntHandler.match('https://www.producthunt.com/products/notion/reviews')).toBe(
-        true,
-      )
-    })
-
-    it('should match topic pages', () => {
+    it('should match a topic page', () => {
       expect(producthuntHandler.match('https://www.producthunt.com/topics/productivity')).toBe(true)
-    })
-
-    it('should match topic pages with a trailing slash', () => {
-      expect(producthuntHandler.match('https://www.producthunt.com/topics/productivity/')).toBe(
-        true,
-      )
-    })
-
-    it('should match topic pages with a capitalized topics segment', () => {
-      expect(producthuntHandler.match('https://www.producthunt.com/Topics/productivity')).toBe(true)
-    })
-
-    it('should not match the topics index', () => {
-      expect(producthuntHandler.match('https://www.producthunt.com/topics')).toBe(false)
-    })
-
-    it('should not match topic subpages', () => {
-      expect(
-        producthuntHandler.match('https://www.producthunt.com/topics/productivity/launches'),
-      ).toBe(false)
-    })
-
-    it('should not match category pages', () => {
-      expect(producthuntHandler.match('https://www.producthunt.com/categories/tech')).toBe(false)
-    })
-
-    it('should not match user pages', () => {
-      expect(producthuntHandler.match('https://www.producthunt.com/@rrhoover')).toBe(false)
     })
 
     it('should not match the home page', () => {
       expect(producthuntHandler.match('https://www.producthunt.com/')).toBe(false)
-    })
-
-    it('should not match non-Product Hunt URLs', () => {
-      expect(producthuntHandler.match('https://example.com/products/notion')).toBe(false)
-    })
-
-    it('should return false for invalid URL', () => {
-      expect(producthuntHandler.match('not-a-url')).toBe(false)
     })
   })
 

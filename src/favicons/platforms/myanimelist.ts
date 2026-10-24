@@ -1,13 +1,15 @@
-import { getPathSegments, isAnyOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement, hasClass } from '../../common/utils.js'
-import { parseMyanimelistUrl } from '../../feeds/platforms/myanimelist.js'
+import { type MyanimelistUrl, parseMyanimelistUrl } from '../../feeds/platforms/myanimelist.js'
 import type { FaviconEnricher } from '../types.js'
 import { getResponseText } from '../utils.js'
 
 const platform = 'myanimelist'
 
 const userImageRegex = /^https:\/\/cdn\.myanimelist\.net\/s\/common\/userimages\//
+
+// The kinds that name a user, while news and featured pages belong to the site.
+const handledKinds: Array<MyanimelistUrl['kind']> = ['profile', 'user']
 
 // A user without an avatar gets a "No Picture" block and no image.
 const parseAvatar = (html: string): Array<string> => {
@@ -29,23 +31,25 @@ const parseAvatar = (html: string): Array<string> => {
 
 export const myanimelistHandler: PlatformHandler = {
   match: (url) => {
-    return parseMyanimelistUrl(url)?.kind === 'user'
+    const parsed = parseMyanimelistUrl(url)
+
+    if (!parsed) {
+      return false
+    }
+
+    return handledKinds.includes(parsed.kind)
   },
 
   resolve: (url, content) => {
     const parsed = parseMyanimelistUrl(url)
 
-    if (parsed?.kind !== 'user') {
+    if (parsed?.kind !== 'profile' && parsed?.kind !== 'user') {
       return []
     }
 
-    const { username } = parsed
-
-    const [section, ...rest] = getPathSegments(url)
-
     // List and history pages carry no avatar, while the user's profile page does.
-    if (!content || !isAnyOf(section, 'profile') || rest.length !== 1) {
-      return [{ platform, id: username, url }]
+    if (parsed.kind !== 'profile' || !content) {
+      return [{ platform, id: parsed.username, url }]
     }
 
     return parseAvatar(content).map((uri) => ({ uri }))

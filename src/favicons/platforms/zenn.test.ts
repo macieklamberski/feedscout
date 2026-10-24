@@ -30,8 +30,8 @@ describe('zennHandler', () => {
       expect(zennHandler.match('https://zenn.dev/alice/articles/intro-to-rust')).toBe(false)
     })
 
-    it('should not match topic feed URLs', () => {
-      expect(zennHandler.match('https://zenn.dev/topics/rust/feed')).toBe(false)
+    it('should match topic feed URLs', () => {
+      expect(zennHandler.match('https://zenn.dev/topics/rust/feed')).toBe(true)
     })
 
     it('should not match a scrap page', () => {

@@ -1,6 +1,6 @@
 import { getPathSegments, isAnyOf, isHostOf, isSubdomainOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, getMetaContent, hasMarker } from '../../common/utils.js'
+import { composeHint, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers group (guess, html), partly covers commits, project, tree.
@@ -13,9 +13,10 @@ export const hosts = ['gitlab.com', 'www.gitlab.com']
 // GitLab names may contain dots, so only the feed suffix is cut off.
 const feedSuffixRegex = /\.atom$/i
 
-// GitLab prints its own name as the site name, and a site about GitLab can carry a longer one.
+// Every GitLab page prints its frontend config through the gon gem and loads its bundles from
+// /assets/webpack/. The og:site_name is operator-set text, which any page can carry.
 export const isGitlabHtml = (content: string): boolean => {
-  return isAnyOf(getMetaContent(content, 'og:site_name'), 'GitLab')
+  return content.includes('window.gon={}') && content.includes('/assets/webpack/')
 }
 
 export const isGitlabHeaders = (headers: Headers): boolean => {
@@ -79,9 +80,7 @@ export const parseGitlabUrl = (url: string): GitlabUrl | undefined => {
 
 export const gitlabHandler: PlatformHandler = {
   match: (url, content, headers) => {
-    const parsed = parseGitlabUrl(url)
-
-    if (!parsed) {
+    if (!parseGitlabUrl(url)) {
       return false
     }
 
@@ -91,12 +90,6 @@ export const gitlabHandler: PlatformHandler = {
 
     // GitLab's own subdomains, such as about.gitlab.com, are its marketing and docs sites.
     if (isSubdomainOf(url, hosts)) {
-      return false
-    }
-
-    // `og:site_name` is operator-set text, so a self-hosted match also needs a
-    // project path or the `/-/` separator.
-    if (parsed.kind === 'namespace' && !new URL(url).pathname.includes('/-/')) {
       return false
     }
 

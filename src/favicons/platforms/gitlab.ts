@@ -1,13 +1,7 @@
-import { isHostOf, isNonEmptyString } from 'trousse'
+import { isNonEmptyString } from 'trousse'
 import type { FetchFnResponse } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { hasMarker } from '../../common/utils.js'
-import {
-  hosts,
-  isGitlabHeaders,
-  isGitlabHtml,
-  parseGitlabUrl,
-} from '../../feeds/platforms/gitlab.js'
+import { gitlabHandler as gitlabFeedHandler, parseGitlabUrl } from '../../feeds/platforms/gitlab.js'
 import type { FaviconEnricher } from '../types.js'
 import { parseResponseJson } from '../utils.js'
 
@@ -25,17 +19,7 @@ const getAvatarUrl = (response: FetchFnResponse): string | undefined => {
 }
 
 export const gitlabHandler: PlatformHandler = {
-  match: (url, content, headers) => {
-    if (!parseGitlabUrl(url)) {
-      return false
-    }
-
-    if (isHostOf(url, hosts)) {
-      return true
-    }
-
-    return hasMarker(content, headers, { html: isGitlabHtml, headers: isGitlabHeaders })
-  },
+  match: gitlabFeedHandler.match,
 
   resolve: (url) => {
     const namespace = parseGitlabUrl(url)?.namespace

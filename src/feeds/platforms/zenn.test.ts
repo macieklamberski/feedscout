@@ -9,8 +9,8 @@ describe('parseZennUrl', () => {
     expect(parseZennUrl('https://zenn.dev/catnose99')).toEqual(expected)
   })
 
-  it('should return the user for an article page', () => {
-    const expected: ZennUrl = { kind: 'user', username: 'catnose99' }
+  it('should return the post for an article page', () => {
+    const expected: ZennUrl = { kind: 'post', username: 'catnose99' }
 
     expect(parseZennUrl('https://zenn.dev/catnose99/articles/some-article')).toEqual(expected)
   })
@@ -80,6 +80,18 @@ describe('zennHandler', () => {
   describe('resolve', () => {
     it('should return feed URL for user', () => {
       const value = 'https://zenn.dev/catnose99'
+      const expected = [
+        {
+          uri: 'https://zenn.dev/catnose99/feed',
+          hint: { key: 'zenn:posts', label: 'Posts' },
+        },
+      ]
+
+      expect(zennHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return the user feed URL for an article page', () => {
+      const value = 'https://zenn.dev/catnose99/articles/some-article'
       const expected = [
         {
           uri: 'https://zenn.dev/catnose99/feed',

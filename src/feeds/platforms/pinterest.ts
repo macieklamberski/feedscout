@@ -7,11 +7,12 @@ import { composeHint } from '../../common/utils.js'
 
 export type PinterestUrl =
   | { kind: 'user'; username: string }
+  | { kind: 'tab'; username: string }
   | { kind: 'board'; username: string; board: string }
 
 export const hosts = ['pinterest.com', 'www.pinterest.com']
 
-// Profile tabs of a user, which map back to the user, not to a board.
+// Profile tabs of a user, which name the user, not a board.
 const userSubpaths = ['pins', 'boards', '_saved', '_created', 'followers', 'following']
 
 export const parsePinterestUrl = (url: string): PinterestUrl | undefined => {
@@ -27,11 +28,15 @@ export const parsePinterestUrl = (url: string): PinterestUrl | undefined => {
     return
   }
 
-  if (board && !isAnyOf(board, userSubpaths)) {
-    return { kind: 'board', username, board }
+  if (!board) {
+    return { kind: 'user', username }
   }
 
-  return { kind: 'user', username }
+  if (isAnyOf(board, userSubpaths)) {
+    return { kind: 'tab', username }
+  }
+
+  return { kind: 'board', username, board }
 }
 
 export const pinterestHandler: PlatformHandler = {

@@ -1,4 +1,4 @@
-import { getPathSegments, isHostOf } from 'trousse'
+import { isHostOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getMetaContent } from '../../common/utils.js'
 import { parseNaverBlogUrl } from '../../feeds/platforms/naverBlog.js'
@@ -29,15 +29,15 @@ export const naverBlogHandler: PlatformHandler = {
   },
 
   resolve: (url, content) => {
-    const blogId = parseNaverBlogUrl(url)?.blogId
+    const parsed = parseNaverBlogUrl(url)
 
-    if (!blogId) {
+    if (!parsed) {
       return []
     }
 
     // A post page carries the post image, not the profile image.
-    if (!isHostOf(url, mobileHost) || getPathSegments(url).length > 1) {
-      return [{ platform, id: blogId, url }]
+    if (parsed.kind !== 'blog' || !isHostOf(url, mobileHost)) {
+      return [{ platform, id: parsed.blogId, url }]
     }
 
     if (!content) {

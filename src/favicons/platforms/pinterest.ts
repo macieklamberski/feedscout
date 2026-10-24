@@ -1,4 +1,4 @@
-import { getPathSegments, isNonEmptyString } from 'trousse'
+import { isNonEmptyString } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getScriptText } from '../../common/utils.js'
 import { parsePinterestUrl } from '../../feeds/platforms/pinterest.js'
@@ -44,18 +44,18 @@ export const pinterestHandler: PlatformHandler = {
   },
 
   resolve: (url, content) => {
-    const username = parsePinterestUrl(url)?.username
+    const parsed = parsePinterestUrl(url)
 
-    if (!username) {
+    if (!parsed) {
       return []
     }
 
     // Only the profile page carries the user in its initial Redux state.
-    if (getPathSegments(url).length > 1 || !content) {
-      return [{ platform, id: username, url }]
+    if (parsed.kind !== 'user' || !content) {
+      return [{ platform, id: parsed.username, url }]
     }
 
-    const image = findProfileImage(content, username)
+    const image = findProfileImage(content, parsed.username)
 
     if (!image) {
       return []
