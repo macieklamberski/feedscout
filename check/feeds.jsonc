@@ -339,6 +339,11 @@
       "https://dasauge.es/-abstrusa/?rss"
     ]
   },
+  "dblp": {
+    "dblp:person": { "skip": "dblp answers non-browser clients with an Anubis challenge" },
+    "dblp:updates": { "skip": "dblp answers non-browser clients with an Anubis challenge" },
+    "dblp:venue": { "skip": "dblp answers non-browser clients with an Anubis challenge" }
+  },
   "deviantart": {
     "deviantart:daily-deviations": "https://backend.deviantart.com/rss.xml?q=special:dd",
     "deviantart:deviations": "https://backend.deviantart.com/rss.xml?type=deviation&q=by:yuumei+sort:time+meta:all",

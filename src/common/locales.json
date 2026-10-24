@@ -698,6 +698,9 @@
     "ojs:announcements": "Announcements",
     "ojs:articles": "Articles",
     "aladin:posts": "Posts",
-    "aladin:category": "Category"
+    "aladin:category": "Category",
+    "dblp:venue": "Venue",
+    "dblp:person": "Person",
+    "dblp:updates": "New issues and volumes"
   }
 }
