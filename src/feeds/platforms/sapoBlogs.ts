@@ -1,4 +1,4 @@
-import { composeQuery, decodeSegment, parseUrl } from 'trousse'
+import { composeQuery, decodeSegment, getQueryParam, parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, getTenantSubdomain } from '../../common/utils.js'
@@ -44,7 +44,7 @@ export const parseSapoBlogsUrl = (url: string): SapoBlogsUrl | undefined => {
   }
 
   // The next pages of a tag listing name the tag in the query: /?skip=20&tag={tag}.
-  const queryTag = pathname === '/' ? parsedUrl.searchParams.get('tag') : undefined
+  const queryTag = pathname === '/' ? getQueryParam(parsedUrl.searchParams, 'tag') : undefined
 
   if (queryTag) {
     return { kind: 'tag', blog, tag: queryTag }

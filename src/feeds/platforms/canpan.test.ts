@@ -15,8 +15,8 @@ describe('parseCanpanUrl', () => {
     expect(parseCanpanUrl('https://blog.canpan.info/alice/archive/573')).toEqual(expected)
   })
 
-  it('should lowercase the blog', () => {
-    const expected: CanpanUrl = { kind: 'blog', blog: 'alice_blog' }
+  it('should keep the blog case', () => {
+    const expected: CanpanUrl = { kind: 'blog', blog: 'Alice_Blog' }
 
     expect(parseCanpanUrl('https://blog.canpan.info/Alice_Blog/')).toEqual(expected)
   })
@@ -65,15 +65,15 @@ describe('canpanHandler', () => {
       expect(canpanHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return lowercase feeds for a mixed-case blog', () => {
+    it('should keep the case of a mixed-case blog', () => {
       const value = 'https://blog.canpan.info/Alice/'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://blog.canpan.info/alice/index2_0.xml',
+          uri: 'https://blog.canpan.info/Alice/index2_0.xml',
           hint: { key: 'canpan:posts', label: 'Posts', format: 'rss' },
         },
         {
-          uri: 'https://blog.canpan.info/alice/index1_0.rdf',
+          uri: 'https://blog.canpan.info/Alice/index1_0.rdf',
           hint: { key: 'canpan:posts', label: 'Posts', format: 'rdf' },
         },
       ]

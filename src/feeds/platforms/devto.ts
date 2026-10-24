@@ -47,8 +47,7 @@ export const parseDevtoUrl = (url: string): DevtoUrl | undefined => {
     return
   }
 
-  // DEV redirects a name in any case to the lowercase one its feed and APIs answer under.
-  return { kind: 'profile', owner: owner.toLowerCase() }
+  return { kind: 'profile', owner }
 }
 
 export const devtoHandler: PlatformHandler = {

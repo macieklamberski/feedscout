@@ -60,9 +60,7 @@ export const microblogHandler: PlatformHandler = {
     const uris: Array<DiscoverUriEntry> = []
 
     if (parsed.kind === 'category') {
-      // Micro.blog serves categories in lowercase only: /categories/Tech/feed.json answers 404
-      // and /categories/Tech/feed.xml redirects to the blog's main feed.
-      const category = parsed.category.toLowerCase()
+      const { category } = parsed
 
       uris.push({
         uri: `${origin}/categories/${category}/feed.xml`,

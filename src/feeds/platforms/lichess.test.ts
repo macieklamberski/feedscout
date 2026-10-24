@@ -143,11 +143,11 @@ describe('lichessHandler', () => {
       expect(lichessHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should lowercase an uppercase language code', () => {
+    it('should keep the case of an uppercase language code', () => {
       const value = 'https://lichess.org/FR/blog/community'
       const expected = [
         {
-          uri: 'https://lichess.org/blog/community.atom?lang=fr',
+          uri: 'https://lichess.org/blog/community.atom?lang=FR',
           hint: { key: 'lichess:community', label: 'Community blogs' },
         },
       ]

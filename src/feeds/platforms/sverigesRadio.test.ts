@@ -103,11 +103,11 @@ describe('sverigesRadioHandler', () => {
       expect(sverigesRadioHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should lowercase a capitalized program slug', () => {
+    it('should keep the case of a capitalized program slug', () => {
       const value = 'https://sverigesradio.se/Morgonpodden'
       const expected = [
         {
-          uri: 'https://public-api.sr.se/rss/morgonpodden',
+          uri: 'https://public-api.sr.se/rss/Morgonpodden',
           hint: { key: 'sveriges-radio:program', label: 'Program' },
         },
       ]

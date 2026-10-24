@@ -1,4 +1,4 @@
-import { composeQuery, decodeSegment, parseUrl } from 'trousse'
+import { composeQuery, decodeSegment, getQueryParam, parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, findElement, hasMarker } from '../../common/utils.js'
@@ -31,7 +31,7 @@ const getPodcastChannelId = (url: string, content: string | undefined): string |
     return (
       feedUrl?.origin === origin &&
       feedUrl.pathname === podcastFeedPath &&
-      feedUrl.searchParams.has('videoChannelId')
+      getQueryParam(feedUrl.searchParams, 'videoChannelId') !== undefined
     )
   })
 
@@ -39,7 +39,7 @@ const getPodcastChannelId = (url: string, content: string | undefined): string |
     return
   }
 
-  return parseUrl(link.attribs.href, url)?.searchParams.get('videoChannelId') ?? undefined
+  return getQueryParam(parseUrl(link.attribs.href, url)?.searchParams, 'videoChannelId')
 }
 
 export const parsePeertubeUrl = (url: string): PeertubeUrl | undefined => {

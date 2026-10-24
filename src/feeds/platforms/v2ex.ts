@@ -59,8 +59,7 @@ export const v2exHandler: PlatformHandler = {
     if (parsed.kind === 'node') {
       return [
         {
-          // V2EX serves node feeds in lowercase only: /feed/Python.xml answers 404.
-          uri: `https://www.v2ex.com/feed/${parsed.node.toLowerCase()}.xml`,
+          uri: `https://www.v2ex.com/feed/${parsed.node}.xml`,
           hint: composeHint('v2ex:node'),
         },
       ]
@@ -77,11 +76,10 @@ export const v2exHandler: PlatformHandler = {
 
     if (parsed.kind === 'tab') {
       // The tab comes out of the query decoded, and it goes into a path.
-      const tab = encodePathSegment(parsed.tab.toLowerCase())
+      const tab = encodePathSegment(parsed.tab)
 
       return [
         {
-          // V2EX serves tab feeds in lowercase only: /feed/tab/TECH.xml answers 404.
           uri: `https://www.v2ex.com/feed/tab/${tab}.xml`,
           hint: composeHint('v2ex:tab'),
         },

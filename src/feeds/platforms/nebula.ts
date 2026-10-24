@@ -52,7 +52,7 @@ export const nebulaHandler: PlatformHandler = {
 
     if (parsed.kind === 'explore') {
       // The category comes out of the query decoded, and it goes into a path.
-      const category = encodePathSegment(parsed.category?.toLowerCase() ?? '')
+      const category = encodePathSegment(parsed.category ?? '')
       const uris: Array<DiscoverUriEntry> = []
 
       if (category) {
