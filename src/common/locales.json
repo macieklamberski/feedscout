@@ -698,6 +698,9 @@
     "ojs:announcements": "Announcements",
     "ojs:articles": "Articles",
     "aladin:posts": "Posts",
-    "aladin:category": "Category"
+    "aladin:category": "Category",
+    "greasy-fork:user": "User scripts",
+    "greasy-fork:new": "New scripts",
+    "greasy-fork:updated": "Updated scripts"
   }
 }
