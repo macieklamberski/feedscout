@@ -136,6 +136,10 @@
       "https://www.biggsports.com/rss.php?action=searchproducts&search_query=hat&type=atom"
     ]
   },
+  "bing": {
+    "bing:news": "https://www.bing.com/news/search?q=rss&format=rss",
+    "bing:search": "https://www.bing.com/search?q=rss&format=rss"
+  },
   "bitchute": {
     "bitchute:channel": "https://www.bitchute.com/feeds/rss/channel/bcsupport/"
   },
