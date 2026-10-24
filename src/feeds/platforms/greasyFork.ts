@@ -20,8 +20,8 @@ export type GreasyForkPage =
   | { kind: 'user'; locale: string; userId: string }
   | { kind: 'home'; locale: string }
 
-const hosts = ['greasyfork.org']
-const apiOrigin = 'https://api.greasyfork.org'
+// Sleazy Fork runs the same software, with its feeds on its own api host.
+const hosts = ['greasyfork.org', 'sleazyfork.org']
 
 const userRegex = /^\/users\/([^/]+)/i
 const scriptRegex = /^\/scripts\/\d/i
@@ -92,7 +92,7 @@ export const greasyForkHandler: PlatformHandler = {
     }
 
     // The feeds answer 406 without a locale in the path.
-    const base = `${apiOrigin}/${page.locale}/scripts.atom`
+    const base = `https://api.${new URL(url).hostname}/${page.locale}/scripts.atom`
 
     if (page.kind === 'user') {
       // The feed lists only the scripts in the locale's language unless `filter_locale=0` is set,

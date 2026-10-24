@@ -3340,7 +3340,7 @@ Discovers the scripts feed of a Greasy Fork user, read from the user page URL or
 <sup>†</sup> *Found only by the Platform method.*
 
 > [!NOTE]
-> The feeds live on `api.greasyfork.org` under the page's locale. A script's feedback, code and version pages name no author, so they get no feed.
+> The feeds live on `api.greasyfork.org` under the page's locale. Sleazy Fork, `sleazyfork.org`, runs the same software and is read the same way, with its feeds on `api.sleazyfork.org`. A script's feedback, code and version pages name no author, so they get no feed.
 
 ## Basic Usage
 

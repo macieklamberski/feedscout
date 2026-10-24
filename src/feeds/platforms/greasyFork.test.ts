@@ -144,6 +144,18 @@ describe('greasyForkHandler', () => {
       expect(greasyForkHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return the user scripts feed on the Sleazy Fork api host', () => {
+      const value = 'https://sleazyfork.org/en/users/989635-canaan-hs'
+      const expected = [
+        {
+          uri: 'https://api.sleazyfork.org/en/scripts.atom?by=989635&filter_locale=0',
+          hint: { key: 'greasy-fork:user', label: 'User scripts' },
+        },
+      ]
+
+      expect(greasyForkHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return the author scripts feed for a script page', () => {
       const value =
         'https://greasyfork.org/en/scripts/6261-rss-atom-feed-subscribe-button-generator'
