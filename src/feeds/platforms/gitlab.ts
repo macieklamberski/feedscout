@@ -53,6 +53,14 @@ export const parseGitlabUrl = (url: string): GitlabUrl | undefined => {
 
   // A group or user page and its tabs sit under /groups/ or /users/, before the account name.
   if (isAnyOf(segments[0], accountPrefixes) && segments[1]) {
+    // A subgroup is named by every segment before the `/-/` separator.
+    if (isAnyOf(segments[0], 'groups')) {
+      const dashIndex = segments.indexOf('-')
+      const groupSegments = segments.slice(1, dashIndex === -1 ? undefined : dashIndex)
+
+      return { kind: 'namespace', namespace: groupSegments.join('/') }
+    }
+
     return { kind: 'namespace', namespace: segments[1] }
   }
 

@@ -16,6 +16,7 @@ export type GravUrl = { kind: 'home' } | { kind: 'page'; path: string }
 
 const trailingSlashRegex = /\/$/
 const htmlSuffixRegex = /\.html$/i
+const paginationRegex = /\/page:\d+$/i
 const gravAssetRegex = /\/user\/(?:themes|plugins)\//
 const gravCookieRegex = /^grav-site-[0-9a-f]+$/
 
@@ -51,17 +52,18 @@ export const parseGravUrl = (url: string): GravUrl | undefined => {
     return
   }
 
-  const { pathname } = parsedUrl
+  // Grav serves `/blog.html` as the `/blog` page, whose feed is `/blog.rss`, and pages a listing
+  // with a `page:{n}` parameter.
+  const path = parsedUrl.pathname
+    .replace(trailingSlashRegex, '')
+    .replace(htmlSuffixRegex, '')
+    .replace(paginationRegex, '')
 
-  if (pathname === '/') {
+  if (!path) {
     return { kind: 'home' }
   }
 
-  // Grav serves `/blog.html` as the `/blog` page, whose feed is `/blog.rss`.
-  return {
-    kind: 'page',
-    path: pathname.replace(trailingSlashRegex, '').replace(htmlSuffixRegex, ''),
-  }
+  return { kind: 'page', path }
 }
 
 export const gravHandler: PlatformHandler = {

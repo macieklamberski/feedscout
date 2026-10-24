@@ -92,6 +92,7 @@ Discovers Atom feeds for subreddits, users, multireddits, wikis, searches, and d
 | `reddit.com/u/{username}` | User activity<sup>†</sup> |
 | `reddit.com/user/{username}/submitted` | Submitted posts<sup>†</sup>, plus the feeds above |
 | `reddit.com/user/{username}/comments` | User comments · user activity |
+| `reddit.com/user/{username}/comments/{id}` | Post comments |
 | `reddit.com/user/{username}/m/{multireddit}` | Multireddit<sup>†</sup> |
 | `reddit.com/domain/{domain}` | Domain submissions |
 
@@ -252,7 +253,7 @@ Discovers Atom feeds for GitHub Gist users, starred gists, forked gists, and the
 
 ### Gitea
 
-Discovers Atom feeds for Gitea users, repositories, releases, tags, branch commits and file history, with RSS as the fallback. Codeberg and `gitea.com` are matched by host; any other instance is matched by the session cookie Gitea sets on a repository page.
+Discovers Atom feeds for Gitea users, repositories, releases, tags, branch commits and file history, with RSS as the fallback. Codeberg and `gitea.com` are matched by host; any other instance is matched by the session cookie Gitea sets on a repository page. An install under a sub-path gets its feeds there, read from `appSubUrl` in the page config.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
@@ -1149,7 +1150,7 @@ Discovers RSS feeds for Megaphone-hosted podcasts from their embed players.
 
 ### Micro.blog
 
-Discovers RSS, JSON, and podcast feeds for Micro.blog-hosted blogs, including category, archive, photos, and replies feeds.
+Discovers RSS, JSON, and podcast feeds for Micro.blog-hosted blogs, including category, archive, and photos feeds.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
@@ -1157,7 +1158,6 @@ Discovers RSS, JSON, and podcast feeds for Micro.blog-hosted blogs, including ca
 | `*.micro.blog/categories/{slug}` | Category (RSS + JSON), plus the feeds above |
 | `*.micro.blog/archive` | Archive<sup>†</sup>, plus the feeds above |
 | `*.micro.blog/photos` | Photos<sup>†</sup>, plus the feeds above |
-| `*.micro.blog/replies` | Replies, plus the feeds above |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -1425,8 +1425,8 @@ Discovers RSS feeds for Weebly-hosted blogs.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `*.weebly.com` | Blog |
-| `*.weebly.com/{slug}` | Blog (custom page slug) · default blog |
+| `*.weebly.com` | Blog (the default blog and every page the home page links) |
+| `*.weebly.com/{slug}` | Blog (custom page slug or blog id) |
 
 ### Zenn
 

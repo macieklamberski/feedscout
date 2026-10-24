@@ -310,7 +310,6 @@
     "microblog:category": "Category",
     "microblog:archive": "Archive",
     "microblog:photos": "Photos",
-    "microblog:replies": "Replies",
     "misskey:posts": "Posts",
     "naver-blog:blog": "Blog",
     "observable:notebooks": "Notebooks",

@@ -44,6 +44,11 @@ export const parseNoteUrl = (url: string): NoteUrl | undefined => {
     return { kind: 'home' }
   }
 
+  // note names carry no dots, so a dotted segment such as robots.txt is a file of the site.
+  if (username.includes('.')) {
+    return
+  }
+
   return { kind: 'user', username }
 }
 

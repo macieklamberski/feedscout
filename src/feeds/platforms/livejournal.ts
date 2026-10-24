@@ -48,6 +48,18 @@ export const getJournalFeeds = (
   return uris
 }
 
+// Journal names on the LiveJournal engine carry no dots, so a dotted segment such as robots.txt is a
+// file of the site.
+export const getJournalName = (pathname: string, regex: RegExp): string | undefined => {
+  const name = pathname.match(regex)?.[1]
+
+  if (!name || name.includes('.')) {
+    return
+  }
+
+  return name
+}
+
 export const parseLivejournalUrl = (url: string): LivejournalUrl | undefined => {
   if (!isSubdomainOf(url, domains)) {
     return
@@ -59,7 +71,7 @@ export const parseLivejournalUrl = (url: string): LivejournalUrl | undefined => 
   // Bare www/users/community/syndicated hosts have no per-user context and would
   // emit 404 URLs. Allow them only when a user selector is in the path.
   if (isHostOf(url, wwwHosts)) {
-    const username = pathname.match(wwwUsersPathRegex)?.[1]
+    const username = getJournalName(pathname, wwwUsersPathRegex)
 
     if (!username) {
       return
@@ -70,7 +82,7 @@ export const parseLivejournalUrl = (url: string): LivejournalUrl | undefined => 
 
   // Legacy users./community. hosts: the first path segment is the user.
   if (isHostOf(url, legacyUserHosts)) {
-    const username = pathname.match(legacyUserPathRegex)?.[1]
+    const username = getJournalName(pathname, legacyUserPathRegex)
 
     if (!username) {
       return

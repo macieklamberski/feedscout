@@ -14,6 +14,12 @@ describe('parseArt19Url', () => {
     expect(parseArt19Url('https://www.art19.com/Shows/my-show')).toEqual(expected)
   })
 
+  it('should return undefined for a show page under its uuid', () => {
+    const value = 'https://art19.com/shows/58dacbdc-646e-4585-9914-19c3de11d1ba'
+
+    expect(parseArt19Url(value)).toBeUndefined()
+  })
+
   it('should return undefined for the root', () => {
     expect(parseArt19Url('https://art19.com/')).toBeUndefined()
   })

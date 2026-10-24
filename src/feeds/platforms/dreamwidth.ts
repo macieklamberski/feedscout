@@ -1,7 +1,7 @@
 import { isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getHostOrigin, getTenantSubdomain } from '../../common/utils.js'
-import { getJournalFeeds, journalTagRegex } from './livejournal.js'
+import { getJournalFeeds, getJournalName, journalTagRegex } from './livejournal.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic partly covers blog, tag, tildePath, userPath.
@@ -24,7 +24,7 @@ export const parseDreamwidthUrl = (url: string): DreamwidthUrl | undefined => {
   // Bare www.dreamwidth.org has no per-user context, so it names a journal only through a
   // /users/ or /~ selector in the path.
   if (isHostOf(url, wwwHosts)) {
-    const username = pathname.match(usersPathRegex)?.[1]
+    const username = getJournalName(pathname, usersPathRegex)
 
     if (!username) {
       return

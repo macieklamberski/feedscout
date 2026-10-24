@@ -1,6 +1,6 @@
 import { isHostOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
+import { composeHint, uuidRegex } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -16,7 +16,9 @@ export const parseArt19Url = (url: string): Art19Url | undefined => {
 
   const slug = new URL(url).pathname.match(showPathRegex)?.[1]
 
-  if (!slug) {
+  // A show page also answers under the show's uuid, and rss.art19.com serves a feed only under the
+  // slug, which the page alone names.
+  if (!slug || uuidRegex.test(slug)) {
     return
   }
 

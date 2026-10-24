@@ -50,6 +50,10 @@ describe('parseLetterboxdUrl', () => {
     expect(parseLetterboxdUrl('https://letterboxd.com')).toBeUndefined()
   })
 
+  it('should return undefined for a dotted first segment', () => {
+    expect(parseLetterboxdUrl('https://letterboxd.com/robots.txt')).toBeUndefined()
+  })
+
   it('should return undefined for another host', () => {
     expect(parseLetterboxdUrl('https://example.com/letterboxd')).toBeUndefined()
     expect(parseLetterboxdUrl('https://example.org/letterboxd')).toBeUndefined()

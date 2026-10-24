@@ -37,7 +37,9 @@ export const parsePlurkUrl = (url: string): PlurkUrl | undefined => {
 
   const username = isAnyOf(route, 'u') ? value : route
 
-  if (!username) {
+  // Plurk names carry no dots, so a dotted segment such as robots.txt or alice.xml is a file of the
+  // site.
+  if (!username || username.includes('.')) {
     return { kind: 'page' }
   }
 
