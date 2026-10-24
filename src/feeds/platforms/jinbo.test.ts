@@ -214,39 +214,14 @@ describe('jinboHandler', () => {
       expect(jinboHandler.resolve(value, content)).toEqual(expected)
     })
 
-    it('should return only the blog feeds for a tag that found no posts', () => {
+    it('should return the tag feed first for a tag that found no posts', () => {
       const value = 'https://blog.jinbo.net/alice/tag/nosuchtag'
       const content = '<p class="info"><span class="count">0</span>개의 게시물을 찾았습니다.</p>'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://blog.jinbo.net/alice/rss',
-          hint: { key: 'jinbo:posts', label: 'Posts', format: 'rss' },
+          uri: 'https://blog.jinbo.net/alice/atom/tag/nosuchtag',
+          hint: { key: 'jinbo:tag', label: 'Tag', format: 'atom' },
         },
-        {
-          uri: 'https://blog.jinbo.net/alice/atom',
-          hint: { key: 'jinbo:posts', label: 'Posts', format: 'atom' },
-        },
-        {
-          uri: 'https://blog.jinbo.net/alice/rss/response',
-          hint: { key: 'jinbo:responses', label: 'Comments and trackbacks', format: 'rss' },
-        },
-        {
-          uri: 'https://blog.jinbo.net/alice/atom/response',
-          hint: { key: 'jinbo:responses', label: 'Comments and trackbacks', format: 'atom' },
-        },
-      ]
-
-      expect(jinboHandler.resolve(value, content)).toEqual(expected)
-    })
-
-    const noPostsSkins = [
-      "<h1>'nosuchtag'에 관한 글 0개</h1>",
-      "<h1>'nosuchtag'에 해당되는 글 0건</h1>",
-    ]
-
-    it.each(noPostsSkins)('should return only the blog feeds when the skin says %s', (content) => {
-      const value = 'https://blog.jinbo.net/alice/tag/nosuchtag'
-      const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://blog.jinbo.net/alice/rss',
           hint: { key: 'jinbo:posts', label: 'Posts', format: 'rss' },
@@ -268,10 +243,14 @@ describe('jinboHandler', () => {
       expect(jinboHandler.resolve(value, content)).toEqual(expected)
     })
 
-    it('should return only the blog feeds for a category that found no posts', () => {
+    it('should return the category feed first for a category that found no posts', () => {
       const value = 'https://blog.jinbo.net/alice/category/999'
       const content = '<p class="info"><em>0</em>개의 게시물을 찾았습니다.</p>'
       const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://blog.jinbo.net/alice/atom/category/999',
+          hint: { key: 'jinbo:category', label: 'Category', format: 'atom' },
+        },
         {
           uri: 'https://blog.jinbo.net/alice/rss',
           hint: { key: 'jinbo:posts', label: 'Posts', format: 'rss' },

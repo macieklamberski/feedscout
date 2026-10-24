@@ -13,6 +13,7 @@ const showRegex = /^\/shows\/([^/]+)(?:\/|$)/i
 const getUuidFromPath = (pathname: string): string | undefined => {
   const segment = pathname.match(showRegex)?.[1]
 
+  // length: keeps a show slug out, since only the uuid builds feeds.redcircle.com/{uuid}
   if (!segment || !uuidRegex.test(segment)) {
     return
   }

@@ -23,6 +23,7 @@ export const parsePostypeUrl = (url: string): PostypeUrl | undefined => {
   if (isHostOf(parsedUrl, hosts)) {
     const [first, second] = getPathSegments(parsedUrl)
 
+    // length: keeps a bare @ with no channel after it out
     if (!first?.startsWith('@') || first.length < 2) {
       return
     }

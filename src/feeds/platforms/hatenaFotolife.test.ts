@@ -113,15 +113,7 @@ describe('parseHatenaFotolifeUrl', () => {
 })
 
 describe('hatenaFotolifeHandler', () => {
-  const withPhoto =
-    '<ul class="fotolist"><li><a href="/alice/1"><img class="foto_thumb" src="x.jpg" /></a></li></ul>'
   const withoutPhoto = '<div class="fotolist"></div>'
-  const photosFeed: Array<DiscoverUriEntry> = [
-    {
-      uri: 'https://f.hatena.ne.jp/alice/rss',
-      hint: { key: 'hatena-fotolife:photos', label: 'Photos' },
-    },
-  ]
 
   describe('match', () => {
     it('should return true for a user page', () => {
@@ -195,7 +187,7 @@ describe('hatenaFotolifeHandler', () => {
       expect(hatenaFotolifeHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return the folder feed for a folder page that lists photos', () => {
+    it('should return the folder feed for a folder page that lists no photo', () => {
       const value = 'https://f.hatena.ne.jp/alice/anime/'
       const expected: Array<DiscoverUriEntry> = [
         {
@@ -204,16 +196,10 @@ describe('hatenaFotolifeHandler', () => {
         },
       ]
 
-      expect(hatenaFotolifeHandler.resolve(value, withPhoto)).toEqual(expected)
+      expect(hatenaFotolifeHandler.resolve(value, withoutPhoto)).toEqual(expected)
     })
 
-    it('should return the photos feed for a folder page that lists no photo', () => {
-      const value = 'https://f.hatena.ne.jp/alice/anime/'
-
-      expect(hatenaFotolifeHandler.resolve(value, withoutPhoto)).toEqual(photosFeed)
-    })
-
-    it('should return the tag feed for a tag page that lists photos', () => {
+    it('should return the tag feed for a tag page that lists no photo', () => {
       const value = 'https://f.hatena.ne.jp/alice/t/sky'
       const expected: Array<DiscoverUriEntry> = [
         {
@@ -222,16 +208,10 @@ describe('hatenaFotolifeHandler', () => {
         },
       ]
 
-      expect(hatenaFotolifeHandler.resolve(value, withPhoto)).toEqual(expected)
+      expect(hatenaFotolifeHandler.resolve(value, withoutPhoto)).toEqual(expected)
     })
 
-    it('should return the photos feed for a tag page that lists no photo', () => {
-      const value = 'https://f.hatena.ne.jp/alice/t/sky'
-
-      expect(hatenaFotolifeHandler.resolve(value, withoutPhoto)).toEqual(photosFeed)
-    })
-
-    it('should return the camera model feed for a model page that lists photos', () => {
+    it('should return the camera model feed for a model page that lists no photo', () => {
       const value = 'https://f.hatena.ne.jp/alice/?model=E-PL5'
       const expected: Array<DiscoverUriEntry> = [
         {
@@ -240,13 +220,7 @@ describe('hatenaFotolifeHandler', () => {
         },
       ]
 
-      expect(hatenaFotolifeHandler.resolve(value, withPhoto)).toEqual(expected)
-    })
-
-    it('should return the photos feed for a model page that lists no photo', () => {
-      const value = 'https://f.hatena.ne.jp/alice/?model=E-PL5'
-
-      expect(hatenaFotolifeHandler.resolve(value, withoutPhoto)).toEqual(photosFeed)
+      expect(hatenaFotolifeHandler.resolve(value, withoutPhoto)).toEqual(expected)
     })
 
     it('should return the tag feed for a tag page', () => {

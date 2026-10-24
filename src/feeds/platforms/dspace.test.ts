@@ -267,9 +267,13 @@ describe('getDspacePage', () => {
     expect(getDspacePage(value, content)).toEqual(expected)
   })
 
-  it('should return the home page for a uuid followed by more characters', () => {
+  it('should return the collection for an id longer than a uuid', () => {
     const value = 'https://example.com/collections/376236b0-16ee-4ede-a680-dfa9c0b88e70abc'
-    const expected: DspacePage = { kind: 'home', restUrl: 'https://example.com/server' }
+    const expected: DspacePage = {
+      kind: 'collection',
+      restUrl: 'https://example.com/server',
+      uuid: '376236b0-16ee-4ede-a680-dfa9c0b88e70abc',
+    }
 
     expect(getDspacePage(value, statelessHtml)).toEqual(expected)
   })

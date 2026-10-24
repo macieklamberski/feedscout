@@ -63,20 +63,14 @@ describe('parseLobstersUrl', () => {
     expect(parseLobstersUrl('https://lobste.rs/top/1d')).toEqual(expected)
   })
 
-  it('should return the top page with a canonical period for a capitalized one', () => {
-    const expected: LobstersUrl = { kind: 'top', period: '1w' }
-
-    expect(parseLobstersUrl('https://lobste.rs/top/1W')).toEqual(expected)
-  })
-
   it('should return the all-time top page', () => {
     const expected: LobstersUrl = { kind: 'top', period: undefined }
 
     expect(parseLobstersUrl('https://lobste.rs/top')).toEqual(expected)
   })
 
-  it('should return the home page for a top page with an unknown period', () => {
-    const expected: LobstersUrl = { kind: 'home' }
+  it('should return the top page with a period outside the linked ones', () => {
+    const expected: LobstersUrl = { kind: 'top', period: '2y' }
 
     expect(parseLobstersUrl('https://lobste.rs/top/2y')).toEqual(expected)
   })
@@ -263,7 +257,6 @@ describe('lobstersHandler', () => {
       ['https://lobste.rs/top/1w', 'https://lobste.rs/top/1w/rss'],
       ['https://lobste.rs/top/1m', 'https://lobste.rs/top/1m/rss'],
       ['https://lobste.rs/top/1y', 'https://lobste.rs/top/1y/rss'],
-      ['https://lobste.rs/top/1W', 'https://lobste.rs/top/1w/rss'],
     ]
 
     it.each(topPeriodValues)('should return top stories feed for %s', (value, uri) => {

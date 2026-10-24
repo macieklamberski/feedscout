@@ -8,7 +8,7 @@ import { composeHint, findElement, hasMarker } from '../../common/utils.js'
 const listPackPath = '/apps/js/common/list-pack.js'
 
 const newsFeedHrefRegex = /^\/apps\/news\/rss\?categoryid=(\d+)$/
-const classPathRegex = /^\/apps\/classes\/(\d+)(?:\/|$)/
+const classPathRegex = /^\/apps\/classes\/(\d+)(?:\/|$)/i
 const classFeedHrefRegex = /^\/apps\/classes\/assignment_rss\.jsp\?classREC_ID=(\d+)$/
 
 export type EdlioPage =

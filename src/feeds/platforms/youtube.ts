@@ -1,7 +1,7 @@
 import { composeQuery, isHostOf, parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
+import { composeHint, formatSuffixRegex } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic partly covers channelById, custom, handle, user.
@@ -39,7 +39,7 @@ const liveRegex = /^\/live\/[\w-]+/i
 const watchRegex = /^\/watch\/?$/i
 const channelPrefixRegex = /^UC/
 // Channel IDs are case-sensitive, so the ID is checked apart from the case-insensitive route.
-const channelIdFormatRegex = /^UC[a-zA-Z0-9_-]+/
+const channelIdFormatRegex = /^UC[\w-]+$/
 // Watch Later, Liked videos and the Music likes are private, and a mix is generated per viewer, so
 // none of them has a feed. RDCLAK lists are curated YouTube Music playlists, not mixes.
 const feedlessListRegex = /^(?:WL|LL|LM)$|^RD(?!CLAK)/
@@ -124,8 +124,9 @@ export const parseYoutubeUrl = (url: string): YoutubeUrl | undefined => {
   const { pathname, searchParams } = parsedUrl
   const listId = searchParams.get('list') ?? undefined
   const playlistId = listId && !feedlessListRegex.test(listId) ? listId : undefined
-  const rawChannelId = pathname.match(channelRegex)?.[1]
-  const channelId = rawChannelId?.match(channelIdFormatRegex)?.[0]
+  const rawChannelId = pathname.match(channelRegex)?.[1]?.replace(formatSuffixRegex, '')
+  const channelId =
+    rawChannelId && channelIdFormatRegex.test(rawChannelId) ? rawChannelId : undefined
 
   if (channelId) {
     return { kind: 'channel', channelId, playlistId }

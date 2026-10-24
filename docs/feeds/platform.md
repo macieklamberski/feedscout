@@ -194,7 +194,7 @@ Discovers RSS feeds for Lobsters homepage, users, tags, and domains.
 | `lobste.rs` | Homepage · site-wide comments |
 | `lobste.rs/newest` | Newest posts |
 | `lobste.rs/top` | Top stories |
-| `lobste.rs/top/{period}` | Top stories by period (1d/3d/1w/1m/1y) |
+| `lobste.rs/top/{period}` | Top stories by period, such as 1d, 2w or 1y |
 | `lobste.rs/comments` | Site-wide comments |
 | `lobste.rs/~{username}` | User stories<sup>†</sup> |
 | `lobste.rs/t/{tag}` | Tag |
@@ -572,8 +572,6 @@ Discovers RSS feeds for Hatena Fotolife users, folders, tags, camera models and 
 | `f.hatena.ne.jp/{user}/t/{tag}` | Tag |
 | `f.hatena.ne.jp/{user}/favorite` | Stars |
 | `f.hatena.ne.jp/{user}/starfriends` | Star Friends |
-
-> A folder, tag or camera model page that lists no photo falls back to the user's photos feed, since Hatena serves an empty feed under any made-up name.
 
 ### Hatena Blog
 
@@ -3259,7 +3257,7 @@ Discovers the feeds of an academic journal on OpenEdition Journals at `journals.
 
 ### Jinbo blog
 
-Discovers the feeds of a blog on Jinbonet's blog host, `blog.jinbo.net/{user}`. The blog name keeps the case its own pages link the feeds in, and a tag or category page that found no posts gets only the blog's feeds.
+Discovers the feeds of a blog on Jinbonet's blog host, `blog.jinbo.net/{user}`. The blog name keeps the case its own pages link the feeds in.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|

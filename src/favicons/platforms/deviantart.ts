@@ -15,10 +15,12 @@ export const deviantartHandler: PlatformHandler = {
       return []
     }
 
+    // length: extracts the first two characters the avatar path is filed under
     if (parsed.username.length < 2) {
       return []
     }
 
+    // The avatar host answers 404 to a capital, as /avatars-big/Y/u/Yuumei.jpg.
     const username = parsed.username.toLowerCase()
 
     const uri: Array<string> = [

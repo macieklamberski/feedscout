@@ -20,7 +20,7 @@ export const parseRakutenBlogUrl = (url: string): RakutenBlogUrl | undefined => 
     return
   }
 
-  return { kind: 'blog', username: username.toLowerCase() }
+  return { kind: 'blog', username }
 }
 
 export const rakutenBlogHandler: PlatformHandler = {

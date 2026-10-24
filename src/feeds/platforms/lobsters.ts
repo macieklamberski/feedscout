@@ -1,4 +1,4 @@
-import { getAnyOf, isHostOf, parseUrl } from 'trousse'
+import { isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, wordOrHyphenRegex } from '../../common/utils.js'
 
@@ -19,12 +19,10 @@ const hosts = ['lobste.rs']
 const tagRegex = /^\/t\/(?<tags>[^/]+)/i
 const domainRegex = /^\/domains\/([^/]+)/i
 const userRegex = /^\/~(?<username>[^/]+)/
-const topRegex = /^\/top(?:\/(1d|3d|1w|1m|1y))?\/?$/i
+const topRegex = /^\/top(?:\/(?<period>\d+[dwmy]))?\/?$/i
 const newestRegex = /^\/newest\/?$/i
 const commentsRegex = /^\/comments\/?$/i
 const tagsValueRegex = /^[\w,-]+$/
-
-const topPeriods = ['1d', '3d', '1w', '1m', '1y']
 
 export const parseLobstersUrl = (url: string): LobstersUrl | undefined => {
   const parsedUrl = parseUrl(url)
@@ -57,7 +55,7 @@ export const parseLobstersUrl = (url: string): LobstersUrl | undefined => {
 
   // Top page, all time or for a period: /top or /top/{period}.
   if (topMatch) {
-    return { kind: 'top', period: getAnyOf(topMatch[1], topPeriods) }
+    return { kind: 'top', period: topMatch.groups?.period }
   }
 
   if (newestRegex.test(pathname)) {

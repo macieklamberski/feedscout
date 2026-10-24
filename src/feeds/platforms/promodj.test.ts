@@ -78,27 +78,27 @@ describe('promodjHandler', () => {
       expect(promodjHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should spell the feeds in lowercase for a capitalized username', () => {
+    it('should keep the case of a capitalized username', () => {
       const value = 'https://promodj.com/SomeArtist'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://promodj.com/someartist/podcast.xml',
+          uri: 'https://promodj.com/SomeArtist/podcast.xml',
           hint: { key: 'promodj:podcast', label: 'Podcast' },
         },
         {
-          uri: 'https://promodj.com/someartist/rss.xml',
+          uri: 'https://promodj.com/SomeArtist/rss.xml',
           hint: { key: 'promodj:content', label: 'Content' },
         },
         {
-          uri: 'https://promodj.com/someartist/blog.xml',
+          uri: 'https://promodj.com/SomeArtist/blog.xml',
           hint: { key: 'promodj:blog', label: 'Blog' },
         },
         {
-          uri: 'https://promodj.com/someartist/bookmarks.xml',
+          uri: 'https://promodj.com/SomeArtist/bookmarks.xml',
           hint: { key: 'promodj:favorites', label: 'Favorites' },
         },
         {
-          uri: 'https://promodj.com/someartist/avisha.xml',
+          uri: 'https://promodj.com/SomeArtist/avisha.xml',
           hint: { key: 'promodj:events', label: 'Events' },
         },
       ]
