@@ -37,7 +37,7 @@ export const parseDailymotionUrl = (url: string): DailymotionUrl | undefined => 
 
   const playlistId = pathname.match(playlistRegex)?.groups?.playlistId
 
-  if (playlistId) {
+  if (playlistId && wordOrHyphenRegex.test(playlistId)) {
     return { kind: 'playlist', playlistId }
   }
 
