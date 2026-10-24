@@ -1,4 +1,4 @@
-import { isHttpUrl, type NormalizeOptions, normalizeUrl, stripWww } from 'trousse'
+import { isHttpUrl, type NormalizeOptions, normalizeUrl, stripWww, trimUrlValues } from 'trousse'
 import { reportError } from '../../discover/utils.js'
 import type {
   DiscoverInputObject,
@@ -27,6 +27,10 @@ const samePageOptions: NormalizeOptions = {
   stripEmptyQuery: true,
   stripAuthentication: true,
   normalizeEncoding: true,
+}
+
+const readPageUrl = (url: string): string => {
+  return trimUrlValues(normalizeUrl(url, { collapseSlashes: true }))
 }
 
 const matchesUrlAlone = (handler: PlatformHandler, url: string): boolean => {
@@ -63,7 +67,7 @@ export const resolveFromPlatform = async (
     return { entries, guessExclusionRegexes }
   }
 
-  const fetchedPageUrl = normalizeUrl(baseUrl, { collapseSlashes: true })
+  const fetchedPageUrl = readPageUrl(baseUrl)
   const fetchedPage: PlatformPage = { url: fetchedPageUrl, content, headers }
   const candidatePages = [fetchedPage]
   let refsUrl = fetchedPageUrl
@@ -71,7 +75,7 @@ export const resolveFromPlatform = async (
   // A page that redirects, to a sign-in page for example, is fetched under another URL. The
   // content and headers belong to that URL, so the requested one is tried without them.
   if (requestedUrl && isHttpUrl(requestedUrl)) {
-    const requestedPageUrl = normalizeUrl(requestedUrl, { collapseSlashes: true })
+    const requestedPageUrl = readPageUrl(requestedUrl)
     const normalizedRequested = normalizeUrl(requestedPageUrl, samePageOptions)
     const normalizedFetched = normalizeUrl(fetchedPageUrl, samePageOptions)
     const requestedHost = stripWww(new URL(requestedPageUrl).hostname)
