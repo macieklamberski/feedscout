@@ -9,7 +9,7 @@ export type PukiwikiPage = { kind: 'wiki'; scriptUrl: string }
 const stylesheetRegex = /(?:^|\/)pukiwiki\.css(?:\.php)?(?:[?#]|$)/i
 // Quick Homepage Maker, a PukiWiki fork, numbers its session cookie per install.
 const sessionCookieRegex = /^QHMSSID\d*$/
-const skinRootRegex = /^(.*?\/)skin\//
+const skinRootRegex = /^(.*?\/)skin\//i
 const scriptPathRegex = /\.php$/i
 
 export const isPukiwikiHtml = (content: string): boolean => {
