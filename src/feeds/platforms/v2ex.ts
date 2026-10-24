@@ -1,4 +1,4 @@
-import { isHostOf, parseUrl } from 'trousse'
+import { encodePathSegment, isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
@@ -78,10 +78,13 @@ export const v2exHandler: PlatformHandler = {
     }
 
     if (parsed.kind === 'tab') {
+      // The tab comes out of the query decoded, and it goes into a path.
+      const tab = encodePathSegment(parsed.tab.toLowerCase())
+
       return [
         {
           // V2EX serves tab feeds in lowercase only: /feed/tab/TECH.xml answers 404.
-          uri: `https://www.v2ex.com/feed/tab/${parsed.tab.toLowerCase()}.xml`,
+          uri: `https://www.v2ex.com/feed/tab/${tab}.xml`,
           hint: composeHint('v2ex:tab'),
         },
         { uri: 'https://www.v2ex.com/index.xml', hint: composeHint('v2ex:index') },

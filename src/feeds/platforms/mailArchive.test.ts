@@ -26,8 +26,8 @@ describe('parseMailArchiveUrl', () => {
     )
   })
 
-  it('should decode a percent-encoded list address', () => {
-    const expected: MailArchiveUrl = { kind: 'list', list: 'dnsop@ietf.org' }
+  it('should keep a percent-encoded list address as written', () => {
+    const expected: MailArchiveUrl = { kind: 'list', list: 'dnsop%40ietf.org' }
 
     expect(parseMailArchiveUrl('https://www.mail-archive.com/dnsop%40ietf.org/')).toEqual(expected)
   })
@@ -98,6 +98,30 @@ describe('mailArchiveHandler', () => {
       const expected: Array<DiscoverUriEntry> = [
         {
           uri: 'https://mail-archive.com/dnsop@ietf.org/maillist.xml',
+          hint: { key: 'mail-archive:list', label: 'Mailing list' },
+        },
+      ]
+
+      expect(mailArchiveHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should keep a percent-encoded at sign in the list address', () => {
+      const value = 'https://www.mail-archive.com/dev%40example.org/'
+      const expected = [
+        {
+          uri: 'https://www.mail-archive.com/dev%40example.org/maillist.xml',
+          hint: { key: 'mail-archive:list', label: 'Mailing list' },
+        },
+      ]
+
+      expect(mailArchiveHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should keep a percent-encoded slash in the list address as written', () => {
+      const value = 'https://www.mail-archive.com/dev%2Fnull@example.org/'
+      const expected = [
+        {
+          uri: 'https://www.mail-archive.com/dev%2Fnull@example.org/maillist.xml',
           hint: { key: 'mail-archive:list', label: 'Mailing list' },
         },
       ]

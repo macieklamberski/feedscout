@@ -270,5 +270,37 @@ describe('nebulaHandler', () => {
 
       expect(nebulaHandler.resolve(value)).toEqual(expected)
     })
+
+    it('should escape a slash in the category', () => {
+      const value = 'https://nebula.tv/explore/videos?category=science%2Ftech'
+      const expected = [
+        {
+          uri: 'https://rss.nebula.app/video/categories/science%2Ftech.rss',
+          hint: { key: 'nebula:category', label: 'Category' },
+        },
+        {
+          uri: 'https://rss.nebula.app/video/categories/science%2Ftech.rss?plus=true',
+          hint: { key: 'nebula:category-plus', label: 'Category (Plus)' },
+        },
+        {
+          uri: 'https://rss.nebula.app/video.rss',
+          hint: { key: 'nebula:videos-all', label: 'All Videos' },
+        },
+        {
+          uri: 'https://rss.nebula.app/video.rss?plus=true',
+          hint: { key: 'nebula:videos-all-plus', label: 'All Videos (Plus)' },
+        },
+        {
+          uri: 'https://rss.nebula.app/video/categories/originals.rss',
+          hint: { key: 'nebula:originals', label: 'Nebula Originals' },
+        },
+        {
+          uri: 'https://rss.nebula.app/video/channels.rss',
+          hint: { key: 'nebula:channels', label: 'Recently Added Channels' },
+        },
+      ]
+
+      expect(nebulaHandler.resolve(value)).toEqual(expected)
+    })
   })
 })

@@ -1,3 +1,4 @@
+import { encodePathSegment } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, hasMarker, hasMetaContent } from '../../common/utils.js'
 
@@ -39,6 +40,8 @@ export const hubzillaHandler: PlatformHandler = {
       return []
     }
 
-    return [{ uri: `${origin}/feed/${parsed.channel}`, hint: composeHint('hubzilla:channel') }]
+    const channel = encodePathSegment(parsed.channel)
+
+    return [{ uri: `${origin}/feed/${channel}`, hint: composeHint('hubzilla:channel') }]
   },
 }

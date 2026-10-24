@@ -1,4 +1,4 @@
-import { decodeSegment, getPathSegments, isHostOf } from 'trousse'
+import { decodeSegment, encodePathSegment, getPathSegments, isHostOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
@@ -15,10 +15,11 @@ export const parseMailArchiveUrl = (url: string): MailArchiveUrl | undefined => 
     return
   }
 
-  const list = decodeSegment(getPathSegments(url)[0])
+  const list = getPathSegments(url)[0]
 
-  // A list is archived under its posting address, so the site's own pages carry no `@`.
-  if (!list?.includes('@')) {
+  // A list is archived under its posting address, so the site's own pages carry no `@`. The address
+  // stays as written, so a feed stored as `%40` keeps that spelling.
+  if (!list || !decodeSegment(list)?.includes('@')) {
     return
   }
 
@@ -38,10 +39,11 @@ export const mailArchiveHandler: PlatformHandler = {
     }
 
     const { origin } = new URL(url)
+    const list = encodePathSegment(parsed.list)
 
     return [
       {
-        uri: `${origin}/${encodeURI(parsed.list)}/maillist.xml`,
+        uri: `${origin}/${list}/maillist.xml`,
         hint: composeHint('mail-archive:list'),
       },
     ]

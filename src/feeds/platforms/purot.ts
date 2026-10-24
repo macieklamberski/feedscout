@@ -1,3 +1,4 @@
+import { encodePathSegment } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, findElement, getTenantSubdomain } from '../../common/utils.js'
@@ -44,7 +45,7 @@ export const getPurotPage = (url: string, content: string | undefined): PurotPag
     return parsed
   }
 
-  return { kind: 'page', wiki: parsed.wiki, page }
+  return { kind: 'page', wiki: parsed.wiki, page: encodePathSegment(page) }
 }
 
 export const purotHandler: PlatformHandler = {

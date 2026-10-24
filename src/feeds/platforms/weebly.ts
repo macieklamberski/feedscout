@@ -1,4 +1,4 @@
-import { getPathSegments, isAnyOf } from 'trousse'
+import { encodePathSegment, getPathSegments, isAnyOf } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, digitsRegex, getTenantSubdomain } from '../../common/utils.js'
@@ -44,7 +44,7 @@ export const weeblyHandler: PlatformHandler = {
 
     if (parsed.page) {
       uris.push({
-        uri: `${origin}/${parsed.page}/feed`,
+        uri: `${origin}/${encodePathSegment(parsed.page)}/feed`,
         hint: composeHint('weebly:blog'),
       })
     }

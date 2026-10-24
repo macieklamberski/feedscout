@@ -185,5 +185,37 @@ describe('v2exHandler', () => {
 
       expect(v2exHandler.resolve(value)).toEqual(expected)
     })
+
+    it('should escape a slash in the tab', () => {
+      const value = 'https://www.v2ex.com/?tab=tech%2Fnews'
+      const expected = [
+        {
+          uri: 'https://www.v2ex.com/feed/tab/tech%2Fnews.xml',
+          hint: { key: 'v2ex:tab', label: 'Tab' },
+        },
+        {
+          uri: 'https://www.v2ex.com/index.xml',
+          hint: { key: 'v2ex:index', label: 'Index' },
+        },
+      ]
+
+      expect(v2exHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should escape a backslash in the tab', () => {
+      const value = 'https://www.v2ex.com/?tab=..%5C..%5Cmember%5Cfoo'
+      const expected = [
+        {
+          uri: 'https://www.v2ex.com/feed/tab/..%5C..%5Cmember%5Cfoo.xml',
+          hint: { key: 'v2ex:tab', label: 'Tab' },
+        },
+        {
+          uri: 'https://www.v2ex.com/index.xml',
+          hint: { key: 'v2ex:index', label: 'Index' },
+        },
+      ]
+
+      expect(v2exHandler.resolve(value)).toEqual(expected)
+    })
   })
 })

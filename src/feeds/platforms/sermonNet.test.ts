@@ -117,5 +117,19 @@ describe('sermonNetHandler', () => {
 
       expect(sermonNetHandler.resolve(value, content)).toEqual(expected)
     })
+
+    it('should escape a slash in a channel the page lists', () => {
+      const value = 'https://faithchapelchurch.sermon.net/'
+      const content =
+        'var StudioAppData = {"allPlaylists":[{"is_series":true,"url":"main/extra"}]};'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://faithchapelchurch.sermon.net/rss/main%2Fextra/audio',
+          hint: { key: 'sermon-net:channel', label: 'Channel podcast' },
+        },
+      ]
+
+      expect(sermonNetHandler.resolve(value, content)).toEqual(expected)
+    })
   })
 })

@@ -130,6 +130,14 @@ describe('getPurotPage', () => {
     expect(getPurotPage(value, anchorOnlyHtml)).toEqual(expected)
   })
 
+  it('should escape a space in the page its feed link names', () => {
+    const value = 'https://example.purot.net/kevatjuhla'
+    const content = '<link rel="alternate" href="/changes/kevat juhla?mode=rss&messages=0" />'
+    const expected: PurotPage = { kind: 'page', wiki: 'example', page: 'kevat%20juhla' }
+
+    expect(getPurotPage(value, content)).toEqual(expected)
+  })
+
   const foreignLinks = [
     '<link rel="alternate" href="https://other.purot.net/changes/kevatjuhla?mode=rss&messages=0" />',
     '<link rel="alternate" href="/changes/kevatjuhla?mode=rss&messages=0&pages=0" />',

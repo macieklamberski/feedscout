@@ -239,6 +239,19 @@ describe('getRedminePage', () => {
     expect(getRedminePage(value, repositoryHtml)).toEqual(expected)
   })
 
+  it('should escape a backslash in the repository the page links', () => {
+    const value = 'https://example.com/projects/acme-tools/repository'
+    const content = repositoryHtml.replaceAll('/repository/core/', '/repository/..\\core/')
+    const expected: RedminePage = {
+      kind: 'repository',
+      root: 'https://example.com',
+      project: 'acme-tools',
+      repository: '..%5Ccore',
+    }
+
+    expect(getRedminePage(value, content)).toEqual(expected)
+  })
+
   it('should return the project of a repository page that links no revisions', () => {
     const value = 'https://example.com/projects/acme-tools/repository'
     const expected: RedminePage = {
@@ -628,6 +641,19 @@ describe('redmineHandler', () => {
 
     it('should return empty array for the sign-in page', () => {
       expect(redmineHandler.resolve('https://example.com/login', signInHtml)).toEqual([])
+    })
+
+    it('should escape a question mark in the project identifier', () => {
+      const value = 'https://example.com/projects/acme/issues'
+      const content = projectHtml.replace('project-acme-tools', 'project-acme?tools')
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://example.com/projects/acme%3Ftools/issues.atom',
+          hint: { key: 'redmine:issues', label: 'Issues' },
+        },
+      ]
+
+      expect(redmineHandler.resolve(value, content)).toEqual(expected)
     })
   })
 })

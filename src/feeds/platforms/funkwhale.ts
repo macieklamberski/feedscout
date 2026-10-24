@@ -1,4 +1,4 @@
-import { decodeSegment } from 'trousse'
+import { decodeSegment, encodePathSegment } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, hasElementWithId, hasMarker, hasMetaContent } from '../../common/utils.js'
 
@@ -47,8 +47,9 @@ export const funkwhaleHandler: PlatformHandler = {
     const [name, domain] = (decodeSegment(channel) ?? channel)
       .replace(leadingAtRegex, '')
       .split('@')
+    // The name comes out of the path decoded, and it goes back into one.
     const channelUrl = domain
-      ? `https://${domain}/api/v1/channels/${name}`
+      ? `https://${domain}/api/v1/channels/${encodePathSegment(name)}`
       : `${origin}/api/v1/channels/${channel}`
 
     return [

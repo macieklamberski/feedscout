@@ -1,4 +1,4 @@
-import { getPathSegments } from 'trousse'
+import { encodePathSegment, getPathSegments } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, getTenantSubdomain } from '../../common/utils.js'
@@ -58,7 +58,8 @@ export const sermonNetHandler: PlatformHandler = {
     const uris: Array<DiscoverUriEntry> = []
 
     for (const channel of channels) {
-      const uri = `${origin}/rss/${channel}/audio`
+      // The channel is page text, which can hold a `/`.
+      const uri = `${origin}/rss/${encodePathSegment(channel)}/audio`
 
       if (uris.some((entry) => entry.uri === uri)) {
         continue

@@ -1,4 +1,4 @@
-import { isAnyOf } from 'trousse'
+import { encodePathSegment, isAnyOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, hasMarker } from '../../common/utils.js'
 
@@ -37,7 +37,14 @@ const getDiasporaPage = (url: string, content: string | undefined): DiasporaPage
     return { username: pathUsername }
   }
 
-  return { username: content?.match(diasporaIdRegex)?.[1] ?? pathUsername }
+  const linkedUsername = content?.match(diasporaIdRegex)?.[1]
+
+  if (!linkedUsername) {
+    return { username: pathUsername }
+  }
+
+  // The id is page text, which can hold a `/`.
+  return { username: encodePathSegment(linkedUsername) }
 }
 
 export const diasporaHandler: PlatformHandler = {
