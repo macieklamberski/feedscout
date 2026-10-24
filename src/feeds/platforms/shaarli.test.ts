@@ -53,20 +53,16 @@ describe('shaarliHandler', () => {
       expect(shaarliHandler.resolve('not-a-url')).toEqual([])
     })
 
-    it('should return the current and legacy feed shapes', () => {
+    it('should try the legacy RSS spelling after the current one', () => {
       const value = 'https://example.org/'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://example.org/feed/rss',
+          uri: ['https://example.org/feed/rss', 'https://example.org/?do=rss'],
           hint: { key: 'shaarli:posts', label: 'Posts', format: 'rss' },
         },
         {
           uri: 'https://example.org/feed/atom',
           hint: { key: 'shaarli:posts', label: 'Posts', format: 'atom' },
-        },
-        {
-          uri: 'https://example.org/?do=rss',
-          hint: { key: 'shaarli:posts-legacy', label: 'Posts (legacy)' },
         },
       ]
 
@@ -78,16 +74,12 @@ describe('shaarliHandler', () => {
       const content = '<input type="hidden" name="js_base_path" value="/links" />'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://example.org/links/feed/rss',
+          uri: ['https://example.org/links/feed/rss', 'https://example.org/links/?do=rss'],
           hint: { key: 'shaarli:posts', label: 'Posts', format: 'rss' },
         },
         {
           uri: 'https://example.org/links/feed/atom',
           hint: { key: 'shaarli:posts', label: 'Posts', format: 'atom' },
-        },
-        {
-          uri: 'https://example.org/links/?do=rss',
-          hint: { key: 'shaarli:posts-legacy', label: 'Posts (legacy)' },
         },
       ]
 
@@ -104,7 +96,7 @@ describe('shaarliHandler', () => {
         />
       `
       const expected: DiscoverUriEntry = {
-        uri: 'https://example.org/links/feed/rss',
+        uri: ['https://example.org/links/feed/rss', 'https://example.org/links/?do=rss'],
         hint: { key: 'shaarli:posts', label: 'Posts', format: 'rss' },
       }
 
@@ -115,16 +107,12 @@ describe('shaarliHandler', () => {
       const value = 'https://example.org/links/?searchtags=web'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://example.org/links/feed/rss',
+          uri: ['https://example.org/links/feed/rss', 'https://example.org/links/?do=rss'],
           hint: { key: 'shaarli:posts', label: 'Posts', format: 'rss' },
         },
         {
           uri: 'https://example.org/links/feed/atom',
           hint: { key: 'shaarli:posts', label: 'Posts', format: 'atom' },
-        },
-        {
-          uri: 'https://example.org/links/?do=rss',
-          hint: { key: 'shaarli:posts-legacy', label: 'Posts (legacy)' },
         },
       ]
 
@@ -135,16 +123,12 @@ describe('shaarliHandler', () => {
       const value = 'https://example.org/links/index.PHP?searchtags=web'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://example.org/links/feed/rss',
+          uri: ['https://example.org/links/feed/rss', 'https://example.org/links/?do=rss'],
           hint: { key: 'shaarli:posts', label: 'Posts', format: 'rss' },
         },
         {
           uri: 'https://example.org/links/feed/atom',
           hint: { key: 'shaarli:posts', label: 'Posts', format: 'atom' },
-        },
-        {
-          uri: 'https://example.org/links/?do=rss',
-          hint: { key: 'shaarli:posts-legacy', label: 'Posts (legacy)' },
         },
       ]
 
@@ -155,16 +139,12 @@ describe('shaarliHandler', () => {
       const value = 'https://example.org/links'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://example.org/links/feed/rss',
+          uri: ['https://example.org/links/feed/rss', 'https://example.org/links/?do=rss'],
           hint: { key: 'shaarli:posts', label: 'Posts', format: 'rss' },
         },
         {
           uri: 'https://example.org/links/feed/atom',
           hint: { key: 'shaarli:posts', label: 'Posts', format: 'atom' },
-        },
-        {
-          uri: 'https://example.org/links/?do=rss',
-          hint: { key: 'shaarli:posts-legacy', label: 'Posts (legacy)' },
         },
       ]
 

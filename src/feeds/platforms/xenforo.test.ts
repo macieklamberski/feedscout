@@ -150,14 +150,13 @@ describe('xenforoHandler', () => {
       expect(xenforoHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return only the site feeds when the forum id runs into letters', () => {
+    it('should return only the site feed when the forum id runs into letters', () => {
       const value = 'https://example.com/forums/general.17x/'
       const expected = [
         {
-          uri: 'https://example.com/forums/-/index.rss',
+          uri: ['https://example.com/forums/-/index.rss', 'https://example.com/f/-/index.rss'],
           hint: { key: 'xenforo:site', label: 'Site' },
         },
-        { uri: 'https://example.com/f/-/index.rss', hint: { key: 'xenforo:site', label: 'Site' } },
       ]
 
       expect(xenforoHandler.resolve(value)).toEqual(expected)
@@ -167,10 +166,9 @@ describe('xenforoHandler', () => {
       const value = 'https://example.com/threads/a-thread.123/'
       const expected = [
         {
-          uri: 'https://example.com/forums/-/index.rss',
+          uri: ['https://example.com/forums/-/index.rss', 'https://example.com/f/-/index.rss'],
           hint: { key: 'xenforo:site', label: 'Site' },
         },
-        { uri: 'https://example.com/f/-/index.rss', hint: { key: 'xenforo:site', label: 'Site' } },
       ]
 
       expect(xenforoHandler.resolve(value)).toEqual(expected)
@@ -179,11 +177,10 @@ describe('xenforoHandler', () => {
     const subPathHtml = `${xenforoHtml}<script>XF.config = { url: { basePath: '/community/' } }</script>`
     const subPathExpected = [
       {
-        uri: 'https://forum.example/community/forums/-/index.rss',
-        hint: { key: 'xenforo:site', label: 'Site' },
-      },
-      {
-        uri: 'https://forum.example/community/f/-/index.rss',
+        uri: [
+          'https://forum.example/community/forums/-/index.rss',
+          'https://forum.example/community/f/-/index.rss',
+        ],
         hint: { key: 'xenforo:site', label: 'Site' },
       },
     ]
@@ -194,21 +191,17 @@ describe('xenforoHandler', () => {
     ]
 
     it.each(subPathValues)(
-      'should return the site feeds under the path the page names for %s',
+      'should return the site feed under the path the page names for %s',
       (value) => {
         expect(xenforoHandler.resolve(value, subPathHtml)).toEqual(subPathExpected)
       },
     )
 
-    it('should return the site feeds on the origin when the named path does not hold the page', () => {
+    it('should return the site feed on the origin when the named path does not hold the page', () => {
       const value = 'https://forum.example/threads/a-thread.123/'
       const expected = [
         {
-          uri: 'https://forum.example/forums/-/index.rss',
-          hint: { key: 'xenforo:site', label: 'Site' },
-        },
-        {
-          uri: 'https://forum.example/f/-/index.rss',
+          uri: ['https://forum.example/forums/-/index.rss', 'https://forum.example/f/-/index.rss'],
           hint: { key: 'xenforo:site', label: 'Site' },
         },
       ]
@@ -216,16 +209,12 @@ describe('xenforoHandler', () => {
       expect(xenforoHandler.resolve(value, subPathHtml)).toEqual(expected)
     })
 
-    it('should return the site feeds on the origin for a board at the root', () => {
+    it('should return the site feed on the origin for a board at the root', () => {
       const value = 'https://forum.example/'
       const content = `${xenforoHtml}<script>XF.config = { url: { basePath: '/' } }</script>`
       const expected = [
         {
-          uri: 'https://forum.example/forums/-/index.rss',
-          hint: { key: 'xenforo:site', label: 'Site' },
-        },
-        {
-          uri: 'https://forum.example/f/-/index.rss',
+          uri: ['https://forum.example/forums/-/index.rss', 'https://forum.example/f/-/index.rss'],
           hint: { key: 'xenforo:site', label: 'Site' },
         },
       ]
