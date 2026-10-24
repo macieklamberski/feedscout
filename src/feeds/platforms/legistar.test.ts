@@ -1,6 +1,12 @@
 import { describe, expect, it } from 'bun:test'
 import type { DiscoverUriEntry } from '../../common/types.js'
-import { type LegistarUrl, legistarHandler, parseLegistarUrl } from './legistar.js'
+import {
+  getLegistarPage,
+  type LegistarPage,
+  type LegistarUrl,
+  legistarHandler,
+  parseLegistarUrl,
+} from './legistar.js'
 
 describe('parseLegistarUrl', () => {
   it('should return the legislation for a legislation detail page', () => {
@@ -85,6 +91,53 @@ describe('parseLegistarUrl', () => {
     }
 
     expect(parseLegistarUrl(value)).toEqual(expected)
+  })
+})
+
+describe('getLegistarPage', () => {
+  const value =
+    'https://example.com/MeetingDetail.aspx?ID=1234567&GUID=0A1B2C3D-4E5F-4A6B-8C7D-9E0F1A2B3C4D'
+
+  it('should return the meeting feed as the page alternate link spells it', () => {
+    const content = `
+      <link
+        href="Feed.ashx?M=CalendarDetail&amp;ID=1234567&amp;GUID=0A1B2C3D-4E5F-4A6B-8C7D-9E0F1A2B3C4D&amp;Title=Meeting"
+        rel="alternate"
+      />
+    `
+    const expected: LegistarPage = {
+      kind: 'meeting',
+      feedUrl:
+        'https://example.com/Feed.ashx?M=CalendarDetail&ID=1234567&GUID=0A1B2C3D-4E5F-4A6B-8C7D-9E0F1A2B3C4D&Title=Meeting',
+    }
+
+    expect(getLegistarPage(value, content)).toEqual(expected)
+  })
+
+  it('should return the meeting feed from the page URL without content', () => {
+    const expected: LegistarPage = {
+      kind: 'meeting',
+      feedUrl:
+        'https://example.com/Feed.ashx?M=CalendarDetail&ID=1234567&GUID=0A1B2C3D-4E5F-4A6B-8C7D-9E0F1A2B3C4D',
+    }
+
+    expect(getLegistarPage(value, undefined)).toEqual(expected)
+  })
+
+  it('should return the legislation feed for a legislation page', () => {
+    const legislationUrl =
+      'https://example.com/LegislationDetail.aspx?ID=1065902&GUID=EFE087C2-C62A-40F9-B1F9-6E2975E86217'
+    const expected: LegistarPage = {
+      kind: 'legislation',
+      feedUrl:
+        'https://example.com/Feed.ashx?M=LD&ID=1065902&GUID=EFE087C2-C62A-40F9-B1F9-6E2975E86217',
+    }
+
+    expect(getLegistarPage(legislationUrl, undefined)).toEqual(expected)
+  })
+
+  it('should return undefined for another page', () => {
+    expect(getLegistarPage('https://example.com/Calendar.aspx', undefined)).toBeUndefined()
   })
 })
 

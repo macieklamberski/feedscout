@@ -4,6 +4,8 @@ import { composeHint, findElement, hasMarker, hasMetaContent } from '../../commo
 
 // Discoverability: Discoverable without handler.
 
+export type TextpatternPage = { kind: 'site'; siteUrl: string }
+
 const feedPathRegex = /\/(?:atom|rss)\/?$/i
 
 export const isTextpatternHtml = (content: string): boolean => {
@@ -42,17 +44,21 @@ const getSiteUrl = (url: string, content: string | undefined): string | undefine
   return `${parsedUrl.origin}${sitePath}`
 }
 
+export const getTextpatternPage = (url: string, content: string | undefined): TextpatternPage => {
+  return { kind: 'site', siteUrl: getSiteUrl(url, content) ?? new URL(url).origin }
+}
+
 export const textpatternHandler: PlatformHandler = {
   match: (_url, content, headers) => {
     return hasMarker(content, headers, { html: isTextpatternHtml })
   },
 
   resolve: (url, content) => {
-    const siteUrl = getSiteUrl(url, content) ?? new URL(url).origin
+    const page = getTextpatternPage(url, content)
 
     return [
-      { uri: `${siteUrl}/rss`, hint: composeHint('textpattern:posts', 'rss') },
-      { uri: `${siteUrl}/atom`, hint: composeHint('textpattern:posts', 'atom') },
+      { uri: `${page.siteUrl}/rss`, hint: composeHint('textpattern:posts', 'rss') },
+      { uri: `${page.siteUrl}/atom`, hint: composeHint('textpattern:posts', 'atom') },
     ]
   },
 }

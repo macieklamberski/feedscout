@@ -1,5 +1,11 @@
 import { describe, expect, it } from 'bun:test'
-import { drupalHandler, isDrupalHeaders, isDrupalHtml } from './drupal.js'
+import {
+  type DrupalPage,
+  drupalHandler,
+  getDrupalPage,
+  isDrupalHeaders,
+  isDrupalHtml,
+} from './drupal.js'
 
 const drupalHtml = '<meta name="Generator" content="Drupal 11 (https://www.drupal.org)" />'
 const drupalHeaders = new Headers({ 'x-generator': 'Drupal 11 (https://www.drupal.org)' })
@@ -27,6 +33,66 @@ describe('isDrupalHeaders', () => {
   it('should return false when the header is absent', () => {
     expect(isDrupalHeaders(new Headers())).toBe(false)
     expect(isDrupalHeaders(new Headers({ 'x-generator': 'Hugo 0.120' }))).toBe(false)
+  })
+})
+
+describe('getDrupalPage', () => {
+  it('should return the base path the settings print', () => {
+    const value = 'https://example.com/site/node/1'
+    const content = `
+      <script
+        type="application/json"
+        data-drupal-selector="drupal-settings-json"
+      >{"path":{"baseUrl":"\\/site\\/","pathPrefix":"","currentPath":"node\\/1"}}</script>
+    `
+    const expected: DrupalPage = { kind: 'site', baseUrl: 'https://example.com/site/' }
+
+    expect(getDrupalPage(value, content)).toEqual(expected)
+  })
+
+  it('should return the origin without content', () => {
+    const expected: DrupalPage = { kind: 'site', baseUrl: 'https://example.com/' }
+
+    expect(getDrupalPage('https://example.com/site/node/1', undefined)).toEqual(expected)
+  })
+
+  it('should return the origin for malformed settings', () => {
+    const value = 'https://example.com/site/node/1'
+    const content = `
+      <script
+        type="application/json"
+        data-drupal-selector="drupal-settings-json"
+      >{"path":</script>
+    `
+    const expected: DrupalPage = { kind: 'site', baseUrl: 'https://example.com/' }
+
+    expect(getDrupalPage(value, content)).toEqual(expected)
+  })
+
+  it('should return the origin for a base url that is not a path', () => {
+    const value = 'https://example.com/site/node/1'
+    const content = `
+      <script
+        type="application/json"
+        data-drupal-selector="drupal-settings-json"
+      >{"path":{"baseUrl":"https:\\/\\/example.org\\/"}}</script>
+    `
+    const expected: DrupalPage = { kind: 'site', baseUrl: 'https://example.com/' }
+
+    expect(getDrupalPage(value, content)).toEqual(expected)
+  })
+
+  it('should return the origin for a base path without a trailing slash', () => {
+    const value = 'https://example.com/site/node/1'
+    const content = `
+      <script
+        type="application/json"
+        data-drupal-selector="drupal-settings-json"
+      >{"path":{"baseUrl":"\\/site"}}</script>
+    `
+    const expected: DrupalPage = { kind: 'site', baseUrl: 'https://example.com/' }
+
+    expect(getDrupalPage(value, content)).toEqual(expected)
   })
 })
 

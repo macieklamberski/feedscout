@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import { podloveHandler } from './podlove.js'
+import { getPodlovePage, type PodlovePage, podloveHandler } from './podlove.js'
 
 const stylesheet = `
   <link
@@ -24,6 +24,23 @@ const blogLink = `
     href="https://example.com/feed/"
   >
 `
+
+describe('getPodlovePage', () => {
+  it('should return the podcast feeds the page links', () => {
+    const value = `${stylesheet}${blogLink}${mp3Link}`
+    const expected: PodlovePage = { kind: 'podcast', feedUrls: ['https://example.com/feed/mp3/'] }
+
+    expect(getPodlovePage('https://example.com/', value)).toEqual(expected)
+  })
+
+  it('should return undefined for a feed link without the plugin stylesheet', () => {
+    expect(getPodlovePage('https://example.com/', mp3Link)).toBeUndefined()
+  })
+
+  it('should return undefined for the plugin stylesheet without a podcast feed link', () => {
+    expect(getPodlovePage('https://example.com/', `${stylesheet}${blogLink}`)).toBeUndefined()
+  })
+})
 
 describe('podloveHandler', () => {
   describe('match', () => {

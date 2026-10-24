@@ -1,5 +1,11 @@
 import { describe, expect, it } from 'bun:test'
-import { type AushaUrl, aushaHandler, parseAushaUrl } from './ausha.js'
+import {
+  type AushaPage,
+  type AushaUrl,
+  aushaHandler,
+  getAushaPage,
+  parseAushaUrl,
+} from './ausha.js'
 
 describe('parseAushaUrl', () => {
   it('should return the show for a show page', () => {
@@ -14,6 +20,42 @@ describe('parseAushaUrl', () => {
 
   it('should return undefined for another host', () => {
     expect(parseAushaUrl('https://example.com/my-show')).toBeUndefined()
+  })
+})
+
+describe('getAushaPage', () => {
+  const content = '<a href="https://feed.ausha.co/oKpV7hDw3XqM">RSS</a>'
+
+  it('should return the feed id of a show page', () => {
+    const value = 'https://podcast.ausha.co/my-show'
+    const expected: AushaPage = { kind: 'show', feedId: 'oKpV7hDw3XqM' }
+
+    expect(getAushaPage(value, content)).toEqual(expected)
+  })
+
+  it('should return the feed id of a smartlink page', () => {
+    const value = 'https://smartlink.ausha.co/my-show'
+    const expected: AushaPage = { kind: 'show', feedId: 'oKpV7hDw3XqM' }
+
+    expect(getAushaPage(value, content)).toEqual(expected)
+  })
+
+  it('should return undefined without content', () => {
+    expect(getAushaPage('https://podcast.ausha.co/my-show', undefined)).toBeUndefined()
+  })
+
+  it('should return undefined for a page without a feed link', () => {
+    const value = 'https://podcast.ausha.co/my-show'
+
+    expect(getAushaPage(value, '<p>My Show</p>')).toBeUndefined()
+  })
+
+  it('should return undefined for another host', () => {
+    expect(getAushaPage('https://example.com/my-show', content)).toBeUndefined()
+  })
+
+  it('should return undefined for the host root', () => {
+    expect(getAushaPage('https://podcast.ausha.co/', content)).toBeUndefined()
   })
 })
 

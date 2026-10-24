@@ -39,12 +39,36 @@ describe('parseBehanceUrl', () => {
     expect(parseBehanceUrl('https://www.behance.net/JohnDoe')).toEqual(expected)
   })
 
-  it('should return undefined for other nested profile paths', () => {
-    expect(parseBehanceUrl('https://www.behance.net/johndoe/projects')).toBeUndefined()
+  it('should read a profile tab as the profile', () => {
+    const expected: BehanceUrl = { kind: 'profile', username: 'johndoe' }
+
+    expect(parseBehanceUrl('https://www.behance.net/johndoe/projects')).toEqual(expected)
   })
 
-  it('should return undefined for a gallery page', () => {
-    expect(parseBehanceUrl('https://www.behance.net/gallery/123456/Brand-Identity')).toBeUndefined()
+  it('should read a profile tab in any case as the profile', () => {
+    const expected: BehanceUrl = { kind: 'profile', username: 'johndoe' }
+
+    expect(parseBehanceUrl('https://www.behance.net/johndoe/Moodboards/')).toEqual(expected)
+  })
+
+  it('should read a two-segment path that is not a profile tab as the home page', () => {
+    const expected: BehanceUrl = { kind: 'home' }
+
+    expect(parseBehanceUrl('https://www.behance.net/johndoe/unknown')).toEqual(expected)
+  })
+
+  it('should read a search page as the home page', () => {
+    const expected: BehanceUrl = { kind: 'home' }
+
+    expect(parseBehanceUrl('https://www.behance.net/search/projects?search=logo')).toEqual(expected)
+  })
+
+  it('should read a gallery page as the home page', () => {
+    const expected: BehanceUrl = { kind: 'home' }
+
+    expect(parseBehanceUrl('https://www.behance.net/gallery/123456/Brand-Identity')).toEqual(
+      expected,
+    )
   })
 
   it('should return the home page', () => {

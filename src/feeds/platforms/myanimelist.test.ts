@@ -67,14 +67,17 @@ describe('parseMyanimelistUrl', () => {
     expect(parseMyanimelistUrl('https://myanimelist.net/featured/')).toEqual(expected)
   })
 
-  it('should return undefined for an anime page', () => {
+  it('should read an anime page as the news page', () => {
     const value = 'https://myanimelist.net/anime/1/Cowboy_Bebop'
+    const expected: MyanimelistUrl = { kind: 'news' }
 
-    expect(parseMyanimelistUrl(value)).toBeUndefined()
+    expect(parseMyanimelistUrl(value)).toEqual(expected)
   })
 
-  it('should return undefined for the root', () => {
-    expect(parseMyanimelistUrl('https://myanimelist.net/')).toBeUndefined()
+  it('should read the root as the news page', () => {
+    const expected: MyanimelistUrl = { kind: 'news' }
+
+    expect(parseMyanimelistUrl('https://myanimelist.net/')).toEqual(expected)
   })
 
   it('should return undefined for another host', () => {
@@ -302,10 +305,6 @@ describe('myanimelistHandler', () => {
       expect(myanimelistHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should not return news feed for a path that starts with news', () => {
-      expect(myanimelistHandler.resolve('https://myanimelist.net/newsletter')).toEqual([])
-    })
-
     it('should return featured feed for /featured', () => {
       const value = 'https://myanimelist.net/featured'
       const expected = [
@@ -340,10 +339,6 @@ describe('myanimelistHandler', () => {
       ]
 
       expect(myanimelistHandler.resolve(value)).toEqual(expected)
-    })
-
-    it('should return empty array for root', () => {
-      expect(myanimelistHandler.resolve('https://myanimelist.net/')).toEqual([])
     })
   })
 })

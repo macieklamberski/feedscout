@@ -9,8 +9,8 @@ describe('parseNoteUrl', () => {
     expect(parseNoteUrl('https://note.com/tsukasa_yamato')).toEqual(expected)
   })
 
-  it('should return the user for an article page', () => {
-    const expected: NoteUrl = { kind: 'user', username: 'tsukasa_yamato' }
+  it('should return the note for an article page', () => {
+    const expected: NoteUrl = { kind: 'note', username: 'tsukasa_yamato' }
 
     expect(parseNoteUrl('https://note.com/tsukasa_yamato/n/some-note')).toEqual(expected)
   })
@@ -84,6 +84,18 @@ describe('noteHandler', () => {
   describe('resolve', () => {
     it('should return feed URL for blog', () => {
       const value = 'https://note.com/tsukasa_yamato'
+      const expected = [
+        {
+          uri: 'https://note.com/tsukasa_yamato/rss',
+          hint: { key: 'note:blog', label: 'Blog' },
+        },
+      ]
+
+      expect(noteHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return the author blog feed for a note', () => {
+      const value = 'https://note.com/tsukasa_yamato/n/n1234567890ab'
       const expected = [
         {
           uri: 'https://note.com/tsukasa_yamato/rss',

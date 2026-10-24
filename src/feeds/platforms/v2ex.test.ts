@@ -26,8 +26,10 @@ describe('parseV2exUrl', () => {
     expect(parseV2exUrl('https://www.v2ex.com/')).toEqual(expected)
   })
 
-  it('should return undefined for another page', () => {
-    expect(parseV2exUrl('https://www.v2ex.com/recent')).toBeUndefined()
+  it('should read another page as the home page', () => {
+    const expected: V2exUrl = { kind: 'home' }
+
+    expect(parseV2exUrl('https://www.v2ex.com/t/123456')).toEqual(expected)
   })
 
   it('should return undefined for another host', () => {
@@ -165,12 +167,6 @@ describe('v2exHandler', () => {
       ]
 
       expect(v2exHandler.resolve(value)).toEqual(expected)
-    })
-
-    it('should return empty array for unrecognized paths', () => {
-      const value = 'https://www.v2ex.com/t/12345'
-
-      expect(v2exHandler.resolve(value)).toEqual([])
     })
 
     it('should return tab feed for /t/{id} page with tab query', () => {

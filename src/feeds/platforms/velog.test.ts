@@ -40,9 +40,10 @@ describe('parseVelogUrl', () => {
     expect(parseVelogUrl('https://velog.io/@%E0%A4%A')).toBeUndefined()
   })
 
-  it('should return undefined for paths without @ prefix', () => {
-    expect(parseVelogUrl('https://velog.io/trending')).toBeUndefined()
-    expect(parseVelogUrl('https://velog.io/tags/react')).toBeUndefined()
+  it('should read a tag page as the home page', () => {
+    const expected: VelogUrl = { kind: 'home' }
+
+    expect(parseVelogUrl('https://velog.io/tags/react')).toEqual(expected)
   })
 
   it('should return the home page for the root', () => {
@@ -51,8 +52,10 @@ describe('parseVelogUrl', () => {
     expect(parseVelogUrl('https://velog.io/')).toEqual(expected)
   })
 
-  it('should return undefined for another page', () => {
-    expect(parseVelogUrl('https://velog.io/trending')).toBeUndefined()
+  it('should read another page as the home page', () => {
+    const expected: VelogUrl = { kind: 'home' }
+
+    expect(parseVelogUrl('https://velog.io/trending')).toEqual(expected)
   })
 
   it('should return undefined for another host', () => {
@@ -110,10 +113,6 @@ describe('velogHandler', () => {
       ]
 
       expect(velogHandler.resolve(value)).toEqual(expected)
-    })
-
-    it('should return empty array for paths without @ prefix', () => {
-      expect(velogHandler.resolve('https://velog.io/trending')).toEqual([])
     })
   })
 })

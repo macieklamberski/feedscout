@@ -17,14 +17,10 @@ export const parseVelogUrl = (url: string): VelogUrl | undefined => {
     return
   }
 
-  if (parsedUrl.pathname === '/') {
-    return { kind: 'home' }
-  }
-
   const match = parsedUrl.pathname.match(userRegex)
 
   if (!match?.[1]) {
-    return
+    return { kind: 'home' }
   }
 
   const username = decodeSegment(match[1])

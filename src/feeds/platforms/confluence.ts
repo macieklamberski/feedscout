@@ -13,10 +13,20 @@ const trailingSlashRegex = /\/$/
 const dashboardFeedQuery =
   'types=page&types=blogpost&types=comment&spaces=conf_all&sort=modified&title=Dashboard+RSS+Feed&maxResults=15&publicFeed=true'
 
-const getBaseUrl = (origin: string, content: string): string => {
-  const contextPath = getMetaContent(content, 'confluence-context-path') ?? ''
+export type ConfluencePage =
+  | { kind: 'site'; baseUrl: string }
+  | { kind: 'space'; baseUrl: string; spaceKey: string }
 
-  return `${origin}${contextPath}`.replace(trailingSlashRegex, '')
+export const getConfluencePage = (url: string, content: string | undefined): ConfluencePage => {
+  const contextPath = getMetaContent(content ?? '', 'confluence-context-path') ?? ''
+  const baseUrl = `${new URL(url).origin}${contextPath}`.replace(trailingSlashRegex, '')
+  const spaceKey = getMetaContent(content ?? '', 'confluence-space-key')
+
+  if (!spaceKey) {
+    return { kind: 'site', baseUrl }
+  }
+
+  return { kind: 'space', baseUrl, spaceKey }
 }
 
 export const isConfluenceHtml = (content: string): boolean => {
@@ -29,14 +39,13 @@ export const confluenceHandler: PlatformHandler = {
   },
 
   resolve: (url, content) => {
-    const { origin } = new URL(url)
-    const baseUrl = getBaseUrl(origin, content ?? '')
-    const spaceKey = getMetaContent(content ?? '', 'confluence-space-key')
+    const page = getConfluencePage(url, content)
+    const { baseUrl } = page
     const uris: Array<DiscoverUriEntry> = []
 
-    if (spaceKey) {
+    if (page.kind === 'space') {
       uris.push({
-        uri: `${baseUrl}/plugins/servlet/streams${composeQuery({ key: spaceKey })}`,
+        uri: `${baseUrl}/plugins/servlet/streams${composeQuery({ key: page.spaceKey })}`,
         hint: composeHint('confluence:space'),
       })
     }

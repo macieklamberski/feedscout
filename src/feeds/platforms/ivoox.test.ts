@@ -1,5 +1,11 @@
 import { describe, expect, it } from 'bun:test'
-import { type IvooxUrl, ivooxHandler, parseIvooxUrl } from './ivoox.js'
+import {
+  getIvooxPage,
+  type IvooxPage,
+  type IvooxUrl,
+  ivooxHandler,
+  parseIvooxUrl,
+} from './ivoox.js'
 
 describe('parseIvooxUrl', () => {
   it('should return the podcast for a podcast page', () => {
@@ -20,6 +26,40 @@ describe('parseIvooxUrl', () => {
 
   it('should return undefined for another host', () => {
     expect(parseIvooxUrl('https://example.com/')).toBeUndefined()
+  })
+})
+
+describe('getIvooxPage', () => {
+  const episodeUrl = 'https://www.ivoox.com/episode-name_rf_123_1.html'
+
+  it('should return the podcast id of a podcast page from the url', () => {
+    const value = 'https://www.ivoox.com/podcast-name_sq_f1234_1.html'
+    const expected: IvooxPage = { kind: 'podcast', podcastId: '1234' }
+
+    expect(getIvooxPage(value, undefined)).toEqual(expected)
+  })
+
+  it('should return the podcast id the episode page names as its series', () => {
+    const content = `{"partOfSeries":{"@type":"PodcastSeries","url":"https://www.ivoox.com/podcast-name_sq_f1234_1.html"}}`
+    const expected: IvooxPage = { kind: 'episode', podcastId: '1234' }
+
+    expect(getIvooxPage(episodeUrl, content)).toEqual(expected)
+  })
+
+  it('should return undefined for an episode page without content', () => {
+    expect(getIvooxPage(episodeUrl, undefined)).toBeUndefined()
+  })
+
+  it('should return undefined for another host', () => {
+    const value = 'https://example.com/podcast-name_sq_f1234_1.html'
+
+    expect(getIvooxPage(value, undefined)).toBeUndefined()
+  })
+
+  it('should ignore a link to another show outside the series', () => {
+    const content = '<a href="https://www.ivoox.com/other-podcast_sq_f5678_1.html">Other</a>'
+
+    expect(getIvooxPage(episodeUrl, content)).toBeUndefined()
   })
 })
 

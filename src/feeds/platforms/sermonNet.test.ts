@@ -1,6 +1,12 @@
 import { describe, expect, it } from 'bun:test'
 import type { DiscoverUriEntry } from '../../common/types.js'
-import { parseSermonNetUrl, type SermonNetUrl, sermonNetHandler } from './sermonNet.js'
+import {
+  getSermonNetPage,
+  parseSermonNetUrl,
+  type SermonNetPage,
+  type SermonNetUrl,
+  sermonNetHandler,
+} from './sermonNet.js'
 
 const faithChapelHtml = `
   <script type="text/javascript">
@@ -49,6 +55,36 @@ describe('parseSermonNetUrl', () => {
 
   it('should return undefined for another host', () => {
     expect(parseSermonNetUrl('https://example.com/')).toBeUndefined()
+  })
+})
+
+describe('getSermonNetPage', () => {
+  it('should return every channel and series the church page lists once', () => {
+    const value = 'https://faithchapelchurch.sermon.net/'
+    const expected: SermonNetPage = { kind: 'church', channels: ['faithchapel', 'main'] }
+
+    expect(getSermonNetPage(value, faithChapelHtml)).toEqual(expected)
+  })
+
+  it('should return the channel a channel page names', () => {
+    const value = 'https://faithchapelchurch.sermon.net/main/faithchapel'
+    const expected: SermonNetPage = { kind: 'channel', channel: 'faithchapel' }
+
+    expect(getSermonNetPage(value, faithChapelHtml)).toEqual(expected)
+  })
+
+  it('should fall back to the church for a channel the page does not list', () => {
+    const value = 'https://faithchapelchurch.sermon.net/main/shared'
+    const expected: SermonNetPage = { kind: 'church', channels: ['faithchapel', 'main'] }
+
+    expect(getSermonNetPage(value, faithChapelHtml)).toEqual(expected)
+  })
+
+  it('should return the church with no channel without content', () => {
+    const value = 'https://faithchapelchurch.sermon.net/'
+    const expected: SermonNetPage = { kind: 'church', channels: [] }
+
+    expect(getSermonNetPage(value, undefined)).toEqual(expected)
   })
 })
 

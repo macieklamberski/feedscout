@@ -1,4 +1,4 @@
-import { composeQuery, isHostOf, parseUrl } from 'trousse'
+import { composeQuery, getPathSegments, isAnyOf, isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
@@ -7,8 +7,21 @@ import { composeHint } from '../../common/utils.js'
 export type BehanceUrl = { kind: 'profile'; username: string } | { kind: 'home' }
 
 const hosts = ['behance.net', 'www.behance.net']
-// User profile: /{username} or /{username}/appreciated.
-const userRegex = /^\/([a-zA-Z0-9_-]+)(?:\/(appreciated))?\/?$/i
+// Profile tabs of a user, which map back to the user.
+const profileTabs = [
+  'analytics',
+  'appreciated',
+  'followers',
+  'following',
+  'info',
+  'moodboards',
+  'projects',
+  'resume',
+  'services',
+]
+// Site routes whose tabs share the profile tab names, as /search/projects does.
+const sitePaths = ['search']
+const usernameRegex = /^[a-zA-Z0-9_-]+$/
 const homeRegex = /^\/(?:galleries\/?)?$/i
 
 export const parseBehanceUrl = (url: string): BehanceUrl | undefined => {
@@ -23,10 +36,19 @@ export const parseBehanceUrl = (url: string): BehanceUrl | undefined => {
     return { kind: 'home' }
   }
 
-  const username = parsedUrl.pathname.match(userRegex)?.[1]
+  const [username, tab, ...rest] = getPathSegments(parsedUrl)
 
-  if (!username) {
-    return
+  if (
+    !username ||
+    !usernameRegex.test(username) ||
+    isAnyOf(username, sitePaths) ||
+    rest.length > 0
+  ) {
+    return { kind: 'home' }
+  }
+
+  if (tab && !isAnyOf(tab, profileTabs)) {
+    return { kind: 'home' }
   }
 
   return { kind: 'profile', username }

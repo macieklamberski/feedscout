@@ -1,7 +1,9 @@
 import { describe, expect, it } from 'bun:test'
 import {
+  type ApplePodcastsPage,
   type ApplePodcastsUrl,
   applePodcastsHandler,
+  getApplePodcastsPage,
   parseApplePodcastsUrl,
 } from './applePodcasts.js'
 
@@ -41,6 +43,63 @@ describe('parseApplePodcastsUrl', () => {
   })
 })
 
+describe('getApplePodcastsPage', () => {
+  const value = 'https://podcasts.apple.com/us/podcast/the-daily/id1200361736'
+
+  it('should return the feed URL the page carries', () => {
+    const content = '{"feedUrl":"https://feeds.example.com/the-daily","name":"The Daily"}'
+    const expected: ApplePodcastsPage = {
+      kind: 'podcast',
+      feedUrl: 'https://feeds.example.com/the-daily',
+    }
+
+    expect(getApplePodcastsPage(value, content)).toEqual(expected)
+  })
+
+  it('should read a feed URL with spaces around the colon', () => {
+    const content = '{"feedUrl" : "https://example.com/feed.xml"}'
+    const expected: ApplePodcastsPage = { kind: 'podcast', feedUrl: 'https://example.com/feed.xml' }
+
+    expect(getApplePodcastsPage(value, content)).toEqual(expected)
+  })
+
+  it('should decode the JSON escapes in the feed URL', () => {
+    const content = '{"feedUrl":"https:\\/\\/feeds.example.com\\/x?a=1\\u0026b=2"}'
+    const expected: ApplePodcastsPage = {
+      kind: 'podcast',
+      feedUrl: 'https://feeds.example.com/x?a=1&b=2',
+    }
+
+    expect(getApplePodcastsPage(value, content)).toEqual(expected)
+  })
+
+  it('should keep a feed URL whose escapes do not decode', () => {
+    const content = '{"feedUrl":"https://feeds.example.com/x\\q"}'
+    const expected: ApplePodcastsPage = {
+      kind: 'podcast',
+      feedUrl: 'https://feeds.example.com/x\\q',
+    }
+
+    expect(getApplePodcastsPage(value, content)).toEqual(expected)
+  })
+
+  it('should return undefined without content', () => {
+    expect(getApplePodcastsPage(value, undefined)).toBeUndefined()
+  })
+
+  it('should return undefined when the content carries no feed URL', () => {
+    const content = '<html><body>No feed URL here</body></html>'
+
+    expect(getApplePodcastsPage(value, content)).toBeUndefined()
+  })
+
+  it('should return undefined for a URL outside the platform', () => {
+    const content = '{"feedUrl":"https://feeds.example.com/the-daily"}'
+
+    expect(getApplePodcastsPage('https://example.com/', content)).toBeUndefined()
+  })
+})
+
 describe('applePodcastsHandler', () => {
   describe('match', () => {
     const values: Array<[boolean, string]> = [
@@ -73,67 +132,12 @@ describe('applePodcastsHandler', () => {
       expect(applePodcastsHandler.resolve('https://example.com/')).toEqual([])
     })
 
-    it('should keep a feed URL whose escapes do not decode', () => {
+    it('should return the feed URL the page carries', () => {
       const value = 'https://podcasts.apple.com/us/podcast/the-daily/id1200361736'
-      const content = '{"feedUrl":"https://feeds.example.com/x\\q"}'
-      const expected = [
-        {
-          uri: 'https://feeds.example.com/x\\q',
-          hint: { key: 'apple-podcasts:podcast', label: 'Podcast' },
-        },
-      ]
-
-      expect(applePodcastsHandler.resolve(value, content)).toEqual(expected)
-    })
-
-    it('should decode the JSON escapes in the feed URL', () => {
-      const value = 'https://podcasts.apple.com/us/podcast/the-daily/id1200361736'
-      const content = '{"feedUrl":"https:\\/\\/feeds.example.com\\/x?a=1\\u0026b=2"}'
-      const expected = [
-        {
-          uri: 'https://feeds.example.com/x?a=1&b=2',
-          hint: { key: 'apple-podcasts:podcast', label: 'Podcast' },
-        },
-      ]
-
-      expect(applePodcastsHandler.resolve(value, content)).toEqual(expected)
-    })
-
-    const contentWithFeedUrl = `
-			{"feedUrl":"https://feeds.example.com/the-daily","name":"The Daily"}
-		`
-
-    it('should return feed URL when found in content', () => {
-      const value = 'https://podcasts.apple.com/us/podcast/the-daily/id1200361736'
+      const content = '{"feedUrl":"https://feeds.example.com/the-daily","name":"The Daily"}'
       const expected = [
         {
           uri: 'https://feeds.example.com/the-daily',
-          hint: { key: 'apple-podcasts:podcast', label: 'Podcast' },
-        },
-      ]
-
-      expect(applePodcastsHandler.resolve(value, contentWithFeedUrl)).toEqual(expected)
-    })
-
-    it('should return empty array when no content provided', () => {
-      const value = 'https://podcasts.apple.com/us/podcast/the-daily/id1200361736'
-
-      expect(applePodcastsHandler.resolve(value)).toEqual([])
-    })
-
-    it('should return empty array when feedUrl not found in content', () => {
-      const value = 'https://podcasts.apple.com/us/podcast/the-daily/id1200361736'
-      const content = '<html><body>No feed URL here</body></html>'
-
-      expect(applePodcastsHandler.resolve(value, content)).toEqual([])
-    })
-
-    it('should handle feedUrl with spaces around colon', () => {
-      const value = 'https://podcasts.apple.com/us/podcast/the-daily/id1200361736'
-      const content = '{"feedUrl" : "https://example.com/feed.xml"}'
-      const expected = [
-        {
-          uri: 'https://example.com/feed.xml',
           hint: { key: 'apple-podcasts:podcast', label: 'Podcast' },
         },
       ]

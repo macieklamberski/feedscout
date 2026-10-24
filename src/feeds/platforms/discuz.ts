@@ -17,6 +17,8 @@ import {
 
 export type DiscuzUrl = { kind: 'board'; boardId: string } | { kind: 'site' }
 
+export type DiscuzPage = DiscuzUrl & { isLegacy: boolean }
+
 const archiverBoardRegex = /\/archiver\/\??fid-(\d+)\.html/i
 const archiverPathRegex = /\/archiver\/.*$/i
 const boardPathRegex = /\/forum-(\d+)-/i
@@ -68,6 +70,16 @@ export const parseDiscuzUrl = (url: string): DiscuzUrl | undefined => {
   return { kind: 'site' }
 }
 
+export const getDiscuzPage = (url: string, content: string | undefined): DiscuzPage | undefined => {
+  const parsed = parseDiscuzUrl(url)
+
+  if (!parsed) {
+    return
+  }
+
+  return { ...parsed, isLegacy: isLegacyDiscuz(content) }
+}
+
 export const discuzHandler: PlatformHandler = {
   match: (url, content, headers) => {
     if (!hasMarker(content, headers, { html: isDiscuzHtml, headers: isDiscuzHeaders })) {
@@ -78,9 +90,9 @@ export const discuzHandler: PlatformHandler = {
   },
 
   resolve: (url, content) => {
-    const parsed = parseDiscuzUrl(url)
+    const page = getDiscuzPage(url, content)
 
-    if (!parsed) {
+    if (!page) {
       return []
     }
 
@@ -93,9 +105,9 @@ export const discuzHandler: PlatformHandler = {
 
     installUrl.pathname = `${getScriptDirectory(pagePath)}/`
 
-    if (isLegacyDiscuz(content)) {
-      if (parsed.kind === 'board') {
-        const boardQuery = composeQuery({ fid: parsed.boardId, auth: '0' })
+    if (page.isLegacy) {
+      if (page.kind === 'board') {
+        const boardQuery = composeQuery({ fid: page.boardId, auth: '0' })
 
         uris.push({
           uri: new URL(`rss.php${boardQuery}`, installUrl).href,
@@ -111,8 +123,8 @@ export const discuzHandler: PlatformHandler = {
       return uris
     }
 
-    if (parsed.kind === 'board') {
-      const boardQuery = composeQuery({ mod: 'rss', fid: parsed.boardId, auth: '0' })
+    if (page.kind === 'board') {
+      const boardQuery = composeQuery({ mod: 'rss', fid: page.boardId, auth: '0' })
 
       uris.push({
         uri: new URL(`forum.php${boardQuery}`, installUrl).href,
