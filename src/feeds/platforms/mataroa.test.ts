@@ -19,6 +19,7 @@ describe('mataroaHandler', () => {
       [true, 'https://alice.mataroa.blog'],
       [false, 'https://blog.example.mataroa.blog'],
       [false, 'https://mataroa.blog'],
+      [false, 'https://www.mataroa.blog'],
       [false, 'https://example.com'],
     ]
 

@@ -34,6 +34,14 @@ describe('sakuraBlogHandler', () => {
       expect(sakuraBlogHandler.match('http://alice.sblo.jp/')).toBe(true)
     })
 
+    it('should return false for the www host', () => {
+      expect(sakuraBlogHandler.match('http://www.sblo.jp/')).toBe(false)
+    })
+
+    it('should return false for a nested subdomain', () => {
+      expect(sakuraBlogHandler.match('http://blog.alice.sblo.jp/')).toBe(false)
+    })
+
     it('should return false for another host', () => {
       expect(sakuraBlogHandler.match('https://example.com/')).toBe(false)
     })

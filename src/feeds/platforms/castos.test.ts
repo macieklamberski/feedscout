@@ -60,6 +60,7 @@ describe('castosHandler', () => {
       [true, 'https://alice-podcast.castos.com/episodes/first-episode'],
       [false, 'https://castos.com'],
       [false, 'https://www.castos.com'],
+      [false, 'https://blog.example.castos.com'],
       [false, 'https://example.com'],
     ]
 

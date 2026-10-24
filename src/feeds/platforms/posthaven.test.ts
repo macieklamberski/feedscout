@@ -25,6 +25,8 @@ describe('posthavenHandler', () => {
       [true, 'https://alice.posthaven.com'],
       [true, 'https://anything.posthaven.com/post'],
       [false, 'https://posthaven.com'],
+      [false, 'https://www.posthaven.com'],
+      [false, 'https://blog.example.posthaven.com'],
       [false, 'https://example.com'],
     ]
 

@@ -29,6 +29,7 @@ describe('libsynHandler', () => {
       [true, 'https://alice.libsyn.com'],
       [false, 'https://blog.example.libsyn.com'],
       [false, 'https://libsyn.com'],
+      [false, 'https://www.libsyn.com'],
       [false, 'https://example.com'],
     ]
 

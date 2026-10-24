@@ -94,6 +94,7 @@ describe('noticeableHandler', () => {
       [true, 'https://example.noticeable.news/'],
       [true, 'https://example.noticeable.news/labels/bug-fix'],
       [false, 'https://noticeable.news/'],
+      [false, 'https://www.noticeable.news/'],
       [false, 'https://example.com/labels/bug-fix'],
     ]
 

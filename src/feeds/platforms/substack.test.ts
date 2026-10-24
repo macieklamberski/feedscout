@@ -96,6 +96,7 @@ describe('substackHandler', () => {
       [true, 'https://substack.com/@user-name'],
       [false, 'https://substack.com/home'],
       [false, 'https://substack.com'],
+      [false, 'https://www.substack.com'],
       [false, 'https://example.com'],
     ]
 

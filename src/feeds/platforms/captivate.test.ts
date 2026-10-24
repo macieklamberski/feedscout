@@ -12,6 +12,10 @@ describe('parseCaptivateUrl', () => {
     expect(parseCaptivateUrl('https://www.captivate.fm/')).toBeUndefined()
   })
 
+  it('should return undefined for a nested subdomain', () => {
+    expect(parseCaptivateUrl('https://a.b.captivate.fm/')).toBeUndefined()
+  })
+
   it('should return undefined for the feed host', () => {
     expect(parseCaptivateUrl('https://feeds.captivate.fm/myshow/')).toBeUndefined()
   })

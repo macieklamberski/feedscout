@@ -43,6 +43,7 @@ describe('weeblyHandler', () => {
       [true, 'https://example.weebly.com'],
       [false, 'https://blog.example.weebly.com'],
       [false, 'https://weebly.com'],
+      [false, 'https://www.weebly.com'],
       [false, 'https://example.com'],
     ]
 
