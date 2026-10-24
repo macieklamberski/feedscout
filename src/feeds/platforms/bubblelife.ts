@@ -12,7 +12,7 @@ export type BubblelifeUrl =
 const domains = ['bubblelife.com']
 
 const communityRegex = /^\/community\/([a-z0-9_]+)(?:\/library\/(\d+))?(?:\/|$)/i
-const feedHrefRegex = /^\/rss\?c=(\d+)$/
+const feedHrefRegex = /^\/rss\?c=(\d+)$/i
 
 export const parseBubblelifeUrl = (url: string): BubblelifeUrl | undefined => {
   if (!isSubdomainOf(url, domains)) {

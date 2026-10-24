@@ -1,4 +1,4 @@
-import { getAnyOf, parseUrl } from 'trousse'
+import { getAnyOf, getQueryParam, parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, digitsRegex, findElement, hasMarker } from '../../common/utils.js'
@@ -63,14 +63,14 @@ const getUrlObjectId = (parsedUrl: URL): SpipObjectId | undefined => {
     return fileObjectId
   }
 
-  const page = parsedUrl.searchParams.get('page')
-  const object = objects.find((value) => value === page)
+  const page = getQueryParam(parsedUrl.searchParams, 'page')
+  const object = getAnyOf(page, objects)
 
   if (!object) {
     return
   }
 
-  const id = parsedUrl.searchParams.get(`id_${object}`)
+  const id = getQueryParam(parsedUrl.searchParams, `id_${object}`)
 
   if (!id || !digitsRegex.test(id)) {
     return

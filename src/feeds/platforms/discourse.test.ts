@@ -367,6 +367,18 @@ describe('discourseHandler', () => {
       expect(discourseHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should spell a ?period= value in another case as Discourse does', () => {
+      const value = 'https://forum.example.com/top?period=Weekly'
+      const expected = [
+        {
+          uri: 'https://forum.example.com/top.rss?period=weekly',
+          hint: { key: 'discourse:top', label: 'Top' },
+        },
+      ]
+
+      expect(discourseHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should prefer path period over ?period= query param', () => {
       const value = 'https://forum.example.com/top/daily?period=weekly'
       const expected = [

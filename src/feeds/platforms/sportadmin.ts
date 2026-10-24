@@ -1,4 +1,4 @@
-import { composeQuery, parseUrl } from 'trousse'
+import { composeQuery, getQueryParam, parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, digitsRegex, findElement, getTenantSubdomain } from '../../common/utils.js'
@@ -26,7 +26,7 @@ const findLayoutSectionId = (content: string | undefined): string | undefined =>
 // The new template answers an unknown section with the club home page, whose canonical is the
 // root, and its feed then serves the club news items.
 const getUrlSectionId = (url: string, content: string | undefined): string | undefined => {
-  const sectionId = new URL(url).searchParams.get('SID')
+  const sectionId = getQueryParam(new URL(url).searchParams, 'sid')
   const canonical = findElement(content, (element) => {
     return element.name === 'link' && element.attribs.rel === 'canonical'
   })?.attribs.href

@@ -7,7 +7,7 @@ import { composeHint, findElement, getScriptDirectory, hasMarker } from '../../c
 
 export type MediawikiPage = { scriptUrl: string; pageName?: string }
 
-const rsdHrefRegex = /\/api\.php\?action=rsd$/
+const rsdHrefRegex = /\/api\.php\?action=rsd$/i
 const pageNameRegex = /"wgPageName":("(?:[^"\\]|\\.)*")/
 const namespaceNumberRegex = /"wgNamespaceNumber":(-?\d+)/
 

@@ -1,4 +1,4 @@
-import { composeQuery, parseUrl } from 'trousse'
+import { composeQuery, getQueryParam, parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, getScriptDirectory, hasElementWithId, hasMarker } from '../../common/utils.js'
@@ -35,7 +35,7 @@ export const parseFluxbbUrl = (url: string): FluxbbUrl | undefined => {
 
   const { pathname, searchParams } = parsedUrl
   const boardPath = getScriptDirectory(pathname)
-  const id = searchParams.get('id')
+  const id = getQueryParam(searchParams, 'id')
 
   if (id && forumPathRegex.test(pathname)) {
     return { kind: 'forum', boardPath, forumId: id }

@@ -1,4 +1,4 @@
-import { decodeSegment, getPathSegments, isAnyOf, isHostOf, parseUrl } from 'trousse'
+import { decodeSegment, getPathSegments, getQueryParam, isAnyOf, isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, letterThenWordOrHyphenRegex } from '../../common/utils.js'
 
@@ -66,7 +66,7 @@ export const parseHatenaFotolifeUrl = (url: string): HatenaFotolifeUrl | undefin
     return { kind: 'folder', username, folder }
   }
 
-  const model = parsedUrl.searchParams.get('model')
+  const model = getQueryParam(parsedUrl.searchParams, 'model')
 
   if (model) {
     return { kind: 'model', username, model }

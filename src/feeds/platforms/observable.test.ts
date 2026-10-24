@@ -139,6 +139,18 @@ describe('observableHandler', () => {
       expect(observableHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return recent feed for /public sorted by publish time in another case', () => {
+      const value = 'https://observablehq.com/public?sort=Publish_Time'
+      const expected = [
+        {
+          uri: 'https://api.observablehq.com/documents/public.rss',
+          hint: { key: 'observable:recent', label: 'Recent' },
+        },
+      ]
+
+      expect(observableHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return trending feed for /public', () => {
       const value = 'https://observablehq.com/public'
       const expected = [

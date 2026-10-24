@@ -4,7 +4,7 @@ import { composeHint, findElement } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
-const customCssPathRegex = /\/custom_css$/
+const customCssPathRegex = /\/custom_css$/i
 const trailingSlashesRegex = /(?<!\/)\/+$/
 const eventsScriptRegex = /\/gancio-events\.es\.js$/
 

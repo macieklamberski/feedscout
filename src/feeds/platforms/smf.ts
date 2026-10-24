@@ -8,7 +8,7 @@ import { composeHint, findElement, hasMarker } from '../../common/utils.js'
 export type SmfPage = { feedUrl: string; boardId?: string }
 
 const scriptUrlRegex = /var smf_scripturl = "([^"]+)"/
-const boardIdRegex = /[?;&]board=(\d+)/
+const boardIdRegex = /[?;&]board=(\d+)/i
 
 // Core prints both script variables in every page head whatever the theme, from SMF 1.1 to 2.1.
 export const isSmfHtml = (content: string): boolean => {

@@ -9,6 +9,12 @@ describe('isMediawikiHtml', () => {
     expect(isMediawikiHtml(rsdLink)).toBe(true)
   })
 
+  it('should return true for the RSD link spelled in uppercase', () => {
+    const value = '<link rel="EditURI" type="application/rsd+xml" href="/w/API.php?ACTION=RSD">'
+
+    expect(isMediawikiHtml(value)).toBe(true)
+  })
+
   it('should return false for the WordPress RSD link', () => {
     const value = `
       <link

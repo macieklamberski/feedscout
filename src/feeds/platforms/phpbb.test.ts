@@ -127,6 +127,32 @@ describe('phpbbHandler', () => {
       expect(phpbbHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should read the forum id name in uppercase', () => {
+      const value = 'https://example.com/community/viewforum.php?F=12'
+      const expected = [
+        {
+          uri: 'https://example.com/community/feed.php?f=12',
+          hint: { key: 'phpbb:forum', label: 'Forum' },
+        },
+        ...getBoardFeeds('https://example.com/community'),
+      ]
+
+      expect(phpbbHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should read the topic id name in uppercase', () => {
+      const value = 'https://example.com/community/viewtopic.php?T=345'
+      const expected = [
+        {
+          uri: 'https://example.com/community/feed.php?t=345',
+          hint: { key: 'phpbb:topic', label: 'Topic' },
+        },
+        ...getBoardFeeds('https://example.com/community'),
+      ]
+
+      expect(phpbbHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should read the topic from the canonical link of a post link', () => {
       const value = 'https://example.com/community/viewtopic.php?p=678'
       const content = `

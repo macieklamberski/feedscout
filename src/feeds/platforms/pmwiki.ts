@@ -1,4 +1,4 @@
-import { getPathSegments, parseUrl } from 'trousse'
+import { getPathSegments, getQueryParam, parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, hasMarker } from '../../common/utils.js'
@@ -27,7 +27,8 @@ export const parsePmwikiUrl = (url: string): PmwikiUrl | undefined => {
     return
   }
 
-  const [nameGroup] = parsedUrl.searchParams.get('n')?.split(pageNameSeparatorRegex) ?? []
+  const pageName = getQueryParam(parsedUrl.searchParams, 'n')
+  const [nameGroup] = pageName?.split(pageNameSeparatorRegex) ?? []
 
   if (nameGroup) {
     return { kind: 'page', scriptPath: parsedUrl.pathname, group: nameGroup }

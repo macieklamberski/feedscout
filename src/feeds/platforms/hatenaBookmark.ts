@@ -1,4 +1,4 @@
-import { decodeSegment, getAnyOf, isHostOf, parseUrl } from 'trousse'
+import { decodeSegment, getAnyOf, getQueryParam, isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
@@ -46,7 +46,7 @@ const searchFilters = ['target', 'sort', 'users', 'date_range', 'safe']
 
 const copySearchFilters = (from: URLSearchParams, to: URLSearchParams): string => {
   for (const filter of searchFilters) {
-    const value = from.get(filter)
+    const value = getQueryParam(from, filter)
 
     if (value) {
       to.set(filter, value)
@@ -93,7 +93,7 @@ export const parseHatenaBookmarkUrl = (url: string): HatenaBookmarkUrl | undefin
   // The old search path answers 301 to /q/{query}, with `target` set for a text or title search.
   // Without a query it lands on the home page.
   if (searchType) {
-    const legacyQuery = searchParams.get('q')
+    const legacyQuery = getQueryParam(searchParams, 'q')
 
     if (!legacyQuery) {
       return { kind: 'home' }
@@ -108,7 +108,7 @@ export const parseHatenaBookmarkUrl = (url: string): HatenaBookmarkUrl | undefin
 
   // The site page keeps only its sort order in its own feed link.
   if (site) {
-    const sort = searchParams.get('sort')
+    const sort = getQueryParam(searchParams, 'sort')
     const params = new URLSearchParams(sort ? { sort } : {}).toString()
 
     return { kind: 'site', site, params }

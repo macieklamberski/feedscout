@@ -1,4 +1,4 @@
-import { composeQuery, isHostOf, parseUrl } from 'trousse'
+import { composeQuery, getQueryParam, isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, getTenantSubdomain } from '../../common/utils.js'
 
@@ -25,7 +25,7 @@ export const parseProseUrl = (url: string): ProseUrl | undefined => {
     return
   }
 
-  const tag = parsedUrl.searchParams.get('tag')
+  const tag = getQueryParam(parsedUrl.searchParams, 'tag')
 
   if (tag) {
     return { kind: 'tag', tag }

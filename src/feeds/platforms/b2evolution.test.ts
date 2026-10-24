@@ -235,6 +235,12 @@ describe('b2evolutionHandler', () => {
       expect(b2evolutionHandler.resolve('https://example.com/', blogHtml)).toEqual(blogFeeds)
     })
 
+    it('should return the feeds of a blog linking its feed in uppercase', () => {
+      const content = '<link rel="alternate" href="https://example.com/?TEMPSKIN=_RSS2" />'
+
+      expect(b2evolutionHandler.resolve('https://example.com/', content)).toEqual(blogFeeds)
+    })
+
     it('should return the feeds of a blog named in the query', () => {
       const value = 'https://example.com/blogs/index.php?blog=3'
       const expected: Array<DiscoverUriEntry> = [

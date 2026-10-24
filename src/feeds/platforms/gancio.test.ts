@@ -16,6 +16,12 @@ describe('gancioHandler', () => {
       expect(gancioHandler.match('https://example.org/', content)).toBe(true)
     })
 
+    it('should match a custom_css stylesheet spelled in uppercase', () => {
+      const value = `<link rel="stylesheet" href="/Custom_CSS">${eventsScript}`
+
+      expect(gancioHandler.match('https://example.org/', value)).toBe(true)
+    })
+
     it('should not match the stylesheet without the events script', () => {
       const value = '<link rel="stylesheet" href="/custom_css">'
 

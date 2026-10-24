@@ -1,4 +1,4 @@
-import { composeQuery, getAnyOf, parseUrl } from 'trousse'
+import { composeQuery, getAnyOf, getQueryParam, parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import {
@@ -35,11 +35,9 @@ const getTopPeriod = (
   pathPeriod: string | undefined,
   searchParams: URLSearchParams,
 ): string | undefined => {
-  const period = getAnyOf(pathPeriod, validTopPeriods) ?? searchParams.get('period')
+  const period = getAnyOf(pathPeriod, validTopPeriods) ?? getQueryParam(searchParams, 'period')
 
-  if (period && validTopPeriods.includes(period)) {
-    return period
-  }
+  return getAnyOf(period, validTopPeriods)
 }
 
 // A path the parser does not name falls back to the latest topics, on the root and elsewhere.

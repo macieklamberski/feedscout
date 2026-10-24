@@ -1,4 +1,4 @@
-import { composeQuery, isSubdomainOf } from 'trousse'
+import { composeQuery, getQueryParam, isSubdomainOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
@@ -20,8 +20,8 @@ export const parseMailchimpUrl = (url: string): MailchimpUrl | undefined => {
   }
 
   const { pathname, searchParams } = new URL(url)
-  const userId = searchParams.get('u')
-  const id = searchParams.get('id')
+  const userId = getQueryParam(searchParams, 'u')
+  const id = getQueryParam(searchParams, 'id')
 
   if (!userId || !id) {
     return

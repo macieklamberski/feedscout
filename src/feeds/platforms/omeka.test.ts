@@ -191,6 +191,17 @@ describe('getOmekaPage', () => {
     expect(getOmekaPage(value, omekaHtml)).toEqual(expected)
   })
 
+  it('should drop the page and the search button in uppercase from the query', () => {
+    const value = 'https://example.com/items/browse?tags=Blacksburg&Submit_Search=Search&PAGE=2'
+    const expected: OmekaPage = {
+      kind: 'browse',
+      rootUrl: 'https://example.com',
+      query: 'tags=Blacksburg',
+    }
+
+    expect(getOmekaPage(value, omekaHtml)).toEqual(expected)
+  })
+
   it('should return the query of the short items route', () => {
     const expected: OmekaPage = {
       kind: 'browse',

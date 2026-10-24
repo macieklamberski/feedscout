@@ -1,4 +1,4 @@
-import { isHostOf, parseUrl } from 'trousse'
+import { getQueryParam, isAnyOf, isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
@@ -26,11 +26,12 @@ export const parseObservableUrl = (url: string): ObservableUrl | undefined => {
     return
   }
 
-  const { pathname, searchParams } = parsedUrl
+  const { pathname } = parsedUrl
   const isPublic = publicRegex.test(pathname)
+  const sort = getQueryParam(parsedUrl.searchParams, 'sort')
 
   // `/recent` redirects to `/public?sort=publish_time` and `/trending` to `/public`.
-  if (recentRegex.test(pathname) || (isPublic && searchParams.get('sort') === 'publish_time')) {
+  if (recentRegex.test(pathname) || (isPublic && isAnyOf(sort, 'publish_time'))) {
     return { kind: 'recent' }
   }
 

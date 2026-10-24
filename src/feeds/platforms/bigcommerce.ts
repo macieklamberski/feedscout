@@ -1,4 +1,4 @@
-import { composeQuery } from 'trousse'
+import { composeQuery, getQueryParam } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, findElement, getCookieNames, hasMarker } from '../../common/utils.js'
@@ -30,7 +30,7 @@ const getCategoryId = (content: string | undefined): string | undefined => {
 
 const getBigcommercePage = (url: string, content: string | undefined): BigcommercePage => {
   const { pathname, searchParams } = new URL(url)
-  const query = searchParams.get('search_query')
+  const query = getQueryParam(searchParams, 'search_query')
 
   if (searchPathRegex.test(pathname) && query) {
     return { kind: 'search', query }

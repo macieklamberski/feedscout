@@ -1,4 +1,4 @@
-import { getPathSegments, isAnyOf, isHostOf, parseUrl } from 'trousse'
+import { getPathSegments, getQueryParam, isAnyOf, isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { alphanumericOrHyphenRegex, composeHint, digitsRegex } from '../../common/utils.js'
 
@@ -19,7 +19,7 @@ export const parseSverigesRadioUrl = (url: string): SverigesRadioUrl | undefined
     return
   }
 
-  const programId = parsedUrl.searchParams.get('programid')
+  const programId = getQueryParam(parsedUrl.searchParams, 'programid')
 
   // Legacy pages such as /sida/default.aspx?programid={id} name the program by its id alone.
   if (programId && digitsRegex.test(programId)) {

@@ -154,6 +154,19 @@ describe('talentsoftHandler', () => {
       expect(talentsoftHandler.resolve(value, homeHtml)).toEqual(expected)
     })
 
+    it('should read a lowercase lcid from the offers link', () => {
+      const value = 'https://example.com/offre-de-emploi/liste-toutes-offres.aspx'
+      const content = '<a href="/handlers/offerRss.ashx?lcid=2057">All offers</a>'
+      const expected = [
+        {
+          uri: 'https://example.com/handlers/offerRss.ashx?LCID=2057',
+          hint: { key: 'talentsoft:offers', label: 'Job offers' },
+        },
+      ]
+
+      expect(talentsoftHandler.resolve(value, content)).toEqual(expected)
+    })
+
     it('should read a lowercase lcid from the page url', () => {
       const value = 'https://example.com/offre-de-emploi/liste-offres.aspx?mode=layer&lcid=2057'
       const expected = [

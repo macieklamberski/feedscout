@@ -87,6 +87,19 @@ describe('duckWebcomicsHandler', () => {
       expect(duckWebcomicsHandler.resolve(value, content)).toEqual(expected)
     })
 
+    it('should spell the comic as a feed link with an uppercase route word does', () => {
+      const value = 'https://www.theduckwebcomics.com/quack_tales/'
+      const content = '<a href="/Quack_Tales/RSS/">rss</a>'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://www.theduckwebcomics.com/Quack_Tales/rss/',
+          hint: { key: 'duck-webcomics:comic', label: 'Comic' },
+        },
+      ]
+
+      expect(duckWebcomicsHandler.resolve(value, content)).toEqual(expected)
+    })
+
     it('should return empty array when the URL names no comic', () => {
       expect(duckWebcomicsHandler.resolve('https://www.theduckwebcomics.com/')).toEqual([])
     })

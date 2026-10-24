@@ -45,6 +45,21 @@ describe('parseKohaUrl', () => {
     expect(parseKohaUrl(value)).toEqual(expected)
   })
 
+  it('should read the query name in uppercase', () => {
+    const value = 'https://example.com/cgi-bin/koha/opac-search.pl?Q=agua'
+    const expected: KohaUrl = { kind: 'search', root: '', params: 'Q=agua' }
+
+    expect(parseKohaUrl(value)).toEqual(expected)
+  })
+
+  it('should drop the count, paging, sort and format names in uppercase', () => {
+    const value =
+      'https://example.com/cgi-bin/koha/opac-search.pl?q=water&COUNT=20&Offset=20&SORT_BY=title_az&Format=rss'
+    const expected: KohaUrl = { kind: 'search', root: '', params: 'q=water' }
+
+    expect(parseKohaUrl(value)).toEqual(expected)
+  })
+
   it('should return the limits of a search page without a query', () => {
     const value =
       'https://biblioteca.termcat.cat/cgi-bin/koha/opac-search.pl?limit=su-to%3AInternet&limit=au%3ATERMCAT'

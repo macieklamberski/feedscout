@@ -1,4 +1,4 @@
-import { composeQuery, parseUrl } from 'trousse'
+import { composeQuery, getQueryParam, parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import {
@@ -50,7 +50,7 @@ export const parseDiscuzUrl = (url: string): DiscuzUrl | undefined => {
   }
 
   const { pathname, search, searchParams } = parsedUrl
-  const queryId = searchParams.get('fid')
+  const queryId = getQueryParam(searchParams, 'fid')
 
   if (queryId && digitsRegex.test(queryId)) {
     return { kind: 'board', boardId: queryId }

@@ -1,4 +1,4 @@
-import { getPathSegments, isAnyOf, parseUrl } from 'trousse'
+import { getAnyOf, getPathSegments, getQueryParam, isAnyOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import {
   composeHint,
@@ -50,8 +50,9 @@ const getQuerySuffix = (query: LemmyQuery, content: string | undefined): string 
     return element.name === 'link' && element.attribs.rel === 'alternate'
   })
   const feedUrl = parseUrl(link?.attribs.href ?? '', 'https://example.com')
-  const sorts = [query.sort, feedUrl?.searchParams.get('sort')]
-  const sort = sorts.find((value) => value && validSorts.includes(value))
+  const sort =
+    getAnyOf(query.sort, validSorts) ??
+    getAnyOf(getQueryParam(feedUrl?.searchParams, 'sort'), validSorts)
 
   if (sort) {
     params.set('sort', sort)
@@ -75,8 +76,8 @@ export const parseLemmyUrl = (url: string): LemmyUrl | undefined => {
 
   const [section, name] = getPathSegments(parsedUrl)
   const { searchParams } = parsedUrl
-  const sort = searchParams.get('sort') ?? undefined
-  const limit = searchParams.get('limit') ?? undefined
+  const sort = getQueryParam(searchParams, 'sort')
+  const limit = getQueryParam(searchParams, 'limit')
 
   if (!section) {
     return { kind: 'home', sort, limit }

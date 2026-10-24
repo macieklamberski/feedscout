@@ -73,6 +73,12 @@ describe('placementIndiaHandler', () => {
       expect(placementIndiaHandler.match('https://www.example.com/', vacanciesAnchor)).toBe(false)
     })
 
+    it('should match a link to the vacancies feed spelled in uppercase', () => {
+      const value = `${stylesheet}<a href="https://www.example.com/Vacancy.RSS">RSS</a>`
+
+      expect(placementIndiaHandler.match('https://www.example.com/', value)).toBe(true)
+    })
+
     it('should not match a link to the vacancies feed of another host', () => {
       expect(placementIndiaHandler.match('https://www.example.org/', placementIndiaHtml)).toBe(
         false,

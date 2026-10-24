@@ -1,4 +1,4 @@
-import { isHostOf } from 'trousse'
+import { getQueryParam, isHostOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
@@ -31,10 +31,10 @@ const getInternetArchivePage = (
     }
   }
 
-  const query = searchParams.get('query')
+  const query = getQueryParam(searchParams, 'query')
 
   // A `sin` search runs over full text, captions or captures, which the feed's query does not.
-  if (!searchRegex.test(pathname) || !query || searchParams.get('sin')) {
+  if (!searchRegex.test(pathname) || !query || getQueryParam(searchParams, 'sin')) {
     return
   }
 

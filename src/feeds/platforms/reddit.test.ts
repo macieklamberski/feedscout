@@ -544,6 +544,18 @@ describe('redditHandler', () => {
       expect(redditHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should spell a ?t= value in another case as Reddit does', () => {
+      const value = 'https://www.reddit.com/top?t=Week'
+      const expected = [
+        {
+          uri: 'https://www.reddit.com/top/.rss?t=week',
+          hint: { key: 'reddit:posts', label: 'Posts' },
+        },
+      ]
+
+      expect(redditHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return sitewide sort feed for /best', () => {
       const value = 'https://www.reddit.com/best'
       const expected = [

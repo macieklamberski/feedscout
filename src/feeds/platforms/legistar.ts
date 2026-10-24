@@ -1,4 +1,4 @@
-import { composeQuery, isSubdomainOf, parseUrl, resolveUrl } from 'trousse'
+import { composeQuery, getQueryParam, isSubdomainOf, parseUrl, resolveUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import {
   composeHint,
@@ -39,8 +39,8 @@ export const parseLegistarUrl = (url: string): LegistarUrl | undefined => {
     return
   }
 
-  const id = parsedUrl.searchParams.get('ID')
-  const guid = parsedUrl.searchParams.get('GUID')
+  const id = getQueryParam(parsedUrl.searchParams, 'id')
+  const guid = getQueryParam(parsedUrl.searchParams, 'guid')
 
   // Feed.ashx answers 410 to an id without its own GUID, so both must come from the page URL.
   if (!id || !guid || !digitsRegex.test(id) || !hexOrHyphenRegex.test(guid)) {

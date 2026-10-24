@@ -1,4 +1,4 @@
-import { parseUrl } from 'trousse'
+import { isAnyOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, hasMarker } from '../../common/utils.js'
 
@@ -30,7 +30,7 @@ export const parseYmCareersUrl = (url: string): YmCareersUrl | undefined => {
   const query = parsedUrl.search
     .slice(1)
     .split('&')
-    .filter((pair) => pair !== '' && !excludedParams.includes(pair.split('=')[0]))
+    .filter((pair) => pair !== '' && !isAnyOf(pair.split('=')[0], excludedParams))
     .join('&')
 
   if (searchPathRegex.test(parsedUrl.pathname)) {

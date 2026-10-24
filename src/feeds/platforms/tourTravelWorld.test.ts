@@ -73,6 +73,12 @@ describe('tourTravelWorldHandler', () => {
       expect(tourTravelWorldHandler.match('https://www.example.com/', packagesAnchor)).toBe(false)
     })
 
+    it('should match a link to the tour packages feed spelled in uppercase', () => {
+      const value = `${stylesheet}<a href="https://www.example.com/Tour-Packages.RSS">RSS</a>`
+
+      expect(tourTravelWorldHandler.match('https://www.example.com/', value)).toBe(true)
+    })
+
     it('should not match a link to the tour packages feed of another host', () => {
       expect(tourTravelWorldHandler.match('https://www.example.org/', tourTravelWorldHtml)).toBe(
         false,

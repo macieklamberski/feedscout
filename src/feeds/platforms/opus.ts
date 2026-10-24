@@ -1,4 +1,4 @@
-import { decodeSegment, parseUrl, resolveUrl } from 'trousse'
+import { decodeSegment, isAnyOf, parseUrl, resolveUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import {
   composeHint,
@@ -94,11 +94,11 @@ export const getOpusPage = (url: string, content: string | undefined): OpusPage 
       return
     }
 
-    if (excludedParams.includes(key)) {
+    if (isAnyOf(key, excludedParams)) {
       continue
     }
 
-    values[key] = value
+    values[key.toLowerCase()] = value
     params.push(`${encodeParam(key)}/${encodeParam(value)}`)
   }
 
@@ -106,11 +106,11 @@ export const getOpusPage = (url: string, content: string | undefined): OpusPage 
   const feedUrl =
     getLinkedFeedUrl(url, content, rootUrl) ?? `${rootUrl}/rss/index/index/${params.join('/')}`
 
-  if (values.searchtype === 'collection' && digitsRegex.test(values.id ?? '')) {
+  if (isAnyOf(values.searchtype, 'collection') && digitsRegex.test(values.id ?? '')) {
     return { kind: 'collection', feedUrl }
   }
 
-  if (values.searchtype === 'simple' && values.query) {
+  if (isAnyOf(values.searchtype, 'simple') && values.query) {
     return { kind: 'search', feedUrl }
   }
 }

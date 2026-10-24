@@ -7,9 +7,9 @@ import { composeHint, findElement, hasMarker } from '../../common/utils.js'
 
 const listPackPath = '/apps/js/common/list-pack.js'
 
-const newsFeedHrefRegex = /^\/apps\/news\/rss\?categoryid=(\d+)$/
+const newsFeedHrefRegex = /^\/apps\/news\/rss\?categoryid=(\d+)$/i
 const classPathRegex = /^\/apps\/classes\/(\d+)(?:\/|$)/i
-const classFeedHrefRegex = /^\/apps\/classes\/assignment_rss\.jsp\?classREC_ID=(\d+)$/
+const classFeedHrefRegex = /^\/apps\/classes\/assignment_rss\.jsp\?classREC_ID=(\d+)$/i
 
 export type EdlioPage =
   | { kind: 'site'; origin: string; categoryId?: string }

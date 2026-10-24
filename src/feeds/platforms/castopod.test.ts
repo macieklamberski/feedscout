@@ -15,6 +15,12 @@ describe('castopodHandler', () => {
       expect(castopodHandler.match('https://example.org/@podcast', content)).toBe(true)
     })
 
+    it('should match a theme colors stylesheet spelled in uppercase', () => {
+      const value = '<link rel="stylesheet" type="text/css" href="/Themes/Colors" />'
+
+      expect(castopodHandler.match('https://example.org/@podcast', value)).toBe(true)
+    })
+
     it('should not match a podcast page without the stylesheet', () => {
       const value = '<link rel="stylesheet" href="/assets/styles/index.css">'
 

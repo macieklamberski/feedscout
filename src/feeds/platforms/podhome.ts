@@ -11,7 +11,7 @@ export type PodhomePage = { feedUrls: Array<string> }
 const hosts = ['serve.podhome.fm']
 const assetPath = 'cdn.podhome.fm/servesite'
 
-const feedPathRegex = /^\/rss\/[^/]+$/
+const feedPathRegex = /^\/rss\/[^/]+$/i
 
 const getPodhomePage = (url: string, content: string | undefined): PodhomePage | undefined => {
   if (!content?.includes(assetPath)) {

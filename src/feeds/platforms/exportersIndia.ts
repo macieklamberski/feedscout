@@ -6,8 +6,8 @@ import { composeHint, findElement, findElements, hasMarker } from '../../common/
 // Discoverability: Discoverable without handler.
 
 const templateStylesheetRegex = /^(?:https?:)?\/\/catalog\.wlimg\.com\/templates-images\//
-const productsFeedPathRegex = /^\/products\.rss$/
-const servicesFeedPathRegex = /^\/services\.rss$/
+const productsFeedPathRegex = /^\/products\.rss$/i
+const servicesFeedPathRegex = /^\/services\.rss$/i
 
 export type ExportersIndiaPage = { productsFeedUrl?: string; servicesFeedUrl?: string }
 
