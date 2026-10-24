@@ -1,4 +1,4 @@
-import { parseUrl } from 'trousse'
+import { getQueryParam, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, hasMarker, hasMetaContent } from '../../common/utils.js'
 
@@ -22,9 +22,9 @@ const getFeedQuery = (searchParams: URLSearchParams, type: string): string => {
   const query = new URLSearchParams()
 
   for (const name of routingParams) {
-    const value = searchParams.get(name)
+    const value = getQueryParam(searchParams, name)
 
-    if (searchParams.has('option') && value) {
+    if (getQueryParam(searchParams, 'option') !== undefined && value) {
       query.set(name, value)
     }
   }

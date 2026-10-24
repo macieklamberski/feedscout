@@ -1,4 +1,12 @@
-import { composeQuery, getAnyOf, getPathSegments, isAnyOf, isHostOf, parseUrl } from 'trousse'
+import {
+  composeQuery,
+  getAnyOf,
+  getPathSegments,
+  getQueryParam,
+  isAnyOf,
+  isHostOf,
+  parseUrl,
+} from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
@@ -41,7 +49,7 @@ const getTimeframe = (sort: string, searchParams: URLSearchParams): string | und
     return
   }
 
-  const timeframe = searchParams.get('t')
+  const timeframe = getQueryParam(searchParams, 't')
 
   if (timeframe && timeOptions.includes(timeframe)) {
     return timeframe
@@ -74,7 +82,7 @@ export const parseRedditUrl = (url: string): RedditUrl | undefined => {
     return { kind: 'siteSort', sort: siteSort, timeframe: getTimeframe(siteSort, searchParams) }
   }
 
-  const query = searchParams.get('q') ?? undefined
+  const query = getQueryParam(searchParams, 'q')
 
   if (isAnyOf(pathSegments[0], 'search') && query) {
     return { kind: 'siteSearch', query }

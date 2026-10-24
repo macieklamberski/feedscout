@@ -1,4 +1,4 @@
-import { isHostOf, parseUrl } from 'trousse'
+import { getQueryParam, isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, hexOrHyphenRegex } from '../../common/utils.js'
 
@@ -21,7 +21,7 @@ export const parseSoundonUrl = (url: string): SoundonUrl | undefined => {
 
   const { pathname, searchParams } = parsedUrl
   const podcastId = embedRegex.test(pathname)
-    ? searchParams.get('podcast')
+    ? getQueryParam(searchParams, 'podcast')
     : pathname.match(podcastRegex)?.[1]
 
   if (!podcastId || !hexOrHyphenRegex.test(podcastId)) {

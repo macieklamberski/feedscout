@@ -1,4 +1,4 @@
-import { composeQuery, isHostOf } from 'trousse'
+import { composeQuery, getQueryParam, isHostOf } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, getTenantSubdomain } from '../../common/utils.js'
@@ -23,7 +23,7 @@ export const parseBearblogUrl = (url: string): BearblogUrl | undefined => {
   }
 
   // Tag filter via ?q= query param.
-  const tag = new URL(url).searchParams.get('q') ?? undefined
+  const tag = getQueryParam(new URL(url).searchParams, 'q')
 
   return { kind: 'blog', tag }
 }

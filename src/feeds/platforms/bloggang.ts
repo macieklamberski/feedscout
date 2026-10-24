@@ -1,4 +1,4 @@
-import { isAnyOf, isHostOf, parseUrl } from 'trousse'
+import { getQueryParam, isAnyOf, isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, getTenantSubdomain, wordOrHyphenRegex } from '../../common/utils.js'
 
@@ -30,7 +30,7 @@ export const parseBloggangUrl = (url: string): BloggangUrl | undefined => {
 
   const parsed = parseUrl(url)
   const script = parsed?.pathname.match(scriptRegex)?.[1]
-  const username = parsed?.searchParams.get('id')
+  const username = parsed ? getQueryParam(parsed.searchParams, 'id') : undefined
 
   if (!username || !wordOrHyphenRegex.test(username)) {
     return

@@ -1,4 +1,4 @@
-import { parseUrl } from 'trousse'
+import { getQueryParam, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, getCookieNames, hasMarker } from '../../common/utils.js'
 
@@ -36,7 +36,7 @@ export const getGnuboardPage = (
   const scriptRoot = parsedUrl.pathname.match(boardScriptRegex)?.[1]
 
   if (scriptRoot !== undefined) {
-    if (parsedUrl.searchParams.get('bo_table') !== board) {
+    if (getQueryParam(parsedUrl.searchParams, 'bo_table') !== board) {
       return
     }
 

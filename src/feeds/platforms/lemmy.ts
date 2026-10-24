@@ -1,4 +1,4 @@
-import { getPathSegments, isAnyOf, parseUrl } from 'trousse'
+import { getPathSegments, getQueryParam, isAnyOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import {
   composeHint,
@@ -75,8 +75,8 @@ export const parseLemmyUrl = (url: string): LemmyUrl | undefined => {
 
   const [section, name] = getPathSegments(parsedUrl)
   const { searchParams } = parsedUrl
-  const sort = searchParams.get('sort') ?? undefined
-  const limit = searchParams.get('limit') ?? undefined
+  const sort = getQueryParam(searchParams, 'sort')
+  const limit = getQueryParam(searchParams, 'limit')
 
   if (!section) {
     return { kind: 'home', sort, limit }

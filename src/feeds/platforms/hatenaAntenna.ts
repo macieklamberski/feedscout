@@ -1,4 +1,4 @@
-import { composeQuery, getPathSegments, isHostOf, parseUrl } from 'trousse'
+import { composeQuery, getPathSegments, getQueryParam, isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import {
   composeHint,
@@ -45,7 +45,7 @@ export const parseHatenaAntennaUrl = (url: string): HatenaAntennaUrl | undefined
     return
   }
 
-  const groupId = parsedUrl.searchParams.get('gid')
+  const groupId = getQueryParam(parsedUrl.searchParams, 'gid')
 
   if (groupId) {
     return { kind: 'group', username, groupId }

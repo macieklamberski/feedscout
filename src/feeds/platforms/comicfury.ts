@@ -1,4 +1,4 @@
-import { isHostOf, parseUrl } from 'trousse'
+import { getQueryParam, isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { alphanumericOrHyphenRegex, composeHint, getTenantSubdomain } from '../../common/utils.js'
 
@@ -38,7 +38,7 @@ export const parseComicfuryUrl = (url: string): ComicfuryUrl | undefined => {
   }
 
   if (profilePathRegex.test(parsedUrl.pathname)) {
-    const comic = parsedUrl.searchParams.get('url')
+    const comic = getQueryParam(parsedUrl.searchParams, 'url')
 
     if (!comic || !alphanumericOrHyphenRegex.test(comic)) {
       return

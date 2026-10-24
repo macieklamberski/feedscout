@@ -22,7 +22,7 @@ const rollupPathRegex = /\/js\/[^/]*$/
 // 6.1 and later `data-channelid='{id}'`.
 const channelIdRegex = /(?:"channelid":\s*"|data-channelid=['"])(\d+)/
 const forumDisplayRegex = /\/forumdisplay\.php$/i
-const forumIdRegex = /[?&]f=(?<forumId>[^&]+)/
+const forumIdRegex = /[?&]f=(?<forumId>[^&]+)/i
 const friendlyForumIdRegex = /^\?(\d+)(?:-|&|$)/
 
 // vBulletin 4 prints `clientscript/vbulletin-core.js` as an absolute URL under the forum root.

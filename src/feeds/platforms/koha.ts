@@ -1,4 +1,4 @@
-import { parseUrl } from 'trousse'
+import { getQueryParam, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, digitsRegex, hasMarker } from '../../common/utils.js'
 
@@ -49,7 +49,7 @@ export const parseKohaUrl = (url: string): KohaUrl | undefined => {
   }
 
   if (page === 'opac-shelves') {
-    const shelfNumber = params.get('shelfnumber')
+    const shelfNumber = getQueryParam(params, 'shelfnumber')
 
     if (!shelfNumber || !digitsRegex.test(shelfNumber)) {
       return

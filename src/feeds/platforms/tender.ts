@@ -1,4 +1,10 @@
-import { composeQuery, decodeSegment, isHostOrSubdomainOf, parseUrl } from 'trousse'
+import {
+  composeQuery,
+  decodeSegment,
+  isHostOrSubdomainOf,
+  parseUrl,
+  startsWithAnyOf,
+} from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, getCookieNames, getTenantSubdomain, hasMarker } from '../../common/utils.js'
 
@@ -71,7 +77,7 @@ export const getTenderPage = (url: string, content: string | undefined): TenderP
 
   const root = getRoot(parsedUrl.pathname, content)
   const siteUrl = `${parsedUrl.origin}${root}`
-  const sitePath = parsedUrl.pathname.startsWith(`${root}/`)
+  const sitePath = startsWithAnyOf(parsedUrl.pathname, [`${root}/`])
     ? parsedUrl.pathname.slice(root.length)
     : '/'
   const [, category, discussion] = sitePath.match(discussionPathRegex) ?? []

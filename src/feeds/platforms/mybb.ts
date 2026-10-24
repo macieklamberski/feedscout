@@ -1,4 +1,4 @@
-import { composeQuery, parseUrl } from 'trousse'
+import { composeQuery, getQueryParam, parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import {
@@ -66,7 +66,7 @@ const getBreadcrumbForumId = (content: string | undefined): string | undefined =
 
 const getForumId = (url: string, content: string | undefined): string | undefined => {
   const { pathname, searchParams } = new URL(url)
-  const queryId = searchParams.get('fid')
+  const queryId = getQueryParam(searchParams, 'fid')
 
   if (forumScriptRegex.test(pathname) && queryId && digitsRegex.test(queryId)) {
     return queryId

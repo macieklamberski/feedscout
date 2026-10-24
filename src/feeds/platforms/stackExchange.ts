@@ -1,4 +1,4 @@
-import { composeQuery, isHostOf, isHostOrSubdomainOf, parseUrl } from 'trousse'
+import { composeQuery, getQueryParam, isHostOf, isHostOrSubdomainOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, digitsRegex } from '../../common/utils.js'
 
@@ -35,7 +35,8 @@ const collectiveRegex = /^\/collectives\/([^/]+)/i
 const validSorts = ['newest', 'active', 'votes', 'creation', 'hot', 'week', 'month']
 
 const getSort = (searchParams: URLSearchParams): string | undefined => {
-  const sort = searchParams.get('sort') ?? searchParams.get('tab')?.toLowerCase()
+  const sort =
+    getQueryParam(searchParams, 'sort') ?? getQueryParam(searchParams, 'tab')?.toLowerCase()
 
   if (sort && validSorts.includes(sort)) {
     return sort

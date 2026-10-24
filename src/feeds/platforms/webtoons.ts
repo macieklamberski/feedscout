@@ -1,4 +1,4 @@
-import { composeQuery, getAnyOf, isAnyOf, isHostOf, parseUrl } from 'trousse'
+import { composeQuery, getAnyOf, getQueryParam, isAnyOf, isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, digitsRegex } from '../../common/utils.js'
 
@@ -30,7 +30,7 @@ export const parseWebtoonsUrl = (url: string): WebtoonsUrl | undefined => {
 
   const [, languageSegment, genre, name] = parsedUrl.pathname.match(seriesRegex) ?? []
   const language = getAnyOf(languageSegment, languages)
-  const titleNo = parsedUrl.searchParams.get('title_no')
+  const titleNo = getQueryParam(parsedUrl.searchParams, 'title_no')
 
   if (!language || !genre || !name || !titleNo || !digitsRegex.test(titleNo)) {
     return

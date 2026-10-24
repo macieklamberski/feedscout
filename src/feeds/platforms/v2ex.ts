@@ -1,4 +1,4 @@
-import { encodePathSegment, isHostOf, parseUrl } from 'trousse'
+import { encodePathSegment, getQueryParam, isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
@@ -35,7 +35,7 @@ export const parseV2exUrl = (url: string): V2exUrl | undefined => {
     return { kind: 'member', username }
   }
 
-  const tab = searchParams.get('tab')
+  const tab = getQueryParam(searchParams, 'tab')
 
   if (tab) {
     return { kind: 'tab', tab }

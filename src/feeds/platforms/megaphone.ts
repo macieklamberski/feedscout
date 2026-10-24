@@ -1,4 +1,4 @@
-import { isHostOf } from 'trousse'
+import { getQueryParam, isHostOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, wordOrHyphenRegex } from '../../common/utils.js'
 
@@ -20,7 +20,7 @@ export const parseMegaphoneUrl = (url: string): MegaphoneUrl | undefined => {
 
   // The playlist embed names its show by the feed id in the p parameter.
   if (isHostOf(url, playlistHosts)) {
-    const showId = searchParams.get('p')
+    const showId = getQueryParam(searchParams, 'p')
 
     if (!showId || !wordOrHyphenRegex.test(showId)) {
       return
@@ -31,7 +31,8 @@ export const parseMegaphoneUrl = (url: string): MegaphoneUrl | undefined => {
 
   // The episode player names its episode in the path or the e parameter.
   if (isHostOf(url, playerHosts)) {
-    const episodeId = searchParams.get('e') ?? pathname.match(episodePathRegex)?.[1] ?? ''
+    const episodeId =
+      getQueryParam(searchParams, 'e') ?? pathname.match(episodePathRegex)?.[1] ?? ''
 
     if (!episodeIdRegex.test(episodeId)) {
       return

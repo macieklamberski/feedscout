@@ -1,4 +1,4 @@
-import { composeQuery, isHostOf, parseUrl } from 'trousse'
+import { composeQuery, getQueryParam, isHostOf, parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
@@ -20,7 +20,7 @@ export const parseTildesUrl = (url: string): TildesUrl | undefined => {
   }
 
   const { pathname, searchParams } = parsedUrl
-  const tag = searchParams.get('tag') ?? undefined
+  const tag = getQueryParam(searchParams, 'tag')
   const group = pathname.match(groupRegex)?.[1]
 
   if (group) {

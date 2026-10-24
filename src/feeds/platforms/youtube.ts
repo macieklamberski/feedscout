@@ -1,4 +1,4 @@
-import { composeQuery, isHostOf, parseUrl } from 'trousse'
+import { composeQuery, getQueryParam, isHostOf, parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, formatSuffixRegex } from '../../common/utils.js'
@@ -122,7 +122,7 @@ export const parseYoutubeUrl = (url: string): YoutubeUrl | undefined => {
   }
 
   const { pathname, searchParams } = parsedUrl
-  const listId = searchParams.get('list') ?? undefined
+  const listId = getQueryParam(searchParams, 'list')
   const playlistId = listId && !feedlessListRegex.test(listId) ? listId : undefined
   const rawChannelId = pathname.match(channelRegex)?.[1]?.replace(formatSuffixRegex, '')
   const channelId =
@@ -137,7 +137,7 @@ export const parseYoutubeUrl = (url: string): YoutubeUrl | undefined => {
   }
 
   if (
-    (watchRegex.test(pathname) && searchParams.has('v')) ||
+    (watchRegex.test(pathname) && getQueryParam(searchParams, 'v') !== undefined) ||
     (isHostOf(parsedUrl, shortLinkHosts) && pathname.length > 1) ||
     liveRegex.test(pathname)
   ) {
@@ -148,7 +148,7 @@ export const parseYoutubeUrl = (url: string): YoutubeUrl | undefined => {
     return { kind: 'short', playlistId }
   }
 
-  if (searchParams.has('v')) {
+  if (getQueryParam(searchParams, 'v') !== undefined) {
     return { kind: 'player', playlistId }
   }
 

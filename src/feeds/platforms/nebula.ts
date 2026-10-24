@@ -1,4 +1,11 @@
-import { encodePathSegment, getPathSegments, isAnyOf, isHostOf, parseUrl } from 'trousse'
+import {
+  encodePathSegment,
+  getPathSegments,
+  getQueryParam,
+  isAnyOf,
+  isHostOf,
+  parseUrl,
+} from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
@@ -25,7 +32,7 @@ export const parseNebulaUrl = (url: string): NebulaUrl | undefined => {
 
   // The root, /videos and /explore[/{tab}], optionally filtered by category.
   if (!slug || isAnyOf(slug, globalPaths)) {
-    return { kind: 'explore', category: parsedUrl.searchParams.get('category') ?? undefined }
+    return { kind: 'explore', category: getQueryParam(parsedUrl.searchParams, 'category') }
   }
 
   return { kind: 'channel', slug }
