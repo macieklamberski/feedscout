@@ -21,8 +21,8 @@ describe('parseDevtoUrl', () => {
     expect(parseDevtoUrl('https://www.dev.to/alice')).toEqual(expected)
   })
 
-  it('should lowercase the name', () => {
-    const expected: DevtoUrl = { kind: 'profile', owner: 'alice' }
+  it('should keep the name case', () => {
+    const expected: DevtoUrl = { kind: 'profile', owner: 'Alice' }
 
     expect(parseDevtoUrl('https://dev.to/Alice')).toEqual(expected)
   })

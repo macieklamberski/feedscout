@@ -71,8 +71,7 @@ export const lichessHandler: PlatformHandler = {
     }
 
     if (parsed.kind === 'community') {
-      // An uppercase language code falls back to the feed of every language.
-      const language = parsed.language?.toLowerCase()
+      const { language } = parsed
       const query = language ? composeQuery({ lang: language }) : ''
 
       return [

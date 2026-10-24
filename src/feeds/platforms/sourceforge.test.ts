@@ -4,8 +4,8 @@ import type { SourceforgeUrl } from './sourceforge.js'
 import { parseSourceforgeUrl, sourceforgeHandler } from './sourceforge.js'
 
 describe('parseSourceforgeUrl', () => {
-  it('should lowercase the project name', () => {
-    const expected: SourceforgeUrl = { kind: 'project', project: 'sevenzip' }
+  it('should keep the project name case', () => {
+    const expected: SourceforgeUrl = { kind: 'project', project: 'SevenZip' }
 
     expect(parseSourceforgeUrl('https://sourceforge.net/projects/SevenZip/')).toEqual(expected)
   })

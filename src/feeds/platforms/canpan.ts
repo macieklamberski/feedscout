@@ -20,8 +20,7 @@ export const parseCanpanUrl = (url: string): CanpanUrl | undefined => {
     return
   }
 
-  // Pages answer in any case, feeds only in lowercase: /JGAP/index2_0.xml is a 404.
-  return { kind: 'blog', blog: blog.toLowerCase() }
+  return { kind: 'blog', blog }
 }
 
 export const canpanHandler: PlatformHandler = {

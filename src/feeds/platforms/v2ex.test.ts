@@ -83,11 +83,11 @@ describe('v2exHandler', () => {
       expect(v2exHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return lowercase node feed for a capitalized node', () => {
+    it('should keep the case of a capitalized node', () => {
       const value = 'https://www.v2ex.com/go/Python'
       const expected = [
         {
-          uri: 'https://www.v2ex.com/feed/python.xml',
+          uri: 'https://www.v2ex.com/feed/Python.xml',
           hint: { key: 'v2ex:node', label: 'Node' },
         },
       ]
@@ -144,11 +144,11 @@ describe('v2exHandler', () => {
       expect(v2exHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return lowercase tab feed for a capitalized tab', () => {
+    it('should keep the case of a capitalized tab', () => {
       const value = 'https://www.v2ex.com/?tab=TECH'
       const expected = [
         {
-          uri: 'https://www.v2ex.com/feed/tab/tech.xml',
+          uri: 'https://www.v2ex.com/feed/tab/TECH.xml',
           hint: { key: 'v2ex:tab', label: 'Tab' },
         },
         { uri: 'https://www.v2ex.com/index.xml', hint: { key: 'v2ex:index', label: 'Index' } },
