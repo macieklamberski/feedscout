@@ -17,8 +17,8 @@ import { isForumotionHtml } from './forumotion.js'
 
 export type PhpbbPage = { boardUrl: string; forumId?: string; topicId?: string }
 
-const forumIdRegex = /[?&]f=(?<id>[^&#]+)/
-const topicIdRegex = /[?&]t=(?<id>[^&#]+)/
+const forumIdRegex = /[?&]f=(?<id>[^&#]+)/i
+const topicIdRegex = /[?&]t=(?<id>[^&#]+)/i
 
 // Forumotion's phpBB3 template prints the same body id and serves none of phpBB's feeds.
 export const isPhpbbHtml = (content: string): boolean => {

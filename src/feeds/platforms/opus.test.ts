@@ -127,6 +127,26 @@ describe('getOpusPage', () => {
     expect(getOpusPage(value, opusSubPathHtml)).toEqual(expected)
   })
 
+  it('should return a collection page with its parameter names in uppercase', () => {
+    const value = 'https://example.com/solrsearch/index/search/SearchType/collection/ID/112'
+    const expected: OpusPage = {
+      kind: 'collection',
+      feedUrl: 'https://example.com/rss/index/index/SearchType/collection/ID/112',
+    }
+
+    expect(getOpusPage(value, opusHtml)).toEqual(expected)
+  })
+
+  it('should return a collection page with its search type in uppercase', () => {
+    const value = 'https://example.com/solrsearch/index/search/searchtype/Collection/id/112'
+    const expected: OpusPage = {
+      kind: 'collection',
+      feedUrl: 'https://example.com/rss/index/index/searchtype/Collection/id/112',
+    }
+
+    expect(getOpusPage(value, opusHtml)).toEqual(expected)
+  })
+
   it('should return a facet search page with the query spelled as OPUS spells it', () => {
     const value =
       'https://example.com/solrsearch/index/search/searchtype/simple/query/*:*/yearfq/2011'
@@ -157,6 +177,17 @@ describe('getOpusPage', () => {
       kind: 'search',
       feedUrl:
         'https://example.com/rss/index/index/searchtype/simple/query/%2A%3A%2A/yearfq/2011/author_facetfq/Doe%2C+J.',
+    }
+
+    expect(getOpusPage(value, opusHtml)).toEqual(expected)
+  })
+
+  it('should drop the paging and sorting parameters in uppercase', () => {
+    const value =
+      'https://example.com/solrsearch/index/search/searchtype/simple/query/%2A%3A%2A/Start/0/ROWS/10/SortField/year'
+    const expected: OpusPage = {
+      kind: 'search',
+      feedUrl: 'https://example.com/rss/index/index/searchtype/simple/query/%2A%3A%2A',
     }
 
     expect(getOpusPage(value, opusHtml)).toEqual(expected)

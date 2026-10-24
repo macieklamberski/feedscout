@@ -1,4 +1,4 @@
-import { parseUrl } from 'trousse'
+import { isAnyOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import {
   composeHint,
@@ -70,11 +70,15 @@ export const getOmekaPage = (url: string, content: string | undefined): OmekaPag
     return { kind: 'page', rootUrl }
   }
 
-  for (const param of excludedQueryParams) {
-    searchParams.delete(param)
+  const queryParams = new URLSearchParams()
+
+  for (const [name, value] of searchParams) {
+    if (!isAnyOf(name, excludedQueryParams)) {
+      queryParams.append(name, value)
+    }
   }
 
-  const query = searchParams.toString()
+  const query = queryParams.toString()
 
   if (!query) {
     return { kind: 'page', rootUrl }
