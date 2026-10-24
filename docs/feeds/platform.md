@@ -3334,7 +3334,7 @@ Discovers the update feed of a dblp conference or journal, read from the venue i
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | `dblp.org/rec/conf/{venue}/{key}`, `/rec/journals/{venue}/{key}` | Venue (RSS) |
-| `dblp.org/db/conf/{venue}`, `/db/journals/{venue}` | Venue (RSS) |
+| `dblp.org/db/conf/{venue}`, `/db/journals/{venue}`, `/streams/{type}/{venue}` | Venue (RSS) |
 | `dblp.org/pid/{pid}` | Person (RSS) |
 | Any other page | New issues and volumes (RSS) |
 

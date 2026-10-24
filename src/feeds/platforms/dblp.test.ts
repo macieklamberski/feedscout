@@ -59,6 +59,12 @@ describe('parseDblpUrl', () => {
     expect(parseDblpUrl('https://dblp.org/db/series/lncs/index.html')).toEqual(expected)
   })
 
+  it('should return the home page for the venue type index', () => {
+    const expected: DblpUrl = { kind: 'home' }
+
+    expect(parseDblpUrl('https://dblp.org/db/conf/index.html')).toEqual(expected)
+  })
+
   it('should return the home page for the root', () => {
     const expected: DblpUrl = { kind: 'home' }
 
@@ -115,7 +121,7 @@ describe('dblpHandler', () => {
     it('should return the updates feed for any other page', () => {
       const expected = [
         {
-          uri: 'https://dblp.org/feed/',
+          uri: 'https://dblp.org/feed/new.rss',
           hint: { key: 'dblp:updates', label: 'New issues and volumes' },
         },
       ]

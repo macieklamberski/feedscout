@@ -12,7 +12,7 @@ export type DblpUrl =
 const hosts = ['dblp.org']
 
 // Record, venue and stream pages all name the venue as `{type}/{venue}`.
-const venueRegex = /^\/(?:rec|db|streams)\/([^/]+)\/([^/]+)/i
+const venueRegex = /^\/(?:rec|db|streams)\/([^/]+)\/([^/.]+)(?:\/|$)/i
 const personRegex = /^\/pid\/([^/]+)\/([^/]+)/i
 
 const venueTypes = ['conf', 'journals']
@@ -76,6 +76,6 @@ export const dblpHandler: PlatformHandler = {
       return [{ uri: `${origin}/pid/${group}/${personId}.rss`, hint: composeHint('dblp:person') }]
     }
 
-    return [{ uri: `${origin}/feed/`, hint: composeHint('dblp:updates') }]
+    return [{ uri: `${origin}/feed/new.rss`, hint: composeHint('dblp:updates') }]
   },
 }
