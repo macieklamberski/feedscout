@@ -340,12 +340,9 @@
     ]
   },
   "dblp": {
-    "dblp:person": "https://dblp.org/pid/10/3248.rss",
-    "dblp:updates": "https://dblp.org/feed/",
-    "dblp:venue": [
-      "https://dblp.org/feed/streams/conf/igarss.rss",
-      "https://dblp.org/feed/streams/journals/csur.rss"
-    ]
+    "dblp:person": { "skip": "dblp answers non-browser clients with an Anubis challenge" },
+    "dblp:updates": { "skip": "dblp answers non-browser clients with an Anubis challenge" },
+    "dblp:venue": { "skip": "dblp answers non-browser clients with an Anubis challenge" }
   },
   "deviantart": {
     "deviantart:daily-deviations": "https://backend.deviantart.com/rss.xml?q=special:dd",
