@@ -47,7 +47,7 @@ describe('parseKohaUrl', () => {
 
   it('should read the query name in uppercase', () => {
     const value = 'https://example.com/cgi-bin/koha/opac-search.pl?Q=agua'
-    const expected: KohaUrl = { kind: 'search', root: '', params: 'Q=agua' }
+    const expected: KohaUrl = { kind: 'search', root: '', params: 'q=agua' }
 
     expect(parseKohaUrl(value)).toEqual(expected)
   })

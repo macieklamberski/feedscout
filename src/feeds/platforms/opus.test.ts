@@ -131,7 +131,7 @@ describe('getOpusPage', () => {
     const value = 'https://example.com/solrsearch/index/search/SearchType/collection/ID/112'
     const expected: OpusPage = {
       kind: 'collection',
-      feedUrl: 'https://example.com/rss/index/index/SearchType/collection/ID/112',
+      feedUrl: 'https://example.com/rss/index/index/searchtype/collection/id/112',
     }
 
     expect(getOpusPage(value, opusHtml)).toEqual(expected)

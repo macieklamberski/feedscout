@@ -1,4 +1,4 @@
-import { decodeSegment, isAnyOf, parseUrl, resolveUrl } from 'trousse'
+import { decodeSegment, getAnyOf, isAnyOf, parseUrl, resolveUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import {
   composeHint,
@@ -99,7 +99,9 @@ export const getOpusPage = (url: string, content: string | undefined): OpusPage 
     }
 
     values[key.toLowerCase()] = value
-    params.push(`${encodeParam(key)}/${encodeParam(value)}`)
+    params.push(
+      `${encodeParam(getAnyOf(key, ['searchtype', 'id', 'query']) ?? key)}/${encodeParam(value)}`,
+    )
   }
 
   const rootUrl = `${origin}${rootPath}`

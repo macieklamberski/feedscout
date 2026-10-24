@@ -1,4 +1,4 @@
-import { composeQuery, getQueryParam, getQueryParams, isAnyOf, parseUrl } from 'trousse'
+import { composeQuery, getAnyOf, getQueryParam, getQueryParams, isAnyOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, digitsRegex, hasMarker } from '../../common/utils.js'
 
@@ -43,7 +43,7 @@ export const parseKohaUrl = (url: string): KohaUrl | undefined => {
 
     for (const [name, value] of params) {
       if (!isAnyOf(name, searchPageParams)) {
-        searchParams.append(name, value)
+        searchParams.append(getAnyOf(name, ['q', 'limit']) ?? name, value)
       }
     }
 
