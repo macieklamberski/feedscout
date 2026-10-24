@@ -1,4 +1,4 @@
-import { decodeSegment, isHostOf, parseUrl } from 'trousse'
+import { decodeSegment, encodePathSegment, isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
@@ -47,7 +47,7 @@ export const velogHandler: PlatformHandler = {
     if (parsed.kind === 'user') {
       return [
         {
-          uri: `https://v2.velog.io/rss/${encodeURIComponent(parsed.username)}`,
+          uri: `https://v2.velog.io/rss/${encodePathSegment(parsed.username)}`,
           hint: composeHint('velog:posts'),
         },
       ]

@@ -75,11 +75,11 @@ describe('dokuwikiHandler', () => {
       expect(dokuwikiHandler.resolve(value, content, dokuwikiHeaders)).toEqual(expected)
     })
 
-    it('should encode a nested namespace', () => {
-      const value = 'https://example.org/doku.php/wiki:plugins:start'
-      const content = "<script>var NS='wiki:plugins';</script>"
+    it('should write the colon of a nested namespace as is', () => {
+      const value = 'https://example.org/doku.php/de:wiki:syntax'
+      const content = "<script>var NS='de:wiki';</script>"
       const expected = {
-        uri: 'https://example.org/feed.php?ns=wiki%3Aplugins',
+        uri: 'https://example.org/feed.php?ns=de:wiki',
         hint: { key: 'dokuwiki:namespace', label: 'Namespace' },
       }
 

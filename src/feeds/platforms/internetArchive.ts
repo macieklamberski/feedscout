@@ -1,4 +1,4 @@
-import { getQueryParam, isHostOf } from 'trousse'
+import { composeQuery, getQueryParam, isHostOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
@@ -60,7 +60,7 @@ export const internetArchiveHandler: PlatformHandler = {
     if (page.kind === 'collection') {
       return [
         {
-          uri: `${feedUrl}?${new URLSearchParams({ collection: page.collection })}`,
+          uri: `${feedUrl}${composeQuery({ collection: page.collection })}`,
           hint: composeHint('internet-archive:collection'),
         },
       ]
@@ -68,7 +68,7 @@ export const internetArchiveHandler: PlatformHandler = {
 
     return [
       {
-        uri: `${feedUrl}?${new URLSearchParams({ query: page.query })}`,
+        uri: `${feedUrl}${composeQuery({ query: page.query })}`,
         hint: composeHint('internet-archive:search'),
       },
     ]

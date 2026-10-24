@@ -91,11 +91,11 @@ describe('velogHandler', () => {
       expect(velogHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should keep an encoded username encoded', () => {
+    it('should write a non-ASCII username as is', () => {
       const value = 'https://velog.io/@%EA%B9%80'
       const expected = [
         {
-          uri: 'https://v2.velog.io/rss/%EA%B9%80',
+          uri: 'https://v2.velog.io/rss/김',
           hint: { key: 'velog:posts', label: 'Posts' },
         },
       ]

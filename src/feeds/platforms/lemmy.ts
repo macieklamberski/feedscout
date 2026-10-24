@@ -1,4 +1,4 @@
-import { getAnyOf, getPathSegments, getQueryParam, isAnyOf, parseUrl } from 'trousse'
+import { composeQuery, getAnyOf, getPathSegments, getQueryParam, isAnyOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import {
   composeHint,
@@ -45,19 +45,17 @@ const validSorts = [
 ]
 
 const getQuerySuffix = (page: LemmyPage): string => {
-  const params = new URLSearchParams()
+  const params: Record<string, string> = {}
 
   if (page.sort) {
-    params.set('sort', page.sort)
+    params.sort = page.sort
   }
 
   if (page.limit) {
-    params.set('limit', page.limit)
+    params.limit = page.limit
   }
 
-  const suffix = params.toString()
-
-  return suffix ? `?${suffix}` : ''
+  return composeQuery(params)
 }
 
 export const parseLemmyUrl = (url: string): LemmyUrl | undefined => {

@@ -1,4 +1,4 @@
-import { decodeSegment, isHostOf, parseUrl } from 'trousse'
+import { decodeSegment, encodePathSegment, isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, hexRegex } from '../../common/utils.js'
 
@@ -49,7 +49,7 @@ export const odyseeHandler: PlatformHandler = {
 
     return [
       {
-        uri: `https://odysee.com/$/rss/@${encodeURIComponent(parsed.name)}:${parsed.claimId}`,
+        uri: `https://odysee.com/$/rss/@${encodePathSegment(parsed.name)}:${parsed.claimId}`,
         hint: composeHint('odysee:videos'),
       },
     ]
