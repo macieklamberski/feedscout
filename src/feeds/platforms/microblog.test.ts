@@ -161,15 +161,15 @@ describe('microblogHandler', () => {
       expect(microblogHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return the lowercase category feeds for a capitalized category', () => {
+    it('should keep the case of a capitalized category', () => {
       const value = 'https://example.micro.blog/categories/Tech'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://example.micro.blog/categories/tech/feed.xml',
+          uri: 'https://example.micro.blog/categories/Tech/feed.xml',
           hint: { key: 'microblog:category', label: 'Category', format: 'rss' },
         },
         {
-          uri: 'https://example.micro.blog/categories/tech/feed.json',
+          uri: 'https://example.micro.blog/categories/Tech/feed.json',
           hint: { key: 'microblog:category', label: 'Category', format: 'json' },
         },
         {

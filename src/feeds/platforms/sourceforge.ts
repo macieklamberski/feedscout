@@ -23,9 +23,7 @@ export const parseSourceforgeUrl = (url: string): SourceforgeUrl | undefined => 
     return
   }
 
-  // SourceForge redirects a project name in any case to the lowercase one its feed and icon URLs
-  // answer under.
-  return { kind: 'project', project: project.toLowerCase() }
+  return { kind: 'project', project }
 }
 
 export const sourceforgeHandler: PlatformHandler = {

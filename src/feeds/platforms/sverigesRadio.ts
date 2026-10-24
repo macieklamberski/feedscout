@@ -58,10 +58,9 @@ export const sverigesRadioHandler: PlatformHandler = {
       ]
     }
 
-    // public-api.sr.se answers 404 to a slug with an uppercase letter.
     return [
       {
-        uri: `https://public-api.sr.se/rss/${parsed.slug.toLowerCase()}`,
+        uri: `https://public-api.sr.se/rss/${parsed.slug}`,
         hint: composeHint('sveriges-radio:program'),
       },
     ]

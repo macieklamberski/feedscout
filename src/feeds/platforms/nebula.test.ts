@@ -239,15 +239,15 @@ describe('nebulaHandler', () => {
       expect(nebulaHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should lowercase the category query value', () => {
+    it('should keep the category query value case', () => {
       const value = 'https://nebula.tv/explore?category=Science'
       const expected = [
         {
-          uri: 'https://rss.nebula.app/video/categories/science.rss',
+          uri: 'https://rss.nebula.app/video/categories/Science.rss',
           hint: { key: 'nebula:category', label: 'Category' },
         },
         {
-          uri: 'https://rss.nebula.app/video/categories/science.rss?plus=true',
+          uri: 'https://rss.nebula.app/video/categories/Science.rss?plus=true',
           hint: { key: 'nebula:category-plus', label: 'Category (Plus)' },
         },
         {
