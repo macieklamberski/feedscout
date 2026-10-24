@@ -89,6 +89,7 @@ import { gnuboardHandler } from './platforms/gnuboard.js'
 import { goodreadsHandler } from './platforms/goodreads.js'
 import { goopeHandler } from './platforms/goope.js'
 import { gravHandler } from './platforms/grav.js'
+import { greasyForkHandler } from './platforms/greasyFork.js'
 import { habrHandler } from './platforms/habr.js'
 import { hackernewsHandler } from './platforms/hackernews.js'
 import { haleyJobsHandler } from './platforms/haleyJobs.js'
@@ -476,6 +477,7 @@ export const defaultPlatformOptions: Omit<PlatformMethodOptions, 'baseUrl'> = {
     goodreadsHandler,
     goopeHandler,
     gravHandler,
+    greasyForkHandler,
     habrHandler,
     hackernewsHandler,
     haleyJobsHandler,

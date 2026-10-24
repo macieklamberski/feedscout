@@ -665,6 +665,11 @@
   "grav": {
     "grav:page": ["https://getgrav.org/blog.rss", "https://getgrav.org/blog.atom"]
   },
+  "greasyFork": {
+    "greasy-fork:new": "https://api.greasyfork.org/en/scripts.atom?sort=created",
+    "greasy-fork:updated": "https://api.greasyfork.org/en/scripts.atom?sort=updated",
+    "greasy-fork:user": "https://api.greasyfork.org/en/scripts.atom?by=1076667&filter_locale=0"
+  },
   "habr": {
     "habr:articles": "https://habr.com/ru/rss/articles/",
     "habr:company": "https://habr.com/ru/rss/companies/yandex/articles/",
