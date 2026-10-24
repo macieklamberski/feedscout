@@ -1,6 +1,11 @@
 import { composeQuery, getPathSegments, isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, findDescendant, findElement } from '../../common/utils.js'
+import {
+  composeHint,
+  findDescendant,
+  findElement,
+  letterThenWordOrHyphenRegex,
+} from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -12,9 +17,6 @@ const hosts = ['a.hatena.ne.jp']
 
 // The page links its feeds over http, and the same spelling dedupes against that link.
 const feedOrigin = 'http://a.hatena.ne.jp'
-
-// A Hatena ID starts with a letter.
-const usernameRegex = /^[a-zA-Z][\w-]*$/
 
 // The group nav with one group in bold, the one the page shows.
 const hasSelectedGroup = (content: string): boolean => {
@@ -38,7 +40,8 @@ export const parseHatenaAntennaUrl = (url: string): HatenaAntennaUrl | undefined
 
   const [username] = getPathSegments(parsedUrl)
 
-  if (!username || !usernameRegex.test(username)) {
+  // A Hatena ID starts with a letter.
+  if (!username || !letterThenWordOrHyphenRegex.test(username)) {
     return
   }
 

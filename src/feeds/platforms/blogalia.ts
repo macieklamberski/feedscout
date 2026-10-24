@@ -13,6 +13,8 @@ const domains = ['blogalia.com']
 export const parseBlogaliaUrl = (url: string): BlogaliaUrl | undefined => {
   const blog = getSubdomain(url, domains)
 
+  // `www.blogalia.com` is Blogalia's own news blog and serves `rdf.xml`, which its page never
+  // links, so `getTenantSubdomain` would drop that feed by refusing `www`.
   if (!blog || blog.includes('.')) {
     return
   }

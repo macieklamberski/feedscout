@@ -6,6 +6,7 @@ import {
   digitsRegex,
   getCookieNames,
   getMetaContent,
+  getScriptDirectory,
   hasMarker,
   hasMetaContent,
 } from '../../common/utils.js'
@@ -88,7 +89,9 @@ export const discuzHandler: PlatformHandler = {
 
     // Discuz! pages sit in the install directory, such as `/forum/`, beside `forum.php` or
     // `rss.php`, except the archiver, served from `archiver/` inside it.
-    installUrl.pathname = installUrl.pathname.replace(archiverPathRegex, '/')
+    const pagePath = installUrl.pathname.replace(archiverPathRegex, '/')
+
+    installUrl.pathname = `${getScriptDirectory(pagePath)}/`
 
     if (isLegacyDiscuz(content)) {
       if (parsed.kind === 'board') {

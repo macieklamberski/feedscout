@@ -1,7 +1,7 @@
 import { getPathSegments, isHostOf } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, findElement } from '../../common/utils.js'
+import { composeHint, findElement, wordRegex } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -9,7 +9,6 @@ export type DuckWebcomicsUrl = { kind: 'comic'; comic: string }
 
 const hosts = ['theduckwebcomics.com', 'www.theduckwebcomics.com']
 
-const comicRegex = /^\w+$/
 const feedPathRegex = /^\/(\w+)\/rss\/$/
 const feedRegex = /^https?:\/\/(?:www\.)?theduckwebcomics\.com\/\w+\/rss\/?$/i
 
@@ -20,7 +19,7 @@ export const parseDuckWebcomicsUrl = (url: string): DuckWebcomicsUrl | undefined
 
   const [comic] = getPathSegments(url)
 
-  if (!comic || !comicRegex.test(comic)) {
+  if (!comic || !wordRegex.test(comic)) {
     return
   }
 

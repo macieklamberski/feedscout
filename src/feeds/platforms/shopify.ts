@@ -1,14 +1,12 @@
 import { getPathSegments, isAnyOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, hasMarker } from '../../common/utils.js'
+import { composeHint, hasMarker, localeRegex } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
 export type ShopifyUrl = { kind: 'blog'; handle: string; locale?: string }
 
 const shopifyRegex = /shopify/i
-// A market's locale folder, as in `/en-us/blogs/news`.
-const localeRegex = /^[a-z]{2}(?:-[a-z]{2})?$/i
 
 export const isShopifyHeaders = (headers: Headers): boolean => {
   return shopifyRegex.test(headers.get('powered-by') ?? '')
@@ -16,6 +14,7 @@ export const isShopifyHeaders = (headers: Headers): boolean => {
 
 export const parseShopifyUrl = (url: string): ShopifyUrl | undefined => {
   const segments = getPathSegments(url)
+  // A market's locale folder, as in `/en-us/blogs/news`.
   const locale = localeRegex.test(segments[0] ?? '') ? segments[0] : undefined
   const [first, handle] = locale ? segments.slice(1) : segments
 

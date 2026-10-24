@@ -1,17 +1,16 @@
 import { parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, findElement, hasMarker } from '../../common/utils.js'
+import { composeHint, findElement, getTenantSubdomain, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic partly covers blog, blogPost, customDomainBlog, customDomainLabel, label.
 
 export type BlogspotUrl = { kind: 'label'; label: string } | { kind: 'post' } | { kind: 'blog' }
 
-// Matches {blog}.blogspot.com and country domains like .co.uk, .com.br and .de. The certificate
-// covers one label, and www is Blogger's own host.
-const blogspotDomainRegex =
-  /^(?!www\.)[^.]+\.blogspot\.(?:com|co\.[a-z]{2}|com\.[a-z]{2}|[a-z]{2})$/
+// Matches blogspot.com and Blogger's country domains like .co.uk, .com.br and .de, which still
+// serve feeds. getTenantSubdomain then refuses www and nested subdomains.
+const blogspotDomainRegex = /\.(blogspot\.(?:com|co\.[a-z]{2}|com\.[a-z]{2}|[a-z]{2}))$/
 const labelRegex = /^\/search\/label\/([^/]+)/i
 const postRegex = /^\/\d{4}\/\d{2}\/[^/]+\.html$/i
 const postCommentsFeedRegex = /\/feeds\/(\d+)\/comments\/default/i
@@ -58,7 +57,9 @@ export const blogspotHandler: PlatformHandler = {
       return false
     }
 
-    if (blogspotDomainRegex.test(parsedUrl.hostname)) {
+    const domain = parsedUrl.hostname.match(blogspotDomainRegex)?.[1]
+
+    if (domain && getTenantSubdomain(parsedUrl, [domain])) {
       return true
     }
 

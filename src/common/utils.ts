@@ -19,7 +19,12 @@ export const digitsRegex = /^\d+$/
 export const alphanumericOrHyphenRegex = /^[A-Za-z0-9-]+$/
 export const hexRegex = /^[0-9a-f]+$/i
 export const hexOrHyphenRegex = /^[0-9a-f-]+$/i
+export const wordRegex = /^\w+$/
 export const wordOrHyphenRegex = /^[\w-]+$/
+export const letterThenWordOrHyphenRegex = /^[a-zA-Z][\w-]*$/
+export const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+// length: keeps path words such as `blogs` out
+export const localeRegex = /^[a-z]{2}(?:-[a-z]{2})?$/i
 
 // The `id` group the regex reads from the value, when it is all digits.
 export const getNumericId = (value: string | undefined, regex: RegExp): string | undefined => {
