@@ -19,6 +19,22 @@ describe('parsePleromaUrl', () => {
     expect(parsePleromaUrl('https://pleroma.example/Users/alice')).toEqual(expected)
   })
 
+  it('should return the profile for the /@{name} spelling', () => {
+    const expected: PleromaUrl = { kind: 'profile', username: 'alice' }
+
+    expect(parsePleromaUrl('https://pleroma.example/@alice')).toEqual(expected)
+  })
+
+  it('should return the profile for the bare /{name} spelling', () => {
+    const expected: PleromaUrl = { kind: 'profile', username: 'alice' }
+
+    expect(parsePleromaUrl('https://pleroma.example/alice/')).toEqual(expected)
+  })
+
+  it('should return undefined for the instance root', () => {
+    expect(parsePleromaUrl('https://pleroma.example/')).toBeUndefined()
+  })
+
   it('should return undefined for a page outside a profile', () => {
     expect(parsePleromaUrl('https://pleroma.example/main/all')).toBeUndefined()
   })
@@ -65,8 +81,8 @@ describe('pleromaHandler', () => {
       expect(pleromaHandler.match('https://example.com/users/lain', otherHtml)).toBe(false)
     })
 
-    it('should return false for non-profile paths', () => {
-      expect(pleromaHandler.match('https://example.com/about', pleromaHtml)).toBe(false)
+    it('should match a single-segment path as a profile', () => {
+      expect(pleromaHandler.match('https://example.com/about', pleromaHtml)).toBe(true)
     })
   })
 
@@ -107,8 +123,20 @@ describe('pleromaHandler', () => {
       expect(pleromaHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return empty array for non-profile paths', () => {
-      expect(pleromaHandler.resolve('https://example.com/about')).toEqual([])
+    it('should return the profile feeds for a single-segment path', () => {
+      const value = 'https://example.com/about'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://example.com/users/about/feed.atom',
+          hint: { key: 'pleroma:posts', label: 'Posts', format: 'atom' },
+        },
+        {
+          uri: 'https://example.com/users/about/feed.rss',
+          hint: { key: 'pleroma:posts', label: 'Posts', format: 'rss' },
+        },
+      ]
+
+      expect(pleromaHandler.resolve(value)).toEqual(expected)
     })
   })
 })

@@ -229,7 +229,7 @@ Discovers Atom feeds for users, organizations, and repositories.
 | `github.com/{owner}/{repo}/wiki` | Wiki changes<sup>†</sup>, plus the feeds above |
 | `github.com/{owner}/{repo}/discussions` | Discussions<sup>†</sup>, plus the feeds above |
 | `github.com/{owner}/{repo}/discussions/categories/{category}` | Discussion category<sup>†</sup>, plus the feeds above |
-| `github.com/{owner}/{repo}/tree/{branch}` | Branch commits<sup>†</sup>, plus the feeds above |
+| `github.com/{owner}/{repo}/tree/{branch}` or `github.com/{owner}/{repo}/commits/{branch}` | Branch commits<sup>†</sup>, plus the feeds above |
 | `github.com/{owner}/{repo}/blob/{branch}/{path}` | File commits<sup>†</sup>, plus the feeds above |
 | `github.com/{owner}/{repo}/commits/{branch}/{path}` | File commits<sup>†</sup>, plus the feeds above |
 
@@ -313,7 +313,7 @@ Discovers RSS feeds for Pinboard users, user tags, and the popular and recent li
 
 ### Pinterest
 
-Discovers RSS feeds for Pinterest user profiles and boards.
+Discovers RSS feeds for Pinterest user profiles and boards, on `pinterest.com` and on country sites such as `uk.pinterest.com`.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
@@ -387,6 +387,7 @@ Discovers RSS feeds for Tumblr blogs and tagged posts.
 | `*.tumblr.com/tagged/{tag}` | Tagged posts<sup>†</sup> |
 | `www.tumblr.com/{blog}` | Blog posts |
 | `www.tumblr.com/blog/view/{blog}` | Blog posts |
+| `www.tumblr.com/{blog}/tagged/{tag}` | Tagged posts |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -1009,7 +1010,7 @@ Discovers Atom feeds for Friendica user profiles. Detected by the `Friendica` ge
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{instance}/profile/{user}` | Posts · comments · replies · activity (Atom) |
+| `{instance}/profile/{user}`, `{instance}/u/{user}` or `{instance}/~{user}` | Posts · comments · replies · activity (Atom) |
 
 ### Ghost
 
@@ -1039,10 +1040,11 @@ Discovers Atom feeds for HEY World blogs.
 
 ### Huffduffer
 
-Discovers RSS feeds for Huffduffer users and their huffduffed episodes.
+Discovers RSS feeds for Huffduffer users and their huffduffed episodes, and the site-wide new huffduffs.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
+| `huffduffer.com` | New huffduffs (RSS · Atom · JSON) |
 | `huffduffer.com/{user}` | Huffduffs |
 | `huffduffer.com/{user}/{id}` | Possibly related<sup>†</sup> · huffduffs |
 | `huffduffer.com/{user}/{id}/related` | Possibly related |
@@ -1177,6 +1179,7 @@ Discovers RSS feeds for Naver Blog.
 |-------------|-----------------|
 | `blog.naver.com/{id}` | Blog |
 | `m.blog.naver.com/{id}` | Blog<sup>†</sup> |
+| `blog.naver.com/PostView.naver?blogId={id}` or `m.blog.naver.com/PostView.naver?blogId={id}` | Blog |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -1218,7 +1221,7 @@ Discovers Atom and RSS feeds for Pleroma (and Akkoma) user profiles. Detected by
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{instance}/users/{user}` | Posts (Atom + RSS<sup>†</sup>) |
+| `{instance}/users/{user}`, `{instance}/@{user}` or `{instance}/{user}` | Posts (Atom + RSS<sup>†</sup>) |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -1322,6 +1325,7 @@ Discovers the posts, comments and tag feeds of a blog on `*.blogs.sapo.pt`. Comm
 | `{blog}.blogs.sapo.pt/{slug}-{id}` | Post comments<sup>†</sup>*, plus the blog feeds |
 | `{blog}.blogs.sapo.pt/{id}.html` | Post comments<sup>†</sup>*, plus the blog feeds |
 | `{blog}.blogs.sapo.pt/tag/{tag}` | Tag<sup>†</sup>, plus the blog feeds |
+| `{blog}.blogs.sapo.pt/?tag={tag}` | Tag, plus the blog feeds |
 
 \* *Requires HTML content to confirm the page links the post.*
 
@@ -1566,7 +1570,7 @@ Discovers the site and forum feeds of a Wikidot wiki. Detected by the `WIKIDOT.p
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| Any wiki page | Site changes<sup>†</sup> · forum threads<sup>†</sup> (RSS) |
+| Any wiki page | Site changes<sup>†</sup> · forum threads<sup>†</sup> · forum posts (RSS) |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -1668,6 +1672,7 @@ Discovers the feeds of a WriteFreely blog. Detected by the `WriteFreely` or `Wri
 |-------------|-----------------|
 | `{instance}/{blog}` | Blog · instance reader<sup>†</sup> (RSS) |
 | `{instance}/{blog}/tag:{tag}` | Tag · blog · instance reader<sup>†</sup> (RSS) |
+| `{instance}` on a single-user instance | Blog (RSS) |
 | `{instance}/{post}` on a single-user instance | Blog (RSS) |
 | `{instance}/page/{n}` on a single-user instance | Blog (RSS) |
 | `{instance}/lang:{code}` on a single-user instance | Blog (RSS) |
@@ -1775,12 +1780,12 @@ Discovers the RSS feeds of an FC2 blog.
 
 ### Togetter
 
-Discovers the feeds of a Togetter curator or the site-wide popular feed.
+Discovers the feeds of a Togetter curator or the site-wide news and popular feeds.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | `togetter.com/id/{user}` | Curator<sup>†</sup> · popular<sup>†</sup> (RSS) |
-| Any other page | Popular (RSS) |
+| Any other page | News · popular (RSS) |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -1963,8 +1968,8 @@ Discovers the feeds of a PeerTube instance, channel or account. Detected by the 
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{instance}/c/{channel}` | Channel · instance |
-| `{instance}/a/{account}` | Account<sup>†</sup> · instance |
+| `{instance}/c/{channel}` or `{instance}/video-channels/{channel}` | Channel · podcast · instance |
+| `{instance}/a/{account}` or `{instance}/accounts/{account}` | Account<sup>†</sup> · instance |
 | Any other page | Instance |
 
 <sup>†</sup> *Found only by the Platform method.*
@@ -2856,8 +2861,8 @@ Discovers RSS feeds for is-Programmer blogs, including the comment feed of a pos
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
-| `{blog}.is-programmer.com` | Posts · comments · messages |
-| `{blog}.is-programmer.com/posts/{id}` | Post comments<sup>†</sup> · posts · comments · messages |
+| `{blog}.is-programmer.com` | Posts · comments · messages · site |
+| `{blog}.is-programmer.com/posts/{id}` | Post comments<sup>†</sup> · posts · comments · messages · site |
 
 <sup>†</sup> *Found only by the Platform method.*
 
@@ -3193,7 +3198,7 @@ Discovers the discussion feeds of a Tender Support site, hosted on `tenderapp.co
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|
 | `{site}/discussions/{category}/{discussion}` | Discussion comments (Atom) |
-| `{site}/`, any other page | All discussions (Atom) |
+| `{site}/`, any other page | All discussions · recent comments (Atom) |
 
 ### AlloForum
 

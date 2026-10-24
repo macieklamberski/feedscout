@@ -71,9 +71,10 @@ describe('togetterHandler', () => {
       expect(togetterHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return only the popular feed elsewhere', () => {
+    it('should return the news and popular feeds elsewhere', () => {
       const value = 'https://togetter.com/li/123456'
       const expected = [
+        { uri: 'https://togetter.com/rss/news', hint: { key: 'togetter:news', label: 'News' } },
         { uri: 'https://togetter.com/rss/hot', hint: { key: 'togetter:hot', label: 'Popular' } },
       ]
 

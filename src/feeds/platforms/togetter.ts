@@ -50,6 +50,6 @@ export const togetterHandler: PlatformHandler = {
       ]
     }
 
-    return [hot]
+    return [{ uri: `${origin}/rss/news`, hint: composeHint('togetter:news') }, hot]
   },
 }

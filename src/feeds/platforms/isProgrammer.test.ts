@@ -109,6 +109,10 @@ describe('isProgrammerHandler', () => {
           uri: 'http://alice.is-programmer.com/messages.rss',
           hint: { key: 'is-programmer:messages', label: 'Messages' },
         },
+        {
+          uri: 'http://alice.is-programmer.com/site.rss',
+          hint: { key: 'is-programmer:site', label: 'Site' },
+        },
       ]
 
       expect(isProgrammerHandler.resolve(value)).toEqual(expected)
@@ -128,6 +132,10 @@ describe('isProgrammerHandler', () => {
         {
           uri: 'http://alice.is-programmer.com/messages.rss',
           hint: { key: 'is-programmer:messages', label: 'Messages' },
+        },
+        {
+          uri: 'http://alice.is-programmer.com/site.rss',
+          hint: { key: 'is-programmer:site', label: 'Site' },
         },
       ]
 
@@ -152,6 +160,10 @@ describe('isProgrammerHandler', () => {
         {
           uri: 'http://alice.is-programmer.com/messages.rss',
           hint: { key: 'is-programmer:messages', label: 'Messages' },
+        },
+        {
+          uri: 'http://alice.is-programmer.com/site.rss',
+          hint: { key: 'is-programmer:site', label: 'Site' },
         },
       ]
 

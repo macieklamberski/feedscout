@@ -97,6 +97,14 @@ describe('naverBlogHandler', () => {
 
         expect(result).toEqual(expected)
       })
+
+      it('should return ref for mobile PostView URLs', () => {
+        const value = 'https://m.blog.naver.com/PostView.naver?blogId=alice&logNo=223000000000'
+        const result = naverBlogHandler.resolve(value, mobilePage)
+        const expected = [{ platform: 'naverBlog', id: 'alice', url: value }]
+
+        expect(result).toEqual(expected)
+      })
     })
 
     describe('sad paths', () => {

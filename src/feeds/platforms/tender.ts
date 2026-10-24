@@ -116,6 +116,9 @@ export const tenderHandler: PlatformHandler = {
       ]
     }
 
-    return [{ uri: `${page.siteUrl}/discussions.atom`, hint: composeHint('tender:discussions') }]
+    return [
+      { uri: `${page.siteUrl}/discussions.atom`, hint: composeHint('tender:discussions') },
+      { uri: `${page.siteUrl}/comments/recent.atom`, hint: composeHint('tender:comments') },
+    ]
   },
 }

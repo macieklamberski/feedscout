@@ -10,6 +10,8 @@ export type PleromaUrl = { kind: 'profile'; username: string }
 const apiPath = '/api/pleroma/'
 
 const profileRegex = /^\/users\/([^/]+)/i
+// The frontend serves the same profile at /{name} and /@{name}.
+const profileAliasRegex = /^\/@?([^/]+)\/?$/
 
 // The frontend preloads its config from the API, and older releases inline that response in the
 // `initial-results` script, keyed by its path.
@@ -26,7 +28,8 @@ export const isPleromaHtml = (content: string): boolean => {
 }
 
 export const parsePleromaUrl = (url: string): PleromaUrl | undefined => {
-  const username = parseUrl(url)?.pathname.match(profileRegex)?.[1]
+  const pathname = parseUrl(url)?.pathname
+  const username = pathname?.match(profileRegex)?.[1] ?? pathname?.match(profileAliasRegex)?.[1]
 
   if (!username) {
     return

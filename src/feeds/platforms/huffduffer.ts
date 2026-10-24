@@ -10,6 +10,7 @@ export type HuffdufferUrl =
   | { kind: 'profile'; username: string }
   | { kind: 'huffduff'; username: string; id: string }
   | { kind: 'related'; username: string; id: string }
+  | { kind: 'home' }
 
 const hosts = ['huffduffer.com', 'www.huffduffer.com']
 const origin = 'https://huffduffer.com'
@@ -22,7 +23,7 @@ export const parseHuffdufferUrl = (url: string): HuffdufferUrl | undefined => {
   const [username, section, subsection] = getPathSegments(url)
 
   if (!username) {
-    return
+    return { kind: 'home' }
   }
 
   if (section && digitsRegex.test(section) && isAnyOf(subsection, 'related')) {
@@ -46,6 +47,14 @@ export const huffdufferHandler: PlatformHandler = {
 
     if (!parsed) {
       return []
+    }
+
+    if (parsed.kind === 'home') {
+      return [
+        { uri: `${origin}/new/rss`, hint: composeHint('huffduffer:new', 'rss') },
+        { uri: `${origin}/new/atom`, hint: composeHint('huffduffer:new', 'atom') },
+        { uri: `${origin}/new/json`, hint: composeHint('huffduffer:new', 'json') },
+      ]
     }
 
     // Usernames match in any case, and the page links its feeds with the account's own spelling:

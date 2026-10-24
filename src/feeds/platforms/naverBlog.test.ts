@@ -22,6 +22,20 @@ describe('parseNaverBlogUrl', () => {
     expect(parseNaverBlogUrl(value)).toEqual(expected)
   })
 
+  it('should return the post named in the blogId query of a PostView page', () => {
+    const value = 'https://blog.naver.com/PostView.naver?blogId=prologue&logNo=223000000000'
+    const expected: NaverBlogUrl = { kind: 'post', blogId: 'prologue' }
+
+    expect(parseNaverBlogUrl(value)).toEqual(expected)
+  })
+
+  it('should return the post named in the blogId query on the mobile host', () => {
+    const value = 'https://m.blog.naver.com/PostView.naver?blogId=prologue&logNo=223000000000'
+    const expected: NaverBlogUrl = { kind: 'post', blogId: 'prologue' }
+
+    expect(parseNaverBlogUrl(value)).toEqual(expected)
+  })
+
   it('should return undefined for paths with dots', () => {
     expect(parseNaverBlogUrl('https://blog.naver.com/BlogList.naver')).toBeUndefined()
   })

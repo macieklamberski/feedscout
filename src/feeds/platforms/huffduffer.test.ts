@@ -39,10 +39,10 @@ describe('parseHuffdufferUrl', () => {
     expect(parseHuffdufferUrl('https://huffduffer.com/alice/12345abc')).toEqual(expected)
   })
 
-  const sitePaths = ['https://huffduffer.com/']
+  it('should return the home page for the root', () => {
+    const expected: HuffdufferUrl = { kind: 'home' }
 
-  it.each(sitePaths)('should return undefined for site page %s', (value) => {
-    expect(parseHuffdufferUrl(value)).toBeUndefined()
+    expect(parseHuffdufferUrl('https://huffduffer.com/')).toEqual(expected)
   })
 
   it('should return undefined for a dotted subdomain', () => {
@@ -58,7 +58,7 @@ describe('huffdufferHandler', () => {
   describe('match', () => {
     const values: Array<[boolean, string]> = [
       [true, 'https://huffduffer.com/alice'],
-      [false, 'https://huffduffer.com/'],
+      [false, 'https://example.com/'],
     ]
 
     it.each(values)('should return %s for %s', (expected, url) => {
@@ -69,6 +69,26 @@ describe('huffdufferHandler', () => {
   describe('resolve', () => {
     it('should return empty array for a URL outside Huffduffer', () => {
       expect(huffdufferHandler.resolve('https://example.com/alice')).toEqual([])
+    })
+
+    it('should return the site-wide new feeds for the home page', () => {
+      const value = 'https://huffduffer.com/'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://huffduffer.com/new/rss',
+          hint: { key: 'huffduffer:new', label: 'New huffduffs', format: 'rss' },
+        },
+        {
+          uri: 'https://huffduffer.com/new/atom',
+          hint: { key: 'huffduffer:new', label: 'New huffduffs', format: 'atom' },
+        },
+        {
+          uri: 'https://huffduffer.com/new/json',
+          hint: { key: 'huffduffer:new', label: 'New huffduffs', format: 'json' },
+        },
+      ]
+
+      expect(huffdufferHandler.resolve(value)).toEqual(expected)
     })
 
     it('should return the huffduffs feed for a profile', () => {

@@ -5,7 +5,7 @@ import { composeHint, hasMarker, hasMetaContent } from '../../common/utils.js'
 
 export type FriendicaUrl = { kind: 'profile'; username: string }
 
-const profileRegex = /^\/profile\/([^/]+)/i
+const profileRegex = /^\/(?:profile\/|u\/|~)([^/]+)/i
 
 export const isFriendicaHtml = (content: string): boolean => {
   return hasMetaContent(content, 'generator', 'Friendica')

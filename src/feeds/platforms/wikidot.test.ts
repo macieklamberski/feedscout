@@ -64,6 +64,10 @@ describe('wikidotHandler', () => {
           uri: 'https://example.com/feed/forum/threads.xml',
           hint: { key: 'wikidot:forum-threads', label: 'Forum threads' },
         },
+        {
+          uri: 'https://example.com/feed/forum/posts.xml',
+          hint: { key: 'wikidot:forum-posts', label: 'Forum posts' },
+        },
       ]
 
       expect(wikidotHandler.resolve(value)).toEqual(expected)

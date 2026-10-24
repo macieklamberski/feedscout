@@ -55,6 +55,19 @@ describe('parseSapoBlogsUrl', () => {
     expect(parseSapoBlogsUrl('https://alice.blogs.sapo.pt/TAG/blogs')).toEqual(expected)
   })
 
+  it('should return the tag for the next page of a tag listing', () => {
+    const value = 'https://alice.blogs.sapo.pt/?skip=20&tag=ant%C3%B3nio+costa'
+    const expected: SapoBlogsUrl = { kind: 'tag', blog: 'alice', tag: 'antónio costa' }
+
+    expect(parseSapoBlogsUrl(value)).toEqual(expected)
+  })
+
+  it('should return the blog for an empty tag query', () => {
+    const expected: SapoBlogsUrl = { kind: 'blog', blog: 'alice' }
+
+    expect(parseSapoBlogsUrl('https://alice.blogs.sapo.pt/?skip=20&tag=')).toEqual(expected)
+  })
+
   it('should return undefined for a dotted subdomain', () => {
     expect(parseSapoBlogsUrl('https://www.alice.blogs.sapo.pt/')).toBeUndefined()
   })

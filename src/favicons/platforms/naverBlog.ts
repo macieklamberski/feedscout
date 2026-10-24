@@ -35,7 +35,8 @@ export const naverBlogHandler: PlatformHandler = {
       return []
     }
 
-    // A post page carries the post image, not the profile image.
+    // A post page, /{blogId}/{logNo} or /PostView.naver, carries the post image, not the profile
+    // image.
     if (parsed.kind !== 'blog' || !isHostOf(url, mobileHost)) {
       return [{ platform, id: parsed.blogId, url }]
     }
