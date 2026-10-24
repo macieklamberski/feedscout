@@ -339,6 +339,14 @@
       "https://dasauge.es/-abstrusa/?rss"
     ]
   },
+  "dblp": {
+    "dblp:person": "https://dblp.org/pid/10/3248.rss",
+    "dblp:updates": "https://dblp.org/feed/",
+    "dblp:venue": [
+      "https://dblp.org/feed/streams/conf/igarss.rss",
+      "https://dblp.org/feed/streams/journals/csur.rss"
+    ]
+  },
   "deviantart": {
     "deviantart:daily-deviations": "https://backend.deviantart.com/rss.xml?q=special:dd",
     "deviantart:deviations": "https://backend.deviantart.com/rss.xml?type=deviation&q=by:yuumei+sort:time+meta:all",

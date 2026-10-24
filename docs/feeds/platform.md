@@ -3327,6 +3327,17 @@ Discovers the feeds of a user blog on Aladin, `blog.aladin.co.kr/{user}`. A cate
 
 <sup>†</sup> *Found only by the Platform method.*
 
+### dblp
+
+Discovers the update feed of a dblp conference or journal, read from the venue in a record, venue or stream page URL, and the bibliography feed of a person. A record page links neither.
+
+| URL Pattern | Feeds Generated |
+|-------------|-----------------|
+| `dblp.org/rec/conf/{venue}/{key}`, `/rec/journals/{venue}/{key}` | Venue (RSS) |
+| `dblp.org/db/conf/{venue}`, `/db/journals/{venue}` | Venue (RSS) |
+| `dblp.org/pid/{pid}` | Person (RSS) |
+| Any other page | New issues and volumes (RSS) |
+
 ## Basic Usage
 
 ```typescript
@@ -3421,6 +3432,7 @@ import {
   csdnHandler,
   dailymotionHandler,
   dasaugeHandler,
+  dblpHandler,
   deviantartHandler,
   devtoHandler,
   diasporaHandler,
