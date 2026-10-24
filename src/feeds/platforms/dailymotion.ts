@@ -49,6 +49,7 @@ export const parseDailymotionUrl = (url: string): DailymotionUrl | undefined => 
 
   const channel = pathname.match(channelRegex)?.groups?.channel
 
+  // A channel outside [\w-], such as news.tv, has no /rss/channel/ feed: it answers 404.
   if (channel && wordOrHyphenRegex.test(channel)) {
     return { kind: 'channel', channel }
   }

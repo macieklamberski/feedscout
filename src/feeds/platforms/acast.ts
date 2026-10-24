@@ -4,14 +4,14 @@ import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers player, show (html).
-// Handler needed for: embed.
+// Handler needed for: embed, legacy-player.
 
 export type AcastUrl = { kind: 'show'; slug: string }
 
 // shows.acast.com is the canonical web host. play.acast.com is a legacy host that
 // 302-redirects to shows.acast.com (slug at path index 1, after /s/). embed.acast.com
-// is the embed-player host (slug at path index 0).
-const hosts = ['shows.acast.com', 'play.acast.com', 'embed.acast.com']
+// and the older player.acast.com, which 302-redirects to it, put the slug at path index 0.
+const hosts = ['shows.acast.com', 'play.acast.com', 'embed.acast.com', 'player.acast.com']
 const legacyHosts = ['play.acast.com']
 
 export const parseAcastUrl = (url: string): AcastUrl | undefined => {
@@ -21,7 +21,10 @@ export const parseAcastUrl = (url: string): AcastUrl | undefined => {
 
   // play.acast.com keeps the slug after /s/: play.acast.com/s/{slug}.
   const slugIndex = isHostOf(url, legacyHosts) ? 1 : 0
-  const slug = getPathSegments(url)[slugIndex]
+  const allSegments = getPathSegments(url)
+  // The current embed code writes `embed.acast.com/$/{slug}/{episode}`.
+  const segments = allSegments[0] === '$' ? allSegments.slice(1) : allSegments
+  const slug = segments[slugIndex]
 
   if (!slug) {
     return

@@ -17,19 +17,15 @@ export const parseOdyseeUrl = (url: string): OdyseeUrl | undefined => {
     return
   }
 
-  const groups = parsedUrl.pathname.match(channelRegex)?.groups
+  // Odysee's share code percent-encodes the path, `@` and `:` included.
+  const pathname = decodeSegment(parsedUrl.pathname)
+  const groups = pathname?.match(channelRegex)?.groups
 
   if (!groups?.name) {
     return
   }
 
-  const name = decodeSegment(groups.name)
-
-  if (!name) {
-    return
-  }
-
-  const { claimId } = groups
+  const { name, claimId } = groups
 
   if (claimId !== undefined && !hexRegex.test(claimId)) {
     return
