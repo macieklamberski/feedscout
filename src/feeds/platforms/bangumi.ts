@@ -7,7 +7,10 @@ import { composeHint } from '../../common/utils.js'
 
 export type BangumiUrl = { kind: 'user'; username: string } | { kind: 'home' }
 
-const hosts = ['bgm.tv', 'bangumi.tv']
+// chii.in serves the same site, but answers a plain fetch of its feeds with a Cloudflare challenge,
+// so its pages get the bgm.tv feeds.
+const challengedHosts = ['chii.in']
+const hosts = ['bgm.tv', 'bangumi.tv', ...challengedHosts]
 
 const userRegex = /^\/user\/([^/]+)/i
 
@@ -39,7 +42,8 @@ export const bangumiHandler: PlatformHandler = {
       return []
     }
 
-    const { origin } = new URL(url)
+    const parsedUrl = new URL(url)
+    const origin = isHostOf(parsedUrl, challengedHosts) ? 'https://bgm.tv' : parsedUrl.origin
 
     if (parsed.kind === 'user') {
       const base = `${origin}/feed/user/${encodePathSegment(parsed.username)}`

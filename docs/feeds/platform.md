@@ -3329,7 +3329,7 @@ Discovers the feeds of a user blog on Aladin, `blog.aladin.co.kr/{user}`. A cate
 
 ### Bangumi
 
-Discovers the collections and timeline feeds of a Bangumi user on `bgm.tv` or `bangumi.tv`, plus the site blog feed.
+Discovers the collections and timeline feeds of a Bangumi user on `bgm.tv` or `bangumi.tv`, plus the site blog feed. A `chii.in` page gets the `bgm.tv` feeds, since `chii.in` answers a plain fetch of its feeds with a Cloudflare challenge.
 
 | URL Pattern | Feeds Generated |
 |-------------|-----------------|

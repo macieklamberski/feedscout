@@ -85,6 +85,21 @@ describe('bangumiHandler', () => {
       expect(bangumiHandler.resolve('https://bgm.tv/user/sai')).toEqual(expected)
     })
 
+    it('should return the bgm.tv feeds for a chii.in user page', () => {
+      const expected = [
+        {
+          uri: 'https://bgm.tv/feed/user/sai/interests',
+          hint: { key: 'bangumi:collections', label: 'Collections' },
+        },
+        {
+          uri: 'https://bgm.tv/feed/user/sai/timeline',
+          hint: { key: 'bangumi:timeline', label: 'Timeline' },
+        },
+      ]
+
+      expect(bangumiHandler.resolve('https://chii.in/user/sai')).toEqual(expected)
+    })
+
     it('should return the blog feed for any other page', () => {
       const expected = [
         {
