@@ -1,4 +1,4 @@
-import { parseUrl } from 'trousse'
+import { composeQuery, parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, findElement, getCookieNames, hasMarker } from '../../common/utils.js'
@@ -52,12 +52,12 @@ export const dokuwikiHandler: PlatformHandler = {
 
     if (namespace) {
       uris.push({
-        uri: `${feedUrl}?${new URLSearchParams({ ns: namespace })}`,
+        uri: `${feedUrl}${composeQuery({ ns: namespace })}`,
         hint: composeHint('dokuwiki:namespace'),
       })
       // The template advertises this one: the namespace's pages, not its changes.
       uris.push({
-        uri: `${feedUrl}?${new URLSearchParams({ mode: 'list', ns: namespace })}`,
+        uri: `${feedUrl}${composeQuery({ mode: 'list', ns: namespace })}`,
         hint: composeHint('dokuwiki:namespace-pages'),
       })
     }

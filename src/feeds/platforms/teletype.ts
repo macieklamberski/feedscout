@@ -1,4 +1,4 @@
-import { decodeSegment, isHostOf, parseUrl } from 'trousse'
+import { decodeSegment, encodePathSegment, isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
@@ -41,7 +41,7 @@ export const teletypeHandler: PlatformHandler = {
       return []
     }
 
-    const username = encodeURIComponent(teletypeUrl.username)
+    const username = encodePathSegment(teletypeUrl.username)
 
     return [
       {

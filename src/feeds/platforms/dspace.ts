@@ -1,4 +1,4 @@
-import { isAnyOf, isHttpUrl, parseUrl } from 'trousse'
+import { composeQuery, isAnyOf, isHttpUrl, parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import {
@@ -210,15 +210,15 @@ export const getDspacePage = (url: string, content: string | undefined): DspaceP
 }
 
 const getSearchUrl = (restUrl: string, format: 'atom' | 'rss', scope?: string): string => {
-  const query = new URLSearchParams({ format })
+  const params: Record<string, string> = { format }
 
   if (scope) {
-    query.set('scope', scope)
+    params.scope = scope
   }
 
-  query.set('query', '*')
+  params.query = '*'
 
-  return `${restUrl}/opensearch/search?${query}`
+  return `${restUrl}/opensearch/search${composeQuery(params)}`
 }
 
 export const dspaceHandler: PlatformHandler = {

@@ -1,4 +1,4 @@
-import { getPathSegments, getQueryParam, parseUrl } from 'trousse'
+import { composeQuery, getPathSegments, getQueryParam, parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, hasMarker } from '../../common/utils.js'
@@ -71,11 +71,11 @@ export const pmwikiHandler: PlatformHandler = {
 
       uris.push(
         {
-          uri: `${scriptUrl}?${new URLSearchParams({ n: groupChanges, action: 'rss' })}`,
+          uri: `${scriptUrl}${composeQuery({ n: groupChanges, action: 'rss' })}`,
           hint: composeHint('pmwiki:group-changes', 'rss'),
         },
         {
-          uri: `${scriptUrl}?${new URLSearchParams({ n: groupChanges, action: 'atom' })}`,
+          uri: `${scriptUrl}${composeQuery({ n: groupChanges, action: 'atom' })}`,
           hint: composeHint('pmwiki:group-changes', 'atom'),
         },
       )
@@ -83,11 +83,11 @@ export const pmwikiHandler: PlatformHandler = {
 
     uris.push(
       {
-        uri: `${scriptUrl}?${new URLSearchParams({ n: 'Site.AllRecentChanges', action: 'rss' })}`,
+        uri: `${scriptUrl}${composeQuery({ n: 'Site.AllRecentChanges', action: 'rss' })}`,
         hint: composeHint('pmwiki:site-changes', 'rss'),
       },
       {
-        uri: `${scriptUrl}?${new URLSearchParams({ n: 'Site.AllRecentChanges', action: 'atom' })}`,
+        uri: `${scriptUrl}${composeQuery({ n: 'Site.AllRecentChanges', action: 'atom' })}`,
         hint: composeHint('pmwiki:site-changes', 'atom'),
       },
     )

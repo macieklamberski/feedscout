@@ -1,4 +1,4 @@
-import { getQueryParam, isAnyOf, parseUrl } from 'trousse'
+import { composeQuery, getQueryParam, isAnyOf, parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, findElement, hasClass, hasMarker } from '../../common/utils.js'
@@ -85,7 +85,7 @@ export const talentsoftHandler: PlatformHandler = {
     }
 
     // The site's own feed list spells the language as `LCID`, and the feed answers without it.
-    const query = page.lcid ? `?${new URLSearchParams({ LCID: page.lcid })}` : ''
+    const query = page.lcid ? composeQuery({ LCID: page.lcid }) : ''
 
     uris.push({
       uri: `${page.origin}${offerFeedPath}${query}`,

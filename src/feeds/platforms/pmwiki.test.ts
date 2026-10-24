@@ -137,6 +137,16 @@ describe('pmwikiHandler', () => {
       expect(pmwikiHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should write a non-ASCII group as is', () => {
+      const value = 'https://example.com/pmwiki.php?n=%C3%84rzte.Liste'
+      const expected: DiscoverUriEntry = {
+        uri: 'https://example.com/pmwiki.php?n=Ärzte.RecentChanges&action=rss',
+        hint: { key: 'pmwiki:group-changes', label: 'Group changes', format: 'rss' },
+      }
+
+      expect(pmwikiHandler.resolve(value)).toContainEqual(expected)
+    })
+
     it('should return the site feeds for the home page', () => {
       const value = 'https://example.com/'
       const expected: Array<DiscoverUriEntry> = [

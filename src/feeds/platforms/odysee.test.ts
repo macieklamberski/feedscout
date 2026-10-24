@@ -114,11 +114,11 @@ describe('odyseeHandler', () => {
       expect(odyseeHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should keep an encoded channel name encoded', () => {
+    it('should write a non-ASCII channel name as is', () => {
       const value = 'https://odysee.com/@%C3%A9lise:3f'
       const expected = [
         {
-          uri: 'https://odysee.com/$/rss/@%C3%A9lise:3f',
+          uri: 'https://odysee.com/$/rss/@élise:3f',
           hint: { key: 'odysee:videos', label: 'Videos' },
         },
       ]
