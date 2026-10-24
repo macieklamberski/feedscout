@@ -1,6 +1,6 @@
 import { getPathSegments, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, hasMarker, localeRegex } from '../../common/utils.js'
+import { composeHint, hasMarker, letterPairsRegex } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -26,7 +26,7 @@ export const parseInstatusUrl = (url: string): InstatusUrl | undefined => {
 
   const [language] = getPathSegments(parsedUrl)
 
-  if (language && localeRegex.test(language)) {
+  if (language && letterPairsRegex.test(language)) {
     return { kind: 'status', language }
   }
 

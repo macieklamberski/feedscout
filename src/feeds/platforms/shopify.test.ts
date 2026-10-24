@@ -33,6 +33,18 @@ describe('parseShopifyUrl', () => {
     expect(parseShopifyUrl('https://shop.example/en-us/blogs/news/first-post')).toEqual(expected)
   })
 
+  it('should return the blog with a three-letter language', () => {
+    const expected: ShopifyUrl = { kind: 'blog', handle: 'news', locale: 'fil' }
+
+    expect(parseShopifyUrl('https://shop.example/fil/blogs/news')).toEqual(expected)
+  })
+
+  it('should return the blog with a language, script and country', () => {
+    const expected: ShopifyUrl = { kind: 'blog', handle: 'videos', locale: 'zh-hant-hk' }
+
+    expect(parseShopifyUrl('https://shop.example/zh-hant-hk/blogs/videos')).toEqual(expected)
+  })
+
   it('should return undefined for a page outside a blog', () => {
     expect(parseShopifyUrl('https://shop.example/products/shirt')).toBeUndefined()
   })
@@ -99,6 +111,18 @@ describe('shopifyHandler', () => {
       const expected = [
         {
           uri: 'https://example.com/en-us/blogs/news.atom',
+          hint: { key: 'shopify:blog', label: 'Blog' },
+        },
+      ]
+
+      expect(shopifyHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should keep a language, script and country folder', () => {
+      const value = 'https://example.com/zh-hant-hk/blogs/videos/a-post'
+      const expected = [
+        {
+          uri: 'https://example.com/zh-hant-hk/blogs/videos.atom',
           hint: { key: 'shopify:blog', label: 'Blog' },
         },
       ]
