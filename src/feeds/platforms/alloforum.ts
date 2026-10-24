@@ -19,9 +19,10 @@ export type AlloforumUrl =
 
 const domains = ['alloforum.com']
 
-// The site answers 404 to an uppercase `C` or `S`, so the route letters stay case-sensitive.
-const categoryRegex = /^\/([^/]+)-c(\d+)-\d+\.html$/
-const subcategoryRegex = /^\/([^/]+)-c(\d+)-([^/]+)-s(\d+)-\d+\.html$/
+// The route letters are read in any case and the feed url is minted with them lowercase, because
+// the site answers 404 to an uppercase `C` or `S`.
+const categoryRegex = /^\/([^/]+)-c(\d+)-\d+\.html$/i
+const subcategoryRegex = /^\/([^/]+)-c(\d+)-([^/]+)-s(\d+)-\d+\.html$/i
 
 export const parseAlloforumUrl = (url: string): AlloforumUrl | undefined => {
   const pathname = parseUrl(url)?.pathname

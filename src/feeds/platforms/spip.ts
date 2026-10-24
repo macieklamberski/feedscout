@@ -64,7 +64,7 @@ const getUrlObjectId = (parsedUrl: URL): SpipObjectId | undefined => {
   }
 
   const page = getQueryParam(parsedUrl.searchParams, 'page')
-  const object = objects.find((value) => value === page)
+  const object = getAnyOf(page, objects)
 
   if (!object) {
     return

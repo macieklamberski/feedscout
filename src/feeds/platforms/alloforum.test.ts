@@ -32,9 +32,9 @@ describe('parseAlloforumUrl', () => {
     expect(parseAlloforumUrl(value)).toEqual(expected)
   })
 
-  it('should return the forum for an uppercase route letter', () => {
+  it('should return the category for an uppercase route letter', () => {
     const value = 'https://example.alloforum.com/sample-C12-1.html'
-    const expected: AlloforumUrl = { kind: 'forum' }
+    const expected: AlloforumUrl = { kind: 'category', slug: 'sample', categoryId: '12' }
 
     expect(parseAlloforumUrl(value)).toEqual(expected)
   })
@@ -109,6 +109,22 @@ describe('alloforumHandler', () => {
         {
           uri: 'https://example.alloforum.com/derniers-sujets-sample-category-c12.xml',
           hint: { key: 'alloforum:category', label: 'Category' },
+        },
+        {
+          uri: 'https://example.alloforum.com/derniers-sujets.xml',
+          hint: { key: 'alloforum:latest-topics', label: 'Latest topics' },
+        },
+      ]
+
+      expect(alloforumHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should mint lowercase route letters for a subcategory spelled in uppercase', () => {
+      const value = 'https://example.alloforum.com/sample-category-C12-sample-board-S34-1.html'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://example.alloforum.com/derniers-sujets-sample-category-c12-sample-board-s34.xml',
+          hint: { key: 'alloforum:subcategory', label: 'Subcategory' },
         },
         {
           uri: 'https://example.alloforum.com/derniers-sujets.xml',

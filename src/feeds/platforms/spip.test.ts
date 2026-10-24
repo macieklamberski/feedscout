@@ -172,9 +172,13 @@ describe('getSpipPage', () => {
     expect(getSpipPage('https://example.com/spip.php?page=article', undefined)).toEqual(expected)
   })
 
-  it('should return the home page for a template URL with a wrong-case template', () => {
+  it('should return the article of a template URL with the template word in another case', () => {
     const value = 'https://example.com/spip.php?page=Article&id_article=25'
-    const expected: SpipPage = { kind: 'home', scriptUrl: 'https://example.com/spip.php' }
+    const expected: SpipPage = {
+      kind: 'article',
+      scriptUrl: 'https://example.com/spip.php',
+      id: '25',
+    }
 
     expect(getSpipPage(value, undefined)).toEqual(expected)
   })
