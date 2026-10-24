@@ -15,9 +15,9 @@ import {
 export type VbulletinPage = { siteFeedUrl: string; forumFeedUrl?: string }
 
 const coreScriptRegex = /\/clientscript\/vbulletin-core\.js/
-const clientscriptPathRegex = /\/clientscript\/.*$/
+const clientscriptPathRegex = /\/clientscript\/.*$/i
 const rollupScriptRegex = /(?:^|\/)js\/header-rollup(?:-\d+)?\.js/
-const rollupPathRegex = /\/js\/[^/]*$/
+const rollupPathRegex = /\/js\/[^/]*$/i
 // vBulletin 5 and 6.0 print `"channelid": "{id}"` in `pageData`,
 // 6.1 and later `data-channelid='{id}'`.
 const channelIdRegex = /(?:"channelid":\s*"|data-channelid=['"])(\d+)/
