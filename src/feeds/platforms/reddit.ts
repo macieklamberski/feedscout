@@ -49,11 +49,7 @@ const getTimeframe = (sort: string, searchParams: URLSearchParams): string | und
     return
   }
 
-  const timeframe = getQueryParam(searchParams, 't')
-
-  if (timeframe && timeOptions.includes(timeframe)) {
-    return timeframe
-  }
+  return getAnyOf(getQueryParam(searchParams, 't'), timeOptions)
 }
 
 const composeTimeframeQuery = (timeframe: string | undefined): string => {

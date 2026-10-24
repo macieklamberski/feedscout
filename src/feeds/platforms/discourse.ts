@@ -37,9 +37,7 @@ const getTopPeriod = (
 ): string | undefined => {
   const period = getAnyOf(pathPeriod, validTopPeriods) ?? getQueryParam(searchParams, 'period')
 
-  if (period && validTopPeriods.includes(period)) {
-    return period
-  }
+  return getAnyOf(period, validTopPeriods)
 }
 
 // A path the parser does not name falls back to the latest topics, on the root and elsewhere.

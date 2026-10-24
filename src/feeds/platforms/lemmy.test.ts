@@ -370,7 +370,7 @@ describe('lemmyHandler', () => {
       expect(lemmyHandler.resolve(value, content)).toEqual(expected)
     })
 
-    it('should take the advertised sort when the page URL sort has the wrong case', () => {
+    it('should spell a page URL sort in another case as Lemmy does', () => {
       const value = 'https://example.com/?sort=hot'
       const content = `
         <link
@@ -381,11 +381,11 @@ describe('lemmyHandler', () => {
       `
       const expected = [
         {
-          uri: 'https://example.com/feeds/all.xml?sort=Active',
+          uri: 'https://example.com/feeds/all.xml?sort=Hot',
           hint: { key: 'lemmy:all', label: 'All' },
         },
         {
-          uri: 'https://example.com/feeds/local.xml?sort=Active',
+          uri: 'https://example.com/feeds/local.xml?sort=Hot',
           hint: { key: 'lemmy:local', label: 'Local' },
         },
       ]

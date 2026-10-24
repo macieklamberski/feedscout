@@ -369,6 +369,18 @@ describe('stackExchangeHandler', () => {
       expect(stackExchangeHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should spell a ?sort= value in another case as Stack Exchange does', () => {
+      const value = 'https://stackoverflow.com/questions/tagged/javascript?sort=Newest'
+      const expected = [
+        {
+          uri: 'https://stackoverflow.com/feeds/tag/javascript?sort=newest',
+          hint: { key: 'stackexchange:tag', label: 'Tag' },
+        },
+      ]
+
+      expect(stackExchangeHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should pass through hot sort', () => {
       const value = 'https://stackoverflow.com/questions/tagged/javascript?sort=hot'
       const expected = [

@@ -125,6 +125,14 @@ describe('getTischtennislivePage', () => {
     expect(getTischtennislivePage(value, content)).toEqual(expected)
   })
 
+  it('should return the group a results link names with its type in another case', () => {
+    const value = 'https://musterkreis.tischtennislive.de/'
+    const content = '<a href="/Export/Tischtennis/RSS.aspx?Typ=gruppe&ID=1234&Next=0">RSS</a>'
+    const expected: TischtennislivePage = { kind: 'group', group: '1234' }
+
+    expect(getTischtennislivePage(value, content)).toEqual(expected)
+  })
+
   it('should return the association for a results link of an unknown type', () => {
     const value = 'https://musterkreis.tischtennislive.de/'
     const content = '<a href="/Export/Tischtennis/RSS.aspx?Typ=Verein&ID=56789&Next=0">RSS</a>'
