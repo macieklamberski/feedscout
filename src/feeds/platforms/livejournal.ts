@@ -1,7 +1,7 @@
 import { composeQuery, decodeSegment, isHostOf, isSubdomainOf } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, getTenantSubdomain } from '../../common/utils.js'
+import { composeHint, getHostOrigin, getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic partly covers blog, community, tag, tildePath, userPath, usersHost.
@@ -89,14 +89,14 @@ export const parseLivejournalUrl = (url: string): LivejournalUrl | undefined => 
 
 // A user named in the path is canonicalised to its subdomain, with `_` written as `-`. A name that
 // starts or ends with `_` makes no valid host label, so it stays on users.livejournal.com.
-const getJournalOrigin = (username: string): string => {
+const getJournalOrigin = (username: string): string | undefined => {
   const label = username.replaceAll('_', '-')
 
   if (label.startsWith('-') || label.endsWith('-')) {
     return `https://users.livejournal.com/${label}`
   }
 
-  return `https://${label}.livejournal.com`
+  return getHostOrigin(`${label}.livejournal.com`)
 }
 
 export const livejournalHandler: PlatformHandler = {
@@ -112,6 +112,10 @@ export const livejournalHandler: PlatformHandler = {
     }
 
     const base = parsed.username ? getJournalOrigin(parsed.username) : new URL(url).origin
+
+    if (!base) {
+      return []
+    }
 
     return getJournalFeeds(base, parsed.tag, 'livejournal')
   },

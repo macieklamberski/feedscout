@@ -1,6 +1,6 @@
 import { getPathSegments, isAnyOf, isHostOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, getTenantSubdomain } from '../../common/utils.js'
+import { composeHint, getHostOrigin, getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers blog, wwwBlog (html).
@@ -55,7 +55,11 @@ export const tumblrHandler: PlatformHandler = {
     }
 
     const { origin } = new URL(url)
-    const blogOrigin = isHostOf(url, hosts) ? `https://${parsed.blog}.tumblr.com` : origin
+    const blogOrigin = isHostOf(url, hosts) ? getHostOrigin(`${parsed.blog}.tumblr.com`) : origin
+
+    if (!blogOrigin) {
+      return []
+    }
 
     if (parsed.kind === 'tag') {
       return [{ uri: `${blogOrigin}/tagged/${parsed.tag}/rss`, hint: composeHint('tumblr:tag') }]

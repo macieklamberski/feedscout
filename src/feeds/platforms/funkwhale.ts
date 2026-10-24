@@ -1,6 +1,12 @@
 import { decodeSegment, encodePathSegment } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, hasElementWithId, hasMarker, hasMetaContent } from '../../common/utils.js'
+import {
+  composeHint,
+  getHostOrigin,
+  hasElementWithId,
+  hasMarker,
+  hasMetaContent,
+} from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -47,10 +53,14 @@ export const funkwhaleHandler: PlatformHandler = {
     const [name, domain] = (decodeSegment(channel) ?? channel)
       .replace(leadingAtRegex, '')
       .split('@')
+    const channelOrigin = domain ? getHostOrigin(domain) : origin
+
+    if (!channelOrigin) {
+      return []
+    }
+
     // The name comes out of the path decoded, and it goes back into one.
-    const channelUrl = domain
-      ? `https://${domain}/api/v1/channels/${encodePathSegment(name)}`
-      : `${origin}/api/v1/channels/${channel}`
+    const channelUrl = `${channelOrigin}/api/v1/channels/${domain ? encodePathSegment(name) : channel}`
 
     return [
       {

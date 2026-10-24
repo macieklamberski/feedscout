@@ -7,6 +7,7 @@ import {
   findElement,
   findElements,
   getCookieNames,
+  getHostOrigin,
   getJsonLd,
   getMetaContent,
   getNumericId,
@@ -653,6 +654,36 @@ describe('isRootOfPage', () => {
 
   it('should return false for an invalid url', () => {
     expect(isRootOfPage('http://[example', 'https://example.com/')).toBe(false)
+  })
+})
+
+describe('getHostOrigin', () => {
+  it('should return the origin of a host', () => {
+    expect(getHostOrigin('alice.example.com')).toBe('https://alice.example.com')
+  })
+
+  it('should return the origin of a host in any case', () => {
+    expect(getHostOrigin('Alice.example.com')).toBe('https://alice.example.com')
+  })
+
+  it('should return undefined for a value with a path in it', () => {
+    expect(getHostOrigin('open/x')).toBeUndefined()
+  })
+
+  it('should return undefined for a value with userinfo in it', () => {
+    expect(getHostOrigin('alice@example.org.example.com')).toBeUndefined()
+  })
+
+  it('should return undefined for a value with a port in it', () => {
+    expect(getHostOrigin('alice:8080')).toBeUndefined()
+  })
+
+  it('should return undefined for a host with an empty label', () => {
+    expect(getHostOrigin('...example.com')).toBeUndefined()
+  })
+
+  it('should return undefined for a value the URL parser refuses', () => {
+    expect(getHostOrigin('a b.example.com')).toBeUndefined()
   })
 })
 

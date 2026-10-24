@@ -1,6 +1,6 @@
 import { isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, getTenantSubdomain } from '../../common/utils.js'
+import { composeHint, getHostOrigin, getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -48,11 +48,12 @@ export const podomaticHandler: PlatformHandler = {
       return []
     }
 
-    return [
-      {
-        uri: `https://${parsed.show}.podomatic.com/rss2.xml`,
-        hint: composeHint('podomatic:show'),
-      },
-    ]
+    const showOrigin = getHostOrigin(`${parsed.show}.podomatic.com`)
+
+    if (!showOrigin) {
+      return []
+    }
+
+    return [{ uri: `${showOrigin}/rss2.xml`, hint: composeHint('podomatic:show') }]
   },
 }

@@ -105,6 +105,12 @@ describe('funkwhaleHandler', () => {
       expect(funkwhaleHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return an empty array for a remote domain that is not one host', () => {
+      const value = 'https://example.org/channels/alice@remote.example%2Fx'
+
+      expect(funkwhaleHandler.resolve(value)).toEqual([])
+    })
+
     it('should keep a channel name with a malformed escape as written', () => {
       const value = 'https://example.org/channels/100%'
       const expected = [

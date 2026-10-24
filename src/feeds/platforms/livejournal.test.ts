@@ -72,6 +72,12 @@ describe('livejournalHandler', () => {
   })
 
   describe('resolve', () => {
+    it('should return an empty array for a path username that is no host label', () => {
+      const value = 'https://www.livejournal.com/~..'
+
+      expect(livejournalHandler.resolve(value)).toEqual([])
+    })
+
     it('should write an underscore in a path username as a hyphen in the host', async () => {
       const value = 'https://www.livejournal.com/users/foo_bar/'
 
