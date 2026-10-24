@@ -1,4 +1,12 @@
-import { decodeSegment, getAnyOf, getQueryParam, isHostOf, parseUrl } from 'trousse'
+import {
+  composeQuery,
+  decodeSegment,
+  encodePathSegment,
+  getAnyOf,
+  getQueryParam,
+  isHostOf,
+  parseUrl,
+} from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
@@ -9,8 +17,8 @@ import { composeHint } from '../../common/utils.js'
 export type HatenaBookmarkUrl =
   | { kind: 'hotentry'; category?: string }
   | { kind: 'entrylist'; category?: string }
-  | { kind: 'search'; query: string; params: string }
-  | { kind: 'site'; site: string; params: string }
+  | { kind: 'search'; query: string; params: Record<string, string> }
+  | { kind: 'site'; site: string; params: Record<string, string> }
   | { kind: 'user'; username: string }
   | { kind: 'home' }
 
@@ -44,16 +52,19 @@ const searchTypes = ['tag', 'text', 'title']
 // The filters the search page carries into its own feed link. It drops `page` and anything else.
 const searchFilters = ['target', 'sort', 'users', 'date_range', 'safe']
 
-const copySearchFilters = (from: URLSearchParams, to: URLSearchParams): string => {
+const copySearchFilters = (
+  from: URLSearchParams,
+  to: Record<string, string>,
+): Record<string, string> => {
   for (const filter of searchFilters) {
     const value = getQueryParam(from, filter)
 
     if (value) {
-      to.set(filter, value)
+      to[filter] = value
     }
   }
 
-  return to.toString()
+  return to
 }
 
 export const parseHatenaBookmarkUrl = (url: string): HatenaBookmarkUrl | undefined => {
@@ -85,7 +96,7 @@ export const parseHatenaBookmarkUrl = (url: string): HatenaBookmarkUrl | undefin
       return { kind: 'home' }
     }
 
-    return { kind: 'search', query, params: copySearchFilters(searchParams, new URLSearchParams()) }
+    return { kind: 'search', query, params: copySearchFilters(searchParams, {}) }
   }
 
   const searchType = getAnyOf(pathname.match(searchRegex)?.[1], searchTypes)
@@ -99,7 +110,7 @@ export const parseHatenaBookmarkUrl = (url: string): HatenaBookmarkUrl | undefin
       return { kind: 'home' }
     }
 
-    const target = new URLSearchParams(searchType === 'tag' ? {} : { target: searchType })
+    const target: Record<string, string> = searchType === 'tag' ? {} : { target: searchType }
 
     return { kind: 'search', query: legacyQuery, params: copySearchFilters(searchParams, target) }
   }
@@ -109,7 +120,7 @@ export const parseHatenaBookmarkUrl = (url: string): HatenaBookmarkUrl | undefin
   // The site page keeps only its sort order in its own feed link.
   if (site) {
     const sort = getQueryParam(searchParams, 'sort')
-    const params = new URLSearchParams(sort ? { sort } : {}).toString()
+    const params: Record<string, string> = sort ? { sort } : {}
 
     return { kind: 'site', site, params }
   }
@@ -151,24 +162,22 @@ export const hatenaBookmarkHandler: PlatformHandler = {
 
     if (parsed.kind === 'search') {
       // Search and per-site listings answer with RSS when `mode=rss` is set.
-      const searchParams = new URLSearchParams(parsed.params)
-      searchParams.set('mode', 'rss')
+      const query = composeQuery({ ...parsed.params, mode: 'rss' })
 
       return [
         {
-          uri: `${origin}/q/${encodeURIComponent(parsed.query)}?${searchParams}`,
+          uri: `${origin}/q/${encodePathSegment(parsed.query)}${query}`,
           hint: composeHint('hatena-bookmark:search'),
         },
       ]
     }
 
     if (parsed.kind === 'site') {
-      const searchParams = new URLSearchParams(parsed.params)
-      searchParams.set('mode', 'rss')
+      const query = composeQuery({ ...parsed.params, mode: 'rss' })
 
       return [
         {
-          uri: `${origin}/site/${parsed.site}?${searchParams}`,
+          uri: `${origin}/site/${parsed.site}${query}`,
           hint: composeHint('hatena-bookmark:site'),
         },
       ]

@@ -82,6 +82,22 @@ describe('joomlaHandler', () => {
       expect(joomlaHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should write a colon in a routing parameter as is', () => {
+      const value = 'https://example.com/index.php?option=com_content&view=category&id=8%3Anews'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://example.com/index.php?option=com_content&view=category&id=8:news&format=feed&type=rss',
+          hint: { key: 'joomla:view', label: 'View', format: 'rss' },
+        },
+        {
+          uri: 'https://example.com/index.php?option=com_content&view=category&id=8:news&format=feed&type=atom',
+          hint: { key: 'joomla:view', label: 'View', format: 'atom' },
+        },
+      ]
+
+      expect(joomlaHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should keep a search-engine friendly html suffix', () => {
       const value = 'https://example.com/blogs.html'
       const expected: Array<DiscoverUriEntry> = [

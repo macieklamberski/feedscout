@@ -1,4 +1,4 @@
-import { getQueryParam, parseUrl } from 'trousse'
+import { composeQuery, getQueryParam, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, getCookieNames, hasMarker } from '../../common/utils.js'
 
@@ -75,11 +75,11 @@ export const gnuboardHandler: PlatformHandler = {
     }
 
     const { origin } = new URL(url)
-    const query = new URLSearchParams({ bo_table: page.board })
+    const query = composeQuery({ bo_table: page.board })
 
     return [
       {
-        uri: `${origin}${page.root}/bbs/rss.php?${query}`,
+        uri: `${origin}${page.root}/bbs/rss.php${query}`,
         hint: composeHint('gnuboard:board'),
       },
     ]

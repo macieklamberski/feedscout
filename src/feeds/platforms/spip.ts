@@ -1,4 +1,4 @@
-import { getAnyOf, getQueryParam, parseUrl } from 'trousse'
+import { composeQuery, getAnyOf, getQueryParam, parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, digitsRegex, findElement, hasMarker } from '../../common/utils.js'
@@ -131,28 +131,28 @@ export const spipHandler: PlatformHandler = {
     // entries, so only the RSS one is emitted.
     if (page.kind === 'article') {
       uris.push({
-        uri: `${scriptUrl}?${new URLSearchParams({ page: 'comments-rss', id_article: page.id })}`,
+        uri: `${scriptUrl}${composeQuery({ page: 'comments-rss', id_article: page.id })}`,
         hint: composeHint('spip:article-comments'),
       })
     }
 
     if (page.kind === 'rubrique') {
       uris.push({
-        uri: `${scriptUrl}?${new URLSearchParams({ page: 'backend', id_rubrique: page.id })}`,
+        uri: `${scriptUrl}${composeQuery({ page: 'backend', id_rubrique: page.id })}`,
         hint: composeHint('spip:section'),
       })
     }
 
     if (page.kind === 'mot') {
       uris.push({
-        uri: `${scriptUrl}?${new URLSearchParams({ page: 'backend', id_mot: page.id })}`,
+        uri: `${scriptUrl}${composeQuery({ page: 'backend', id_mot: page.id })}`,
         hint: composeHint('spip:keyword'),
       })
     }
 
     if (page.kind === 'auteur') {
       uris.push({
-        uri: `${scriptUrl}?${new URLSearchParams({ page: 'backend', id_auteur: page.id })}`,
+        uri: `${scriptUrl}${composeQuery({ page: 'backend', id_auteur: page.id })}`,
         hint: composeHint('spip:author'),
       })
     }

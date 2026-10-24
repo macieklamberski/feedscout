@@ -1,3 +1,4 @@
+import { composeQuery } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, findElement, hasMarker } from '../../common/utils.js'
 
@@ -55,8 +56,8 @@ export const edlioHandler: PlatformHandler = {
     const page = getEdlioPage(url, content)
 
     if (page.kind === 'class') {
-      const query = new URLSearchParams({ classREC_ID: page.classId })
-      const feedUrl = `${page.origin}/apps/classes/assignment_rss.jsp?${query}`
+      const query = composeQuery({ classREC_ID: page.classId })
+      const feedUrl = `${page.origin}/apps/classes/assignment_rss.jsp${query}`
 
       return [{ uri: feedUrl, hint: composeHint('edlio:assignments') }]
     }
@@ -67,8 +68,8 @@ export const edlioHandler: PlatformHandler = {
       return [{ uri: feedUrl, hint: composeHint('edlio:news') }]
     }
 
-    const query = new URLSearchParams({ categoryid: page.categoryId })
+    const query = composeQuery({ categoryid: page.categoryId })
 
-    return [{ uri: `${feedUrl}?${query}`, hint: composeHint('edlio:news') }]
+    return [{ uri: `${feedUrl}${query}`, hint: composeHint('edlio:news') }]
   },
 }

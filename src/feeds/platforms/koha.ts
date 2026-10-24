@@ -1,4 +1,4 @@
-import { getQueryParam, getQueryParams, isAnyOf, parseUrl } from 'trousse'
+import { composeQuery, getQueryParam, getQueryParams, isAnyOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, digitsRegex, hasMarker } from '../../common/utils.js'
 
@@ -96,13 +96,9 @@ export const kohaHandler: PlatformHandler = {
     }
 
     if (parsed.kind === 'list') {
-      const params = new URLSearchParams({
-        rss: '1',
-        op: 'view',
-        shelfnumber: parsed.shelfNumber,
-      })
+      const params = composeQuery({ rss: '1', op: 'view', shelfnumber: parsed.shelfNumber })
 
-      return [{ uri: `${scriptsUrl}/opac-shelves.pl?${params}`, hint: composeHint('koha:list') }]
+      return [{ uri: `${scriptsUrl}/opac-shelves.pl${params}`, hint: composeHint('koha:list') }]
     }
 
     return [

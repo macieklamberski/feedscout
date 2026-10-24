@@ -1,3 +1,4 @@
+import { composeQuery } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, findElement, getCookieNames, hasMarker } from '../../common/utils.js'
 
@@ -63,7 +64,7 @@ export const civicplusHandler: PlatformHandler = {
 
     return [
       {
-        uri: `${page.origin}/RSSFeed.aspx?${new URLSearchParams(page.module.query)}`,
+        uri: `${page.origin}/RSSFeed.aspx${composeQuery(page.module.query)}`,
         hint: composeHint(page.module.hint),
       },
     ]

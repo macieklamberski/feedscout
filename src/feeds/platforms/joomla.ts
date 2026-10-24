@@ -1,4 +1,4 @@
-import { getQueryParam, parseUrl } from 'trousse'
+import { composeQuery, getQueryParam, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, hasMarker, hasMetaContent } from '../../common/utils.js'
 
@@ -19,20 +19,20 @@ export const isJoomlaHtml = (content: string): boolean => {
 const routingParams = ['option', 'view', 'layout', 'id', 'catid', 'Itemid', 'lang']
 
 const getFeedQuery = (searchParams: URLSearchParams, type: string): string => {
-  const query = new URLSearchParams()
+  const query: Record<string, string> = {}
 
   for (const name of routingParams) {
     const value = getQueryParam(searchParams, name)
 
     if (getQueryParam(searchParams, 'option') !== undefined && value) {
-      query.set(name, value)
+      query[name] = value
     }
   }
 
-  query.set('format', 'feed')
-  query.set('type', type)
+  query.format = 'feed'
+  query.type = type
 
-  return query.toString()
+  return composeQuery(query)
 }
 
 export const parseJoomlaUrl = (url: string): JoomlaUrl | undefined => {
@@ -66,11 +66,11 @@ export const joomlaHandler: PlatformHandler = {
 
     return [
       {
-        uri: `${viewUrl}?${getFeedQuery(searchParams, 'rss')}`,
+        uri: `${viewUrl}${getFeedQuery(searchParams, 'rss')}`,
         hint: composeHint('joomla:view', 'rss'),
       },
       {
-        uri: `${viewUrl}?${getFeedQuery(searchParams, 'atom')}`,
+        uri: `${viewUrl}${getFeedQuery(searchParams, 'atom')}`,
         hint: composeHint('joomla:view', 'atom'),
       },
     ]

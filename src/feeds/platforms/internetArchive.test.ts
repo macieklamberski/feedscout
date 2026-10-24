@@ -77,10 +77,35 @@ describe('internetArchiveHandler', () => {
     })
 
     it('should return the search feed', () => {
-      const value = 'https://archive.org/search?query=subject%3A%22apollo+11%22'
+      const value =
+        'https://archive.org/search?query=creator%3A%22Elf+Eldridge+and+Aimee+Whitcroft%22'
       const expected = [
         {
-          uri: 'https://archive.org/services/collection-rss.php?query=subject%3A%22apollo+11%22',
+          uri: 'https://archive.org/services/collection-rss.php?query=creator:"Elf%20Eldridge%20and%20Aimee%20Whitcroft"',
+          hint: { key: 'internet-archive:search', label: 'Search' },
+        },
+      ]
+
+      expect(internetArchiveHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should write a colon in the search query as is', () => {
+      const value = 'https://archive.org/search?query=subject%3AEqualizing-X-Distort'
+      const expected = [
+        {
+          uri: 'https://archive.org/services/collection-rss.php?query=subject:Equalizing-X-Distort',
+          hint: { key: 'internet-archive:search', label: 'Search' },
+        },
+      ]
+
+      expect(internetArchiveHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should write a space in the search query as %20', () => {
+      const value = 'https://archive.org/search?query=apollo+11'
+      const expected = [
+        {
+          uri: 'https://archive.org/services/collection-rss.php?query=apollo%2011',
           hint: { key: 'internet-archive:search', label: 'Search' },
         },
       ]
