@@ -4,7 +4,7 @@ import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
-// Generic covers channel, instance (html), partly covers account.
+// Generic covers channel, instance, legacyAccount, legacyChannel (html), partly covers account.
 
 export type PeertubeUrl = { kind: 'channel' | 'account'; name: string } | { kind: 'instance' }
 
