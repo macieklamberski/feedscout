@@ -35,7 +35,8 @@ export const parseDailymotionUrl = (url: string): DailymotionUrl | undefined => 
     return { kind: 'trending' }
   }
 
-  const playlistId = pathname.match(playlistRegex)?.groups?.playlistId
+  // A share url appends a `_title-slug` to the id, which the feed and the api ignore.
+  const playlistId = pathname.match(playlistRegex)?.groups?.playlistId?.split('_')[0]
 
   if (playlistId && wordOrHyphenRegex.test(playlistId)) {
     return { kind: 'playlist', playlistId }
