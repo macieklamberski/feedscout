@@ -40,7 +40,7 @@ const getPlacementIndiaPage = (
   let jobOpeningFeedUrl: string | undefined
 
   for (const anchor of anchors) {
-    const target = parseUrl(anchor.attribs.href ?? '', url)
+    const target = parseUrl(anchor.attribs.href, url)
 
     if (target?.host !== host) {
       continue

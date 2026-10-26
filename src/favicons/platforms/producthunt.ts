@@ -48,7 +48,7 @@ export const producthuntHandler: PlatformHandler = {
     const parsed = parseProducthuntUrl(url)
 
     if (parsed?.kind === 'topic') {
-      const image = parseUrl(getMetaContent(content ?? '', 'og:image') ?? '')
+      const image = parseUrl(getMetaContent(content ?? '', 'og:image'))
 
       if (!image || !isHostOf(image.href, topicImageHosts)) {
         return []

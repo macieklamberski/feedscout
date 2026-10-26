@@ -45,7 +45,7 @@ const getTalentsoftPage = (url: string, content: string | undefined): Talentsoft
         return false
       }
 
-      const feedUrl = parseUrl(element.attribs.href ?? '', url)
+      const feedUrl = parseUrl(element.attribs.href, url)
 
       return (
         feedUrl?.origin === origin &&
@@ -55,14 +55,14 @@ const getTalentsoftPage = (url: string, content: string | undefined): Talentsoft
     })
 
     if (offersLink) {
-      lcid = getQueryParam(parseUrl(offersLink.attribs.href ?? '', url)?.searchParams, 'lcid')
+      lcid = getQueryParam(parseUrl(offersLink.attribs.href, url)?.searchParams, 'lcid')
     }
   }
 
   const searchLink = findElement(content, (element) => {
     return element.name === 'a' && hasClass(element, 'ts-ol-criterias-keep__link--rss')
   })
-  const searchFeedUrl = parseUrl(searchLink?.attribs.href ?? '', url)
+  const searchFeedUrl = parseUrl(searchLink?.attribs.href, url)
 
   if (searchFeedUrl?.origin === origin && offerFeedPathRegex.test(searchFeedUrl.pathname)) {
     return { kind: 'search', origin, lcid, searchFeedUrl: searchFeedUrl.href }

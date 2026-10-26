@@ -22,14 +22,14 @@ const getSiteUrl = (url: string, content: string | undefined): string | undefine
       return false
     }
 
-    return feedPathRegex.test(parseUrl(element.attribs.href ?? '', url)?.pathname ?? '')
+    return feedPathRegex.test(parseUrl(element.attribs.href, url)?.pathname ?? '')
   })
 
   if (!feedLink) {
     return
   }
 
-  const feedUrl = parseUrl(feedLink.attribs.href ?? '', url)
+  const feedUrl = parseUrl(feedLink.attribs.href, url)
 
   if (!feedUrl || feedUrl.origin !== parsedUrl.origin) {
     return

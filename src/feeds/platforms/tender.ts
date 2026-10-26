@@ -77,7 +77,7 @@ export const getTenderPage = (url: string, content: string | undefined): TenderP
 
   const root = getRoot(parsedUrl.pathname, content)
   const siteUrl = `${parsedUrl.origin}${root}`
-  const sitePath = startsWithAnyOf(parsedUrl.pathname, [`${root}/`])
+  const sitePath = startsWithAnyOf(parsedUrl.pathname, `${root}/`)
     ? parsedUrl.pathname.slice(root.length)
     : '/'
   const [, category, discussion] = sitePath.match(discussionPathRegex) ?? []

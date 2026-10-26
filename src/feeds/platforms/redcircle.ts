@@ -39,7 +39,7 @@ const findShowUuid = (url: string, content: string | undefined): string | undefi
   }
 
   // A show or episode page under a slug names the show uuid in its `og:url`.
-  const pageUrl = parseUrl(getMetaContent(content, 'og:url') ?? '')
+  const pageUrl = parseUrl(getMetaContent(content, 'og:url'))
 
   if (!pageUrl) {
     return

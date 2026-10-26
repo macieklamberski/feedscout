@@ -20,7 +20,7 @@ export type PowerpressPage = { kind: 'site'; homeUrl: string }
 // holds the page.
 const getPinwHomeUrl = (url: string, content: string | undefined): string | undefined => {
   const homeUrl = content?.match(pinwUrlRegex)?.groups?.homeUrl?.replace(trailingSlashRegex, '')
-  const parsedHomeUrl = parseUrl(homeUrl ?? '')
+  const parsedHomeUrl = parseUrl(homeUrl)
   const parsedUrl = parseUrl(url)
 
   if (!homeUrl || !parsedHomeUrl || !parsedUrl || parsedHomeUrl.origin !== parsedUrl.origin) {

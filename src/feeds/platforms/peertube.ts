@@ -26,7 +26,7 @@ const getPodcastChannelId = (url: string, content: string | undefined): string |
       return false
     }
 
-    const feedUrl = parseUrl(element.attribs.href ?? '', url)
+    const feedUrl = parseUrl(element.attribs.href, url)
 
     return (
       feedUrl?.origin === origin &&

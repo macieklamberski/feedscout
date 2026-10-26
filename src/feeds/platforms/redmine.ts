@@ -51,7 +51,7 @@ const getRootPath = (url: string, content: string | undefined): string => {
   })
   const homeUrl = resolveUrl(homeLink?.attribs.href ?? '/', url)
 
-  return parseUrl(homeUrl ?? '')?.pathname.replace(trailingSlashRegex, '') ?? ''
+  return parseUrl(homeUrl)?.pathname.replace(trailingSlashRegex, '') ?? ''
 }
 
 // The project menu lists a module only when it is on and the reader may see it, and the feed of a

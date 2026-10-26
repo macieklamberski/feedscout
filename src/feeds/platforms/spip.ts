@@ -92,7 +92,7 @@ export const getSpipPage = (url: string, content: string | undefined): SpipPage 
   const base = findElement(content, (element) => {
     return element.name === 'base' && Boolean(element.attribs.href)
   })
-  const baseUrl = parseUrl(base?.attribs.href ?? '', parsedUrl) ?? parsedUrl
+  const baseUrl = parseUrl(base?.attribs.href, parsedUrl) ?? parsedUrl
   const scriptUrl = new URL('spip.php', baseUrl).href
   const objectId = getUrlObjectId(parsedUrl)
   // SPIP answers a made-up id with an empty feed, and its not-found page marks the root element.
