@@ -93,7 +93,7 @@ export const getLemmyPage = (url: string, content: string | undefined): LemmyPag
   const link = findElement(content, (element) => {
     return element.name === 'link' && element.attribs.rel === 'alternate'
   })
-  const feedUrl = parseUrl(link?.attribs.href ?? '', 'https://example.com')
+  const feedUrl = parseUrl(link?.attribs.href, 'https://example.com')
   const sort =
     getAnyOf(parsed.sort, validSorts) ??
     getAnyOf(getQueryParam(feedUrl?.searchParams, 'sort'), validSorts)

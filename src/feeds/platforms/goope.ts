@@ -22,7 +22,7 @@ const templateRegex = /^t_(\d+)$/i
 const qrCodePathRegex = /^\/qr\//i
 
 const isQrCode = (src: string | undefined): boolean => {
-  const qrCodeUrl = parseUrl(resolveUrl(src ?? '') ?? '')
+  const qrCodeUrl = parseUrl(resolveUrl(src ?? ''))
 
   if (!qrCodeUrl) {
     return false

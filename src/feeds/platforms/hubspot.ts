@@ -28,7 +28,7 @@ const getBlogPath = (url: string, content: string | undefined): string | undefin
       feedPathRegex.test(element.attribs.href ?? '')
     )
   })
-  const feedUrl = parseUrl(resolveUrl(link?.attribs.href ?? '', url) ?? '')
+  const feedUrl = parseUrl(resolveUrl(link?.attribs.href ?? '', url))
   const pageUrl = parseUrl(url)
 
   if (!feedUrl || !pageUrl || stripWww(feedUrl.hostname) !== stripWww(pageUrl.hostname)) {

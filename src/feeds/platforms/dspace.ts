@@ -113,7 +113,7 @@ const getLegacyLinks = (url: string, content: string): Array<LegacyLink> => {
   const legacyLinks: Array<LegacyLink> = []
 
   for (const link of links) {
-    const feedUrl = parseUrl(link.attribs.href ?? '', url)
+    const feedUrl = parseUrl(link.attribs.href, url)
     const [, format, scope] = feedUrl?.pathname.match(legacyFeedPathRegex) ?? []
 
     if (!feedUrl || !format || !scope) {

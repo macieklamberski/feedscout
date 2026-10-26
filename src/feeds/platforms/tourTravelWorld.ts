@@ -36,7 +36,7 @@ const getTourTravelWorldPage = (
   const anchors = findElements(content, (element) => element.name === 'a')
 
   for (const anchor of anchors) {
-    const target = parseUrl(anchor.attribs.href ?? '', url)
+    const target = parseUrl(anchor.attribs.href, url)
 
     if (target?.host === host && packagesFeedPathRegex.test(target.pathname)) {
       return { feedUrl: target.href }

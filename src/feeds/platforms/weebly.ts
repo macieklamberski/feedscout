@@ -54,7 +54,7 @@ export const getWeeblyPage = (url: string, content: string | undefined): WeeblyP
   const anchors = content ? findElements(content, (element) => element.name === 'a') : []
 
   for (const anchor of anchors) {
-    const target = parseUrl(anchor.attribs.href ?? '', url)
+    const target = parseUrl(anchor.attribs.href, url)
 
     if (target?.hostname !== hostname) {
       continue

@@ -43,11 +43,11 @@ export const getTischtennislivePage = (
       return false
     }
 
-    const linkUrl = parseUrl(element.attribs.href ?? '', url)
+    const linkUrl = parseUrl(element.attribs.href, url)
 
     return linkUrl?.hostname === hostname && resultsFeedPathRegex.test(linkUrl.pathname)
   })
-  const feedUrl = parseUrl(link?.attribs.href ?? '', url)
+  const feedUrl = parseUrl(link?.attribs.href, url)
   const id = getQueryParam(feedUrl?.searchParams, 'id') ?? ''
 
   if (!digitsRegex.test(id)) {

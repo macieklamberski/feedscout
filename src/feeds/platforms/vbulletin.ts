@@ -83,7 +83,7 @@ const getVbulletin5Page = (url: string, content: string | undefined): VbulletinP
   const baseElement = findElement(content, (element) => {
     return element.name === 'base'
   })
-  const baseUrl = parseUrl(baseElement?.attribs.href ?? '', url) ?? url
+  const baseUrl = parseUrl(baseElement?.attribs.href, url) ?? url
   const rollupScriptUrl = new URL(rollupScriptSrc, baseUrl)
   const rootPath = rollupScriptUrl.pathname.replace(rollupPathRegex, '')
   const channelId = content?.match(channelIdRegex)?.[1]
