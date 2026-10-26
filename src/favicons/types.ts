@@ -1,10 +1,5 @@
-import type {
-  DiscoverEnrichFn,
-  DiscoverOptions,
-  DiscoverRef,
-  FetchFn,
-  MaybePromise,
-} from '../common/types.js'
+import type { MaybePromise } from 'trousse'
+import type { DiscoverEnrichFn, DiscoverOptions, DiscoverRef, FetchFn } from '../common/types.js'
 
 // TODO: Extend with metadata (rel, sizes, type) from HTML attributes.
 // biome-ignore lint/complexity/noBannedTypes: No extra metadata yet.

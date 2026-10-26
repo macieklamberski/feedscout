@@ -1,10 +1,5 @@
-import type {
-  DiscoverEnrichFn,
-  DiscoverRef,
-  DiscoverUriEntry,
-  FetchFn,
-  MaybePromise,
-} from '../../types.js'
+import type { MaybePromise } from 'trousse'
+import type { DiscoverEnrichFn, DiscoverRef, DiscoverUriEntry, FetchFn } from '../../types.js'
 
 export type PlatformHandler = {
   match: (url: string, content?: string, headers?: Headers) => boolean
