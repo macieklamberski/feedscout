@@ -1,5 +1,5 @@
 {
-  "extends": ["kvalita/biome"],
+  "extends": ["kvalita/biome", "kvalita/biome-library", "kvalita/biome-trousse"],
   "overrides": [
     {
       "includes": ["check/constants.ts"],
