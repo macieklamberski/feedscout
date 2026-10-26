@@ -32,7 +32,7 @@ const getBreadcrumbPaths = (url: string, content: string): Array<string> => {
     }
 
     for (const element of data.itemListElement) {
-      const pathname = parseUrl(element?.item?.['@id'] ?? '', url)?.pathname
+      const pathname = parseUrl(element?.item?.['@id'], url)?.pathname
 
       if (pathname) {
         paths.push(pathname)

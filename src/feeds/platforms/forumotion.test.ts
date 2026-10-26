@@ -86,6 +86,17 @@ describe('getForumotionPage', () => {
     expect(getForumotionPage(value, missingForumHtml)).toEqual(expected)
   })
 
+  it('should return home for a forum id the breadcrumb names without a url', () => {
+    const value = 'https://shingamix.forumotion.com/f99999-zzqq'
+    const content = missingForumHtml.replace(
+      '"name":"Super Maker Forums"}}]',
+      '"name":"Super Maker Forums"}},{"@type":"ListItem","position":2,"name":"Zzqq"}]',
+    )
+    const expected: ForumotionPage = { kind: 'home' }
+
+    expect(getForumotionPage(value, content)).toEqual(expected)
+  })
+
   it('should return home for a topic without a forum in the breadcrumb', () => {
     const value = 'https://shingamix.forumotion.com/t550-i-have-returned'
     const content = topicHtml.replace('f119-events', '')
