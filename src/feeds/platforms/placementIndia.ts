@@ -46,14 +46,14 @@ const getPlacementIndiaPage = (
       continue
     }
 
-    if (vacanciesFeedPathRegex.test(target.pathname)) {
-      feedUrl ??= target.href
+    if (vacanciesFeedPathRegex.test(target.pathname) && feedUrl === undefined) {
+      feedUrl = target.href
     }
 
     // A `/vacancy_{id}.rss` with an id no opening has answers a blank HTML page, so the id comes
     // only from the job page's own link.
-    if (jobOpeningFeedPathRegex.test(target.pathname)) {
-      jobOpeningFeedUrl ??= target.href
+    if (jobOpeningFeedPathRegex.test(target.pathname) && jobOpeningFeedUrl === undefined) {
+      jobOpeningFeedUrl = target.href
     }
   }
 

@@ -17,7 +17,7 @@ const findProfileImage = (content: string, username: string): string | undefined
     return
   }
 
-  let users = {}
+  let users: Record<string, { username?: string; image_xlarge_url?: string }> = {}
 
   try {
     users = JSON.parse(json)?.initialReduxState?.users ?? {}
@@ -25,7 +25,7 @@ const findProfileImage = (content: string, username: string): string | undefined
     return
   }
 
-  for (const user of Object.values<{ username?: string; image_xlarge_url?: string }>(users)) {
+  for (const user of Object.values(users)) {
     if (user?.username?.toLowerCase() !== username.toLowerCase()) {
       continue
     }
