@@ -65,8 +65,8 @@ describe('parseObservableUrl', () => {
   })
 
   it('should return recent for the public page sorted by publish time', () => {
-    const expected: ObservableUrl = { kind: 'recent' }
     const value = 'https://observablehq.com/public?sort=publish_time'
+    const expected: ObservableUrl = { kind: 'recent' }
 
     expect(parseObservableUrl(value)).toEqual(expected)
   })

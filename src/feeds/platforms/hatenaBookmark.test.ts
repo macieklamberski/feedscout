@@ -349,13 +349,13 @@ describe('hatenaBookmarkHandler', () => {
     })
 
     it('should write a non-ASCII query as is', () => {
+      const value = `${base}/q/%E3%82%BB%E3%82%AD%E3%83%A5%E3%83%AA%E3%83%86%E3%82%A3`
       const expected = [
         {
           uri: `${base}/q/セキュリティ?mode=rss`,
           hint: { key: 'hatena-bookmark:search', label: 'Search' },
         },
       ]
-      const value = `${base}/q/%E3%82%BB%E3%82%AD%E3%83%A5%E3%83%AA%E3%83%86%E3%82%A3`
 
       expect(hatenaBookmarkHandler.resolve(value)).toEqual(expected)
     })

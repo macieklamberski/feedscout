@@ -47,23 +47,23 @@ describe('parseHatenaFotolifeUrl', () => {
   })
 
   it('should return the model for a user page filtered by camera model', () => {
+    const value = 'https://f.hatena.ne.jp/alice/?model=FinePixViewer%20Lite%20Ver.4.2'
     const expected: HatenaFotolifeUrl = {
       kind: 'model',
       username: 'alice',
       model: 'FinePixViewer Lite Ver.4.2',
     }
-    const value = 'https://f.hatena.ne.jp/alice/?model=FinePixViewer%20Lite%20Ver.4.2'
 
     expect(parseHatenaFotolifeUrl(value)).toEqual(expected)
   })
 
   it('should return the model for a model feed', () => {
+    const value = 'https://f.hatena.ne.jp/alice/rss?model=iPhone+12+Pro+Max'
     const expected: HatenaFotolifeUrl = {
       kind: 'model',
       username: 'alice',
       model: 'iPhone 12 Pro Max',
     }
-    const value = 'https://f.hatena.ne.jp/alice/rss?model=iPhone+12+Pro+Max'
 
     expect(parseHatenaFotolifeUrl(value)).toEqual(expected)
   })
@@ -81,8 +81,8 @@ describe('parseHatenaFotolifeUrl', () => {
   })
 
   it('should return the decoded tag for a tag page', () => {
-    const expected: HatenaFotolifeUrl = { kind: 'tag', username: 'alice', tag: 'イラスト' }
     const value = 'https://f.hatena.ne.jp/alice/t/%E3%82%A4%E3%83%A9%E3%82%B9%E3%83%88'
+    const expected: HatenaFotolifeUrl = { kind: 'tag', username: 'alice', tag: 'イラスト' }
 
     expect(parseHatenaFotolifeUrl(value)).toEqual(expected)
   })

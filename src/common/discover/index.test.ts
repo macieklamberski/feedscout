@@ -425,7 +425,7 @@ describe('discoverFeeds', () => {
         current: 'https://www.example.com/feed',
       }
 
-      expect(progressUpdates[progressUpdates.length - 1]).toMatchObject(expected)
+      expect(progressUpdates.at(-1)).toMatchObject(expected)
     })
 
     it('should count a candidate with several alternatives as tested once', async () => {
@@ -1558,7 +1558,7 @@ describe('discoverFeeds', () => {
         found: 1,
       }
 
-      expect(progressUpdates[progressUpdates.length - 1]).toMatchObject(expected)
+      expect(progressUpdates.at(-1)).toMatchObject(expected)
     })
 
     it('should return one invalid result when several candidates redirect to the same page', async () => {

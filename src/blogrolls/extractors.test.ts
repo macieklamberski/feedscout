@@ -104,7 +104,6 @@ describe('defaultExtractFn', () => {
     const expected = {
       url: 'https://example.com/blogroll.opml',
       isValid: true,
-      title: undefined,
     }
 
     expect(result).toEqual(expected)

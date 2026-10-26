@@ -90,8 +90,8 @@ describe('parseLagetUrl', () => {
   })
 
   it('should return the team for a news page', () => {
-    const expected: LagetUrl = { kind: 'team', team: 'ExempelIF-P14' }
     const value = 'https://www.laget.se/ExempelIF-P14/News/1234567/Valkomna-till-traningen'
+    const expected: LagetUrl = { kind: 'team', team: 'ExempelIF-P14' }
 
     expect(parseLagetUrl(value)).toEqual(expected)
   })
