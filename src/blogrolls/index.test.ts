@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'bun:test'
-import locales from '../common/locales.json' with { type: 'json' }
 import type { DiscoverResult, FetchFn } from '../common/types.js'
+import locales from '../locales.json' with { type: 'json' }
 import { urisBalanced, urisComprehensive, urisMinimal } from './defaults.js'
 import { discoverBlogrolls } from './index.js'
 import type { BlogrollResult } from './types.js'

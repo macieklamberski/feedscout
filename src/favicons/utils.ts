@@ -1,5 +1,7 @@
+import { t } from 'trousse'
 import type { FetchFnResponse } from '../common/types.js'
 import { isSuccessfulStatus } from '../common/utils.js'
+import locales from '../locales.json' with { type: 'json' }
 
 // The status and URL ride in the cause, so an onError consumer can tell a 404 from a 500 without
 // parsing the message.
@@ -19,7 +21,7 @@ export const getResponseText = (response: FetchFnResponse): string => {
   }
 
   if (typeof response.body !== 'string') {
-    throw new Error(`Unexpected stream body from ${response.url}`)
+    throw new Error(t(locales.errors.unexpectedStreamBody, { url: response.url }))
   }
 
   return response.body
