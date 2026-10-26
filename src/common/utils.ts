@@ -1,6 +1,6 @@
 import { DomUtils, parseDocument } from 'htmlparser2'
 import { anyWordMatchesAnyOf, getSubdomain, isAnyOf, parseUrl, stripWww } from 'trousse'
-import locales from './locales.json' with { type: 'json' }
+import locales from '../locales.json' with { type: 'json' }
 import type { DiscoverUriHint, FetchFn } from './types.js'
 
 export type Element = NonNullable<ReturnType<typeof DomUtils.findOne>>

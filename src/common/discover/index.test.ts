@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'bun:test'
 import { discoverFeeds } from '../../feeds/index.js'
 import type { FeedResult } from '../../feeds/types.js'
-import locales from '../locales.json' with { type: 'json' }
+import locales from '../../locales.json' with { type: 'json' }
 import type {
   DiscoverErrorContext,
   DiscoverExtractFn,
