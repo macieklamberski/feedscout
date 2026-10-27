@@ -199,19 +199,19 @@ describe('pinterestEnricher', () => {
     expect(await pinterestEnricher(ref, context)).toEqual([])
   })
 
-  it('should reject when fetch throws', async () => {
+  it('should reject when fetch throws', () => {
     const fetchFn: FetchFn = () => {
       throw new Error('Network error')
     }
     const throwing = () => pinterestEnricher(ref, { fetchFn })
 
-    await expect(throwing()).rejects.toThrow('Network error')
+    expect(throwing()).rejects.toThrow('Network error')
   })
 
-  it('should reject when the response is not 2xx', async () => {
+  it('should reject when the response is not 2xx', () => {
     const throwing = () => pinterestEnricher(ref, createContext({}))
     const expected = 'Unexpected status 404 from https://www.pinterest.com/alice/'
 
-    await expect(throwing()).rejects.toThrow(expected)
+    expect(throwing()).rejects.toThrow(expected)
   })
 })

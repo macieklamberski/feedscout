@@ -114,7 +114,7 @@ describe('postypeEnricher', () => {
     expect(await postypeEnricher(ref, context)).toEqual([])
   })
 
-  it('should reject when the body is a stream', async () => {
+  it('should reject when the body is a stream', () => {
     const fetchFn: FetchFn = async (url) => ({
       headers: new Headers(),
       body: new ReadableStream(),
@@ -124,24 +124,24 @@ describe('postypeEnricher', () => {
     const ref = createRef('https://www.postype.com/@example')
     const throwing = () => postypeEnricher(ref, { fetchFn })
 
-    await expect(throwing()).rejects.toThrow('Unexpected stream body')
+    expect(throwing()).rejects.toThrow('Unexpected stream body')
   })
 
-  it('should reject when fetch throws', async () => {
+  it('should reject when fetch throws', () => {
     const fetchFn: FetchFn = () => {
       throw new Error('Network error')
     }
     const ref = createRef('https://www.postype.com/@example')
     const throwing = () => postypeEnricher(ref, { fetchFn })
 
-    await expect(throwing()).rejects.toThrow('Network error')
+    expect(throwing()).rejects.toThrow('Network error')
   })
 
-  it('should reject when the response is not 2xx', async () => {
+  it('should reject when the response is not 2xx', () => {
     const ref = createRef('https://www.postype.com/@example')
     const throwing = () => postypeEnricher(ref, createContext({}))
     const expected = 'Unexpected status 404 from https://www.postype.com/@example'
 
-    await expect(throwing()).rejects.toThrow(expected)
+    expect(throwing()).rejects.toThrow(expected)
   })
 })

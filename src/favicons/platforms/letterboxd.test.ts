@@ -255,7 +255,7 @@ describe('letterboxdEnricher', () => {
     expect(await letterboxdEnricher(aliceRef, context)).toEqual([])
   })
 
-  it('should reject when the body is a stream', async () => {
+  it('should reject when the body is a stream', () => {
     const fetchFn: FetchFn = async (url) => ({
       headers: new Headers(),
       body: new ReadableStream(),
@@ -264,22 +264,22 @@ describe('letterboxdEnricher', () => {
     })
     const throwing = () => letterboxdEnricher(aliceRef, { fetchFn })
 
-    await expect(throwing()).rejects.toThrow('Unexpected stream body')
+    expect(throwing()).rejects.toThrow('Unexpected stream body')
   })
 
-  it('should reject when fetch throws', async () => {
+  it('should reject when fetch throws', () => {
     const fetchFn: FetchFn = () => {
       throw new Error('Network error')
     }
     const throwing = () => letterboxdEnricher(aliceRef, { fetchFn })
 
-    await expect(throwing()).rejects.toThrow('Network error')
+    expect(throwing()).rejects.toThrow('Network error')
   })
 
-  it('should reject when the response is not 2xx', async () => {
+  it('should reject when the response is not 2xx', () => {
     const throwing = () => letterboxdEnricher(aliceRef, createContext({}))
     const expected = 'Unexpected status 404 from https://letterboxd.com/alice/films/'
 
-    await expect(throwing()).rejects.toThrow(expected)
+    expect(throwing()).rejects.toThrow(expected)
   })
 })

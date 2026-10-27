@@ -83,21 +83,21 @@ describe('hatenaBookmarkEnricher', () => {
     expect(await hatenaBookmarkEnricher(ref, createContext({}))).toEqual([])
   })
 
-  it('should reject when the avatar request fails with another status', async () => {
+  it('should reject when the avatar request fails with another status', () => {
     const fetchFn: FetchFn = (url) => {
       return { headers: new Headers(), body: '', url, status: 503 }
     }
     const throwing = () => hatenaBookmarkEnricher(ref, { fetchFn })
 
-    await expect(throwing()).rejects.toThrow('Unexpected status 503')
+    expect(throwing()).rejects.toThrow('Unexpected status 503')
   })
 
-  it('should reject when fetch throws', async () => {
+  it('should reject when fetch throws', () => {
     const fetchFn: FetchFn = () => {
       throw new Error('Network error')
     }
     const throwing = () => hatenaBookmarkEnricher(ref, { fetchFn })
 
-    await expect(throwing()).rejects.toThrow('Network error')
+    expect(throwing()).rejects.toThrow('Network error')
   })
 })
