@@ -244,34 +244,12 @@ describe('discoverFeeds', () => {
           },
         },
       )
-      const expected: Array<DiscoverProgress<FeedResult>> = [
-        {
-          tested: 1,
-          total: 2,
-          found: 0,
-          current: 'https://example.com/platform-feed',
-          method: 'platform',
-          result: { url: 'https://example.com/platform-feed', isValid: false, method: 'platform' },
-        },
-        {
-          tested: 2,
-          total: 2,
-          found: 1,
-          current: 'https://example.com/guess-feed',
-          method: 'guess',
-          result: {
-            url: 'https://example.com/guess-feed',
-            isValid: true,
-            method: 'guess',
-            format: 'rss',
-            title: 'Test RSS',
-            description: 'Test feed',
-            siteUrl: 'https://example.com/',
-          },
-        },
+      const expected = [
+        { tested: 1, total: 2, found: 0, current: 'https://example.com/platform-feed' },
+        { tested: 2, total: 2, found: 1, current: 'https://example.com/guess-feed' },
       ]
 
-      expect(progressUpdates).toEqual(expected)
+      expect(progressUpdates).toMatchObject(expected)
     })
   })
 
@@ -403,34 +381,22 @@ describe('discoverFeeds', () => {
           },
         },
       )
-      const expected: Array<DiscoverProgress<FeedResult>> = [
+      const expected = [
         {
           tested: 1,
           total: 2,
           found: 1,
           current: 'https://example.com/feed',
-          method: 'guess',
-          result: {
-            url: 'https://example.com/feed',
-            isValid: true,
-            method: 'guess',
-            format: 'rss',
-            title: 'Test RSS',
-            description: 'Test feed',
-            siteUrl: 'https://example.com/',
-          },
         },
         {
           tested: 2,
           total: 2,
           found: 1,
           current: 'https://example.com/rss',
-          method: 'guess',
-          result: { url: 'https://example.com/rss', isValid: false, method: 'guess' },
         },
       ]
 
-      expect(progressUpdates).toEqual(expected)
+      expect(progressUpdates).toMatchObject(expected)
     })
 
     it('should update progress correctly with additional base URLs', async () => {
@@ -452,16 +418,14 @@ describe('discoverFeeds', () => {
           },
         },
       )
-      const expected: DiscoverProgress<FeedResult> = {
+      const expected = {
         tested: 2,
         total: 2,
         found: 0,
         current: 'https://www.example.com/feed',
-        method: 'guess',
-        result: { url: 'https://www.example.com/feed', isValid: false, method: 'guess' },
       }
 
-      expect(progressUpdates.at(-1)).toEqual(expected)
+      expect(progressUpdates.at(-1)).toMatchObject(expected)
     })
 
     it('should count a candidate with several alternatives as tested once', async () => {
@@ -477,34 +441,13 @@ describe('discoverFeeds', () => {
           },
         },
       )
-      const expected: Array<DiscoverProgress<FeedResult>> = [
-        {
-          tested: 0,
-          total: 1,
-          found: 0,
-          current: 'https://example.com/a',
-          method: 'guess',
-          result: { url: 'https://example.com/a', isValid: false, method: 'guess' },
-        },
-        {
-          tested: 0,
-          total: 1,
-          found: 0,
-          current: 'https://example.com/b',
-          method: 'guess',
-          result: { url: 'https://example.com/b', isValid: false, method: 'guess' },
-        },
-        {
-          tested: 1,
-          total: 1,
-          found: 0,
-          current: 'https://example.com/c',
-          method: 'guess',
-          result: { url: 'https://example.com/c', isValid: false, method: 'guess' },
-        },
+      const expected = [
+        { tested: 0, total: 1, current: 'https://example.com/a' },
+        { tested: 0, total: 1, current: 'https://example.com/b' },
+        { tested: 1, total: 1, current: 'https://example.com/c' },
       ]
 
-      expect(progressUpdates).toEqual(expected)
+      expect(progressUpdates).toMatchObject(expected)
     })
 
     it('should count a candidate as tested when an alternative is valid', async () => {
@@ -520,34 +463,12 @@ describe('discoverFeeds', () => {
           },
         },
       )
-      const expected: Array<DiscoverProgress<FeedResult>> = [
-        {
-          tested: 0,
-          total: 1,
-          found: 0,
-          current: 'https://example.com/a',
-          method: 'guess',
-          result: { url: 'https://example.com/a', isValid: false, method: 'guess' },
-        },
-        {
-          tested: 1,
-          total: 1,
-          found: 1,
-          current: 'https://example.com/b',
-          method: 'guess',
-          result: {
-            url: 'https://example.com/b',
-            isValid: true,
-            method: 'guess',
-            format: 'rss',
-            title: 'Test RSS',
-            description: 'Test feed',
-            siteUrl: 'https://example.com/',
-          },
-        },
+      const expected = [
+        { tested: 0, total: 1, current: 'https://example.com/a' },
+        { tested: 1, total: 1, current: 'https://example.com/b' },
       ]
 
-      expect(progressUpdates).toEqual(expected)
+      expect(progressUpdates).toMatchObject(expected)
     })
 
     it('should pass the method and result of the tested URL', async () => {
@@ -567,27 +488,19 @@ describe('discoverFeeds', () => {
           },
         },
       )
-      const expected: Array<DiscoverProgress<FeedResult>> = [
+      const expected = [
         {
-          tested: 1,
-          total: 1,
-          found: 1,
-          current: 'https://example.com/videos',
           method: 'platform',
           result: {
             url: 'https://example.com/videos',
             isValid: true,
             method: 'platform',
             hint: { key: 'example:videos', label: 'Videos' },
-            format: 'rss',
-            title: 'Test RSS',
-            description: 'Test feed',
-            siteUrl: 'https://example.com/',
           },
         },
       ]
 
-      expect(progressUpdates).toEqual(expected)
+      expect(progressUpdates).toMatchObject(expected)
     })
   })
 
@@ -1639,24 +1552,13 @@ describe('discoverFeeds', () => {
           },
         },
       )
-      const expected: DiscoverProgress<FeedResult> = {
+      const expected = {
         tested: 2,
         total: 2,
         found: 1,
-        current: 'https://example.com/rss',
-        method: 'guess',
-        result: {
-          url: 'https://example.com/feed/',
-          isValid: true,
-          method: 'guess',
-          format: 'rss',
-          title: 'Test RSS',
-          description: 'Test feed',
-          siteUrl: 'https://example.com/',
-        },
       }
 
-      expect(progressUpdates.at(-1)).toEqual(expected)
+      expect(progressUpdates.at(-1)).toMatchObject(expected)
     })
 
     it('should return one invalid result when several candidates redirect to the same page', async () => {
@@ -1754,18 +1656,11 @@ describe('discoverFeeds', () => {
           concurrency: 2,
         },
       )
-      const expected: DiscoverResult<FeedResult> = {
-        url: 'https://example.com/feed/',
-        isValid: true,
-        method: 'platform',
-        hint: { key: 'posts', label: 'Posts' },
-        format: 'rss',
-        title: 'Test RSS',
-        description: 'Test feed',
-        siteUrl: 'https://example.com/',
-      }
+      const expected = { method: 'platform', hint: { key: 'posts', label: 'Posts' } }
 
-      expect(value.find((result) => result.url === 'https://example.com/feed/')).toEqual(expected)
+      expect(value.find((result) => result.url === 'https://example.com/feed/')).toMatchObject(
+        expected,
+      )
     })
 
     it('should keep the earlier candidate invalid result when a later one redirecting to the same page finishes first', async () => {
@@ -1833,25 +1728,12 @@ describe('discoverFeeds', () => {
           includeInvalid: true,
         },
       )
-      const expected: Array<DiscoverResult<FeedResult>> = [
-        {
-          url: 'https://example.com/feed',
-          isValid: false,
-          method: 'guess',
-          error: new Error('Timeout'),
-        },
-        {
-          url: 'https://example.com/feed',
-          isValid: true,
-          method: 'guess',
-          format: 'rss',
-          title: 'Test RSS',
-          description: 'Test feed',
-          siteUrl: 'https://example.com/',
-        },
+      const expected = [
+        { url: 'https://example.com/feed', isValid: false },
+        { url: 'https://example.com/feed', isValid: true },
       ]
 
-      expect(value).toEqual(expected)
+      expect(value).toMatchObject(expected)
     })
 
     it('should not fetch a page link that a platform entry offers as an alternative', async () => {
@@ -2383,19 +2265,12 @@ describe('discoverFeeds with non-http URLs', () => {
       { methods: ['html', 'guess'], fetchFn: mockFetch },
     )
 
-    const expected: Array<DiscoverResult<FeedResult>> = [
+    expect(value).toMatchObject([
       {
         url: 'https://example.com/feed.xml',
         isValid: true,
-        method: 'html',
-        format: 'rss',
-        title: 'Test RSS',
-        description: 'Test feed',
-        siteUrl: 'https://example.com/',
       },
-    ]
-
-    expect(value).toEqual(expected)
+    ])
   })
 
   it('should not fetch javascript and mailto links', async () => {

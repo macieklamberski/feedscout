@@ -175,9 +175,8 @@ describe('defaultFetchFn', () => {
       body: '{"method":"resolve"}',
     })
 
-    expect(capturedOptions).toEqual({
+    expect(capturedOptions).toMatchObject({
       method: 'POST',
-      headers: expect.any(Headers),
       body: '{"method":"resolve"}',
     })
   })

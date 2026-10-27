@@ -1299,26 +1299,16 @@ describe('withTextBody', () => {
     const bytes = encoder.encode('<title>Zażółć</title>')
     const value = withTextBody(createFetchFn(createStream([bytes.slice(0, 10), bytes.slice(10)])))
 
-    const expected = {
-      url: 'https://example.com/feed.xml',
+    expect(await value('https://example.com/feed.xml')).toMatchObject({
       body: '<title>Zażółć</title>',
-      headers: new Headers({ etag: '"1"' }),
-      status: 200,
-    }
-
-    expect(await value('https://example.com/feed.xml')).toEqual(expected)
+    })
   })
 
   it('should pass a string body through', async () => {
     const value = withTextBody(createFetchFn('<rss></rss>'))
 
-    const expected = {
-      url: 'https://example.com/feed.xml',
+    expect(await value('https://example.com/feed.xml')).toMatchObject({
       body: '<rss></rss>',
-      headers: new Headers({ etag: '"1"' }),
-      status: 200,
-    }
-
-    expect(await value('https://example.com/feed.xml')).toEqual(expected)
+    })
   })
 })

@@ -21,9 +21,7 @@ describe('createStatusError', () => {
       },
     }
 
-    const error = createStatusError(value)
-
-    expect({ message: error.message, cause: error.cause }).toEqual(expected)
+    expect(createStatusError(value)).toMatchObject(expected)
   })
 })
 
