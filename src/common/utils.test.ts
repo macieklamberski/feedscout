@@ -1008,8 +1008,8 @@ describe('findDescendant', () => {
   it('should return a nested descendant that passes the test', () => {
     const card = findElement(value, (element) => element.attribs.id === 'card') as Element
 
-    expect(findDescendant(card, (element) => element.name === 'img')).toMatchObject({
-      attribs: { src: 'nested.png' },
+    expect(findDescendant(card, (element) => element.name === 'img')?.attribs).toEqual({
+      src: 'nested.png',
     })
   })
 
@@ -1041,10 +1041,8 @@ describe('findElement', () => {
     `
     const element = findElement(value, (element) => element.name === 'img')
 
-    expect(element).toMatchObject({
-      attribs: {
-        src: 'https://example.com/first.png',
-      },
+    expect(element?.attribs).toEqual({
+      src: 'https://example.com/first.png',
     })
   })
 
@@ -1055,10 +1053,8 @@ describe('findElement', () => {
     `
     const element = findElement(value, (element) => hasClass(element.parent, 'avatar'))
 
-    expect(element).toMatchObject({
-      attribs: {
-        src: 'https://example.com/avatar.png',
-      },
+    expect(element?.attribs).toEqual({
+      src: 'https://example.com/avatar.png',
     })
   })
 
@@ -1066,10 +1062,8 @@ describe('findElement', () => {
     const value = '<a href="https://example.com/?a=1&amp;b=2">Link</a>'
     const element = findElement(value, (element) => element.name === 'a')
 
-    expect(element).toMatchObject({
-      attribs: {
-        href: 'https://example.com/?a=1&b=2',
-      },
+    expect(element?.attribs).toEqual({
+      href: 'https://example.com/?a=1&b=2',
     })
   })
 
@@ -1103,9 +1097,9 @@ describe('findElements', () => {
     `
     const elements = findElements(value, (element) => element.name === 'img')
 
-    expect(elements).toMatchObject([
-      { attribs: { src: 'https://example.com/first.png' } },
-      { attribs: { src: 'https://example.com/second.png' } },
+    expect(elements.map((element) => element.attribs)).toEqual([
+      { src: 'https://example.com/first.png' },
+      { src: 'https://example.com/second.png' },
     ])
   })
 
@@ -1305,16 +1299,26 @@ describe('withTextBody', () => {
     const bytes = encoder.encode('<title>Zażółć</title>')
     const value = withTextBody(createFetchFn(createStream([bytes.slice(0, 10), bytes.slice(10)])))
 
-    expect(await value('https://example.com/feed.xml')).toMatchObject({
+    const expected = {
+      url: 'https://example.com/feed.xml',
       body: '<title>Zażółć</title>',
-    })
+      headers: new Headers({ etag: '"1"' }),
+      status: 200,
+    }
+
+    expect(await value('https://example.com/feed.xml')).toEqual(expected)
   })
 
   it('should pass a string body through', async () => {
     const value = withTextBody(createFetchFn('<rss></rss>'))
 
-    expect(await value('https://example.com/feed.xml')).toMatchObject({
+    const expected = {
+      url: 'https://example.com/feed.xml',
       body: '<rss></rss>',
-    })
+      headers: new Headers({ etag: '"1"' }),
+      status: 200,
+    }
+
+    expect(await value('https://example.com/feed.xml')).toEqual(expected)
   })
 })
