@@ -3,10 +3,10 @@ import { type ProducthuntUrl, parseProducthuntUrl, producthuntHandler } from './
 
 describe('parseProducthuntUrl', () => {
   const productPages: Array<string> = [
-    'https://www.producthunt.com/products/notion',
-    'https://www.producthunt.com/Products/notion',
-    'https://producthunt.com/products/notion',
-    'https://www.producthunt.com/products/notion/reviews',
+    'https://www.producthunt.com/products/notion', // a product page
+    'https://www.producthunt.com/Products/notion', // a capitalized products segment
+    'https://producthunt.com/products/notion', // the host without www
+    'https://www.producthunt.com/products/notion/reviews', // a product subpage
   ]
 
   it.each(productPages)('should return the product for %s', (value) => {
@@ -16,9 +16,9 @@ describe('parseProducthuntUrl', () => {
   })
 
   const topicPages: Array<string> = [
-    'https://www.producthunt.com/topics/productivity',
-    'https://www.producthunt.com/topics/productivity/',
-    'https://www.producthunt.com/Topics/productivity',
+    'https://www.producthunt.com/topics/productivity', // a topic page
+    'https://www.producthunt.com/topics/productivity/', // a trailing slash
+    'https://www.producthunt.com/Topics/productivity', // a capitalized topics segment
   ]
 
   it.each(topicPages)('should return the topic for %s', (value) => {
@@ -28,11 +28,11 @@ describe('parseProducthuntUrl', () => {
   })
 
   const homePages: Array<string> = [
-    'https://www.producthunt.com/',
-    'https://www.producthunt.com/topics',
-    'https://www.producthunt.com/topics/productivity/launches',
-    'https://www.producthunt.com/categories/tech',
-    'https://www.producthunt.com/@rrhoover',
+    'https://www.producthunt.com/', // the home page
+    'https://www.producthunt.com/topics', // the topics index
+    'https://www.producthunt.com/topics/productivity/launches', // a topic subpage
+    'https://www.producthunt.com/categories/tech', // a category page
+    'https://www.producthunt.com/@rrhoover', // a user page
   ]
 
   it.each(homePages)('should return the home page for %s', (value) => {
