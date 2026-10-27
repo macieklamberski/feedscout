@@ -523,7 +523,10 @@ describe('platform handler invariant', () => {
 
   it('should leave a page on a known host to its handler when it links a marker', async () => {
     const value = '<a href="https://github.com/bookwyrm-social/bookwyrm">BookWyrm</a>'
-    const options = { ...defaultPlatformOptions, baseUrl: 'https://www.reddit.com/user/alice' }
+    const options = {
+      ...defaultPlatformOptions,
+      baseUrl: 'https://www.reddit.com/user/alice',
+    }
     const entries = await discoverUrisFromPlatform(value, undefined, options)
     const keys = entries.map((entry) => entry.hint?.key)
 

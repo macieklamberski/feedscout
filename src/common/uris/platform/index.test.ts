@@ -29,7 +29,10 @@ describe('discoverUrisFromPlatform', () => {
       match: () => true,
       resolve: () => [{ uri: 'https://example.com/feed.xml' }],
     }
-    const options = { baseUrl: 'https://example.com', handlers: [handler] }
+    const options = {
+      baseUrl: 'https://example.com',
+      handlers: [handler],
+    }
     const expected = [{ uri: 'https://example.com/feed.xml' }]
 
     expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
@@ -40,7 +43,10 @@ describe('discoverUrisFromPlatform', () => {
       match: () => false,
       resolve: () => [{ uri: 'https://example.com/feed.xml' }],
     }
-    const options = { baseUrl: 'https://example.com', handlers: [handler] }
+    const options = {
+      baseUrl: 'https://example.com',
+      handlers: [handler],
+    }
 
     expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual([])
   })
@@ -50,13 +56,19 @@ describe('discoverUrisFromPlatform', () => {
       match: () => true,
       resolve: () => [{ uri: 'https://example.com/feed.xml' }],
     }
-    const options = { baseUrl: 'foo://example.com', handlers: [handler] }
+    const options = {
+      baseUrl: 'foo://example.com',
+      handlers: [handler],
+    }
 
     expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual([])
   })
 
   it('should return empty array when handlers array is empty', async () => {
-    const options = { baseUrl: 'https://example.com', handlers: [] }
+    const options = {
+      baseUrl: 'https://example.com',
+      handlers: [],
+    }
 
     expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual([])
   })
@@ -112,7 +124,10 @@ describe('discoverUrisFromPlatform', () => {
       },
     }
     const html = '<html><body>Test</body></html>'
-    const options = { baseUrl: 'https://example.com', handlers: [handler] }
+    const options = {
+      baseUrl: 'https://example.com',
+      handlers: [handler],
+    }
 
     await discoverUrisFromPlatform(html, undefined, options)
 
@@ -133,7 +148,10 @@ describe('discoverUrisFromPlatform', () => {
         return []
       },
     }
-    const options = { baseUrl: 'https://example.com/page', handlers: [handler] }
+    const options = {
+      baseUrl: 'https://example.com/page',
+      handlers: [handler],
+    }
 
     await discoverUrisFromPlatform(undefined, undefined, options)
     const expected = ['match:https://example.com/page', 'resolve:https://example.com/page']
@@ -155,7 +173,10 @@ describe('discoverUrisFromPlatform', () => {
         return []
       },
     }
-    const options = { baseUrl: 'https://example.com/r//programming///hot', handlers: [handler] }
+    const options = {
+      baseUrl: 'https://example.com/r//programming///hot',
+      handlers: [handler],
+    }
 
     await discoverUrisFromPlatform(undefined, undefined, options)
     const expected = [
@@ -178,7 +199,10 @@ describe('discoverUrisFromPlatform', () => {
         return []
       },
     }
-    const options = { baseUrl: 'https://example.com//page?next=//example.org', handlers: [handler] }
+    const options = {
+      baseUrl: 'https://example.com//page?next=//example.org',
+      handlers: [handler],
+    }
 
     await discoverUrisFromPlatform(undefined, undefined, options)
     const expected = ['https://example.com/page?next=//example.org']
@@ -196,7 +220,10 @@ describe('discoverUrisFromPlatform', () => {
       },
       resolve: () => [],
     }
-    const options = { baseUrl: 'https://example.com/photos/name%20/', handlers: [handler] }
+    const options = {
+      baseUrl: 'https://example.com/photos/name%20/',
+      handlers: [handler],
+    }
 
     await discoverUrisFromPlatform(undefined, undefined, options)
     const expected = ['https://example.com/photos/name/']
@@ -214,7 +241,10 @@ describe('discoverUrisFromPlatform', () => {
       },
       resolve: () => [],
     }
-    const options = { baseUrl: 'https://example.com/playlist?list=PL123%20', handlers: [handler] }
+    const options = {
+      baseUrl: 'https://example.com/playlist?list=PL123%20',
+      handlers: [handler],
+    }
 
     await discoverUrisFromPlatform(undefined, undefined, options)
     const expected = ['https://example.com/playlist?list=PL123']
@@ -234,7 +264,10 @@ describe('discoverUrisFromPlatform', () => {
         return []
       },
     }
-    const options = { baseUrl: 'https://EXAMPLE.com:443', handlers: [handler] }
+    const options = {
+      baseUrl: 'https://EXAMPLE.com:443',
+      handlers: [handler],
+    }
 
     await discoverUrisFromPlatform(undefined, undefined, options)
     const expected = ['https://example.com/']
@@ -257,7 +290,10 @@ describe('discoverUrisFromPlatform', () => {
       },
     }
     const headers = new Headers({ 'content-type': 'text/html' })
-    const options = { baseUrl: 'https://example.com', handlers: [handler] }
+    const options = {
+      baseUrl: 'https://example.com',
+      handlers: [handler],
+    }
 
     await discoverUrisFromPlatform(undefined, headers, options)
 
@@ -284,7 +320,10 @@ describe('discoverUrisFromPlatform', () => {
         statusText: 'OK',
       })
     }
-    const options = { baseUrl: 'https://example.com', handlers: [handler] }
+    const options = {
+      baseUrl: 'https://example.com',
+      handlers: [handler],
+    }
 
     await discoverUrisFromPlatform(undefined, undefined, options, fetchFn)
 
@@ -378,7 +417,10 @@ describe('discoverUrisFromPlatform', () => {
       match: () => true,
       resolve: () => [{ uri: 'https://example.com/url.xml' }],
     }
-    const options = { baseUrl: 'https://example.com', handlers: [markerHandler, urlHandler] }
+    const options = {
+      baseUrl: 'https://example.com',
+      handlers: [markerHandler, urlHandler],
+    }
     const expected = [{ uri: 'https://example.com/url.xml' }]
 
     expect(await discoverUrisFromPlatform('<html></html>', undefined, options)).toEqual(expected)
@@ -395,7 +437,10 @@ describe('discoverUrisFromPlatform', () => {
       },
       resolve: () => [{ uri: 'https://example.com/feed.xml' }],
     }
-    const options = { baseUrl: 'https://example.com', handlers: [handler] }
+    const options = {
+      baseUrl: 'https://example.com',
+      handlers: [handler],
+    }
     const expected = [{ uri: 'https://example.com/feed.xml' }]
 
     expect(await discoverUrisFromPlatform('<html></html>', undefined, options)).toEqual(expected)
@@ -410,7 +455,10 @@ describe('discoverUrisFromPlatform', () => {
       match: (_url, content) => content !== undefined,
       resolve: () => [{ uri: 'https://example.com/second.xml' }],
     }
-    const options = { baseUrl: 'https://example.com', handlers: [firstHandler, secondHandler] }
+    const options = {
+      baseUrl: 'https://example.com',
+      handlers: [firstHandler, secondHandler],
+    }
     const expected = [{ uri: 'https://example.com/first.xml' }]
 
     expect(await discoverUrisFromPlatform('<html></html>', undefined, options)).toEqual(expected)
@@ -453,7 +501,11 @@ describe('discoverUrisFromPlatform', () => {
       ],
     }
     const enrichFn: DiscoverEnrichFn = () => ['https://cdn.example.com/alice.png']
-    const options = { baseUrl: 'https://example.com', handlers: [handler], enrichFn }
+    const options = {
+      baseUrl: 'https://example.com',
+      handlers: [handler],
+      enrichFn,
+    }
     const expected = [
       { uri: 'https://example.com/avatar.png' },
       { uri: 'https://cdn.example.com/alice.png' },
@@ -476,7 +528,11 @@ describe('discoverUrisFromPlatform', () => {
 
       return []
     }
-    const options = { baseUrl: 'https://example.com', handlers: [handler], enrichFn }
+    const options = {
+      baseUrl: 'https://example.com',
+      handlers: [handler],
+      enrichFn,
+    }
     const expected = [
       { platform: 'example', id: 'alice', url: 'https://example.com/@alice' },
       { platform: 'example', id: 'bob', url: 'https://example.com/@bob' },
@@ -495,7 +551,10 @@ describe('discoverUrisFromPlatform', () => {
         { platform: 'example', id: 'alice', url: 'https://example.com/@alice' },
       ],
     }
-    const options = { baseUrl: 'https://example.com', handlers: [handler] }
+    const options = {
+      baseUrl: 'https://example.com',
+      handlers: [handler],
+    }
     const expected = [{ uri: 'https://example.com/avatar.png' }]
 
     expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
@@ -512,7 +571,11 @@ describe('discoverUrisFromPlatform', () => {
 
       return []
     }
-    const options = { baseUrl: 'https://example.com', handlers: [handler], enrichFn }
+    const options = {
+      baseUrl: 'https://example.com',
+      handlers: [handler],
+      enrichFn,
+    }
 
     await discoverUrisFromPlatform(undefined, undefined, options)
 
@@ -534,7 +597,11 @@ describe('discoverUrisFromPlatform', () => {
 
       return ['https://cdn.example.com/bob.png']
     }
-    const options = { baseUrl: 'https://example.com', handlers: [handler], enrichFn }
+    const options = {
+      baseUrl: 'https://example.com',
+      handlers: [handler],
+      enrichFn,
+    }
     const expected = [{ uri: 'https://cdn.example.com/bob.png' }]
 
     expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
@@ -551,7 +618,11 @@ describe('discoverUrisFromPlatform', () => {
     const enrichFn: DiscoverEnrichFn = () => {
       throw new Error('Enrich error')
     }
-    const options = { baseUrl: 'https://example.com', handlers: [handler], enrichFn }
+    const options = {
+      baseUrl: 'https://example.com',
+      handlers: [handler],
+      enrichFn,
+    }
     const expected = [{ uri: 'https://example.com/avatar.png' }]
 
     expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
@@ -572,7 +643,11 @@ describe('discoverUrisFromPlatform', () => {
 
       return ['https://cdn.example.com/bob.png']
     }
-    const options = { baseUrl: 'https://example.com', handlers: [handler], enrichFn }
+    const options = {
+      baseUrl: 'https://example.com',
+      handlers: [handler],
+      enrichFn,
+    }
     const expected = [{ uri: 'https://cdn.example.com/bob.png' }]
 
     expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
@@ -591,7 +666,11 @@ describe('discoverUrisFromPlatform', () => {
     const onError: DiscoverOnErrorFn = (error, context) => {
       reported.push([error, context])
     }
-    const options = { baseUrl: 'https://example.com/@alice', handlers: [handler], enrichFn }
+    const options = {
+      baseUrl: 'https://example.com/@alice',
+      handlers: [handler],
+      enrichFn,
+    }
     const expected: Array<[unknown, DiscoverErrorContext]> = [
       [error, { phase: 'enrichFn', url: 'https://example.com/@alice' }],
     ]
@@ -613,7 +692,10 @@ describe('discoverUrisFromPlatform', () => {
     const onError: DiscoverOnErrorFn = (error, context) => {
       reported.push([error, context])
     }
-    const options = { baseUrl: 'https://example.com/page', handlers: [throwingHandler] }
+    const options = {
+      baseUrl: 'https://example.com/page',
+      handlers: [throwingHandler],
+    }
     const expected: Array<[unknown, DiscoverErrorContext]> = [
       [error, { phase: 'platformHandler', url: 'https://example.com/page' }],
     ]

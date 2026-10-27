@@ -1656,7 +1656,10 @@ describe('discoverFeeds', () => {
           concurrency: 2,
         },
       )
-      const expected = { method: 'platform', hint: { key: 'posts', label: 'Posts' } }
+      const expected = {
+        method: 'platform',
+        hint: { key: 'posts', label: 'Posts' },
+      }
 
       expect(value.find((result) => result.url === 'https://example.com/feed/')).toMatchObject(
         expected,
