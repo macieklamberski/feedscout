@@ -79,10 +79,10 @@
     "@types/bun": "^1.4.4",
     "@types/http-link-header": "^1.0.7",
     "feedsmith": "^3.0.1",
-    "kvalita": "^1.26.1",
+    "kvalita": "^1.26.3",
     "ogier": "^1.7.0",
     "trousse": "^2.16.0",
-    "tsdown": "^0.23.1",
+    "tsdown": "0.23.1",
     "vitepress": "^2.0.0-alpha.20"
   }
 }
