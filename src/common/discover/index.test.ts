@@ -602,8 +602,9 @@ describe('discoverFeeds', () => {
           },
         },
       )
+      const names = steps.map((step) => step.step)
 
-      expect(steps.map((step) => step.step)).toEqual(['collect', 'collect', 'validate', 'validate'])
+      expect(names).toEqual(['collect', 'collect', 'validate', 'validate'])
     })
 
     it('should report resolving the site URL', async () => {
@@ -854,8 +855,9 @@ describe('discoverFeeds', () => {
         fetchFn: mockFetch,
         resolveSiteUrlFn: () => 'https://example.com/',
       })
+      const urls = value.map((result) => result.url)
 
-      expect(value.map((result) => result.url)).toEqual(['https://example.com/feed'])
+      expect(urls).toEqual(['https://example.com/feed'])
     })
 
     it('should throw when the input fetch succeeds without headers', async () => {
@@ -935,8 +937,9 @@ describe('discoverFeeds', () => {
         methods: { platform: { handlers: [platformHandler] } },
         fetchFn: redirectingFetch,
       })
+      const urls = value.map((result) => result.url)
 
-      expect(value.map((result) => result.url)).toEqual(['https://example.com/popular/feed.xml'])
+      expect(urls).toEqual(['https://example.com/popular/feed.xml'])
     })
 
     it('should return the feed a handler builds from the site URL when its fetch ends on another URL', async () => {
@@ -965,8 +968,9 @@ describe('discoverFeeds', () => {
         fetchFn: redirectingFetch,
         resolveSiteUrlFn: () => 'https://example.com/popular',
       })
+      const urls = value.map((result) => result.url)
 
-      expect(value.map((result) => result.url)).toEqual(['https://example.com/popular/feed.xml'])
+      expect(urls).toEqual(['https://example.com/popular/feed.xml'])
     })
   })
 
@@ -1011,8 +1015,9 @@ describe('discoverFeeds', () => {
       const expectedContexts: Array<DiscoverErrorContext> = [
         { phase: 'resolveUrlFn', url: 'http://[malformed' },
       ]
+      const urls = value.map((result) => result.url)
 
-      expect(value.map((result) => result.url)).toEqual(['https://example.com/feed.xml'])
+      expect(urls).toEqual(['https://example.com/feed.xml'])
       expect(contexts).toEqual(expectedContexts)
     })
 
@@ -1032,8 +1037,9 @@ describe('discoverFeeds', () => {
           resolveUrlFn: asyncResolveUrlFn,
         },
       )
+      const urls = value.map((result) => result.url)
 
-      expect(value.map((result) => result.url)).toEqual(['https://example.com/feed.xml'])
+      expect(urls).toEqual(['https://example.com/feed.xml'])
     })
 
     it('should report an extractFn that throws on the input and keep discovering', async () => {
@@ -1060,8 +1066,9 @@ describe('discoverFeeds', () => {
       const expectedContexts: Array<DiscoverErrorContext> = [
         { phase: 'extractFn', url: 'https://example.com' },
       ]
+      const urls = value.map((result) => result.url)
 
-      expect(value.map((result) => result.url)).toEqual(['https://example.com/feed.xml'])
+      expect(urls).toEqual(['https://example.com/feed.xml'])
       expect(contexts).toEqual(expectedContexts)
     })
 
@@ -1083,8 +1090,9 @@ describe('discoverFeeds', () => {
       const expectedContexts: Array<DiscoverErrorContext> = [
         { phase: 'resolveSiteUrlFn', url: 'https://example.com' },
       ]
+      const urls = value.map((result) => result.url)
 
-      expect(value.map((result) => result.url)).toEqual(['https://example.com/feed'])
+      expect(urls).toEqual(['https://example.com/feed'])
       expect(contexts).toEqual(expectedContexts)
     })
 
@@ -1106,8 +1114,9 @@ describe('discoverFeeds', () => {
       const expectedContexts: Array<DiscoverErrorContext> = [
         { phase: 'onProgress', url: 'https://example.com/feed' },
       ]
+      const urls = value.map((result) => result.url)
 
-      expect(value.map((result) => result.url)).toEqual(['https://example.com/feed'])
+      expect(urls).toEqual(['https://example.com/feed'])
       expect(contexts).toEqual(expectedContexts)
     })
 
@@ -1132,8 +1141,9 @@ describe('discoverFeeds', () => {
         { phase: 'onStep' },
         { phase: 'onStep' },
       ]
+      const urls = value.map((result) => result.url)
 
-      expect(value.map((result) => result.url)).toEqual(['https://example.com/feed'])
+      expect(urls).toEqual(['https://example.com/feed'])
       expect(contexts).toEqual(expectedContexts)
     })
 
@@ -1154,8 +1164,9 @@ describe('discoverFeeds', () => {
       const expectedContexts: Array<DiscoverErrorContext> = [
         { phase: 'onProgress', url: 'https://example.com/feed' },
       ]
+      const urls = value.map((result) => result.url)
 
-      expect(value.map((result) => result.url)).toEqual(['https://example.com/feed'])
+      expect(urls).toEqual(['https://example.com/feed'])
       expect(contexts).toEqual(expectedContexts)
     })
 
@@ -1174,8 +1185,9 @@ describe('discoverFeeds', () => {
           throw new Error('Broken callback')
         },
       })
+      const urls = value.map((result) => result.url)
 
-      expect(value.map((result) => result.url)).toEqual(['https://example.com/feed'])
+      expect(urls).toEqual(['https://example.com/feed'])
     })
 
     it('should call onError when site URL resolution fails', async () => {
@@ -1227,11 +1239,9 @@ describe('discoverFeeds', () => {
         { url: 'https://example.com', content: '<html></html>' },
         { methods: { guess: { uris: ['/feed', '/rss'] } }, fetchFn: mockFetch },
       )
+      const urls = results.map((result) => result.url)
 
-      expect(results.map((result) => result.url)).toEqual([
-        'https://example.com/feed',
-        'https://example.com/rss',
-      ])
+      expect(urls).toEqual(['https://example.com/feed', 'https://example.com/rss'])
     })
   })
 
@@ -1656,11 +1666,10 @@ describe('discoverFeeds', () => {
           concurrency: 2,
         },
       )
+      const feed = value.find((result) => result.url === 'https://example.com/feed/')
       const expected = { method: 'platform', hint: { key: 'posts', label: 'Posts' } }
 
-      expect(value.find((result) => result.url === 'https://example.com/feed/')).toMatchObject(
-        expected,
-      )
+      expect(feed).toMatchObject(expected)
     })
 
     it('should keep the earlier candidate invalid result when a later one redirecting to the same page finishes first', async () => {

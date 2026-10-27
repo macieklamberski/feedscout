@@ -1007,16 +1007,18 @@ describe('findDescendant', () => {
 
   it('should return a nested descendant that passes the test', () => {
     const card = findElement(value, (element) => element.attribs.id === 'card') as Element
+    const result = findDescendant(card, (element) => element.name === 'img')
 
-    expect(findDescendant(card, (element) => element.name === 'img')).toMatchObject({
+    expect(result).toMatchObject({
       attribs: { src: 'nested.png' },
     })
   })
 
   it('should return undefined when no descendant passes the test', () => {
     const card = findElement(value, (element) => element.attribs.id === 'card') as Element
+    const result = findDescendant(card, (element) => element.name === 'a')
 
-    expect(findDescendant(card, (element) => element.name === 'a')).toBeUndefined()
+    expect(result).toBeUndefined()
   })
 })
 
@@ -1024,12 +1026,15 @@ describe('releaseParsedPage', () => {
   it('should drop the parsed page so the same content is parsed again', () => {
     const value = '<p id="card"></p>'
     const cached = findElement(value, (element) => element.attribs.id === 'card')
+    const repeated = findElement(value, (element) => element.attribs.id === 'card')
 
-    expect(findElement(value, (element) => element.attribs.id === 'card')).toBe(cached)
+    expect(repeated).toBe(cached)
 
     releaseParsedPage()
 
-    expect(findElement(value, (element) => element.attribs.id === 'card')).not.toBe(cached)
+    const reparsed = findElement(value, (element) => element.attribs.id === 'card')
+
+    expect(reparsed).not.toBe(cached)
   })
 })
 
@@ -1075,22 +1080,28 @@ describe('findElement', () => {
 
   it('should not match markup inside a comment', () => {
     const value = '<!-- <img src="https://example.com/avatar.png"> -->'
+    const result = findElement(value, (element) => element.name === 'img')
 
-    expect(findElement(value, (element) => element.name === 'img')).toBeUndefined()
+    expect(result).toBeUndefined()
   })
 
   it('should not match markup inside script text', () => {
     const value = '<script>const html = \'<img src="https://example.com/avatar.png">\'</script>'
+    const result = findElement(value, (element) => element.name === 'img')
 
-    expect(findElement(value, (element) => element.name === 'img')).toBeUndefined()
+    expect(result).toBeUndefined()
   })
 
   it('should return undefined for empty content', () => {
-    expect(findElement('', () => true)).toBeUndefined()
+    const result = findElement('', () => true)
+
+    expect(result).toBeUndefined()
   })
 
   it('should return undefined for undefined content', () => {
-    expect(findElement(undefined, () => true)).toBeUndefined()
+    const result = findElement(undefined, () => true)
+
+    expect(result).toBeUndefined()
   })
 })
 
@@ -1110,7 +1121,9 @@ describe('findElements', () => {
   })
 
   it('should return an empty array when no element passes the test', () => {
-    expect(findElements('<p>Text</p>', (element) => element.name === 'img')).toEqual([])
+    const result = findElements('<p>Text</p>', (element) => element.name === 'img')
+
+    expect(result).toEqual([])
   })
 })
 

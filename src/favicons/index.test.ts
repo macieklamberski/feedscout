@@ -293,8 +293,9 @@ describe('discoverFavicons', () => {
       methods: ['html'],
       fetchFn: mockFetch,
     })
+    const urls = result.map((favicon) => favicon.url)
 
-    expect(result.map((favicon) => favicon.url)).toEqual(['https://example.com/favicon.ico'])
+    expect(urls).toEqual(['https://example.com/favicon.ico'])
   })
 
   it('should resolve a relative link in the site page headers against the site, not the feed', async () => {
@@ -321,8 +322,9 @@ describe('discoverFavicons', () => {
       methods: ['headers'],
       fetchFn: mockFetch,
     })
+    const urls = result.map((favicon) => favicon.url)
 
-    expect(result.map((favicon) => favicon.url)).toEqual(['https://example.com/favicon.png'])
+    expect(urls).toEqual(['https://example.com/favicon.png'])
   })
 
   it('should resolve a relative icon in the feed against the feed, not the site', async () => {
@@ -344,8 +346,9 @@ describe('discoverFavicons', () => {
       methods: ['feed'],
       fetchFn: mockFetch,
     })
+    const urls = result.map((favicon) => favicon.url)
 
-    expect(result.map((favicon) => favicon.url)).toEqual(['https://feeds.example.org/icon.png'])
+    expect(urls).toEqual(['https://feeds.example.org/icon.png'])
   })
 
   it('should scan the site origin when the feed site link is malformed', async () => {
@@ -367,8 +370,9 @@ describe('discoverFavicons', () => {
       methods: ['html'],
       fetchFn: mockFetch,
     })
+    const urls = result.map((favicon) => favicon.url)
 
-    expect(result.map((favicon) => favicon.url)).toEqual(['https://example.com/favicon.ico'])
+    expect(urls).toEqual(['https://example.com/favicon.ico'])
   })
 
   it('should discover favicon from Atom feed content', async () => {
