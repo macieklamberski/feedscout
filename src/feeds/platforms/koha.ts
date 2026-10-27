@@ -6,7 +6,8 @@ import { composeHint, digitsRegex, hasMarker } from '../../common/utils.js'
 // Generic covers comments, search (html).
 // Handler needed for: list.
 
-const scriptRegex = /^(.*)\/cgi-bin\/koha\/(opac-search|opac-shelves|opac-showreviews)\.pl$/i
+const scriptRegex =
+  /^(?<root>.*)\/cgi-bin\/koha\/(?<script>opac-search|opac-shelves|opac-showreviews)\.pl$/i
 
 // The feed link Koha prints drops the page's paging and sort for the newest acquisitions.
 const searchPageParams = ['count', 'format', 'offset', 'sort_by']
@@ -23,7 +24,7 @@ export const isKohaHtml = (content: string): boolean => {
 
 export const parseKohaUrl = (url: string): KohaUrl | undefined => {
   const parsedUrl = parseUrl(url)
-  const [, root, script] = parsedUrl?.pathname.match(scriptRegex) ?? []
+  const { root, script } = parsedUrl?.pathname.match(scriptRegex)?.groups ?? {}
 
   if (!parsedUrl || root === undefined || !script) {
     return

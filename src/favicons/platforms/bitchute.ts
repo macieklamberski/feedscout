@@ -4,7 +4,7 @@ import { parseBitchuteUrl } from '../../feeds/platforms/bitchute.js'
 
 // The `_large` rendition is 570x556, the `_medium` one is a 400x400 square.
 const channelImageRegex =
-  /^(https:\/\/static-\d+\.bitchute\.com\/live\/channel_images\/.+)_large(\.\w+)$/
+  /^(?<base>https:\/\/static-\d+\.bitchute\.com\/live\/channel_images\/.+)_large(?<extension>\.\w+)$/
 
 export const bitchuteHandler: PlatformHandler = {
   match: (url) => {
@@ -16,13 +16,14 @@ export const bitchuteHandler: PlatformHandler = {
       return []
     }
 
-    const match = getMetaContent(content, 'og:image')?.match(channelImageRegex)
+    const { base, extension } =
+      getMetaContent(content, 'og:image')?.match(channelImageRegex)?.groups ?? {}
 
     // An unknown channel serves a generic sharing image outside `channel_images`.
-    if (!match) {
+    if (!base || !extension) {
       return []
     }
 
-    return [{ uri: `${match[1]}_medium${match[2]}` }]
+    return [{ uri: `${base}_medium${extension}` }]
   },
 }

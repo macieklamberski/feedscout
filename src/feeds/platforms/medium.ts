@@ -17,7 +17,7 @@ export const hosts = ['medium.com', 'www.medium.com']
 
 const userRegex = /^\/@([^/]+)/
 const tagRegex = /^\/tag\/([^/]+)/i
-const publicationTagRegex = /^\/([^/@][^/]+)\/tagged\/([^/]+)/i
+const publicationTagRegex = /^\/(?<publication>[^/@][^/]+)\/tagged\/(?<tag>[^/]+)/i
 const publicationRegex = /^\/([^/@][^/]+)/
 const subdomainTagRegex = /^\/tagged\/([^/]+)/i
 
@@ -64,7 +64,7 @@ export const parseMediumUrl = (url: string): MediumUrl | undefined => {
     return
   }
 
-  const publicationTag = pathname.match(publicationTagRegex)?.[2]
+  const publicationTag = pathname.match(publicationTagRegex)?.groups?.tag
 
   if (publicationTag) {
     return { kind: 'publication', publication, tag: publicationTag }
