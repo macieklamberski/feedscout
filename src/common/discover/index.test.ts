@@ -1940,14 +1940,15 @@ describe('discoverFeeds', () => {
       type ExtendedFeedResult = FeedResult & {
         etag?: string
       }
-      const mockFetch: FetchFn = (url) =>
-        Promise.resolve({
+      const mockFetch: FetchFn = (url) => {
+        return Promise.resolve({
           headers: new Headers({ etag: '"abc123"' }),
           body: '<rss><channel><title>Test</title></channel></rss>',
           url,
           status: 200,
           statusText: 'OK',
         })
+      }
       const customExtractor: DiscoverExtractFn<ExtendedFeedResult> = ({
         url,
         content,
@@ -2160,14 +2161,15 @@ describe('discoverFeeds', () => {
 
         return { url, isValid: false }
       }
-      const mockFetch: FetchFn = (url: string) =>
-        Promise.resolve({
+      const mockFetch: FetchFn = (url: string) => {
+        return Promise.resolve({
           headers: responseHeaders,
           body: rss,
           url,
           status: 200,
           statusText: 'OK',
         })
+      }
       await discoverFeeds(
         { url: 'https://example.com', content: '<html></html>' },
         {
