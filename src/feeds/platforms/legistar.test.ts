@@ -52,11 +52,10 @@ describe('parseLegistarUrl', () => {
   })
 
   it('should return undefined for a non-numeric ID', () => {
-    expect(
-      parseLegistarUrl(
-        'https://madison.legistar.com/LegislationDetail.aspx?ID=abc&GUID=EFE087C2-C62A-40F9-B1F9-6E2975E86217',
-      ),
-    ).toBeUndefined()
+    const value =
+      'https://madison.legistar.com/LegislationDetail.aspx?ID=abc&GUID=EFE087C2-C62A-40F9-B1F9-6E2975E86217'
+
+    expect(parseLegistarUrl(value)).toBeUndefined()
   })
 
   it('should return undefined for a GUID with a non-hex character', () => {
@@ -74,11 +73,10 @@ describe('parseLegistarUrl', () => {
   })
 
   it('should return undefined for another detail page', () => {
-    expect(
-      parseLegistarUrl(
-        'https://madison.legistar.com/DepartmentDetail.aspx?ID=17411&GUID=ED5B7181-AD76-4EF5-9730-729ACA9BFE9C',
-      ),
-    ).toBeUndefined()
+    const value =
+      'https://madison.legistar.com/DepartmentDetail.aspx?ID=17411&GUID=ED5B7181-AD76-4EF5-9730-729ACA9BFE9C'
+
+    expect(parseLegistarUrl(value)).toBeUndefined()
   })
 
   it('should return the legislation for a detail page on a custom domain', () => {

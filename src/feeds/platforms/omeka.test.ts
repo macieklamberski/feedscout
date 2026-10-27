@@ -140,18 +140,14 @@ describe('getOmekaPage', () => {
   })
 
   it('should return the query of a tag browse page', () => {
+    const value = 'https://example.com/biblioteca/items/browse?tags=poes%C3%ADa'
     const expected: OmekaPage = {
       kind: 'browse',
       rootUrl: 'https://example.com/biblioteca',
       query: 'tags=poes%C3%ADa',
     }
 
-    expect(
-      getOmekaPage(
-        'https://example.com/biblioteca/items/browse?tags=poes%C3%ADa',
-        omekaSubPathHtml,
-      ),
-    ).toEqual(expected)
+    expect(getOmekaPage(value, omekaSubPathHtml)).toEqual(expected)
   })
 
   it('should return the query of a collection browse page', () => {
