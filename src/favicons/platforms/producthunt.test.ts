@@ -134,12 +134,9 @@ describe('producthuntHandler', () => {
     })
 
     it('should return empty array for a topic og:image outside ph-files.imgix.net', () => {
-      expect(
-        producthuntHandler.resolve(
-          'https://www.producthunt.com/topics/productivity',
-          foreignImagePage,
-        ),
-      ).toEqual([])
+      const value = 'https://www.producthunt.com/topics/productivity'
+
+      expect(producthuntHandler.resolve(value, foreignImagePage)).toEqual([])
     })
 
     it('should return empty array for a topic page without content', () => {

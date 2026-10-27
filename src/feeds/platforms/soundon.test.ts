@@ -14,16 +14,13 @@ describe('parseSoundonUrl', () => {
   })
 
   it('should return the podcast for an embed page', () => {
+    const value = 'https://player.soundon.fm/embed/?podcast=2b3a8f6c-1234-4abc-9def-0123456789ab'
     const expected: SoundonUrl = {
       kind: 'podcast',
       podcastId: '2b3a8f6c-1234-4abc-9def-0123456789ab',
     }
 
-    expect(
-      parseSoundonUrl(
-        'https://player.soundon.fm/embed/?podcast=2b3a8f6c-1234-4abc-9def-0123456789ab',
-      ),
-    ).toEqual(expected)
+    expect(parseSoundonUrl(value)).toEqual(expected)
   })
 
   it('should return undefined for an id with a non-hex character', () => {

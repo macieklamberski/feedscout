@@ -34,17 +34,14 @@ describe('parseBubblelifeUrl', () => {
   })
 
   it('should return the library for a library page', () => {
+    const value = 'https://denver.bubblelife.com/community/denver_ireporter/library/35828711'
     const expected: BubblelifeUrl = {
       kind: 'library',
       community: 'denver_ireporter',
       libraryId: '35828711',
     }
 
-    expect(
-      parseBubblelifeUrl(
-        'https://denver.bubblelife.com/community/denver_ireporter/library/35828711',
-      ),
-    ).toEqual(expected)
+    expect(parseBubblelifeUrl(value)).toEqual(expected)
   })
 
   it('should return the library for a post page', () => {

@@ -34,14 +34,9 @@ describe('mastodonHandler', () => {
 
     it('should match when both HTML and headers indicate Mastodon', () => {
       const value = '<meta name="generator" content="Mastodon v4.2.0">'
+      const headers = new Headers({ server: 'Mastodon' })
 
-      expect(
-        mastodonHandler.match(
-          'https://example.com/@user',
-          value,
-          new Headers({ server: 'Mastodon' }),
-        ),
-      ).toBe(true)
+      expect(mastodonHandler.match('https://example.com/@user', value, headers)).toBe(true)
     })
 
     it('should not match tag pages', () => {

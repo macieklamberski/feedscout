@@ -157,6 +157,7 @@ describe('placementIndiaHandler', () => {
         ><i class="fa fa-feed"></i> RSS Feed </a>
         ${vacanciesAnchor}
       `
+      const url = 'https://www.example.com/job-openings-for-python-developer-jaipur-1234567.htm'
       const expected = [
         {
           uri: 'https://www.example.com/vacancy_1234567.rss',
@@ -168,15 +169,11 @@ describe('placementIndiaHandler', () => {
         },
       ]
 
-      expect(
-        placementIndiaHandler.resolve(
-          'https://www.example.com/job-openings-for-python-developer-jaipur-1234567.htm',
-          value,
-        ),
-      ).toEqual(expected)
+      expect(placementIndiaHandler.resolve(url, value)).toEqual(expected)
     })
 
     it('should not build a job opening feed from the job page url alone', () => {
+      const value = 'https://www.example.com/job-openings-for-python-developer-jaipur-1234567.htm'
       const expected = [
         {
           uri: 'https://www.example.com/vacancy.rss',
@@ -184,12 +181,7 @@ describe('placementIndiaHandler', () => {
         },
       ]
 
-      expect(
-        placementIndiaHandler.resolve(
-          'https://www.example.com/job-openings-for-python-developer-jaipur-1234567.htm',
-          placementIndiaHtml,
-        ),
-      ).toEqual(expected)
+      expect(placementIndiaHandler.resolve(value, placementIndiaHtml)).toEqual(expected)
     })
 
     it('should not return a job opening feed of another host', () => {
@@ -247,6 +239,7 @@ describe('placementIndiaHandler', () => {
         >RSS Feed</a>
         ${vacanciesAnchor}
       `
+      const url = 'https://www.example.com/job-openings-for-python-developer-jaipur-1234567.htm'
       const expected = [
         {
           uri: 'https://www.example.com/vacancy_1234567.rss',
@@ -258,12 +251,7 @@ describe('placementIndiaHandler', () => {
         },
       ]
 
-      expect(
-        placementIndiaHandler.resolve(
-          'https://www.example.com/job-openings-for-python-developer-jaipur-1234567.htm',
-          value,
-        ),
-      ).toEqual(expected)
+      expect(placementIndiaHandler.resolve(url, value)).toEqual(expected)
     })
 
     it('should return nothing without content', () => {

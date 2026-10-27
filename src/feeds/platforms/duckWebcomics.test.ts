@@ -113,11 +113,9 @@ describe('duckWebcomicsHandler', () => {
     })
 
     it('should not match a strip page', () => {
-      expect(
-        duckWebcomicsHandler.guessExclusionRegex?.test(
-          'https://www.theduckwebcomics.com/HaTs/4960244/',
-        ),
-      ).toBe(false)
+      const value = 'https://www.theduckwebcomics.com/HaTs/4960244/'
+
+      expect(duckWebcomicsHandler.guessExclusionRegex?.test(value)).toBe(false)
     })
   })
 })

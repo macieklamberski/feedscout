@@ -589,50 +589,46 @@ describe('discoverUrisFromHtml', () => {
     it('should use custom anchorUris', () => {
       const value = '<a href="/custom-feed">Feed</a>'
       const expected = ['/custom-feed']
+      const options = {
+        ...defaultOptions,
+        anchorUris: ['/custom-feed'],
+      }
 
-      expect(
-        discoverUrisFromHtml(value, {
-          ...defaultOptions,
-          anchorUris: ['/custom-feed'],
-        }),
-      ).toEqual(expected)
+      expect(discoverUrisFromHtml(value, options)).toEqual(expected)
     })
 
     it('should use custom RegExp anchorUris', () => {
       const value = '<a href="/podcast/episodes.xml">Link</a>'
       const expected = ['/podcast/episodes.xml']
+      const options = {
+        ...defaultOptions,
+        // biome-ignore lint/performance/useTopLevelRegex: Test-specific pattern.
+        anchorUris: [/\/podcast\//],
+      }
 
-      expect(
-        discoverUrisFromHtml(value, {
-          ...defaultOptions,
-          // biome-ignore lint/performance/useTopLevelRegex: Test-specific pattern.
-          anchorUris: [/\/podcast\//],
-        }),
-      ).toEqual(expected)
+      expect(discoverUrisFromHtml(value, options)).toEqual(expected)
     })
 
     it('should use custom anchorLabels', () => {
       const value = '<a href="/news.xml">Get Updates</a>'
       const expected = ['/news.xml']
+      const options = {
+        ...defaultOptions,
+        anchorLabels: ['updates'],
+      }
 
-      expect(
-        discoverUrisFromHtml(value, {
-          ...defaultOptions,
-          anchorLabels: ['updates'],
-        }),
-      ).toEqual(expected)
+      expect(discoverUrisFromHtml(value, options)).toEqual(expected)
     })
 
     it('should use custom anchorIgnoredUris', () => {
       const value = '<a href="/custom-ignore/feed">Feed</a>'
       const expected: Array<string> = []
+      const options = {
+        ...defaultOptions,
+        anchorIgnoredUris: ['custom-ignore'],
+      }
 
-      expect(
-        discoverUrisFromHtml(value, {
-          ...defaultOptions,
-          anchorIgnoredUris: ['custom-ignore'],
-        }),
-      ).toEqual(expected)
+      expect(discoverUrisFromHtml(value, options)).toEqual(expected)
     })
   })
 
