@@ -1987,6 +1987,7 @@ describe('attempt', () => {
     const thenable: PromiseLike<string> = {
       // biome-ignore lint/suspicious/noThenProperty: A thenable is the input under test.
       then: (_onFulfilled, onRejected) => {
+        // biome-ignore lint/plugin/noThen: The thenable under test hands its rejection to onRejected.
         return Promise.reject(new Error('Thenable failed')).then(undefined, onRejected)
       },
     }

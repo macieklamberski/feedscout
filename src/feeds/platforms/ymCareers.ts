@@ -30,7 +30,7 @@ export const parseYmCareersUrl = (url: string): YmCareersUrl | undefined => {
   const query = parsedUrl.search
     .slice(1)
     .split('&')
-    .filter((pair) => pair !== '' && !isAnyOf(pair.split('=')[0], excludedParams))
+    .filter((pair) => pair && !isAnyOf(pair.split('=')[0], excludedParams))
     .join('&')
 
   if (searchPathRegex.test(parsedUrl.pathname)) {
