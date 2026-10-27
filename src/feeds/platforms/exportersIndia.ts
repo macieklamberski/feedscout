@@ -47,12 +47,12 @@ const getExportersIndiaPage = (
       continue
     }
 
-    if (productsFeedPathRegex.test(target.pathname)) {
-      productsFeedUrl ??= target.href
+    if (productsFeedPathRegex.test(target.pathname) && productsFeedUrl === undefined) {
+      productsFeedUrl = target.href
     }
 
-    if (servicesFeedPathRegex.test(target.pathname)) {
-      servicesFeedUrl ??= target.href
+    if (servicesFeedPathRegex.test(target.pathname) && servicesFeedUrl === undefined) {
+      servicesFeedUrl = target.href
     }
   }
 

@@ -69,10 +69,8 @@ export const getTenderPage = (url: string, content: string | undefined): TenderP
     return
   }
 
-  if (isHostOrSubdomainOf(url, domains)) {
-    if (!getTenantSubdomain(url, domains)) {
-      return
-    }
+  if (isHostOrSubdomainOf(url, domains) && !getTenantSubdomain(url, domains)) {
+    return
   }
 
   const root = getRoot(parsedUrl.pathname, content)

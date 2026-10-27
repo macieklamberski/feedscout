@@ -17,7 +17,7 @@ export const isSmfHtml = (content: string): boolean => {
 
 // A board page and a topic page both link their board as `rel="index"`.
 const getBoardId = (url: string, content: string): string | undefined => {
-  const urlBoardId = url.match(boardIdRegex)?.[1]
+  const urlBoardId = boardIdRegex.exec(url)?.[1]
 
   if (urlBoardId) {
     return urlBoardId

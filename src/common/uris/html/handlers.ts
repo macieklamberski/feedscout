@@ -6,7 +6,7 @@ import type { HtmlMethodContext } from './types.js'
 export const handleOpenTag = (
   context: HtmlMethodContext,
   name: string,
-  attribs: { [key: string]: string },
+  attribs: Record<string, string>,
   _isImplied?: boolean,
 ): void => {
   // Capture the first <base href> to resolve relative URLs against (browser semantics).

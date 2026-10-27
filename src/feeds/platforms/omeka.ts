@@ -46,7 +46,7 @@ const getAssetRoot = (content: string | undefined): string | undefined => {
     return
   }
 
-  return getAssetPath(asset).match(assetRootRegex)?.[1]
+  return assetRootRegex.exec(getAssetPath(asset))?.[1]
 }
 
 export const isOmekaHtml = (content: string): boolean => {

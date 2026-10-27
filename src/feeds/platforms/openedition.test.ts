@@ -22,15 +22,15 @@ describe('parseOpeneditionUrl', () => {
   })
 
   it('should return the journal for its feed list page', () => {
-    const expected: OpeneditionUrl = { kind: 'journal', journal: 'example' }
     const value = 'https://journals.openedition.org/example/?page=backend'
+    const expected: OpeneditionUrl = { kind: 'journal', journal: 'example' }
 
     expect(parseOpeneditionUrl(value)).toEqual(expected)
   })
 
   it('should return the journal for a hyphenated journal', () => {
-    const expected: OpeneditionUrl = { kind: 'journal', journal: 'example-journal' }
     const value = 'https://journals.openedition.org/example-journal/'
+    const expected: OpeneditionUrl = { kind: 'journal', journal: 'example-journal' }
 
     expect(parseOpeneditionUrl(value)).toEqual(expected)
   })

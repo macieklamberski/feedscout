@@ -1,10 +1,9 @@
+import type { MaybePromise } from 'trousse'
 import type { FeedMethodOptions } from './uris/feed/types.js'
 import type { GuessMethodOptions } from './uris/guess/types.js'
 import type { HeadersMethodOptions } from './uris/headers/types.js'
 import type { HtmlMethodOptions } from './uris/html/types.js'
 import type { PlatformMethodOptions } from './uris/platform/types.js'
-
-export type MaybePromise<T> = T | Promise<T>
 
 export type Pattern = string | RegExp
 

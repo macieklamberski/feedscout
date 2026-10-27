@@ -40,15 +40,15 @@ describe('parseAladinUrl', () => {
   })
 
   it('should return the category for a category page with a list type', () => {
-    const expected: AladinUrl = { kind: 'category', username: 'alice', categoryId: '12345678' }
     const value = 'https://blog.aladin.co.kr/alice/category/12345678?communitytype=MyPaper'
+    const expected: AladinUrl = { kind: 'category', username: 'alice', categoryId: '12345678' }
 
     expect(parseAladinUrl(value)).toEqual(expected)
   })
 
   it('should return the category for a capitalized category segment', () => {
-    const expected: AladinUrl = { kind: 'category', username: 'alice', categoryId: '12345678' }
     const value = 'https://blog.aladin.co.kr/alice/Category/12345678?CommunityType=AllView&page=2'
+    const expected: AladinUrl = { kind: 'category', username: 'alice', categoryId: '12345678' }
 
     expect(parseAladinUrl(value)).toEqual(expected)
   })

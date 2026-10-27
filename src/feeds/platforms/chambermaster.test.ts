@@ -32,8 +32,8 @@ describe('parseChambermasterUrl', () => {
   })
 
   it('should return the events page for an event', () => {
-    const expected: ChambermasterUrl = { kind: 'events' }
     const value = 'https://business.example.com/events/details/community-networking-mixer-30539'
+    const expected: ChambermasterUrl = { kind: 'events' }
 
     expect(parseChambermasterUrl(value)).toEqual(expected)
   })

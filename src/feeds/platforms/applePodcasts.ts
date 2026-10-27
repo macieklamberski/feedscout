@@ -14,7 +14,7 @@ const feedUrlRegex = /"feedUrl"\s*:\s*"([^"]+)"/
 
 // The value is a JSON string, which may write `/` as `\/` and `&` as `\u0026`.
 const extractFeedUrlFromContent = (content: string): string | undefined => {
-  const value = content.match(feedUrlRegex)?.[1]
+  const value = feedUrlRegex.exec(content)?.[1]
 
   if (!value) {
     return

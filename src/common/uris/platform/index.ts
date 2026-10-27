@@ -149,6 +149,7 @@ export const resolveFromPlatform = async (
   // Each ref is enriched on its own, so one that fails leaves the icons of the others.
   for (const ref of refs) {
     try {
+      // biome-ignore lint/nursery/useAwaitThenable: The enrich function may return a promise.
       const uris = await enrichFn(ref)
 
       for (const uri of uris ?? []) {

@@ -82,7 +82,9 @@ describe('composeHint', () => {
   })
 
   it('should not return format when no format is given', () => {
-    expect(composeHint('youtube:all')).not.toHaveProperty('format')
+    const expected: DiscoverUriHint = { key: 'youtube:all', label: 'All uploads' }
+
+    expect(composeHint('youtube:all')).toEqual(expected)
   })
 
   it('should return undefined label for unknown key', () => {

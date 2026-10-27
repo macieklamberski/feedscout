@@ -65,7 +65,7 @@ const getForumId = (pathname: string, search: string): string | undefined => {
   }
 
   const forumId =
-    search.match(forumIdRegex)?.groups?.forumId ?? search.match(friendlyForumIdRegex)?.[1]
+    forumIdRegex.exec(search)?.groups?.forumId ?? friendlyForumIdRegex.exec(search)?.[1]
 
   if (forumId && digitsRegex.test(forumId)) {
     return forumId

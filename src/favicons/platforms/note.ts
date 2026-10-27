@@ -19,7 +19,7 @@ const getOwner = (url: string): string | undefined => {
 }
 
 const parseProfileImageUrl = (content: string): string | undefined => {
-  const match = content.match(profileImageUrlRegex)
+  const match = profileImageUrlRegex.exec(content)
 
   if (!match?.[1]) {
     return

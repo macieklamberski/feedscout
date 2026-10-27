@@ -61,7 +61,7 @@ export const parseDiscuzUrl = (url: string): DiscuzUrl | undefined => {
   // The archiver carries the board in the query key, as in `archiver/?fid-22.html`, or in the path
   // with rewrites on, as in `archiver/fid-22.html`.
   const boardId =
-    pathname.match(boardPathRegex)?.[1] ?? `${pathname}${search}`.match(archiverBoardRegex)?.[1]
+    boardPathRegex.exec(pathname)?.[1] ?? archiverBoardRegex.exec(`${pathname}${search}`)?.[1]
 
   if (boardId) {
     return { kind: 'board', boardId }

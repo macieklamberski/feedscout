@@ -37,7 +37,7 @@ export const parsePinboardUrl = (url: string): PinboardUrl | undefined => {
     const tags: Array<string> = []
 
     for (const segment of rest) {
-      const tag = segment.match(tagRegex)?.[1]
+      const tag = tagRegex.exec(segment)?.[1]
 
       if (tag) {
         tags.push(tag)

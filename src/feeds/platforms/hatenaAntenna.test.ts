@@ -57,8 +57,8 @@ describe('parseHatenaAntennaUrl', () => {
   })
 
   it('should return the group for the simple view of a group', () => {
-    const expected: HatenaAntennaUrl = { kind: 'group', username: 'alice', groupId: '390986' }
     const value = 'https://a.hatena.ne.jp/alice/simple?gid=390986'
+    const expected: HatenaAntennaUrl = { kind: 'group', username: 'alice', groupId: '390986' }
 
     expect(parseHatenaAntennaUrl(value)).toEqual(expected)
   })

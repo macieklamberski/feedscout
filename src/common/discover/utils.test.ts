@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, it, spyOn } from 'bun:test'
 import { parseFeed } from 'feedsmith'
+import type { MaybePromise } from 'trousse'
 import locales from '../../locales.json' with { type: 'json' }
 import type {
   DiscoverErrorContext,
@@ -23,16 +24,15 @@ import {
 describe('defaultFetchFn', () => {
   type MockResponse = Pick<Response, 'headers' | 'text' | 'url' | 'status' | 'statusText'>
 
-  type MockFetchImplementation = (
-    url: string,
-    options?: RequestInit,
-  ) => MockResponse | Promise<MockResponse>
+  type MockFetchImplementation = (url: string, options?: RequestInit) => MaybePromise<MockResponse>
 
   const createFetchMock = (implementation: MockFetchImplementation): typeof fetch => {
     const fetchMock = async (input: URL | RequestInfo, init?: RequestInit) => {
+      // biome-ignore lint/plugin: A mock response stands in for the parts of Response the fetch reads.
       return (await implementation(input.toString(), init)) as Response
     }
 
+    // biome-ignore lint/plugin: Bun types fetch with a preconnect method a plain function lacks.
     return fetchMock as typeof fetch
   }
 
@@ -379,7 +379,6 @@ describe('normalizeInput', () => {
     }
     const expected = {
       url: 'https://example.com',
-      content: undefined,
       headers: expect.any(Headers),
       status: 200,
     }
@@ -2214,7 +2213,7 @@ describe('omitReadPages', () => {
 
   it('should drop only the alternatives that point at a read page', () => {
     const value = { uri: ['https://example.com/#', 'https://example.com/feed'], hint: undefined }
-    const expected = { uri: 'https://example.com/feed', hint: undefined }
+    const expected = { uri: 'https://example.com/feed' }
 
     expect(omitReadPages(value, readPageUrls)).toEqual(expected)
   })
