@@ -78,7 +78,7 @@ export const getAncestorPathBases = (baseUrl: string, maxDepth: number): Array<s
   const segments = url.pathname
     .split('/')
     .slice(1, -1)
-    .filter((segment) => segment !== '')
+    .filter((segment) => segment)
   const bases: Array<string> = []
   let base = `${url.origin}/`
 
@@ -174,7 +174,7 @@ export const getSubdomainVariants = (baseUrl: string, prefixes: Array<string>): 
   const port = url.port ? `:${url.port}` : ''
 
   return prefixes.map((prefix) => {
-    const hostname = prefix === '' ? rootDomain : `${prefix}.${rootDomain}`
+    const hostname = prefix ? `${prefix}.${rootDomain}` : rootDomain
     return `${protocol}//${hostname}${port}`
   })
 }

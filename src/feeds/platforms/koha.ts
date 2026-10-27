@@ -35,7 +35,7 @@ export const parseKohaUrl = (url: string): KohaUrl | undefined => {
   if (page === 'opac-search') {
     const terms = [...getQueryParams(params, 'q'), ...getQueryParams(params, 'limit')]
 
-    if (!terms.some((term) => term.trim() !== '')) {
+    if (!terms.some((term) => term.trim())) {
       return
     }
 

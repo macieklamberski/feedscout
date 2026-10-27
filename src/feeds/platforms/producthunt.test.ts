@@ -2,40 +2,40 @@ import { describe, expect, it } from 'bun:test'
 import { type ProducthuntUrl, parseProducthuntUrl, producthuntHandler } from './producthunt.js'
 
 describe('parseProducthuntUrl', () => {
-  const productPages: Array<[string, string]> = [
-    ['a product page', 'https://www.producthunt.com/products/notion'],
-    ['a capitalized products segment', 'https://www.producthunt.com/Products/notion'],
-    ['the host without www', 'https://producthunt.com/products/notion'],
-    ['a product subpage', 'https://www.producthunt.com/products/notion/reviews'],
+  const productPages: Array<string> = [
+    'https://www.producthunt.com/products/notion',
+    'https://www.producthunt.com/Products/notion',
+    'https://producthunt.com/products/notion',
+    'https://www.producthunt.com/products/notion/reviews',
   ]
 
-  it.each(productPages)('should return the product for %s', (_name, value) => {
+  it.each(productPages)('should return the product for %s', (value) => {
     const expected: ProducthuntUrl = { kind: 'product', slug: 'notion' }
 
     expect(parseProducthuntUrl(value)).toEqual(expected)
   })
 
-  const topicPages: Array<[string, string]> = [
-    ['a topic page', 'https://www.producthunt.com/topics/productivity'],
-    ['a trailing slash', 'https://www.producthunt.com/topics/productivity/'],
-    ['a capitalized topics segment', 'https://www.producthunt.com/Topics/productivity'],
+  const topicPages: Array<string> = [
+    'https://www.producthunt.com/topics/productivity',
+    'https://www.producthunt.com/topics/productivity/',
+    'https://www.producthunt.com/Topics/productivity',
   ]
 
-  it.each(topicPages)('should return the topic for %s', (_name, value) => {
+  it.each(topicPages)('should return the topic for %s', (value) => {
     const expected: ProducthuntUrl = { kind: 'topic', topic: 'productivity' }
 
     expect(parseProducthuntUrl(value)).toEqual(expected)
   })
 
-  const homePages: Array<[string, string]> = [
-    ['the home page', 'https://www.producthunt.com/'],
-    ['the topics index', 'https://www.producthunt.com/topics'],
-    ['a topic subpage', 'https://www.producthunt.com/topics/productivity/launches'],
-    ['a category page', 'https://www.producthunt.com/categories/tech'],
-    ['a user page', 'https://www.producthunt.com/@rrhoover'],
+  const homePages: Array<string> = [
+    'https://www.producthunt.com/',
+    'https://www.producthunt.com/topics',
+    'https://www.producthunt.com/topics/productivity/launches',
+    'https://www.producthunt.com/categories/tech',
+    'https://www.producthunt.com/@rrhoover',
   ]
 
-  it.each(homePages)('should return the home page for %s', (_name, value) => {
+  it.each(homePages)('should return the home page for %s', (value) => {
     const expected: ProducthuntUrl = { kind: 'home' }
 
     expect(parseProducthuntUrl(value)).toEqual(expected)

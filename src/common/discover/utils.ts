@@ -248,7 +248,7 @@ export const normalizeMethodsConfig = (
   const methodsConfig: DiscoverMethodsConfigInternal = {}
 
   if (methodsObj.platform && defaults.platform) {
-    if (!resolvedInput.url || resolvedInput.url === '') {
+    if (!resolvedInput.url) {
       throw new Error(locales.errors.platformMethodRequiresUrl)
     }
 
@@ -317,7 +317,7 @@ export const normalizeMethodsConfig = (
   }
 
   if (methodsObj.guess && defaults.guess) {
-    if (!resolvedInput.url || resolvedInput.url === '') {
+    if (!resolvedInput.url) {
       throw new Error(locales.errors.guessMethodRequiresUrl)
     }
 
