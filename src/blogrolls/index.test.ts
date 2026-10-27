@@ -357,12 +357,12 @@ describe('discoverBlogrolls', () => {
     expect(value).toEqual(expected)
   })
 
-  it('should throw error when html method requested without content', async () => {
+  it('should throw error when html method requested without content', () => {
     const mockFetch = createMockFetch({})
     const throwing = () =>
       discoverBlogrolls({ url: 'https://example.com' }, { methods: ['html'], fetchFn: mockFetch })
 
-    await expect(throwing()).rejects.toThrow(locales.errors.htmlMethodRequiresContent)
+    expect(throwing()).rejects.toThrow(locales.errors.htmlMethodRequiresContent)
   })
 
   it('should test additional base URLs alongside main baseUrl', async () => {

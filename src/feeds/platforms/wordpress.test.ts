@@ -14,27 +14,25 @@ describe('parseWordpressUrl', () => {
   })
 
   it('should return the archive for a nested category page', () => {
+    const value = 'https://example.wordpress.com/category/news/north-brentwood/'
     const expected: WordpressUrl = {
       kind: 'archive',
       path: '/category/news/north-brentwood',
       hintKey: 'wordpress:category',
     }
 
-    expect(
-      parseWordpressUrl('https://example.wordpress.com/category/news/north-brentwood/'),
-    ).toEqual(expected)
+    expect(parseWordpressUrl(value)).toEqual(expected)
   })
 
   it('should return the archive for a paginated nested category page', () => {
+    const value = 'https://example.wordpress.com/category/news/north-brentwood/page/2/'
     const expected: WordpressUrl = {
       kind: 'archive',
       path: '/category/news/north-brentwood',
       hintKey: 'wordpress:category',
     }
 
-    expect(
-      parseWordpressUrl('https://example.wordpress.com/category/news/north-brentwood/page/2/'),
-    ).toEqual(expected)
+    expect(parseWordpressUrl(value)).toEqual(expected)
   })
 
   const endpoints: Array<string> = ['feed', 'feed/atom', 'rdf', 'rss', 'rss2', 'atom', 'embed']
@@ -106,15 +104,14 @@ describe('parseWordpressUrl', () => {
   })
 
   it('should return the archive for an Unblog tag page', () => {
+    const value = 'http://blogerslorrainsengages.unblog.fr/tag/pays-des-trois-frontieres/'
     const expected: WordpressUrl = {
       kind: 'archive',
       path: '/tag/pays-des-trois-frontieres',
       hintKey: 'wordpress:tag',
     }
 
-    expect(
-      parseWordpressUrl('http://blogerslorrainsengages.unblog.fr/tag/pays-des-trois-frontieres/'),
-    ).toEqual(expected)
+    expect(parseWordpressUrl(value)).toEqual(expected)
   })
 
   it('should return the home page for a feed path', () => {

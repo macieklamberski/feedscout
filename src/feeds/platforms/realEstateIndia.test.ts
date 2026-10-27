@@ -105,6 +105,7 @@ describe('realEstateIndiaHandler', () => {
 
   describe('resolve', () => {
     it('should return the property feed the page links', () => {
+      const value = 'https://www.example.com/'
       const expected = [
         {
           uri: 'https://www.example.com/property.rss',
@@ -112,9 +113,7 @@ describe('realEstateIndiaHandler', () => {
         },
       ]
 
-      expect(
-        realEstateIndiaHandler.resolve('https://www.example.com/', realEstateIndiaHtml),
-      ).toEqual(expected)
+      expect(realEstateIndiaHandler.resolve(value, realEstateIndiaHtml)).toEqual(expected)
     })
 
     it('should keep the scheme the link spells', () => {

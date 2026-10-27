@@ -855,9 +855,9 @@ describe('hasMetaContent', () => {
   })
 
   it('should return false when meta tag is absent', () => {
-    expect(
-      hasMetaContent('<html><body>Mastodon generator</body></html>', 'generator', 'Mastodon'),
-    ).toBe(false)
+    const value = '<html><body>Mastodon generator</body></html>'
+
+    expect(hasMetaContent(value, 'generator', 'Mastodon')).toBe(false)
   })
 
   it('should return false for empty HTML', () => {

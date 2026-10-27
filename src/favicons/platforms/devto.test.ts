@@ -73,22 +73,22 @@ describe('devtoEnricher', () => {
     expect(await devtoEnricher(aliceRef, context)).toEqual([])
   })
 
-  it('should reject when API returns invalid JSON', async () => {
+  it('should reject when API returns invalid JSON', () => {
     const context = createContext({
       'https://dev.to/api/users/by_username?url=alice': 'not-json',
     })
     const throwing = () => devtoEnricher(aliceRef, context)
 
-    await expect(throwing()).rejects.toThrow('JSON Parse error: Unexpected identifier "not"')
+    expect(throwing()).rejects.toThrow('JSON Parse error: Unexpected identifier "not"')
   })
 
-  it('should reject when fetch throws', async () => {
+  it('should reject when fetch throws', () => {
     const fetchFn: FetchFn = () => {
       throw new Error('Network error')
     }
     const throwing = () => devtoEnricher(aliceRef, { fetchFn })
 
-    await expect(throwing()).rejects.toThrow('Network error')
+    expect(throwing()).rejects.toThrow('Network error')
   })
 
   it('should return the organization image when the users API does not know the name', async () => {
@@ -104,11 +104,11 @@ describe('devtoEnricher', () => {
     ])
   })
 
-  it('should reject when neither API knows the name', async () => {
+  it('should reject when neither API knows the name', () => {
     const throwing = () => devtoEnricher(aliceRef, createContext({}))
     const expected = 'Unexpected status 404 from https://dev.to/api/organizations/alice'
 
-    await expect(throwing()).rejects.toThrow(expected)
+    expect(throwing()).rejects.toThrow(expected)
   })
 
   it('should reject without trying the organizations API when the users API fails', async () => {

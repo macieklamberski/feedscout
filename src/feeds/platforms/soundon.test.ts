@@ -3,14 +3,13 @@ import { parseSoundonUrl, type SoundonUrl, soundonHandler } from './soundon.js'
 
 describe('parseSoundonUrl', () => {
   it('should return the podcast for a podcast page', () => {
+    const value = 'https://player.soundon.fm/p/2b3a8f6c-1234-4abc-9def-0123456789ab'
     const expected: SoundonUrl = {
       kind: 'podcast',
       podcastId: '2b3a8f6c-1234-4abc-9def-0123456789ab',
     }
 
-    expect(
-      parseSoundonUrl('https://player.soundon.fm/p/2b3a8f6c-1234-4abc-9def-0123456789ab'),
-    ).toEqual(expected)
+    expect(parseSoundonUrl(value)).toEqual(expected)
   })
 
   it('should return the podcast for an embed page', () => {
@@ -28,9 +27,9 @@ describe('parseSoundonUrl', () => {
   })
 
   it('should return undefined for another host', () => {
-    expect(
-      parseSoundonUrl('https://example.com/p/2b3a8f6c-1234-4abc-9def-0123456789ab'),
-    ).toBeUndefined()
+    const value = 'https://example.com/p/2b3a8f6c-1234-4abc-9def-0123456789ab'
+
+    expect(parseSoundonUrl(value)).toBeUndefined()
   })
 })
 

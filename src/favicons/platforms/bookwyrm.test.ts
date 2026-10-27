@@ -241,28 +241,28 @@ describe('bookwyrmEnricher', () => {
     expect(await bookwyrmEnricher(createRef(shelfUrl, 'reader'), context)).toEqual([])
   })
 
-  it('should reject when the actor JSON is invalid', async () => {
+  it('should reject when the actor JSON is invalid', () => {
     const context = createContext({
       [actorJsonUrl]: 'not json',
     })
     const throwing = () => bookwyrmEnricher(createRef(shelfUrl, 'reader'), context)
 
-    await expect(throwing()).rejects.toThrow('JSON Parse error: Unexpected identifier "not"')
+    expect(throwing()).rejects.toThrow('JSON Parse error: Unexpected identifier "not"')
   })
 
-  it('should reject when fetch throws', async () => {
+  it('should reject when fetch throws', () => {
     const fetchFn: FetchFn = () => {
       throw new Error('Network error')
     }
     const throwing = () => bookwyrmEnricher(createRef(shelfUrl, 'reader'), { fetchFn })
 
-    await expect(throwing()).rejects.toThrow('Network error')
+    expect(throwing()).rejects.toThrow('Network error')
   })
 
-  it('should reject when the response is not 2xx', async () => {
+  it('should reject when the response is not 2xx', () => {
     const throwing = () => bookwyrmEnricher(createRef(shelfUrl, 'reader'), createContext({}))
     const expected = 'Unexpected status 404 from https://books.example.com/user/reader.json'
 
-    await expect(throwing()).rejects.toThrow(expected)
+    expect(throwing()).rejects.toThrow(expected)
   })
 })

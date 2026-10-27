@@ -858,7 +858,7 @@ describe('discoverFeeds', () => {
       expect(value.map((result) => result.url)).toEqual(['https://example.com/feed'])
     })
 
-    it('should throw when the input fetch succeeds without headers', async () => {
+    it('should throw when the input fetch succeeds without headers', () => {
       const page = '<link rel="alternate" type="application/rss+xml" href="/feed">'
       // @ts-expect-error: This is for testing purposes.
       const mockFetch: FetchFn = (url) => {
@@ -871,7 +871,7 @@ describe('discoverFeeds', () => {
         })
       }
 
-      await expect(throwing()).rejects.toThrow(locales.errors.headersMethodRequiresHeaders)
+      expect(throwing()).rejects.toThrow(locales.errors.headersMethodRequiresHeaders)
     })
   })
 
@@ -2125,23 +2125,23 @@ describe('discoverFeeds', () => {
   })
 
   describe('method validation', () => {
-    it('should throw error when html method requested without content', async () => {
+    it('should throw error when html method requested without content', () => {
       const throwing = () => discoverFeeds({ url: 'https://example.com' }, { methods: ['html'] })
 
-      await expect(throwing()).rejects.toThrow(locales.errors.htmlMethodRequiresContent)
+      expect(throwing()).rejects.toThrow(locales.errors.htmlMethodRequiresContent)
     })
 
-    it('should throw error when headers method requested without headers', async () => {
+    it('should throw error when headers method requested without headers', () => {
       const throwing = () => discoverFeeds({ url: 'https://example.com' }, { methods: ['headers'] })
 
-      await expect(throwing()).rejects.toThrow(locales.errors.headersMethodRequiresHeaders)
+      expect(throwing()).rejects.toThrow(locales.errors.headersMethodRequiresHeaders)
     })
 
-    it('should throw error when guess method requested without url', async () => {
+    it('should throw error when guess method requested without url', () => {
       // @ts-expect-error: This is for testing purposes.
       const throwing = () => discoverFeeds({ content: '<html></html>' }, { methods: ['guess'] })
 
-      await expect(throwing()).rejects.toThrow(locales.errors.guessMethodRequiresUrl)
+      expect(throwing()).rejects.toThrow(locales.errors.guessMethodRequiresUrl)
     })
   })
 

@@ -47,9 +47,9 @@ describe('isNetcrewHtml', () => {
   })
 
   it('should return false for another script under the template path', () => {
-    expect(
-      isNetcrewHtml('<script src="/ssi/js/common.js"></script><link href="/ssi/css/top.css">'),
-    ).toBe(false)
+    const value = '<script src="/ssi/js/common.js"></script><link href="/ssi/css/top.css">'
+
+    expect(isNetcrewHtml(value)).toBe(false)
   })
 
   it('should return false for the script path alone', () => {

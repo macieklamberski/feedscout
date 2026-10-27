@@ -165,10 +165,10 @@ describe('discourseHandler', () => {
 
   describe('match', () => {
     it('should return true for any URL with Discourse content', () => {
+      const value = 'https://forum.example.com/u/steveklabnik'
+
       expect(discourseHandler.match('https://forum.example.com/', discourseHtml)).toBe(true)
-      expect(
-        discourseHandler.match('https://forum.example.com/u/steveklabnik', discourseHtml),
-      ).toBe(true)
+      expect(discourseHandler.match(value, discourseHtml)).toBe(true)
     })
 
     it('should return true for any URL with Discourse headers', () => {

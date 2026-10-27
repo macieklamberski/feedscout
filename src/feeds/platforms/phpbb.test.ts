@@ -225,7 +225,25 @@ describe('phpbbHandler', () => {
     })
 
     it('should handle a board at the origin root', () => {
-      const expected = getBoardFeeds('https://example.com')
+      const expected: Array<DiscoverUriEntry> = [
+        { uri: 'https://example.com/feed.php', hint: { key: 'phpbb:site', label: 'Site' } },
+        {
+          uri: 'https://example.com/feed.php?mode=news',
+          hint: { key: 'phpbb:news', label: 'News' },
+        },
+        {
+          uri: 'https://example.com/feed.php?mode=topics',
+          hint: { key: 'phpbb:new-topics', label: 'New topics' },
+        },
+        {
+          uri: 'https://example.com/feed.php?mode=topics_active',
+          hint: { key: 'phpbb:active-topics', label: 'Active topics' },
+        },
+        {
+          uri: 'https://example.com/feed.php?mode=forums',
+          hint: { key: 'phpbb:forums', label: 'Forums' },
+        },
+      ]
 
       expect(phpbbHandler.resolve('https://example.com/')).toEqual(expected)
     })

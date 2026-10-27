@@ -8,11 +8,10 @@ import {
 
 describe('parseStackExchangeUrl', () => {
   it('should return the tag with its sort for a tag page', () => {
+    const value = 'https://stackoverflow.com/questions/tagged/javascript?tab=Newest'
     const expected: StackExchangeUrl = { kind: 'tag', tag: 'javascript', sort: 'newest' }
 
-    expect(
-      parseStackExchangeUrl('https://stackoverflow.com/questions/tagged/javascript?tab=Newest'),
-    ).toEqual(expected)
+    expect(parseStackExchangeUrl(value)).toEqual(expected)
   })
 
   it('should return a percent-encoded tag whole', () => {

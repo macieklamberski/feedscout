@@ -65,9 +65,9 @@ describe('parseComicfuryUrl', () => {
   })
 
   it('should return undefined for a profile path below another segment', () => {
-    expect(
-      parseComicfuryUrl('https://comicfury.com/forum/comicprofile.php?url=cardiac'),
-    ).toBeUndefined()
+    const value = 'https://comicfury.com/forum/comicprofile.php?url=cardiac'
+
+    expect(parseComicfuryUrl(value)).toBeUndefined()
   })
 
   it('should return undefined for another comicfury.com page', () => {

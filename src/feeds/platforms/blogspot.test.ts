@@ -115,12 +115,11 @@ describe('blogspotHandler', () => {
     })
 
     it('should return false for an archived copy of a Blogger page', () => {
+      const url = 'https://web.archive.org/web/2023/https://example.com/'
       const value =
         '<script src="https://web.archive.org/web/2023js_/https://www.blogger.com/static/v1/widgets/851759228-widgets.js"></script>'
 
-      expect(
-        blogspotHandler.match('https://web.archive.org/web/2023/https://example.com/', value),
-      ).toBe(false)
+      expect(blogspotHandler.match(url, value)).toBe(false)
     })
   })
 

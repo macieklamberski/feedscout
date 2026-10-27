@@ -58,11 +58,10 @@ describe('parseNoticeableUrl', () => {
   })
 
   it('should return the newspage for a publication page', () => {
+    const value = 'https://example.noticeable.news/publications/new-billing-api'
     const expected: NoticeableUrl = { kind: 'newspage' }
 
-    expect(
-      parseNoticeableUrl('https://example.noticeable.news/publications/new-billing-api'),
-    ).toEqual(expected)
+    expect(parseNoticeableUrl(value)).toEqual(expected)
   })
 
   it('should return the newspage for a page combining labels', () => {
