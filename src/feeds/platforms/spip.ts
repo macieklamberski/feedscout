@@ -14,8 +14,8 @@ export type SpipPage =
   | { kind: SpipObject; scriptUrl: string; id: string }
   | { kind: 'home'; scriptUrl: string }
 
-const objectWordRegex = /^(?<name>[a-z]+)(?<id>\d+)$/i
-const objectFileRegex = /^(?<name>[a-z]+)(?<id>\d+)\.html$/i
+const objectWordRegex = /^([a-z]+)(\d+)$/i
+const objectFileRegex = /^([a-z]+)(\d+)\.html$/i
 const notFoundClassRegex = /\bpage_404\b/
 
 const objects = ['article', 'rubrique', 'mot', 'auteur'] as const
@@ -47,7 +47,7 @@ const getObjectId = (
 // install also answers the template form, `spip.php?page=article&id_article=12`.
 const getUrlObjectId = (parsedUrl: URL): SpipObjectId | undefined => {
   for (const key of parsedUrl.searchParams.keys()) {
-    const { name, id } = key.match(objectWordRegex)?.groups ?? {}
+    const [, name, id] = key.match(objectWordRegex) ?? []
     const objectId = getObjectId(name, id)
 
     if (objectId) {
@@ -56,7 +56,7 @@ const getUrlObjectId = (parsedUrl: URL): SpipObjectId | undefined => {
   }
 
   const lastSegment = parsedUrl.pathname.split('/').at(-1) ?? ''
-  const { name: fileName, id: fileId } = lastSegment.match(objectFileRegex)?.groups ?? {}
+  const [, fileName, fileId] = lastSegment.match(objectFileRegex) ?? []
   const fileObjectId = getObjectId(fileName, fileId)
 
   if (fileObjectId) {

@@ -7,7 +7,7 @@ import { composeHint, getCookieNames, hasMarker } from '../../common/utils.js'
 export type OdooUrl = { kind: 'blog'; languagePath: string; blog: string }
 
 // The blog segment is `{slug}-{id}`, after an optional language prefix such as `/fr` or `/en_GB`.
-const blogRegex = /^(?<languagePath>(?:\/[a-z]+(?:_[a-z\d]+)?)?)\/blog\/(?<blog>[^/]+-\d+)(?:\/|$)/i
+const blogRegex = /^((?:\/[a-z]+(?:_[a-z\d]+)?)?)\/blog\/([^/]+-\d+)(?:\/|$)/i
 
 // Odoo 11 and later set both cookies on a first visit to any website page.
 export const isOdooHeaders = (headers: Headers): boolean => {
@@ -23,13 +23,13 @@ export const parseOdooUrl = (url: string): OdooUrl | undefined => {
     return
   }
 
-  const { languagePath, blog } = parsedUrl.pathname.match(blogRegex)?.groups ?? {}
+  const match = parsedUrl.pathname.match(blogRegex)
 
-  if (!blog) {
+  if (!match?.[2]) {
     return
   }
 
-  return { kind: 'blog', languagePath: languagePath ?? '', blog }
+  return { kind: 'blog', languagePath: match[1] ?? '', blog: match[2] }
 }
 
 export const odooHandler: PlatformHandler = {

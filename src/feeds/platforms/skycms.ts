@@ -7,7 +7,7 @@ import { composeHint, findElement, getCookieNames, hasMarker } from '../../commo
 
 export type SkycmsUrl = { kind: 'page'; pageId: string; slug: string }
 
-const pageRegex = /^\/(?<pageId>\d+)\/(?<slug>[^/]+)\.html$/i
+const pageRegex = /^\/(\d+)\/([^/]+)\.html$/i
 const rssListRegex = /\/\d+\/lista-kanalow-rss\.html$/i
 const templateRegex = /\/(?:cms\/public|clients\/cms_[^/]+)\/image\/default\/bip(?:_v\d+)?\//
 
@@ -43,13 +43,13 @@ export const parseSkycmsUrl = (url: string): SkycmsUrl | undefined => {
     return
   }
 
-  const { pageId, slug } = parsedUrl.pathname.match(pageRegex)?.groups ?? {}
+  const match = parsedUrl.pathname.match(pageRegex)
 
-  if (!pageId || !slug) {
+  if (!match?.[1] || !match[2]) {
     return
   }
 
-  return { kind: 'page', pageId, slug }
+  return { kind: 'page', pageId: match[1], slug: match[2] }
 }
 
 export const skycmsHandler: PlatformHandler = {
