@@ -2108,9 +2108,15 @@ describe('normalizeUriEntry', () => {
   it('should return undefined for a file with an ignored extension', () => {
     const value = { uri: 'https://example.com/rss/episode.mp3' }
 
-    expect(
-      normalizeUriEntry(value, defaultResolveUrlFn, 'https://example.com/', undefined, ['mp3']),
-    ).toBeUndefined()
+    const result = normalizeUriEntry(
+      value,
+      defaultResolveUrlFn,
+      'https://example.com/',
+      undefined,
+      ['mp3'],
+    )
+
+    expect(result).toBeUndefined()
   })
 
   it('should return undefined for an episode behind a tracking prefix with a feed segment', () => {
@@ -2118,35 +2124,59 @@ describe('normalizeUriEntry', () => {
       uri: 'https://prefix.example.com/e/tracker.example.com/redirect.mp3/prefix.example.org/e/tracker.example.org/rss/p/media.example.net/show/episode.mp3',
     }
 
-    expect(
-      normalizeUriEntry(value, defaultResolveUrlFn, 'https://example.com/', undefined, ['mp3']),
-    ).toBeUndefined()
+    const result = normalizeUriEntry(
+      value,
+      defaultResolveUrlFn,
+      'https://example.com/',
+      undefined,
+      ['mp3'],
+    )
+
+    expect(result).toBeUndefined()
   })
 
   it('should return undefined for an ignored file with a query string', () => {
     const value = { uri: 'https://example.com/episode.MP3?ref=feed' }
 
-    expect(
-      normalizeUriEntry(value, defaultResolveUrlFn, 'https://example.com/', undefined, ['mp3']),
-    ).toBeUndefined()
+    const result = normalizeUriEntry(
+      value,
+      defaultResolveUrlFn,
+      'https://example.com/',
+      undefined,
+      ['mp3'],
+    )
+
+    expect(result).toBeUndefined()
   })
 
   it('should drop ignored alternatives', () => {
     const value = { uri: ['/episode.mp3', '/feed.xml'] }
     const expected = { uri: ['https://example.com/feed.xml'] }
 
-    expect(
-      normalizeUriEntry(value, defaultResolveUrlFn, 'https://example.com/', undefined, ['mp3']),
-    ).toEqual(expected)
+    const result = normalizeUriEntry(
+      value,
+      defaultResolveUrlFn,
+      'https://example.com/',
+      undefined,
+      ['mp3'],
+    )
+
+    expect(result).toEqual(expected)
   })
 
   it('should keep a file whose extension is not ignored', () => {
     const value = { uri: 'https://example.com/favicon.png' }
     const expected = { uri: 'https://example.com/favicon.png' }
 
-    expect(
-      normalizeUriEntry(value, defaultResolveUrlFn, 'https://example.com/', undefined, ['mp3']),
-    ).toEqual(expected)
+    const result = normalizeUriEntry(
+      value,
+      defaultResolveUrlFn,
+      'https://example.com/',
+      undefined,
+      ['mp3'],
+    )
+
+    expect(result).toEqual(expected)
   })
 
   it('should keep every file when no extensions are ignored', () => {
@@ -2160,26 +2190,38 @@ describe('normalizeUriEntry', () => {
     const value = { uri: 'https://example.com/feed/mp3/' }
     const expected = { uri: 'https://example.com/feed/mp3/' }
 
-    expect(
-      normalizeUriEntry(value, defaultResolveUrlFn, 'https://example.com/', undefined, ['mp3']),
-    ).toEqual(expected)
+    const result = normalizeUriEntry(
+      value,
+      defaultResolveUrlFn,
+      'https://example.com/',
+      undefined,
+      ['mp3'],
+    )
+
+    expect(result).toEqual(expected)
   })
 
   it('should keep a uri whose query names an ignored file', () => {
     const value = { uri: 'https://example.com/feed.php?file=episode.mp3' }
     const expected = { uri: 'https://example.com/feed.php?file=episode.mp3' }
 
-    expect(
-      normalizeUriEntry(value, defaultResolveUrlFn, 'https://example.com/', undefined, ['mp3']),
-    ).toEqual(expected)
+    const result = normalizeUriEntry(
+      value,
+      defaultResolveUrlFn,
+      'https://example.com/',
+      undefined,
+      ['mp3'],
+    )
+
+    expect(result).toEqual(expected)
   })
 
   it('should return undefined for a relative uri resolved against a file base', () => {
     const value = { uri: '/feed.xml' }
 
-    expect(
-      normalizeUriEntry(value, defaultResolveUrlFn, 'file:///Users/alice/saved.html'),
-    ).toBeUndefined()
+    const result = normalizeUriEntry(value, defaultResolveUrlFn, 'file:///Users/alice/saved.html')
+
+    expect(result).toBeUndefined()
   })
 
   it('should keep original string uri when resolveUrlFn returns undefined', () => {

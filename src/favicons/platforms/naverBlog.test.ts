@@ -127,9 +127,9 @@ describe('naverBlogHandler', () => {
       })
 
       it('should return empty array for paths with dots', () => {
-        expect(
-          naverBlogHandler.resolve('https://m.blog.naver.com/BlogList.naver', mobilePage),
-        ).toEqual([])
+        const value = 'https://m.blog.naver.com/BlogList.naver'
+
+        expect(naverBlogHandler.resolve(value, mobilePage)).toEqual([])
       })
     })
   })

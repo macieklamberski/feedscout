@@ -66,6 +66,7 @@ describe('podhomeHandler', () => {
     })
 
     it('should return the show feed the page links', () => {
+      const url = 'https://serve.podhome.fm/episodepage/example-show/1'
       const value = `${stylesheet}${feedLink}`
       const expected = [
         {
@@ -74,9 +75,7 @@ describe('podhomeHandler', () => {
         },
       ]
 
-      expect(
-        podhomeHandler.resolve('https://serve.podhome.fm/episodepage/example-show/1', value),
-      ).toEqual(expected)
+      expect(podhomeHandler.resolve(url, value)).toEqual(expected)
     })
   })
 })

@@ -48,11 +48,10 @@ describe('dailymotionHandler', () => {
     })
 
     it('should return a ref for a playlist page', async () => {
+      const value = 'https://www.dailymotion.com/playlist/x6abc1'
       const expected = [playlistRef]
 
-      expect(
-        await dailymotionHandler.resolve('https://www.dailymotion.com/playlist/x6abc1'),
-      ).toEqual(expected)
+      expect(await dailymotionHandler.resolve(value)).toEqual(expected)
     })
 
     it('should return empty array for a page without a user or playlist', async () => {

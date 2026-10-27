@@ -10,27 +10,24 @@ import {
 
 describe('parseBubblelifeUrl', () => {
   it('should return the community for a community page', () => {
+    const value = 'https://sandysprings.bubblelife.com/community/idealplotter'
     const expected: BubblelifeUrl = { kind: 'community', community: 'idealplotter' }
 
-    expect(
-      parseBubblelifeUrl('https://sandysprings.bubblelife.com/community/idealplotter'),
-    ).toEqual(expected)
+    expect(parseBubblelifeUrl(value)).toEqual(expected)
   })
 
   it('should return the community for a page under the community', () => {
+    const value = 'https://sandysprings.bubblelife.com/community/idealplotter/type/rssinfo'
     const expected: BubblelifeUrl = { kind: 'community', community: 'idealplotter' }
 
-    expect(
-      parseBubblelifeUrl('https://sandysprings.bubblelife.com/community/idealplotter/type/rssinfo'),
-    ).toEqual(expected)
+    expect(parseBubblelifeUrl(value)).toEqual(expected)
   })
 
   it('should keep the case of the community name', () => {
+    const value = 'https://sandysprings.bubblelife.com/Community/IdealPlotter'
     const expected: BubblelifeUrl = { kind: 'community', community: 'IdealPlotter' }
 
-    expect(
-      parseBubblelifeUrl('https://sandysprings.bubblelife.com/Community/IdealPlotter'),
-    ).toEqual(expected)
+    expect(parseBubblelifeUrl(value)).toEqual(expected)
   })
 
   it('should return the library for a library page', () => {
@@ -61,9 +58,9 @@ describe('parseBubblelifeUrl', () => {
   })
 
   it('should return undefined for a path sharing the community prefix', () => {
-    expect(
-      parseBubblelifeUrl('https://coppell.bubblelife.com/communitys/hall_law_pc_56'),
-    ).toBeUndefined()
+    const value = 'https://coppell.bubblelife.com/communitys/hall_law_pc_56'
+
+    expect(parseBubblelifeUrl(value)).toBeUndefined()
   })
 
   it('should return undefined for the apex domain', () => {

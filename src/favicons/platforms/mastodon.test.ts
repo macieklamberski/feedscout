@@ -27,9 +27,9 @@ describe('mastodonHandler', () => {
     })
 
     it('should match profile path with Mastodon server header', () => {
-      expect(
-        mastodonHandler.match('https://example.com/@user', '', new Headers({ server: 'Mastodon' })),
-      ).toBe(true)
+      const value = 'https://example.com/@user'
+
+      expect(mastodonHandler.match(value, '', new Headers({ server: 'Mastodon' }))).toBe(true)
     })
 
     it('should match when both HTML and headers indicate Mastodon', () => {
@@ -50,9 +50,9 @@ describe('mastodonHandler', () => {
     })
 
     it('should not match without Mastodon header signals', () => {
-      expect(
-        mastodonHandler.match('https://example.com/@user', '', new Headers({ server: 'nginx' })),
-      ).toBe(false)
+      const value = 'https://example.com/@user'
+
+      expect(mastodonHandler.match(value, '', new Headers({ server: 'nginx' }))).toBe(false)
     })
 
     it('should not match without content and headers', () => {

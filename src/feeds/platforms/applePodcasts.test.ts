@@ -9,11 +9,10 @@ import {
 
 describe('parseApplePodcastsUrl', () => {
   it('should return the podcast for a podcast page', () => {
+    const value = 'https://podcasts.apple.com/us/podcast/the-daily/id1200361736'
     const expected: ApplePodcastsUrl = { kind: 'podcast' }
 
-    expect(
-      parseApplePodcastsUrl('https://podcasts.apple.com/us/podcast/the-daily/id1200361736'),
-    ).toEqual(expected)
+    expect(parseApplePodcastsUrl(value)).toEqual(expected)
   })
 
   it('should return the podcast for a page without locale and name', () => {
@@ -25,11 +24,10 @@ describe('parseApplePodcastsUrl', () => {
   })
 
   it('should return the podcast for a storefront longer than two letters', () => {
+    const value = 'https://podcasts.apple.com/xyz/podcast/the-daily/id1200361736'
     const expected: ApplePodcastsUrl = { kind: 'podcast' }
 
-    expect(
-      parseApplePodcastsUrl('https://podcasts.apple.com/xyz/podcast/the-daily/id1200361736'),
-    ).toEqual(expected)
+    expect(parseApplePodcastsUrl(value)).toEqual(expected)
   })
 
   it('should return undefined for a browse page', () => {
@@ -37,9 +35,9 @@ describe('parseApplePodcastsUrl', () => {
   })
 
   it('should return undefined for another host', () => {
-    expect(
-      parseApplePodcastsUrl('https://example.com/us/podcast/the-daily/id1200361736'),
-    ).toBeUndefined()
+    const value = 'https://example.com/us/podcast/the-daily/id1200361736'
+
+    expect(parseApplePodcastsUrl(value)).toBeUndefined()
   })
 })
 

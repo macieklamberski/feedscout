@@ -122,9 +122,9 @@ describe('getConfluencePage', () => {
 describe('confluenceHandler', () => {
   describe('match', () => {
     it('should match a space page', () => {
-      expect(
-        confluenceHandler.match('https://wiki.example.org/confluence/display/DOCS', confluenceHtml),
-      ).toBe(true)
+      const value = 'https://wiki.example.org/confluence/display/DOCS'
+
+      expect(confluenceHandler.match(value, confluenceHtml)).toBe(true)
     })
 
     it('should not match without content', () => {

@@ -10,9 +10,9 @@ describe('isWixHtml', () => {
   })
 
   it('should return true for the Wix asset host', () => {
-    expect(
-      isWixHtml('<script src="https://static.parastorage.com/services/app.js"></script>'),
-    ).toBe(true)
+    const value = '<script src="https://static.parastorage.com/services/app.js"></script>'
+
+    expect(isWixHtml(value)).toBe(true)
   })
 
   it('should return false for a link to the Wix asset host', () => {

@@ -46,9 +46,9 @@ describe('parseLegistarUrl', () => {
   })
 
   it('should return undefined for a detail page without a GUID', () => {
-    expect(
-      parseLegistarUrl('https://madison.legistar.com/LegislationDetail.aspx?ID=1065902'),
-    ).toBeUndefined()
+    const value = 'https://madison.legistar.com/LegislationDetail.aspx?ID=1065902'
+
+    expect(parseLegistarUrl(value)).toBeUndefined()
   })
 
   it('should return undefined for a non-numeric ID', () => {
@@ -59,9 +59,9 @@ describe('parseLegistarUrl', () => {
   })
 
   it('should return undefined for a GUID with a non-hex character', () => {
-    expect(
-      parseLegistarUrl('https://madison.legistar.com/LegislationDetail.aspx?ID=1065902&GUID=xyz'),
-    ).toBeUndefined()
+    const value = 'https://madison.legistar.com/LegislationDetail.aspx?ID=1065902&GUID=xyz'
+
+    expect(parseLegistarUrl(value)).toBeUndefined()
   })
 
   it('should return undefined for an invalid URL', () => {

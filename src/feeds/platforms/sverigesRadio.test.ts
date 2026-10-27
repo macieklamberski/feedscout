@@ -7,11 +7,10 @@ import {
 
 describe('parseSverigesRadioUrl', () => {
   it('should return the legacy program for a programid query', () => {
+    const value = 'https://sverigesradio.se/sida/default.aspx?programid=2519'
     const expected: SverigesRadioUrl = { kind: 'legacyProgram', programId: '2519' }
 
-    expect(
-      parseSverigesRadioUrl('https://sverigesradio.se/sida/default.aspx?programid=2519'),
-    ).toEqual(expected)
+    expect(parseSverigesRadioUrl(value)).toEqual(expected)
   })
 
   it('should return the program for a program slug', () => {

@@ -10,11 +10,10 @@ describe('parseNewswireUrl', () => {
   })
 
   it('should return the newsroom for a press release', () => {
+    const value = 'https://acme.newswire.com/news/acme-opens-a-new-office-12345678'
     const expected: NewswireUrl = { kind: 'newsroom', newsroom: 'acme' }
 
-    expect(
-      parseNewswireUrl('https://acme.newswire.com/news/acme-opens-a-new-office-12345678'),
-    ).toEqual(expected)
+    expect(parseNewswireUrl(value)).toEqual(expected)
   })
 
   it('should return the beat for a beat page', () => {
@@ -34,11 +33,10 @@ describe('parseNewswireUrl', () => {
   })
 
   it('should return the newsroom for a path below a beat', () => {
+    const value = 'https://acme.newswire.com/browse/beat/business-marketing/extra'
     const expected: NewswireUrl = { kind: 'newsroom', newsroom: 'acme' }
 
-    expect(
-      parseNewswireUrl('https://acme.newswire.com/browse/beat/business-marketing/extra'),
-    ).toEqual(expected)
+    expect(parseNewswireUrl(value)).toEqual(expected)
   })
 
   it('should return the content type for a press releases page', () => {

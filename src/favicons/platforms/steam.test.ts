@@ -129,9 +129,9 @@ describe('steamHandler', () => {
     })
 
     it('should return empty array for a community group page without a preview image', () => {
-      expect(
-        steamHandler.resolve('https://steamcommunity.com/groups/Valve', '<html></html>'),
-      ).toEqual([])
+      const value = 'https://steamcommunity.com/groups/Valve'
+
+      expect(steamHandler.resolve(value, '<html></html>')).toEqual([])
     })
 
     it('should return empty array for a URL the parser rejects', () => {

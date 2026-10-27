@@ -42,53 +42,48 @@ describe('producthuntHandler', () => {
 
   describe('resolve', () => {
     it('should return the product logo from the page JSON', () => {
+      const url = 'https://www.producthunt.com/products/notion'
       const value = `<script>{"data":${productJson}}</script>`
       const expected = [
         { uri: 'https://ph-files.imgix.net/ff3e2acf-884a-4f4c-a383-6edfe3de0d88.png' },
       ]
 
-      expect(
-        producthuntHandler.resolve('https://www.producthunt.com/products/notion', value),
-      ).toEqual(expected)
+      expect(producthuntHandler.resolve(url, value)).toEqual(expected)
     })
 
     it('should return the product logo from a product subpage', () => {
+      const url = 'https://www.producthunt.com/products/notion/reviews'
       const value = `<script>{"data":${productJson}}</script>`
       const expected = [
         { uri: 'https://ph-files.imgix.net/ff3e2acf-884a-4f4c-a383-6edfe3de0d88.png' },
       ]
 
-      expect(
-        producthuntHandler.resolve('https://www.producthunt.com/products/notion/reviews', value),
-      ).toEqual(expected)
+      expect(producthuntHandler.resolve(url, value)).toEqual(expected)
     })
 
     it('should skip the logos of related products listed first', () => {
+      const url = 'https://www.producthunt.com/products/notion'
       const value = `<script>{"related":[${relatedProductJson}],"data":${productJson}}</script>`
       const expected = [
         { uri: 'https://ph-files.imgix.net/ff3e2acf-884a-4f4c-a383-6edfe3de0d88.png' },
       ]
 
-      expect(
-        producthuntHandler.resolve('https://www.producthunt.com/products/notion', value),
-      ).toEqual(expected)
+      expect(producthuntHandler.resolve(url, value)).toEqual(expected)
     })
 
     it('should return empty array when only related products carry a logo', () => {
+      const url = 'https://www.producthunt.com/products/notion'
       const value = `<script>{"related":[${relatedProductJson}]}</script>`
 
-      expect(
-        producthuntHandler.resolve('https://www.producthunt.com/products/notion', value),
-      ).toEqual([])
+      expect(producthuntHandler.resolve(url, value)).toEqual([])
     })
 
     it('should return empty array when the product has no logoUuid', () => {
+      const url = 'https://www.producthunt.com/products/notion'
       const value =
         '<script>{"data":{"__typename":"Product","slug":"notion","name":"Notion"}}</script>'
 
-      expect(
-        producthuntHandler.resolve('https://www.producthunt.com/products/notion', value),
-      ).toEqual([])
+      expect(producthuntHandler.resolve(url, value)).toEqual([])
     })
 
     it('should stay linear on a page that repeats the product slug', () => {
@@ -108,29 +103,27 @@ describe('producthuntHandler', () => {
     })
 
     it('should return empty array for a page outside a product', () => {
+      const url = 'https://www.producthunt.com/categories/notion'
       const value = '{"slug":"notion","name":"Notion","logoUuid":"abc123.png"}'
 
-      expect(
-        producthuntHandler.resolve('https://www.producthunt.com/categories/notion', value),
-      ).toEqual([])
+      expect(producthuntHandler.resolve(url, value)).toEqual([])
     })
 
     it('should return the topic image cropped to a square', () => {
+      const value = 'https://www.producthunt.com/topics/productivity'
       const expected = [
         {
           uri: 'https://ph-files.imgix.net/5e906c86-5776-4ef0-9841-2b76dea8e255.jpeg?fit=crop&w=256&h=256',
         },
       ]
 
-      expect(
-        producthuntHandler.resolve('https://www.producthunt.com/topics/productivity', topicPage),
-      ).toEqual(expected)
+      expect(producthuntHandler.resolve(value, topicPage)).toEqual(expected)
     })
 
     it('should return empty array for the generic share image on a topic page', () => {
-      expect(
-        producthuntHandler.resolve('https://www.producthunt.com/topics/productivity', genericPage),
-      ).toEqual([])
+      const value = 'https://www.producthunt.com/topics/productivity'
+
+      expect(producthuntHandler.resolve(value, genericPage)).toEqual([])
     })
 
     it('should return empty array for a topic og:image outside ph-files.imgix.net', () => {

@@ -45,11 +45,10 @@ describe('parseHatenaBookmarkUrl', () => {
   })
 
   it('should drop the page and unknown parameters of a query page', () => {
+    const value = 'https://b.hatena.ne.jp/q/rss?target=text&page=2&ref=top'
     const expected: HatenaBookmarkUrl = { kind: 'search', query: 'rss', params: { target: 'text' } }
 
-    expect(
-      parseHatenaBookmarkUrl('https://b.hatena.ne.jp/q/rss?target=text&page=2&ref=top'),
-    ).toEqual(expected)
+    expect(parseHatenaBookmarkUrl(value)).toEqual(expected)
   })
 
   it('should return the home page for a query page without a query', () => {
@@ -109,15 +108,14 @@ describe('parseHatenaBookmarkUrl', () => {
   })
 
   it('should keep only the sort order of a site page', () => {
+    const value = 'https://b.hatena.ne.jp/site/example.com/?page=2&sort=eid'
     const expected: HatenaBookmarkUrl = {
       kind: 'site',
       site: 'example.com/',
       params: { sort: 'eid' },
     }
 
-    expect(
-      parseHatenaBookmarkUrl('https://b.hatena.ne.jp/site/example.com/?page=2&sort=eid'),
-    ).toEqual(expected)
+    expect(parseHatenaBookmarkUrl(value)).toEqual(expected)
   })
 
   it('should return a site for a domain page with a capitalized site segment', () => {
@@ -201,14 +199,13 @@ describe('parseHatenaBookmarkUrl', () => {
   })
 
   it('should return the user for a path longer than 32 characters', () => {
+    const value = 'https://b.hatena.ne.jp/abcdefghijklmnopqrstuvwxyzabcdefghijklmn/'
     const expected: HatenaBookmarkUrl = {
       kind: 'user',
       username: 'abcdefghijklmnopqrstuvwxyzabcdefghijklmn',
     }
 
-    expect(
-      parseHatenaBookmarkUrl('https://b.hatena.ne.jp/abcdefghijklmnopqrstuvwxyzabcdefghijklmn/'),
-    ).toEqual(expected)
+    expect(parseHatenaBookmarkUrl(value)).toEqual(expected)
   })
 
   it('should return the home page for a path starting with a non-letter', () => {

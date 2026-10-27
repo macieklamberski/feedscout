@@ -10,11 +10,10 @@ describe('parseCanalblogUrl', () => {
   })
 
   it('should return the blog for a post page', () => {
+    const value = 'https://alice.canalblog.com/archives/2024/05/19/12345678.html'
     const expected: CanalblogUrl = { kind: 'blog' }
 
-    expect(
-      parseCanalblogUrl('https://alice.canalblog.com/archives/2024/05/19/12345678.html'),
-    ).toEqual(expected)
+    expect(parseCanalblogUrl(value)).toEqual(expected)
   })
 
   it('should return undefined for the www host', () => {

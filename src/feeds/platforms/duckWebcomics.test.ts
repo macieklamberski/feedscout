@@ -107,9 +107,9 @@ describe('duckWebcomicsHandler', () => {
 
   describe('guessExclusionRegex', () => {
     it('should match a guessed comic feed in another case', () => {
-      expect(
-        duckWebcomicsHandler.guessExclusionRegex?.test('https://www.theduckwebcomics.com/hats/rss'),
-      ).toBe(true)
+      const value = 'https://www.theduckwebcomics.com/hats/rss'
+
+      expect(duckWebcomicsHandler.guessExclusionRegex?.test(value)).toBe(true)
     })
 
     it('should not match a strip page', () => {
