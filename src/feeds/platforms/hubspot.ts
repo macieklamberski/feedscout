@@ -43,7 +43,11 @@ const getContentType = (headers: Headers | undefined): string | undefined => {
   try {
     const { contentType } = JSON.parse(headers?.get('x-hs-cfworker-meta') ?? '{}')
 
-    return typeof contentType === 'string' ? contentType : undefined
+    if (typeof contentType !== 'string') {
+      return
+    }
+
+    return contentType
   } catch {}
 }
 
