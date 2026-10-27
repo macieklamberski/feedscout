@@ -12,7 +12,8 @@ export type BubblelifePage = { kind: 'community' | 'library'; feedId: string }
 
 const domains = ['bubblelife.com']
 
-const communityRegex = /^\/community\/([a-z0-9_]+)(?:\/library\/(\d+))?(?:\/|$)/i
+const communityRegex =
+  /^\/community\/(?<community>[a-z0-9_]+)(?:\/library\/(?<libraryId>\d+))?(?:\/|$)/i
 const feedHrefRegex = /^\/rss\?c=(\d+)$/i
 
 export const parseBubblelifeUrl = (url: string): BubblelifeUrl | undefined => {
@@ -20,17 +21,17 @@ export const parseBubblelifeUrl = (url: string): BubblelifeUrl | undefined => {
     return
   }
 
-  const match = new URL(url).pathname.match(communityRegex)
+  const { community, libraryId } = new URL(url).pathname.match(communityRegex)?.groups ?? {}
 
-  if (!match?.[1]) {
+  if (!community) {
     return
   }
 
-  if (match[2]) {
-    return { kind: 'library', community: match[1], libraryId: match[2] }
+  if (libraryId) {
+    return { kind: 'library', community, libraryId }
   }
 
-  return { kind: 'community', community: match[1] }
+  return { kind: 'community', community }
 }
 
 export const getBubblelifePage = (

@@ -34,9 +34,10 @@ export type DspacePage =
   | { kind: 'home'; restUrl: string }
   | { kind: LegacyKind; feeds: Array<LegacyFeed> }
 
-const scopePathRegex = /\/(collections|communities)\/([^/]+)(?:\/|$)/i
+const scopePathRegex = /\/(?<route>collections|communities)\/(?<uuid>[^/]+)(?:\/|$)/i
 const transferStateEntityRegex = /&([aglqs]);/g
-const legacyFeedPathRegex = /\/feed\/(rss_1\.0|rss_2\.0|atom_1\.0)\/(site|[^/]+\/[^/]+)$/i
+const legacyFeedPathRegex =
+  /\/feed\/(?<format>rss_1\.0|rss_2\.0|atom_1\.0)\/(?<scope>site|[^/]+\/[^/]+)$/i
 const legacyStylesheetRegex = /\/static\/css\/bootstrap\/dspace-theme\.css$/
 const generatorRegex = /^DSpace\b/
 
@@ -114,7 +115,7 @@ const getLegacyLinks = (url: string, content: string): Array<LegacyLink> => {
 
   for (const link of links) {
     const feedUrl = parseUrl(link.attribs.href, url)
-    const [, format, scope] = feedUrl?.pathname.match(legacyFeedPathRegex) ?? []
+    const { format, scope } = feedUrl?.pathname.match(legacyFeedPathRegex)?.groups ?? {}
 
     if (!feedUrl || !format || !scope) {
       continue
@@ -196,7 +197,7 @@ export const getDspacePage = (url: string, content: string | undefined): DspaceP
   }
 
   const restUrl = getRestUrl(parsedUrl.origin, content)
-  const [, route, uuid] = parsedUrl.pathname.match(scopePathRegex) ?? []
+  const { route, uuid } = parsedUrl.pathname.match(scopePathRegex)?.groups ?? {}
 
   if (!route || !uuid || !hexOrHyphenRegex.test(uuid) || isNotFoundHtml(content)) {
     return { kind: 'home', restUrl }

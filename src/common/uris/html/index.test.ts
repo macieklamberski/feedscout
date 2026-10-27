@@ -466,7 +466,10 @@ describe('discoverUrisFromHtml', () => {
   })
 
   describe('<base href> resolution', () => {
-    const withBase = { ...defaultOptions, baseUrl: 'https://example.com/page' }
+    const withBase = {
+      ...defaultOptions,
+      baseUrl: 'https://example.com/page',
+    }
 
     it('should resolve relative anchor hrefs against an absolute <base href>', () => {
       const value = '<base href="https://example.com/sub/"><a href="feed.xml">RSS</a>'

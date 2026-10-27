@@ -20,7 +20,7 @@ const settingsLineRegex = /\bTender = \{[^\n]*/
 const settingsRootRegex = /"root":"(?<root>\/[^"]*)"/
 const sessionCookieRegex = /^_tender\d*_session$/
 const helpRootRegex = /^\/help(?:\/|$)/i
-const discussionPathRegex = /^\/discussions\/([^/]+)\/(\d+[^/]*)\/?$/i
+const discussionPathRegex = /^\/discussions\/(?<category>[^/]+)\/(?<discussion>\d+[^/]*)\/?$/i
 const trailingSlashRegex = /\/$/
 // A missing page answers 404 with the stock Rails error page inside the site layout, and a
 // made-up category would otherwise get the site's feed.
@@ -78,7 +78,7 @@ export const getTenderPage = (url: string, content: string | undefined): TenderP
   const sitePath = startsWithAnyOf(parsedUrl.pathname, `${root}/`)
     ? parsedUrl.pathname.slice(root.length)
     : '/'
-  const [, category, discussion] = sitePath.match(discussionPathRegex) ?? []
+  const { category, discussion } = sitePath.match(discussionPathRegex)?.groups ?? {}
 
   if (category && discussion) {
     return { kind: 'discussion', siteUrl, category, discussion }

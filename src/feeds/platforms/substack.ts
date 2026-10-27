@@ -21,18 +21,18 @@ const profileRegex = /^\/@(?<username>[^/]+)/
 // A profile page embeds its primary publication as escaped JSON. The publication
 // subdomain is not always the handle, and a custom domain replaces it.
 const publicationRegex =
-  /primaryPublication\\?":\{[^{}]*?\\?"subdomain\\?":\\?"([\w-]+)\\?",\\?"custom_domain\\?":(?:\\?"([^"\\]+)\\?"|null)/
+  /primaryPublication\\?":\{[^{}]*?\\?"subdomain\\?":\\?"(?<subdomain>[\w-]+)\\?",\\?"custom_domain\\?":(?:\\?"(?<customDomain>[^"\\]+)\\?"|null)/
 
 const getPublicationOrigin = (content: string | undefined): string | undefined => {
-  const match = content?.match(publicationRegex)
+  const { subdomain, customDomain } = content?.match(publicationRegex)?.groups ?? {}
 
-  if (!match?.[1]) {
+  if (!subdomain) {
     return
   }
 
-  const customOrigin = match[2] ? getHostOrigin(match[2]) : undefined
+  const customOrigin = customDomain ? getHostOrigin(customDomain) : undefined
 
-  return customOrigin ?? `https://${match[1]}.substack.com`
+  return customOrigin ?? `https://${subdomain}.substack.com`
 }
 
 export const parseSubstackUrl = (url: string): SubstackUrl | undefined => {

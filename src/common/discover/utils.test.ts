@@ -2067,7 +2067,10 @@ describe('normalizeUriEntry', () => {
   })
 
   it('should preserve hint on string entry', () => {
-    const value = { uri: '/feed.xml', hint: { key: 'test:feed', label: 'Feed' } }
+    const value = {
+      uri: '/feed.xml',
+      hint: { key: 'test:feed', label: 'Feed' },
+    }
     const expected = {
       uri: 'https://example.com/feed.xml',
       hint: { key: 'test:feed', label: 'Feed' },
@@ -2077,7 +2080,10 @@ describe('normalizeUriEntry', () => {
   })
 
   it('should preserve hint on array entry', () => {
-    const value = { uri: ['/feed/', '?feed=rss'], hint: { key: 'test:feed', label: 'Feed' } }
+    const value = {
+      uri: ['/feed/', '?feed=rss'],
+      hint: { key: 'test:feed', label: 'Feed' },
+    }
     const expected = {
       uri: ['https://example.com/feed/', 'https://example.com/?feed=rss'],
       hint: { key: 'test:feed', label: 'Feed' },
@@ -2255,7 +2261,10 @@ describe('omitReadPages', () => {
   })
 
   it('should drop only the alternatives that point at a read page', () => {
-    const value = { uri: ['https://example.com/#', 'https://example.com/feed'], hint: undefined }
+    const value = {
+      uri: ['https://example.com/#', 'https://example.com/feed'],
+      hint: undefined,
+    }
     const expected = { uri: 'https://example.com/feed' }
 
     expect(omitReadPages(value, readPageUrls)).toEqual(expected)

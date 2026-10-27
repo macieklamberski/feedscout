@@ -318,7 +318,11 @@ describe('discoverUris', () => {
       },
       fetchFn,
     )
-    const expected = { content, headers, fetchFn }
+    const expected = {
+      content,
+      headers,
+      fetchFn,
+    }
 
     expect(received).toEqual(expected)
   })
