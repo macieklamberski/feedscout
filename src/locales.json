@@ -5,7 +5,8 @@
     "htmlMethodRequiresContent": "HTML method requires content to be provided in input",
     "headersMethodRequiresHeaders": "Headers method requires headers to be provided in input",
     "guessMethodRequiresUrl": "Guess method requires url to be provided in input",
-    "unexpectedStreamBody": "Unexpected stream body from {{url}}"
+    "unexpectedStreamBody": "Unexpected stream body from {{url}}",
+    "unexpectedStatus": "Unexpected status {{status}} from {{url}}"
   },
   "hints": {
     "youtube:all": "All uploads",

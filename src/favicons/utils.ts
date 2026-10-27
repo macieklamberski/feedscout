@@ -6,12 +6,15 @@ import locales from '../locales.json' with { type: 'json' }
 // The status and URL ride in the cause, so an onError consumer can tell a 404 from a 500 without
 // parsing the message.
 export const createStatusError = (response: FetchFnResponse): Error => {
-  return new Error(`Unexpected status ${response.status} from ${response.url}`, {
-    cause: {
-      status: response.status,
-      url: response.url,
+  return new Error(
+    t(locales.errors.unexpectedStatus, { status: response.status, url: response.url }),
+    {
+      cause: {
+        status: response.status,
+        url: response.url,
+      },
     },
-  })
+  )
 }
 
 // A non-2xx response carries an error page, not the data an enricher asked for.
