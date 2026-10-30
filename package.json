@@ -81,7 +81,7 @@
     "feedsmith": "^3.0.1",
     "kvalita": "^1.30.0",
     "ogier": "^1.7.0",
-    "trousse": "^2.16.0",
+    "trousse": "^3.0.0",
     "tsdown": "0.23.1",
     "vitepress": "^2.0.0-alpha.20"
   }
