@@ -1,4 +1,4 @@
-import { composeQuery, getQueryParam, getQueryParams, isAnyOf, parseUrl } from 'trousse'
+import { composeQuery, getQueryParam, getQueryParamValues, isAnyOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, digitsRegex, hasMarker } from '../../common/utils.js'
 
@@ -34,7 +34,7 @@ export const parseKohaUrl = (url: string): KohaUrl | undefined => {
   const page = script.toLowerCase()
 
   if (page === 'opac-search') {
-    const terms = [...getQueryParams(params, 'q'), ...getQueryParams(params, 'limit')]
+    const terms = [...getQueryParamValues(params, 'q'), ...getQueryParamValues(params, 'limit')]
 
     if (!terms.some((term) => term.trim())) {
       return
