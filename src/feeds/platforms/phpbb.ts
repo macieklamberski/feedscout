@@ -6,7 +6,6 @@ import {
   digitsRegex,
   findElement,
   getCookieNames,
-  getNumericId,
   getScriptDirectory,
   hasElementWithId,
   hasMarker,
@@ -17,8 +16,6 @@ import { isForumotionHtml } from './forumotion.js'
 // Generic partly covers board, forum, post, topic.
 
 export type PhpbbPage = { boardUrl: string; forumId?: string; topicId?: string }
-
-const topicIdRegex = /[?&]t=(?<id>[^&#]+)/i
 
 // Forumotion's phpBB3 template prints the same body id and serves none of phpBB's feeds.
 export const isPhpbbHtml = (content: string): boolean => {
@@ -40,7 +37,10 @@ export const isPhpbbHeaders = (headers: Headers): boolean => {
   })
 }
 
-const getNumericParam = (searchParams: URLSearchParams, name: string): string | undefined => {
+const getNumericParam = (
+  searchParams: URLSearchParams | undefined,
+  name: string,
+): string | undefined => {
   const value = getQueryParam(searchParams, name)
 
   if (value && digitsRegex.test(value)) {
@@ -60,13 +60,13 @@ const getPhpbbPage = (url: string, content: string | undefined): PhpbbPage | und
   const canonicalLink = findElement(content, (element) => {
     return element.name === 'link' && element.attribs.rel === 'canonical'
   })
+  const canonicalUrl = parseUrl(canonicalLink?.attribs.href, url)
 
   return {
     // A board is routinely mounted under a sub-path such as `/community`.
     boardUrl: `${origin}${getScriptDirectory(pathname)}`,
     forumId: getNumericParam(searchParams, 'f'),
-    topicId:
-      getNumericParam(searchParams, 't') ?? getNumericId(canonicalLink?.attribs.href, topicIdRegex),
+    topicId: getNumericParam(searchParams, 't') ?? getNumericParam(canonicalUrl?.searchParams, 't'),
   }
 }
 

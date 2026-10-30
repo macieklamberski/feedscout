@@ -172,6 +172,25 @@ describe('phpbbHandler', () => {
       expect(phpbbHandler.resolve(value, content)).toEqual(expected)
     })
 
+    it('should read the topic from a relative canonical link', () => {
+      const value = 'https://example.com/community/viewtopic.php?p=678'
+      const content = `
+        <link
+          rel="canonical"
+          href="./viewtopic.php?t=345"
+        >
+      `
+      const expected = [
+        {
+          uri: 'https://example.com/community/feed.php?t=345',
+          hint: { key: 'phpbb:topic', label: 'Topic' },
+        },
+        ...getBoardFeeds('https://example.com/community'),
+      ]
+
+      expect(phpbbHandler.resolve(value, content)).toEqual(expected)
+    })
+
     it('should prefer the topic in the url over the canonical link', () => {
       const value = 'https://example.com/community/viewtopic.php?t=345'
       const content = `
