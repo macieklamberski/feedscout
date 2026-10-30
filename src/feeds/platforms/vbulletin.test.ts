@@ -190,6 +190,21 @@ describe('vbulletinHandler', () => {
       ])
     })
 
+    it('should return the forum feed for an uppercase forum parameter', () => {
+      const value = 'https://example.com/forumdisplay.php?F=28'
+
+      expect(vbulletinHandler.resolve(value, '<html></html>')).toEqual([
+        {
+          uri: 'https://example.com/external.php?type=RSS2&forumids=28',
+          hint: { key: 'vbulletin:forum', label: 'Forum' },
+        },
+        {
+          uri: 'https://example.com/external.php?type=RSS2',
+          hint: { key: 'vbulletin:site', label: 'Site' },
+        },
+      ])
+    })
+
     it('should return only the site feed for a forum id with a letter', () => {
       const value = 'https://rangeroverclub.com/forumdisplay.php?f=28abc'
 

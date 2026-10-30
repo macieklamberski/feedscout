@@ -1,4 +1,4 @@
-import { composeQuery, parseUrl } from 'trousse'
+import { composeQuery, getQueryParam, parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import {
@@ -22,7 +22,6 @@ const rollupPathRegex = /\/js\/[^/]*$/i
 // 6.1 and later `data-channelid='{id}'`.
 const channelIdRegex = /(?:"channelid":\s*"|data-channelid=['"])(\d+)/
 const forumDisplayRegex = /\/forumdisplay\.php$/i
-const forumIdRegex = /[?&]f=(?<forumId>[^&]+)/i
 const friendlyForumIdRegex = /^\?(\d+)(?:-|&|$)/
 
 // vBulletin 4 prints `clientscript/vbulletin-core.js` as an absolute URL under the forum root.
@@ -59,13 +58,13 @@ export const isVbulletinHeaders = (headers: Headers): boolean => {
 }
 
 // Friendly URLs name the forum as `?{id}-{title}` or `?{id}`, and plain ones as `?f={id}`.
-const getForumId = (pathname: string, search: string): string | undefined => {
-  if (!forumDisplayRegex.test(pathname)) {
+const getForumId = (parsedUrl: URL): string | undefined => {
+  if (!forumDisplayRegex.test(parsedUrl.pathname)) {
     return
   }
 
   const forumId =
-    forumIdRegex.exec(search)?.groups?.forumId ?? friendlyForumIdRegex.exec(search)?.[1]
+    getQueryParam(parsedUrl.searchParams, 'f') ?? friendlyForumIdRegex.exec(parsedUrl.search)?.[1]
 
   if (forumId && digitsRegex.test(forumId)) {
     return forumId
@@ -127,7 +126,7 @@ const getVbulletinPage = (url: string, content: string | undefined): VbulletinPa
   }
 
   const rootUrl = getVbulletin4RootUrl(parsedUrl, content)
-  const forumId = getForumId(parsedUrl.pathname, parsedUrl.search)
+  const forumId = getForumId(parsedUrl)
   const page: VbulletinPage = { siteFeedUrl: `${rootUrl}/external.php?type=RSS2` }
 
   if (forumId) {
