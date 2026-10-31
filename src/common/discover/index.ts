@@ -1,4 +1,4 @@
-import { coerceArray, isHttpUrl, resolveFeedProtocol } from 'trousse'
+import { coerceArray, isHttpUrl, resolveFeedScheme } from 'trousse'
 import {
   type DiscoverInput,
   type DiscoverInputObject,
@@ -70,7 +70,7 @@ const runDiscover = async <TValid>(
   let requestedUrl: string | undefined
 
   if (inputUrl) {
-    requestedUrl = resolveFeedProtocol(inputUrl)
+    requestedUrl = resolveFeedScheme(inputUrl)
     reportStep({ step: 'fetchInput', status: 'start', url: inputUrl })
   }
 

@@ -8,7 +8,7 @@ import {
   isHttpUrl,
   isObject,
   parseUrl,
-  resolveFeedProtocol,
+  resolveFeedScheme,
 } from 'trousse'
 import locales from '../../locales.json' with { type: 'json' }
 import type {
@@ -39,7 +39,7 @@ export const normalizeInput = async (
 
   // A feed or podcast scheme, such as feed:// or itpc://, names an https URL. A JavaScript caller
   // can still pass null or an array here, which goes to the fetch as it is.
-  const url = typeof input === 'string' ? resolveFeedProtocol(input) : input
+  const url = typeof input === 'string' ? resolveFeedScheme(input) : input
 
   try {
     const response = await fetchFn(url, { headers: { Accept: acceptHeader } })
