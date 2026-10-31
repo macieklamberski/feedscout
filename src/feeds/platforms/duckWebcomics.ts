@@ -1,4 +1,4 @@
-import { getPathSegments, isHostOf } from 'trousse'
+import { getPathSegments, isHostOf, isSameText } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, findElement, wordRegex } from '../../common/utils.js'
@@ -29,7 +29,7 @@ export const parseDuckWebcomicsUrl = (url: string): DuckWebcomicsUrl | undefined
 // The site answers a comic in any case, and its pages link the feed in the comic's own spelling.
 const getFeedComic = (content: string | undefined, comic: string): string | undefined => {
   const anchor = findElement(content, (element) => {
-    return element.attribs.href?.match(feedPathRegex)?.[1]?.toLowerCase() === comic.toLowerCase()
+    return isSameText(element.attribs.href?.match(feedPathRegex)?.[1], comic)
   })
 
   return anchor?.attribs.href?.match(feedPathRegex)?.[1]

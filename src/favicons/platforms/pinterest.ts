@@ -1,4 +1,4 @@
-import { isNonEmptyString } from 'trousse'
+import { isNonEmptyString, isSameText } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getScriptText } from '../../common/utils.js'
 import { parsePinterestUrl } from '../../feeds/platforms/pinterest.js'
@@ -26,7 +26,7 @@ const findProfileImage = (content: string, username: string): string | undefined
   }
 
   for (const user of Object.values(users)) {
-    if (user?.username?.toLowerCase() !== username.toLowerCase()) {
+    if (!isSameText(user?.username, username)) {
       continue
     }
 
