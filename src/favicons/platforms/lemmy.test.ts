@@ -195,7 +195,7 @@ describe('lemmyEnricher', () => {
   describe('edge cases', () => {
     it('should resolve federated community through the local instance API', async () => {
       const context = createContext({
-        'https://example.com/api/v3/community?name=rust%40example.net': JSON.stringify({
+        'https://example.com/api/v3/community?name=rust@example.net': JSON.stringify({
           community_view: {
             community: { icon: 'https://example.net/pictrs/image/rust.png' },
           },
@@ -210,7 +210,7 @@ describe('lemmyEnricher', () => {
 
     it('should resolve federated user through the local instance API', async () => {
       const context = createContext({
-        'https://example.com/api/v3/user?username=alice%40example.net&limit=1': JSON.stringify({
+        'https://example.com/api/v3/user?username=alice@example.net&limit=1': JSON.stringify({
           person_view: {
             person: { avatar: 'https://example.net/pictrs/image/alice.png' },
           },

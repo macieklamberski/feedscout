@@ -1,4 +1,4 @@
-import { isNonEmptyString } from 'trousse'
+import { composeQuery, isNonEmptyString } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getMetaContent, hasMarker } from '../../common/utils.js'
 import { isPixelfedHtml, parsePixelfedUrl } from '../../feeds/platforms/pixelfed.js'
@@ -46,7 +46,9 @@ export const pixelfedEnricher: FaviconEnricher = async (ref, context) => {
   }
 
   const { origin } = new URL(ref.url)
-  const response = await context.fetchFn(`${origin}/api/v1/accounts/lookup?acct=${ref.id}`)
+  const response = await context.fetchFn(
+    `${origin}/api/v1/accounts/lookup${composeQuery({ acct: ref.id })}`,
+  )
   const data = parseResponseJson(response)
 
   if (isAvatar(data.avatar)) {

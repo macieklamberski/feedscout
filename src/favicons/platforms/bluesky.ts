@@ -1,4 +1,4 @@
-import { isNonEmptyString } from 'trousse'
+import { composeQuery, isNonEmptyString } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { parseBlueskyUrl } from '../../feeds/platforms/bluesky.js'
 import type { FaviconEnricher } from '../types.js'
@@ -27,7 +27,7 @@ export const blueskyEnricher: FaviconEnricher = async (ref, context) => {
     return
   }
 
-  const apiUrl = `https://public.api.bsky.app/xrpc/app.bsky.actor.getProfile?actor=${ref.id}`
+  const apiUrl = `https://public.api.bsky.app/xrpc/app.bsky.actor.getProfile${composeQuery({ actor: ref.id })}`
   const response = await context.fetchFn(apiUrl)
   const data = parseResponseJson(response)
 

@@ -111,6 +111,7 @@ export const deviantartHandler: PlatformHandler = {
 
       return [
         {
+          // biome-ignore lint/plugin/useComposeQuery: composeQuery leaves the `/` raw.
           uri: `${feedBaseUrl}?type=deviation&q=${encodeURIComponent(query)}`,
           hint: composeHint('deviantart:gallery'),
         },

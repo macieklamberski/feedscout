@@ -1,4 +1,4 @@
-import { isNonEmptyString } from 'trousse'
+import { composeQuery, isNonEmptyString } from 'trousse'
 import type { FetchFnResponse } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { gitlabHandler as gitlabFeedHandler, parseGitlabUrl } from '../../feeds/platforms/gitlab.js'
@@ -40,7 +40,9 @@ export const gitlabEnricher: FaviconEnricher = async (ref, context) => {
   const { origin } = new URL(ref.url)
 
   const encodedName = encodeURIComponent(ref.id)
-  const userResponse = await context.fetchFn(`${origin}/api/v4/users?username=${encodedName}`)
+  const userResponse = await context.fetchFn(
+    `${origin}/api/v4/users${composeQuery({ username: ref.id })}`,
+  )
   const userAvatarUrl = getAvatarUrl(userResponse)
 
   if (userAvatarUrl) {

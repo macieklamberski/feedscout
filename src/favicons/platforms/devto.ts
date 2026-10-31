@@ -1,4 +1,4 @@
-import { isNonEmptyString } from 'trousse'
+import { composeQuery, isNonEmptyString } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { parseDevtoUrl } from '../../feeds/platforms/devto.js'
 import type { FaviconEnricher } from '../types.js'
@@ -28,7 +28,9 @@ export const devtoEnricher: FaviconEnricher = async (ref, context) => {
   }
 
   const name = encodeURIComponent(ref.id)
-  let response = await context.fetchFn(`https://dev.to/api/users/by_username?url=${name}`)
+  let response = await context.fetchFn(
+    `https://dev.to/api/users/by_username${composeQuery({ url: ref.id })}`,
+  )
 
   // An organization's name answers 404 from the users API, and the organizations API has it.
   if (response.status === 404) {

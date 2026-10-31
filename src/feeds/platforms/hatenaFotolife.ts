@@ -97,6 +97,7 @@ export const hatenaFotolifeHandler: PlatformHandler = {
     if (parsed.kind === 'model') {
       const model = escapeSegment(parsed.model)
 
+      // biome-ignore lint/plugin/useComposeQuery: composeQuery respells the page's escapes.
       return [{ uri: `${userUrl}/rss?model=${model}`, hint: composeHint('hatena-fotolife:model') }]
     }
 

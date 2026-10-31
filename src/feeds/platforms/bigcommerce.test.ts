@@ -169,6 +169,23 @@ describe('bigcommerceHandler', () => {
       expect(bigcommerceHandler.resolve(value, '<html></html>')).toEqual(expected)
     })
 
+    it('should escape a space in the search query as %20', () => {
+      const value = 'https://www.example.com/search.php?search_query=red+hat'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://www.example.com/rss.php?action=searchproducts&search_query=red%20hat&type=rss',
+          hint: { key: 'bigcommerce:search', label: 'Search', format: 'rss' },
+        },
+        {
+          uri: 'https://www.example.com/rss.php?action=searchproducts&search_query=red%20hat&type=atom',
+          hint: { key: 'bigcommerce:search', label: 'Search', format: 'atom' },
+        },
+        ...storeFeeds,
+      ]
+
+      expect(bigcommerceHandler.resolve(value, '<html></html>')).toEqual(expected)
+    })
+
     it('should return the store feeds on a search page without a query', () => {
       const value = 'https://www.example.com/search.php'
 
