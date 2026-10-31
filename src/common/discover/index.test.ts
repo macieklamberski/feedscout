@@ -670,9 +670,9 @@ describe('discoverFeeds', () => {
           },
         },
       )
-      const validatedMethods = steps.flatMap((step) => {
-        return step.step === 'validate' && step.status === 'start' ? [step.method] : []
-      })
+      const validatedMethods = steps
+        .filter((step) => step.step === 'validate' && step.status === 'start')
+        .map((step) => step.method)
 
       expect(validatedMethods).toEqual(['platform'])
     })
