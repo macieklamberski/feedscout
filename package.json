@@ -80,7 +80,7 @@
     "@types/http-link-header": "^1.0.7",
     "feedsmith": "^3.0.1",
     "kvalita": "^1.30.0",
-    "ogier": "^1.7.0",
+    "ogier": "^1.8.1",
     "trousse": "^3.0.0",
     "tsdown": "0.23.1",
     "vitepress": "^2.0.0-alpha.20"
