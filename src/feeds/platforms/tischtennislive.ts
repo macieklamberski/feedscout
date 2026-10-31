@@ -1,4 +1,4 @@
-import { composeQuery, getQueryParam, isAnyOf, parseUrl } from 'trousse'
+import { composeQuery, getQueryParam, isAnyOf, isHostOf, parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, digitsRegex, findElement, getTenantSubdomain } from '../../common/utils.js'
@@ -45,7 +45,11 @@ export const getTischtennislivePage = (
 
     const linkUrl = parseUrl(element.attribs.href, url)
 
-    return linkUrl?.hostname === hostname && resultsFeedPathRegex.test(linkUrl.pathname)
+    return (
+      linkUrl !== undefined &&
+      isHostOf(linkUrl, hostname) &&
+      resultsFeedPathRegex.test(linkUrl.pathname)
+    )
   })
   const feedUrl = parseUrl(link?.attribs.href, url)
   const id = getQueryParam(feedUrl?.searchParams, 'id') ?? ''

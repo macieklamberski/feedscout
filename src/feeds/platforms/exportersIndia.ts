@@ -1,4 +1,4 @@
-import { parseUrl } from 'trousse'
+import { isHostOf, parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, findElement, findElements, hasMarker } from '../../common/utils.js'
@@ -35,7 +35,7 @@ const getExportersIndiaPage = (
     return
   }
 
-  const { host } = new URL(url)
+  const { hostname } = new URL(url)
   const anchors = findElements(content, (element) => element.name === 'a')
   let productsFeedUrl: string | undefined
   let servicesFeedUrl: string | undefined
@@ -43,7 +43,7 @@ const getExportersIndiaPage = (
   for (const anchor of anchors) {
     const target = parseUrl(anchor.attribs.href, url)
 
-    if (target?.host !== host) {
+    if (!target || !isHostOf(target, hostname)) {
       continue
     }
 
