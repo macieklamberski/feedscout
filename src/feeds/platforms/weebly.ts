@@ -1,4 +1,4 @@
-import { encodePathSegment, getPathSegments, isAnyOf, parseUrl } from 'trousse'
+import { encodePathSegment, getPathSegments, isAnyOf, isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import {
   composeHint,
@@ -56,7 +56,7 @@ export const getWeeblyPage = (url: string, content: string | undefined): WeeblyP
   for (const anchor of anchors) {
     const target = parseUrl(anchor.attribs.href, url)
 
-    if (target?.hostname !== hostname) {
+    if (!target || !isHostOf(target, hostname)) {
       continue
     }
 

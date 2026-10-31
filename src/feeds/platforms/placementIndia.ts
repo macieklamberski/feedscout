@@ -1,4 +1,4 @@
-import { parseUrl } from 'trousse'
+import { isHostOf, parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, findElement, findElements, hasMarker } from '../../common/utils.js'
@@ -34,7 +34,7 @@ const getPlacementIndiaPage = (
     return
   }
 
-  const { host } = new URL(url)
+  const { hostname } = new URL(url)
   const anchors = findElements(content, (element) => element.name === 'a')
   let feedUrl: string | undefined
   let jobOpeningFeedUrl: string | undefined
@@ -42,7 +42,7 @@ const getPlacementIndiaPage = (
   for (const anchor of anchors) {
     const target = parseUrl(anchor.attribs.href, url)
 
-    if (target?.host !== host) {
+    if (!target || !isHostOf(target, hostname)) {
       continue
     }
 
