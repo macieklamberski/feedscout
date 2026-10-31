@@ -102,7 +102,6 @@ export const sapoBlogsHandler: PlatformHandler = {
       })
 
       uris.push({
-        // biome-ignore lint/plugin/useComposeQuery: composeQuery respells the page's escapes.
         uri: `${origin}/data/rss?tag=${tag}`,
         hint: composeHint('sapo-blogs:tag'),
       })

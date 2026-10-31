@@ -101,7 +101,6 @@ export const yeswikiHandler: PlatformHandler = {
 
     for (const formId of formIds) {
       uris.push({
-        // biome-ignore lint/plugin/useComposeQuery: composeQuery writes no bare BazaR/rss key.
         uri: `${wikiUrl}?BazaR/rss&id=${encodeURIComponent(formId)}`,
         hint: composeHint('yeswiki:form-entries'),
       })
