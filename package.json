@@ -68,7 +68,7 @@
     "docs:build": "vitepress build docs"
   },
   "dependencies": {
-    "entities": "^8.1.0",
+    "entities": "^9.0.0",
     "htmlparser2": "^12.0.0",
     "http-link-header": "^1.1.4"
   },
