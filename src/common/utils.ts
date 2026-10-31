@@ -1,5 +1,13 @@
 import { DomUtils, parseDocument } from 'htmlparser2'
-import { anyWordMatchesAnyOf, getSubdomain, isAnyOf, parseUrl, stripWww } from 'trousse'
+import {
+  anyWordMatchesAnyOf,
+  getSubdomain,
+  isAnyOf,
+  isNumber,
+  isString,
+  parseUrl,
+  stripWww,
+} from 'trousse'
 import locales from '../locales.json' with { type: 'json' }
 import type { DiscoverUriHint, FetchFn } from './types.js'
 
@@ -61,7 +69,7 @@ export const withTextBody = (fetchFn: FetchFn): FetchFn => {
   return async (url, options) => {
     const response = await fetchFn(url, options)
 
-    if (typeof response.body === 'string') {
+    if (isString(response.body)) {
       return response
     }
 
@@ -74,7 +82,7 @@ export const withTextBody = (fetchFn: FetchFn): FetchFn => {
 
 // Coerce to a positive integer, falling back when missing or invalid (NaN, < 1, non-integer).
 export const toPositiveInteger = (value: number | undefined, fallback: number): number => {
-  return typeof value === 'number' && Number.isInteger(value) && value >= 1 ? value : fallback
+  return isNumber(value) && Number.isInteger(value) && value >= 1 ? value : fallback
 }
 
 export const normalizeMimeType = (type: string): string => {

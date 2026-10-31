@@ -1,4 +1,4 @@
-import { getAnyOf, getPathSegments, parseUrl, resolveUrl, stripWww } from 'trousse'
+import { getAnyOf, getPathSegments, isString, parseUrl, resolveUrl, stripWww } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, findElement, hasMarker, hasMetaContent } from '../../common/utils.js'
@@ -43,7 +43,7 @@ const getContentType = (headers: Headers | undefined): string | undefined => {
   try {
     const { contentType } = JSON.parse(headers?.get('x-hs-cfworker-meta') ?? '{}')
 
-    if (typeof contentType !== 'string') {
+    if (!isString(contentType)) {
       return
     }
 

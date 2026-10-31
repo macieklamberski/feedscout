@@ -1,4 +1,4 @@
-import { t } from 'trousse'
+import { isString, t } from 'trousse'
 import type { FetchFnResponse } from '../common/types.js'
 import { isSuccessfulStatus } from '../common/utils.js'
 import locales from '../locales.json' with { type: 'json' }
@@ -23,7 +23,7 @@ export const getResponseText = (response: FetchFnResponse): string => {
     throw createStatusError(response)
   }
 
-  if (typeof response.body !== 'string') {
+  if (!isString(response.body)) {
     throw new Error(t(locales.errors.unexpectedStreamBody, { url: response.url }))
   }
 

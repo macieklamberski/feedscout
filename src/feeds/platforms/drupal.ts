@@ -1,4 +1,5 @@
 import { DomUtils } from 'htmlparser2'
+import { isString } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, findElement, hasMarker, hasMetaContent } from '../../common/utils.js'
 import { isGcsWebPage } from './gcsWeb.js'
@@ -34,7 +35,7 @@ export const getDrupalPage = (url: string, content: string | undefined): DrupalP
       const settings: DrupalSettings = JSON.parse(DomUtils.textContent(script))
       const basePath = settings.path?.baseUrl
 
-      if (typeof basePath === 'string' && basePath.startsWith('/') && basePath.endsWith('/')) {
+      if (isString(basePath) && basePath.startsWith('/') && basePath.endsWith('/')) {
         return { kind: 'site', baseUrl: `${origin}${basePath}` }
       }
     } catch {}

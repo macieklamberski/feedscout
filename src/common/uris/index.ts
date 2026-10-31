@@ -1,4 +1,4 @@
-import { coerceArray } from 'trousse'
+import { coerceArray, isString } from 'trousse'
 import type {
   DiscoverMethodsConfigInternal,
   DiscoverOnErrorFn,
@@ -30,7 +30,7 @@ const excludeGuesses = (
       return []
     }
 
-    if (typeof guess === 'string') {
+    if (isString(guess)) {
       return alternatives
     }
 
