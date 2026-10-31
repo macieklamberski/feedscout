@@ -1,4 +1,4 @@
-import { parseUrl } from 'trousse'
+import { isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getMetaContent } from '../../common/utils.js'
 import {
@@ -26,7 +26,7 @@ const parseAvatar = (html: string): string | undefined => {
 
   const parsedUrl = parseUrl(image)
 
-  if (!parsedUrl || parsedUrl.hostname !== avatarHost) {
+  if (!parsedUrl || !isHostOf(parsedUrl, avatarHost)) {
     return
   }
 

@@ -1,5 +1,5 @@
 import { Parser } from 'htmlparser2'
-import { getPathSegments, getRegistrableDomain, parseUrl } from 'trousse'
+import { getPathSegments, getRegistrableDomain, isString, parseUrl } from 'trousse'
 import type { UriEntry } from '../../types.js'
 
 const ipAddressRegex = /^\d+\.\d+\.\d+\.\d+$/
@@ -26,7 +26,7 @@ export const generateUrlCombinations = (
     const pathname = parsed.pathname
 
     return uris.map((uri) => {
-      if (typeof uri === 'string') {
+      if (isString(uri)) {
         return resolveUri(uri, base, origin, pathname)
       }
 
@@ -55,7 +55,7 @@ export const generatePathUrlCombinations = (
     const normalizedBase = base.endsWith('/') ? base : `${base}/`
 
     return uris.map((uri) => {
-      if (typeof uri === 'string') {
+      if (isString(uri)) {
         return resolvePathUri(uri, normalizedBase)
       }
 

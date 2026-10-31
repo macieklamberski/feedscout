@@ -1,4 +1,5 @@
 import { type Browser, chromium } from 'playwright'
+import { decodePercent, isHostOrSubdomainOf, sleep } from 'trousse'
 import * as constants from './constants.js'
 
 export const timeoutMs = 30_000
@@ -15,8 +16,6 @@ const fallbackStatuses = [403, 408, 413, 429, 500, 502, 503, 504]
 // Some hosts answer a client that does not look like a browser with 404, such as Haley job boards.
 // A retry does not change that, so a 404 goes to the browser without one.
 const browserFallbackStatuses = [...fallbackStatuses, 404]
-
-export const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
 export type FetchResult = {
   status: number
@@ -36,9 +35,7 @@ const redditGapMs = 61_000
 let redditNextAt = 0
 
 const waitForReddit = async (url: string) => {
-  const { hostname } = new URL(url)
-
-  if (hostname !== 'reddit.com' && !hostname.endsWith('.reddit.com')) {
+  if (!isHostOrSubdomainOf(url, 'reddit.com')) {
     return
   }
 
@@ -46,7 +43,7 @@ const waitForReddit = async (url: string) => {
   redditNextAt = Math.max(redditNextAt, Date.now()) + redditGapMs
 
   if (waitMs > 0) {
-    await delay(waitMs)
+    await sleep(waitMs)
   }
 }
 
@@ -68,7 +65,7 @@ const fetchWithRetry = async (url: string, options?: FetchOptions): Promise<Fetc
     if (!fallbackStatuses.includes(response.status)) {
       break
     }
-    await delay(retryDelayMs)
+    await sleep(retryDelayMs)
     response = await fetchOnce(url, options)
   }
 
@@ -137,8 +134,8 @@ const parseProxy = (url: string | undefined) => {
   const parsed = new URL(url)
   return {
     server: `${parsed.protocol}//${parsed.host}`,
-    username: parsed.username ? decodeURIComponent(parsed.username) : undefined,
-    password: parsed.password ? decodeURIComponent(parsed.password) : undefined,
+    username: parsed.username ? decodePercent(parsed.username) : undefined,
+    password: parsed.password ? decodePercent(parsed.password) : undefined,
   }
 }
 
@@ -167,7 +164,7 @@ export const checkPlatforms = async (
 
       for (let i = 0; i < urls.length; i++) {
         if (i > 0) {
-          await delay(delayMs)
+          await sleep(delayMs)
         }
 
         const detail = await checkUrl(urls[i])

@@ -1,4 +1,4 @@
-import { isNonEmptyString } from 'trousse'
+import { composeQuery, isNonEmptyString } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement, getMetaContent, hasClass } from '../../common/utils.js'
 import { parseSteamUrl } from '../../feeds/platforms/steam.js'
@@ -61,7 +61,7 @@ export const steamEnricher: FaviconEnricher = async (ref, context) => {
     return
   }
 
-  const apiUrl = `https://api.steampowered.com/ICommunityService/GetApps/v1/?appids[0]=${ref.id}`
+  const apiUrl = `https://api.steampowered.com/ICommunityService/GetApps/v1/${composeQuery({ 'appids[0]': ref.id })}`
   const response = await context.fetchFn(apiUrl)
   const icon = parseResponseJson(response)?.response?.apps?.[0]?.icon
 

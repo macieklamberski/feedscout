@@ -1,4 +1,4 @@
-import { parseUrl } from 'trousse'
+import { composeQuery, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, findElement, hasMarker } from '../../common/utils.js'
 
@@ -65,16 +65,18 @@ export const opencartJournalHandler: PlatformHandler = {
       return []
     }
 
-    const blogRoute = `${page.storeUrl}index.php?route=${page.version}/blog`
+    const indexUrl = `${page.storeUrl}index.php`
+    const blogRoute = `${page.version}/blog`
+    const slashFeedUrl = `${indexUrl}${composeQuery({ route: `${blogRoute}/feed` })}`
 
     if (page.version === 'journal2') {
-      return [{ uri: `${blogRoute}/feed`, hint: composeHint('opencart-journal:blog', 'rss') }]
+      return [{ uri: slashFeedUrl, hint: composeHint('opencart-journal:blog', 'rss') }]
     }
 
     return [
       {
         // OpenCart 4 separates a route's method with a dot and answers the slash form with a 404.
-        uri: [`${blogRoute}/feed`, `${blogRoute}.feed`],
+        uri: [slashFeedUrl, `${indexUrl}${composeQuery({ route: `${blogRoute}.feed` })}`],
         hint: composeHint('opencart-journal:blog', 'rss'),
       },
     ]

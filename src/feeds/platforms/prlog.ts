@@ -1,4 +1,4 @@
-import { getPathSegments, isHostOf, parseUrl } from 'trousse'
+import { getPathSegments, isHostOf, isSameText, parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, findElement } from '../../common/utils.js'
@@ -44,7 +44,7 @@ export const getPrlogPage = (url: string, content: string | undefined): PrlogPag
   })
   const linked = parsePrlogUrl(link?.attribs.href ?? '')
 
-  if (linked && linked.pressroomId.toLowerCase() === parsed.pressroomId.toLowerCase()) {
+  if (linked && isSameText(linked.pressroomId, parsed.pressroomId)) {
     return linked
   }
 

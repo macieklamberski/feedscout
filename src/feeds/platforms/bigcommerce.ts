@@ -83,11 +83,11 @@ export const bigcommerceHandler: PlatformHandler = {
 
       uris.push(
         {
-          uri: `${feedUrl}?${new URLSearchParams({ ...params, type: 'rss' })}`,
+          uri: `${feedUrl}${composeQuery({ ...params, type: 'rss' })}`,
           hint: composeHint('bigcommerce:search', 'rss'),
         },
         {
-          uri: `${feedUrl}?${new URLSearchParams({ ...params, type: 'atom' })}`,
+          uri: `${feedUrl}${composeQuery({ ...params, type: 'atom' })}`,
           hint: composeHint('bigcommerce:search', 'atom'),
         },
       )

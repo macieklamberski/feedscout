@@ -1,4 +1,4 @@
-import { isHostOrSubdomainOf } from 'trousse'
+import { isAnyOf, isHostOrSubdomainOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, findElement, getTenantSubdomain, hasMarker } from '../../common/utils.js'
 
@@ -17,7 +17,7 @@ export const isBigCartelHtml = (content: string): boolean => {
   const stylesheet = findElement(content, (element) => {
     return (
       element.name === 'link' &&
-      element.attribs.rel?.toLowerCase() === 'stylesheet' &&
+      isAnyOf(element.attribs.rel, 'stylesheet') &&
       themeStylesheetRegex.test(element.attribs.href ?? '')
     )
   })

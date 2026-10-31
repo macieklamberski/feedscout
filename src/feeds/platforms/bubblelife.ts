@@ -1,4 +1,4 @@
-import { composeQuery, isSubdomainOf } from 'trousse'
+import { composeQuery, includesAnyOf, isSubdomainOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, findElement } from '../../common/utils.js'
 
@@ -61,7 +61,7 @@ export const getBubblelifePage = (
   // then names the community instead, so the id counts only when the footer names it.
   if (
     parsed.kind === 'library' &&
-    content.toLowerCase().includes(`${communityPath}${parsed.libraryId}/type/rssinfo`.toLowerCase())
+    includesAnyOf(content, `${communityPath}${parsed.libraryId}/type/rssinfo`)
   ) {
     return { kind: 'library', feedId: parsed.libraryId }
   }

@@ -5,10 +5,12 @@ import {
   genericHtmlMimeTypes,
   htmlMimeTypes,
   isAnyOf,
+  isFunction,
   isHttpUrl,
   isObject,
+  isString,
   parseUrl,
-  resolveFeedProtocol,
+  resolveFeedScheme,
 } from 'trousse'
 import locales from '../../locales.json' with { type: 'json' }
 import type {
@@ -39,14 +41,14 @@ export const normalizeInput = async (
 
   // A feed or podcast scheme, such as feed:// or itpc://, names an https URL. A JavaScript caller
   // can still pass null or an array here, which goes to the fetch as it is.
-  const url = typeof input === 'string' ? resolveFeedProtocol(input) : input
+  const url = isString(input) ? resolveFeedScheme(input) : input
 
   try {
     const response = await fetchFn(url, { headers: { Accept: acceptHeader } })
 
     return {
       url: response.url,
-      content: typeof response.body === 'string' ? response.body : undefined,
+      content: isString(response.body) ? response.body : undefined,
       headers: response.headers,
       status: response.status,
     }
@@ -78,7 +80,7 @@ export const getFeedSiteUrl = (parsed: FeedMethodData): string | undefined => {
 }
 
 const isThenable = (value: unknown): value is PromiseLike<unknown> => {
-  return isObject(value) && 'then' in value && typeof value.then === 'function'
+  return isObject(value) && 'then' in value && isFunction(value.then)
 }
 
 // onError is where failures get reported, so an error thrown from it has nowhere to go. It is
@@ -110,7 +112,7 @@ export const attempt = <TValue, TFallback>(
 ): NonNullable<TValue> | TFallback => {
   const context: DiscoverErrorContext = {
     phase,
-    url: url ?? (typeof fallback === 'string' ? fallback : undefined),
+    url: url ?? (isString(fallback) ? fallback : undefined),
   }
 
   try {
@@ -162,7 +164,7 @@ export const normalizeUriEntry = (
 ): DiscoverUriEntry | undefined => {
   const { uri } = entry
 
-  if (typeof uri === 'string') {
+  if (isString(uri)) {
     const resolvedUri = attempt(() => resolveUrlFn(uri, baseUrl), uri, 'resolveUrlFn', onError)
 
     if (!isFetchableUri(resolvedUri, ignoredExtensions)) {

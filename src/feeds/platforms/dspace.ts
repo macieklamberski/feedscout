@@ -1,4 +1,4 @@
-import { composeQuery, isAnyOf, isHttpUrl, parseUrl } from 'trousse'
+import { composeQuery, isAnyOf, isHttpUrl, isString, parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import {
@@ -167,7 +167,7 @@ const getRestUrl = (origin: string, content: string | undefined): string => {
       const state: TransferState = JSON.parse(json)
       const baseUrl = state.APP_CONFIG_STATE?.rest?.baseUrl
 
-      if (typeof baseUrl === 'string' && isHttpUrl(baseUrl)) {
+      if (isString(baseUrl) && isHttpUrl(baseUrl)) {
         let end = baseUrl.length
 
         // A regex for the trailing slashes rescans every slash run in a page-supplied value.

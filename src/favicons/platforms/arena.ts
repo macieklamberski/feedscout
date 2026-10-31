@@ -1,3 +1,4 @@
+import { isString } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getMetaContent } from '../../common/utils.js'
 import { parseArenaUrl } from '../../feeds/platforms/arena.js'
@@ -58,7 +59,7 @@ export const arenaEnricher: FaviconEnricher = async (ref, context) => {
 
   // The API also looks channels up by numeric id, so /block/{id} and profile
   // subpages would otherwise resolve to another user's channel.
-  if (data?.user?.slug !== username || typeof display !== 'string') {
+  if (data?.user?.slug !== username || !isString(display)) {
     return []
   }
 

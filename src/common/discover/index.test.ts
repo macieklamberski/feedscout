@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'bun:test'
+import { sleep } from 'trousse'
 import { discoverFeeds } from '../../feeds/index.js'
 import type { FeedResult } from '../../feeds/types.js'
 import locales from '../../locales.json' with { type: 'json' }
@@ -669,9 +670,9 @@ describe('discoverFeeds', () => {
           },
         },
       )
-      const validatedMethods = steps.flatMap((step) => {
-        return step.step === 'validate' && step.status === 'start' ? [step.method] : []
-      })
+      const validatedMethods = steps
+        .filter((step) => step.step === 'validate' && step.status === 'start')
+        .map((step) => step.method)
 
       expect(validatedMethods).toEqual(['platform'])
     })
@@ -1218,7 +1219,7 @@ describe('discoverFeeds', () => {
     it('should return results in the order the candidates were listed, whatever finishes first', async () => {
       const delays: Record<string, number> = { 'https://example.com/feed': 30 }
       const mockFetch: FetchFn = async (url) => {
-        await new Promise((resolve) => setTimeout(resolve, delays[url] ?? 0))
+        await sleep(delays[url] ?? 0)
 
         return { headers: new Headers(), body: rss, url, status: 200, statusText: 'OK' }
       }
@@ -1598,7 +1599,7 @@ describe('discoverFeeds', () => {
       }
       const redirectingFetch: FetchFn = async (url) => {
         if (url === 'https://example.com/feed/') {
-          await new Promise((resolve) => setTimeout(resolve, 10))
+          await sleep(10)
         }
 
         return {
@@ -1676,7 +1677,7 @@ describe('discoverFeeds', () => {
       }
       const redirectingFetch: FetchFn = async (url) => {
         if (url === 'https://example.com/feed/') {
-          await new Promise((resolve) => setTimeout(resolve, 10))
+          await sleep(10)
         }
 
         return {
