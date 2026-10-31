@@ -27,14 +27,15 @@ export const devtoEnricher: FaviconEnricher = async (ref, context) => {
     return
   }
 
-  const name = encodeURIComponent(ref.id)
   let response = await context.fetchFn(
     `https://dev.to/api/users/by_username${composeQuery({ url: ref.id })}`,
   )
 
   // An organization's name answers 404 from the users API, and the organizations API has it.
   if (response.status === 404) {
-    response = await context.fetchFn(`https://dev.to/api/organizations/${name}`)
+    response = await context.fetchFn(
+      `https://dev.to/api/organizations/${encodeURIComponent(ref.id)}`,
+    )
   }
 
   const profileImage = parseResponseJson(response)?.profile_image
