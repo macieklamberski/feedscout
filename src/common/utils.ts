@@ -270,6 +270,7 @@ export const isRootOfPage = (rootUrl: string, url: string): boolean => {
 export const getHostOrigin = (host: string): string | undefined => {
   const parsedUrl = parseUrl(`https://${host}`)
 
+  // biome-ignore lint/plugin/noRawHostCompare: isHostOf would punycode a Unicode host and pass it.
   if (!parsedUrl || parsedUrl.hostname !== host.toLowerCase()) {
     return
   }
