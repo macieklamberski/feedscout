@@ -18,10 +18,13 @@ const hosts = ['f.hatena.ne.jp']
 // length: keeps a photo id out of the folder slot
 const photoIdRegex = /^\d{14}$/
 
+// The marks encodeURIComponent leaves as they are.
+const unreservedMarkRegex = /[-.!~*'()]/g
+
 // The page links its feeds with every byte outside [A-Za-z0-9_] percent-encoded, `-` and `.`
 // included, so the same spelling dedupes against the page's own link.
 const escapeSegment = (value: string): string => {
-  return encodeURIComponent(value).replace(/[-.!~*'()]/g, (char) => {
+  return encodeURIComponent(value).replace(unreservedMarkRegex, (char) => {
     return `%${char.charCodeAt(0).toString(16).toUpperCase()}`
   })
 }
