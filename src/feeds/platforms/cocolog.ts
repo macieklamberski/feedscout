@@ -43,9 +43,11 @@ const getCocologPage = (url: string, content: string | undefined): CocologPage |
 
     const feedUrl = parseUrl(element.attribs.href, url)
 
-    return (
-      feedUrl !== undefined && isHostOf(feedUrl, hostname) && feedPathRegex.test(feedUrl.pathname)
-    )
+    if (!feedUrl) {
+      return false
+    }
+
+    return isHostOf(feedUrl, hostname) && feedPathRegex.test(feedUrl.pathname)
   })
   const linkedBlog = parseUrl(link?.attribs.href, url)?.pathname.match(feedPathRegex)?.[1]
 
