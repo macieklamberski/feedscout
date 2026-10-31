@@ -1,5 +1,5 @@
 import { type Browser, chromium } from 'playwright'
-import { decodePercent, sleep } from 'trousse'
+import { decodePercent, isHostOrSubdomainOf, sleep } from 'trousse'
 import * as constants from './constants.js'
 
 export const timeoutMs = 30_000
@@ -35,9 +35,7 @@ const redditGapMs = 61_000
 let redditNextAt = 0
 
 const waitForReddit = async (url: string) => {
-  const { hostname } = new URL(url)
-
-  if (hostname !== 'reddit.com' && !hostname.endsWith('.reddit.com')) {
+  if (!isHostOrSubdomainOf(url, 'reddit.com')) {
     return
   }
 
