@@ -3,7 +3,7 @@ import {
   anyWordMatchesAnyOf,
   getSubdomain,
   isAnyOf,
-  isNumber,
+  isInteger,
   isString,
   parseUrl,
   stripWww,
@@ -82,7 +82,7 @@ export const withTextBody = (fetchFn: FetchFn): FetchFn => {
 
 // Coerce to a positive integer, falling back when missing or invalid (NaN, < 1, non-integer).
 export const toPositiveInteger = (value: number | undefined, fallback: number): number => {
-  return isNumber(value) && Number.isInteger(value) && value >= 1 ? value : fallback
+  return isInteger(value) && value >= 1 ? value : fallback
 }
 
 export const normalizeMimeType = (type: string): string => {
