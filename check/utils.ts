@@ -1,5 +1,5 @@
 import { type Browser, chromium } from 'playwright'
-import { sleep } from 'trousse'
+import { decodePercent, sleep } from 'trousse'
 import * as constants from './constants.js'
 
 export const timeoutMs = 30_000
@@ -136,8 +136,8 @@ const parseProxy = (url: string | undefined) => {
   const parsed = new URL(url)
   return {
     server: `${parsed.protocol}//${parsed.host}`,
-    username: parsed.username ? decodeURIComponent(parsed.username) : undefined,
-    password: parsed.password ? decodeURIComponent(parsed.password) : undefined,
+    username: parsed.username ? decodePercent(parsed.username) : undefined,
+    password: parsed.password ? decodePercent(parsed.password) : undefined,
   }
 }
 
