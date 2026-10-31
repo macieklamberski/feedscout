@@ -1,4 +1,4 @@
-import { composeQuery, isNonEmptyString } from 'trousse'
+import { coerceSingular, composeQuery, isNonEmptyString } from 'trousse'
 import type { FetchFnResponse } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { gitlabHandler as gitlabFeedHandler, parseGitlabUrl } from '../../feeds/platforms/gitlab.js'
@@ -11,7 +11,7 @@ const getAvatarUrl = (response: FetchFnResponse): string | undefined => {
   const data = parseResponseJson(response)
 
   // Users API returns an array, groups API returns an object.
-  const entry = Array.isArray(data) ? data[0] : data
+  const entry = coerceSingular(data)
 
   if (isNonEmptyString(entry?.avatar_url)) {
     return entry.avatar_url
