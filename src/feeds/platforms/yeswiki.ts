@@ -1,3 +1,4 @@
+import { parseJson } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import {
@@ -30,9 +31,7 @@ export const isYeswikiHeaders = (headers: Headers): boolean => {
 }
 
 const parseListParams = (value: string | undefined): BazarListParams | undefined => {
-  try {
-    return JSON.parse(value ?? '')
-  } catch {}
+  return parseJson<BazarListParams>(value)
 }
 
 const readFormIds = (element: Element): Array<string> => {

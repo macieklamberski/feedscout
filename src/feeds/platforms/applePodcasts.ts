@@ -1,4 +1,4 @@
-import { isHostOf } from 'trousse'
+import { isHostOf, parseJson } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
@@ -20,11 +20,7 @@ const extractFeedUrlFromContent = (content: string): string | undefined => {
     return
   }
 
-  try {
-    return JSON.parse(`"${value}"`)
-  } catch {
-    return value
-  }
+  return parseJson<string>(`"${value}"`) ?? value
 }
 
 // Podcast pages: /{locale}/podcast/{name}/id{number}, locale and name optional.

@@ -1,4 +1,4 @@
-import { isNonEmptyString } from 'trousse'
+import { isNonEmptyString, parseJson } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { parseNoteUrl } from '../../feeds/platforms/note.js'
 import type { FaviconEnricher } from '../types.js'
@@ -26,9 +26,7 @@ const parseProfileImageUrl = (content: string): string | undefined => {
   }
 
   // A broken page payload must not hide the creators API, which the ref falls back to.
-  try {
-    return JSON.parse(`"${match[1]}"`)
-  } catch {}
+  return parseJson<string>(`"${match[1]}"`)
 }
 
 export const noteHandler: PlatformHandler = {
