@@ -156,7 +156,7 @@ describe('hatenaFotolifeHandler', () => {
       const value = 'https://f.hatena.ne.jp/alice/?model=FinePixViewer%20Lite%20Ver.4.2'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://f.hatena.ne.jp/alice/rss?model=FinePixViewer%20Lite%20Ver%2E4%2E2',
+          uri: 'https://f.hatena.ne.jp/alice/rss?model=FinePixViewer%20Lite%20Ver.4.2',
           hint: { key: 'hatena-fotolife:model', label: 'Camera model' },
         },
       ]
@@ -215,7 +215,7 @@ describe('hatenaFotolifeHandler', () => {
       const value = 'https://f.hatena.ne.jp/alice/?model=E-PL5'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://f.hatena.ne.jp/alice/rss?model=E%2DPL5',
+          uri: 'https://f.hatena.ne.jp/alice/rss?model=E-PL5',
           hint: { key: 'hatena-fotolife:model', label: 'Camera model' },
         },
       ]

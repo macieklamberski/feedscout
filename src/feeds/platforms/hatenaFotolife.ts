@@ -1,4 +1,12 @@
-import { decodeSegment, getPathSegments, getQueryParam, isAnyOf, isHostOf, parseUrl } from 'trousse'
+import {
+  composeQuery,
+  decodeSegment,
+  getPathSegments,
+  getQueryParam,
+  isAnyOf,
+  isHostOf,
+  parseUrl,
+} from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, letterThenWordOrHyphenRegex } from '../../common/utils.js'
 
@@ -95,9 +103,9 @@ export const hatenaFotolifeHandler: PlatformHandler = {
     const userUrl = `${origin}/${escapeSegment(parsed.username)}`
 
     if (parsed.kind === 'model') {
-      const model = escapeSegment(parsed.model)
+      const query = composeQuery({ model: parsed.model })
 
-      return [{ uri: `${userUrl}/rss?model=${model}`, hint: composeHint('hatena-fotolife:model') }]
+      return [{ uri: `${userUrl}/rss${query}`, hint: composeHint('hatena-fotolife:model') }]
     }
 
     if (parsed.kind === 'folder') {
