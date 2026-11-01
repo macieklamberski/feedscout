@@ -1,4 +1,4 @@
-import { composeQuery, getQueryParam, parseUrl } from 'trousse'
+import { composeQuery, getOrigin, getQueryParam, parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import {
@@ -84,9 +84,15 @@ const getVbulletin5Page = (url: string, content: string | undefined): VbulletinP
   })
   const baseUrl = parseUrl(baseElement?.attribs.href, url) ?? url
   const rollupScriptUrl = new URL(rollupScriptSrc, baseUrl)
+  const rollupOrigin = getOrigin(rollupScriptUrl)
+
+  if (!rollupOrigin) {
+    return
+  }
+
   const rootPath = rollupScriptUrl.pathname.replace(rollupPathRegex, '')
   const channelId = content?.match(channelIdRegex)?.[1]
-  const feedUrl = `${rollupScriptUrl.origin}${rootPath}/external`
+  const feedUrl = `${rollupOrigin}${rootPath}/external`
   const siteFeedUrl = `${feedUrl}?type=rss2`
 
   // The root channel, id 1, serves the same items as the site feed.
@@ -104,9 +110,10 @@ const getVbulletin5Page = (url: string, content: string | undefined): VbulletinP
 const getVbulletin4RootUrl = (parsedUrl: URL, content: string | undefined): string => {
   const coreScriptSrc = getScriptSrc(content, coreScriptRegex)
   const coreScriptUrl = coreScriptSrc ? parseUrl(coreScriptSrc, parsedUrl) : undefined
+  const coreScriptOrigin = getOrigin(coreScriptUrl)
 
-  if (coreScriptUrl) {
-    return `${coreScriptUrl.origin}${coreScriptUrl.pathname.replace(clientscriptPathRegex, '')}`
+  if (coreScriptUrl && coreScriptOrigin) {
+    return `${coreScriptOrigin}${coreScriptUrl.pathname.replace(clientscriptPathRegex, '')}`
   }
 
   return `${parsedUrl.origin}${getScriptDirectory(parsedUrl.pathname)}`

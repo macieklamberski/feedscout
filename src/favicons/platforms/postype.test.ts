@@ -75,6 +75,19 @@ describe('postypeHandler', () => {
         expect(postypeHandler.resolve(value, channelPageWithoutAvatar)).toEqual(expected)
       })
 
+      it('should return a ref to the channel when the og:image url has no http origin', () => {
+        const value = 'https://www.postype.com/@example'
+        const content = `
+          <meta
+            property="og:image"
+            content="cdn://d3mcojo3jv0dbr.cloudfront.net/2026/02/16/10/42/1a2ffc17168638878779956409.jpg"
+          />
+        `
+        const expected = [createRef(value)]
+
+        expect(postypeHandler.resolve(value, content)).toEqual(expected)
+      })
+
       it('should return a ref to the channel when the page has no og:image', () => {
         const value = 'https://www.postype.com/@example'
         const expected = [createRef(value)]

@@ -1,4 +1,4 @@
-import { isHostOf, parseUrl } from 'trousse'
+import { getOrigin, isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getMetaContent } from '../../common/utils.js'
 import {
@@ -25,12 +25,13 @@ const parseAvatar = (html: string): string | undefined => {
   }
 
   const parsedUrl = parseUrl(image)
+  const origin = getOrigin(parsedUrl)
 
-  if (!parsedUrl || !isHostOf(parsedUrl, avatarHosts)) {
+  if (!parsedUrl || !origin || !isHostOf(parsedUrl, avatarHosts)) {
     return
   }
 
-  return `${parsedUrl.origin}${parsedUrl.pathname}${avatarQuery}`
+  return `${origin}${parsedUrl.pathname}${avatarQuery}`
 }
 
 export const postypeHandler: PlatformHandler = {
