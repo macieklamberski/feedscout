@@ -12,7 +12,7 @@ jobs:
       FETCH_PROXY: ${{ secrets.FETCH_PROXY }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
