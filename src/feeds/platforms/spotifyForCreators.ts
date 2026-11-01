@@ -13,7 +13,7 @@ const showRegex = /^\/pod\/(?:show|profile)\/[^/]+(?:\/|$)/i
 // The alternate link omits `/s/` and ends on HTML, and a show without RSS answers 404 on `/s/`.
 // Only 2 of the 4 shows measured also show a visible `/s/` link, which generic discovery reads,
 // so the block above holds for those shows alone.
-const feedUrlRegex = /anchor\.fm\/(?:s\/)?([\da-f]+)\/podcast\/rss/
+const feedUrlRegex = /anchor\.fm\/(?:s\/)?([\da-f]+)\/podcast\/rss/i
 
 export const parseSpotifyForCreatorsUrl = (url: string): SpotifyForCreatorsUrl | undefined => {
   const parsedUrl = parseUrl(url)

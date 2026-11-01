@@ -4,7 +4,7 @@ import { parseBitchuteUrl } from '../../feeds/platforms/bitchute.js'
 
 // The `_large` rendition is 570x556, the `_medium` one is a 400x400 square.
 const channelImageRegex =
-  /^(?<base>https:\/\/static-\d+\.bitchute\.com\/live\/channel_images\/.+)_large(?<extension>\.\w+)$/
+  /^(?<base>https:\/\/static-\d+\.bitchute\.com\/live\/channel_images\/.+)_large(?<extension>\.\w+)$/i
 
 export const bitchuteHandler: PlatformHandler = {
   match: (url) => {

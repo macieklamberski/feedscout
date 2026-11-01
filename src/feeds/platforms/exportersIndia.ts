@@ -5,7 +5,7 @@ import { composeHint, findElement, findElements, hasMarker } from '../../common/
 
 // Discoverability: Discoverable without handler.
 
-const templateStylesheetRegex = /^(?:https?:)?\/\/catalog\.wlimg\.com\/templates-images\//
+const templateStylesheetRegex = /^(?:https?:)?\/\/catalog\.wlimg\.com\/templates-images\//i
 const productsFeedPathRegex = /^\/products\.rss$/i
 const servicesFeedPathRegex = /^\/services\.rss$/i
 

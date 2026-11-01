@@ -14,7 +14,7 @@ const playerHosts = ['player.megaphone.fm']
 
 const episodeIdRegex = /^[A-Z]+\d+$/
 const episodePathRegex = /^\/([^/]+)\/?$/
-const feedUrlRegex = /feeds\.megaphone\.fm\/([\w-]+)/
+const feedUrlRegex = /feeds\.megaphone\.fm\/([\w-]+)/i
 
 export const parseMegaphoneUrl = (url: string): MegaphoneUrl | undefined => {
   const { pathname, searchParams } = new URL(url)

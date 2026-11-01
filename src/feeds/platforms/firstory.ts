@@ -9,7 +9,7 @@ const domains = ['firstory.cc']
 
 // The feed is keyed by the show's cuid, and the vanity-slug form of it answers 403.
 // Show, episode and firstory.cc pages each link the show's feed.
-const feedUrlRegex = /feed\.firstory\.me\/rss\/user\/([a-z\d]+)/
+const feedUrlRegex = /feed\.firstory\.me\/rss\/user\/([a-z\d]+)/i
 
 export type FirstoryPage = { kind: 'show'; cuid: string }
 

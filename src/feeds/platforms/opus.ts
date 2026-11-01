@@ -14,7 +14,7 @@ export type OpusPage = { kind: 'collection' | 'search'; feedUrl: string }
 
 // Every OPUS 4 layout ships the core `frontdoorutil.js` under the install root, as in
 // `/opus4/layouts/opus4-zwi2/js/frontdoorutil.js`, whatever the layout is named.
-const assetRootRegex = /["']([^"'\s]*?)\/layouts\/[^/"'\s]+\/js\/frontdoorutil\.js/
+const assetRootRegex = /["']([^"'\s]*?)\/layouts\/[^/"'\s]+\/js\/frontdoorutil\.js/i
 const searchPathRegex = /^\/solrsearch\/index\/search\/(.+)$/i
 const trailingSlashRegex = /\/$/
 const urlencodeExtrasRegex = /[!'()*~]/g
@@ -54,7 +54,7 @@ const getLinkedFeedUrl = (
 
     const { host: feedHost, pathname: feedPathname } = new URL(feedUrl)
 
-    if (feedHost === host && feedPathname.startsWith(feedPath)) {
+    if (feedHost === host && feedPathname.toLowerCase().startsWith(feedPath.toLowerCase())) {
       return feedUrl
     }
   }
@@ -86,9 +86,10 @@ export const getOpusPage = (url: string, content: string | undefined): OpusPage 
   const params: Array<string> = []
 
   for (let index = 0; index < segments.length; index += 2) {
-    const key = decodeSegment(segments[index])
+    const [keySegment, valueSegment] = segments.slice(index, index + 2)
+    const key = decodeSegment(keySegment)
     // Zend reads a `+` in a path parameter as a space.
-    const value = decodeSegment(segments[index + 1]?.replaceAll('+', ' ') ?? '')
+    const value = decodeSegment(valueSegment?.replaceAll('+', ' ') ?? '')
 
     if (key === undefined || value === undefined) {
       return

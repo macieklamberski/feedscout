@@ -15,7 +15,7 @@ export type ZenfolioUrl = { kind: 'site' }
 
 const domains = ['zenfolio.com']
 
-const zenfolioAssetRegex = /^(?:https?:)?\/\/cdn\.zenfolio\.com\/zf\//
+const zenfolioAssetRegex = /^(?:https?:)?\/\/cdn\.zenfolio\.com\/zf\//i
 
 export const isZenfolioHtml = (content: string): boolean => {
   const stylesheet = findElement(content, (element) => {

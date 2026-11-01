@@ -64,32 +64,32 @@ export const parseGithubUrl = (url: string): GithubUrl | undefined => {
   }
 
   const { pathname } = new URL(url)
-  const [first, second, third] = getPathSegments(url)
+  const [routeOrOwner, orgOrRepo, orgRoute] = getPathSegments(url)
   const discussionCategory = pathname.match(discussionCategoryRegex)?.[1]
 
-  if (isAnyOf(first, 'orgs') && second && isAnyOf(third, 'discussions')) {
-    return { kind: 'discussions', org: second, discussionCategory }
+  if (isAnyOf(routeOrOwner, 'orgs') && orgOrRepo && isAnyOf(orgRoute, 'discussions')) {
+    return { kind: 'discussions', org: orgOrRepo, discussionCategory }
   }
 
   // An organization page sits under /orgs/, and its feed is the owner feed.
-  if (isAnyOf(first, 'orgs') && second) {
-    return { kind: 'user', owner: second }
+  if (isAnyOf(routeOrOwner, 'orgs') && orgOrRepo) {
+    return { kind: 'user', owner: orgOrRepo }
   }
 
-  const owner = second ? first : first?.replace(userRouteSuffixRegex, '')
+  const owner = orgOrRepo ? routeOrOwner : routeOrOwner?.replace(userRouteSuffixRegex, '')
 
   // GitHub names carry no dots, so a dotted segment such as robots.txt is a file of the site.
   if (!owner || owner.includes('.')) {
     return
   }
 
-  if (second) {
+  if (orgOrRepo) {
     const fileMatch = pathname.match(fileRegex)
 
     return {
       kind: 'repo',
       owner,
-      repo: second,
+      repo: orgOrRepo,
       section: getRepoSection(pathname),
       discussionCategory,
       branch: pathname.match(branchRegex)?.[1],

@@ -12,7 +12,7 @@ export type AushaPage = { kind: 'show'; feedId: string }
 const hosts = ['podcast.ausha.co', 'smartlink.ausha.co']
 
 // The feed id is opaque: show and episode pages carry it only in the markup.
-const feedIdRegex = /feed\.ausha\.co\/(\w+)/
+const feedIdRegex = /feed\.ausha\.co\/(\w+)/i
 
 export const parseAushaUrl = (url: string): AushaUrl | undefined => {
   if (!isHostOf(url, hosts)) {

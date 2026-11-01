@@ -16,7 +16,7 @@ const hosts = ['lore.kernel.org']
 const fileRegex = /\.(?:html?|txt|json|xml|ico)$/i
 
 // The core navigation links help relative to the page, one `../` per level below the inbox root.
-const helpLinkRegex = /href="((?:\.\.\/)*)_\/text\/help\/?"/
+const helpLinkRegex = /href="((?:\.\.\/)*)_\/text\/help\/?"/i
 
 export const isPublicInboxHtml = (content: string): boolean => {
   return helpLinkRegex.test(content) && content.includes('_/text/color')
@@ -41,16 +41,15 @@ export const getPublicInboxPage = (url: string, content?: string): PublicInboxPa
     return
   }
 
-  if (rootLength < 0 || fileRegex.test(segments[rootLength - 1] ?? '')) {
+  const inboxSegments = segments.slice(0, rootLength)
+
+  if (rootLength < 0 || fileRegex.test(inboxSegments.at(-1) ?? '')) {
     return
   }
 
-  const inboxPath = segments
-    .slice(0, rootLength)
-    .map((segment) => `${segment}/`)
-    .join('')
+  const inboxPath = inboxSegments.map((segment) => `${segment}/`).join('')
   const inboxUrl = `${parsedUrl.origin}/${inboxPath}`
-  const messageId = segments[rootLength]
+  const [messageId] = segments.slice(rootLength)
 
   // Every Message-ID carries an `@`, and no route segment of an inbox does.
   if (messageId?.includes('@')) {

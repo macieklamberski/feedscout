@@ -51,38 +51,40 @@ export const parseMastodonUrl = (url: string): MastodonUrl | undefined => {
 
   // Mastodon serves a page's feed at the page path plus .rss, as in /@user.rss.
   const segments = getPathSegments(parsedUrl)
-  const [first, second, third] = segments.map((segment) => segment.replace(feedExtensionRegex, ''))
+  const [routeOrHandle, nameOrRoute, tag] = segments.map((segment) =>
+    segment.replace(feedExtensionRegex, ''),
+  )
 
-  if (isAnyOf(first, 'tags') && second) {
-    return { kind: 'tag', tag: second }
+  if (isAnyOf(routeOrHandle, 'tags') && nameOrRoute) {
+    return { kind: 'tag', tag: nameOrRoute }
   }
 
   // Mastodon serves the profile at /users/{user} too, without redirecting, unless HTML is
   // asked for.
-  if (isAnyOf(first, 'users') && second) {
-    return { kind: 'profile', username: second }
+  if (isAnyOf(routeOrHandle, 'users') && nameOrRoute) {
+    return { kind: 'profile', username: nameOrRoute }
   }
 
-  if (!first?.startsWith('@')) {
+  if (!routeOrHandle?.startsWith('@')) {
     return
   }
 
-  const username = first.slice(1)
+  const username = routeOrHandle.slice(1)
 
   if (!username) {
     return
   }
 
-  if (isAnyOf(second, 'with_replies')) {
+  if (isAnyOf(nameOrRoute, 'with_replies')) {
     return { kind: 'replies', username }
   }
 
-  if (isAnyOf(second, 'media')) {
+  if (isAnyOf(nameOrRoute, 'media')) {
     return { kind: 'media', username }
   }
 
-  if (isAnyOf(second, 'tagged') && third) {
-    return { kind: 'tagged', username, tag: third }
+  if (isAnyOf(nameOrRoute, 'tagged') && tag) {
+    return { kind: 'tagged', username, tag }
   }
 
   return { kind: 'profile', username }

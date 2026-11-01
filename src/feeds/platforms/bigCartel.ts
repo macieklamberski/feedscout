@@ -11,7 +11,7 @@ export type BigCartelUrl = { kind: 'store' }
 const domains = ['bigcartel.com']
 
 const frameOptionsRegex = /https:\/\/my\.bigcartel\.com/i
-const themeStylesheetRegex = /^\/theme_stylesheets\/\d+\/\d+\/theme\.css$/
+const themeStylesheetRegex = /^\/theme_stylesheets\/\d+\/\d+\/theme\.css$/i
 
 export const isBigCartelHtml = (content: string): boolean => {
   const stylesheet = findElement(content, (element) => {

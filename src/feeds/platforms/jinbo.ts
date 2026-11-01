@@ -14,7 +14,7 @@ const hosts = ['blog.jinbo.net']
 const baseUrl = 'https://blog.jinbo.net'
 
 // A category named by text answers an empty feed under another category's title.
-const feedLinkRegex = /^https:\/\/blog\.jinbo\.net\/([^/]+)\/rss$/
+const feedLinkRegex = /^https:\/\/blog\.jinbo\.net\/([^/]+)\/rss$/i
 
 export const parseJinboUrl = (url: string): JinboUrl | undefined => {
   if (!isHostOf(url, hosts)) {

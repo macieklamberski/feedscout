@@ -11,7 +11,7 @@ import {
 // Discoverability: Partially discoverable without handler.
 // Generic partly covers blog, post.
 
-const assetRegex = /\/rsc\/(?:build|css|js)\//
+const assetRegex = /\/rsc\/(?:build|css|js)\//i
 const sessionCookieRegex = /^session_b2evo(?:__.+)?$/
 const blogFeedHrefRegex = /^(.*[?&])tempskin=_(?:rss2|atom)$/i
 const blogCommentsHrefRegex = /^(.*[?&])tempskin=_(?:rss2|atom)&disp=comments$/i

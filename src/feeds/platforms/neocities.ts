@@ -17,10 +17,10 @@ export const parseNeocitiesUrl = (url: string): NeocitiesUrl | undefined => {
     return { kind: 'site', username: subdomain }
   }
 
-  const [first, segment] = getPathSegments(url)
+  const [route, segment] = getPathSegments(url)
   const username = segment?.replace(formatSuffixRegex, '')
 
-  if (!isHostOf(url, hosts) || !isAnyOf(first, 'site') || !username) {
+  if (!isHostOf(url, hosts) || !isAnyOf(route, 'site') || !username) {
     return
   }
 

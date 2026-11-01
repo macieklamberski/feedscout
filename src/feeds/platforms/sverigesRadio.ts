@@ -26,9 +26,9 @@ export const parseSverigesRadioUrl = (url: string): SverigesRadioUrl | undefined
     return { kind: 'legacyProgram', programId }
   }
 
-  const [first, second] = getPathSegments(parsedUrl)
+  const [routeOrSlug, podcastSlug] = getPathSegments(parsedUrl)
   // Program pages redirect to /poddar/{program}.
-  const slug = isAnyOf(first, 'poddar') && second ? second : first
+  const slug = isAnyOf(routeOrSlug, 'poddar') && podcastSlug ? podcastSlug : routeOrSlug
 
   if (!slug || !alphanumericOrHyphenRegex.test(slug)) {
     return

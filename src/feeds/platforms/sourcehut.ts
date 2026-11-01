@@ -20,14 +20,14 @@ export const parseSourcehutUrl = (url: string): SourcehutUrl | undefined => {
     return
   }
 
-  const [first, repo] = getPathSegments(parsedUrl)
+  const [ownerHandle, repo] = getPathSegments(parsedUrl)
 
   // length: keeps a bare ~ with no owner after it out
-  if (!first?.startsWith('~') || first.length < 2) {
+  if (!ownerHandle?.startsWith('~') || ownerHandle.length < 2) {
     return
   }
 
-  const owner = first.slice(1)
+  const owner = ownerHandle.slice(1)
 
   if (repo && isHostOf(parsedUrl, hosts)) {
     return { kind: 'repo', owner, repo }

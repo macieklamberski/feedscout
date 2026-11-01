@@ -12,7 +12,7 @@ export type BookwyrmUrl =
   | { kind: 'subpage'; username: string }
 
 // The trailing boundary keeps sibling repositories such as `bookwyrm-docs` out.
-const sourceLinkRegex = /github\.com\/bookwyrm-social\/bookwyrm(?![\w-])/
+const sourceLinkRegex = /github\.com\/bookwyrm-social\/bookwyrm(?![\w-])/i
 
 const shelfSections = ['shelf', 'books']
 

@@ -17,16 +17,17 @@ export const parseTumblrUrl = (url: string): TumblrUrl | undefined => {
   // www.tumblr.com/{blog} and the legacy www.tumblr.com/blog/view/{blog} show a blog, and
   // www.tumblr.com/{blog}/tagged/{tag} its tagged posts.
   if (isHostOf(url, hosts)) {
-    const [first, second, third] = getPathSegments(url)
-    const blog = isAnyOf(first, 'blog') && isAnyOf(second, 'view') ? third : first
+    const [routeOrBlog, viewOrTagged, blogOrTag] = getPathSegments(url)
+    const blog =
+      isAnyOf(routeOrBlog, 'blog') && isAnyOf(viewOrTagged, 'view') ? blogOrTag : routeOrBlog
 
     // Tumblr names carry no dots, so a dotted segment such as robots.txt is a file of the site.
     if (!blog || blog.includes('.')) {
       return
     }
 
-    if (isAnyOf(second, 'tagged') && third) {
-      return { kind: 'tag', blog, tag: third }
+    if (isAnyOf(viewOrTagged, 'tagged') && blogOrTag) {
+      return { kind: 'tag', blog, tag: blogOrTag }
     }
 
     return { kind: 'blog', blog }

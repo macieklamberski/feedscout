@@ -18,12 +18,13 @@ export type WritefreelyPage = { blogPath: string; tag?: string }
 const tagPathRegex = /\/tag:([^/]+)/i
 const rootRouteRegex = /^\/(?:(?:tag|lang):|page\/\d+(?:\/|$)|archive\/?$)/i
 const blogPathRegex = /^\/(?:[^/]+\/)?$/
+const writeStylesheetRegex = /^\/css\/write\.css/i
 
 const getUrlBlogPath = (url: string): string | undefined => {
   const { pathname } = new URL(url)
-  const [first] = getPathSegments(url)
+  const [blogOrRoute] = getPathSegments(url)
 
-  if (!first) {
+  if (!blogOrRoute) {
     return
   }
 
@@ -32,7 +33,7 @@ const getUrlBlogPath = (url: string): string | undefined => {
     return '/'
   }
 
-  return `/${first}/`
+  return `/${blogOrRoute}/`
 }
 
 // A single-user instance serves its one blog at the root, and the blog title links to it.
@@ -53,7 +54,7 @@ const getBlogPath = (content: string | undefined): string | undefined => {
 }
 
 const isWriteStylesheet = (element: Element): boolean => {
-  return element.attribs.href?.startsWith('/css/write.css') ?? false
+  return writeStylesheetRegex.test(element.attribs.href ?? '')
 }
 
 export const isWritefreelyHtml = (content: string): boolean => {

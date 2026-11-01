@@ -11,7 +11,7 @@ import { getResponseText } from '../utils.js'
 const platform = 'postype'
 
 // A channel without an avatar carries a placeholder from d33pksfia2a94m.cloudfront.net.
-const avatarHost = 'd3mcojo3jv0dbr.cloudfront.net'
+const avatarHosts = ['d3mcojo3jv0dbr.cloudfront.net']
 
 // The CDN center-crops to a square only when both sides fit inside the raw file, which is
 // often under 400 pixels on a side. Postype's own channel thumbnail asks for 200.
@@ -26,7 +26,7 @@ const parseAvatar = (html: string): string | undefined => {
 
   const parsedUrl = parseUrl(image)
 
-  if (!parsedUrl || !isHostOf(parsedUrl, avatarHost)) {
+  if (!parsedUrl || !isHostOf(parsedUrl, avatarHosts)) {
     return
   }
 

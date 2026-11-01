@@ -79,14 +79,16 @@ export const parseGoopeUrl = (url: string): GoopeUrl | undefined => {
   }
 
   // A `t_{id}` segment serves the site in another template, and its pages link the feed under it.
-  const templateId = segments[0]?.match(templateRegex)?.[1]
+  const [templateOrSection] = segments
+  const templateId = templateOrSection?.match(templateRegex)?.[1]
 
   if (templateId) {
     segments.shift()
     sitePath = `${sitePath}/t_${templateId}`
   }
 
-  const isMemberPage = isAnyOf(segments[0], 'shokokai') && isAnyOf(segments[1], 'member')
+  const [section, page] = segments
+  const isMemberPage = isAnyOf(section, 'shokokai') && isAnyOf(page, 'member')
 
   return { kind, sitePath, isMemberPage }
 }

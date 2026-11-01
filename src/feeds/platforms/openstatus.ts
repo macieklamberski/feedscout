@@ -7,7 +7,7 @@ import { composeHint, findElement, hasMetaContent, isRootOfPage } from '../../co
 
 const previewImageUrl = 'https://www.openstatus.dev/api/og/page'
 
-const summaryHrefRegex = /^(?:https?:\/\/[^/]+)?\/api\/status\/summary\.json$/
+const summaryHrefRegex = /^(?:https?:\/\/[^/]+)?\/api\/status\/summary\.json$/i
 
 // A status page links its summary endpoint and takes its preview image from the hosted service.
 export const isOpenstatusPage = (url: string, content: string | undefined): boolean => {

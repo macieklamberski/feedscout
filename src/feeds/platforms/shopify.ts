@@ -15,10 +15,11 @@ export const isShopifyHeaders = (headers: Headers): boolean => {
 export const parseShopifyUrl = (url: string): ShopifyUrl | undefined => {
   const segments = getPathSegments(url)
   // A market's locale folder, as in `/en-us/blogs/news` or `/zh-hant-hk/blogs/news`.
-  const locale = letterGroupsRegex.test(segments[0] ?? '') ? segments[0] : undefined
-  const [first, handle] = locale ? segments.slice(1) : segments
+  const [localeOrRoute] = segments
+  const locale = letterGroupsRegex.test(localeOrRoute ?? '') ? localeOrRoute : undefined
+  const [route, handle] = locale ? segments.slice(1) : segments
 
-  if (!isAnyOf(first, 'blogs') || !handle) {
+  if (!isAnyOf(route, 'blogs') || !handle) {
     return
   }
 

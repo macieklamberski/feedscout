@@ -9,8 +9,8 @@ import { composeHint, findElement, hasMarker } from '../../common/utils.js'
 export type NetcrewUrl = { kind: 'home' }
 
 const homePathRegex = /^\/(?:index\.html)?$/i
-const searchScriptRegex = /^\/ssi\/js\/search-trend\.js(?:\?|$)/
-const styleImportRegex = /@import\s+url\(["']?\/ssi\/css\//
+const searchScriptRegex = /^\/ssi\/js\/search-trend\.js(?:\?|$)/i
+const styleImportRegex = /@import\s+url\(["']?\/ssi\/css\//i
 
 // Every NetCrew CMS template loads its search script from `/ssi/js/search-trend.js` and its styles
 // from `/ssi/css/` at the site root.
