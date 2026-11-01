@@ -61,6 +61,9 @@
   "engines": {
     "node": ">=18"
   },
+  "workspaces": [
+    "check"
+  ],
   "scripts": {
     "prepare": "lefthook install",
     "build": "tsdown src/exports/index.ts src/exports/feeds.ts src/exports/blogrolls.ts src/exports/favicons.ts src/exports/hubs.ts src/exports/methods.ts src/exports/platform.ts --format esm --dts --clean --unbundle",
