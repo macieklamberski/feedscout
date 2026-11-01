@@ -62,6 +62,17 @@ describe('cocologHandler', () => {
 
       expect(cocologHandler.match('https://example.cocolog-nifty.com/', value)).toBe(false)
     })
+
+    it('should return false for the home page linking a feed without an href', () => {
+      const value = `
+        <link
+          rel="alternate"
+          type="application/rss+xml"
+        />
+      `
+
+      expect(cocologHandler.match('https://example.cocolog-nifty.com/', value)).toBe(false)
+    })
   })
 
   describe('resolve', () => {

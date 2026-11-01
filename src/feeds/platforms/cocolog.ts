@@ -1,4 +1,4 @@
-import { parseUrl } from 'trousse'
+import { isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, findElement, getTenantSubdomain } from '../../common/utils.js'
 
@@ -43,7 +43,11 @@ const getCocologPage = (url: string, content: string | undefined): CocologPage |
 
     const feedUrl = parseUrl(element.attribs.href, url)
 
-    return feedUrl?.hostname === hostname && feedPathRegex.test(feedUrl.pathname)
+    if (!feedUrl) {
+      return false
+    }
+
+    return isHostOf(feedUrl, hostname) && feedPathRegex.test(feedUrl.pathname)
   })
   const linkedBlog = parseUrl(link?.attribs.href, url)?.pathname.match(feedPathRegex)?.[1]
 

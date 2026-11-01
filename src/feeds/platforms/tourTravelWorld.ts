@@ -1,4 +1,4 @@
-import { parseUrl } from 'trousse'
+import { isHostOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, findElement, findElements, hasMarker } from '../../common/utils.js'
 
@@ -32,13 +32,13 @@ const getTourTravelWorldPage = (
     return
   }
 
-  const { host } = new URL(url)
+  const { hostname } = new URL(url)
   const anchors = findElements(content, (element) => element.name === 'a')
 
   for (const anchor of anchors) {
     const target = parseUrl(anchor.attribs.href, url)
 
-    if (target?.host === host && packagesFeedPathRegex.test(target.pathname)) {
+    if (target && isHostOf(target, hostname) && packagesFeedPathRegex.test(target.pathname)) {
       return { feedUrl: target.href }
     }
   }

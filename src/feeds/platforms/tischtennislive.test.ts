@@ -152,6 +152,17 @@ describe('getTischtennislivePage', () => {
     expect(getTischtennislivePage(value, content)).toEqual(expected)
   })
 
+  it('should skip an anchor without an href', () => {
+    const value = 'https://musterkreis.tischtennislive.de/'
+    const content = `
+      <a name="top">Top</a>
+      <a href="/Export/Tischtennis/RSS.aspx?Typ=Gruppe&ID=1234&Next=0">RSS</a>
+    `
+    const expected: TischtennislivePage = { kind: 'group', group: '1234' }
+
+    expect(getTischtennislivePage(value, content)).toEqual(expected)
+  })
+
   it('should return the association for a results link without an id', () => {
     const value = 'https://musterkreis.tischtennislive.de/'
     const content = '<a href="/Export/Tischtennis/RSS.aspx?Typ=Wett&Next=0">RSS</a>'
