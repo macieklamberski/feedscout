@@ -153,6 +153,23 @@ describe('vbulletinHandler', () => {
       ])
     })
 
+    it('should return the site feed from the script directory for a core script with no host', () => {
+      const value = 'https://example.org/forum/forum.php'
+      const content = `
+        <script
+          type="text/javascript"
+          src="cdn://example.org/forum/clientscript/vbulletin-core.js?v=425"
+        ></script>
+      `
+
+      expect(vbulletinHandler.resolve(value, content)).toEqual([
+        {
+          uri: 'https://example.org/forum/external.php?type=RSS2',
+          hint: { key: 'vbulletin:site', label: 'Site' },
+        },
+      ])
+    })
+
     it('should return the site feed for a rewritten page URL', () => {
       const value = 'https://www.gpspower.net/other-gps-systems.html'
 
@@ -237,6 +254,24 @@ describe('vbulletinHandler', () => {
       expect(vbulletinHandler.resolve(value, loganClubHtml)).toEqual([
         {
           uri: 'https://www.loganclub.ro/forum/external?type=rss2',
+          hint: { key: 'vbulletin:site', label: 'Site' },
+        },
+      ])
+    })
+
+    it('should skip a vBulletin 5 header rollup script with no host', () => {
+      const value = 'https://example.org/forum/'
+      const content = `
+        <base href="https://example.org/forum/" />
+        <script
+          type="text/javascript"
+          src="cdn://example.org/js/header-rollup-575.js"
+        ></script>
+      `
+
+      expect(vbulletinHandler.resolve(value, content)).toEqual([
+        {
+          uri: 'https://example.org/forum/external.php?type=RSS2',
           hint: { key: 'vbulletin:site', label: 'Site' },
         },
       ])
