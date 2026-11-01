@@ -17,7 +17,6 @@ const commentsUrl = 'https://blogs.sapo.pt/commentsrss.bml'
 
 const postRegex = /^\/(?:[^/]+-(\d+)|(\d+)\.html)\/?$/i
 const tagRegex = /^\/tag\/(.+?)\/?$/i
-const reservedCharRegex = /[!'()*]/g
 
 export const parseSapoBlogsUrl = (url: string): SapoBlogsUrl | undefined => {
   const parsedUrl = parseUrl(url)
@@ -96,14 +95,8 @@ export const sapoBlogsHandler: PlatformHandler = {
     }
 
     if (page.kind === 'tag') {
-      // The page escapes !'()* in the tag, which encodeURIComponent leaves as they are.
-      const tag = encodeURIComponent(page.tag).replace(reservedCharRegex, (char) => {
-        return `%${char.charCodeAt(0).toString(16).toUpperCase()}`
-      })
-
       uris.push({
-        // biome-ignore lint/plugin/useComposeQuery: composeQuery respells the page's escapes.
-        uri: `${origin}/data/rss?tag=${tag}`,
+        uri: `${origin}/data/rss${composeQuery({ tag: page.tag })}`,
         hint: composeHint('sapo-blogs:tag'),
       })
     }

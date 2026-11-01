@@ -106,13 +106,11 @@ export const deviantartHandler: PlatformHandler = {
     }
 
     if (parsed.kind === 'folder') {
-      // A stored gallery feed spells `/` as `%2F`, which feedcanon does not read as the same url.
       const query = `gallery:${parsed.username}/${parsed.folderId}`
 
       return [
         {
-          // biome-ignore lint/plugin/useComposeQuery: composeQuery leaves the `/` raw.
-          uri: `${feedBaseUrl}?type=deviation&q=${encodeURIComponent(query)}`,
+          uri: `${feedBaseUrl}${composeQuery({ type: 'deviation', q: query })}`,
           hint: composeHint('deviantart:gallery'),
         },
       ]

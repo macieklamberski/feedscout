@@ -229,11 +229,11 @@ describe('sapoBlogsHandler', () => {
       expect(sapoBlogsHandler.resolve(value, content)).toEqual(expected)
     })
 
-    it('should return the tag feed spelled as the page links it for a tag', () => {
+    it('should return the tag feed for a tag', () => {
       const value = 'https://alice.blogs.sapo.pt/tag/ant%C3%B3nio+costa'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://alice.blogs.sapo.pt/data/rss?tag=ant%C3%B3nio%20costa',
+          uri: 'https://alice.blogs.sapo.pt/data/rss?tag=antónio%20costa',
           hint: { key: 'sapo-blogs:tag', label: 'Tag' },
         },
         {
@@ -253,11 +253,11 @@ describe('sapoBlogsHandler', () => {
       expect(sapoBlogsHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should escape the characters the page escapes in a tag', () => {
+    it('should keep the punctuation of a tag as written', () => {
       const value = 'https://alice.blogs.sapo.pt/tag/don%27t+kill+%28me%29%21'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://alice.blogs.sapo.pt/data/rss?tag=don%27t%20kill%20%28me%29%21',
+          uri: "https://alice.blogs.sapo.pt/data/rss?tag=don't%20kill%20(me)!",
           hint: { key: 'sapo-blogs:tag', label: 'Tag' },
         },
         {
@@ -277,11 +277,11 @@ describe('sapoBlogsHandler', () => {
       expect(sapoBlogsHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should escape the slash in a tag', () => {
+    it('should keep the slash in a tag as written', () => {
       const value = 'https://alice.blogs.sapo.pt/tag/fim+de+ano+2010/11'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://alice.blogs.sapo.pt/data/rss?tag=fim%20de%20ano%202010%2F11',
+          uri: 'https://alice.blogs.sapo.pt/data/rss?tag=fim%20de%20ano%202010/11',
           hint: { key: 'sapo-blogs:tag', label: 'Tag' },
         },
         {

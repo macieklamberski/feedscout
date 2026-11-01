@@ -168,7 +168,7 @@ describe('deviantartHandler', () => {
       const value = 'https://deviantart.com/yuumei/gallery/123456/folder-name'
       const expected = [
         {
-          uri: 'https://backend.deviantart.com/rss.xml?type=deviation&q=gallery%3Ayuumei%2F123456',
+          uri: 'https://backend.deviantart.com/rss.xml?type=deviation&q=gallery:yuumei/123456',
           hint: { key: 'deviantart:gallery', label: 'Gallery' },
         },
       ]
