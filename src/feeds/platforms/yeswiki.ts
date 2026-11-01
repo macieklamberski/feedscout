@@ -1,4 +1,4 @@
-import { parseJson } from 'trousse'
+import { composeQuery, parseJson } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import {
@@ -100,8 +100,7 @@ export const yeswikiHandler: PlatformHandler = {
 
     for (const formId of formIds) {
       uris.push({
-        // biome-ignore lint/plugin/useComposeQuery: composeQuery writes no bare BazaR/rss key.
-        uri: `${wikiUrl}?BazaR/rss&id=${encodeURIComponent(formId)}`,
+        uri: `${wikiUrl}${composeQuery({ 'BazaR/rss': true, id: formId })}`,
         hint: composeHint('yeswiki:form-entries'),
       })
     }
