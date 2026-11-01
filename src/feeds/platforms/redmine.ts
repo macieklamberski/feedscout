@@ -30,7 +30,7 @@ export type RedminePage = (
 
 const poweredByRegex = /Powered by <a\s[^<>]*href="https?:\/\/www\.redmine\.org\/"/
 const projectClassRegex = /(?:^|\s)project-(\S+)/
-const repositoryRevisionsRegex = /\/repository\/([^/"?#]+)\/revisions\b/
+const repositoryRevisionsRegex = /\/repository\/([^/"?#]+)\/revisions\b/i
 const schemeRegex = /^https?:/
 const trailingSlashRegex = /\/$/
 

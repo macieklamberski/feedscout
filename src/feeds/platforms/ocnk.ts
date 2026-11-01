@@ -9,7 +9,7 @@ export type OcnkUrl = { kind: 'shop'; shop: string } | { kind: 'customDomain' }
 const domains = ['ocnk.net']
 
 const cartScriptRegex =
-  /^(?:https?:\/\/[^/]+)?\/res\/[^/]+\/js\/(?:ocnk|pack\/ocnk-min)\.js(?:\?|$)/
+  /^(?:https?:\/\/[^/]+)?\/res\/[^/]+\/js\/(?:ocnk|pack\/ocnk-min)\.js(?:\?|$)/i
 
 // Every shop template loads the cart script from its `/res/{template}/js/` folder, on a custom
 // domain too: `ocnk.js` in the PC templates, `pack/ocnk-min.js` in the responsive ones.

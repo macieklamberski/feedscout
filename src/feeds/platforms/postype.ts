@@ -21,18 +21,18 @@ export const parsePostypeUrl = (url: string): PostypeUrl | undefined => {
   }
 
   if (isHostOf(parsedUrl, hosts)) {
-    const [first, second] = getPathSegments(parsedUrl)
+    const [channelHandle, postSlug] = getPathSegments(parsedUrl)
 
     // length: keeps a bare @ with no channel after it out
-    if (!first?.startsWith('@') || first.length < 2) {
+    if (!channelHandle?.startsWith('@') || channelHandle.length < 2) {
       return
     }
 
-    if (second) {
-      return { kind: 'post', channel: first.slice(1) }
+    if (postSlug) {
+      return { kind: 'post', channel: channelHandle.slice(1) }
     }
 
-    return { kind: 'channel', channel: first.slice(1) }
+    return { kind: 'channel', channel: channelHandle.slice(1) }
   }
 
   const subdomain = getTenantSubdomain(parsedUrl, domains)

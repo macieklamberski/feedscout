@@ -7,8 +7,8 @@ import { getResponseText } from '../utils.js'
 const platform = 'goodreads'
 
 // Avatars carry a size token before the file name, e.g. `1506617226p5/1.jpg`: p8 is the largest.
-const sizeTokenRegex = /(\/\d+)p\d\//
-const placeholderRegex = /\/nophoto\//
+const sizeTokenRegex = /(\/\d+)p\d\//i
+const placeholderRegex = /\/nophoto\//i
 
 // Users without a photo get a silhouette from s.gr-assets.com/assets/nophoto/.
 const parseAvatar = (html: string): Array<string> => {

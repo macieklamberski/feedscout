@@ -11,7 +11,7 @@ import { parseResponseJson } from '../utils.js'
 const platform = 'bookwyrm'
 
 // Served in place of an avatar to users who never uploaded one.
-const defaultAvatarRegex = /\/images\/default_avi\.jpg$/
+const defaultAvatarRegex = /\/images\/default_avi\.jpg$/i
 
 const findAvatarSrc = (content: string | undefined): string | undefined => {
   const avatar = findElement(content, (element) => {

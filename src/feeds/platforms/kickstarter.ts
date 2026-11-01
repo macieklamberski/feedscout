@@ -17,10 +17,10 @@ export const parseKickstarterUrl = (url: string): KickstarterUrl | undefined => 
     return
   }
 
-  const [first, creator, project] = getPathSegments(url)
+  const [route, creator, project] = getPathSegments(url)
 
   // Project page: kickstarter.com/projects/{creator}/{project}
-  if (isAnyOf(first, 'projects') && creator && project) {
+  if (isAnyOf(route, 'projects') && creator && project) {
     return { kind: 'project', creator, project }
   }
 

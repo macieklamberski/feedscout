@@ -11,7 +11,7 @@ export type EstrankyPage = { origin: string; sliceOrigin: string }
 
 const domains = ['estranky.cz', 'estranky.sk']
 
-const estrankyAssetRegex = /^(?:https?:)?\/\/s3[a-z]\.(?:estranky\.(?:cz|sk)|eoldal\.hu)\//
+const estrankyAssetRegex = /^(?:https?:)?\/\/s3[a-z]\.(?:estranky\.(?:cz|sk)|eoldal\.hu)\//i
 
 const assetTags = ['link', 'script']
 

@@ -15,7 +15,7 @@ export type GcsWebUrl = { kind: 'site' }
 
 const domains = ['gcs-web.com']
 
-const filesPathRegex = /\/sites\/g\/files\/knoqqb\d+\//
+const filesPathRegex = /\/sites\/g\/files\/knoqqb\d+\//i
 
 const getAssetUrl = (element: Element): string => {
   return element.attribs.href ?? element.attribs.src ?? ''

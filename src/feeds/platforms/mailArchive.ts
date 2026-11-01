@@ -15,7 +15,7 @@ export const parseMailArchiveUrl = (url: string): MailArchiveUrl | undefined => 
     return
   }
 
-  const list = getPathSegments(url)[0]
+  const [list] = getPathSegments(url)
 
   // A list is archived under its posting address, so the site's own pages carry no `@`. The address
   // stays as written, so a feed stored as `%40` keeps that spelling.

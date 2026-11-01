@@ -15,7 +15,7 @@ const domains = ['is-programmer.com']
 const postRegex = /^\/posts\/(\d+)(?:\.html)?(?:\/|$)/i
 
 // An unregistered name answers the sign-up page, served from the platform's own index account.
-const signUpPageRegex = /\/user_files\/index\/config\/favicon\.ico"/
+const signUpPageRegex = /\/user_files\/index\/config\/favicon\.ico"/i
 
 export const parseIsProgrammerUrl = (url: string): IsProgrammerUrl | undefined => {
   const parsedUrl = parseUrl(url)

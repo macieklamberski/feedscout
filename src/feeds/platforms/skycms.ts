@@ -9,7 +9,7 @@ export type SkycmsUrl = { kind: 'page'; pageId: string; slug: string }
 
 const pageRegex = /^\/(\d+)\/([^/]+)\.html$/i
 const rssListRegex = /\/\d+\/lista-kanalow-rss\.html$/i
-const templateRegex = /\/(?:cms\/public|clients\/cms_[^/]+)\/image\/default\/bip(?:_v\d+)?\//
+const templateRegex = /\/(?:cms\/public|clients\/cms_[^/]+)\/image\/default\/bip(?:_v\d+)?\//i
 
 // SkyCMS sets its counter cookie whenever the page differs from the one the cookie holds.
 export const isSkycmsHeaders = (headers: Headers): boolean => {

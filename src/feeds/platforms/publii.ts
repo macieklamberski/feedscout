@@ -5,7 +5,7 @@ import { composeHint, hasMarker, hasMetaContent, isRootOfPage } from '../../comm
 
 // Publii links its media by absolute URL under the site root, as in
 // `https://example.com/blog/media/posts/12/cover.jpg`.
-const mediaUrlRegex = /["'](?<siteUrl>https?:\/\/[^"'\s]+?)\/media\/(?:website\/|posts\/\d+\/)/
+const mediaUrlRegex = /["'](?<siteUrl>https?:\/\/[^"'\s]+?)\/media\/(?:website\/|posts\/\d+\/)/i
 
 const hasGenerator = (content: string): boolean => {
   return hasMetaContent(content, 'generator', 'Publii')

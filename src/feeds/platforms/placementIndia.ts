@@ -7,7 +7,7 @@ import { composeHint, findElement, findElements, hasMarker } from '../../common/
 
 export type PlacementIndiaPage = { feedUrl: string; jobOpeningFeedUrl?: string }
 
-const templateStylesheetRegex = /^(?:https?:)?\/\/catalog\.wlimg\.com\/templates-images\//
+const templateStylesheetRegex = /^(?:https?:)?\/\/catalog\.wlimg\.com\/templates-images\//i
 const vacanciesFeedPathRegex = /^\/vacancy\.rss$/i
 const jobOpeningFeedPathRegex = /^\/vacancy_\d+\.rss$/i
 

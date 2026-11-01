@@ -50,18 +50,19 @@ const splitProjectPath = (pathSegments: Array<string>): [Array<string>, Array<st
 
 export const parseGitlabUrl = (url: string): GitlabUrl | undefined => {
   const segments = getPathSegments(url)
+  const [prefixOrNamespace, account] = segments
 
   // A group or user page and its tabs sit under /groups/ or /users/, before the account name.
-  if (isAnyOf(segments[0], accountPrefixes) && segments[1]) {
+  if (isAnyOf(prefixOrNamespace, accountPrefixes) && account) {
     // A subgroup is named by every segment before the `/-/` separator.
-    if (isAnyOf(segments[0], 'groups')) {
+    if (isAnyOf(prefixOrNamespace, 'groups')) {
       const dashIndex = segments.indexOf('-')
       const groupSegments = segments.slice(1, dashIndex === -1 ? undefined : dashIndex)
 
       return { kind: 'namespace', namespace: groupSegments.join('/') }
     }
 
-    return { kind: 'namespace', namespace: segments[1] }
+    return { kind: 'namespace', namespace: account }
   }
 
   const [projectSegments, featureSegments] = splitProjectPath(segments)

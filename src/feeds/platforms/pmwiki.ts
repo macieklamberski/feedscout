@@ -35,14 +35,15 @@ export const parsePmwikiUrl = (url: string): PmwikiUrl | undefined => {
   }
 
   const segments = getPathSegments(url)
-  const groupIndex = segments.findIndex((segment) => groupRegex.test(segment))
-  const group = segments[groupIndex]
+  const group = segments.find((segment) => groupRegex.test(segment))
 
   if (!group) {
     return { kind: 'home', scriptPath: parsedUrl.pathname }
   }
 
-  return { kind: 'page', scriptPath: `/${segments.slice(0, groupIndex).join('/')}`, group }
+  const scriptPath = `/${segments.slice(0, segments.indexOf(group)).join('/')}`
+
+  return { kind: 'page', scriptPath, group }
 }
 
 export const pmwikiHandler: PlatformHandler = {

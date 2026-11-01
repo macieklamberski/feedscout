@@ -24,7 +24,7 @@ export const parseAcastUrl = (url: string): AcastUrl | undefined => {
   const allSegments = getPathSegments(url)
   // The current embed code writes `embed.acast.com/$/{slug}/{episode}`.
   const segments = allSegments[0] === '$' ? allSegments.slice(1) : allSegments
-  const slug = segments[slugIndex]
+  const [slug] = segments.slice(slugIndex)
 
   if (!slug) {
     return

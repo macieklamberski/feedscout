@@ -3,7 +3,7 @@ import { findDescendant, findElement, hasClass } from '../../common/utils.js'
 import { parseHabrUrl } from '../../feeds/platforms/habr.js'
 
 // A user without an avatar gets one of the numbered generic pictures.
-const placeholderRegex = /^https:\/\/assets\.habr\.com\/.+\/img\/avatars\/\d+\.png$/
+const placeholderRegex = /^https:\/\/assets\.habr\.com\/.+\/img\/avatars\/\d+\.png$/i
 
 const getCardClass = (url: string): string | undefined => {
   const kind = parseHabrUrl(url)?.kind

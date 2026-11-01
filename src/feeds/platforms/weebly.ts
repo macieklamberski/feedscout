@@ -26,14 +26,15 @@ export const parseWeeblyUrl = (url: string): WeeblyUrl | undefined => {
   // A blog sits under its page slug, such as /articles/feed, or under a numeric blog id, such as
   // /1/feed. A page address ends in `.html`, which redirects to the bare slug the blog feed sits
   // under.
-  const first = getPathSegments(url)[0]?.replace(formatSuffixRegex, '')
+  const [pageSegment] = getPathSegments(url)
+  const routeOrPage = pageSegment?.replace(formatSuffixRegex, '')
 
-  if (!first) {
+  if (!routeOrPage) {
     return { kind: 'home' }
   }
 
-  if (!isAnyOf(first, 'blog')) {
-    return { kind: 'blog', page: first }
+  if (!isAnyOf(routeOrPage, 'blog')) {
+    return { kind: 'blog', page: routeOrPage }
   }
 
   return { kind: 'blog' }

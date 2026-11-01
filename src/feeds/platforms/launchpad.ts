@@ -46,16 +46,16 @@ export const parseLaunchpadUrl = (url: string): LaunchpadUrl | undefined => {
   }
 
   const segments = getPathSegments(parsedUrl)
-  const [first, second, third] = segments
+  const [pillarOrPerson, route, sourcePackage] = segments
   const application = getApplication(parsedUrl)
   const isCodeHost = application === 'code'
 
-  if (!first && application !== 'code') {
+  if (!pillarOrPerson && application !== 'code') {
     return { kind: 'home', application }
   }
 
   // Code has no site-wide feed.
-  if (!first) {
+  if (!pillarOrPerson) {
     return
   }
 
@@ -63,16 +63,16 @@ export const parseLaunchpadUrl = (url: string): LaunchpadUrl | undefined => {
     const bugIndex = segments.findIndex((segment, index) => {
       return isAnyOf(segment, '+bug') || (index === 0 && isAnyOf(segment, 'bugs'))
     })
-    const bugId = segments[bugIndex + 1]
+    const [, bugId] = segments.slice(bugIndex)
 
     if (bugIndex !== -1 && bugId && digitsRegex.test(bugId)) {
       return { kind: 'bug', bugId }
     }
   }
 
-  if (first.startsWith('~')) {
-    if (first.length > 1 && segments.length === 1) {
-      return { kind: 'person', application, username: first.slice(1) }
+  if (pillarOrPerson.startsWith('~')) {
+    if (pillarOrPerson.length > 1 && segments.length === 1) {
+      return { kind: 'person', application, username: pillarOrPerson.slice(1) }
     }
 
     // Bazaar branches live at ~owner/project/branch or ~owner/distro/series/package/branch.
@@ -85,16 +85,16 @@ export const parseLaunchpadUrl = (url: string): LaunchpadUrl | undefined => {
     return
   }
 
-  if (first.startsWith('+')) {
+  if (pillarOrPerson.startsWith('+')) {
     return
   }
 
   if (segments.length === 1) {
-    return { kind: 'project', application, project: first }
+    return { kind: 'project', application, project: pillarOrPerson }
   }
 
-  if (!isCodeHost && third && segments.length === 3 && isAnyOf(second, '+source')) {
-    return { kind: 'sourcePackage', distribution: first, sourcePackage: third }
+  if (!isCodeHost && sourcePackage && segments.length === 3 && isAnyOf(route, '+source')) {
+    return { kind: 'sourcePackage', distribution: pillarOrPerson, sourcePackage }
   }
 }
 

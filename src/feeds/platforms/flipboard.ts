@@ -19,34 +19,34 @@ export const parseFlipboardUrl = (url: string): FlipboardUrl | undefined => {
     return
   }
 
-  const [first, second, third] = getPathSegments(url)
+  const [routeOrHandle, topicOrMagazine, article] = getPathSegments(url)
 
   // A third segment is an article flipped into a magazine, which has no feed.
-  if (!first || third) {
+  if (!routeOrHandle || article) {
     return
   }
 
-  if (isAnyOf(first, 'topic')) {
-    if (!second) {
+  if (isAnyOf(routeOrHandle, 'topic')) {
+    if (!topicOrMagazine) {
       return
     }
 
-    return { kind: 'topic', topic: second }
+    return { kind: 'topic', topic: topicOrMagazine }
   }
 
   // Only a leading @ marks a user, so site routes like /explore never read as one.
-  if (!first.startsWith('@') || first.length === 1) {
+  if (!routeOrHandle.startsWith('@') || routeOrHandle.length === 1) {
     return
   }
 
-  const username = first.slice(1)
+  const username = routeOrHandle.slice(1)
 
-  if (!second || isAnyOf(second, profileSubpaths)) {
+  if (!topicOrMagazine || isAnyOf(topicOrMagazine, profileSubpaths)) {
     return { kind: 'profile', username }
   }
 
   // Storyboards share the magazine URL shape and its .rss feed.
-  return { kind: 'magazine', username, magazine: second }
+  return { kind: 'magazine', username, magazine: topicOrMagazine }
 }
 
 export const flipboardHandler: PlatformHandler = {

@@ -22,39 +22,39 @@ export const parseVimeoUrl = (url: string): VimeoUrl | undefined => {
     return
   }
 
-  const [first, second] = getPathSegments(url)
+  const [routeOrUsername, nameOrRoute] = getPathSegments(url)
 
   // Channel page: vimeo.com/channels/{channel}
-  if (isAnyOf(first, 'channels') && second) {
-    return { kind: 'channel', channel: second }
+  if (isAnyOf(routeOrUsername, 'channels') && nameOrRoute) {
+    return { kind: 'channel', channel: nameOrRoute }
   }
 
   // Group page: vimeo.com/groups/{group}
-  if (isAnyOf(first, 'groups') && second) {
-    return { kind: 'group', group: second }
+  if (isAnyOf(routeOrUsername, 'groups') && nameOrRoute) {
+    return { kind: 'group', group: nameOrRoute }
   }
 
   // Album/showcase: vimeo.com/album/{id} or vimeo.com/showcase/{id}. Only /album/{id}/rss
   // returns RSS; /showcase/{id}/rss returns 404. /album/{id} 301-redirects to
   // /showcase/{id} in the browser, so users will most often paste the showcase URL.
-  if (isAnyOf(first, albumSegments) && second) {
-    if (!digitsRegex.test(second)) {
+  if (isAnyOf(routeOrUsername, albumSegments) && nameOrRoute) {
+    if (!digitsRegex.test(nameOrRoute)) {
       return
     }
 
-    return { kind: 'album', albumId: second }
+    return { kind: 'album', albumId: nameOrRoute }
   }
 
   // A numeric first segment is a video id.
-  if (!first || digitsRegex.test(first)) {
+  if (!routeOrUsername || digitsRegex.test(routeOrUsername)) {
     return
   }
 
-  if (isAnyOf(second, 'likes')) {
-    return { kind: 'likes', username: first }
+  if (isAnyOf(nameOrRoute, 'likes')) {
+    return { kind: 'likes', username: routeOrUsername }
   }
 
-  return { kind: 'user', username: first }
+  return { kind: 'user', username: routeOrUsername }
 }
 
 export const vimeoHandler: PlatformHandler = {

@@ -20,7 +20,7 @@ const hosts = [
   'www.science.org',
   'www.tandfonline.com',
 ]
-const wileyHost = 'onlinelibrary.wiley.com'
+const mostCitedHosts = ['onlinelibrary.wiley.com']
 
 const journalRegex = /^\/(?:toc|journals?|loi|home)\/(\w+)(?:\/|$)/i
 
@@ -29,14 +29,14 @@ export const parseAtyponUrl = (url: string): AtyponUrl | undefined => {
     return
   }
 
-  const { host, pathname } = new URL(url)
+  const { pathname } = new URL(url)
   const code = pathname.match(journalRegex)?.[1]
 
   if (!code) {
     return
   }
 
-  return { kind: 'journal', code, isWiley: host === wileyHost }
+  return { kind: 'journal', code, isWiley: isHostOf(url, mostCitedHosts) }
 }
 
 export const atyponHandler: PlatformHandler = {

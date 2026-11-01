@@ -6,7 +6,7 @@ import { getResponseText } from '../utils.js'
 
 const platform = 'myanimelist'
 
-const userImageRegex = /^https:\/\/cdn\.myanimelist\.net\/s\/common\/userimages\//
+const userImageRegex = /^https:\/\/cdn\.myanimelist\.net\/s\/common\/userimages\//i
 
 // The kinds that name a user, while news and featured pages belong to the site.
 const handledKinds: Array<MyanimelistUrl['kind']> = ['profile', 'user']

@@ -12,7 +12,7 @@ type Avatar = {
 
 const platform = 'peertube'
 
-const avatarPathPrefix = '/lazy-static/avatars/'
+const avatarPathRegex = /^\/lazy-static\/avatars\//i
 
 const apiPaths: Record<string, string> = {
   c: 'video-channels',
@@ -47,7 +47,7 @@ export const peertubeHandler: PlatformHandler = {
 
     const ogImage = content ? getMetaContent(content, 'og:image') : undefined
 
-    if (ogImage && parseUrl(ogImage)?.pathname.startsWith(avatarPathPrefix)) {
+    if (ogImage && avatarPathRegex.test(parseUrl(ogImage)?.pathname ?? '')) {
       return [{ uri: ogImage }]
     }
 

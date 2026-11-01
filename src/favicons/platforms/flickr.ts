@@ -3,7 +3,7 @@ import { type Element, findElement, hasClass } from '../../common/utils.js'
 import type { FlickrUrl } from '../../feeds/platforms/flickr.js'
 import { parseFlickrUrl } from '../../feeds/platforms/flickr.js'
 
-const buddyiconRegex = /background-image:\s*url\(\s*["']?(\/\/[^)"'#]+\/buddyicons\/[^)"'#]+)/
+const buddyiconRegex = /background-image:\s*url\(\s*["']?(\/\/[^)"'#]+\/buddyicons\/[^)"'#]+)/i
 
 // Pages that show the owner's avatar. Tag pages carry other users' icons, and single photo
 // and album pages carry none.

@@ -28,8 +28,8 @@ export const parseHabrUrl = (url: string): HabrUrl | undefined => {
   }
 
   const { pathname } = parsedUrl
-  const [first] = getPathSegments(parsedUrl)
-  const language = getAnyOf(first, languages) ?? 'ru'
+  const [languageOrRoute] = getPathSegments(parsedUrl)
+  const language = getAnyOf(languageOrRoute, languages) ?? 'ru'
   const hub = pathname.match(hubRegex)?.[1]
 
   if (hub) {

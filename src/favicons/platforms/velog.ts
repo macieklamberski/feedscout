@@ -10,7 +10,8 @@ const platform = 'velog'
 const imageHosts = ['images.velog.io', 'velog.velcdn.com']
 
 // Velog shows this image for every user who has not uploaded an avatar.
-const placeholderRegex = /\/images\/user-thumbnail\.png$/
+const placeholderRegex = /\/images\/user-thumbnail\.png$/i
+const imagePathRegex = /^\/images\//i
 
 const getSquareAvatar = (value: unknown): string | undefined => {
   if (!isNonEmptyString(value) || placeholderRegex.test(value) || !isHostOf(value, imageHosts)) {
@@ -19,7 +20,7 @@ const getSquareAvatar = (value: unknown): string | undefined => {
 
   const parsedUrl = parseUrl(value)
 
-  if (!parsedUrl?.pathname.startsWith('/images/')) {
+  if (!parsedUrl || !imagePathRegex.test(parsedUrl.pathname)) {
     return
   }
 

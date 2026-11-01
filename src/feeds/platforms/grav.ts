@@ -17,7 +17,7 @@ export type GravUrl = { kind: 'home' } | { kind: 'page'; path: string }
 const trailingSlashRegex = /\/$/
 const htmlSuffixRegex = /\.html$/i
 const paginationRegex = /\/page:\d+$/i
-const gravAssetRegex = /\/user\/(?:themes|plugins)\//
+const gravAssetRegex = /\/user\/(?:themes|plugins)\//i
 const gravCookieRegex = /^grav-site-[0-9a-f]+$/
 
 // `GravCMS` in full, since the value is compared as a prefix and `Grav` matches `Gravity Forms`.

@@ -6,7 +6,7 @@ import { composeHint, findElement } from '../../common/utils.js'
 
 const customCssPathRegex = /\/custom_css$/i
 const trailingSlashesRegex = /(?<!\/)\/+$/
-const eventsScriptRegex = /\/gancio-events\.es\.js$/
+const eventsScriptRegex = /\/gancio-events\.es\.js$/i
 
 export type GancioPage =
   | { kind: 'tag' | 'place' | 'collection'; rootUrl: string; value: string }

@@ -17,22 +17,24 @@ export const parseNaverBlogUrl = (url: string): NaverBlogUrl | undefined => {
     return
   }
 
-  const [first, second] = getPathSegments(parsedUrl)
+  const [blogIdOrScript, logNo] = getPathSegments(parsedUrl)
 
-  if (!first) {
+  if (!blogIdOrScript) {
     return
   }
 
   // A dotted segment is a script such as /PostView.naver, which names the blog in its `blogId`
   // query, and /BlogList.naver names none.
-  const blogId = first.includes('.') ? getQueryParam(parsedUrl.searchParams, 'blogId') : first
+  const blogId = blogIdOrScript.includes('.')
+    ? getQueryParam(parsedUrl.searchParams, 'blogId')
+    : blogIdOrScript
 
   if (!blogId) {
     return
   }
 
   // A script page such as /PostView.naver shows a post, as does /{blogId}/{logNo}.
-  if (second || first.includes('.')) {
+  if (logNo || blogIdOrScript.includes('.')) {
     return { kind: 'post', blogId }
   }
 

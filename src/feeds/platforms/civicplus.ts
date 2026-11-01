@@ -5,7 +5,7 @@ import { composeHint, findElement, getCookieNames, hasMarker } from '../../commo
 // Discoverability: Not discoverable without handler.
 // Handler needed for: all shapes.
 
-const layoutAssetRegex = /^\/Areas\/Layout\/Assets\//
+const layoutAssetRegex = /^\/Areas\/Layout\/Assets\//i
 
 type CivicplusModule = { query: Record<string, string>; hint: string }
 

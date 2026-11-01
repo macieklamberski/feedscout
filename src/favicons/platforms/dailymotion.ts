@@ -6,6 +6,8 @@ import { parseResponseJson } from '../utils.js'
 
 const platform = 'dailymotion'
 
+const placeholderPathRegex = /^\/d\//i
+
 // The id is the API path, `user/{name}` or `playlist/{id}`.
 const getApiPath = (url: string): string | undefined => {
   const parsed = parseDailymotionUrl(url)
@@ -48,7 +50,7 @@ export const dailymotionEnricher: FaviconEnricher = async (ref, context) => {
   const avatar = parseResponseJson(response)?.[field]
 
   // An account without an avatar gets the generic silhouette served under /d/.
-  if (isNonEmptyString(avatar) && !parseUrl(avatar)?.pathname.startsWith('/d/')) {
+  if (isNonEmptyString(avatar) && !placeholderPathRegex.test(parseUrl(avatar)?.pathname ?? '')) {
     return [avatar]
   }
 

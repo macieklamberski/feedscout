@@ -6,7 +6,7 @@ import { composeHint, findElement, findElements, hasMarker } from '../../common/
 
 export type TourTravelWorldPage = { feedUrl: string }
 
-const templateStylesheetRegex = /^(?:https?:)?\/\/catalog\.wlimg\.com\/templates-images\//
+const templateStylesheetRegex = /^(?:https?:)?\/\/catalog\.wlimg\.com\/templates-images\//i
 const packagesFeedPathRegex = /^\/tour-packages\.rss$/i
 
 // Every Weblink.In catalog site loads its template stylesheet from the shared asset host.

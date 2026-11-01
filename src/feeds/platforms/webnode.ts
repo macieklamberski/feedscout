@@ -29,13 +29,14 @@ export const isWebnodeHtml = (content: string): boolean => {
 // feed.
 export const parseWebnodeUrl = (url: string): WebnodeUrl => {
   const segments = getPathSegments(url)
+  const [routeOrPage] = segments
   const section = segments.at(-1)
   // Webnode serves no feed for a non-ASCII slug on any spelling, and `/rss/sitemap.xml` of the
   // built-in `/sitemap/` page is the XML sitemap.
   const isFeedless =
     section?.includes('%') || (segments.length === 1 && isAnyOf(section, 'sitemap'))
 
-  if (!section || isFeedless || isAnyOf(segments[0], itemPaths)) {
+  if (!section || isFeedless || isAnyOf(routeOrPage, itemPaths)) {
     return { kind: 'site' }
   }
 

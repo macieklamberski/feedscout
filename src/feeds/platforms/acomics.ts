@@ -17,19 +17,19 @@ export const parseAcomicsUrl = (url: string): AcomicsUrl | undefined => {
     return
   }
 
-  const [first] = getPathSegments(url)
+  const [comicOrUser] = getPathSegments(url)
 
   // length: keeps a bare ~ or - with no name after it out
-  if (!first || first.length < 2) {
+  if (!comicOrUser || comicOrUser.length < 2) {
     return
   }
 
-  if (first.startsWith('~')) {
-    return { kind: 'comic', comic: first.slice(1) }
+  if (comicOrUser.startsWith('~')) {
+    return { kind: 'comic', comic: comicOrUser.slice(1) }
   }
 
-  if (first.startsWith('-')) {
-    return { kind: 'user', username: first.slice(1) }
+  if (comicOrUser.startsWith('-')) {
+    return { kind: 'user', username: comicOrUser.slice(1) }
   }
 }
 

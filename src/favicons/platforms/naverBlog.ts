@@ -8,7 +8,8 @@ import { getResponseText } from '../utils.js'
 const platform = 'naverBlog'
 
 // The desktop blog.naver.com page is a frameset without og:image.
-const mobileHost = 'm.blog.naver.com'
+const mobileHosts = ['m.blog.naver.com']
+const mobileUrl = 'https://m.blog.naver.com'
 
 // A blog that does not exist carries the generic ssl.pstatic.net/static/blog/icon/og_270x270.png.
 const profileImageHosts = ['blogpfthumb-phinf.pstatic.net']
@@ -37,7 +38,7 @@ export const naverBlogHandler: PlatformHandler = {
 
     // A post page, /{blogId}/{logNo} or /PostView.naver, carries the post image, not the profile
     // image.
-    if (parsed.kind !== 'blog' || !isHostOf(url, mobileHost)) {
+    if (parsed.kind !== 'blog' || !isHostOf(url, mobileHosts)) {
       return [{ platform, id: parsed.blogId, url }]
     }
 
@@ -60,7 +61,7 @@ export const naverBlogEnricher: FaviconEnricher = async (ref, context) => {
     return
   }
 
-  const response = await context.fetchFn(`https://${mobileHost}/${ref.id}`)
+  const response = await context.fetchFn(`${mobileUrl}/${ref.id}`)
   const image = getProfileImage(getResponseText(response))
 
   if (image) {

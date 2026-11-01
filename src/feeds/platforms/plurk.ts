@@ -24,7 +24,8 @@ export const parsePlurkUrl = (url: string): PlurkUrl | undefined => {
   }
 
   const segments = getPathSegments(url)
-  const isMobile = isAnyOf(segments[0], 'm')
+  const [mobileOrRoute] = segments
+  const isMobile = isAnyOf(mobileOrRoute, 'm')
   const [route, value] = isMobile ? segments.slice(1) : segments
 
   if (isAnyOf(route, 'p')) {

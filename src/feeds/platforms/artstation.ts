@@ -27,16 +27,16 @@ export const parseArtstationUrl = (url: string): ArtstationUrl | undefined => {
     return { kind: 'profile', username: subdomain }
   }
 
-  const [first, second] = getPathSegments(url)
+  const [routeOrUsername, artworkId] = getPathSegments(url)
 
-  if (!first) {
+  if (!routeOrUsername) {
     return { kind: 'artwork' }
   }
 
   // Global artwork page: /artwork. A single artwork at /artwork/{id} names its artist only in the
   // page.
-  if (isAnyOf(first, 'artwork')) {
-    if (second) {
+  if (isAnyOf(routeOrUsername, 'artwork')) {
+    if (artworkId) {
       return
     }
 
@@ -44,11 +44,11 @@ export const parseArtstationUrl = (url: string): ArtstationUrl | undefined => {
   }
 
   // ArtStation names carry no dots, so a dotted segment such as robots.txt is a file of the site.
-  if (first.includes('.')) {
+  if (routeOrUsername.includes('.')) {
     return
   }
 
-  return { kind: 'profile', username: first }
+  return { kind: 'profile', username: routeOrUsername }
 }
 
 export const artstationHandler: PlatformHandler = {

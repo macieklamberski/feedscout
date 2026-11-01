@@ -8,7 +8,7 @@ import { getResponseText } from '../utils.js'
 const platform = 'pinterest'
 
 // A user without an avatar gets the generic s.pinimg.com/images/user/default_280.png.
-const defaultAvatarRegex = /\/images\/user\/default_/
+const defaultAvatarRegex = /\/images\/user\/default_/i
 
 const findProfileImage = (content: string, username: string): string | undefined => {
   const json = getScriptText(content, '__PWS_INITIAL_PROPS__')

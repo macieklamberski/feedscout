@@ -8,7 +8,7 @@ const hosts = ['librivox.org']
 
 const audiobookRegex = /^\/[^/]+\/?$/
 // An audiobook page links its feed by numeric id, which the slug does not carry.
-const feedIdRegex = /href="(?:https?|itpc):\/\/librivox\.org\/rss\/(\d+)"/
+const feedIdRegex = /href="(?:https?|itpc):\/\/librivox\.org\/rss\/(\d+)"/i
 
 export type LibrivoxPage = { audiobookId: string }
 

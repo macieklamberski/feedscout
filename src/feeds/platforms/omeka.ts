@@ -20,7 +20,7 @@ export type OmekaPage =
 // core `application/views/scripts/` path is any Zend Framework 1 layout, so only Omeka's own files
 // under it count.
 const assetRootRegex =
-  /^((?:(?!\/wp-content\/)[^\s])*?)\/(?:plugins\/[^/\s]+\/views\/(?:public|shared)\/|application\/views\/scripts\/(?:css\/(?:public|iconfonts)\.css|javascripts\/globals\.js))/
+  /^((?:(?!\/wp-content\/)[^\s])*?)\/(?:plugins\/[^/\s]+\/views\/(?:public|shared)\/|application\/views\/scripts\/(?:css\/(?:public|iconfonts)\.css|javascripts\/globals\.js))/i
 const itemsBrowseRegex = /^\/items(?:\/browse)?\/?$/i
 const trailingSlashRegex = /\/$/
 
