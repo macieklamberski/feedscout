@@ -21,6 +21,7 @@ const profileTabs = [
 ]
 // Site routes whose tabs share the profile tab names, as /search/projects does.
 const sitePaths = ['search']
+
 const usernameRegex = /^[a-zA-Z0-9_-]+$/
 const homeRegex = /^\/(?:galleries\/?)?$/i
 

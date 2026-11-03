@@ -8,6 +8,7 @@ export type PodomaticUrl = { kind: 'podcast'; show: string }
 
 const domains = ['podomatic.com']
 const hosts = ['podomatic.com', 'www.podomatic.com']
+
 const directoryPathRegex = /^\/podcasts\/([^/]+)/i
 
 export const parsePodomaticUrl = (url: string): PodomaticUrl | undefined => {

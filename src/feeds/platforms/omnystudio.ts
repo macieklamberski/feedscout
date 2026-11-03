@@ -7,6 +7,7 @@ import { composeHint } from '../../common/utils.js'
 export type OmnystudioUrl = { kind: 'show'; show: string }
 
 const hosts = ['omny.fm', 'www.omny.fm']
+
 const showPathRegex = /^\/shows\/([^/]+)/i
 
 export const parseOmnystudioUrl = (url: string): OmnystudioUrl | undefined => {

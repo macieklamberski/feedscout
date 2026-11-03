@@ -21,6 +21,7 @@ const hosts = [
   'movie.douban.com',
   'music.douban.com',
 ]
+
 const userRegex = /^\/people\/([^/]+)/i
 const subjectRegex = /^\/subject\/(?<subjectId>[^/]+)/i
 

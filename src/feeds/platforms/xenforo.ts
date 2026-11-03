@@ -11,11 +11,12 @@ export type XenforoPage =
   | { kind: 'forum'; basePath: string; route: string; forumPath: string }
   | { kind: 'board'; basePath: string }
 
-// XF2 serves a forum at `/f/{slug.id}` or, on the default route, `/forums/{slug.id}`.
-const forumPathRegex = /\/(?<route>f|forums)\/(?<forumPath>[^/]+\.\d+)(?:\/|$)/i
 // The board feed sits under the same route prefix as the forums. A page outside a
 // forum does not carry the prefix, and a board that renamed its route can answer on both.
 const routePrefixes = ['forums', 'f']
+
+// XF2 serves a forum at `/f/{slug.id}` or, on the default route, `/forums/{slug.id}`.
+const forumPathRegex = /\/(?<route>f|forums)\/(?<forumPath>[^/]+\.\d+)(?:\/|$)/i
 // XF2 prints the path the board is mounted under in its script config.
 const basePathRegex = /\bbasePath:\s*'(?<basePath>(?:\/[^'/]+)*)\/?'/
 

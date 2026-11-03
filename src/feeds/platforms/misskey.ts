@@ -9,6 +9,7 @@ export type MisskeyUrl = { kind: 'profile'; username: string }
 
 const profileRegex = /^\/@(?<segment>[^/]+)/
 const feedSuffixRegex = /\.(?:atom|rss|json)$/i
+
 const metaMarkers: Array<[string, string]> = [
   ['application-name', 'Misskey'],
   ['application-name', 'Sharkey'], // Fork, same feed routes

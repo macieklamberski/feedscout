@@ -13,6 +13,7 @@ export type DailymotionUrl =
   | { kind: 'trending' }
 
 const hosts = ['dailymotion.com', 'www.dailymotion.com']
+
 // The older /user/{name} address still serves the same page.
 // length: keeps a two-letter country home page out, as /fr serves the site-wide feed
 const userRegex = /^\/(?:user\/)?([a-zA-Z0-9_-]{3,})\/?$/i

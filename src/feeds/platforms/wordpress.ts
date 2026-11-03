@@ -20,6 +20,7 @@ const domains = [
   'wpcomstaging.com',
 ]
 const postIdDomains = ['hypotheses.org']
+
 // A nested category's path holds every parent slug and ends at WordPress's endpoint words.
 const categoryRegex = /^\/category\/(.+?)(?:\/(?:feed|rdf|rss|rss2|atom|embed|page)(?:\/|$)|\/?$)/i
 const tagRegex = /^\/tag\/([^/]+)/i

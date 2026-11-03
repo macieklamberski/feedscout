@@ -13,6 +13,7 @@ export type DevtoUrl =
   | { kind: 'home' }
 
 const hosts = ['dev.to', 'www.dev.to']
+
 // An article lives under its author's name, a user or an organization: /{name}/{slug}.
 const ownerRegex = /^\/([a-zA-Z0-9_-]+)(?:\/|$)/i
 const tagRegex = /^\/t\/([^/]+)/i

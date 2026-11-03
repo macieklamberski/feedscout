@@ -14,6 +14,7 @@ export type MyanimelistUrl =
   | { kind: 'featured' }
 
 export const hosts = ['myanimelist.net', 'www.myanimelist.net']
+
 const profileRegex = /^\/profile\/([^/]+)\/?$/i
 const userRegex = /^\/(?:profile|animelist|mangalist|history)\/([^/]+)/i
 const newsRegex = /^\/news(?:\/|$)/i

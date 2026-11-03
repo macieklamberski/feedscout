@@ -10,6 +10,7 @@ const isImageContentType = (headers?: Headers): boolean => {
 // and turns JPEG's leading `FF D8 FF` into replacement characters, so a JPEG is
 // found by the JFIF or Exif label that follows them.
 const icoSignature = '\u0000\u0000\u0001\u0000'
+
 const jpegLabelRegex = /^\uFFFD{3,4}[\s\S]{2}(?:JFIF|Exif)/
 
 // Security: SVG favicons are accepted here but returned unvalidated. An SVG can

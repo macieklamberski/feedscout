@@ -9,6 +9,7 @@ export type ApplePodcastsUrl = { kind: 'podcast' }
 export type ApplePodcastsPage = { kind: 'podcast'; feedUrl: string }
 
 const hosts = ['podcasts.apple.com']
+
 const podcastRegex = /^(?:\/[^/]+)?\/podcast\/(?:[^/]+\/)?id\d+(?:\/|$)/i
 const feedUrlRegex = /"feedUrl"\s*:\s*"([^"]+)"/
 

@@ -7,6 +7,7 @@ import { composeHint } from '../../common/utils.js'
 export type ListedUrl = { kind: 'blog'; username: string }
 
 const hosts = ['listed.to', 'www.listed.to']
+
 const userRegex = /^\/@([^/]+)/
 
 export const parseListedUrl = (url: string): ListedUrl | undefined => {

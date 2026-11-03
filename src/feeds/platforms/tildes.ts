@@ -10,6 +10,7 @@ export type TildesUrl =
   | { kind: 'home'; tag?: string }
 
 const hosts = ['tildes.net', 'www.tildes.net']
+
 const groupRegex = /^\/~([^/]+)/
 
 export const parseTildesUrl = (url: string): TildesUrl | undefined => {
