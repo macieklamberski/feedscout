@@ -453,10 +453,16 @@ const cases: Array<Case> = [
   ['zenfolio', zenfolioHandler, '<link href="https://cdn.zenfolio.com/zf/css/layout.css">'],
 ]
 
-// Under it.each, a row without headers gets the done callback in their place.
+// A tuple row without headers would get the done callback in their place under it.each, so the
+// rows go in as objects.
+const rows = cases.map(([platform, handler, value, headers]) => {
+  return { platform, handler, value, headers }
+})
+
 describe('platform handler invariant', () => {
-  for (const [platform, handler, value, headers] of cases) {
-    it(`should resolve a feed wherever ${platform} matches`, async () => {
+  it.each(rows)(
+    'should resolve a feed wherever $platform matches',
+    async ({ handler, value, headers }) => {
       const violations: Array<string> = []
       let matched = 0
 
@@ -481,13 +487,14 @@ describe('platform handler invariant', () => {
       // A marker the handler no longer reads would pass every path vacuously.
       expect(matched).toBeGreaterThan(0)
       expect(violations).toEqual([])
-    })
-  }
+    },
+  )
 
   // Two handlers matching one page leave the result to their order in the defaults. Only the
   // neutral host is tried, since gitlab.com never serves another platform's markup.
-  for (const [platform, , value, headers] of cases) {
-    it(`should match ${platform} pages with no other default handler`, () => {
+  it.each(rows)(
+    'should match $platform pages with no other default handler',
+    ({ value, headers }) => {
       const violations: Array<string> = []
 
       for (const path of paths) {
@@ -502,8 +509,8 @@ describe('platform handler invariant', () => {
       }
 
       expect(violations).toEqual([])
-    })
-  }
+    },
+  )
 
   // The Platform method tries a handler that takes the URL alone ahead of the marker ones, which
   // only holds while no handler takes a host it does not own.

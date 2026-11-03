@@ -11,14 +11,12 @@ describe('defaultHtmlOptions ignores subscribe/share links that wrap a feed URL'
     'http://share.example.org/feed.php?h1=http%3A%2F%2Fexample.com%2Ffeed',
   ]
 
-  for (const href of wrappers) {
-    it(`should ignore ${href}`, () => {
-      const value = `<a href="${href}">Subscribe via RSS</a>`
-      const expected: Array<string> = []
+  it.each(wrappers)('should ignore %s', (href) => {
+    const value = `<a href="${href}">Subscribe via RSS</a>`
+    const expected: Array<string> = []
 
-      expect(discoverUrisFromHtml(value, defaultHtmlOptions)).toEqual(expected)
-    })
-  }
+    expect(discoverUrisFromHtml(value, defaultHtmlOptions)).toEqual(expected)
+  })
 
   it('should still discover a same-site feed link matched by label', () => {
     const value = '<a href="https://example.com/feed">RSS</a>'
