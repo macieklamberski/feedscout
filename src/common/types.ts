@@ -128,13 +128,17 @@ export type DiscoverRef = {
 // Positional: one entry per ref, undefined where nothing was found.
 export type DiscoverEnrichFn = (ref: DiscoverRef) => MaybePromise<Array<string> | undefined>
 
-// Extract function uses TValid generic.
-export type DiscoverExtractFn<TValid> = (input: {
+export type DiscoverExtractInput = {
   url: string
   content: string
   headers?: Headers
   status?: number
-}) => MaybePromise<DiscoverResult<TValid>>
+}
+
+// Extract function uses TValid generic.
+export type DiscoverExtractFn<TValid> = (
+  input: DiscoverExtractInput,
+) => MaybePromise<DiscoverResult<TValid>>
 
 export type DiscoverInputObject = {
   url: string

@@ -24,6 +24,11 @@ export type PageMarkers = {
   headers?: (headers: Headers) => boolean
 }
 
+type ProcessConcurrentlyOptions = {
+  concurrency: number
+  shouldStop?: () => boolean
+}
+
 export const digitsRegex = /^\d+$/
 export const alphanumericOrHyphenRegex = /^[A-Za-z0-9-]+$/
 export const hexRegex = /^[0-9a-f]+$/i
@@ -343,10 +348,7 @@ export const matchesAnyOfLinkSelectors = (
 export const processConcurrently = async <T>(
   items: Array<T>,
   processFn: (item: T, index: number) => Promise<void>,
-  options: {
-    concurrency: number
-    shouldStop?: () => boolean
-  },
+  options: ProcessConcurrentlyOptions,
 ): Promise<void> => {
   let index = 0
 

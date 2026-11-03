@@ -30,9 +30,11 @@ describe('createHtmlUrisHandlers', () => {
 
     const handlers = createHtmlUrisHandlers(value)
 
-    expect(handlers.onopentag).toBeDefined()
-    expect(handlers.ontext).toBeDefined()
-    expect(handlers.onclosetag).toBeDefined()
+    expect(handlers).toEqual({
+      onopentag: expect.any(Function),
+      ontext: expect.any(Function),
+      onclosetag: expect.any(Function),
+    })
   })
 
   it('should create handlers that modify context', () => {
