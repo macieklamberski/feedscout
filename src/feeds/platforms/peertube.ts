@@ -11,6 +11,7 @@ export type PeertubeUrl = { kind: 'channel' | 'account'; name: string } | { kind
 const peertubeRegex = /peertube/i
 const channelPathRegex = /^\/(?:c|video-channels)\/([^/]+)/i
 const accountPathRegex = /^\/(?:a|accounts)\/([^/]+)/i
+
 const podcastFeedPath = '/feeds/podcast/videos.xml'
 
 export const isPeertubeHeaders = (headers: Headers): boolean => {

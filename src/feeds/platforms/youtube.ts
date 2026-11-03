@@ -35,8 +35,11 @@ const channelIdRegexes = [
   /"externalChannelId":"(UC[a-zA-Z0-9_-]+)"/,
   /"channelId":"(UC[a-zA-Z0-9_-]+)"/,
 ]
+
 const channelRegex = /^\/channel\/([^/]+)/i
+
 const channelPathRegexes = [/^\/@[^/]+/, /^\/user\/[^/]+/i, /^\/c\/[^/]+/i]
+
 const shortsRegex = /^\/shorts\/[\w-]+/i
 const liveRegex = /^\/live\/[\w-]+/i
 const watchRegex = /^\/watch\/?$/i

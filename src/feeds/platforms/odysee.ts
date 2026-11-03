@@ -8,6 +8,7 @@ import { composeHint, hexRegex } from '../../common/utils.js'
 export type OdyseeUrl = { kind: 'channel'; name: string; claimId?: string }
 
 export const hosts = ['odysee.com', 'www.odysee.com']
+
 const channelRegex = /^\/@(?<name>[^/:]+)(?::(?<claimId>[^/]+))?/
 
 export const parseOdyseeUrl = (url: string): OdyseeUrl | undefined => {

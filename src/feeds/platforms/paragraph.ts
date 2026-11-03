@@ -7,6 +7,7 @@ import { composeHint } from '../../common/utils.js'
 export type ParagraphUrl = { kind: 'blog'; username: string }
 
 const hosts = ['paragraph.com', 'www.paragraph.com']
+
 const userRegex = /^\/@([^/]+)/
 
 export const parseParagraphUrl = (url: string): ParagraphUrl | undefined => {

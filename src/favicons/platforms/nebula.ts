@@ -7,6 +7,7 @@ import { parseResponseJson } from '../utils.js'
 const platform = 'nebula'
 
 const queryDataMarker = 'window.__QUERY_DATA__'
+
 const assignmentRegex = /^\s*=/
 const trailingSemicolonRegex = /;$/
 

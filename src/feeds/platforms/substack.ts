@@ -17,6 +17,7 @@ export type SubstackPage = { kind: 'newsletter' | 'profile'; origin: string }
 const domains = ['substack.com']
 // The app host names a publication in the path, so it is no publication itself.
 const appHosts = ['open.substack.com']
+
 const profileRegex = /^\/@(?<username>[^/]+)/
 // A profile page embeds its primary publication as escaped JSON. The publication
 // subdomain is not always the handle, and a custom domain replaces it.

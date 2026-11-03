@@ -9,6 +9,7 @@ import { composeHint, getTenantSubdomain } from '../../common/utils.js'
 export type PosthavenUrl = { kind: 'tag'; tag: string } | { kind: 'blog' }
 
 const domains = ['posthaven.com']
+
 const tagRegex = /^\/tag\/([^/]+)/i
 
 export const parsePosthavenUrl = (url: string): PosthavenUrl | undefined => {

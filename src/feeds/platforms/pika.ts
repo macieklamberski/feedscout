@@ -9,6 +9,7 @@ import { composeHint, getTenantSubdomain } from '../../common/utils.js'
 export type PikaUrl = { kind: 'tag'; tag: string } | { kind: 'blog' }
 
 const domains = ['pika.page']
+
 const tagRegex = /^\/tag\/([^/]+)/i
 
 export const parsePikaUrl = (url: string): PikaUrl | undefined => {

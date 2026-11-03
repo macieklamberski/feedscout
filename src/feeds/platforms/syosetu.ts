@@ -8,6 +8,7 @@ import { composeHint, digitsRegex } from '../../common/utils.js'
 export type SyosetuUrl = { kind: 'writer'; writerId: string }
 
 const hosts = ['mypage.syosetu.com']
+
 const writerRegex = /^\/(?<writerId>[^/]+)/
 
 export const parseSyosetuUrl = (url: string): SyosetuUrl | undefined => {

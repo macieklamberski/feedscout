@@ -7,6 +7,7 @@ import { composeHint } from '../../common/utils.js'
 export type AudioboomUrl = { kind: 'channel'; channelId: string }
 
 const hosts = ['audioboom.com', 'www.audioboom.com']
+
 const channelRegex = /^\/channels\/(?<segment>[^/]+)/i
 // The page answers at /channels/{id} and at its canonical /channels/{id}-{slug}.
 const channelIdRegex = /^(?<channelId>\d+)(?:-|$)/

@@ -7,6 +7,7 @@ import { composeHint, uuidRegex } from '../../common/utils.js'
 export type Art19Url = { kind: 'show'; slug: string }
 
 const hosts = ['art19.com', 'www.art19.com']
+
 const showPathRegex = /^\/shows\/([^/]+)/i
 
 export const parseArt19Url = (url: string): Art19Url | undefined => {

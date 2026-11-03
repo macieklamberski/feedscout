@@ -10,6 +10,7 @@ import { composeHint } from '../../common/utils.js'
 export type TogetterUrl = { kind: 'user'; username: string } | { kind: 'home' }
 
 export const hosts = ['togetter.com', 'www.togetter.com']
+
 const userPathRegex = /^\/id\/([^/]+)/i
 
 export const parseTogetterUrl = (url: string): TogetterUrl | undefined => {

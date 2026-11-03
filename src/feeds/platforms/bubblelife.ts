@@ -14,6 +14,7 @@ const domains = ['bubblelife.com']
 
 const communityRegex =
   /^\/community\/(?<community>[a-z0-9_]+)(?:\/library\/(?<libraryId>\d+))?(?:\/|$)/i
+
 const feedHrefRegex = /^\/rss\?c=(\d+)$/i
 
 export const parseBubblelifeUrl = (url: string): BubblelifeUrl | undefined => {

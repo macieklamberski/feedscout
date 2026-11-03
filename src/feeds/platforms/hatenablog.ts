@@ -17,6 +17,7 @@ const domains = [
   'hatenadiary.jp',
   'hatenadiary.org',
 ]
+
 const categoryRegex = /^\/archive\/category\/([^/]+)/i
 const authorRegex = /^\/archive\/author\/([^/]+)/i
 

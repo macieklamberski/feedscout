@@ -10,6 +10,7 @@ export type DreamwidthUrl = { kind: 'journal'; username?: string; tag?: string }
 
 const domains = ['dreamwidth.org']
 const wwwHosts = ['www.dreamwidth.org', 'dreamwidth.org']
+
 const usersPathRegex = /^\/(?:users\/|~)([^/]+)/i
 
 export const parseDreamwidthUrl = (url: string): DreamwidthUrl | undefined => {

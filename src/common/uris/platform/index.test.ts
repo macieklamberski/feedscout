@@ -10,6 +10,7 @@ import { discoverUrisFromPlatform, resolveFromPlatform } from './index.js'
 import type { PlatformHandler } from './types.js'
 
 const guessExclusionRegex = /^https:\/\/example\.com\/[^/]+\.xml$/
+
 const samePageUrls = [
   'https://example.com/page?a=1&b=2',
   'http://example.com/page?a=1&b=2',

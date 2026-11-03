@@ -8,6 +8,7 @@ import { composeHint } from '../../common/utils.js'
 export type VelogUrl = { kind: 'user'; username: string } | { kind: 'home' }
 
 export const hosts = ['velog.io', 'www.velog.io']
+
 const userRegex = /^\/@([^/]+)/
 
 export const parseVelogUrl = (url: string): VelogUrl | undefined => {

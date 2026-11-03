@@ -16,6 +16,7 @@ export type LobstersUrl =
   | { kind: 'home' }
 
 const hosts = ['lobste.rs']
+
 const tagRegex = /^\/t\/(?<tags>[^/]+)/i
 const domainRegex = /^\/domains\/([^/]+)/i
 const userRegex = /^\/~(?<username>[^/]+)/
