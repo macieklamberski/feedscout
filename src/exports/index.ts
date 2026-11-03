@@ -1,5 +1,9 @@
 export { discoverBlogrolls } from '../blogrolls/index.js'
-export { defaultFetchFn, defaultResolveSiteUrlFn } from '../common/discover/defaults.js'
+export {
+  defaultFetchFn,
+  defaultResolveSiteUrlFn,
+  defaultResolveUrlFn,
+} from '../common/discover/defaults.js'
 export { getFeedSiteUrl } from '../common/discover/utils.js'
 export type {
   DiscoverEnrichFn,
