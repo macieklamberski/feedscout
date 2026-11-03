@@ -21,7 +21,6 @@ export type OmekaPage =
 // under it count.
 const assetRootRegex =
   /^((?:(?!\/wp-content\/)[^\s])*?)\/(?:plugins\/[^/\s]+\/views\/(?:public|shared)\/|application\/views\/scripts\/(?:css\/(?:public|iconfonts)\.css|javascripts\/globals\.js))/i
-
 const itemsBrowseRegex = /^\/items(?:\/browse)?\/?$/i
 const trailingSlashRegex = /\/$/
 

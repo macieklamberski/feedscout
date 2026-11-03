@@ -12,6 +12,7 @@ export type PublicInboxPage =
 // lore.kernel.org answers a page request from a browser user agent with an Anubis challenge, and
 // from curl with 403, while its feeds still answer.
 const hosts = ['lore.kernel.org']
+
 // A file at the root, such as the list of inboxes, is no inbox.
 const fileRegex = /\.(?:html?|txt|json|xml|ico)$/i
 

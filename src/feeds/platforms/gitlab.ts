@@ -10,6 +10,7 @@ export type GitlabUrl =
   | { kind: 'project'; namespace: string; projectPath: string; branch?: string }
 
 export const hosts = ['gitlab.com', 'www.gitlab.com']
+
 // GitLab names may contain dots, so only the feed suffix is cut off.
 const feedSuffixRegex = /\.atom$/i
 

@@ -12,6 +12,7 @@ export type ObservableUrl =
   | { kind: 'trending' }
 
 export const hosts = ['observablehq.com', 'www.observablehq.com']
+
 // The live form carries a `-` segment, `/@{owner}/-/collection/{slug}`.
 const collectionRegex = /^\/@([^/]+)\/(?:-\/)?collection\/([^/]+)/i
 const ownerRegex = /^\/@([^/]+)/

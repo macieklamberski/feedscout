@@ -36,10 +36,8 @@ export type DspacePage =
 
 const scopePathRegex = /\/(?<route>collections|communities)\/(?<uuid>[^/]+)(?:\/|$)/i
 const transferStateEntityRegex = /&([aglqs]);/g
-
 const legacyFeedPathRegex =
   /\/feed\/(?<format>rss_1\.0|rss_2\.0|atom_1\.0)\/(?<scope>site|[^/]+\/[^/]+)$/i
-
 const legacyStylesheetRegex = /\/static\/css\/bootstrap\/dspace-theme\.css$/i
 const generatorRegex = /^DSpace\b/
 
