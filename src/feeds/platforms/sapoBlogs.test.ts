@@ -68,6 +68,57 @@ describe('parseSapoBlogsUrl', () => {
     expect(parseSapoBlogsUrl(value)).toEqual(expected)
   })
 
+  it('should return the tag for a tag feed', () => {
+    const expected: SapoBlogsUrl = { kind: 'tag', blog: 'cantinhodacasa', tag: 'compal' }
+
+    expect(parseSapoBlogsUrl('https://cantinhodacasa.blogs.sapo.pt/data/rss?tag=compal')).toEqual(
+      expected,
+    )
+  })
+
+  it('should return the blog for a comments feed', () => {
+    const expected: SapoBlogsUrl = { kind: 'blog', blog: 'canetadapoesia' }
+
+    expect(parseSapoBlogsUrl('https://blogs.sapo.pt/commentsrss.bml?blog=canetadapoesia')).toEqual(
+      expected,
+    )
+  })
+
+  it('should return the post for a post comments feed', () => {
+    const value = 'https://blogs.sapo.pt/commentsrss.bml?blog=21ng&ditemid=62534'
+    const expected: SapoBlogsUrl = { kind: 'post', blog: '21ng', postId: '62534' }
+
+    expect(parseSapoBlogsUrl(value)).toEqual(expected)
+  })
+
+  it('should return the blog for a comments feed with a non-numeric post id', () => {
+    const value = 'https://blogs.sapo.pt/commentsrss.bml?blog=alice&ditemid=abc'
+    const expected: SapoBlogsUrl = { kind: 'blog', blog: 'alice' }
+
+    expect(parseSapoBlogsUrl(value)).toEqual(expected)
+  })
+
+  it('should return the blog for a comments feed naming a blog with an underscore', () => {
+    const value = 'https://blogs.sapo.pt/commentsrss.bml?blog=the_other_side'
+    const expected: SapoBlogsUrl = { kind: 'blog', blog: 'the_other_side' }
+
+    expect(parseSapoBlogsUrl(value)).toEqual(expected)
+  })
+
+  it('should return undefined for a blog query on another apex path', () => {
+    expect(parseSapoBlogsUrl('https://blogs.sapo.pt/?blog=alice')).toBeUndefined()
+  })
+
+  it('should return undefined for a comments feed without a blog', () => {
+    expect(parseSapoBlogsUrl('https://blogs.sapo.pt/commentsrss.bml')).toBeUndefined()
+  })
+
+  it('should return undefined for a comments feed naming a blog with a dot', () => {
+    const value = 'https://blogs.sapo.pt/commentsrss.bml?blog=alice.example'
+
+    expect(parseSapoBlogsUrl(value)).toBeUndefined()
+  })
+
   it('should return the blog for an empty tag query', () => {
     const expected: SapoBlogsUrl = { kind: 'blog', blog: 'alice' }
 
@@ -92,6 +143,10 @@ describe('parseSapoBlogsUrl', () => {
 
   it('should return undefined for another host', () => {
     expect(parseSapoBlogsUrl('https://example.com/')).toBeUndefined()
+  })
+
+  it('should return undefined for a value that is not a url', () => {
+    expect(parseSapoBlogsUrl('alice.blogs.sapo.pt')).toBeUndefined()
   })
 })
 
@@ -136,6 +191,12 @@ describe('sapoBlogsHandler', () => {
   describe('resolve', () => {
     it('should return empty array for a URL outside SAPO Blogs', () => {
       expect(sapoBlogsHandler.resolve('https://example.com/')).toEqual([])
+    })
+
+    it('should return empty array for a comments feed naming a blog no host can carry', () => {
+      const value = 'https://blogs.sapo.pt/commentsrss.bml?blog=xn--a'
+
+      expect(sapoBlogsHandler.resolve(value)).toEqual([])
     })
 
     it('should return the blog feeds for a blog', () => {
@@ -294,6 +355,94 @@ describe('sapoBlogsHandler', () => {
         },
         {
           uri: 'https://blogs.sapo.pt/commentsrss.bml?blog=alice',
+          hint: { key: 'sapo-blogs:comments', label: 'Comments' },
+        },
+      ]
+
+      expect(sapoBlogsHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return the tag feed for a tag feed', () => {
+      const value = 'https://cantinhodacasa.blogs.sapo.pt/data/rss?tag=compal'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://cantinhodacasa.blogs.sapo.pt/data/rss?tag=compal',
+          hint: { key: 'sapo-blogs:tag', label: 'Tag' },
+        },
+        {
+          uri: 'https://cantinhodacasa.blogs.sapo.pt/data/rss',
+          hint: { key: 'sapo-blogs:posts', label: 'Posts', format: 'rss' },
+        },
+        {
+          uri: 'https://cantinhodacasa.blogs.sapo.pt/data/atom',
+          hint: { key: 'sapo-blogs:posts', label: 'Posts', format: 'atom' },
+        },
+        {
+          uri: 'https://blogs.sapo.pt/commentsrss.bml?blog=cantinhodacasa',
+          hint: { key: 'sapo-blogs:comments', label: 'Comments' },
+        },
+      ]
+
+      expect(sapoBlogsHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return the blog feeds for a comments feed', () => {
+      const value = 'https://blogs.sapo.pt/commentsrss.bml?blog=canetadapoesia'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://canetadapoesia.blogs.sapo.pt/data/rss',
+          hint: { key: 'sapo-blogs:posts', label: 'Posts', format: 'rss' },
+        },
+        {
+          uri: 'https://canetadapoesia.blogs.sapo.pt/data/atom',
+          hint: { key: 'sapo-blogs:posts', label: 'Posts', format: 'atom' },
+        },
+        {
+          uri: 'https://blogs.sapo.pt/commentsrss.bml?blog=canetadapoesia',
+          hint: { key: 'sapo-blogs:comments', label: 'Comments' },
+        },
+      ]
+
+      expect(sapoBlogsHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return the blog feeds on the hyphenated host for a blog with an underscore', () => {
+      const value = 'https://blogs.sapo.pt/commentsrss.bml?blog=the_other_side'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://the-other-side.blogs.sapo.pt/data/rss',
+          hint: { key: 'sapo-blogs:posts', label: 'Posts', format: 'rss' },
+        },
+        {
+          uri: 'https://the-other-side.blogs.sapo.pt/data/atom',
+          hint: { key: 'sapo-blogs:posts', label: 'Posts', format: 'atom' },
+        },
+        {
+          uri: 'https://blogs.sapo.pt/commentsrss.bml?blog=the_other_side',
+          hint: { key: 'sapo-blogs:comments', label: 'Comments' },
+        },
+      ]
+
+      expect(sapoBlogsHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return the post comments feed for a post comments feed', () => {
+      const value = 'https://blogs.sapo.pt/commentsrss.bml?blog=21ng&ditemid=62534'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://blogs.sapo.pt/commentsrss.bml?blog=21ng&ditemid=62534',
+          hint: { key: 'sapo-blogs:post-comments', label: 'Post comments' },
+        },
+        {
+          uri: 'https://21ng.blogs.sapo.pt/data/rss',
+          hint: { key: 'sapo-blogs:posts', label: 'Posts', format: 'rss' },
+        },
+        {
+          uri: 'https://21ng.blogs.sapo.pt/data/atom',
+          hint: { key: 'sapo-blogs:posts', label: 'Posts', format: 'atom' },
+        },
+        {
+          uri: 'https://blogs.sapo.pt/commentsrss.bml?blog=21ng',
           hint: { key: 'sapo-blogs:comments', label: 'Comments' },
         },
       ]

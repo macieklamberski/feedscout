@@ -1332,7 +1332,7 @@ Discovers the posts, comments and tag feeds of a blog on `*.blogs.sapo.pt`. Comm
 | `{blog}.blogs.sapo.pt/{slug}-{id}` | Post comments<sup>†</sup>*, plus the blog feeds |
 | `{blog}.blogs.sapo.pt/{id}.html` | Post comments<sup>†</sup>*, plus the blog feeds |
 | `{blog}.blogs.sapo.pt/tag/{tag}` | Tag<sup>†</sup>, plus the blog feeds |
-| `{blog}.blogs.sapo.pt/?tag={tag}` | Tag, plus the blog feeds |
+| `{blog}.blogs.sapo.pt/?tag={tag}` | Tag<sup>†</sup>, plus the blog feeds |
 
 \* *Requires HTML content to confirm the page links the post.*
 
