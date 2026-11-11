@@ -19,6 +19,44 @@ describe('parseHatenablogUrl', () => {
     )
   })
 
+  it('should return the category for a category feed', () => {
+    const value = 'https://staff.hatenablog.com/rss/category/%E3%81%8A%E7%9F%A5%E3%82%89%E3%81%9B'
+    const expected: HatenablogUrl = {
+      kind: 'category',
+      category: '%E3%81%8A%E7%9F%A5%E3%82%89%E3%81%9B',
+    }
+
+    expect(parseHatenablogUrl(value)).toEqual(expected)
+  })
+
+  it('should return the category for a category feed with a dot in its name', () => {
+    const value = 'https://usagi.hatenablog.jp/rss/category/Newtonsoft.Json'
+    const expected: HatenablogUrl = { kind: 'category', category: 'Newtonsoft.Json' }
+
+    expect(parseHatenablogUrl(value)).toEqual(expected)
+  })
+
+  it('should return the author for an author feed', () => {
+    const value = 'https://blog.hatenablog.com/feed/author/hatenablog-editors'
+    const expected: HatenablogUrl = { kind: 'author', author: 'hatenablog-editors' }
+
+    expect(parseHatenablogUrl(value)).toEqual(expected)
+  })
+
+  it('should return the blog for an entry whose slug starts with category', () => {
+    const value = 'https://mmll.hatenablog.com/entry/category/css/collapse-list'
+    const expected: HatenablogUrl = { kind: 'blog' }
+
+    expect(parseHatenablogUrl(value)).toEqual(expected)
+  })
+
+  it('should return the blog for an entry whose slug starts with archive', () => {
+    const value = 'https://taxtax.hatenablog.jp/entry/archive/category/list'
+    const expected: HatenablogUrl = { kind: 'blog' }
+
+    expect(parseHatenablogUrl(value)).toEqual(expected)
+  })
+
   it('should return the blog for any other page', () => {
     const expected: HatenablogUrl = { kind: 'blog' }
 
@@ -58,6 +96,29 @@ describe('hatenablogHandler', () => {
   })
 
   describe('resolve', () => {
+    const ownFeeds: Array<[string, string]> = [
+      ['hatenablog:posts', 'https://staff.hatenablog.com/rss'],
+      ['hatenablog:posts', 'https://staff.hatenablog.com/feed'],
+      [
+        'hatenablog:category',
+        'https://staff.hatenablog.com/rss/category/%E3%81%8A%E7%9F%A5%E3%82%89%E3%81%9B',
+      ],
+      [
+        'hatenablog:category',
+        'https://staff.hatenablog.com/feed/category/%E3%81%8A%E7%9F%A5%E3%82%89%E3%81%9B',
+      ],
+      ['hatenablog:author', 'https://blog.hatenablog.com/rss/author/hatenablog-editors'],
+      ['hatenablog:author', 'https://blog.hatenablog.com/feed/author/hatenablog-editors'],
+    ]
+
+    it.each(ownFeeds)('should return the %s feed itself for %s', (key, value) => {
+      const uris = hatenablogHandler.resolve(value)
+
+      expect(uris).toContainEqual(
+        expect.objectContaining({ uri: value, hint: expect.objectContaining({ key }) }),
+      )
+    })
+
     it('should return empty array for a URL outside Hatena Blog', () => {
       expect(hatenablogHandler.resolve('https://example.com/')).toEqual([])
     })
