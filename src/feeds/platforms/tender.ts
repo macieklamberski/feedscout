@@ -21,6 +21,9 @@ const settingsRootRegex = /"root":"(?<root>\/[^"]*)"/
 const sessionCookieRegex = /^_tender\d*_session$/
 const helpRootRegex = /^\/help(?:\/|$)/i
 const discussionPathRegex = /^\/discussions\/(?<category>[^/]+)\/(?<discussion>\d+[^/]*)\/?$/i
+const discussionsFeedPathRegex = /^\/discussions\.atom$/i
+const commentsFeedPathRegex = /^\/comments\/recent\.atom$/i
+const discussionFeedPathRegex = /^\/discussions\/[^/]+\/\d+[^/]*\.atom$/i
 const trailingSlashRegex = /\/$/
 // A missing page answers 404 with the stock Rails error page inside the site layout, and a
 // made-up category would otherwise get the site's feed.
@@ -56,6 +59,10 @@ const getRoot = (pathname: string, content: string | undefined): string => {
   return ''
 }
 
+const getSitePath = (pathname: string, root: string): string => {
+  return startsWithAnyOf(pathname, `${root}/`) ? pathname.slice(root.length) : '/'
+}
+
 export const getTenderPage = (url: string, content: string | undefined): TenderPage | undefined => {
   const parsedUrl = parseUrl(url)
 
@@ -75,10 +82,8 @@ export const getTenderPage = (url: string, content: string | undefined): TenderP
 
   const root = getRoot(parsedUrl.pathname, content)
   const siteUrl = `${parsedUrl.origin}${root}`
-  const sitePath = startsWithAnyOf(parsedUrl.pathname, `${root}/`)
-    ? parsedUrl.pathname.slice(root.length)
-    : '/'
-  const { category, discussion } = sitePath.match(discussionPathRegex)?.groups ?? {}
+  const sitePath = getSitePath(parsedUrl.pathname, root)
+  const { category, discussion } = discussionPathRegex.exec(sitePath)?.groups ?? {}
 
   if (category && discussion) {
     return { kind: 'discussion', siteUrl, category, discussion }
@@ -124,5 +129,30 @@ export const tenderHandler: PlatformHandler = {
       { uri: `${page.siteUrl}/discussions.atom`, hint: composeHint('tender:discussions') },
       { uri: `${page.siteUrl}/comments/recent.atom`, hint: composeHint('tender:comments') },
     ]
+  },
+
+  // A site's root comes from its settings script and a custom domain carries no marker in the URL
+  // alone, so only a feed on a Tender host is read, under its origin or `/help`.
+  getFeedKey: (url) => {
+    const parsedUrl = parseUrl(url)
+
+    if (!parsedUrl || !getTenantSubdomain(url, domains)) {
+      return
+    }
+
+    const sitePath = getSitePath(parsedUrl.pathname, getRoot(parsedUrl.pathname, undefined))
+
+    if (discussionsFeedPathRegex.test(sitePath)) {
+      return 'tender:discussions'
+    }
+
+    if (commentsFeedPathRegex.test(sitePath)) {
+      return 'tender:comments'
+    }
+
+    // A discussion answers its feed with or without the `discussion_id` the page links.
+    if (discussionFeedPathRegex.test(sitePath)) {
+      return 'tender:discussion'
+    }
   },
 }

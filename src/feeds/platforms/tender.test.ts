@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import {
   getTenderPage,
   isTenderHeaders,
@@ -264,6 +266,112 @@ describe('tenderHandler', () => {
 
     it('should return empty array for the www host', () => {
       expect(tenderHandler.resolve('https://www.tenderapp.com/')).toEqual([])
+    })
+  })
+
+  describe('getFeedKey', () => {
+    it('should return the discussions key for the discussions feed', () => {
+      const value = 'https://gpgtools.tenderapp.com/discussions.atom'
+      const expected = 'tender:discussions'
+
+      expect(tenderHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the comments key for the recent comments feed', () => {
+      const value = 'https://gpgtools.tenderapp.com/comments/recent.atom'
+      const expected = 'tender:comments'
+
+      expect(tenderHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the discussion key for a discussion feed', () => {
+      const value =
+        'https://infinitekind.tenderapp.com/discussions/general-questions/135551-change-view.atom?discussion_id=135551-change-view'
+      const expected = 'tender:discussion'
+
+      expect(tenderHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the discussion key for a discussion feed without discussion_id', () => {
+      const value =
+        'https://infinitekind.tenderapp.com/discussions/general-questions/135551-change-view.atom'
+      const expected = 'tender:discussion'
+
+      expect(tenderHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the discussions key for the discussions feed under /help', () => {
+      const value = 'https://the-unsigned-guide-2.tenderapp.com/help/discussions.atom'
+      const expected = 'tender:discussions'
+
+      expect(tenderHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the discussion key for a discussion feed under /help over http', () => {
+      const value =
+        'http://scrivener.tenderapp.com/help/discussions/scrivener-3-beta/890-translation-feedback-japanese.atom?discussion_id=890-translation-feedback-japanese'
+      const expected = 'tender:discussion'
+
+      expect(tenderHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return undefined for a discussion page', () => {
+      const value =
+        'https://infinitekind.tenderapp.com/discussions/general-questions/135551-change-view'
+
+      expect(tenderHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on a custom domain', () => {
+      const value = 'https://support.example.com/discussions.atom'
+
+      expect(tenderHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on the www host', () => {
+      const value = 'https://www.tenderapp.com/discussions.atom'
+
+      expect(tenderHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for an invalid URL', () => {
+      expect(tenderHandler.getFeedKey?.('not a url')).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const ownFeeds: Array<[string, DiscoverUriHint]> = [
+      [
+        'https://gpgtools.tenderapp.com/discussions.atom',
+        { key: 'tender:discussions', label: 'Discussions' },
+      ],
+      [
+        'https://gpgtools.tenderapp.com/comments/recent.atom',
+        { key: 'tender:comments', label: 'Recent comments' },
+      ],
+      [
+        'https://infinitekind.tenderapp.com/discussions/general-questions/135551-change-view.atom?discussion_id=135551-change-view',
+        { key: 'tender:discussion', label: 'Discussion comments' },
+      ],
+      [
+        'https://infinitekind.tenderapp.com/discussions/problems/50-quicken-credit-card-and-chase.atom',
+        { key: 'tender:discussion', label: 'Discussion comments' },
+      ],
+      [
+        'http://scrivener.tenderapp.com/help/discussions/scrivener-3-beta/890-translation-feedback-japanese.atom?discussion_id=890-translation-feedback-japanese',
+        { key: 'tender:discussion', label: 'Discussion comments' },
+      ],
+    ]
+
+    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+      const options = {
+        ...defaultPlatformOptions,
+        handlers: [tenderHandler],
+        baseUrl: value,
+      }
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
     })
   })
 })
