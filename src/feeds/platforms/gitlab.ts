@@ -1,4 +1,4 @@
-import { getPathSegments, isAnyOf, isHostOf, isSubdomainOf } from 'trousse'
+import { getPathSegments, getQueryParam, isAnyOf, isHostOf, isSubdomainOf, parseUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, hasMarker } from '../../common/utils.js'
 
@@ -13,6 +13,7 @@ export const hosts = ['gitlab.com', 'www.gitlab.com']
 
 // GitLab names may contain dots, so only the feed suffix is cut off.
 const feedSuffixRegex = /\.atom$/i
+const activityFeedRegex = /.\.atom$/i
 
 // Every GitLab page prints its frontend config through the gon gem and loads its bundles from
 // /assets/webpack/. The og:site_name is operator-set text, which any page can carry.
@@ -88,6 +89,13 @@ export const parseGitlabUrl = (url: string): GitlabUrl | undefined => {
   return { kind: 'project', namespace, projectPath }
 }
 
+// The project feeds after the `/-/` separator that ends a project path of any depth.
+const projectFeeds = [
+  { file: 'releases.atom', key: 'gitlab:releases' },
+  { file: 'issues.atom', key: 'gitlab:issues' },
+  { file: 'merge_requests.atom', key: 'gitlab:merge-requests' },
+]
+
 export const gitlabHandler: PlatformHandler = {
   match: (url, content, headers) => {
     if (!parseGitlabUrl(url)) {
@@ -152,5 +160,56 @@ export const gitlabHandler: PlatformHandler = {
     }
 
     return repoFeeds
+  },
+
+  // Only gitlab.com is claimed: a self-hosted instance is known by its page markup, which a feed
+  // URL does not carry.
+  getFeedKey: (url) => {
+    const parsedUrl = parseUrl(url)
+
+    if (!parsedUrl || !isHostOf(parsedUrl, hosts)) {
+      return
+    }
+
+    const segments = getPathSegments(parsedUrl)
+    const [prefixOrNamespace] = segments
+
+    if (isAnyOf(prefixOrNamespace, accountPrefixes)) {
+      return
+    }
+
+    const dashIndex = segments.indexOf('-')
+
+    if (dashIndex === -1) {
+      const [, featureSegments] = splitProjectPath(segments)
+
+      if (featureSegments.length === 0 && activityFeedRegex.test(segments.at(-1) ?? '')) {
+        return 'gitlab:activity'
+      }
+
+      return
+    }
+
+    // A project path is a namespace and a project at least.
+    if (dashIndex < 2) {
+      return
+    }
+
+    const [feature, branch, ...rest] = segments.slice(dashIndex + 1)
+    const isAtomFormat = isAnyOf(getQueryParam(parsedUrl, 'format'), 'atom')
+
+    if (isAnyOf(feature, 'commits') && branch && rest.length === 0 && isAtomFormat) {
+      return 'gitlab:branch-commits'
+    }
+
+    if (branch) {
+      return
+    }
+
+    if (isAnyOf(feature, 'tags') && isAtomFormat) {
+      return 'gitlab:tags'
+    }
+
+    return projectFeeds.find(({ file }) => isAnyOf(feature, file))?.key
   },
 }
