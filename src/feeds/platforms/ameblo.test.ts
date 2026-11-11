@@ -124,6 +124,13 @@ describe('amebloHandler', () => {
       expect(amebloHandler.getFeedKey?.(value)).toBe(expected)
     })
 
+    it('should return the posts key for an RDF feed on ameblo.jp', () => {
+      const value = 'https://ameblo.jp/6262sm/rss.html'
+      const expected = 'ameblo:posts'
+
+      expect(amebloHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
     it('should return the posts key for a feed on the www host', () => {
       const value = 'https://www.ameblo.jp/6262sm/rss20.xml'
       const expected = 'ameblo:posts'
@@ -158,6 +165,7 @@ describe('amebloHandler', () => {
       ['https://rssblog.ameba.jp/a-retro/rss.html', { key: 'ameblo:posts', label: 'Posts' }],
       ['https://rssblog.ameba.jp/6262sm/rss20.xml', { key: 'ameblo:posts', label: 'Posts' }],
       ['https://rssblog.ameba.jp/6262sm/atom.xml', { key: 'ameblo:posts', label: 'Posts' }],
+      ['https://ameblo.jp/6262sm/rss.html', { key: 'ameblo:posts', label: 'Posts' }],
     ]
 
     it.each(ownFeeds)('should return %s as itself', async (value, hint) => {

@@ -16,11 +16,7 @@ const feeds = definePlatformFeeds(
   [
     { key: 'ameblo:posts', template: 'https://{host}/{username}/rss20.xml', format: 'rss' },
     { key: 'ameblo:posts', template: 'https://{host}/{username}/atom.xml', format: 'atom' },
-    {
-      key: 'ameblo:posts',
-      template: 'https://rssblog.ameba.jp/{username}/rss.html',
-      format: 'rdf',
-    },
+    { key: 'ameblo:posts', template: 'https://{host}/{username}/rss.html', format: 'rdf' },
   ],
   { hosts: feedHosts },
 )
@@ -51,12 +47,12 @@ export const amebloHandler: PlatformHandler = {
       return []
     }
 
-    const { username } = parsed
+    const params = { host: 'rssblog.ameba.jp', username: parsed.username }
 
     return [
-      feeds.getFeedEntry('ameblo:posts', { host: 'rssblog.ameba.jp', username }, 'rss'),
-      feeds.getFeedEntry('ameblo:posts', { host: 'rssblog.ameba.jp', username }, 'atom'),
-      feeds.getFeedEntry('ameblo:posts', { username }, 'rdf'),
+      feeds.getFeedEntry('ameblo:posts', params, 'rss'),
+      feeds.getFeedEntry('ameblo:posts', params, 'atom'),
+      feeds.getFeedEntry('ameblo:posts', params, 'rdf'),
     ]
   },
 
