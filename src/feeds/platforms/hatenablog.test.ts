@@ -226,50 +226,58 @@ describe('hatenablogHandler', () => {
   describe('getFeedKey', () => {
     it('should return the posts key for an RSS feed', () => {
       const value = 'https://staff.hatenablog.com/rss'
+      const expected = 'hatenablog:posts'
 
-      expect(hatenablogHandler.getFeedKey?.(value)).toBe('hatenablog:posts')
+      expect(hatenablogHandler.getFeedKey?.(value)).toBe(expected)
     })
 
     it('should return the posts key for an Atom feed', () => {
       const value = 'https://staff.hatenablog.com/feed'
+      const expected = 'hatenablog:posts'
 
-      expect(hatenablogHandler.getFeedKey?.(value)).toBe('hatenablog:posts')
+      expect(hatenablogHandler.getFeedKey?.(value)).toBe(expected)
     })
 
     it('should return the category key for a percent-encoded RSS category feed', () => {
       const value = 'https://staff.hatenablog.com/rss/category/%E3%81%8A%E7%9F%A5%E3%82%89%E3%81%9B'
+      const expected = 'hatenablog:category'
 
-      expect(hatenablogHandler.getFeedKey?.(value)).toBe('hatenablog:category')
+      expect(hatenablogHandler.getFeedKey?.(value)).toBe(expected)
     })
 
     it('should return the category key for a percent-encoded Atom category feed', () => {
       const value = 'https://246west.hatenablog.com/feed/category/%E3%81%8A%E7%B1%B3'
+      const expected = 'hatenablog:category'
 
-      expect(hatenablogHandler.getFeedKey?.(value)).toBe('hatenablog:category')
+      expect(hatenablogHandler.getFeedKey?.(value)).toBe(expected)
     })
 
     it('should return the category key for a category with a dot in its name', () => {
       const value = 'https://usagi.hatenablog.jp/rss/category/Newtonsoft.Json'
+      const expected = 'hatenablog:category'
 
-      expect(hatenablogHandler.getFeedKey?.(value)).toBe('hatenablog:category')
+      expect(hatenablogHandler.getFeedKey?.(value)).toBe(expected)
     })
 
     it('should return the author key for an RSS author feed', () => {
       const value = 'https://forestwisteria.hatenablog.com/rss/author/forestwisteria'
+      const expected = 'hatenablog:author'
 
-      expect(hatenablogHandler.getFeedKey?.(value)).toBe('hatenablog:author')
+      expect(hatenablogHandler.getFeedKey?.(value)).toBe(expected)
     })
 
     it('should return the author key for an Atom author feed', () => {
       const value = 'https://blog.hatenablog.com/feed/author/hatenablog-editors'
+      const expected = 'hatenablog:author'
 
-      expect(hatenablogHandler.getFeedKey?.(value)).toBe('hatenablog:author')
+      expect(hatenablogHandler.getFeedKey?.(value)).toBe(expected)
     })
 
     it('should return the author key for a feed on hatenadiary.jp', () => {
       const value = 'https://konifar-zatsu.hatenadiary.jp/rss/author/konifar'
+      const expected = 'hatenablog:author'
 
-      expect(hatenablogHandler.getFeedKey?.(value)).toBe('hatenablog:author')
+      expect(hatenablogHandler.getFeedKey?.(value)).toBe(expected)
     })
 
     it('should return undefined for a category page', () => {
@@ -292,11 +300,15 @@ describe('hatenablogHandler', () => {
     })
 
     it('should return undefined for a feed on the apex', () => {
-      expect(hatenablogHandler.getFeedKey?.('https://hatenablog.com/rss')).toBeUndefined()
+      const value = 'https://hatenablog.com/rss'
+
+      expect(hatenablogHandler.getFeedKey?.(value)).toBeUndefined()
     })
 
     it('should return undefined for another host', () => {
-      expect(hatenablogHandler.getFeedKey?.('https://example.com/rss')).toBeUndefined()
+      const value = 'https://example.com/rss'
+
+      expect(hatenablogHandler.getFeedKey?.(value)).toBeUndefined()
     })
   })
 
@@ -322,15 +334,15 @@ describe('hatenablogHandler', () => {
       ],
     ]
 
-    it.each(ownFeeds)('should return %s as itself', async (feedUrl, hint) => {
-      const value = await discoverUrisFromPlatform(undefined, undefined, {
+    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
         ...defaultPlatformOptions,
         handlers: [hatenablogHandler],
-        baseUrl: feedUrl,
+        baseUrl: value,
       })
-      const expected: Array<DiscoverUriEntry> = [{ uri: feedUrl, hint }]
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
 
-      expect(value).toEqual(expected)
+      expect(result).toEqual(expected)
     })
   })
 })
