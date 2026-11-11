@@ -71,10 +71,6 @@ describe('amebloHandler', () => {
           uri: 'https://rssblog.ameba.jp/shibuya/rss.html',
           hint: { key: 'ameblo:posts', label: 'Posts', format: 'rdf' },
         },
-        {
-          uri: 'https://rssblog.ameba.jp/shibuya/rss20.xml',
-          hint: { key: 'ameblo:posts', label: 'Posts', format: 'rss' },
-        },
       ]
 
       expect(amebloHandler.resolve(value)).toEqual(expected)

@@ -55,7 +55,6 @@ export const amebloHandler: PlatformHandler = {
       feeds.getFeedEntry('ameblo:posts', { host: 'ameblo.jp', username }, 'rss'),
       feeds.getFeedEntry('ameblo:posts', { username }, 'atom'),
       feeds.getFeedEntry('ameblo:posts', { username }, 'rdf'),
-      feeds.getFeedEntry('ameblo:posts', { host: 'rssblog.ameba.jp', username }, 'rss'),
     ]
   },
 
