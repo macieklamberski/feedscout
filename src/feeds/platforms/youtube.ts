@@ -13,8 +13,13 @@ export type YoutubeUrl =
   | { kind: 'short'; playlistId?: string }
   | { kind: 'player'; playlistId?: string }
   | { kind: 'playlist'; playlistId: string }
+  | { kind: 'feed'; channelId?: string; playlistId?: string }
 export type YoutubePage =
-  | { kind: 'channel' | 'watch' | 'short' | 'player'; channelId?: string; playlistId?: string }
+  | {
+      kind: 'channel' | 'watch' | 'short' | 'player' | 'feed'
+      channelId?: string
+      playlistId?: string
+    }
   | { kind: 'playlist'; playlistId: string }
 
 export const hosts = [
@@ -41,12 +46,16 @@ const channelRegex = /^\/channel\/([^/]+)/i
 const shortsRegex = /^\/shorts\/[\w-]+/i
 const liveRegex = /^\/live\/[\w-]+/i
 const watchRegex = /^\/watch\/?$/i
+const feedRegex = /^\/feeds\/videos\.xml$/i
 const channelPrefixRegex = /^UC/
 // Channel IDs are case-sensitive, so the ID is checked apart from the case-insensitive route.
 const channelIdFormatRegex = /^UC[\w-]+$/
 // Watch Later, Liked videos and the Music likes are private, and a mix is generated per viewer, so
 // none of them has a feed. RDCLAK lists are curated YouTube Music playlists, not mixes.
 const feedlessListRegex = /^(?:WL|LL|LM)$|^RD(?!CLAK)/
+// A channel ID is UC and 22 characters, so the fixed length tells UULF{id} apart from UU{id}
+// whose ID starts with LF.
+const uploadsPlaylistRegex = /^UU(?:LF|SH|LV|LP|PS|PV|MO|MS|MV)?([\w-]{22})$/
 
 const extractChannelIdFromContent = (content: string): string | undefined => {
   for (const regex of channelIdRegexes) {
@@ -126,6 +135,27 @@ export const parseYoutubeUrl = (url: string): YoutubeUrl | undefined => {
   }
 
   const { pathname, searchParams } = parsedUrl
+
+  if (feedRegex.test(pathname)) {
+    const feedChannelId = getQueryParam(searchParams, 'channel_id')
+    const feedPlaylistId = getQueryParam(searchParams, 'playlist_id')
+    const uploadsId = feedPlaylistId?.match(uploadsPlaylistRegex)?.[1]
+
+    if (feedChannelId && channelIdFormatRegex.test(feedChannelId)) {
+      return { kind: 'feed', channelId: feedChannelId }
+    }
+
+    if (uploadsId) {
+      return { kind: 'feed', channelId: `UC${uploadsId}` }
+    }
+
+    if (feedPlaylistId) {
+      return { kind: 'feed', playlistId: feedPlaylistId }
+    }
+
+    return
+  }
+
   const listId = getQueryParam(searchParams, 'list')
   const playlistId = listId && !feedlessListRegex.test(listId) ? listId : undefined
   const rawChannelId = pathname.match(channelRegex)?.[1]?.replace(formatSuffixRegex, '')
@@ -175,7 +205,7 @@ export const getYoutubePage = (
     return parsed
   }
 
-  if (parsed.kind === 'channel' && parsed.channelId) {
+  if ((parsed.kind === 'channel' || parsed.kind === 'feed') && parsed.channelId) {
     return parsed
   }
 
