@@ -46,7 +46,7 @@ describe('csdnHandler', () => {
       const value = 'https://blog.csdn.net/csdnnews'
       const expected = [
         {
-          uri: ['https://rss.csdn.net/csdnnews/rss/map', 'https://blog.csdn.net/csdnnews/rss/map'],
+          uri: 'https://rss.csdn.net/csdnnews/rss/map',
           hint: { key: 'csdn:blog', label: 'Blog' },
         },
       ]
@@ -58,7 +58,7 @@ describe('csdnHandler', () => {
       const value = 'https://blog.csdn.net/csdnnews/article/details/12345'
       const expected = [
         {
-          uri: ['https://rss.csdn.net/csdnnews/rss/map', 'https://blog.csdn.net/csdnnews/rss/map'],
+          uri: 'https://rss.csdn.net/csdnnews/rss/map',
           hint: { key: 'csdn:blog', label: 'Blog' },
         },
       ]

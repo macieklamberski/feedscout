@@ -1,7 +1,6 @@
 import { isHostOf } from 'trousse'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Not discoverable without handler.
 // Handler needed for: all shapes.
@@ -51,15 +50,7 @@ export const csdnHandler: PlatformHandler = {
 
     const { username } = parsed
 
-    return [
-      {
-        uri: [
-          feeds.getFeedUrl('csdn:blog', { host: 'rss.csdn.net', username }),
-          feeds.getFeedUrl('csdn:blog', { host: 'blog.csdn.net', username }),
-        ],
-        hint: composeHint('csdn:blog'),
-      },
-    ]
+    return [feeds.getFeedEntry('csdn:blog', { host: 'rss.csdn.net', username })]
   },
 
   getFeedKey: feeds.getFeedKey,
