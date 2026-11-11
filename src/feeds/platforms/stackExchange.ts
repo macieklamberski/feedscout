@@ -33,10 +33,11 @@ const domains = [
 // The network host serves only the network-wide feed, and its user ids are network profile ids.
 const networkHosts = ['stackexchange.com', 'www.stackexchange.com']
 
-const tagRegex = /^\/questions\/tagged\/(?<tag>[^/]+)/i
-const questionRegex = /^\/questions\/(?<questionId>[^/]+)/i
-const userRegex = /^\/users\/(?<userId>[^/]+)/i
-const collectiveRegex = /^\/collectives\/([^/]+)/i
+const homeRegex = /^\/(?:feeds\/?)?$/i
+const tagRegex = /^\/(?:questions\/tagged\/|feeds\/tag\/(?=[^/]+\/?$))(?<tag>[^/]+)/i
+const questionRegex = /^\/(?:questions\/|feeds\/question\/(?=[^/]+\/?$))(?<questionId>[^/]+)/i
+const userRegex = /^\/(?:feeds\/user\/(?=[^/]+\/?$)|users\/)(?<userId>[^/]+)/i
+const collectiveRegex = /^\/(?:feeds\/collectives\/(?=[^/]+\/?$)|collectives\/)([^/]+)/i
 
 // Sort values accepted by feeds.tag. Documented at api.stackexchange.com.
 const validSorts = ['newest', 'active', 'votes', 'creation', 'hot', 'week', 'month']
@@ -57,12 +58,13 @@ export const parseStackExchangeUrl = (url: string): StackExchangeUrl | undefined
   const { pathname, searchParams } = parsedUrl
 
   if (isHostOf(parsedUrl, networkHosts)) {
-    if (pathname === '/') {
+    if (homeRegex.test(pathname)) {
       return { kind: 'home' }
     }
 
     return
   }
+
   const tag = pathname.match(tagRegex)?.groups?.tag
 
   if (tag) {
@@ -87,7 +89,7 @@ export const parseStackExchangeUrl = (url: string): StackExchangeUrl | undefined
     return { kind: 'collective', collective }
   }
 
-  if (pathname === '/') {
+  if (homeRegex.test(pathname)) {
     return { kind: 'home' }
   }
 }

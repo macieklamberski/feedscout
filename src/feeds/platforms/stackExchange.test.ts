@@ -84,6 +84,65 @@ describe('parseStackExchangeUrl', () => {
     expect(parseStackExchangeUrl('https://stackexchange.com/users/12345/example')).toBeUndefined()
   })
 
+  it('should return the tag for a tag feed', () => {
+    const expected: StackExchangeUrl = { kind: 'tag', tag: 'shadow', sort: undefined }
+
+    expect(parseStackExchangeUrl('https://askubuntu.com/feeds/tag/shadow')).toEqual(expected)
+  })
+
+  it('should return the tag with its sort for a sorted tag feed', () => {
+    const value = 'https://stackoverflow.com/feeds/tag/javascript?sort=newest'
+    const expected: StackExchangeUrl = { kind: 'tag', tag: 'javascript', sort: 'newest' }
+
+    expect(parseStackExchangeUrl(value)).toEqual(expected)
+  })
+
+  it('should return the question for a question feed', () => {
+    const expected: StackExchangeUrl = { kind: 'question', questionId: '282319' }
+
+    expect(parseStackExchangeUrl('https://askubuntu.com/feeds/question/282319')).toEqual(expected)
+  })
+
+  it('should return the user for a user feed', () => {
+    const expected: StackExchangeUrl = { kind: 'user', userId: '1193941' }
+
+    expect(parseStackExchangeUrl('https://askubuntu.com/feeds/user/1193941')).toEqual(expected)
+  })
+
+  it('should return the collective for a collective feed', () => {
+    const expected: StackExchangeUrl = { kind: 'collective', collective: 'aws' }
+
+    expect(parseStackExchangeUrl('https://stackoverflow.com/feeds/collectives/aws')).toEqual(
+      expected,
+    )
+  })
+
+  it('should return the home page for the newest feed', () => {
+    const expected: StackExchangeUrl = { kind: 'home' }
+
+    expect(parseStackExchangeUrl('https://askubuntu.com/feeds')).toEqual(expected)
+  })
+
+  it('should return the home page for the newest feed on the network host', () => {
+    const expected: StackExchangeUrl = { kind: 'home' }
+
+    expect(parseStackExchangeUrl('https://stackexchange.com/feeds')).toEqual(expected)
+  })
+
+  it('should return undefined for a feed below a user feed', () => {
+    const value = 'https://askubuntu.com/feeds/user/93023/responses'
+
+    expect(parseStackExchangeUrl(value)).toBeUndefined()
+  })
+
+  it('should return undefined for another feed on a site host', () => {
+    expect(parseStackExchangeUrl('https://apple.stackexchange.com/feeds/week')).toBeUndefined()
+  })
+
+  it('should return undefined for a user feed on the network host', () => {
+    expect(parseStackExchangeUrl('https://stackexchange.com/feeds/user/12345')).toBeUndefined()
+  })
+
   it('should return undefined for another host', () => {
     expect(parseStackExchangeUrl('https://example.com/questions/12345')).toBeUndefined()
   })
@@ -424,6 +483,22 @@ describe('stackExchangeHandler', () => {
           hint: { key: 'stackexchange:tag', label: 'Tag' },
         },
       ]
+
+      expect(stackExchangeHandler.resolve(value)).toEqual(expected)
+    })
+
+    const ownFeeds: Array<[string, string, string]> = [
+      ['https://askubuntu.com/feeds/question/282319', 'stackexchange:question', 'Question'],
+      ['https://askubuntu.com/feeds/user/1193941', 'stackexchange:user', 'User'],
+      ['https://askubuntu.com/feeds/tag/shadow', 'stackexchange:tag', 'Tag'],
+      ['https://stackoverflow.com/feeds/tag/javascript?sort=newest', 'stackexchange:tag', 'Tag'],
+      ['https://stackoverflow.com/feeds/collectives/aws', 'stackexchange:collective', 'Collective'],
+      ['https://askubuntu.com/feeds', 'stackexchange:newest', 'Newest questions'],
+      ['https://stackexchange.com/feeds', 'stackexchange:newest', 'Newest questions'],
+    ]
+
+    it.each(ownFeeds)('should return %s itself as %s', (value, key, label) => {
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint: { key, label } }]
 
       expect(stackExchangeHandler.resolve(value)).toEqual(expected)
     })
