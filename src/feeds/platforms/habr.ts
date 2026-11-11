@@ -19,15 +19,15 @@ const hubRegex = new RegExp(`^${languagePrefix}/hubs?/([^/]+)`, 'i')
 const userRegex = new RegExp(`^${languagePrefix}/users/([^/]+)`, 'i')
 const companyRegex = new RegExp(`^${languagePrefix}/compan(?:y|ies)/([^/]+)`, 'i')
 
-// The first row of a key is the feed `resolve` emits. Habr serves the same items under the hub and
-// user spellings below it, which pages link and readers store.
+// The first row of a key is the feed `resolve` emits, the one Habr's pages link. Habr serves the
+// same items under the hub and user spellings below it, which readers store.
 const feeds = definePlatformFeeds([
   { key: 'habr:articles', template: 'https://habr.com/{language}/rss/articles/' },
-  { key: 'habr:hub', template: 'https://habr.com/{language}/rss/hub/{hub}/' },
   { key: 'habr:hub', template: 'https://habr.com/{language}/rss/hubs/{hub}/articles/' },
   { key: 'habr:hub', template: 'https://habr.com/{language}/rss/hubs/{hub}/articles/all/' },
-  { key: 'habr:user', template: 'https://habr.com/{language}/rss/users/{username}/posts/' },
+  { key: 'habr:hub', template: 'https://habr.com/{language}/rss/hub/{hub}/' },
   { key: 'habr:user', template: 'https://habr.com/{language}/rss/users/{username}/articles/' },
+  { key: 'habr:user', template: 'https://habr.com/{language}/rss/users/{username}/posts/' },
   {
     key: 'habr:user',
     template: 'https://habr.com/{language}/rss/users/{username}/publications/articles/',

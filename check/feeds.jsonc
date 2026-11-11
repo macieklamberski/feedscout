@@ -668,8 +668,8 @@
   "habr": {
     "habr:articles": "https://habr.com/ru/rss/articles/",
     "habr:company": "https://habr.com/ru/rss/companies/yandex/articles/",
-    "habr:hub": "https://habr.com/ru/rss/hub/programming/",
-    "habr:user": "https://habr.com/ru/rss/users/alizar/posts/"
+    "habr:hub": "https://habr.com/ru/rss/hubs/programming/articles/",
+    "habr:user": "https://habr.com/ru/rss/users/alizar/articles/"
   },
   "hackernews": {
     "hackernews:front": "https://news.ycombinator.com/rss",
