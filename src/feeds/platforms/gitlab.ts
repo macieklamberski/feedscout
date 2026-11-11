@@ -195,10 +195,10 @@ export const gitlabHandler: PlatformHandler = {
       return
     }
 
-    const [feature, branch, ...rest] = segments.slice(dashIndex + 1)
+    const [feature, branch] = segments.slice(dashIndex + 1)
     const isAtomFormat = isAnyOf(getQueryParam(parsedUrl, 'format'), 'atom')
 
-    if (isAnyOf(feature, 'commits') && branch && rest.length === 0 && isAtomFormat) {
+    if (isAnyOf(feature, 'commits') && branch && isAtomFormat) {
       return 'gitlab:branch-commits'
     }
 

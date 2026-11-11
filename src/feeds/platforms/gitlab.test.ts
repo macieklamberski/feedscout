@@ -477,6 +477,20 @@ describe('gitlabHandler', () => {
       expect(gitlabHandler.getFeedKey?.(value)).toBe(expected)
     })
 
+    it('should return the branch commits key for a commits feed filtered by path', () => {
+      const value = 'https://gitlab.com/sympl.io/install/-/commits/master/LICENSE?format=atom'
+      const expected = 'gitlab:branch-commits'
+
+      expect(gitlabHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the branch commits key for a branch named with a slash', () => {
+      const value = 'https://gitlab.com/ns/proj/-/commits/feature/x?format=atom'
+      const expected = 'gitlab:branch-commits'
+
+      expect(gitlabHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
     it('should return the releases key for a feed on www', () => {
       const value = 'https://www.gitlab.com/tortoisegit/tortoisegit/-/releases.atom'
       const expected = 'gitlab:releases'
@@ -572,6 +586,10 @@ describe('gitlabHandler', () => {
       ],
       [
         'https://gitlab.com/vdr-jp/audkrellm/-/commits/master?format=atom',
+        { key: 'gitlab:branch-commits', label: 'Branch commits' },
+      ],
+      [
+        'https://gitlab.com/sympl.io/install/-/commits/master/LICENSE?format=atom',
         { key: 'gitlab:branch-commits', label: 'Branch commits' },
       ],
     ]
