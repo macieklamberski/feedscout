@@ -1,5 +1,6 @@
 import { getPathSegments, isAnyOf, isHostOf, parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
+import type { PlatformFeedParams } from '../../common/uris/platform/feeds.js'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
@@ -28,10 +29,8 @@ const discussionCategoryRegex = /^\/[^/]+\/[^/]+\/discussions\/categories\/([^/]
 const branchRegex = /^\/[^/]+\/[^/]+\/(?:tree|commits)\/([^/]+)\/?$/i
 const fileRegex = /^\/[^/]+\/[^/]+\/(?:blob|commits)\/([^/]+)\/(.+)/i
 const userRouteSuffixRegex = /\.(?:atom|gpg|keys|png)$/i
-const fileHistoryFeedRegex = /^\/[^/]+\/[^/]+\/commits\/[^/]+\/.+\.atom$/i
+const fileHistoryFeedRegex = /^\/[^/]+\/[^/]+\/commits\/[^/]+\/.+\.atom\/?$/i
 
-// Repository and organization discussions sit at the same path depth, /{owner}/{repo}/discussions
-// and /orgs/{org}/discussions, so `orgs` fills the owner of an organization's feeds.
 const feeds = definePlatformFeeds([
   { key: 'github:activity', template: 'https://github.com/{owner}.atom' },
   { key: 'github:releases', template: 'https://github.com/{owner}/{repo}/releases.atom' },
@@ -39,9 +38,14 @@ const feeds = definePlatformFeeds([
   { key: 'github:tags', template: 'https://github.com/{owner}/{repo}/tags.atom' },
   { key: 'github:wiki', template: 'https://github.com/{owner}/{repo}/wiki.atom' },
   { key: 'github:discussions', template: 'https://github.com/{owner}/{repo}/discussions.atom' },
+  { key: 'github:discussions', template: 'https://github.com/orgs/{org}/discussions.atom' },
   {
     key: 'github:discussion-category',
     template: 'https://github.com/{owner}/{repo}/discussions/categories/{category}.atom',
+  },
+  {
+    key: 'github:discussion-category',
+    template: 'https://github.com/orgs/{org}/discussions/categories/{category}.atom',
   },
   {
     key: 'github:branch-commits',
@@ -50,14 +54,13 @@ const feeds = definePlatformFeeds([
 ])
 
 const getDiscussionFeeds = (
-  owner: string,
-  repo: string,
+  params: PlatformFeedParams,
   category?: string,
 ): Array<DiscoverUriEntry> => {
-  const uris = [feeds.getFeedEntry('github:discussions', { owner, repo })]
+  const uris = [feeds.getFeedEntry('github:discussions', params)]
 
   if (category) {
-    uris.push(feeds.getFeedEntry('github:discussion-category', { owner, repo, category }))
+    uris.push(feeds.getFeedEntry('github:discussion-category', { ...params, category }))
   }
 
   return uris
@@ -134,7 +137,7 @@ export const githubHandler: PlatformHandler = {
 
     // Organization discussions page: /orgs/{org}/discussions.
     if (parsed.kind === 'discussions') {
-      return getDiscussionFeeds('orgs', parsed.org, parsed.discussionCategory)
+      return getDiscussionFeeds({ org: parsed.org }, parsed.discussionCategory)
     }
 
     const { owner, repo, section, discussionCategory, branch, file } = parsed
@@ -149,7 +152,7 @@ export const githubHandler: PlatformHandler = {
     }
 
     if (section === 'discussions') {
-      uris.push(...getDiscussionFeeds(owner, repo, discussionCategory))
+      uris.push(...getDiscussionFeeds({ owner, repo }, discussionCategory))
     }
 
     if (branch) {

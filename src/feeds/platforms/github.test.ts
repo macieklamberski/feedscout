@@ -748,6 +748,13 @@ describe('githubHandler', () => {
       expect(githubHandler.getFeedKey?.(value)).toBe(expected)
     })
 
+    it('should return the file history key for a feed with a trailing slash', () => {
+      const value = 'https://github.com/hajimehoshi/ebiten/commits/main/LICENSE.atom/'
+      const expected = 'github:file-history'
+
+      expect(githubHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
     it('should return the file history key for a feed on the www host', () => {
       const value = 'https://www.github.com/hajimehoshi/ebiten/commits/main/LICENSE.atom'
       const expected = 'github:file-history'
