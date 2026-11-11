@@ -1,6 +1,6 @@
 import { getPathSegments, isHostOf } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers player, show (html).
@@ -13,6 +13,11 @@ export type AcastUrl = { kind: 'show'; slug: string }
 // and the older player.acast.com, which 302-redirects to it, put the slug at path index 0.
 const hosts = ['shows.acast.com', 'play.acast.com', 'embed.acast.com', 'player.acast.com']
 const legacyHosts = ['play.acast.com']
+
+// feeds.acast.com serves every show by path, by slug or by id, so it stays out of `hosts`.
+const feeds = definePlatformFeeds([
+  { key: 'acast:podcast', template: 'https://feeds.acast.com/public/shows/{slug}' },
+])
 
 export const parseAcastUrl = (url: string): AcastUrl | undefined => {
   if (!isHostOf(url, hosts)) {
@@ -45,11 +50,8 @@ export const acastHandler: PlatformHandler = {
       return []
     }
 
-    return [
-      {
-        uri: `https://feeds.acast.com/public/shows/${parsed.slug}`,
-        hint: composeHint('acast:podcast'),
-      },
-    ]
+    return [feeds.getFeedEntry('acast:podcast', { slug: parsed.slug })]
   },
+
+  getFeedKey: feeds.getFeedKey,
 }

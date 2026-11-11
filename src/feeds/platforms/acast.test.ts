@@ -1,4 +1,7 @@
 import { describe, expect, it } from 'bun:test'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import { type AcastUrl, acastHandler, parseAcastUrl } from './acast.js'
 
 describe('parseAcastUrl', () => {
@@ -132,6 +135,75 @@ describe('acastHandler', () => {
       const value = 'https://play.acast.com/s'
 
       expect(acastHandler.resolve(value)).toEqual([])
+    })
+  })
+
+  describe('getFeedKey', () => {
+    it('should return the podcast key for a show feed by slug', () => {
+      const value = 'https://feeds.acast.com/public/shows/the-mariners-mirror-podcast'
+      const expected = 'acast:podcast'
+
+      expect(acastHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the podcast key for a show feed by id', () => {
+      const value = 'https://feeds.acast.com/public/shows/0185cea5-9e3b-4b82-a887-26f91f92765f'
+      const expected = 'acast:podcast'
+
+      expect(acastHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the podcast key for a show feed over http with a trailing slash', () => {
+      const value = 'http://feeds.acast.com/public/shows/thetraveldiaries/'
+      const expected = 'acast:podcast'
+
+      expect(acastHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return undefined for a show page', () => {
+      const value = 'https://shows.acast.com/the-mariners-mirror-podcast'
+
+      expect(acastHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for the show list on the feed host', () => {
+      const value = 'https://feeds.acast.com/public/shows'
+
+      expect(acastHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for another host', () => {
+      const value = 'https://example.com/public/shows/thetraveldiaries'
+
+      expect(acastHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const ownFeeds: Array<[string, DiscoverUriHint]> = [
+      [
+        'https://feeds.acast.com/public/shows/the-mariners-mirror-podcast',
+        { key: 'acast:podcast', label: 'Podcast' },
+      ],
+      [
+        'https://feeds.acast.com/public/shows/thetraveldiaries',
+        { key: 'acast:podcast', label: 'Podcast' },
+      ],
+      [
+        'https://feeds.acast.com/public/shows/0185cea5-9e3b-4b82-a887-26f91f92765f',
+        { key: 'acast:podcast', label: 'Podcast' },
+      ],
+    ]
+
+    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [acastHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(result).toEqual(expected)
     })
   })
 })
