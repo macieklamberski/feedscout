@@ -1,6 +1,6 @@
-import { decodeSegment, encodePathSegment, isHostOf, parseUrl } from 'trousse'
+import { decodeSegment, isHostOf, parseUrl } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Not discoverable without handler.
 // Handler needed for: all shapes.
@@ -10,6 +10,12 @@ export type VelogUrl = { kind: 'user'; username: string } | { kind: 'home' }
 export const hosts = ['velog.io', 'www.velog.io']
 
 const userRegex = /^\/@([^/]+)/
+
+// v2.velog.io serves the same feed at `/rss/@{username}`, which the `{username}` row reads too.
+const feeds = definePlatformFeeds([
+  { key: 'velog:trending', template: 'https://v2.velog.io/rss' },
+  { key: 'velog:posts', template: 'https://v2.velog.io/rss/{username}' },
+])
 
 export const parseVelogUrl = (url: string): VelogUrl | undefined => {
   const parsedUrl = parseUrl(url)
@@ -46,19 +52,11 @@ export const velogHandler: PlatformHandler = {
     }
 
     if (parsed.kind === 'user') {
-      return [
-        {
-          uri: `https://v2.velog.io/rss/${encodePathSegment(parsed.username)}`,
-          hint: composeHint('velog:posts'),
-        },
-      ]
+      return [feeds.getFeedEntry('velog:posts', { username: parsed.username })]
     }
 
-    return [
-      {
-        uri: 'https://v2.velog.io/rss',
-        hint: composeHint('velog:trending'),
-      },
-    ]
+    return [feeds.getFeedEntry('velog:trending')]
   },
+
+  getFeedKey: feeds.getFeedKey,
 }
