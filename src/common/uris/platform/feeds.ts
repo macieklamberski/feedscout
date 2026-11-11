@@ -47,6 +47,8 @@ type CompiledTemplate = {
   key: string
   format?: DiscoverUriHint['format']
   queryCount: number
+  // The placeholder names the template fills.
+  names: Array<string>
   isFeedUrl: (url: URL) => boolean
   getUrl: (params?: PlatformFeedParams) => string
 }
@@ -131,7 +133,9 @@ const compileTemplate = (
     return `${fillPlaceholders(scheme)}://${fillPlaceholders(host)}${fillPlaceholders(path, encodePathSegment)}${builtQuery}`
   }
 
-  return { key, format, queryCount: query.length, isFeedUrl, getUrl }
+  const names = [...template.matchAll(placeholderRegex)].map(([, name]) => name)
+
+  return { key, format, queryCount: query.length, names, isFeedUrl, getUrl }
 }
 
 // One table of a handler's feed URLs, keyed by hint key. `getFeedUrl` writes a feed from the values
@@ -145,9 +149,14 @@ export const definePlatformFeeds = (
   const bySpecificity = [...compiled].sort((a, b) => b.queryCount - a.queryCount)
 
   const getFeedUrl: PlatformFeedTable['getFeedUrl'] = (key, params, format) => {
-    const template = compiled.find((candidate) => {
+    const candidates = compiled.filter((candidate) => {
       return candidate.key === key && (format === undefined || candidate.format === format)
     })
+    // A key with several shapes builds the first one whose placeholders the values fill.
+    const template =
+      candidates.find((candidate) =>
+        candidate.names.every((name) => params?.[name] !== undefined),
+      ) ?? candidates[0]
 
     if (!template) {
       throw new Error(t(locales.errors.missingFeedTemplate, { key }))
