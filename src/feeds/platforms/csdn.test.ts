@@ -1,4 +1,7 @@
 import { describe, expect, it } from 'bun:test'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import { type CsdnUrl, csdnHandler, parseCsdnUrl } from './csdn.js'
 
 describe('parseCsdnUrl', () => {
@@ -43,7 +46,7 @@ describe('csdnHandler', () => {
       const value = 'https://blog.csdn.net/csdnnews'
       const expected = [
         {
-          uri: ['https://rss.csdn.net/csdnnews/rss/map', 'https://blog.csdn.net/csdnnews/rss/list'],
+          uri: ['https://rss.csdn.net/csdnnews/rss/map', 'https://blog.csdn.net/csdnnews/rss/map'],
           hint: { key: 'csdn:blog', label: 'Blog' },
         },
       ]
@@ -55,7 +58,7 @@ describe('csdnHandler', () => {
       const value = 'https://blog.csdn.net/csdnnews/article/details/12345'
       const expected = [
         {
-          uri: ['https://rss.csdn.net/csdnnews/rss/map', 'https://blog.csdn.net/csdnnews/rss/list'],
+          uri: ['https://rss.csdn.net/csdnnews/rss/map', 'https://blog.csdn.net/csdnnews/rss/map'],
           hint: { key: 'csdn:blog', label: 'Blog' },
         },
       ]
@@ -67,6 +70,74 @@ describe('csdnHandler', () => {
       const value = 'https://blog.csdn.net/'
 
       expect(csdnHandler.resolve(value)).toEqual([])
+    })
+  })
+
+  describe('getFeedKey', () => {
+    it('should return the blog key for a feed on rss.csdn.net', () => {
+      const value = 'https://rss.csdn.net/ziping_0918/rss/map'
+      const expected = 'csdn:blog'
+
+      expect(csdnHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the blog key for a feed on blog.csdn.net', () => {
+      const value = 'https://blog.csdn.net/eastmount/rss/map'
+      const expected = 'csdn:blog'
+
+      expect(csdnHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the blog key for a list feed on blog.csdn.net', () => {
+      const value = 'https://blog.csdn.net/csdnnews/rss/list'
+      const expected = 'csdn:blog'
+
+      expect(csdnHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the blog key for a feed over http', () => {
+      const value = 'http://rss.csdn.net/eastmount/rss/map'
+      const expected = 'csdn:blog'
+
+      expect(csdnHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return undefined for a blog page', () => {
+      const value = 'https://blog.csdn.net/eastmount/article/details/12345'
+
+      expect(csdnHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a list path on rss.csdn.net', () => {
+      const value = 'https://rss.csdn.net/eastmount/rss/list'
+
+      expect(csdnHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed path on www.csdn.net', () => {
+      const value = 'https://www.csdn.net/eastmount/rss/map'
+
+      expect(csdnHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const ownFeeds: Array<[string, DiscoverUriHint]> = [
+      ['https://rss.csdn.net/ziping_0918/rss/map', { key: 'csdn:blog', label: 'Blog' }],
+      ['https://rss.csdn.net/eastmount/rss/map', { key: 'csdn:blog', label: 'Blog' }],
+      ['https://blog.csdn.net/eastmount/rss/map', { key: 'csdn:blog', label: 'Blog' }],
+      ['https://blog.csdn.net/csdnnews/rss/list', { key: 'csdn:blog', label: 'Blog' }],
+    ]
+
+    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [csdnHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(result).toEqual(expected)
     })
   })
 })
