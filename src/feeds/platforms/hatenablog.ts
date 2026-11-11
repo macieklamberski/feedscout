@@ -18,8 +18,8 @@ const domains = [
   'hatenadiary.org',
 ]
 
-const categoryRegex = /^\/(?:archive|rss|feed)\/category\/([^/]+)/i
-const authorRegex = /^\/(?:archive|rss|feed)\/author\/([^/]+)/i
+const categoryRegex = /^\/archive\/category\/([^/]+)/i
+const authorRegex = /^\/archive\/author\/([^/]+)/i
 
 export const parseHatenablogUrl = (url: string): HatenablogUrl | undefined => {
   if (!getTenantSubdomain(url, domains)) {

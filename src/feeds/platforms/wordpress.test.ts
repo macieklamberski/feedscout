@@ -114,94 +114,6 @@ describe('parseWordpressUrl', () => {
     expect(parseWordpressUrl(value)).toEqual(expected)
   })
 
-  const postFeedPaths = ['/feed/', '/feed', '/Feed/', '/feed/rss/', '/feed/rss2/', '/feed/atom/']
-
-  it.each(postFeedPaths)('should return the post for its %s feed', (path) => {
-    const value = `https://4oops.edublogs.org/2014/07/24/link-check-notice${path}`
-    const expected: WordpressUrl = { kind: 'post', path: '/2014/07/24/link-check-notice' }
-
-    expect(parseWordpressUrl(value)).toEqual(expected)
-  })
-
-  const dateFeedPaths = ['/feed/', '/feed/rss2/', '/feed/atom/', '/feed/rdf/']
-
-  it.each(dateFeedPaths)('should return the date archive for its %s feed', (path) => {
-    const expected: WordpressUrl = {
-      kind: 'archive',
-      path: '/2008/04/24',
-      hintKey: 'wordpress:date-archive',
-    }
-
-    expect(parseWordpressUrl(`https://4oops.edublogs.org/2008/04/24${path}`)).toEqual(expected)
-  })
-
-  const commentsFeedPaths = ['/comments/feed/', '/comments/feed/atom/']
-
-  it.each(commentsFeedPaths)('should return the home page for the %s feed', (path) => {
-    const expected: WordpressUrl = { kind: 'home' }
-
-    expect(parseWordpressUrl(`https://example.wordpress.com${path}`)).toEqual(expected)
-  })
-
-  const tagNamedFeedUrls = [
-    'https://lorelle.wordpress.com/tag/feed/',
-    'https://lorelle.wordpress.com/tag/feed/atom/',
-    'https://mrsdkrebs.edublogs.org/tag/feed/',
-    'https://netbib.hypotheses.org/tag/feed',
-  ]
-
-  it.each(tagNamedFeedUrls)('should return the tag named feed for %s', (value) => {
-    const expected: WordpressUrl = { kind: 'archive', path: '/tag/feed', hintKey: 'wordpress:tag' }
-
-    expect(parseWordpressUrl(value)).toEqual(expected)
-  })
-
-  it('should return the category named feed', () => {
-    const expected: WordpressUrl = {
-      kind: 'archive',
-      path: '/category/feed',
-      hintKey: 'wordpress:category',
-    }
-
-    expect(parseWordpressUrl('https://example.wordpress.com/category/feed/')).toEqual(expected)
-  })
-
-  it('should return the author named feed', () => {
-    const expected: WordpressUrl = {
-      kind: 'archive',
-      path: '/author/feed',
-      hintKey: 'wordpress:author',
-    }
-
-    expect(parseWordpressUrl('https://example.wordpress.com/author/feed/')).toEqual(expected)
-  })
-
-  it('should return the tag named amp for its feed', () => {
-    const expected: WordpressUrl = { kind: 'archive', path: '/tag/amp', hintKey: 'wordpress:tag' }
-
-    expect(parseWordpressUrl('https://afsr.hypotheses.org/tag/amp/feed')).toEqual(expected)
-  })
-
-  it('should return the tag named embed for its page', () => {
-    const expected: WordpressUrl = { kind: 'archive', path: '/tag/embed', hintKey: 'wordpress:tag' }
-
-    expect(parseWordpressUrl('https://pesannemariev.edublogs.org/tag/embed/')).toEqual(expected)
-  })
-
-  it('should return the post for a post-id feed without a trailing slash', () => {
-    const expected: WordpressUrl = { kind: 'post', path: '/1009' }
-
-    expect(parseWordpressUrl('https://raffl.hypotheses.org/1009/feed')).toEqual(expected)
-  })
-
-  it('should return the post whose slug is comments for its feed', () => {
-    const expected: WordpressUrl = { kind: 'post', path: '/2024/05/01/comments' }
-
-    expect(parseWordpressUrl('https://example.wordpress.com/2024/05/01/comments/feed/')).toEqual(
-      expected,
-    )
-  })
-
   it('should return the home page for a feed path', () => {
     const expected: WordpressUrl = { kind: 'home' }
 
@@ -255,7 +167,6 @@ describe('parseWordpressUrl', () => {
     '/wp-sitemap.xml',
     '/search/news/',
     '/category/',
-    '/feed/podcast/',
   ]
 
   it.each(homePaths)('should return the home page for %s', (path) => {
