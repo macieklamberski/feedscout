@@ -1,15 +1,25 @@
-import { composeQuery, getQueryParam, isHostOf } from 'trousse'
+import { getQueryParam, isHostOf } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Not discoverable without handler.
 // Handler needed for: all shapes.
 
 const hosts = ['archive.org', 'www.archive.org']
-const feedUrl = 'https://archive.org/services/collection-rss.php'
 
 const detailsRegex = /^\/details\/([^/@][^/]*)\/?$/i
 const searchRegex = /^\/search\/?$/i
+
+const feeds = definePlatformFeeds([
+  {
+    key: 'internet-archive:collection',
+    template: 'https://archive.org/services/collection-rss.php?collection={collection}',
+  },
+  {
+    key: 'internet-archive:search',
+    template: 'https://archive.org/services/collection-rss.php?query={query}',
+  },
+])
 
 export type InternetArchivePage =
   | { kind: 'collection'; collection: string }
@@ -58,19 +68,11 @@ export const internetArchiveHandler: PlatformHandler = {
     }
 
     if (page.kind === 'collection') {
-      return [
-        {
-          uri: `${feedUrl}${composeQuery({ collection: page.collection })}`,
-          hint: composeHint('internet-archive:collection'),
-        },
-      ]
+      return [feeds.getFeedEntry('internet-archive:collection', { collection: page.collection })]
     }
 
-    return [
-      {
-        uri: `${feedUrl}${composeQuery({ query: page.query })}`,
-        hint: composeHint('internet-archive:search'),
-      },
-    ]
+    return [feeds.getFeedEntry('internet-archive:search', { query: page.query })]
   },
+
+  getFeedKey: feeds.getFeedKey,
 }
