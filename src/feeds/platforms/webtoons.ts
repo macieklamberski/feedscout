@@ -1,6 +1,7 @@
-import { composeQuery, getAnyOf, getQueryParam, isAnyOf, isHostOf, parseUrl } from 'trousse'
+import { getAnyOf, getQueryParam, isAnyOf, isHostOf, parseUrl } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, digitsRegex } from '../../common/utils.js'
+import { digitsRegex } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers canvas, series (html).
@@ -20,6 +21,13 @@ const seriesRegex = /^\/([^/]+)\/([^/]+)\/([^/]+)\/(?:list|[^/]+\/viewer)\/?$/i
 
 const languages = ['de', 'en', 'es', 'fr', 'id', 'th', 'zh-hant']
 const canvasGenres = ['canvas', 'challenge']
+
+const feeds = definePlatformFeeds([
+  {
+    key: 'webtoons:series',
+    template: 'https://www.webtoons.com/{language}/{genre}/{name}/rss?title_no={titleNo}',
+  },
+])
 
 export const parseWebtoonsUrl = (url: string): WebtoonsUrl | undefined => {
   const parsedUrl = parseUrl(url)
@@ -55,11 +63,8 @@ export const webtoonsHandler: PlatformHandler = {
     // 500 unless its genre and name match the series.
     const genre = isAnyOf(parsed.genre, canvasGenres) ? 'challenge' : parsed.genre
 
-    return [
-      {
-        uri: `https://www.webtoons.com/${parsed.language}/${genre}/${parsed.name}/rss${composeQuery({ title_no: parsed.titleNo })}`,
-        hint: composeHint('webtoons:series'),
-      },
-    ]
+    return [feeds.getFeedEntry('webtoons:series', { ...parsed, genre })]
   },
+
+  getFeedKey: feeds.getFeedKey,
 }
