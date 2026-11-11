@@ -1,7 +1,8 @@
 import { parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, getTenantSubdomain } from '../../common/utils.js'
+import { getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -12,6 +13,20 @@ export type LivedoorBlogUrl =
 const domains = ['blog.jp', 'doorblog.jp', 'ldblog.jp', 'livedoor.biz']
 
 const categoryRegex = /^\/archives\/cat_(\d+)\.html$/i
+
+// Every blog redirects http to https, and its pages link only the https feeds.
+const feeds = definePlatformFeeds(
+  [
+    {
+      key: 'livedoor-blog:category',
+      template: 'https://{blog}.{domain}/archives/cat_{category}.xml',
+      format: 'rdf',
+    },
+    { key: 'livedoor-blog:posts', template: 'https://{blog}.{domain}/index.rdf', format: 'rdf' },
+    { key: 'livedoor-blog:posts', template: 'https://{blog}.{domain}/atom.xml', format: 'atom' },
+  ],
+  { domains },
+)
 
 export const parseLivedoorBlogUrl = (url: string): LivedoorBlogUrl | undefined => {
   // A nested subdomain answers with a self-signed certificate and is no blog.
@@ -42,20 +57,27 @@ export const livedoorBlogHandler: PlatformHandler = {
       return []
     }
 
-    // Every blog redirects http to https, and its pages link only the https feeds.
-    const origin = `https://${new URL(url).hostname}`
+    const domain = new URL(url).hostname.slice(parsed.blog.length + 1)
+    const params = { blog: parsed.blog, domain }
     const uris: Array<DiscoverUriEntry> = []
 
     if (parsed.kind === 'category') {
-      uris.push({
-        uri: `${origin}/archives/cat_${parsed.category}.xml`,
-        hint: composeHint('livedoor-blog:category', 'rdf'),
-      })
+      uris.push(
+        feeds.getFeedEntry(
+          'livedoor-blog:category',
+          { ...params, category: parsed.category },
+          'rdf',
+        ),
+      )
     }
 
-    uris.push({ uri: `${origin}/index.rdf`, hint: composeHint('livedoor-blog:posts', 'rdf') })
-    uris.push({ uri: `${origin}/atom.xml`, hint: composeHint('livedoor-blog:posts', 'atom') })
+    uris.push(
+      feeds.getFeedEntry('livedoor-blog:posts', params, 'rdf'),
+      feeds.getFeedEntry('livedoor-blog:posts', params, 'atom'),
+    )
 
     return uris
   },
+
+  getFeedKey: feeds.getFeedKey,
 }
