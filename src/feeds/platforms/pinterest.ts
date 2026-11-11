@@ -21,6 +21,7 @@ const countryLabelRegex = /^[a-z]{2}$/
 
 // Profile tabs of a user, which name the user, not a board.
 const userSubpaths = ['pins', 'boards', '_saved', '_created', 'followers', 'following']
+
 const feeds = definePlatformFeeds(
   [
     // Before the board row, so a pins feed never reads as a board named feed.
@@ -70,11 +71,12 @@ export const pinterestHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parsePinterestUrl(url)
-    const host = 'www.pinterest.com'
 
     if (!parsed) {
       return []
     }
+
+    const host = 'www.pinterest.com'
 
     if (parsed.kind === 'board') {
       const params = { host, username: parsed.username, board: parsed.board }
