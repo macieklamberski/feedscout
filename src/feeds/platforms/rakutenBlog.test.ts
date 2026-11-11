@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import { parseRakutenBlogUrl, type RakutenBlogUrl, rakutenBlogHandler } from './rakutenBlog.js'
 
 describe('parseRakutenBlogUrl', () => {
@@ -65,6 +67,68 @@ describe('rakutenBlogHandler', () => {
 
     it('should return empty array for a URL outside Rakuten Blog', () => {
       expect(rakutenBlogHandler.resolve('https://example.com/')).toEqual([])
+    })
+  })
+
+  describe('getFeedKey', () => {
+    it('should return the posts key for a posts feed', () => {
+      const value = 'https://api.plaza.rakuten.ne.jp/affiliatestaff/rss/'
+      const expected = 'rakuten-blog:posts'
+
+      expect(rakutenBlogHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the posts key for a posts feed at the blog root on the feed host', () => {
+      const value = 'https://api.plaza.rakuten.ne.jp/milkypinky/'
+      const expected = 'rakuten-blog:posts'
+
+      expect(rakutenBlogHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return undefined for a blog page', () => {
+      const value = 'https://plaza.rakuten.co.jp/affiliatestaff/diary/'
+
+      expect(rakutenBlogHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for another path on the feed host', () => {
+      const value = 'https://api.plaza.rakuten.ne.jp/affiliatestaff/diary/'
+
+      expect(rakutenBlogHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for another host', () => {
+      const value = 'https://example.com/affiliatestaff/rss/'
+
+      expect(rakutenBlogHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const ownFeeds: Array<[string, DiscoverUriHint]> = [
+      [
+        'https://api.plaza.rakuten.ne.jp/affiliatestaff/rss/',
+        { key: 'rakuten-blog:posts', label: 'Posts' },
+      ],
+      [
+        'https://api.plaza.rakuten.ne.jp/aikentotozan/rss/',
+        { key: 'rakuten-blog:posts', label: 'Posts' },
+      ],
+      [
+        'https://api.plaza.rakuten.ne.jp/milkypinky/',
+        { key: 'rakuten-blog:posts', label: 'Posts' },
+      ],
+    ]
+
+    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [rakutenBlogHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(result).toEqual(expected)
     })
   })
 })

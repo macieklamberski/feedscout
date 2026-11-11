@@ -1,13 +1,19 @@
 import { getPathSegments, isHostOf } from 'trousse'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
 export type RakutenBlogUrl = { kind: 'blog'; username: string }
 
 const hosts = ['plaza.rakuten.co.jp']
+
+// A blog page links its feed under `/rss/`, and the feed host serves the same feed at the blog's
+// root too, so the table reads both paths.
+const feeds = definePlatformFeeds([
+  { key: 'rakuten-blog:posts', template: 'https://api.plaza.rakuten.ne.jp/{username}/rss/' },
+  { key: 'rakuten-blog:posts', template: 'https://api.plaza.rakuten.ne.jp/{username}/' },
+])
 
 export const parseRakutenBlogUrl = (url: string): RakutenBlogUrl | undefined => {
   if (!isHostOf(url, hosts)) {
@@ -36,13 +42,8 @@ export const rakutenBlogHandler: PlatformHandler = {
       return []
     }
 
-    const uris: Array<DiscoverUriEntry> = []
-
-    uris.push({
-      uri: `https://api.plaza.rakuten.ne.jp/${parsed.username}/rss/`,
-      hint: composeHint('rakuten-blog:posts'),
-    })
-
-    return uris
+    return [feeds.getFeedEntry('rakuten-blog:posts', { username: parsed.username })]
   },
+
+  getFeedKey: feeds.getFeedKey,
 }
