@@ -1,4 +1,4 @@
-import { composeQuery, getQueryParam, isSubdomainOf, parseUrl, resolveUrl } from 'trousse'
+import { composeQuery, getQueryParam, isAnyOf, isSubdomainOf, parseUrl, resolveUrl } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import {
   composeHint,
@@ -158,13 +158,13 @@ export const legistarHandler: PlatformHandler = {
       return
     }
 
-    const mode = getQueryParam(parsedUrl.searchParams, 'm')?.toLowerCase()
+    const mode = getQueryParam(parsedUrl.searchParams, 'm')
 
-    if (mode === 'ld') {
+    if (isAnyOf(mode, 'LD')) {
       return 'legistar:legislation'
     }
 
-    if (mode === 'calendardetail') {
+    if (isAnyOf(mode, 'CalendarDetail')) {
       return 'legistar:meeting'
     }
   },
