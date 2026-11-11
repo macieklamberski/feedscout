@@ -14,12 +14,14 @@ import {
 export type LegistarUrl =
   | { kind: 'legislation'; id: string; guid: string }
   | { kind: 'meeting'; id: string; guid: string }
+type LegistarRecord = { id: string; guid: string }
 export type LegistarPage = { kind: 'legislation' | 'meeting'; feedUrl: string }
 
 const domains = ['legistar.com']
 
 const legislationPathRegex = /^\/LegislationDetail\.aspx$/i
 const meetingPathRegex = /^\/MeetingDetail\.aspx$/i
+const feedPathRegex = /^\/Feed\.ashx$/i
 
 // Legistar's load balancer sets this cookie on every page, on a client's custom domain too.
 const cookieName = 'BIGipServerinsite.legistar.com_443'
@@ -33,6 +35,18 @@ export const isLegistarHeaders = (headers: Headers): boolean => {
   return getCookieNames(headers).includes(cookieName)
 }
 
+// Feed.ashx answers 410 to an id without its own GUID, so a record is read only with both.
+const getRecord = (searchParams: URLSearchParams): LegistarRecord | undefined => {
+  const id = getQueryParam(searchParams, 'id')
+  const guid = getQueryParam(searchParams, 'guid')
+
+  if (!id || !guid || !digitsRegex.test(id) || !hexOrHyphenRegex.test(guid)) {
+    return
+  }
+
+  return { id, guid }
+}
+
 export const parseLegistarUrl = (url: string): LegistarUrl | undefined => {
   const parsedUrl = parseUrl(url)
 
@@ -40,13 +54,13 @@ export const parseLegistarUrl = (url: string): LegistarUrl | undefined => {
     return
   }
 
-  const id = getQueryParam(parsedUrl.searchParams, 'id')
-  const guid = getQueryParam(parsedUrl.searchParams, 'guid')
+  const record = getRecord(parsedUrl.searchParams)
 
-  // Feed.ashx answers 410 to an id without its own GUID, so both must come from the page URL.
-  if (!id || !guid || !digitsRegex.test(id) || !hexOrHyphenRegex.test(guid)) {
+  if (!record) {
     return
   }
+
+  const { id, guid } = record
 
   if (legislationPathRegex.test(parsedUrl.pathname)) {
     return { kind: 'legislation', id, guid }
@@ -130,5 +144,28 @@ export const legistarHandler: PlatformHandler = {
     }
 
     return [{ uri: page.feedUrl, hint: composeHint('legistar:meeting') }]
+  },
+
+  // A custom domain carries no marker in the URL alone, so only a feed on a Legistar host is read.
+  getFeedKey: (url) => {
+    const parsedUrl = parseUrl(url)
+
+    if (!parsedUrl || !isSubdomainOf(url, domains) || !feedPathRegex.test(parsedUrl.pathname)) {
+      return
+    }
+
+    if (!getRecord(parsedUrl.searchParams)) {
+      return
+    }
+
+    const mode = getQueryParam(parsedUrl.searchParams, 'm')?.toLowerCase()
+
+    if (mode === 'ld') {
+      return 'legistar:legislation'
+    }
+
+    if (mode === 'calendardetail') {
+      return 'legistar:meeting'
+    }
   },
 }
