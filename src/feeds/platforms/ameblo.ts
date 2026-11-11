@@ -1,7 +1,6 @@
 import { getPathSegments, isHostOf } from 'trousse'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic partly covers blog.
@@ -9,6 +8,12 @@ import { composeHint } from '../../common/utils.js'
 export type AmebloUrl = { kind: 'blog'; username: string }
 
 const hosts = ['ameblo.jp', 'www.ameblo.jp']
+
+const feeds = definePlatformFeeds([
+  { key: 'ameblo:posts', template: 'https://ameblo.jp/{username}/rss20.xml', format: 'rss' },
+  { key: 'ameblo:posts', template: 'https://ameblo.jp/{username}/atom.xml', format: 'atom' },
+  { key: 'ameblo:posts', template: 'https://rssblog.ameba.jp/{username}/rss.html', format: 'rdf' },
+])
 
 export const parseAmebloUrl = (url: string): AmebloUrl | undefined => {
   if (!isHostOf(url, hosts)) {
@@ -36,23 +41,14 @@ export const amebloHandler: PlatformHandler = {
       return []
     }
 
-    const { username } = parsed
+    const params = { username: parsed.username }
 
-    const uris: Array<DiscoverUriEntry> = []
-
-    uris.push({
-      uri: `https://ameblo.jp/${username}/rss20.xml`,
-      hint: composeHint('ameblo:posts', 'rss'),
-    })
-    uris.push({
-      uri: `https://ameblo.jp/${username}/atom.xml`,
-      hint: composeHint('ameblo:posts', 'atom'),
-    })
-    uris.push({
-      uri: `https://rssblog.ameba.jp/${username}/rss.html`,
-      hint: composeHint('ameblo:posts', 'rdf'),
-    })
-
-    return uris
+    return [
+      feeds.getFeedEntry('ameblo:posts', params, 'rss'),
+      feeds.getFeedEntry('ameblo:posts', params, 'atom'),
+      feeds.getFeedEntry('ameblo:posts', params, 'rdf'),
+    ]
   },
+
+  getFeedKey: feeds.getFeedKey,
 }
