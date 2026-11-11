@@ -1,4 +1,7 @@
 import { describe, expect, it } from 'bun:test'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import type { OdyseeUrl } from './odysee.js'
 import { odyseeHandler, parseOdyseeUrl } from './odysee.js'
 
@@ -141,6 +144,74 @@ describe('odyseeHandler', () => {
       const value = 'https://odysee.com/@veritasium'
 
       expect(odyseeHandler.resolve(value)).toEqual([])
+    })
+  })
+
+  describe('getFeedKey', () => {
+    it('should return the videos key for a feed with a full claim ID', () => {
+      const value = 'https://odysee.com/$/rss/@CryptoRain:2feae5c0e5c62d5533e0dd78e58a7684ca94f215'
+      const expected = 'odysee:videos'
+
+      expect(odyseeHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the videos key for a feed with a short claim ID', () => {
+      const value = 'https://odysee.com/$/rss/@eduard.messmer:5'
+      const expected = 'odysee:videos'
+
+      expect(odyseeHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the videos key for a feed with an encoded channel name', () => {
+      const value = 'https://odysee.com/$/rss/@LiberumAsociaci%C3%B3n:6'
+      const expected = 'odysee:videos'
+
+      expect(odyseeHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the videos key for a feed on the www host', () => {
+      const value = 'https://www.odysee.com/$/rss/@eduard.messmer:5'
+      const expected = 'odysee:videos'
+
+      expect(odyseeHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return undefined for a channel page', () => {
+      const value = 'https://odysee.com/@eduard.messmer:5'
+
+      expect(odyseeHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed path without a claim ID', () => {
+      const value = 'https://odysee.com/$/rss/@eduard.messmer'
+
+      expect(odyseeHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for another host', () => {
+      const value = 'https://example.com/$/rss/@eduard.messmer:5'
+
+      expect(odyseeHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const hint: DiscoverUriHint = { key: 'odysee:videos', label: 'Videos' }
+    const ownFeeds = [
+      'https://odysee.com/$/rss/@CryptoRain:2feae5c0e5c62d5533e0dd78e58a7684ca94f215',
+      'https://odysee.com/$/rss/@eduard.messmer:5',
+      'https://odysee.com/$/rss/@LiberumAsociaci%C3%B3n:6',
+    ]
+
+    it.each(ownFeeds)('should return %s as itself', async (value) => {
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [odyseeHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(result).toEqual(expected)
     })
   })
 })

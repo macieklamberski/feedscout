@@ -1,6 +1,7 @@
-import { decodeSegment, encodePathSegment, isHostOf, parseUrl } from 'trousse'
+import { decodeSegment, isHostOf, parseUrl } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, hexRegex } from '../../common/utils.js'
+import { hexRegex } from '../../common/utils.js'
 
 // Discoverability: Not discoverable without handler.
 // Handler needed for: all shapes.
@@ -10,6 +11,10 @@ export type OdyseeUrl = { kind: 'channel'; name: string; claimId?: string }
 export const hosts = ['odysee.com', 'www.odysee.com']
 
 const channelRegex = /^\/@(?<name>[^/:]+)(?::(?<claimId>[^/]+))?/
+
+const feeds = definePlatformFeeds([
+  { key: 'odysee:videos', template: 'https://odysee.com/$/rss/@{name}:{claimId}' },
+])
 
 export const parseOdyseeUrl = (url: string): OdyseeUrl | undefined => {
   const parsedUrl = parseUrl(url)
@@ -48,11 +53,8 @@ export const odyseeHandler: PlatformHandler = {
       return []
     }
 
-    return [
-      {
-        uri: `https://odysee.com/$/rss/@${encodePathSegment(parsed.name)}:${parsed.claimId}`,
-        hint: composeHint('odysee:videos'),
-      },
-    ]
+    return [feeds.getFeedEntry('odysee:videos', { name: parsed.name, claimId: parsed.claimId })]
   },
+
+  getFeedKey: feeds.getFeedKey,
 }
