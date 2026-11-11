@@ -1,4 +1,7 @@
 import { describe, expect, it } from 'bun:test'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import type { MediumUrl } from './medium.js'
 import { mediumHandler, parseMediumUrl } from './medium.js'
 
@@ -212,6 +215,132 @@ describe('mediumHandler', () => {
       const value = 'https://medium.com/'
 
       expect(mediumHandler.resolve(value)).toEqual([])
+    })
+  })
+
+  describe('getFeedKey', () => {
+    it('should return the posts key for a user feed', () => {
+      const value = 'https://medium.com/feed/@anngivens'
+      const expected = 'medium:posts'
+
+      expect(mediumHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the posts key for a user feed on the www host', () => {
+      const value = 'https://www.medium.com/feed/@mariandrew'
+      const expected = 'medium:posts'
+
+      expect(mediumHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the tag key for a tag feed', () => {
+      const value = 'https://medium.com/feed/tag/fake-news'
+      const expected = 'medium:tag'
+
+      expect(mediumHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the tagged key for a publication tagged feed', () => {
+      const value = 'https://medium.com/feed/towards-data-science/tagged/machine-learning'
+      const expected = 'medium:tagged'
+
+      expect(mediumHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the tagged key for a subdomain tagged feed', () => {
+      const value = 'https://humanparts.medium.com/feed/tagged/poetry'
+      const expected = 'medium:tagged'
+
+      expect(mediumHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the publication key for a publication feed', () => {
+      const value = 'https://medium.com/feed/age-of-awareness'
+      const expected = 'medium:publication'
+
+      expect(mediumHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the publication key for a publication named like a route word', () => {
+      const value = 'https://medium.com/feed/tag'
+      const expected = 'medium:publication'
+
+      expect(mediumHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the publication key for a subdomain feed', () => {
+      const value = 'https://humanparts.medium.com/feed'
+      const expected = 'medium:publication'
+
+      expect(mediumHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return undefined for a profile page', () => {
+      const value = 'https://medium.com/@anngivens'
+
+      expect(mediumHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a tag page', () => {
+      const value = 'https://medium.com/tag/fake-news'
+
+      expect(mediumHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a subdomain tagged page', () => {
+      const value = 'https://humanparts.medium.com/tagged/poetry'
+
+      expect(mediumHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for the bare feed path on medium.com', () => {
+      const value = 'https://medium.com/feed'
+
+      expect(mediumHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on a nested subdomain', () => {
+      const value = 'https://a.b.medium.com/feed'
+
+      expect(mediumHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on another host', () => {
+      const value = 'https://example.com/feed'
+
+      expect(mediumHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const ownFeeds: Array<[string, DiscoverUriHint]> = [
+      ['https://medium.com/feed/@anngivens', { key: 'medium:posts', label: 'Posts' }],
+      ['https://medium.com/feed/tag/fake-news', { key: 'medium:tag', label: 'Tag' }],
+      [
+        'https://medium.com/feed/towards-data-science/tagged/machine-learning',
+        { key: 'medium:tagged', label: 'Tagged' },
+      ],
+      [
+        'https://humanparts.medium.com/feed/tagged/poetry',
+        { key: 'medium:tagged', label: 'Tagged' },
+      ],
+      [
+        'https://medium.com/feed/age-of-awareness',
+        { key: 'medium:publication', label: 'Publication' },
+      ],
+      ['https://medium.com/feed/tag', { key: 'medium:publication', label: 'Publication' }],
+      ['https://humanparts.medium.com/feed', { key: 'medium:publication', label: 'Publication' }],
+    ]
+
+    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [mediumHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(result).toEqual(expected)
     })
   })
 })
