@@ -1,4 +1,7 @@
 import { describe, expect, it } from 'bun:test'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import type { GithubUrl } from './github.js'
 import { githubHandler, parseGithubUrl } from './github.js'
 
@@ -648,6 +651,213 @@ describe('githubHandler', () => {
       ]
 
       expect(githubHandler.resolve(value)).toEqual(expected)
+    })
+  })
+
+  describe('getFeedKey', () => {
+    it('should return the activity key for a user feed', () => {
+      const value = 'https://github.com/a99f.atom'
+      const expected = 'github:activity'
+
+      expect(githubHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the releases key for a releases feed', () => {
+      const value = 'https://github.com/BishopFox/sliver/releases.atom'
+      const expected = 'github:releases'
+
+      expect(githubHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the commits key for a commits feed', () => {
+      const value = 'https://github.com/BishopFox/sliver/commits.atom'
+      const expected = 'github:commits'
+
+      expect(githubHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the tags key for a tags feed', () => {
+      const value = 'https://github.com/BishopFox/sliver/tags.atom'
+      const expected = 'github:tags'
+
+      expect(githubHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the wiki key for a wiki feed', () => {
+      const value = 'https://github.com/BishopFox/sliver/wiki.atom'
+      const expected = 'github:wiki'
+
+      expect(githubHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the wiki key for the wiki feed of a repository named wiki', () => {
+      const value = 'https://github.com/ethereum/wiki/wiki.atom'
+      const expected = 'github:wiki'
+
+      expect(githubHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the discussions key for a repository discussions feed', () => {
+      const value = 'https://github.com/MusicPlayerDaemon/MPD/discussions.atom'
+      const expected = 'github:discussions'
+
+      expect(githubHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the discussions key for an organization discussions feed', () => {
+      const value = 'https://github.com/orgs/community/discussions.atom'
+      const expected = 'github:discussions'
+
+      expect(githubHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the discussion category key for a repository category feed', () => {
+      const value =
+        'https://github.com/Security-Onion-Solutions/securityonion/discussions/categories/quick-malware-analysis.atom'
+      const expected = 'github:discussion-category'
+
+      expect(githubHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the discussion category key for an organization category feed', () => {
+      const value = 'https://github.com/orgs/community/discussions/categories/github-education.atom'
+      const expected = 'github:discussion-category'
+
+      expect(githubHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the branch commits key for a branch commits feed', () => {
+      const value = 'https://github.com/microsoft/vscode/commits/main.atom'
+      const expected = 'github:branch-commits'
+
+      expect(githubHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the file history key for a file at the repository root', () => {
+      const value = 'https://github.com/hajimehoshi/ebiten/commits/main/LICENSE.atom'
+      const expected = 'github:file-history'
+
+      expect(githubHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the file history key for a nested file', () => {
+      const value =
+        'https://github.com/combine-org/combine-specifications/commits/main/specifications/sbml.level-3.version-1.render.version-1.release-1.md.atom'
+      const expected = 'github:file-history'
+
+      expect(githubHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the file history key for a feed on the www host', () => {
+      const value = 'https://www.github.com/hajimehoshi/ebiten/commits/main/LICENSE.atom'
+      const expected = 'github:file-history'
+
+      expect(githubHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the wiki key for a feed on the www host', () => {
+      const value = 'https://www.github.com/BishopFox/sliver/wiki.atom'
+      const expected = 'github:wiki'
+
+      expect(githubHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the discussions key for a feed with a capitalized route', () => {
+      const value = 'https://github.com/Orgs/community/Discussions.atom'
+      const expected = 'github:discussions'
+
+      expect(githubHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return undefined for a repository page', () => {
+      const value = 'https://github.com/BishopFox/sliver'
+
+      expect(githubHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a wiki page', () => {
+      const value = 'https://github.com/BishopFox/sliver/wiki'
+
+      expect(githubHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a file blob page', () => {
+      const value = 'https://github.com/hajimehoshi/ebiten/blob/main/LICENSE'
+
+      expect(githubHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a file history page', () => {
+      const value = 'https://github.com/hajimehoshi/ebiten/commits/main/LICENSE'
+
+      expect(githubHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a file history feed on another host', () => {
+      const value = 'https://example.com/hajimehoshi/ebiten/commits/main/LICENSE.atom'
+
+      expect(githubHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for another host', () => {
+      const value = 'https://example.com/BishopFox/sliver/wiki.atom'
+
+      expect(githubHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const ownFeeds: Array<[string, DiscoverUriHint]> = [
+      ['https://github.com/a99f.atom', { key: 'github:activity', label: 'Activity' }],
+      [
+        'https://github.com/BishopFox/sliver/releases.atom',
+        { key: 'github:releases', label: 'Releases' },
+      ],
+      [
+        'https://github.com/BishopFox/sliver/commits.atom',
+        { key: 'github:commits', label: 'Commits' },
+      ],
+      ['https://github.com/BishopFox/sliver/tags.atom', { key: 'github:tags', label: 'Tags' }],
+      ['https://github.com/BishopFox/sliver/wiki.atom', { key: 'github:wiki', label: 'Wiki' }],
+      [
+        'https://github.com/MusicPlayerDaemon/MPD/discussions.atom',
+        { key: 'github:discussions', label: 'Discussions' },
+      ],
+      [
+        'https://github.com/orgs/community/discussions.atom',
+        { key: 'github:discussions', label: 'Discussions' },
+      ],
+      [
+        'https://github.com/Security-Onion-Solutions/securityonion/discussions/categories/quick-malware-analysis.atom',
+        { key: 'github:discussion-category', label: 'Discussion category' },
+      ],
+      [
+        'https://github.com/orgs/community/discussions/categories/github-education.atom',
+        { key: 'github:discussion-category', label: 'Discussion category' },
+      ],
+      [
+        'https://github.com/microsoft/vscode/commits/main.atom',
+        { key: 'github:branch-commits', label: 'Branch commits' },
+      ],
+      [
+        'https://github.com/hajimehoshi/ebiten/commits/main/LICENSE.atom',
+        { key: 'github:file-history', label: 'File history' },
+      ],
+      [
+        'https://github.com/combine-org/combine-specifications/commits/main/specifications/sbml.level-3.version-1.render.version-1.release-1.md.atom',
+        { key: 'github:file-history', label: 'File history' },
+      ],
+    ]
+
+    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [githubHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(result).toEqual(expected)
     })
   })
 })

@@ -1,5 +1,6 @@
-import { getPathSegments, isAnyOf, isHostOf } from 'trousse'
+import { getPathSegments, isAnyOf, isHostOf, parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint } from '../../common/utils.js'
 
@@ -27,22 +28,36 @@ const discussionCategoryRegex = /^\/[^/]+\/[^/]+\/discussions\/categories\/([^/]
 const branchRegex = /^\/[^/]+\/[^/]+\/(?:tree|commits)\/([^/]+)\/?$/i
 const fileRegex = /^\/[^/]+\/[^/]+\/(?:blob|commits)\/([^/]+)\/(.+)/i
 const userRouteSuffixRegex = /\.(?:atom|gpg|keys|png)$/i
+const fileHistoryFeedRegex = /^\/[^/]+\/[^/]+\/commits\/[^/]+\/.+\.atom$/i
 
-// Repository and organization discussions sit at the same path depth:
-// /{owner}/{repo}/discussions and /orgs/{org}/discussions.
-const getDiscussionFeeds = (base: string, category?: string): Array<DiscoverUriEntry> => {
-  const uris: Array<DiscoverUriEntry> = [
-    {
-      uri: `${base}/discussions.atom`,
-      hint: composeHint('github:discussions'),
-    },
-  ]
+// Repository and organization discussions sit at the same path depth, /{owner}/{repo}/discussions
+// and /orgs/{org}/discussions, so `orgs` fills the owner of an organization's feeds.
+const feeds = definePlatformFeeds([
+  { key: 'github:activity', template: 'https://github.com/{owner}.atom' },
+  { key: 'github:releases', template: 'https://github.com/{owner}/{repo}/releases.atom' },
+  { key: 'github:commits', template: 'https://github.com/{owner}/{repo}/commits.atom' },
+  { key: 'github:tags', template: 'https://github.com/{owner}/{repo}/tags.atom' },
+  { key: 'github:wiki', template: 'https://github.com/{owner}/{repo}/wiki.atom' },
+  { key: 'github:discussions', template: 'https://github.com/{owner}/{repo}/discussions.atom' },
+  {
+    key: 'github:discussion-category',
+    template: 'https://github.com/{owner}/{repo}/discussions/categories/{category}.atom',
+  },
+  {
+    key: 'github:branch-commits',
+    template: 'https://github.com/{owner}/{repo}/commits/{branch}.atom',
+  },
+])
+
+const getDiscussionFeeds = (
+  owner: string,
+  repo: string,
+  category?: string,
+): Array<DiscoverUriEntry> => {
+  const uris = [feeds.getFeedEntry('github:discussions', { owner, repo })]
 
   if (category) {
-    uris.push({
-      uri: `${base}/discussions/categories/${category}.atom`,
-      hint: composeHint('github:discussion-category'),
-    })
+    uris.push(feeds.getFeedEntry('github:discussion-category', { owner, repo, category }))
   }
 
   return uris
@@ -114,57 +129,34 @@ export const githubHandler: PlatformHandler = {
 
     // User or organization profile page: /{owner}.
     if (parsed.kind === 'user') {
-      return [
-        {
-          uri: `https://github.com/${parsed.owner}.atom`,
-          hint: composeHint('github:activity'),
-        },
-      ]
+      return [feeds.getFeedEntry('github:activity', { owner: parsed.owner })]
     }
 
     // Organization discussions page: /orgs/{org}/discussions.
     if (parsed.kind === 'discussions') {
-      return getDiscussionFeeds(`https://github.com/orgs/${parsed.org}`, parsed.discussionCategory)
+      return getDiscussionFeeds('orgs', parsed.org, parsed.discussionCategory)
     }
 
     const { owner, repo, section, discussionCategory, branch, file } = parsed
-    const uris: Array<DiscoverUriEntry> = []
+    const uris = [
+      feeds.getFeedEntry('github:releases', { owner, repo }),
+      feeds.getFeedEntry('github:commits', { owner, repo }),
+      feeds.getFeedEntry('github:tags', { owner, repo }),
+    ]
 
-    // Repository feeds.
-    uris.push({
-      uri: `https://github.com/${owner}/${repo}/releases.atom`,
-      hint: composeHint('github:releases'),
-    })
-    uris.push({
-      uri: `https://github.com/${owner}/${repo}/commits.atom`,
-      hint: composeHint('github:commits'),
-    })
-    uris.push({
-      uri: `https://github.com/${owner}/${repo}/tags.atom`,
-      hint: composeHint('github:tags'),
-    })
-
-    // If on wiki page, add wiki feed.
     if (section === 'wiki') {
-      uris.push({
-        uri: `https://github.com/${owner}/${repo}/wiki.atom`,
-        hint: composeHint('github:wiki'),
-      })
+      uris.push(feeds.getFeedEntry('github:wiki', { owner, repo }))
     }
 
     if (section === 'discussions') {
-      uris.push(...getDiscussionFeeds(`https://github.com/${owner}/${repo}`, discussionCategory))
+      uris.push(...getDiscussionFeeds(owner, repo, discussionCategory))
     }
 
-    // If on a specific branch, add branch-specific commits feed.
     if (branch) {
-      uris.push({
-        uri: `https://github.com/${owner}/${repo}/commits/${branch}.atom`,
-        hint: composeHint('github:branch-commits'),
-      })
+      uris.push(feeds.getFeedEntry('github:branch-commits', { owner, repo, branch }))
     }
 
-    // If viewing a file (blob) or file history (commits), add file-specific commits feed.
+    // The file path keeps its slashes, so it is written outside the table.
     if (file) {
       uris.push({
         uri: `https://github.com/${owner}/${repo}/commits/${file.branch}/${file.path}.atom`,
@@ -173,5 +165,20 @@ export const githubHandler: PlatformHandler = {
     }
 
     return uris
+  },
+
+  getFeedKey: (url) => {
+    const key = feeds.getFeedKey(url)
+
+    if (key) {
+      return key
+    }
+
+    const parsedUrl = parseUrl(url)
+
+    // A file history feed carries a file path of any depth, which a template segment cannot hold.
+    if (parsedUrl && isHostOf(parsedUrl, hosts) && fileHistoryFeedRegex.test(parsedUrl.pathname)) {
+      return 'github:file-history'
+    }
   },
 }
