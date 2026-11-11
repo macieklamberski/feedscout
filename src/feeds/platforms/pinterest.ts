@@ -1,6 +1,7 @@
 import { getPathSegments, isAnyOf, isHostOf, parseUrl } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, getTenantSubdomain } from '../../common/utils.js'
+import { getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Not discoverable without handler.
 // Handler needed for: all shapes.
@@ -20,6 +21,14 @@ const countryLabelRegex = /^[a-z]{2}$/
 
 // Profile tabs of a user, which name the user, not a board.
 const userSubpaths = ['pins', 'boards', '_saved', '_created', 'followers', 'following']
+const feeds = definePlatformFeeds(
+  [
+    // Before the board row, so a pins feed never reads as a board named feed.
+    { key: 'pinterest:pins', template: 'https://{host}/{username}/feed.rss' },
+    { key: 'pinterest:board', template: 'https://{host}/{username}/{board}.rss' },
+  ],
+  { hosts, domains },
+)
 
 const isPinterestHost = (parsedUrl: URL): boolean => {
   if (isHostOf(parsedUrl, hosts)) {
@@ -61,25 +70,29 @@ export const pinterestHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parsePinterestUrl(url)
+    const host = 'www.pinterest.com'
 
     if (!parsed) {
       return []
     }
 
     if (parsed.kind === 'board') {
-      return [
-        {
-          uri: `https://www.pinterest.com/${parsed.username}/${parsed.board}.rss`,
-          hint: composeHint('pinterest:board'),
-        },
-      ]
+      const params = { host, username: parsed.username, board: parsed.board }
+
+      return [feeds.getFeedEntry('pinterest:board', params)]
     }
 
-    return [
-      {
-        uri: `https://www.pinterest.com/${parsed.username}/feed.rss`,
-        hint: composeHint('pinterest:pins'),
-      },
-    ]
+    return [feeds.getFeedEntry('pinterest:pins', { host, username: parsed.username })]
+  },
+
+  // Country label hosts serve the same feeds, other subdomains such as help do not.
+  getFeedKey: (url) => {
+    const parsedUrl = parseUrl(url)
+
+    if (!parsedUrl || !isPinterestHost(parsedUrl)) {
+      return
+    }
+
+    return feeds.getFeedKey(url)
   },
 }
