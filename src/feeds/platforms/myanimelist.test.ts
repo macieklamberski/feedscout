@@ -1,4 +1,7 @@
 import { describe, expect, it } from 'bun:test'
+import type { DiscoverUriEntry } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import type { MyanimelistUrl } from './myanimelist.js'
 import { myanimelistHandler, parseMyanimelistUrl } from './myanimelist.js'
 
@@ -340,5 +343,99 @@ describe('myanimelistHandler', () => {
 
       expect(myanimelistHandler.resolve(value)).toEqual(expected)
     })
+  })
+
+  describe('getFeedKey', () => {
+    it('should return the anime key for an anime list feed', () => {
+      const value = 'https://myanimelist.net/rss.php?type=rw&u=MoonFox'
+      const expected = 'myanimelist:anime'
+
+      expect(myanimelistHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the manga key for a manga list feed', () => {
+      const value = 'https://myanimelist.net/rss.php?type=rm&u=MoonFox'
+      const expected = 'myanimelist:manga'
+
+      expect(myanimelistHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the recently-watched key for a recently watched feed', () => {
+      const value = 'https://myanimelist.net/rss.php?type=rwe&u=MoonFox'
+      const expected = 'myanimelist:recently-watched'
+
+      expect(myanimelistHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the recently-read key for a recently read feed', () => {
+      const value = 'https://myanimelist.net/rss.php?type=rrm&u=Felix-san'
+      const expected = 'myanimelist:recently-read'
+
+      expect(myanimelistHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the blog key for a blog feed', () => {
+      const value = 'https://myanimelist.net/rss.php?type=blog&u=Felix-san'
+      const expected = 'myanimelist:blog'
+
+      expect(myanimelistHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the featured key for the featured feed', () => {
+      const value = 'https://myanimelist.net/rss/featured.xml'
+      const expected = 'myanimelist:featured'
+
+      expect(myanimelistHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the news key for the news feed', () => {
+      const value = 'https://myanimelist.net/rss/news.xml'
+      const expected = 'myanimelist:news'
+
+      expect(myanimelistHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return undefined for a feed URL without a list type', () => {
+      const value = 'https://myanimelist.net/rss.php?u=MoonFox'
+
+      expect(myanimelistHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a profile page', () => {
+      const value = 'https://myanimelist.net/profile/MoonFox'
+
+      expect(myanimelistHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+  })
+})
+
+describe('discoverUrisFromPlatform', () => {
+  const ownFeeds: Array<[string, string, string]> = [
+    ['https://myanimelist.net/rss.php?type=rw&u=MoonFox', 'myanimelist:anime', 'Anime list'],
+    ['https://myanimelist.net/rss.php?type=rm&u=MoonFox', 'myanimelist:manga', 'Manga list'],
+    [
+      'https://myanimelist.net/rss.php?type=rwe&u=MoonFox',
+      'myanimelist:recently-watched',
+      'Recently watched',
+    ],
+    [
+      'https://myanimelist.net/rss.php?type=rrm&u=Felix-san',
+      'myanimelist:recently-read',
+      'Recently read',
+    ],
+    ['https://myanimelist.net/rss.php?type=blog&u=Felix-san', 'myanimelist:blog', 'Blog'],
+    ['https://myanimelist.net/rss/featured.xml', 'myanimelist:featured', 'Featured'],
+    ['https://myanimelist.net/rss/news.xml', 'myanimelist:news', 'News'],
+  ]
+
+  it.each(ownFeeds)('should return %s itself as %s', async (value, key, label) => {
+    const options = {
+      ...defaultPlatformOptions,
+      handlers: [myanimelistHandler],
+      baseUrl: value,
+    }
+    const expected: Array<DiscoverUriEntry> = [{ uri: value, hint: { key, label } }]
+
+    expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
   })
 })

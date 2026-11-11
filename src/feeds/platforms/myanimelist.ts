@@ -1,7 +1,6 @@
-import { composeQuery, decodeSegment, isHostOf, parseUrl } from 'trousse'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import { decodeSegment, isHostOf, parseUrl } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers featured, news (html), partly covers profile.
@@ -19,6 +18,22 @@ const profileRegex = /^\/profile\/([^/]+)\/?$/i
 const userRegex = /^\/(?:profile|animelist|mangalist|history)\/([^/]+)/i
 const newsRegex = /^\/news(?:\/|$)/i
 const featuredRegex = /^\/featured(?:\/|$)/i
+
+const feeds = definePlatformFeeds([
+  { key: 'myanimelist:news', template: 'https://myanimelist.net/rss/news.xml' },
+  { key: 'myanimelist:featured', template: 'https://myanimelist.net/rss/featured.xml' },
+  { key: 'myanimelist:anime', template: 'https://myanimelist.net/rss.php?type=rw&u={username}' },
+  { key: 'myanimelist:manga', template: 'https://myanimelist.net/rss.php?type=rm&u={username}' },
+  {
+    key: 'myanimelist:recently-watched',
+    template: 'https://myanimelist.net/rss.php?type=rwe&u={username}',
+  },
+  {
+    key: 'myanimelist:recently-read',
+    template: 'https://myanimelist.net/rss.php?type=rrm&u={username}',
+  },
+  { key: 'myanimelist:blog', template: 'https://myanimelist.net/rss.php?type=blog&u={username}' },
+])
 
 export const parseMyanimelistUrl = (url: string): MyanimelistUrl | undefined => {
   const parsedUrl = parseUrl(url)
@@ -66,47 +81,23 @@ export const myanimelistHandler: PlatformHandler = {
     }
 
     if (parsed.kind === 'news') {
-      return [
-        {
-          uri: 'https://myanimelist.net/rss/news.xml',
-          hint: composeHint('myanimelist:news'),
-        },
-      ]
+      return [feeds.getFeedEntry('myanimelist:news')]
     }
 
     if (parsed.kind === 'featured') {
-      return [
-        {
-          uri: 'https://myanimelist.net/rss/featured.xml',
-          hint: composeHint('myanimelist:featured'),
-        },
-      ]
+      return [feeds.getFeedEntry('myanimelist:featured')]
     }
 
     const username = decodeSegment(parsed.username) ?? parsed.username
-    const uris: Array<DiscoverUriEntry> = []
 
-    uris.push({
-      uri: `https://myanimelist.net/rss.php${composeQuery({ type: 'rw', u: username })}`,
-      hint: composeHint('myanimelist:anime'),
-    })
-    uris.push({
-      uri: `https://myanimelist.net/rss.php${composeQuery({ type: 'rm', u: username })}`,
-      hint: composeHint('myanimelist:manga'),
-    })
-    uris.push({
-      uri: `https://myanimelist.net/rss.php${composeQuery({ type: 'rwe', u: username })}`,
-      hint: composeHint('myanimelist:recently-watched'),
-    })
-    uris.push({
-      uri: `https://myanimelist.net/rss.php${composeQuery({ type: 'rrm', u: username })}`,
-      hint: composeHint('myanimelist:recently-read'),
-    })
-    uris.push({
-      uri: `https://myanimelist.net/rss.php${composeQuery({ type: 'blog', u: username })}`,
-      hint: composeHint('myanimelist:blog'),
-    })
-
-    return uris
+    return [
+      feeds.getFeedEntry('myanimelist:anime', { username }),
+      feeds.getFeedEntry('myanimelist:manga', { username }),
+      feeds.getFeedEntry('myanimelist:recently-watched', { username }),
+      feeds.getFeedEntry('myanimelist:recently-read', { username }),
+      feeds.getFeedEntry('myanimelist:blog', { username }),
+    ]
   },
+
+  getFeedKey: feeds.getFeedKey,
 }
