@@ -1,4 +1,7 @@
 import { describe, expect, it } from 'bun:test'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import { parseV2exUrl, type V2exUrl, v2exHandler } from './v2ex.js'
 
 describe('parseV2exUrl', () => {
@@ -212,6 +215,93 @@ describe('v2exHandler', () => {
       ]
 
       expect(v2exHandler.resolve(value)).toEqual(expected)
+    })
+  })
+
+  describe('getFeedKey', () => {
+    it('should return the member key for a member feed', () => {
+      const value = 'https://www.v2ex.com/feed/member/cfans1993.xml'
+      const expected = 'v2ex:member'
+
+      expect(v2exHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the node key for a node feed', () => {
+      const value = 'https://www.v2ex.com/feed/markdown.xml'
+      const expected = 'v2ex:node'
+
+      expect(v2exHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the tab key for a tab feed', () => {
+      const value = 'https://www.v2ex.com/feed/tab/qna.xml'
+      const expected = 'v2ex:tab'
+
+      expect(v2exHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the index key for the site feed', () => {
+      const value = 'https://www.v2ex.com/index.xml'
+      const expected = 'v2ex:index'
+
+      expect(v2exHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the member key for a member feed without www', () => {
+      const value = 'https://v2ex.com/feed/member/feelinglucky.xml'
+      const expected = 'v2ex:member'
+
+      expect(v2exHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return undefined for a feed path with a third segment', () => {
+      const value = 'https://www.v2ex.com/feed/member/feelinglucky/extra.xml'
+
+      expect(v2exHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a member page', () => {
+      const value = 'https://www.v2ex.com/member/feelinglucky'
+
+      expect(v2exHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a node page', () => {
+      const value = 'https://www.v2ex.com/go/markdown'
+
+      expect(v2exHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for another host', () => {
+      const value = 'https://example.com/feed/member/feelinglucky.xml'
+
+      expect(v2exHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const ownFeeds: Array<[string, DiscoverUriHint]> = [
+      ['https://www.v2ex.com/feed/member/cfans1993.xml', { key: 'v2ex:member', label: 'Member' }],
+      [
+        'https://www.v2ex.com/feed/member/feelinglucky.xml',
+        { key: 'v2ex:member', label: 'Member' },
+      ],
+      ['https://www.v2ex.com/feed/markdown.xml', { key: 'v2ex:node', label: 'Node' }],
+      ['https://www.v2ex.com/feed/designer.xml', { key: 'v2ex:node', label: 'Node' }],
+      ['https://www.v2ex.com/feed/tab/qna.xml', { key: 'v2ex:tab', label: 'Tab' }],
+      ['https://www.v2ex.com/feed/tab/apple.xml', { key: 'v2ex:tab', label: 'Tab' }],
+      ['https://www.v2ex.com/index.xml', { key: 'v2ex:index', label: 'Index' }],
+    ]
+
+    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [v2exHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(result).toEqual(expected)
     })
   })
 })
