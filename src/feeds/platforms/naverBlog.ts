@@ -1,6 +1,6 @@
 import { getPathSegments, getQueryParam, isHostOf, parseUrl } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers blog (html).
@@ -9,6 +9,11 @@ import { composeHint } from '../../common/utils.js'
 export type NaverBlogUrl = { kind: 'blog'; blogId: string } | { kind: 'post'; blogId: string }
 
 export const hosts = ['blog.naver.com', 'm.blog.naver.com']
+
+// The feed host serves feeds only, so it stays out of `hosts` and its pages are not read as blogs.
+const feeds = definePlatformFeeds([
+  { key: 'naver-blog:blog', template: 'https://rss.blog.naver.com/{blogId}.xml' },
+])
 
 export const parseNaverBlogUrl = (url: string): NaverBlogUrl | undefined => {
   const parsedUrl = parseUrl(url)
@@ -53,11 +58,8 @@ export const naverBlogHandler: PlatformHandler = {
       return []
     }
 
-    return [
-      {
-        uri: `https://rss.blog.naver.com/${parsed.blogId}.xml`,
-        hint: composeHint('naver-blog:blog'),
-      },
-    ]
+    return [feeds.getFeedEntry('naver-blog:blog', { blogId: parsed.blogId })]
   },
+
+  getFeedKey: feeds.getFeedKey,
 }
