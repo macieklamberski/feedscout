@@ -1,7 +1,6 @@
 import { getAnyOf, getPathSegments, isHostOf, parseUrl } from 'trousse'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -19,6 +18,25 @@ const languagePrefix = `(?:/(?:${languages.join('|')}))?`
 const hubRegex = new RegExp(`^${languagePrefix}/hubs?/([^/]+)`, 'i')
 const userRegex = new RegExp(`^${languagePrefix}/users/([^/]+)`, 'i')
 const companyRegex = new RegExp(`^${languagePrefix}/compan(?:y|ies)/([^/]+)`, 'i')
+
+// The first row of a key is the feed `resolve` emits. Habr serves the same items under the hub and
+// user spellings below it, which pages link and readers store.
+const feeds = definePlatformFeeds([
+  { key: 'habr:articles', template: 'https://habr.com/{language}/rss/articles/' },
+  { key: 'habr:hub', template: 'https://habr.com/{language}/rss/hub/{hub}/' },
+  { key: 'habr:hub', template: 'https://habr.com/{language}/rss/hubs/{hub}/articles/' },
+  { key: 'habr:hub', template: 'https://habr.com/{language}/rss/hubs/{hub}/articles/all/' },
+  { key: 'habr:user', template: 'https://habr.com/{language}/rss/users/{username}/posts/' },
+  { key: 'habr:user', template: 'https://habr.com/{language}/rss/users/{username}/articles/' },
+  {
+    key: 'habr:user',
+    template: 'https://habr.com/{language}/rss/users/{username}/publications/articles/',
+  },
+  {
+    key: 'habr:company',
+    template: 'https://habr.com/{language}/rss/companies/{company}/articles/',
+  },
+])
 
 export const parseHabrUrl = (url: string): HabrUrl | undefined => {
   const parsedUrl = parseUrl(url)
@@ -63,34 +81,28 @@ export const habrHandler: PlatformHandler = {
       return []
     }
 
-    const { origin } = new URL(url)
-    const base = `${origin}/${parsed.language}/rss`
-    const articles: DiscoverUriEntry = {
-      uri: `${base}/articles/`,
-      hint: composeHint('habr:articles'),
-    }
+    const articles = feeds.getFeedEntry('habr:articles', { language: parsed.language })
 
     if (parsed.kind === 'hub') {
-      return [{ uri: `${base}/hub/${parsed.hub}/`, hint: composeHint('habr:hub') }, articles]
+      const params = { language: parsed.language, hub: parsed.hub }
+
+      return [feeds.getFeedEntry('habr:hub', params), articles]
     }
 
     if (parsed.kind === 'user') {
-      return [
-        { uri: `${base}/users/${parsed.username}/posts/`, hint: composeHint('habr:user') },
-        articles,
-      ]
+      const params = { language: parsed.language, username: parsed.username }
+
+      return [feeds.getFeedEntry('habr:user', params), articles]
     }
 
     if (parsed.kind === 'company') {
-      return [
-        {
-          uri: `${base}/companies/${parsed.company}/articles/`,
-          hint: composeHint('habr:company'),
-        },
-        articles,
-      ]
+      const params = { language: parsed.language, company: parsed.company }
+
+      return [feeds.getFeedEntry('habr:company', params), articles]
     }
 
     return [articles]
   },
+
+  getFeedKey: feeds.getFeedKey,
 }

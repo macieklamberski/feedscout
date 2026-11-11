@@ -1,4 +1,7 @@
 import { describe, expect, it } from 'bun:test'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import type { HabrUrl } from './habr.js'
 import { habrHandler, parseHabrUrl } from './habr.js'
 
@@ -172,6 +175,22 @@ describe('habrHandler', () => {
       expect(habrHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should return the feeds on habr.com for a page on the www host', () => {
+      const value = 'https://www.habr.com/ru/companies/example/articles/'
+      const expected = [
+        {
+          uri: 'https://habr.com/ru/rss/companies/example/articles/',
+          hint: { key: 'habr:company', label: 'Company' },
+        },
+        {
+          uri: 'https://habr.com/ru/rss/articles/',
+          hint: { key: 'habr:articles', label: 'Articles' },
+        },
+      ]
+
+      expect(habrHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should fall back to the default language', () => {
       const value = 'https://habr.com/'
       const expected = [
@@ -186,6 +205,148 @@ describe('habrHandler', () => {
 
     it('should return empty array for another host', () => {
       expect(habrHandler.resolve('https://example.com/ru/users/alice/')).toEqual([])
+    })
+  })
+
+  describe('getFeedKey', () => {
+    it('should return the user key for a user feed', () => {
+      const value = 'https://habr.com/en/rss/users/app-z/posts/'
+      const expected = 'habr:user'
+
+      expect(habrHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the user key for a user articles feed', () => {
+      const value = 'https://habr.com/en/rss/users/app-z/articles/?fl=en'
+      const expected = 'habr:user'
+
+      expect(habrHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the user key for a user publications feed', () => {
+      const value = 'https://habr.com/ru/rss/users/b0fh/publications/articles/'
+      const expected = 'habr:user'
+
+      expect(habrHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the company key for a company feed', () => {
+      const value = 'https://habr.com/en/rss/companies/comptek/articles/'
+      const expected = 'habr:company'
+
+      expect(habrHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the company key for a company feed with its language query', () => {
+      const value = 'https://habr.com/ru/rss/companies/kingservers/articles/?fl=ru'
+      const expected = 'habr:company'
+
+      expect(habrHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the hub key for a hub feed', () => {
+      const value = 'https://habr.com/ru/rss/hub/office365dev/'
+      const expected = 'habr:hub'
+
+      expect(habrHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the hub key for a hub articles feed', () => {
+      const value = 'https://habr.com/ru/rss/hubs/python/articles/?fl=ru'
+      const expected = 'habr:hub'
+
+      expect(habrHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the hub key for a hub feed of all articles', () => {
+      const value = 'https://habr.com/ru/rss/hubs/python/articles/all/'
+      const expected = 'habr:hub'
+
+      expect(habrHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the hub key for a hub feed without a trailing slash', () => {
+      const value = 'https://habr.com/en/rss/hub/controllers'
+      const expected = 'habr:hub'
+
+      expect(habrHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the articles key for the site feed', () => {
+      const value = 'https://habr.com/ru/rss/articles/'
+      const expected = 'habr:articles'
+
+      expect(habrHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the articles key for a feed with a capitalized route', () => {
+      const value = 'https://habr.com/RU/RSS/Articles/'
+      const expected = 'habr:articles'
+
+      expect(habrHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the user key for a feed on the www host', () => {
+      const value = 'https://www.habr.com/en/rss/users/b0fh/posts/'
+      const expected = 'habr:user'
+
+      expect(habrHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the user key for a feed over http', () => {
+      const value = 'http://habr.com/en/rss/users/b0fh/posts/'
+      const expected = 'habr:user'
+
+      expect(habrHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return undefined for a hub page', () => {
+      const value = 'https://habr.com/ru/hubs/python/articles/'
+
+      expect(habrHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a user page', () => {
+      const value = 'https://habr.com/en/users/app-z/posts/'
+
+      expect(habrHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a company page', () => {
+      const value = 'https://habr.com/ru/companies/kingservers/articles/'
+
+      expect(habrHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for another host', () => {
+      const value = 'https://example.com/en/rss/users/app-z/posts/'
+
+      expect(habrHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const ownFeeds: Array<[string, DiscoverUriHint]> = [
+      ['https://habr.com/en/rss/users/app-z/posts/', { key: 'habr:user', label: 'User' }],
+      ['https://habr.com/en/rss/users/app-z/articles/?fl=en', { key: 'habr:user', label: 'User' }],
+      [
+        'https://habr.com/en/rss/companies/comptek/articles/',
+        { key: 'habr:company', label: 'Company' },
+      ],
+      ['https://habr.com/ru/rss/hub/office365dev/', { key: 'habr:hub', label: 'Hub' }],
+      ['https://habr.com/ru/rss/hubs/python/articles/all/', { key: 'habr:hub', label: 'Hub' }],
+      ['https://habr.com/ru/rss/articles/', { key: 'habr:articles', label: 'Articles' }],
+    ]
+
+    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [habrHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(result).toEqual(expected)
     })
   })
 })
