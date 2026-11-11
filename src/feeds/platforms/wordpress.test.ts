@@ -1317,6 +1317,7 @@ describe('wordpressHandler', () => {
       '/feed/rss2/',
       '/feed/atom/',
       '/feed/rdf/',
+      '/?feed=rss2',
       '/?feed=rdf',
     ]
 
@@ -1430,6 +1431,12 @@ describe('wordpressHandler', () => {
 
     it('should return undefined for the tag named embed', () => {
       const value = 'https://pesannemariev.edublogs.org/tag/embed/'
+
+      expect(wordpressHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a post comments feed query', () => {
+      const value = 'https://example.wordpress.com/2024/05/01/hello/?feed=comments-rss2'
 
       expect(wordpressHandler.getFeedKey?.(value)).toBeUndefined()
     })
