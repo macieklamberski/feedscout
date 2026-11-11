@@ -1,4 +1,7 @@
 import { describe, expect, it } from 'bun:test'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import { parseRssComUrl, type RssComUrl, rssComHandler } from './rssCom.js'
 
 describe('parseRssComUrl', () => {
@@ -118,6 +121,51 @@ describe('rssComHandler', () => {
       ]
 
       expect(rssComHandler.resolve(value)).toEqual(expected)
+    })
+  })
+
+  describe('getFeedKey', () => {
+    it('should return the podcast key for a podcast feed', () => {
+      const value = 'https://media.rss.com/charismanews/feed.xml'
+      const expected = 'rss-com:podcast'
+
+      expect(rssComHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return undefined for a podcast page', () => {
+      const value = 'https://rss.com/podcasts/charismanews'
+
+      expect(rssComHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a show path on the feed host without the feed file', () => {
+      const value = 'https://media.rss.com/charismanews/'
+
+      expect(rssComHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed path on another host', () => {
+      const value = 'https://example.com/charismanews/feed.xml'
+
+      expect(rssComHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const ownFeeds: Array<[string, DiscoverUriHint]> = [
+      ['https://media.rss.com/charismanews/feed.xml', { key: 'rss-com:podcast', label: 'Podcast' }],
+      ['https://media.rss.com/kuuske/feed.xml', { key: 'rss-com:podcast', label: 'Podcast' }],
+    ]
+
+    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [rssComHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(result).toEqual(expected)
     })
   })
 })
