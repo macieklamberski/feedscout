@@ -14,7 +14,8 @@ export type AcastUrl = { kind: 'show'; slug: string }
 const hosts = ['shows.acast.com', 'play.acast.com', 'embed.acast.com', 'player.acast.com']
 const legacyHosts = ['play.acast.com']
 
-// feeds.acast.com serves every show by path, by slug or by id, so it stays out of `hosts`.
+// feeds.acast.com serves a show by slug or by id. It stays out of `hosts`, where the first path
+// segment would read as the slug.
 const feeds = definePlatformFeeds([
   { key: 'acast:podcast', template: 'https://feeds.acast.com/public/shows/{slug}' },
 ])

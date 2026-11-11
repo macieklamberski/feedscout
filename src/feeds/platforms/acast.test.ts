@@ -153,6 +153,13 @@ describe('acastHandler', () => {
       expect(acastHandler.getFeedKey?.(value)).toBe(expected)
     })
 
+    it('should return the podcast key for a show feed by hex id', () => {
+      const value = 'https://feeds.acast.com/public/shows/5cd07163ad694b18367aeb03'
+      const expected = 'acast:podcast'
+
+      expect(acastHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
     it('should return the podcast key for a show feed over http with a trailing slash', () => {
       const value = 'http://feeds.acast.com/public/shows/thetraveldiaries/'
       const expected = 'acast:podcast'
@@ -191,6 +198,10 @@ describe('acastHandler', () => {
       ],
       [
         'https://feeds.acast.com/public/shows/0185cea5-9e3b-4b82-a887-26f91f92765f',
+        { key: 'acast:podcast', label: 'Podcast' },
+      ],
+      [
+        'https://feeds.acast.com/public/shows/5cd07163ad694b18367aeb03',
         { key: 'acast:podcast', label: 'Podcast' },
       ],
     ]
