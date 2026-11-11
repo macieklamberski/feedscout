@@ -1,7 +1,7 @@
 import { isHostOf, parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
+import { definePlatformFeeds, type PlatformFeedParams } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic partly covers extensions, home, package, vendor.
@@ -21,11 +21,71 @@ const extensionsRegex = /^\/extensions(?:\/|$)/i
 // The JSON API sits under the same paths, such as /packages/list.json.
 const jsonSuffixRegex = /\.json$/i
 
-const createFeeds = (name: string, key: string): Array<DiscoverUriEntry> => {
-  return [
-    { uri: `https://packagist.org/feeds/${name}.rss`, hint: composeHint(key, 'rss') },
-    { uri: `https://packagist.org/feeds/${name}.atom`, hint: composeHint(key, 'atom') },
-  ]
+const feeds = definePlatformFeeds([
+  {
+    key: 'packagist:releases',
+    template: 'https://packagist.org/feeds/package.{vendor}/{name}.rss',
+    format: 'rss',
+  },
+  {
+    key: 'packagist:releases',
+    template: 'https://packagist.org/feeds/package.{vendor}/{name}.atom',
+    format: 'atom',
+  },
+  {
+    key: 'packagist:vendor',
+    template: 'https://packagist.org/feeds/vendor.{vendor}.rss',
+    format: 'rss',
+  },
+  {
+    key: 'packagist:vendor',
+    template: 'https://packagist.org/feeds/vendor.{vendor}.atom',
+    format: 'atom',
+  },
+  {
+    key: 'packagist:new-packages',
+    template: 'https://packagist.org/feeds/packages.rss',
+    format: 'rss',
+  },
+  {
+    key: 'packagist:new-packages',
+    template: 'https://packagist.org/feeds/packages.atom',
+    format: 'atom',
+  },
+  {
+    key: 'packagist:new-releases',
+    template: 'https://packagist.org/feeds/releases.rss',
+    format: 'rss',
+  },
+  {
+    key: 'packagist:new-releases',
+    template: 'https://packagist.org/feeds/releases.atom',
+    format: 'atom',
+  },
+  {
+    key: 'packagist:new-extensions',
+    template: 'https://packagist.org/feeds/extensions.rss',
+    format: 'rss',
+  },
+  {
+    key: 'packagist:new-extensions',
+    template: 'https://packagist.org/feeds/extensions.atom',
+    format: 'atom',
+  },
+  {
+    key: 'packagist:extension-releases',
+    template: 'https://packagist.org/feeds/extension-releases.rss',
+    format: 'rss',
+  },
+  {
+    key: 'packagist:extension-releases',
+    template: 'https://packagist.org/feeds/extension-releases.atom',
+    format: 'atom',
+  },
+])
+
+const getFeedEntries = (key: string, params?: PlatformFeedParams): Array<DiscoverUriEntry> => {
+  return [feeds.getFeedEntry(key, params, 'rss'), feeds.getFeedEntry(key, params, 'atom')]
 }
 
 export const parsePackagistUrl = (url: string): PackagistUrl | undefined => {
@@ -76,29 +136,31 @@ export const packagistHandler: PlatformHandler = {
     // Every page gets the site-wide feeds after its own, the extension pages included, which do
     // not link them.
     const siteFeeds = [
-      ...createFeeds('packages', 'packagist:new-packages'),
-      ...createFeeds('releases', 'packagist:new-releases'),
+      ...getFeedEntries('packagist:new-packages'),
+      ...getFeedEntries('packagist:new-releases'),
     ]
 
     if (parsed.kind === 'package') {
       return [
-        ...createFeeds(`package.${parsed.vendor}/${parsed.name}`, 'packagist:releases'),
+        ...getFeedEntries('packagist:releases', { vendor: parsed.vendor, name: parsed.name }),
         ...siteFeeds,
       ]
     }
 
     if (parsed.kind === 'vendor') {
-      return [...createFeeds(`vendor.${parsed.vendor}`, 'packagist:vendor'), ...siteFeeds]
+      return [...getFeedEntries('packagist:vendor', { vendor: parsed.vendor }), ...siteFeeds]
     }
 
     if (parsed.kind === 'extensions') {
       return [
-        ...createFeeds('extensions', 'packagist:new-extensions'),
-        ...createFeeds('extension-releases', 'packagist:extension-releases'),
+        ...getFeedEntries('packagist:new-extensions'),
+        ...getFeedEntries('packagist:extension-releases'),
         ...siteFeeds,
       ]
     }
 
     return siteFeeds
   },
+
+  getFeedKey: feeds.getFeedKey,
 }
