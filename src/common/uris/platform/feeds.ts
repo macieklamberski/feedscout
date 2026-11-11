@@ -14,7 +14,8 @@ import { composeHint } from '../../utils.js'
 
 export type PlatformFeedTemplate = {
   key: string
-  // A feed URL with `{name}` placeholders, each one host label, path segment or query value.
+  // A feed URL with `{name}` placeholders, each one host label, path segment or query value, and
+  // `{scheme}` for a feed served under the page's own scheme.
   template: string
   format?: DiscoverUriHint['format']
 }
@@ -50,7 +51,7 @@ type CompiledTemplate = {
   getUrl: (params?: PlatformFeedParams) => string
 }
 
-const templateRegex = /^(https?):\/\/([^/?#]+)(\/[^?#]*)?(?:\?([^#]*))?$/i
+const templateRegex = /^(https?|\{scheme\}):\/\/([^/?#]+)(\/[^?#]*)?(?:\?([^#]*))?$/i
 const placeholderRegex = /\{(\w+)\}/g
 const trailingSlashRegex = /\/$/
 
@@ -127,7 +128,7 @@ const compileTemplate = (
       Object.fromEntries(query.map(([name, value]) => [name, fillPlaceholders(value)])),
     )
 
-    return `${scheme}://${fillPlaceholders(host)}${fillPlaceholders(path, encodePathSegment)}${builtQuery}`
+    return `${fillPlaceholders(scheme)}://${fillPlaceholders(host)}${fillPlaceholders(path, encodePathSegment)}${builtQuery}`
   }
 
   return { key, format, queryCount: query.length, isFeedUrl, getUrl }

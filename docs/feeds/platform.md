@@ -3747,7 +3747,7 @@ type PlatformHandler = {
 
 ### Declaring Feeds
 
-`definePlatformFeeds` holds a handler's feed URLs as templates keyed by hint key: `entry` builds a feed with its hint, `getFeedKey` reads a URL back to its key, `{host}` stands for any host in `hosts` or under `domains`, and `{domain}` for one of `domains`.
+`definePlatformFeeds` holds a handler's feed URLs as templates keyed by hint key: `entry` builds a feed with its hint, `getFeedKey` reads a URL back to its key, `{host}` stands for any host in `hosts` or under `domains`, `{domain}` for one of `domains`, and `{scheme}` for the page's scheme on a platform that runs on the site's own host.
 
 ```typescript
 import { definePlatformFeeds, type PlatformHandler } from 'feedscout/platform'

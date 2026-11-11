@@ -19,6 +19,7 @@ const feeds = definePlatformFeeds(
     { key: 'example:blog', template: 'https://{username}.example.org/feed' },
     { key: 'example:site', template: 'https://{host}/feeds/site' },
     { key: 'example:journal', template: 'https://{username}.{domain}/journal/feed' },
+    { key: 'example:site-feed', template: '{scheme}://{host}/feed' },
   ],
   { hosts: ['example.com', 'www.example.com'], domains: ['example.net', 'example.edu'] },
 )
@@ -70,6 +71,13 @@ describe('definePlatformFeeds', () => {
     it('should write a host value as given', () => {
       const value = feeds.getFeedUrl('example:site', { host: 'example.com' })
       const expected = 'https://example.com/feeds/site'
+
+      expect(value).toBe(expected)
+    })
+
+    it('should write the scheme value as given', () => {
+      const value = feeds.getFeedUrl('example:site-feed', { scheme: 'http', host: 'example.com' })
+      const expected = 'http://example.com/feed'
 
       expect(value).toBe(expected)
     })
@@ -147,6 +155,13 @@ describe('definePlatformFeeds', () => {
 
     it('should return the key of a feed on any listed host', () => {
       expect(feeds.getFeedKey('https://example.com/feeds/site')).toBe('example:site')
+    })
+
+    it('should return the key of a feed under either scheme for a scheme placeholder', () => {
+      const value = 'http://example.com/feed'
+      const expected = 'example:site-feed'
+
+      expect(feeds.getFeedKey(value)).toBe(expected)
     })
 
     it('should return the key of a feed on a host under a listed domain', () => {
