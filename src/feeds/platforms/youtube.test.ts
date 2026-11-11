@@ -175,6 +175,76 @@ describe('parseYoutubeUrl', () => {
     expect(parseYoutubeUrl('https://youtube.com/playlist?list=PL1234567890')).toEqual(expected)
   })
 
+  const uploadsFeedValues: Array<string> = [
+    'https://www.youtube.com/feeds/videos.xml?channel_id=UCh63NPM0o2atIXHQQjqfIqA',
+    'https://www.youtube.com/feeds/videos.xml?playlist_id=UUh63NPM0o2atIXHQQjqfIqA',
+    'https://www.youtube.com/feeds/videos.xml?playlist_id=UULVh63NPM0o2atIXHQQjqfIqA',
+    'https://www.youtube.com/feeds/videos.xml?playlist_id=UUMSh63NPM0o2atIXHQQjqfIqA',
+    'https://youtube.com/Feeds/Videos.xml?playlist_id=UULFh63NPM0o2atIXHQQjqfIqA',
+  ]
+
+  it.each(uploadsFeedValues)('should return the channel of the feed %s', (value) => {
+    const expected: YoutubeUrl = { kind: 'feed', channelId: 'UCh63NPM0o2atIXHQQjqfIqA' }
+
+    expect(parseYoutubeUrl(value)).toEqual(expected)
+  })
+
+  const prefixedChannelFeedValues: Array<string> = [
+    'https://www.youtube.com/feeds/videos.xml?playlist_id=UULFHVgbSwvTgM1PcsOCvHjw',
+    'https://www.youtube.com/feeds/videos.xml?playlist_id=UULFLFHVgbSwvTgM1PcsOCvHjw',
+  ]
+
+  it.each(prefixedChannelFeedValues)(
+    'should return the channel whose ID starts with a prefix for the feed %s',
+    (value) => {
+      const expected: YoutubeUrl = { kind: 'feed', channelId: 'UCLFHVgbSwvTgM1PcsOCvHjw' }
+
+      expect(parseYoutubeUrl(value)).toEqual(expected)
+    },
+  )
+
+  it('should return the playlist of a playlist feed', () => {
+    const value =
+      'https://www.youtube.com/feeds/videos.xml?playlist_id=OLAK5uy_lmKuYKcDhQg3fS7o3Ql9Q41XabFKm02_M'
+    const expected: YoutubeUrl = {
+      kind: 'feed',
+      playlistId: 'OLAK5uy_lmKuYKcDhQg3fS7o3Ql9Q41XabFKm02_M',
+    }
+
+    expect(parseYoutubeUrl(value)).toEqual(expected)
+  })
+
+  const notUploadsFeedValues: Array<[string, string]> = [
+    [
+      'https://www.youtube.com/feeds/videos.xml?playlist_id=PLmxmP8p3bUU34kLdPVeYn3taksN_hOH6L',
+      'PLmxmP8p3bUU34kLdPVeYn3taksN_hOH6L',
+    ],
+    [
+      'https://www.youtube.com/feeds/videos.xml?playlist_id=uulfh63NPM0o2atIXHQQjqfIqA',
+      'uulfh63NPM0o2atIXHQQjqfIqA',
+    ],
+    [
+      'https://www.youtube.com/feeds/videos.xml?playlist_id=UUOGFVzj8CefByxicwh4etbwu',
+      'UUOGFVzj8CefByxicwh4etbwu',
+    ],
+  ]
+
+  it.each(notUploadsFeedValues)(
+    'should return the playlist of the feed %s',
+    (value, playlistId) => {
+      const expected: YoutubeUrl = { kind: 'feed', playlistId }
+
+      expect(parseYoutubeUrl(value)).toEqual(expected)
+    },
+  )
+
+  it('should return undefined for a feed without a channel or playlist', () => {
+    const value = 'https://www.youtube.com/feeds/videos.xml?channel_id=abc'
+
+    expect(parseYoutubeUrl('https://www.youtube.com/feeds/videos.xml')).toBeUndefined()
+    expect(parseYoutubeUrl(value)).toBeUndefined()
+  })
+
   it('should return undefined for a channel path without a UC ID', () => {
     expect(parseYoutubeUrl('https://youtube.com/channel/abc')).toBeUndefined()
   })
@@ -318,6 +388,85 @@ describe('youtubeHandler', () => {
       const value = 'https://youtube.com/channel/UC1234567890'
 
       expect(youtubeHandler.resolve(value)).toEqual(expectedChannelFeeds)
+    })
+
+    const channelFeedValues: Array<string> = [
+      'https://www.youtube.com/feeds/videos.xml?channel_id=UCh63NPM0o2atIXHQQjqfIqA',
+      'https://www.youtube.com/feeds/videos.xml?playlist_id=UUh63NPM0o2atIXHQQjqfIqA',
+      'https://www.youtube.com/feeds/videos.xml?playlist_id=UULFh63NPM0o2atIXHQQjqfIqA',
+      'https://www.youtube.com/feeds/videos.xml?playlist_id=UUSHh63NPM0o2atIXHQQjqfIqA',
+      'https://www.youtube.com/feeds/videos.xml?playlist_id=UULVh63NPM0o2atIXHQQjqfIqA',
+      'https://www.youtube.com/feeds/videos.xml?playlist_id=UULPh63NPM0o2atIXHQQjqfIqA',
+      'https://www.youtube.com/feeds/videos.xml?playlist_id=UUPSh63NPM0o2atIXHQQjqfIqA',
+      'https://www.youtube.com/feeds/videos.xml?playlist_id=UUPVh63NPM0o2atIXHQQjqfIqA',
+      'https://www.youtube.com/feeds/videos.xml?playlist_id=UUMOh63NPM0o2atIXHQQjqfIqA',
+      'https://www.youtube.com/feeds/videos.xml?playlist_id=UUMSh63NPM0o2atIXHQQjqfIqA',
+      'https://www.youtube.com/feeds/videos.xml?playlist_id=UUMVh63NPM0o2atIXHQQjqfIqA',
+    ]
+
+    it.each(channelFeedValues)('should return the channel feeds for the feed %s', (value) => {
+      const expected = [
+        {
+          uri: [
+            'https://www.youtube.com/feeds/videos.xml?channel_id=UCh63NPM0o2atIXHQQjqfIqA',
+            'https://www.youtube.com/feeds/videos.xml?playlist_id=UUh63NPM0o2atIXHQQjqfIqA',
+          ],
+          hint: { key: 'youtube:all', label: 'All uploads' },
+        },
+        {
+          uri: 'https://www.youtube.com/feeds/videos.xml?playlist_id=UULFh63NPM0o2atIXHQQjqfIqA',
+          hint: { key: 'youtube:videos', label: 'Videos' },
+        },
+        {
+          uri: 'https://www.youtube.com/feeds/videos.xml?playlist_id=UUSHh63NPM0o2atIXHQQjqfIqA',
+          hint: { key: 'youtube:shorts', label: 'Shorts' },
+        },
+        {
+          uri: 'https://www.youtube.com/feeds/videos.xml?playlist_id=UULVh63NPM0o2atIXHQQjqfIqA',
+          hint: { key: 'youtube:live', label: 'Live streams' },
+        },
+        {
+          uri: 'https://www.youtube.com/feeds/videos.xml?playlist_id=UULPh63NPM0o2atIXHQQjqfIqA',
+          hint: { key: 'youtube:popular-videos', label: 'Popular videos' },
+        },
+        {
+          uri: 'https://www.youtube.com/feeds/videos.xml?playlist_id=UUPSh63NPM0o2atIXHQQjqfIqA',
+          hint: { key: 'youtube:popular-shorts', label: 'Popular shorts' },
+        },
+        {
+          uri: 'https://www.youtube.com/feeds/videos.xml?playlist_id=UUPVh63NPM0o2atIXHQQjqfIqA',
+          hint: { key: 'youtube:popular-live', label: 'Popular live streams' },
+        },
+        {
+          uri: 'https://www.youtube.com/feeds/videos.xml?playlist_id=UUMOh63NPM0o2atIXHQQjqfIqA',
+          hint: { key: 'youtube:member-videos', label: 'Member videos' },
+        },
+        {
+          uri: 'https://www.youtube.com/feeds/videos.xml?playlist_id=UUMSh63NPM0o2atIXHQQjqfIqA',
+          hint: { key: 'youtube:member-shorts', label: 'Member shorts' },
+        },
+        {
+          uri: 'https://www.youtube.com/feeds/videos.xml?playlist_id=UUMVh63NPM0o2atIXHQQjqfIqA',
+          hint: { key: 'youtube:member-live', label: 'Member live streams' },
+        },
+      ]
+
+      expect(youtubeHandler.match(value)).toBe(true)
+      expect(youtubeHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return the playlist feed for a playlist feed', () => {
+      const value =
+        'https://www.youtube.com/feeds/videos.xml?playlist_id=OLAK5uy_lmKuYKcDhQg3fS7o3Ql9Q41XabFKm02_M'
+      const expected = [
+        {
+          uri: value,
+          hint: { key: 'youtube:playlist', label: 'Playlist' },
+        },
+      ]
+
+      expect(youtubeHandler.match(value)).toBe(true)
+      expect(youtubeHandler.resolve(value)).toEqual(expected)
     })
 
     it('should return feed URL for playlist', () => {
