@@ -67,6 +67,9 @@ const uploadsPlaylistKeys: Record<string, string> = {
   UUMS: 'youtube:member-shorts',
   UUMV: 'youtube:member-live',
 }
+// YouTube also supports a legacy ?user=username feed parameter, but it only works with old-style
+// usernames (not modern @handles) and returns the same Atom content as ?channel_id=. YouTube's own
+// autodiscovery always uses channel_id, so we treat it as the canonical format.
 const feeds = definePlatformFeeds([
   { key: 'youtube:all', template: `${feedUrl}?channel_id={channelId}` },
   { key: 'youtube:playlist', template: `${feedUrl}?playlist_id={playlistId}` },
