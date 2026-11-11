@@ -6,10 +6,8 @@ import type {
   DiscoverRef,
   FetchFn,
 } from '../../types.js'
-import { discoverUrisFromPlatform, resolveFromPlatform } from './index.js'
+import { discoverUrisFromPlatform } from './index.js'
 import type { PlatformHandler } from './types.js'
-
-const guessExclusionRegex = /^https:\/\/example\.com\/[^/]+\.xml$/
 
 const samePageUrls = [
   'https://example.com/page?a=1&b=2',
@@ -33,6 +31,65 @@ describe('discoverUrisFromPlatform', () => {
     const options = {
       baseUrl: 'https://example.com',
       handlers: [handler],
+    }
+    const expected = [{ uri: 'https://example.com/feed.xml' }]
+
+    expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
+  })
+
+  it('should return the URL as given with its key when a handler claims it as its feed', async () => {
+    const handler: PlatformHandler = {
+      match: () => false,
+      resolve: () => [],
+      getFeedKey: (url) => (url.endsWith('.xml') ? 'youtube:videos' : undefined),
+    }
+    const options = {
+      baseUrl: 'http://Example.com/alice.xml',
+      handlers: [handler],
+    }
+    const expected = [
+      { uri: 'http://Example.com/alice.xml', hint: { key: 'youtube:videos', label: 'Videos' } },
+    ]
+
+    expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
+  })
+
+  it('should ask every handler for its feed before any match', async () => {
+    const pageHandler: PlatformHandler = {
+      match: () => true,
+      resolve: () => [{ uri: 'https://example.com/alice.xml/feed.xml' }],
+    }
+    const feedHandler: PlatformHandler = {
+      match: () => false,
+      resolve: () => [],
+      getFeedKey: () => 'youtube:videos',
+    }
+    const options = {
+      baseUrl: 'https://example.com/alice.xml',
+      handlers: [pageHandler, feedHandler],
+    }
+    const expected = [
+      { uri: 'https://example.com/alice.xml', hint: { key: 'youtube:videos', label: 'Videos' } },
+    ]
+
+    expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
+  })
+
+  it('should move on when a getFeedKey throws', async () => {
+    const throwingHandler: PlatformHandler = {
+      match: () => false,
+      resolve: () => [],
+      getFeedKey: () => {
+        throw new Error('Unexpected input')
+      },
+    }
+    const handler: PlatformHandler = {
+      match: () => true,
+      resolve: () => [{ uri: 'https://example.com/feed.xml' }],
+    }
+    const options = {
+      baseUrl: 'https://example.com',
+      handlers: [throwingHandler, handler],
     }
     const expected = [{ uri: 'https://example.com/feed.xml' }]
 
@@ -1125,26 +1182,5 @@ describe('discoverUrisFromPlatform', () => {
     await discoverUrisFromPlatform(undefined, undefined, options, undefined, onError)
 
     expect(reported).toEqual(expected)
-  })
-})
-
-describe('resolveFromPlatform', () => {
-  it('should collect the guessExclusionRegex of a handler that matched the requested URL', async () => {
-    const handler: PlatformHandler = {
-      match: (url) => url === 'https://example.com/popular',
-      resolve: () => [{ uri: 'https://example.com/popular/feed.xml' }],
-      guessExclusionRegex,
-    }
-    const options = {
-      baseUrl: 'https://example.com/login',
-      requestedUrl: 'https://example.com/popular',
-      handlers: [handler],
-    }
-    const expected = {
-      entries: [{ uri: 'https://example.com/popular/feed.xml' }],
-      guessExclusionRegexes: [guessExclusionRegex],
-    }
-
-    expect(await resolveFromPlatform(undefined, undefined, options)).toEqual(expected)
   })
 })

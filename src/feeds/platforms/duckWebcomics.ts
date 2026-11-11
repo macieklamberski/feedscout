@@ -1,7 +1,7 @@
-import { getPathSegments, isHostOf, isSameText } from 'trousse'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import { getPathSegments, isHostOf, isSameText, parseUrl } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, findElement, wordRegex } from '../../common/utils.js'
+import { findElement, wordRegex } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -10,7 +10,11 @@ export type DuckWebcomicsUrl = { kind: 'comic'; comic: string }
 const hosts = ['theduckwebcomics.com', 'www.theduckwebcomics.com']
 
 const feedPathRegex = /^\/(\w+)\/rss\/$/i
-const feedRegex = /^https?:\/\/(?:www\.)?theduckwebcomics\.com\/\w+\/rss\/?$/i
+
+const feeds = definePlatformFeeds(
+  [{ key: 'duck-webcomics:comic', template: 'https://{host}/{comic}/rss/' }],
+  { hosts },
+)
 
 export const parseDuckWebcomicsUrl = (url: string): DuckWebcomicsUrl | undefined => {
   if (!isHostOf(url, hosts)) {
@@ -55,20 +59,14 @@ export const duckWebcomicsHandler: PlatformHandler = {
 
   resolve: (url, content) => {
     const page = getDuckWebcomicsPage(url, content)
+    const host = parseUrl(url)?.hostname
 
-    if (!page) {
+    if (!page || !host) {
       return []
     }
 
-    const { comic } = page
-    const { origin } = new URL(url)
-    const uris: Array<DiscoverUriEntry> = []
-
-    uris.push({ uri: `${origin}/${comic}/rss/`, hint: composeHint('duck-webcomics:comic') })
-
-    return uris
+    return [feeds.getFeedEntry('duck-webcomics:comic', { host, comic: page.comic })]
   },
 
-  // A guess keeps the URL's spelling of the comic, a second copy of the feed the page spells.
-  guessExclusionRegex: feedRegex,
+  getFeedKey: feeds.getFeedKey,
 }

@@ -105,17 +105,23 @@ describe('duckWebcomicsHandler', () => {
     })
   })
 
-  describe('guessExclusionRegex', () => {
-    it('should match a guessed comic feed in another case', () => {
-      const value = 'https://www.theduckwebcomics.com/hats/rss'
+  describe('getFeedKey', () => {
+    it('should return the comic key for a comic feed', () => {
+      const value = 'https://www.theduckwebcomics.com/hats/rss/'
 
-      expect(duckWebcomicsHandler.guessExclusionRegex?.test(value)).toBe(true)
+      expect(duckWebcomicsHandler.getFeedKey?.(value)).toBe('duck-webcomics:comic')
     })
 
-    it('should not match a strip page', () => {
+    it('should return the comic key for a comic feed without the trailing slash', () => {
+      const value = 'https://theduckwebcomics.com/hats/rss'
+
+      expect(duckWebcomicsHandler.getFeedKey?.(value)).toBe('duck-webcomics:comic')
+    })
+
+    it('should return undefined for a strip page', () => {
       const value = 'https://www.theduckwebcomics.com/HaTs/4960244/'
 
-      expect(duckWebcomicsHandler.guessExclusionRegex?.test(value)).toBe(false)
+      expect(duckWebcomicsHandler.getFeedKey?.(value)).toBeUndefined()
     })
   })
 })

@@ -3724,7 +3724,7 @@ You can create handlers for platforms not included by default.
 
 ### Handler Interface
 
-A `PlatformHandler` has two methods and an optional regex:
+A `PlatformHandler` has two methods and an optional third:
 
 ```typescript
 type PlatformHandler = {
@@ -3735,7 +3735,7 @@ type PlatformHandler = {
     headers?: Headers,
     fetchFn?: FetchFn,
   ) => MaybePromise<Array<DiscoverUriEntry | DiscoverRef>>
-  guessExclusionRegex?: RegExp
+  getFeedKey?: (url: string) => string | undefined
 }
 ```
 
@@ -3743,7 +3743,35 @@ type PlatformHandler = {
 |--------|-------------|
 | `match(url, content?, headers?)` | Returns `true` if this handler should process the URL |
 | `resolve(url, content?, headers?, fetchFn?)` | Returns an array of [`DiscoverUriEntry`](/reference/types#discoverurientry) objects for the given page URL. A favicon handler can also return a [`DiscoverRef`](/reference/types#discoverref) for an icon that takes an extra request. See [Enriching Platform Icons](/other/favicons#enriching-platform-icons) |
-| `guessExclusionRegex` | Matches the full URL of any user's feed on the platform's host. When the handler matches the page or the requested URL, the [Guess method](/feeds/guess) drops URLs matching it, unless the handler generated them. Set it on a platform where a path like `/feed.xml` can be the feed of a user named `feed` |
+| `getFeedKey(url)` | Returns the hint key of the feed the URL is, when it is one of the feeds the handler builds. The Platform method returns such a URL as given, and the [Guess method](/feeds/guess) drops a guessed one |
+
+### Declaring Feeds
+
+`definePlatformFeeds` holds a handler's feed URLs as templates keyed by hint key: `entry` builds a feed with its hint, `getFeedKey` reads a URL back to its key, `{host}` stands for any host in `hosts` or under `domains`, and `{domain}` for one of `domains`.
+
+```typescript
+import { definePlatformFeeds, type PlatformHandler } from 'feedscout/platform'
+
+const hosts = ['example.com', 'www.example.com']
+
+const feeds = definePlatformFeeds(
+  [
+    { key: 'example:posts', template: 'https://{host}/{username}/feed.rss' },
+    { key: 'example:search', template: 'https://feeds.example.com/rss.xml?q={query}' },
+  ],
+  { hosts },
+)
+
+const exampleHandler: PlatformHandler = {
+  match: (url) => new URL(url).hostname === 'example.com',
+  resolve: (url) => {
+    const [username] = new URL(url).pathname.split('/').filter(Boolean)
+
+    return [feeds.getFeedEntry('example:posts', { host: 'example.com', username })]
+  },
+  getFeedKey: feeds.getFeedKey,
+}
+```
 
 ### Basic Example
 

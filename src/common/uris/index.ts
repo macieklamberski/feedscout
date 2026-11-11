@@ -10,17 +10,19 @@ import { discoverUrisFromFeed } from './feed/index.js'
 import { discoverUrisFromGuess } from './guess/index.js'
 import { discoverUrisFromHeaders } from './headers/index.js'
 import { discoverUrisFromHtml } from './html/index.js'
-import { resolveFromPlatform } from './platform/index.js'
+import { discoverUrisFromPlatform, getFeedKey } from './platform/index.js'
+import type { PlatformHandler } from './platform/types.js'
 
-// A guess is kept when no regex matches it or the platform emitted it. An entry with alternatives
-// keeps the ones that pass and is dropped when none do.
+// A guess is kept when no handler claims it as one of its feeds or the platform emitted it: a
+// guessed `/feed.xml` on a platform host can be the feed of a user named feed. An entry with
+// alternatives keeps the ones that pass and is dropped when none do.
 const excludeGuesses = (
   guesses: Array<UriEntry>,
-  regexes: Array<RegExp>,
+  handlers: Array<PlatformHandler>,
   platformUris: Array<string>,
 ): Array<UriEntry> => {
   const isKept = (uri: string) => {
-    return platformUris.includes(uri) || !regexes.some((regex) => regex.test(uri))
+    return platformUris.includes(uri) || getFeedKey(handlers, uri) === undefined
   }
 
   return guesses.flatMap((guess): Array<UriEntry> => {
@@ -44,10 +46,9 @@ export const discoverUris = async (
   onError?: DiscoverOnErrorFn,
 ): Promise<DiscoverUrisResult> => {
   const result: DiscoverUrisResult = {}
-  let guessExclusionRegexes: Array<RegExp> = []
 
   if (config.platform) {
-    const resolution = await resolveFromPlatform(
+    const entries = await discoverUrisFromPlatform(
       config.platform.content,
       config.platform.headers,
       config.platform.options,
@@ -55,10 +56,8 @@ export const discoverUris = async (
       onError,
     )
 
-    guessExclusionRegexes = resolution.guessExclusionRegexes
-
-    if (resolution.entries.length > 0) {
-      result.platform = resolution.entries
+    if (entries.length > 0) {
+      result.platform = entries
     }
   }
 
@@ -89,7 +88,8 @@ export const discoverUris = async (
   if (config.guess) {
     const platformUris = result.platform?.flatMap((entry) => entry.uri) ?? []
     const guesses = discoverUrisFromGuess(config.guess.options)
-    const uris = excludeGuesses(guesses, guessExclusionRegexes, platformUris)
+    const handlers = config.platform?.options.handlers ?? []
+    const uris = excludeGuesses(guesses, handlers, platformUris)
 
     if (uris.length > 0) {
       result.guess = uris.map((uri) => ({ uri }))

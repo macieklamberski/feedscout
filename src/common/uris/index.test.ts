@@ -3,7 +3,9 @@ import { omitEmpty } from 'trousse'
 import type { FetchFn } from '../types.js'
 import { discoverUris } from './index.js'
 
-const guessExclusionRegex = /^https:\/\/example\.com\/[^/]+\.xml$/
+// A root `.xml` path is a user's feed, as on Plurk.
+const userFeedRegex = /^https:\/\/example\.com\/[^/]+\.xml$/
+const getFeedKey = (url: string) => (userFeedRegex.test(url) ? 'plurk:plurks' : undefined)
 
 describe('discoverUris', () => {
   it('should return empty object when no methods configured', async () => {
@@ -328,7 +330,7 @@ describe('discoverUris', () => {
   })
 
   describe('guess exclusion', () => {
-    it('should drop guesses matching the regex of a matched handler', async () => {
+    it('should drop guesses a handler claims as its feeds', async () => {
       const value = await discoverUris({
         platform: {
           options: {
@@ -337,7 +339,7 @@ describe('discoverUris', () => {
               {
                 match: () => true,
                 resolve: () => [{ uri: 'https://example.com/alice.xml' }],
-                guessExclusionRegex,
+                getFeedKey,
               },
             ],
           },
@@ -366,7 +368,7 @@ describe('discoverUris', () => {
               {
                 match: () => true,
                 resolve: () => [{ uri: 'https://example.com/feed.xml' }],
-                guessExclusionRegex,
+                getFeedKey,
               },
             ],
           },
@@ -386,18 +388,12 @@ describe('discoverUris', () => {
       expect(value).toEqual(expected)
     })
 
-    it('should drop guesses when the matched handler resolves nothing', async () => {
+    it('should drop claimed guesses when the matched handler resolves nothing', async () => {
       const value = await discoverUris({
         platform: {
           options: {
             baseUrl: 'https://example.com',
-            handlers: [
-              {
-                match: () => true,
-                resolve: () => [],
-                guessExclusionRegex,
-              },
-            ],
+            handlers: [{ match: () => true, resolve: () => [], getFeedKey }],
           },
         },
         guess: {
@@ -412,18 +408,12 @@ describe('discoverUris', () => {
       expect(value).toEqual(expected)
     })
 
-    it('should keep the alternatives of a guess that do not match the regex', async () => {
+    it('should keep the alternatives of a guess no handler claims', async () => {
       const value = await discoverUris({
         platform: {
           options: {
             baseUrl: 'https://example.com',
-            handlers: [
-              {
-                match: () => true,
-                resolve: () => [],
-                guessExclusionRegex,
-              },
-            ],
+            handlers: [{ match: () => true, resolve: () => [], getFeedKey }],
           },
         },
         guess: {
@@ -441,18 +431,12 @@ describe('discoverUris', () => {
       expect(value).toEqual(expected)
     })
 
-    it('should keep all guesses when the handler does not match', async () => {
+    it('should keep all guesses when no handler claims them', async () => {
       const value = await discoverUris({
         platform: {
           options: {
             baseUrl: 'https://example.com',
-            handlers: [
-              {
-                match: () => false,
-                resolve: () => [],
-                guessExclusionRegex,
-              },
-            ],
+            handlers: [{ match: () => false, resolve: () => [] }],
           },
         },
         guess: {
@@ -463,34 +447,6 @@ describe('discoverUris', () => {
         },
       })
       const expected = {
-        guess: [{ uri: 'https://example.com/feed.xml' }, { uri: 'https://example.com/rss.xml' }],
-      }
-
-      expect(value).toEqual(expected)
-    })
-
-    it('should keep all guesses when the matched handler has no regex', async () => {
-      const value = await discoverUris({
-        platform: {
-          options: {
-            baseUrl: 'https://example.com/alice',
-            handlers: [
-              {
-                match: () => true,
-                resolve: () => [{ uri: 'https://example.com/alice.xml' }],
-              },
-            ],
-          },
-        },
-        guess: {
-          options: {
-            baseUrl: 'https://example.com',
-            uris: ['/feed.xml', '/rss.xml'],
-          },
-        },
-      })
-      const expected = {
-        platform: [{ uri: 'https://example.com/alice.xml' }],
         guess: [{ uri: 'https://example.com/feed.xml' }, { uri: 'https://example.com/rss.xml' }],
       }
 

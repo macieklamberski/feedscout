@@ -6,7 +6,10 @@
     "headersMethodRequiresHeaders": "Headers method requires headers to be provided in input",
     "guessMethodRequiresUrl": "Guess method requires url to be provided in input",
     "unexpectedStreamBody": "Unexpected stream body from {{url}}",
-    "unexpectedStatus": "Unexpected status {{status}} from {{url}}"
+    "unexpectedStatus": "Unexpected status {{status}} from {{url}}",
+    "invalidFeedTemplate": "Not a feed URL template: {{template}}",
+    "missingFeedTemplate": "No feed template for {{key}}",
+    "missingFeedHosts": "No hosts for the {{key}} feed"
   },
   "hints": {
     "youtube:all": "All uploads",

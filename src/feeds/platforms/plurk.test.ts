@@ -146,13 +146,19 @@ describe('plurkHandler', () => {
     })
   })
 
-  describe('guessExclusionRegex', () => {
-    it('should match a guessed root feed, which is a user feed on Plurk', () => {
-      expect(plurkHandler.guessExclusionRegex?.test('https://www.plurk.com/feed.xml')).toBe(true)
+  describe('getFeedKey', () => {
+    it('should return the plurks key for a user feed', () => {
+      expect(plurkHandler.getFeedKey?.('https://www.plurk.com/alice.xml')).toBe('plurk:plurks')
     })
 
-    it('should not match a post feed', () => {
-      expect(plurkHandler.guessExclusionRegex?.test('https://www.plurk.com/p/abc.xml')).toBe(false)
+    it('should return the responses key for a post feed', () => {
+      expect(plurkHandler.getFeedKey?.('https://www.plurk.com/p/abc123.xml')).toBe(
+        'plurk:responses',
+      )
+    })
+
+    it('should return undefined for a user page', () => {
+      expect(plurkHandler.getFeedKey?.('https://www.plurk.com/alice')).toBeUndefined()
     })
   })
 })
