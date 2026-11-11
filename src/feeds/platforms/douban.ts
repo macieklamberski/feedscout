@@ -1,6 +1,7 @@
 import { isHostOf } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, digitsRegex } from '../../common/utils.js'
+import { digitsRegex } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers subject (html), partly covers people.
@@ -24,6 +25,23 @@ const hosts = [
 
 const userRegex = /^\/people\/([^/]+)/i
 const subjectRegex = /^\/subject\/(?<subjectId>[^/]+)/i
+
+const feeds = definePlatformFeeds([
+  {
+    key: 'douban:interests',
+    template: 'https://www.douban.com/feed/people/{username}/interests',
+  },
+  { key: 'douban:reviews', template: 'https://www.douban.com/feed/people/{username}/reviews' },
+  { key: 'douban:notes', template: 'https://www.douban.com/feed/people/{username}/notes' },
+  {
+    key: 'douban:subject-reviews',
+    template: 'https://www.douban.com/feed/subject/{subjectId}/reviews',
+  },
+  { key: 'douban:book-reviews', template: 'https://www.douban.com/feed/review/book' },
+  { key: 'douban:movie-reviews', template: 'https://www.douban.com/feed/review/movie' },
+  { key: 'douban:music-reviews', template: 'https://www.douban.com/feed/review/music' },
+  { key: 'douban:drama-reviews', template: 'https://www.douban.com/feed/review/drama' },
+])
 
 export const parseDoubanUrl = (url: string): DoubanUrl | undefined => {
   if (!isHostOf(url, hosts)) {
@@ -63,51 +81,27 @@ export const doubanHandler: PlatformHandler = {
     }
 
     if (parsed.kind === 'user') {
-      const { username } = parsed
+      const params = { username: parsed.username }
 
       return [
-        {
-          uri: `https://www.douban.com/feed/people/${username}/interests`,
-          hint: composeHint('douban:interests'),
-        },
-        {
-          uri: `https://www.douban.com/feed/people/${username}/reviews`,
-          hint: composeHint('douban:reviews'),
-        },
-        {
-          uri: `https://www.douban.com/feed/people/${username}/notes`,
-          hint: composeHint('douban:notes'),
-        },
+        feeds.getFeedEntry('douban:interests', params),
+        feeds.getFeedEntry('douban:reviews', params),
+        feeds.getFeedEntry('douban:notes', params),
       ]
     }
 
     if (parsed.kind === 'subject') {
-      return [
-        {
-          uri: `https://www.douban.com/feed/subject/${parsed.subjectId}/reviews`,
-          hint: composeHint('douban:subject-reviews'),
-        },
-      ]
+      return [feeds.getFeedEntry('douban:subject-reviews', { subjectId: parsed.subjectId })]
     }
 
     // Root page: category review feeds.
     return [
-      {
-        uri: 'https://www.douban.com/feed/review/book',
-        hint: composeHint('douban:book-reviews'),
-      },
-      {
-        uri: 'https://www.douban.com/feed/review/movie',
-        hint: composeHint('douban:movie-reviews'),
-      },
-      {
-        uri: 'https://www.douban.com/feed/review/music',
-        hint: composeHint('douban:music-reviews'),
-      },
-      {
-        uri: 'https://www.douban.com/feed/review/drama',
-        hint: composeHint('douban:drama-reviews'),
-      },
+      feeds.getFeedEntry('douban:book-reviews'),
+      feeds.getFeedEntry('douban:movie-reviews'),
+      feeds.getFeedEntry('douban:music-reviews'),
+      feeds.getFeedEntry('douban:drama-reviews'),
     ]
   },
+
+  getFeedKey: feeds.getFeedKey,
 }
