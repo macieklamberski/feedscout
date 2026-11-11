@@ -10,10 +10,12 @@ export type AmebloUrl = { kind: 'blog'; username: string }
 const hosts = ['ameblo.jp', 'www.ameblo.jp']
 const feedHosts = ['ameblo.jp', 'rssblog.ameba.jp']
 
+// A blog page links its feed on rssblog.ameba.jp, and ameblo.jp serves the same feeds under the
+// same paths, so the table reads both hosts.
 const feeds = definePlatformFeeds(
   [
     { key: 'ameblo:posts', template: 'https://{host}/{username}/rss20.xml', format: 'rss' },
-    { key: 'ameblo:posts', template: 'https://ameblo.jp/{username}/atom.xml', format: 'atom' },
+    { key: 'ameblo:posts', template: 'https://{host}/{username}/atom.xml', format: 'atom' },
     {
       key: 'ameblo:posts',
       template: 'https://rssblog.ameba.jp/{username}/rss.html',
@@ -52,8 +54,8 @@ export const amebloHandler: PlatformHandler = {
     const { username } = parsed
 
     return [
-      feeds.getFeedEntry('ameblo:posts', { host: 'ameblo.jp', username }, 'rss'),
-      feeds.getFeedEntry('ameblo:posts', { username }, 'atom'),
+      feeds.getFeedEntry('ameblo:posts', { host: 'rssblog.ameba.jp', username }, 'rss'),
+      feeds.getFeedEntry('ameblo:posts', { host: 'rssblog.ameba.jp', username }, 'atom'),
       feeds.getFeedEntry('ameblo:posts', { username }, 'rdf'),
     ]
   },
