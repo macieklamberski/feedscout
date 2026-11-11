@@ -1,4 +1,7 @@
 import { describe, expect, it } from 'bun:test'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import type { FlipboardUrl } from './flipboard.js'
 import { flipboardHandler, parseFlipboardUrl } from './flipboard.js'
 
@@ -156,6 +159,114 @@ describe('flipboardHandler', () => {
       const value = 'https://flipboard.com/@example/business-arsskhdiz/a-lx3ygqVrTUGLodLkg_7x2g'
 
       expect(flipboardHandler.resolve(value)).toEqual([])
+    })
+  })
+
+  describe('getFeedKey', () => {
+    it('should return the profile key for a profile feed', () => {
+      const value = 'https://flipboard.com/@JawadDogar.rss'
+      const expected = 'flipboard:profile'
+
+      expect(flipboardHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the profile key for a profile feed on the www host', () => {
+      const value = 'https://www.flipboard.com/@HinFahren.rss'
+      const expected = 'flipboard:profile'
+
+      expect(flipboardHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the profile key for a profile feed over http', () => {
+      const value = 'http://flipboard.com/@HinFahren.rss'
+      const expected = 'flipboard:profile'
+
+      expect(flipboardHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the magazine key for a magazine feed', () => {
+      const value =
+        'https://flipboard.com/@gobankingrates/the-most-affordable-places-to-retire-that-have-great-weather-too-tjt3fnf55qlfnd84.rss'
+      const expected = 'flipboard:magazine'
+
+      expect(flipboardHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the magazine key for a magazine feed with an encoded slug', () => {
+      const value =
+        'https://flipboard.com/@andresloren3alr/construcci%C3%B3n-en-espa%C3%B1a-noviembre-23-7c2jllgiz.rss'
+      const expected = 'flipboard:magazine'
+
+      expect(flipboardHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the topic key for a topic feed', () => {
+      const value = 'https://flipboard.com/topic/africanculture.rss'
+      const expected = 'flipboard:topic'
+
+      expect(flipboardHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the topic key for a topic feed with a capitalized route', () => {
+      const value = 'https://flipboard.com/Topic/aiart.rss'
+      const expected = 'flipboard:topic'
+
+      expect(flipboardHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return undefined for a profile page', () => {
+      const value = 'https://flipboard.com/@JawadDogar'
+
+      expect(flipboardHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a magazine page', () => {
+      const value = 'https://flipboard.com/@hildasterner/pizza-ah07s77kz'
+
+      expect(flipboardHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a topic page', () => {
+      const value = 'https://flipboard.com/topic/africanculture'
+
+      expect(flipboardHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for an article page', () => {
+      const value = 'https://flipboard.com/@hildasterner/pizza-ah07s77kz/a-lx3ygqVrTUGLodLkg_7x2g'
+
+      expect(flipboardHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on another host', () => {
+      const value = 'https://example.com/@JawadDogar.rss'
+
+      expect(flipboardHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const ownFeeds: Array<[string, DiscoverUriHint]> = [
+      ['https://flipboard.com/@JawadDogar.rss', { key: 'flipboard:profile', label: 'Profile' }],
+      [
+        'https://flipboard.com/@andresloren3alr/construcci%C3%B3n-en-espa%C3%B1a-noviembre-23-7c2jllgiz.rss',
+        { key: 'flipboard:magazine', label: 'Magazine' },
+      ],
+      [
+        'https://flipboard.com/topic/africanculture.rss',
+        { key: 'flipboard:topic', label: 'Topic' },
+      ],
+    ]
+
+    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [flipboardHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(result).toEqual(expected)
     })
   })
 })
