@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import type { TeletypeUrl } from './teletype.js'
 import { parseTeletypeUrl, teletypeHandler } from './teletype.js'
 
@@ -97,6 +99,79 @@ describe('teletypeHandler', () => {
 
     it('should return empty array for paths without @ prefix', () => {
       expect(teletypeHandler.resolve('https://teletype.in/about')).toEqual([])
+    })
+  })
+
+  describe('getFeedKey', () => {
+    it('should return the posts key for an RSS feed', () => {
+      const value = 'https://teletype.in/rss/zimnijpejzazh'
+      const expected = 'teletype:posts'
+
+      expect(teletypeHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the posts key for an Atom feed', () => {
+      const value = 'https://teletype.in/atom/zimnijpejzazh'
+      const expected = 'teletype:posts'
+
+      expect(teletypeHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the posts key for a feed over http', () => {
+      const value = 'http://teletype.in/rss/zimnijpejzazh'
+      const expected = 'teletype:posts'
+
+      expect(teletypeHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the posts key for a feed with a trailing slash', () => {
+      const value = 'https://teletype.in/atom/zimnijpejzazh/'
+      const expected = 'teletype:posts'
+
+      expect(teletypeHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the posts key for a feed with an encoded username', () => {
+      const value = 'https://teletype.in/rss/%D0%B4%D1%83%D1%80%D0%BE%D0%B2'
+      const expected = 'teletype:posts'
+
+      expect(teletypeHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return undefined for a blog page', () => {
+      const value = 'https://teletype.in/@zimnijpejzazh'
+
+      expect(teletypeHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed path without a username', () => {
+      const value = 'https://teletype.in/rss/'
+
+      expect(teletypeHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for another host', () => {
+      const value = 'https://example.com/rss/zimnijpejzazh'
+
+      expect(teletypeHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const ownFeeds: Array<[string, DiscoverUriHint]> = [
+      ['https://teletype.in/rss/zimnijpejzazh', { key: 'teletype:posts', label: 'Posts' }],
+      ['https://teletype.in/atom/zimnijpejzazh', { key: 'teletype:posts', label: 'Posts' }],
+    ]
+
+    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [teletypeHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(result).toEqual(expected)
     })
   })
 })
