@@ -92,6 +92,21 @@ const toUploadsPlaylistId = (prefix: string, channelId: string): string => {
   return channelId.replace(channelPrefixRegex, prefix)
 }
 
+// An uploads list is one of the channel's feeds, whether a page or a feed URL names it.
+const getPlaylistKey = (playlistId: string | undefined): string => {
+  const uploadsPrefix = playlistId?.match(uploadsPlaylistRegex)?.[1]
+
+  if (uploadsPrefix === 'UU') {
+    return 'youtube:all'
+  }
+
+  if (uploadsPrefix) {
+    return uploadsPlaylistKeys[uploadsPrefix]
+  }
+
+  return 'youtube:playlist'
+}
+
 const pushChannelUris = (uris: Array<DiscoverUriEntry>, channelId: string): void => {
   const uploadsPlaylistId = toUploadsPlaylistId('UU', channelId)
 
@@ -194,7 +209,10 @@ export const youtubeHandler: PlatformHandler = {
     }
 
     if (page.playlistId) {
-      uris.push(feeds.getFeedEntry('youtube:playlist', { playlistId: page.playlistId }))
+      uris.push({
+        uri: feeds.getFeedUrl('youtube:playlist', { playlistId: page.playlistId }),
+        hint: composeHint(getPlaylistKey(page.playlistId)),
+      })
     }
 
     return uris
@@ -217,17 +235,6 @@ export const youtubeHandler: PlatformHandler = {
       return
     }
 
-    const playlistId = getQueryParam(parsedUrl, 'playlist_id')
-    const uploadsPrefix = playlistId?.match(uploadsPlaylistRegex)?.[1]
-
-    if (uploadsPrefix === 'UU') {
-      return 'youtube:all'
-    }
-
-    if (uploadsPrefix) {
-      return uploadsPlaylistKeys[uploadsPrefix]
-    }
-
-    return 'youtube:playlist'
+    return getPlaylistKey(getQueryParam(parsedUrl, 'playlist_id'))
   },
 }
