@@ -1,4 +1,7 @@
 import { describe, expect, it } from 'bun:test'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import { type BuzzsproutUrl, buzzsproutHandler, parseBuzzsproutUrl } from './buzzsprout.js'
 
 describe('parseBuzzsproutUrl', () => {
@@ -74,6 +77,52 @@ describe('buzzsproutHandler', () => {
       const value = 'https://www.buzzsprout.com/about'
 
       expect(buzzsproutHandler.resolve(value)).toEqual([])
+    })
+  })
+
+  describe('getFeedKey', () => {
+    it('should return the podcast key for a podcast feed', () => {
+      const value = 'https://rss.buzzsprout.com/1016149.rss'
+      const expected = 'buzzsprout:podcast'
+
+      expect(buzzsproutHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the podcast key for a podcast feed over http', () => {
+      const value = 'http://rss.buzzsprout.com/1097498.rss'
+      const expected = 'buzzsprout:podcast'
+
+      expect(buzzsproutHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return undefined for a podcast page', () => {
+      const value = 'https://www.buzzsprout.com/1016149'
+
+      expect(buzzsproutHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed path on another host', () => {
+      const value = 'https://example.com/1016149.rss'
+
+      expect(buzzsproutHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const ownFeeds: Array<[string, DiscoverUriHint]> = [
+      ['https://rss.buzzsprout.com/1016149.rss', { key: 'buzzsprout:podcast', label: 'Podcast' }],
+      ['https://rss.buzzsprout.com/1097498.rss', { key: 'buzzsprout:podcast', label: 'Podcast' }],
+    ]
+
+    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [buzzsproutHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(result).toEqual(expected)
     })
   })
 })

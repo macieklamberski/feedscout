@@ -1,12 +1,17 @@
 import { getPathSegments, isHostOf } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, digitsRegex } from '../../common/utils.js'
+import { digitsRegex } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
 export type BuzzsproutUrl = { kind: 'podcast'; podcastId: string }
 
 const hosts = ['buzzsprout.com', 'www.buzzsprout.com']
+
+const feeds = definePlatformFeeds([
+  { key: 'buzzsprout:podcast', template: 'https://rss.buzzsprout.com/{podcastId}.rss' },
+])
 
 export const parseBuzzsproutUrl = (url: string): BuzzsproutUrl | undefined => {
   if (!isHostOf(url, hosts)) {
@@ -34,11 +39,8 @@ export const buzzsproutHandler: PlatformHandler = {
       return []
     }
 
-    return [
-      {
-        uri: `https://rss.buzzsprout.com/${parsed.podcastId}.rss`,
-        hint: composeHint('buzzsprout:podcast'),
-      },
-    ]
+    return [feeds.getFeedEntry('buzzsprout:podcast', { podcastId: parsed.podcastId })]
   },
+
+  getFeedKey: feeds.getFeedKey,
 }
