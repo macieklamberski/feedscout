@@ -300,6 +300,13 @@ describe('dailymotionHandler', () => {
       expect(dailymotionHandler.getFeedKey?.(value)).toBe(expected)
     })
 
+    it('should return the videos key for a legacy user feed', () => {
+      const value = 'https://www.dailymotion.com/rss/user/20Minutes'
+      const expected = 'dailymotion:videos'
+
+      expect(dailymotionHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
     it('should return the playlist key for a playlist feed', () => {
       const value = 'https://www.dailymotion.com/rss/playlist/x5rwtk'
       const expected = 'dailymotion:playlist'
@@ -369,6 +376,10 @@ describe('dailymotionHandler', () => {
   describe('own feeds through the Platform method', () => {
     const ownFeeds: Array<[string, DiscoverUriHint]> = [
       ['https://www.dailymotion.com/rss/adamtas', { key: 'dailymotion:videos', label: 'Videos' }],
+      [
+        'https://www.dailymotion.com/rss/user/20Minutes',
+        { key: 'dailymotion:videos', label: 'Videos' },
+      ],
       [
         'https://www.dailymotion.com/rss/playlist/x5rwtk',
         { key: 'dailymotion:playlist', label: 'Playlist' },

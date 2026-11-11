@@ -30,6 +30,7 @@ const feeds = definePlatformFeeds([
   { key: 'dailymotion:search', template: 'https://www.dailymotion.com/rss/search/{query}' },
   { key: 'dailymotion:channel', template: 'https://www.dailymotion.com/rss/channel/{channel}' },
   { key: 'dailymotion:videos', template: 'https://www.dailymotion.com/rss/{username}' },
+  { key: 'dailymotion:videos', template: 'https://www.dailymotion.com/rss/user/{username}' },
 ])
 
 export const parseDailymotionUrl = (url: string): DailymotionUrl | undefined => {
