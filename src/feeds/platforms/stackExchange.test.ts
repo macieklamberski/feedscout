@@ -437,57 +437,66 @@ describe('stackExchangeHandler', () => {
 
   describe('getFeedKey', () => {
     it('should return the tag key for a tag feed', () => {
-      expect(stackExchangeHandler.getFeedKey?.('https://askubuntu.com/feeds/tag/shadow')).toBe(
-        'stackexchange:tag',
-      )
+      const value = 'https://askubuntu.com/feeds/tag/shadow'
+      const expected = 'stackexchange:tag'
+
+      expect(stackExchangeHandler.getFeedKey?.(value)).toBe(expected)
     })
 
     it('should return the tag key for a sorted tag feed', () => {
       const value = 'https://stackoverflow.com/feeds/tag/javascript?sort=newest'
+      const expected = 'stackexchange:tag'
 
-      expect(stackExchangeHandler.getFeedKey?.(value)).toBe('stackexchange:tag')
+      expect(stackExchangeHandler.getFeedKey?.(value)).toBe(expected)
     })
 
     it('should return the tag key for a percent-encoded tag feed', () => {
-      expect(stackExchangeHandler.getFeedKey?.('https://stackoverflow.com/feeds/tag/c%23')).toBe(
-        'stackexchange:tag',
-      )
+      const value = 'https://stackoverflow.com/feeds/tag/c%23'
+      const expected = 'stackexchange:tag'
+
+      expect(stackExchangeHandler.getFeedKey?.(value)).toBe(expected)
     })
 
     it('should return the question key for a question feed', () => {
       const value = 'https://askubuntu.com/feeds/question/282319'
+      const expected = 'stackexchange:question'
 
-      expect(stackExchangeHandler.getFeedKey?.(value)).toBe('stackexchange:question')
+      expect(stackExchangeHandler.getFeedKey?.(value)).toBe(expected)
     })
 
     it('should return the user key for a user feed', () => {
-      expect(stackExchangeHandler.getFeedKey?.('https://askubuntu.com/feeds/user/1193941')).toBe(
-        'stackexchange:user',
-      )
+      const value = 'https://askubuntu.com/feeds/user/1193941'
+      const expected = 'stackexchange:user'
+
+      expect(stackExchangeHandler.getFeedKey?.(value)).toBe(expected)
     })
 
     it('should return the collective key for a collective feed', () => {
       const value = 'https://stackoverflow.com/feeds/collectives/aws'
+      const expected = 'stackexchange:collective'
 
-      expect(stackExchangeHandler.getFeedKey?.(value)).toBe('stackexchange:collective')
+      expect(stackExchangeHandler.getFeedKey?.(value)).toBe(expected)
     })
 
     it('should return the newest key for the site feed', () => {
-      expect(stackExchangeHandler.getFeedKey?.('https://askubuntu.com/feeds')).toBe(
-        'stackexchange:newest',
-      )
+      const value = 'https://askubuntu.com/feeds'
+      const expected = 'stackexchange:newest'
+
+      expect(stackExchangeHandler.getFeedKey?.(value)).toBe(expected)
     })
 
     it('should return the newest key for the site feed on a nested subdomain', () => {
-      expect(stackExchangeHandler.getFeedKey?.('https://chat.meta.stackexchange.com/feeds')).toBe(
-        'stackexchange:newest',
-      )
+      const value = 'https://chat.meta.stackexchange.com/feeds'
+      const expected = 'stackexchange:newest'
+
+      expect(stackExchangeHandler.getFeedKey?.(value)).toBe(expected)
     })
 
     it('should return the newest key for the network feed', () => {
-      expect(stackExchangeHandler.getFeedKey?.('https://stackexchange.com/feeds')).toBe(
-        'stackexchange:newest',
-      )
+      const value = 'https://stackexchange.com/feeds'
+      const expected = 'stackexchange:newest'
+
+      expect(stackExchangeHandler.getFeedKey?.(value)).toBe(expected)
     })
 
     it('should return undefined for a user feed on the network host', () => {
