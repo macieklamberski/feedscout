@@ -20,6 +20,8 @@ const feeds = definePlatformFeeds(
     { key: 'example:site', template: 'https://{host}/feeds/site' },
     { key: 'example:journal', template: 'https://{username}.{domain}/journal/feed' },
     { key: 'example:site-feed', template: '{scheme}://{host}/feed' },
+    { key: 'example:channel', template: 'https://www.example.com/feed/{channel}' },
+    { key: 'example:channel', template: 'https://{subdomain}.example.org/feed' },
   ],
   { hosts: ['example.com', 'www.example.com'], domains: ['example.net', 'example.edu'] },
 )
@@ -78,6 +80,20 @@ describe('definePlatformFeeds', () => {
     it('should write the scheme value as given', () => {
       const value = feeds.getFeedUrl('example:site-feed', { scheme: 'http', host: 'example.com' })
       const expected = 'http://example.com/feed'
+
+      expect(value).toBe(expected)
+    })
+
+    it('should build the first template of a key whose placeholders the values fill', () => {
+      const value = feeds.getFeedUrl('example:channel', { subdomain: 'alice' })
+      const expected = 'https://alice.example.org/feed'
+
+      expect(value).toBe(expected)
+    })
+
+    it('should build the first template of a key when the values fill none', () => {
+      const value = feeds.getFeedUrl('example:channel', {})
+      const expected = 'https://www.example.com/feed/{channel}'
 
       expect(value).toBe(expected)
     })
