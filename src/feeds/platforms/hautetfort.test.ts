@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import { type HautetfortUrl, hautetfortHandler, parseHautetfortUrl } from './hautetfort.js'
 
 describe('parseHautetfortUrl', () => {
@@ -99,6 +101,96 @@ describe('hautetfortHandler', () => {
       ]
 
       expect(hautetfortHandler.resolve(value)).toEqual(expected)
+    })
+  })
+
+  describe('getFeedKey', () => {
+    it('should return the category key for a category feed', () => {
+      const value = 'http://pourunefranceforteetcatholique.hautetfort.com/web/index.rss'
+      const expected = 'hautetfort:category'
+
+      expect(hautetfortHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the category key for a category feed on blogspirit.com', () => {
+      const value = 'http://actionbarbes.blogspirit.com/dans-le-18eme/index.rss'
+      const expected = 'hautetfort:category'
+
+      expect(hautetfortHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the posts key for an RSS feed', () => {
+      const value = 'http://vouloir.hautetfort.com/index.rss'
+      const expected = 'hautetfort:posts'
+
+      expect(hautetfortHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the posts key for an Atom feed', () => {
+      const value = 'http://cfabtpduloiret.blogspirit.com/atom.xml'
+      const expected = 'hautetfort:posts'
+
+      expect(hautetfortHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the posts key for a feed on blog.blogspirit-business.com', () => {
+      const value = 'http://institutmauricegarcon.blog.blogspirit-business.com/index.rss'
+      const expected = 'hautetfort:posts'
+
+      expect(hautetfortHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return undefined for a category page', () => {
+      const value = 'http://vouloir.hautetfort.com/histoire/'
+
+      expect(hautetfortHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on a nested subdomain', () => {
+      const value = 'http://blog.vouloir.hautetfort.com/index.rss'
+
+      expect(hautetfortHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on the www host', () => {
+      const value = 'https://www.hautetfort.com/index.rss'
+
+      expect(hautetfortHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for another host', () => {
+      const value = 'https://example.com/histoire/index.rss'
+
+      expect(hautetfortHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const ownFeeds: Array<[string, DiscoverUriHint]> = [
+      [
+        'http://pourunefranceforteetcatholique.hautetfort.com/web/index.rss',
+        { key: 'hautetfort:category', label: 'Category' },
+      ],
+      [
+        'http://actionbarbes.blogspirit.com/dans-le-18eme/index.rss',
+        { key: 'hautetfort:category', label: 'Category' },
+      ],
+      ['http://vouloir.hautetfort.com/index.rss', { key: 'hautetfort:posts', label: 'Posts' }],
+      [
+        'http://cfabtpduloiret.blogspirit.com/atom.xml',
+        { key: 'hautetfort:posts', label: 'Posts' },
+      ],
+    ]
+
+    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [hautetfortHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(result).toEqual(expected)
     })
   })
 })
