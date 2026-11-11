@@ -33,9 +33,18 @@ const feeds = definePlatformFeeds([
     template: 'https://habr.com/{language}/rss/users/{username}/publications/articles/',
   },
   {
+    key: 'habr:user',
+    template: 'https://habr.com/{language}/rss/users/{username}/publications/posts/',
+  },
+  {
     key: 'habr:company',
     template: 'https://habr.com/{language}/rss/companies/{company}/articles/',
   },
+  {
+    key: 'habr:company',
+    template: 'https://habr.com/{language}/rss/companies/{company}/articles/all/',
+  },
+  { key: 'habr:company', template: 'https://habr.com/{language}/rss/company/{company}/blog/' },
 ])
 
 export const parseHabrUrl = (url: string): HabrUrl | undefined => {

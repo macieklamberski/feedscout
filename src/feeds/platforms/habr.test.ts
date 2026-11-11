@@ -230,6 +230,27 @@ describe('habrHandler', () => {
       expect(habrHandler.getFeedKey?.(value)).toBe(expected)
     })
 
+    it('should return the user key for a user publications posts feed', () => {
+      const value = 'https://habr.com/ru/rss/users/alizar/publications/posts/'
+      const expected = 'habr:user'
+
+      expect(habrHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the company key for a company feed of all articles', () => {
+      const value = 'https://habr.com/ru/rss/companies/yandex/articles/all/'
+      const expected = 'habr:company'
+
+      expect(habrHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the company key for a company blog feed', () => {
+      const value = 'https://habr.com/ru/rss/company/yandex/blog/'
+      const expected = 'habr:company'
+
+      expect(habrHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
     it('should return the company key for a company feed', () => {
       const value = 'https://habr.com/en/rss/companies/comptek/articles/'
       const expected = 'habr:company'
@@ -334,7 +355,21 @@ describe('habrHandler', () => {
         { key: 'habr:company', label: 'Company' },
       ],
       ['https://habr.com/ru/rss/hub/office365dev/', { key: 'habr:hub', label: 'Hub' }],
+      ['https://habr.com/ru/rss/hubs/python/articles/', { key: 'habr:hub', label: 'Hub' }],
       ['https://habr.com/ru/rss/hubs/python/articles/all/', { key: 'habr:hub', label: 'Hub' }],
+      [
+        'https://habr.com/ru/rss/users/b0fh/publications/articles/',
+        { key: 'habr:user', label: 'User' },
+      ],
+      [
+        'https://habr.com/ru/rss/users/alizar/publications/posts/',
+        { key: 'habr:user', label: 'User' },
+      ],
+      [
+        'https://habr.com/ru/rss/companies/yandex/articles/all/',
+        { key: 'habr:company', label: 'Company' },
+      ],
+      ['https://habr.com/ru/rss/company/yandex/blog/', { key: 'habr:company', label: 'Company' }],
       ['https://habr.com/ru/rss/articles/', { key: 'habr:articles', label: 'Articles' }],
     ]
 
