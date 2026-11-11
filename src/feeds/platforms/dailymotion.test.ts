@@ -1,4 +1,7 @@
 import { describe, expect, it } from 'bun:test'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import type { DailymotionUrl } from './dailymotion.js'
 import { dailymotionHandler, parseDailymotionUrl } from './dailymotion.js'
 
@@ -244,6 +247,155 @@ describe('dailymotionHandler', () => {
       ]
 
       expect(dailymotionHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should return no feeds for a video page', () => {
+      const value = 'https://www.dailymotion.com/video/x8abc12'
+      const expected: Array<DiscoverUriEntry> = []
+
+      expect(dailymotionHandler.resolve(value)).toEqual(expected)
+    })
+  })
+
+  describe('getFeedKey', () => {
+    it('should return the videos key for a user feed', () => {
+      const value = 'https://www.dailymotion.com/rss/adamtas'
+      const expected = 'dailymotion:videos'
+
+      expect(dailymotionHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the videos key for a user feed with an underscore', () => {
+      const value = 'https://www.dailymotion.com/rss/254_official'
+      const expected = 'dailymotion:videos'
+
+      expect(dailymotionHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the videos key for a feed on the host without www', () => {
+      const value = 'https://dailymotion.com/rss/adamtas'
+      const expected = 'dailymotion:videos'
+
+      expect(dailymotionHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the videos key for a feed over http', () => {
+      const value = 'http://www.dailymotion.com/rss/adamtas'
+      const expected = 'dailymotion:videos'
+
+      expect(dailymotionHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the videos key for a feed with a trailing slash', () => {
+      const value = 'https://www.dailymotion.com/rss/adamtas/'
+      const expected = 'dailymotion:videos'
+
+      expect(dailymotionHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the videos key for a feed with a capitalized route', () => {
+      const value = 'https://www.dailymotion.com/RSS/adamtas'
+      const expected = 'dailymotion:videos'
+
+      expect(dailymotionHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the playlist key for a playlist feed', () => {
+      const value = 'https://www.dailymotion.com/rss/playlist/x5rwtk'
+      const expected = 'dailymotion:playlist'
+
+      expect(dailymotionHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the playlist key for a playlist feed with a capitalized route', () => {
+      const value = 'https://www.dailymotion.com/rss/Playlist/x7buf3'
+      const expected = 'dailymotion:playlist'
+
+      expect(dailymotionHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the search key for a search feed', () => {
+      const value = 'https://www.dailymotion.com/rss/search/cats'
+      const expected = 'dailymotion:search'
+
+      expect(dailymotionHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the channel key for a channel feed', () => {
+      const value = 'https://www.dailymotion.com/rss/channel/news'
+      const expected = 'dailymotion:channel'
+
+      expect(dailymotionHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the trending key for the trending feed', () => {
+      const value = 'https://www.dailymotion.com/rss/trending'
+      const expected = 'dailymotion:trending'
+
+      expect(dailymotionHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return undefined for a user page', () => {
+      const value = 'https://www.dailymotion.com/adamtas'
+
+      expect(dailymotionHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a playlist page', () => {
+      const value = 'https://www.dailymotion.com/playlist/x5rwtk'
+
+      expect(dailymotionHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a video page', () => {
+      const value = 'https://www.dailymotion.com/video/x8abc12'
+
+      expect(dailymotionHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for the rss path alone', () => {
+      const value = 'https://www.dailymotion.com/rss'
+
+      expect(dailymotionHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for another host', () => {
+      const value = 'https://example.com/rss/adamtas'
+
+      expect(dailymotionHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const ownFeeds: Array<[string, DiscoverUriHint]> = [
+      ['https://www.dailymotion.com/rss/adamtas', { key: 'dailymotion:videos', label: 'Videos' }],
+      [
+        'https://www.dailymotion.com/rss/playlist/x5rwtk',
+        { key: 'dailymotion:playlist', label: 'Playlist' },
+      ],
+      [
+        'https://www.dailymotion.com/rss/search/cats',
+        { key: 'dailymotion:search', label: 'Search' },
+      ],
+      [
+        'https://www.dailymotion.com/rss/channel/news',
+        { key: 'dailymotion:channel', label: 'Channel' },
+      ],
+      [
+        'https://www.dailymotion.com/rss/trending',
+        { key: 'dailymotion:trending', label: 'Trending' },
+      ],
+    ]
+
+    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [dailymotionHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(result).toEqual(expected)
     })
   })
 })
