@@ -1,13 +1,7 @@
-import {
-  composeQuery,
-  getAnyOf,
-  getQueryParam,
-  isHostOf,
-  isHostOrSubdomainOf,
-  parseUrl,
-} from 'trousse'
+import { getAnyOf, getQueryParam, isHostOf, isHostOrSubdomainOf, parseUrl } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, digitsRegex } from '../../common/utils.js'
+import { digitsRegex } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers home, meta, question (html).
@@ -40,6 +34,18 @@ const collectiveRegex = /^\/collectives\/([^/]+)/i
 
 // Sort values accepted by feeds.tag. Documented at api.stackexchange.com.
 const validSorts = ['newest', 'active', 'votes', 'creation', 'hot', 'week', 'month']
+const feeds = definePlatformFeeds(
+  [
+    // First under its key, so it writes every tag feed: an empty sort leaves the query out.
+    { key: 'stackexchange:tag', template: 'https://{host}/feeds/tag/{tag}?sort={sort}' },
+    { key: 'stackexchange:tag', template: 'https://{host}/feeds/tag/{tag}' },
+    { key: 'stackexchange:question', template: 'https://{host}/feeds/question/{questionId}' },
+    { key: 'stackexchange:user', template: 'https://{host}/feeds/user/{userId}' },
+    { key: 'stackexchange:collective', template: 'https://{host}/feeds/collectives/{collective}' },
+    { key: 'stackexchange:newest', template: 'https://{host}/feeds' },
+  ],
+  { domains },
+)
 
 const getSort = (searchParams: URLSearchParams): string | undefined => {
   const sort = getQueryParam(searchParams, 'sort') ?? getQueryParam(searchParams, 'tab')
@@ -99,57 +105,42 @@ export const stackExchangeHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parseStackExchangeUrl(url)
+    const host = parseUrl(url)?.hostname
 
-    if (!parsed) {
+    if (!parsed || !host) {
       return []
     }
 
-    const { origin } = new URL(url)
-
     if (parsed.kind === 'tag') {
-      const sortQuery = parsed.sort ? composeQuery({ sort: parsed.sort }) : ''
+      const params = { host, tag: parsed.tag, sort: parsed.sort ?? '' }
 
-      return [
-        {
-          uri: `${origin}/feeds/tag/${parsed.tag}${sortQuery}`,
-          hint: composeHint('stackexchange:tag'),
-        },
-      ]
+      return [feeds.getFeedEntry('stackexchange:tag', params)]
     }
 
     if (parsed.kind === 'question') {
-      return [
-        {
-          uri: `${origin}/feeds/question/${parsed.questionId}`,
-          hint: composeHint('stackexchange:question'),
-        },
-      ]
+      return [feeds.getFeedEntry('stackexchange:question', { host, questionId: parsed.questionId })]
     }
 
     if (parsed.kind === 'user') {
-      return [
-        {
-          uri: `${origin}/feeds/user/${parsed.userId}`,
-          hint: composeHint('stackexchange:user'),
-        },
-      ]
+      return [feeds.getFeedEntry('stackexchange:user', { host, userId: parsed.userId })]
     }
 
     if (parsed.kind === 'collective') {
-      return [
-        {
-          uri: `${origin}/feeds/collectives/${parsed.collective}`,
-          hint: composeHint('stackexchange:collective'),
-        },
-      ]
+      const params = { host, collective: parsed.collective }
+
+      return [feeds.getFeedEntry('stackexchange:collective', params)]
     }
 
-    // Homepage: site-wide newest questions feed.
-    return [
-      {
-        uri: `${origin}/feeds`,
-        hint: composeHint('stackexchange:newest'),
-      },
-    ]
+    return [feeds.getFeedEntry('stackexchange:newest', { host })]
+  },
+
+  getFeedKey: (url) => {
+    const key = feeds.getFeedKey(url)
+
+    if (isHostOf(url, networkHosts) && key !== 'stackexchange:newest') {
+      return
+    }
+
+    return key
   },
 }

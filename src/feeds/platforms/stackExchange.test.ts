@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'bun:test'
 import type { DiscoverUriEntry } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import {
   parseStackExchangeUrl,
   type StackExchangeUrl,
@@ -431,5 +433,108 @@ describe('stackExchangeHandler', () => {
     it('should return empty array for unrecognized path', () => {
       expect(stackExchangeHandler.resolve('https://stackoverflow.com/company')).toEqual([])
     })
+  })
+
+  describe('getFeedKey', () => {
+    it('should return the tag key for a tag feed', () => {
+      expect(stackExchangeHandler.getFeedKey?.('https://askubuntu.com/feeds/tag/shadow')).toBe(
+        'stackexchange:tag',
+      )
+    })
+
+    it('should return the tag key for a sorted tag feed', () => {
+      const value = 'https://stackoverflow.com/feeds/tag/javascript?sort=newest'
+
+      expect(stackExchangeHandler.getFeedKey?.(value)).toBe('stackexchange:tag')
+    })
+
+    it('should return the tag key for a percent-encoded tag feed', () => {
+      expect(stackExchangeHandler.getFeedKey?.('https://stackoverflow.com/feeds/tag/c%23')).toBe(
+        'stackexchange:tag',
+      )
+    })
+
+    it('should return the question key for a question feed', () => {
+      const value = 'https://askubuntu.com/feeds/question/282319'
+
+      expect(stackExchangeHandler.getFeedKey?.(value)).toBe('stackexchange:question')
+    })
+
+    it('should return the user key for a user feed', () => {
+      expect(stackExchangeHandler.getFeedKey?.('https://askubuntu.com/feeds/user/1193941')).toBe(
+        'stackexchange:user',
+      )
+    })
+
+    it('should return the collective key for a collective feed', () => {
+      const value = 'https://stackoverflow.com/feeds/collectives/aws'
+
+      expect(stackExchangeHandler.getFeedKey?.(value)).toBe('stackexchange:collective')
+    })
+
+    it('should return the newest key for the site feed', () => {
+      expect(stackExchangeHandler.getFeedKey?.('https://askubuntu.com/feeds')).toBe(
+        'stackexchange:newest',
+      )
+    })
+
+    it('should return the newest key for the site feed on a nested subdomain', () => {
+      expect(stackExchangeHandler.getFeedKey?.('https://chat.meta.stackexchange.com/feeds')).toBe(
+        'stackexchange:newest',
+      )
+    })
+
+    it('should return the newest key for the network feed', () => {
+      expect(stackExchangeHandler.getFeedKey?.('https://stackexchange.com/feeds')).toBe(
+        'stackexchange:newest',
+      )
+    })
+
+    it('should return undefined for a user feed on the network host', () => {
+      const value = 'https://stackexchange.com/feeds/user/12345'
+
+      expect(stackExchangeHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed below a user feed', () => {
+      const value = 'https://askubuntu.com/feeds/user/93023/responses'
+
+      expect(stackExchangeHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for the weekly feed', () => {
+      const value = 'https://apple.stackexchange.com/feeds/week'
+
+      expect(stackExchangeHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a page', () => {
+      const value = 'https://askubuntu.com/questions/282319'
+
+      expect(stackExchangeHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+  })
+})
+
+describe('discoverUrisFromPlatform', () => {
+  const ownFeeds: Array<[string, string, string]> = [
+    ['https://askubuntu.com/feeds/question/282319', 'stackexchange:question', 'Question'],
+    ['https://askubuntu.com/feeds/user/1193941', 'stackexchange:user', 'User'],
+    ['https://askubuntu.com/feeds/tag/shadow', 'stackexchange:tag', 'Tag'],
+    ['https://stackoverflow.com/feeds/tag/javascript?sort=newest', 'stackexchange:tag', 'Tag'],
+    ['https://stackoverflow.com/feeds/collectives/aws', 'stackexchange:collective', 'Collective'],
+    ['https://askubuntu.com/feeds', 'stackexchange:newest', 'Newest questions'],
+    ['https://stackexchange.com/feeds', 'stackexchange:newest', 'Newest questions'],
+  ]
+
+  it.each(ownFeeds)('should return %s itself as %s', async (value, key, label) => {
+    const options = {
+      ...defaultPlatformOptions,
+      handlers: [stackExchangeHandler],
+      baseUrl: value,
+    }
+    const expected: Array<DiscoverUriEntry> = [{ uri: value, hint: { key, label } }]
+
+    expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
   })
 })
