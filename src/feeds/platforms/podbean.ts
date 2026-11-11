@@ -1,6 +1,7 @@
 import { isHostOf } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, getTenantSubdomain } from '../../common/utils.js'
+import { getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -9,6 +10,10 @@ export type PodbeanUrl = { kind: 'podcast'; show: string }
 const domains = ['podbean.com']
 // The feed host serves every show by path, so it names no show.
 const feedHosts = ['feed.podbean.com']
+
+const feeds = definePlatformFeeds([
+  { key: 'podbean:podcast', template: 'https://feed.podbean.com/{show}/feed.xml' },
+])
 
 export const parsePodbeanUrl = (url: string): PodbeanUrl | undefined => {
   const show = getTenantSubdomain(url, domains)
@@ -32,11 +37,8 @@ export const podbeanHandler: PlatformHandler = {
       return []
     }
 
-    return [
-      {
-        uri: `https://feed.podbean.com/${parsed.show}/feed.xml`,
-        hint: composeHint('podbean:podcast'),
-      },
-    ]
+    return [feeds.getFeedEntry('podbean:podcast', { show: parsed.show })]
   },
+
+  getFeedKey: feeds.getFeedKey,
 }

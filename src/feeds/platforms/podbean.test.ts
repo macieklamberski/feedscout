@@ -1,4 +1,7 @@
 import { describe, expect, it } from 'bun:test'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import { type PodbeanUrl, parsePodbeanUrl, podbeanHandler } from './podbean.js'
 
 describe('parsePodbeanUrl', () => {
@@ -71,6 +74,64 @@ describe('podbeanHandler', () => {
 
     it('should return empty array for the bare host', () => {
       expect(podbeanHandler.resolve('https://podbean.com/')).toEqual([])
+    })
+  })
+
+  describe('getFeedKey', () => {
+    it('should return the podcast key for a podcast feed', () => {
+      const value = 'https://feed.podbean.com/ambitchious/feed.xml'
+      const expected = 'podbean:podcast'
+
+      expect(podbeanHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the podcast key for a podcast feed over http', () => {
+      const value = 'http://feed.podbean.com/amoutdoors/feed.xml'
+      const expected = 'podbean:podcast'
+
+      expect(podbeanHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return undefined for a show page', () => {
+      const value = 'https://ambitchious.podbean.com/'
+
+      expect(podbeanHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a show path on the feed host without the feed file', () => {
+      const value = 'https://feed.podbean.com/ambitchious/'
+
+      expect(podbeanHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed path on another host', () => {
+      const value = 'https://example.com/ambitchious/feed.xml'
+
+      expect(podbeanHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const ownFeeds: Array<[string, DiscoverUriHint]> = [
+      [
+        'https://feed.podbean.com/ambitchious/feed.xml',
+        { key: 'podbean:podcast', label: 'Podcast' },
+      ],
+      [
+        'https://feed.podbean.com/amoutdoors/feed.xml',
+        { key: 'podbean:podcast', label: 'Podcast' },
+      ],
+    ]
+
+    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [podbeanHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(result).toEqual(expected)
     })
   })
 })
