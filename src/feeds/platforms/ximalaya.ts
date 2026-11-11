@@ -1,6 +1,7 @@
 import { isHostOf, parseUrl } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, digitsRegex } from '../../common/utils.js'
+import { digitsRegex } from '../../common/utils.js'
 
 // Discoverability: Not discoverable without handler.
 // Handler needed for: all shapes.
@@ -11,6 +12,10 @@ const hosts = ['www.ximalaya.com', 'ximalaya.com']
 
 // Match /album/{id} (canonical) or /{userid}/album/{id} (legacy form).
 const albumRegex = /(?:^|\/)album\/(?<albumId>[^/]+)/i
+
+const feeds = definePlatformFeeds([
+  { key: 'ximalaya:album', template: 'https://www.ximalaya.com/album/{albumId}.xml' },
+])
 
 export const parseXimalayaUrl = (url: string): XimalayaUrl | undefined => {
   const parsedUrl = parseUrl(url)
@@ -40,11 +45,8 @@ export const ximalayaHandler: PlatformHandler = {
       return []
     }
 
-    return [
-      {
-        uri: `https://www.ximalaya.com/album/${parsed.albumId}.xml`,
-        hint: composeHint('ximalaya:album'),
-      },
-    ]
+    return [feeds.getFeedEntry('ximalaya:album', { albumId: parsed.albumId })]
   },
+
+  getFeedKey: feeds.getFeedKey,
 }
