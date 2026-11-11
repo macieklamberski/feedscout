@@ -1,4 +1,4 @@
-import { isSubdomainOf } from 'trousse'
+import { getQueryParam, isAnyOf, isSubdomainOf } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { composeHint, findElement, getTenantSubdomain } from '../../common/utils.js'
@@ -32,14 +32,25 @@ const postIdRegex = /^\/\d+\/?$/
 const trailingSlashRegex = /\/$/
 const feedSegmentRegex = /\/feed(?:\/|$)/i
 const paginationRegex = /\/page\/\d+\/?$/i
+// A page's feed endpoint. The word right after a bare archive route is its slug: /tag/feed/ is
+// the tag named feed.
+const feedEndpointRegex = /(?<!^\/(?:category|tag|author))\/feed(?:\/(?:rss|rss2|atom|rdf))?\/?$/i
+// The site comments feed, whose /comments is no page of its own.
+const commentsFeedRegex = /^\/comments\/feed(?:\/(?:rss|rss2|atom|rdf))?\/?$/i
 // WordPress's rewrite endpoints under a post: its AMP and embed views, trackback and comment pages.
-const postEndpointRegex = /(?<=[^/])\/(?:amp|embed|trackback|comment-page-\d+)\/?$/i
+// The word right after a bare archive route is its slug: /tag/embed/ is the tag named embed.
+const postEndpointRegex =
+  /(?<=[^/])(?<!^\/(?:category|tag|author))\/(?:amp|embed|trackback|comment-page-\d+)\/?$/i
 // WordPress's own scripts and folders, the search results, and an archive route without its slug.
 const reservedPathRegex =
   /^\/(?:wp-(?:admin|content|includes|json)|[^/]*\.(?:php|xml)|search|category|tag|author)(?:\/|$)/i
 
 // An unregistered {name}.home.blog redirects to home.blog, whose every page links this feed.
 const platformFeedUrl = 'https://home.blog/feed/'
+
+// The `?feed=` values of a page's feeds and of the site comments feed.
+const feedQueries = ['rss', 'rss2', 'atom', 'rdf']
+const commentsFeedQueries = ['comments-rss2', 'comments-atom']
 
 // The route word is emitted as listed, so a capitalized path still yields the canonical feed.
 const archives: Array<{ regex: RegExp; hintKey: string; route?: string }> = [
@@ -121,6 +132,38 @@ export const parseWordpressUrl = (url: string): WordpressUrl | undefined => {
   return parseWordpressPage(url)
 }
 
+// The hint key of a WordPress feed URL: the feed endpoint comes off the path, or the `?feed=`
+// query is read, and the page left is the one whose feed it is. A WP Engine feed reads the same.
+export const getWordpressFeedKey = (url: string): string | undefined => {
+  const parsedUrl = new URL(url)
+  const { origin, pathname } = parsedUrl
+  const feedQuery = getQueryParam(parsedUrl, 'feed')
+  const isCommentsFeedQuery = pathname === '/' && isAnyOf(feedQuery, commentsFeedQueries)
+
+  if (commentsFeedRegex.test(pathname) || isCommentsFeedQuery) {
+    return 'wordpress:comments'
+  }
+
+  const isFeedPath = feedEndpointRegex.test(pathname)
+
+  if (!isFeedPath && !isAnyOf(feedQuery, feedQueries)) {
+    return
+  }
+
+  const pagePath = isFeedPath ? pathname.replace(feedEndpointRegex, '') : pathname
+  const page = parseWordpressPage(`${origin}${pagePath}`)
+
+  if (page.kind === 'archive') {
+    return page.hintKey
+  }
+
+  if (page.kind === 'post') {
+    return 'wordpress:post-comments'
+  }
+
+  return 'wordpress:posts'
+}
+
 export const composeWordpressFeeds = (
   origin: string,
   parsed: WordpressUrl,
@@ -180,5 +223,13 @@ export const wordpressHandler: PlatformHandler = {
     }
 
     return composeWordpressFeeds(new URL(url).origin, parsed)
+  },
+
+  getFeedKey: (url) => {
+    if (!getTenantSubdomain(url, domains)) {
+      return
+    }
+
+    return getWordpressFeedKey(url)
   },
 }

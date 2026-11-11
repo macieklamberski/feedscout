@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import { parseWpengineUrl, type WpengineUrl, wpengineHandler } from './wpengine.js'
 
 describe('parseWpengineUrl', () => {
@@ -608,6 +610,69 @@ describe('wpengineHandler', () => {
       ]
 
       expect(wpengineHandler.resolve(value)).toEqual(expected)
+    })
+  })
+
+  describe('getFeedKey', () => {
+    it('should return the posts key for the site feed', () => {
+      const value = 'https://example.wpenginepowered.com/feed/'
+      const expected = 'wordpress:posts'
+
+      expect(wpengineHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the tag key for a tag Atom feed on the legacy domain', () => {
+      const value = 'https://example.wpengine.com/tag/news/feed/atom/'
+      const expected = 'wordpress:tag'
+
+      expect(wpengineHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the post comments key for a post feed query', () => {
+      const value = 'https://example.wpenginepowered.com/2024/05/01/hello/?feed=rss'
+      const expected = 'wordpress:post-comments'
+
+      expect(wpengineHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return undefined for a plugin feed under the feed path', () => {
+      const value = 'https://wondersandwdev.wpengine.com/feed/podcast/'
+
+      expect(wpengineHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on the www subdomain', () => {
+      const value = 'https://www.example.wpengine.com/feed/'
+
+      expect(wpengineHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on another host', () => {
+      const value = 'https://example.wordpress.com/feed/'
+
+      expect(wpengineHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const ownFeeds: Array<[string, DiscoverUriHint]> = [
+      ['https://example.wpenginepowered.com/feed/', { key: 'wordpress:posts', label: 'Posts' }],
+      ['https://example.wpengine.com/tag/news/feed/atom/', { key: 'wordpress:tag', label: 'Tag' }],
+      [
+        'https://example.wpenginepowered.com/2024/05/01/hello/?feed=rss',
+        { key: 'wordpress:post-comments', label: 'Post comments' },
+      ],
+    ]
+
+    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+      const options = {
+        ...defaultPlatformOptions,
+        handlers: [wpengineHandler],
+        baseUrl: value,
+      }
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
     })
   })
 })

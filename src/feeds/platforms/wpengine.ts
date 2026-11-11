@@ -1,6 +1,11 @@
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { getTenantSubdomain } from '../../common/utils.js'
-import { composeWordpressFeeds, parseWordpressPage, type WordpressUrl } from './wordpress.js'
+import {
+  composeWordpressFeeds,
+  getWordpressFeedKey,
+  parseWordpressPage,
+  type WordpressUrl,
+} from './wordpress.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic partly covers blog, legacyBlog.
@@ -30,5 +35,13 @@ export const wpengineHandler: PlatformHandler = {
     }
 
     return composeWordpressFeeds(new URL(url).origin, parsed)
+  },
+
+  getFeedKey: (url) => {
+    if (!getTenantSubdomain(url, domains)) {
+      return
+    }
+
+    return getWordpressFeedKey(url)
   },
 }
