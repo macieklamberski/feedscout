@@ -32,8 +32,13 @@ const postIdRegex = /^\/\d+\/?$/
 const trailingSlashRegex = /\/$/
 const feedSegmentRegex = /\/feed(?:\/|$)/i
 const paginationRegex = /\/page\/\d+\/?$/i
+// A page's feed endpoint, and the site comments feed, whose /comments is no page of its own. The
+// word right after a bare archive route is its slug: /tag/feed/ is the tag named feed.
+const feedEndpointRegex =
+  /(?:^\/comments)?(?<!^\/(?:category|tag|author))\/feed(?:\/(?:rss|rss2|atom|rdf))?\/?$/i
 // WordPress's rewrite endpoints under a post: its AMP and embed views, trackback and comment pages.
-const postEndpointRegex = /(?<=[^/])\/(?:amp|embed|trackback|comment-page-\d+)\/?$/i
+const postEndpointRegex =
+  /(?<=[^/])(?<!^\/(?:category|tag|author))\/(?:amp|embed|trackback|comment-page-\d+)\/?$/i
 // WordPress's own scripts and folders, the search results, and an archive route without its slug.
 const reservedPathRegex =
   /^\/(?:wp-(?:admin|content|includes|json)|[^/]*\.(?:php|xml)|search|category|tag|author)(?:\/|$)/i
@@ -79,8 +84,12 @@ const getPostsFeedEntries = (base: string, key: string): Array<DiscoverUriEntry>
 // The page a WordPress URL shows, read from the path, so a WP Engine site reads the same. Only
 // hypotheses.org's post-id paths need the host.
 export const parseWordpressPage = (url: string): WordpressUrl => {
-  // A paginated listing, `/page/2/` or `/2024/05/page/2/`, is the listing itself.
-  const pathname = new URL(url).pathname.replace(paginationRegex, '').replace(postEndpointRegex, '')
+  // A paginated listing, `/page/2/` or `/2024/05/page/2/`, is the listing itself, and a feed
+  // URL is the page it belongs to.
+  const pathname = new URL(url).pathname
+    .replace(feedEndpointRegex, '')
+    .replace(paginationRegex, '')
+    .replace(postEndpointRegex, '')
 
   // hypotheses.org posts are /{post_id}, so a four-digit id is a post, never a year archive.
   if (isSubdomainOf(url, postIdDomains) && postIdRegex.test(pathname)) {
