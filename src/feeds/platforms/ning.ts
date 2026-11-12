@@ -2,7 +2,7 @@ import { parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { getTenantSubdomain, hasMarker } from '../../common/utils.js'
+import { hasMarker } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic partly covers topic.
@@ -170,13 +170,5 @@ export const ningHandler: PlatformHandler = {
     return uris
   },
 
-  // The table reads any host under ning.com, so only a network's own subdomain is claimed, never
-  // the apex, www or a nested host.
-  getFeedHint: (url) => {
-    if (!getTenantSubdomain(url, domains)) {
-      return
-    }
-
-    return feeds.getFeedHint(url)
-  },
+  getFeedHint: feeds.getFeedHint,
 }
