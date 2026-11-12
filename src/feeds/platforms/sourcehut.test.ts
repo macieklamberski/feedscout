@@ -151,6 +151,21 @@ describe('sourcehutHandler', () => {
       expect(sourcehutHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
+    it('should return the commit history hint for a log feed at a commit hash', () => {
+      const value =
+        'https://git.sr.ht/~example/project/log/0123456789abcdef0123456789abcdef01234567/rss.xml'
+      const expected: DiscoverUriHint = { key: 'sourcehut:commit-history', label: 'Commit history' }
+
+      expect(sourcehutHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the commits hint for a log feed of a short commit hash', () => {
+      const value = 'https://git.sr.ht/~example/project/log/0123456/rss.xml'
+      const expected: DiscoverUriHint = { key: 'sourcehut:commits', label: 'Commits' }
+
+      expect(sourcehutHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
     it('should return the commits hint for a log feed of a repository with a dotted name', () => {
       const value = 'https://git.sr.ht/~example/example.org/log/rss.xml'
       const expected: DiscoverUriHint = { key: 'sourcehut:commits', label: 'Commits' }
@@ -221,6 +236,11 @@ describe('sourcehutHandler', () => {
     const commits: DiscoverUriHint = { key: 'sourcehut:commits', label: 'Commits' }
     const refs: DiscoverUriHint = { key: 'sourcehut:refs', label: 'Refs' }
     const project: DiscoverUriHint = { key: 'sourcehut:project', label: 'Project' }
+    const commitHistory: DiscoverUriHint = {
+      key: 'sourcehut:commit-history',
+      label: 'Commit history',
+    }
+    const hash = '0123456789abcdef0123456789abcdef01234567'
     const ownFeeds: Array<[string, DiscoverUriHint]> = [
       ['https://git.sr.ht/~example/project/log/rss.xml', commits],
       ['http://git.sr.ht/~example/project/log/rss.xml', commits],
@@ -229,6 +249,8 @@ describe('sourcehutHandler', () => {
       ['http://git.sr.ht/~example/project/refs/rss.xml', refs],
       ['https://sr.ht/~example/project/feed.rss', project],
       ['http://sr.ht/~example/project/feed.rss', project],
+      [`https://git.sr.ht/~example/project/log/${hash}/rss.xml`, commitHistory],
+      [`http://git.sr.ht/~example/project/log/${hash}/rss.xml`, commitHistory],
     ]
 
     it.each(ownFeeds)('should return %s as itself', async (value, hint) => {

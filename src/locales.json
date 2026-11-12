@@ -374,6 +374,7 @@
     "sourcehut:commits": "Commits",
     "sourcehut:refs": "Refs",
     "sourcehut:project": "Project",
+    "sourcehut:commit-history": "Commit history",
     "squarespace:collection": "Collection",
     "statuspage:history": "Incident history",
     "wikidot:site-changes": "Site changes",
