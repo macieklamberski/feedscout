@@ -53,13 +53,13 @@ export const syosetuHandler: PlatformHandler = {
 
   // The page parser builds feeds only for a digits writer id, so a feed URL with another id gets
   // no key.
-  getFeedKey: (url) => {
+  getFeedHint: (url) => {
     const writerId = getPathSegments(url).at(-1)?.replace(formatSuffixRegex, '')
 
     if (!writerId || !digitsRegex.test(writerId)) {
       return
     }
 
-    return feeds.getFeedKey(url)
+    return feeds.getFeedHint(url)
   },
 }

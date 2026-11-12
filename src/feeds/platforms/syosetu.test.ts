@@ -84,57 +84,57 @@ describe('syosetuHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
-    it('should return the author key for an author feed', () => {
+  describe('getFeedHint', () => {
+    it('should return the author hint for an author feed', () => {
       const value = 'https://api.syosetu.com/writernovel/12345.Atom'
-      const expected = 'syosetu:author'
+      const expected: DiscoverUriHint = { key: 'syosetu:author', label: 'Author' }
 
-      expect(syosetuHandler.getFeedKey?.(value)).toBe(expected)
+      expect(syosetuHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the activity key for an activity feed', () => {
+    it('should return the activity hint for an activity feed', () => {
       const value = 'https://api.syosetu.com/writer/12345.Atom'
-      const expected = 'syosetu:activity'
+      const expected: DiscoverUriHint = { key: 'syosetu:activity', label: 'Activity' }
 
-      expect(syosetuHandler.getFeedKey?.(value)).toBe(expected)
+      expect(syosetuHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the author key for a lowercase author feed over http', () => {
+    it('should return the author hint for a lowercase author feed over http', () => {
       const value = 'http://api.syosetu.com/writernovel/12345.atom'
-      const expected = 'syosetu:author'
+      const expected: DiscoverUriHint = { key: 'syosetu:author', label: 'Author' }
 
-      expect(syosetuHandler.getFeedKey?.(value)).toBe(expected)
+      expect(syosetuHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the activity key for an activity feed with a trailing slash', () => {
+    it('should return the activity hint for an activity feed with a trailing slash', () => {
       const value = 'https://api.syosetu.com/writer/12345.Atom/'
-      const expected = 'syosetu:activity'
+      const expected: DiscoverUriHint = { key: 'syosetu:activity', label: 'Activity' }
 
-      expect(syosetuHandler.getFeedKey?.(value)).toBe(expected)
+      expect(syosetuHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a word in place of the writer id', () => {
       const value = 'https://api.syosetu.com/writernovel/alice.Atom'
 
-      expect(syosetuHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(syosetuHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed without the format suffix', () => {
       const value = 'https://api.syosetu.com/writernovel/12345'
 
-      expect(syosetuHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(syosetuHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a writer page', () => {
       const value = 'https://mypage.syosetu.com/12345/'
 
-      expect(syosetuHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(syosetuHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for another host', () => {
       const value = 'https://example.com/writernovel/12345.Atom'
 
-      expect(syosetuHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(syosetuHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 
