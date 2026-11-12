@@ -82,5 +82,5 @@ export const internetArchiveHandler: PlatformHandler = {
     return [feeds.getFeedEntry('internet-archive:search', { query: page.query })]
   },
 
-  getFeedKey: feeds.getFeedKey,
+  getFeedHint: feeds.getFeedHint,
 }

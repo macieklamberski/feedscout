@@ -123,81 +123,81 @@ describe('internetArchiveHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
-    it('should return the collection key for a collection feed', () => {
+  describe('getFeedHint', () => {
+    it('should return the collection hint for a collection feed', () => {
       const value = 'https://archive.org/services/collection-rss.php?collection=oldtimeradio'
-      const expected = 'internet-archive:collection'
+      const expected: DiscoverUriHint = { key: 'internet-archive:collection', label: 'Collection' }
 
-      expect(internetArchiveHandler.getFeedKey?.(value)).toBe(expected)
+      expect(internetArchiveHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the search key for a search feed', () => {
+    it('should return the search hint for a search feed', () => {
       const value =
         'https://archive.org/services/collection-rss.php?query=subject:Equalizing-X-Distort'
-      const expected = 'internet-archive:search'
+      const expected: DiscoverUriHint = { key: 'internet-archive:search', label: 'Search' }
 
-      expect(internetArchiveHandler.getFeedKey?.(value)).toBe(expected)
+      expect(internetArchiveHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the search key for a search feed with an encoded query', () => {
+    it('should return the search hint for a search feed with an encoded query', () => {
       const value =
         'https://archive.org/services/collection-rss.php?query=creator%3A%22Mo-No-Yuki%22'
-      const expected = 'internet-archive:search'
+      const expected: DiscoverUriHint = { key: 'internet-archive:search', label: 'Search' }
 
-      expect(internetArchiveHandler.getFeedKey?.(value)).toBe(expected)
+      expect(internetArchiveHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the search key for a search feed with a plus in the query', () => {
+    it('should return the search hint for a search feed with a plus in the query', () => {
       const value =
         'https://archive.org/services/collection-rss.php?query=creator%3A%28Sand%29+AND+-description%3A%28Google%29'
-      const expected = 'internet-archive:search'
+      const expected: DiscoverUriHint = { key: 'internet-archive:search', label: 'Search' }
 
-      expect(internetArchiveHandler.getFeedKey?.(value)).toBe(expected)
+      expect(internetArchiveHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the search key for a feed on the www host', () => {
+    it('should return the search hint for a feed on the www host', () => {
       const value = 'https://www.archive.org/services/collection-rss.php?query=subject%3Atrance'
-      const expected = 'internet-archive:search'
+      const expected: DiscoverUriHint = { key: 'internet-archive:search', label: 'Search' }
 
-      expect(internetArchiveHandler.getFeedKey?.(value)).toBe(expected)
+      expect(internetArchiveHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the search key for a feed over http', () => {
+    it('should return the search hint for a feed over http', () => {
       const value = 'http://archive.org/services/collection-rss.php?query=subject%3Atrance'
-      const expected = 'internet-archive:search'
+      const expected: DiscoverUriHint = { key: 'internet-archive:search', label: 'Search' }
 
-      expect(internetArchiveHandler.getFeedKey?.(value)).toBe(expected)
+      expect(internetArchiveHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the collection key for a collection feed on the cors host', () => {
+    it('should return the collection hint for a collection feed on the cors host', () => {
       const value = 'https://cors.archive.org/services/collection-rss.php?collection=Film_Noir'
-      const expected = 'internet-archive:collection'
+      const expected: DiscoverUriHint = { key: 'internet-archive:collection', label: 'Collection' }
 
-      expect(internetArchiveHandler.getFeedKey?.(value)).toBe(expected)
+      expect(internetArchiveHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a feed with an empty query', () => {
       const value = 'https://archive.org/services/collection-rss.php?query='
 
-      expect(internetArchiveHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(internetArchiveHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a search page', () => {
       const value = 'https://archive.org/search?query=subject%3Atrance'
 
-      expect(internetArchiveHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(internetArchiveHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a collection page', () => {
       const value = 'https://archive.org/details/oldtimeradio'
 
-      expect(internetArchiveHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(internetArchiveHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for another host', () => {
       const value = 'https://example.com/services/collection-rss.php?query=subject%3Atrance'
 
-      expect(internetArchiveHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(internetArchiveHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 
