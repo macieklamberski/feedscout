@@ -120,23 +120,23 @@ describe('isProgrammerHandler', () => {
       expect(isProgrammerHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return http feeds for an https page', () => {
+    it('should return the feeds under the page scheme for an https page', () => {
       const value = 'https://alice.is-programmer.com/'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'http://alice.is-programmer.com/posts.rss',
+          uri: 'https://alice.is-programmer.com/posts.rss',
           hint: { key: 'is-programmer:posts', label: 'Posts' },
         },
         {
-          uri: 'http://alice.is-programmer.com/comments.rss',
+          uri: 'https://alice.is-programmer.com/comments.rss',
           hint: { key: 'is-programmer:comments', label: 'Comments' },
         },
         {
-          uri: 'http://alice.is-programmer.com/messages.rss',
+          uri: 'https://alice.is-programmer.com/messages.rss',
           hint: { key: 'is-programmer:messages', label: 'Messages' },
         },
         {
-          uri: 'http://alice.is-programmer.com/site.rss',
+          uri: 'https://alice.is-programmer.com/site.rss',
           hint: { key: 'is-programmer:site', label: 'Site' },
         },
       ]

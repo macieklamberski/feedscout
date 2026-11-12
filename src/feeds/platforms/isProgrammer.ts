@@ -18,21 +18,23 @@ const postRegex = /^\/posts\/(\d+)(?:\.html)?(?:\/|$)/i
 // An unregistered name answers the sign-up page, served from the platform's own index account.
 const signUpPageRegex = /\/user_files\/index\/config\/favicon\.ico"/i
 
-// The host refuses connections on port 443, and every page links its feeds over http.
-const feeds = definePlatformFeeds([
-  {
-    key: 'is-programmer:post-comments',
-    template: 'http://{blog}.is-programmer.com/posts/{postId}.rss',
-  },
-  { key: 'is-programmer:posts', template: 'http://{blog}.is-programmer.com/posts.rss' },
-  { key: 'is-programmer:posts', template: 'http://{blog}.is-programmer.com/feed' },
-  { key: 'is-programmer:posts', template: 'http://{blog}.is-programmer.com/feed.rss' },
-  { key: 'is-programmer:posts', template: 'http://{blog}.is-programmer.com/rss' },
-  { key: 'is-programmer:posts', template: 'http://{blog}.is-programmer.com/?format=rss' },
-  { key: 'is-programmer:comments', template: 'http://{blog}.is-programmer.com/comments.rss' },
-  { key: 'is-programmer:messages', template: 'http://{blog}.is-programmer.com/messages.rss' },
-  { key: 'is-programmer:site', template: 'http://{blog}.is-programmer.com/site.rss' },
-])
+const feeds = definePlatformFeeds(
+  [
+    {
+      key: 'is-programmer:post-comments',
+      template: '{scheme}://{host}/posts/{postId}.rss',
+    },
+    { key: 'is-programmer:posts', template: '{scheme}://{host}/posts.rss' },
+    { key: 'is-programmer:posts', template: '{scheme}://{host}/feed' },
+    { key: 'is-programmer:posts', template: '{scheme}://{host}/feed.rss' },
+    { key: 'is-programmer:posts', template: '{scheme}://{host}/rss' },
+    { key: 'is-programmer:posts', template: '{scheme}://{host}/?format=rss' },
+    { key: 'is-programmer:comments', template: '{scheme}://{host}/comments.rss' },
+    { key: 'is-programmer:messages', template: '{scheme}://{host}/messages.rss' },
+    { key: 'is-programmer:site', template: '{scheme}://{host}/site.rss' },
+  ],
+  { domains },
+)
 
 export const parseIsProgrammerUrl = (url: string): IsProgrammerUrl | undefined => {
   const parsedUrl = parseUrl(url)
@@ -68,25 +70,23 @@ export const isProgrammerHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parseIsProgrammerUrl(url)
+    const page = feeds.forUrl(url)
 
-    if (!parsed) {
+    if (!parsed || !page) {
       return []
     }
 
-    const params = { blog: parsed.blog }
     const uris: Array<DiscoverUriEntry> = []
 
     if (parsed.kind === 'post') {
-      uris.push(
-        feeds.getFeedEntry('is-programmer:post-comments', { ...params, postId: parsed.postId }),
-      )
+      uris.push(page.getFeedEntry('is-programmer:post-comments', { postId: parsed.postId }))
     }
 
     uris.push(
-      feeds.getFeedEntry('is-programmer:posts', params),
-      feeds.getFeedEntry('is-programmer:comments', params),
-      feeds.getFeedEntry('is-programmer:messages', params),
-      feeds.getFeedEntry('is-programmer:site', params),
+      page.getFeedEntry('is-programmer:posts'),
+      page.getFeedEntry('is-programmer:comments'),
+      page.getFeedEntry('is-programmer:messages'),
+      page.getFeedEntry('is-programmer:site'),
     )
 
     return uris
