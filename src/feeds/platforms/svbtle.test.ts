@@ -106,6 +106,13 @@ describe('svbtleHandler', () => {
       expect(svbtleHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
+    it('should return the posts hint for a feed on www in front of a blog', () => {
+      const value = 'https://www.alice.svbtle.com/feed'
+      const expected: DiscoverUriHint = { key: 'svbtle:posts', label: 'Posts' }
+
+      expect(svbtleHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
     it('should return undefined for a feed on a custom domain', () => {
       const value = 'https://example.com/feed'
 
