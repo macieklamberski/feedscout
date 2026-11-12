@@ -152,6 +152,8 @@ describe('blogHuHandler', () => {
       ['https://candc.blog.hu/comments/rss2', 'blog-hu:comments'],
       ['https://sajtologia.blog.hu/comments/rss', 'blog-hu:comments'],
       ['https://usznikek.blog.hu/comments/comments/rss', 'blog-hu:comments'],
+      ['https://lambda.blog.hu/comments/comments/rss2', 'blog-hu:comments'],
+      ['https://konyves.blog.hu/comments/comments/rss2/', 'blog-hu:comments'],
       ['https://isolde.blog.hu/comments/atom', 'blog-hu:comments'],
       ['http://kertbuvolo.blog.hu/rss2', 'blog-hu:posts'],
       ['https://blog.hu/user/1264714/rss', 'blog-hu:user'],
