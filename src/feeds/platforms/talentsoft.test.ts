@@ -1,4 +1,7 @@
 import { describe, expect, it } from 'bun:test'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import { isTalentsoftHtml, talentsoftHandler } from './talentsoft.js'
 
 const homeHtml = `
@@ -242,6 +245,114 @@ describe('talentsoftHandler', () => {
       ]
 
       expect(talentsoftHandler.resolve(value, offsiteSearchHtml)).toEqual(expected)
+    })
+
+    it('should keep the http scheme of the site', () => {
+      const value = 'http://alice.talent-soft.com/accueil.aspx?LCID=1036'
+      const expected = [
+        {
+          uri: 'http://alice.talent-soft.com/handlers/offerRss.ashx?LCID=1036',
+          hint: { key: 'talentsoft:offers', label: 'Job offers' },
+        },
+      ]
+
+      expect(talentsoftHandler.resolve(value, homeHtml)).toEqual(expected)
+    })
+
+    it('should return no feeds for a page outside http', () => {
+      const value = 'ftp://alice.talent-soft.com/accueil.aspx'
+
+      expect(talentsoftHandler.resolve(value, homeHtml)).toEqual([])
+    })
+  })
+
+  describe('getFeedHint', () => {
+    it('should return the offers hint for an offers feed in a language', () => {
+      const value = 'https://alice.talent-soft.com/handlers/offerRss.ashx?LCID=1036'
+      const expected: DiscoverUriHint = { key: 'talentsoft:offers', label: 'Job offers' }
+
+      expect(talentsoftHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the offers hint for an offers feed with a lowercase lcid', () => {
+      const value = 'https://alice.talent-soft.com/handlers/offerRss.ashx?lcid=2057'
+      const expected: DiscoverUriHint = { key: 'talentsoft:offers', label: 'Job offers' }
+
+      expect(talentsoftHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the offers hint for an offers feed without a language', () => {
+      const value = 'https://alice.talent-soft.com/handlers/offerRss.ashx'
+      const expected: DiscoverUriHint = { key: 'talentsoft:offers', label: 'Job offers' }
+
+      expect(talentsoftHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the search hint for a feed with a criterion', () => {
+      const value = 'https://alice.talent-soft.com/handlers/offerRss.ashx?LCID=1036&Rss_Profile=12'
+      const expected: DiscoverUriHint = { key: 'talentsoft:search', label: 'Search results' }
+
+      expect(talentsoftHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return the search hint for a feed with a renamed facet', () => {
+      const value =
+        'https://alice.talent-soft.com/handlers/offerRss.ashx?Rss_JobDescription_Contract=1&lcid=1036'
+      const expected: DiscoverUriHint = { key: 'talentsoft:search', label: 'Search results' }
+
+      expect(talentsoftHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return undefined for a career site page', () => {
+      const value = 'https://alice.talent-soft.com/accueil.aspx?LCID=1036'
+
+      expect(talentsoftHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on the apex', () => {
+      const value = 'https://talent-soft.com/handlers/offerRss.ashx'
+
+      expect(talentsoftHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on the www host', () => {
+      const value = 'https://www.talent-soft.com/handlers/offerRss.ashx'
+
+      expect(talentsoftHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on a custom domain', () => {
+      const value = 'https://example.com/handlers/offerRss.ashx?LCID=1036'
+
+      expect(talentsoftHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const ownFeeds: Array<[string, DiscoverUriHint]> = [
+      [
+        'https://alice.talent-soft.com/handlers/offerRss.ashx?LCID=1036',
+        { key: 'talentsoft:offers', label: 'Job offers' },
+      ],
+      [
+        'https://alice.talent-soft.com/handlers/offerRss.ashx',
+        { key: 'talentsoft:offers', label: 'Job offers' },
+      ],
+      [
+        'https://alice.talent-soft.com/handlers/offerRss.ashx?LCID=2057&Rss_Entity=68',
+        { key: 'talentsoft:search', label: 'Search results' },
+      ],
+    ]
+
+    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [talentsoftHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(result).toEqual(expected)
     })
   })
 })
