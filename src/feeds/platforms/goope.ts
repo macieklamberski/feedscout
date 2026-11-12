@@ -154,9 +154,13 @@ export const goopeHandler: PlatformHandler = {
       return []
     }
 
-    const { protocol, host } = new URL(url)
-    const feeds = parsed.kind === 'freeSite' ? freeSiteFeeds : siteFeeds
-    const params: PlatformFeedParams = { scheme: protocol.slice(0, -1), host }
+    const pageFeeds = (parsed.kind === 'freeSite' ? freeSiteFeeds : siteFeeds).forUrl(url)
+
+    if (!pageFeeds) {
+      return []
+    }
+
+    const params: PlatformFeedParams = {}
 
     if (parsed.site) {
       params.site = parsed.site
@@ -166,11 +170,11 @@ export const goopeHandler: PlatformHandler = {
       params.templateId = parsed.templateId
     }
 
-    const news = feeds.getFeedEntry('goope:news', params, 'rdf')
+    const news = pageFeeds.getFeedEntry('goope:news', params, 'rdf')
 
     // A chamber of commerce site collects its members' news under /shokokai/member.
     if (parsed.isMemberPage) {
-      return [feeds.getFeedEntry('goope:member-news', params, 'rdf'), news]
+      return [pageFeeds.getFeedEntry('goope:member-news', params, 'rdf'), news]
     }
 
     return [news]
