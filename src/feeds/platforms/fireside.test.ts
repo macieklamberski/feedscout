@@ -85,74 +85,87 @@ describe('firesideHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
-    it('should return the podcast key for an RSS feed', () => {
+  describe('getFeedHint', () => {
+    it('should return the podcast hint for an RSS feed', () => {
       const value = 'https://feeds.fireside.fm/99zueins/rss'
-      const expected = 'fireside:podcast'
+      const expected: DiscoverUriHint = { key: 'fireside:podcast', label: 'Podcast', format: 'rss' }
 
-      expect(firesideHandler.getFeedKey?.(value)).toBe(expected)
+      expect(firesideHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the podcast key for an RSS feed with a trailing slash', () => {
+    it('should return the podcast hint for an RSS feed with a trailing slash', () => {
       const value = 'https://feeds.fireside.fm/podcastmethod/rss/'
-      const expected = 'fireside:podcast'
+      const expected: DiscoverUriHint = { key: 'fireside:podcast', label: 'Podcast', format: 'rss' }
 
-      expect(firesideHandler.getFeedKey?.(value)).toBe(expected)
+      expect(firesideHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the podcast key for a JSON feed', () => {
+    it('should return the podcast hint for a JSON feed', () => {
       const value = 'https://99zueins.fireside.fm/json'
-      const expected = 'fireside:podcast'
+      const expected: DiscoverUriHint = {
+        key: 'fireside:podcast',
+        label: 'Podcast',
+        format: 'json',
+      }
 
-      expect(firesideHandler.getFeedKey?.(value)).toBe(expected)
+      expect(firesideHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a show page', () => {
       const value = 'https://99zueins.fireside.fm/'
 
-      expect(firesideHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(firesideHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a show path on the feed host', () => {
       const value = 'https://feeds.fireside.fm/99zueins'
 
-      expect(firesideHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(firesideHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a tag feed', () => {
       const value = 'https://99zueins.fireside.fm/tags/podcast/rss'
 
-      expect(firesideHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(firesideHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a JSON feed on a nested subdomain', () => {
       const value = 'https://blog.example.fireside.fm/json'
 
-      expect(firesideHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(firesideHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a JSON feed on the www host', () => {
       const value = 'https://www.fireside.fm/json'
 
-      expect(firesideHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(firesideHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for another host', () => {
       const value = 'https://example.com/json'
 
-      expect(firesideHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(firesideHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 
   describe('own feeds through the Platform method', () => {
     const ownFeeds: Array<[string, DiscoverUriHint]> = [
-      ['https://feeds.fireside.fm/99zueins/rss', { key: 'fireside:podcast', label: 'Podcast' }],
-      ['https://feeds.fireside.fm/assets/rss', { key: 'fireside:podcast', label: 'Podcast' }],
+      [
+        'https://feeds.fireside.fm/99zueins/rss',
+        { key: 'fireside:podcast', label: 'Podcast', format: 'rss' },
+      ],
+      [
+        'https://feeds.fireside.fm/assets/rss',
+        { key: 'fireside:podcast', label: 'Podcast', format: 'rss' },
+      ],
       [
         'https://feeds.fireside.fm/podcastmethod/rss/',
-        { key: 'fireside:podcast', label: 'Podcast' },
+        { key: 'fireside:podcast', label: 'Podcast', format: 'rss' },
       ],
-      ['https://99zueins.fireside.fm/json', { key: 'fireside:podcast', label: 'Podcast' }],
+      [
+        'https://99zueins.fireside.fm/json',
+        { key: 'fireside:podcast', label: 'Podcast', format: 'json' },
+      ],
     ]
 
     it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
