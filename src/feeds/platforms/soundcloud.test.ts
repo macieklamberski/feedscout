@@ -117,64 +117,64 @@ describe('soundcloudHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
-    it('should return the tracks key for a user feed', () => {
+  describe('getFeedHint', () => {
+    it('should return the tracks hint for a user feed', () => {
       const value = 'https://feeds.soundcloud.com/users/soundcloud:users:12345/sounds.rss'
-      const expected = 'soundcloud:tracks'
+      const expected: DiscoverUriHint = { key: 'soundcloud:tracks', label: 'Tracks' }
 
-      expect(soundcloudHandler.getFeedKey?.(value)).toBe(expected)
+      expect(soundcloudHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the tracks key for a user feed without sounds.rss', () => {
+    it('should return the tracks hint for a user feed without sounds.rss', () => {
       const value = 'https://feeds.soundcloud.com/users/soundcloud:users:12345'
-      const expected = 'soundcloud:tracks'
+      const expected: DiscoverUriHint = { key: 'soundcloud:tracks', label: 'Tracks' }
 
-      expect(soundcloudHandler.getFeedKey?.(value)).toBe(expected)
+      expect(soundcloudHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the tracks key for an http user feed', () => {
+    it('should return the tracks hint for an http user feed', () => {
       const value = 'http://feeds.soundcloud.com/users/soundcloud:users:12345/sounds.rss'
-      const expected = 'soundcloud:tracks'
+      const expected: DiscoverUriHint = { key: 'soundcloud:tracks', label: 'Tracks' }
 
-      expect(soundcloudHandler.getFeedKey?.(value)).toBe(expected)
+      expect(soundcloudHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the tracks key for a paged user feed', () => {
+    it('should return the tracks hint for a paged user feed', () => {
       const value =
         'https://feeds.soundcloud.com/users/soundcloud:users:12345/sounds.rss?before=67890'
-      const expected = 'soundcloud:tracks'
+      const expected: DiscoverUriHint = { key: 'soundcloud:tracks', label: 'Tracks' }
 
-      expect(soundcloudHandler.getFeedKey?.(value)).toBe(expected)
+      expect(soundcloudHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a user feed with a word in place of the id', () => {
       const value = 'https://feeds.soundcloud.com/users/soundcloud:users:alice/sounds.rss'
 
-      expect(soundcloudHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(soundcloudHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a user feed with a word before the id', () => {
       const value = 'https://feeds.soundcloud.com/users/soundcloud:users:alice:12345/sounds.rss'
 
-      expect(soundcloudHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(soundcloudHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a playlist feed', () => {
       const value = 'https://feeds.soundcloud.com/playlists/soundcloud:sets:12345/sounds.rss'
 
-      expect(soundcloudHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(soundcloudHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a profile page', () => {
       const value = 'https://soundcloud.com/alice'
 
-      expect(soundcloudHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(soundcloudHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for another host', () => {
       const value = 'https://example.com/users/soundcloud:users:12345/sounds.rss'
 
-      expect(soundcloudHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(soundcloudHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 

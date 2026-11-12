@@ -77,13 +77,13 @@ export const soundcloudHandler: PlatformHandler = {
   },
 
   // A user id is digits, and a word in its place answers 400.
-  getFeedKey: (url) => {
+  getFeedHint: (url) => {
     const [, userSegment] = getPathSegments(url)
 
     if (!userSegment || !userSegmentRegex.test(userSegment)) {
       return
     }
 
-    return feeds.getFeedKey(url)
+    return feeds.getFeedHint(url)
   },
 }
