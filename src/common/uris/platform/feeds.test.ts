@@ -39,6 +39,11 @@ const hintFeeds = definePlatformFeeds([
   { key: 'youtube:videos', template: 'https://example.com/{username}/videos.xml' },
 ])
 
+const apexFeeds = definePlatformFeeds([
+  { key: 'example:site', template: 'https://example.org/rss' },
+  { key: 'example:blog', template: 'https://{username}.example.org/rss' },
+])
+
 describe('definePlatformFeeds', () => {
   it('should throw for a template without an http scheme', () => {
     const throwing = () =>
@@ -254,6 +259,41 @@ describe('definePlatformFeeds', () => {
       const expected = 'example:posts'
 
       expect(feeds.getFeedHint(value)?.key).toBe(expected)
+    })
+
+    it('should return the key of a tenant named www on a tenant host as given', () => {
+      const value = 'https://www.example.org/feed'
+      const expected = 'example:blog'
+
+      expect(feeds.getFeedHint(value)?.key).toBe(expected)
+    })
+
+    it('should return the key of a feed on a tenant host with www', () => {
+      const value = 'https://www.alice.example.org/feed'
+      const expected = 'example:blog'
+
+      expect(feeds.getFeedHint(value)?.key).toBe(expected)
+    })
+
+    it('should return the key of a feed on a fixed host with www', () => {
+      const value = 'https://www.example.com/alice/videos.xml'
+      const expected = 'youtube:videos'
+
+      expect(hintFeeds.getFeedHint(value)?.key).toBe(expected)
+    })
+
+    it('should return the key of a tenant row as given over an apex row without www', () => {
+      const value = 'https://www.example.org/rss'
+      const expected = 'example:blog'
+
+      expect(apexFeeds.getFeedHint(value)?.key).toBe(expected)
+    })
+
+    it('should return the key of an apex row for the apex host', () => {
+      const value = 'https://example.org/rss'
+      const expected = 'example:site'
+
+      expect(apexFeeds.getFeedHint(value)?.key).toBe(expected)
     })
 
     it('should ignore the query order and extra parameters', () => {
