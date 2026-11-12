@@ -82,8 +82,8 @@ const compileTemplate = (
 
   const [, scheme, host, path = '', queryText = ''] = match
   const query = [...new URLSearchParams(queryText)]
-  // A name with no `=`, such as `?rss`, is a flag, built with no value.
-  const flags = new Set(queryText.split('&').filter((pair) => pair && !pair.includes('=')))
+  // A name with no value, such as `?rss`, is a flag, built with no value.
+  const flags = new Set(query.filter(([, value]) => !value).map(([name]) => name))
   const hosts = (options.hosts ?? []).map((value) => escapeRegex(stripWww(value)))
   const domains = (options.domains ?? []).map(escapeRegex)
   const domainSource = `(?:${domains.join('|')})`

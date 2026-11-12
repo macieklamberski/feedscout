@@ -23,6 +23,8 @@ const feeds = definePlatformFeeds(
     { key: 'example:channel', template: 'https://www.example.com/feed/{channel}' },
     { key: 'example:channel', template: 'https://{subdomain}.example.org/feed' },
     { key: 'example:profile', template: 'https://www.example.com/-{username}/?rss' },
+    { key: 'example:member', template: 'https://www.example.com/members/{username}?rss=' },
+    { key: 'example:page', template: 'https://www.example.com/pages/{username}?rss&page={page}' },
   ],
   { hosts: ['example.com', 'www.example.com'], domains: ['example.net', 'example.edu'] },
 )
@@ -74,6 +76,20 @@ describe('definePlatformFeeds', () => {
     it('should write a query flag with no value', () => {
       const value = feeds.getFeedUrl('example:profile', { username: 'alice' })
       const expected = 'https://www.example.com/-alice/?rss'
+
+      expect(value).toBe(expected)
+    })
+
+    it('should write a query flag written with an empty value as a flag', () => {
+      const value = feeds.getFeedUrl('example:member', { username: 'alice' })
+      const expected = 'https://www.example.com/members/alice?rss'
+
+      expect(value).toBe(expected)
+    })
+
+    it('should write a query flag beside a query value', () => {
+      const value = feeds.getFeedUrl('example:page', { username: 'alice', page: '2' })
+      const expected = 'https://www.example.com/pages/alice?rss&page=2'
 
       expect(value).toBe(expected)
     })
@@ -169,6 +185,20 @@ describe('definePlatformFeeds', () => {
     it('should return the key of a feed named by a query flag with an empty value', () => {
       const value = 'https://www.example.com/-alice/?rss='
       const expected = 'example:profile'
+
+      expect(feeds.getFeedKey(value)).toBe(expected)
+    })
+
+    it('should return the key of a feed whose template writes the flag with an empty value', () => {
+      const value = 'https://www.example.com/members/alice?rss'
+      const expected = 'example:member'
+
+      expect(feeds.getFeedKey(value)).toBe(expected)
+    })
+
+    it('should return the key of a feed named by a query flag beside a query value', () => {
+      const value = 'https://www.example.com/pages/alice?page=2&rss='
+      const expected = 'example:page'
 
       expect(feeds.getFeedKey(value)).toBe(expected)
     })
