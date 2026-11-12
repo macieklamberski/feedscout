@@ -1,22 +1,25 @@
-import { getPathSegments, isHostOf, parseUrl } from 'trousse'
+import { getPathSegments, isAnyOf, isHostOf, parseUrl } from 'trousse'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic partly covers log.
-// Handler needed for: repo.
+// Handler needed for: repo, project.
 
 export type SourcehutUrl =
   | { kind: 'user'; owner: string }
   | { kind: 'repo'; owner: string; repo: string }
+  | { kind: 'project'; owner: string; project: string }
 
 export const hosts = ['git.sr.ht']
-const userHosts = ['sr.ht', 'todo.sr.ht', ...hosts]
+const projectHosts = ['sr.ht']
+const userHosts = [...projectHosts, 'todo.sr.ht', ...hosts]
 
 const feeds = definePlatformFeeds([
   { key: 'sourcehut:commits', template: 'https://git.sr.ht/~{owner}/{repo}/log/rss.xml' },
   { key: 'sourcehut:commits', template: 'https://git.sr.ht/~{owner}/{repo}/log/{ref}/rss.xml' },
   { key: 'sourcehut:refs', template: 'https://git.sr.ht/~{owner}/{repo}/refs/rss.xml' },
+  { key: 'sourcehut:project', template: 'https://sr.ht/~{owner}/{project}/feed.rss' },
 ])
 
 export const parseSourcehutUrl = (url: string): SourcehutUrl | undefined => {
@@ -39,6 +42,10 @@ export const parseSourcehutUrl = (url: string): SourcehutUrl | undefined => {
     return { kind: 'repo', owner, repo }
   }
 
+  if (repo && isHostOf(parsedUrl, projectHosts)) {
+    return { kind: 'project', owner, project: repo }
+  }
+
   if (!repo && isHostOf(parsedUrl, userHosts)) {
     return { kind: 'user', owner }
   }
@@ -46,11 +53,19 @@ export const parseSourcehutUrl = (url: string): SourcehutUrl | undefined => {
 
 export const sourcehutHandler: PlatformHandler = {
   match: (url) => {
-    return parseSourcehutUrl(url)?.kind === 'repo'
+    const kind = parseSourcehutUrl(url)?.kind
+
+    return isAnyOf(kind, ['repo', 'project'])
   },
 
   resolve: (url) => {
     const parsed = parseSourcehutUrl(url)
+
+    if (parsed?.kind === 'project') {
+      return [
+        feeds.getFeedEntry('sourcehut:project', { owner: parsed.owner, project: parsed.project }),
+      ]
+    }
 
     if (parsed?.kind !== 'repo') {
       return []

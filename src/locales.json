@@ -373,6 +373,7 @@
     "postype:posts": "Posts",
     "sourcehut:commits": "Commits",
     "sourcehut:refs": "Refs",
+    "sourcehut:project": "Project",
     "squarespace:collection": "Collection",
     "statuspage:history": "Incident history",
     "wikidot:site-changes": "Site changes",

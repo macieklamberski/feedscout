@@ -1,3 +1,4 @@
+import { isAnyOf } from 'trousse'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement, hasClass } from '../../common/utils.js'
 import { parseSourcehutUrl } from '../../feeds/platforms/sourcehut.js'
@@ -21,14 +22,17 @@ const parseAvatar = (html: string): Array<string> => {
 }
 
 export const sourcehutHandler: PlatformHandler = {
+  // A project page carries no avatar, and its README images are not the owner's icon.
   match: (url) => {
-    return parseSourcehutUrl(url) !== undefined
+    const kind = parseSourcehutUrl(url)?.kind
+
+    return isAnyOf(kind, ['user', 'repo'])
   },
 
   resolve: (url, content) => {
     const parsed = parseSourcehutUrl(url)
 
-    if (!parsed) {
+    if (!parsed || parsed.kind === 'project') {
       return []
     }
 

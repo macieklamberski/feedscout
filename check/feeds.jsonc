@@ -1619,6 +1619,7 @@
   },
   "sourcehut": {
     "sourcehut:commits": "https://git.sr.ht/~sircmpwn/hare/log/rss.xml",
+    "sourcehut:project": "https://sr.ht/~sircmpwn/hare/feed.rss",
     "sourcehut:refs": "https://git.sr.ht/~sircmpwn/hare/refs/rss.xml"
   },
   "spip": {
