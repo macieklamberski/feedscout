@@ -22,8 +22,6 @@ const channelRegex = /"is_series":(?:false|true),"url":"([^"]+)"/g
 
 const feeds = definePlatformFeeds([
   { key: 'sermon-net:channel', template: 'https://{tenant}.sermon.net/rss/{channel}/audio' },
-  // The same audio entries, with each title ending in `- Audio`.
-  { key: 'sermon-net:channel', template: 'https://{tenant}.sermon.net/rss/{channel}/audio_pdf' },
   { key: 'sermon-net:church', template: 'https://{tenant}.sermon.net/rss' },
 ])
 

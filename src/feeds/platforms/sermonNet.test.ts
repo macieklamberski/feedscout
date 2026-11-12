@@ -216,13 +216,6 @@ describe('sermonNetHandler', () => {
       expect(sermonNetHandler.getFeedKey?.(value)).toBe(expected)
     })
 
-    it('should return the channel key for the audio and PDF feed of a channel', () => {
-      const value = 'https://example.sermon.net/rss/sermons/audio_pdf'
-      const expected = 'sermon-net:channel'
-
-      expect(sermonNetHandler.getFeedKey?.(value)).toBe(expected)
-    })
-
     it('should return the channel key for a channel with an escaped slash', () => {
       const value = 'https://example.sermon.net/rss/main%2Fextra/audio'
       const expected = 'sermon-net:channel'
@@ -256,6 +249,12 @@ describe('sermonNetHandler', () => {
       expect(sermonNetHandler.getFeedKey?.(value)).toBeUndefined()
     })
 
+    it('should return undefined for the audio and PDF feed of a channel', () => {
+      const value = 'https://example.sermon.net/rss/sermons/audio_pdf'
+
+      expect(sermonNetHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
     it('should return undefined for the church feed path on the www host', () => {
       const value = 'https://www.sermon.net/rss'
 
@@ -268,7 +267,7 @@ describe('sermonNetHandler', () => {
     const churchHint: DiscoverUriHint = { key: 'sermon-net:church', label: 'Church' }
     const ownFeeds: Array<[string, DiscoverUriHint]> = [
       ['https://example.sermon.net/rss/sermons/audio', channelHint],
-      ['http://example.sermon.net/rss/sermons/audio_pdf', channelHint],
+      ['http://example.sermon.net/rss/sermons/audio', channelHint],
       ['https://example.sermon.net/rss/', churchHint],
     ]
 
