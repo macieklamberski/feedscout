@@ -1,7 +1,7 @@
 import { parseUrl } from 'trousse'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { getCookieNames, getTenantSubdomain, hasMarker } from '../../common/utils.js'
+import { getCookieNames, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -73,13 +73,5 @@ export const odooHandler: PlatformHandler = {
     return [page.getFeedEntry('odoo:blog', { blog }, 'atom')]
   },
 
-  // The table reads any host under odoo.com, so only a database's own subdomain is claimed, never
-  // the apex, www or a nested host.
-  getFeedHint: (url) => {
-    if (!getTenantSubdomain(url, domains)) {
-      return
-    }
-
-    return feeds.getFeedHint(url)
-  },
+  getFeedHint: feeds.getFeedHint,
 }
