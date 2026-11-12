@@ -269,64 +269,64 @@ describe('observableHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
-    it('should return the notebooks key for a user feed', () => {
+  describe('getFeedHint', () => {
+    it('should return the notebooks hint for a user feed', () => {
       const value = 'https://api.observablehq.com/documents/@chaosalchemist.rss'
-      const expected = 'observable:notebooks'
+      const expected: DiscoverUriHint = { key: 'observable:notebooks', label: 'Notebooks' }
 
-      expect(observableHandler.getFeedKey?.(value)).toBe(expected)
+      expect(observableHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the collection key for a collection feed', () => {
+    it('should return the collection hint for a collection feed', () => {
       const value = 'https://api.observablehq.com/collection/@observablehq/visualization.rss'
-      const expected = 'observable:collection'
+      const expected: DiscoverUriHint = { key: 'observable:collection', label: 'Collection' }
 
-      expect(observableHandler.getFeedKey?.(value)).toBe(expected)
+      expect(observableHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the recent key for the public feed', () => {
+    it('should return the recent hint for the public feed', () => {
       const value = 'https://api.observablehq.com/documents/public.rss'
-      const expected = 'observable:recent'
+      const expected: DiscoverUriHint = { key: 'observable:recent', label: 'Recent' }
 
-      expect(observableHandler.getFeedKey?.(value)).toBe(expected)
+      expect(observableHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the trending key for the trending feed', () => {
+    it('should return the trending hint for the trending feed', () => {
       const value = 'https://api.observablehq.com/documents/trending.rss'
-      const expected = 'observable:trending'
+      const expected: DiscoverUriHint = { key: 'observable:trending', label: 'Trending' }
 
-      expect(observableHandler.getFeedKey?.(value)).toBe(expected)
+      expect(observableHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the notebooks key for a user feed over http', () => {
+    it('should return the notebooks hint for a user feed over http', () => {
       const value = 'http://api.observablehq.com/documents/@civicdatadesign.rss'
-      const expected = 'observable:notebooks'
+      const expected: DiscoverUriHint = { key: 'observable:notebooks', label: 'Notebooks' }
 
-      expect(observableHandler.getFeedKey?.(value)).toBe(expected)
+      expect(observableHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a profile page', () => {
       const value = 'https://observablehq.com/@chaosalchemist'
 
-      expect(observableHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(observableHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a user feed path on the page host', () => {
       const value = 'https://observablehq.com/documents/@chaosalchemist.rss'
 
-      expect(observableHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(observableHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a user document without the rss extension', () => {
       const value = 'https://api.observablehq.com/documents/@chaosalchemist'
 
-      expect(observableHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(observableHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for another host', () => {
       const value = 'https://example.com/documents/@chaosalchemist.rss'
 
-      expect(observableHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(observableHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 

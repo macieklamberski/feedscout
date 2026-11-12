@@ -94,5 +94,5 @@ export const observableHandler: PlatformHandler = {
     return [feeds.getFeedEntry('observable:notebooks', { owner: parsed.owner })]
   },
 
-  getFeedKey: feeds.getFeedKey,
+  getFeedHint: feeds.getFeedHint,
 }
