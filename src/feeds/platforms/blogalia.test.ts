@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import { type BlogaliaUrl, blogaliaHandler, parseBlogaliaUrl } from './blogalia.js'
 
 describe('parseBlogaliaUrl', () => {
@@ -70,6 +72,82 @@ describe('blogaliaHandler', () => {
       ]
 
       expect(blogaliaHandler.resolve(value)).toEqual(expected)
+    })
+
+    it('should keep the page scheme for an http blog', () => {
+      const value = 'http://example.blogalia.com/'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'http://example.blogalia.com/rdf.xml',
+          hint: { key: 'blogalia:posts', label: 'Posts', format: 'rdf' },
+        },
+        {
+          uri: 'http://example.blogalia.com/rss20.xml',
+          hint: { key: 'blogalia:posts', label: 'Posts', format: 'rss' },
+        },
+      ]
+
+      expect(blogaliaHandler.resolve(value)).toEqual(expected)
+    })
+  })
+
+  describe('getFeedKey', () => {
+    const postsFeeds = [
+      'https://example.blogalia.com/rdf.xml',
+      'https://example.blogalia.com/rss20.xml',
+      'http://example.blogalia.com/rdf.xml',
+      'http://example.blogalia.com/rss20.xml',
+      'https://www.blogalia.com/rdf.xml',
+      'https://www.blogalia.com/rss20.xml',
+    ]
+
+    it.each(postsFeeds)('should return the posts key for %s', (value) => {
+      const expected = 'blogalia:posts'
+
+      expect(blogaliaHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return undefined for a story page', () => {
+      const value = 'https://example.blogalia.com/historias/12345'
+
+      expect(blogaliaHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on the apex', () => {
+      const value = 'https://blogalia.com/rdf.xml'
+
+      expect(blogaliaHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on a nested subdomain', () => {
+      const value = 'https://example.beta.blogalia.com/rdf.xml'
+
+      expect(blogaliaHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for another host', () => {
+      const value = 'https://example.com/rdf.xml'
+
+      expect(blogaliaHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const ownFeeds: Array<[string, DiscoverUriHint]> = [
+      ['https://example.blogalia.com/rdf.xml', { key: 'blogalia:posts', label: 'Posts' }],
+      ['http://example.blogalia.com/rss20.xml', { key: 'blogalia:posts', label: 'Posts' }],
+      ['https://www.blogalia.com/rdf.xml', { key: 'blogalia:posts', label: 'Posts' }],
+    ]
+
+    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [blogaliaHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(result).toEqual(expected)
     })
   })
 })
