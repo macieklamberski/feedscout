@@ -218,97 +218,97 @@ describe('mediumHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
-    it('should return the posts key for a user feed', () => {
+  describe('getFeedHint', () => {
+    it('should return the posts hint for a user feed', () => {
       const value = 'https://medium.com/feed/@anngivens'
-      const expected = 'medium:posts'
+      const expected: DiscoverUriHint = { key: 'medium:posts', label: 'Posts' }
 
-      expect(mediumHandler.getFeedKey?.(value)).toBe(expected)
+      expect(mediumHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the posts key for a user feed on the www host', () => {
+    it('should return the posts hint for a user feed on the www host', () => {
       const value = 'https://www.medium.com/feed/@mariandrew'
-      const expected = 'medium:posts'
+      const expected: DiscoverUriHint = { key: 'medium:posts', label: 'Posts' }
 
-      expect(mediumHandler.getFeedKey?.(value)).toBe(expected)
+      expect(mediumHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the tag key for a tag feed', () => {
+    it('should return the tag hint for a tag feed', () => {
       const value = 'https://medium.com/feed/tag/fake-news'
-      const expected = 'medium:tag'
+      const expected: DiscoverUriHint = { key: 'medium:tag', label: 'Tag' }
 
-      expect(mediumHandler.getFeedKey?.(value)).toBe(expected)
+      expect(mediumHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the tagged key for a publication tagged feed', () => {
+    it('should return the tagged hint for a publication tagged feed', () => {
       const value = 'https://medium.com/feed/towards-data-science/tagged/machine-learning'
-      const expected = 'medium:tagged'
+      const expected: DiscoverUriHint = { key: 'medium:tagged', label: 'Tagged' }
 
-      expect(mediumHandler.getFeedKey?.(value)).toBe(expected)
+      expect(mediumHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the tagged key for a subdomain tagged feed', () => {
+    it('should return the tagged hint for a subdomain tagged feed', () => {
       const value = 'https://humanparts.medium.com/feed/tagged/poetry'
-      const expected = 'medium:tagged'
+      const expected: DiscoverUriHint = { key: 'medium:tagged', label: 'Tagged' }
 
-      expect(mediumHandler.getFeedKey?.(value)).toBe(expected)
+      expect(mediumHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the publication key for a publication feed', () => {
+    it('should return the publication hint for a publication feed', () => {
       const value = 'https://medium.com/feed/age-of-awareness'
-      const expected = 'medium:publication'
+      const expected: DiscoverUriHint = { key: 'medium:publication', label: 'Publication' }
 
-      expect(mediumHandler.getFeedKey?.(value)).toBe(expected)
+      expect(mediumHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the publication key for a publication named like a route word', () => {
+    it('should return the publication hint for a publication named like a route word', () => {
       const value = 'https://medium.com/feed/tag'
-      const expected = 'medium:publication'
+      const expected: DiscoverUriHint = { key: 'medium:publication', label: 'Publication' }
 
-      expect(mediumHandler.getFeedKey?.(value)).toBe(expected)
+      expect(mediumHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the publication key for a subdomain feed', () => {
+    it('should return the publication hint for a subdomain feed', () => {
       const value = 'https://humanparts.medium.com/feed'
-      const expected = 'medium:publication'
+      const expected: DiscoverUriHint = { key: 'medium:publication', label: 'Publication' }
 
-      expect(mediumHandler.getFeedKey?.(value)).toBe(expected)
+      expect(mediumHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a profile page', () => {
       const value = 'https://medium.com/@anngivens'
 
-      expect(mediumHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(mediumHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a tag page', () => {
       const value = 'https://medium.com/tag/fake-news'
 
-      expect(mediumHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(mediumHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a subdomain tagged page', () => {
       const value = 'https://humanparts.medium.com/tagged/poetry'
 
-      expect(mediumHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(mediumHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for the bare feed path on medium.com', () => {
       const value = 'https://medium.com/feed'
 
-      expect(mediumHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(mediumHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed on a nested subdomain', () => {
       const value = 'https://a.b.medium.com/feed'
 
-      expect(mediumHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(mediumHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed on another host', () => {
       const value = 'https://example.com/feed'
 
-      expect(mediumHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(mediumHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 

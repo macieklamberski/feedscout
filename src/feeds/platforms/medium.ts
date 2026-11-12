@@ -129,7 +129,7 @@ export const mediumHandler: PlatformHandler = {
     return [subdomainFeeds.getFeedEntry('medium:publication', { subdomain: parsed.subdomain })]
   },
 
-  getFeedKey: (url) => {
-    return feeds.getFeedKey(url) ?? subdomainFeeds.getFeedKey(url)
+  getFeedHint: (url) => {
+    return feeds.getFeedHint(url) ?? subdomainFeeds.getFeedHint(url)
   },
 }
