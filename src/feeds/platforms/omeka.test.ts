@@ -136,9 +136,27 @@ describe('getOmekaPage', () => {
   })
 
   it('should return the root named by a core script asset', () => {
-    const expected: OmekaPage = { kind: 'page', rootUrl: 'https://example.com' }
+    const expected: OmekaPage = { kind: 'item', rootUrl: 'https://example.com', id: '1000' }
 
     expect(getOmekaPage('https://example.com/items/show/1000', omekaCoreHtml)).toEqual(expected)
+  })
+
+  it('should return the id of an item shown inside an exhibit', () => {
+    const value = 'https://example.com/biblioteca/exhibits/show/poesia/item/1000'
+    const expected: OmekaPage = {
+      kind: 'item',
+      rootUrl: 'https://example.com/biblioteca',
+      id: '1000',
+    }
+
+    expect(getOmekaPage(value, omekaSubPathHtml)).toEqual(expected)
+  })
+
+  it('should return a page for an exhibit page', () => {
+    const value = 'https://example.com/biblioteca/exhibits/show/poesia/item'
+    const expected: OmekaPage = { kind: 'page', rootUrl: 'https://example.com/biblioteca' }
+
+    expect(getOmekaPage(value, omekaSubPathHtml)).toEqual(expected)
   })
 
   it('should return the query of a tag browse page', () => {
@@ -285,6 +303,46 @@ describe('omekaHandler', () => {
       ]
 
       expect(omekaHandler.resolve(value, omekaSubPathHtml)).toEqual(expected)
+    })
+
+    it('should return the item feed and the items feeds for an item page', () => {
+      const value = 'https://example.com/biblioteca/items/show/1000'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://example.com/biblioteca/items/show/1000?output=atom',
+          hint: { key: 'omeka:item', label: 'Item', format: 'atom' },
+        },
+        {
+          uri: 'https://example.com/biblioteca/items/browse?output=rss2',
+          hint: { key: 'omeka:items', label: 'Items', format: 'rss' },
+        },
+        {
+          uri: 'https://example.com/biblioteca/items/browse?output=atom',
+          hint: { key: 'omeka:items', label: 'Items', format: 'atom' },
+        },
+      ]
+
+      expect(omekaHandler.resolve(value, omekaSubPathHtml)).toEqual(expected)
+    })
+
+    it('should return the item feed under its own page for an item inside an exhibit', () => {
+      const value = 'https://alice.omeka.net/exhibits/show/maps/item/1000'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'https://alice.omeka.net/items/show/1000?output=atom',
+          hint: { key: 'omeka:item', label: 'Item', format: 'atom' },
+        },
+        {
+          uri: 'https://alice.omeka.net/items/browse?output=rss2',
+          hint: { key: 'omeka:items', label: 'Items', format: 'rss' },
+        },
+        {
+          uri: 'https://alice.omeka.net/items/browse?output=atom',
+          hint: { key: 'omeka:items', label: 'Items', format: 'atom' },
+        },
+      ]
+
+      expect(omekaHandler.resolve(value, omekaHtml)).toEqual(expected)
     })
 
     it('should return no feeds for a page outside the root the asset names', () => {

@@ -1,4 +1,5 @@
 import { isAnyOf, parseUrl } from 'trousse'
+import type { DiscoverUriEntry } from '../../common/types.js'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import {
@@ -13,6 +14,7 @@ import {
 
 export type OmekaPage =
   | { kind: 'browse'; rootUrl: string; query: string }
+  | { kind: 'item'; rootUrl: string; id: string }
   | { kind: 'page'; rootUrl: string }
 
 // Omeka Classic serves plugin views and core scripts from under the install root, as in
@@ -23,6 +25,8 @@ export type OmekaPage =
 const assetRootRegex =
   /^((?:(?!\/wp-content\/)[^\s])*?)\/(?:plugins\/[^/\s]+\/views\/(?:public|shared)\/|application\/views\/scripts\/(?:css\/(?:public|iconfonts)\.css|javascripts\/globals\.js))/i
 const itemsBrowseRegex = /^\/items(?:\/browse)?\/?$/i
+// An item is shown on its own page or inside an exhibit, under the same id.
+const itemShowRegex = /^\/(?:items\/show|exhibits\/show\/[^/]+\/item)\/(?<id>\d+)\/?$/i
 const trailingSlashRegex = /\/$/
 
 // Omeka drops these from the browse query when it prints the page's feed links.
@@ -120,6 +124,11 @@ export const getOmekaPage = (url: string, content: string | undefined): OmekaPag
   const rootPath = assetRootUrl.pathname.replace(trailingSlashRegex, '')
   const rootUrl = `${origin}${rootPath}`
   const routePath = pathname.slice(rootPath.length)
+  const itemId = itemShowRegex.exec(routePath)?.groups?.id
+
+  if (itemId) {
+    return { kind: 'item', rootUrl, id: itemId }
+  }
 
   if (!itemsBrowseRegex.test(routePath)) {
     return { kind: 'page', rootUrl }
@@ -165,10 +174,21 @@ export const omekaHandler: PlatformHandler = {
       ]
     }
 
-    return [
+    const uris: Array<DiscoverUriEntry> = []
+
+    if (page.kind === 'item') {
+      uris.push({
+        uri: `${page.rootUrl}/items/show/${page.id}?output=atom`,
+        hint: composeHint('omeka:item', 'atom'),
+      })
+    }
+
+    uris.push(
       { uri: `${browseUrl}?output=rss2`, hint: composeHint('omeka:items', 'rss') },
       { uri: `${browseUrl}?output=atom`, hint: composeHint('omeka:items', 'atom') },
-    ]
+    )
+
+    return uris
   },
 
   getFeedHint: (url) => {
