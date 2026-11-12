@@ -30,6 +30,13 @@ const feeds = definePlatformFeeds([
   { key: 'bearblog:tag', template: 'https://{blog}.bearblog.dev/atom/?q={tag}', format: 'atom' },
   { key: 'bearblog:tag', template: 'https://{blog}.bearblog.dev/atom.xml?q={tag}', format: 'atom' },
   { key: 'bearblog:tag', template: 'https://{blog}.bearblog.dev/rss/?q={tag}', format: 'rss' },
+  { key: 'bearblog:tag', template: 'https://{blog}.bearblog.dev/feed.xml?q={tag}', format: 'atom' },
+  {
+    key: 'bearblog:tag',
+    template: 'https://{blog}.bearblog.dev/index.xml?q={tag}',
+    format: 'atom',
+  },
+  { key: 'bearblog:tag', template: 'https://{blog}.bearblog.dev/rss.xml?q={tag}', format: 'rss' },
   { key: 'bearblog:posts', template: 'https://{blog}.bearblog.dev/feed/', format: 'atom' },
   { key: 'bearblog:posts', template: 'https://{blog}.bearblog.dev/feed/?type=rss', format: 'rss' },
   // Every blog serves the same two feeds under these paths too, which the page does not link.
