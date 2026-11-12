@@ -89,13 +89,13 @@ export const megaphoneHandler: PlatformHandler = {
 
   // The feeds host also serves files such as robots.txt, so a show id is word characters and
   // hyphens, as the pages give it.
-  getFeedKey: (url) => {
+  getFeedHint: (url) => {
     const [showId] = getPathSegments(url)
 
     if (!showId || !wordOrHyphenRegex.test(showId)) {
       return
     }
 
-    return feeds.getFeedKey(url)
+    return feeds.getFeedHint(url)
   },
 }

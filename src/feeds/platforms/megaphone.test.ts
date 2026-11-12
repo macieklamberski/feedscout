@@ -130,56 +130,56 @@ describe('megaphoneHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
-    it('should return the podcast key for a show feed', () => {
+  describe('getFeedHint', () => {
+    it('should return the podcast hint for a show feed', () => {
       const value = 'https://feeds.megaphone.fm/ABC1234567890'
-      const expected = 'megaphone:podcast'
+      const expected: DiscoverUriHint = { key: 'megaphone:podcast', label: 'Podcast' }
 
-      expect(megaphoneHandler.getFeedKey?.(value)).toBe(expected)
+      expect(megaphoneHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the podcast key for a show feed named by a slug', () => {
+    it('should return the podcast hint for a show feed named by a slug', () => {
       const value = 'https://feeds.megaphone.fm/my-show'
-      const expected = 'megaphone:podcast'
+      const expected: DiscoverUriHint = { key: 'megaphone:podcast', label: 'Podcast' }
 
-      expect(megaphoneHandler.getFeedKey?.(value)).toBe(expected)
+      expect(megaphoneHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the podcast key for a show feed with a limit parameter', () => {
+    it('should return the podcast hint for a show feed with a limit parameter', () => {
       const value = 'https://feeds.megaphone.fm/ABC1234567890?limit=300'
-      const expected = 'megaphone:podcast'
+      const expected: DiscoverUriHint = { key: 'megaphone:podcast', label: 'Podcast' }
 
-      expect(megaphoneHandler.getFeedKey?.(value)).toBe(expected)
+      expect(megaphoneHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a file on the feeds host', () => {
       const value = 'https://feeds.megaphone.fm/robots.txt'
 
-      expect(megaphoneHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(megaphoneHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for the feeds host root', () => {
       const value = 'https://feeds.megaphone.fm/'
 
-      expect(megaphoneHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(megaphoneHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a deeper path on the feeds host', () => {
       const value = 'https://feeds.megaphone.fm/ABC1234567890/episodes'
 
-      expect(megaphoneHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(megaphoneHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a playlist embed', () => {
       const value = 'https://playlist.megaphone.fm/?p=ABC1234567890'
 
-      expect(megaphoneHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(megaphoneHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a show path on another host', () => {
       const value = 'https://example.com/ABC1234567890'
 
-      expect(megaphoneHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(megaphoneHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 
