@@ -5,6 +5,7 @@ import {
   escapeRegex,
   getQueryParam,
   isHttpUrl,
+  isSubdomainOf,
   parseUrl,
   stripWww,
   t,
@@ -42,6 +43,7 @@ export type PlatformFeedTable = {
     format?: DiscoverUriHint['format'],
   ) => DiscoverUriEntry
   getFeedHint: (url: string) => DiscoverUriHint | undefined
+  forUrl: (url: string) => Pick<PlatformFeedTable, 'getFeedUrl' | 'getFeedEntry'> | undefined
 }
 
 type CompiledTemplate = {
@@ -211,5 +213,30 @@ export const definePlatformFeeds = (
     return composeHint(template.key, template.format)
   }
 
-  return { getFeedUrl, getFeedEntry, getFeedHint }
+  // The table for one page: `{scheme}` and `{host}` come from the page URL, and `{domain}` from the
+  // entry of `domains` its host is under. A value the handler passes wins.
+  const forUrl: PlatformFeedTable['forUrl'] = (url) => {
+    const parsedUrl = parseUrl(url)
+
+    if (!parsedUrl || !isHttpUrl(parsedUrl)) {
+      return
+    }
+
+    const urlParams: PlatformFeedParams = {
+      scheme: parsedUrl.protocol.slice(0, -1),
+      host: parsedUrl.host,
+    }
+    const domain = options.domains?.find((candidate) => isSubdomainOf(parsedUrl, candidate))
+
+    if (domain) {
+      urlParams.domain = domain
+    }
+
+    return {
+      getFeedUrl: (key, params, format) => getFeedUrl(key, { ...urlParams, ...params }, format),
+      getFeedEntry: (key, params, format) => getFeedEntry(key, { ...urlParams, ...params }, format),
+    }
+  }
+
+  return { getFeedUrl, getFeedEntry, getFeedHint, forUrl }
 }
