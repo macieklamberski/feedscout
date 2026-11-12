@@ -28,6 +28,7 @@ const feeds = definePlatformFeeds([
     key: 'jira:project',
     template: 'https://{tenant}.atlassian.net/plugins/servlet/streams?key={key}',
   },
+  { key: 'jira:project', template: 'https://{tenant}.atlassian.net/activity?key={key}' },
   { key: 'jira:site', template: 'https://{tenant}.atlassian.net/plugins/servlet/streams' },
 ])
 
@@ -106,7 +107,6 @@ export const jiraHandler: PlatformHandler = {
     }
 
     // A Data Center install runs on its own host, under a root its page names.
-
     if (projectKey) {
       uris.push({
         uri: `${baseUrl}/plugins/servlet/streams${composeQuery({ key: projectKey })}`,

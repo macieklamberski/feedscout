@@ -249,6 +249,13 @@ describe('jiraHandler', () => {
       expect(jiraHandler.getFeedKey?.(value)).toBe(expected)
     })
 
+    it('should return the project key for a project activity feed', () => {
+      const value = 'https://redhat.atlassian.net/activity?key=TORQUE'
+      const expected = 'jira:project'
+
+      expect(jiraHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
     it('should return the project key for a project feed with a trailing slash', () => {
       const value = 'https://dcosjira.atlassian.net/plugins/servlet/streams/?key=DCOS'
       const expected = 'jira:project'
@@ -271,6 +278,12 @@ describe('jiraHandler', () => {
 
     it('should return undefined for a Confluence feed on a Cloud site', () => {
       const value = 'https://dcosjira.atlassian.net/wiki/plugins/servlet/streams?key=DOCS'
+
+      expect(jiraHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a Confluence activity feed on a Cloud site', () => {
+      const value = 'https://redhat.atlassian.net/wiki/activity'
 
       expect(jiraHandler.getFeedKey?.(value)).toBeUndefined()
     })
@@ -302,6 +315,10 @@ describe('jiraHandler', () => {
       ],
       [
         'https://dcosjira.atlassian.net/plugins/servlet/streams?key=DCOS',
+        { key: 'jira:project', label: 'Project' },
+      ],
+      [
+        'https://redhat.atlassian.net/activity?key=TORQUE',
         { key: 'jira:project', label: 'Project' },
       ],
       [
