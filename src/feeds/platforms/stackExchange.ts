@@ -134,13 +134,13 @@ export const stackExchangeHandler: PlatformHandler = {
     return [feeds.getFeedEntry('stackexchange:newest', { host })]
   },
 
-  getFeedKey: (url) => {
-    const key = feeds.getFeedKey(url)
+  getFeedHint: (url) => {
+    const hint = feeds.getFeedHint(url)
 
-    if (isHostOf(url, networkHosts) && key !== 'stackexchange:newest') {
+    if (isHostOf(url, networkHosts) && hint?.key !== 'stackexchange:newest') {
       return
     }
 
-    return key
+    return hint
   },
 }

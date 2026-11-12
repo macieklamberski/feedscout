@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
 import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
 import { defaultPlatformOptions } from '../defaults.js'
 import {
@@ -435,92 +435,92 @@ describe('stackExchangeHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
-    it('should return the tag key for a tag feed', () => {
+  describe('getFeedHint', () => {
+    it('should return the tag hint for a tag feed', () => {
       const value = 'https://askubuntu.com/feeds/tag/shadow'
-      const expected = 'stackexchange:tag'
+      const expected: DiscoverUriHint = { key: 'stackexchange:tag', label: 'Tag' }
 
-      expect(stackExchangeHandler.getFeedKey?.(value)).toBe(expected)
+      expect(stackExchangeHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the tag key for a sorted tag feed', () => {
+    it('should return the tag hint for a sorted tag feed', () => {
       const value = 'https://stackoverflow.com/feeds/tag/javascript?sort=newest'
-      const expected = 'stackexchange:tag'
+      const expected: DiscoverUriHint = { key: 'stackexchange:tag', label: 'Tag' }
 
-      expect(stackExchangeHandler.getFeedKey?.(value)).toBe(expected)
+      expect(stackExchangeHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the tag key for a percent-encoded tag feed', () => {
+    it('should return the tag hint for a percent-encoded tag feed', () => {
       const value = 'https://stackoverflow.com/feeds/tag/c%23'
-      const expected = 'stackexchange:tag'
+      const expected: DiscoverUriHint = { key: 'stackexchange:tag', label: 'Tag' }
 
-      expect(stackExchangeHandler.getFeedKey?.(value)).toBe(expected)
+      expect(stackExchangeHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the question key for a question feed', () => {
+    it('should return the question hint for a question feed', () => {
       const value = 'https://askubuntu.com/feeds/question/282319'
-      const expected = 'stackexchange:question'
+      const expected: DiscoverUriHint = { key: 'stackexchange:question', label: 'Question' }
 
-      expect(stackExchangeHandler.getFeedKey?.(value)).toBe(expected)
+      expect(stackExchangeHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the user key for a user feed', () => {
+    it('should return the user hint for a user feed', () => {
       const value = 'https://askubuntu.com/feeds/user/1193941'
-      const expected = 'stackexchange:user'
+      const expected: DiscoverUriHint = { key: 'stackexchange:user', label: 'User' }
 
-      expect(stackExchangeHandler.getFeedKey?.(value)).toBe(expected)
+      expect(stackExchangeHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the collective key for a collective feed', () => {
+    it('should return the collective hint for a collective feed', () => {
       const value = 'https://stackoverflow.com/feeds/collectives/aws'
-      const expected = 'stackexchange:collective'
+      const expected: DiscoverUriHint = { key: 'stackexchange:collective', label: 'Collective' }
 
-      expect(stackExchangeHandler.getFeedKey?.(value)).toBe(expected)
+      expect(stackExchangeHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the newest key for the site feed', () => {
+    it('should return the newest hint for the site feed', () => {
       const value = 'https://askubuntu.com/feeds'
-      const expected = 'stackexchange:newest'
+      const expected: DiscoverUriHint = { key: 'stackexchange:newest', label: 'Newest questions' }
 
-      expect(stackExchangeHandler.getFeedKey?.(value)).toBe(expected)
+      expect(stackExchangeHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the newest key for the site feed on a nested subdomain', () => {
+    it('should return the newest hint for the site feed on a nested subdomain', () => {
       const value = 'https://chat.meta.stackexchange.com/feeds'
-      const expected = 'stackexchange:newest'
+      const expected: DiscoverUriHint = { key: 'stackexchange:newest', label: 'Newest questions' }
 
-      expect(stackExchangeHandler.getFeedKey?.(value)).toBe(expected)
+      expect(stackExchangeHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the newest key for the network feed', () => {
+    it('should return the newest hint for the network feed', () => {
       const value = 'https://stackexchange.com/feeds'
-      const expected = 'stackexchange:newest'
+      const expected: DiscoverUriHint = { key: 'stackexchange:newest', label: 'Newest questions' }
 
-      expect(stackExchangeHandler.getFeedKey?.(value)).toBe(expected)
+      expect(stackExchangeHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a user feed on the network host', () => {
       const value = 'https://stackexchange.com/feeds/user/12345'
 
-      expect(stackExchangeHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(stackExchangeHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed below a user feed', () => {
       const value = 'https://askubuntu.com/feeds/user/93023/responses'
 
-      expect(stackExchangeHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(stackExchangeHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for the weekly feed', () => {
       const value = 'https://apple.stackexchange.com/feeds/week'
 
-      expect(stackExchangeHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(stackExchangeHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a page', () => {
       const value = 'https://askubuntu.com/questions/282319'
 
-      expect(stackExchangeHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(stackExchangeHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 })
