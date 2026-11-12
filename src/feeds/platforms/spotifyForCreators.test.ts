@@ -160,6 +160,12 @@ describe('spotifyForCreatorsHandler', () => {
       expect(spotifyForCreatorsHandler.getFeedKey?.(value)).toBe(expected)
     })
 
+    it('should return undefined for a station id that does not start with hex', () => {
+      const value = 'https://anchor.fm/s/z5f7f0e18/podcast/rss'
+
+      expect(spotifyForCreatorsHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
     it('should return undefined for the alternate link without /s/', () => {
       const value = 'https://anchor.fm/1a2b3c4d/podcast/rss'
 

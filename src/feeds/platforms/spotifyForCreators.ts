@@ -1,4 +1,4 @@
-import { isHostOf, parseUrl } from 'trousse'
+import { getPathSegments, isHostOf, parseUrl } from 'trousse'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 
@@ -14,6 +14,7 @@ const showRegex = /^\/pod\/(?:show|profile)\/[^/]+(?:\/|$)/i
 // Only 2 of the 4 shows measured also show a visible `/s/` link, which generic discovery reads,
 // so the block above holds for those shows alone.
 const feedUrlRegex = /anchor\.fm\/(?:s\/)?([\da-f]+)\/podcast\/rss/i
+const stationIdRegex = /^[\da-f]/i
 
 const feeds = definePlatformFeeds([
   { key: 'spotify-for-creators:podcast', template: 'https://anchor.fm/s/{stationId}/podcast/rss' },
@@ -58,5 +59,14 @@ export const spotifyForCreatorsHandler: PlatformHandler = {
     return [feeds.getFeedEntry('spotify-for-creators:podcast', { stationId: page.stationId })]
   },
 
-  getFeedKey: feeds.getFeedKey,
+  // A station id starts with hex, and a word in its place answers 404.
+  getFeedKey: (url) => {
+    const [, stationId] = getPathSegments(url)
+
+    if (!stationId || !stationIdRegex.test(stationId)) {
+      return
+    }
+
+    return feeds.getFeedKey(url)
+  },
 }
