@@ -94,11 +94,11 @@ export const noticeableHandler: PlatformHandler = {
 
   // A feed on a custom domain carries no marker in its URL, so only a tenant host is read, never
   // the noticeable.news site itself.
-  getFeedKey: (url) => {
+  getFeedHint: (url) => {
     if (!getTenantSubdomain(url, domains)) {
       return
     }
 
-    return feeds.getFeedKey(url)
+    return feeds.getFeedHint(url)
   },
 }

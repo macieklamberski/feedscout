@@ -166,91 +166,91 @@ describe('noticeableHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
-    it('should return the posts key for a newspage RSS feed', () => {
+  describe('getFeedHint', () => {
+    it('should return the posts hint for a newspage RSS feed', () => {
       const value = 'https://bcdevchangelog.noticeable.news/feed.rss'
-      const expected = 'noticeable:posts'
+      const expected: DiscoverUriHint = { key: 'noticeable:posts', label: 'Posts', format: 'rss' }
 
-      expect(noticeableHandler.getFeedKey?.(value)).toBe(expected)
+      expect(noticeableHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the posts key for a newspage Atom feed', () => {
+    it('should return the posts hint for a newspage Atom feed', () => {
       const value = 'https://synthesia.noticeable.news/feed.atom'
-      const expected = 'noticeable:posts'
+      const expected: DiscoverUriHint = { key: 'noticeable:posts', label: 'Posts', format: 'atom' }
 
-      expect(noticeableHandler.getFeedKey?.(value)).toBe(expected)
+      expect(noticeableHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the posts key for a newspage JSON feed', () => {
+    it('should return the posts hint for a newspage JSON feed', () => {
       const value = 'https://bcdevchangelog.noticeable.news/feed.json'
-      const expected = 'noticeable:posts'
+      const expected: DiscoverUriHint = { key: 'noticeable:posts', label: 'Posts', format: 'json' }
 
-      expect(noticeableHandler.getFeedKey?.(value)).toBe(expected)
+      expect(noticeableHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the posts key for a newspage feed over http', () => {
+    it('should return the posts hint for a newspage feed over http', () => {
       const value = 'http://bcdevchangelog.noticeable.news/feed.rss'
-      const expected = 'noticeable:posts'
+      const expected: DiscoverUriHint = { key: 'noticeable:posts', label: 'Posts', format: 'rss' }
 
-      expect(noticeableHandler.getFeedKey?.(value)).toBe(expected)
+      expect(noticeableHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the posts key for a newspage feed with an embed parameter', () => {
+    it('should return the posts hint for a newspage feed with an embed parameter', () => {
       const value = 'https://bcdevchangelog.noticeable.news/feed.rss?embed=true'
-      const expected = 'noticeable:posts'
+      const expected: DiscoverUriHint = { key: 'noticeable:posts', label: 'Posts', format: 'rss' }
 
-      expect(noticeableHandler.getFeedKey?.(value)).toBe(expected)
+      expect(noticeableHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the label key for a label RSS feed', () => {
+    it('should return the label hint for a label RSS feed', () => {
       const value = 'https://bcdevchangelog.noticeable.news/cornerstone.rss'
-      const expected = 'noticeable:label'
+      const expected: DiscoverUriHint = { key: 'noticeable:label', label: 'Label', format: 'rss' }
 
-      expect(noticeableHandler.getFeedKey?.(value)).toBe(expected)
+      expect(noticeableHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the label key for a label Atom feed', () => {
+    it('should return the label hint for a label Atom feed', () => {
       const value = 'https://synthesia.noticeable.news/templates.atom'
-      const expected = 'noticeable:label'
+      const expected: DiscoverUriHint = { key: 'noticeable:label', label: 'Label', format: 'atom' }
 
-      expect(noticeableHandler.getFeedKey?.(value)).toBe(expected)
+      expect(noticeableHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the label key for a label JSON feed', () => {
+    it('should return the label hint for a label JSON feed', () => {
       const value = 'https://bcdevchangelog.noticeable.news/cornerstone.json'
-      const expected = 'noticeable:label'
+      const expected: DiscoverUriHint = { key: 'noticeable:label', label: 'Label', format: 'json' }
 
-      expect(noticeableHandler.getFeedKey?.(value)).toBe(expected)
+      expect(noticeableHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a label page', () => {
       const value = 'https://bcdevchangelog.noticeable.news/labels/cornerstone'
 
-      expect(noticeableHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(noticeableHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a publication page', () => {
       const value = 'https://example.noticeable.news/publications/new-billing-api'
 
-      expect(noticeableHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(noticeableHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed path on the Noticeable site', () => {
       const value = 'https://noticeable.news/feed.rss'
 
-      expect(noticeableHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(noticeableHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed path on a nested subdomain', () => {
       const value = 'https://news.example.noticeable.news/feed.rss'
 
-      expect(noticeableHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(noticeableHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed on a custom domain', () => {
       const value = 'https://acme.noticeable.io/feed.rss'
 
-      expect(noticeableHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(noticeableHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 
@@ -258,27 +258,27 @@ describe('noticeableHandler', () => {
     const ownFeeds: Array<[string, DiscoverUriHint]> = [
       [
         'https://bcdevchangelog.noticeable.news/feed.rss',
-        { key: 'noticeable:posts', label: 'Posts' },
+        { key: 'noticeable:posts', label: 'Posts', format: 'rss' },
       ],
       [
         'https://bcdevchangelog.noticeable.news/feed.atom',
-        { key: 'noticeable:posts', label: 'Posts' },
+        { key: 'noticeable:posts', label: 'Posts', format: 'atom' },
       ],
       [
         'https://bcdevchangelog.noticeable.news/feed.json',
-        { key: 'noticeable:posts', label: 'Posts' },
+        { key: 'noticeable:posts', label: 'Posts', format: 'json' },
       ],
       [
         'https://bcdevchangelog.noticeable.news/cornerstone.rss',
-        { key: 'noticeable:label', label: 'Label' },
+        { key: 'noticeable:label', label: 'Label', format: 'rss' },
       ],
       [
         'https://bcdevchangelog.noticeable.news/cornerstone.atom',
-        { key: 'noticeable:label', label: 'Label' },
+        { key: 'noticeable:label', label: 'Label', format: 'atom' },
       ],
       [
         'https://bcdevchangelog.noticeable.news/cornerstone.json',
-        { key: 'noticeable:label', label: 'Label' },
+        { key: 'noticeable:label', label: 'Label', format: 'json' },
       ],
     ]
 
