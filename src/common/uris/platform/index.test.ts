@@ -61,11 +61,17 @@ describe('discoverUrisFromPlatform', () => {
     expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
   })
 
-  it('should return the URL as given with its key when a handler claims it as its feed', async () => {
+  it('should return the URL as given with its hint when a handler claims it as its feed', async () => {
     const handler: PlatformHandler = {
       match: () => false,
       resolve: () => [],
-      getFeedKey: (url) => (url.endsWith('.xml') ? 'youtube:videos' : undefined),
+      getFeedHint: (url) => {
+        if (!url.endsWith('.xml')) {
+          return
+        }
+
+        return { key: 'youtube:videos', label: 'Videos' }
+      },
     }
     const options = {
       baseUrl: 'http://Example.com/alice.xml',
@@ -79,13 +85,12 @@ describe('discoverUrisFromPlatform', () => {
   })
 
   it.each(claimedFeedCases)(
-    'should carry the format of the feed table row that claims %s',
+    'should return the hint of the feed table row that claims %s',
     async (value, expected) => {
       const handler: PlatformHandler = {
         match: () => false,
         resolve: () => [],
-        getFeedKey: claimedFeeds.getFeedKey,
-        getFeedFormat: claimedFeeds.getFeedFormat,
+        getFeedHint: claimedFeeds.getFeedHint,
       }
       const options = {
         baseUrl: value,
@@ -104,7 +109,7 @@ describe('discoverUrisFromPlatform', () => {
     const feedHandler: PlatformHandler = {
       match: () => false,
       resolve: () => [],
-      getFeedKey: () => 'youtube:videos',
+      getFeedHint: () => ({ key: 'youtube:videos', label: 'Videos' }),
     }
     const options = {
       baseUrl: 'https://example.com/alice.xml',
@@ -117,11 +122,11 @@ describe('discoverUrisFromPlatform', () => {
     expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
   })
 
-  it('should move on when a getFeedKey throws', async () => {
+  it('should move on when a getFeedHint throws', async () => {
     const throwingHandler: PlatformHandler = {
       match: () => false,
       resolve: () => [],
-      getFeedKey: () => {
+      getFeedHint: () => {
         throw new Error('Unexpected input')
       },
     }

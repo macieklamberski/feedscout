@@ -18,10 +18,8 @@ export type PlatformHandler = {
     headers?: Headers,
     fetchFn?: FetchFn,
   ) => MaybePromise<Array<DiscoverUriEntry | DiscoverRef>>
-  // The hint key of the feed the URL is, when it is one of the feeds the handler builds.
-  getFeedKey?: (url: string) => string | undefined
-  // The format of the feed `getFeedKey` claims, when the feed names one.
-  getFeedFormat?: (url: string) => DiscoverUriHint['format'] | undefined
+  // The hint of the feed the URL is, when it is one of the feeds the handler builds.
+  getFeedHint?: (url: string) => DiscoverUriHint | undefined
 }
 
 export type PlatformMethodOptions = {

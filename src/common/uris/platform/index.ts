@@ -8,7 +8,6 @@ import type {
   DiscoverUriHint,
   FetchFn,
 } from '../../types.js'
-import { composeHint } from '../../utils.js'
 import type { PlatformHandler, PlatformMethodOptions } from './types.js'
 
 type PlatformPage = Omit<DiscoverInputObject, 'status'>
@@ -48,23 +47,19 @@ const orderHandlers = (handlers: Array<PlatformHandler>, url: string): Array<Pla
 }
 
 // The hint of the handler feed the URL is, read as the URL arrived.
-const getFeedHint = (
+export const getFeedHint = (
   handlers: Array<PlatformHandler>,
   url: string,
 ): DiscoverUriHint | undefined => {
   for (const handler of handlers) {
     try {
-      const key = handler.getFeedKey?.(url)
+      const hint = handler.getFeedHint?.(url)
 
-      if (key) {
-        return composeHint(key, handler.getFeedFormat?.(url))
+      if (hint) {
+        return hint
       }
     } catch {}
   }
-}
-
-export const getFeedKey = (handlers: Array<PlatformHandler>, url: string): string | undefined => {
-  return getFeedHint(handlers, url)?.key
 }
 
 export const discoverUrisFromPlatform = async (
