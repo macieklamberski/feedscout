@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
 import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
 import { defaultPlatformOptions } from '../defaults.js'
 import { parseSoundonUrl, type SoundonUrl, soundonHandler } from './soundon.js'
@@ -125,25 +125,25 @@ describe('soundonHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
-    it('should return the podcast key for a podcast feed', () => {
+  describe('getFeedHint', () => {
+    it('should return the podcast hint for a podcast feed', () => {
       const value = 'https://feeds.soundon.fm/podcasts/b6b84ca9-41ab-4b90-bd86-777ce7fcac02.xml'
-      const expected = 'soundon:podcast'
+      const expected: DiscoverUriHint = { key: 'soundon:podcast', label: 'Podcast' }
 
-      expect(soundonHandler.getFeedKey?.(value)).toBe(expected)
+      expect(soundonHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the podcast key for a podcast feed with a query', () => {
+    it('should return the podcast hint for a podcast feed with a query', () => {
       const value = 'https://feeds.soundon.fm/podcasts/99f9a86d-92bb-45ac-bf2d-162a74b28c76.xml?r=1'
-      const expected = 'soundon:podcast'
+      const expected: DiscoverUriHint = { key: 'soundon:podcast', label: 'Podcast' }
 
-      expect(soundonHandler.getFeedKey?.(value)).toBe(expected)
+      expect(soundonHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a podcast page', () => {
       const value = 'https://player.soundon.fm/p/b6b84ca9-41ab-4b90-bd86-777ce7fcac02'
 
-      expect(soundonHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(soundonHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 

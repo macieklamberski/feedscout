@@ -51,5 +51,5 @@ export const soundonHandler: PlatformHandler = {
     return [feeds.getFeedEntry('soundon:podcast', { podcastId: parsed.podcastId })]
   },
 
-  getFeedKey: feeds.getFeedKey,
+  getFeedHint: feeds.getFeedHint,
 }
