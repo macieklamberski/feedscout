@@ -12,15 +12,18 @@ const domains = ['pika.page']
 
 const tagRegex = /^\/tag\/([^/]+)/i
 
-const feeds = definePlatformFeeds([
-  { key: 'pika:posts', template: 'https://{blog}.pika.page/posts_feed', format: 'atom' },
-  { key: 'pika:posts', template: 'https://{blog}.pika.page/posts_feed.rss', format: 'rss' },
-  { key: 'pika:posts', template: 'https://{blog}.pika.page/posts_feed.atom', format: 'atom' },
-  { key: 'pika:posts', template: 'https://{blog}.pika.page/feed', format: 'atom' },
-  { key: 'pika:tag', template: 'https://{blog}.pika.page/tag/{tag}/feed', format: 'atom' },
-  { key: 'pika:tag', template: 'https://{blog}.pika.page/tag/{tag}/feed.rss', format: 'rss' },
-  { key: 'pika:tag', template: 'https://{blog}.pika.page/tag/{tag}/feed.atom', format: 'atom' },
-])
+const feeds = definePlatformFeeds(
+  [
+    { key: 'pika:posts', template: '{scheme}://{host}/posts_feed', format: 'atom' },
+    { key: 'pika:posts', template: '{scheme}://{host}/posts_feed.rss', format: 'rss' },
+    { key: 'pika:posts', template: '{scheme}://{host}/posts_feed.atom', format: 'atom' },
+    { key: 'pika:posts', template: '{scheme}://{host}/feed', format: 'atom' },
+    { key: 'pika:tag', template: '{scheme}://{host}/tag/{tag}/feed', format: 'atom' },
+    { key: 'pika:tag', template: '{scheme}://{host}/tag/{tag}/feed.rss', format: 'rss' },
+    { key: 'pika:tag', template: '{scheme}://{host}/tag/{tag}/feed.atom', format: 'atom' },
+  ],
+  { domains },
+)
 
 export const parsePikaUrl = (url: string): PikaUrl | undefined => {
   const parsedUrl = parseUrl(url)
@@ -46,21 +49,21 @@ export const pikaHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parsePikaUrl(url)
+    const page = feeds.forUrl(url)
 
-    if (!parsed) {
+    if (!parsed || !page) {
       return []
     }
 
-    const { blog } = parsed
     const posts = [
-      feeds.getFeedEntry('pika:posts', { blog }, 'atom'),
-      feeds.getFeedEntry('pika:posts', { blog }, 'rss'),
+      page.getFeedEntry('pika:posts', {}, 'atom'),
+      page.getFeedEntry('pika:posts', {}, 'rss'),
     ]
 
     if (parsed.kind === 'tag') {
       return [
-        feeds.getFeedEntry('pika:tag', { blog, tag: parsed.tag }, 'atom'),
-        feeds.getFeedEntry('pika:tag', { blog, tag: parsed.tag }, 'rss'),
+        page.getFeedEntry('pika:tag', { tag: parsed.tag }, 'atom'),
+        page.getFeedEntry('pika:tag', { tag: parsed.tag }, 'rss'),
         ...posts,
       ]
     }

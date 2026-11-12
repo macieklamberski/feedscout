@@ -126,23 +126,23 @@ describe('pikaHandler', () => {
       expect(pikaHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return https feed URLs for an http blog page', () => {
+    it('should return the feeds under the page scheme for an http blog page', () => {
       const value = 'http://alice.pika.page/tag/tech'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://alice.pika.page/tag/tech/feed',
+          uri: 'http://alice.pika.page/tag/tech/feed',
           hint: { key: 'pika:tag', label: 'Tag', format: 'atom' },
         },
         {
-          uri: 'https://alice.pika.page/tag/tech/feed.rss',
+          uri: 'http://alice.pika.page/tag/tech/feed.rss',
           hint: { key: 'pika:tag', label: 'Tag', format: 'rss' },
         },
         {
-          uri: 'https://alice.pika.page/posts_feed',
+          uri: 'http://alice.pika.page/posts_feed',
           hint: { key: 'pika:posts', label: 'Posts', format: 'atom' },
         },
         {
-          uri: 'https://alice.pika.page/posts_feed.rss',
+          uri: 'http://alice.pika.page/posts_feed.rss',
           hint: { key: 'pika:posts', label: 'Posts', format: 'rss' },
         },
       ]
