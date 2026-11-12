@@ -1,6 +1,7 @@
-import { isHostOf, parseUrl } from 'trousse'
+import { getPathSegments, isHostOf, parseUrl } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
+import { digitsRegex } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -10,6 +11,16 @@ const hosts = ['royalroad.com', 'www.royalroad.com']
 
 // A chapter URL sits under its fiction, so it carries the fiction id too.
 const fictionIdRegex = /^\/fiction\/(\d+)(?:\/|$)/i
+
+// The fiction page advertises /syndication/{id}. The chapter page links /fiction/syndication/{id},
+// which serves the same feed.
+const feeds = definePlatformFeeds([
+  { key: 'royalroad:fiction', template: 'https://www.royalroad.com/syndication/{fictionId}' },
+  {
+    key: 'royalroad:fiction',
+    template: 'https://www.royalroad.com/fiction/syndication/{fictionId}',
+  },
+])
 
 export const parseRoyalroadUrl = (url: string): RoyalroadUrl | undefined => {
   const parsedUrl = parseUrl(url)
@@ -39,13 +50,17 @@ export const royalroadHandler: PlatformHandler = {
       return []
     }
 
-    // The fiction page advertises this URL. The chapter page links /fiction/syndication/{id},
-    // which serves the same feed.
-    return [
-      {
-        uri: `https://www.royalroad.com/syndication/${parsed.fictionId}`,
-        hint: composeHint('royalroad:fiction'),
-      },
-    ]
+    return [feeds.getFeedEntry('royalroad:fiction', { fictionId: parsed.fictionId })]
+  },
+
+  // A fiction id is digits, and /syndication/latest answers 404.
+  getFeedKey: (url) => {
+    const fictionId = getPathSegments(url).at(-1)
+
+    if (!fictionId || !digitsRegex.test(fictionId)) {
+      return
+    }
+
+    return feeds.getFeedKey(url)
   },
 }
