@@ -93,11 +93,11 @@ export const comicfuryHandler: PlatformHandler = {
   },
 
   // The table reads any label or segment as a comic, the parser only a valid comic name.
-  getFeedKey: (url) => {
+  getFeedHint: (url) => {
     if (!parseComicfuryUrl(url)) {
       return
     }
 
-    return feeds.getFeedKey(url)
+    return feeds.getFeedHint(url)
   },
 }
