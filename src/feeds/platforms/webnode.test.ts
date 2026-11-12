@@ -170,6 +170,10 @@ describe('webnodeHandler', () => {
         'https://example.webnode.com.br/rss/all.xml',
         { key: 'webnode:articles', label: 'All articles' },
       ],
+      [
+        'https://example.webnode.cat/rss/all.xml',
+        { key: 'webnode:articles', label: 'All articles' },
+      ],
     ]
 
     it.each(feedUrls)('should return the hint for %s', (value, expected) => {
@@ -202,6 +206,19 @@ describe('webnodeHandler', () => {
 
     it('should return undefined for a feed on a nested subdomain', () => {
       const value = 'https://cms.example.webnode.page/rss/all.xml'
+
+      expect(webnodeHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return the hint for a country domain outside the stored ones', () => {
+      const value = 'https://example.webnode.de/rss/all.xml'
+      const expected: DiscoverUriHint = { key: 'webnode:articles', label: 'All articles' }
+
+      expect(webnodeHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
+    it('should return undefined for a suffix outside the domain pattern', () => {
+      const value = 'https://example.webnode.co.uk/rss/all.xml'
 
       expect(webnodeHandler.getFeedHint?.(value)).toBeUndefined()
     })

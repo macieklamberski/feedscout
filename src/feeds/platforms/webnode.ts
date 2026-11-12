@@ -2,48 +2,16 @@ import { getPathSegments, isAnyOf } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { findElement, getTenantSubdomain, hasMarker } from '../../common/utils.js'
+import { findElement, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers article, site (html), partly covers section.
 
 export type WebnodeUrl = { kind: 'section'; section: string } | { kind: 'site' }
 
-const domains = [
-  'webnode.at',
-  'webnode.be',
-  'webnode.cat',
-  'webnode.cl',
-  'webnode.cn',
-  'webnode.com.ar',
-  'webnode.com.br',
-  'webnode.com.co',
-  'webnode.com.pt',
-  'webnode.com.tr',
-  'webnode.com.ua',
-  'webnode.com.uy',
-  'webnode.com.ve',
-  'webnode.cz',
-  'webnode.es',
-  'webnode.fi',
-  'webnode.fr',
-  'webnode.gr',
-  'webnode.hu',
-  'webnode.in',
-  'webnode.it',
-  'webnode.jp',
-  'webnode.kr',
-  'webnode.mx',
-  'webnode.nl',
-  'webnode.page',
-  'webnode.pt',
-  'webnode.ro',
-  'webnode.ru',
-  'webnode.se',
-  'webnode.sk',
-  'webnode.tw',
-  'webnode.vn',
-]
+// Webnode's two-letter and `com.xx` country domains, with `webnode.page` and `webnode.cat`.
+// length: keeps any suffix but a two-letter country code out
+const domains = [/^webnode\.(?:[a-z]{2}|com\.[a-z]{2}|page|cat)$/]
 
 const clientScriptPrefix = 'https://d11bh4d8fhuq47.cloudfront.net/_system/client/'
 
@@ -113,13 +81,5 @@ export const webnodeHandler: PlatformHandler = {
     return uris
   },
 
-  // The table reads any host under the domains, so only a site's own subdomain is claimed, not the
-  // apex, www or a nested host.
-  getFeedHint: (url) => {
-    if (!getTenantSubdomain(url, domains)) {
-      return
-    }
-
-    return feeds.getFeedHint(url)
-  },
+  getFeedHint: feeds.getFeedHint,
 }
