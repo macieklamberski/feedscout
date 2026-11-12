@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'bun:test'
+import type { DiscoverUriHint } from '../../common/types.js'
 import { type PlurkUrl, parsePlurkUrl, plurkHandler } from './plurk.js'
 
 describe('parsePlurkUrl', () => {
@@ -146,19 +147,25 @@ describe('plurkHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
-    it('should return the plurks key for a user feed', () => {
-      expect(plurkHandler.getFeedKey?.('https://www.plurk.com/alice.xml')).toBe('plurk:plurks')
+  describe('getFeedHint', () => {
+    it('should return the plurks hint for a user feed', () => {
+      const value = 'https://www.plurk.com/alice.xml'
+      const expected: DiscoverUriHint = { key: 'plurk:plurks', label: 'Plurks' }
+
+      expect(plurkHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the responses key for a post feed', () => {
-      expect(plurkHandler.getFeedKey?.('https://www.plurk.com/p/abc123.xml')).toBe(
-        'plurk:responses',
-      )
+    it('should return the responses hint for a post feed', () => {
+      const value = 'https://www.plurk.com/p/abc123.xml'
+      const expected: DiscoverUriHint = { key: 'plurk:responses', label: 'Responses' }
+
+      expect(plurkHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a user page', () => {
-      expect(plurkHandler.getFeedKey?.('https://www.plurk.com/alice')).toBeUndefined()
+      const value = 'https://www.plurk.com/alice'
+
+      expect(plurkHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 })
