@@ -78,5 +78,5 @@ export const redcircleHandler: PlatformHandler = {
     return [feeds.getFeedEntry('redcircle:show', { showUuid: page.showUuid })]
   },
 
-  getFeedKey: feeds.getFeedKey,
+  getFeedHint: feeds.getFeedHint,
 }

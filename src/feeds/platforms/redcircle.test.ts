@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
 import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
 import { defaultPlatformOptions } from '../defaults.js'
 import { redcircleHandler } from './redcircle.js'
@@ -59,44 +59,44 @@ describe('redcircleHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
+  describe('getFeedHint', () => {
     it('should return the show key for a show feed', () => {
       const value = `https://feeds.redcircle.com/${showUuid}`
-      const expected = 'redcircle:show'
+      const expected: DiscoverUriHint = { key: 'redcircle:show', label: 'Show' }
 
-      expect(redcircleHandler.getFeedKey?.(value)).toBe(expected)
+      expect(redcircleHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the show key for a show feed with a trailing slash', () => {
       const value = `https://feeds.redcircle.com/${showUuid}/`
-      const expected = 'redcircle:show'
+      const expected: DiscoverUriHint = { key: 'redcircle:show', label: 'Show' }
 
-      expect(redcircleHandler.getFeedKey?.(value)).toBe(expected)
+      expect(redcircleHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the show key for a show feed with a tracking query', () => {
       const value = `https://feeds.redcircle.com/${showUuid}?_gl=1*696p1f*_gcl_au*OTYzNTI1NzMxLjE2OTE4MTk5MDQ.`
-      const expected = 'redcircle:show'
+      const expected: DiscoverUriHint = { key: 'redcircle:show', label: 'Show' }
 
-      expect(redcircleHandler.getFeedKey?.(value)).toBe(expected)
+      expect(redcircleHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for the feed host root', () => {
       const value = 'https://feeds.redcircle.com/'
 
-      expect(redcircleHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(redcircleHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a show page', () => {
       const value = `https://redcircle.com/shows/${showUuid}`
 
-      expect(redcircleHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(redcircleHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for another host', () => {
       const value = `https://example.com/${showUuid}`
 
-      expect(redcircleHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(redcircleHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 
