@@ -69,21 +69,19 @@ export const zenfolioHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parseZenfolioUrl(url)
+    const page = feeds.forUrl(url)
 
-    if (!parsed) {
+    if (!parsed || !page) {
       return []
     }
 
-    const { protocol, host } = new URL(url)
-    const params = { scheme: protocol.slice(0, -1), host }
-
     return [
-      feeds.getFeedEntry('zenfolio:recent', params, 'rss'),
-      feeds.getFeedEntry('zenfolio:recent', params, 'atom'),
-      feeds.getFeedEntry('zenfolio:featured', params, 'rss'),
-      feeds.getFeedEntry('zenfolio:featured', params, 'atom'),
-      feeds.getFeedEntry('zenfolio:blog', params, 'rss'),
-      feeds.getFeedEntry('zenfolio:blog', params, 'atom'),
+      page.getFeedEntry('zenfolio:recent', {}, 'rss'),
+      page.getFeedEntry('zenfolio:recent', {}, 'atom'),
+      page.getFeedEntry('zenfolio:featured', {}, 'rss'),
+      page.getFeedEntry('zenfolio:featured', {}, 'atom'),
+      page.getFeedEntry('zenfolio:blog', {}, 'rss'),
+      page.getFeedEntry('zenfolio:blog', {}, 'atom'),
     ]
   },
 
