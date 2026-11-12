@@ -108,8 +108,8 @@ export const cocologHandler: PlatformHandler = {
     ]
   },
 
-  // The page parser keeps a dotted first segment, an uploaded file or the `.shared` assets, and a
-  // nested service host out of the table's matches.
+  // A first segment with a dot is an uploaded file or the `.shared` assets, which the table's
+  // `{blog}` placeholder would match.
   getFeedKey: (url) => {
     if (!getCocologPage(url, undefined)) {
       return

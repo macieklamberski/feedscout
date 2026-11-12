@@ -98,6 +98,26 @@ describe('cocologHandler', () => {
       expect(cocologHandler.resolve(value)).toEqual(expected)
     })
 
+    it('should keep the http scheme of the page', () => {
+      const value = 'http://example.cocolog-nifty.com/consulting/'
+      const expected: Array<DiscoverUriEntry> = [
+        {
+          uri: 'http://example.cocolog-nifty.com/consulting/atom.xml',
+          hint: { key: 'cocolog:posts', label: 'Posts', format: 'atom' },
+        },
+        {
+          uri: 'http://example.cocolog-nifty.com/consulting/index.rdf',
+          hint: { key: 'cocolog:posts', label: 'Posts', format: 'rdf' },
+        },
+        {
+          uri: 'http://example.cocolog-nifty.com/consulting/rss.xml',
+          hint: { key: 'cocolog:posts', label: 'Posts', format: 'rss' },
+        },
+      ]
+
+      expect(cocologHandler.resolve(value)).toEqual(expected)
+    })
+
     it('should return the posts feeds of the blog the home page links', () => {
       const value = 'https://example.cocolog-nifty.com/'
       const expected: Array<DiscoverUriEntry> = [
