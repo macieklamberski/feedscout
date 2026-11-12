@@ -81,57 +81,57 @@ describe('captivateHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
-    it('should return the podcast key for a feed', () => {
+  describe('getFeedHint', () => {
+    it('should return the podcast hint for a feed', () => {
       const value = 'https://feeds.captivate.fm/bluntdissection/'
-      const expected = 'captivate:podcast'
+      const expected: DiscoverUriHint = { key: 'captivate:podcast', label: 'Podcast' }
 
-      expect(captivateHandler.getFeedKey?.(value)).toBe(expected)
+      expect(captivateHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the podcast key for a feed with a hyphenated slug', () => {
+    it('should return the podcast hint for a feed with a hyphenated slug', () => {
       const value = 'https://feeds.captivate.fm/flies-in-the-jar/'
-      const expected = 'captivate:podcast'
+      const expected: DiscoverUriHint = { key: 'captivate:podcast', label: 'Podcast' }
 
-      expect(captivateHandler.getFeedKey?.(value)).toBe(expected)
+      expect(captivateHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the podcast key for a feed without the trailing slash', () => {
+    it('should return the podcast hint for a feed without the trailing slash', () => {
       const value = 'https://feeds.captivate.fm/bluntdissection'
-      const expected = 'captivate:podcast'
+      const expected: DiscoverUriHint = { key: 'captivate:podcast', label: 'Podcast' }
 
-      expect(captivateHandler.getFeedKey?.(value)).toBe(expected)
+      expect(captivateHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the podcast key for a feed over http', () => {
+    it('should return the podcast hint for a feed over http', () => {
       const value = 'http://feeds.captivate.fm/bluntdissection/'
-      const expected = 'captivate:podcast'
+      const expected: DiscoverUriHint = { key: 'captivate:podcast', label: 'Podcast' }
 
-      expect(captivateHandler.getFeedKey?.(value)).toBe(expected)
+      expect(captivateHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a show page', () => {
       const value = 'https://bluntdissection.captivate.fm/'
 
-      expect(captivateHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(captivateHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for the feed host root', () => {
       const value = 'https://feeds.captivate.fm/'
 
-      expect(captivateHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(captivateHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a nested path on the feed host', () => {
       const value = 'https://feeds.captivate.fm/bluntdissection/episodes/'
 
-      expect(captivateHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(captivateHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for another host', () => {
       const value = 'https://example.com/bluntdissection/'
 
-      expect(captivateHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(captivateHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 

@@ -41,5 +41,5 @@ export const captivateHandler: PlatformHandler = {
     return [feeds.getFeedEntry('captivate:podcast', { slug: parsed.slug })]
   },
 
-  getFeedKey: feeds.getFeedKey,
+  getFeedHint: feeds.getFeedHint,
 }
