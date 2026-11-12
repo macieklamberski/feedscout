@@ -19,11 +19,11 @@ const feeds = definePlatformFeeds(
   [
     {
       key: 'livedoor-blog:category',
-      template: 'https://{blog}.{domain}/archives/cat_{category}.xml',
+      template: '{scheme}://{host}/archives/cat_{category}.xml',
       format: 'rdf',
     },
-    { key: 'livedoor-blog:posts', template: 'https://{blog}.{domain}/index.rdf', format: 'rdf' },
-    { key: 'livedoor-blog:posts', template: 'https://{blog}.{domain}/atom.xml', format: 'atom' },
+    { key: 'livedoor-blog:posts', template: '{scheme}://{host}/index.rdf', format: 'rdf' },
+    { key: 'livedoor-blog:posts', template: '{scheme}://{host}/atom.xml', format: 'atom' },
   ],
   { domains },
 )
@@ -52,28 +52,21 @@ export const livedoorBlogHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parseLivedoorBlogUrl(url)
+    const page = feeds.forUrl(url)
 
-    if (!parsed) {
+    if (!parsed || !page) {
       return []
     }
 
-    const domain = new URL(url).hostname.slice(parsed.blog.length + 1)
-    const params = { blog: parsed.blog, domain }
     const uris: Array<DiscoverUriEntry> = []
 
     if (parsed.kind === 'category') {
-      uris.push(
-        feeds.getFeedEntry(
-          'livedoor-blog:category',
-          { ...params, category: parsed.category },
-          'rdf',
-        ),
-      )
+      uris.push(page.getFeedEntry('livedoor-blog:category', { category: parsed.category }, 'rdf'))
     }
 
     uris.push(
-      feeds.getFeedEntry('livedoor-blog:posts', params, 'rdf'),
-      feeds.getFeedEntry('livedoor-blog:posts', params, 'atom'),
+      page.getFeedEntry('livedoor-blog:posts', {}, 'rdf'),
+      page.getFeedEntry('livedoor-blog:posts', {}, 'atom'),
     )
 
     return uris

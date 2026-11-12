@@ -102,15 +102,15 @@ describe('livedoorBlogHandler', () => {
       expect(livedoorBlogHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return the https feeds for an http page', () => {
+    it('should return the feeds under the page scheme for an http page', () => {
       const value = 'http://example.ldblog.jp/'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://example.ldblog.jp/index.rdf',
+          uri: 'http://example.ldblog.jp/index.rdf',
           hint: { key: 'livedoor-blog:posts', label: 'Posts', format: 'rdf' },
         },
         {
-          uri: 'https://example.ldblog.jp/atom.xml',
+          uri: 'http://example.ldblog.jp/atom.xml',
           hint: { key: 'livedoor-blog:posts', label: 'Posts', format: 'atom' },
         },
       ]
