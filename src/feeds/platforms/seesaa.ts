@@ -1,6 +1,7 @@
-import type { DiscoverUriEntry } from '../../common/types.js'
+import { getRegistrableDomain } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, getTenantSubdomain } from '../../common/utils.js'
+import { getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers blog, iiblog, seesaaBlog, seesaaSpace, sokuho, xblog (html), partly covers stablo.
@@ -17,6 +18,20 @@ const domains = [
   'xblog.jp',
 ]
 
+// A blog with a podcast also serves its RSS feed as `index_custom.rdf`.
+const feeds = definePlatformFeeds(
+  [
+    { key: 'seesaa:posts', template: '{scheme}://{blog}.{domain}/index20.rdf', format: 'rss' },
+    { key: 'seesaa:posts', template: '{scheme}://{blog}.{domain}/index.rdf', format: 'rdf' },
+    {
+      key: 'seesaa:posts',
+      template: '{scheme}://{blog}.{domain}/index_custom.rdf',
+      format: 'rss',
+    },
+  ],
+  { domains },
+)
+
 export const parseSeesaaUrl = (url: string): SeesaaUrl | undefined => {
   if (!getTenantSubdomain(url, domains)) {
     return
@@ -31,18 +46,20 @@ export const seesaaHandler: PlatformHandler = {
   },
 
   resolve: (url) => {
-    const parsed = parseSeesaaUrl(url)
+    const blog = getTenantSubdomain(url, domains)
+    const domain = getRegistrableDomain(url)
 
-    if (!parsed) {
+    if (!blog || !domain) {
       return []
     }
 
-    const { origin } = new URL(url)
-    const uris: Array<DiscoverUriEntry> = []
+    const params = { scheme: new URL(url).protocol.slice(0, -1), blog, domain }
 
-    uris.push({ uri: `${origin}/index20.rdf`, hint: composeHint('seesaa:posts', 'rss') })
-    uris.push({ uri: `${origin}/index.rdf`, hint: composeHint('seesaa:posts', 'rdf') })
-
-    return uris
+    return [
+      feeds.getFeedEntry('seesaa:posts', params, 'rss'),
+      feeds.getFeedEntry('seesaa:posts', params, 'rdf'),
+    ]
   },
+
+  getFeedKey: feeds.getFeedKey,
 }
