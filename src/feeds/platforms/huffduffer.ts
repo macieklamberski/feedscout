@@ -95,22 +95,18 @@ export const huffdufferHandler: PlatformHandler = {
       ]
     }
 
-    const huffduffsFeed = feeds.getFeedEntry('huffduffer:huffduffs', { username: page.username })
-
     if (page.kind === 'profile') {
-      return [huffduffsFeed]
+      return [feeds.getFeedEntry('huffduffer:huffduffs', { username: page.username })]
     }
-
-    const relatedFeed = feeds.getFeedEntry('huffduffer:related', {
-      username: page.username,
-      id: page.id,
-    })
 
     if (page.kind === 'related') {
-      return [relatedFeed]
+      return [feeds.getFeedEntry('huffduffer:related', { username: page.username, id: page.id })]
     }
 
-    return [relatedFeed, huffduffsFeed]
+    return [
+      feeds.getFeedEntry('huffduffer:related', { username: page.username, id: page.id }),
+      feeds.getFeedEntry('huffduffer:huffduffs', { username: page.username }),
+    ]
   },
 
   getFeedHint: (url) => {
