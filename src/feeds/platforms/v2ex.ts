@@ -78,5 +78,5 @@ export const v2exHandler: PlatformHandler = {
     return [feeds.getFeedEntry('v2ex:index')]
   },
 
-  getFeedKey: feeds.getFeedKey,
+  getFeedHint: feeds.getFeedHint,
 }

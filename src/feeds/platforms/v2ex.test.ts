@@ -218,64 +218,64 @@ describe('v2exHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
-    it('should return the member key for a member feed', () => {
+  describe('getFeedHint', () => {
+    it('should return the member hint for a member feed', () => {
       const value = 'https://www.v2ex.com/feed/member/cfans1993.xml'
-      const expected = 'v2ex:member'
+      const expected: DiscoverUriHint = { key: 'v2ex:member', label: 'Member' }
 
-      expect(v2exHandler.getFeedKey?.(value)).toBe(expected)
+      expect(v2exHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the node key for a node feed', () => {
+    it('should return the node hint for a node feed', () => {
       const value = 'https://www.v2ex.com/feed/markdown.xml'
-      const expected = 'v2ex:node'
+      const expected: DiscoverUriHint = { key: 'v2ex:node', label: 'Node' }
 
-      expect(v2exHandler.getFeedKey?.(value)).toBe(expected)
+      expect(v2exHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the tab key for a tab feed', () => {
+    it('should return the tab hint for a tab feed', () => {
       const value = 'https://www.v2ex.com/feed/tab/qna.xml'
-      const expected = 'v2ex:tab'
+      const expected: DiscoverUriHint = { key: 'v2ex:tab', label: 'Tab' }
 
-      expect(v2exHandler.getFeedKey?.(value)).toBe(expected)
+      expect(v2exHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the index key for the site feed', () => {
+    it('should return the index hint for the site feed', () => {
       const value = 'https://www.v2ex.com/index.xml'
-      const expected = 'v2ex:index'
+      const expected: DiscoverUriHint = { key: 'v2ex:index', label: 'Index' }
 
-      expect(v2exHandler.getFeedKey?.(value)).toBe(expected)
+      expect(v2exHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the member key for a member feed without www', () => {
+    it('should return the member hint for a member feed without www', () => {
       const value = 'https://v2ex.com/feed/member/feelinglucky.xml'
-      const expected = 'v2ex:member'
+      const expected: DiscoverUriHint = { key: 'v2ex:member', label: 'Member' }
 
-      expect(v2exHandler.getFeedKey?.(value)).toBe(expected)
+      expect(v2exHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a feed path with a third segment', () => {
       const value = 'https://www.v2ex.com/feed/member/feelinglucky/extra.xml'
 
-      expect(v2exHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(v2exHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a member page', () => {
       const value = 'https://www.v2ex.com/member/feelinglucky'
 
-      expect(v2exHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(v2exHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a node page', () => {
       const value = 'https://www.v2ex.com/go/markdown'
 
-      expect(v2exHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(v2exHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for another host', () => {
       const value = 'https://example.com/feed/member/feelinglucky.xml'
 
-      expect(v2exHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(v2exHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 
