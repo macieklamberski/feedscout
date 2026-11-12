@@ -13,6 +13,8 @@ const newsFeedHrefRegex = /^\/apps\/news\/rss\?categoryid=(\d+)$/i
 const classPathRegex = /^\/apps\/classes\/(\d+)(?:\/|$)/i
 const classFeedHrefRegex = /^\/apps\/classes\/assignment_rss\.jsp\?classREC_ID=(\d+)$/i
 
+// A school on its own domain is known only by its marker, so its feeds are built here but claimed
+// only on an edlio.com school.
 const feeds = definePlatformFeeds(
   [
     { key: 'edlio:news', template: '{scheme}://{host}/apps/news/rss' },
@@ -23,24 +25,6 @@ const feeds = definePlatformFeeds(
     {
       key: 'edlio:assignments',
       template: '{scheme}://{host}/apps/classes/assignment_rss.jsp?classREC_ID={classId}',
-    },
-  ],
-  { domains },
-)
-
-// A school on its own domain is known only by its marker, so only a feed on an edlio.com school is
-// claimed.
-const ownFeeds = definePlatformFeeds(
-  [
-    { key: 'edlio:news', template: '{scheme}://{school}.{domain}/apps/news/rss' },
-    {
-      key: 'edlio:news-category',
-      template: '{scheme}://{school}.{domain}/apps/news/rss?categoryid={categoryId}',
-    },
-    {
-      key: 'edlio:assignments',
-      template:
-        '{scheme}://{school}.{domain}/apps/classes/assignment_rss.jsp?classREC_ID={classId}',
     },
   ],
   { domains },
@@ -103,5 +87,5 @@ export const edlioHandler: PlatformHandler = {
     return [pageFeeds.getFeedEntry('edlio:news-category', { categoryId: page.categoryId })]
   },
 
-  getFeedHint: ownFeeds.getFeedHint,
+  getFeedHint: feeds.getFeedHint,
 }
