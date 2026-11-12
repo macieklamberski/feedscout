@@ -1,5 +1,6 @@
 import {
   composeQuery,
+  decodePercent,
   encodePathSegment,
   escapeRegex,
   getQueryParam,
@@ -14,7 +15,8 @@ import { composeHint } from '../../utils.js'
 
 export type PlatformFeedTemplate = {
   key: string
-  // A feed URL with `{name}` placeholders, each one host label, path segment or query value.
+  // A feed URL with `{name}` placeholders, each one host label, path segment or query value, and
+  // `{scheme}` for a feed served under the page's own scheme.
   template: string
   format?: DiscoverUriHint['format']
 }
@@ -39,30 +41,53 @@ export type PlatformFeedTable = {
     params?: PlatformFeedParams,
     format?: DiscoverUriHint['format'],
   ) => DiscoverUriEntry
-  getFeedKey: (url: string) => string | undefined
+  getFeedHint: (url: string) => DiscoverUriHint | undefined
 }
 
 type CompiledTemplate = {
   key: string
   format?: DiscoverUriHint['format']
   queryCount: number
+  // The placeholder names the template fills.
+  names: Array<string>
   isFeedUrl: (url: URL) => boolean
   getUrl: (params?: PlatformFeedParams) => string
 }
 
-const templateRegex = /^(https?):\/\/([^/?#]+)(\/[^?#]*)?(?:\?([^#]*))?$/i
+const templateRegex = /^(https?|\{scheme\}):\/\/([^/?#]+)(\/[^?#]*)?(?:\?([^#]*))?$/i
 const placeholderRegex = /\{(\w+)\}/g
 const trailingSlashRegex = /\/$/
 
-// A placeholder becomes the capture, the text around it a literal.
+// A path decoded segment by segment, so `%40` and `@` compare equal. A decoded `%` and `/` are
+// written back as `%25` and `%2F`, so `%252F` stays apart from `%2F` and no segment splits.
+const decodePath = (path: string): string => {
+  if (!path.includes('%')) {
+    return path
+  }
+
+  return path
+    .split('/')
+    .map((segment) => decodePercent(segment).replaceAll('%', '%25').replaceAll('/', '%2F'))
+    .join('/')
+}
+
+// A placeholder becomes the capture, the text around it a literal, decoded for a path so an
+// encoded brace in it stays a literal.
 const toRegexSource = (
   text: string,
   capture: string,
   captures: Record<string, string> = {},
+  isPath = false,
 ): string => {
   return text
     .split(placeholderRegex)
-    .map((piece, index) => (index % 2 === 0 ? escapeRegex(piece) : (captures[piece] ?? capture)))
+    .map((piece, index) => {
+      if (index % 2 === 1) {
+        return captures[piece] ?? capture
+      }
+
+      return escapeRegex(isPath ? decodePath(piece) : piece)
+    })
     .join('')
 }
 
@@ -91,21 +116,21 @@ const compileTemplate = (
     throw new Error(t(locales.errors.missingFeedHosts, { key }))
   }
 
-  // Matched on the host without `www` and the path without its trailing slash.
+  // Matched on the host without `www` and the decoded path without its trailing slash.
   const hostSource = toRegexSource(stripWww(host), '[^.]+', {
     host: `(?:${hostSources.join('|')})`,
     domain: domainSource,
   })
-  const pathSource = toRegexSource(path.replace(trailingSlashRegex, ''), '[^/]+')
+  const pathSource = toRegexSource(path.replace(trailingSlashRegex, ''), '[^/]+', {}, true)
   const hostPathRegex = new RegExp(`^${hostSource}${pathSource}$`, 'i')
   const queryRegexes = query.map(([name, value]): [string, RegExp] => {
     return [name, new RegExp(`^${toRegexSource(value, '.+')}$`, 'i')]
   })
 
   const isFeedUrl = (url: URL): boolean => {
-    if (
-      !hostPathRegex.test(stripWww(url.hostname) + url.pathname.replace(trailingSlashRegex, ''))
-    ) {
+    const pathname = decodePath(url.pathname).replace(trailingSlashRegex, '')
+
+    if (!hostPathRegex.test(stripWww(url.hostname) + pathname)) {
       return false
     }
 
@@ -127,14 +152,16 @@ const compileTemplate = (
       Object.fromEntries(query.map(([name, value]) => [name, fillPlaceholders(value)])),
     )
 
-    return `${scheme}://${fillPlaceholders(host)}${fillPlaceholders(path, encodePathSegment)}${builtQuery}`
+    return `${fillPlaceholders(scheme)}://${fillPlaceholders(host)}${fillPlaceholders(path, encodePathSegment)}${builtQuery}`
   }
 
-  return { key, format, queryCount: query.length, isFeedUrl, getUrl }
+  const names = [...template.matchAll(placeholderRegex)].map(([, name]) => name)
+
+  return { key, format, queryCount: query.length, names, isFeedUrl, getUrl }
 }
 
 // One table of a handler's feed URLs, keyed by hint key. `getFeedUrl` writes a feed from the values
-// a page gave, `getFeedEntry` adds its hint, and `getFeedKey` reads a URL back to the feed's key.
+// a page gave, `getFeedEntry` adds its hint, and `getFeedHint` reads a URL back to the feed's hint.
 export const definePlatformFeeds = (
   templates: Array<PlatformFeedTemplate>,
   options: PlatformFeedTableOptions = {},
@@ -144,9 +171,14 @@ export const definePlatformFeeds = (
   const bySpecificity = [...compiled].sort((a, b) => b.queryCount - a.queryCount)
 
   const getFeedUrl: PlatformFeedTable['getFeedUrl'] = (key, params, format) => {
-    const template = compiled.find((candidate) => {
+    const candidates = compiled.filter((candidate) => {
       return candidate.key === key && (format === undefined || candidate.format === format)
     })
+    // A key with several shapes builds the first one whose placeholders the values fill.
+    const template =
+      candidates.find((candidate) =>
+        candidate.names.every((name) => params?.[name] !== undefined),
+      ) ?? candidates[0]
 
     if (!template) {
       throw new Error(t(locales.errors.missingFeedTemplate, { key }))
@@ -159,15 +191,21 @@ export const definePlatformFeeds = (
     return { uri: getFeedUrl(key, params, format), hint: composeHint(key, format) }
   }
 
-  const getFeedKey: PlatformFeedTable['getFeedKey'] = (url) => {
+  const getFeedHint: PlatformFeedTable['getFeedHint'] = (url) => {
     const parsedUrl = parseUrl(url)
 
     if (!parsedUrl || !isHttpUrl(parsedUrl)) {
       return
     }
 
-    return bySpecificity.find((candidate) => candidate.isFeedUrl(parsedUrl))?.key
+    const template = bySpecificity.find((candidate) => candidate.isFeedUrl(parsedUrl))
+
+    if (!template) {
+      return
+    }
+
+    return composeHint(template.key, template.format)
   }
 
-  return { getFeedUrl, getFeedEntry, getFeedKey }
+  return { getFeedUrl, getFeedEntry, getFeedHint }
 }
