@@ -40,19 +40,18 @@ export const viablogaHandler: PlatformHandler = {
 
   resolve: (url) => {
     const blog = getTenantSubdomain(url, domains)
+    const page = feeds.forUrl(url)
 
-    if (!blog) {
+    if (!blog || !page) {
       return []
     }
 
-    const params = { scheme: new URL(url).protocol.slice(0, -1), blog, domain: domains[0] }
-
     return [
-      feeds.getFeedEntry('viabloga:posts', params, 'rss'),
-      feeds.getFeedEntry('viabloga:posts', params, 'atom'),
-      feeds.getFeedEntry('viabloga:posts', params, 'rdf'),
-      feeds.getFeedEntry('viabloga:comments', params, 'rss'),
-      feeds.getFeedEntry('viabloga:wiki', params, 'rdf'),
+      page.getFeedEntry('viabloga:posts', { blog }, 'rss'),
+      page.getFeedEntry('viabloga:posts', { blog }, 'atom'),
+      page.getFeedEntry('viabloga:posts', { blog }, 'rdf'),
+      page.getFeedEntry('viabloga:comments', { blog }, 'rss'),
+      page.getFeedEntry('viabloga:wiki', { blog }, 'rdf'),
     ]
   },
 
