@@ -1,6 +1,6 @@
 import { isHostOf, parseUrl } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -9,6 +9,13 @@ export type ParagraphUrl = { kind: 'blog'; username: string }
 const hosts = ['paragraph.com', 'www.paragraph.com']
 
 const userRegex = /^\/@([^/]+)/
+
+const feeds = definePlatformFeeds([
+  { key: 'paragraph:blog', template: 'https://api.paragraph.com/blogs/rss/@{username}' },
+  // A blog page links the %40 spelling, and both answer 308 to the api.paragraph.com feed.
+  { key: 'paragraph:blog', template: 'https://paragraph.com/api/blogs/rss/@{username}' },
+  { key: 'paragraph:blog', template: 'https://paragraph.com/api/blogs/rss/%40{username}' },
+])
 
 export const parseParagraphUrl = (url: string): ParagraphUrl | undefined => {
   const parsedUrl = parseUrl(url)
@@ -38,11 +45,8 @@ export const paragraphHandler: PlatformHandler = {
       return []
     }
 
-    return [
-      {
-        uri: `https://api.paragraph.com/blogs/rss/@${parsed.username}`,
-        hint: composeHint('paragraph:blog'),
-      },
-    ]
+    return [feeds.getFeedEntry('paragraph:blog', { username: parsed.username })]
   },
+
+  getFeedKey: feeds.getFeedKey,
 }
