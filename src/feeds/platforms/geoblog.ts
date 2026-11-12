@@ -15,9 +15,10 @@ const domains = ['geoblog.pl']
 
 const tripPathRegex = /^\/podroz\/(\d+)(?:\/|$)/i
 
-const feeds = definePlatformFeeds([
-  { key: 'geoblog:trip', template: '{scheme}://{user}.geoblog.pl/podroz/rss/{tripId}.xml' },
-])
+const feeds = definePlatformFeeds(
+  [{ key: 'geoblog:trip', template: '{scheme}://{host}/podroz/rss/{tripId}.xml' }],
+  { domains },
+)
 
 export const parseGeoblogUrl = (url: string): GeoblogUrl | undefined => {
   if (!getTenantSubdomain(url, domains)) {
@@ -68,14 +69,13 @@ export const geoblogHandler: PlatformHandler = {
 
   resolve: (url, content) => {
     const page = getGeoblogPage(url, content)
-    const user = getTenantSubdomain(url, domains)
     const pageFeeds = feeds.forUrl(url)
 
-    if (!page || !user || !pageFeeds) {
+    if (!page || !pageFeeds) {
       return []
     }
 
-    return [pageFeeds.getFeedEntry('geoblog:trip', { user, tripId: page.tripId })]
+    return [pageFeeds.getFeedEntry('geoblog:trip', { tripId: page.tripId })]
   },
 
   getFeedHint: feeds.getFeedHint,
