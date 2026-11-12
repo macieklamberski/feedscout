@@ -1,11 +1,17 @@
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, getTenantSubdomain } from '../../common/utils.js'
+import { getTenantSubdomain } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
 export type BlogiaUrl = { kind: 'blog'; blog: string }
 
 const domains = ['blogia.com']
+
+// The blog's alternate link is always https, and http redirects to it.
+const feeds = definePlatformFeeds([
+  { key: 'blogia:posts', template: 'https://{blog}.blogia.com/feed.xml' },
+])
 
 export const parseBlogiaUrl = (url: string): BlogiaUrl | undefined => {
   const blog = getTenantSubdomain(url, domains)
@@ -29,12 +35,8 @@ export const blogiaHandler: PlatformHandler = {
       return []
     }
 
-    // The blog's alternate link is always https, and http redirects to it.
-    return [
-      {
-        uri: `https://${parsed.blog}.blogia.com/feed.xml`,
-        hint: composeHint('blogia:posts'),
-      },
-    ]
+    return [feeds.getFeedEntry('blogia:posts', { blog: parsed.blog })]
   },
+
+  getFeedKey: feeds.getFeedKey,
 }
