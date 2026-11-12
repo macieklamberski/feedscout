@@ -1,5 +1,4 @@
 import { getQueryParam, getSubdomain, isAnyOf, parseUrl } from 'trousse'
-import type { DiscoverUriEntry } from '../../common/types.js'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { digitsRegex, getTenantSubdomain } from '../../common/utils.js'
@@ -74,23 +73,29 @@ export const fc2Handler: PlatformHandler = {
       return []
     }
 
-    const uris: Array<DiscoverUriEntry> = []
-
     if (parsed.category) {
-      uris.push(page.getFeedEntry('fc2:category', { category: parsed.category }))
+      return [
+        page.getFeedEntry('fc2:category', { category: parsed.category }),
+        page.getFeedEntry('fc2:posts'),
+        page.getFeedEntry('fc2:comments'),
+        page.getFeedEntry('fc2:trackbacks'),
+      ]
     }
 
     if (parsed.tag) {
-      uris.push(page.getFeedEntry('fc2:tag', { tag: parsed.tag }))
+      return [
+        page.getFeedEntry('fc2:tag', { tag: parsed.tag }),
+        page.getFeedEntry('fc2:posts'),
+        page.getFeedEntry('fc2:comments'),
+        page.getFeedEntry('fc2:trackbacks'),
+      ]
     }
 
-    uris.push(
+    return [
       page.getFeedEntry('fc2:posts'),
       page.getFeedEntry('fc2:comments'),
       page.getFeedEntry('fc2:trackbacks'),
-    )
-
-    return uris
+    ]
   },
 
   // The table reads any host under fc2.com, such as web.fc2.com, so the page parser narrows it to
