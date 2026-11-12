@@ -50,11 +50,11 @@ export const overblogHandler: PlatformHandler = {
 
   // The table reads any host under the domains, so the page parser refuses the apex and the www
   // host first, whose /rss ends in a 404, and a www or nested subdomain of a blog.
-  getFeedKey: (url) => {
+  getFeedHint: (url) => {
     if (!parseOverblogUrl(url)) {
       return
     }
 
-    return feeds.getFeedKey(url)
+    return feeds.getFeedHint(url)
   },
 }
