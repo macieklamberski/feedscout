@@ -1779,8 +1779,10 @@
     "travellerspoint:posts": "https://debtravels.travellerspoint.com/atom.xml"
   },
   "tumblr": {
+    "tumblr:podcast": { "skip": "Tumblr answers plain requests to it with a browser check" },
     "tumblr:posts": "https://staff.tumblr.com/rss",
-    "tumblr:tag": "https://staff.tumblr.com/tagged/updates/rss"
+    "tumblr:tag": "https://staff.tumblr.com/tagged/updates/rss",
+    "tumblr:theme-posts": { "skip": "Tumblr answers plain requests to it with a browser check" }
   },
   "twoday": {
     "twoday:posts": "https://changes.twoday.net/index.rdf",

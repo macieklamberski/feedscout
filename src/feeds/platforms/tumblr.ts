@@ -14,9 +14,14 @@ export const domains = ['tumblr.com']
 
 const tagRegex = /^\/tagged\/([^/]+)/i
 
+// The theme render of the posts and the podcast of the audio posts answer a plain request with a
+// browser check, so the rows only claim them.
 const feeds = definePlatformFeeds([
   { key: 'tumblr:tag', template: 'https://{blog}.tumblr.com/tagged/{tag}/rss' },
   { key: 'tumblr:posts', template: 'https://{blog}.tumblr.com/rss' },
+  { key: 'tumblr:theme-posts', template: 'https://{blog}.tumblr.com/?format=rss' },
+  { key: 'tumblr:podcast', template: 'https://{blog}.tumblr.com/podcast' },
+  { key: 'tumblr:podcast', template: 'https://{blog}.tumblr.com/podcast/rss' },
 ])
 
 export const parseTumblrUrl = (url: string): TumblrUrl | undefined => {
