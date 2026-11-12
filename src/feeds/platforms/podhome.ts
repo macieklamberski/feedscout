@@ -67,7 +67,7 @@ export const podhomeHandler: PlatformHandler = {
     })
   },
 
-  getFeedKey: (url) => {
+  getFeedHint: (url) => {
     const [, feedId] = getPathSegments(url)
 
     // A feed id is a GUID, with or without hyphens, so `xslsheet`, the stylesheet every feed links
@@ -76,6 +76,6 @@ export const podhomeHandler: PlatformHandler = {
       return
     }
 
-    return feeds.getFeedKey(url)
+    return feeds.getFeedHint(url)
   },
 }

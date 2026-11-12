@@ -95,82 +95,82 @@ describe('podhomeHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
-    it('should return the podcast key for a show feed', () => {
+  describe('getFeedHint', () => {
+    it('should return the podcast hint for a show feed', () => {
       const value = 'https://serve.podhome.fm/rss/00000000-0000-4000-8000-000000000000'
-      const expected = 'podhome:podcast'
+      const expected: DiscoverUriHint = { key: 'podhome:podcast', label: 'Podcast' }
 
-      expect(podhomeHandler.getFeedKey?.(value)).toBe(expected)
+      expect(podhomeHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the podcast key for a show feed over http', () => {
+    it('should return the podcast hint for a show feed over http', () => {
       const value = 'http://serve.podhome.fm/rss/00000000-0000-4000-8000-000000000000'
-      const expected = 'podhome:podcast'
+      const expected: DiscoverUriHint = { key: 'podhome:podcast', label: 'Podcast' }
 
-      expect(podhomeHandler.getFeedKey?.(value)).toBe(expected)
+      expect(podhomeHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the podcast key for a show feed with a trailing slash', () => {
+    it('should return the podcast hint for a show feed with a trailing slash', () => {
       const value = 'https://serve.podhome.fm/rss/00000000-0000-4000-8000-000000000000/'
-      const expected = 'podhome:podcast'
+      const expected: DiscoverUriHint = { key: 'podhome:podcast', label: 'Podcast' }
 
-      expect(podhomeHandler.getFeedKey?.(value)).toBe(expected)
+      expect(podhomeHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the podcast key for a show feed with an uppercase id', () => {
+    it('should return the podcast hint for a show feed with an uppercase id', () => {
       const value = 'https://serve.podhome.fm/RSS/ABCDEF00-0000-4000-8000-000000000000'
-      const expected = 'podhome:podcast'
+      const expected: DiscoverUriHint = { key: 'podhome:podcast', label: 'Podcast' }
 
-      expect(podhomeHandler.getFeedKey?.(value)).toBe(expected)
+      expect(podhomeHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the podcast key for a show feed id without hyphens', () => {
+    it('should return the podcast hint for a show feed id without hyphens', () => {
       const value = 'https://serve.podhome.fm/rss/00000000000040008000000000000000'
-      const expected = 'podhome:podcast'
+      const expected: DiscoverUriHint = { key: 'podhome:podcast', label: 'Podcast' }
 
-      expect(podhomeHandler.getFeedKey?.(value)).toBe(expected)
+      expect(podhomeHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for an all-hex word of another length in the feed path', () => {
       const value = 'https://serve.podhome.fm/rss/cafe'
 
-      expect(podhomeHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(podhomeHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for an all-hex word in the feed path', () => {
       const value = 'https://serve.podhome.fm/rss/feed'
 
-      expect(podhomeHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(podhomeHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for the stylesheet a feed links', () => {
       const value = 'https://serve.podhome.fm/rss/xslsheet'
 
-      expect(podhomeHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(podhomeHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for the feed path without an id', () => {
       const value = 'https://serve.podhome.fm/rss/'
 
-      expect(podhomeHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(podhomeHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a show page', () => {
       const value = 'https://serve.podhome.fm/example-show'
 
-      expect(podhomeHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(podhomeHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for an episode page', () => {
       const value = 'https://serve.podhome.fm/episodepage/example-show/1'
 
-      expect(podhomeHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(podhomeHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed path on another host', () => {
       const value = 'https://example.com/rss/00000000-0000-4000-8000-000000000000'
 
-      expect(podhomeHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(podhomeHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 
