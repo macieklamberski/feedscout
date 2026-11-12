@@ -39,9 +39,9 @@ export const parseGeoblogUrl = (url: string): GeoblogUrl | undefined => {
   }
 }
 
-// A trip feed answers 200 with an empty channel for any id on any user's host, so the trip comes
-// from the page. Trip and entry pages link their own trip by a relative path, in the breadcrumb,
-// and the user's other trips by absolute urls.
+// A trip feed answers on any user's host, under that user's name, so the trip comes from the page.
+// Trip and entry pages link their own trip by a relative path, in the breadcrumb, and the user's
+// other trips by absolute urls.
 const getGeoblogPage = (url: string, content: string | undefined): GeoblogPage | undefined => {
   const parsed = parseGeoblogUrl(url)
 

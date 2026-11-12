@@ -166,6 +166,13 @@ describe('geoblogHandler', () => {
       expect(geoblogHandler.getFeedKey?.(value)).toBe(expected)
     })
 
+    it('should return the trip key for a trip feed on the www form of a user host', () => {
+      const value = 'http://www.alice.geoblog.pl/podroz/rss/12345.xml'
+      const expected = 'geoblog:trip'
+
+      expect(geoblogHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
     it('should return undefined for a trip page', () => {
       const value = 'http://alice.geoblog.pl/podroz/12345/majorka-2024'
 
