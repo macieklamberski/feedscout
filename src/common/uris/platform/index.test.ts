@@ -4,8 +4,10 @@ import type {
   DiscoverErrorContext,
   DiscoverOnErrorFn,
   DiscoverRef,
+  DiscoverUriEntry,
   FetchFn,
 } from '../../types.js'
+import { definePlatformFeeds } from './feeds.js'
 import { discoverUrisFromPlatform } from './index.js'
 import type { PlatformHandler } from './types.js'
 
@@ -20,6 +22,28 @@ const samePageUrls = [
   'https://example.com:443/page?a=1&b=2',
   'https://user:pw@example.com/page?a=1&b=2',
   'https://example.com/p%61ge?a=1&b=2',
+]
+
+const claimedFeeds = definePlatformFeeds([
+  { key: 'ocnk:products', template: 'https://example.com/{shop}/products.rdf', format: 'rdf' },
+  { key: 'youtube:videos', template: 'https://example.com/{username}/videos.xml' },
+])
+
+const claimedFeedCases: Array<[string, DiscoverUriEntry]> = [
+  [
+    'https://example.com/alice/products.rdf',
+    {
+      uri: 'https://example.com/alice/products.rdf',
+      hint: { key: 'ocnk:products', label: 'Products', format: 'rdf' },
+    },
+  ],
+  [
+    'https://example.com/alice/videos.xml',
+    {
+      uri: 'https://example.com/alice/videos.xml',
+      hint: { key: 'youtube:videos', label: 'Videos' },
+    },
+  ],
 ]
 
 describe('discoverUrisFromPlatform', () => {
@@ -37,11 +61,17 @@ describe('discoverUrisFromPlatform', () => {
     expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
   })
 
-  it('should return the URL as given with its key when a handler claims it as its feed', async () => {
+  it('should return the URL as given with its hint when a handler claims it as its feed', async () => {
     const handler: PlatformHandler = {
       match: () => false,
       resolve: () => [],
-      getFeedKey: (url) => (url.endsWith('.xml') ? 'youtube:videos' : undefined),
+      getFeedHint: (url) => {
+        if (!url.endsWith('.xml')) {
+          return
+        }
+
+        return { key: 'youtube:videos', label: 'Videos' }
+      },
     }
     const options = {
       baseUrl: 'http://Example.com/alice.xml',
@@ -54,6 +84,23 @@ describe('discoverUrisFromPlatform', () => {
     expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
   })
 
+  it.each(claimedFeedCases)(
+    'should return the hint of the feed table row that claims %s',
+    async (value, expected) => {
+      const handler: PlatformHandler = {
+        match: () => false,
+        resolve: () => [],
+        getFeedHint: claimedFeeds.getFeedHint,
+      }
+      const options = {
+        baseUrl: value,
+        handlers: [handler],
+      }
+
+      expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual([expected])
+    },
+  )
+
   it('should ask every handler for its feed before any match', async () => {
     const pageHandler: PlatformHandler = {
       match: () => true,
@@ -62,7 +109,7 @@ describe('discoverUrisFromPlatform', () => {
     const feedHandler: PlatformHandler = {
       match: () => false,
       resolve: () => [],
-      getFeedKey: () => 'youtube:videos',
+      getFeedHint: () => ({ key: 'youtube:videos', label: 'Videos' }),
     }
     const options = {
       baseUrl: 'https://example.com/alice.xml',
@@ -75,11 +122,11 @@ describe('discoverUrisFromPlatform', () => {
     expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
   })
 
-  it('should move on when a getFeedKey throws', async () => {
+  it('should move on when a getFeedHint throws', async () => {
     const throwingHandler: PlatformHandler = {
       match: () => false,
       resolve: () => [],
-      getFeedKey: () => {
+      getFeedHint: () => {
         throw new Error('Unexpected input')
       },
     }
