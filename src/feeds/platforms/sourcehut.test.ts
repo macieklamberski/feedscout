@@ -108,64 +108,64 @@ describe('sourcehutHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
-    it('should return the commits key for a log feed', () => {
+  describe('getFeedHint', () => {
+    it('should return the commits hint for a log feed', () => {
       const value = 'https://git.sr.ht/~example/project/log/rss.xml'
-      const expected = 'sourcehut:commits'
+      const expected: DiscoverUriHint = { key: 'sourcehut:commits', label: 'Commits' }
 
-      expect(sourcehutHandler.getFeedKey?.(value)).toBe(expected)
+      expect(sourcehutHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the commits key for a log feed of one ref', () => {
+    it('should return the commits hint for a log feed of one ref', () => {
       const value = 'https://git.sr.ht/~example/project/log/master/rss.xml'
-      const expected = 'sourcehut:commits'
+      const expected: DiscoverUriHint = { key: 'sourcehut:commits', label: 'Commits' }
 
-      expect(sourcehutHandler.getFeedKey?.(value)).toBe(expected)
+      expect(sourcehutHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the commits key for a log feed of a repository with a dotted name', () => {
+    it('should return the commits hint for a log feed of a repository with a dotted name', () => {
       const value = 'https://git.sr.ht/~example/example.org/log/rss.xml'
-      const expected = 'sourcehut:commits'
+      const expected: DiscoverUriHint = { key: 'sourcehut:commits', label: 'Commits' }
 
-      expect(sourcehutHandler.getFeedKey?.(value)).toBe(expected)
+      expect(sourcehutHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the refs key for a refs feed', () => {
+    it('should return the refs hint for a refs feed', () => {
       const value = 'https://git.sr.ht/~example/project/refs/rss.xml'
-      const expected = 'sourcehut:refs'
+      const expected: DiscoverUriHint = { key: 'sourcehut:refs', label: 'Refs' }
 
-      expect(sourcehutHandler.getFeedKey?.(value)).toBe(expected)
+      expect(sourcehutHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the refs key for a refs feed over http', () => {
+    it('should return the refs hint for a refs feed over http', () => {
       const value = 'http://git.sr.ht/~example/project/refs/rss.xml'
-      const expected = 'sourcehut:refs'
+      const expected: DiscoverUriHint = { key: 'sourcehut:refs', label: 'Refs' }
 
-      expect(sourcehutHandler.getFeedKey?.(value)).toBe(expected)
+      expect(sourcehutHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a repository page', () => {
       const value = 'https://git.sr.ht/~example/project'
 
-      expect(sourcehutHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(sourcehutHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a log page', () => {
       const value = 'https://git.sr.ht/~example/project/log'
 
-      expect(sourcehutHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(sourcehutHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a log feed path without the tilde prefix', () => {
       const value = 'https://git.sr.ht/example/project/log/rss.xml'
 
-      expect(sourcehutHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(sourcehutHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a log feed path on another host', () => {
       const value = 'https://example.com/~example/project/log/rss.xml'
 
-      expect(sourcehutHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(sourcehutHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 
