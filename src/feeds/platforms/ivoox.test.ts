@@ -161,10 +161,25 @@ describe('ivooxHandler', () => {
       expect(ivooxHandler.getFeedKey?.(value)).toBe(expected)
     })
 
-    it('should return undefined for a podcast feed under a show slug', () => {
-      const value = 'https://feeds.ivoox.com/podcast-cine-en-serie_fg_f1317588_filtro_1.xml'
+    it('should return the podcast key for a podcast feed under a show slug', () => {
+      const value = 'https://feeds.ivoox.com/example_fg_f12345_filtro_1.xml'
+      const expected = 'ivoox:podcast'
 
-      expect(ivooxHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(ivooxHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the podcast key for a podcast feed on the site host', () => {
+      const value = 'https://www.ivoox.com/example_fg_f12345_filtro_1.xml'
+      const expected = 'ivoox:podcast'
+
+      expect(ivooxHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the podcast key for a podcast feed under a locale prefix', () => {
+      const value = 'https://www.ivoox.com/en/example_fg_f12345_filtro_1.xml'
+      const expected = 'ivoox:podcast'
+
+      expect(ivooxHandler.getFeedKey?.(value)).toBe(expected)
     })
 
     it('should return undefined for a podcast page', () => {
@@ -191,6 +206,9 @@ describe('ivooxHandler', () => {
     const ownFeeds = [
       'https://feeds.ivoox.com/feed_fg_f1317588_filtro_1.xml',
       'https://feeds.ivoox.com/feed_fg_f1905434_filtro_1.xml',
+      'https://feeds.ivoox.com/example_fg_f12345_filtro_1.xml',
+      'https://www.ivoox.com/example_fg_f12345_filtro_1.xml',
+      'https://www.ivoox.com/en/example_fg_f12345_filtro_1.xml',
     ]
 
     it.each(ownFeeds)('should return %s as itself', async (value) => {

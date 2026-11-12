@@ -17,6 +17,13 @@ const partOfSeriesRegex = /"partOfSeries":\{[^{}]*_sq_f(\d+)_/
 
 const feeds = definePlatformFeeds([
   { key: 'ivoox:podcast', template: 'https://feeds.ivoox.com/feed_fg_f{podcastId}_filtro_1.xml' },
+  // Served spellings with the same items, under any slug. Claimed, never built.
+  { key: 'ivoox:podcast', template: 'https://feeds.ivoox.com/{slug}_fg_f{podcastId}_filtro_1.xml' },
+  { key: 'ivoox:podcast', template: 'https://www.ivoox.com/{slug}_fg_f{podcastId}_filtro_1.xml' },
+  {
+    key: 'ivoox:podcast',
+    template: 'https://www.ivoox.com/{locale}/{slug}_fg_f{podcastId}_filtro_1.xml',
+  },
 ])
 
 export const parseIvooxUrl = (url: string): IvooxUrl | undefined => {
