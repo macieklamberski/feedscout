@@ -512,6 +512,41 @@ describe('gitlabHandler', () => {
       expect(gitlabHandler.getFeedKey?.(value)).toBe(expected)
     })
 
+    it('should return the activity key for a namespace feed with a trailing slash', () => {
+      const value = 'https://gitlab.com/0xy.atom/'
+      const expected = 'gitlab:activity'
+
+      expect(gitlabHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the activity key for a project feed with a trailing slash', () => {
+      const value = 'https://gitlab.com/tortoisegit/tortoisegit.atom/'
+      const expected = 'gitlab:activity'
+
+      expect(gitlabHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the releases key for a releases feed with a trailing slash', () => {
+      const value = 'https://gitlab.com/tortoisegit/tortoisegit/-/releases.atom/'
+      const expected = 'gitlab:releases'
+
+      expect(gitlabHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the tags key for a tags feed with a trailing slash', () => {
+      const value = 'https://gitlab.com/spritely/fantasary/-/tags/?format=atom'
+      const expected = 'gitlab:tags'
+
+      expect(gitlabHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the branch commits key for a branch commits feed with a trailing slash', () => {
+      const value = 'https://gitlab.com/vdr-jp/audkrellm/-/commits/master/?format=atom'
+      const expected = 'gitlab:branch-commits'
+
+      expect(gitlabHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
     it('should return undefined for a project page', () => {
       const value = 'https://gitlab.com/tortoisegit/tortoisegit'
 
@@ -590,6 +625,19 @@ describe('gitlabHandler', () => {
       ],
       [
         'https://gitlab.com/sympl.io/install/-/commits/master/LICENSE?format=atom',
+        { key: 'gitlab:branch-commits', label: 'Branch commits' },
+      ],
+      ['https://gitlab.com/0xy.atom/', { key: 'gitlab:activity', label: 'Activity' }],
+      [
+        'https://gitlab.com/tortoisegit/tortoisegit/-/releases.atom/',
+        { key: 'gitlab:releases', label: 'Releases' },
+      ],
+      [
+        'https://gitlab.com/spritely/fantasary/-/tags/?format=atom',
+        { key: 'gitlab:tags', label: 'Tags' },
+      ],
+      [
+        'https://gitlab.com/vdr-jp/audkrellm/-/commits/master/?format=atom',
         { key: 'gitlab:branch-commits', label: 'Branch commits' },
       ],
     ]
