@@ -211,11 +211,11 @@ export const livejournalHandler: PlatformHandler = {
 
   // The table reads any label or first segment as a journal, so the page parser refuses the mobile,
   // syndication and image hosts and a dotted name first.
-  getFeedKey: (url) => {
+  getFeedHint: (url) => {
     if (!parseLivejournalUrl(url)) {
       return
     }
 
-    return feeds.getFeedKey(url)
+    return feeds.getFeedHint(url)
   },
 }
