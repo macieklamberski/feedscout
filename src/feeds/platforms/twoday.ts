@@ -18,8 +18,10 @@ const topicRegex = /^\/topics\/([^/]+)(?:\/|$)/i
 const feeds = definePlatformFeeds([
   { key: 'twoday:posts', template: 'https://{blog}.twoday.net/index.rdf' },
   { key: 'twoday:posts', template: 'https://{blog}.twoday.net/rss' },
+  { key: 'twoday:posts', template: 'https://{blog}.twoday.net/rss.xml' },
   { key: 'twoday:posts', template: 'https://{blog}.twoday.net/summary.rdf' },
   { key: 'twoday:topic', template: 'https://{blog}.twoday.net/topics/{topic}/index.rdf' },
+  { key: 'twoday:topic', template: 'https://{blog}.twoday.net/topics/{topic}/rss' },
 ])
 
 export const parseTwodayUrl = (url: string): TwodayUrl | undefined => {

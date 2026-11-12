@@ -132,6 +132,13 @@ describe('twodayHandler', () => {
       expect(twodayHandler.getFeedKey?.(value)).toBe(expected)
     })
 
+    it('should return the posts key for the rss.xml feed', () => {
+      const value = 'https://alice.twoday.net/rss.xml'
+      const expected = 'twoday:posts'
+
+      expect(twodayHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
     it('should return the posts key for the summary feed', () => {
       const value = 'https://alice.twoday.net/summary.rdf'
       const expected = 'twoday:posts'
@@ -141,6 +148,13 @@ describe('twodayHandler', () => {
 
     it('should return the topic key for a topic feed', () => {
       const value = 'https://alice.twoday.net/topics/Wo+der+Hase+hinlief/index.rdf'
+      const expected = 'twoday:topic'
+
+      expect(twodayHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the topic key for a topic rss feed', () => {
+      const value = 'https://alice.twoday.net/topics/Wo+der+Hase+hinlief/rss'
       const expected = 'twoday:topic'
 
       expect(twodayHandler.getFeedKey?.(value)).toBe(expected)
@@ -203,11 +217,13 @@ describe('twodayHandler', () => {
       'https://alice.twoday.net/index.rdf',
       'http://alice.twoday.net/index.rdf',
       'https://alice.twoday.net/rss',
+      'https://alice.twoday.net/rss.xml',
       'https://alice.twoday.net/summary.rdf',
     ]
     const topicFeeds: Array<string> = [
       'https://alice.twoday.net/topics/Wo+der+Hase+hinlief/index.rdf',
       'https://alice.twoday.net/TOPICS/Fuer+eilige+Leser/index.rdf',
+      'https://alice.twoday.net/topics/Wo+der+Hase+hinlief/rss',
     ]
 
     it.each(postsFeeds)('should return %s as itself with the posts hint', async (value) => {
