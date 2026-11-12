@@ -1,14 +1,7 @@
-import {
-  composeQuery,
-  decodeSegment,
-  getPathSegments,
-  getQueryParam,
-  isAnyOf,
-  isHostOf,
-  parseUrl,
-} from 'trousse'
+import { decodeSegment, getPathSegments, getQueryParam, isAnyOf, isHostOf, parseUrl } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, letterThenWordOrHyphenRegex } from '../../common/utils.js'
+import { letterThenWordOrHyphenRegex } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -28,6 +21,27 @@ const photoIdRegex = /^\d{14}$/
 
 // The marks encodeURIComponent leaves as they are.
 const unreservedMarkRegex = /[-.!~*'()]/g
+
+const feeds = definePlatformFeeds(
+  [
+    { key: 'hatena-fotolife:photos', template: 'https://f.hatena.ne.jp/{username}/rss' },
+    {
+      key: 'hatena-fotolife:model',
+      template: 'https://f.hatena.ne.jp/{username}/rss?model={model}',
+    },
+    { key: 'hatena-fotolife:folder', template: 'https://f.hatena.ne.jp/{username}/{folder}/rss' },
+    { key: 'hatena-fotolife:tag', template: 'https://f.hatena.ne.jp/{username}/t/{tag}?mode=rss' },
+    {
+      key: 'hatena-fotolife:stars',
+      template: 'https://f.hatena.ne.jp/{username}/favorite?mode=rss',
+    },
+    {
+      key: 'hatena-fotolife:star-friends',
+      template: 'https://f.hatena.ne.jp/{username}/starfriends?mode=rss',
+    },
+  ],
+  { hosts },
+)
 
 // The page links its feeds with every byte outside [A-Za-z0-9_] percent-encoded, `-` and `.`
 // included, so the same spelling dedupes against the page's own link.
@@ -99,45 +113,34 @@ export const hatenaFotolifeHandler: PlatformHandler = {
       return []
     }
 
-    const { origin } = new URL(url)
-    const userUrl = `${origin}/${escapeSegment(parsed.username)}`
+    const username = escapeSegment(parsed.username)
 
     if (parsed.kind === 'model') {
-      const query = composeQuery({ model: parsed.model })
-
-      return [{ uri: `${userUrl}/rss${query}`, hint: composeHint('hatena-fotolife:model') }]
+      return [feeds.getFeedEntry('hatena-fotolife:model', { username, model: parsed.model })]
     }
 
     if (parsed.kind === 'folder') {
       const folder = escapeSegment(parsed.folder)
 
-      return [{ uri: `${userUrl}/${folder}/rss`, hint: composeHint('hatena-fotolife:folder') }]
+      return [feeds.getFeedEntry('hatena-fotolife:folder', { username, folder })]
     }
 
     if (parsed.kind === 'tag') {
       const tag = escapeSegment(parsed.tag)
 
-      return [{ uri: `${userUrl}/t/${tag}?mode=rss`, hint: composeHint('hatena-fotolife:tag') }]
+      return [feeds.getFeedEntry('hatena-fotolife:tag', { username, tag })]
     }
 
     if (parsed.kind === 'favorite') {
-      return [
-        {
-          uri: `${origin}/${parsed.username}/favorite?mode=rss`,
-          hint: composeHint('hatena-fotolife:stars'),
-        },
-      ]
+      return [feeds.getFeedEntry('hatena-fotolife:stars', { username: parsed.username })]
     }
 
     if (parsed.kind === 'starfriends') {
-      return [
-        {
-          uri: `${origin}/${parsed.username}/starfriends?mode=rss`,
-          hint: composeHint('hatena-fotolife:star-friends'),
-        },
-      ]
+      return [feeds.getFeedEntry('hatena-fotolife:star-friends', { username: parsed.username })]
     }
 
-    return [{ uri: `${userUrl}/rss`, hint: composeHint('hatena-fotolife:photos') }]
+    return [feeds.getFeedEntry('hatena-fotolife:photos', { username })]
   },
+
+  getFeedKey: feeds.getFeedKey,
 }

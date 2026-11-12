@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import type { HatenaFotolifeUrl } from './hatenaFotolife.js'
 import { hatenaFotolifeHandler, parseHatenaFotolifeUrl } from './hatenaFotolife.js'
 
@@ -285,6 +287,129 @@ describe('hatenaFotolifeHandler', () => {
       expect(hatenaFotolifeHandler.resolve('https://f.hatena.ne.jp/alice/starfriends')).toEqual(
         expected,
       )
+    })
+  })
+
+  describe('getFeedKey', () => {
+    it('should return the photos key for a photos feed', () => {
+      const value = 'https://f.hatena.ne.jp/aiken_makiss/rss'
+      const expected = 'hatena-fotolife:photos'
+
+      expect(hatenaFotolifeHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the photos key for a user with an escaped hyphen', () => {
+      const value = 'https://f.hatena.ne.jp/bon%2Dku%2Dra/rss'
+      const expected = 'hatena-fotolife:photos'
+
+      expect(hatenaFotolifeHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the model key for a camera model feed', () => {
+      const value = 'https://f.hatena.ne.jp/kakashibennett/rss?model=SC%2D04F'
+      const expected = 'hatena-fotolife:model'
+
+      expect(hatenaFotolifeHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the folder key for a folder feed', () => {
+      const value =
+        'https://f.hatena.ne.jp/yotsuba%2Drope%2Dsystem/%E3%83%AD%E3%83%BC%E3%83%97%E3%82%AC%E3%83%BC%E3%83%89/rss'
+      const expected = 'hatena-fotolife:folder'
+
+      expect(hatenaFotolifeHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the tag key for a tag feed', () => {
+      const value =
+        'https://f.hatena.ne.jp/one%2Dseater/t/%E3%82%BF%E3%82%A4%E3%83%88%E3%83%AB?mode=rss'
+      const expected = 'hatena-fotolife:tag'
+
+      expect(hatenaFotolifeHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the stars key for a stars feed', () => {
+      const value = 'https://f.hatena.ne.jp/aiken_makiss/favorite?mode=rss'
+      const expected = 'hatena-fotolife:stars'
+
+      expect(hatenaFotolifeHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the Star Friends key for a Star Friends feed', () => {
+      const value = 'https://f.hatena.ne.jp/aiken_makiss/starfriends?mode=rss'
+      const expected = 'hatena-fotolife:star-friends'
+
+      expect(hatenaFotolifeHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return undefined for a user page', () => {
+      const value = 'https://f.hatena.ne.jp/aiken_makiss/'
+
+      expect(hatenaFotolifeHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a camera model page', () => {
+      const value = 'https://f.hatena.ne.jp/aiken_makiss/?model=DMC%2DGX7MK2'
+
+      expect(hatenaFotolifeHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a tag page', () => {
+      const value = 'https://f.hatena.ne.jp/one%2Dseater/t/%E3%82%BF%E3%82%A4%E3%83%88%E3%83%AB'
+
+      expect(hatenaFotolifeHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a stars page', () => {
+      const value = 'https://f.hatena.ne.jp/aiken_makiss/favorite'
+
+      expect(hatenaFotolifeHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for another host', () => {
+      const value = 'https://example.com/aiken_makiss/rss'
+
+      expect(hatenaFotolifeHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const ownFeeds: Array<[string, DiscoverUriHint]> = [
+      [
+        'https://f.hatena.ne.jp/bon%2Dku%2Dra/rss',
+        { key: 'hatena-fotolife:photos', label: 'Photos' },
+      ],
+      [
+        'https://f.hatena.ne.jp/kakashibennett/rss?model=SC%2D04F',
+        { key: 'hatena-fotolife:model', label: 'Camera model' },
+      ],
+      [
+        'https://f.hatena.ne.jp/one%2Dseater/%E3%83%96%E3%83%AD%E6%B4%BB/rss',
+        { key: 'hatena-fotolife:folder', label: 'Folder' },
+      ],
+      [
+        'https://f.hatena.ne.jp/one%2Dseater/t/%E3%82%BF%E3%82%A4%E3%83%88%E3%83%AB?mode=rss',
+        { key: 'hatena-fotolife:tag', label: 'Tag' },
+      ],
+      [
+        'https://f.hatena.ne.jp/aiken_makiss/favorite?mode=rss',
+        { key: 'hatena-fotolife:stars', label: 'Stars' },
+      ],
+      [
+        'https://f.hatena.ne.jp/aiken_makiss/starfriends?mode=rss',
+        { key: 'hatena-fotolife:star-friends', label: 'Star Friends' },
+      ],
+    ]
+
+    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [hatenaFotolifeHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(result).toEqual(expected)
     })
   })
 })
