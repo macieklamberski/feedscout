@@ -38,5 +38,5 @@ export const hashnodeHandler: PlatformHandler = {
     return [feeds.getFeedEntry('hashnode:blog', { blog, domain })]
   },
 
-  getFeedKey: feeds.getFeedKey,
+  getFeedHint: feeds.getFeedHint,
 }

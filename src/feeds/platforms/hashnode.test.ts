@@ -81,50 +81,50 @@ describe('hashnodeHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
+  describe('getFeedHint', () => {
     it('should return the blog key for a blog feed', () => {
       const value = 'https://example.hashnode.dev/rss.xml'
-      const expected = 'hashnode:blog'
+      const expected: DiscoverUriHint = { key: 'hashnode:blog', label: 'Blog' }
 
-      expect(hashnodeHandler.getFeedKey?.(value)).toBe(expected)
+      expect(hashnodeHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the blog key for a blog feed over HTTP', () => {
       const value = 'http://example.hashnode.dev/rss.xml'
-      const expected = 'hashnode:blog'
+      const expected: DiscoverUriHint = { key: 'hashnode:blog', label: 'Blog' }
 
-      expect(hashnodeHandler.getFeedKey?.(value)).toBe(expected)
+      expect(hashnodeHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the blog key for a blog feed on hashnode.com', () => {
       const value = 'https://example.hashnode.com/rss.xml'
-      const expected = 'hashnode:blog'
+      const expected: DiscoverUriHint = { key: 'hashnode:blog', label: 'Blog' }
 
-      expect(hashnodeHandler.getFeedKey?.(value)).toBe(expected)
+      expect(hashnodeHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a blog page', () => {
       const value = 'https://example.hashnode.dev/some-article-slug'
 
-      expect(hashnodeHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(hashnodeHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed on a nested subdomain', () => {
       const value = 'https://blog.example.hashnode.dev/rss.xml'
 
-      expect(hashnodeHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(hashnodeHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed on the apex', () => {
       const value = 'https://hashnode.com/blog/rss.xml'
 
-      expect(hashnodeHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(hashnodeHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for another host', () => {
       const value = 'https://example.com/rss.xml'
 
-      expect(hashnodeHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(hashnodeHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 
