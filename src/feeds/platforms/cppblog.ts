@@ -1,7 +1,8 @@
-import { encodePathSegment, getPathSegments, isAnyOf, isHostOf } from 'trousse'
+import { getPathSegments, isAnyOf, isHostOf } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, findElement } from '../../common/utils.js'
+import { findElement } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic covers favorite (html), partly covers blog, category.
@@ -12,11 +13,23 @@ export type CppblogUrl =
   | { kind: 'favorite'; username: string; favoriteId: string }
 
 const hosts = ['cppblog.com', 'www.cppblog.com']
-// The https certificate has expired, and every page links its feeds at this origin, the apex too.
-const feedsOrigin = 'http://www.cppblog.com'
 
 const listPageRegex = /^(\d+)\.html$/i
 const feedLinkRegex = /^https?:\/\/(?:www\.)?cppblog\.com\/([^/]+)\/rss\.aspx$/i
+
+// The https certificate has expired, and every page links its feeds at this origin, the apex too.
+const feeds = definePlatformFeeds([
+  {
+    key: 'cppblog:category',
+    template: 'http://www.cppblog.com/{username}/category/{categoryId}.html/rss',
+  },
+  {
+    key: 'cppblog:favorites',
+    template: 'http://www.cppblog.com/{username}/favorite/{favoriteId}.html/rss',
+  },
+  { key: 'cppblog:posts', template: 'http://www.cppblog.com/{username}/rss.aspx' },
+  { key: 'cppblog:comments', template: 'http://www.cppblog.com/{username}/CommentsRSS.aspx' },
+])
 
 export const parseCppblogUrl = (url: string): CppblogUrl | undefined => {
   if (!isHostOf(url, hosts)) {
@@ -48,13 +61,7 @@ const getFeedUsername = (content: string | undefined): string | undefined => {
     return element.name === 'link' && element.attribs.id === 'RSSLink'
   })
 
-  const username = link?.attribs.href?.match(feedLinkRegex)?.[1]
-
-  if (!username) {
-    return
-  }
-
-  return encodePathSegment(username)
+  return link?.attribs.href?.match(feedLinkRegex)?.[1]
 }
 
 const getCppblogPage = (url: string, content: string | undefined): CppblogUrl | undefined => {
@@ -79,26 +86,22 @@ export const cppblogHandler: PlatformHandler = {
       return []
     }
 
-    const blogUrl = `${feedsOrigin}/${page.username}`
+    const { username } = page
     const uris: Array<DiscoverUriEntry> = []
 
     if (page.kind === 'category') {
-      uris.push({
-        uri: `${blogUrl}/category/${page.categoryId}.html/rss`,
-        hint: composeHint('cppblog:category'),
-      })
+      uris.push(feeds.getFeedEntry('cppblog:category', { username, categoryId: page.categoryId }))
     }
 
     if (page.kind === 'favorite') {
-      uris.push({
-        uri: `${blogUrl}/favorite/${page.favoriteId}.html/rss`,
-        hint: composeHint('cppblog:favorites'),
-      })
+      uris.push(feeds.getFeedEntry('cppblog:favorites', { username, favoriteId: page.favoriteId }))
     }
 
-    uris.push({ uri: `${blogUrl}/rss.aspx`, hint: composeHint('cppblog:posts') })
-    uris.push({ uri: `${blogUrl}/CommentsRSS.aspx`, hint: composeHint('cppblog:comments') })
+    uris.push(feeds.getFeedEntry('cppblog:posts', { username }))
+    uris.push(feeds.getFeedEntry('cppblog:comments', { username }))
 
     return uris
   },
+
+  getFeedKey: feeds.getFeedKey,
 }
