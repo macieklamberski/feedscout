@@ -1,4 +1,4 @@
-import { getRegistrableDomain, isHostOf, parseUrl } from 'trousse'
+import { isHostOf, parseUrl } from 'trousse'
 import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
 import { findElement, getTenantSubdomain } from '../../common/utils.js'
@@ -88,23 +88,18 @@ export const cocologHandler: PlatformHandler = {
   resolve: (url, content) => {
     const page = getCocologPage(url, content)
     const account = getTenantSubdomain(url, domains)
-    const domain = getRegistrableDomain(url)
+    const pageFeeds = feeds.forUrl(url)
 
-    if (!page || !account || !domain) {
+    if (!page || !account || !pageFeeds) {
       return []
     }
 
-    const params = {
-      scheme: new URL(url).protocol.slice(0, -1),
-      account,
-      domain,
-      blog: page.blog,
-    }
+    const params = { account, blog: page.blog }
 
     return [
-      feeds.getFeedEntry('cocolog:posts', params, 'atom'),
-      feeds.getFeedEntry('cocolog:posts', params, 'rdf'),
-      feeds.getFeedEntry('cocolog:posts', params, 'rss'),
+      pageFeeds.getFeedEntry('cocolog:posts', params, 'atom'),
+      pageFeeds.getFeedEntry('cocolog:posts', params, 'rdf'),
+      pageFeeds.getFeedEntry('cocolog:posts', params, 'rss'),
     ]
   },
 
