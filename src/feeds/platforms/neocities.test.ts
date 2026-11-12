@@ -104,44 +104,44 @@ describe('neocitiesHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
-    it('should return the updates key for a site feed', () => {
+  describe('getFeedHint', () => {
+    it('should return the updates hint for a site feed', () => {
       const value = 'https://neocities.org/site/alice.rss'
-      const expected = 'neocities:updates'
+      const expected: DiscoverUriHint = { key: 'neocities:updates', label: 'Site updates' }
 
-      expect(neocitiesHandler.getFeedKey?.(value)).toBe(expected)
+      expect(neocitiesHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the updates key for a site feed on the www host', () => {
+    it('should return the updates hint for a site feed on the www host', () => {
       const value = 'https://www.neocities.org/site/alice.rss'
-      const expected = 'neocities:updates'
+      const expected: DiscoverUriHint = { key: 'neocities:updates', label: 'Site updates' }
 
-      expect(neocitiesHandler.getFeedKey?.(value)).toBe(expected)
+      expect(neocitiesHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the updates key for a site feed over http', () => {
+    it('should return the updates hint for a site feed over http', () => {
       const value = 'http://neocities.org/site/alice.rss'
-      const expected = 'neocities:updates'
+      const expected: DiscoverUriHint = { key: 'neocities:updates', label: 'Site updates' }
 
-      expect(neocitiesHandler.getFeedKey?.(value)).toBe(expected)
+      expect(neocitiesHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a profile page', () => {
       const value = 'https://neocities.org/site/alice'
 
-      expect(neocitiesHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(neocitiesHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed file on a site subdomain', () => {
       const value = 'https://alice.neocities.org/site/alice.rss'
 
-      expect(neocitiesHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(neocitiesHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for another host', () => {
       const value = 'https://example.com/site/alice.rss'
 
-      expect(neocitiesHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(neocitiesHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 

@@ -46,5 +46,5 @@ export const neocitiesHandler: PlatformHandler = {
     return [feeds.getFeedEntry('neocities:updates', { username: parsed.username })]
   },
 
-  getFeedKey: feeds.getFeedKey,
+  getFeedHint: feeds.getFeedHint,
 }
