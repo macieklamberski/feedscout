@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import { type JinboUrl, jinboHandler, parseJinboUrl } from './jinbo.js'
 
 describe('parseJinboUrl', () => {
@@ -296,6 +298,127 @@ describe('jinboHandler', () => {
       ]
 
       expect(jinboHandler.resolve(value, content)).toEqual(expected)
+    })
+  })
+
+  describe('getFeedKey', () => {
+    it('should return the category key for a category feed', () => {
+      const value = 'https://blog.jinbo.net/ljydialogue/atom/category/5'
+      const expected = 'jinbo:category'
+
+      expect(jinboHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the tag key for a tag feed', () => {
+      const value = 'https://blog.jinbo.net/ysj40/atom/tag/32745'
+      const expected = 'jinbo:tag'
+
+      expect(jinboHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the tag key for a tag feed named by text', () => {
+      const value =
+        'https://blog.jinbo.net/alice/atom/tag/toward%20a%20global%20autonomous%20university'
+      const expected = 'jinbo:tag'
+
+      expect(jinboHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the posts key for an RSS feed', () => {
+      const value = 'https://blog.jinbo.net/comworld/rss'
+      const expected = 'jinbo:posts'
+
+      expect(jinboHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the posts key for an Atom feed', () => {
+      const value = 'https://blog.jinbo.net/comworld/atom'
+      const expected = 'jinbo:posts'
+
+      expect(jinboHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the posts key for an Atom feed with a trailing slash', () => {
+      const value = 'http://blog.jinbo.net/comworld/atom/'
+      const expected = 'jinbo:posts'
+
+      expect(jinboHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the posts key for a feed over http', () => {
+      const value = 'http://blog.jinbo.net/comworld/rss'
+      const expected = 'jinbo:posts'
+
+      expect(jinboHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the responses key for an RSS feed', () => {
+      const value = 'https://blog.jinbo.net/hongsili/rss/response'
+      const expected = 'jinbo:responses'
+
+      expect(jinboHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the responses key for an Atom feed', () => {
+      const value = 'https://blog.jinbo.net/hongsili/atom/response'
+      const expected = 'jinbo:responses'
+
+      expect(jinboHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return undefined for a blog page', () => {
+      const value = 'https://blog.jinbo.net/comworld'
+
+      expect(jinboHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a category page', () => {
+      const value = 'https://blog.jinbo.net/ljydialogue/category/5'
+
+      expect(jinboHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for the responses feed of one post', () => {
+      const value = 'https://blog.jinbo.net/hongsili/rss/response/1234'
+
+      expect(jinboHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for another host', () => {
+      const value = 'https://example.com/comworld/rss'
+
+      expect(jinboHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const ownFeeds: Array<[string, DiscoverUriHint]> = [
+      [
+        'https://blog.jinbo.net/ljydialogue/atom/category/5',
+        { key: 'jinbo:category', label: 'Category' },
+      ],
+      ['https://blog.jinbo.net/ysj40/atom/tag/32745', { key: 'jinbo:tag', label: 'Tag' }],
+      ['https://blog.jinbo.net/comworld/rss', { key: 'jinbo:posts', label: 'Posts' }],
+      ['https://blog.jinbo.net/comworld/atom', { key: 'jinbo:posts', label: 'Posts' }],
+      [
+        'https://blog.jinbo.net/hongsili/rss/response',
+        { key: 'jinbo:responses', label: 'Comments and trackbacks' },
+      ],
+      [
+        'https://blog.jinbo.net/hongsili/atom/response',
+        { key: 'jinbo:responses', label: 'Comments and trackbacks' },
+      ],
+    ]
+
+    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [jinboHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(result).toEqual(expected)
     })
   })
 })

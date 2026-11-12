@@ -1,7 +1,8 @@
-import { encodePathSegment, getPathSegments, isAnyOf, isHostOf } from 'trousse'
+import { getPathSegments, isAnyOf, isHostOf } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, digitsRegex, findElement } from '../../common/utils.js'
+import { digitsRegex, findElement } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -11,10 +12,35 @@ export type JinboUrl =
   | { kind: 'tag'; username: string; tag: string }
 
 const hosts = ['blog.jinbo.net']
-const baseUrl = 'https://blog.jinbo.net'
 
 // A category named by text answers an empty feed under another category's title.
 const feedLinkRegex = /^https:\/\/blog\.jinbo\.net\/([^/]+)\/rss$/i
+
+const feeds = definePlatformFeeds([
+  {
+    key: 'jinbo:category',
+    template: 'https://blog.jinbo.net/{username}/atom/category/{categoryId}',
+    format: 'atom',
+  },
+  // The tag feed exists only as Atom: the RSS spelling answers 404.
+  {
+    key: 'jinbo:tag',
+    template: 'https://blog.jinbo.net/{username}/atom/tag/{tag}',
+    format: 'atom',
+  },
+  { key: 'jinbo:posts', template: 'https://blog.jinbo.net/{username}/rss', format: 'rss' },
+  { key: 'jinbo:posts', template: 'https://blog.jinbo.net/{username}/atom', format: 'atom' },
+  {
+    key: 'jinbo:responses',
+    template: 'https://blog.jinbo.net/{username}/rss/response',
+    format: 'rss',
+  },
+  {
+    key: 'jinbo:responses',
+    template: 'https://blog.jinbo.net/{username}/atom/response',
+    format: 'atom',
+  },
+])
 
 export const parseJinboUrl = (url: string): JinboUrl | undefined => {
   if (!isHostOf(url, hosts)) {
@@ -50,13 +76,7 @@ const getFeedUsername = (content: string | undefined): string | undefined => {
     )
   })
 
-  const username = link?.attribs.href?.match(feedLinkRegex)?.[1]
-
-  if (!username) {
-    return
-  }
-
-  return encodePathSegment(username)
+  return link?.attribs.href?.match(feedLinkRegex)?.[1]
 }
 
 const getJinboPage = (url: string, content: string | undefined): JinboUrl | undefined => {
@@ -83,26 +103,26 @@ export const jinboHandler: PlatformHandler = {
       return []
     }
 
-    const blogUrl = `${baseUrl}/${page.username}`
+    const { username } = page
     const uris: Array<DiscoverUriEntry> = []
 
     if (page.kind === 'category') {
-      uris.push({
-        uri: `${blogUrl}/atom/category/${page.categoryId}`,
-        hint: composeHint('jinbo:category', 'atom'),
-      })
+      uris.push(
+        feeds.getFeedEntry('jinbo:category', { username, categoryId: page.categoryId }, 'atom'),
+      )
     }
 
-    // The tag feed exists only as Atom: the RSS spelling answers 404.
     if (page.kind === 'tag') {
-      uris.push({ uri: `${blogUrl}/atom/tag/${page.tag}`, hint: composeHint('jinbo:tag', 'atom') })
+      uris.push(feeds.getFeedEntry('jinbo:tag', { username, tag: page.tag }, 'atom'))
     }
 
-    uris.push({ uri: `${blogUrl}/rss`, hint: composeHint('jinbo:posts', 'rss') })
-    uris.push({ uri: `${blogUrl}/atom`, hint: composeHint('jinbo:posts', 'atom') })
-    uris.push({ uri: `${blogUrl}/rss/response`, hint: composeHint('jinbo:responses', 'rss') })
-    uris.push({ uri: `${blogUrl}/atom/response`, hint: composeHint('jinbo:responses', 'atom') })
+    uris.push(feeds.getFeedEntry('jinbo:posts', { username }, 'rss'))
+    uris.push(feeds.getFeedEntry('jinbo:posts', { username }, 'atom'))
+    uris.push(feeds.getFeedEntry('jinbo:responses', { username }, 'rss'))
+    uris.push(feeds.getFeedEntry('jinbo:responses', { username }, 'atom'))
 
     return uris
   },
+
+  getFeedKey: feeds.getFeedKey,
 }
