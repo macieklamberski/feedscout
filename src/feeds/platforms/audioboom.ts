@@ -1,6 +1,6 @@
 import { isHostOf } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -11,6 +11,10 @@ const hosts = ['audioboom.com', 'www.audioboom.com']
 const channelRegex = /^\/channels\/(?<segment>[^/]+)/i
 // The page answers at /channels/{id} and at its canonical /channels/{id}-{slug}.
 const channelIdRegex = /^(?<channelId>\d+)(?:-|$)/
+
+const feeds = definePlatformFeeds([
+  { key: 'audioboom:podcast', template: 'https://audioboom.com/channels/{channelId}.rss' },
+])
 
 export const parseAudioboomUrl = (url: string): AudioboomUrl | undefined => {
   if (!isHostOf(url, hosts)) {
@@ -39,11 +43,8 @@ export const audioboomHandler: PlatformHandler = {
       return []
     }
 
-    return [
-      {
-        uri: `https://audioboom.com/channels/${parsed.channelId}.rss`,
-        hint: composeHint('audioboom:podcast'),
-      },
-    ]
+    return [feeds.getFeedEntry('audioboom:podcast', { channelId: parsed.channelId })]
   },
+
+  getFeedKey: feeds.getFeedKey,
 }
