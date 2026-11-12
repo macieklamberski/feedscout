@@ -41,5 +41,5 @@ export const heyWorldHandler: PlatformHandler = {
     return [feeds.getFeedEntry('hey-world:blog', { username: parsed.username })]
   },
 
-  getFeedKey: feeds.getFeedKey,
+  getFeedHint: feeds.getFeedHint,
 }

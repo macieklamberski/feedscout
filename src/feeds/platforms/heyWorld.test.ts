@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
 import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
 import { defaultPlatformOptions } from '../defaults.js'
 import { type HeyWorldUrl, heyWorldHandler, parseHeyWorldUrl } from './heyWorld.js'
@@ -74,33 +74,33 @@ describe('heyWorldHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
-    const feedKeys: Array<[string, string]> = [
-      ['https://world.hey.com/alice/feed.atom', 'hey-world:blog'],
-      ['http://world.hey.com/alice/feed.atom', 'hey-world:blog'],
-      ['https://world.hey.com/alice/feed.atom/', 'hey-world:blog'],
+  describe('getFeedHint', () => {
+    const feedHints: Array<[string, DiscoverUriHint]> = [
+      ['https://world.hey.com/alice/feed.atom', { key: 'hey-world:blog', label: 'Blog' }],
+      ['http://world.hey.com/alice/feed.atom', { key: 'hey-world:blog', label: 'Blog' }],
+      ['https://world.hey.com/alice/feed.atom/', { key: 'hey-world:blog', label: 'Blog' }],
     ]
 
-    it.each(feedKeys)('should return the key of %s', (value, expected) => {
-      expect(heyWorldHandler.getFeedKey?.(value)).toBe(expected)
+    it.each(feedHints)('should return the key of %s', (value, expected) => {
+      expect(heyWorldHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a blog page', () => {
       const value = 'https://world.hey.com/alice'
 
-      expect(heyWorldHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(heyWorldHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a post page', () => {
       const value = 'https://world.hey.com/alice/hello-world-1a2b3c4d'
 
-      expect(heyWorldHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(heyWorldHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed path on another host', () => {
       const value = 'https://example.com/alice/feed.atom'
 
-      expect(heyWorldHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(heyWorldHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 
