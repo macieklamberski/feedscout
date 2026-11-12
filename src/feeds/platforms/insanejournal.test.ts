@@ -411,6 +411,17 @@ describe('insanejournalHandler', () => {
       expect(insanejournalHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
+    it('should return the posts hint for a journal feed with www before the journal', () => {
+      const value = 'https://www.alice.insanejournal.com/data/rss'
+      const expected: DiscoverUriHint = {
+        key: 'insanejournal:posts',
+        label: 'Posts',
+        format: 'rss',
+      }
+
+      expect(insanejournalHandler.getFeedHint?.(value)).toEqual(expected)
+    })
+
     it('should return the posts hint for a journal Atom feed', () => {
       const value = 'https://a-new-dawn.insanejournal.com/data/atom'
       const expected: DiscoverUriHint = {
@@ -554,7 +565,7 @@ describe('insanejournalHandler', () => {
     })
 
     it('should return undefined for a feed on a nested subdomain', () => {
-      const value = 'https://www.alice.insanejournal.com/data/rss'
+      const value = 'https://blog.alice.insanejournal.com/data/rss'
 
       expect(insanejournalHandler.getFeedHint?.(value)).toBeUndefined()
     })

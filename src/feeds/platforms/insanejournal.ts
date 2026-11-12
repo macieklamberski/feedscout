@@ -217,10 +217,6 @@ export const insanejournalHandler: PlatformHandler = {
       return pathFeeds.getFeedHint(url)
     }
 
-    if (!getTenantSubdomain(url, domains)) {
-      return
-    }
-
     return journalFeeds.getFeedHint(url)
   },
 }
