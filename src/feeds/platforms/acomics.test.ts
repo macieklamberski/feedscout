@@ -7,6 +7,7 @@ import { type AcomicsUrl, acomicsHandler, parseAcomicsUrl } from './acomics.js'
 const feedCases: Array<[string, DiscoverUriHint]> = [
   ['https://acomics.ru/~Oglaf/rss', { key: 'acomics:issues', label: 'Issues' }], // Comic
   ['https://acomics.ru/-Lilim/rss', { key: 'acomics:subscriptions', label: 'Subscriptions' }], // User
+  ['http://www.acomics.ru/~Example/rss', { key: 'acomics:issues', label: 'Issues' }], // Comic, www
 ]
 
 describe('parseAcomicsUrl', () => {
@@ -112,7 +113,7 @@ describe('acomicsHandler', () => {
     })
 
     it('should return the issues key for a comic feed on the www host', () => {
-      const value = 'http://www.acomics.ru/~Oglaf/rss/'
+      const value = 'http://www.acomics.ru/~Example/rss'
       const expected = 'acomics:issues'
 
       expect(acomicsHandler.getFeedKey?.(value)).toBe(expected)
