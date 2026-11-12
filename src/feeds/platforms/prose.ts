@@ -78,5 +78,5 @@ export const proseHandler: PlatformHandler = {
     return [feeds.getFeedEntry('prose:blog', { username: parsed.username })]
   },
 
-  getFeedKey: feeds.getFeedKey,
+  getFeedHint: feeds.getFeedHint,
 }
