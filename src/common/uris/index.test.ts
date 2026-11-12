@@ -1,11 +1,19 @@
 import { describe, expect, it } from 'bun:test'
 import { omitEmpty } from 'trousse'
-import type { FetchFn } from '../types.js'
+import type { DiscoverUriHint, FetchFn } from '../types.js'
 import { discoverUris } from './index.js'
 
 // A root `.xml` path is a user's feed, as on Plurk.
 const userFeedRegex = /^https:\/\/example\.com\/[^/]+\.xml$/
-const getFeedKey = (url: string) => (userFeedRegex.test(url) ? 'plurk:plurks' : undefined)
+const userFeedHint: DiscoverUriHint = { key: 'plurk:plurks', label: 'Plurks' }
+
+const getFeedHint = (url: string): DiscoverUriHint | undefined => {
+  if (!userFeedRegex.test(url)) {
+    return
+  }
+
+  return userFeedHint
+}
 
 describe('discoverUris', () => {
   it('should return empty object when no methods configured', async () => {
@@ -339,7 +347,7 @@ describe('discoverUris', () => {
               {
                 match: () => true,
                 resolve: () => [{ uri: 'https://example.com/alice.xml' }],
-                getFeedKey,
+                getFeedHint,
               },
             ],
           },
@@ -368,7 +376,7 @@ describe('discoverUris', () => {
               {
                 match: () => true,
                 resolve: () => [{ uri: 'https://example.com/feed.xml' }],
-                getFeedKey,
+                getFeedHint,
               },
             ],
           },
@@ -393,7 +401,7 @@ describe('discoverUris', () => {
         platform: {
           options: {
             baseUrl: 'https://example.com',
-            handlers: [{ match: () => true, resolve: () => [], getFeedKey }],
+            handlers: [{ match: () => true, resolve: () => [], getFeedHint }],
           },
         },
         guess: {
@@ -413,7 +421,7 @@ describe('discoverUris', () => {
         platform: {
           options: {
             baseUrl: 'https://example.com',
-            handlers: [{ match: () => true, resolve: () => [], getFeedKey }],
+            handlers: [{ match: () => true, resolve: () => [], getFeedHint }],
           },
         },
         guess: {
