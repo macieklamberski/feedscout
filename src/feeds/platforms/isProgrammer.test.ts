@@ -188,6 +188,34 @@ describe('isProgrammerHandler', () => {
       expect(isProgrammerHandler.getFeedKey?.(value)).toBe(expected)
     })
 
+    it('should return the posts key for a posts feed at /feed', () => {
+      const value = 'http://jade.is-programmer.com/feed'
+      const expected = 'is-programmer:posts'
+
+      expect(isProgrammerHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the posts key for a posts feed at /feed.rss', () => {
+      const value = 'http://renyuneyun.is-programmer.com/feed.rss'
+      const expected = 'is-programmer:posts'
+
+      expect(isProgrammerHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the posts key for a posts feed at /rss', () => {
+      const value = 'http://lispor.is-programmer.com/rss'
+      const expected = 'is-programmer:posts'
+
+      expect(isProgrammerHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the posts key for a posts feed at /?format=rss', () => {
+      const value = 'http://cnlox.is-programmer.com/?format=rss'
+      const expected = 'is-programmer:posts'
+
+      expect(isProgrammerHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
     it('should return the comments key for a comments feed', () => {
       const value = 'http://baudelaire.is-programmer.com/comments.rss'
       const expected = 'is-programmer:comments'
@@ -259,6 +287,16 @@ describe('isProgrammerHandler', () => {
       ],
       [
         'http://baudelaire.is-programmer.com/posts.rss',
+        { key: 'is-programmer:posts', label: 'Posts' },
+      ],
+      ['http://jade.is-programmer.com/feed', { key: 'is-programmer:posts', label: 'Posts' }],
+      [
+        'http://renyuneyun.is-programmer.com/feed.rss',
+        { key: 'is-programmer:posts', label: 'Posts' },
+      ],
+      ['http://lispor.is-programmer.com/rss', { key: 'is-programmer:posts', label: 'Posts' }],
+      [
+        'http://cnlox.is-programmer.com/?format=rss',
         { key: 'is-programmer:posts', label: 'Posts' },
       ],
       [
