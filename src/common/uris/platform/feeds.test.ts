@@ -42,6 +42,17 @@ const hintFeeds = definePlatformFeeds([
   { key: 'youtube:videos', template: 'https://example.com/{username}/videos.xml' },
 ])
 
+const wwwTenantTemplates = [
+  { key: 'example:site', template: 'https://example.org/rss' },
+  { key: 'example:blog', template: 'https://{username}.example.org/rss' },
+  { key: 'example:journal', template: 'https://{username}.example.org/feed' },
+  { key: 'example:videos', template: 'https://example.com/{username}/videos.xml' },
+]
+
+const wwwTenantFeeds = definePlatformFeeds(wwwTenantTemplates, { isWwwTenant: true })
+
+const wwwStrippedFeeds = definePlatformFeeds(wwwTenantTemplates)
+
 describe('definePlatformFeeds', () => {
   it('should throw for a template without an http scheme', () => {
     const throwing = () =>
@@ -312,6 +323,61 @@ describe('definePlatformFeeds', () => {
       const expected = 'example:posts'
 
       expect(feeds.getFeedHint(value)?.key).toBe(expected)
+    })
+
+    it('should return the key of a tenant named www as given with isWwwTenant', () => {
+      const value = 'https://www.example.org/feed'
+      const expected = 'example:journal'
+
+      expect(wwwTenantFeeds.getFeedHint(value)?.key).toBe(expected)
+    })
+
+    it('should return the key of a feed on a tenant host with www with isWwwTenant', () => {
+      const value = 'https://www.alice.example.org/feed'
+      const expected = 'example:journal'
+
+      expect(wwwTenantFeeds.getFeedHint(value)?.key).toBe(expected)
+    })
+
+    it('should return the key of a feed on a fixed host with www with isWwwTenant', () => {
+      const value = 'https://www.example.com/alice/videos.xml'
+      const expected = 'example:videos'
+
+      expect(wwwTenantFeeds.getFeedHint(value)?.key).toBe(expected)
+    })
+
+    it('should return the key of a tenant row as given over an apex row with isWwwTenant', () => {
+      const value = 'https://www.example.org/rss'
+      const expected = 'example:blog'
+
+      expect(wwwTenantFeeds.getFeedHint(value)?.key).toBe(expected)
+    })
+
+    it('should return the key of an apex row for the apex host with isWwwTenant', () => {
+      const value = 'https://example.org/rss'
+      const expected = 'example:site'
+
+      expect(wwwTenantFeeds.getFeedHint(value)?.key).toBe(expected)
+    })
+
+    it('should return undefined for a tenant named www without isWwwTenant', () => {
+      const value = 'https://www.example.org/feed'
+
+      expect(wwwStrippedFeeds.getFeedHint(value)).toBeUndefined()
+    })
+
+    it('should return the key of an apex row for a www host without isWwwTenant', () => {
+      const value = 'https://www.example.org/rss'
+      const expected = 'example:site'
+
+      expect(wwwStrippedFeeds.getFeedHint(value)?.key).toBe(expected)
+    })
+
+    it('should return the key of a feed on a tenant host with www without isWwwTenant', () => {
+      const value = 'https://www.alice.example.org/feed'
+      const expected = 'example:journal'
+
+      expect(wwwStrippedFeeds.getFeedHint(value)?.key).toBe(expected)
     })
 
     it('should ignore the query order and extra parameters', () => {
