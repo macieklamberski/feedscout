@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
 import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
 import { defaultPlatformOptions } from '../defaults.js'
 import { isJugemHtml, type JugemUrl, jugemHandler, parseJugemUrl } from './jugem.js'
@@ -137,91 +137,89 @@ describe('jugemHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
-    it('should return the posts key for an RSS 1.0 feed', () => {
+  describe('getFeedHint', () => {
+    it('should return the posts hint for an RSS 1.0 feed', () => {
       const value = 'https://alice.jugem.jp/?mode=rss'
-      const expected = 'jugem:posts'
+      const expected: DiscoverUriHint = { key: 'jugem:posts', label: 'Posts', format: 'rdf' }
 
-      expect(jugemHandler.getFeedKey?.(value)).toBe(expected)
+      expect(jugemHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the posts key for an Atom feed', () => {
+    it('should return the posts hint for an Atom feed', () => {
       const value = 'https://alice.jugem.jp/?mode=atom'
-      const expected = 'jugem:posts'
+      const expected: DiscoverUriHint = { key: 'jugem:posts', label: 'Posts', format: 'atom' }
 
-      expect(jugemHandler.getFeedKey?.(value)).toBe(expected)
+      expect(jugemHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the posts key for an http feed on jugem.cc', () => {
+    it('should return the posts hint for an http feed on jugem.cc', () => {
       const value = 'http://alice.jugem.cc/?mode=rss'
-      const expected = 'jugem:posts'
+      const expected: DiscoverUriHint = { key: 'jugem:posts', label: 'Posts', format: 'rdf' }
 
-      expect(jugemHandler.getFeedKey?.(value)).toBe(expected)
+      expect(jugemHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the posts key for an index.rdf feed', () => {
+    it('should return the posts hint for an index.rdf feed', () => {
       const value = 'https://alice.jugem.jp/index.rdf'
-      const expected = 'jugem:posts'
+      const expected: DiscoverUriHint = { key: 'jugem:posts', label: 'Posts', format: 'rdf' }
 
-      expect(jugemHandler.getFeedKey?.(value)).toBe(expected)
+      expect(jugemHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the posts key for an atom.xml feed', () => {
+    it('should return the posts hint for an atom.xml feed', () => {
       const value = 'https://alice.jugem.jp/atom.xml'
-      const expected = 'jugem:posts'
+      const expected: DiscoverUriHint = { key: 'jugem:posts', label: 'Posts', format: 'atom' }
 
-      expect(jugemHandler.getFeedKey?.(value)).toBe(expected)
+      expect(jugemHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a post page', () => {
       const value = 'https://alice.jugem.jp/?eid=123'
 
-      expect(jugemHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(jugemHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed query on the apex portal', () => {
       const value = 'https://jugem.jp/?mode=rss'
 
-      expect(jugemHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(jugemHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed query on the www portal', () => {
       const value = 'https://www.jugem.jp/?mode=atom'
 
-      expect(jugemHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(jugemHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed query on a nested subdomain', () => {
       const value = 'https://blog.alice.jugem.jp/?mode=rss'
 
-      expect(jugemHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(jugemHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed on a custom domain', () => {
       const value = 'http://blog.example.com/?mode=rss'
 
-      expect(jugemHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(jugemHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 
   describe('own feeds through the Platform method', () => {
-    const ownFeeds: Array<string> = [
-      'https://alice.jugem.jp/?mode=rss',
-      'http://alice.jugem.jp/?mode=atom',
-      'https://alice.jugem.cc/?mode=atom',
-      'https://alice.jugem.jp/index.rdf',
-      'http://alice.jugem.jp/atom.xml',
+    const ownFeeds: Array<[string, DiscoverUriHint]> = [
+      ['https://alice.jugem.jp/?mode=rss', { key: 'jugem:posts', label: 'Posts', format: 'rdf' }],
+      ['http://alice.jugem.jp/?mode=atom', { key: 'jugem:posts', label: 'Posts', format: 'atom' }],
+      ['https://alice.jugem.cc/?mode=atom', { key: 'jugem:posts', label: 'Posts', format: 'atom' }],
+      ['https://alice.jugem.jp/index.rdf', { key: 'jugem:posts', label: 'Posts', format: 'rdf' }],
+      ['http://alice.jugem.jp/atom.xml', { key: 'jugem:posts', label: 'Posts', format: 'atom' }],
     ]
 
-    it.each(ownFeeds)('should return %s as itself', async (value) => {
+    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
       const result = await discoverUrisFromPlatform(undefined, undefined, {
         ...defaultPlatformOptions,
         handlers: [jugemHandler],
         baseUrl: value,
       })
-      const expected: Array<DiscoverUriEntry> = [
-        { uri: value, hint: { key: 'jugem:posts', label: 'Posts' } },
-      ]
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
 
       expect(result).toEqual(expected)
     })

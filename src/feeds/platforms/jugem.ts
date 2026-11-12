@@ -92,11 +92,11 @@ export const jugemHandler: PlatformHandler = {
 
   // The table reads any host under the domains, so the page parser refuses the portal and a nested
   // subdomain first.
-  getFeedKey: (url) => {
+  getFeedHint: (url) => {
     if (parseJugemUrl(url)?.kind !== 'blog') {
       return
     }
 
-    return feeds.getFeedKey(url)
+    return feeds.getFeedHint(url)
   },
 }
