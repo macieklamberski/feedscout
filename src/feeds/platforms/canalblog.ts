@@ -8,9 +8,9 @@ export type CanalblogUrl = { kind: 'blog'; blog: string }
 
 const domains = ['canalblog.com']
 
-const feeds = definePlatformFeeds([
-  { key: 'canalblog:posts', template: 'https://{blog}.canalblog.com/rss' },
-])
+const feeds = definePlatformFeeds([{ key: 'canalblog:posts', template: '{scheme}://{host}/rss' }], {
+  domains,
+})
 
 export const parseCanalblogUrl = (url: string): CanalblogUrl | undefined => {
   // A nested subdomain like a.b.canalblog.com fails TLS, since the certificate covers one label.
@@ -30,12 +30,13 @@ export const canalblogHandler: PlatformHandler = {
 
   resolve: (url) => {
     const parsed = parseCanalblogUrl(url)
+    const page = feeds.forUrl(url)
 
-    if (!parsed) {
+    if (!parsed || !page) {
       return []
     }
 
-    return [feeds.getFeedEntry('canalblog:posts', { blog: parsed.blog })]
+    return [page.getFeedEntry('canalblog:posts')]
   },
 
   getFeedHint: feeds.getFeedHint,

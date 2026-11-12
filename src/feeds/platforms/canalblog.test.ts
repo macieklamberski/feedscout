@@ -66,11 +66,11 @@ describe('canalblogHandler', () => {
       expect(canalblogHandler.resolve(value)).toEqual(expected)
     })
 
-    it('should return the HTTPS posts feed for an HTTP blog page', () => {
+    it('should keep the scheme of an HTTP blog page', () => {
       const value = 'http://alice.canalblog.com/'
       const expected: Array<DiscoverUriEntry> = [
         {
-          uri: 'https://alice.canalblog.com/rss',
+          uri: 'http://alice.canalblog.com/rss',
           hint: { key: 'canalblog:posts', label: 'Posts' },
         },
       ]
