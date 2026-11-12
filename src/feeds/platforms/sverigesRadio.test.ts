@@ -173,83 +173,83 @@ describe('sverigesRadioHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
-    it('should return the program key for a program feed', () => {
+  describe('getFeedHint', () => {
+    it('should return the program hint for a program feed', () => {
       const value = 'https://api.sr.se/api/rss/program/12345'
-      const expected = 'sveriges-radio:program'
+      const expected: DiscoverUriHint = { key: 'sveriges-radio:program', label: 'Program' }
 
-      expect(sverigesRadioHandler.getFeedKey?.(value)).toBe(expected)
+      expect(sverigesRadioHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the program key for a program feed with a format', () => {
+    it('should return the program hint for a program feed with a format', () => {
       const value = 'https://api.sr.se/api/rss/program/12345?format=1'
-      const expected = 'sveriges-radio:program'
+      const expected: DiscoverUriHint = { key: 'sveriges-radio:program', label: 'Program' }
 
-      expect(sverigesRadioHandler.getFeedKey?.(value)).toBe(expected)
+      expect(sverigesRadioHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the program key for a program feed on public-api.sr.se', () => {
+    it('should return the program hint for a program feed on public-api.sr.se', () => {
       const value = 'https://public-api.sr.se/rss/example-program'
-      const expected = 'sveriges-radio:program'
+      const expected: DiscoverUriHint = { key: 'sveriges-radio:program', label: 'Program' }
 
-      expect(sverigesRadioHandler.getFeedKey?.(value)).toBe(expected)
+      expect(sverigesRadioHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the program key for a podcast feed', () => {
+    it('should return the program hint for a podcast feed', () => {
       const value = 'https://api.sr.se/api/rss/pod/12345'
-      const expected = 'sveriges-radio:program'
+      const expected: DiscoverUriHint = { key: 'sveriges-radio:program', label: 'Program' }
 
-      expect(sverigesRadioHandler.getFeedKey?.(value)).toBe(expected)
+      expect(sverigesRadioHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the program key for a podcast feed under itunes', () => {
+    it('should return the program hint for a podcast feed under itunes', () => {
       const value = 'https://api.sr.se/api/rss/pod/itunes/12345'
-      const expected = 'sveriges-radio:program'
+      const expected: DiscoverUriHint = { key: 'sveriges-radio:program', label: 'Program' }
 
-      expect(sverigesRadioHandler.getFeedKey?.(value)).toBe(expected)
+      expect(sverigesRadioHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the program key for a program feed over http with a trailing slash', () => {
+    it('should return the program hint for a program feed over http with a trailing slash', () => {
       const value = 'http://api.sr.se/api/rss/program/12345/'
-      const expected = 'sveriges-radio:program'
+      const expected: DiscoverUriHint = { key: 'sveriges-radio:program', label: 'Program' }
 
-      expect(sverigesRadioHandler.getFeedKey?.(value)).toBe(expected)
+      expect(sverigesRadioHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a word in place of the program id', () => {
       const value = 'https://api.sr.se/api/rss/program/example'
 
-      expect(sverigesRadioHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(sverigesRadioHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for the itunes path without a podcast id', () => {
       const value = 'https://api.sr.se/api/rss/pod/itunes'
 
-      expect(sverigesRadioHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(sverigesRadioHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a file in place of the program slug', () => {
       const value = 'https://public-api.sr.se/rss/robots.txt'
 
-      expect(sverigesRadioHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(sverigesRadioHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a traffic feed', () => {
       const value = 'https://api.sr.se/api/rss/traffic/12345'
 
-      expect(sverigesRadioHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(sverigesRadioHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a program page', () => {
       const value = 'https://sverigesradio.se/example-program'
 
-      expect(sverigesRadioHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(sverigesRadioHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for another host', () => {
       const value = 'https://example.com/api/rss/program/12345'
 
-      expect(sverigesRadioHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(sverigesRadioHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 

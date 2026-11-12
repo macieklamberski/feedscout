@@ -68,7 +68,7 @@ export const sverigesRadioHandler: PlatformHandler = {
 
   // An id on api.sr.se is digits, and a word in its place answers 400. A slug on public-api.sr.se
   // carries no dot, and a file such as robots.txt answers 404.
-  getFeedKey: (url) => {
+  getFeedHint: (url) => {
     const value = getPathSegments(url).at(-1)
     const valueRegex = isHostOf(url, 'public-api.sr.se') ? alphanumericOrHyphenRegex : digitsRegex
 
@@ -76,6 +76,6 @@ export const sverigesRadioHandler: PlatformHandler = {
       return
     }
 
-    return feeds.getFeedKey(url)
+    return feeds.getFeedHint(url)
   },
 }
