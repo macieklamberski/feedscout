@@ -82,52 +82,52 @@ describe('hearthisHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
+  describe('getFeedHint', () => {
     it('should return the tracks key for a user feed', () => {
       const value = 'https://hearthis.at/alice/podcast/'
-      const expected = 'hearthis:tracks'
+      const expected: DiscoverUriHint = { key: 'hearthis:tracks', label: 'Tracks' }
 
-      expect(hearthisHandler.getFeedKey?.(value)).toBe(expected)
+      expect(hearthisHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the tracks key for a user feed without a trailing slash', () => {
       const value = 'https://hearthis.at/alice/podcast'
-      const expected = 'hearthis:tracks'
+      const expected: DiscoverUriHint = { key: 'hearthis:tracks', label: 'Tracks' }
 
-      expect(hearthisHandler.getFeedKey?.(value)).toBe(expected)
+      expect(hearthisHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the tracks key for a user feed over http on www', () => {
       const value = 'http://www.hearthis.at/alice/podcast/'
-      const expected = 'hearthis:tracks'
+      const expected: DiscoverUriHint = { key: 'hearthis:tracks', label: 'Tracks' }
 
-      expect(hearthisHandler.getFeedKey?.(value)).toBe(expected)
+      expect(hearthisHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the tracks key for a user feed spelled podcast.xml', () => {
       const value = 'https://hearthis.at/alice/podcast.xml'
-      const expected = 'hearthis:tracks'
+      const expected: DiscoverUriHint = { key: 'hearthis:tracks', label: 'Tracks' }
 
-      expect(hearthisHandler.getFeedKey?.(value)).toBe(expected)
+      expect(hearthisHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return the new tracks key for the new tracks feed', () => {
       const value = 'https://hearthis.at/new_tracks.rss'
-      const expected = 'hearthis:new-tracks'
+      const expected: DiscoverUriHint = { key: 'hearthis:new-tracks', label: 'New tracks' }
 
-      expect(hearthisHandler.getFeedKey?.(value)).toBe(expected)
+      expect(hearthisHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a user page', () => {
       const value = 'https://hearthis.at/alice/'
 
-      expect(hearthisHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(hearthisHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed path on another host', () => {
       const value = 'https://example.com/alice/podcast/'
 
-      expect(hearthisHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(hearthisHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 
