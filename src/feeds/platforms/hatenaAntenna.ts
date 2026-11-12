@@ -1,11 +1,7 @@
-import { composeQuery, getPathSegments, getQueryParam, isHostOf, parseUrl } from 'trousse'
+import { getPathSegments, getQueryParam, isAnyOf, isHostOf, parseUrl } from 'trousse'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import {
-  composeHint,
-  findDescendant,
-  findElement,
-  letterThenWordOrHyphenRegex,
-} from '../../common/utils.js'
+import { findDescendant, findElement, letterThenWordOrHyphenRegex } from '../../common/utils.js'
 
 // Discoverability: Discoverable without handler.
 
@@ -17,7 +13,13 @@ export type HatenaAntennaPage = HatenaAntennaUrl
 const hosts = ['a.hatena.ne.jp']
 
 // The page links its feeds over http, and the same spelling dedupes against that link.
-const feedOrigin = 'http://a.hatena.ne.jp'
+const feeds = definePlatformFeeds([
+  { key: 'hatena-antenna:group', template: 'http://a.hatena.ne.jp/{username}/rss?gid={groupId}' },
+  { key: 'hatena-antenna:antenna', template: 'http://a.hatena.ne.jp/{username}/rss' },
+])
+
+// Site routes in the user position, which redirect their rss path to the home page.
+const routeWords = ['include', 'category']
 
 // The group nav with one group in bold, the one the page shows.
 const hasSelectedGroup = (content: string): boolean => {
@@ -87,14 +89,27 @@ export const hatenaAntennaHandler: PlatformHandler = {
       return []
     }
 
-    const antennaUrl = `${feedOrigin}/${page.username}`
-
     if (page.kind === 'group') {
-      const query = composeQuery({ gid: page.groupId })
-
-      return [{ uri: `${antennaUrl}/rss${query}`, hint: composeHint('hatena-antenna:group') }]
+      return [
+        feeds.getFeedEntry('hatena-antenna:group', {
+          username: page.username,
+          groupId: page.groupId,
+        }),
+      ]
     }
 
-    return [{ uri: `${antennaUrl}/rss`, hint: composeHint('hatena-antenna:antenna') }]
+    return [feeds.getFeedEntry('hatena-antenna:antenna', { username: page.username })]
+  },
+
+  // The table reads any first segment as a user, so the page parser refuses a segment that is no
+  // Hatena ID, such as a file of the site, and the route words are refused here.
+  getFeedKey: (url) => {
+    const parsed = parseHatenaAntennaUrl(url)
+
+    if (!parsed || isAnyOf(parsed.username, routeWords)) {
+      return
+    }
+
+    return feeds.getFeedKey(url)
   },
 }

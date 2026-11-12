@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import type { HatenaAntennaPage, HatenaAntennaUrl } from './hatenaAntenna.js'
 import {
   getHatenaAntennaPage,
@@ -190,6 +192,105 @@ describe('hatenaAntennaHandler', () => {
 
       expect(elapsed).toBeLessThan(500)
       expect(result).toEqual(antennaFeed)
+    })
+  })
+
+  describe('getFeedKey', () => {
+    it('should return the antenna key for an antenna feed', () => {
+      const value = 'https://a.hatena.ne.jp/alice/rss'
+      const expected = 'hatena-antenna:antenna'
+
+      expect(hatenaAntennaHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the antenna key for an antenna feed over http', () => {
+      const value = 'http://a.hatena.ne.jp/alice/rss'
+      const expected = 'hatena-antenna:antenna'
+
+      expect(hatenaAntennaHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the group key for a group feed', () => {
+      const value = 'https://a.hatena.ne.jp/alice/rss?gid=390986'
+      const expected = 'hatena-antenna:group'
+
+      expect(hatenaAntennaHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the group key for the feed of the ungrouped pages', () => {
+      const value = 'http://a.hatena.ne.jp/alice/rss?gid=null'
+      const expected = 'hatena-antenna:group'
+
+      expect(hatenaAntennaHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return undefined for an antenna page', () => {
+      const value = 'https://a.hatena.ne.jp/alice/'
+
+      expect(hatenaAntennaHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for the simple view', () => {
+      const value = 'https://a.hatena.ne.jp/alice/simple'
+
+      expect(hatenaAntennaHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for the rss path of the include route', () => {
+      const value = 'https://a.hatena.ne.jp/include/rss'
+
+      expect(hatenaAntennaHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for the rss path of the category route', () => {
+      const value = 'https://a.hatena.ne.jp/category/rss'
+
+      expect(hatenaAntennaHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for an rss path under a dotted first segment', () => {
+      const value = 'https://a.hatena.ne.jp/robots.txt/rss'
+
+      expect(hatenaAntennaHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for an rss path on another Hatena host', () => {
+      const value = 'https://b.hatena.ne.jp/alice/rss'
+
+      expect(hatenaAntennaHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const antennaHint: DiscoverUriHint = { key: 'hatena-antenna:antenna', label: 'Antenna' }
+    const groupHint: DiscoverUriHint = { key: 'hatena-antenna:group', label: 'Group' }
+    const ownFeeds: Array<[string, DiscoverUriHint]> = [
+      ['https://a.hatena.ne.jp/alice/rss', antennaHint],
+      ['https://a.hatena.ne.jp/alice/rss?gid=390986', groupHint],
+    ]
+
+    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [hatenaAntennaHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(result).toEqual(expected)
+    })
+
+    it('should return a group feed as itself with the feed as content', async () => {
+      const value = 'http://a.hatena.ne.jp/alice/rss?gid=390986'
+      const content = '<rdf:RDF><channel rdf:about="http://a.hatena.ne.jp/alice/rss?gid=390986">'
+      const result = await discoverUrisFromPlatform(content, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [hatenaAntennaHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint: groupHint }]
+
+      expect(result).toEqual(expected)
     })
   })
 })
