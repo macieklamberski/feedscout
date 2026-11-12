@@ -44,5 +44,5 @@ export const kktixHandler: PlatformHandler = {
     return [feeds.getFeedEntry('kktix:events', { organizer: parsed.organizer })]
   },
 
-  getFeedKey: feeds.getFeedKey,
+  getFeedHint: feeds.getFeedHint,
 }

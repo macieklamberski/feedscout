@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
 import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
 import { defaultPlatformOptions } from '../defaults.js'
 import { type KktixUrl, kktixHandler, parseKktixUrl } from './kktix.js'
@@ -93,38 +93,38 @@ describe('kktixHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
-    it('should return the events key for the events feed', () => {
+  describe('getFeedHint', () => {
+    it('should return the events hint for the events feed', () => {
       const value = 'https://example.kktix.cc/events.atom?locale=zh-TW'
-      const expected = 'kktix:events'
+      const expected: DiscoverUriHint = { key: 'kktix:events', label: 'Events' }
 
-      expect(kktixHandler.getFeedKey?.(value)).toBe(expected)
+      expect(kktixHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the events key for the events feed without a locale', () => {
+    it('should return the events hint for the events feed without a locale', () => {
       const value = 'https://example.kktix.cc/events.atom'
-      const expected = 'kktix:events'
+      const expected: DiscoverUriHint = { key: 'kktix:events', label: 'Events' }
 
-      expect(kktixHandler.getFeedKey?.(value)).toBe(expected)
+      expect(kktixHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the events key for the events feed with another locale', () => {
+    it('should return the events hint for the events feed with another locale', () => {
       const value = 'https://example.kktix.cc/events.atom?locale=ja'
-      const expected = 'kktix:events'
+      const expected: DiscoverUriHint = { key: 'kktix:events', label: 'Events' }
 
-      expect(kktixHandler.getFeedKey?.(value)).toBe(expected)
+      expect(kktixHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for an organizer page', () => {
-      expect(kktixHandler.getFeedKey?.('https://example.kktix.cc/events')).toBeUndefined()
+      expect(kktixHandler.getFeedHint?.('https://example.kktix.cc/events')).toBeUndefined()
     })
 
     it('should return undefined for the events feed on the www subdomain', () => {
-      expect(kktixHandler.getFeedKey?.('https://www.kktix.cc/events.atom')).toBeUndefined()
+      expect(kktixHandler.getFeedHint?.('https://www.kktix.cc/events.atom')).toBeUndefined()
     })
 
     it('should return undefined for the events feed on a nested subdomain', () => {
-      expect(kktixHandler.getFeedKey?.('https://a.example.kktix.cc/events.atom')).toBeUndefined()
+      expect(kktixHandler.getFeedHint?.('https://a.example.kktix.cc/events.atom')).toBeUndefined()
     })
   })
 })
