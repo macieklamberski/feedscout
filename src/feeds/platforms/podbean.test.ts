@@ -92,6 +92,26 @@ describe('podbeanHandler', () => {
       expect(podbeanHandler.getFeedKey?.(value)).toBe(expected)
     })
 
+    it('should return the podcast key for a podcast feed on the S3 bucket', () => {
+      const value = 'https://s3.amazonaws.com/feed.podbean.com/startupnotes/feed.xml'
+      const expected = 'podbean:podcast'
+
+      expect(podbeanHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the podcast key for a podcast feed on the show subdomain', () => {
+      const value = 'https://pcgcck1show.podbean.com/feed.xml'
+      const expected = 'podbean:podcast'
+
+      expect(podbeanHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return undefined for a feed path in another S3 bucket', () => {
+      const value = 'https://s3.amazonaws.com/other-bucket/startupnotes/feed.xml'
+
+      expect(podbeanHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
     it('should return undefined for a show page', () => {
       const value = 'https://ambitchious.podbean.com/'
 
@@ -121,6 +141,11 @@ describe('podbeanHandler', () => {
         'https://feed.podbean.com/amoutdoors/feed.xml',
         { key: 'podbean:podcast', label: 'Podcast' },
       ],
+      [
+        'https://s3.amazonaws.com/feed.podbean.com/startupnotes/feed.xml',
+        { key: 'podbean:podcast', label: 'Podcast' },
+      ],
+      ['https://pcgcck1show.podbean.com/feed.xml', { key: 'podbean:podcast', label: 'Podcast' }],
     ]
 
     it.each(ownFeeds)('should return %s as itself', async (value, hint) => {

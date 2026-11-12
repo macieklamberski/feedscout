@@ -13,6 +13,13 @@ const feedHosts = ['feed.podbean.com']
 
 const feeds = definePlatformFeeds([
   { key: 'podbean:podcast', template: 'https://feed.podbean.com/{show}/feed.xml' },
+  // The feed host's S3 bucket serves the same feed. S3 is shared, so the bucket segment is literal.
+  {
+    key: 'podbean:podcast',
+    template: 'https://s3.amazonaws.com/feed.podbean.com/{show}/feed.xml',
+  },
+  // The show's old feed path, which redirects to the feed host.
+  { key: 'podbean:podcast', template: 'https://{show}.podbean.com/feed.xml' },
 ])
 
 export const parsePodbeanUrl = (url: string): PodbeanUrl | undefined => {
