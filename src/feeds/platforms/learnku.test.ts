@@ -79,37 +79,37 @@ describe('learnkuHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
-    const feedKeys: Array<[string, string]> = [
-      ['https://learnku.com/feed', 'learnku:site'],
-      ['http://learnku.com/feed', 'learnku:site'],
-      ['https://learnku.com/feed/', 'learnku:site'],
-      ['https://learnku.com/example/feed', 'learnku:community'],
-      ['http://learnku.com/example/feed', 'learnku:community'],
-      ['https://learnku.com/example/feed/', 'learnku:community'],
-      ['https://www.learnku.com/example/feed', 'learnku:community'],
+  describe('getFeedHint', () => {
+    const feedHints: Array<[string, DiscoverUriHint]> = [
+      ['https://learnku.com/feed', { key: 'learnku:site', label: 'Site' }],
+      ['http://learnku.com/feed', { key: 'learnku:site', label: 'Site' }],
+      ['https://learnku.com/feed/', { key: 'learnku:site', label: 'Site' }],
+      ['https://learnku.com/example/feed', { key: 'learnku:community', label: 'Community' }],
+      ['http://learnku.com/example/feed', { key: 'learnku:community', label: 'Community' }],
+      ['https://learnku.com/example/feed/', { key: 'learnku:community', label: 'Community' }],
+      ['https://www.learnku.com/example/feed', { key: 'learnku:community', label: 'Community' }],
     ]
 
-    it.each(feedKeys)('should return the key of %s', (value, expected) => {
-      expect(learnkuHandler.getFeedKey?.(value)).toBe(expected)
+    it.each(feedHints)('should return the hint of %s', (value, expected) => {
+      expect(learnkuHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a community page', () => {
       const value = 'https://learnku.com/example'
 
-      expect(learnkuHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(learnkuHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for the home page', () => {
       const value = 'https://learnku.com/'
 
-      expect(learnkuHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(learnkuHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed path on another host', () => {
       const value = 'https://example.com/example/feed'
 
-      expect(learnkuHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(learnkuHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 
