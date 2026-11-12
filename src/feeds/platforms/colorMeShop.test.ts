@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'bun:test'
 import type { DiscoverUriEntry } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import { type ColorMeShopUrl, colorMeShopHandler, parseColorMeShopUrl } from './colorMeShop.js'
 
 const shopCookies = [
@@ -52,6 +54,13 @@ describe('parseColorMeShopUrl', () => {
 })
 
 describe('colorMeShopHandler', () => {
+  const feedUrls: Array<string> = [
+    'https://example.shop-pro.jp/?mode=rss',
+    'https://example.shop-pro.jp/?mode=atom',
+    'http://example.shop-pro.jp/?mode=rss',
+    'http://example.shop-pro.jp/?mode=atom',
+  ]
+
   describe('match', () => {
     it('should match a shop subdomain without headers', () => {
       expect(colorMeShopHandler.match('https://example.shop-pro.jp/')).toBe(true)
@@ -107,6 +116,59 @@ describe('colorMeShopHandler', () => {
       ]
 
       expect(colorMeShopHandler.resolve(value)).toEqual(expected)
+    })
+  })
+
+  describe('getFeedKey', () => {
+    it.each(feedUrls)('should return the products key for %s', (value) => {
+      const expected = 'color-me-shop:products'
+
+      expect(colorMeShopHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return undefined for a product page', () => {
+      const value = 'https://example.shop-pro.jp/?pid=193633107'
+
+      expect(colorMeShopHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed of a blog on a nested subdomain', () => {
+      const value = 'http://blog.example.shop-pro.jp/?mode=atom'
+
+      expect(colorMeShopHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on a numbered host', () => {
+      const value = 'https://img15.shop-pro.jp/?mode=rss'
+
+      expect(colorMeShopHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on the apex domain', () => {
+      const value = 'https://shop-pro.jp/?mode=rss'
+
+      expect(colorMeShopHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on a shop domain', () => {
+      const value = 'https://www.example.com/?mode=rss'
+
+      expect(colorMeShopHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    it.each(feedUrls)('should return %s as itself', async (value) => {
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [colorMeShopHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [
+        { uri: value, hint: { key: 'color-me-shop:products', label: 'Products' } },
+      ]
+
+      expect(result).toEqual(expected)
     })
   })
 })
