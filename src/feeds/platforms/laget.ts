@@ -68,13 +68,13 @@ export const lagetHandler: PlatformHandler = {
       return [teamFeeds.getFeedEntry('laget:news', { team: parsed.team })]
     }
 
-    if (isHostOrSubdomainOf(url, domains)) {
+    const page = clubFeeds.forUrl(url)
+
+    if (isHostOrSubdomainOf(url, domains) || !page) {
       return []
     }
 
-    const { protocol, host } = new URL(url)
-
-    return [clubFeeds.getFeedEntry('laget:news', { scheme: protocol.slice(0, -1), host })]
+    return [page.getFeedEntry('laget:news')]
   },
 
   getFeedHint: teamFeeds.getFeedHint,
