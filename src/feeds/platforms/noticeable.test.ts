@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import {
   isNoticeableHtml,
   type NoticeableUrl,
@@ -161,6 +163,134 @@ describe('noticeableHandler', () => {
 
     it('should return empty array for an invalid URL', () => {
       expect(noticeableHandler.resolve('not-a-url')).toEqual([])
+    })
+  })
+
+  describe('getFeedKey', () => {
+    it('should return the posts key for a newspage RSS feed', () => {
+      const value = 'https://bcdevchangelog.noticeable.news/feed.rss'
+      const expected = 'noticeable:posts'
+
+      expect(noticeableHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the posts key for a newspage Atom feed', () => {
+      const value = 'https://synthesia.noticeable.news/feed.atom'
+      const expected = 'noticeable:posts'
+
+      expect(noticeableHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the posts key for a newspage JSON feed', () => {
+      const value = 'https://bcdevchangelog.noticeable.news/feed.json'
+      const expected = 'noticeable:posts'
+
+      expect(noticeableHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the posts key for a newspage feed over http', () => {
+      const value = 'http://bcdevchangelog.noticeable.news/feed.rss'
+      const expected = 'noticeable:posts'
+
+      expect(noticeableHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the posts key for a newspage feed with an embed parameter', () => {
+      const value = 'https://bcdevchangelog.noticeable.news/feed.rss?embed=true'
+      const expected = 'noticeable:posts'
+
+      expect(noticeableHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the label key for a label RSS feed', () => {
+      const value = 'https://bcdevchangelog.noticeable.news/cornerstone.rss'
+      const expected = 'noticeable:label'
+
+      expect(noticeableHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the label key for a label Atom feed', () => {
+      const value = 'https://synthesia.noticeable.news/templates.atom'
+      const expected = 'noticeable:label'
+
+      expect(noticeableHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the label key for a label JSON feed', () => {
+      const value = 'https://bcdevchangelog.noticeable.news/cornerstone.json'
+      const expected = 'noticeable:label'
+
+      expect(noticeableHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return undefined for a label page', () => {
+      const value = 'https://bcdevchangelog.noticeable.news/labels/cornerstone'
+
+      expect(noticeableHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a publication page', () => {
+      const value = 'https://example.noticeable.news/publications/new-billing-api'
+
+      expect(noticeableHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed path on the Noticeable site', () => {
+      const value = 'https://noticeable.news/feed.rss'
+
+      expect(noticeableHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed path on a nested subdomain', () => {
+      const value = 'https://news.example.noticeable.news/feed.rss'
+
+      expect(noticeableHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on a custom domain', () => {
+      const value = 'https://acme.noticeable.io/feed.rss'
+
+      expect(noticeableHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('own feeds through the Platform method', () => {
+    const ownFeeds: Array<[string, DiscoverUriHint]> = [
+      [
+        'https://bcdevchangelog.noticeable.news/feed.rss',
+        { key: 'noticeable:posts', label: 'Posts' },
+      ],
+      [
+        'https://bcdevchangelog.noticeable.news/feed.atom',
+        { key: 'noticeable:posts', label: 'Posts' },
+      ],
+      [
+        'https://bcdevchangelog.noticeable.news/feed.json',
+        { key: 'noticeable:posts', label: 'Posts' },
+      ],
+      [
+        'https://bcdevchangelog.noticeable.news/cornerstone.rss',
+        { key: 'noticeable:label', label: 'Label' },
+      ],
+      [
+        'https://bcdevchangelog.noticeable.news/cornerstone.atom',
+        { key: 'noticeable:label', label: 'Label' },
+      ],
+      [
+        'https://bcdevchangelog.noticeable.news/cornerstone.json',
+        { key: 'noticeable:label', label: 'Label' },
+      ],
+    ]
+
+    it.each(ownFeeds)('should return %s as itself', async (value, hint) => {
+      const result = await discoverUrisFromPlatform(undefined, undefined, {
+        ...defaultPlatformOptions,
+        handlers: [noticeableHandler],
+        baseUrl: value,
+      })
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(result).toEqual(expected)
     })
   })
 })

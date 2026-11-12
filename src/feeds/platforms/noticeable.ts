@@ -1,7 +1,8 @@
 import { isHostOrSubdomainOf, isSubdomainOf, parseUrl } from 'trousse'
 import type { DiscoverUriEntry } from '../../common/types.js'
+import { definePlatformFeeds } from '../../common/uris/platform/feeds.js'
 import type { PlatformHandler } from '../../common/uris/platform/types.js'
-import { composeHint, getTenantSubdomain, hasMarker } from '../../common/utils.js'
+import { getTenantSubdomain, hasMarker } from '../../common/utils.js'
 
 // Discoverability: Partially discoverable without handler.
 // Generic partly covers label, newspage, publication.
@@ -12,6 +13,20 @@ const domains = ['noticeable.news']
 
 // A page combining labels, `/labels/{a},{b}`, has no feed of its own: `/{a},{b}.rss` answers 404.
 const labelPathRegex = /^\/labels\/([^/,]+)\/?$/i
+
+// A newspage serves its feeds on its own host, custom domains too. The `feed.*` rows read before
+// the label rows, so a label named feed reads as the newspage feed.
+const feeds = definePlatformFeeds(
+  [
+    { key: 'noticeable:posts', template: '{scheme}://{host}/feed.rss', format: 'rss' },
+    { key: 'noticeable:posts', template: '{scheme}://{host}/feed.atom', format: 'atom' },
+    { key: 'noticeable:posts', template: '{scheme}://{host}/feed.json', format: 'json' },
+    { key: 'noticeable:label', template: '{scheme}://{host}/{label}.rss', format: 'rss' },
+    { key: 'noticeable:label', template: '{scheme}://{host}/{label}.atom', format: 'atom' },
+    { key: 'noticeable:label', template: '{scheme}://{host}/{label}.json', format: 'json' },
+  ],
+  { domains },
+)
 
 // Every newspage template loads its styles from the Noticeable asset host, custom domains too.
 export const isNoticeableHtml = (content: string): boolean => {
@@ -54,21 +69,36 @@ export const noticeableHandler: PlatformHandler = {
       return []
     }
 
-    const { origin } = new URL(url)
+    const { protocol, host } = new URL(url)
+    const params = { scheme: protocol.slice(0, -1), host }
     const uris: Array<DiscoverUriEntry> = []
 
     if (parsed.kind === 'label') {
-      const { label } = parsed
+      const labelParams = { ...params, label: parsed.label }
 
-      uris.push({ uri: `${origin}/${label}.rss`, hint: composeHint('noticeable:label', 'rss') })
-      uris.push({ uri: `${origin}/${label}.atom`, hint: composeHint('noticeable:label', 'atom') })
-      uris.push({ uri: `${origin}/${label}.json`, hint: composeHint('noticeable:label', 'json') })
+      uris.push(
+        feeds.getFeedEntry('noticeable:label', labelParams, 'rss'),
+        feeds.getFeedEntry('noticeable:label', labelParams, 'atom'),
+        feeds.getFeedEntry('noticeable:label', labelParams, 'json'),
+      )
     }
 
-    uris.push({ uri: `${origin}/feed.rss`, hint: composeHint('noticeable:posts', 'rss') })
-    uris.push({ uri: `${origin}/feed.atom`, hint: composeHint('noticeable:posts', 'atom') })
-    uris.push({ uri: `${origin}/feed.json`, hint: composeHint('noticeable:posts', 'json') })
+    uris.push(
+      feeds.getFeedEntry('noticeable:posts', params, 'rss'),
+      feeds.getFeedEntry('noticeable:posts', params, 'atom'),
+      feeds.getFeedEntry('noticeable:posts', params, 'json'),
+    )
 
     return uris
+  },
+
+  // A feed on a custom domain carries no marker in its URL, so only a tenant host is read, never
+  // the noticeable.news site itself.
+  getFeedKey: (url) => {
+    if (!getTenantSubdomain(url, domains)) {
+      return
+    }
+
+    return feeds.getFeedKey(url)
   },
 }
