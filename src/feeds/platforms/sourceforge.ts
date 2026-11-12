@@ -10,8 +10,8 @@ export type SourceforgeUrl = { kind: 'project'; project: string }
 const hosts = ['sourceforge.net', 'www.sourceforge.net']
 const projectPrefixes = ['projects', 'p']
 
-// SourceForge serves each feed at `feed`, `feed.rss` and `feed.atom`, so the rows `resolve` never
-// builds claim the other spellings.
+// SourceForge serves each feed at `feed`, `feed.rss` and `feed.atom`. The rows `resolve` never
+// builds claim the spellings the corpus stores, of the project and news feeds.
 const feeds = definePlatformFeeds([
   { key: 'sourceforge:activity', template: 'https://sourceforge.net/p/{project}/activity/feed' },
   { key: 'sourceforge:project-feed', template: 'https://sourceforge.net/p/{project}/feed' },
