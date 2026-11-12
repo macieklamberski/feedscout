@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'bun:test'
 import type { DiscoverUriEntry } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import { type AtwikiUrl, atwikiHandler, parseAtwikiUrl } from './atwiki.js'
 
 describe('parseAtwikiUrl', () => {
@@ -61,6 +63,81 @@ describe('atwikiHandler', () => {
 
     it('should return empty array for non-wiki path', () => {
       expect(atwikiHandler.resolve('https://w.atwiki.jp/')).toEqual([])
+    })
+  })
+  describe('getFeedKey', () => {
+    it('should return the updated pages key for an RDF feed', () => {
+      const value = 'https://w.atwiki.jp/jojobr2/rss10.xml'
+      const expected = 'atwiki:updated-pages'
+
+      expect(atwikiHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the updated pages key for the rss spelling of the RDF feed', () => {
+      const value = 'https://w.atwiki.jp/2chserver/rss'
+      const expected = 'atwiki:updated-pages'
+
+      expect(atwikiHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the updated pages key for an Atom feed', () => {
+      const value = 'https://w.atwiki.jp/jojobr2/feed.atom'
+      const expected = 'atwiki:updated-pages'
+
+      expect(atwikiHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the new pages key for a new pages feed', () => {
+      const value = 'https://w.atwiki.jp/jojobr2/rss10_new.xml'
+      const expected = 'atwiki:new-pages'
+
+      expect(atwikiHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return undefined for a wiki page', () => {
+      const value = 'https://w.atwiki.jp/jojobr2/pages/1.html'
+
+      expect(atwikiHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a wiki root', () => {
+      const value = 'https://w.atwiki.jp/jojobr2/'
+
+      expect(atwikiHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed path on another host', () => {
+      const value = 'https://example.com/jojobr2/rss10.xml'
+
+      expect(atwikiHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('discoverUrisFromPlatform', () => {
+    const updatedPages = {
+      key: 'atwiki:updated-pages',
+      label: 'Updated pages',
+    }
+    const newPages = {
+      key: 'atwiki:new-pages',
+      label: 'New pages',
+    }
+    const values: Array<[string, DiscoverUriEntry['hint']]> = [
+      ['https://w.atwiki.jp/jojobr2/rss10.xml', updatedPages],
+      ['https://w.atwiki.jp/2chserver/rss', updatedPages],
+      ['https://w.atwiki.jp/jojobr2/feed.atom', updatedPages],
+      ['https://w.atwiki.jp/jojobr2/rss10_new.xml', newPages],
+    ]
+
+    it.each(values)('should return %s as itself', async (value, hint) => {
+      const options = {
+        ...defaultPlatformOptions,
+        handlers: [atwikiHandler],
+        baseUrl: value,
+      }
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
     })
   })
 })
