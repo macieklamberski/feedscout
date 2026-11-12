@@ -14,7 +14,7 @@ export type SverigesRadioUrl =
 const hosts = ['sverigesradio.se', 'www.sverigesradio.se']
 
 // A podcast feed on /api/rss/pod/{id}, with or without /itunes, mostly answers a 301 to the program
-// feed on public-api.sr.se. Pages link neither, so both rows only claim.
+// feed on public-api.sr.se, and a few serve a podcast of their own. resolve builds neither.
 const feeds = definePlatformFeeds([
   { key: 'sveriges-radio:program', template: 'https://api.sr.se/api/rss/program/{programId}' },
   { key: 'sveriges-radio:program', template: 'https://public-api.sr.se/rss/{slug}' },
