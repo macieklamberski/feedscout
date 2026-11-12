@@ -5,6 +5,7 @@ import {
   escapeRegex,
   getQueryParam,
   isHttpUrl,
+  isSubdomainOf,
   parseUrl,
   stripWww,
   t,
@@ -28,6 +29,8 @@ export type PlatformFeedTableOptions = {
   hosts?: Array<string>
   // The domains a `{domain}` placeholder stands for.
   domains?: Array<string>
+  // Whether `www` can be a tenant, so `www.example.com` matches a `{user}.example.com` row.
+  isWwwTenant?: boolean
 }
 
 export type PlatformFeedTable = {
@@ -42,6 +45,7 @@ export type PlatformFeedTable = {
     format?: DiscoverUriHint['format'],
   ) => DiscoverUriEntry
   getFeedHint: (url: string) => DiscoverUriHint | undefined
+  forUrl: (url: string) => Pick<PlatformFeedTable, 'getFeedUrl' | 'getFeedEntry'> | undefined
 }
 
 type CompiledTemplate = {
@@ -51,6 +55,7 @@ type CompiledTemplate = {
   // The placeholder names the template fills.
   names: Array<string>
   isFeedUrl: (url: URL) => boolean
+  isFeedUrlWithoutWww: (url: URL) => boolean
   getUrl: (params?: PlatformFeedParams) => string
 }
 
@@ -106,33 +111,41 @@ const compileTemplate = (
   const query = [...new URLSearchParams(queryText)]
   // A name with no value, such as `?rss`, is a flag, built with no value.
   const flags = new Set(query.filter(([, value]) => !value).map(([name]) => name))
-  const hosts = (options.hosts ?? []).map((value) => escapeRegex(stripWww(value)))
+  const hosts = options.hosts ?? []
   const domains = (options.domains ?? []).map(escapeRegex)
   const domainSource = `(?:${domains.join('|')})`
-  const hostSources = [...hosts, ...(domains.length > 0 ? [`(?:[^/]+\\.)?${domainSource}`] : [])]
 
   if (
-    (host.includes('{host}') && hostSources.length === 0) ||
+    (host.includes('{host}') && hosts.length === 0 && domains.length === 0) ||
     (host.includes('{domain}') && domains.length === 0)
   ) {
     throw new Error(t(locales.errors.missingFeedHosts, { key }))
   }
 
-  // Matched on the host without `www` and the decoded path without its trailing slash.
-  const hostSource = toRegexSource(stripWww(host), '[^.]+', {
-    host: `(?:${hostSources.join('|')})`,
-    domain: domainSource,
-  })
+  // Matched on the decoded path without its trailing slash.
   const pathSource = toRegexSource(path.replace(trailingSlashRegex, ''), '[^/]+', {}, true)
-  const hostPathRegex = new RegExp(`^${hostSource}${pathSource}$`, 'i')
+  const toHostPathRegex = (normalize: (value: string) => string): RegExp => {
+    const hostSources = [
+      ...hosts.map((value) => escapeRegex(normalize(value))),
+      ...(domains.length > 0 ? [`(?:[^/]+\\.)?${domainSource}`] : []),
+    ]
+    const hostSource = toRegexSource(normalize(host), '[^.]+', {
+      host: `(?:${hostSources.join('|')})`,
+      domain: domainSource,
+    })
+
+    return new RegExp(`^${hostSource}${pathSource}$`, 'i')
+  }
+  const asGivenRegex = toHostPathRegex((value) => value)
+  const withoutWwwRegex = toHostPathRegex(stripWww)
   const queryRegexes = query.map(([name, value]): [string, RegExp] => {
     return [name, new RegExp(`^${toRegexSource(value, '.+')}$`, 'i')]
   })
 
-  const isFeedUrl = (url: URL): boolean => {
+  const matchesUrl = (url: URL, hostPathRegex: RegExp, hostname: string): boolean => {
     const pathname = decodePath(url.pathname).replace(trailingSlashRegex, '')
 
-    if (!hostPathRegex.test(stripWww(url.hostname) + pathname)) {
+    if (!hostPathRegex.test(hostname + pathname)) {
       return false
     }
 
@@ -141,6 +154,14 @@ const compileTemplate = (
 
       return value !== undefined && regex.test(value)
     })
+  }
+
+  const isFeedUrl = (url: URL): boolean => {
+    return matchesUrl(url, asGivenRegex, url.hostname)
+  }
+
+  const isFeedUrlWithoutWww = (url: URL): boolean => {
+    return matchesUrl(url, withoutWwwRegex, stripWww(url.hostname))
   }
 
   // A placeholder with no value stays in the URL, as in trousse's `t`.
@@ -161,7 +182,7 @@ const compileTemplate = (
 
   const names = [...template.matchAll(placeholderRegex)].map(([, name]) => name)
 
-  return { key, format, queryCount: query.length, names, isFeedUrl, getUrl }
+  return { key, format, queryCount: query.length, names, isFeedUrl, isFeedUrlWithoutWww, getUrl }
 }
 
 // One table of a handler's feed URLs, keyed by hint key. `getFeedUrl` writes a feed from the values
@@ -202,7 +223,17 @@ export const definePlatformFeeds = (
       return
     }
 
-    const template = bySpecificity.find((candidate) => candidate.isFeedUrl(parsedUrl))
+    // With `www` a tenant, a host as given wins, so `www.example.com` is the tenant `www` and
+    // `www.alice.example.com` falls back to the host without `www`.
+    if (options.isWwwTenant) {
+      const template = bySpecificity.find((candidate) => candidate.isFeedUrl(parsedUrl))
+
+      if (template) {
+        return composeHint(template.key, template.format)
+      }
+    }
+
+    const template = bySpecificity.find((candidate) => candidate.isFeedUrlWithoutWww(parsedUrl))
 
     if (!template) {
       return
@@ -211,5 +242,30 @@ export const definePlatformFeeds = (
     return composeHint(template.key, template.format)
   }
 
-  return { getFeedUrl, getFeedEntry, getFeedHint }
+  // The table for one page: `{scheme}` and `{host}` come from the page URL, and `{domain}` from the
+  // entry of `domains` its host is under. A value the handler passes wins.
+  const forUrl: PlatformFeedTable['forUrl'] = (url) => {
+    const parsedUrl = parseUrl(url)
+
+    if (!parsedUrl || !isHttpUrl(parsedUrl)) {
+      return
+    }
+
+    const urlParams: PlatformFeedParams = {
+      scheme: parsedUrl.protocol.slice(0, -1),
+      host: parsedUrl.host,
+    }
+    const domain = options.domains?.find((candidate) => isSubdomainOf(parsedUrl, candidate))
+
+    if (domain) {
+      urlParams.domain = domain
+    }
+
+    return {
+      getFeedUrl: (key, params, format) => getFeedUrl(key, { ...urlParams, ...params }, format),
+      getFeedEntry: (key, params, format) => getFeedEntry(key, { ...urlParams, ...params }, format),
+    }
+  }
+
+  return { getFeedUrl, getFeedEntry, getFeedHint, forUrl }
 }
