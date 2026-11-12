@@ -60,5 +60,5 @@ export const kickstarterHandler: PlatformHandler = {
     return [feeds.getFeedEntry('kickstarter:projects')]
   },
 
-  getFeedKey: feeds.getFeedKey,
+  getFeedHint: feeds.getFeedHint,
 }
