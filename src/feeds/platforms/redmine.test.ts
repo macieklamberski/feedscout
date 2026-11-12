@@ -757,6 +757,22 @@ describe('redmineHandler', () => {
         'https://example.plan.io/projects/acme/repository/main/revisions.atom',
         { key: 'redmine:revisions', label: 'Revisions' },
       ],
+      [
+        'https://example.plan.io/projects/acme/repository/main/changes.atom',
+        { key: 'redmine:changes', label: 'Repository changes' },
+      ],
+      [
+        'https://example.plan.io/projects/acme/repository/main/changes.atom?rev=a1b2c3d4',
+        { key: 'redmine:revision-changes', label: 'Revision changes' },
+      ],
+      [
+        'https://example.plan.io/projects/acme/boards.atom',
+        { key: 'redmine:boards', label: 'Forums' },
+      ],
+      [
+        'https://example.planio.com/issues/12345.atom',
+        { key: 'redmine:issue', label: 'Issue updates' },
+      ],
     ]
 
     it.each(feedUrls)('should return the hint for %s', (value, expected) => {
@@ -771,6 +787,18 @@ describe('redmineHandler', () => {
 
     it('should return undefined for a feed on a custom domain', () => {
       const value = 'https://example.com/news.atom'
+
+      expect(redmineHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a forums feed on a custom domain', () => {
+      const value = 'https://example.com/projects/acme/boards.atom'
+
+      expect(redmineHandler.getFeedHint?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed on the planio.com apex', () => {
+      const value = 'https://planio.com/issues/12345.atom'
 
       expect(redmineHandler.getFeedHint?.(value)).toBeUndefined()
     })
@@ -830,6 +858,22 @@ describe('redmineHandler', () => {
       [
         'https://example.plan.io/projects/acme/repository/main/revisions.atom',
         { key: 'redmine:revisions', label: 'Revisions' },
+      ],
+      [
+        'https://example.plan.io/projects/acme/repository/main/changes.atom',
+        { key: 'redmine:changes', label: 'Repository changes' },
+      ],
+      [
+        'https://example.plan.io/projects/acme/repository/main/changes.atom?rev=a1b2c3d4',
+        { key: 'redmine:revision-changes', label: 'Revision changes' },
+      ],
+      [
+        'https://example.plan.io/projects/acme/boards.atom',
+        { key: 'redmine:boards', label: 'Forums' },
+      ],
+      [
+        'https://example.planio.com/issues.atom?set_filter=1',
+        { key: 'redmine:issues', label: 'Issues' },
       ],
     ]
 
