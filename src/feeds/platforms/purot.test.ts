@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'bun:test'
 import type { DiscoverUriEntry } from '../../common/types.js'
+import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
+import { defaultPlatformOptions } from '../defaults.js'
 import type { PurotPage, PurotUrl } from './purot.js'
 import { getPurotPage, parsePurotUrl, purotHandler } from './purot.js'
 
@@ -220,6 +222,98 @@ describe('purotHandler', () => {
 
     it('should return empty array for a URL outside purot.net', () => {
       expect(purotHandler.resolve('https://example.com/', pageHtml)).toEqual([])
+    })
+  })
+
+  describe('getFeedKey', () => {
+    it('should return the recent changes key for the wiki feed', () => {
+      const value = 'https://example.purot.net/changes/all?mode=rss'
+      const expected = 'purot:recent-changes'
+
+      expect(purotHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the page changes key for a page changes feed', () => {
+      const value = 'https://example.purot.net/changes/kevatjuhla?messages=0&mode=rss'
+      const expected = 'purot:page-changes'
+
+      expect(purotHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the page discussions key for a page discussions feed', () => {
+      const value = 'https://example.purot.net/changes/kevatjuhla?mode=rss&pages=0'
+      const expected = 'purot:page-discussions'
+
+      expect(purotHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return the page activity key for a page activity feed', () => {
+      const value = 'https://example.purot.net/changes/kevatjuhla?mode=rss'
+      const expected = 'purot:page-activity'
+
+      expect(purotHandler.getFeedKey?.(value)).toBe(expected)
+    })
+
+    it('should return undefined for a profile feed', () => {
+      const value = 'https://example.purot.net/changes/profile/alice?mode=rss'
+
+      expect(purotHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a changes page', () => {
+      const value = 'https://example.purot.net/changes/kevatjuhla'
+
+      expect(purotHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed path on the apex domain', () => {
+      const value = 'https://purot.net/changes/all?mode=rss'
+
+      expect(purotHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+
+    it('should return undefined for a feed path on another host', () => {
+      const value = 'https://example.com/changes/all?mode=rss'
+
+      expect(purotHandler.getFeedKey?.(value)).toBeUndefined()
+    })
+  })
+
+  describe('discoverUrisFromPlatform', () => {
+    const recentChanges = {
+      key: 'purot:recent-changes',
+      label: 'Recent changes',
+    }
+    const pageChanges = {
+      key: 'purot:page-changes',
+      label: 'Page changes',
+    }
+    const pageDiscussions = {
+      key: 'purot:page-discussions',
+      label: 'Page discussions',
+    }
+    const pageActivity = {
+      key: 'purot:page-activity',
+      label: 'Page changes, discussions and likes',
+    }
+    const values: Array<[string, DiscoverUriEntry['hint']]> = [
+      ['https://example.purot.net/changes/all?mode=rss', recentChanges],
+      ['http://example.purot.net/changes/all?mode=rss', recentChanges],
+      ['https://example.purot.net/changes/kevatjuhla?mode=rss&messages=0', pageChanges],
+      ['https://example.purot.net/changes/kevatjuhla?messages=0&mode=rss', pageChanges],
+      ['https://example.purot.net/changes/kevatjuhla?mode=rss&pages=0', pageDiscussions],
+      ['https://example.purot.net/changes/kevatjuhla?mode=rss', pageActivity],
+    ]
+
+    it.each(values)('should return %s as itself', async (value, hint) => {
+      const options = {
+        ...defaultPlatformOptions,
+        handlers: [purotHandler],
+        baseUrl: value,
+      }
+      const expected: Array<DiscoverUriEntry> = [{ uri: value, hint }]
+
+      expect(await discoverUrisFromPlatform(undefined, undefined, options)).toEqual(expected)
     })
   })
 })
