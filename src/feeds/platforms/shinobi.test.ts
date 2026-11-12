@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiscoverUriEntry } from '../../common/types.js'
+import type { DiscoverUriEntry, DiscoverUriHint } from '../../common/types.js'
 import { discoverUrisFromPlatform } from '../../common/uris/platform/index.js'
 import { defaultPlatformOptions } from '../defaults.js'
 import { parseShinobiUrl, type ShinobiUrl, shinobiHandler } from './shinobi.js'
@@ -118,119 +118,119 @@ describe('shinobiHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
-    it('should return the posts key for the RSS feed', () => {
+  describe('getFeedHint', () => {
+    it('should return the posts hint for the RSS feed', () => {
       const value = 'https://example.blog.shinobi.jp/RSS/'
-      const expected = 'shinobi:posts'
+      const expected: DiscoverUriHint = { key: 'shinobi:posts', label: 'Posts', format: 'rss' }
 
-      expect(shinobiHandler.getFeedKey?.(value)).toBe(expected)
+      expect(shinobiHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the posts key for the Atom feed', () => {
+    it('should return the posts hint for the Atom feed', () => {
       const value = 'https://example.blog.shinobi.jp/ATOM/'
-      const expected = 'shinobi:posts'
+      const expected: DiscoverUriHint = { key: 'shinobi:posts', label: 'Posts', format: 'atom' }
 
-      expect(shinobiHandler.getFeedKey?.(value)).toBe(expected)
+      expect(shinobiHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the posts key for the Atom feed as its self link spells it', () => {
+    it('should return the posts hint for the Atom feed as its self link spells it', () => {
       const value = 'http://example.blog.shinobi.jp/atom'
-      const expected = 'shinobi:posts'
+      const expected: DiscoverUriHint = { key: 'shinobi:posts', label: 'Posts', format: 'atom' }
 
-      expect(shinobiHandler.getFeedKey?.(value)).toBe(expected)
+      expect(shinobiHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the posts key for the RSS 2.0 feed', () => {
+    it('should return the posts hint for the RSS 2.0 feed', () => {
       const value = 'https://example.blog.shinobi.jp/RSS/200'
-      const expected = 'shinobi:posts'
+      const expected: DiscoverUriHint = { key: 'shinobi:posts', label: 'Posts', format: 'rss' }
 
-      expect(shinobiHandler.getFeedKey?.(value)).toBe(expected)
+      expect(shinobiHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the posts key for the RSS 0.91 feed', () => {
+    it('should return the posts hint for the RSS 0.91 feed', () => {
       const value = 'https://example.blog.shinobi.jp/RSS/091'
-      const expected = 'shinobi:posts'
+      const expected: DiscoverUriHint = { key: 'shinobi:posts', label: 'Posts', format: 'rss' }
 
-      expect(shinobiHandler.getFeedKey?.(value)).toBe(expected)
+      expect(shinobiHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the posts key for the RSS 1.0 feed', () => {
+    it('should return the posts hint for the RSS 1.0 feed', () => {
       const value = 'https://example.blog.shinobi.jp/RSS/100'
-      const expected = 'shinobi:posts'
+      const expected: DiscoverUriHint = { key: 'shinobi:posts', label: 'Posts', format: 'rdf' }
 
-      expect(shinobiHandler.getFeedKey?.(value)).toBe(expected)
+      expect(shinobiHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the posts key for the RSS feed under the RSS path', () => {
+    it('should return the posts hint for the RSS feed under the RSS path', () => {
       const value = 'https://example.blog.shinobi.jp/RSS/RSS'
-      const expected = 'shinobi:posts'
+      const expected: DiscoverUriHint = { key: 'shinobi:posts', label: 'Posts', format: 'rss' }
 
-      expect(shinobiHandler.getFeedKey?.(value)).toBe(expected)
+      expect(shinobiHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the posts key for the RSS 2.0 feed under the RSS path', () => {
+    it('should return the posts hint for the RSS 2.0 feed under the RSS path', () => {
       const value = 'https://example.blog.shinobi.jp/RSS/200/RSS'
-      const expected = 'shinobi:posts'
+      const expected: DiscoverUriHint = { key: 'shinobi:posts', label: 'Posts', format: 'rss' }
 
-      expect(shinobiHandler.getFeedKey?.(value)).toBe(expected)
+      expect(shinobiHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the posts key for the RSS 1.0 feed under the RSS path', () => {
+    it('should return the posts hint for the RSS 1.0 feed under the RSS path', () => {
       const value = 'https://example.blog.shinobi.jp/RSS/100/RSS'
-      const expected = 'shinobi:posts'
+      const expected: DiscoverUriHint = { key: 'shinobi:posts', label: 'Posts', format: 'rdf' }
 
-      expect(shinobiHandler.getFeedKey?.(value)).toBe(expected)
+      expect(shinobiHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the posts key for the RSS 0.91 feed as index.rdf', () => {
+    it('should return the posts hint for the RSS 0.91 feed as index.rdf', () => {
       const value = 'https://example.blog.shinobi.jp/RSS/091/index.rdf'
-      const expected = 'shinobi:posts'
+      const expected: DiscoverUriHint = { key: 'shinobi:posts', label: 'Posts', format: 'rss' }
 
-      expect(shinobiHandler.getFeedKey?.(value)).toBe(expected)
+      expect(shinobiHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the posts key for the RSS feed at the OPML path', () => {
+    it('should return the posts hint for the RSS feed at the OPML path', () => {
       const value = 'https://example.blog.shinobi.jp/OPML'
-      const expected = 'shinobi:posts'
+      const expected: DiscoverUriHint = { key: 'shinobi:posts', label: 'Posts', format: 'rss' }
 
-      expect(shinobiHandler.getFeedKey?.(value)).toBe(expected)
+      expect(shinobiHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the posts key for a feed on another Ninja Blog domain', () => {
+    it('should return the posts hint for a feed on another Ninja Blog domain', () => {
       const value = 'http://example.ni-3.net/RSS/'
-      const expected = 'shinobi:posts'
+      const expected: DiscoverUriHint = { key: 'shinobi:posts', label: 'Posts', format: 'rss' }
 
-      expect(shinobiHandler.getFeedKey?.(value)).toBe(expected)
+      expect(shinobiHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for an entry page', () => {
       const value = 'https://example.blog.shinobi.jp/Entry/1/'
 
-      expect(shinobiHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(shinobiHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed path on the blog portal', () => {
       const value = 'https://blog.shinobi.jp/RSS/'
 
-      expect(shinobiHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(shinobiHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed path on the bare domain of a Ninja Blog domain', () => {
       const value = 'https://ni-3.net/RSS/'
 
-      expect(shinobiHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(shinobiHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed path on a nested subdomain', () => {
       const value = 'https://blog.example.ni-3.net/RSS/'
 
-      expect(shinobiHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(shinobiHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed path on another host', () => {
       const value = 'https://example.com/RSS/'
 
-      expect(shinobiHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(shinobiHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 
