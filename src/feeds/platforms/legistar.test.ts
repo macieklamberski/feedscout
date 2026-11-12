@@ -376,76 +376,76 @@ describe('legistarHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
-    it('should return the legislation key for a legislation feed', () => {
+  describe('getFeedHint', () => {
+    it('should return the legislation hint for a legislation feed', () => {
       const value =
         'https://alleghenycounty.legistar.com/Feed.ashx?M=LD&ID=6069821&GUID=4507F171-BA67-43E7-A535-95A46CA29A11'
-      const expected = 'legistar:legislation'
+      const expected: DiscoverUriHint = { key: 'legistar:legislation', label: 'Legislation' }
 
-      expect(legistarHandler.getFeedKey?.(value)).toBe(expected)
+      expect(legistarHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the meeting key for a meeting feed', () => {
+    it('should return the meeting hint for a meeting feed', () => {
       const value =
         'https://baltimore.legistar.com/Feed.ashx?M=CalendarDetail&ID=825328&GUID=3884B135-30AF-4C64-831C-956ED571117E'
-      const expected = 'legistar:meeting'
+      const expected: DiscoverUriHint = { key: 'legistar:meeting', label: 'Meeting' }
 
-      expect(legistarHandler.getFeedKey?.(value)).toBe(expected)
+      expect(legistarHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the meeting key for a meeting feed with the title the page link appends', () => {
+    it('should return the meeting hint for a meeting feed with the title the page link appends', () => {
       const value =
         'https://springfield.legistar.com/Feed.ashx?M=CalendarDetail&ID=1234567&GUID=0A1B2C3D-4E5F-4A6B-8C7D-9E0F1A2B3C4D&Title=City+of+Springfield+-+Meeting+of+Park+Advisory+Commission+on+9%2f15%2f2026+at+4%3a00+PM'
-      const expected = 'legistar:meeting'
+      const expected: DiscoverUriHint = { key: 'legistar:meeting', label: 'Meeting' }
 
-      expect(legistarHandler.getFeedKey?.(value)).toBe(expected)
+      expect(legistarHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the legislation key for a legislation feed over http', () => {
+    it('should return the legislation hint for a legislation feed over http', () => {
       const value =
         'http://mckinney.legistar.com/Feed.ashx?M=LD&ID=4674357&GUID=7FEFBD10-89D4-4AE8-8490-E76C6DA74630'
-      const expected = 'legistar:legislation'
+      const expected: DiscoverUriHint = { key: 'legistar:legislation', label: 'Legislation' }
 
-      expect(legistarHandler.getFeedKey?.(value)).toBe(expected)
+      expect(legistarHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should ignore the case of the feed path and query', () => {
       const value =
         'https://madison.legistar.com/feed.ashx?m=ld&id=1065902&guid=EFE087C2-C62A-40F9-B1F9-6E2975E86217'
-      const expected = 'legistar:legislation'
+      const expected: DiscoverUriHint = { key: 'legistar:legislation', label: 'Legislation' }
 
-      expect(legistarHandler.getFeedKey?.(value)).toBe(expected)
+      expect(legistarHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a legislation page', () => {
       const value =
         'https://madison.legistar.com/LegislationDetail.aspx?ID=1065902&GUID=EFE087C2-C62A-40F9-B1F9-6E2975E86217'
 
-      expect(legistarHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(legistarHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed without a GUID', () => {
       const value = 'https://madison.legistar.com/Feed.ashx?M=LD&ID=1065902'
 
-      expect(legistarHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(legistarHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a calendar feed', () => {
       const value =
         'https://madison.legistar.com/Feed.ashx?M=Calendar&ID=1065902&GUID=EFE087C2-C62A-40F9-B1F9-6E2975E86217&Mode=All'
 
-      expect(legistarHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(legistarHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed on a custom domain', () => {
       const value =
         'https://legistar.council.nyc.gov/Feed.ashx?M=LD&ID=548175&GUID=91F5A388-3FA2-4881-92F8-3A8295CF56D9'
 
-      expect(legistarHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(legistarHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for an invalid URL', () => {
-      expect(legistarHandler.getFeedKey?.('not a url')).toBeUndefined()
+      expect(legistarHandler.getFeedHint?.('not a url')).toBeUndefined()
     })
   })
 

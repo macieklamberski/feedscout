@@ -147,7 +147,7 @@ export const legistarHandler: PlatformHandler = {
   },
 
   // A custom domain carries no marker in the URL alone, so only a feed on a Legistar host is read.
-  getFeedKey: (url) => {
+  getFeedHint: (url) => {
     const parsedUrl = parseUrl(url)
 
     if (!parsedUrl || !isSubdomainOf(url, domains) || !feedPathRegex.test(parsedUrl.pathname)) {
@@ -161,11 +161,11 @@ export const legistarHandler: PlatformHandler = {
     const mode = getQueryParam(parsedUrl.searchParams, 'm')
 
     if (isAnyOf(mode, 'LD')) {
-      return 'legistar:legislation'
+      return composeHint('legistar:legislation')
     }
 
     if (isAnyOf(mode, 'CalendarDetail')) {
-      return 'legistar:meeting'
+      return composeHint('legistar:meeting')
     }
   },
 }
