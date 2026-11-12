@@ -14,12 +14,22 @@ export type HuffdufferUrl =
 
 const hosts = ['huffduffer.com', 'www.huffduffer.com']
 
-// `/new/{format}` reads before `/{username}/rss`, so the site-wide feed keeps its own key.
+// `/new/{format}` reads before `/{username}/{format}`, so the site-wide feed keeps its own key.
 const feeds = definePlatformFeeds([
   { key: 'huffduffer:new', template: 'https://huffduffer.com/new/rss', format: 'rss' },
   { key: 'huffduffer:new', template: 'https://huffduffer.com/new/atom', format: 'atom' },
   { key: 'huffduffer:new', template: 'https://huffduffer.com/new/json', format: 'json' },
-  { key: 'huffduffer:huffduffs', template: 'https://huffduffer.com/{username}/rss' },
+  { key: 'huffduffer:huffduffs', template: 'https://huffduffer.com/{username}/rss', format: 'rss' },
+  {
+    key: 'huffduffer:huffduffs',
+    template: 'https://huffduffer.com/{username}/atom',
+    format: 'atom',
+  },
+  {
+    key: 'huffduffer:huffduffs',
+    template: 'https://huffduffer.com/{username}/json',
+    format: 'json',
+  },
   { key: 'huffduffer:related', template: 'https://huffduffer.com/{username}/{id}/related/rss' },
 ])
 
