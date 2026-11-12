@@ -201,63 +201,63 @@ describe('aladinHandler', () => {
     })
   })
 
-  describe('getFeedKey', () => {
-    it('should return the posts key for a blog feed', () => {
+  describe('getFeedHint', () => {
+    it('should return the posts hint for a blog feed', () => {
       const value = 'https://blog.aladin.co.kr/singri/rss'
-      const expected = 'aladin:posts'
+      const expected: DiscoverUriHint = { key: 'aladin:posts', label: 'Posts' }
 
-      expect(aladinHandler.getFeedKey?.(value)).toBe(expected)
+      expect(aladinHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the posts key for a numeric user feed', () => {
+    it('should return the posts hint for a numeric user feed', () => {
       const value = 'https://blog.aladin.co.kr/790598133/rss'
-      const expected = 'aladin:posts'
+      const expected: DiscoverUriHint = { key: 'aladin:posts', label: 'Posts' }
 
-      expect(aladinHandler.getFeedKey?.(value)).toBe(expected)
+      expect(aladinHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the posts key for a blog feed over http', () => {
+    it('should return the posts hint for a blog feed over http', () => {
       const value = 'http://blog.aladin.co.kr/singri/rss'
-      const expected = 'aladin:posts'
+      const expected: DiscoverUriHint = { key: 'aladin:posts', label: 'Posts' }
 
-      expect(aladinHandler.getFeedKey?.(value)).toBe(expected)
+      expect(aladinHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
-    it('should return the category key for a category feed', () => {
+    it('should return the category hint for a category feed', () => {
       const value = 'https://blog.aladin.co.kr/729975157/category/28094802/rss'
-      const expected = 'aladin:category'
+      const expected: DiscoverUriHint = { key: 'aladin:category', label: 'Category' }
 
-      expect(aladinHandler.getFeedKey?.(value)).toBe(expected)
+      expect(aladinHandler.getFeedHint?.(value)).toEqual(expected)
     })
 
     it('should return undefined for a blog page', () => {
       const value = 'https://blog.aladin.co.kr/singri'
 
-      expect(aladinHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(aladinHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a category page', () => {
       const value = 'https://blog.aladin.co.kr/singri/category/12345678'
 
-      expect(aladinHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(aladinHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed path under a dotted first segment', () => {
       const value = 'https://blog.aladin.co.kr/ScriptResource.axd/rss'
 
-      expect(aladinHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(aladinHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a bookstore feed', () => {
       const value = 'https://www.aladin.co.kr/rss/new_all/798'
 
-      expect(aladinHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(aladinHandler.getFeedHint?.(value)).toBeUndefined()
     })
 
     it('should return undefined for a feed path on another host', () => {
       const value = 'https://example.com/singri/rss'
 
-      expect(aladinHandler.getFeedKey?.(value)).toBeUndefined()
+      expect(aladinHandler.getFeedHint?.(value)).toBeUndefined()
     })
   })
 
